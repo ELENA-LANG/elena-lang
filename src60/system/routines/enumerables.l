@@ -90,6 +90,18 @@ public extension enumerableOp
    forEach(fn)
       = self.forEach:(n){ fn(n) };
 
+   seekEach(Func1 f)
+      = f.retrieve(cast Enumerator(self.enumerator()));
+
+   seekEach(ExtensionMessage extMessage)
+      = self.seekEach:(n => extMessage(n));
+        
+   seekEach(fn)
+      = self.seekEach:(n => fn(n));
+
+   seekEach(object param, Func2 f)
+      = f.retrieve(param, cast Enumerator(self.enumerator()));
+
    filterBy(Func1 selector)
       = Filter.new(selector, cast Enumerator(self.enumerator()));
 
@@ -129,12 +141,65 @@ public extension enumerableOp
 
 // --- indexableOp ---
 
+public extension indexableOp<T>
+{
+   populate(Func<int,T> f)
+   {
+      Indexer it := self.indexer();
+
+      while (it.Available)
+      {
+         int i := it.Index;
+            
+         it.Value := f(i);
+            
+         it.appendIndex:1
+      };
+        
+      ^ self
+   }
+}
+
 public extension indexableOp
 {
+   exchange(int i1, int i2)
+   {
+      Indexer indexer := self.indexer();
+        
+      indexer.Index := i1;
+        
+      var o1 := *indexer;
+        
+      indexer.Index := i2;
+      var o2 := *indexer;
+        
+      indexer.Value := o1;
+        
+      indexer.Index := i1;
+      indexer.Value := o2
+   }
+
    sort(Func2 compareFunc)
    {
       QuickSorting.sort(new IndexerSortingAgent(self), compareFunc);
    }
+
+   populate(Func1 f)
+   {
+      Indexer it := self.indexer();
+
+      while (it.Available)
+      {
+         int i := it.Index;
+            
+         it.Value := f(i);
+            
+         it.appendIndex:1
+      };
+   }    
+
+   populate(action)
+      = self.populate:(int n){ ^action(n) };
 
    ascendant()
       = self.clone().sort(ifOrdered);

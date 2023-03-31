@@ -134,6 +134,14 @@ int main(int argc, char* argv[])
          return -1;
       }
    }
+   else {
+      IdentifierString arg(argv[1]);
+      if (!viewer.loadByName(*arg)) {
+         consoleHelper.printPath(ECV_MODULE_NOTLOADED, argv[1]);
+
+         return -1;
+      }
+   }
 
    viewer.runSession();
 

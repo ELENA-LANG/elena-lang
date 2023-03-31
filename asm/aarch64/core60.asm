@@ -2,13 +2,17 @@
 define INVOKER               10001h
 define GC_ALLOC	             10002h
 define VEH_HANDLER           10003h
+define GC_COLLECT	     10004h
+define GC_ALLOCPERM	     10005h
+define PREPARE	            10006h
 
 define CORE_TOC              20001h
 define SYSTEM_ENV            20002h
 define CORE_GC_TABLE         20003h
-define CORE_THREAD_TABLE     2000Bh
+define CORE_SINGLE_CONTENT   2000Bh
 define VOID           	     2000Dh
 define VOIDPTR               2000Eh
+define CORE_THREAD_TABLE     2000Fh
 
 define ACTION_ORDER              9
 define ARG_MASK               05Fh
@@ -34,6 +38,9 @@ define gc_mg_start           0038h
 define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
+define gc_perm_start         0058h 
+define gc_perm_end           0060h 
+define gc_perm_current       0068h 
 
 define et_current            0008h
 define tt_stack_frame        0010h
@@ -61,11 +68,17 @@ structure % CORE_TOC
 
 end
  
-structure % CORE_THREAD_TABLE
+structure % CORE_SINGLE_CONTENT
 
   dq 0 // ; critical_handler       ; +x00   - pointer to ELENA critical exception handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
   dq 0 // ; tt_stack_frame         ; +x10   - pointer to the stack frame
+
+end
+ 
+structure % CORE_THREAD_TABLE
+
+  // ; dummy for STA
 
 end
 
@@ -83,6 +96,10 @@ structure %CORE_GC_TABLE
   dq 0 // ; gc_end                : +48h
   dq 0 // ; gc_mg_wbar            : +50h
 
+  dq 0 // ; gc_perm_start         : +58h 
+  dq 0 // ; gc_perm_end           : +60h 
+  dq 0 // ; gc_perm_current       : +68h 
+
 end
 
 // ; NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
@@ -90,11 +107,13 @@ structure %SYSTEM_ENV
 
   dq 0
   dq data : %CORE_GC_TABLE
-  dq data : %CORE_THREAD_TABLE
+  dq data : %CORE_SINGLE_CONTENT
+  dq 0
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize
+  // ; dd ThreadCounter
 
 end
 
@@ -142,8 +161,8 @@ labYGCollect:
   mov     x29, sp              // ; set frame pointer
 
   // ; lock frame
-  movz    x14,  data_ptr32lo : %CORE_THREAD_TABLE
-  movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
   add     x14, x14, # tt_stack_frame
 
   mov     x12, sp
@@ -216,7 +235,176 @@ labYGNextFrame:
   ret     x30
 
 end
- 
+
+// ; --- GC_COLLECT ---
+// ; in: ecx - fullmode (0, 1)
+inline % GC_COLLECT
+
+  stp     x0,  x1, [sp, #-16]! 
+  stp     x29, x30, [sp, #-16]! 
+  mov     x29, sp              // ; set frame pointer
+
+  // ; lock frame
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+  add     x14, x14, # tt_stack_frame
+
+  mov     x12, sp
+  str     x12, [x14]
+
+  stp     x11, x11, [sp, #-16]! 
+
+  // ; create set of roots
+  mov     x29, sp
+  mov     x18, 0
+  stp     x18, x18, [sp, #-16]! 
+
+  // ;   save static roots
+  movz    x17, rdata_ptr32lo : %SYSTEM_ENV
+  movk    x17, rdata_ptr32hi : %SYSTEM_ENV, lsl #16
+
+  movz    x19, stat_ptr32lo : #0
+  movk    x19, stat_ptr32hi : #0, lsl #16
+  ldr     x18, [x17]
+  lsl     x18, x18, #3
+  stp     x18, x19, [sp, #-16]! 
+
+  // ;   collect frames
+  ldr     x19, [x14]
+  mov     x18, x19
+
+labYGNextFrame:
+  mov     x17, x19
+  ldr     x19, [x17]
+  cmp     x19, #0
+  bne     labYGNextFrame
+
+  mov     x20, x18
+  sub     x18, x17, x18
+  stp     x18, x20, [sp, #-16]! 
+
+  ldr     x19, [x17, #8]!
+  cmp     x19, #0
+  mov     x18, x19
+  bne     labYGNextFrame
+
+  mov     x20, sp
+  str     x20, [x29]
+
+  add     x19, x29, #8
+  ldr     x1, [x19]
+  mov     x0, sp
+
+  // ; restore frame to correctly display a call stack
+  stp     x29, x29, [sp, #-16]! 
+
+  ldr     x29, [x29]
+
+  // ; call GC routine
+  movz    x16,  import_ptr32lo : "$rt.CollectGCLA"
+  movk    x16,  import_ptr32hi : "$rt.CollectGCLA", lsl #16
+
+  ldr     x17, [x16]
+  blr     x17
+
+  mov     x10, x0
+
+//;  ldp     x19, x29, [sp, #-16]! 
+  ldp     x19, x29, [sp], #16
+  add     x29, x29, #16
+  mov     sp, x29
+  ldp     x29, x30, [sp], #16
+  ldp     x0,  x1, [sp], #16
+
+  ret     x30
+
+end
+
+// --- GC_ALLOCPERM ---
+procedure %GC_ALLOCPERM
+
+  movz    x12,  data_ptr32lo : %CORE_GC_TABLE
+  movk    x12,  data_ptr32hi : %CORE_GC_TABLE, lsl #16
+  add     x13, x12, gc_perm_current
+  ldr     x15, [x13]
+  add     x14, x12, gc_perm_end
+  ldr     x14, [x14]
+  add     x11, x11, x15
+  cmp     x11, x14
+  bge     labYGCollect
+  str     x11, [x13]
+  add     x10, x15, elObjectOffset
+  ret     x30
+
+labYGCollect:
+  // ; save registers
+  sub     x11, x11, x15
+
+  stp     x0,  x1, [sp, #-16]! 
+  stp     x29, x30, [sp, #-16]! 
+  mov     x29, sp              // ; set frame pointer
+
+  // ; lock frame
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+  add     x14, x14, # tt_stack_frame
+
+  mov     x12, sp
+  str     x12, [x14]
+
+  stp     x11, x11, [sp, #-16]! 
+
+  mov     x20, sp
+  str     x20, [x29]
+
+  add     x19, x29, #8
+  ldr     x1, [x19]
+  mov     x0, sp
+
+  // ; restore frame to correctly display a call stack
+  stp     x29, x29, [sp, #-16]! 
+
+  ldr     x29, [x29]
+
+  // ; call GC routine
+  movz    x16,  import_ptr32lo : "$rt.CollectPermGCLA"
+  movk    x16,  import_ptr32hi : "$rt.CollectPermGCLA", lsl #16
+
+  ldr     x17, [x16]
+  blr     x17
+
+  mov     x10, x0
+
+//;  ldp     x19, x29, [sp, #-16]! 
+  ldp     x19, x29, [sp], #16
+  add     x29, x29, #16
+  mov     sp, x29
+  ldp     x29, x30, [sp], #16
+  ldp     x0,  x1, [sp], #16
+
+  ret     x30
+
+end
+
+procedure %PREPARE
+
+  stp     x29, x30, [sp, #-16]! 
+
+  // ; call GC routine
+  movz    x16,  import_ptr32lo : "$rt.PrepareLA"
+  movk    x16,  import_ptr32hi : "$rt.PrepareLA", lsl #16
+
+  mov     x0, x12
+
+  ldr     x17, [x16]
+  blr     x17
+
+  ldp     x29, x30, [sp], #16
+
+  ret     x30
+
+end
+
 // ; ==== Command Set ==
 
 // ; redirect
@@ -308,8 +496,8 @@ end
 // ; throw
 inline %0Ah
 
-  movz    x14,  data_ptr32lo : %CORE_THREAD_TABLE
-  movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
 
   ldr     x14, [x14, # et_current]!
   ldr     x17, [x14, # es_catch_addr]!
@@ -321,8 +509,8 @@ end
 // ; unhook
 inline %0Bh
 
-  movz    x14,  data_ptr32lo : %CORE_THREAD_TABLE
-  movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
 
   add     x14, x14, # et_current
   ldr     x13, [x14]
@@ -385,8 +573,8 @@ inline % 10h
 
   stp      x18, x29, [sp, #-16]! 
 
-  movz    x14,  data_ptr32lo : %CORE_THREAD_TABLE
-  movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
   add     x14, x14, # tt_stack_frame
 
 end
@@ -517,6 +705,21 @@ inline %1Ah
 
 end
 
+// ; convl
+inline %1Bh
+
+  sxtw    x9, w9
+
+end
+
+// ; xlcmp
+inline % 1Ch
+
+  ldr     x14, [x10]
+  cmp     x14, x9
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -567,7 +770,8 @@ end
 // ; wread
 inline %26h
 
-  add     x18, x0, x9
+  lsl     x18, x9, #1
+  add     x18, x0, x18
   ldrsw   x17, [x18]
   str     x17, [x10]
 
@@ -1051,6 +1255,14 @@ inline %9Bh
 
 end
 
+// ; muln
+inline %9Ch
+
+  mov     x11, __n16_1   // ; temporally
+  mul     x9, x9, x11
+
+end
+
 // ; saveddp
 inline %0A0h
 
@@ -1269,6 +1481,14 @@ end
 inline %2ABh
 
   mov     x1, x9
+
+end 
+
+// ; lloaddp
+inline %0ACh
+
+  add     x11, x29, __arg12_1
+  ldr     x9,  [x11]
 
 end 
 
@@ -1535,10 +1755,73 @@ end
 // ; cmpsi 1
 inline %2C9h
 
-  mov     x10, x1
+  mov     x11, x1
   cmp     x10, x11
 
 end 
+
+// ; xloadargsi
+inline %0CDh
+
+  add     x11, sp, __arg12_1
+  ldr     x9, [x11]
+
+end 
+
+// ; xloadargsi 0
+inline %1CDh
+
+  mov     x9, x0
+
+end 
+
+// ; xloadargsi 1
+inline %2CDh
+
+  mov     x9, x1
+
+end 
+
+// ; xcreate r
+inline %0CEh
+
+  ldr     w19, [x0]
+  lsl     x19, x19, #3
+
+  add     x19, x19, page_ceil
+  and     x11, x19, page_mask
+
+  movz    x17,  code_ptr32lo : %GC_ALLOCPERM
+  movk    x17,  code_ptr32hi : %GC_ALLOCPERM, lsl #16
+  blr     x17
+
+  ldr     w19, [x0]
+  lsl     x18, x19, #3
+
+  movz    x19,  __ptr32lo_1
+  movk    x19,  __ptr32hi_1, lsl #16
+  sub     x20, x10, elVMTOffset
+  str     x19, [x20]
+  str     w18, [x20, #12]!
+
+end
+
+// ; system
+inline %0CFh
+
+end
+
+
+// ; system 4
+inline %4CFh
+
+  mov     x12, sp
+
+  movz    x17,  code_ptr32lo : %PREPARE
+  movk    x17,  code_ptr32hi : %PREPARE, lsl #16
+  blr     x17
+
+end
 
 // ; faddndp
 inline %0D0h
@@ -2232,8 +2515,8 @@ inline %0E6h
 
   add     x13, x29, __arg12_1
 
-  movz    x14,  data_ptr32lo : %CORE_THREAD_TABLE
-  movk    x14,  data_ptr32hi : %CORE_THREAD_TABLE, lsl #16
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
   mov     x18, x13
 
   movz    x16,  __ptr32lo_2
@@ -3363,10 +3646,11 @@ end
 // ; vcallmr
 inline %0FCh
 
+  mov     x18, __arg16_1
   sub     x14, x10, elVMTOffset              
   ldr     x17, [x14]
-  add     x17, x17, __arg12_1
-  ldr     x17, [x17]
+  add     x17, x17, x18
+  ldr     x17, [x17, #8]
   blr     x17
 
 end

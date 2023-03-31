@@ -1,22 +1,20 @@
+import system'routines;
 import extensions;
 
-import system'collections;
-import system'routines;
 
 public program()
 {
-//   var s := "1 2";
+   var s:= "1234".toArray();
 
-//   s.split().forEach:(x => console.writeLine(x));
+   var ch := s[0];
 
-   var f := mssgconst toInt<intConvertOp>[1];
-   console.writeLine(f("2"));
+//   console.printLine(s[0] == ch);
+   console.printLine(s[0].equalReference(ch));
 
+//               var duplicate := guess.seekEach:(x => (x == ch)&&(x.equalReference(ch).Inverted));
+//               if (nil != duplicate)
+//               {
+//                  InvalidArgumentException.raise()
+//               };
 
-
-//    var o := nil;
-//    o.call()
-
-//   var o := new Object();
-//   o.fail()
 }

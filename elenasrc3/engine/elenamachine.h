@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Machine common types
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENAMACHINE_H
@@ -20,6 +20,7 @@ namespace elena_lang
       int      mg_committed_size;
       int      page_mask;
       int      page_size_order;
+      int      perm_total_size;
    };
 
    class ImageSection : public MemoryBase
@@ -41,7 +42,7 @@ namespace elena_lang
          return nullptr;
       }
 
-      bool read(pos_t position, void* s, pos_t length) override
+      bool read(pos_t position, void* s, pos_t length) const override
       {
          if (position < _length && _length >= position + length) {
             memcpy(s, (unsigned char*)_section + position, length);
@@ -80,6 +81,7 @@ namespace elena_lang
    {
    public:
       int execute(SystemEnv* env, void* symbolListEntry);
+      int execute(SystemEnv* env, void* threadEntry, void* threadFunc);
 
       ELENAMachine() = default;
 
@@ -98,15 +100,24 @@ namespace elena_lang
 
       static uintptr_t NewHeap(size_t totalSize, size_t committedSize);
       static uintptr_t ExpandHeap(void* allocPtr, size_t newSize);
+      static uintptr_t ExpandPerm(void* allocPtr, size_t newSize);
 
-      static void* GCRoutine(GCTable* table, GCRoot* roots, size_t size);
+      static void* GCRoutine(GCTable* table, GCRoot* roots, size_t size, bool fullMode);
+      static void* GCRoutinePerm(GCTable* table, size_t size);
 
       static size_t LoadCallStack(uintptr_t framePtr, uintptr_t* list, size_t length);
 
       static void Init(SystemEnv* env, SystemSettings settings);
-      static void InitExceptionHandling(SystemEnv* env, void* criticalHandler);
+      static void InitSTAExceptionHandling(SystemEnv* env, void* criticalHandler);
+      static void InitMTAExceptionHandling(SystemEnv* env, int index, void* criticalHandler);
       static void InitCriticalStruct(uintptr_t criticalDispatcher);
       static void InitSTA(SystemEnv* env);
+
+      static long long GenerateSeed();
+      static void InitRandomSeed(SeedStruct& seed, long long seedNumber);
+      static unsigned int GetRandomNumber(SeedStruct& seed);
+
+      static void* CreateThread(int tt_index, int flags, void* threadProc);
 
       static void RaiseError(int code);
 

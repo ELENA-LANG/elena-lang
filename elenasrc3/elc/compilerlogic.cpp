@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 112;
+constexpr auto OperationLength = 117;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -193,6 +193,21 @@ constexpr Op Operations[OperationLength] =
    },
    {
       NOTEQUAL_OPERATOR_ID, BuildKey::LongCondOp, V_INT64, V_INT64, 0, V_FLAG
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::LongCondOp, V_WORD64, V_WORD64, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::LongCondOp, V_WORD64, V_WORD64, 0, V_FLAG
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::LongIntCondOp, V_INT64, V_INT32, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::LongIntCondOp, V_INT64, V_INT32, 0, V_FLAG
+   },
+   {
+      LESS_OPERATOR_ID, BuildKey::LongIntCondOp, V_INT64, V_INT32, 0, V_FLAG
    },
    {
       ADD_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT8, 0, V_INT8
@@ -403,14 +418,15 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
       case V_OBJECT:
          return !isPrimitiveRef(source.typeRef);
       case V_INT32:
-         return source.typeRef == V_INT8 || source.typeRef == V_INT16
-            || source.typeRef == V_WORD32 || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32;
+         return source.typeRef == V_INT8 || source.typeRef == V_WORD32 || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32;
       case V_INT64:
-         return source.typeRef == V_PTR64;
+         return source.typeRef == V_PTR64 || source.typeRef == V_WORD64;
       case V_FLAG:
          return isCompatible(scope, { scope.branchingInfo.typeRef }, source, true);
       case V_WORD32:
          return source.typeRef == V_INT32;
+      case V_WORD64:
+         return source.typeRef == V_INT64;
       default:
          return false;
    }
@@ -722,9 +738,10 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_EXTERN:
          attrs |= ExpressionAttribute::Extern;
          return true;
-      case V_NEWOP:
+   case V_NEWOP:
          if (ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::Parameter)
-            || ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::NestedDecl))
+            || ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::NestedDecl)
+            || ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::Meta))
          {
             attrs |= ExpressionAttribute::NewOp;
             return true;
@@ -787,6 +804,9 @@ bool CompilerLogic :: validateTypeScopeAttribute(ref_t attrValue, TypeAttributes
          return true;
       case V_NEWOP:
          attributes.newOp = true;
+         return true;
+      case V_CLASS:
+         attributes.classOne = true;
          return true;
       default:
          return false;
@@ -915,6 +935,11 @@ bool CompilerLogic :: isEmbeddableArray(ModuleScopeBase& scope, ref_t reference)
    return false;
 }
 
+bool CompilerLogic :: isDynamic(ClassInfo& info)
+{
+   return test(info.header.flags, elDynamicRole | elWrapper);
+}
+
 bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
 {
    return test(info.header.flags, elDynamicRole | elStructureRole | elWrapper);
@@ -942,6 +967,21 @@ bool CompilerLogic :: isEmbeddable(ClassInfo& info)
       return isEmbeddableArray(info);
    }
    else return isEmbeddableStruct(info);
+}
+
+bool CompilerLogic :: isEmbeddableAndReadOnly(ClassInfo& info)
+{
+   return isReadOnly(info) && isEmbeddable(info);
+}
+
+bool CompilerLogic :: isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t reference)
+{
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference, true)) {
+      return isEmbeddableAndReadOnly(info);
+   }
+
+   return false;
 }
 
 bool CompilerLogic :: isStacksafeArg(ClassInfo& info)
@@ -1047,6 +1087,7 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
             break;
          case V_INT64:
          case V_PTR64:
+         case V_WORD64:
             info.header.flags |= elDebugQWORD;
             break;
          case V_FLOAT64:
@@ -1174,6 +1215,12 @@ void CompilerLogic :: writeArrayEntry(MemoryBase* section, ref_t reference)
    writer.writeRef(reference);
 }
 
+void CompilerLogic :: writeArrayReference(MemoryBase* section, ref_t reference)
+{
+   MemoryWriter writer(section);
+   writer.writeDReference(reference, 0);
+}
+
 void CompilerLogic :: writeExtMessageEntry(MemoryBase* section, ref_t extRef, mssg_t message, mssg_t strongMessage)
 {
    MemoryWriter writer(section);
@@ -1182,7 +1229,17 @@ void CompilerLogic :: writeExtMessageEntry(MemoryBase* section, ref_t extRef, ms
    writer.writeRef(strongMessage);
 }
 
-bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* section, ExtensionMap& map, ModuleScopeBase* scope)
+void CompilerLogic :: writeExtMessageEntry(MemoryBase* section, mssg_t message, ustr_t pattern)
+{
+   MemoryWriter writer(section);
+   writer.writeRef(0);
+   writer.writeRef(message);
+   writer.writeRef(0);
+   writer.writeString(pattern);
+}
+
+bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* section, ExtensionMap& map, 
+   ExtensionTemplateMap& extensionTemplates, ModuleScopeBase* scope)
 {
    bool importMode = extModule != scope->module;
 
@@ -1191,7 +1248,7 @@ bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* sec
    MemoryReader reader(section);
    while (!reader.eof()) {
       ref_t extRef = reader.getRef();
-      if (importMode)
+      if (importMode && extRef)
          extRef = scope->importReference(extModule, extRef);
 
       mssg_t message = reader.getRef();
@@ -1199,10 +1256,16 @@ bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* sec
          message = scope->importMessage(extModule, message);
 
       mssg_t strongMessage = reader.getRef();
-      if (importMode)
+      if (importMode && strongMessage)
          strongMessage = scope->importMessage(extModule, strongMessage);
 
-      map.add(message, { extRef, strongMessage });
+      if (!extRef) {
+         // if it is an extension template
+         ustr_t pattern = reader.getString(DEFAULT_STR);
+
+         extensionTemplates.add(message, pattern.clone());
+      }
+      else map.add(message, { extRef, strongMessage });
    }
 
    return true;
@@ -1219,6 +1282,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
    {
       case V_INT64:
       case V_PTR64:
+      case V_WORD64:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugQWORD | elStructureRole | elReadOnlyRole;
          info.size = 8;
@@ -1239,6 +1303,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
          info.size = 1;
+         break;
+      case V_INT16:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
+         info.size = 2;
          break;
       case V_INT8ARRAY:
          info.header.parentRef = scope.buildins.superReference;
@@ -1655,6 +1724,9 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
       if (compatible)
          return { ConversionResult::BoxingRequired };
 
+      if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_INT16 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, INT16_32_CONVERSION, 1 };
+      }
       if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT32 }, sourceInfo, false)) {
          return { ConversionResult::NativeConversion, INT32_64_CONVERSION, 1 };
       }
@@ -1730,10 +1802,6 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
          result.constRef = info.attributes.get({ message, ClassAttribute::ConstantMethod });
       }
 
-      if (testany(info.header.flags, elWithVariadics)) {
-         result.withVariadicDispatcher = true;
-      }
-
       if (test(methodInfo.hints, (ref_t)MethodHint::Initializer)) {
          result.kind = (ref_t)MethodHint::Sealed;
       }
@@ -1747,6 +1815,12 @@ bool CompilerLogic :: checkMethod(ModuleScopeBase& scope, ref_t classRef, mssg_t
 {
    ClassInfo info;
    if (classRef && defineClassInfo(scope, info, classRef)) {
+      if (testany(info.header.flags, elWithVariadics)) {
+         result.withVariadicDispatcher = true;
+      }
+      else if (test(info.header.flags, elWithCustomDispatcher))
+         result.withCustomDispatcher = true;
+
       return checkMethod(info, message, result);
    }
    else return false;
@@ -1760,6 +1834,12 @@ bool CompilerLogic :: resolveCallType(ModuleScopeBase& scope, ref_t classRef, ms
 
    ClassInfo info;
    if (defineClassInfo(scope, info, classRef)) {
+      if (testany(info.header.flags, elWithVariadics)) {
+         result.withVariadicDispatcher = true;
+      }
+      else if (test(info.header.flags, elWithCustomDispatcher))
+         result.withCustomDispatcher = true;
+
       if (!checkMethod(info, message, result)) {
          if (checkMethod(info, message | STATIC_MESSAGE, result)) {
             result.visibility = Visibility::Private;
@@ -1851,13 +1931,13 @@ ref_t paramFeedback(void* param, ref_t)
 #endif
 }
 
-void CompilerLogic::injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags,
+void CompilerLogic :: injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags,
    mssg_t message, ClassInfo::MethodMap& methods, ClassAttributes& attributes,
-   void* param, ref_t(*resolve)(void*, ref_t))
+   void* param, ref_t(*resolve)(void*, ref_t), ClassAttribute attribute)
 {
    ref_t listRef = generateOverloadList(compiler, scope, flags, methods, message, param, resolve);
 
-   ClassAttributeKey key = { message, ClassAttribute::OverloadList };
+   ClassAttributeKey key = { message, attribute };
    attributes.exclude(key);
    attributes.add(key, listRef);
 }
@@ -1871,7 +1951,7 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
          mssg_t message = it.key();
 
          injectMethodOverloadList(compiler, scope, info.header.flags, message, 
-            info.methods, info.attributes, (void*)classRef, paramFeedback);
+            info.methods, info.attributes, (void*)classRef, paramFeedback, ClassAttribute::OverloadList);
       }
    }
 }
@@ -1916,4 +1996,170 @@ mssg_t CompilerLogic :: resolveSingleDispatch(ModuleScopeBase& scope, ref_t refe
    }
    else return 0;
 
+}
+
+inline size_t readSignatureMember(ustr_t signature, size_t index)
+{
+   int level = 0;
+   size_t len = getlength(signature);
+   for (size_t i = index; i < len; i++) {
+      if (signature[i] == '&') {
+         if (level == 0) {
+            return i;
+         }
+         else level--;
+      }
+      else if (signature[i] == '#') {
+         String<char, 5> tmp;
+         size_t numEnd = signature.findSub(i, '&', NOTFOUND_POS);
+         tmp.copy(signature.str() + i + 1, numEnd - i - 1);
+         level += tmp.toInt();
+      }
+   }
+
+   return len;
+}
+
+inline void decodeClassName(IdentifierString& signature)
+{
+   ustr_t ident = *signature;
+
+   if (ident.startsWith(TEMPLATE_PREFIX_NS_ENCODED)) {
+      // if it is encodeded weak reference - decode only the prefix
+      signature[0] = '\'';
+      signature[strlen(TEMPLATE_PREFIX_NS_ENCODED) - 1] = '\'';
+   }
+   else if (ident.startsWith(TEMPLATE_PREFIX_NS)) {
+      // if it is weak reference - do nothing
+   }
+   else signature.replaceAll('@', '\'', 0);
+}
+
+ref_t CompilerLogic :: resolveExtensionTemplate(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern, ref_t signatureRef, 
+   ustr_t ns, ExtensionMap* outerExtensionList)
+{
+   size_t argumentLen = 0;
+   ref_t parameters[ARG_COUNT] = { 0 };
+   ref_t signatures[ARG_COUNT];
+   scope.module->resolveSignature(signatureRef, signatures);
+
+   // matching pattern with the provided signature
+   size_t i = pattern.find('.') + 2;
+
+   // define an argument length
+   size_t argLenPos = pattern.findSub(0, '#', i, NOTFOUND_POS);
+   if (i != NOTFOUND_POS) {
+      String<char, 5> tmp;
+      tmp.copy(pattern + argLenPos + 1, i - argLenPos - 3);
+
+      argumentLen = tmp.toInt();
+   }
+
+   IdentifierString templateName(pattern, i - 2);
+   ref_t templateRef = scope.mapFullReference(*templateName, true);
+
+   size_t len = getlength(pattern);
+   bool matched = true;
+   size_t signIndex = 0;
+   while (matched && i < len) {
+      if (pattern[i] == '{') {
+         size_t end = pattern.findSub(i, '}', 0);
+
+         String<char, 5> tmp;
+         tmp.copy(pattern + i + 1, end - i - 1);
+
+         size_t index = tmp.toInt(10);
+
+         parameters[index - 1] = signatures[signIndex];
+         if (argumentLen < index)
+            argumentLen = index;
+
+         i = end + 2;
+      }
+      else {
+         size_t end = pattern.findSub(i, '/', getlength(pattern));
+         IdentifierString argType;
+         argType.copy(pattern + i, end - i);
+
+         if ((*argType).find('{') != NOTFOUND_POS) {
+            ref_t argRef = signatures[signIndex];
+            // bad luck : if it is a template based argument
+            ustr_t signType;
+            while (argRef) {
+               // try to find the template based signature argument
+               signType = scope.module->resolveReference(argRef);
+               if (!isTemplateWeakReference(signType)) {
+                  ClassInfo info;
+                  defineClassInfo(scope, info, argRef, true);
+                  argRef = info.header.parentRef;
+               }
+               else break;
+            }
+
+            if (argRef) {
+               size_t argLen = argType.length();
+               size_t start = 0;
+               size_t argIndex = (*argType).find('{');
+               while (argIndex < argLen && matched) {
+                  if (argType.compare(signType, start, argIndex - start)) {
+                     size_t paramEnd = (*argType).findSub(argIndex, '}', 0);
+
+                     String<char, 5> tmp;
+                     tmp.copy(*argType + argIndex + 1, paramEnd - argIndex - 1);
+
+                     IdentifierString templateArg;
+                     size_t nextArg = readSignatureMember(signType, argIndex - start);
+                     templateArg.copy(signType + argIndex - start, nextArg - argIndex + start);
+                     decodeClassName(templateArg);
+
+                     signType = signType + nextArg + 1;
+
+                     size_t index = tmp.toInt();
+                     ref_t templateArgRef = scope.mapFullReference(*templateArg);
+                     if (!parameters[index - 1]) {
+                        parameters[index - 1] = templateArgRef;
+                     }
+                     else if (parameters[index - 1] != templateArgRef) {
+                        matched = false;
+                        break;
+                     }
+
+                     if (argumentLen < index)
+                        argumentLen = index;
+
+                     start = paramEnd + 2;
+                     argIndex = (*argType).findSub(start, '{', argLen);
+                  }
+                  else matched = false;
+               }
+
+               if (matched && start < argLen) {
+                  // validate the rest part
+                  matched = argType.compare(signType, start, argIndex - start);
+               }
+            }
+            else matched = false;
+         }
+         else {
+            ref_t argRef = scope.mapFullReference(*argType, true);
+            matched = isCompatible(scope, { argRef }, { signatures[signIndex] }, true);
+         }
+
+         i = end + 1;
+      }
+
+      signIndex++;
+   }
+
+   // check if it is assigned
+   for (size_t argI = 0; argI < argumentLen; argI++) {
+      if (!parameters[argI])
+         parameters[argI] = scope.buildins.superReference;
+   }
+
+   if (matched) {
+      return compiler->generateExtensionTemplate(scope, templateRef, argumentLen, parameters, ns, outerExtensionList);
+   }
+
+   return 0;
 }

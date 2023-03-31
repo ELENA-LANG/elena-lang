@@ -34,7 +34,7 @@ namespace elena_lang
 
       pos_t length() const override;
 
-      bool read(pos_t position, void* s, pos_t length) override;
+      bool read(pos_t position, void* s, pos_t length) const override;
 
       void trim(pos_t position) override;
 

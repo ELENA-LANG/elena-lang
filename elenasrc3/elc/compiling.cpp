@@ -169,18 +169,47 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
    }
    name.replaceAll('\'', '@', 0);
 
-   return moduleScope.mapTemplateIdentifier(ns, *name, visibility, alreadyDeclared);
+   return moduleScope.mapTemplateIdentifier(ns, *name, visibility, alreadyDeclared, false);
+}
+
+ref_t CompilingProcess::TemplateGenerator :: declareTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility, 
+   ref_t templateRef, List<SyntaxNode>& parameters)
+{
+   ModuleBase* module = moduleScope.module;
+
+   ustr_t templateName = module->resolveReference(templateRef);
+   IdentifierString name;
+   if (isWeakReference(templateName)) {
+      name.copy(module->name());
+      name.append(templateName);
+   }
+   else name.copy(templateName);
+
+   for (auto it = parameters.start(); !it.eof(); ++it) {
+      name.append("&");
+
+      ref_t typeRef = (*it).arg.reference;
+      ustr_t param = module->resolveReference(typeRef);
+      if (isWeakReference(param)) {
+         name.append(module->name());
+         name.append(param);
+      }
+      else name.append(param);
+   }
+   name.replaceAll('\'', '@', 0);
+
+   bool dummy = false;
+   return moduleScope.mapTemplateIdentifier(ns, *name, visibility, dummy, true);
 }
 
 ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns,
-   ref_t templateRef, List<SyntaxNode>& parameters, bool declarationMode)
+   ref_t templateRef, List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList)
 {
    ref_t generatedReference = 0;
 
    if (declarationMode) {
-      bool dummy = false;
-      generatedReference = generateTemplateName(moduleScope, ns, Visibility::Public, templateRef,
-         parameters, dummy);
+      generatedReference = declareTemplateName(moduleScope, ns, Visibility::Public, templateRef,
+         parameters);
    }
    else {
       auto sectionInfo = moduleScope.getSection(
@@ -205,8 +234,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
       writer.closeNode();
       writer.closeNode();
 
-      _process->buildSyntaxTree(moduleScope, &syntaxTree, true);
-
+      _process->buildSyntaxTree(moduleScope, &syntaxTree, true, outerExtensionList);
    }
 
    return generatedReference;
@@ -347,10 +375,11 @@ void CompilingProcess :: parseModule(path_t projectPath,
    }
 }
 
-void CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target)
+void CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target, 
+   ExtensionMap* outerExtensionList)
 {
-   _compiler->declare(&moduleScope, source);
-   _compiler->compile(&moduleScope, source, target);
+   _compiler->declare(&moduleScope, source, outerExtensionList);
+   _compiler->compile(&moduleScope, source, target, outerExtensionList);
 }
 
 void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode)
@@ -367,11 +396,12 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    }
 }
 
-void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode)
+void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode, 
+   ExtensionMap* outerExtensionList)
 {
    // generating build tree
    BuildTree buildTree;
-   compileModule(moduleScope, *syntaxTree, buildTree);
+   compileModule(moduleScope, *syntaxTree, buildTree, outerExtensionList);
 
    // generating byte code
    generateModule(moduleScope, buildTree, !templateMode);
@@ -403,7 +433,7 @@ void CompilingProcess :: buildModule(path_t projectPath,
 
    _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
 
-   buildSyntaxTree(moduleScope, syntaxTree, false);
+   buildSyntaxTree(moduleScope, syntaxTree, false, nullptr);
 }
 
 void CompilingProcess :: configurate(Project& project)
@@ -457,7 +487,7 @@ void CompilingProcess :: compile(ProjectBase& project,
    _presenter->print(ELC_SUCCESSFUL_COMPILATION);
 }
 
-void CompilingProcess :: link(Project& project, LinkerBase& linker)
+void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS)
 {
    _presenter->print(ELC_LINKING);
 
@@ -467,7 +497,9 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker)
    imageInfo.autoClassSymbol = project.BoolSetting(ProjectOption::ClassSymbolAutoLoad);
    imageInfo.coreSettings.mgSize = project.IntSetting(ProjectOption::GCMGSize, _defaultCoreSettings.mgSize);
    imageInfo.coreSettings.ygSize = project.IntSetting(ProjectOption::GCYGSize, _defaultCoreSettings.ygSize);
+   imageInfo.coreSettings.threadCounter = project.IntSetting(ProjectOption::ThreadCounter, 1);
    imageInfo.ns = project.StringSetting(ProjectOption::Namespace);
+   imageInfo.withTLS = withTLS;
 
    AddressMapper* addressMapper = nullptr;
    if (project.BoolSetting(ProjectOption::MappingOutputMode))
@@ -561,7 +593,10 @@ int CompilingProcess :: build(Project& project,
       // generating target when required
       switch (targetType) {
          case PlatformType::Console:
-            link(project, linker);
+            link(project, linker, false);
+            break;
+         case PlatformType::MTA_Console:
+            link(project, linker, true);
             break;
          case PlatformType::Library:
             //do nothing

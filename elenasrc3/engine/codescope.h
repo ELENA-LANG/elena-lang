@@ -95,6 +95,7 @@ namespace elena_lang
       Section _import;
       Section _data;
       Section _stat;
+      Section _tls;
       Section _debug;
 
    public:
@@ -106,12 +107,13 @@ namespace elena_lang
       MemoryBase* getADataSection() override;
       MemoryBase* getMDataSection() override;
       MemoryBase* getMBDataSection() override;
+      MemoryBase* getTLSSection() override;
 
       MemoryBase* getTargetDebugSection() override;
 
       ImageProvider() :
          _text(), _mdata(), _adata(), _mbdata(), _rdata(),
-         _import(), _data(), _stat(), _debug()
+         _import(), _data(), _stat(), _tls(), _debug()
       {
       }
    };

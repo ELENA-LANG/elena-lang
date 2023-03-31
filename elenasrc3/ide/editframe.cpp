@@ -13,28 +13,22 @@ using namespace elena_lang;
 SourceViewModel :: SourceViewModel()
    : TextViewModel()
 {
-   traceRow = errorRow = -1;
 }
 
 void SourceViewModel :: beforeDocumentSelect(int index)
 {
-   if (errorRow != -1)
-      clearErrorLine();
+   clearErrorLine();
 }
 
 void SourceViewModel :: setTraceLine(int row, bool withCursor)
 {
    DocumentChangeStatus status = {};
 
-   if (traceRow != -1) {
-      _currentView->removeMarker(traceRow, STYLE_TRACE_LINE, status);
-   }
+   _currentView->removeMarker(STYLE_TRACE_LINE, status);
 
    _currentView->addMarker(row, STYLE_TRACE_LINE, false, status);
    if (withCursor)
       _currentView->setCaret({ 0, row - 1 }, false, status);
-
-   traceRow = row;
 
    _currentView->notifyOnChange(status);
 }
@@ -43,10 +37,7 @@ void SourceViewModel :: clearTraceLine()
 {
    DocumentChangeStatus status = {};
 
-   if (traceRow != -1) {
-      _currentView->removeMarker(traceRow, STYLE_TRACE_LINE, status);
-   }
-   traceRow = -1;
+   _currentView->removeMarker(STYLE_TRACE_LINE, status);
 
    _currentView->notifyOnChange(status);
 }
@@ -55,15 +46,11 @@ void SourceViewModel :: setErrorLine(int row, int column, bool withCursor)
 {
    DocumentChangeStatus status = {};
 
-   if (errorRow != -1) {
-      _currentView->removeMarker(errorRow, STYLE_ERROR_LINE, status);
-   }
+   _currentView->removeMarker(STYLE_ERROR_LINE, status);
 
    _currentView->addMarker(row, STYLE_ERROR_LINE, true, status);
    if (withCursor)
       _currentView->setCaret({ column - 1, row - 1 }, false, status);
-
-   errorRow = row;
 
    _currentView->notifyOnChange(status);
 }
@@ -72,17 +59,15 @@ void SourceViewModel :: clearErrorLine()
 {
    DocumentChangeStatus status = {};
 
-   if (errorRow != -1) {
-      _currentView->removeMarker(errorRow, STYLE_ERROR_LINE, status);
-
+   if(_currentView->removeMarker(STYLE_ERROR_LINE, status)) {
+      status.formatterChanged = true;
       _currentView->notifyOnChange(status);
    }
-   errorRow = -1;
 }
 
 void SourceViewModel :: notifyOnChange(DocumentChangeStatus& status)
 {
-   if (errorRow != -1 && (status.textChanged || status.caretChanged)) {
+   if (status.textChanged || status.caretChanged) {
       clearErrorLine();
       status.formatterChanged = true;
    }
@@ -90,8 +75,7 @@ void SourceViewModel :: notifyOnChange(DocumentChangeStatus& status)
    TextViewModel::notifyOnChange(status);
 }
 
-void SourceViewModel::clearDocumentView()
+void SourceViewModel :: clearDocumentView()
 {
-   TextViewModel::clearDocumentView();
-   errorRow = -1;
+   TextViewModel :: clearDocumentView();
 }

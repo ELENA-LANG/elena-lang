@@ -35,6 +35,9 @@ namespace elena_lang
    constexpr char dfaReal           = ']';
    constexpr char dfaRealPostfix    = '_';
 
+   constexpr char dfaPrivate        = 'N';
+   constexpr char dfaLong           = '?';
+
    constexpr char dfaError          = '?';
    constexpr char dfaEOF            = '.';
    constexpr char dfaWhitespace     = '*';
@@ -56,6 +59,11 @@ namespace elena_lang
       LineInfo()
       {
          position = 0;
+         column = row = 0;
+      }
+      LineInfo(pos_t defPosition)
+      {
+         position = defPosition;
          column = row = 0;
       }
    };
@@ -228,6 +236,17 @@ namespace elena_lang
 
          previousState = state;
          return terminateState;
+      }
+
+      void reset()
+      {
+         _reader->reset();
+         _lineInfo = {};
+
+         if (!cacheLine()) {
+            _position = 0;
+            _line[0] = 0;
+         }
       }
 
       TextParser(const char** dfa, int tabSize, TextReader<T>* reader)

@@ -39,6 +39,7 @@ namespace elena_lang
 
    public:
       void startSTA(SystemEnv* env, void* entry);
+      void startThread(SystemEnv* env, void* entryPoint, int index);
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
       size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
@@ -49,11 +50,23 @@ namespace elena_lang
 
       mssg_t loadMessage(ustr_t messageName);
 
+      void initRandomSeed(SeedStruct& seed)
+      {
+         __routineProvider.InitRandomSeed(seed, __routineProvider.GenerateSeed());
+      }
+
+      int allocateThreadEntry(SystemEnv* env);
+
+      void* allocateThread(SystemEnv* env, void* arg, void* threadProc, int flags);
+
+      unsigned int getRandomNumber(SeedStruct& seed)
+      {
+         return __routineProvider.GetRandomNumber(seed);
+      }
+
       ELENARTMachine(path_t dllRootPath, path_t execPath, path_t configFile, PlatformType platform, void* mdata);
 
-      virtual ~ELENARTMachine()
-      {
-      }
+      virtual ~ELENARTMachine() = default;
    };
 }
 

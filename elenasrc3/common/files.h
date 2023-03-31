@@ -143,6 +143,8 @@ namespace elena_lang
 
       bool read(char* s, pos_t length) override;
 
+      void reset() override;
+
       TextFileReader(path_t path, FileEncoding encoding, bool withBOM);
    };
 

@@ -38,6 +38,8 @@ public:
    MemoryBase* getStatSection() override;
    MemoryBase* getTargetDebugSection() override;
    MemoryBase* getTextSection() override;
+   MemoryBase* getTLSSection() override;
+   addr_t getTLSVariable() override;
 
    addr_t getDebugEntryPoint() override;
    addr_t getEntryPoint() override;

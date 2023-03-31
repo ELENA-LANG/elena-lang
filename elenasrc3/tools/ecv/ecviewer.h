@@ -40,6 +40,7 @@ namespace elena_lang
       bool               _noPaging;
       bool               _pathMode;
       bool               _showBytecodes;
+      bool               _showMethodInfo;
 
       MemoryBase* findProcedureCode(ustr_t referenceName);
       MemoryBase* findSymbolCode(ustr_t referenceName);
@@ -91,6 +92,7 @@ namespace elena_lang
       void printFlags(ref_t flags, int& row, int pageSize);
       void printFields(ClassInfo& classInfo, int& row, int pageSize);
 
+      void printMethodInfo(MethodInfo& info);
       void printMethod(ustr_t name, bool fullInfo);
       void printSymbol(ustr_t name);
       void printProcedure(ustr_t name);
@@ -111,6 +113,7 @@ namespace elena_lang
          _noPaging = false;
          _pathMode = false;
          _showBytecodes = false;
+         _showMethodInfo = false;
       }
       virtual ~ByteCodeViewer()
       {

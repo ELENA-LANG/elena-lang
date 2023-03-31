@@ -16,6 +16,30 @@ public sealed Array<T> : Indexable<T>
       }
    }
 
+   static copy(Array<T> target, Array<T> source, int index, int length)
+   {      
+      for(int i := 0 , i < length, i += 1)
+      {
+         target[i] := source[i + index]
+      }
+   }
+
+   static copyTo(Array<T> target, Array<T> source, int index, int length)
+   {      
+      for(int i := 0 , i < length, i += 1)
+      {
+         target[i + index] := source[i]
+      }
+   }
+
+   static move(Array<T> target, int index, int length, int offset)
+   {
+      for (int i := 0, i < length, i += 1)
+      {
+         target[i] := target[i + offset]
+      }
+   }
+
    Enumerator<T> enumerator() = new BaseEnumerator<T>
    {
       this index := -1;
@@ -121,7 +145,17 @@ public sealed Array<T> : Indexable<T>
             
       ^ retVal
    }
-   
+                                 
+   T[] clone()
+   {
+      int len := self.Length;
+      T[] copy := new T[](len);
+      for(int i := 0, i < len, i+=1) {
+         copy[i] := array[i]
+      };
+        
+      ^ copy
+   }
 }
 
 // --- Variadic Array template ---
@@ -174,7 +208,7 @@ public const struct String : BaseValue,
       byte buffer[4];
       int chVal := ch.Value;
       int  length := ch.Length;
-      PrimitiveOperations.copyUTF32(buffer, 0, length);
+      length := PrimitiveOperations.copyUTF32(buffer, 0, chVal);
         
       int offs := 0;
       for (int i := 0, i < size, i := i + 1)
@@ -275,9 +309,11 @@ public const struct String : BaseValue,
 
    bool equal(o)
    {
-      var s := cast string(o) ?? nil;
+      auto s := cast string(o) ?? nil;
       (nil == s)
-         ? { ^ false } : { ^ self.equal(s) }      
+         ? { ^ false };
+
+      ^ self.equal(s)
    }
 
    bool less(o)
@@ -357,7 +393,7 @@ public const struct String : BaseValue,
       string retVal := String.allocate(len1-length);
 
       self.copySubS(retVal, self, 0, index);
-      self.copySubS(retVal, self, sindex, len1 - length, index);
+      self.copySubS(retVal, self, index, len1 - sindex, sindex);
     
       ^ retVal;         
    }
@@ -540,7 +576,7 @@ public const struct WideString : BaseValue
       short buffer[4];
       int chVal := ch.Value;
       int  length := ch.Length;
-      PrimitiveOperations.copyUTF32(buffer, 0, length);
+      length := PrimitiveOperations.copyUTF32(buffer, 0, chVal);
         
       int offs := 0;
       for (int i := 0, i < size, i := i + 1)
@@ -611,11 +647,17 @@ public const struct WideString : BaseValue
 
    string toPrintable() = self;
 
+
+   private copySubS(wide dest, wide sour, int index, int length) : external(system'core_routines'__wstr_copysubs);
+   private copySubS(wide dest, wide sour, int index, int length, int sourIndex) : external(system'core_routines'__wstr_xcopysubs);
+
    bool equal(o)
    {
-      var s := cast wide(o) ?? nil;
+      auto s := cast wide(o) ?? nil;
       (nil == s)
-         ? { ^ false } : { ^ self.equal(s) }
+         ? { ^ false };
+
+      ^ self.equal(s)
    }
    
    bool less(o)
@@ -713,7 +755,7 @@ public const struct WideString : BaseValue
       ^ String.fromByteArray(array, index, length);
    }
 
-   int save(int index, char[] buffer, int length, int destIndex)
+   int save(int index, int length, char[] buffer, int destIndex)
       = PrimitiveWideStringOperations.save(buffer, self, index, length, destIndex);
 
    internal saveToShortArray(int index, short[] buffer, int length)
@@ -922,7 +964,7 @@ public sealed class Variant
                 = o.toPrintable();
             
             castTo(BaseVariable v)
-                = self.castValueTo(v.Value);
+                = self.castValueTo(*v);
             
             castTo(int val)
                 = cast int(self);
@@ -973,44 +1015,44 @@ public sealed class Variant
 
 public sealed Array : Indexable
 {
-    __string object[] array;
+   __string object[] array;
     
-    /// Creates an empty array
-    constructor MinValue
-        = new object[](0);
+   /// Creates an empty array
+   constructor MinValue
+      = new object[](0);
     
-    /// Creates the array with the specified length
-    constructor allocate(int len)
-        = new object[](len);
+   /// Creates the array with the specified length
+   constructor allocate(int len)
+      = new object[](len);
 
     /// Creates a copy of the provided sub array
-    constructor copy(int index, int length, Array array)
-        <= allocate(length)
-    {
+   constructor copy(int index, int length, Array array)
+      <= allocate(length)
+   {
       for(int i := 0 , i < length, i += 1)
       {
          this array[i] := array[i + index]
       }
-    }
+   }
         
-//    /// Concatinates the arrays    
-//    add(Array a)
-//    {
-//        int length1 := self.Length;
-//        int length2 := a.Length;
-//        
-//        auto retVal := Array.allocate(length1 + length2);
-//
-//        for (int i:=0, i < length1, i += 1) {
-//            retVal[i] := theArray[i]
-//        };
-//
-//        for (int i:=0, i < length2, i += 1) {
-//            retVal[length1 + i] := a[i]
-//        };
-//            
-//        ^ retVal
-//    }
+   /// Concatinates the arrays    
+   add(Array a)
+   {
+      int length1 := self.Length;
+      int length2 := a.Length;
+        
+      auto retVal := Array.allocate(length1 + length2);
+
+      for (int i:=0, i < length1, i += 1) {
+         retVal[i] := array[i]
+      };
+
+      for (int i:=0, i < length2, i += 1) {
+         retVal[length1 + i] := a[i]
+      };
+            
+      ^ retVal
+   }
 
    int Length
    {
@@ -1022,27 +1064,27 @@ public sealed Array : Indexable
       }
    }
 
-    /// Sets the specified array member
-    setAt(int n, object o)
-    {
-        array[n] := o
-    }
+   /// Sets the specified array member
+   setAt(int n, object o)
+   {
+      array[n] := o
+   }
 
-    /// Returns the specified array member
-    object at(int n)
-        = array[n];
+   /// Returns the specified array member
+   object at(int n)
+      = array[n];
  
-    /// Returns the array enumerator
-    Enumerator enumerator() = new ArrayEnumerator(self);
+   /// Returns the array enumerator
+   Enumerator enumerator() = new ArrayEnumerator(self);
 
-    /// Returns the array indexer
-    Indexer indexer() = new ArrayIndexer(self);
+   /// Returns the array indexer
+   Indexer indexer() = new ArrayIndexer(self);
 
-//    object[] Value = theArray;
+   object[] Value = array;
 
-    /// Clones the array
-    Array clone()
-        = Array.copy(0, self.Length, self);
+   /// Clones the array
+   Array clone()
+      = Array.copy(0, self.Length, self);
 }
 
 // --- ArrrayEnumerator ---

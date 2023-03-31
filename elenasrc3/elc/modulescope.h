@@ -41,7 +41,8 @@ public:
    ref_t mapAnonymous(ustr_t prefix) override;
 
    ref_t mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) override;
-   ref_t mapTemplateIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility, bool& alreadyDeclared) override;
+   ref_t mapTemplateIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility, bool& alreadyDeclared,
+      bool declarationMode) override;
 
    ref_t mapFullReference(ustr_t referenceName, bool existing) override;
    ref_t mapWeakReference(ustr_t referenceName, bool existing) override;

@@ -23,6 +23,7 @@ namespace elena_lang
       Visibility  visibility;
       bool        stackSafe;
       bool        withVariadicDispatcher;
+      bool        withCustomDispatcher;
    };
 
    struct TypeAttributes
@@ -32,6 +33,7 @@ namespace elena_lang
       bool byRefOne;
       bool mssgNameLiteral;
       bool newOp;
+      bool classOne;
 
       bool isNonempty() const
       {
@@ -90,11 +92,14 @@ namespace elena_lang
       bool isAbstract(ClassInfo& info);
       bool isReadOnly(ClassInfo& info);
 
+      bool isDynamic(ClassInfo& info);
       bool isEmbeddableArray(ClassInfo& info);
       bool isEmbeddableArray(ModuleScopeBase& scope, ref_t reference);
 
       bool isEmbeddableStruct(ClassInfo& info);
 
+      bool isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t reference);
+      bool isEmbeddableAndReadOnly(ClassInfo& info);
       bool isEmbeddable(ModuleScopeBase& scope, ref_t reference);
       bool isEmbeddable(ClassInfo& info);
 
@@ -120,6 +125,7 @@ namespace elena_lang
       bool readAttributeMap(MemoryBase* section, ReferenceMap& map);
 
       void writeArrayEntry(MemoryBase* section, ref_t reference);
+      void writeArrayReference(MemoryBase* section, ref_t reference);
 
       void writeTypeMapEntry(MemoryBase* section, ustr_t key, ref_t reference);
       bool readTypeMap(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
@@ -128,7 +134,9 @@ namespace elena_lang
       //bool readDeclDictionary(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
 
       void writeExtMessageEntry(MemoryBase* section, ref_t extRef, mssg_t message, mssg_t strongMessage);
-      bool readExtMessageEntry(ModuleBase* module, MemoryBase* section, ExtensionMap& map, ModuleScopeBase* scope);
+      void writeExtMessageEntry(MemoryBase* section, mssg_t message, ustr_t pattern);
+      bool readExtMessageEntry(ModuleBase* module, MemoryBase* section, ExtensionMap& map, 
+         ExtensionTemplateMap& extensionTemplates, ModuleScopeBase* scope);
 
       bool isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, bool ignoreNils);
       bool isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo target, TypeInfo source);
@@ -154,12 +162,15 @@ namespace elena_lang
       void injectOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, ref_t classRef);
       void injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags, 
          mssg_t message, ClassInfo::MethodMap& methods, ClassAttributes& attributes,
-         void* param, ref_t(*resolve)(void*, ref_t));
+         void* param, ref_t(*resolve)(void*, ref_t), ClassAttribute attribute);
 
       void verifyMultimethods();
 
       mssg_t resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, 
          ref_t implicitSignatureRef, int& stackSafeAttr, bool selfCall);
+
+      virtual ref_t resolveExtensionTemplate(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern,
+         ref_t signatureRef, ustr_t ns, ExtensionMap* outerExtensionList);
 
       bool isValidType(ClassInfo& info, bool allowRole);
       bool isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole);

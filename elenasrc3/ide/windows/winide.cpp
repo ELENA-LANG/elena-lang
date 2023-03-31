@@ -170,7 +170,7 @@ void IDEWindow :: closeProject()
 void IDEWindow :: exit()
 {
    if(_controller->doExit(fileDialog, _model)) {
-      close();
+      SDIWindow::exit();
    }
 }
 
@@ -204,6 +204,18 @@ void IDEWindow :: commentText()
    wchar_t str[3] = _T("//");
 
    _controller->sourceController.insertBlockText(_model->viewModel(), str, 2);
+}
+
+void IDEWindow :: uncommentText()
+{
+   wchar_t str[3] = _T("//");
+
+   _controller->sourceController.deleteBlockText(_model->viewModel(), str, 2);
+}
+
+void IDEWindow :: selectAll()
+{
+   _controller->sourceController.selectAll(_model->viewModel());
 }
 
 void IDEWindow :: toggleProjectView(bool open)
@@ -272,8 +284,8 @@ void IDEWindow :: onErrorHighlight(int index)
    ErrorLogBase* resultBar = dynamic_cast<ErrorLogBase*>(_children[_model->ideScheme.errorListControl]);
 
    auto messageInfo = resultBar->getMessage(index);
-
-   _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
+   if (!messageInfo.path.empty())
+      _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
 }
 
 void IDEWindow :: onProjectViewSel(size_t index)
@@ -390,6 +402,7 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
       menu->enableMenuItemById(IDM_EDIT_PASTE, false);
       menu->enableMenuItemById(IDM_EDIT_DELETE, false);
       menu->enableMenuItemById(IDM_EDIT_COMMENT, false);
+      menu->enableMenuItemById(IDM_EDIT_UNCOMMENT, false);
    }
    else menu->enableMenuItemById(IDM_EDIT_PASTE, true);
 
@@ -481,6 +494,12 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_EDIT_COMMENT:
          commentText();
+         break;
+      case IDM_EDIT_UNCOMMENT:
+         uncommentText();
+         break;
+      case IDM_EDIT_SELECTALL:
+         selectAll();
          break;
       case IDM_PROJECT_COMPILE:
          _controller->doCompileProject(projectDialog, _model);
@@ -804,6 +823,7 @@ void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
       menu->enableMenuItemById(IDM_EDIT_COPY, isSelected);
       menu->enableMenuItemById(IDM_EDIT_CUT, isSelected);
       menu->enableMenuItemById(IDM_EDIT_COMMENT, isSelected);
+      menu->enableMenuItemById(IDM_EDIT_UNCOMMENT, isSelected);
       menu->enableMenuItemById(IDM_EDIT_DELETE, isSelected);
    }
    if (changeStatus.textChanged) {

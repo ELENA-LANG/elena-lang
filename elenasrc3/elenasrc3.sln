@@ -21,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenavm", "elenavm\vs\elena
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "og", "tools\og\vs\og.vcxproj", "{CEEBA8A7-6082-49F5-AD6C-0D038BDAEA5E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenasm", "elenasm\vs\elenasm.vcxproj", "{E2686A7D-1888-4078-B5F3-63FD4F2682A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -101,6 +103,14 @@ Global
 		{CEEBA8A7-6082-49F5-AD6C-0D038BDAEA5E}.Release|x64.Build.0 = Release|x64
 		{CEEBA8A7-6082-49F5-AD6C-0D038BDAEA5E}.Release|x86.ActiveCfg = Release|Win32
 		{CEEBA8A7-6082-49F5-AD6C-0D038BDAEA5E}.Release|x86.Build.0 = Release|Win32
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Debug|x64.ActiveCfg = Debug|x64
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Debug|x64.Build.0 = Debug|x64
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Debug|x86.ActiveCfg = Debug|Win32
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Debug|x86.Build.0 = Debug|Win32
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Release|x64.ActiveCfg = Release|x64
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Release|x64.Build.0 = Release|x64
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Release|x86.ActiveCfg = Release|Win32
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

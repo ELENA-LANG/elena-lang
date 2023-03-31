@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef JITLINKER_H
@@ -201,6 +201,7 @@ namespace elena_lang
       addr_t resolveConstantDump(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode);
       addr_t resolveStaticVariable(ReferenceInfo referenceInfo, ref_t sectionMask);
       addr_t resolveName(ReferenceInfo referenceInfo, bool onlyPath);
+      addr_t resolveRawConstant(ReferenceInfo referenceInfo);
 
       void resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader& vmtReader, FieldAddressMap& staticValues);
 
@@ -211,6 +212,8 @@ namespace elena_lang
       pos_t createNativeClassDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
       void endNativeDebugInfo(pos_t position);
 
+      ReferenceInfo retrieveConstantVMT(SectionInfo info);
+
       void createGlobalAttribute(int category, ustr_t value, addr_t address);
 
       addr_t resolve(ReferenceInfo refrenceInfo, ref_t sectionMask, bool silentMode);
@@ -218,6 +221,7 @@ namespace elena_lang
    public:
       addr_t resolveTape(ustr_t referenceName, MemoryBase* tape);
       addr_t resolveTemporalByteCode(MemoryDump& tapeSymbol, ModuleBase* module);
+      addr_t resolveTLSSection(JITCompilerBase* compiler);
 
       addr_t resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode);
 

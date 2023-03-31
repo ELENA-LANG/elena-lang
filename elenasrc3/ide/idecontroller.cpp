@@ -11,6 +11,8 @@
 
 using namespace elena_lang;
 
+constexpr auto MAX_RECENT_FILES = 10;
+
 inline ustr_t getPlatformName(PlatformType type)
 {
    switch (type) {
@@ -663,7 +665,7 @@ void IDEController :: doOpenFile(DialogBase& dialog, IDEModel* model)
    if (dialog.openFiles(files)) {
       for (auto it = files.start(); !it.eof(); ++it) {
          if(openFile(model, *it, status)) {
-            while (model->projectModel.lastOpenFiles.count() >= 10)
+            while (model->projectModel.lastOpenFiles.count() >= MAX_RECENT_FILES)
                model->projectModel.lastOpenFiles.cut(
                   model->projectModel.lastOpenFiles.get(model->projectModel.lastOpenFiles.count()));
 
@@ -829,7 +831,7 @@ bool IDEController :: doCloseAll(DialogBase& dialog, IDEModel* model)
 
 bool IDEController :: doExit(DialogBase& dialog, IDEModel* model)
 {
-   return true;
+   return doCloseAll(dialog, model);
 }
 
 void IDEController :: doSelectNextWindow(IDEModel* model)
@@ -1004,9 +1006,11 @@ void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, ID
 
 bool IDEController :: onClose(DialogBase& dialog, IDEModel* model)
 {
+   PathString path(*model->projectModel.paths.configPath);
+
    bool result = doCloseAll(dialog, model);
    if (result) {
-      saveConfig(model, *model->projectModel.paths.configPath);
+      saveConfig(model, *path);
    }
 
    return result;

@@ -92,6 +92,24 @@ Lab00:
 
 end
 
+procedure __lazy_dispatcher
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2)[],[tmp]
+  save       dp:tmp
+  vcall      mssg:"function:#invoke[0]", class:"system'BaseLazyExpression"
+  load       dp:tmp  
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+  jump       vt:0
+
+end
+
 procedure __exception_raise
 
   xflush     sp:0
@@ -313,6 +331,11 @@ procedure __str_copysubs (self, s1, s2, index, len)
   peek       fp:s2
   store      sp:0
 
+  peek       fp:len
+  load       
+  cmp        n:0
+  jeq        labEnd
+
 labNext:
   set        dp:tmp
   load       dp:i2
@@ -332,6 +355,7 @@ labNext:
   xcmp       dp:i2
   jne        labNext
 
+labEnd:
   nsave      dp:tmp, 0
 
   xswap      sp:1
@@ -368,6 +392,11 @@ procedure __str_xcopysubs (self, s1, s2, index1, len, index2)
   peek       fp:s2
   store      sp:0
 
+  peek       fp:len
+  load       
+  cmp        n:0
+  jeq        labEnd
+
 labNext:
   set        dp:tmp
   load       dp:i2
@@ -381,7 +410,6 @@ labNext:
   add        n:1
   save       dp:i1
   xswap      sp:1
-  nadd       dp:i1, 1
 
   load       dp:cnt
   sub        n:1   
@@ -389,6 +417,7 @@ labNext:
   cmp        n:0
   jne        labNext
 
+labEnd:
   nsave      dp:tmp, 0
 
   xswap      sp:1
@@ -520,6 +549,112 @@ labNotLess:
    set       class:"system'BoolValue#false"
 
 labEnd:
+  close      []
+
+end
+
+
+procedure __wstr_copysubs (self, s1, s2, index, len)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[i1,i2,tmp]
+
+  peek       fp:index
+  store      sp:0
+  copy       dp:i1, 4
+  nsave      dp:i2, 0
+
+  peek       fp:s1
+  store      sp:1
+
+  peek       fp:s2
+  store      sp:0
+
+labNext:
+  set        dp:tmp
+  load       dp:i2
+  read       2
+  add        n:1
+  save       dp:i2
+
+  xswap      sp:1
+  load       dp:i1
+  write      2
+  add        n:1
+  save       dp:i1
+  xswap      sp:1
+
+  peek       fp:len
+  load       
+  xcmp       dp:i2
+  jne        labNext
+
+  nsave      dp:tmp, 0
+
+  xswap      sp:1
+  set        dp:tmp
+  load       dp:i1
+  write      2
+
+  close      []
+
+end
+
+procedure __wstr_xcopysubs (self, s1, s2, index1, len, index2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[i1,i2,tmp,cnt]
+
+  peek       fp:len
+  load
+  save       dp:cnt
+
+  peek       fp:index1
+  store      sp:0
+  copy       dp:i1, 4
+
+  peek       fp:index2
+  store      sp:0
+  copy       dp:i2, 4
+
+  peek       fp:s1
+  store      sp:1
+
+  peek       fp:s2
+  store      sp:0
+
+labNext:
+  set        dp:tmp
+  load       dp:i2
+  read       2
+  add        n:1
+  save       dp:i2
+
+  xswap      sp:1
+  load       dp:i1
+  write      2
+  add        n:1
+  save       dp:i1
+  xswap      sp:1
+  nadd       dp:i1, 1
+
+  load       dp:cnt
+  sub        n:1   
+  save       dp:cnt
+  cmp        n:0
+  jne        labNext
+
+  nsave      dp:tmp, 0
+
+  xswap      sp:1
+  set        dp:tmp
+  load       dp:i1
+  write      2
+
   close      []
 
 end
@@ -982,6 +1117,119 @@ labNext:
 
 end
 
+procedure __st_assign (self, s)
+
+  peek      sp:1
+  lload
+  peek      sp:0
+  lsave
+
+end
+
+procedure __gc_minor
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+  system     1
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+end
+
+procedure __gc_full
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+  system     2
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+end
+
+procedure __perm_vector_create
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[len]
+
+  nsave      dp:len, 10
+  set        dp:len  
+  store      sp:0
+  xcreate    class:"system'runtime'$private'PermVectorArray"
+
+  close      []
+
+end
+
+procedure __perm_array_set
+
+ peek       sp:1
+ load
+ peek       sp:2
+ swap       sp:0
+ xassign
+
+end
+
+procedure __perm_array_refer (self,index,retVal)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[ptr:ptr_size,ptr_index:8]
+
+  set        fp:self
+  $load                   // ; get the 
+  $save      dp:ptr
+
+  // ; the code should support both for 32 and 64 bit mode
+  // ; so ptr_index has the maximal possible size
+  peek       fp:index
+  load
+  mul        n:ptr_size
+  convl
+  lsave      dp:ptr_index
+
+  set        dp:ptr_index
+  store      sp:0
+  iadd       dp:ptr, ptr_size
+
+  $load      dp:ptr
+  peek       fp:retVal
+  $save
+
+  close      []
+
+end
+
+procedure __thread_create(self,arg,flags,ptr)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  call extern:CreateThreadLA (
+     *arg, 
+     procedure:"system'core_routines'thread_start",
+     *flags)
+
+  peek       fp:ptr
+  $save
+
+  close      []
+
+end
+
 procedure critical_exception_handler
 
   cmp         n:EXCEPTION_ACCESS_VIOLATION
@@ -1054,7 +1302,82 @@ labNext:
 
 end
 
+procedure func_invoker(arg)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  peek       fp:arg
+  get        i:0
+  mov        mssg:"function:#invoke[0]" 
+  call       vt:0 
+
+  close      []
+  quit
+
+end
+
+procedure thread_start
+
+  xloadarg    sp:1
+
+  system      3
+
+  open header [arg1],[ptr,envptr,ex_struct:ex_struct_size]
+  
+  $save       dp:ptr
+
+  xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
+
+  mov         env
+  save        dp:envptr
+  set         dp:envptr
+  store       fp:arg1
+
+  call extern:StartThreadLA (
+     *arg1, 
+     procedure:"system'core_routines'critical_exception_handler",
+     procedure:"system'core_routines'func_invoker",
+     *ptr)
+
+  unhook
+
+  close       []
+  quit
+
+end
+
 symbol sta_start
+
+  system      4
+
+  open header [arg1],[argv, envptr,ex_struct:ex_struct_size]
+
+  xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
+
+  mov         env
+  save        dp:envptr
+  set         dp:envptr
+  store       fp:arg1
+
+  call extern:InitializeSTLA (
+     *arg1,
+     procedure:"system'core_routines'startUpSymbols",
+     procedure:"system'core_routines'critical_exception_handler")
+
+  close       []
+
+end
+
+symbol mta_start
+
+  system      4
+
+  // ; initialize TLS entry
+  mov         n:0
+  system      3
 
   open header [arg1],[envptr,ex_struct:ex_struct_size]
   
@@ -1065,8 +1388,8 @@ symbol sta_start
   set         dp:envptr
   store       fp:arg1
 
-  call extern:InitializeSTLA (
-     *arg1, 
+  call extern:InitializeMTLA (
+     *arg1,
      procedure:"system'core_routines'startUpSymbols",
      procedure:"system'core_routines'critical_exception_handler")
 
@@ -1088,7 +1411,7 @@ symbol vm_sta_start
   call extern:InitializeVMSTLA (
      *arg1, 
      constdump:"$elena'meta$startUpTape",
-     procedure:"system'core_routines'critical_exception_handler")
+     pstr:"system'core_routines'critical_exception_handler")
 
   close       []
 

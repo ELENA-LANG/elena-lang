@@ -42,8 +42,12 @@ namespace elena_lang
       {
          return style == m.style;
       }
+      bool operator !=(const Marker& m)
+      {
+         return style != m.style;
+      }
    };
-   typedef Map<int, Marker>   MarkerList;
+   typedef CachedMemoryMap<int, Marker, 5>   MarkerList;
 
    // --- TextFormatterBase ---
    class TextFormatterBase
@@ -94,14 +98,13 @@ namespace elena_lang
       bool maxColChanged;
       bool frameChanged;
       bool selelectionChanged;
-      bool hasSelection;
       bool formatterChanged;
       bool textChanged;
       bool modifiedChanged;
 
       bool isViewChanged()
       {
-         bool flag = formatterChanged | frameChanged | hasSelection | textChanged | selelectionChanged;
+         bool flag = formatterChanged | frameChanged | textChanged | selelectionChanged;
 
          return flag;
       }
@@ -113,9 +116,7 @@ namespace elena_lang
          frameChanged = false;
          modifiedChanged = false;
          selelectionChanged = false;
-         hasSelection = false;
          formatterChanged = false;
-         //oldOvewrite = true;     // to trigger mode change
          textChanged = false;
       }
 
@@ -258,13 +259,31 @@ namespace elena_lang
       {
          _markers.add(row, { style });
 
-         //status.formatterChanged = true;
+         changeStatus.formatterChanged = true;
       }
       void removeMarker(int row, pos_t style, DocumentChangeStatus& changeStatus)
       {
          _markers.erase(row, { style });
 
-         //status.formatterChanged = true;
+         changeStatus.formatterChanged = true;
+      }
+      bool removeMarker(pos_t style, DocumentChangeStatus& changeStatus)
+      {
+         if (_markers.count() > 0) {
+            int row = _markers.retrieve<pos_t>(-1, style, [](pos_t arg, int key, Marker item)
+            {
+               return item.style == arg;
+            });
+
+            if (row != -1) {
+               _markers.erase(row, { style });
+
+               changeStatus.formatterChanged = true;
+               return true;
+            }
+         }
+
+         return false;
       }
 
       Point getFrame() const { return _frame.getCaret(); }
@@ -327,6 +346,7 @@ namespace elena_lang
       void insertLine(DocumentChangeStatus& changeStatus, text_t text, disp_t length);
 
       virtual void blockInserting(DocumentChangeStatus& changeStatus, text_t subs, size_t length);
+      virtual void blockDeleting(DocumentChangeStatus& changeStatus, text_t subs, size_t length);
 
       bool eraseSelection(DocumentChangeStatus& changeStatus);
       void eraseChar(DocumentChangeStatus& changeStatus, bool moveback);

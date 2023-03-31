@@ -910,7 +910,23 @@ void PPC64Assembler :: compileBCTRL(ScriptToken& tokenInfo, MemoryWriter& writer
    read(tokenInfo);
 }
 
-void PPC64Assembler::compileEXTRDI(ScriptToken& tokenInfo, MemoryWriter& writer)
+void PPC64Assembler ::compileEXTSW(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand ry = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (rx.isGPR() && ry.isGPR()) {
+      writer.writeDWord(PPCHelper::makeXCommand(31, ry.type,
+         rx.type, 986, 0));
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+
+void PPC64Assembler :: compileEXTRDI(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
 
@@ -1859,6 +1875,9 @@ bool PPC64Assembler :: compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
 {
    if (tokenInfo.compare("extrdi")) {
       compileEXTRDI(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("extsw")) {
+      compileEXTSW(tokenInfo, writer);
    }
    else return false;
 

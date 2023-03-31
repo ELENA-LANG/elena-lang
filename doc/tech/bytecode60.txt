@@ -153,11 +153,15 @@ ELENA byte codes (or ecodes)
    alloc i                  - sp += i ; reserve and fill with zeros; 
                               new sp value is aligned to 2 in x86-64 mode
 
+   convl                    - index => long:index
+
    dalloc                   - sp += index ; reserve and fill with zeros; 
                               new sp value is aligned to 2 in x86-64 mode
 
    free i                   - sp -= i ; release the stack; 
                               new sp value is aligned to 2 in x86-64 mode
+
+   lload dp:disp            - long:index := dp[disp]
 
    load fp:i                - index := fp[i]
 
@@ -192,6 +196,9 @@ ELENA byte codes (or ecodes)
    xrefresh sp:i            - cached_sp[i] := sp[i];
 
    xflush sp:i              - sp[i] := cached_sp[i];
+
+   xloadarg sp:i            - load the argument passed from the external program;
+                              OS dependant; the size of arguments can be 4 / 8
 
    xmov sp:i1, sp:i2        - sp[i1] := sp[i2]
 
@@ -268,6 +275,10 @@ ELENA byte codes (or ecodes)
 
    xnewn n {prefix}:r       - "create" the stack allocated object with the specified
                               size; in : acc contains the reference to the stack space
+                              out: acc contains the class instance, index - undefined
+
+   xcreate {prefix}:r       - create the object with the specified size in PERM;
+                              sp[0] >> temp;
                               out: acc contains the class instance, index - undefined
 
    xredirect m              - search acc::VMT for the {m.action + index.argCount} in index;
@@ -353,6 +364,8 @@ ELENA byte codes (or ecodes)
    ixor dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] ^ temp;
                               n = 1,2,4,8 
+
+   muln n                   - index := index * n
  
    orn n                    - index := index | n
  
@@ -391,11 +404,21 @@ ELENA byte codes (or ecodes)
                               COMP.LT := (temp2 < temp1);
                               n = 1,2,4,8 
 
+   system n                 - invokes system command
+                              n = 1 -> forced minor collect;
+                              n = 2 -> forced major collect
+                              n = 3 -> assign TLS entry to the THREAD_TABLE at index
+                              n = 4 -> prepare the program (should be the first command) 
+
    xcmp                     - temp << acc[0];
                               COMP.EQ := (index == temp);
                               COMP.LT := (index < temp);
 
    xcmp  dp:i               - COMP.EQ := (index == dp[i]);
+
+   xlcmp                    - long:temp << long:acc[0];
+                              COMP.EQ := (long:index == long:temp);
+                              COMP.LT := (long:index < long:temp);
 
 
  Misc operations:

@@ -40,6 +40,9 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_ARM64;
 static ELENARTMachine* machine = nullptr;
 static SystemEnv* systemEnv = nullptr;
 
+static int    __argc = 0;
+static char** __argv = nullptr;
+
 void getSelfPath(PathString& rootPath)
 {
    char buff[FILENAME_MAX];
@@ -73,7 +76,7 @@ void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
    if (machine == nullptr)
       init();
 
-   __routineProvider.InitExceptionHandling(env, criricalHandler);
+   __routineProvider.InitSTAExceptionHandling(env, criricalHandler);
 
    machine->startSTA(env, entryList);
 }
@@ -82,7 +85,7 @@ void* CollectGCLA(void* roots, size_t size)
 {
    //printf("CollectGCLA %llx %llx\n", (long long)roots, size);
 
-   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size);
+   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size, false);
 }
 
 size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)
@@ -120,6 +123,58 @@ addr_t LoadSymbolByString2LA(const char* ns, const char* symbolName)
 mssg_t LoadMessageLA(const char* messageName)
 {
    return machine->loadMessage(messageName);
+}
+
+void GetRandomSeedLA(SeedStruct& seed)
+{
+   machine->initRandomSeed(seed);
+}
+
+unsigned int GetRandomIntLA(SeedStruct& seed)
+{
+   return machine->getRandomNumber(seed);
+}
+
+int GetArgCLA()
+{
+   return __argc;
+}
+
+int GetArgLA(int index, char* buffer, int length)
+{
+   if (index < 0 || index >= __argc) {
+      buffer[0] = 0;
+
+      return 0;
+   }
+
+   for (int i = 0; i < length; i++) {
+      char tmp = __argv[index][i];
+
+      buffer[i] = tmp;
+
+      if (!tmp) {
+         return i;
+      }
+   }
+
+   return length;
+}
+
+void PrepareLA(uintptr_t arg)
+{
+   __argc = *(int*)arg;
+
+#if defined __PPC64__
+
+   uintptr_t argptr = *(uintptr_t*)(arg + sizeof(uintptr_t));
+   __argv = (char**)argptr;
+
+#else
+
+   __argv = (char**)(arg + sizeof(uintptr_t));
+
+#endif
 }
 
 void ExitLA(int retVal)

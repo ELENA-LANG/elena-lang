@@ -1,0 +1,25 @@
+<configuration>
+  <platform key="Win_x86">
+     <project>
+        <executable>datetime</executable>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <executable>datetime64</executable>
+     </project>
+  </platform>
+  <project>
+     <namespace>datetime</namespace>
+     <template>console</template>
+  </project>
+  <files>
+     <module>
+        <include>control.l</include>
+     </module>
+  </files>
+  <forwards>
+     <forward key="program">extensions'programLoop</forward>
+     <forward key="program'control">datetime'control</forward>
+  </forwards>
+</configuration>

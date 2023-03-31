@@ -119,7 +119,7 @@ namespace elena_lang
             return (char*)_buffer + position + sizeof(pos_t);
          }
 
-         bool read(pos_t position, void* s, pos_t length) override
+         bool read(pos_t position, void* s, pos_t length) const override
          {
             memcpy(s, (char*)_buffer + position + sizeof(pos_t), length);
 

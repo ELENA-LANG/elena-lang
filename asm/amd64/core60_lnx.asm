@@ -2,6 +2,7 @@
 define INVOKER              10001h
 define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
+define PREPARE	            10006h
 
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
@@ -172,7 +173,23 @@ labYGNextFrame:
 
 end
 
+procedure %PREPARE
+
+  mov  rdi, rax
+  call extern "$rt.PrepareLA"
+  ret
+
+end
+
 // ; ==== Overridden Command Set ==
+
+// ; system prepare
+inline %4CFh
+
+  mov  rax, rsp
+  call %PREPARE
+
+end
 
 // ; openheaderin
 inline %0F2h

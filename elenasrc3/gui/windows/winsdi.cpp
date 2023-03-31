@@ -476,3 +476,9 @@ bool SDIWindow :: onSetCursor()
    return true;
 }
 
+
+void SDIWindow::exit()
+{
+   ::SendMessage(_handle, WM_CLOSE, 0, 0);
+
+}

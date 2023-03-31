@@ -98,12 +98,15 @@ struct AddressSpace
    pos_t           headerSize;
    pos_t           codeSize, dataSize, unintDataSize, importSize;
    pos_t           imageSize;
+   pos_t           tlsSize;
 
    addr_t          imageBase;
    pos_t           code;
    pos_t           adata, mdata, mbdata, rdata;
    pos_t           data, stat;
    pos_t           import;
+   pos_t           tls;
+   pos_t           tlsDirectory;
 
    pos_t           entryPoint;
 
@@ -116,11 +119,14 @@ struct AddressSpace
       headerSize = codeSize = dataSize = 0;
       import = 0;
       unintDataSize = 0;
+      tlsSize = 0;
 
       importSize = imageSize = 0;
       imageBase = 0;
       code = adata = mdata = mbdata = rdata = 0;
       data = stat = 0;
+      tls = 0;
+      tlsDirectory = 0xFFFFFFFF;
 
       entryPoint = 0;
    }
@@ -176,6 +182,8 @@ struct BuiltinReferences
    ref_t   arrayTemplateReference;
    ref_t   argArrayTemplateReference;
    ref_t   closureTemplateReference;
+   ref_t   lazyExpressionReference;
+   ref_t   pointerReference;
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
@@ -202,7 +210,8 @@ struct BuiltinReferences
       messageReference = extMessageReference = 0;
       wrapperTemplateReference = 0;
       arrayTemplateReference = argArrayTemplateReference = 0;
-      closureTemplateReference = 0;
+      closureTemplateReference = lazyExpressionReference = 0;
+      pointerReference = 0;
 
       dispatch_message = constructor_message = 0;
       protected_constructor_message = 0;
@@ -290,7 +299,7 @@ public:
    virtual ref_t mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) = 0;
 
    virtual ref_t mapTemplateIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility, 
-      bool& alreadyDeclared) = 0;
+      bool& alreadyDeclared, bool declarationMode) = 0;
 
    virtual ref_t resolveImplicitIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) = 0;
    virtual ref_t resolveImportedIdentifier(ustr_t identifier, IdentifierList* importedNs) = 0;
@@ -373,6 +382,7 @@ enum class ExpressionAttribute : pos64_t
    AlreadyResolved   = 0x00000400000,
    InitializerScope  = 0x00000800000,
    NestedDecl        = 0x00001000000,
+   ConstantExpr      = 0x00002000000,
    Superior          = 0x10000000000,
    Lookahead         = 0x20000000000,
    NoDebugInfo       = 0x40000000000,
@@ -453,6 +463,9 @@ public:
    virtual ref_t resolvePrimitiveType(ModuleScopeBase& scope, TypeInfo typeInfo)
       = 0;
 
+   virtual ref_t generateExtensionTemplate(ModuleScopeBase& scope, ref_t templateRef, size_t argumentLen,
+      ref_t* arguments, ustr_t ns, ExtensionMap* outerExtensionList) = 0;
+
    virtual ~CompilerBase() = default;
 
 };
@@ -463,7 +476,7 @@ class TemplateProssesorBase
 {
 public:
    virtual ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
-      List<SyntaxNode>& parameters, bool declarationMode) = 0;
+      List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList) = 0;
 
    virtual bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& parameters) = 0;

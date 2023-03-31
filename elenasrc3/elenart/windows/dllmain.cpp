@@ -70,7 +70,23 @@ EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, SymbolList* entry, void* c
    fflush(stdout);
 #endif
 
-   __routineProvider.InitExceptionHandling(env, criricalHandler);
+   __routineProvider.InitSTAExceptionHandling(env, criricalHandler);
+
+   machine->startSTA(env, entry);
+}
+
+EXTERN_DLL_EXPORT void InitializeMTLA(SystemEnv* env, SymbolList* entry, void* criricalHandler)
+{
+   systemEnv = env;
+
+#ifdef DEBUG_OUTPUT
+   printf("InitializeSTA.6 %x,%x\n", (int)env, (int)criricalHandler);
+
+   fflush(stdout);
+#endif
+
+   int index = machine->allocateThreadEntry(env);
+   __routineProvider.InitMTAExceptionHandling(env, index, criricalHandler);
 
    machine->startSTA(env, entry);
 }
@@ -85,11 +101,40 @@ EXTERN_DLL_EXPORT void ExitLA(int retVal)
    __routineProvider.Exit(retVal);
 }
 
+// NOTE : arg must be unique for every separate thread
+EXTERN_DLL_EXPORT void* CreateThreadLA(void* arg, void* threadProc, int flags)
+{
+   return machine->allocateThread(systemEnv, arg, threadProc, flags);
+}
+
+EXTERN_DLL_EXPORT void StartThreadLA(SystemEnv* env, void* criricalHandler, void* entryPoint, int index)
+{
+#ifdef DEBUG_OUTPUT
+   printf("StartThreadLA.6 %x,%x\n", (int)env, (int)criricalHandler);
+
+   fflush(stdout);
+#endif
+
+   __routineProvider.InitMTAExceptionHandling(env, index, criricalHandler);
+
+   machine->startThread(env, entryPoint, index);
+}
+
+EXTERN_DLL_EXPORT void* CollectPermGCLA(size_t size)
+{
+   return __routineProvider.GCRoutinePerm(systemEnv->gc_table, size);
+}
+
 EXTERN_DLL_EXPORT void* CollectGCLA(void* roots, size_t size)
 {
 //   printf("CollectGCLA %llx %llx\n", (long long)roots, size);
 
-   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size);
+   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size, false);
+}
+
+EXTERN_DLL_EXPORT void* ForcedCollectGCLA(void* roots, int fullMode)
+{
+   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, INVALID_SIZE, fullMode != 0);
 }
 
 EXTERN_DLL_EXPORT size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)
@@ -127,6 +172,16 @@ EXTERN_DLL_EXPORT addr_t LoadSymbolByString2LA(const char* ns, const char* symbo
 EXTERN_DLL_EXPORT mssg_t LoadMessageLA(const char* messageName)
 {
    return machine->loadMessage(messageName);
+}
+
+EXTERN_DLL_EXPORT void GetRandomSeedLA(SeedStruct& seed)
+{
+   machine->initRandomSeed(seed);
+}
+
+EXTERN_DLL_EXPORT unsigned int GetRandomIntLA(SeedStruct& seed)
+{
+   return machine->getRandomNumber(seed);
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,

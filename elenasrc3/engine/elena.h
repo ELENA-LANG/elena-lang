@@ -112,15 +112,16 @@ namespace elena_lang
    typedef Pair<ref_t, mssg_t>   ExtensionInfo;
 
    // --- Maps ---
-   typedef Map<ustr_t, ref_t, allocUStr, freeUStr>    ReferenceMap;
-   typedef Map<ref64_t, ref_t>                        ActionMap;
-   typedef Map<ustr_t, addr_t, allocUStr, freeUStr>   AddressMap;
-   typedef Map<mssg_t, ExtensionInfo>                 ExtensionMap;
-   typedef Map<ref_t, ref_t>                          ResolvedMap;
-   typedef Map<int, addr_t>                           FieldAddressMap;
+   typedef Map<ustr_t, ref_t, allocUStr, freeUStr>          ReferenceMap;
+   typedef Map<ref64_t, ref_t>                              ActionMap;
+   typedef Map<ustr_t, addr_t, allocUStr, freeUStr>         AddressMap;
+   typedef Map<mssg_t, ExtensionInfo>                       ExtensionMap;
+   typedef Map<mssg_t, ustr_t, nullptr, nullptr, freeUStr>  ExtensionTemplateMap;
+   typedef Map<ref_t, ref_t>                                ResolvedMap;
+   typedef Map<int, addr_t>                                 FieldAddressMap;
 
    // --- Maps ---
-   typedef List<ustr_t, freeUStr>                     IdentifierList;
+   typedef List<ustr_t, freeUStr>                           IdentifierList;
 
    // --- Tuples ---
 
@@ -167,6 +168,7 @@ namespace elena_lang
       virtual MemoryBase* getImportSection() = 0;
       virtual MemoryBase* getDataSection() = 0;
       virtual MemoryBase* getStatSection() = 0;
+      virtual MemoryBase* getTLSSection() = 0;
 
       virtual MemoryBase* getTargetSection(ref_t targetMask)
       {
@@ -179,6 +181,8 @@ namespace elena_lang
                return getDataSection();
             case mskStatDataRef:
                return getStatSection();
+            case mskTLSRef:
+               return getTLSSection();
             default:
                return nullptr;
          }
@@ -188,6 +192,7 @@ namespace elena_lang
 
       virtual addr_t getEntryPoint() = 0;
       virtual addr_t getDebugEntryPoint() = 0;
+      virtual addr_t getTLSVariable() = 0;
 
       virtual ~ImageProviderBase() = default;
    };
@@ -454,6 +459,7 @@ namespace elena_lang
    {
       pos_t    mgSize;
       pos_t    ygSize;
+      pos_t    threadCounter;
    };
 
    // --- LabelHelperBase ---
@@ -555,6 +561,12 @@ namespace elena_lang
 
       virtual void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) = 0;
       virtual void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) = 0;
+
+      virtual void allocateVariable(MemoryWriter& writer) = 0;
+
+      virtual addr_t allocateTLSIndex(ReferenceHelperBase* helper, MemoryWriter& writer) = 0;
+
+      virtual void allocateThreadContent(MemoryWriter* tlsWriter) = 0;
 
       virtual ~JITCompilerBase() = default;
    };
@@ -668,6 +680,11 @@ namespace elena_lang
       bool compare(ustr_t s)
       {
          return s.compare(_string);
+      }
+
+      bool compare(ustr_t s, size_t index, size_t length)
+      {
+         return ustr_t(_string + index).compare(s, length);
       }
 
       ref_t toRef(int radix = 10) const
@@ -802,6 +819,7 @@ namespace elena_lang
          _string[index] = 0;
       }
 
+      NamespaceString() = default;
       NamespaceString(ustr_t rootNs, ustr_t referenceName)
       {
          copy(rootNs);
@@ -1069,6 +1087,7 @@ namespace elena_lang
       Symbol = 0,
       Singleton,
       Constant,
+      ConstantArray,
    };
 
    struct SymbolInfo

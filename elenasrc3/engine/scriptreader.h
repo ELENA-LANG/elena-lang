@@ -52,6 +52,11 @@ namespace elena_lang
    public:
       bool read(ScriptToken& token);
 
+      void resetReader()
+      {
+         reset();
+      }
+
       ScriptReader(int tabSize, UStrReader* reader);
    };
 }

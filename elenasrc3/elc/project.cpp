@@ -284,6 +284,7 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
       copySetting(config, root, MGSIZE_PATH, ProjectOption::GCMGSize);
       copySetting(config, root, YGSIZE_PATH, ProjectOption::GCYGSize);
       copySetting(config, root, DEBUGMODE_PATH, ProjectOption::DebugMode);
+      copySetting(config, root, THREAD_COUNTER, ProjectOption::ThreadCounter);
 
       copySetting(config, root, FILE_PROLOG, ProjectOption::Prolog, true);
       copySetting(config, root, FILE_EPILOG, ProjectOption::Epilog, true);

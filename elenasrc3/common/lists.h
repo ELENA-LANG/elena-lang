@@ -13,6 +13,7 @@
 namespace elena_lang
 {
    template <class T, void(*FreeT)(T) = nullptr> class BListBase;
+   template <class T, void(*FreeT)(T) = nullptr> class ListBase;
 
    // --- ItemBase ---
    template <class T> struct ItemBase
@@ -122,6 +123,7 @@ namespace elena_lang
       Item* _current;
 
       friend class BListBase<T>;
+      friend class ListBase<T>;
 
    public:
       bool operator ==(const ListIteratorBase& it)
@@ -385,7 +387,7 @@ namespace elena_lang
    };
 
    // --- ListBase ---
-   template <class T, void(*FreeT)(T) = nullptr> class ListBase
+   template <class T, void(*FreeT)(T)> class ListBase
    {
       typedef ItemBase<T> Item;
 
@@ -461,6 +463,22 @@ namespace elena_lang
             prev->next = new Item(item, prev->next);
          }
          else addToTale(item);
+      }
+
+      void insertBefore(Iterator& it, T item)
+      {
+         it._current->next = new Item(it._current->item, it._current->next);
+         it._current->item = item;
+
+         _count++;
+         ++it;
+      }
+
+      void insertAfter(Iterator& it, T item)
+      {
+         it._current->next = new Item(item, it._current->next);
+
+         _count++;
       }
 
       T cutTop()
@@ -564,24 +582,6 @@ namespace elena_lang
 
       Iterator end() { return Iterator(_tale); }
 
-      BListBase()
-      {
-         _top = _tale = nullptr;
-         _count = 0;
-      }
-
-      void add(T value)
-      {
-         Item* item = new Item(value, _tale, nullptr);
-         if (_tale != nullptr) {
-            _tale->next = item;
-            _tale = item;
-         }
-         else _top = _tale = item;
-
-         _count++;
-      }
-
       void insertAfter(Iterator it, T item)
       {
          Item* nextItem = it._current->next;
@@ -592,6 +592,32 @@ namespace elena_lang
             nextItem->previous = it._current->next;
          }
          else _tale = it._current->next;
+
+         _count++;
+      }
+
+      void insertBefore(Iterator it, T item)
+      {
+         Item* previousItem = it._current->previous;
+
+         it._current->previous = new Item(item, previousItem, it._current);
+
+         if (previousItem) {
+            previousItem->next = it._current->previous;
+         }
+         else _top = it._current->previous;
+
+         _count++;
+      }
+
+      void add(T value)
+      {
+         Item* item = new Item(value, _tale, nullptr);
+         if (_tale != nullptr) {
+            _tale->next = item;
+            _tale = item;
+         }
+         else _top = _tale = item;
 
          _count++;
       }
@@ -609,6 +635,12 @@ namespace elena_lang
             _count--;
          }
          _top = _tale = nullptr;
+      }
+
+      BListBase()
+      {
+         _top = _tale = nullptr;
+         _count = 0;
       }
    };
 
@@ -841,6 +873,24 @@ namespace elena_lang
 
       T DefaultValue() const { return _list.DefaultValue(); }
 
+      Iterator get(int index)
+      {
+         Iterator it = start();
+         while (!it.eof() && index > 0) {
+            index--;
+            it++;
+         }
+         return it;
+      }
+
+      void insert(Iterator it, T item)
+      {
+         if (it.eof()) {
+            _list.addToTale(item);
+         }
+         else _list.insertAfter(it, item);
+      }
+
       void push(T item)
       {
          _list.addToTop(item);
@@ -882,6 +932,11 @@ namespace elena_lang
       pos_t count() const { return  _list.count(); }
 
       T DefaultValue() const { return _list.DefaultValue(); }
+
+      void insert(T item)
+      {
+         _list.addToTop(item);
+      }
 
       void push(T item)
       {
@@ -1099,6 +1154,38 @@ namespace elena_lang
          }
 
          return false;
+      }
+
+      T exclude(Key key)
+      {
+         Item* tmp = nullptr;
+         if (!_top);
+         else if (_top->key == key) {
+            tmp = _top;
+            if (_top == _tale)
+               _tale = nullptr;
+            _top = _top->next;
+         }
+         else {
+            Item* cur = _top;
+            while (cur->next) {
+               if (cur->next->key == key) {
+                  if (cur->next == _tale)
+                     _tale = cur;
+
+                  tmp = cur->next;
+                  cur->next = tmp->next;
+                  break;
+               }
+               cur = cur->next;
+            }
+         }
+         if (tmp) {
+            _count--;
+
+            return tmp->item;
+         }
+         else return _defaultItem;
       }
 
       void erase(Key key)
@@ -1628,6 +1715,40 @@ namespace elena_lang
          return _defValue;
       }
 
+      T exclude(Key key, T value)
+      {
+         if (_top) {
+            pos_t currentOffset = _top;
+            pos_t previousOffset = -1;
+            while (currentOffset) {
+               Item* current = (Item*)_buffer.get(currentOffset);
+
+               if (current->readKey(&_buffer) == key && current->item == value) {
+                  if (previousOffset == INVALID_POS) {
+                     _top = current->nextOffset;
+                  }
+                  else {
+                     Item* previous = (Item*)_buffer.get(previousOffset);
+                     previous->nextOffset = current->nextOffset;
+                  }
+
+                  if (_tale == currentOffset)
+                     _tale = previousOffset;
+
+                  _count--;
+                  if (!_count)
+                     _top = _tale = 0;
+
+                  return current->item;
+               }
+
+               previousOffset = currentOffset;
+               currentOffset = current->nextOffset;
+            }
+         }
+         return _defValue;
+      }
+
       void clear()
       {
          _buffer.clear();
@@ -1744,7 +1865,7 @@ namespace elena_lang
    };
 
    // --- HashTable ---
-   template <class Key, class T, size_t(_scaleKey)(Key), size_t hashSize, Key(*AllocKey)(Key) = nullptr, void(*FreeKey)(Key) = nullptr, void(*FreeT)(T) = nullptr> class HashTable
+   template <class Key, class T, pos_t(_scaleKey)(Key), pos_t hashSize, Key(*AllocKey)(Key) = nullptr, void(*FreeKey)(Key) = nullptr, void(*FreeT)(T) = nullptr> class HashTable
    {
       typedef MapItemBase<Key, T, AllocKey, FreeKey> Item;
 
@@ -1753,7 +1874,7 @@ namespace elena_lang
          friend class HashTable;
 
          Item*            _current;
-         size_t           _hashIndex;
+         pos_t            _hashIndex;
          const HashTable* _hashTable;
 
          HashTableIterator(const HashTable* hashTable, size_t hashIndex, Item* current)
@@ -1850,7 +1971,7 @@ namespace elena_lang
 
       void add(Key key, T item)
       {
-         size_t index = _scaleKey(key);
+         pos_t index = _scaleKey(key);
          if (index > hashSize)
             index = hashSize - 1;
 
@@ -1877,7 +1998,7 @@ namespace elena_lang
 
       Iterator getIt(Key key) const
       {
-         size_t index = _scaleKey(key);
+         pos_t index = _scaleKey(key);
          if (index > hashSize)
             index = hashSize - 1;
 
@@ -1886,7 +2007,7 @@ namespace elena_lang
             current = current->next;
 
          if (current && (current->key != key)) {
-            return Iterator(this, hashSize, NULL);
+            return Iterator(this, hashSize, nullptr);
          }
          else return Iterator(this, index, current);
       }
@@ -1986,6 +2107,544 @@ namespace elena_lang
          clear();
       }
    };
+
+   // --- MemoryHashTable template ---
+   template <class Key, class T, pos_t(_scaleKey)(Key), pos_t hashSize, pos_t(*StoreKey)(MemoryDump*, Key), Key(*GetKey)(MemoryDump*, pos_t), void(*FreeT)(T) = nullptr> class MemoryHashTable
+   {
+      typedef MemoryMapItemBase<Key, T, GetKey> Item;
+
+      class MemoryHashTableIterator
+      {
+         friend class MemoryHashTable;
+
+         const MemoryDump* _buffer;
+         pos_t             _position;
+         Item*             _current;
+         pos_t             _hashIndex;
+
+         MemoryHashTableIterator(const MemoryDump* buffer, unsigned int hashIndex, unsigned int position, Item* current)
+         {
+            _buffer = buffer;
+            _hashIndex = hashIndex;
+            _current = current;
+            _position = position;
+         }
+         MemoryHashTableIterator(const MemoryDump* buffer)
+         {
+            _buffer = buffer;
+            _current = nullptr;
+
+            if (buffer->length() > 0) {
+               for (_hashIndex = 0; _hashIndex < hashSize && !(*buffer)[_hashIndex << 2]; _hashIndex++);
+
+               if (_hashIndex < hashSize) {
+                  _position = _buffer->getPos(_hashIndex << 2);
+                  _current = (Item*)_buffer->get(_position);
+               }
+               else _current = nullptr;
+            }
+         }
+
+      public:
+         MemoryHashTableIterator& operator =(const MemoryHashTableIterator& it)
+         {
+            this->_current = it._current;
+            this->_position = it._position;
+            this->_buffer = it._buffer;
+            this->_hashIndex = it._hashIndex;
+
+            return *this;
+         }
+
+         MemoryHashTableIterator& operator++()
+         {
+            if (_current->next != 0) {
+               _position = _current->next;
+
+               if (_position != 0) {
+                  _current = (Item*)_buffer->get(_position);
+               }
+               else _current = NULL;
+            }
+            else _current = NULL;
+
+            while (!_current && _hashIndex < (hashSize - 1)) {
+               _hashIndex++;
+
+               _position = _buffer->getPos(_hashIndex << 2);
+               if (_position != 0)
+                  _current = (Item*)_buffer->get(_position);
+            }
+            return *this;
+         }
+
+         MemoryHashTableIterator operator++(int)
+         {
+            MemoryHashTableIterator tmp = *this;
+            ++* this;
+
+            return tmp;
+         }
+
+         T operator*() const { return _current->item; }
+
+         Key key() const
+         {
+            return _current->readKey(_buffer);
+         }
+
+         bool eof() const { return (_current == nullptr); }
+
+         MemoryHashTableIterator()
+         {
+            _current = nullptr;
+            _position = 0;
+            _hashIndex = hashSize;
+            _buffer = nullptr;
+         }
+      };
+      friend class MemoryHashTableIterator;
+
+      MemoryDump _buffer;
+      pos_t      _count;
+
+      T          _defaultItem;
+
+   public:
+      typedef MemoryHashTableIterator Iterator;
+
+      pos_t count() const { return _count; }
+
+      T DefaultValue() const { return _defaultItem; }
+
+      Iterator start() const
+      {
+         return Iterator(&_buffer);
+      }
+
+      Iterator getIt(Key key) const
+      {
+         pos_t beginning = (pos_t)_buffer.get(0);
+
+         pos_t index = _scaleKey(key);
+         if (index > hashSize)
+            index = hashSize - 1;
+
+         pos_t position = _buffer.getPos(index << 2);
+         Item* current = (position != 0) ? (Item*)(beginning + position) : nullptr;
+         while (current && current->readKey((MemoryDump*)&_buffer) < key) {
+            if (current->nextOffset != 0) {
+               position = current->nextOffset;
+               current = (Item*)(beginning + position);
+            }
+            else current = nullptr;
+         }
+
+         if (current && (current->readKey((MemoryDump*)&_buffer) != key)) {
+            return Iterator(&_buffer, index, 0, nullptr);
+         }
+         else return Iterator(&_buffer, index, position, current);
+      }
+
+      T get(Key key) const
+      {
+         Iterator it = getIt(key);
+
+         return it.eof() ? _defaultItem : *it;
+      }
+
+      bool exist(Key key) const
+      {
+         Iterator it = getIt(key);
+         if (!it.eof()) {
+            return true;
+         }
+         else return false;
+      }
+
+      void add(Key key, T value)
+      {
+         pos_t keyPosition = StoreKey(&_buffer, key);
+
+         Item item(keyPosition, value, 0);
+
+         pos_t index = _scaleKey(key);
+         if (index > hashSize)
+            index = hashSize - 1;
+
+         pos_t position = _buffer.getPos(index << 2);
+
+         pos_t tale = _buffer.length();
+
+         _buffer.write(tale, &item, sizeof(item));
+
+         size_t beginning = (size_t)_buffer.get(0);
+
+         Item* current = (position != 0) ? (Item*)(beginning + position) : nullptr;
+         if (current && current->readKey(&_buffer) <= key) {
+            while (current->nextOffset != 0 && ((Item*)(beginning + current->nextOffset))->readKey(&_buffer) <= key) {
+               position = current->nextOffset;
+               current = (Item*)(beginning + position);
+            }
+            _buffer.writePos(tale, current->nextOffset);
+            current->nextOffset = tale;
+         }
+         else {
+            if (position == 0) {
+               _buffer.writePos(tale, 0);
+            }
+            else _buffer.writePos(tale, position);
+
+            _buffer.writePos(index << 2, tale);
+         }
+
+         _count++;
+      }
+
+      template<class SumT> SumT sum(SumT initValue, SumT(*lambda)(T item))
+      {
+         SumT value = initValue;
+
+         auto it = start();
+         while (!it.eof())
+         {
+            value += lambda(*it);
+
+            ++it;
+         }
+
+         return value;
+      }
+
+      template<class ArgT> void forEach(ArgT arg, void(*lambda)(ArgT arg, Key key, T item))
+      {
+         auto it = start();
+         while (!it.eof())
+         {
+            lambda(arg, it.key(), *it);
+
+            ++it;
+         }
+      }
+
+      template<class ArgT> Key retrieve(Key defKey, ArgT arg, bool(*lambda)(ArgT arg, Key key, T item))
+      {
+         auto it = start();
+         while (!it.eof()) {
+            if (lambda(arg, it.key(), *it))
+               return it.key();
+
+            ++it;
+         }
+
+         return defKey;
+      }
+
+      void clear()
+      {
+         _buffer.clear();
+         _count = 0;
+
+         _buffer.writeBytes(0, 0, hashSize << 2);
+      }
+
+      MemoryHashTable(T defaultItem)
+      {
+         _defaultItem = defaultItem;
+         _count = 0;
+
+         _buffer.writeBytes(0, 0, hashSize << 2);
+      }
+      ~MemoryHashTable()
+      {
+         clear();
+      }
+   };
+
+   //// --- Memory32HashTable template ---
+
+   //template <class Key, class T, unsigned int(_scaleKey)(Key), unsigned int hashSize> class Memory32HashTable
+   //{
+   //   typedef _Memory32MapItem<Key, T> Item;
+
+   //   class Memory32HashTableIterator
+   //   {
+   //      friend class Memory32HashTable;
+
+   //      const MemoryDump* _buffer;
+   //      unsigned int      _position;
+   //      Item* _current;
+   //      unsigned int      _hashIndex;
+
+   //      Memory32HashTableIterator(const MemoryDump* buffer, unsigned int hashIndex, unsigned int position, Item* current)
+   //      {
+   //         _buffer = buffer;
+   //         _hashIndex = hashIndex;
+   //         _current = current;
+   //         _position = position;
+   //      }
+   //      Memory32HashTableIterator(const MemoryDump* buffer)
+   //      {
+   //         _buffer = buffer;
+   //         _current = NULL;
+
+   //         if (buffer->Length() > 0) {
+   //            for (_hashIndex = 0; _hashIndex < hashSize && !(*buffer)[_hashIndex << 2]; _hashIndex++);
+
+   //            if (_hashIndex < hashSize) {
+   //               _position = (*_buffer)[_hashIndex << 2];
+   //               _current = (Item*)_buffer->get(_position);
+   //            }
+   //            else _current = NULL;
+   //         }
+   //      }
+
+   //   public:
+   //      Memory32HashTableIterator& operator =(const Memory32HashTableIterator& it)
+   //      {
+   //         this->_current = it._current;
+   //         this->_position = it._position;
+   //         this->_buffer = it._buffer;
+   //         this->_hashIndex = it._hashIndex;
+
+   //         return *this;
+   //      }
+
+   //      Memory32HashTableIterator& operator++()
+   //      {
+   //         if (_current->next != 0) {
+   //            _position = _current->next;
+
+   //            if (_position != 0) {
+   //               _current = (Item*)_buffer->get(_position);
+   //            }
+   //            else _current = NULL;
+   //         }
+   //         else _current = NULL;
+
+   //         while (!_current && _hashIndex < (hashSize - 1)) {
+   //            _hashIndex++;
+
+   //            _position = (*_buffer)[_hashIndex << 2];
+   //            if (_position != 0)
+   //               _current = (Item*)_buffer->get(_position);
+   //         }
+   //         return *this;
+   //      }
+
+   //      Memory32HashTableIterator operator++(int)
+   //      {
+   //         Memory32HashTableIterator tmp = *this;
+   //         ++* this;
+
+   //         return tmp;
+   //      }
+
+   //      T operator*() const { return _current->item; }
+
+   //      Key key() const
+   //      {
+   //         return _current->getKey(Key());
+   //      }
+
+   //      bool Eof() const { return (_current == NULL); }
+
+   //      Memory32HashTableIterator()
+   //      {
+   //         _current = NULL;
+   //         _position = 0;
+   //         _hashIndex = hashSize;
+   //         _buffer = NULL;
+   //      }
+   //   };
+   //   friend class Memory32HashTableIterator;
+
+   //   MemoryDump   _buffer;
+   //   unsigned int _count;
+
+   //   T            _defaultItem;
+
+   //public:
+   //   typedef Memory32HashTableIterator Iterator;
+
+   //   unsigned int Count() const { return _count; }
+
+   //   T DefaultValue() const { return _defaultItem; }
+
+   //   Iterator start() const
+   //   {
+   //      return Iterator(&_buffer);
+   //   }
+
+   //   Iterator getIt(Key key) const
+   //   {
+   //      size_t beginning = (size_t)_buffer.get(0);
+
+   //      unsigned int index = _scaleKey(key);
+   //      if (index > hashSize)
+   //         index = hashSize - 1;
+
+   //      unsigned int position = _buffer[index << 2];
+   //      Item* current = (position != 0) ? (Item*)(beginning + position) : NULL;
+   //      while (current && *current < key) {
+   //         if (current->next != 0) {
+   //            position = current->next;
+   //            current = (Item*)(beginning + position);
+   //         }
+   //         else current = NULL;
+   //      }
+
+   //      if (current && (*current != key)) {
+   //         return Iterator((const MemoryDump*)&_buffer, index, 0, NULL);
+   //      }
+   //      else return Iterator((const MemoryDump*)&_buffer, index, position, current);
+   //   }
+
+   //   T get(Key key) const
+   //   {
+   //      Iterator it = getIt(key);
+
+   //      return it.Eof() ? _defaultItem : *it;
+   //   }
+
+   //   bool exist(const int key, T item) const
+   //   {
+   //      Iterator it = getIt(key);
+   //      while (!it.Eof() && it.key() == key) {
+   //         if (*it == item)
+   //            return true;
+
+   //         it++;
+   //      }
+   //      return false;
+   //   }
+
+   //   bool exist(Key key) const
+   //   {
+   //      Iterator it = getIt(key);
+   //      if (!it.Eof()) {
+   //         return true;
+   //      }
+   //      else return false;
+   //   }
+
+   //   pos_t storeKey(unsigned int, ref_t key)
+   //   {
+   //      return key;
+   //   }
+
+   //   pos_t storeKey(unsigned int position, ident_t key)
+   //   {
+   //      pos_t offset = _buffer.Length();
+
+   //      _buffer.writeLiteral(offset, key);
+
+   //      return offset - position;
+   //   }
+
+   //   pos_t storeKey(unsigned int position, ref64_t key)
+   //   {
+   //      pos_t offset = _buffer.Length();
+
+   //      _buffer.writeQWord(offset, key);
+
+   //      return offset - position;
+   //   }
+
+   //   void add(Key key, T value)
+   //   {
+   //      Item item(0, value, 0);
+
+   //      unsigned int index = _scaleKey(key);
+   //      if (index > hashSize)
+   //         index = hashSize - 1;
+
+   //      int position = _buffer[index << 2];
+
+   //      unsigned int tale = _buffer.Length();
+
+   //      _buffer.write(tale, &item, sizeof(item));
+
+   //      // save stored key
+   //      pos_t storedKey = storeKey(tale, key);
+   //      _buffer.writeDWord(tale + 4, storedKey);
+
+   //      size_t beginning = (size_t)_buffer.get(0);
+
+   //      Item* current = (position != 0) ? (Item*)(beginning + position) : NULL;
+   //      if (current && *current <= key) {
+   //         while (current->next != 0 && *(Item*)(beginning + current->next) <= key) {
+   //            position = current->next;
+   //            current = (Item*)(beginning + position);
+   //         }
+   //         _buffer[tale] = current->next;
+   //         current->next = tale;
+   //      }
+   //      else {
+   //         if (position == 0) {
+   //            _buffer[tale] = 0;
+   //         }
+   //         else _buffer[tale] = position;
+   //         _buffer[index << 2] = tale;
+   //      }
+
+   //      _count++;
+   //   }
+
+   //   bool add(int key, T item, bool unique)
+   //   {
+   //      if (!unique || !exist(key, item)) {
+   //         add(key, item);
+
+   //         return true;
+   //      }
+   //      else return false;
+   //   }
+
+   //   void write(StreamWriter* writer)
+   //   {
+   //      writer->writeDWord(_buffer.Length());
+   //      writer->writeDWord(_count);
+
+   //      MemoryReader reader(&_buffer);
+   //      writer->read(&reader, _buffer.Length());
+   //   }
+
+   //   void read(StreamReader* reader)
+   //   {
+   //      _buffer.clear();
+
+   //      int length = reader->getDWord();
+   //      if (length > 0) {
+   //         _buffer.reserve(length);
+
+   //         _count = reader->getDWord();
+
+   //         MemoryWriter writer(&_buffer);
+   //         writer.read(reader, length);
+   //      }
+   //   }
+
+   //   void clear()
+   //   {
+   //      _buffer.clear();
+   //      _count = 0;
+
+   //      _buffer.writeBytes(0, 0, hashSize << 2);
+   //   }
+
+   //   Memory32HashTable(T defaultItem)
+   //   {
+   //      _defaultItem = defaultItem;
+   //      _count = 0;
+
+   //      _buffer.writeBytes(0, 0, hashSize << 2);
+   //   }
+   //   ~Memory32HashTable()
+   //   {
+   //      clear();
+   //   }
+   //};
 
    template <class Key> Key GetKey(MemoryDump* dump, pos_t position)
    {
@@ -2106,6 +2765,14 @@ namespace elena_lang
    public:
       typedef CachedMemoryMapIterator Iterator;
 
+      pos_t count()
+      {
+         if (_cached) {
+            return (pos_t)_count;
+         }
+         else return _map.count();
+      }
+
       Iterator start()
       {
          if (_cached) {
@@ -2186,12 +2853,78 @@ namespace elena_lang
          else return _map.exclude(key);
       }
 
+      T exclude(Key key, T item)
+      {
+         if (_cached) {
+            for (size_t i = 0; i < _count; i++) {
+               if (_cache[i].key == key && _cache[i].item == item) {
+                  T item = _cache[i].item;
+
+                  for (size_t j = i + 1; j < _count; j++) {
+                     _cache[i] = _cache[j];
+                  }
+
+                  _count--;
+
+                  return item;
+               }
+            }
+            return _map.DefaultValue();
+         }
+         else return _map.exclude(key, item);
+      }
+
+      void erase(Key key)
+      {
+         T item = exclude(key);
+         if (item != _map.DefaultValue()) {
+            if (FreeT)
+               FreeT(item);
+         }
+      }
+
+      void erase(Key key, T item)
+      {
+         T itemToDelete = exclude(key, item);
+         if (itemToDelete != _map.DefaultValue()) {
+            if (FreeT)
+               FreeT(itemToDelete);
+         }
+      }
+
+      void clear()
+      {
+         _map.clear();
+
+         _cached = true;
+         _count = 0;
+      }
+
+      template<class ArgT> Key retrieve(Key defKey, ArgT arg, bool(*lambda)(ArgT arg, Key key, T item))
+      {
+         auto it = start();
+         while (!it.eof())
+         {
+            if (lambda(arg, it.key(), *it))
+               return it.key();
+
+            ++it;
+         }
+
+         return defKey;
+      }
+
       CachedMemoryMap(T defValue)
          : _map(defValue)
       {
          _cached = true;
          _count = 0;
       }
+      virtual ~CachedMemoryMap()
+      {
+         clear();
+      }
+
    };
 
    // --- CachedList ---

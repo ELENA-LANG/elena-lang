@@ -52,10 +52,10 @@ internal singleton PrimitiveOperations
    {
       if (code < 0D800h)
       {
-         ^ 2
+         ^ 1
       };
 
-      ^ 4
+      ^ 2
    }
 
    int readUTF32(byte[] sour, int index)
@@ -170,6 +170,17 @@ internal singleton PrimitiveOperations
       for(int i := 0, i < length, i += 1)
       {
          subStrLength += array[i].Length;
+      };
+
+      ^ subStrLength;
+   }
+
+   int calcSubWideStringLength(int index, int length, char[] array)
+   {
+      int subStrLength := 0;
+      for(int i := 0, i < length, i += 1)
+      {
+         subStrLength += array[i].WideLength;
       };
 
       ^ subStrLength;
@@ -431,12 +442,12 @@ internal singleton PrimitiveStringOperations
       };
 
       sLen -= length;
-      int i := 0;
-      while (i < sLen) {
+      int i := index;
+      while (i <= sLen) {
          bool isEqual := true;
          int j := 0;         
          while (j < length) {
-            char ch1 := subs[i + j];
+            char ch1 := s[i + j];
             char ch2 := subs[j];
             int len1 := ch2.Length;
             int len2 := ch2.Length;
@@ -448,7 +459,8 @@ internal singleton PrimitiveStringOperations
          };
          if (isEqual) {
             ^ i
-         }
+         };
+         i += 1;
       };
 
       ^ -1
@@ -578,6 +590,25 @@ internal singleton PrimitiveWideStringOperations
          i += len;
       };
       
+      ^ j
+   }
+
+   int save(char[] dest, wide s, int sourIndex, int sourLength, int destIndex)
+   {
+      int i := 0;
+      int j := destIndex;
+      while (i < sourLength) {
+         char ch := s[sourIndex + i];
+
+         dest[j] := ch;
+
+         int len := ch.Length;
+         i += len;
+         j += 1;
+      };
+      
+      j := j - destIndex;
+
       ^ j
    }
 

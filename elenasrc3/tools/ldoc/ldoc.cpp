@@ -137,6 +137,19 @@ void writeSymbolSummaryHeader(TextFileWriter& writer)
    writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Symbol name</TH>");
    writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Description</TH>");
    writer.writeTextLine("</TR>");
+}
+
+void writeExtendedSummaryHeader(TextFileWriter& writer)
+{
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+   writer.writeTextLine("<TABLE CLASS=\"typeSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<HEADER>");
+   writer.writeTextLine("Extended Class Summary");
+   writer.writeTextLine("</HEADER>");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Symbol name</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Description</TH>");
+   writer.writeTextLine("</TR>");
 
 }
 
@@ -694,17 +707,27 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
    else {
       writer.writeText("(");
 
+      bool last = false;
       bool first = true;
       auto it = info->paramTypes.start();
       auto name_it = info->paramNames.start();
       while (!name_it.eof()) {
+         last = name_it.last();
+
          if (!first) {
             writer.writeText(", ");
          }
          else first = false;
 
          if (!it.eof()) {
-            writeType(writer, *it);
+            if (last && info->variadic) {
+               writer.writeText("<i>params</i> ");
+               writeType(writer, *it);
+               writer.writeText("<i>[]</i>");
+            }
+            else {
+               writeType(writer, *it);
+            }
             writer.writeText(" ");
             writer.writeText(*name_it);
             ++it;
@@ -928,7 +951,7 @@ bool DocGenerator :: loadClassInfo(ref_t reference, ClassInfo& info, bool header
          ref_t resolvedReference = _module->mapReference(refName + getlength(TEMPLATE_PREFIX_NS) - 1);
 
          section = _module->mapSection(resolvedReference | mskMetaClassInfoRef, true);
-         if (!mskMetaClassInfoRef)
+         if (!section)
             return false;
       }
       else return false;
@@ -958,6 +981,18 @@ bool DocGenerator :: loadSymbolInfo(ref_t reference, SymbolInfo& info)
    return true;
 }
 
+inline void readTemplateNs(IdentifierString& ns, ustr_t reference)
+{
+   size_t i = reference.find('#');
+
+   ns.copy(reference, i);
+
+   size_t j = (*ns).findLast('@');
+   ns.truncate(j + 1);
+
+   ns.replaceAll('@', '\'', 0);
+}
+
 void DocGenerator :: loadParents(ApiClassInfo* apiClassInfo, ref_t reference)
 {
    if (!reference)
@@ -970,7 +1005,20 @@ void DocGenerator :: loadParents(ApiClassInfo* apiClassInfo, ref_t reference)
    }
 
    ustr_t name = _module->resolveReference(reference);
-   apiClassInfo->parents.add(name.clone());
+   if (isTemplateWeakReference(name)) {
+      IdentifierString type(name);
+      IdentifierString ns;
+
+      type.cut(0, 7);
+
+      readTemplateNs(ns, *type);
+
+      parseTemplateName(type);
+      type.insert(*ns, 0);
+
+      apiClassInfo->parents.add((*type).clone());
+   }
+   else apiClassInfo->parents.add(name.clone());
 }
 
 void validateTemplateType(IdentifierString& type, bool templateBased, bool argMode)
@@ -996,8 +1044,10 @@ void validateTemplateType(IdentifierString& type, bool templateBased, bool argMo
 
 void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs, bool templateBased, bool argMode)
 {
+   bool nsExpected = false;
    if (isTemplateWeakReference(line)) {
       type.copy(line);
+      nsExpected = true;
    }
    else if (line[0] == '\'') {
       type.copy(rootNs);
@@ -1006,6 +1056,11 @@ void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs, bool templateB
    else type.copy(line);
 
    validateTemplateType(type, templateBased, argMode);
+
+   if (nsExpected) {
+      type.insert("'", 0);
+      type.insert(rootNs, 0);
+   }
 }
 
 void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateBased)
@@ -1073,8 +1128,6 @@ void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateB
 void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message, MethodInfo& methodInfo, 
    MemberType memberType, DescriptionMap* descriptions, ClassInfo& classInfo)
 {
-
-
    auto apiMethodInfo = new ApiMethodInfo();
    apiMethodInfo->extensionOne = memberType == MemberType::Extension;
 
@@ -1122,6 +1175,10 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
                apiMethodInfo->prefix.append("set ");
             }
             else apiMethodInfo->prefix.append("get ");
+         }
+         if ((*apiMethodInfo->name).startsWith("params:")) {
+            apiMethodInfo->name.cut(0, 7);
+            apiMethodInfo->variadic = true;
          }
          if ((*apiMethodInfo->name).startsWith("typecast:#cast")) {
             apiMethodInfo->name.cut(0, 10);
@@ -1332,21 +1389,15 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
          reference = _module->mapReference(*name, true);
          referenceName = _module->resolveReference(reference);
       }
-      else if (isExtension(reference)) {
-         extensionRef = reference;
-         reference = findExtensionTarget(extensionRef);
-         referenceName = _module->resolveReference(reference);
-      }
-
-      NamespaceString ns(*_rootNs, referenceName);
 
       ReferenceProperName properName(referenceName);
-      ReferenceName fullName(*_rootNs, *properName);
+      ReferenceName fullName(*_rootNs, referenceName + 1);
 
       // HOTFIX : skip internal class
       if (properName[0] == '$')
          return;
 
+      NamespaceString ns(*fullName);
       ApiModuleInfo* moduleInfo = findModule(modules, *ns);
       if (!moduleInfo) {
          moduleInfo = new ApiModuleInfo();
@@ -1355,10 +1406,24 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
          modules.add(moduleInfo);
       }
 
-      if (_module->mapSection(reference | mskVMTRef, true)) {
+      if (isExtension(reference)) {
+         extensionRef = reference;
+         reference = findExtensionTarget(extensionRef);
+         referenceName = _module->resolveReference(reference);
+         if (isWeakReference(referenceName)) {
+            fullName.copy(*_rootNs);
+            fullName.append(referenceName);
+         }
+         else fullName.copy(referenceName);
+
+         size_t pos = referenceName.findLast('\'', 0);
+         properName.copy(referenceName.str() + pos + 1);
+      }
+
+      if (_module->mapSection(reference | mskVMTRef, true) || extensionRef) {
          bool templateBased = false;
          if (isTemplateBased(referenceName)) {
-            if (referenceName.findStr("$private@T1") != NOTFOUND_POS) {
+            if (referenceName.findStr("@T1") != NOTFOUND_POS && referenceName.findStr("$private")) {
                templateBased = true;
 
                parseTemplateName(properName);
@@ -1376,6 +1441,9 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
          if (!info) {
             info = new ApiClassInfo();
 
+            if (extensionRef)
+               info->virtualMode = true;
+
             info->fullName.copy(*fullName);
             info->name.copy(*properName);
             info->title.copy(*properName);
@@ -1389,6 +1457,13 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             if (!descr.empty())
                info->shortDescr.copy(descr);
          }
+         else if (!extensionRef){
+            info->virtualMode = false;
+
+            info->prefix.copy(*prefix);
+            loadClassPrefixes(info, reference);
+         }
+
          if (templateBased)
             info->templateBased = true;
 
@@ -1581,6 +1656,24 @@ void DocGenerator :: generateSymbolDoc(TextFileWriter& summaryWriter, TextFileWr
    writeSymbolFooter(bodyWriter);
 }
 
+void DocGenerator :: generateExtendedDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName)
+{
+   IdentifierString moduleName;
+   parseNs(moduleName, *_rootNs, *classInfo->fullName);
+
+   writeSummaryTable(summaryWriter, classInfo, bodyName);
+
+   writeClassBodyHeader(bodyWriter, classInfo, *moduleName);
+
+   if (classInfo->extensions.count() > 0) {
+      writeExtensionsHeader(bodyWriter, classInfo, *moduleName);
+      generateMethodList(bodyWriter, classInfo->extensions);
+      writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
+   }
+
+   writeClassBodyFooter(bodyWriter, classInfo, *moduleName);
+}
+
 void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo)
 {
    _presenter->print(LDOC_GENERATING, *moduleInfo->name);
@@ -1608,6 +1701,7 @@ void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo)
 
    writeSummaryHeader(summaryWriter, *moduleInfo->name, *moduleInfo->shortDescr);
 
+   bool withVirtualOnes = false;
    if (moduleInfo->classes.count() > 0) {
       // classes
       writeClassSummaryHeader(summaryWriter);
@@ -1615,6 +1709,11 @@ void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo)
       bool alt = true;
       for (auto class_it = moduleInfo->classes.start(); !class_it.eof(); ++class_it) {
          ApiClassInfo* classInfo = *class_it;
+         if (classInfo->virtualMode) {
+            withVirtualOnes = true;
+            continue;
+         }
+
          if (alt) {
             summaryWriter.writeTextLine("<TR CLASS=\"altColor\">");
          }
@@ -1647,6 +1746,33 @@ void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo)
          alt = !alt;
 
          generateSymbolDoc(summaryWriter, bodyWriter, symbolInfo, *name);
+
+         summaryWriter.writeTextLine("</TR>");
+      }
+
+      writeClassSummaryFooter(summaryWriter);
+   }
+
+   if (withVirtualOnes) {
+      // classes
+      writeExtendedSummaryHeader(summaryWriter);
+
+      bool alt = true;
+      for (auto class_it = moduleInfo->classes.start(); !class_it.eof(); ++class_it) {
+         ApiClassInfo* classInfo = *class_it;
+         if (!classInfo->virtualMode) {
+            continue;
+         }
+
+         if (alt) {
+            summaryWriter.writeTextLine("<TR CLASS=\"altColor\">");
+         }
+         else {
+            summaryWriter.writeTextLine("<TR CLASS=\"rowColor\">");
+         }
+         alt = !alt;
+
+         generateExtendedDoc(summaryWriter, bodyWriter, classInfo, *name);
 
          summaryWriter.writeTextLine("</TR>");
       }

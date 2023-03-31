@@ -4,13 +4,17 @@
 define INVOKER              10001h
 define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
+define GC_COLLECT	    10004h
+define GC_ALLOCPERM	    10005h
+define PREPARE	            10006h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
-define CORE_THREAD_TABLE    2000Bh
+define CORE_SINGLE_CONTENT  2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
+define CORE_THREAD_TABLE    2000Fh
 
 define ACTION_ORDER              9
 define ACTION_MASK            1E0h
@@ -37,6 +41,9 @@ define gc_mg_start           0038h
 define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
+define gc_perm_start         0058h 
+define gc_perm_end           0060h 
+define gc_perm_current       0068h 
 
 define et_current            0008h
 define tt_stack_frame        0010h
@@ -61,11 +68,17 @@ structure % CORE_TOC
 
 end
  
-structure % CORE_THREAD_TABLE
+structure % CORE_SINGLE_CONTENT
 
-  dq 0 // ; crtitical_handler      ; +x00   - pointer to ELENA exception handler
+  dq 0 // ; et_crtitical_handler   ; +x00   - pointer to ELENA exception handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
   dq 0 // ; tt_stack_frame         ; +x10   - pointer to the stack frame
+
+end
+ 
+structure % CORE_THREAD_TABLE
+
+  // ; dummy for STA
 
 end
 
@@ -83,6 +96,10 @@ structure %CORE_GC_TABLE
   dq 0 // ; gc_end                : +48h
   dq 0 // ; gc_mg_wbar            : +50h
 
+  dq 0 // ; gc_perm_start         : +58h 
+  dq 0 // ; gc_perm_end           : +60h 
+  dq 0 // ; gc_perm_current       : +68h 
+
 end
 
 // ; NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
@@ -90,11 +107,13 @@ structure %SYSTEM_ENV
 
   dq 0
   dq data : %CORE_GC_TABLE
-  dq data : %CORE_THREAD_TABLE
+  dq data : %CORE_SINGLE_CONTENT
+  dq 0
   dq code : %INVOKER
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize
+  // ; dd ThreadCounter
 
 end
 
@@ -138,7 +157,7 @@ labYGCollect:
   push rbp
 
   // ; lock frame
-  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], rsp
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
 
   push rcx
 
@@ -158,7 +177,7 @@ labYGCollect:
   push rcx
 
   // ;   collect frames
-  mov  rax, [data : %CORE_THREAD_TABLE + tt_stack_frame]  
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]  
   mov  rcx, rax
 
 labYGNextFrame:
@@ -202,6 +221,124 @@ labYGNextFrame:
   pop  r10
 
   ret
+
+end
+
+// ; --- GC_COLLECT ---
+// ; in: ecx - fullmode (0, 1)
+inline % GC_COLLECT
+
+  // ; save registers
+  push r10
+  push r11
+  push rbp
+
+  // ; lock frame
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
+
+  push rcx
+
+  // ; create set of roots
+  mov  rbp, rsp
+  xor  ecx, ecx
+  push rcx        // ; reserve place 
+  push rcx
+  push rcx
+
+  // ;   save static roots
+  mov  rax, rdata : %SYSTEM_ENV
+  mov  rsi, stat : %0
+  mov  ecx, dword ptr [rax]
+  shl  ecx, 3
+  push rsi
+  push rcx
+
+  // ;   collect frames
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]  
+  mov  rcx, rax
+
+labYGNextFrame:
+  mov  rsi, rax
+  mov  rax, [rsi]
+  test rax, rax
+  jnz  short labYGNextFrame
+
+  push rcx
+  sub  rcx, rsi
+  neg  rcx
+  push rcx  
+
+  mov  rax, [rsi + 8]
+  test rax, rax
+  mov  rcx, rax
+  jnz  short labYGNextFrame
+
+  mov [rbp-8], rsp      // ; save position for roots
+
+  mov  rdx, [rbp]
+  mov  rcx, rsp
+
+  // ; restore frame to correctly display a call stack
+  mov  rax, rbp
+  mov  rbp, [rax+8]
+
+  // ; call GC routine
+  sub  rsp, 30h
+  mov  [rsp+28h], rax
+  call extern "$rt.CollectGCLA"
+
+  mov  rbp, [rsp+28h] 
+  add  rsp, 30h
+  mov  rbx, rax
+
+  mov  rsp, rbp 
+  pop  rcx
+  pop  rbp
+  pop  r11
+  pop  r10
+
+  ret
+
+end
+
+// ; --- GC_ALLOCPERM ---
+// ; in: rcx - size ; out: ebx - created object
+// ; note for linux - there is a separate copy
+inline % GC_ALLOCPERM
+
+  mov  rax, [data : %CORE_GC_TABLE + gc_perm_current]
+  mov  r12, [data : %CORE_GC_TABLE + gc_perm_end]
+  add  rcx, rax
+  cmp  rcx, r12
+  jae  short labPERMCollect
+  mov  [data : %CORE_GC_TABLE + gc_perm_current], rcx
+  lea  rbx, [rax + elObjectOffset]
+  ret
+
+labPERMCollect:
+  // ; save registers
+  sub  rcx, rax
+  push r10
+  push r11
+
+  // ; lock frame
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
+
+  // ; call GC routine
+  sub  rsp, 30h
+  mov  [rsp+28h], rcx
+  call extern "$rt.CollectPermGCLA"
+
+  add  rsp, 30h
+
+  pop  r11
+  pop  r10
+
+  ret
+
+end
+
+procedure %PREPARE
 
 end
 
@@ -286,7 +423,7 @@ end
 // ; throw
 inline %0Ah
 
-  mov  rax, [data : %CORE_THREAD_TABLE + et_current]
+  mov  rax, [data : %CORE_SINGLE_CONTENT + et_current]
   jmp  [rax + es_catch_addr]
 
 end
@@ -294,13 +431,13 @@ end
 // ; unhook
 inline %0Bh
 
-  mov  rdi, [data : %CORE_THREAD_TABLE + et_current]
+  mov  rdi, [data : %CORE_SINGLE_CONTENT + et_current]
 
   mov  rax, [rdi + es_prev_struct]
   mov  rbp, [rdi + es_catch_frame]
   mov  rsp, [rdi + es_catch_level]
 
-  mov  [data : %CORE_THREAD_TABLE + et_current], rax
+  mov  [data : %CORE_SINGLE_CONTENT + et_current], rax
 
 end
 
@@ -344,7 +481,7 @@ inline % 10h
 
   push 0                                                     
   push rbp     
-  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], rsp
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
 
 end
 
@@ -439,6 +576,20 @@ inline %1Ah
 
 end
 
+// ; convl
+inline %1Bh
+
+  movsxd rdx, edx
+
+end
+
+// ; xlcmp
+inline % 1Ch
+
+  cmp  [rbx], rdx
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -493,7 +644,7 @@ inline %26h
 
   mov  rsi, r10  
   xor  rax, rax
-  mov  ax, word ptr [rsi+rdx]
+  mov  ax, word ptr [rsi+rdx*2]
   mov  [rbx], rax
 
 end
@@ -928,6 +1079,14 @@ inline %9Bh
 
 end
 
+// ; muln
+inline %9Ch
+
+  mov   eax, __n_1
+  imul  edx, eax
+
+end
+
 // ; savedp
 inline %0A0h
 
@@ -1099,6 +1258,14 @@ inline %2ABh
   mov r11, rdx
 
 end 
+
+// ; lloaddp
+inline %0ACh
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rdx, [rdi]
+
+end
 
 // ; callr
 inline %0B0h
@@ -1311,6 +1478,81 @@ inline %2C9h
 
 end 
 
+// ; xloadargsi
+inline %0CDh
+
+  mov rdx, [rsp + __arg32_1]
+
+end 
+
+// ; xloadarg si:1
+inline %1CDh
+
+  mov rdx, rdi
+
+end 
+
+// ; xloadarg si:2
+inline %2CDh
+
+  mov rdx, rsi
+
+end 
+
+// ; xloadarg si:3
+inline %3CDh
+
+ // ; mov rdi, rdi - idle operation
+
+end 
+
+// ; xloadarg si:4
+inline %4CDh
+
+  mov rdx, rcx
+
+end 
+
+// ; xcreater r
+inline %0CEh
+
+  mov  rax, [r10]
+  mov  ecx, page_ceil
+  shl  eax, 3
+  add  ecx, eax
+  and  ecx, page_mask 
+  call %GC_ALLOCPERM
+
+  mov  rcx, [r10]
+  shl  ecx, 3
+
+  mov  rax, __ptr64_1
+  mov  [rbx - elSizeOffset], rcx
+  mov  [rbx - elVMTOffset], rax
+
+end
+
+// ; system
+inline %0CFh
+
+end
+
+// ; system minor collect
+inline %1CFh
+
+  xor  ecx, ecx
+  call %GC_COLLECT
+
+end
+
+// ; system full collect
+inline %2CFh
+
+  mov  ecx, 1
+  call %GC_COLLECT
+
+end
+
 // ; faddndp
 inline %0D0h
 
@@ -1511,7 +1753,7 @@ end
 inline %0DCh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
   shl  eax, cl
   mov  dword ptr [rdi], eax
@@ -1522,7 +1764,7 @@ end
 inline %1DCh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
   shl  eax, cl
   mov  byte ptr [rdi], al
@@ -1533,7 +1775,7 @@ end
 inline %2DCh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
   shl  eax, cl
   mov  word ptr [rdi], ax
@@ -1544,7 +1786,7 @@ end
 inline %4DCh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  rax, [rdi]
   shl  rax, cl
   mov  [rdi], rax
@@ -1555,7 +1797,7 @@ end
 inline %0DDh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
   shr  eax, cl
   mov  dword ptr [rdi], eax
@@ -1566,7 +1808,7 @@ end
 inline %1DDh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
   shr  eax, cl
   mov  byte ptr [rdi], al
@@ -1577,7 +1819,7 @@ end
 inline %2DDh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
   shr  eax, cl
   mov  word ptr [rdi], ax
@@ -1588,7 +1830,7 @@ end
 inline %4DDh
 
   lea  rdi, [rbp + __arg32_1]
-  mov  ecx, dword ptr [rsi]
+  mov  rcx, [r10]
   mov  rax, [rdi]
   shr  rax, cl
   mov  [rdi], rax
@@ -1754,7 +1996,7 @@ inline %0E4h
 
   mov  rcx, [r10]
   mov  rax, [rbp+__arg32_1]
-  xor  edx, edx
+  cdq
   idiv ecx
   mov  dword ptr [rbp+__arg32_1], eax
 
@@ -1765,6 +2007,7 @@ inline %1E4h
 
   mov  rcx, [r10]
   mov  rax, [rbp+__arg32_1]
+  cdq
   idiv cl
   mov  byte ptr [rbp+__arg32_1], al
 
@@ -1775,6 +2018,7 @@ inline %2E4h
 
   mov  rcx, [r10]
   mov  rax, [rbp+__arg32_1]
+  cdq
   idiv cx
   mov  word ptr [rbp+__arg32_1], ax
 
@@ -1784,6 +2028,7 @@ end
 inline %4E4h
 
   mov  rcx, [r10]
+  xor  rdx, rdx
   mov  rax, [rbp+__arg32_1]
   idiv rcx
   mov  [rbp+__arg32_1], rax
@@ -1803,14 +2048,14 @@ inline %0E6h
 
   lea  rdi, [rbp + __arg32_1]
   mov  rcx, __ptr64_2
-  mov  rax, [data : %CORE_THREAD_TABLE + et_current]
+  mov  rax, [data : %CORE_SINGLE_CONTENT + et_current]
 
   mov  [rdi + es_prev_struct], rax
   mov  [rdi + es_catch_frame], rbp
   mov  [rdi + es_catch_level], rsp
   mov  [rdi + es_catch_addr], rcx
 
-  mov  [data : %CORE_THREAD_TABLE + et_current], rdi
+  mov  [data : %CORE_SINGLE_CONTENT + et_current], rdi
 
 end
 
@@ -2522,8 +2767,9 @@ end
 // ; vcallmr
 inline % 0FCh
 
+  mov  ecx, __arg32_1
   mov  rax, [rbx - elVMTOffset]
-  call [rax + __arg32_1]
+  call [rax + rcx + 8]
 
 end
 
