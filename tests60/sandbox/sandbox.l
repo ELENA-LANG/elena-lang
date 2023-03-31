@@ -8,7 +8,7 @@ public program()
 
    var ch := s[0];
 
-   console.printLine(s[0] == ch);
+//   console.printLine(s[0] == ch);
    console.printLine(s[0].equalReference(ch));
 
 //               var duplicate := guess.seekEach:(x => (x == ch)&&(x.equalReference(ch).Inverted));
