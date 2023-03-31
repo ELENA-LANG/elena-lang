@@ -4,9 +4,6 @@ In development:
 
   [development]
     ### EPOCH: elena 6.0 - redux ###
-    === Iteration 14 ===
-    * release
-
     === Iteration 15 ===
     ! migrate rest of elena 5.0 functionality (script engine, infinite enumeration, ...)
     ! script and db samples
@@ -32,6 +29,7 @@ In development:
     * redesign switch statement : it should be possible to use as an expression as well
       (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
        console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
+
 
     * operator .\
     * optimization : copy a sub array to another array
