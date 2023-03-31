@@ -389,18 +389,16 @@ end
 procedure %PREPARE
 
   stp     x29, x30, [sp, #-16]! 
-  stp     x0,  x1, [sp, #-16]! 
 
   // ; call GC routine
   movz    x16,  import_ptr32lo : "$rt.PrepareLA"
   movk    x16,  import_ptr32hi : "$rt.PrepareLA", lsl #16
 
-  mov     x0, sp
+  mov     x0, x12
 
   ldr     x17, [x16]
   blr     x17
 
-  ldp     x0,  x1, [sp], #16
   ldp     x29, x30, [sp], #16
 
   ret     x30
@@ -1816,6 +1814,8 @@ end
 
 // ; system 4
 inline %4CFh
+
+  mov     x12, sp
 
   movz    x17,  code_ptr32lo : %PREPARE
   movk    x17,  code_ptr32hi : %PREPARE, lsl #16
