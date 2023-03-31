@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Compiler Engine templates,
 //		classes, structures, functions and constants
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENA_H
@@ -102,20 +102,26 @@ namespace elena_lang
       return encodeMessage(actionRef, newArgCount, flags);
    }
 
+   inline bool isOpenArg(mssg_t message)
+   {
+      return (message & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
+   }
+
    // --- Misc types ---
    typedef unsigned int          parse_key_t;
    typedef Pair<ref_t, mssg_t>   ExtensionInfo;
 
    // --- Maps ---
-   typedef Map<ustr_t, ref_t, allocUStr, freeUStr>    ReferenceMap;
-   typedef Map<ref64_t, ref_t>                        ActionMap;
-   typedef Map<ustr_t, addr_t, allocUStr, freeUStr>   AddressMap;
-   typedef Map<mssg_t, ExtensionInfo>                 ExtensionMap;
-   typedef Map<ref_t, ref_t>                          ResolvedMap;
-   typedef Map<int, addr_t>                           FieldAddressMap;
+   typedef Map<ustr_t, ref_t, allocUStr, freeUStr>          ReferenceMap;
+   typedef Map<ref64_t, ref_t>                              ActionMap;
+   typedef Map<ustr_t, addr_t, allocUStr, freeUStr>         AddressMap;
+   typedef Map<mssg_t, ExtensionInfo>                       ExtensionMap;
+   typedef Map<mssg_t, ustr_t, nullptr, nullptr, freeUStr>  ExtensionTemplateMap;
+   typedef Map<ref_t, ref_t>                                ResolvedMap;
+   typedef Map<int, addr_t>                                 FieldAddressMap;
 
    // --- Maps ---
-   typedef List<ustr_t, freeUStr>                     IdentifierList;
+   typedef List<ustr_t, freeUStr>                           IdentifierList;
 
    // --- Tuples ---
 
@@ -154,19 +160,39 @@ namespace elena_lang
    public:
       virtual AddressMap::Iterator externals() = 0;
 
-      virtual Section* getTextSection() = 0;
-      virtual Section* getRDataSection() = 0;
-      virtual Section* getMDataSection() = 0;
-      virtual Section* getMBDataSection() = 0;
-      virtual Section* getImportSection() = 0;
-      virtual Section* getDataSection() = 0;
-      virtual Section* getStatSection() = 0;
+      virtual MemoryBase* getTextSection() = 0;
+      virtual MemoryBase* getRDataSection() = 0;
+      virtual MemoryBase* getADataSection() = 0;   // NOTE : adata should contains at least 4 bytes (zero value)
+      virtual MemoryBase* getMDataSection() = 0;
+      virtual MemoryBase* getMBDataSection() = 0;
+      virtual MemoryBase* getImportSection() = 0;
+      virtual MemoryBase* getDataSection() = 0;
+      virtual MemoryBase* getStatSection() = 0;
+      virtual MemoryBase* getTLSSection() = 0;
 
-      virtual Section* getTargetSection(ref_t targetMask) = 0;
-      virtual Section* getTargetDebugSection() = 0;
+      virtual MemoryBase* getTargetSection(ref_t targetMask)
+      {
+         switch (targetMask) {
+            case mskCodeRef:
+               return getTextSection();
+            case mskRDataRef:
+               return getRDataSection();
+            case mskDataRef:
+               return getDataSection();
+            case mskStatDataRef:
+               return getStatSection();
+            case mskTLSRef:
+               return getTLSSection();
+            default:
+               return nullptr;
+         }
+      }
+
+      virtual MemoryBase* getTargetDebugSection() = 0;
 
       virtual addr_t getEntryPoint() = 0;
       virtual addr_t getDebugEntryPoint() = 0;
+      virtual addr_t getTLSVariable() = 0;
 
       virtual ~ImageProviderBase() = default;
    };
@@ -244,6 +270,8 @@ namespace elena_lang
       virtual ustr_t resolveForward(ustr_t forward) = 0;
       virtual ustr_t resolveExternal(ustr_t forward) = 0;
       virtual ustr_t resolveWinApi(ustr_t forward) = 0;
+
+      virtual void forEachForward(void* arg, void(*feedback)(void* arg, ustr_t key, ustr_t value)) = 0;
    };
 
    // --- ModuleLoaderBase ---
@@ -251,13 +279,28 @@ namespace elena_lang
    {
       ModuleBase* module;
       MemoryBase* section;
+      MemoryBase* metaSection;
       ref_t       reference;
 
       SectionInfo()
       {
          module = nullptr;
-         section = nullptr;
+         section = metaSection = nullptr;
          reference = 0;
+      }
+      SectionInfo(MemoryBase* section)
+      {
+         this->module = nullptr;
+         this->section = section;
+         this->metaSection = nullptr;
+         this->reference = 0;
+      }
+      SectionInfo(MemoryBase* section, MemoryBase* mataSection)
+      {
+         this->module = nullptr;
+         this->section = section;
+         this->metaSection = metaSection;
+         this->reference = 0;
       }
    };
 
@@ -303,20 +346,35 @@ namespace elena_lang
    class LibraryLoaderBase
    {
    public:
+      virtual ustr_t Namespace() = 0;
+
+      virtual path_t OutputPath() = 0;
+
       virtual ReferenceInfo retrieveReferenceInfo(ModuleBase* module, ref_t reference, ref_t mask,
          ForwardResolverBase* forwardResolver) = 0;
       virtual ReferenceInfo retrieveReferenceInfo(ustr_t referenceName,
          ForwardResolverBase* forwardResolver) = 0;
 
       virtual SectionInfo getCoreSection(ref_t reference, bool silentMode) = 0;
-      virtual SectionInfo getSection(ReferenceInfo referenceInfo, ref_t mask, bool silentMode) = 0;
+      virtual SectionInfo getSection(ReferenceInfo referenceInfo, ref_t mask, ref_t metaMask, bool silentMode) = 0;
       virtual ClassSectionInfo getClassSections(ReferenceInfo referenceInfo, ref_t vmtMask, ref_t codeMask, 
          bool silentMode) = 0;
 
       virtual ModuleInfo getModule(ReferenceInfo referenceInfo, bool silentMode) = 0;
       virtual ModuleInfo getWeakModule(ustr_t weakReferenceName, bool silentMode) = 0;
+      virtual ModuleInfo getDebugModule(ReferenceInfo referenceInfo, bool silentMode) = 0;
 
       virtual void resolvePath(ustr_t ns, PathString& path) = 0;
+   };
+
+   class LibraryProviderBase
+   {
+   public:
+      virtual void addCorePath(path_t path) = 0;
+      virtual void addPrimitivePath(ustr_t alias, path_t path) = 0;
+      virtual void addPackage(ustr_t ns, path_t path) = 0;
+
+      virtual void setRootPath(path_t path) = 0;
    };
 
    // --- SectionScopeBase ---
@@ -334,6 +392,10 @@ namespace elena_lang
       virtual ref_t importMessage(ModuleBase* referenceModule, mssg_t message) = 0;
       virtual ref_t importReference(ModuleBase* referenceModule, ustr_t referenceName) = 0;
       virtual ref_t importReference(ModuleBase* referenceModule, ref_t reference) = 0;
+      virtual ref_t importConstant(ModuleBase* referenceModule, ref_t reference) = 0;
+      virtual ref_t importExternal(ModuleBase* referenceModule, ref_t reference) = 0;
+      virtual ref_t importMessageConstant(ModuleBase* referenceModule, ref_t reference) = 0;
+      virtual ref_t importExtMessageConstant(ModuleBase* referenceModule, ref_t reference) = 0;
 
       SectionScopeBase()
       {
@@ -386,6 +448,10 @@ namespace elena_lang
          ref_t addressMask) = 0;
 
       virtual mssg_t importMessage(mssg_t message, ModuleBase* module = nullptr) = 0;
+
+      virtual addr_t resolveMDataVAddress() = 0;
+
+      virtual void resolveLabel(MemoryWriter& writer, ref_t mask, pos_t position) = 0;
    };
 
    // --- JITSettings ---
@@ -393,6 +459,7 @@ namespace elena_lang
    {
       pos_t    mgSize;
       pos_t    ygSize;
+      pos_t    threadCounter;
    };
 
    // --- LabelHelperBase ---
@@ -400,9 +467,9 @@ namespace elena_lang
    {
       virtual bool checkLabel(pos_t label) = 0;
 
-      virtual bool setLabel(pos_t label, MemoryWriter& writer) = 0;
+      virtual bool setLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) = 0;
 
-      virtual bool fixLabel(pos_t label, MemoryWriter& writer) = 0;
+      virtual bool fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) = 0;
 
       virtual void writeJumpBack(pos_t label, MemoryWriter& writer) = 0;
       virtual void writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
@@ -412,6 +479,14 @@ namespace elena_lang
 
       virtual void writeJneBack(pos_t label, MemoryWriter& writer) = 0;
       virtual void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
+
+      virtual void writeJltBack(pos_t label, MemoryWriter& writer) = 0;
+      virtual void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
+
+      virtual void writeJgeBack(pos_t label, MemoryWriter& writer) = 0;
+      virtual void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
+
+      virtual void writeLabelAddress(pos_t label, MemoryWriter& writer, ref_t mask) = 0;
    };
 
    // --- JITCompilerBase ---
@@ -426,6 +501,8 @@ namespace elena_lang
          JITSettings settings) = 0;
 
       virtual bool isWithDebugInfo() = 0;
+
+      virtual int getExtMessageSize() = 0;
 
       virtual void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) = 0;
 
@@ -450,25 +527,46 @@ namespace elena_lang
 
       virtual void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
          bool structMode, bool virtualMode) = 0;
+      virtual void allocateBody(MemoryWriter& writer, int size) = 0;
       virtual void writeInt32(MemoryWriter& writer, unsigned int value) = 0;
+      virtual void writeInt64(MemoryWriter& writer, unsigned long long value) = 0;
+      virtual void writeFloat64(MemoryWriter& writer, double value) = 0;
       virtual void writeLiteral(MemoryWriter& writer, ustr_t value) = 0;
+      virtual void writeWideLiteral(MemoryWriter& writer, wstr_t value) = 0;
       virtual void writeChar32(MemoryWriter& writer, ustr_t value) = 0;
       virtual void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
+      virtual void writeDump(MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
       virtual void writeVariable(MemoryWriter& writer) = 0;
+      virtual void writeMessage(MemoryWriter& writer, mssg_t message) = 0;
+      virtual void writeExtMessage(MemoryWriter& writer, Pair<mssg_t, addr_t> extensionInfo, bool virtualMode) = 0;
 
       virtual void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) = 0;
       virtual void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) = 0;
 
       virtual pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode) = 0;
       virtual pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, 
-         ustr_t actionName, ref_t weakActionRef, ref_t signature) = 0;
+         ustr_t actionName, ref_t weakActionRef, ref_t signature, bool virtualMode) = 0;
 
       virtual void writeImm9(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm12(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm16(MemoryWriter* writer, int value, int type) = 0;
+      virtual void writeImm16Hi(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm32(MemoryWriter* writer, int value) = 0;
 
+      virtual void writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode) = 0;
+
+      virtual void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) = 0;
+
+      virtual void populatePreloaded(uintptr_t env, uintptr_t eh_table, uintptr_t gc_table) = 0;
+
       virtual void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) = 0;
+      virtual void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) = 0;
+
+      virtual void allocateVariable(MemoryWriter& writer) = 0;
+
+      virtual addr_t allocateTLSIndex(ReferenceHelperBase* helper, MemoryWriter& writer) = 0;
+
+      virtual void allocateThreadContent(MemoryWriter* tlsWriter) = 0;
 
       virtual ~JITCompilerBase() = default;
    };
@@ -483,21 +581,92 @@ namespace elena_lang
       virtual ~AddressMapperBase() = default;
    };
 
+   // --- PresenterBase ----
+   class PresenterBase
+   {
+   public:
+      virtual ustr_t getMessage(int code) = 0;
+
+      virtual void print(ustr_t msg) = 0;
+      virtual void print(ustr_t msg, ustr_t arg) = 0;
+      virtual void print(ustr_t msg, ustr_t arg1, ustr_t arg2) = 0;
+      virtual void print(ustr_t msg, ustr_t arg1, ustr_t arg2, ustr_t arg3) = 0;
+      virtual void print(ustr_t msg, int arg1) = 0;
+      virtual void print(ustr_t msg, int arg1, int arg2) = 0;
+      virtual void print(ustr_t msg, int arg1, int arg2, int arg3) = 0;
+      virtual void print(ustr_t msg, ustr_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
+      virtual void printPath(ustr_t msg, path_t arg) = 0;
+      virtual void printPath(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
+
+      virtual ~PresenterBase() = default;
+   };
+
    // --- WideMessage ---
    class WideMessage : public String<wide_c, MESSAGE_LEN>
    {
    public:
       wstr_t operator*() const { return wstr_t(_string); }
 
+      void appendUstr(const char* s)
+      {
+         size_t len = length();
+
+         size_t subLen = MESSAGE_LEN - length();
+         StrConvertor::copy(_string + len, s, getlength(s), subLen);
+         _string[len + subLen] = 0;
+      }
+
+      WideMessage()
+      {
+         _string[0] = 0;
+      }
       WideMessage(const char* s)
       {
          size_t len = MESSAGE_LEN;
          StrConvertor::copy(_string, s, getlength(s), len);
          _string[len] = 0;
       }
+      WideMessage(const char* s1, const char* s2)
+      {
+         size_t len = MESSAGE_LEN;
+         size_t len2 = MESSAGE_LEN;
+         StrConvertor::copy(_string, s1, getlength(s1), len);
+         StrConvertor::copy(_string + len, s2, getlength(s2), len2);
+
+         _string[len + len2] = 0;
+      }
+      WideMessage(const char* s1, const char* s2, const char* s3)
+      {
+         size_t len = MESSAGE_LEN;
+         size_t len2 = MESSAGE_LEN;
+         size_t len3 = MESSAGE_LEN;
+         StrConvertor::copy(_string, s1, getlength(s1), len);
+         StrConvertor::copy(_string + len, s2, getlength(s2), len2);
+         StrConvertor::copy(_string + len + len2, s3, getlength(s3), len3);
+
+         _string[len + len2 + len3] = 0;
+      }
+      WideMessage(const char* s1, const char* s2, const char* s3, const char* s4)
+      {
+         size_t len = MESSAGE_LEN;
+         size_t len2 = MESSAGE_LEN;
+         size_t len3 = MESSAGE_LEN;
+         size_t len4 = MESSAGE_LEN;
+         StrConvertor::copy(_string, s1, getlength(s1), len);
+         StrConvertor::copy(_string + len, s2, getlength(s2), len2);
+         StrConvertor::copy(_string + len + len2, s3, getlength(s3), len3);
+         StrConvertor::copy(_string + len + len2 + len3, s4, getlength(s4), len4);
+
+         _string[len + len2 + len3 + len4] = 0;
+      }
       WideMessage(const wide_c* s)
       {
          copy(s);
+      }
+      WideMessage(const wide_c* s1, const wide_c* s2)
+      {
+         copy(s1);
+         append(s2);
       }
    };
 
@@ -511,6 +680,11 @@ namespace elena_lang
       bool compare(ustr_t s)
       {
          return s.compare(_string);
+      }
+
+      bool compare(ustr_t s, size_t index, size_t length)
+      {
+         return ustr_t(_string + index).compare(s, length);
       }
 
       ref_t toRef(int radix = 10) const
@@ -645,6 +819,16 @@ namespace elena_lang
          _string[index] = 0;
       }
 
+      NamespaceString() = default;
+      NamespaceString(ustr_t rootNs, ustr_t referenceName)
+      {
+         copy(rootNs);
+         if (referenceName[0] != '\'')
+            append('\'');
+
+         size_t pos = referenceName.findLast('\'', 0);
+         append(referenceName, pos);
+      }
       NamespaceString(ustr_t referenceName)
       {
          size_t pos = referenceName.findLast('\'', 0);
@@ -809,10 +993,11 @@ namespace elena_lang
    // --- MethodInfo ---
    struct MethodInfo
    {
-      bool  inherited;
-      ref_t hints;
-      ref_t outputRef;
-      ref_t multiMethod;
+      bool   inherited;
+      ref_t  hints;
+      ref_t  outputRef;
+      mssg_t multiMethod;
+      mssg_t byRefHandler;
 
       MethodInfo()
       {
@@ -820,12 +1005,14 @@ namespace elena_lang
          hints = 0;
          outputRef = 0;
          multiMethod = 0;
+         byRefHandler = 0;
       }
-      MethodInfo(bool inherited, ref_t hints, ref_t outputRef, ref_t multiMethod) :
+      MethodInfo(bool inherited, ref_t hints, ref_t outputRef, mssg_t multiMethod, mssg_t byRefHandler) :
          inherited(inherited),
          hints(hints),
          outputRef(outputRef),
-         multiMethod(multiMethod)
+         multiMethod(multiMethod),
+         byRefHandler(byRefHandler)
       {
       }
    };
@@ -855,12 +1042,12 @@ namespace elena_lang
       int         col, row/*, length*/;
       union
       {
-         struct Source { pos_t nameRef; } source;
-         struct Module { pos_t nameRef; int flags; } classSource;
+         struct Source { addr_t nameRef; } source;
+         struct Module { addr_t nameRef; int flags; } classSource;
          struct Step { addr_t address; } step;
-      //   struct Local { pos_t nameRef; int level; } local;
-      //   struct Field { pos_t nameRef; int size; } field;
-      //   struct Offset { pos_t disp; } offset;
+         struct Local { addr_t nameRef; int offset; } local;
+         struct Field { addr_t nameRef; int offset; } field;
+         struct Offset { pos_t disp; } offset;
       } addresses;
 
       DebugLineInfo()
@@ -899,7 +1086,8 @@ namespace elena_lang
    {
       Symbol = 0,
       Singleton,
-      Constant
+      Constant,
+      ConstantArray,
    };
 
    struct SymbolInfo
@@ -907,12 +1095,28 @@ namespace elena_lang
       SymbolType symbolType;
       ref_t      valueRef;
       ref_t      typeRef;
+      bool       loadableInRuntime;
+
+      SymbolInfo()
+      {
+         symbolType = SymbolType::Symbol;
+         valueRef = typeRef = 0;
+         loadableInRuntime = false;
+      }
+      SymbolInfo(SymbolType symbolType, ref_t valueRef, ref_t typeRef, bool loadableInRuntime)
+      {
+         this->symbolType = symbolType;
+         this->valueRef = valueRef;
+         this->typeRef = typeRef;
+         this->loadableInRuntime = loadableInRuntime;
+      }
 
       void load(StreamReader* reader)
       {
          symbolType = (SymbolType)reader->getDWord();
          valueRef = reader->getRef();
          typeRef = reader->getRef();
+         loadableInRuntime = reader->getBool();
       }
 
       void save(StreamWriter* writer)
@@ -920,6 +1124,7 @@ namespace elena_lang
          writer->writeDWord((unsigned int)symbolType);
          writer->writeRef(valueRef);
          writer->writeRef(typeRef);
+         writer->writeBool(loadableInRuntime);
       }
    };
 
@@ -1141,7 +1346,12 @@ namespace elena_lang
       {
          writer->writePos(map.count());
          for (auto it = map.start(); !it.eof(); ++it) {
-            writer->writeString(it.key());
+            ustr_t key = it.key();
+            if (key.empty()) {
+               writer->writeChar(0);
+            }
+            else writer->writeString(key);
+
             writer->write(&(*it), sizeof(T));
          }
       }

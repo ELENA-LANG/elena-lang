@@ -3,7 +3,7 @@
 //
 //		This file contains CPU native helpers
 //		Supported platforms: ARM64
-//                                            (C)2021-2022, by Aleksey Rakov
+//                                            (C)2021-2023, by Aleksey Rakov
 //                                            (C)2016, from The LLVM Compiler
 //---------------------------------------------------------------------------
 
@@ -103,11 +103,44 @@ namespace elena_lang
       W29       = 0x101D,
       W30       = 0x101E,
 
+      D0        = 0x2000,
+      D1        = 0x2001,
+      D2        = 0x2002,
+      D3        = 0x2003,
+      D4        = 0x2004,
+      D5        = 0x2005,
+      D6        = 0x2006,
+      D7        = 0x2007,
+      D8        = 0x2008,
+      D9        = 0x2009,
+      D10       = 0x200A,
+      D11       = 0x200B,
+      D12       = 0x200C,
+      D13       = 0x200D,
+      D14       = 0x200E,
+      D15       = 0x200F,
+      D16       = 0x2010,
+      D17       = 0x2011,
+      D18       = 0x2012,
+      D19       = 0x2013,
+      D20       = 0x2014,
+      D21       = 0x2015,
+      D22       = 0x2016,
+      D23       = 0x2017,
+      D24       = 0x2018,
+      D25       = 0x2019,
+      D26       = 0x201A,
+      D27       = 0x201B,
+      D28       = 0x201C,
+      D29       = 0x201D,
+      D30       = 0x201E,
+
       XR        = 0x0100,
       Preindex  = 0x0200,
       Postindex = 0x0400,
       Unsigned  = 0x0800,
       WR        = 0x1000,
+      DR        = 0x2000,
 
       Imm       = 0x300,
    };
@@ -135,6 +168,10 @@ namespace elena_lang
       bool isWR()
       {
          return test(type, ARMOperandType::WR) && !test(type, ARMOperandType::Preindex);
+      }
+      bool isDR()
+      {
+         return test(type, ARMOperandType::DR);
       }
       bool isPreindex()
       {
@@ -173,6 +210,19 @@ namespace elena_lang
    class ARMHelper
    {
    public:
+      static unsigned int makeOpcodeImmRS(int sf, int ops, int op2, int n, int immr, int imms, ARMOperandType rn, ARMOperandType rd)
+      {
+         return (sf << 31) | (ops << 29) | (op2 << 23) | (n << 22) | (immr << 16)
+            | (imms << 10) | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
+      }
+
+      static unsigned int makeOpcode2(int sf, int op, int op2, int op3, ARMOperandType rm, int op4, int op5,
+         ARMOperandType rn, ARMOperandType rd)
+      {
+         return (sf << 31) | (op << 30) | (op2 << 29) | (op3 << 21) | (((unsigned int)rm & 0x1F) << 16) | (op4 << 12)
+            | (op5 << 10) | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
+      }
+
       static unsigned int makeOpcode(int sf, int op, int op2, int op3, ARMOperandType rm, int op4, int o1,
          ARMOperandType rn, ARMOperandType rd)
       {
@@ -205,6 +255,13 @@ namespace elena_lang
             | (((unsigned int)rm & 0x1F) << 16) | (imm6 << 10) | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
       }
 
+      static unsigned int makeImm6ShiftOpcode(int size, int op, int s, int op2, int shift, int n, int imm6, ARMOperandType rm,
+         ARMOperandType rn, ARMOperandType rd)
+      {
+         return (size << 31) | (op << 30) | (s << 29) | (op2 << 24) | (shift << 22) | (n << 21)
+            | (((unsigned int)rm & 0x1F) << 16) | (imm6 << 10) | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
+      }
+
       static unsigned int makeImm9Opcode(int size, int op1, int op2, int op3, int opc, int op4, int imm9, int op5, ARMOperandType rn, ARMOperandType rt)
       {
          return (size << 30) | (op1 << 27) | (op2 << 26) | (op3 << 24) | (opc << 22) | (op4 << 21) | ((imm9 & 0x1FF) << 12) | (op5 << 10)
@@ -227,6 +284,37 @@ namespace elena_lang
       {
          return (sf << 31) | (op << 30) | (s << 29) | (op1 << 23) | (sh << 22) | ((imm & 0xFFF) << 10)
             | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rt & 0x1F);
+      }
+
+      static unsigned int makeRModeOpcode(int sf, int opc, int op, int ftype, int op2, int rmode, int opcode, ARMOperandType rn, ARMOperandType rd)
+      {
+         return (sf << 31) | (opc << 29) | (op << 24) | (ftype << 22) | (op2 << 21) | (rmode << 19) | (opcode << 16)
+            | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
+      }
+
+      static unsigned int makeRMode3Opcode(int sf, int opc, int op, int ftype, int op2, int op3, int op4, int op5, ARMOperandType rn, ARMOperandType rd)
+      {
+         return (sf << 31) | (opc << 29) | (op << 24) | (ftype << 22) | (op2 << 21) | (op3 << 17) | (op4 << 15) | (op5 << 10)
+            | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
+      }
+
+      static unsigned int makeRMode2Opcode(int sf, int opc, int op, int ftype, int op2, int op3, int rmode, int op4, ARMOperandType rn, ARMOperandType rd)
+      {
+         return (sf << 31) | (opc << 29) | (op << 24) | (ftype << 22) | (op2 << 21) | (op3 << 18) | (rmode << 15) | (op4 << 10)
+            | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
+      }
+
+      static unsigned int makeFTypeOpcode(int op0, int op, int ftype, int op2, ARMOperandType rm, int op3, int op4, ARMOperandType rn, int opc)
+      {
+         return (op0 << 29) | (op << 24) | (ftype << 22) | (op2 << 21) | (((unsigned int)rm & 0x1F) << 16) | (op3 << 14) | (op4 << 10)
+            | (((unsigned int)rn & 0x1F) << 5) | (opc << 3);
+      }
+
+      static unsigned int makeFTypeOpcode(int op0, int op, int ftype, int op2, ARMOperandType rm, int op3, int op4, ARMOperandType rn, 
+         ARMOperandType rd)
+      {
+         return (op0 << 29) | (op << 24) | (ftype << 22) | (op2 << 21) | (((unsigned int)rm & 0x1F) << 16) | (op3 << 13) | (op4 << 10)
+            | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
       }
 
       static bool isMask_64(uint64_t Value) {
@@ -410,7 +498,7 @@ namespace elena_lang
          writer.writeDWord(ARMHelper::makeBxxOpcode(0x2A, 0, imm >> 2, 0, cond));
       }
 
-      bool fixLabel(pos_t label, MemoryWriter& writer) override
+      bool fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) override
       {
          for (auto it = jumps.getIt(label); !it.eof(); ++it) {
             if (it.key() == label) {
@@ -432,6 +520,13 @@ namespace elena_lang
                }
             }
          }
+
+         for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
+            auto info = *a_it;
+
+            rh->resolveLabel(writer, info.mask, info.position);
+         }
+
          return true;
       }
 
@@ -481,6 +576,38 @@ namespace elena_lang
             throw InternalError(-1);
 
          writeBcc(offset, (int)JumpType::NE, writer);
+      }
+
+      void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBcc(0, (int)JumpType::LT, writer);
+      }
+
+      void writeJltBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0x3FFFF)
+            throw InternalError(-1);
+
+         writeBcc(offset, (int)JumpType::LT, writer);
+      }
+
+      void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBcc(0, (int)JumpType::GE, writer);
+      }
+
+      void writeJgeBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0x3FFFF)
+            throw InternalError(-1);
+
+         writeBcc(offset, (int)JumpType::GE, writer);
       }
    };
 }

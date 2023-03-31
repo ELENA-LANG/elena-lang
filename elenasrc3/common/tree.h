@@ -303,6 +303,16 @@ namespace elena_lang
             return current != defKey;
          }
 
+         bool existChild(Key key1, Key key2)
+         {
+            Node current = firstChild();
+            while (current != defKey && current.key != key1 && current.key != key2) {
+               current = current.nextNode();
+            }
+
+            return current != defKey;
+         }
+
          Node lastChild() const
          {
             Node current = firstChild();
@@ -361,6 +371,43 @@ namespace elena_lang
             Node current = firstChild();
             while (current != defKey) {
                if (current == key)
+                  return current;
+
+               current = current.nextNode();
+            }
+
+            return current;
+         }
+
+         Node findChild(Key key1, Key key2) const
+         {
+            Node current = firstChild();
+            while (current != defKey) {
+               if (current == key1 || current == key2)
+                  return current;
+
+               current = current.nextNode();
+            }
+
+            return current;
+         }
+         Node findChild(Key key1, Key key2, Key key3) const
+         {
+            Node current = firstChild();
+            while (current != defKey) {
+               if (current == key1 || current == key2 || current == key3)
+                  return current;
+
+               current = current.nextNode();
+            }
+
+            return current;
+         }
+         Node findChild(Key key1, Key key2, Key key3, Key key4) const
+         {
+            Node current = firstChild();
+            while (current != defKey) {
+               if (current == key1 || current == key2 || current == key3 || current == key4)
                   return current;
 
                current = current.nextNode();
@@ -539,8 +586,8 @@ namespace elena_lang
       static Node gotoChild(Node node, Key key, int value)
       {
          Node current = node.findChild(key);
-         while (current == key) {
-            if (value == current.arg.value)
+         while (current != defKey) {
+            if ( current == key && value == current.arg.value)
                return current;
 
             current = current.nextNode();
@@ -562,6 +609,11 @@ namespace elena_lang
       }
 
       static bool ifChildExists(Node node, Key key, int value)
+      {
+         return gotoChild(node, key, value) == key;
+      }
+
+      static bool ifChildExists(Node node, Key key, ref_t value)
       {
          return gotoChild(node, key, value) == key;
       }

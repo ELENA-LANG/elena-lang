@@ -35,7 +35,16 @@ namespace elena_lang
       static bool copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength);
 
       static int toInt(const char* s, int radix);
+      static int toInt(const wide_c* s, int radix);
+      static long long toLong(const char* s, int radix);
+      static long long toLong(const wide_c* s, int radix);
+      static double toDouble(const char* s);
+      static double toDouble(const wide_c* s);
+
       static unsigned int toUInt(const char* s, int radix);
+
+      static char* toString(double value, int precision, char* s, size_t destLength);
+      static wchar_t* toString(double value, int precision, wchar_t* s, size_t destLength);
    };
 
    // --- StrUtil ---
@@ -52,7 +61,10 @@ namespace elena_lang
       static void append(wide_c* dest, const wide_c* sour, size_t length);
 
       static void insert(char* s, size_t pos, size_t length, const char* subs);
+      static void insert(wide_c* s, size_t pos, size_t length, const wide_c* subs);
 
+      static char* upper(char* s);
+      static wide_c* upper(wide_c* s);
       static char* lower(char* s);
       static wide_c* lower(wide_c* s);
       static char lower(char s);
@@ -114,6 +126,8 @@ namespace elena_lang
       bool compare(const char* s, size_t length) const;
       bool compareSub(const char* s, size_t index, size_t length) const;
 
+      bool greater(const char* s) const;
+
       bool startsWith(const char* s);
       bool endsWith(const char* s);
 
@@ -125,6 +139,7 @@ namespace elena_lang
       size_t findLastSub(size_t index,  char c, size_t defValue = NOTFOUND_POS);
 
       size_t findStr(const char* subs, size_t defValue = NOTFOUND_POS);
+      size_t findSubStr(size_t index, const char* s, size_t length, size_t defValue = NOTFOUND_POS);
 
       char* clone();
       char* clone(size_t index, size_t length);
@@ -198,6 +213,9 @@ namespace elena_lang
       size_t find(wide_c c, size_t defValue = NOTFOUND_POS);
       size_t findSub(size_t index, char c, size_t defValue = NOTFOUND_POS);
       size_t findSub(size_t index, char c, size_t length, size_t defValue);
+
+      size_t findStr(const wide_c* subs, size_t defValue = NOTFOUND_POS);
+      size_t findSubStr(size_t index, const wide_c* s, size_t length, size_t defValue = NOTFOUND_POS);
 
       size_t findLast(wide_c c, size_t defValue = NOTFOUND_POS);
       size_t findLastSub(size_t index, char c, size_t defValue = NOTFOUND_POS);
@@ -343,6 +361,71 @@ namespace elena_lang
 
          return true;
       }
+      static bool longToStr(unsigned long long n, T* s, int radix, size_t maxLength)
+      {
+         long long rem = 0;
+         size_t    pos = 0;
+         size_t    start = 0;
+
+         do
+         {
+            if (pos >= maxLength)
+               return false;
+
+            rem = n % radix;
+            n /= radix;
+            switch (rem) {
+               case 10:
+                  s[pos++] = 'a';
+                  break;
+               case 11:
+                  s[pos++] = 'b';
+                  break;
+               case 12:
+                  s[pos++] = 'c';
+                  break;
+               case 13:
+                  s[pos++] = 'd';
+                  break;
+               case 14:
+                  s[pos++] = 'e';
+                  break;
+               case 15:
+                  s[pos++] = 'f';
+                  break;
+               default:
+                  if (rem < 10) {
+                     s[pos++] = (T)(rem + 0x30);
+                  }
+            }
+         } while (n != 0);
+
+         s[pos] = 0;
+         pos--;
+         while (start < pos) {
+            T tmp = s[start];
+            s[start++] = s[pos];
+            s[pos--] = tmp;
+         }
+
+         return true;
+      }
+
+      void appendHex(int n)
+      {
+         size_t pos = getlength(_string);
+
+         uintToStr(n, _string + pos, 16, size - pos);
+
+         StrUtil::upper(_string + pos);
+      }
+
+      void appendDouble(double value)
+      {
+         size_t pos = getlength(_string);
+
+         StrConvertor::toString(value, 10, _string + pos, size - pos);
+      }
 
       T& operator[](size_t index)
       {
@@ -400,6 +483,13 @@ namespace elena_lang
          return uintToStr(value, _string + pos, radix, size - pos);
       }
 
+      bool appendLong(long long value, int radix = 10)
+      {
+         size_t pos = getlength(_string);
+
+         return longToStr(value, _string + pos, radix, size - pos);
+      }
+
       bool copy(const T* s)
       {
          const size_t length = getlength(s);
@@ -417,6 +507,11 @@ namespace elena_lang
       void insert(const T* s, size_t index)
       {
          StrUtil::insert(_string, index, getlength(s), s);
+      }
+
+      void cut(size_t index, size_t length)
+      {
+         StrUtil::move(_string + index, _string + index + length, getlength(_string) - index - length + 1);
       }
 
       void replaceAll(T oldCh, T newCh, size_t index)
@@ -550,7 +645,17 @@ namespace elena_lang
 
       void insert(const T* s, size_t index)
       {
-         StrUtil::insert(_string, index, getlength(s), s);
+         pos_t length = getlength_pos(s);
+         if (_size <= length) {
+            create(length + 1);
+         }
+
+         StrUtil::insert(_string, index, length, s);
+      }
+
+      void cut(size_t index, size_t length)
+      {
+         StrUtil::move(_string + index, _string + index + length, getlength(_string) - index - length + 1);
       }
 
       int toInt(int radix = 10) const

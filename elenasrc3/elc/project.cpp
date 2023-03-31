@@ -43,7 +43,6 @@ path_t Project :: PathSetting(ProjectOption option, ustr_t key) const
 
 path_t Project :: PathSetting(ProjectOption option) const
 {
-   int fileIndex = 0;
    switch (option) {
       case ProjectOption::BasePath:
          return *_basePath;
@@ -52,13 +51,10 @@ path_t Project :: PathSetting(ProjectOption option) const
       case ProjectOption::TargetPath:
       case ProjectOption::OutputPath:
       case ProjectOption::LibPath:
-         fileIndex = _root.findChild(option).arg.value;
-         break;
+         return XmlProjectBase::PathSetting(option);
       default:
          return nullptr;
    }
-
-   return _paths.get(fileIndex);
 }
 
 ustr_t Project :: StringSetting(ProjectOption option) const
@@ -67,21 +63,8 @@ ustr_t Project :: StringSetting(ProjectOption option) const
       case ProjectOption::Namespace:
          return *_defaultNs;
       default:
-      {
-         ProjectNode node = _root.findChild(option);
-
-         return node.identifier();
-      }
+         return XmlProjectBase::StringSetting(option);
    }
-}
-
-bool Project :: BoolSetting(ProjectOption option, bool defValue) const
-{
-   ustr_t val = StringSetting(option);
-   if (val.empty())
-      return defValue;
-
-   return val == "-1";
 }
 
 void Project :: addBoolSetting(ProjectOption option, bool value)
@@ -89,22 +72,17 @@ void Project :: addBoolSetting(ProjectOption option, bool value)
    _root.appendChild(option, value ? "-1" : "0");
 }
 
-int Project :: IntSetting(ProjectOption option, int defValue) const
+void Project :: addIntSetting(ProjectOption option, int value)
 {
-   ustr_t val = StringSetting(option);
-   if (!val.empty()) {
-      int intValue = StrConvertor::toInt(val, 10);
+   String<char, 20> valStr;
+   valStr.appendInt(value);
 
-      return intValue;
-   }
-   else return defValue;
+   _root.appendChild(option, valStr.str());
 }
 
-ustr_t Project :: resolveKey(ProjectOption category, ProjectOption item, ustr_t key)
+PlatformType Project :: SystemTarget()
 {
-   ProjectNode current = ProjectTree::gotoChild(_root.findChild(category), item, key);
-
-   return current == item ? current.findChild(ProjectOption::Value).identifier() : nullptr;
+   return _platform & PlatformType::TargetMask;
 }
 
 PlatformType Project :: Platform()
@@ -112,31 +90,9 @@ PlatformType Project :: Platform()
    return _platform & PlatformType::PlatformMask;
 }
 
-PlatformType Project::TargetType()
+PlatformType Project :: TargetType()
 {
    return _platform & PlatformType::TargetTypeMask;
-}
-
-ustr_t Project :: resolveForward(ustr_t forward)
-{
-   return _forwards.get(forward);
-}
-
-ustr_t Project::resolveExternal(ustr_t dllAlias)
-{
-   return resolveKey(ProjectOption::Externals, ProjectOption::External, dllAlias);
-}
-
-ustr_t Project :: resolveWinApi(ustr_t dllAlias)
-{
-   return resolveKey(ProjectOption::Winapis, ProjectOption::Winapi, dllAlias);
-}
-
-void Project :: addForward(ustr_t forward, ustr_t referenceName)
-{
-   freeUStr(_forwards.exclude(forward));
-
-   _forwards.add(forward, referenceName.clone());
 }
 
 void Project :: addSource(ustr_t ns, path_t path)
@@ -213,25 +169,6 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
    }
 }
 
-void Project :: loadPathSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, 
-                                ProjectOption key, path_t configPath)
-{
-   auto configNode = config.selectNode(configRoot, xpath);
-   if (!configNode.isNotFound()) {
-      DynamicString<char> path;
-      configNode.readContent(path);
-
-      ProjectNode node = _root.findChild(key);
-      if (node == ProjectOption::None) {
-         _root.appendChild(key, _paths.count() + 1);
-      }
-      else node.setArgumentValue(_paths.count() + 1);
-
-      PathString filePath(configPath, path.str());
-      _paths.add((*filePath).clone());
-   }
-}
-
 void Project :: loadSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, IdentifierString& value)
 {
    auto configNode = config.selectNode(configRoot, xpath);
@@ -243,7 +180,7 @@ void Project :: loadSetting(ConfigFile& config, ConfigFile::Node& configRoot, us
    }
 }
 
-void Project::loadTargetType(ConfigFile& config, ConfigFile::Node& root)
+void Project :: loadTargetType(ConfigFile& config, ConfigFile::Node& root)
 {
    // read target type; merge it with platform if required
    ConfigFile::Node targetType = config.selectNode(root, PLATFORMTYPE_KEY);
@@ -254,70 +191,6 @@ void Project::loadTargetType(ConfigFile& config, ConfigFile::Node& root)
       PlatformType pt = (PlatformType)key.toInt();
       _platform = _platform & PlatformType::PlatformMask;
       _platform = _platform | pt;
-   }
-}
-
-void Project :: loadPathCollection(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath,
-                                   ProjectOption collectionKey, path_t configPath)
-{
-   DynamicString<char> path;
-
-   ConfigFile::Collection collection;
-   if(config.select(configRoot, xpath, collection)) {
-      auto collectionNode = _root.findChild(collectionKey);
-      if (collectionNode == ProjectOption::None)
-         collectionNode = _root.appendChild(collectionKey);
-
-      for (auto it = collection.start(); !it.eof(); ++it) {
-         ConfigFile::Node node = *it;
-
-         ProjectNode fileNode = collectionNode.appendChild(ProjectOption::FileKey, _paths.count() + 1);
-
-         // read the key
-         if (node.readAttribute("key", path)) {
-            fileNode.appendChild(ProjectOption::Key, path.str());
-         }
-
-         // read the path
-         node.readContent(path);
-         PathString filePath(configPath, path.str());
-         _paths.add((*filePath).clone());
-      }
-   }
-}
-
-void Project::loadKeyCollection(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath, ProjectOption collectionKey,
-   ProjectOption itemKey, ustr_t prefix)
-{
-   DynamicString<char> key, value;
-
-   ConfigFile::Collection collection;
-   if (config.select(root, xpath, collection)) {
-      auto collectionNode = _root.findChild(collectionKey);
-      if (collectionNode == ProjectOption::None)
-         collectionNode = _root.appendChild(collectionKey);
-
-      for (auto it = collection.start(); !it.eof(); ++it) {
-         ConfigFile::Node node = *it;
-
-         if (node.readAttribute("key", key)) {
-            node.readContent(value);
-
-            ProjectNode keyNode = ProjectTree::gotoChild(collectionNode, itemKey, key.str());
-            if (keyNode == ProjectOption::None) {
-               if (!prefix.empty())
-                  key.insert(prefix, 0);
-
-               keyNode = collectionNode.appendChild(itemKey, key.str());
-            }               
-
-            ProjectNode valueNode = keyNode.findChild(ProjectOption::Value);
-            if (valueNode == ProjectOption::None) {
-               keyNode.appendChild(ProjectOption::Value, value.str());
-            }
-            else keyNode.setStrArgument(value.str());
-         }
-      }
    }
 }
 
@@ -339,15 +212,38 @@ void Project :: loadForwards(ConfigFile& config, ConfigFile::Node& root, ustr_t 
    }
 }
 
-void Project :: copySetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, ProjectOption key)
+void Project :: copySetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, ProjectOption key, bool exclusiveMode)
 {
    auto configNode = config.selectNode(configRoot, xpath);
    if (!configNode.isNotFound()) {
       DynamicString<char> content;
       configNode.readContent(content);
 
-      _root.appendChild(key, content.str());
+      if (!exclusiveMode || !_root.existChild(key)) {
+         _root.appendChild(key, content.str());
+      }
+      else {
+         auto node = _root.findChild(key);
+
+         node.setStrArgument(content.str());
+      }
    }
+}
+
+bool Project :: loadConfigByName(path_t configPath, ustr_t name, bool markAsLoaded)
+{
+   path_t relativePath = PathSetting(ProjectOption::Templates, name);
+   if (!relativePath.empty()) {
+      PathString baseConfigPath(configPath, relativePath);
+
+      if (loadConfig(*baseConfigPath, false)) {
+         if (markAsLoaded)
+            _loaded = true;
+
+         return true;
+      }
+   }
+   return false;
 }
 
 void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node& root)
@@ -360,12 +256,7 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
          DynamicString<char> key;
          baseConfig.readContent(key);
 
-         path_t relativePath = PathSetting(ProjectOption::Templates, key.str());
-         if (!relativePath.empty()) {
-            PathString baseConfigPath(configPath, relativePath);
-
-            loadConfig(*baseConfigPath, false);
-         }
+         loadConfigByName(configPath, key.str(), false);
       }
 
       loadSetting(config, root, NAMESPACE_KEY, _defaultNs);
@@ -393,20 +284,17 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
       copySetting(config, root, MGSIZE_PATH, ProjectOption::GCMGSize);
       copySetting(config, root, YGSIZE_PATH, ProjectOption::GCYGSize);
       copySetting(config, root, DEBUGMODE_PATH, ProjectOption::DebugMode);
+      copySetting(config, root, THREAD_COUNTER, ProjectOption::ThreadCounter);
+
+      copySetting(config, root, FILE_PROLOG, ProjectOption::Prolog, true);
+      copySetting(config, root, FILE_EPILOG, ProjectOption::Epilog, true);
    }
 }
 
 void Project :: loadConfig(ConfigFile& config, path_t configPath)
 {
-   ustr_t key = getPlatformName(_platform);
-
    ConfigFile::Node root = config.selectRootNode();
-
-   // select platform configuration
-   ConfigFile::Node platformRoot = config.selectNode<ustr_t>(PLATFORM_CATEGORY, key, [](ustr_t key, ConfigFile::Node& node)
-   {
-      return node.compareAttribute("key", key);
-   });
+   ConfigFile::Node platformRoot = getPlatformRoot(config, _platform);
 
    // load common project settings
    loadConfig(config, configPath, root);
@@ -428,7 +316,7 @@ void Project :: loadDefaultConfig()
 bool Project :: loadConfig(path_t path, bool mainConfig)
 {
    PathString configPath;
-   configPath.copySubPath(path);
+   configPath.copySubPath(path, false);
 
    ConfigFile config;
    if (config.load(path, _encoding)) {
@@ -469,6 +357,13 @@ bool Project :: loadProject(path_t path)
    }
 }
 
+void Project :: setBasePath(path_t path)
+{
+   _projectPath.copy(path);
+
+   addPathSetting(ProjectOption::OutputPath, path);
+}
+
 void Project :: prepare()
 {
    if (!_loaded) {
@@ -479,10 +374,25 @@ void Project :: prepare()
    if (_defaultNs.empty())
       _defaultNs.copy(*_projectName);
 
+   path_t outputPath = PathSetting(ProjectOption::OutputPath);
+   if (emptystr(outputPath)) {
+      PathString outputPath(_projectPath);
+
+      addPathSetting(ProjectOption::OutputPath, *outputPath);
+   }
+
    path_t target = PathSetting(ProjectOption::TargetPath);
    if (target.empty()) {
       PathString path(*_projectPath, _projectName.str());
 
       addPathSetting(ProjectOption::TargetPath, *path);
+   }
+}
+
+void Project :: forEachForward(void* arg, void (* feedback)(void* arg, ustr_t key, ustr_t value))
+{
+   // list forwards
+   for (auto f_it = _forwards.start(); !f_it.eof(); ++f_it) {
+      feedback(arg, f_it.key(), *f_it);
    }
 }

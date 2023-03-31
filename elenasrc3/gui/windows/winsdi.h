@@ -11,42 +11,92 @@
 
 namespace elena_lang
 {
+   // --- BoxBase ---
+   class BoxBase : public GUIControlBase
+   {
+   protected:
+      CachedList<GUIControlBase*, 3> _list;
+      bool                           _stretchMode;
+      int                            _spacer;
+
+   public:
+      bool checkHandle(void* param) const override
+      {
+         return false;
+      }
+
+      void show() override;
+      void hide() override;
+
+      bool visible() override;
+
+      void setFocus() override;
+
+      void refresh() override;
+
+      BoxBase(bool stretchMode, int spacer);
+   };
+
+   // --- VerticalBox ---
+   class VerticalBox : public BoxBase
+   {
+   public:
+      void append(GUIControlBase* item);
+
+      Rectangle getRectangle() override;
+      void setRectangle(Rectangle rec) override;
+
+      VerticalBox(bool stretchMode, int spacer);
+   };
+
+   // --- HorizontalBox ---
+   class HorizontalBox : public BoxBase
+   {
+   public:
+      void append(GUIControlBase* item);
+
+      Rectangle getRectangle() override;
+      void setRectangle(Rectangle rec) override;
+
+      HorizontalBox(bool stretchMode, int spacer);
+   };
+
    // --- LayoutManager ---
    class LayoutManager
    {
-      ControlBase* _top;
-      ControlBase* _left;
-      ControlBase* _right;
-      ControlBase* _bottom;
-      ControlBase* _center;
+      GUIControlBase* _top;
+      GUIControlBase* _left;
+      GUIControlBase* _right;
+      GUIControlBase* _bottom;
+      GUIControlBase* _center;
 
    public:
-      ControlBase* getCenter()
+      GUIControlBase* getCenter()
       {
          return _center;
       }
 
-      void setTop(ControlBase* top)
+      void setTop(GUIControlBase* top)
       {
          _top = top;
       }
 
-      void setCenter(ControlBase* center)
+      void setCenter(GUIControlBase* center)
       {
          _center = center;
       }
 
-      void setBottom(ControlBase* bottom)
+      void setBottom(GUIControlBase* bottom)
       {
          _bottom = bottom;
       }
 
-      void setLeft(ControlBase* left)
+      void setLeft(GUIControlBase* left)
       {
          _left = left;
       }
 
-      void setRight(ControlBase* right)
+      void setRight(GUIControlBase* right)
       {
          _right = right;
       }
@@ -65,26 +115,28 @@ namespace elena_lang
    class SDIWindow : public WindowBase
    {
    protected:
-      size_t        _childCounter;
-      ControlBase** _children;
-      LayoutManager _layoutManager;
+      size_t           _childCounter;
+      GUIControlBase** _children;
+      LayoutManager    _layoutManager;
 
       //void drawControls(HDC& hdc);
 
       void onResize() override;
       virtual void onActivate();
+      virtual void onResizing(RECT* rect);
       void onDrawItem(DRAWITEMSTRUCT* item) override;
       virtual bool onCommand(int command) { return false; }
       virtual void onNotify(NMHDR* hdr);
+      bool onSetCursor() override;
 
       LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam) override;
 
    public:
       static void registerSDIWindow(HINSTANCE hInstance, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon);
 
-      void populate(size_t counter, ControlBase** children)
+      void populate(size_t counter, GUIControlBase** children)
       {
-         _children = new ControlBase*[counter];
+         _children = new GUIControlBase *[counter];
          for (size_t i = 0; i < counter; i++) {
             _children[i] = children[i];
          }
@@ -95,8 +147,17 @@ namespace elena_lang
 
       void close();
 
+      void refresh() override
+      {
+         WindowBase::refresh();
+
+         onResize();
+      }
+
+      virtual void exit();
+
       SDIWindow(wstr_t title)
-         : WindowBase(title)
+         : WindowBase(title, 800, 600)
       {
          _children = nullptr;
          _childCounter = 0;

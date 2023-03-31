@@ -3,7 +3,7 @@
 //
 //		This file contains CPU native helpers
 //		Supported platforms: PPC64
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PPCHELPER_H
@@ -52,6 +52,41 @@ namespace elena_lang
       GPR31    = 0x011F,
 
       GPR      = 0x0100,
+
+      FPR0     = 0x0200,
+      FPR1     = 0x0201,
+      FPR2     = 0x0202,
+      FPR3     = 0x0203,
+      FPR4     = 0x0204,
+      FPR5     = 0x0205,
+      FPR6     = 0x0206,
+      FPR7     = 0x0207,
+      FPR8     = 0x0208,
+      FPR9     = 0x0209,
+      FPR10    = 0x020A,
+      FPR11    = 0x020B,
+      FPR12    = 0x020C,
+      FPR13    = 0x020D,
+      FPR14    = 0x020E,
+      FPR15    = 0x020F,
+      FPR16    = 0x0210,
+      FPR17    = 0x0211,
+      FPR18    = 0x0212,
+      FPR19    = 0x0213,
+      FPR20    = 0x0214,
+      FPR21    = 0x0215,
+      FPR22    = 0x0216,
+      FPR23    = 0x0217,
+      FPR24    = 0x0218,
+      FPR25    = 0x0219,
+      FPR26    = 0x021A,
+      FPR27    = 0x021B,
+      FPR28    = 0x021C,
+      FPR29    = 0x021D,
+      FPR30    = 0x021E,
+      FPR31    = 0x021F,
+
+      FPR      = 0x0200,
    };
 
    inline bool test(PPCOperandType type, PPCOperandType mask)
@@ -68,6 +103,11 @@ namespace elena_lang
       bool isGPR()
       {
          return test(type, PPCOperandType::GPR);
+      }
+
+      bool isFPR()
+      {
+         return test(type, PPCOperandType::FPR);
       }
 
       bool isRX()
@@ -92,6 +132,18 @@ namespace elena_lang
    class PPCHelper
    {
    public:
+      static short getHiAdjusted(disp_t n)
+      {
+         // HOTFIX : if the DWORD LO is over 0x7FFF - adjust DWORD HI (by adding 1) to be properly combined in the following code:
+         //     addis   r16, r16, __xdisp32hi_1
+         //     addi    r16, r16, __xdisp32lo_1
+         short lo = n & 0xFFFF;
+         if (lo < 0)
+            n += 0x10000;
+
+         return (short)(n >> 16);
+      }
+
       static unsigned int makeDSCommand(unsigned int opcode, PPCOperandType rs, PPCOperandType ra, int d)
       {
          return (opcode << 26) | (((unsigned int)rs & 0x1F) << 21) | (((unsigned int)ra & 0x1F) << 16) | ((unsigned int)d & 0xFFFC);
@@ -114,10 +166,23 @@ namespace elena_lang
             | (((unsigned int)rb & 0x1F) << 11) | (((unsigned int)bc & 0x1F) << 6) | (xo << 1) | 0;
       }
 
+      static unsigned int makeACommand(unsigned int opcode, PPCOperandType rt, PPCOperandType ra, PPCOperandType rb,
+         int xo)
+      {
+         return (opcode << 26) | (((unsigned int)rt & 0x1F) << 21) | (((unsigned int)ra & 0x1F) << 16)
+            | (((unsigned int)rb & 0x1F) << 6) | (xo << 1) | 0;
+      }
+
       static unsigned int makeXCommand(unsigned int opcode, PPCOperandType rt, PPCOperandType ra, PPCOperandType rb,
          int xo, int rc)
       {
          return (opcode << 26) | (((unsigned int)rt & 0x1F) << 21) | (((unsigned int)ra & 0x1F) << 16)
+            | (((unsigned int)rb & 0x1F) << 11) | (xo << 1) | rc;
+      }
+      static unsigned int makeXCommand(unsigned int opcode, PPCOperandType rt, PPCOperandType rb,
+         int xo, int rc)
+      {
+         return (opcode << 26) | (((unsigned int)rt & 0x1F) << 21)
             | (((unsigned int)rb & 0x1F) << 11) | (xo << 1) | rc;
       }
 
@@ -173,6 +238,18 @@ namespace elena_lang
    // --- PPCLabelHelper ---
    struct PPCLabelHelper : LabelHelper
    {
+      static short getHiAdjusted(disp_t n)
+      {
+         // HOTFIX : if the DWORD LO is over 0x7FFF - adjust DWORD HI (by adding 1) to be properly combined in the following code:
+         //     addis   r16, r16, __xdisp32hi_1
+         //     addi    r16, r16, __xdisp32lo_1
+         short lo = n & 0xFFFF;
+         if (lo < 0)
+            n += 0x10000;
+
+         return (short)(n >> 16);
+      }
+
       static void writeBxx(int offset, int aa, int lk, MemoryWriter& writer)
       {
          writer.writeDWord(PPCHelper::makeICommand(18, offset >> 2, aa, lk));
@@ -183,7 +260,7 @@ namespace elena_lang
          writer.writeDWord(PPCHelper::makeBCommand(16, bo, bi, bd >> 2, aa, lk));
       }
 
-      bool fixLabel(pos_t label, MemoryWriter& writer) override
+      bool fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) override
       {
          for (auto it = jumps.getIt(label); !it.eof(); ++it) {
             if (it.key() == label) {
@@ -197,6 +274,13 @@ namespace elena_lang
                PPCHelper::fixBCommand(opcode, offset);
             }
          }
+
+         for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
+            auto info = *a_it;
+
+            rh->resolveLabel(writer, info.mask, info.position);
+         }
+
          return true;
       }
 
@@ -246,6 +330,38 @@ namespace elena_lang
             throw InternalError(-1);
 
          writeBCxx(4, 2, offset, 0, 0, writer);
+      }
+
+      void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBCxx(12, 0, 0, 0, 0, writer);
+      }
+
+      void writeJltBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0xFFFF)
+            throw InternalError(-1);
+
+         writeBCxx(12, 0, offset, 0, 0, writer);
+      }
+
+      void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBCxx(4, 0, 0, 0, 0, writer);
+      }
+
+      void writeJgeBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0xFFFF)
+            throw InternalError(-1);
+
+         writeBCxx(4, 0, offset, 0, 0, writer);
       }
    };
 

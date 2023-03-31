@@ -1,10 +1,12 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TextView Control Body File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wintextview.h"
+
+#include <tchar.h>
 
 using namespace elena_lang;
 
@@ -41,13 +43,14 @@ void ViewStyles::release()
 // --- TextViewWindow ---
 
 TextViewWindow :: TextViewWindow(TextViewModelBase* model, TextViewControllerBase* controller, ViewStyles* styles)
-   : WindowBase(nullptr)
+   : WindowBase(nullptr, 50, 50)
 {
    _model = model;
    _styles = styles;
    _controller = controller;
    _needToResize = _cached = false;
    _caretVisible = _caretValid = false;
+   _caretChanged = false;
    _mouseCaptured = false;
    _caret_x = 0;
 
@@ -106,15 +109,15 @@ void TextViewWindow :: resizeDocument()
       size.y = client.height() / _styles->getLineHeight();
 
       _needToResize = false;
-      _model->resize(size);
+
+      _controller->resizeModel(_model, size);
    }
    _cached = false;
-
 }
 
 void TextViewWindow :: mouseToScreen(Point point, int& col, int& row, bool& margin)
 {
-   Rectangle rect = getRectangle();
+   Rectangle rect = getClientRectangle();
    auto defaultStyle = _styles->getStyle(STYLE_DEFAULT);
    int marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
    int offset = defaultStyle->avgCharWidth / 2;
@@ -173,15 +176,12 @@ int TextViewWindow :: getVScrollerPosition()
    return _model->DocView()->getFrame().y;
 }
 
-void TextViewWindow :: update(bool resized)
+void TextViewWindow :: update(bool maxColChanged, bool resized)
 {
    if (_model->isAssigned()) {
-      auto docView = _model->DocView();
-
       updateVScroller(resized);
-      if (docView->status.maxColChanged) {
+      if (maxColChanged) {
          updateHScroller(resized);
-         docView->status.maxColChanged = false;
       }
       else updateHScroller(resized);
    }
@@ -249,7 +249,6 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
    int marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
 
    if (!_cached) {
-      
       if (!defaultStyle->valid) {
          _styles->validate(&canvas);
 
@@ -257,6 +256,9 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
          marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
 
          _needToResize = true;
+         if (_caretValid) {
+            createCaret(_styles->getLineHeight(), /*_view->docView->status.overwriteMode ? _view->styles.getStyle(STYLE_DEFAULT)->avgCharWidth : */1);
+         }
       }
       // if document size yet to be defined
       if (_needToResize)
@@ -306,7 +308,11 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
 
          width = canvas.TextWidth(style, buffer, length);
 
-         /*else */canvas.drawTextClipped(Rectangle(x, y, width + 1, lineHeight + 1), x, y,
+         if (length == 0 && reader.style == STYLE_SELECTION) {
+            canvas.drawTextClipped(Rectangle(x, y, style->avgCharWidth + 1, lineHeight + 1), x, y,
+               _T(" "), 1, style);
+         }
+         else canvas.drawTextClipped(Rectangle(x, y, width + 1, lineHeight + 1), x, y,
             buffer, length, style);
 
          x += width;
@@ -317,7 +323,7 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
    }
 
    if (caret.x >= 0 && caret.y >= 0) {
-      if (_caret_x == 0 || docView->status.caretChanged) {
+      if (_caret_x == 0 || _caretChanged) {
          _caret_x = 0;
 
          text_c buffer[255];
@@ -332,7 +338,7 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
             writer.reset();
          } while (reader.readCurrentLine(writer, 0xFF));
 
-         docView->status.caretChanged = false;
+         _caretChanged = false;
       }
 
       locateCaret(clientRect.topLeft.x + marginWidth + _caret_x,
@@ -350,7 +356,7 @@ void TextViewWindow :: onPaint()
          hideCaret();
 
       PAINTSTRUCT ps;
-      Rectangle   clientRect = getRectangle();
+      Rectangle   clientRect = getClientRectangle();
 
       ::BeginPaint(_handle, &ps);
 
@@ -378,7 +384,7 @@ void TextViewWindow :: onResize()
    _zbuffer.release();
 
    resizeDocument();
-   update(true);
+   update(true, true);
 }
 
 void TextViewWindow :: onSetFocus()
@@ -423,14 +429,33 @@ void TextViewWindow :: onButtonDown(Point point, bool kbShift)
    bool margin = false;
    mouseToScreen(point, col, row, margin);
 
-   _model->DocView()->moveToFrame(col, row, kbShift);
+   _controller->moveToFrame(_model, col, row, kbShift);
 
    captureMouse();
+}
+
+void TextViewWindow :: onDoubleClick(NMHDR*)
+{
+   _controller->selectWord(_model);
 }
 
 void TextViewWindow :: onButtonUp()
 {
    releaseMouse();
+}
+
+void TextViewWindow :: onMouseMove(short wheelDelta, bool kbCtrl)
+{
+   DocumentChangeStatus status = {};
+   auto docView = _model->DocView();
+
+   int offset = (wheelDelta > 0) ? -1 : 1;
+   if (kbCtrl) {
+      offset *= docView->getSize().y;
+   }
+   docView->vscroll(status, offset);
+
+   onDocumentUpdate(status);
 }
 
 bool TextViewWindow :: onKeyDown(int keyCode, bool kbShift, bool kbCtrl)
@@ -448,16 +473,21 @@ bool TextViewWindow :: onKeyDown(int keyCode, bool kbShift, bool kbCtrl)
       case VK_DOWN:
          _controller->moveCaretDown(_model, kbShift, kbCtrl);
          break;
-      case VK_DELETE:
-      {
-         auto docView = _model->DocView();
-         if (docView->status.readOnly)
-            return false;
-
-         docView->eraseChar(false);
-         onDocumentUpdate();
+      case VK_HOME:
+         _controller->moveCaretHome(_model, kbShift, kbCtrl);
          break;
-      }
+      case VK_END:
+         _controller->moveCaretEnd(_model, kbShift, kbCtrl);
+         break;
+      case VK_PRIOR:
+         _controller->movePageUp(_model, kbShift);
+         break;
+      case VK_NEXT:
+         _controller->movePageDown(_model, kbShift);
+         break;
+      case VK_DELETE:
+         _controller->eraseChar(_model, false);
+         break;
       default:
          return false;
    }
@@ -468,28 +498,23 @@ bool TextViewWindow :: onKeyDown(int keyCode, bool kbShift, bool kbCtrl)
 bool TextViewWindow :: onKeyPressed(wchar_t ch)
 {
    if (_model->isAssigned()) {
-      auto docView = _model->DocView();
-      if (docView->status.readOnly)
-         return false;
-
       switch (ch) {
          case 0x0D:
-            docView->insertNewLine();
+            if (!_controller->insertNewLine(_model))
+               return false;
             break;
          case 0x08:
-            docView->eraseChar(true);
+            if(!_controller->eraseChar(_model, true))
+               return false;
             break;
          case 0x09:
             _controller->indent(_model);
             break;
          default:
-            if (ch >= 0x20) {
-               docView->insertChar(ch);
-            }
-            else return false;
+            if (!_controller->insertChar(_model, ch))
+               return false;
       }
 
-      onDocumentUpdate();
       return true;
    }
    else return false;
@@ -512,6 +537,12 @@ LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
       case WM_LBUTTONUP:
          onButtonUp();
          return 0;
+      case WM_LBUTTONDBLCLK:
+         onDoubleClick(nullptr);
+         return 0;
+      case WM_MOUSEWHEEL:
+         onMouseMove(HIWORD(wParam), (wParam & MK_CONTROL) != 0);
+         return 0;
       case WM_KEYDOWN:
          if (onKeyDown((int)wParam, isKeyDown(VK_SHIFT), isKeyDown(VK_CONTROL))) {
             return true;
@@ -531,16 +562,15 @@ LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
    return WindowBase::proceed(message, wParam, lParam);
 }
 
-void TextViewWindow :: onDocumentUpdate()
+void TextViewWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
 {
-   auto docView = _model->DocView();
-
-   if (docView && docView->status.isViewChanged()) {
+   if (changeStatus.isViewChanged()) {
       _cached = false;
       _caret_x = 0;
    }
+   _caretChanged = changeStatus.caretChanged;
 
-   update();
+   update(changeStatus.maxColChanged);
 }
 
 void TextViewWindow :: onScroll(int bar, int type)
@@ -575,17 +605,28 @@ void TextViewWindow :: onScroll(int bar, int type)
          return;
    }
 
+   DocumentChangeStatus status = {};
    auto docView = _model->DocView();
    if (bar == SB_VERT) {
-      docView->vscroll(offset);
+      docView->vscroll(status, offset);
    }
-   else docView->hscroll(offset);
+   else docView->hscroll(status, offset);
 
-   onDocumentUpdate();
+   onDocumentUpdate(status);
 
 }
 
 void TextViewWindow :: refresh()
 {
-   onDocumentUpdate();
+   //_cached = false;
+   //_caret_x = 0;
+
+   ::InvalidateRect(_handle, nullptr, true);
+}
+
+void TextViewWindow :: hide()
+{
+   ControlBase::hide();
+
+   _cached = false;
 }

@@ -11,8 +11,8 @@ ELENA byte codes (or ecodes)
 
    index  - data accumulator 
 
-   x86    : fp - ebp, sp - esp, acc - ebx, index - eax, sp[0] - esi, sp[1] - edx
-   x86_64 : fp - rbp, sp - rsp, acc - rbx, index - rax, sp[0] - r10, sp[1] - rdx, r15 - presaved
+   x86    : fp - ebp, sp - esp, acc - ebx, index - edx, sp[0] - esi
+   x86_64 : fp - rbp, sp - rsp, acc - rbx, index - rdx, sp[0] - r10, sp[1] - r11, r15 - presaved
    arm64  : fp - x29, sp - x31, index - x9, acc - x10, sp[0] - x0, sp[1] - x1
    ppc64  : fp - r31, sp - r1, index - r14, acc - r15, sp[0] - r3, sp[1] - r4
 
@@ -26,7 +26,7 @@ ELENA byte codes (or ecodes)
    x86    :                edx, ebx, [esi]
    x86_64 : (r15)          rdx, rbx, [r10, r11]
    arm64  : (x29, x31),    x9, x10,  [x0, x1]
-   ppc64  : (r13, r1, r2), r14, r15, [r3, r4]
+   ppc64  : (r13, r1, r2), r14, r15, [r3, r4], r13 - preserved
 
  Frame operations:
  -----------------              
@@ -52,13 +52,41 @@ ELENA byte codes (or ecodes)
  --------------------
    andn n                   - index := index & n
 
+   assign                   - acc[index] := sp[0]
+
+   assigni i                - acc[i] := sp[0];
+
+   bload                    - index := byte([acc])
+
    get i                    - acc[i] => acc
+
+   lload                    - long:index := long:[acc] 
 
    load                     - index := [acc] 
 
+   loadv                    - index.action := [acc].action
+
+   loads                    - index := [acc].action
+
+   lsave                    - long:[acc] := index
+
+   fsave                    - double:[acc] := index
+
    mov env                  - %SYSTEM_ENV => index 
+                              NOTE: for 64 bit, to save it correctly lsave and lsavedp should be used
+
+   mov frm                  - %CURRENT_FRAME => index;
+                              NOTE: for 64 bit, to save it correctly lsave and lsavedp should be used
 
    mov mssg:m               - index := m
+
+   mov arg:n                - index.{argCount}{flags} := n
+
+   mov n:n                  - index := n
+
+   neg                      - index := -index; 
+
+   not                      - index := ~index; 
 
    peek r                   - acc <= [r] 
 
@@ -66,16 +94,27 @@ ELENA byte codes (or ecodes)
 
    seleq r1, r2             - acc <= COMP.EQ ? r1 : r2
 
-   sellt r1, r2             - acc <= COMP.EQ ? r1 : r2
+   sellt r1, r2             - acc <= COMP.LE ? r1 : r2
 
    set {prefix}:r           - r => acc
 
    set dp:i                 - dp[i] => acc
 
+   set fp:i                 - fp[i] => acc
+
    store r                  - acc => [r]
+
+   wload                    - index := word([acc])
+
+   xassign                  - acc[index] := sp[0];
+                              direct operation
 
    xassign i                - acc[i] := sp[0];
                               direct operation
+
+   xget                     - acc[index] => acc
+
+   xassignsp                - sp => acc
 
 
  Call operations:
@@ -86,20 +125,27 @@ ELENA byte codes (or ecodes)
    call symbol:r            - calls the procedure;
                               acc contains the result
 
+   call mssg:m, r           - calls directly the method resolved by JIT by r and m
+                              acc contains the result 
+
    call vt:i                - call acc::VMT[i] method;
                               acc contains the result
 
-   call mssg:m, r           - calls directly the method resolved by JIT by r and m
+   jump mssg:m, r           - jumps directly the method resolved by JIT by r and m
                               acc contains the result 
+
+   jump vt:i                - jump to acc::VMT[i] method;
+                              acc contains the result
 
    vcall mssg:m, r          - calls via table the method resolved by JIT by r and m
                               acc contains the result 
  
-   jump mssg:m, r           - jumps directly the method resolved by JIT by r and m
-                              acc contains the result 
-
    vjump mssg:m, r          - jumps via table the method resolved by JIT by r and m
                               acc contains the result 
+
+   xcall                    - calls the procedure in acc;
+ 
+   xjump                    - jumps to the procedure in acc;
  
 
  Stack operations:
@@ -107,14 +153,31 @@ ELENA byte codes (or ecodes)
    alloc i                  - sp += i ; reserve and fill with zeros; 
                               new sp value is aligned to 2 in x86-64 mode
 
+   convl                    - index => long:index
+
+   dalloc                   - sp += index ; reserve and fill with zeros; 
+                              new sp value is aligned to 2 in x86-64 mode
+
    free i                   - sp -= i ; release the stack; 
                               new sp value is aligned to 2 in x86-64 mode
 
+   lload dp:disp            - long:index := dp[disp]
+
    load fp:i                - index := fp[i]
+
+   load dp:disp             - index := dp[disp]
+
+   lsave dp:disp            - dp[disp]  := long:index
+
+   lsave sp:disp            - sp[disp]  := long:index
 
    mov sp:i1, fp:i2,        - sp[i1] := fp[i2]
 
-   nsave dp:disp, i         - sp[disp] := i
+   nconvf dp:disp           - double:acc >> int:dp[disp]
+
+   nadd dp:disp, n          - [dp[disp]] += n;
+ 
+   nsave dp:disp, i         - dp[disp] := i
 
    peek fp:i                - acc := fp[i]
 
@@ -128,7 +191,14 @@ ELENA byte codes (or ecodes)
 
    store sp:i               - sp[i] := acc
 
+   swap sp:i                - acc <=> sp[i]
+
+   xrefresh sp:i            - cached_sp[i] := sp[i];
+
    xflush sp:i              - sp[i] := cached_sp[i];
+
+   xloadarg sp:i            - load the argument passed from the external program;
+                              OS dependant; the size of arguments can be 4 / 8
 
    xmov sp:i1, sp:i2        - sp[i1] := sp[i2]
 
@@ -136,26 +206,46 @@ ELENA byte codes (or ecodes)
 
    xstore sp:i, {prefix:}r  - sp[i] := r
 
+   xswap sp:i               - sp[0] <=> sp[i]
+
 
  Object operations:
  ------------------
+   bread                    - byte:sp[0][index*n] >> int:acc, 
+
    class                    - acc := acc.class
+
+   coalesce                 - acc := acc ?? sp[0]   (if acc is nil, get sp[0])
 
    copy n                   - sp[0] >> acc, n bytes
 
-   copy dp:disp, n          - dp[disp] => temp;
-                              sp[0] >> temp, n bytes  
+   copy dp:disp, n          - sp[0] >> temp, n bytes  
+                              temp >> dp[disp];
+                              
+   create {prefix}:r        - create the object with the specified size;
+                              sp[0] >> temp;
+                              out: acc contains the class instance, index - undefined
 
    create n {prefix}:r      - create the object with the specified size;
                               sp[0] >> temp;
                               size * temp;
                               out: acc contains the class instance, index - undefined
 
+   dcopy n                  - sp[0] >> acc, n*index bytes
+
+   dcopy dp:disp, n         - sp[0] >> temp, n*index bytes  
+                              temp >> dp[disp];
+                              
    dispatch m, r            - search in message table r the message in index and provided parameter list; 
                               if found jumps to it;
 
+   dtrans                   - sp[0] >> acc, index ptrs
+
    len                      - index := acc.length;
                               returns the object length
+
+   mlen                     - index := index.argCount;
+                              returns the argument counter
 
    new i, {prefix}:r        - create the object with the specified
                               number of fields;
@@ -173,10 +263,30 @@ ELENA byte codes (or ecodes)
    redirect                 - search acc::VMT for the message in index;
                               if found jumps to it; binary search is used ; index, acc presaved
 
+   wread                    - word:sp[0][index*n] >> int:acc, 
+
    write n                  - sp[0][index*n] << acc, n bytes
+
+   xcopy disp, n            - sp[0] >> temp, n bytes;
+                              temp >> acc[disp];
 
    xdispatch m, r           - search in message table r the message in index and provided parameter list; 
                               if found jumps directly to it;
+
+   xnewn n {prefix}:r       - "create" the stack allocated object with the specified
+                              size; in : acc contains the reference to the stack space
+                              out: acc contains the class instance, index - undefined
+
+   xcreate {prefix}:r       - create the object with the specified size in PERM;
+                              sp[0] >> temp;
+                              out: acc contains the class instance, index - undefined
+
+   xredirect m              - search acc::VMT for the {m.action + index.argCount} in index;
+                              if found jumps to it; binary search is used ; index, acc presaved; 
+                              index is set the original valuze
+
+   xwrite offs, n           - acc[disp] >> temp, n bytes;
+                              temp >> sp[0];
 
 
  Jump operations:
@@ -187,13 +297,42 @@ ELENA byte codes (or ecodes)
  
    jne  label               - jump if COMP.EQ == 0
  
+   jlt  label               - jump if COMP.LT == 1
+ 
+   jge  label               - jump if COMP.LT == 0
+
 
  Arithmeric operations:
  ----------------------
+   addn n                   - index := index + n
+ 
    andn n                   - index := index & n
  
+   fadd dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] += temp;
+                              n = 8 
+ 
+   fdiv dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] /= temp;
+                              n = 8  
+
+   fmul dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] *= temp;
+                              n = 8  
+
+   fsub dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] -= temp;
+                              n = 8  
+
+   ftrunc dp:disp           - double:tmp << sp[0];
+                              double:dp[disp] := trunc(tmp)
+
    iadd dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] += temp;
+                              n = 1,2,4,8 
+ 
+   iand dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] & temp;
                               n = 1,2,4,8 
  
    idiv dp:disp, n          - temp : n << sp[0];
@@ -204,19 +343,60 @@ ELENA byte codes (or ecodes)
                               [dp[disp]] *= temp;
                               n = 1,2,4,8  
 
+   inot dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] ^ temp;
+                              n = 1,2,4,8 
+ 
+   ior dp:disp, n           - temp : n << sp[0];
+                              [dp[disp]] | temp;
+                              n = 1,2,4,8 
+ 
+   ishl dp:disp, n          - [dp[disp]] << index;
+                              n = 1,2,4,8  
+
+   ishr dp:disp, n          - [dp[disp]] >> index
+                              n = 1,2,4,8  
 
    isub dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] -= temp;
                               n = 1,2,4,8  
 
+   ixor dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] ^ temp;
+                              n = 1,2,4,8 
+
+   muln n                   - index := index * n
+ 
+   orn n                    - index := index | n
+ 
+   subn n                   - index := index - n
+
 
  Comparison operations:
  ----------------------
-   cmpr r                   - COMP.EQ := (acc == r);
+   tstflg n                 - temp := acc::VMT::flag & n 
+                              COMP.EQ := (temp == 0);
+
+   tstn n                   - temp := index & n 
+                              COMP.EQ := (temp == 0);
+
+   tstm m                   - search for m in acc:VMT;
+                              COMP.EQ := found
+
+   cmp  fp:i                - COMP.EQ := (acc == fp[i]);
 
    cmp  sp:i                - COMP.EQ := (acc == sp[i]);
 
-   cmp  fp:i                - COMP.EQ := (acc == fp[i]);
+   cmpn n                   - COMP.EQ := (index == n);
+                              COMP.LT := (index < n);
+
+   cmpr r                   - COMP.EQ := (acc == r);
+
+   fcmp n                   - temp1 : n << acc;
+                              temp2 : n << sp[0];
+                              COMP.EQ := (temp2 == temp1);
+                              COMP.LT := (temp2 < temp1);
+                              n = 8 
 
    icmp n                   - temp1 : n << acc;
                               temp2 : n << sp[0];
@@ -224,8 +404,28 @@ ELENA byte codes (or ecodes)
                               COMP.LT := (temp2 < temp1);
                               n = 1,2,4,8 
 
-   icmp n                   - temp : n << acc;
-                              temp2 : n << sp[0];
-                              COMP.EQ := (temp2 == temp1);
-                              COMP.EQ := (temp2 < temp1);
-                              n = 1,2,4,8 
+   system n                 - invokes system command
+                              n = 1 -> forced minor collect;
+                              n = 2 -> forced major collect
+                              n = 3 -> assign TLS entry to the THREAD_TABLE at index
+                              n = 4 -> prepare the program (should be the first command) 
+
+   xcmp                     - temp << acc[0];
+                              COMP.EQ := (index == temp);
+                              COMP.LT := (index < temp);
+
+   xcmp  dp:i               - COMP.EQ := (index == dp[i]);
+
+   xlcmp                    - long:temp << long:acc[0];
+                              COMP.EQ := (long:index == long:temp);
+                              COMP.LT := (long:index < long:temp);
+
+
+ Misc operations:
+ ---------------- 
+   hook  dp:i, label        - set a handler to the specified label
+
+   throw                    - raise an exception (acc contains the exception object)
+
+   xhook dp:i, r            - set a handler to the specified address
+

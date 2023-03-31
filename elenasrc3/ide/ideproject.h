@@ -7,10 +7,22 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
+#include "elena.h"
 #include "idecommon.h"
 
 namespace elena_lang
 {
+   constexpr auto ROOT_NODE            = "configuration";
+   constexpr auto MAXIMIZED_SETTINGS   = "configuration/settings/maximized";
+   constexpr auto FONTSIZE_SETTINGS    = "configuration/settings/font_size";
+   constexpr auto SCHEME_SETTINGS      = "configuration/settings/scheme";
+
+   constexpr auto RECENTFILES_SETTINGS = "configuration/recent_files/*";
+   constexpr auto RECENTFILE_SETTINGS  = "configuration/recent_files/path";
+
+   // --- Map types ---
+   typedef List<path_t, freepath> ProjectPaths;
+
    // --- ProjectModel ---
    struct ProjectModel
    {
@@ -23,14 +35,30 @@ namespace elena_lang
          PathString libraryRoot;
          PathString lastPath;
          PathString librarySourceRoot;
+         PathString appPath;
+         PathString compilerPath;
+         PathString configPath;
       } paths;
 
-      bool       autoRecompile;
-      PathString projectPath;
-      PathString outputPath;
+      bool              singleSourceProject;
+      bool              autoRecompile;
+      bool              empty;
+      bool              started;
+      PathString        name;
+      PathString        projectFile;
+      PathString        projectPath;
+      PathString        outputPath;
+
+      IdentifierString  package;
+      IdentifierString  target;
+
+      ProjectPaths      sources;
+
+      ProjectPaths      lastOpenFiles;
 
       ustr_t getTarget();
       ustr_t getArguments();
+
       ustr_t getPackage();
 
       path_t getOutputPath();

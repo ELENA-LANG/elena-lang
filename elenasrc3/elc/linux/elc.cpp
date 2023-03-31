@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the Linux command-line compiler
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -54,6 +54,7 @@ constexpr int MINIMAL_ARG_LIST            = 2;
 
 constexpr auto DEFAULT_STACKALIGNMENT     = 2;
 constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
+constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 32;
 
 typedef ElfAmd64Linker           LinuxLinker;
 typedef ElfAmd64ImageFormatter   LinuxImageFormatter;
@@ -66,7 +67,7 @@ constexpr int MINIMAL_ARG_LIST            = 1;
 
 constexpr auto DEFAULT_STACKALIGNMENT     = 1;
 constexpr auto DEFAULT_RAW_STACKALIGNMENT = 4;
-
+constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 16;
 
 typedef ElfI386Linker            LinuxLinker;
 typedef ElfI386ImageFormatter    LinuxImageFormatter;
@@ -79,7 +80,7 @@ constexpr int MINIMAL_ARG_LIST            = 2;
 
 constexpr auto DEFAULT_STACKALIGNMENT     = 2;
 constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
-
+constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 32;
 
 typedef ElfPPC64leLinker         LinuxLinker;
 typedef ElfPPC64leImageFormatter LinuxImageFormatter;
@@ -92,6 +93,7 @@ constexpr int MINIMAL_ARG_LIST            = 2;
 
 constexpr auto DEFAULT_STACKALIGNMENT     = 2;
 constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
+constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 32;
 
 typedef ElfARM64Linker         LinuxLinker;
 typedef ElfARM64ImageFormatter LinuxImageFormatter;
@@ -220,7 +222,8 @@ int main(int argc, char* argv[])
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       Project          project(*dataPath, CURRENT_PLATFORM, &Presenter::getInstance());
       LinuxLinker      linker(&errorProcessor, &LinuxImageFormatter::getInstance(&project));
-      CompilingProcess process(dataPath, &Presenter::getInstance(), &errorProcessor,
+      CompilingProcess process(dataPath, "<prolog>", "<epilog>",
+         &Presenter::getInstance(), &errorProcessor,
          VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 
       process.greeting();
@@ -241,8 +244,48 @@ int main(int argc, char* argv[])
                case 'm':
                   project.addBoolSetting(ProjectOption::MappingOutputMode, true);
                   break;
+               case 'o':
+                  if (argv[i][2] == '0') {
+                     project.addIntSetting(ProjectOption::OptimizationMode, optNone);
+                  }
+                  else if (argv[i][2] == '1') {
+                     project.addIntSetting(ProjectOption::OptimizationMode, optLow);
+                  }
+                  else if (argv[i][2] == '2') {
+                     project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
+                  }
+                  break;
                case 'r':
                   cleanMode = true;
+                  break;
+               case 't':
+               {
+                  IdentifierString configName(argv[i] + 2);
+
+                  project.loadConfigByName(*dataPath, *configName, true);
+                  break;
+               }
+               case 'p':
+                  project.setBasePath(argv[i] + 2);
+                  break;
+               case 'w':
+                  if (argv[i][2] == '0') {
+                     errorProcessor.setWarningLevel(WarningLevel::Level0);
+                  }
+                  else if (argv[i][2] == '1') {
+                     errorProcessor.setWarningLevel(WarningLevel::Level1);
+                  }
+                  else if (argv[i][2] == '2') {
+                     errorProcessor.setWarningLevel(WarningLevel::Level2);
+                  }
+                  else if (argv[i][2] == '3') {
+                     errorProcessor.setWarningLevel(WarningLevel::Level3);
+                  }
+                  break;
+               case 'x':
+                  if (argv[i][2] == 'p') {
+                     project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');
+                  }
                   break;
                default:
                   break;
@@ -270,6 +313,7 @@ int main(int argc, char* argv[])
          return process.build(project, linker,
             DEFAULT_STACKALIGNMENT,
             DEFAULT_RAW_STACKALIGNMENT,
+            DEFAULT_EHTABLE_ENTRY_SIZE,
             MINIMAL_ARG_LIST);
       }
    }

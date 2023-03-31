@@ -16,17 +16,27 @@ namespace elena_lang
    // --- ELENA DFA Constants ---
    constexpr char dfaMaxChar        = 127;
 
-   constexpr char dfaStart          = 'a';
-   constexpr char dfaIdentifier     = 'c';
-   constexpr char dfaOperator       = 'd';
-   constexpr char dfaInteger        = 'e';
-   constexpr char dfaQuote          = 'g';
-   constexpr char dfaHexInteger     = 'j';
-   constexpr char dfaReference      = 'm';
-   constexpr char dfaDblOperator    = 'q';
-   constexpr char dfaCharacter      = 's';
-   constexpr char dfaQuoteCode      = 'u';
-   constexpr char dfaSignStart      = 'w';
+   constexpr char dfaStart          = 'A';
+   constexpr char dfaIdentifier     = 'C';
+   constexpr char dfaOperator       = 'D';
+   constexpr char dfaInteger        = 'E';
+   constexpr char dfaQuote          = 'G';
+   constexpr char dfaHexInteger     = 'J';
+   constexpr char dfaReference      = 'M';
+   constexpr char dfaAltOperator    = 'Q';
+   constexpr char dfaCharacter      = 'S';
+   constexpr char dfaQuoteCode      = 'U';
+   constexpr char dfaSignStart      = 'W';
+   constexpr char dfaWideQuote      = 'X';
+   constexpr char dfaGrOperator     = 'Y';
+   constexpr char dfaCustomNumber   = 'J';
+   constexpr char dfaDotStart       = 'Z';
+   constexpr char dfaGenericReal    = '[';
+   constexpr char dfaReal           = ']';
+   constexpr char dfaRealPostfix    = '_';
+
+   constexpr char dfaPrivate        = 'N';
+   constexpr char dfaLong           = '?';
 
    constexpr char dfaError          = '?';
    constexpr char dfaEOF            = '.';
@@ -34,7 +44,6 @@ namespace elena_lang
    constexpr char dfaMinusLookahead = '-';  // indicates that if minus is preceeded by the operator it may be part of the digit
    constexpr char dfaDotLookahead   = '$';
    constexpr char dfaBack           = '!';
-
 
    // --- LineInfo ---
    struct LineInfo
@@ -50,6 +59,11 @@ namespace elena_lang
       LineInfo()
       {
          position = 0;
+         column = row = 0;
+      }
+      LineInfo(pos_t defPosition)
+      {
+         position = defPosition;
          column = row = 0;
       }
    };
@@ -93,6 +107,19 @@ namespace elena_lang
       {
          this->lineInfo = lineInfo;
          this->message = message;
+      }
+   };
+
+   class ProcedureError : public ExceptionBase
+   {
+   public:
+      ustr_t           message;
+      IdentifierString name;
+      IdentifierString arg;
+
+      ProcedureError(ustr_t message, ustr_t name, ustr_t arg)
+         : message(message), name(name), arg(arg)
+      {
       }
    };
 
@@ -163,7 +190,7 @@ namespace elena_lang
    public:
       void step(T ch, char& state, char& terminateState)
       {
-         char c = ch > maxChar ? maxChar : (char)ch;
+         char c = (unsigned char)ch > maxChar ? maxChar : (char)ch;
 
          terminateState = _dfa[state - finalState][(unsigned char)c];
 
@@ -209,6 +236,17 @@ namespace elena_lang
 
          previousState = state;
          return terminateState;
+      }
+
+      void reset()
+      {
+         _reader->reset();
+         _lineInfo = {};
+
+         if (!cacheLine()) {
+            _position = 0;
+            _line[0] = 0;
+         }
       }
 
       TextParser(const char** dfa, int tabSize, TextReader<T>* reader)

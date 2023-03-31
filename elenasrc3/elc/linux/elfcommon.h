@@ -12,7 +12,6 @@ namespace elena_lang
 {
    constexpr auto SECTION_ALIGNMENT  = 0x1000;
    constexpr auto FILE_ALIGNMENT     = 0x0010;
-   constexpr auto IMAGE_BASE         = 0x400000;
 
    constexpr auto elfDynamicOffset   = 1;
    constexpr auto elfDynamicVAddress = 2;

@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image loader class implementations
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -17,7 +17,12 @@ addr_t ReferenceMapper :: resolveExternal(ustr_t referenceName)
 {
    addr_t address = _exportReferences.get(referenceName);
    if (address == INVALID_ADDR) {
-      address = (_exportReferences.count() + 1) | mskImportRef;
+      if (_externalMapper) {
+         address = _externalMapper->resolveExternal(referenceName);
+
+         assert(address != INVALID_ADDR);
+      }
+      else address = (_exportReferences.count() + 1) | mskImportRef;
 
       _exportReferences.add(referenceName, address);
    }
@@ -28,11 +33,23 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
 {
    switch (sectionMask) {
       case mskSymbolRef:
+      case mskProcedureRef:
          return _symbolReferences.get(referenceName);
-      case mskTypeListRef:
       case mskIntLiteralRef:
+         return _numberReferences.get(referenceName);
+      case mskLongLiteralRef:
+         return _longNumberReferences.get(referenceName);
+      case mskRealLiteralRef:
+         return _realNumberReferences.get(referenceName);
       case mskLiteralRef:
+         return _literalReferences.get(referenceName);
+      case mskWideLiteralRef:
+         return _wideReferences.get(referenceName);
+      case mskCharacterRef:
+         return _characterReferences.get(referenceName);
+      case mskTypeListRef:
       case mskConstArray:
+      case mskConstant:
          return _constReferences.get(referenceName);
       case mskExternalRef:
          return resolveExternal(referenceName);
@@ -41,6 +58,9 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
       case mskStaticRef:
       case mskStaticVariable:
          return _statReferences.get(referenceName);
+      case mskMssgLiteralRef:
+      case mskExtMssgLiteralRef:
+         return _mssgReferences.get(referenceName);
       default:
          return INVALID_ADDR;
    }
@@ -50,13 +70,35 @@ void ReferenceMapper :: mapReference(ustr_t referenceName, addr_t address, ref_t
 {
    switch (sectionMask) {
       case mskSymbolRef:
+      case mskProcedureRef:
          _symbolReferences.add(referenceName, address);
          break;
-      case mskTypeListRef:
       case mskLiteralRef:
+         _literalReferences.add(referenceName, address);
+         break;
+      case mskWideLiteralRef:
+         _wideReferences.add(referenceName, address);
+         break;
       case mskIntLiteralRef:
+         _numberReferences.add(referenceName, address);
+         break;
+      case mskLongLiteralRef:
+         _longNumberReferences.add(referenceName, address);
+         break;
+      case mskRealLiteralRef:
+         _realNumberReferences.add(referenceName, address);
+         break;
+      case mskCharacterRef:
+         _characterReferences.add(referenceName, address);
+         break;
+      case mskTypeListRef:
       case mskConstArray:
+      case mskConstant:
          _constReferences.add(referenceName, address);
+         break;
+      case mskMssgLiteralRef:
+      case mskExtMssgLiteralRef:
+         _mssgReferences.add(referenceName, address);
          break;
       case mskVMTRef:
          _dataReferences.add(referenceName, address);
@@ -79,6 +121,7 @@ ustr_t ReferenceMapper :: retrieveReference(addr_t address, ref_t sectionMask)
                return current == reference;
             });
       case mskSymbolRef:
+      case mskProcedureRef:
          return _symbolReferences.retrieve<addr_t>(nullptr, address, [](addr_t reference, ustr_t key, addr_t current)
             {
                return current == reference;
@@ -113,7 +156,7 @@ void ReferenceMapper :: mapAction(ustr_t actionName, ref_t actionRef, ref_t sign
    ref_t nextNameId = _actionNames.count() + 1;
    ref_t nameId = mapKey(_actionNames, actionName, nextNameId);
 
-   ref_t refId = mapKey(_actions, encodeAction64(nameId, signRef), actionRef);
+   mapKey(_actions, encodeAction64(nameId, signRef), actionRef);
 }
 
 ref_t ReferenceMapper :: resolveAction(ustr_t actionName, ref_t signRef)
@@ -149,42 +192,52 @@ void ReferenceMapper :: addLazyReference(LazyReferenceInfo info)
 
 // --- ImageProvider ---
 
-Section* ImageProvider :: getTextSection()
+MemoryBase* ImageProvider :: getTextSection()
 {
    return &_text;
 }
 
-Section* ImageProvider :: getMDataSection()
+MemoryBase* ImageProvider :: getADataSection()
+{
+   return &_adata;
+}
+
+MemoryBase* ImageProvider :: getMDataSection()
 {
    return &_mdata;
 }
 
-Section* ImageProvider :: getRDataSection()
+MemoryBase* ImageProvider :: getRDataSection()
 {
    return &_rdata;
 }
 
-Section* ImageProvider :: getImportSection()
+MemoryBase* ImageProvider :: getImportSection()
 {
    return &_import;
 }
 
-Section* ImageProvider :: getDataSection()
+MemoryBase* ImageProvider :: getDataSection()
 {
    return &_data;
 }
 
-Section* ImageProvider::getStatSection()
+MemoryBase* ImageProvider::getStatSection()
 {
    return &_stat;
 }
 
-Section* ImageProvider :: getMBDataSection()
+MemoryBase* ImageProvider :: getMBDataSection()
 {
    return &_mbdata;
 }
 
-Section* ImageProvider :: getTargetDebugSection()
+MemoryBase* ImageProvider :: getTargetDebugSection()
 {
    return &_debug;
+}
+
+MemoryBase* ImageProvider :: getTLSSection()
+{
+   return &_tls;
 }

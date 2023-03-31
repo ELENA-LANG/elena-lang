@@ -1,0 +1,31 @@
+<configuration>
+  <platform key="Linux_I386">
+     <project>
+        <executable>helloworld</executable>
+     </project>
+  </platform>
+  <platform key="Linux_AMD64">
+     <project>
+        <executable>helloworld64</executable>
+     </project>
+  </platform>
+  <platform key="Linux_PPC64le">
+     <project>
+        <executable>helloworld64</executable>
+     </project>
+  </platform>
+  <platform key="Linux_ARM64">
+     <project>
+        <executable>helloworld64</executable>
+     </project>
+  </platform>
+  <project>
+     <namespace>helloworld</namespace>
+     <template>console</template>
+  </project>
+  <files>
+     <module>
+        <include>helloworld.l</include>
+     </module>
+  </files>
+</configuration>

@@ -1,11 +1,48 @@
 // --- base inline templates ---
 
-inline external<routine>()
+public inline external(routine)
 {
    #include intern routine;
 }
 
-public inline __included<routine>()
+// --- class meta info ---
+
+public inline info(descr)
 {
-   #let routine[$name __decl] := __decl;
+   #new super string descriptions;
+
+   #let super descriptions[$name __decl] := descr;
+}
+
+// --- prop ---
+
+public field prop<name, T>
+{
+   get T name()
+   {
+      ^ name
+   }
+
+   set name(T value)
+   {
+      name := value
+   }
+}
+
+// --- rprop ---
+
+public field rprop<name, T>
+{
+   get T name()
+   {
+      ^ name
+   }
+}
+
+public interface<T>
+{
+   T cast() = new T
+   {
+      embeddable dispatch() => self;
+   };
 }

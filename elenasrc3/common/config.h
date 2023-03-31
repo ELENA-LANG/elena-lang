@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains Config File class header
-//                                              (C)2021, by Aleksey Rakov
+//                                            (C)2021-2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CONFIG_H
@@ -87,6 +87,7 @@ namespace elena_lang
       };
 
       bool select(Node& node, ustr_t xpath, Collection& collection);
+      bool select(ustr_t xpath, Collection& collection);
 
       Node selectNode(ustr_t xpath);
       Node selectNode(Node& node, ustr_t xpath);
@@ -106,7 +107,16 @@ namespace elena_lang
          return Node();
       }
 
+      void appendSetting(ustr_t xpath, ustr_t value);
+
       bool load(path_t path, FileEncoding encoding);
+      bool save(path_t path, FileEncoding encoding);
+
+      ConfigFile() = default;
+      ConfigFile(ustr_t rootTag)
+         : _tree(rootTag)
+      {
+      }
    };
 }
 

@@ -38,6 +38,13 @@ namespace elena_lang
          return value;
       }
 
+      static void maskDWord(MemoryBase* source, pos_t position, ref_t mask)
+      {
+         unsigned int value = getDWord(source, position);
+
+         writeDWord(source, position, value | mask);
+      }
+
       static bool writeQWord(MemoryBase* target, pos_t position, unsigned long long value)
       {
          return target->write(position, &value, sizeof(value));
@@ -49,9 +56,9 @@ namespace elena_lang
 
       virtual bool write(pos_t position, const void* s, pos_t length) = 0;
 
-      virtual void insert(pos_t position, const void* s, pos_t length) = 0;
+      virtual bool insert(pos_t position, const void* s, pos_t length) = 0;
 
-      virtual bool read(pos_t position, void* s, pos_t length) = 0;
+      virtual bool read(pos_t position, void* s, pos_t length) const = 0;
 
       virtual bool addReference(ref_t, pos_t)
       {
@@ -102,6 +109,10 @@ namespace elena_lang
       bool readRef(ref_t& retVal)
       {
          return read(&retVal, sizeof(ref_t));
+      }
+      bool readBool(bool& retVal)
+      {
+         return read(&retVal, sizeof(bool));
       }
       bool readRef64(ref64_t& retVal)
       {
@@ -156,6 +167,14 @@ namespace elena_lang
          }
          else return 0ull;
       }
+      bool getBool()
+      {
+         bool retVal = false;
+         if (readBool(retVal)) {
+            return retVal;
+         }
+         else return false;
+      }
 
       template<class T, size_t size> bool readString(String<T, size>& s)
       {
@@ -194,6 +213,8 @@ namespace elena_lang
 
       virtual pos_t position() const = 0;
 
+      virtual void reset() = 0;
+
       virtual bool read(char* s, pos_t length) = 0;
 
       template<class String> bool readAll(String& s, T* buffer, pos_t size = BLOCK_SIZE)
@@ -213,19 +234,35 @@ namespace elena_lang
    template<class T> class TextWriter
    {
    public:
+      virtual bool isOpen() const = 0;
+
       virtual pos_t position() const = 0;
 
       virtual bool write(const T* s, pos_t length) = 0;
+      virtual bool writeNewLine() = 0;
 
-      void writeText(const T* s)
+      bool writeChar(T ch)
       {
-         write(s, getlength_pos(s) + 1);
+         return write(&ch, 1);
+      }
+
+      bool writeText(const T* s)
+      {
+         return write(s, getlength_pos(s));
+      }
+
+      virtual bool writeTextLine(const T* s)
+      {
+         if (writeText(s)) {
+            return writeNewLine();
+         }
+         else return false;
       }
 
       bool fillText(const T* s, pos_t length, pos_t count)
       {
          while (count > 0) {
-            if (write(s, length))
+            if (!write(s, length))
                return false;
 
             count--;
@@ -281,6 +318,10 @@ namespace elena_lang
       {
          return write(&value, sizeof(pos_t));
       }
+      bool writeBool(bool value)
+      {
+         return write(&value, sizeof(bool));
+      }
       bool writeRef64(ref64_t value)
       {
          return write(&value, sizeof(ref64_t));
@@ -298,6 +339,15 @@ namespace elena_lang
             count--;
          }
          return true;
+      }
+
+      bool writeWideString(wstr_t s, pos_t length)
+      {
+         return write(s, length << 1);
+      }
+      bool writeWideString(wstr_t s)
+      {
+         return writeWideString(s, s.length_pos() + 1);
       }
 
       bool writeString(ustr_t s, pos_t length)
@@ -400,6 +450,7 @@ namespace elena_lang
          _memory = memory;
          _position = position;
       }
+      virtual ~MemoryReader() = default;
    };
 
    // --- MemoryWriter ---
@@ -521,6 +572,8 @@ namespace elena_lang
       pos_t _offset;
 
    public:
+      bool isOpen() const override { return _text != nullptr; }
+
       pos_t position() const override { return _offset; }
 
       bool seek(pos_t position)
@@ -528,6 +581,13 @@ namespace elena_lang
          _offset = position;
 
          return true;
+      }
+
+      bool writeNewLine() override
+      {
+         T ch = '\n';
+
+         return write(&ch, 1);
       }
 
       bool write(const T* s, pos_t length)
@@ -598,13 +658,20 @@ namespace elena_lang
          else return false;
       }
 
+      void reset() override
+      {
+         _offset = 0;
+      }
+
       StringTextReader(const T* string)
       {
          _text = string;
          _offset = 0;
-         _length = getlength(string);
+         _length = getlength_pos(string);
       }
    };
+
+   typedef StringTextReader<char> IdentifierTextReader;
 
 }
 

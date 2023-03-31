@@ -49,6 +49,7 @@ namespace elena_lang
 
    constexpr auto errMsgDupPublicMethod         = "%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n";
    constexpr auto errMsgEmptyStructure          = "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n";
+   constexpr auto errMsgInvalidType             = "%s(%d:%d): error 172: '%s' cannot be used in the declaration\n";
    constexpr auto errMsgDupInternalMethod       = "%s(%d:%d): error 173: An internal method with the same name '%s' is already declared\n";
    constexpr auto errMsgInvalidConstAttr        = "%s(%d:%d): error 174: A method '%s' cannot be compiled as a constant one\n";
    constexpr auto errMsgIllegalConstructorAbstract = "%s(%d:%d): error 177: An abstract class cannot have a public constructor\n";
@@ -78,6 +79,8 @@ namespace elena_lang
    constexpr auto wrnMsgUnknownModule        = "%s(%d:%d): warning 413: Unknown module '%s'\n";
    constexpr auto wrnMsgTypeInherited        = "%s(%d:%d): warning 420: Type attribute is inherited\n";
    constexpr auto wrnMsgDuplicateInclude     = "%s(%d:%d): warning 425: '%s': duplicate inclusion\n";
+   constexpr auto wrnMsgUnknownTypecast      = "%s(%d:%d): warning 426: typecasting routine cannot be found\n";
+   constexpr auto wrnMsgUnsupportedOperator  = "%s(%d:%d): warning 427: operator handler is not defined for %s\n";
 
    constexpr auto wrnMsgSyntaxFileNotFound   = "warning 500: cannot open syntax file '%s'\n";
    constexpr auto wrnMsgInvalidConfig        = "warning 501: invalid or unknown config file %s\n";
@@ -88,6 +91,7 @@ namespace elena_lang
    constexpr auto errMsgReferenceOverflow    = "internal error 603: Reference overflow";
    constexpr auto errMsgUnknownBaseClass     = "internal error 604: Base class doesn't exist\n";
    constexpr auto errMsgNoDispatcher         = "internal error 605: Default dispatch method is not declared in the base class\n";
+   constexpr auto errMsgClosureError         = "internal error 606: closure cannot be generated";
 
    constexpr auto errMsgFatalError           = "Fatal error\n";
    constexpr auto errMsgUnrecognizedError    = "Unknown error\n";

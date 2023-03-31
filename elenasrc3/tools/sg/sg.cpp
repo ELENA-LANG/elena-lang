@@ -48,6 +48,102 @@ parse_key_t registerSymbol(ParserTable& table, ustr_t symbol, parse_key_t newKey
    return key;
 }
 
+parse_key_t registerStarRule(ParserTable& table, parse_key_t key)
+{
+   IdentifierString ruleName("AUTO_", table.resolveKey(key));
+   ruleName.append("*");
+
+   parse_key_t star_key = table.resolveSymbol(*ruleName);
+   if (!star_key) {
+      star_key = registerSymbol(table, *ruleName, lastKey + 1, false);
+
+      parse_key_t rule[3];
+      rule[0] = star_key;
+
+      rule[1] = key;
+      rule[2] = star_key;
+      table.registerRule(rule, 3);
+
+      rule[1] = pkEps;
+      table.registerRule(rule, 2);
+   }
+
+   return star_key;
+}
+
+parse_key_t registerPlusRule(ParserTable& table, parse_key_t key)
+{
+   IdentifierString ruleName("AUTO_", table.resolveKey(key));
+   ruleName.append("+");
+
+   parse_key_t plus_key = table.resolveSymbol(*ruleName);
+   if (!plus_key) {
+      plus_key = registerSymbol(table, *ruleName, lastKey + 1, false);
+
+      parse_key_t rule[3];
+      rule[0] = plus_key;
+      rule[1] = key;
+      rule[2] = registerStarRule(table, key);
+
+      table.registerRule(rule, 3);
+   }
+
+   return plus_key;
+}
+
+parse_key_t registerEpsRule(ParserTable& table, parse_key_t key)
+{
+   IdentifierString ruleName("AUTO_", table.resolveKey(key));
+   ruleName.append("?");
+
+   parse_key_t eps_key = table.resolveSymbol(*ruleName);
+   if (!eps_key) {
+      eps_key = registerSymbol(table, *ruleName, lastKey + 1, false);
+
+      parse_key_t rule[2];
+      rule[0] = eps_key;
+      rule[1] = key;
+      table.registerRule(rule, 2);
+
+      rule[1] = pkEps;
+      table.registerRule(rule, 2);
+   }
+
+   return eps_key;
+}
+
+void registerBrackets(ParserTable& table, parse_key_t* rule, size_t& rule_len, size_t start)
+{
+   parse_key_t bracket_key = rule[start];
+   if (!bracket_key) {
+      IdentifierString ruleName("AUTO$");
+      do
+      {
+         ruleName.truncate(5);
+
+         lastKey++;
+         ruleName.appendInt(lastKey);
+      } while (!emptystr(table.resolveKey(lastKey)));
+
+      bracket_key = registerSymbol(table, *ruleName, lastKey + 1, false);
+
+      rule[start] = bracket_key;
+   }
+
+   parse_key_t bracket_rule[MAX_RULE_LEN];
+   bracket_rule[0] = bracket_key;
+   size_t bracket_rule_len = 1;
+
+   // copy the bracket rule
+   for (size_t i = start + 1; i < rule_len; i++) {
+      bracket_rule[bracket_rule_len++] = rule[i];
+   }
+
+   table.registerRule(bracket_rule, bracket_rule_len);
+
+   rule_len = start + 1;
+}
+
 int main(int argc, char* argv[])
 {
    printf(SG_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, SG_REVISION_NUMBER);
@@ -82,6 +178,8 @@ int main(int argc, char* argv[])
 
       parse_key_t rule[MAX_RULE_LEN];
       size_t rule_len = 0;
+
+      Stack<size_t> bracketIndexes(-1);
 
       ScriptReader reader(4, &source);
       ScriptToken  token;
@@ -122,25 +220,48 @@ int main(int argc, char* argv[])
 
             rule[rule_len++] = registerSymbol(table, *token.token, lastKey + 1, false) | pkInjectable;
          }
+         else if (token.compare("+")) {
+            rule[rule_len - 1] = registerPlusRule(table, rule[rule_len - 1]);
+         }
+         else if (token.compare("*")) {
+            rule[rule_len - 1] = registerStarRule(table, rule[rule_len - 1]);
+         }
          else if (token.compare(";")) {
             table.registerRule(rule, rule_len);
             rule_len = 0;
          }
+         else if (token.compare("?")) {
+            rule[rule_len - 1] = registerEpsRule(table, rule[rule_len - 1]);
+         }
          else if (token.compare("|")) {
-            if (rule_len != 1) {
+            if (bracketIndexes.count() > 0) {
+               registerBrackets(table, rule, rule_len, bracketIndexes.peek());
+            }
+            else if (rule_len != 1) {
                table.registerRule(rule, rule_len);
                rule_len = 1;
             }
             else throw SyntaxError(SG_INVALID_RULE, token.lineInfo);
+         }
+         else if  (token.compare("{")) {
+            rule[rule_len++] = 0;
+
+            bracketIndexes.push(rule_len - 1);
+         }
+         else if (token.compare("}")) {
+            registerBrackets(table, rule, rule_len, bracketIndexes.pop());
          }
          else rule[rule_len++] = registerSymbol(table, *token.token, lastKey + 1, false);
       }
 
       printf("generating...\n");
 
-      parse_key_t ambigous = table.generate();
-      if (ambigous) {
-         printf(SG_AMBIGUOUS, table.resolveKey(ambigous).str());
+      auto ambigous = table.generate();
+      if (ambigous.value1) {
+         ustr_t terminal = table.resolveKey(ambigous.value2);
+         ustr_t nonterminal = table.resolveKey(ambigous.value1);
+
+         printf(SG_AMBIGUOUS, terminal.str(), nonterminal.str());
          return -1;
       }
 

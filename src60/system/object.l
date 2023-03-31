@@ -3,27 +3,52 @@
 // --- super object ---
 
 public class Object
+   : info("a common ancestor")
 {
-    const string __className := $name __decl;
+   const string __className := $name __decl;
 
-    bool equal(o)
-       = self.equalReference(o);
+   constructor() 
+      : info("Creates the object")
+   {
+   }
 
-    bool notequal(o)
-       = !(self.equal(o));
+   bool equal(o)
+               : info("Returns true if the specified object is equal to the current object; otherwise, false. By default compares the object references.")
+      = self.equalReference(o);
 
-    predefined bool less(o);
-    predefined bool notless(o);
+   bool notequal(o)
+               : info("Returns true if the specified object is not equal to the current object; otherwise, false. By default it inverts the result of equal[2].")
+      = !self.equal(o);
 
-    string toPrintable() = __className;
+   // virtual method declarations : forcing the output type                            
+   predefined bool less(o);
+   predefined bool greater(o);
+   predefined bool notless(o);
+   predefined bool notgreater(o);
 
-    dispatch() : external<system'core_routines'__object_dispatcher>;
+   string toPrintable() 
+               : info("Returns the string representation. By default it returns the class name.")
+      = __className;
+
+   dispatch() : external(system'core_routines'__object_dispatcher), info("Implements a message dispatching in VMT");
 }
 
 // --- basic extensions ---
 
 public extension commonOp
 {
-   bool equalReference(o) : external<system'core_routines'__object_equal>;
+   back(o)
+            : info("Returns the parameter")
+      = o;
+
+   bool equalReference(o) : external(system'core_routines'__object_equal);
+
+   then(Func f)
+            : info("Executes the parameter function")
+      = f();
+
+   then(Func1 f)
+            : info("Executes the parameter function and pass itself as a parameter")
+      = f(self);
 }
 

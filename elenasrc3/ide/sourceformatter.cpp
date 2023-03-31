@@ -7,6 +7,8 @@
 #include "sourceformatter.h"
 #include "view.h"
 
+#include <tchar.h>
+
 using namespace elena_lang;
 
 // --- Lexical DFA Table ---

@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "config.h"
@@ -12,7 +12,7 @@
 
 using namespace elena_lang;
 
-constexpr auto DEFAULT_CONFIG       = "/etc/elena/elc.config";
+constexpr auto DEFAULT_CONFIG       = "/etc/elena/templates/lib60.config";
 
 constexpr auto PLATFORM_CATEGORY    = "configuration/platform";
 constexpr auto LIB_PATH             = "project/libpath";
@@ -35,14 +35,13 @@ constexpr auto PLATFORM_KEY = "Linux_ARM64";
 
 #endif
 
-class Presenter : public PresenterBase
+class ConsoleHelper : public ConsoleHelperBase
 {
    TextFileWriter* _writer;
 
 public:
    void readLine(char* buffer, size_t length) override
    {
-      // !! fgets is used instead of fgetws, because there is a strange bug in fgetws implementation
       fgets(buffer, LINE_LEN, stdin);
    }
 
@@ -81,11 +80,11 @@ public:
       _writer = new TextFileWriter(*path, FileEncoding::UTF8, false);
    }
 
-   Presenter()
+   ConsoleHelper()
    {
       _writer = nullptr;
    }
-   ~Presenter() override
+   ~ConsoleHelper() override
    {
       freeobj(_writer);
    }
@@ -117,11 +116,11 @@ int main(int argc, char* argv[])
       provider.setRootPath(*libPath);
    }
 
-   Presenter presenter;
-   ByteCodeViewer viewer(&provider, &presenter, 30);
+   ConsoleHelper consoleHelper;
+   ByteCodeViewer viewer(&provider, &consoleHelper, 30);
 
    if (argc < 2) {
-      presenter.print("ecv <module name> | ecv -p<module path>");
+      consoleHelper.print("ecv <module name> | ecv -p<module path>");
       return 0;
    }
 
@@ -130,7 +129,15 @@ int main(int argc, char* argv[])
 
       PathString path(argv[1]);
       if(!viewer.load(*path)) {
-         presenter.printPath(ECV_MODULE_NOTLOADED, path.str());
+         consoleHelper.printPath(ECV_MODULE_NOTLOADED, path.str());
+
+         return -1;
+      }
+   }
+   else {
+      IdentifierString arg(argv[1]);
+      if (!viewer.loadByName(*arg)) {
+         consoleHelper.printPath(ECV_MODULE_NOTLOADED, argv[1]);
 
          return -1;
       }

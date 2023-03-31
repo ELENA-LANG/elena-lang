@@ -83,6 +83,7 @@ namespace elena_lang
       bool                    _caretValid;
       bool                    _caretVisible;
       bool                    _mouseCaptured;
+      bool                    _caretChanged;
 
       int                     _caret_x;
       Canvas                  _zbuffer;
@@ -111,7 +112,7 @@ namespace elena_lang
       void setScrollPosition(int bar, int position);
       void setScrollInfo(int bar, int max, int page);
 
-      void update(bool resize = true);
+      void update(bool maxColChanged, bool resize = true);
       void updateVScroller(bool resize);
       void updateHScroller(bool resize);
 
@@ -122,6 +123,8 @@ namespace elena_lang
 
       void onButtonDown(Point point, bool kbShift);
       void onButtonUp();
+      void onMouseMove(short wheelDelta, bool kbCtrl);
+      void onDoubleClick(NMHDR* hdr) override;
 
       bool onKeyDown(int keyCode, bool kbShift, bool kbCtrl);
       bool onKeyPressed(wchar_t ch);
@@ -134,7 +137,9 @@ namespace elena_lang
       void onScroll(int bar, int type);
 
    public:
-      void onDocumentUpdate() override;
+      void onDocumentUpdate(DocumentChangeStatus& changeStatus) override;
+
+      void hide() override;
 
       void refresh() override;
 

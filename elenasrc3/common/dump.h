@@ -11,7 +11,6 @@
 
 namespace elena_lang
 {
-
    // --- MemoryDump ---
 
    class MemoryDump : public MemoryBase
@@ -32,7 +31,7 @@ namespace elena_lang
 
       bool write(pos_t position, const void* s, pos_t length) override;
 
-      bool read(pos_t position, void* s, pos_t length) override;
+      bool read(pos_t position, void* s, pos_t length) const override;
 
       void* get(pos_t position) const override;
 
@@ -44,7 +43,7 @@ namespace elena_lang
          return retVal;
       }
 
-      pos_t getPos(pos_t position)
+      pos_t getPos(pos_t position) const
       {
          pos_t retVal = 0;
          read(position, &retVal, sizeof(pos_t));
@@ -66,7 +65,19 @@ namespace elena_lang
          write(position, &value, sizeof(int));
       }
 
-      void insert(pos_t position, const void* s, pos_t length) override;
+      bool writeBytes(pos_t position, char value, pos_t length)
+      {
+         if (position <= _used && length > 0) {
+            resize(position + length);
+
+            memset(static_cast<char*>(_buffer) + position, value, length);
+
+            return true;
+         }
+         else return false;
+      }
+
+      bool insert(pos_t position, const void* s, pos_t length) override;
 
       void load(StreamReader& reader, pos_t length);
 
@@ -96,6 +107,36 @@ namespace elena_lang
          freestr((char*)_buffer);
       }
    };
+
+   // --- ByteArray ---
+   class ByteArray : public MemoryBase
+   {
+      char* _bytes;
+      pos_t _length;
+
+   public:
+      pos_t length() const override
+      {
+         return _length;
+      }
+
+      void* get(pos_t position) const override;
+
+      bool write(pos_t position, const void* s, pos_t length) override;
+
+      bool read(pos_t position, void* s, pos_t length) const override;
+
+      bool insert(pos_t position, const void* s, pos_t length) override;
+
+      void trim(pos_t position) override;
+
+      ByteArray(void* bytes, pos_t length)
+      {
+         _bytes = (char*)bytes;
+         _length = length;
+      }
+   };
+
 }
 
 #endif // DUMP_H

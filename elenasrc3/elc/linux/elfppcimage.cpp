@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive ELF Image class implementation
 //       supported platform: PPC64le
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "clicommon.h"
@@ -20,9 +20,9 @@ void ElfPPC64leImageFormatter :: fillElfData(ImageProviderBase& provider, ElfDat
 {
    pos_t count = fillImportTable(provider.externals(), elfData);
 
-   Section* code = provider.getTextSection();
-   Section* data = provider.getDataSection();
-   Section* import = provider.getImportSection();
+   MemoryBase* code = provider.getTextSection();
+   MemoryBase* data = provider.getDataSection();
+   MemoryBase* import = provider.getImportSection();
 
    MemoryWriter dynamicWriter(data);
    dynamicWriter.align(fileAlignment, 0);
@@ -168,14 +168,16 @@ int ElfPPC64leImageFormatter :: getRelocationType()
    return R_PPC64_JMP_SLOT;
 }
 
-void ElfPPC64leImageFormatter :: fixSection(Section* section, AddressSpace& map)
+void ElfPPC64leImageFormatter :: fixSection(MemoryBase* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, ppc64relocate);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, ppc64relocate);
 }
 
-void ElfPPC64leImageFormatter :: fixImportSection(Section* section, AddressSpace& map)
+void ElfPPC64leImageFormatter :: fixImportSection(MemoryBase* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, ppc64relocateElf64Import);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, ppc64relocateElf64Import);
 }
 
 void ElfPPC64leImageFormatter :: writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference, pos_t disp)

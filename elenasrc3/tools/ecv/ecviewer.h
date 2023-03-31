@@ -15,8 +15,8 @@
 
 namespace elena_lang
 {
-   // --- PresenterBase ---
-   class PresenterBase
+   // --- ConsoleHelperBase ---
+   class ConsoleHelperBase
    {
    public:
       virtual void setOutputMode(ustr_t arg) = 0;
@@ -27,19 +27,22 @@ namespace elena_lang
       virtual void print(ustr_t message, ustr_t arg) = 0;
       virtual void printPath(ustr_t message, path_t arg) = 0;
 
-      virtual ~PresenterBase() = default;
+      virtual ~ConsoleHelperBase() = default;
    };
 
    // --- ByteCodeViewer ---
    class ByteCodeViewer
    {
-      PresenterBase*   _presenter;
-      LibraryProvider* _provider;
-      ModuleBase*      _module;
-      int              _pageSize;
-      bool             _noPaging;
-      bool             _pathMode;
+      ConsoleHelperBase* _presenter;
+      LibraryProvider*   _provider;
+      ModuleBase*        _module;
+      int                _pageSize;
+      bool               _noPaging;
+      bool               _pathMode;
+      bool               _showBytecodes;
+      bool               _showMethodInfo;
 
+      MemoryBase* findProcedureCode(ustr_t referenceName);
       MemoryBase* findSymbolCode(ustr_t referenceName);
       MemoryBase* findClassVMT(ustr_t referenceName);
       MemoryBase* findClassCode(ustr_t referenceName);
@@ -61,8 +64,10 @@ namespace elena_lang
 
       void listMembers();
 
+      void addIArg(arg_t arg, IdentifierString& commandStr);
+
       void addRArg(arg_t arg, IdentifierString& commandStr);
-      void addSecondRArg(arg_t arg, IdentifierString& commandStr);
+      void addSecondRArg(arg_t arg, IdentifierString& commandStr, List<pos_t>& labels);
 
       void addSPArg(arg_t arg, IdentifierString& commandStr);
       void addSecondSPArg(arg_t arg, IdentifierString& commandStr);
@@ -87,8 +92,10 @@ namespace elena_lang
       void printFlags(ref_t flags, int& row, int pageSize);
       void printFields(ClassInfo& classInfo, int& row, int pageSize);
 
+      void printMethodInfo(MethodInfo& info);
       void printMethod(ustr_t name, bool fullInfo);
       void printSymbol(ustr_t name);
+      void printProcedure(ustr_t name);
       void printClass(ustr_t name, bool fullInfo);
 
    public:
@@ -97,7 +104,7 @@ namespace elena_lang
 
       void runSession();
 
-      ByteCodeViewer(LibraryProvider* provider, PresenterBase* presenter, int pageSize)
+      ByteCodeViewer(LibraryProvider* provider, ConsoleHelperBase* presenter, int pageSize)
       {
          _presenter = presenter;
          _provider = provider;
@@ -105,6 +112,8 @@ namespace elena_lang
          _pageSize = pageSize;
          _noPaging = false;
          _pathMode = false;
+         _showBytecodes = false;
+         _showMethodInfo = false;
       }
       virtual ~ByteCodeViewer()
       {

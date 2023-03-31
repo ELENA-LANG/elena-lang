@@ -1,0 +1,47 @@
+<configuration>
+  <platform key="Linux_I386">
+     <project>
+        <output>/usr/lib/elena/lib60</output>
+     </project>
+  </platform>
+  <platform key="Linux_AMD64">
+     <project>
+        <output>/usr/lib/elena/lib60_64</output>
+     </project>
+  </platform>
+  <platform key="Linux_PPC64le">
+     <project>
+        <output>/usr/lib/elena/lib60_64</output>
+     </project>
+  </platform>
+  <platform key="Linux_ARM64">
+     <project>
+        <output>/usr/lib/elena/lib60_64</output>
+     </project>
+  </platform>
+  <project>
+     <namespace>extensions</namespace>
+     <template>lib60</template>
+  </project>
+  <files>
+     <module>
+        <include>control.l</include>
+        <include>convertors.l</include>
+        <include>console.l</include>
+        <include>basic.l</include>
+        <include>tests.l</include>
+        <include>random.l</include>
+        <include>app.l</include>
+        <include>lnx_args.l</include>
+        <include>text/strings.l</include>
+        <include>text/words.l</include>
+     </module>
+     <module name="routines">
+       <include>routines/enumerating.l</include>
+       <include>routines/combinations.l</include>
+     </module>
+     <module name="scripting">
+       <include>scripting/interpreter.l</include>
+     </module>
+  </files>
+</configuration>

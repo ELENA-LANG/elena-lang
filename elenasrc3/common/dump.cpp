@@ -87,7 +87,7 @@ bool MemoryDump :: write(pos_t position, const void* s, pos_t length)
 
 }
 
-void MemoryDump :: insert(pos_t position, const void* s, pos_t length)
+bool MemoryDump :: insert(pos_t position, const void* s, pos_t length)
 {
    if (position <= _used) {
       resize(_used + length);
@@ -95,10 +95,13 @@ void MemoryDump :: insert(pos_t position, const void* s, pos_t length)
       memmove(get(position + length), get(position), _used - position - length);
       if (s != nullptr)
          memcpy(get(position), s, length);
+
+      return true;
    }
+   else return false;
 }
 
-bool MemoryDump :: read(pos_t position, void* s, pos_t length)
+bool MemoryDump :: read(pos_t position, void* s, pos_t length) const
 {
    if (position < _used && _used >= position + length) {
       memcpy(s, static_cast<char*>(_buffer) + position, length);
@@ -115,4 +118,37 @@ void MemoryDump :: load(StreamReader& reader, pos_t length)
    reader.read(static_cast<char*>(_buffer) + _used, length);
 
    _used += length;
+}
+
+// --- ByteArray ---
+
+void* ByteArray :: get(pos_t position) const
+{
+   return _bytes + position;
+}
+
+bool ByteArray :: write(pos_t position, const void* s, pos_t length)
+{
+   memcpy(_bytes + position, s, length);
+
+   return true;
+}
+
+bool ByteArray :: read(pos_t position, void* s, pos_t length) const
+{
+   memcpy(s, _bytes + position, length);
+
+   return true;
+}
+
+bool ByteArray :: insert(pos_t position, const void* s, pos_t length)
+{
+   memmove(_bytes + position + length, _bytes + position, _length - position - length);
+   memcpy(_bytes + position, s, length);
+
+   return true;
+}
+
+void ByteArray :: trim(pos_t position)
+{
 }

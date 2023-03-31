@@ -32,23 +32,9 @@ namespace elena_lang
 
       void copyToken(char* token, size_t length);
 
-      //inline void resolveDotAmbiguity(SourceInfo& info)
-      //{
-      //   char state = info.state;
-      //   size_t rollback = _position;
-      //   nextColumn();
-
-      //   char endState = TextParser::read(dfaDotStart, info.state, info.lineInfo);
-      //   // rollback if lookahead fails
-      //   if (endState == dfaBack) {
-      //      _position = rollback;
-      //      info.state = state;
-      //   }
-      //}
-
       bool IsOperator(char state)
       {
-         return (state == dfaOperator || state == dfaDblOperator/* || state == dfaAltOperator*/);
+         return (state == dfaOperator || state == dfaAltOperator || state == dfaGrOperator);
       }
 
       void resolveSignAmbiguity(SourceInfo& info)
@@ -68,13 +54,31 @@ namespace elena_lang
                _position = rollback;
                info.state = dfaOperator;
             }
-            //// resolve dot ambiguity
-            //else if (terminalState == dfaDotLookahead) {
-            //   resolveDotAmbiguity(info);
-            //}
+            // resolve dot ambiguity
+            else if (terminalState == dfaDotLookahead) {
+               resolveDotAmbiguity(info);
+            }
 
             _startPosition = rollbackStart;
          }
+      }
+
+      void resolveDotAmbiguity(SourceInfo& info)
+      {
+         char state = info.state;
+         pos_t rollback = _position;
+         pos_t rollbackStart = _startPosition;
+
+         nextColumn();
+
+         char endState = TextParser::read(dfaDotStart, info.state, info.lineInfo);
+         // rollback if lookahead fails
+         if (endState == dfaBack) {
+            _position = rollback;
+            info.state = state;
+         }
+
+         _startPosition = rollbackStart;
       }
 
    public:

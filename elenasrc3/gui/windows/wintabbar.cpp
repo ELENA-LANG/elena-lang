@@ -8,14 +8,17 @@
 #include "wintabbar.h"
 #include "wincanvas.h"
 
+#include <tchar.h>
+
 using namespace elena_lang;
 
 // --- CustomTabBar ---
 
-CustomTabBar :: CustomTabBar(NotifierBase* notifier, bool withAbovescore)
-   : ControlBase(nullptr)
+CustomTabBar :: CustomTabBar(NotifierBase* notifier, bool withAbovescore, int width, int height)
+   : ControlBase(nullptr, 0, 0, width, height)
 {
    _notifier = notifier;
+   _selNotificationId = 0;
    _withAbovescore = withAbovescore;
    _notSelected = true;
 }
@@ -80,7 +83,8 @@ void CustomTabBar :: selectTab(int index)
 {
    int previous = (int)::SendMessage(_handle, TCM_SETCURSEL, index, 0);
    if (_notSelected || previous != index) {
-      _notifier->notifyModelChange(NOTIFY_CURRENTVIEW_CHANGED, index);
+      if (_selNotificationId)
+         _notifier->notifySelection(_selNotificationId, index);
 
       _notSelected = false;
    }
@@ -115,7 +119,7 @@ int CustomTabBar :: getCurrentIndex()
 // --- MultiTabControl ---
 
 MultiTabControl :: MultiTabControl(NotifierBase* notifier, bool withAbovescore, ControlBase* child)
-   : CustomTabBar(notifier, withAbovescore)
+   : CustomTabBar(notifier, withAbovescore, 50, 50)
 {
    _child = child;
 }
@@ -123,6 +127,9 @@ MultiTabControl :: MultiTabControl(NotifierBase* notifier, bool withAbovescore, 
 void MultiTabControl :: show()
 {
    ControlBase::show();
+   if (_child)
+      _child->show();
+
    refresh();
 }
 
@@ -182,3 +189,130 @@ void MultiTabControl :: eraseTabView(int index)
 {
    deleteTab(index);
 }
+
+void MultiTabControl :: refresh()
+{
+   _child->refresh();
+
+   ControlBase::refresh();
+}
+
+// --- TabBar ---
+
+TabBar :: TabBar(NotifierBase* notifier, bool withAbovescore, int height)
+   : CustomTabBar(notifier, withAbovescore, 800, height),
+   _current(nullptr), _pages(nullptr)
+{
+   _title = _T("Tabbar");
+
+   _minHeight = 50;
+   _minWidth = 50;
+}
+
+HWND TabBar :: createControl(HINSTANCE instance, ControlBase* owner)
+{
+   _handle = ::CreateWindowEx(
+      TCS_EX_FLATSEPARATORS, WC_TABCONTROL, _title,
+      WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_BORDER | TCS_FOCUSNEVER | TCS_TABS | TCS_SINGLELINE | TCS_OWNERDRAWFIXED,
+      CW_USEDEFAULT, 0, _minWidth, _minHeight, owner->handle(), nullptr, instance, (LPVOID)this);
+
+   return _handle;
+}
+
+void TabBar :: addTabChild(const wchar_t* name, ControlBase* child)
+{
+   auto rect = getClientRectangle();
+   resizeTab(&rect, child);
+
+   child->hide();
+
+   _pages.add(child);
+
+   addTab(_pages.count(), name, nullptr);
+}
+
+void TabBar :: removeTabChild(ControlBase* child)
+{
+   if (_pages.count() == 0)
+      return;
+
+   int index = _pages.retrieveIndex<ControlBase*>(child, [](ControlBase* arg, ControlBase* current)
+      {
+         return current == arg;
+      });
+
+   if (index != -1) {
+      child->hide();
+   }
+
+   _pages.cut(child);
+   deleteTab(index);
+
+   _current = nullptr;
+
+   refresh();
+}
+
+bool TabBar :: selectTabChild(ControlBase* child)
+{
+   int index = _pages.retrieveIndex<ControlBase*>(child, [](ControlBase* arg, ControlBase* current)
+      {
+         return current == arg;
+      });
+
+   if (index != -1) {
+      if (_current)
+         _current->hide();
+
+      _current = child;
+
+      _current->show();
+
+      selectTab(index);
+
+      ControlBase::refresh();
+
+      return true;
+   }
+   else return false;
+}
+
+void TabBar :: resizeTab(Rectangle* clientRect, ControlBase* control)
+{
+   Rectangle childRec(clientRect->topLeft.x + 4, clientRect->topLeft.y + 28, 
+      clientRect->width() - 8, clientRect->height() - 36);
+
+   control->setRectangle(childRec);
+}
+
+void TabBar :: setRectangle(Rectangle rec)
+{
+   ControlBase::setRectangle(rec);
+
+   auto clientRect = getClientRectangle();
+   for (auto it = _pages.start(); !it.eof(); ++it) {
+      resizeTab(&clientRect, *it);
+   }
+}
+
+void TabBar :: showCurrentTab()
+{
+   int index = getCurrentIndex();
+   int current = 0;
+   for (auto it = _pages.start(); !it.eof(); ++it) {
+      if (index == current) {
+         (*it)->show();
+         (*it)->setFocus();
+      }
+      else (*it)->hide();
+
+      current++;
+   }
+}
+
+void TabBar :: refresh()
+{
+   if (_current)
+      _current->refresh();
+}
+

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Text class body
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "guicommon.h"
@@ -59,12 +59,13 @@ void TextBookmark :: set(Pages* pages)
 
    // reset bookmark to the beginning
    _status = 0;
+   _pagePosition = 0;
    _offset = 0;
-   _length = NOTFOUND_POS;
    _page = pages->start();
 
    _row = _column = 0;
    _virtual_column = 0;
+   _length = NOTFOUND_POS;
 
    // go to the current position
    moveTo(target.x, target.y);
@@ -498,6 +499,19 @@ int Text :: retrieveRowCount()
    return count;
 }
 
+pos_t Text :: getRowLength(int row)
+{
+   if (row < _rowCount) {
+      TextBookmark bookmark;
+      validateBookmark(bookmark);
+
+      bookmark.moveTo(0, row);
+
+      return bookmark.length_pos();
+   }
+   else return 0;
+}
+
 void Text :: validateBookmark(TextBookmark& bookmark)
 {
    if (!bookmark.isValid()) {
@@ -506,7 +520,7 @@ void Text :: validateBookmark(TextBookmark& bookmark)
    }
 }
 
-void Text :: copyLineTo(TextBookmark& bookmark, TextWriter<text_c>& writer, pos_t length, bool stopOnEOL)
+void Text :: copyLineTo(TextBookmark& bookmark, TextWriter<text_c>& writer, pos_t length_pos, bool stopOnEOL)
 {
    validateBookmark(bookmark);
 
@@ -522,6 +536,7 @@ void Text :: copyLineTo(TextBookmark& bookmark, TextWriter<text_c>& writer, pos_
    }
 
    int col = bookmark._column;
+   size_t length = length_pos;
    while (length > 0) {
       size_t offset = bookmark._offset;
       size_t count = (*bookmark._page).used - offset;
@@ -546,7 +561,7 @@ void Text :: copyLineTo(TextBookmark& bookmark, TextWriter<text_c>& writer, pos_
             size_t chLen = TextBookmark::charLength(line, i);
             if (chLen > 1) {
                if (i + chLen < count) {
-                  writer.write(&line[i], chLen);
+                  writer.write(&line[i], (pos_t)chLen);
                   i += (chLen - 1);
                }
                else break;
@@ -606,7 +621,7 @@ void Text :: copyLineToX(TextBookmark& bookmark, TextWriter<text_c>& writer, pos
             if (chLen > 1) {
                if (i + chLen < count) {
                   writer.write(&line[i], chLen);
-                  i += (chLen - 1);
+                  i += ((pos_t)chLen - 1);
                }
                else break;
             }
@@ -1194,10 +1209,10 @@ bool TextHistory :: eof() const
    else return false;
 }
 
-void TextHistory :: undo(Text* text, TextBookmark& caret)
+bool TextHistory :: undo(Text* text, TextBookmark& caret)
 {
    if (bof())
-      return;
+      return false;
 
    text->validateBookmark(caret);
 
@@ -1235,14 +1250,17 @@ void TextHistory :: undo(Text* text, TextBookmark& caret)
       // insert mode
       text->eraseLine(caret, length);
    }
+   
    _locking = false;
    _offset = reader.position();
+
+   return true;
 }
 
-void TextHistory :: redo(Text* text, TextBookmark& caret)
+bool TextHistory :: redo(Text* text, TextBookmark& caret)
 {
    if (eof())
-      return;
+      return true;
 
    text->validateBookmark(caret);
 
@@ -1276,4 +1294,6 @@ void TextHistory :: redo(Text* text, TextBookmark& caret)
    if (_offset == _buffer->length() && !_previous) {
       switchBuffer();
    }
+
+   return true;
 }

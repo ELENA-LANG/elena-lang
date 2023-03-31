@@ -3,7 +3,7 @@
 //
 //		This file contains String classes implementations
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //                                             (C)1994-2004, Unicode, Inc.
 //---------------------------------------------------------------------------
 
@@ -24,6 +24,7 @@
 #include "common.h"
 // --------------------------------------------------------------------------
 #include "ustring.h"
+#include <math.h>
 
 using namespace elena_lang;
 
@@ -400,9 +401,165 @@ int StrConvertor :: toInt(const char* s, int radix)
    return strtol(s, nullptr, radix);
 }
 
+int StrConvertor :: toInt(const wide_c* s, int radix)
+{
+   int n = 0;
+   bool neg = false;
+
+   //!! temporal
+   if (*s == '-') {
+      s++;
+      neg = true;
+   }
+   while (*s) {
+      n *= 10;
+
+      unsigned short c = *s;
+      if (c >= '0' && c <= '9') {
+         n += (c - '0');
+
+         s++;
+      }
+      else return 0;
+   }
+   if (neg)
+      n *= -1;
+
+   return n;
+}
+
 unsigned int StrConvertor :: toUInt(const char* s, int radix)
 {
    return strtoul(s, nullptr, radix);
+}
+
+long long StrConvertor :: toLong(const char* s, int radix)
+{
+   long long number = 0;
+
+   bool negative = false;
+   if (s[0] == '-') {
+      negative = true;
+      s++;
+   }
+
+   char dump[10];
+   size_t length = getlength(s);
+   while (length > 8) {
+      memcpy(dump, (char*)s, 8);
+      dump[8] = 0;
+
+      long long temp = toUInt(dump, radix);
+      for (size_t i = 0; i < (length - 8); i++) {
+         temp *= radix;
+      }
+      number += temp;
+
+      length -= 8;
+      s += 8;
+   }
+   memcpy(dump, s, length);
+   dump[length] = 0;
+   long long temp = toUInt(dump, radix);
+   number += temp;
+
+   if (negative)
+      number = -number;
+
+   return number;
+}
+
+long long StrConvertor :: toLong(const wide_c* s, int radix)
+{
+   long long number = 0;
+
+   bool negative = false;
+   if (s[0] == '-') {
+      negative = true;
+      s++;
+   }
+
+   wide_c dump[10];
+   size_t length = getlength(s);
+   while (length > 9) {
+      memcpy(dump, (wide_c*)s, 18);
+      dump[9] = 0;
+
+      long long temp = toInt(dump, radix);
+      for (size_t i = 0; i < (length - 9); i++) {
+         temp *= radix;
+      }
+      number += temp;
+
+      length -= 9;
+      s += 9;
+   }
+   memcpy(dump, s, length * 2);
+   dump[length] = 0;
+   long long temp = toInt(dump, radix);
+   number += temp;
+
+   if (negative)
+      number = -number;
+
+   return number;
+}
+
+double StrConvertor :: toDouble(const char* s)
+{
+   // !!HOTFIX : to recognize nan
+   if (strcmp(s, "nan") == 0) {
+      return NAN;
+   }
+   else if (strcmp(s, "-inf") == 0) {
+      return -INFINITY;
+   }
+   else if (strcmp(s, "+inf") == 0) {
+      return INFINITY;
+   }
+   else return atof(s);
+}
+
+double StrConvertor::toDouble(const wide_c* s)
+{
+   size_t destLen = 30;
+   char temp[30];
+   StrConvertor::copy(temp, s, getlength(s), destLen);
+   temp[destLen] = 0;
+
+   return toDouble(temp);
+}
+
+char* StrConvertor :: toString(double value, int precision, char* s, size_t destLength)
+{
+   // !!HOTFIX : to recognize nan
+   if (value != value) {
+      StrConvertor::copy(s, "nan", 3, destLength);
+      s[destLength] = 0;
+   }
+   else if (isinf(value)) {
+      if (value == -INFINITY) {
+         StrConvertor::copy(s, "-inf", 4, destLength);
+      }
+      else StrConvertor::copy(s, "+inf", 4, destLength);
+
+      s[destLength] = 0;
+   }
+   else _gcvt(value, precision, s);
+
+   return s;
+}
+
+wchar_t* StrConvertor :: toString(double value, int precision, wchar_t* s, size_t destLength)
+{
+   char tmp[25];
+   gcvt(value, precision, tmp);
+
+   for (size_t i = 0; i <= getlength(tmp); i++) {
+      s[i] = tmp[i];
+   }
+
+   return s;
 }
 
 // --- internal functions ---
@@ -411,6 +568,12 @@ bool inline util_compare(const char* s1, const char* s2)
 {
    if (s1 && s2) return (strcmp(s1, s2) == 0);
    else return (s1 == s2);
+}
+
+bool inline util_greater(const char* s1, const char* s2)
+{
+   if (s1 && s2) return (strcmp(s1, s2) > 0);
+   else return false;
 }
 
 bool inline util_compare(const char* s1, const char* s2, size_t length)
@@ -431,6 +594,15 @@ inline size_t util_find(const char* s, char ch, size_t length, size_t defValue)
 inline size_t util_find_str(const char* s, const char* subs, size_t defValue)
 {
    const char* p = (const char*)strstr(s, subs);
+   if (p == nullptr) {
+      return defValue;
+   }
+   else return p - s;
+}
+
+inline size_t util_find_str(const char* s, size_t index, const char* subs, size_t defValue)
+{
+   const char* p = (const char*)strstr(s + index, subs);
    if (p == nullptr) {
       return defValue;
    }
@@ -520,9 +692,32 @@ inline size_t util_find_last(const wchar_t* s, wchar_t c, size_t defValue)
    else return p - s;
 }
 
+inline size_t util_find_str(const wchar_t* s, const wchar_t* subs, size_t defValue)
+{
+   const wchar_t* p = wcsstr(s, subs);
+   if (p == nullptr) {
+      return defValue;
+   }
+   else return p - s;
+}
+
+inline size_t util_find_str(const wchar_t* s, size_t index, const wchar_t* subs, size_t defValue)
+{
+   const wchar_t* p = wcsstr(s + index, subs);
+   if (p == nullptr) {
+      return defValue;
+   }
+   else return p - s;
+}
+
 inline char* util_lower(char* s)
 {
    return _strlwr(s);
+}
+
+inline char* util_upper(char* s)
+{
+   return _strupr(s);
 }
 
 inline char util_lower(char ch)
@@ -538,6 +733,11 @@ inline char util_lower(char ch)
 inline wchar_t* util_lower(wchar_t* s)
 {
    return _wcslwr(s);
+}
+
+inline wchar_t* util_upper(wchar_t* s)
+{
+   return _wcsupr(s);
 }
 
 inline wchar_t util_lower(wchar_t ch)
@@ -649,6 +849,48 @@ inline size_t util_find_last(const unsigned short* s, unsigned short c, size_t d
    return defValue;
 }
 
+inline size_t util_find_str(const unsigned short* s, const unsigned short* subs, size_t defValue)
+{
+   size_t length = getlength(s);
+   size_t sub_len = getlength(subs);
+
+   for (size_t i = 0; i < length; i++) {
+      bool found = true;
+      for (size_t j = 0; j < sub_len; j++) {
+         if (s[i + j] != subs[j]) {
+            found = false;
+            break;
+         }            
+      }
+
+      if (found)
+         return i;
+   }
+
+   return defValue;
+}
+
+inline size_t util_find_str(const unsigned short* s, size_t index, const unsigned short* subs, size_t defValue)
+{
+   size_t length = getlength(s);
+   size_t sub_len = getlength(subs);
+
+   for (size_t i = index; i < length; i++) {
+      bool found = true;
+      for (size_t j = 0; j < sub_len; j++) {
+         if (s[i + j] != subs[j]) {
+            found = false;
+            break;
+         }
+      }
+
+      if (found)
+         return i;
+   }
+
+   return defValue;
+}
+
 inline char* util_lower(char* s)
 {
    while (*s) {
@@ -676,6 +918,35 @@ inline unsigned short* util_lower(unsigned short* s)
 inline wchar_t util_lower(unsigned short ch)
 {
    return tolower(ch); // !! temporal: currently only ascii symbols are handled
+}
+
+inline char* util_upper(char* s)
+{
+   while (*s) {
+      *s = toupper(*s); // !! temporal: currently only ascii symbols are handled
+
+      s++;
+   }
+   return s;
+}
+
+inline unsigned short* util_upper(unsigned short* s)
+{
+   while (*s) {
+      *s = toupper(*s); // !! temporal: currently only ascii symbols are handled
+      s++;
+   }
+   return s;
+}
+
+inline char util_upper(char ch)
+{
+   return toupper(ch);
+}
+
+inline wchar_t util_upper(unsigned short ch)
+{
+   return toupper(ch); // !! temporal: currently only ascii symbols are handled
 }
 
 #endif
@@ -720,6 +991,19 @@ void StrUtil :: insert(char* s, size_t pos, size_t length, const char* subs)
    s[totalLen + length] = 0;
 }
 
+void StrUtil :: insert(wide_c* s, size_t pos, size_t length, const wide_c* subs)
+{
+   size_t totalLen = getlength(s);
+
+   for (size_t i = totalLen; i > pos; i--) {
+      s[i + length - 1] = s[i - 1];
+   }
+
+   memmove(s + pos, subs, length << 1);
+
+   s[totalLen + length] = 0;
+}
+
 size_t StrUtil :: findChar(const char* s, char ch, size_t length, size_t defaultValue)
 {
    return util_find(s, ch, length, defaultValue);
@@ -743,6 +1027,16 @@ wide_c* StrUtil::lower(wide_c* s)
 wide_c StrUtil::lower(wide_c ch)
 {
    return util_lower(ch);
+}
+
+char* StrUtil :: upper(char* s)
+{
+   return util_upper(s);
+}
+
+wide_c* StrUtil :: upper(wide_c* s)
+{
+   return util_upper(s);
 }
 
 // --- StrFactory ---
@@ -832,6 +1126,11 @@ bool ustr_t::compare(const char* s, size_t length) const
    return util_compare(_string, s, length);
 }
 
+bool ustr_t::greater(const char* s) const
+{
+   return util_greater(_string, s);
+}
+
 bool ustr_t::compareSub(const char* s, size_t index, size_t length) const
 {
    return util_compare(_string + index, s, length);
@@ -879,6 +1178,11 @@ size_t ustr_t::findLastSub(size_t index, char c, size_t defValue)
 size_t ustr_t::findStr(const char* subs, size_t defValue)
 {
    return util_find_str(_string, subs, defValue);
+}
+
+size_t ustr_t::findSubStr(size_t index, const char* subs, size_t length, size_t defValue)
+{
+   return util_find_str(_string, index, subs, defValue);
 }
 
 char* ustr_t :: clone()
@@ -940,6 +1244,16 @@ size_t wstr_t::findSub(size_t index, char c, size_t defValue)
 size_t wstr_t::findSub(size_t index, char c, size_t length, size_t defValue)
 {
    return util_find(_string + index, c, length, defValue - index) + index;
+}
+
+size_t wstr_t::findStr(const wide_c* subs, size_t defValue)
+{
+   return util_find_str(_string, subs, defValue);
+}
+
+size_t wstr_t::findSubStr(size_t index, const wide_c* subs, size_t length, size_t defValue)
+{
+   return util_find_str(_string, index, subs, defValue);
 }
 
 size_t wstr_t :: findLast(wide_c c, size_t defValue)

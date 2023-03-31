@@ -156,7 +156,7 @@ void X86LabelHelper :: fixJumps(pos_t position, int size, MemoryWriter& writer)
    }
 }
 
-bool X86LabelHelper :: fixLabel(pos_t label, MemoryWriter& writer)
+bool X86LabelHelper :: fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh)
 {
    auto it = jumps.getIt(label);
 
@@ -175,6 +175,14 @@ bool X86LabelHelper :: fixLabel(pos_t label, MemoryWriter& writer)
       else (*it).offset = fixNearJccLabel(jumpPos, writer);
 
       it = jumps.nextIt(label, it);
+   }
+
+   for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
+      assert(rh != nullptr);
+
+      auto info = *a_it;
+
+      rh->resolveLabel(writer, info.mask, info.position);
    }
 
    return true;

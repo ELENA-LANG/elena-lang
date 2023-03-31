@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Byte code Build Tree classes
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef BUILDTREE_H
@@ -20,12 +20,12 @@ namespace elena_lang
 
       CollectionMask       = 0x1000,
 
-      Root                 = 0x1000,
-      Symbol               = 0x1001,
-      Class                = 0x1002,
-      Method               = 0x1003,
-      Tape                 = 0x1004,
-      AbstractMethod       = 0x1005,
+      Root                 = 0x1001,
+      Symbol               = 0x1002,
+      Class                = 0x1003,
+      Method               = 0x1004,
+      Tape                 = 0x1005,
+      AbstractMethod       = 0x1006,
 
       OpenFrame            = 0x0001,
       CloseFrame           = 0x0002,
@@ -57,7 +57,7 @@ namespace elena_lang
       DispatchingOp        = 0x001C,
       IntOp                = 0x001D,
       ByteArraySOp         = 0x001E,
-      AccCopying           = 0x001F,
+      CopyingToAcc         = 0x001F,
       Argument             = 0x0020,
       BranchOp             = 0x0021,
       DirectResendOp       = 0x0022,
@@ -73,22 +73,104 @@ namespace elena_lang
       ClassOp              = 0x002C,
       ByteArrayOp          = 0x002D,
       NewArrayOp           = 0x002E,
+      Swapping             = 0x002F,
+      MssgLiteral          = 0x0030,
+      AccSwapping          = 0x0031,
+      RedirectOp           = 0x0032,
+      ShortArraySOp        = 0x0033,
+      WideStringLiteral    = 0x0034,
+      ByteOp               = 0x0035,
+      ShortOp              = 0x0036,
+      ByteCondOp           = 0x0037,
+      ShortCondOp          = 0x0038,
+      AccFieldCopying      = 0x0039,
+      AccFieldCopyingTo    = 0x003A,
+      LocalReference       = 0x003B,
+      RefParamAssigning    = 0x003C,
+      StaticVar            = 0x003D,
+      LoadingIndex         = 0x003E,
+      NilOp                = 0x003F,
+      IntSOp               = 0x0040,
+      ByteSOp              = 0x0041,
+      ShortSOp             = 0x0042,
+      LongLiteral          = 0x0043,
+      LongOp               = 0x0044,
+      LongSOp              = 0x0045,
+      LongCondOp           = 0x0046,
+      RealLiteral          = 0x0047,
+      RealOp               = 0x0048,
+      RealCondOp           = 0x0049,
+      VirtualBreakoint     = 0x004A,
+      ConversionOp         = 0x004B,
+      SemictResendOp       = 0x004C,
+      NilCondOp            = 0x004D,
+      AssignLocalToStack   = 0x004E,
+      SetImmediateField    = 0x004F,
+      GenericDispatchingOp = 0x0050,
+      BinaryArraySOp       = 0x0051,
+      BinaryArrayOp        = 0x0052,
+      ShortArrayOp         = 0x0053,
+      BreakOp              = 0x0054,
+      ConstantReference    = 0x0055,
+      ObjArrayOp           = 0x0056,
+      IntArrayOp           = 0x0057,
+      IntArraySOp          = 0x0058,
+      ObjArraySOp          = 0x0059,
+      CopyingArr           = 0x005A,
+      ExtMssgLiteral       = 0x005B,
+      LoadingBinaryLen     = 0x005C,
+      UnboxMessage         = 0x005D,
+      LoadingSubject       = 0x005E,
+      peekArgument         = 0x005F,
+      TerminatorReference  = 0x0060,
+      CopyingItem          = 0x0061,
+      SavingLongIndex      = 0x0062,
+      LongIntCondOp        = 0x0063,
+      ConstArrayReference  = 0x0064,
+      StaticAssigning      = 0x0065,
+      SavingLInStack       = 0x0066,
 
-      Import               = 0x0038,
-      DictionaryOp         = 0x0039,
+      MaxOperationalKey    = 0x0070,
 
-      ObjArrayOp           = 0x003A,
-      ObjOp                = 0x003B,
-      AttrDictionaryOp     = 0x003C,
-      DeclOp               = 0x003D,
-      DeclDictionaryOp     = 0x003E,
-      LoopOp               = 0x003F,
+      Import               = 0x0070,
+      DictionaryOp         = 0x0071,
+      ObjOp                = 0x0072,
+      AttrDictionaryOp     = 0x0073,
+      DeclOp               = 0x0074,
+      DeclDictionaryOp     = 0x0075,
+      LoopOp               = 0x0076,
+      CatchOp              = 0x0077,
+      ExternOp             = 0x0078,
+      AltOp                = 0x0079,
+      ShortCircuitOp       = 0x007A,
+      Switching            = 0x007B,
+      SwitchOption         = 0x007C,
+      ElseOption           = 0x007D,
 
       NestedClass          = 0x0080,
 
       VariableInfo         = 0x0090,
+      Variable             = 0x0091,
+      VariableAddress      = 0x0092,
+      IntVariableAddress   = 0x0093,
+      LongVariableAddress  = 0x0094,
+      RealVariableAddress  = 0x0095,
+      ByteArrayAddress     = 0x0096,
+      ShortArrayAddress    = 0x0097,
+      IntArrayAddress      = 0x0098,
 
-      BinaryArray          = 0x00A0,
+      ParameterInfo        = 0x00A0,
+      Parameter            = 0x00A1,
+      IntParameterAddress  = 0x00A2,
+      LongParameterAddress = 0x00A3,
+      RealParameterAddress = 0x00A4,
+      ParameterAddress     = 0x00A5,
+      MethodName           = 0x00A6,
+      ShortArrayParameter  = 0x00A7,
+      ByteArrayParameter   = 0x00A8,
+      IntArrayParameter    = 0x00A9,
+
+      BinaryArray          = 0x00B0,
 
       Value                = 0x8001,
       Reserved             = 0x8002,      // reserved managed
@@ -104,13 +186,17 @@ namespace elena_lang
       TrueConst            = 0x800C,
       FalseConst           = 0x800D,
       Path                 = 0x800E,
+      ClassName            = 0x800F,
+
+      Idle                 = 0x8FFF,
 
       //MetaDictionary    = 0x0022,
       //MetaArray         = 0x1023,
    };
 
-   // --- BuildTree ---
+   typedef Map<ustr_t, BuildKey, allocUStr, freeUStr> BuildKeyMap;
 
+   // --- BuildTree ---
    class BuildTree : public Tree<BuildKey, BuildKey::None>
    {
    public:
@@ -126,11 +212,70 @@ namespace elena_lang
 
          return counter;
       }
+
+      static void loadBuildKeyMap(BuildKeyMap& map)
+      {
+         map.add("breakpoint", BuildKey::Breakpoint);
+      }
    };
 
    // --- BuildTreeWriter ---
    typedef Tree<BuildKey, BuildKey::None>::Writer BuildTreeWriter;
    typedef Tree<BuildKey, BuildKey::None>::Node   BuildNode;
+
+   // --- BuildKeyPattern ---
+   struct BuildKeyPattern
+   {
+      BuildKey type;
+
+      int      argument;
+      int      pattternId;
+
+      bool operator ==(BuildKey type) const
+      {
+         return (this->type == type);
+      }
+
+      bool operator !=(BuildKey type) const
+      {
+         return (this->type != type);
+      }
+
+      bool operator ==(BuildKeyPattern pattern)
+      {
+         return (type == pattern.type && argument == pattern.argument);
+      }
+
+      bool operator !=(BuildKeyPattern pattern)
+      {
+         return !(*this == pattern);
+      }
+
+      bool match(BuildNode node)
+      {
+         return node.key == type;
+      }
+   };
+
+   typedef MemoryTrieBuilder<BuildKeyPattern>            BuildCodeTrie;
+   typedef MemoryTrieNode<BuildKeyPattern>               BuildCodeTrieNode;
+   typedef CachedList<BuildCodeTrieNode, 10>             BuildPatterns;
+
+   // --- BuildTreeTransformer ---
+   struct BuildTreeTransformer
+   {
+      typedef MemoryTrie<BuildKeyPattern>     MemoryBuildCodeTrie;
+
+      MemoryBuildCodeTrie  trie;
+      bool                 loaded;
+
+      BuildTreeTransformer()
+         : trie({ BuildKey::None })
+      {
+         loaded = false;
+      }
+   };
+
 
 }
 

@@ -1,5 +1,9 @@
 // ; --- Predefined References  --
-define INVOKER         10001h
+define INVOKER           10001h
+define VEH_HANDLER       10003h
+define PREPARE	         10006h
+
+define CORE_ET_TABLE     2000Bh
 
 // ; ==== System commands ===
 
@@ -35,7 +39,34 @@ procedure % INVOKER
 
 end
 
+// VEH_HANDLER() 
+procedure % VEH_HANDLER
+
+  mov  esi, edx
+  mov  edx, eax   // ; set exception code
+  mov  eax, [data : % CORE_ET_TABLE]
+  jmp  eax
+
+end
+
+procedure %PREPARE
+
+  push eax 
+  call extern "$rt.PrepareLA"
+  add  esp, 4
+  ret
+
+end
+
 // ; ==== Overridden Command Set ==
+
+// ; system prepare
+inline %4CFh
+
+  mov  eax, esp
+  call %PREPARE
+
+end
 
 // ; openheaderin
 inline %0F2h

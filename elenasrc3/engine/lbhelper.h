@@ -10,6 +10,7 @@
 #define LBHELPER_H
 
 #include "elena.h"
+#include "lbhelper.h"
 
 namespace elena_lang
 {
@@ -38,8 +39,15 @@ namespace elena_lang
          }
       };
 
-      Map<pos_t, pos_t>    labels;
-      Map<ref_t, JumpInfo> jumps;
+      struct LabelAddressInfo
+      {
+         pos_t position;
+         ref_t mask;
+      };
+
+      Map<pos_t, pos_t>             labels;
+      Map<ref_t, JumpInfo>          jumps;
+      Map<ref_t, LabelAddressInfo>  addresses;
 
       bool checkLabel(pos_t label) override
       {
@@ -51,15 +59,20 @@ namespace elena_lang
          jumps.add(label, { writer.position() });
       }
 
-      bool setLabel(pos_t label, MemoryWriter& writer) override
+      bool setLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) override
       {
          labels.add(label, writer.position());
 
-         return fixLabel(label, writer);
+         return fixLabel(label, writer, rh);
+      }
+
+      void writeLabelAddress(pos_t label, MemoryWriter& writer, ref_t mask) override
+      {
+         addresses.add(label, { writer.position(), mask});
       }
 
       LabelHelper()
-         : labels(0), jumps({})
+         : labels(0), jumps({}), addresses({})
       {
          
       }

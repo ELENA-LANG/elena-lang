@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------
 #include "ntlinker.h"
 #include "langcommon.h"
+#include "windows/winconsts.h"
 
 #include <windows.h>
 #include <time.h>
@@ -99,7 +100,7 @@ void WinNtLinker :: writeSections(WinNtExecutableImage& image, FileWriter& file)
 
    // write data
    for (auto it = image.imageSections.items.start(); !it.eof(); ++it) {
-      Section* section = (*it).section;
+      MemoryBase* section = (*it).section;
 
       MemoryReader reader(section);
       file.copyFrom(&reader, section->length());
@@ -138,7 +139,7 @@ bool WinNtLinker :: createDebugFile(ImageProviderBase& provider, WinNtExecutable
    if (!debugWriter.isOpen())
       return false;
 
-   Section* debug = provider.getTargetDebugSection();
+   MemoryBase* debug = provider.getTargetDebugSection();
 
    // signature - first 8 bytes
    debugWriter.write(DEBUG_MODULE_SIGNATURE, getlength_pos(DEBUG_MODULE_SIGNATURE));
@@ -162,7 +163,7 @@ void WinNtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableI
    // !! temporal
    image.fileAlignment = FILE_ALIGNMENT;
    image.sectionAlignment = SECTION_ALIGNMENT;
-   image.addressSpace.imageBase = 0x00400000;
+   image.addressSpace.imageBase = IMAGE_BASE;
 
    _imageFormatter->prepareImage(provider, image.addressSpace, image.imageSections, 
       image.sectionAlignment, 

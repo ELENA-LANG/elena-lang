@@ -8,6 +8,7 @@
 
 #include "elflinker.h"
 #include "elfcommon.h"
+#include "linux/lnxconsts.h"
 
 #include <elf.h>
 #include <sys/stat.h>
@@ -21,7 +22,7 @@ unsigned short ElfLinker :: calcPHLength(ElfExecutableImage& image)
    return image.imageSections.headers.count() + 3; // sections + HDR + interpreter + dynamic
 }
 
-void ElfLinker :: writeSection(FileWriter* file, Section* section)
+void ElfLinker :: writeSection(FileWriter* file, MemoryBase* section)
 {
    if (section != nullptr) {
       MemoryReader reader(section);
@@ -72,10 +73,11 @@ bool ElfLinker :: createDebugFile(ImageProviderBase& provider, ElfExecutableImag
    if (!debugWriter.isOpen())
       return false;
 
-   Section* debug = provider.getTargetDebugSection();
+   MemoryBase* debug = provider.getTargetDebugSection();
 
-   // signature
+   // signature - first 8 bytes
    debugWriter.write(DEBUG_MODULE_SIGNATURE, getlength_pos(DEBUG_MODULE_SIGNATURE));
+   debugWriter.align(8);
 
    // save entry point
    addr_t entryPoint = image.addressMap.code + image.addressMap.imageBase + provider.getDebugEntryPoint();
@@ -108,7 +110,7 @@ void ElfLinker :: prepareElfImage(ImageProviderBase& provider, ElfExecutableImag
 
 LinkResult ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider)
 {
-   bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode);
+   bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode, true);
    ElfExecutableImage image(withDebugMode);
 
    image.addressMap.entryPoint = (pos_t)provider.getEntryPoint();

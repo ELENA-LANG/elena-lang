@@ -1,0 +1,69 @@
+ ../../bin/elena64-cli helloworld/helloworld.project
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena64-cli sum/intsum.project
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena64-cli sum/realsum.project
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena64-cli -pwords words.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena64-cli -pbinary binary.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena64-cli -pbsort bsort.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena64-cli -pgoods goods.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi

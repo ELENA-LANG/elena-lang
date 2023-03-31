@@ -10,6 +10,8 @@ define ELENA_ERR_OUT_OF_MEMORY     103h
 // prop_mssg_mask - property message mask
 
 define ARG_MASK              0000001Fh
+define ACTION_MASK           000001E0h
+
 define SPECIAL_MESSAGE       00000020h
 define VARIADIC_MESSAGE      00000080h
 define SPECIAL_MESSAGE_INV  0FFFFFFDFh

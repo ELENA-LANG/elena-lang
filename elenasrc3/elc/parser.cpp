@@ -42,14 +42,30 @@ parse_key_t Parser :: resolveTerminal(SourceInfo& info)
       case dfaQuote:
       case dfaQuoteCode:
          return _terminalKeys.string;
+      case dfaWideQuote:
+         return _terminalKeys.wide;
       case dfaEOF:
          return _terminalKeys.eof;
       case dfaInteger:
          return _terminalKeys.integer;
+      case dfaGenericReal:
+      case dfaReal:
+      case dfaRealPostfix:
+         return _terminalKeys.real;
       case dfaCharacter:
          return _terminalKeys.character;
-      case dfaHexInteger:
-         return _terminalKeys.hexinteger;
+      case dfaCustomNumber:
+      {
+         switch (info.symbol[info.symbol.length() - 1]) {
+            case 'h':
+               return _terminalKeys.hexinteger;
+            case 'l':
+               return _terminalKeys.longinteger;
+            default:
+               return _terminalKeys.customnumber;
+         }
+         break;
+      }
       default:
          return _table.resolveSymbol(info.symbol);
    }   

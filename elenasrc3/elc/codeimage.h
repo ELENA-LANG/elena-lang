@@ -19,6 +19,7 @@ namespace elena_lang
       PlatformType type;
       pos_t        codeAlignment;
       bool         autoClassSymbol;
+      bool         withTLS;
       JITSettings  coreSettings;
       ustr_t       ns;
 
@@ -26,7 +27,7 @@ namespace elena_lang
       {
          type = PlatformType::None;
          codeAlignment = 0;
-         autoClassSymbol = false;
+         autoClassSymbol = withTLS = false;
          coreSettings = {};
          ns = nullptr;
       }
@@ -35,13 +36,23 @@ namespace elena_lang
    // --- TargetImage ---
    class TargetImage : public ReferenceMapper, public ImageProvider
    {
+      PlatformType       _systemTarget;
+
       pos_t              _entryPoint;
       pos_t              _debugEntryPoint;
 
+      addr_t             _tlsVariable;
+
+      void createVMTape(MemoryBase* tape, ustr_t ns, path_t nsPath, ForwardResolverBase* resolver);
       void prepareImage(ustr_t ns);
 
    public:
       AddressMap::Iterator externals() override;
+
+      addr_t getTLSVariable() override
+      {
+         return _tlsVariable;
+      }
 
       addr_t getEntryPoint() override
       {
@@ -53,7 +64,7 @@ namespace elena_lang
          return _debugEntryPoint & ~mskAnyRef;
       }
 
-      TargetImage(ForwardResolverBase* resolver, LibraryLoaderBase* loader, 
+      TargetImage(PlatformType systemTarget, ForwardResolverBase* resolver, LibraryLoaderBase* loader,
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType),
          TargetImageInfo imageInfo, AddressMapperBase* addressMapper);
    };

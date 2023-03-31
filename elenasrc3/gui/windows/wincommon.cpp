@@ -13,7 +13,7 @@ using namespace elena_lang;
 HWND ControlBase :: create(HINSTANCE instance, wstr_t className, ControlBase* owner)
 {
    _handle = ::CreateWindowW(className.str(), _title.str(), WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, owner ? owner->handle() : nullptr, nullptr, instance, this);
+      _rect.topLeft.x, _rect.topLeft.y, _rect.width(), _rect.height(), owner ? owner->handle() : nullptr, nullptr, instance, this);
 
    return _handle;
 }
@@ -24,7 +24,7 @@ void ControlBase :: showWindow(int cmdShow)
    UpdateWindow(_handle);
 }
 
-elena_lang::Rectangle ControlBase :: getRectangle()
+elena_lang::Rectangle ControlBase ::getClientRectangle()
 {
    RECT rc = { 0,0,0,0 };
    ::GetClientRect(_handle, &rc);
@@ -32,9 +32,23 @@ elena_lang::Rectangle ControlBase :: getRectangle()
    return Rectangle(rc.left, rc.top, rc.right, rc.bottom);
 }
 
-void ControlBase :: setRectangle(Rectangle rec)
+elena_lang::Rectangle ControlBase::getRectangle()
 {
-   ::MoveWindow(_handle, rec.topLeft.x, rec.topLeft.y, rec.width(), rec.height(), TRUE);
+   return _rect;
+}
+
+void ControlBase :: setRectangle(Rectangle rect)
+{
+   int x = rect.topLeft.x;
+   int y = rect.topLeft.y;
+   int width = max(rect.width(), _minWidth);
+   int height = max(rect.height(), _minHeight);
+
+   _rect = { x, y, width, height };
+
+   int r = ::MoveWindow(_handle, x, y, width, height, TRUE);
+
+   refresh();
 }
 
 void ControlBase :: setFocus()
@@ -65,7 +79,7 @@ void ControlBase :: hide()
 
 // --- WindowBase ---
 
-ATOM WindowBase :: registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon, unsigned int style)
+ATOM WindowBase :: registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon, HCURSOR cursor, HBRUSH background, unsigned int style)
 {
    WNDCLASSEXW wcex;
 
@@ -77,13 +91,18 @@ ATOM WindowBase :: registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t class
    wcex.cbWndExtra = 0;
    wcex.hInstance = hInstance;
    wcex.hIcon = icon;
-   wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-   wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+   wcex.hCursor = cursor;
+   wcex.hbrBackground = background;
    wcex.lpszMenuName = menuName.str();
    wcex.lpszClassName = className.str();
    wcex.hIconSm = smallIcon;
 
    return RegisterClassExW(&wcex);
+}
+
+ATOM WindowBase::registerClass(HINSTANCE hInstance, WNDPROC proc, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon, unsigned int style)
+{
+   return registerClass(hInstance, proc, className, icon, menuName, smallIcon, LoadCursor(nullptr, IDC_ARROW), (HBRUSH)(COLOR_WINDOW + 1), style);
 }
 
 LRESULT WindowBase :: WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -145,7 +164,9 @@ LRESULT WindowBase :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
                return TRUE;
          }
          break;
-      //case WM_CLOSE:
+      case WM_CLOSE:
+         onClose();
+         return 0;
       default:
          // to make compiler happy
          break;
@@ -153,9 +174,16 @@ LRESULT WindowBase :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
    return ::DefWindowProc(_handle, message, wParam, lParam);
 }
 
+bool WindowBase::onClose()
+{
+   ::DestroyWindow(_handle);
+
+   return true;
+}
+
 // --- WindowApp ---
 
-bool WindowApp :: initInstance(WindowBase* mainWindow)
+bool WindowApp :: initInstance(WindowBase* mainWindow, int cmdShow)
 {
    _hwnd = mainWindow->handle();
 
@@ -164,41 +192,57 @@ bool WindowApp :: initInstance(WindowBase* mainWindow)
       return FALSE;
    }
 
-   mainWindow->showWindow(_cmdShow);
+   mainWindow->showWindow(cmdShow);
 
    return TRUE;
 }
 
-void WindowApp :: notifyMessage(int messageCode)
+void WindowApp :: notify(int messageCode, NotificationStatus status)
 {
-   ExtNMHDR notification;
+   StatusNMHDR notification;
 
-   notification.nmhrd.code = NMHDR_Message;
+   notification.nmhrd.code = STATUS_NOTIFICATION;
    notification.nmhrd.hwndFrom = _hwnd;
-   notification.extParam = messageCode;
+   notification.code = messageCode;
+   notification.status = status;
 
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
-void WindowApp :: notifyModelChange(int modelCode, int arg)
+void WindowApp :: notifySelection(int messageCode, size_t param)
 {
-   ExtNMHDR notification;
+   SelectionNMHDR notification;
 
-   notification.nmhrd.code = NMHDR_Model;
+   notification.nmhrd.code = STATUS_SELECTION;
    notification.nmhrd.hwndFrom = _hwnd;
-   notification.extParam = modelCode;
-   notification.extParam2 = arg;
+   notification.code = messageCode;
+   notification.param = param;
 
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
-int WindowApp :: run(GUIControlBase* mainWindow)
+void WindowApp::notifyCompletion(int messageCode, int param)
+{
+   CompletionNMHDR notification;
+
+   notification.nmhrd.code = STATUS_COMPLETION;
+   notification.nmhrd.hwndFrom = _hwnd;
+   notification.code = messageCode;
+   notification.param = param;
+
+   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
+}
+
+int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, int notificationId, NotificationStatus notificationStatus)
 {
    // Perform application initialization:
-   if (!initInstance(dynamic_cast<WindowBase*>(mainWindow)))
+   if (!initInstance(dynamic_cast<WindowBase*>(mainWindow), maximized ? SW_MAXIMIZE : SW_SHOW))
    {
       return FALSE;
    }
+
+   if (notificationId)
+      notify(notificationId, notificationStatus);
 
    HACCEL hAccelTable = LoadAccelerators(_instance, _accelerators.str());
 

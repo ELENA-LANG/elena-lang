@@ -10,6 +10,7 @@
 #define PPC64COMPILER_H
 
 #include "jitcompiler.h"
+#include "ppchelper.h"
 
 namespace elena_lang
 {
@@ -31,6 +32,12 @@ namespace elena_lang
    public:
       void writeImm9(MemoryWriter* writer, int value, int type) override;
       void writeImm12(MemoryWriter* writer, int value, int type) override;
+      void writeImm16Hi(MemoryWriter* writer, int value, int type) override
+      {
+         writeImm16(writer, PPCHelper::getHiAdjusted(value), type);
+      }
+
+      void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) override;
 
       void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) override;
 

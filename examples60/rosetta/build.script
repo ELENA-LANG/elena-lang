@@ -1,0 +1,209 @@
+ ../../bin/elena-cli -packermann ackermann.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -paccumulator accumulator.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -paddfield addfield.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -panonymrec anonymrec.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -paplusb aplusb.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -papplycallback applycallback.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -parithmeticint arithmeticint.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -parithmeval arithmeval.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -parithmmean arithmmean.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -parrayconcat arrayconcat.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -parraymode arraymode.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -parrays arrays.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -passociativearrays associativearrays.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -pbestshuffle bestshuffle.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -pbinary binary.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -pbitwise bitwise.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -pbrackets brackets.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -pbullscows bullscows.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -pcaesar caesar.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -pcharmatch charmatch.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../bin/elena-cli -pcalendar calendar.l
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi

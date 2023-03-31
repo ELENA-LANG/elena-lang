@@ -28,6 +28,7 @@ namespace elena_lang
    {
    public:
       static bool compare(path_t path1, path_t path);
+      static bool compare(path_t s1, path_t s2, size_t length);
 
       static bool removeFile(path_t path);
 
@@ -55,10 +56,13 @@ namespace elena_lang
       {
          String::copy(path, length);
       }
-      void copySubPath(path_t path)
+      void copySubPath(path_t path, bool includeSeparator)
       {
          size_t pos = path.findLast(PATH_SEPARATOR);
          if (pos != NOTFOUND_POS) {
+            if (includeSeparator)
+               pos++;
+
             copy(path, pos);
          }
          else clear();
@@ -174,10 +178,19 @@ namespace elena_lang
          PathString pathStr(path);
          combine(*pathStr);
       }
+      void combine(ustr_t path, size_t index)
+      {
+         PathString pathStr(path, index);
+         combine(*pathStr);
+      }
 
       PathString(ustr_t path)
       {
          copy(path);
+      }
+      PathString(ustr_t path, size_t index)
+      {
+         copy(path, index);
       }
       PathString(path_t root, ustr_t path)
       {

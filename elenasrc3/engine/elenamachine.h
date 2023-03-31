@@ -1,93 +1,125 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Machine common types
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENAMACHINE_H
 #define ELENAMACHINE_H
+
+#include "core.h"
 
 namespace elena_lang
 {
    // --- SystemSettings ---
    struct SystemSettings
    {
-      int      YGTotalSize;
-      int      YGCommittedSize;
-      int      MGTotalSize;
-      int      MGCommittedSize;
-      int      PageMask;
-      int      PageSizeOrder;
+      int      yg_total_size;
+      int      yg_committed_size;
+      int      mg_total_size;
+      int      mg_committed_size;
+      int      page_mask;
+      int      page_size_order;
+      int      perm_total_size;
    };
 
-#pragma pack(push, 1)
-
-   // --- GCTable ---
-   struct GCTable
+   class ImageSection : public MemoryBase
    {
-      uintptr_t   gc_header;
-      uintptr_t   gc_start;
-      uintptr_t   gc_yg_start;
-      uintptr_t   gc_yg_current;
-      uintptr_t   gc_yg_end;
-      uintptr_t   gc_shadow;
-      uintptr_t   gc_shadow_end;
-      uintptr_t   gc_mg_start;
-      uintptr_t   gc_mg_current;
-      uintptr_t   gc_end;
-      uintptr_t   gc_mg_wbar;
-   };
+      void* _section;
+      pos_t _length;
 
-   // --- SystemEnv ---
-   struct SystemEnv
-   {
-      size_t      StatCounter;
-      GCTable*    Table;
-      void*       BCInvoker;
-      pos_t       GCMGSize;
-      pos_t       GCYGSize;
-   };
-
-   // --- _Entry ---
-   struct Entry
-   {
-      union {
-         void* address;
-         int  (*evaluate)(void*, int);
-      };
-
-      Entry()
+   public:
+      pos_t length() const override
       {
-         address = nullptr;
+         return _length;
+      }
+
+      void* get(pos_t position) const override
+      {
+         if (position < _length) {
+            return (char*)_section + position;
+         }
+         return nullptr;
+      }
+
+      bool read(pos_t position, void* s, pos_t length) const override
+      {
+         if (position < _length && _length >= position + length) {
+            memcpy(s, (unsigned char*)_section + position, length);
+
+            return true;
+         }
+         else return false;
+      }
+
+      bool write(pos_t position, const void* s, pos_t length) override
+      {
+         // write operations are not supported
+         return false;
+      }
+
+      bool insert(pos_t position, const void* s, pos_t length) override
+      {
+         // write operations are not supported
+         return false;
+      }
+
+      void trim(pos_t position) override
+      {
+         _length = position;
+      }
+
+      ImageSection(void* section, pos_t length)
+         : _section(section), _length(length)
+      {
+
       }
    };
 
-   // --- SymbolList ---
-   struct SymbolList
+   // --- ELENAMachine ---
+   class ELENAMachine
    {
-      size_t length;
-      // NOTE : the array size if fictinal - it can contain the number of entried defined in the first field
-      Entry  entries[1];  
+   public:
+      int execute(SystemEnv* env, void* symbolListEntry);
+      int execute(SystemEnv* env, void* threadEntry, void* threadFunc);
 
-      SymbolList()
-      {
-         length = 0;
-      }
+      ELENAMachine() = default;
+
+      virtual ~ELENAMachine() = default;
    };
-
-#pragma pack(pop)
 
    // --- SystemRoutineProvider ---
    static class SystemRoutineProvider
    {
    public:
+      void* RetrieveMDataPtr(void* imageBase, pos_t imageLength);
+
       static void FillSettings(SystemEnv* env, SystemSettings& settings);
 
-      static uintptr_t NewHeap(int totalSize, int committedSize);
+      static size_t AlignHeapSize(size_t size);
+
+      static uintptr_t NewHeap(size_t totalSize, size_t committedSize);
+      static uintptr_t ExpandHeap(void* allocPtr, size_t newSize);
+      static uintptr_t ExpandPerm(void* allocPtr, size_t newSize);
+
+      static void* GCRoutine(GCTable* table, GCRoot* roots, size_t size, bool fullMode);
+      static void* GCRoutinePerm(GCTable* table, size_t size);
+
+      static size_t LoadCallStack(uintptr_t framePtr, uintptr_t* list, size_t length);
 
       static void Init(SystemEnv* env, SystemSettings settings);
-
+      static void InitSTAExceptionHandling(SystemEnv* env, void* criticalHandler);
+      static void InitMTAExceptionHandling(SystemEnv* env, int index, void* criticalHandler);
+      static void InitCriticalStruct(uintptr_t criticalDispatcher);
       static void InitSTA(SystemEnv* env);
+
+      static long long GenerateSeed();
+      static void InitRandomSeed(SeedStruct& seed, long long seedNumber);
+      static unsigned int GetRandomNumber(SeedStruct& seed);
+
+      static void* CreateThread(int tt_index, int flags, void* threadProc);
+
+      static void RaiseError(int code);
 
       static void Exit(int exitCode);
 

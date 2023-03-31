@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  x86 ELENA System Routines
 //
-//                                              (C)2022, by Aleksey Rakov
+//                                             (C)2022-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -17,11 +17,13 @@ constexpr int page_size_order        = gcPageSizeOrder32;
 
 void SystemRoutineProvider :: FillSettings(SystemEnv* env, SystemSettings& settings)
 {
-   settings.YGTotalSize = 0x8000000;
-   settings.YGCommittedSize = align(env->GCMGSize, 128) >> page_size_order_minus2;
-   settings.MGTotalSize = 0x20000000;
-   settings.MGCommittedSize = align(env->GCMGSize, 128);
+   settings.yg_total_size = 0x8000000;
+   settings.yg_committed_size = align(env->gc_mg_size, 128) >> page_size_order_minus2;
+   settings.mg_total_size = 0x20000000;
+   settings.mg_committed_size = align(env->gc_mg_size, 128);
 
-   settings.PageMask = page_mask;
-   settings.PageSizeOrder = page_size_order;
+   settings.page_mask = page_mask;
+   settings.page_size_order = page_size_order;
+
+   settings.perm_total_size = 0x20000000;
 }

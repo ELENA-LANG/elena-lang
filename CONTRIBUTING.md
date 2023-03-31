@@ -2,7 +2,7 @@
 
 To acquire the source code clone the git repository:
 
-    git clone git://github.com/ELENA-LANG/elena-lang.git
+    git clone https://github.com/ELENA-LANG/elena-lang.git
 
 ### Windows:
 

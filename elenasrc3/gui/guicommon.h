@@ -13,12 +13,6 @@ namespace elena_lang
 {
 #ifdef _MSC_VER
 
-#ifndef _T
-
-#define _T(x) L ## x
-
-#endif // _T
-
    typedef wide_c  text_c;
    typedef wide_c* text_t;
    typedef wstr_t  text_str;
@@ -36,6 +30,9 @@ namespace elena_lang
    typedef ustr_t text_str;
 
 #endif
+
+   // --- Misc types
+   typedef unsigned int NotificationStatus;
 
    // --- Point ---
    struct Point
@@ -131,7 +128,18 @@ namespace elena_lang
    class GUIControlBase
    {
    public:
+      virtual bool checkHandle(void* param) const = 0;
+
+      virtual Rectangle getRectangle() = 0;
+      virtual void setRectangle(Rectangle rec) = 0;
+
+      virtual void show() = 0;
+      virtual void hide() = 0;
       virtual bool visible() = 0;
+
+      virtual void setFocus() = 0;
+
+      virtual void refresh() = 0;
 
       virtual ~GUIControlBase() = default;
    };
@@ -140,15 +148,16 @@ namespace elena_lang
    class NotifierBase
    {
    public:
-      virtual void notifyMessage(int messageCode) = 0;
-      virtual void notifyModelChange(int modelCode, int arg = 0) = 0;
+      virtual void notify(int id, NotificationStatus status) = 0;
+      virtual void notifySelection(int id, size_t param) = 0;
+      virtual void notifyCompletion(int id, int param) = 0;
    };
 
    // --- GUIApp ---
    class GUIApp : public NotifierBase
    {
    public:
-      virtual int run(GUIControlBase* mainWindow) = 0;
+      virtual int run(GUIControlBase* mainWindow, bool maximized, int notificationId, NotificationStatus notificationStatus) = 0;
 
       virtual ~GUIApp() = default;
    };

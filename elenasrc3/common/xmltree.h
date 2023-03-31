@@ -43,9 +43,19 @@ namespace elena_lang
          return _parent->getContent();
       }
 
+      virtual void writeContent(size_t position, ustr_t value)
+      {
+         _parent->writeContent(position, value);
+      }
+
       size_t loadTag(ustr_t content, size_t start, NodeTag& tag, AttributeList* list);
 
       size_t parse(ustr_t content, size_t position, size_t end, PositionList* list);
+
+      virtual size_t insert(size_t position, ustr_t tag)
+      {
+         return _parent->insert(position, tag);
+      }
 
    public:
       static XmlNode Default()
@@ -70,6 +80,11 @@ namespace elena_lang
       bool readAttribute(ustr_t name, Attribute& value);
       bool readContent(DynamicString<char>& s);
 
+      void setContent(ustr_t content)
+      {
+         writeContent(_position, content);
+      }
+
       XmlNode();
       XmlNode(XmlNode* parent, size_t position);
    };
@@ -90,6 +105,11 @@ namespace elena_lang
       size_t resolve(XmlNode& node, ustr_t xpath);
 
       size_t resolveSubPath(ustr_t xpath, size_t& end);
+      size_t reproduceSubPath(ustr_t xpath, size_t& end);
+
+      size_t insert(size_t position, ustr_t tag) override;
+
+      void writeContent(size_t position, ustr_t value) override;
 
    public:
       bool empty() { return _content.empty(); }
@@ -100,9 +120,13 @@ namespace elena_lang
       XmlNode selectNode(ustr_t xpath);
       XmlNode selectNode(XmlNode& node, ustr_t xpath);
 
+      XmlNode insertNode(ustr_t xpath);
+
       bool load(path_t path, FileEncoding encoding);
+      bool save(path_t path, FileEncoding encoding, bool withBOM, bool formatted);
 
       XmlTree();
+      XmlTree(ustr_t rootTag);
    };
 }
 

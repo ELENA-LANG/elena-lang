@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31515.178
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elc", "elc\vs\elc.vcxproj", "{85BBE576-02A3-414E-BF88-35280FAFADAD}"
 EndProject
@@ -14,6 +14,14 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenart", "elenart\vs\elenart.vcxproj", "{D85B37B5-135E-44EC-85C7-B87F6B7B1071}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ecv", "tools\ecv\vs\ecv.vcxproj", "{E660D0B2-A8A6-4CEB-9A91-FF4564C6DAB5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ldoc", "tools\ldoc\vs\ldoc.vcxproj", "{D1AED700-DF42-451A-B46C-3B1E077A279B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenavm", "elenavm\vs\elenavm.vcxproj", "{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "og", "tools\og\vs\og.vcxproj", "{CEEBA8A7-6082-49F5-AD6C-0D038BDAEA5E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenasm", "elenasm\vs\elenasm.vcxproj", "{E2686A7D-1888-4078-B5F3-63FD4F2682A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +79,38 @@ Global
 		{E660D0B2-A8A6-4CEB-9A91-FF4564C6DAB5}.Release|x64.Build.0 = Release|x64
 		{E660D0B2-A8A6-4CEB-9A91-FF4564C6DAB5}.Release|x86.ActiveCfg = Release|Win32
 		{E660D0B2-A8A6-4CEB-9A91-FF4564C6DAB5}.Release|x86.Build.0 = Release|Win32
+		{D1AED700-DF42-451A-B46C-3B1E077A279B}.Debug|x64.ActiveCfg = Debug|x64
+		{D1AED700-DF42-451A-B46C-3B1E077A279B}.Debug|x64.Build.0 = Debug|x64
+		{D1AED700-DF42-451A-B46C-3B1E077A279B}.Debug|x86.ActiveCfg = Debug|Win32
+		{D1AED700-DF42-451A-B46C-3B1E077A279B}.Debug|x86.Build.0 = Debug|Win32
+		{D1AED700-DF42-451A-B46C-3B1E077A279B}.Release|x64.ActiveCfg = Release|x64
+		{D1AED700-DF42-451A-B46C-3B1E077A279B}.Release|x64.Build.0 = Release|x64
+		{D1AED700-DF42-451A-B46C-3B1E077A279B}.Release|x86.ActiveCfg = Release|Win32
+		{D1AED700-DF42-451A-B46C-3B1E077A279B}.Release|x86.Build.0 = Release|Win32
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Debug|x64.ActiveCfg = Debug|x64
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Debug|x64.Build.0 = Debug|x64
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Debug|x86.ActiveCfg = Debug|Win32
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Debug|x86.Build.0 = Debug|Win32
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Release|x64.ActiveCfg = Release|x64
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Release|x64.Build.0 = Release|x64
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Release|x86.ActiveCfg = Release|Win32
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600}.Release|x86.Build.0 = Release|Win32
+		{CEEBA8A7-6082-49F5-AD6C-0D038BDAEA5E}.Debug|x64.ActiveCfg = Debug|x64
+		{CEEBA8A7-6082-49F5-AD6C-0D038BDAEA5E}.Debug|x64.Build.0 = Debug|x64
+		{CEEBA8A7-6082-49F5-AD6C-0D038BDAEA5E}.Debug|x86.ActiveCfg = Debug|Win32
+		{CEEBA8A7-6082-49F5-AD6C-0D038BDAEA5E}.Debug|x86.Build.0 = Debug|Win32
+		{CEEBA8A7-6082-49F5-AD6C-0D038BDAEA5E}.Release|x64.ActiveCfg = Release|x64
+		{CEEBA8A7-6082-49F5-AD6C-0D038BDAEA5E}.Release|x64.Build.0 = Release|x64
+		{CEEBA8A7-6082-49F5-AD6C-0D038BDAEA5E}.Release|x86.ActiveCfg = Release|Win32
+		{CEEBA8A7-6082-49F5-AD6C-0D038BDAEA5E}.Release|x86.Build.0 = Release|Win32
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Debug|x64.ActiveCfg = Debug|x64
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Debug|x64.Build.0 = Debug|x64
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Debug|x86.ActiveCfg = Debug|Win32
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Debug|x86.Build.0 = Debug|Win32
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Release|x64.ActiveCfg = Release|x64
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Release|x64.Build.0 = Release|x64
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Release|x86.ActiveCfg = Release|Win32
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

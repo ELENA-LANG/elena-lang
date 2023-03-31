@@ -20,6 +20,7 @@ constexpr auto RDATA_SECTION  = ".rdata";
 constexpr auto IMPORT_SECTION = ".import";
 constexpr auto BSS_SECTION    = ".bss";
 constexpr auto DATA_SECTION   = ".data";
+constexpr auto TLS_SECTION    = ".tls";
 
 // --- WinNtImageFormatter ---
 
@@ -57,13 +58,15 @@ pos_t WinNtImageFormatter :: fillImportTable(ImportTable& importTable, AddressMa
 void WinNtImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& map, ImageSections& sections,
    pos_t sectionAlignment, pos_t fileAlignment)
 {
-   Section* text = provider.getTextSection();
-   Section* mdata = provider.getMDataSection();
-   Section* mbdata = provider.getMBDataSection();
-   Section* rdata = provider.getRDataSection();
-   Section* data = provider.getDataSection();
-   Section* stat = provider.getStatSection();
-   Section* import = provider.getImportSection();
+   MemoryBase* text = provider.getTextSection();
+   MemoryBase* adata = provider.getADataSection();
+   MemoryBase* mdata = provider.getMDataSection();
+   MemoryBase* mbdata = provider.getMBDataSection();
+   MemoryBase* rdata = provider.getRDataSection();
+   MemoryBase* data = provider.getDataSection();
+   MemoryBase* stat = provider.getStatSection();
+   MemoryBase* import = provider.getImportSection();
+   MemoryBase* tls = provider.getTLSSection();
 
    pos_t    size = 0;
    pos_t    offset = 0x1000;
@@ -84,18 +87,21 @@ void WinNtImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
 
    offset = align(offset + size, sectionAlignment);
 
-   // --- mdata ---
-   size = mdata->length();
-   map.mdata = offset;
+   // --- adata & mdata ---
+   map.adata = offset;
+   size = adata->length();
+   map.mdata = offset + size;
+   size += mdata->length();
    map.mbdata = offset + size;
    size += mbdata->length();
    map.dataSize += align(size, fileAlignment);
 
-   sections.headers.add(ImageSectionHeader::get(MDATA_SECTION, map.mdata, 
+   sections.headers.add(ImageSectionHeader::get(MDATA_SECTION, map.adata, 
       ImageSectionHeader::SectionType::RData,
       align(size, sectionAlignment),
       align(size, fileAlignment)));
 
+   sections.items.add(sections.items.count() + 1, { adata, false });
    sections.items.add(sections.items.count() + 1, { mdata, false });
    sections.items.add(sections.items.count() + 1, { mbdata, true });
 
@@ -141,12 +147,30 @@ void WinNtImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
 
    // --- stat ---
    size = stat->length();
-   map.stat = offset;
-   map.unintDataSize += align(size, fileAlignment);
+   if (size > 0) {
+      map.stat = offset;
+      map.unintDataSize += align(size, fileAlignment);
 
-   sections.headers.add(ImageSectionHeader::get(DATA_SECTION, map.stat,
-      ImageSectionHeader::SectionType::Data,
-      align(size, sectionAlignment), 0));
+      sections.headers.add(ImageSectionHeader::get(DATA_SECTION, map.stat,
+         ImageSectionHeader::SectionType::Data,
+         align(size, sectionAlignment), 0));
+   }
+
+   offset = align(offset + size, sectionAlignment);
+
+   // --- tls ---
+   size = tls->length();
+   if (size > 0) {
+      map.tls = offset;
+      map.dataSize += align(size, fileAlignment);
+
+      sections.headers.add(ImageSectionHeader::get(TLS_SECTION, map.tls,
+         ImageSectionHeader::SectionType::Data,
+         align(size, sectionAlignment),
+         align(size, fileAlignment)));
+
+      sections.items.add(sections.items.count() + 1, { tls, true });
+   }
 
    offset = align(offset + size, sectionAlignment);
 
@@ -157,9 +181,11 @@ void WinNtImageFormatter :: fixImage(ImageProviderBase& provider, AddressSpace& 
 {
    fixSection(provider.getTextSection(), map);
    fixSection(provider.getRDataSection(), map);
+   fixSection(provider.getADataSection(), map);
    fixSection(provider.getMDataSection(), map);
    fixSection(provider.getMBDataSection(), map);
    fixImportSection(provider.getImportSection(), map);
+   fixSection(provider.getTLSSection(), map);
 
    // fix up debug info if enabled
    if (withDebugInfo) {
@@ -170,6 +196,8 @@ void WinNtImageFormatter :: fixImage(ImageProviderBase& provider, AddressSpace& 
 void WinNtImageFormatter :: prepareImage(ImageProviderBase& provider, AddressSpace& map, ImageSections& sections,
                                          pos_t sectionAlignment, pos_t fileAlignment, bool withDebugInfo)
 {
+   createTLSSection(provider, map);
+
    createImportSection(provider, map.importMapping);
 
    mapImage(provider, map, sections, sectionAlignment, fileAlignment);
@@ -179,12 +207,33 @@ void WinNtImageFormatter :: prepareImage(ImageProviderBase& provider, AddressSpa
 
 // --- Win32NtImageFormatter ---
 
+void Win32NtImageFormatter :: createTLSSection(ImageProviderBase& provider, AddressSpace& map)
+{
+   MemoryBase* tlsSection = provider.getTLSSection();
+   if (tlsSection && tlsSection->length() > 0) {
+      pos_t tls_variable = (pos_t)provider.getTLSVariable();
+
+      // map IMAGE_TLS_DIRECTORY
+      MemoryWriter rdataWriter(provider.getRDataSection());
+      map.tlsDirectory = rdataWriter.position();
+      map.tlsSize = tlsSection->length();
+
+      // create IMAGE_TLS_DIRECTORY
+      rdataWriter.writeDReference(mskTLSRef32, 0);              // StartAddressOfRawData
+      rdataWriter.writeDReference(mskTLSRef32, map.tlsSize);      // EndAddressOfRawData
+      rdataWriter.writeDReference(mskDataRef32, tls_variable);  // AddressOfIndex
+      rdataWriter.writeDWord(0);                       // AddressOfCallBacks
+      rdataWriter.writeDWord(0);                       // SizeOfZeroFill
+      rdataWriter.writeDWord(0);                       // Characteristics
+   }
+}
+
 void Win32NtImageFormatter :: createImportSection(ImageProviderBase& provider, RelocationMap& importMapping)
 {
    ImportTable importTable(nullptr);
    pos_t count = fillImportTable(importTable, provider.externals());
 
-   Section* import = provider.getImportSection();
+   MemoryBase* import = provider.getImportSection();
 
    MemoryWriter writer(import);
 
@@ -226,24 +275,31 @@ void Win32NtImageFormatter :: createImportSection(ImageProviderBase& provider, R
    }
 }
 
-void Win32NtImageFormatter::fixSection(Section* section, AddressSpace& map)
+void Win32NtImageFormatter::fixSection(MemoryBase* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, relocate);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocate);
 }
 
-void Win32NtImageFormatter::fixImportSection(Section* section, AddressSpace& map)
+void Win32NtImageFormatter::fixImportSection(MemoryBase* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, relocateImport);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocateImport);
 }
 
 // --- Win64NtImageFormatter ---
+
+void Win64NtImageFormatter :: createTLSSection(ImageProviderBase& provider, AddressSpace& map)
+{
+   
+}
 
 void Win64NtImageFormatter :: createImportSection(ImageProviderBase& provider, RelocationMap& importMapping)
 {
    ImportTable importTable(nullptr);
    pos_t count = fillImportTable(importTable, provider.externals());
 
-   Section* import = provider.getImportSection();
+   MemoryBase* import = provider.getImportSection();
 
    MemoryWriter writer(import);
 
@@ -285,12 +341,14 @@ void Win64NtImageFormatter :: createImportSection(ImageProviderBase& provider, R
    }
 }
 
-void Win64NtImageFormatter::fixSection(Section* section, AddressSpace& map)
+void Win64NtImageFormatter::fixSection(MemoryBase* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, relocate64);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocate64);
 }
 
-void Win64NtImageFormatter::fixImportSection(Section* section, AddressSpace& map)
+void Win64NtImageFormatter::fixImportSection(MemoryBase* section, AddressSpace& map)
 {
-   section->fixupReferences<AddressSpace*>(&map, relocateImport);
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocateImport);
 }

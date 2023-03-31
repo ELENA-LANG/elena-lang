@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                              (C)2021-2022, by Aleksey Rakov
+//                                              (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <windows.h>
@@ -11,6 +11,7 @@
 #include "config.h"
 #include "ecvconst.h"
 #include "ecviewer.h"
+#include "windows/presenter.h"
 
 using namespace elena_lang;
 
@@ -27,7 +28,7 @@ constexpr auto PLATFORM_KEY = "Win_x64";
 
 #endif
 
-class Presenter : public PresenterBase
+class ConsoleHelper : public ConsoleHelperBase
 {
    TextFileWriter* _writer;
 
@@ -78,11 +79,11 @@ public:
       _writer = new TextFileWriter(*path, FileEncoding::UTF8, false);
    }
 
-   Presenter()
+   ConsoleHelper()
    {
       _writer = nullptr;
    }
-   ~Presenter() override
+   ~ConsoleHelper() override
    {
       freeobj(_writer);
    }
@@ -107,7 +108,7 @@ void getAppPath(PathString& appPath)
 
    ::GetModuleFileName(NULL, path, MAX_PATH);
 
-   appPath.copySubPath(path);
+   appPath.copySubPath(path, false);
    appPath.lower();
 }
 
@@ -149,11 +150,11 @@ int main()
       provider.setRootPath(*libPath);
    }
 
-   Presenter presenter;
-   ByteCodeViewer viewer(&provider, &presenter, rows);
+   ConsoleHelper consoleHelper;
+   ByteCodeViewer viewer(&provider, &consoleHelper, rows);
 
    if (argc < 2) {
-      presenter.print("ecv <module name> | ecv -p<module path>");
+      consoleHelper.print("ecv <module name> | ecv -p<module path>");
       return 0;
    }
 
@@ -162,7 +163,7 @@ int main()
 
       PathString path(argv[1]);
       if(!viewer.load(*path)) {
-         presenter.printPath(ECV_MODULE_NOTLOADED, path.str());
+         consoleHelper.printPath(ECV_MODULE_NOTLOADED, path.str());
 
          return -1;
       }
@@ -170,7 +171,7 @@ int main()
    else {
       IdentifierString arg(argv[1]);
       if (!viewer.loadByName(*arg)) {
-         presenter.printPath(ECV_MODULE_NOTLOADED, argv[1]);
+         consoleHelper.printPath(ECV_MODULE_NOTLOADED, argv[1]);
 
          return -1;
       }

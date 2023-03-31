@@ -17,6 +17,16 @@
 
 using namespace elena_lang;
 
+#ifdef _M_IX86
+
+constexpr auto CURRENT_PLATFORM = PlatformType::Win_x86;
+
+#elif _M_X64
+
+constexpr auto CURRENT_PLATFORM = PlatformType::Win_x86_64;
+
+#endif
+
 typedef Win32DebugProcess    DebugProcess;
 
 // Forward declarations of functions included in this code module:
@@ -31,25 +41,30 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
    UNREFERENCED_PARAMETER(hPrevInstance);
    UNREFERENCED_PARAMETER(lpCmdLine);
+   UNREFERENCED_PARAMETER(nCmdShow);
 
    Text::TabSize = 4; // !! temporal
 
    GUISettinngs  guiSettings = { true };
    TextViewSettings textViewSettings = { EOLMode::CRLF, false, 3 };
 
-   IDEModel          ideModel(10);
-   Win32Controller   osController;
+   IDEModel          ideModel;
+   Win32Process      outputProcess(50);
    DebugProcess      debugProcess;
-   IDEController     ideController(&osController, &debugProcess, &ideModel, textViewSettings);
-   IDEFactory        factory(hInstance, nCmdShow, &ideModel, &ideController, guiSettings);
+   IDEController     ideController(&outputProcess, &debugProcess, &ideModel, 
+                        textViewSettings, CURRENT_PLATFORM);
+   IDEFactory        factory(hInstance, &ideModel, &ideController, guiSettings);
+
+   PathString configPath(ideModel.projectModel.paths.appPath);
+   configPath.combine(_T("ide60.cfg"));
+   ideController.loadConfig(&ideModel, *configPath);
 
    GUIApp* app = factory.createApp();
-   GUIControlBase* ideWindow = factory.createMainWindow(app);
+   GUIControlBase* ideWindow = factory.createMainWindow(app, &outputProcess);
 
    ideController.setNotifier(app);
-   ideController.init(&ideModel);
 
-   int retVal = app->run(ideWindow);
+   int retVal = app->run(ideWindow, ideModel.appMaximized, NOTIFY_ONSTART, IDE_ONSTART);
 
    delete app;
 

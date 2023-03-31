@@ -3,7 +3,7 @@
 //
 //		This file contains CPU native helpers
 //		Supported platforms: x86 / x86-64
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef X86HELPER_H
@@ -19,6 +19,8 @@ namespace elena_lang
    {
       Unknown    = 0,
       None       = 0,
+
+      ST         = 0x00000001,
 
       DD         = 0x00100005,
       DB         = 0x00200005,
@@ -98,6 +100,12 @@ namespace elena_lang
       Factor8    = 0xC0000000
    };
 
+   enum class SegmentPrefix : unsigned int
+   {
+      None  = 0,
+      FS    = 0x64
+   };
+
    // --- X86JumpType ---
    enum class X86JumpType : unsigned int
    {
@@ -105,10 +113,13 @@ namespace elena_lang
 
       JB    = 0x02,
       JAE   = 0x03,
+      JE    = 0x04,
       JZ    = 0x04,
       JNZ   = 0x05,
       JBE   = 0x06,
       JA    = 0x07,
+      JS    = 0x08,
+      JNS   = 0x09,
       JL    = 0x0C,
       JGE   = 0x0D,
    };
@@ -149,14 +160,23 @@ namespace elena_lang
       X86OperandType type;
       ref_t          reference;
       int            offset;
+      SegmentPrefix  prefix;
 
       bool isR8() const
       {
          return test(type, X86OperandType::R8);
       }
+      bool isM8() const
+      {
+         return test(type, X86OperandType::M8);
+      }
       bool isR8_M8() const
       {
          return test(type, X86OperandType::R8) || test(type, X86OperandType::M8);
+      }
+      bool isM16() const
+      {
+         return test(type, X86OperandType::M16);
       }
       bool isR16() const
       {
@@ -207,6 +227,10 @@ namespace elena_lang
       {
          return type == X86OperandType::DD || type == X86OperandType::DB;
       }
+      bool isDB() const
+      {
+         return type == X86OperandType::DB;
+      }
       bool isDB_DD_DQ() const
       {
          return type == X86OperandType::DQ || type == X86OperandType::DD || type == X86OperandType::DB;
@@ -218,6 +242,8 @@ namespace elena_lang
          this->reference = 0;
          this->offset = 0;
          this->factorReg = this->ebpReg = false;
+         this->accReg = false;
+         this->prefix = SegmentPrefix::None;
       }
       X86Operand(X86OperandType type)
       {
@@ -227,6 +253,7 @@ namespace elena_lang
          this->factorReg = false;
          this->ebpReg = (type == X86OperandType::EBP || this->type == X86OperandType::RBP);
          this->accReg = (type == X86OperandType::EAX || this->type == X86OperandType::RAX);
+         this->prefix = SegmentPrefix::None;
       }
    };
 
@@ -402,7 +429,7 @@ namespace elena_lang
       }
 
       void fixJumps(pos_t position, int size, MemoryWriter& writer);
-      bool fixLabel(pos_t label, MemoryWriter& writer) override;
+      bool fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) override;
 
       void writeShortJmpForward(pos_t label, MemoryWriter& writer);
       void writeJmpForward(pos_t label, MemoryWriter& writer);
@@ -437,6 +464,26 @@ namespace elena_lang
       void writeJneBack(pos_t label, MemoryWriter& writer) override
       {
          writeJccBack(X86JumpType::JNZ, label, writer);
+      }
+
+      void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         writeJccForward(X86JumpType::JL, label, writer, byteCodeOffset);
+      }
+
+      void writeJltBack(pos_t label, MemoryWriter& writer) override
+      {
+         writeJccBack(X86JumpType::JL, label, writer);
+      }
+
+      void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         writeJccForward(X86JumpType::JGE, label, writer, byteCodeOffset);
+      }
+
+      void writeJgeBack(pos_t label, MemoryWriter& writer) override
+      {
+         writeJccBack(X86JumpType::JGE, label, writer);
       }
    };
 }

@@ -13,31 +13,13 @@
 #include "langcommon.h"
 #include "textparser.h"
 #include "syntaxtree.h"
+#include "projectbase.h"
 #include "errors.h"
 
 namespace elena_lang
 {
 
-// --- PresenterBase ----
-
-class PresenterBase
-{
-public:
-   virtual ustr_t getMessage(int code) = 0;
-
-   virtual void print(ustr_t msg) = 0;
-   virtual void print(ustr_t msg, ustr_t arg) = 0;
-   virtual void print(ustr_t msg, ustr_t arg1, ustr_t arg2) = 0;
-   virtual void print(ustr_t msg, ustr_t arg1, ustr_t arg2, ustr_t arg3) = 0;
-   virtual void print(ustr_t msg, int arg1) = 0;
-   virtual void print(ustr_t msg, int arg1, int arg2) = 0;
-   virtual void print(ustr_t msg, int arg1, int arg2, int arg3) = 0;
-   virtual void print(ustr_t msg, ustr_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
-   virtual void printPath(ustr_t msg, path_t arg) = 0;
-   virtual void printPath(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
-
-   virtual ~PresenterBase() = default;
-};
+constexpr int MAX_WARNINGS = 200;
 
 // --- ImageFormatter ---
 
@@ -96,8 +78,8 @@ struct ImageSectionHeader
 
 struct ImageItem
 {
-   Section* section;
-   bool     isAligned;
+   MemoryBase* section;
+   bool        isAligned;
 };
 
 struct ImageSections
@@ -116,12 +98,15 @@ struct AddressSpace
    pos_t           headerSize;
    pos_t           codeSize, dataSize, unintDataSize, importSize;
    pos_t           imageSize;
+   pos_t           tlsSize;
 
    addr_t          imageBase;
    pos_t           code;
-   pos_t           mdata, mbdata, rdata;
+   pos_t           adata, mdata, mbdata, rdata;
    pos_t           data, stat;
    pos_t           import;
+   pos_t           tls;
+   pos_t           tlsDirectory;
 
    pos_t           entryPoint;
 
@@ -134,11 +119,14 @@ struct AddressSpace
       headerSize = codeSize = dataSize = 0;
       import = 0;
       unintDataSize = 0;
+      tlsSize = 0;
 
       importSize = imageSize = 0;
       imageBase = 0;
-      code = mdata = mbdata = rdata = 0;
+      code = adata = mdata = mbdata = rdata = 0;
       data = stat = 0;
+      tls = 0;
+      tlsDirectory = 0xFFFFFFFF;
 
       entryPoint = 0;
    }
@@ -151,121 +139,11 @@ public:
       pos_t sectionAlignment, pos_t fileAlignment, bool withDebugInfo) = 0;
 };
 
-// --- ProjectBase ---
-
-enum class ProjectOption
-{
-   None = 0,
-
-   // collections
-   Root,
-   Files,
-   Templates,
-   Primitives,
-   Externals,
-   Winapis,
-   References,
-
-   Namespace,
-
-   Module,
-   FileKey,
-   External,
-   Winapi,
-
-   TargetPath,
-   BasePath,
-   OutputPath,
-   ProjectPath,
-   LibPath,
-
-   ClassSymbolAutoLoad,
-   StackAlignment,
-   RawStackAlignment,
-   GCMGSize,
-   GCYGSize,
-
-   // flags
-   DebugMode,
-   MappingOutputMode,
-
-   Key,
-   Value,
-};
-
-class FileIteratorBase
-{
-protected:
-   virtual void next() = 0;
-   virtual path_t path() = 0;
-
-public:
-   virtual bool eof() = 0;
-
-   virtual bool loadKey(IdentifierString& retVal) = 0;
-
-   path_t operator*()
-   {
-      return path();
-   }
-
-   FileIteratorBase& operator ++()
-   {
-      next();
-
-      return *this;
-   }
-   virtual ~FileIteratorBase() = default;
-};
-
-class ModuleIteratorBase
-{
-protected:
-   virtual void next() = 0;
-
-public:
-   virtual ustr_t name() = 0;
-
-   virtual bool eof() = 0;
-
-   virtual FileIteratorBase& files() = 0;
-
-   ModuleIteratorBase& operator ++()
-   {
-      next();
-
-      return *this;
-   }
-   virtual ~ModuleIteratorBase() = default;
-};
-
-class ProjectBase : public ForwardResolverBase
-{
-public:
-   virtual ModuleIteratorBase* allocModuleIterator() = 0;
-
-   virtual FileIteratorBase* allocPrimitiveIterator() = 0;
-   virtual FileIteratorBase* allocPackageIterator() = 0;
-
-   virtual PlatformType TargetType() = 0;
-   virtual PlatformType Platform() = 0;
-   virtual ustr_t ProjectName() = 0;
-   virtual ustr_t Namespace() = 0;
-
-   virtual path_t PathSetting(ProjectOption option) const = 0;
-   virtual ustr_t StringSetting(ProjectOption option) const = 0;
-   virtual bool BoolSetting(ProjectOption option, bool defValue = false) const = 0;
-   virtual int IntSetting(ProjectOption option, int defValue = 0) const = 0;
-
-   virtual void prepare() = 0;
-
-   virtual ~ProjectBase() = default;
-};
-
 enum class TemplateType
 {
    None = 0,
    Inline,
+   InlineProperty,
    Class,
    Statement
 };
@@ -294,45 +172,67 @@ struct BranchingInfo
 struct BuiltinReferences
 {
    ref_t   superReference;
-   ref_t   intReference;
+   ref_t   intReference, shortReference, byteReference;
+   ref_t   longReference, realReference;
+   ref_t   dwordReference;
    ref_t   literalReference;
+   ref_t   wideReference;
+   ref_t   messageReference, extMessageReference;
    ref_t   wrapperTemplateReference;
    ref_t   arrayTemplateReference;
+   ref_t   argArrayTemplateReference;
+   ref_t   closureTemplateReference;
+   ref_t   lazyExpressionReference;
+   ref_t   pointerReference;
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
+   mssg_t  protected_constructor_message;
+   mssg_t  invoke_message;
    mssg_t  init_message;
-   mssg_t  add_message;
-   mssg_t  if_message;
+   mssg_t  add_message, sub_message, mul_message, div_message;
+   mssg_t  band_message, bor_message, bxor_message;
+   mssg_t  refer_message, set_refer_message;
+   mssg_t  if_message, iif_message;
    mssg_t  equal_message;
-   mssg_t  not_message;
+   mssg_t  not_message, negate_message, value_message;
    mssg_t  notequal_message;
-   mssg_t  less_message;
-   mssg_t  notless_message;
+   mssg_t  less_message, greater_message;
+   mssg_t  notless_message, notgreater_message;
 
    BuiltinReferences()
    {
       superReference = intReference = 0;
-      literalReference = 0;
+      shortReference = byteReference = 0;
+      dwordReference = 0;
+      longReference = realReference = 0;
+      literalReference = wideReference = 0;
+      messageReference = extMessageReference = 0;
       wrapperTemplateReference = 0;
-      arrayTemplateReference = 0;
+      arrayTemplateReference = argArrayTemplateReference = 0;
+      closureTemplateReference = lazyExpressionReference = 0;
+      pointerReference = 0;
 
       dispatch_message = constructor_message = 0;
-      init_message = 0;
-      add_message = 0;
-      if_message = 0;
+      protected_constructor_message = 0;
+      invoke_message = init_message = 0;
+      add_message = sub_message = mul_message = div_message = 0;
+      band_message = bor_message = bxor_message = 0;
+      refer_message = set_refer_message = 0;
+      if_message = iif_message = 0;
       equal_message = 0;
-      not_message = 0;
+      not_message = negate_message = value_message = 0;
       notequal_message = 0;
-      less_message = 0;
-      notless_message = 0;
+      greater_message = less_message = 0;
+      notgreater_message = notless_message = 0;
    }
 };
 
 // --- SizeInfo ---
 struct SizeInfo
 {
-   int size;
+   int  size;
+   bool readOnly;
 };
 
 // --- ExternalType ---
@@ -362,15 +262,34 @@ public:
 
    IdentifierString     selfVar;
    IdentifierString     declVar;
+   IdentifierString     superVar;
 
    pos_t                stackAlingment, rawStackAlingment;
+   pos_t                ehTableEntrySize;
    int                  minimalArgList;
+   int                  ptrSize;
+
+   bool                 tapeOptMode;
 
    Map<ref_t, SizeInfo> cachedSizes;
+   Map<ref_t, ref_t>    cachedClassReferences;
 
    virtual bool isStandardOne() = 0;
 
    virtual bool isDeclared(ref_t reference) = 0;
+
+   virtual bool isInternalOp(ref_t reference)
+   {
+      ustr_t referenceName = resolveFullName(reference);
+      if (isWeakReference(referenceName)) {
+         return true;
+      }
+      else {
+         auto refInfo = getModule(referenceName, true);
+
+         return refInfo.module == module;
+      }
+   }
 
    virtual ref_t mapAnonymous(ustr_t prefix = nullptr) = 0;
 
@@ -380,10 +299,12 @@ public:
    virtual ref_t mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) = 0;
 
    virtual ref_t mapTemplateIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility, 
-      bool& alreadyDeclared) = 0;
+      bool& alreadyDeclared, bool declarationMode) = 0;
 
    virtual ref_t resolveImplicitIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) = 0;
    virtual ref_t resolveImportedIdentifier(ustr_t identifier, IdentifierList* importedNs) = 0;
+
+   virtual ref_t resolveWeakTemplateReferenceID(ref_t reference) = 0;
 
    virtual SectionInfo getSection(ustr_t referenceName, ref_t mask, bool silentMode) = 0;
 
@@ -408,19 +329,26 @@ public:
       ModuleBase* debugModule,
       pos_t stackAlingment, 
       pos_t rawStackAlingment,
-      int minimalArgList
+      pos_t ehTableEntrySize,
+      int minimalArgList,
+      int ptrSize,
+      bool tapeOptMode
    ) :
       predefined(0),
       attributes(0),
       aliases(0),
       operations(0),
-      cachedSizes({})
+      cachedSizes({}),
+      cachedClassReferences(0)
    {
       this->module = module;
       this->debugModule = debugModule;
       this->stackAlingment = stackAlingment;
       this->rawStackAlingment = rawStackAlingment;
+      this->ehTableEntrySize = ehTableEntrySize;
       this->minimalArgList = minimalArgList;
+      this->ptrSize = ptrSize;
+      this->tapeOptMode = tapeOptMode;
    }
 };
 
@@ -443,11 +371,20 @@ enum class ExpressionAttribute : pos64_t
    RootSymbol        = 0x00000000800,
    Root              = 0x00000001000,
    CastOp            = 0x00000002000,
-   AssigningTarget   = 0x00000004000,
+   IgnoreDuplicate   = 0x00000004000,
    RefOp             = 0x00000008000,
    NoPrimitives      = 0x00000010000,
+   MssgLiteral       = 0x00000020000,
+   MssgNameLiteral   = 0x00000040000,
    Extern            = 0x00000080000,
-   Lookahead         = 0x20000080000,
+   Member            = 0x00000100000,
+   ProbeMode         = 0x00000200000,
+   AlreadyResolved   = 0x00000400000,
+   InitializerScope  = 0x00000800000,
+   NestedDecl        = 0x00001000000,
+   ConstantExpr      = 0x00002000000,
+   Superior          = 0x10000000000,
+   Lookahead         = 0x20000000000,
    NoDebugInfo       = 0x40000000000,
    NoExtension       = 0x80000000000,
 };
@@ -505,8 +442,10 @@ struct FieldAttributes
    TypeInfo typeInfo;
    int      size;
    bool     isConstant;
+   bool     isStatic;
    bool     isEmbeddable;
    bool     inlineArray;
+   bool     fieldArray;
 };
 
 // --- CompilerBase ---
@@ -521,6 +460,12 @@ public:
    virtual void injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode, 
       mssg_t message, ustr_t retVar, ref_t classRef) = 0;
 
+   virtual ref_t resolvePrimitiveType(ModuleScopeBase& scope, TypeInfo typeInfo)
+      = 0;
+
+   virtual ref_t generateExtensionTemplate(ModuleScopeBase& scope, ref_t templateRef, size_t argumentLen,
+      ref_t* arguments, ustr_t ns, ExtensionMap* outerExtensionList) = 0;
+
    virtual ~CompilerBase() = default;
 
 };
@@ -531,11 +476,15 @@ class TemplateProssesorBase
 {
 public:
    virtual ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
-      List<SyntaxNode>& parameters, bool declarationMode) = 0;
+      List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList) = 0;
 
+   virtual bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+      List<SyntaxNode>& parameters) = 0;
    virtual bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& parameters) = 0;
-   virtual bool importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
+   virtual bool importPropertyTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+      List<SyntaxNode>& parameters) = 0;
+   virtual bool importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
 };
 
@@ -556,10 +505,20 @@ public:
 
 class CLIException : public ExceptionBase {};
 
+enum class WarningLevel
+{
+   None,
+   Level0,
+   Level1,
+   Level2,
+   Level3
+};
+
 class ErrorProcessor : public ErrorProcessorBase
 {
    PresenterBase* _presenter;
    int            _warningMasks;
+   int            _numberOfWarnings;
 
    static SyntaxNode findTerminal(SyntaxNode node)
    {
@@ -581,10 +540,12 @@ class ErrorProcessor : public ErrorProcessorBase
    void printTerminalInfo(int code, ustr_t pathArg, SyntaxNode node)
    {
       SyntaxNode terminal = findTerminal(node);
-      SyntaxNode col = terminal.findChild(SyntaxKey::Column);
-      SyntaxNode row = terminal.findChild(SyntaxKey::Row);
+      if (terminal != SyntaxKey::None) {
+         SyntaxNode col = terminal.findChild(SyntaxKey::Column);
+         SyntaxNode row = terminal.findChild(SyntaxKey::Row);
 
-      _presenter->print(_presenter->getMessage(code), pathArg, col.arg.value, row.arg.value, terminal.identifier());
+         _presenter->print(_presenter->getMessage(code), pathArg, col.arg.value, row.arg.value, terminal.identifier());
+      }
    }
 
 public:
@@ -631,13 +592,40 @@ public:
       if (!test(_warningMasks, level))
          return;
 
-      printTerminalInfo(code, pathArg, node);
+      if (_numberOfWarnings < MAX_WARNINGS) {
+         _numberOfWarnings++;
+
+         printTerminalInfo(code, pathArg, node);
+      }
+   }
+
+   bool hasWarnings() { return _numberOfWarnings > 0; }
+
+   void setWarningLevel(WarningLevel level)
+   {
+      switch (level) {
+         case WarningLevel::Level0:
+            _warningMasks = WARNING_MASK_0;
+            break;
+         case WarningLevel::Level1:
+            _warningMasks = WARNING_MASK_1;
+            break;
+         case WarningLevel::Level2:
+            _warningMasks = WARNING_MASK_2;
+            break;
+         case WarningLevel::Level3:
+            _warningMasks = WARNING_MASK_3;
+            break;
+         default:
+            break;
+      }
    }
 
    ErrorProcessor(PresenterBase* presenter)
    {
       _presenter = presenter;
       _warningMasks = WARNING_MASK_2;
+      _numberOfWarnings = 0;
    }
 };
 
@@ -669,14 +657,20 @@ enum class ConversionResult
 {
    None = 0,
    BoxingRequired,
-   Conversion
+   VariadicBoxingRequired,
+   Conversion,
+   NativeConversion
 };
 
 // --- ConversionRoutine ---
 struct ConversionRoutine
 {
    ConversionResult result;
-   mssg_t           conversionMssg;
+   union {
+      mssg_t conversionMssg;
+      ref_t  operationKey;
+   };
+   
    int              stackSafeAttrs;
 };
 

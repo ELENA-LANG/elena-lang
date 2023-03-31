@@ -98,7 +98,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;RT_EXPORTS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;RT_EXPORTS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\common;..\..\engine;..\windows;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -117,7 +117,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;RT_EXPORTS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;RT_EXPORTS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\common;..\..\engine;..\windows;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -136,7 +136,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;RT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;RT_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\common;..\..\engine;..\windows;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -155,7 +155,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;RT_EXPORTS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;RT_EXPORTS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\common;..\..\engine;..\windows;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -171,20 +171,45 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\common\config.h" />
+    <ClInclude Include="..\..\common\dump.h" />
+    <ClInclude Include="..\..\common\files.h" />
+    <ClInclude Include="..\..\common\paths.h" />
+    <ClInclude Include="..\..\common\ustring.h" />
+    <ClInclude Include="..\..\common\xmltree.h" />
+    <ClInclude Include="..\..\engine\bytecode.h" />
     <ClInclude Include="..\..\engine\core.h" />
     <ClInclude Include="..\..\engine\elenamachine.h" />
+    <ClInclude Include="..\..\engine\libman.h" />
+    <ClInclude Include="..\..\engine\module.h" />
+    <ClInclude Include="..\..\engine\rtmanager.h" />
+    <ClInclude Include="..\..\engine\section.h" />
+    <ClInclude Include="..\..\engine\windows\pehelper.h" />
     <ClInclude Include="..\elenartmachine.h" />
     <ClInclude Include="..\rtcommon.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\common\config.cpp" />
+    <ClCompile Include="..\..\common\dump.cpp" />
+    <ClCompile Include="..\..\common\files.cpp" />
+    <ClCompile Include="..\..\common\paths.cpp" />
+    <ClCompile Include="..\..\common\ustring.cpp" />
+    <ClCompile Include="..\..\common\xmltree.cpp" />
     <ClCompile Include="..\..\engine\amd64\amd64routines.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\engine\bytecode.cpp" />
     <ClCompile Include="..\..\engine\elenamachine.cpp" />
+    <ClCompile Include="..\..\engine\gcroutines.cpp" />
+    <ClCompile Include="..\..\engine\libman.cpp" />
+    <ClCompile Include="..\..\engine\module.cpp" />
+    <ClCompile Include="..\..\engine\rtmanager.cpp" />
+    <ClCompile Include="..\..\engine\section.cpp" />
+    <ClCompile Include="..\..\engine\windows\pehelper.cpp" />
     <ClCompile Include="..\..\engine\windows\winroutines.cpp" />
     <ClCompile Include="..\..\engine\x86\x86routines.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>

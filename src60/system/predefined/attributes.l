@@ -1,5 +1,8 @@
 #new attributesSymbols;
 
+/// modificator:
+#let attributesSymbols["__ignore_duplicates"] :=  80006001h;
+
 /// scope_accessors:
 #let attributesSymbols["get"]         := 80005001h;
 #let attributesSymbols["set"]         := 80005002h;
@@ -19,6 +22,8 @@
 #let attributesSymbols["const"]       := 80002001h;
 #let attributesSymbols["embeddable"]  := 80002002h;
 #let attributesSymbols["ref"]         := 80002003h;
+#let attributesSymbols["retoverload"] := 8000200Ah;
+#let attributesSymbols["params"]      := 8000200Bh;
                                                  
 /// scope:
 #let attributesSymbols["class"]       := 80001001h;
@@ -30,8 +35,11 @@
 #let attributesSymbols["interface"]   := 80001007h;
 #let attributesSymbols["method"]      := 80001008h;
 #let attributesSymbols["field"]       := 80001009h;
+#let attributesSymbols["nonstructural"] := 8000100Ah;
+#let attributesSymbols["generic"]     := 8000100Bh;
 #let attributesSymbols["function"]    := 8000100Ch;
 #let attributesSymbols["var"]         := 8000100Dh;
+#let attributesSymbols["this"]        := 8000100Eh;
 #let attributesSymbols["static"]      := 8000100Fh;
 #let attributesSymbols["cast"]        := 80001011h;
 #let attributesSymbols["new"]         := 80001012h;
@@ -40,14 +48,26 @@
 #let attributesSymbols["intern"]      := 80001016h;
 #let attributesSymbols["forward"]     := 80001017h;
 #let attributesSymbols["import"]      := 80001018h;
+#let attributesSymbols["auto"]        := 8000101Ch;
 #let attributesSymbols["namespace"]   := 80001021h;
+#let attributesSymbols["super"]       := 80001024h;
 #let attributesSymbols["inline"]      := 80001025h;
+#let attributesSymbols["__probe"]     := 80001026h;
+#let attributesSymbols["template"]    := 80001027h;
+#let attributesSymbols["weak"]        := 80001029h;
 
 /// primitive types
 #let attributesSymbols["__string"]    := 80000801h;
+#let attributesSymbols["__float"]     := 80000802h;
 #let attributesSymbols["__int"]       := 80000803h;
 //#let attributesSymbols["__meta"]      := 80000804h;
 #let attributesSymbols["__word"]      := 80000805h;
+#let attributesSymbols["mssgconst"]   := 80000806h;
+#let attributesSymbols["mssg"]        := 80000806h;
+#let attributesSymbols["__subj"]      := 80000807h;
 #let attributesSymbols["__symbol"]    := 80000808h;
+#let attributesSymbols["__mssg"]      := 80000809h;
+#let attributesSymbols["__ptr"]       := 8000080Ah;
+#let attributesSymbols["__ext_mssg"]  := 8000080Bh;
 
 #reload attributesSymbols;

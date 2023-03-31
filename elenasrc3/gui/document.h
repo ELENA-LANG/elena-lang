@@ -1,8 +1,7 @@
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      DocumentView class header
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DOCUMENT_H
@@ -43,8 +42,12 @@ namespace elena_lang
       {
          return style == m.style;
       }
+      bool operator !=(const Marker& m)
+      {
+         return style != m.style;
+      }
    };
-   typedef Map<int, Marker>   MarkerList;
+   typedef CachedMemoryMap<int, Marker, 5>   MarkerList;
 
    // --- TextFormatterBase ---
    class TextFormatterBase
@@ -88,11 +91,57 @@ namespace elena_lang
       virtual ~LexicalFormatter();
    };
 
+   // --- DocumentChangeStatus ---
+   struct DocumentChangeStatus
+   {
+      bool caretChanged;
+      bool maxColChanged;
+      bool frameChanged;
+      bool selelectionChanged;
+      bool formatterChanged;
+      bool textChanged;
+      bool modifiedChanged;
+
+      bool isViewChanged()
+      {
+         bool flag = formatterChanged | frameChanged | textChanged | selelectionChanged;
+
+         return flag;
+      }
+
+      void reset()
+      {
+         caretChanged = false;
+         maxColChanged = false;
+         frameChanged = false;
+         modifiedChanged = false;
+         selelectionChanged = false;
+         formatterChanged = false;
+         textChanged = false;
+      }
+
+      DocumentChangeStatus()
+      {
+         reset();
+      }
+      DocumentChangeStatus(bool dirty)
+      {
+         reset();
+         if (dirty) {
+            caretChanged = true;
+            maxColChanged = true;
+            frameChanged = true;
+            selelectionChanged = true;
+            textChanged = true;
+         }
+      }
+   };
+
    // --- DocumentNotifier ---
    class DocumentNotifier
    {
    public:
-      virtual void onDocumentUpdate() = 0;
+      virtual void onDocumentUpdate(DocumentChangeStatus& changeStatus) = 0;
    };
 
    typedef List<DocumentNotifier*> DocumentNotifiers;
@@ -128,53 +177,34 @@ namespace elena_lang
 
       struct Status
       {
-         bool caretChanged;
-         bool maxColChanged;
-         bool frameChanged;
-         bool selelectionChanged;
-         bool formatterChanged;
          bool readOnly;
          bool modifiedMode;
          bool unnamed;
          bool overwriteMode;
 
-         bool oldModified;
-         bool oldOvewrite;
-
          int  rowDifference;
 
-         bool isModeChanged()
-         {
-            bool changed = (modifiedMode != oldModified) || (overwriteMode != oldOvewrite);
+         bool oldModified;
+         bool oldSelected;
+         //bool oldOvewrite;
 
-            oldModified = modifiedMode;
-            oldOvewrite = overwriteMode;
+         //bool isModeChanged()
+         //{
+         //   bool changed = (modifiedMode != oldModified) || (overwriteMode != oldOvewrite);
 
-            return changed;
-         }
+         //   oldModified = modifiedMode;
+         //   oldOvewrite = overwriteMode;
 
-         bool isViewChanged(bool reset = true)
-         {
-            bool flag = formatterChanged | frameChanged | selelectionChanged;
-
-            if (reset)
-               formatterChanged = frameChanged = selelectionChanged = false;
-
-            return flag;
-         }
+         //   return changed;
+         //}
 
          void reset()
          {
-            caretChanged = false;
-            maxColChanged = false;
-            frameChanged = false;
-            oldModified = modifiedMode = false;
-            selelectionChanged = false;
-            formatterChanged = false;
+            modifiedMode = false;
             readOnly = false;
             unnamed = false;
             overwriteMode = false;
-            oldOvewrite = true;     // to trigger mode change
+            oldSelected = oldModified = false;
 
             rowDifference = 0;
          }
@@ -188,6 +218,8 @@ namespace elena_lang
       friend struct LexicalReader;
 
    protected:
+      Status            status;
+
       Text*             _text;
       TextHistory       _undoBuffer;
       LexicalFormatter  _formatter;
@@ -208,9 +240,11 @@ namespace elena_lang
       void onUpdate(size_t position) override;
       void onErase(size_t position, size_t length, text_t line) override;
 
-   public:
-      Status status;
+      TextBookmark getCaretBookmark() { return _caret; }
 
+      void setCaret(int column, int row, bool selecting, DocumentChangeStatus& changeStatus);
+
+   public:
       void attachNotifier(DocumentNotifier* notifier)
       {
          _notifiers.add(notifier);
@@ -221,75 +255,110 @@ namespace elena_lang
          _notifiers.cut(notifier);
       }
 
-      void addMarker(int row, pos_t style)
+      void addMarker(int row, pos_t style, bool instanteMode, DocumentChangeStatus& changeStatus)
       {
          _markers.add(row, { style });
 
-         status.formatterChanged = true;
+         changeStatus.formatterChanged = true;
       }
-      void removeMarker(int row, pos_t style)
+      void removeMarker(int row, pos_t style, DocumentChangeStatus& changeStatus)
       {
          _markers.erase(row, { style });
 
-         status.formatterChanged = true;
+         changeStatus.formatterChanged = true;
       }
+      bool removeMarker(pos_t style, DocumentChangeStatus& changeStatus)
+      {
+         if (_markers.count() > 0) {
+            int row = _markers.retrieve<pos_t>(-1, style, [](pos_t arg, int key, Marker item)
+            {
+               return item.style == arg;
+            });
 
-      virtual void resize(Point size);
+            if (row != -1) {
+               _markers.erase(row, { style });
 
-      bool hasSelection() const { return (_selection != 0); }
-      disp_t getSelectionLength();
+               changeStatus.formatterChanged = true;
+               return true;
+            }
+         }
 
-      TextBookmark getCaretBookmark() { return _caret; }
+         return false;
+      }
 
       Point getFrame() const { return _frame.getCaret(); }
       Point getCaret(bool virtualOne = true) const { return _caret.getCaret(virtualOne); }
-      Point getSize() const { return _size; }
+      void setCaret(Point caret, bool selecting, DocumentChangeStatus& changeStatus)
+      {
+         setCaret(caret.x, caret.y, selecting, changeStatus);
+      }
 
       int getRowCount() const { return _text->getRowCount(); }
       int getMaxColumn() const { return _maxColumn; }
+      disp_t getSelectionLength();
 
-      void setCaret(int column, int row, bool selecting);
-      void setCaret(Point caret, bool selecting)
-      {
-         setCaret(caret.x, caret.y, selecting);
-      }
+      bool hasSelection() const { return (_selection != 0); }
+      bool isReadOnly() { return status.readOnly; }
+      bool isUnnamed() { return status.unnamed; }
+      bool isModified() { return status.modifiedMode; }
 
-      void vscroll(int offset);
-      void hscroll(int offset);
+      Point getSize() const { return _size; }
 
-      void moveRight(bool selecting);
-      void moveLeft(bool selecting);
-      void moveUp(bool selecting);
-      void moveDown(bool selecting);
+      virtual void setSize(Point size);
 
-      void moveRightToken(bool selecting, bool trimWhitespace = false);
-      void moveLeftToken(bool selecting);
-      void moveFrameUp();
-      void moveFrameDown();
+      virtual bool canUndo();
+      virtual bool canRedo();
 
-      void moveToFrame(int column, int row, bool selecting);
+      void vscroll(DocumentChangeStatus& changeStatus, int offset);
+      void hscroll(DocumentChangeStatus& changeStatus, int offset);
 
-      virtual void tabbing(text_c space, size_t count, bool indent);
+      void moveHome(DocumentChangeStatus& changeStatus, bool selecting);
+      void moveFirst(DocumentChangeStatus& changeStatus, bool selecting);
 
-      void insertNewLine();
-      void insertChar(text_c ch)
-      {
-         insertChar(ch, 1);
-      }
-      void insertChar(text_c ch, size_t number);
-      void insertLine(text_t text, disp_t length);
+      void moveEnd(DocumentChangeStatus& changeStatus, bool selecting);
+      void moveLast(DocumentChangeStatus& changeStatus, bool selecting);
 
-      void eraseChar(bool moveback);
-      bool eraseSelection();
+      void moveFrameDown(DocumentChangeStatus& changeStatus);
+      void moveDown(DocumentChangeStatus& changeStatus, bool selecting);
+
+      void moveFrameUp(DocumentChangeStatus& changeStatus);
+      void moveUp(DocumentChangeStatus& changeStatus, bool selecting);
+
+      void moveLeftToken(DocumentChangeStatus& changeStatus, bool selecting);
+      void moveLeft(DocumentChangeStatus& changeStatus, bool selecting);
+
+      void moveRightToken(DocumentChangeStatus& changeStatus, bool selecting, bool trimWhitespace = false);
+      void moveRight(DocumentChangeStatus& changeStatus, bool selecting);
+
+      void movePageUp(DocumentChangeStatus& changeStatus, bool selecting);
+      void movePageDown(DocumentChangeStatus& changeStatus, bool selecting);
+
+      void moveToFrame(DocumentChangeStatus& changeStatus, int column, int row, bool selecting);
 
       void copySelection(text_c* text);
 
-      void undo();
-      void redo();
+      void insertChar(DocumentChangeStatus& changeStatus, text_c ch)
+      {
+         insertChar(changeStatus, ch, 1);
+      }
+      void insertChar(DocumentChangeStatus& changeStatus, text_c ch, size_t number);
+      void insertNewLine(DocumentChangeStatus& changeStatus);
+      void insertLine(DocumentChangeStatus& changeStatus, text_t text, disp_t length);
 
-      void notifyOnChange();
+      virtual void blockInserting(DocumentChangeStatus& changeStatus, text_t subs, size_t length);
+      virtual void blockDeleting(DocumentChangeStatus& changeStatus, text_t subs, size_t length);
+
+      bool eraseSelection(DocumentChangeStatus& changeStatus);
+      void eraseChar(DocumentChangeStatus& changeStatus, bool moveback);
+
+      void undo(DocumentChangeStatus& changeStatus);
+      void redo(DocumentChangeStatus& changeStatus);
+
+      virtual void tabbing(DocumentChangeStatus& changeStatus, text_c space, size_t count, bool indent);
 
       void save(path_t path);
+
+      void notifyOnChange(DocumentChangeStatus& changeStatus);
 
       DocumentView(Text* text, TextFormatterBase* formatter);
       virtual ~DocumentView();

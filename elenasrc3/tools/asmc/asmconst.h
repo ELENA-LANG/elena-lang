@@ -3,7 +3,7 @@
 //
 //		This file contains the assembly compiler common constants
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CLICONST
@@ -12,7 +12,7 @@
 namespace elena_lang
 {
 
-   #define ASM_REVISION_NUMBER               0x0066
+   #define ASM_REVISION_NUMBER               0x00A4
 
    constexpr auto N_ARGUMENT1                = "__n_1";
    constexpr auto N_ARGUMENT2                = "__n_2";
@@ -21,6 +21,8 @@ namespace elena_lang
    constexpr auto N12_ARGUMENT1              = "__n12_1";
    constexpr auto N12_ARGUMENT2              = "__n12_2";
    constexpr auto N16HI_ARGUMENT1            = "__n16hi_1";
+   constexpr auto N16LO_ARGUMENT1            = "__n16lo_1";
+   constexpr auto N16HI_ARGUMENT2            = "__n16hi_2";
    constexpr auto WORD_ARGUMENT1             = "__arg16_1";
    constexpr auto WORD_ARGUMENT2             = "__arg16_2";
    constexpr auto IMM9_ARGUMENT1             = "__arg9_1";
@@ -36,8 +38,12 @@ namespace elena_lang
    constexpr auto RELPTR32_ARGUMENT2         = "__relptr32_2";
    constexpr auto DISP32HI_ARGUMENT1         = "__disp32hi_1";
    constexpr auto DISP32HI_ARGUMENT2         = "__disp32hi_2";
+   constexpr auto XDISP32HI_ARGUMENT1        = "__xdisp32hi_1";
+   constexpr auto XDISP32HI_ARGUMENT2        = "__xdisp32hi_2";
    constexpr auto DISP32LO_ARGUMENT1         = "__disp32lo_1";
    constexpr auto DISP32LO_ARGUMENT2         = "__disp32lo_2";
+   constexpr auto XDISP32LO_ARGUMENT1        = "__xdisp32lo_1";
+   constexpr auto XDISP32LO_ARGUMENT2        = "__xdisp32lo_2";
    constexpr auto PTR32HI_ARGUMENT1          = "__ptr32hi_1";
    constexpr auto PTR32LO_ARGUMENT1          = "__ptr32lo_1";
    constexpr auto PTR32HI_ARGUMENT2          = "__ptr32hi_2";
@@ -73,6 +79,7 @@ namespace elena_lang
    constexpr auto ASM_COMMA_EXPECTED         = "(%d,%d): Comma expected\n";
    constexpr auto ASM_INVALID_COMMAND        = "(%d,%d): Invalid command\n";
    constexpr auto ASM_DOUBLECOLON_EXPECTED   = "(%d,%d): ':' expected\n";
+   constexpr auto ASM_SEMICOLON_EXPECTED     = "(%d,%d): ';' expected\n";
    constexpr auto ASM_SBRACKET_EXPECTED      = "(%d,%d): '[' expected\n";
    constexpr auto ASM_SBRACKETCLOSE_EXPECTED  = "(%d,%d): ']' expected\n";
    constexpr auto ASM_BRACKET_EXPECTED       = "(%d,%d): '(' expected\n";

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="og-cli" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug32">
+				<Option output="../../../../bin/og-cli" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../temp/og-cli/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++20" />
+					<Add option="-m32" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-m32" />
+				</Linker>
+			</Target>
+			<Target title="Release32">
+				<Option output="../../../../bin/og-cli" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../temp/release/og-cli/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-march=pentium3" />
+					<Add option="-std=c++20" />
+					<Add option="-m32" />
+				</Compiler>
+				<Linker>
+					<Add option="-O3" />
+					<Add option="-s" />
+					<Add option="-m32" />
+				</Linker>
+			</Target>
+			<Target title="Debug64">
+				<Option output="../../../../bin/og64-cli" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../temp/og64-cli/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="~/elena-lang/dat/sg/syntax60.txt" />
+				<Compiler>
+					<Add option="-std=c++20" />
+					<Add option="-m64" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-m64" />
+				</Linker>
+			</Target>
+			<Target title="Release64">
+				<Option output="../../../../bin/og64-cli" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../temp/release/og64-cli/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-march=pentium3" />
+					<Add option="-m64" />
+				</Compiler>
+				<Linker>
+					<Add option="-O3" />
+					<Add option="-s" />
+					<Add option="-m64" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add directory=".." />
+			<Add directory="../../../engine" />
+			<Add directory="../../../common" />
+		</Compiler>
+		<Unit filename="../../../common/dump.cpp" />
+		<Unit filename="../../../common/dump.h" />
+		<Unit filename="../../../common/files.cpp" />
+		<Unit filename="../../../common/files.h" />
+		<Unit filename="../../../common/ustring.cpp" />
+		<Unit filename="../../../common/ustring.h" />
+		<Unit filename="../../../engine/bytecode.cpp" />
+		<Unit filename="../../../engine/bytecode.h" />
+		<Unit filename="../../../engine/scriptreader.cpp" />
+		<Unit filename="../../../engine/scriptreader.h" />
+		<Unit filename="../og.cpp" />
+		<Unit filename="../ogconst.h" />
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>

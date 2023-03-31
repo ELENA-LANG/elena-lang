@@ -143,21 +143,24 @@ namespace elena_lang
 
       bool read(char* s, pos_t length) override;
 
+      void reset() override;
+
       TextFileReader(path_t path, FileEncoding encoding, bool withBOM);
    };
 
    // --- TextFileWriter ---
-   class TextFileWriter : public  TextWriter<char>
+   class TextFileWriter : public TextWriter<char>
    {
       File         _file;
       FileEncoding _encoding;
 
    public:
-      //bool isOpen() const override { return _file.isOpen(); }
+      bool isOpen() const override { return _file.isOpen(); }
 
       pos_t position() const override { return _file.position(); }
 
       bool write(const char* s, pos_t length) override;
+      bool writeNewLine() override;
 
       TextFileWriter(path_t path, FileEncoding encoding, bool withBOM);
    };

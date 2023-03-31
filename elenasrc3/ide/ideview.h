@@ -14,39 +14,71 @@
 namespace elena_lang
 {
 
-// --- IDEListener ---
-
-class IDEListener
+// --- IDEScheme ---
+struct IDEScheme
 {
-public:
-   virtual void onIDEChange() = 0;
+   int               textFrameId;
+   int               resultControl;
+   int               compilerOutputControl;
+   int               errorListControl;
+   int               projectView;
+   int               debugWatch;
+   int               menu;
+   int               statusBar;
+
+   Map<int, text_t>  captions;
+
+   IDEScheme() : 
+      textFrameId(-1), 
+      resultControl(-1), 
+      compilerOutputControl(-1), 
+      errorListControl(-1),
+      projectView(-1),
+      debugWatch(-1),
+      menu(-1),
+      statusBar(-1),
+      captions(nullptr)
+   {
+   }
 };
 
-typedef List<IDEListener*> IDEListenerListeners;
+// --- IDEListener ---
+
+//class IDEListener
+//{
+//public:
+//   virtual void onIDEChange() = 0;
+//};
+
+//typedef List<IDEListener*> IDEListenerListeners;
 
 // --- IDEModel ---
 class IDEModel
 {
-   IDEListenerListeners listeners;
+//   IDEListenerListeners listeners;
 
 public:
    IDEStatus       status;
 
    SourceViewModel sourceViewModel;
    ProjectModel    projectModel;
+   IDEScheme       ideScheme;
+
+   bool            appMaximized;
 
    SourceViewModel* viewModel() { return &sourceViewModel; }
 
-   void attachListener(IDEListener* listener);
+   //void attachListener(IDEListener* listener);
 
    void changeStatus(IDEStatus status);
 
-   void onIDEChange();
+   //void onIDEChange();
 
-   IDEModel(int fontSize)
-      : listeners(nullptr), sourceViewModel(fontSize), projectModel(&status)
+   IDEModel()
+      : /*listeners(nullptr), */projectModel(&status)
    {
-      status = IDEStatus::None;
+      status = IDEStatus::Empty;
+      appMaximized = false;
    }
 };
 

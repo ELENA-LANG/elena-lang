@@ -3,7 +3,7 @@
 //
 //		This file contains the compiling processor header
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPLING_H
@@ -14,6 +14,7 @@
 #include "compiler.h"
 #include "parser.h"
 #include "derivation.h"
+#include "project.h"
 
 namespace elena_lang
 {
@@ -26,14 +27,22 @@ namespace elena_lang
          CompilingProcess* _process;
          TemplateProssesor _processor;
 
-         ref_t generateTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility, 
+         ref_t declareTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility,
+            ref_t templateRef, List<SyntaxNode>& parameters);
+         ref_t generateTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility,
             ref_t templateRef, List<SyntaxNode>& parameters, bool& alreadyDeclared);
 
       public:
          ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
-            List<SyntaxNode>& parameters, bool declarationMode) override;
+            List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList) override;
+
+         bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
+            List<SyntaxNode>& parameters) override;
 
          bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
+            SyntaxNode target, List<SyntaxNode>& parameters) override;
+
+         bool importPropertyTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
             SyntaxNode target, List<SyntaxNode>& parameters) override;
 
          bool importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
@@ -41,6 +50,8 @@ namespace elena_lang
 
          TemplateGenerator(CompilingProcess* process);
       };
+
+      path_t              _prologName, _epilogName;
 
       PresenterBase*      _presenter;
       ErrorProcessor*     _errorProcessor;
@@ -55,44 +66,58 @@ namespace elena_lang
 
       TemplateGenerator   _templateGenerator;
 
-      void buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode);
+      MemoryDump          _bcRules;
+      MemoryDump          _btRules;
 
-      void compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target);
+      void buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode, 
+         ExtensionMap* outerExtensionList);
+
+      void compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target, 
+         ExtensionMap* outerExtensionList);
       void generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode);
+      void parseFileTemlate(ustr_t prolog, path_t name,
+         SyntaxWriterBase* syntaxWriter);
       void parseFile(path_t projectPath,
          FileIteratorBase& file_it, 
          SyntaxWriterBase* syntaxWriter);
       void parseModule(path_t projectPath,
-         ModuleIteratorBase& module_it, 
+         ustr_t fileProlog, ustr_t fileEpilog,
+         ModuleIteratorBase& module_it,
          SyntaxTreeBuilder& builder, 
          ModuleScopeBase& moduleScope);
       void buildModule(path_t projectPath,
+         ustr_t fileProlog, ustr_t fileEpilog,
          ModuleIteratorBase& module_it, 
          SyntaxTree* syntaxTree, 
          ForwardResolverBase* forwardResolver,
          pos_t stackAlingment,
          pos_t rawStackAlingment,
+         pos_t ehTableEntrySize,
          int minimalArgList,
+         int ptrSize,
          bool withDebug);
 
-      void configurate(ProjectBase& project);
+      void configurate(Project& project);
       void cleanUp(ProjectBase& project);
       void compile(ProjectBase& project, 
          pos_t defaultStackAlignment, 
          pos_t defaultRawStackAlignment,
+         pos_t defaultEHTableEntrySize,
          int minimalArgList);
-      void link(ProjectBase& project, LinkerBase& linker);
+      void link(Project& project, LinkerBase& linker, bool withTLS);
 
    public:
       void greeting();
-      int build(ProjectBase& project, 
+      int build(Project& project, 
          LinkerBase& linker, 
          pos_t defaultStackAlignment, 
          pos_t defaultRawStackAlignment,
+         pos_t defaultEHTableEntrySize,
          int minimalArgList);
-      int clean(ProjectBase& project);
+      int clean(Project& project);
 
-      CompilingProcess(PathString& appPath, PresenterBase* presenter, ErrorProcessor* errorProcessor,
+      CompilingProcess(PathString& appPath, path_t prologName, path_t epilogName,
+         PresenterBase* presenter, ErrorProcessor* errorProcessor,
          pos_t codeAlignment,
          JITSettings defaultCoreSettings,
          JITCompilerBase* (*compilerFactory)(LibraryLoaderBase*, PlatformType));

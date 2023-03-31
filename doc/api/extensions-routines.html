@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 5.8: Module extensions'routines
+ELENA Standard Library 6.0: Module extensions'routines
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 5.8: Module extensions'routines
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>5.8
+ELENA&nbsp;Standard&nbsp;Library<br>6.0
 </STRONG>
 </DIV>
 </DIV>
@@ -36,13 +36,20 @@ extensions'routines'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-Interface <SPAN CLASS="typeNameLabel">BaseRowEnumerator</SPAN></PRE>
+abstract public class <SPAN CLASS="typeNameLabel">BaseRowEnumerator</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">system'Enumerator</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+extensions'routines'BaseRowEnumerator</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -53,26 +60,46 @@ Interface <SPAN CLASS="typeNameLabel">BaseRowEnumerator</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Indexer&gt;</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#Array&lt;T1&gt;">Array&lt;Indexer&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theIndexers</CODE>
+<CODE>_indexers</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theLength</CODE>
+<CODE>_length</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="extensions-routines-$private.html#BaseStrategy">BaseStrategy</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="extensions-routines-$private.html#BaseStrategy">BaseStrategy</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theStrategy</CODE>
+<CODE>_strategy</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -99,16 +126,7 @@ Interface <SPAN CLASS="typeNameLabel">BaseRowEnumerator</SPAN></PRE>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>get()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>enumerable()
 </CODE>
@@ -117,9 +135,6 @@ Interface <SPAN CLASS="typeNameLabel">BaseRowEnumerator</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="Combinator">
@@ -131,9 +146,20 @@ extensions'routines'</DIV>
 <H2 title="Combinator" class="title">Combinator</H2>
 </DIV>
 <DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">Combinator</SPAN></PRE>
+<BR>
+</DIV>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#BaseRowEnumerator">extensions'routines'BaseRowEnumerator</A></SPAN></LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">system'Enumerator</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#BaseRowEnumerator">'BaseRowEnumerator</A></SPAN></LI>
 <LI>
 <UL CLASS="inheritance">
 <LI>
@@ -141,17 +167,9 @@ extensions'routines'Combinator</LI>
 </UL>
 </LI>
 </UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">Combinator</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -162,34 +180,34 @@ Class <SPAN CLASS="typeNameLabel">Combinator</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Indexer&gt;</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#Array&lt;T1&gt;">Array&lt;Indexer&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theIndexers</CODE>
+<CODE>_indexers</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theLength</CODE>
+<CODE>_length</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="extensions-routines-$private.html#BaseStrategy">BaseStrategy</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="extensions-routines-$private.html#BaseStrategy">BaseStrategy</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theStrategy</CODE>
+<CODE>_strategy</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theTotalLength</CODE>
+<CODE>_totalLength</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -198,18 +216,18 @@ Class <SPAN CLASS="typeNameLabel">Combinator</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#Combinator">Combinator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> arguments)
+<CODE>new(arguments)
 </CODE>
 </TD>
 </TR>
@@ -218,16 +236,7 @@ Class <SPAN CLASS="typeNameLabel">Combinator</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#Combinator">Combinator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> subLength, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> set)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#Combinator">Combinator</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> subLength, <SPAN CLASS="memberNameLink"></SPAN> set)
 </CODE>
 </TD>
 </TR>
@@ -255,7 +264,7 @@ Class <SPAN CLASS="typeNameLabel">Combinator</SPAN></PRE>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>reset()
 </CODE>
@@ -264,184 +273,6 @@ Class <SPAN CLASS="typeNameLabel">Combinator</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="CompoundEnumerator">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-extensions'routines'</DIV>
-<H2 title="CompoundEnumerator" class="title">CompoundEnumerator</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">CompoundEnumerator</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Enumerator&gt;</A></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>enumerators</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>index</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#CompoundEnumerator">CompoundEnumerator</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#CompoundEnumerator">CompoundEnumerator</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>reset()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>enumerable()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>get()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>next()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="EmptyEnumerable">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-extensions'routines'</DIV>
-<H2 title="EmptyEnumerable" class="title">EmptyEnumerable</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Singleton <SPAN CLASS="typeNameLabel">EmptyEnumerable</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>enumerator()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="ParallelEnumerator">
@@ -453,9 +284,20 @@ extensions'routines'</DIV>
 <H2 title="ParallelEnumerator" class="title">ParallelEnumerator</H2>
 </DIV>
 <DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">ParallelEnumerator</SPAN></PRE>
+<BR>
+</DIV>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#BaseRowEnumerator">extensions'routines'BaseRowEnumerator</A></SPAN></LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">system'Enumerator</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#BaseRowEnumerator">'BaseRowEnumerator</A></SPAN></LI>
 <LI>
 <UL CLASS="inheritance">
 <LI>
@@ -463,17 +305,9 @@ extensions'routines'ParallelEnumerator</LI>
 </UL>
 </LI>
 </UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">ParallelEnumerator</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -484,26 +318,26 @@ Class <SPAN CLASS="typeNameLabel">ParallelEnumerator</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Indexer&gt;</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#Array&lt;T1&gt;">Array&lt;Indexer&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theIndexers</CODE>
+<CODE>_indexers</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theLength</CODE>
+<CODE>_length</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="extensions-routines-$private.html#BaseStrategy">BaseStrategy</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="extensions-routines-$private.html#BaseStrategy">BaseStrategy</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theStrategy</CODE>
+<CODE>_strategy</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -512,18 +346,18 @@ Class <SPAN CLASS="typeNameLabel">ParallelEnumerator</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ParallelEnumerator">ParallelEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A><I>[]</I></SPAN> arguments)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#Array&lt;T1&gt;">Array&lt;Object&gt;</A></SPAN> arguments)
 </CODE>
 </TD>
 </TR>
@@ -536,15 +370,6 @@ Class <SPAN CLASS="typeNameLabel">ParallelEnumerator</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ParallelEnumerator">ParallelEnumerator</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -560,7 +385,7 @@ Class <SPAN CLASS="typeNameLabel">ParallelEnumerator</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>reset()
 </CODE>
@@ -569,9 +394,6 @@ Class <SPAN CLASS="typeNameLabel">ParallelEnumerator</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="ReaderEnumerator">
@@ -587,13 +409,20 @@ extensions'routines'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">ReaderEnumerator</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">ReaderEnumerator</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">system'Enumerator</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+extensions'routines'ReaderEnumerator</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -604,18 +433,18 @@ Class <SPAN CLASS="typeNameLabel">ReaderEnumerator</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextReader">TextReader</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextReader">TextReader</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theReader</CODE>
+<CODE>_reader</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theLine</CODE>
+<CODE>_line</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -624,18 +453,18 @@ Class <SPAN CLASS="typeNameLabel">ReaderEnumerator</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ReaderEnumerator">ReaderEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> source)
+<CODE>new(source)
 </CODE>
 </TD>
 </TR>
@@ -666,13 +495,24 @@ Class <SPAN CLASS="typeNameLabel">ReaderEnumerator</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ReaderEnumerator">ReaderEnumerator</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
+<CODE>Value()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -690,45 +530,33 @@ Class <SPAN CLASS="typeNameLabel">ReaderEnumerator</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>reset()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>next()
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>enumerable()
-</CODE>
-</TD>
-</TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>get()
+<CODE>reset()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="SequentialEnumerator">
@@ -740,9 +568,20 @@ extensions'routines'</DIV>
 <H2 title="SequentialEnumerator" class="title">SequentialEnumerator</H2>
 </DIV>
 <DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">SequentialEnumerator</SPAN></PRE>
+<BR>
+</DIV>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#BaseRowEnumerator">extensions'routines'BaseRowEnumerator</A></SPAN></LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">system'Enumerator</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#BaseRowEnumerator">'BaseRowEnumerator</A></SPAN></LI>
 <LI>
 <UL CLASS="inheritance">
 <LI>
@@ -750,17 +589,9 @@ extensions'routines'SequentialEnumerator</LI>
 </UL>
 </LI>
 </UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">SequentialEnumerator</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -771,26 +602,26 @@ Class <SPAN CLASS="typeNameLabel">SequentialEnumerator</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Indexer&gt;</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#Array&lt;T1&gt;">Array&lt;Indexer&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theIndexers</CODE>
+<CODE>_indexers</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theLength</CODE>
+<CODE>_length</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="extensions-routines-$private.html#BaseStrategy">BaseStrategy</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="extensions-routines-$private.html#BaseStrategy">BaseStrategy</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theStrategy</CODE>
+<CODE>_strategy</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -799,18 +630,18 @@ Class <SPAN CLASS="typeNameLabel">SequentialEnumerator</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#SequentialEnumerator">SequentialEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A><I>[]</I></SPAN> arguments)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#Array&lt;T1&gt;">Array&lt;Object&gt;</A></SPAN> arguments)
 </CODE>
 </TD>
 </TR>
@@ -819,16 +650,7 @@ Class <SPAN CLASS="typeNameLabel">SequentialEnumerator</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#SequentialEnumerator">SequentialEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> arguments)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#SequentialEnumerator">SequentialEnumerator</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
+<CODE>new(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> arguments)
 </CODE>
 </TD>
 </TR>
@@ -847,7 +669,7 @@ Class <SPAN CLASS="typeNameLabel">SequentialEnumerator</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>reset()
 </CODE>
@@ -856,125 +678,6 @@ Class <SPAN CLASS="typeNameLabel">SequentialEnumerator</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="SingleEnumerable">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-extensions'routines'</DIV>
-<H2 title="SingleEnumerable" class="title">SingleEnumerable</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">SingleEnumerable</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>value</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#SingleEnumerable">SingleEnumerable</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> value)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#SingleEnumerable">SingleEnumerable</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== COVERSION SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Conversion Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#SingleEnumerable">SingleEnumerable</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>enumerator()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="printingLn">
@@ -990,73 +693,24 @@ extensions'routines'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">printingLn</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">printingLn</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>invoke</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">system'Func1</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+extensions'routines'printingLn</LI>
 </UL>
 </LI>
 </UL>
-</DIV>
 <HR>
 </DIV>
-<A NAME="#ext_initializer">
+<A NAME="File">
 </A>
-<!-- ======== START OF SYMBOL DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-extensions'routines'</DIV>
-<H2 title="#ext_initializer" class="title">#ext_initializer</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Symbol Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Name</TH>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>symbol #ext_initializer</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="ext-File">
-</A>
-<!-- ======== START OF EXTENSION DATA ======== -->
+<!-- ======== START OF CLASS DATA ======== -->
 <DIV CLASS="header">
 <DIV CLASS="subTitle">
 system'io'</DIV>
@@ -1067,13 +721,10 @@ system'io'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-<SPAN CLASS="typeNameLabel">File</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">File</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- ========== EXTNSION SUMMARY =========== -->
+<!-- ========== EXTENSION SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Extension Summary</H3>
@@ -1085,7 +736,7 @@ system'io'</DIV>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>forEachLine(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> f)
 </CODE>
@@ -1094,59 +745,11 @@ system'io'</DIV>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
-<A NAME="ext-Func1">
+<A NAME="Object">
 </A>
-<!-- ======== START OF EXTENSION DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'</DIV>
-<H2 title="Func1" class="title">Func1</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-<SPAN CLASS="typeNameLabel">Func1</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- ========== EXTNSION SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Extension Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Extension Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>asComparator()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="ext-Object">
-</A>
-<!-- ======== START OF EXTENSION DATA ======== -->
+<!-- ======== START OF CLASS DATA ======== -->
 <DIV CLASS="header">
 <DIV CLASS="subTitle">
 system'</DIV>
@@ -1157,13 +760,10 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-<SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- ========== EXTNSION SUMMARY =========== -->
+<!-- ========== EXTENSION SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Extension Summary</H3>
@@ -1175,18 +775,24 @@ system'</DIV>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>forEachWord(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>populate(<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#Func&lt;T1,T2&gt;">Func&lt;IntNumber,Object&gt;</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <DIV CLASS="bottomNav">
@@ -1200,7 +806,7 @@ system'</DIV>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>5.8
+ELENA&nbsp;Standard&nbsp;Library<br>6.0
 </STRONG>
 </DIV>
 </DIV>

@@ -4,6 +4,9 @@
 
 // ; --- Predefined References  --
 define INVOKER         10001h
+define VEH_HANDLER     10003h
+
+define CORE_ET_TABLE   2000Bh
 
 // ; ==== System commands ===
 
@@ -20,11 +23,16 @@ procedure % INVOKER
   stp     x27, x28, [sp, #-16]! 
   stp     x29, x30, [sp, #-16]! 
 
+  mov     x3, 0
+  stp     x3, x3, [sp, #-16]! 
+  mov     x29, sp
+
   mov     x8, x0
   mov     x0, x1
 
   blr     x8
 
+  add     sp, sp, #16
   ldp     x29, x30, [sp], #16 
   ldp     x27, x28, [sp], #16 
   ldp     x25, x26, [sp], #16 
@@ -33,5 +41,20 @@ procedure % INVOKER
   ldp     x19, x20, [sp], #16 
 
   ret     x30
+
+end
+
+// VEH_HANDLER() 
+procedure % VEH_HANDLER
+
+  mov     x17, x0
+  mov     x0, x9
+  mov     x9, x17
+
+  movz    x20,  data_ptr32lo : %CORE_ET_TABLE
+  movk    x20,  data_ptr32hi : %CORE_ET_TABLE, lsl #16
+
+  ldr     x17, [x20]
+  br      x17
 
 end

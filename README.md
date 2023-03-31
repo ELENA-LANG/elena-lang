@@ -47,7 +47,7 @@ ELENA is a general-purpose language with late binding. It is multi-paradigm, com
 
 To acquire the source code clone the git repository:
 
-    git clone git://github.com/ELENA-LANG/elena-lang.git
+    git clone https://github.com/ELENA-LANG/elena-lang.git
 
 ### Windows:
 
@@ -57,15 +57,15 @@ You have to add a path to _BIN_ folder to the system environment *PATH* or copy 
 
 To build the compiler under VS2019 you have to go to the root folder and type:
 
-    recompile19.bat
+    recompile60.bat
 
 To build the ELENA libraries type the following command:
 
-    rebuild_lib.bat
+    rebuild_lib60.bat
     
 To build ELENA samples type the following command:
 
-    rebuild_examples.bat 
+    rebuild_examples60.bat 
     
 To build ELENA Rosetta-code samples type the following command:
 
@@ -75,9 +75,30 @@ To run unit-tests type the following command:
 
     lib_tests.bat     
 
-## Contribute!
+## Source Code Organization
 
-ELENA Project looks for programmers interested in learning the language and providing feedback.
+### Windows:
+
+The ELENA source code is organized as follows:
+
+    bin                 binaries and shared libraries
+    bin\scripts         scripts used by the script engine and VM console
+    bin\templates       ELENA project templates
+    asm                 source for core routines implemented in assembly
+    dat\sg              language grammar file            
+    dat\og              language optimization rules
+    doc                 some documentations
+    elenasrc3\elc       source for the compiler
+    elenasrc3\elenart   source for the run-time shared library
+    elenasrc3\elenasm   source for the script engine
+    elenasrc3\elenavm   source for the virtual machine
+    elenasrc3\gui       source for IDE
+    elenasrc3\tools     source for ELENA utilities
+    examples60          ELENA examples
+    src60               source for ELENA libraries
+
+## Community
+We want your contributions and suggestions! One of the easiest ways to contribute is to participate in Github discussions or on Discord.
 
 ### 1. Bugs, questions, suggestions?
 
@@ -94,36 +115,15 @@ If you've noticed a bug or have a question go ahead and [make one](https://githu
 You may try to implement some of [Rosetta code tasks](http://rosettacode.org/wiki/Reports:Tasks_not_implemented_in_Elena) 
 which are not yet implemented
 
-## Source Code Organization
+## Contact Us
 
-### Windows:
+Reach out with any questions you may have and we'll make sure to answer them as soon as possible!
 
-The ELENA source code is organized as follows:
-
-    bin                 binaries and shared libraries
-    bin\scripts         scripts used by the script engine and VM console
-    bin\templates       ELENA project templates
-    asm                 source for core routines implemented in assembly
-    dat\sg              language grammar file            
-    dat\og              language optimization rules
-    doc                 some documentations
-    elenasrc2\elc       source for the compiler
-    elenasrc2\elenart   source for the run-time shared library
-    elenasrc2\elenasm   source for the script engine
-    elenasrc2\elenavm   source for the virtual machine
-    elenasrc2\gui       source for IDE
-    elenasrc2\tools     source for ELENA utilities
-    examples            ELENA examples
-    src50               source for ELENA libraries
-
-## License
-
-The compiler and executables distributed in this package fall under MIT License, 
-for more information read the file LICENSE.
-
-## Questions?
-
-Feel free to ask any question:  elenaprolang@gmail.com.
+| Platform  | Link        |
+|:----------|:------------|
+| 💬 Instant Message Chat | [![Discord Banner](https://discordapp.com/api/guilds/1023392280087908352/widget.png?style=banner2)](https://discord.gg/pMCjunWSxH)
+| 📧 E-mail | elenaprolang@gmail.com
+| 🐤 Twitter | [@elena_language](https://twitter.com/elena_language)
 
 ## Resources
 - **Nightly builds:** <https://ci.appveyor.com/project/arakov/elena-lang/build/artifacts>
@@ -135,3 +135,8 @@ Feel free to ask any question:  elenaprolang@gmail.com.
 - **Source code:** <https://github.com/ELENA-LANG/elena-lang>
 - **Twitter:** <https://twitter.com/elena_language>
 - **Rosetta code:** <http://rosettacode.org/wiki/Category:Elena>
+
+## License
+
+The compiler and executables distributed in this package fall under MIT License, 
+for more information read the file LICENSE.

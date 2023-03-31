@@ -82,14 +82,12 @@ void elena_lang::ARM64loadCallOp(JITCompilerScope* scope)
       switch (entries->reference) {
          case PTR32HI_1:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, disp, mskRef32Hi);
+            ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Hi);
             break;
          }
          case PTR32LO_1:
          {
-            short disp = *(short*)((char*)code + entries->offset);
-            ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, disp, mskRef32Lo);
+            ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Lo);
             break;
          }
          default:
@@ -200,4 +198,32 @@ void ARM64JITCompiler :: compileSymbol(ReferenceHelperBase* helper, MemoryReader
    JITCompiler64::compileSymbol(helper, bcReader, codeWriter, &labelHelper);
 
    alignCode(codeWriter, 0x08, true);
+}
+
+void ARM64JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode)
+{
+   pos_t offset = writer->position();
+   switch (mask) {
+      case mskRef32Hi:
+      {
+         offset >>= 16;
+
+         MemoryBase::maskDWord(writer->Memory(), position, (offset & 0xFFFF) << 5);
+         writer->Memory()->addReference(mskCodeRef32Hi, position);
+
+         break;
+      }
+      case mskRef32Lo:
+      {
+         offset &= 0xFFFF;
+
+         MemoryBase::maskDWord(writer->Memory(), position, (offset & 0xFFFF) << 5);
+         writer->Memory()->addReference(mskCodeRef32Lo, position);
+
+         break;
+      }
+      default:
+         JITCompiler::resolveLabelAddress(writer, mask, position, virtualMode);
+         break;
+   }
 }

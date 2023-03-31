@@ -3,7 +3,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                                (C)2021-2022, by Aleksey Rakov
+//                                                (C)2021-2023, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #include "bytecode.h"
@@ -15,7 +15,13 @@ constexpr auto OPCODE_UNKNOWN = "unknown";
 const char* _fnOpcodes[256] =
 {
    "nop", "breakpoint", OPCODE_UNKNOWN, "redirect", "quit", "mov env", "load", "len",
-   "class", "save", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "class", "save", "throw", "unhook", "loadv", "xcmp", "bload", "wload",
+
+   "incude", "exclude", "assign", "mov frm", "loads", "mlen", "dalloc", "xassignsp",
+   "dtrans", "xassign", "lload", "convl", "xlcmp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+
+   "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", "xjump",
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xget", "xcall",
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -32,35 +38,29 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "set", "set dp", "nlen", "xassign i", "peek", "store", "xswap sp", "swap sp",
+   "mov mssg", "mov n", "load dp", "xcmp dp", "sub n", "add n", "set fp", "create",
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "copy", "close", "alloc", "free", "and n", "read", "write", "cmp n",
+   "nconf dp", "ftrunc dp", "dcopy", "or n", "mul n", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "set", "set dp", "nlen", "xassign", "peek", "store", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   "mov mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "save dp", "store fp", "save sp", "store sp", "xflush sp", "get i", "assign i", "xrefresh sp",
+   "peek fp", "peek sp", "lsave dp", "lsave sp", "lload dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "copy", "close", "alloc", "free", "andn", "read", "write", OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "call", "call vt", "jump", "jeq", "jne", "jump vt", "xredirect mssg", "jlt",
+   "jge", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "save dp", "store fp", "save sp", "store sp", "xflush sp", "get", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   "peek fp", "peek sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "cmp", "fcmp", "icmp", "tst flag", "tstn", "tst mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "cmp fp", "cmp sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xloadarg sp", "xcreate", "system",
 
-   "call", "call vt", "jump", "jeq", "jne", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "fadd dp", "fsub dp", "fmul dp", "fdiv dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "iand dp", "ior dp", "ixor dp", "inot dp", "ishl dp", "ishr dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "cmp", OPCODE_UNKNOWN, "icmp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   "cmp fp", "cmp sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-
-   "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", "nsave dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "vjump mssg", "jump mssg", "seleq", "sellt",
+   "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", "nsave dp", "xhook dp", "xnewn",
+   "nadd dp", "dcopy dp", "xwrite offs", "xcopy offs", "vjump mssg", "jump mssg", "seleq", "sellt",
 
    "open", "xstore sp", "open header", "mov sp", "new", "newn", "xmov sp", "createn",
-   "create", "xstore fp", "xdispatch mssg", "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
+   OPCODE_UNKNOWN, "xstore fp", "xdispatch mssg", "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
 };
 
 // --- Auxiliary  ---
@@ -71,6 +71,10 @@ void fixJumps(MemoryBase* code, int labelPosition, Map<int, int>& jumps, int lab
    while (!it.eof()) {
       if (it.key() == label) {
          int position = labelPosition - *it - 4;
+         code->write(*it, &position, 4);
+      }
+      else if (it.key() == (int)(label | mskLabelRef)) {
+         int position = labelPosition | mskLabelRef;
          code->write(*it, &position, 4);
       }
       ++it;
@@ -113,32 +117,33 @@ void ByteCodeUtil :: decode(ByteCode code, IdentifierString& target)
    target.append(_fnOpcodes[(int)code]);
 }
 
-bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message)
+void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
+   ref_t* references, size_t len, pos_t argCount, ref_t flags)
 {
-   ref_t actionRef, flags;
-   pos_t argCount = 0;
-   decodeMessage(message, actionRef, argCount, flags);
-
-   ref_t signature = 0;
-   ustr_t actionName = module->resolveAction(actionRef, signature);
-   if (emptystr(actionName))
-      return false;
-
    if (test(flags, STATIC_MESSAGE))
       messageName.append("static:");
 
    if (test(flags, FUNCTION_MESSAGE))
       messageName.append("function:");
 
-   if (test(flags, PROPERTY_MESSAGE))
-      messageName.append("prop:");
+   switch (flags & PREFIX_MESSAGE_MASK) {
+      case PROPERTY_MESSAGE:
+         messageName.append("prop:");
+         break;
+      case VARIADIC_MESSAGE:
+         messageName.append("params:");
+         break;
+      case CONVERSION_MESSAGE:
+         messageName.append("typecast:");
+         break;
+      default:
+         break;
+   }
 
    messageName.append(actionName);
-   if (signature) {
-      ref_t references[ARG_COUNT];
-
+   if (len > 0) {
       messageName.append('<');
-      size_t len = module->resolveSignature(signature, references);
+      
       for (size_t i = 0; i < len; i++) {
          if (i != 0)
             messageName.append(',');
@@ -153,15 +158,29 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
       messageName.appendInt(argCount);
       messageName.append(']');
    }
+}
+
+bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message)
+{
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   ref_t signature = 0;
+   ustr_t actionName = module->resolveAction(actionRef, signature);
+   if (emptystr(actionName))
+      return false;
+
+   ref_t references[ARG_COUNT];
+   size_t len = signature ? module->resolveSignature(signature, references) : 0;
+
+   formatMessageName(messageName, module, actionName, references, len, argCount, flags);
 
    return true;
 }
 
-mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
+void ByteCodeUtil :: parseMessageName(ustr_t messageName, IdentifierString& actionName, ref_t& flags, pos_t& argCount)
 {
-   pos_t argCount = 0;
-   ref_t actionRef = 0, flags = 0;
-
    if (messageName.startsWith("static:")) {
       flags |= STATIC_MESSAGE;
       messageName += getlength("static:");
@@ -174,8 +193,15 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
       flags |= PROPERTY_MESSAGE;
       messageName += getlength("prop:");
    }
+   if (messageName.startsWith("params:")) {
+      flags |= VARIADIC_MESSAGE;
+      messageName += getlength("params:");
+   }
+   if (messageName.startsWith("typecast:")) {
+      flags |= CONVERSION_MESSAGE;
+      messageName += getlength("typecast:");
+   }
 
-   IdentifierString actionName;
    size_t paramIndex = messageName.find('[');
    if (paramIndex != NOTFOUND_POS) {
       actionName.copy(messageName, paramIndex);
@@ -188,6 +214,15 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
    if (actionName.compare(INVOKE_MESSAGE)) {
       flags |= FUNCTION_MESSAGE;
    }
+}
+
+mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode)
+{
+   pos_t argCount = 0;
+   ref_t actionRef = 0, flags = 0;
+
+   IdentifierString actionName;
+   parseMessageName(messageName, actionName, flags, argCount);
 
    ref_t signature = 0;
    size_t index = (*actionName).find('<');
@@ -210,10 +245,7 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
       actionName.truncate(index);
    }
 
-   if ((*actionName).compare(CAST_MESSAGE))
-      flags |= CONVERSION_MESSAGE;
-
-   actionRef = module->mapAction(*actionName, signature, true);
+   actionRef = module->mapAction(*actionName, signature, readOnlyMode);
    if (actionRef == 0) {
       return 0;
    }
@@ -224,8 +256,24 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module)
 void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* target, ModuleBase* importer)
 {
    if (isRCommand(command.code)) {
-      ref_t mask = command.arg1 & mskAnyRef;
-      command.arg1 = target->importReference(importer, command.arg1 & ~mskAnyRef) | mask;
+      // HOTFIX : ignore -1
+      if (command.arg1 != -1) {
+         ref_t mask = command.arg1 & mskAnyRef;
+         switch (mask) {
+            case mskMssgLiteralRef:
+               command.arg1 = target->importMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
+               break;
+            case mskExtMssgLiteralRef:
+               command.arg1 = target->importExtMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
+               break;
+            case mskExternalRef:
+               command.arg1 = target->importExternal(importer, command.arg1 & ~mskAnyRef) | mask;
+               break;
+            default:
+               command.arg1 = target->importReference(importer, command.arg1 & ~mskAnyRef) | mask;
+               break;
+         }
+      }      
    }
    else if (isMCommand(command.code)) {
       command.arg1 = target->importMessage(importer, command.arg1);
@@ -253,35 +301,21 @@ inline void addJump(int label, int index, CachedMemoryMap<int, int, 20>& labels,
 
 inline bool removeIdleJump(ByteCodeIterator it)
 {
-   ByteCommand command = *it;
-
    while (true) {
+      ByteCommand command = *it;
+
       switch (command.code) {
          case ByteCode::Jump:
-         //case bcIfR:
-         //case bcElseR:
-         //   //case bcIfB:
-         //case bcElseD:
-         //case bcIf:
-         //case bcIfCount:
-         //case bcElse:
-         //   //case bcLess:
-         //case bcNotLess:
-         //case bcNotGreater:
-         //case bcIfN:
-         //case bcElseN:
-         //case bcLessN:
-         //case bcNotLessN:
-         //case bcGreaterN:
-         //case bcNotGreaterN:
-         //   //case bcIfM:
-         //   //case bcElseM:
-         //   //case bcNext:
-         //case bcIfHeap:
-         //case bcJumpRM:
-         //case bcVJumpRM:
+         case ByteCode::Jne:
+         case ByteCode::Jeq:
+         case ByteCode::Jlt:
+         case ByteCode::Jge:
+         case ByteCode::JumpMR:
+         case ByteCode::VJumpMR:
+         case ByteCode::JumpVI:
          //case bcJumpI:
             *it = ByteCode::Nop;
+            it.flush();
             return true;
          default:
             break;
@@ -338,11 +372,21 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
 
    // populate blocks and jump lists
    int index = 0;
+   bool importMode = false;
    while (!it.eof()) {
       // skip pseudo commands (except labels)
       ByteCommand command = *it;
 
-      if (command.code == ByteCode::Label) {
+      if (command.code == ByteCode::ImportOn) {
+         importMode = true;
+      }
+      else if (command.code == ByteCode::ImportOff) {
+         importMode = false;
+      }
+      else if (importMode) {
+         // ignore commands in the import mode
+      }
+      else if (command.code == ByteCode::Label) {
          labels.add(command.arg1, index);
 
          // add to idleLabels only if there are no forward jumps to it
@@ -364,41 +408,30 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
       }
       else if (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop) {
          switch (command.code) {
-            //case bcThrow:
+            case ByteCode::Throw:
             case ByteCode::Quit:
             //case bcQuitN:
-            //case ByteCode::JumpVI:
-            //case ByteCode::JumpRM:
-            //case ByteCode::VJumpRM:
+            case ByteCode::JumpMR:
+            case ByteCode::VJumpMR:
+            case ByteCode::JumpVI:
             //case ByteCode::JumpI:
                blocks.add(index + 1, 0);
                break;
             case ByteCode::Jump:
                blocks.add(index + 1, 0);
-            //case bcIfR:
-            //case bcElseR:
-            //case bcElseD:
-            //case bcIf:
-            //case bcIfCount:
-            //case bcElse:
-            //case bcNotLess:
-            //case bcNotGreater:
-            //case bcIfN:
-            //case bcElseN:
-            //case bcLessN:
-            //case bcNotLessN:
-            //case bcGreaterN:
-            //case bcNotGreaterN:
-               //            case bcIfM:
-               //            case bcElseM:
-               //            case bcNext:
-            //case bcHook:
-            //case bcAddress:
-            //case bcIfHeap:
+            case ByteCode::Jeq:
+            case ByteCode::Jne:
+            case ByteCode::Jlt:
+            case ByteCode::Jge:
                // remove the label from idle list
                idleLabels.exclude(command.arg1);
 
                addJump(command.arg1, index, labels, jumps, fixes);
+               break;
+            case ByteCode::XHookDPR:
+               idleLabels.exclude(command.arg2 & ~mskLabelRef);
+
+               addJump(command.arg2 & ~mskLabelRef, index, labels, jumps, fixes);
                break;
             default:
                break;
@@ -441,7 +474,14 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
    int blockEnd = getBlockEnd(b_it, length);
    while (!it.eof()) {
       ByteCommand command = *it;
-      bool isCommand = (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop);
+      if (command.code == ByteCode::ImportOn) {
+         importMode = true;
+      }
+      else if (command.code == ByteCode::ImportOff) {
+         importMode = false;
+      }
+
+      bool isCommand = !importMode && (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop);
 
       if (index == blockEnd) {
          b_it++;
@@ -452,6 +492,7 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
       // HOTFIX : do not remove ending breakpoint coordinates
       if (*b_it != -1 && command.code != ByteCode::None && command.code != ByteCode::Breakpoint) {
          (*it).code = ByteCode::None;
+         it.flush();
          modified = true;
       }
 
@@ -465,6 +506,8 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
    CachedMemoryMap<int, ByteCodeIterator, 20>::Iterator i_it = idleLabels.start();
    while (!i_it.eof()) {
       *(*i_it) = ByteCode::Nop;
+      (*i_it).flush();
+
       modified = true;
 
       ++i_it;
@@ -567,6 +610,16 @@ void CommandTape :: write(ByteCode code, PseudoArg arg)
    write(code, resolvePseudoArg(arg));
 }
 
+void CommandTape :: write(ByteCode code, arg_t arg1, PseudoArg arg2)
+{
+   write(code, arg1, resolvePseudoArg(arg2));
+}
+
+void CommandTape::write(ByteCode code, arg_t arg1, PseudoArg arg2, ref_t mask)
+{
+   write(code, arg1, resolvePseudoArg(arg2) | mask);
+}
+
 void CommandTape :: write(ByteCode code, arg_t arg1, arg_t arg2)
 {
    ByteCommand command(code, arg1, arg2);
@@ -595,10 +648,20 @@ void CommandTape :: saveTo(MemoryWriter* writer)
 {
    Map<int, int> labels(0);
    Map<int, int> fwdJumps(0);
+   bool importMode = false;
 
    for (auto it = tape.start(); !it.eof(); ++it) {
       auto command = *it;
       switch (command.code) {
+         case ByteCode::ImportOn:
+            importMode = true;
+            break;
+         case ByteCode::ImportOff:
+            importMode = false;
+            break;
+         //case ByteCode::BreakLabel:
+         //   // nop in command tape is ignored (used in replacement patterns)
+         //   break;
          case ByteCode::Label:
             fixJumps(writer->Memory(), writer->position(), fwdJumps, command.arg1);
             labels.add(command.arg1, writer->position());
@@ -610,19 +673,40 @@ void CommandTape :: saveTo(MemoryWriter* writer)
          case ByteCode::Jump:
          case ByteCode::Jeq:
          case ByteCode::Jne:
+         case ByteCode::Jlt:
+         case ByteCode::Jge:
             writer->writeByte((char)command.code);
-
-            // if forward jump, it should be resolved later
-            if (!labels.exist(command.arg1)) {
-               fwdJumps.add(command.arg1, writer->position());
-               // put jump offset place holder
-               writer->writeDWord(0);
+            if (!importMode) {
+               // if forward jump, it should be resolved later
+               if (!labels.exist(command.arg1)) {
+                  fwdJumps.add(command.arg1, writer->position());
+                  // put jump offset place holder
+                  writer->writeDWord(0);
+               }
+               // if backward jump
+               else writer->writeDWord(labels.get(command.arg1) - writer->position() - 4);
             }
-            // if backward jump
-            else writer->writeDWord(labels.get(command.arg1) - writer->position() - 4);
+            else writer->writeDWord(command.arg1);
 
             if (command.code > ByteCode::MaxDoubleOp)
                writer->write(&command.arg2, sizeof(arg_t));
+
+            break;
+         case ByteCode::XHookDPR:
+            writer->writeByte((char)command.code);
+            writer->write(&command.arg1, sizeof(arg_t));
+
+            if ((command.arg2 & mskAnyRef) == mskLabelRef) {
+               // if forward jump, it should be resolved later
+               if (!labels.exist(command.arg2)) {
+                  fwdJumps.add(command.arg2, writer->position());
+                  // put jump offset place holder
+                  writer->writeDWord(mskLabelRef);
+               }
+               // if backward jump
+               else writer->writeDWord(labels.get(command.arg2) - writer->position() - 4);
+            }
+            else writer->write(&command.arg2, sizeof(arg_t));
 
             break;
          default:

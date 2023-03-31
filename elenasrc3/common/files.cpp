@@ -17,10 +17,14 @@ using namespace elena_lang;
 
 #define file_open _wfopen
 
+#define NEW_LINE "\r\n"
+
 #include <windows.h>
 #include <direct.h>
 
 #else
+
+#define NEW_LINE "\n"
 
 #define file_open fopen
 
@@ -367,6 +371,11 @@ bool TextFileReader :: read(char* s, pos_t length)
    }
 }
 
+void TextFileReader :: reset()
+{
+   _file.rewind();
+}
+
 // --- TextFileWriter ---
 
 TextFileWriter :: TextFileWriter(path_t path, FileEncoding encoding, bool withBOM)
@@ -388,4 +397,9 @@ TextFileWriter :: TextFileWriter(path_t path, FileEncoding encoding, bool withBO
 bool TextFileWriter :: write(const char* s, pos_t length)
 {
    return _file.writeText(s, _encoding, length);
+}
+
+bool TextFileWriter :: writeNewLine()
+{
+   return write(NEW_LINE, getlength_pos(NEW_LINE));
 }

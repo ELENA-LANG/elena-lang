@@ -23,7 +23,9 @@ namespace elena_lang
       {
          Unknown = 0,
          InlineTemplate,
-         ClassTemplate
+         ClassTemplate,
+         PropertyTemplate,
+         ExtensionTemplate
       };
 
       struct Scope
@@ -36,10 +38,14 @@ namespace elena_lang
 
          bool withTypeParameters() const
          {
-            return type == ScopeType::ClassTemplate;
+            return type == ScopeType::ClassTemplate || type == ScopeType::PropertyTemplate || type == ScopeType::ExtensionTemplate;
+         }
+         bool withNameParameters() const
+         {
+            return type == ScopeType::PropertyTemplate;
          }
 
-         bool isParameter(SyntaxNode node, SyntaxKey& parameterKey, ref_t& parameterIndex)
+         bool isParameter(SyntaxNode node, SyntaxKey& parameterKey, ref_t& parameterIndex, bool allowType)
          {
             switch (type) {
                case ScopeType::InlineTemplate:
@@ -58,6 +64,33 @@ namespace elena_lang
                   }
                   return false;
                }
+               case ScopeType::PropertyTemplate:
+               {
+                  ref_t index = arguments.get(node.identifier());
+                  if (index == 1) {
+                     parameterKey = SyntaxKey::NameParameter;
+                     parameterIndex = index;
+                     return true;
+                  }
+                  else if (index > 1) {
+                     parameterKey = SyntaxKey::TemplateArgParameter;
+                     parameterIndex = index;
+                     return true;
+                  }
+                  return false;
+               }
+               case ScopeType::ClassTemplate:
+               case ScopeType::ExtensionTemplate:
+                  if (allowType) {
+                     ref_t index = arguments.get(node.identifier());
+                     if (index > 0) {
+                        parameterKey = SyntaxKey::TemplateArgParameter;
+                        parameterIndex = index + nestedLevel;
+
+                        return true;
+                     }
+                  }
+                  return false;
                default:
                   return false;
             }
@@ -82,6 +115,8 @@ namespace elena_lang
       ModuleScopeBase*        _moduleScope;
       TemplateProssesorBase*  _templateProcessor;
 
+      ScopeType defineTemplateType(SyntaxNode node);
+
       ref_t mapAttribute(SyntaxNode node, bool allowType, ref_t& previusCategory);
 
       void parseStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current, 
@@ -91,23 +126,28 @@ namespace elena_lang
       void flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
+      void flushL6AsTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushIdentifier(SyntaxTreeWriter& writer, SyntaxNode identNode, bool ignoreTerminalInfo);
       void flushTemplateCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushTemplateArgDescr(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushParameterArgDescr(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool allowType);
       void flushTemplageExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxKey type, bool allowType);
-      void flushTemplateType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushTemplateType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool exprMode = true);
+      void flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, int nestLevel = 1);
       void flushMessage(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushResend(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushObject(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushNested(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushClosure(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushExpressionCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushExpressionMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMethodCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
-      void copyHeader(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void copyHeader(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool includeType);
+      void copyType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
       void flushSubScopeMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxNode headerNode);
       void flushSubScope(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxNode headerNode);
@@ -116,13 +156,15 @@ namespace elena_lang
       void flushMethod(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMethodMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
-         bool allowType);
+      bool flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
+         bool allowType, int arrayNestLevel = 0);
       void flushTypeAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
-         bool allowType);
+         bool allowType, bool onlyChildren = false);
       void flushInlineTemplatePostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node/*, bool ignorePostfix*/);
       void flushClassPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushParent(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushParentTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
       void flushDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool withNameNode = true, 
          bool typeDescriptor = false);
@@ -173,7 +215,8 @@ namespace elena_lang
          None = 0,
          Inline,
          CodeTemplate,
-         Class
+         Class,
+         InlineProperty
       };
 
       typedef Map<ref_t, SyntaxNode> NodeMap;
@@ -210,6 +253,9 @@ namespace elena_lang
       void copyChildren(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyField(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyMethod(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void copyParent(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void copyClassMembers(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void copyTemplatePostfix(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
 
       void copyModuleInfo(SyntaxTreeWriter& writer, SyntaxNode rootNode, TemplateScope& scope);
 
@@ -222,7 +268,9 @@ namespace elena_lang
          List<SyntaxNode>* arguments, List<SyntaxNode>* parameters);
 
    public:
+      void importTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
       void importInlineTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
+      void importInlinePropertyTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
       void importCodeTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
 

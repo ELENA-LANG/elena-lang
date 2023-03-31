@@ -105,7 +105,11 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>comctl32.lib shlwapi.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -122,7 +126,11 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>comctl32.lib shlwapi.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -135,7 +143,11 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>comctl32.lib shlwapi.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -152,15 +164,21 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>comctl32.lib shlwapi.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\common\config.h" />
     <ClInclude Include="..\..\common\dump.h" />
     <ClInclude Include="..\..\common\files.h" />
     <ClInclude Include="..\..\common\lists.h" />
     <ClInclude Include="..\..\common\paths.h" />
     <ClInclude Include="..\..\common\streams.h" />
     <ClInclude Include="..\..\common\ustring.h" />
+    <ClInclude Include="..\..\common\xmltree.h" />
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\engine\windows\pehelper.h" />
@@ -172,11 +190,15 @@
     <ClInclude Include="..\..\gui\view.h" />
     <ClInclude Include="..\..\gui\windows\wincanvas.h" />
     <ClInclude Include="..\..\gui\windows\wincommon.h" />
+    <ClInclude Include="..\..\gui\windows\winlistview.h" />
+    <ClInclude Include="..\..\gui\windows\winmenu.h" />
     <ClInclude Include="..\..\gui\windows\winsdi.h" />
+    <ClInclude Include="..\..\gui\windows\winsplitter.h" />
     <ClInclude Include="..\..\gui\windows\winstatusbar.h" />
     <ClInclude Include="..\..\gui\windows\wintabbar.h" />
     <ClInclude Include="..\..\gui\windows\wintextframe.h" />
     <ClInclude Include="..\..\gui\windows\wintextview.h" />
+    <ClInclude Include="..\..\gui\windows\wintreeview.h" />
     <ClInclude Include="..\debugcontroller.h" />
     <ClInclude Include="..\editframe.h" />
     <ClInclude Include="..\ide.h" />
@@ -190,16 +212,21 @@
     <ClInclude Include="..\windows\factory.h" />
     <ClInclude Include="..\windows\Resource.h" />
     <ClInclude Include="..\windows\win32controller.h" />
+    <ClInclude Include="..\windows\wincontextbrowser.h" />
     <ClInclude Include="..\windows\windialogs.h" />
     <ClInclude Include="..\windows\winide.h" />
     <ClInclude Include="..\windows\win32debugprocess.h" />
     <ClInclude Include="..\windows\winidestatusbar.h" />
+    <ClInclude Include="..\windows\winmessagelog.h" />
+    <ClInclude Include="..\windows\winoutput.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\common\config.cpp" />
     <ClCompile Include="..\..\common\dump.cpp" />
     <ClCompile Include="..\..\common\files.cpp" />
     <ClCompile Include="..\..\common\paths.cpp" />
     <ClCompile Include="..\..\common\ustring.cpp" />
+    <ClCompile Include="..\..\common\xmltree.cpp" />
     <ClCompile Include="..\..\engine\module.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
     <ClCompile Include="..\..\engine\windows\pehelper.cpp" />
@@ -209,11 +236,15 @@
     <ClCompile Include="..\..\gui\view.cpp" />
     <ClCompile Include="..\..\gui\windows\wincanvas.cpp" />
     <ClCompile Include="..\..\gui\windows\wincommon.cpp" />
+    <ClCompile Include="..\..\gui\windows\winlistview.cpp" />
+    <ClCompile Include="..\..\gui\windows\winmenu.cpp" />
     <ClCompile Include="..\..\gui\windows\winsdi.cpp" />
+    <ClCompile Include="..\..\gui\windows\winsplitter.cpp" />
     <ClCompile Include="..\..\gui\windows\winstatusbar.cpp" />
     <ClCompile Include="..\..\gui\windows\wintabbar.cpp" />
     <ClCompile Include="..\..\gui\windows\wintextframe.cpp" />
     <ClCompile Include="..\..\gui\windows\wintextview.cpp" />
+    <ClCompile Include="..\..\gui\windows\wintreeview.cpp" />
     <ClCompile Include="..\debugcontroller.cpp" />
     <ClCompile Include="..\editframe.cpp" />
     <ClCompile Include="..\ide.cpp" />
@@ -226,10 +257,13 @@
     <ClCompile Include="..\windows\factory.cpp" />
     <ClCompile Include="..\windows\main.cpp" />
     <ClCompile Include="..\windows\win32controller.cpp" />
+    <ClCompile Include="..\windows\wincontextbrowser.cpp" />
     <ClCompile Include="..\windows\windialogs.cpp" />
     <ClCompile Include="..\windows\winide.cpp" />
     <ClCompile Include="..\windows\win32debugprocess.cpp" />
     <ClCompile Include="..\windows\winidestatusbar.cpp" />
+    <ClCompile Include="..\windows\winmessagelog.cpp" />
+    <ClCompile Include="..\windows\winoutput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\windows\small.ico" />
