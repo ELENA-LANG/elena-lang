@@ -1,5 +1,16 @@
-## upcoming ELENA 6.0
-*12.06.2022*
+## ELENA 6.0.2b
+*31.3.2023*
+
+- ELENA
+  - fixing a critical error with long number comparision operations
+  - (re)implementing Script Engine (elenasm60 dll)
+  - #568 : Converting an external function return to the pointer
+  - starting work on (re)implementing multi-threading support (win x86)
+  - a lot of bug fixes : including critical ones
+  - migrating number of examples
+
+## ELENA 5.8
+*01.10.2021*
 
 - ELENA
   - binary incompatible due to module structure change / new opcodes / support for amd64
