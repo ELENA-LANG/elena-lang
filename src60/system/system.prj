@@ -29,10 +29,10 @@
         <include>object.l</include>
         <include>basic.l</include>
         <include>variables.l</include>
-        <include>extensions.l</include>
         <include>primitives.l</include>
         <include>enumerables.l</include>
         <include>strings.l</include>
+        <include>extensions.l</include>
         <include>messaging.l</include>
         <include>closures.l</include>
         <include>convertors.l</include>
@@ -41,19 +41,38 @@
         <include>exceptions.l</include>
         <include>console.l</include>
         <include>app.l</include>
+        <include>win_app.l</include>
         <include>win_strings.l</include>
         <include>template_tests.l</include>
         <include>collections\list.l</include>
+        <include>collections\tuples.l</include>
+        <include>collections\maps.l</include>
+        <include>collections\template_tests.l</include>
         <include>math\math.l</include>
+        <include>calendar\win_datetime.l</include>
+        <include>calendar\dates.l</include>
         <include>text\encoding.l</include>
         <include>text\win_encoding.l</include>
         <include>text\textbuffer.l</include>
+        <include>io\common.l</include>
+        <include>io\streamreader.l</include>
         <include>io\win_console.l</include>
+        <include>io\files.l</include>
+        <include>io\ioexceptions.l</include>
+        <include>io\win_files.l</include>
      </module>
      <module name="routines">
        <include>routines\enumerables.l</include>
        <include>routines\patterns.l</include>
        <include>routines\sorting.l</include>
+     </module>
+     <module name="runtime">
+       <include>runtime\gc_routines.l</include>
+       <include>runtime\vectortable.l</include>
+     </module>
+     <module name="threading">
+       <include>threading\win32_handlers.l</include>
+       <include>threading\thread.l</include>
      </module>
   </files>
 </configuration>

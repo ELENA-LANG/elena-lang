@@ -69,6 +69,7 @@ namespace elena_lang
 
       void deleteText(TextViewModelBase* model) override;
       void insertBlockText(TextViewModelBase* model, const text_t s, size_t length) override;
+      void deleteBlockText(TextViewModelBase* model, const text_t s, size_t length) override;
 
       bool copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;
       void pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;
@@ -84,6 +85,7 @@ namespace elena_lang
       void moveToFrame(TextViewModelBase* model, int col, int row, bool kbShift) override;
 
       void selectWord(TextViewModelBase* model) override;
+      void selectAll(TextViewModelBase* model) override;
 
       void resizeModel(TextViewModelBase* model, Point size) override;
 

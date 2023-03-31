@@ -35,12 +35,12 @@ bool ConfigFile :: select(Node& node, ustr_t xpath, Collection& result)
    else return false;
 }
 
-ConfigFile::Node ConfigFile::selectRootNode()
+ConfigFile::Node ConfigFile :: selectRootNode()
 {
    return Node(_tree);
 }
 
-ConfigFile::Node ConfigFile::selectNode(ustr_t xpath)
+ConfigFile::Node ConfigFile :: selectNode(ustr_t xpath)
 {
    return Node(_tree.selectNode(xpath));
 }

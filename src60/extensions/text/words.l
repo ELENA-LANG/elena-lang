@@ -37,6 +37,76 @@ namespace text
       bool isWhitespace() = _spaceMode;
    }
     
+   public class ExpressionStatemachine : Statemachine
+   {
+      bool _spaceMode;
+      bool _quoteMode;
+      bool _newToken;
+      bool _operatorMode;
+        
+      constructor()
+      {
+         _spaceMode := true;
+         _quoteMode := false;
+         _newToken := true;
+         _operatorMode := false
+      }
+        
+      bool proceed(char ch)
+      {
+         if (_quoteMode)
+         {
+            if (ch == $22h)
+               { _quoteMode := false; _spaceMode := false; _newToken := false; _operatorMode := true };
+                    
+            ^ false
+         };
+            
+         bool whitespace := ch.isWhitespace();
+         bool digit := ch.isDigit();
+         bool letter := ch.isLToken();
+         if (whitespace)
+         {
+            ifnot(_spaceMode)
+               { _spaceMode := true; _newToken := true; ^ true }
+         }
+         else
+         {
+            if (ch == $22h)
+            {
+               ifnot(_newToken)
+                  { _newToken := true; ^ true };
+                    
+               _quoteMode := true;
+               _spaceMode := false;
+                    
+               ^ false
+            };
+                
+            if (_newToken)
+            { 
+               _newToken := false;
+               _spaceMode := false; 
+               _operatorMode := (letter || digit) ? false : true
+            }
+            else if (letter || digit)
+            {
+               if(_operatorMode)
+                  { _newToken := true; _operatorMode := false; ^ true }
+            }
+            else
+            { 
+               _operatorMode := true;
+               _newToken := true; ^ true
+            }
+         };
+            
+         ^ false
+      }
+        
+      bool isWhitespace() = _spaceMode;    
+   }
+
    public class TokenEnumerator : Enumerator<string>, interface<Enumerator>
    {
       string         _literal;
@@ -107,5 +177,60 @@ namespace text
       }
         
       get string Value() = *_buffer;
+   }
+
+   public class TokenStatemachine : Statemachine
+   {
+      bool _spaceMode;
+      bool _quoteMode;
+      bool _newToken;
+        
+      constructor()
+      {
+         _spaceMode := true;
+         _quoteMode := false;
+         _newToken := true
+      }
+        
+      bool proceed(char ch)
+      {
+         if (_quoteMode)
+         {
+            if (ch == $22h)
+               { _quoteMode := false; _spaceMode := false; _newToken := false };
+                    
+            ^ false
+         };
+            
+         bool whitespace := ch.isWhitespace();
+         if (whitespace)
+         {
+            ifnot(_spaceMode)
+               { _spaceMode := true; _newToken := true; ^ true }
+         }
+         else
+         {
+            if (ch == $22h)
+            {
+               ifnot(_newToken)
+                  { _newToken := true; ^ true };
+                    
+               _quoteMode := true;
+               _spaceMode := false;
+                    
+               ^ false
+            };
+                                      
+            if (_newToken)
+            { 
+               _newToken := false;
+               _spaceMode := false 
+            }
+         };
+            
+         ^ false
+      }
+        
+      bool isWhitespace() = _spaceMode;    
    }
 }

@@ -102,11 +102,13 @@ namespace elena_lang
       friend void* retrieveRCode(JITCompilerScope* scope, int arg);
 
       friend void loadOp(JITCompilerScope* scope);
+      friend void loadSysOp(JITCompilerScope* scope);
       friend void loadLOp(JITCompilerScope* scope);
       friend void loadIndexOp(JITCompilerScope* scope);
       friend void loadNOp(JITCompilerScope* scope);
       friend void loadFieldIndexOp(JITCompilerScope* scope);
       friend void loadStackIndexOp(JITCompilerScope* scope);
+      friend void loadArgIndexOp(JITCompilerScope* scope);
       friend void loadVMTIndexOp(JITCompilerScope* scope);
       friend void loadFrameIndexOp(JITCompilerScope* scope);
       friend void loadFrameDispOp(JITCompilerScope* scope);
@@ -201,6 +203,10 @@ namespace elena_lang
 
       void populatePreloaded(uintptr_t env, uintptr_t eh_table, uintptr_t gc_table) override;
 
+      addr_t allocateTLSIndex(ReferenceHelperBase* helper, MemoryWriter& writer) override;
+
+      void allocateThreadContent(MemoryWriter* tlsWriter) override;
+
       JITCompiler()
          : _inlines{}, _preloaded(nullptr)
       {
@@ -280,6 +286,8 @@ namespace elena_lang
       void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
       void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) override;
 
+      void allocateVariable(MemoryWriter& writer) override;
+
       JITCompiler32()
          : JITCompiler()
       {
@@ -353,6 +361,8 @@ namespace elena_lang
       void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
       void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) override;
 
+      void allocateVariable(MemoryWriter& writer) override;
+
       JITCompiler64()
          : JITCompiler()
       {
@@ -372,6 +382,7 @@ namespace elena_lang
 
    void loadNop(JITCompilerScope*);
    void loadOp(JITCompilerScope* scope);
+   void loadSysOp(JITCompilerScope* scope);
    void loadLOp(JITCompilerScope* scope);
    void loadIndexOp(JITCompilerScope* scope);
    void loadNOp(JITCompilerScope* scope);
@@ -379,6 +390,7 @@ namespace elena_lang
    void loadVMTIndexOp(JITCompilerScope* scope);
    void loadFrameIndexOp(JITCompilerScope* scope);
    void loadStackIndexOp(JITCompilerScope* scope);
+   void loadArgIndexOp(JITCompilerScope* scope);
    void loadFrameDispOp(JITCompilerScope* scope);
    void loadNOp(JITCompilerScope* scope);
    void loadLenOp(JITCompilerScope* scope);

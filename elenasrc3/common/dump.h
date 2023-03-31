@@ -31,7 +31,7 @@ namespace elena_lang
 
       bool write(pos_t position, const void* s, pos_t length) override;
 
-      bool read(pos_t position, void* s, pos_t length) override;
+      bool read(pos_t position, void* s, pos_t length) const override;
 
       void* get(pos_t position) const override;
 
@@ -43,7 +43,7 @@ namespace elena_lang
          return retVal;
       }
 
-      pos_t getPos(pos_t position)
+      pos_t getPos(pos_t position) const
       {
          pos_t retVal = 0;
          read(position, &retVal, sizeof(pos_t));
@@ -63,6 +63,18 @@ namespace elena_lang
       void writeInt(pos_t position, int value)
       {
          write(position, &value, sizeof(int));
+      }
+
+      bool writeBytes(pos_t position, char value, pos_t length)
+      {
+         if (position <= _used && length > 0) {
+            resize(position + length);
+
+            memset(static_cast<char*>(_buffer) + position, value, length);
+
+            return true;
+         }
+         else return false;
       }
 
       bool insert(pos_t position, const void* s, pos_t length) override;
@@ -112,7 +124,7 @@ namespace elena_lang
 
       bool write(pos_t position, const void* s, pos_t length) override;
 
-      bool read(pos_t position, void* s, pos_t length) override;
+      bool read(pos_t position, void* s, pos_t length) const override;
 
       bool insert(pos_t position, const void* s, pos_t length) override;
 

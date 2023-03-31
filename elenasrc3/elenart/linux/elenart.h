@@ -8,6 +8,7 @@
 #define ELENART_H_INCLUDED
 
 #include "elenamachine.h"
+#include "core.h"
 
 #if __GNUG__
 
@@ -32,6 +33,11 @@ extern "C"
    DLL_PUBLIC elena_lang::addr_t LoadClassByStringLA(const char* symbolName);
    DLL_PUBLIC elena_lang::addr_t LoadSymbolByString2LA(const char* ns, const char* symbolName);
    DLL_PUBLIC elena_lang::mssg_t LoadMessageLA(const char* messageName);
+   DLL_PUBLIC unsigned int GetRandomIntLA(elena_lang::SeedStruct& seed);
+   DLL_PUBLIC void GetRandomSeedLA(elena_lang::SeedStruct& seed);
+   DLL_PUBLIC void PrepareLA(uintptr_t arg);
+   DLL_PUBLIC int GetArgCLA();
+   DLL_PUBLIC int GetArgLA(int index, char* buffer, int length);
    DLL_PUBLIC void ExitLA(int retVal);
 }
 

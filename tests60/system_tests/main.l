@@ -14,6 +14,7 @@ public program()
    conversionTests();
    inlineAssignmentTests();
    singleDispatchTest();
+   variadicTest();
 
    console.writeLine("--- Passed ---")
 }

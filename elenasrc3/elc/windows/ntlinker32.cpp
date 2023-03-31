@@ -90,10 +90,10 @@ void Win32NtLinker :: writeNtHeader(WinNtExecutableImage& image, FileWriter& fil
    header.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size = image.addressSpace.importSize;
    //}
 
-//   // IMAGE_DIRECTORY_ENTRY_TLS
-//   if (tls_directory != 0xFFFFFFFF) {
-//      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].VirtualAddress = info.map.rdata + tls_directory;
-//      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].Size = getSize(info.image->getTLSSection());
-//   }
+   // IMAGE_DIRECTORY_ENTRY_TLS
+   if (image.addressSpace.tlsDirectory != 0xFFFFFFFF) {
+      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].VirtualAddress = image.addressSpace.rdata + image.addressSpace.tlsDirectory;
+      header.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].Size = image.addressSpace.tlsSize;
+   }
    file.write(&header, IMAGE_SIZEOF_NT_OPTIONAL_HEADER);
 }

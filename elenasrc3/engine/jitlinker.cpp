@@ -232,7 +232,7 @@ void JITLinker::JITLinkerReferenceHelper :: writeSectionReference(MemoryBase* im
          MemoryBase::getDWord(section, sectionOffset), *_references);
 
       pos_t offset = _owner->resolveVMTMethodOffset(sectionInfo->module, currentRef, message);
-      _owner->fixOffset(imageOffset, mskRef32, offset, image);
+      _owner->fixOffset(imageOffset, addressMask, offset, image);
    }
    else if (currentMask == mskVMTMethodAddress) {
       _owner->resolve(
@@ -244,6 +244,22 @@ void JITLinker::JITLinkerReferenceHelper :: writeSectionReference(MemoryBase* im
          MemoryBase::getDWord(section, sectionOffset), *_references);
 
       addr_t vaddress = _owner->resolveVMTMethodAddress(sectionInfo->module, currentRef, message);
+
+      switch (addressMask & mskRefType) {
+         case mskRef32:
+            ::writeVAddress32(image, imageOffset, vaddress, 0, addressMask, _owner->_virtualMode);
+            break;
+         case mskRef64:
+            ::writeVAddress64(image, imageOffset, vaddress, 0, addressMask, _owner->_virtualMode);
+            break;
+         default:
+            // to make compiler happy
+            break;
+      }
+   }
+   else {
+      addr_t vaddress = _owner->resolve(_owner->_loader->retrieveReferenceInfo(sectionInfo->module, currentRef, currentMask,
+         _owner->_forwardResolver), currentMask, false);
 
       switch (addressMask & mskRefType) {
          case mskRef32:
@@ -445,6 +461,7 @@ void JITLinker :: fixOffset(pos_t position, ref_t offsetMask, int offset, Memory
 
    switch (offsetMask) {
       case mskRef32:
+      case mskRef64:
          _compiler->writeImm32(&writer, offset);
          break;
       case mskRef32Lo12:
@@ -724,6 +741,9 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
 #ifdef FULL_OUTOUT_INFO
    if (referenceInfo.referenceName)
       printf("linking %s\n", referenceInfo.referenceName.str());
+
+   if (referenceInfo.referenceName.compare("'$inline0"))
+      referenceInfo.module = referenceInfo.module;
 
 #endif // FULL_OUTOUT_INFO
 
@@ -1012,12 +1032,13 @@ addr_t JITLinker :: resolveMetaSection(ReferenceInfo referenceInfo, ref_t sectio
    return vaddress;
 }
 
-inline ReferenceInfo retrieveConstantVMT(SectionInfo info)
+ReferenceInfo JITLinker :: retrieveConstantVMT(SectionInfo sectionInfo)
 {
-   if (info.module) {
-      for (auto it = RelocationMap::Iterator(info.section->getReferences()); !it.eof(); ++it) {
+   if (sectionInfo.module) {
+      for (auto it = RelocationMap::Iterator(sectionInfo.section->getReferences()); !it.eof(); ++it) {
          if ((*it) == (pos_t)-4) {
-            return { info.module, info.module->resolveReference(it.key() & ~mskAnyRef) };
+            return _loader->retrieveReferenceInfo(sectionInfo.module, it.key() & ~mskAnyRef, it.key() & mskAnyRef,
+               _forwardResolver);
          }
       }
    }
@@ -1027,15 +1048,8 @@ inline ReferenceInfo retrieveConstantVMT(SectionInfo info)
 
 addr_t JITLinker :: resolveConstantArray(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode)
 {
-   if (referenceInfo.referenceName.compare("'mod$inline0"))
-      silentMode |= false;
-
    VAddressMap references({ 0, nullptr, 0, 0 });
    ReferenceInfo vmtReferenceInfo;
-
-   // get target image & resolve virtual address
-   MemoryBase* image = _imageProvider->getTargetSection(mskRDataRef);
-   MemoryWriter writer(image);
 
    bool structMode = false;
 
@@ -1053,6 +1067,10 @@ addr_t JITLinker :: resolveConstantArray(ReferenceInfo referenceInfo, ref_t sect
    if (!vmtReferenceInfo.referenceName.empty()) {
       vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
    }
+
+   // get target image & resolve virtual address
+   MemoryBase* image = _imageProvider->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
 
    // allocate object header
    _compiler->allocateHeader(writer, vmtVAddress, size, structMode, _virtualMode);
@@ -1096,6 +1114,19 @@ addr_t JITLinker :: resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo
    _compiler->writeDump(writer, &sectionInfo);
 
    fixReferences(references, image);
+
+   return vaddress;
+}
+
+addr_t JITLinker :: resolveRawConstant(ReferenceInfo referenceInfo)
+{
+   // get target image & resolve virtual address
+   MemoryBase* image = _imageProvider->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
+
+   addr_t vaddress = calculateVAddress(writer, mskRDataRef);
+
+   _compiler->writeLiteral(writer, referenceInfo.referenceName);
 
    return vaddress;
 }
@@ -1413,6 +1444,9 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
          case mskConstArray:
             address = resolveConstantArray(referenceInfo, sectionMask, silentMode);
             break;
+         case mskPSTRRef:
+            address = resolveRawConstant(referenceInfo);
+            break;
          default:
             // to make compiler happy
             break;
@@ -1449,3 +1483,19 @@ addr_t JITLinker :: resolveTemporalByteCode(MemoryDump& tapeSymbol, ModuleBase* 
 
    return vaddress;
 }
+
+addr_t JITLinker :: resolveTLSSection(JITCompilerBase* compiler)
+{
+   JITLinkerReferenceHelper helper(this, nullptr, nullptr);
+
+   MemoryWriter tlsWriter(_imageProvider->getTLSSection());
+   compiler->allocateThreadContent(&tlsWriter);
+
+   MemoryBase* image = _imageProvider->getTargetSection(mskDataRef);
+   MemoryWriter writer(image);
+
+   addr_t address = compiler->allocateTLSIndex(&helper, writer);
+
+   return address;
+}
+

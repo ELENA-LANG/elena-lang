@@ -38,7 +38,7 @@ namespace elena_lang
       void addForward(ustr_t forwardLine);
       void addPackage(ustr_t packageLine);
 
-      int interprete(SystemEnv* env, void* tape, pos_t size, void* criricalHandler);
+      int interprete(SystemEnv* env, void* tape, pos_t size, const char* criricalHandlerReference);
 
       void onNewCode();
 
@@ -59,7 +59,7 @@ namespace elena_lang
    public:
       addr_t resolveExternal(ustr_t reference) override;
 
-      void startSTA(SystemEnv* env, void* tape, void* criricalHandler);
+      void startSTA(SystemEnv* env, void* tape, const char* criricalHandlerReference);
 
       size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
       size_t loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length);

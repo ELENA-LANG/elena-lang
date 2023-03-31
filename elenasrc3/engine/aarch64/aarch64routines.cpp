@@ -24,4 +24,6 @@ void SystemRoutineProvider::FillSettings(SystemEnv* env, SystemSettings& setting
 
    settings.page_mask = page_mask;
    settings.page_size_order = page_size_order;
+
+   settings.perm_total_size = 0x20000000;
 }

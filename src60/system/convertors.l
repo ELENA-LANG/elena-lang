@@ -210,7 +210,14 @@ public singleton intConvertor
    {
       int len := s.Length;
       int val := 0;
-      for (int i := 0, i < len, i := i + 1) {
+      int start := 0;
+      bool inverted := false;
+      if (s[0]==$45) {
+         start := 1;
+         inverted := true;
+      };
+
+      for (int i := start, i < len, i := i + 1) {
          byte c := s[i];
          int ch := c;
          ch := ch - 48;
@@ -219,6 +226,10 @@ public singleton intConvertor
          };
          val := val * radix;
          val := val + ch;
+      };
+
+      if (inverted) {
+         val := -val;
       };
 
       ^ val
@@ -299,7 +310,7 @@ public singleton uintConvertor
       int len := s.Length;
       uint val := 0;
       for (int i := 0, i < len, i := i + 1) {
-         byte c := s[i];
+         short c := s[i];
          int ch := c;
          ch := ch - 48;
          if (ch >= radix) {
@@ -396,7 +407,7 @@ public singleton longConvertor
       int len := s.Length;
       long val := 0;
       for (int i := 0, i < len, i := i + 1) {
-         byte c := s[i];
+         short c := s[i];
          int ch := c;
          ch := ch - 48;
          if (ch >= radix) {
@@ -535,10 +546,10 @@ public singleton stringConvertor
          n := 0 - n;
       };   
 
-      byte buffer[12];
+      byte buffer[36];
       byte tmp;
       int len := 0;
-      int index := 11;
+      int index := 35;
       while (n >= radix) {
          int r := n.mod(radix);
          n := n / radix;
@@ -757,6 +768,12 @@ public singleton stringConvertor
       ^ String.fromByteArray(0, length, buffer);      
    }
 
+   string convert(BaseVariable v)
+      <= convert(*v);
+    
+   string convert(BaseVariable v, int radix)
+      <= convert(*v, radix);
+
    string convert(o)
       = o.toPrintable();
 }
@@ -765,6 +782,18 @@ public singleton stringConvertor
 
 public singleton wideConvertor
 {
+   string convert(char ch)
+   {
+      int value := ch.Value;
+
+      short buffer[2];
+      int length := PrimitiveOperations.copyUTF32(buffer,0,value);
+
+      ^ WideString.fromShortArray(0, length, buffer);      
+   }  
+
+   wide convert(o)
+      = o.toPrintable();
 }
 
 // --- byteArrayConvertor ---
@@ -782,13 +811,12 @@ public singleton byteArrayConvertor
          int length := PrimitiveOperations.copyUTF32(dest,j,chVal);
          
          j += length;
-         i += ch.Length;
+         i += ch.WideLength;
       };
 
       ^ j
    }   
 }
-
 
 // --- shortArrayConvertor ---
 

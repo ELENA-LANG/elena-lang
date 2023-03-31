@@ -1,7 +1,11 @@
-## ELENA 6.0.2a
-- TOOLS
-  - ldoc : api doc generator
-
+## ELENA 6.0.2b
+- ELENA
+  - fixing a critical error with long number comparision operations
+  - (re)implementing Script Engine (elenasm60 dll)
+  - #568 : Converting an external function return to the pointer
+  - starting work on (re)implementing multi-threading support (win x86)
+  - a lot of bug fixes : including critical ones
+  - migrating number of examples
 
 ## ELENA 5.8
 *01.10.2021*

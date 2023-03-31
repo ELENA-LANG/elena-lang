@@ -13,7 +13,7 @@
 using namespace elena_lang;
 
 // --- key mapping routines ---
-inline size_t simpleParseRule(parse_key_t key)
+inline pos_t simpleParseRule(parse_key_t key)
 {
    return key;
 }

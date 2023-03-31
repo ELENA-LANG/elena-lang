@@ -359,6 +359,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::PeekR:
          case ByteCode::StoreR:
          case ByteCode::CreateR:
+         case ByteCode::XCreateR:
             addRArg(command.arg1, commandStr);
             break;
          case ByteCode::MovM:
@@ -533,6 +534,14 @@ void ByteCodeViewer :: printByteCodes(MemoryBase* section, pos_t address, int in
       printCommand(command, indent, labels, position);
       nextRow(row, pageSize);
    }
+}
+
+void ByteCodeViewer :: printMethodInfo(MethodInfo& info)
+{
+   IdentifierString flags("          @hints:");
+   flags.appendHex(info.hints);
+
+   printLine(*flags);
 }
 
 void ByteCodeViewer :: printSymbol(ustr_t name)
@@ -775,6 +784,10 @@ void ByteCodeViewer::printMethod(ustr_t name, bool fullInfo)
          }
 
          printLine(getMethodPrefix(test(entry.message, FUNCTION_MESSAGE)), *line);
+
+         if (_showMethodInfo)
+            printMethodInfo(methodInfo);
+
          printByteCodes(code, entry.codeOffset, 4, _pageSize);
          printLine("@end");
 
@@ -811,6 +824,12 @@ void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo)
       if (info.header.parentRef) {
          printLineAndCount("@parent ", _module->resolveReference(info.header.parentRef), row, _pageSize);
          row++;
+      }
+
+      if (test(info.header.flags, elExtension)) {
+         ref_t extensionRef = info.attributes.get({ 0, ClassAttribute::ExtensionRef });
+         if (extensionRef)
+            printLineAndCount("@target ", _module->resolveReference(extensionRef), row, _pageSize);
       }
 
       printFlags(info.header.flags, row, _pageSize);
@@ -908,6 +927,10 @@ void ByteCodeViewer :: runSession()
             case 'b':
                _showBytecodes = !_showBytecodes;
                _presenter->print("Bytecode mode is %s", _showBytecodes ? "true" : "false");
+               break;
+            case 'h':
+               _showMethodInfo = !_showMethodInfo;
+               _presenter->print("Method hint mode is %s", _showMethodInfo ? "true" : "false");
                break;
             default:
                printHelp();

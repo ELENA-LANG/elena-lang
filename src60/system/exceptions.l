@@ -25,6 +25,11 @@ public class Exception
        weak self.new().raise()
    }
 
+   sealed static raise(string message)
+   {
+       weak self.new(message).raise()
+   }
+
    string toPrintable()
    {
       string retVal := message.add($10"Call stack:"$10).add(callStack.toPrintable());
@@ -126,4 +131,15 @@ public class AbortException : Exception,
    /// Creates the exception
    constructor new()
       <= super new("The process terminated");
+}
+
+// --- FormatException ---
+
+public class FormatException : Exception
+{
+    constructor new()
+        <= new("A number is not in the correct format");
+        
+    constructor new(string message)
+        <= super new(message);
 }

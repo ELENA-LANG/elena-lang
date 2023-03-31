@@ -101,7 +101,7 @@ bool MemoryDump :: insert(pos_t position, const void* s, pos_t length)
    else return false;
 }
 
-bool MemoryDump :: read(pos_t position, void* s, pos_t length)
+bool MemoryDump :: read(pos_t position, void* s, pos_t length) const
 {
    if (position < _used && _used >= position + length) {
       memcpy(s, static_cast<char*>(_buffer) + position, length);
@@ -134,7 +134,7 @@ bool ByteArray :: write(pos_t position, const void* s, pos_t length)
    return true;
 }
 
-bool ByteArray :: read(pos_t position, void* s, pos_t length)
+bool ByteArray :: read(pos_t position, void* s, pos_t length) const
 {
    memcpy(s, _bytes + position, length);
 

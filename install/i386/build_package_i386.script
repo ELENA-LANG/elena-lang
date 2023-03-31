@@ -1,24 +1,25 @@
 #!/bin/bash
-RELEASE=elena-6.0.1.amd64-linux
+RELEASE=elena-6.0.2.i386-linux
 
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
 mkdir -p /etc/elena/templates/
 mkdir -p /usr/lib/elena/core/x32/
 mkdir -p /usr/lib/elena/core/amd64/
-mkdir -p /usr/lib/elena/lib60_64
+mkdir -p /usr/lib/elena/lib60
 
-cp ../bin/libelenart60_64.so /usr/lib/elena/
+cp ../../bin/libelenart60.so /usr/lib/elena/
 # cp ../bin/libelenavm.so /usr/lib/elena/
-cp ../bin/elena64-cli /usr/bin/
+cp ../../bin/elena-cli /usr/bin/
 
-cp ../bin/elc60.config /etc/elena/
+cp ../../bin/elc60.config /etc/elena/
+cp ../../bin/elenart60.config /etc/elena/
 # cp ../bin/elenavm.config /etc/elena/
-cp ../bin/templates/*.config /etc/elena/templates/
+cp ../../bin/templates/*.config /etc/elena/templates/
 
 echo compiling data files
 
-../bin/sg64-cli ../dat/sg/syntax60.txt
+../../bin/sg-cli ../../dat/sg/syntax60.txt
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -38,7 +39,7 @@ fi
 #   exit 1
 # fi
 
-../bin/og64-cli -s ../dat/og/bt_rules.txt
+../../bin/og-cli -s ../../dat/og/bt_rules.txt
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -48,12 +49,12 @@ else
   exit 1
 fi
 
-cp ../dat/og/*.dat /usr/share/elena/
-cp ../dat/sg/syntax60.dat /usr/share/elena
+cp ../../dat/og/*.dat /usr/share/elena/
+cp ../../dat/sg/syntax60.dat /usr/share/elena
 
 echo compiling assembly files
 
-../bin/asm64-cli -amd64 ../asm/amd64/core60.asm /usr/lib/elena/core/amd64
+../../bin/asm-cli -x86 ../../asm/x32/core60.asm /usr/lib/elena/core/x32
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -63,7 +64,7 @@ else
   exit 1
 fi
 
-../bin/asm64-cli -amd64 ../asm/amd64/core60_lnx.asm /usr/lib/elena/core/amd64
+../../bin/asm-cli -x86 ../../asm/x32/core60_lnx.asm /usr/lib/elena/core/x32
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -82,10 +83,10 @@ fi
 #   echo "Failure" >&2
 #   exit 1
 # fi
-#
-# echo compiling lib50 files
 
- ../bin/asm64-cli -bc64 ../src60/core/system.core_routines.esm /usr/lib/elena/lib60_64
+echo compiling lib60 files
+
+ ../../bin/asm-cli -bc32 ../../src60/core/system.core_routines.esm /usr/lib/elena/lib60
  ret=$?
  if [ $ret -eq 0 ]
  then
@@ -95,7 +96,7 @@ fi
    exit 1
  fi
 
- ../bin/elena64-cli ../src60/system/system.project
+ ../../bin/elena-cli ../../src60/system/system.project
  ret=$?
  if [ $ret -eq -2 ]
  then
@@ -105,7 +106,7 @@ fi
    echo .
  fi
 
- ../bin/elena64-cli ../src60/extensions/extensions.project
+ ../../bin/elena-cli ../../src60/extensions/extensions.project
  ret=$?
  if [ $ret -eq -2 ]
  then
@@ -115,7 +116,7 @@ fi
    echo .
  fi
 
- ../bin/elena64-cli ../tests60/system_tests/system_tests.project
+ ../../bin/elena-cli ../../tests60/system_tests/system_tests.project
  ret=$?
  if [ $ret -eq -2 ]
  then
@@ -125,7 +126,7 @@ fi
    echo .
  fi
 
- ../tests60/system_tests/system_tests
+ ../../tests60/system_tests/system_tests
  ret=$?
  if [ $ret -eq -2 ]
  then
@@ -146,8 +147,8 @@ fi
  mkdir -p ./$RELEASE/etc/elena/
  mkdir -p ./$RELEASE/etc/elena/templates/
  mkdir -p ./$RELEASE/usr/share/elena/
- mkdir -p ./$RELEASE/usr/lib/elena/core/amd64/
- mkdir -p ./$RELEASE/usr/lib/elena/lib60_64/
+ mkdir -p ./$RELEASE/usr/lib/elena/core/x32/
+ mkdir -p ./$RELEASE/usr/lib/elena/lib60/
  mkdir -p ./$RELEASE/usr/bin/
  mkdir -p ./$RELEASE/usr/elena-lang
 
@@ -169,29 +170,29 @@ fi
 
  echo copying configuration
 
- cp ../bin/*.config ./$RELEASE/etc/elena/
- cp ../bin/templates/*.config ./$RELEASE/etc/elena/templates
+ cp ../../bin/*.config ./$RELEASE/etc/elena/
+ cp ../../bin/templates/*.config ./$RELEASE/etc/elena/templates
 
  echo compiling shared files
 
- cp ../dat/og/bt_rules.txt ./$RELEASE/usr/share/elena
- cp ../dat/sg/syntax60.dat ./$RELEASE/usr/share/elena
+ cp ../../dat/og/bt_rules.txt ./$RELEASE/usr/share/elena
+ cp ../../dat/sg/syntax60.dat ./$RELEASE/usr/share/elena
 
  echo copying binaries
 
- cp ../bin/elena64-cli ./$RELEASE/usr/bin/
- cp ../bin/libelenart60_64.so ./$RELEASE/usr/lib/elena/
+ cp ../../bin/elena-cli ./$RELEASE/usr/bin/
+ cp ../../bin/libelenart60.so ./$RELEASE/usr/lib/elena/
 
  echo compiling core
 
- cp /usr/lib/elena/core/amd64/*.bin ./$RELEASE/usr/lib/elena/core/amd64/
+ cp /usr/lib/elena/core/x32/*.bin ./$RELEASE/usr/lib/elena/core/x32/
 
  echo compiling lib60
 
- cp /usr/lib/elena/lib60_64/*.* ./$RELEASE/usr/lib/elena/lib60_64/
+ cp /usr/lib/elena/lib60/*.* ./$RELEASE/usr/lib/elena/lib60/
 
- cp -r ../examples $RELEASE/usr/elena-lang
- cp -r ../src60 $RELEASE/usr/elena-lang
+ cp -r ../../examples $RELEASE/usr/elena-lang
+ cp -r ../../src60 $RELEASE/usr/elena-lang
 
  mkdir ./$RELEASE/DEBIAN
  cp ./control ./$RELEASE/DEBIAN

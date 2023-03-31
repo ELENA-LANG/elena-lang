@@ -378,13 +378,12 @@ void DocumentView :: setCaret(int column, int row, bool selecting, DocumentChang
    }
    if (selecting) {
       _selection += position - _caret.position();
-
-      changeStatus.hasSelection = _selection != 0;
    }
    else {
       _selection = 0;
    }
 
+   changeStatus.selelectionChanged = true;
    changeStatus.caretChanged = true;
 }
 
@@ -429,7 +428,7 @@ void DocumentView :: moveLeft(DocumentChangeStatus& changeStatus, bool selecting
 
       _selection += position - _caret.position();
 
-      changeStatus.hasSelection = _selection != 0;
+      changeStatus.selelectionChanged = true;
    }
    else _caret.moveOn(-1);
 
@@ -439,12 +438,14 @@ void DocumentView :: moveLeft(DocumentChangeStatus& changeStatus, bool selecting
 void DocumentView :: moveRight(DocumentChangeStatus& changeStatus, bool selecting)
 {
    if (selecting) {
+      bool oldSelection = _selection != 0;
+
       pos_t position = _caret.position();
       _caret.moveOn(1);
 
       _selection += position - _caret.position();
 
-      changeStatus.hasSelection = _selection != 0;
+      changeStatus.selelectionChanged = true;
    }
    else _caret.moveOn(1);
 
@@ -476,7 +477,7 @@ void DocumentView :: moveLeftToken(DocumentChangeStatus& changeStatus, bool sele
 
    _caret.moveOn(-1);
 
-   while (_caret.column() > 0 || _caret.row() > 0) {
+   while (_caret.column() > 0) {
       if (_caret.column() == _caret.length_int())
          break;
 
@@ -511,7 +512,7 @@ void DocumentView :: moveLeftToken(DocumentChangeStatus& changeStatus, bool sele
    if (selecting) {
       _selection += position - _caret.position();
 
-      changeStatus.hasSelection = _selection != 0;
+      changeStatus.selelectionChanged = true;
    }
    setCaret(_caret.getCaret(), selecting, changeStatus);
 }
@@ -525,7 +526,7 @@ void DocumentView :: moveRightToken(DocumentChangeStatus& changeStatus, bool sel
    bool newToken = false;
    bool operatorOne = false;
    bool first = true;
-   while (first || (pos_t)_caret.column() < _caret.position()) {
+   while (first || (pos_t)_caret.column() < _caret.length_pos()) {
       pos_t length = 0;
       text_t line = _text->getLine(_caret, length);
       if (length == 0)
@@ -553,7 +554,7 @@ void DocumentView :: moveRightToken(DocumentChangeStatus& changeStatus, bool sel
    if (selecting) {
       _selection += position - _caret.position();
 
-      changeStatus.hasSelection = _selection != 0;
+      changeStatus.selelectionChanged = true;
    }
    setCaret(_caret.getCaret(), selecting, changeStatus);
 }
@@ -637,11 +638,6 @@ void DocumentView :: notifyOnChange(DocumentChangeStatus& changeStatus)
       changeStatus.modifiedChanged = true;
       status.oldModified = status.modifiedMode;
    }
-   bool isSelected = changeStatus.hasSelection;
-   if (isSelected != status.oldSelected) {
-      changeStatus.selelectionChanged = true;
-      status.oldSelected = isSelected;
-   }
 
    for(auto it = _notifiers.start(); !it.eof(); ++it) {
       (*it)->onDocumentUpdate(changeStatus);
@@ -682,6 +678,39 @@ void DocumentView :: blockInserting(DocumentChangeStatus& changeStatus, text_t s
          if (!start.moveTo(0, start.row() + 1))
             break;
       }
+   }
+}
+
+void DocumentView :: blockDeleting(DocumentChangeStatus& changeStatus, text_t subs, size_t length)
+{
+   _text->validateBookmark(_caret);
+
+   disp_t selection = _selection;
+   _selection = 0;
+   changeStatus.selelectionChanged = true;
+
+   if (selection < 0) {
+      _caret.moveOn(selection);
+      selection = -selection;
+   }
+   Point caret = _caret.getCaret();
+   TextBookmark end = _caret;
+   end.moveOn(selection);
+
+   text_c line[0x50];
+   if (length > 0x4F)
+      length = 0x4F;
+
+   while (caret.y <= end.row()) {
+      if (!_caret.moveTo(0, caret.y))
+         return;
+
+      _text->copyTo(_caret, line, length);
+      if (text_str(subs).compare(line)) {
+         for (size_t i = 0; i < length; i++)
+            eraseChar(changeStatus, false);
+      }
+      caret.y++;
    }
 }
 
@@ -739,6 +768,8 @@ void DocumentView :: tabbing(DocumentChangeStatus& changeStatus, text_c space, s
             break;
       }
    }
+
+   changeStatus.selelectionChanged = true;
 }
 
 void DocumentView :: insertChar(DocumentChangeStatus& changeStatus, text_c ch, size_t count)
@@ -837,6 +868,7 @@ bool DocumentView :: eraseSelection(DocumentChangeStatus& changeStatus)
    _text->eraseLine(_caret, _selection);
    _selection = 0;
    changeStatus.textChanged = true;
+   changeStatus.selelectionChanged = true;
 
    return true;
 }

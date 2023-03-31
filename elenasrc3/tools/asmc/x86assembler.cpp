@@ -482,6 +482,14 @@ X86Operand X86Assembler :: compileOperand(ScriptToken& tokenInfo, ustr_t errorMe
       operand.type = X86OperandType::ST;
       operand.offset = readStReg(tokenInfo);
    }
+   else if (tokenInfo.compare("fs")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+      operand = readPtrOperand(tokenInfo, X86OperandType::M32, errorMessage);
+      if (operand.prefix != SegmentPrefix::None) {
+         throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
+      }
+      else operand.prefix = SegmentPrefix::FS;
+   }
    else {
       operand = defineOperand(tokenInfo, X86OperandType::DD, errorMessage);
       if (operand.type != X86OperandType::Unknown) {
@@ -1706,6 +1714,10 @@ bool X86Assembler :: compileLea(X86Operand source, X86Operand target, MemoryWrit
 
 bool X86Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWriter& writer)
 {
+   if (target.prefix == SegmentPrefix::FS) {
+      writer.writeByte(0x64);
+   }
+
    if(source.type == X86OperandType::EAX && target.type == X86OperandType::Disp32) {
       writer.writeByte(0xA1);
       if (target.reference != 0) {
@@ -2385,6 +2397,15 @@ bool X86Assembler::compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
    else if (tokenInfo.compare("setnc")) {
       compileSetcc(tokenInfo, writer, X86JumpType::JAE);
    }
+   else if (tokenInfo.compare("setns")) {
+      compileSetcc(tokenInfo, writer, X86JumpType::JNS);
+   }
+   else if (tokenInfo.compare("sets")) {
+      compileSetcc(tokenInfo, writer, X86JumpType::JS);
+   }
+   else if (tokenInfo.compare("setz")) {
+      compileSetcc(tokenInfo, writer, X86JumpType::JZ);
+   }
    else if (tokenInfo.compare("shr")) {
       compileShr(tokenInfo, writer);
    }
@@ -3043,17 +3064,46 @@ bool X86_64Assembler :: compileTest(X86Operand source, X86Operand target, Memory
    return true;
 }
 
-void X86_64Assembler::compileMovsq(ScriptToken& tokenInfo, MemoryWriter& writer)
+void X86_64Assembler :: compileMovsq(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    writer.writeByte(0x48);
    writer.writeByte(0xA5);
    read(tokenInfo);
 }
 
+bool X86_64Assembler :: compileMovsxd(X86Operand source, X86Operand target, MemoryWriter& writer)
+{
+   if (source.isR64() && target.isR32()) {
+      writer.writeByte(0x48);
+      writer.writeByte(0x63);
+      X86Helper::writeModRM(writer, target, source);
+   }
+   else return false;
+
+   return true;
+}
+
+void X86_64Assembler :: compileMovsxd(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
+
+   if (!compileMovsxd(sour, dest, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 bool X86_64Assembler :: compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    if (tokenInfo.compare("movsq")) {
       compileMovsq(tokenInfo, writer);
+
+      return true;
+   }
+   else if (tokenInfo.compare("movsxd")) {
+      compileMovsxd(tokenInfo, writer);
 
       return true;
    }

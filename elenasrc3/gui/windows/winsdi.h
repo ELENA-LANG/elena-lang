@@ -154,6 +154,8 @@ namespace elena_lang
          onResize();
       }
 
+      virtual void exit();
+
       SDIWindow(wstr_t title)
          : WindowBase(title, 800, 600)
       {

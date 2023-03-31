@@ -118,6 +118,9 @@ public extension stringConvertOp
 {
    string toString()
       = stringExConvertor.convert(self);
+
+   string toString(int radix)
+      = stringConvertor.convert(self, radix);
 }
 
 // --- intConvertOp ---

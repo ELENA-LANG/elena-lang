@@ -27,12 +27,14 @@ namespace elena_lang
          CompilingProcess* _process;
          TemplateProssesor _processor;
 
-         ref_t generateTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility, 
+         ref_t declareTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility,
+            ref_t templateRef, List<SyntaxNode>& parameters);
+         ref_t generateTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility,
             ref_t templateRef, List<SyntaxNode>& parameters, bool& alreadyDeclared);
 
       public:
          ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
-            List<SyntaxNode>& parameters, bool declarationMode) override;
+            List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList) override;
 
          bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
             List<SyntaxNode>& parameters) override;
@@ -67,9 +69,11 @@ namespace elena_lang
       MemoryDump          _bcRules;
       MemoryDump          _btRules;
 
-      void buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode);
+      void buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode, 
+         ExtensionMap* outerExtensionList);
 
-      void compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target);
+      void compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target, 
+         ExtensionMap* outerExtensionList);
       void generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode);
       void parseFileTemlate(ustr_t prolog, path_t name,
          SyntaxWriterBase* syntaxWriter);
@@ -100,7 +104,7 @@ namespace elena_lang
          pos_t defaultRawStackAlignment,
          pos_t defaultEHTableEntrySize,
          int minimalArgList);
-      void link(Project& project, LinkerBase& linker);
+      void link(Project& project, LinkerBase& linker, bool withTLS);
 
    public:
       void greeting();

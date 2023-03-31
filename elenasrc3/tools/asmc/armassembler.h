@@ -143,6 +143,7 @@ namespace elena_lang
       void compileRET(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSUB(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSXTH(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileSXTW(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileTST(ScriptToken& tokenInfo, MemoryWriter& writer);
 
       bool compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;

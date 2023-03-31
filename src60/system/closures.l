@@ -191,13 +191,13 @@ public interface Func5
       }
    }
 
-   sealed retrieve(object param1, object param2, object param3, Enumerator en)
+   sealed retrieve(object param1, object param2, object param3, object param4, Enumerator en)
    {
       while (en.next())
       {
          var item := *en;
 
-         if (self(param1, param2, param3, item))
+         if (self(param1, param2, param3, param4, item))
             { ^ item }
       };
 
@@ -429,4 +429,13 @@ public interface Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,TResult>
 
    Func11 cast()
       = (a,b,c,d,e,f,g,h,i,j,k => self(a,b,c,d,e,f,g,h,i,j,k));
+}
+
+// --- BaseLazyExpression ---
+
+public abstract BaseLazyExpression
+{
+   abstract function();
+    
+   dispatch() : external(system'core_routines'__lazy_dispatcher);
 }

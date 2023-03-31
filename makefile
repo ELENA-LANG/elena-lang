@@ -117,6 +117,12 @@ clean_elc_amd64:
 clean_sg_amd64: 
 	$(MAKE) -C elenasrc3/tools/sg/codeblocks clean -f sg_amd64.mak
 
+clean_og_amd64: 
+	$(MAKE) -C elenasrc3/tools/og/codeblocks clean -f og_amd64.mak
+
+clean_og_ppc64le: 
+	$(MAKE) -C elenasrc3/tools/og/codeblocks clean -f og_ppc64le.mak
+
 clean_asmc_amd64: 
 	$(MAKE) -C elenasrc3/tools/asmc/codeblocks clean -f asmc_amd64.mak
 
@@ -141,12 +147,14 @@ clean_ecv_ppc64le:
 clean_elenart_ppc64le:
 	$(MAKE) -C elenasrc3/elenart/codeblocks clean -f elenart_ppc64le.mak
 
-
 clean_elc_arm64: 
 	$(MAKE) -C elenasrc3/elc/codeblocks clean -f elc_arm64.mak
 
 clean_sg_arm64: 
 	$(MAKE) -C elenasrc3/tools/sg/codeblocks clean -f sg_arm64.mak
+
+clean_og_arm64: 
+	$(MAKE) -C elenasrc3/tools/og/codeblocks clean -f og_arm64.mak
 
 clean_asmc_arm64: 
 	$(MAKE) -C elenasrc3/tools/asmc/codeblocks clean -f asmc_arm64.mak

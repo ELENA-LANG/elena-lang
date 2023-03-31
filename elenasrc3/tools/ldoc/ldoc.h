@@ -28,6 +28,7 @@ namespace elena_lang
       bool              property;
       bool              cast;
       bool              function;
+      bool              variadic;
 
       StringList        paramTypes;
       StringList        paramNames;
@@ -36,6 +37,7 @@ namespace elena_lang
          : extensionOne(false), paramTypes(nullptr), paramNames(nullptr)
       {
          function = cast = property = special = false;
+         variadic = false;
       }
    };
 
@@ -55,6 +57,7 @@ namespace elena_lang
    struct ApiClassInfo
    {
       bool              templateBased;
+      bool              virtualMode;
 
       IdentifierString  prefix;
       IdentifierString  fullName;
@@ -76,7 +79,7 @@ namespace elena_lang
             constructors(nullptr), convertors(nullptr), extensions(nullptr),
             properties(nullptr), staticProperties(nullptr)
       {
-         
+         virtualMode = false;
       }
    };
 
@@ -164,6 +167,7 @@ namespace elena_lang
       void generateMethodList(TextFileWriter& bodyWriter, ApiMethodInfoList& list);
       void generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName);
       void generateSymbolDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiSymbolInfo* symbolInfo, ustr_t bodyName);
+      void generateExtendedDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName);
       void generateModuleDoc(ApiModuleInfo* moduleInfo);
 
       void loadMetaSections();

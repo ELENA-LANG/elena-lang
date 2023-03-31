@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  GC System Routines
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -231,6 +231,29 @@ inline void CollectMG2YGRoots(GCTable* table, ObjectPage* &shadowPtr)
    }
 }
 
+inline void CollectPermYGRoots(GCTable* table, ObjectPage*& shadowPtr)
+{
+   GCRoot     currentRoot;
+
+   addr_t current = table->gc_perm_start;
+   addr_t end = table->gc_perm_current;
+   while (current < end) {
+      addr_t objectPtr = getObjectPtr(current);
+      ObjectPage* currentPage = getObjectPage(objectPtr);
+
+      currentRoot.size = currentPage->size;
+      currentRoot.stack_ptr_addr = objectPtr;
+
+      int object_size = ((currentPage->size + page_ceil) & page_align_mask);
+      if (currentRoot.size < struct_mask) {
+         // ; check if the object has fields
+         YGCollect(&currentRoot, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
+      }
+
+      current += object_size;
+   }
+}
+
 void MGCollect(GCRoot* root, size_t start, size_t end)
 {
    size_t* ptr = (size_t*)root->stack_ptr;
@@ -273,10 +296,6 @@ inline void FixObject(GCTable* table, GCRoot* roots, size_t start, size_t end)
       if (*ptr >= start && *ptr < end) {
 
          uintptr_t t = *ptr;
-
-         // !! temporal
-         if ((uintptr_t)ptr == 0x000000000014c660)
-            size |= 0;
 
          ObjectPage* pagePtr = getObjectPage(*ptr);
          uintptr_t mappings = table->gc_header + (((uintptr_t)pagePtr - table->gc_start) >> page_size_order_minus2);
@@ -340,10 +359,6 @@ inline void FullCollect(GCTable* table, GCRoot* roots)
       int object_size = ((mgPtr->size + page_ceil) & page_align_mask);
 
       if (mgPtr->size < 0) {
-         // temporal
-         if (((uintptr_t)mgPtr & 0xFFFF) == 0x1b10)
-            mg_end |= 0;
-
          *(uintptr_t*)mappings = getObjectPtr((uintptr_t)newPtr);
 
          // ; copy page
@@ -364,10 +379,6 @@ inline void FullCollect(GCTable* table, GCRoot* roots)
       int object_size = ((ygPtr->size + page_ceil) & page_align_mask);
 
       if (ygPtr->size < 0) {
-         // temporal
-         if (((uintptr_t)ygPtr & 0xFFFF) == 0x1b10)
-            mg_end |= 0;
-
          // ; copy page
          MoveObject(object_size, newPtr, ygPtr);
 
@@ -397,7 +408,7 @@ inline void FullCollect(GCTable* table, GCRoot* roots)
    memset((void*)table->gc_mg_wbar, 0, size);
 }
 
-void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t size)
+void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t size, bool fullMode)
 {
    //printf("GCRoutine %llx,%llx\n", (long long)roots, (long long)size);
 
@@ -414,6 +425,10 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
    // ; collect mg -> yg roots
    CollectMG2YGRoots(table, shadowPtr);
 
+   // ; collect perm yg roots
+   if (table->gc_perm_current > table->gc_perm_current)
+      CollectPermYGRoots(table, shadowPtr);
+
    // ; save gc_yg_current to mark  objects
    table->gc_yg_current = (uintptr_t)shadowPtr;
 
@@ -425,7 +440,7 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
    table->gc_yg_end = table->gc_shadow_end;
    table->gc_shadow_end = tmp;
 
-   if (table->gc_yg_end - table->gc_yg_current < size) {
+   if ((table->gc_yg_end - table->gc_yg_current < size) || fullMode) {
       // ; expand MG if required to promote YG
       while (table->gc_end - table->gc_mg_current < table->gc_yg_current - table->gc_yg_start) {
          size_t inc = AlignHeapSize(heap_inc);
@@ -438,6 +453,9 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
       }
 
       FullCollect(table, roots);
+
+      if (size == INVALID_SIZE)
+         return nullptr;
 
       uintptr_t allocated = table->gc_yg_current;
       if (table->gc_yg_end - table->gc_yg_current < size) {
@@ -479,4 +497,22 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
    }
 
    return nullptr;
+}
+
+void* SystemRoutineProvider :: GCRoutinePerm(GCTable* table, size_t size)
+{
+   if (table->gc_perm_current + size > table->gc_perm_end) {
+      size_t permSize = AlignHeapSize(size);
+
+      // allocate a perm space
+      ExpandPerm((void*)table->gc_perm_end, permSize);
+
+      table->gc_perm_end += permSize;
+   }
+
+   uintptr_t allocated = table->gc_perm_current;
+
+   table->gc_perm_current += size;
+
+   return (void*)getObjectPtr(allocated);
 }

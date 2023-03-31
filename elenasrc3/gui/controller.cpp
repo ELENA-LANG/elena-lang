@@ -214,6 +214,17 @@ void TextViewController :: insertBlockText(TextViewModelBase* model, const text_
    notifyOnChange(model, status);
 }
 
+void TextViewController :: deleteBlockText(TextViewModelBase* model, const text_t s, size_t length)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+   if (!docView->isReadOnly()) {
+      docView->blockDeleting(status, s, length);
+   }
+
+   notifyOnChange(model, status);
+}
+
 void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl)
 {
    DocumentChangeStatus status = {};
@@ -247,6 +258,17 @@ void TextViewController :: selectWord(TextViewModelBase* model)
 
    docView->moveLeftToken(status, false);
    docView->moveRightToken(status, true, true);
+
+   notifyOnChange(model, status);
+}
+
+void TextViewController::selectAll(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+
+   docView->moveHome(status, false);
+   docView->moveEnd(status, true);
 
    notifyOnChange(model, status);
 }

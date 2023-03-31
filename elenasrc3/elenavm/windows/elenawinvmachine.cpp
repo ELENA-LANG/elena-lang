@@ -116,3 +116,13 @@ addr_t ELENAWinVMMachine :: resolveExternal(ustr_t dll, ustr_t function)
 
    return (addr_t)_data.get(reference);
 }
+
+MemoryBase* ELENAWinVMMachine::getTLSSection()
+{
+   return nullptr; // !! temporal
+}
+
+addr_t ELENAWinVMMachine::getTLSVariable()
+{
+   return INVALID_ADDR;
+}

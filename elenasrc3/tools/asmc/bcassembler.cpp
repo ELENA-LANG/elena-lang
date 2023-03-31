@@ -133,6 +133,13 @@ ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
 
       mask = mskTypeListRef;
    }
+   else if (tokenInfo.compare("pstr")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      _reader.read(tokenInfo);
+
+      mask = mskPSTRRef;
+   }
 
    if (tokenInfo.state == dfaQuote) {
       if (constantMode) {
@@ -307,7 +314,9 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
 
       arg.byVal = true;
    }
-   if (tokenInfo.compare("$")) {
+   if (tokenInfo.token[0] == '$') {
+      tokenInfo.token.cut(0, 1);
+
       if(arg.byVal) {
          if (_mode64) {
             arg.byVal64 = true;
@@ -315,8 +324,6 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
          }
       }
       else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
-
-      read(tokenInfo);
    }
 
    if (tokenInfo.compare("array")) {
@@ -351,6 +358,14 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
 
       return arg;
    }
+   else if (tokenInfo.compare("pstr")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      arg.type = Operand::Type::R;
+      arg.reference = readReference(tokenInfo) | mskPSTRRef;
+
+      return arg;
+   }
    else if (tokenInfo.compare("procedure")) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
@@ -380,6 +395,12 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
    else if (constants.exist(*tokenInfo.token)) {
       arg.type = Operand::Type::Value;
       arg.reference = constants.get(*tokenInfo.token);
+
+      return arg;
+   }
+   else if (tokenInfo.state == dfaInteger) {
+      arg.type = Operand::Type::Value;
+      arg.reference = tokenInfo.token.toInt();
 
       return arg;
    }
@@ -788,6 +809,8 @@ bool ByteCodeAssembler :: compileMR(ScriptToken& tokenInfo, MemoryWriter& writer
 
    ByteCodeUtil::write(writer, command.code, arg, arg2);
 
+   read(tokenInfo);
+
    return true;
 }
 
@@ -867,10 +890,10 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
 {
    IdentifierString command(*tokenInfo.token);
 
-   if (tokenInfo.compare("$")) {
-      read(tokenInfo);
-
+   if (tokenInfo.token[0] == '$') {
       command.copy(*tokenInfo.token);
+
+      command.cut(0, 1);
 
       if (_mode64) {
          command.insert("l", 0);
@@ -919,7 +942,9 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::CmpSI:
          case ByteCode::XFlushSI:
          case ByteCode::XSwapSI:
+         case ByteCode::SwapSI:
          case ByteCode::XRefreshSI:
+         case ByteCode::XLoadArgSI:
             return compileOpStackI(tokenInfo, writer, opCommand, true);
          case ByteCode::SaveDP:
          case ByteCode::LSaveDP:
@@ -928,6 +953,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::XCmpDP:
          case ByteCode::FTruncDP:
          case ByteCode::NConvFDP:
+         case ByteCode::LLoadDP:
             return compileDDisp(tokenInfo, writer, opCommand, dataLocals, true);
          case ByteCode::TstM:
          case ByteCode::MovM:
@@ -941,21 +967,23 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::VCallMR:
          case ByteCode::JumpMR:
          case ByteCode::VJumpMR:
-            return compileMR(tokenInfo, writer, opCommand, true);
+            return compileMR(tokenInfo, writer, opCommand, false);
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
             return compileRR(tokenInfo, writer, opCommand, true);
          case ByteCode::ICmpN:
-         case ByteCode::MovN:
          case ByteCode::TstN:
          case ByteCode::NLen:
          case ByteCode::ReadN:
          case ByteCode::WriteN:
+         case ByteCode::System:
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
+         case ByteCode::MovN:
          case ByteCode::AndN:
          case ByteCode::AddN:
          case ByteCode::SubN:
          case ByteCode::CmpN:
+         case ByteCode::MulN:
             return compileOpN(tokenInfo, writer, opCommand, constants, false);
          case ByteCode::Copy:
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
@@ -970,12 +998,14 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileJcc(tokenInfo, writer, opCommand, lh);
          case ByteCode::SetR:
          case ByteCode::CmpR:
+         case ByteCode::XCreateR:
             return compileR(tokenInfo, writer, opCommand, true);
          case ByteCode::XNewNR:
             return compileNR(tokenInfo, writer, opCommand, constants, true);
          case ByteCode::NSaveDPN:
          case ByteCode::NAddDPN:
          case ByteCode::CopyDPN:
+         case ByteCode::IAddDPN:
             return compileDDispN(tokenInfo, writer, opCommand, dataLocals, constants, true);
          default:
             return false;

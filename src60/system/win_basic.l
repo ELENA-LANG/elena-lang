@@ -2,11 +2,16 @@
 
 public sealed const struct Handle
 {
-   embeddable __word value[4];
+   embeddable __ptr value;
 
-   constructor(int intValue)
+   constructor(pointer ptr)
    {
-      value := intValue
+      value := ptr
+   }
+
+   bool isUnassigned()
+   {
+      ^ value == 0;
    }
 }
 
@@ -15,6 +20,30 @@ public sealed const struct Handle
 public sealed const struct UnsafePointer
 {
    embeddable __ptr pointer;
+
+   bool isUnassigned()
+   {
+      ^ pointer == 0;
+   }
+
+   // unsafe code
+   string cast()
+   {
+      int  len := extern KERNEL32.lstrlenA(self);
+      string s := String.allocate(len);
+      extern KERNEL32.lstrcpyA(s, self);
+        
+      ^ s
+   }
+
+   wide cast()
+   {
+      int  len := extern KERNEL32.lstrlenW(self);
+      wide s := WideString.allocate(len);
+      extern KERNEL32.lstrcpyW(s, self);
+        
+      ^ s
+   }
 }
 
 // --- CallStack ---
@@ -31,7 +60,7 @@ public sealed class CallStack
       pointer stack[64];
       self.load(stack, 64, ref int length);
 
-      this stack := Array<pointer>.copy(stack, 0, length);
+      this stack := class Array<pointer>.copy(stack, 0, length);
    }
 
    string toPrintable()

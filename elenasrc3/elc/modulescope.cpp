@@ -73,24 +73,26 @@ ref_t ModuleScope :: mapAnonymous(ustr_t prefix)
    return module->mapReference(*name);
 }
 
-ref_t ModuleScope :: mapTemplateIdentifier(ustr_t ns, ustr_t templateName, Visibility visibility, bool& alreadyDeclared)
+ref_t ModuleScope :: mapTemplateIdentifier(ustr_t ns, ustr_t templateName, Visibility visibility, bool& alreadyDeclared, bool declarationMode)
 {
    IdentifierString forwardName(TEMPLATE_PREFIX_NS, templateName);
 
-   if (forwardResolver->resolveForward(templateName).empty()) {
-      ReferenceName fullName(module->name());
-      if (!ns.empty())
-         fullName.combine(ns);
+   if (!declarationMode) {
+      if (forwardResolver->resolveForward(templateName).empty()) {
+         ReferenceName fullName(module->name());
+         if (!ns.empty())
+            fullName.combine(ns);
 
-      fullName.combine(templateName);
+         fullName.combine(templateName);
 
-      forwardResolver->addForward(templateName, *fullName);
+         forwardResolver->addForward(templateName, *fullName);
 
-      mapNewIdentifier(ns, templateName, visibility);
+         mapNewIdentifier(ns, templateName, visibility);
 
-      alreadyDeclared = false;
+         alreadyDeclared = false;
+      }
+      else alreadyDeclared = true;
    }
-   else alreadyDeclared = true;
 
    return module->mapReference(*forwardName);
 }
@@ -191,6 +193,8 @@ ref_t ModuleScope :: resolveWeakTemplateReferenceID(ref_t reference)
    ustr_t referenceName = module->resolveReference(reference);
    if (isTemplateWeakReference(referenceName)) {
       ustr_t resolvedTemplateReferenceName = resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN);
+      if (resolvedTemplateReferenceName.empty())
+         return reference;
 
       if (NamespaceString::compareNs(resolvedTemplateReferenceName, module->name())) {
          return module->mapReference(resolvedTemplateReferenceName + getlength(module->name()));

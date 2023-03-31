@@ -23,6 +23,9 @@ inline void relocate(pos_t pos, ref_t mask, ref_t reference, void* address, Addr
       case mskDataRef32:
          *(unsigned int*)address += (unsigned int)(base + space->data);
          break;
+      case mskTLSRef32:
+         *(unsigned int*)address += (unsigned int)(base + space->tls);
+         break;
       case mskStatDataRef32:
          *(unsigned int*)address += (unsigned int)(base + space->stat);
          break;

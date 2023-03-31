@@ -25,6 +25,7 @@ namespace elena_lang
          InlineTemplate,
          ClassTemplate,
          PropertyTemplate,
+         ExtensionTemplate
       };
 
       struct Scope
@@ -37,7 +38,7 @@ namespace elena_lang
 
          bool withTypeParameters() const
          {
-            return type == ScopeType::ClassTemplate || type == ScopeType::PropertyTemplate;
+            return type == ScopeType::ClassTemplate || type == ScopeType::PropertyTemplate || type == ScopeType::ExtensionTemplate;
          }
          bool withNameParameters() const
          {
@@ -79,6 +80,7 @@ namespace elena_lang
                   return false;
                }
                case ScopeType::ClassTemplate:
+               case ScopeType::ExtensionTemplate:
                   if (allowType) {
                      ref_t index = arguments.get(node.identifier());
                      if (index > 0) {
@@ -132,13 +134,14 @@ namespace elena_lang
       void flushTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool allowType);
       void flushTemplageExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxKey type, bool allowType);
       void flushTemplateType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool exprMode = true);
-      void flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, int nestLevel = 1);
       void flushMessage(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushResend(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushObject(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushNested(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushClosure(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushExpressionCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushExpressionMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMethodCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
@@ -154,7 +157,7 @@ namespace elena_lang
       void flushMethodMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       bool flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
-         bool allowType, bool arrayMode);
+         bool allowType, int arrayNestLevel = 0);
       void flushTypeAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
          bool allowType, bool onlyChildren = false);
       void flushInlineTemplatePostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);

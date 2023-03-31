@@ -242,6 +242,7 @@ namespace elena_lang
       bool compileJmp(X86Operand source, MemoryWriter& writer) override;
       bool compileLea(X86Operand source, X86Operand target, MemoryWriter& writer) override;
       bool compileMov(X86Operand source, X86Operand target, MemoryWriter& writer) override;
+      bool compileMovsxd(X86Operand source, X86Operand target, MemoryWriter& writer);
       bool compileNeg(X86Operand source, MemoryWriter& writer) override;
       bool compileNot(X86Operand source, MemoryWriter& writer) override;
       bool compileOr(X86Operand source, X86Operand target, MemoryWriter& writer) override;
@@ -261,6 +262,8 @@ namespace elena_lang
       }
       void compileMovsq(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileStosq(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileMovsxd(ScriptToken& tokenInfo, MemoryWriter& writer);
+
 
    public:
       X86_64Assembler(int tabSize, UStrReader* reader, ModuleBase* target)

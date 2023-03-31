@@ -51,10 +51,17 @@ public template do::until(loop_body, cond_expr) : __included(statementTemplates)
 {
    loop_body;
 
-   $rep cast bool(cond_expr) ? { loop_body }
+   $rep cast bool(cond_expr) ! { loop_body }
 }
 
 // --- for ---
+
+public template for<stepExpr, condExpr>(loopBody) : __included(statementTemplates)
+{
+   stepExpr;
+
+   $rep cast bool(condExpr) ? { loopBody; __ignore_duplicates stepExpr; }
+}
 
 public template for<initExpr,condExpr,stepExpr>(loopBody) : __included(statementTemplates)
 {

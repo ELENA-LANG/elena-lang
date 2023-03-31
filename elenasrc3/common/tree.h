@@ -379,11 +379,35 @@ namespace elena_lang
             return current;
          }
 
+         Node findChild(Key key1, Key key2) const
+         {
+            Node current = firstChild();
+            while (current != defKey) {
+               if (current == key1 || current == key2)
+                  return current;
+
+               current = current.nextNode();
+            }
+
+            return current;
+         }
          Node findChild(Key key1, Key key2, Key key3) const
          {
             Node current = firstChild();
             while (current != defKey) {
                if (current == key1 || current == key2 || current == key3)
+                  return current;
+
+               current = current.nextNode();
+            }
+
+            return current;
+         }
+         Node findChild(Key key1, Key key2, Key key3, Key key4) const
+         {
+            Node current = firstChild();
+            while (current != defKey) {
+               if (current == key1 || current == key2 || current == key3 || current == key4)
                   return current;
 
                current = current.nextNode();
@@ -562,8 +586,8 @@ namespace elena_lang
       static Node gotoChild(Node node, Key key, int value)
       {
          Node current = node.findChild(key);
-         while (current == key) {
-            if (value == current.arg.value)
+         while (current != defKey) {
+            if ( current == key && value == current.arg.value)
                return current;
 
             current = current.nextNode();

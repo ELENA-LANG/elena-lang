@@ -58,7 +58,7 @@ namespace elena_lang
 
       virtual bool insert(pos_t position, const void* s, pos_t length) = 0;
 
-      virtual bool read(pos_t position, void* s, pos_t length) = 0;
+      virtual bool read(pos_t position, void* s, pos_t length) const = 0;
 
       virtual bool addReference(ref_t, pos_t)
       {
@@ -212,6 +212,8 @@ namespace elena_lang
       virtual bool isOpen() const = 0;
 
       virtual pos_t position() const = 0;
+
+      virtual void reset() = 0;
 
       virtual bool read(char* s, pos_t length) = 0;
 
@@ -656,6 +658,11 @@ namespace elena_lang
          else return false;
       }
 
+      void reset() override
+      {
+         _offset = 0;
+      }
+
       StringTextReader(const T* string)
       {
          _text = string;
@@ -663,6 +670,8 @@ namespace elena_lang
          _length = getlength_pos(string);
       }
    };
+
+   typedef StringTextReader<char> IdentifierTextReader;
 
 }
 

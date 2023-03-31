@@ -45,6 +45,8 @@ namespace elena_lang
       DTrans         = 0x18,
       XAssign        = 0x19,
       LLoad          = 0x1A,
+      ConvL          = 0x1B,
+      XLCmp          = 0x1C,
 
       Coalesce       = 0x20,
       Not            = 0x21,
@@ -88,6 +90,7 @@ namespace elena_lang
       FTruncDP       = 0x99,
       DCopy          = 0x9A,
       OrN            = 0x9B,
+      MulN           = 0x9C,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,
@@ -101,6 +104,7 @@ namespace elena_lang
       PeekSI         = 0xA9,
       LSaveDP        = 0xAA,
       LSaveSI        = 0xAB,
+      LLoadDP        = 0xAC,
 
       CallR          = 0xB0,
       CallVI         = 0xB1,
@@ -120,6 +124,10 @@ namespace elena_lang
       TstM           = 0xC5,
       CmpFI          = 0xC8,
       CmpSI          = 0xC9,
+
+      XLoadArgSI     = 0xCD,
+      XCreateR       = 0xCE,
+      System         = 0xCF,
 
       MaxDoubleOp    = 0xCF,
 
@@ -341,6 +349,7 @@ namespace elena_lang
          case ByteCode::PeekR:
          case ByteCode::StoreR:
          case ByteCode::CreateR:
+         case ByteCode::XCreateR:
             return true;
          default:
             return false;

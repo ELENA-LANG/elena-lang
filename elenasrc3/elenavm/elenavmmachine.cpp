@@ -92,6 +92,7 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    _settings.alignment = codeAlignment;
    _settings.jitSettings.mgSize = _configuration->IntSetting(ProjectOption::GCMGSize, gcSettings.mgSize);
    _settings.jitSettings.ygSize = _configuration->IntSetting(ProjectOption::GCYGSize, gcSettings.ygSize);
+//   _settings.jitSettings.threadCounter = _configuration->IntSetting(ProjectOption::ThreadCounter, 1);
 
    // configurate the loader
    _configuration->initLoader(_libraryProvider);
@@ -104,7 +105,7 @@ void ELENAVMMachine :: init(JITLinker& linker, SystemEnv* env)
    _presenter->print(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER);
    _presenter->print(ELENAVM_INITIALIZING);
 
-   _compiler->populatePreloaded((uintptr_t)env, (uintptr_t)env->eh_table, (uintptr_t)env->gc_table);
+   _compiler->populatePreloaded((uintptr_t)env, (uintptr_t)env->th_table, (uintptr_t)env->gc_table);
 
    linker.prepare(_compiler);
 
@@ -230,10 +231,10 @@ void ELENAVMMachine :: resumeVM(SystemEnv* env, void* criricalHandler)
 
    onNewCode();
 
-   __routineProvider.InitExceptionHandling(env, criricalHandler);
+   __routineProvider.InitSTAExceptionHandling(env, criricalHandler);
 }
 
-int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, void* criricalHandler)
+int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, const char* criricalHandlerReference)
 {
    ByteArray      tapeArray(tape, size);
    MemoryReader   reader(&tapeArray);
@@ -252,13 +253,15 @@ int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, void* c
       init(*jitLinker, env);
    }
 
+   addr_t criricalHandler = jitLinker->resolve(criricalHandlerReference, mskProcedureRef, false);
+
    compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule);
 
    SymbolList list;
 
    void* address = (void*)jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
 
-   resumeVM(env, criricalHandler);
+   resumeVM(env, (void*)criricalHandler);
 
    freeobj(dummyModule);
    freeobj(jitLinker);
@@ -266,14 +269,14 @@ int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, void* c
    return execute(env, address);
 }
 
-void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, void* criricalHandler)
+void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
 {
    // setting up system
    __routineProvider.InitSTA(env);
 
    int retVal = -1;
    if (tape != nullptr) {
-      retVal = interprete(env, tape, INVALID_POS, criricalHandler);
+      retVal = interprete(env, tape, INVALID_POS, criricalHandlerReference);
    }
 
    Exit(retVal);

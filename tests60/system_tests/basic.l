@@ -4,7 +4,7 @@ import extensions;
 
 intTests()
 {
-    console.write("intTests");
+    console.write("intTests:");
 
     int n := 2;
     int m := 3;
@@ -36,11 +36,14 @@ intTests()
 
 longTests()
 {
-    console.write("longTests");
+    console.write("longTests:");
 
     int n32 := 23456;
     long n64 := n32;
+    int in32 := -23458;
+    long in64 := in32;
     Assert.ifTrue(n64 == 23456l);
+    Assert.ifTrue(in64 == -23458l);
     console.write(".");
 
     long n := 2l;
@@ -66,6 +69,37 @@ longTests()
     Assert.ifTrue(n <= n);
     Assert.ifTrue(n >= n);
     Assert.ifFalse(n >= m);
+
+    Assert.ifFalse(m == n);
+    Assert.ifTrue(m > n);
+    Assert.ifFalse(m < n);
+    console.write(".");
+
+    long l := 2l;
+    long l2 := -2l;
+    Assert.ifTrue(l == l);   
+    Assert.ifTrue(l2 == l2); 
+    Assert.ifFalse(l2 == l); 
+    Assert.ifFalse(l == l2); 
+    Assert.ifFalse(l < l2);  
+    Assert.ifTrue(l > l2);   
+    Assert.ifTrue(l2 < l);   
+    Assert.ifFalse(l2 > l);  
+    console.write(".");
+
+    n := 2;
+    int n2 := -2;
+
+    Assert.ifTrue(l == n);   // ; true
+    Assert.ifTrue(l2 == n2); // ; true
+    Assert.ifFalse(l == n2);  // ; false
+    Assert.ifFalse(l2 == n); // ; false
+
+    Assert.ifFalse(l < n2);  // ; false
+    Assert.ifFalse(l < n);  // ; false
+    Assert.ifTrue(l2 < n);  // ; true
+    Assert.ifFalse(l2 < n2);  // ; false
+
     console.writeLine(".");
 }
 
@@ -73,7 +107,7 @@ longTests()
 
 realTests()
 {
-    console.write("realTests");
+    console.write("realTests:");
 
     real r := 2.89787;
     Assert.ifFalse(r == 2.8);
@@ -112,7 +146,7 @@ realTests()
 
 gcTests()
 {
-   console.write("gcTests");
+   console.write("gcTests:");
    for (int i := 0, i < 100000, i := i + 1)
    {
       new IntNumber();
@@ -123,7 +157,7 @@ gcTests()
 // --- stringTests ---
 stringTests()
 {
-    console.write("stringTests");
+    console.write("stringTests:");
     string s := "abc";
 
     Assert.ifTrue(s == "abc");
@@ -139,7 +173,7 @@ stringTests()
 
 shortTests()
 {
-    console.write("shortTests");
+    console.write("shortTests:");
     short w := 1234;
     Assert.ifTrue(w == 1234);
     console.writeLine(".");
@@ -149,7 +183,7 @@ shortTests()
 
 conversionTests()
 {
-    console.write("conversionTests");
+    console.write("conversionTests:");
     int n := 1234;
     short w := n;
     Assert.ifTrue(w == 1234);
@@ -184,7 +218,7 @@ AssignTestClass
 
 assignTests()
 {
-   console.write("assignTests");
+   console.write("assignTests:");
    var o := new AssignTestClass(2,"test");
    o.test(2,"test");
 
@@ -260,7 +294,7 @@ singleton BoxingProber
 
 boxingTests()
 {
-   console.write("boxingTests");
+   console.write("boxingTests:");
 
    int n := 123;
 
@@ -314,7 +348,7 @@ singleton ByRefProber
 
 byRefTests()
 {
-   console.write("byRefTests");
+   console.write("byRefTests:");
 
    int n := 0;
    ByRefProber.set(ref n);
@@ -374,7 +408,7 @@ class InlineAssignTester2Base
 
 inlineAssignmentTests()
 {
-   console.write("inlineAssignmentTests");
+   console.write("inlineAssignmentTests:");
    var b := new InlineAssignTesterBase();
    b.validate();
    console.write(".");
@@ -431,7 +465,7 @@ sealed class SingleDispatcher
 
 public singleDispatchTest()
 {
-   console.write("singleDispatchTest");
+   console.write("singleDispatchTest:");
 
    var weakDispatcher := new SingleDispatcher();
 
@@ -446,5 +480,32 @@ public singleDispatchTest()
 
    Assert.ifTrue(dispatcher.check(arg1) == 1);
    Assert.ifTrue(dispatcher.check(arg2) == 2);
+   console.writeLine(".");
+}
+
+sealed class VariadicTester
+{
+    bool test1Passed := false;
+    
+    testTwoArgs(params int[] args)
+    {
+        int length := args.Length;
+
+        test1Passed := length == 2;
+    }
+
+    validate()
+    {
+       Assert.ifTrue(test1Passed);
+    }
+}
+
+variadicTest()
+{
+   console.write("variadicTest:");
+
+   auto strong := new VariadicTester();
+   strong.testTwoArgs(2,3);
+   strong.validate();
    console.writeLine(".");
 }

@@ -12,13 +12,21 @@ using namespace elena_lang;
 
 // --- SystemRoutineProvider ---
 
-void SystemRoutineProvider :: InitExceptionHandling(SystemEnv* env, void* criticalHandler)
+void SystemRoutineProvider :: InitSTAExceptionHandling(SystemEnv* env, void* criticalHandler)
 {
    // inti App criticaL handler
-   env->eh_table->eh_critical = (uintptr_t)criticalHandler;
+   env->th_single_content->eh_critical = (uintptr_t)criticalHandler;
 
    // inti OS criticaL handler
    InitCriticalStruct((uintptr_t)env->veh_handler);
+}
+
+void SystemRoutineProvider :: InitMTAExceptionHandling(SystemEnv* env, int index, void* criticalHandler)
+{
+   env->th_table->slots[index].content->eh_critical = (uintptr_t)criticalHandler;
+
+   if (index == 0)
+      InitCriticalStruct((uintptr_t)env->veh_handler);
 }
 
 void SystemRoutineProvider :: Init(SystemEnv* env, SystemSettings settings)
@@ -47,6 +55,11 @@ void SystemRoutineProvider :: Init(SystemEnv* env, SystemSettings settings)
 
    // ; initialize wbar start
    env->gc_table->gc_mg_wbar = ((mg_ptr - env->gc_table->gc_start) >> settings.page_size_order) + env->gc_table->gc_header;
+
+   // ; initialize but not commit perm space
+   int perm_size = align(settings.perm_total_size, 128);
+   env->gc_table->gc_perm_start = env->gc_table->gc_perm_current = NewHeap(perm_size, 0);
+   env->gc_table->gc_perm_end = env->gc_table->gc_perm_start;
 }
 
 void SystemRoutineProvider :: InitSTA(SystemEnv* env)
@@ -82,6 +95,32 @@ size_t SystemRoutineProvider :: LoadCallStack(uintptr_t framePtr, uintptr_t* lis
    return length;
 }
 
+void SystemRoutineProvider :: InitRandomSeed(SeedStruct& seed, long long seedNumber)
+{
+   unsigned int low = (unsigned int)(seedNumber & 0xFFFFFFFF);
+   unsigned int hi = (unsigned int)(seedNumber >> 32);
+
+   seed.z1 = low;
+   seed.z2 = hi;
+   seed.z3 = low * (low & 0xFF);
+   seed.z3 = hi * (low & 0xFF00);
+}
+
+unsigned int SystemRoutineProvider :: GetRandomNumber(SeedStruct& seed)
+{
+   unsigned int b;
+   b = ((seed.z1 << 6) ^ seed.z1) >> 13;
+   seed.z1 = ((seed.z1 & 4294967294U) << 18) ^ b;
+   b = ((seed.z2 << 2) ^ seed.z2) >> 27;
+   seed.z2 = ((seed.z2 & 4294967288U) << 2) ^ b;
+   b = ((seed.z3 << 13) ^ seed.z3) >> 21;
+   seed.z3 = ((seed.z3 & 4294967280U) << 7) ^ b;
+   b = ((seed.z4 << 3) ^ seed.z4) >> 12;
+   seed.z4 = ((seed.z4 & 4294967168U) << 13) ^ b;
+
+   return (seed.z1 ^ seed.z2 ^ seed.z3 ^ seed.z4);
+}
+
 // --- ELENAMachine ---
 
 int ELENAMachine :: execute(SystemEnv* env, void* symbolListEntry)
@@ -94,7 +133,7 @@ int ELENAMachine :: execute(SystemEnv* env, void* symbolListEntry)
    int retVal = 0;
    try
    {
-      retVal = entry.evaluate(symbolListEntry, 0);
+      retVal = entry.evaluate(symbolListEntry, nullptr);
    }
    catch (InternalError&)
    {
@@ -102,6 +141,16 @@ int ELENAMachine :: execute(SystemEnv* env, void* symbolListEntry)
 
       retVal = -1;
    }
+
+   return retVal;
+}
+
+int ELENAMachine::execute(SystemEnv* env, void* threadEntry, void* threadFunc)
+{
+   Entry entry;
+   entry.address = env->bc_invoker;
+
+   int retVal = entry.evaluate(threadEntry, threadFunc);
 
    return retVal;
 }

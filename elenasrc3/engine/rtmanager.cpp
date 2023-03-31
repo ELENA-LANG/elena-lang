@@ -158,7 +158,7 @@ size_t RTManager :: retriveAddressInfo(LibraryLoaderBase& provider, addr_t retAd
       }
       if (row != -1) {
          buffer[copied++] = '(';
-         copy(buffer, row + 1, copied);
+         copy(buffer, row, copied);
          buffer[copied++] = ')';
       }
       buffer[copied] = 0;

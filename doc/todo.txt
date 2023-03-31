@@ -4,40 +4,84 @@ In development:
 
   [development]
     ### EPOCH: elena 6.0 - redux ###
-    === Iteration 13 ===
-    * inno setup : x86, x86-64
-
-    * ide - close all / close all but active
-    * ide : change status to ready when writing / selecting files
-    * ldoc : recognize template based type - for the method output
-
     === Iteration 14 ===
-    ! api functionality for existing classes : rest of system
-    ! api functionality for existing classes : externals
-    ! examples : pi, bsort, textfile, binary, replace, goods
-    ! elena sm : x86
-    ! script samples : x86
-    ! elena vm : x86-64
-    ! x86 : multi-threading
-    ! x86 : gui
-    * create github action workflow to build the project
+    * release
 
     === Iteration 15 ===
-    ! ide : vm console
+    ! migrate rest of elena 5.0 functionality (script engine, infinite enumeration, ...)
+    ! script and db samples
+    ! x86 : gui
+    ! api functionality for existing classes : rest of system
+    ! api functionality for existing classes : externals
+    ! elena sm : x86-64
+    ! ide : vm console 
+    * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
     ! sm : generate some basic templates from vm console - hello world sample
+    ! elena sm : linux
     ! elena vm : ppc64
+    ! script samples : win x86, win x86-64, linix i386, linux amd64
+    ! migrate all script engine tutorials : win x86, win x86-64, linix i386, linux amd64
     ! regression tests : github issues
     ! i386 : multi-threading
     ! x86-64 : multi-threading
     ! x86-64 : gui
+    ! elc : using custom grammar for parsing a source
+    ! elenavm : test all rosetta code samples for vm
+    ! elenavm : critical exception handlers
+
+    * redesign switch statement : it should be possible to use as an expression as well
+      (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
+       console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
+
+    * operator .\
+    * optimization : copy a sub array to another array
+    * int32 : implement direct neg, not operations; use it directly for IntNumber
+
+    * Dynamic programming in ELENA : bf loop - https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
+    * ELENA Script Engine : compiling JavaScript file - https://www.reddit.com/r/elena_lang/comments/6h6nyz/elena_script_engine_compiling_javascript_file/
+    * method templates
+    * by exiting thread (must be called on thread proc exit) - remove entry from table slots
+    * for time being keep SINGLE_THREAD_CONTEXT empty, after the migrating it
+      must be made empty 
+    * review extensions warnings
+    * review system warnings
+    * prefix nullable / nable - allow to assign nil
+    * introduce Nullable structure
+    * elenavm : implementing dll api
+    * show the signature for the typecast message if possible
+    * ide : key combination doesn't work after closing the project
+    * #521 : create an example and close the ticket
+    * examples : collatz, matrix
+    * examples : pi, p2, random 
+    * ldoc : symbol should return the type and it should be possible to see its api (e.g. system'console)
+    * rosetta samples : 20
+    * examples : datetime
+    * ide : change status to ready when writing / selecting files
+    * ide : selecting with a mouse
+    * examples : replace, trans 
+    * ide : new source
+    * examples : textdb, textfile 
+    * ide : on start : set focus inside the edit frame if available
+    * ldoc : get rid of BaseEnumerator<TupleTuple#2,T1,T2> and so on
+    * strong typed forward constant
+    * arrange action for i386 / amd64 linux release
 
     === Iteration 16 ===
+    ! x86 : multi-threading : sync, thread-safe gc, snop
+    ! x86-64 : multi-threading : open another thread
     ! sm : generate advances templates from vm console
     ! elena vm : helloworld sample Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
     ! elena sm : script samples Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
-    ! elena vm : aarch64
+    ! elena vm : aarch64, ppc64
+    ! migrate all script engine tutorials : linix aarch64, linux ppc64le
     ! ppc64le : multi-threading
     ! ppc64le : gui
+    * templates with parameters: template can have attribute values in the brackets after the main body
+      e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
+    * migrate: amb, anagram
+    * multi-value return - #508
+
+    === Iteration 17 ===
 
 ------                                                           
 Backlog:
@@ -48,7 +92,28 @@ Backlog:
     --- docs / tutorials ---
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
+    --- elena tutorials ---
+    * raise an error if the constructor does not handle the argument (if the multimethod is auto generated)
+    * read an article about meta programming in Ruby, try to do similar
+    * Func<T> / Func1 should use semi-direct call for the function invoke
+    * overloading the method return, put it in the first page as a feature
+    * lazy expressions, put it in the first page as a feature
+
     --- elena redux ---
+    * native conversion from short to int / byte to int
+    * extension template should contain all its arguments in the signature
+    * support strong extension template arrayOp<T> : strong, weak
+    * support autoloaded classes : should be automatically resolved when the module is loaded
+      (flag elAutoLoaded)
+    * support preloaded symbols : both static and dynamic
+    * module extension dispatcher should be preloaded
+    * elena : nullable
+    * system'collections'Map - migrating rest of methods
+    * if statements with single statement
+    * replace all default maps with optimized ones (e.g. SyntaxHash, TableHash, SyntaxTable)
+    * optimization : double assigning for external op
+    * create github action workflow to build the project
+    * inno setup : x86, x86-64
     * arm : uncomment loadv opcode : using and imm
     * arm / ppc : supporting indexes bigger than arg12 or arg16
     * async programming
@@ -60,11 +125,9 @@ Backlog:
     * boxable self (structs) - do not box the self return
     * automatical conversion of int literal to int8, int16 and int64 if possible
     * redesign : for 64 bit:object size offset should be 8, instead of 4
-    * elenavm : implementing dll api
     * conversion to int - raise an error if not valid
     * implement correct string,real,byte,short,long hash functions
     * implement iif operator : a ? b : c
-    * show the signature for the typecast message if possible
     * warn on resending to itself (e.g. for constructor)
     * allocate constant array directly if possible
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
@@ -76,10 +139,7 @@ Backlog:
     * system'console : reader and writer should be strongly-typed : IConsoleReader, IConsoleWriter
     * test : print german text
     * optimization : WinEncoder.convertChar (do not use the intermediate buffer)
-    * elena : (see system'text'Encoder, it should be possible to pass byref argument further)
     * console symbol should be strong one
-    * ldoc : extensions - no extensions
-    * ldoc : symbol should return the type and it should be possible to see its api
     * ldoc : all symbols should be in alphabetic order
     * ldoc : consoleOp extension should be visible
     * debugger watch: variadic argument list
@@ -98,15 +158,10 @@ Backlog:
     * unit tests via postfix pattern
     * ide debugger : callstack
     * system porting : UnsafePointer, characterController, caseStringOp, caseWideOp
-    * elena : nullable
-    * templates with parameters: template can have attribute values in the brackets after the main body
-      e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
       as well, to pass the name there (currently it passed over template args which is not 100% correct)
     * do:while : both statement are matched : do{ a } while(b) and do{ a } while{ b } which is not correct?
-    * ide : uncomment
     * ide : error messages if the debug process failed
     * ide : set focus on activate / after opening a file
-    * ide : compile the project and select an error line - part of the windows is covered with other window
     * ide : output is not properly refreshed
     * ide : toolbar
     * ide : fix blicking on tab selecting (especially on opening a new project)
@@ -115,7 +170,6 @@ Backlog:
     * ide : replace all
     * ide : open the last opened file on the ide start
     * ide : remember last open project
-    * vmclient : the executable must contain only the most basic functionality
     * api : migrate VariadicArray, Matrix<T>, BitArray, BitArray32, IntMatrix, RealMatrix
     * elena : allow to initialize class in-place
     * ide - disable close if no files are open
@@ -123,9 +177,7 @@ Backlog:
     * vm : on stop : unprotected / remove executable flags, on start - reverse the action
     * test for self : nestedFieldsTest
     * test three type of self : self, this self, weak self
-    * api : support lazy-load expressions
     * gc - system_tests - why full collect happends so often
-    * aarch64 gc: system_tests fails in gc routine
     * #15 : return double / long from external function
     * #47 : Evaluating an expression in a symbol
 
@@ -142,8 +194,6 @@ Backlog:
     * ide - add close button on tabbar
     * ide - fix errors
     * ide - compile the project / file
-
-    * api doc
 
     * ide debugger
 
@@ -229,7 +279,6 @@ Backlog:
     * exclude embeddable return for auto field
     * generate abstract ebleddable
     * primitive operations : support all comparision operations (not only <, == and !=)
-    * hexadecimal character literal
     * uint, ushort, int8
     * numberic constant should be implicitly converted to byte / short / long / real
     * closure should be sealed
@@ -257,8 +306,6 @@ Backlog:
     * operator names should be configurable
     * optimize String.prop:Length[1]
     * replace xassign with assign for the field assignment
-    * generating template extensions
-    * if statements with single statement
     * ide - open file - namespace should be added
     * do load self for expression with ret statement
     * byte / short should support plus / minus operator
@@ -323,11 +370,7 @@ Backlog:
     * ide : save last open file / project
     * ide : project settings
     * ide : styling source code
-    * ide : font / size - to make it less blur
     * call a message / closure; debugger
-    * introduce memoryhashmap instead of normal maps, replace all default maps with optimized ones
-    * hello world sample
-    * hello world vm client sample
     * support preloaded symbols
     * redux : add output convertion for the method without the explicit return statement
 
@@ -356,12 +399,7 @@ Backlog:
 
     - test all samples - x86 / x86-64
     - op code refactoring
-    + ppc64le : simplest program
 
-    + compile console / files samples for linux i386
-    + compile lib50_64 for linux i386 / ppc64le
-    + compile console / files samples for linux amd64
-    + compile hellowordl for ppc64le
     - IDE : smart spaces
 
     + support low and high part of addresses (for ppc64) - e.g. offset 80000000h offset - low, 80000000h - high, offset <<= 2
@@ -452,8 +490,6 @@ Backlog:
     * test string / wide operations
     * fix chat sample
 
-    * linux : implement INIT_RND
-
     * test all samples
     * check all mtredirect commands (class, parent class)
     * test parent / flags / class commands
@@ -514,7 +550,6 @@ Backlog:
     * [pipeline]
     * expression tree to source
     * source to expression tree
-    * multi-value return - #508
     * dispatching a method return
     * [Brace expansion]
     * chat
@@ -584,7 +619,6 @@ Backlog:
                 * countable
                 * implement analog of C# enum
                 * analog of C# $ strings
-                * method templates
                 * function return type : e.g. int f() = 1;
                 * properties in properties
                 * readonly fields
@@ -653,7 +687,6 @@ Backlog:
                 * step over external / message / loop / if call?
                 * step over last statement (without terminator)
                 * watch message / subject info
-                * sealed static methods : multimethods
                 * uncomment validateUnresolved
                 * error by viewing translit sample
                 * port Linux IDE

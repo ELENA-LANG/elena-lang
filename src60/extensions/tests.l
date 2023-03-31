@@ -4,11 +4,6 @@ public class AssertException : Exception
 {
     constructor new(string message)
         <= super new(message);
-    
-    static raise(string message)
-    {
-        AssertException.new(message).raise()
-    }    
 }
 
 public singleton Assert
