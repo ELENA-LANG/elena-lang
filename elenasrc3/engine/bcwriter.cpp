@@ -1905,9 +1905,6 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             importTree(tape, current, *tapeScope.scope);
             tape.write(ByteCode::ImportOff);
             break;
-         case BuildKey::NestedClass:
-            saveClass(current, tapeScope.scope->moduleScope, tapeScope.scope->minimalArgList, paths, tapeOptMode);
-            break;
          case BuildKey::BranchOp:
             saveBranching(tape, current, tapeScope, paths, tapeOptMode, loopMode);
             break;

@@ -147,8 +147,6 @@ namespace elena_lang
       SwitchOption         = 0x007C,
       ElseOption           = 0x007D,
 
-      NestedClass          = 0x0080,
-
       VariableInfo         = 0x0090,
       Variable             = 0x0091,
       VariableAddress      = 0x0092,

@@ -26,8 +26,6 @@ In development:
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
-    * ide debugger : step over
-
     * redesign syntax : support tuple literal : expression in brackets separeted by comma
 
     * multi-value return - #508

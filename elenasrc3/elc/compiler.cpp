@@ -7942,7 +7942,12 @@ ObjectInfo Compiler :: compileClosure(BuildTreeWriter& writer, ExprScope& ownerS
    ref_t nestedRef = mapNested(ownerScope, mode);
    InlineClassScope scope(&ownerScope, nestedRef);
 
-   compileClosureClass(writer, scope, node);
+   BuildNode buildNode = writer.CurrentNode();
+   while (buildNode != BuildKey::Root)
+      buildNode = buildNode.parentNode();
+
+   BuildTreeWriter nestedWriter(buildNode);
+   compileClosureClass(nestedWriter, scope, node);
 
    return compileNestedExpression(writer, scope, ownerScope, mode, updatedOuterArgs);
 }
@@ -9717,7 +9722,7 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
    bool lazyExpression = node == SyntaxKey::LazyOperation;
    ref_t parentRef = scope.info.header.parentRef;
 
-   writer.newNode(BuildKey::NestedClass, scope.reference);
+   writer.newNode(BuildKey::Class, scope.reference);
 
    MethodScope methodScope(&scope);
    declareClosureMessage(methodScope, node);
@@ -9892,20 +9897,26 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
 
    scope.save();
 
-   writer.newNode(BuildKey::NestedClass, scope.reference);
+   BuildNode buildNode = writer.CurrentNode();
+   while (buildNode != BuildKey::Root)
+      buildNode = buildNode.parentNode();
 
-   writer.appendNode(BuildKey::Path, *ns->sourcePath);
+   BuildTreeWriter nestedWriter(buildNode);
 
-   compileVMT(writer, scope, node, true, true);
+   nestedWriter.newNode(BuildKey::Class, scope.reference);
+
+   nestedWriter.appendNode(BuildKey::Path, *ns->sourcePath);
+
+   compileVMT(nestedWriter, scope, node, true, true);
 
    // set flags once again
    // NOTE : it should be called after the code compilation to take into consideration outer fields
    _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, scope.isClassClass());
 
    // NOTE : compile once again only auto generated methods
-   compileVMT(writer, scope, node, true, false);
+   compileVMT(nestedWriter, scope, node, true, false);
 
-   writer.closeNode();
+   nestedWriter.closeNode();
 
    scope.save();
 }
