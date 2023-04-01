@@ -26,6 +26,20 @@ In development:
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
+    * redesign syntax : support tuple literal : expression in brackets separeted by comma
+
+    * multi-value return - #508
+    * support multi-value to tuple :
+       Tuple<int, string> getMulti()
+           = $(1, "abc");
+
+
+
+    * multi-value
+    * multi-return
+    * switch expression
+
+
     * redesign switch statement : it should be possible to use as an expression as well
       (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
        console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
@@ -77,7 +91,6 @@ In development:
     * templates with parameters: template can have attribute values in the brackets after the main body
       e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
     * migrate: amb, anagram
-    * multi-value return - #508
 
     === Iteration 17 ===
 
@@ -573,7 +586,6 @@ Backlog:
     * refactoring : classROp.setField should be either internal or not available at all (because
                     it is not possible to enforce types)
 
-    * multi-return
     * docs
 
     * api doc :  static method descriptions;
