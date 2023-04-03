@@ -801,6 +801,35 @@ void SyntaxTreeBuilder :: flushMethodMember(SyntaxTreeWriter& writer, Scope& sco
    writer.closeNode();
 }
 
+void SyntaxTreeBuilder :: flushExpressionAsDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Object) {
+         flushDescriptor(writer, scope, current);
+      }
+      else _errorProcessor->raiseTerminalError(errInvalidSyntax, retrievePath(node), node);
+
+      current = current.nextNode();
+   }
+
+}
+
+void SyntaxTreeBuilder :: flushParameterBlock(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Expression) {
+         // HOTFIX : treat an expression as a parameter
+         writer.newNode(SyntaxKey::Parameter);
+         flushExpressionAsDescriptor(writer, scope, current);
+         writer.closeNode();
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void SyntaxTreeBuilder :: flushMethodCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
    writer.newNode(node.key);
@@ -836,6 +865,9 @@ void SyntaxTreeBuilder :: flushClosure(SyntaxTreeWriter& writer, Scope& scope, S
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Parameter) {
          flushMethodMember(writer, scope, current);
+      }
+      else if (current == SyntaxKey::ParameterBlock) {
+         flushParameterBlock(writer, scope, current);
       }
       else if (SyntaxTree::test(current.key, SyntaxKey::ScopeMask)) {
          flushMethodCode(writer, scope, current);

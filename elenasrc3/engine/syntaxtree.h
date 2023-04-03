@@ -151,6 +151,7 @@ namespace elena_lang
       SwitchLastOption        = 0x0018D2,
       SwitchCode              = 0x0018D3,
       CollectionExpression    = 0x0018D4,
+      ParameterBlock          = 0x0010F0,
 
       Name                    = 0x000101,
       Namespace               = 0x000103,
