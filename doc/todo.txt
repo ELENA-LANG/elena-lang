@@ -26,28 +26,25 @@ In development:
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
-    * redesign syntax : support tuple literal : expression in brackets separeted by comma
+    * operator .\
 
-    * ldoc : tuple with 2 items
 
     * multi-value return - #508
+    * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
+
     * support multi-value to tuple :
        Tuple<int, string> getMulti()
            = $(1, "abc");
 
-
-
     * multi-value
     * multi-return
     * switch expression
-
 
     * redesign switch statement : it should be possible to use as an expression as well
       (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
        console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
 
 
-    * operator .\
     * optimization : copy a sub array to another array
     * int32 : implement direct neg, not operations; use it directly for IntNumber
 
