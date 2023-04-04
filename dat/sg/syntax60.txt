@@ -86,6 +86,7 @@ __define SWITCH_OPTION 	        6353;
 __define SWITCH_LAST_OPTION     6354;
 __define SWITCH_CODE 	        6355;
 __define COLLECTION_EXPRESSION  6356;
+__define TUPLE_COLLECTION 	6357;
 __define POSTFIX                4200;
 __define TEMPLATE_POSTFIX       4201;
 __define TEMPLATE_ARG           4208;
@@ -419,7 +420,11 @@ SUB_EXPRESSION ::=
 	| reference { 
 		L3 ^OBJECT MESSAGE MESSAGE_R ")"
 		| ")" ^OBJECT }
-	| { string | integer | hexinteger | long | character | wide } ^OBJECT L4_OP* L5_OP* L6_OP? ")" ^EXPRESSION
+	| { string | integer | hexinteger | long | character | wide } ^OBJECT L4_OP* L5_OP* L6_OP? {
+		"," ^EXPRESSION EXPRESSION { "," EXPRESSION }* ^ TUPLE_COLLECTION
+		| eps
+	}  ")" ^EXPRESSION
+
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION ")" ^EXPRESSION
 	| "!" EXPRESSION ^NOT_OPERATION ")" ^EXPRESSION
 	| "~" SINGLE_EXPRESSION ^BNOT_OPERATION

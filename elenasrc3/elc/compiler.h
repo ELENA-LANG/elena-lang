@@ -982,6 +982,7 @@ namespace elena_lang
       ref_t resolveWrapperTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
       ref_t resolveArrayTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
       ref_t resolveArgArrayTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
+      ref_t resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo& items);
 
       int resolveSize(Scope& scope, SyntaxNode node);
       TypeInfo resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
@@ -1272,6 +1273,7 @@ namespace elena_lang
       void compileClassVMT(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope, SyntaxNode node);
 
       ObjectInfo compileCollection(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute mode);
+      ObjectInfo compileTupleCollectiom(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
 
       void compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, SyntaxNode node);
       void compileClassSymbol(BuildTreeWriter& writer, ClassScope& scope);

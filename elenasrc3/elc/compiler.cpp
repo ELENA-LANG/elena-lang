@@ -8087,6 +8087,93 @@ inline bool areConstants(ArgumentsInfo& args)
    return true;
 }
 
+ref_t Compiler :: resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo& items)
+{
+   IdentifierString tupleName(scope.module->resolveReference(scope.moduleScope->buildins.tupleTemplateReference));
+
+   List<SyntaxNode> parameters({});
+
+   // HOTFIX : generate a temporal template to pass the type
+   SyntaxTree dummyTree;
+   SyntaxTreeWriter dummyWriter(dummyTree);
+   dummyWriter.newNode(SyntaxKey::Root);
+
+   for (size_t i = 0; i < items.count(); i++) {
+      ref_t typeRef = resolvePrimitiveType(scope, items[i].typeInfo, false);
+
+      dummyWriter.newNode(SyntaxKey::TemplateArg, typeRef);
+      dummyWriter.newNode(SyntaxKey::Type);
+
+      ustr_t referenceName = scope.moduleScope->module->resolveReference(typeRef);
+      if (isWeakReference(referenceName)) {
+         dummyWriter.appendNode(SyntaxKey::reference, referenceName);
+      }
+      else dummyWriter.appendNode(SyntaxKey::globalreference, referenceName);
+
+      dummyWriter.closeNode();
+      dummyWriter.closeNode();
+   }
+
+   dummyWriter.closeNode();
+
+   SyntaxNode current = dummyTree.readRoot().firstChild();
+   while (current == SyntaxKey::TemplateArg) {
+      parameters.add(current);
+
+      current = current.nextNode();
+   }
+
+   tupleName.append('#');
+   tupleName.appendInt(items.count());
+
+   ref_t templateReference = 0;
+   if (isWeakReference(*tupleName)) {
+      templateReference = scope.module->mapReference(*tupleName, true);
+   }
+   else templateReference = scope.moduleScope->mapFullReference(*tupleName, true);
+
+   if (!templateReference)
+      scope.raiseError(errInvalidOperation, node);
+
+   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+   return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
+      templateReference, parameters, false, nullptr);
+}
+
+ObjectInfo Compiler :: compileTupleCollectiom(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
+{
+   ArgumentsInfo arguments;
+   EAttr paramMode = EAttr::Parameter;
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Expression) {
+         auto argInfo = compileExpression(writer, scope, current, 0,
+            paramMode, nullptr);
+
+         arguments.add(argInfo);
+      }
+
+      current = current.nextNode();
+   }
+
+   ref_t tupleRef = resolveTupleClass(scope, node, arguments);
+
+   writer.newNode(BuildKey::CreatingClass, arguments.count());
+   writer.appendNode(BuildKey::Type, tupleRef);
+   writer.closeNode();
+
+   for (size_t i = 0; i < arguments.count(); i++) {
+      writer.appendNode(BuildKey::SavingInStack, 0);
+      writeObjectInfo(writer, scope, arguments[i]);
+      writer.appendNode(BuildKey::AccSwapping);
+      writer.appendNode(BuildKey::FieldAssigning, (pos_t)i);
+   }
+
+   return { ObjectKind::Object, { tupleRef }, 0 };
+}
+
 ObjectInfo Compiler :: compileCollection(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute mode)
 {
    bool constOne = EAttrs::testAndExclude(mode, EAttr::ConstantExpr);
@@ -8288,6 +8375,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          return compileExpression(writer, scope, current.nextNode(), targetRef, exprAttr.attrs, updatedOuterArgs);
          break;
       }
+      case SyntaxKey::TupleCollection:
+         retVal = compileTupleCollectiom(writer, scope, current);
+         break;
       case SyntaxKey::None:
          assert(false);
          break;
@@ -10131,6 +10221,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.argArrayTemplateReference = safeMapReference(moduleScope, forwardResolver, VARIADIC_ARRAY_FORWARD);
 
    moduleScope->buildins.closureTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, CLOSURE_FORWARD);
+   moduleScope->buildins.tupleTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, TUPLE_FORWARD);
    moduleScope->buildins.lazyExpressionReference = safeMapWeakReference(moduleScope, forwardResolver, LAZY_FORWARD);
    moduleScope->buildins.dwordReference = safeMapReference(moduleScope, forwardResolver, DWORD_FORWARD);
    moduleScope->buildins.pointerReference = safeMapReference(moduleScope, forwardResolver, PTR_FORWARD);

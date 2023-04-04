@@ -101,6 +101,7 @@ namespace elena_lang
    constexpr auto MESSAGE_FORWARD         = "$message";        // the message class
    constexpr auto EXT_MESSAGE_FORWARD     = "$ext_message";    // the extension message class
    constexpr auto CLOSURE_FORWARD         = "$closure";        // the closure template class
+   constexpr auto TUPLE_FORWARD           = "$tuple";        // the closure template class
    constexpr auto DWORD_FORWARD           = "$dword";          // the dword wrapper
    constexpr auto PTR_FORWARD             = "$ptr";          // the dword wrapper
    constexpr auto LAZY_FORWARD            = "$lazy";

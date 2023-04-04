@@ -28,6 +28,8 @@ In development:
 
     * redesign syntax : support tuple literal : expression in brackets separeted by comma
 
+    * ldoc : tuple with 2 items
+
     * multi-value return - #508
     * support multi-value to tuple :
        Tuple<int, string> getMulti()
