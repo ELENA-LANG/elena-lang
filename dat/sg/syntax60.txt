@@ -27,6 +27,7 @@ __define ARRAY_TYPE          4147;
 __define NESTED              4224;
 __define CLOSURE             4225;
 __define MESSAGE             4288;
+__define OPERATOR            4310;
 __define RET_EXPRESSION      7220;
 __define GET_EXPRESSION      7222;
 __define INIT_EXPRESSION     7223;
@@ -82,6 +83,7 @@ __define NT_EXPRESSION          6296;
 __define L7_EXPRESSION          6297;
 __define L3_SINGLE_EXPRESSION   6298;
 __define NESTED_ROOT_EXPRESSION 6299;
+__define OPERATION_TEMPLATE     6300;
 __define SWITCH_OPTION 	        6353;
 __define SWITCH_LAST_OPTION     6354;
 __define SWITCH_CODE 	        6355;
@@ -239,16 +241,19 @@ ROOT_EXPRESSION ::=
 			T_EXPRESSION { identifier NT_EXPRESSION }? ^ TEMPLATE_BLOCK
 			| ISNIL ^MESSAGE_OPERATION SINGLE_EXPRESSION ^ISNIL_OPERATION
 			| eps ^MESSAGE_OPERATION }
-		| L3 ^OBJECT MESSAGE {
-			L3_R {
-				L3 L3_F
-				| L4_OP
-				| L6_OP
-				| L9_OP
-				| eps }
-			| ASSIGN EXPRESSION ^PROPERTY_OPERATION
-			| L3 ^PROPERTY_OPERATION L3_F
-			| eps ^PROPERTY_OPERATION }
+		| L3 ^OBJECT { 
+			OPERATOR MESSAGE L3_R ^OPERATION_TEMPLATE
+			| MESSAGE {
+				L3_R {
+					L3 L3_F
+					| L4_OP
+					| L6_OP
+					| L9_OP
+					| eps }
+				| ASSIGN EXPRESSION ^PROPERTY_OPERATION
+				| L3 ^PROPERTY_OPERATION L3_F
+				| eps ^PROPERTY_OPERATION }
+		}
 		| L4_O_OP L4_OP*
 		| L5_O_OP 
 		| LESS ^OBJECT TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" ^TEMPLATE_TYPE
@@ -257,6 +262,7 @@ ROOT_EXPRESSION ::=
 				| identifier ^OBJECT }
 		| L7_O_OP
 		| TRY ^OBJECT TRY_R
+		| ALT ^OBJECT ALT_R
 		| T_EXPRESSION { identifier NT_EXPRESSION }? ^ TEMPLATE_BLOCK
 		| "=>" ^OBJECT { SWITCH_OPTION+ SWITCH_LAST_OPTION? } ^SWITCH_OPERATION
 		| eps ^OBJECT }
@@ -772,6 +778,9 @@ PARAMETER ::=
 
 MESSAGE ::=
 	identifier;
+
+OPERATOR ::=
+	"\" ^ ALT_OPERATION | "?" ^ IF_OPERATION | "!" ^ ELSE_OPERATION;
 
 SWITCH_OPTION ::=
 	identifier ^ OBJECT SWITCH_CODE

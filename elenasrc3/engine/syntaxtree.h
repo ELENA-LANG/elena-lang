@@ -128,6 +128,7 @@ namespace elena_lang
       L7Expression            = 0x001899,
       L3SingleExpression      = 0x00189A,
       NestedRootExpression    = 0x00189B,
+      TemplateOperation       = 0x00189C,
       TemplateExpression      = 0x0018A0,
       FieldInitializer        = 0x0018B0,
       Message                 = 0x0010C0,
@@ -152,6 +153,7 @@ namespace elena_lang
       SwitchCode              = 0x0018D3,
       CollectionExpression    = 0x0018D4,
       TupleCollection         = 0x0018D5,
+      Operator                = 0x0010D6,
       ParameterBlock          = 0x0010F0,
 
       Name                    = 0x000101,

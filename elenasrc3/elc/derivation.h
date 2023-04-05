@@ -122,6 +122,7 @@ namespace elena_lang
       void parseStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current, 
          List<SyntaxNode>& arguments, List<SyntaxNode>& parameters, IdentifierString& postfix);
       void generateTemplateStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void generateTemplateOperation(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
       void flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);

@@ -3,13 +3,7 @@ import extensions;
 
 public program()
 {
-   var t := (1,"abc");
+   var o := new object();
 
-   console.printLine("Item1=",t.Item1,", Item2=", t.Item2);
-
-   var a;
-   var b;
-
-   a,b := t;
-   console.printLine("a=",a,", b=", t.Item2);
+   o.\fail();
 }

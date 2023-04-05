@@ -435,6 +435,51 @@ void SyntaxTreeBuilder :: flushMessage(SyntaxTreeWriter& writer, Scope& scope, S
    writer.closeNode();
 }
 
+void SyntaxTreeBuilder :: generateTemplateOperation(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+{
+   List<SyntaxNode> arguments({});
+   List<SyntaxNode> parameters({});
+
+   SyntaxNode op = node.findChild(SyntaxKey::MessageOperation);
+   SyntaxNode operatorTerminal = op.findChild(SyntaxKey::Operator).firstChild();
+
+   IdentifierString templateName("operator:");
+   switch (operatorTerminal.key) {
+      case SyntaxKey::AltOperation:
+         templateName.append("alt#1#1");
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   // generate template arguments
+   SyntaxTree tempTree;
+   SyntaxTreeWriter tempWriter(tempTree);
+
+   tempWriter.newNode(SyntaxKey::Idle);
+   flushObject(tempWriter, scope, op.firstChild(SyntaxKey::Object));
+   arguments.add(tempWriter.CurrentNode().firstChild());
+   tempWriter.closeNode();
+
+   tempWriter.newNode(SyntaxKey::Idle);
+   flushExpression(tempWriter, scope, op);
+   parameters.add(tempWriter.CurrentNode().firstChild());
+   tempWriter.closeNode();
+
+   ref_t templateRef = _moduleScope->operations.get(*templateName);
+
+   if (_templateProcessor->importCodeTemplate(*_moduleScope, templateRef, writer.CurrentNode(),
+      arguments, parameters))
+   {
+   }
+   else {
+      _errorProcessor->raiseTerminalError(errInvalidOperation, retrievePath(node), node);
+   }
+
+   testNodes(node);
+}
+
 void SyntaxTreeBuilder :: flushExpressionMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current)
 {
    switch (current.key) {
@@ -456,6 +501,9 @@ void SyntaxTreeBuilder :: flushExpressionMember(SyntaxTreeWriter& writer, Scope&
       case SyntaxKey::TemplateCode:
          writer.CurrentNode().setKey(SyntaxKey::CodeBlock);
          generateTemplateStatement(writer, scope, current);
+         break;
+      case SyntaxKey::TemplateOperation:
+         generateTemplateOperation(writer, scope, current);
          break;
       default:
          if (SyntaxTree::testSuperKey(current.key, SyntaxKey::Expression)) {

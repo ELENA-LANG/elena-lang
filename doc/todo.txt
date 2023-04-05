@@ -26,9 +26,6 @@ In development:
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
-    * operator .\
-
-
     * multi-value return - #508
     * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
 
