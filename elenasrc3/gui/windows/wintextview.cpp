@@ -444,7 +444,22 @@ void TextViewWindow :: onButtonUp()
    releaseMouse();
 }
 
-void TextViewWindow :: onMouseMove(short wheelDelta, bool kbCtrl)
+void TextViewWindow :: onMouseMove(Point point, bool kbLButton)
+{
+   auto docView = _model->DocView();
+   if (kbLButton && isMouseCaptured() && docView != nullptr) {
+      DocumentChangeStatus status = {};
+      int col = 0, row = 0;
+      bool margin = false;
+      mouseToScreen(point, col, row, margin);
+
+      docView->moveToFrame(status, col, row, true);
+
+      onDocumentUpdate(status);
+   }
+}
+
+void TextViewWindow :: onMouseWheel(short wheelDelta, bool kbCtrl)
 {
    DocumentChangeStatus status = {};
    auto docView = _model->DocView();
@@ -541,7 +556,10 @@ LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
          onDoubleClick(nullptr);
          return 0;
       case WM_MOUSEWHEEL:
-         onMouseMove(HIWORD(wParam), (wParam & MK_CONTROL) != 0);
+         onMouseWheel(HIWORD(wParam), (wParam & MK_CONTROL) != 0);
+         return 0;
+      case WM_MOUSEMOVE:
+         onMouseMove(Point(LOWORD(lParam), HIWORD(lParam)), (wParam & MK_LBUTTON) != 0);
          return 0;
       case WM_KEYDOWN:
          if (onKeyDown((int)wParam, isKeyDown(VK_SHIFT), isKeyDown(VK_CONTROL))) {

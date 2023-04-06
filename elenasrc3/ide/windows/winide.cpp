@@ -832,4 +832,8 @@ void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
       menu->enableMenuItemById(IDM_EDIT_UNDO, docInfo->canUndo());
       menu->enableMenuItemById(IDM_EDIT_REDO, docInfo->canRedo());
    }
+
+   if (changeStatus.textChanged || changeStatus.caretChanged) {
+      _controller->onStatusChange(_model, IDEStatus::Ready);
+   }
 }

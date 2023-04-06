@@ -1006,14 +1006,7 @@ void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, ID
 
 bool IDEController :: onClose(DialogBase& dialog, IDEModel* model)
 {
-   PathString path(*model->projectModel.paths.configPath);
-
-   bool result = doCloseAll(dialog, model);
-   if (result) {
-      saveConfig(model, *path);
-   }
-
-   return result;
+   return doCloseAll(dialog, model);
 }
 
 void IDEController :: onDebuggerStop(IDEModel* model)
@@ -1022,4 +1015,17 @@ void IDEController :: onDebuggerStop(IDEModel* model)
 
    model->status = IDEStatus::DebuggerStopped;
    _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED | FRAME_CHANGED);
+}
+
+void IDEController :: onProgramStop(IDEModel* model)
+{
+   PathString path(*model->projectModel.paths.configPath);
+
+   saveConfig(model, *path);
+}
+
+void IDEController :: onStatusChange(IDEModel* model, IDEStatus newStatus)
+{
+   model->status = newStatus;
+   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
 }

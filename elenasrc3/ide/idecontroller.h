@@ -189,12 +189,15 @@ namespace elena_lang
       void onCompilationCompletion(IDEModel* model, int exitCode, 
          text_str output, ErrorLogBase* log);
       void onDebuggerStop(IDEModel* model);
+      void onStatusChange(IDEModel* model, IDEStatus newStatus);
 
       bool doExit(DialogBase& dialog, IDEModel* model);
 
       bool onClose(DialogBase& dialog, IDEModel* model);
 
       void init(IDEModel* model);
+
+      void onProgramStop(IDEModel* model);
 
       IDEController(ProcessBase* outputProcess, DebugProcessBase* process, IDEModel* model,
          TextViewSettings& textViewSettings, PlatformType platform

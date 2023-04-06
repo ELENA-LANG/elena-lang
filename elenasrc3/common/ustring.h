@@ -646,11 +646,12 @@ namespace elena_lang
       void insert(const T* s, size_t index)
       {
          pos_t length = getlength_pos(s);
-         if (_size <= length) {
-            create(length + 1);
-         }
+         size_t newLength = getlength(_string) + length;
+         if (_size <= newLength)
+            create(newLength + 1);
 
          StrUtil::insert(_string, index, length, s);
+         _string[newLength] = 0;
       }
 
       void cut(size_t index, size_t length)
