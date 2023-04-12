@@ -6819,7 +6819,8 @@ ObjectInfo Compiler :: compileTupleAssigning(BuildTreeWriter& writer, ExprScope&
    ObjectInfo exprVal = compileExpression(writer, scope, current, 0, EAttr::Parameter, nullptr);
    for (pos_t i = 0; i < targets.count_pos(); i++) {
       arguments.clear();
-      arguments.add({ ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(scope, i + 1), i + 1});
+      arguments.add(exprVal);
+      arguments.add({ ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(scope, i), i});
 
       ObjectInfo targetVar = targets[i];
 
