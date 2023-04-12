@@ -487,6 +487,7 @@ void SyntaxTreeBuilder :: flushExpressionMember(SyntaxTreeWriter& writer, Scope&
          flushMethodMember(writer, scope, current);
          break;
       case SyntaxKey::Object:
+      case SyntaxKey::SubVariable:
          flushObject(writer, scope, current);
          break;
       case SyntaxKey::NestedBlock:
@@ -551,8 +552,12 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
    bool typeDescriptor)
 {
    SyntaxNode nameNode = node.lastChild(SyntaxKey::TerminalMask);
-   if (typeDescriptor)
+   if (typeDescriptor) {
       nameNode = nameNode.nextNode();
+   }
+   else if (nameNode.nextNode() == SyntaxKey::SubDeclaration) {
+      nameNode = {};
+   }
 
    SyntaxNode current = node.firstChild();
    ref_t attributeCategory = V_CATEGORY_MAX;
@@ -578,6 +583,15 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
          }
 
          writer.closeNode();
+      }
+      else if (current == SyntaxKey::SubDeclaration) {
+         flushDescriptor(writer, scope, current, withNameNode, typeDescriptor);
+
+         current = current.nextNode();
+
+         // HOTFIX : the last sub declaration contains the name node and should be the last one to analyze
+         if (current != SyntaxKey::SubDeclaration)
+            break;
       }
       else {
          bool allowType = nameNode.key == SyntaxKey::None || nextNode == nameNode;

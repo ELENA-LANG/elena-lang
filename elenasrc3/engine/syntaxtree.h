@@ -41,6 +41,7 @@ namespace elena_lang
 
       // NOTE : low word should be unique for every key
       Declaration             = 0x001400,
+      SubDeclaration          = 0x001001,
 
       Class                   = 0x001001,
       Symbol                  = 0x001002,
@@ -109,6 +110,7 @@ namespace elena_lang
       XorOperation            = 0x001863,
       BreakOperation          = 0x001864,
       LazyOperation           = 0x001865,
+      TupleAssignOperation    = 0x001866,
       Postfix                 = 0x001068,
       TemplatePostfix         = 0x001069,
       //MethodPostfix           = 0x00106A,
@@ -154,6 +156,7 @@ namespace elena_lang
       CollectionExpression    = 0x0018D4,
       TupleCollection         = 0x0018D5,
       Operator                = 0x0010D6,
+      SubVariable             = 0x0010D7,
       ParameterBlock          = 0x0010F0,
 
       Name                    = 0x000101,

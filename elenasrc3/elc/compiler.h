@@ -256,6 +256,7 @@ namespace elena_lang
    };
 
    typedef CachedList<ObjectInfo, 5> ArgumentsInfo;
+   typedef CachedList<ref_t, 5>      TypeList;
 
    // --- Interpreter ---
    class Interpreter
@@ -1015,6 +1016,8 @@ namespace elena_lang
 
       ObjectInfo allocateResult(ExprScope& scope, ref_t resultRef);
 
+      ref_t declareMultiType(Scope& scope, SyntaxNode& node, ref_t elementRef);
+
       void declareTemplateAttributes(TemplateScope& scope, SyntaxNode node, IdentifierString& postfix);
       void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node);
       void declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& fldeclaredFlagsags);
@@ -1193,6 +1196,7 @@ namespace elena_lang
       ObjectInfo compileCatchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
       ObjectInfo compileAltOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
       ObjectInfo compileIsNilOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
+      ObjectInfo compileTupleAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
 
       void compileSwitchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
 

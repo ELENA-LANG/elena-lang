@@ -116,6 +116,16 @@ void declareTemplateParameters(ModuleBase* module, TemplateTypeList& typeList,
    dummyWriter.closeNode();
 }
 
+inline ref_t mapIntConstant(Compiler::Scope& scope, int integer)
+{
+   String<char, 20> s;
+
+   // convert back to string as a decimal integer
+   s.appendInt(integer, 16);
+
+   return scope.moduleScope->module->mapConstant(s.str());
+}
+
 // --- Interpreter ---
 
 Interpreter :: Interpreter(ModuleScopeBase* scope, CompilerLogic* logic)
@@ -4135,6 +4145,24 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
       scope.raiseError(errInvalidOperation, node);
 }
 
+ref_t Compiler :: declareMultiType(Scope& scope, SyntaxNode& current, ref_t elementRef)
+{
+   bool eol = false;
+   ArgumentsInfo items;
+   items.add({ ObjectKind::Class, { elementRef }, 0 });
+
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Type) {
+         items.add({ ObjectKind::Class, { resolveStrongTypeAttribute(scope, current, true, false) }, 0 });
+      }
+      else break;
+
+      current = current.nextNode();
+   }
+
+   return resolveTupleClass(scope, current, items);
+}
+
 void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode)
 {
    if (exensionMode)
@@ -4167,7 +4195,12 @@ void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node, bo
          case SyntaxKey::TemplateType:
          case SyntaxKey::ArrayType:
             // if it is a type attribute
-            scope.info.outputRef = resolveStrongTypeAttribute(scope, current, true, false);
+            if (scope.info.outputRef) {
+               scope.info.outputRef = declareMultiType(scope, current, scope.info.outputRef);
+
+               continue;
+            }
+            else scope.info.outputRef = resolveStrongTypeAttribute(scope, current, true, false);
             break;
          case SyntaxKey::Name:
          {
@@ -6769,6 +6802,39 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
    return true;
 }
 
+ObjectInfo Compiler :: compileTupleAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
+{
+   ArgumentsInfo targets;
+   ArgumentsInfo arguments;
+
+   SyntaxNode current = node.firstChild();
+   targets.add(mapObject(scope, current, EAttr::None));
+   current = current.nextNode();
+   while (current == SyntaxKey::SubVariable) {
+      targets.add(mapObject(scope, current, EAttr::None));
+
+      current = current.nextNode();
+   }
+
+   ObjectInfo exprVal = compileExpression(writer, scope, current, 0, EAttr::Parameter, nullptr);
+   for (pos_t i = 0; i < targets.count_pos(); i++) {
+      arguments.clear();
+      arguments.add({ ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(scope, i + 1), i + 1});
+
+      ObjectInfo targetVar = targets[i];
+
+      ref_t actionRef = scope.module->mapAction(REFER_MESSAGE, 0, false);
+      mssg_t getter = encodeMessage(actionRef, 2, 0);
+
+      ObjectInfo sourceVar = compileMessageOperation(writer, scope, node, exprVal, getter,
+         0, arguments, EAttr::None, nullptr);
+
+      compileAssigningOp(writer, scope, targetVar, sourceVar);
+   }
+
+   return exprVal;
+}
+
 ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand,
    SyntaxNode roperand, ExpressionAttribute mode)
 {
@@ -7236,16 +7302,6 @@ ObjectInfo Compiler :: mapCharacterConstant(Scope& scope, SyntaxNode node)
 ObjectInfo Compiler :: mapConstant(Scope& scope, SyntaxNode node)
 {
    return { ObjectKind::ConstantLiteral, { V_WORD32 }, scope.module->mapConstant(node.identifier()) };
-}
-
-inline ref_t mapIntConstant(Compiler::Scope& scope, int integer)
-{
-   String<char, 20> s;
-
-   // convert back to string as a decimal integer
-   s.appendInt(integer, 16);
-
-   return scope.moduleScope->module->mapConstant(s.str());
 }
 
 inline ref_t mapLongConstant(Compiler::Scope& scope, long long integer)
@@ -8099,7 +8155,7 @@ ref_t Compiler :: resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo
    dummyWriter.newNode(SyntaxKey::Root);
 
    for (size_t i = 0; i < items.count(); i++) {
-      ref_t typeRef = resolvePrimitiveType(scope, items[i].typeInfo, false);
+      ref_t typeRef = retrieveStrongType(scope, items[i]);
 
       dummyWriter.newNode(SyntaxKey::TemplateArg, typeRef);
       dummyWriter.newNode(SyntaxKey::Type);
@@ -8377,6 +8433,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       }
       case SyntaxKey::TupleCollection:
          retVal = compileTupleCollectiom(writer, scope, current);
+         break;
+      case SyntaxKey::TupleAssignOperation:
+         retVal = compileTupleAssigning(writer, scope, current);
          break;
       case SyntaxKey::None:
          assert(false);

@@ -149,6 +149,7 @@ namespace elena_lang
    constexpr auto NOT_MESSAGE             = "Inverted";
    constexpr auto NEGATE_MESSAGE          = "Negative";
    constexpr auto VALUE_MESSAGE           = "Value";
+   constexpr auto ITEM_MESSAGE = "Value";
    constexpr auto NOTEQUAL_MESSAGE        = "notequal";
    constexpr auto LESS_MESSAGE            = "less";
    constexpr auto NOTLESS_MESSAGE         = "notless";
