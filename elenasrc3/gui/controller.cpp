@@ -16,7 +16,7 @@ using namespace elena_lang;
 //   
 //}
 
-void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name, int notifyMessage)
+void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name)
 {
    Text* text = new Text(_settings.eolMode);
    text->create();

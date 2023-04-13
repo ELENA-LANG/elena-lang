@@ -35,18 +35,22 @@ inline ustr_t getPlatformName(PlatformType type)
 
 // --- SourceViewController ---
 
-void SourceViewController :: newSource(TextViewModelBase* model, ustr_t caption, bool autoSelect)
+void SourceViewController :: newSource(TextViewModelBase* model, ustr_t caption, bool autoSelect, NotificationStatus& status)
 {
-//   IdentifierString tabName("unnamed");
+   IdentifierString tabName("unnamed");
 
-   //newDocument(model, caption, model->empty ? NOTIFY_CURRENTVIEW_SHOW : 0);
+   bool empty = model->empty;
 
-   //if (autoSelect) {
-   //   selectDocument(model, caption);
+   newDocument(model, caption);
 
-   //   model->DocView()->status.unnamed = true;
-   //   model->DocView()->status.modifiedMode = true;
-   //}
+   if (empty)
+      status |= FRAME_VISIBILITY_CHANGED;
+
+   if (autoSelect) {
+      int index = model->getDocumentIndex(caption);
+
+      selectDocument(model, index, status);
+   }
 }
 
 bool SourceViewController :: openSource(TextViewModelBase* model, ustr_t caption, path_t sourcePath, 
@@ -589,16 +593,14 @@ bool IDEController :: selectSource(ProjectModel* model, SourceViewModel* sourceM
 
 void IDEController :: doNewFile(IDEModel* model)
 {
+   NotificationStatus status = NONE_CHANGED;
    ReferenceName sourceNameStr;
    projectController.defineSourceName(&model->projectModel, nullptr, sourceNameStr);
 
-   sourceController.newSource(&model->sourceViewModel, *sourceNameStr, true);
-}
+   sourceController.newSource(&model->sourceViewModel, *sourceNameStr, true, status);
 
-//bool IDEController :: openFile(IDEModel* model, path_t sourceFile)
-//{
-//   
-//}
+   _notifier->notify(NOTIFY_IDE_CHANGE, status);
+}
 
 bool IDEController :: openFile(IDEModel* model, path_t sourceFile, NotificationStatus& status)
 {

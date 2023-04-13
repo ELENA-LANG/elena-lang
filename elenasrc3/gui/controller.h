@@ -55,8 +55,7 @@ namespace elena_lang
       void selectPreviousDocument(TextViewModelBase* model);
       void closeDocument(TextViewModelBase* model, int index, NotificationStatus& status) override;
 
-      void newDocument(TextViewModelBase* model, ustr_t name, 
-         int notifyMessage) override;
+      void newDocument(TextViewModelBase* model, ustr_t name) override;
 
       bool insertNewLine(TextViewModelBase* model) override;
       bool insertChar(TextViewModelBase* model, text_c ch) override;

@@ -302,6 +302,15 @@ namespace elena_lang
       bool isUnnamed() { return status.unnamed; }
       bool isModified() { return status.modifiedMode; }
 
+      void markAsUnnamed()
+      {
+         status.unnamed = true;
+      }
+      void markAsModified()
+      {
+         status.modifiedMode = true;
+      }
+
       Point getSize() const { return _size; }
 
       virtual void setSize(Point size);

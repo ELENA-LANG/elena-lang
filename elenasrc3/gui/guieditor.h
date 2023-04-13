@@ -121,8 +121,7 @@ namespace elena_lang
    class TextViewControllerBase
    {
    public:
-      virtual void newDocument(TextViewModelBase* model, ustr_t name, 
-         int notifyMessage) = 0;
+      virtual void newDocument(TextViewModelBase* model, ustr_t name) = 0;
       virtual bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
          FileEncoding encoding) = 0;
 

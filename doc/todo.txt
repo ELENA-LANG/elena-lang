@@ -24,8 +24,6 @@ In development:
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
-    * ide : new source
-
     * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
     * ide : opening a sub-watch - more than 3 level
     * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
@@ -40,6 +38,8 @@ In development:
     * redesign switch statement : it should be possible to use as an expression as well
       (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
        console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
+    * ide : closing unsaved file - closing unsaved
+
 
     * #508 : support strong-typed variables for tuple unboxing
     * multi-value return - #508

@@ -18,7 +18,7 @@ namespace elena_lang
    class SourceViewController : public TextViewController
    {
    public:
-      void newSource(TextViewModelBase* model, ustr_t name, bool autoSelect);
+      void newSource(TextViewModelBase* model, ustr_t name, bool autoSelect, NotificationStatus& status);
       bool openSource(TextViewModelBase* model, ustr_t name, path_t sourcePath,
          FileEncoding encoding, bool autoSelect, NotificationStatus& status);
       void closeSource(TextViewModelBase* model, int index, bool autoSelect, NotificationStatus& status);
