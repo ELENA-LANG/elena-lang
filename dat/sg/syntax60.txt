@@ -11,7 +11,6 @@ __define constant           12301;
 __define long               12302;
 __define real               12303;
 
-__define SUB_DECLARATION     4097;
 __define DECLARATION         5120;
 __define BLOCK               7184;
 __define NO_BODY             7185;
@@ -105,6 +104,7 @@ __define ISNIL_OPERATION        7373;
 __define SWITCH_OPERATION       7376;
 __define COMPLEX_NAME 	        4302;
 __define INLINE                 4303;
+__define SUB_DECLARATION        4312;
 __define PARAMETER_BLOCK        4336;
 
 START ::= 
@@ -219,7 +219,8 @@ NT_EXPRESSION ::=
 ROOT_EXPRESSION ::=
         identifier { 
 		{ identifier }+ { 
-			L0 ^OBJECT L0_R L1_OP?
+			"," ^OBJECT SUB_VARIABLE { "," SUB_VARIABLE }* ASSIGN EXPRESSION ^TUPLE_ASSIGNING 
+			| L0 ^OBJECT L0_R L1_OP?
 			| { DYNAMIC_DIMENSION ^ARRAY_TYPE }+ {
 				identifier ^OBJECT ASSIGN ASSIGN_R
 				| "{" ^OBJECT COLLECTION "}" ^ COLLECTION_EXPRESSION L3_OP*

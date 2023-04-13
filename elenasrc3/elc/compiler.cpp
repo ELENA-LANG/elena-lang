@@ -6811,7 +6811,11 @@ ObjectInfo Compiler :: compileTupleAssigning(BuildTreeWriter& writer, ExprScope&
    targets.add(mapObject(scope, current, EAttr::None));
    current = current.nextNode();
    while (current == SyntaxKey::SubVariable) {
-      targets.add(mapObject(scope, current, EAttr::None));
+      ObjectInfo subVar = mapObject(scope, current, EAttr::NewVariable | EAttr::IgnoreDuplicate);
+      if (subVar.kind == ObjectKind::Unknown)
+         scope.raiseError(errUnknownObject, current);
+
+      targets.add(subVar);
 
       current = current.nextNode();
    }

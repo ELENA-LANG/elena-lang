@@ -24,13 +24,15 @@ In development:
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
-    * assigning multi-value
+    * ide : new source
+
+    * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
+    * ide : opening a sub-watch - more than 3 level
+    * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
+    * ide : refreshing auto watch - with the same name, unused
 
     * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
     * optimization : copy a sub array to another array - starting
-    * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
-    * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
-    * ide : new source
     * x86 : gui - starting - new project type
 
     * switch expression
@@ -70,8 +72,6 @@ In development:
     * ldoc : get rid of BaseEnumerator<TupleTuple#2,T1,T2> and so on
     * strong typed forward constant
     * arrange action for i386 / amd64 linux release
-    * ide : opening a sub-watch - more than 3 level
-    * ide : refreshing auto watch - with the same name, unused
     * ide : debug vm client app
     * x86 : gui
 
