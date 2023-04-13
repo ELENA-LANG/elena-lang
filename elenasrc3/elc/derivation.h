@@ -166,6 +166,7 @@ namespace elena_lang
       void flushInlineTemplatePostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node/*, bool ignorePostfix*/);
       void flushClassPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushSymbolPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushParent(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushParentTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 

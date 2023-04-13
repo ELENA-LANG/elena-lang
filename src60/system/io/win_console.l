@@ -2,7 +2,7 @@ namespace io
 {
    import system'text;
 
-   const int FILE_TYPE_CHAR = 2;
+   const IntNumber FILE_TYPE_CHAR = 2;
 
    struct KEY_EVENT_RECORD
    {

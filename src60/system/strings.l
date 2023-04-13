@@ -420,7 +420,7 @@ public const struct String : BaseValue,
    string clone() = String.copy(self);
 }
 
-public const string emptyString = String.MinValue;
+public const String emptyString = String.MinValue;
 
 // --- StringEnumerator ---
 
@@ -786,7 +786,7 @@ public const struct WideString : BaseValue
 // --- emptyWideString ---
 
 /// An empty wide literal value
-public const wide emptyWideString = WideString.MinValue;
+public const WideString emptyWideString = WideString.MinValue;
 
 // --- WideStringEnumerator ---
 

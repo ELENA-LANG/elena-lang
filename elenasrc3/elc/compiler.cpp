@@ -2373,6 +2373,7 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, re
 void Compiler :: declareSymbol(SymbolScope& scope, SyntaxNode node)
 {
    declareSymbolAttributes(scope, node);
+   declareSymbolMetaInfo(scope, node);
 
    scope.save();
 }
@@ -2542,6 +2543,49 @@ void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
             break;
          default:
             scope.raiseError(errInvalidSyntax, node);
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: declareSymbolMetaInfo(SymbolScope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::InlineTemplate:
+            if (!importInlineTemplate(scope, current, INLINE_PREFIX, node))
+               scope.raiseError(errUnknownTemplate, node);
+            break;
+      //case SyntaxKey::InlinePropertyTemplate:
+      //   if (!importPropertyTemplate(scope, current, INLINE_PROPERTY_PREFIX,
+      //      node))
+      //   {
+      //      scope.raiseError(errUnknownTemplate, node);
+      //   }
+      //   break;
+      //case SyntaxKey::MetaExpression:
+      //{
+      //   MetaScope metaScope(&scope, Scope::ScopeLevel::Field);
+
+      //   evalStatement(metaScope, current);
+      //   break;
+      //}
+      //case SyntaxKey::MetaDictionary:
+      //   declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field);
+      //   break;
+      //case SyntaxKey::Name:
+      //case SyntaxKey::Type:
+      //case SyntaxKey::ArrayType:
+      //case SyntaxKey::TemplateType:
+      //case SyntaxKey::Attribute:
+      //case SyntaxKey::Dimension:
+      //case SyntaxKey::EOP:
+      //   break;
+         default:
+      //   scope.raiseError(errInvalidSyntax, node);
             break;
       }
 
@@ -4044,11 +4088,20 @@ void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node)
    bool constant = false;
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      if (current == SyntaxKey::Attribute) {
-         if (!_logic->validateSymbolAttribute(current.arg.value, scope.visibility, constant, scope.isStatic)) {
-            current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
-            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-         }
+      switch (current.key) {
+         case SyntaxKey::Attribute:
+            if (!_logic->validateSymbolAttribute(current.arg.value, scope.visibility, constant, scope.isStatic)) {
+               current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
+               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+            }
+            break;
+         case SyntaxKey::Type:
+         case SyntaxKey::ArrayType:
+         case SyntaxKey::TemplateType:
+            scope.info.typeRef = resolveStrongTypeAttribute(scope, current, true, false);
+            break;
+         default:
+            break;
       }
 
       current = current.nextNode();

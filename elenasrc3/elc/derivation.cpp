@@ -829,6 +829,18 @@ void SyntaxTreeBuilder :: flushParent(SyntaxTreeWriter& writer, Scope& scope, Sy
    }
 }
 
+void SyntaxTreeBuilder :: flushSymbolPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current.key == SyntaxKey::Postfix) {
+         flushTemplageExpression(writer, scope, current.firstChild(), SyntaxKey::InlineTemplate, false);
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void SyntaxTreeBuilder :: flushClassPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
@@ -1341,6 +1353,10 @@ inline bool isTemplateDeclaration(SyntaxNode node, SyntaxNode declaration, bool&
       else if (current == SyntaxKey::Parameter && (withPostfix || isTemplate(declaration))) {
          return true;
       }
+      else if (current == SyntaxKey::CodeBlock && !withPostfix && isTemplate(declaration)) {
+         // HOTFIX : recognize inline template with no arguments
+         return true;
+      }
       else if (current != SyntaxKey::identifier) 
          break;
 
@@ -1386,6 +1402,8 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode 
    bool withComplexName = false;
    if(node.existChild(SyntaxKey::GetExpression)) {
       writer.CurrentNode().setKey(SyntaxKey::Symbol);
+
+      flushSymbolPostfixes(writer, scope, node);
 
       flushStatement(writer, scope, node.findChild(SyntaxKey::GetExpression));
    }

@@ -1,19 +1,70 @@
-import system'routines;
 import extensions;
+//import system'io;
+//
+//preloaded used = new object[]{ Node };
+//
+//public class Node
+//{
+//   string Text  : prop;
+//   Node   Left  : prop;
+//   Node   Right : prop;
+//    
+//   constructor()
+//   {
+//   }    
+//    
+//   constructor(string text)
+//   {
+//      Text := text
+//   }
+//    
+//   constructor(Node left, Node right, string operation)
+//   {
+//      Left := left;
+//      Right := right;
+//      Text := operation;
+//   }
+//    
+//   eval()
+//   {
+//      if (Text==nil)
+//      {
+//         ^ Left.eval()
+//      }
+//      else
+//      {
+//         Text =>
+//            "+" { ^ Left.eval() + Right.eval() }
+//            "-" { ^ Left.eval() - Right.eval() }
+//            "*" { ^ Left.eval() * Right.eval() }
+//            "/" { ^ Left.eval() / Right.eval() }
+//            : { ^ Text.toReal() }
+//      }        
+//   }
+//}
+//
+//public program()
+//{
+//   auto engine := new extensions'scripting'ScriptEngine();
+//   engine.loadPath("grammar2.es");
+//    
+//   var line;
+//   until(line := console.write(">").readLine(), line == "")
+//   {
+//      var tape := engine.buildScript(line);
+//        
+//      console.printLine("=",tape.eval());        
+//   }
+//}
 
-singleton Tester
+public inline preloaded()
 {
-   int,string get()
-   {
-      ^ (1,"abc")
-   }
+   #let preloadedSymbols += __decl;
 }
+
+symbol test : preloaded = console.printLine("Preloaded fired!");
 
 public program()
 {
-//   var t := Tester.get();
-//   console.printLine("t.Item1=",t.Item1, ",t.Item2=", t.Item2);
-
-   var a, b := Tester.get();
-   console.printLine("t.Item1 aka a=",a, ",t.Item2 aka b=", b);
+   console.printLine("Started");
 }

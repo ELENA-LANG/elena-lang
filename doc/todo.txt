@@ -5,6 +5,13 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
+    * preloaded symbol
+    * support preloaded symbols
+
+    * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
+    * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
+    * ide : opening a sub-watch - more than 3 level
+
     ! migrate rest of elena 5.0 functionality (script engine, infinite enumeration, ...)
     ! script and db samples
     ! x86 : gui
@@ -17,18 +24,13 @@ In development:
     ! script samples : win x86, win x86-64, linix i386, linux amd64
     ! migrate all script engine tutorials : win x86, win x86-64, linix i386, linux amd64
     ! regression tests : github issues
-    ! i386 : multi-threading
-    ! x86-64 : multi-threading
-    ! x86-64 : gui
     ! elc : using custom grammar for parsing a source
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
-    * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
-    * ide : opening a sub-watch - more than 3 level
-    * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
+    * review documentation - check if all code is compiled
+    * ide : fix select all
     * ide : refreshing auto watch - with the same name, unused
-
     * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
     * optimization : copy a sub array to another array - starting
     * x86 : gui - starting - new project type
@@ -39,7 +41,9 @@ In development:
       (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
        console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
     * ide : closing unsaved file - closing unsaved
+    * ide : selecting an error line - try to get rid of blicking
 
+    * elena vm : preloaded symbol
 
     * #508 : support strong-typed variables for tuple unboxing
     * multi-value return - #508
@@ -74,6 +78,8 @@ In development:
     * arrange action for i386 / amd64 linux release
     * ide : debug vm client app
     * x86 : gui
+    * system module - it should be possible to use type aliases (replace all cases of using direct types 
+      for symbols in system (int,string,wide))
 
     === Iteration 16 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop
@@ -83,9 +89,13 @@ In development:
     ! elena sm : script samples Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
     ! migrate all script engine tutorials : linix aarch64, linux ppc64le
     ! elena sm : linux
+    ! i386 : multi-threading
+    ! x86-64 : multi-threading
+    ! x86-64 : gui
     * templates with parameters: template can have attribute values in the brackets after the main body
       e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
     * migrate: amb, anagram
+    * support preloaded symbols : dynamic
 
     === Iteration 17 ===
     ! elena vm : aarch64, ppc64
@@ -115,7 +125,6 @@ Backlog:
     * support strong extension template arrayOp<T> : strong, weak
     * support autoloaded classes : should be automatically resolved when the module is loaded
       (flag elAutoLoaded)
-    * support preloaded symbols : both static and dynamic
     * module extension dispatcher should be preloaded
     * elena : nullable
     * system'collections'Map - migrating rest of methods
@@ -383,7 +392,6 @@ Backlog:
     * ide : project settings
     * ide : styling source code
     * call a message / closure; debugger
-    * support preloaded symbols
     * redux : add output convertion for the method without the explicit return statement
 
     * optimization : openheader / open - there should be an optimized version for n < 4 - with reserved raw stack

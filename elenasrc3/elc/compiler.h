@@ -1084,6 +1084,8 @@ namespace elena_lang
 
       void initializeMethod(ClassScope& scope, MethodScope& methodScope, SyntaxNode current);
 
+      void declareSymbolMetaInfo(SymbolScope& scope, SyntaxNode node);
+
       void declareMetaInfo(Scope& scope, SyntaxNode node);
       void declareMethodMetaInfo(MethodScope& scope, SyntaxNode node);
       void declareMethod(MethodScope& scope, SyntaxNode node, bool abstractMode);

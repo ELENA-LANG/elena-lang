@@ -808,7 +808,7 @@ SWITCH_CODE ::=
 	"{" BLOCK;
 
 COLLECTION ::=
-	EXPRESSION { "," EXPRESSION }+ ;
+	EXPRESSION { "," EXPRESSION }* ;
 
 POSTFIX ::=
 	identifier { 

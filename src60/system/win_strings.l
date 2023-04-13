@@ -1,2 +1,2 @@
-public const string newLineConstant
+public const String newLineConstant
     = $13$10;

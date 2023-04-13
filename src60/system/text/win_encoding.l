@@ -1,6 +1,6 @@
 namespace text
 {
-   const int MB_ERR_INVALID_CHARS     = 00000008h;
+   const IntNumber MB_ERR_INVALID_CHARS     = 00000008h;
 
    // --- WinEncoder ---
    public class WinEncoder : Encoder

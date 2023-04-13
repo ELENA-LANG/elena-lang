@@ -14,6 +14,13 @@ public inline info(descr)
    #let super descriptions[$name __decl] := descr;
 }
 
+// --- preloaded ---
+
+public inline preloaded()
+{
+   #let preloadedSymbols += __decl;
+}
+
 // --- prop ---
 
 public field prop<name, T>
@@ -38,6 +45,8 @@ public field rprop<name, T>
       ^ name
    }
 }
+
+// --- interface<T> ---
 
 public interface<T>
 {
