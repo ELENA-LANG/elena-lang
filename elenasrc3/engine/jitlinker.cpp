@@ -11,6 +11,7 @@
 #include "jitlinker.h"
 #include "langcommon.h"
 #include "bytecode.h"
+#include "module.h"
 
 //#define FULL_OUTOUT_INFO 1
 
@@ -295,16 +296,17 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
       module = _module;
 
    addr_t vaddress = INVALID_ADDR;
-   //switch (mask) {
-   //   case mskNameLiteralRef:
-   //   case mskPathLiteralRef:
-   //      break;
-   //   default:
+   switch (mask) {
+      case mskAutoSymbolRef:
+         // HOTFIX : preloaded symbols should be resolved later
+         _owner->_mapper->addLazyReference({ mask, position, module, reference, addressMask });
+         return;
+      default:
          vaddress = _owner->_mapper->resolveReference(
             _owner->_loader->retrieveReferenceInfo(module, refID, mask, 
                _owner->_forwardResolver), mask);
-   //      break;
-   //}
+         break;
+   }
 
    if (vaddress != INVALID_ADDR) {
       switch (addressMask & mskRefType) {
@@ -1322,6 +1324,61 @@ addr_t JITLinker :: resolveStaticVariable(ReferenceInfo referenceInfo, ref_t sec
    return vaddress;
 }
 
+void JITLinker :: copyMetaList(ModuleInfo info, ModuleInfoList& output)
+{
+   auto sectionInfo = _loader->getSection({ info.module, info.module->resolveReference(info.reference) }, mskTypeListRef, 0, true);
+   if (!sectionInfo.module)
+      return;
+
+   MemoryReader bcReader(sectionInfo.section);
+
+   while (!bcReader.eof()) {
+      ref_t symbolRef = bcReader.getRef();
+
+      output.add({ info.module, symbolRef & ~mskAnyRef });
+   }
+}
+
+void JITLinker :: createAutoGenerateSymbols(TapeGeneratorBase* tapeGenerator, VAddressMap& autoReferences, ModuleBase* module)
+{
+   // fill the list of virtual references
+   VAddressMap virtualReferences({});
+   _mapper->forEachLazyReference<VAddressMap*>(&virtualReferences, [](VAddressMap* virtualReferences, LazyReferenceInfo info)
+      {
+         if (info.mask == mskAutoSymbolRef) {
+            virtualReferences->add(info.position, { info.reference, info.module, info.addressMask, 0 });
+         }
+      });
+
+   for (auto it = virtualReferences.start(); !it.eof(); ++it) {
+      auto info = *it;
+
+      IdentifierString metaReference("'", META_PREFIX);
+      metaReference.append(info.module->resolveReference(info.reference & ~mskAnyRef) + 1);
+
+      ref_t autoRef = module->mapReference(*metaReference);
+
+      ModuleInfoList list({});
+      ModuleInfoList symbolList({});
+
+      _loader->loadDistributedSymbols(*metaReference, list);
+      for (auto it = list.start(); !it.eof(); ++it) {
+         copyMetaList(*it, symbolList);
+      }
+
+      MemoryDump tapeSymbol;
+      tapeGenerator->generateAutoSymbol(symbolList, module, tapeSymbol);
+
+      IdentifierString fullAutoName(AUTO_GENERATED_PREFIX, *metaReference);
+      ref_t fullRef = module->mapReference(*fullAutoName);
+
+      addr_t vaddress = resolveTemporalByteCode(tapeSymbol, module);
+      _mapper->mapReference({ module, module->resolveReference(fullRef) }, vaddress, mskSymbolRef);
+
+      autoReferences.add(it.key(), { fullRef | mskSymbolRef, module, info.addressMask, info.disp });
+   }
+}
+
 void JITLinker :: prepare(JITCompilerBase* compiler)
 {
    _compiler = compiler;
@@ -1356,11 +1413,19 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
    fixReferences(references, _imageProvider->getTextSection());
 }
 
-void JITLinker :: complete(JITCompilerBase* compiler, ustr_t superClass)
+void JITLinker :: complete(TapeGeneratorBase* tapeGenerator, JITCompilerBase* compiler, ustr_t superClass)
 {
    // set voidobj
    addr_t superAddr = resolve(superClass, mskVMTRef, true);
    compiler->updateVoidObject(_imageProvider->getRDataSection(), superAddr, _virtualMode);
+
+   // load preloaded / auto-generated symbols
+   Module dummyModule;
+   MemoryBase* rdSection = _imageProvider->getRDataSection();
+   VAddressMap autoReferences({});
+
+   createAutoGenerateSymbols(tapeGenerator, autoReferences, &dummyModule);
+   fixReferences(autoReferences, rdSection);
 
    // fix message body references
    MemoryBase* mbSection = _imageProvider->getMBDataSection();

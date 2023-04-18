@@ -34,7 +34,7 @@ namespace elena_lang
    };
 
    // --- TargetImage ---
-   class TargetImage : public ReferenceMapper, public ImageProvider
+   class TargetImage : public ReferenceMapper, public ImageProvider, public TapeGeneratorBase
    {
       PlatformType       _systemTarget;
 
@@ -63,6 +63,8 @@ namespace elena_lang
       {
          return _debugEntryPoint & ~mskAnyRef;
       }
+
+      void generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol) override;
 
       TargetImage(PlatformType systemTarget, ForwardResolverBase* resolver, LibraryLoaderBase* loader,
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType),

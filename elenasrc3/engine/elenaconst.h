@@ -65,6 +65,7 @@ namespace elena_lang
    constexpr auto TEMPLATE_PREFIX_NS         = "'$auto'";
    constexpr auto TEMPLATE_PREFIX_NS_ENCODED = "@$auto@";
    constexpr auto FORWARD_PREFIX_NS          = "$forwards'";
+   constexpr auto AUTO_SYMBOL_PREFIX         = "@autosymbol";
    constexpr auto INLINE_CLASSNAME           = "$inline";          // nested class generic name
 
    constexpr auto PREDEFINED_MAP             = "$forwards'meta$predefined";
@@ -110,6 +111,7 @@ namespace elena_lang
    constexpr auto META_PREFIX             = "meta$";
    constexpr auto INLINE_PREFIX           = "inline$";
    constexpr auto INLINE_PROPERTY_PREFIX  = "prop$";
+   constexpr auto AUTO_GENERATED_PREFIX   = "generated$";
 
    // --- ELENA class prefixes / postfixes ---
    constexpr auto PRIVATE_PREFIX_NS       = "'$private'";
@@ -344,6 +346,7 @@ namespace elena_lang
    constexpr ref_t mskRealLiteralRef      = 0x21000000u;
    constexpr ref_t mskExtMssgLiteralRef   = 0x22000000u;
    constexpr ref_t mskPSTRRef             = 0x23000000u;
+   constexpr ref_t mskAutoSymbolRef       = 0x24000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

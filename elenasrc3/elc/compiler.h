@@ -99,7 +99,8 @@ namespace elena_lang
       UnboxingRequired,
       RefUnboxingRequired,
       LocalUnboxingRequired,
-      ArrayContent
+      ArrayContent,
+      AutoSymbol,
    };
 
    struct ObjectInfo
@@ -268,7 +269,7 @@ namespace elena_lang
       void setAttributeMapValue(ref_t dictionaryRef, ustr_t key, ustr_t value);
       void setTypeMapValue(ref_t dictionaryRef, ustr_t key, ref_t reference);
 
-      void addTypeListItem(ref_t dictionaryRef, ref_t symbolRef);
+      void addTypeListItem(ref_t dictionaryRef, ref_t symbolRef, ref_t mask);
       void addConstArrayItem(ref_t dictionaryRef, ref_t item, ref_t mask);
 
       bool evalDictionaryOp(ref_t operator_id, ArgumentsInfo& args);

@@ -218,6 +218,9 @@ namespace elena_lang
 
       addr_t resolve(ReferenceInfo refrenceInfo, ref_t sectionMask, bool silentMode);
 
+      void createAutoGenerateSymbols(TapeGeneratorBase* tapeGenerator, VAddressMap& autoReferences, ModuleBase* module);
+      void copyMetaList(ModuleInfo info, ModuleInfoList& output);
+
    public:
       addr_t resolveTape(ustr_t referenceName, MemoryBase* tape);
       addr_t resolveTemporalByteCode(MemoryDump& tapeSymbol, ModuleBase* module);
@@ -226,7 +229,7 @@ namespace elena_lang
       addr_t resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode);
 
       void prepare(JITCompilerBase* compiler);
-      void complete(JITCompilerBase* compiler, ustr_t superClass);
+      void complete(TapeGeneratorBase* tapeGenerator, JITCompilerBase* compiler, ustr_t superClass);
 
       JITLinker(ReferenceMapperBase* mapper, 
          LibraryLoaderBase* loader, ForwardResolverBase* forwardResolver,

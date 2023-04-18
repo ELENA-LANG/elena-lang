@@ -18,6 +18,8 @@ public inline info(descr)
 
 public inline preloaded()
 {
+   #new __string preloadedSymbols;
+
    #let preloadedSymbols += __decl;
 }
 

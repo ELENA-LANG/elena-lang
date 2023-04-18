@@ -335,7 +335,14 @@ namespace elena_lang
          module = nullptr;
          reference = 0;
       }
+      ModuleInfo(ModuleBase* module, ref_t reference)
+      {
+         this->module = module;
+         this->reference = reference;
+      }
    };
+
+   typedef List<ModuleInfo> ModuleInfoList;
 
    class LibraryLoaderListenerBase
    {
@@ -365,6 +372,15 @@ namespace elena_lang
       virtual ModuleInfo getDebugModule(ReferenceInfo referenceInfo, bool silentMode) = 0;
 
       virtual void resolvePath(ustr_t ns, PathString& path) = 0;
+
+      virtual void loadDistributedSymbols(ustr_t virtualSymbolName, ModuleInfoList& list) = 0;
+   };
+
+   // --- AutoSymbolGeneratorBase ---
+   class TapeGeneratorBase
+   {
+   public:
+      virtual void generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol) = 0;
    };
 
    class LibraryProviderBase

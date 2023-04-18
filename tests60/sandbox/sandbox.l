@@ -57,11 +57,6 @@ import extensions;
 //   }
 //}
 
-public inline preloaded()
-{
-   #let preloadedSymbols += __decl;
-}
-
 symbol test : preloaded = console.printLine("Preloaded fired!");
 
 public program()

@@ -834,7 +834,7 @@ void SyntaxTreeBuilder :: flushSymbolPostfixes(SyntaxTreeWriter& writer, Scope& 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current.key == SyntaxKey::Postfix) {
-         flushTemplageExpression(writer, scope, current.firstChild(), SyntaxKey::InlineTemplate, false);
+         flushTemplageExpression(writer, scope, current, SyntaxKey::InlineTemplate, false);
       }
 
       current = current.nextNode();

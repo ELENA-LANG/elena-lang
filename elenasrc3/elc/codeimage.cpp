@@ -8,6 +8,8 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "codeimage.h"
+
+#include "bytecode.h"
 #include "jitlinker.h"
 
 using namespace elena_lang;
@@ -72,7 +74,7 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
       _debugEntryPoint = (pos_t)linker.resolve(PROGRAM_ENTRY, mskSymbolRef, true);
 
       ustr_t superClass = resolver->resolveForward(SUPER_FORWARD);
-      linker.complete(compiler, superClass);
+      linker.complete(dynamic_cast<TapeGeneratorBase*>(this), compiler, superClass);
    }
 
    if (_debugEntryPoint == INVALID_ADDR) {
@@ -167,4 +169,35 @@ void TargetImage :: prepareImage(ustr_t ns)
    // save root namespace
    MemoryWriter debugWriter(getTargetDebugSection());
    debugWriter.writeString(ns);
+}
+
+void TargetImage :: generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol)
+{
+   MemoryWriter writer(&tapeSymbol);
+
+   pos_t sizePlaceholder = writer.position();
+   writer.writePos(0);
+
+   pos_t  command = 0;
+   ustr_t strArg = nullptr;
+
+   ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
+
+   // generate the preloaded list
+   for (auto it = list.start(); !it.eof(); ++it) {
+      auto info = *it;
+      ustr_t symbolName = info.module->resolveReference(info.reference);
+      IdentifierString fullName(info.module->name(), symbolName);
+
+      ByteCodeUtil::write(writer, ByteCode::CallR, module->mapReference(*fullName) | mskSymbolRef);
+   }
+
+   ByteCodeUtil::write(writer, ByteCode::CloseN);
+   ByteCodeUtil::write(writer, ByteCode::Quit);
+
+   pos_t size = writer.position() - sizePlaceholder - sizeof(pos_t);
+
+   writer.seek(sizePlaceholder);
+   writer.writePos(size);
+
 }

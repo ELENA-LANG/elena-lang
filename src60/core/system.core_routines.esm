@@ -1290,6 +1290,7 @@ labNext:
   nadd       dp:i, 1
 
   load       dp:i
+  set        marray:"$forwards'meta$startUpSymbols"
   xget
   xcall
 

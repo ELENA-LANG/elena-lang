@@ -8,6 +8,8 @@ In development:
     * preloaded symbol
     * support preloaded symbols
 
+    * support preloaded symbols x64
+
     * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
     * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
     * ide : opening a sub-watch - more than 3 level
