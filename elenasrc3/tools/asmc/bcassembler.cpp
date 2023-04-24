@@ -133,6 +133,13 @@ ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
 
       mask = mskTypeListRef;
    }
+   else if (tokenInfo.compare("array")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      _reader.read(tokenInfo);
+
+      mask = mskConstArray;
+   }
    else if (tokenInfo.compare("pstr")) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
@@ -977,6 +984,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::ReadN:
          case ByteCode::WriteN:
          case ByteCode::System:
+         case ByteCode::DCopy:
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
          case ByteCode::MovN:
          case ByteCode::AndN:

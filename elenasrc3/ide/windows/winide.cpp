@@ -304,6 +304,14 @@ void IDEWindow :: onDebugWatch()
    contextBrowser->expandRootNode();
 }
 
+void IDEWindow :: onDebugWatchBrowse(size_t item, size_t param)
+{
+   if (param) {
+      ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
+      _controller->refreshDebugContext(contextBrowser, _model, item, param);
+   }
+}
+
 void IDEWindow :: onProjectChange(bool empty)
 {
    TreeView* projectTree = dynamic_cast<TreeView*>(_children[_model->ideScheme.projectView]);
@@ -540,11 +548,19 @@ bool IDEWindow :: onCommand(int command)
       case IDM_HELP_API:
          openHelp();
          break;
+      case IDM_DEBUG_INSPECT:
+         refreshDebugNode();
+         break;
       default:
          return false;
    }
 
    return true;
+}
+
+void IDEWindow :: refreshDebugNode()
+{
+   dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch])->refreshCurrentNode();
 }
 
 void IDEWindow :: onStatusChange(StatusNMHDR* rec)
@@ -555,6 +571,9 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
          break;
       case NOTIFY_IDE_CHANGE:
          onIDEChange(rec->status);
+         break;
+      case NOTIFY_DEBUG_START:
+         onDebuggerStart();
          break;
       case NOTIFY_DEBUG_CHANGE:
          onDebuggerUpdate(rec);
@@ -633,11 +652,52 @@ void IDEWindow :: onTreeSelChanged(HWND wnd)
    }
 }
 
+void IDEWindow :: onTreeItemExpanded(NMTREEVIEWW* rec)
+{
+   for (size_t i = 0; i < _childCounter; i++) {
+      if (_children[i]->checkHandle(rec->hdr.hwndFrom)) {
+         ((TreeView*)_children[i])->onItemExpand(rec->itemNew.hItem);
+         break;
+      }
+   }
+}
+
 void IDEWindow :: onDoubleClick(NMHDR* hdr)
 {
    for (size_t i = 0; i < _childCounter; i++) {
       if (_children[i]->checkHandle(hdr->hwndFrom)) {
          ((ControlBase*)_children[i])->onDoubleClick(hdr);
+         break;
+      }
+   }
+}
+
+void IDEWindow :: onDebugWatchRClick(int controlIndex)
+{
+   DWORD dwpos = ::GetMessagePos();
+   Point p(LOWORD(dwpos), HIWORD(dwpos));
+
+   TreeView* treeView = ((TreeView*)_children[controlIndex]);
+
+   HTREEITEM item = treeView->hitTest(p.x, p.x);
+   if (item) {
+      treeView->select(item);
+   }
+
+   ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.debugContextMenu]);
+
+   menu->show(_handle, p);
+
+   //treeView->showContextMenu(LOWORD(dwpos), HIWORD(dwpos));
+}
+
+void IDEWindow :: onRClick(NMHDR* hdr)
+{
+   for (size_t i = 0; i < _childCounter; i++) {
+      if (_children[i]->checkHandle(hdr->hwndFrom)) {
+         if (i == _model->ideScheme.debugWatch) {
+            onDebugWatchRClick(i);
+         }
          break;
       }
    }
@@ -660,6 +720,17 @@ void IDEWindow :: onSelection(SelectionNMHDR* rec)
          break;
       case NOTIFY_REFRESH:
          onChildRefresh((int)rec->param);
+         break;
+      default:
+         break;
+   }
+}
+
+void IDEWindow :: onTreeItem(TreeItemNMHDR* rec)
+{
+   switch (rec->code) {
+      case NOTIFY_DEBUG_CONTEXT_EXPANDED:
+         onDebugWatchBrowse(rec->item, rec->param);
          break;
       default:
          break;
@@ -710,6 +781,9 @@ void IDEWindow :: onNotify(NMHDR* hdr)
       case STATUS_SELECTION:
          onSelection((SelectionNMHDR*)hdr);
          break;
+      case STATUS_TREEITEM:
+         onTreeItem((TreeItemNMHDR*)hdr);
+         break;
       case STATUS_COMPLETION:
          onComplition((CompletionNMHDR*)hdr);
          break;
@@ -722,9 +796,22 @@ void IDEWindow :: onNotify(NMHDR* hdr)
       case TVN_SELCHANGED:
          onTreeSelChanged(hdr->hwndFrom);
          break;
+      case TVN_ITEMEXPANDING:
+         onTreeItemExpanded((NMTREEVIEW*)hdr);
+         break;
+      case NM_RCLICK:
+         onRClick(hdr);
+         break;
       default:
          break;
    }
+}
+
+void IDEWindow :: onDebuggerStart()
+{
+   ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
+
+   contextBrowser->clearRootNode();
 }
 
 void IDEWindow :: onDebuggerUpdate(StatusNMHDR* rec)

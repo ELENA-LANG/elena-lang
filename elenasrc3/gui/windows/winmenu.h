@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Menu Header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINMENU_H
@@ -42,6 +42,29 @@ namespace  elena_lang
    public:
       RootMenu(HMENU hMenu);
    };
+
+   // --- ContextMenu ---
+
+   struct MenuInfo
+   {
+      size_t         key;
+      const wchar_t* text;
+   };
+
+   class ContextMenu : public MenuBase
+   {
+      bool isLoaded() const { return _handle != nullptr; }
+
+   public:
+      void create(int count, MenuInfo* items);
+
+      void show(HWND parent, Point& p) const;
+
+      ContextMenu();
+      virtual ~ContextMenu();
+   };
+
+
 }
 
 #endif

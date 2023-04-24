@@ -100,5 +100,8 @@
        <include>runtime/gc_routines.l</include>
        <include>runtime/vectortable.l</include>
      </module>
+     <module name="dynamic">
+       <include>dynamic/tape.l</include>
+     </module>
   </files>
 </configuration>

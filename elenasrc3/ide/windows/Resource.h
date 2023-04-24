@@ -38,6 +38,9 @@
 #define IDM_DEBUG_RUNTO             804
 #define IDM_DEBUG_STOP              805
 
+#define IDM_DEBUG_INSPECT           810
+#define IDM_DEBUG_SWITCHHEXVIEW     811
+
 #define IDM_WINDOW_NEXT             901
 #define IDM_WINDOW_PREVIOUS         902
 

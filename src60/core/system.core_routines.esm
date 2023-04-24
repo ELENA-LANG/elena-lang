@@ -824,6 +824,35 @@ procedure __byteToShort
 
 end
 
+procedure __readIntPtr
+
+  peek       sp:1
+  get        i:0
+  load
+  peek       sp:2
+  save
+
+end
+
+procedure __ptrCopyTo (self, arr, len)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  peek       fp:self
+  get        i:0
+  store      sp:0
+  peek       fp:len
+  load
+  peek       fp:arr
+  dcopy      1
+
+  close      []
+
+end
+
 procedure __copySubStr (dest, index, len, sour)
 
   xflush     sp:0
@@ -1225,6 +1254,72 @@ procedure __thread_create(self,arg,flags,ptr)
 
   peek       fp:ptr
   $save
+
+  close      []
+
+end
+
+procedure __tape_eval(self, buffer, len)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[index,command,size,ptr]
+
+  // ; alloc stack
+  peek       fp:buffer
+  load
+  dalloc
+
+  nsave      dp:index, 4
+  nsave      dp:ptr, 0
+
+  // while (index < len) {
+labNext:
+  peek       fp:len
+  load       
+  xcmp       dp:index
+  jge        labEnd
+
+  //command := buffer[index];
+  peek       fp:buffer
+  load       dp:index
+  xload
+  and        n:0FFh
+  save       dp:command
+
+  // index += 1;
+  nadd       dp:index, 1
+
+  // size := buffer[index];
+  load       dp:index
+  xload
+  save       dp:size
+
+  // index += 4;
+  nadd       dp:index, 4
+
+  // commands[command](size,buffer,i);
+  load       dp:command
+  set        array:"system'dynamic'$private'commands#$inline0"        
+  xget
+  call       vt:0
+
+  // ; store the result
+  load       dp:ptr
+  store      sp:0
+  set        fp:0
+  xassign
+  nadd       dp:ptr, -1
+
+  // i += size
+  set        dp:size
+  store      sp:0
+  iadd       dp:index, 4
+
+  jump       labNext
+
+labEnd:
 
   close      []
 

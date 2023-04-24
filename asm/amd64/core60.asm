@@ -590,6 +590,22 @@ inline % 1Ch
 
 end
 
+// ; xload
+inline %1Dh
+
+  lea  rax, [rbx+rdx]
+  mov  edx, dword ptr [rax]
+
+end
+
+// ; xlload
+inline %1Eh
+
+  lea  rax, [rbx+rdx]
+  mov  rdx, qword ptr [rax]
+
+end
+
 // ; coalesce
 inline % 20h
 

@@ -47,6 +47,8 @@ namespace elena_lang
       LLoad          = 0x1A,
       ConvL          = 0x1B,
       XLCmp          = 0x1C,
+      XLoad          = 0x1D,
+      XLLoad         = 0x1E,
 
       Coalesce       = 0x20,
       Not            = 0x21,

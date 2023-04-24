@@ -90,6 +90,7 @@ namespace elena_lang
 
       void runToCursor(ProjectModel& model, SourceViewModel& sourceModel);
       void refreshDebugContext(ContextBrowserBase* contextBrowser);
+      void refreshDebugContext(ContextBrowserBase* contextBrowser, size_t param, addr_t address);
 
       void setNotifier(NotifierBase* notifier)
       {
@@ -110,7 +111,11 @@ namespace elena_lang
       {
          if (_notifier)
             _notifier->notifyCompletion(id, param);
-
+      }
+      void notifyTreeItem(int id, size_t item, size_t param) override
+      {
+         if (_notifier)
+            _notifier->notifyTreeItem(id, item, param);
       }
 
       ProjectController(ProcessBase* outputProcess, DebugProcessBase* debugProcess, ProjectModel* model, SourceViewModel* sourceModel,
@@ -182,6 +187,8 @@ namespace elena_lang
       void doDebugStop(IDEModel* model);
 
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model);
+      void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param);
+
 
       void doSelectNextWindow(IDEModel* model);
       void doSelectPrevWindow(IDEModel* model);

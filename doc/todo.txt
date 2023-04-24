@@ -5,14 +5,11 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * preloaded symbol
-    * support preloaded symbols
+    * print an array of singleton
 
-    * support preloaded symbols x64
+    * impelement system'dynamic'TapeInterpreter
 
-    * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
     * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
-    * ide : opening a sub-watch - more than 3 level
 
     ! migrate rest of elena 5.0 functionality (script engine, infinite enumeration, ...)
     ! script and db samples
@@ -44,6 +41,7 @@ In development:
        console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
     * ide : closing unsaved file - closing unsaved
     * ide : selecting an error line - try to get rid of blicking
+    * ide : show hex number
 
     * elena vm : preloaded symbol
 
@@ -79,9 +77,12 @@ In development:
     * strong typed forward constant
     * arrange action for i386 / amd64 linux release
     * ide : debug vm client app
+    * ide : editor context menu
+    * ide : tool bar
     * x86 : gui
     * system module - it should be possible to use type aliases (replace all cases of using direct types 
       for symbols in system (int,string,wide))
+    * new opcode : xload, lxload - ppc64le, arm64
 
     === Iteration 16 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop
@@ -94,6 +95,7 @@ In development:
     ! i386 : multi-threading
     ! x86-64 : multi-threading
     ! x86-64 : gui
+    ! x86-64 : script samples
     * templates with parameters: template can have attribute values in the brackets after the main body
       e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
     * migrate: amb, anagram

@@ -796,6 +796,7 @@ bool DebugController :: startThread()
    while (_process->waitForEvent(DEBUG_ACTIVE, 0));
 
    //_listener->onStart();
+   _notifier->notify(NOTIFY_DEBUG_START, 0);
 
    return _process->isStarted();
 }

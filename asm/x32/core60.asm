@@ -588,6 +588,23 @@ inline % 1Ch
 
 end
 
+// ; xload
+inline %1Dh
+
+  lea  eax, [ebx+edx]
+  mov  edx, dword ptr [eax]
+
+end
+
+// ; xlload
+inline %1Eh
+
+  lea  eax, [ebx+edx]
+  mov  edx, dword ptr [eax+4]
+  mov  eax, dword ptr [eax]
+
+end
+
 // ; coalesce
 inline % 20h
 

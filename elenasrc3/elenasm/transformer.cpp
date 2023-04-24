@@ -126,8 +126,6 @@ void ScriptEngineBuilder :: saveClass(MemoryWriter& writer, ScriptEngineReaderBa
 
 void ScriptEngineBuilder :: flush(MemoryWriter& writer, ScriptEngineReaderBase& reader, Stack<ScriptBookmark>& stack)
 {
-   pos_t sizePos = writer.position();
-   writer.writeDWord(0);
    pos_t allocPos = writer.position();
    writer.writeDWord(0);
 
@@ -138,10 +136,6 @@ void ScriptEngineBuilder :: flush(MemoryWriter& writer, ScriptEngineReaderBase& 
       saveClass(writer, reader, stack, 0, allocated, stackSize);
    }
 
-   pos_t len = writer.position() - sizePos - 8;
-
-   writer.seek(sizePos);
-   writer.writeDWord(len);
    writer.seek(allocPos);
    writer.writeDWord(allocated + stackSize);
    writer.seekEOF();
@@ -183,4 +177,9 @@ void ScriptEngineBuilder :: parse(ScriptEngineReaderBase& reader, MemoryDump* ou
    }
 
    writer.writeDWord(0);
+}
+
+bool ScriptEngineBuilder :: parseGrammarRule(ScriptEngineReaderBase& reader)
+{
+   return false;
 }

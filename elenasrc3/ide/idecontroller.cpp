@@ -477,6 +477,11 @@ void ProjectController :: refreshDebugContext(ContextBrowserBase* contextBrowser
    contextBrowser->removeUnused(refreshedItems);
 }
 
+void ProjectController :: refreshDebugContext(ContextBrowserBase* contextBrowser, size_t param, addr_t address)
+{
+   _debugController.readContext(contextBrowser, (void*)param, address, 4);
+}
+
 // --- IDEController ---
 
 inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue)
@@ -1002,6 +1007,13 @@ bool IDEController :: doCompileProject(DialogBase& dialog, IDEModel* model)
 void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model)
 {
    projectController.refreshDebugContext(contextBrowser);
+
+   _notifier->notifySelection(NOTIFY_REFRESH, model->ideScheme.debugWatch);
+}
+
+void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param)
+{
+   projectController.refreshDebugContext(contextBrowser, item, param);
 
    _notifier->notifySelection(NOTIFY_REFRESH, model->ideScheme.debugWatch);
 }

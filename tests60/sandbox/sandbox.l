@@ -1,7 +1,7 @@
 import extensions;
 //import system'io;
 //
-//preloaded used = new object[]{ Node };
+//used : preloaded = new object[]{ Node };
 //
 //public class Node
 //{
@@ -42,24 +42,24 @@ import extensions;
 //      }        
 //   }
 //}
-//
-//public program()
-//{
-//   auto engine := new extensions'scripting'ScriptEngine();
-//   engine.loadPath("grammar2.es");
-//    
-//   var line;
-//   until(line := console.write(">").readLine(), line == "")
-//   {
-//      var tape := engine.buildScript(line);
-//        
-//      console.printLine("=",tape.eval());        
-//   }
-//}
 
-symbol test : preloaded = console.printLine("Preloaded fired!");
+singleton A;
+singleton B;
+
+const object[] array = new object[] {A,B};
 
 public program()
 {
-   console.printLine("Started");
+   console.printLine(array.asEnumerable());
+
+//   auto engine := new extensions'scripting'ScriptEngine();
+//   engine.loadPath("grammar2.es");
+    
+//   var line;
+//   until(line := console.write(">").readLine(), line == "")
+//   {
+//      var tape := engine.buildScript(/*line*/"2+3");
+        
+//      console.printLine("=",tape.eval());        
+//   }
 }

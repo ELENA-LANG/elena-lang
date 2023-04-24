@@ -50,6 +50,7 @@ namespace elena_lang
 
       void onStatusChange(StatusNMHDR* rec);
       void onSelection(SelectionNMHDR* rec);
+      void onTreeItem(TreeItemNMHDR* rec);
       void onComplition(CompletionNMHDR* rec);
       //void onModelChange(ExtNMHDR* hdr);
       //void onNotifyMessage(ExtNMHDR* hdr);
@@ -57,10 +58,13 @@ namespace elena_lang
       void onDebugWatch();
 
       void onDoubleClick(NMHDR* hdr);
+      void onRClick(NMHDR* hdr);
+      void onDebugWatchRClick(int index);
 
       void onTabSelChanged(HWND wnd);
       void onTreeSelChanged(HWND wnd);
       void onChildRefresh(int controlId);
+      void onTreeItemExpanded(NMTREEVIEW* rec);
 
       void onLayoutChange(NotificationStatus status);
       void onIDEChange(NotificationStatus status);
@@ -75,6 +79,7 @@ namespace elena_lang
       void onCompilationEnd(int exitCode);
       void onErrorHighlight(int index);
       void onDebugResult(int code);
+      void onDebugWatchBrowse(size_t item, size_t param);
 
       void onProjectChange(bool empty);
       void onProjectViewSel(size_t index);
@@ -106,7 +111,10 @@ namespace elena_lang
 
       void openHelp();
 
+      void refreshDebugNode();
+
       void onIDEViewUpdate(bool forced);
+      void onDebuggerStart();
       void onDebuggerUpdate(StatusNMHDR* rec);
       void onDocumentUpdate(DocumentChangeStatus& changeStatus) override;
 
