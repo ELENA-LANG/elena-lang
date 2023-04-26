@@ -1103,6 +1103,22 @@ inline %9Ch
 
 end
 
+// ; xadddpn
+inline %09Dh
+
+  mov  eax, dword ptr [rbp+__arg32_1]
+  add  edx, eax
+
+end
+
+// ; xsetfp
+inline %09Eh
+
+  lea  rax, [rdx*4]
+  lea  rbx, [rbp + rax + __arg32_1]
+
+end 
+
 // ; savedp
 inline %0A0h
 

@@ -93,6 +93,8 @@ namespace elena_lang
       DCopy          = 0x9A,
       OrN            = 0x9B,
       MulN           = 0x9C,
+      XAddDP         = 0x9D,
+      XSetFP         = 0x9E,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,

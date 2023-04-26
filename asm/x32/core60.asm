@@ -1086,6 +1086,22 @@ inline %9Ch
 
 end
 
+// ; xadddpn
+inline %09Dh
+
+  mov  eax, [ebp+__arg32_1]
+  add  edx, eax
+
+end
+
+// ; xsetfp
+inline %09Eh
+
+  lea  eax, [edx*4]
+  lea  ebx, [ebp + eax + __arg32_1]
+
+end 
+
 // ; savedp
 inline %0A0h
 

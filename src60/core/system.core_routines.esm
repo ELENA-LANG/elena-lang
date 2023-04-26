@@ -553,7 +553,6 @@ labEnd:
 
 end
 
-
 procedure __wstr_copysubs (self, s1, s2, index, len)
 
   xflush     sp:0
@@ -1299,10 +1298,24 @@ labNext:
   // index += 4;
   nadd       dp:index, 4
 
-  // commands[command](size,buffer,i);
-  load       dp:command
-  set        array:"system'dynamic'$private'commands#$inline0"        
-  xget
+  // copy arguments
+  xassignsp
+  store      sp:0
+  load       dp:ptr
+  xset       fp:0
+  swap       sp:0
+  dtrans
+
+  // loadClass
+  call       extern:LoadClassByBufferLA(buffer, index, size)
+  cmp        n:0
+  jeq        labNotFound 
+  save       sp:0
+
+  mov        mssg : "#constructor[1]"
+  xadd       dp:command
+
+  peek       sp:0
   call       vt:0
 
   // ; store the result
@@ -1320,8 +1333,28 @@ labNext:
   jump       labNext
 
 labEnd:
-
   close      []
+  quit
+
+labNotFound:
+  // UTF8Encoding.toString(index,size,buffer)
+  alloc       i:4
+  peek        fp:buffer
+  store       sp:3    
+  set         dp:size
+  store       sp:2
+  set         dp:index
+  store       sp:1
+  set         class:"system'text'UTF8Encoding"
+  store       sp:0
+  call        mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]", class:"system'text'UTF8Encoding"
+
+  store      sp:1
+  set        class : "system'TypeLoaderException"
+  store      sp:0
+
+  set        mssgconst : "new[2]"
+  throw
 
 end
 

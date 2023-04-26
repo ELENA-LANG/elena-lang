@@ -943,6 +943,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::CmpFI:
          case ByteCode::PeekFI:
          case ByteCode::SetFP:
+         case ByteCode::XSetFP:
             return compileOpFrameI(tokenInfo, writer, opCommand, parameters, locals, true);
          case ByteCode::PeekSI:
          case ByteCode::StoreSI:
@@ -952,6 +953,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::SwapSI:
          case ByteCode::XRefreshSI:
          case ByteCode::XLoadArgSI:
+         case ByteCode::SaveSI:
             return compileOpStackI(tokenInfo, writer, opCommand, true);
          case ByteCode::SaveDP:
          case ByteCode::LSaveDP:
@@ -961,12 +963,14 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::FTruncDP:
          case ByteCode::NConvFDP:
          case ByteCode::LLoadDP:
+         case ByteCode::XAddDP:
             return compileDDisp(tokenInfo, writer, opCommand, dataLocals, true);
          case ByteCode::TstM:
          case ByteCode::MovM:
             return compileOpM(tokenInfo, writer, opCommand, false);
          case ByteCode::AssignI:
          case ByteCode::GetI:
+         case ByteCode::AllocI:
             return compileOpI(tokenInfo, writer, opCommand, false);
          case ByteCode::XHookDPR:
             return compileDDispR(tokenInfo, writer, opCommand, dataLocals, true);

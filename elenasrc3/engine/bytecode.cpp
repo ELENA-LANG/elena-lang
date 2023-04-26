@@ -41,8 +41,8 @@ const char* _fnOpcodes[256] =
    "set", "set dp", "nlen", "xassign i", "peek", "store", "xswap sp", "swap sp",
    "mov mssg", "mov n", "load dp", "xcmp dp", "sub n", "add n", "set fp", "create",
 
-   "copy", "close", "alloc", "free", "and n", "read", "write", "cmp n",
-   "nconf dp", "ftrunc dp", "dcopy", "or n", "mul n", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "copy", "close", "alloc i", "free", "and n", "read", "write", "cmp n",
+   "nconf dp", "ftrunc dp", "dcopy", "or n", "mul n", "xadd dp", "xset fp", OPCODE_UNKNOWN,
 
    "save dp", "store fp", "save sp", "store sp", "xflush sp", "get i", "assign i", "xrefresh sp",
    "peek fp", "peek sp", "lsave dp", "lsave sp", "lload dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,

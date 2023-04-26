@@ -120,6 +120,8 @@ ELENA byte codes (or ecodes)
 
    xlload                   - long:index := long:acc[index]
 
+   xset fp:i                - fp[index + i] => acc
+
 
  Call operations:
  ----------------
@@ -197,6 +199,8 @@ ELENA byte codes (or ecodes)
 
    swap sp:i                - acc <=> sp[i]
 
+   xadd dp:disp             - index += [dp[disp]];
+ 
    xrefresh sp:i            - cached_sp[i] := sp[i];
 
    xflush sp:i              - sp[i] := cached_sp[i];

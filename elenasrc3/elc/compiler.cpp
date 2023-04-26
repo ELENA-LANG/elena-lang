@@ -126,6 +126,31 @@ inline ref_t mapIntConstant(Compiler::Scope& scope, int integer)
    return scope.moduleScope->module->mapConstant(s.str());
 }
 
+inline bool isConstant(ObjectKind kind)
+{
+   switch (kind) {
+      case ObjectKind::IntLiteral:
+      case ObjectKind::Float64Literal:
+      case ObjectKind::LongLiteral:
+      case ObjectKind::StringLiteral:
+      case ObjectKind::WideStringLiteral:
+      case ObjectKind::Singleton:
+         return true;
+      default:
+         return false;
+   }
+}
+
+inline bool areConstants(ArgumentsInfo& args)
+{
+   for (size_t i = 0; i < args.count(); i++) {
+      if (!isConstant(args[i].kind))
+         return false;
+   }
+
+   return true;
+}
+
 // --- Interpreter ---
 
 Interpreter :: Interpreter(ModuleScopeBase* scope, CompilerLogic* logic)
@@ -253,6 +278,9 @@ ObjectInfo Interpreter :: createConstCollection(ref_t arrayRef, ref_t typeRef, A
       switch (arg.kind) {
          case ObjectKind::StringLiteral:
             addConstArrayItem(arrayRef, arg.reference, mskLiteralRef);
+            break;
+         case ObjectKind::Singleton:
+            addConstArrayItem(arrayRef, arg.reference, mskVMTRef);
             break;
          default:
             assert(false);
@@ -2388,7 +2416,7 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, re
 
 void Compiler :: declareSymbol(SymbolScope& scope, SyntaxNode node)
 {
-   declareSymbolAttributes(scope, node);
+   declareSymbolAttributes(scope, node, false);
    declareSymbolMetaInfo(scope, node);
 
    scope.save();
@@ -3251,7 +3279,7 @@ void Compiler :: declareMemberIdentifiers(NamespaceScope& ns, SyntaxNode node)
          case SyntaxKey::Symbol:
          {
             SymbolScope symbolScope(&ns, 0, ns.defaultVisibility);
-            declareSymbolAttributes(symbolScope, current);
+            declareSymbolAttributes(symbolScope, current, true);
 
             SyntaxNode name = current.findChild(SyntaxKey::Name);
 
@@ -3497,13 +3525,12 @@ ObjectInfo Compiler :: evalCollection(Interpreter& interpreter, Scope& scope, Sy
    auto fieldInfo = *(collectionInfo.fields.start());
    ref_t elementTypeRef = retrieveStrongType(scope, { ObjectKind::Object, { fieldInfo.typeInfo.elementRef }, 0 });
 
-   auto sizeInfo = _logic->defineStructSize(collectionInfo);
    ArgumentsInfo arguments;
    EAttr paramMode = EAttr::Parameter;
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Expression) {
          auto argInfo = evalExpression(interpreter, scope, current);
-         if (!_logic->isCompatible(*scope.moduleScope, { elementTypeRef }, argInfo.typeInfo, true))
+         if (!isConstant(argInfo.kind) || !_logic->isCompatible(*scope.moduleScope, { elementTypeRef }, argInfo.typeInfo, true))
             return {};
 
          arguments.add(argInfo);
@@ -4092,7 +4119,7 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
    }
 }
 
-void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node)
+void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool doNotEvalConstant)
 {
    bool constant = false;
    SyntaxNode current = node.firstChild();
@@ -4120,7 +4147,7 @@ void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node)
       scope.info.loadableInRuntime = true;
    }
 
-   if (constant) {
+   if (constant && !doNotEvalConstant) {
       scope.info.symbolType = SymbolType::Constant;
 
       Interpreter interpreter(scope.moduleScope, _logic);
@@ -8184,30 +8211,6 @@ void Compiler :: compileSwitchOperation(BuildTreeWriter& writer, ExprScope& scop
    }
 
    writer.closeNode();
-}
-
-inline bool isConstant(ObjectKind kind)
-{
-   switch (kind) {
-      case ObjectKind::IntLiteral:
-      case ObjectKind::Float64Literal:
-      case ObjectKind::LongLiteral:
-      case ObjectKind::StringLiteral:
-      case ObjectKind::WideStringLiteral:
-         return true;
-      default:
-         return false;
-   }
-}
-
-inline bool areConstants(ArgumentsInfo& args)
-{
-   for (size_t i = 0; i < args.count(); i++) {
-      if (!isConstant(args[i].kind))
-         return false;
-   }
-
-   return true;
 }
 
 ref_t Compiler :: resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo& items)
