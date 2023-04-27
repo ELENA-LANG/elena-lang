@@ -235,12 +235,12 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bo
          size_t j = (*actionName).findSub(i, ',', end);
 
          IdentifierString temp(actionName.str() + i, j - i);
-         references[len++] = module->mapReference(*temp, true);
+         references[len++] = module->mapReference(*temp, readOnlyMode);
 
          i = j + 1;
       }
 
-      signature = module->mapSignature(references, len, true);
+      signature = module->mapSignature(references, len, readOnlyMode);
 
       actionName.truncate(index);
    }

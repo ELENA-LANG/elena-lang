@@ -45,6 +45,8 @@ public class Node
 
 public program()
 {
+   var o := new object();
+
    auto engine := new extensions'scripting'ScriptEngine();
    engine.loadPath("grammar2.es");
     

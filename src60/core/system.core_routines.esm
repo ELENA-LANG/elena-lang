@@ -1263,7 +1263,7 @@ procedure __tape_eval(self, buffer, len)
   xflush     sp:0
   xflush     sp:1
 
-  open       (2),[],[index,command,size,ptr]
+  open       (4),[],[index,command,size,ptr]
 
   // ; alloc stack
   peek       fp:buffer
@@ -1271,14 +1271,14 @@ procedure __tape_eval(self, buffer, len)
   dalloc
 
   nsave      dp:index, 4
-  nsave      dp:ptr, 0
+  nsave      dp:ptr, -1
 
   // while (index < len) {
 labNext:
   peek       fp:len
   load       
   xcmp       dp:index
-  jge        labEnd
+  jlt        labEnd
 
   //command := buffer[index];
   peek       fp:buffer
@@ -1298,21 +1298,31 @@ labNext:
   // index += 4;
   nadd       dp:index, 4
 
+  // check attribute type
+  load       dp:command
+  cmp        n:020h
+  jge        labSpecial
+
   // copy arguments
   xassignsp
   store      sp:0
   load       dp:ptr
   xset       fp:0
   swap       sp:0
+  load       dp:command
+  add        n:1  
   dtrans
 
+  set        dp:command
+  isub       dp:ptr, 4
+
   // loadClass
-  call       extern:LoadClassByBufferLA(buffer, index, size)
+  call       extern:LoadClassByBufferLA(buffer, *index, *size)
   cmp        n:0
   jeq        labNotFound 
   save       sp:0
 
-  mov        mssg : "#constructor[1]"
+  mov        mssg : "function:#constructor[0]"
   xadd       dp:command
 
   peek       sp:0
@@ -1332,13 +1342,7 @@ labNext:
 
   jump       labNext
 
-labEnd:
-  close      []
-  quit
-
-labNotFound:
-  // UTF8Encoding.toString(index,size,buffer)
-  alloc       i:4
+labSpecial:
   peek        fp:buffer
   store       sp:3    
   set         dp:size
@@ -1347,14 +1351,45 @@ labNotFound:
   store       sp:1
   set         class:"system'text'UTF8Encoding"
   store       sp:0
+  mov         mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
   call        mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]", class:"system'text'UTF8Encoding"
 
+  // ; store the result
+  load       dp:ptr
+  store      sp:0
+  set        fp:0
+  xassign
+  nadd       dp:ptr, -1
+
+  // i += size
+  set        dp:size
+  store      sp:0
+  iadd       dp:index, 4
+
+  jump       labNext
+
+labNotFound:
+  // UTF8Encoding.toString(index,size,buffer)
+  peek       fp:buffer
+  store      sp:3    
+  set        dp:size
+  store      sp:2
+  set        dp:index
+  store      sp:1
+  set        class:"system'text'UTF8Encoding"
+  store      sp:0
+  mov        mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
+  call       mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]", class:"system'text'UTF8Encoding"
   store      sp:1
   set        class : "system'TypeLoaderException"
   store      sp:0
 
   set        mssgconst : "new[2]"
   throw
+
+labEnd:
+  close      []
+  quit
 
 end
 

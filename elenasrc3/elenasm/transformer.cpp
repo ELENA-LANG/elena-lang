@@ -145,7 +145,7 @@ void ScriptEngineBuilder :: parse(ScriptEngineReaderBase& reader, MemoryDump* ou
 {
    MemoryWriter writer(output);
 
-   ScriptBookmark defVal;
+   ScriptBookmark defVal = {};
    Stack<ScriptBookmark> stack(defVal);
    Stack<int> bookmarks(0);
 

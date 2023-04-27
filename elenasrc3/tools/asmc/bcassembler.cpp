@@ -1018,6 +1018,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::NAddDPN:
          case ByteCode::CopyDPN:
          case ByteCode::IAddDPN:
+         case ByteCode::ISubDPN:
             return compileDDispN(tokenInfo, writer, opCommand, dataLocals, constants, true);
          default:
             return false;
