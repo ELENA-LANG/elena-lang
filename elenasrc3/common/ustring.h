@@ -675,6 +675,14 @@ namespace elena_lang
          _size = 0;
          _string = nullptr;
       }
+      DynamicString(const T* value, size_t index, size_t length)
+      {
+         _size = 0;
+         _string = nullptr;
+
+         copy(value + index, length);
+      }
+
    };
 
 }

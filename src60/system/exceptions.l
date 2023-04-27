@@ -143,3 +143,13 @@ public class FormatException : Exception
     constructor new(string message)
         <= super new(message);
 }
+
+// --- TypeLoaderException ---
+
+public class TypeLoaderException : Exception
+{
+   /// Creates the exception
+   constructor new(string className)
+      <= super new("Type " + className + " cannot be loaded");
+}
+

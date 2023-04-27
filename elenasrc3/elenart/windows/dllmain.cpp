@@ -162,6 +162,20 @@ EXTERN_DLL_EXPORT addr_t LoadClassByStringLA(const char* symbolName)
    return machine->loadClassReference(symbolName);
 }
 
+EXTERN_DLL_EXPORT addr_t LoadClassByBufferLA(void* referenceName, size_t index, size_t length)
+{
+   if (length < 0x100) {
+      IdentifierString str((const char*)referenceName + index, length);
+
+      return LoadClassByStringLA(*str);
+   }
+   else {
+      DynamicString<char> str((const char*)referenceName, index, length);
+
+      return LoadClassByStringLA(str.str());
+   }
+}
+
 EXTERN_DLL_EXPORT addr_t LoadSymbolByString2LA(const char* ns, const char* symbolName)
 {
    ReferenceName fullName(ns, symbolName);
