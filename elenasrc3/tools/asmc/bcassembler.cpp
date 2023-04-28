@@ -1006,6 +1006,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::Jne:
          case ByteCode::Jlt:
          case ByteCode::Jge:
+         case ByteCode::Jle:
          case ByteCode::Jump:
             return compileJcc(tokenInfo, writer, opCommand, lh);
          case ByteCode::SetR:

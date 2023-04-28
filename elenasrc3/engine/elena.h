@@ -502,6 +502,12 @@ namespace elena_lang
       virtual void writeJgeBack(pos_t label, MemoryWriter& writer) = 0;
       virtual void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
 
+      virtual void writeJleBack(pos_t label, MemoryWriter& writer) = 0;
+      virtual void writeJleForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
+
+      virtual void writeJgrBack(pos_t label, MemoryWriter& writer) = 0;
+      virtual void writeJgrForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
+
       virtual void writeLabelAddress(pos_t label, MemoryWriter& writer, ref_t mask) = 0;
    };
 

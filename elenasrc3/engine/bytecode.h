@@ -119,6 +119,8 @@ namespace elena_lang
       XRedirectM     = 0xB6,
       Jlt            = 0xB7,
       Jge            = 0xB8,
+      Jgr            = 0xB9,
+      Jle            = 0xBA,
 
       CmpR           = 0xC0,
       FCmpN          = 0xC1,

@@ -1288,7 +1288,7 @@ labNext:
   peek       fp:len
   load       
   xcmp       dp:index
-  jlt        labEnd
+  jle        labEnd
 
   //command := buffer[index];
   peek       fp:buffer
@@ -1317,25 +1317,29 @@ labNext:
   xassignsp
   store      sp:0
   load       dp:ptr
+  add        n:1
   xset       fp:0
   swap       sp:0
   load       dp:command
-  add        n:1  
   dtrans
 
   set        dp:command
-  isub       dp:ptr, 4
+  store      sp:0
+  iadd       dp:ptr, 4
 
   // loadClass
   call       extern:LoadClassByBufferLA(buffer, *index, *size)
   cmp        n:0
   jeq        labNotFound 
+
+  // ; !! NOTE : we taking advantage that the operation with sp:0 does not affect the real stack
   save       sp:0
+  peek       sp:0
+  xrefresh   sp:0
 
   mov        mssg : "function:#constructor[0]"
   xadd       dp:command
 
-  peek       sp:0
   call       vt:0
 
   // ; store the result
@@ -1398,6 +1402,11 @@ labNotFound:
   throw
 
 labEnd:
+  load       dp:ptr
+  add        n:1
+  set        fp:0
+  xget
+
   close      []
   quit
 

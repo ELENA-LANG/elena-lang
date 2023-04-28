@@ -175,8 +175,8 @@ void ScriptEngineBuilder :: parse(ScriptEngineReaderBase& reader, MemoryDump* ou
 
       bm = reader.read();
    }
-
-   writer.writeDWord(0);
+   if (output->length() == 0)
+      writer.writeDWord(0);
 }
 
 bool ScriptEngineBuilder :: parseGrammarRule(ScriptEngineReaderBase& reader)

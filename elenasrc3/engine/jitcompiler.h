@@ -144,6 +144,8 @@ namespace elena_lang
       friend void compileJne(JITCompilerScope* scope);
       friend void compileJlt(JITCompilerScope* scope);
       friend void compileJge(JITCompilerScope* scope);
+      friend void compileJle(JITCompilerScope* scope);
+      friend void compileJgr(JITCompilerScope* scope);
       friend void compileDispatchMR(JITCompilerScope* scope);
       friend void compileHookDPR(JITCompilerScope* scope);
 
@@ -424,6 +426,8 @@ namespace elena_lang
    void compileJne(JITCompilerScope* scope);
    void compileJlt(JITCompilerScope* scope);
    void compileJge(JITCompilerScope* scope);
+   void compileJle(JITCompilerScope* scope);
+   void compileJgr(JITCompilerScope* scope);
    void compileDispatchMR(JITCompilerScope* scope);
    void compileHookDPR(JITCompilerScope* scope);
 }

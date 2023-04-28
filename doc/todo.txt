@@ -5,9 +5,6 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * new system test : load dynamically class - verify it by calling named constructor
-
-
     * impelement system'dynamic'TapeInterpreter
 
     * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
@@ -86,6 +83,7 @@ In development:
       for symbols in system (int,string,wide))
     * new opcode : xload, lxload, xadddp - ppc64le, arm64
     * new opcode : xsetfp - ppc64le, arm64
+    * new opcode : jle, jg - ppc64le, arm64
 
     === Iteration 16 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop

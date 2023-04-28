@@ -122,6 +122,8 @@ namespace elena_lang
       JNS   = 0x09,
       JL    = 0x0C,
       JGE   = 0x0D,
+      JLE   = 0x0E,
+      JG    = 0x0F,
    };
 
    inline bool test(X86OperandType type, X86OperandType mask)
@@ -484,6 +486,26 @@ namespace elena_lang
       void writeJgeBack(pos_t label, MemoryWriter& writer) override
       {
          writeJccBack(X86JumpType::JGE, label, writer);
+      }
+
+      void writeJgrForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         writeJccForward(X86JumpType::JG, label, writer, byteCodeOffset);
+      }
+
+      void writeJgrBack(pos_t label, MemoryWriter& writer) override
+      {
+         writeJccBack(X86JumpType::JG, label, writer);
+      }
+
+      void writeJleForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         writeJccForward(X86JumpType::JLE, label, writer, byteCodeOffset);
+      }
+
+      void writeJleBack(pos_t label, MemoryWriter& writer) override
+      {
+         writeJccBack(X86JumpType::JLE, label, writer);
       }
    };
 }

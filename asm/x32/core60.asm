@@ -1184,7 +1184,7 @@ end
 // ; xrefreshsi 0
 inline %1A7h
 
-  mov esi, [esp+4]
+  mov esi, [esp+__arg32_1]
 
 end 
 
