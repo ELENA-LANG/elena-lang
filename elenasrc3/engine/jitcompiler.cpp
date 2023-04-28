@@ -3529,7 +3529,7 @@ void JITCompiler64 :: writeAttribute(MemoryWriter& writer, int category, ustr_t 
    writer.writeString(value);
 
    if (virtualMode) {
-      writer.writeQReference((ref_t)address | mskCodeRef64, 0);
+      writer.writeQReference((ref_t)address | mskRef64, 0);
    }
    else writer.writeQWord(address);
 }

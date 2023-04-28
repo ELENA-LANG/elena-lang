@@ -58,6 +58,15 @@ procedure __object_class
 
 end
 
+procedure __object_instanceOf
+
+  peek        sp:0
+  class
+  cmp         sp:1
+  seleq       class:"system'BoolValue#true", class:"system'BoolValue#false"
+
+end
+
 procedure __exception_handler
 
   xflush          sp:0
@@ -1045,6 +1054,7 @@ procedure __classref_dispatcher
   redirect
 
   get        i:0
+  store      sp:0
   jump       vt:0
 
 end

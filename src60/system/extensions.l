@@ -24,6 +24,9 @@ public extension objectOp
         
       ^ len != 0;
    }
+
+   bool instanceOf(type) : external(system'core_routines'__object_instanceOf),
+                  info("Checks if the object is an instance of type");   
 }
 
 // --- intOp ---

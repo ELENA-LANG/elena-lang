@@ -509,3 +509,24 @@ variadicTest()
    strong.validate();
    console.writeLine(".");
 }
+
+
+// --- dynamicLoadTests ---
+
+public class DynamicallyLoadedClass
+{
+   constructor new() {}
+}
+
+dynamicLoadTests()
+{
+   console.write("dynamicLoadTests:");
+
+   var class := new ClassReference("system_tests'DynamicallyLoadedClass");
+   
+   var o := class.new();
+
+   Assert.ifTrue(o.instanceOf(DynamicallyLoadedClass));
+
+   console.writeLine(".");
+}   

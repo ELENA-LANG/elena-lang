@@ -15,6 +15,7 @@ public program()
    inlineAssignmentTests();
    singleDispatchTest();
    variadicTest();
+   dynamicLoadTests();
 
    console.writeLine("--- Passed ---")
 }

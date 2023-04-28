@@ -1,60 +1,86 @@
 import extensions;
-import system'io;
+//import system'io;
+//
+//used : preloaded = new object[]{ Node };
+//
+//public class Node
+//{
+//   string Text  : prop;
+//   Node   Left  : prop;
+//   Node   Right : prop;
+//    
+//   constructor()
+//   {
+//   }    
+//    
+//   constructor(string text)
+//   {
+//      Text := text
+//   }
+//    
+//   constructor(Node left, Node right, string operation)
+//   {
+//      Left := left;
+//      Right := right;
+//      Text := operation;
+//   }
+//    
+//   eval()
+//   {
+//      if (Text==nil)
+//      {
+//         ^ Left.eval()
+//      }
+//      else
+//      {
+//         Text =>
+//            "+" { ^ Left.eval() + Right.eval() }
+//            "-" { ^ Left.eval() - Right.eval() }
+//            "*" { ^ Left.eval() * Right.eval() }
+//            "/" { ^ Left.eval() / Right.eval() }
+//            : { ^ Text.toReal() }
+//      }        
+//   }
+//}
+//
+//public program()
+//{
+//   auto engine := new extensions'scripting'ScriptEngine();
+//   engine.loadPath("grammar2.es");
+//    
+////   var line;
+////   until(line := console.write(">").readLine(), line == "")
+////   {
+//      var tape := engine.buildScript(/*line*/"2+3");
+//        
+//      console.printLine("=",tape.eval());        
+////   }
+//}
 
-used : preloaded = new object[]{ Node };
-
-public class Node
+public class DynamicallyLoadedClass
 {
-   string Text  : prop;
-   Node   Left  : prop;
-   Node   Right : prop;
-    
-   constructor()
-   {
-   }    
-    
-   constructor(string text)
-   {
-      Text := text
-   }
-    
-   constructor(Node left, Node right, string operation)
-   {
-      Left := left;
-      Right := right;
-      Text := operation;
-   }
-    
-   eval()
-   {
-      if (Text==nil)
-      {
-         ^ Left.eval()
-      }
-      else
-      {
-         Text =>
-            "+" { ^ Left.eval() + Right.eval() }
-            "-" { ^ Left.eval() - Right.eval() }
-            "*" { ^ Left.eval() * Right.eval() }
-            "/" { ^ Left.eval() / Right.eval() }
-            : { ^ Text.toReal() }
-      }        
-   }
+   constructor new() {}
 }
+
+// --- dynamicLoadTests ---
+
+dynamicLoadTests()
+{
+   console.write("dynamicLoadTests:");
+
+   var class := new ClassReference("sandbox'DynamicallyLoadedClass");
+   
+   var o := class.new();
+
+   Assert.ifTrue(o.instanceOf(DynamicallyLoadedClass));
+
+   console.writeLine(".");
+}   
+
+
+//used : preloaded = new object[]{ A };
 
 public program()
 {
-   var o := new object();
-
-   auto engine := new extensions'scripting'ScriptEngine();
-   engine.loadPath("grammar2.es");
-    
-//   var line;
-//   until(line := console.write(">").readLine(), line == "")
-//   {
-      var tape := engine.buildScript(/*line*/"2+3");
-        
-      console.printLine("=",tape.eval());        
-//   }
+   dynamicLoadTests()
 }

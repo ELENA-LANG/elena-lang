@@ -5,9 +5,8 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * new opcode : xsetfp
+    * new system test : load dynamically class - verify it by calling named constructor
 
-    * print an array of singleton
 
     * impelement system'dynamic'TapeInterpreter
 
@@ -35,6 +34,7 @@ In development:
     * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
     * optimization : copy a sub array to another array - starting
     * x86 : gui - starting - new project type
+    * ide : before compiling, make sure the source file is saved
 
     * switch expression
     * optimization : copy a sub array to another array
@@ -126,6 +126,7 @@ Backlog:
     * lazy expressions, put it in the first page as a feature
 
     --- elena redux ---
+    * internal / auto-generated classes must not be included in run-time attributes
     * optimization : tuple / array unboxing
     * native conversion from short to int / byte to int
     * extension template should contain all its arguments in the signature
