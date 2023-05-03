@@ -183,7 +183,7 @@ namespace elena_lang
       virtual void populateWORD(WatchContext* root, unsigned short value);
       virtual void populateDWORD(WatchContext* root, unsigned int value);
       virtual void populateUINT(WatchContext* root, unsigned int value);
-      virtual void populateQWORD(WatchContext* root, unsigned long long value);
+      virtual void populateQWORD(WatchContext* root, long long value);
       virtual void populateFLOAT64(WatchContext* root, double value);
       virtual void populateString(WatchContext* root, const char* value);
       virtual void populateWideString(WatchContext* root, const wide_c* value);

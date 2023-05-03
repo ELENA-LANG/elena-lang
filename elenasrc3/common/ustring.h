@@ -361,11 +361,16 @@ namespace elena_lang
 
          return true;
       }
-      static bool longToStr(unsigned long long n, T* s, int radix, size_t maxLength)
+      static bool longToStr(long long n, T* s, int radix, size_t maxLength)
       {
          long long rem = 0;
          size_t    pos = 0;
          size_t    start = 0;
+         if (n < 0) {
+            start++;
+            n = -n;
+            s[pos++] = '-';
+         }
 
          do
          {

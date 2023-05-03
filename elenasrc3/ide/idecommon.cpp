@@ -153,7 +153,7 @@ void* ContextBrowserBase :: addOrUpdateQWORD(WatchContext* context, ustr_t varia
    return item;
 }
 
-void ContextBrowserBase :: populateQWORD(WatchContext* context, unsigned long long value)
+void ContextBrowserBase :: populateQWORD(WatchContext* context, long long value)
 {
    String<char, 40> number;
    /*if (_browser->isHexNumberMode()) {

@@ -577,11 +577,19 @@ public singleton stringConvertor
          n := n / radix;
 
          tmp := 48 + r;
+         if (r > 9) {
+            tmp :=tmp + 7;
+         };
+
          buffer[index] := tmp;
          index := index - 1;
          len := len + 1;
       };
       tmp := 48 + n;
+      if (n > 9) {
+         tmp :=tmp + 7;
+      };
+
       buffer[index] := tmp;
       len := len + 1;
 
@@ -650,11 +658,19 @@ public singleton stringConvertor
          n := n / uradix;
 
          tmp := 48 + r;
+         if (r > 9) {
+            tmp :=tmp + 7;
+         };
+
          buffer[index] := tmp;
          index := index - 1;
          len := len + 1;
       };
       tmp := 48 + n;
+      if (n > 9) {
+         tmp := tmp + 7;
+      };
+
       buffer[index] := tmp;
       len := len + 1;
 

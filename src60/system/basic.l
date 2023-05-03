@@ -1519,6 +1519,9 @@ public sealed const struct LongNumber : IntBaseNumber,
    multiply(n)
       <= multiply(cast long(n));
 
+   divide(n)
+      <= divide(cast long(n));
+
    long add(long n)
       = theValue + n;
 
@@ -1535,49 +1538,49 @@ public sealed const struct LongNumber : IntBaseNumber,
       <= add(cast long(n));
 
    long subtract(byte n)
-      <= add(cast long(n));
+      <= subtract(cast long(n));
 
    long multiply(byte n)
-      <= add(cast long(n));
+      <= multiply(cast long(n));
 
    long divide(byte n)
-      <= add(cast long(n));
+      <= divide(cast long(n));
 
    long add(short n)
       <= add(cast long(n));
 
    long subtract(short n)
-      <= add(cast long(n));
+      <= subtract(cast long(n));
 
    long multiply(short n)
-      <= add(cast long(n));
+      <= multiply(cast long(n));
 
    long divide(short n)
-      <= add(cast long(n));
+      <= divide(cast long(n));
 
    long add(int n)
       <= add(cast long(n));
 
    long subtract(int n)
-      <= add(cast long(n));
+      <= subtract(cast long(n));
 
    long multiply(int n)
-      <= add(cast long(n));
+      <= multiply(cast long(n));
 
    long divide(int n)
-      <= add(cast long(n));
+      <= divide(cast long(n));
 
    long add(uint n)
       <= add(cast long(n));
 
    long subtract(uint n)
-      <= add(cast long(n));
+      <= subtract(cast long(n));
 
    long multiply(uint n)
-      <= add(cast long(n));
+      <= multiply(cast long(n));
 
    long divide(uint n)
-      <= add(cast long(n));
+      <= divide(cast long(n));
 
    real add(real n)
       = new RealNumber(self).add(n);
@@ -1613,37 +1616,37 @@ public sealed const struct LongNumber : IntBaseNumber,
       <= band(cast long(n));
 
    long bor(byte n)
-      <= band(cast long(n));
+      <= bor(cast long(n));
 
    long bxor(byte n)
-      <= band(cast long(n));
+      <= bxor(cast long(n));
 
    long band(short n)
       <= band(cast long(n));
 
    long bor(short n)
-      <= band(cast long(n));
+      <= bor(cast long(n));
 
    long bxor(short n)
-      <= band(cast long(n));
+      <= bxor(cast long(n));
 
    long band(int n)
       <= band(cast long(n));
 
    long bor(int n)
-      <= band(cast long(n));
+      <= bor(cast long(n));
 
    long bxor(int n)
-      <= band(cast long(n));
+      <= bxor(cast long(n));
 
    long band(uint n)
       <= band(cast long(n));
 
    long bor(uint n)
-      <= band(cast long(n));
+      <= bor(cast long(n));
 
    long bxor(uint n)
-      <= band(cast long(n));
+      <= bxor(cast long(n));
 
    long shiftLeft(int val)
       = theValue $shl val;
