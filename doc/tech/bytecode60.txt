@@ -96,6 +96,9 @@ ELENA byte codes (or ecodes)
 
    sellt r1, r2             - acc <= COMP.LE ? r1 : r2
 
+   selult r1, r2            - acc <= COMP.B ? r1 : r2;
+                              used to compar the unsigned numbers
+
    set {prefix}:r           - r => acc
 
    set dp:i                 - dp[i] => acc
@@ -307,6 +310,8 @@ ELENA byte codes (or ecodes)
  
    jlt  label               - jump if COMP.LT == 1
  
+   jult label               - jump if COMP.BL == 1
+ 
    jle  label               - jump if COMP.LT == 1 && COMP.EQ == 1
  
    jge  label               - jump if COMP.LT == 0 && COMP.EQ == 1
@@ -349,6 +354,10 @@ ELENA byte codes (or ecodes)
  
    idiv dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] /= temp;
+                              n = 1,2,4,8  
+
+   udiv dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] /= temp; as unsigned
                               n = 1,2,4,8  
 
    imul dp:disp, n          - temp : n << sp[0];

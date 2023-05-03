@@ -4,33 +4,65 @@ import extensions;
 
 intTests()
 {
-    console.write("intTests:");
+   console.write("intTests:");
 
-    int n := 2;
-    int m := 3;
-    int k := 4;
+   int n := 2;
+   int m := 3;
+   int k := 4;
                     
-    Assert.ifTrue(2 + 3 * 4 == 14);
-    Assert.ifTrue(n + m * k == 14);
-    console.write(".");
-    Assert.ifFalse(n == m);
-    Assert.ifTrue(n == n);
-    Assert.ifTrue(n < m);
-    Assert.ifFalse(n > m);
-    Assert.ifTrue(n <= m);
-    Assert.ifTrue(n <= n);
-    Assert.ifTrue(n >= n);
-    Assert.ifFalse(n >= m);
-    console.write(".");
+   Assert.ifTrue(2 + 3 * 4 == 14);
+   Assert.ifTrue(n + m * k == 14);
+   console.write(".");
+   Assert.ifFalse(n == m);
+   Assert.ifTrue(n == n);
+   Assert.ifTrue(n < m);
+   Assert.ifFalse(n > m);
+   Assert.ifTrue(n <= m);
+   Assert.ifTrue(n <= n);
+   Assert.ifTrue(n >= n);
+   Assert.ifFalse(n >= m);
+   console.write(".");
 
-    int i := 1;
-    i += 2;
-    i -= 2;
-    i *= 2;
-    i /= 2;    
-    Assert.ifTrue(i == 1);
-    console.writeLine(".");
+   int m2 := 10;
+   int k2 := -2;
+   int l2 := -10;
+
+   Assert.ifFalse(k2 > m2);
+   Assert.ifTrue(m2 > k2);
+   Assert.ifFalse(k2 < l2);
+   console.write(".");
+   
+   int i := 1;
+   i += 2;
+   i -= 2;
+   i *= 2;
+   i /= 2;    
+   Assert.ifTrue(i == 1);
+   console.writeLine(".");
 }
+
+uintTests()
+{
+   console.write("uintTests:");
+
+   uint k := 2H;
+   uint l := 0AH;
+   uint m := 081000000H;
+   uint n := 08FFFFFFFH;
+
+   Assert.ifFalse(k > l);  // 2 > 10
+   Assert.ifFalse(m < l);  // 081000000H < 10
+   Assert.ifTrue(l < m);   // 10 < 081000000H
+   Assert.ifTrue(n > m);  // 08FFFFFFFH > 081000000H
+   console.write(".");
+
+   m := 80000000H;
+   n := 10H;
+   k := m / n;
+   Assert.ifTrue(k == 8000000H);
+   console.writeLine(".");
+}
+
 
 // --- longTests ---
 

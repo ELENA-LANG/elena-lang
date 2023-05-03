@@ -215,7 +215,7 @@ namespace elena_lang
    constexpr auto V_STRINGOBJ             = 0x80000801u;
    constexpr auto V_FLOATBINARY           = 0x80000802u;
    constexpr auto V_INTBINARY             = 0x80000803u;
-   //constexpr auto V_DECLOBJ               = 0x80000804u;
+   constexpr auto V_UINTBINARY            = 0x80000804u;
    constexpr auto V_WORDBINARY            = 0x80000805u;
    constexpr auto V_MSSGNAME              = 0x80000806u;
    constexpr auto V_SUBJBINARY            = 0x80000807u;
@@ -255,6 +255,7 @@ namespace elena_lang
    constexpr auto V_EXTMESSAGE64          = 0x8000001Cu;
    constexpr auto V_EXTMESSAGE128         = 0x8000001Du;
    constexpr auto V_WORD64                = 0x8000001Eu;
+   constexpr auto V_UINT32                = 0x8000001Fu;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;

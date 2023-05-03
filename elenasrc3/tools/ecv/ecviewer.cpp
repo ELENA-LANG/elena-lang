@@ -373,6 +373,9 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::Jne:
          case ByteCode::Jlt:
          case ByteCode::Jge:
+         case ByteCode::Jgr:
+         case ByteCode::Jle:
+         case ByteCode::Jult:
             addLabel(command.arg1 + commandPosition + 5, commandStr, labels);
             break;
          case ByteCode::AssignI:
@@ -416,6 +419,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             break;
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
+         case ByteCode::SelULtRR:
             addRArg(command.arg1, commandStr);
             addSecondRArg(command.arg2, commandStr, labels);
             break;

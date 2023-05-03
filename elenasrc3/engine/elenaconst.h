@@ -102,9 +102,9 @@ namespace elena_lang
    constexpr auto MESSAGE_FORWARD         = "$message";        // the message class
    constexpr auto EXT_MESSAGE_FORWARD     = "$ext_message";    // the extension message class
    constexpr auto CLOSURE_FORWARD         = "$closure";        // the closure template class
-   constexpr auto TUPLE_FORWARD           = "$tuple";        // the closure template class
-   constexpr auto DWORD_FORWARD           = "$dword";          // the dword wrapper
-   constexpr auto PTR_FORWARD             = "$ptr";          // the dword wrapper
+   constexpr auto TUPLE_FORWARD           = "$tuple";          // the closure template class
+   constexpr auto UINT_FORWARD            = "$uint";           // the uint wrapper
+   constexpr auto PTR_FORWARD             = "$ptr";            // the ptr wrapper
    constexpr auto LAZY_FORWARD            = "$lazy";
 
    // --- ELENA section prefixes
@@ -268,6 +268,7 @@ namespace elena_lang
       ByteArrayAddress     = 0x0105,
       ShortArrayAddress    = 0x0106,
       IntArrayAddress      = 0x0107,
+      UIntLocalAddress     = 0x0108,
 
       Parameter            = 0x0200,
       IntParameterAddress  = 0x0202,

@@ -801,7 +801,7 @@ public const struct IntNumber : IntBaseNumber,
 
    constructor(uint n)
             : info("Creates the object with specified value")
-      = n;
+      = intConvertor.convert(n);
 
    constructor(byte b)
       = b;
@@ -1083,26 +1083,26 @@ public const struct IntNumber : IntBaseNumber,
 public sealed const struct UIntNumber : IntBaseNumber,
    info("A unsigned 32 bit integer")
 {
-   embeddable __int theValue[4];
+   embeddable __uint _value[4];
 
    constructor(byte b)
    {
-      theValue := b;
+      _value := uintConvertor.convert(b);
    }
 
    constructor(short s)
    {
-      theValue := s;
+      _value := uintConvertor.convert(s);
    }
 
    constructor(int n)
    {
-      theValue := n
+      _value := uintConvertor.convert(n);
    }
 
    constructor(uint n)
    {
-      theValue := n
+      _value := n
    }
 
    constructor()
@@ -1110,12 +1110,12 @@ public sealed const struct UIntNumber : IntBaseNumber,
 
    cast u(string s)
    {
-      theValue := uintConvertor.convert(s);
+      _value := uintConvertor.convert(s);
    }
 
    cast H(string s)
    {
-      theValue := uintConvertor.convert(s, 16);
+      _value := uintConvertor.convert(s, 16);
    }
 
    static uint MinValue
@@ -1128,7 +1128,7 @@ public sealed const struct UIntNumber : IntBaseNumber,
 
    string toPrintable()
             : info("Returns the literal presentation")
-      = stringConvertor.convert(self, 10);
+         = stringConvertor.convert(self, 16);
 
    short cast()
             : info("Returns the value as a short integer")
@@ -1163,15 +1163,15 @@ public sealed const struct UIntNumber : IntBaseNumber,
 
    bool equal(uint n)
             : info("Compares the value")
-      = theValue == n;
+      = _value == n;
 
    bool less(uint n)
             : info("Compares the value")
-      = theValue < n;
+      = _value < n;
 
    bool equal(int n)
             : info("Compares the value")
-      = theValue == n;
+      <= equal(cast uint(n));
 
    bool less(int n)
             : info("Compares the value")
@@ -1231,35 +1231,35 @@ public sealed const struct UIntNumber : IntBaseNumber,
 
    uint add(uint n)
             : info("Returns the sum")
-      = theValue + n;
+      = _value + n;
 
    uint subtract(uint n)
             : info("Returns the difference")
-      = theValue - n;
+      = _value - n;
 
    uint multiply(uint n)
             : info("Returns the product")
-      = theValue * n;
+      = _value * n;
 
    uint divide(uint n)
             : info("Returns the result of integer division")
-      = theValue / n;
+      = _value / n;
 
    int add(int n)
             : info("Returns the sum")
-      = theValue + n;
+      <= add(cast uint(n));
 
    int subtract(int n)
             : info("Returns the difference")
-      = theValue - n;
+      <= subtract(cast uint(n));
 
    int multiply(int n)
             : info("Returns the product")
-      = theValue * n;
+      <= multiply(cast uint(n));
 
    int divide(int n)
             : info("Returns the result of integer division")
-      = theValue / n;
+      <= divide(cast uint(n));
 
    int add(byte n)
             : info("Returns the sum")
@@ -1328,27 +1328,27 @@ public sealed const struct UIntNumber : IntBaseNumber,
 
    uint band(uint n)
             : info("Returns the result of bitwise AND operation")
-      = theValue & n;
+      = _value & n;
 
    uint bor(uint n)
             : info("Returns the result of bitwise OR operation")
-      = theValue | n;
+      = _value | n;
 
    uint bxor(uint n)
             : info("Returns the result of bitwise XOR operation")
-      = theValue ^ n;
+      = _value ^ n;
 
    int band(int n)
             : info("Returns the result of bitwise AND operation")
-      = theValue & n;
+      <= band(cast uint(n));
 
    int bor(int n)
             : info("Returns the result of bitwise OR operation")
-      = theValue | n;
+      <= bor(cast uint(n));
 
    int bxor(int n)
             : info("Returns the result of bitwise XOR operation")
-      = theValue ^ n;
+      <= bxor(cast uint(n));
 
    uint band(short n)
             : info("Returns the result of bitwise AND operation")
@@ -1386,15 +1386,21 @@ public sealed const struct UIntNumber : IntBaseNumber,
             : info("Returns the result of bitwise XOR operation")
       = new LongNumber(n).bxor(n);
 
+   uint shiftLeft(uint val)
+      = _value $shl val;
+
    uint shiftLeft(int val)
-      = theValue $shl val;
+      <= shiftLeft(cast uint(val));
+
+   uint shiftRight(uint val)
+      = _value $shr val;
 
    uint shiftRight(int val)
-      = theValue $shr val;
+      <= shiftRight(cast uint(val));
    
    get uint BInverted()
             : info("Bitwise inversion")
-      = ~theValue;
+      = ~_value;
 
    uint clone()
       = new UIntNumber(self);

@@ -499,6 +499,9 @@ namespace elena_lang
       virtual void writeJltBack(pos_t label, MemoryWriter& writer) = 0;
       virtual void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
 
+      virtual void writeJultBack(pos_t label, MemoryWriter& writer) = 0;
+      virtual void writeJultForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
+
       virtual void writeJgeBack(pos_t label, MemoryWriter& writer) = 0;
       virtual void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
 

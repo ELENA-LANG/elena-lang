@@ -1533,6 +1533,16 @@ inline %0D3h
 
 end
 
+// ; udivndp
+inline %0D4h
+
+  xor  edx, edx
+  mov  eax, [ebp+__arg32_1]
+  div  dword ptr [esi]
+  mov  [ebp+__arg32_1], eax
+
+end
+
 // ; ianddpn
 inline %0D8h
 
@@ -1830,6 +1840,15 @@ lEnd:
 
 lEnd2:
   pop   edx
+
+end
+
+// ; selultrr
+inline %0DFh
+
+  mov   eax, __ptr32_1
+  mov   ebx, __ptr32_2
+  cmovb ebx, eax
 
 end
 

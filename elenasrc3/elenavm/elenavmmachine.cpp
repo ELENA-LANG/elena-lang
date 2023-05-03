@@ -219,17 +219,21 @@ void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
    writer.writePos(size);
 }
 
-void ELENAVMMachine :: onNewCode()
+void ELENAVMMachine :: onNewCode(JITLinker& jitLinker)
 {
-   
+   ustr_t superClass = _configuration->resolveForward(SUPER_FORWARD);
+
+   jitLinker.complete(dynamic_cast<TapeGeneratorBase*>(this), _compiler, superClass);
+
+   _mapper.clearLazyReferences();
 }
 
-void ELENAVMMachine :: resumeVM(SystemEnv* env, void* criricalHandler)
+void ELENAVMMachine :: resumeVM(JITLinker& jitLinker, SystemEnv* env, void* criricalHandler)
 {
    if (!_initialized)
       throw InternalError(errVMNotInitialized);
 
-   onNewCode();
+   onNewCode(jitLinker);
 
    __routineProvider.InitSTAExceptionHandling(env, criricalHandler);
 }
@@ -261,7 +265,7 @@ int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, const c
 
    void* address = (void*)jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
 
-   resumeVM(env, (void*)criricalHandler);
+   resumeVM(*jitLinker, env, (void*)criricalHandler);
 
    freeobj(dummyModule);
    freeobj(jitLinker);
@@ -357,3 +361,32 @@ addr_t ELENAVMMachine::loadSymbol(ustr_t name)
    return 0;
 }
 
+void ELENAVMMachine :: generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol)
+{
+   MemoryWriter writer(&tapeSymbol);
+
+   pos_t sizePlaceholder = writer.position();
+   writer.writePos(0);
+
+   pos_t  command = 0;
+   ustr_t strArg = nullptr;
+
+   ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
+
+   // generate the preloaded list
+   for (auto it = list.start(); !it.eof(); ++it) {
+      auto info = *it;
+      ustr_t symbolName = info.module->resolveReference(info.reference);
+      IdentifierString fullName(info.module->name(), symbolName);
+
+      ByteCodeUtil::write(writer, ByteCode::CallR, module->mapReference(*fullName) | mskSymbolRef);
+   }
+
+   ByteCodeUtil::write(writer, ByteCode::CloseN);
+   ByteCodeUtil::write(writer, ByteCode::Quit);
+
+   pos_t size = writer.position() - sizePlaceholder - sizeof(pos_t);
+
+   writer.seek(sizePlaceholder);
+   writer.writePos(size);
+}

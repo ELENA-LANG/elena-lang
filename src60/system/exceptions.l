@@ -7,7 +7,7 @@ public class Exception
    constructor new(string message)
    {
       this message := message;
-      this callStack := new CallStack();
+      this callStack := new CallStack(3);
    }
 
    constructor new()

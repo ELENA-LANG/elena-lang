@@ -244,6 +244,7 @@ namespace elena_lang
 
       void* readObject(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, ustr_t className = nullptr);
       void* readIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
+      void* readUIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readLongLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readRealLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readByteArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);

@@ -209,6 +209,7 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             case DebugSymbol::Local:
             case DebugSymbol::LocalAddress:
             case DebugSymbol::IntLocalAddress:
+            case DebugSymbol::UIntLocalAddress:
             case DebugSymbol::LongLocalAddress:
             case DebugSymbol::RealLocalAddress:
             case DebugSymbol::ByteArrayAddress:
@@ -1015,6 +1016,17 @@ void* DebugController :: readIntLocal(ContextBrowserBase* watch, void* parent, a
    else return nullptr;
 }
 
+void* DebugController :: readUIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
+{
+   if (level > 0) {
+      unsigned int value = _process->getDWORD(address);
+
+      WatchContext context = { parent, address };
+      return watch->addOrUpdateUINT(&context, name, value);
+   }
+   else return nullptr;
+}
+
 void* DebugController :: readLongLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
 {
    if (level > 0) {
@@ -1133,6 +1145,11 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
                break;
             case DebugSymbol::IntLocalAddress:
                item = readIntLocal(watch, nullptr,
+                  _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+            case DebugSymbol::UIntLocalAddress:
+               item = readUIntLocal(watch, nullptr,
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;

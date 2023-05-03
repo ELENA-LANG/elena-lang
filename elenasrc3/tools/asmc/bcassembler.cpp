@@ -981,6 +981,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileMR(tokenInfo, writer, opCommand, false);
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
+         case ByteCode::SelULtRR:
             return compileRR(tokenInfo, writer, opCommand, true);
          case ByteCode::ICmpN:
          case ByteCode::TstN:
@@ -1008,6 +1009,8 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::Jge:
          case ByteCode::Jle:
          case ByteCode::Jump:
+         case ByteCode::Jgr:
+         case ByteCode::Jult:
             return compileJcc(tokenInfo, writer, opCommand, lh);
          case ByteCode::SetR:
          case ByteCode::CmpR:
@@ -1020,6 +1023,9 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::CopyDPN:
          case ByteCode::IAddDPN:
          case ByteCode::ISubDPN:
+         case ByteCode::IMulDPN:
+         case ByteCode::IDivDPN:
+         case ByteCode::UDivDPN:
             return compileDDispN(tokenInfo, writer, opCommand, dataLocals, constants, true);
          default:
             return false;

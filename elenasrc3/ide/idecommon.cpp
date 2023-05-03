@@ -37,6 +37,21 @@ void* ContextBrowserBase :: addOrUpdateDWORD(WatchContext* context, ustr_t varia
    return item;
 }
 
+void* ContextBrowserBase :: addOrUpdateUINT(WatchContext* context, ustr_t variableName, int value)
+{
+   void* item = findWatchNodeStartingWith(context, variableName);
+   if (item != nullptr) {
+      editWatchNode(item, variableName, "<uint>", context->address);
+   }
+   else item = addWatchNode(context->root, variableName, "<uint>", context->address);
+
+   WatchContext dwordContext = { item };
+
+   populateUINT(&dwordContext, value);
+
+   return item;
+}
+
 void* ContextBrowserBase :: addOrUpdateWORD(WatchContext* context, ustr_t variableName, short value)
 {
    void* item = findWatchNodeStartingWith(context, variableName);
@@ -89,6 +104,20 @@ void ContextBrowserBase :: populateDWORD(WatchContext* context, unsigned value)
       number.append('h');
    }
    else*/ number.appendInt(value);
+
+   clearNode(context->root);
+   populateNode(context->root, number.str());
+
+}
+
+void ContextBrowserBase :: populateUINT(WatchContext* context, unsigned value)
+{
+   String<char, 20> number;
+   /*if (_browser->isHexNumberMode()) {
+      number.appendHex(value);
+      number.append('h');
+   }
+   else*/ number.appendUInt(value);
 
    clearNode(context->root);
    populateNode(context->root, number.str());

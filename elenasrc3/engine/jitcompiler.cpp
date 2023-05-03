@@ -52,13 +52,13 @@ CodeGenerator _codeGenerators[256] =
    loadFrameIndexOp, loadStackIndexOp, loadFrameDispOp, loadStackIndexOp, loadFrameDispOp, loadNop, loadNop, loadNop,
 
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadVMTIndexOp, loadMOp, compileJlt,
-   compileJge, compileJgr, compileJle, loadNop, loadNop, loadNop, loadNop, loadNop,
+   compileJge, compileJgr, compileJle, compileJult, loadNop, loadNop, loadNop, loadNop,
 
    loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadNop, loadNop,
    loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadArgIndexOp, loadROp, loadSysOp,
 
-   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop, loadNop, loadNop,
-   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop,
+   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop, loadNop,
+   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadRROp,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp2, compileHookDPR, loadNewOp,
    loadDPNOp, loadDPNOp, loadONOp, loadONOp, loadVMTROp, loadMROp, loadRROp, loadRROp,
@@ -90,7 +90,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 136;
+constexpr size_t bcCommandNumber = 138;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -120,7 +120,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::XAssign, ByteCode::OrN, ByteCode::LSaveDP, ByteCode::LLoad, ByteCode::LSaveSI,
    ByteCode::ConvL, ByteCode::XLCmp, ByteCode::System, ByteCode::XCreateR, ByteCode::MulN,
    ByteCode::LLoadDP, ByteCode::XLoadArgSI, ByteCode::XLoad, ByteCode::XLLoad, ByteCode::XSetFP,
-   ByteCode::XAddDP
+   ByteCode::XAddDP, ByteCode::SelULtRR, ByteCode::UDivDPN
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
@@ -2373,6 +2373,19 @@ void elena_lang::compileJlt(JITCompilerScope* scope)
    }
    else if (scope->command.arg1 > 0) {
       scope->lh->writeJltForward(label, *scope->codeWriter, scope->command.arg1);
+   }
+}
+
+void elena_lang::compileJult(JITCompilerScope* scope)
+{
+   pos_t label = scope->tapeReader->position() + scope->command.arg1;
+
+   if (scope->command.arg1 < 0) {
+      // if it is a back jump
+      scope->lh->writeJultBack(label, *scope->codeWriter);
+   }
+   else if (scope->command.arg1 > 0) {
+      scope->lh->writeJultForward(label, *scope->codeWriter, scope->command.arg1);
    }
 }
 

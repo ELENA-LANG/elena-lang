@@ -2156,11 +2156,14 @@ bool X86Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    else if (tokenInfo.compare("cmp")) {
       compileCmp(tokenInfo, writer);
    }
-   else if (tokenInfo.compare("cmovz")) {
-      compileCMovcc(tokenInfo, writer, X86JumpType::JZ);
+   else if (tokenInfo.compare("cmovb")) {
+      compileCMovcc(tokenInfo, writer, X86JumpType::JB);
    }
    else if (tokenInfo.compare("cmovl")) {
       compileCMovcc(tokenInfo, writer, X86JumpType::JL);
+   }
+   else if (tokenInfo.compare("cmovz")) {
+      compileCMovcc(tokenInfo, writer, X86JumpType::JZ);
    }
    else if (tokenInfo.compare("cwde")) {
       compileCWDE(tokenInfo, writer);

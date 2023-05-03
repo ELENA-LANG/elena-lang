@@ -1415,9 +1415,11 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
 
 void JITLinker :: complete(TapeGeneratorBase* tapeGenerator, JITCompilerBase* compiler, ustr_t superClass)
 {
-   // set voidobj
-   addr_t superAddr = resolve(superClass, mskVMTRef, true);
-   compiler->updateVoidObject(_imageProvider->getRDataSection(), superAddr, _virtualMode);
+   if (!superClass.empty()) {
+      // set voidobj
+      addr_t superAddr = resolve(superClass, mskVMTRef, true);
+      compiler->updateVoidObject(_imageProvider->getRDataSection(), superAddr, _virtualMode);
+   }
 
    // load preloaded / auto-generated symbols
    Module dummyModule;

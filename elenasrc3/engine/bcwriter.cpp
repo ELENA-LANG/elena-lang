@@ -495,6 +495,53 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void uintOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
+   if (!isAssignOp(node.arg.value)) {
+      tape.write(ByteCode::CopyDPN, targetOffset, 4);
+      tape.write(ByteCode::XMovSISI, 0, 1);
+   }
+
+   switch (node.arg.value) {
+      case ADD_OPERATOR_ID:
+      case ADD_ASSIGN_OPERATOR_ID:
+         tape.write(ByteCode::IAddDPN, targetOffset, 4);
+         break;
+      case SUB_OPERATOR_ID:
+      case SUB_ASSIGN_OPERATOR_ID:
+         tape.write(ByteCode::ISubDPN, targetOffset, 4);
+         break;
+      case MUL_OPERATOR_ID:
+      case MUL_ASSIGN_OPERATOR_ID:
+         tape.write(ByteCode::IMulDPN, targetOffset, 4);
+         break;
+      case DIV_OPERATOR_ID:
+      case DIV_ASSIGN_OPERATOR_ID:
+         tape.write(ByteCode::UDivDPN, targetOffset, 4);
+         break;
+      case BAND_OPERATOR_ID:
+         tape.write(ByteCode::IAndDPN, targetOffset, 4);
+         break;
+      case BOR_OPERATOR_ID:
+         tape.write(ByteCode::IOrDPN, targetOffset, 4);
+         break;
+      case BXOR_OPERATOR_ID:
+         tape.write(ByteCode::IXorDPN, targetOffset, 4);
+         break;
+      case SHL_OPERATOR_ID:
+         tape.write(ByteCode::IShlDPN, targetOffset, 4);
+         break;
+      case SHR_OPERATOR_ID:
+         tape.write(ByteCode::IShrDPN, targetOffset, 4);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
 void intSOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int targetOffset = node.findChild(BuildKey::Index).arg.value;
@@ -701,6 +748,39 @@ void intCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
    switch (node.arg.value) {
       case LESS_OPERATOR_ID:
          opCode = ByteCode::SelLtRR;
+         break;
+      case EQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         inverted = true;
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   if (!inverted) {
+      tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
+   }
+   else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
+}
+
+void uintCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   bool inverted = false;
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   tape.write(ByteCode::PeekSI, 1);
+   tape.write(ByteCode::ICmpN, 4);
+
+   ByteCode opCode = ByteCode::None;
+   switch (node.arg.value) {
+      case LESS_OPERATOR_ID:
+         opCode = ByteCode::SelULtRR;
          break;
       case EQUAL_OPERATOR_ID:
          opCode = ByteCode::SelEqRR;
@@ -1396,7 +1476,8 @@ ByteCodeWriter::Saver commands[] =
    genericDispatchOp, bynaryArraySOp, binaryArrayOp, shortArrayOp, breakOp, constant, objArrayOp, intArrayOp,
    intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject, peekArgument,
 
-   terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning, savingLInStack
+   terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning, savingLInStack, uintCondOp,
+   uintOp
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -1781,6 +1862,9 @@ void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node, TapeS
             break;
          case BuildKey::IntVariableAddress:
             saveDebugSymbol(DebugSymbol::IntLocalAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            break;
+         case BuildKey::UIntVariableAddress:
+            saveDebugSymbol(DebugSymbol::UIntLocalAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
             break;
          case BuildKey::ByteArrayAddress:
             saveDebugSymbol(DebugSymbol::ByteArrayAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);

@@ -182,6 +182,11 @@ EXTERN_DLL_EXPORT void* CollectGCLA(void* roots, size_t size)
    return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size, false);
 }
 
+EXTERN_DLL_EXPORT void* CollectPermGCLA(size_t size)
+{
+   return __routineProvider.GCRoutinePerm(systemEnv->gc_table, size);
+}
+
 EXTERN_DLL_EXPORT void* ForcedCollectGCLA(void* roots, int fullMode)
 {
    return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, INVALID_SIZE, fullMode != 0);
@@ -210,6 +215,20 @@ EXTERN_DLL_EXPORT addr_t LoadSymbolByStringLA(const char* symbolName)
 EXTERN_DLL_EXPORT addr_t LoadClassByStringLA(const char* symbolName)
 {
    return machine->loadClassReference(symbolName);
+}
+
+EXTERN_DLL_EXPORT addr_t LoadClassByBufferLA(void* referenceName, size_t index, size_t length)
+{
+   if (length < 0x100) {
+      IdentifierString str((const char*)referenceName + index, length);
+
+      return LoadClassByStringLA(*str);
+   }
+   else {
+      DynamicString<char> str((const char*)referenceName, index, length);
+
+      return LoadClassByStringLA(str.str());
+   }
 }
 
 EXTERN_DLL_EXPORT addr_t LoadSymbolByString2LA(const char* ns, const char* symbolName)

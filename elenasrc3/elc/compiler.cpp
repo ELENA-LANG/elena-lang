@@ -1751,6 +1751,9 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
    }
 
    ref_t typeRef = retrieveStrongType(scope, retVal);
+   if (!typeRef)
+      return 0;
+
    dataWriter.Memory()->addReference(typeRef | mskVMTRef, (pos_t)-4);
 
    // save constant meta info
@@ -3513,7 +3516,8 @@ ObjectInfo Compiler :: evalCollection(Interpreter& interpreter, Scope& scope, Sy
    ref_t collectionTypeRef = retrieveStrongType(scope, typeInfo);
 
    ClassInfo collectionInfo;
-   _logic->defineClassInfo(*scope.moduleScope, collectionInfo, collectionTypeRef, false, true);
+   if(!_logic->defineClassInfo(*scope.moduleScope, collectionInfo, collectionTypeRef, false, true))
+      scope.raiseError(errInvalidOperation, node);
 
    if (!test(collectionInfo.header.flags, elDynamicRole))
       scope.raiseError(errInvalidOperation, node);
@@ -4085,8 +4089,8 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
          return scope.moduleScope->buildins.longReference;
       case V_FLOAT64:
          return scope.moduleScope->buildins.realReference;
-      case V_WORD32:
-         return scope.moduleScope->buildins.dwordReference;
+      case V_UINT32:
+         return scope.moduleScope->buildins.uintReference;
       case V_STRING:
          return scope.moduleScope->buildins.literalReference;
       case V_WIDESTRING:
@@ -4115,7 +4119,7 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
       case V_PTR64:
          return scope.moduleScope->buildins.pointerReference;
       default:
-         throw InternalError(errFatalError);
+         return 0;
    }
 }
 
@@ -5188,6 +5192,17 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                   break;
             }
             break;
+         case V_UINTBINARY:
+            switch (attrs.size) {
+               case 4:
+                  attrs.typeInfo.typeRef = V_UINT32;
+                  attrs.fieldArray = false;
+                  break;
+               default:
+                  valid = false;
+                  break;
+            }
+            break;
          case V_WORDBINARY:
             switch (attrs.size) {
                case 4:
@@ -5786,6 +5801,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
             break;
          case BuildKey::BoolSOp:
          case BuildKey::IntCondOp:
+         case BuildKey::UIntCondOp:
          case BuildKey::ByteCondOp:
          case BuildKey::ShortCondOp:
          case BuildKey::LongCondOp:
@@ -8814,6 +8830,10 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
             BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
             varNode.appendChild(BuildKey::Index, localInfo.offset);
          }
+         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.uintReference) {
+            BuildNode varNode = node.appendChild(BuildKey::UIntVariableAddress, it.key());
+            varNode.appendChild(BuildKey::Index, localInfo.offset);
+         }
          else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.byteReference) {
             BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
             varNode.appendChild(BuildKey::Index, localInfo.offset);
@@ -10352,7 +10372,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.closureTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, CLOSURE_FORWARD);
    moduleScope->buildins.tupleTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, TUPLE_FORWARD);
    moduleScope->buildins.lazyExpressionReference = safeMapWeakReference(moduleScope, forwardResolver, LAZY_FORWARD);
-   moduleScope->buildins.dwordReference = safeMapReference(moduleScope, forwardResolver, DWORD_FORWARD);
+   moduleScope->buildins.uintReference = safeMapReference(moduleScope, forwardResolver, UINT_FORWARD);
    moduleScope->buildins.pointerReference = safeMapReference(moduleScope, forwardResolver, PTR_FORWARD);
 
    moduleScope->branchingInfo.typeRef = safeMapReference(moduleScope, forwardResolver, BOOL_FORWARD);

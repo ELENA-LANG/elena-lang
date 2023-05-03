@@ -163,6 +163,7 @@ public singleton intConvertor
    private convertChar(char ch, ref int retVal) : external(system'core_routines'__charToInt);
    private convertLong(long l, ref int retVal) : external(system'core_routines'__longToInt);
    private convertReal(real l, ref int retVal) : external(system'core_routines'__realToInt);
+   private convertUInt(uint l, ref int retVal) : external(system'core_routines'__uintToInt);
 
    int convert(o)
       = cast int(o);
@@ -182,6 +183,13 @@ public singleton intConvertor
       int n := s;
 
       ^ n;
+   }
+
+   int convert(uint n)
+   {
+      self.convertUInt(n, ref int retVal);
+
+      ^ retVal
    }
 
    int convert(char ch)
@@ -222,7 +230,7 @@ public singleton intConvertor
          int ch := c;
          ch := ch - 48;
          if (ch >= radix) {
-            ch := ch - 49;
+            ch := ch - 7;
          };
          val := val * radix;
          val := val + ch;
@@ -247,7 +255,7 @@ public singleton intConvertor
          int ch := c;
          ch := ch - 48;
          if (ch >= radix) {
-            ch := ch - 49;
+            ch := ch - 7;
          };
          val := val * radix;
          val := val + ch;
@@ -258,28 +266,41 @@ public singleton intConvertor
 
    int convert(wide s)
       <= convert(s, 10);
-
-   int convert(uint n)
-      = new IntNumber(n);
 }
 
 // --- uintConvertor ---
 
 public singleton uintConvertor
 {
+   private copyDirectly(int n, ref uint retVal) : external(system'core_routines'__intToUInt);
+
    uint convert(o)
       = cast uint(o);
 
    uint convert(int n)
-      = new UIntNumber(n);
+   {
+      if (n < 0) {
+         InvalidArgumentException.raise();
+      };
+
+      self.copyDirectly(n, ref uint retVal);
+
+      ^ retVal
+   }
 
    uint convert(byte b)
    {
-      uint n := b;
+      int n := b;
 
-      ^ n;
+      ^ uintConvertor.convert(n);
    }
 
+   uint convert(short s)
+   {
+      int n := s;
+
+      ^ uintConvertor.convert(n);
+   }
    uint convert(long l)
    {
       int n := intConvertor.convert(l);
@@ -291,14 +312,15 @@ public singleton uintConvertor
    {
       int len := s.Length;
       uint val := 0;
+      uint r := radix;
       for (int i := 0, i < len, i := i + 1) {
          byte c := s[i];
-         int ch := c;
+         uint ch := c;
          ch := ch - 48;
-         if (ch >= radix) {
-            ch := ch - 49;
+         if (ch >= r) {            
+            ch := ch - 7;
          };
-         val := val * radix;
+         val := val * r;
          val := val + ch;
       };
 
@@ -617,14 +639,15 @@ public singleton stringConvertor
    string convert(uint value, int radix)
    {
       uint n := value;
+      uint uradix := radix;
 
       byte buffer[12];
       byte tmp;
       int len := 0;
       int index := 11;
-      while (n >= radix) {
-         int r := n.mod(radix);
-         n := n / radix;
+      while (n >= uradix) {
+         uint r := n.mod(uradix);
+         n := n / uradix;
 
          tmp := 48 + r;
          buffer[index] := tmp;

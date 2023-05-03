@@ -3,7 +3,7 @@
 //
 //		This header contains Byte-code Assembler declarations
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef BCASSEMBLER_H
@@ -39,6 +39,9 @@ namespace elena_lang
 
          void writeJltBack(pos_t label, MemoryWriter& writer) override {}
          void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
+
+         void writeJultBack(pos_t label, MemoryWriter& writer) override {}
+         void writeJultForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
 
          void writeJgeBack(pos_t label, MemoryWriter& writer) override {}
          void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}

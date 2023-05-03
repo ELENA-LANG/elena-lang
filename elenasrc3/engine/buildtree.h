@@ -129,6 +129,8 @@ namespace elena_lang
       ConstArrayReference  = 0x0064,
       StaticAssigning      = 0x0065,
       SavingLInStack       = 0x0066,
+      UIntCondOp           = 0x0067,
+      UIntOp               = 0x0068,
 
       MaxOperationalKey    = 0x0070,
 
@@ -156,6 +158,7 @@ namespace elena_lang
       ByteArrayAddress     = 0x0096,
       ShortArrayAddress    = 0x0097,
       IntArrayAddress      = 0x0098,
+      UIntVariableAddress  = 0x0099,
 
       ParameterInfo        = 0x00A0,
       Parameter            = 0x00A1,

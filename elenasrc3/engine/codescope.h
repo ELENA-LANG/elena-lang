@@ -61,6 +61,11 @@ namespace elena_lang
 
       void addLazyReference(LazyReferenceInfo info) override;
 
+      void clearLazyReferences()
+      {
+         _lazyReferences.clear();
+      }
+
       ReferenceMapper(ExternalMapper* externalMapper = nullptr) :
          _symbolReferences(INVALID_ADDR), 
          _exportReferences(INVALID_ADDR), 

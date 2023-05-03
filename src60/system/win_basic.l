@@ -74,6 +74,14 @@ public sealed class CallStack
       this stack := class Array<pointer>.copy(stack, 0, length);
    }
 
+   constructor(int trimingLevel)
+   {
+      pointer stack[64];
+      self.load(stack, 64, ref int length);
+
+      this stack := class Array<pointer>.copy(stack, trimingLevel, length);
+   }
+
    string toPrintable()
       : info("Generates the call stack literal representation")
    {

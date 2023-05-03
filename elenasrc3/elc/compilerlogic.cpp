@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 118;
+constexpr auto OperationLength = 137;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -145,6 +145,63 @@ constexpr Op Operations[OperationLength] =
    },
    {
       NOTEQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG
+   },
+   {
+      ADD_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, 0
+   },
+   {
+      BAND_OPERATOR_ID, BuildKey::IntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      BOR_OPERATOR_ID, BuildKey::IntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      BXOR_OPERATOR_ID, BuildKey::IntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      BNOT_OPERATOR_ID, BuildKey::IntSOp, V_UINT32, 0, 0, V_UINT32
+   },
+   {
+      SHL_OPERATOR_ID, BuildKey::IntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      SHR_OPERATOR_ID, BuildKey::IntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::UIntCondOp, V_UINT32, V_UINT32, 0, V_FLAG
+   },
+   {
+      LESS_OPERATOR_ID, BuildKey::UIntCondOp, V_UINT32, V_UINT32, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::UIntCondOp, V_UINT32, V_UINT32, 0, V_FLAG
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::UIntCondOp, V_UINT32, V_UINT32, 0, V_FLAG
+   },
+   {
+      LESS_OPERATOR_ID, BuildKey::UIntCondOp, V_UINT32, V_UINT32, 0, V_FLAG
    },
    {
       ADD_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, V_INT64
@@ -588,6 +645,7 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_FIELD:
          break;
       case V_INTBINARY:
+      case V_UINTBINARY:
       case V_WORDBINARY:
       case V_MSSGBINARY:
       case V_SUBJBINARY:
@@ -1088,6 +1146,7 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
       auto inner = *info.fields.start();
       switch (inner.typeInfo.typeRef) {
          case V_INT32:
+         case V_UINT32:
          case V_INT8:
          case V_PTR32:
          case V_WORD32:
@@ -1302,6 +1361,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.size = 8;
          break;
       case V_INT32:
+      case V_UINT32:
       case V_PTR32:
       case V_WORD32:
          info.header.parentRef = scope.buildins.superReference;

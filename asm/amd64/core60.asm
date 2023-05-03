@@ -1633,6 +1633,17 @@ inline %0D3h
 
 end
 
+// ; udivndp
+inline %0D4h
+
+  mov  rcx, [r10]
+  xor  edx, edx 
+  mov  rax, [rbp+__arg32_1]
+  div  ecx
+  mov  dword ptr [rbp+__arg32_1], eax
+
+end
+
 // ; ianddpn
 inline %0D8h
 
@@ -1866,6 +1877,15 @@ inline %4DDh
   mov  rax, [rdi]
   shr  rax, cl
   mov  [rdi], rax
+
+end
+
+// ; selltrr
+inline %0DFh
+
+  mov   rax, __ptr64_1
+  mov   rbx, __ptr64_2
+  cmovb rbx, rax
 
 end
 

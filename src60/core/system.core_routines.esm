@@ -697,6 +697,24 @@ procedure __shortToByte
 
 end
 
+procedure __intToUInt
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
+procedure __uintToInt
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
 procedure __realTrunc (self, r1, r2)
 
   xflush     sp:0

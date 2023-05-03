@@ -20,6 +20,8 @@ namespace elena_lang
       bool readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider, ustr_t& symbol, ustr_t& method, ustr_t& path, int& row);
 
    public:
+      void loadRootPackage(LibraryProviderBase& provider, path_t rootPath);
+
       ref_t loadSubject(ustr_t actionName);
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);

@@ -71,6 +71,33 @@ public extension intOp : IntNumber
    }
 }
 
+// --- uintOp ---
+
+public extension uintOp : UIntNumber
+{
+   uint mod(uint operand)
+   {
+      uint retVal := self / operand * operand;
+
+      retVal := self - retVal;
+        
+      ^ retVal
+   }
+
+   uint mod(int operand)
+   {
+      uint uoperand := operand;
+      uint retVal := self / uoperand * uoperand;
+
+      retVal := self - retVal;
+        
+      ^ retVal
+   }
+
+   uint mod(operand)
+      = self.mod(cast uint(operand));
+}
+
 // --- longOp ---
 
 public extension longOp : LongNumber

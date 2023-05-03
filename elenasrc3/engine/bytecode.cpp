@@ -48,13 +48,13 @@ const char* _fnOpcodes[256] =
    "peek fp", "peek sp", "lsave dp", "lsave sp", "lload dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "call", "call vt", "jump", "jeq", "jne", "jump vt", "xredirect mssg", "jlt",
-   "jge", "jgr", "jle", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "jge", "jgr", "jle", "jbl", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "cmp", "fcmp", "icmp", "tst flag", "tstn", "tst mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "cmp fp", "cmp sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xloadarg sp", "xcreate", "system",
 
-   "fadd dp", "fsub dp", "fmul dp", "fdiv dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   "iand dp", "ior dp", "ixor dp", "inot dp", "ishl dp", "ishr dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "fadd dp", "fsub dp", "fmul dp", "fdiv dp", "udiv dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "iand dp", "ior dp", "ixor dp", "inot dp", "ishl dp", "ishr dp", OPCODE_UNKNOWN, "selbl",
 
    "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", "nsave dp", "xhook dp", "xnewn",
    "nadd dp", "dcopy dp", "xwrite offs", "xcopy offs", "vjump mssg", "jump mssg", "seleq", "sellt",
@@ -423,6 +423,9 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
             case ByteCode::Jne:
             case ByteCode::Jlt:
             case ByteCode::Jge:
+            case ByteCode::Jgr:
+            case ByteCode::Jle:
+            case ByteCode::Jult:
                // remove the label from idle list
                idleLabels.exclude(command.arg1);
 

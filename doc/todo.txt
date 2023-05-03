@@ -5,9 +5,26 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * impelement system'dynamic'TapeInterpreter
+    * new opcode : udivdpn - x86, x86-64, ppc64le, aarch64
 
-    * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
+    * uint test : divide 80000000 by 16 -> the result is 8000000
+
+    * uint to string and back (hex)
+    * uint : test comparision (e.g 0 < 3000000u)
+
+    * int to string and back (hex)
+
+    * review documentation - check if all code is compiled - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual
+    * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Code-Snippets
+    * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
+
+    * ide : fix select all
+    * ide : refreshing auto watch - with the same name, unused
+    * vm console : use ENV struct allocated in vm
+    * vm console : reimplement helloworld
+
+    * vm console : ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
+    * vm console : ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
 
     ! migrate rest of elena 5.0 functionality (script engine, infinite enumeration, ...)
     ! script and db samples
@@ -25,9 +42,6 @@ In development:
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
-    * review documentation - check if all code is compiled
-    * ide : fix select all
-    * ide : refreshing auto watch - with the same name, unused
     * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
     * optimization : copy a sub array to another array - starting
     * x86 : gui - starting - new project type
@@ -84,6 +98,7 @@ In development:
     * new opcode : xload, lxload, xadddp - ppc64le, arm64
     * new opcode : xsetfp - ppc64le, arm64
     * new opcode : jle, jg - ppc64le, arm64
+    * new opcode : selult,jult - ppc64le, aarch64
 
     === Iteration 16 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop
@@ -124,6 +139,7 @@ Backlog:
     * lazy expressions, put it in the first page as a feature
 
     --- elena redux ---
+    * elenavm : loading preloaded symbols for newly loaded modules
     * internal / auto-generated classes must not be included in run-time attributes
     * optimization : tuple / array unboxing
     * native conversion from short to int / byte to int
@@ -168,7 +184,6 @@ Backlog:
     * ldoc : all symbols should be in alphabetic order
     * ldoc : consoleOp extension should be visible
     * debugger watch: variadic argument list
-    * callstack : fix the call stack list, it looks some points are not included
     * call semidirect method
     * external inline template should be private / internal. Currently it is not possible because
       it cannot be resolved by template generation
@@ -234,7 +249,6 @@ Backlog:
     * unit tests : boolean operations
     * int to short -> negative
     * short to int -> negative
-    * uint : test comparision (e.g 0 < 3000000u)
     * comparision operations : short / byte / long operation
     * boolean operators : &&, ||, ^^ - weak implementation
 
@@ -306,7 +320,7 @@ Backlog:
     * exclude embeddable return for auto field
     * generate abstract ebleddable
     * primitive operations : support all comparision operations (not only <, == and !=)
-    * uint, ushort, int8
+    * ushort, int8
     * numberic constant should be implicitly converted to byte / short / long / real
     * closure should be sealed
     * jumping - aligning the target to 4 / 8

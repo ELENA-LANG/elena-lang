@@ -121,6 +121,7 @@ namespace elena_lang
       Jge            = 0xB8,
       Jgr            = 0xB9,
       Jle            = 0xBA,
+      Jult           = 0xBB,
 
       CmpR           = 0xC0,
       FCmpN          = 0xC1,
@@ -141,6 +142,7 @@ namespace elena_lang
       FSubDPN        = 0xD1,
       FMulDPN        = 0xD2,
       FDivDPN        = 0xD3,
+      UDivDPN        = 0xD4,
 
       IAndDPN        = 0xD8,
       IOrDPN         = 0xD9,
@@ -148,6 +150,7 @@ namespace elena_lang
       INotDPN        = 0xDB,
       IShlDPN        = 0xDC,
       IShrDPN        = 0xDD,
+      SelULtRR       = 0xDF,
 
       CopyDPN        = 0xE0,
       IAddDPN        = 0xE1,
@@ -352,6 +355,7 @@ namespace elena_lang
          case ByteCode::CmpR:
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
+         case ByteCode::SelULtRR:
          case ByteCode::PeekR:
          case ByteCode::StoreR:
          case ByteCode::CreateR:
@@ -378,6 +382,7 @@ namespace elena_lang
             case ByteCode::XDispatchMR:
             case ByteCode::SelEqRR:
             case ByteCode::SelLtRR:
+            case ByteCode::SelULtRR:
             case ByteCode::XHookDPR:
             case ByteCode::CreateNR:
                return true;

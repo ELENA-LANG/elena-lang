@@ -19,7 +19,8 @@ namespace elena_lang
    constexpr auto ELENAVM_INITIALIZING    = "Initializing...";
 
    // --- ELENARTMachine ---
-   class ELENAVMMachine : public ELENAMachine, public ImageProviderBase, public ExternalMapper
+   class ELENAVMMachine : public ELENAMachine, public ImageProviderBase, public ExternalMapper,
+      public TapeGeneratorBase
    {
    protected:
       bool                 _initialized;
@@ -40,7 +41,7 @@ namespace elena_lang
 
       int interprete(SystemEnv* env, void* tape, pos_t size, const char* criricalHandlerReference);
 
-      void onNewCode();
+      void onNewCode(JITLinker& jitLinker);
 
       void stopVM();
 
@@ -48,7 +49,7 @@ namespace elena_lang
       void compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, 
          ModuleBase* dummyModule);
 
-      void resumeVM(SystemEnv* env, void* criricalHandler);
+      void resumeVM(JITLinker& jitLinker, SystemEnv* env, void* criricalHandler);
 
       void init(JITLinker& jitLinker, SystemEnv* env);
 
@@ -71,6 +72,8 @@ namespace elena_lang
 
       void Exit(int exitCode);
 
+      void generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol) override;
+      
       ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
          int codeAlignment, JITSettings gcSettings,
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType));
