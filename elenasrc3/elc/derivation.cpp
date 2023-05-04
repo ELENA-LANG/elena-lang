@@ -13,15 +13,15 @@
 
 using namespace elena_lang;
 
-inline void testNodes(SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      testNodes(current);
-
-      current = current.nextNode();
-   }
-}
+//inline void testNodes(SyntaxNode node)
+//{
+//   SyntaxNode current = node.firstChild();
+//   while (current != SyntaxKey::None) {
+//      testNodes(current);
+//
+//      current = current.nextNode();
+//   }
+//}
 
 inline bool testNodeMask(SyntaxKey key, SyntaxKey mask)
 {
@@ -476,8 +476,6 @@ void SyntaxTreeBuilder :: generateTemplateOperation(SyntaxTreeWriter& writer, Sc
    else {
       _errorProcessor->raiseTerminalError(errInvalidOperation, retrievePath(node), node);
    }
-
-   testNodes(node);
 }
 
 void SyntaxTreeBuilder :: flushExpressionMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current)

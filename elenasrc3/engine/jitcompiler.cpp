@@ -40,13 +40,13 @@ CodeGenerator _codeGenerators[256] =
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
-   loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadFrameDispOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadROp, loadFrameDispOp, loadLenOp, loadIndexOp, loadROp, loadROp, loadStackIndexOp, loadStackIndexOp,
    loadMOp, loadNOp, loadFrameDispOp, loadFrameDispOp, loadNOp, loadNOp, loadFrameIndexOp, loadROp,
 
    loadNOp, compileClose, loadIndexOp, loadIndexOp, loadNOp, loadNOp, loadNOp, loadNOp,
-   loadFrameDispOp, loadFrameDispOp, loadNOp, loadNOp, loadNOp, loadFrameDispOp, loadFrameIndexOp, loadNop,
+   loadFrameDispOp, loadFrameDispOp, loadNOp, loadNOp, loadNOp, loadFrameDispOp, loadFrameIndexOp, loadFrameDispOp,
 
    loadFrameDispOp, loadFrameIndexOp, loadStackIndexOp, loadStackIndexOp, loadStackIndexOp, loadFieldIndexOp, loadFieldIndexOp, loadStackIndexOp,
    loadFrameIndexOp, loadStackIndexOp, loadFrameDispOp, loadStackIndexOp, loadFrameDispOp, loadNop, loadNop, loadNop,
@@ -90,7 +90,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 138;
+constexpr size_t bcCommandNumber = 140;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -120,7 +120,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::XAssign, ByteCode::OrN, ByteCode::LSaveDP, ByteCode::LLoad, ByteCode::LSaveSI,
    ByteCode::ConvL, ByteCode::XLCmp, ByteCode::System, ByteCode::XCreateR, ByteCode::MulN,
    ByteCode::LLoadDP, ByteCode::XLoadArgSI, ByteCode::XLoad, ByteCode::XLLoad, ByteCode::XSetFP,
-   ByteCode::XAddDP, ByteCode::SelULtRR, ByteCode::UDivDPN
+   ByteCode::XAddDP, ByteCode::SelULtRR, ByteCode::UDivDPN, ByteCode::FRoundDP, ByteCode::FAbsDP
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,

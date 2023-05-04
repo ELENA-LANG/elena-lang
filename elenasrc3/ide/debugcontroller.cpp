@@ -479,7 +479,6 @@ DebugController :: DebugController(DebugProcessBase* process, ProjectModel* mode
    _sourceModel = sourceModel;
    _model = model;
    _notifier = notifier;
-   _currentModule = nullptr;
    _currentPath = nullptr;
    _sourceController = sourceController;
 }
@@ -533,7 +532,7 @@ void DebugController :: debugThread()
       }
    }
    _running = false;
-   //_currentModule = nullptr;
+   _currentModule.clear();
    _process->clearEvents();
 
    onStop();
@@ -651,8 +650,8 @@ void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName
    if (lineInfo) {
       _sourceModel->clearTraceLine();
 
-      if (!moduleName.compare(_currentModule) || !sourcePath.compare(_currentPath)) {
-         _currentModule = moduleName;
+      if (!_currentModule.compare(moduleName) || !sourcePath.compare(_currentPath)) {
+         _currentModule.copy(moduleName);
          _currentPath = sourcePath;
 
          PathString path(sourcePath);
@@ -673,7 +672,7 @@ void DebugController :: onStop()
    _process->reset();
    _provider.clear();
 
-   _currentModule = nullptr;
+   _currentModule.clear();
    _currentPath = nullptr;
 
    _notifier->notifyCompletion(NOTIFY_DEBUGGER_RESULT, DEBUGGER_STOPPED);
@@ -809,7 +808,7 @@ void DebugController :: clearBreakpoints()
 
 bool DebugController :: start(path_t programPath, path_t arguments, bool debugMode)
 {
-   //_currentModule = NULL;
+   _currentModule.clear();
    _debuggee.copy(programPath);
    _arguments.copy(arguments);
 

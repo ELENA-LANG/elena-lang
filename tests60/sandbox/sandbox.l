@@ -2,10 +2,13 @@ import extensions;
 
 public program()
 {
-   console
-      .writeLine(4 & 2)
-      .writeLine(3 | 10000000000l)
-      .writeLine(5 ^ 3)
-      .writeLine(5 $shl 2)
-      .writeLine(5 $shr 1);
+   bool neg := false;
+
+   ^ neg ? 2 : 0;
+
+//   var r1 := 5.3;
+//   var r2 := 3.8;
+
+//   var n1 := r1.Rounded;
+//   var n2 := r2.Rounded;
 }

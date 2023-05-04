@@ -684,6 +684,16 @@ inline %02Fh
 
 end
 
+// ; fabsdp
+inline %078h
+
+  lea   edi, [ebp + __arg32_1]
+  fld   qword ptr [esi]
+  fabs
+  fstp  qword ptr [edi]    // ; store result 
+
+end 
+
 // ; setr
 inline %80h
 
@@ -1099,6 +1109,42 @@ inline %09Eh
 
   lea  eax, [edx*4]
   lea  ebx, [ebp + eax + __arg32_1]
+
+end 
+
+// ; frounddp
+inline %09Fh
+
+  lea   edi, [ebp + __arg32_1]
+
+  mov   ecx, 0
+  fld   qword ptr [esi]
+
+  push  ecx                // reserve space on stack
+  fstcw word ptr [esp]     // get current control word
+
+  mov   edx, [esp]
+  and   dx,0F3FFh          // code it for code it for rounding 
+  push  edx
+  fldcw word ptr [esp]     // change rounding code of FPU to truncate
+
+  frndint                  // round the number
+  pop   edx                // remove modified CW from CPU stack
+  fldcw word ptr [esp]     // load back the former control word
+  pop   edx                // clean CPU stack
+      
+  fstsw ax                 // retrieve exception flags from FPU
+  shr   al,1               // test for invalid operation
+  jc    short labErr       // clean-up and return error
+
+labSave:
+  fstp  qword ptr [edi]    // store result
+  jmp   short labEnd
+  
+labErr:
+  ffree st(1)
+  
+labEnd:
 
 end 
 

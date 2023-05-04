@@ -36,6 +36,10 @@ public singleton byteConvertor
 
    byte convert(int n)
    {
+      if (n > 255 || n < 0) {
+         OutOfRangeException.raise();
+      };
+
       byte b;
       self.convert(n, ref b);
 
@@ -84,11 +88,11 @@ public singleton byteConvertor
 
 public singleton shortConvertor
 {
-   convert(int n, ref short retVal) : external(system'core_routines'__intToShort);
+   private convertInt(int n, ref short retVal) : external(system'core_routines'__intToShort);
 
-   convert(uint n, ref short retVal) : external(system'core_routines'__uintToShort);
+   private convertUInt(uint n, ref short retVal) : external(system'core_routines'__uintToShort);
 
-   convert(byte b, ref short retVal) : external(system'core_routines'__byteToShort);
+   private convertByte(byte b, ref short retVal) : external(system'core_routines'__byteToShort);
 
    short convert(o)
       = cast short(o);
@@ -99,7 +103,7 @@ public singleton shortConvertor
    short convert(byte b)
    {
       short s;
-      self.convert(b, ref s);
+      self.convertByte(b, ref s);
 
       ^ s;
    }   
@@ -107,7 +111,7 @@ public singleton shortConvertor
    short convert(int n)
    {
       short s;
-      self.convert(n, ref s);
+      self.convertInt(n, ref s);
 
       ^ s;
    }
@@ -115,7 +119,7 @@ public singleton shortConvertor
    short convert(uint n)
    {
       short s;
-      self.convert(n, ref s);
+      self.convertUInt(n, ref s);
 
       ^ s;
    }

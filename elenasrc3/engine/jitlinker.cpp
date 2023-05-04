@@ -752,9 +752,6 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
    referenceInfo.module = sectionInfo.module;
    referenceInfo.referenceName = referenceInfo.module->resolveReference(sectionInfo.reference);
 
-   if (referenceInfo.referenceName.findStr("program") != NOTFOUND_POS)
-      sectionInfo.reference = sectionInfo.reference;
-
    JITLinkerReferenceHelper helper(this, sectionInfo.module, &references);
 
    // VMT just in time compilation

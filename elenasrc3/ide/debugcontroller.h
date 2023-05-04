@@ -224,7 +224,7 @@ namespace elena_lang
       NotifierBase*           _notifier;
       DebugSourceController*  _sourceController;
 
-      ustr_t                  _currentModule;
+      IdentifierString        _currentModule;
       ustr_t                  _currentPath;
 
       void debugThread() override;

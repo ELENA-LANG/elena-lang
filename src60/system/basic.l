@@ -1499,7 +1499,7 @@ public sealed const struct LongNumber : IntBaseNumber,
       <= less(cast long(s));
 
    bool equal(int n)
-      <= equal(cast int(n));
+      <= equal(cast long(n));
 
    bool less(int n)
       <= less(cast long(n));

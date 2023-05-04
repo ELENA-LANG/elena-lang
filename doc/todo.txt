@@ -5,11 +5,15 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
+
+    * supporting truncate, Reciprocal
+    * supporting functions : frac, ceil, floor, truncate
+
     * review documentation - check if all code is compiled - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual
+
     * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Code-Snippets
     * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * ide : fix select all
     * ide : refreshing auto watch - with the same name, unused
     * vm console : use ENV struct allocated in vm
     * vm console : reimplement helloworld
@@ -91,6 +95,8 @@ In development:
     * new opcode : jle, jg - ppc64le, arm64
     * new opcode : selult,jult - ppc64le, aarch64
     * new opcode : udivdpn - ppc64le, aarch64
+    * new opcode : fabsdp - aarch64, ppc64le
+    * new opcode : fround - x86-64, ppc64le, arm64
 
     === Iteration 16 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop

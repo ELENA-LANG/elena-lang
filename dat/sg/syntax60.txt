@@ -374,6 +374,7 @@ EXPRESSION ::=
 		| L5_O_OP L5_OP* L6_OP?
 		| L6_O_OP L7_OP* L8_OP?
 		| L7_O_OP
+		| L8_O_OP
 		| TRY ^OBJECT TRY_R
 		| NESTED_EXPRESSION ^NESTED L3_OP*
 		| eps ^OBJECT }
@@ -558,7 +559,7 @@ L3_F ::=
 L3_SINGLE_EXPRESSION ::=
 	identifier ^OBJECT
 	| reference ^OBJECT 
-	| { string | integer | hexinteger | character | constant } ^OBJECT
+	| { string | integer | hexinteger | character | constant | long | real } ^OBJECT
 	| "(" SUB_L3_SINGLE_EXPRESSION;
 
 L6_EXPRESSION ::=
@@ -689,6 +690,7 @@ L3_OP ::=
 L4_OP ::=
 	BAND L4_EXPRESSION ^BAND_OPERATION
 	| BOR L4_EXPRESSION ^BOR_OPERATION
+	| BXOR L4_EXPRESSION ^BXOR_OPERATION
 	| STAR L4_EXPRESSION ^MUL_OPERATION
 	| DIV  L4_EXPRESSION ^DIV_OPERATION
 	| SHL L4_EXPRESSION ^SHL_OPERATION
@@ -751,6 +753,10 @@ ELSE_R ::=
 L8_OP ::=
 	IF IF_R
 	| ELSE ELSE_R;
+
+L8_O_OP ::=
+	IF ^OBJECT IF_R
+	| ELSE ^OBJECT ELSE_R;
 
 TRY_R ::=
 	CATCH ^CATCH_OPERATION;

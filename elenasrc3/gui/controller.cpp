@@ -267,7 +267,7 @@ void TextViewController::selectAll(TextViewModelBase* model)
    DocumentChangeStatus status = {};
    auto docView = model->DocView();
 
-   docView->moveHome(status, false);
+   docView->moveFirst(status, false);
    docView->moveEnd(status, true);
 
    notifyOnChange(model, status);

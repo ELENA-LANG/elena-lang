@@ -297,6 +297,10 @@ internal singleton PrimitiveRealOperations
 {
    trunc(real r, ref real retVal) : external(system'core_routines'__realTrunc);
 
+   round(real r, ref real retVal) : external(system'core_routines'__realRound);
+
+   abs(real r, ref real retVal) : external(system'core_routines'__realAbs);
+
    int normalizeFloat(ref real value)
    {
       real positiveExpThreshold := 1.0e7;

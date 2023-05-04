@@ -3,7 +3,7 @@
 //
 //		This header contains x86 and x86-64 Assembler declarations
 //
-//                                                  (C)2021, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef X86ASSEMBLER_H
@@ -122,6 +122,7 @@ namespace elena_lang
       void compileCWDE(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileDec(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileDiv(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFabs(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFadd(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFinit(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFcomip(ScriptToken& tokenInfo, MemoryWriter& writer);

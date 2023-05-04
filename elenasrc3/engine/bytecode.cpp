@@ -36,13 +36,13 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "fabs dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "set", "set dp", "nlen", "xassign i", "peek", "store", "xswap sp", "swap sp",
    "mov mssg", "mov n", "load dp", "xcmp dp", "sub n", "add n", "set fp", "create",
 
    "copy", "close", "alloc i", "free", "and n", "read", "write", "cmp n",
-   "nconf dp", "ftrunc dp", "dcopy", "or n", "mul n", "xadd dp", "xset fp", OPCODE_UNKNOWN,
+   "nconf dp", "ftrunc dp", "dcopy", "or n", "mul n", "xadd dp", "xset fp", "fround dp",
 
    "save dp", "store fp", "save sp", "store sp", "xflush sp", "get i", "assign i", "xrefresh sp",
    "peek fp", "peek sp", "lsave dp", "lsave sp", "lload dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,

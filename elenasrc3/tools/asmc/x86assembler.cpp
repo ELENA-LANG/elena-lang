@@ -807,6 +807,13 @@ void X86Assembler :: compileFrndint(ScriptToken& tokenInfo, MemoryWriter& writer
    writer.writeWord(0xFCD9);
 }
 
+void X86Assembler :: compileFabs(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   read(tokenInfo);
+
+   writer.writeWord(0xE1D9);
+}
+
 void X86Assembler :: compileFsub(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    X86Operand sour = compileOperand(tokenInfo, nullptr);
@@ -1274,6 +1281,12 @@ bool X86Assembler :: compileAnd(X86Operand source, X86Operand target, MemoryWrit
       writer.writeByte(0x66);
       writer.writeByte(0x21);
       X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR16() && target.type == X86OperandType::DD) {
+      writer.writeByte(0x66);
+      writer.writeByte(0x81);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 4 }, source);
+      writer.writeWord(target.offset);
    }
    else return false;
 
@@ -2196,7 +2209,10 @@ bool X86Assembler :: compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
 
 bool X86Assembler :: compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
-   if (tokenInfo.compare("fadd")) {
+   if (tokenInfo.compare("fabs")) {
+      compileFabs(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fadd")) {
       compileFadd(tokenInfo, writer);
    }
    else if (tokenInfo.compare("fcomip")) {

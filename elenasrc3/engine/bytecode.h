@@ -61,7 +61,9 @@ namespace elena_lang
       XGet           = 0x2E,
       XCall          = 0x2F,
 
-      MaxSingleOp    = 0x7F,
+      MaxSingleOp    = 0x77,
+
+      FAbsDP         = 0x78,
 
       SetR           = 0x80,
       SetDP          = 0x81,
@@ -95,6 +97,7 @@ namespace elena_lang
       MulN           = 0x9C,
       XAddDP         = 0x9D,
       XSetFP         = 0x9E,
+      FRoundDP       = 0x9F,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,

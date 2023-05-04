@@ -736,6 +736,48 @@ procedure __realTrunc (self, r1, r2)
 
 end
 
+procedure __realRound (self, r1, r2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp:__realSize]
+
+  peek       fp:r1
+  store      sp:0
+
+  fround     dp:tmp
+
+  set        dp:tmp
+  store      sp:0
+  peek       fp:r2
+  copy       __realSize
+
+  close      []
+
+end
+
+procedure __realAbs (self, r1, r2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp:__realSize]
+
+  peek       fp:r1
+  store      sp:0
+
+  fabs       dp:tmp
+
+  set        dp:tmp
+  store      sp:0
+  peek       fp:r2
+  copy       __realSize
+
+  close      []
+
+end
+
 procedure __longToByte
 
   peek       sp:1

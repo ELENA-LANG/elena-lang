@@ -3392,7 +3392,7 @@ void Compiler :: declareNamespace(NamespaceScope& ns, SyntaxNode node, bool igno
                   current.setKey(SyntaxKey::Idle);
                }
                else {
-                  ns.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, current);
+                  ns.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, current.findChild(SyntaxKey::Name));
                   current.setKey(SyntaxKey::Idle); // remove the node, to prevent duplicate warnings
                }
             }
@@ -8835,6 +8835,10 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
             varNode.appendChild(BuildKey::Index, localInfo.offset);
          }
          else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.byteReference) {
+            BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
+            varNode.appendChild(BuildKey::Index, localInfo.offset);
+         }
+         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.shortReference) {
             BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
             varNode.appendChild(BuildKey::Index, localInfo.offset);
          }

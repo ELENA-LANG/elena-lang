@@ -325,6 +325,9 @@ ELENA byte codes (or ecodes)
  
    andn n                   - index := index & n
  
+   fabs dp:disp             - double:tmp << sp[0];
+                              double:dp[disp] := abs(tmp)
+
    fadd dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] += temp;
                               n = 8 
@@ -336,6 +339,9 @@ ELENA byte codes (or ecodes)
    fmul dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] *= temp;
                               n = 8  
+
+   fround dp:disp           - double:tmp << sp[0];
+                              double:dp[disp] := trunc(tmp)
 
    fsub dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] -= temp;

@@ -29,6 +29,110 @@ public extension objectOp
                   info("Checks if the object is an instance of type");   
 }
 
+// --- byteOp ---
+
+public extension byteOp : ByteNumber
+{
+   int Hashcode
+   {
+      // Reads the object hash code into the output parameter
+      get()
+      {
+         int val := self;
+         int retVal := PrimitiveIntOperations.getHashcode(val);
+
+         ^ retVal
+      }
+   }
+
+   get byte Absolute()
+   {
+      byte n := self;
+    
+      if (n < 0)
+         { n := -n };
+    
+      ^ n
+   }
+
+   byte mod(operand)
+   {
+      var retVal := self / operand * operand;
+        
+      ^ byteConvertor.convert(retVal)
+   }
+
+   bool isOdd()
+      = self.mod:2 != 0;
+        
+   bool isEven()
+      = self.mod:2 == 0;
+        
+   bool isZero()
+      = self.equal(0);
+        
+   bool isPositive()
+      = self > 0;
+        
+   bool isNegative()
+      = self < 0;
+        
+   bool isNonnegative()
+      = self <= 0;
+}
+
+// --- shortOp ---
+
+public extension shortOp : ShortNumber
+{
+   int Hashcode
+   {
+      // Reads the object hash code into the output parameter
+      get()
+      {
+         int val := self;
+         int retVal := PrimitiveIntOperations.getHashcode(val);
+
+         ^ retVal
+      }
+   }
+
+   get short Absolute()
+   {
+      short n := self;
+    
+      if (n < 0)
+         { n := -n };
+    
+      ^ n
+   }
+
+   short mod(operand)
+   {
+      var retVal := self / operand * operand;
+        
+      ^ shortConvertor.convert(retVal)
+   }    
+
+   bool isOdd()
+      = self.mod:2 != 0;
+        
+   bool isEven()
+      = self.mod:2 == 0;
+        
+   bool isZero()
+      = self.equal(0);
+        
+   bool isPositive()
+      = self > 0;
+        
+   bool isNegative()
+      = self < 0;
+        
+   bool isNonnegative()
+      = self <= 0;
+}
+
 // --- intOp ---
 
 public extension intOp : IntNumber
@@ -54,6 +158,9 @@ public extension intOp : IntNumber
       ^ n
    }
 
+   real realDiv(n)
+      = new RealNumber(self).divide:n;
+
    int mod(int operand)
    {
       int retVal := self / operand * operand;
@@ -69,6 +176,24 @@ public extension intOp : IntNumber
         
       ^ retVal
    }
+
+   bool isOdd()
+      = self.mod:2 != 0;
+        
+   bool isEven()
+      = self.mod:2 == 0;
+        
+   bool isZero()
+      = self.equal(0);
+        
+   bool isPositive()
+      = self > 0;
+        
+   bool isNegative()
+      = self < 0;
+        
+   bool isNonnegative()
+      = self <= 0;
 }
 
 // --- uintOp ---
@@ -96,12 +221,36 @@ public extension uintOp : UIntNumber
 
    uint mod(operand)
       = self.mod(cast uint(operand));
+
+   real realDiv(n)
+      = new RealNumber(self).divide:n;
+
+   bool isOdd()
+      = self.mod:2 != 0;
+        
+   bool isEven()
+      = self.mod:2 == 0;
+        
+   bool isZero()
+      = self.equal(0);
+        
+   bool isPositive()
+      = self > 0;
+        
+   bool isNegative()
+      = self < 0;
+        
+   bool isNonnegative()
+      = self <= 0;
 }
 
 // --- longOp ---
 
 public extension longOp : LongNumber
 {
+   real realDiv(n)
+      = new RealNumber(self).divide:n;
+
    long mod(long operand)
    {
       long retVal := self / operand * operand;
@@ -110,6 +259,24 @@ public extension longOp : LongNumber
         
       ^ retVal
    }    
+
+   bool isOdd()
+      = self.mod:2l != 0l;
+        
+   bool isEven()
+      = self.mod:2l == 0l;
+        
+   bool isZero()
+      = self.equal(0l);
+        
+   bool isPositive()
+      = self > 0l;
+        
+   bool isNegative()
+      = self < 0l;
+        
+   bool isNonnegative()
+      = self <= 0l;
 }
 
 // --- realOp ---
@@ -133,6 +300,87 @@ public extension realOp : RealNumber
 
       ^ retVal
    }
+
+   get int IntegerInt()
+      = intConvertor.convert(self.Integer);
+
+   get real Rounded()
+   {
+      real retVal := PrimitiveRealOperations.round(self);
+
+      ^ retVal
+   }
+
+   get int RoundedInt()
+      = intConvertor.convert(self.Rounded);
+
+   real Absolute
+      = PrimitiveRealOperations.abs(self);
+
+   real frac()
+   {
+      real retVal := self.Absolute;
+      
+      ^ retVal - retVal.Integer
+   }
+
+   real ceil()
+   {
+      if (self < 0)
+      {
+         ^ self.Integer
+      }
+      else
+      {
+         real y := self.Integer;
+                
+         ^ (y == self).iif(y,y+1)
+      }
+   }
+
+   real floor()
+   {
+      if (self >= 0)
+      {
+         ^ self.Integer
+      }
+      else
+      {
+         real y := self.Integer;
+                
+         ^ (y == self).iif(y,y-1)
+      }
+   }
+
+   real truncate(int precision)
+   {
+      real a := self;
+      bool neg := false;
+      if(self.isNegative())
+      {
+         a := a * -1.0r;
+         neg := true
+      };
+       
+      int b := 10.power(precision);
+      real c := (a * b).Integer; // returns the integer part of the real number
+
+      a := c / b;
+
+      ^ neg ? (a * -1.0r) : a 
+   }
+
+   bool isZero()
+      = self.equal(0.0);
+        
+   bool isPositive()
+      = self > 0.0;
+        
+   bool isNegative()
+      = self < 0.0;
+        
+   bool isNonnegative()
+      = self <= 0.0;
 }
 
 // --- intRefOp ---
