@@ -301,6 +301,18 @@ internal singleton PrimitiveRealOperations
 
    abs(real r, ref real retVal) : external(system'core_routines'__realAbs);
 
+   sqrt(real r, ref real retVal) : external(system'core_routines'__realSqrt);
+
+   exp(real r, ref real retVal) : external(system'core_routines'__realExp);
+
+   ln(real r, ref real retVal) : external(system'core_routines'__realLn);
+
+   sin(real r, ref real retVal) : external(system'core_routines'__realSin);
+
+   cos(real r, ref real retVal) : external(system'core_routines'__realCos);
+
+   arctan(real r, ref real retVal) : external(system'core_routines'__realArctan);
+
    int normalizeFloat(ref real value)
    {
       real positiveExpThreshold := 1.0e7;

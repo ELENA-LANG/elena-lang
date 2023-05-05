@@ -120,6 +120,7 @@ namespace elena_lang
       JA    = 0x07,
       JS    = 0x08,
       JNS   = 0x09,
+      JP    = 0x0A,
       JL    = 0x0C,
       JGE   = 0x0D,
       JLE   = 0x0E,

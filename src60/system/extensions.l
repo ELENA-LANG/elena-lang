@@ -55,6 +55,27 @@ public extension byteOp : ByteNumber
       ^ n
    }
 
+   byte sqr()
+      = self * self;
+
+   byte sqrt()
+   {   
+      byte num := self;
+              
+      if (num == 0)
+         { ^ 0 };
+                  
+      byte n := num / 2 + 1;
+      byte n1 := (n + (num / n)) / 2;
+      while (n1 < n)
+      {
+         n := n1;
+         n1 := (n + (num / n)) / 2
+      };
+              
+      ^ n
+   }
+
    byte mod(operand)
    {
       var retVal := self / operand * operand;
@@ -104,6 +125,27 @@ public extension shortOp : ShortNumber
       if (n < 0)
          { n := -n };
     
+      ^ n
+   }
+
+   short sqr()
+      = self * self;
+
+   short sqrt()
+   {   
+      short num := self;
+              
+      if (num == 0)
+         { ^ 0 };
+                  
+      short n := num / 2 + 1;
+      short n1 := (n + (num / n)) / 2;
+      while (n1 < n)
+      {
+         n := n1;
+         n1 := (n + (num / n)) / 2
+      };
+              
       ^ n
    }
 
@@ -158,6 +200,27 @@ public extension intOp : IntNumber
       ^ n
    }
 
+   int sqr()
+      = self * self;
+
+   int sqrt()
+   {   
+      int num := self;
+              
+      if (num == 0)
+         { ^ 0 };
+                  
+      int n := num / 2 + 1;
+      int n1 := (n + (num / n)) / 2;
+      while (n1 < n)
+      {
+         n := n1;
+         n1 := (n + (num / n)) / 2
+      };
+              
+      ^ n
+   }
+
    real realDiv(n)
       = new RealNumber(self).divide:n;
 
@@ -200,6 +263,27 @@ public extension intOp : IntNumber
 
 public extension uintOp : UIntNumber
 {
+   uint sqr()
+      = self * self;
+
+   uint sqrt()
+   {   
+      uint num := self;
+              
+      if (num == 0u)
+         { ^ 0u };
+                  
+      uint n := num / 2u + 1u;
+      uint n1 := (n + (num / n)) / 2u;
+      while (n1 < n)
+      {
+         n := n1;
+         n1 := (n + (num / n)) / 2u
+      };
+              
+      ^ n
+   }
+
    uint mod(uint operand)
    {
       uint retVal := self / operand * operand;
@@ -248,6 +332,27 @@ public extension uintOp : UIntNumber
 
 public extension longOp : LongNumber
 {
+   long sqr()
+      = self * self;
+
+   long sqrt()
+   {   
+      long num := self;
+              
+      if (num == 0l)
+         { ^ 0l };
+                  
+      long n := num / 2l + 1l;
+      long n1 := (n + (num / n)) / 2l;
+      while (n1 < n)
+      {
+         n := n1;
+         n1 := (n + (num / n)) / 2l
+      };
+              
+      ^ n
+   }
+
    real realDiv(n)
       = new RealNumber(self).divide:n;
 
@@ -294,6 +399,107 @@ public extension realOp : RealNumber
       }
    }
 
+   real sqr()
+      = self * self;
+
+   real sqrt()
+   {
+      PrimitiveRealOperations.sqrt(self, ref real retVal);
+
+      ^ retVal
+   }
+
+   real exp()
+   {
+      PrimitiveRealOperations.exp(self, ref real retVal);
+
+      ^ retVal
+   }
+
+   real ln()
+   {
+      real retVal := PrimitiveRealOperations.ln(self);
+
+      ^ retVal
+   }
+
+   real sin()
+   {
+      real retVal := PrimitiveRealOperations.sin(self);
+
+      ^ retVal
+   }
+
+   real cos()
+   {
+      real retVal := PrimitiveRealOperations.cos(self);
+
+      ^ retVal
+   }
+
+   real tan()
+   {
+      real sinVal := PrimitiveRealOperations.sin(self);
+      real cosVal := PrimitiveRealOperations.cos(self);
+        
+      real n := sinVal / cosVal;
+        
+      ^ n
+   }
+
+   real arctan()
+   {
+      real retVal := PrimitiveRealOperations.arctan(self);
+
+      ^ retVal
+   }
+
+   real arcsin()
+   {
+      real n := self;
+      real retVal := 0.0r;
+        
+      retVal := n * n;    
+      retVal := 1.0r - retVal;
+      real arg := PrimitiveRealOperations.sqrt(retVal);
+        
+      arg := n / arg;
+      retVal := PrimitiveRealOperations.arctan(arg);
+        
+      ^ retVal
+   }
+            
+   real arccos()
+   {
+      real n := self;        
+      real retVal := 0.0r;
+        
+      retVal := n * n;    
+      retVal := 1.0r - retVal;        
+      real arg := PrimitiveRealOperations.sqrt(retVal);
+        
+      arg := arg / n;
+      retVal := PrimitiveRealOperations.arctan(arg);
+        
+      ^ retVal
+   }
+
+   real log2()
+   {
+      real x := self.ln();
+      real y := 2.0.ln();
+            
+      ^ x / y
+   }
+            
+   real log10()
+   {
+      real x := self.ln();
+      real y := 10.0.ln();
+            
+      ^ x / y
+   }      
+
    get real Integer()
    {
       PrimitiveRealOperations.trunc(self, ref real retVal);
@@ -316,6 +522,15 @@ public extension realOp : RealNumber
 
    real Absolute
       = PrimitiveRealOperations.abs(self);
+
+   get real Reciprocal()
+   {
+      real value := self;
+        
+      value := 1.0r / value;
+        
+      ^ value
+   }    
 
    real frac()
    {

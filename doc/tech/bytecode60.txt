@@ -336,12 +336,18 @@ ELENA byte codes (or ecodes)
                               [dp[disp]] /= temp;
                               n = 8  
 
+   fexp dp:disp            -  double:tmp << sp[0];
+                              double:dp[disp] := exp(tmp)
+
    fmul dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] *= temp;
                               n = 8  
 
    fround dp:disp           - double:tmp << sp[0];
                               double:dp[disp] := trunc(tmp)
+
+   fsqrt dp:disp           -  double:tmp << sp[0];
+                              double:dp[disp] := sqrt(tmp)
 
    fsub dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] -= temp;

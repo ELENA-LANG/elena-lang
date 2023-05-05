@@ -5,10 +5,6 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-
-    * supporting truncate, Reciprocal
-    * supporting functions : frac, ceil, floor, truncate
-
     * review documentation - check if all code is compiled - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual
 
     * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Code-Snippets
@@ -96,7 +92,10 @@ In development:
     * new opcode : selult,jult - ppc64le, aarch64
     * new opcode : udivdpn - ppc64le, aarch64
     * new opcode : fabsdp - aarch64, ppc64le
-    * new opcode : fround - x86-64, ppc64le, arm64
+    * new opcode : fround - ppc64le, arm64
+    * new opcode : fsqrt - ppc64le, arm64
+    * new opcode : fexp, fln - ppc64le, arm64
+    * new opcode : fsin, fcos, farctan - ppc64le, arm64
 
     === Iteration 16 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop
@@ -260,7 +259,6 @@ Backlog:
     * api60 : Indexer2D?
     * native support for long to real
     * native support for real to long
-    * migrate realOpController : math operations
     * pi & e constants
     * intRefOp & realRefOp ?
     * string to real : support e notation

@@ -64,6 +64,12 @@ namespace elena_lang
       MaxSingleOp    = 0x77,
 
       FAbsDP         = 0x78,
+      FSqrtDP        = 0x79,
+      FExpDP         = 0x7A,
+      FLnDP          = 0x7B,
+      FSinDP         = 0x7C,
+      FCosDP         = 0x7D,
+      FArctanDP      = 0x7E,
 
       SetR           = 0x80,
       SetDP          = 0x81,
