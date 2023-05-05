@@ -108,10 +108,18 @@ namespace io
          this h := h
       }
 
+      write(wide s)
+      {
+         int len := s.Length;
+            
+         extern KERNEL32.WriteConsoleW(h,s,len,0,0);
+    
+         // !!check the result of the operation
+      }
+
       write(string s)
       {
-          int l := s.Length;
-          extern KERNEL32.WriteConsoleA(h,s,l,0,0);
+         self.write(cast wide(s))
       }
    }
 

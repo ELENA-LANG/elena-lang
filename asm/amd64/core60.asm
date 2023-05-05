@@ -820,6 +820,15 @@ inline %07Eh
 
 end 
 
+// ; fpidp
+inline %07Fh
+
+  lea   rdi, [rbp + __arg32_1]
+  fldpi
+  fstp  qword ptr [rdi]    // ; store result 
+
+end 
+
 // ; setr
 inline %80h
 

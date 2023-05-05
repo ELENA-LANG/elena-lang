@@ -70,6 +70,7 @@ namespace elena_lang
       FSinDP         = 0x7C,
       FCosDP         = 0x7D,
       FArctanDP      = 0x7E,
+      FPiDP          = 0x7F,
 
       SetR           = 0x80,
       SetDP          = 0x81,

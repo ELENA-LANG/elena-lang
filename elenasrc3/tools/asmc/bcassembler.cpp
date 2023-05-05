@@ -969,6 +969,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::FSinDP:
          case ByteCode::FCosDP:
          case ByteCode::FArctanDP:
+         case ByteCode::FPiDP:
          case ByteCode::NConvFDP:
          case ByteCode::LLoadDP:
          case ByteCode::XAddDP:

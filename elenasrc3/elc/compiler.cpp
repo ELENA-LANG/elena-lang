@@ -4123,7 +4123,7 @@ ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool dec
    }
 }
 
-void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool doNotEvalConstant)
+void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool identifierDeclarationMode)
 {
    bool constant = false;
    SyntaxNode current = node.firstChild();
@@ -4138,7 +4138,8 @@ void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bo
          case SyntaxKey::Type:
          case SyntaxKey::ArrayType:
          case SyntaxKey::TemplateType:
-            scope.info.typeRef = resolveStrongTypeAttribute(scope, current, true, false);
+            if (!identifierDeclarationMode)
+               scope.info.typeRef = resolveStrongTypeAttribute(scope, current, true, false);
             break;
          default:
             break;
@@ -4151,7 +4152,7 @@ void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bo
       scope.info.loadableInRuntime = true;
    }
 
-   if (constant && !doNotEvalConstant) {
+   if (constant && !identifierDeclarationMode) {
       scope.info.symbolType = SymbolType::Constant;
 
       Interpreter interpreter(scope.moduleScope, _logic);

@@ -2,9 +2,12 @@ import extensions;
 import system'math;
 import extensions'math;
 
+Pi = RealNumber.Pi;
+
 public program()
 {
     console
-        .printLine("foor(5.6)=", floor(5.6r))
-        .printLine("ceil(5.6)=", 5.6r.ceil())
+        .printLine("sin(π/3) = ",(Pi / 3).sin())
+        .printLine("cos(π/3) = ",cos(Pi / 3))
+        .printLine("tan(π/3) = ",tan(Pi / 3))
 }

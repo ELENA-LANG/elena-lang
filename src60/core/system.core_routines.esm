@@ -904,6 +904,24 @@ procedure __realArctan (self, r1, r2)
 
 end
 
+procedure __realPi (self, r1)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp:__realSize]
+
+  fpi        dp:tmp
+
+  set        dp:tmp
+  store      sp:0
+  peek       fp:r1
+  copy       __realSize
+
+  close      []
+
+end
+
 procedure __longToByte
 
   peek       sp:1

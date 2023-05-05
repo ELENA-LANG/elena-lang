@@ -5,6 +5,8 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
+    * converting utf8 => utf16
+
     * review documentation - check if all code is compiled - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual
 
     * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Code-Snippets
@@ -95,7 +97,7 @@ In development:
     * new opcode : fround - ppc64le, arm64
     * new opcode : fsqrt - ppc64le, arm64
     * new opcode : fexp, fln - ppc64le, arm64
-    * new opcode : fsin, fcos, farctan - ppc64le, arm64
+    * new opcode : fsin, fcos, farctan, fpi - ppc64le, arm64
 
     === Iteration 16 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop

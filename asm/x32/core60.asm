@@ -818,6 +818,15 @@ inline %07Eh
 
 end 
 
+// ; fpidp
+inline %07Fh
+
+  lea   edi, [ebp + __arg32_1]
+  fldpi
+  fstp  qword ptr [edi]    // ; store result 
+
+end 
+
 // ; setr
 inline %80h
 

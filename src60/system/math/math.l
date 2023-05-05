@@ -17,5 +17,4 @@ namespace math
       mod(n)
          = mathController.mod(self, n);
    }      
-
 }

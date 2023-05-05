@@ -1020,7 +1020,7 @@ namespace elena_lang
       ref_t declareMultiType(Scope& scope, SyntaxNode& node, ref_t elementRef);
 
       void declareTemplateAttributes(TemplateScope& scope, SyntaxNode node, IdentifierString& postfix);
-      void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool doNotEvalConstant);
+      void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool identifierDeclarationMode);
       void declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& fldeclaredFlagsags);
       void declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& mode);
       void declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode);

@@ -313,6 +313,15 @@ internal singleton PrimitiveRealOperations
 
    arctan(real r, ref real retVal) : external(system'core_routines'__realArctan);
 
+   getPi(ref real retVal) : external(system'core_routines'__realPi);
+
+   real getPi()
+   {
+      self.getPi(ref real retVal);
+      
+      ^ retVal
+   }
+
    int normalizeFloat(ref real value)
    {
       real positiveExpThreshold := 1.0e7;

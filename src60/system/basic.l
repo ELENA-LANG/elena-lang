@@ -1683,17 +1683,20 @@ public sealed const struct RealNumber : BaseNumber,
             : info("Returns the maximal value")
       = 1.7976931348623157e+308r;
 
-    static real NegativeInfinity 
+   static real NegativeInfinity 
             : info("Returns the negative infinity")
-        = -1.0 / 0.0;   
+      = -1.0 / 0.0;   
 
-    static real PositiveInfinity 
+   static real PositiveInfinity 
             : info("Returns the positive infinity")
-        = 1.0 / 0.0;   
+      = 1.0 / 0.0;   
 
-    static real NaN 
+   static real NaN 
             : info("Returns the positive infinity")
-        = 0.0 / 0.0;   
+      = 0.0 / 0.0;   
+
+   static real Pi
+      = Pi_value;
 
    constructor(int n)
       = realConvertor.convert(n);
@@ -1877,6 +1880,8 @@ public sealed const struct RealNumber : BaseNumber,
             : info("Negates the value")
       = 0.0 - theValue;
 }
+
+public real Pi_value = PrimitiveRealOperations.getPi();
 
 // --- CharValue ---
 
@@ -2063,3 +2068,5 @@ public sealed class KeyValue
    dispatch() : info("Redirects the incoming messages to the object")
      => value;
 }
+
+//public real symbol Pi_value = PrimitiveRealOperations.getPi();
