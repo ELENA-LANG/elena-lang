@@ -79,7 +79,7 @@ public sealed class CallStack
       pointer stack[64];
       self.load(stack, 64, ref int length);
 
-      this stack := class Array<pointer>.copy(stack, trimingLevel, length);
+      this stack := class Array<pointer>.copy(stack, trimingLevel, length - trimingLevel);
    }
 
    string toPrintable()
