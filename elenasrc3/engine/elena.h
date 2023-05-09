@@ -838,6 +838,44 @@ namespace elena_lang
          else return false;
       }
 
+      void pathToName(path_t path)
+      {
+         char buf[IDENTIFIER_LEN];
+         size_t bufLen = IDENTIFIER_LEN;
+
+         while (!path.empty()) {
+            if (!empty())
+               append('\'');
+
+            size_t pos = path.find(PATH_SEPARATOR);
+            if (pos != NOTFOUND_POS) {
+               bufLen = IDENTIFIER_LEN;
+               path.copyTo(buf, pos, bufLen);
+
+               append(buf, bufLen);
+               path += pos + 1u;
+            }
+            else {
+               pos = path.findLast('.');
+               if (pos == NOTFOUND_POS)
+                  pos = path.length();
+
+               bufLen = IDENTIFIER_LEN;
+               path.copyTo(buf, pos, bufLen);
+
+               // replace dots with apostrophes
+               for (size_t i = 0; i < bufLen; i++) {
+                  if (buf[i] == '.')
+                     buf[i] = '\'';
+               }
+
+               append(buf, bufLen);
+
+               break;
+            }
+         }
+      }
+
       void trimLastSubNs()
       {
          size_t index = (**this).findLast('\'', 0);
@@ -909,44 +947,6 @@ namespace elena_lang
 
             name += pos + 1;
          }
-      }
-
-      void pathToName(path_t path)
-      {
-         char buf[IDENTIFIER_LEN];
-         size_t bufLen = IDENTIFIER_LEN;
-
-         while (!path.empty()) {
-            if (!empty())
-               append('\'');
-
-            size_t pos = path.find(PATH_SEPARATOR);
-            if (pos != NOTFOUND_POS) {
-               bufLen = IDENTIFIER_LEN;
-               path.copyTo(buf, pos, bufLen);
-
-               append(buf, bufLen);
-               path += pos + 1u;
-            }
-            else {
-               pos = path.findLast('.');
-               if (pos == NOTFOUND_POS)
-                  pos = path.length();
-
-               bufLen = IDENTIFIER_LEN;
-               path.copyTo(buf, pos, bufLen);
-
-               // replace dots with apostrophes
-               for (size_t i = 0; i < bufLen; i++) {
-                  if (buf[i] == '.')
-                     buf[i] = '\'';
-               }
-
-               append(buf, bufLen);
-
-               break;
-            }
-          }
       }
 
       bool combine(ustr_t name)

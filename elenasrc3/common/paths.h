@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Path class declarations.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PATHS_H
@@ -27,6 +27,8 @@ namespace elena_lang
    class PathUtil
    {
    public:
+      static bool ifExist(path_t path);
+
       static bool compare(path_t path1, path_t path);
       static bool compare(path_t s1, path_t s2, size_t length);
 

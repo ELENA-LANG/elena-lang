@@ -64,6 +64,21 @@ void DebugInfoProvider :: retrievePath(ustr_t name, PathString& path, path_t ext
    }
 }
 
+void DebugInfoProvider :: fixNamespace(NamespaceString& name)
+{
+   PathString      path;
+   retrievePath(*name, path, _T("dnl"));
+
+   while (name.length() != 0) {
+      retrievePath(*name, path, _T("dnl"));
+
+      if (!PathUtil::ifExist(*path)) {
+         name.trimLastSubNs();
+      }
+      else break;
+   }
+}
+
 ModuleBase* DebugInfoProvider :: loadDebugModule(ustr_t reference)
 {
    NamespaceString name(reference);
@@ -357,7 +372,7 @@ addr_t DebugInfoProvider :: findNearestAddress(ModuleBase* module, ustr_t path, 
    int nearestRow = 0;
    bool skipping = true;
    for (size_t i = 0; i < count; i++) {
-      if (info[i].symbol == DebugSymbol::Procedure) {
+      if (info[i].symbol == DebugSymbol::Procedure && info[i].addresses.source.nameRef != INVALID_ADDR) {
          ustr_t procPath = (const char*)strings->get(info[i].addresses.source.nameRef);
          if (procPath.compare(path)) {
             skipping = false;
@@ -366,7 +381,7 @@ addr_t DebugInfoProvider :: findNearestAddress(ModuleBase* module, ustr_t path, 
       else if (info[i].symbol == DebugSymbol::End) {
          skipping = true;
       }
-      else if ((info[i].symbol & DebugSymbol::DebugMask) == DebugSymbol::Breakpoint) {
+      else if (!skipping && (info[i].symbol & DebugSymbol::DebugMask) == DebugSymbol::Breakpoint) {
          if (_abs(nearestRow - row) > _abs(info[i].row - row)) {
             nearestRow = info[i].row;
 
@@ -654,8 +669,7 @@ void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName
          _currentModule.copy(moduleName);
          _currentPath = sourcePath;
 
-         PathString path(sourcePath);
-         found = _sourceController->selectSource(_model, _sourceModel, moduleName, *path);
+         PathString path(sourcePath);found = _sourceController->selectSource(_model, _sourceModel, moduleName, *path);
       }
 
       if (found) {
@@ -1236,4 +1250,9 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
          index--;
       }
    }
+}
+
+void DebugController::resolveNamespace(NamespaceString& ns)
+{
+   _provider.fixNamespace(ns);
 }

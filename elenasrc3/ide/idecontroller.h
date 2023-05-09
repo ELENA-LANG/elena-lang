@@ -43,6 +43,8 @@ namespace elena_lang
       RunTo
    };
 
+   typedef List<Breakpoint*, freeobj> Breakpoints;
+
    // --- ProjectController ---
    class ProjectController : public NotifierBase
    {
@@ -53,9 +55,11 @@ namespace elena_lang
       NotifierBase*           _notifier;
       WatchContext            _autoWatch;
 
+      Breakpoints             _breakpoints;
+
       void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
 
-      path_t retrieveSourceName(ProjectModel* model, path_t sourcePath, ReferenceName& retVal);
+      path_t retrieveSourceName(ProjectModel* model, path_t sourcePath, NamespaceString& retVal);
 
       bool onDebugAction(ProjectModel& model, DebugAction action);
       bool isOutaged(bool noWarning);
@@ -79,7 +83,7 @@ namespace elena_lang
 
       path_t getSourceByIndex(ProjectModel& model, int index);
 
-      void defineSourceName(ProjectModel* model, path_t path, ReferenceName& retVal);
+      void defineSourceName(ProjectModel* model, path_t path, NamespaceString& retVal);
 
       void defineFullPath(ProjectModel& model, ustr_t ns, path_t path, PathString& fullPath);
 
@@ -121,7 +125,8 @@ namespace elena_lang
       ProjectController(ProcessBase* outputProcess, DebugProcessBase* debugProcess, ProjectModel* model, SourceViewModel* sourceModel,
          DebugSourceController* sourceController, PlatformType platform)
          : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, this, sourceController),
-           _autoWatch({ nullptr, 0 }) 
+           _autoWatch({ nullptr, 0 }),
+           _breakpoints({})
       {
          //_notifier = nullptr;
          _platform = platform;

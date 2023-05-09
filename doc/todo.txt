@@ -5,7 +5,9 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * converting utf8 => utf16
+    * ide : set / remove breakpoints
+    * ide : menu - clear all breakpoints
+    * ide : breakpoints
 
     * review documentation - check if all code is compiled - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual
 
@@ -53,6 +55,8 @@ In development:
 
     * #508 : support strong-typed variables for tuple unboxing
     * multi-value return - #508
+
+    * ide debugger : stepping in the loop (for)
 
     * optimization : copy a sub array to another array
     * int32 : implement direct neg, not operations; use it directly for IntNumber
@@ -138,6 +142,9 @@ Backlog:
     * lazy expressions, put it in the first page as a feature
 
     --- elena redux ---
+    * ide : brackets highlight
+    * ide : auto indent
+    * ide : highlight syntax
     * elenavm : loading preloaded symbols for newly loaded modules
     * internal / auto-generated classes must not be included in run-time attributes
     * optimization : tuple / array unboxing
@@ -172,8 +179,6 @@ Backlog:
     * allocate constant array directly if possible
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
     * dispatch optimization : for 1,2,3 args
-    * debugger : step over symbol
-    * debugger : stepping in the loop (for)
     * system'String.Substring<'IntNumber,'IntNumber>[3] - why the parameters are boxed?
     * system'io'read[3] : uncomment code
     * system'console : reader and writer should be strongly-typed : IConsoleReader, IConsoleWriter
@@ -201,7 +206,6 @@ Backlog:
     * do:while : both statement are matched : do{ a } while(b) and do{ a } while{ b } which is not correct?
     * ide : error messages if the debug process failed
     * ide : set focus on activate / after opening a file
-    * ide : output is not properly refreshed
     * ide : toolbar
     * ide : fix blicking on tab selecting (especially on opening a new project)
     * ide : find
@@ -224,8 +228,6 @@ Backlog:
 
     * api : provide field descriptions
 
-    * ide : debugger - step into / over / stop / run / compile
-    * ide : debugger - on debugging / debugger stopped
     * ide - tab
     * ide - close project
     * ide - close single file project
@@ -236,12 +238,9 @@ Backlog:
     * ide - fix errors
     * ide - compile the project / file
 
-    * ide debugger
-
     * conversion : byte / short / int / long => real
 
     * toPrintable should return both wide and string
-    * unit tests : arithmetic operations
 
     * uncomment hello world
     * uncomment lnx_console.l code
@@ -404,8 +403,6 @@ Backlog:
     * for linux amd64 allocate shadow memory
 
     * ide : editor
-    * ide : project view
-    * ide : compiling
     * ide : save last open file / project
     * ide : project settings
     * ide : styling source code

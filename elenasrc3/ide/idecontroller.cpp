@@ -137,7 +137,7 @@ void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t 
    }
 }
 
-path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourcePath, ReferenceName& name)
+path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourcePath, NamespaceString& name)
 {
    size_t projectPathLen = model->projectPath.length();
 
@@ -148,6 +148,8 @@ path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourc
       name.copy(model->getPackage());
       if (path.length() > projectPathLen) {
          name.pathToName(*path + projectPathLen);
+
+         _debugController.resolveNamespace(name);
       }
       return sourcePath + projectPathLen;
    }
@@ -157,6 +159,8 @@ path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourc
 
       if (!rootPath.empty() && PathUtil::compare(sourcePath, rootPath, rootPathLen)) {
          name.pathToName(sourcePath + rootPathLen);
+
+         _debugController.resolveNamespace(name);
 
          return sourcePath + rootPathLen;
       }
@@ -171,7 +175,7 @@ path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourc
    return sourcePath;
 }
 
-void ProjectController :: defineSourceName(ProjectModel* model, path_t path, ReferenceName& retVal)
+void ProjectController :: defineSourceName(ProjectModel* model, path_t path, NamespaceString& retVal)
 {
    if (path.empty()) {
       retVal.copy("undefined");
@@ -289,10 +293,10 @@ void ProjectController :: runToCursor(ProjectModel& model, SourceViewModel& sour
       ustr_t currentSource = sourceModel.getDocumentName(index);
       path_t currentPath = sourceModel.getDocumentPath(index);
 
-      ReferenceName ns;
+      NamespaceString ns;
       currentPath = retrieveSourceName(&model, currentPath, ns);
 
-      IdentifierString pathStr(currentPath);
+      IdentifierString pathStr(currentSource + currentSource.find(':') + 1);
       _debugController.runToCursor(*ns, *pathStr, currentDoc->getCaret().y);
    }
 }
@@ -599,7 +603,7 @@ bool IDEController :: selectSource(ProjectModel* model, SourceViewModel* sourceM
 void IDEController :: doNewFile(IDEModel* model)
 {
    NotificationStatus status = NONE_CHANGED;
-   ReferenceName sourceNameStr;
+   NamespaceString sourceNameStr;
    projectController.defineSourceName(&model->projectModel, nullptr, sourceNameStr);
 
    sourceController.newSource(&model->sourceViewModel, *sourceNameStr, true, status);
@@ -625,7 +629,7 @@ bool IDEController :: openFile(SourceViewModel* model, ProjectModel* projectMode
       return sourceController.selectDocument(model, index, status);
    }
    else {
-      ReferenceName sourceNameStr;
+      NamespaceString sourceNameStr;
       projectController.defineSourceName(projectModel, sourceFile, sourceNameStr);
 
       sourceName = *sourceNameStr;
@@ -695,7 +699,7 @@ bool IDEController :: doSaveFile(DialogBase& dialog, IDEModel* model, bool saveA
       if (!dialog.saveFile(_T("l"), path))
          return false;
 
-      ReferenceName sourceNameStr;
+      NamespaceString sourceNameStr;
       projectController.defineSourceName(&model->projectModel, *path, sourceNameStr);
 
       sourceController.renameSource(&model->sourceViewModel, nullptr, *sourceNameStr, *path);

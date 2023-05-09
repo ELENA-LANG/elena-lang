@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Source Reader class declaration.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef SOURCE_H
@@ -25,8 +25,13 @@ namespace elena_lang
       }
    };
 
+   inline bool isQuote(char state)
+   {
+      return state == dfaQuoteStart;
+   }
+
    // --- SourceReader ---
-   class SourceReader : protected TextParser<char, LINE_LEN>
+   class SourceReader : protected TextParser<char, LINE_LEN, dfaStart, dfaMaxChar, isQuote>
    {
       bool _operatorMode;
 

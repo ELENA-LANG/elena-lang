@@ -7,9 +7,10 @@
 #ifndef IDECOMMON_H
 #define IDECOMMON_H
 
+#include "elena.h"
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x004F
+#define IDE_REVISION_NUMBER                           0x0050
 
 namespace elena_lang
 {
@@ -276,6 +277,14 @@ namespace elena_lang
       virtual bool findSignature(StreamReader& reader, char* signature, pos_t length) = 0;
 
       virtual ~DebugProcessBase() = default;
+   };
+
+   struct Breakpoint
+   {
+      int              row;
+      IdentifierString source;
+      IdentifierString module;
+      void*            param;
    };
 
    struct GUISettinngs

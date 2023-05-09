@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine File class implementations.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "common.h"
@@ -148,6 +148,11 @@ bool PathUtil :: removeFile(path_t path)
 }
 
 #endif
+
+bool PathUtil :: ifExist(path_t path)
+{
+   return checkDir(path, 0) == 0;
+}
 
 bool PathUtil :: checkExtension(path_t path, path_t extension)
 {

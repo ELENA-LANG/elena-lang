@@ -95,6 +95,8 @@ namespace elena_lang
 
       DebugLineInfo* seekClassInfo(addr_t address, IdentifierString& className, addr_t vmtAddress, ref_t flags);
 
+      void fixNamespace(NamespaceString& str);
+
       void clear()
       {
          _entryPoint = 0;
@@ -269,6 +271,8 @@ namespace elena_lang
 
       void readAutoContext(ContextBrowserBase* watch, int level, WatchItems* refreshedItems);
       void readContext(ContextBrowserBase* watch, void* parentItem, addr_t address, int level);
+
+      void resolveNamespace(NamespaceString& ns);
 
       virtual void clearDebugInfo()
       {

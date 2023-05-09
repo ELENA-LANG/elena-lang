@@ -3,7 +3,7 @@
 //
 //		Asm2BinX main file
 //
-//                                              (C)2021, by Aleksey Rakov
+//                                              (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <cstdarg>
@@ -94,7 +94,7 @@ template<class AssemblyT> void compileAssembly(path_t source, path_t target)
 void compileByteCode(path_t source, path_t target, bool mode64, int rawDataAlignment)
 {
    FileNameString sourceName(source, true);
-   ReferenceName  name;
+   NamespaceString  name;
 
    name.pathToName(sourceName.str());
 
