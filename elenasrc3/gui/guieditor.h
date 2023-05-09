@@ -110,7 +110,7 @@ namespace elena_lang
       TextViewModelBase()
       {
          this->_currentView = nullptr;
-         this->lineNumbersVisible = false;
+         this->lineNumbersVisible = true; // !! temporal hard-coded
          this->empty = true;
          this->fontSize = 10;
          this->schemeIndex = 0;

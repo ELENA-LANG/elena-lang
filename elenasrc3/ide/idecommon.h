@@ -52,6 +52,7 @@ namespace elena_lang
    constexpr int NOTIFY_REFRESH                          = 15;
    constexpr int NOTIFY_DEBUG_START                      = 16;
    constexpr int NOTIFY_DEBUG_CONTEXT_EXPANDED           = 17;
+   constexpr int NOTIFY_DEBUG_LOAD                       = 18;
 
    // --- Notification statuses ---
    constexpr NotificationStatus IDE_ONSTART              = -1;
@@ -268,6 +269,7 @@ namespace elena_lang
       virtual double getFLOAT64(addr_t address) = 0;
 
       virtual void setBreakpoint(addr_t address, bool withStackLevelControl) = 0;
+      virtual void addBreakpoint(addr_t address) = 0;
 
       virtual void addStep(addr_t address, void* current) = 0;
 
@@ -285,6 +287,11 @@ namespace elena_lang
       IdentifierString source;
       IdentifierString module;
       void*            param;
+
+      Breakpoint(int row, ustr_t source, ustr_t module)
+         : row(row), source(source), module(module), param(nullptr)
+      {
+      }
    };
 
    struct GUISettinngs

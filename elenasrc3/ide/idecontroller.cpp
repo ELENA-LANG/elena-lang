@@ -486,6 +486,52 @@ void ProjectController :: refreshDebugContext(ContextBrowserBase* contextBrowser
    _debugController.readContext(contextBrowser, (void*)param, address, 4);
 }
 
+void ProjectController :: toggleBreakpoint(ProjectModel& model, SourceViewModel& sourceModel, int row)
+{
+   auto currentDoc = sourceModel.DocView();
+   if (currentDoc != nullptr) {
+      if (row == -1)
+         row = currentDoc->getCaret().y + 1;
+
+      int index = sourceModel.getCurrentIndex();
+      ustr_t currentSource = sourceModel.getDocumentName(index);
+      path_t currentPath = sourceModel.getDocumentPath(index);
+
+      NamespaceString ns;
+      currentPath = retrieveSourceName(&model, currentPath, ns);
+
+      bool addMode = true;
+      IdentifierString pathStr(currentSource + currentSource.find(':') + 1);
+      for(auto it = model.breakpoints.start(); !it.eof(); ++it) {
+         auto bm = *it;
+         if (bm->row == row && bm->module.compare(*ns) && bm->source.compare(*pathStr)) {
+            model.breakpoints.cut(bm);
+            addMode = false;
+            break;
+         }
+      }
+
+      DocumentChangeStatus status = {};
+      if (addMode) {
+         model.breakpoints.add(new Breakpoint(row, *pathStr, *ns));
+
+         currentDoc->addMarker(row, STYLE_BREAKPOINT, false, true, status);
+      }
+      else {
+         currentDoc->removeMarker(row, STYLE_BREAKPOINT, status);
+      }
+
+      currentDoc->notifyOnChange(status);
+   }
+}
+
+void ProjectController :: loadBreakpoints(ProjectModel& model)
+{
+   for (auto it = model.breakpoints.start(); !it.eof(); ++it) {
+      _debugController.addBreakpoint(*it);
+   }
+}
+
 // --- IDEController ---
 
 inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue)
@@ -1027,6 +1073,11 @@ bool IDEController :: onClose(DialogBase& dialog, IDEModel* model)
    return doCloseAll(dialog, model);
 }
 
+void IDEController :: onDebuggerHook(IDEModel* model)
+{
+   projectController.loadBreakpoints(model->projectModel);
+}
+
 void IDEController :: onDebuggerStop(IDEModel* model)
 {
    model->sourceViewModel.clearTraceLine();
@@ -1046,4 +1097,9 @@ void IDEController :: onStatusChange(IDEModel* model, IDEStatus newStatus)
 {
    model->status = newStatus;
    _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
+}
+
+void IDEController :: toggleBreakpoint(IDEModel* model, int row)
+{
+   projectController.toggleBreakpoint(model->projectModel, model->sourceViewModel, row);
 }

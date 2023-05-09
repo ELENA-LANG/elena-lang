@@ -238,6 +238,14 @@ Win32BreakpointContext :: Win32BreakpointContext()
    
 }
 
+void Win32BreakpointContext :: addBreakpoint(addr_t address, Win32ThreadContext* context, bool started)
+{
+   if (started) {
+      breakpoints.add(address, context->setSoftwareBreakpoint(address));
+   }
+   else breakpoints.add(address, 0);
+}
+
 void Win32BreakpointContext :: setSoftwareBreakpoints(Win32ThreadContext* context)
 {
    Map<size_t, char>::Iterator breakpoint = breakpoints.start();
@@ -609,6 +617,11 @@ bool Win32DebugProcess :: findSignature(StreamReader& reader, char* signature, p
 void Win32DebugProcess :: setBreakpoint(addr_t address, bool withStackLevelControl)
 {
    _breakpoints.setHardwareBreakpoint(address, _current, withStackLevelControl);
+}
+
+void Win32DebugProcess :: addBreakpoint(addr_t address)
+{
+   _breakpoints.addBreakpoint(address, _current, started);
 }
 
 void Win32DebugProcess :: setStepMode()

@@ -77,16 +77,22 @@ void LexicalFormatter :: format()
 
 bool LexicalFormatter :: checkMarker(ReaderInfo& info)
 {
-   auto it = _markers->getIt(info.row + 1);
-   if (!it.eof()) {
-      auto marker = *it;
+   Marker marker = { INVALID_POS };
+   for (auto it = _markers->start(); !it.eof(); ++it) {
+      if (it.key() == info.row + 1) {
+         marker = *it;
+      }
+   }
 
+   if (marker.style != INVALID_POS) {
       info.bandStyle = true;
       info.style = marker.style;
+      info.toggleMark = marker.toggleMark;
       info.step = 0;
 
       return true;
    }
+
    return false;
 }
 
@@ -175,6 +181,7 @@ void DocumentView::LexicalReader :: readFirst(TextWriter<text_c>& writer, pos_t 
 {
    style = step = 0;
    newLine = true;
+   toggleMark = false;
 
    region.topLeft = docView->_frame.getCaret();
    region.bottomRight = region.topLeft + docView->_size;

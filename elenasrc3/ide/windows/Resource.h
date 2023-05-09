@@ -37,6 +37,8 @@
 #define IDM_DEBUG_STEPINTO          803
 #define IDM_DEBUG_RUNTO             804
 #define IDM_DEBUG_STOP              805
+#define IDM_DEBUG_BREAKPOINT        806
+#define IDM_DEBUG_CLEARBREAKPOINT   807
 
 #define IDM_DEBUG_INSPECT           810
 #define IDM_DEBUG_SWITCHHEXVIEW     811

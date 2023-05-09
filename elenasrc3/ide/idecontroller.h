@@ -43,8 +43,6 @@ namespace elena_lang
       RunTo
    };
 
-   typedef List<Breakpoint*, freeobj> Breakpoints;
-
    // --- ProjectController ---
    class ProjectController : public NotifierBase
    {
@@ -54,8 +52,6 @@ namespace elena_lang
       DebugController         _debugController;
       NotifierBase*           _notifier;
       WatchContext            _autoWatch;
-
-      Breakpoints             _breakpoints;
 
       void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
 
@@ -96,6 +92,10 @@ namespace elena_lang
       void refreshDebugContext(ContextBrowserBase* contextBrowser);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, size_t param, addr_t address);
 
+      void toggleBreakpoint(ProjectModel& model, SourceViewModel& sourceModel, int row);
+
+      void loadBreakpoints(ProjectModel& model);
+
       void setNotifier(NotifierBase* notifier)
       {
          _notifier = notifier;
@@ -125,8 +125,7 @@ namespace elena_lang
       ProjectController(ProcessBase* outputProcess, DebugProcessBase* debugProcess, ProjectModel* model, SourceViewModel* sourceModel,
          DebugSourceController* sourceController, PlatformType platform)
          : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, this, sourceController),
-           _autoWatch({ nullptr, 0 }),
-           _breakpoints({})
+           _autoWatch({ nullptr, 0 })
       {
          //_notifier = nullptr;
          _platform = platform;
@@ -194,12 +193,14 @@ namespace elena_lang
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param);
 
+      void toggleBreakpoint(IDEModel* model, int row);
 
       void doSelectNextWindow(IDEModel* model);
       void doSelectPrevWindow(IDEModel* model);
 
       void onCompilationCompletion(IDEModel* model, int exitCode, 
          text_str output, ErrorLogBase* log);
+      void onDebuggerHook(IDEModel* model);
       void onDebuggerStop(IDEModel* model);
       void onStatusChange(IDEModel* model, IDEStatus newStatus);
 

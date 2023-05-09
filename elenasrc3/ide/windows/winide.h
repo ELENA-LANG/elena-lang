@@ -115,6 +115,7 @@ namespace elena_lang
 
       void onIDEViewUpdate(bool forced);
       void onDebuggerStart();
+      void onDebuggerHook();
       void onDebuggerUpdate(StatusNMHDR* rec);
       void onDocumentUpdate(DocumentChangeStatus& changeStatus) override;
 

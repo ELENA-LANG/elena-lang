@@ -527,6 +527,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_DEBUG_STOP:
          _controller->doDebugStop(_model);
          break;
+      case IDM_DEBUG_BREAKPOINT:
+         _controller->toggleBreakpoint(_model, -1);
+         break;
       case IDM_WINDOW_NEXT:
          _controller->doSelectNextWindow(_model);
          break;
@@ -574,6 +577,9 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
          break;
       case NOTIFY_DEBUG_START:
          onDebuggerStart();
+         break;
+      case NOTIFY_DEBUG_LOAD:
+         onDebuggerHook();
          break;
       case NOTIFY_DEBUG_CHANGE:
          onDebuggerUpdate(rec);
@@ -812,6 +818,11 @@ void IDEWindow :: onDebuggerStart()
    ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
 
    contextBrowser->clearRootNode();
+}
+
+void IDEWindow :: onDebuggerHook()
+{
+   _controller->onDebuggerHook(_model);
 }
 
 void IDEWindow :: onDebuggerUpdate(StatusNMHDR* rec)

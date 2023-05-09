@@ -21,7 +21,8 @@ namespace elena_lang
    constexpr auto RECENTFILE_SETTINGS  = "configuration/recent_files/path";
 
    // --- Map types ---
-   typedef List<path_t, freepath> ProjectPaths;
+   typedef List<path_t, freepath>      ProjectPaths;
+   typedef List<Breakpoint*, freeobj>  Breakpoints;
 
    // --- ProjectModel ---
    struct ProjectModel
@@ -55,6 +56,8 @@ namespace elena_lang
       ProjectPaths      sources;
 
       ProjectPaths      lastOpenFiles;
+
+      Breakpoints       breakpoints;
 
       ustr_t getTarget();
       ustr_t getArguments();

@@ -733,6 +733,17 @@ void DebugController :: runToCursor(ustr_t ns, ustr_t path, int row)
    _process->setEvent(DEBUG_RESUME);
 }
 
+void DebugController :: addBreakpoint(Breakpoint* bp)
+{
+   ModuleBase* currentModule = _provider.resolveModule(*bp->module);
+   if (currentModule != nullptr) {
+      addr_t address = _provider.findNearestAddress(currentModule, *bp->source, bp->row);
+      if (address != INVALID_ADDR) {
+         _process->addBreakpoint(address);
+      }
+   }
+}
+
 void DebugController :: stepInto()
 {
    if (_running || !_process->isStarted())
@@ -857,7 +868,7 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
    if (!reader.eof()) {
       _provider.load(reader, starting, _process);
 
-      //_listener->onDebuggerHook();
+      _notifier->notify(NOTIFY_DEBUG_LOAD, 0);
 
       _provider.setDebugInfoSize(reader.position());
 

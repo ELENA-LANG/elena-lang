@@ -268,6 +268,7 @@ namespace elena_lang
       void stepInto();
       void stop();
       void runToCursor(ustr_t name, ustr_t path, int row);
+      void addBreakpoint(Breakpoint* bp);
 
       void readAutoContext(ContextBrowserBase* watch, int level, WatchItems* refreshedItems);
       void readContext(ContextBrowserBase* watch, void* parentItem, addr_t address, int level);
