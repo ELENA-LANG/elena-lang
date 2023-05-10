@@ -131,6 +131,7 @@ namespace elena_lang
       SavingLInStack       = 0x0066,
       UIntCondOp           = 0x0067,
       UIntOp               = 0x0068,
+      MssgNameLiteral      = 0x0069,
 
       MaxOperationalKey    = 0x0070,
 

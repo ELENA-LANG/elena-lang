@@ -100,6 +100,7 @@ namespace elena_lang
    constexpr auto ARRAY_FORWARD           = "$array";          // the array template
    constexpr auto VARIADIC_ARRAY_FORWARD  = "$varray";         // the array template 
    constexpr auto MESSAGE_FORWARD         = "$message";        // the message class
+   constexpr auto MESSAGE_NAME_FORWARD    = "$subject";        // the message class
    constexpr auto EXT_MESSAGE_FORWARD     = "$ext_message";    // the extension message class
    constexpr auto CLOSURE_FORWARD         = "$closure";        // the closure template class
    constexpr auto TUPLE_FORWARD           = "$tuple";          // the closure template class
@@ -348,6 +349,7 @@ namespace elena_lang
    constexpr ref_t mskExtMssgLiteralRef   = 0x22000000u;
    constexpr ref_t mskPSTRRef             = 0x23000000u;
    constexpr ref_t mskAutoSymbolRef       = 0x24000000u;
+   constexpr ref_t mskMssgNameLiteralRef  = 0x25000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

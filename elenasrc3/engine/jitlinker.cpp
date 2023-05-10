@@ -505,6 +505,12 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
             info.addressMask = 0; // clear because it is already fixed
             break;
          }
+         case mskMssgNameLiteralRef:
+         {
+            ref_t dummy = 0;
+            vaddress = resolve({ info.module, info.module->resolveAction(currentRef, dummy) }, currentMask, false);
+            break;
+         }
          case mskMssgLiteralRef:
          case mskExtMssgLiteralRef:
             vaddress = resolve({ info.module, info.module->resolveConstant(currentRef) }, currentMask, false);
@@ -1166,6 +1172,13 @@ mssg_t JITLinker :: parseMessageLiteral(ustr_t messageLiteral, ModuleBase* modul
    return createMessage(module, message, references);
 }
 
+mssg_t JITLinker :: parseMessageNameLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references)
+{
+   mssg_t message = ByteCodeUtil::resolveMessageName(messageLiteral, module, true);
+
+   return createMessage(module, message, references);
+}
+
 Pair<mssg_t, addr_t> JITLinker :: parseExtMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references)
 {
    Pair<mssg_t, addr_t> retVal = {};
@@ -1220,10 +1233,13 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          structMode = true;
          break;
       case mskWideLiteralRef:
+      {
+         WideMessage tmp(value);
          vmtReferenceInfo.referenceName = _constantSettings.wideLiteralClass;
-         size = (value.length_pos() + 1) << 1;
+         size = (tmp.length_pos() + 1) << 1;
          structMode = true;
          break;
+      }
       case mskCharacterRef:
          vmtReferenceInfo.referenceName = _constantSettings.characterClass;
          size = 4;
@@ -1231,6 +1247,11 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          break;
       case mskMssgLiteralRef:
          vmtReferenceInfo.referenceName = _constantSettings.messageClass;
+         size = 4;
+         structMode = true;
+         break;
+      case mskMssgNameLiteralRef:
+         vmtReferenceInfo.referenceName = _constantSettings.messageNameClass;
          size = 4;
          structMode = true;
          break;
@@ -1278,6 +1299,9 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          break;
       case mskMssgLiteralRef:
          _compiler->writeMessage(writer, parseMessageLiteral(value, referenceInfo.module, messageReferences));
+         break;
+      case mskMssgNameLiteralRef:
+         _compiler->writeMessage(writer, parseMessageNameLiteral(value, referenceInfo.module, messageReferences));
          break;
       case mskExtMssgLiteralRef:
       {
@@ -1503,6 +1527,7 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
          case mskCharacterRef:
          case mskMssgLiteralRef:
          case mskExtMssgLiteralRef:
+         case mskMssgNameLiteralRef:
             address = resolveConstant(referenceInfo, sectionMask);
             break;
          case mskConstant:

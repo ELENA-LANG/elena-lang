@@ -253,6 +253,22 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bo
    return encodeMessage(actionRef, argCount, flags);
 }
 
+mssg_t ByteCodeUtil :: resolveMessageName(ustr_t messageName, ModuleBase* module, bool readOnlyMode)
+{
+   pos_t argCount = 0;
+   ref_t flags = 0;
+
+   IdentifierString actionName;
+   parseMessageName(messageName, actionName, flags, argCount);
+
+   ref_t actionRef = module->mapAction(*actionName, 0, readOnlyMode);
+   if (actionRef == 0) {
+      return 0;
+   }
+
+   return encodeMessage(actionRef, argCount, flags);
+}
+
 void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* target, ModuleBase* importer)
 {
    if (isRCommand(command.code)) {
@@ -261,6 +277,7 @@ void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* targe
          ref_t mask = command.arg1 & mskAnyRef;
          switch (mask) {
             case mskMssgLiteralRef:
+            case mskMssgNameLiteralRef:
                command.arg1 = target->importMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
                break;
             case mskExtMssgLiteralRef:

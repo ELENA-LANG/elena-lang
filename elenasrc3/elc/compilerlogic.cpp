@@ -1164,6 +1164,9 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
          case V_MESSAGE:
             info.header.flags |= elMessage;
             break;
+         case V_MESSAGENAME:
+            info.header.flags |= elMessage;
+            break;
          case V_INT32ARRAY:
             info.header.flags |= elDebugDWORDS;
             break;

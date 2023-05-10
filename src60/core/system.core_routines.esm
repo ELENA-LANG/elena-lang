@@ -269,15 +269,15 @@ procedure __str_less (s1, s2)
 
   peek       fp:s1
   nlen       1
+  sub        n:1
   save       dp:s_len
 
   peek       fp:s2
   nlen       1
+  sub        n:1
   set        dp:s_len
   xcmp
   jne        labNotLess
-
-  sub        n:1
 
   nsave      dp:index, 0
 
@@ -302,15 +302,20 @@ labCheck:
   set        dp:ch2
   read       1
 
+  xswap      sp:1
   load
-  xcmp       dp:ch 
-  jge        labNotLess
+  xcmp       dp:ch
+  jlt        labNotLess
 
   nadd       dp:index, 1
-  xswap      sp:1
   jump       labCheck
 
 labLoopEnd:
+  set        dp:ch2
+  load
+  xcmp       dp:ch
+  jeq        labNotLess
+
   set        class:"system'BoolValue#true"
   jump       labEnd
 
@@ -509,15 +514,15 @@ procedure __wstr_less (s1, s2)
 
   peek       fp:s1
   nlen       2
+  sub        n:1
   save       dp:s_len
 
   peek       fp:s2
   nlen       2
+  sub        n:1
   set        dp:s_len
   xcmp
   jne        labNotLess
-
-  sub        n:1
 
   nsave      dp:index, 0
 
@@ -542,15 +547,20 @@ labCheck:
   set        dp:ch2
   read       2
 
+  xswap      sp:1
   load
-  xcmp       dp:ch 
-  jge        labNotLess
+  xcmp       dp:ch
+  jlt        labNotLess
 
   nadd       dp:index, 1
-  xswap      sp:1
   jump       labCheck
 
 labLoopEnd:
+  set        dp:ch2
+  load
+  xcmp       dp:ch
+  jeq        labNotLess
+
   set        class:"system'BoolValue#true"
   jump       labEnd
 
@@ -1303,9 +1313,6 @@ procedure __mssgname_dispatcher
   jeq         labDefault
 
   loadv
-  xcmp
-  jne         labDefault
-
   peek        sp:0
   jump        vt:0
 

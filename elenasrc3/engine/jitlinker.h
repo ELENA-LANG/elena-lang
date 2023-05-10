@@ -62,6 +62,7 @@ namespace elena_lang
          ustr_t characterClass;
          ustr_t messageClass;
          ustr_t extMessageClass;
+         ustr_t messageNameClass;
       };
 
       struct VAddressInfo
@@ -189,6 +190,7 @@ namespace elena_lang
       mssg_t createMessage(ModuleBase* module, mssg_t message, VAddressMap& references);
 
       mssg_t parseMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);
+      mssg_t parseMessageNameLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);
       Pair<mssg_t, addr_t> parseExtMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);
 
       addr_t resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo sectionInfo, ref_t sectionMask);
@@ -259,6 +261,7 @@ namespace elena_lang
          _constantSettings.characterClass = forwardResolver->resolveForward(CHAR_FORWARD);
          _constantSettings.messageClass = forwardResolver->resolveForward(MESSAGE_FORWARD);
          _constantSettings.extMessageClass = forwardResolver->resolveForward(EXT_MESSAGE_FORWARD);
+         _constantSettings.messageNameClass = forwardResolver->resolveForward(MESSAGE_NAME_FORWARD);
       }
    };
 

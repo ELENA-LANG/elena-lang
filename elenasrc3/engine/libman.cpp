@@ -426,6 +426,7 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t
       case mskWideLiteralRef:
       case mskCharacterRef:
       case mskMssgLiteralRef:
+      case mskMssgNameLiteralRef:
          return module->resolveConstant(reference);
       default:
       {

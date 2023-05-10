@@ -446,6 +446,7 @@ namespace elena_lang
       static void parseMessageName(ustr_t messageName, IdentifierString& actionName, ref_t& flags, pos_t& argCount);
 
       static mssg_t resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode);
+      static mssg_t resolveMessageName(ustr_t messageName, ModuleBase* module, bool readOnlyMode);
    };
 
    // --- ByteCodePattern ---

@@ -137,6 +137,17 @@ public extension enumerableOp
          ^ nil
       }
    }
+
+   get LastMember()
+   {
+      auto   en := cast Enumerator(self.enumerator());
+      object lastItem := nil;
+        
+      while (en.next())
+         { lastItem := *en };
+            
+      ^ lastItem
+   }
 }
 
 // --- indexableOp ---

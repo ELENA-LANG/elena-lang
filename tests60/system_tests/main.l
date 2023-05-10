@@ -11,6 +11,7 @@ public program()
    boxingTests();
    byRefTests();
    stringTests();
+   wideTests();
    shortTests();
    conversionTests();
    inlineAssignmentTests();

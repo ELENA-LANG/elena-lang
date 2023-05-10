@@ -3964,6 +3964,9 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::MssgLiteral:
          writer.appendNode(BuildKey::MssgLiteral, info.reference);
          break;
+      case ObjectKind::MssgNameLiteral:
+         writer.appendNode(BuildKey::MssgNameLiteral, info.reference);
+         break;
       case ObjectKind::ExtMssgLiteral:
          writer.appendNode(BuildKey::ExtMssgLiteral, info.reference);
          break;
@@ -5236,7 +5239,6 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                   break;
             }
             break;
-         case V_SUBJBINARY:
          case V_MSSGBINARY:
             switch (attrs.size) {
                case 4:
@@ -5248,6 +5250,7 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                   break;
             }
             break;
+         case V_SUBJBINARY:
             switch (attrs.size) {
                case 4:
                   attrs.typeInfo.typeRef = V_MESSAGENAME;
@@ -7531,12 +7534,12 @@ ObjectInfo Compiler :: mapExtMessageConstant(Scope& scope, SyntaxNode node, ref_
    Interpreter interpreter(scope.moduleScope, _logic);
    ObjectInfo retVal = evalExpression(interpreter, scope, node.findChild(SyntaxKey::Expression));
    switch (retVal.kind) {
-   case ObjectKind::IntLiteral:
-      argCount = retVal.extra;
-      break;
-   default:
-      scope.raiseError(errCannotEval, node);
-      break;
+      case ObjectKind::IntLiteral:
+         argCount = retVal.extra;
+         break;
+      default:
+         scope.raiseError(errCannotEval, node);
+         break;
    }
 
    mssg_t message = encodeMessage(actionRef, argCount, 0);
@@ -7579,7 +7582,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    bool newOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::NewOp);
    bool castOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::CastOp);
    bool refOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::RefOp);
-   bool mssgOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::MssgLiteral);
+   bool mssgOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::MssgNameLiteral);
    bool probeMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::ProbeMode);
    bool memberMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::Member);
    bool ignoreDuplicates = EAttrs::testAndExclude(attrs, ExpressionAttribute::IgnoreDuplicate);
