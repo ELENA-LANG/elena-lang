@@ -55,6 +55,19 @@ public extension byteOp : ByteNumber
       ^ n
    }
 
+   byte power(int y)
+   {
+      byte x := self;
+      byte r := 1;
+        
+      for (int i := 0, i < y, i += 1)
+      {
+         r := r * x
+      };
+        
+      ^ new ByteNumber(r)
+   }
+
    byte sqr()
       = self * self;
 
@@ -128,6 +141,19 @@ public extension shortOp : ShortNumber
       ^ n
    }
 
+   short power(int y)
+   {
+      short x := self;
+      short r := 1;
+        
+      for (int i := 0, i < y, i += 1)
+      {
+         r := r * x
+      };
+        
+      ^ new ShortNumber(r)
+   }
+
    short sqr()
       = self * self;
 
@@ -198,6 +224,21 @@ public extension intOp : IntNumber
          { n := -n };
     
       ^ n
+   }
+
+   int power(int y)
+   {
+      int x := self;
+      int r := 1;
+      if (x == 0)
+         { r := 0 };
+        
+      for(int i := 0, i < y, i += 1)
+      {
+         r := r * x
+      };
+        
+      ^ r
    }
 
    int sqr()
@@ -331,7 +372,36 @@ public extension uintOp : UIntNumber
 // --- longOp ---
 
 public extension longOp : LongNumber
-{
+{   
+   long power(long y)
+   {
+      long x := self;
+      long r := 1;
+        
+      for(long i := 0l, i < y, i += 1l)
+      {
+         r := r * x;
+      };
+        
+      ^ new LongNumber(r)
+   }
+    
+   long power(int y)
+   {
+      long x := self;
+      long r := 1;
+        
+      int i := 0;
+      while (i < y)
+      {
+         r := r * x;
+            
+         i += 1;
+      };
+        
+      ^ new LongNumber(r)
+   }
+
    long sqr()
       = self * self;
 
@@ -397,6 +467,60 @@ public extension realOp : RealNumber
 
          ^ retVal
       }
+   }
+
+   real power(real y)
+   {
+      real x := self;
+        
+      if(x == 0.0r)
+         { ^ 0.0r };
+                        
+      if(y == 0.0r)
+        { ^ 1.0r };
+            
+      x := x.ln();
+        
+      x := x * y;
+        
+      x := x.exp();
+            
+      ^ x            
+   }
+
+   real power(int y)
+   {
+      real x := self;
+
+      if(x == 0.0r)
+         { ^ 0.0r };
+                        
+      if(y == 0)
+         { ^ 1.0r };
+                        
+      if (x < 0.0r)
+      {
+         x := x * -1.0r;
+            
+         x := x.ln();
+            
+         x := x * y;
+            
+         x := x.exp();
+            
+         if (y.isOdd())
+            { x := x * -1.0r }
+      }
+      else
+      {
+         x := x.ln();
+            
+         x := x * y;
+            
+         x := x.exp()
+      };
+        
+      ^ x
    }
 
    real sqr()

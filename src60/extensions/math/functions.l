@@ -65,6 +65,30 @@ namespace math
          = operand.ceil();
    }   
 
+   public singleton power
+   {
+      function(loperand, roperand)
+         = cast real(loperand).power(roperand);
+        
+      real function(real loperand, int roperand)
+         = loperand.power(roperand);
+            
+      real function(real loperand, real roperand)
+         = loperand.power(roperand);
+            
+      int function(int loperand, int roperand)
+         = loperand.power(roperand);
+            
+      byte function(byte loperand, int roperand)
+         = loperand.power(roperand);
+            
+      short function(short loperand, int roperand)
+         = loperand.power(roperand);
+            
+      long function(long loperand, long roperand)
+         = loperand.power(roperand);
+   }
+
    public singleton sqr
    {
       real function(real operand)

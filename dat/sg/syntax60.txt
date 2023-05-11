@@ -290,7 +290,7 @@ ROOT_EXPRESSION ::=
 	| reference { 
 		L3 ^OBJECT MESSAGE MESSAGE_R
 		| eps ^OBJECT }
-	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L4_OP* L5_OP* L6_OP?
+	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L3_OP* L4_OP* L5_OP* L6_OP?
 	| "!" EXPRESSION ^NOT_OPERATION
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
 	| "~" SINGLE_EXPRESSION ^BNOT_OPERATION
