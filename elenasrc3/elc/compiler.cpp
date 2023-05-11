@@ -4549,8 +4549,15 @@ void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
    SyntaxNode name = node.findChild(SyntaxKey::Name);
    if (name.nextNode() == SyntaxKey::ComplexName) {
       SyntaxNode secondName = name.nextNode();
-      postfix.insert(secondName.firstChild().identifier(), 0);
-      postfix.insert(":", 0);
+      size_t index = 0;
+      while (secondName == SyntaxKey::ComplexName) {
+         postfix.insert(secondName.firstChild().identifier(), index);
+         postfix.insert(":", index);
+
+         index += secondName.firstChild().identifier().length() + 1;
+
+         secondName = secondName.nextNode();
+      }
    }
 
    scope.reference = mapNewTerminal(scope, *prefix, name, *postfix, scope.visibility);
@@ -7378,6 +7385,7 @@ ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope&
    ObjectInfo ehLocal = declareTempStructure(scope, { (int)scope.moduleScope->ehTableEntrySize, false });
 
    SyntaxNode catchNode = node.findChild(SyntaxKey::CatchDispatch);
+   SyntaxNode finallyNode = node.findChild(SyntaxKey::FinallyBlock).firstChild();
    SyntaxNode opNode = node.firstChild();
    if (opNode.existChild(SyntaxKey::ClosureBlock))
       opNode = opNode.findChild(SyntaxKey::ClosureBlock);
@@ -7389,9 +7397,17 @@ ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope&
    writer.closeNode();
 
    writer.newNode(BuildKey::Tape);
-
    compileMessageOperationR(writer, scope, { ObjectKind::Object }, catchNode.firstChild().firstChild());
    writer.closeNode();
+
+   if (finallyNode != SyntaxKey::None) {
+      if (finallyNode.existChild(SyntaxKey::ClosureBlock))
+         finallyNode = finallyNode.findChild(SyntaxKey::ClosureBlock);
+
+      writer.newNode(BuildKey::Tape);
+      compileExpression(writer, scope, finallyNode, 0, EAttr::None, nullptr);
+      writer.closeNode();
+   }
 
    writer.closeNode();
 
@@ -8129,9 +8145,9 @@ ObjectInfo Compiler :: compileNested(BuildTreeWriter& writer, ExprScope& ownerSc
    EAttrs nestedMode = { EAttr::NestedDecl };
    declareExpressionAttributes(ownerScope, node, parentInfo, nestedMode);
 
-   // allow only new and type attrobutes
-   if (nestedMode.attrs != EAttr::None && !EAttrs::test(nestedMode.attrs, EAttr::NewOp) && !EAttrs::test(nestedMode.attrs, EAttr::NewVariable))
-      ownerScope.raiseError(errInvalidOperation, node);
+   //// allow only new and type attrobutes
+   //if (nestedMode.attrs != EAttr::None && !EAttrs::test(nestedMode.attrs, EAttr::NewOp) && !EAttrs::test(nestedMode.attrs, EAttr::NewVariable))
+   //   ownerScope.raiseError(errInvalidOperation, node);
 
    ref_t nestedRef = mapNested(ownerScope, mode);
    InlineClassScope scope(&ownerScope, nestedRef);

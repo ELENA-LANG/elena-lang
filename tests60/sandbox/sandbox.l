@@ -2,7 +2,18 @@ import extensions;
 
 public program()
 {
-   var n := 2;
-   if(n == 2)
-      console.printLine("n==2");
+    console.printLine("Try");
+    try
+    {
+        var o := new Object();
+        o.fail();
+    }
+    catch(Exception e)
+    {
+        console.printLine("Error!");
+    }
+    finally
+    {
+        console.printLine("Finally");
+    }
 }

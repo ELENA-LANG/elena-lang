@@ -5,6 +5,9 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
+    * try-finally-catch
+    * try-finally
+
     * review documentation - check if all code is compiled - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual
 
     * ide : set / remove breakpoints
@@ -280,8 +283,6 @@ Backlog:
     * review code { int n := 3; } : extra assigning
     * repeate-until statements
     * aarch64 : setting mask for size (createn, ...)
-    * try-finally-catch
-    * try-finally
     * optimization : fields should be aligned to 4 / 8 and the copy operation should take this into account,
       except for special type of structs - packed one
     * ide : fix errors with font size / switching to error list / clear high light on click

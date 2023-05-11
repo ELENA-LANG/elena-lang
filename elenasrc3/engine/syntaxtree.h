@@ -130,6 +130,7 @@ namespace elena_lang
       L3SingleExpression      = 0x00189A,
       NestedRootExpression    = 0x00189B,
       TemplateOperation       = 0x00189C,
+      LTExpression            = 0x00189D,
       TemplateExpression      = 0x0018A0,
       FieldInitializer        = 0x0018B0,
       Message                 = 0x0010C0,
@@ -157,6 +158,7 @@ namespace elena_lang
       Operator                = 0x0010D6,
       SubVariable             = 0x0010D7,
       SubDeclaration          = 0x0010D8,
+      FinallyBlock            = 0x001CD9,
       ParameterBlock          = 0x0010F0,
 
       Name                    = 0x000101,

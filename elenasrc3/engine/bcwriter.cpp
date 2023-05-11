@@ -1730,6 +1730,8 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
    retLabel = tape.exchangeFirstsLabel(retLabel);
 
    BuildNode tryNode = node.findChild(BuildKey::Tape);
+   BuildNode catchNode = tryNode.nextNode(BuildKey::Tape);
+   BuildNode finallyNode = catchNode.nextNode(BuildKey::Tape);
    saveTape(tape, tryNode, tapeScope, paths, tapeOptMode, false);
 
    // unhook
@@ -1741,10 +1743,17 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
    // === exit redirect block ===
    // restore the original ret label and return the overridden one
    retLabel = tape.exchangeFirstsLabel(retLabel);
+
    // ret-end-label:
    tape.setPredefinedLabel(retLabel);
+
    // unhook
    tape.write(ByteCode::Unhook);
+
+   // finally-block
+   if (finallyNode != BuildKey::None)
+      saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
+
    tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
    // ===========================
 
@@ -1767,13 +1776,15 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
    tape.setLabel();
    tape.write(ByteCode::Unhook);
 
-   BuildNode catchNode = tryNode.nextNode(BuildKey::Tape);
    saveTape(tape, catchNode, tapeScope, paths, tapeOptMode, false);
 
    // eos:
    tape.setLabel();
-
    tape.releaseLabel(); // release ret-end-label
+
+   // finally-block
+   if (finallyNode != BuildKey::None)
+      saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
 }
 
 void ByteCodeWriter :: saveSwitchOption(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)

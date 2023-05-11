@@ -53,6 +53,15 @@ public template do::until(loop_body, cond_expr) : __included(statementTemplates)
    $rep cast bool(cond_expr) ! { loop_body }
 }
 
+// --- do:while ---
+
+public template do::while(loop_body, cond_expr) : __included(statementTemplates)
+{
+   loop_body;
+
+   $rep cast bool(cond_expr) ? { loop_body }
+}
+
 // --- for ---
 
 public template for<stepExpr, condExpr>(loopBody) : __included(statementTemplates)
@@ -74,6 +83,13 @@ public template for<initExpr,condExpr,stepExpr>(loopBody) : __included(statement
 public template try::catch(try_block,catch_block) : __included(statementTemplates)
 {
    try_block \\ on(catch_block);
+}
+
+// --- try:catch:finally ---
+
+public template try::catch::finally(try_block,catch_block,finally_block) : __included(statementTemplates)
+{
+   try_block \\ on(catch_block) \\ finally_block;
 }
 
 // --- extern ---

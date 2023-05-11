@@ -136,10 +136,12 @@ void SyntaxTreeBuilder :: parseStatement(SyntaxTreeWriter& writer, Scope& scope,
             break;
          case SyntaxKey::NTExpression:
          case SyntaxKey::TExpression:
+         case SyntaxKey::LTExpression:
             // unpacking the statement body
             //flushExpression();
             writer.newNode(SyntaxKey::Idle);
-            flushExpression(writer, scope, current.firstChild());
+            flushExpressionMember(writer, scope, current.firstChild());
+            //flushExpression(writer, scope, current.firstChild());
             parameters.add(writer.CurrentNode().firstChild());
             writer.closeNode();
             break;
@@ -1408,7 +1410,10 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode 
    else if (isTemplateDeclaration(node, writer.CurrentNode(), withComplexName)) {
       if (withComplexName) {
          SyntaxNode complexName = node.findChild(SyntaxKey::ComplexName);
-         flushNode(writer, scope, complexName);
+         while (complexName == SyntaxKey::ComplexName) {
+            flushNode(writer, scope, complexName);
+            complexName = complexName.nextNode();
+         }
       }
 
       SyntaxNode body = node.firstChild(SyntaxKey::MemberMask);
