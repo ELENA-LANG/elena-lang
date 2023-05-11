@@ -99,6 +99,7 @@ __define DIMENSION              5233;
 __define RESEND                 7366;
 __define CATCH_OPERATION        7367;
 __define CATCH                  7368;
+__define FINAL_OPERATION        7386;
 __define REDIRECT               7371;
 __define ALT_OPERATION          7372;
 __define ISNIL_OPERATION        7373;
@@ -281,6 +282,7 @@ ROOT_EXPRESSION ::=
 				| identifier ^OBJECT }
 		| L7_O_OP
 		| TRY ^OBJECT TRY_R
+		| FNL ^OBJECT FNL_R
 		| ALT ^OBJECT ALT_R
 		| T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
 		| "=>" ^OBJECT { SWITCH_OPTION+ SWITCH_LAST_OPTION? } ^SWITCH_OPERATION
@@ -670,6 +672,7 @@ ELSE       ::= "!";
 TRY        ::= "\\";
 ALT        ::= "\";
 ISNIL      ::= "??";
+FNL        ::= "$fnl";
 
 L0_R ::=
 	EXPRESSION "]" ^INDEXER_OPERATION;
@@ -785,7 +788,10 @@ L8_O_OP ::=
 	| ELSE ^OBJECT ELSE_R;
 
 TRY_R ::=
-	CATCH FINALLY? ^CATCH_OPERATION;
+	CATCH { "$fnl" FINALLY }? ^CATCH_OPERATION;
+
+FNL_R ::=
+	FINALLY ^FINAL_OPERATION;
 
 ALT_R ::=
 	CATCH ^ALT_OPERATION;
@@ -794,7 +800,7 @@ CATCH ::=
 	MESSAGE MESSAGE_R;
 
 FINALLY ::=
-	"\\" L7_EXPRESSION;
+	L7_EXPRESSION;
 
 L9_OP ::= 
 	TRY TRY_R

@@ -5,9 +5,6 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * try-finally-catch
-    * try-finally
-
     * review documentation - check if all code is compiled - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual
 
     * ide : set / remove breakpoints

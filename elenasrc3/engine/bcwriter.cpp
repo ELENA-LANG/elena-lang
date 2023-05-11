@@ -1787,6 +1787,85 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
       saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
 }
 
+void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
+   ReferenceMap& paths, bool tapeOptMode)
+{
+   int retLabel = tape.newLabel();                 // declare ret-end-label
+   tape.newLabel();                                // declare end-label  
+   tape.newLabel();                                // declare alternative-label
+
+   tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
+
+   retLabel = tape.exchangeFirstsLabel(retLabel);
+
+   BuildNode tryNode = node.findChild(BuildKey::Tape);
+   BuildNode finallyNode = tryNode.nextNode(BuildKey::Tape);
+   BuildNode index = node.findChild(BuildKey::Index);
+
+   saveTape(tape, tryNode, tapeScope, paths, tapeOptMode, false);
+
+   // unhook
+   tape.write(ByteCode::Unhook);
+
+   if (finallyNode != BuildKey::None)
+      saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
+
+   // jump
+   tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
+
+   // === exit redirect block ===
+   // restore the original ret label and return the overridden one
+   retLabel = tape.exchangeFirstsLabel(retLabel);
+
+   // ret-end-label:
+   tape.setPredefinedLabel(retLabel);
+
+   // unhook
+   tape.write(ByteCode::Unhook);
+
+   // finally-block
+   if (finallyNode != BuildKey::None)
+      saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
+
+   tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
+   // ===========================
+
+   // catchLabel:
+   tape.setLabel();
+
+   // tstflg elMessage
+   // jeq labSkip
+   // load
+   // peeksi 0
+   // callvi 0   
+   // labSkip:
+   // unhook
+   // store fp:index
+
+   tape.newLabel();
+   tape.write(ByteCode::TstFlag, elMessage);
+   tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
+   tape.write(ByteCode::Load);
+   tape.write(ByteCode::PeekSI);
+   tape.write(ByteCode::CallVI);
+   tape.setLabel();
+   tape.write(ByteCode::Unhook);
+   tape.write(ByteCode::StoreFI, index.arg.value);
+
+   // finally-block
+   if (finallyNode != BuildKey::None)
+      saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
+
+   // peek fp:index
+   // throw
+   tape.write(ByteCode::PeekFI, index.arg.value);
+   tape.write(ByteCode::Throw);
+
+   // eos:
+   tape.setLabel();
+   tape.releaseLabel(); // release ret-end-label
+}
+
 void ByteCodeWriter :: saveSwitchOption(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
 {
    tape.newLabel();
@@ -2013,6 +2092,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::CatchOp:
             saveCatching(tape, current, tapeScope, paths, tapeOptMode);
+            break;
+         case BuildKey::FinalOp:
+            saveFinally(tape, current, tapeScope, paths, tapeOptMode);
             break;
          case BuildKey::AltOp:
             saveAlternate(tape, current, tapeScope, paths, tapeOptMode);

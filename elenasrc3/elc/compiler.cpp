@@ -7380,6 +7380,36 @@ ObjectInfo Compiler :: compileIsNilOperation(BuildTreeWriter& writer, ExprScope&
 
 }
 
+ObjectInfo Compiler :: compileFinalOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
+{
+   ObjectInfo ehLocal = declareTempStructure(scope, { (int)scope.moduleScope->ehTableEntrySize, false });
+
+   int index1 = scope.newTempLocal();
+
+   SyntaxNode finallyNode = node.findChild(SyntaxKey::FinallyBlock).firstChild();
+   SyntaxNode opNode = node.firstChild();
+   if (opNode.existChild(SyntaxKey::ClosureBlock))
+      opNode = opNode.findChild(SyntaxKey::ClosureBlock);
+
+   writer.newNode(BuildKey::FinalOp, ehLocal.argument);
+   writer.appendNode(BuildKey::Index, index1);
+
+   writer.newNode(BuildKey::Tape);
+   compileExpression(writer, scope, opNode, 0, EAttr::None, nullptr);
+   writer.closeNode();
+
+   if (finallyNode.existChild(SyntaxKey::ClosureBlock))
+      finallyNode = finallyNode.findChild(SyntaxKey::ClosureBlock);
+
+   writer.newNode(BuildKey::Tape);
+   compileExpression(writer, scope, finallyNode, 0, EAttr::None, nullptr);
+   writer.closeNode();
+
+   writer.closeNode();
+
+   return {};
+}
+
 ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
 {
    ObjectInfo ehLocal = declareTempStructure(scope, { (int)scope.moduleScope->ehTableEntrySize, false });
@@ -8491,6 +8521,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
       case SyntaxKey::CatchOperation:
          retVal = compileCatchOperation(writer, scope, current);
+         break;
+      case SyntaxKey::FinalOperation:
+         retVal = compileFinalOperation(writer, scope, current);
          break;
       case SyntaxKey::AltOperation:
          retVal = compileAltOperation(writer, scope, current);

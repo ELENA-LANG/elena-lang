@@ -159,6 +159,7 @@ namespace elena_lang
       SubVariable             = 0x0010D7,
       SubDeclaration          = 0x0010D8,
       FinallyBlock            = 0x001CD9,
+      FinalOperation          = 0x001CDA,
       ParameterBlock          = 0x0010F0,
 
       Name                    = 0x000101,

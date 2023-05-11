@@ -89,7 +89,14 @@ public template try::catch(try_block,catch_block) : __included(statementTemplate
 
 public template try::catch::finally(try_block,catch_block,finally_block) : __included(statementTemplates)
 {
-   try_block \\ on(catch_block) \\ finally_block;
+   try_block \\ on(catch_block) $fnl finally_block;
+}
+
+// --- try:finally ---
+
+public template try::finally(try_block,finally_block) : __included(statementTemplates)
+{
+   try_block $fnl finally_block;
 }
 
 // --- extern ---

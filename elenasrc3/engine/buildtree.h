@@ -149,6 +149,7 @@ namespace elena_lang
       Switching            = 0x007B,
       SwitchOption         = 0x007C,
       ElseOption           = 0x007D,
+      FinalOp              = 0x007E,
 
       VariableInfo         = 0x0090,
       Variable             = 0x0091,
