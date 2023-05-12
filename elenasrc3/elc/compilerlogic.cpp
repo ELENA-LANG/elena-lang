@@ -666,6 +666,9 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_STATIC:
          attrs.isStatic = true;
          break;
+      case V_READONLY:
+         attrs.isReadonly = true;
+         break;
       default:
          return false;
    }

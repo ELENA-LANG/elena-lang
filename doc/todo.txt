@@ -11,6 +11,7 @@ In development:
     * ide : menu - clear all breakpoints
 
     * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Code-Snippets
+    * ide : new project / new file
     * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
     * ide : refreshing auto watch - with the same name, unused

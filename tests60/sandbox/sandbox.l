@@ -1,24 +1,35 @@
 import extensions;
 
-class Record
+public class DynamicSingleton
 {
-    // an initialization expression can be a constant
-    int x := 0;
-
-    // it can be a result of operations  
-    string y := "My" + "String";
-
-    // or class creation  
-    z := new Object(); 
+    // declare a private constructor to prevent the class 
+    // from direct use
+    private constructor() {}
+    
+    callMe()
+    {
+        console.printLine("I'm a singleton")
+    }
+    
+    // declaring a static field
+    static DynamicSingleton instance;
+    
+    // declaring a static property to access the field
+    static DynamicSingleton Instance
+    {
+        get()
+        {
+            if (instance == nil)
+            {
+                instance := new DynamicSingleton();
+            };
+            
+            ^ instance
+        }
+    }
 }
-
-class MySpecialRecord : Record
-{
-    // we have to use this prefix to initialize already existing fields
-    this x := 2; 
-} 
 
 public program()
 {
-    var p := new Record();
+    DynamicSingleton.Instance.callMe();
 }

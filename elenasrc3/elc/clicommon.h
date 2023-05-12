@@ -445,6 +445,7 @@ struct FieldAttributes
    bool     isConstant;
    bool     isStatic;
    bool     isEmbeddable;
+   bool     isReadonly;
    bool     inlineArray;
    bool     fieldArray;
 };

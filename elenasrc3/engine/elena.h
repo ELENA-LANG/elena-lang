@@ -1005,6 +1005,7 @@ namespace elena_lang
    {
       int      offset;
       TypeInfo typeInfo;
+      bool     readOnly;
    };
 
    // --- StaticFieldInfo ---

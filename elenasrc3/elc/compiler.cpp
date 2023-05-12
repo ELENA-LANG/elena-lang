@@ -766,11 +766,11 @@ Compiler::ClassScope :: ClassScope(Scope* ns, ref_t reference, Visibility visibi
 
 inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, ExpressionAttribute attr, bool ignoreFields)
 {
-   bool readOnly = test(info.header.flags, elReadOnlyRole)
-      && !EAttrs::test(attr, EAttr::InitializerScope);
-
    auto fieldInfo = info.fields.get(identifier);
    if (!ignoreFields && fieldInfo.offset >= 0) {
+      bool readOnly = (test(info.header.flags, elReadOnlyRole) || fieldInfo.readOnly)
+         && !EAttrs::test(attr, EAttr::InitializerScope);
+
       if (test(info.header.flags, elStructureRole)) {
          return { readOnly ? ObjectKind::ReadOnlyFieldAddress : ObjectKind::FieldAddress,
             fieldInfo.typeInfo, fieldInfo.offset };
@@ -779,6 +779,9 @@ inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, Expressi
          fieldInfo.typeInfo, fieldInfo.offset };
    }
    else if (!ignoreFields && fieldInfo.offset == -2) {
+      bool readOnly = (test(info.header.flags, elReadOnlyRole) || fieldInfo.readOnly)
+         && !EAttrs::test(attr, EAttr::InitializerScope);
+
       return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeInfo, 1u, TargetMode::ArrayContent };
    }
    else {
@@ -1094,7 +1097,7 @@ ObjectInfo Compiler::ExprScope :: mapMember(ustr_t identifier)
    ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
    if (classScope) {
       //if (methodScope)
-      return classScope->mapField(identifier, EAttr::None);
+      return classScope->mapField(identifier, (methodScope != nullptr && methodScope->constructorMode) ? EAttr::InitializerScope : EAttr::None);
    }
 
    return Scope::mapMember(identifier);
@@ -1601,7 +1604,7 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
    scope.moduleScope->module->mapSection(reference | mask, false);
 }
 
-Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef)
+Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed)
 {
    ref_t flagCopy = scope.info.header.flags;
    ref_t classClassCopy = scope.info.header.classRef;
@@ -1641,7 +1644,7 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
       }
    }
 
-   if (test(scope.info.header.flags, elFinal)) {
+   if (!ignoreSealed && test(scope.info.header.flags, elFinal)) {
       // COMPILER MAGIC : if it is a unsealed nested class inheriting its owner
       if (!test(scope.info.header.flags, elSealed) && test(flagCopy, elNestedClass)) {
          ClassScope* owner = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::OwnerClass);
@@ -2244,6 +2247,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
    TypeInfo typeInfo = attrs.typeInfo;
    int   sizeHint = attrs.size;
    bool  embeddable = attrs.isEmbeddable;
+   bool  readOnly = attrs.isReadonly;
    ref_t flags = scope.info.header.flags;
 
    if (sizeHint == -1) {
@@ -2316,7 +2320,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
          typeInfo.typeRef = _logic->definePrimitiveArray(*scope.moduleScope, typeInfo.elementRef,
             test(scope.info.header.flags, elStructureRole));
 
-         scope.info.fields.add(name, { -2, typeInfo });
+         scope.info.fields.add(name, { -2, typeInfo, readOnly });
       }
       else scope.raiseError(errIllegalField, node);
    }
@@ -2335,7 +2339,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
 
          offset = scope.info.size;
          scope.info.size += sizeInfo.size;
-         scope.info.fields.add(name, { offset, typeInfo });
+         scope.info.fields.add(name, { offset, typeInfo, readOnly });
 
          if (typeInfo.isPrimitive())
             _logic->tweakPrimitiveClassFlags(scope.info, typeInfo.typeRef);
@@ -2348,7 +2352,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
          scope.info.header.flags |= elNonStructureRole;
 
          offset = scope.info.fields.count();
-         scope.info.fields.add(name, { offset, typeInfo });
+         scope.info.fields.add(name, { offset, typeInfo, readOnly });
       }
    }
 }
@@ -2363,7 +2367,7 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node, bool si
          FieldAttributes attrs = {};
          declareFieldAttributes(scope, current, attrs);
 
-         if (attrs.isConstant || attrs.isStatic) {
+         if ((attrs.isConstant && !isClassClassMode) || attrs.isStatic) {
             generateClassStaticField(scope, current, attrs.isConstant, attrs.typeInfo);
          }
          else if (!isClassClassMode) {
@@ -2380,7 +2384,8 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, re
    bool closed = test(scope.info.header.flags, elClosed);
 
    if (scope.isClassClass()) {
-
+      // generate static fields
+      generateClassFields(scope, node, false);
    }
    else {
       // HOTFIX : flags / fields should be compiled only for the class itself
@@ -2430,7 +2435,7 @@ void Compiler :: declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNo
    scope.info.header.parentRef = parentRef;
    InheritResult res = InheritResult::irSuccessfull;
    if (scope.info.header.parentRef != 0) {
-      res = inheritClass(scope, scope.info.header.parentRef/*, ignoreFields, test(scope.info.header.flags, elVirtualVMT)*/);
+      res = inheritClass(scope, scope.info.header.parentRef/*, ignoreFields*/, test(scope.info.header.flags, elVirtualVMT));
    }
 
    //if (res == irObsolete) {
@@ -4022,6 +4027,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::TempLocalAddress:
          writer.appendNode(BuildKey::LocalAddress, info.reference);
          break;
+      case ObjectKind::ReadOnlyField:
       case ObjectKind::Field:
       case ObjectKind::Outer:
       case ObjectKind::OuterSelf:
@@ -5488,7 +5494,7 @@ bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node)
                }
                break;
             default:
-               scope.raiseError(errInvalidOperation, current);
+               evalulated = false;
                break;
          }
       }
@@ -8019,6 +8025,8 @@ ObjectInfo Compiler :: compileNestedExpression(BuildTreeWriter& writer, InlineCl
 {
    bool paramMode = EAttrs::test(mode, EAttr::Parameter);
    ref_t nestedRef = scope.reference;
+   if (test(scope.info.header.flags, elVirtualVMT))
+      nestedRef = scope.info.header.parentRef;
 
    if (test(scope.info.header.flags, elStateless)) {
       ObjectInfo retVal = { ObjectKind::Singleton, { nestedRef }, nestedRef };
@@ -9513,10 +9521,17 @@ bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, mssg_t message, 
 
 // NOTE : check if init_method is declared in the current class then call it
 //        returns the parent class reference
-ref_t Compiler :: callInitMethod(BuildTreeWriter& writer, SyntaxNode node, ExprScope& exprScope, ClassInfo& info, ref_t reference)
+void Compiler :: callInitMethod(BuildTreeWriter& writer, SyntaxNode node, ExprScope& exprScope, ClassInfo& info, ref_t reference)
 {
    if (!info.methods.exist(exprScope.moduleScope->buildins.init_message))
-      return 0;
+      return;
+
+   if (info.header.parentRef != 0) {
+      ClassInfo classInfo;
+      _logic->defineClassInfo(*exprScope.moduleScope, classInfo, info.header.parentRef);
+
+      callInitMethod(writer, node, exprScope, classInfo, info.header.parentRef);
+   }
 
    MethodInfo initInfo = info.methods.get(exprScope.moduleScope->buildins.init_message);
    if (!initInfo.inherited) {
@@ -9526,24 +9541,13 @@ ref_t Compiler :: callInitMethod(BuildTreeWriter& writer, SyntaxNode node, ExprS
       compileMessageOperation(writer, exprScope, node, args[0], exprScope.moduleScope->buildins.init_message,
          0, args, EAttr::AlreadyResolved, nullptr);
    }
-
-   return info.header.parentRef;
 }
 
 void Compiler :: compileInlineInitializing(BuildTreeWriter& writer, ClassScope& classScope, SyntaxNode node)
 {
    ExprScope exprScope(&classScope);
 
-   ref_t reference = classScope.reference;
-   while (reference != 0) {
-      if (reference != classScope.reference) {
-         ClassInfo classInfo;
-         _logic->defineClassInfo(*classScope.moduleScope, classInfo, reference);
-
-         reference = callInitMethod(writer, node, exprScope, classInfo, reference);
-      }
-      else reference = callInitMethod(writer, node, exprScope, classScope.info, reference);
-   }
+   callInitMethod(writer, node, exprScope, classScope.info, classScope.reference);
 }
 
 void Compiler :: compileDefConvConstructorCode(BuildTreeWriter& writer, MethodScope& scope,
@@ -10170,8 +10174,27 @@ void Compiler :: injectInterfaceDispatch(Scope& scope, SyntaxNode node, ref_t pa
 void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef)
 {
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-
    scope.info.header.flags |= elNestedClass;
+
+   bool virtualClass = true;
+   // NOTE : check if it is in-place initialization
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Field:
+         case SyntaxKey::Method:
+            virtualClass = false;
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   if (virtualClass)
+      scope.info.header.flags |= elVirtualVMT;
+
    declareClassParent(parentRef, scope, node);
 
    ref_t dummy = 0;
