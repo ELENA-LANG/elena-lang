@@ -58,7 +58,7 @@ inline bool isSelfCall(ObjectInfo target)
       case ObjectKind::SelfLocal:
       case ObjectKind::SelfBoxableLocal:
          //case okOuterSelf:
-      //case okClassSelf:
+      case ObjectKind::ClassSelf:
       //case okInternalSelf:
          return true;
       default:
@@ -324,6 +324,7 @@ bool Interpreter :: evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInf
             return true;
          }
          case ObjectKind::Class:
+         case ObjectKind::ClassSelf:
             retVal = { ObjectKind::SelfName };
             return true;
          case ObjectKind::Method:
@@ -3991,6 +3992,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
          writer.appendNode(BuildKey::SymbolCall, info.reference);
          break;
       case ObjectKind::Class:
+      case ObjectKind::ClassSelf:
       case ObjectKind::Singleton:
       case ObjectKind::ConstantRole:
          writer.appendNode(BuildKey::ClassReference, info.reference);
@@ -4772,6 +4774,7 @@ ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxK
 
    switch (identInfo.kind) {
       case ObjectKind::Class:
+      case ObjectKind::ClassSelf:
          return identInfo.reference;
       case ObjectKind::Symbol:
          if (declarationMode)
@@ -5521,6 +5524,11 @@ ObjectInfo Compiler :: mapClassSymbol(Scope& scope, ref_t classRef)
       }
 
       retVal.typeInfo = { classClassRef };
+
+      ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+      if (classScope != nullptr && classScope->reference == retVal.typeInfo.typeRef) {
+         retVal.kind = ObjectKind::ClassSelf;
+      }
 
       return retVal;
    }

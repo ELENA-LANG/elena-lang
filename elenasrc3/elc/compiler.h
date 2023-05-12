@@ -41,6 +41,7 @@ namespace elena_lang
       Terminator,
       Symbol,
       Class,
+      ClassSelf,
       Method,
       Object,
       Singleton,
