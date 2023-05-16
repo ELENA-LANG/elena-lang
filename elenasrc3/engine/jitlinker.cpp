@@ -1555,8 +1555,10 @@ void JITLinker :: loadPreloaded(ustr_t preloadedSection)
    ModuleInfoList list({});
    ModuleInfoList symbolList({});
 
+   IdentifierString nameToResolve(META_PREFIX, preloadedSection);
+
    // load preloaded symbols
-   _loader->loadDistributedSymbols(preloadedSection, list);
+   _loader->loadDistributedSymbols(*nameToResolve, list);
    for (auto it = list.start(); !it.eof(); ++it) {
       copyMetaList(*it, symbolList);
    }

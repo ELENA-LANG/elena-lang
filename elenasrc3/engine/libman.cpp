@@ -547,7 +547,9 @@ bool LibraryProvider::saveDebugModule(ModuleBase* module)
 void LibraryProvider :: loadDistributedSymbols(ustr_t virtualSymbolName, ModuleInfoList& list)
 {
    for (auto it = _modules.start(); !it.eof(); ++it) {
-      ref_t reference = (*it)->mapReference(virtualSymbolName, true);
+      IdentifierString rootName("'", virtualSymbolName);
+
+      ref_t reference = (*it)->mapReference(*rootName, true);
       if (reference) {
          list.add({ *it, reference });
       }

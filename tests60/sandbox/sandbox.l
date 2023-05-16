@@ -12,9 +12,11 @@ import extensions;
 //    }
 //}
 
+onModuleUse : preloaded = console.printLine("Starting");
+
 public program()
 {
-   console.printLine("Hello   ");
+   console.printLine("Hello");
 
 //    MySingleton.printMe()
 }
