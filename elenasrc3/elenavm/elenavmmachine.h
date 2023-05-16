@@ -19,8 +19,7 @@ namespace elena_lang
    constexpr auto ELENAVM_INITIALIZING    = "Initializing...";
 
    // --- ELENARTMachine ---
-   class ELENAVMMachine : public ELENAMachine, public ImageProviderBase, public ExternalMapper,
-      public TapeGeneratorBase
+   class ELENAVMMachine : public ELENAMachine, public ImageProviderBase, public ExternalMapper
    {
    protected:
       bool                 _initialized;
@@ -72,7 +71,7 @@ namespace elena_lang
 
       void Exit(int exitCode);
 
-      void generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol) override;
+      //void generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol);
       
       ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
          int codeAlignment, JITSettings gcSettings,

@@ -302,6 +302,39 @@ void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* targe
    }
 }
 
+void ByteCodeUtil :: generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* module, MemoryDump& tapeSymbol)
+{
+   MemoryWriter writer(&tapeSymbol);
+
+   pos_t sizePlaceholder = writer.position();
+   writer.writePos(0);
+
+   pos_t  command = 0;
+   ustr_t strArg = nullptr;
+
+   ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
+
+   // generate the preloaded list
+   for (auto it = symbolList.start(); !it.eof(); ++it) {
+      auto info = *it;
+      ustr_t symbolName = info.module->resolveReference(info.reference);
+      if (isWeakReference(symbolName)) {
+         IdentifierString fullName(info.module->name(), symbolName);
+
+         ByteCodeUtil::write(writer, ByteCode::CallR, module->mapReference(*fullName) | mskSymbolRef);
+      }
+      else ByteCodeUtil::write(writer, ByteCode::CallR, module->mapReference(symbolName) | mskSymbolRef);
+   }
+
+   ByteCodeUtil::write(writer, ByteCode::CloseN);
+   ByteCodeUtil::write(writer, ByteCode::Quit);
+
+   pos_t size = writer.position() - sizePlaceholder - sizeof(pos_t);
+
+   writer.seek(sizePlaceholder);
+   writer.writePos(size);
+}
+
 // --- CommandTape ---
 
 inline void addJump(int label, int index, CachedMemoryMap<int, int, 20>& labels,

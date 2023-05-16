@@ -220,7 +220,6 @@ namespace elena_lang
 
       addr_t resolve(ReferenceInfo refrenceInfo, ref_t sectionMask, bool silentMode);
 
-      void createAutoGenerateSymbols(TapeGeneratorBase* tapeGenerator, VAddressMap& autoReferences, ModuleBase* module);
       void copyMetaList(ModuleInfo info, ModuleInfoList& output);
 
    public:
@@ -230,8 +229,9 @@ namespace elena_lang
 
       addr_t resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode);
 
+      void loadPreloaded(ustr_t preloadedSection);
       void prepare(JITCompilerBase* compiler);
-      void complete(TapeGeneratorBase* tapeGenerator, JITCompilerBase* compiler, ustr_t superClass);
+      void complete(JITCompilerBase* compiler, ustr_t superClass);
 
       JITLinker(ReferenceMapperBase* mapper, 
          LibraryLoaderBase* loader, ForwardResolverBase* forwardResolver,

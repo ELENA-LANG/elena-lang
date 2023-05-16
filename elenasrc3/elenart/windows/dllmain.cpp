@@ -60,7 +60,7 @@ void init(HMODULE hModule)
 
 // --- API export ---
 
-EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, SymbolList* entry, void* criricalHandler)
+EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, void* entry, void* criricalHandler)
 {
    systemEnv = env;
 

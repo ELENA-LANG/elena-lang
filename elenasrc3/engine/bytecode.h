@@ -447,6 +447,8 @@ namespace elena_lang
 
       static mssg_t resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode);
       static mssg_t resolveMessageName(ustr_t messageName, ModuleBase* module, bool readOnlyMode);
+
+      static void generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* module, MemoryDump& tapeSymbol);
    };
 
    // --- ByteCodePattern ---

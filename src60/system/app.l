@@ -11,10 +11,3 @@ entry()
 
 private entrySymbol
     = entry();
-
-// --- startUpSymbols ---
-#new __string startUpSymbols;
-
-#let startUpSymbols += distributed preloadedSymbols;
-#let startUpSymbols += entrySymbol;
-

@@ -101,7 +101,6 @@ namespace elena_lang
       RefUnboxingRequired,
       LocalUnboxingRequired,
       ArrayContent,
-      AutoSymbol,
    };
 
    struct ObjectInfo
@@ -1292,6 +1291,8 @@ namespace elena_lang
       void compileModuleExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope);
 
       void compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, SyntaxNode node);
+
+      ref_t compileStaticAssigning(ClassScope& scope, SyntaxNode node);
 
       void validateClassFields(ClassScope& scope, SyntaxNode node);
 

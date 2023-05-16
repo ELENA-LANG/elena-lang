@@ -381,6 +381,14 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
 
       return arg;
    }
+   else if (tokenInfo.compare("symbol")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      arg.type = Operand::Type::R;
+      arg.reference = readReference(tokenInfo) | mskSymbolRef;
+
+      return arg;
+   }
    else if (parameters.exist(*tokenInfo.token)) {
       arg.type = Operand::Type::Variable;
       arg.reference = parameters.get(*tokenInfo.token);

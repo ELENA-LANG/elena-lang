@@ -716,10 +716,17 @@ void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader
 
    for (auto it = statics.start(); !it.eof(); ++it) {
       auto fieldInfo = *it;
-      if (fieldInfo.valueRef && fieldInfo.offset < 0) {
-         addr_t vaddress = INVALID_REF;
+      ref_t mask = fieldInfo.valueRef & mskAnyRef;
 
-         switch (fieldInfo.valueRef) {
+      if (fieldInfo.valueRef && fieldInfo.offset < 0) {
+         if (mask == mskAutoSymbolRef) {
+            // if it is a static field initializer
+
+         }
+         else {
+            addr_t vaddress = INVALID_REF;
+
+            switch (fieldInfo.valueRef) {
             case mskNameLiteralRef:
                vaddress = resolveName(referenceInfo, false);
                break;
@@ -729,13 +736,13 @@ void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader
             default:
                vaddress = resolve(
                   _loader->retrieveReferenceInfo(referenceInfo.module, fieldInfo.valueRef & ~mskAnyRef,
-                     fieldInfo.valueRef & mskAnyRef, _forwardResolver),
+                     mask, _forwardResolver),
                   mskVMTRef, false);
+            }
+
+            assert(vaddress != INVALID_REF);
+            staticValues.add(fieldInfo.offset, vaddress);
          }
-
-         assert(vaddress != INVALID_REF);
-
-         staticValues.add(fieldInfo.offset, vaddress);
       }
    }
 }
@@ -1363,46 +1370,6 @@ void JITLinker :: copyMetaList(ModuleInfo info, ModuleInfoList& output)
    }
 }
 
-void JITLinker :: createAutoGenerateSymbols(TapeGeneratorBase* tapeGenerator, VAddressMap& autoReferences, ModuleBase* module)
-{
-   // fill the list of virtual references
-   VAddressMap virtualReferences({});
-   _mapper->forEachLazyReference<VAddressMap*>(&virtualReferences, [](VAddressMap* virtualReferences, LazyReferenceInfo info)
-      {
-         if (info.mask == mskAutoSymbolRef) {
-            virtualReferences->add(info.position, { info.reference, info.module, info.addressMask, 0 });
-         }
-      });
-
-   for (auto it = virtualReferences.start(); !it.eof(); ++it) {
-      auto info = *it;
-
-      IdentifierString metaReference("'", META_PREFIX);
-      metaReference.append(info.module->resolveReference(info.reference & ~mskAnyRef) + 1);
-
-      ref_t autoRef = module->mapReference(*metaReference);
-
-      ModuleInfoList list({});
-      ModuleInfoList symbolList({});
-
-      _loader->loadDistributedSymbols(*metaReference, list);
-      for (auto it = list.start(); !it.eof(); ++it) {
-         copyMetaList(*it, symbolList);
-      }
-
-      MemoryDump tapeSymbol;
-      tapeGenerator->generateAutoSymbol(symbolList, module, tapeSymbol);
-
-      IdentifierString fullAutoName(AUTO_GENERATED_PREFIX, *metaReference);
-      ref_t fullRef = module->mapReference(*fullAutoName);
-
-      addr_t vaddress = resolveTemporalByteCode(tapeSymbol, module);
-      _mapper->mapReference({ module, module->resolveReference(fullRef) }, vaddress, mskSymbolRef);
-
-      autoReferences.add(it.key(), { fullRef | mskSymbolRef, module, info.addressMask, info.disp });
-   }
-}
-
 void JITLinker :: prepare(JITCompilerBase* compiler)
 {
    _compiler = compiler;
@@ -1437,21 +1404,13 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
    fixReferences(references, _imageProvider->getTextSection());
 }
 
-void JITLinker :: complete(TapeGeneratorBase* tapeGenerator, JITCompilerBase* compiler, ustr_t superClass)
+void JITLinker :: complete(JITCompilerBase* compiler, ustr_t superClass)
 {
    if (!superClass.empty()) {
       // set voidobj
       addr_t superAddr = resolve(superClass, mskVMTRef, true);
       compiler->updateVoidObject(_imageProvider->getRDataSection(), superAddr, _virtualMode);
    }
-
-   // load preloaded / auto-generated symbols
-   Module dummyModule;
-   MemoryBase* rdSection = _imageProvider->getRDataSection();
-   VAddressMap autoReferences({});
-
-   createAutoGenerateSymbols(tapeGenerator, autoReferences, &dummyModule);
-   fixReferences(autoReferences, rdSection);
 
    // fix message body references
    MemoryBase* mbSection = _imageProvider->getMBDataSection();
@@ -1591,3 +1550,21 @@ addr_t JITLinker :: resolveTLSSection(JITCompilerBase* compiler)
    return address;
 }
 
+void JITLinker :: loadPreloaded(ustr_t preloadedSection)
+{
+   ModuleInfoList list({});
+   ModuleInfoList symbolList({});
+
+   // load preloaded symbols
+   _loader->loadDistributedSymbols(preloadedSection, list);
+   for (auto it = list.start(); !it.eof(); ++it) {
+      copyMetaList(*it, symbolList);
+   }
+
+   // save preloaded symbols as auto symbols
+   for (auto it = symbolList.start(); !it.eof(); ++it) {
+      auto info = *it;
+
+      _mapper->addLazyReference({ mskAutoSymbolRef, INVALID_POS, info.module, info.reference, 0 });
+   }
+}

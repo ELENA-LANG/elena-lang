@@ -223,7 +223,7 @@ void ELENAVMMachine :: onNewCode(JITLinker& jitLinker)
 {
    ustr_t superClass = _configuration->resolveForward(SUPER_FORWARD);
 
-   jitLinker.complete(dynamic_cast<TapeGeneratorBase*>(this), _compiler, superClass);
+   jitLinker.complete(_compiler, superClass);
 
    _mapper.clearLazyReferences();
 }
@@ -360,33 +360,33 @@ addr_t ELENAVMMachine::loadSymbol(ustr_t name)
    // !! temporal
    return 0;
 }
-
-void ELENAVMMachine :: generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol)
-{
-   MemoryWriter writer(&tapeSymbol);
-
-   pos_t sizePlaceholder = writer.position();
-   writer.writePos(0);
-
-   pos_t  command = 0;
-   ustr_t strArg = nullptr;
-
-   ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
-
-   // generate the preloaded list
-   for (auto it = list.start(); !it.eof(); ++it) {
-      auto info = *it;
-      ustr_t symbolName = info.module->resolveReference(info.reference);
-      IdentifierString fullName(info.module->name(), symbolName);
-
-      ByteCodeUtil::write(writer, ByteCode::CallR, module->mapReference(*fullName) | mskSymbolRef);
-   }
-
-   ByteCodeUtil::write(writer, ByteCode::CloseN);
-   ByteCodeUtil::write(writer, ByteCode::Quit);
-
-   pos_t size = writer.position() - sizePlaceholder - sizeof(pos_t);
-
-   writer.seek(sizePlaceholder);
-   writer.writePos(size);
-}
+//
+//void ELENAVMMachine :: generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol)
+//{
+//   MemoryWriter writer(&tapeSymbol);
+//
+//   pos_t sizePlaceholder = writer.position();
+//   writer.writePos(0);
+//
+//   pos_t  command = 0;
+//   ustr_t strArg = nullptr;
+//
+//   ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
+//
+//   // generate the preloaded list
+//   for (auto it = list.start(); !it.eof(); ++it) {
+//      auto info = *it;
+//      ustr_t symbolName = info.module->resolveReference(info.reference);
+//      IdentifierString fullName(info.module->name(), symbolName);
+//
+//      ByteCodeUtil::write(writer, ByteCode::CallR, module->mapReference(*fullName) | mskSymbolRef);
+//   }
+//
+//   ByteCodeUtil::write(writer, ByteCode::CloseN);
+//   ByteCodeUtil::write(writer, ByteCode::Quit);
+//
+//   pos_t size = writer.position() - sizePlaceholder - sizeof(pos_t);
+//
+//   writer.seek(sizePlaceholder);
+//   writer.writePos(size);
+//}

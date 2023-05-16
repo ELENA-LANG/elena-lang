@@ -1758,7 +1758,7 @@ symbol sta_start
 
   call extern:InitializeSTLA (
      *arg1,
-     procedure:"system'core_routines'startUpSymbols",
+     symbol:"$auto'startUpSymbol",
      procedure:"system'core_routines'critical_exception_handler")
 
   close       []

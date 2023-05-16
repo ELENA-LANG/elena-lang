@@ -376,13 +376,6 @@ namespace elena_lang
       virtual void loadDistributedSymbols(ustr_t virtualSymbolName, ModuleInfoList& list) = 0;
    };
 
-   // --- AutoSymbolGeneratorBase ---
-   class TapeGeneratorBase
-   {
-   public:
-      virtual void generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol) = 0;
-   };
-
    class LibraryProviderBase
    {
    public:

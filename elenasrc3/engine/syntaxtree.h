@@ -161,6 +161,7 @@ namespace elena_lang
       FinallyBlock            = 0x001CD9,
       FinalOperation          = 0x001CDA,
       ParameterBlock          = 0x0010F0,
+      InitializerMethod       = 0x0010F1,
 
       Name                    = 0x000101,
       Namespace               = 0x000103,
@@ -223,6 +224,7 @@ namespace elena_lang
       }
 
       static void copyNode(SyntaxTreeWriter& writer, SyntaxNode node, bool includingNode = false);
+      static void copyNodeSafe(SyntaxTreeWriter& writer, SyntaxNode node, bool includingNode = false);
       static void saveNode(SyntaxNode node, MemoryBase* section, bool includingNode = false);
    };
 

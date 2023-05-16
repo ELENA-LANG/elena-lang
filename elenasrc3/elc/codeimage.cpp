@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image class implementations
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -11,6 +11,7 @@
 
 #include "bytecode.h"
 #include "jitlinker.h"
+#include "module.h"
 
 using namespace elena_lang;
 
@@ -54,27 +55,46 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
       _tlsVariable = linker.resolveTLSSection(compiler);
    }
 
+   // resolve the debug entry
+   _debugEntryPoint = INVALID_ADDR;
+
    if (_systemTarget == PlatformType::VMClient) {
       MemoryDump tape;
       createVMTape(&tape, loader->Namespace(), loader->OutputPath(), resolver);
 
       linker.resolveTape(VM_TAPE, &tape);
+
+      // resolve the system entry
+      ustr_t entryName = resolver->resolveForward(SYSTEM_FORWARD);
+      _entryPoint = entryName.empty() ? INVALID_POS : (pos_t)linker.resolve(entryName, mskSymbolRef, true);
+      if (_entryPoint == INVALID_POS)
+         throw JITUnresolvedException(ReferenceInfo(SYSTEM_FORWARD));
    }
-
-   // resolve the program entry
-   ustr_t entryName = resolver->resolveForward(SYSTEM_FORWARD);
-   _entryPoint = entryName.empty() ? INVALID_POS : (pos_t)linker.resolve(entryName, mskSymbolRef, true);
-   if (_entryPoint == INVALID_POS)
-      throw JITUnresolvedException(ReferenceInfo(SYSTEM_FORWARD));
-
-   // resolvethe debug entry
-   _debugEntryPoint = INVALID_ADDR;
-
-   if (_systemTarget != PlatformType::VMClient) {
+   else {
+      // resolving program entry
       _debugEntryPoint = (pos_t)linker.resolve(PROGRAM_ENTRY, mskSymbolRef, true);
 
+      // creating start up symbol
+      Module* dummyModule = new Module();
+      linker.loadPreloaded(PRELOADED_FORWARD);
+      addLazyReference({ mskAutoSymbolRef, INVALID_POS, 
+         dummyModule, dummyModule->mapReference(resolver->resolveForward(START_FORWARD)), 0});
+
+      MemoryDump tapeSymbol;
+      generateAutoSymbol(dummyModule, tapeSymbol);
+      addr_t vaddress = linker.resolveTemporalByteCode(tapeSymbol, dummyModule);
+      mapReference(STARTUP_ENTRY, vaddress, mskSymbolRef);
+
+      // resolve the system entry
+      ustr_t entryName = resolver->resolveForward(SYSTEM_FORWARD);
+      _entryPoint = entryName.empty() ? INVALID_POS : (pos_t)linker.resolve(entryName, mskSymbolRef, true);
+      if (_entryPoint == INVALID_POS)
+         throw JITUnresolvedException(ReferenceInfo(SYSTEM_FORWARD));
+
       ustr_t superClass = resolver->resolveForward(SUPER_FORWARD);
-      linker.complete(dynamic_cast<TapeGeneratorBase*>(this), compiler, superClass);
+      linker.complete(compiler, superClass);
+
+      freeobj(dummyModule);
    }
 
    if (_debugEntryPoint == INVALID_ADDR) {
@@ -171,33 +191,16 @@ void TargetImage :: prepareImage(ustr_t ns)
    debugWriter.writeString(ns);
 }
 
-void TargetImage :: generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol)
+void TargetImage :: generateAutoSymbol(ModuleBase* module, MemoryDump& tapeSymbol)
 {
-   MemoryWriter writer(&tapeSymbol);
+   // fill the list of virtual references
+   ModuleInfoList symbolList({});
+   forEachLazyReference<ModuleInfoList*>(&symbolList, [](ModuleInfoList* symbolList, LazyReferenceInfo info)
+      {
+         if (info.mask == mskAutoSymbolRef) {
+            symbolList->add({ info.module, info.reference });
+         }
+      });
 
-   pos_t sizePlaceholder = writer.position();
-   writer.writePos(0);
-
-   pos_t  command = 0;
-   ustr_t strArg = nullptr;
-
-   ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
-
-   // generate the preloaded list
-   for (auto it = list.start(); !it.eof(); ++it) {
-      auto info = *it;
-      ustr_t symbolName = info.module->resolveReference(info.reference);
-      IdentifierString fullName(info.module->name(), symbolName);
-
-      ByteCodeUtil::write(writer, ByteCode::CallR, module->mapReference(*fullName) | mskSymbolRef);
-   }
-
-   ByteCodeUtil::write(writer, ByteCode::CloseN);
-   ByteCodeUtil::write(writer, ByteCode::Quit);
-
-   pos_t size = writer.position() - sizePlaceholder - sizeof(pos_t);
-
-   writer.seek(sizePlaceholder);
-   writer.writePos(size);
-
+   ByteCodeUtil::generateAutoSymbol(symbolList, module, tapeSymbol);
 }

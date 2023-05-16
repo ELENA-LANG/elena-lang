@@ -123,7 +123,7 @@ unsigned int SystemRoutineProvider :: GetRandomNumber(SeedStruct& seed)
 
 // --- ELENAMachine ---
 
-int ELENAMachine :: execute(SystemEnv* env, void* symbolListEntry)
+int ELENAMachine :: execute(SystemEnv* env, void* entryAddress)
 {
    Entry entry;
    entry.address = env->bc_invoker;
@@ -133,7 +133,7 @@ int ELENAMachine :: execute(SystemEnv* env, void* symbolListEntry)
    int retVal = 0;
    try
    {
-      retVal = entry.evaluate(symbolListEntry, nullptr);
+      retVal = entry.evaluate(entryAddress, nullptr);
    }
    catch (InternalError&)
    {
