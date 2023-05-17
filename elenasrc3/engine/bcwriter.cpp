@@ -2407,13 +2407,23 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
 
    ClassInfo::saveStaticFields(&vmtWriter, info.statics);
 
-   if (!testany(info.header.flags, elClassClass | elAbstract) 
-      && info.attributes.exist({0, ClassAttribute::RuntimeLoadable})) 
+   CachedList<ref_t, 3> globalAttributes;
+   if (!testany(info.header.flags, elClassClass | elAbstract)
+      && info.attributes.exist({ 0, ClassAttribute::RuntimeLoadable }))
    {
-      vmtWriter.writePos(sizeof(unsigned int));
-      vmtWriter.writeDWord((unsigned int)ClassAttribute::RuntimeLoadable);
+      globalAttributes.add((unsigned int)ClassAttribute::RuntimeLoadable);
    }
-   else vmtWriter.writePos(0);
+   if (info.attributes.exist({ 0, ClassAttribute::Initializer })) {
+      ref_t symbolRef = info.attributes.get({ 0, ClassAttribute::Initializer });
+
+      globalAttributes.add((unsigned int)ClassAttribute::Initializer);
+      globalAttributes.add(symbolRef);
+   }
+
+   vmtWriter.writePos(globalAttributes.count_pos());
+   for (int i = 0; i < globalAttributes.count_pos(); i++) {
+      vmtWriter.writeDWord(globalAttributes.get(i));
+   }
 }
 
 void ByteCodeWriter :: save(BuildTree& tree, SectionScopeBase* moduleScope, 

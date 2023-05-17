@@ -308,6 +308,7 @@ namespace elena_lang
       SealedStatic      = 0x908,
       SingleDispatch    = 0xA09,
       ExtOverloadList   = 0x90A,
+      Initializer       = 0x10B,
    };
 
    // === Reference constants ====

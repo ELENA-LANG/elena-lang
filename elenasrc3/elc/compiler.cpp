@@ -5548,20 +5548,28 @@ ExternalInfo Compiler :: mapExternal(Scope& scope, SyntaxNode node)
 
 ref_t Compiler :: compileStaticAssigning(ClassScope& scope, SyntaxNode node)
 {
-   IdentifierString sectionName(scope.module->resolveReference(scope.reference));
-   sectionName.append(INITIALIZER_SECTION);
-
-   ref_t actionRef = scope.module->mapReference(*sectionName);
+   ref_t actionRef = 0;
 
    SyntaxNode rootNode = node.parentNode();
    while (rootNode != SyntaxKey::Class) {
       rootNode = rootNode.parentNode();
    }
 
-   SyntaxTreeWriter writer(rootNode);
-   writer.newNode(SyntaxKey::InitializerMethod, actionRef);
+   SyntaxNode staticInitializer = rootNode.firstChild(SyntaxKey::StaticInitializerMethod);
+   if (staticInitializer == SyntaxKey::None) {
+      IdentifierString sectionName(scope.module->resolveReference(scope.reference));
+      sectionName.append(INITIALIZER_SECTION);
+
+      actionRef = scope.moduleScope->mapAnonymous(*sectionName);
+
+      staticInitializer = rootNode.appendChild(SyntaxKey::StaticInitializerMethod, actionRef);
+
+      scope.addAttribute(ClassAttribute::Initializer, actionRef);
+   }
+   else actionRef = staticInitializer.arg.reference;
+
+   SyntaxTreeWriter writer(staticInitializer);
    SyntaxTree::copyNode(writer, node, true);
-   writer.closeNode();
 
    return actionRef;
 }
@@ -9112,6 +9120,36 @@ void Compiler :: compileInitializerMethod(BuildTreeWriter& writer, MethodScope& 
    endMethod(writer, scope);
 }
 
+void Compiler :: compileStaticInitializerMethod(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node)
+{
+   writer.newNode(BuildKey::Symbol, node.arg.reference);
+
+   writer.newNode(BuildKey::Tape);
+   writer.appendNode(BuildKey::OpenFrame);
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::AssignOperation) {
+         writer.appendNode(BuildKey::OpenStatement);
+         addBreakpoint(writer, findObjectNode(current), BuildKey::Breakpoint);
+
+         ExprScope exprScope(&scope);
+         compileExpression(writer, exprScope,
+            current, 0, EAttr::None, nullptr);
+
+         writer.appendNode(BuildKey::EndStatement);
+
+         exprScope.syncStack();
+      }
+      current = current.nextNode();
+   }
+
+   writer.appendNode(BuildKey::CloseFrame);
+
+   writer.closeNode();
+   writer.closeNode();
+}
+
 void Compiler :: compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode)
 {
    SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
@@ -9912,6 +9950,9 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
             if (_logic->isRole(scope.info)) {
                scope.raiseError(errIllegalStaticMethod, node);
             }
+            break;
+         case SyntaxKey::StaticInitializerMethod:
+            compileStaticInitializerMethod(writer, scope, current);
             break;
          default:
             break;

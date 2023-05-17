@@ -161,7 +161,7 @@ namespace elena_lang
       FinallyBlock            = 0x001CD9,
       FinalOperation          = 0x001CDA,
       ParameterBlock          = 0x0010F0,
-      InitializerMethod       = 0x0010F1,
+      StaticInitializerMethod = 0x0010F1,
 
       Name                    = 0x000101,
       Namespace               = 0x000103,

@@ -719,14 +719,9 @@ void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader
       ref_t mask = fieldInfo.valueRef & mskAnyRef;
 
       if (fieldInfo.valueRef && fieldInfo.offset < 0) {
-         if (mask == mskAutoSymbolRef) {
-            // if it is a static field initializer
+         addr_t vaddress = INVALID_REF;
 
-         }
-         else {
-            addr_t vaddress = INVALID_REF;
-
-            switch (fieldInfo.valueRef) {
+         switch (fieldInfo.valueRef) {
             case mskNameLiteralRef:
                vaddress = resolveName(referenceInfo, false);
                break;
@@ -738,11 +733,10 @@ void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader
                   _loader->retrieveReferenceInfo(referenceInfo.module, fieldInfo.valueRef & ~mskAnyRef,
                      mask, _forwardResolver),
                   mskVMTRef, false);
-            }
-
-            assert(vaddress != INVALID_REF);
-            staticValues.add(fieldInfo.offset, vaddress);
          }
+
+         assert(vaddress != INVALID_REF);
+         staticValues.add(fieldInfo.offset, vaddress);
       }
    }
 }
@@ -869,6 +863,15 @@ void JITLinker :: resolveClassGlobalAttributes(ReferenceInfo referenceInfo, Memo
             }
             else createGlobalAttribute(GA_CLASS_NAME, referenceInfo.referenceName, vaddress);
             break;
+         case ClassAttribute::Initializer:
+         {
+            ref_t symbolRef = vmtReader.getDWord();
+            attrCount -= sizeof(unsigned int);
+
+            _mapper->addLazyReference({ mskAutoSymbolRef, INVALID_POS, referenceInfo.module, symbolRef, 0 });
+
+            break;
+         }
          default:
             break;
       }

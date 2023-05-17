@@ -1,22 +1,22 @@
 import extensions;
 
-//singleton MySingleton
-//{
-//    static mySingletonField := "Some value";
-//    
-//    printMe()
-//    {
-//        var s := mySingletonField;
-//
-//        console.printLine(mySingletonField)
-//    }
-//}
+singleton MySingleton
+{
+    static mySingletonField := "Some value";
+    
+    printMe()
+    {
+        var s := mySingletonField;
 
-onModuleUse : preloaded = console.printLine("Starting");
+        console.printLine(mySingletonField)
+    }
+}
+
+//onModuleUse : preloaded = console.printLine("Starting");
 
 public program()
 {
-   console.printLine("Hello");
+//   console.printLine("Hello");
 
-//    MySingleton.printMe()
+    MySingleton.printMe()
 }

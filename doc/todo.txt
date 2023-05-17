@@ -5,9 +5,7 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * redesign auto load : there is a virtual symbol list - startUpSymbols - which is compiled in the run-time;
-      it contains the preloaed symbols, static class initializers and program entry
-
+    * assigning static field in compile-time
 
     * review documentation - check if all code is compiled - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual
 
