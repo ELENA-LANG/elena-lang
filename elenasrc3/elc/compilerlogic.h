@@ -148,8 +148,8 @@ namespace elena_lang
       ref_t retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, 
          pos_t signLen, int& stackSafeAttrs);
 
-      ConversionRoutine retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ref_t targetRef, 
-         TypeInfo sourceInfo);
+      ConversionRoutine retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ustr_t ns, 
+         ref_t targetRef, TypeInfo sourceInfo);
 
       bool checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result);
       bool checkMethod(ModuleScopeBase& scope, ref_t reference, mssg_t message, CheckMethodResult& result);

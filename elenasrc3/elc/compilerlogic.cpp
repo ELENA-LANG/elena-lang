@@ -1776,8 +1776,8 @@ ref_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t
    return 0;
 }
 
-ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ref_t targetRef,
-   TypeInfo sourceInfo)
+ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ustr_t ns, 
+   ref_t targetRef, TypeInfo sourceInfo)
 {
    ClassInfo info;
    if (!defineClassInfo(scope, info, targetRef))
@@ -1823,7 +1823,7 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
 
    // if there is a implicit conversion routine
    if (!isPrimitiveRef(targetRef)) {
-      ref_t sourceRef = sourceInfo.isPrimitive() ? compiler->resolvePrimitiveType(scope, sourceInfo) : sourceInfo.typeRef;
+      ref_t sourceRef = sourceInfo.isPrimitive() ? compiler->resolvePrimitiveType(scope, ns, sourceInfo) : sourceInfo.typeRef;
 
       ref_t signRef = scope.module->mapSignature(&sourceRef, 1, false);
       int stackSafeAttrs = 0;

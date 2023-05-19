@@ -461,8 +461,8 @@ public:
    virtual void injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode, 
       mssg_t message, ustr_t retVar, ref_t classRef) = 0;
 
-   virtual ref_t resolvePrimitiveType(ModuleScopeBase& scope, TypeInfo typeInfo)
-      = 0;
+   virtual ref_t resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, 
+      TypeInfo typeInfo, bool declarationMode = false) = 0;
 
    virtual ref_t generateExtensionTemplate(ModuleScopeBase& scope, ref_t templateRef, size_t argumentLen,
       ref_t* arguments, ustr_t ns, ExtensionMap* outerExtensionList) = 0;

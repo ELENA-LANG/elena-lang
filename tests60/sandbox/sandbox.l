@@ -1,22 +1,23 @@
 import extensions;
 
-singleton MySingleton
+singleton Ops
 {
-    static mySingletonField := "Some value";
-    
-    printMe()
+    test(params object[] args)
     {
-        var s := mySingletonField;
+       self.boxVArg(params args);
+    }
 
-        console.printLine(mySingletonField)
+    boxVArg(params object[] args)
+    {
+//        // an variadic argument is boxed into dynamic array
+//        var o := args;
+        
+        // print a boxed variadic argument as a collection 
+//        console.printLine(o.asEnumerable())
     }
 }
 
-//onModuleUse : preloaded = console.printLine("Starting");
-
 public program()
 {
-//   console.printLine("Hello");
-
-    MySingleton.printMe()
+    Ops.boxVArg(1,2.0r,"abc");
 }

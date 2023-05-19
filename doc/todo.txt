@@ -5,8 +5,6 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * assigning static field in compile-time
-
     * review documentation - check if all code is compiled - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual
 
     * ide : set / remove breakpoints
@@ -39,6 +37,7 @@ In development:
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
+    * Class Constants : review doc and implement if requiered
     * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
     * optimization : copy a sub array to another array - starting
     * x86 : gui - starting - new project type
@@ -137,6 +136,7 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena tutorials ---
+    * review Producing a code in run-time
     * raise an error if the constructor does not handle the argument (if the multimethod is auto generated)
     * read an article about meta programming in Ruby, try to do similar
     * Func<T> / Func1 should use semi-direct call for the function invoke

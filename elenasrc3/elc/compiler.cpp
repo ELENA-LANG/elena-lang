@@ -2247,7 +2247,9 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
          scope.info.header.flags |= elDynamicRole;
       }
       else if (!test(scope.info.header.flags, elStructureRole)) {
-         typeInfo.typeRef = resolveArrayTemplate(scope, attrs.typeInfo.typeRef, true);
+         NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+         typeInfo.typeRef = resolveArrayTemplate(*scope.moduleScope, *nsScope->nsName, attrs.typeInfo.typeRef, true);
       }
       else scope.raiseError(errIllegalField, node);
 
@@ -2470,6 +2472,8 @@ void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode node, bool 
                   scope.raiseError(errUnknownTemplate, current);
             }
             else if (!parentRef) {
+               parentNode = current;
+
                parentRef = resolveStrongTypeAttribute(scope, child, extensionMode, false);
             }
             else scope.raiseError(errInvalidSyntax, current);
@@ -3891,6 +3895,45 @@ ObjectInfo Compiler :: boxArgumentLocally(BuildTreeWriter& writer, ExprScope& sc
    }
 }
 
+ObjectInfo Compiler :: boxVariadicArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info)
+{
+   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+   ref_t elementRef = info.typeInfo.elementRef;
+   if (!elementRef)
+      elementRef = scope.moduleScope->buildins.superReference;
+
+   ref_t typeRef = resolveArgArrayTemplate(*scope.moduleScope, *nsScope->nsName, elementRef, false);
+
+   ObjectInfo destLocal = declareTempLocal(scope, typeRef);
+   ObjectInfo lenLocal = declareTempLocal(scope, scope.moduleScope->buildins.intReference, false);
+
+   // get length
+   writeObjectInfo(writer, scope, info);
+   writer.appendNode(BuildKey::SavingInStack);
+   writer.newNode(BuildKey::VArgSOp, LEN_OPERATOR_ID);
+   writer.appendNode(BuildKey::Index, lenLocal.argument);
+   writer.closeNode();
+
+   // create  a dynamic array
+   writeObjectInfo(writer, scope, lenLocal);
+   writer.appendNode(BuildKey::SavingInStack);
+   writer.appendNode(BuildKey::NewArrayOp, typeRef);
+   compileAssigningOp(writer, scope, destLocal, { ObjectKind::Object, { typeRef }, 0 });
+
+   // copy the content
+   // index len
+   // src:sp[0]
+   // dst:acc
+   writer.appendNode(BuildKey::LoadingIndex, lenLocal.argument);
+   writeObjectInfo(writer, scope, info);
+   writer.appendNode(BuildKey::SavingInStack);
+   writeObjectInfo(writer, scope, destLocal);
+   writer.appendNode(BuildKey::CopyingArr);
+
+   return destLocal;
+}
+
 ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info,
    bool stackSafe, bool boxInPlace, bool allowingRefArg, ref_t targetRef)
 {
@@ -3928,7 +3971,9 @@ ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, Ob
          if (!boxInPlace)
             scope.tempLocals.add(key, retVal);
       }
-
+   }
+   else if (info.kind == ObjectKind::VArgParam && !stackSafe) {
+      retVal = boxVariadicArgument(writer, scope, info);
    }
    else retVal = info;
 
@@ -4070,56 +4115,56 @@ ref_t Compiler :: retrieveType(Scope& scope, ObjectInfo info)
    else return info.typeInfo.typeRef;
 }
 
-ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& scope, TypeInfo typeInfo)
+ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool declarationMode)
 {
-   MetaScope metaScope(nullptr, Scope::ScopeLevel::Expr);
-   metaScope.moduleScope = &scope;
+   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
-   return resolvePrimitiveType(metaScope, typeInfo, false);
+   return resolvePrimitiveType(*scope.moduleScope, *nsScope->nsName, typeInfo, declarationMode);
 }
 
-ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool declarationMode)
+ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, TypeInfo typeInfo, 
+   bool declarationMode)
 {
    switch (typeInfo.typeRef) {
       case V_INT8:
-         return scope.moduleScope->buildins.byteReference;
+         return moduleScope.buildins.byteReference;
       case V_INT16:
-         return scope.moduleScope->buildins.shortReference;
+         return moduleScope.buildins.shortReference;
       case V_INT32:
-         return scope.moduleScope->buildins.intReference;
+         return moduleScope.buildins.intReference;
       case V_INT64:
-         return scope.moduleScope->buildins.longReference;
+         return moduleScope.buildins.longReference;
       case V_FLOAT64:
-         return scope.moduleScope->buildins.realReference;
+         return moduleScope.buildins.realReference;
       case V_UINT32:
-         return scope.moduleScope->buildins.uintReference;
+         return moduleScope.buildins.uintReference;
       case V_STRING:
-         return scope.moduleScope->buildins.literalReference;
+         return moduleScope.buildins.literalReference;
       case V_WIDESTRING:
-         return scope.moduleScope->buildins.wideReference;
+         return moduleScope.buildins.wideReference;
       case V_MESSAGE:
-         return scope.moduleScope->buildins.messageReference;
+         return moduleScope.buildins.messageReference;
       case V_EXTMESSAGE64:
       case V_EXTMESSAGE128:
-         return scope.moduleScope->buildins.extMessageReference;
+         return moduleScope.buildins.extMessageReference;
       case V_FLAG:
-         return scope.moduleScope->branchingInfo.typeRef;
+         return moduleScope.branchingInfo.typeRef;
       case V_WRAPPER:
-         return resolveWrapperTemplate(scope, typeInfo.elementRef, declarationMode);
+         return resolveWrapperTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
       case V_INT8ARRAY:
       case V_INT16ARRAY:
       case V_INT32ARRAY:
       case V_BINARYARRAY:
-         return resolveArrayTemplate(scope, typeInfo.elementRef, declarationMode);
+         return resolveArrayTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
       case V_NIL:
-         return scope.moduleScope->buildins.superReference;
+         return moduleScope.buildins.superReference;
       case V_ARGARRAY:
-         return resolveArgArrayTemplate(scope, typeInfo.elementRef, declarationMode);
+         return resolveArgArrayTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
       case V_OBJARRAY:
-         return resolveArrayTemplate(scope, typeInfo.elementRef, declarationMode);
+         return resolveArrayTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
       case V_PTR32:
       case V_PTR64:
-         return scope.moduleScope->buildins.pointerReference;
+         return moduleScope.buildins.pointerReference;
       default:
          return 0;
    }
@@ -4866,10 +4911,11 @@ ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node,
    }
 }
 
-ref_t Compiler :: resolveTemplate(Scope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode)
+ref_t Compiler :: resolveTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef, 
+   ref_t elementRef, bool declarationMode)
 {
    if (isPrimitiveRef(elementRef))
-      elementRef = resolvePrimitiveType(*scope.moduleScope, { elementRef });
+      elementRef = resolvePrimitiveType(moduleScope, ns, { elementRef });
 
    TemplateTypeList typeList;
    typeList.add(elementRef);
@@ -4877,11 +4923,9 @@ ref_t Compiler :: resolveTemplate(Scope& scope, ref_t templateRef, ref_t element
    // HOTFIX : generate a temporal template to pass the type
    SyntaxTree dummyTree;
    List<SyntaxNode> parameters({});
-   declareTemplateParameters(scope.module, typeList, dummyTree, parameters);
+   declareTemplateParameters(moduleScope.module, typeList, dummyTree, parameters);
 
-   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-
-   return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
+   return _templateProcessor->generateClassTemplate(moduleScope, ns,
       templateRef, parameters, declarationMode, nullptr);
 }
 
@@ -4967,22 +5011,22 @@ ref_t Compiler :: resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outp
    }
 }
 
-ref_t Compiler :: resolveWrapperTemplate(Scope& scope, ref_t elementRef, bool declarationMode)
+ref_t Compiler :: resolveWrapperTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode)
 {
    if (!elementRef)
-      elementRef = scope.moduleScope->buildins.superReference;
+      elementRef = moduleScope.buildins.superReference;
 
-   return resolveTemplate(scope, scope.moduleScope->buildins.wrapperTemplateReference, elementRef, declarationMode);
+   return resolveTemplate(moduleScope, ns, moduleScope.buildins.wrapperTemplateReference, elementRef, declarationMode);
 }
 
-ref_t Compiler :: resolveArrayTemplate(Scope& scope, ref_t elementRef, bool declarationMode)
+ref_t Compiler :: resolveArrayTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode)
 {
-   return resolveTemplate(scope, scope.moduleScope->buildins.arrayTemplateReference, elementRef, declarationMode);
+   return resolveTemplate(moduleScope, ns, moduleScope.buildins.arrayTemplateReference, elementRef, declarationMode);
 }
 
-ref_t Compiler :: resolveArgArrayTemplate(Scope& scope, ref_t elementRef, bool declarationMode)
+ref_t Compiler :: resolveArgArrayTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode)
 {
-   return resolveTemplate(scope, scope.moduleScope->buildins.argArrayTemplateReference, elementRef, declarationMode);
+   return resolveTemplate(moduleScope, ns, moduleScope.buildins.argArrayTemplateReference, elementRef, declarationMode);
 }
 
 TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
@@ -5158,9 +5202,11 @@ void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAt
             }
             else if (attrs.size == -1) {
                // if it is a nested array
+               NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
                readFieldAttributes(scope, current, attrs, declarationMode);
-               attrs.typeInfo = { resolveArrayTemplate(scope, attrs.typeInfo.typeRef, declarationMode) };
+               attrs.typeInfo = { resolveArrayTemplate(*scope.moduleScope, *nsScope->nsName, 
+                  attrs.typeInfo.typeRef, declarationMode) };
             }
             else scope.raiseError(errInvalidHint, current);
             break;
@@ -6421,6 +6467,10 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
                operation = BuildKey::None;
             }
             else operation = BuildKey::DirectCallOp;
+            // HOTFIX : do not box the variadic argument target for the direct operation
+            if (arguments[0].kind == ObjectKind::VArgParam)
+               result.stackSafe = true;
+
             break;
          default:
             break;
@@ -6554,7 +6604,10 @@ ObjectInfo Compiler :: compileNewArrayOp(BuildTreeWriter& writer, ExprScope& sco
       auto sizeInfo = _logic->defineStructSize(*scope.moduleScope, sourceRef);
 
       if (targetRef) {
-         auto conversionRoutine = _logic->retrieveConversionRoutine(this, *scope.moduleScope, targetRef, source.typeInfo);
+         NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+         auto conversionRoutine = _logic->retrieveConversionRoutine(this, *scope.moduleScope, *nsScope->nsName, 
+            targetRef, source.typeInfo);
          if (conversionRoutine.result == ConversionResult::BoxingRequired) {
             source.typeInfo = { targetRef };
          }
@@ -8000,8 +8053,10 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
          // unbox wrapper for the conversion
          source.typeInfo = { source.typeInfo.elementRef };
       }
-
-      auto conversionRoutine = _logic->retrieveConversionRoutine(this, *scope.moduleScope, targetRef, source.typeInfo);
+      NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+      
+      auto conversionRoutine = _logic->retrieveConversionRoutine(this, *scope.moduleScope, *nsScope->nsName, 
+         targetRef, source.typeInfo);
       if (conversionRoutine.result == ConversionResult::BoxingRequired) {
          // if it is implcitily compatible
          switch (source.kind) {
@@ -9122,32 +9177,39 @@ void Compiler :: compileInitializerMethod(BuildTreeWriter& writer, MethodScope& 
 
 void Compiler :: compileStaticInitializerMethod(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node)
 {
-   writer.newNode(BuildKey::Symbol, node.arg.reference);
+   BuildNode buildNode = writer.CurrentNode();
+   while (buildNode != BuildKey::Root)
+      buildNode = buildNode.parentNode();
 
-   writer.newNode(BuildKey::Tape);
-   writer.appendNode(BuildKey::OpenFrame);
+   BuildTreeWriter nestedWriter(buildNode);
+
+   nestedWriter.newNode(BuildKey::Symbol, node.arg.reference);
+
+   nestedWriter.newNode(BuildKey::Tape);
+   nestedWriter.appendNode(BuildKey::OpenFrame);
 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::AssignOperation) {
-         writer.appendNode(BuildKey::OpenStatement);
-         addBreakpoint(writer, findObjectNode(current), BuildKey::Breakpoint);
+         nestedWriter.appendNode(BuildKey::OpenStatement);
+         addBreakpoint(nestedWriter, findObjectNode(current), BuildKey::Breakpoint);
 
          ExprScope exprScope(&scope);
-         compileExpression(writer, exprScope,
+         compileExpression(nestedWriter, exprScope,
             current, 0, EAttr::None, nullptr);
 
-         writer.appendNode(BuildKey::EndStatement);
+         nestedWriter.appendNode(BuildKey::EndStatement);
 
          exprScope.syncStack();
       }
       current = current.nextNode();
    }
 
-   writer.appendNode(BuildKey::CloseFrame);
+   nestedWriter.appendNode(BuildKey::CloseFrame);
+   nestedWriter.appendNode(BuildKey::Exit);
 
-   writer.closeNode();
-   writer.closeNode();
+   nestedWriter.closeNode();
+   nestedWriter.closeNode();
 }
 
 void Compiler :: compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode)

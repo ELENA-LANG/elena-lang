@@ -166,6 +166,9 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
 
    private readArgLength(ref int retVal) : external(system'core_routines'__varg_readLength);
 
+   T at(int n)
+      = array[n];
+
    int Length
    {
       get()
@@ -174,7 +177,23 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
             
          ^ len
       }
-   }   
+   }
+
+   Enumerator<T> enumerator() = new BaseEnumerator<T>
+   {
+      this index := -1;
+        
+      this length := self.Length;
+        
+      get T Value() = self.at(this index.Value);
+        
+      enumerable() = self;
+        
+      reset()
+      {
+         this index := -1
+      }
+   };
 }
 
 // --- String ---

@@ -243,7 +243,7 @@ void getArgument(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::PeekSI, node.arg.value);
 }
 
-void getLocalAddredd(CommandTape& tape, BuildNode& node, TapeScope&)
+void getLocalAddress(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::SetDP, node.arg.value);
 }
@@ -1013,8 +1013,42 @@ void byteArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
          tape.write(ByteCode::NLen, 1);
          tape.write(ByteCode::SaveDP, targetOffset, 4);
          break;
-   default:
-      throw InternalError(errFatalError);
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
+void vargSOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
+   switch (node.arg.value) {
+      case LEN_OPERATOR_ID:
+         // nsave      dp : tmp, -1
+         // labNext :
+         // nadd       dp : tmp, 1
+         // peek       sp : 0
+         // load       dp : tmp
+         // xget
+         // cmp        terminator
+         // jne        labNext
+         // nadd       dp : tmp, 1
+
+         tape.write(ByteCode::NSaveDPN, targetOffset, -1);
+         tape.newLabel();     // declare symbol-end label
+         tape.setLabel(true);
+         tape.write(ByteCode::NAddDPN, targetOffset, 1);
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::LoadDP, targetOffset);
+         tape.write(ByteCode::XGet);
+         tape.write(ByteCode::CmpR, -1);
+         tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
+         tape.releaseLabel();
+         tape.write(ByteCode::NAddDPN, targetOffset, 1);
+         break;
+      default:
+         throw InternalError(errFatalError);
    }
 }
 
@@ -1466,7 +1500,7 @@ ByteCodeWriter::Saver commands[] =
    nullptr, openFrame, closeFrame, nilReference, symbolCall, classReference, sendOp, exit,
    savingInStack, assigningLocal, getLocal, creatingClass, openStatement, closeStatement, addingBreakpoint, addingBreakpoint,
 
-   creatingStruct, intLiteral, stringLiteral, goingToEOP, getLocalAddredd, copyingLocal, allocatingStack, freeingStack,
+   creatingStruct, intLiteral, stringLiteral, goingToEOP, getLocalAddress, copyingLocal, allocatingStack, freeingStack,
    savingNInStack, extCallOp, savingIndex, directCallOp, dispatchOp, intOp, byteArraySOp, copyingToAcc,
 
    getArgument, nullptr, directResend, resendOp, xdispatchOp, boolSOp, intCondOp, charLiteral,
@@ -1482,7 +1516,7 @@ ByteCodeWriter::Saver commands[] =
    intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject, peekArgument,
 
    terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning, savingLInStack, uintCondOp,
-   uintOp, mssgNameLiteral
+   uintOp, mssgNameLiteral, vargSOp
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -2420,7 +2454,7 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
       globalAttributes.add(symbolRef);
    }
 
-   vmtWriter.writePos(globalAttributes.count_pos());
+   vmtWriter.writePos(globalAttributes.count_pos() * sizeof(unsigned int));
    for (int i = 0; i < globalAttributes.count_pos(); i++) {
       vmtWriter.writeDWord(globalAttributes.get(i));
    }

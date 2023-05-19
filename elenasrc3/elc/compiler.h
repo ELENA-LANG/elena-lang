@@ -979,11 +979,11 @@ namespace elena_lang
       ref_t resolveTypeTemplate(Scope& scope, SyntaxNode node,
          TypeAttributes& attributes, bool declarationMode, bool objectMode = false);
 
-      ref_t resolveTemplate(Scope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode);
+      ref_t resolveTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef, ref_t elementRef, bool declarationMode);
       ref_t resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef);
-      ref_t resolveWrapperTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
-      ref_t resolveArrayTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
-      ref_t resolveArgArrayTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
+      ref_t resolveWrapperTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
+      ref_t resolveArrayTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
+      ref_t resolveArgArrayTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
       ref_t resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo& items);
 
       int resolveSize(Scope& scope, SyntaxNode node);
@@ -1145,6 +1145,7 @@ namespace elena_lang
       ObjectInfo boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, 
          bool stackSafe, bool boxInPlace, bool allowingRefArg, ref_t targetRef = 0);
       ObjectInfo boxArgumentLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool stackSafe);
+      ObjectInfo boxVariadicArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info);
 
       ObjectInfo unboxArguments(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo retVal, ArgumentsInfo* updatedOuterArgs);
       void unboxArgumentLocaly(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo tempLocal, ObjectKey targetKey);
@@ -1358,7 +1359,8 @@ namespace elena_lang
       void injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode,
          mssg_t message, ustr_t retVar, ref_t classRef) override;
 
-      ref_t resolvePrimitiveType(ModuleScopeBase& scope, TypeInfo typeInfo) override;
+      ref_t resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, TypeInfo typeInfo, 
+         bool declarationMode = false) override;
 
       ref_t generateExtensionTemplate(ModuleScopeBase& scope, ref_t templateRef, size_t argumentLen, ref_t* arguments, 
          ustr_t ns, ExtensionMap* outerExtensionList) override;

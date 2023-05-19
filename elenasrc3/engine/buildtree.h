@@ -132,6 +132,7 @@ namespace elena_lang
       UIntCondOp           = 0x0067,
       UIntOp               = 0x0068,
       MssgNameLiteral      = 0x0069,
+      VArgSOp              = 0x006A,
 
       MaxOperationalKey    = 0x0070,
 
