@@ -2150,15 +2150,17 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
          }
 
          if (methodKey != SyntaxKey::Constructor && !test(hints, (ref_t)MethodHint::Constant)) {
-            // HOTFIX : do not generate byref handler for methods returning constant value
-            mssg_t byRefMethod = withRetOverload ? 0 : defineByRefMethod(scope, current);
-            if (byRefMethod) {
-               current.appendChild(SyntaxKey::ByRefRetMethod, byRefMethod);
+            // HOTFIX : do not generate byref handler for methods returning constant value & variadic method
+            if ((current.arg.reference & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE) {
+               mssg_t byRefMethod = withRetOverload ? 0 : defineByRefMethod(scope, current);
+               if (byRefMethod) {
+                  current.appendChild(SyntaxKey::ByRefRetMethod, byRefMethod);
 
-               // HOTFIX : do not need to generate byref stub for the private method, it will be added later in the code
-               if (!test(current.arg.reference, STATIC_MESSAGE) && retrieveMethod(implicitMultimethods, byRefMethod) == 0) {
-                  implicitMultimethods.add({ byRefMethod, VirtualType::EmbeddableWrapper });
-                  thirdPassRequired = true;
+                  // HOTFIX : do not need to generate byref stub for the private method, it will be added later in the code
+                  if (!test(current.arg.reference, STATIC_MESSAGE) && retrieveMethod(implicitMultimethods, byRefMethod) == 0) {
+                     implicitMultimethods.add({ byRefMethod, VirtualType::EmbeddableWrapper });
+                     thirdPassRequired = true;
+                  }
                }
             }
          }

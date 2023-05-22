@@ -288,6 +288,14 @@ namespace elena_lang
 
       bool eof() const { return _current == nullptr; }
 
+      bool last()
+      {
+         MemoryIteratorBase tmp = *this;
+         ++tmp;
+
+         return tmp.eof();
+      }
+
       MemoryIteratorBase(MemoryDump* buffer, Item* item)
       {
          _buffer = buffer;

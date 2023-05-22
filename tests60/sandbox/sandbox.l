@@ -1,24 +1,23 @@
 import extensions;
 
-singleton Ops
+A
 {
-    test(params object[] args)
+    generic(n)
     {
-       self.boxVArg(params args);
+        // __received refers to the current message
+        console.printLine("message ",__received," is invoked")
     }
-
-    boxVArg(params object[] args)
+    
+    generic(n1,n2)
     {
-//        // an variadic argument is boxed into dynamic array
-        var o := args;
-        
-        // print a boxed variadic argument as a collection 
-        console.printLine(o.asEnumerable())
+        console.printLine("message ",__received," is invoked")
     }
 }
 
 public program()
 {
-    //Ops.boxVArg(1,2.0r,"abc");
-   Ops.test(1,2.0r,"abc");
+    var a := new A();
+    a.testMe(2);
+    a.andMeTo("abc");
+    a.testWithTwoArguments(2,"abc");
 }
