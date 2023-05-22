@@ -6549,20 +6549,21 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
       pos_t counter = arguments.count_pos();
       if (argUnboxinhgRequired) {
+         counter--;
+
          ObjectInfo lenLocal = declareTempLocal(scope, scope.moduleScope->buildins.intReference, false);
 
          // get length
-         writeObjectInfo(writer, scope, arguments[counter - 1]);
+         writeObjectInfo(writer, scope, arguments[counter]);
          writer.appendNode(BuildKey::SavingInStack);
          writer.newNode(BuildKey::VArgSOp, LEN_OPERATOR_ID);
          writer.appendNode(BuildKey::Index, lenLocal.argument);
          writer.closeNode();
 
          writer.appendNode(BuildKey::LoadingIndex, lenLocal.argument);
-         writer.appendNode(BuildKey::IncIndex, counter);
-         writer.appendNode(BuildKey::UnboxMessage, arguments[counter - 1].argument);
-
-         counter--;
+         writer.newNode(BuildKey::UnboxMessage, arguments[counter].argument);
+         writer.appendNode(BuildKey::Index, counter);
+         writer.closeNode();
       }
 
       // box the arguments if required
@@ -6576,7 +6577,8 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          argMask <<= 1;
       }
 
-      if (isOpenArg(message)) {
+      if (isOpenArg(message) && !argUnboxinhgRequired) {
+         // NOTE : in case of unboxing variadic argument, the terminator is already copied
          arguments.add({ ObjectKind::Terminator });
          counter++;
       }
@@ -6604,8 +6606,6 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
       if (argUnboxinhgRequired) {
          writer.appendNode(BuildKey::LoadingIndex, lenLocal.argument);
-         writer.appendNode(BuildKey::IncIndex, 1);
-         writer.appendNode(BuildKey::UnboxMessage, arguments[counter - 1].argument);
          writer.appendNode(BuildKey::FreeVarStack);
       }
    }

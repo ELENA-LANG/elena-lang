@@ -1437,10 +1437,12 @@ void incIndex(CommandTape& tape, BuildNode& node, TapeScope&)
 
 void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
 {
+   int index = node.findChild(BuildKey::Index).arg.value;
+
    // dalloc
    // sub    n:1
    // xassignsp
-   // alloc  i:1
+   // alloc  i:1 + index
    // store  sp:0
    // set    fp:arg
    // swap   sp:0
@@ -1454,7 +1456,7 @@ void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::DAlloc);
    tape.write(ByteCode::SubN, 1);
    tape.write(ByteCode::XAssignSP);
-   tape.write(ByteCode::AllocI, 1);
+   tape.write(ByteCode::AllocI, 1 + index);
    tape.write(ByteCode::StoreSI, 0);
    tape.write(ByteCode::SetFP, node.arg.value);
    tape.write(ByteCode::SwapSI);
