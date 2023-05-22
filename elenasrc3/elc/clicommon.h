@@ -263,6 +263,7 @@ public:
    IdentifierString     selfVar;
    IdentifierString     declVar;
    IdentifierString     superVar;
+   IdentifierString     receivedVar;
 
    pos_t                stackAlingment, rawStackAlingment;
    pos_t                ehTableEntrySize;

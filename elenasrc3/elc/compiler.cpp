@@ -948,6 +948,9 @@ ObjectInfo Compiler::MethodScope :: mapIdentifier(ustr_t identifier, bool refere
          }
          else return mapSuper();
       }
+      else if (moduleScope->receivedVar.compare(identifier) && messageLocalAddress != 0) {
+         return { ObjectKind::LocalAddress, { V_MESSAGE }, messageLocalAddress };
+      }
    }
 
    if (constructorMode)
@@ -10771,6 +10774,11 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
          return current == reference;
       }));
    moduleScope->superVar.copy(moduleScope->predefined.retrieve<ref_t>("@super", V_SUPER_VAR,
+      [](ref_t reference, ustr_t key, ref_t current)
+      {
+         return current == reference;
+      }));
+   moduleScope->receivedVar.copy(moduleScope->predefined.retrieve<ref_t>("@received", V_RECEIVED_VAR,
       [](ref_t reference, ustr_t key, ref_t current)
       {
          return current == reference;
