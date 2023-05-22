@@ -910,7 +910,11 @@ ObjectInfo Compiler::MethodScope :: mapParameter(ustr_t identifier, ExpressionAt
          else return { ObjectKind::ParamAddress, local.typeInfo, prefix - local.offset };
       }
       else if (local.typeInfo.typeRef == V_ARGARRAY) {
-         return { ObjectKind::VArgParam, local.typeInfo, prefix - local.offset };
+         TargetMode mode = TargetMode::None;
+         if (EAttrs::test(attr, EAttr::Variadic))
+            mode = TargetMode::UnboxingVarArgument;
+
+         return { ObjectKind::VArgParam, local.typeInfo, prefix - local.offset, mode };
       }
       else {
          if (byRef) {
@@ -6086,7 +6090,7 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
 }
 
 ref_t Compiler :: compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current,
-   ArgumentsInfo& arguments, ref_t expectedSignRef, EAttr mode, ArgumentsInfo* updatedOuterArgs)
+   ArgumentsInfo& arguments, ref_t expectedSignRef, EAttr mode, ArgumentsInfo* updatedOuterArgs, bool& variadicArgList)
 {
    EAttr paramMode = EAttr::Parameter;
    if (EAttrs::testAndExclude(mode, EAttr::NoPrimitives))
@@ -6107,15 +6111,27 @@ ref_t Compiler :: compileMessageArguments(BuildTreeWriter& writer, ExprScope& sc
          auto argInfo = compileExpression(writer, scope, current, signatures[signatureLen],
             paramMode, updatedOuterArgs);
 
-         ref_t argRef = retrieveStrongType(scope, argInfo);
-         if (signatureLen >= ARG_COUNT) {
-            signatureLen++;
-         }
-         else if (argRef) {
-            signatures[signatureLen++] = argRef;
-         }
-         else signatures[signatureLen++] = superReference;
+         if (argInfo.mode == TargetMode::UnboxingVarArgument) {
+            if (argInfo.typeInfo.elementRef) {
+               signatures[signatureLen++] = argInfo.typeInfo.elementRef;
+            }
+            else signatures[signatureLen++] = scope.moduleScope->buildins.superReference;
 
+            if (!variadicArgList) {
+               variadicArgList = true;
+            }
+            else scope.raiseError(errInvalidOperation, current);
+         }
+         else {
+            ref_t argRef = retrieveStrongType(scope, argInfo);
+            if (signatureLen >= ARG_COUNT) {
+               signatureLen++;
+            }
+            else if (argRef) {
+               signatures[signatureLen++] = argRef;
+            }
+            else signatures[signatureLen++] = superReference;
+         }
          arguments.add(argInfo);
       }
 
@@ -6403,6 +6419,8 @@ ObjectInfo Compiler :: unboxArguments(BuildTreeWriter& writer, ExprScope& scope,
 ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo target,
    mssg_t weakMessage, ref_t implicitSignatureRef, ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs)
 {
+   bool argUnboxinhgRequired = EAttrs::testAndExclude(mode.attrs, EAttr::WithVariadicArg);
+
    ObjectInfo retVal(ObjectKind::Object);
 
    BuildKey operation = BuildKey::CallOp;
@@ -6520,6 +6538,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    }
 
    if (operation != BuildKey::None) {
+      ObjectInfo lenLocal = {};
       bool targetOverridden = (target != arguments[0]);
       if (targetOverridden) {
          target = boxArgument(writer, scope, target, result.stackSafe, false, false);
@@ -6529,6 +6548,23 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          stackSafeAttr = 0;
 
       pos_t counter = arguments.count_pos();
+      if (argUnboxinhgRequired) {
+         ObjectInfo lenLocal = declareTempLocal(scope, scope.moduleScope->buildins.intReference, false);
+
+         // get length
+         writeObjectInfo(writer, scope, arguments[counter - 1]);
+         writer.appendNode(BuildKey::SavingInStack);
+         writer.newNode(BuildKey::VArgSOp, LEN_OPERATOR_ID);
+         writer.appendNode(BuildKey::Index, lenLocal.argument);
+         writer.closeNode();
+
+         writer.appendNode(BuildKey::LoadingIndex, lenLocal.argument);
+         writer.appendNode(BuildKey::IncIndex, counter);
+         writer.appendNode(BuildKey::UnboxMessage, arguments[counter - 1].argument);
+
+         counter--;
+      }
+
       // box the arguments if required
       int argMask = 1;
       for (unsigned int i = 0; i < counter; i++) {
@@ -6565,6 +6601,13 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       writer.closeNode();
 
       retVal = unboxArguments(writer, scope, retVal, updatedOuterArgs);
+
+      if (argUnboxinhgRequired) {
+         writer.appendNode(BuildKey::LoadingIndex, lenLocal.argument);
+         writer.appendNode(BuildKey::IncIndex, 1);
+         writer.appendNode(BuildKey::UnboxMessage, arguments[counter - 1].argument);
+         writer.appendNode(BuildKey::FreeVarStack);
+      }
    }
 
    scope.reserveArgs(arguments.count_pos());
@@ -6741,11 +6784,21 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
    mssg_t resolvedMessage = _logic->resolveSingleDispatch(*scope.moduleScope,
       retrieveType(scope, source), messageRef);
 
+   bool variadicArgList = false;
    ref_t expectedSignRef = 0;
    if (resolvedMessage)
       scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
 
-   ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, expectedSignRef, EAttr::NoPrimitives, &outerArgsToUpdate);
+   ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, expectedSignRef, EAttr::NoPrimitives, 
+      &outerArgsToUpdate, variadicArgList);
+   EAttr opMode = EAttr::None;
+   if (variadicArgList) {
+      //// HOTFIX : set variadic flag if required
+      //messageRef |= VARIADIC_MESSAGE;
+
+      //opMode = EAttr::WithVariadicArg;
+   }
+
    mssg_t byRefHandler = resolveByRefHandler(scope, retrieveStrongType(scope, source), expectedRef, messageRef, implicitSignatureRef);
    if (byRefHandler) {
       ObjectInfo tempRetVal = declareTempLocal(scope, expectedRef, false);
@@ -6753,12 +6806,12 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
       addByRefRetVal(arguments, tempRetVal);
 
       compileMessageOperation(writer, scope, node, source, byRefHandler,
-         implicitSignatureRef, arguments, EAttr::AlreadyResolved, &outerArgsToUpdate);
+         implicitSignatureRef, arguments, opMode | EAttr::AlreadyResolved, &outerArgsToUpdate);
 
       retVal = tempRetVal;
    }
    else retVal = compileMessageOperation(writer, scope, node, source, messageRef,
-      0, arguments, EAttr::None, &outerArgsToUpdate);
+      0, arguments, opMode, &outerArgsToUpdate);
 
    return retVal;
 }
@@ -6802,32 +6855,46 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    switch (source.mode) {
       case TargetMode::External:
       case TargetMode::WinApi:
-         compileMessageArguments(writer, scope, current, arguments, 0, EAttr::None, nullptr);
+      {
+         bool dummy = false;
+         compileMessageArguments(writer, scope, current, arguments, 0, EAttr::None, nullptr, dummy);
+         if (dummy)
+            scope.raiseError(errInvalidOperation, current);
 
          retVal = compileExternalOp(writer, scope, source.reference, source.mode == TargetMode::WinApi, arguments, expectedRef);
          break;
+      }
       case TargetMode::CreatingArray:
       {
-         compileMessageArguments(writer, scope, current, arguments, 0, EAttr::NoPrimitives, nullptr);
+         bool dummy = false;
+         compileMessageArguments(writer, scope, current, arguments, 0, EAttr::NoPrimitives, nullptr, dummy);
+         if (dummy)
+            scope.raiseError(errInvalidOperation, current);
 
          retVal = compileNewArrayOp(writer, scope, source, expectedRef, arguments);
          break;
       }
       case TargetMode::Creating:
       {
-         ref_t signRef = compileMessageArguments(writer, scope, current, arguments, 0, EAttr::NoPrimitives, nullptr);
+         bool dummy = false;
+         ref_t signRef = compileMessageArguments(writer, scope, current, arguments, 0, EAttr::NoPrimitives, nullptr, dummy);
+         if (dummy)
+            scope.raiseError(errInvalidOperation, current);
 
          retVal = compileNewOp(writer, scope, node, mapClassSymbol(scope,
             retrieveStrongType(scope, source)), signRef, arguments);
          break;
       }
       case TargetMode::Casting:
-         compileMessageArguments(writer, scope, current, arguments, 0, EAttr::NoPrimitives, nullptr);
-         if (arguments.count() == 1) {
+      {
+         bool dummy = false;
+         compileMessageArguments(writer, scope, current, arguments, 0, EAttr::NoPrimitives, nullptr, dummy);
+         if (arguments.count() == 1 && !dummy) {
             retVal = convertObject(writer, scope, current, arguments[0], retrieveStrongType(scope, source));
          }
          else scope.raiseError(errInvalidOperation, node);
          break;
+      }
       default:
       {
          // NOTE : the operation target shouldn't be a primtive type
@@ -6847,7 +6914,16 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          if (resolvedMessage)
             scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
 
-         ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, expectedSignRef, EAttr::NoPrimitives, &updatedOuterArgs);
+         bool withVariadicArg = false;
+         ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, expectedSignRef, EAttr::NoPrimitives,
+            &updatedOuterArgs, withVariadicArg);
+
+         EAttr opMode = EAttr::None;
+         if (withVariadicArg) {
+            messageRef |= VARIADIC_MESSAGE;
+
+            opMode = EAttr::WithVariadicArg;
+         }
 
          mssg_t byRefHandler = resolveByRefHandler(scope, retrieveStrongType(scope, source), expectedRef, messageRef, implicitSignatureRef);
          if (byRefHandler) {
@@ -6856,12 +6932,12 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
             addByRefRetVal(arguments, tempRetVal);
 
             compileMessageOperation(writer, scope, node, source, byRefHandler,
-               implicitSignatureRef, arguments, EAttr::AlreadyResolved, &updatedOuterArgs);
+               implicitSignatureRef, arguments, opMode | EAttr::AlreadyResolved, &updatedOuterArgs);
 
             retVal = tempRetVal;
          }
          else retVal = compileMessageOperation(writer, scope, node, source, messageRef,
-            implicitSignatureRef, arguments, EAttr::None, &updatedOuterArgs);
+            implicitSignatureRef, arguments, opMode, &updatedOuterArgs);
 
          break;
       }
@@ -7366,12 +7442,15 @@ ObjectInfo Compiler :: compileMessageOperationR(BuildTreeWriter& writer, ExprSco
 
    switch (target.mode) {
       case TargetMode::Casting:
-         compileMessageArguments(writer, scope, messageNode, arguments, 0, EAttr::NoPrimitives, &updatedOuterArgs);
-         if (arguments.count() == 1) {
+      {
+         bool dummy = false;
+         compileMessageArguments(writer, scope, messageNode, arguments, 0, EAttr::NoPrimitives, &updatedOuterArgs, dummy);
+         if (arguments.count() == 1 && !dummy) {
             return convertObject(writer, scope, messageNode, arguments[0], retrieveStrongType(scope, target));
          }
          else scope.raiseError(errInvalidOperation, messageNode);
          break;
+      }
       default:
          {
             // NOTE : the operation target shouldn't be a primitive type
@@ -7390,11 +7469,19 @@ ObjectInfo Compiler :: compileMessageOperationR(BuildTreeWriter& writer, ExprSco
                arguments.add(source);
             }
 
+            bool withVariadicArg = false;
             ref_t implicitSignatureRef = compileMessageArguments(writer, scope, messageNode, arguments, expectedSignRef, 
-               EAttr::NoPrimitives, &updatedOuterArgs);
+               EAttr::NoPrimitives, &updatedOuterArgs, withVariadicArg);
+
+            EAttr opMode = EAttr::None;
+            if (withVariadicArg) {
+               //messageRef |= VARIADIC_MESSAGE;
+
+               //opMode = EAttr::WithVariadicArg;
+            }
 
             return compileMessageOperation(writer, scope, messageNode, source, messageRef,
-               implicitSignatureRef, arguments, EAttr::None, &updatedOuterArgs);
+               implicitSignatureRef, arguments, opMode, &updatedOuterArgs);
 
             break;
          }
@@ -9342,11 +9429,19 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
       if (!test(messageRef, FUNCTION_MESSAGE))
          arguments.add(source);
 
+      bool withVariadicArg = false;
       ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, expectedSignRef, 
-         EAttr::NoPrimitives, &updatedOuterArgs);
+         EAttr::NoPrimitives, &updatedOuterArgs, withVariadicArg);
+
+      EAttr opMode = EAttr::None;
+      if (withVariadicArg) {
+         //messageRef |= VARIADIC_MESSAGE;
+
+         //opMode = EAttr::WithVariadicArg;
+      }
 
       retVal = compileMessageOperation(writer, scope, node, target, messageRef,
-         implicitSignatureRef, arguments, EAttr::None, &updatedOuterArgs);
+         implicitSignatureRef, arguments, opMode, &updatedOuterArgs);
 
       scope.syncStack();
    }
@@ -9939,6 +10034,7 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
          scope.messageLocalAddress =  allocateLocalAddress(&codeScope, sizeof(mssg_t), false);
          writer.appendNode(BuildKey::SavingIndex, scope.messageLocalAddress);
          // unbox argument list
+         writer.appendNode(BuildKey::LoadArgCount, 1);
          writer.appendNode(BuildKey::UnboxMessage, -1);
          // change incoming message to variadic multi-method
          writer.newNode(BuildKey::LoadingSubject,

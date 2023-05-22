@@ -835,6 +835,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_IGNOREDUPLICATE:
          attrs |= ExpressionAttribute::IgnoreDuplicate;
          return true;
+      case V_VARIADIC:
+         attrs |= ExpressionAttribute::Variadic;
+         return true;
       default:
          return false;
    }

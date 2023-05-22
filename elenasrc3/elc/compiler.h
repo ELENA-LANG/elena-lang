@@ -101,6 +101,7 @@ namespace elena_lang
       RefUnboxingRequired,
       LocalUnboxingRequired,
       ArrayContent,
+      UnboxingVarArgument
    };
 
    struct ObjectInfo
@@ -189,6 +190,14 @@ namespace elena_lang
          this->argument = argument;
          this->extra = extra;
          mode = TargetMode::None;
+      }
+      ObjectInfo(ObjectKind kind, TypeInfo typeInfo, int argument, TargetMode mode)
+      {
+         this->kind = kind;
+         this->typeInfo = typeInfo;
+         this->argument = argument;
+         this->extra = 0;
+         this->mode = mode;
       }
       ObjectInfo(ObjectKind kind, TypeInfo typeInfo, ref_t reference, TargetMode mode)
       {
@@ -1133,7 +1142,7 @@ namespace elena_lang
          ref_t outputRef);
 
       ref_t compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, 
-         ArgumentsInfo& arguments, ref_t expectedSignRef, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs);
+         ArgumentsInfo& arguments, ref_t expectedSignRef, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs, bool& variadicArgList);
 
       void writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& scope);
       void writeMessageInfo(BuildTreeWriter& writer, MethodScope& scope);

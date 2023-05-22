@@ -133,6 +133,9 @@ namespace elena_lang
       UIntOp               = 0x0068,
       MssgNameLiteral      = 0x0069,
       VArgSOp              = 0x006A,
+      LoadArgCount         = 0x006B, // argument contains the argument offset
+      IncIndex             = 0x006C,
+      FreeVarStack         = 0x006D,
 
       MaxOperationalKey    = 0x0070,
 

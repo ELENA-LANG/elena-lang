@@ -1421,10 +1421,22 @@ void loadingBynaryLen(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::NLen, node.arg.value);
 }
 
-void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
+void loadArgCount(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // mlen
    // add    n:1
+   tape.write(ByteCode::MLen);
+   if (node.arg.value > 0)
+      tape.write(ByteCode::AddN, node.arg.value);
+}
+
+void incIndex(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::AddN, node.arg.value);
+}
+
+void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
+{
    // dalloc
    // sub    n:1
    // xassignsp
@@ -1439,8 +1451,6 @@ void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
    // assign
    // free   i:1
 
-   tape.write(ByteCode::MLen);
-   tape.write(ByteCode::AddN, 1);
    tape.write(ByteCode::DAlloc);
    tape.write(ByteCode::SubN, 1);
    tape.write(ByteCode::XAssignSP);
@@ -1485,6 +1495,12 @@ void staticAssigning(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::StoreR, node.arg.value | mskStaticVariable);
 }
 
+void freeStack(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::Neg);
+   tape.write(ByteCode::DAlloc);
+}
+
 inline void includeFrame(CommandTape& tape)
 {
    tape.write(ByteCode::Include);
@@ -1516,7 +1532,7 @@ ByteCodeWriter::Saver commands[] =
    intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject, peekArgument,
 
    terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning, savingLInStack, uintCondOp,
-   uintOp, mssgNameLiteral, vargSOp
+   uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

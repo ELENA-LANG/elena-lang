@@ -383,6 +383,8 @@ enum class ExpressionAttribute : pos64_t
    InitializerScope  = 0x00000800000,
    NestedDecl        = 0x00001000000,
    ConstantExpr      = 0x00002000000,
+   Variadic          = 0x00004000000,
+   WithVariadicArg   = 0x00008000000,
    Superior          = 0x10000000000,
    Lookahead         = 0x20000000000,
    NoDebugInfo       = 0x40000000000,
