@@ -1405,7 +1405,8 @@ ref_t Compiler :: mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNod
 }
 
 mssg_t Compiler :: mapMethodName(MethodScope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef,
-   ref_t flags, ref_t* signature, size_t signatureLen)
+   ref_t flags, ref_t* signature, size_t signatureLen,
+   bool withoutWeakMessages, bool noSignature)
 {
    if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
       paramCount = 1;
@@ -1413,6 +1414,10 @@ mssg_t Compiler :: mapMethodName(MethodScope& scope, pos_t paramCount, ustr_t ac
       if (scope.isExtension && test(flags, FUNCTION_MESSAGE))
          paramCount++;
    }
+
+   // NOTE : a message target should be included as well for a normal message
+   pos_t argCount = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
+   argCount += paramCount;
 
    if (actionRef != 0) {
       // HOTFIX : if the action was already resolved - do nothing
@@ -1423,12 +1428,16 @@ mssg_t Compiler :: mapMethodName(MethodScope& scope, pos_t paramCount, ustr_t ac
          signatureRef = scope.moduleScope->module->mapSignature(signature, signatureLen, false);
 
       actionRef = scope.moduleScope->module->mapAction(actionName, signatureRef, false);
+
+      if (withoutWeakMessages && noSignature && test(scope.getClassFlags(false), elClosed)) {
+         // HOTFIX : for the nested closed class - special handling is requiered
+         ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+         if (!classScope->info.methods.exist(encodeMessage(actionRef, argCount, flags))) {
+            actionRef = scope.moduleScope->module->mapAction(actionName, 0, false);
+         }
+      }
    }
    else return 0;
-
-   // NOTE : a message target should be included as well for a normal message
-   pos_t argCount = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
-   argCount += paramCount;
 
    return encodeMessage(actionRef, argCount, flags);
 }
@@ -2687,7 +2696,7 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
 }
 
 void Compiler :: declareParameter(MethodScope& scope, SyntaxNode current, bool withoutWeakMessages,
-   bool declarationMode, bool& variadicMode, bool& weakSignature,
+   bool declarationMode, bool& variadicMode, bool& weakSignature, bool& noSignature,
    pos_t& paramCount, ref_t* signature, size_t& signatureLen)
 {
    int index = 1 + scope.parameters.count();
@@ -2696,11 +2705,16 @@ void Compiler :: declareParameter(MethodScope& scope, SyntaxNode current, bool w
    TypeInfo paramTypeInfo = {};
    declareArgumentAttributes(scope, current, paramTypeInfo, declarationMode);
 
-   if (withoutWeakMessages && !paramTypeInfo.typeRef)
+   // NOTE : an extension method must be strong-resolved
+   if (withoutWeakMessages && !paramTypeInfo.typeRef) {
       paramTypeInfo.typeRef = scope.moduleScope->buildins.superReference;
+   }
+   else noSignature = false;
 
-   if (paramTypeInfo.typeRef)
-      weakSignature = false;
+   if (!paramTypeInfo.typeRef) {
+      paramTypeInfo.typeRef = scope.moduleScope->buildins.superReference;
+   }
+   else weakSignature = false;
 
    ustr_t terminal = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
    if (scope.parameters.exist(terminal))
@@ -2770,13 +2784,13 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
       flags |= FUNCTION_MESSAGE;
    }
 
-   //bool noSignature = true; // NOTE : is similar to weakSignature except if withoutWeakMessages=true
+   bool noSignature = true; // NOTE : is similar to weakSignature except if withoutWeakMessages=true
    // if method has an argument list
    SyntaxNode current = node.findChild(SyntaxKey::Parameter);
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Parameter) {
          declareParameter(scope, current, withoutWeakMessages,
-            declarationMode, variadicMode, weakSignature,
+            declarationMode, variadicMode, weakSignature, noSignature,
             paramCount, signature, signatureLen);
       }
       else break;
@@ -2882,7 +2896,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          else {
             // check if protected method already declared
             mssg_t publicMessage = mapMethodName(scope, paramCount, *actionStr, actionRef, flags,
-               signature, signatureLen);
+               signature, signatureLen, withoutWeakMessages, noSignature);
 
             mssg_t declaredMssg = scope.getAttribute(publicMessage, ClassAttribute::ProtectedAlias);
             if (!declaredMssg) {
@@ -2903,7 +2917,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
 
       if (!scope.message) {
          scope.message = mapMethodName(scope, paramCount, *actionStr, actionRef, flags,
-            signature, signatureLen);
+            signature, signatureLen, withoutWeakMessages, noSignature);
          if (unnamedMessage || !scope.message)
             scope.raiseError(errIllegalMethod, node);
       }
@@ -2925,13 +2939,14 @@ ref_t Compiler :: declareClosureParameters(MethodScope& methodScope, SyntaxNode 
    ref_t signRef = 0;
 
    bool weakSingature = true;
+   bool noSignature = true;
    bool variadicMode = false;
    ref_t flags = FUNCTION_MESSAGE;
    ref_t signatures[ARG_COUNT];
    size_t signatureLen = 0;
    while (argNode == SyntaxKey::Parameter) {
       declareParameter(methodScope, argNode, false, false,
-         variadicMode, weakSingature,
+         variadicMode, weakSingature, noSignature,
          paramCount, signatures, signatureLen);
 
       if (variadicMode)
@@ -2941,7 +2956,7 @@ ref_t Compiler :: declareClosureParameters(MethodScope& methodScope, SyntaxNode 
    }
 
    messageStr.copy(INVOKE_MESSAGE);
-   if (!weakSingature) {
+   if (!weakSingature && !noSignature) {
       signRef = methodScope.module->mapSignature(signatures, signatureLen, false);
    }
 
@@ -5783,14 +5798,19 @@ ObjectInfo Compiler :: compileWeakOperation(BuildTreeWriter& writer, ExprScope& 
    ObjectInfo retVal =  {};
 
    // resolving a message signature (excluding a target)
+   bool weakSignature = false;
    for (pos_t i = 1; i < argLen; i++) {
-      if (isPrimitiveRef(arguments[i])) {
+      if (!arguments[i]) {
+         weakSignature = true;
+         break;
+      }
+      else if (isPrimitiveRef(arguments[i])) {
          arguments[i - 1] = resolvePrimitiveType(scope, { arguments[i] }, false);
       }
       else arguments[i - 1] = arguments[i];
    }
 
-   ref_t signRef = argLen > 1 ? scope.module->mapSignature(arguments, argLen - 1, false) : 0;
+   ref_t signRef = (!weakSignature && argLen > 1) ? scope.module->mapSignature(arguments, argLen - 1, false) : 0;
 
    mssg_t byRefHandler = resolveByRefHandler(scope, retrieveStrongType(scope, loperand), expectedRef, message, signRef);
    if (byRefHandler) {

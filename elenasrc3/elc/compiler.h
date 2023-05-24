@@ -716,6 +716,13 @@ namespace elena_lang
             return scope ? scope->reference : 0;
          }
 
+         ref_t getClassFlags(bool ownerClass = true)
+         {
+            ClassScope* scope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+
+            return scope ? scope->info.header.flags : 0;
+         }
+
          Visibility getClassVisibility(bool ownerClass = true)
          {
             ClassScope* scope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
@@ -956,7 +963,7 @@ namespace elena_lang
 
       ref_t mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix, Visibility visibility);
       mssg_t mapMethodName(MethodScope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef,
-         ref_t flags, ref_t* signature, size_t signatureLen);
+         ref_t flags, ref_t* signature, size_t signatureLen, bool withoutWeakMessages, bool noSignature);
       mssg_t mapMessage(Scope& scope, SyntaxNode node, bool propertyMode, bool extensionMode, bool probeMode);
 
       ExternalInfo mapExternal(Scope& scope, SyntaxNode node);
@@ -1084,7 +1091,7 @@ namespace elena_lang
       int resolveArraySize(Scope& scope, SyntaxNode node);
 
       void declareParameter(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, 
-         bool declarationMode, bool& variadicMode, bool& weakSignature, 
+         bool declarationMode, bool& variadicMode, bool& weakSignature, bool& noSignature,
          pos_t& paramCount, ref_t* signature, size_t& signatureLen);
 
       ref_t declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode);

@@ -720,6 +720,22 @@ inline % 1Ch
 
 end
 
+// ; xload
+inline %1Dh
+
+  add     x12, x10, __arg12_1
+  ldrsw   x9, [x12]
+
+end
+
+// ; xlload
+inline %1Eh
+
+  add     x12, x10, __arg12_1
+  ldr     x9, [x12]
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -1007,7 +1023,7 @@ inline %8Dh
 
 end
 
-// ; peekfi
+// ; setfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %08Eh
 
@@ -1015,7 +1031,7 @@ inline %08Eh
 
 end 
 
-// ; peekfi
+// ; setfi
 // ; NOTE : it is presumed that arg1 > 0 (it is inverted in jitcompiler)
 inline %58Eh
 
@@ -1262,6 +1278,35 @@ inline %9Ch
   mul     x9, x9, x11
 
 end
+
+// ; xadddp
+inline %9Dh
+
+  add     x11, x29, __arg12_1
+  ldrsw   x12,  [x11]
+  add     x9, x9, x12
+
+end 
+
+// ; xsetfi
+// ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
+inline %09Eh
+
+  lsl     x14, x9, #3
+  sub     x10, x29, -__arg12_1
+  sub     x10, x10, x14
+
+end 
+
+// ; xsetfi
+// ; NOTE : it is presumed that arg1 > 0 (it is inverted in jitcompiler)
+inline %59Eh
+
+  lsl     x14, x9, #3
+  add     x10, x29, __arg12_1
+  add     x10, x10, x14
+
+end 
 
 // ; saveddp
 inline %0A0h

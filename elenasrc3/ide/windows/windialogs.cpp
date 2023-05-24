@@ -130,6 +130,19 @@ MessageDialogBase::Answer MessageDialog :: question(text_str message, text_str p
    else return Answer::No;
 }
 
+MessageDialogBase::Answer MessageDialog :: question(text_str message)
+{
+   int result = MsgBox::show(_owner->handle(), message, MB_YESNOCANCEL | MB_ICONQUESTION);
+
+   if (MsgBox::isYes(result)) {
+      return Answer::Yes;
+   }
+   else if (MsgBox::isCancel(result)) {
+      return Answer::Cancel;
+   }
+   else return Answer::No;
+}
+
 // --- WinDialog ---
 
 BOOL CALLBACK WinDialog::DialogProc(HWND hWnd, size_t message, WPARAM wParam, LPARAM lParam)

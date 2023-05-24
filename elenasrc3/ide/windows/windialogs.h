@@ -52,6 +52,7 @@ namespace elena_lang
 
    public:
       Answer question(text_str message, text_str param) override;
+      Answer question(text_str message) override;
 
       MessageDialog(WindowBase* owner)
       {

@@ -31,6 +31,7 @@ namespace elena_lang
       };
 
       virtual Answer question(text_str message, const text_str param) = 0;
+      virtual Answer question(text_str message) = 0;
    };
 
    // --- ProjectSettingsBase ---

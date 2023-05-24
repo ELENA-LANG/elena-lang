@@ -69,6 +69,7 @@ namespace elena_lang
    constexpr auto ASM_AMD64_MODE             = "amd64";
    constexpr auto ASM_PPC64le_MODE           = "ppc64le";
    constexpr auto ASM_ARM64_MODE             = "arm64";
+   constexpr auto ASM_AARCH64_MODE           = "aarch64";
    constexpr auto BC_32_MODE                 = "bc32";
    constexpr auto BC_64_MODE                 = "bc64";
 

@@ -729,6 +729,9 @@ void IDEController :: doNewFile(IDEModel* model)
 
    sourceController.newSource(&model->sourceViewModel, *sourceNameStr, true, status);
 
+   if (test(status, FRAME_VISIBILITY_CHANGED))
+      status |= IDE_LAYOUT_CHANGED;
+
    _notifier->notify(NOTIFY_IDE_CHANGE, status);
 }
 
@@ -915,8 +918,12 @@ bool IDEController :: closeFile(FileDialogBase& dialog, MessageDialogBase& mssgD
 {
    auto docView = model->sourceViewModel.getDocument(index);
    if (docView->isUnnamed()) {
-      if (!doSaveFile(dialog, model, false, true))
-         return false;
+      if (!doSaveFile(dialog, model, false, true)) {
+         auto result = mssgDialog.question(QUESTION_CLOSE_UNSAVED);
+
+         if (result != MessageDialogBase::Answer::Yes)
+            return false;
+      }
    }
    else if (docView->isModified()) {
       path_t path = model->sourceViewModel.getDocumentPath(index);

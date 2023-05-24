@@ -5,13 +5,18 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * new opcode : xload, lxload, xadddp - ppc64le, arm64
-    * new opcode : xsetfp - ppc64le, arm64
+    * 5 roseta codes samples
 
     * new opcode : jle, jg - ppc64le, arm64
     * new opcode : selult,jult - ppc64le, aarch64
+
+    * 5 roseta codes samples
+
     * new opcode : udivdpn - ppc64le, aarch64
     * new opcode : fabsdp - aarch64, ppc64le
+
+    * console & files samples
+
     * new opcode : fround - ppc64le, arm64
     * new opcode : fsqrt - ppc64le, arm64
     * new opcode : fexp, fln - ppc64le, arm64

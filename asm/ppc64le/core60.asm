@@ -777,6 +777,22 @@ inline % 1Ch
 
 end
 
+// ; xload
+inline %1Dh
+
+  add     r18, r18, r15
+  lwz     r14, 0(r18)
+
+end
+
+// ; xlload
+inline %1Eh
+
+  add     r18, r18, r15
+  ld      r14, 0(r18)
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -1355,6 +1371,25 @@ inline %9Ch
   mulld   r14, r14, r16
 
 end
+
+// ; xadddp
+inline %9Dh
+
+  addi    r16, r31, __arg16_1
+  lwz     r16, 0(r16)
+  add     r14, r14, r16
+
+end 
+
+// ; xsetfp
+inline %09Eh
+
+  li      r16, __arg16_1
+  add     r15, r31, r16
+  sldi    r18, r14, 3
+  add     r15, r15, r18
+
+end 
 
 // ; savedp
 inline %0A0h

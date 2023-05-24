@@ -143,6 +143,9 @@ int main(int argc, char* argv[])
          else if (arg.compare(ASM_ARM64_MODE)) {
             mode = CompileMode::arm64;
          }
+         else if (arg.compare(ASM_AARCH64_MODE)) {
+            mode = CompileMode::arm64;
+         }
          else if (arg.compare(BC_32_MODE)) {
             mode = CompileMode::bc32;
          }
