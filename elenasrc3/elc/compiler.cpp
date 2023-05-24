@@ -1711,6 +1711,7 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
       case ObjectKind::StringLiteral:
       case ObjectKind::WideStringLiteral:
       case ObjectKind::IntLiteral:
+      case ObjectKind::Float64Literal:
          break;
       default:
          return 0;
@@ -1755,6 +1756,16 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
          dataWriter.writeDWord(retVal.extra);
 
          retVal.typeInfo = { scope.moduleScope->buildins.intReference };
+         break;
+      }
+      case ObjectKind::Float64Literal:
+      {
+         ustr_t valueStr = module->resolveConstant(retVal.reference);
+         double value = StrConvertor::toDouble(valueStr);
+
+         dataWriter.write(&value, sizeof(double));
+
+         retVal.typeInfo = { scope.moduleScope->buildins.realReference };
          break;
       }
       default:
@@ -8922,6 +8933,7 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
             break;
          case ObjectKind::StringLiteral:
          case ObjectKind::IntLiteral:
+         case ObjectKind::Float64Literal:
             scope.info.symbolType = SymbolType::Constant;
             scope.info.valueRef = constRef;
             scope.info.typeRef = retrieveStrongType(scope, retVal);

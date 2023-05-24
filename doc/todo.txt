@@ -5,7 +5,7 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * 5 roseta codes samples
+    * 3 roseta codes samples
 
     * new opcode : jle, jg - ppc64le, arm64
     * new opcode : selult,jult - ppc64le, aarch64

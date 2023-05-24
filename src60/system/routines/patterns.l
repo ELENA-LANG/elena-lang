@@ -96,3 +96,60 @@ public class Filter : Enumerator
     enumerable() => _enumerator;
 }
 
+// --- RangeEnumerator ---
+
+public class RangeEnumerator : Enumerator
+{
+    object _variable;
+    object _start;
+    object _end;
+    object _step;
+    
+    bool   _forward;
+    
+    constructor new(var,start,end,step)
+    {
+        _variable := var;
+        _start := start;
+        _end := end;
+        _step := step;
+        
+        _forward := (start < end);
+        
+        self.reset()
+    }
+
+    constructor new(start, end, step)
+        <= new(new Variable(), start, end, step);
+
+    constructor new(start, end)
+        <= new(new Variable(), start, end, 1);
+        
+    reset() 
+    {
+        _variable.Value := _start;
+
+        if(_forward)
+        {
+            _variable.reduce:_step 
+        }
+        else
+        {
+            _variable.append:_step
+        }
+    }    
+    
+    get Value() = _variable.Value;
+    
+    bool next()
+    {
+        if(_forward)
+            { _variable.append:_step; ^ (_variable <= _end) };
+        
+        _variable.reduce:_step; 
+        
+        ^ (_variable >= _end)
+    }
+    
+    enumerable() = _variable;
+}

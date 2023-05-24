@@ -148,6 +148,9 @@ public extension enumerableOp
             
       ^ lastItem
    }
+
+   repeatTill(n)
+      = RangeEnumerator.new(self, n - 1, 1);
 }
 
 // --- indexableOp ---
