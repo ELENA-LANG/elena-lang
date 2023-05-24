@@ -12,7 +12,7 @@ using namespace elena_lang;
 
 ProjectModel :: ProjectModel(IDEStatus* status)
    : lastOpenFiles(nullptr), sources(nullptr),
-   breakpoints({})
+   breakpoints({}), projectTypeList(nullptr)
 {
    this->status = status;
 
@@ -20,6 +20,7 @@ ProjectModel :: ProjectModel(IDEStatus* status)
 
    this->empty = true;
    this->started = false;
+   this->notSaved = false;
 
 #ifdef _M_IX86
    this->paths.libraryRoot.copy("C:\\Alex\\ELENA\\lib60\\");      // !! temporal

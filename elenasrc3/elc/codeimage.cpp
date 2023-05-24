@@ -151,9 +151,10 @@ void TargetImage :: createVMTape(MemoryBase* tape, ustr_t ns, path_t nsPath, For
 
    IdentifierString nsPathStr(nsPath);
    addVMTapeEntry(tapeWriter, VM_PACKAGE_CMD, ns, *nsPathStr);
+   addVMTapeEntry(tapeWriter, VM_PRELOADED_CMD, PRELOADED_FORWARD);
 
    addVMTapeEntry(tapeWriter, VM_INIT_CMD);
-   addVMTapeEntry(tapeWriter, VM_CALLSYMBOL_CMD, STARTUP_ENTRY);
+   addVMTapeEntry(tapeWriter, VM_CALLSYMBOL_CMD, resolver->resolveForward(START_FORWARD));
    addVMTapeEntry(tapeWriter, VM_ENDOFTAPE_CMD);
 }
 

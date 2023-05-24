@@ -2280,9 +2280,19 @@ inline void loadPreloaded(JITCompilerScope& scope, LibraryLoaderBase* loader, si
       }
       else {
          pos_t position = positions.get(functions[i]);
-         scope.codeWriter->seek(position);
+         if (position != INVALID_POS) {
+            scope.codeWriter->seek(position);
 
-         loadCode(&scope, info.section->get(0), info.module);
+            if (functions[i] == SYSTEM_ENV) {
+               printf("SYSTEM_ENV %x\n", map.get(functions[i]));
+            }
+            if (functions[i] == CORE_GC_TABLE) {
+               printf("CORE_GC_TABLE %x\n", map.get(functions[i]));
+            }
+
+            loadCode(&scope, info.section->get(0), info.module);
+         }
+
       }
    }
 }
@@ -2583,7 +2593,7 @@ void JITCompiler :: prepare(
    LabelHelperBase* lh,
    JITSettings settings)
 {
-   Map<ref_t, pos_t> positions(0u);
+   Map<ref_t, pos_t> positions(INVALID_POS);
    loadCoreRoutines(loader, imageProvider, helper, lh, settings, positions, true);
    loadCoreRoutines(loader, imageProvider, helper, lh, settings, positions, false);
 
@@ -2593,11 +2603,14 @@ void JITCompiler :: prepare(
    }
 }
 
-void JITCompiler :: populatePreloaded(uintptr_t env, uintptr_t th_table, uintptr_t gc_table)
+void JITCompiler :: populatePreloaded(uintptr_t th_table)
 {
-   _preloaded.add(SYSTEM_ENV, (void*)env);
    _preloaded.add(CORE_THREAD_TABLE, (void*)th_table);
-   _preloaded.add(CORE_GC_TABLE, (void*)gc_table);
+}
+
+void* JITCompiler :: getSystemEnv()
+{
+   return _preloaded.get(SYSTEM_ENV);
 }
 
 CodeGenerator* JITCompiler :: codeGenerators()

@@ -39,14 +39,16 @@ namespace elena_lang
    // --- IDEWindow ---
    class IDEWindow : public SDIWindow, DocumentNotifier
    {
-      Dialog         fileDialog;
-      Dialog         projectDialog;
-      Clipboard      clipboard;
+      FileDialog        fileDialog;
+      FileDialog        projectDialog;
+      MessageDialog     messageDialog;
+      ProjectSettings   projectSettingsDialog;
+      Clipboard         clipboard;
 
-      HINSTANCE      _instance;
+      HINSTANCE         _instance;
 
-      IDEModel*      _model;
-      IDEController* _controller;
+      IDEModel*         _model;
+      IDEController*    _controller;
 
       void onStatusChange(StatusNMHDR* rec);
       void onSelection(SelectionNMHDR* rec);
@@ -96,6 +98,7 @@ namespace elena_lang
       void saveFile();
       void closeFile();
       void closeAll();
+      void newProject();
       void openProject();
       void closeProject();
       void exit() override;

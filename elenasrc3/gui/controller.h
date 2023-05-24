@@ -12,8 +12,17 @@
 
 namespace elena_lang
 {
-   // --- DialogBase ---
-   class DialogBase
+   // --- FileDialogBase ---
+   class FileDialogBase
+   {
+   public:
+      virtual bool openFile(PathString& path) = 0;
+      virtual bool openFiles(List<path_t, freepath>& files) = 0;
+      virtual bool saveFile(path_t ext, PathString& path) = 0;
+   };
+
+   // --- MessageDialogBase ---
+   class MessageDialogBase
    {
    public:
       enum Answer
@@ -21,11 +30,14 @@ namespace elena_lang
          Yes, No, Cancel
       };
 
-      virtual bool openFile(PathString& path) = 0;
-      virtual bool openFiles(List<path_t, freepath>& files) = 0;
-      virtual bool saveFile(path_t ext, PathString& path) = 0;
-
       virtual Answer question(text_str message, const text_str param) = 0;
+   };
+
+   // --- ProjectSettingsBase ---
+   class ProjectSettingsBase
+   {
+   public:
+      virtual bool showModal() = 0;
    };
 
    // --- TextViewSettings ---

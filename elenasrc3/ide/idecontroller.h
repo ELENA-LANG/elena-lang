@@ -74,6 +74,7 @@ namespace elena_lang
       }
 
       NotificationStatus openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
+      NotificationStatus newProject(ProjectModel& model);
       NotificationStatus openProject(ProjectModel& model, path_t projectFile);
       NotificationStatus closeProject(ProjectModel& model);
 
@@ -140,10 +141,13 @@ namespace elena_lang
       bool openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile, NotificationStatus& status);
       bool openFile(IDEModel* model, path_t sourceFile, NotificationStatus& status);
       bool openProject(IDEModel* model, path_t projectFile, NotificationStatus& status);
-      bool closeProject(DialogBase& dialog, IDEModel* model, NotificationStatus& status);
+      bool closeProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+         NotificationStatus& status);
 
-      bool closeFile(DialogBase& dialog, IDEModel* model, int index, NotificationStatus& status);
-      bool closeAll(DialogBase& dialog, IDEModel* model, NotificationStatus& status);
+      bool closeFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+         int index, NotificationStatus& status);
+      bool closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+         NotificationStatus& status);
 
       void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);
 
@@ -156,6 +160,8 @@ namespace elena_lang
 
       SourceViewController sourceController;
       ProjectController    projectController;
+
+      void loadSystemConfig(IDEModel* model, path_t configPath, ustr_t typeXPath, ustr_t platformXPath);
 
       bool loadConfig(IDEModel* model, path_t configPath);
       void saveConfig(IDEModel* model, path_t configPath);
@@ -178,15 +184,18 @@ namespace elena_lang
       void highlightError(IDEModel* model, int row, int column, path_t path);
 
       void doNewFile(IDEModel* model);
-      void doOpenFile(DialogBase& dialog, IDEModel* model);
-      bool doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
-      bool doCloseFile(DialogBase& dialog, IDEModel* model);
-      bool doCloseAll(DialogBase& dialog, IDEModel* model);
-      bool doOpenProject(DialogBase& dialog, IDEModel* model);
-      bool doCloseProject(DialogBase& dialog, IDEModel* model);
-      bool doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode);
+      void doOpenFile(FileDialogBase& dialog, IDEModel* model);
+      bool doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
+      bool doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool doCloseAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      void doNewProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, ProjectSettingsBase& prjDialog, 
+         IDEModel* model);
+      bool doOpenProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool doCloseProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool doSaveProject(FileDialogBase& dialog, IDEModel* model, bool forcedMode);
 
-      bool doCompileProject(DialogBase& dialog, IDEModel* model);
+      bool doCompileProject(FileDialogBase& dialog, IDEModel* model);
+      void doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model);
       void doDebugAction(IDEModel* model, DebugAction action);
       void doDebugStop(IDEModel* model);
 
@@ -204,9 +213,9 @@ namespace elena_lang
       void onDebuggerStop(IDEModel* model);
       void onStatusChange(IDEModel* model, IDEStatus newStatus);
 
-      bool doExit(DialogBase& dialog, IDEModel* model);
+      bool doExit(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
 
-      bool onClose(DialogBase& dialog, IDEModel* model);
+      bool onClose(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
 
       void init(IDEModel* model);
 

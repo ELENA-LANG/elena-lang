@@ -74,7 +74,6 @@ public:
    }
 };
 
-
 // --- ELENARTMachine ---
 
 ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform, 
@@ -90,9 +89,6 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    _settings.autoLoadMode = _configuration->BoolSetting(ProjectOption::ClassSymbolAutoLoad);
    _settings.virtualMode = false;
    _settings.alignment = codeAlignment;
-   _settings.jitSettings.mgSize = _configuration->IntSetting(ProjectOption::GCMGSize, gcSettings.mgSize);
-   _settings.jitSettings.ygSize = _configuration->IntSetting(ProjectOption::GCYGSize, gcSettings.ygSize);
-//   _settings.jitSettings.threadCounter = _configuration->IntSetting(ProjectOption::ThreadCounter, 1);
 
    // configurate the loader
    _configuration->initLoader(_libraryProvider);
@@ -100,14 +96,19 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    _compiler = jitCompilerFactory(&_libraryProvider, platform);
 }
 
-void ELENAVMMachine :: init(JITLinker& linker, SystemEnv* env)
+void ELENAVMMachine :: init(JITLinker& linker, SystemEnv* exeEnv)
 {
    _presenter->print(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER);
    _presenter->print(ELENAVM_INITIALIZING);
 
-   _compiler->populatePreloaded((uintptr_t)env, (uintptr_t)env->th_table, (uintptr_t)env->gc_table);
+   _compiler->populatePreloaded((uintptr_t)exeEnv->th_table);
 
    linker.prepare(_compiler);
+
+   _env = (SystemEnv*)_compiler->getSystemEnv();
+
+   // setting up system
+   __routineProvider.InitSTA(_env);
 
    _initialized = true;
 }
@@ -142,6 +143,9 @@ void ELENAVMMachine :: addPackage(ustr_t packageLine)
 
 bool ELENAVMMachine :: configurateVM(MemoryReader& reader, SystemEnv* env)
 {
+   _settings.jitSettings.ygSize = env->gc_yg_size;
+   _settings.jitSettings.mgSize = env->gc_mg_size;
+
    pos_t  command = 0;
    ustr_t strArg = nullptr;
 
@@ -171,6 +175,9 @@ bool ELENAVMMachine :: configurateVM(MemoryReader& reader, SystemEnv* env)
          case VM_INIT_CMD:
             eop = true;
             break;
+         case VM_PRELOADED_CMD:
+            _preloadedSection.copy(strArg);
+            break;
          default:
             break;
       }
@@ -179,18 +186,37 @@ bool ELENAVMMachine :: configurateVM(MemoryReader& reader, SystemEnv* env)
    return true;
 }
 
+void ELENAVMMachine :: fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule)
+{
+   ModuleInfoList symbolList({});
+   _mapper.forEachLazyReference<ModuleInfoList*>(&symbolList, [](ModuleInfoList* symbolList, LazyReferenceInfo info)
+      {
+         if (info.mask == mskAutoSymbolRef) {
+            symbolList->add({ info.module, info.reference });
+         }
+      });
+
+   _mapper.clearLazyReferences();
+
+   for (auto it = symbolList.start(); !it.eof(); ++it) {
+      auto info = *it;
+      ustr_t symbolName = info.module->resolveReference(info.reference);
+      if (isWeakReference(symbolName)) {
+         IdentifierString fullName(info.module->name(), symbolName);
+
+         ByteCodeUtil::write(writer, ByteCode::CallR, dummyModule->mapReference(*fullName) | mskSymbolRef);
+      }
+      else ByteCodeUtil::write(writer, ByteCode::CallR, dummyModule->mapReference(symbolName) | mskSymbolRef);
+   }
+
+}
+
 void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, ModuleBase* dummyModule)
 {
-   MemoryWriter writer(&tapeSymbol);
-
-   pos_t sizePlaceholder = writer.position();
-   writer.writePos(0);
+   CachedList<ref_t, 5> symbols;
 
    pos_t  command = 0;
    ustr_t strArg = nullptr;
-
-   ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
-
    bool eop = false;
    while (!eop) {
       command = reader.getDWord();
@@ -202,12 +228,24 @@ void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
             eop = true;
             break;
          case VM_CALLSYMBOL_CMD:
-            ByteCodeUtil::write(writer, ByteCode::CallR,
-               dummyModule->mapReference(strArg) | mskProcedureRef);
+            jitLinker.resolve(strArg, mskSymbolRef, false);
+            symbols.add(dummyModule->mapReference(strArg) | mskSymbolRef);
             break;
          default:
             break;
       }
+   }
+
+   MemoryWriter writer(&tapeSymbol);
+
+   pos_t sizePlaceholder = writer.position();
+   writer.writePos(0);
+
+   ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
+
+   fillPreloadedSymbols(writer, dummyModule);
+   for(size_t i = 0; i < symbols.count(); i++) {
+      ByteCodeUtil::write(writer, ByteCode::CallR, symbols[i]);
    }
 
    ByteCodeUtil::write(writer, ByteCode::CloseN);
@@ -275,9 +313,6 @@ int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, const c
 
 void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
 {
-   // setting up system
-   __routineProvider.InitSTA(env);
-
    int retVal = -1;
    if (tape != nullptr) {
       retVal = interprete(env, tape, INVALID_POS, criricalHandlerReference);

@@ -5,21 +5,28 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * review documentation - check if all code is compiled - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual
+    * new opcode : xload, lxload, xadddp - ppc64le, arm64
+    * new opcode : xsetfp - ppc64le, arm64
 
-    * ide : set / remove breakpoints
-    * ide : menu - clear all breakpoints
+    * vm console : test helloworld sample
 
-    * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Code-Snippets
-    * ide : new project / new file
-    * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
+    * new opcode : jle, jg - ppc64le, arm64
+    * new opcode : selult,jult - ppc64le, aarch64
+    * new opcode : udivdpn - ppc64le, aarch64
+    * new opcode : fabsdp - aarch64, ppc64le
+    * new opcode : fround - ppc64le, arm64
+    * new opcode : fsqrt - ppc64le, arm64
+    * new opcode : fexp, fln - ppc64le, arm64
+    * new opcode : fsin, fcos, farctan, fpi - ppc64le, arm64
 
-    * ide : refreshing auto watch - with the same name, unused
-    * vm console : use ENV struct allocated in vm
-    * vm console : reimplement helloworld
-
+    === Iteration 16 ===
     * vm console : ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
     * vm console : ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
+
+    * ide : create a new project, save it, change it and save it
+    * ide : refreshing auto watch - with the same name, unused
+    * ide : set / remove breakpoints
+    * ide : menu - clear all breakpoints
 
     ! migrate rest of elena 5.0 functionality (script engine, infinite enumeration, ...)
     ! script and db samples
@@ -51,8 +58,10 @@ In development:
     * ide : closing unsaved file - closing unsaved
     * ide : selecting an error line - try to get rid of blicking
     * ide : show hex number
+    * ide : show project name as a app title (new / existing projects / single file project)
 
-    * elena vm : preloaded symbol
+    * elenavm : preloaded symbol, support preloaded symbols : dynamic
+    * elenavm : loading preloaded symbols for newly loaded modules
 
     * #508 : support strong-typed variables for tuple unboxing
     * multi-value return - #508
@@ -93,18 +102,9 @@ In development:
     * x86 : gui
     * system module - it should be possible to use type aliases (replace all cases of using direct types 
       for symbols in system (int,string,wide))
-    * new opcode : xload, lxload, xadddp - ppc64le, arm64
-    * new opcode : xsetfp - ppc64le, arm64
-    * new opcode : jle, jg - ppc64le, arm64
-    * new opcode : selult,jult - ppc64le, aarch64
-    * new opcode : udivdpn - ppc64le, aarch64
-    * new opcode : fabsdp - aarch64, ppc64le
-    * new opcode : fround - ppc64le, arm64
-    * new opcode : fsqrt - ppc64le, arm64
-    * new opcode : fexp, fln - ppc64le, arm64
-    * new opcode : fsin, fcos, farctan, fpi - ppc64le, arm64
+    * elenavm : protect rdata memory sections
 
-    === Iteration 16 ===
+    === Iteration 17 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop
     ! x86-64 : multi-threading : open another thread
     ! sm : generate advances templates from vm console
@@ -119,9 +119,9 @@ In development:
     * templates with parameters: template can have attribute values in the brackets after the main body
       e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
     * migrate: amb, anagram
-    * support preloaded symbols : dynamic
+    * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    === Iteration 17 ===
+    === Iteration 18 ===
     ! elena vm : aarch64, ppc64
     ! elena vm : ppc64
     ! ppc64le : multi-threading
@@ -147,7 +147,8 @@ Backlog:
     * ide : brackets highlight
     * ide : auto indent
     * ide : highlight syntax
-    * elenavm : loading preloaded symbols for newly loaded modules
+    * ide : rest of menu options
+    * ide : context menu
     * internal / auto-generated classes must not be included in run-time attributes
     * optimization : tuple / array unboxing
     * native conversion from short to int / byte to int

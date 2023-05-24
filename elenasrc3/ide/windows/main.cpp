@@ -21,11 +21,17 @@ using namespace elena_lang;
 
 constexpr auto CURRENT_PLATFORM = PlatformType::Win_x86;
 
+constexpr auto TARGET_XPATH = "Win_x86";
+
 #elif _M_X64
 
 constexpr auto CURRENT_PLATFORM = PlatformType::Win_x86_64;
 
+constexpr auto TARGET_XPATH = "Win_x64";
+
 #endif
+
+constexpr auto TEMPLATE_XPATH = "templates/*";
 
 typedef Win32DebugProcess    DebugProcess;
 
@@ -58,6 +64,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    PathString configPath(ideModel.projectModel.paths.appPath);
    configPath.combine(_T("ide60.cfg"));
    ideController.loadConfig(&ideModel, *configPath);
+
+   PathString sysConfigPath(ideModel.projectModel.paths.appPath);
+   sysConfigPath.combine(_T("elc60.cfg"));
+   ideController.loadSystemConfig(&ideModel, *sysConfigPath, TEMPLATE_XPATH, TARGET_XPATH);
 
    GUIApp* app = factory.createApp();
    GUIControlBase* ideWindow = factory.createMainWindow(app, &outputProcess);

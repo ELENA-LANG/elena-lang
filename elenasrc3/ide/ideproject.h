@@ -23,6 +23,7 @@ namespace elena_lang
    // --- Map types ---
    typedef List<path_t, freepath>      ProjectPaths;
    typedef List<Breakpoint*, freeobj>  Breakpoints;
+   typedef List<ustr_t, freeUStr>      StringList;
 
    // --- ProjectModel ---
    struct ProjectModel
@@ -45,19 +46,25 @@ namespace elena_lang
       bool              autoRecompile;
       bool              empty;
       bool              started;
+      bool              notSaved;
       PathString        name;
       PathString        projectFile;
       PathString        projectPath;
       PathString        outputPath;
+      PathString        debugArguments;
 
       IdentifierString  package;
       IdentifierString  target;
+      IdentifierString  templateName;
+      IdentifierString  options;
 
       ProjectPaths      sources;
 
       ProjectPaths      lastOpenFiles;
 
       Breakpoints       breakpoints;
+
+      StringList        projectTypeList;
 
       ustr_t getTarget();
       ustr_t getArguments();

@@ -107,13 +107,15 @@ void Clipboard :: pasteFromClipboard(DocumentChangeStatus& status, DocumentView*
 IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance) : 
    SDIWindow(title), 
    fileDialog(instance,
-      this, Dialog::SourceFilter, 
+      this, FileDialog::SourceFilter, 
       OPEN_FILE_CAPTION, 
       *model->projectModel.paths.lastPath),
    projectDialog(instance,
-      this, Dialog::ProjectFilter,
+      this, FileDialog::ProjectFilter,
       OPEN_PROJECT_CAPTION,
       *model->projectModel.paths.lastPath),
+   messageDialog(this),
+   projectSettingsDialog(instance, this, &model->projectModel),
    clipboard(this)
 {
    this->_instance = instance;
@@ -135,6 +137,11 @@ void IDEWindow :: newFile()
    _controller->doNewFile(_model);
 }
 
+void IDEWindow :: newProject()
+{
+   _controller->doNewProject(fileDialog, messageDialog, projectSettingsDialog, _model);
+}
+
 void IDEWindow :: openFile()
 {
    _controller->doOpenFile(fileDialog, _model);
@@ -147,29 +154,29 @@ void IDEWindow :: saveFile()
 
 void IDEWindow :: closeFile()
 {
-   _controller->doCloseFile(fileDialog, _model);
+   _controller->doCloseFile(fileDialog, messageDialog, _model);
 }
 
 void IDEWindow :: closeAll()
 {
-   _controller->doCloseAll(fileDialog, _model);
+   _controller->doCloseAll(fileDialog, messageDialog, _model);
 }
 
 void IDEWindow :: openProject()
 {
-   _controller->doOpenProject(projectDialog, _model);
+   _controller->doOpenProject(projectDialog, messageDialog, _model);
 }
 
 void IDEWindow :: closeProject()
 {
-   _controller->doCloseProject(projectDialog, _model);
+   _controller->doCloseProject(projectDialog, messageDialog, _model);
 
    //_controller->onLayoutchange();
 }
 
 void IDEWindow :: exit()
 {
-   if(_controller->doExit(fileDialog, _model)) {
+   if(_controller->doExit(fileDialog, messageDialog, _model)) {
       SDIWindow::exit();
    }
 }
@@ -460,6 +467,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_FILE_NEW:
          newFile();
          break;
+      case IDM_PROJECT_NEW:
+         newProject();
+         break;
       case IDM_FILE_OPEN:
          openFile();
          break;
@@ -511,6 +521,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_PROJECT_COMPILE:
          _controller->doCompileProject(projectDialog, _model);
+         break;
+      case IDM_PROJECT_OPTION:
+         _controller->doChangeProject(projectSettingsDialog, _model);
          break;
       case IDM_DEBUG_RUN:
          _controller->doDebugAction(_model, DebugAction::Run);
@@ -891,7 +904,7 @@ void IDEWindow :: onDebuggerUpdate(StatusNMHDR* rec)
 
 bool IDEWindow :: onClose()
 {
-   if (!_controller->onClose(fileDialog, _model))
+   if (!_controller->onClose(fileDialog, messageDialog, _model))
       return false;
 
    return WindowBase::onClose();

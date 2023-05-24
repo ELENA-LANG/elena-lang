@@ -27,11 +27,14 @@ namespace elena_lang
       PresenterBase*       _presenter;
       ReferenceMapper      _mapper;
       JITLinkerSettings    _settings;
+      SystemEnv*           _env;
 
       path_t               _rootPath;
 
       ProjectBase*         _configuration;
       JITCompilerBase*     _compiler;
+
+      IdentifierString     _preloadedSection;
 
       virtual addr_t resolveExternal(ustr_t dll, ustr_t function) = 0;
 
@@ -56,6 +59,8 @@ namespace elena_lang
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
 
+      void fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule);
+
    public:
       addr_t resolveExternal(ustr_t reference) override;
 
@@ -70,6 +75,11 @@ namespace elena_lang
       mssg_t loadMessage(ustr_t messageName);
 
       void Exit(int exitCode);
+
+      SystemEnv* getSystemEnv()
+      {
+         return _env;
+      }
 
       //void generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol);
       

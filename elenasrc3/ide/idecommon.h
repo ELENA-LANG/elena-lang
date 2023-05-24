@@ -10,7 +10,7 @@
 #include "elena.h"
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x0050
+#define IDE_REVISION_NUMBER                           0x0051
 
 namespace elena_lang
 {
@@ -18,6 +18,10 @@ namespace elena_lang
    constexpr auto NAMESPACE_CATEGORY                  = "configuration/project/namespace";
 
    constexpr auto TARGET_SUB_CATEGORY                 = "project/executable";
+   constexpr auto TEMPLATE_SUB_CATEGORY               = "project/template";
+   constexpr auto NAMESPACE_SUB_CATEGORY              = "project/namespace";
+   constexpr auto OPTIONS_SUB_CATEGORY                = "project/options";
+
    constexpr auto MODULE_CATEGORY                     = "files/*";
 
    constexpr auto WIN_X86_KEY                         = "Win_x86";

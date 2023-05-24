@@ -49,7 +49,6 @@ JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platf
 #endif
 
 static ELENAVMMachine* machine = nullptr;
-static SystemEnv* systemEnv = nullptr;
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
@@ -134,8 +133,6 @@ void printError(int errCode, ustr_t arg)
 
 EXTERN_DLL_EXPORT void InitializeVMSTLA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
 {
-   systemEnv = env;
-
 #ifdef DEBUG_OUTPUT
    printf("InitializeVMSTLA.6 %x,%x\n", (int)env, (int)criricalHandler);
 
@@ -179,17 +176,17 @@ EXTERN_DLL_EXPORT void ExitLA(int retVal)
 
 EXTERN_DLL_EXPORT void* CollectGCLA(void* roots, size_t size)
 {
-   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size, false);
+   return __routineProvider.GCRoutine(machine->getSystemEnv()->gc_table, (GCRoot*)roots, size, false);
 }
 
 EXTERN_DLL_EXPORT void* CollectPermGCLA(size_t size)
 {
-   return __routineProvider.GCRoutinePerm(systemEnv->gc_table, size);
+   return __routineProvider.GCRoutinePerm(machine->getSystemEnv()->gc_table, size);
 }
 
 EXTERN_DLL_EXPORT void* ForcedCollectGCLA(void* roots, int fullMode)
 {
-   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, INVALID_SIZE, fullMode != 0);
+   return __routineProvider.GCRoutine(machine->getSystemEnv()->gc_table, (GCRoot*)roots, INVALID_SIZE, fullMode != 0);
 }
 
 EXTERN_DLL_EXPORT size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)
