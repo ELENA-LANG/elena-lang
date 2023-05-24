@@ -137,7 +137,7 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
       case mskMDataRef32:
       case mskStatDataRef32:
          scope->helper->writeVAddress32(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
+            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
             *(pos_t*)((char*)code + disp), mask);
          break;
       case mskCodeRef64:
@@ -145,13 +145,13 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
       case mskMDataRef64:
       case mskStatDataRef64:
          scope->helper->writeVAddress64(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
+            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
             *(pos_t*)((char*)code + disp), mask);
          break;
       case mskCodeRelRef32:
       case mskDataRelRef32:
          scope->helper->writeRelAddress32(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
+            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
             *(pos_t*)((char*)code + disp), mask);
          break;
       case mskImportRef32:
@@ -188,12 +188,12 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
          break;
       case mskRDataRef32:
          scope->helper->writeVAddress32(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
+            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
             *(pos_t*)((char*)code + disp), mask);
          break;
       case mskRDataRef64:
          scope->helper->writeVAddress64(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
+            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
             *(pos_t*)((char*)code + disp), mask);
          break;
       case mskDataRef32Lo:
@@ -202,7 +202,7 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
       case mskCodeRef32Lo:
       case mskStatDataRef32Lo:
          scope->helper->writeVAddress32Lo(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
+            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
             0, mask);
          break;
       case mskDataRef32Hi:
@@ -211,21 +211,21 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
       case mskCodeRef32Hi:
       case mskStatDataRef32Hi:
          scope->helper->writeVAddress32Hi(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
+            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
             0, mask);
          break;
       case mskDataDisp32Hi:
       case mskRDataDisp32Hi:
       case mskCodeDisp32Hi:
          scope->helper->writeDisp32Hi(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
+            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
             *(pos_t*)((char*)code + disp), mask);
          break;
       case mskDataDisp32Lo:
       case mskRDataDisp32Lo:
       case mskCodeDisp32Lo:
          scope->helper->writeDisp32Lo(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef) & ~mskAnyRef,
+            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
             *(pos_t*)((char*)code + disp), mask);
          break;
       default:
@@ -2262,7 +2262,7 @@ void elena_lang::compileHookDPR(JITCompilerScope* scope)
 
 inline void loadPreloaded(JITCompilerScope& scope, LibraryLoaderBase* loader, size_t length,
    const ref_t* functions, JITCompiler::PreloadedMap& map, Map<ref_t, pos_t>& positions,
-   ref_t mask, bool declarating)
+   ref_t mask, bool declarating, bool virtualMode)
 {
    for (size_t i = 0; i < length; i++) {
       // due to optimization section must be ROModule::ROSection instance
@@ -2272,7 +2272,11 @@ inline void loadPreloaded(JITCompilerScope& scope, LibraryLoaderBase* loader, si
 
       if (declarating) {
          if (!map.exist(functions[i])) {
-            map.add(functions[i], (void*)scope.helper->calculateVAddress(*scope.codeWriter, mask));
+            if (virtualMode) {
+               map.add(functions[i], (void*)(scope.helper->calculateVAddress(*scope.codeWriter, mask) & ~mskAnyRef));
+            }
+            else map.add(functions[i], (void*)scope.helper->calculateVAddress(*scope.codeWriter, mask));
+            
             positions.add(functions[i], scope.codeWriter->position());
 
             allocateCode(&scope, info.section->get(0));
@@ -2282,13 +2286,6 @@ inline void loadPreloaded(JITCompilerScope& scope, LibraryLoaderBase* loader, si
          pos_t position = positions.get(functions[i]);
          if (position != INVALID_POS) {
             scope.codeWriter->seek(position);
-
-            if (functions[i] == SYSTEM_ENV) {
-               printf("SYSTEM_ENV %x\n", map.get(functions[i]));
-            }
-            if (functions[i] == CORE_GC_TABLE) {
-               printf("CORE_GC_TABLE %x\n", map.get(functions[i]));
-            }
 
             loadCode(&scope, info.section->get(0), info.module);
          }
@@ -2550,7 +2547,7 @@ void JITCompiler :: loadCoreRoutines(
    ReferenceHelperBase* helper,
    LabelHelperBase* lh,
    JITSettings settings,
-   Map<ref_t, pos_t>& positions, bool declareMode)
+   Map<ref_t, pos_t>& positions, bool declareMode, bool virtualMode)
 {
    // preload core data
    MemoryBase* code = imageProvider->getTextSection();
@@ -2565,7 +2562,7 @@ void JITCompiler :: loadCoreRoutines(
    JITCompilerScope dataScope(helper, this, lh, &dataWriter, nullptr, &_constants);
    loadPreloaded(
       dataScope, loader, coreVariableNumber, coreVariables,
-      _preloaded, positions, _constants.inlineMask, declareMode);
+      _preloaded, positions, _constants.inlineMask, declareMode, virtualMode);
 
    // fill the required number of thread-table slots
    if (settings.threadCounter > 1)
@@ -2574,7 +2571,7 @@ void JITCompiler :: loadCoreRoutines(
    // preload core constants
    JITCompilerScope rdataScope(helper, this, lh, &rdataWriter, nullptr, &_constants);
    loadPreloaded(rdataScope, loader, coreConstantNumber, coreConstants,
-      _preloaded, positions, _constants.inlineMask, declareMode);
+      _preloaded, positions, _constants.inlineMask, declareMode, virtualMode);
    // NOTE : SYSTEM_ENV table is tailed with GCMGSize,GCYGSize,GCPERMSize,threadCounter
    rdataWriter.writeDWord(settings.mgSize);
    rdataWriter.writeDWord(settings.ygSize);
@@ -2583,7 +2580,7 @@ void JITCompiler :: loadCoreRoutines(
    // preload core functions
    JITCompilerScope scope(helper, this, lh, &codeWriter, nullptr, &_constants);
    loadPreloaded(scope, loader, coreFunctionNumber, coreFunctions, _preloaded, positions,
-      _constants.inlineMask, declareMode);
+      _constants.inlineMask, declareMode, virtualMode);
 }
 
 void JITCompiler :: prepare(
@@ -2591,11 +2588,12 @@ void JITCompiler :: prepare(
    ImageProviderBase* imageProvider,
    ReferenceHelperBase* helper,
    LabelHelperBase* lh,
-   JITSettings settings)
+   JITSettings settings,
+   bool virtualMode)
 {
    Map<ref_t, pos_t> positions(INVALID_POS);
-   loadCoreRoutines(loader, imageProvider, helper, lh, settings, positions, true);
-   loadCoreRoutines(loader, imageProvider, helper, lh, settings, positions, false);
+   loadCoreRoutines(loader, imageProvider, helper, lh, settings, positions, true, virtualMode);
+   loadCoreRoutines(loader, imageProvider, helper, lh, settings, positions, false, virtualMode);
 
    // preload vm commands
    for (ref_t i = 0; i < NumberOfInlines; i++) {
@@ -2735,7 +2733,8 @@ void JITCompiler32 :: prepare(
    ImageProviderBase* imageProvider,
    ReferenceHelperBase* helper,
    LabelHelperBase* lh,
-   JITSettings settings)
+   JITSettings settings,
+   bool virtualMode)
 {
    _constants.indexPower = 2;
    _constants.dataOffset = 4;
@@ -2743,7 +2742,7 @@ void JITCompiler32 :: prepare(
    _constants.structMask = elStructMask32;
    _constants.vmtSize = elVMTClassOffset32;
 
-   JITCompiler::prepare(loader, imageProvider, helper, lh, settings);
+   JITCompiler::prepare(loader, imageProvider, helper, lh, settings, virtualMode);
 }
 
 pos_t JITCompiler32 :: getStaticCounter(MemoryBase* statSection, bool emptyNotAllowed)
@@ -3175,7 +3174,8 @@ void JITCompiler64 :: prepare(
    ImageProviderBase* imageProvider,
    ReferenceHelperBase* helper,
    LabelHelperBase* lh,
-   JITSettings settings)
+   JITSettings settings,
+   bool virtualMode)
 {
    _constants.indexPower = 3;
    _constants.dataOffset = 8;
@@ -3183,7 +3183,7 @@ void JITCompiler64 :: prepare(
    _constants.structMask = elStructMask64;
    _constants.vmtSize = elVMTClassOffset64;
 
-   JITCompiler::prepare(loader, imageProvider, helper, lh, settings);
+   JITCompiler::prepare(loader, imageProvider, helper, lh, settings, virtualMode);
 }
 
 void JITCompiler64 :: compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length)

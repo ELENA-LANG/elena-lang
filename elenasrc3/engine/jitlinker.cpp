@@ -1401,7 +1401,7 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
    resolveWeakAction(CONSTRUCTOR_MESSAGE);
 
    // prepare jit compiler
-   _compiler->prepare(_loader, _imageProvider, &helper, nullptr, _jitSettings);
+   _compiler->prepare(_loader, _imageProvider, &helper, nullptr, _jitSettings, _virtualMode);
 
    // fix not loaded references
    fixReferences(references, _imageProvider->getTextSection());

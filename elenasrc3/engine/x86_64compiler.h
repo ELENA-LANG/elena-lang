@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86-64
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef X86_64COMPILER_H
@@ -22,7 +22,8 @@ namespace elena_lang
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
-         JITSettings settings) override;
+         JITSettings settings,
+         bool virtualMode) override;
 
       friend void x86_64loadCallOp(JITCompilerScope* scope);
       friend void x86_64compileStackOp(JITCompilerScope* scope);

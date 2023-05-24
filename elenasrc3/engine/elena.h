@@ -516,7 +516,8 @@ namespace elena_lang
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
-         JITSettings settings) = 0;
+         JITSettings settings,
+         bool virtualMode) = 0;
 
       virtual bool isWithDebugInfo() = 0;
 

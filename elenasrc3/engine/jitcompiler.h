@@ -156,7 +156,7 @@ namespace elena_lang
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
          JITSettings settings,
-         Map<ref_t, pos_t>& positions, bool declareMode);
+         Map<ref_t, pos_t>& positions, bool declareMode, bool virtualMode);
 
    public:
       void allocateBody(MemoryWriter& writer, int size) override;
@@ -173,7 +173,8 @@ namespace elena_lang
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
-         JITSettings settings) override;
+         JITSettings settings,
+         bool virtualMode) override;
 
       void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
          MemoryWriter& codeWriter, LabelHelperBase* lh) override;
@@ -243,7 +244,8 @@ namespace elena_lang
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
-         JITSettings settings) override;
+         JITSettings settings,
+         bool virtualMode) override;
 
       int getExtMessageSize() override
       {
@@ -317,7 +319,8 @@ namespace elena_lang
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
-         JITSettings settings) override;
+         JITSettings settings,
+         bool virtualMode) override;
 
       void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) override;
 

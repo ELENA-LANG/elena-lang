@@ -8,8 +8,6 @@ In development:
     * new opcode : xload, lxload, xadddp - ppc64le, arm64
     * new opcode : xsetfp - ppc64le, arm64
 
-    * vm console : test helloworld sample
-
     * new opcode : jle, jg - ppc64le, arm64
     * new opcode : selult,jult - ppc64le, aarch64
     * new opcode : udivdpn - ppc64le, aarch64

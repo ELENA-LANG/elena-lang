@@ -196,8 +196,6 @@ void ELENAVMMachine :: fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* du
          }
       });
 
-   _mapper.clearLazyReferences();
-
    for (auto it = symbolList.start(); !it.eof(); ++it) {
       auto info = *it;
       ustr_t symbolName = info.module->resolveReference(info.reference);
