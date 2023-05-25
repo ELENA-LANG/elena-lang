@@ -8869,6 +8869,11 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
       if (!hasToBePresaved(retVal)) {
          writeObjectInfo(writer, scope, retVal);
       }
+      else if (retVal.kind == ObjectKind::Symbol) {
+         writeObjectInfo(writer, scope, retVal);
+
+         retVal = { ObjectKind::Object, retVal.typeInfo, 0 };
+      }
 
       outputRef = retrieveStrongType(scope, retVal);
 
