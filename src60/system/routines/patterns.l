@@ -1,5 +1,7 @@
 import system;
 
+idleFunc1 = (x){};
+
 // --- Selecting ---
 
 public class Selector : Enumerator
@@ -152,4 +154,37 @@ public class RangeEnumerator : Enumerator
     }
     
     enumerable() = _variable;
+}
+
+// --- ZipEnumerator ---
+
+public class ZipEnumerator : Enumerator
+{
+   Enumerator _enumerator1;
+   Enumerator _enumerator2;
+    
+   Func2      _zipper;
+    
+   constructor new(Func2 fn, Enumerator enum1, Enumerator enum2)
+   {
+      _zipper := fn;
+        
+      _enumerator1 := enum1;
+      _enumerator2 := enum2;
+   }
+    
+   constructor new(ExtensionMessage ext, Enumerator enum1, Enumerator enum2)
+      <= new((n,m => ext(n,m)), enum1, enum2);
+    
+   get Value() = _zipper(_enumerator1.Value, _enumerator2.Value);
+    
+   bool next() = _enumerator1.next() && _enumerator2.next();
+    
+   reset()
+   {
+      _enumerator1.reset();
+      _enumerator2.reset();
+   }
+
+   enumerable() => _enumerator1;
 }

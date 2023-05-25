@@ -147,6 +147,7 @@ Backlog:
     * lazy expressions, put it in the first page as a feature
 
     --- elena redux ---
+    * debugger info : save the path relative to the src60 path?
     * ide : brackets highlight
     * ide : auto indent
     * ide : highlight syntax

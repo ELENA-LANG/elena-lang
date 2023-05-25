@@ -2,14 +2,9 @@ import extensions;
 import extensions'text;
 import system'routines;
 
-const string AllowedCharacters = " ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-rnd = randomGenerator;
-
-randomChar 
-    = AllowedCharacters[rnd.nextInt(AllowedCharacters.Length)];
-
 public program()
 {
-   var s := 0.repeatTill("abc".Length).selectBy:(x => randomChar).summarize(new StringWriter());
+   var variants := new string[]{"abc","dfge","ab"}; 
+
+   var o := variants.sort:(a,b => a.Length > b.Length );
 }

@@ -151,6 +151,12 @@ public extension enumerableOp
 
    repeatTill(n)
       = RangeEnumerator.new(self, n - 1, 1);
+
+   zipBy(enumerable, zipper)
+      = ZipEnumerator.new(zipper, cast Enumerator(self.enumerator()), cast Enumerator(enumerable.enumerator()));
+
+   zipForEach(enumerable, func2)
+      = self.zipBy(enumerable, func2).forEach:idleFunc1;
 }
 
 // --- indexableOp ---

@@ -296,7 +296,10 @@ void ProjectController :: runToCursor(ProjectModel& model, SourceViewModel& sour
       NamespaceString ns;
       currentPath = retrieveSourceName(&model, currentPath, ns);
 
-      IdentifierString pathStr(currentSource + currentSource.find(':') + 1);
+      // !! temporal solution : skip the project folder
+      size_t rootNsLen = (*ns).find('\'');
+
+      IdentifierString pathStr(currentPath + rootNsLen + 1);
       _debugController.runToCursor(*ns, *pathStr, currentDoc->getCaret().y);
    }
 }

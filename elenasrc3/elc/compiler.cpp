@@ -6665,7 +6665,8 @@ void Compiler :: addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKe
    }
 }
 
-ObjectInfo Compiler :: compileNewArrayOp(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo source, ref_t targetRef, ArgumentsInfo& arguments)
+ObjectInfo Compiler :: compileNewArrayOp(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
+   ObjectInfo source, ref_t targetRef, ArgumentsInfo& arguments)
 {
    ref_t sourceRef = retrieveStrongType(scope, source);
 
@@ -6711,7 +6712,7 @@ ObjectInfo Compiler :: compileNewArrayOp(BuildTreeWriter& writer, ExprScope& sco
       return { ObjectKind::Object, source.typeInfo, 0 };
    }
 
-   assert(false);
+   scope.raiseError(errInvalidOperation, node);
 
    return {}; // !! temporal
 }
@@ -6907,7 +6908,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          if (dummy)
             scope.raiseError(errInvalidOperation, current);
 
-         retVal = compileNewArrayOp(writer, scope, source, expectedRef, arguments);
+         retVal = compileNewArrayOp(writer, scope, node, source, expectedRef, arguments);
          break;
       }
       case TargetMode::Creating:
