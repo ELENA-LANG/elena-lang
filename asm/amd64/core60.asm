@@ -1478,6 +1478,24 @@ inline %0ACh
 
 end
 
+// ; xfillr
+inline % 0ADh
+  mov  rax, __ptr64_1
+  mov  rdi, rbx
+  mov  rcx, [r10]
+  rep  stos
+
+end
+
+// ; xfillr i,0
+inline % 1ADh
+  xor  rax, rax
+  mov  rdi, rbx
+  mov  rcx, [r10]
+  rep  stos
+
+end
+
 // ; callr
 inline %0B0h
 
@@ -2695,6 +2713,26 @@ inline %0F7h
   mov  rax, __ptr64_2
   mov  [rbx - elSizeOffset], rcx
   mov  [rbx - elVMTOffset], rax
+
+end
+
+// ; fillir
+inline % 0F8h
+
+  mov  rax, __ptr64_2
+  mov  rdi, rbx
+  mov  ecx, __arg32_1
+  rep  stos
+
+end
+
+// ; fill i,0
+inline % 1F8h
+
+  xor  rax, rax
+  mov  rdi, rbx
+  mov  ecx, __arg32_1
+  rep  stos
 
 end
 

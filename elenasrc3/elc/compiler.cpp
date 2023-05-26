@@ -3678,11 +3678,16 @@ inline void createObject(BuildTreeWriter& writer, ClassInfo& info, ref_t referen
    if (test(info.header.flags, elStructureRole)) {
       writer.newNode(BuildKey::CreatingStruct, info.size);
    }
-   else writer.newNode(BuildKey::CreatingClass, info.fields.count());
+   else {
+      writer.newNode(BuildKey::CreatingClass, info.fields.count());
+   }
 
    writer.appendNode(BuildKey::Type, reference);
-
    writer.closeNode();
+
+   if (!test(info.header.flags, elStructureRole) && info.fields.count() != 0) {
+      writer.appendNode(BuildKey::FillOp, info.fields.count());
+   }
 }
 
 inline void copyObjectToAcc(BuildTreeWriter& writer, ClassInfo& info, int offset)
@@ -6715,6 +6720,11 @@ ObjectInfo Compiler :: compileNewArrayOp(BuildTreeWriter& writer, ExprScope& sco
 
       writer.closeNode();
 
+      // fill the array
+      if (!sizeInfo.size) {
+         writer.appendNode(BuildKey::FillOp);
+      }
+
       return { ObjectKind::Object, source.typeInfo, 0 };
    }
 
@@ -8277,6 +8287,12 @@ ObjectInfo Compiler :: compileNestedExpression(BuildTreeWriter& writer, InlineCl
       writer.newNode(BuildKey::CreatingClass, scope.info.fields.count());
       writer.appendNode(BuildKey::Type, nestedRef);
       writer.closeNode();
+
+      if (scope.outers.count() != scope.info.fields.count()) {
+         if (scope.info.fields.count() != 0) {
+            writer.appendNode(BuildKey::FillOp, scope.info.fields.count());
+         }
+      }
 
       // second pass : fill members
       int argIndex = 0;

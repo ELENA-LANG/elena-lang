@@ -136,6 +136,7 @@ namespace elena_lang
       LoadArgCount         = 0x006B, // argument contains the argument offset
       IncIndex             = 0x006C,
       FreeVarStack         = 0x006D,
+      FillOp               = 0x006E, // if the argument is 0 - the size is in sp[0]
 
       MaxOperationalKey    = 0x0070,
 

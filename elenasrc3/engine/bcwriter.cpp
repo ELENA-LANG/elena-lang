@@ -1371,6 +1371,14 @@ void newArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
    else assert(false);
 }
 
+void fillOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   if (node.arg.reference) {
+      tape.write(ByteCode::FillIR, node.arg.reference);
+   }
+   else tape.write(ByteCode::XFillR);
+}
+
 void refParamAssigning(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // store si:0
@@ -1534,7 +1542,7 @@ ByteCodeWriter::Saver commands[] =
    intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject, peekArgument,
 
    terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning, savingLInStack, uintCondOp,
-   uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack
+   uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

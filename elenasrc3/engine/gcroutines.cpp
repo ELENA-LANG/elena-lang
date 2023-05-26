@@ -101,6 +101,10 @@ inline void YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*& shado
    uintptr_t  new_ptr = 0;
    GCRoot     current;
 
+   if (size == 0x28) {
+      size = 0x28;
+   }
+
    //printf("YGCollect %llx,%llx\n", (long long)ptr, (long long)size);
 
    // ; collect roots

@@ -119,6 +119,7 @@ namespace elena_lang
       LSaveDP        = 0xAA,
       LSaveSI        = 0xAB,
       LLoadDP        = 0xAC,
+      XFillR         = 0xAD,
 
       CallR          = 0xB0,
       CallVI         = 0xB1,
@@ -187,6 +188,7 @@ namespace elena_lang
       NewNR          = 0xF5,
       XMovSISI       = 0xF6,
       CreateNR       = 0xF7,
+      FillIR         = 0xF8,
       XStoreFIR      = 0xF9,
       XDispatchMR    = 0xFA,
       DispatchMR     = 0xFB,
@@ -370,6 +372,7 @@ namespace elena_lang
          case ByteCode::StoreR:
          case ByteCode::CreateR:
          case ByteCode::XCreateR:
+         case ByteCode::XFillR:
             return true;
          default:
             return false;
@@ -395,6 +398,7 @@ namespace elena_lang
             case ByteCode::SelULtRR:
             case ByteCode::XHookDPR:
             case ByteCode::CreateNR:
+            case ByteCode::FillIR:
                return true;
             default:
                return false;

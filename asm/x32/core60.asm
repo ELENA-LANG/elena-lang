@@ -1415,6 +1415,24 @@ inline %0ACh
 
 end
 
+// ; xfillr
+inline % 0ADh
+  mov  eax, __ptr32_1
+  mov  edi, ebx
+  mov  ecx, [esi]
+  rep  stos
+
+end
+
+// ; xfillr i,0
+inline % 1ADh
+  xor  eax, eax
+  mov  edi, ebx
+  mov  ecx, [esi]
+  rep  stos
+
+end
+
 // ; callr
 inline %0B0h
 
@@ -2751,6 +2769,26 @@ inline %0F7h
   or   ecx, struct_mask
   mov  [ebx - elVMTOffset], eax
   mov  [ebx - elSizeOffset], ecx
+
+end
+
+// ; fillir
+inline % 0F8h
+
+  mov  eax, __ptr32_2
+  mov  edi, ebx
+  mov  ecx, __arg32_1
+  rep  stos
+
+end
+
+// ; fill i,0
+inline % 1F8h
+
+  xor  eax, eax
+  mov  edi, ebx
+  mov  ecx, __arg32_1
+  rep  stos
 
 end
 
