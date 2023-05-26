@@ -5,6 +5,10 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
+    * ecv : show if the method is abstract
+    * make abstract the byref handler
+    * fix implementation of abstract method with the stack allocated returning value
+
     * 3 roseta codes samples
 
     * new opcode : jle, jg - ppc64le, arm64

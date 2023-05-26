@@ -18,6 +18,7 @@ public program()
    singleDispatchTest();
    variadicTest();
    dynamicLoadTests();
+   interfaceTests();
 
    console.writeLine("--- Passed ---")
 }

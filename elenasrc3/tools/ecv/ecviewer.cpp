@@ -548,6 +548,14 @@ void ByteCodeViewer :: printMethodInfo(MethodInfo& info)
 {
    IdentifierString flags("          @hints:");
    flags.appendHex(info.hints);
+   if (test(info.hints, (ref_t)MethodHint::Abstract))
+      flags.append(" @Abstract");
+   if (test(info.hints, (ref_t)MethodHint::Constant))
+      flags.append(" @Constant");
+   if (test(info.hints, (ref_t)MethodHint::Conversion))
+      flags.append(" @Conversion");
+   if (test(info.hints, (ref_t)MethodHint::Extension))
+      flags.append(" @Extension");
 
    printLine(*flags);
 }
@@ -796,7 +804,11 @@ void ByteCodeViewer::printMethod(ustr_t name, bool fullInfo)
          if (_showMethodInfo)
             printMethodInfo(methodInfo);
 
-         printByteCodes(code, entry.codeOffset, 4, _pageSize);
+         if (test(methodInfo.hints, (ref_t)MethodHint::Abstract)) {
+            printLine("  <abstract>");
+         }
+         else printByteCodes(code, entry.codeOffset, 4, _pageSize);
+
          printLine("@end");
 
          break;

@@ -318,7 +318,8 @@ namespace elena_lang
       {
          None = 0,
          Multimethod,
-         EmbeddableWrapper
+         EmbeddableWrapper,
+         AbstractEmbeddableWrapper
       };
 
       typedef Pair<mssg_t, VirtualType, 0, VirtualType::None>  VirtualMethod;
@@ -1323,7 +1324,7 @@ namespace elena_lang
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
          ClassInfo& info, mssg_t multiMethod);
       void injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
-         ref_t targetRef, ClassInfo& info, mssg_t multiMethod);
+         ref_t targetRef, ClassInfo& info, mssg_t multiMethod, bool abstractOne);
 
       void injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
          ref_t targetRef, ClassInfo& info, VirtualMethodList& implicitMultimethods);
