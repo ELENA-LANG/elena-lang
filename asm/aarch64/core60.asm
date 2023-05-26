@@ -2256,6 +2256,18 @@ inline %4DDh
 
 end
 
+// ; selultrr
+inline %0DFh
+
+  movz    x11,  __ptr32lo_1
+  movz    x12,  __ptr32lo_2
+  movk    x11,  __ptr32hi_1, lsl #16
+  movk    x12,  __ptr32hi_2, lsl #16
+
+  csel    x10, x11, x12, cc
+
+end
+
 // ; copydpn
 inline %0E0h
 

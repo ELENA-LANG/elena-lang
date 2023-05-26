@@ -1337,6 +1337,23 @@ void PPC64Assembler :: compileISELLT(ScriptToken& tokenInfo, MemoryWriter& write
 
 }
 
+void PPC64Assembler :: compileISELSO(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand ry = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand rz = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (!compileISEL(rx, ry, rz, 3, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+
+}
+
 void PPC64Assembler :: compileLIS(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    PPCOperand rs = readRegister(tokenInfo, ASM_INVALID_SOURCE);
@@ -1922,6 +1939,9 @@ bool PPC64Assembler :: compileIOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    }
    else if (tokenInfo.compare("isellt")) {
       compileISELLT(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("iselso")) {
+      compileISELSO(tokenInfo, writer);
    }
    else return false;
 

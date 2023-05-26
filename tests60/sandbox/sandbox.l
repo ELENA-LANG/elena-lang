@@ -1,38 +1,76 @@
-//import extensions;
-//import extensions'text;
-//import system'routines;
+import system'routines;
+import extensions;
+import extensions'text;
 
-interface I
+const string Target = "ME";
+const string AllowedCharacters = " ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+const int C = /*100*/10;
+const real P = 0.05r;
+
+rnd = randomGenerator;
+
+randomChar 
+    = AllowedCharacters[rnd.nextInt(AllowedCharacters.Length)];
+
+extension evoHelper
 {
-   abstract int Index
-   {
-      get();
-   }
+    randomString()
+        = 0.repeatTill(self).selectBy:(x => randomChar).summarize(new StringWriter());
+        
+    fitnessOf(s)
+        = self.zipBy(s, (a,b => a==b ? 1 : 0)).summarize(new Integer()).toInt();
+        
+    mutate(p)
+        = self.selectBy:(ch => rnd.nextReal() <= p ? randomChar : ch).summarize(new StringWriter());
 }
 
-class A
+class EvoAlgorithm : Enumerator
 {
-   get int Index()
-   {
-      ^ 2;
-   }
+    object _target;
+    object _current;
+    object _variantCount;
 
-   I cast() = new I { embeddable dispatch() => self; };
+    constructor new(s,count)
+    {
+        _target := s;
+        _variantCount := count.toInt();
+    }
+
+    get Value() = _current;
+
+    bool next()
+    {
+        if (nil == _current)
+            { _current := _target.Length.randomString(); ^ true };
+            
+        if (_target == _current)
+            { ^ false };
+            
+        auto variants := Array.allocate(_variantCount).populate:(x => _current.mutate:P );
+        
+        _current := variants.sort:(a,b => a.fitnessOf:Target > b.fitnessOf:Target ).at:0;
+        
+        ^ true
+    } 
+    
+    reset()
+    {
+        _current := nil
+    }
+    
+    enumerable() => _target;                          
 }
 
 public program()
 {
-   var a := new A();
-
-   I i := a;
-
-   int n := i.Index;
-
-//   var variants := new string[]{"abc","dfge","ab"}; 
-//
-//   Indexer i := variants.indexer();
-//
-//   int l := i.Length;
-//
-////   var o := variants.sort:(a,b => a.Length > b.Length );
+    var attempt := new Integer();
+    EvoAlgorithm.new(Target,C).forEach:(current)
+    {
+        console 
+            .printPaddingLeft(10,"#",attempt.append(1))
+            .printLine(" ",current," fitness: ",current.fitnessOf(Target))
+    };
+    
+    console.readChar()
 }

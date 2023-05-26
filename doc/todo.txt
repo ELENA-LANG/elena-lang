@@ -5,14 +5,11 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * ecv : show if the method is abstract
-    * make abstract the byref handler
-    * fix implementation of abstract method with the stack allocated returning value
+    * evolutions : fix GC error
+    * new opcode : fround - ppc64le, arm64
+    * 2 roseta codes samples
 
-    * 3 roseta codes samples
-
-    * new opcode : jle, jg - ppc64le, arm64
-    * new opcode : selult,jult - ppc64le, aarch64
+    * new opcode : fsqrt - ppc64le, arm64
 
     * 5 roseta codes samples
 
@@ -21,8 +18,6 @@ In development:
 
     * console & files samples
 
-    * new opcode : fround - ppc64le, arm64
-    * new opcode : fsqrt - ppc64le, arm64
     * new opcode : fexp, fln - ppc64le, arm64
     * new opcode : fsin, fcos, farctan, fpi - ppc64le, arm64
 

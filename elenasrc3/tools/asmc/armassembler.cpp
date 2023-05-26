@@ -625,6 +625,11 @@ JumpType Arm64Assembler :: readCond(ScriptToken& tokenInfo)
 
       return  JumpType::LT;
    }
+   else if (tokenInfo.compare("cc")) {
+      read(tokenInfo);
+
+      return  JumpType::CC;
+   }
    else throw SyntaxError(ASM_INVALID_TARGET, tokenInfo.lineInfo);
 }
 
