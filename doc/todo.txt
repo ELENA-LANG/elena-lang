@@ -5,10 +5,13 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * 5 roseta codes samples
-
+    * 2 roseta codes samples
     * new opcode : fsqrt - ppc64le, arm64
+
+    * 2 roseta codes samples
     * new opcode : udivdpn - ppc64le, aarch64
+
+    * 2 roseta codes samples
     * new opcode : fabsdp - aarch64, ppc64le
 
     * console & files samples
