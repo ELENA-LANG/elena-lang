@@ -1250,6 +1250,16 @@ bool Arm64Assembler :: compileSDIV(ARMOperand rd, ARMOperand rn, ARMOperand rm, 
    return true;
 }
 
+bool Arm64Assembler :: compileUDIV(ARMOperand rd, ARMOperand rn, ARMOperand rm, MemoryWriter& writer)
+{
+   if (rm.isXR() && rn.isXR() && rd.isXR()) {
+      writer.writeDWord(ARMHelper::makeOpcode(1, 0, 0, 0xD6, rm.type, 1, 0, rn.type, rd.type));
+   }
+   else return false;
+
+   return true;
+}
+
 bool Arm64Assembler :: compileSTP(ARMOperand t1, ARMOperand t2, ARMOperand ptr, MemoryWriter& writer)
 {
    if (t1.isXR() && t2.isXR() && ptr.isPreindex()) {
@@ -2176,6 +2186,24 @@ void Arm64Assembler :: compileSDIV(ScriptToken& tokenInfo, MemoryWriter& writer)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void Arm64Assembler :: compileUDIV(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rm = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   bool isValid = compileUDIV(rd, rn, rm, writer);
+
+   if (!isValid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void Arm64Assembler :: compileSTP(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    ARMOperand t1 = readOperand(tokenInfo, ASM_INVALID_SOURCE);
@@ -2632,6 +2660,16 @@ bool Arm64Assembler :: compileTOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
 {
    if (tokenInfo.compare("tst")) {
       compileTST(tokenInfo, writer);
+   }
+   else return false;
+
+   return true;
+}
+
+bool Arm64Assembler :: compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   if (tokenInfo.compare("udiv")) {
+      compileUDIV(tokenInfo, writer);
    }
    else return false;
 

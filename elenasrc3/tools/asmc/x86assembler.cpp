@@ -2666,6 +2666,11 @@ bool X86Assembler :: compileTOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    return true;
 }
 
+bool X86Assembler :: compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   return false;
+}
+
 bool X86Assembler :: compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    if (tokenInfo.compare("xor")) {

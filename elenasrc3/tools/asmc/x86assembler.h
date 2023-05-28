@@ -212,6 +212,7 @@ namespace elena_lang
       bool compileROpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileTOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
 
       void compileProcedure(ScriptToken& tokenInfo) override;

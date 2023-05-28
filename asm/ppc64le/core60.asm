@@ -1967,6 +1967,20 @@ inline %0D3h
 
 end
 
+// ; udivndp
+inline %0D4h
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  divwu   r18, r18, r17  
+
+  stw     r18, 0(r19)
+
+end
+
 // ; ianddpn
 inline %0D8h
 

@@ -1943,6 +1943,20 @@ inline %0D3h
 
 end
 
+// ; udivndp
+inline %0D4h
+
+  add     x19, x29, __arg12_1
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x19]
+
+  udiv    x18, x18, x17    // ; sp[0] / temp
+
+  str     w18, [x19]
+
+end
+
 // ; ianddpn
 inline %0D8h
 

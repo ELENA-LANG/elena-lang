@@ -86,6 +86,7 @@ namespace elena_lang
       void compileFCTIW(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileDIVD(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileDIVW(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileDIVWU(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileEXTRDI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileEXTSW(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFADD(ScriptToken& tokenInfo, MemoryWriter& writer);
@@ -156,6 +157,7 @@ namespace elena_lang
       bool compileROpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileTOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
 
       void compileProcedure(ScriptToken& tokenInfo) override;

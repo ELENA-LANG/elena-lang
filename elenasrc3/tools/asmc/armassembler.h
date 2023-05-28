@@ -98,6 +98,7 @@ namespace elena_lang
       virtual bool compileSUBSShifted(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rt, 
          int shift, int ampount, MemoryWriter& writer);
       virtual bool compileUBFM(ARMOperand rd, ARMOperand rn, ARMOperand immr, ARMOperand imms, MemoryWriter& writer);
+      virtual bool compileUDIV(ARMOperand rd, ARMOperand rn, ARMOperand rm, MemoryWriter& writer);
 
       void compileADD(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileADRP(ScriptToken& tokenInfo, MemoryWriter& writer);
@@ -149,6 +150,7 @@ namespace elena_lang
       void compileSXTH(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileSXTW(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileTST(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileUDIV(ScriptToken& tokenInfo, MemoryWriter& writer);
 
       bool compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;
@@ -166,6 +168,7 @@ namespace elena_lang
       bool compileROpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileTOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
 
       void compileDBField(ScriptToken& tokenInfo, MemoryWriter& writer) override;

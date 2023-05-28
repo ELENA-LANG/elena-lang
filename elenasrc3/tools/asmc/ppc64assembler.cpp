@@ -1108,6 +1108,25 @@ void PPC64Assembler :: compileDIVW(ScriptToken& tokenInfo, MemoryWriter& writer)
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void PPC64Assembler :: compileDIVWU(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand ry = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand rz = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (rx.isGPR() && ry.isGPR() && rz.isGPR()) {
+      writer.writeDWord(PPCHelper::makeXOCommand(31, rx.type, ry.type,
+         rz.type, 0, 459, 0));
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void PPC64Assembler :: compileFADD(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    PPCOperand rt = readRegister(tokenInfo, ASM_INVALID_SOURCE);
@@ -1911,6 +1930,9 @@ bool PPC64Assembler :: compileDOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    else if (tokenInfo.compare("divw")) {
       compileDIVW(tokenInfo, writer);
    }
+   else if (tokenInfo.compare("divwu")) {
+      compileDIVWU(tokenInfo, writer);
+   }
    else return false;
 
    return true;
@@ -2132,6 +2154,11 @@ bool PPC64Assembler :: compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
 }
 
 bool PPC64Assembler :: compileTOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   return false;
+}
+
+bool PPC64Assembler::compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    return false;
 }
