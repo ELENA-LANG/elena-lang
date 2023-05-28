@@ -564,7 +564,7 @@ L5_EXPRESSION ::=
 		| eps ^OBJECT }
 	| reference ^OBJECT 
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L4_OP*
-	| "(" SUB_EXPRESSION
+	| "(" SUB_EXPRESSION L3_OP* L4_OP*
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
 	| "!" L5_EXPRESSION ^NOT_OPERATION
 	| "~" SINGLE_EXPRESSION ^BNOT_OPERATION
