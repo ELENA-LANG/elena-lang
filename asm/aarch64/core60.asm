@@ -1307,6 +1307,15 @@ inline %59Eh
   add     x10, x10, x14
 
 end 
+// ; frounddp
+inline %9Fh
+
+  add     x19, x29, __arg12_1
+  ldr     d18, [x0]
+  frintn  d18, d18
+  str     d18, [x19]
+
+end
 
 // ; saveddp
 inline %0A0h

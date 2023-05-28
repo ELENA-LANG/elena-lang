@@ -980,6 +980,20 @@ void PPC64Assembler :: compileFRIZ(ScriptToken& tokenInfo, MemoryWriter& writer)
    }
 }
 
+void PPC64Assembler :: compileFRIN(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand frt = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand frb = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (frt.isFPR() && frb.isFPR()) {
+      writer.writeDWord(PPCHelper::makeXCommand(63, frt.type,
+         frb.type, 392, 0));
+   }
+}
+
 void PPC64Assembler :: compileCMP(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    PPCOperand ra = readRegister(tokenInfo, ASM_INVALID_SOURCE);
@@ -1920,6 +1934,9 @@ bool PPC64Assembler::compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    }
    else if (tokenInfo.compare("fmul")) {
       compileFMUL(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("frin")) {
+      compileFRIN(tokenInfo, writer);
    }
    else if (tokenInfo.compare("friz")) {
       compileFRIZ(tokenInfo, writer);

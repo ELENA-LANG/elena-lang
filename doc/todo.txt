@@ -5,8 +5,6 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * new opcode : fround - ppc64le, arm64
-
     * 5 roseta codes samples
 
     * new opcode : fsqrt - ppc64le, arm64

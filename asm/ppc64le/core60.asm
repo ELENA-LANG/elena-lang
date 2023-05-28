@@ -1391,6 +1391,17 @@ inline %09Eh
 
 end 
 
+// ; frounddp
+inline %09Fh
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r3)
+  frin    f17, f17
+  stfd    f17, 0(r19)
+
+end
+
 // ; savedp
 inline %0A0h
 

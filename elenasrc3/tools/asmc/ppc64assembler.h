@@ -94,6 +94,7 @@ namespace elena_lang
       void compileFCMPU(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFDIV(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFMUL(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFRIN(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFRIZ(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileISELEQ(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileISELLT(ScriptToken& tokenInfo, MemoryWriter& writer);
