@@ -2864,11 +2864,11 @@ end
 // ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 5FAh
 
+  mov  [esp+4], esi                      // ; saving arg0
   lea  eax, [esp + __n_2]
   xor  ecx, ecx
   push ecx
   push ecx
-  mov  [esp+4], esi                      // ; saving arg0
   push ebx
   mov  ebx, eax 
 
@@ -3007,11 +3007,11 @@ end
 // ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 5FBh
 
+  mov  [esp+4], esi                      // ; saving arg0
   xor  ecx, ecx
   lea  eax, [esp + __n_2]
   push ecx
   push ecx
-  mov  [esp+4], esi                      // ; saving arg0
   push ebx
   mov  ebx, eax 
 

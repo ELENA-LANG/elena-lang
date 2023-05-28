@@ -194,6 +194,20 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
          this index := -1
       }
    };
+
+   T[] cast()
+   {
+      int len := self.Length;
+        
+      T[] copy := new T[](len);
+      for(int i := 0, i < len, i += 1)
+      {
+         copy[i] := array[i]
+      };
+        
+      ^ copy
+   }
+
 }
 
 // --- String ---

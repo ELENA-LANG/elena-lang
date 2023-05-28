@@ -5,17 +5,13 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * nextInt should return the zero
-
-    * evolutions
+    * 1 roseta codes samples
 
     * new opcode : fround - ppc64le, arm64
-    * 2 roseta codes samples
-
-    * new opcode : fsqrt - ppc64le, arm64
 
     * 5 roseta codes samples
 
+    * new opcode : fsqrt - ppc64le, arm64
     * new opcode : udivdpn - ppc64le, aarch64
     * new opcode : fabsdp - aarch64, ppc64le
 
@@ -151,6 +147,7 @@ Backlog:
     * lazy expressions, put it in the first page as a feature
 
     --- elena redux ---
+    * resolve variadic operation directly if possible
     * fillir - optimization for 1,2,3,4
     * gc fune-tuning, promote the part of YG to MG if it survive several collecting cycles
     * debugger info : save the path relative to the src60 path?

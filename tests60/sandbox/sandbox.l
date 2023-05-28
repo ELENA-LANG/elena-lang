@@ -1,76 +1,108 @@
 import system'routines;
 import extensions;
-import extensions'text;
+import extensions'routines;
 
-const string Target = "METHINKS IT";
-const string AllowedCharacters = " ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+// --- Joinable --
 
-const int C = 100;
-const real P = 0.05r;
+joinable(former,later) = (former[former.Length - 1] == later[0]);
 
-rnd = randomGenerator;
-
-randomChar 
-    = AllowedCharacters[rnd.nextInt(AllowedCharacters.Length)];
-
-extension evoHelper
+dispatcher = new
 {
-    randomString()
-        = 0.repeatTill(self).selectBy:(x => randomChar).summarize(new StringWriter());
-        
-    fitnessOf(s)
-        = self.zipBy(s, (a,b => a==b ? 1 : 0)).summarize(new Integer()).toInt();
-        
-    mutate(p)
-        = self.selectBy:(ch => rnd.nextReal() <= p ? randomChar : ch).summarize(new StringWriter());
+    eval(object a, Func2 f)
+    {
+        ^ f(a[0],a[1])
+    }
+
+    eval(object a, Func3 f)
+    {
+        ^ f(a[0], a[1],a[2])
+    }
+    
+    eval(object a, Func4 f)
+    {
+        ^ f(a[0],a[1],a[2],a[3])
+    }
+    
+    eval(object a, Func5 f)
+    {
+        ^ f(a[0],a[1],a[2],a[3],a[4])
+    }
+};
+
+// --- AmbValueCollection ---
+
+class AmbValueCollection
+{
+    object _combinator;
+    
+    constructor new(params object[] args)
+    {
+        _combinator := SequentialEnumerator.new(params args)
+    }
+
+    seek(cond)
+    {
+        _combinator.reset();
+
+        _combinator.seekEach:(v => dispatcher.eval(v,cond))
+    }
+    
+    do(f)
+    {
+        var result := *_combinator;
+        if (nil != result)
+        {
+            dispatcher.eval(result,f) 
+        }
+        else
+        {
+            InvalidArgumentException.raise()
+        }
+    }
 }
 
-class EvoAlgorithm : Enumerator
+// --- ambOperator ---
+
+singleton ambOperator
 {
-    object _target;
-    object _current;
-    object _variantCount;
+    for(params object[] args)
+        = AmbValueCollection.new(params args);
+}
 
-    constructor new(s,count)
+// --- Program ---
+
+public program1()
+{
+    try
     {
-        _target := s;
-        _variantCount := count.toInt();
+        ambOperator.for(new object[]{1,2,4}, new object[]{4,5,6}).seek:(a,b => a * b == 8).do:
+            (a,b){ console.printLine(a," * ",b," = 8") };
     }
-
-    get Value() = _current;
-
-    bool next()
+    catch(Exception e)
     {
-        if (nil == _current)
-            { _current := _target.Length.randomString(); ^ true };
-            
-        if (_target == _current)
-            { ^ false };
-            
-        auto variants := Array.allocate(_variantCount).populate:(x => _current.mutate:P );
+        console.printLine:"AMB is angry"
+    };
         
-        _current := variants.sort:(a,b => a.fitnessOf:Target > b.fitnessOf:Target ).at:0;
-        
-        ^ true
-    } 
-    
-    reset()
-    {
-        _current := nil
-    }
-    
-    enumerable() => _target;                          
+    console.readChar()
 }
 
 public program()
 {
-    var attempt := new Integer();
-    EvoAlgorithm.new(Target,C).forEach:(current)
+    try
     {
-        console 
-            .printPaddingLeft(10,"#",attempt.append(1))
-            .printLine(" ",current," fitness: ",current.fitnessOf(Target))
+        ambOperator 
+            .for(
+                new object[]{"the","that","a"},
+                new object[]{"frog", "elephant", "thing"},
+                new object[]{"walked", "treaded", "grows"}, 
+                new object[]{"slowly", "quickly"})
+            .seek:(a,b,c,d => joinable(a,b) && joinable(b,c) && joinable(c,d) )
+            .do:(a,b,c,d) { console.printLine(a," ",b," ",c," ",d) }
+    }
+    catch(Exception e)
+    {
+        console.printLine:"AMB is angry"
     };
-    
+        
     console.readChar()
 }
