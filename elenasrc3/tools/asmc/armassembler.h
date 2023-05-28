@@ -61,6 +61,7 @@ namespace elena_lang
       virtual bool compileFRINTX(ARMOperand rd, ARMOperand rn, MemoryWriter& writer);
       virtual bool compileFRINT32Z(ARMOperand rd, ARMOperand rn, MemoryWriter& writer);
       virtual bool compileFRINT64Z(ARMOperand rd, ARMOperand rn, MemoryWriter& writer);
+      virtual bool compileFSQRT(ARMOperand rd, ARMOperand rn, MemoryWriter& writer);
       virtual bool compileFSUB(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm, MemoryWriter& writer);
       virtual bool compileLDP(ARMOperand rt, ARMOperand rx, ARMOperand n1, ARMOperand n2, MemoryWriter& writer);
       virtual bool compileLDR(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer);
@@ -120,6 +121,7 @@ namespace elena_lang
       void compileFRINTX(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFRINT32Z(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFRINT64Z(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFSQRT(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFSUB(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLDP(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLDR(ScriptToken& tokenInfo, MemoryWriter& writer);

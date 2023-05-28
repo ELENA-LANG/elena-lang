@@ -876,6 +876,17 @@ inline %02Fh
 
 end
 
+// ; fsqrtdp
+inline %079h
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r3)
+  fsqrt   f17, f17
+  stfd    f17, 0(r19)
+
+end
+
 // ; setr
 inline %80h
 
