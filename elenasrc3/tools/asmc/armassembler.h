@@ -51,6 +51,7 @@ namespace elena_lang
       virtual bool compileCSINC(ARMOperand rd, ARMOperand rn, ARMOperand rm, JumpType cond, MemoryWriter& writer);
       virtual bool compileEORShifted(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rx, ARMOperand ry,
          int shift, int ampount, MemoryWriter& writer);
+      virtual bool compileFABS(ARMOperand rd, ARMOperand rn, MemoryWriter& writer);
       virtual bool compileFADD(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm, MemoryWriter& writer);
       virtual bool compileFCMP(ARMOperand rd, ARMOperand rn, MemoryWriter& writer);
       virtual bool compileFDIV(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm, MemoryWriter& writer);
@@ -112,6 +113,7 @@ namespace elena_lang
       void compileCSINC(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMP(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileEOR(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFABS(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFADD(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFCMP(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFCVTZS(ScriptToken& tokenInfo, MemoryWriter& writer);

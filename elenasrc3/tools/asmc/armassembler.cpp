@@ -864,6 +864,17 @@ bool Arm64Assembler :: compileEORShifted(ScriptToken& tokenInfo, ARMOperand rd, 
    return true;
 }
 
+bool Arm64Assembler :: compileFABS(ARMOperand rd, ARMOperand rn, MemoryWriter& writer)
+{
+   if (rd.isDR() && rn.isDR()) {
+      writer.writeDWord(ARMHelper::makeRMode3Opcode(0, 0, 0x1E, 1, 1, 0, 1, 0x10,
+         rn.type, rd.type));
+   }
+   else return false;
+
+   return true;
+}
+
 bool Arm64Assembler::compileFADD(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm, 
    MemoryWriter& writer)
 {
@@ -1619,6 +1630,20 @@ void Arm64Assembler :: compileEOR(ScriptToken& tokenInfo, MemoryWriter& writer)
    isValid = compileEORShifted(tokenInfo, rd, rn, rn2, 0, 0, writer);
 
    if (!isValid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void Arm64Assembler :: compileFABS(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   bool valid = compileFABS(rd, rn, writer);
+
+   if (!valid)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
@@ -2483,7 +2508,10 @@ bool Arm64Assembler :: compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
 
 bool Arm64Assembler :: compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
-   if (tokenInfo.compare("fadd")) {
+   if (tokenInfo.compare("fabs")) {
+      compileFABS(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fadd")) {
       compileFADD(tokenInfo, writer);
    }
    else if (tokenInfo.compare("fcmp")) {

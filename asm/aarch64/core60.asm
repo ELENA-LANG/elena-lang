@@ -816,6 +816,16 @@ inline %02Fh
 
 end
 
+// ; fabsdp
+inline %78h
+
+  add     x19, x29, __arg12_1
+  ldr     d18, [x0]
+  fabs    d18, d18
+  str     d18, [x19]
+
+end
+
 // ; fsqrtdp
 inline %79h
 

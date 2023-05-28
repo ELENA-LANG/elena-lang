@@ -952,6 +952,20 @@ void PPC64Assembler :: compileEXTRDI(ScriptToken& tokenInfo, MemoryWriter& write
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void PPC64Assembler :: compileFABS(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand frt = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand frb = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (frt.isFPR() && frb.isFPR()) {
+      writer.writeDWord(PPCHelper::makeXCommand(63, frt.type,
+         frb.type, 264, 0));
+   }
+}
+
 void PPC64Assembler :: compileFCFID(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    PPCOperand frt = readRegister(tokenInfo, ASM_INVALID_SOURCE);
@@ -1953,7 +1967,10 @@ bool PPC64Assembler :: compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
 
 bool PPC64Assembler::compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
-   if (tokenInfo.compare("fadd")) {
+   if (tokenInfo.compare("fabs")) {
+      compileFABS(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fadd")) {
       compileFADD(tokenInfo, writer);
    }
    else if (tokenInfo.compare("fcfid")) {
