@@ -13,7 +13,19 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x0185
+   #define ELC_REVISION_NUMBER               0x0186
+
+#if defined _M_IX86 || _M_X64
+
+   #define ERROR_RET_CODE     -2
+   #define WARNING_RET_CODE   -1
+
+#elif defined __i386__ || __x86_64__ || __PPC64__ || __aarch64__
+
+   #define ERROR_RET_CODE     2
+   #define WARNING_RET_CODE   1
+
+#endif
 
    // --- Information messages ---
    constexpr auto ELC_GREETING               = "ELENA Command-line compiler %d.%d.%d (C)2005-2023 by Aleksey Rakov\n";

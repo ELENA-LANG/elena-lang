@@ -98,7 +98,7 @@ echo compiling lib60 files
 
  ../../bin/elena-cli ../../src60/system/system.project
  ret=$?
- if [ $ret -eq -2 ]
+ if [ $ret -eq 2 ]
  then
    echo "Failure" >&2
    exit 1
@@ -108,7 +108,7 @@ echo compiling lib60 files
 
  ../../bin/elena-cli ../../src60/extensions/extensions.project
  ret=$?
- if [ $ret -eq -2 ]
+ if [ $ret -eq 2 ]
  then
    echo "Failure" >&2
    exit 1
@@ -118,7 +118,7 @@ echo compiling lib60 files
 
  ../../bin/elena-cli ../../tests60/system_tests/system_tests.project
  ret=$?
- if [ $ret -eq -2 ]
+ if [ $ret -eq 2 ]
  then
    echo "Failure" >&2
    exit 1
@@ -128,7 +128,7 @@ echo compiling lib60 files
 
  ../../tests60/system_tests/system_tests
  ret=$?
- if [ $ret -eq -2 ]
+ if [ $ret -eq 2 ]
  then
    echo "Failure" >&2
    exit 1

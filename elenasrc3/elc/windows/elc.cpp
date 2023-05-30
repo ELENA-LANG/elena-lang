@@ -207,7 +207,7 @@ int main()
             PathString path(argv[i]);
 
             if (!project.loadProject(*path)) {
-               return -2;
+               return ERROR_RET_CODE;
             }
          }
          else {
@@ -231,6 +231,6 @@ int main()
    }
    catch (CLIException)
    {
-      return -2;
+      return ERROR_RET_CODE;
    }
 }

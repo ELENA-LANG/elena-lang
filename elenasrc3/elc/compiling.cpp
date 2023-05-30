@@ -606,7 +606,7 @@ int CompilingProcess :: build(Project& project,
             break;
       }
 
-      return _errorProcessor->hasWarnings() ? -1 : 0;
+      return _errorProcessor->hasWarnings() ? WARNING_RET_CODE : 0;
    }
    //catch (LinkerException e)
    //{
@@ -617,36 +617,36 @@ int CompilingProcess :: build(Project& project,
       _presenter->printPath(e.message, e.path, e.lineInfo.row, e.lineInfo.column, e.token);
 
       _presenter->print(ELC_UNSUCCESSFUL);
-      return -2;
+      return ERROR_RET_CODE;
    }
    catch (InvalidChar& e) {
       _presenter->print("(%d,%d): Invalid char %c\n", e.lineInfo.row, e.lineInfo.column, e.ch);
 
       _presenter->print(ELC_UNSUCCESSFUL);
-      return -2;
+      return ERROR_RET_CODE;
    }
    catch (JITUnresolvedException& ex)
    {
       _presenter->print(_presenter->getMessage(errUnresovableLink), ex.referenceInfo.referenceName);
 
       _presenter->print(ELC_UNSUCCESSFUL);
-      return -2;
+      return ERROR_RET_CODE;
    }
    catch (InternalError& ex) {
       _presenter->print(_presenter->getMessage(ex.messageCode), ex.arg);
 
       _presenter->print(ELC_UNSUCCESSFUL);
-      return -2;
+      return ERROR_RET_CODE;
    }
    catch(AbortError&) {
       _presenter->print(ELC_UNSUCCESSFUL);
-      return -2;
+      return ERROR_RET_CODE;
    }
    catch (...)
    {
       _presenter->print(_presenter->getMessage(errFatalError));
       _presenter->print(ELC_UNSUCCESSFUL);
 
-      return -2;
+      return ERROR_RET_CODE;
    }
 }
