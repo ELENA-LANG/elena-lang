@@ -7,5 +7,5 @@ public program()
 
    var r := k < l;
 
-   Assert.ifFalse(k > l);  // 2 > 10
+   Assert.ifTrue(r);  // 2 > 10
 }
