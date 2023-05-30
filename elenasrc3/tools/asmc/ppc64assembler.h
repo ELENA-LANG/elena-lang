@@ -80,6 +80,7 @@ namespace elena_lang
       void compileBNE(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileBLT(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileBGE(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
+      void compileBSO(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileCMP(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMPWI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMPDI(ScriptToken& tokenInfo, MemoryWriter& writer);
@@ -101,7 +102,6 @@ namespace elena_lang
       void compileFSQRT(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileISELEQ(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileISELLT(ScriptToken& tokenInfo, MemoryWriter& writer);
-      void compileISELSO(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileOR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileORI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLBZ(ScriptToken& tokenInfo, MemoryWriter& writer);

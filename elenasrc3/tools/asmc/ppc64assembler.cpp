@@ -888,13 +888,19 @@ void PPC64Assembler :: compileBGE(ScriptToken& tokenInfo, MemoryWriter& writer, 
    read(tokenInfo);
 }
 
+void PPC64Assembler :: compileBSO(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
+{
+   compileBCxx(tokenInfo, 12, 3, writer, labelScope);
+
+   read(tokenInfo);
+}
+
 void PPC64Assembler :: compileBLR(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    compileBCLR(20, 0, 0, writer);
 
    read(tokenInfo);
 }
-
 
 void PPC64Assembler::compileBCTR(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
@@ -1394,23 +1400,6 @@ void PPC64Assembler :: compileISELLT(ScriptToken& tokenInfo, MemoryWriter& write
    PPCOperand rz = readRegister(tokenInfo, ASM_INVALID_SOURCE);
 
    if (!compileISEL(rx, ry, rz, 0, writer))
-      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
-
-}
-
-void PPC64Assembler :: compileISELSO(ScriptToken& tokenInfo, MemoryWriter& writer)
-{
-   PPCOperand rx = readRegister(tokenInfo, ASM_INVALID_SOURCE);
-
-   checkComma(tokenInfo);
-
-   PPCOperand ry = readRegister(tokenInfo, ASM_INVALID_SOURCE);
-
-   checkComma(tokenInfo);
-
-   PPCOperand rz = readRegister(tokenInfo, ASM_INVALID_SOURCE);
-
-   if (!compileISEL(rx, ry, rz, 6, writer))
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
@@ -1914,6 +1903,9 @@ bool PPC64Assembler :: compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    else if (tokenInfo.compare("bge")) {
       compileBGE(tokenInfo, writer, labelScope);
    }
+   else if (tokenInfo.compare("bso")) {
+      compileBSO(tokenInfo, writer, labelScope);
+   }
    else return false;
 
    return true;
@@ -2011,9 +2003,6 @@ bool PPC64Assembler :: compileIOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    }
    else if (tokenInfo.compare("isellt")) {
       compileISELLT(tokenInfo, writer);
-   }
-   else if (tokenInfo.compare("iselso")) {
-      compileISELSO(tokenInfo, writer);
    }
    else return false;
 

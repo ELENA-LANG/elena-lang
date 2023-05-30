@@ -2402,7 +2402,10 @@ inline %0DFh
   addi    r17, r17, __xdisp32lo_1 
   addi    r18, r18, __xdisp32lo_2 
 
-  iselso  r15, r17, r18
+  mr      r15, r17
+  bso     labSkip
+  mr      r15, r18
+labSkip:
 
 end 
 
