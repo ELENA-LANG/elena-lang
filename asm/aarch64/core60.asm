@@ -2023,8 +2023,8 @@ inline %0D4h
 
   add     x19, x29, __arg12_1
 
-  ldrsw   x17, [x0]
-  ldrsw   x18, [x19]
+  ldr     w17, [x0]
+  ldr     w18, [x19]
 
   udiv    x18, x18, x17    // ; sp[0] / temp
 
