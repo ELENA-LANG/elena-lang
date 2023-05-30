@@ -1935,7 +1935,7 @@ bool PPC64Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    if (tokenInfo.compare("cmp")) {
       compileCMP(tokenInfo, writer);
    }
-   if (tokenInfo.compare("cmpl")) {
+   else if (tokenInfo.compare("cmpl")) {
       compileCMPL(tokenInfo, writer);
    }
    else if (tokenInfo.compare("cmpwi")) {
