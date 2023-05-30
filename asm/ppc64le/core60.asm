@@ -2402,7 +2402,7 @@ inline %0DFh
   addi    r17, r17, __xdisp32lo_1 
   addi    r18, r18, __xdisp32lo_2 
 
-  iselso  r15, r17, r18
+  isellt  r15, r17, r18
 
 end 
 
