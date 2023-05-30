@@ -1,3 +1,17 @@
+## ELENA 6.0.3b
+*30.05.2023*
+
+- ELENA
+  - #508 : multi-value
+  - fixing an issue with call stack information : incorrect / missing source code information
+  - fixing conversion uint to string and back
+  - fixing number of bugs
+  - migrating rest of API to ELENA 6.0
+  - fix implementation of abstract method with the stack allocated returning value
+
+- IDE
+  - ide : fixing go to source routine
+
 ## ELENA 6.0.2b
 *31.03.2023*
 

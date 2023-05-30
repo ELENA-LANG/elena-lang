@@ -73,6 +73,12 @@ bin\elena64-cli src60\extensions\extensions.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\ldoc system doc\api
+bin\ldoc system'routines doc\api
+bin\ldoc extensions doc\api
+bin\ldoc extensions'routines doc\api
+bin\ldoc extensions'scripting doc\api
+
 bin\elena-cli tests60\system_tests\system_tests.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError

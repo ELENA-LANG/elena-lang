@@ -3,7 +3,7 @@
 //
 //		This is a main file containing doc generator code
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "ldoc.h"
@@ -1677,7 +1677,7 @@ void DocGenerator :: generateExtendedDoc(TextFileWriter& summaryWriter, TextFile
    writeClassBodyFooter(bodyWriter, classInfo, *moduleName);
 }
 
-void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo)
+void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo, path_t output)
 {
    _presenter->print(LDOC_GENERATING, *moduleInfo->name);
 
@@ -1693,8 +1693,11 @@ void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo)
    PathString outPath;
    outPath.copy(*name);
 
-   PathString outSumPath;
-   outSumPath.copy(*summaryname);
+   PathString outSumPath(output);
+   if (!output.empty()) {
+      outSumPath.combine(*summaryname);
+   }
+   else outSumPath.copy(*summaryname);
 
    TextFileWriter bodyWriter(outPath.str(), FileEncoding::UTF8, false);
    TextFileWriter summaryWriter(outSumPath.str(), FileEncoding::UTF8, false);
@@ -1861,7 +1864,7 @@ bool DocGenerator :: loadByName(ustr_t name)
    else return false;
 }
 
-void DocGenerator :: generate()
+void DocGenerator :: generate(path_t output)
 {
    loadDescriptions();
 
@@ -1869,6 +1872,6 @@ void DocGenerator :: generate()
    loadNestedModules(modules);
 
    for (auto it = modules.start(); !it.eof(); ++it) {
-      generateModuleDoc(*it);
+      generateModuleDoc(*it, output);
    }
 }

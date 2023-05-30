@@ -63,8 +63,8 @@ int main()
    int argc;
    wchar_t** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
    
-   if (argc != 2) {
-      printf("ldoc {<module> | <path>}\n");
+   if (argc != 2 && argc != 3) {
+      printf("ldoc {<module> | <path>} <output>?\n");
       return -1;
    }
 
@@ -117,7 +117,12 @@ int main()
       }
    }
 
-   generator.generate();
+   path_t output;
+   if (argc == 3) {
+      output = argv[2];
+   }
+
+   generator.generate(output);
 
    return 0;
 }
