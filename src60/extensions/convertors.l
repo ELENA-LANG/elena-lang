@@ -128,10 +128,33 @@ public extension stringConvertOp
 public extension intConvertOp
 {
    int toInt()
-     = intConvertor.convert(self, 10);
+     = intConvertor.convert(self);
 
    int toInt(int radix)
      = intConvertor.convert(self, radix);
+}
+
+// --- byteConvertOp ---
+
+public extension byteConvertOp
+{
+   byte toByte()
+     = byteConvertor.convert(self);
+}
+
+// --- shortConvertOp ---
+
+public extension shortConvertOp
+{
+   short toShort()
+     = shortConvertor.convert(self);
+}
+
+// --- longConvertOp ---
+public extension longConvertOp
+{
+   long toLong()
+      = longConvertor.convert(self);
 }
 
 // --- realConvertOp ---

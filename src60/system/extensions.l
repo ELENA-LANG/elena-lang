@@ -24,6 +24,184 @@ public extension objectOp
         
       ^ len != 0;
    }
+
+   doWith(action)
+      = action(self);
+
+   bool instanceOf(type) : external(system'core_routines'__object_instanceOf),
+                  info("Checks if the object is an instance of type");   
+}
+
+// --- byteOp ---
+
+public extension byteOp : ByteNumber
+{
+   int Hashcode
+   {
+      // Reads the object hash code into the output parameter
+      get()
+      {
+         int val := self;
+         int retVal := PrimitiveIntOperations.getHashcode(val);
+
+         ^ retVal
+      }
+   }
+
+   get byte Absolute()
+   {
+      byte n := self;
+    
+      if (n < 0)
+         { n := -n };
+    
+      ^ n
+   }
+
+   byte power(int y)
+   {
+      byte x := self;
+      byte r := 1;
+        
+      for (int i := 0, i < y, i += 1)
+      {
+         r := r * x
+      };
+        
+      ^ new ByteNumber(r)
+   }
+
+   byte sqr()
+      = self * self;
+
+   byte sqrt()
+   {   
+      byte num := self;
+              
+      if (num == 0)
+         { ^ 0 };
+                  
+      byte n := num / 2 + 1;
+      byte n1 := (n + (num / n)) / 2;
+      while (n1 < n)
+      {
+         n := n1;
+         n1 := (n + (num / n)) / 2
+      };
+              
+      ^ n
+   }
+
+   byte mod(operand)
+   {
+      var retVal := self / operand * operand;
+        
+      ^ byteConvertor.convert(retVal)
+   }
+
+   bool isOdd()
+      = self.mod:2 != 0;
+        
+   bool isEven()
+      = self.mod:2 == 0;
+        
+   bool isZero()
+      = self.equal(0);
+        
+   bool isPositive()
+      = self > 0;
+        
+   bool isNegative()
+      = self < 0;
+        
+   bool isNonnegative()
+      = self <= 0;
+}
+
+// --- shortOp ---
+
+public extension shortOp : ShortNumber
+{
+   int Hashcode
+   {
+      // Reads the object hash code into the output parameter
+      get()
+      {
+         int val := self;
+         int retVal := PrimitiveIntOperations.getHashcode(val);
+
+         ^ retVal
+      }
+   }
+
+   get short Absolute()
+   {
+      short n := self;
+    
+      if (n < 0)
+         { n := -n };
+    
+      ^ n
+   }
+
+   short power(int y)
+   {
+      short x := self;
+      short r := 1;
+        
+      for (int i := 0, i < y, i += 1)
+      {
+         r := r * x
+      };
+        
+      ^ new ShortNumber(r)
+   }
+
+   short sqr()
+      = self * self;
+
+   short sqrt()
+   {   
+      short num := self;
+              
+      if (num == 0)
+         { ^ 0 };
+                  
+      short n := num / 2 + 1;
+      short n1 := (n + (num / n)) / 2;
+      while (n1 < n)
+      {
+         n := n1;
+         n1 := (n + (num / n)) / 2
+      };
+              
+      ^ n
+   }
+
+   short mod(operand)
+   {
+      var retVal := self / operand * operand;
+        
+      ^ shortConvertor.convert(retVal)
+   }    
+
+   bool isOdd()
+      = self.mod:2 != 0;
+        
+   bool isEven()
+      = self.mod:2 == 0;
+        
+   bool isZero()
+      = self.equal(0);
+        
+   bool isPositive()
+      = self > 0;
+        
+   bool isNegative()
+      = self < 0;
+        
+   bool isNonnegative()
+      = self <= 0;
 }
 
 // --- intOp ---
@@ -51,6 +229,45 @@ public extension intOp : IntNumber
       ^ n
    }
 
+   int power(int y)
+   {
+      int x := self;
+      int r := 1;
+      if (x == 0)
+         { r := 0 };
+        
+      for(int i := 0, i < y, i += 1)
+      {
+         r := r * x
+      };
+        
+      ^ r
+   }
+
+   int sqr()
+      = self * self;
+
+   int sqrt()
+   {   
+      int num := self;
+              
+      if (num == 0)
+         { ^ 0 };
+                  
+      int n := num / 2 + 1;
+      int n1 := (n + (num / n)) / 2;
+      while (n1 < n)
+      {
+         n := n1;
+         n1 := (n + (num / n)) / 2
+      };
+              
+      ^ n
+   }
+
+   real realDiv(n)
+      = new RealNumber(self).divide:n;
+
    int mod(int operand)
    {
       int retVal := self / operand * operand;
@@ -66,12 +283,152 @@ public extension intOp : IntNumber
         
       ^ retVal
    }
+
+   bool isOdd()
+      = self.mod:2 != 0;
+        
+   bool isEven()
+      = self.mod:2 == 0;
+        
+   bool isZero()
+      = self.equal(0);
+        
+   bool isPositive()
+      = self > 0;
+        
+   bool isNegative()
+      = self < 0;
+        
+   bool isNonnegative()
+      = self <= 0;
+}
+
+// --- uintOp ---
+
+public extension uintOp : UIntNumber
+{
+   uint sqr()
+      = self * self;
+
+   uint sqrt()
+   {   
+      uint num := self;
+              
+      if (num == 0u)
+         { ^ 0u };
+                  
+      uint n := num / 2u + 1u;
+      uint n1 := (n + (num / n)) / 2u;
+      while (n1 < n)
+      {
+         n := n1;
+         n1 := (n + (num / n)) / 2u
+      };
+              
+      ^ n
+   }
+
+   uint mod(uint operand)
+   {
+      uint retVal := self / operand * operand;
+
+      retVal := self - retVal;
+        
+      ^ retVal
+   }
+
+   uint mod(int operand)
+   {
+      uint uoperand := operand;
+      uint retVal := self / uoperand * uoperand;
+
+      retVal := self - retVal;
+        
+      ^ retVal
+   }
+
+   uint mod(operand)
+      = self.mod(cast uint(operand));
+
+   real realDiv(n)
+      = new RealNumber(self).divide:n;
+
+   bool isOdd()
+      = self.mod:2 != 0;
+        
+   bool isEven()
+      = self.mod:2 == 0;
+        
+   bool isZero()
+      = self.equal(0);
+        
+   bool isPositive()
+      = self > 0;
+        
+   bool isNegative()
+      = self < 0;
+        
+   bool isNonnegative()
+      = self <= 0;
 }
 
 // --- longOp ---
 
 public extension longOp : LongNumber
-{
+{   
+   long power(long y)
+   {
+      long x := self;
+      long r := 1;
+        
+      for(long i := 0l, i < y, i += 1l)
+      {
+         r := r * x;
+      };
+        
+      ^ new LongNumber(r)
+   }
+    
+   long power(int y)
+   {
+      long x := self;
+      long r := 1;
+        
+      int i := 0;
+      while (i < y)
+      {
+         r := r * x;
+            
+         i += 1;
+      };
+        
+      ^ new LongNumber(r)
+   }
+
+   long sqr()
+      = self * self;
+
+   long sqrt()
+   {   
+      long num := self;
+              
+      if (num == 0l)
+         { ^ 0l };
+                  
+      long n := num / 2l + 1l;
+      long n1 := (n + (num / n)) / 2l;
+      while (n1 < n)
+      {
+         n := n1;
+         n1 := (n + (num / n)) / 2l
+      };
+              
+      ^ n
+   }
+
+   real realDiv(n)
+      = new RealNumber(self).divide:n;
+
    long mod(long operand)
    {
       long retVal := self / operand * operand;
@@ -80,6 +437,24 @@ public extension longOp : LongNumber
         
       ^ retVal
    }    
+
+   bool isOdd()
+      = self.mod:2l != 0l;
+        
+   bool isEven()
+      = self.mod:2l == 0l;
+        
+   bool isZero()
+      = self.equal(0l);
+        
+   bool isPositive()
+      = self > 0l;
+        
+   bool isNegative()
+      = self < 0l;
+        
+   bool isNonnegative()
+      = self <= 0l;
 }
 
 // --- realOp ---
@@ -97,12 +472,257 @@ public extension realOp : RealNumber
       }
    }
 
+   real power(real y)
+   {
+      real x := self;
+        
+      if(x == 0.0r)
+         { ^ 0.0r };
+                        
+      if(y == 0.0r)
+        { ^ 1.0r };
+            
+      x := x.ln();
+        
+      x := x * y;
+        
+      x := x.exp();
+            
+      ^ x            
+   }
+
+   real power(int y)
+   {
+      real x := self;
+
+      if(x == 0.0r)
+         { ^ 0.0r };
+                        
+      if(y == 0)
+         { ^ 1.0r };
+                        
+      if (x < 0.0r)
+      {
+         x := x * -1.0r;
+            
+         x := x.ln();
+            
+         x := x * y;
+            
+         x := x.exp();
+            
+         if (y.isOdd())
+            { x := x * -1.0r }
+      }
+      else
+      {
+         x := x.ln();
+            
+         x := x * y;
+            
+         x := x.exp()
+      };
+        
+      ^ x
+   }
+
+   real sqr()
+      = self * self;
+
+   real sqrt()
+   {
+      PrimitiveRealOperations.sqrt(self, ref real retVal);
+
+      ^ retVal
+   }
+
+   real exp()
+   {
+      PrimitiveRealOperations.exp(self, ref real retVal);
+
+      ^ retVal
+   }
+
+   real ln()
+   {
+      real retVal := PrimitiveRealOperations.ln(self);
+
+      ^ retVal
+   }
+
+   real sin()
+   {
+      real retVal := PrimitiveRealOperations.sin(self);
+
+      ^ retVal
+   }
+
+   real cos()
+   {
+      real retVal := PrimitiveRealOperations.cos(self);
+
+      ^ retVal
+   }
+
+   real tan()
+   {
+      real sinVal := PrimitiveRealOperations.sin(self);
+      real cosVal := PrimitiveRealOperations.cos(self);
+        
+      real n := sinVal / cosVal;
+        
+      ^ n
+   }
+
+   real arctan()
+   {
+      real retVal := PrimitiveRealOperations.arctan(self);
+
+      ^ retVal
+   }
+
+   real arcsin()
+   {
+      real n := self;
+      real retVal := 0.0r;
+        
+      retVal := n * n;    
+      retVal := 1.0r - retVal;
+      real arg := PrimitiveRealOperations.sqrt(retVal);
+        
+      arg := n / arg;
+      retVal := PrimitiveRealOperations.arctan(arg);
+        
+      ^ retVal
+   }
+            
+   real arccos()
+   {
+      real n := self;        
+      real retVal := 0.0r;
+        
+      retVal := n * n;    
+      retVal := 1.0r - retVal;        
+      real arg := PrimitiveRealOperations.sqrt(retVal);
+        
+      arg := arg / n;
+      retVal := PrimitiveRealOperations.arctan(arg);
+        
+      ^ retVal
+   }
+
+   real log2()
+   {
+      real x := self.ln();
+      real y := 2.0.ln();
+            
+      ^ x / y
+   }
+            
+   real log10()
+   {
+      real x := self.ln();
+      real y := 10.0.ln();
+            
+      ^ x / y
+   }      
+
    get real Integer()
    {
       PrimitiveRealOperations.trunc(self, ref real retVal);
 
       ^ retVal
    }
+
+   get int IntegerInt()
+      = intConvertor.convert(self.Integer);
+
+   get real Rounded()
+   {
+      real retVal := PrimitiveRealOperations.round(self);
+
+      ^ retVal
+   }
+
+   get int RoundedInt()
+      = intConvertor.convert(self.Rounded);
+
+   real Absolute
+      = PrimitiveRealOperations.abs(self);
+
+   get real Reciprocal()
+   {
+      real value := self;
+        
+      value := 1.0r / value;
+        
+      ^ value
+   }    
+
+   real frac()
+   {
+      real retVal := self.Absolute;
+      
+      ^ retVal - retVal.Integer
+   }
+
+   real ceil()
+   {
+      if (self < 0)
+      {
+         ^ self.Integer
+      }
+      else
+      {
+         real y := self.Integer;
+                
+         ^ (y == self).iif(y,y+1)
+      }
+   }
+
+   real floor()
+   {
+      if (self >= 0)
+      {
+         ^ self.Integer
+      }
+      else
+      {
+         real y := self.Integer;
+                
+         ^ (y == self).iif(y,y-1)
+      }
+   }
+
+   real truncate(int precision)
+   {
+      real a := self;
+      bool neg := false;
+      if(self.isNegative())
+      {
+         a := a * -1.0r;
+         neg := true
+      };
+       
+      int b := 10.power(precision);
+      real c := (a * b).Integer; // returns the integer part of the real number
+
+      a := c / b;
+
+      ^ neg ? (a * -1.0r) : a 
+   }
+
+   bool isZero()
+      = self.equal(0.0);
+        
+   bool isPositive()
+      = self > 0.0;
+        
+   bool isNegative()
+      = self < 0.0;
+        
+   bool isNonnegative()
+      = self <= 0.0;
 }
 
 // --- intRefOp ---

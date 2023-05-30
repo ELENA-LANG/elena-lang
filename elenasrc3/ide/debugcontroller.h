@@ -95,6 +95,8 @@ namespace elena_lang
 
       DebugLineInfo* seekClassInfo(addr_t address, IdentifierString& className, addr_t vmtAddress, ref_t flags);
 
+      void fixNamespace(NamespaceString& str);
+
       void clear()
       {
          _entryPoint = 0;
@@ -224,7 +226,7 @@ namespace elena_lang
       NotifierBase*           _notifier;
       DebugSourceController*  _sourceController;
 
-      ustr_t                  _currentModule;
+      IdentifierString        _currentModule;
       ustr_t                  _currentPath;
 
       void debugThread() override;
@@ -244,6 +246,7 @@ namespace elena_lang
 
       void* readObject(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, ustr_t className = nullptr);
       void* readIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
+      void* readUIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readLongLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readRealLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readByteArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
@@ -265,9 +268,12 @@ namespace elena_lang
       void stepInto();
       void stop();
       void runToCursor(ustr_t name, ustr_t path, int row);
+      void addBreakpoint(Breakpoint* bp);
 
       void readAutoContext(ContextBrowserBase* watch, int level, WatchItems* refreshedItems);
       void readContext(ContextBrowserBase* watch, void* parentItem, addr_t address, int level);
+
+      void resolveNamespace(NamespaceString& ns);
 
       virtual void clearDebugInfo()
       {

@@ -44,6 +44,9 @@ ScriptEngineParserBase* ScriptEngine :: newParser(int id, ParserType type)
       case ParserType::CF:
          newOne = new ScriptEngineCFParser(baseOne);
          break;
+      case ParserType::Build:
+         newOne = new ScriptEngineBuilder();
+         break;
       default:
          throw InvalidOperationError("Unknown parser type");
    }
@@ -85,6 +88,9 @@ void ScriptEngine :: parseMetaScript(int id, ScriptEngineReaderBase& reader)
             }
             else if (reader.compare("text")) {
                parser = newParser(id, ParserType::Text);
+            }
+            else if (reader.compare("build")) {
+               parser = newParser(id, ParserType::Build);
             }
             else throw SyntaxError("unrecognized parser", bm.lineInfo);
          }
@@ -210,4 +216,12 @@ void ScriptEngine :: free(void* tape)
 {
    // !! temporal solution : presuming only one tape at once
    _tape.trim(0);
+}
+
+pos_t ScriptEngine :: getLength(void* tape)
+{
+   if (_tape.get(0) == tape) {
+      return _tape.length();
+   }
+   else return 0;
 }

@@ -1,0 +1,108 @@
+import system'routines;
+import extensions;
+import extensions'routines;
+
+// --- Joinable --
+
+joinable(former,later) = (former[former.Length - 1] == later[0]);
+
+dispatcher = new
+{
+    eval(object a, Func2 f)
+    {
+        ^ f(a[0],a[1])
+    }
+
+    eval(object a, Func3 f)
+    {
+        ^ f(a[0], a[1],a[2])
+    }
+    
+    eval(object a, Func4 f)
+    {
+        ^ f(a[0],a[1],a[2],a[3])
+    }
+    
+    eval(object a, Func5 f)
+    {
+        ^ f(a[0],a[1],a[2],a[3],a[4])
+    }
+};
+
+// --- AmbValueCollection ---
+
+class AmbValueCollection
+{
+    object _combinator;
+    
+    constructor new(params object[] args)
+    {
+        _combinator := SequentialEnumerator.new(params args)
+    }
+
+    seek(cond)
+    {
+        _combinator.reset();
+
+        _combinator.seekEach:(v => dispatcher.eval(v,cond))
+    }
+    
+    do(f)
+    {
+        var result := *_combinator;
+        if (nil != result)
+        {
+            dispatcher.eval(result,f) 
+        }
+        else
+        {
+            InvalidArgumentException.raise()
+        }
+    }
+}
+
+// --- ambOperator ---
+
+singleton ambOperator
+{
+    for(params object[] args)
+        = AmbValueCollection.new(params args);
+}
+
+// --- Program ---
+
+public program1()
+{
+    try
+    {
+        ambOperator.for(new object[]{1,2,4}, new object[]{4,5,6}).seek:(a,b => a * b == 8).do:
+            (a,b){ console.printLine(a," * ",b," = 8") };
+    }
+    catch(Exception e)
+    {
+        console.printLine:"AMB is angry"
+    };
+        
+    console.readChar()
+}
+
+public program()
+{
+    try
+    {
+        ambOperator 
+            .for(
+                new object[]{"the","that","a"},
+                new object[]{"frog", "elephant", "thing"},
+                new object[]{"walked", "treaded", "grows"}, 
+                new object[]{"slowly", "quickly"})
+            .seek:(a,b,c,d => joinable(a,b) && joinable(b,c) && joinable(c,d) )
+            .do:(a,b,c,d) { console.printLine(a," ",b," ",c," ",d) }
+    }
+    catch(Exception e)
+    {
+        console.printLine:"AMB is angry"
+    };
+        
+    console.readChar()
+}

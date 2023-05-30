@@ -17,9 +17,10 @@ typedef String<text_t, CAPTION_LEN> CaptrionString;
 
 // --- ContextBrowser --
 
-ContextBrowser :: ContextBrowser(int width, int height, NotifierBase* notifier)
+ContextBrowser :: ContextBrowser(int width, int height, NotifierBase* notifier, int expandNotificationId)
    : TreeView(width, height, notifier, 0, false, false)
 {
+   _expandNotificationId = expandNotificationId;
 }
 
 HWND ContextBrowser :: createControl(HINSTANCE instance, ControlBase* owner)
@@ -122,12 +123,17 @@ void ContextBrowser :: populateNode(void* item, ustr_t value)
 
 }
 
-void ContextBrowser::expandRootNode()
+void ContextBrowser :: expandRootNode()
 {
    expand(_rootItem);
 }
 
-void ContextBrowser::removeUnused(WatchItems& refreshedItems)
+void ContextBrowser :: clearRootNode()
+{
+   clearNode(_rootItem);
+}
+
+void ContextBrowser :: removeUnused(WatchItems& refreshedItems)
 {
    TreeViewItem current = getChild(_rootItem);
    while (current != nullptr) {
@@ -147,3 +153,21 @@ void ContextBrowser::removeUnused(WatchItems& refreshedItems)
       else current = getNext(current);
    }
 }
+
+void ContextBrowser :: onItemExpand(TreeViewItem item)
+{
+   _notifier->notifyTreeItem(_expandNotificationId, (size_t)item, getParam(item));
+}
+
+void ContextBrowser :: expandNode(size_t param)
+{
+   expand((TreeViewItem)param);
+}
+
+void ContextBrowser :: refreshCurrentNode()
+{
+   TreeViewItem current = getCurrent();
+
+   _notifier->notifyTreeItem(_expandNotificationId, (size_t)current, getParam(current));
+}
+

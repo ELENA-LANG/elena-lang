@@ -42,7 +42,10 @@ WCHAR szHSplitter[MAX_LOADSTRING];              // the hsplitter class name
 WCHAR szVSplitter[MAX_LOADSTRING];              // the vsplitter window class name
 WCHAR szCompilerOutput[MAX_LOADSTRING];         // the compiler output caption
 WCHAR szErrorList[MAX_LOADSTRING];              // the compiler output caption
-WCHAR szWatch[MAX_LOADSTRING];              // the compiler output caption
+WCHAR szWatch[MAX_LOADSTRING];                  // the compiler output caption
+
+#define CONTEXT_MENU_INSPECT                    _T("Inspect\tCtrl+I")
+#define CONTEXT_MENU_SHOWHEX                    _T("Show as hexadecimal")
 
 // !! temporally
 #define IDE_CHARSET_ANSI                        ANSI_CHARSET
@@ -55,6 +58,7 @@ StyleInfo defaultStyles[STYLE_MAX + 1] = {
    {Color(0), Color(0xC0, 0xC0, 0xC0), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0x60, 0x60, 0x60), Color(0x0, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
    {Color(0xFF, 0xFF, 0xFF), Color(0xFF, 0x0, 0x0), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0xFF, 0xFF, 0xFF), Color(0xFF, 0x0, 0x0), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Color(0xFF, 0x80, 0x40), Color(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0, 0, 0xFF), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0, 0x80, 0), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
@@ -65,7 +69,6 @@ StyleInfo defaultStyles[STYLE_MAX + 1] = {
    //{Colour(0xFF, 0xFF, 0xFF), Colour(0xFF, 0x0, 0x0), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0), Colour(0x0, 0xFF, 0xFF), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0x60, 0x60, 0x60), Colour(0x0, 0xFF, 0xFF), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
-   //{Colour(0xFF, 0xFF, 0xFF), Colour(0xFF, 0x0, 0x0), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0), Colour(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false}
 };
 
@@ -89,6 +92,13 @@ StyleInfo classicStyles[STYLE_MAX + 1] = {
 };
 
 constexpr auto STYLE_SCHEME_COUNT = 2;
+
+MenuInfo browserContextMenuInfo[3] = {
+      {IDM_DEBUG_INSPECT, CONTEXT_MENU_INSPECT},
+      {0, nullptr},
+      {IDM_DEBUG_SWITCHHEXVIEW, CONTEXT_MENU_SHOWHEX}
+};
+
 
 // --- IDEFactory ---
 
@@ -212,7 +222,7 @@ ControlBase* IDEFactory :: createProjectView(ControlBase* owner, NotifierBase* n
 
 ControlBase* IDEFactory :: createDebugBrowser(ControlBase* owner, NotifierBase* notifier)
 {
-   ContextBrowser* browser = new ContextBrowser(300, 50, notifier);
+   ContextBrowser* browser = new ContextBrowser(300, 50, notifier, NOTIFY_DEBUG_CONTEXT_EXPANDED);
    browser->createControl(_instance, owner);
    browser->hide();
 
@@ -226,8 +236,17 @@ GUIControlBase* IDEFactory :: createMenu(ControlBase* owner)
    return menu;
 }
 
+GUIControlBase* IDEFactory :: createDebugContextMenu(ControlBase* owner)
+{
+   ContextMenu* menu = new ContextMenu();
+
+   menu->create(3, browserContextMenuInfo);
+
+   return menu;
+}
+
 void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
-   int projectView, int contextBrowser, int menu, int statusBar)
+   int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu)
 {
    LoadStringW(_instance, IDC_COMPILER_OUTPUT, szCompilerOutput, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_COMPILER_MESSAGES, szErrorList, MAX_LOADSTRING);
@@ -241,6 +260,7 @@ void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compiler
    _model->ideScheme.debugWatch = contextBrowser;
    _model->ideScheme.menu = menu;
    _model->ideScheme.statusBar = statusBar;
+   _model->ideScheme.debugContextMenu = debugContextMenu;
 
    _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
    _model->ideScheme.captions.add(errorList, szErrorList);
@@ -258,7 +278,7 @@ GUIApp* IDEFactory :: createApp()
 
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess)
 {
-   GUIControlBase* children[11];
+   GUIControlBase* children[12];
    int counter = 0;
 
    int textIndex = counter++;
@@ -272,6 +292,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    int hsplitter = counter++;
    int browser = counter++;
    int menu = counter++;
+   int debugContextMenu = counter++;
 
    SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance);
    sdi->create(_instance, szSDI, nullptr);
@@ -291,6 +312,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[hsplitter] = createSplitter(sdi, (ControlBase*)children[projectView], true, notifier,
       NOTIFY_IDE_CHANGE, IDE_LAYOUT_CHANGED);
    children[menu] = createMenu(sdi);
+   children[debugContextMenu] = createDebugContextMenu(sdi);
 
    vb->append(children[vsplitter]);
    vb->append(children[statusBarIndex]);
@@ -298,7 +320,8 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    sdi->populate(counter, children);
    sdi->setLayout(textIndex, -1, bottomBox, -1, hsplitter);
 
-   initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView, browser, menu, statusBarIndex);
+   initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView, browser, menu, statusBarIndex, 
+      debugContextMenu);
 
    return sdi;
 }

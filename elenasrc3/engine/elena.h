@@ -335,7 +335,14 @@ namespace elena_lang
          module = nullptr;
          reference = 0;
       }
+      ModuleInfo(ModuleBase* module, ref_t reference)
+      {
+         this->module = module;
+         this->reference = reference;
+      }
    };
+
+   typedef List<ModuleInfo> ModuleInfoList;
 
    class LibraryLoaderListenerBase
    {
@@ -365,6 +372,8 @@ namespace elena_lang
       virtual ModuleInfo getDebugModule(ReferenceInfo referenceInfo, bool silentMode) = 0;
 
       virtual void resolvePath(ustr_t ns, PathString& path) = 0;
+
+      virtual void loadDistributedSymbols(ustr_t virtualSymbolName, ModuleInfoList& list) = 0;
    };
 
    class LibraryProviderBase
@@ -486,6 +495,12 @@ namespace elena_lang
       virtual void writeJgeBack(pos_t label, MemoryWriter& writer) = 0;
       virtual void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
 
+      virtual void writeJleBack(pos_t label, MemoryWriter& writer) = 0;
+      virtual void writeJleForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
+
+      virtual void writeJgrBack(pos_t label, MemoryWriter& writer) = 0;
+      virtual void writeJgrForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) = 0;
+
       virtual void writeLabelAddress(pos_t label, MemoryWriter& writer, ref_t mask) = 0;
    };
 
@@ -498,7 +513,8 @@ namespace elena_lang
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
-         JITSettings settings) = 0;
+         JITSettings settings,
+         bool virtualMode) = 0;
 
       virtual bool isWithDebugInfo() = 0;
 
@@ -557,7 +573,9 @@ namespace elena_lang
 
       virtual void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) = 0;
 
-      virtual void populatePreloaded(uintptr_t env, uintptr_t eh_table, uintptr_t gc_table) = 0;
+      virtual void populatePreloaded(uintptr_t eh_table) = 0;
+
+      virtual void* getSystemEnv() = 0;
 
       virtual void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) = 0;
       virtual void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) = 0;
@@ -813,6 +831,44 @@ namespace elena_lang
          else return false;
       }
 
+      void pathToName(path_t path)
+      {
+         char buf[IDENTIFIER_LEN];
+         size_t bufLen = IDENTIFIER_LEN;
+
+         while (!path.empty()) {
+            if (!empty())
+               append('\'');
+
+            size_t pos = path.find(PATH_SEPARATOR);
+            if (pos != NOTFOUND_POS) {
+               bufLen = IDENTIFIER_LEN;
+               path.copyTo(buf, pos, bufLen);
+
+               append(buf, bufLen);
+               path += pos + 1u;
+            }
+            else {
+               pos = path.findLast('.');
+               if (pos == NOTFOUND_POS)
+                  pos = path.length();
+
+               bufLen = IDENTIFIER_LEN;
+               path.copyTo(buf, pos, bufLen);
+
+               // replace dots with apostrophes
+               for (size_t i = 0; i < bufLen; i++) {
+                  if (buf[i] == '.')
+                     buf[i] = '\'';
+               }
+
+               append(buf, bufLen);
+
+               break;
+            }
+         }
+      }
+
       void trimLastSubNs()
       {
          size_t index = (**this).findLast('\'', 0);
@@ -886,44 +942,6 @@ namespace elena_lang
          }
       }
 
-      void pathToName(path_t path)
-      {
-         char buf[IDENTIFIER_LEN];
-         size_t bufLen = IDENTIFIER_LEN;
-
-         while (!path.empty()) {
-            if (!empty())
-               append('\'');
-
-            size_t pos = path.find(PATH_SEPARATOR);
-            if (pos != NOTFOUND_POS) {
-               bufLen = IDENTIFIER_LEN;
-               path.copyTo(buf, pos, bufLen);
-
-               append(buf, bufLen);
-               path += pos + 1u;
-            }
-            else {
-               pos = path.findLast('.');
-               if (pos == NOTFOUND_POS)
-                  pos = path.length();
-
-               bufLen = IDENTIFIER_LEN;
-               path.copyTo(buf, pos, bufLen);
-
-               // replace dots with apostrophes
-               for (size_t i = 0; i < bufLen; i++) {
-                  if (buf[i] == '.')
-                     buf[i] = '\'';
-               }
-
-               append(buf, bufLen);
-
-               break;
-            }
-          }
-      }
-
       bool combine(ustr_t name)
       {
          if (!name.empty()) {
@@ -980,6 +998,7 @@ namespace elena_lang
    {
       int      offset;
       TypeInfo typeInfo;
+      bool     readOnly;
    };
 
    // --- StaticFieldInfo ---

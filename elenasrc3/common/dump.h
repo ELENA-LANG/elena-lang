@@ -104,7 +104,11 @@ namespace elena_lang
       MemoryDump(const MemoryDump& copy);
       virtual ~MemoryDump()
       {
-         freestr((char*)_buffer);
+         if (_buffer) {
+            freestr((char*)_buffer);
+            _buffer = nullptr;
+         }
+         else _buffer = nullptr;
       }
    };
 

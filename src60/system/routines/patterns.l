@@ -1,5 +1,7 @@
 import system;
 
+idleFunc1 = (x){};
+
 // --- Selecting ---
 
 public class Selector : Enumerator
@@ -96,3 +98,93 @@ public class Filter : Enumerator
     enumerable() => _enumerator;
 }
 
+// --- RangeEnumerator ---
+
+public class RangeEnumerator : Enumerator
+{
+    object _variable;
+    object _start;
+    object _end;
+    object _step;
+    
+    bool   _forward;
+    
+    constructor new(var,start,end,step)
+    {
+        _variable := var;
+        _start := start;
+        _end := end;
+        _step := step;
+        
+        _forward := (start < end);
+        
+        self.reset()
+    }
+
+    constructor new(start, end, step)
+        <= new(new Variable(), start, end, step);
+
+    constructor new(start, end)
+        <= new(new Variable(), start, end, 1);
+        
+    reset() 
+    {
+        _variable.Value := _start;
+
+        if(_forward)
+        {
+            _variable.reduce:_step 
+        }
+        else
+        {
+            _variable.append:_step
+        }
+    }    
+    
+    get Value() = _variable.Value;
+    
+    bool next()
+    {
+        if(_forward)
+            { _variable.append:_step; ^ (_variable <= _end) };
+        
+        _variable.reduce:_step; 
+        
+        ^ (_variable >= _end)
+    }
+    
+    enumerable() = _variable;
+}
+
+// --- ZipEnumerator ---
+
+public class ZipEnumerator : Enumerator
+{
+   Enumerator _enumerator1;
+   Enumerator _enumerator2;
+    
+   Func2      _zipper;
+    
+   constructor new(Func2 fn, Enumerator enum1, Enumerator enum2)
+   {
+      _zipper := fn;
+        
+      _enumerator1 := enum1;
+      _enumerator2 := enum2;
+   }
+    
+   constructor new(ExtensionMessage ext, Enumerator enum1, Enumerator enum2)
+      <= new((n,m => ext(n,m)), enum1, enum2);
+    
+   get Value() = _zipper(_enumerator1.Value, _enumerator2.Value);
+    
+   bool next() = _enumerator1.next() && _enumerator2.next();
+    
+   reset()
+   {
+      _enumerator1.reset();
+      _enumerator2.reset();
+   }
+
+   enumerable() => _enumerator1;
+}

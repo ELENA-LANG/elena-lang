@@ -22,6 +22,7 @@
 #let attributesSymbols["const"]       := 80002001h;
 #let attributesSymbols["embeddable"]  := 80002002h;
 #let attributesSymbols["ref"]         := 80002003h;
+#let attributesSymbols["readonly"]    := 80002004h;
 #let attributesSymbols["retoverload"] := 8000200Ah;
 #let attributesSymbols["params"]      := 8000200Bh;
                                                  
@@ -55,12 +56,13 @@
 #let attributesSymbols["__probe"]     := 80001026h;
 #let attributesSymbols["template"]    := 80001027h;
 #let attributesSymbols["weak"]        := 80001029h;
+#let attributesSymbols["distributed"] := 8000102Bh;
 
 /// primitive types
 #let attributesSymbols["__string"]    := 80000801h;
 #let attributesSymbols["__float"]     := 80000802h;
 #let attributesSymbols["__int"]       := 80000803h;
-//#let attributesSymbols["__meta"]      := 80000804h;
+#let attributesSymbols["__uint"]      := 80000804h;
 #let attributesSymbols["__word"]      := 80000805h;
 #let attributesSymbols["mssgconst"]   := 80000806h;
 #let attributesSymbols["mssg"]        := 80000806h;

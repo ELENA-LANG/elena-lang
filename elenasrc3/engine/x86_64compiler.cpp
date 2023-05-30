@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86-64
-//                                              (C)2021-2022 by Aleksey Rakov
+//                                              (C)2021-2023 by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -147,7 +147,8 @@ void X86_64JITCompiler :: prepare(
    ImageProviderBase* imageProvider, 
    ReferenceHelperBase* helper,
    LabelHelperBase*,
-   JITSettings _settings)
+   JITSettings _settings,
+   bool virtualMode)
 {
    _constants.inlineMask = mskCodeRelRef32;
 
@@ -158,7 +159,7 @@ void X86_64JITCompiler :: prepare(
       commands[(int)Overloads[i].value1] = Overloads[i].value2;
 
    X86LabelHelper lh;
-   JITCompiler64::prepare(loader, imageProvider, helper, &lh, _settings);
+   JITCompiler64::prepare(loader, imageProvider, helper, &lh, _settings, virtualMode);
 }
 
 void X86_64JITCompiler :: writeImm9(MemoryWriter* writer, int value, int type)

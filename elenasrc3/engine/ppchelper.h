@@ -363,6 +363,38 @@ namespace elena_lang
 
          writeBCxx(4, 0, offset, 0, 0, writer);
       }
+
+      void writeJgrForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBCxx(12, 1, 0, 0, 0, writer);
+      }
+
+      void writeJgrBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0xFFFF)
+            throw InternalError(-1);
+
+         writeBCxx(12, 1, offset, 0, 0, writer);
+      }
+
+      void writeJleForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      {
+         jumps.add(label, { writer.position() });
+
+         writeBCxx(4, 1, 0, 0, 0, writer);
+      }
+
+      void writeJleBack(pos_t label, MemoryWriter& writer) override
+      {
+         int offset = labels.get(label) - writer.position();
+         if (abs(offset) > 0xFFFF)
+            throw InternalError(-1);
+
+         writeBCxx(4, 1, offset, 0, 0, writer);
+      }
    };
 
 }

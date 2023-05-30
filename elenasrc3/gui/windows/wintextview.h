@@ -97,6 +97,8 @@ namespace elena_lang
          return (bar == SB_VERT) ? getVScrollerPosition() : getHScrollerPosition();
       }
 
+      bool isMouseCaptured() { return _mouseCaptured; }
+
       bool getScrollInfo(int bar, SCROLLINFO* info);
 
       void resizeDocument();
@@ -122,8 +124,9 @@ namespace elena_lang
       void releaseMouse();
 
       void onButtonDown(Point point, bool kbShift);
+      void onMouseMove(Point point, bool kbLButton);
       void onButtonUp();
-      void onMouseMove(short wheelDelta, bool kbCtrl);
+      void onMouseWheel(short wheelDelta, bool kbCtrl);
       void onDoubleClick(NMHDR* hdr) override;
 
       bool onKeyDown(int keyCode, bool kbShift, bool kbCtrl);

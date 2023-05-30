@@ -17,7 +17,10 @@ namespace elena_lang
    // --- TreeView ---
    class TreeView : public ControlBase
    {
-      NotifierBase*  _notifier;
+   protected:
+      NotifierBase* _notifier;
+
+   private:
       int            _notificationId;
 
       bool           _persistentSelection;
@@ -30,6 +33,8 @@ namespace elena_lang
       virtual HWND createControl(HINSTANCE instance, ControlBase* owner);
 
       void onSelChanged() override;
+
+      virtual void onItemExpand(TreeViewItem item) {}
 
       void select(TreeViewItem item);
       void expand(TreeViewItem item);
@@ -45,6 +50,8 @@ namespace elena_lang
       void setCaption(TreeViewItem item, wchar_t* caption, size_t length);
 
       TreeViewItem insertTo(TreeViewItem parent, const wchar_t* caption, size_t param, bool isNode);
+
+      TreeViewItem hitTest(short x, short y);
 
       void clear(TreeViewItem item);
       void remove(TreeViewItem item);

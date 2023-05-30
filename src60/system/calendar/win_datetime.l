@@ -1,7 +1,7 @@
 namespace calendar
 {
-   const int DATE_SHORTDATE  = 00000001h;
-   const int DATE_LONGDATE   = 00000002h;
+   const IntNumber DATE_SHORTDATE  = 00000001h;
+   const IntNumber DATE_LONGDATE   = 00000002h;
     
    // --- SystemTime ---
    public sealed const struct SystemTime : BaseValue

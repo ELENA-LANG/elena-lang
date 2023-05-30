@@ -375,6 +375,8 @@ bool AssemblerBase::compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, 
          return compileSOpCode(tokenInfo, writer);
       case 't':
          return compileTOpCode(tokenInfo, writer);
+      case 'u':
+         return compileUOpCode(tokenInfo, writer);
       case 'x':
          return compileXOpCode(tokenInfo, writer);
       default:

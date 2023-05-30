@@ -30,8 +30,6 @@ namespace elena_lang
    // --- ScriptEngineBuilder ---
    class ScriptEngineBuilder : public ScriptEngineParserBase
    {
-      int _width;
-
       void saveToken(MemoryWriter& writer, ScriptEngineReaderBase& reader, ScriptBookmark bm);
 
       void saveClass(MemoryWriter& writer, ScriptEngineReaderBase& reader, Stack<ScriptBookmark>& stack, int allocated,
@@ -45,7 +43,6 @@ namespace elena_lang
 
       ScriptEngineBuilder()
       {
-         _width = 0x50;
       }
    };
 

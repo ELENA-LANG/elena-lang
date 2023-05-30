@@ -3,7 +3,7 @@
 //
 //		This header contains x86 and x86-64 Assembler declarations
 //
-//                                                  (C)2021, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef X86ASSEMBLER_H
@@ -70,6 +70,7 @@ namespace elena_lang
       virtual bool compileDec(X86Operand source, MemoryWriter& writer);
       virtual bool compileDiv(X86Operand source, MemoryWriter& writer);
       virtual bool compileFadd(X86Operand source, MemoryWriter& writer);
+      virtual bool compileFadd(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileFcomip(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileFdiv(X86Operand source, MemoryWriter& writer);
       virtual bool compileFfree(X86Operand source, MemoryWriter& writer);
@@ -83,6 +84,7 @@ namespace elena_lang
       virtual bool compileFstp(X86Operand source, MemoryWriter& writer);
       virtual bool compileFstsw(X86Operand source, MemoryWriter& writer);
       virtual bool compileFsub(X86Operand source, MemoryWriter& writer);
+      virtual bool compileFsub(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileIDiv(X86Operand source, MemoryWriter& writer);
       virtual bool compileIMul(X86Operand source, MemoryWriter& writer);
       virtual bool compileIMul(X86Operand source, X86Operand target, MemoryWriter& writer);
@@ -122,6 +124,7 @@ namespace elena_lang
       void compileCWDE(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileDec(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileDiv(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFabs(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFadd(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFinit(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFcomip(ScriptToken& tokenInfo, MemoryWriter& writer);
@@ -134,10 +137,25 @@ namespace elena_lang
       void compileFldcw(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFmul(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFrndint(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFprem(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileF2xm1(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFld1(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFaddp(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFscale(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFsin(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFcos(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFpatan(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFldl2e(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFldln2(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFldpi(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFmulp(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFsqrt(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFstcw(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFstp(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFstsw(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFsub(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFxch(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFyl2x(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileIDiv(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileIMul(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileJcc(ScriptToken& tokenInfo, MemoryWriter& writer, X86JumpType type, LabelScope& labelScope);
@@ -163,6 +181,7 @@ namespace elena_lang
       void compileShl(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileShld(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileShrd(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileSahf(ScriptToken& tokenInfo, MemoryWriter& writer);
       virtual void compileStos(ScriptToken& tokenInfo, MemoryWriter& writer)
       {
          compileStosd(tokenInfo, writer);
@@ -193,6 +212,7 @@ namespace elena_lang
       bool compileROpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileTOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
 
       void compileProcedure(ScriptToken& tokenInfo) override;

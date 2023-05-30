@@ -314,5 +314,7 @@ void TabBar :: refresh()
 {
    if (_current)
       _current->refresh();
+
+   CustomTabBar::refresh();
 }
 

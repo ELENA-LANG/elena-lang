@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 117;
+constexpr auto OperationLength = 137;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -82,6 +82,9 @@ constexpr Op Operations[OperationLength] =
    },
    {
       ADD_ASSIGN_OPERATOR_ID, BuildKey::ObjArrayOp, V_OBJARRAY, V_OBJECT, 0, V_OBJECT
+   },
+   {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::ObjArrayOp, V_OBJARRAY, V_DECLARATION, 0, V_OBJECT
    },
    {
       ADD_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
@@ -142,6 +145,63 @@ constexpr Op Operations[OperationLength] =
    },
    {
       NOTEQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG
+   },
+   {
+      ADD_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, 0
+   },
+   {
+      BAND_OPERATOR_ID, BuildKey::IntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      BOR_OPERATOR_ID, BuildKey::IntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      BXOR_OPERATOR_ID, BuildKey::IntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      BNOT_OPERATOR_ID, BuildKey::IntSOp, V_UINT32, 0, 0, V_UINT32
+   },
+   {
+      SHL_OPERATOR_ID, BuildKey::IntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      SHR_OPERATOR_ID, BuildKey::IntOp, V_UINT32, V_UINT32, 0, V_UINT32
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::UIntCondOp, V_UINT32, V_UINT32, 0, V_FLAG
+   },
+   {
+      LESS_OPERATOR_ID, BuildKey::UIntCondOp, V_UINT32, V_UINT32, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::UIntCondOp, V_UINT32, V_UINT32, 0, V_FLAG
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::UIntCondOp, V_UINT32, V_UINT32, 0, V_FLAG
+   },
+   {
+      LESS_OPERATOR_ID, BuildKey::UIntCondOp, V_UINT32, V_UINT32, 0, V_FLAG
    },
    {
       ADD_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT64, 0, V_INT64
@@ -585,6 +645,7 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_FIELD:
          break;
       case V_INTBINARY:
+      case V_UINTBINARY:
       case V_WORDBINARY:
       case V_MSSGBINARY:
       case V_SUBJBINARY:
@@ -604,6 +665,9 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
          break;
       case V_STATIC:
          attrs.isStatic = true;
+         break;
+      case V_READONLY:
+         attrs.isReadonly = true;
          break;
       default:
          return false;
@@ -738,7 +802,7 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_EXTERN:
          attrs |= ExpressionAttribute::Extern;
          return true;
-   case V_NEWOP:
+      case V_NEWOP:
          if (ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::Parameter)
             || ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::NestedDecl)
             || ExpressionAttributes::test(attrs.attrs, ExpressionAttribute::Meta))
@@ -770,6 +834,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
          return true;
       case V_IGNOREDUPLICATE:
          attrs |= ExpressionAttribute::IgnoreDuplicate;
+         return true;
+      case V_VARIADIC:
+         attrs |= ExpressionAttribute::Variadic;
          return true;
       default:
          return false;
@@ -1079,6 +1146,7 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
       auto inner = *info.fields.start();
       switch (inner.typeInfo.typeRef) {
          case V_INT32:
+         case V_UINT32:
          case V_INT8:
          case V_PTR32:
          case V_WORD32:
@@ -1094,6 +1162,9 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
             info.header.flags |= elDebugFLOAT64;
             break;
          case V_MESSAGE:
+            info.header.flags |= elMessage;
+            break;
+         case V_MESSAGENAME:
             info.header.flags |= elMessage;
             break;
          case V_INT32ARRAY:
@@ -1293,6 +1364,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.size = 8;
          break;
       case V_INT32:
+      case V_UINT32:
       case V_PTR32:
       case V_WORD32:
          info.header.parentRef = scope.buildins.superReference;
@@ -1707,8 +1779,8 @@ ref_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t
    return 0;
 }
 
-ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ref_t targetRef,
-   TypeInfo sourceInfo)
+ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ustr_t ns, 
+   ref_t targetRef, TypeInfo sourceInfo)
 {
    ClassInfo info;
    if (!defineClassInfo(scope, info, targetRef))
@@ -1754,7 +1826,7 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
 
    // if there is a implicit conversion routine
    if (!isPrimitiveRef(targetRef)) {
-      ref_t sourceRef = sourceInfo.isPrimitive() ? compiler->resolvePrimitiveType(scope, sourceInfo) : sourceInfo.typeRef;
+      ref_t sourceRef = sourceInfo.isPrimitive() ? compiler->resolvePrimitiveType(scope, ns, sourceInfo) : sourceInfo.typeRef;
 
       ref_t signRef = scope.module->mapSignature(&sourceRef, 1, false);
       int stackSafeAttrs = 0;

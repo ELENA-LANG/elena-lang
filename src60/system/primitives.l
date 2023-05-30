@@ -67,14 +67,14 @@ internal singleton PrimitiveOperations
       };
       if (ch < 0C0h)
       {
-         //InvalidOperaionException.raise()
+         InvalidOperationException.raise()
       };
       if (ch < 0E0h)
       {
          int ch2 := sour[index + 1];
          int mask := ch2 & 0C0h;
          if (mask != 80h) {
-            //InvalidOperaionException.raise()
+            InvalidOperationException.raise()
          };
          ch := ch $shl 6;
          ch2 := ch2 + ch;
@@ -88,7 +88,7 @@ internal singleton PrimitiveOperations
 
          int mask := ch2 & 0C0h;
          if (mask != 80h) {
-            //InvalidOperaionException.raise()
+            InvalidOperationException.raise()
          };
 
          ch := ch $shl 12;
@@ -97,7 +97,7 @@ internal singleton PrimitiveOperations
 
          int mask2 := ch3 & 0C0h;
          if (mask2 != 80h) {
-            //InvalidOperaionException.raise()
+            InvalidOperationException.raise()
          };
          ch3 := ch3 + ch;
          ch3 := ch3 - 0E2080h;
@@ -110,7 +110,7 @@ internal singleton PrimitiveOperations
 
          int mask := ch2 & 0C0h;
          if (mask != 80h) {
-            //InvalidOperaionException.raise()
+            InvalidOperationException.raise()
          };
 
          ch := ch $shl 18;
@@ -119,7 +119,7 @@ internal singleton PrimitiveOperations
 
          int mask2 := ch3 & 0C0h;
          if (mask2 != 80h) {
-            //InvalidOperaionException.raise()
+            InvalidOperationException.raise()
          };
 
          ch3 := ch3 $shl 6;
@@ -127,15 +127,15 @@ internal singleton PrimitiveOperations
 
          int mask3 := ch4 & 0C0h;
          if (mask3 != 80h) {
-            //InvalidOperaionException.raise()
+            InvalidOperationException.raise()
          };
          
          ch4 := ch4 + ch3;
          ch4 := ch4 - 3C82080h;
          ^ ch4
-      }
+      };
 
-      //InvalidOperaionException.raise()    
+      InvalidOperationException.raise()    
    }
 
    int readUTF32(short[] sour, int index)
@@ -296,6 +296,31 @@ internal singleton PrimitiveOperations
 internal singleton PrimitiveRealOperations
 {
    trunc(real r, ref real retVal) : external(system'core_routines'__realTrunc);
+
+   round(real r, ref real retVal) : external(system'core_routines'__realRound);
+
+   abs(real r, ref real retVal) : external(system'core_routines'__realAbs);
+
+   sqrt(real r, ref real retVal) : external(system'core_routines'__realSqrt);
+
+   exp(real r, ref real retVal) : external(system'core_routines'__realExp);
+
+   ln(real r, ref real retVal) : external(system'core_routines'__realLn);
+
+   sin(real r, ref real retVal) : external(system'core_routines'__realSin);
+
+   cos(real r, ref real retVal) : external(system'core_routines'__realCos);
+
+   arctan(real r, ref real retVal) : external(system'core_routines'__realArctan);
+
+   getPi(ref real retVal) : external(system'core_routines'__realPi);
+
+   real getPi()
+   {
+      self.getPi(ref real retVal);
+      
+      ^ retVal
+   }
 
    int normalizeFloat(ref real value)
    {

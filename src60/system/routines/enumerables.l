@@ -37,6 +37,32 @@ public extension stringListOp : String
 
       ^ list
    }
+    
+   Array splitBy(string value)
+   {
+      ArrayList list := new ArrayList();
+      int       start := 0;
+      int       index := 0;
+      int       valueLen := value.Length;
+      int       literalLen := self.Length;
+        
+      while (index >= 0)
+      {
+         index := self.indexOf(start, value);
+         if (-1 != index)
+         {
+            list.append(self.Substring(start, index - start));
+            start := index + valueLen
+         }
+         else
+         {
+            list.append(self.Substring(start, literalLen - start))
+         }
+      };
+        
+      ^ list
+   }
+
 }
 
 public extension wideListOp : WideString
@@ -137,6 +163,26 @@ public extension enumerableOp
          ^ nil
       }
    }
+
+   get LastMember()
+   {
+      auto   en := cast Enumerator(self.enumerator());
+      object lastItem := nil;
+        
+      while (en.next())
+         { lastItem := *en };
+            
+      ^ lastItem
+   }
+
+   repeatTill(n)
+      = RangeEnumerator.new(self, n - 1, 1);
+
+   zipBy(enumerable, zipper)
+      = ZipEnumerator.new(zipper, cast Enumerator(self.enumerator()), cast Enumerator(enumerable.enumerator()));
+
+   zipForEach(enumerable, func2)
+      = self.zipBy(enumerable, func2).forEach:idleFunc1;
 }
 
 // --- indexableOp ---
@@ -203,4 +249,33 @@ public extension indexableOp
 
    ascendant()
       = self.clone().sort(ifOrdered);
+
+   sequenceReverse()
+      = self.sequenceReverse(0, self.Length);
+            
+   sequenceReverse(int index, int counter)
+   {
+      Indexer it := self.indexer();
+        
+      int      i := index;
+      int      j := counter;
+      j := j + i;
+      j := j - 1;
+        
+      while (i < j)
+      {
+            it.Index := i;
+            var temp1 := *it;
+            it.Index := j;
+            var temp2 := *it;
+            it.Value := temp1;
+            it.Index := i;
+            it.Value := temp2;
+            
+            i := i + 1;
+            j := j - 1
+      };
+        
+      ^ self
+   }    
 }

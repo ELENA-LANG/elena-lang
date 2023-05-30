@@ -166,6 +166,9 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
 
    private readArgLength(ref int retVal) : external(system'core_routines'__varg_readLength);
 
+   T at(int n)
+      = array[n];
+
    int Length
    {
       get()
@@ -174,7 +177,37 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
             
          ^ len
       }
-   }   
+   }
+
+   Enumerator<T> enumerator() = new BaseEnumerator<T>
+   {
+      this index := -1;
+        
+      this length := self.Length;
+        
+      get T Value() = self.at(this index.Value);
+        
+      enumerable() = self;
+        
+      reset()
+      {
+         this index := -1
+      }
+   };
+
+   T[] cast()
+   {
+      int len := self.Length;
+        
+      T[] copy := new T[](len);
+      for(int i := 0, i < len, i += 1)
+      {
+         copy[i] := array[i]
+      };
+        
+      ^ copy
+   }
+
 }
 
 // --- String ---
@@ -266,7 +299,7 @@ public const struct String : BaseValue,
             page := 256
          };
 
-         m := shortArrayConvertor.convert(buffer, 0, l, self.Substring(i,page));
+         m := shortArrayConvertor.convert(buffer, 0, page, self.Substring(i,page));
 
          retVal := retVal.add(WideString.fromShortArray(0, m, buffer));
 
@@ -420,7 +453,7 @@ public const struct String : BaseValue,
    string clone() = String.copy(self);
 }
 
-public const string emptyString = String.MinValue;
+public const String emptyString = String.MinValue;
 
 // --- StringEnumerator ---
 
@@ -632,7 +665,7 @@ public const struct WideString : BaseValue
             page := 256
          };
 
-         m := byteArrayConvertor.convert(buffer, 0, l, self.Substring(i,page));
+         m := byteArrayConvertor.convert(buffer, 0, page, self.Substring(i,page));
 
          retVal := retVal.add(String.fromByteArray(0, m, buffer));
 
@@ -694,7 +727,7 @@ public const struct WideString : BaseValue
       };
 
       int l2 := subs.Length;
-      string retVal := WideString.allocate(l1 + l2);
+      wide retVal := WideString.allocate(l1 + l2);
 
       self.copySubS(retVal, self, 0, l1);
       self.copySubS(retVal, subs, l1, l2);    
@@ -786,7 +819,7 @@ public const struct WideString : BaseValue
 // --- emptyWideString ---
 
 /// An empty wide literal value
-public const wide emptyWideString = WideString.MinValue;
+public const WideString emptyWideString = WideString.MinValue;
 
 // --- WideStringEnumerator ---
 

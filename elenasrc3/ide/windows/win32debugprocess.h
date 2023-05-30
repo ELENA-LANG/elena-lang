@@ -97,7 +97,7 @@ namespace elena_lang
    {
       Map<size_t, char> breakpoints;
 
-      //void addBreakpoint(size_t address, Win32ThreadContext* context, bool started);
+      void addBreakpoint(addr_t address, Win32ThreadContext* context, bool started);
       //void removeBreakpoint(size_t address, Win32ThreadContext* context, bool started);
       void setSoftwareBreakpoints(Win32ThreadContext* context);
       void setHardwareBreakpoint(addr_t address, Win32ThreadContext* context, bool withStackLevelControl);
@@ -240,6 +240,7 @@ namespace elena_lang
       size_t getArrayLength(addr_t address) override;
 
       void setBreakpoint(addr_t address, bool withStackLevelControl) override;
+      void addBreakpoint(addr_t address) override;
 
       void addStep(addr_t address, void* current) override;
 

@@ -135,6 +135,7 @@ namespace elena_lang
       friend void loadDPROp(JITCompilerScope* scope);
       friend void loadDPLabelOp(JITCompilerScope* scope);
       friend void loadIOp(JITCompilerScope* scope);
+      friend void loadIROp(JITCompilerScope* scope);
 
       friend void compileBreakpoint(JITCompilerScope* scope);
       friend void compileClose(JITCompilerScope* scope);
@@ -144,6 +145,8 @@ namespace elena_lang
       friend void compileJne(JITCompilerScope* scope);
       friend void compileJlt(JITCompilerScope* scope);
       friend void compileJge(JITCompilerScope* scope);
+      friend void compileJle(JITCompilerScope* scope);
+      friend void compileJgr(JITCompilerScope* scope);
       friend void compileDispatchMR(JITCompilerScope* scope);
       friend void compileHookDPR(JITCompilerScope* scope);
 
@@ -153,7 +156,7 @@ namespace elena_lang
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
          JITSettings settings,
-         Map<ref_t, pos_t>& positions, bool declareMode);
+         Map<ref_t, pos_t>& positions, bool declareMode, bool virtualMode);
 
    public:
       void allocateBody(MemoryWriter& writer, int size) override;
@@ -170,7 +173,8 @@ namespace elena_lang
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
-         JITSettings settings) override;
+         JITSettings settings,
+         bool virtualMode) override;
 
       void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
          MemoryWriter& codeWriter, LabelHelperBase* lh) override;
@@ -201,11 +205,13 @@ namespace elena_lang
 
       void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) override;
 
-      void populatePreloaded(uintptr_t env, uintptr_t eh_table, uintptr_t gc_table) override;
+      void populatePreloaded(uintptr_t eh_table) override;
 
       addr_t allocateTLSIndex(ReferenceHelperBase* helper, MemoryWriter& writer) override;
 
       void allocateThreadContent(MemoryWriter* tlsWriter) override;
+
+      void* getSystemEnv() override;
 
       JITCompiler()
          : _inlines{}, _preloaded(nullptr)
@@ -238,7 +244,8 @@ namespace elena_lang
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
-         JITSettings settings) override;
+         JITSettings settings,
+         bool virtualMode) override;
 
       int getExtMessageSize() override
       {
@@ -312,7 +319,8 @@ namespace elena_lang
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
-         JITSettings settings) override;
+         JITSettings settings,
+         bool virtualMode) override;
 
       void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) override;
 
@@ -415,6 +423,7 @@ namespace elena_lang
    void loadDPROp(JITCompilerScope* scope);
    void loadDPLabelOp(JITCompilerScope* scope);
    void loadIOp(JITCompilerScope* scope);
+   void loadIROp(JITCompilerScope* scope);
 
    void compileClose(JITCompilerScope* scope);
    void compileOpen(JITCompilerScope* scope);
@@ -424,6 +433,8 @@ namespace elena_lang
    void compileJne(JITCompilerScope* scope);
    void compileJlt(JITCompilerScope* scope);
    void compileJge(JITCompilerScope* scope);
+   void compileJle(JITCompilerScope* scope);
+   void compileJgr(JITCompilerScope* scope);
    void compileDispatchMR(JITCompilerScope* scope);
    void compileHookDPR(JITCompilerScope* scope);
 }

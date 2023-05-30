@@ -4,10 +4,19 @@ In development:
 
   [development]
     ### EPOCH: elena 6.0 - redux ###
-    === Iteration 14 ===
-    * release
-
     === Iteration 15 ===
+
+    * test x86, x86-64, i386, amd64, ppc64le, arm64
+
+    === Iteration 16 ===
+    * vm console : ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
+    * vm console : ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
+
+    * ide : create a new project, save it, change it and save it
+    * ide : refreshing auto watch - with the same name, unused
+    * ide : set / remove breakpoints
+    * ide : menu - clear all breakpoints
+
     ! migrate rest of elena 5.0 functionality (script engine, infinite enumeration, ...)
     ! script and db samples
     ! x86 : gui
@@ -17,23 +26,37 @@ In development:
     ! ide : vm console 
     * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
     ! sm : generate some basic templates from vm console - hello world sample
-    ! elena sm : linux
-    ! elena vm : ppc64
     ! script samples : win x86, win x86-64, linix i386, linux amd64
     ! migrate all script engine tutorials : win x86, win x86-64, linix i386, linux amd64
     ! regression tests : github issues
-    ! i386 : multi-threading
-    ! x86-64 : multi-threading
-    ! x86-64 : gui
     ! elc : using custom grammar for parsing a source
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
+    * Class Constants : review doc and implement if requiered
+    * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
+    * optimization : copy a sub array to another array - starting
+    * x86 : gui - starting - new project type
+    * ide : before compiling, make sure the source file is saved
+
+    * switch expression
+    * optimization : copy a sub array to another array
     * redesign switch statement : it should be possible to use as an expression as well
       (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
        console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
+    * ide : closing unsaved file - closing unsaved
+    * ide : selecting an error line - try to get rid of blicking
+    * ide : show hex number
+    * ide : show project name as a app title (new / existing projects / single file project)
 
-    * operator .\
+    * elenavm : preloaded symbol, support preloaded symbols : dynamic
+    * elenavm : loading preloaded symbols for newly loaded modules
+
+    * #508 : support strong-typed variables for tuple unboxing
+    * multi-value return - #508
+
+    * ide debugger : stepping in the loop (for)
+
     * optimization : copy a sub array to another array
     * int32 : implement direct neg, not operations; use it directly for IntNumber
 
@@ -56,32 +79,44 @@ In development:
     * ldoc : symbol should return the type and it should be possible to see its api (e.g. system'console)
     * rosetta samples : 20
     * examples : datetime
-    * ide : change status to ready when writing / selecting files
-    * ide : selecting with a mouse
     * examples : replace, trans 
-    * ide : new source
     * examples : textdb, textfile 
     * ide : on start : set focus inside the edit frame if available
     * ldoc : get rid of BaseEnumerator<TupleTuple#2,T1,T2> and so on
     * strong typed forward constant
     * arrange action for i386 / amd64 linux release
+    * ide : debug vm client app
+    * ide : editor context menu
+    * ide : tool bar
+    * x86 : gui
+    * system module - it should be possible to use type aliases (replace all cases of using direct types 
+      for symbols in system (int,string,wide))
+    * elenavm : protect rdata memory sections
+    * console & files samples
+    * new opcode : fexp, fln - ppc64le, arm64
+    * new opcode : fsin, fcos, farctan, fpi - ppc64le, arm64
 
-    === Iteration 16 ===
+    === Iteration 17 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop
     ! x86-64 : multi-threading : open another thread
     ! sm : generate advances templates from vm console
     ! elena vm : helloworld sample Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
     ! elena sm : script samples Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
-    ! elena vm : aarch64, ppc64
     ! migrate all script engine tutorials : linix aarch64, linux ppc64le
-    ! ppc64le : multi-threading
-    ! ppc64le : gui
+    ! elena sm : linux
+    ! i386 : multi-threading
+    ! x86-64 : multi-threading
+    ! x86-64 : gui
+    ! x86-64 : script samples
     * templates with parameters: template can have attribute values in the brackets after the main body
       e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
     * migrate: amb, anagram
-    * multi-value return - #508
+    * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    === Iteration 17 ===
+    === Iteration 18 ===
+    ! elena vm : aarch64, ppc64
+    ! elena vm : ppc64
+    ! ppc64le : multi-threading
 
 ------                                                           
 Backlog:
@@ -93,6 +128,7 @@ Backlog:
     --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
 
     --- elena tutorials ---
+    * review Producing a code in run-time
     * raise an error if the constructor does not handle the argument (if the multimethod is auto generated)
     * read an article about meta programming in Ruby, try to do similar
     * Func<T> / Func1 should use semi-direct call for the function invoke
@@ -100,12 +136,22 @@ Backlog:
     * lazy expressions, put it in the first page as a feature
 
     --- elena redux ---
+    * resolve variadic operation directly if possible
+    * fillir - optimization for 1,2,3,4
+    * gc fune-tuning, promote the part of YG to MG if it survive several collecting cycles
+    * debugger info : save the path relative to the src60 path?
+    * ide : brackets highlight
+    * ide : auto indent
+    * ide : highlight syntax
+    * ide : rest of menu options
+    * ide : context menu
+    * internal / auto-generated classes must not be included in run-time attributes
+    * optimization : tuple / array unboxing
     * native conversion from short to int / byte to int
     * extension template should contain all its arguments in the signature
     * support strong extension template arrayOp<T> : strong, weak
     * support autoloaded classes : should be automatically resolved when the module is loaded
       (flag elAutoLoaded)
-    * support preloaded symbols : both static and dynamic
     * module extension dispatcher should be preloaded
     * elena : nullable
     * system'collections'Map - migrating rest of methods
@@ -132,8 +178,6 @@ Backlog:
     * allocate constant array directly if possible
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
     * dispatch optimization : for 1,2,3 args
-    * debugger : step over symbol
-    * debugger : stepping in the loop (for)
     * system'String.Substring<'IntNumber,'IntNumber>[3] - why the parameters are boxed?
     * system'io'read[3] : uncomment code
     * system'console : reader and writer should be strongly-typed : IConsoleReader, IConsoleWriter
@@ -143,7 +187,6 @@ Backlog:
     * ldoc : all symbols should be in alphabetic order
     * ldoc : consoleOp extension should be visible
     * debugger watch: variadic argument list
-    * callstack : fix the call stack list, it looks some points are not included
     * call semidirect method
     * external inline template should be private / internal. Currently it is not possible because
       it cannot be resolved by template generation
@@ -162,7 +205,6 @@ Backlog:
     * do:while : both statement are matched : do{ a } while(b) and do{ a } while{ b } which is not correct?
     * ide : error messages if the debug process failed
     * ide : set focus on activate / after opening a file
-    * ide : output is not properly refreshed
     * ide : toolbar
     * ide : fix blicking on tab selecting (especially on opening a new project)
     * ide : find
@@ -170,6 +212,8 @@ Backlog:
     * ide : replace all
     * ide : open the last opened file on the ide start
     * ide : remember last open project
+    * ide : project settings
+    * ide : editor settings
     * api : migrate VariadicArray, Matrix<T>, BitArray, BitArray32, IntMatrix, RealMatrix
     * elena : allow to initialize class in-place
     * ide - disable close if no files are open
@@ -183,8 +227,6 @@ Backlog:
 
     * api : provide field descriptions
 
-    * ide : debugger - step into / over / stop / run / compile
-    * ide : debugger - on debugging / debugger stopped
     * ide - tab
     * ide - close project
     * ide - close single file project
@@ -195,19 +237,15 @@ Backlog:
     * ide - fix errors
     * ide - compile the project / file
 
-    * ide debugger
-
     * conversion : byte / short / int / long => real
 
     * toPrintable should return both wide and string
-    * unit tests : arithmetic operations
 
     * uncomment hello world
     * uncomment lnx_console.l code
     * unit tests : boolean operations
     * int to short -> negative
     * short to int -> negative
-    * uint : test comparision (e.g 0 < 3000000u)
     * comparision operations : short / byte / long operation
     * boolean operators : &&, ||, ^^ - weak implementation
 
@@ -221,7 +259,6 @@ Backlog:
     * api60 : Indexer2D?
     * native support for long to real
     * native support for real to long
-    * migrate realOpController : math operations
     * pi & e constants
     * intRefOp & realRefOp ?
     * string to real : support e notation
@@ -235,7 +272,6 @@ Backlog:
     * prop template : weak
     * generate default constructor if there is an initializer
     * do not box when stack-allocated self is returned from the stack-safe method
-    * new opcode - creater
     * tests : mg->yg collecting - x86, x86-64, i386, amd64, ppc64le, arm64
     * unit tests : branching
     * unit tests : looping
@@ -243,8 +279,6 @@ Backlog:
     * review code { int n := 3; } : extra assigning
     * repeate-until statements
     * aarch64 : setting mask for size (createn, ...)
-    * try-finally-catch
-    * try-finally
     * optimization : fields should be aligned to 4 / 8 and the copy operation should take this into account,
       except for special type of structs - packed one
     * ide : fix errors with font size / switching to error list / clear high light on click
@@ -279,7 +313,7 @@ Backlog:
     * exclude embeddable return for auto field
     * generate abstract ebleddable
     * primitive operations : support all comparision operations (not only <, == and !=)
-    * uint, ushort, int8
+    * ushort, int8
     * numberic constant should be implicitly converted to byte / short / long / real
     * closure should be sealed
     * jumping - aligning the target to 4 / 8
@@ -314,7 +348,6 @@ Backlog:
     * verifyMultimethods implements
     * explicit multimethod
     * call interface method
-    * compiler - constructor - fill newly created object with zerros
     * compiler - if the method has no call operarion, no need to set arg length
     * bcwriter : openFrame - should flush only used arguments (e.g. for test[1] - only one xflush)
     * dispatch opcode : optimize for 1,2,3,4 arguments
@@ -365,13 +398,10 @@ Backlog:
     * for linux amd64 allocate shadow memory
 
     * ide : editor
-    * ide : project view
-    * ide : compiling
     * ide : save last open file / project
     * ide : project settings
     * ide : styling source code
     * call a message / closure; debugger
-    * support preloaded symbols
     * redux : add output convertion for the method without the explicit return statement
 
     * optimization : openheader / open - there should be an optimized version for n < 4 - with reserved raw stack
@@ -575,7 +605,6 @@ Backlog:
     * refactoring : classROp.setField should be either internal or not available at all (because
                     it is not possible to enforce types)
 
-    * multi-return
     * docs
 
     * api doc :  static method descriptions;

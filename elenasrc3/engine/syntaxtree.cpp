@@ -58,6 +58,27 @@ void SyntaxTree :: copyNode(SyntaxTreeWriter& writer, SyntaxNode node, bool incl
       writer.closeNode();
 }
 
+void SyntaxTree :: copyNodeSafe(SyntaxTreeWriter& writer, SyntaxNode node, bool includingNode)
+{
+   if (includingNode) {
+      if (node.arg.strArgPosition != INVALID_POS) {
+         IdentifierString tmp(node.identifier());
+         writer.newNode(node.key, *tmp);
+      }
+      else writer.newNode(node.key, node.arg.reference);
+   }
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      copyNodeSafe(writer, current, true);
+
+      current = current.nextNode();
+   }
+
+   if (includingNode)
+      writer.closeNode();
+}
+
 void SyntaxTree :: saveNode(SyntaxNode node, MemoryBase* section, bool includingNode)
 {
    SyntaxTree tree;

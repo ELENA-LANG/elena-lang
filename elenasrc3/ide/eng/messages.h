@@ -16,6 +16,7 @@ namespace elena_lang
    constexpr auto SAVEAS_PROJECT_CAPTION     = _T("Save File As");
 
    constexpr auto QUESTION_SAVE_FILECHANGES  = _T("Save changes to ");
+   constexpr auto QUESTION_CLOSE_UNSAVED     = _T("Close the tab anyway");
 
 }
 

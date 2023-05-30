@@ -1,4 +1,5 @@
 import system'routines;
+import system'text;
 
 // --- outputOp ---
 
@@ -51,6 +52,43 @@ public extension outputOp
 //        
 //        self.writeLine();
 //    }
+}
+
+public extension outputFormatterOp
+{
+   printPaddingRight(int width, params object[] list)
+   {
+      auto buffer := new TextBuilder();
+        
+      int len := list.Length;
+      for (int i := 0, i < len, i += 1)
+      {
+         object obj := list[i];
+            
+         buffer.write(obj.toString())
+      };
+        
+      self.writePaddingRight(buffer.Value, $32, width);
+            
+      ^ self
+   }
+
+   printPaddingLeft(int width, params object[] list)
+   {
+      auto buffer := new TextBuilder();
+        
+      int len := list.Length;
+      for (int i := 0, i < len, i += 1)
+      {
+         object obj := list[i];
+            
+         buffer.write(obj.toString())
+      };
+        
+      self.writePaddingLeft(buffer.Value, $32, width);
+            
+      ^ self
+   }
 }
 
 public extension inputOp

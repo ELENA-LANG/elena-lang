@@ -1,20 +1,11 @@
-import system'routines;
 import extensions;
-
 
 public program()
 {
-   var s:= "1234".toArray();
+   uint k := 2H;
+   uint l := 0AH;
 
-   var ch := s[0];
+   var r := l < k;
 
-//   console.printLine(s[0] == ch);
-   console.printLine(s[0].equalReference(ch));
-
-//               var duplicate := guess.seekEach:(x => (x == ch)&&(x.equalReference(ch).Inverted));
-//               if (nil != duplicate)
-//               {
-//                  InvalidArgumentException.raise()
-//               };
-
+   Assert.ifTrue(r);  // 2 > 10
 }

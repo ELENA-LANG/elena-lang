@@ -720,6 +720,22 @@ inline % 1Ch
 
 end
 
+// ; xload
+inline %1Dh
+
+  add     x12, x10, __arg12_1
+  ldrsw   x9, [x12]
+
+end
+
+// ; xlload
+inline %1Eh
+
+  add     x12, x10, __arg12_1
+  ldr     x9, [x12]
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -798,6 +814,50 @@ inline %02Fh
 
   blr     x10
 
+end
+
+// ; fabsdp
+inline %78h
+
+  add     x19, x29, __arg12_1
+  ldr     d18, [x0]
+  fabs    d18, d18
+  str     d18, [x19]
+
+end
+
+// ; fsqrtdp
+inline %79h
+
+  add     x19, x29, __arg12_1
+  ldr     d18, [x0]
+  fsqrt   d18, d18
+  str     d18, [x19]
+
+end
+
+// ; fexp
+inline %07Ah
+end
+
+// ; fln
+inline %07Bh
+end
+
+// ; fsin
+inline %07Ch
+end
+
+// ; fcos
+inline %07Dh
+end
+
+// ; farchtan
+inline %07Eh
+end
+
+// ; fpi
+inline %07Fh
 end
 
 // ; setr
@@ -1007,7 +1067,7 @@ inline %8Dh
 
 end
 
-// ; peekfi
+// ; setfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %08Eh
 
@@ -1015,7 +1075,7 @@ inline %08Eh
 
 end 
 
-// ; peekfi
+// ; setfi
 // ; NOTE : it is presumed that arg1 > 0 (it is inverted in jitcompiler)
 inline %58Eh
 
@@ -1263,6 +1323,44 @@ inline %9Ch
 
 end
 
+// ; xadddp
+inline %9Dh
+
+  add     x11, x29, __arg12_1
+  ldrsw   x12,  [x11]
+  add     x9, x9, x12
+
+end 
+
+// ; xsetfi
+// ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
+inline %09Eh
+
+  lsl     x14, x9, #3
+  sub     x10, x29, -__arg12_1
+  sub     x10, x10, x14
+
+end 
+
+// ; xsetfi
+// ; NOTE : it is presumed that arg1 > 0 (it is inverted in jitcompiler)
+inline %59Eh
+
+  lsl     x14, x9, #3
+  add     x10, x29, __arg12_1
+  add     x10, x10, x14
+
+end 
+// ; frounddp
+inline %9Fh
+
+  add     x19, x29, __arg12_1
+  ldr     d18, [x0]
+  frintn  d18, d18
+  str     d18, [x19]
+
+end
+
 // ; saveddp
 inline %0A0h
 
@@ -1491,6 +1589,47 @@ inline %0ACh
   ldr     x9,  [x11]
 
 end 
+
+// ; xfillr
+inline % 0ADh
+
+  ldr     w11, [x0]
+  lsl     x11, x11, #3
+
+  movz    x12,  __ptr32lo_1
+  movk    x12,  __ptr32hi_1, lsl #16
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 8
+  str     x12, [x13], #8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; xfillr 0
+inline % 1ADh
+
+  ldr     w11, [x0]
+  lsl     x11, x11, #3
+
+  movz    x12, #0
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 8
+  str     x12, [x13], #8
+  b       labLoop
+
+labEnd:
+
+end
 
 // ; callr
 inline %0B0h
@@ -1879,6 +2018,20 @@ inline %0D3h
 
 end
 
+// ; udivndp
+inline %0D4h
+
+  add     x19, x29, __arg12_1
+
+  ldr     w17, [x0]
+  ldr     w18, [x19]
+
+  udiv    x18, x18, x17    // ; sp[0] / temp
+
+  str     w18, [x19]
+
+end
+
 // ; ianddpn
 inline %0D8h
 
@@ -2208,6 +2361,22 @@ inline %4DDh
   lsr     x18, x18, x17
 
   str     x18, [x19]
+
+end
+
+// ; selultrr
+inline %0DFh
+
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x10]
+  cmp     x17, x18
+
+  movz    x11,  __ptr32lo_1
+  movz    x12,  __ptr32lo_2
+  movk    x11,  __ptr32hi_1, lsl #16
+  movk    x12,  __ptr32hi_2, lsl #16
+
+  csel    x10, x11, x12, cc
 
 end
 
@@ -3096,6 +3265,44 @@ inline %0F7h
   sub     x20, x10, elVMTOffset
   str     x19, [x20]
   str     w18, [x20, #12]!
+
+end
+
+// ; fillir
+inline %0F8h
+
+  movz    x12,  __ptr32lo_2
+  movk    x12,  __ptr32hi_2, lsl #16
+
+  mov     x11, __arg12_1
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  str     x12, [x13], #8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; fill i,0
+inline %1F8h
+
+  mov     x11, __arg12_1
+  mov     x12, 0
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  str     x12, [x13], #8
+  b       labLoop
+
+labEnd:
 
 end
 

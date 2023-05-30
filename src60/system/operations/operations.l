@@ -44,7 +44,6 @@ public template until<step_expr, cond_expr>(loop_body) : __included(statementTem
     $rep cast bool(cond_expr) ! { loop_body; __ignore_duplicates step_expr }
 }
 
-
 // --- do:until ---
 
 public template do::until(loop_body, cond_expr) : __included(statementTemplates)
@@ -52,6 +51,15 @@ public template do::until(loop_body, cond_expr) : __included(statementTemplates)
    loop_body;
 
    $rep cast bool(cond_expr) ! { loop_body }
+}
+
+// --- do:while ---
+
+public template do::while(loop_body, cond_expr) : __included(statementTemplates)
+{
+   loop_body;
+
+   $rep cast bool(cond_expr) ? { loop_body }
 }
 
 // --- for ---
@@ -77,9 +85,30 @@ public template try::catch(try_block,catch_block) : __included(statementTemplate
    try_block \\ on(catch_block);
 }
 
+// --- try:catch:finally ---
+
+public template try::catch::finally(try_block,catch_block,finally_block) : __included(statementTemplates)
+{
+   try_block \\ on(catch_block) $fnl finally_block;
+}
+
+// --- try:finally ---
+
+public template try::finally(try_block,finally_block) : __included(statementTemplates)
+{
+   try_block $fnl finally_block;
+}
+
 // --- extern ---
 
 public template extern(body) : __included(statementTemplates)
 {
    $ext body
+}
+
+// --- operator templates ---
+
+public template operator::alt<identifier>(expr) : __included(statementTemplates)
+{
+   expr \ back:identifier;
 }

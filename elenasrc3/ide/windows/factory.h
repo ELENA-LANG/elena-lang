@@ -43,9 +43,10 @@ namespace elena_lang
       ControlBase* createProjectView(ControlBase* owner, NotifierBase* notifier);
       ControlBase* createDebugBrowser(ControlBase* owner, NotifierBase* notifier);
       GUIControlBase* createMenu(ControlBase* owner);
+      GUIControlBase* createDebugContextMenu(ControlBase* owner);
 
       void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
-         int projectView, int contextBrowser, int menu, int statusBar);
+         int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu);
 
    public:
       GUIApp* createApp() override;

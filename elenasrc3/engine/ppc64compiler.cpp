@@ -157,7 +157,8 @@ void PPC64leJITCompiler:: prepare(
    ImageProviderBase* imageProvider, 
    ReferenceHelperBase* helper,
    LabelHelperBase*,
-   JITSettings settings)
+   JITSettings settings,
+   bool virtualMode)
 {
    //_inlineMask = mskCodeRelRef32;
 
@@ -168,7 +169,7 @@ void PPC64leJITCompiler:: prepare(
       commands[(int)Overloads[i].value1] = Overloads[i].value2;
 
    PPCLabelHelper labelHelper;
-   JITCompiler64::prepare(loader, imageProvider, helper, &labelHelper, settings);
+   JITCompiler64::prepare(loader, imageProvider, helper, &labelHelper, settings, virtualMode);
 }
 
 void PPC64leJITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode)

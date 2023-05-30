@@ -1,6 +1,6 @@
 namespace text
 {
-   const int TextPageSize = 128;
+   const IntNumber TextPageSize = 128;
     
    // --- TextBuffer ---
     

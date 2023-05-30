@@ -51,6 +51,8 @@ namespace elena_lang
       void compileBCxx(ScriptToken& tokenInfo, int aa, int lk, MemoryWriter& writer, LabelScope& labelScope);
       void compileCMP(ScriptToken& tokenInfo, int bf, int l, PPCOperand ra, PPCOperand rb,
          MemoryWriter& writer);
+      void compileCMPL(ScriptToken& tokenInfo, int bf, int l, PPCOperand ra, PPCOperand rb,
+         MemoryWriter& writer);
       void compileCMPI(ScriptToken& tokenInfo, int bf, int l, PPCOperand ra, int i, ref_t reference,
          MemoryWriter& writer);
       void compileFCMPU(ScriptToken& tokenInfo, int bf, PPCOperand fra, PPCOperand frb,
@@ -80,21 +82,27 @@ namespace elena_lang
       void compileBNE(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileBLT(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileBGE(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
+      void compileBSO(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileCMP(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileCMPL(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMPWI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMPDI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFCTIW(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileDIVD(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileDIVW(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileDIVWU(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileEXTRDI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileEXTSW(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFABS(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFADD(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFSUB(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFCFID(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFCMPU(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFDIV(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFMUL(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFRIN(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFRIZ(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFSQRT(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileISELEQ(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileISELLT(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileOR(ScriptToken& tokenInfo, MemoryWriter& writer);
@@ -153,6 +161,7 @@ namespace elena_lang
       bool compileROpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileTOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
 
       void compileProcedure(ScriptToken& tokenInfo) override;

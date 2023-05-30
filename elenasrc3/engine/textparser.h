@@ -20,6 +20,7 @@ namespace elena_lang
    constexpr char dfaIdentifier     = 'C';
    constexpr char dfaOperator       = 'D';
    constexpr char dfaInteger        = 'E';
+   constexpr char dfaQuoteStart     = 'F';
    constexpr char dfaQuote          = 'G';
    constexpr char dfaHexInteger     = 'J';
    constexpr char dfaReference      = 'M';

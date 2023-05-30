@@ -1,4 +1,5 @@
 import system'text;
+import system'dynamic;
 
 // --- IOException ---
 
@@ -16,13 +17,13 @@ public sealed class ScriptEngine
 
    constructor()
    {
-      _scopeId := extern elenasm.NewScope()
+      _scopeId := extern elenasm.NewScopeSMLA()
    }
 
    internal string lastScriptError()
    {
       byte buffer[256];
-      int  length := extern elenasm.GetStatus(buffer, 255);
+      int  length := extern elenasm.GetStatusSMLA(buffer, 255);
             
       ^ UTF8Encoding.toString(0, length, buffer);
    }
@@ -30,7 +31,7 @@ public sealed class ScriptEngine
     
    string evaluateScriptAsText(string script)
    {
-      pointer tape := extern elenasm.InterpretScopeScript
+      pointer tape := extern elenasm.InterpretScopeScriptSMLA
                             (_scopeId, script);
             
       if (tape.isUnassigned())
@@ -38,20 +39,44 @@ public sealed class ScriptEngine
 
       auto retVal := cast string(tape);    
 
-      extern elenasm.Release(tape);
+      extern elenasm.ReleaseSMLA(tape);
 
       ^ retVal
    }
     
    private loadScriptFile(string path, int encoding, int autoDetect)
    {
-      pointer ptr := extern elenasm.InterpretScopeFile
+      pointer ptr := extern elenasm.InterpretScopeFileSMLA
                             (_scopeId, path, encoding, autoDetect);
 
       if (ptr.isUnassigned())
          {   ScriptEngineException.raise(self.lastScriptError()) };
       
-      extern elenasm.Release(ptr)
+      extern elenasm.ReleaseSMLA(ptr)
+   }
+
+   private buildTape(pointer tape)
+   {
+      var retVal := nil;
+      byte temp[1024];        
+      int len := extern elenasm.GetLengthSMLA(tape);
+
+      if (len <= 1024) {
+         tape.copyTo(temp, len);
+            
+         retVal := StreamTapeInterpreter.build(temp, len)
+      }
+      else {
+         auto dump := new byte[](len);
+            
+         tape.copyTo(dump, len);
+            
+         retVal := StreamTapeInterpreter.build(dump, len);
+      };
+                                                                                                            
+      extern elenasm.ReleaseSMLA(tape);
+        
+      ^ retVal
    }
 
    string loadScriptAsText(string script)
@@ -60,5 +85,17 @@ public sealed class ScriptEngine
    loadPath(string path)
    {
       self.loadScriptFile(path, 0, -1);
+   }
+
+   buildScript(string script)
+   {
+      pointer tape := extern elenasm.InterpretScopeScriptSMLA
+                            (_scopeId, script);
+            
+      if (tape.isUnassigned())
+         {   ScriptEngineException.raise(self.lastScriptError()) };
+
+
+      ^ self.buildTape(tape)
    }
 }

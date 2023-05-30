@@ -174,14 +174,14 @@ struct BuiltinReferences
    ref_t   superReference;
    ref_t   intReference, shortReference, byteReference;
    ref_t   longReference, realReference;
-   ref_t   dwordReference;
+   ref_t   uintReference;
    ref_t   literalReference;
    ref_t   wideReference;
    ref_t   messageReference, extMessageReference;
    ref_t   wrapperTemplateReference;
    ref_t   arrayTemplateReference;
    ref_t   argArrayTemplateReference;
-   ref_t   closureTemplateReference;
+   ref_t   closureTemplateReference, tupleTemplateReference;
    ref_t   lazyExpressionReference;
    ref_t   pointerReference;
 
@@ -204,13 +204,13 @@ struct BuiltinReferences
    {
       superReference = intReference = 0;
       shortReference = byteReference = 0;
-      dwordReference = 0;
+      uintReference = 0;
       longReference = realReference = 0;
       literalReference = wideReference = 0;
       messageReference = extMessageReference = 0;
       wrapperTemplateReference = 0;
       arrayTemplateReference = argArrayTemplateReference = 0;
-      closureTemplateReference = lazyExpressionReference = 0;
+      closureTemplateReference = lazyExpressionReference = tupleTemplateReference = 0;
       pointerReference = 0;
 
       dispatch_message = constructor_message = 0;
@@ -263,6 +263,7 @@ public:
    IdentifierString     selfVar;
    IdentifierString     declVar;
    IdentifierString     superVar;
+   IdentifierString     receivedVar;
 
    pos_t                stackAlingment, rawStackAlingment;
    pos_t                ehTableEntrySize;
@@ -383,6 +384,8 @@ enum class ExpressionAttribute : pos64_t
    InitializerScope  = 0x00000800000,
    NestedDecl        = 0x00001000000,
    ConstantExpr      = 0x00002000000,
+   Variadic          = 0x00004000000,
+   WithVariadicArg   = 0x00008000000,
    Superior          = 0x10000000000,
    Lookahead         = 0x20000000000,
    NoDebugInfo       = 0x40000000000,
@@ -444,6 +447,7 @@ struct FieldAttributes
    bool     isConstant;
    bool     isStatic;
    bool     isEmbeddable;
+   bool     isReadonly;
    bool     inlineArray;
    bool     fieldArray;
 };
@@ -460,8 +464,8 @@ public:
    virtual void injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode, 
       mssg_t message, ustr_t retVar, ref_t classRef) = 0;
 
-   virtual ref_t resolvePrimitiveType(ModuleScopeBase& scope, TypeInfo typeInfo)
-      = 0;
+   virtual ref_t resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, 
+      TypeInfo typeInfo, bool declarationMode = false) = 0;
 
    virtual ref_t generateExtensionTemplate(ModuleScopeBase& scope, ref_t templateRef, size_t argumentLen,
       ref_t* arguments, ustr_t ns, ExtensionMap* outerExtensionList) = 0;

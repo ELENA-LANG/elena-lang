@@ -32,11 +32,13 @@ namespace elena_lang
 
       bool  newLine;
       bool  bandStyle;
+      bool  toggleMark;
    };
 
    struct Marker
    {
       pos_t style;
+      bool  toggleMark;
 
       bool operator ==(const Marker& m)
       {
@@ -170,6 +172,7 @@ namespace elena_lang
             this->row = 0;
             this->newLine = false;
             this->bandStyle = false;
+            this->toggleMark = false;
 
             this->bm.invalidate();
          }
@@ -255,9 +258,9 @@ namespace elena_lang
          _notifiers.cut(notifier);
       }
 
-      void addMarker(int row, pos_t style, bool instanteMode, DocumentChangeStatus& changeStatus)
+      void addMarker(int row, pos_t style, bool instanteMode, bool togleMark, DocumentChangeStatus& changeStatus)
       {
-         _markers.add(row, { style });
+         _markers.add(row, { style, togleMark });
 
          changeStatus.formatterChanged = true;
       }
@@ -301,6 +304,15 @@ namespace elena_lang
       bool isReadOnly() { return status.readOnly; }
       bool isUnnamed() { return status.unnamed; }
       bool isModified() { return status.modifiedMode; }
+
+      void markAsUnnamed()
+      {
+         status.unnamed = true;
+      }
+      void markAsModified()
+      {
+         status.modifiedMode = true;
+      }
 
       Point getSize() const { return _size; }
 

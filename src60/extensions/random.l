@@ -19,10 +19,9 @@ sealed struct RandomGenerator
 
    private int eval(int maxValue)
    {
-      int number := self.eval();
-      int middle := maxValue / 2;
+      int number := self.eval().Absolute;
 
-      ^ middle + number.mod(middle);
+      ^ 0 + number.mod(maxValue);
    }
 
    private int eval()

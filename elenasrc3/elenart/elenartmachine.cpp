@@ -23,6 +23,8 @@ ELENARTMachine :: ELENARTMachine(path_t dllRootPath, path_t execPath, path_t con
 
    PathString configPath(dllRootPath, configFile);
    loadConfig(*configPath);
+
+   _providerInitialized = false;
 }
 
 void ELENARTMachine :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node root)
@@ -173,6 +175,14 @@ size_t ELENARTMachine :: loadAddressInfo(addr_t retPoint, char* lineInfo, size_t
       return 0;
 
    RTManager rtmanager(nullptr, &_debugSection);
+   if (!_providerInitialized) {
+      PathString rootPath;
+      rootPath.copySubPath(*_execPath, true);
+
+      rtmanager.loadRootPackage(_libraryProvider, *rootPath);
+
+      _providerInitialized = true;
+   }
 
    return rtmanager.retriveAddressInfo(_libraryProvider, retPoint, lineInfo, length);
 }

@@ -58,6 +58,15 @@ procedure __object_class
 
 end
 
+procedure __object_instanceOf
+
+  peek        sp:0
+  class
+  cmp         sp:1
+  seleq       class:"system'BoolValue#true", class:"system'BoolValue#false"
+
+end
+
 procedure __exception_handler
 
   xflush          sp:0
@@ -260,15 +269,15 @@ procedure __str_less (s1, s2)
 
   peek       fp:s1
   nlen       1
+  sub        n:1
   save       dp:s_len
 
   peek       fp:s2
   nlen       1
+  sub        n:1
   set        dp:s_len
   xcmp
   jne        labNotLess
-
-  sub        n:1
 
   nsave      dp:index, 0
 
@@ -293,15 +302,20 @@ labCheck:
   set        dp:ch2
   read       1
 
+  xswap      sp:1
   load
-  xcmp       dp:ch 
-  jge        labNotLess
+  xcmp       dp:ch
+  jlt        labNotLess
 
   nadd       dp:index, 1
-  xswap      sp:1
   jump       labCheck
 
 labLoopEnd:
+  set        dp:ch2
+  load
+  xcmp       dp:ch
+  jeq        labNotLess
+
   set        class:"system'BoolValue#true"
   jump       labEnd
 
@@ -500,15 +514,15 @@ procedure __wstr_less (s1, s2)
 
   peek       fp:s1
   nlen       2
+  sub        n:1
   save       dp:s_len
 
   peek       fp:s2
   nlen       2
+  sub        n:1
   set        dp:s_len
   xcmp
   jne        labNotLess
-
-  sub        n:1
 
   nsave      dp:index, 0
 
@@ -533,15 +547,20 @@ labCheck:
   set        dp:ch2
   read       2
 
+  xswap      sp:1
   load
-  xcmp       dp:ch 
-  jge        labNotLess
+  xcmp       dp:ch
+  jlt        labNotLess
 
   nadd       dp:index, 1
-  xswap      sp:1
   jump       labCheck
 
 labLoopEnd:
+  set        dp:ch2
+  load
+  xcmp       dp:ch
+  jeq        labNotLess
+
   set        class:"system'BoolValue#true"
   jump       labEnd
 
@@ -552,7 +571,6 @@ labEnd:
   close      []
 
 end
-
 
 procedure __wstr_copysubs (self, s1, s2, index, len)
 
@@ -689,6 +707,24 @@ procedure __shortToByte
 
 end
 
+procedure __intToUInt
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
+procedure __uintToInt
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
 procedure __realTrunc (self, r1, r2)
 
   xflush     sp:0
@@ -704,6 +740,192 @@ procedure __realTrunc (self, r1, r2)
   set        dp:tmp
   store      sp:0
   peek       fp:r2
+  copy       __realSize
+
+  close      []
+
+end
+
+procedure __realRound (self, r1, r2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp:__realSize]
+
+  peek       fp:r1
+  store      sp:0
+
+  fround     dp:tmp
+
+  set        dp:tmp
+  store      sp:0
+  peek       fp:r2
+  copy       __realSize
+
+  close      []
+
+end
+
+procedure __realAbs (self, r1, r2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp:__realSize]
+
+  peek       fp:r1
+  store      sp:0
+
+  fabs       dp:tmp
+
+  set        dp:tmp
+  store      sp:0
+  peek       fp:r2
+  copy       __realSize
+
+  close      []
+
+end
+
+procedure __realSqrt (self, r1, r2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp:__realSize]
+
+  peek       fp:r1
+  store      sp:0
+
+  fsqrt      dp:tmp
+
+  set        dp:tmp
+  store      sp:0
+  peek       fp:r2
+  copy       __realSize
+
+  close      []
+
+end
+
+procedure __realExp (self, r1, r2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp:__realSize]
+
+  peek       fp:r1
+  store      sp:0
+
+  fexp       dp:tmp
+
+  set        dp:tmp
+  store      sp:0
+  peek       fp:r2
+  copy       __realSize
+
+  close      []
+
+end
+
+procedure __realLn (self, r1, r2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp:__realSize]
+
+  peek       fp:r1
+  store      sp:0
+
+  fln        dp:tmp
+
+  set        dp:tmp
+  store      sp:0
+  peek       fp:r2
+  copy       __realSize
+
+  close      []
+
+end
+
+procedure __realSin (self, r1, r2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp:__realSize]
+
+  peek       fp:r1
+  store      sp:0
+
+  fsin        dp:tmp
+
+  set        dp:tmp
+  store      sp:0
+  peek       fp:r2
+  copy       __realSize
+
+  close      []
+
+end
+
+procedure __realCos (self, r1, r2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp:__realSize]
+
+  peek       fp:r1
+  store      sp:0
+
+  fcos       dp:tmp
+
+  set        dp:tmp
+  store      sp:0
+  peek       fp:r2
+  copy       __realSize
+
+  close      []
+
+end
+
+procedure __realArctan (self, r1, r2)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp:__realSize]
+
+  peek       fp:r1
+  store      sp:0
+
+  farctan    dp:tmp
+
+  set        dp:tmp
+  store      sp:0
+  peek       fp:r2
+  copy       __realSize
+
+  close      []
+
+end
+
+procedure __realPi (self, r1)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp:__realSize]
+
+  fpi        dp:tmp
+
+  set        dp:tmp
+  store      sp:0
+  peek       fp:r1
   copy       __realSize
 
   close      []
@@ -821,6 +1043,35 @@ procedure __byteToShort
   and        n:0FFFFh
   peek       sp:2
   save
+
+end
+
+procedure __readIntPtr
+
+  peek       sp:1
+  get        i:0
+  load
+  peek       sp:2
+  save
+
+end
+
+procedure __ptrCopyTo (self, arr, len)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  peek       fp:self
+  get        i:0
+  store      sp:0
+  peek       fp:len
+  load
+  peek       fp:arr
+  dcopy      1
+
+  close      []
 
 end
 
@@ -1017,6 +1268,7 @@ procedure __classref_dispatcher
   redirect
 
   get        i:0
+  store      sp:0
   jump       vt:0
 
 end
@@ -1061,9 +1313,6 @@ procedure __mssgname_dispatcher
   jeq         labDefault
 
   loadv
-  xcmp
-  jne         labDefault
-
   peek        sp:0
   jump        vt:0
 
@@ -1230,6 +1479,150 @@ procedure __thread_create(self,arg,flags,ptr)
 
 end
 
+procedure __tape_eval(self, buffer, len)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (4),[],[index,command,size,ptr]
+
+  // ; alloc stack
+  peek       fp:buffer
+  load
+  dalloc
+
+  nsave      dp:index, 4
+  nsave      dp:ptr, -1
+
+  // while (index < len) {
+labNext:
+  peek       fp:len
+  load       
+  xcmp       dp:index
+  jle        labEnd
+
+  //command := buffer[index];
+  peek       fp:buffer
+  load       dp:index
+  xload
+  and        n:0FFh
+  save       dp:command
+
+  // index += 1;
+  nadd       dp:index, 1
+
+  // size := buffer[index];
+  load       dp:index
+  xload
+  save       dp:size
+
+  // index += 4;
+  nadd       dp:index, 4
+
+  // check attribute type
+  load       dp:command
+  cmp        n:020h
+  jge        labSpecial
+
+  // copy arguments
+  xassignsp
+  store      sp:0
+  load       dp:ptr
+  add        n:1
+  xset       fp:0
+  swap       sp:0
+  load       dp:command
+  dtrans
+
+  set        dp:command
+  store      sp:0
+  iadd       dp:ptr, 4
+
+  // loadClass
+  call       extern:LoadClassByBufferLA(buffer, *index, *size)
+  cmp        n:0
+  jeq        labNotFound 
+
+  // ; !! NOTE : we taking advantage that the operation with sp:0 does not affect the real stack
+  save       sp:0
+  peek       sp:0
+  xrefresh   sp:0
+
+  mov        mssg : "function:#constructor[0]"
+  xadd       dp:command
+
+  call       vt:0
+
+  // ; store the result
+  load       dp:ptr
+  store      sp:0
+  set        fp:0
+  xassign
+  nadd       dp:ptr, -1
+
+  // i += size
+  set        dp:size
+  store      sp:0
+  iadd       dp:index, 4
+
+  jump       labNext
+
+labSpecial:
+  peek        fp:buffer
+  store       sp:3    
+  set         dp:size
+  store       sp:2
+  set         dp:index
+  store       sp:1
+  set         class:"system'text'UTF8Encoding"
+  store       sp:0
+  mov         mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
+  call        mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]", class:"system'text'UTF8Encoding"
+
+  // ; store the result
+  load       dp:ptr
+  store      sp:0
+  set        fp:0
+  xassign
+  nadd       dp:ptr, -1
+
+  // i += size
+  set        dp:size
+  store      sp:0
+  iadd       dp:index, 4
+
+  jump       labNext
+
+labNotFound:
+  // UTF8Encoding.toString(index,size,buffer)
+  peek       fp:buffer
+  store      sp:3    
+  set        dp:size
+  store      sp:2
+  set        dp:index
+  store      sp:1
+  set        class:"system'text'UTF8Encoding"
+  store      sp:0
+  mov        mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
+  call       mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]", class:"system'text'UTF8Encoding"
+  store      sp:1
+  set        class : "system'TypeLoaderException"
+  store      sp:0
+
+  set        mssgconst : "new[2]"
+  throw
+
+labEnd:
+  load       dp:ptr
+  add        n:1
+  set        fp:0
+  xget
+
+  close      []
+  quit
+
+end
+
 procedure critical_exception_handler
 
   cmp         n:EXCEPTION_ACCESS_VIOLATION
@@ -1290,6 +1683,7 @@ labNext:
   nadd       dp:i, 1
 
   load       dp:i
+  set        marray:"$forwards'meta$startUpSymbols"
   xget
   xcall
 
@@ -1364,7 +1758,7 @@ symbol sta_start
 
   call extern:InitializeSTLA (
      *arg1,
-     procedure:"system'core_routines'startUpSymbols",
+     symbol:"$auto'startUpSymbol",
      procedure:"system'core_routines'critical_exception_handler")
 
   close       []

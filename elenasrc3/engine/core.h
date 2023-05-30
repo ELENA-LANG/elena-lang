@@ -213,7 +213,7 @@ namespace elena_lang
    struct SymbolList
    {
       size_t length;
-      // NOTE : the array size if fictinal - it can contain the number of entried defined in the first field
+      // NOTE : the array size is not valud - the actual number of entries defined in the first field
       Entry  entries[1];
 
       SymbolList()

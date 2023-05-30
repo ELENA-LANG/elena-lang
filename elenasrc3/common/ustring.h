@@ -361,11 +361,16 @@ namespace elena_lang
 
          return true;
       }
-      static bool longToStr(unsigned long long n, T* s, int radix, size_t maxLength)
+      static bool longToStr(long long n, T* s, int radix, size_t maxLength)
       {
          long long rem = 0;
          size_t    pos = 0;
          size_t    start = 0;
+         if (n < 0) {
+            start++;
+            n = -n;
+            s[pos++] = '-';
+         }
 
          do
          {
@@ -646,11 +651,12 @@ namespace elena_lang
       void insert(const T* s, size_t index)
       {
          pos_t length = getlength_pos(s);
-         if (_size <= length) {
-            create(length + 1);
-         }
+         size_t newLength = getlength(_string) + length;
+         if (_size <= newLength)
+            create(newLength + 1);
 
          StrUtil::insert(_string, index, length, s);
+         _string[newLength] = 0;
       }
 
       void cut(size_t index, size_t length)
@@ -674,6 +680,14 @@ namespace elena_lang
          _size = 0;
          _string = nullptr;
       }
+      DynamicString(const T* value, size_t index, size_t length)
+      {
+         _size = 0;
+         _string = nullptr;
+
+         copy(value + index, length);
+      }
+
    };
 
 }

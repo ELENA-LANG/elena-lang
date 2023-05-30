@@ -17,6 +17,18 @@ RTManager :: RTManager(MemoryBase* msection, MemoryBase* dbgsection)
 
 }
 
+void RTManager :: loadRootPackage(LibraryProviderBase& provider, path_t rootPath)
+{
+   MemoryReader reader(dbgsection);
+
+   // skip a debugger entry pointer
+   addr_t tempAddr = 0;
+   reader.read(&tempAddr, sizeof(tempAddr));
+
+   ustr_t ns = reader.getString(DEFAULT_STR);
+   provider.addPackage(ns, rootPath);
+}
+
 bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider, ustr_t& symbol, ustr_t& method, ustr_t& path, int& row)
 {
    MemoryReader reader(dbgsection);
@@ -90,6 +102,7 @@ bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider
                   stringReader.seek(info.addresses.source.nameRef);
                   method = stringReader.getString(DEFAULT_STR);
                   break;
+               case DebugSymbol::Class:               // NOTE : to take into account vmt address
                case DebugSymbol::Breakpoint:
                case DebugSymbol::VirtualBreakpoint:
                   index--;

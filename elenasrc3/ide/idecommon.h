@@ -7,9 +7,10 @@
 #ifndef IDECOMMON_H
 #define IDECOMMON_H
 
+#include "elena.h"
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x004A
+#define IDE_REVISION_NUMBER                           0x0052
 
 namespace elena_lang
 {
@@ -17,6 +18,10 @@ namespace elena_lang
    constexpr auto NAMESPACE_CATEGORY                  = "configuration/project/namespace";
 
    constexpr auto TARGET_SUB_CATEGORY                 = "project/executable";
+   constexpr auto TEMPLATE_SUB_CATEGORY               = "project/template";
+   constexpr auto NAMESPACE_SUB_CATEGORY              = "project/namespace";
+   constexpr auto OPTIONS_SUB_CATEGORY                = "project/options";
+
    constexpr auto MODULE_CATEGORY                     = "files/*";
 
    constexpr auto WIN_X86_KEY                         = "Win_x86";
@@ -49,6 +54,9 @@ namespace elena_lang
    constexpr int NOTIFY_IDE_CHANGE                       = 13;
    constexpr int NOTIFY_ONSTART                          = 14;
    constexpr int NOTIFY_REFRESH                          = 15;
+   constexpr int NOTIFY_DEBUG_START                      = 16;
+   constexpr int NOTIFY_DEBUG_CONTEXT_EXPANDED           = 17;
+   constexpr int NOTIFY_DEBUG_LOAD                       = 18;
 
    // --- Notification statuses ---
    constexpr NotificationStatus IDE_ONSTART              = -1;
@@ -161,12 +169,18 @@ namespace elena_lang
       virtual void populateNode(void* item, ustr_t value) = 0;
 
    public:
+      virtual void clearRootNode() = 0;
       virtual void expandRootNode() = 0;
+
+      virtual void expandNode(size_t param) = 0;
+
+      virtual void refreshCurrentNode() = 0;
 
       virtual void* addOrUpdate(WatchContext* root, ustr_t name, ustr_t className);
       virtual void* addOrUpdateBYTE(WatchContext* root, ustr_t name, int value);
       virtual void* addOrUpdateWORD(WatchContext* root, ustr_t name, short value);
       virtual void* addOrUpdateDWORD(WatchContext* root, ustr_t name, int value);
+      virtual void* addOrUpdateUINT(WatchContext* root, ustr_t name, int value);
       virtual void* addOrUpdateQWORD(WatchContext* root, ustr_t name, long long value);
       virtual void* addOrUpdateFLOAT64(WatchContext* root, ustr_t name, double value);
 
@@ -174,10 +188,13 @@ namespace elena_lang
 
       virtual void populateWORD(WatchContext* root, unsigned short value);
       virtual void populateDWORD(WatchContext* root, unsigned int value);
-      virtual void populateQWORD(WatchContext* root, unsigned long long value);
+      virtual void populateUINT(WatchContext* root, unsigned int value);
+      virtual void populateQWORD(WatchContext* root, long long value);
       virtual void populateFLOAT64(WatchContext* root, double value);
       virtual void populateString(WatchContext* root, const char* value);
       virtual void populateWideString(WatchContext* root, const wide_c* value);
+
+      //virtual void browse() = 0;
    };
 
    // --- DebugControllerBase ---
@@ -256,6 +273,7 @@ namespace elena_lang
       virtual double getFLOAT64(addr_t address) = 0;
 
       virtual void setBreakpoint(addr_t address, bool withStackLevelControl) = 0;
+      virtual void addBreakpoint(addr_t address) = 0;
 
       virtual void addStep(addr_t address, void* current) = 0;
 
@@ -265,6 +283,19 @@ namespace elena_lang
       virtual bool findSignature(StreamReader& reader, char* signature, pos_t length) = 0;
 
       virtual ~DebugProcessBase() = default;
+   };
+
+   struct Breakpoint
+   {
+      int              row;
+      IdentifierString source;
+      IdentifierString module;
+      void*            param;
+
+      Breakpoint(int row, ustr_t source, ustr_t module)
+         : row(row), source(source), module(module), param(nullptr)
+      {
+      }
    };
 
    struct GUISettinngs

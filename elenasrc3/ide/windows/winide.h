@@ -39,17 +39,20 @@ namespace elena_lang
    // --- IDEWindow ---
    class IDEWindow : public SDIWindow, DocumentNotifier
    {
-      Dialog         fileDialog;
-      Dialog         projectDialog;
-      Clipboard      clipboard;
+      FileDialog        fileDialog;
+      FileDialog        projectDialog;
+      MessageDialog     messageDialog;
+      ProjectSettings   projectSettingsDialog;
+      Clipboard         clipboard;
 
-      HINSTANCE      _instance;
+      HINSTANCE         _instance;
 
-      IDEModel*      _model;
-      IDEController* _controller;
+      IDEModel*         _model;
+      IDEController*    _controller;
 
       void onStatusChange(StatusNMHDR* rec);
       void onSelection(SelectionNMHDR* rec);
+      void onTreeItem(TreeItemNMHDR* rec);
       void onComplition(CompletionNMHDR* rec);
       //void onModelChange(ExtNMHDR* hdr);
       //void onNotifyMessage(ExtNMHDR* hdr);
@@ -57,10 +60,13 @@ namespace elena_lang
       void onDebugWatch();
 
       void onDoubleClick(NMHDR* hdr);
+      void onRClick(NMHDR* hdr);
+      void onDebugWatchRClick(int index);
 
       void onTabSelChanged(HWND wnd);
       void onTreeSelChanged(HWND wnd);
       void onChildRefresh(int controlId);
+      void onTreeItemExpanded(NMTREEVIEW* rec);
 
       void onLayoutChange(NotificationStatus status);
       void onIDEChange(NotificationStatus status);
@@ -75,6 +81,7 @@ namespace elena_lang
       void onCompilationEnd(int exitCode);
       void onErrorHighlight(int index);
       void onDebugResult(int code);
+      void onDebugWatchBrowse(size_t item, size_t param);
 
       void onProjectChange(bool empty);
       void onProjectViewSel(size_t index);
@@ -91,6 +98,7 @@ namespace elena_lang
       void saveFile();
       void closeFile();
       void closeAll();
+      void newProject();
       void openProject();
       void closeProject();
       void exit() override;
@@ -106,7 +114,11 @@ namespace elena_lang
 
       void openHelp();
 
+      void refreshDebugNode();
+
       void onIDEViewUpdate(bool forced);
+      void onDebuggerStart();
+      void onDebuggerHook();
       void onDebuggerUpdate(StatusNMHDR* rec);
       void onDocumentUpdate(DocumentChangeStatus& changeStatus) override;
 

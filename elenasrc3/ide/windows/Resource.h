@@ -14,6 +14,7 @@
 #define IDM_FILE_CLOSEALL           406
 #define IDM_PROJECT_OPEN            407
 #define IDM_PROJECT_CLOSE           408
+#define IDM_PROJECT_NEW             409
 
 #define IDM_EDIT_UNDO               501
 #define IDM_EDIT_REDO               502
@@ -31,12 +32,18 @@
 #define IDM_VIEW_MESSAGES           604
 
 #define IDM_PROJECT_COMPILE         701
+#define IDM_PROJECT_OPTION          702
 
 #define IDM_DEBUG_RUN               801
 #define IDM_DEBUG_STEPOVER          802
 #define IDM_DEBUG_STEPINTO          803
 #define IDM_DEBUG_RUNTO             804
 #define IDM_DEBUG_STOP              805
+#define IDM_DEBUG_BREAKPOINT        806
+#define IDM_DEBUG_CLEARBREAKPOINT   807
+
+#define IDM_DEBUG_INSPECT           810
+#define IDM_DEBUG_SWITCHHEXVIEW     811
 
 #define IDM_WINDOW_NEXT             901
 #define IDM_WINDOW_PREVIOUS         902
@@ -53,9 +60,19 @@
 #define IDC_COMPILER_MESSAGES       114
 #define IDC_COMPILER_WATCH          115
 
+#define IDD_SETTINGS                800
+#define IDC_SETTINGS_TEPMPLATE      801
+#define IDC_SETTINGS_PACKAGE        802
+#define IDC_SETTINGS_OPTIONS        803
+#define IDC_SETTINGS_TARGET         804
+#define IDC_SETTINGS_OUTPUT         805
+#define IDC_SETTINGS_DEBUG          806
+#define IDC_SETTINGS_ARGUMENT       807
+
 #ifndef IDC_STATIC
 #define IDC_STATIC                  -1
 #endif
+
 // Next default values for new objects
 //
 #ifdef APSTUDIO_INVOKED

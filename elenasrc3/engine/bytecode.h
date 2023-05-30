@@ -47,6 +47,8 @@ namespace elena_lang
       LLoad          = 0x1A,
       ConvL          = 0x1B,
       XLCmp          = 0x1C,
+      XLoad          = 0x1D,
+      XLLoad         = 0x1E,
 
       Coalesce       = 0x20,
       Not            = 0x21,
@@ -59,7 +61,16 @@ namespace elena_lang
       XGet           = 0x2E,
       XCall          = 0x2F,
 
-      MaxSingleOp    = 0x7F,
+      MaxSingleOp    = 0x77,
+
+      FAbsDP         = 0x78,
+      FSqrtDP        = 0x79,
+      FExpDP         = 0x7A,
+      FLnDP          = 0x7B,
+      FSinDP         = 0x7C,
+      FCosDP         = 0x7D,
+      FArctanDP      = 0x7E,
+      FPiDP          = 0x7F,
 
       SetR           = 0x80,
       SetDP          = 0x81,
@@ -91,6 +102,9 @@ namespace elena_lang
       DCopy          = 0x9A,
       OrN            = 0x9B,
       MulN           = 0x9C,
+      XAddDP         = 0x9D,
+      XSetFP         = 0x9E,
+      FRoundDP       = 0x9F,
 
       SaveDP         = 0xA0,
       StoreFI        = 0xA1,
@@ -105,6 +119,7 @@ namespace elena_lang
       LSaveDP        = 0xAA,
       LSaveSI        = 0xAB,
       LLoadDP        = 0xAC,
+      XFillR         = 0xAD,
 
       CallR          = 0xB0,
       CallVI         = 0xB1,
@@ -115,6 +130,8 @@ namespace elena_lang
       XRedirectM     = 0xB6,
       Jlt            = 0xB7,
       Jge            = 0xB8,
+      Jgr            = 0xB9,
+      Jle            = 0xBA,
 
       CmpR           = 0xC0,
       FCmpN          = 0xC1,
@@ -135,6 +152,7 @@ namespace elena_lang
       FSubDPN        = 0xD1,
       FMulDPN        = 0xD2,
       FDivDPN        = 0xD3,
+      UDivDPN        = 0xD4,
 
       IAndDPN        = 0xD8,
       IOrDPN         = 0xD9,
@@ -142,6 +160,7 @@ namespace elena_lang
       INotDPN        = 0xDB,
       IShlDPN        = 0xDC,
       IShrDPN        = 0xDD,
+      SelULtRR       = 0xDF,
 
       CopyDPN        = 0xE0,
       IAddDPN        = 0xE1,
@@ -168,6 +187,7 @@ namespace elena_lang
       NewNR          = 0xF5,
       XMovSISI       = 0xF6,
       CreateNR       = 0xF7,
+      FillIR         = 0xF8,
       XStoreFIR      = 0xF9,
       XDispatchMR    = 0xFA,
       DispatchMR     = 0xFB,
@@ -346,10 +366,12 @@ namespace elena_lang
          case ByteCode::CmpR:
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
+         case ByteCode::SelULtRR:
          case ByteCode::PeekR:
          case ByteCode::StoreR:
          case ByteCode::CreateR:
          case ByteCode::XCreateR:
+         case ByteCode::XFillR:
             return true;
          default:
             return false;
@@ -372,8 +394,10 @@ namespace elena_lang
             case ByteCode::XDispatchMR:
             case ByteCode::SelEqRR:
             case ByteCode::SelLtRR:
+            case ByteCode::SelULtRR:
             case ByteCode::XHookDPR:
             case ByteCode::CreateNR:
+            case ByteCode::FillIR:
                return true;
             default:
                return false;
@@ -425,6 +449,9 @@ namespace elena_lang
       static void parseMessageName(ustr_t messageName, IdentifierString& actionName, ref_t& flags, pos_t& argCount);
 
       static mssg_t resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode);
+      static mssg_t resolveMessageName(ustr_t messageName, ModuleBase* module, bool readOnlyMode);
+
+      static void generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* module, MemoryDump& tapeSymbol);
    };
 
    // --- ByteCodePattern ---

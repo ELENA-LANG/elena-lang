@@ -27,7 +27,7 @@ void init(HMODULE hModule)
    engine = new ScriptEngine(*rootPath);
 }
 
-EXTERN_DLL_EXPORT int NewScope()
+EXTERN_DLL_EXPORT int NewScopeSMLA()
 {
    if (engine) {
       return engine->newScope();
@@ -35,25 +35,33 @@ EXTERN_DLL_EXPORT int NewScope()
    else return -1;
 }
 
-EXTERN_DLL_EXPORT void* InterpretScopeFile(int scope_id, const char* pathStr, int encoding, bool autoDetect)
+EXTERN_DLL_EXPORT void* InterpretScopeFileSMLA(int scope_id, const char* pathStr, int encoding, bool autoDetect)
 {
    PathString path(pathStr);
 
    return engine->translate(scope_id, *path, (FileEncoding)encoding, autoDetect);
 }
 
-EXTERN_DLL_EXPORT void* InterpretScopeScript(int scope_id, ustr_t script)
+EXTERN_DLL_EXPORT void* InterpretScopeScriptSMLA(int scope_id, ustr_t script)
 {
    return engine->translate(scope_id, script);
 }
 
-EXTERN_DLL_EXPORT void Release(void* tape)
+EXTERN_DLL_EXPORT int GetLengthSMLA(void* tape)
+{
+   if (tape) {
+      return engine->getLength(tape);
+   }
+   else return 0;
+}
+
+EXTERN_DLL_EXPORT void ReleaseSMLA(void* tape)
 {
    if (tape)
       engine->free(tape);
 }
 
-EXTERN_DLL_EXPORT size_t GetStatus(char* buffer, size_t maxLength)
+EXTERN_DLL_EXPORT size_t GetStatusSMLA(char* buffer, size_t maxLength)
 {
    if (engine) {
       ustr_t error = engine->getLastError();

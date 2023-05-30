@@ -221,6 +221,19 @@ void WindowApp :: notifySelection(int messageCode, size_t param)
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
+void WindowApp :: notifyTreeItem(int messageCode, size_t item, size_t param)
+{
+   TreeItemNMHDR notification;
+
+   notification.nmhrd.code = STATUS_TREEITEM;
+   notification.nmhrd.hwndFrom = _hwnd;
+   notification.code = messageCode;
+   notification.item = item;
+   notification.param = param;
+
+   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
+}
+
 void WindowApp::notifyCompletion(int messageCode, int param)
 {
    CompletionNMHDR notification;

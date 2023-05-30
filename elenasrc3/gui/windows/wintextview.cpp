@@ -249,6 +249,8 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
    int marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
 
    if (!_cached) {
+      String<text_c, 6> lineNumber;
+
       if (!defaultStyle->valid) {
          _styles->validate(&canvas);
 
@@ -299,6 +301,27 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
 
             x = clientRect.topLeft.x + marginWidth;
             y += lineHeight;
+
+            if (_model->lineNumbersVisible) {
+               lineNumber.clear();
+               lineNumber.appendInt(reader.row + 1);
+
+               int numLen = getlength_int(lineNumber.str());
+               canvas.drawTextClipped(
+                  Rectangle(x - marginWidth, y, marginWidth, lineHeight + 1),
+                  x - marginStyle->avgCharWidth * numLen - 6,
+                  y,
+                  lineNumber.str(),
+                  numLen,
+                  marginStyle);
+            }
+
+            // !! HOTFIX: allow to see breakpoint ellipse on margin if STYLE_TRACELINe set for this line
+            if (reader.toggleMark) {
+               canvas.drawEllipse(Rectangle(3, y + 2, 12, 12), *style);
+
+               reader.toggleMark = false;
+            }
          }
          if (reader.bandStyle) {
             canvas.fillRectangle(Rectangle(x, y, clientRect.bottomRight.x - x, lineHeight + 1), style);
@@ -444,7 +467,22 @@ void TextViewWindow :: onButtonUp()
    releaseMouse();
 }
 
-void TextViewWindow :: onMouseMove(short wheelDelta, bool kbCtrl)
+void TextViewWindow :: onMouseMove(Point point, bool kbLButton)
+{
+   auto docView = _model->DocView();
+   if (kbLButton && isMouseCaptured() && docView != nullptr) {
+      DocumentChangeStatus status = {};
+      int col = 0, row = 0;
+      bool margin = false;
+      mouseToScreen(point, col, row, margin);
+
+      docView->moveToFrame(status, col, row, true);
+
+      onDocumentUpdate(status);
+   }
+}
+
+void TextViewWindow :: onMouseWheel(short wheelDelta, bool kbCtrl)
 {
    DocumentChangeStatus status = {};
    auto docView = _model->DocView();
@@ -541,7 +579,10 @@ LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
          onDoubleClick(nullptr);
          return 0;
       case WM_MOUSEWHEEL:
-         onMouseMove(HIWORD(wParam), (wParam & MK_CONTROL) != 0);
+         onMouseWheel(HIWORD(wParam), (wParam & MK_CONTROL) != 0);
+         return 0;
+      case WM_MOUSEMOVE:
+         onMouseMove(Point(LOWORD(lParam), HIWORD(lParam)), (wParam & MK_LBUTTON) != 0);
          return 0;
       case WM_KEYDOWN:
          if (onKeyDown((int)wParam, isKeyDown(VK_SHIFT), isKeyDown(VK_CONTROL))) {

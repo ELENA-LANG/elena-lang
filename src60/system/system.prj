@@ -74,5 +74,8 @@
        <include>threading\win32_handlers.l</include>
        <include>threading\thread.l</include>
      </module>
+     <module name="dynamic">
+       <include>dynamic\tape.l</include>
+     </module>
   </files>
 </configuration>

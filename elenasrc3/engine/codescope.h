@@ -30,7 +30,7 @@ namespace elena_lang
       AddressMap      _constReferences, _numberReferences, _literalReferences, _characterReferences;
       AddressMap      _longNumberReferences, _realNumberReferences;
       AddressMap      _wideReferences;
-      AddressMap      _mssgReferences;
+      AddressMap      _mssgReferences, _subjReferences;
       AddressMap      _dataReferences;
       AddressMap      _statReferences;
 
@@ -61,6 +61,11 @@ namespace elena_lang
 
       void addLazyReference(LazyReferenceInfo info) override;
 
+      void clearLazyReferences()
+      {
+         _lazyReferences.clear();
+      }
+
       ReferenceMapper(ExternalMapper* externalMapper = nullptr) :
          _symbolReferences(INVALID_ADDR), 
          _exportReferences(INVALID_ADDR), 
@@ -72,6 +77,7 @@ namespace elena_lang
          _realNumberReferences(INVALID_ADDR),
          _wideReferences(INVALID_ADDR),
          _mssgReferences(INVALID_ADDR),
+         _subjReferences(INVALID_ADDR),
          _dataReferences(INVALID_ADDR),
          _statReferences(INVALID_ADDR),
          _actionNames(0),

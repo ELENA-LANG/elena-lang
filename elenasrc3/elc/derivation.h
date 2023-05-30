@@ -122,6 +122,7 @@ namespace elena_lang
       void parseStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current, 
          List<SyntaxNode>& arguments, List<SyntaxNode>& parameters, IdentifierString& postfix);
       void generateTemplateStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void generateTemplateOperation(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
       void flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
@@ -142,6 +143,7 @@ namespace elena_lang
       void flushClosure(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushExpressionCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushExpressionAsDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushExpressionMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMethodCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
@@ -155,6 +157,7 @@ namespace elena_lang
       void flushClassMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool functionMode = false);
       void flushMethod(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMethodMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushParameterBlock(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       bool flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
          bool allowType, int arrayNestLevel = 0);
@@ -163,6 +166,7 @@ namespace elena_lang
       void flushInlineTemplatePostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node/*, bool ignorePostfix*/);
       void flushClassPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushSymbolPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushParent(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushParentTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 

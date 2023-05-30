@@ -166,3 +166,17 @@ void TreeView :: remove(TreeViewItem item)
 {
    TreeView_DeleteItem(_handle, item);
 }
+
+TreeViewItem TreeView :: hitTest(short x, short y)
+{
+   TVHITTESTINFO hit;
+
+   hit.pt.x = x;
+   hit.pt.y = y;
+
+   ::ScreenToClient(_handle, &hit.pt);
+
+   HTREEITEM i = TreeView_HitTest(_handle, &hit);
+
+   return i;
+}

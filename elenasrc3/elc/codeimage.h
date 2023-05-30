@@ -64,6 +64,8 @@ namespace elena_lang
          return _debugEntryPoint & ~mskAnyRef;
       }
 
+      void generateAutoSymbol(ModuleBase* module, MemoryDump& tapeSymbol);
+
       TargetImage(PlatformType systemTarget, ForwardResolverBase* resolver, LibraryLoaderBase* loader,
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType),
          TargetImageInfo imageInfo, AddressMapperBase* addressMapper);
