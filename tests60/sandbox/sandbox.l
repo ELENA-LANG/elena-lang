@@ -5,7 +5,7 @@ public program()
    uint k := 2H;
    uint l := 0AH;
 
-   var r := k < l;
+   var r := l < k;
 
    Assert.ifTrue(r);  // 2 > 10
 }
