@@ -5,8 +5,8 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 15 ===
-    * new opcode : fillir - aarch64, ppc64le
-    * new opcode : xfillr - aarch64, ppc64le
+    * new opcode : fillir - ppc64le
+    * new opcode : xfillr - ppc64le
 
     * console & files samples
     * new opcode : fexp, fln - ppc64le, arm64

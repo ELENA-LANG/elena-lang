@@ -1600,6 +1600,51 @@ inline %0ACh
 
 end
 
+// ; xfillr
+inline % 0ADh
+
+  ld      r16, 0(r3)
+  sldi    r16, r16, 3
+
+  ld      r17, toc_code(r2)
+  addis   r17, r17, __xdisp32hi_1 
+  addi    r17, r17, __xdisp32lo_1 
+
+  mr      r18, r15 
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  addi    r16, r16, -8
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; xfillr
+inline % 1ADh
+
+  ld      r16, 0(r3)
+  sldi    r16, r16, 3
+  li      r17, 0
+  mr      r18, r15 
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  addi    r16, r16, -8
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  b       labLoop
+
+labEnd:
+
+end
+
+
 // ; callr
 inline %0B0h
 
@@ -3261,6 +3306,48 @@ inline %0F7h
   addi    r17, r17, __disp32lo_2
   std     r18, -elSizeOffset(r15)
   std     r17, -elVMTOffset(r15)
+
+end
+
+// ; fillir
+inline %0F8h
+
+  li      r16, __arg16_1
+
+  ld      r17, toc_rdata(r2)
+  addis   r17, r17, __disp32hi_2 
+  addi    r17, r17, __disp32lo_2 
+
+  mr      r18, r15
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  addi    r16, r16, -8
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; fillir
+inline %1F8h
+
+  li      r16, __arg16_1
+  li      r17, 0
+  mr      r18, r15
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  addi    r16, r16, -8
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  b       labLoop
+
+labEnd:
 
 end
 

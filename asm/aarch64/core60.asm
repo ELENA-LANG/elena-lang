@@ -1566,6 +1566,47 @@ inline %0ACh
 
 end 
 
+// ; xfillr
+inline % 0ADh
+
+  ldr     w11, [x0]
+  lsl     x11, x11, #3
+
+  movz    x12,  __ptr32lo_1
+  movk    x12,  __ptr32hi_1, lsl #16
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 8
+  str     x12, [x13], #8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; xfillr 0
+inline % 1ADh
+
+  ldr     w11, [x0]
+  lsl     x11, x11, #3
+
+  movz    x12, #0
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 8
+  str     x12, [x13], #8
+  b       labLoop
+
+labEnd:
+
+end
+
 // ; callr
 inline %0B0h
 
@@ -3196,6 +3237,44 @@ inline %0F7h
   sub     x20, x10, elVMTOffset
   str     x19, [x20]
   str     w18, [x20, #12]!
+
+end
+
+// ; fillir
+inline %0F8h
+
+  movz    x12,  __ptr32lo_2
+  movk    x12,  __ptr32hi_2, lsl #16
+
+  mov     x11, __arg12_1
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  str     x12, [x13], #8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; fill i,0
+inline %1F8h
+
+  mov     x11, __arg12_1
+  mov     x12, 0
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  str     x12, [x13], #8
+  b       labLoop
+
+labEnd:
 
 end
 
