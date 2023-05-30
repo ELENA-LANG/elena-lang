@@ -64,6 +64,21 @@ void DebugInfoProvider :: retrievePath(ustr_t name, PathString& path, path_t ext
    }
 }
 
+void DebugInfoProvider :: fixNamespace(NamespaceString& name)
+{
+   PathString      path;
+   retrievePath(*name, path, _T("dnl"));
+
+   while (name.length() != 0) {
+      retrievePath(*name, path, _T("dnl"));
+
+      if (!PathUtil::ifExist(*path)) {
+         name.trimLastSubNs();
+      }
+      else break;
+   }
+}
+
 ModuleBase* DebugInfoProvider :: loadDebugModule(ustr_t reference)
 {
    NamespaceString name(reference);
@@ -209,6 +224,7 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             case DebugSymbol::Local:
             case DebugSymbol::LocalAddress:
             case DebugSymbol::IntLocalAddress:
+            case DebugSymbol::UIntLocalAddress:
             case DebugSymbol::LongLocalAddress:
             case DebugSymbol::RealLocalAddress:
             case DebugSymbol::ByteArrayAddress:
@@ -356,7 +372,7 @@ addr_t DebugInfoProvider :: findNearestAddress(ModuleBase* module, ustr_t path, 
    int nearestRow = 0;
    bool skipping = true;
    for (size_t i = 0; i < count; i++) {
-      if (info[i].symbol == DebugSymbol::Procedure) {
+      if (info[i].symbol == DebugSymbol::Procedure && info[i].addresses.source.nameRef != INVALID_ADDR) {
          ustr_t procPath = (const char*)strings->get(info[i].addresses.source.nameRef);
          if (procPath.compare(path)) {
             skipping = false;
@@ -365,7 +381,7 @@ addr_t DebugInfoProvider :: findNearestAddress(ModuleBase* module, ustr_t path, 
       else if (info[i].symbol == DebugSymbol::End) {
          skipping = true;
       }
-      else if ((info[i].symbol & DebugSymbol::DebugMask) == DebugSymbol::Breakpoint) {
+      else if (!skipping && (info[i].symbol & DebugSymbol::DebugMask) == DebugSymbol::Breakpoint) {
          if (_abs(nearestRow - row) > _abs(info[i].row - row)) {
             nearestRow = info[i].row;
 
@@ -478,7 +494,6 @@ DebugController :: DebugController(DebugProcessBase* process, ProjectModel* mode
    _sourceModel = sourceModel;
    _model = model;
    _notifier = notifier;
-   _currentModule = nullptr;
    _currentPath = nullptr;
    _sourceController = sourceController;
 }
@@ -532,7 +547,7 @@ void DebugController :: debugThread()
       }
    }
    _running = false;
-   //_currentModule = nullptr;
+   _currentModule.clear();
    _process->clearEvents();
 
    onStop();
@@ -650,12 +665,11 @@ void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName
    if (lineInfo) {
       _sourceModel->clearTraceLine();
 
-      if (!moduleName.compare(_currentModule) || !sourcePath.compare(_currentPath)) {
-         _currentModule = moduleName;
+      if (!_currentModule.compare(moduleName) || !sourcePath.compare(_currentPath)) {
+         _currentModule.copy(moduleName);
          _currentPath = sourcePath;
 
-         PathString path(sourcePath);
-         found = _sourceController->selectSource(_model, _sourceModel, moduleName, *path);
+         PathString path(sourcePath);found = _sourceController->selectSource(_model, _sourceModel, moduleName, *path);
       }
 
       if (found) {
@@ -672,7 +686,7 @@ void DebugController :: onStop()
    _process->reset();
    _provider.clear();
 
-   _currentModule = nullptr;
+   _currentModule.clear();
    _currentPath = nullptr;
 
    _notifier->notifyCompletion(NOTIFY_DEBUGGER_RESULT, DEBUGGER_STOPPED);
@@ -717,6 +731,17 @@ void DebugController :: runToCursor(ustr_t ns, ustr_t path, int row)
    }
 
    _process->setEvent(DEBUG_RESUME);
+}
+
+void DebugController :: addBreakpoint(Breakpoint* bp)
+{
+   ModuleBase* currentModule = _provider.resolveModule(*bp->module);
+   if (currentModule != nullptr) {
+      addr_t address = _provider.findNearestAddress(currentModule, *bp->source, bp->row);
+      if (address != INVALID_ADDR) {
+         _process->addBreakpoint(address);
+      }
+   }
 }
 
 void DebugController :: stepInto()
@@ -796,6 +821,7 @@ bool DebugController :: startThread()
    while (_process->waitForEvent(DEBUG_ACTIVE, 0));
 
    //_listener->onStart();
+   _notifier->notify(NOTIFY_DEBUG_START, 0);
 
    return _process->isStarted();
 }
@@ -807,7 +833,7 @@ void DebugController :: clearBreakpoints()
 
 bool DebugController :: start(path_t programPath, path_t arguments, bool debugMode)
 {
-   //_currentModule = NULL;
+   _currentModule.clear();
    _debuggee.copy(programPath);
    _arguments.copy(arguments);
 
@@ -842,7 +868,7 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
    if (!reader.eof()) {
       _provider.load(reader, starting, _process);
 
-      //_listener->onDebuggerHook();
+      _notifier->notify(NOTIFY_DEBUG_LOAD, 0);
 
       _provider.setDebugInfoSize(reader.position());
 
@@ -1014,6 +1040,17 @@ void* DebugController :: readIntLocal(ContextBrowserBase* watch, void* parent, a
    else return nullptr;
 }
 
+void* DebugController :: readUIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
+{
+   if (level > 0) {
+      unsigned int value = _process->getDWORD(address);
+
+      WatchContext context = { parent, address };
+      return watch->addOrUpdateUINT(&context, name, value);
+   }
+   else return nullptr;
+}
+
 void* DebugController :: readLongLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
 {
    if (level > 0) {
@@ -1135,6 +1172,11 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
+            case DebugSymbol::UIntLocalAddress:
+               item = readUIntLocal(watch, nullptr,
+                  _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
             case DebugSymbol::ByteArrayAddress:
                item = readByteArrayLocal(watch, nullptr,
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
@@ -1219,4 +1261,9 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
          index--;
       }
    }
+}
+
+void DebugController::resolveNamespace(NamespaceString& ns)
+{
+   _provider.fixNamespace(ns);
 }

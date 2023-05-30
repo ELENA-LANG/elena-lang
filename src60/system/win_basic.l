@@ -21,6 +21,8 @@ public sealed const struct UnsafePointer
 {
    embeddable __ptr pointer;
 
+   private readIntPtr(ref int retVal) : external(system'core_routines'__readIntPtr);
+
    bool isUnassigned()
    {
       ^ pointer == 0;
@@ -44,6 +46,15 @@ public sealed const struct UnsafePointer
         
       ^ s
    }
+
+   int cast()
+   {
+      self.readIntPtr(ref int retVal);
+
+      ^ retVal
+   }
+
+   copyTo(byte[] target, int len) : external(system'core_routines'__ptrCopyTo);
 }
 
 // --- CallStack ---
@@ -61,6 +72,14 @@ public sealed class CallStack
       self.load(stack, 64, ref int length);
 
       this stack := class Array<pointer>.copy(stack, 0, length);
+   }
+
+   constructor(int trimingLevel)
+   {
+      pointer stack[64];
+      self.load(stack, 64, ref int length);
+
+      this stack := class Array<pointer>.copy(stack, trimingLevel, length - trimingLevel);
    }
 
    string toPrintable()

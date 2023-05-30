@@ -128,6 +128,7 @@ namespace elena_lang
       virtual bool compileROpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual bool compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual bool compileTOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
+      virtual bool compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual bool compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
 
       virtual bool compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);

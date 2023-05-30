@@ -1393,6 +1393,9 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
       ReferenceProperName properName(referenceName);
       ReferenceName fullName(*_rootNs, referenceName + 1);
 
+      if (referenceName.findStr("Tuple") != NOTFOUND_POS) 
+         classClassRef = classClassRef + 0;;
+
       // HOTFIX : skip internal class
       if (properName[0] == '$')
          return;

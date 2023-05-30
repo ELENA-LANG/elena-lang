@@ -11,6 +11,7 @@
 #include "jitlinker.h"
 #include "langcommon.h"
 #include "bytecode.h"
+#include "module.h"
 
 //#define FULL_OUTOUT_INFO 1
 
@@ -295,16 +296,17 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
       module = _module;
 
    addr_t vaddress = INVALID_ADDR;
-   //switch (mask) {
-   //   case mskNameLiteralRef:
-   //   case mskPathLiteralRef:
-   //      break;
-   //   default:
+   switch (mask) {
+      case mskAutoSymbolRef:
+         // HOTFIX : preloaded symbols should be resolved later
+         _owner->_mapper->addLazyReference({ mask, position, module, reference, addressMask });
+         return;
+      default:
          vaddress = _owner->_mapper->resolveReference(
             _owner->_loader->retrieveReferenceInfo(module, refID, mask, 
                _owner->_forwardResolver), mask);
-   //      break;
-   //}
+         break;
+   }
 
    if (vaddress != INVALID_ADDR) {
       switch (addressMask & mskRefType) {
@@ -501,6 +503,12 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
             fixOffset(it.key(), info.addressMask, offset, image);
 
             info.addressMask = 0; // clear because it is already fixed
+            break;
+         }
+         case mskMssgNameLiteralRef:
+         {
+            ref_t dummy = 0;
+            vaddress = resolve({ info.module, info.module->resolveAction(currentRef, dummy) }, currentMask, false);
             break;
          }
          case mskMssgLiteralRef:
@@ -708,6 +716,8 @@ void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader
 
    for (auto it = statics.start(); !it.eof(); ++it) {
       auto fieldInfo = *it;
+      ref_t mask = fieldInfo.valueRef & mskAnyRef;
+
       if (fieldInfo.valueRef && fieldInfo.offset < 0) {
          addr_t vaddress = INVALID_REF;
 
@@ -721,12 +731,11 @@ void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader
             default:
                vaddress = resolve(
                   _loader->retrieveReferenceInfo(referenceInfo.module, fieldInfo.valueRef & ~mskAnyRef,
-                     fieldInfo.valueRef & mskAnyRef, _forwardResolver),
+                     mask, _forwardResolver),
                   mskVMTRef, false);
          }
 
          assert(vaddress != INVALID_REF);
-
          staticValues.add(fieldInfo.offset, vaddress);
       }
    }
@@ -854,6 +863,15 @@ void JITLinker :: resolveClassGlobalAttributes(ReferenceInfo referenceInfo, Memo
             }
             else createGlobalAttribute(GA_CLASS_NAME, referenceInfo.referenceName, vaddress);
             break;
+         case ClassAttribute::Initializer:
+         {
+            ref_t symbolRef = vmtReader.getDWord();
+            attrCount -= sizeof(unsigned int);
+
+            _mapper->addLazyReference({ mskAutoSymbolRef, INVALID_POS, referenceInfo.module, symbolRef, 0 });
+
+            break;
+         }
          default:
             break;
       }
@@ -1164,6 +1182,13 @@ mssg_t JITLinker :: parseMessageLiteral(ustr_t messageLiteral, ModuleBase* modul
    return createMessage(module, message, references);
 }
 
+mssg_t JITLinker :: parseMessageNameLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references)
+{
+   mssg_t message = ByteCodeUtil::resolveMessageName(messageLiteral, module, true);
+
+   return createMessage(module, message, references);
+}
+
 Pair<mssg_t, addr_t> JITLinker :: parseExtMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references)
 {
    Pair<mssg_t, addr_t> retVal = {};
@@ -1218,10 +1243,13 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          structMode = true;
          break;
       case mskWideLiteralRef:
+      {
+         WideMessage tmp(value);
          vmtReferenceInfo.referenceName = _constantSettings.wideLiteralClass;
-         size = (value.length_pos() + 1) << 1;
+         size = (tmp.length_pos() + 1) << 1;
          structMode = true;
          break;
+      }
       case mskCharacterRef:
          vmtReferenceInfo.referenceName = _constantSettings.characterClass;
          size = 4;
@@ -1229,6 +1257,11 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          break;
       case mskMssgLiteralRef:
          vmtReferenceInfo.referenceName = _constantSettings.messageClass;
+         size = 4;
+         structMode = true;
+         break;
+      case mskMssgNameLiteralRef:
+         vmtReferenceInfo.referenceName = _constantSettings.messageNameClass;
          size = 4;
          structMode = true;
          break;
@@ -1277,6 +1310,9 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
       case mskMssgLiteralRef:
          _compiler->writeMessage(writer, parseMessageLiteral(value, referenceInfo.module, messageReferences));
          break;
+      case mskMssgNameLiteralRef:
+         _compiler->writeMessage(writer, parseMessageNameLiteral(value, referenceInfo.module, messageReferences));
+         break;
       case mskExtMssgLiteralRef:
       {
          pos_t position = writer.position();
@@ -1322,6 +1358,21 @@ addr_t JITLinker :: resolveStaticVariable(ReferenceInfo referenceInfo, ref_t sec
    return vaddress;
 }
 
+void JITLinker :: copyMetaList(ModuleInfo info, ModuleInfoList& output)
+{
+   auto sectionInfo = _loader->getSection({ info.module, info.module->resolveReference(info.reference) }, mskTypeListRef, 0, true);
+   if (!sectionInfo.module)
+      return;
+
+   MemoryReader bcReader(sectionInfo.section);
+
+   while (!bcReader.eof()) {
+      ref_t symbolRef = bcReader.getRef();
+
+      output.add({ info.module, symbolRef & ~mskAnyRef });
+   }
+}
+
 void JITLinker :: prepare(JITCompilerBase* compiler)
 {
    _compiler = compiler;
@@ -1350,7 +1401,7 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
    resolveWeakAction(CONSTRUCTOR_MESSAGE);
 
    // prepare jit compiler
-   _compiler->prepare(_loader, _imageProvider, &helper, nullptr, _jitSettings);
+   _compiler->prepare(_loader, _imageProvider, &helper, nullptr, _jitSettings, _virtualMode);
 
    // fix not loaded references
    fixReferences(references, _imageProvider->getTextSection());
@@ -1358,9 +1409,11 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
 
 void JITLinker :: complete(JITCompilerBase* compiler, ustr_t superClass)
 {
-   // set voidobj
-   addr_t superAddr = resolve(superClass, mskVMTRef, true);
-   compiler->updateVoidObject(_imageProvider->getRDataSection(), superAddr, _virtualMode);
+   if (!superClass.empty()) {
+      // set voidobj
+      addr_t superAddr = resolve(superClass, mskVMTRef, true);
+      compiler->updateVoidObject(_imageProvider->getRDataSection(), superAddr, _virtualMode);
+   }
 
    // fix message body references
    MemoryBase* mbSection = _imageProvider->getMBDataSection();
@@ -1436,6 +1489,7 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
          case mskCharacterRef:
          case mskMssgLiteralRef:
          case mskExtMssgLiteralRef:
+         case mskMssgNameLiteralRef:
             address = resolveConstant(referenceInfo, sectionMask);
             break;
          case mskConstant:
@@ -1499,3 +1553,23 @@ addr_t JITLinker :: resolveTLSSection(JITCompilerBase* compiler)
    return address;
 }
 
+void JITLinker :: loadPreloaded(ustr_t preloadedSection)
+{
+   ModuleInfoList list({});
+   ModuleInfoList symbolList({});
+
+   IdentifierString nameToResolve(META_PREFIX, preloadedSection);
+
+   // load preloaded symbols
+   _loader->loadDistributedSymbols(*nameToResolve, list);
+   for (auto it = list.start(); !it.eof(); ++it) {
+      copyMetaList(*it, symbolList);
+   }
+
+   // save preloaded symbols as auto symbols
+   for (auto it = symbolList.start(); !it.eof(); ++it) {
+      auto info = *it;
+
+      _mapper->addLazyReference({ mskAutoSymbolRef, INVALID_POS, info.module, info.reference, 0 });
+   }
+}

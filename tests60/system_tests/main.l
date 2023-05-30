@@ -3,6 +3,7 @@ public program()
    console.writeLine("--- ELENA 6 API Unit Tests ---");
 
    intTests();
+   uintTests();
    longTests();
    realTests();
    gcTests();
@@ -10,11 +11,14 @@ public program()
    boxingTests();
    byRefTests();
    stringTests();
+   wideTests();
    shortTests();
    conversionTests();
    inlineAssignmentTests();
    singleDispatchTest();
    variadicTest();
+   dynamicLoadTests();
+   interfaceTests();
 
    console.writeLine("--- Passed ---")
 }

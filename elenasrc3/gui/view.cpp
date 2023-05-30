@@ -155,6 +155,10 @@ void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path)
    docView->setSize(_size);
 
    _documents.add(new DocumentViewScope(name, path, docView));
+   if (emptystr(path)) {
+      docView->markAsUnnamed();
+      docView->markAsModified();
+   }
 
    for (auto it = _docListeners.start(); !it.eof(); ++it) {
       docView->attachNotifier(*it);

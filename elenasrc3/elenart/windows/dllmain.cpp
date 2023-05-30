@@ -60,7 +60,7 @@ void init(HMODULE hModule)
 
 // --- API export ---
 
-EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, SymbolList* entry, void* criricalHandler)
+EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, void* entry, void* criricalHandler)
 {
    systemEnv = env;
 
@@ -160,6 +160,20 @@ EXTERN_DLL_EXPORT addr_t LoadSymbolByStringLA(const char* symbolName)
 EXTERN_DLL_EXPORT addr_t LoadClassByStringLA(const char* symbolName)
 {
    return machine->loadClassReference(symbolName);
+}
+
+EXTERN_DLL_EXPORT addr_t LoadClassByBufferLA(void* referenceName, size_t index, size_t length)
+{
+   if (length < 0x100) {
+      IdentifierString str((const char*)referenceName + index, length);
+
+      return LoadClassByStringLA(*str);
+   }
+   else {
+      DynamicString<char> str((const char*)referenceName, index, length);
+
+      return LoadClassByStringLA(str.str());
+   }
 }
 
 EXTERN_DLL_EXPORT addr_t LoadSymbolByString2LA(const char* ns, const char* symbolName)

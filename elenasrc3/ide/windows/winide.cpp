@@ -107,13 +107,15 @@ void Clipboard :: pasteFromClipboard(DocumentChangeStatus& status, DocumentView*
 IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance) : 
    SDIWindow(title), 
    fileDialog(instance,
-      this, Dialog::SourceFilter, 
+      this, FileDialog::SourceFilter, 
       OPEN_FILE_CAPTION, 
       *model->projectModel.paths.lastPath),
    projectDialog(instance,
-      this, Dialog::ProjectFilter,
+      this, FileDialog::ProjectFilter,
       OPEN_PROJECT_CAPTION,
       *model->projectModel.paths.lastPath),
+   messageDialog(this),
+   projectSettingsDialog(instance, this, &model->projectModel),
    clipboard(this)
 {
    this->_instance = instance;
@@ -135,6 +137,11 @@ void IDEWindow :: newFile()
    _controller->doNewFile(_model);
 }
 
+void IDEWindow :: newProject()
+{
+   _controller->doNewProject(fileDialog, messageDialog, projectSettingsDialog, _model);
+}
+
 void IDEWindow :: openFile()
 {
    _controller->doOpenFile(fileDialog, _model);
@@ -147,29 +154,29 @@ void IDEWindow :: saveFile()
 
 void IDEWindow :: closeFile()
 {
-   _controller->doCloseFile(fileDialog, _model);
+   _controller->doCloseFile(fileDialog, messageDialog, _model);
 }
 
 void IDEWindow :: closeAll()
 {
-   _controller->doCloseAll(fileDialog, _model);
+   _controller->doCloseAll(fileDialog, messageDialog, _model);
 }
 
 void IDEWindow :: openProject()
 {
-   _controller->doOpenProject(projectDialog, _model);
+   _controller->doOpenProject(projectDialog, messageDialog, _model);
 }
 
 void IDEWindow :: closeProject()
 {
-   _controller->doCloseProject(projectDialog, _model);
+   _controller->doCloseProject(projectDialog, messageDialog, _model);
 
    //_controller->onLayoutchange();
 }
 
 void IDEWindow :: exit()
 {
-   if(_controller->doExit(fileDialog, _model)) {
+   if(_controller->doExit(fileDialog, messageDialog, _model)) {
       SDIWindow::exit();
    }
 }
@@ -302,6 +309,14 @@ void IDEWindow :: onDebugWatch()
    _controller->refreshDebugContext(contextBrowser, _model);
 
    contextBrowser->expandRootNode();
+}
+
+void IDEWindow :: onDebugWatchBrowse(size_t item, size_t param)
+{
+   if (param) {
+      ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
+      _controller->refreshDebugContext(contextBrowser, _model, item, param);
+   }
 }
 
 void IDEWindow :: onProjectChange(bool empty)
@@ -452,6 +467,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_FILE_NEW:
          newFile();
          break;
+      case IDM_PROJECT_NEW:
+         newProject();
+         break;
       case IDM_FILE_OPEN:
          openFile();
          break;
@@ -504,6 +522,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_PROJECT_COMPILE:
          _controller->doCompileProject(projectDialog, _model);
          break;
+      case IDM_PROJECT_OPTION:
+         _controller->doChangeProject(projectSettingsDialog, _model);
+         break;
       case IDM_DEBUG_RUN:
          _controller->doDebugAction(_model, DebugAction::Run);
          break;
@@ -518,6 +539,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_DEBUG_STOP:
          _controller->doDebugStop(_model);
+         break;
+      case IDM_DEBUG_BREAKPOINT:
+         _controller->toggleBreakpoint(_model, -1);
          break;
       case IDM_WINDOW_NEXT:
          _controller->doSelectNextWindow(_model);
@@ -540,11 +564,19 @@ bool IDEWindow :: onCommand(int command)
       case IDM_HELP_API:
          openHelp();
          break;
+      case IDM_DEBUG_INSPECT:
+         refreshDebugNode();
+         break;
       default:
          return false;
    }
 
    return true;
+}
+
+void IDEWindow :: refreshDebugNode()
+{
+   dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch])->refreshCurrentNode();
 }
 
 void IDEWindow :: onStatusChange(StatusNMHDR* rec)
@@ -555,6 +587,12 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
          break;
       case NOTIFY_IDE_CHANGE:
          onIDEChange(rec->status);
+         break;
+      case NOTIFY_DEBUG_START:
+         onDebuggerStart();
+         break;
+      case NOTIFY_DEBUG_LOAD:
+         onDebuggerHook();
          break;
       case NOTIFY_DEBUG_CHANGE:
          onDebuggerUpdate(rec);
@@ -633,11 +671,52 @@ void IDEWindow :: onTreeSelChanged(HWND wnd)
    }
 }
 
+void IDEWindow :: onTreeItemExpanded(NMTREEVIEWW* rec)
+{
+   for (size_t i = 0; i < _childCounter; i++) {
+      if (_children[i]->checkHandle(rec->hdr.hwndFrom)) {
+         ((TreeView*)_children[i])->onItemExpand(rec->itemNew.hItem);
+         break;
+      }
+   }
+}
+
 void IDEWindow :: onDoubleClick(NMHDR* hdr)
 {
    for (size_t i = 0; i < _childCounter; i++) {
       if (_children[i]->checkHandle(hdr->hwndFrom)) {
          ((ControlBase*)_children[i])->onDoubleClick(hdr);
+         break;
+      }
+   }
+}
+
+void IDEWindow :: onDebugWatchRClick(int controlIndex)
+{
+   DWORD dwpos = ::GetMessagePos();
+   Point p(LOWORD(dwpos), HIWORD(dwpos));
+
+   TreeView* treeView = ((TreeView*)_children[controlIndex]);
+
+   HTREEITEM item = treeView->hitTest(p.x, p.x);
+   if (item) {
+      treeView->select(item);
+   }
+
+   ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.debugContextMenu]);
+
+   menu->show(_handle, p);
+
+   //treeView->showContextMenu(LOWORD(dwpos), HIWORD(dwpos));
+}
+
+void IDEWindow :: onRClick(NMHDR* hdr)
+{
+   for (size_t i = 0; i < _childCounter; i++) {
+      if (_children[i]->checkHandle(hdr->hwndFrom)) {
+         if (i == _model->ideScheme.debugWatch) {
+            onDebugWatchRClick(i);
+         }
          break;
       }
    }
@@ -660,6 +739,17 @@ void IDEWindow :: onSelection(SelectionNMHDR* rec)
          break;
       case NOTIFY_REFRESH:
          onChildRefresh((int)rec->param);
+         break;
+      default:
+         break;
+   }
+}
+
+void IDEWindow :: onTreeItem(TreeItemNMHDR* rec)
+{
+   switch (rec->code) {
+      case NOTIFY_DEBUG_CONTEXT_EXPANDED:
+         onDebugWatchBrowse(rec->item, rec->param);
          break;
       default:
          break;
@@ -710,6 +800,9 @@ void IDEWindow :: onNotify(NMHDR* hdr)
       case STATUS_SELECTION:
          onSelection((SelectionNMHDR*)hdr);
          break;
+      case STATUS_TREEITEM:
+         onTreeItem((TreeItemNMHDR*)hdr);
+         break;
       case STATUS_COMPLETION:
          onComplition((CompletionNMHDR*)hdr);
          break;
@@ -722,9 +815,27 @@ void IDEWindow :: onNotify(NMHDR* hdr)
       case TVN_SELCHANGED:
          onTreeSelChanged(hdr->hwndFrom);
          break;
+      case TVN_ITEMEXPANDING:
+         onTreeItemExpanded((NMTREEVIEW*)hdr);
+         break;
+      case NM_RCLICK:
+         onRClick(hdr);
+         break;
       default:
          break;
    }
+}
+
+void IDEWindow :: onDebuggerStart()
+{
+   ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
+
+   contextBrowser->clearRootNode();
+}
+
+void IDEWindow :: onDebuggerHook()
+{
+   _controller->onDebuggerHook(_model);
 }
 
 void IDEWindow :: onDebuggerUpdate(StatusNMHDR* rec)
@@ -793,7 +904,7 @@ void IDEWindow :: onDebuggerUpdate(StatusNMHDR* rec)
 
 bool IDEWindow :: onClose()
 {
-   if (!_controller->onClose(fileDialog, _model))
+   if (!_controller->onClose(fileDialog, messageDialog, _model))
       return false;
 
    return WindowBase::onClose();
@@ -831,5 +942,9 @@ void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
 
       menu->enableMenuItemById(IDM_EDIT_UNDO, docInfo->canUndo());
       menu->enableMenuItemById(IDM_EDIT_REDO, docInfo->canRedo());
+   }
+
+   if (changeStatus.textChanged || changeStatus.caretChanged) {
+      _controller->onStatusChange(_model, IDEStatus::Ready);
    }
 }

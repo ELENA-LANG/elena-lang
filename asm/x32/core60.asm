@@ -588,6 +588,23 @@ inline % 1Ch
 
 end
 
+// ; xload
+inline %1Dh
+
+  lea  eax, [ebx+edx]
+  mov  edx, dword ptr [eax]
+
+end
+
+// ; xlload
+inline %1Eh
+
+  lea  eax, [ebx+edx]
+  mov  edx, dword ptr [eax+4]
+  mov  eax, dword ptr [eax]
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -666,6 +683,149 @@ inline %02Fh
   call ebx
 
 end
+
+// ; fabsdp
+inline %078h
+
+  lea   edi, [ebp + __arg32_1]
+  fld   qword ptr [esi]
+  fabs
+  fstp  qword ptr [edi]    // ; store result 
+
+end 
+
+// ; fsqrtdp
+inline %079h
+
+  lea   edi, [ebp + __arg32_1]
+  fld   qword ptr [esi]
+  fsqrt
+  fstp  qword ptr [edi]    // ; store result 
+
+end 
+
+// ; fexpdp
+inline %07Ah
+
+  lea   edi, [ebp + __arg32_1]
+  fld   qword ptr [esi]
+  xor   edx, edx
+
+  fldl2e                  // ; ->log2(e)
+  fmulp                   // ; ->log2(e)*Src
+                                                              
+  // ; the FPU can compute the antilog only with the mantissa
+  // ; the characteristic of the logarithm must thus be removed
+      
+  fld st(0)               // ; copy the logarithm
+  frndint                 // ; keep only the characteristic
+  fsub  st(1),st(0)       // ; keeps only the mantissa
+  fxch                    // ; get the mantissa on top
+
+  f2xm1                   // ; ->2^(mantissa)-1
+  fld1
+  faddp                   // ; add 1 back
+
+  //; the number must now be readjusted for the characteristic of the logarithm
+
+  fscale                  // ;, scale it with the characteristic
+      
+  fstsw ax                // ; retrieve exception flags from FPU
+  shr   al,1              // ; test for invalid operation
+  jc    short lErr        // ; clean-up and return if error
+      
+  // ; the characteristic is still on the FPU and must be removed
+  
+  fstp  st(1)             // ; get rid of the characteristic
+
+  fstp  qword ptr [edi]    // ; store result 
+  mov   edx, 1
+  jmp   short labEnd
+  
+lErr:
+  ffree st(1)
+  
+labEnd:
+
+end 
+
+// ; flndp
+inline %07Bh
+
+  lea   edi, [ebp + __arg32_1]
+  fld   qword ptr [esi]
+
+  fldln2
+  fxch
+  fyl2x                   // ->[log2(Src)]*ln(2) = ln(Src)
+
+  fstsw ax                // retrieve exception flags from FPU
+  shr   al,1              // test for invalid operation
+  jc    short lErr        // clean-up and return error
+
+  fstp  qword ptr [edi]    // store result 
+  mov   edx, 1
+  jmp   short labEnd
+
+lErr:
+  ffree st(0)
+
+labEnd:
+
+end 
+
+// ; fsindp
+inline %07Ch
+
+  lea   edi, [ebp + __arg32_1]
+  fld   qword ptr [esi]
+  fldpi
+  fadd  st(0),st(0)       // ; ->2pi
+  fxch
+
+lReduce:
+  fprem                   // ; reduce the angle
+  fsin
+  fstsw ax                // ; retrieve exception flags from FPU
+  shr   al,1              // ; test for invalid operation
+  // ; jc    short lErr        // ; clean-up and return error
+  sahf                    // ; transfer to the CPU flags
+  jpe   short lReduce     // ; reduce angle again if necessary
+  fstp  st(1)             // ; get rid of the 2pi
+
+  fstp  qword ptr [edi]    // ; store result 
+
+end 
+
+// ; fcosdp
+inline %07Dh
+
+  lea   edi, [ebp + __arg32_1]
+  fld   qword ptr [esi]
+  fcos
+  fstp  qword ptr [edi]    // ; store result 
+
+end 
+
+// ; farctandp
+inline %07Eh
+
+  lea   edi, [ebp + __arg32_1]
+  fld   qword ptr [esi]
+  fld1
+  fpatan                   // i.e. arctan(Src/1)
+  fstp  qword ptr [edi]    // ; store result 
+
+end 
+
+// ; fpidp
+inline %07Fh
+
+  lea   edi, [ebp + __arg32_1]
+  fldpi
+  fstp  qword ptr [edi]    // ; store result 
+
+end 
 
 // ; setr
 inline %80h
@@ -1069,6 +1229,58 @@ inline %9Ch
 
 end
 
+// ; xadddpn
+inline %09Dh
+
+  mov  eax, [ebp+__arg32_1]
+  add  edx, eax
+
+end
+
+// ; xsetfp
+inline %09Eh
+
+  lea  eax, [edx*4]
+  lea  ebx, [ebp + eax + __arg32_1]
+
+end 
+
+// ; frounddp
+inline %09Fh
+
+  lea   edi, [ebp + __arg32_1]
+
+  mov   ecx, 0
+  fld   qword ptr [esi]
+
+  push  ecx                // reserve space on stack
+  fstcw word ptr [esp]     // get current control word
+
+  mov   edx, [esp]
+  and   dx,0F3FFh          // code it for code it for rounding 
+  push  edx
+  fldcw word ptr [esp]     // change rounding code of FPU to truncate
+
+  frndint                  // round the number
+  pop   edx                // remove modified CW from CPU stack
+  fldcw word ptr [esp]     // load back the former control word
+  pop   edx                // clean CPU stack
+      
+  fstsw ax                 // retrieve exception flags from FPU
+  shr   al,1               // test for invalid operation
+  jc    short labErr       // clean-up and return error
+
+labSave:
+  fstp  qword ptr [edi]    // store result
+  jmp   short labEnd
+  
+labErr:
+  ffree st(1)
+  
+labEnd:
+
+end 
+
 // ; savedp
 inline %0A0h
 
@@ -1151,7 +1363,7 @@ end
 // ; xrefreshsi 0
 inline %1A7h
 
-  mov esi, [esp+4]
+  mov esi, [esp+__arg32_1]
 
 end 
 
@@ -1200,6 +1412,24 @@ inline %0ACh
   lea  edi, [ebp + __arg32_1]
   mov  eax, dword ptr [ebx]
   mov  edx, dword ptr [ebx+4]
+
+end
+
+// ; xfillr
+inline % 0ADh
+  mov  eax, __ptr32_1
+  mov  edi, ebx
+  mov  ecx, [esi]
+  rep  stos
+
+end
+
+// ; xfillr i,0
+inline % 1ADh
+  xor  eax, eax
+  mov  edi, ebx
+  mov  ecx, [esi]
+  rep  stos
 
 end
 
@@ -1500,6 +1730,16 @@ inline %0D3h
 
 end
 
+// ; udivndp
+inline %0D4h
+
+  xor  edx, edx
+  mov  eax, [ebp+__arg32_1]
+  div  dword ptr [esi]
+  mov  [ebp+__arg32_1], eax
+
+end
+
 // ; ianddpn
 inline %0D8h
 
@@ -1797,6 +2037,17 @@ lEnd:
 
 lEnd2:
   pop   edx
+
+end
+
+// ; selultrr
+inline %0DFh
+
+  mov   eax, [esi]
+  cmp   eax, [ebx]
+  mov   ecx, __ptr32_1
+  mov   ebx, __ptr32_2
+  cmovb ebx, ecx
 
 end
 
@@ -2523,6 +2774,26 @@ inline %0F7h
 
 end
 
+// ; fillir
+inline % 0F8h
+
+  mov  eax, __ptr32_2
+  mov  edi, ebx
+  mov  ecx, __arg32_1
+  rep  stos
+
+end
+
+// ; fill i,0
+inline % 1F8h
+
+  xor  eax, eax
+  mov  edi, ebx
+  mov  ecx, __arg32_1
+  rep  stos
+
+end
+
 // ; xstorefir
 inline %0F9h
 
@@ -2595,11 +2866,11 @@ end
 // ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 5FAh
 
+  mov  [esp+4], esi                      // ; saving arg0
   lea  eax, [esp + __n_2]
   xor  ecx, ecx
   push ecx
   push ecx
-  mov  [esp+4], esi                      // ; saving arg0
   push ebx
   mov  ebx, eax 
 
@@ -2738,11 +3009,11 @@ end
 // ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 5FBh
 
+  mov  [esp+4], esi                      // ; saving arg0
   xor  ecx, ecx
   lea  eax, [esp + __n_2]
   push ecx
   push ecx
-  mov  [esp+4], esi                      // ; saving arg0
   push ebx
   mov  ebx, eax 
 

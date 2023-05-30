@@ -109,6 +109,7 @@ namespace elena_lang
       XorOperation            = 0x001863,
       BreakOperation          = 0x001864,
       LazyOperation           = 0x001865,
+      TupleAssignOperation    = 0x001866,
       Postfix                 = 0x001068,
       TemplatePostfix         = 0x001069,
       //MethodPostfix           = 0x00106A,
@@ -128,6 +129,8 @@ namespace elena_lang
       L7Expression            = 0x001899,
       L3SingleExpression      = 0x00189A,
       NestedRootExpression    = 0x00189B,
+      TemplateOperation       = 0x00189C,
+      LTExpression            = 0x00189D,
       TemplateExpression      = 0x0018A0,
       FieldInitializer        = 0x0018B0,
       Message                 = 0x0010C0,
@@ -151,6 +154,14 @@ namespace elena_lang
       SwitchLastOption        = 0x0018D2,
       SwitchCode              = 0x0018D3,
       CollectionExpression    = 0x0018D4,
+      TupleCollection         = 0x0018D5,
+      Operator                = 0x0010D6,
+      SubVariable             = 0x0010D7,
+      SubDeclaration          = 0x0010D8,
+      FinallyBlock            = 0x001CD9,
+      FinalOperation          = 0x001CDA,
+      ParameterBlock          = 0x0010F0,
+      StaticInitializerMethod = 0x0010F1,
 
       Name                    = 0x000101,
       Namespace               = 0x000103,
@@ -213,6 +224,7 @@ namespace elena_lang
       }
 
       static void copyNode(SyntaxTreeWriter& writer, SyntaxNode node, bool includingNode = false);
+      static void copyNodeSafe(SyntaxTreeWriter& writer, SyntaxNode node, bool includingNode = false);
       static void saveNode(SyntaxNode node, MemoryBase* section, bool includingNode = false);
    };
 

@@ -21,6 +21,7 @@ namespace elena_lang
 
       PlatformType      _platform;
       LibraryProvider   _libraryProvider;
+      bool              _providerInitialized;
 
       MemoryDump        _debugSection;
 

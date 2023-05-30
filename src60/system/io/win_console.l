@@ -2,7 +2,7 @@ namespace io
 {
    import system'text;
 
-   const int FILE_TYPE_CHAR = 2;
+   const IntNumber FILE_TYPE_CHAR = 2;
 
    struct KEY_EVENT_RECORD
    {
@@ -108,10 +108,18 @@ namespace io
          this h := h
       }
 
+      write(wide s)
+      {
+         int len := s.Length;
+            
+         extern KERNEL32.WriteConsoleW(h,s,len,0,0);
+    
+         // !!check the result of the operation
+      }
+
       write(string s)
       {
-          int l := s.Length;
-          extern KERNEL32.WriteConsoleA(h,s,l,0,0);
+         self.write(cast wide(s))
       }
    }
 

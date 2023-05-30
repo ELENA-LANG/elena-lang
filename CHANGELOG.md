@@ -1,4 +1,6 @@
 ## ELENA 6.0.2b
+*31.03.2023*
+
 - ELENA
   - fixing a critical error with long number comparision operations
   - (re)implementing Script Engine (elenasm60 dll)

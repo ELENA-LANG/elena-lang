@@ -25,6 +25,7 @@
         <include>app.l</include>
         <include>text\strings.l</include>
         <include>text\words.l</include>
+        <include>math\functions.l</include>
      </module>
      <module name="routines">
        <include>routines\enumerating.l</include>

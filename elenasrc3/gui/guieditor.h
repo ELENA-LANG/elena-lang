@@ -20,6 +20,7 @@ namespace elena_lang
    constexpr auto STYLE_SELECTION      = 2;
    constexpr auto STYLE_TRACE_LINE     = 3;
    constexpr auto STYLE_ERROR_LINE     = 4;
+   constexpr auto STYLE_BREAKPOINT     = 5;
    //#define STYLE_KEYWORD                           3
    //#define STYLE_COMMENT                           4
    //#define STYLE_OPERATOR                          5
@@ -28,9 +29,8 @@ namespace elena_lang
    //#define STYLE_STRING                            8
    //#define STYLE_HINT                              9  // !! not used
    //#define STYLE_TRACE                             12
-   //#define STYLE_BREAKPOINT                        13
    //#define STYLE_HIGHLIGHTED_BRACKET               14
-   constexpr auto STYLE_MAX            = 4;
+   constexpr auto STYLE_MAX            = 5;
 
    // --- ClipboardBase ----
    class ClipboardBase
@@ -110,7 +110,7 @@ namespace elena_lang
       TextViewModelBase()
       {
          this->_currentView = nullptr;
-         this->lineNumbersVisible = false;
+         this->lineNumbersVisible = true; // !! temporal hard-coded
          this->empty = true;
          this->fontSize = 10;
          this->schemeIndex = 0;
@@ -121,8 +121,7 @@ namespace elena_lang
    class TextViewControllerBase
    {
    public:
-      virtual void newDocument(TextViewModelBase* model, ustr_t name, 
-         int notifyMessage) = 0;
+      virtual void newDocument(TextViewModelBase* model, ustr_t name) = 0;
       virtual bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
          FileEncoding encoding) = 0;
 

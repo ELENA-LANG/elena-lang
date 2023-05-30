@@ -18,7 +18,7 @@ namespace elena_lang
    class SourceViewController : public TextViewController
    {
    public:
-      void newSource(TextViewModelBase* model, ustr_t name, bool autoSelect);
+      void newSource(TextViewModelBase* model, ustr_t name, bool autoSelect, NotificationStatus& status);
       bool openSource(TextViewModelBase* model, ustr_t name, path_t sourcePath,
          FileEncoding encoding, bool autoSelect, NotificationStatus& status);
       void closeSource(TextViewModelBase* model, int index, bool autoSelect, NotificationStatus& status);
@@ -55,7 +55,7 @@ namespace elena_lang
 
       void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
 
-      path_t retrieveSourceName(ProjectModel* model, path_t sourcePath, ReferenceName& retVal);
+      path_t retrieveSourceName(ProjectModel* model, path_t sourcePath, NamespaceString& retVal);
 
       bool onDebugAction(ProjectModel& model, DebugAction action);
       bool isOutaged(bool noWarning);
@@ -74,12 +74,13 @@ namespace elena_lang
       }
 
       NotificationStatus openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
+      NotificationStatus newProject(ProjectModel& model);
       NotificationStatus openProject(ProjectModel& model, path_t projectFile);
       NotificationStatus closeProject(ProjectModel& model);
 
       path_t getSourceByIndex(ProjectModel& model, int index);
 
-      void defineSourceName(ProjectModel* model, path_t path, ReferenceName& retVal);
+      void defineSourceName(ProjectModel* model, path_t path, NamespaceString& retVal);
 
       void defineFullPath(ProjectModel& model, ustr_t ns, path_t path, PathString& fullPath);
 
@@ -90,6 +91,11 @@ namespace elena_lang
 
       void runToCursor(ProjectModel& model, SourceViewModel& sourceModel);
       void refreshDebugContext(ContextBrowserBase* contextBrowser);
+      void refreshDebugContext(ContextBrowserBase* contextBrowser, size_t param, addr_t address);
+
+      void toggleBreakpoint(ProjectModel& model, SourceViewModel& sourceModel, int row);
+
+      void loadBreakpoints(ProjectModel& model);
 
       void setNotifier(NotifierBase* notifier)
       {
@@ -110,13 +116,17 @@ namespace elena_lang
       {
          if (_notifier)
             _notifier->notifyCompletion(id, param);
-
+      }
+      void notifyTreeItem(int id, size_t item, size_t param) override
+      {
+         if (_notifier)
+            _notifier->notifyTreeItem(id, item, param);
       }
 
       ProjectController(ProcessBase* outputProcess, DebugProcessBase* debugProcess, ProjectModel* model, SourceViewModel* sourceModel,
          DebugSourceController* sourceController, PlatformType platform)
          : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, this, sourceController),
-           _autoWatch({ nullptr, 0 }) 
+           _autoWatch({ nullptr, 0 })
       {
          //_notifier = nullptr;
          _platform = platform;
@@ -131,10 +141,13 @@ namespace elena_lang
       bool openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile, NotificationStatus& status);
       bool openFile(IDEModel* model, path_t sourceFile, NotificationStatus& status);
       bool openProject(IDEModel* model, path_t projectFile, NotificationStatus& status);
-      bool closeProject(DialogBase& dialog, IDEModel* model, NotificationStatus& status);
+      bool closeProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+         NotificationStatus& status);
 
-      bool closeFile(DialogBase& dialog, IDEModel* model, int index, NotificationStatus& status);
-      bool closeAll(DialogBase& dialog, IDEModel* model, NotificationStatus& status);
+      bool closeFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+         int index, NotificationStatus& status);
+      bool closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+         NotificationStatus& status);
 
       void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);
 
@@ -147,6 +160,8 @@ namespace elena_lang
 
       SourceViewController sourceController;
       ProjectController    projectController;
+
+      void loadSystemConfig(IDEModel* model, path_t configPath, ustr_t typeXPath, ustr_t platformXPath);
 
       bool loadConfig(IDEModel* model, path_t configPath);
       void saveConfig(IDEModel* model, path_t configPath);
@@ -169,32 +184,42 @@ namespace elena_lang
       void highlightError(IDEModel* model, int row, int column, path_t path);
 
       void doNewFile(IDEModel* model);
-      void doOpenFile(DialogBase& dialog, IDEModel* model);
-      bool doSaveFile(DialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
-      bool doCloseFile(DialogBase& dialog, IDEModel* model);
-      bool doCloseAll(DialogBase& dialog, IDEModel* model);
-      bool doOpenProject(DialogBase& dialog, IDEModel* model);
-      bool doCloseProject(DialogBase& dialog, IDEModel* model);
-      bool doSaveProject(DialogBase& dialog, IDEModel* model, bool forcedMode);
+      void doOpenFile(FileDialogBase& dialog, IDEModel* model);
+      bool doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
+      bool doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool doCloseAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      void doNewProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, ProjectSettingsBase& prjDialog, 
+         IDEModel* model);
+      bool doOpenProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool doCloseProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool doSaveProject(FileDialogBase& dialog, IDEModel* model, bool forcedMode);
 
-      bool doCompileProject(DialogBase& dialog, IDEModel* model);
+      bool doCompileProject(FileDialogBase& dialog, IDEModel* model);
+      void doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model);
       void doDebugAction(IDEModel* model, DebugAction action);
       void doDebugStop(IDEModel* model);
 
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model);
+      void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param);
+
+      void toggleBreakpoint(IDEModel* model, int row);
 
       void doSelectNextWindow(IDEModel* model);
       void doSelectPrevWindow(IDEModel* model);
 
       void onCompilationCompletion(IDEModel* model, int exitCode, 
          text_str output, ErrorLogBase* log);
+      void onDebuggerHook(IDEModel* model);
       void onDebuggerStop(IDEModel* model);
+      void onStatusChange(IDEModel* model, IDEStatus newStatus);
 
-      bool doExit(DialogBase& dialog, IDEModel* model);
+      bool doExit(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
 
-      bool onClose(DialogBase& dialog, IDEModel* model);
+      bool onClose(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
 
       void init(IDEModel* model);
+
+      void onProgramStop(IDEModel* model);
 
       IDEController(ProcessBase* outputProcess, DebugProcessBase* process, IDEModel* model,
          TextViewSettings& textViewSettings, PlatformType platform

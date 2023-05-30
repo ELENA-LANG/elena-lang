@@ -590,6 +590,22 @@ inline % 1Ch
 
 end
 
+// ; xload
+inline %1Dh
+
+  lea  rax, [rbx+rdx]
+  mov  edx, dword ptr [rax]
+
+end
+
+// ; xlload
+inline %1Eh
+
+  lea  rax, [rbx+rdx]
+  mov  rdx, qword ptr [rax]
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -669,6 +685,149 @@ inline %02Fh
   call rbx
 
 end
+
+// ; fabsdp
+inline %078h
+
+  lea   rdi, [rbp + __arg32_1]
+  fld   qword ptr [rsi]
+  fabs
+  fstp  qword ptr [rdi]    // ; store result 
+
+end 
+
+// ; fsqrtdp
+inline %079h
+
+  lea   rdi, [rbp + __arg32_1]
+  fld   qword ptr [rsi]
+  fsqrt
+  fstp  qword ptr [rdi]    // ; store result 
+
+end 
+
+// ; fexpdp
+inline %07Ah
+
+  lea   rdi, [rbp + __arg32_1]
+  fld   qword ptr [rsi]
+  xor   edx, edx
+
+  fldl2e                  // ; ->log2(e)
+  fmulp                   // ; ->log2(e)*Src
+                                                              
+  // ; the FPU can compute the antilog only with the mantissa
+  // ; the characteristic of the logarithm must thus be removed
+      
+  fld   st(0)             // ; copy the logarithm
+  frndint                 // ; keep only the characteristic
+  fsub  st(1),st(0)       // ; keeps only the mantissa
+  fxch                    // ; get the mantissa on top
+
+  f2xm1                   // ; ->2^(mantissa)-1
+  fld1
+  faddp                   // ; add 1 back
+
+  //; the number must now be readjusted for the characteristic of the logarithm
+
+  fscale                  // ;, scale it with the characteristic
+      
+  fstsw ax                // ; retrieve exception flags from FPU
+  shr   al,1              // ; test for invalid operation
+  jc    short lErr        // ; clean-up and return if error
+      
+  // ; the characteristic is still on the FPU and must be removed
+  
+  fstp  st(1)             // ; get rid of the characteristic
+
+  fstp  qword ptr [rdi]    // ; store result 
+  mov   edx, 1
+  jmp   short labEnd
+  
+lErr:
+  ffree st(1)
+  
+labEnd:
+
+end 
+
+// ; flndp
+inline %07Bh
+
+  lea   rdi, [rbp + __arg32_1]
+  fld   qword ptr [rsi]
+
+  fldln2
+  fxch
+  fyl2x                   // ->[log2(Src)]*ln(2) = ln(Src)
+
+  fstsw ax                // retrieve exception flags from FPU
+  shr   al,1              // test for invalid operation
+  jc    short lErr        // clean-up and return error
+
+  fstp  qword ptr [rdi]    // store result 
+  mov   edx, 1
+  jmp   short labEnd
+
+lErr:
+  ffree st(0)
+
+labEnd:
+
+end 
+
+// ; fsindp
+inline %07Ch
+
+  lea   rdi, [rbp + __arg32_1]
+  fld   qword ptr [rsi]
+  fldpi
+  fadd  st(0),st(0)       // ; ->2pi
+  fxch
+
+lReduce:
+  fprem                   // ; reduce the angle
+  fsin
+  fstsw ax                // ; retrieve exception flags from FPU
+  shr   al,1              // ; test for invalid operation
+  // ; jc    short lErr        // ; clean-up and return error
+  sahf                    // ; transfer to the CPU flags
+  jpe   short lReduce     // ; reduce angle again if necessary
+  fstp  st(1)             // ; get rid of the 2pi
+
+  fstp  qword ptr [rdi]    // ; store result 
+
+end 
+
+// ; fcosdp
+inline %07Dh
+
+  lea   rdi, [rbp + __arg32_1]
+  fld   qword ptr [rsi]
+  fcos
+  fstp  qword ptr [rdi]    // ; store result 
+
+end 
+
+// ; farctandp
+inline %07Eh
+
+  lea   rdi, [rbp + __arg32_1]
+  fld   qword ptr [rsi]
+  fld1
+  fpatan                   // i.e. arctan(Src/1)
+  fstp  qword ptr [rdi]    // ; store result 
+
+end 
+
+// ; fpidp
+inline %07Fh
+
+  lea   rdi, [rbp + __arg32_1]
+  fldpi
+  fstp  qword ptr [rdi]    // ; store result 
+
+end 
 
 // ; setr
 inline %80h
@@ -1087,6 +1246,58 @@ inline %9Ch
 
 end
 
+// ; xadddpn
+inline %09Dh
+
+  mov  eax, dword ptr [rbp+__arg32_1]
+  add  edx, eax
+
+end
+
+// ; xsetfp
+inline %09Eh
+
+  lea  rax, [rdx*4]
+  lea  rbx, [rbp + rax + __arg32_1]
+
+end 
+
+// ; frounddp
+inline %09Fh
+
+  lea   rdi, [rbp + __arg32_1]
+
+  mov   ecx, 0
+  fld   qword ptr [rsi]
+
+  push  rcx                // reserve space on stack
+  fstcw word ptr [rsp]     // get current control word
+
+  mov   rdx, [rsp]
+  and   dx,0F3FFh          // code it for code it for rounding 
+  push  rdx
+  fldcw word ptr [rsp]     // change rounding code of FPU to truncate
+
+  frndint                  // round the number
+  pop   rdx                // remove modified CW from CPU stack
+  fldcw word ptr [rsp]     // load back the former control word
+  pop   rdx                // clean CPU stack
+      
+  fstsw ax                 // retrieve exception flags from FPU
+  shr   al,1               // test for invalid operation
+  jc    short labErr       // clean-up and return error
+
+labSave:
+  fstp  qword ptr [rdi]    // store result
+  jmp   short labEnd
+  
+labErr:
+  ffree st(1)
+  
+labEnd:
+
+end 
+
 // ; savedp
 inline %0A0h
 
@@ -1264,6 +1475,24 @@ inline %0ACh
 
   lea  rdi, [rbp + __arg32_1]
   mov  rdx, [rdi]
+
+end
+
+// ; xfillr
+inline % 0ADh
+  mov  rax, __ptr64_1
+  mov  rdi, rbx
+  mov  rcx, [r10]
+  rep  stos
+
+end
+
+// ; xfillr i,0
+inline % 1ADh
+  xor  rax, rax
+  mov  rdi, rbx
+  mov  rcx, [r10]
+  rep  stos
 
 end
 
@@ -1601,6 +1830,17 @@ inline %0D3h
 
 end
 
+// ; udivndp
+inline %0D4h
+
+  mov  rcx, [r10]
+  xor  edx, edx 
+  mov  rax, [rbp+__arg32_1]
+  div  ecx
+  mov  dword ptr [rbp+__arg32_1], eax
+
+end
+
 // ; ianddpn
 inline %0D8h
 
@@ -1834,6 +2074,17 @@ inline %4DDh
   mov  rax, [rdi]
   shr  rax, cl
   mov  [rdi], rax
+
+end
+
+// ; selultrr
+inline %0DFh
+
+  mov   rax, [r10]
+  cmp   eax, dword ptr[rbx]
+  mov   rcx, __ptr64_1
+  mov   rbx, __ptr64_2
+  cmovb rbx, rcx
 
 end
 
@@ -2464,6 +2715,26 @@ inline %0F7h
   mov  rax, __ptr64_2
   mov  [rbx - elSizeOffset], rcx
   mov  [rbx - elVMTOffset], rax
+
+end
+
+// ; fillir
+inline % 0F8h
+
+  mov  rax, __ptr64_2
+  mov  rdi, rbx
+  mov  ecx, __arg32_1
+  rep  stos
+
+end
+
+// ; fill i,0
+inline % 1F8h
+
+  xor  rax, rax
+  mov  rdi, rbx
+  mov  ecx, __arg32_1
+  rep  stos
 
 end
 

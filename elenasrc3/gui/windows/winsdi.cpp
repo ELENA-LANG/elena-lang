@@ -399,15 +399,10 @@ LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
       case WM_SIZING:
          onResizing((RECT*)lParam);
          return TRUE;
-      case WM_SIZE:
-         if (wParam != SIZE_MINIMIZED) {
-            onResize();
-         }
-         return 0;
       case WM_COMMAND:
          if(!onCommand(LOWORD(wParam)))
             return DefWindowProc(_handle, message, wParam, lParam);
-         break;
+         return 0;
       //case WM_PAINT:
       //{
       //   PAINTSTRUCT ps;
@@ -420,7 +415,7 @@ LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
       //}
       case WM_DESTROY:
          PostQuitMessage(0);
-         break;
+         return 0;
       case WM_ACTIVATE:
          if (LOWORD(wParam) != WA_INACTIVE) {
             onActivate();

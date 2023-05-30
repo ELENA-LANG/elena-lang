@@ -96,6 +96,11 @@ ELENA byte codes (or ecodes)
 
    sellt r1, r2             - acc <= COMP.LE ? r1 : r2
 
+   selult r1, r2            - temp1 : 4 << acc;
+                              temp2 : 4 << sp[0];
+                              temp2 < temp1 ? r1 : r2;
+                              used to compar the unsigned numbers
+
    set {prefix}:r           - r => acc
 
    set dp:i                 - dp[i] => acc
@@ -112,9 +117,15 @@ ELENA byte codes (or ecodes)
    xassign i                - acc[i] := sp[0];
                               direct operation
 
+   xassignsp                - sp => acc
+
    xget                     - acc[index] => acc
 
-   xassignsp                - sp => acc
+   xload                    - index := acc[index]
+
+   xlload                   - long:index := long:acc[index]
+
+   xset fp:i                - fp[index + i] => acc
 
 
  Call operations:
@@ -193,6 +204,8 @@ ELENA byte codes (or ecodes)
 
    swap sp:i                - acc <=> sp[i]
 
+   xadd dp:disp             - index += [dp[disp]];
+ 
    xrefresh sp:i            - cached_sp[i] := sp[i];
 
    xflush sp:i              - sp[i] := cached_sp[i];
@@ -241,6 +254,8 @@ ELENA byte codes (or ecodes)
 
    dtrans                   - sp[0] >> acc, index ptrs
 
+   fill i, r                - fills acc with r i-times
+
    len                      - index := acc.length;
                               returns the object length
 
@@ -281,6 +296,8 @@ ELENA byte codes (or ecodes)
                               sp[0] >> temp;
                               out: acc contains the class instance, index - undefined
 
+   xfill r                   - fills acc with r int(sp[0])-times
+
    xredirect m              - search acc::VMT for the {m.action + index.argCount} in index;
                               if found jumps to it; binary search is used ; index, acc presaved; 
                               index is set the original valuze
@@ -299,7 +316,13 @@ ELENA byte codes (or ecodes)
  
    jlt  label               - jump if COMP.LT == 1
  
-   jge  label               - jump if COMP.LT == 0
+   jult label               - jump if COMP.BL == 1
+ 
+   jle  label               - jump if COMP.LT == 1 && COMP.EQ == 1
+ 
+   jge  label               - jump if COMP.LT == 0 && COMP.EQ == 1
+
+   jgr  label               - jump if COMP.LT == 0
 
 
  Arithmeric operations:
@@ -308,6 +331,9 @@ ELENA byte codes (or ecodes)
  
    andn n                   - index := index & n
  
+   fabs dp:disp             - double:tmp << sp[0];
+                              double:dp[disp] := abs(tmp)
+
    fadd dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] += temp;
                               n = 8 
@@ -316,9 +342,18 @@ ELENA byte codes (or ecodes)
                               [dp[disp]] /= temp;
                               n = 8  
 
+   fexp dp:disp            -  double:tmp << sp[0];
+                              double:dp[disp] := exp(tmp)
+
    fmul dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] *= temp;
                               n = 8  
+
+   fround dp:disp           - double:tmp << sp[0];
+                              double:dp[disp] := trunc(tmp)
+
+   fsqrt dp:disp           -  double:tmp << sp[0];
+                              double:dp[disp] := sqrt(tmp)
 
    fsub dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] -= temp;
@@ -337,6 +372,10 @@ ELENA byte codes (or ecodes)
  
    idiv dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] /= temp;
+                              n = 1,2,4,8  
+
+   udiv dp:disp, n          - temp : n << sp[0];
+                              [dp[disp]] /= temp; as unsigned
                               n = 1,2,4,8  
 
    imul dp:disp, n          - temp : n << sp[0];

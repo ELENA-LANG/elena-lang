@@ -18,7 +18,7 @@ const char* _fnOpcodes[256] =
    "class", "save", "throw", "unhook", "loadv", "xcmp", "bload", "wload",
 
    "incude", "exclude", "assign", "mov frm", "loads", "mlen", "dalloc", "xassignsp",
-   "dtrans", "xassign", "lload", "convl", "xlcmp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "dtrans", "xassign", "lload", "convl", "xlcmp", "xload", "xlload", OPCODE_UNKNOWN,
 
    "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", "xjump",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xget", "xcall",
@@ -36,31 +36,31 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "fabs dp", "fsqrt dp", "fexp dp", "fln dp", "fsin dp", "fcos dp", "farctan dp", "fpi dp",
 
    "set", "set dp", "nlen", "xassign i", "peek", "store", "xswap sp", "swap sp",
    "mov mssg", "mov n", "load dp", "xcmp dp", "sub n", "add n", "set fp", "create",
 
-   "copy", "close", "alloc", "free", "and n", "read", "write", "cmp n",
-   "nconf dp", "ftrunc dp", "dcopy", "or n", "mul n", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "copy", "close", "alloc i", "free", "and n", "read", "write", "cmp n",
+   "nconf dp", "ftrunc dp", "dcopy", "or n", "mul n", "xadd dp", "xset fp", "fround dp",
 
    "save dp", "store fp", "save sp", "store sp", "xflush sp", "get i", "assign i", "xrefresh sp",
-   "peek fp", "peek sp", "lsave dp", "lsave sp", "lload dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "peek fp", "peek sp", "lsave dp", "lsave sp", "lload dp", "xfill", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "call", "call vt", "jump", "jeq", "jne", "jump vt", "xredirect mssg", "jlt",
-   "jge", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "jge", "jgr", "jle", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "cmp", "fcmp", "icmp", "tst flag", "tstn", "tst mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "cmp fp", "cmp sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xloadarg sp", "xcreate", "system",
 
-   "fadd dp", "fsub dp", "fmul dp", "fdiv dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   "iand dp", "ior dp", "ixor dp", "inot dp", "ishl dp", "ishr dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "fadd dp", "fsub dp", "fmul dp", "fdiv dp", "udiv dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "iand dp", "ior dp", "ixor dp", "inot dp", "ishl dp", "ishr dp", OPCODE_UNKNOWN, "selult",
 
    "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", "nsave dp", "xhook dp", "xnewn",
    "nadd dp", "dcopy dp", "xwrite offs", "xcopy offs", "vjump mssg", "jump mssg", "seleq", "sellt",
 
    "open", "xstore sp", "open header", "mov sp", "new", "newn", "xmov sp", "createn",
-   OPCODE_UNKNOWN, "xstore fp", "xdispatch mssg", "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
+   "fillir", "xstore fp", "xdispatch mssg", "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
 };
 
 // --- Auxiliary  ---
@@ -235,17 +235,33 @@ mssg_t ByteCodeUtil :: resolveMessage(ustr_t messageName, ModuleBase* module, bo
          size_t j = (*actionName).findSub(i, ',', end);
 
          IdentifierString temp(actionName.str() + i, j - i);
-         references[len++] = module->mapReference(*temp, true);
+         references[len++] = module->mapReference(*temp, readOnlyMode);
 
          i = j + 1;
       }
 
-      signature = module->mapSignature(references, len, true);
+      signature = module->mapSignature(references, len, readOnlyMode);
 
       actionName.truncate(index);
    }
 
    actionRef = module->mapAction(*actionName, signature, readOnlyMode);
+   if (actionRef == 0) {
+      return 0;
+   }
+
+   return encodeMessage(actionRef, argCount, flags);
+}
+
+mssg_t ByteCodeUtil :: resolveMessageName(ustr_t messageName, ModuleBase* module, bool readOnlyMode)
+{
+   pos_t argCount = 0;
+   ref_t flags = 0;
+
+   IdentifierString actionName;
+   parseMessageName(messageName, actionName, flags, argCount);
+
+   ref_t actionRef = module->mapAction(*actionName, 0, readOnlyMode);
    if (actionRef == 0) {
       return 0;
    }
@@ -261,6 +277,7 @@ void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* targe
          ref_t mask = command.arg1 & mskAnyRef;
          switch (mask) {
             case mskMssgLiteralRef:
+            case mskMssgNameLiteralRef:
                command.arg1 = target->importMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
                break;
             case mskExtMssgLiteralRef:
@@ -283,6 +300,39 @@ void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* targe
       ref_t mask = command.arg2 & mskAnyRef;
       command.arg2 = target->importReference(importer, command.arg2 & ~mskAnyRef) | mask;
    }
+}
+
+void ByteCodeUtil :: generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* module, MemoryDump& tapeSymbol)
+{
+   MemoryWriter writer(&tapeSymbol);
+
+   pos_t sizePlaceholder = writer.position();
+   writer.writePos(0);
+
+   pos_t  command = 0;
+   ustr_t strArg = nullptr;
+
+   ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
+
+   // generate the preloaded list
+   for (auto it = symbolList.start(); !it.eof(); ++it) {
+      auto info = *it;
+      ustr_t symbolName = info.module->resolveReference(info.reference);
+      if (isWeakReference(symbolName)) {
+         IdentifierString fullName(info.module->name(), symbolName);
+
+         ByteCodeUtil::write(writer, ByteCode::CallR, module->mapReference(*fullName) | mskSymbolRef);
+      }
+      else ByteCodeUtil::write(writer, ByteCode::CallR, module->mapReference(symbolName) | mskSymbolRef);
+   }
+
+   ByteCodeUtil::write(writer, ByteCode::CloseN);
+   ByteCodeUtil::write(writer, ByteCode::Quit);
+
+   pos_t size = writer.position() - sizePlaceholder - sizeof(pos_t);
+
+   writer.seek(sizePlaceholder);
+   writer.writePos(size);
 }
 
 // --- CommandTape ---
@@ -423,6 +473,8 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
             case ByteCode::Jne:
             case ByteCode::Jlt:
             case ByteCode::Jge:
+            case ByteCode::Jgr:
+            case ByteCode::Jle:
                // remove the label from idle list
                idleLabels.exclude(command.arg1);
 

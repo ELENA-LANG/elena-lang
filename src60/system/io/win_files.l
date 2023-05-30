@@ -3,23 +3,23 @@ import system'text;
 namespace io
 {
    // --- File Access Modes ---
-   const int FILE_READ_DATA     = 00000001h;
-   const int FILE_APPEND_DATA   = 00000004h;
-   const int FILE_GENERIC_READ  = 80000000h;
-   const int FILE_GENERIC_WRITE = 40000000h;
+   const IntNumber FILE_READ_DATA     = 00000001h;
+   const IntNumber FILE_APPEND_DATA   = 00000004h;
+   const IntNumber FILE_GENERIC_READ  = 80000000h;
+   const IntNumber FILE_GENERIC_WRITE = 40000000h;
     
-   const int OPEN_EXISTING      = 0003h;
-   const int CREATE_ALWAYS      = 0002h;
-   const int OPEN_ALWAYS        = 0004h;
+   const IntNumber OPEN_EXISTING      = 0003h;
+   const IntNumber CREATE_ALWAYS      = 0002h;
+   const IntNumber OPEN_ALWAYS        = 0004h;
     
-   const int FILE_SHARE_READ    = 00000001h;
-   const int FILE_SHARE_WRITE   = 00000002h;
+   const IntNumber FILE_SHARE_READ    = 00000001h;
+   const IntNumber FILE_SHARE_WRITE   = 00000002h;
     
-   const int FILE_BEGIN = 0;
-   const int FILE_CURRENT = 1;
-   const int FILE_END = 2;
+   const IntNumber FILE_BEGIN = 0;
+   const IntNumber FILE_CURRENT = 1;
+   const IntNumber FILE_END = 2;
     
-   const int FILE_ATTRIBUTE_DIRECTORY = 10h;
+   const IntNumber FILE_ATTRIBUTE_DIRECTORY = 10h;
 
    // --- FileStream ---
    public struct FileStream : Stream

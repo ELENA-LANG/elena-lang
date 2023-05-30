@@ -53,8 +53,10 @@ ConfigFile::Node ConfigFile :: selectNode(Node& node, ustr_t xpath)
 void ConfigFile :: appendSetting(ustr_t xpath, ustr_t value)
 {
    XmlNode node = _tree.insertNode(xpath);
-
-   node.setContent(value);
+   if (node.isNotFound()) {
+      assert(false);
+   }
+   else node.setContent(value);
 }
 
 bool ConfigFile :: load(path_t path, FileEncoding encoding)

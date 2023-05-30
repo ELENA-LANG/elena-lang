@@ -7,7 +7,7 @@ public class Exception
    constructor new(string message)
    {
       this message := message;
-      this callStack := new CallStack();
+      this callStack := new CallStack(3);
    }
 
    constructor new()
@@ -143,3 +143,13 @@ public class FormatException : Exception
     constructor new(string message)
         <= super new(message);
 }
+
+// --- TypeLoaderException ---
+
+public class TypeLoaderException : Exception
+{
+   /// Creates the exception
+   constructor new(string className)
+      <= super new("Type " + className + " cannot be loaded");
+}
+

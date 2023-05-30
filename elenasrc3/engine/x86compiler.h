@@ -21,7 +21,8 @@ namespace elena_lang
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
-         JITSettings settings) override;
+         JITSettings settings,
+         bool virtualMode) override;
 
    public:
       void writeImm9(MemoryWriter* writer, int value, int type) override;

@@ -25,7 +25,7 @@ namespace elena_lang
          CF = 0x10,
          //ptTransform = 0x20,
          Text = 0x30,
-         //ptBuild = 0x40
+         Build = 0x40
       };
 
       PathString        _rootPath;
@@ -53,6 +53,8 @@ namespace elena_lang
       void* translate(int id, ustr_t script);
 
       void free(void* tape);
+
+      pos_t getLength(void* tape);
 
       ustr_t getLastError()
       {

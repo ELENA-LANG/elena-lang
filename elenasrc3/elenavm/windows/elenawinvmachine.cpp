@@ -18,12 +18,12 @@ ELENAWinVMMachine :: ELENAWinVMMachine(path_t configPath, PresenterBase* present
    JITCompilerBase*(* jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
       : ELENAVMMachine(configPath, presenter, platform, codeAlignment, gcSettings, jitCompilerFactory),
          _text(TEXT_MAX_SIZE, false, true),
-         _rdata(RDATA_MAX_SIZE, false, false),
+         _rdata(RDATA_MAX_SIZE, /*false*/true, false),
          _data(DATA_MAX_SIZE, true, false),
          _stat(STAT_MAX_SIZE, true, false),
-         _adata(ADATA_MAX_SIZE, false, false),
-         _mdata(MDATA_MAX_SIZE, false, false),
-         _mbdata(MBDATA_MAX_SIZE, false, false),
+         _adata(ADATA_MAX_SIZE, /*false*/true, false),
+         _mdata(MDATA_MAX_SIZE, /*false*/true, false),
+         _mbdata(MBDATA_MAX_SIZE, /*false*/true, false),
          _debug(DEBUG_MAX_SIZE, true, false)
 {
 }

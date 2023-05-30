@@ -189,6 +189,7 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
    switch (mask) {
       case mskMssgLiteralRef:
       case mskExtMssgLiteralRef:
+      case mskMssgNameLiteralRef:
          referenceName = arg ? _module->resolveConstant(arg & ~mskAnyRef) : nullptr;
          break;
       default:
@@ -242,6 +243,9 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
       case mskMssgLiteralRef:
       case mskExtMssgLiteralRef:
          commandStr.append("mssgconst:");
+         break;
+      case mskMssgNameLiteralRef:
+         commandStr.append("mssgnameconst:");
          break;
       default:
          commandStr.append(":");
@@ -373,6 +377,8 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::Jne:
          case ByteCode::Jlt:
          case ByteCode::Jge:
+         case ByteCode::Jgr:
+         case ByteCode::Jle:
             addLabel(command.arg1 + commandPosition + 5, commandStr, labels);
             break;
          case ByteCode::AssignI:
@@ -416,6 +422,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             break;
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
+         case ByteCode::SelULtRR:
             addRArg(command.arg1, commandStr);
             addSecondRArg(command.arg2, commandStr, labels);
             break;
@@ -540,6 +547,14 @@ void ByteCodeViewer :: printMethodInfo(MethodInfo& info)
 {
    IdentifierString flags("          @hints:");
    flags.appendHex(info.hints);
+   if (test(info.hints, (ref_t)MethodHint::Abstract))
+      flags.append(" @Abstract");
+   if (test(info.hints, (ref_t)MethodHint::Constant))
+      flags.append(" @Constant");
+   if (test(info.hints, (ref_t)MethodHint::Conversion))
+      flags.append(" @Conversion");
+   if (test(info.hints, (ref_t)MethodHint::Extension))
+      flags.append(" @Extension");
 
    printLine(*flags);
 }
@@ -788,7 +803,11 @@ void ByteCodeViewer::printMethod(ustr_t name, bool fullInfo)
          if (_showMethodInfo)
             printMethodInfo(methodInfo);
 
-         printByteCodes(code, entry.codeOffset, 4, _pageSize);
+         if (test(methodInfo.hints, (ref_t)MethodHint::Abstract)) {
+            printLine("  <abstract>");
+         }
+         else printByteCodes(code, entry.codeOffset, 4, _pageSize);
+
          printLine("@end");
 
          break;

@@ -129,6 +129,14 @@ namespace elena_lang
       ConstArrayReference  = 0x0064,
       StaticAssigning      = 0x0065,
       SavingLInStack       = 0x0066,
+      UIntCondOp           = 0x0067,
+      UIntOp               = 0x0068,
+      MssgNameLiteral      = 0x0069,
+      VArgSOp              = 0x006A,
+      LoadArgCount         = 0x006B, // argument contains the argument offset
+      IncIndex             = 0x006C,
+      FreeVarStack         = 0x006D,
+      FillOp               = 0x006E, // if the argument is 0 - the size is in sp[0]
 
       MaxOperationalKey    = 0x0070,
 
@@ -146,8 +154,7 @@ namespace elena_lang
       Switching            = 0x007B,
       SwitchOption         = 0x007C,
       ElseOption           = 0x007D,
-
-      NestedClass          = 0x0080,
+      FinalOp              = 0x007E,
 
       VariableInfo         = 0x0090,
       Variable             = 0x0091,
@@ -158,6 +165,7 @@ namespace elena_lang
       ByteArrayAddress     = 0x0096,
       ShortArrayAddress    = 0x0097,
       IntArrayAddress      = 0x0098,
+      UIntVariableAddress  = 0x0099,
 
       ParameterInfo        = 0x00A0,
       Parameter            = 0x00A1,

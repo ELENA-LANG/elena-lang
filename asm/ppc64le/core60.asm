@@ -777,6 +777,22 @@ inline % 1Ch
 
 end
 
+// ; xload
+inline %1Dh
+
+  add     r18, r18, r15
+  lwz     r14, 0(r18)
+
+end
+
+// ; xlload
+inline %1Eh
+
+  add     r18, r18, r15
+  ld      r14, 0(r18)
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -858,6 +874,52 @@ inline %02Fh
   mtctr    r15            // ; put code address into ctr
   bctrl                   // ; and call it
 
+end
+
+// ; fabsdp
+inline %078h
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r3)
+  fabs    f17, f17
+  stfd    f17, 0(r19)
+
+end
+
+// ; fsqrtdp
+inline %079h
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r3)
+  fsqrt   f17, f17
+  stfd    f17, 0(r19)
+
+end
+
+// ; fexp
+inline %07Ah
+end
+
+// ; fln
+inline %07Bh
+end
+
+// ; fsin
+inline %07Ch
+end
+
+// ; fcos
+inline %07Dh
+end
+
+// ; farchtan
+inline %07Eh
+end
+
+// ; fpi
+inline %07Fh
 end
 
 // ; setr
@@ -1356,6 +1418,36 @@ inline %9Ch
 
 end
 
+// ; xadddp
+inline %9Dh
+
+  addi    r16, r31, __arg16_1
+  lwz     r16, 0(r16)
+  add     r14, r14, r16
+
+end 
+
+// ; xsetfp
+inline %09Eh
+
+  li      r16, __arg16_1
+  add     r15, r31, r16
+  sldi    r18, r14, 3
+  add     r15, r15, r18
+
+end 
+
+// ; frounddp
+inline %09Fh
+
+  addi    r19, r31, __arg16_1
+
+  lfd     f17, 0(r3)
+  frin    f17, f17
+  stfd    f17, 0(r19)
+
+end
+
 // ; savedp
 inline %0A0h
 
@@ -1542,6 +1634,51 @@ inline %0ACh
   ld      r14, 0(r16)
 
 end
+
+// ; xfillr
+inline % 0ADh
+
+  ld      r16, 0(r3)
+  sldi    r16, r16, 3
+
+  ld      r17, toc_code(r2)
+  addis   r17, r17, __xdisp32hi_1 
+  addi    r17, r17, __xdisp32lo_1 
+
+  mr      r18, r15 
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  addi    r16, r16, -8
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; xfillr
+inline % 1ADh
+
+  ld      r16, 0(r3)
+  sldi    r16, r16, 3
+  li      r17, 0
+  mr      r18, r15 
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  addi    r16, r16, -8
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  b       labLoop
+
+labEnd:
+
+end
+
 
 // ; callr
 inline %0B0h
@@ -1910,6 +2047,20 @@ inline %0D3h
 
 end
 
+// ; udivndp
+inline %0D4h
+
+  addi    r19, r31, __arg16_1
+
+  lwz     r17, 0(r3)
+  lwz     r18, 0(r19)
+
+  divwu   r18, r18, r17  
+
+  stw     r18, 0(r19)
+
+end
+
 // ; ianddpn
 inline %0D8h
 
@@ -2241,6 +2392,24 @@ inline %4DDh
   std     r17, 0(r19)
 
 end
+
+// ; selultrr
+inline %0DFh
+
+  lwz      r17, 0(r3)
+  lwz      r18, 0(r15)
+
+  cmpl     r17, r18
+
+  ld      r16, toc_code(r2)
+  addis   r17, r16, __xdisp32hi_1 
+  addis   r18, r16, __xdisp32hi_2 
+  addi    r17, r17, __xdisp32lo_1 
+  addi    r18, r18, __xdisp32lo_2 
+
+  isellt  r15, r17, r18
+
+end 
 
 // ; copydpn
 inline %0E0h
@@ -3177,6 +3346,48 @@ inline %0F7h
   addi    r17, r17, __disp32lo_2
   std     r18, -elSizeOffset(r15)
   std     r17, -elVMTOffset(r15)
+
+end
+
+// ; fillir
+inline %0F8h
+
+  li      r16, __arg16_1
+
+  ld      r17, toc_rdata(r2)
+  addis   r17, r17, __disp32hi_2 
+  addi    r17, r17, __disp32lo_2 
+
+  mr      r18, r15
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  addi    r16, r16, -1
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; fillir
+inline %1F8h
+
+  li      r16, __arg16_1
+  li      r17, 0
+  mr      r18, r15
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  addi    r16, r16, -1
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  b       labLoop
+
+labEnd:
 
 end
 

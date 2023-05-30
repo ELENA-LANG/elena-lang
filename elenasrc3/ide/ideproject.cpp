@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Project Model implementation File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "ideproject.h"
@@ -11,7 +11,8 @@ using namespace elena_lang;
 // --- ProjectModel ---
 
 ProjectModel :: ProjectModel(IDEStatus* status)
-   : lastOpenFiles(nullptr), sources(nullptr)
+   : lastOpenFiles(nullptr), sources(nullptr),
+   breakpoints({}), projectTypeList(nullptr)
 {
    this->status = status;
 
@@ -19,6 +20,7 @@ ProjectModel :: ProjectModel(IDEStatus* status)
 
    this->empty = true;
    this->started = false;
+   this->notSaved = false;
 
 #ifdef _M_IX86
    this->paths.libraryRoot.copy("C:\\Alex\\ELENA\\lib60\\");      // !! temporal

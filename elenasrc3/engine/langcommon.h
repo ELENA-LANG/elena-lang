@@ -174,6 +174,7 @@ namespace elena_lang
    constexpr auto V_CONST                 = 0x80002001u;
    constexpr auto V_EMBEDDABLE            = 0x80002002u;
    constexpr auto V_WRAPPER               = 0x80002003u;
+   constexpr auto V_READONLY              = 0x80002004u;
    constexpr auto V_OVERLOADRET           = 0x8000200Au;
    constexpr auto V_VARIADIC              = 0x8000200Bu;
    
@@ -214,7 +215,7 @@ namespace elena_lang
    constexpr auto V_STRINGOBJ             = 0x80000801u;
    constexpr auto V_FLOATBINARY           = 0x80000802u;
    constexpr auto V_INTBINARY             = 0x80000803u;
-   //constexpr auto V_DECLOBJ               = 0x80000804u;
+   constexpr auto V_UINTBINARY            = 0x80000804u;
    constexpr auto V_WORDBINARY            = 0x80000805u;
    constexpr auto V_MSSGNAME              = 0x80000806u;
    constexpr auto V_SUBJBINARY            = 0x80000807u;
@@ -254,11 +255,13 @@ namespace elena_lang
    constexpr auto V_EXTMESSAGE64          = 0x8000001Cu;
    constexpr auto V_EXTMESSAGE128         = 0x8000001Du;
    constexpr auto V_WORD64                = 0x8000001Eu;
+   constexpr auto V_UINT32                = 0x8000001Fu;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;
    constexpr auto V_DECL_VAR              = 0x80000082u;
    constexpr auto V_SUPER_VAR             = 0x80000083u;
+   constexpr auto V_RECEIVED_VAR          = 0x80000084u;
 
    // === Operators ===
    constexpr auto OPERATOR_MAKS              = 0x1840;
@@ -320,6 +323,7 @@ namespace elena_lang
    constexpr pos_t VM_INIT_CMD               = 0x005;
    constexpr pos_t VM_FORWARD_CMD            = 0x106;
    constexpr pos_t VM_PACKAGE_CMD            = 0x107;
+   constexpr pos_t VM_PRELOADED_CMD          = 0x108;
 
    // --- Configuration xpaths ---
    constexpr auto WIN_X86_KEY = "Win_x86";

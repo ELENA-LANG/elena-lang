@@ -27,11 +27,14 @@ namespace elena_lang
       PresenterBase*       _presenter;
       ReferenceMapper      _mapper;
       JITLinkerSettings    _settings;
+      SystemEnv*           _env;
 
       path_t               _rootPath;
 
       ProjectBase*         _configuration;
       JITCompilerBase*     _compiler;
+
+      IdentifierString     _preloadedSection;
 
       virtual addr_t resolveExternal(ustr_t dll, ustr_t function) = 0;
 
@@ -40,7 +43,7 @@ namespace elena_lang
 
       int interprete(SystemEnv* env, void* tape, pos_t size, const char* criricalHandlerReference);
 
-      void onNewCode();
+      void onNewCode(JITLinker& jitLinker);
 
       void stopVM();
 
@@ -48,13 +51,15 @@ namespace elena_lang
       void compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, 
          ModuleBase* dummyModule);
 
-      void resumeVM(SystemEnv* env, void* criricalHandler);
+      void resumeVM(JITLinker& jitLinker, SystemEnv* env, void* criricalHandler);
 
       void init(JITLinker& jitLinker, SystemEnv* env);
 
       AddressMap::Iterator externals() override;
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
+
+      void fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule);
 
    public:
       addr_t resolveExternal(ustr_t reference) override;
@@ -71,6 +76,13 @@ namespace elena_lang
 
       void Exit(int exitCode);
 
+      SystemEnv* getSystemEnv()
+      {
+         return _env;
+      }
+
+      //void generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol);
+      
       ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
          int codeAlignment, JITSettings gcSettings,
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType));

@@ -133,6 +133,13 @@ ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
 
       mask = mskTypeListRef;
    }
+   else if (tokenInfo.compare("array")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      _reader.read(tokenInfo);
+
+      mask = mskConstArray;
+   }
    else if (tokenInfo.compare("pstr")) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
 
@@ -371,6 +378,14 @@ ByteCodeAssembler::Operand ByteCodeAssembler :: compileArg(ScriptToken& tokenInf
 
       arg.type = Operand::Type::R;
       arg.reference = readReference(tokenInfo) | mskProcedureRef;
+
+      return arg;
+   }
+   else if (tokenInfo.compare("symbol")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+      arg.type = Operand::Type::R;
+      arg.reference = readReference(tokenInfo) | mskSymbolRef;
 
       return arg;
    }
@@ -936,6 +951,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::CmpFI:
          case ByteCode::PeekFI:
          case ByteCode::SetFP:
+         case ByteCode::XSetFP:
             return compileOpFrameI(tokenInfo, writer, opCommand, parameters, locals, true);
          case ByteCode::PeekSI:
          case ByteCode::StoreSI:
@@ -945,6 +961,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::SwapSI:
          case ByteCode::XRefreshSI:
          case ByteCode::XLoadArgSI:
+         case ByteCode::SaveSI:
             return compileOpStackI(tokenInfo, writer, opCommand, true);
          case ByteCode::SaveDP:
          case ByteCode::LSaveDP:
@@ -952,14 +969,25 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::LoadDP:
          case ByteCode::XCmpDP:
          case ByteCode::FTruncDP:
+         case ByteCode::FRoundDP:
+         case ByteCode::FAbsDP:
+         case ByteCode::FSqrtDP:
+         case ByteCode::FExpDP:
+         case ByteCode::FLnDP:
+         case ByteCode::FSinDP:
+         case ByteCode::FCosDP:
+         case ByteCode::FArctanDP:
+         case ByteCode::FPiDP:
          case ByteCode::NConvFDP:
          case ByteCode::LLoadDP:
+         case ByteCode::XAddDP:
             return compileDDisp(tokenInfo, writer, opCommand, dataLocals, true);
          case ByteCode::TstM:
          case ByteCode::MovM:
             return compileOpM(tokenInfo, writer, opCommand, false);
          case ByteCode::AssignI:
          case ByteCode::GetI:
+         case ByteCode::AllocI:
             return compileOpI(tokenInfo, writer, opCommand, false);
          case ByteCode::XHookDPR:
             return compileDDispR(tokenInfo, writer, opCommand, dataLocals, true);
@@ -970,6 +998,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileMR(tokenInfo, writer, opCommand, false);
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
+         case ByteCode::SelULtRR:
             return compileRR(tokenInfo, writer, opCommand, true);
          case ByteCode::ICmpN:
          case ByteCode::TstN:
@@ -977,6 +1006,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::ReadN:
          case ByteCode::WriteN:
          case ByteCode::System:
+         case ByteCode::DCopy:
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
          case ByteCode::MovN:
          case ByteCode::AndN:
@@ -994,7 +1024,9 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::Jne:
          case ByteCode::Jlt:
          case ByteCode::Jge:
+         case ByteCode::Jle:
          case ByteCode::Jump:
+         case ByteCode::Jgr:
             return compileJcc(tokenInfo, writer, opCommand, lh);
          case ByteCode::SetR:
          case ByteCode::CmpR:
@@ -1006,6 +1038,10 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::NAddDPN:
          case ByteCode::CopyDPN:
          case ByteCode::IAddDPN:
+         case ByteCode::ISubDPN:
+         case ByteCode::IMulDPN:
+         case ByteCode::IDivDPN:
+         case ByteCode::UDivDPN:
             return compileDDispN(tokenInfo, writer, opCommand, dataLocals, constants, true);
          default:
             return false;

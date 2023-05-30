@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA ScriptReader class implementation.
 //
-//                                              (C)2005-2021, by Alexei Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"

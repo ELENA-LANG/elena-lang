@@ -3847,7 +3847,7 @@ procedure __loadString."#dispatch[1]" // -4 - size, -2 - index, -12 - buffer
   movr     const : system'text'UTF8Encoding
   pusha  
   movm     mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm   system'text'UTF8Encoding, mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
+  callrm   system'text'UTF8Encoding, mssgconst : "toString<$system'IntNumber$system'IntNumber$system'system@Array#1&system@ByteNumber>[4]"
   freei    4
 
   quit

@@ -19,13 +19,14 @@ void X86JITCompiler :: prepare(
    ImageProviderBase* imageProvider, 
    ReferenceHelperBase* helper,
    LabelHelperBase*,
-   JITSettings settings)
+   JITSettings settings,
+   bool virtualMode)
 {
    X86LabelHelper lh;
 
    _constants.inlineMask = mskCodeRef32;
 
-   JITCompiler32::prepare(loader, imageProvider, helper, &lh, settings);
+   JITCompiler32::prepare(loader, imageProvider, helper, &lh, settings, virtualMode);
 }
 
 void X86JITCompiler :: writeImm9(MemoryWriter* writer, int value, int type)
