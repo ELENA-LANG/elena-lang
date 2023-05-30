@@ -3358,7 +3358,7 @@ inline %0F8h
 labLoop:
   cmpwi   r16,0
   beq     labEnd
-  addi    r16, r16, -8
+  addi    r16, r16, -1
   std     r17, 0(r18)
   addi    r18, r18, 8
   b       labLoop
@@ -3377,7 +3377,7 @@ inline %1F8h
 labLoop:
   cmpwi   r16,0
   beq     labEnd
-  addi    r16, r16, -8
+  addi    r16, r16, -1
   std     r17, 0(r18)
   addi    r18, r18, 8
   b       labLoop
