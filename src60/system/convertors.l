@@ -283,9 +283,9 @@ public singleton uintConvertor
 
    uint convert(int n)
    {
-      if (n < 0) {
-         InvalidArgumentException.raise();
-      };
+//      if (n < 0) {
+//         InvalidArgumentException.raise();
+//      };
 
       self.copyDirectly(n, ref uint retVal);
 
