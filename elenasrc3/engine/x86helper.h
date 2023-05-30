@@ -479,16 +479,6 @@ namespace elena_lang
          writeJccBack(X86JumpType::JL, label, writer);
       }
 
-      void writeJultForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
-      {
-         writeJccForward(X86JumpType::JB, label, writer, byteCodeOffset);
-      }
-
-      void writeJultBack(pos_t label, MemoryWriter& writer) override
-      {
-         writeJccBack(X86JumpType::JB, label, writer);
-      }
-
       void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
       {
          writeJccForward(X86JumpType::JGE, label, writer, byteCodeOffset);

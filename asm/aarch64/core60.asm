@@ -2367,6 +2367,10 @@ end
 // ; selultrr
 inline %0DFh
 
+  ldrsw   x17, [x0]
+  ldrsw   x18, [x10]
+  cmp     x17, x18
+
   movz    x11,  __ptr32lo_1
   movz    x12,  __ptr32lo_2
   movk    x11,  __ptr32hi_1, lsl #16

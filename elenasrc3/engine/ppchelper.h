@@ -348,22 +348,6 @@ namespace elena_lang
          writeBCxx(12, 0, offset, 0, 0, writer);
       }
 
-      void writeJultForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
-      {
-         jumps.add(label, { writer.position() });
-
-         writeBCxx(12, 3, 0, 0, 0, writer);
-      }
-
-      void writeJultBack(pos_t label, MemoryWriter& writer) override
-      {
-         int offset = labels.get(label) - writer.position();
-         if (abs(offset) > 0xFFFF)
-            throw InternalError(-1);
-
-         writeBCxx(12, 3, offset, 0, 0, writer);
-      }
-
       void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
       {
          jumps.add(label, { writer.position() });

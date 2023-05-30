@@ -780,7 +780,6 @@ void uintCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
 
    // NOTE : sp[0] - loperand, sp[1] - roperand
    tape.write(ByteCode::PeekSI, 1);
-   tape.write(ByteCode::ICmpN, 4);
 
    ByteCode opCode = ByteCode::None;
    switch (node.arg.value) {
@@ -788,9 +787,11 @@ void uintCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
          opCode = ByteCode::SelULtRR;
          break;
       case EQUAL_OPERATOR_ID:
+         tape.write(ByteCode::ICmpN, 4);
          opCode = ByteCode::SelEqRR;
          break;
       case NOTEQUAL_OPERATOR_ID:
+         tape.write(ByteCode::ICmpN, 4);
          opCode = ByteCode::SelEqRR;
          inverted = true;
          break;

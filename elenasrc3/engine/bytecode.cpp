@@ -48,7 +48,7 @@ const char* _fnOpcodes[256] =
    "peek fp", "peek sp", "lsave dp", "lsave sp", "lload dp", "xfill", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "call", "call vt", "jump", "jeq", "jne", "jump vt", "xredirect mssg", "jlt",
-   "jge", "jgr", "jle", "jbl", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "jge", "jgr", "jle", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "cmp", "fcmp", "icmp", "tst flag", "tstn", "tst mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "cmp fp", "cmp sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xloadarg sp", "xcreate", "system",
@@ -475,7 +475,6 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
             case ByteCode::Jge:
             case ByteCode::Jgr:
             case ByteCode::Jle:
-            case ByteCode::Jult:
                // remove the label from idle list
                idleLabels.exclude(command.arg1);
 

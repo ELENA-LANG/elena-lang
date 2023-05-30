@@ -2043,9 +2043,11 @@ end
 // ; selultrr
 inline %0DFh
 
-  mov   eax, __ptr32_1
+  mov   eax, [esi]
+  cmp   eax, [ebx]
+  mov   ecx, __ptr32_1
   mov   ebx, __ptr32_2
-  cmovb ebx, eax
+  cmovb ebx, ecx
 
 end
 

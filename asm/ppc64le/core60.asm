@@ -2396,16 +2396,18 @@ end
 // ; selultrr
 inline %0DFh
 
+  lwz      r17, 0(r3)
+  lwz      r18, 0(r15)
+
+  cmpl     r17, r18
+
   ld      r16, toc_code(r2)
   addis   r17, r16, __xdisp32hi_1 
   addis   r18, r16, __xdisp32hi_2 
   addi    r17, r17, __xdisp32lo_1 
   addi    r18, r18, __xdisp32lo_2 
 
-  mr      r15, r17
-  bso     labSkip
-  mr      r15, r18
-labSkip:
+  isellt  r15, r17, r18
 
 end 
 

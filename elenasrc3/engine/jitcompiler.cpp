@@ -52,7 +52,7 @@ CodeGenerator _codeGenerators[256] =
    loadFrameIndexOp, loadStackIndexOp, loadFrameDispOp, loadStackIndexOp, loadFrameDispOp, loadROp, loadNop, loadNop,
 
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadVMTIndexOp, loadMOp, compileJlt,
-   compileJge, compileJgr, compileJle, compileJult, loadNop, loadNop, loadNop, loadNop,
+   compileJge, compileJgr, compileJle, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadNop, loadNop,
    loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadArgIndexOp, loadROp, loadSysOp,
@@ -2451,19 +2451,6 @@ void elena_lang::compileJlt(JITCompilerScope* scope)
    }
    else if (scope->command.arg1 > 0) {
       scope->lh->writeJltForward(label, *scope->codeWriter, scope->command.arg1);
-   }
-}
-
-void elena_lang::compileJult(JITCompilerScope* scope)
-{
-   pos_t label = scope->tapeReader->position() + scope->command.arg1;
-
-   if (scope->command.arg1 < 0) {
-      // if it is a back jump
-      scope->lh->writeJultBack(label, *scope->codeWriter);
-   }
-   else if (scope->command.arg1 > 0) {
-      scope->lh->writeJultForward(label, *scope->codeWriter, scope->command.arg1);
    }
 }
 

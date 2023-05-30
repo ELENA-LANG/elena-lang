@@ -40,9 +40,6 @@ namespace elena_lang
          void writeJltBack(pos_t label, MemoryWriter& writer) override {}
          void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
 
-         void writeJultBack(pos_t label, MemoryWriter& writer) override {}
-         void writeJultForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
-
          void writeJgeBack(pos_t label, MemoryWriter& writer) override {}
          void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
 

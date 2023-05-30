@@ -2077,12 +2077,14 @@ inline %4DDh
 
 end
 
-// ; selltrr
+// ; selultrr
 inline %0DFh
 
-  mov   rax, __ptr64_1
+  mov   rax, [r10]
+  cmp   eax, dword ptr[rbx]
+  mov   rcx, __ptr64_1
   mov   rbx, __ptr64_2
-  cmovb rbx, rax
+  cmovb rbx, rcx
 
 end
 

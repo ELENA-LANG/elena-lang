@@ -96,7 +96,9 @@ ELENA byte codes (or ecodes)
 
    sellt r1, r2             - acc <= COMP.LE ? r1 : r2
 
-   selult r1, r2            - acc <= COMP.B ? r1 : r2;
+   selult r1, r2            - temp1 : 4 << acc;
+                              temp2 : 4 << sp[0];
+                              temp2 < temp1 ? r1 : r2;
                               used to compar the unsigned numbers
 
    set {prefix}:r           - r => acc
