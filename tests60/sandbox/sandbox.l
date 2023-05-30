@@ -2,5 +2,8 @@ import extensions;
 
 public program()
 {
-   console.writeLine("Hello");
+   uint k := 2H;
+   uint l := 0AH;
+
+   Assert.ifFalse(k > l);  // 2 > 10
 }
