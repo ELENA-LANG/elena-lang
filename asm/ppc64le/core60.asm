@@ -887,6 +887,30 @@ inline %079h
 
 end
 
+// ; fexp
+inline %07Ah
+end
+
+// ; fln
+inline %07Bh
+end
+
+// ; fsin
+inline %07Ch
+end
+
+// ; fcos
+inline %07Dh
+end
+
+// ; farchtan
+inline %07Eh
+end
+
+// ; fpi
+inline %07Fh
+end
+
 // ; setr
 inline %80h
 
