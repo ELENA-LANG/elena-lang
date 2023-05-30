@@ -1410,7 +1410,7 @@ void PPC64Assembler :: compileISELSO(ScriptToken& tokenInfo, MemoryWriter& write
 
    PPCOperand rz = readRegister(tokenInfo, ASM_INVALID_SOURCE);
 
-   if (!compileISEL(rx, ry, rz, 3, writer))
+   if (!compileISEL(rx, ry, rz, /*3*/0, writer))
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 
 }
