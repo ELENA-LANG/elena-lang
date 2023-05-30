@@ -51,6 +51,8 @@ namespace elena_lang
       void compileBCxx(ScriptToken& tokenInfo, int aa, int lk, MemoryWriter& writer, LabelScope& labelScope);
       void compileCMP(ScriptToken& tokenInfo, int bf, int l, PPCOperand ra, PPCOperand rb,
          MemoryWriter& writer);
+      void compileCMPL(ScriptToken& tokenInfo, int bf, int l, PPCOperand ra, PPCOperand rb,
+         MemoryWriter& writer);
       void compileCMPI(ScriptToken& tokenInfo, int bf, int l, PPCOperand ra, int i, ref_t reference,
          MemoryWriter& writer);
       void compileFCMPU(ScriptToken& tokenInfo, int bf, PPCOperand fra, PPCOperand frb,

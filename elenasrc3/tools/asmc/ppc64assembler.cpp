@@ -661,6 +661,14 @@ void PPC64Assembler :: compileCMP(ScriptToken& tokenInfo, int bf, int l, PPCOper
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void PPC64Assembler :: compileCMPL(ScriptToken& tokenInfo, int bf, int l, PPCOperand ra, PPCOperand rb, MemoryWriter& writer)
+{
+   if (ra.isGPR() && rb.isGPR()) {
+      writer.writeDWord(PPCHelper::makeXCommand(31, bf, l, ra.type, rb.type, 32));
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void PPC64Assembler :: compileCMPI(ScriptToken& tokenInfo, int bf, int l, PPCOperand ra, int i, ref_t reference, MemoryWriter& writer)
 {
    if (ra.isGPR()) {
@@ -1915,6 +1923,9 @@ bool PPC64Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
 {
    if (tokenInfo.compare("cmp")) {
       compileCMP(tokenInfo, writer);
+   }
+   if (tokenInfo.compare("cmpl")) {
+      compileCMPL(tokenInfo, writer);
    }
    else if (tokenInfo.compare("cmpwi")) {
       compileCMPWI(tokenInfo, writer);
