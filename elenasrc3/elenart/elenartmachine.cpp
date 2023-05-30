@@ -200,6 +200,8 @@ void ELENARTMachine :: startSTA(SystemEnv* env, void* entry)
    // executing the program
    int retVal = execute(env, entry);
 
+   printf("exiting");
+
    unsigned n = 0x800000;
    unsigned m = 0x800000;
    bool r = n < m;
