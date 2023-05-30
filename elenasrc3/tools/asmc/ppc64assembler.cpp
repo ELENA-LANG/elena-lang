@@ -1413,6 +1413,9 @@ void PPC64Assembler :: compileISELSO(ScriptToken& tokenInfo, MemoryWriter& write
    if (!compileISEL(rx, ry, rz, 3, writer))
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 
+   compileISEL(rx, ry, rz, 4, writer);
+   compileISEL(rx, ry, rz, 5, writer);
+   compileISEL(rx, ry, rz, 6, writer);
 }
 
 void PPC64Assembler :: compileLIS(ScriptToken& tokenInfo, MemoryWriter& writer)
