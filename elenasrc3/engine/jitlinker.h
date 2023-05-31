@@ -231,6 +231,10 @@ namespace elena_lang
 
       void loadPreloaded(ustr_t preloadedSection);
       void prepare(JITCompilerBase* compiler);
+      void setCompiler(JITCompilerBase* compiler)
+      {
+         _compiler = compiler;
+      }
       void complete(JITCompilerBase* compiler, ustr_t superClass);
 
       JITLinker(ReferenceMapperBase* mapper, 

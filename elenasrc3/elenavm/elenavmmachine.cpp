@@ -271,10 +271,11 @@ void ELENAVMMachine :: resumeVM(JITLinker& jitLinker, SystemEnv* env, void* crir
 
    onNewCode(jitLinker);
 
-   __routineProvider.InitSTAExceptionHandling(env, criricalHandler);
+   if (criricalHandler)
+      __routineProvider.InitSTAExceptionHandling(env, criricalHandler);
 }
 
-int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, const char* criricalHandlerReference)
+addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, const char* criricalHandlerReference)
 {
    ByteArray      tapeArray(tape, size);
    MemoryReader   reader(&tapeArray);
@@ -290,10 +291,13 @@ int ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, const c
       jitLinker = new JITLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
          &_settings, nullptr);
 
-      init(*jitLinker, env);
+      if (!_initialized) {
+         init(*jitLinker, env);
+      }
+      else jitLinker->setCompiler(_compiler);
    }
 
-   addr_t criricalHandler = jitLinker->resolve(criricalHandlerReference, mskProcedureRef, false);
+   addr_t criricalHandler = _initialized ? 0 : jitLinker->resolve(criricalHandlerReference, mskProcedureRef, false);
 
    compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule);
 
@@ -313,7 +317,9 @@ void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, const char* crirical
 {
    int retVal = -1;
    if (tape != nullptr) {
-      retVal = interprete(env, tape, INVALID_POS, criricalHandlerReference);
+      interprete(env, tape, INVALID_POS, criricalHandlerReference);
+
+      retVal = 0;
    }
 
    Exit(retVal);
@@ -376,7 +382,7 @@ size_t ELENAVMMachine :: loadAddressInfo(addr_t retPoint, char* lineInfo, size_t
    return 0;
 }
 
-addr_t ELENAVMMachine::loadClassReference(ustr_t name)
+addr_t ELENAVMMachine :: loadClassReference(ustr_t name)
 {
    // !! temporal
    return 0;
@@ -388,14 +394,29 @@ mssg_t ELENAVMMachine :: loadMessage(ustr_t messageName)
    return 0;
 }
 
+inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command, ustr_t arg)
+{
+   rdataWriter.writeDWord(command);
+   rdataWriter.writeString(arg);
+}
+
+inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command)
+{
+   rdataWriter.writeDWord(command);
+}
+
 addr_t ELENAVMMachine :: loadSymbol(ustr_t name)
 {
-   stopVM();
+   MemoryDump tape;
+   MemoryWriter tapeWriter(&tape);
 
-   resumeVM();
+   addVMTapeEntry(tapeWriter, VM_INIT_CMD);
+   addVMTapeEntry(tapeWriter, VM_CALLSYMBOL_CMD, name);
+   addVMTapeEntry(tapeWriter, VM_ENDOFTAPE_CMD);
 
-   // !! temporal
-   return 0;
+   interprete(_env, tape.get(0), tape.length(), nullptr);
+
+   return _mapper.resolveReference({ nullptr, name }, mskSymbolRef);
 }
 //
 //void ELENAVMMachine :: generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol)

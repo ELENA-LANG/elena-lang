@@ -15,7 +15,7 @@
 
 namespace elena_lang
 {
-   constexpr auto ELENAVM_GREETING        = "ELENA VM %d.%d.%d (C)2022 by Aleksex Rakov";
+   constexpr auto ELENAVM_GREETING        = "ELENA VM %d.%d.%d (C)2022 by Aleksey Rakov";
    constexpr auto ELENAVM_INITIALIZING    = "Initializing...";
 
    // --- ELENARTMachine ---
@@ -41,7 +41,7 @@ namespace elena_lang
       void addForward(ustr_t forwardLine);
       void addPackage(ustr_t packageLine);
 
-      int interprete(SystemEnv* env, void* tape, pos_t size, const char* criricalHandlerReference);
+      addr_t interprete(SystemEnv* env, void* tape, pos_t size, const char* criricalHandlerReference);
 
       void onNewCode(JITLinker& jitLinker);
 

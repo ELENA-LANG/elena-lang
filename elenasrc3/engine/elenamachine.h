@@ -80,8 +80,8 @@ namespace elena_lang
    class ELENAMachine
    {
    public:
-      int execute(SystemEnv* env, void* symbolListEntry);
-      int execute(SystemEnv* env, void* threadEntry, void* threadFunc);
+      addr_t execute(SystemEnv* env, void* symbolListEntry);
+      addr_t execute(SystemEnv* env, void* threadEntry, void* threadFunc);
 
       ELENAMachine() = default;
 

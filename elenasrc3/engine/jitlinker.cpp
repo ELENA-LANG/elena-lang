@@ -1375,7 +1375,7 @@ void JITLinker :: copyMetaList(ModuleInfo info, ModuleInfoList& output)
 
 void JITLinker :: prepare(JITCompilerBase* compiler)
 {
-   _compiler = compiler;
+   setCompiler(compiler);
 
    _withDebugInfo = _compiler->isWithDebugInfo();
 

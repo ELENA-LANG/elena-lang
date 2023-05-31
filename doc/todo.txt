@@ -8,10 +8,6 @@ In development:
     [!] elenavm x86 : script executing
     [!] vm terminal
     [!] ide vm console : LoadSymbolByString2LA, LoadSymbolByStringLA
-    * redesign invoker : it has to return the last operation result (store it in eax)
-      (x86, x86-64, i384, amd64, ppc64le, aarch64)
-
-    * elenavm : load a symbol at run time
     * new opcode : fexp - ppc64le, arm64
     * elenavm : load a class at run time
     * ide : create a new project, save it, change it and save it

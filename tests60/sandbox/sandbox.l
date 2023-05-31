@@ -1,6 +1,15 @@
 import extensions;
 
+public singleton Tester
+{
+   writeLine(s)
+   {
+      console.writeLine(s)
+   }
+}
+
 public program()
 {
-   console.printLine("Hello")
+   var c := new Symbol("sandbox'Tester");
+   c.writeLine("Hello");
 }

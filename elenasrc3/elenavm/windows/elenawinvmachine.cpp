@@ -131,20 +131,20 @@ void ELENAWinVMMachine :: stopVM()
 {
    ELENAVMMachine::stopVM();
 
-   _text.protect(false, false);
-   _rdata.protect(false, false);
-   _adata.protect(false, false);
-   _mdata.protect(false, false);
-   _mbdata.protect(false, false);
+   _text.protect(true, false);
+   _rdata.protect(true, false);
+   _adata.protect(true, false);
+   _mdata.protect(true, false);
+   _mbdata.protect(true, false);
 }
 
 void ELENAWinVMMachine :: resumeVM(JITLinker& jitLinker, SystemEnv* env, void* criricalHandler)
 {
    ELENAVMMachine::resumeVM(jitLinker, env, criricalHandler);
 
-   _text.protect(true, true);
-   _rdata.protect(true, false);
-   _adata.protect(true, false);
-   _mdata.protect(true, false);
-   _mbdata.protect(true, false);
+   _text.protect(false, true);
+   _rdata.protect(false, false);
+   _adata.protect(false, false);
+   _mdata.protect(false, false);
+   _mbdata.protect(false, false);
 }
