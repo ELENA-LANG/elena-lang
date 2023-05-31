@@ -324,7 +324,7 @@ void ELENAVMMachine :: Exit(int exitCode)
    __routineProvider.Exit(exitCode);
 }
 
-AddressMap::Iterator ELENAVMMachine::externals()
+AddressMap::Iterator ELENAVMMachine :: externals()
 {
    throw InternalError(errVMBroken);
 }
@@ -382,14 +382,18 @@ addr_t ELENAVMMachine::loadClassReference(ustr_t name)
    return 0;
 }
 
-mssg_t ELENAVMMachine::loadMessage(ustr_t messageName)
+mssg_t ELENAVMMachine :: loadMessage(ustr_t messageName)
 {
    // !! temporal
    return 0;
 }
 
-addr_t ELENAVMMachine::loadSymbol(ustr_t name)
+addr_t ELENAVMMachine :: loadSymbol(ustr_t name)
 {
+   stopVM();
+
+   resumeVM();
+
    // !! temporal
    return 0;
 }

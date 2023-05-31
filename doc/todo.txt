@@ -5,13 +5,33 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 16 ===
+    [!] elenavm x86 : script executing
+    [!] vm terminal
+    [!] ide vm console : LoadSymbolByString2LA, LoadSymbolByStringLA
+    * redesign invoker : it has to return the last operation result (store it in eax)
+      (x86, x86-64, i384, amd64, ppc64le, aarch64)
+
+    * elenavm : load a symbol at run time
+    * new opcode : fexp - ppc64le, arm64
+    * elenavm : load a class at run time
+    * ide : create a new project, save it, change it and save it
+
+    === Iteration 17 ===
+    [!] x86 mta support
+
+    === Iteration 18 ===
+    [!] x86 GUI support
+
+------                                                           
+Backlog:
+------   
+    --- elena backlog
     * review install scripts : include all existing samples, use different output folders
     * review install scripts : update naming
 
     * vm console : ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
     * vm console : ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
 
-    * ide : create a new project, save it, change it and save it
     * ide : refreshing auto watch - with the same name, unused
     * ide : set / remove breakpoints
     * ide : menu - clear all breakpoints
@@ -92,11 +112,10 @@ In development:
       for symbols in system (int,string,wide))
     * elenavm : protect rdata memory sections
     * console & files samples
-    * new opcode : fexp, fln - ppc64le, arm64
+    * new opcode : fln - ppc64le, arm64
     * new opcode : fsin, fcos, farctan, fpi - ppc64le, arm64
     * setup pipeline for windows / linux x86 & x86-64, retire appvayor
 
-    === Iteration 17 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop
     ! x86-64 : multi-threading : open another thread
     ! sm : generate advances templates from vm console
@@ -112,15 +131,9 @@ In development:
       e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
     * migrate: amb, anagram
     * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
-
-    === Iteration 18 ===
     ! elena vm : aarch64, ppc64
     ! elena vm : ppc64
     ! ppc64le : multi-threading
-
-------                                                           
-Backlog:
-------   
     --- output redux ---
     --- elena redux ---
     --- ide redux ---
@@ -285,8 +298,6 @@ Backlog:
     * ide : react on mouse
     * ide : new menu option : open output
     * ide : recent files
-    * project - load - project
-    * project - compile - project
     * editor - status bar : col, row, ins / ovr
     * editor - modified doc mark, 
     * editor - black theme

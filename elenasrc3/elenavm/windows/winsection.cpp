@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Windows Image Section implementation
 //
-//                                              (C)2022, by Aleksey Rakov
+//                                             (C)2022-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -109,4 +109,11 @@ bool WinImageSection :: write(pos_t position, const void* s, pos_t length)
    memcpy((LPVOID)((size_t)_section + position), s, length);
 
    return true;
+}
+
+void WinImageSection :: protect(bool writeAccess, bool executeAccess)
+{
+   DWORD oldprotect;
+   ::VirtualProtect(_section, _size, getProtectedMode(writeAccess, executeAccess), &oldprotect);
+
 }

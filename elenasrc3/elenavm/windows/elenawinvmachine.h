@@ -28,6 +28,9 @@ class ELENAWinVMMachine : public ELENAVMMachine
 
    bool exportFunction(path_t rootPath, size_t position, path_t dllName, ustr_t funName);
 
+   void stopVM() override;
+   void resumeVM(JITLinker& jitLinker, SystemEnv* env, void* criricalHandler) override;
+
 public:
    MemoryBase* getDataSection() override;
    MemoryBase* getImportSection() override;

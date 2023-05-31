@@ -45,13 +45,13 @@ namespace elena_lang
 
       void onNewCode(JITLinker& jitLinker);
 
-      void stopVM();
+      virtual void stopVM();
 
       bool configurateVM(MemoryReader& reader, SystemEnv* env);
       void compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, 
          ModuleBase* dummyModule);
 
-      void resumeVM(JITLinker& jitLinker, SystemEnv* env, void* criricalHandler);
+      virtual void resumeVM(JITLinker& jitLinker, SystemEnv* env, void* criricalHandler);
 
       void init(JITLinker& jitLinker, SystemEnv* env);
 

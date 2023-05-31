@@ -18,12 +18,12 @@ ELENAWinVMMachine :: ELENAWinVMMachine(path_t configPath, PresenterBase* present
    JITCompilerBase*(* jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
       : ELENAVMMachine(configPath, presenter, platform, codeAlignment, gcSettings, jitCompilerFactory),
          _text(TEXT_MAX_SIZE, false, true),
-         _rdata(RDATA_MAX_SIZE, /*false*/true, false),
+         _rdata(RDATA_MAX_SIZE, false, false),
          _data(DATA_MAX_SIZE, true, false),
          _stat(STAT_MAX_SIZE, true, false),
-         _adata(ADATA_MAX_SIZE, /*false*/true, false),
-         _mdata(MDATA_MAX_SIZE, /*false*/true, false),
-         _mbdata(MBDATA_MAX_SIZE, /*false*/true, false),
+         _adata(ADATA_MAX_SIZE, false, false),
+         _mdata(MDATA_MAX_SIZE, false, false),
+         _mbdata(MBDATA_MAX_SIZE, false, false),
          _debug(DEBUG_MAX_SIZE, true, false)
 {
 }
@@ -117,12 +117,34 @@ addr_t ELENAWinVMMachine :: resolveExternal(ustr_t dll, ustr_t function)
    return (addr_t)_data.get(reference);
 }
 
-MemoryBase* ELENAWinVMMachine::getTLSSection()
+MemoryBase* ELENAWinVMMachine :: getTLSSection()
 {
    return nullptr; // !! temporal
 }
 
-addr_t ELENAWinVMMachine::getTLSVariable()
+addr_t ELENAWinVMMachine :: getTLSVariable()
 {
    return INVALID_ADDR;
+}
+
+void ELENAWinVMMachine :: stopVM()
+{
+   ELENAVMMachine::stopVM();
+
+   _text.protect(false, false);
+   _rdata.protect(false, false);
+   _adata.protect(false, false);
+   _mdata.protect(false, false);
+   _mbdata.protect(false, false);
+}
+
+void ELENAWinVMMachine :: resumeVM(JITLinker& jitLinker, SystemEnv* env, void* criricalHandler)
+{
+   ELENAVMMachine::resumeVM(jitLinker, env, criricalHandler);
+
+   _text.protect(true, true);
+   _rdata.protect(true, false);
+   _adata.protect(true, false);
+   _mdata.protect(true, false);
+   _mbdata.protect(true, false);
 }
