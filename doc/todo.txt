@@ -11,7 +11,7 @@ In development:
 
     * elenavm : ParsingExpression - https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1,
       ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
-    * ide : create a new project, save it, change it and save it
+    * ide : test screnario - create a new project, change it and save it
     * (re)implement elt
     * new opcode : fexp - ppc64le
 
@@ -48,6 +48,7 @@ Backlog:
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
+    * ide : save project as
     * Class Constants : review doc and implement if requiered
     * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
     * optimization : copy a sub array to another array - starting

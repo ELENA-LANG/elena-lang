@@ -10,12 +10,13 @@
 #include "elena.h"
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x0052
+#define IDE_REVISION_NUMBER                           0x0053
 
 namespace elena_lang
 {
    constexpr auto PLATFORM_CATEGORY                   = "configuration/platform";
    constexpr auto NAMESPACE_CATEGORY                  = "configuration/project/namespace";
+   constexpr auto TEMPLATE_CATEGORY                   = "configuration/project/template";
 
    constexpr auto TARGET_SUB_CATEGORY                 = "project/executable";
    constexpr auto TEMPLATE_SUB_CATEGORY               = "project/template";

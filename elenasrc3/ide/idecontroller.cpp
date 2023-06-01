@@ -407,6 +407,21 @@ void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, Co
    }
 }
 
+void ProjectController :: saveConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node root, ConfigFile::Node platformRoot)
+{
+   auto templateOption = config.selectNode(platformRoot, TEMPLATE_SUB_CATEGORY);
+   if (!templateOption.isNotFound()) {
+      templateOption.saveContent(*model.templateName);
+   }
+   else {
+      templateOption = config.selectNode(root, TEMPLATE_SUB_CATEGORY);
+      if (!templateOption.isNotFound()) {
+         templateOption.saveContent(*model.templateName);
+      }
+      else config.appendSetting(TEMPLATE_CATEGORY, *model.templateName);
+   }
+}
+
 NotificationStatus ProjectController :: newProject(ProjectModel& model)
 {
    model.sources.clear();
@@ -454,6 +469,32 @@ NotificationStatus ProjectController :: openProject(ProjectModel& model, path_t 
       loadConfig(model, projectConfig, root);
       loadConfig(model, projectConfig, platformRoot);
    }
+
+   return PROJECT_CHANGED;
+}
+
+NotificationStatus ProjectController :: saveProject(ProjectModel& model)
+{
+   ustr_t key = getPlatformName(_platform);
+
+   PathString path(*model.projectPath, *model.projectFile);
+   ConfigFile projectConfig;
+   if (projectConfig.load(*path, FileEncoding::UTF8)) {
+
+   }
+
+   ConfigFile::Node root = projectConfig.selectRootNode();
+   // select platform configuration
+   ConfigFile::Node platformRoot = projectConfig.selectNode<ustr_t>(PLATFORM_CATEGORY, key, [](ustr_t key, ConfigFile::Node& node)
+      {
+         return node.compareAttribute("key", key);
+      });
+
+   saveConfig(model, projectConfig, root, platformRoot);
+
+   projectConfig.save(*path, FileEncoding::UTF8);
+
+   model.notSaved = false;
 
    return PROJECT_CHANGED;
 }
@@ -840,6 +881,19 @@ bool IDEController :: doSaveFile(FileDialogBase& dialog, IDEModel* model, bool s
    return true;
 }
 
+bool IDEController :: doSaveAll(FileDialogBase& dialog, IDEModel* model)
+{
+   NotificationStatus status = NONE_CHANGED;
+   if (saveAll(dialog, model, status)) {
+      if (status != NONE_CHANGED)
+         _notifier->notify(NOTIFY_IDE_CHANGE, status);
+
+      return true;
+   }
+
+   return false;
+}
+
 void IDEController :: doNewProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, 
    ProjectSettingsBase& prjDialog, IDEModel* model)
 {
@@ -916,6 +970,13 @@ bool IDEController :: doCloseProject(FileDialogBase& dialog, MessageDialogBase& 
    else return false;
 }
 
+bool IDEController :: saveFile(FileDialogBase& dialog, IDEModel* model, int index)
+{
+   auto docView = model->sourceViewModel.getDocument(index);
+
+   return doSaveFile(dialog, model, false, true);
+}
+
 bool IDEController :: closeFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
    int index, NotificationStatus& status)
 {
@@ -972,6 +1033,20 @@ bool IDEController :: closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDi
       if (!closeFile(dialog, mssgDialog, model, 1, status))
          return false;
    }
+
+   return true;
+}
+
+bool IDEController :: saveAll(FileDialogBase& dialog, IDEModel* model,
+   NotificationStatus& status)
+{
+   for (pos_t i = 0; i < model->sourceViewModel.getDocumentCount(); i++) {
+      if (!saveFile(dialog, model, i + 1))
+         return false;
+   }
+
+   if (model->projectModel.notSaved)
+      status = projectController.saveProject(model->projectModel);
 
    return true;
 }
@@ -1160,7 +1235,7 @@ bool IDEController :: doCompileProject(FileDialogBase& dialog, IDEModel* model)
 void IDEController :: doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model)
 {
    if (prjDialog.showModal()) {
-
+      
    }
 }
 

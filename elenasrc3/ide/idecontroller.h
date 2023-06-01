@@ -54,6 +54,7 @@ namespace elena_lang
       WatchContext            _autoWatch;
 
       void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
+      void saveConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node root, ConfigFile::Node platformRoot);
 
       path_t retrieveSourceName(ProjectModel* model, path_t sourcePath, NamespaceString& retVal);
 
@@ -76,6 +77,7 @@ namespace elena_lang
       NotificationStatus openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
       NotificationStatus newProject(ProjectModel& model);
       NotificationStatus openProject(ProjectModel& model, path_t projectFile);
+      NotificationStatus saveProject(ProjectModel& model);
       NotificationStatus closeProject(ProjectModel& model);
 
       path_t getSourceByIndex(ProjectModel& model, int index);
@@ -146,7 +148,10 @@ namespace elena_lang
 
       bool closeFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
          int index, NotificationStatus& status);
+      bool saveFile(FileDialogBase& dialog, IDEModel* model, int index);
       bool closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+         NotificationStatus& status);
+      bool saveAll(FileDialogBase& dialog, IDEModel* model,
          NotificationStatus& status);
 
       void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);
@@ -186,6 +191,7 @@ namespace elena_lang
       void doNewFile(IDEModel* model);
       void doOpenFile(FileDialogBase& dialog, IDEModel* model);
       bool doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
+      bool doSaveAll(FileDialogBase& dialog, IDEModel* model);
       bool doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
       bool doCloseAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
       void doNewProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, ProjectSettingsBase& prjDialog, 

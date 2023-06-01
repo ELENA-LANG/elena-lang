@@ -50,6 +50,11 @@ namespace elena_lang
             xmlNode.readContent(s);
          }
 
+         void saveContent(ustr_t s)
+         {
+            xmlNode.setContent(s);
+         }
+
          bool isNotFound()
          {
             return xmlNode.isNotFound();

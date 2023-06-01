@@ -152,6 +152,11 @@ void IDEWindow :: saveFile()
    _controller->doSaveFile(fileDialog, _model, false, true);
 }
 
+void IDEWindow::saveAll()
+{
+   _controller->doSaveAll(fileDialog, _model);
+}
+
 void IDEWindow :: closeFile()
 {
    _controller->doCloseFile(fileDialog, messageDialog, _model);
@@ -478,6 +483,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_FILE_SAVE:
          saveFile();
+         break;
+      case IDM_FILE_SAVEALL:
+         saveAll();
          break;
       case IDM_FILE_CLOSE:
          closeFile();
