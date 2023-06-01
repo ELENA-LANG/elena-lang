@@ -209,6 +209,18 @@ void ELENAVMMachine :: fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* du
 
 }
 
+inline ref_t getCmdMask(int command)
+{
+   switch (command) {
+      case VM_CALLSYMBOL_CMD:
+         return mskSymbolRef;
+      case VM_CALLCLASS_CMD:
+         return mskVMTRef;
+      default:
+         return 0;
+   }
+}
+
 void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, ModuleBase* dummyModule)
 {
    CachedList<ref_t, 5> symbols;
@@ -226,8 +238,9 @@ void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
             eop = true;
             break;
          case VM_CALLSYMBOL_CMD:
-            jitLinker.resolve(strArg, mskSymbolRef, false);
-            symbols.add(dummyModule->mapReference(strArg) | mskSymbolRef);
+         case VM_CALLCLASS_CMD:
+            jitLinker.resolve(strArg, getCmdMask(command), false);
+            symbols.add(dummyModule->mapReference(strArg) | getCmdMask(command));
             break;
          default:
             break;
@@ -243,7 +256,19 @@ void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
 
    fillPreloadedSymbols(writer, dummyModule);
    for(size_t i = 0; i < symbols.count(); i++) {
-      ByteCodeUtil::write(writer, ByteCode::CallR, symbols[i]);
+      ref_t mask = symbols[i] & mskAnyRef;
+
+      switch (mask){
+         case mskSymbolRef:
+            ByteCodeUtil::write(writer, ByteCode::CallR, symbols[i]);
+            break;
+         case mskVMTRef:
+            ByteCodeUtil::write(writer, ByteCode::SetR, symbols[i]);
+            break;
+         default:
+            assert(false);
+            break;
+      }
    }
 
    ByteCodeUtil::write(writer, ByteCode::CloseN);
@@ -382,18 +407,6 @@ size_t ELENAVMMachine :: loadAddressInfo(addr_t retPoint, char* lineInfo, size_t
    return 0;
 }
 
-addr_t ELENAVMMachine :: loadClassReference(ustr_t name)
-{
-   // !! temporal
-   return 0;
-}
-
-mssg_t ELENAVMMachine :: loadMessage(ustr_t messageName)
-{
-   // !! temporal
-   return 0;
-}
-
 inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command, ustr_t arg)
 {
    rdataWriter.writeDWord(command);
@@ -405,20 +418,36 @@ inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command)
    rdataWriter.writeDWord(command);
 }
 
-addr_t ELENAVMMachine :: loadSymbol(ustr_t name)
+addr_t ELENAVMMachine :: loadReference(ustr_t name, int command)
 {
    MemoryDump tape;
    MemoryWriter tapeWriter(&tape);
 
    addVMTapeEntry(tapeWriter, VM_INIT_CMD);
-   addVMTapeEntry(tapeWriter, VM_CALLSYMBOL_CMD, name);
+   addVMTapeEntry(tapeWriter, command, name);
    addVMTapeEntry(tapeWriter, VM_ENDOFTAPE_CMD);
 
    interprete(_env, tape.get(0), tape.length(), nullptr);
 
-   return _mapper.resolveReference({ nullptr, name }, mskSymbolRef);
+   return _mapper.resolveReference({ nullptr, name }, getCmdMask(command));
 }
-//
+
+addr_t ELENAVMMachine :: loadClassReference(ustr_t name)
+{
+   return loadReference(name, VM_CALLCLASS_CMD);
+}
+
+mssg_t ELENAVMMachine :: loadMessage(ustr_t messageName)
+{
+   // !! temporal
+   return 0;
+}
+
+addr_t ELENAVMMachine :: loadSymbol(ustr_t name)
+{
+   return loadReference(name, VM_CALLSYMBOL_CMD);
+}
+
 //void ELENAVMMachine :: generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol)
 //{
 //   MemoryWriter writer(&tapeSymbol);

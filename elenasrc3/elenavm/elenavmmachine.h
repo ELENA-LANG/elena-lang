@@ -61,6 +61,8 @@ namespace elena_lang
 
       void fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule);
 
+      addr_t loadReference(ustr_t name, int command);
+
    public:
       addr_t resolveExternal(ustr_t reference) override;
 

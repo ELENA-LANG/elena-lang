@@ -740,7 +740,7 @@ end
 inline % 20h
 
   cmp     x10, #0
-  csel   x10, x0, x10, eq
+  csel    x10, x0, x10, eq
 
 end
 
@@ -836,8 +836,61 @@ inline %79h
 
 end
 
-// ; fexp
+// ; fexpdp
 inline %07Ah
+
+//; static double expo(double n) {
+//;     int a = 0, b = n > 0;
+//;     double c = 1, d = 1, e = 1;
+//;     for (b || (n = -n); e + .00001 < (e += (d *= n) / (c *= ++a)););
+//;     // approximately 15 iterations
+//;     return b ? e : 1 / e;
+
+  mov     x15, #0
+  fmov    d14, #"1E-4" // ; diff = 0.00001
+
+  ldr     d7, [x0]     // ; n
+
+  fcmp    d7, #0
+  blt     labSkip
+  fneg    d7, d7
+  mov     x15, #1
+
+labSkip:
+  mov     x4, #0       // ; a = 0
+
+  fmov    d3, #"1E0"   // ; e = 1
+  fmov    d5, d3       // ; c = 1
+  fmov    d6, d3       // ; d = 1
+
+  // ; e = d3  a = x4, c = d5, d = d6 ; n = d7
+
+labNext:
+  // ; e + .00001 < (e += (d *= n) / (c *= ++a))
+  fmov    d13, d3
+
+  add     x4, x4, #1     // ; ++a
+  fmov    d4, x4 
+  frintx  d4, d4
+
+  fmul    d5, d5, d4     // ; c *= (++a)
+  fmul    d6, d6, d7     // ; d *= n
+  fdiv    d12, d6, d5    // ; (d *= n) / (c *= ++a)
+  fadd    d3, d3, d12    // ; e += (d *= n) / (c *= ++a)
+
+  fsub    d13, d13, d3
+  fcmp    d13, d14
+  bgt     labNext
+
+  cmp     x15, #0
+  fmov    d16, #"1E0"
+  bne     labSkip2
+  fdiv    d3, d16, d3
+
+labSkip2:
+  add     x19, x29, __arg12_1
+  str     d3, [x19]
+
 end
 
 // ; fln

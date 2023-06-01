@@ -1,15 +1,15 @@
 import extensions;
 
-public singleton Tester
+public class A
 {
-   writeLine(s)
+   constructor new()
    {
-      console.writeLine(s)
+      console.printLine("Calling a constructor");
    }
 }
 
 public program()
 {
-   var c := new Symbol("sandbox'Tester");
-   c.writeLine("Hello");
+   var c := new ClassReference("sandbox'A");
+   var a := c.new();
 }

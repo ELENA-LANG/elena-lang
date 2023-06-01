@@ -324,6 +324,7 @@ namespace elena_lang
    constexpr pos_t VM_FORWARD_CMD            = 0x106;
    constexpr pos_t VM_PACKAGE_CMD            = 0x107;
    constexpr pos_t VM_PRELOADED_CMD          = 0x108;
+   constexpr pos_t VM_CALLCLASS_CMD          = 0x109;
 
    // --- Configuration xpaths ---
    constexpr auto WIN_X86_KEY = "Win_x86";

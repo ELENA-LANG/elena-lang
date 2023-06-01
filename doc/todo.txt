@@ -8,9 +8,12 @@ In development:
     [!] elenavm x86 : script executing
     [!] vm terminal
     [!] ide vm console : LoadSymbolByString2LA, LoadSymbolByStringLA
-    * new opcode : fexp - ppc64le, arm64
-    * elenavm : load a class at run time
+
+    * elenavm : ParsingExpression - https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1,
+      ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
     * ide : create a new project, save it, change it and save it
+    * (re)implement elt
+    * new opcode : fexp - ppc64le
 
     === Iteration 17 ===
     [!] x86 mta support
@@ -24,9 +27,6 @@ Backlog:
     --- elena backlog
     * review install scripts : include all existing samples, use different output folders
     * review install scripts : update naming
-
-    * vm console : ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
-    * vm console : ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
 
     * ide : refreshing auto watch - with the same name, unused
     * ide : set / remove breakpoints
@@ -111,6 +111,8 @@ Backlog:
     * new opcode : fln - ppc64le, arm64
     * new opcode : fsin, fcos, farctan, fpi - ppc64le, arm64
     * setup pipeline for windows / linux x86 & x86-64, retire appvayor
+    * ppc64le / aarch64 : fexp - improve quality / performace
+    * test fexpdp opcode
 
     ! x86 : multi-threading : sync, thread-safe gc, snop
     ! x86-64 : multi-threading : open another thread
