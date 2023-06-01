@@ -9,8 +9,7 @@ In development:
     [!] vm terminal
     [!] ide vm console : LoadSymbolByString2LA, LoadSymbolByStringLA
 
-    * elenavm : ParsingExpression - https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1,
-      ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
+    * elenavm : ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
     * ide : test screnario - create a new project, change it and save it
     * (re)implement elt
     * new opcode : fexp - ppc64le
@@ -20,6 +19,8 @@ In development:
 
     === Iteration 18 ===
     [!] x86 GUI support
+
+    === Iteration 19 ===
 
 ------                                                           
 Backlog:
