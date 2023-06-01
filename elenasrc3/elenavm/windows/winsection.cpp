@@ -43,7 +43,7 @@ bool WinImageSection :: allocate(pos_t size)
    if (_allocated + size > _size)
       return false;
 
-   size_t blockSize = align(size, _sysInfo.dwPageSize);
+   pos_t blockSize = align(size, _sysInfo.dwPageSize);
 
    LPVOID retVal = ::VirtualAlloc((LPVOID)((uintptr_t)_section + _allocated), blockSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
    if (retVal == nullptr)
@@ -94,7 +94,7 @@ void WinImageSection :: trim(pos_t size)
 
 bool WinImageSection :: write(pos_t position, const void* s, pos_t length)
 {
-   size_t newSize = position + length;
+   pos_t newSize = position + length;
 
    // check if the operation insert data to the end
    if (newSize > _used) {

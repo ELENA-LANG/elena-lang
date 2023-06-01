@@ -7,14 +7,16 @@ In development:
     === Iteration 16 ===
     [!] elenavm x86 : script executing
     [!] vm terminal
-    [!] ide vm console : LoadSymbolByString2LA, LoadSymbolByStringLA
+    [!] ide vm console
 
-    * elenavm : ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
-    * ide : test screnario - create a new project, change it and save it
-    * (re)implement elt
+    * (re)implementing DynamicTape
+    * elenavm : https://github.com/ELENA-LANG/tutorials/tree/master/ExpressionTree1,
+      https://github.com/ELENA-LANG/tutorials/tree/master/ExpressionTree2
     * new opcode : fexp - ppc64le
+    * (re)implement elt
+    * ide : test screnario - create a new project, change it and save it
 
-    === Iteration 17 ===
+     === Iteration 17 ===
     [!] x86 mta support
 
     === Iteration 18 ===
@@ -27,7 +29,6 @@ Backlog:
 ------   
     --- elena backlog
     * review install scripts : include all existing samples, use different output folders
-    * review install scripts : update naming
 
     * ide : refreshing auto watch - with the same name, unused
     * ide : set / remove breakpoints

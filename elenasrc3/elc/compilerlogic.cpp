@@ -741,6 +741,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_INTERFACE_DISPATCHER:
          hint = (ref_t)MethodHint::InterfaceDispatcher;
          return true;
+      case V_MIXIN:
+         hint = (ref_t)MethodHint::Mixin;
+         return true;
       default:
          return false;
    }

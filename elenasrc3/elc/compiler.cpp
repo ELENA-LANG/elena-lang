@@ -88,6 +88,16 @@ inline void addByRefRetVal(ArgumentsInfo& arguments, ObjectInfo& tempRetVal)
    else arguments.add({ ObjectKind::TempLocalAddress, { V_WRAPPER, tempRetVal.typeInfo.typeRef }, tempRetVal.argument, tempRetVal.extra });
 }
 
+inline bool validateGenericClosure(ref_t* signature, size_t length)
+{
+   for (size_t i = 1; i < length; i++) {
+      if (signature[i - 1] != signature[i])
+         return false;
+   }
+
+   return true;
+}
+
 void declareTemplateParameters(ModuleBase* module, TemplateTypeList& typeList,
    SyntaxTree& dummyTree, List<SyntaxNode>& parameters)
 {
@@ -2801,6 +2811,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
       flags |= FUNCTION_MESSAGE;
    }
 
+   bool mixinFunction = false;
    bool noSignature = true; // NOTE : is similar to weakSignature except if withoutWeakMessages=true
    // if method has an argument list
    SyntaxNode current = node.findChild(SyntaxKey::Parameter);
@@ -2875,11 +2886,25 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
 
          flags |= FUNCTION_MESSAGE;
          unnamedMessage = false;
+
+         // Compiler Magic : if it is a generic closure - ignore fixed argument
+         if (scope.checkHint(MethodHint::Mixin)) {
+            if (variadicMode && validateGenericClosure(signature, signatureLen)) {
+               signatureLen = 1;
+               mixinFunction = true;
+            }
+            // mixin function should have a homogeneous signature (i.e. same types) and be variadic
+            else scope.raiseError(errIllegalMethod, node);
+         }
       }
 
       if (scope.checkHint(MethodHint::GetAccessor) || scope.checkHint(MethodHint::SetAccessor)) {
          flags |= PROPERTY_MESSAGE;
       }
+
+      if (scope.checkHint(MethodHint::Mixin) && !scope.checkHint(MethodHint::Function))
+         // only mixin function is supported
+         scope.raiseError(errIllegalMethod, node);
 
       if (variadicMode)
          flags |= VARIADIC_MESSAGE;
@@ -2945,6 +2970,11 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
 
          addExtensionMessage(scope, scope.message, scope.getClassRef(), scope.message,
             scope.getClassVisibility() != Visibility::Public);
+      }
+
+      if (mixinFunction) {
+         // Compiler Magic : if it is a mixin function - argument size cannot be directly defined
+         scope.message = overwriteArgCount(scope.message, 0);
       }
    }
 }

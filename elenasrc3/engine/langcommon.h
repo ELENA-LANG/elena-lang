@@ -28,6 +28,7 @@ namespace elena_lang
       Multimethod          = 0x00001000,
       Static               = 0x00004000,
       GetAccessor          = 0x00008000,
+      Mixin                = 0x00010000,
       Abstract             = 0x00020000,
       Internal             = 0x00040000,
       Predefined           = 0x00080000, // virtual class declaration
@@ -201,6 +202,7 @@ namespace elena_lang
    constexpr auto V_INTERN                = 0x80001016u;
    constexpr auto V_FORWARD               = 0x80001017u;
    constexpr auto V_IMPORT                = 0x80001018u;
+   constexpr auto V_MIXIN                 = 0x80001019u;
    constexpr auto V_AUTO                  = 0x8000101Cu;
    constexpr auto V_NAMESPACE             = 0x80001021u;
    constexpr auto V_SUPERIOR              = 0x80001024u;

@@ -1,29 +1,10 @@
 import extensions;
 
-public class A
+public interface TapeFunction
 {
-   constructor new()
-   {
-      console.printLine("Calling a constructor");
-   }
+    abstract mixin function(params object[] args);
 }
 
 public program()
 {
-    var node := new object();
-    while (node.next()) {
-        string token := *node;
-        if (token == "(") {
-            node.append(buildTree(reader));
-        }
-        else if (token == ")") {
-            ^ node;
-        }
-        else if (token == ";") {
-           node := Node.new(node);
-        }
-        else {
-            node.Text := token;
-        }
-    };
 }

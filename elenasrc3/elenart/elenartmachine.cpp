@@ -198,10 +198,10 @@ void ELENARTMachine :: startSTA(SystemEnv* env, void* entry)
    __routineProvider.InitSTA(env);
 
    // executing the program
-   int retVal = execute(env, entry);
+   execute(env, entry);
 
    // winding down system
-   Exit(retVal);
+   Exit(0);
 }
 
 int ELENARTMachine :: allocateThreadEntry(SystemEnv* env)

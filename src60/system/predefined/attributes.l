@@ -49,6 +49,7 @@
 #let attributesSymbols["intern"]      := 80001016h;
 #let attributesSymbols["forward"]     := 80001017h;
 #let attributesSymbols["import"]      := 80001018h;
+#let attributesSymbols["mixin"]       := 80001019h;
 #let attributesSymbols["auto"]        := 8000101Ch;
 #let attributesSymbols["namespace"]   := 80001021h;
 #let attributesSymbols["super"]       := 80001024h;
