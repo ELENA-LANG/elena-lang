@@ -9087,6 +9087,15 @@ void Compiler :: compileClassSymbol(BuildTreeWriter& writer, ClassScope& scope)
    writer.closeNode();
 
    writer.closeNode();
+
+   if (scope.info.attributes.exist({ 0, ClassAttribute::RuntimeLoadable })) {
+      SymbolInfo symbolInfo = {};
+      symbolInfo.loadableInRuntime = true;
+
+      // save class meta data
+      MemoryWriter metaWriter(scope.module->mapSection(scope.reference | mskMetaSymbolInfoRef, false), 0);
+      symbolInfo.save(&metaWriter);
+   }
 }
 
 void Compiler :: beginMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, BuildKey scopeKey, bool withDebugInfo)

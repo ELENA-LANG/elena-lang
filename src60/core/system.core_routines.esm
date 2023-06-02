@@ -1460,6 +1460,14 @@ procedure __perm_array_refer (self,index,retVal)
 
 end
 
+procedure __mssg_closure
+
+  load
+  peek       sp:0
+  jump       vt:0
+
+end
+
 procedure __thread_create(self,arg,flags,ptr)
 
   xflush     sp:0

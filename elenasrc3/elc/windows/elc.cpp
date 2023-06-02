@@ -127,7 +127,7 @@ int main()
       PathString appPath;
       getAppPath(appPath);
 
-      JITSettings defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE };
+      JITSettings defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, 1, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       Project          project(*appPath, CURRENT_PLATFORM, &Presenter::getInstance());
       WinLinker        linker(&errorProcessor, &WinImageFormatter::getInstance(&project));
