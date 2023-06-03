@@ -1403,14 +1403,14 @@ end
 // ; xrefreshsi 0
 inline %1A7h
 
-  mov r10, [rsp+8]
+  mov r10, [rsp]
 
 end 
 
 // ; xrefreshsi 1
 inline %2A7h
 
-  mov [rsp+16], r11
+  mov r11, [rsp+8]
 
 end 
 

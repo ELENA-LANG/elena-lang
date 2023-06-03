@@ -10076,6 +10076,30 @@ void Compiler :: compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope&
    writer.appendNode(BuildKey::RedirectOp);
 }
 
+inline bool hasVariadicFunctionDispatcher(Compiler::ClassScope* classScope, bool& mixedDispatcher)
+{
+   bool normalVariadic = false;
+   bool functionVariadic = false;
+   for (auto it = classScope->info.methods.start(); !it.eof(); ++it) {
+      mssg_t m = it.key();
+
+      if ((m & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
+         if (test(m, FUNCTION_MESSAGE)) {
+            functionVariadic = true;
+         }
+         else normalVariadic = true;
+      }
+   }
+
+   if (functionVariadic) {
+      if (normalVariadic)
+         mixedDispatcher = true;
+
+      return true;
+   }
+   else return false;
+}
+
 void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node,
    bool withGenerics, bool withOpenArgGenerics)
 {
@@ -10124,12 +10148,23 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
       else if (withOpenArgGenerics) {
          ExprScope exprScope(&codeScope);
 
-         // HOTFIX : an extension is a special case of a variadic function and a target should be included
          ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
-         pos_t argCount = !scope.isExtension && test(scope.message, FUNCTION_MESSAGE) ? 1 : 2;
+
+         ref_t mask = VARIADIC_MESSAGE;
+         bool mixedDispatcher = false;
+         bool variadicFunction = hasVariadicFunctionDispatcher(classScope, mixedDispatcher);
+         if (variadicFunction) {
+            // !! temporally
+            if (mixedDispatcher)
+               scope.raiseError(errInvalidOperation, node);
+
+            mask |= FUNCTION_MESSAGE;
+         }
+
+         // HOTFIX : an extension is a special case of a variadic function and a target should be included
+         pos_t argCount = (!scope.isExtension && variadicFunction) ? 1 : 2;
 
          writer.appendNode(BuildKey::DispatchingOp);
-
          // open frame
          writer.appendNode(BuildKey::OpenFrame);
          // save the target
@@ -10142,7 +10177,7 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
          writer.appendNode(BuildKey::UnboxMessage, -1);
          // change incoming message to variadic multi-method
          writer.newNode(BuildKey::LoadingSubject,
-            encodeMessage(getAction(scope.moduleScope->buildins.dispatch_message), argCount, VARIADIC_MESSAGE));
+            encodeMessage(getAction(scope.moduleScope->buildins.dispatch_message), argCount, mask));
          writer.appendNode(BuildKey::Index, scope.messageLocalAddress);
          writer.closeNode();
          // select the target
@@ -10158,6 +10193,34 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
 
    codeScope.syncStack(&scope);
    endMethod(writer, scope);
+}
+
+void Compiler :: compileCustomDispatcher(BuildTreeWriter& writer, ClassScope& scope)
+{
+   MethodScope methodScope(&scope);
+   methodScope.message = scope.moduleScope->buildins.dispatch_message;
+
+   auto methodIt = scope.info.methods.getIt(methodScope.message);
+   if (!methodIt.eof()) {
+      methodScope.info = *methodIt;
+
+      methodScope.info.inherited = false;
+
+      *methodIt = methodScope.info;
+   }
+   else {
+      methodScope.info.hints |= (ref_t)MethodHint::Dispatcher;
+      scope.info.methods.add(methodScope.message, methodScope.info);
+   }
+
+   scope.info.header.flags |= elWithCustomDispatcher;
+
+   compileDispatcherMethod(writer, methodScope, {},
+      test(scope.info.header.flags, elWithGenerics),
+      test(scope.info.header.flags, elWithVariadics));
+
+   // overwrite the class info if required
+   scope.save();
 }
 
 void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
@@ -10227,32 +10290,8 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
    if (testany(scope.info.header.flags, elWithGenerics | elWithVariadics)
       && scope.info.methods.get(scope.moduleScope->buildins.dispatch_message).inherited)
    {
-      MethodScope methodScope(&scope);
-      methodScope.message = scope.moduleScope->buildins.dispatch_message;
-
-      auto methodIt = scope.info.methods.getIt(methodScope.message);
-      if (!methodIt.eof()) {
-         methodScope.info = *methodIt;
-
-         methodScope.info.inherited = false;
-
-         *methodIt = methodScope.info;
-      }
-      else {
-         methodScope.info.hints |= (ref_t)MethodHint::Dispatcher;
-         scope.info.methods.add(methodScope.message, methodScope.info);
-      }
-
-      scope.info.header.flags |= elWithCustomDispatcher;
-
-      compileDispatcherMethod(writer, methodScope, {},
-         test(scope.info.header.flags, elWithGenerics),
-         test(scope.info.header.flags, elWithVariadics));
-
-      // overwrite the class info if required
-      scope.save();
+      compileCustomDispatcher(writer, scope);
    }
-
 }
 
 void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope, SyntaxNode node)
@@ -10297,6 +10336,13 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
       }
 
       current = current.nextNode();
+   }
+
+   // if the VMT conatains newly defined generic / variadic handlers, overrides default one
+   if (testany(classClassScope.info.header.flags, elWithGenerics | elWithVariadics)
+      && classClassScope.info.methods.get(scope.moduleScope->buildins.dispatch_message).inherited)
+   {
+      compileCustomDispatcher(writer, classClassScope);
    }
 }
 

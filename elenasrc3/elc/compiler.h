@@ -1294,6 +1294,7 @@ namespace elena_lang
       void compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode);
       void compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileConstructor(BuildTreeWriter& writer, MethodScope& scope, ClassScope& classClassScope, SyntaxNode node);
+      void compileCustomDispatcher(BuildTreeWriter& writer, ClassScope& scope);
       void compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef);
       void compileClosureClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node);
       void compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,

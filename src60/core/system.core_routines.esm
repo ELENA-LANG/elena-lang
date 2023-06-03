@@ -1487,6 +1487,80 @@ procedure __thread_create(self,arg,flags,ptr)
 
 end
 
+procedure __closuretape
+
+  tstn       FUNCTION_MESSAGE
+  jeq        labDefault
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (32),[target],[index,len,mssg]
+      
+  save       dp:mssg
+    
+  len
+  save       dp:len
+  nsave      dp:index, 0
+
+  store      fp:target
+
+  // ; copy the call stack
+  load       dp:mssg
+  mlen
+  xassignsp
+  alloc      i:1
+  store      sp:0
+  set        fp:1
+  swap       sp:0
+  dtrans
+  swap       sp:0
+  set        terminator
+  swap       sp:0
+  xassign
+  free       i:1
+
+labNext:
+  peek       fp:target
+
+  set        dp:len
+  load       
+  xcmp       dp:index
+  jle        labEnd
+
+  xget
+  nadd       dp:index, 1
+
+  call       mssg:"function:params:#invoke<system'Object>[0]", class:"system'dynamic'TapeFunction"
+  store      sp:0
+
+  jump       labNext
+
+labEnd:
+
+  close      []
+	
+labDefault:
+  redirect
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
+
+end
+
 procedure __tape_eval(self, buffer, len)
 
   xflush     sp:0

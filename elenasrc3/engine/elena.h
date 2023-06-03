@@ -563,6 +563,7 @@ namespace elena_lang
       virtual pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode) = 0;
       virtual pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, 
          ustr_t actionName, ref_t weakActionRef, ref_t signature, bool virtualMode) = 0;
+      virtual void addSignatureStopper(MemoryWriter& messageWriter) = 0;
 
       virtual void writeImm9(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm12(MemoryWriter* writer, int value, int type) = 0;

@@ -186,7 +186,8 @@ namespace elena_lang
       ref_t resolveWeakAction(ustr_t actionName);
 
       ref_t createAction(ustr_t actionName, ref_t weakAction, ref_t signature);
-      ref_t createSignature(ModuleBase* module, ref_t signature, VAddressMap& references);
+      ref_t createSignature(ModuleBase* module, ref_t signature, bool variadicOne, 
+         VAddressMap& references);
       mssg_t createMessage(ModuleBase* module, mssg_t message, VAddressMap& references);
 
       mssg_t parseMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);

@@ -640,7 +640,8 @@ ref_t JITLinker :: createAction(ustr_t actionName, ref_t weakActionRef, ref_t si
    return actionRef;
 }
 
-ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, VAddressMap& references)
+ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, bool variadicOne, 
+   VAddressMap& references)
 {
    if (!signature)
       return 0;
@@ -650,6 +651,12 @@ ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, VAddress
 
    // resolve the signature name
    IdentifierString signatureName;
+
+   if (count != 0 && variadicOne) {
+      // HOTFIX : to tell apart vardiatic signature from normal ones (see further)
+      signatureName.append("#params");
+   }
+
    for (size_t i = 0; i < count; i++) {
       signatureName.append('$');
       auto referenceInfo = _loader->retrieveReferenceInfo(module, signReferences[i], mskVMTRef, _forwardResolver);
@@ -682,6 +689,11 @@ ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, VAddress
          }
       }
 
+      if (variadicOne) {
+         // HOTFIX : variadic signature should end with zero for correct multi-dispatching operation
+         _compiler->addSignatureStopper(writer);
+      }
+
       // HOTFIX : adding a mask to tell apart a message name from a signature in meta module
       _mapper->mapAction(*signatureName, resolvedSignature | SIGNATURE_MASK, 0u);
    }
@@ -700,7 +712,8 @@ mssg_t JITLinker :: createMessage(ModuleBase* module, mssg_t message, VAddressMa
    ref_t signature = 0;
    ustr_t actionName = module->resolveAction(actionRef, signature);
 
-   ref_t importedSignature = createSignature(module, signature, references);
+   bool variadic = (flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
+   ref_t importedSignature = createSignature(module, signature, variadic, references);
    ref_t importedAction = _mapper->resolveAction(actionName, importedSignature);
    if (!importedAction) {
       importedAction = createAction(actionName, resolveWeakAction(actionName), importedSignature);

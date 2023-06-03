@@ -3045,6 +3045,11 @@ pos_t JITCompiler32 :: addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress
    return position;
 }
 
+void JITCompiler32 :: addSignatureStopper(MemoryWriter& writer)
+{
+   writer.writeDWord(0);
+}
+
 int JITCompiler32 :: calcTotalSize(int numberOfFields)
 {
    return align((numberOfFields << 2) + elObjectOffset32, gcPageSize32);
@@ -3462,6 +3467,11 @@ pos_t JITCompiler64 :: addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress
    else writer.writeQWord(0);
 
    return position;
+}
+
+void JITCompiler64 :: addSignatureStopper(MemoryWriter& writer)
+{
+   writer.writeQWord(0);
 }
 
 void JITCompiler64 :: allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length,

@@ -102,8 +102,10 @@ void sendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    int vmtIndex = node.findChild(BuildKey::Index).arg.value;
 
+   bool variadicOp = (node.arg.reference & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
+
    pos_t argCount = getArgCount(node.arg.reference);
-   if ((int)argCount < tapeScope.scope->minimalArgList) {
+   if (!variadicOp && (int)argCount < tapeScope.scope->minimalArgList) {
       for (int i = argCount; i < tapeScope.scope->minimalArgList; i++) {
          tape.write(ByteCode::XStoreSIR, i, 0);
       }
@@ -135,8 +137,10 @@ void directCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
 
+   bool variadicOp = (node.arg.reference & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
+
    pos_t argCount = getArgCount(node.arg.reference);
-   if ((int)argCount < tapeScope.scope->minimalArgList) {
+   if (!variadicOp && (int)argCount < tapeScope.scope->minimalArgList) {
       for (int i = argCount; i < tapeScope.scope->minimalArgList; i++) {
          tape.write(ByteCode::XStoreSIR, i, 0);
       }
@@ -1459,7 +1463,7 @@ void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
    // swap   sp:0
    // set    r:-1
    // swap   sp:0
-   // assign
+   // xassign
    // free   i:1
 
    tape.write(ByteCode::DAlloc);

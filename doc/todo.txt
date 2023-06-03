@@ -9,6 +9,7 @@ In development:
     [!] vm terminal
     [!] ide vm console
 
+    * resolving variadic constructor at run-time?
     * (re)implementing DynamicTape
     * elenavm : https://github.com/ELENA-LANG/tutorials/tree/master/ExpressionTree1,
       https://github.com/ELENA-LANG/tutorials/tree/master/ExpressionTree2
@@ -69,9 +70,6 @@ Backlog:
 
     * elenavm : preloaded symbol, support preloaded symbols : dynamic
     * elenavm : loading preloaded symbols for newly loaded modules
-
-    * #508 : support strong-typed variables for tuple unboxing
-    * multi-value return - #508
 
     * ide debugger : stepping in the loop (for)
 
@@ -150,7 +148,6 @@ Backlog:
     * lazy expressions, put it in the first page as a feature
 
     --- elena redux ---
-    * resolve variadic operation directly if possible
     * fillir - optimization for 1,2,3,4
     * gc fune-tuning, promote the part of YG to MG if it survive several collecting cycles
     * debugger info : save the path relative to the src60 path?

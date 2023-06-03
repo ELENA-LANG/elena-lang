@@ -272,6 +272,7 @@ namespace elena_lang
       pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName, 
          ref_t weakActionRef, ref_t signature, bool virtualMode) override;
       pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode) override;
+      void addSignatureStopper(MemoryWriter& messageWriter) override;
 
       void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) override;
       void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) override;
@@ -348,6 +349,7 @@ namespace elena_lang
       pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName, ref_t weakActionRef, 
          ref_t signature, bool virtualMode) override;
       pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode) override;
+      void addSignatureStopper(MemoryWriter& messageWriter) override;
 
       void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) override;
       void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) override;
