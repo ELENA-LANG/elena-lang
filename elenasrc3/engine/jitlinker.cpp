@@ -611,7 +611,7 @@ addr_t JITLinker :: loadMethod(ReferenceHelperBase& refHelper, MemoryReader& rea
    return _virtualMode ? position : (addr_t)writer.Memory()->get(position);
 }
 
-ref_t JITLinker::resolveWeakAction(ustr_t actionName)
+ref_t JITLinker :: resolveWeakAction(ustr_t actionName)
 {
    ref_t resolvedAction = _mapper->resolveAction(actionName, 0u);
    if (!resolvedAction) {
@@ -1564,6 +1564,11 @@ addr_t JITLinker :: resolveTLSSection(JITCompilerBase* compiler)
    addr_t address = compiler->allocateTLSIndex(&helper, writer);
 
    return address;
+}
+
+ref_t JITLinker :: resolveAction(ustr_t actionName)
+{
+   return resolveWeakAction(actionName);
 }
 
 void JITLinker :: loadPreloaded(ustr_t preloadedSection)

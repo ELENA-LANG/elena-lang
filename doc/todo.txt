@@ -9,13 +9,13 @@ In development:
     [!] vm terminal
     [!] ide vm console
 
-    * resolving variadic constructor at run-time?
-    * (re)implementing DynamicTape
+    * loadMessage
     * elenavm : https://github.com/ELENA-LANG/tutorials/tree/master/ExpressionTree1,
       https://github.com/ELENA-LANG/tutorials/tree/master/ExpressionTree2
     * new opcode : fexp - ppc64le
     * (re)implement elt
     * ide : test screnario - create a new project, change it and save it
+    * elenavm : implementing rest of dll api
 
      === Iteration 17 ===
     [!] x86 mta support
@@ -86,7 +86,6 @@ Backlog:
     * review system warnings
     * prefix nullable / nable - allow to assign nil
     * introduce Nullable structure
-    * elenavm : implementing dll api
     * show the signature for the typecast message if possible
     * ide : key combination doesn't work after closing the project
     * #521 : create an example and close the ticket
@@ -107,7 +106,6 @@ Backlog:
     * x86 : gui
     * system module - it should be possible to use type aliases (replace all cases of using direct types 
       for symbols in system (int,string,wide))
-    * elenavm : protect rdata memory sections
     * console & files samples
     * new opcode : fln - ppc64le, arm64
     * new opcode : fsin, fcos, farctan, fpi - ppc64le, arm64

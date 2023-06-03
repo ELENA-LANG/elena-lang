@@ -1523,15 +1523,15 @@ procedure __closuretape
 labNext:
   peek       fp:target
 
-  set        dp:len
-  load       
+  load       dp:len
   xcmp       dp:index
   jle        labEnd
 
+  load       dp:index
   xget
   nadd       dp:index, 1
 
-  call       mssg:"function:params:#invoke<system'Object>[0]", class:"system'dynamic'TapeFunction"
+  vcall      mssg:"function:params:#invoke<system'Object>[0]", class:"system'dynamic'TapeFunction"
   store      sp:0
 
   jump       labNext
@@ -1539,6 +1539,7 @@ labNext:
 labEnd:
 
   close      []
+  quit
 	
 labDefault:
   redirect

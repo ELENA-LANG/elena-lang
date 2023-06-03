@@ -15,7 +15,7 @@
 
 namespace elena_lang
 {
-   constexpr auto ELENAVM_GREETING        = "ELENA VM %d.%d.%d (C)2022 by Aleksey Rakov";
+   constexpr auto ELENAVM_GREETING        = "ELENA VM %d.%d.%d (C)2022-2023 by Aleksey Rakov";
    constexpr auto ELENAVM_INITIALIZING    = "Initializing...";
 
    // --- ELENARTMachine ---
@@ -58,6 +58,7 @@ namespace elena_lang
       AddressMap::Iterator externals() override;
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
+      ref_t loadSubject(ustr_t actionName);
 
       void fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule);
 

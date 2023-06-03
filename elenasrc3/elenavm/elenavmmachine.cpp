@@ -437,10 +437,35 @@ addr_t ELENAVMMachine :: loadClassReference(ustr_t name)
    return loadReference(name, VM_CALLCLASS_CMD);
 }
 
+ref_t ELENAVMMachine :: loadSubject(ustr_t actionName)
+{
+   stopVM();
+
+   JITLinker* jitLinker = new JITLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
+         &_settings, nullptr);
+
+   jitLinker->setCompiler(_compiler);
+
+   ref_t actionRef = jitLinker->resolveAction(actionName);
+
+   resumeVM(*jitLinker, _env, nullptr);
+
+   return actionRef;
+}
+
 mssg_t ELENAVMMachine :: loadMessage(ustr_t messageName)
 {
-   // !! temporal
-   return 0;
+   pos_t argCount = 0;
+   ref_t flags = 0;
+
+   IdentifierString actionName;
+   ByteCodeUtil::parseMessageName(messageName, actionName, flags, argCount);
+
+   ref_t actionRef = loadSubject(*actionName);
+   if (!actionRef)
+      return 0;
+
+   return encodeMessage(actionRef, argCount, flags);
 }
 
 addr_t ELENAVMMachine :: loadSymbol(ustr_t name)

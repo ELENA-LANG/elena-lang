@@ -230,6 +230,8 @@ namespace elena_lang
 
       addr_t resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode);
 
+      ref_t resolveAction(ustr_t actionName);
+
       void loadPreloaded(ustr_t preloadedSection);
       void prepare(JITCompilerBase* compiler);
       void setCompiler(JITCompilerBase* compiler)
