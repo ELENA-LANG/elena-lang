@@ -279,7 +279,7 @@ ROOT_EXPRESSION ::=
 		| LESS ^OBJECT TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" ^TEMPLATE_TYPE
 			{ 
 				L3 ^OBJECT MESSAGE L3_R
-				| identifier ^OBJECT }
+				| identifier ^OBJECT { ASSIGN ASSIGN_R }? }
 		| L7_O_OP
 		| TRY ^OBJECT TRY_R
 		| FNL ^OBJECT FNL_R

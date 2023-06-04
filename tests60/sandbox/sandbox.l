@@ -1,6 +1,6 @@
 import extensions;
 import system'dynamic;
-//import system'dynamic'expressions;
+import system'dynamic'expressions;
 
 public singleton MyDynamicallyLoadedClass
 {
@@ -12,32 +12,18 @@ public singleton MyDynamicallyLoadedClass
 
 symbol used : preloaded = new object[]{MyDynamicallyLoadedClass, mssg doSomething};
     
-dynamicEvaluating()
+treeEvaluating()
 {
-    var loadedClass := new Symbol("sandbox'MyDynamicallyLoadedClass");
     var loadedMessage := new Message("doSomething[1]");
     
-    var t := DynamicTape.load(
-        ConstantFunction.load(loadedClass),
-        MessageFunction.load(loadedMessage));
-
-    t()
-}    
-    
-//treeEvaluating()
-//{
-//    var loadedMessage := new Message("doSomething[1]");
-    
-//    var c := Expression.MessageCall(
-//                            loadedMessage, 
-//                            Expression.Symbol("exprtree1'MyDynamicallyLoadedClass"));
+    var c := Expression.MessageCall(
+                            loadedMessage, 
+                            Expression.Symbol("sandbox'MyDynamicallyLoadedClass"));
                             
-//    c.eval()                                
-//}    
+    c.eval()                                
+}    
 
 public program()
 {
-    dynamicEvaluating();
-    
-//    treeEvaluating()
+    treeEvaluating()
 }

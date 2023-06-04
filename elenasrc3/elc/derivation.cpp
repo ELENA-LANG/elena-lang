@@ -450,6 +450,9 @@ void SyntaxTreeBuilder :: generateTemplateOperation(SyntaxTreeWriter& writer, Sc
       case SyntaxKey::AltOperation:
          templateName.append("alt#1#1");
          break;
+      case SyntaxKey::IfNotOperation:
+         templateName.append("ifnot#1#1");
+         break;
       default:
          assert(false);
          break;

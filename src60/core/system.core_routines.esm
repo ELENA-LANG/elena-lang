@@ -1468,6 +1468,31 @@ procedure __mssg_closure
 
 end
 
+procedure __saving_closure(obj, args)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  load
+  peek       fp:obj
+  store      sp:0
+  peek       fp:args
+  xassign
+  peek       sp:0
+
+  close      []
+
+end
+
+procedure __alloc_closure
+
+  load
+  system     5
+
+end
+
 procedure __thread_create(self,arg,flags,ptr)
 
   xflush     sp:0

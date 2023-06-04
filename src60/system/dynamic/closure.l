@@ -41,3 +41,31 @@ public struct MessageFunction : TapeFunction
     
    mixin function(params object[] args) : external(system'core_routines'__mssg_closure);
 }
+
+// --- SavingFunction ---
+
+public struct SavingFunction : TapeFunction
+{
+    embeddable int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    mixin function(params object[] args) : external(system'core_routines'__saving_closure);
+}
+
+// --- AllocFunction ---
+
+public struct AllocFunction : TapeFunction
+{
+    int size;
+    
+    constructor(int size)
+    {
+        this size := size
+    }
+    
+    mixin function(params object[] args) : external(system'core_routines'__alloc_closure);
+}

@@ -9,7 +9,8 @@ In development:
     [!] vm terminal
     [!] ide vm console
 
-    * loadMessage
+    * __typeof attribute
+    * .! operation
     * elenavm : https://github.com/ELENA-LANG/tutorials/tree/master/ExpressionTree1,
       https://github.com/ELENA-LANG/tutorials/tree/master/ExpressionTree2
     * new opcode : fexp - ppc64le
@@ -24,6 +25,9 @@ In development:
     [!] x86 GUI support
 
     === Iteration 19 ===
+    [!] elenavm x64 dll
+    [!] elenavm x64 : script executing
+    * amd64 : implement system 5
 
 ------                                                           
 Backlog:

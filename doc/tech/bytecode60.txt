@@ -448,6 +448,7 @@ ELENA byte codes (or ecodes)
                               n = 2 -> forced major collect
                               n = 3 -> assign TLS entry to the THREAD_TABLE at index
                               n = 4 -> prepare the program (should be the first command) 
+                              n = 5 -> inject the stack (note, should be called ouside the frame)
 
    xcmp                     - temp << acc[0];
                               COMP.EQ := (index == temp);

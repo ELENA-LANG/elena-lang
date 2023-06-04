@@ -349,6 +349,7 @@ void elena_lang :: loadSysOp(JITCompilerScope* scope)
       case 2:
       case 3:
       case 4:
+      case 5:
          index = scope->command.arg1;
          break;
       default:

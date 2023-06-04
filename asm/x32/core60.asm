@@ -1686,6 +1686,22 @@ inline %2CFh
 
 end
 
+// ; system inject
+inline %5CFh
+
+  mov  [esp+4], esi
+  pop  esi
+  lea  eax, [edx*4]
+  sub  esp, eax
+  mov  ecx, edx
+  xor  eax, eax
+  mov  edi, esp
+  rep  stos
+  push esi
+  mov  esi, [esp+4]
+
+end
+
 // ; faddndp
 inline %0D0h
 

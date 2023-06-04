@@ -112,3 +112,18 @@ public template operator::alt<identifier>(expr) : __included(statementTemplates)
 {
    expr \ back:identifier;
 }
+
+
+//public template operator::ifnot<identifier>(expr) : __included(statementTemplates)
+//{
+//
+//    if (nil == identifier)
+//    {
+//        identifier := new __typeof identifier();
+//    };
+//    
+//    expr
+//
+//
+//   expr \ back:identifier;
+//}
