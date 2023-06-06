@@ -33,6 +33,8 @@ namespace expressions
       static Expression MessageCall(Message message, Expression t)
          = MessageCallExpression.new(message,t);      
 
+      get abstract bool IsOperation();
+
       abstract saveTo(List<TapeFunction> list, ExpressionScope scope, int index);
 
       abstract int prepare(ExpressionScope scope) 
@@ -117,6 +119,8 @@ namespace expressions
          symbol := new Symbol(s)
       }
 
+      bool IsOperation = false;
+
       int prepare(ExpressionScope scope)
          = 1;
 
@@ -144,6 +148,8 @@ namespace expressions
          _target := t;
          _arguments := new Expression[](0);
       }
+
+      bool IsOperation = true;
 
       int prepare(ExpressionScope scope)
       {
