@@ -57,7 +57,6 @@
 #let attributesSymbols["__probe"]     := 80001026h;
 #let attributesSymbols["template"]    := 80001027h;
 #let attributesSymbols["weak"]        := 80001029h;
-#let attributesSymbols["distributed"] := 8000102Bh;
 
 /// primitive types
 #let attributesSymbols["__string"]    := 80000801h;
@@ -72,5 +71,6 @@
 #let attributesSymbols["__mssg"]      := 80000809h;
 #let attributesSymbols["__ptr"]       := 8000080Ah;
 #let attributesSymbols["__ext_mssg"]  := 8000080Bh;
+#let attributesSymbols["__typeof"]    := 8000080Ch;
 
 #reload attributesSymbols;

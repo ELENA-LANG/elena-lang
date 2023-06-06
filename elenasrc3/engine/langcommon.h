@@ -178,7 +178,7 @@ namespace elena_lang
    constexpr auto V_READONLY              = 0x80002004u;
    constexpr auto V_OVERLOADRET           = 0x8000200Au;
    constexpr auto V_VARIADIC              = 0x8000200Bu;
-   
+
    /// scope:
    constexpr auto V_CLASS                 = 0x80001001u;
    constexpr auto V_STRUCT                = 0x80001002u;
@@ -225,6 +225,7 @@ namespace elena_lang
    constexpr auto V_MSSGBINARY            = 0x80000809u;
    constexpr auto V_POINTER               = 0x8000080Au;
    constexpr auto V_EXTMESSAGE            = 0x8000080Bu;
+   constexpr auto V_TYPEOF                = 0x8000080Cu;
 
    /// primitive types
    constexpr auto V_STRING                = 0x80000001u;

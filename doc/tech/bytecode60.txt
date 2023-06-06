@@ -215,7 +215,7 @@ ELENA byte codes (or ecodes)
 
    xmov sp:i1, sp:i2        - sp[i1] := sp[i2]
 
-   xstore fp:i, {prefix:}r  - sp[i] := r
+   xstore fp:i, {prefix:}r  - fp[i] := r
 
    xstore sp:i, {prefix:}r  - sp[i] := r
 

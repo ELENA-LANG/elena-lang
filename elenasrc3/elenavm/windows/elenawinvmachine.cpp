@@ -99,7 +99,7 @@ bool ELENAWinVMMachine :: exportFunction(path_t rootPath, size_t position, path_
    if (address == 0)
       return false;
 
-   return _data.write(position, &address, sizeof(address));
+   return _data.write((pos_t)position, &address, sizeof(address));
 }
 
 addr_t ELENAWinVMMachine :: resolveExternal(ustr_t dll, ustr_t function)

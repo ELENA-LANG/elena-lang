@@ -1223,6 +1223,9 @@ namespace elena_lang
 
       void compileSwitchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
 
+      ObjectInfo defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo declaredTypeInfo, bool variableMode,
+         bool forwardMode, bool refOp, bool mssgOp, bool memberMode, bool& invalid, ExpressionAttribute attrs);
+
       ObjectInfo mapStringConstant(Scope& scope, SyntaxNode node);
       ObjectInfo mapWideStringConstant(Scope& scope, SyntaxNode node);
       ObjectInfo mapCharacterConstant(Scope& scope, SyntaxNode node);

@@ -841,6 +841,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_VARIADIC:
          attrs |= ExpressionAttribute::Variadic;
          return true;
+      case V_TYPEOF:
+         attrs |= ExpressionAttribute::RetrievingType;
+         return true;
       default:
          return false;
    }

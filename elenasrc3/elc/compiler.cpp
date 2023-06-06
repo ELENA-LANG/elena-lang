@@ -7881,6 +7881,121 @@ ObjectInfo Compiler :: mapExtMessageConstant(Scope& scope, SyntaxNode node, ref_
    return { ObjectKind::ExtMssgLiteral, { constType, extension }, constRef };
 }
 
+ObjectInfo Compiler :: defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo declaredTypeInfo, bool variableMode, 
+   bool forwardMode, bool refOp, bool mssgOp, bool memberMode, bool& invalid, ExpressionAttribute attrs)
+{
+   ObjectInfo retVal = {};
+   bool ignoreDuplicates = EAttrs::testAndExclude(attrs, ExpressionAttribute::IgnoreDuplicate);
+   bool invalidForNonIdentifier = forwardMode || variableMode || refOp || mssgOp || memberMode;
+
+   switch (node.key) {
+      case SyntaxKey::TemplateType:
+      {
+         TypeAttributes typeAttributes = {};
+         TypeInfo typeInfo = resolveTypeAttribute(scope, node, typeAttributes, false, false);
+         retVal = { ObjectKind::Class, typeInfo, 0u };
+
+         retVal = mapClassSymbol(scope, retrieveStrongType(scope, retVal));
+         break;
+      }
+      case SyntaxKey::identifier:
+      case SyntaxKey::reference:
+         if (variableMode) {
+            invalid = forwardMode;
+
+            if (declareVariable(scope, node, declaredTypeInfo, ignoreDuplicates)) {
+               retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs | ExpressionAttribute::Local);
+            }
+            else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
+         }
+         else if (forwardMode) {
+            IdentifierString forwardName(FORWARD_PREFIX_NS, node.identifier());
+
+            retVal = scope.mapIdentifier(*forwardName, true, attrs);
+         }
+         else if (memberMode) {
+            retVal = scope.mapMember(node.identifier());
+         }
+         else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
+
+         if (refOp) {
+            switch (retVal.kind) {
+               case ObjectKind::LocalAddress:
+                  retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
+                  break;
+               case ObjectKind::ParamAddress:
+                  retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
+                  break;
+               case ObjectKind::Local:
+                  retVal.kind = ObjectKind::RefLocal;
+                  retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
+                  break;
+               case ObjectKind::ByRefParam:
+                  // allowing to pass by ref parameter directly
+                  retVal.kind = ObjectKind::ParamReference;
+                  retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
+                  break;
+               case ObjectKind::ByRefParamAddress:
+                  // allowing to pass by ref parameter directly
+                  retVal.kind = ObjectKind::ParamAddress;
+                  retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
+                  //retVal.mode = TargetMode::UnboxingRequired;
+                  break;
+               default:
+                  invalid = true;
+                  break;
+            }
+         }
+         break;
+      case SyntaxKey::string:
+         invalid = invalidForNonIdentifier;
+
+         retVal = mapStringConstant(scope, node);
+         break;
+      case SyntaxKey::wide:
+         invalid = invalidForNonIdentifier;
+
+         retVal = mapWideStringConstant(scope, node);
+         break;
+      case SyntaxKey::character:
+         invalid = invalidForNonIdentifier;
+
+         retVal = mapCharacterConstant(scope, node);
+         break;
+      case SyntaxKey::integer:
+         invalid = invalidForNonIdentifier;
+
+         retVal = mapIntConstant(scope, node, 10);
+         break;
+      case SyntaxKey::hexinteger:
+         invalid = invalidForNonIdentifier;
+
+         retVal = mapUIntConstant(scope, node, 16);
+         break;
+      case SyntaxKey::longinteger:
+         invalid = invalidForNonIdentifier;
+
+         retVal = mapLongConstant(scope, node, 10);
+         break;
+      case SyntaxKey::real:
+         invalid = invalidForNonIdentifier;
+
+         retVal = mapFloat64Constant(scope, node);
+         break;
+      case SyntaxKey::constant:
+         invalid = invalidForNonIdentifier;
+
+         retVal = mapConstant(scope, node);
+         break;
+      default:
+         // to make compiler happy
+         invalid = true;
+         break;
+   }
+
+   return retVal;
+}
+
 ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declaredTypeInfo, EAttr attrs)
 {
    bool forwardMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::Forward);
@@ -7892,11 +8007,9 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    bool mssgOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::MssgNameLiteral);
    bool probeMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::ProbeMode);
    bool memberMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::Member);
-   bool ignoreDuplicates = EAttrs::testAndExclude(attrs, ExpressionAttribute::IgnoreDuplicate);
 
    ObjectInfo retVal;
    bool invalid = false;
-   bool invalidForNonIdentifier = forwardMode || variableMode || refOp || mssgOp || memberMode;
    if (externalOp) {
       auto externalInfo = mapExternal(scope, node);
       switch (externalInfo.type) {
@@ -7907,24 +8020,33 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
       }
    }
    else if (newOp || castOp) {
-      switch (node.key) {
-         case SyntaxKey::TemplateType:
-         case SyntaxKey::ArrayType:
-         case SyntaxKey::Type:
-         case SyntaxKey::identifier:
-         case SyntaxKey::reference:
-         {
-            TypeAttributes typeAttributes = {};
-            TypeInfo typeInfo = resolveTypeAttribute(scope, node, typeAttributes, false, false);
-
-            retVal = { ObjectKind::Class, typeInfo, 0u, newOp ? TargetMode::Creating : TargetMode::Casting };
-            if (CompilerLogic::isPrimitiveArrRef(retVal.typeInfo.typeRef) && newOp)
-               retVal.mode = TargetMode::CreatingArray;
-            break;
+      if (node.key == SyntaxKey::identifier && EAttrs::testAndExclude(attrs, ExpressionAttribute::RetrievingType)) {
+         auto varInfo = scope.mapIdentifier(node.identifier(), false, attrs);
+         if (varInfo.kind != ObjectKind::Unknown) {
+            retVal = { ObjectKind::Class, varInfo.typeInfo, 0u, newOp ? TargetMode::Creating : TargetMode::Casting };
          }
-         default:
-            invalid = true;
-            break;
+         else return varInfo;
+      }
+      else {
+         switch (node.key) {
+            case SyntaxKey::TemplateType:
+            case SyntaxKey::ArrayType:
+            case SyntaxKey::Type:
+            case SyntaxKey::identifier:
+            case SyntaxKey::reference:
+            {
+               TypeAttributes typeAttributes = {};
+               TypeInfo typeInfo = resolveTypeAttribute(scope, node, typeAttributes, false, false);
+
+               retVal = { ObjectKind::Class, typeInfo, 0u, newOp ? TargetMode::Creating : TargetMode::Casting };
+               if (CompilerLogic::isPrimitiveArrRef(retVal.typeInfo.typeRef) && newOp)
+                  retVal.mode = TargetMode::CreatingArray;
+               break;
+            }
+            default:
+               invalid = true;
+               break;
+         }
       }
    }
    else if (mssgOp) {
@@ -7940,120 +8062,11 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
             break;
       }
    }
-   else {
-      switch (node.key) {
-         case SyntaxKey::TemplateType:
-         {
-            TypeAttributes typeAttributes = {};
-            TypeInfo typeInfo = resolveTypeAttribute(scope, node, typeAttributes, false, false);
-            retVal = { ObjectKind::Class, typeInfo, 0u };
-
-            retVal = mapClassSymbol(scope, retrieveStrongType(scope, retVal));
-            break;
-         }
-         case SyntaxKey::identifier:
-         case SyntaxKey::reference:
-            if (variableMode) {
-               invalid = forwardMode;
-
-               if(declareVariable(scope, node, declaredTypeInfo, ignoreDuplicates)) {
-                  retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs | ExpressionAttribute::Local);
-               }
-               else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
-            }
-            else if (forwardMode) {
-               IdentifierString forwardName(FORWARD_PREFIX_NS, node.identifier());
-
-               retVal = scope.mapIdentifier(*forwardName, true, attrs);
-            }
-            else if (memberMode) {
-               retVal = scope.mapMember(node.identifier());
-            }
-            else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
-
-            if (refOp) {
-               switch (retVal.kind) {
-                  case ObjectKind::LocalAddress:
-                     retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
-                     break;
-                  case ObjectKind::ParamAddress:
-                     retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
-                     break;
-                  case ObjectKind::Local:
-                     retVal.kind = ObjectKind::RefLocal;
-                     retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
-                     break;
-                  case ObjectKind::ByRefParam:
-                     // allowing to pass by ref parameter directly
-                     retVal.kind = ObjectKind::ParamReference;
-                     retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
-                     break;
-                  case ObjectKind::ByRefParamAddress:
-                     // allowing to pass by ref parameter directly
-                     retVal.kind = ObjectKind::ParamAddress;
-                     retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
-                     //retVal.mode = TargetMode::UnboxingRequired;
-                     break;
-                  default:
-                     invalid = true;
-                     break;
-               }
-            }
-            break;
-         case SyntaxKey::string:
-            invalid = invalidForNonIdentifier;
-
-            retVal = mapStringConstant(scope, node);
-            break;
-         case SyntaxKey::wide:
-            invalid = invalidForNonIdentifier;
-
-            retVal = mapWideStringConstant(scope, node);
-            break;
-         case SyntaxKey::character:
-            invalid = invalidForNonIdentifier;
-
-            retVal = mapCharacterConstant(scope, node);
-            break;
-         case SyntaxKey::integer:
-            invalid = invalidForNonIdentifier;
-
-            retVal = mapIntConstant(scope, node, 10);
-            break;
-         case SyntaxKey::hexinteger:
-            invalid = invalidForNonIdentifier;
-
-            retVal = mapUIntConstant(scope, node, 16);
-            break;
-         case SyntaxKey::longinteger:
-            invalid = invalidForNonIdentifier;
-
-            retVal = mapLongConstant(scope, node, 10);
-            break;
-         case SyntaxKey::real:
-            invalid = invalidForNonIdentifier;
-
-            retVal = mapFloat64Constant(scope, node);
-            break;
-         case SyntaxKey::constant:
-            invalid = invalidForNonIdentifier;
-
-            retVal = mapConstant(scope, node);
-            break;
-         default:
-            // to make compiler happy
-            invalid = true;
-            break;
-      }
-   }
+   else retVal = defineTerminalInfo(scope, node, declaredTypeInfo, variableMode, forwardMode, 
+      refOp, mssgOp, memberMode, invalid, attrs);
 
    if (invalid)
       scope.raiseError(errInvalidOperation, node);
-
-//   if (declaredTypeInfo.typeRef == V_OBJARRAY) {
-  //    assert(false);
-   //   retVal = defineArrayType(scope, retVal);
-   //}
 
    if (probeMode)
       retVal.mode = TargetMode::Probe;

@@ -9,8 +9,6 @@ In development:
     [!] vm terminal
     [!] ide vm console
 
-    * __typeof attribute
-    * .! operation
     * elenavm : https://github.com/ELENA-LANG/tutorials/tree/master/ExpressionTree1,
       https://github.com/ELENA-LANG/tutorials/tree/master/ExpressionTree2
     * new opcode : fexp - ppc64le
@@ -39,14 +37,12 @@ Backlog:
     * ide : set / remove breakpoints
     * ide : menu - clear all breakpoints
 
-    ! migrate rest of elena 5.0 functionality (script engine, infinite enumeration, ...)
+    ! migrate rest of elena 5.0 functionality (infinite enumeration, ...)
     ! script and db samples
     ! x86 : gui
     ! api functionality for existing classes : rest of system
     ! api functionality for existing classes : externals
     ! elena sm : x86-64
-    ! ide : vm console 
-    * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
     ! sm : generate some basic templates from vm console - hello world sample
     ! script samples : win x86, win x86-64, linix i386, linux amd64
     ! migrate all script engine tutorials : win x86, win x86-64, linix i386, linux amd64
@@ -151,6 +147,7 @@ Backlog:
 
     --- elena redux ---
     * fillir - optimization for 1,2,3,4
+    * dispatch opcode optimization for 1,2,3,4
     * gc fune-tuning, promote the part of YG to MG if it survive several collecting cycles
     * debugger info : save the path relative to the src60 path?
     * ide : brackets highlight
@@ -163,8 +160,6 @@ Backlog:
     * native conversion from short to int / byte to int
     * extension template should contain all its arguments in the signature
     * support strong extension template arrayOp<T> : strong, weak
-    * support autoloaded classes : should be automatically resolved when the module is loaded
-      (flag elAutoLoaded)
     * module extension dispatcher should be preloaded
     * elena : nullable
     * system'collections'Map - migrating rest of methods
@@ -344,13 +339,8 @@ Backlog:
     * constant field must have assigning expression
     * class constant (should be a static variable / pure constant - no entry in VMT)
     * init_handler : call previous one if avialable
-    * call set properties
-    * arithmetic operations
-    * string operations
-    * char operations
     * operator names should be configurable
     * optimize String.prop:Length[1]
-    * replace xassign with assign for the field assignment
     * ide - open file - namespace should be added
     * do load self for expression with ret statement
     * byte / short should support plus / minus operator

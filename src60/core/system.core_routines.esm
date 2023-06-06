@@ -1493,6 +1493,21 @@ procedure __alloc_closure
 
 end
 
+procedure __assign_closure
+
+  load
+  peek       sp:0
+
+  alloc      i:1
+  store      sp:0
+
+  set        fp:0
+  xassign
+
+  free       i:1
+
+end
+
 procedure __thread_create(self,arg,flags,ptr)
 
   xflush     sp:0

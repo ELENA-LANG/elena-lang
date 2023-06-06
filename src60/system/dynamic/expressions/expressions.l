@@ -38,53 +38,53 @@ namespace expressions
       abstract int prepare(ExpressionScope scope) 
             : info("Prepares the expression tree. Returns the maximal size of the preallocated stack");
 
-//      internal static saveMessageCallTo(List<TapeFunction> list, ExpressionScope scope, Expression target, 
-//                                            Expression[] arguments, TapeFunction operation)
-//      {
-//         int len := arguments.Length;
-//         Queue<Expression> tempVariables := nil;
-//            
-//         // first pass - preallocating sub expr 
-//         if (target.IsOperation && len > 0) {
-//            int tempVar := scope.allocTempVariable();
-//            tempVar += scope.ScopeLevel;
-//            target.saveTo(list, scope, 0);
-//            list.append(new AssigningFunction(tempVar));
-//                
-//            tempVariables.!push(Expression.VariableByIndex(tempVar));                
-//         };
-//            
-//         for (int i := 0, i < len, i += 1) {
-//            if (arguments[i].IsOperation) {
-//               int tempVar := scope.allocTempVariable();
-//               tempVar += scope.ScopeLevel;
-//                                    
-//               arguments[i].saveTo(list, scope, 0);
-//               list.append(new AssigningFunction(tempVar));
-//                
-//               tempVariables.!push(Expression.VariableByIndex(tempVar));
-//            }
-//         };
-//            
-//         for (int i := 0, i < len, i += 1) {
-//            if (arguments[i].IsOperation) {
-//               tempVariables.pop().saveTo(list, scope, i + 1) 
-//            }
-//            else {
-//               arguments[i].saveTo(list, scope, i + 1) 
-//            }
-//         };
-//
-//         // second pass - the operation
-//         if (target.IsOperation && len > 0) {
-//            tempVariables.pop().saveTo(list, scope, 0) 
-//         }
-//         else {
-//            target.saveTo(list, scope, 0)
-//         };
-//                                    
-//         list.append(operation);
-//      }
+      internal static saveMessageCallTo(List<TapeFunction> list, ExpressionScope scope, Expression target, 
+                                            Expression[] arguments, TapeFunction operation)
+      {
+         int len := arguments.Length;
+         Queue<Expression> tempVariables := nil;
+            
+         // first pass - preallocating sub expr 
+         if (target.IsOperation && len > 0) {
+            int tempVar := scope.allocTempVariable();
+            tempVar += scope.ScopeLevel;
+            target.saveTo(list, scope, 0);
+            list.append(new AssigningFunction(tempVar));
+                
+            tempVariables.!push(Expression.VariableByIndex(tempVar));                
+         };
+            
+         for (int i := 0, i < len, i += 1) {
+            if (arguments[i].IsOperation) {
+               int tempVar := scope.allocTempVariable();
+               tempVar += scope.ScopeLevel;
+                                    
+               arguments[i].saveTo(list, scope, 0);
+               list.append(new AssigningFunction(tempVar));
+                
+               tempVariables.!push(Expression.VariableByIndex(tempVar));
+            }
+         };
+            
+         for (int i := 0, i < len, i += 1) {
+            if (arguments[i].IsOperation) {
+               tempVariables.pop().saveTo(list, scope, i + 1) 
+            }
+            else {
+               arguments[i].saveTo(list, scope, i + 1) 
+            }
+         };
+
+         // second pass - the operation
+         if (target.IsOperation && len > 0) {
+            tempVariables.pop().saveTo(list, scope, 0) 
+         }
+         else {
+            target.saveTo(list, scope, 0)
+         };
+                                    
+         list.append(operation);
+      }
 
       // temporal generic solution
       eval()

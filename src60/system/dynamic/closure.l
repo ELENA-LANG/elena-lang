@@ -69,3 +69,17 @@ public struct AllocFunction : TapeFunction
     
     mixin function(params object[] args) : external(system'core_routines'__alloc_closure);
 }
+
+// --- AssigningFunction ---
+
+public struct AssigningFunction : TapeFunction
+{
+    embeddable int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    mixin function(params object[] args) : external(system'core_routines'__assign_closure);
+}

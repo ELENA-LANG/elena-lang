@@ -108,22 +108,19 @@ public template extern(body) : __included(statementTemplates)
 
 // --- operator templates ---
 
+// .\
 public template operator::alt<identifier>(expr) : __included(statementTemplates)
 {
    expr \ back:identifier;
 }
 
-
-//public template operator::ifnot<identifier>(expr) : __included(statementTemplates)
-//{
-//
-//    if (nil == identifier)
-//    {
-//        identifier := new __typeof identifier();
-//    };
-//    
-//    expr
-//
-//
-//   expr \ back:identifier;
-//}
+// .!
+public template operator::ifnil<identifier>(expr) : __included(statementTemplates)
+{
+    (nil == identifier) ?
+    {
+        identifier := new __typeof identifier();
+    };
+    
+    expr
+}
