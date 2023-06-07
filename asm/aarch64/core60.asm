@@ -15,8 +15,8 @@ define VOIDPTR               2000Eh
 define CORE_THREAD_TABLE     2000Fh
 
 define ACTION_ORDER              9
-define ARG_MASK               05Fh
-define ARG_COUNT_MASK         01Fh
+define ARG_MASK               01Fh
+define ARG_ACTION_MASK        1DFh
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -633,7 +633,7 @@ end
 // ; mlen
 inline % 15h
 
-  and   x9, x9, ARG_COUNT_MASK
+  and   x9, x9, ARG_MASK
 
 end
 

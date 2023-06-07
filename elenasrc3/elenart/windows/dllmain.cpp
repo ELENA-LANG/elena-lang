@@ -188,6 +188,11 @@ EXTERN_DLL_EXPORT mssg_t LoadMessageLA(const char* messageName)
    return machine->loadMessage(messageName);
 }
 
+EXTERN_DLL_EXPORT mssg_t LoadActionLA(const char* actionName)
+{
+   return machine->loadAction(actionName);
+}
+
 EXTERN_DLL_EXPORT void GetRandomSeedLA(SeedStruct& seed)
 {
    machine->initRandomSeed(seed);

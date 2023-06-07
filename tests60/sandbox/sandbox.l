@@ -3,8 +3,8 @@ import system'routines;
 //import system'dynamic'expressions;
 import extensions;
 //import extensions'scripting;
-//
-//symbol used : preloaded= new object[]{subj get, mssg set};
+
+symbol used : preloaded= new object[]{mssg get, mssg set};
 
 class Person
 {
@@ -185,16 +185,14 @@ public program()
 //        };
     
     var r := new Person();
-    
-//    console.printLine(
-//"Enter ""verb property value"" or press enter to stop
-//set FirstName | LastName Alex
-//get FirstName | LastName");
+  
+    console.printLine(
+"Enter ""verb property value"" or press enter to stop
+set FirstName | LastName Alex
+get FirstName | LastName");
 
-   string line := "set FirstName Alex";
-
-//    until(string line := console.write(">").readLine(), line == "")
-//    {
+    until(string line := console.write(">").readLine(), line == "")
+    {
         proceed(r, line.split());
-//    }
+    }
 }

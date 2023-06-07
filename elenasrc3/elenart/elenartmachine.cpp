@@ -168,6 +168,18 @@ mssg_t ELENARTMachine :: loadMessage(ustr_t messageName)
    return encodeMessage(actionRef, argCount, flags);
 }
 
+mssg_t ELENARTMachine :: loadAction(ustr_t actionName)
+{
+   pos_t argCount = 0;
+   ref_t flags = 0;
+
+   ref_t actionRef = loadSubject(actionName);
+   if (!actionRef)
+      return 0;
+
+   return encodeMessage(actionRef, argCount, flags);
+}
+
 size_t ELENARTMachine :: loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length)
 {
    // lazy load of debug data
@@ -232,7 +244,7 @@ void ELENARTMachine :: startThread(SystemEnv* env, void* entry, int index)
 {
    void* arg = env->th_table->slots[index].arg;
    // executing the program
-   int retVal = execute(env, entry, arg);
+   execute(env, entry, arg);
 
    // winding down thread
    //ExitThread(retVal);

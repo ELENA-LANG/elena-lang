@@ -15,7 +15,9 @@ define page_size64                   32;
 
 define ptr_size32                     4;
 define ptr_size64                     8;
-
+                                      
+define get_prop_mssg                0C1h;
+define set_prop_mssg                0C2h;
 
 define __realSize                     8;
 
@@ -1314,7 +1316,7 @@ procedure __messagename_loadbystr (self, s)
 
   open       (2),[]
 
-  call extern:LoadMessageNameLA(s)
+  call extern:LoadActionLA(s)
   cmp  n:0
   jne  labExit
 
@@ -1329,6 +1331,26 @@ labExit:
   save
 
   close      []
+
+end
+
+procedure __mssgname_getprop (self, mssg)
+
+  mov        n:1
+  loadv
+  or         n:get_prop_mssg
+  peek       sp:1
+  save
+
+end
+
+procedure __mssgname_setprop (self, mssg)
+
+  mov        n:2
+  loadv
+  or         n:set_prop_mssg
+  peek       sp:1
+  save
 
 end
 

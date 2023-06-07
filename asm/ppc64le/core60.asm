@@ -16,8 +16,8 @@ define CORE_THREAD_TABLE    2000Fh
 
 define ACTION_ORDER              9
 define ACTION_MASK            1E0h
-define ARG_MASK               05Fh
-define ARG_COUNT_MASK         01Fh
+define ARG_MASK               01Fh
+define ARG_ACTION_MASK        1DFh
 
 // ; TOC TABLE OFFSETS
 define toc_import            0000h
@@ -689,7 +689,7 @@ end
 // ; mlen
 inline % 15h
 
-  andi.   r14, r14, ARG_COUNT_MASK
+  andi.   r14, r14, ARG_MASK
 
 end
 

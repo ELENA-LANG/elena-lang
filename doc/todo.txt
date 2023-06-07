@@ -13,6 +13,7 @@ In development:
     * new opcode : fexp - ppc64le
     * (re)implement elt
     * ide : test screnario - create a new project, change it and save it
+    * elenavm : LoadActionLA
     * elenavm : implementing rest of dll api
 
      === Iteration 17 ===

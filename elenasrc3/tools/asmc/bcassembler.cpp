@@ -1011,6 +1011,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
          case ByteCode::MovN:
          case ByteCode::AndN:
+         case ByteCode::OrN:
          case ByteCode::AddN:
          case ByteCode::SubN:
          case ByteCode::CmpN:

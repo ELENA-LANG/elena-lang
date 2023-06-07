@@ -51,6 +51,10 @@ public sealed const struct MessageName
 
    private load(string name) : external(system'core_routines'__messagename_loadbystr);
 
+   private createGetProperty(ref Message mssg) : external(system'core_routines'__mssgname_getprop);
+
+   private createSetProperty(ref Message mssg) : external(system'core_routines'__mssgname_setprop);
+
    /// Creates a dynamic signature
    constructor(string s)
    {
@@ -60,6 +64,20 @@ public sealed const struct MessageName
    internal constructor load(Message mssg)
    {
       self.loadMessageName(mssg);
+   }
+
+   Message getPropertyMessage()
+   {
+      self.createGetProperty(ref Message message);
+        
+      ^ message
+   }
+
+   Message setPropertyMessage()
+   {
+      self.createSetProperty(ref Message message);
+        
+      ^ message
    }
 
    dispatch() : external(system'core_routines'__mssgname_dispatcher);
