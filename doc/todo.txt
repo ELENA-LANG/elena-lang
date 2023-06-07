@@ -9,8 +9,7 @@ In development:
     [!] vm terminal
     [!] ide vm console
 
-    * elenavm : https://github.com/ELENA-LANG/tutorials/tree/master/ExpressionTree1,
-      https://github.com/ELENA-LANG/tutorials/tree/master/ExpressionTree2
+    * elenavm : https://github.com/ELENA-LANG/tutorials/tree/master/ExpressionTree2
     * new opcode : fexp - ppc64le
     * (re)implement elt
     * ide : test screnario - create a new project, change it and save it
@@ -51,6 +50,7 @@ Backlog:
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
+    * ldoc : put the symbols in the alphabetic order
     * ide : save project as
     * Class Constants : review doc and implement if requiered
     * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
@@ -58,6 +58,7 @@ Backlog:
     * x86 : gui - starting - new project type
     * ide : before compiling, make sure the source file is saved
 
+    * ide debugger : fix screen flashing
     * switch expression
     * optimization : copy a sub array to another array
     * redesign switch statement : it should be possible to use as an expression as well

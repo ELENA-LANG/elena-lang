@@ -49,6 +49,14 @@ public sealed const struct MessageName
 
    private loadMessageName(Message mssg) : external(system'core_routines'__mssgname_load);
 
+   private load(string name) : external(system'core_routines'__messagename_loadbystr);
+
+   /// Creates a dynamic signature
+   constructor(string s)
+   {
+      self.load(s);
+   }
+
    internal constructor load(Message mssg)
    {
       self.loadMessageName(mssg);

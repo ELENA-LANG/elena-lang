@@ -498,7 +498,7 @@ internal singleton PrimitiveStringOperations
          char ch2 := s[index + i];
          if (ch == ch2)
          {
-            ^ i
+            ^ index + i
          };
 
          int len1 := ch2.Length;
@@ -592,7 +592,7 @@ internal singleton PrimitiveWideStringOperations
          char ch2 := s[index + i];
          if (ch == ch2)
          {
-            ^ i
+            ^ i + index
          };
 
          int len1 := ch2.Length;

@@ -1307,6 +1307,31 @@ procedure __mssgname_load(self, m)
 
 end
 
+procedure __messagename_loadbystr (self, s)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  call extern:LoadMessageNameLA(s)
+  cmp  n:0
+  jne  labExit
+
+  set        class : "system'InvalidArgumentException"
+  store      sp:0
+
+  set        mssgconst : "new[1]"
+  throw
+
+labExit:
+  peek       fp:self
+  save
+
+  close      []
+
+end
+
 procedure __mssgname_dispatcher
 
   tstn        FUNCTION_MESSAGE
