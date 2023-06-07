@@ -217,6 +217,8 @@ ELENA byte codes (or ecodes)
 
    xstore fp:i, {prefix:}r  - fp[i] := r
 
+   xstore i:i               - sp[0] := acc[i];
+
    xstore sp:i, {prefix:}r  - sp[i] := r
 
    xswap sp:i               - sp[0] <=> sp[i]

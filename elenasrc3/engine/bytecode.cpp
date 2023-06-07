@@ -45,7 +45,7 @@ const char* _fnOpcodes[256] =
    "nconf dp", "ftrunc dp", "dcopy", "or n", "mul n", "xadd dp", "xset fp", "fround dp",
 
    "save dp", "store fp", "save sp", "store sp", "xflush sp", "get i", "assign i", "xrefresh sp",
-   "peek fp", "peek sp", "lsave dp", "lsave sp", "lload dp", "xfill", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "peek fp", "peek sp", "lsave dp", "lsave sp", "lload dp", "xfill", "xstore i", OPCODE_UNKNOWN,
 
    "call", "call vt", "jump", "jeq", "jne", "jump vt", "xredirect mssg", "jlt",
    "jge", "jgr", "jle", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,

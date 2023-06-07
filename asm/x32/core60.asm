@@ -533,6 +533,13 @@ inline % 17h
 
 end
 
+// ; xassignsp
+inline % 117h
+
+  lea   ebx, [esp + 4]
+
+end
+
 // ; dtrans
 inline %18h
 
@@ -1430,6 +1437,13 @@ inline % 1ADh
   mov  edi, ebx
   mov  ecx, [esi]
   rep  stos
+
+end
+
+// ; xstorei
+inline % 0AEh
+
+  mov  esi, [ebx + __arg32_1]
 
 end
 

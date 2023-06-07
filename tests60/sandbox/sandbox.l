@@ -1,6 +1,6 @@
 import system'collections;
 import system'routines;
-//import system'dynamic'expressions;
+import system'dynamic'expressions;
 import extensions;
 //import extensions'scripting;
 
@@ -47,29 +47,29 @@ static verbs = new Map<string,object>()
                     .setAt("get",getProperty)
                     .setAt("set",setProperty);
 
-//// Solution 2
-//
-//getPropertyTree(target,name)
-//{
-//    auto prop := new MessageName(name);
-//    
-//    ^ Expression.GetProperty(prop, 
-//        Expression.Constant(target)).eval()
-//}
-//
-//setPropertyTree(target,name,value)
-//{
-//    auto prop := new MessageName(name);
-//    
-//    ^ Expression.SetProperty(prop, 
-//        Expression.Constant(target),
-//        Expression.Constant(value)).eval()
-//}
-//
-//static nodes = new Map<string,object>()
-//                    .setAt("get",getPropertyTree)
-//                    .setAt("set",setPropertyTree);
-//
+// Solution 2
+
+getPropertyTree(target,name)
+{
+    auto prop := new MessageName(name);
+    
+    ^ Expression.GetProperty(prop, 
+        Expression.Constant(target)).eval()
+}
+
+setPropertyTree(target,name,value)
+{
+    auto prop := new MessageName(name);
+    
+    ^ Expression.SetProperty(prop, 
+        Expression.Constant(target),
+        Expression.Constant(value)).eval()
+}
+
+static nodes = new Map<string,object>()
+                    .setAt("get",getPropertyTree)
+                    .setAt("set",setPropertyTree);
+
 //// Solution 3
 //
 //static nodes2 = new Map<string,object>()
@@ -169,10 +169,10 @@ public program()
     
 //    Solution =>
 //        1 {
-            proceed := closureSolution((word => verbs[word]));
+//            proceed := closureSolution((word => verbs[word]));
 //        }
 //        2 {
-//            proceed := closureSolution((word => nodes[word]))
+            proceed := closureSolution((word => nodes[word]));
 //        }
 //        3 {
 //            proceed := closureSolution((word => nodes2[word].compile(new RootExpressionScope())))
@@ -184,8 +184,8 @@ public program()
 //            proceed := classSolution(classTreeFromScript)            
 //        };
     
-    var r := new Person();
-  
+   var r := new Person();
+
     console.printLine(
 "Enter ""verb property value"" or press enter to stop
 set FirstName | LastName Alex

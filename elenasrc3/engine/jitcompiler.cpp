@@ -21,7 +21,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, compileBreakpoint, loadNop, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
-   loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
+   loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, compileXAssignSp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadNop,
 
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
@@ -49,7 +49,7 @@ CodeGenerator _codeGenerators[256] =
    loadFrameDispOp, loadFrameDispOp, loadNOp, loadNOp, loadNOp, loadFrameDispOp, loadFrameIndexOp, loadFrameDispOp,
 
    loadFrameDispOp, loadFrameIndexOp, loadStackIndexOp, loadStackIndexOp, loadStackIndexOp, loadFieldIndexOp, loadFieldIndexOp, loadStackIndexOp,
-   loadFrameIndexOp, loadStackIndexOp, loadFrameDispOp, loadStackIndexOp, loadFrameDispOp, loadROp, loadNop, loadNop,
+   loadFrameIndexOp, loadStackIndexOp, loadFrameDispOp, loadStackIndexOp, loadFrameDispOp, loadROp, loadFieldIndexOp, loadNop,
 
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadVMTIndexOp, loadMOp, compileJlt,
    compileJge, compileJgr, compileJle, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -90,7 +90,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 149;
+constexpr size_t bcCommandNumber = 150;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -122,7 +122,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::LLoadDP, ByteCode::XLoadArgSI, ByteCode::XLoad, ByteCode::XLLoad, ByteCode::XSetFP,
    ByteCode::XAddDP, ByteCode::SelULtRR, ByteCode::UDivDPN, ByteCode::FRoundDP, ByteCode::FAbsDP,
    ByteCode::FSqrtDP, ByteCode::FExpDP, ByteCode::FLnDP, ByteCode::FSinDP, ByteCode::FCosDP,
-   ByteCode::FArctanDP, ByteCode::FPiDP, ByteCode::FillIR, ByteCode::XFillR
+   ByteCode::FArctanDP, ByteCode::FPiDP, ByteCode::FillIR, ByteCode::XFillR, ByteCode::XStoreI
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
@@ -339,6 +339,16 @@ void elena_lang :: loadCode(JITCompilerScope* scope, void* code, ModuleBase* mod
 void elena_lang :: loadOp(JITCompilerScope* scope)
 {
    loadCode(scope, scope->compiler->_inlines[0][scope->code()], nullptr);
+}
+
+void elena_lang :: compileXAssignSp(JITCompilerScope* scope)
+{
+   int index = 0;
+
+   if (scope->stackOffset > 0)
+      index = 1;
+
+   loadCode(scope, scope->compiler->_inlines[index][scope->code()], nullptr);
 }
 
 void elena_lang :: loadSysOp(JITCompilerScope* scope)
@@ -3646,7 +3656,7 @@ void JITCompiler64 :: writeDump(MemoryWriter& writer, SectionInfo* sectionInfo)
 void JITCompiler64 :: writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode)
 {
    writer.writeDWord(category);
-   writer.writeDWord(getlength(value) + 9);
+   writer.writeDWord(getlength_pos(value) + 9);
    writer.writeString(value);
 
    if (virtualMode) {

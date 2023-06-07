@@ -149,6 +149,7 @@ namespace elena_lang
       friend void compileJgr(JITCompilerScope* scope);
       friend void compileDispatchMR(JITCompilerScope* scope);
       friend void compileHookDPR(JITCompilerScope* scope);
+      friend void compileXAssignSp(JITCompilerScope* scope);
 
       void loadCoreRoutines(
          LibraryLoaderBase* loader,
@@ -439,6 +440,7 @@ namespace elena_lang
    void compileJgr(JITCompilerScope* scope);
    void compileDispatchMR(JITCompilerScope* scope);
    void compileHookDPR(JITCompilerScope* scope);
+   void compileXAssignSp(JITCompilerScope* scope);
 }
 
 #endif

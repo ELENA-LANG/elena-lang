@@ -552,6 +552,13 @@ inline % 17h
 
 end
 
+// ; xassignsp
+inline % 117h
+
+  lea   rbx, [rsp + 8]
+
+end
+
 // ; dtrans
 inline %18h
 
@@ -1493,6 +1500,13 @@ inline % 1ADh
   mov  rdi, rbx
   mov  rcx, [r10]
   rep  stos
+
+end
+
+// ; xstorei
+inline % 0AEh
+
+  mov  r10, [rbx + __arg32_1]
 
 end
 

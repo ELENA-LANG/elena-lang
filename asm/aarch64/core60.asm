@@ -1684,6 +1684,14 @@ labEnd:
 
 end
 
+// ; xstorei
+inline % 0AEh
+
+  add     x11, x10, __arg12_1
+  ldr     x0, [x11]
+
+end
+
 // ; callr
 inline %0B0h
 

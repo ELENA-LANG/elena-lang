@@ -989,6 +989,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::GetI:
          case ByteCode::AllocI:
          case ByteCode::FreeI:
+         case ByteCode::XStoreI:
             return compileOpI(tokenInfo, writer, opCommand, false);
          case ByteCode::XHookDPR:
             return compileDDispR(tokenInfo, writer, opCommand, dataLocals, true);

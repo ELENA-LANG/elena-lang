@@ -120,6 +120,7 @@ namespace elena_lang
       LSaveSI        = 0xAB,
       LLoadDP        = 0xAC,
       XFillR         = 0xAD,
+      XStoreI        = 0xAE,
 
       CallR          = 0xB0,
       CallVI         = 0xB1,

@@ -1520,16 +1520,13 @@ procedure __saving_closure(obj, args)
   xflush     sp:0
   xflush     sp:1
 
-  open       (2),[]
-
   load
-  peek       fp:obj
-  store      sp:0
-  peek       fp:args
-  xassign
-  peek       sp:0
+  xassignsp
 
-  close      []
+  alloc      i:1
+  xstore     i:0
+  xassign
+  free       i:1
 
 end
 
@@ -1624,6 +1621,7 @@ labNext:
   jump       labNext
 
 labEnd:
+  peek       sp:0  
 
   close      []
   quit
