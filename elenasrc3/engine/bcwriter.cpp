@@ -124,6 +124,13 @@ void resendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::CallVI, vmtIndex);
 }
 
+void strongResendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
+
+   tape.write(ByteCode::CallMR, node.arg.reference, targetRef | mskVMTRef);
+}
+
 void redirectOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    if (node.arg.reference)
@@ -1547,7 +1554,7 @@ ByteCodeWriter::Saver commands[] =
    intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject, peekArgument,
 
    terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning, savingLInStack, uintCondOp,
-   uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp
+   uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

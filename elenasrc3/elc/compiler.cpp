@@ -9484,7 +9484,7 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
          SyntaxNode targetNode = node.findChild(SyntaxKey::Target);
          assert(targetNode != SyntaxKey::None);
 
-         writer.newNode(BuildKey::DirectResendOp, message);
+         writer.newNode(BuildKey::StrongRedirectOp, message);
          writer.appendNode(BuildKey::Type, targetNode.arg.reference);
          writer.closeNode();
       }
@@ -9624,7 +9624,7 @@ void Compiler :: compileDirectResendCode(BuildTreeWriter& writer, CodeScope& cod
    if (!disptachTarget)
       assert(false);
 
-   writer.newNode(BuildKey::DirectResendOp, dispatchMessage);
+   writer.newNode(BuildKey::StrongRedirectOp, dispatchMessage);
    writer.appendNode(BuildKey::Type, disptachTarget);
    writer.closeNode();
 }
@@ -10171,12 +10171,9 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
             encodeMessage(scope.module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
          writer.closeNode();
 
-         writer.newNode(BuildKey::DirectResendOp, scope.moduleScope->buildins.dispatch_message);
+         writer.newNode(BuildKey::StrongRedirectOp, scope.moduleScope->buildins.dispatch_message);
          writer.appendNode(BuildKey::Type, classScope->info.header.parentRef);
          writer.closeNode();
-
-         // !! do we need it?
-         writer.appendNode(BuildKey::RedirectOp);
       }
       // if it is open arg generic without redirect statement
       else if (withOpenArgGenerics) {
@@ -10216,8 +10213,13 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
          writer.closeNode();
          // select the target
          writeObjectInfo(writer, exprScope, tempTarget);
+
          // call the message
-         writer.appendNode(BuildKey::ResendOp);
+         writer.newNode(BuildKey::StrongResendOp, scope.moduleScope->buildins.dispatch_message);
+         writer.appendNode(BuildKey::Type, classScope->info.header.parentRef);
+         writer.closeNode();
+         //writer.appendNode(BuildKey::ResendOp);
+
          // close frame
          writer.appendNode(BuildKey::CloseFrame);
 

@@ -175,7 +175,7 @@ public program()
 //            proceed := closureSolution((word => nodes[word]));
 //        }
 //        3 {
-            proceed := closureSolution((word => nodes2[word].compile(new RootExpressionScope())));
+//            proceed := closureSolution((word => nodes2[word].compile(new RootExpressionScope())));
 //        }
 //        4 {
 //            proceed := classSolution(classTree)
@@ -183,16 +183,36 @@ public program()
 //        5{
 //            proceed := classSolution(classTreeFromScript)            
 //        };
-    
-   var r := new Person();
+  
+      var tt := Expression.ClassReference("system'MessageName");
 
-    console.printLine(
-"Enter ""verb property value"" or press enter to stop
-set FirstName | LastName Alex
-get FirstName | LastName");
+//         var o := Expression.MessageCall( 
+//                        new Message("setPropertyMessage[1]"),
+//                        Expression.New(
+//                           Expression.ClassReference("system'MessageName"),
+//                           Expression.Variable("name")
+//                        )
+//                     );
 
-    until(string line := console.write(">").readLine(), line == "")
-    {
-        proceed(r, line.split());
-    }
+  
+//   var r := new Person();
+
+   //proceed(r, "set FirstName Alex".split());
+
+//   var op := nodes2["set"];
+
+//   var t := op.compile(new RootExpressionScope());
+
+//   t(r,"Alex");
+
+
+//    console.printLine(
+//"Enter ""verb property value"" or press enter to stop
+//set FirstName | LastName Alex
+//get FirstName | LastName");
+//
+//    until(string line := console.write(">").readLine(), line == "")
+//    {
+//        proceed(r, line.split());
+//    }
 }
