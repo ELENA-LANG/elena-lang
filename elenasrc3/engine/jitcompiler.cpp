@@ -926,6 +926,7 @@ void elena_lang::loadIROp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case NARG_1:
+         case ARG32_1:
             writer->writeDWord(scope->command.arg1);
             break;
          case NARG16_1:

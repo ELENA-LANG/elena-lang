@@ -9958,6 +9958,8 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
    bool newFrame = false;
    if (current == SyntaxKey::ResendDispatch || current == SyntaxKey::RedirectDispatch) {
       // do not create a frame for resend operation
+      // the object should not be created, because of redirecting
+      isDefConvConstructor = false;
    }
    else if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
       // new stack frame
