@@ -180,7 +180,8 @@ namespace elena_lang
       bool compileCloseOpN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
          int dataSize, ReferenceMap& constants);
       bool compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command,
-         ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants, int& dataSize);
+         ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants, 
+         int& dataSize);
       bool compileCallExt(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
          ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
 

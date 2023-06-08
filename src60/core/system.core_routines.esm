@@ -1530,6 +1530,17 @@ procedure __saving_closure(obj, args)
 
 end
 
+procedure __local_closure(obj, args)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  load
+  set        fp:0
+  xget
+
+end
+
 procedure __alloc_closure
 
   load
@@ -1549,6 +1560,34 @@ procedure __assign_closure
   xassign
 
   free       i:1
+
+end
+
+procedure __dynamicmssg_closure
+
+  xflush     sp:0
+  xflush     sp:1
+
+  load
+  set        fp:0
+  xget
+  load
+  peek       sp:0
+  jump       vt:0
+
+end
+
+procedure __exit_closure
+
+  xflush     sp:0
+  xflush     sp:1
+
+  peek       sp:0
+
+  xopen      (32),[target],[index,len,mssg]
+
+  load       dp:len
+  save       dp:index 
 
 end
 

@@ -78,6 +78,14 @@ public template for<initExpr,condExpr,stepExpr>(loopBody) : __included(statement
    $rep cast bool(condExpr) ? { loopBody; stepExpr; }
 }
 
+public template for<init_expr1, init_expr2,condExpr,step_expr1, step_expr2>(loopBody) : __included(statementTemplates)
+{
+   init_expr1;
+   init_expr2;
+
+   $rep cast bool(condExpr) ? { loopBody; step_expr1; step_expr2; }
+}
+
 // --- try:catch ---
 
 public template try::catch(try_block,catch_block) : __included(statementTemplates)
@@ -115,7 +123,7 @@ public template operator::alt<identifier>(expr) : __included(statementTemplates)
 }
 
 // .!
-public template operator::ifnil<identifier>(expr) : __included(statementTemplates)
+public template operator::else<identifier>(expr) : __included(statementTemplates)
 {
     (nil == identifier) ?
     {
@@ -123,4 +131,11 @@ public template operator::ifnil<identifier>(expr) : __included(statementTemplate
     };
     
     expr
+}
+
+// .?
+public template operator::ifnil<identifier>(expr) : __included(statementTemplates)
+{
+    cast bool(nil != identifier) ?
+      { expr } : { nil };
 }

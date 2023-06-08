@@ -716,7 +716,8 @@ void ByteCodeAssembler :: readParameterList(ScriptToken& tokenInfo, ReferenceMap
 }
 
 bool ByteCodeAssembler :: compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& writer,
-   ByteCommand& command, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants, int& dataSize)
+   ByteCommand& command, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants, 
+   int& dataSize)
 {
    int argCount = 0;
    if (tokenInfo.compare("(")) {
@@ -940,6 +941,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
       switch (opCommand.code) {
          case ByteCode::CallExtR:
             return compileCallExt(tokenInfo, writer, opCommand, parameters, locals, dataLocals, constants);
+         case ByteCode::XOpenIN:
          case ByteCode::OpenIN:
          case ByteCode::OpenHeaderIN:
             return compileOpenOp(tokenInfo, writer, opCommand, locals, dataLocals, constants, dataSize);

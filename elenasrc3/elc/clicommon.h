@@ -387,6 +387,7 @@ enum class ExpressionAttribute : pos64_t
    Variadic          = 0x00004000000,
    WithVariadicArg   = 0x00008000000,
    RetrievingType    = 0x00010000000,
+   RetValExpected    = 0x00020000000,
    Superior          = 0x10000000000,
    Lookahead         = 0x20000000000,
    NoDebugInfo       = 0x40000000000,

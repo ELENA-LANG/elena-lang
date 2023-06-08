@@ -58,7 +58,7 @@ CodeGenerator _codeGenerators[256] =
    loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadArgIndexOp, loadROp, loadSysOp,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop, loadNop,
-   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadRROp,
+   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, compileXOpen, loadRROp,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp2, compileHookDPR, loadNewOp,
    loadDPNOp, loadDPNOp, loadONOp, loadONOp, loadVMTROp, loadMROp, loadRROp, loadRROp,
@@ -2405,6 +2405,12 @@ void elena_lang::compileOpen(JITCompilerScope* scope)
    scope->stackOffset = 0;
 
    loadIndexNOp(scope);
+}
+
+void elena_lang :: compileXOpen(JITCompilerScope* scope)
+{
+   scope->frameOffset = scope->compiler->calcFrameOffset(scope->command.arg2);
+   scope->stackOffset = 0;
 }
 
 void elena_lang::compileBreakpoint(JITCompilerScope* scope)

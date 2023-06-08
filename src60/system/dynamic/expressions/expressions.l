@@ -3,17 +3,58 @@ import system'collections;
 
 namespace expressions
 {
+   const int mode_lcl   = 1;
+
+   symbol used : preloaded = new object[]{Expression/*,DynamicSingleton*//*,DynamicExpressionSymbol,SymbolCollection,DynamicImport*/};
+
+   public class ScopeIdentifier
+   {
+      string Name : prop;
+      int Mode : prop;
+        
+      static ScopeIdentifier Variable(string name)
+         = new ScopeIdentifier(name, mode_lcl);
+        
+      static ScopeIdentifier TempVariable(int index)
+         = new ScopeIdentifier(index.toPrintable(), mode_lcl);
+        
+      bool equal(ScopeIdentifier var)
+      {
+         if (var.Name == Name && var.Mode == Mode)
+         {
+            ^ true
+         };
+            
+         ^ false;
+      }
+        
+      constructor(string name, int mode)
+      {
+         Name := name;
+         Mode := mode
+      }
+   }
+
+
    public interface ExpressionScope
    {
+      abstract bool reserve(int level);
+
       get abstract int Reserved();
+
+      abstract int allocTempVariable();
+
+      get abstract int ScopeLevel();
+
+      abstract TapeFunction resolve(ScopeIdentifier ident, bool assignMode);
+
+      abstract declare(ScopeIdentifier variable);
    }
 
    public class RootExpressionScope : ExpressionScope
    {
       Reference<int>  reserved := 0;
       ExpressionScope parent;
-
-      int Reserved = *reserved;
 
       constructor()
       {
@@ -23,6 +64,38 @@ namespace expressions
       {
          this parent := parent
       } 
+
+      int Reserved = *reserved;
+
+      bool reserve(int level)
+      {
+         int current := *reserved;
+         if (current < level)
+         {
+            reserved.Value := level
+         };
+            
+         ^ true;
+      }        
+
+      int allocTempVariable()
+      {
+         reserved.append(1);
+            
+         ^ *reserved;
+      }
+        
+      int ScopeLevel = *reserved;
+        
+      TapeFunction resolve(ScopeIdentifier variable, bool assignMode) 
+      {
+         ^ parent.?resolve(variable, assignMode)
+      }
+    
+      declare(ScopeIdentifier variable)
+      {
+         ^ nil
+      }
    }
 
    public interface Expression
@@ -41,6 +114,27 @@ namespace expressions
 
       static Expression SetProperty(MessageName name, Expression t, Expression v)
          = SetPropertyExpression.new(name, t, v);
+
+      static Expression Closure(Expression body)
+         = new ClosureExpression(body);        
+              
+      static Expression Closure(Expression body, params ScopeIdentifier[] variables)
+         = ClosureExpression.new(body, params variables);        
+
+      static Expression CodeBlock(params Expression[] statements)
+         = CodeblockExpression.new(params statements);
+
+      static Expression SetDynamicProperty(Expression m, Expression t, Expression v)
+         = SetDynamicPropertyExpression.new(m, t, v);
+
+      static Expression GetDynamicProperty(Expression m, Expression t)
+         = GetDynamicPropertyExpression.new(m, t);
+
+      static Expression Return(Expression expr)
+         = new ReturnExpression(expr);
+
+      static Expression Variable(string variable)
+         = new VariableExpression(variable);
 
       get abstract bool IsOperation();
 
@@ -289,5 +383,347 @@ namespace expressions
       }
    }
 
+   public class ClosureExpression : Expression
+   {
+      ScopeIdentifier[] parameters;
+      Expression        body;
+        
+      constructor(Expression body)
+      {
+         this parameters := new ScopeIdentifier[](0);
+            
+         this body := body;
+      } 
+        
+      constructor new(Expression body, params ScopeIdentifier[] params)
+      {
+         // revese the order
+         int len := params.Length;
+         this parameters := new ScopeIdentifier[](len);
+         for (int i := 0, int j := len - 1, i < len, i += 1, j -= 1)
+         {
+            parameters[i] := params[j]
+         };
+            
+         this body := body;
+      } 
+
+      bool IsOperation = true;
+     
+      int prepare(ExpressionScope scope)
+      {
+         auto closureScope := new ExpressionScope
+         {
+            int ScopeLevel = parameters.Length;
+                
+            bool reserve(int index)
+               = scope.reserve(index);
+                
+            int allocTempVariable()
+               = scope.allocTempVariable();
+                
+            int Reserved 
+               = scope.Reserved;
+                
+            TapeFunction resolve(ScopeIdentifier variable, bool assignMode)
+            {
+               int len := parameters.Length;
+               for(int i := 0, i < len, i+=1) {
+                  if (variable == parameters[i])
+                  {
+                     int index := i + 1;
+                            
+                     if (assignMode) 
+                     {
+                        NotSupportedException.raise()
+                     }
+                     else 
+                     {
+                        ^ new LocalFunction(index)
+                     };                                
+                  }
+               };
+                    
+               ^ scope.resolve(variable, assignMode)
+            }
+        
+            declare(ScopeIdentifier variable)
+            {
+            }            
+         };
+
+         ^ body.prepare(closureScope);
+      }
+     
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {    
+         body.saveTo(list, scope, index);
+      }    
+   }      
+
+   public class CodeblockExpression : Expression
+   {
+      Expression[]          statements;
+      List<ScopeIdentifier> variables;
+        
+      constructor new(params Expression[] statements)
+      {
+         this statements := statements
+      }
+
+      constructor new(Expression[] statements)
+      {
+         this statements := statements
+      }
+
+      bool IsOperation = true;
+        
+      int prepare(ExpressionScope scope)
+      {
+         variables := new List<ScopeIdentifier>();
+            
+         auto codeScope := new ExpressionScope
+         {
+            int Reserved = scope.Reserved;
+                
+            bool reserve(int level)
+               = scope.reserve(level);
+                
+            int allocTempVariable()
+            {
+               int index := variables.Length + 1;
+               scope.reserve(index);
+                                        
+               index := index + scope.ScopeLevel;
+                    
+               variables.append(ScopeIdentifier.TempVariable(index));
+                    
+               ^ index
+            }
+                
+            TapeFunction resolve(ScopeIdentifier variable, bool assignMode)
+            {
+               int prevLevel := scope.ScopeLevel;
+               int len := variables.Length;
+               for(int i := 0, i < len, i+=1) {
+                  if (variable == variables[i])
+                  {
+                     int index := i + 1;
+                     index += prevLevel;
+
+                     if (assignMode) 
+                     {
+                        ^ new AssigningFunction(index)
+                     }
+                     else 
+                     {
+                        ^ new LocalFunction(index)
+                     };                                
+                  }
+               };
+                    
+               ^ scope.resolve(variable, assignMode)
+            }                
+               
+            int ScopeLevel = scope.ScopeLevel + variables.Length;
+        
+            declare(ScopeIdentifier variable)
+            {
+               int index := variables.Length + 1;
+               scope.reserve(index);
+                    
+               variables.append(variable)
+            }            
+         };
+
+         int maxStackLevel := 0;
+         int len := statements.Length;
+         for(int i := 0, i < len, i+=1) {
+            int current := statements[i].prepare(codeScope);
+            if (current > maxStackLevel)
+               { maxStackLevel := current }
+         };
+            
+         ^ maxStackLevel
+      }
+        
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         int len := statements.Length;
+         for(int i := 0, i < len, i+=1) {
+            statements[i].saveTo(list, scope, 0);
+         };
+
+         if (index > 0)
+            { list.append(new SavingFunction(index)) };
+      }      
+   }
+
+   public class SetDynamicPropertyExpression : Expression
+   {
+      Expression _property;
+      Expression  _target;
+      Expression  _value;
+      int         _tempVariable;  
+        
+      constructor(Expression t, Expression p, Expression v)
+            <= new(p, t, v);
+            
+      constructor new(Expression p, Expression t, Expression v)
+      {
+         _property := Expression.MessageCall( 
+                        new Message("setPropertyMessage[1]"),
+                        Expression.New(
+                           Expression.ClassReference("system'MessageName"),
+                           p
+                        )
+                     );
+            
+         _target := t;
+         _value := v
+      }
+        
+      bool IsOperation = true;
+        
+      int prepare(ExpressionScope scope)
+      {
+         _tempVariable := scope.allocTempVariable();
+            
+         int maxStackLevel := _property.prepare(scope);
+
+         int current := _target.prepare(scope);
+         if (current > maxStackLevel)
+            { maxStackLevel := current };
+
+         current := _value.prepare(scope);
+         if (current > maxStackLevel)
+            { maxStackLevel := current };
+                                    
+         ^ maxStackLevel;
+      }
+        
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         _property.saveTo(list, scope, 0);
+         list.append(new AssigningFunction(_tempVariable));                       
+            
+         _value.saveTo(list, scope, 1);
+         _target.saveTo(list, scope, 0);
+
+         list.append(new DynamicMessageFunction(_tempVariable));
+            
+         if (index > 0) {
+            list.append(new SavingFunction(index));
+         }
+      }
+   }
+
+   public class GetDynamicPropertyExpression : Expression
+   {
+      Expression   _property;
+      Expression   _target;
+      int          _tempVariable;  
+        
+      constructor(Expression t, Expression p)
+         <= new(p, t);
+            
+      constructor new(Expression p, Expression t)
+      {
+         _property := Expression.MessageCall( 
+                           new Message("getPropertyMessage[1]"),
+                           Expression.New(
+                              Expression.ClassReference("system'MessageName"),
+                              p
+                           )
+                        );
+            
+         _target := t
+      }
+        
+      bool IsOperation = true;
+        
+      int prepare(ExpressionScope scope)
+      {
+         _tempVariable := scope.allocTempVariable();
+            
+         int maxStackLevel := _property.prepare(scope);
+         int current := _target.prepare(scope);
+         if (current > maxStackLevel)
+            { maxStackLevel := current };
+            
+         ^ maxStackLevel;
+      }
+
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         _property.saveTo(list, scope, 0);
+         list.append(new AssigningFunction(_tempVariable));                       
+            
+         _target.saveTo(list, scope, 0);
+
+         list.append(new DynamicMessageFunction(_tempVariable));
+            
+         if (index > 0) {
+            list.append(new SavingFunction(index));
+         }
+      }
+   }
+
+   public class ReturnExpression : Expression
+   {
+      Expression expr;
+        
+      constructor(Expression expr)
+      {
+         this expr := expr
+      }
+        
+      bool IsOperation = false;
+
+      int prepare(ExpressionScope scope)
+         = expr.prepare(scope);
+
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         expr.saveTo(list, scope, 0);
+         list.append(JumpToEnd)
+      }
+   }
+
+   public class IdentifierExpression : Expression
+   {
+      ScopeIdentifier ident;
+      TapeFunction    local;
+        
+      constructor(ScopeIdentifier ident)
+      {
+         this ident := ident;
+      }
+
+      bool IsOperation = false;
+
+      int prepare(ExpressionScope scope)
+      {
+         local := scope.resolve(ident, false);
+            
+         ^ 1
+      }
+                
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         list.append(local);
+         if (index > 0) {
+            list.append(new SavingFunction(index));
+         }
+      }
+   }
+
+   public class VariableExpression : IdentifierExpression
+   {
+      constructor(string name)
+      {
+         this ident := ScopeIdentifier.Variable(name)
+      }
+    }
 }
 

@@ -161,6 +161,7 @@ namespace elena_lang
       INotDPN        = 0xDB,
       IShlDPN        = 0xDC,
       IShrDPN        = 0xDD,
+      XOpenIN        = 0xDE,
       SelULtRR       = 0xDF,
 
       CopyDPN        = 0xE0,
