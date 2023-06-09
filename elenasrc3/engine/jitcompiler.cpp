@@ -45,7 +45,7 @@ CodeGenerator _codeGenerators[256] =
    loadROp, loadFrameDispOp, loadLenOp, loadIndexOp, loadROp, loadROp, loadStackIndexOp, loadStackIndexOp,
    loadMOp, loadNOp, loadFrameDispOp, loadFrameDispOp, loadNOp, loadNOp, loadFrameIndexOp, loadROp,
 
-   loadNOp, compileClose, loadIndexOp, loadIndexOp, loadNOp, loadNOp, loadNOp, loadNOp,
+   loadNOp, compileClose, compileAlloc, compileFree, loadNOp, loadNOp, loadNOp, loadNOp,
    loadFrameDispOp, loadFrameDispOp, loadNOp, loadNOp, loadNOp, loadFrameDispOp, loadFrameIndexOp, loadFrameDispOp,
 
    loadFrameDispOp, loadFrameIndexOp, loadStackIndexOp, loadStackIndexOp, loadStackIndexOp, loadFieldIndexOp, loadFieldIndexOp, loadStackIndexOp,
@@ -2414,6 +2414,26 @@ void elena_lang :: compileXOpen(JITCompilerScope* scope)
    scope->stackOffset = 0;
 }
 
+void elena_lang :: compileAlloc(JITCompilerScope* scope)
+{
+   if (scope->command.arg1 > 0 && scope->stackOffset > 0) {
+      scope->stackOffset = 0;
+      scope->inlineMode = true;
+   }
+
+   loadIndexOp(scope);
+}
+
+void elena_lang :: compileFree(JITCompilerScope* scope)
+{
+   loadIndexOp(scope);
+
+   if (scope->inlineMode) {
+      scope->stackOffset = scope->constants->unframedOffset;
+      scope->inlineMode = false;
+   }
+}
+
 void elena_lang::compileBreakpoint(JITCompilerScope* scope)
 {
    if (scope->withDebugInfo)
@@ -2611,6 +2631,7 @@ JITCompilerScope :: JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* c
    this->stackOffset = constants->unframedOffset;
    this->frameOffset = 0;
    this->withDebugInfo = compiler->isWithDebugInfo();
+   this->inlineMode = false;
 }
 
 // --- JITCompiler ---

@@ -139,11 +139,11 @@ namespace expressions
       static Expression ClassReference(string s)
          = new ConstantExpression(new ClassReference(s));
 
-      static Expression New(Expression t)
-         = new MessageCallExpression(t, "#constructor");
+      static Expression New(object t)
+         = new NewExpression(t);
            
-      static Expression New(Expression t, Expression p0)
-         = new MessageCallExpression(t, "#constructor", p0);
+      static Expression New(object t, Expression p0)
+         = new NewExpression(t, p0);
 
       get abstract bool IsOperation();
 
@@ -195,6 +195,36 @@ namespace expressions
          }
          else {
             target.saveTo(list, scope, 0)
+         };
+                                    
+         list.append(operation);
+      }
+
+      internal static saveFunctionCallTo(List<TapeFunction> list, ExpressionScope scope, 
+                                            Expression[] arguments, TapeFunction operation)
+      {
+         int len := arguments.Length;
+         Queue<Expression> tempVariables := nil;
+            
+         for (int i := 0, i < len, i += 1) {
+            if (arguments[i].IsOperation) {
+               int tempVar := scope.allocTempVariable();
+               tempVar += scope.ScopeLevel;
+                                    
+               arguments[i].saveTo(list, scope, 0);
+               list.append(new AssigningFunction(tempVar));
+                
+               tempVariables.!push(Expression.VariableByIndex(tempVar));
+            }
+         };
+            
+         for (int i := 0, i < len, i += 1) {
+            if (arguments[i].IsOperation) {
+               tempVariables.pop().saveTo(list, scope, i + 1) 
+            }
+            else {
+               arguments[i].saveTo(list, scope, i) 
+            }
          };
                                     
          list.append(operation);
@@ -639,7 +669,7 @@ namespace expressions
          _property := Expression.MessageCall( 
                         new Message("setPropertyMessage[1]"),
                         Expression.New(
-                           Expression.ClassReference("system'MessageName"),
+                           system'MessageName,
                            p
                         )
                      );
@@ -697,7 +727,7 @@ namespace expressions
          _property := Expression.MessageCall( 
                            new Message("getPropertyMessage[1]"),
                            Expression.New(
-                              Expression.ClassReference("system'MessageName"),
+                              system'MessageName,
                               p
                            )
                         );
@@ -789,6 +819,105 @@ namespace expressions
       {
          this ident := ScopeIdentifier.Variable(name)
       }
-    }
+   }
+
+   // --- NewExpression
+
+   public class NewExpression : Expression
+   {
+      Message      _message;
+      object       _target;
+      Expression[] _arguments;
+
+      constructor new(object t)
+      {
+         _message := new Message("#constructor[0]");
+         _target := t;
+         _arguments := new Expression[](0);
+      }
+
+      constructor new(object t, params Expression[] arguments)
+      {
+         int len := arguments.Length;
+
+         _message := new Message("#constructor[" + len.toPrintable() + "]");
+         _target := t;
+         _arguments := arguments;
+      }
+
+      constructor(object t)
+         <= new(t);
+        
+      constructor(object t, Expression p1)
+         <= new(t, p1);
+        
+      constructor(object t, Expression p1, Expression p2)
+         <= new(t, p1, p2);
+        
+      constructor(object t, string message, Expression p1, Expression p2, Expression p3)
+         <= new(t, p1, p2, p3);
+        
+      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4)
+         <= new(t, p1, p2, p3, p4);
+        
+      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5)
+         <= new(t, p1, p2, p3, p4, p5);
+        
+      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6)
+         <= new(t, p1, p2, p3, p4, p5, p6);
+        
+      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7)
+         <= new(t, p1, p2, p3, p4, p5, p6, p7);
+        
+      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8)
+         <= new(t, p1, p2, p3, p4, p5, p6, p7, p8);
+        
+      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
+         <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9);
+        
+      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
+         <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+        
+      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11)
+         <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
+        
+      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12)
+         <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+
+      bool IsOperation = true;
+
+      int prepare(ExpressionScope scope)
+      {
+         int len := _arguments.Length;
+         int maxStackSize := len + 1;
+            
+         for(int i := 0, i < len, i+=1) {
+            int argStackSize := _arguments[i].prepare(scope);
+            if (argStackSize > maxStackSize)
+               { maxStackSize := argStackSize; }
+         };
+
+         ^ maxStackSize
+      }
+
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         Expression.saveFunctionCallTo(list, scope, _arguments, ExtensionMessageFunction.load(_message, _target));                                                            
+         if (index > 0) {
+            list.append(new SavingFunction(index));
+         }
+      }
+   }
+
 }
 

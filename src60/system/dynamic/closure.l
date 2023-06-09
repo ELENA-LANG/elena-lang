@@ -42,6 +42,28 @@ public struct MessageFunction : TapeFunction
    mixin function(params object[] args) : external(system'core_routines'__mssg_closure);
 }
 
+// --- ExtensionMessageFunction ---
+
+public class ExtensionMessageFunction : TapeFunction
+{
+   Message message;
+   Object  target;
+    
+   constructor(string message, object target)
+      <= load(new Message(message), target);
+    
+   constructor load(string message, object target)
+      <= load(new Message(message), target);
+    
+   constructor load(Message message, object target)
+   {
+      this message := message;
+      this target := target
+   }
+    
+   mixin function(params object[] args) : external(system'core_routines'__ext_closure);
+}
+
 // --- SavingFunction ---
 
 public struct SavingFunction : TapeFunction

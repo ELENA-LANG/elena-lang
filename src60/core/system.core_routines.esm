@@ -1515,6 +1515,25 @@ procedure __mssg_closure
 
 end
 
+procedure __ext_closure
+
+  xflush     sp:0
+  xflush     sp:1
+
+  alloc     i:1
+  xstore    i:1
+  get       i:0
+  load
+  or        n:FUNCTION_MESSAGE
+  peek      sp:0
+  free      i:1
+
+  xrefresh  sp:0
+
+  jump      vt:0
+
+end
+
 procedure __saving_closure(obj, args)
 
   xflush     sp:0

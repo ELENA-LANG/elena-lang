@@ -4007,6 +4007,15 @@ ObjectInfo Compiler :: boxVariadicArgument(BuildTreeWriter& writer, ExprScope& s
    writeObjectInfo(writer, scope, destLocal);
    writer.appendNode(BuildKey::CopyingArr);
 
+   if (info.typeInfo.typeRef && info.typeInfo.typeRef != typeRef) {
+      // if the conversion is required
+      ObjectInfo convInfo = convertObject(writer, scope, {}, destLocal, info.typeInfo.typeRef);
+
+      compileAssigningOp(writer, scope, destLocal, convInfo);
+
+      destLocal.typeInfo = convInfo.typeInfo;
+   }
+
    return destLocal;
 }
 

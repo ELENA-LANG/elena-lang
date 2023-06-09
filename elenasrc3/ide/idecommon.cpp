@@ -15,6 +15,8 @@ void* ContextBrowserBase :: addOrUpdate(WatchContext* context, ustr_t variableNa
 {
    void* item = findWatchNodeStartingWith(context, variableName);
    if (item != nullptr) {
+      clearNode(item);
+
       editWatchNode(item, variableName, className, context->address);
    }
    else item = addWatchNode(context->root, variableName, className, context->address);

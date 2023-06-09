@@ -49,6 +49,7 @@ namespace elena_lang
       ByteCommand          command;
       JITConstants*        constants;
 
+      bool                 inlineMode;
       bool                 withDebugInfo;
       ref_t                frameOffset;
       ref_t                stackOffset;
@@ -137,6 +138,8 @@ namespace elena_lang
       friend void loadIOp(JITCompilerScope* scope);
       friend void loadIROp(JITCompilerScope* scope);
 
+      friend void compileAlloc(JITCompilerScope* scope);
+      friend void compileFree(JITCompilerScope* scope);
       friend void compileBreakpoint(JITCompilerScope* scope);
       friend void compileClose(JITCompilerScope* scope);
       friend void compileOpen(JITCompilerScope* scope);
@@ -429,6 +432,8 @@ namespace elena_lang
    void loadIOp(JITCompilerScope* scope);
    void loadIROp(JITCompilerScope* scope);
 
+   void compileAlloc(JITCompilerScope* scope);
+   void compileFree(JITCompilerScope* scope);
    void compileClose(JITCompilerScope* scope);
    void compileOpen(JITCompilerScope* scope);
    void compileXOpen(JITCompilerScope* scope);
