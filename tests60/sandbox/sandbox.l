@@ -175,7 +175,7 @@ public program()
 //            proceed := closureSolution((word => nodes[word]));
 //        }
 //        3 {
-//            proceed := closureSolution((word => nodes2[word].compile(new RootExpressionScope())));
+            proceed := closureSolution((word => nodes2[word].compile(new RootExpressionScope())));
 //        }
 //        4 {
 //            proceed := classSolution(classTree)
@@ -185,40 +185,14 @@ public program()
 //        };
 
    var r := new Person();
-   var e := Expression.Closure(
-               Expression.CodeBlock(
-                  Expression.SetDynamicProperty(
-                     Expression.Variable("name"),
-                     Expression.Variable("target"),
-                     Expression.Variable("value")
-                  )                                    
-               ),
-               ScopeIdentifier.Variable("target"),
-               ScopeIdentifier.Variable("name"),
-               ScopeIdentifier.Variable("value"));
 
-   var t := e.compile(new RootExpressionScope());
-   t(r, "Alex");
+    console.printLine(
+"Enter ""verb property value"" or press enter to stop
+set FirstName | LastName Alex
+get FirstName | LastName");
 
-
-//   var r := new Person();
-
-//   proceed(r, "set FirstName Alex".split());
-
-//   var op := nodes2["set"];
-
-//   var t := op.compile(new RootExpressionScope());
-
-//   t(r,"Alex");
-
-
-//    console.printLine(
-//"Enter ""verb property value"" or press enter to stop
-//set FirstName | LastName Alex
-//get FirstName | LastName");
-//
-//    until(string line := console.write(">").readLine(), line == "")
-//    {
-//        proceed(r, line.split());
-//    }
+    until(string line := console.write(">").readLine(), line == "")
+    {
+        proceed(r, line.split());
+    }
 }

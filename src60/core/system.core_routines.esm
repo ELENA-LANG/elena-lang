@@ -1556,14 +1556,23 @@ procedure __local_closure(obj, args)
 
   load
   set        fp:0
+  neg
   xget
 
 end
 
 procedure __alloc_closure
 
+  xflush     sp:0
+  xflush     sp:1
+
   load
   system     5
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+  peek       sp:0
 
 end
 
@@ -1576,9 +1585,11 @@ procedure __assign_closure
   store      sp:0
 
   set        fp:0
+  neg
   xassign
 
   free       i:1
+  peek       sp:0
 
 end
 
@@ -1589,6 +1600,7 @@ procedure __dynamicmssg_closure
 
   load
   set        fp:0
+  neg
   xget
   load
   peek       sp:0
@@ -1650,16 +1662,38 @@ procedure __closuretape
   // ; copy the call stack
   load       dp:mssg
   mlen
+
+  set        fp:2
+  store      sp:2
+
+  set        fp:-1
+  store      sp:1
+
+  cmp        n:0
+  jeq        labCopyEnd
+
+labCopy:
+  add        n:-1
+
+  peek       sp:1
+  xget
+  store      sp:0
+
+  neg
+  peek       sp:2
+  xassign
+  neg
+
+  cmp        n:0
+  jne        labCopy
+
+labCopyEnd:
   xassignsp
   alloc      i:1
   store      sp:0
-  set        fp:1
-  swap       sp:0
-  dtrans
-  swap       sp:0
   set        terminator
   swap       sp:0
-  xassign
+  xassign    i:0
   free       i:1
 
 labNext:

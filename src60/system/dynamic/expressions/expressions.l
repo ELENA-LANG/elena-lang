@@ -494,10 +494,11 @@ namespace expressions
       {
          // revese the order
          int len := params.Length;
-         this parameters := new ScopeIdentifier[](len);
-         for (int i := 0, int j := len - 1, i < len, i += 1, j -= 1)
+         this parameters := new ScopeIdentifier[](len + 1);
+         parameters[0] := new ScopeIdentifier("$tape", 0);
+         for (int i := 0, i < len, i += 1)
          {
-            parameters[i] := params[j]
+            parameters[i + 1] := params[i]
          };
             
          this body := body;
