@@ -130,23 +130,10 @@ namespace text
          _length.append(1)
       }
     
-//      write(int n)
-//      {
-//            byte tmp[16];
-//            char ch_tmp[16];
-//            int  len := 16;
-//            
-//            stringConvertor.convert(n, tmp, ref len);
-//            
-//            UTF8Encoder.convertFrom(0, ref len, tmp, ch_tmp, ref len);
-//            
-//            self.write(ch_tmp, len)
-//      }
-//    
-//        write(object)
-//        {
-//            self.write(object.toPrintable())
-//        }
+      write(object)
+      {
+         self.write(object.toPrintable())
+      }
 
       write(char[] array, int length)
       {

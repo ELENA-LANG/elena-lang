@@ -65,6 +65,36 @@ public mixin DynamicTape
    dispatch() : external(system'core_routines'__closuretape);
 }
 
+// --- DynamicClass ---
+
+public mixin DynamicClass
+{
+   __string object[] items;
+    
+   internal constructor allocate(int n)
+        = new object[](n);
+    
+   constructor create(List<Tuple<Message,DynamicTape>> methods)
+      <= allocate(methods.Length * 2)
+   {
+      int length := methods.Length;
+      for (int i := 0, i < length, i += 1)
+      {
+         var t := methods[i];
+            
+         var o1 := t.Item1;
+         var o2 := t.Item2;
+
+         items[i*2]:= o1;
+            
+         int k := i*2 + 1;
+         items[k]:= o2;
+      }
+   }
+    
+   dispatch() : external(system'core_routines'__closureclass);
+}
+
 // --- StreamTapeInterpreter ---
 
 public singleton StreamTapeInterpreter

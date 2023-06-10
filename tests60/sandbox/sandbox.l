@@ -98,37 +98,37 @@ static nodes2 = new Map<string,object>()
                                     ScopeIdentifier.Variable("name")                                             
                     ));
                     
-//// Solution 4
-//
-//static classTree = DynamicSingleton.new(
-//        Expression.Method(
-//            "get",            
-//            Expression.CodeBlock(
-//                Expression.Return(
-//                    Expression.GetDynamicProperty(
-//                        Expression.Variable("name"),
-//                        Expression.Variable("target")
-//                    )
-//                )
-//            ),                     
-//            ScopeIdentifier.Variable("target"),
-//            ScopeIdentifier.Variable("name")
-//        ),
-//        Expression.Method(
-//            "set",
-//            Expression.CodeBlock(
-//                Expression.SetDynamicProperty(
-//                    Expression.Variable("name"),
-//                    Expression.Variable("target"),
-//                    Expression.Variable("value")
-//                )
-//            ),
-//            ScopeIdentifier.Variable("target"),
-//            ScopeIdentifier.Variable("name"),
-//            ScopeIdentifier.Variable("value")                     
-//        )
-//    ).compile();
-//
+// Solution 4
+
+static classTree = DynamicSingleton.new(
+        Expression.Method(
+            "get",            
+            Expression.CodeBlock(
+                Expression.Return(
+                    Expression.GetDynamicProperty(
+                        Expression.Variable("name"),
+                        Expression.Variable("target")
+                    )
+                )
+            ),                     
+            ScopeIdentifier.Variable("target"),
+            ScopeIdentifier.Variable("name")
+        ),
+        Expression.Method(
+            "set",
+            Expression.CodeBlock(
+                Expression.SetDynamicProperty(
+                    Expression.Variable("name"),
+                    Expression.Variable("target"),
+                    Expression.Variable("value")
+                )
+            ),
+            ScopeIdentifier.Variable("target"),
+            ScopeIdentifier.Variable("name"),
+            ScopeIdentifier.Variable("value")                     
+        )
+    ).compile();
+
 //// Solution 5
 //
 //static classTreeFromScript
@@ -148,20 +148,20 @@ closureSolution(select) = (r,words)
         };        
 };
    
-//classSolution(class) = (r,words)
-//{
-//    auto prop := new MessageName(words[0]);
-//    
-//    (words.Length) =>
-//        2 {            
-//            console.printLine(prop(class, r, words[1]))
-//        }
-//        3 {
-//            var c := class;
-//            
-//            prop(class, r, words[1], words[2])
-//        };
-//};
+classSolution(class) = (r,words)
+{
+    auto prop := new MessageName(words[0]);
+    
+    (words.Length) =>
+        2 {            
+            console.printLine(prop(class, r, words[1]))
+        }
+        3 {
+            var c := class;
+            
+            prop(class, r, words[1], words[2])
+        };
+};
    
 public program()
 {
@@ -175,10 +175,10 @@ public program()
 //            proceed := closureSolution((word => nodes[word]));
 //        }
 //        3 {
-            proceed := closureSolution((word => nodes2[word].compile(new RootExpressionScope())));
+//           proceed := closureSolution((word => nodes2[word].compile(new RootExpressionScope())));
 //        }
 //        4 {
-//            proceed := classSolution(classTree)
+            proceed := classSolution(classTree);
 //        }
 //        5{
 //            proceed := classSolution(classTreeFromScript)            

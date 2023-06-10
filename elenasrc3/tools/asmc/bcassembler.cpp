@@ -1020,6 +1020,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::SubN:
          case ByteCode::CmpN:
          case ByteCode::MulN:
+         case ByteCode::TstFlag:
             return compileOpN(tokenInfo, writer, opCommand, constants, false);
          case ByteCode::Copy:
             return compileOpN(tokenInfo, writer, opCommand, constants, true);

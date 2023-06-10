@@ -21,6 +21,8 @@ define set_prop_mssg                0C2h;
 
 define __realSize                     8;
 
+define elMessage              00200000h;
+
 define err_ret          -1;
 
 procedure __object_dispatcher
@@ -1720,6 +1722,77 @@ labEnd:
 	
 labDefault:
   redirect
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
+
+end
+
+procedure __closureclass
+
+  redirect
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[index,command,len]
+
+  save       dp:command
+  store      sp:1
+
+  len
+  save       dp:len
+  nsave      dp:index, 0
+
+labNext:
+  load       dp:index
+  xcmp       dp:len
+  jge        labEnd
+
+  peek       sp:1
+  xget
+  nadd       dp:index, 1
+  tst        flag:elMessage
+  jeq        labNext 
+
+  load       dp:command
+  xcmp
+  jne        labNext
+
+  load       dp:index
+  xget
+
+  peek       sp:1
+  xget
+  load       dp:command
+  or         n:FUNCTION_MESSAGE
+
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+  jump       vt:0
+
+labEnd:
+  load       dp:command
+
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
 
   // ; if the message is not resolved
   open       (3),[],[tempObject:page_size]
