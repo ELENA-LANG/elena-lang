@@ -1269,7 +1269,8 @@ namespace elena_lang
       void compileDispatchCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
       void compileDispatchProberCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
       void compileConstructorDispatchCode(BuildTreeWriter& writer, CodeScope& codeScope, ClassScope& classClassScope, SyntaxNode node);
-      void compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, mssg_t handler, ref_t targetRef);
+      void compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, 
+         mssg_t handler, ref_t targetRef);
 
       void compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, SyntaxNode node,
          bool withGenerics);
@@ -1287,7 +1288,10 @@ namespace elena_lang
       void compileDefConvConstructorCode(BuildTreeWriter& writer, MethodScope& scope, 
          SyntaxNode node, bool newFrame);
 
-      mssg_t compileByRefHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node, mssg_t byRefHandler);
+      mssg_t compileByRefHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node, 
+         mssg_t byRefHandler);
+      void compileByRefRedirectHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node,
+         mssg_t byRefHandler);
 
       void compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, 
          bool withGenerics, bool withOpenArgGenerics);

@@ -2193,7 +2193,10 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
                   current.appendChild(SyntaxKey::ByRefRetMethod, byRefMethod);
 
                   // HOTFIX : do not need to generate byref stub for the private method, it will be added later in the code
-                  if (!test(current.arg.reference, STATIC_MESSAGE) && retrieveMethod(implicitMultimethods, byRefMethod) == 0) {
+                  // HOTFIX : ignore the redirect method
+                  if ((!test(current.arg.reference, STATIC_MESSAGE) && !current.existChild(SyntaxKey::Redirect))
+                     && retrieveMethod(implicitMultimethods, byRefMethod) == 0) 
+                  {
                      if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_ABSTRACT)) {
                         implicitMultimethods.add({ byRefMethod, VirtualType::AbstractEmbeddableWrapper });
                      }
@@ -9709,6 +9712,40 @@ mssg_t Compiler :: compileByRefHandler(BuildTreeWriter& writer, MethodScope& inv
    return privateScope.message;
 }
 
+void Compiler::compileByRefRedirectHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node, 
+   mssg_t byRefHandler)
+{
+   ClassScope* classScope = Scope::getScope<ClassScope>(invokerScope, Scope::ScopeLevel::Class);
+
+   MethodScope redirectScope(classScope);
+   // copy parameters
+   for (auto it = invokerScope.parameters.start(); !it.eof(); ++it) {
+      redirectScope.parameters.add(it.key(), *it);
+   }
+
+   // add byref return arg
+   TypeInfo refType = { V_WRAPPER, invokerScope.info.outputRef };
+   auto sizeInfo = _logic->defineStructSize(*invokerScope.moduleScope, resolvePrimitiveType(invokerScope, refType, false));
+
+   int offset = invokerScope.parameters.count() + 1u;
+   redirectScope.parameters.add(RETVAL_ARG, { offset, refType, sizeInfo.size });
+
+   redirectScope.message = byRefHandler;
+
+   // HOTFIX : mark it as stacksafe if required
+   if (_logic->isEmbeddableStruct(classScope->info))
+      redirectScope.info.hints |= (ref_t)MethodHint::Stacksafe;
+
+   redirectScope.nestedMode = invokerScope.nestedMode;
+   redirectScope.functionMode = invokerScope.functionMode;
+   redirectScope.isEmbeddable = invokerScope.isEmbeddable;
+
+   classScope->info.methods.add(redirectScope.message, redirectScope.info);
+   classScope->save();
+
+   compileMethod(writer, redirectScope, node);
+}
+
 void Compiler :: compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope& methodScope, CodeScope& codeScope, mssg_t handler, ref_t targetRef)
 {
    writer.appendNode(BuildKey::OpenFrame);
@@ -9816,50 +9853,56 @@ void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& s
 
 void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
 {
+   SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
+
    CodeScope codeScope(&scope);
    if (scope.info.byRefHandler && !scope.checkHint(MethodHint::InterfaceDispatcher)) {
-      mssg_t privateImplementation = compileByRefHandler(writer, scope, node, scope.info.byRefHandler);
-
-      beginMethod(writer, scope, node, BuildKey::Method, false);
-      compileByRefHandlerInvoker(writer, scope, codeScope, privateImplementation, scope.info.outputRef);
-      codeScope.syncStack(&scope);
-      endMethod(writer, scope);
-   }
-   else {
-      beginMethod(writer, scope, node, BuildKey::Method, true);
-
-      CodeScope codeScope(&scope);
-
-      SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
-      switch (current.key) {
-         case SyntaxKey::CodeBlock:
-         case SyntaxKey::ReturnExpression:
-         case SyntaxKey::ResendDispatch:
-         case SyntaxKey::Redirect:
-            compileMethodCode(writer, scope, codeScope, node, false);
-            break;
-         case SyntaxKey::DirectResend:
-            compileDirectResendCode(writer, codeScope, current);
-            break;
-         case SyntaxKey::Importing:
-            writer.appendNode(BuildKey::Import, current.arg.reference);
-            break;
-         case SyntaxKey::WithoutBody:
-            scope.raiseError(errNoBodyMethod, node);
-            break;
-         case SyntaxKey::RedirectDispatch:
-            compileDispatchCode(writer, codeScope, current);
-            break;
-         case SyntaxKey::RedirectTryDispatch:
-            compileDispatchProberCode(writer, codeScope, current);
-            break;
-         default:
-            break;
+      if (current.key == SyntaxKey::Redirect) {
+         compileByRefRedirectHandler(writer, scope, node, scope.info.byRefHandler);
       }
+      else {
+         mssg_t privateImplementation = compileByRefHandler(writer, scope, node, scope.info.byRefHandler);
 
-      codeScope.syncStack(&scope);
-      endMethod(writer, scope);
+         beginMethod(writer, scope, node, BuildKey::Method, false);
+         compileByRefHandlerInvoker(writer, scope, codeScope, privateImplementation, scope.info.outputRef);
+         codeScope.syncStack(&scope);
+         endMethod(writer, scope);
+
+         // NOTE : normal byrefhandler has an alternative implementation
+         // overriding the normal routine
+         return;
+      }
    }
+   beginMethod(writer, scope, node, BuildKey::Method, true);
+
+   switch (current.key) {
+      case SyntaxKey::CodeBlock:
+      case SyntaxKey::ReturnExpression:
+      case SyntaxKey::ResendDispatch:
+      case SyntaxKey::Redirect:
+         compileMethodCode(writer, scope, codeScope, node, false);
+         break;
+      case SyntaxKey::DirectResend:
+         compileDirectResendCode(writer, codeScope, current);
+         break;
+      case SyntaxKey::Importing:
+         writer.appendNode(BuildKey::Import, current.arg.reference);
+         break;
+      case SyntaxKey::WithoutBody:
+         scope.raiseError(errNoBodyMethod, node);
+         break;
+      case SyntaxKey::RedirectDispatch:
+         compileDispatchCode(writer, codeScope, current);
+         break;
+      case SyntaxKey::RedirectTryDispatch:
+         compileDispatchProberCode(writer, codeScope, current);
+         break;
+      default:
+         break;
+   }
+
+   codeScope.syncStack(&scope);
+   endMethod(writer, scope);
 }
 
 bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool& isProtectedDefConst)

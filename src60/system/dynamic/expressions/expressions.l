@@ -566,7 +566,8 @@ namespace expressions
                         
       constructor(string name, MethodParameterList parameters, Expression body)
       {
-         int len := parameters.Length;
+         // excluding $tape variable
+         int len := parameters.Length - 1;
             
          auto text := TextBuilder.load(name);
          text.append("[");
@@ -1118,7 +1119,7 @@ namespace expressions
          this methods := new Expression[](0);
       }
             
-      constructor(Expression[] methods)
+      constructor(params Expression[] methods)
       {
          this methods := methods;
       }
