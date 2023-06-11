@@ -9,8 +9,6 @@ In development:
     [!] vm terminal
     [!] ide vm console
 
-    * create an object in run-time (using implicit constructor)
-
     * elenavm : https://github.com/ELENA-LANG/tutorials/tree/master/ExpressionTree2
     * new opcode : fexp - ppc64le
     * (re)implement elt

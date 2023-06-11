@@ -1493,11 +1493,36 @@ void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
 void loadingSubject(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int index = node.findChild(BuildKey::Index).arg.value;
+   bool mixedMode = node.findChild(BuildKey::Special).arg.value != 0;
 
-   // mov mmsg:arg
+   if (mixedMode) {
+      tape.newLabel();     // lab2
+      tape.newLabel();     // lab1
+
+      // load dp:index
+      // tst  FUNCTION_MESSAGE
+      // jne  lab1
+      // mov mmsg:arg + 1
+      // jmp  lab2
+      // lab1:
+      // mov mmsg:arg
+      // lab2:
+      tape.write(ByteCode::LoadDP, index);
+      tape.write(ByteCode::TstN, FUNCTION_MESSAGE);
+      tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
+      tape.write(ByteCode::MovM, node.arg.value + 1);
+      tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
+      tape.setLabel();
+      tape.write(ByteCode::MovM, node.arg.value);
+      tape.setLabel();
+   }
+   else {
+      // mov mmsg:arg
+      tape.write(ByteCode::MovM, node.arg.value);
+   }
+
    // set dp:index
    // loadv
-   tape.write(ByteCode::MovM, node.arg.value);
    tape.write(ByteCode::SetDP, index);
    tape.write(ByteCode::LoadV);
 

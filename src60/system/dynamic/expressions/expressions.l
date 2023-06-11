@@ -739,6 +739,11 @@ namespace expressions
       Expression[]          statements;
       List<ScopeIdentifier> variables;
         
+      constructor(params Expression[] statements)
+      {
+         this statements := statements
+      }
+
       constructor new(params Expression[] statements)
       {
          this statements := statements

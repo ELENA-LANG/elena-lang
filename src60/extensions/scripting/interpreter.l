@@ -55,6 +55,17 @@ public sealed class ScriptEngine
       extern elenasm.ReleaseSMLA(ptr)
    }
 
+   buildScriptFile(string path, int encoding, int autoDetect)
+   {
+      pointer ptr := extern elenasm.InterpretScopeFileSMLA
+                            (_scopeId, path, encoding, autoDetect);
+
+      if (ptr.isUnassigned())
+         {   ScriptEngineException.raise(self.lastScriptError()) };
+
+      ^ self.buildTape(ptr)
+   }
+
    private buildTape(pointer tape)
    {
       var retVal := nil;
@@ -86,6 +97,9 @@ public sealed class ScriptEngine
    {
       self.loadScriptFile(path, 0, -1);
    }
+
+   buildScriptFile(string path)
+      = self.buildScriptFile(path, 0, -1);
 
    buildScript(string script)
    {

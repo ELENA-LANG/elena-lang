@@ -10196,9 +10196,6 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
          bool mixedDispatcher = false;
          bool variadicFunction = hasVariadicFunctionDispatcher(classScope, mixedDispatcher);
          if (variadicFunction) {
-            // !! temporally
-            if (mixedDispatcher)
-               scope.raiseError(errInvalidOperation, node);
 
             mask |= FUNCTION_MESSAGE;
          }
@@ -10217,11 +10214,15 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
          // unbox argument list
          writer.appendNode(BuildKey::LoadArgCount, 1);
          writer.appendNode(BuildKey::UnboxMessage, -1);
+
          // change incoming message to variadic multi-method
          writer.newNode(BuildKey::LoadingSubject,
             encodeMessage(getAction(scope.moduleScope->buildins.dispatch_message), argCount, mask));
          writer.appendNode(BuildKey::Index, scope.messageLocalAddress);
+         if (mixedDispatcher)
+            writer.appendNode(BuildKey::Special, -1);
          writer.closeNode();
+
          // select the target
          writeObjectInfo(writer, exprScope, tempTarget);
 
@@ -10229,7 +10230,6 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
          writer.newNode(BuildKey::StrongResendOp, scope.moduleScope->buildins.dispatch_message);
          writer.appendNode(BuildKey::Type, classScope->info.header.parentRef);
          writer.closeNode();
-         //writer.appendNode(BuildKey::ResendOp);
 
          // close frame
          writer.appendNode(BuildKey::CloseFrame);

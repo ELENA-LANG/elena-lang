@@ -196,6 +196,7 @@ namespace elena_lang
       FalseConst           = 0x800D,
       Path                 = 0x800E,
       ClassName            = 0x800F,
+      Special              = 0x8010,
 
       Idle                 = 0x8FFF,
 
