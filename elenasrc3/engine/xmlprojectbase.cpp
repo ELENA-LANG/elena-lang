@@ -178,6 +178,11 @@ ustr_t XmlProjectBase :: resolveExternal(ustr_t dllAlias)
 
 void XmlProjectBase :: addForward(ustr_t forward, ustr_t referenceName)
 {
+   // !! temporal
+   if (referenceName.findStr("system@Enumerator#1&system@String") != NOTFOUND_POS)
+      referenceName = referenceName;
+
+
    freeUStr(_forwards.exclude(forward));
 
    _forwards.add(forward, referenceName.clone());

@@ -775,10 +775,12 @@ inline void readTailItemAndPush(MemoryReader& reader, MemoryWriter& writer, Scri
 
 void ScriptEngineCFParser :: predict(DerivationQueue& queue, DerivationItem item, ScriptEngineReaderBase& reader, ScriptBookmark& bm, pos_t terminalOffset, MemoryWriter& writer)
 {
+#ifdef TRACING_INFO
    ustr_t keyName = _names.retrieve<ref_t>(DEFAULT_STR, item.ruleId, [](ref_t reference, ustr_t key, ref_t current)
       {
          return current == reference;
       });
+#endif
 
    pos_t key = createKey(item.ruleId, 1);
    Rule rule = _table.get(key);

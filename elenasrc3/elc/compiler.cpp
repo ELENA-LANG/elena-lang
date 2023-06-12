@@ -8234,6 +8234,8 @@ ObjectInfo Compiler :: typecastObject(BuildTreeWriter& writer, ExprScope& scope,
    if (targetRef == scope.moduleScope->buildins.superReference)
       return source;
 
+   ustr_t refName2 = scope.module->resolveReference(targetRef);
+
    ref_t signRef = scope.module->mapSignature(&targetRef, 1, false);
    ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
 

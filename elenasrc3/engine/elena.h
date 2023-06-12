@@ -833,6 +833,19 @@ namespace elena_lang
          else return false;
       }
 
+      static bool compareNs(ustr_t referenceName, ustr_t ns, size_t length)
+      {
+         size_t len = referenceName.length();
+         if (len <= length)
+            return false;
+
+         if (referenceName.compareSub(ns, 0, length) && referenceName[length] == '\'')
+         {
+            return true;
+         }
+         else return false;
+      }
+
       void pathToName(path_t path)
       {
          char buf[IDENTIFIER_LEN];

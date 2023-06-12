@@ -196,7 +196,7 @@ ref_t ModuleScope :: resolveWeakTemplateReferenceID(ref_t reference)
       if (resolvedTemplateReferenceName.empty())
          return reference;
 
-      if (NamespaceString::compareNs(resolvedTemplateReferenceName, module->name())) {
+      if (NamespaceString::compareNs(resolvedTemplateReferenceName, module->name(), module->name().length())) {
          return module->mapReference(resolvedTemplateReferenceName + getlength(module->name()));
       }
       else return module->mapReference(resolvedTemplateReferenceName);

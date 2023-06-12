@@ -149,6 +149,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
    ModuleBase* module = moduleScope.module;
 
    ustr_t templateName = module->resolveReference(templateRef);
+
    IdentifierString name;
    if (isWeakReference(templateName)) {
       name.copy(module->name());
