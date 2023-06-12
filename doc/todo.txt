@@ -5,16 +5,14 @@ In development:
   [development]
     ### EPOCH: elena 6.0 - redux ###
     === Iteration 16 ===
-    [!] elenavm x86 : script executing
     [!] vm terminal
     [!] ide vm console
 
-    * elenavm : https://github.com/ELENA-LANG/tutorials/tree/master/ExpressionTree2
-    * new opcode : fexp - ppc64le
+    * review extensions warnings
     * (re)implement elt
     * ide : test screnario - create a new project, change it and save it
-    * elenavm : LoadActionLA
     * elenavm : implementing rest of dll api
+    * ide debugger : stepping in the loop (for)
 
      === Iteration 17 ===
     [!] x86 mta support
@@ -59,6 +57,7 @@ Backlog:
     * x86 : gui - starting - new project type
     * ide : before compiling, make sure the source file is saved
 
+    * new opcode : fexp - ppc64le
     * ide debugger : fix screen flashing
     * switch expression
     * optimization : copy a sub array to another array
@@ -73,7 +72,6 @@ Backlog:
     * elenavm : preloaded symbol, support preloaded symbols : dynamic
     * elenavm : loading preloaded symbols for newly loaded modules
 
-    * ide debugger : stepping in the loop (for)
 
     * optimization : copy a sub array to another array
     * int32 : implement direct neg, not operations; use it directly for IntNumber
@@ -84,7 +82,6 @@ Backlog:
     * by exiting thread (must be called on thread proc exit) - remove entry from table slots
     * for time being keep SINGLE_THREAD_CONTEXT empty, after the migrating it
       must be made empty 
-    * review extensions warnings
     * review system warnings
     * prefix nullable / nable - allow to assign nil
     * introduce Nullable structure

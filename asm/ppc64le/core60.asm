@@ -898,8 +898,9 @@ inline %079h
 
 end
 
-// ; fexp
+// ; fexpdp
 inline %07Ah
+
 end
 
 // ; fln
