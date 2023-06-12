@@ -240,6 +240,11 @@ EXTERN_DLL_EXPORT mssg_t LoadMessageLA(const char* messageName)
    return machine->loadMessage(messageName);
 }
 
+EXTERN_DLL_EXPORT mssg_t LoadActionLA(const char* actionName)
+{
+   return machine->loadAction(actionName);
+}
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved

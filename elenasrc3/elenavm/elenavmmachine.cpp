@@ -468,6 +468,18 @@ mssg_t ELENAVMMachine :: loadMessage(ustr_t messageName)
    return encodeMessage(actionRef, argCount, flags);
 }
 
+mssg_t ELENAVMMachine :: loadAction(ustr_t actionName)
+{
+   pos_t argCount = 0;
+   ref_t flags = 0;
+
+   ref_t actionRef = loadSubject(actionName);
+   if (!actionRef)
+      return 0;
+
+   return encodeMessage(actionRef, argCount, flags);
+}
+
 addr_t ELENAVMMachine :: loadSymbol(ustr_t name)
 {
    return loadReference(name, VM_CALLSYMBOL_CMD);

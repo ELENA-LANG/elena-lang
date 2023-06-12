@@ -76,6 +76,7 @@ namespace elena_lang
       addr_t loadClassReference(ustr_t name);
 
       mssg_t loadMessage(ustr_t messageName);
+      mssg_t loadAction(ustr_t actionName);
 
       void Exit(int exitCode);
 
