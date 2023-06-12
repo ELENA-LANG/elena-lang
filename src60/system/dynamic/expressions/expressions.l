@@ -523,7 +523,7 @@ namespace expressions
 
          for (int i := 0, i < len, i += 1)
          {
-            parameters[i] := ScopeIdentifier.Variable(variables[i])
+            parameters[i + 2] := ScopeIdentifier.Variable(variables[i])
          };
       }
          
