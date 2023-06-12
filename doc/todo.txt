@@ -8,11 +8,11 @@ In development:
     [!] vm terminal
     [!] ide vm console
 
-    * review extensions warnings
     * (re)implement elt
     * ide : test screnario - create a new project, change it and save it
     * elenavm : implementing rest of dll api
     * ide debugger : stepping in the loop (for)
+    * review extensions warnings
 
      === Iteration 17 ===
     [!] x86 mta support

@@ -30,6 +30,7 @@ copy %~dp0\..\bin\elena-ide.exe %~dp0\output\bin
 copy %~dp0\..\bin\sg-cli.exe %~dp0\output\bin
 copy %~dp0\..\bin\og-cli.exe %~dp0\output\bin
 copy %~dp0\..\bin\ecv-cli.exe %~dp0\output\bin
+copy %~dp0\..\bin\elt-cli.exe %~dp0\output\bin
 copy %~dp0\..\bin\elenart60.dll %~dp0\output\bin
 copy %~dp0\..\bin\elenavm60.dll %~dp0\output\bin
 copy %~dp0\..\bin\winstub.ex_ %~dp0\output\bin
