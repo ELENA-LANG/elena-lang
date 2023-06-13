@@ -29,6 +29,8 @@ namespace elena_lang
       JITLinkerSettings    _settings;
       SystemEnv*           _env;
 
+      bool                 _standAloneMode;
+
       path_t               _rootPath;
 
       ProjectBase*         _configuration;
@@ -65,6 +67,8 @@ namespace elena_lang
       addr_t loadReference(ustr_t name, int command);
 
    public:
+      bool isStandAlone() { return _standAloneMode; }
+
       addr_t resolveExternal(ustr_t reference) override;
 
       void startSTA(SystemEnv* env, void* tape, const char* criricalHandlerReference);

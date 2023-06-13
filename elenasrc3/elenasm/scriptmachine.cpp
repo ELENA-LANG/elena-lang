@@ -12,6 +12,7 @@
 #include "scriptparser.h"
 #include "textparser.h"
 #include "transformer.h"
+#include "vmparser.h"
 
 using namespace elena_lang;
 
@@ -46,6 +47,9 @@ ScriptEngineParserBase* ScriptEngine :: newParser(int id, ParserType type)
          break;
       case ParserType::Build:
          newOne = new ScriptEngineBuilder();
+         break;
+      case ParserType::VMBuild:
+         newOne = new VMTapeParser();
          break;
       default:
          throw InvalidOperationError("Unknown parser type");
@@ -91,6 +95,9 @@ void ScriptEngine :: parseMetaScript(int id, ScriptEngineReaderBase& reader)
             }
             else if (reader.compare("build")) {
                parser = newParser(id, ParserType::Build);
+            }
+            else if (reader.compare("vmbuild")) {
+               parser = newParser(id, ParserType::VMBuild);
             }
             else throw SyntaxError("unrecognized parser", bm.lineInfo);
          }

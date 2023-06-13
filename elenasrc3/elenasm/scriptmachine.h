@@ -18,14 +18,14 @@ namespace elena_lang
    {
       enum class ParserType
       {
-         BaseParseMask = 0x0F,
+         BaseParseMask  = 0x0F,
 
-         //ptVMBuild = 0x01,
+         VMBuild        = 0x01,
          //ptTree = 0x02,
-         CF = 0x10,
+         CF             = 0x10,
          //ptTransform = 0x20,
-         Text = 0x30,
-         Build = 0x40
+         Text           = 0x30,
+         Build          = 0x40
       };
 
       PathString        _rootPath;

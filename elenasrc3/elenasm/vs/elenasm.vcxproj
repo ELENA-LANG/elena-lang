@@ -185,6 +185,7 @@
     <ClInclude Include="..\scriptparser.h" />
     <ClInclude Include="..\smcommon.h" />
     <ClInclude Include="..\transformer.h" />
+    <ClInclude Include="..\vmparser.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +198,7 @@
     <ClCompile Include="..\scriptmachine.cpp" />
     <ClCompile Include="..\scriptparser.cpp" />
     <ClCompile Include="..\transformer.cpp" />
+    <ClCompile Include="..\vmparser.cpp" />
     <ClCompile Include="..\windows\dllmain.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -81,6 +81,7 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
       : _mapper(this), _rootPath(configPath)
 {
+   _standAloneMode = true;
    _initialized = false;
    _presenter = presenter;
 
@@ -340,14 +341,16 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, cons
 
 void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
 {
-   int retVal = -1;
    if (tape != nullptr) {
       interprete(env, tape, INVALID_POS, criricalHandlerReference);
-
-      retVal = 0;
    }
+   else {
+      // initialize VM in terminal mode
+      _standAloneMode = false;
 
-   Exit(retVal);
+      _settings.jitSettings.ygSize = env->gc_yg_size;
+      _settings.jitSettings.mgSize = env->gc_mg_size;
+   }
 }
 
 void ELENAVMMachine :: Exit(int exitCode)

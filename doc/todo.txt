@@ -16,6 +16,7 @@ In development:
 
      === Iteration 17 ===
     [!] x86 mta support
+    [!] elt tutorial (stand-alone / in IDE)
 
     === Iteration 18 ===
     [!] x86 GUI support

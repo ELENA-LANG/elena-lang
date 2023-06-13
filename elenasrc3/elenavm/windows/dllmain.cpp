@@ -131,7 +131,7 @@ void printError(int errCode, ustr_t arg)
 
 // --- API export ---
 
-EXTERN_DLL_EXPORT void InitializeVMSTLA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
+EXTERN_DLL_EXPORT int InitializeVMSTLA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
 {
 #ifdef DEBUG_OUTPUT
    printf("InitializeVMSTLA.6 %x,%x\n", (int)env, (int)criricalHandler);
@@ -161,7 +161,10 @@ EXTERN_DLL_EXPORT void InitializeVMSTLA(SystemEnv* env, void* tape, const char* 
       retVal = -1;
    }
 
-   machine->Exit(retVal);
+   if (machine->isStandAlone())
+      machine->Exit(retVal);
+
+   return retVal;
 }
 
 EXTERN_DLL_EXPORT void ExitLA(int retVal)

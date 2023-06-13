@@ -105,6 +105,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\..\..\..\bin\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>elenavm60.lib;elenasm60.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>..;..\..\..\engine</AdditionalIncludeDirectories>
@@ -125,6 +127,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\..\..\..\bin\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>elenavm60.lib;elenasm60.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>..;..\..\..\engine</AdditionalIncludeDirectories>
@@ -141,6 +145,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\..\..\..\bin\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>elenavm60_64.lib;elenasm60_64.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>..;..\..\..\engine</AdditionalIncludeDirectories>
@@ -161,18 +167,32 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\..\..\..\bin\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>elenavm60_64.lib;elenasm60_64.lib</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>..;..\..\..\engine</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\session.cpp" />
+    <ClCompile Include="..\..\..\common\files.cpp" />
+    <ClCompile Include="..\..\..\common\paths.cpp" />
+    <ClCompile Include="..\..\..\common\ustring.cpp" />
+    <ClCompile Include="..\..\..\engine\windows\presenter.cpp" />
+    <ClCompile Include="..\vmsession.cpp" />
     <ClCompile Include="..\windows\elt.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\common\common.h" />
+    <ClInclude Include="..\..\..\common\files.h" />
+    <ClInclude Include="..\..\..\common\lists.h" />
+    <ClInclude Include="..\..\..\common\paths.h" />
+    <ClInclude Include="..\..\..\common\ustring.h" />
+    <ClInclude Include="..\..\..\engine\windows\presenter.h" />
+    <ClInclude Include="..\elenasm.h" />
+    <ClInclude Include="..\elenavm.h" />
     <ClInclude Include="..\eltconst.h" />
-    <ClInclude Include="..\session.h" />
+    <ClInclude Include="..\vmsession.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

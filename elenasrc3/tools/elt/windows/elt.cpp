@@ -8,25 +8,35 @@
 
 #include "elena.h"
 #include "eltconst.h"
+#include "vmsession.h"
+#include "windows/presenter.h"
 
 using namespace elena_lang;
+
+class ELTPresenter : public WinConsolePresenter
+{
+public:
+   ustr_t getMessage(int code) override
+   {
+      // !! temporally
+      return nullptr;
+   }
+};
 
 int main()
 {
    printf(ELT_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_REVISION_NUMBER);
 
-   //Path commandPath("command.es");
-   //loadTemplate(commandPath.c_str());
+   ELTPresenter presenter;
+   VMSession session(&presenter);
 
-   //_env.MaxThread = 1;
-   //_env.Table = &_table;
-   //_env.TLSIndex = &_tlsIndex;
-   //_env.GCMGSize = 0x54000;
-   //_env.GCYGSize = 0x15000;
+   if (!session.connect())
+      return -1;
 
-   //InitializeVMSTA(&_sehTable, &_env, nullptr, nullptr, nullptr, &_header);
+   PathString commandPath(COMMAMD_TEMPLATE);
+   session.loadTemplate(*commandPath);
 
-   //loadScript("~\\elt.es");
+   session.loadScript(ELT_CONFIG);
    //loadScript("~\\scripts\\grammar.es");
    //loadScript("~\\scripts\\tscript.es");
 
