@@ -605,6 +605,8 @@ namespace elena_lang
    class PresenterBase
    {
    public:
+      virtual void readLine(char* buffer, size_t length) = 0;
+
       virtual ustr_t getMessage(int code) = 0;
 
       virtual void print(ustr_t msg) = 0;
@@ -617,6 +619,17 @@ namespace elena_lang
       virtual void print(ustr_t msg, ustr_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
       virtual void printPath(ustr_t msg, path_t arg) = 0;
       virtual void printPath(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
+
+      virtual void printLine(ustr_t msg) = 0;
+      virtual void printLine(ustr_t msg, ustr_t arg) = 0;
+      virtual void printLine(ustr_t msg, ustr_t arg1, ustr_t arg2) = 0;
+      virtual void printLine(ustr_t msg, ustr_t arg1, ustr_t arg2, ustr_t arg3) = 0;
+      virtual void printLine(ustr_t msg, int arg1) = 0;
+      virtual void printLine(ustr_t msg, int arg1, int arg2) = 0;
+      virtual void printLine(ustr_t msg, int arg1, int arg2, int arg3) = 0;
+      virtual void printLine(ustr_t msg, ustr_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
+      virtual void printPathLine(ustr_t msg, path_t arg) = 0;
+      virtual void printPathLine(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
 
       virtual ~PresenterBase() = default;
    };

@@ -12,7 +12,8 @@
 
 namespace elena_lang
 {
-   typedef Map<pos_t, LineInfo> CoordMap;
+   typedef Map<pos_t, LineInfo>  CoordMap;
+   typedef String<char, 0x100>   TempString;
 
    // --- InvalidOperationError ---
    class InvalidOperationError
@@ -34,6 +35,11 @@ namespace elena_lang
       pos_t    offset;
       int      state;
       LineInfo lineInfo;
+
+      bool compare(ScriptBookmark& bm)
+      {
+         return offset == bm.offset;
+      }
    };
 
    // --- ScriptEngineReaderBase ---
@@ -165,6 +171,8 @@ namespace elena_lang
 
       virtual void parse(ScriptEngineReaderBase& reader, MemoryDump* output) = 0;
 
+      virtual bool parseDirective(ScriptEngineReaderBase& reader, MemoryDump* output) = 0;
+
       virtual ~ScriptEngineParserBase() = default;
    };
 
@@ -174,6 +182,27 @@ namespace elena_lang
       MemoryDump* _tape;
 
    public:
+      void write(pos_t command)
+      {
+         MemoryWriter tapeWriter(_tape);
+
+         tapeWriter.writeDWord(command);
+      }
+      void write(pos_t command, ustr_t arg)
+      {
+         MemoryWriter tapeWriter(_tape);
+
+         tapeWriter.writeDWord(command);
+         tapeWriter.writeString(arg);
+      }
+      void write(pos_t command, int arg)
+      {
+         MemoryWriter tapeWriter(_tape);
+
+         tapeWriter.writeDWord(command);
+         tapeWriter.writeDWord(arg);
+      }
+
       TapeWriter(MemoryDump* tape)
       {
          _tape = tape;

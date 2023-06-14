@@ -40,7 +40,6 @@ namespace elena_lang
       ScriptEngineParserBase* newParser(int id, ParserType type);
       ScriptEngineParserBase* getParser(int id);
 
-      void parseDirectives(ScriptEngineReaderBase& reader);
       void parseMetaScript(int id, ScriptEngineReaderBase& reader);
       void parseScript(int id, ScriptEngineReaderBase& reader);
 

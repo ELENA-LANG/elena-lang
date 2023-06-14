@@ -103,7 +103,7 @@ int main()
 
       PathString path(argv[1]);
       if(!generator.load(*path)) {
-         presenter.printPath(LDOC_MODULE_NOTLOADED, path.str());
+         presenter.printPathLine(LDOC_MODULE_NOTLOADED, path.str());
 
          return -1;
       }
@@ -111,7 +111,7 @@ int main()
    else {
       IdentifierString arg(argv[1]);
       if (!generator.loadByName(*arg)) {
-         presenter.printPath(LDOC_MODULE_NOTLOADED, argv[1]);
+         presenter.printPathLine(LDOC_MODULE_NOTLOADED, argv[1]);
 
          return -1;
       }

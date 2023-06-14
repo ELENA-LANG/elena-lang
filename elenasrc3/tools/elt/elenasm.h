@@ -21,7 +21,9 @@
 extern "C"
 {
    DLL_PUBLIC void* InterpretFileSMLA(const char* pathStr, int encoding, bool autoDetect);
+   DLL_PUBLIC void* InterpretScriptSMLA(const char* script);
    DLL_PUBLIC size_t GetStatusSMLA(char* buffer, size_t maxLength);
+   DLL_PUBLIC void ReleaseSMLA(void* tape);
 }
 
 #endif // ELENART_H_INCLUDED

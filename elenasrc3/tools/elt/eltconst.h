@@ -11,14 +11,17 @@
 
 namespace elena_lang
 {
-   #define ELT_REVISION_NUMBER               0x0001
+   #define ELT_REVISION_NUMBER               0x0002
 
    constexpr auto ELT_GREETING               = "ELENA command line VM terminal %d.%d.%d (C)2021-23 by Aleksey Rakov\n";
 
    constexpr auto COMMAMD_TEMPLATE           = "command60.es";
    constexpr auto ELT_CONFIG                 = "~\\elt60.es";
+   constexpr auto ELT_GRAMMAR_CONFIG         = "~\\scripts\\grammar60.es";
+   constexpr auto ELT_TSCRIPT_CONFIG         = "~\\scripts\\tscript60.es";
 
    constexpr auto ELT_STARTUP_FAILED         = "ELENA VM has failed to start";
+   constexpr auto ELT_CODE_FAILED            = "ELENA VM operation has failed";
    constexpr auto ELT_SCRIPT_FAILED          = "\nFailed:%s";
 }
 

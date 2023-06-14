@@ -17,6 +17,11 @@ namespace elena_lang
       int _width;
 
    public:
+      bool parseDirective(ScriptEngineReaderBase&, MemoryDump*) override
+      {
+         return false;
+      }
+
       bool parseGrammarRule(ScriptEngineReaderBase& reader) override;
 
       void parse(ScriptEngineReaderBase& reader, MemoryDump* output) override;
@@ -37,6 +42,11 @@ namespace elena_lang
       void flush(MemoryWriter& writer, ScriptEngineReaderBase& reader, Stack<ScriptBookmark>& stack);
 
    public:
+      bool parseDirective(ScriptEngineReaderBase&, MemoryDump*) override
+      {
+         return false;
+      }
+
       bool parseGrammarRule(ScriptEngineReaderBase& reader) override;
 
       void parse(ScriptEngineReaderBase& reader, MemoryDump* output) override;

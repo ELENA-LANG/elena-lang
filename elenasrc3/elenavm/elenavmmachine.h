@@ -50,7 +50,7 @@ namespace elena_lang
       virtual void stopVM();
 
       bool configurateVM(MemoryReader& reader, SystemEnv* env);
-      void compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, 
+      bool compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, 
          ModuleBase* dummyModule);
 
       virtual void resumeVM(JITLinker& jitLinker, SystemEnv* env, void* criricalHandler);

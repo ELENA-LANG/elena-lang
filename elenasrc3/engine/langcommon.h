@@ -318,6 +318,7 @@ namespace elena_lang
 
    // === VM Command ===
    constexpr pos_t VM_STR_COMMAND_MASK       = 0x100;
+   constexpr pos_t VM_INT_COMMAND_MASK       = 0x200;
 
    constexpr pos_t VM_ENDOFTAPE_CMD          = 0x001;
    constexpr pos_t VM_CALLSYMBOL_CMD         = 0x102;
@@ -328,6 +329,12 @@ namespace elena_lang
    constexpr pos_t VM_PACKAGE_CMD            = 0x107;
    constexpr pos_t VM_PRELOADED_CMD          = 0x108;
    constexpr pos_t VM_CALLCLASS_CMD          = 0x109;
+   constexpr pos_t VM_TERMINAL_CMD           = 0x00A;
+   constexpr pos_t VM_STRING_CMD             = 0x10B;
+   constexpr pos_t VM_ALLOC_CMD              = 0x20C;
+   constexpr pos_t VM_SET_ARG_CMD            = 0x20D;
+   constexpr pos_t VM_ARG_TAPE_CMD           = 0x20E;
+   constexpr pos_t VM_NEW_CMD                = 0x10F;
 
    // --- Configuration xpaths ---
    constexpr auto WIN_X86_KEY = "Win_x86";

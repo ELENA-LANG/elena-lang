@@ -99,8 +99,8 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
 
 void ELENAVMMachine :: init(JITLinker& linker, SystemEnv* exeEnv)
 {
-   _presenter->print(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER);
-   _presenter->print(ELENAVM_INITIALIZING);
+   _presenter->printLine(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER);
+   _presenter->printLine(ELENAVM_INITIALIZING);
 
    _compiler->populatePreloaded((uintptr_t)exeEnv->th_table);
 
@@ -173,6 +173,9 @@ bool ELENAVMMachine :: configurateVM(MemoryReader& reader, SystemEnv* env)
          case VM_PACKAGE_CMD:
             addPackage(strArg);
             break;
+         case VM_TERMINAL_CMD:
+            _standAloneMode = false;
+            break;
          case VM_INIT_CMD:
             eop = true;
             break;
@@ -217,22 +220,27 @@ inline ref_t getCmdMask(int command)
          return mskSymbolRef;
       case VM_CALLCLASS_CMD:
          return mskVMTRef;
+      case VM_STRING_CMD:
+         return mskLiteralRef;
       default:
          return 0;
    }
 }
 
-void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, ModuleBase* dummyModule)
+bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, ModuleBase* dummyModule)
 {
-   CachedList<ref_t, 5> symbols;
+   CachedList<Pair<ref_t, pos_t>, 5> symbols;
 
    pos_t  command = 0;
    ustr_t strArg = nullptr;
-   bool eop = false;
+   ref_t  nArg = 0;
+   bool   eop = false;
    while (!eop) {
       command = reader.getDWord();
       if (test(command, VM_STR_COMMAND_MASK))
          strArg = reader.getString(nullptr);
+      else if (test(command, VM_INT_COMMAND_MASK))
+         nArg = reader.getDWord();
 
       switch (command) {
          case VM_ENDOFTAPE_CMD:
@@ -241,12 +249,26 @@ void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
          case VM_CALLSYMBOL_CMD:
          case VM_CALLCLASS_CMD:
             jitLinker.resolve(strArg, getCmdMask(command), false);
-            symbols.add(dummyModule->mapReference(strArg) | getCmdMask(command));
+            symbols.add({ dummyModule->mapReference(strArg) | getCmdMask(command), 0 });
+            break;
+         case VM_STRING_CMD:
+            jitLinker.resolve(strArg, getCmdMask(command), false);
+            symbols.add({ dummyModule->mapReference(strArg) | getCmdMask(command), 0 });
+            break;
+         case VM_ALLOC_CMD:
+         case VM_SET_ARG_CMD:
+            symbols.add({ nArg, command });
+            break;
+         case VM_NEW_CMD:
+            symbols.add({ dummyModule->mapReference(strArg) | mskVMTRef, nArg });
             break;
          default:
             break;
       }
    }
+
+   if (symbols.count() == 0)
+      return false;
 
    MemoryWriter writer(&tapeSymbol);
 
@@ -257,18 +279,40 @@ void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
 
    fillPreloadedSymbols(writer, dummyModule);
    for(size_t i = 0; i < symbols.count(); i++) {
-      ref_t mask = symbols[i] & mskAnyRef;
+      auto p = symbols[i];
+      ref_t mask = p.value1 & mskAnyRef;
+      if (!p.value2) {
+         switch (mask) {
+            case mskSymbolRef:
+               ByteCodeUtil::write(writer, ByteCode::CallR, p.value1);
+               break;
+            case mskVMTRef:
+            case mskLiteralRef:
+               ByteCodeUtil::write(writer, ByteCode::SetR, p.value1);
+               break;
+            default:
+               assert(false);
+               break;
+         }
+      }
+      else if (mask == mskVMTRef) {
+         mssg_t message = encodeMessage(dummyModule->mapAction(CONSTRUCTOR_MESSAGE, 0, false), 
+            p.value2 - 1, FUNCTION_MESSAGE);
 
-      switch (mask){
-         case mskSymbolRef:
-            ByteCodeUtil::write(writer, ByteCode::CallR, symbols[i]);
-            break;
-         case mskVMTRef:
-            ByteCodeUtil::write(writer, ByteCode::SetR, symbols[i]);
-            break;
-         default:
-            assert(false);
-            break;
+         ByteCodeUtil::write(writer, ByteCode::MovM, message);
+         ByteCodeUtil::write(writer, ByteCode::CallVI);
+      }
+      else {
+         switch (p.value2) {
+            case VM_ALLOC_CMD:
+               ByteCodeUtil::write(writer, ByteCode::AllocI, p.value1);
+               break;
+            case VM_SET_ARG_CMD:
+               ByteCodeUtil::write(writer, ByteCode::StoreSI, p.value1);
+               break;
+            default:
+               break;
+         }
       }
    }
 
@@ -279,6 +323,8 @@ void ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
 
    writer.seek(sizePlaceholder);
    writer.writePos(size);
+
+   return true;
 }
 
 void ELENAVMMachine :: onNewCode(JITLinker& jitLinker)
@@ -325,18 +371,19 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, cons
 
    addr_t criricalHandler = _initialized ? 0 : jitLinker->resolve(criricalHandlerReference, mskProcedureRef, false);
 
-   compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule);
+   if (compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule)) {
+      SymbolList list;
 
-   SymbolList list;
+      void* address = (void*)jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
 
-   void* address = (void*)jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
+      resumeVM(*jitLinker, env, (void*)criricalHandler);
 
-   resumeVM(*jitLinker, env, (void*)criricalHandler);
+      freeobj(dummyModule);
+      freeobj(jitLinker);
 
-   freeobj(dummyModule);
-   freeobj(jitLinker);
-
-   return execute(env, address);
+      return execute(env, address);
+   }
+   else return 0;
 }
 
 void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, const char* criricalHandlerReference)

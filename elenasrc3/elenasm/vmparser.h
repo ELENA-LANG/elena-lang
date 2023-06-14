@@ -11,9 +11,28 @@
 
 namespace elena_lang
 {
+   typedef Stack<ScriptBookmark> ScriptStack;
+
    class VMTapeParser : public ScriptEngineParserBase
    {
+      TempString _postfix;
+
+      bool parseBuildScript(ScriptEngineReaderBase& reader, TapeWriter& writer);
+      void parseInline(ustr_t script, TapeWriter& writer);
+      void parseInlineScript(ScriptEngineReaderBase& reader, TapeWriter& writer);
+      void parseInlineStatement(ScriptEngineReaderBase& reader, ScriptBookmark& bm, TapeWriter& writer);
+      int parseBuildScriptStatement(ScriptEngineReaderBase& reader, ScriptBookmark& bm, ScriptStack& callStack, 
+         pos_t exprBookmark);
+
+      void writeBuildScriptStatement(ScriptEngineReaderBase& reader, ScriptBookmark bm, ScriptStack& callStack,
+         TapeWriter& writer);
+      int parseBuildScriptArgumentList(ScriptEngineReaderBase& reader, ScriptStack& callStack);
+
+      int writeBuildScriptArgumentList(ScriptEngineReaderBase& reader, ScriptBookmark terminator,
+         ScriptStack& callStack, TapeWriter& writer);
+
    public:
+      bool parseDirective(ScriptEngineReaderBase& reader, MemoryDump* output) override;
       void parse(ScriptEngineReaderBase& reader, MemoryDump* output) override;
       bool parseGrammarRule(ScriptEngineReaderBase& reader) override;
 

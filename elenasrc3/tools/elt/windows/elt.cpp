@@ -30,15 +30,12 @@ int main()
    ELTPresenter presenter;
    VMSession session(&presenter);
 
-   if (!session.connect())
-      return -1;
-
    PathString commandPath(COMMAMD_TEMPLATE);
    session.loadTemplate(*commandPath);
 
    session.loadScript(ELT_CONFIG);
-   //loadScript("~\\scripts\\grammar.es");
-   //loadScript("~\\scripts\\tscript.es");
+   session.loadScript(ELT_GRAMMAR_CONFIG);
+   session.loadScript(ELT_TSCRIPT_CONFIG);
 
    //// load script passed via command line arguments
    //if (argc > 1) {
@@ -54,7 +51,7 @@ int main()
    //   }
    //}
 
-   //runSession();
+   session.run();
 
    return 0;
 }

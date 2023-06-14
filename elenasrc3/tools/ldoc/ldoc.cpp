@@ -1536,7 +1536,7 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
 
 void DocGenerator :: loadNestedModules(ApiModuleInfoList& modules)
 {
-   _presenter->print(LDOC_READING);
+   _presenter->printLine(LDOC_READING);
 
    HelpStruct arg = { this, &modules };
 
@@ -1679,7 +1679,7 @@ void DocGenerator :: generateExtendedDoc(TextFileWriter& summaryWriter, TextFile
 
 void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo, path_t output)
 {
-   _presenter->print(LDOC_GENERATING, *moduleInfo->name);
+   _presenter->printLine(LDOC_GENERATING, *moduleInfo->name);
 
    IdentifierString name;
    writeNs(name, moduleInfo);

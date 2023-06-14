@@ -13,21 +13,30 @@ namespace elena_lang
 {
    class VMSession
    {
-      FileEncoding      _encoding;
+      bool                 _started;
 
-      PresenterBase*    _presenter;
+      FileEncoding         _encoding;
 
-      IdentifierString  _prefix;
-      IdentifierString  _postfix;
+      PresenterBase*       _presenter;
+
+      IdentifierString     _prefix;
+      IdentifierString     _postfix;
+
+      DynamicString<char>  _body;
+
+      bool connect(void* tape);
+
+      void executeCommandLine(const char* line);
 
       bool executeTape(void* tape);
+      bool executeScript(const char* line);
 
    public:
       bool loadTemplate(path_t path);
 
       bool loadScript(ustr_t pathStr);
 
-      bool connect();
+      void run();
 
       VMSession(PresenterBase* presenter);
    };

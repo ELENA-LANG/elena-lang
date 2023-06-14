@@ -70,11 +70,6 @@ ScriptEngineParserBase* ScriptEngine :: getParser(int id)
    else throw InvalidOperationError("Scope is not created");
 }
 
-void ScriptEngine :: parseDirectives(ScriptEngineReaderBase& reader)
-{
-   return;
-}
-
 void ScriptEngine :: parseMetaScript(int id, ScriptEngineReaderBase& reader)
 {
    ScriptEngineParserBase* parser = nullptr;
@@ -108,7 +103,8 @@ void ScriptEngine :: parseMetaScript(int id, ScriptEngineReaderBase& reader)
             if (reader.compare("#define")) {
                parser->parseGrammarRule(reader);
             }
-            else parseDirectives(reader);
+            else if(!parser->parseDirective(reader, &_tape))
+               throw SyntaxError("invalid directive", bm.lineInfo);
          }
       }
    }

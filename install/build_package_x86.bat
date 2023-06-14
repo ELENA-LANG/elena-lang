@@ -39,6 +39,7 @@ copy %~dp0\..\bin\elenart60.cfg %~dp0\output\bin
 copy %~dp0\..\bin\elenavm60.cfg %~dp0\output\bin
 
 copy %~dp0\..\bin\templates\*.cfg %~dp0\output\bin\templates\
+copy %~dp0\..\bin\scripts\*.es %~dp0\output\bin\scripts\
 
 copy %~dp0\..\doc\license %~dp0\output\doc\
 copy %~dp0\..\doc\contributors %~dp0\output\doc\

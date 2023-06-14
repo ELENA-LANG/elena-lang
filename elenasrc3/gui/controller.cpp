@@ -119,9 +119,11 @@ bool TextViewController :: copyToClipboard(TextViewModelBase* model, ClipboardBa
    if (docView->hasSelection()) {
       if (clipboard->copyToClipboard(docView)) {
          notifyOnClipboardOperation(clipboard);
+
+         return true;
       }
    }
-   else return false;
+   return false;
 }
 
 //void TextViewController :: onTextChanged(TextViewModelBase* model, DocumentView* view)
