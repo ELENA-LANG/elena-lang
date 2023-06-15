@@ -150,15 +150,19 @@ bool VMTapeParser :: parseBuildScript(ScriptEngineReaderBase& reader, TapeWriter
       bm = reader.read();
    }
 
-   writer.write(VM_ALLOC_CMD, maxArgCount);
+   if (!idle) {
+      writer.write(VM_ALLOC_CMD, maxArgCount);
 
-   while (callStack.count() > 0) {
-      bm = callStack.pop();
+      while (callStack.count() > 0) {
+         bm = callStack.pop();
 
-      writeBuildScriptStatement(reader, bm, callStack, writer);
+         writeBuildScriptStatement(reader, bm, callStack, writer);
+      }
+
+      return true;
    }
 
-   return !idle;
+   return false;
 }
 
 void VMTapeParser :: parse(ScriptEngineReaderBase& reader, MemoryDump* output)

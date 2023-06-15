@@ -8,11 +8,14 @@ In development:
     [!] vm terminal
     [!] ide vm console
 
+    * elt : 2, 2+3, "hello", "workd".insert(0, "hello ")
     * (re)implement elt
+
     * ide : test screnario - create a new project, change it and save it
     * elenavm : implementing rest of dll api
     * ide debugger : stepping in the loop (for)
     * review extensions warnings
+    * new feature : use C# 7.0 style namespace (single line one)
 
      === Iteration 17 ===
     [!] x86 mta support

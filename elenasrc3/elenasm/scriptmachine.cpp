@@ -103,8 +103,7 @@ void ScriptEngine :: parseMetaScript(int id, ScriptEngineReaderBase& reader)
             if (reader.compare("#define")) {
                parser->parseGrammarRule(reader);
             }
-            else if(!parser->parseDirective(reader, &_tape))
-               throw SyntaxError("invalid directive", bm.lineInfo);
+            else parser->parseDirective(reader, &_tape);
          }
       }
    }
