@@ -34,8 +34,6 @@ namespace elena_lang
 
       void loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot);
 
-      void loadForwards(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath);
-
       void loadSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, IdentifierString& value);
 
       void copySetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, ProjectOption key, bool exclusiveMode = false);

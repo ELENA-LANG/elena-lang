@@ -167,6 +167,39 @@ EXTERN_DLL_EXPORT int InitializeVMSTLA(SystemEnv* env, void* tape, const char* c
    return retVal;
 }
 
+EXTERN_DLL_EXPORT int EvaluateVMLA(void* tape)
+{
+#ifdef DEBUG_OUTPUT
+   printf("EvaluateVMSTLA.6 %x,%x\n", (int)env, (int)criricalHandler);
+
+   fflush(stdout);
+#endif
+
+   int retVal = 0;
+   try
+   {
+      machine->evaluate(tape);
+   }
+   catch (InternalError err)
+   {
+      printError(err.messageCode);
+      retVal = -1;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      printError(errVMReferenceNotFound, e.referenceInfo.referenceName);
+
+      retVal = -1;
+   }
+   catch (...)
+   {
+      printError(errVMBroken);
+      retVal = -1;
+   }
+
+   return retVal;
+}
+
 EXTERN_DLL_EXPORT void ExitLA(int retVal)
 {
    if (retVal) {

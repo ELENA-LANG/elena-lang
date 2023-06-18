@@ -25,6 +25,7 @@ namespace elena_lang
       DynamicString<char>  _body;
 
       bool connect(void* tape);
+      bool execute(void* tape);
 
       void executeCommandLine(const char* line);
 

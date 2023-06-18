@@ -3,7 +3,7 @@
 //
 //		This file contains the xml project base class implementation
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "xmlprojectbase.h"
@@ -154,6 +154,24 @@ void XmlProjectBase :: loadKeyCollection(ConfigFile& config, ConfigFile::Node& r
    }
 }
 
+void XmlProjectBase :: loadForwards(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath)
+{
+   DynamicString<char> key, value;
+
+   ConfigFile::Collection collection;
+   if (config.select(root, xpath, collection)) {
+      for (auto it = collection.start(); !it.eof(); ++it) {
+         ConfigFile::Node node = *it;
+
+         if (node.readAttribute("key", key)) {
+            node.readContent(value);
+
+            addForward(key.str(), value.str());
+         }
+      }
+   }
+}
+
 ustr_t XmlProjectBase :: resolveKey(ProjectOption category, ProjectOption item, ustr_t key)
 {
    ProjectNode current = ProjectTree::gotoChild(_root.findChild(category), item, key);
@@ -178,11 +196,6 @@ ustr_t XmlProjectBase :: resolveExternal(ustr_t dllAlias)
 
 void XmlProjectBase :: addForward(ustr_t forward, ustr_t referenceName)
 {
-   // !! temporal
-   if (referenceName.findStr("system@Enumerator#1&system@String") != NOTFOUND_POS)
-      referenceName = referenceName;
-
-
    freeUStr(_forwards.exclude(forward));
 
    _forwards.add(forward, referenceName.clone());

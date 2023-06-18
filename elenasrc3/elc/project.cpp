@@ -194,24 +194,6 @@ void Project :: loadTargetType(ConfigFile& config, ConfigFile::Node& root)
    }
 }
 
-void Project :: loadForwards(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath)
-{
-   DynamicString<char> key, value;
-
-   ConfigFile::Collection collection;
-   if (config.select(root, xpath, collection)) {
-      for (auto it = collection.start(); !it.eof(); ++it) {
-         ConfigFile::Node node = *it;
-
-         if (node.readAttribute("key", key)) {
-            node.readContent(value);
-
-            addForward(key.str(), value.str());
-         }
-      }
-   }
-}
-
 void Project :: copySetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, ProjectOption key, bool exclusiveMode)
 {
    auto configNode = config.selectNode(configRoot, xpath);

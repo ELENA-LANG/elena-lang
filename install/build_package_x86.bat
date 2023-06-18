@@ -6,6 +6,7 @@ md %~dp0\output
 md %~dp0\output\bin
 md %~dp0\output\bin\templates
 md %~dp0\output\bin\scripts
+md %~dp0\output\bin\x32
 md %~dp0\output\doc
 md %~dp0\output\examples60 
 md %~dp0\output\examples60\console 
@@ -37,6 +38,10 @@ copy %~dp0\..\bin\winstub.ex_ %~dp0\output\bin
 copy %~dp0\..\bin\elc60.cfg %~dp0\output\bin
 copy %~dp0\..\bin\elenart60.cfg %~dp0\output\bin
 copy %~dp0\..\bin\elenavm60.cfg %~dp0\output\bin
+
+copy %~dp0\..\bin\x32\core60.bin %~dp0\output\bin\x32\
+copy %~dp0\..\bin\x32\core60_win.bin %~dp0\output\bin\x32\
+copy %~dp0\..\bin\x32\corex60.bin %~dp0\output\bin\x32\
 
 copy %~dp0\..\bin\templates\*.cfg %~dp0\output\bin\templates\
 copy %~dp0\..\bin\scripts\*.es %~dp0\output\bin\scripts\

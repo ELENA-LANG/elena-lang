@@ -8,8 +8,11 @@ In development:
     [!] vm terminal
     [!] ide vm console
 
+    * elenavm : #config command
+    * elenavm : forwards
     * elt : 2, 2+3, "hello", "workd".insert(0, "hello ")
     * (re)implement elt
+    * test vm console app (e.g. helloworld)
 
     * ide : test screnario - create a new project, change it and save it
     * elenavm : implementing rest of dll api

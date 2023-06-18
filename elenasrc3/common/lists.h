@@ -3209,7 +3209,7 @@ namespace elena_lang
 
       pos_t getNextLink(pos_t linkPosition)
       {
-         ChildLink link;
+         ChildLink link = {};
          _buffer.read(linkPosition, &link, sizeof(ChildLink));
 
          return link.nextChildLink;

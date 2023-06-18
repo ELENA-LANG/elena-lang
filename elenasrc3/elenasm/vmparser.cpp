@@ -36,6 +36,13 @@ bool VMTapeParser :: parseDirective(ScriptEngineReaderBase& reader, MemoryDump* 
          writer.write(VM_TERMINAL_CMD);
          writer.write(VM_INIT_CMD);
       }
+      else if (reader.compare("#config")) {
+         ScriptBookmark bm = reader.read();
+         if (bm.state == dfaIdentifier) {
+            writer.write(VM_CONFIG_CMD, reader.lookup(bm));
+         }
+         else throw SyntaxError("Invalid directive", bm.lineInfo);
+      }
       else return false;
 
       reader.read();
@@ -97,7 +104,9 @@ int VMTapeParser :: parseBuildScriptArgumentList(ScriptEngineReaderBase& reader,
 
    ScriptBookmark bm = reader.read();
    while (!reader.compare(")")) {
-      maxArgCount = _max(maxArgCount, parseBuildScriptStatement(reader, bm, callStack, exprBookmark));
+      int subArgCount = parseBuildScriptStatement(reader, bm, callStack, exprBookmark);
+
+      maxArgCount = _max(maxArgCount, subArgCount);
       currentArgCount++;
 
       bm = reader.read();
@@ -145,7 +154,8 @@ bool VMTapeParser :: parseBuildScript(ScriptEngineReaderBase& reader, TapeWriter
    while (!reader.eof()) {
       idle = false;
 
-      maxArgCount = _max(maxArgCount, parseBuildScriptStatement(reader, bm, callStack, 0));
+      int subArgCount = parseBuildScriptStatement(reader, bm, callStack, 0);
+      maxArgCount = _max(maxArgCount, subArgCount);
 
       bm = reader.read();
    }

@@ -40,10 +40,13 @@ namespace elena_lang
 
       virtual addr_t resolveExternal(ustr_t dll, ustr_t function) = 0;
 
+      void loadConfig(ustr_t configName);
+
       void addForward(ustr_t forwardLine);
       void addPackage(ustr_t packageLine);
 
-      addr_t interprete(SystemEnv* env, void* tape, pos_t size, const char* criricalHandlerReference);
+      addr_t interprete(SystemEnv* env, void* tape, pos_t size, 
+         const char* criricalHandlerReference, bool withConfiguration);
 
       void onNewCode(JITLinker& jitLinker);
 
@@ -72,6 +75,8 @@ namespace elena_lang
       addr_t resolveExternal(ustr_t reference) override;
 
       void startSTA(SystemEnv* env, void* tape, const char* criricalHandlerReference);
+
+      addr_t evaluate(void* tape);
 
       size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
       size_t loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length);

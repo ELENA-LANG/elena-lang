@@ -11,7 +11,7 @@
 
 namespace elena_lang
 {
-   #define ELT_REVISION_NUMBER               0x0002
+   #define ELT_REVISION_NUMBER               0x0003
 
    constexpr auto ELT_GREETING               = "ELENA command line VM terminal %d.%d.%d (C)2021-23 by Aleksey Rakov\n";
 

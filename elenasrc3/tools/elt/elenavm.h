@@ -21,6 +21,8 @@
 extern "C"
 {
    DLL_PUBLIC int InitializeVMSTLA(elena_lang::SystemEnv* env, void* tape, const char* criricalHandlerReference);
+   DLL_PUBLIC int EvaluateVMLA(void* tape);
+
 }
 
 #endif // ELENART_H_INCLUDED

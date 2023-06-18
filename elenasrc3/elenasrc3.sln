@@ -24,6 +24,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenasm", "elenasm\vs\elenasm.vcxproj", "{E2686A7D-1888-4078-B5F3-63FD4F2682A4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elt", "tools\elt\vs\elt.vcxproj", "{BDA77ED4-5133-45DC-9E2A-EF1077600A27}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0AC5D6DF-B249-4EED-BD36-E4ECD3493600} = {0AC5D6DF-B249-4EED-BD36-E4ECD3493600}
+		{E2686A7D-1888-4078-B5F3-63FD4F2682A4} = {E2686A7D-1888-4078-B5F3-63FD4F2682A4}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

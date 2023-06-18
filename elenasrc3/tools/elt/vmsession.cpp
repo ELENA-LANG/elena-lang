@@ -67,8 +67,9 @@ void VMSession :: executeCommandLine(const char* line)
    command.append(line);
    command.append(*_postfix);
 
-   if (!executeScript(command.str()))
+   if (!executeScript(command.str())) {
       _presenter->print(ELT_CODE_FAILED);
+   }
 
    _body.clear();
 }
@@ -79,6 +80,7 @@ bool VMSession :: executeTape(void* tape)
    if (!_started) {
       retVal = connect(tape);
    }
+   else execute(tape);
 
    ReleaseSMLA(tape);
 
@@ -111,7 +113,7 @@ bool VMSession :: executeScript(const char* script)
       int length = GetStatusSMLA(error, 0x200);
       error[length] = 0;
       if (!emptystr(error)) {
-         _presenter->print(ELT_SCRIPT_FAILED, error);
+         _presenter->printLine(ELT_SCRIPT_FAILED, error);
          return false;
       }
       return true;
@@ -128,12 +130,21 @@ bool VMSession :: connect(void* tape)
 
    int retVal = InitializeVMSTLA(&env, tape, nullptr);
    if (retVal != 0) {
-      _presenter->print(ELT_STARTUP_FAILED);
+      _presenter->printLine(ELT_STARTUP_FAILED);
 
       return false;
    }
 
    _started = true;
+
+   return true;
+}
+
+bool VMSession :: execute(void* tape)
+{
+   if (EvaluateVMLA(tape) != 0) {
+      return false;
+   }
 
    return true;
 }
