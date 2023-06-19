@@ -141,8 +141,12 @@ namespace elena_lang
       ustr_t resolveExternal(ustr_t forward) override;
 
       ustr_t StringSetting(ProjectOption option) const override;
+
       path_t PathSetting(ProjectOption option) const override;
+      path_t PathSetting(ProjectOption option, ustr_t key) const override;
+
       bool BoolSetting(ProjectOption option, bool defValue = false) const override;
+
       int IntSetting(ProjectOption option, int defValue) const override;
 
       ModuleIteratorBase* allocModuleIterator() override

@@ -2014,7 +2014,7 @@ inline void* elena_lang :: retrieveRCode(JITCompilerScope* scope, int arg)
 
 inline int retrieveNOpIndex(int arg, unsigned extendedForm, int baseIndex)
 {
-   return abs(arg) > extendedForm ? baseIndex + 1 : baseIndex;
+   return (unsigned)abs(arg) > extendedForm ? baseIndex + 1 : baseIndex;
 }
 
 void elena_lang::loadDPNOp(JITCompilerScope* scope)

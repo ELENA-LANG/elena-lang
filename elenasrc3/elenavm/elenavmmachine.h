@@ -12,31 +12,54 @@
 #include "jitlinker.h" 
 #include "codescope.h" 
 #include "projectbase.h"
+#include "xmlprojectbase.h"
 
 namespace elena_lang
 {
    constexpr auto ELENAVM_GREETING        = "ELENA VM %d.%d.%d (C)2022-2023 by Aleksey Rakov";
    constexpr auto ELENAVM_INITIALIZING    = "Initializing...";
 
+   // --- ELENAVMConfiguration ---
+
+   class ELENAVMConfiguration : public XmlProjectBase
+   {
+   protected:
+      void loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node root);
+      bool loadConfig(path_t path);
+
+   public:
+      ustr_t resolveWinApi(ustr_t forward);
+
+      bool loadConfigByName(path_t configPath, ustr_t name);
+
+      void forEachForward(void* arg, void (*feedback)(void* arg, ustr_t key, ustr_t value)) override;
+
+      ELENAVMConfiguration(PlatformType platform, path_t path)
+         : XmlProjectBase(platform)
+      {
+         loadConfig(path);
+      }
+   };
+
    // --- ELENARTMachine ---
    class ELENAVMMachine : public ELENAMachine, public ImageProviderBase, public ExternalMapper
    {
    protected:
-      bool                 _initialized;
-      LibraryProvider      _libraryProvider;
-      PresenterBase*       _presenter;
-      ReferenceMapper      _mapper;
-      JITLinkerSettings    _settings;
-      SystemEnv*           _env;
+      bool                    _initialized;
+      LibraryProvider         _libraryProvider;
+      PresenterBase*          _presenter;
+      ReferenceMapper         _mapper;
+      JITLinkerSettings       _settings;
+      SystemEnv*              _env;
 
-      bool                 _standAloneMode;
+      bool                    _standAloneMode;
 
-      path_t               _rootPath;
+      path_t                  _rootPath;
 
-      ProjectBase*         _configuration;
-      JITCompilerBase*     _compiler;
+      ELENAVMConfiguration*   _configuration;
+      JITCompilerBase*        _compiler;
 
-      IdentifierString     _preloadedSection;
+      IdentifierString        _preloadedSection;
 
       virtual addr_t resolveExternal(ustr_t dll, ustr_t function) = 0;
 

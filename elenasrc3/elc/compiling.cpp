@@ -432,7 +432,7 @@ void CompilingProcess :: buildModule(path_t projectPath,
       &moduleScope, &_templateGenerator);
    parseModule(projectPath, fileProlog, fileEpilog, module_it, builder, moduleScope);
 
-   _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
+   _presenter->printLine(ELC_COMPILING_MODULE, moduleScope.module->name());
 
    buildSyntaxTree(moduleScope, syntaxTree, false, nullptr);
 }

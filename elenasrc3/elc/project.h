@@ -45,8 +45,6 @@ namespace elena_lang
 
       void loadDefaultConfig();
 
-      path_t PathSetting(ProjectOption option, ustr_t key) const;
-
    public:
       PlatformType SystemTarget();
       PlatformType Platform();
@@ -64,6 +62,7 @@ namespace elena_lang
 
       ustr_t StringSetting(ProjectOption option) const override;
       path_t PathSetting(ProjectOption option) const override;
+      path_t PathSetting(ProjectOption option, ustr_t key) const override;
 
       void addBoolSetting(ProjectOption option, bool value);
       void addIntSetting(ProjectOption option, int value);

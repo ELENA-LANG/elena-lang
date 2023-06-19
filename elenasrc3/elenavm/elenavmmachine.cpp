@@ -16,70 +16,75 @@
 
 using namespace elena_lang;
 
-// --- ELENARTMachine::ReferenceMapper ---
-
 // --- ELENAVMConfiguration ---
 
-class ELENAVMConfiguration : public XmlProjectBase
+void ELENAVMConfiguration :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node root)
 {
-protected:
-   void loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node root)
-   {
-      loadPathCollection(config, root, TEMPLATE_CATEGORY, 
-         ProjectOption::Templates, configPath);
+   ConfigFile::Node baseConfig = config.selectNode(root, PROJECT_TEMPLATE);
+   if (!baseConfig.isNotFound()) {
+      DynamicString<char> key;
+      baseConfig.readContent(key);
 
-      loadPathCollection(config, root, PRIMITIVE_CATEGORY,
-         ProjectOption::Primitives, configPath);
-      loadPathCollection(config, root, REFERENCE_CATEGORY,
-         ProjectOption::References, configPath);
-
-      loadPathSetting(config, root, LIB_PATH, ProjectOption::LibPath, configPath);
-
-      loadKeyCollection(config, root, EXTERNAL_CATEGORY,
-         ProjectOption::Externals, ProjectOption::External, nullptr);
-
-      loadForwards(config, root, FORWARD_CATEGORY);
+      loadConfigByName(configPath, key.str());
    }
 
-   bool loadConfig(path_t path)
-   {
-      ConfigFile config;
-      if (config.load(path, FileEncoding::UTF8)) {
-         PathString configPath;
-         configPath.copySubPath(path, false);
+   loadPathCollection(config, root, TEMPLATE_CATEGORY,
+      ProjectOption::Templates, configPath);
 
-         ConfigFile::Node root = config.selectRootNode();
-         // select platform configuration
-         ConfigFile::Node platformRoot = getPlatformRoot(config, _platform);
+   loadPathCollection(config, root, PRIMITIVE_CATEGORY,
+      ProjectOption::Primitives, configPath);
+   loadPathCollection(config, root, REFERENCE_CATEGORY,
+      ProjectOption::References, configPath);
 
-         loadConfig(config, *configPath, root);
-         loadConfig(config, *configPath, platformRoot);
+   loadPathSetting(config, root, LIB_PATH, ProjectOption::LibPath, configPath);
 
-         return true;
-      }
+   loadKeyCollection(config, root, EXTERNAL_CATEGORY,
+      ProjectOption::Externals, ProjectOption::External, nullptr);
 
-      return false;
+   loadForwards(config, root, FORWARD_CATEGORY);
+}
+
+bool ELENAVMConfiguration :: loadConfig(path_t path)
+{
+   ConfigFile config;
+   if (config.load(path, FileEncoding::UTF8)) {
+      PathString configPath;
+      configPath.copySubPath(path, false);
+
+      ConfigFile::Node root = config.selectRootNode();
+      // select platform configuration
+      ConfigFile::Node platformRoot = getPlatformRoot(config, _platform);
+
+      loadConfig(config, *configPath, root);
+      loadConfig(config, *configPath, platformRoot);
+
+      return true;
    }
 
-public:
-   ustr_t resolveWinApi(ustr_t forward)
-   {
-      throw InternalError(errVMBroken);
+   return false;
+}
+
+ustr_t ELENAVMConfiguration :: resolveWinApi(ustr_t forward)
+{
+   throw InternalError(errVMBroken);
+}
+
+bool ELENAVMConfiguration :: loadConfigByName(path_t configPath, ustr_t name)
+{
+   path_t relativePath = PathSetting(ProjectOption::Templates, name);
+   if (!relativePath.empty()) {
+      PathString baseConfigPath(configPath, relativePath);
+
+      return loadConfig(*baseConfigPath);
    }
+   return false;
+}
 
-   void forEachForward(void* arg, void (*feedback)(void* arg, ustr_t key, ustr_t value))
-   {
+void ELENAVMConfiguration :: forEachForward(void* arg, void (*feedback)(void* arg, ustr_t key, ustr_t value))
+{
+}
 
-   }
-
-   ELENAVMConfiguration(PlatformType platform, path_t path)
-      : XmlProjectBase(platform)
-   {
-      loadConfig(path);
-   }
-};
-
-// --- ELENARTMachine ---
+// --- ELENAVMMachine ---
 
 ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform, 
    int codeAlignment, JITSettings gcSettings,
@@ -150,7 +155,7 @@ void ELENAVMMachine :: addPackage(ustr_t packageLine)
 
 void ELENAVMMachine :: loadConfig(ustr_t configName)
 {
-   
+   _configuration->loadConfigByName(_rootPath, configName);
 }
 
 bool ELENAVMMachine :: configurateVM(MemoryReader& reader, SystemEnv* env)

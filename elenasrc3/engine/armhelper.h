@@ -408,7 +408,7 @@ namespace elena_lang
 
             unsigned CLO = countLeadingOnes(imm);
             I = 64 - CLO;
-            CTO = CLO + countTrailingOnes(imm) - (64 - Size);
+            CTO = CLO + (uint32_t)countTrailingOnes(imm) - (64 - Size);
          }
 
          // Encode in Immr the number of RORs it would take to get *from* 0^m 1^n

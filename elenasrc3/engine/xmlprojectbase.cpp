@@ -20,11 +20,27 @@ ustr_t XmlProjectBase::StringSetting(ProjectOption option) const
    return node.identifier();
 }
 
-path_t XmlProjectBase::PathSetting(ProjectOption option) const
+path_t XmlProjectBase :: PathSetting(ProjectOption option) const
 {
    int fileIndex = _root.findChild(option).arg.value;
 
    return _paths.get(fileIndex);
+}
+
+
+path_t XmlProjectBase :: PathSetting(ProjectOption option, ustr_t key) const
+{
+   ProjectNode current = _root.findChild(option).firstChild();
+   while (current != ProjectOption::None) {
+      ProjectNode keyNode = current.findChild(ProjectOption::Key);
+      if (keyNode != ProjectOption::None && key.compare(keyNode.identifier())) {
+         return _paths.get(current.arg.value);
+      }
+
+      current = current.nextNode();
+   }
+
+   return nullptr;
 }
 
 bool XmlProjectBase::BoolSetting(ProjectOption option, bool defValue) const

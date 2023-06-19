@@ -665,6 +665,8 @@ namespace elena_lang
 
       pos_t count() const { return _list.count(); }
 
+      int count_int() const { return (int)_list.count(); }
+
       Iterator start()
       {
          return _list.start();
@@ -3035,6 +3037,11 @@ namespace elena_lang
       pos_t count_pos() const
       {
          return (pos_t)_length;
+      }
+
+      int count_int() const
+      {
+         return (int)_length;
       }
 
       T& get(int index)

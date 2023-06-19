@@ -2518,7 +2518,7 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
    }
 
    vmtWriter.writePos(globalAttributes.count_pos() * sizeof(unsigned int));
-   for (int i = 0; i < globalAttributes.count_pos(); i++) {
+   for (pos_t i = 0; i < globalAttributes.count_pos(); i++) {
       vmtWriter.writeDWord(globalAttributes.get(i));
    }
 }

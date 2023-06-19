@@ -26,21 +26,6 @@ PlatformType operator | (const PlatformType& l, const PlatformType& r)
 
 // --- Project ---
 
-path_t Project :: PathSetting(ProjectOption option, ustr_t key) const
-{
-   ProjectNode current = _root.findChild(option).firstChild();
-   while (current != ProjectOption::None) {
-      ProjectNode keyNode = current.findChild(ProjectOption::Key);
-      if (keyNode != ProjectOption::None && key.compare(keyNode.identifier())) {
-         return _paths.get(current.arg.value);
-      }
-
-      current = current.nextNode();
-   }
-
-   return nullptr;
-}
-
 path_t Project :: PathSetting(ProjectOption option) const
 {
    switch (option) {
@@ -55,6 +40,11 @@ path_t Project :: PathSetting(ProjectOption option) const
       default:
          return nullptr;
    }
+}
+
+path_t Project::PathSetting(ProjectOption option, ustr_t key) const
+{
+   return XmlProjectBase::PathSetting(option, key);
 }
 
 ustr_t Project :: StringSetting(ProjectOption option) const

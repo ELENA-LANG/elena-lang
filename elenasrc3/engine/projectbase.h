@@ -125,6 +125,8 @@ namespace elena_lang
       virtual FileIteratorBase* allocPackageIterator() = 0;
 
       virtual path_t PathSetting(ProjectOption option) const = 0;
+      virtual path_t PathSetting(ProjectOption option, ustr_t key) const = 0;
+
       virtual ustr_t StringSetting(ProjectOption option) const = 0;
       virtual bool BoolSetting(ProjectOption option, bool defValue = false) const = 0;
       virtual int IntSetting(ProjectOption option, int defValue = 0) const = 0;

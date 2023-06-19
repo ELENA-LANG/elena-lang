@@ -32,7 +32,7 @@ inline bool isTemplateBased(ustr_t reference)
 
 void writeNs(TextFileWriter& writer, ustr_t ns)
 {
-   for (int i = 0; i < getlength(ns); i++)
+   for (size_t i = 0; i < getlength(ns); i++)
    {
       if (ns[i] == '\'') {
          writer.writeChar('-');
@@ -172,13 +172,13 @@ void parseNs(IdentifierString& ns, ustr_t root, ustr_t fullName)
    ns.append(fullName, last);
 }
 
-void parseTemplateType(IdentifierString& line, int index, bool argMode)
+void parseTemplateType(IdentifierString& line, size_t index, bool argMode)
 {
    IdentifierString temp(line);
 
    line.truncate(0);
 
-   int last = index;
+   size_t last = index;
    bool first = true;
    bool noCurlybrackets = false;
    if (argMode && (*temp).startsWith(ByRefPrefix)) {
@@ -198,7 +198,7 @@ void parseTemplateType(IdentifierString& line, int index, bool argMode)
       noCurlybrackets = true;
    }
 
-   for (int i = index; i < temp.length(); i++) {
+   for (size_t i = index; i < temp.length(); i++) {
       if (temp[i] == '@') {
          temp[i] = '\'';
       }
@@ -272,7 +272,7 @@ void writeRefName(TextFileWriter& writer, ustr_t name, bool allowResolvedTemplat
 {
    int paramIndex = 1;
    bool paramMode = false;
-   for (int i = 0; i < getlength(name); i++)
+   for (size_t i = 0; i < getlength(name); i++)
    {
       if (!paramMode && name[i] == '\'') {
          writer.writeChar('-');

@@ -13,6 +13,11 @@ md %~dp0\output\examples60\console
 md %~dp0\output\examples60\console\helloworld
 md %~dp0\output\examples60\console\sum
 md %~dp0\output\examples60\console\words
+md %~dp0\output\examples60\console\binary 
+md %~dp0\output\examples60\console\bsort 
+md %~dp0\output\examples60\console\datetime 
+md %~dp0\output\examples60\console\goods 
+md %~dp0\output\examples60\console\replace 
 md %~dp0\output\examples60\rosetta\accumulator
 md %~dp0\output\examples60\rosetta\ackermann
 md %~dp0\output\examples60\rosetta\addfield
@@ -24,6 +29,26 @@ md %~dp0\output\examples60\rosetta\arithmeval
 md %~dp0\output\examples60\rosetta\arithmmean
 md %~dp0\output\examples60\rosetta\arrayconcat
 md %~dp0\output\examples60\rosetta\arraymode
+md %~dp0\output\examples60\rosetta\arrays 
+md %~dp0\output\examples60\rosetta\associativearrays 
+md %~dp0\output\examples60\rosetta\bestshuffle 
+md %~dp0\output\examples60\rosetta\binary 
+md %~dp0\output\examples60\rosetta\bitwise 
+md %~dp0\output\examples60\rosetta\brackets 
+md %~dp0\output\examples60\rosetta\bullscows 
+md %~dp0\output\examples60\rosetta\caesar 
+md %~dp0\output\examples60\rosetta\calendar 
+md %~dp0\output\examples60\rosetta\charmatch 
+md %~dp0\output\examples60\rosetta\combinations 
+md %~dp0\output\examples60\rosetta\doors 
+md %~dp0\output\examples60\rosetta\evolutionary 
+md %~dp0\output\examples60\rosetta\firstclass 
+md %~dp0\output\examples60\rosetta\loop_multiple_arrays 
+md %~dp0\output\examples60\rosetta\median 
+md %~dp0\output\examples60\rosetta\ninetynine 
+md %~dp0\output\examples60\rosetta\reverse_words_in_string 
+md %~dp0\output\examples60\rosetta\smavg 
+md %~dp0\output\examples60\rosetta\string_append 
 
 copy %~dp0\..\bin\asm-cli.exe %~dp0\output\bin
 copy %~dp0\..\bin\elena-cli.exe %~dp0\output\bin
@@ -101,6 +126,13 @@ copy %~dp0\..\examples60\console\sum\*.l %~dp0\output\examples60\console\sum
 copy %~dp0\..\examples60\console\sum\*.prj %~dp0\output\examples60\console\sum
 
 copy %~dp0\..\examples60\console\words\*.l %~dp0\output\examples60\console\words
+copy %~dp0\..\examples60\console\binary\*.l %~dp0\output\examples60\console\binary
+copy %~dp0\..\examples60\console\bsort\*.l %~dp0\output\examples60\console\bsort
+copy %~dp0\..\examples60\console\datetime\*.l %~dp0\output\examples60\console\datetime
+copy %~dp0\..\examples60\console\datetime\*.prj %~dp0\output\examples60\console\datetime
+copy %~dp0\..\examples60\console\goods\*.l %~dp0\output\examples60\console\goods
+copy %~dp0\..\examples60\console\goods\*.txt %~dp0\output\examples60\console\goods
+copy %~dp0\..\examples60\console\replace\*.l %~dp0\output\examples60\console\replace
 
 copy %~dp0\..\examples60\rosetta\accumulator\*.l %~dp0\output\examples60\rosetta\accumulator
 copy %~dp0\..\examples60\rosetta\ackermann\*.l %~dp0\output\examples60\rosetta\ackermann
@@ -113,6 +145,27 @@ copy %~dp0\..\examples60\rosetta\arithmeval\*.l %~dp0\output\examples60\rosetta\
 copy %~dp0\..\examples60\rosetta\arithmmean\*.l %~dp0\output\examples60\rosetta\arithmmean
 copy %~dp0\..\examples60\rosetta\arrayconcat\*.l %~dp0\output\examples60\rosetta\arrayconcat
 copy %~dp0\..\examples60\rosetta\arraymode\*.l %~dp0\output\examples60\rosetta\arraymode
+copy %~dp0\..\examples60\rosetta\arrays\*.l %~dp0\output\examples60\rosetta\arrays
+
+copy %~dp0\..\examples60\rosetta\associativearrays\*.l %~dp0\output\examples60\rosetta\associativearrays 
+copy %~dp0\..\examples60\rosetta\bestshuffle\*.l %~dp0\output\examples60\rosetta\bestshuffle
+copy %~dp0\..\examples60\rosetta\binary\*.l %~dp0\output\examples60\rosetta\binary
+copy %~dp0\..\examples60\rosetta\bitwise\*.l %~dp0\output\examples60\rosetta\bitwise
+copy %~dp0\..\examples60\rosetta\brackets\*.l %~dp0\output\examples60\rosetta\brackets
+copy %~dp0\..\examples60\rosetta\bullscows\*.l %~dp0\output\examples60\rosetta\bullscows
+copy %~dp0\..\examples60\rosetta\caesar\*.l %~dp0\output\examples60\rosetta\caesar
+copy %~dp0\..\examples60\rosetta\calendar\*.l %~dp0\output\examples60\rosetta\calendar
+copy %~dp0\..\examples60\rosetta\charmatch\*.l %~dp0\output\examples60\rosetta\charmatch
+copy %~dp0\..\examples60\rosetta\combinations\*.l %~dp0\output\examples60\rosetta\combinations
+copy %~dp0\..\examples60\rosetta\doors\*.l %~dp0\output\examples60\rosetta\doors
+copy %~dp0\..\examples60\rosetta\evolutionary\*.l %~dp0\output\examples60\rosetta\evolutionary 
+copy %~dp0\..\examples60\rosetta\firstclass\*.l %~dp0\output\examples60\rosetta\firstclass 
+copy %~dp0\..\examples60\rosetta\loop_multiple_arrays\*.l %~dp0\output\examples60\rosetta\loop_multiple_arrays
+copy %~dp0\..\examples60\rosetta\median\*.l %~dp0\output\examples60\rosetta\median
+copy %~dp0\..\examples60\rosetta\ninetynine\*.l %~dp0\output\examples60\rosetta\ninetynine
+copy %~dp0\..\examples60\rosetta\reverse_words_in_string\*.l %~dp0\output\examples60\rosetta\reverse_words_in_string
+copy %~dp0\..\examples60\rosetta\smavg\*.l %~dp0\output\examples60\rosetta\smavg
+copy %~dp0\..\examples60\rosetta\string_append\*.l %~dp0\output\examples60\rosetta\string_append
 
 7z a %~dp0\output\%1.zip %~dp0\output\*.* %~dp0\output\* -r
 

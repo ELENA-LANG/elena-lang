@@ -222,8 +222,8 @@ bool TextViewModel :: selectDocumentView(int index)
    if (_documents.count() == 0)
       return false;
 
-   if (index > _documents.count())
-      index = _documents.count();
+   if (index > _documents.count_int())
+      index = _documents.count_int();
 
    bool selected = false;
 

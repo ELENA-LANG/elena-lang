@@ -8,8 +8,8 @@ In development:
     [!] vm terminal
     [!] ide vm console
 
+    * fix resolveExternal for external mapper - use the key value
     * elenavm : #config command
-    * elenavm : forwards
     * elt : 2, 2+3, "hello", "workd".insert(0, "hello ")
     * (re)implement elt
     * test vm console app (e.g. helloworld)

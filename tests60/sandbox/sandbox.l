@@ -21,9 +21,9 @@ class Person
     }
 }
 
-//// Select a solution
-//
-//const int Solution = 5; // put 1,2,3,4 or 5
+// Select a solution
+
+const int Solution = 5; // put 1,2,3,4 or 5
 
 // Solution 1
 
@@ -138,8 +138,8 @@ static classTreeFromScript
 
 closureSolution(select) = (r,words)
 {
-   var f := select(words[0]);
-   (words.Length) =>
+    var f := select(words[0]);
+    (words.Length) =>
         2 {
             console.printLine(f(r, words[1]));
         }
@@ -167,32 +167,32 @@ public program()
 {
     var proceed := nil;
     
-//    Solution =>
-//        1 {
-//            proceed := closureSolution((word => verbs[word]));
-//        }
-//        2 {
-//            proceed := closureSolution((word => nodes[word]));
-//        }
-//        3 {
-//           proceed := closureSolution((word => nodes2[word].compile(new RootExpressionScope())));
-//        }
-//        4 {
-//            proceed := classSolution(classTree);
-//        }
-//        5{
-            proceed := classSolution(classTreeFromScript);
-//        };
-
-   var r := new Person();
-
+    Solution =>
+        1 {
+            proceed := closureSolution((word => verbs[word]))
+        }
+        2 {
+            proceed := closureSolution((word => nodes[word]))
+        }
+        3 {
+            proceed := closureSolution((word => nodes2[word].compile(new RootExpressionScope())))
+        }
+        4 {
+            proceed := classSolution(classTree)
+        }
+        5 {
+            proceed := classSolution(classTreeFromScript)            
+        };
+    
+    var r := new Person();
+    
     console.printLine(
 "Enter ""verb property value"" or press enter to stop
-set FirstName | LastName Alex
-get FirstName | LastName");
+set FirstName Alex
+get FirstName");
 
     until(string line := console.write(">").readLine(), line == "")
     {
-        proceed(r, line.split());
+        proceed(r, line.split());        
     }
 }
