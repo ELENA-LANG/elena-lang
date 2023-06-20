@@ -180,6 +180,43 @@ mssg_t ELENARTMachine :: loadAction(ustr_t actionName)
    return encodeMessage(actionRef, argCount, flags);
 }
 
+ref_t ELENARTMachine :: loadDispatcherOverloadlist(ustr_t referenceName)
+{
+   return retrieveGlobalAttribute(GA_EXT_OVERLOAD_LIST, referenceName);
+}
+
+int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output)
+{
+   // load message name
+   char messageName[IDENTIFIER_LEN];
+   size_t mssgLen = loadMessageName(message, messageName, IDENTIFIER_LEN);
+   messageName[mssgLen] = 0;
+
+   int len = 0;
+
+   // search message dispatcher
+   IdentifierString messageRef;
+   size_t listLen = getlength(moduleList);
+   size_t i = 0;
+   while (moduleList[i]) {
+      ustr_t ns = moduleList + i;
+
+      messageRef.copy(ns);
+      messageRef.append('\'');
+      messageRef.append(messageName);
+
+      ref_t listRef = loadDispatcherOverloadlist(*messageRef);
+      if (listRef) {
+         ((int*)output)[len] = listRef;
+         len++;
+      }
+
+      i += getlength(ns) + 1;
+   }
+
+   return len;
+}
+
 size_t ELENARTMachine :: loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length)
 {
    // lazy load of debug data

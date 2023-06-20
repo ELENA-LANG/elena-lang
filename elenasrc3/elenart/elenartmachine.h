@@ -36,6 +36,8 @@ namespace elena_lang
 
       addr_t retrieveGlobalAttribute(int attribute, ustr_t name);
 
+      ref_t loadDispatcherOverloadlist(ustr_t referenceName);
+
       void Exit(int exitCode);
 
    public:
@@ -51,6 +53,8 @@ namespace elena_lang
 
       mssg_t loadMessage(ustr_t messageName);
       mssg_t loadAction(ustr_t actionName);
+
+      int loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output);
 
       void initRandomSeed(SeedStruct& seed)
       {

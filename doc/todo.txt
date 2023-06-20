@@ -8,8 +8,9 @@ In development:
     [!] vm terminal
     [!] ide vm console
 
-    * fix resolveExternal for external mapper - use the key value
-    * elenavm : #config command
+    * rt / vm : LoadExtensionDispatcher
+
+    * ExtensionOrMessageCallExpression
     * elt : 2, 2+3, "hello", "workd".insert(0, "hello ")
     * (re)implement elt
     * test vm console app (e.g. helloworld)
@@ -166,7 +167,6 @@ Backlog:
     * native conversion from short to int / byte to int
     * extension template should contain all its arguments in the signature
     * support strong extension template arrayOp<T> : strong, weak
-    * module extension dispatcher should be preloaded
     * elena : nullable
     * system'collections'Map - migrating rest of methods
     * if statements with single statement

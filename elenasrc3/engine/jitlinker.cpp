@@ -862,6 +862,30 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
    return vaddress;
 }
 
+void JITLinker :: generateOverloadListMetaAttribute(ModuleBase* module, mssg_t message, ref_t listRef)
+{
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   // write the overload list name
+   ref_t signature;
+   ustr_t actionName = module->resolveAction(actionRef, signature);
+
+   IdentifierString fullName;
+   fullName.copy(module->name());
+   fullName.append('\'');
+
+   ByteCodeUtil::formatMessageName(fullName, module, actionName, nullptr, 0, argCount, flags);
+
+   ustr_t referenceName = module->resolveReference(listRef & ~mskAnyRef);
+
+   // resolve extension overloadlist
+   addr_t address = resolve(ReferenceInfo(module, referenceName), mskConstArray, false);
+
+   createGlobalAttribute(GA_EXT_OVERLOAD_LIST, *fullName, address);
+}
+
 void JITLinker :: resolveClassGlobalAttributes(ReferenceInfo referenceInfo, MemoryReader& vmtReader, addr_t vaddress)
 {
    pos_t attrCount = vmtReader.getPos();
@@ -883,6 +907,14 @@ void JITLinker :: resolveClassGlobalAttributes(ReferenceInfo referenceInfo, Memo
 
             _mapper->addLazyReference({ mskAutoSymbolRef, INVALID_POS, referenceInfo.module, symbolRef, 0 });
 
+            break;
+         }
+         case ClassAttribute::ExtOverloadList:
+         {
+            mssg_t message = vmtReader.getDWord();
+            ref_t listRef = vmtReader.getDWord();
+
+            generateOverloadListMetaAttribute(referenceInfo.module, message, listRef);
             break;
          }
          default:

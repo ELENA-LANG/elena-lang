@@ -164,7 +164,7 @@ void XmlProjectBase :: loadKeyCollection(ConfigFile& config, ConfigFile::Node& r
             if (valueNode == ProjectOption::None) {
                keyNode.appendChild(ProjectOption::Value, value.str());
             }
-            else keyNode.setStrArgument(value.str());
+            else valueNode.setStrArgument(value.str());
          }
       }
    }

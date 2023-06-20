@@ -49,6 +49,8 @@ namespace expressions
 
       abstract TapeFunction resolve(ScopeIdentifier ident, bool assignMode);
 
+//      abstract TapeFunction resolveExtension(Message message);
+
       abstract declare(ScopeIdentifier variable);
    }
 
@@ -129,8 +131,14 @@ namespace expressions
       static Expression MessageCall(Message message, Expression t)
          = MessageCallExpression.new(message,t);      
 
+      static Expression ExtensionOrMessageCall(Message message, Expression t, params Expression[] arguments)
+         = ExtensionOrMessageCallExpression.new(message,t,params arguments);
+
       static Expression Constant(object o)
          = new ConstantExpression(o);
+
+      static Expression IntConstant(string value)
+         = new IntConstantExpression(value);
 
       static Expression GetProperty(MessageName name, Expression t)
          = GetPropertyExpression.new(name, t);
@@ -407,6 +415,109 @@ namespace expressions
       }
    }
 
+   public class ExtensionOrMessageCallExpression : Expression
+   {
+      Message      _message;
+      Expression   _target;
+      Expression[] _arguments;
+
+      constructor new(Message message, Expression t)
+      {
+         _message := message;
+         _target := t;
+         _arguments := new Expression[](0);
+      }
+
+      constructor new(Message message, Expression t, params Expression[] arguments)
+      {
+         _message := message;
+         _target := t;
+         _arguments := arguments;
+      }
+
+      constructor(Expression t, string message)
+         <= new(new Message(message + "[1]"), t);
+        
+      constructor(Expression t, string message, Expression p1)
+         <= new(new Message(message + "[2]"), t, p1);
+        
+      constructor(Expression t, string message, Expression p1, Expression p2)
+         <= new(new Message(message + "[3]"), t, p1, p2);
+        
+      constructor(Expression t, string message, Expression p1, Expression p2, Expression p3)
+         <= new(new Message(message + "[4]"), t, p1, p2, p3);
+        
+      constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4)
+         <= new(new Message(message + "[5]"), t, p1, p2, p3, p4);
+        
+      constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5)
+         <= new(new Message(message + "[6]"), t, p1, p2, p3, p4, p5);
+        
+      constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6)
+         <= new(new Message(message + "[7]"), t, p1, p2, p3, p4, p5, p6);
+        
+      constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7)
+         <= new(new Message(message + "[8]"), t, p1, p2, p3, p4, p5, p6, p7);
+        
+      constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8)
+         <= new(new Message(message + "[9]"), t, p1, p2, p3, p4, p5, p6, p7, p8);
+        
+      constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
+         <= new(new Message(message + "[10]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9);
+        
+      constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
+         <= new(new Message(message + "[11]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+        
+      constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11)
+         <= new(new Message(message + "[12]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
+        
+      constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12)
+         <= new(new Message(message + "[13]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+        
+      bool IsOperation = true;
+        
+      int prepare(ExpressionScope scope)
+      {
+         int len := _arguments.Length;
+         int maxStackSize := len + 1;
+            
+         int argStackSize := _target.prepare(scope);
+         if (argStackSize > maxStackSize)
+            { maxStackSize := argStackSize; };
+            
+         for(int i := 0, i < len, i+=1) {
+            argStackSize := _arguments[i].prepare(scope);
+            if (argStackSize > maxStackSize)
+               { maxStackSize := argStackSize; }
+         };
+
+         ^ maxStackSize
+      }
+
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         TapeFunction messageExpr := scope.resolveExtension(_message);
+         if (messageExpr == nil) {
+            messageExpr := MessageFunction.load(_message)
+         };
+
+         Expression.saveMessageCallTo(list, scope, _target, _arguments, messageExpr);                                                            
+         if (index > 0) {
+            list.append(new SavingFunction(index));
+         }
+      }
+   }
+
    public class GetPropertyExpression : Expression
    {
       MessageName _name;
@@ -506,6 +617,14 @@ namespace expressions
          list.append(ConstantFunction.load(object));
          if (index > 0)
             { list.append(new SavingFunction(index)) };
+      }
+   }
+
+   public class IntConstantExpression : ConstantExpression
+   {
+      constructor(o)
+      {
+         this object := intConvertor.convert(o)
       }
    }
 

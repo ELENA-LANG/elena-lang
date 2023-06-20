@@ -315,6 +315,7 @@ namespace elena_lang
    // === Global Attributes ===
    constexpr auto GA_SYMBOL_NAME             = 0x0001;
    constexpr auto GA_CLASS_NAME              = 0x0002;
+   constexpr auto GA_EXT_OVERLOAD_LIST       = 0x0003;
 
    // === VM Command ===
    constexpr pos_t VM_STR_COMMAND_MASK       = 0x100;

@@ -194,6 +194,8 @@ namespace elena_lang
       mssg_t parseMessageNameLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);
       Pair<mssg_t, addr_t> parseExtMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);
 
+      void generateOverloadListMetaAttribute(ModuleBase* module, mssg_t message, ref_t listRef);
+
       addr_t resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo sectionInfo, ref_t sectionMask);
 
       addr_t resolveVMTSection(ReferenceInfo referenceInfo, ClassSectionInfo sectionInfo);

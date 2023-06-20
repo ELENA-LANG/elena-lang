@@ -1131,6 +1131,8 @@ namespace elena_lang
 
       void declareExtension(ClassScope& scope, mssg_t message, bool internalOne);
 
+      void declareModuleExtensionDispatcher(NamespaceScope& scope, SyntaxNode node);
+
       ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors = false);
       ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors = false, bool resolveMode = true);
       ObjectInfo evalObject(Interpreter& interpreter, Scope& scope, SyntaxNode node);
@@ -1316,8 +1318,6 @@ namespace elena_lang
       void compileClassSymbol(BuildTreeWriter& writer, ClassScope& scope);
       void compileClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node);
       void compileClassClass(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope, SyntaxNode node);
-
-      void compileModuleExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope);
 
       void compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, SyntaxNode node);
 

@@ -3337,6 +3337,12 @@ void Compiler :: declareMembers(NamespaceScope& ns, SyntaxNode node)
 
       current = current.nextNode();
    }
+
+   if (ns.declaredExtensions.count() > 0) {
+      declareModuleExtensionDispatcher(ns, node);
+
+      ns.declaredExtensions.clear();
+   }
 }
 
 
@@ -10820,12 +10826,6 @@ void Compiler :: compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, S
 
       current = current.nextNode();
    }
-
-   if (ns.declaredExtensions.count() > 0) {
-      compileModuleExtensionDispatcher(writer, ns);
-
-      ns.declaredExtensions.clear();
-   }
 }
 
 inline ref_t safeMapReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward)
@@ -11524,7 +11524,25 @@ inline int retrieveIndex(List<mssg_t>& list, mssg_t multiMethod)
       });
 }
 
-void Compiler :: compileModuleExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope)
+inline void saveAsPreloaded(CompilerLogic* logic, ustr_t ns, ModuleBase* module, ref_t ref, ref_t mask)
+{
+   IdentifierString preloadedListName;
+   if (!ns.empty()) {
+      preloadedListName.append(ns);
+   }
+   else preloadedListName.append("'");
+
+   preloadedListName.append(META_PREFIX);
+   preloadedListName.append(PRELOADED_FORWARD);
+
+   ref_t dictionaryRef = module->mapReference(*preloadedListName);
+
+   MemoryBase* dictionary = module->mapSection(dictionaryRef | mskTypeListRef, false);
+
+   logic->writeArrayEntry(dictionary, ref | mask);
+}
+
+void Compiler :: declareModuleExtensionDispatcher(NamespaceScope& scope, SyntaxNode node)
 {
    List<mssg_t>         genericMethods(0);
    ClassInfo::MethodMap methods({});
@@ -11549,44 +11567,33 @@ void Compiler :: compileModuleExtensionDispatcher(BuildTreeWriter& writer, Names
          }
       }
 
-      it++;
-   }
+      if (genericMethods.count() > 0) {
+         // if there are extension methods in the namespace
+         ref_t extRef = scope.moduleScope->mapAnonymous();
+         ClassScope classScope(&scope, extRef, Visibility::Private);
+         declareClassParent(classScope.info.header.parentRef, classScope, {});
+         classScope.extensionDispatcher = true;
+         classScope.info.header.classRef = classScope.reference;
+         classScope.extensionClassRef = scope.moduleScope->buildins.superReference;
+         generateClassFlags(classScope, elExtension | elSealed | elAutoLoaded);
 
-   if (genericMethods.count() > 0) {
-      // if there are extension methods in the namespace
-      ref_t extRef = scope.moduleScope->mapAnonymous();
-      ClassScope classScope(&scope, extRef, Visibility::Private);
-      declareClassParent(classScope.info.header.parentRef, classScope, {});
-      classScope.extensionDispatcher = true;
-      classScope.info.header.classRef = classScope.reference;
-      classScope.extensionClassRef = scope.moduleScope->buildins.superReference;
-      generateClassFlags(classScope, elExtension | elSealed | elAutoLoaded);
+         for (auto g_it = genericMethods.start(); !g_it.eof(); ++g_it) {
+            mssg_t genericMessage = *g_it;
 
-      SyntaxTree classTree;
-      SyntaxTreeWriter classWriter(classTree);
+            _logic->injectMethodOverloadList(this, *scope.moduleScope,
+               classScope.info.header.flags, genericMessage | FUNCTION_MESSAGE, methods,
+               classScope.info.attributes, &targets, targetResolver, ClassAttribute::ExtOverloadList);
+         }
 
-      // build the class tree
-      classWriter.newNode(SyntaxKey::Root);
-      classWriter.newNode(SyntaxKey::Class, extRef);
-      SyntaxNode classNode = classWriter.CurrentNode();
-      classWriter.closeNode();
-      classWriter.closeNode();
+         classScope.save();
 
-      for (auto g_it = genericMethods.start(); !g_it.eof(); ++g_it) {
-         mssg_t genericMessage = *g_it;
- 
-         _logic->injectMethodOverloadList(this, *scope.moduleScope,
-            classScope.info.header.flags, genericMessage | FUNCTION_MESSAGE, methods,
-            classScope.info.attributes, &targets, targetResolver, ClassAttribute::ExtOverloadList);
+         // build the class tree
+         node.appendChild(SyntaxKey::Class, extRef);
+
+         // save as preloaded class
+         saveAsPreloaded(_logic, *scope.nsName, scope.module, extRef, mskVMTRef);
       }
 
-      classScope.save();
-
-      // compile the extension
-      SyntaxTree buffer;
-      SyntaxTreeWriter bufferWriter(buffer);
-
-      writer.newNode(BuildKey::Class, classScope.reference);
-      writer.closeNode();
+      it++;
    }
 }

@@ -2504,17 +2504,25 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
 
    ClassInfo::saveStaticFields(&vmtWriter, info.statics);
 
-   CachedList<ref_t, 3> globalAttributes;
-   if (!testany(info.header.flags, elClassClass | elAbstract)
-      && info.attributes.exist({ 0, ClassAttribute::RuntimeLoadable }))
-   {
-      globalAttributes.add((unsigned int)ClassAttribute::RuntimeLoadable);
-   }
-   if (info.attributes.exist({ 0, ClassAttribute::Initializer })) {
-      ref_t symbolRef = info.attributes.get({ 0, ClassAttribute::Initializer });
+   CachedList<ref_t, 4> globalAttributes;
+   for (auto it = info.attributes.start(); !it.eof(); ++it) {
+      auto key = it.key();
+      if (!testany(info.header.flags, elClassClass | elAbstract)
+         && (key.value2 == ClassAttribute::RuntimeLoadable))
+      {
+         globalAttributes.add((unsigned int)ClassAttribute::RuntimeLoadable);
+      }
+      else if (key.value2 == ClassAttribute::Initializer) {
+         ref_t symbolRef = *it;
 
-      globalAttributes.add((unsigned int)ClassAttribute::Initializer);
-      globalAttributes.add(symbolRef);
+         globalAttributes.add((unsigned int)ClassAttribute::Initializer);
+         globalAttributes.add(symbolRef);
+      }
+      else if (key.value2 == ClassAttribute::ExtOverloadList) {
+         globalAttributes.add((unsigned int)ClassAttribute::ExtOverloadList);
+         globalAttributes.add(key.value1);
+         globalAttributes.add(*it);
+      }
    }
 
    vmtWriter.writePos(globalAttributes.count_pos() * sizeof(unsigned int));

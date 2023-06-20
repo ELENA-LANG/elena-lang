@@ -272,7 +272,7 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
             break;
          case VM_STRING_CMD:
             jitLinker.resolve(strArg, getCmdMask(command), false);
-            symbols.add({ dummyModule->mapReference(strArg) | getCmdMask(command), 0 });
+            symbols.add({ dummyModule->mapConstant(strArg) | getCmdMask(command), 0 });
             break;
          case VM_ALLOC_CMD:
          case VM_SET_ARG_CMD:
@@ -318,6 +318,7 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
          mssg_t message = encodeMessage(dummyModule->mapAction(CONSTRUCTOR_MESSAGE, 0, false), 
             p.value2 - 1, FUNCTION_MESSAGE);
 
+         ByteCodeUtil::write(writer, ByteCode::SetR, p.value1);
          ByteCodeUtil::write(writer, ByteCode::MovM, message);
          ByteCodeUtil::write(writer, ByteCode::CallVI);
       }
