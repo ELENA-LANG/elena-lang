@@ -1341,7 +1341,7 @@ end
 // ; xflushsi 0
 inline %1A4h
 
-  mov [esp+4], esi
+  mov [esp+__arg32_1], esi
 
 end 
 

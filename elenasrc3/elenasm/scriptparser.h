@@ -202,6 +202,24 @@ namespace elena_lang
          tapeWriter.writeDWord(command);
          tapeWriter.writeDWord(arg);
       }
+      pos_t writeAndGetArgPosition(pos_t command, int arg)
+      {
+         MemoryWriter tapeWriter(_tape);
+
+         tapeWriter.writeDWord(command);
+         pos_t argPosition = tapeWriter.position();
+         tapeWriter.writeDWord(arg);
+
+         return argPosition;
+      }
+
+      void fixArg(pos_t position, int arg)
+      {
+         MemoryWriter tapeWriter(_tape);
+         tapeWriter.seek(position);
+
+         tapeWriter.writeDWord(arg);
+      }
 
       TapeWriter(MemoryDump* tape)
       {

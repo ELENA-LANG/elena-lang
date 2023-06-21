@@ -54,6 +54,8 @@ bool VMTapeParser :: parseDirective(ScriptEngineReaderBase& reader, MemoryDump* 
 int VMTapeParser :: writeBuildScriptArgumentList(ScriptEngineReaderBase& reader, ScriptBookmark terminator,
    ScriptStack& callStack, TapeWriter& writer)
 {
+   pos_t position = writer.writeAndGetArgPosition(VM_ALLOC_CMD, 0);
+
    int counter = 0;
    ScriptBookmark bm = callStack.pop();
    while (!bm.compare(terminator)) {
@@ -64,6 +66,8 @@ int VMTapeParser :: writeBuildScriptArgumentList(ScriptEngineReaderBase& reader,
       bm = callStack.pop();
    }
 
+   writer.fixArg(position, counter);
+
    return counter;
 }
 
@@ -73,8 +77,10 @@ void VMTapeParser :: writeBuildScriptStatement(ScriptEngineReaderBase& reader, S
    if (bm.state == dfaReference) {
       int counter = writeBuildScriptArgumentList(reader, bm, callStack, writer);
 
-      writer.write(VM_ARG_TAPE_CMD, counter + 1);
+      writer.write(VM_ARG_TAPE_CMD, counter);
       writer.write(VM_NEW_CMD, reader.lookup(bm));
+
+      writer.write(VM_FREE_CMD, counter);
    }
    else if (bm.state == dfaQuote) {
       writer.write(VM_STRING_CMD, reader.lookup(bm));
@@ -94,43 +100,31 @@ inline void readToken(ScriptEngineReaderBase& reader, ustr_t expectedToken)
       throw SyntaxError("Parse error", bm.lineInfo);
 }
 
-int VMTapeParser :: parseBuildScriptArgumentList(ScriptEngineReaderBase& reader, ScriptStack& callStack)
+void VMTapeParser :: parseBuildScriptArgumentList(ScriptEngineReaderBase& reader, ScriptStack& callStack)
 {
-   int maxArgCount = 2;
-   int currentArgCount = 0;
-
    pos_t exprBookmark = callStack.count();
    readToken(reader, "(");
 
    ScriptBookmark bm = reader.read();
    while (!reader.compare(")")) {
-      int subArgCount = parseBuildScriptStatement(reader, bm, callStack, exprBookmark);
-
-      maxArgCount = _max(maxArgCount, subArgCount);
-      currentArgCount++;
+      parseBuildScriptStatement(reader, bm, callStack, exprBookmark);
 
       bm = reader.read();
    }
-
-   return _max(maxArgCount, currentArgCount);
 }
 
-int VMTapeParser :: parseBuildScriptStatement(ScriptEngineReaderBase& reader, ScriptBookmark& bm, 
+void VMTapeParser :: parseBuildScriptStatement(ScriptEngineReaderBase& reader, ScriptBookmark& bm, 
    ScriptStack& callStack, pos_t exprBookmark)
 {
-   int retVal = 0;
-
    if (bm.state == dfaReference) {
       callStack.push(bm);
 
-      retVal = parseBuildScriptArgumentList(reader, callStack);
+      parseBuildScriptArgumentList(reader, callStack);
 
       callStack.push(bm);
    }
    else if (bm.state == dfaQuote) {
       callStack.push(bm);
-
-      retVal = 1;
    }
    else if (reader.lookup(bm).compare(";")) {
       auto expr_it = callStack.get(callStack.count() - exprBookmark);
@@ -140,8 +134,6 @@ int VMTapeParser :: parseBuildScriptStatement(ScriptEngineReaderBase& reader, Sc
       callStack.push(bm);
    }
    else throw SyntaxError("Invalid operation", bm.lineInfo);
-
-   return retVal;
 }
 
 bool VMTapeParser :: parseBuildScript(ScriptEngineReaderBase& reader, TapeWriter& writer)
@@ -150,19 +142,15 @@ bool VMTapeParser :: parseBuildScript(ScriptEngineReaderBase& reader, TapeWriter
 
    ScriptBookmark bm = reader.read();
    Stack<ScriptBookmark> callStack({});
-   int maxArgCount = 2;
    while (!reader.eof()) {
       idle = false;
 
-      int subArgCount = parseBuildScriptStatement(reader, bm, callStack, 0);
-      maxArgCount = _max(maxArgCount, subArgCount);
+      parseBuildScriptStatement(reader, bm, callStack, 0);
 
       bm = reader.read();
    }
 
    if (!idle) {
-      writer.write(VM_ALLOC_CMD, maxArgCount);
-
       while (callStack.count() > 0) {
          bm = callStack.pop();
 

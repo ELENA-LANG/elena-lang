@@ -275,6 +275,7 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
             symbols.add({ dummyModule->mapConstant(strArg) | getCmdMask(command), 0 });
             break;
          case VM_ALLOC_CMD:
+         case VM_FREE_CMD:
          case VM_SET_ARG_CMD:
             symbols.add({ nArg, command });
             break;
@@ -316,7 +317,7 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
       }
       else if (mask == mskVMTRef) {
          mssg_t message = encodeMessage(dummyModule->mapAction(CONSTRUCTOR_MESSAGE, 0, false), 
-            p.value2 - 1, FUNCTION_MESSAGE);
+            p.value2, FUNCTION_MESSAGE);
 
          ByteCodeUtil::write(writer, ByteCode::SetR, p.value1);
          ByteCodeUtil::write(writer, ByteCode::MovM, message);
@@ -325,7 +326,14 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
       else {
          switch (p.value2) {
             case VM_ALLOC_CMD:
+               ByteCodeUtil::write(writer, ByteCode::XFlushSI, 0);
+               ByteCodeUtil::write(writer, ByteCode::XFlushSI, 1);
                ByteCodeUtil::write(writer, ByteCode::AllocI, p.value1);
+               break;
+            case VM_FREE_CMD:
+               ByteCodeUtil::write(writer, ByteCode::FreeI, p.value1);
+               ByteCodeUtil::write(writer, ByteCode::XRefreshSI, 0);
+               ByteCodeUtil::write(writer, ByteCode::XRefreshSI, 1);
                break;
             case VM_SET_ARG_CMD:
                ByteCodeUtil::write(writer, ByteCode::StoreSI, p.value1);

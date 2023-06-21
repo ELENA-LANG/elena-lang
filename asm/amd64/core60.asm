@@ -1370,14 +1370,14 @@ end
 // ; xflushsi 0
 inline %1A4h
 
-  mov [rsp+8], r10
+  mov [rsp+__arg32_1], r10
 
 end 
 
 // ; xflushsi 1
 inline %2A4h
 
-  mov [rsp+16], r11
+  mov [rsp+__arg32_1], r11
 
 end 
 
@@ -1410,14 +1410,14 @@ end
 // ; xrefreshsi 0
 inline %1A7h
 
-  mov r10, [rsp]
+  mov r10, [rsp+__arg32_1]
 
 end 
 
 // ; xrefreshsi 1
 inline %2A7h
 
-  mov r11, [rsp+8]
+  mov r11, [rsp+__arg32_1]
 
 end 
 

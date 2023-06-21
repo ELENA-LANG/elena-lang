@@ -21,12 +21,12 @@ namespace elena_lang
       void parseInline(ustr_t script, TapeWriter& writer);
       void parseInlineScript(ScriptEngineReaderBase& reader, TapeWriter& writer);
       void parseInlineStatement(ScriptEngineReaderBase& reader, ScriptBookmark& bm, TapeWriter& writer);
-      int parseBuildScriptStatement(ScriptEngineReaderBase& reader, ScriptBookmark& bm, ScriptStack& callStack, 
+      void parseBuildScriptStatement(ScriptEngineReaderBase& reader, ScriptBookmark& bm, ScriptStack& callStack, 
          pos_t exprBookmark);
 
       void writeBuildScriptStatement(ScriptEngineReaderBase& reader, ScriptBookmark bm, ScriptStack& callStack,
          TapeWriter& writer);
-      int parseBuildScriptArgumentList(ScriptEngineReaderBase& reader, ScriptStack& callStack);
+      void parseBuildScriptArgumentList(ScriptEngineReaderBase& reader, ScriptStack& callStack);
 
       int writeBuildScriptArgumentList(ScriptEngineReaderBase& reader, ScriptBookmark terminator,
          ScriptStack& callStack, TapeWriter& writer);

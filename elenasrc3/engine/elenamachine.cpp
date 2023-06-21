@@ -128,7 +128,7 @@ addr_t ELENAMachine :: execute(SystemEnv* env, void* entryAddress)
    Entry entry;
    entry.address = env->bc_invoker;
 
-   // executing the program
+   // executing the program   
 
    addr_t retVal = 0;
    try

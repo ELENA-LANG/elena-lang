@@ -8,7 +8,10 @@ In development:
     [!] vm terminal
     [!] ide vm console
 
+    * vmbuild : refactor - allocate
+
     * elt : 2
+    * exit elt (see ticket)
     * (re)implement elt
 
     * ide : test screnario - create a new project, change it and save it
