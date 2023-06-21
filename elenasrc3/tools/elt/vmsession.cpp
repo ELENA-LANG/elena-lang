@@ -149,6 +149,37 @@ bool VMSession :: execute(void* tape)
    return true;
 }
 
+void VMSession::printHelp()
+{
+   _presenter->print("-q                   - quit\n");
+   _presenter->print("-h                   - help\n");
+   _presenter->print("-l <path>            - execute a script from file\n");
+   _presenter->print("<script>             - execute script\n");
+}
+
+bool VMSession :: executeCommand(const char* line, bool& running)
+{
+   if (getlength(line) < 2)
+      return false;
+
+   // check commands
+   if (line[1] == 'q') {
+      running = false;
+   }
+   else if (line[1] == 'h') {
+      printHelp();
+   }
+   else if (line[1] == 'l') {
+      loadScript(line + 2);
+   }
+   else if (line[1] == 'c') {
+      _body.clear();
+   }
+   else return false;
+
+   return true;
+}
+
 void VMSession :: run()
 {
    char          buffer[MAX_LINE];
@@ -169,16 +200,16 @@ void VMSession :: run()
          while (!line.empty() && line[line.length() - 1] == ' ')
             line[line.length() - 1] = 0;
 
-         //if (line[0] == '-') {
-         //   if (!executeCommand(line, running))
-         //      print("Invalid command, use -h to get the list of the commands\n");
-         //}
-         //else if (!emptystr(line) && line[getlength(line) - 1] == ';') {
-         //   line[getlength(line) - 1] = 0;
+         if (line[0] == '-') {
+            if (!executeCommand(*line, running))
+               _presenter->print("Invalid command, use -h to get the list of the commands\n");
+         }
+         else if (!line.empty() && line[line.length() - 1] == ';') {
+            line[line.length() - 1] = 0;
 
-         //   body.append(line.c_str());
-         //}
-         /*else */executeCommandLine(*line);
+            _body.append(*line);
+         }
+         else executeCommandLine(*line);
       }
       catch (...) {
          _presenter->print("Invalid operation");

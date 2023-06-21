@@ -24,6 +24,8 @@ namespace elena_lang
 
       DynamicString<char>  _body;
 
+      void printHelp();
+
       bool connect(void* tape);
       bool execute(void* tape);
 
@@ -31,6 +33,7 @@ namespace elena_lang
 
       bool executeTape(void* tape);
       bool executeScript(const char* line);
+      bool executeCommand(const char* line, bool& running);
 
    public:
       bool loadTemplate(path_t path);
