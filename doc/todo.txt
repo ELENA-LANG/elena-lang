@@ -8,9 +8,6 @@ In development:
     [!] vm terminal
     [!] ide vm console
 
-    * vmbuild : refactor - allocate
-
-    * elt : 2
     * exit elt (see ticket)
     * (re)implement elt
 
@@ -37,6 +34,7 @@ Backlog:
     * elt : 2+3, "hello", "workd".insert(0, "hello ")
     * check : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
     * x86-64, ppc64, aarch64 : fix loads
+    * ppc64, aarch64 : fix xrefresh / xflush - use arg instead of direct values
     * execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
     * api : uncomment ExtensionDispatcher and SymbolCollection
     * elenavm : implementing loadDispatcherOverloadlist

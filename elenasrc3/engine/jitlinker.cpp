@@ -345,6 +345,16 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
    else _references->add(position, VAddressInfo(reference, module, addressMask, disp));
 }
 
+void JITLinker::JITLinkerReferenceHelper :: writeMDataRef32(MemoryBase& target, pos_t position,
+   pos_t disp, ref_t addressMask)
+{
+   if (!_owner->_virtualMode) {
+      ::writeVAddress32(&target, position, (addr_t)_owner->_imageProvider->getMDataSection()->get(0), disp, addressMask, false);
+   }
+   else ::writeVAddress32(&target, position, 0, disp, addressMask, _owner->_virtualMode);
+}
+
+
 void JITLinker::JITLinkerReferenceHelper :: writeVAddress32(MemoryBase& target, pos_t position, addr_t vaddress, 
    pos_t disp, ref_t addressMask)
 {

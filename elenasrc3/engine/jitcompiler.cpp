@@ -132,9 +132,16 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
    ref_t mask = reference & mskAnyRef;
    ref_t properRef = reference & ~mskAnyRef;
    switch (mask) {
+      case mskMDataRef32:
+         // HOTFIX : to deal with mdata section reference
+         if (reference == mskMDataRef32) {
+            scope->helper->writeMDataRef32(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+               *(pos_t*)((char*)code + disp), mask);
+            break;
+
+         }
       case mskCodeRef32:
       case mskDataRef32:
-      case mskMDataRef32:
       case mskStatDataRef32:
          scope->helper->writeVAddress32(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),

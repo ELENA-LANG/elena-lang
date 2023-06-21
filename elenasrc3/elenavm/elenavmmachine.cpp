@@ -282,6 +282,9 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
          case VM_NEW_CMD:
             symbols.add({ dummyModule->mapReference(strArg) | mskVMTRef, nArg });
             break;
+         case VM_SEND_MESSAGE_CMD:
+            symbols.add({ ByteCodeUtil::resolveMessageName(strArg, dummyModule, false), command });
+            break;
          default:
             break;
       }
@@ -337,6 +340,10 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
                break;
             case VM_SET_ARG_CMD:
                ByteCodeUtil::write(writer, ByteCode::StoreSI, p.value1);
+               break;
+            case VM_SEND_MESSAGE_CMD:
+               ByteCodeUtil::write(writer, ByteCode::MovM, p.value1);
+               ByteCodeUtil::write(writer, ByteCode::CallVI);
                break;
             default:
                break;

@@ -456,6 +456,9 @@ namespace elena_lang
       virtual void writeDisp32Lo(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
          ref_t addressMask) = 0;
 
+      virtual void writeMDataRef32(MemoryBase& target, pos_t position,
+         pos_t disp, ref_t addressMask) = 0;
+
       virtual mssg_t importMessage(mssg_t message, ModuleBase* module = nullptr) = 0;
 
       virtual addr_t resolveMDataVAddress() = 0;

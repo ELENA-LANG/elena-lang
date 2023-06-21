@@ -80,7 +80,7 @@ bool VMSession :: executeTape(void* tape)
    if (!_started) {
       retVal = connect(tape);
    }
-   else execute(tape);
+   else retVal = execute(tape);
 
    ReleaseSMLA(tape);
 

@@ -43,6 +43,11 @@ bool VMTapeParser :: parseDirective(ScriptEngineReaderBase& reader, MemoryDump* 
          }
          else throw SyntaxError("Invalid directive", bm.lineInfo);
       }
+      else if (reader.compare("#postfix")) {
+         ScriptBookmark bm = reader.read();
+
+         _postfix.append(reader.lookup(bm));
+      }
       else return false;
 
       reader.read();
@@ -54,19 +59,28 @@ bool VMTapeParser :: parseDirective(ScriptEngineReaderBase& reader, MemoryDump* 
 int VMTapeParser :: writeBuildScriptArgumentList(ScriptEngineReaderBase& reader, ScriptBookmark terminator,
    ScriptStack& callStack, TapeWriter& writer)
 {
+   CachedList<pos_t, 5> argPositions;
+
    pos_t position = writer.writeAndGetArgPosition(VM_ALLOC_CMD, 0);
 
    int counter = 0;
    ScriptBookmark bm = callStack.pop();
    while (!bm.compare(terminator)) {
       writeBuildScriptStatement(reader, bm, callStack, writer);
-      writer.write(VM_SET_ARG_CMD, counter);
+      argPositions.add(writer.writeAndGetArgPosition(VM_SET_ARG_CMD, counter));
 
       counter++;
       bm = callStack.pop();
    }
 
    writer.fixArg(position, counter);
+
+   // NOTE : we need to reverse the order of arguments
+   if (counter > 1) {
+      for (size_t i = 0; i < counter; i++) {
+         writer.fixArg(argPositions[i], counter - i - 1);
+      }
+   }
 
    return counter;
 }
@@ -178,15 +192,13 @@ void VMTapeParser :: parse(ScriptEngineReaderBase& reader, MemoryDump* output)
 
 void VMTapeParser :: parseInlineStatement(ScriptEngineReaderBase& reader, ScriptBookmark& bm, TapeWriter& writer)
 {
-   //if (reader.compare("#start")) {
-   //   writer.addVMTapeEntry(START_VM_MESSAGE_ID);
-   //}
-   //else if (reader.compare("^")) {
-   //   bm = reader.read();
+   if (reader.compare("^")) {
+      bm = reader.read();
 
-   //   writeMessage(writer, reader.lookup(bm), SEND_TAPE_MESSAGE_ID);
-   //}
-   /*else*/ throw SyntaxError("Invalid operation", bm.lineInfo);
+      writer.write(VM_SET_ARG_CMD, 0);
+      writer.write(VM_SEND_MESSAGE_CMD, reader.lookup(bm));
+   }
+   else throw SyntaxError("Invalid operation", bm.lineInfo);
 }
 
 void VMTapeParser :: parseInlineScript(ScriptEngineReaderBase& reader, TapeWriter& writer)
