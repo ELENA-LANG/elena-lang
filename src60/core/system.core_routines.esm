@@ -1308,9 +1308,9 @@ end
 
 procedure __mssgname_load(self, m)
 
-  peek      fp:m
+  peek      sp:1
   loads
-  peek      fp:self
+  peek      sp:0
   save
 
 end

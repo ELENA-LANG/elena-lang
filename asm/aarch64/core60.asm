@@ -1723,7 +1723,7 @@ inline %0B5h
 
 end
 
-// ; redirect
+// ; xredirect
 inline % 0B6h //; (r15 - object, r14 - message)
 
   mov     x20, x9
@@ -1735,7 +1735,7 @@ inline % 0B6h //; (r15 - object, r14 - message)
 
   movz    x14,  __arg32lo_1
   movk    x14,  __arg32hi_1, lsl #16
-  and     x9, x9, ARG_MASK
+  and     x9, x9, ARG_ACTION_MASK
   movz    x16,  ~ARG_MASK
   movk    x16,  #0FFFFh, lsl #16
   and     x14, x14, x16

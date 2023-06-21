@@ -1719,7 +1719,7 @@ inline % 0B5h
 
 end
 
-// ; redirect
+// ; xredirect
 inline % 0B6h //; (r15 - object, r14 - message)
 
   mr      r20, r14
@@ -1730,7 +1730,7 @@ inline % 0B6h //; (r15 - object, r14 - message)
 
   lis     r18, __arg32hi_1
   addi    r18, r18, __arg32lo_1
-  andi.   r14, r14, ARG_MASK
+  andi.   r14, r14, ARG_ACTION_MASK
 
   li      r19, ~ARG_MASK
   addis   r19, r19, 0FFFFh

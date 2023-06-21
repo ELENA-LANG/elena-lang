@@ -1533,14 +1533,14 @@ inline % 0B5h
 
 end
 
-// ; redirect
+// ; xredirect
 inline % 0B6h // (rbx - object, rdx - message, r10 - arg0, r11 - arg1)
 
   mov  r15, rdx
   mov  r14, [rbx - elVMTOffset]
   xor  ecx, ecx
 
-  and  edx, ARG_MASK
+  and  edx, ARG_ACTION_MASK
   mov  eax, __arg32_1
   and  ecx, ~ARG_MASK
   or   edx, ecx

@@ -500,10 +500,13 @@ end
 // ; loads
 inline % 14h
 
-  mov   edx, [ebx]
-  shr   edx, ACTION_ORDER
-  mov   eax, mdata : %0
-  mov   edx, [eax + edx]
+  mov    edx, [ebx]
+  shr    edx, ACTION_ORDER
+  mov    eax, mdata : %0
+  mov    ecx, [eax + edx * 8]
+  test   ecx, ecx
+  cmovnz edx, ecx
+  shl    edx, ACTION_ORDER
 
 end
 
@@ -1478,7 +1481,7 @@ inline % 0B6h // (ebx - object, edx - message, esi - arg0, edi - arg1)
   push  edx 
   mov   edi, [ebx - elVMTOffset]
   mov   eax, __arg32_1
-  and   edx, ARG_MASK
+  and   edx, ARG_ACTION_MASK
   and   eax, ~ARG_MASK
   mov   esi, [edi - elVMTSizeOffset]
   or    edx, eax

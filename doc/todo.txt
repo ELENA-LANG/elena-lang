@@ -8,15 +8,12 @@ In development:
     [!] vm terminal
     [!] ide vm console
 
-    * execute script : hello world with writeLine
-
-    * elt : 2, 2+3, "hello", "workd".insert(0, "hello ")
-    * check : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
+    * elt : 2
     * (re)implement elt
-    * test vm console app (e.g. helloworld)
 
     * ide : test screnario - create a new project, change it and save it
     * ide debugger : stepping in the loop (for)
+    * test vm console app (e.g. helloworld)
 
      === Iteration 17 ===
     [!] x86 mta support
@@ -34,6 +31,9 @@ In development:
 Backlog:
 ------   
     --- elena backlog
+    * elt : 2+3, "hello", "workd".insert(0, "hello ")
+    * check : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
+    * x86-64, ppc64, aarch64 : fix loads
     * execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
     * api : uncomment ExtensionDispatcher and SymbolCollection
     * elenavm : implementing loadDispatcherOverloadlist

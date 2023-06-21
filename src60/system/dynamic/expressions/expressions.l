@@ -1464,32 +1464,33 @@ namespace expressions
             ^ nil
          }
                 
-         TapeFunction resolve(ScopeIdentifier ident, bool assignModemode) 
+         TapeFunction resolve(ScopeIdentifier variable, bool assignModemode) 
          {
-//            var refName := variable.Name;
-//                    
-//            if (mode == 0 || mode == mode_class)
-//            {
-//               // look for external references
-//               if(imports != nil) {
-//                  int len := imports.Length;
-//                  for(int i := 0, i < len, i+=1) {
-//                     var symbol := Symbol.tryLoad(imports[i], refName);
-//                     if (symbol != nil)
-//                     {
-//                        ^ ConstantFunction.load(symbol)
-//                     }
-//                  }
-//               };
-//                        
-//               var prop := new MessageName(refName).getPropertyMessage();
-//                        
-//               var symbol := prop(set);
-//               if (symbol != nil)
-//               {
-//                  ^ ConstantFunction.load(symbol);
-//               }
-//            };
+            var refName := variable.Name;
+            int mode := variable.Mode;
+                    
+            if (mode == 0/* || mode == mode_class*/)
+            {
+               // look for external references
+               if(imports != nil) {
+                  int len := imports.Length;
+                  for(int i := 0, i < len, i+=1) {
+                     var symbol := Symbol.tryLoad(imports[i], refName);
+                     if (symbol != nil)
+                     {
+                        ^ ConstantFunction.load(symbol)
+                     }
+                  }
+               };
+                        
+               var prop := new MessageName(refName).getPropertyMessage();
+                        
+               var symbol := prop(set);
+               if (symbol != nil)
+               {
+                  ^ ConstantFunction.load(symbol);
+               }
+            };
                     
             ^ nil
          }                
