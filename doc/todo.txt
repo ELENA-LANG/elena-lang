@@ -8,18 +8,15 @@ In development:
     [!] vm terminal
     [!] ide vm console
 
-    * rt / vm : LoadExtensionDispatcher
+    * execute script : hello world with writeLine
 
-    * ExtensionOrMessageCallExpression
     * elt : 2, 2+3, "hello", "workd".insert(0, "hello ")
+    * check : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
     * (re)implement elt
     * test vm console app (e.g. helloworld)
 
     * ide : test screnario - create a new project, change it and save it
-    * elenavm : implementing rest of dll api
     * ide debugger : stepping in the loop (for)
-    * review extensions warnings
-    * new feature : use C# 7.0 style namespace (single line one)
 
      === Iteration 17 ===
     [!] x86 mta support
@@ -37,11 +34,19 @@ In development:
 Backlog:
 ------   
     --- elena backlog
+    * execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
+    * api : uncomment ExtensionDispatcher and SymbolCollection
+    * elenavm : implementing loadDispatcherOverloadlist
+    * elenavm : implementing rest of dll api
     * review install scripts : include all existing samples, use different output folders
+    * elc : improve the compilation speed
 
     * ide : refreshing auto watch - with the same name, unused
     * ide : set / remove breakpoints
     * ide : menu - clear all breakpoints
+    * ide : open via dialog - set proper namespace
+    * review extensions warnings
+    * new feature : use C# 7.0 style namespace (single line one)
 
     ! migrate rest of elena 5.0 functionality (infinite enumeration, ...)
     ! script and db samples

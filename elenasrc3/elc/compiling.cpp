@@ -59,7 +59,7 @@ public:
             fullName.append("=");
             fullName.appendUInt((unsigned int)address, 16);
 
-            presenter->print(*fullName);
+            presenter->printLine(*fullName);
          }
          else {
             addr_t address = result.code + *it;
@@ -68,7 +68,7 @@ public:
             fullName.append("=");
             fullName.appendUInt((unsigned int)address, 16);
 
-            presenter->print(*fullName);
+            presenter->printLine(*fullName);
          }
       }
    }

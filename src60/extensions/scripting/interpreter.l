@@ -98,6 +98,17 @@ public sealed class ScriptEngine
       self.loadScriptFile(path, 0, -1);
    }
 
+   loadScript(string script)
+   {
+      pointer ptr := extern elenasm.InterpretScopeScriptSMLA
+                            (_scopeId, script);
+
+      if (ptr.isUnassigned())
+         {   ScriptEngineException.raise(self.lastScriptError()) };
+      
+      extern elenasm.ReleaseSMLA(ptr)      
+   }
+
    buildScriptFile(string path)
       = self.buildScriptFile(path, 0, -1);
 

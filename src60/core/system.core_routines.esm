@@ -6,6 +6,9 @@ define ELENA_ERR_DIVIDE_BY_ZERO    102h;
 define ELENA_ERR_OUT_OF_MEMORY     103h;
 
 define FUNCTION_MESSAGE       00000020h;
+define PROPERTY_MESSAGE       000000C0h;
+define PROP_ARG_MASK          000000DFh;
+define ARG_MASK               0000001Fh;
 
 define ex_struct_size32              16; 
 define ex_struct_size64              32; 
@@ -22,6 +25,7 @@ define set_prop_mssg                0C2h;
 define __realSize                     8;
 
 define elMessage              00200000h;
+define elSubject              01000000h;
 
 define err_ret          -1;
 
@@ -1785,6 +1789,82 @@ labNext:
   xrefresh   sp:0
   xrefresh   sp:1
   jump       vt:0
+
+labEnd:
+  load       dp:command
+
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
+
+end
+
+
+procedure __struct
+
+  redirect
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[index,command,len]
+
+  save       dp:command
+  store      sp:1
+
+  mlen
+  cmp        n:1
+  jne        labEnd
+
+  peek       sp:1 
+  len
+  save       dp:len
+  nsave      dp:index, 0
+
+labNext:
+  load       dp:index
+  xcmp       dp:len
+  jge        labEnd
+
+  peek       sp:1
+  xget
+  nadd       dp:index, 1
+  tst        flag:elSubject
+  jeq        labNext 
+
+  load       dp:command
+  and        n: ~PROP_ARG_MASK
+  xcmp
+  jne        labNext
+
+  load       dp:index
+  xget
+
+  peek       sp:1
+  xget
+
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+  quit
 
 labEnd:
   load       dp:command

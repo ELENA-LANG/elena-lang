@@ -87,6 +87,7 @@ namespace elena_lang
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
       ref_t loadSubject(ustr_t actionName);
+      ref_t loadDispatcherOverloadlist(ustr_t referenceName);
 
       void fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule);
 
@@ -109,6 +110,8 @@ namespace elena_lang
 
       mssg_t loadMessage(ustr_t messageName);
       mssg_t loadAction(ustr_t actionName);
+
+      int loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output);
 
       void Exit(int exitCode);
 

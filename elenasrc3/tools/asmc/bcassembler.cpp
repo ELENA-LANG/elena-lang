@@ -167,6 +167,11 @@ int ByteCodeAssembler :: readN(ScriptToken& tokenInfo, ReferenceMap& constants, 
 
       return -val;
    }
+   if (tokenInfo.compare("~")) {
+      int val = readN(tokenInfo, constants, false);
+
+      return ~val;
+   }
    else if (constants.exist(*tokenInfo.token)) {
       return constants.get(*tokenInfo.token);
    }

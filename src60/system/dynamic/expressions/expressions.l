@@ -7,7 +7,7 @@ namespace expressions
 {
    const int mode_lcl   = 1;
 
-   symbol used : preloaded = new object[]{Expression, DynamicSingleton/*,DynamicExpressionSymbol,SymbolCollection,DynamicImport*/};
+   symbol used : preloaded = new object[]{Expression, DynamicSingleton/*,DynamicExpressionSymbol*/,SymbolCollection/*,DynamicImport*/};
 
    public class ScopeIdentifier
    {
@@ -35,6 +35,11 @@ namespace expressions
          Name := name;
          Mode := mode
       }
+      constructor(string name)
+      {
+         Name := name;
+         Mode := 0
+      }
    }
 
    public interface ExpressionScope
@@ -49,7 +54,7 @@ namespace expressions
 
       abstract TapeFunction resolve(ScopeIdentifier ident, bool assignMode);
 
-//      abstract TapeFunction resolveExtension(Message message);
+      abstract TapeFunction resolveExtension(Message message);
 
       abstract declare(ScopeIdentifier variable);
    }
@@ -72,6 +77,9 @@ namespace expressions
          ^ nil
       }
         
+      TapeFunction resolveExtension(Message message)
+         = nil;    
+
       TapeFunction resolve(ScopeIdentifier ident, bool assignMode)
          = nil; 
    }
@@ -121,6 +129,9 @@ namespace expressions
       {
          ^ nil
       }
+
+      TapeFunction resolveExtension(Message message)
+         = nil;    
    }
 
    public interface Expression
@@ -178,6 +189,9 @@ namespace expressions
 
       static Expression Method(string name, Expression body, params ScopeIdentifier[] variables)
          = MethodExpression.new(name, body, params variables);
+
+      static Expression ActionMethod(Expression body)
+         = new ActionMethodExpression(body);        
 
       get abstract bool IsOperation();
 
@@ -762,6 +776,9 @@ namespace expressions
                ^ scope.resolve(variable, assignMode)
             }
         
+            TapeFunction resolveExtension(Message message)
+               => scope;    
+
             declare(ScopeIdentifier variable)
             {
             }            
@@ -773,6 +790,98 @@ namespace expressions
       DynamicTape compile(ExpressionScope scope)
          = super.compile(new RootExpressionScope(scope));
 
+   }
+
+   public class ActionMethodExpression : MethodExpression
+   {
+      constructor(Expression body)
+      {
+         this parameters := new ScopeIdentifier[]
+         { 
+            ScopeIdentifier.Variable("$tape")
+         };
+
+         this message := new Message("function:#invoke[0]");
+
+         this body := body;
+      }
+
+      constructor(ScopeIdentifier param1, Expression body)
+      {
+         this parameters := new ScopeIdentifier[]
+         { 
+            ScopeIdentifier.Variable("$tape"), 
+            param1
+         };
+
+         this message := new Message("function:#invoke[1]");
+
+         this body := body;
+      }
+
+      constructor(ScopeIdentifier param1, ScopeIdentifier param2, Expression body)
+      {
+         this parameters := new ScopeIdentifier[]
+         { 
+            ScopeIdentifier.Variable("$tape"), 
+            param1,
+            param2
+         };
+
+         this message := new Message("function:#invoke[2]");
+
+         this body := body;
+      }
+
+      constructor(ScopeIdentifier param1, ScopeIdentifier param2, ScopeIdentifier param3, Expression body)
+      {
+         this parameters := new ScopeIdentifier[]
+         { 
+            ScopeIdentifier.Variable("$tape"), 
+            param1,
+            param2,
+            param3
+         };
+
+         this message := new Message("function:#invoke[2]");
+
+         this body := body;
+      }
+
+      constructor(ScopeIdentifier param1, ScopeIdentifier param2, ScopeIdentifier param3, 
+         ScopeIdentifier param4, Expression body)
+      {
+         this parameters := new ScopeIdentifier[]
+         { 
+            ScopeIdentifier.Variable("$tape"), 
+            param1,
+            param2,
+            param3,
+            param4
+         };
+
+         this message := new Message("function:#invoke[2]");
+
+         this body := body;
+      }
+
+      constructor(ScopeIdentifier param1, ScopeIdentifier param2, ScopeIdentifier param3, 
+         ScopeIdentifier param4, ScopeIdentifier param5, Expression body)
+      {
+         this parameters := new ScopeIdentifier[]
+         { 
+            ScopeIdentifier.Variable("$tape"), 
+            param1,
+            param2,
+            param3,
+            param4,
+            param5
+         };
+
+         this message := new Message("function:#invoke[2]");
+
+         this body := body;
+      }
    }
 
    public class ClosureExpression : Expression
@@ -840,6 +949,9 @@ namespace expressions
                ^ scope.resolve(variable, assignMode)
             }
         
+            TapeFunction resolveExtension(Message message)
+               => scope;    
+
             declare(ScopeIdentifier variable)
             {
             }            
@@ -925,6 +1037,9 @@ namespace expressions
                
             int ScopeLevel = scope.ScopeLevel + variables.Length;
         
+            TapeFunction resolveExtension(Message message)
+               => scope;    
+
             declare(ScopeIdentifier variable)
             {
                int index := variables.Length + 1;
@@ -1257,6 +1372,161 @@ namespace expressions
          methods.forEach:(m){m.saveTo(list, scope)};
             
          ^ DynamicClass.create(list);
+      }
+   }
+
+   public class SymbolInfo
+   {
+      string Name : prop;
+      DynamicSymbol Symbol : prop;
+        
+      constructor(string name, DynamicSymbol symbol)
+      {
+         Name := name;
+         Symbol := symbol
+      } 
+      constructor(DynamicSymbol symbol)
+      {
+         Symbol := symbol
+      } 
+   }
+    
+   public class SymbolCollection
+         : info("a dynamic namespace, containing list of symbols")
+   {
+      SymbolInfo[] symbols;
+      string[]     imports := new string[] { "system" };
+
+      constructor(SymbolInfo symbol1)
+         <= load(symbol1);
+                
+      constructor(SymbolInfo symbol1, SymbolInfo symbol2)
+         <= load(symbol1, symbol2);
+                
+      constructor(SymbolInfo symbol1, SymbolInfo symbol2, SymbolInfo symbol3)
+         <= load(symbol1, symbol2, symbol3);
+                
+      constructor(SymbolInfo symbol1, SymbolInfo symbol2, SymbolInfo symbol3, SymbolInfo symbol4)
+         <= load(symbol1, symbol2, symbol3, symbol4);
+
+      constructor(params SymbolInfo[] symbols)
+         <= load(params symbols);
+                                
+      constructor load(params SymbolInfo[] symbols)
+      {
+         this symbols := symbols;        
+      }
+ 
+      compile()
+         <= compile(new DynamicStruct());
+ 
+      compile(set)
+         <= compile(set, new ExpressionScope
+      {
+         bool reserve(int level)
+            = false;
+
+         int allocTempVariable()
+            = 0;
+
+         int Reserved = 0;
+        
+         get int ScopeLevel() 
+         {
+            NotSupportedException.raise();
+                    
+            ^ nil // !! to supress warning
+         }
+                
+         declare(ScopeIdentifier variable) 
+         {
+//            auto subarr := new string[] { variable.Name };
+                    
+//            imports := imports + subarr
+         }
+                
+         TapeFunction resolveExtension(Message message)
+         {
+//            auto varMessage := message.MessageName.VariadicMessage;
+//                    
+//            var op := ExtensionDispatcher.load(message, imports);
+//            if (op != nil)
+//            {
+//               ^ ExtensionMessageFunction.load(op, message)
+//            }
+//            else {
+//               var op2 := VariadicExtensionDispatcher.load(varMessage, imports);
+//               if (op2 != nil) {
+//                  ^ VariadicExtensionMessageFunction.load(op2, message)
+//               }
+//            };
+                    
+            ^ nil
+         }
+                
+         TapeFunction resolve(ScopeIdentifier ident, bool assignModemode) 
+         {
+//            var refName := variable.Name;
+//                    
+//            if (mode == 0 || mode == mode_class)
+//            {
+//               // look for external references
+//               if(imports != nil) {
+//                  int len := imports.Length;
+//                  for(int i := 0, i < len, i+=1) {
+//                     var symbol := Symbol.tryLoad(imports[i], refName);
+//                     if (symbol != nil)
+//                     {
+//                        ^ ConstantFunction.load(symbol)
+//                     }
+//                  }
+//               };
+//                        
+//               var prop := new MessageName(refName).getPropertyMessage();
+//                        
+//               var symbol := prop(set);
+//               if (symbol != nil)
+//               {
+//                  ^ ConstantFunction.load(symbol);
+//               }
+//            };
+                    
+            ^ nil
+         }                
+      });
+ 
+      compile(set, ExpressionScope scope)
+      {
+         int len := symbols.Length;
+         for (int i := 0, i < len, i+=1) {
+            auto info := symbols[i];
+                
+            var symbolName := info.Name;
+            if (symbolName == nil) {
+               info.Symbol.compile(nil, scope);
+            }
+            else {
+               MessageName name := new MessageName(symbolName);
+               Message prop := name.setPropertyMessage(); 
+        
+               var tape := info.Symbol.compile(set, scope);
+         
+               prop(set, tape);
+            }                
+         };
+            
+         ^ set
+      }
+        
+      eval()
+         : info("Exectutes the program entry point")
+      {
+         var set := new DynamicStruct();
+            
+         var tape := self.compile(set);
+            
+         var program := tape.program;
+         ^ program();
       }
    }
 }

@@ -76,6 +76,8 @@
        <include>threading\thread.l</include>
      </module>
      <module name="dynamic">
+       <include>dynamic\interpreters.l</include>
+       <include>dynamic\groups.l</include>
        <include>dynamic\closure.l</include>
        <include>dynamic\tape.l</include>
        <include>dynamic\expressions\expressions.l</include>

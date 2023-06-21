@@ -22,7 +22,7 @@
 <=
    system'dynamic'expressions'SymbolInfo (
      system'dynamic'expressions'DynamicImport (
-       system'dynamic'expressions'ScopeVariable (
+       system'dynamic'expressions'ScopeIdentifier (
 =>
                                      "import" "(" "identifier" "=" ident_quote ")"
 <=
@@ -35,7 +35,7 @@
 <=
    system'dynamic'expressions'SymbolInfo (
      system'dynamic'expressions'DynamicImport (
-       system'dynamic'expressions'ScopeVariable (
+       system'dynamic'expressions'ScopeIdentifier (
 =>
                                      "import" "(" "reference" "=" ref_quote ")"
 <=
@@ -141,7 +141,7 @@
 
   #define parameter       ::= 
 <=
-         system'dynamic'expressions'ScopeVariable (
+         system'dynamic'expressions'ScopeIdentifier (
 =>
                                    "parameter" "(" p_name ")"
 <=
@@ -265,7 +265,7 @@
 
   #define var_name          ::=
 <=
-                       system'dynamic'expressions'ScopeVariable (
+                       system'dynamic'expressions'ScopeIdentifier (
 =>
                               "identifier" "=" ident_quote
 <=
@@ -307,7 +307,7 @@
   #define object          ::=
 <=
                     system'dynamic'expressions'IdentifierExpression ( 
-                       system'dynamic'expressions'ScopeVariable (
+                       system'dynamic'expressions'ScopeIdentifier (
 =>
                               "identifier" "=" ident_quote
 <=
@@ -318,7 +318,7 @@
   #define object          ::=
 <=
                     system'dynamic'expressions'PreviousVariableExpression ( 
-                       system'dynamic'expressions'ScopeVariable (
+                       system'dynamic'expressions'ScopeIdentifier (
 =>
                               "prev_identifier" "=" ident_quote
 <=
