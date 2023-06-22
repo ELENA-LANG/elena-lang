@@ -435,6 +435,51 @@ void ProjectController :: saveConfig(ProjectModel& model, ConfigFile& config, Co
       }
       else config.appendSetting(TEMPLATE_CATEGORY, *model.templateName);
    }
+
+   auto nsOption = config.selectNode(platformRoot, NAMESPACE_SUB_CATEGORY);
+   if (!nsOption.isNotFound()) {
+      templateOption.saveContent(*model.package);
+   }
+   else {
+      nsOption = config.selectNode(root, NAMESPACE_SUB_CATEGORY);
+      if (!nsOption.isNotFound()) {
+         nsOption.saveContent(*model.package);
+      }
+      else config.appendSetting(NAMESPACE_CATEGORY, *model.package);
+   }
+
+   auto optionsOption = config.selectNode(platformRoot, OPTIONS_SUB_CATEGORY);
+   if (!optionsOption.isNotFound()) {
+      optionsOption.saveContent(*model.options);
+   }
+   else {
+      optionsOption = config.selectNode(root, OPTIONS_SUB_CATEGORY);
+      if (!optionsOption.isNotFound()) {
+         optionsOption.saveContent(*model.options);
+      }
+      else config.appendSetting(OPTIONS_CATEGORY, *model.options);
+   }
+
+   auto targetOption = config.selectNode(platformRoot, TARGET_SUB_CATEGORY);
+   if (!targetOption.isNotFound()) {
+      targetOption.saveContent(*model.target);
+   }
+   else {
+      targetOption = config.selectNode(root, TARGET_SUB_CATEGORY);
+      if (!targetOption.isNotFound()) {
+         targetOption.saveContent(*model.target);
+      }
+      else config.appendSetting(TARGET_CATEGORY, *model.target);
+   }
+
+   // adding source files
+   for (auto it = model.addedSources.start(); !it.eof(); ++it) {
+      IdentifierString pathStr(*it);
+
+      config.appendSetting(FILE_CATEGORY, *pathStr);
+   }
+
+   model.addedSources.clear();
 }
 
 NotificationStatus ProjectController :: newProject(ProjectModel& model)
@@ -453,15 +498,7 @@ NotificationStatus ProjectController :: openProject(ProjectModel& model, path_t 
 {
    ustr_t key = getPlatformName(_platform);
 
-   FileNameString src(projectFile, true);
-   FileNameString name(projectFile);
-
-   model.sources.clear();
-
-   model.empty = false;
-   model.name.copy(*name);
-   model.projectFile.copy(*src);
-   model.projectPath.copySubPath(projectFile, true);
+   setProjectPath(model, projectFile);
 
    model.singleSourceProject = false;
 
@@ -472,8 +509,10 @@ NotificationStatus ProjectController :: openProject(ProjectModel& model, path_t 
       ConfigFile::Node root = projectConfig.selectRootNode();
 
       ConfigFile::Node nsNode = projectConfig.selectNode(NAMESPACE_CATEGORY);
-      nsNode.readContent(value);
-      model.package.copy(value.str());
+      if (!nsNode.isNotFound()) {
+         nsNode.readContent(value);
+         model.package.copy(value.str());
+      }
 
       // select platform configuration
       ConfigFile::Node platformRoot = projectConfig.selectNode<ustr_t>(PLATFORM_CATEGORY, key, [](ustr_t key, ConfigFile::Node& node)
@@ -488,15 +527,29 @@ NotificationStatus ProjectController :: openProject(ProjectModel& model, path_t 
    return PROJECT_CHANGED;
 }
 
+void ProjectController :: setProjectPath(ProjectModel& model, path_t projectFile)
+{
+   FileNameString src(projectFile, true);
+   FileNameString name(projectFile);
+
+   model.sources.clear();
+
+   model.empty = false;
+   model.name.copy(*name);
+   model.projectFile.copy(*src);
+   model.projectPath.copySubPath(projectFile, true);
+}
+
 NotificationStatus ProjectController :: saveProject(ProjectModel& model)
 {
    ustr_t key = getPlatformName(_platform);
 
    PathString path(*model.projectPath, *model.projectFile);
    ConfigFile projectConfig;
-   if (projectConfig.load(*path, FileEncoding::UTF8)) {
 
-   }
+   bool existing = projectConfig.load(*path, FileEncoding::UTF8);
+   if (!existing)
+      projectConfig.create();
 
    ConfigFile::Node root = projectConfig.selectRootNode();
    // select platform configuration
@@ -622,6 +675,17 @@ void ProjectController :: loadBreakpoints(ProjectModel& model)
    for (auto it = model.breakpoints.start(); !it.eof(); ++it) {
       _debugController.addBreakpoint(*it);
    }
+}
+
+void ProjectController :: includeFile(ProjectModel& model, path_t filePath)
+{
+   PathString relPath(filePath);
+   PathString::makePathRelative(relPath, *model.projectPath);
+
+   model.sources.add((*relPath).clone());
+   model.addedSources.add((*relPath).clone());
+
+   model.notSaved = true;
 }
 
 // --- IDEController ---
@@ -896,15 +960,19 @@ bool IDEController :: doSaveFile(FileDialogBase& dialog, IDEModel* model, bool s
    return true;
 }
 
-bool IDEController :: doSaveAll(FileDialogBase& dialog, IDEModel* model)
+bool IDEController :: doSaveAll(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model)
 {
    NotificationStatus status = NONE_CHANGED;
-   if (saveAll(dialog, model, status)) {
-      if (status != NONE_CHANGED)
-         _notifier->notify(NOTIFY_IDE_CHANGE, status);
-
+   if (!saveAll(dialog, model, true, status)) {
       return true;
    }
+
+   if (model->projectModel.notSaved) {
+      doSaveProject(dialog, projectDialog, model, false);
+   }
+
+   if (status != NONE_CHANGED)
+      _notifier->notify(NOTIFY_IDE_CHANGE, status);
 
    return false;
 }
@@ -948,13 +1016,29 @@ bool IDEController :: doOpenProject(FileDialogBase& dialog, MessageDialogBase& m
 }
 
 
-bool IDEController :: doSaveProject(FileDialogBase& dialog, IDEModel* model, bool forcedMode)
+bool IDEController :: doSaveProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model, bool forcedMode)
 {
-   //// !! temporal
-   //if (!doSaveFile(dialog, model, false, forcedMode))
-   //   return false;
+   if (model->projectModel.notSaved) {
+      if (model->projectModel.projectPath.empty()) {
+         PathString path;
+         if (!projectDialog.saveFile(_T("prj"), path))
+            return false;
 
-   return true;
+         projectController.setProjectPath(model->projectModel, *path);
+      }
+
+      projectController.saveProject(model->projectModel);
+   }
+
+   NotificationStatus status = NONE_CHANGED;
+   if(saveAll(dialog, model, forcedMode, status)) {
+      if (status != NONE_CHANGED)
+         _notifier->notify(NOTIFY_IDE_CHANGE, status);
+
+      return true;
+   }
+
+   return false;
 }
 
 bool IDEController :: closeProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
@@ -985,11 +1069,11 @@ bool IDEController :: doCloseProject(FileDialogBase& dialog, MessageDialogBase& 
    else return false;
 }
 
-bool IDEController :: saveFile(FileDialogBase& dialog, IDEModel* model, int index)
+bool IDEController :: saveFile(FileDialogBase& dialog, IDEModel* model, int index, bool forcedMode)
 {
    auto docView = model->sourceViewModel.getDocument(index);
 
-   return doSaveFile(dialog, model, false, true);
+   return doSaveFile(dialog, model, false, forcedMode);
 }
 
 bool IDEController :: closeFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
@@ -1052,16 +1136,13 @@ bool IDEController :: closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDi
    return true;
 }
 
-bool IDEController :: saveAll(FileDialogBase& dialog, IDEModel* model,
+bool IDEController :: saveAll(FileDialogBase& dialog, IDEModel* model, bool forcedMode,
    NotificationStatus& status)
 {
    for (pos_t i = 0; i < model->sourceViewModel.getDocumentCount(); i++) {
-      if (!saveFile(dialog, model, i + 1))
+      if (!saveFile(dialog, model, i + 1, forcedMode))
          return false;
    }
-
-   if (model->projectModel.notSaved)
-      status = projectController.saveProject(model->projectModel);
 
    return true;
 }
@@ -1234,11 +1315,11 @@ void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode,
    }
 }
 
-bool IDEController :: doCompileProject(FileDialogBase& dialog, IDEModel* model)
+bool IDEController :: doCompileProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model)
 {
    onCompilationStart(model);
 
-   if (!doSaveProject(dialog, model, false)) {
+   if (!doSaveProject(dialog, projectDialog, model, false)) {
       onCompilationBreak(model);
 
       return false;
@@ -1314,4 +1395,11 @@ void IDEController :: onStatusChange(IDEModel* model, IDEStatus newStatus)
 void IDEController :: toggleBreakpoint(IDEModel* model, int row)
 {
    projectController.toggleBreakpoint(model->projectModel, model->sourceViewModel, row);
+}
+
+void IDEController :: doInclude(IDEModel* model)
+{
+   path_t path = model->sourceViewModel.getDocumentPath(model->sourceViewModel.getCurrentIndex());
+
+   projectController.includeFile(model->projectModel, path);
 }

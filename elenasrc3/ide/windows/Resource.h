@@ -35,8 +35,9 @@
 #define IDM_VIEW_MESSAGES           604
 #define IDM_VIEW_VMCONSOLE          605
 
-#define IDM_PROJECT_COMPILE         701
-#define IDM_PROJECT_OPTION          702
+#define IDM_PROJECT_INCLUDE         701
+#define IDM_PROJECT_COMPILE         702
+#define IDM_PROJECT_OPTION          703
 
 #define IDM_DEBUG_RUN               801
 #define IDM_DEBUG_STEPOVER          802

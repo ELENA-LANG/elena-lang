@@ -7,7 +7,6 @@ In development:
     === Iteration 16 ===
     * calc sample
     * script : declare and return a singleton
-    * pi sample
     * 5 rosetta code sample
     * test all samples for win x86
 
@@ -30,7 +29,6 @@ In development:
 Backlog:
 ------   
     --- elena backlog
-    * ide : test screnario - create a new project, change it and save it
     * ide debugger : stepping in the loop (for)
     * elt : 2+3, "hello", "workd".insert(0, "hello ")
     * check : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
@@ -49,6 +47,8 @@ Backlog:
     * ide : open via dialog - set proper namespace
     * review extensions warnings
     * #580 : new feature : use C# 7.0 style namespace (single line one)
+    * ide : exclude the file from the project
+    * ide : hide / show include / exclude  depending if the file is a part of the project
 
     ! migrate rest of elena 5.0 functionality (infinite enumeration, ...)
     ! script and db samples

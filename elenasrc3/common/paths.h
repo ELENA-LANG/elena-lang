@@ -116,6 +116,8 @@ namespace elena_lang
          append(extension, extension.length());
       }
 
+      static void makePathRelative(PathString& path, path_t rootPath);
+
       PathString() = default;
 
       PathString(path_t path)

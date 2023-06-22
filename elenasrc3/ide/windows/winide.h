@@ -98,6 +98,7 @@ namespace elena_lang
       void openFile();
       void saveFile();
       void saveAll();
+      void saveProject();
       void closeFile();
       void closeAll();
       void newProject();
@@ -113,6 +114,8 @@ namespace elena_lang
       void commentText();
       void uncommentText();
       void selectAll();
+
+      void includeFile();
 
       void openHelp();
 

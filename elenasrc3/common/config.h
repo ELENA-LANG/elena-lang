@@ -114,6 +114,8 @@ namespace elena_lang
 
       void appendSetting(ustr_t xpath, ustr_t value);
 
+      void create();
+
       bool load(path_t path, FileEncoding encoding);
       bool save(path_t path, FileEncoding encoding);
 

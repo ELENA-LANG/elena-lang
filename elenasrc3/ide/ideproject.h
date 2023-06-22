@@ -60,6 +60,7 @@ namespace elena_lang
       IdentifierString  options;
 
       ProjectPaths      sources;
+      ProjectPaths      addedSources;
 
       ProjectPaths      lastOpenFiles;
 

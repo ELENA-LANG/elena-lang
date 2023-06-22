@@ -154,7 +154,12 @@ void IDEWindow :: saveFile()
 
 void IDEWindow::saveAll()
 {
-   _controller->doSaveAll(fileDialog, _model);
+   _controller->doSaveAll(fileDialog, projectDialog, _model);
+}
+
+void IDEWindow :: saveProject()
+{
+   _controller->doSaveProject(fileDialog, projectDialog, _model, true);
 }
 
 void IDEWindow :: closeFile()
@@ -228,6 +233,11 @@ void IDEWindow :: uncommentText()
 void IDEWindow :: selectAll()
 {
    _controller->sourceController.selectAll(_model->viewModel());
+}
+
+void IDEWindow :: includeFile()
+{
+   _controller->doInclude(_model);
 }
 
 void IDEWindow :: toggleProjectView(bool open)
@@ -509,6 +519,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_FILE_SAVEALL:
          saveAll();
          break;
+      case IDM_FILE_SAVEPROJECT:
+         saveProject();
+         break;
       case IDM_FILE_CLOSE:
          closeFile();
          break;
@@ -550,7 +563,10 @@ bool IDEWindow :: onCommand(int command)
          selectAll();
          break;
       case IDM_PROJECT_COMPILE:
-         _controller->doCompileProject(projectDialog, _model);
+         _controller->doCompileProject(fileDialog, projectDialog, _model);
+         break;
+      case IDM_PROJECT_INCLUDE:
+         includeFile();
          break;
       case IDM_PROJECT_OPTION:
          _controller->doChangeProject(projectSettingsDialog, _model);
