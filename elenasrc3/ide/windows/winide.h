@@ -86,11 +86,12 @@ namespace elena_lang
       void onProjectChange(bool empty);
       void onProjectViewSel(size_t index);
 
-      void toggleTabBarWindow(int child_id);
+      bool toggleTabBarWindow(int child_id);
       void toggleWindow(int child_id);
 
       void toggleProjectView(bool open);
       void openResultTab(int controlIndex);
+      void closeResultTab(int controlIndex);
       void setChildFocus(int controlIndex);
 
       void newFile();

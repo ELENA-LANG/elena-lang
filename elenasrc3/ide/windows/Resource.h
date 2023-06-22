@@ -33,6 +33,7 @@
 #define IDM_VIEW_OUTPUT             602
 #define IDM_VIEW_WATCH              603
 #define IDM_VIEW_MESSAGES           604
+#define IDM_VIEW_VMCONSOLE          605
 
 #define IDM_PROJECT_COMPILE         701
 #define IDM_PROJECT_OPTION          702
@@ -62,6 +63,7 @@
 #define IDC_COMPILER_OUTPUT         113
 #define IDC_COMPILER_MESSAGES       114
 #define IDC_COMPILER_WATCH          115
+#define IDC_COMPILER_VMOUTPUT       116
 
 #define IDD_SETTINGS                800
 #define IDC_SETTINGS_TEPMPLATE      801

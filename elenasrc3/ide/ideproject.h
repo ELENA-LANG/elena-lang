@@ -39,6 +39,7 @@ namespace elena_lang
          PathString librarySourceRoot;
          PathString appPath;
          PathString compilerPath;
+         PathString vmTerminalPath;
          PathString configPath;
       } paths;
 

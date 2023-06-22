@@ -3,21 +3,18 @@ In development:
 ------         
 
   [development]
-    ### EPOCH: elena 6.0 - redux ###
+    ### EPIC: elena 6.0 - redux ###
     === Iteration 16 ===
-    [!] vm terminal
-    [!] ide vm console
-
-    * exit elt (see ticket)
-    * (re)implement elt
-
-    * ide : test screnario - create a new project, change it and save it
-    * ide debugger : stepping in the loop (for)
-    * test vm console app (e.g. helloworld)
+    * calc sample
+    * script : declare and return a singleton
+    * pi sample
+    * 5 rosetta code sample
+    * test all samples for win x86
 
      === Iteration 17 ===
     [!] x86 mta support
     [!] elt tutorial (stand-alone / in IDE)
+    * test all samples for win x86-64
 
     === Iteration 18 ===
     [!] x86 GUI support
@@ -25,12 +22,16 @@ In development:
     === Iteration 19 ===
     [!] elenavm x64 dll
     [!] elenavm x64 : script executing
+    [!] vm terminal x64
+    [!] ide vm console x64
     * amd64 : implement system 5
 
 ------                                                           
 Backlog:
 ------   
     --- elena backlog
+    * ide : test screnario - create a new project, change it and save it
+    * ide debugger : stepping in the loop (for)
     * elt : 2+3, "hello", "workd".insert(0, "hello ")
     * check : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
     * x86-64, ppc64, aarch64 : fix loads
@@ -47,7 +48,7 @@ Backlog:
     * ide : menu - clear all breakpoints
     * ide : open via dialog - set proper namespace
     * review extensions warnings
-    * new feature : use C# 7.0 style namespace (single line one)
+    * #580 : new feature : use C# 7.0 style namespace (single line one)
 
     ! migrate rest of elena 5.0 functionality (infinite enumeration, ...)
     ! script and db samples

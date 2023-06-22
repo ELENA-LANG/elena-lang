@@ -304,6 +304,21 @@ void ProjectController :: runToCursor(ProjectModel& model, SourceViewModel& sour
    }
 }
 
+bool ProjectController :: startVMConsole(ProjectModel& model)
+{
+   PathString appPath(model.paths.appPath);
+   appPath.combine(*model.paths.vmTerminalPath);
+
+   PathString cmdLine(*model.paths.vmTerminalPath);
+
+   return _vmProcess->start(*appPath, *cmdLine, *model.paths.appPath, false);
+}
+
+void ProjectController :: stopVMConsole()
+{
+   _vmProcess->stop(0);
+}
+
 bool ProjectController :: compileProject(ProjectModel& model)
 {
    PathString appPath(model.paths.appPath);
@@ -1232,6 +1247,16 @@ bool IDEController :: doCompileProject(FileDialogBase& dialog, IDEModel* model)
    return projectController.doCompileProject(model->projectModel, DebugAction::None);
 }
 
+void IDEController :: doStartVMConsole(IDEModel* model)
+{
+   projectController.startVMConsole(model->projectModel);
+}
+
+void IDEController :: doStopVMConsole()
+{
+   projectController.stopVMConsole();
+}
+
 void IDEController :: doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model)
 {
    if (prjDialog.showModal()) {
@@ -1255,6 +1280,8 @@ void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, ID
 
 bool IDEController :: onClose(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model)
 {
+   projectController.stopVMConsole();
+
    return doCloseAll(dialog, mssgDialog, model);
 }
 

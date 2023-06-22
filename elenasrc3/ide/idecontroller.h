@@ -49,6 +49,7 @@ namespace elena_lang
       PlatformType            _platform;
 
       ProcessBase*            _outputProcess;
+      ProcessBase*            _vmProcess;
       DebugController         _debugController;
       NotifierBase*           _notifier;
       WatchContext            _autoWatch;
@@ -88,6 +89,9 @@ namespace elena_lang
 
       bool doCompileProject(ProjectModel& model, DebugAction postponedAction);
 
+      bool startVMConsole(ProjectModel& model);
+      void stopVMConsole();
+
       void doDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action);
       void doDebugStop(ProjectModel& model);
 
@@ -125,9 +129,10 @@ namespace elena_lang
             _notifier->notifyTreeItem(id, item, param);
       }
 
-      ProjectController(ProcessBase* outputProcess, DebugProcessBase* debugProcess, ProjectModel* model, SourceViewModel* sourceModel,
+      ProjectController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* debugProcess, 
+         ProjectModel* model, SourceViewModel* sourceModel,
          DebugSourceController* sourceController, PlatformType platform)
-         : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, this, sourceController),
+         : _outputProcess(outputProcess), _vmProcess(vmConsoleProcess), _debugController(debugProcess, model, sourceModel, this, sourceController),
            _autoWatch({ nullptr, 0 })
       {
          //_notifier = nullptr;
@@ -205,6 +210,9 @@ namespace elena_lang
       void doDebugAction(IDEModel* model, DebugAction action);
       void doDebugStop(IDEModel* model);
 
+      void doStartVMConsole(IDEModel* model);
+      void doStopVMConsole();
+
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param);
 
@@ -227,11 +235,11 @@ namespace elena_lang
 
       void onProgramStop(IDEModel* model);
 
-      IDEController(ProcessBase* outputProcess, DebugProcessBase* process, IDEModel* model,
-         TextViewSettings& textViewSettings, PlatformType platform
+      IDEController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* process,
+         IDEModel* model, TextViewSettings& textViewSettings, PlatformType platform
       ) :
          sourceController(textViewSettings),
-         projectController(outputProcess, process, &model->projectModel, &model->sourceViewModel,
+         projectController(outputProcess, vmConsoleProcess, process, &model->projectModel, &model->sourceViewModel,
             this, platform)
       {
          _notifier = nullptr;

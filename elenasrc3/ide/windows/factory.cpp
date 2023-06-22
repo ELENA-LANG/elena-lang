@@ -24,11 +24,13 @@ using namespace elena_lang;
 
 #ifdef _M_IX86
 
-#define CLI_PATH "elena-cli.exe"
+#define CLI_PATH     "elena-cli.exe"
+#define ELT_CLI_PATH "elt-cli.exe"
 
 #else
 
-#define CLI_PATH "elena64-cli.exe"
+#define CLI_PATH     "elena64-cli.exe"
+#define ELT_CLI_PATH "elt64-cli.exe"
 
 #endif // DEBUG
 
@@ -42,9 +44,12 @@ WCHAR szHSplitter[MAX_LOADSTRING];              // the hsplitter class name
 WCHAR szVSplitter[MAX_LOADSTRING];              // the vsplitter window class name
 WCHAR szCompilerOutput[MAX_LOADSTRING];         // the compiler output caption
 WCHAR szErrorList[MAX_LOADSTRING];              // the compiler output caption
-WCHAR szWatch[MAX_LOADSTRING];                  // the compiler output caption
+WCHAR szWatch[MAX_LOADSTRING];                  // the debug auto watch caption
+WCHAR szVMOutput[MAX_LOADSTRING];               // the vm terminal output caption
 
 #define CONTEXT_MENU_INSPECT                    _T("Inspect\tCtrl+I")
+#define CONTEXT_MENU_SHOWHEX                    _T("Show as hexadecimal")
+
 #define CONTEXT_MENU_SHOWHEX                    _T("Show as hexadecimal")
 
 // !! temporally
@@ -122,6 +127,7 @@ IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel,
 
    _model->projectModel.paths.appPath.copy(*_pathSettings.appPath);
    _model->projectModel.paths.compilerPath.copy(CLI_PATH);
+   _model->projectModel.paths.vmTerminalPath.copy(ELT_CLI_PATH);
 }
 
 void IDEFactory :: registerClasses()
@@ -193,6 +199,17 @@ ControlBase* IDEFactory :: createSplitter(WindowBase* owner, ControlBase* client
    return splitter;
 }
 
+ControlBase* IDEFactory :: createVmConsoleControl(ControlBase* owner, ProcessBase* outputProcess)
+{
+   VMConsoleInteractive* vmConsole = new VMConsoleInteractive(outputProcess);
+
+   vmConsole->createControl(_instance, owner);
+
+   outputProcess->attachListener(vmConsole);
+
+   return vmConsole;
+}
+
 ControlBase* IDEFactory :: createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess, NotifierBase* notifier)
 {
    CompilerOutput* output = new CompilerOutput(notifier, NOTIFY_COMPILATION_RESULT);
@@ -246,11 +263,12 @@ GUIControlBase* IDEFactory :: createDebugContextMenu(ControlBase* owner)
 }
 
 void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
-   int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu)
+   int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl)
 {
    LoadStringW(_instance, IDC_COMPILER_OUTPUT, szCompilerOutput, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_COMPILER_MESSAGES, szErrorList, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_COMPILER_WATCH, szWatch, MAX_LOADSTRING);
+   LoadStringW(_instance, IDC_COMPILER_VMOUTPUT, szVMOutput, MAX_LOADSTRING);
 
    _model->ideScheme.textFrameId = frameTextIndex;
    _model->ideScheme.resultControl = tabBar;
@@ -261,10 +279,12 @@ void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compiler
    _model->ideScheme.menu = menu;
    _model->ideScheme.statusBar = statusBar;
    _model->ideScheme.debugContextMenu = debugContextMenu;
+   _model->ideScheme.vmConsoleControl = vmConsoleControl;
 
    _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
    _model->ideScheme.captions.add(errorList, szErrorList);
    _model->ideScheme.captions.add(contextBrowser, szWatch);
+   _model->ideScheme.captions.add(vmConsoleControl, szVMOutput);
 }
 
 GUIApp* IDEFactory :: createApp()
@@ -276,9 +296,10 @@ GUIApp* IDEFactory :: createApp()
    return app;
 }
 
-GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess)
+GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess, 
+   ProcessBase* vmConsoleProcess)
 {
-   GUIControlBase* children[12];
+   GUIControlBase* children[13];
    int counter = 0;
 
    int textIndex = counter++;
@@ -293,6 +314,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    int browser = counter++;
    int menu = counter++;
    int debugContextMenu = counter++;
+   int vmConsoleControl = counter++;
 
    SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance);
    sdi->create(_instance, szSDI, nullptr);
@@ -313,6 +335,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
       NOTIFY_IDE_CHANGE, IDE_LAYOUT_CHANGED);
    children[menu] = createMenu(sdi);
    children[debugContextMenu] = createDebugContextMenu(sdi);
+   children[vmConsoleControl] = createVmConsoleControl((ControlBase*)children[tabBar], vmConsoleProcess);
 
    vb->append(children[vsplitter]);
    vb->append(children[statusBarIndex]);
@@ -321,7 +344,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    sdi->setLayout(textIndex, -1, bottomBox, -1, hsplitter);
 
    initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView, browser, menu, statusBarIndex, 
-      debugContextMenu);
+      debugContextMenu, vmConsoleControl);
 
    return sdi;
 }

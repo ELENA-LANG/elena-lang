@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Process Output Implementation File
-//                                             (C)2022, by Aleksey Rakov
+//                                             (C)2022-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "windows/winoutput.h"
@@ -16,8 +16,9 @@ LRESULT CALLBACK ProcessOutput::Proc(HWND hWnd, UINT Message, WPARAM wParam, LPA
    return window->OutputProc(hWnd, Message, wParam, lParam);
 }
 
-ProcessOutput :: ProcessOutput(bool readOnly) :
+ProcessOutput :: ProcessOutput(ProcessBase* process, bool readOnly) :
    ControlBase(nullptr, 0, 0, 50, 50),
+   _process(process),
    _editProc(nullptr),
    _readOnly(readOnly)
 {
@@ -43,23 +44,23 @@ HWND ProcessOutput :: createControl(HINSTANCE instance, ControlBase* owner)
 
 LRESULT ProcessOutput :: OutputProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-   switch (Message)
-   {
+   switch (Message) {
       case WM_CHAR:
       {
          int eol = GetWindowTextLength(_handle);
          SendMessage(_handle, EM_SETSEL, (WPARAM)eol, (LPARAM)eol);
 
-         if ((wchar_t)wParam == 13) {
-//            _redirector->write("\r\n", 2);
+         if (_process != nullptr) {
+            if ((wchar_t)wParam == 13) {
+               _process->write("\r\n", 2);
+            }
+            else if ((wchar_t)wParam == 0x8) {
+               _process->write(0x8);
+            }
+            else if ((wchar_t)wParam >= 0x20) {
+               _process->write((wchar_t)wParam);
+            }
          }
-         else if ((wchar_t)wParam == 0x8) {
-//            _redirector->write(0x8);
-         }
-         else if ((wchar_t)wParam >= 0x20) {
-//            _redirector->write((wchar_t)wParam);
-         }
-
          break;
       }
    }
@@ -120,7 +121,7 @@ wchar_t* ProcessOutput :: getValue()
 // --- CompilerOutput ---
 
 CompilerOutput :: CompilerOutput(NotifierBase* notifier, int notificationId)
-   : ProcessOutput(true),
+   : ProcessOutput(nullptr, true),
    _notifier(notifier),
    _notificationId(notificationId)
 {
@@ -130,4 +131,12 @@ CompilerOutput :: CompilerOutput(NotifierBase* notifier, int notificationId)
 void CompilerOutput :: afterExecution(int exitCode)
 {
    _notifier->notifyCompletion(_notificationId, exitCode);
+}
+
+// --- VMConsoleInteractive ---
+
+VMConsoleInteractive :: VMConsoleInteractive(ProcessBase* process)
+   : ProcessOutput(process, false)
+{
+   
 }

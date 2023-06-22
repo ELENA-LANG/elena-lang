@@ -55,9 +55,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    TextViewSettings textViewSettings = { EOLMode::CRLF, false, 3 };
 
    IDEModel          ideModel;
+   Win32Process      vmConsoleProcess(50);
    Win32Process      outputProcess(50);
    DebugProcess      debugProcess;
-   IDEController     ideController(&outputProcess, &debugProcess, &ideModel, 
+   IDEController     ideController(&outputProcess, &vmConsoleProcess, &debugProcess, &ideModel,
                         textViewSettings, CURRENT_PLATFORM);
    IDEFactory        factory(hInstance, &ideModel, &ideController, guiSettings);
 
@@ -70,7 +71,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    ideController.loadSystemConfig(&ideModel, *sysConfigPath, TEMPLATE_XPATH, TARGET_XPATH);
 
    GUIApp* app = factory.createApp();
-   GUIControlBase* ideWindow = factory.createMainWindow(app, &outputProcess);
+   GUIControlBase* ideWindow = factory.createMainWindow(app, &outputProcess, &vmConsoleProcess);
 
    ideController.setNotifier(app);
 

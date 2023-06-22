@@ -63,6 +63,8 @@ copy %~dp0\..\bin\winstub.ex_ %~dp0\output\bin
 copy %~dp0\..\bin\elc60.cfg %~dp0\output\bin
 copy %~dp0\..\bin\elenart60.cfg %~dp0\output\bin
 copy %~dp0\..\bin\elenavm60.cfg %~dp0\output\bin
+copy %~dp0\..\bin\elt60.es %~dp0\output\bin
+copy %~dp0\..\bin\command60.es %~dp0\output\bin
 
 copy %~dp0\..\bin\x32\core60.bin %~dp0\output\bin\x32\
 copy %~dp0\..\bin\x32\core60_win.bin %~dp0\output\bin\x32\

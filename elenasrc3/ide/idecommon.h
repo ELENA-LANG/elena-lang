@@ -10,7 +10,7 @@
 #include "elena.h"
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x0053
+#define IDE_REVISION_NUMBER                           0x0054
 
 namespace elena_lang
 {
@@ -124,6 +124,9 @@ namespace elena_lang
 
       virtual bool start(path_t path, path_t commandLine, path_t curDir, bool readOnly) = 0;
       virtual void stop(int exitCode) = 0;
+
+      virtual bool write(const char* line, size_t length) = 0;
+      virtual bool write(wchar_t ch) = 0;
 
       ProcessBase()
          : _listeners(nullptr)
@@ -309,7 +312,8 @@ namespace elena_lang
    {
    public:
       virtual GUIApp* createApp() = 0;
-      virtual GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess) = 0;
+      virtual GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
+         ProcessBase* vmConsoleProcess) = 0;
    };
 }
 

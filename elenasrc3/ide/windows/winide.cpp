@@ -254,6 +254,22 @@ void IDEWindow :: openResultTab(int controlIndex)
    onLayoutChange(IDE_LAYOUT_CHANGED);
 }
 
+void IDEWindow :: closeResultTab(int controlIndex)
+{
+   _children[controlIndex]->hide();
+
+   TabBar* resultBar = (TabBar*)_children[_model->ideScheme.resultControl];
+
+   resultBar->removeTabChild((ControlBase*)_children[controlIndex]);
+
+   if (resultBar->empty()) {
+      resultBar->hide();
+   }
+   else resultBar->selectTab(0);
+
+   onLayoutChange(IDE_LAYOUT_CHANGED);
+}
+
 void IDEWindow :: toggleWindow(int child_id)
 {
    if (child_id == _model->ideScheme.projectView) {
@@ -264,11 +280,16 @@ void IDEWindow :: toggleWindow(int child_id)
    }
 }
 
-void IDEWindow :: toggleTabBarWindow(int child_id)
+bool IDEWindow :: toggleTabBarWindow(int child_id)
 {
    if (!_children[child_id]->visible()) {
       openResultTab(child_id);
+
+      return true;
    }
+
+   closeResultTab(child_id);
+   return false;
 }
 
 void IDEWindow :: setChildFocus(int controlIndex)
@@ -409,6 +430,7 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
    menu->checkItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
    menu->checkItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
    menu->checkItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
+   menu->checkItemById(IDM_VIEW_VMCONSOLE, _children[_model->ideScheme.vmConsoleControl]->visible());
 
    menu->enableMenuItemById(IDM_FILE_SAVE, !empty);
    menu->enableMenuItemById(IDM_FILE_CLOSE, !empty);
@@ -565,6 +587,12 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_VIEW_OUTPUT:
          toggleTabBarWindow(_model->ideScheme.compilerOutputControl);
+         break;
+      case IDM_VIEW_VMCONSOLE:
+         if (toggleTabBarWindow(_model->ideScheme.vmConsoleControl)) {
+            _controller->doStartVMConsole(_model);
+         }
+         else _controller->doStopVMConsole();
          break;
       case IDM_VIEW_MESSAGES:
          toggleTabBarWindow(_model->ideScheme.errorListControl);

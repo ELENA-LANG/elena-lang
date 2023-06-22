@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Process Output Header File
-//                                             (C)2022, by Aleksey Rakov
+//                                             (C)2022-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 
@@ -17,6 +17,8 @@ namespace elena_lang
    class ProcessOutput : public ControlBase, public ProcessListenerBase
    {
    protected:
+      ProcessBase*      _process;
+
       WNDPROC           _editProc;
       bool              _readOnly;
 
@@ -34,7 +36,7 @@ namespace elena_lang
 
       HWND createControl(HINSTANCE instance, ControlBase* owner);
 
-      ProcessOutput(bool readOnly);
+      ProcessOutput(ProcessBase* process, bool readOnly);
    };
 
    // --- CompilerOutput ---
@@ -48,6 +50,14 @@ namespace elena_lang
    public:
       CompilerOutput(NotifierBase* notifier, int notificationId);
    };
+
+   // --- VMConsoleInteractive ---
+   class VMConsoleInteractive : public ProcessOutput
+   {
+   public:
+      VMConsoleInteractive(ProcessBase* process);
+   };
+
 }
 
 #endif // WINOUTPUT_H

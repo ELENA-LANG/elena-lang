@@ -8,7 +8,7 @@ public program()
             .loadPath("~\scripts\grammar60.es")
             .loadPath("~\scripts\tscript60.es");
             
-    var o := t.buildScript("public program() { console.writeLine(2) }");
+    var o := t.buildScript("public program() { console.writeLine(""Hello World"") }");
     
     o.eval();
 }

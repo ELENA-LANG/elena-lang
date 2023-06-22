@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Win32 OS Controller class and its helpers header
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WIN32CONTROLLER_H
@@ -13,6 +13,8 @@
 
 namespace elena_lang
 {
+   constexpr int BUF_SIZE = 512;
+
    // -- Win32Process ---
    class Win32Process : public ProcessBase
    {
@@ -21,6 +23,9 @@ namespace elena_lang
       DWORD  _dwThreadId;		// id of the redir thread
 
       DWORD  _dwWaitTime;  // wait time to check the status of the child process
+
+      char   _buffer[BUF_SIZE];
+      size_t _offset;
 
    protected:
       HANDLE _hStdinWrite;	// write end of child's stdin pipe
@@ -45,7 +50,10 @@ namespace elena_lang
 
       void stop(int exitCode = 0) override;
 
-      void flush(char* buffer, size_t length);
+      bool write(wchar_t ch) override;
+      bool write(const char* line, size_t length) override;
+
+      void flush();
 
       Win32Process(int waitTime);
       virtual ~Win32Process();
