@@ -680,7 +680,7 @@ void ProjectController :: loadBreakpoints(ProjectModel& model)
 void ProjectController :: includeFile(ProjectModel& model, path_t filePath)
 {
    PathString relPath(filePath);
-   PathString::makePathRelative(relPath, *model.projectPath);
+   _pathHelper->makePathRelative(relPath, *model.projectPath);
 
    model.sources.add((*relPath).clone());
    model.addedSources.add((*relPath).clone());

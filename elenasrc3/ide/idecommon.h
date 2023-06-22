@@ -292,6 +292,12 @@ namespace elena_lang
       virtual ~DebugProcessBase() = default;
    };
 
+   class PathHelperBase
+   {
+   public:
+      virtual void makePathRelative(PathString& path, path_t rootPath) = 0;
+   };
+
    struct Breakpoint
    {
       int              row;

@@ -1,0 +1,13 @@
+<configuration>
+    <files>
+        <module>
+            <file>control.l</file>
+        </module>
+    </files>
+    <project>
+        <executable>calc.exe</executable>
+        <options></options>
+        <namespace>calc</namespace>
+        <template>console</template>
+    </project>
+</configuration>

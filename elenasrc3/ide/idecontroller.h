@@ -54,6 +54,8 @@ namespace elena_lang
       NotifierBase*           _notifier;
       WatchContext            _autoWatch;
 
+      PathHelperBase*         _pathHelper;
+
       void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
       void saveConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node root, ConfigFile::Node platformRoot);
 
@@ -135,9 +137,10 @@ namespace elena_lang
 
       ProjectController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* debugProcess, 
          ProjectModel* model, SourceViewModel* sourceModel,
-         DebugSourceController* sourceController, PlatformType platform)
+         DebugSourceController* sourceController, PlatformType platform, PathHelperBase* pathHelper)
          : _outputProcess(outputProcess), _vmProcess(vmConsoleProcess), _debugController(debugProcess, model, sourceModel, this, sourceController),
-           _autoWatch({ nullptr, 0 })
+           _autoWatch({ nullptr, 0 }),
+           _pathHelper(pathHelper)
       {
          //_notifier = nullptr;
          _platform = platform;
@@ -242,11 +245,11 @@ namespace elena_lang
       void onProgramStop(IDEModel* model);
 
       IDEController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* process,
-         IDEModel* model, TextViewSettings& textViewSettings, PlatformType platform
+         IDEModel* model, TextViewSettings& textViewSettings, PlatformType platform, PathHelperBase* pathHelper
       ) :
          sourceController(textViewSettings),
          projectController(outputProcess, vmConsoleProcess, process, &model->projectModel, &model->sourceViewModel,
-            this, platform)
+            this, platform, pathHelper)
       {
          _notifier = nullptr;
          defaultEncoding = FileEncoding::UTF8;

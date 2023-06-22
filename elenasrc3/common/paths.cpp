@@ -16,8 +16,6 @@ using namespace elena_lang;
 
 #include <direct.h>
 #include <io.h>
-#include "windows/editcontrol.h"
-#include <shlwapi.h>
 
 inline int checkDir(const wchar_t* name, int mode)
 {
@@ -105,19 +103,6 @@ bool PathUtil :: checkExtension(path_t path, ustr_t extension)
    return PathUtil::checkExtension(path, *wExtension);
 }
 
-void PathString :: makePathRelative(PathString& path, path_t rootPath)
-{
-   path_c tmpPath[MAX_PATH];
-
-   ::PathRelativePathTo(tmpPath, rootPath, FILE_ATTRIBUTE_DIRECTORY, *path, FILE_ATTRIBUTE_NORMAL);
-   if (!emptystr(tmpPath)) {
-      if (path_t(tmpPath).compareSub(L".\\", 0, 2)) {
-         path.copy(tmpPath + 2);
-      }
-      else path.copy(tmpPath);
-   }
-}
-
 #elif __GNUG__
 
 #include <unistd.h>
@@ -160,12 +145,6 @@ bool PathUtil::recreatePath(path_t path)
 bool PathUtil :: removeFile(path_t path)
 {
    return ::remove(path.str()) != 0;;
-}
-
-
-void PathString::makePathRelative(PathString& path, path_t rootPath)
-{
-   // !! temporally not implemented
 }
 #endif
 
