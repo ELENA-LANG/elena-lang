@@ -3,7 +3,7 @@
 //
 //		This file contains the project class declaration
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PROJECT_H
@@ -33,6 +33,8 @@ namespace elena_lang
       void addStringSetting(ProjectOption key, ustr_t s);
 
       void loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot);
+
+      void loadParserTargets(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath);
 
       void loadSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, IdentifierString& value);
 
@@ -72,7 +74,7 @@ namespace elena_lang
 
       void forEachForward(void* arg, void(* feedback)(void* arg, ustr_t key, ustr_t value)) override;
 
-      void addSource(ustr_t ns, path_t path);
+      void addSource(ustr_t ns, path_t path, ustr_t target);
 
       bool loadConfigByName(path_t configPath, ustr_t name, bool markAsLoaded);
 

@@ -919,6 +919,11 @@ namespace elena_lang
          else return _defaultItem;
       }
 
+      void clear()
+      {
+         _list.clear();
+      }
+
       pos_t count() const
       {
          return _list.count();

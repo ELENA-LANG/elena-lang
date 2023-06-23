@@ -101,6 +101,26 @@ namespace elena_lang
          return child;
       }
 
+      pos_t injectSibling(pos_t position, Key key, NodeArg& arg)
+      {
+         MemoryWriter writer(&_body);
+         pos_t child = writer.position();
+
+         NodeRecord nw;
+         nw.next = INVALID_POS;
+         nw.key = key;
+         nw.arg = arg;
+
+         auto r = (NodeRecord*)_body.get(position);
+         nw.next = r->next;
+         r->next = child;
+         nw.parent = r->parent;
+
+         writer.write(&nw, sizeof(nw));
+
+         return child;
+      }
+
       pos_t saveStrArgument(ustr_t strArgument)
       {
          MemoryWriter stringWriter(&_strings);
@@ -488,10 +508,48 @@ namespace elena_lang
    public:
       class Writer
       {
-         Tree* _tree;
-         pos_t _current;
+         Tree*          _tree;
+         pos_t          _current;
+
+         Stack<pos_t>   _bookmarks;
+         pos_t          _pendingBookmarks;
+
+         void updateBookmarks(Stack<pos_t>& bookmarks, pos_t oldPos, pos_t newPos)
+         {
+            for (auto it = bookmarks.start(); !it.eof(); ++it) {
+               if (*it == oldPos)
+                  *it = newPos;
+            }
+         }
+
+         void inject(pos_t position, Key type, ref_t argument, pos_t strArgRef)
+         {
+            NodeArg arg(argument, strArgRef);
+
+            pos_t prev = _tree->readPrevious(position);
+            if (prev != INVALID_REF) {
+               _current = _tree->injectSibling(prev, type, arg);
+            }
+            else _current = _tree->injectChild(position, type, arg);
+
+            updateBookmarks(_bookmarks, position, _current);
+         }
 
       public:
+         pos_t newBookmark()
+         {
+            _pendingBookmarks++;
+
+            return _bookmarks.count() + _pendingBookmarks;
+         }
+         void removeBookmark()
+         {
+            if (_pendingBookmarks > 0) {
+               _pendingBookmarks--;
+            }
+            else _bookmarks.pop();
+         }
+
          void newNode(Key key, ref_t arg)
          {
             if (_current == INVALID_POS) {
@@ -536,6 +594,19 @@ namespace elena_lang
             closeNode();
          }
 
+         void inject(Key type, ustr_t argument)
+         {
+            inject(_bookmarks.peek(), type, 0, _tree->saveStrArgument(argument));
+         }
+         void inject(Key type, ref_t argument)
+         {
+            inject(_bookmarks.peek(), type, argument, INVALID_POS);
+         }
+         void inject(Key type)
+         {
+            inject(_bookmarks.peek(), type, 0, INVALID_POS);
+         }
+
          Node CurrentNode()
          {
             return Node::read(_tree, _current);
@@ -545,17 +616,23 @@ namespace elena_lang
          {
             _tree->clear();
             _current = INVALID_POS;
+            _bookmarks.clear();
+            _pendingBookmarks = 0;
          }
 
          Writer(Tree& tree)
+            : _bookmarks(INVALID_POS)
          {
             this->_tree = &tree;
             this->_current = INVALID_POS;
+            this->_pendingBookmarks = 0;
          }
          Writer(Node& node)
+            : _bookmarks(INVALID_POS)
          {
             this->_tree = node._tree;
             this->_current = node._position;
+            this->_pendingBookmarks = 0;
          }
       };
 

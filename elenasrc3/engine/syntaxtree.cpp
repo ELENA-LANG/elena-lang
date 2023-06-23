@@ -3,7 +3,7 @@
 //
 //		This file contains Syntax Tree class implementation
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -13,6 +13,11 @@
 using namespace elena_lang;
 
 // --- SyntaxTree ---
+
+void SyntaxTree :: loadTokens(TokenMap& map)
+{
+   
+}
 
 void SyntaxTree :: save(MemoryBase* section)
 {

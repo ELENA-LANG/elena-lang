@@ -3,7 +3,7 @@
 //
 //		This file contains the project class body
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -85,7 +85,7 @@ PlatformType Project :: TargetType()
    return _platform & PlatformType::TargetTypeMask;
 }
 
-void Project :: addSource(ustr_t ns, path_t path)
+void Project :: addSource(ustr_t ns, path_t path, ustr_t target)
 {
    if (!_loaded && _projectName.empty())
       _projectName.copy(ns);
@@ -103,7 +103,9 @@ void Project :: addSource(ustr_t ns, path_t path)
       current = files.appendChild(ProjectOption::Module, ns);
    }
 
-   current.appendChild(ProjectOption::FileKey, _paths.count() + 1);
+   ProjectNode fileNode = current.appendChild(ProjectOption::FileKey, _paths.count() + 1);
+   if (!target.empty())
+      fileNode.appendChild(ProjectOption::Target, target);
 
    PathString fullPath(*_projectPath, path);
    _paths.add((*fullPath).clone());
@@ -133,6 +135,7 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
 {
    DynamicString<char> subNs;
    DynamicString<char> path;
+   DynamicString<char> target;
 
    ConfigFile::Collection modules;
    if (config.select(configRoot, MODULE_CATEGORY, modules)) {
@@ -142,8 +145,11 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
          if (!moduleNode.readAttribute("name", subNs)) {
             subNs.clear();
          }
+         if (!moduleNode.readAttribute("target", target)) {
+            target.clear();
+         }
 
-         ReferenceName          ns(Namespace(), subNs.str());
+         ReferenceName ns(Namespace(), subNs.str());
          ConfigFile::Collection files;
          if (config.select(moduleNode, "*", files)) {
             for (auto it = files.start(); !it.eof(); ++it) {
@@ -152,7 +158,41 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
                node.readContent(path);
 
                PathString filePath(path.str());
-               addSource(*ns, *filePath);
+               addSource(*ns, *filePath, target.str());
+            }
+         }
+      }
+   }
+}
+
+void Project :: loadParserTargets(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath)
+{
+   DynamicString<char> name;
+   DynamicString<char> type;
+   DynamicString<char> option;
+
+   ConfigFile::Collection targets;
+   if (config.select(configRoot, xpath, targets)) {
+      for (auto m_it = targets.start(); !m_it.eof(); ++m_it) {
+         ConfigFile::Node targetNode = *m_it;
+
+         if (!targetNode.readAttribute("name", name)) {
+            name.clear();
+         }
+         if (!targetNode.readAttribute("type", type)) {
+            type.clear();
+         }
+
+         ProjectNode node = _root.appendChild(ProjectOption::ParserTargets, name.str());
+         node.appendChild(ProjectOption::TargetType, type.str());
+
+         ConfigFile::Collection options;
+         if (config.select(targetNode, "*", options)) {
+            for (auto it = options.start(); !it.eof(); ++it) {
+               ConfigFile::Node optionNode = *it;
+               optionNode.readContent(option);
+
+               node.appendChild(ProjectOption::TargetOption, option.str());
             }
          }
       }
@@ -252,6 +292,8 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
       loadPathSetting(config, root, LIB_PATH, ProjectOption::LibPath, configPath);
       loadPathSetting(config, root, OUTPUT_PATH, ProjectOption::OutputPath, configPath);
       loadPathSetting(config, root, TARGET_PATH, ProjectOption::TargetPath, configPath);
+
+      loadParserTargets(config, root, PARSER_TARGET_CATEGORY);
 
       copySetting(config, root, MGSIZE_PATH, ProjectOption::GCMGSize);
       copySetting(config, root, YGSIZE_PATH, ProjectOption::GCYGSize);

@@ -3,12 +3,12 @@
 //
 //		Copmpiler messages 
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 namespace elena_lang
 {
-   constexpr auto MessageLength = 76;
+   constexpr auto MessageLength = 78;
    const Pair<int, const char*, 0, nullptr> Messages[MessageLength] =
    {
       {errDuplicatedSymbol, errMsgDuplicatedSymbol},
@@ -86,7 +86,9 @@ namespace elena_lang
       {errClosureError, errMsgClosureError},
       {errInvalidType, errMsgInvalidType},
       {wrnUnknownTypecast, wrnMsgUnknownTypecast},
-      {wrnUnsupportedOperator, wrnMsgUnsupportedOperator}
+      {wrnUnsupportedOperator, wrnMsgUnsupportedOperator},
+      {errInvalidParserTarget, errMsgInvalidParserTarget},
+      {errInvalidParserTargetType, errMsgInvalidParserTargetType}
    };
 
 }

@@ -3,7 +3,7 @@
 //
 //		This file contains the xml project base class declaration
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef XMLPROJECTBASE_H
@@ -55,7 +55,18 @@ namespace elena_lang
 
                return true;
             }
-            else return false;
+            return false;
+         }
+
+         bool loadTarget(IdentifierString& retVal) override
+         {
+            ProjectNode key = _node.findChild(ProjectOption::Target);
+            if (key == ProjectOption::Target) {
+               retVal.copy(key.identifier());
+
+               return true;
+            }
+            return false;
          }
 
          bool eof() override
@@ -106,6 +117,60 @@ namespace elena_lang
          ModuleIterator(XmlProjectBase* project)
             : _fileIterator(project)
          {
+         }
+      };
+
+      class CategoryIterator : public  CategoryIteratorBase
+      {
+         ProjectNode  _node;
+
+      protected:
+         void next() override
+         {
+            _node = _node.nextNode();
+         }
+
+      public:
+         bool eof() override
+         {
+            return _node == ProjectOption::None;
+         }
+
+         ustr_t name() override
+         {
+            return _node.identifier();
+         }
+
+         bool loadOption(ProjectOption option, IdentifierString& value) override
+         {
+            ProjectNode current = _node.findChild(option);
+            if (current != ProjectOption::None) {
+               value.copy(current.identifier());
+
+               return true;
+            }
+            return false;
+         }
+
+         void loadOptions(ProjectOption option, IdentifierString& value, char separator) override
+         {
+            value.clear();
+
+            ProjectNode current = _node.findChild(option);
+            while (current != ProjectOption::None) {
+               if (current.key == option) {
+                  if (!value.empty()) {
+                     value.append(separator);
+                  }
+                  value.append(current.identifier());
+               }
+               current = current.nextNode();
+            }
+         }
+
+         CategoryIterator(ProjectNode node)
+         {
+            _node = node;
          }
       };
 
@@ -174,6 +239,13 @@ namespace elena_lang
 
          ProjectNode primitiveNode = _root.findChild(ProjectOption::References);
          it->_node = primitiveNode.findChild(ProjectOption::FileKey);
+
+         return it;
+      }
+
+      CategoryIteratorBase* allocTargetIterator() override
+      {
+         CategoryIterator* it = new CategoryIterator(_root.findChild(ProjectOption::ParserTargets));
 
          return it;
       }

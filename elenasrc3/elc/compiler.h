@@ -1198,7 +1198,8 @@ namespace elena_lang
       ObjectInfo compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, 
          SyntaxNode roperand, ExpressionAttribute mode);
 
-      ObjectInfo compileMessageOperationR(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, SyntaxNode node);
+      ObjectInfo compileMessageOperationR(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, 
+         SyntaxNode node, bool propertyMode);
 
       ObjectInfo compileWeakOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ref_t* arguments, pos_t argLen,
          ObjectInfo& loperand, ArgumentsInfo& messageArguments, mssg_t message, ref_t expectedRef, ArgumentsInfo* updatedOuterArgs);

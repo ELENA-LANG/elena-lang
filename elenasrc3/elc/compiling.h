@@ -72,6 +72,8 @@ namespace elena_lang
       void buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode, 
          ExtensionMap* outerExtensionList);
 
+      void parseFileStandart(SyntaxWriterBase* syntaxWriter, path_t path);
+
       void compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target, 
          ExtensionMap* outerExtensionList);
       void generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode);
@@ -79,14 +81,13 @@ namespace elena_lang
          SyntaxWriterBase* syntaxWriter);
       void parseFile(path_t projectPath,
          FileIteratorBase& file_it, 
-         SyntaxWriterBase* syntaxWriter);
-      void parseModule(path_t projectPath,
-         ustr_t fileProlog, ustr_t fileEpilog,
+         SyntaxWriterBase* syntaxWriter,
+         ProjectTarget* parserTarget);
+      void parseModule(ProjectEnvironment& env,
          ModuleIteratorBase& module_it,
          SyntaxTreeBuilder& builder, 
          ModuleScopeBase& moduleScope);
-      void buildModule(path_t projectPath,
-         ustr_t fileProlog, ustr_t fileEpilog,
+      void buildModule(ProjectEnvironment& env,
          ModuleIteratorBase& module_it, 
          SyntaxTree* syntaxTree, 
          ForwardResolverBase* forwardResolver,

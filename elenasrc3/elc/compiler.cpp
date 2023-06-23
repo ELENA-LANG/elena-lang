@@ -7556,7 +7556,8 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
    return retVal;
 }
 
-ObjectInfo Compiler :: compileMessageOperationR(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, SyntaxNode messageNode)
+ObjectInfo Compiler :: compileMessageOperationR(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, 
+   SyntaxNode messageNode, bool propertyMode)
 {
    ArgumentsInfo arguments;
    ArgumentsInfo updatedOuterArgs;
@@ -7577,7 +7578,7 @@ ObjectInfo Compiler :: compileMessageOperationR(BuildTreeWriter& writer, ExprSco
             // NOTE : the operation target shouldn't be a primitive type
             ObjectInfo source = validateObject(writer, scope, messageNode, target, 0, true, true);
 
-            mssg_t messageRef = mapMessage(scope, messageNode, false, false, false);
+            mssg_t messageRef = mapMessage(scope, messageNode, propertyMode, false, false);
 
             mssg_t resolvedMessage = _logic->resolveSingleDispatch(*scope.moduleScope,
                retrieveType(scope, source), messageRef);
@@ -7625,7 +7626,7 @@ ObjectInfo Compiler :: compileAltOperation(BuildTreeWriter& writer, ExprScope& s
       writer.newNode(BuildKey::AltOp, ehLocal.argument);
 
       writer.newNode(BuildKey::Tape);
-      compileMessageOperationR(writer, scope, target, objNode.nextNode());
+      compileMessageOperationR(writer, scope, target, objNode.nextNode(), false);
       writer.closeNode();
    }
    else scope.raiseError(errInvalidOperation, node);
@@ -7633,7 +7634,7 @@ ObjectInfo Compiler :: compileAltOperation(BuildTreeWriter& writer, ExprScope& s
    writer.newNode(BuildKey::Tape);
    SyntaxNode altNode = current.nextNode().firstChild();
 
-   compileMessageOperationR(writer, scope, target, altNode.firstChild());
+   compileMessageOperationR(writer, scope, target, altNode.firstChild(), false);
    writer.closeNode();
 
    writer.closeNode();
@@ -7647,7 +7648,7 @@ ObjectInfo Compiler :: compileIsNilOperation(BuildTreeWriter& writer, ExprScope&
 
    ObjectInfo loperand = {};
    SyntaxNode current = node.firstChild();
-   if (current == SyntaxKey::MessageOperation) {
+   if (current == SyntaxKey::MessageOperation || current == SyntaxKey::PropertyOperation) {
       SyntaxNode objNode = current.firstChild();
 
       loperand = compileObject(writer, scope, objNode, EAttr::Parameter, nullptr);
@@ -7655,7 +7656,8 @@ ObjectInfo Compiler :: compileIsNilOperation(BuildTreeWriter& writer, ExprScope&
       writer.newNode(BuildKey::AltOp, ehLocal.argument);
 
       writer.newNode(BuildKey::Tape);
-      compileMessageOperationR(writer, scope, loperand, objNode.nextNode());
+      compileMessageOperationR(writer, scope, loperand, objNode.nextNode(),
+         current == SyntaxKey::PropertyOperation);
       writer.closeNode();
 
       writer.newNode(BuildKey::Tape);
@@ -7666,6 +7668,7 @@ ObjectInfo Compiler :: compileIsNilOperation(BuildTreeWriter& writer, ExprScope&
 
       loperand = saveToTempLocal(writer, scope, { ObjectKind::Object });
    }
+   else scope.raiseError(errInvalidOperation, node);
 
    SyntaxNode altNode = current.nextNode();
    ObjectInfo roperand = compileExpression(writer, scope, altNode, 0, EAttr::Parameter, nullptr);
@@ -7726,7 +7729,8 @@ ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope&
    writer.closeNode();
 
    writer.newNode(BuildKey::Tape);
-   compileMessageOperationR(writer, scope, { ObjectKind::Object }, catchNode.firstChild().firstChild());
+   compileMessageOperationR(writer, scope, { ObjectKind::Object }, 
+      catchNode.firstChild().firstChild(), false);
    writer.closeNode();
 
    if (finallyNode != SyntaxKey::None) {

@@ -21,7 +21,7 @@ namespace elena_lang
          BaseParseMask  = 0x0F,
 
          VMBuild        = 0x01,
-         //ptTree = 0x02,
+         Tree           = 0x02,
          CF             = 0x10,
          //ptTransform = 0x20,
          Text           = 0x30,

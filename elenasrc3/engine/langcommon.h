@@ -95,6 +95,8 @@ namespace elena_lang
    constexpr auto errInvalidModule           = 203;
    constexpr auto errCannotCreate            = 204;
    constexpr auto errInvalidFile             = 205;
+   constexpr auto errInvalidParserTarget     = 206;
+   constexpr auto errInvalidParserTargetType = 207;
    constexpr auto errInvalidModuleVersion    = 210;
    constexpr auto errEmptyTarget             = 212;
 
@@ -363,6 +365,7 @@ namespace elena_lang
    constexpr auto REFERENCE_CATEGORY = "references/*";
    constexpr auto MODULE_CATEGORY = "files/*";
    constexpr auto FILE_CATEGORY = "include/*";
+   constexpr auto PARSER_TARGET_CATEGORY = "targets/*";
 
    constexpr auto LIB_PATH = "project/libpath";
    constexpr auto OUTPUT_PATH = "project/output";
@@ -399,6 +402,16 @@ namespace elena_lang
       }
    }
 
+   typedef Map<ustr_t, ref_t, allocUStr, freeUStr> AttributeMap;
+
+   class LangHelper
+   {
+   public:
+      static void loadAttributes(AttributeMap& map)
+      {
+         
+      }
+   };
 }
 
 #endif

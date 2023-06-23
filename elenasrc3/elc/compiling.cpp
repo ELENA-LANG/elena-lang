@@ -322,9 +322,30 @@ void CompilingProcess :: parseFileTemlate(ustr_t prolog, path_t name,
 
 }
 
+void CompilingProcess :: parseFileStandart(SyntaxWriterBase* syntaxWriter, path_t path)
+{
+   TextFileReader source(path, FileEncoding::UTF8, false);
+   if (source.isOpen()) {
+      try
+      {
+         _parser->parse(&source, syntaxWriter);
+      }
+      catch (ParserError& e)
+      {
+         e.path = path;
+
+         throw e;
+      }
+   }
+   else {
+      _errorProcessor->raisePathError(errInvalidFile, path);
+   }
+}
+
 void CompilingProcess :: parseFile(path_t projectPath,
    FileIteratorBase& file_it,
-   SyntaxWriterBase* syntaxWriter)
+   SyntaxWriterBase* syntaxWriter,
+   ProjectTarget* parserTarget)
 {
    // save the path to the current source
    path_t sourceRelativePath = (*file_it).str();
@@ -337,38 +358,45 @@ void CompilingProcess :: parseFile(path_t projectPath,
    syntaxWriter->newNode(SyntaxTree::toParseKey(SyntaxKey::SourcePath), *pathStr);
    syntaxWriter->closeNode();
 
-   TextFileReader source(*file_it, FileEncoding::UTF8, false);
-   if (source.isOpen()) {
-      try
-      {
-         _parser->parse(&source, syntaxWriter);
-      }
-      catch (ParserError& e)
-      {
-         e.path = *file_it;
+   int type = parserTarget ? parserTarget->type : 1;
 
-         throw e;
+   switch (type) {
+      case 1:
+         parseFileStandart(syntaxWriter, *file_it);
+         break;
+      default:
+      {
+         IdentifierString typeStr;
+         typeStr.appendInt(type);
+
+         _errorProcessor->raiseError(errInvalidParserTargetType, *typeStr);
+         break;
       }
-   }
-   else {
-      _errorProcessor->raisePathError(errInvalidFile, *file_it);
    }
 }
 
-void CompilingProcess :: parseModule(path_t projectPath,
-   ustr_t fileProlog, ustr_t fileEpilog,
+void CompilingProcess :: parseModule(ProjectEnvironment& env,
    ModuleIteratorBase& module_it,
    SyntaxTreeBuilder& builder,
    ModuleScopeBase& moduleScope)
 {
+   IdentifierString target;
+
    auto& file_it = module_it.files();
    while (!file_it.eof()) {
       builder.newNode(SyntaxTree::toParseKey(SyntaxKey::Namespace));
 
+      ProjectTarget* parserTarget = nullptr;
+      if (file_it.loadTarget(target)) {
+         parserTarget = env.targets.get(target.str());
+         if (!parserTarget)
+            _errorProcessor->raiseError(errInvalidParserTarget, target.str());
+      }
+
       // generating syntax tree
-      parseFileTemlate(fileProlog, _prologName, &builder); // !! temporal explicit prolog
-      parseFile(projectPath, file_it, &builder);
-      parseFileTemlate(fileEpilog, _epilogName, &builder);
+      parseFileTemlate(*env.fileProlog, _prologName, &builder); // !! temporal explicit prolog
+      parseFile(*env.projectPath, file_it, &builder, parserTarget);
+      parseFileTemlate(*env.fileEpilog, _epilogName, &builder);
 
       builder.closeNode();
 
@@ -408,8 +436,7 @@ void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTre
    generateModule(moduleScope, buildTree, !templateMode);
 }
 
-void CompilingProcess :: buildModule(path_t projectPath,
-   ustr_t fileProlog, ustr_t fileEpilog,
+void CompilingProcess :: buildModule(ProjectEnvironment& env,
    ModuleIteratorBase& module_it, SyntaxTree* syntaxTree,
    ForwardResolverBase* forwardResolver,
    pos_t stackAlingment,
@@ -430,7 +457,7 @@ void CompilingProcess :: buildModule(path_t projectPath,
 
    SyntaxTreeBuilder builder(syntaxTree, _errorProcessor,
       &moduleScope, &_templateGenerator);
-   parseModule(projectPath, fileProlog, fileEpilog, module_it, builder, moduleScope);
+   parseModule(env, module_it, builder, moduleScope);
 
    _presenter->printLine(ELC_COMPILING_MODULE, moduleScope.module->name());
 
@@ -464,15 +491,17 @@ void CompilingProcess :: compile(ProjectBase& project,
       _errorProcessor->raiseInternalError(errParserNotInitialized);
    }
 
+   // load the environment
+   ProjectEnvironment env;
+   project.initEnvironment(env);
+
+   // compile the project
    SyntaxTree syntaxTree;
 
    auto module_it = project.allocModuleIterator();
    while (!module_it->eof()) {
       buildModule(
-         project.PathSetting(ProjectOption::ProjectPath),
-         project.StringSetting(ProjectOption::Prolog),
-         project.StringSetting(ProjectOption::Epilog),
-         *module_it, &syntaxTree, &project,
+         env, *module_it, &syntaxTree, &project,
          project.IntSetting(ProjectOption::StackAlignment, defaultStackAlignment),
          project.IntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
          project.IntSetting(ProjectOption::EHTableEntrySize, defaultEHTableEntrySize),
@@ -582,11 +611,11 @@ int CompilingProcess :: build(Project& project,
       PlatformType targetType = project.TargetType();
 
       // Project Greetings
-      _presenter->print(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()),
+      _presenter->printLine(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()),
          getTargetTypeName(targetType, project.SystemTarget()));
 
       // Cleaning up
-      _presenter->print(ELC_CLEANING);
+      _presenter->printLine(ELC_CLEANING);
       cleanUp(project);
 
       compile(project, defaultStackAlignment, defaultRawStackAlignment, defaultEHTableEntrySize, minimalArgList);
