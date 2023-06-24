@@ -187,6 +187,8 @@ namespace elena_lang
 
       void closeNode() override;
 
+      void saveTree(SyntaxTree& tree) override;
+
       void clear()
       {
          _level = 0;

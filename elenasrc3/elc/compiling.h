@@ -73,6 +73,8 @@ namespace elena_lang
          ExtensionMap* outerExtensionList);
 
       void parseFileStandart(SyntaxWriterBase* syntaxWriter, path_t path);
+      void parseFileUserDefinedGrammar(SyntaxWriterBase* syntaxWriter, path_t path,
+         ProjectTarget* parserTarget, path_t projectPath);
 
       void compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target, 
          ExtensionMap* outerExtensionList);

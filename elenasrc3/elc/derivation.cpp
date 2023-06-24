@@ -1296,6 +1296,11 @@ void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, 
    }
 }
 
+void SyntaxTreeBuilder::saveTree(SyntaxTree& tree)
+{
+   SyntaxTree::copyNode(_writer, tree.readRoot(), true);
+}
+
 enum DeclarationType
 {
    Class,

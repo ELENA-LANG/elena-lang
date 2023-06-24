@@ -9,15 +9,14 @@ In development:
 
     * script : declare and return a singleton
     * 5 rosetta code sample
-    * test all samples for win x86
 
      === Iteration 17 ===
     [!] x86 mta support
     [!] elt tutorial (stand-alone / in IDE)
-    * test all samples for win x86-64
 
     === Iteration 18 ===
     [!] x86 GUI support
+    * test all samples for win x86
 
     === Iteration 19 ===
     [!] elenavm x64 dll
@@ -25,6 +24,7 @@ In development:
     [!] vm terminal x64
     [!] ide vm console x64
     * amd64 : implement system 5
+    * test all samples for win x86-64
 
 ------                                                           
 Backlog:

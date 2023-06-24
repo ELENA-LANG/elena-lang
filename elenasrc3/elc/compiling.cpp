@@ -14,6 +14,7 @@
 #include "codeimage.h"
 #include "modulescope.h"
 #include "bcwriter.h"
+#include "separser.h"
 
 using namespace elena_lang;
 
@@ -342,6 +343,43 @@ void CompilingProcess :: parseFileStandart(SyntaxWriterBase* syntaxWriter, path_
    }
 }
 
+void CompilingProcess :: parseFileUserDefinedGrammar(SyntaxWriterBase* syntaxWriter, path_t path,
+   ProjectTarget* parserTarget, path_t projectPath)
+{
+   ScriptParser parser;
+
+   // loading target options
+   size_t i = 0;
+   IdentifierString option;
+   do {
+      size_t index = (*parserTarget->options).findSub(i, '\n', parserTarget->options.length());
+      option.copy(*parserTarget->options + i, index - i);
+
+      parser.setOption(*option, projectPath);
+
+      i = index + 1;
+   } while (i < parserTarget->options.length());
+
+   try {
+      // based on the target type generate the syntax tree for the file
+      PathString fullPath(projectPath);
+      fullPath.combine(path);
+
+      SyntaxTree derivationTree;
+      parser.parse(*fullPath, derivationTree);
+
+      syntaxWriter->saveTree(derivationTree);
+   }
+   catch (ParserError& e)
+   {
+      e.path = path;
+
+      throw e;
+   }
+
+   assert(false);
+}
+
 void CompilingProcess :: parseFile(path_t projectPath,
    FileIteratorBase& file_it,
    SyntaxWriterBase* syntaxWriter,
@@ -352,7 +390,7 @@ void CompilingProcess :: parseFile(path_t projectPath,
    if (!projectPath.empty())
       sourceRelativePath += projectPath.length() + 1;
 
-   _presenter->printPath(ELC_PARSING_FILE, sourceRelativePath);
+   _presenter->printPathLine(ELC_PARSING_FILE, sourceRelativePath);
 
    IdentifierString pathStr(sourceRelativePath);
    syntaxWriter->newNode(SyntaxTree::toParseKey(SyntaxKey::SourcePath), *pathStr);
@@ -363,6 +401,9 @@ void CompilingProcess :: parseFile(path_t projectPath,
    switch (type) {
       case 1:
          parseFileStandart(syntaxWriter, *file_it);
+         break;
+      case 2:
+         parseFileUserDefinedGrammar(syntaxWriter, *file_it, parserTarget, projectPath);
          break;
       default:
       {

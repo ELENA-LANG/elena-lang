@@ -505,6 +505,8 @@ public:
    virtual void appendTerminal(parse_key_t key, ustr_t value, LineInfo lineInfo) = 0;
 
    virtual void closeNode() = 0;
+
+   virtual void saveTree(SyntaxTree& tree) = 0;
 };
 
 // --- ErrorProcessor ---
@@ -678,6 +680,15 @@ struct ConversionRoutine
    };
    
    int              stackSafeAttrs;
+};
+
+// --- SysLibraryLoaderBase ---
+class SysLibraryLoaderBase
+{
+public:
+   virtual void* loadFunction(const char* name) = 0;
+
+   virtual ~SysLibraryLoaderBase() = default;
 };
 
 }
