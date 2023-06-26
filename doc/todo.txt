@@ -5,15 +5,13 @@ In development:
   [development]
     ### EPIC: elena 6.0 - redux ###
     === Iteration 16 ===
-    * missing source path
-    * calc sample
-
     * script : declare and return a singleton
-    * 5 rosetta code sample
 
      === Iteration 17 ===
     [!] x86 mta support
     [!] elt tutorial (stand-alone / in IDE)
+    * calc sample (uncomment install script)
+    * 5 rosetta code sample
 
     === Iteration 18 ===
     [!] x86 GUI support

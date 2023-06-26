@@ -17,6 +17,7 @@
         </module>
         <module>
             <file>control.l</file>
+            <file>parser.l</file>
         </module>
     </files>
     <forwards>
