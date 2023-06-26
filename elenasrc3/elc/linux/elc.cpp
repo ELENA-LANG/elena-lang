@@ -115,6 +115,17 @@ void print(const char* msg, ...)
    fflush(stdout);
 }
 
+void printLine(const char* msg, ...)
+{
+   va_list argptr;
+   va_start(argptr, msg);
+
+   vprintf(msg, argptr);
+   va_end(argptr);
+
+   fflush(stdout);
+}
+
 class Presenter : public PresenterBase
 {
 public:
@@ -174,6 +185,47 @@ public:
    void print(ustr_t msg, ustr_t path, int col, int row, ustr_t s) override
    {
       ::print(msg.str(), path.str(), row, col, s.str());
+   }
+
+   void printLine(ustr_t msg, ustr_t arg) override
+   {
+      ::printLine(msg.str(), arg.str());
+   }
+   void printLine(ustr_t msg, ustr_t arg1, ustr_t arg2) override
+   {
+      ::printLine(msg.str(), arg1.str(), arg2.str());
+   }
+   void printLine(ustr_t msg, ustr_t arg1, ustr_t arg2, ustr_t arg3) override
+   {
+      ::printLine(msg.str(), arg1.str(), arg2.str(), arg3.str());
+   }
+   void printLine(ustr_t msg, int arg1, int arg2, int arg3) override
+   {
+      ::printLine(msg.str(), arg1, arg2, arg3);
+   }
+   void printPathLine(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4) override
+   {
+      ::printLine(msg.str(), arg1.str(), arg2, arg3, arg4.str());
+   }
+   void printLine(ustr_t msg, int arg1, int arg2) override
+   {
+      ::printLine(msg.str(), arg1, arg2);
+   }
+   void printLine(ustr_t msg, int arg1) override
+   {
+      ::printLine(msg.str(), arg1);
+   }
+   void printPathLine(ustr_t msg, path_t arg)
+   {
+      ::printLine(msg.str(), arg.str());
+   }
+   void printLine(ustr_t msg)
+   {
+      ::printLine(msg.str());
+   }
+   void printLine(ustr_t msg, ustr_t path, int col, int row, ustr_t s) override
+   {
+      ::printLine(msg.str(), path.str(), row, col, s.str());
    }
 
 private:
