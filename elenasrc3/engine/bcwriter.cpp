@@ -102,8 +102,10 @@ void sendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    int vmtIndex = node.findChild(BuildKey::Index).arg.value;
 
+   bool variadicOp = (node.arg.reference & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
+
    pos_t argCount = getArgCount(node.arg.reference);
-   if ((int)argCount < tapeScope.scope->minimalArgList) {
+   if (!variadicOp && (int)argCount < tapeScope.scope->minimalArgList) {
       for (int i = argCount; i < tapeScope.scope->minimalArgList; i++) {
          tape.write(ByteCode::XStoreSIR, i, 0);
       }
@@ -122,6 +124,13 @@ void resendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::CallVI, vmtIndex);
 }
 
+void strongResendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
+
+   tape.write(ByteCode::CallMR, node.arg.reference, targetRef | mskVMTRef);
+}
+
 void redirectOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    if (node.arg.reference)
@@ -135,8 +144,10 @@ void directCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
 
+   bool variadicOp = (node.arg.reference & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
+
    pos_t argCount = getArgCount(node.arg.reference);
-   if ((int)argCount < tapeScope.scope->minimalArgList) {
+   if (!variadicOp && (int)argCount < tapeScope.scope->minimalArgList) {
       for (int i = argCount; i < tapeScope.scope->minimalArgList; i++) {
          tape.write(ByteCode::XStoreSIR, i, 0);
       }
@@ -1459,7 +1470,7 @@ void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
    // swap   sp:0
    // set    r:-1
    // swap   sp:0
-   // assign
+   // xassign
    // free   i:1
 
    tape.write(ByteCode::DAlloc);
@@ -1482,11 +1493,36 @@ void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
 void loadingSubject(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int index = node.findChild(BuildKey::Index).arg.value;
+   bool mixedMode = node.findChild(BuildKey::Special).arg.value != 0;
 
-   // mov mmsg:arg
+   if (mixedMode) {
+      tape.newLabel();     // lab2
+      tape.newLabel();     // lab1
+
+      // load dp:index
+      // tst  FUNCTION_MESSAGE
+      // jne  lab1
+      // mov mmsg:arg + 1
+      // jmp  lab2
+      // lab1:
+      // mov mmsg:arg
+      // lab2:
+      tape.write(ByteCode::LoadDP, index);
+      tape.write(ByteCode::TstN, FUNCTION_MESSAGE);
+      tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
+      tape.write(ByteCode::MovM, node.arg.value + 1);
+      tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
+      tape.setLabel();
+      tape.write(ByteCode::MovM, node.arg.value);
+      tape.setLabel();
+   }
+   else {
+      // mov mmsg:arg
+      tape.write(ByteCode::MovM, node.arg.value);
+   }
+
    // set dp:index
    // loadv
-   tape.write(ByteCode::MovM, node.arg.value);
    tape.write(ByteCode::SetDP, index);
    tape.write(ByteCode::LoadV);
 
@@ -1543,7 +1579,7 @@ ByteCodeWriter::Saver commands[] =
    intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject, peekArgument,
 
    terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning, savingLInStack, uintCondOp,
-   uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp
+   uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -2468,21 +2504,29 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
 
    ClassInfo::saveStaticFields(&vmtWriter, info.statics);
 
-   CachedList<ref_t, 3> globalAttributes;
-   if (!testany(info.header.flags, elClassClass | elAbstract)
-      && info.attributes.exist({ 0, ClassAttribute::RuntimeLoadable }))
-   {
-      globalAttributes.add((unsigned int)ClassAttribute::RuntimeLoadable);
-   }
-   if (info.attributes.exist({ 0, ClassAttribute::Initializer })) {
-      ref_t symbolRef = info.attributes.get({ 0, ClassAttribute::Initializer });
+   CachedList<ref_t, 4> globalAttributes;
+   for (auto it = info.attributes.start(); !it.eof(); ++it) {
+      auto key = it.key();
+      if (!testany(info.header.flags, elClassClass | elAbstract)
+         && (key.value2 == ClassAttribute::RuntimeLoadable))
+      {
+         globalAttributes.add((unsigned int)ClassAttribute::RuntimeLoadable);
+      }
+      else if (key.value2 == ClassAttribute::Initializer) {
+         ref_t symbolRef = *it;
 
-      globalAttributes.add((unsigned int)ClassAttribute::Initializer);
-      globalAttributes.add(symbolRef);
+         globalAttributes.add((unsigned int)ClassAttribute::Initializer);
+         globalAttributes.add(symbolRef);
+      }
+      else if (key.value2 == ClassAttribute::ExtOverloadList) {
+         globalAttributes.add((unsigned int)ClassAttribute::ExtOverloadList);
+         globalAttributes.add(key.value1);
+         globalAttributes.add(*it);
+      }
    }
 
    vmtWriter.writePos(globalAttributes.count_pos() * sizeof(unsigned int));
-   for (int i = 0; i < globalAttributes.count_pos(); i++) {
+   for (pos_t i = 0; i < globalAttributes.count_pos(); i++) {
       vmtWriter.writeDWord(globalAttributes.get(i));
    }
 }

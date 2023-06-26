@@ -10,11 +10,14 @@
 #define IDM_FILE_OPEN               402
 #define IDM_FILE_EXIT               403
 #define IDM_FILE_SAVE               404
-#define IDM_FILE_CLOSE              405
-#define IDM_FILE_CLOSEALL           406
-#define IDM_PROJECT_OPEN            407
-#define IDM_PROJECT_CLOSE           408
-#define IDM_PROJECT_NEW             409
+#define IDM_FILE_SAVEAS             405
+#define IDM_FILE_SAVEPROJECT        406
+#define IDM_FILE_SAVEALL            407
+#define IDM_FILE_CLOSE              408
+#define IDM_FILE_CLOSEALL           409
+#define IDM_PROJECT_OPEN            410
+#define IDM_PROJECT_CLOSE           411
+#define IDM_PROJECT_NEW             412
 
 #define IDM_EDIT_UNDO               501
 #define IDM_EDIT_REDO               502
@@ -30,9 +33,11 @@
 #define IDM_VIEW_OUTPUT             602
 #define IDM_VIEW_WATCH              603
 #define IDM_VIEW_MESSAGES           604
+#define IDM_VIEW_VMCONSOLE          605
 
-#define IDM_PROJECT_COMPILE         701
-#define IDM_PROJECT_OPTION          702
+#define IDM_PROJECT_INCLUDE         701
+#define IDM_PROJECT_COMPILE         702
+#define IDM_PROJECT_OPTION          703
 
 #define IDM_DEBUG_RUN               801
 #define IDM_DEBUG_STEPOVER          802
@@ -59,6 +64,7 @@
 #define IDC_COMPILER_OUTPUT         113
 #define IDC_COMPILER_MESSAGES       114
 #define IDC_COMPILER_WATCH          115
+#define IDC_COMPILER_VMOUTPUT       116
 
 #define IDD_SETTINGS                800
 #define IDC_SETTINGS_TEPMPLATE      801

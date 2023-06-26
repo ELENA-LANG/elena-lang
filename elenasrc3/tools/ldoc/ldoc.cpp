@@ -3,7 +3,7 @@
 //
 //		This is a main file containing doc generator code
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "ldoc.h"
@@ -32,7 +32,7 @@ inline bool isTemplateBased(ustr_t reference)
 
 void writeNs(TextFileWriter& writer, ustr_t ns)
 {
-   for (int i = 0; i < getlength(ns); i++)
+   for (size_t i = 0; i < getlength(ns); i++)
    {
       if (ns[i] == '\'') {
          writer.writeChar('-');
@@ -172,13 +172,13 @@ void parseNs(IdentifierString& ns, ustr_t root, ustr_t fullName)
    ns.append(fullName, last);
 }
 
-void parseTemplateType(IdentifierString& line, int index, bool argMode)
+void parseTemplateType(IdentifierString& line, size_t index, bool argMode)
 {
    IdentifierString temp(line);
 
    line.truncate(0);
 
-   int last = index;
+   size_t last = index;
    bool first = true;
    bool noCurlybrackets = false;
    if (argMode && (*temp).startsWith(ByRefPrefix)) {
@@ -198,7 +198,7 @@ void parseTemplateType(IdentifierString& line, int index, bool argMode)
       noCurlybrackets = true;
    }
 
-   for (int i = index; i < temp.length(); i++) {
+   for (size_t i = index; i < temp.length(); i++) {
       if (temp[i] == '@') {
          temp[i] = '\'';
       }
@@ -272,7 +272,7 @@ void writeRefName(TextFileWriter& writer, ustr_t name, bool allowResolvedTemplat
 {
    int paramIndex = 1;
    bool paramMode = false;
-   for (int i = 0; i < getlength(name); i++)
+   for (size_t i = 0; i < getlength(name); i++)
    {
       if (!paramMode && name[i] == '\'') {
          writer.writeChar('-');
@@ -1536,7 +1536,7 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
 
 void DocGenerator :: loadNestedModules(ApiModuleInfoList& modules)
 {
-   _presenter->print(LDOC_READING);
+   _presenter->printLine(LDOC_READING);
 
    HelpStruct arg = { this, &modules };
 
@@ -1677,9 +1677,9 @@ void DocGenerator :: generateExtendedDoc(TextFileWriter& summaryWriter, TextFile
    writeClassBodyFooter(bodyWriter, classInfo, *moduleName);
 }
 
-void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo)
+void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo, path_t output)
 {
-   _presenter->print(LDOC_GENERATING, *moduleInfo->name);
+   _presenter->printLine(LDOC_GENERATING, *moduleInfo->name);
 
    IdentifierString name;
    writeNs(name, moduleInfo);
@@ -1693,8 +1693,11 @@ void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo)
    PathString outPath;
    outPath.copy(*name);
 
-   PathString outSumPath;
-   outSumPath.copy(*summaryname);
+   PathString outSumPath(output);
+   if (!output.empty()) {
+      outSumPath.combine(*summaryname);
+   }
+   else outSumPath.copy(*summaryname);
 
    TextFileWriter bodyWriter(outPath.str(), FileEncoding::UTF8, false);
    TextFileWriter summaryWriter(outSumPath.str(), FileEncoding::UTF8, false);
@@ -1861,7 +1864,7 @@ bool DocGenerator :: loadByName(ustr_t name)
    else return false;
 }
 
-void DocGenerator :: generate()
+void DocGenerator :: generate(path_t output)
 {
    loadDescriptions();
 
@@ -1869,6 +1872,6 @@ void DocGenerator :: generate()
    loadNestedModules(modules);
 
    for (auto it = modules.start(); !it.eof(); ++it) {
-      generateModuleDoc(*it);
+      generateModuleDoc(*it, output);
    }
 }

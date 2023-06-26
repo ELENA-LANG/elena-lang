@@ -14,6 +14,7 @@
 #include "codeimage.h"
 #include "modulescope.h"
 #include "bcwriter.h"
+#include "separser.h"
 
 using namespace elena_lang;
 
@@ -59,7 +60,7 @@ public:
             fullName.append("=");
             fullName.appendUInt((unsigned int)address, 16);
 
-            presenter->print(*fullName);
+            presenter->printLine(*fullName);
          }
          else {
             addr_t address = result.code + *it;
@@ -68,7 +69,7 @@ public:
             fullName.append("=");
             fullName.appendUInt((unsigned int)address, 16);
 
-            presenter->print(*fullName);
+            presenter->printLine(*fullName);
          }
       }
    }
@@ -149,6 +150,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
    ModuleBase* module = moduleScope.module;
 
    ustr_t templateName = module->resolveReference(templateRef);
+
    IdentifierString name;
    if (isWeakReference(templateName)) {
       name.copy(module->name());
@@ -321,22 +323,9 @@ void CompilingProcess :: parseFileTemlate(ustr_t prolog, path_t name,
 
 }
 
-void CompilingProcess :: parseFile(path_t projectPath,
-   FileIteratorBase& file_it,
-   SyntaxWriterBase* syntaxWriter)
+void CompilingProcess :: parseFileStandart(SyntaxWriterBase* syntaxWriter, path_t path)
 {
-   // save the path to the current source
-   path_t sourceRelativePath = (*file_it).str();
-   if (!projectPath.empty())
-      sourceRelativePath += projectPath.length() + 1;
-
-   _presenter->printPath(ELC_PARSING_FILE, sourceRelativePath);
-
-   IdentifierString pathStr(sourceRelativePath);
-   syntaxWriter->newNode(SyntaxTree::toParseKey(SyntaxKey::SourcePath), *pathStr);
-   syntaxWriter->closeNode();
-
-   TextFileReader source(*file_it, FileEncoding::UTF8, false);
+   TextFileReader source(path, FileEncoding::UTF8, false);
    if (source.isOpen()) {
       try
       {
@@ -344,30 +333,109 @@ void CompilingProcess :: parseFile(path_t projectPath,
       }
       catch (ParserError& e)
       {
-         e.path = *file_it;
+         e.path = path;
 
          throw e;
       }
    }
    else {
-      _errorProcessor->raisePathError(errInvalidFile, *file_it);
+      _errorProcessor->raisePathError(errInvalidFile, path);
    }
 }
 
-void CompilingProcess :: parseModule(path_t projectPath,
-   ustr_t fileProlog, ustr_t fileEpilog,
+void CompilingProcess :: parseFileUserDefinedGrammar(SyntaxWriterBase* syntaxWriter, path_t path,
+   ProjectTarget* parserTarget, path_t projectPath)
+{
+   ScriptParser parser;
+
+   // loading target options
+   size_t i = 0;
+   IdentifierString option;
+   do {
+      size_t index = (*parserTarget->options).findSub(i, '\n', parserTarget->options.length());
+      option.copy(*parserTarget->options + i, index - i);
+
+      parser.setOption(*option, projectPath);
+
+      i = index + 1;
+   } while (i < parserTarget->options.length());
+
+   try {
+      // based on the target type generate the syntax tree for the file
+      PathString fullPath(projectPath);
+      fullPath.combine(path);
+
+      SyntaxTree derivationTree;
+      parser.parse(*fullPath, derivationTree);
+
+      syntaxWriter->saveTree(derivationTree);
+   }
+   catch (ParserError& e)
+   {
+      e.path = path;
+
+      throw e;
+   }
+}
+
+void CompilingProcess :: parseFile(path_t projectPath,
+   FileIteratorBase& file_it,
+   SyntaxWriterBase* syntaxWriter,
+   ProjectTarget* parserTarget)
+{
+   // save the path to the current source
+   path_t sourceRelativePath = (*file_it).str();
+   if (!projectPath.empty())
+      sourceRelativePath += projectPath.length() + 1;
+
+   _presenter->printPathLine(ELC_PARSING_FILE, sourceRelativePath);
+
+   IdentifierString pathStr(sourceRelativePath);
+   syntaxWriter->newNode(SyntaxTree::toParseKey(SyntaxKey::SourcePath), *pathStr);
+   syntaxWriter->closeNode();
+
+   int type = parserTarget ? parserTarget->type : 1;
+
+   switch (type) {
+      case 1:
+         parseFileStandart(syntaxWriter, *file_it);
+         break;
+      case 2:
+         parseFileUserDefinedGrammar(syntaxWriter, *file_it, parserTarget, projectPath);
+         break;
+      default:
+      {
+         IdentifierString typeStr;
+         typeStr.appendInt(type);
+
+         _errorProcessor->raiseError(errInvalidParserTargetType, *typeStr);
+         break;
+      }
+   }
+}
+
+void CompilingProcess :: parseModule(ProjectEnvironment& env,
    ModuleIteratorBase& module_it,
    SyntaxTreeBuilder& builder,
    ModuleScopeBase& moduleScope)
 {
+   IdentifierString target;
+
    auto& file_it = module_it.files();
    while (!file_it.eof()) {
       builder.newNode(SyntaxTree::toParseKey(SyntaxKey::Namespace));
 
+      ProjectTarget* parserTarget = nullptr;
+      if (file_it.loadTarget(target)) {
+         parserTarget = env.targets.get(target.str());
+         if (!parserTarget)
+            _errorProcessor->raiseError(errInvalidParserTarget, target.str());
+      }
+
       // generating syntax tree
-      parseFileTemlate(fileProlog, _prologName, &builder); // !! temporal explicit prolog
-      parseFile(projectPath, file_it, &builder);
-      parseFileTemlate(fileEpilog, _epilogName, &builder);
+      parseFileTemlate(*env.fileProlog, _prologName, &builder); // !! temporal explicit prolog
+      parseFile(*env.projectPath, file_it, &builder, parserTarget);
+      parseFileTemlate(*env.fileEpilog, _epilogName, &builder);
 
       builder.closeNode();
 
@@ -407,8 +475,7 @@ void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTre
    generateModule(moduleScope, buildTree, !templateMode);
 }
 
-void CompilingProcess :: buildModule(path_t projectPath,
-   ustr_t fileProlog, ustr_t fileEpilog,
+void CompilingProcess :: buildModule(ProjectEnvironment& env,
    ModuleIteratorBase& module_it, SyntaxTree* syntaxTree,
    ForwardResolverBase* forwardResolver,
    pos_t stackAlingment,
@@ -429,9 +496,9 @@ void CompilingProcess :: buildModule(path_t projectPath,
 
    SyntaxTreeBuilder builder(syntaxTree, _errorProcessor,
       &moduleScope, &_templateGenerator);
-   parseModule(projectPath, fileProlog, fileEpilog, module_it, builder, moduleScope);
+   parseModule(env, module_it, builder, moduleScope);
 
-   _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
+   _presenter->printLine(ELC_COMPILING_MODULE, moduleScope.module->name());
 
    buildSyntaxTree(moduleScope, syntaxTree, false, nullptr);
 }
@@ -463,15 +530,17 @@ void CompilingProcess :: compile(ProjectBase& project,
       _errorProcessor->raiseInternalError(errParserNotInitialized);
    }
 
+   // load the environment
+   ProjectEnvironment env;
+   project.initEnvironment(env);
+
+   // compile the project
    SyntaxTree syntaxTree;
 
    auto module_it = project.allocModuleIterator();
    while (!module_it->eof()) {
       buildModule(
-         project.PathSetting(ProjectOption::ProjectPath),
-         project.StringSetting(ProjectOption::Prolog),
-         project.StringSetting(ProjectOption::Epilog),
-         *module_it, &syntaxTree, &project,
+         env, *module_it, &syntaxTree, &project,
          project.IntSetting(ProjectOption::StackAlignment, defaultStackAlignment),
          project.IntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
          project.IntSetting(ProjectOption::EHTableEntrySize, defaultEHTableEntrySize),
@@ -494,10 +563,10 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS
    TargetImageInfo imageInfo;
    imageInfo.type = project.Platform();
    imageInfo.codeAlignment = _codeAlignment;
-   imageInfo.autoClassSymbol = project.BoolSetting(ProjectOption::ClassSymbolAutoLoad);
+   imageInfo.autoClassSymbol = project.BoolSetting(ProjectOption::ClassSymbolAutoLoad, _defaultCoreSettings.classSymbolAutoLoad);
    imageInfo.coreSettings.mgSize = project.IntSetting(ProjectOption::GCMGSize, _defaultCoreSettings.mgSize);
    imageInfo.coreSettings.ygSize = project.IntSetting(ProjectOption::GCYGSize, _defaultCoreSettings.ygSize);
-   imageInfo.coreSettings.threadCounter = project.IntSetting(ProjectOption::ThreadCounter, 1);
+   imageInfo.coreSettings.threadCounter = project.IntSetting(ProjectOption::ThreadCounter, _defaultCoreSettings.threadCounter);
    imageInfo.ns = project.StringSetting(ProjectOption::Namespace);
    imageInfo.withTLS = withTLS;
 
@@ -581,11 +650,11 @@ int CompilingProcess :: build(Project& project,
       PlatformType targetType = project.TargetType();
 
       // Project Greetings
-      _presenter->print(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()),
+      _presenter->printLine(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()),
          getTargetTypeName(targetType, project.SystemTarget()));
 
       // Cleaning up
-      _presenter->print(ELC_CLEANING);
+      _presenter->printLine(ELC_CLEANING);
       cleanUp(project);
 
       compile(project, defaultStackAlignment, defaultRawStackAlignment, defaultEHTableEntrySize, minimalArgList);

@@ -6,6 +6,9 @@ define ELENA_ERR_DIVIDE_BY_ZERO    102h;
 define ELENA_ERR_OUT_OF_MEMORY     103h;
 
 define FUNCTION_MESSAGE       00000020h;
+define PROPERTY_MESSAGE       000000C0h;
+define PROP_ARG_MASK          000000DFh;
+define ARG_MASK               0000001Fh;
 
 define ex_struct_size32              16; 
 define ex_struct_size64              32; 
@@ -15,9 +18,14 @@ define page_size64                   32;
 
 define ptr_size32                     4;
 define ptr_size64                     8;
-
+                                      
+define get_prop_mssg                0C1h;
+define set_prop_mssg                0C2h;
 
 define __realSize                     8;
+
+define elMessage              00200000h;
+define elSubject              01000000h;
 
 define err_ret          -1;
 
@@ -106,7 +114,7 @@ procedure __lazy_dispatcher
   xflush     sp:0
   xflush     sp:1
 
-  open       (2)[],[tmp]
+  open       (2),[],[tmp]
   save       dp:tmp
   vcall      mssg:"function:#invoke[0]", class:"system'BaseLazyExpression"
   load       dp:tmp  
@@ -1300,9 +1308,54 @@ end
 
 procedure __mssgname_load(self, m)
 
-  peek      fp:m
+  peek      sp:1
   loads
-  peek      fp:self
+  peek      sp:0
+  save
+
+end
+
+procedure __messagename_loadbystr (self, s)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  call extern:LoadActionLA(s)
+  cmp  n:0
+  jne  labExit
+
+  set        class : "system'InvalidArgumentException"
+  store      sp:0
+
+  set        mssgconst : "new[1]"
+  throw
+
+labExit:
+  peek       fp:self
+  save
+
+  close      []
+
+end
+
+procedure __mssgname_getprop (self, mssg)
+
+  mov        n:1
+  loadv
+  or         n:get_prop_mssg
+  peek       sp:1
+  save
+
+end
+
+procedure __mssgname_setprop (self, mssg)
+
+  mov        n:2
+  loadv
+  or         n:set_prop_mssg
+  peek       sp:1
   save
 
 end
@@ -1460,6 +1513,121 @@ procedure __perm_array_refer (self,index,retVal)
 
 end
 
+procedure __mssg_closure
+
+  load
+  peek       sp:0
+  jump       vt:0
+
+end
+
+procedure __ext_closure
+
+  xflush     sp:0
+  xflush     sp:1
+
+  alloc     i:1
+  xstore    i:1
+  get       i:0
+  load
+  or        n:FUNCTION_MESSAGE
+  peek      sp:0
+  free      i:1
+
+  xrefresh  sp:0
+
+  jump      vt:0
+
+end
+
+procedure __saving_closure(obj, args)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  load
+  xassignsp
+
+  alloc      i:1
+  xstore     i:0
+  xassign
+  free       i:1
+
+end
+
+procedure __local_closure(obj, args)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  load
+  set        fp:0
+  neg
+  xget
+
+end
+
+procedure __alloc_closure
+
+  xflush     sp:0
+  xflush     sp:1
+
+  load
+  system     5
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+  peek       sp:0
+
+end
+
+procedure __assign_closure
+
+  load
+  peek       sp:0
+
+  alloc      i:1
+  store      sp:0
+
+  set        fp:0
+  neg
+  xassign
+
+  free       i:1
+  peek       sp:0
+
+end
+
+procedure __dynamicmssg_closure
+
+  xflush     sp:0
+  xflush     sp:1
+
+  load
+  set        fp:0
+  neg
+  xget
+  load
+  peek       sp:0
+  jump       vt:0
+
+end
+
+procedure __exit_closure
+
+  xflush     sp:0
+  xflush     sp:1
+
+  peek       sp:0
+
+  xopen      (32),[target],[index,len,mssg]
+
+  load       dp:len
+  save       dp:index 
+
+end
+
 procedure __thread_create(self,arg,flags,ptr)
 
   xflush     sp:0
@@ -1476,6 +1644,251 @@ procedure __thread_create(self,arg,flags,ptr)
   $save
 
   close      []
+
+end
+
+procedure __closuretape
+
+  tstn       FUNCTION_MESSAGE
+  jeq        labDefault
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (32),[target],[index,len,mssg]
+      
+  save       dp:mssg
+    
+  len
+  save       dp:len
+  nsave      dp:index, 0
+
+  store      fp:target
+
+  // ; copy the call stack
+  load       dp:mssg
+  mlen
+
+  set        fp:2
+  store      sp:2
+
+  set        fp:-1
+  store      sp:1
+
+  cmp        n:0
+  jeq        labCopyEnd
+
+labCopy:
+  add        n:-1
+
+  peek       sp:1
+  xget
+  store      sp:0
+
+  neg
+  peek       sp:2
+  xassign
+  neg
+
+  cmp        n:0
+  jne        labCopy
+
+labCopyEnd:
+  xassignsp
+  alloc      i:1
+  store      sp:0
+  set        terminator
+  swap       sp:0
+  xassign    i:0
+  free       i:1
+
+labNext:
+  peek       fp:target
+
+  load       dp:len
+  xcmp       dp:index
+  jle        labEnd
+
+  load       dp:index
+  xget
+  nadd       dp:index, 1
+
+  vcall      mssg:"function:params:#invoke<system'Object>[0]", class:"system'dynamic'TapeFunction"
+  store      sp:0
+
+  jump       labNext
+
+labEnd:
+  peek       sp:0  
+
+  close      []
+  quit
+	
+labDefault:
+  redirect
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
+
+end
+
+procedure __closureclass
+
+  redirect
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[index,command,len]
+
+  save       dp:command
+  store      sp:1
+
+  len
+  save       dp:len
+  nsave      dp:index, 0
+
+labNext:
+  load       dp:index
+  xcmp       dp:len
+  jge        labEnd
+
+  peek       sp:1
+  xget
+  nadd       dp:index, 1
+  tst        flag:elMessage
+  jeq        labNext 
+
+  load       dp:command
+  xcmp
+  jne        labNext
+
+  load       dp:index
+  xget
+
+  peek       sp:1
+  xget
+  load       dp:command
+  or         n:FUNCTION_MESSAGE
+
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+  jump       vt:0
+
+labEnd:
+  load       dp:command
+
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
+
+end
+
+
+procedure __struct
+
+  redirect
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[index,command,len]
+
+  save       dp:command
+  store      sp:1
+
+  mlen
+  cmp        n:1
+  jne        labEnd
+
+  peek       sp:1 
+  len
+  save       dp:len
+  nsave      dp:index, 0
+
+labNext:
+  load       dp:index
+  xcmp       dp:len
+  jge        labEnd
+
+  peek       sp:1
+  xget
+  nadd       dp:index, 1
+  tst        flag:elSubject
+  jeq        labNext 
+
+  load       dp:command
+  and        n: ~PROP_ARG_MASK
+  xcmp
+  jne        labNext
+
+  load       dp:index
+  xget
+
+  peek       sp:1
+  xget
+
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+  quit
+
+labEnd:
+  load       dp:command
+
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
 
 end
 

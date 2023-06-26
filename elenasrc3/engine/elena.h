@@ -456,6 +456,9 @@ namespace elena_lang
       virtual void writeDisp32Lo(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
          ref_t addressMask) = 0;
 
+      virtual void writeMDataRef32(MemoryBase& target, pos_t position,
+         pos_t disp, ref_t addressMask) = 0;
+
       virtual mssg_t importMessage(mssg_t message, ModuleBase* module = nullptr) = 0;
 
       virtual addr_t resolveMDataVAddress() = 0;
@@ -469,6 +472,7 @@ namespace elena_lang
       pos_t    mgSize;
       pos_t    ygSize;
       pos_t    threadCounter;
+      bool     classSymbolAutoLoad;
    };
 
    // --- LabelHelperBase ---
@@ -562,6 +566,7 @@ namespace elena_lang
       virtual pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode) = 0;
       virtual pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, 
          ustr_t actionName, ref_t weakActionRef, ref_t signature, bool virtualMode) = 0;
+      virtual void addSignatureStopper(MemoryWriter& messageWriter) = 0;
 
       virtual void writeImm9(MemoryWriter* writer, int value, int type) = 0;
       virtual void writeImm12(MemoryWriter* writer, int value, int type) = 0;
@@ -603,6 +608,8 @@ namespace elena_lang
    class PresenterBase
    {
    public:
+      virtual void readLine(char* buffer, size_t length) = 0;
+
       virtual ustr_t getMessage(int code) = 0;
 
       virtual void print(ustr_t msg) = 0;
@@ -615,6 +622,17 @@ namespace elena_lang
       virtual void print(ustr_t msg, ustr_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
       virtual void printPath(ustr_t msg, path_t arg) = 0;
       virtual void printPath(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
+
+      virtual void printLine(ustr_t msg) = 0;
+      virtual void printLine(ustr_t msg, ustr_t arg) = 0;
+      virtual void printLine(ustr_t msg, ustr_t arg1, ustr_t arg2) = 0;
+      virtual void printLine(ustr_t msg, ustr_t arg1, ustr_t arg2, ustr_t arg3) = 0;
+      virtual void printLine(ustr_t msg, int arg1) = 0;
+      virtual void printLine(ustr_t msg, int arg1, int arg2) = 0;
+      virtual void printLine(ustr_t msg, int arg1, int arg2, int arg3) = 0;
+      virtual void printLine(ustr_t msg, ustr_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
+      virtual void printPathLine(ustr_t msg, path_t arg) = 0;
+      virtual void printPathLine(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
 
       virtual ~PresenterBase() = default;
    };
@@ -827,6 +845,19 @@ namespace elena_lang
             return true;
          else if (ns.length() == pos) {
             return referenceName.compare(ns, pos);
+         }
+         else return false;
+      }
+
+      static bool compareNs(ustr_t referenceName, ustr_t ns, size_t length)
+      {
+         size_t len = referenceName.length();
+         if (len <= length)
+            return false;
+
+         if (referenceName.compareSub(ns, 0, length) && referenceName[length] == '\'')
+         {
+            return true;
          }
          else return false;
       }

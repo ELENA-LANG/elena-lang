@@ -120,6 +120,7 @@ namespace elena_lang
       LSaveSI        = 0xAB,
       LLoadDP        = 0xAC,
       XFillR         = 0xAD,
+      XStoreI        = 0xAE,
 
       CallR          = 0xB0,
       CallVI         = 0xB1,
@@ -160,6 +161,7 @@ namespace elena_lang
       INotDPN        = 0xDB,
       IShlDPN        = 0xDC,
       IShrDPN        = 0xDD,
+      XOpenIN        = 0xDE,
       SelULtRR       = 0xDF,
 
       CopyDPN        = 0xE0,

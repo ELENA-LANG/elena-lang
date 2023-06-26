@@ -167,6 +167,11 @@ int ByteCodeAssembler :: readN(ScriptToken& tokenInfo, ReferenceMap& constants, 
 
       return -val;
    }
+   if (tokenInfo.compare("~")) {
+      int val = readN(tokenInfo, constants, false);
+
+      return ~val;
+   }
    else if (constants.exist(*tokenInfo.token)) {
       return constants.get(*tokenInfo.token);
    }
@@ -716,7 +721,8 @@ void ByteCodeAssembler :: readParameterList(ScriptToken& tokenInfo, ReferenceMap
 }
 
 bool ByteCodeAssembler :: compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& writer,
-   ByteCommand& command, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants, int& dataSize)
+   ByteCommand& command, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants, 
+   int& dataSize)
 {
    int argCount = 0;
    if (tokenInfo.compare("(")) {
@@ -940,6 +946,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
       switch (opCommand.code) {
          case ByteCode::CallExtR:
             return compileCallExt(tokenInfo, writer, opCommand, parameters, locals, dataLocals, constants);
+         case ByteCode::XOpenIN:
          case ByteCode::OpenIN:
          case ByteCode::OpenHeaderIN:
             return compileOpenOp(tokenInfo, writer, opCommand, locals, dataLocals, constants, dataSize);
@@ -988,6 +995,9 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::AssignI:
          case ByteCode::GetI:
          case ByteCode::AllocI:
+         case ByteCode::FreeI:
+         case ByteCode::XStoreI:
+         case ByteCode::XAssignI:
             return compileOpI(tokenInfo, writer, opCommand, false);
          case ByteCode::XHookDPR:
             return compileDDispR(tokenInfo, writer, opCommand, dataLocals, true);
@@ -1010,10 +1020,12 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
          case ByteCode::MovN:
          case ByteCode::AndN:
+         case ByteCode::OrN:
          case ByteCode::AddN:
          case ByteCode::SubN:
          case ByteCode::CmpN:
          case ByteCode::MulN:
+         case ByteCode::TstFlag:
             return compileOpN(tokenInfo, writer, opCommand, constants, false);
          case ByteCode::Copy:
             return compileOpN(tokenInfo, writer, opCommand, constants, true);

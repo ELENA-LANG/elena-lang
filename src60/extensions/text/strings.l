@@ -105,7 +105,7 @@ namespace text
          _index := _index + s.Length
       }
         
-      insert(wide s)
+      insert(wide s) 
       {
          _value := _value.insert(_index, s);
             

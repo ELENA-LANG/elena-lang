@@ -665,6 +665,8 @@ namespace elena_lang
 
       pos_t count() const { return _list.count(); }
 
+      int count_int() const { return (int)_list.count(); }
+
       Iterator start()
       {
          return _list.start();
@@ -915,6 +917,11 @@ namespace elena_lang
             return _list.cutTop();
          }
          else return _defaultItem;
+      }
+
+      void clear()
+      {
+         _list.clear();
       }
 
       pos_t count() const
@@ -1980,7 +1987,7 @@ namespace elena_lang
       void add(Key key, T item)
       {
          pos_t index = _scaleKey(key);
-         if (index > hashSize)
+         if (index >= hashSize)
             index = hashSize - 1;
 
          if (_table[index] && _table[index]->key <= key) {
@@ -2007,7 +2014,7 @@ namespace elena_lang
       Iterator getIt(Key key) const
       {
          pos_t index = _scaleKey(key);
-         if (index > hashSize)
+         if (index >= hashSize)
             index = hashSize - 1;
 
          Item* current = _table[index];
@@ -3037,6 +3044,11 @@ namespace elena_lang
          return (pos_t)_length;
       }
 
+      int count_int() const
+      {
+         return (int)_length;
+      }
+
       T& get(int index)
       {
          if (index < cacheSize) {
@@ -3209,7 +3221,7 @@ namespace elena_lang
 
       pos_t getNextLink(pos_t linkPosition)
       {
-         ChildLink link;
+         ChildLink link = {};
          _buffer.read(linkPosition, &link, sizeof(ChildLink));
 
          return link.nextChildLink;

@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 5.8: Module system'dynamic
+ELENA Standard Library 6.0: Module system'dynamic
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,40 +19,43 @@ ELENA Standard Library 5.8: Module system'dynamic
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>5.8
+ELENA&nbsp;Standard&nbsp;Library<br>6.0
 </STRONG>
 </DIV>
 </DIV>
-<A NAME="AssigningFunction">
+<A NAME="AllocFunction">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
 <DIV CLASS="header">
 <DIV CLASS="subTitle">
 system'dynamic'</DIV>
-<H2 title="AssigningFunction" class="title">AssigningFunction</H2>
+<H2 title="AllocFunction" class="title">AllocFunction</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">system'dynamic'TapeFunction</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'dynamic'AssigningFunction</LI>
-</UL>
-</LI>
-</UL>
 <DIV CLASS="description">
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">AssigningFunction</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">AllocFunction</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#TapeFunction">'TapeFunction</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'dynamic'AllocFunction</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -63,10 +66,10 @@ sealed Class <SPAN CLASS="typeNameLabel">AssigningFunction</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>index</CODE>
+<CODE>size</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -75,27 +78,18 @@ sealed Class <SPAN CLASS="typeNameLabel">AssigningFunction</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#AssigningFunction">AssigningFunction</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#AllocFunction">AllocFunction</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#AssigningFunction">AssigningFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> size)
 </CODE>
 </TD>
 </TR>
@@ -114,18 +108,129 @@ sealed Class <SPAN CLASS="typeNameLabel">AssigningFunction</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
+<HR>
+</DIV>
+<A NAME="AssigningFunction">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'dynamic'</DIV>
+<H2 title="AssigningFunction" class="title">AssigningFunction</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">AssigningFunction</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#TapeFunction">'TapeFunction</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'dynamic'AssigningFunction</LI>
+</UL>
 </LI>
 </UL>
-</DIV>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>index</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#AssigningFunction">AssigningFunction</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
 <HR>
 </DIV>
 <A NAME="ConstantFunction">
@@ -137,9 +242,20 @@ system'dynamic'</DIV>
 <H2 title="ConstantFunction" class="title">ConstantFunction</H2>
 </DIV>
 <DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">ConstantFunction</SPAN></PRE>
+<BR>
+</DIV>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">system'dynamic'TapeFunction</A></SPAN></LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#TapeFunction">'TapeFunction</A></SPAN></LI>
 <LI>
 <UL CLASS="inheritance">
 <LI>
@@ -147,17 +263,9 @@ system'dynamic'ConstantFunction</LI>
 </UL>
 </LI>
 </UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">ConstantFunction</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -168,8 +276,8 @@ Class <SPAN CLASS="typeNameLabel">ConstantFunction</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>constant</CODE>
 </TD>
@@ -180,27 +288,18 @@ Class <SPAN CLASS="typeNameLabel">ConstantFunction</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ConstantFunction">ConstantFunction</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> constant)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ConstantFunction">ConstantFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
+<CODE>load(constant)
 </CODE>
 </TD>
 </TR>
@@ -219,18 +318,24 @@ Class <SPAN CLASS="typeNameLabel">ConstantFunction</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="DynamicClass">
@@ -246,13 +351,20 @@ system'dynamic'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">DynamicClass</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">DynamicClass</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'dynamic'DynamicClass</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -263,8 +375,8 @@ Class <SPAN CLASS="typeNameLabel">DynamicClass</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
-</TD>
+<CODE>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>items</CODE>
 </TD>
@@ -275,18 +387,18 @@ Class <SPAN CLASS="typeNameLabel">DynamicClass</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClass">DynamicClass</A></SPAN></CODE></TD>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClass">DynamicClass</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
+<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -295,29 +407,20 @@ Class <SPAN CLASS="typeNameLabel">DynamicClass</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClass">DynamicClass</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'Object&gt;</A></SPAN> list, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClass">DynamicClass</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>create(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1,T2,T3&gt;">List&lt;'$auto'system'collections'Tuple'$auto'system'collections'Tuple#2,system'Message,system'dynamic'DynamicTape&gt;</A></SPAN> methods)
+<CODE>create(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#List&lt;T1,T2,T3&gt;">List&lt;TupleTuple#2,Message,DynamicTape&gt;</A></SPAN> methods)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== COVERSION SUMMARY =========== -->
+<!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Conversion Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Conversion Method</TH>
 </TR>
 <TR CLASS="altColor">
@@ -325,8 +428,7 @@ Class <SPAN CLASS="typeNameLabel">DynamicClass</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClass">DynamicClass</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
+<CODE><i>cast</i>()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -341,12 +443,18 @@ Class <SPAN CLASS="typeNameLabel">DynamicClass</SPAN></PRE>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Method</TH>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="DynamicMessageFunction">
@@ -358,9 +466,20 @@ system'dynamic'</DIV>
 <H2 title="DynamicMessageFunction" class="title">DynamicMessageFunction</H2>
 </DIV>
 <DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">DynamicMessageFunction</SPAN></PRE>
+<BR>
+</DIV>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">system'dynamic'TapeFunction</A></SPAN></LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#TapeFunction">'TapeFunction</A></SPAN></LI>
 <LI>
 <UL CLASS="inheritance">
 <LI>
@@ -368,16 +487,49 @@ system'dynamic'DynamicMessageFunction</LI>
 </UL>
 </LI>
 </UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Singleton <SPAN CLASS="typeNameLabel">DynamicMessageFunction</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>index</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicMessageFunction">DynamicMessageFunction</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
 <!-- ========== METHOD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
@@ -390,18 +542,24 @@ sealed Singleton <SPAN CLASS="typeNameLabel">DynamicMessageFunction</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="DynamicStruct">
@@ -417,13 +575,20 @@ system'dynamic'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">DynamicStruct</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">DynamicStruct</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'dynamic'DynamicStruct</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -434,10 +599,10 @@ Class <SPAN CLASS="typeNameLabel">DynamicStruct</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Struct">Struct</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Struct">Struct</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theStruct</CODE>
+<CODE>_struct</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -446,11 +611,11 @@ Class <SPAN CLASS="typeNameLabel">DynamicStruct</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -464,13 +629,34 @@ Class <SPAN CLASS="typeNameLabel">DynamicStruct</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== COVERSION SUMMARY =========== -->
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>#generic(o)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Conversion Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Conversion Method</TH>
 </TR>
 <TR CLASS="altColor">
@@ -478,29 +664,7 @@ Class <SPAN CLASS="typeNameLabel">DynamicStruct</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicStruct">DynamicStruct</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- =========== PROPERTY SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Property Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Property accessor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set</i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>generic</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
-</CODE>
+<CODE><i>cast</i>()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -518,7 +682,16 @@ Class <SPAN CLASS="typeNameLabel">DynamicStruct</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>containsProperty(<SPAN CLASS="memberNameLink"><A HREF="system.html#MessageName">MessageName</A></SPAN> subj)
 </CODE>
@@ -527,9 +700,6 @@ Class <SPAN CLASS="typeNameLabel">DynamicStruct</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="DynamicTape">
@@ -545,13 +715,20 @@ system'dynamic'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">DynamicTape</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">DynamicTape</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'dynamic'DynamicTape</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -562,10 +739,10 @@ Class <SPAN CLASS="typeNameLabel">DynamicTape</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
-</TD>
+<CODE>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>theList</CODE>
+<CODE>list</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -574,18 +751,36 @@ Class <SPAN CLASS="typeNameLabel">DynamicTape</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> len)
+</CODE>
+</TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction[]</A></SPAN> args)
+<CODE>load(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -594,7 +789,7 @@ Class <SPAN CLASS="typeNameLabel">DynamicTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#List&lt;T1&gt;">List&lt;TapeFunction&gt;</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -603,7 +798,7 @@ Class <SPAN CLASS="typeNameLabel">DynamicTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#List&lt;T1&gt;">List&lt;TapeFunction&gt;</A></SPAN> args, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
@@ -612,209 +807,20 @@ Class <SPAN CLASS="typeNameLabel">DynamicTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg6)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg7)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg8)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg9)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg10)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg11)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg12)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg13)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg13, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg14)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg13, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg14, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg15)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg13, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg14, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg15, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg16)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg13, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg14, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg15, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg16, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg17)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg13, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg14, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg15, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg16, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg17, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg18)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg13, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg14, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg15, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg16, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg17, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg18, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg19)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg13, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg14, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg15, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg16, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg17, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg18, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg19, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN> arg20)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>load(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction[]</A></SPAN> args)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'TapeFunction&gt;</A></SPAN> list)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'TapeFunction&gt;</A></SPAN> list, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'Object&gt;</A></SPAN> list, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#List&lt;T1&gt;">List&lt;Object&gt;</A></SPAN> args, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== COVERSION SUMMARY =========== -->
+<!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Conversion Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Conversion Method</TH>
 </TR>
 <TR CLASS="altColor">
@@ -822,8 +828,7 @@ Class <SPAN CLASS="typeNameLabel">DynamicTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
+<CODE><i>cast</i>()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -838,119 +843,18 @@ Class <SPAN CLASS="typeNameLabel">DynamicTape</SPAN></PRE>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Method</TH>
 </TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="ExtensionDispatcher">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'dynamic'</DIV>
-<H2 title="ExtensionDispatcher" class="title">ExtensionDispatcher</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">ExtensionDispatcher</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>theArray</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ExtensionDispatcher">ExtensionDispatcher</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ExtensionDispatcher">ExtensionDispatcher</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> message, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A><I>[]</I></SPAN> namespaces)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== COVERSION SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Conversion Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ExtensionDispatcher">ExtensionDispatcher</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="ExtensionMessageFunction">
@@ -962,9 +866,20 @@ system'dynamic'</DIV>
 <H2 title="ExtensionMessageFunction" class="title">ExtensionMessageFunction</H2>
 </DIV>
 <DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">ExtensionMessageFunction</SPAN></PRE>
+<BR>
+</DIV>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">system'dynamic'TapeFunction</A></SPAN></LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#TapeFunction">'TapeFunction</A></SPAN></LI>
 <LI>
 <UL CLASS="inheritance">
 <LI>
@@ -972,17 +887,9 @@ system'dynamic'ExtensionMessageFunction</LI>
 </UL>
 </LI>
 </UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">ExtensionMessageFunction</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -993,18 +900,18 @@ Class <SPAN CLASS="typeNameLabel">ExtensionMessageFunction</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ExtensionDispatcher">ExtensionDispatcher</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>dispatcher</CODE>
+<CODE>message</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>message</CODE>
+<CODE>target</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1013,27 +920,36 @@ Class <SPAN CLASS="typeNameLabel">ExtensionMessageFunction</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ExtensionMessageFunction">ExtensionMessageFunction</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ExtensionDispatcher">ExtensionDispatcher</A></SPAN> dispatcher, <SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> message)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> target)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ExtensionMessageFunction">ExtensionMessageFunction</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ExtensionMessageFunction">ExtensionMessageFunction</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>()
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> target)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ExtensionMessageFunction">ExtensionMessageFunction</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> message, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> target)
 </CODE>
 </TD>
 </TR>
@@ -1052,618 +968,24 @@ Class <SPAN CLASS="typeNameLabel">ExtensionMessageFunction</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="FuncFunction">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'dynamic'</DIV>
-<H2 title="FuncFunction" class="title">FuncFunction</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">system'dynamic'TapeFunction</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'dynamic'FuncFunction</LI>
-</UL>
-</LI>
-</UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">FuncFunction</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>theMessage</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#FuncFunction">FuncFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#FuncFunction">FuncFunction</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#FuncFunction">FuncFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> message)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#FuncFunction">FuncFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="GoToFunction">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'dynamic'</DIV>
-<H2 title="GoToFunction" class="title">GoToFunction</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">system'dynamic'TapeFunction</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'dynamic'GoToFunction</LI>
-</UL>
-</LI>
-</UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">GoToFunction</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>index</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#GoToFunction">GoToFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#GoToFunction">GoToFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="Group">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'dynamic'</DIV>
-<H2 title="Group" class="title">Group</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">Group</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>items</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Group">Group</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>load(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> objects)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Group">Group</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== COVERSION SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Conversion Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Group">Group</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="JumpIfFunction">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'dynamic'</DIV>
-<H2 title="JumpIfFunction" class="title">JumpIfFunction</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">system'dynamic'TapeFunction</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'dynamic'JumpIfFunction</LI>
-</UL>
-</LI>
-</UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">JumpIfFunction</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>index</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#JumpIfFunction">JumpIfFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#JumpIfFunction">JumpIfFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="JumpIfNotFunction">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'dynamic'</DIV>
-<H2 title="JumpIfNotFunction" class="title">JumpIfNotFunction</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">system'dynamic'TapeFunction</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'dynamic'JumpIfNotFunction</LI>
-</UL>
-</LI>
-</UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">JumpIfNotFunction</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>index</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#JumpIfNotFunction">JumpIfNotFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#JumpIfNotFunction">JumpIfNotFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="JumpToEnd">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'dynamic'</DIV>
-<H2 title="JumpToEnd" class="title">JumpToEnd</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">system'dynamic'TapeFunction</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'dynamic'JumpToEnd</LI>
-</UL>
-</LI>
-</UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Singleton <SPAN CLASS="typeNameLabel">JumpToEnd</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="LocalFunction">
@@ -1675,9 +997,20 @@ system'dynamic'</DIV>
 <H2 title="LocalFunction" class="title">LocalFunction</H2>
 </DIV>
 <DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">LocalFunction</SPAN></PRE>
+<BR>
+</DIV>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">system'dynamic'TapeFunction</A></SPAN></LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#TapeFunction">'TapeFunction</A></SPAN></LI>
 <LI>
 <UL CLASS="inheritance">
 <LI>
@@ -1685,17 +1018,9 @@ system'dynamic'LocalFunction</LI>
 </UL>
 </LI>
 </UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">LocalFunction</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -1706,8 +1031,8 @@ sealed Class <SPAN CLASS="typeNameLabel">LocalFunction</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>index</CODE>
 </TD>
@@ -1718,11 +1043,11 @@ sealed Class <SPAN CLASS="typeNameLabel">LocalFunction</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -1730,15 +1055,6 @@ sealed Class <SPAN CLASS="typeNameLabel">LocalFunction</SPAN></PRE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#LocalFunction">LocalFunction</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#LocalFunction">LocalFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
 </CODE>
 </TD>
 </TR>
@@ -1757,18 +1073,24 @@ sealed Class <SPAN CLASS="typeNameLabel">LocalFunction</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="MessageFunction">
@@ -1780,9 +1102,20 @@ system'dynamic'</DIV>
 <H2 title="MessageFunction" class="title">MessageFunction</H2>
 </DIV>
 <DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">MessageFunction</SPAN></PRE>
+<BR>
+</DIV>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">system'dynamic'TapeFunction</A></SPAN></LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#TapeFunction">'TapeFunction</A></SPAN></LI>
 <LI>
 <UL CLASS="inheritance">
 <LI>
@@ -1790,17 +1123,9 @@ system'dynamic'MessageFunction</LI>
 </UL>
 </LI>
 </UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">MessageFunction</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -1811,10 +1136,10 @@ sealed Class <SPAN CLASS="typeNameLabel">MessageFunction</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theMessage</CODE>
+<CODE>message</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1823,11 +1148,11 @@ sealed Class <SPAN CLASS="typeNameLabel">MessageFunction</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -1856,15 +1181,6 @@ sealed Class <SPAN CLASS="typeNameLabel">MessageFunction</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#MessageFunction">MessageFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -1880,273 +1196,24 @@ sealed Class <SPAN CLASS="typeNameLabel">MessageFunction</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="ReleaseFunction">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'dynamic'</DIV>
-<H2 title="ReleaseFunction" class="title">ReleaseFunction</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">system'dynamic'TapeFunction</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'dynamic'ReleaseFunction</LI>
-</UL>
-</LI>
-</UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">ReleaseFunction</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>counter</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ReleaseFunction">ReleaseFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> counter)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ReleaseFunction">ReleaseFunction</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="SavingFunction">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'dynamic'</DIV>
-<H2 title="SavingFunction" class="title">SavingFunction</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">system'dynamic'TapeFunction</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'dynamic'SavingFunction</LI>
-</UL>
-</LI>
-</UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">SavingFunction</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>index</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#SavingFunction">SavingFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#SavingFunction">SavingFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="StreamTapeInterpreter">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'dynamic'</DIV>
-<H2 title="StreamTapeInterpreter" class="title">StreamTapeInterpreter</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Singleton <SPAN CLASS="typeNameLabel">StreamTapeInterpreter</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>build(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A><I>[]</I></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> len)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="Struct">
@@ -2162,13 +1229,20 @@ system'dynamic'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">Struct</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">Struct</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'dynamic'Struct</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -2179,8 +1253,8 @@ Class <SPAN CLASS="typeNameLabel">Struct</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
-</TD>
+<CODE>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>items</CODE>
 </TD>
@@ -2191,18 +1265,18 @@ Class <SPAN CLASS="typeNameLabel">Struct</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Struct">Struct</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -2211,7 +1285,7 @@ Class <SPAN CLASS="typeNameLabel">Struct</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Struct">Struct</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> list)
+<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -2220,20 +1294,49 @@ Class <SPAN CLASS="typeNameLabel">Struct</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Struct">Struct</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A><I>[]</I></SPAN> list)
+<CODE>new(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Struct">Struct</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Array&lt;T1&gt;">Array&lt;Object&gt;</A></SPAN> list)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== COVERSION SUMMARY =========== -->
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Conversion Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Conversion Method</TH>
 </TR>
 <TR CLASS="altColor">
@@ -2241,21 +1344,8 @@ Class <SPAN CLASS="typeNameLabel">Struct</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Struct">Struct</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
+<CODE><i>cast</i>()</CODE>
 </TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- =========== PROPERTY SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Property Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Property accessor</TH>
 </TR>
 </TABLE>
 </LI>
@@ -2269,12 +1359,45 @@ Class <SPAN CLASS="typeNameLabel">Struct</SPAN></PRE>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Method</TH>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Struct">Struct</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>expand(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> gain)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
+</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="TapeFunction">
@@ -2290,19 +1413,26 @@ system'dynamic'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-Interface <SPAN CLASS="typeNameLabel">TapeFunction</SPAN></PRE>
+abstract public class <SPAN CLASS="typeNameLabel">TapeFunction</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- ========== COVERSION SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'dynamic'TapeFunction</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Conversion Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Conversion Method</TH>
 </TR>
 <TR CLASS="altColor">
@@ -2310,8 +1440,7 @@ Interface <SPAN CLASS="typeNameLabel">TapeFunction</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
+<CODE><i>cast</i>()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -2329,40 +1458,59 @@ Interface <SPAN CLASS="typeNameLabel">TapeFunction</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
-<A NAME="VariadicExtensionDispatcher">
+<A NAME="SavingFunction">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
 <DIV CLASS="header">
 <DIV CLASS="subTitle">
 system'dynamic'</DIV>
-<H2 title="VariadicExtensionDispatcher" class="title">VariadicExtensionDispatcher</H2>
+<H2 title="SavingFunction" class="title">SavingFunction</H2>
 </DIV>
 <DIV CLASS="contentContainer">
 <DIV CLASS="description">
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">VariadicExtensionDispatcher</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">SavingFunction</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#TapeFunction">'TapeFunction</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'dynamic'SavingFunction</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -2373,10 +1521,10 @@ sealed Class <SPAN CLASS="typeNameLabel">VariadicExtensionDispatcher</SPAN></PRE
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theArray</CODE>
+<CODE>index</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -2385,48 +1533,18 @@ sealed Class <SPAN CLASS="typeNameLabel">VariadicExtensionDispatcher</SPAN></PRE
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#VariadicExtensionDispatcher">VariadicExtensionDispatcher</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#SavingFunction">SavingFunction</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#VariadicExtensionDispatcher">VariadicExtensionDispatcher</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> message, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A><I>[]</I></SPAN> namespaces)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== COVERSION SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Conversion Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#VariadicExtensionDispatcher">VariadicExtensionDispatcher</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
 </TD>
 </TR>
@@ -2442,99 +1560,59 @@ sealed Class <SPAN CLASS="typeNameLabel">VariadicExtensionDispatcher</SPAN></PRE
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Method</TH>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
-<A NAME="VariadicExtensionMessageFunction">
+<A NAME="JumpToEnd">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
 <DIV CLASS="header">
 <DIV CLASS="subTitle">
 system'dynamic'</DIV>
-<H2 title="VariadicExtensionMessageFunction" class="title">VariadicExtensionMessageFunction</H2>
+<H2 title="JumpToEnd" class="title">JumpToEnd</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">system'dynamic'TapeFunction</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'dynamic'VariadicExtensionMessageFunction</LI>
-</UL>
-</LI>
-</UL>
 <DIV CLASS="description">
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">VariadicExtensionMessageFunction</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">JumpToEnd</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#VariadicExtensionDispatcher">VariadicExtensionDispatcher</A></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>dispatcher</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>message</CODE>
-</TD>
-</TR>
-</TABLE>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#TapeFunction">'TapeFunction</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'dynamic'JumpToEnd</LI>
+</UL>
 </LI>
 </UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#VariadicExtensionMessageFunction">VariadicExtensionMessageFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#VariadicExtensionDispatcher">VariadicExtensionDispatcher</A></SPAN> dispatcher, <SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> message)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#VariadicExtensionMessageFunction">VariadicExtensionMessageFunction</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
 </LI>
 </UL>
 <!-- ========== METHOD SUMMARY =========== -->
@@ -2549,262 +1627,73 @@ Class <SPAN CLASS="typeNameLabel">VariadicExtensionMessageFunction</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
-<A NAME="#ext_initializer">
+<A NAME="StreamTapeInterpreter">
 </A>
-<!-- ======== START OF SYMBOL DATA ======== -->
+<!-- ======== START OF CLASS DATA ======== -->
 <DIV CLASS="header">
 <DIV CLASS="subTitle">
 system'dynamic'</DIV>
-<H2 title="#ext_initializer" class="title">#ext_initializer</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Symbol Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Name</TH>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>symbol #ext_initializer</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="#initializer">
-</A>
-<!-- ======== START OF SYMBOL DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'dynamic'</DIV>
-<H2 title="#initializer" class="title">#initializer</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Symbol Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Name</TH>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>symbol #initializer</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="ext-Message">
-</A>
-<!-- ======== START OF EXTENSION DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'</DIV>
-<H2 title="Message" class="title">Message</H2>
+<H2 title="StreamTapeInterpreter" class="title">StreamTapeInterpreter</H2>
 </DIV>
 <DIV CLASS="contentContainer">
 <DIV CLASS="description">
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-<SPAN CLASS="typeNameLabel">Message</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">StreamTapeInterpreter</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'dynamic'StreamTapeInterpreter</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<!-- ========== EXTNSION SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Extension Summary</H3>
+<H3>Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Extension Method</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>__getFirstSignatureMember()
+<CODE>build(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Array&lt;T1&gt;">Array&lt;ByteNumber&gt;</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> len)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="ext-Object">
-</A>
-<!-- ======== START OF EXTENSION DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'</DIV>
-<H2 title="Object" class="title">Object</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-<SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- ========== EXTNSION SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Extension Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Extension Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>__newProxy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> target)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>__inheritProxy()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>setField(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>getField(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>extension static get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>__FieldCount()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>respondTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> m)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Message&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>__getMessages()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'MessageName&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>__getProperties()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>setFields(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> objects)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>mixInto(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> role)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>groupWith(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <DIV CLASS="bottomNav">
@@ -2818,7 +1707,7 @@ system'</DIV>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>5.8
+ELENA&nbsp;Standard&nbsp;Library<br>6.0
 </STRONG>
 </DIV>
 </DIV>

@@ -123,14 +123,14 @@ unsigned int SystemRoutineProvider :: GetRandomNumber(SeedStruct& seed)
 
 // --- ELENAMachine ---
 
-int ELENAMachine :: execute(SystemEnv* env, void* entryAddress)
+addr_t ELENAMachine :: execute(SystemEnv* env, void* entryAddress)
 {
    Entry entry;
    entry.address = env->bc_invoker;
 
-   // executing the program
+   // executing the program   
 
-   int retVal = 0;
+   addr_t retVal = 0;
    try
    {
       retVal = entry.evaluate(entryAddress, nullptr);
@@ -139,18 +139,18 @@ int ELENAMachine :: execute(SystemEnv* env, void* entryAddress)
    {
       //_instance->printInfo("EAbortException");
 
-      retVal = -1;
+      retVal = 0;
    }
 
    return retVal;
 }
 
-int ELENAMachine::execute(SystemEnv* env, void* threadEntry, void* threadFunc)
+addr_t ELENAMachine::execute(SystemEnv* env, void* threadEntry, void* threadFunc)
 {
    Entry entry;
    entry.address = env->bc_invoker;
 
-   int retVal = entry.evaluate(threadEntry, threadFunc);
+   addr_t retVal = entry.evaluate(threadEntry, threadFunc);
 
    return retVal;
 }

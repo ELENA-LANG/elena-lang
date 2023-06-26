@@ -741,6 +741,12 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_INTERFACE_DISPATCHER:
          hint = (ref_t)MethodHint::InterfaceDispatcher;
          return true;
+      case V_MIXIN:
+         hint = (ref_t)MethodHint::Mixin;
+         return true;
+      case V_SCRIPTSELFMODE:
+         hint = (ref_t)MethodHint::TargetSelf;
+         return true;
       default:
          return false;
    }
@@ -837,6 +843,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
          return true;
       case V_VARIADIC:
          attrs |= ExpressionAttribute::Variadic;
+         return true;
+      case V_TYPEOF:
+         attrs |= ExpressionAttribute::RetrievingType;
          return true;
       default:
          return false;
@@ -1165,7 +1174,7 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
             info.header.flags |= elMessage;
             break;
          case V_MESSAGENAME:
-            info.header.flags |= elMessage;
+            info.header.flags |= elMessageName;
             break;
          case V_INT32ARRAY:
             info.header.flags |= elDebugDWORDS;

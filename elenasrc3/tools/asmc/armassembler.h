@@ -18,12 +18,14 @@ namespace elena_lang
    class Arm64Assembler : public AssemblerBase
    {
    protected:
-      int readIntArg(ScriptToken& tokenInfo, ref_t& reference);
+      int readIntArg(ScriptToken& tokenInfo, ref_t& reference, bool skipRead = false);
       int readReferenceArg(ScriptToken& tokenInfo, ref_t& reference, ustr_t errorMessage);
       bool readOperandReference(ScriptToken& tokenInfo, ref_t mask, int& value, ref_t& reference);
       bool readOperandExternalReference(ScriptToken& tokenInfo, ref_t mask, int& value, ref_t& reference);
 
       ARMOperand defineRegister(ScriptToken& tokenInfo);
+
+      ARMOperand readImmArg(ScriptToken& tokenInfo);
 
       ARMOperand readOperand(ScriptToken& tokenInfo, ustr_t error);
       ARMOperand readPtrOperand(ScriptToken& tokenInfo, ustr_t error);
@@ -56,7 +58,9 @@ namespace elena_lang
       virtual bool compileFCMP(ARMOperand rd, ARMOperand rn, MemoryWriter& writer);
       virtual bool compileFDIV(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm, MemoryWriter& writer);
       virtual bool compileFCVTZS(ARMOperand rd, ARMOperand rn, MemoryWriter& writer);
+      virtual bool compileFMOV(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rn, MemoryWriter& writer);
       virtual bool compileFMUL(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm, MemoryWriter& writer);
+      virtual bool compileFNEG(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, MemoryWriter& writer);
       virtual bool compileFRINTZ(ARMOperand rd, ARMOperand rn, MemoryWriter& writer);
       virtual bool compileFRINTN(ARMOperand rd, ARMOperand rn, MemoryWriter& writer);
       virtual bool compileFRINTX(ARMOperand rd, ARMOperand rn, MemoryWriter& writer);
@@ -118,7 +122,9 @@ namespace elena_lang
       void compileFCMP(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFCVTZS(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFDIV(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFMOV(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFMUL(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFNEG(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFRINTZ(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFRINTN(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFRINTX(ScriptToken& tokenInfo, MemoryWriter& writer);

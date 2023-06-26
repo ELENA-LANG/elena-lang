@@ -39,6 +39,7 @@ namespace elena_lang
          PathString librarySourceRoot;
          PathString appPath;
          PathString compilerPath;
+         PathString vmTerminalPath;
          PathString configPath;
       } paths;
 
@@ -59,6 +60,7 @@ namespace elena_lang
       IdentifierString  options;
 
       ProjectPaths      sources;
+      ProjectPaths      addedSources;
 
       ProjectPaths      lastOpenFiles;
 

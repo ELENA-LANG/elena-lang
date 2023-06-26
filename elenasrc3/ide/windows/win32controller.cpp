@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Win32 Controller class and its helpers implementation
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -28,7 +28,8 @@ Win32Process :: Win32Process(int waitTime) :
    _dwWaitTime(waitTime),
    _hStdinWrite(nullptr),
    _hStdoutRead(nullptr),
-   _hChildProcess(nullptr)
+   _hChildProcess(nullptr),
+   _offset(0)
 {
 }
 
@@ -283,11 +284,47 @@ void Win32Process :: stop(int exitCode)
       TerminateProcess(_hChildProcess, exitCode);
 
       WaitForSingleObject(_hChildProcess, INFINITE);
+
+      _hChildProcess = nullptr;
    }
 }
 
-void Win32Process :: flush(char* buffer, size_t length)
+void Win32Process :: flush()
 {
    DWORD dwWritten;
-   ::WriteFile(_hStdinWrite, buffer, length, &dwWritten, NULL);
+   ::WriteFile(_hStdinWrite, _buffer, _offset, &dwWritten, nullptr);
+
+   //!! should be moved if dwWritten != _offset
+   _offset = 0;
+}
+
+
+bool Win32Process :: write(const char* line, size_t length)
+{
+   if (!_hStdinWrite)
+      return false;
+
+   if (_offset + length < BUF_SIZE) {
+      memcpy(_buffer + _offset, line, length);
+      _offset += length;
+
+      if (line[length - 1] == '\n')
+         flush();
+
+      return true;
+   }
+   else return false;
+}
+
+bool Win32Process :: write(wchar_t ch)
+{
+   if (ch == 8) {
+      if (_offset > 0) {
+         _offset--;
+
+         return true;
+      }
+      else return false;
+   }
+   else return write((const char*)&ch, 1);
 }

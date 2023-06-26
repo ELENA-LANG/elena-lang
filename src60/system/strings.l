@@ -387,7 +387,7 @@ public const struct String : BaseValue,
    int indexOf(int index, string literal)
       : info("Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1")
    {
-      int sublen := literal.Length;
+      int sublen := literal.Length - index;
       int retVal := PrimitiveStringOperations.indexOf(self, literal, index, sublen);
         
       ^ retVal
@@ -395,7 +395,8 @@ public const struct String : BaseValue,
 
    int indexOf(int index, char ch)
    {
-      int sublen := self.Length;
+      int sublen := self.Length - index;
+
       int retVal := PrimitiveStringOperations.indexOf(self, ch, index, sublen);
         
       ^ retVal
@@ -738,7 +739,7 @@ public const struct WideString : BaseValue
    int indexOf(int index, wide literal)
       : info("Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1")   
    {
-      int sublen := literal.Length;
+      int sublen := literal.Length - index;
       int retVal := PrimitiveWideStringOperations.indexOf(self, literal, index, sublen);
         
       ^ retVal
@@ -746,7 +747,7 @@ public const struct WideString : BaseValue
 
    int indexOf(int index, char ch)
    {
-      int sublen := self.Length;
+      int sublen := self.Length - index;
       int retVal := PrimitiveWideStringOperations.indexOf(self, ch, index, sublen);
         
       ^ retVal

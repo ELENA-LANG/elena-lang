@@ -26,8 +26,10 @@ namespace elena_lang
       Generic              = 0x00000100,
       RetOverload          = 0x00000200,
       Multimethod          = 0x00001000,
+      TargetSelf           = 0x00002000,
       Static               = 0x00004000,
       GetAccessor          = 0x00008000,
+      Mixin                = 0x00010000,
       Abstract             = 0x00020000,
       Internal             = 0x00040000,
       Predefined           = 0x00080000, // virtual class declaration
@@ -94,6 +96,8 @@ namespace elena_lang
    constexpr auto errInvalidModule           = 203;
    constexpr auto errCannotCreate            = 204;
    constexpr auto errInvalidFile             = 205;
+   constexpr auto errInvalidParserTarget     = 206;
+   constexpr auto errInvalidParserTargetType = 207;
    constexpr auto errInvalidModuleVersion    = 210;
    constexpr auto errEmptyTarget             = 212;
 
@@ -154,6 +158,7 @@ namespace elena_lang
 
    /// modificator
    constexpr auto V_IGNOREDUPLICATE       = 0x80006001u;
+   constexpr auto V_SCRIPTSELFMODE        = 0x80006002u;
 
    /// accessors:
    constexpr auto V_GETACCESSOR           = 0x80005001u;
@@ -177,7 +182,7 @@ namespace elena_lang
    constexpr auto V_READONLY              = 0x80002004u;
    constexpr auto V_OVERLOADRET           = 0x8000200Au;
    constexpr auto V_VARIADIC              = 0x8000200Bu;
-   
+
    /// scope:
    constexpr auto V_CLASS                 = 0x80001001u;
    constexpr auto V_STRUCT                = 0x80001002u;
@@ -201,6 +206,7 @@ namespace elena_lang
    constexpr auto V_INTERN                = 0x80001016u;
    constexpr auto V_FORWARD               = 0x80001017u;
    constexpr auto V_IMPORT                = 0x80001018u;
+   constexpr auto V_MIXIN                 = 0x80001019u;
    constexpr auto V_AUTO                  = 0x8000101Cu;
    constexpr auto V_NAMESPACE             = 0x80001021u;
    constexpr auto V_SUPERIOR              = 0x80001024u;
@@ -223,6 +229,7 @@ namespace elena_lang
    constexpr auto V_MSSGBINARY            = 0x80000809u;
    constexpr auto V_POINTER               = 0x8000080Au;
    constexpr auto V_EXTMESSAGE            = 0x8000080Bu;
+   constexpr auto V_TYPEOF                = 0x8000080Cu;
 
    /// primitive types
    constexpr auto V_STRING                = 0x80000001u;
@@ -312,9 +319,11 @@ namespace elena_lang
    // === Global Attributes ===
    constexpr auto GA_SYMBOL_NAME             = 0x0001;
    constexpr auto GA_CLASS_NAME              = 0x0002;
+   constexpr auto GA_EXT_OVERLOAD_LIST       = 0x0003;
 
    // === VM Command ===
    constexpr pos_t VM_STR_COMMAND_MASK       = 0x100;
+   constexpr pos_t VM_INT_COMMAND_MASK       = 0x200;
 
    constexpr pos_t VM_ENDOFTAPE_CMD          = 0x001;
    constexpr pos_t VM_CALLSYMBOL_CMD         = 0x102;
@@ -324,6 +333,16 @@ namespace elena_lang
    constexpr pos_t VM_FORWARD_CMD            = 0x106;
    constexpr pos_t VM_PACKAGE_CMD            = 0x107;
    constexpr pos_t VM_PRELOADED_CMD          = 0x108;
+   constexpr pos_t VM_CALLCLASS_CMD          = 0x109;
+   constexpr pos_t VM_TERMINAL_CMD           = 0x00A;
+   constexpr pos_t VM_STRING_CMD             = 0x10B;
+   constexpr pos_t VM_ALLOC_CMD              = 0x20C;
+   constexpr pos_t VM_SET_ARG_CMD            = 0x20D;
+   constexpr pos_t VM_ARG_TAPE_CMD           = 0x20E;
+   constexpr pos_t VM_NEW_CMD                = 0x10F;
+   constexpr pos_t VM_CONFIG_CMD             = 0x110;
+   constexpr pos_t VM_FREE_CMD               = 0x211;
+   constexpr pos_t VM_SEND_MESSAGE_CMD       = 0x112;
 
    // --- Configuration xpaths ---
    constexpr auto WIN_X86_KEY = "Win_x86";
@@ -348,6 +367,7 @@ namespace elena_lang
    constexpr auto REFERENCE_CATEGORY = "references/*";
    constexpr auto MODULE_CATEGORY = "files/*";
    constexpr auto FILE_CATEGORY = "include/*";
+   constexpr auto PARSER_TARGET_CATEGORY = "targets/*";
 
    constexpr auto LIB_PATH = "project/libpath";
    constexpr auto OUTPUT_PATH = "project/output";
@@ -384,6 +404,29 @@ namespace elena_lang
       }
    }
 
+   typedef Map<ustr_t, ref_t, allocUStr, freeUStr> AttributeMap;
+
+   class LangHelper
+   {
+   public:
+      static void loadAttributes(AttributeMap& map)
+      {
+         //map.add("singleton", V_SINGLETON);
+         //map.add("preloaded_symbol", V_PRELOADED);
+         //map.add("function", V_FUNCTION);
+         map.add("get_method", V_GETACCESSOR);
+         map.add("script_method", V_SCRIPTSELFMODE);
+         map.add("public_namespace", V_PUBLIC);
+         map.add("script_function", V_SCRIPTSELFMODE);
+         map.add("public_symbol", V_PUBLIC);
+         //map.add("script_function", V_FUNCTION);
+         //map.add("variable_identifier", V_VARIABLE);
+         //map.add("new_reference", V_NEWOP);
+         //map.add("new_identifier", V_NEWOP);
+         //map.add("prev_identifier", V_PREVIOUS);
+         //map.add("loop_expression", V_LOOP);
+      }
+   };
 }
 
 #endif

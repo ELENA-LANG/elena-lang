@@ -3,28 +3,59 @@ In development:
 ------         
 
   [development]
-    ### EPOCH: elena 6.0 - redux ###
-    === Iteration 15 ===
+    ### EPIC: elena 6.0 - redux ###
+     === Iteration 17 ===
+    [!] x86 mta support
+    [!] elt tutorial (stand-alone / in IDE)
+    [!] some bytecode optimizations
+    [!] rest of files / console samples
+    * 5 rosetta code sample
 
-    * test x86, x86-64, i386, amd64, ppc64le, arm64
+    === Iteration 18 ===
+    [!] x86 GUI support
+    * test all samples for win x86
 
-    === Iteration 16 ===
-    * vm console : ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression1
-    * vm console : ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
+    === Iteration 19 ===
+    [!] elenavm x64 dll
+    [!] elenavm x64 : script executing
+    [!] vm terminal x64
+    [!] ide vm console x64
+    * amd64 : implement system 5
+    * test all samples for win x86-64
 
-    * ide : create a new project, save it, change it and save it
+------                                                           
+Backlog:
+------   
+    --- elena backlog
+    * ppc64le / aarch64 : fix variadictest
+    * uncomment rest of calc sample - supporting function
+    * ide debugger : stepping in the loop (for)
+    * elt : 2+3, "hello", "workd".insert(0, "hello ")
+    * check : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
+    * x86-64, ppc64, aarch64 : fix loads
+    * ppc64, aarch64 : fix xrefresh / xflush - use arg instead of direct values
+    * execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
+    * api : uncomment ExtensionDispatcher and SymbolCollection
+    * elenavm : implementing loadDispatcherOverloadlist
+    * elenavm : implementing rest of dll api
+    * review install scripts : include all existing samples, use different output folders
+    * elc : improve the compilation speed
+
     * ide : refreshing auto watch - with the same name, unused
     * ide : set / remove breakpoints
     * ide : menu - clear all breakpoints
+    * ide : open via dialog - set proper namespace
+    * review extensions warnings
+    * #580 : new feature : use C# 7.0 style namespace (single line one)
+    * ide : exclude the file from the project
+    * ide : hide / show include / exclude  depending if the file is a part of the project
 
-    ! migrate rest of elena 5.0 functionality (script engine, infinite enumeration, ...)
+    ! migrate rest of elena 5.0 functionality (infinite enumeration, ...)
     ! script and db samples
     ! x86 : gui
     ! api functionality for existing classes : rest of system
     ! api functionality for existing classes : externals
     ! elena sm : x86-64
-    ! ide : vm console 
-    * ParsingExpression : https://github.com/ELENA-LANG/tutorials/tree/master/ParsingExpression2
     ! sm : generate some basic templates from vm console - hello world sample
     ! script samples : win x86, win x86-64, linix i386, linux amd64
     ! migrate all script engine tutorials : win x86, win x86-64, linix i386, linux amd64
@@ -33,12 +64,16 @@ In development:
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
+    * ldoc : put the symbols in the alphabetic order
+    * ide : save project as
     * Class Constants : review doc and implement if requiered
     * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
     * optimization : copy a sub array to another array - starting
     * x86 : gui - starting - new project type
     * ide : before compiling, make sure the source file is saved
 
+    * new opcode : fexp - ppc64le
+    * ide debugger : fix screen flashing
     * switch expression
     * optimization : copy a sub array to another array
     * redesign switch statement : it should be possible to use as an expression as well
@@ -52,10 +87,6 @@ In development:
     * elenavm : preloaded symbol, support preloaded symbols : dynamic
     * elenavm : loading preloaded symbols for newly loaded modules
 
-    * #508 : support strong-typed variables for tuple unboxing
-    * multi-value return - #508
-
-    * ide debugger : stepping in the loop (for)
 
     * optimization : copy a sub array to another array
     * int32 : implement direct neg, not operations; use it directly for IntNumber
@@ -66,11 +97,9 @@ In development:
     * by exiting thread (must be called on thread proc exit) - remove entry from table slots
     * for time being keep SINGLE_THREAD_CONTEXT empty, after the migrating it
       must be made empty 
-    * review extensions warnings
     * review system warnings
     * prefix nullable / nable - allow to assign nil
     * introduce Nullable structure
-    * elenavm : implementing dll api
     * show the signature for the typecast message if possible
     * ide : key combination doesn't work after closing the project
     * #521 : create an example and close the ticket
@@ -91,12 +120,13 @@ In development:
     * x86 : gui
     * system module - it should be possible to use type aliases (replace all cases of using direct types 
       for symbols in system (int,string,wide))
-    * elenavm : protect rdata memory sections
     * console & files samples
-    * new opcode : fexp, fln - ppc64le, arm64
+    * new opcode : fln - ppc64le, arm64
     * new opcode : fsin, fcos, farctan, fpi - ppc64le, arm64
+    * setup pipeline for windows / linux x86 & x86-64, retire appvayor
+    * ppc64le / aarch64 : fexp - improve quality / performace
+    * test fexpdp opcode
 
-    === Iteration 17 ===
     ! x86 : multi-threading : sync, thread-safe gc, snop
     ! x86-64 : multi-threading : open another thread
     ! sm : generate advances templates from vm console
@@ -112,15 +142,9 @@ In development:
       e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
     * migrate: amb, anagram
     * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
-
-    === Iteration 18 ===
     ! elena vm : aarch64, ppc64
     ! elena vm : ppc64
     ! ppc64le : multi-threading
-
-------                                                           
-Backlog:
-------   
     --- output redux ---
     --- elena redux ---
     --- ide redux ---
@@ -136,8 +160,8 @@ Backlog:
     * lazy expressions, put it in the first page as a feature
 
     --- elena redux ---
-    * resolve variadic operation directly if possible
     * fillir - optimization for 1,2,3,4
+    * dispatch opcode optimization for 1,2,3,4
     * gc fune-tuning, promote the part of YG to MG if it survive several collecting cycles
     * debugger info : save the path relative to the src60 path?
     * ide : brackets highlight
@@ -150,9 +174,6 @@ Backlog:
     * native conversion from short to int / byte to int
     * extension template should contain all its arguments in the signature
     * support strong extension template arrayOp<T> : strong, weak
-    * support autoloaded classes : should be automatically resolved when the module is loaded
-      (flag elAutoLoaded)
-    * module extension dispatcher should be preloaded
     * elena : nullable
     * system'collections'Map - migrating rest of methods
     * if statements with single statement
@@ -285,8 +306,6 @@ Backlog:
     * ide : react on mouse
     * ide : new menu option : open output
     * ide : recent files
-    * project - load - project
-    * project - compile - project
     * editor - status bar : col, row, ins / ovr
     * editor - modified doc mark, 
     * editor - black theme
@@ -333,13 +352,8 @@ Backlog:
     * constant field must have assigning expression
     * class constant (should be a static variable / pure constant - no entry in VMT)
     * init_handler : call previous one if avialable
-    * call set properties
-    * arithmetic operations
-    * string operations
-    * char operations
     * operator names should be configurable
     * optimize String.prop:Length[1]
-    * replace xassign with assign for the field assignment
     * ide - open file - namespace should be added
     * do load self for expression with ret statement
     * byte / short should support plus / minus operator

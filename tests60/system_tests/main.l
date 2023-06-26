@@ -19,6 +19,7 @@ public program()
    variadicTest();
    dynamicLoadTests();
    interfaceTests();
+   vardispatcherTest();
 
    console.writeLine("--- Passed ---")
 }

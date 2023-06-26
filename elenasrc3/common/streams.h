@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of abstract stream reader
 //      and writer classes
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef STREAMS_H
@@ -669,6 +669,82 @@ namespace elena_lang
          _offset = 0;
          _length = getlength_pos(string);
       }
+   };
+
+
+   // --- DumpReader ---
+
+   class DumpReader : public StreamReader
+   {
+      void* _dump;
+      pos_t  _offset;
+      pos_t  _length;
+
+   public:
+      bool eof() override { return _offset >= _length; }
+
+      pos_t position() const override { return _offset; }
+
+      pos_t length() const override { return _length; }
+
+      bool seek(pos_t position) override
+      {
+         _offset = position;
+
+         return true;
+      }
+
+      virtual const char* getLiteral(const char*)
+      {
+         const char* s = (char*)_dump + _offset;
+
+         seek(_offset + getlength(s) + 1);
+
+         return s;
+
+      }
+      virtual const wide_c* getLiteral(const wide_c*)
+      {
+         const wide_c* s = (const wide_c*)((char*)_dump + _offset);
+
+         seek(_offset + (getlength(s) << 1) + 1);
+
+         return s;
+      }
+
+      bool read(void* s, pos_t length) override
+      {
+         if (_offset + length <= _length) {
+            memcpy(s, (char*)_dump + _offset, length);
+
+            _offset += length;
+
+            return true;
+         }
+         else return false;
+
+      }
+
+      void setSize(pos_t length)
+      {
+         _length = length;
+      }
+
+      DumpReader(void* dump, pos_t length)
+      {
+         _dump = dump;
+         _offset = 0;
+         _length = length;
+      }
+      DumpReader(void* dump, pos_t length, int offset)
+      {
+         _dump = dump;
+         _offset = 0;
+         _length = length;
+         _offset = offset;
+      }
+
+      ~DumpReader() override = default;
    };
 
    typedef StringTextReader<char> IdentifierTextReader;

@@ -143,6 +143,7 @@ namespace elena_lang
       DR        = 0x2000,
 
       Imm       = 0x300,
+      FImm      = 0x500,
    };
 
    inline bool test(ARMOperandType type, ARMOperandType mask)
@@ -310,11 +311,31 @@ namespace elena_lang
             | (((unsigned int)rn & 0x1F) << 5) | (opc << 3);
       }
 
-      static unsigned int makeFTypeOpcode(int op0, int op, int ftype, int op2, ARMOperandType rm, int op3, int op4, ARMOperandType rn, 
+      static unsigned int makeFTypeOpcode(int op0, int op, int ftype, int op2, ARMOperandType rm, int op3, int op4, ARMOperandType rn,
          ARMOperandType rd)
       {
          return (op0 << 29) | (op << 24) | (ftype << 22) | (op2 << 21) | (((unsigned int)rm & 0x1F) << 16) | (op3 << 13) | (op4 << 10)
             | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
+      }
+
+      static unsigned int makeFTypeOpcode(int op0, int op, int ftype, int op2, int opc, int op3, ARMOperandType rn, ARMOperandType rd)
+      {
+         return (op0 << 29) | (op << 24) | (ftype << 22) | (op2 << 21) | (opc << 15) | (op3 << 10)
+            | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
+      }
+
+      static unsigned int makeFTypeOpcodeX(int op0, int op, int ftype, int op2, int rmode, int opcode, int op3, 
+         ARMOperandType rn, ARMOperandType rd)
+      {
+         return (op0 << 29) | (op << 24) | (ftype << 22) | (op2 << 21) | (rmode << 19) | (opcode << 16) | (op3 << 10)
+            | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
+      }
+
+      static unsigned int makeFTypeImm8Opcode(int op0, int op, int ftype, int op2, int imm8, int op4, int op5,
+         ARMOperandType rd)
+      {
+         return (op0 << 29) | (op << 24) | (ftype << 22) | (op2 << 21) | ((imm8 & 0xFF) << 13) | (op4 << 10)
+            | (op5 << 5) | ((unsigned int)rd & 0x1F);
       }
 
       static bool isMask_64(uint64_t Value) {
@@ -387,7 +408,7 @@ namespace elena_lang
 
             unsigned CLO = countLeadingOnes(imm);
             I = 64 - CLO;
-            CTO = CLO + countTrailingOnes(imm) - (64 - Size);
+            CTO = CLO + (uint32_t)countTrailingOnes(imm) - (64 - Size);
          }
 
          // Encode in Immr the number of RORs it would take to get *from* 0^m 1^n

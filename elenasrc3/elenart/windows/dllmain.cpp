@@ -188,6 +188,23 @@ EXTERN_DLL_EXPORT mssg_t LoadMessageLA(const char* messageName)
    return machine->loadMessage(messageName);
 }
 
+EXTERN_DLL_EXPORT mssg_t LoadActionLA(const char* actionName)
+{
+   return machine->loadAction(actionName);
+}
+
+/// <summary>
+/// Fills the passed dispatch list with references to extension message overload list
+/// </summary>
+/// <param name="moduleList">List of imported modules separated by semicolon</param>
+/// <param name="message">Extension message</param>
+/// <param name="output">Dispatch list</param>
+/// <returns></returns>
+EXTERN_DLL_EXPORT int LoadExtensionDispatcherLA(const char* moduleList, mssg_t message, void* output)
+{
+   return machine->loadExtensionDispatcher(moduleList, message, output);
+}
+
 EXTERN_DLL_EXPORT void GetRandomSeedLA(SeedStruct& seed)
 {
    machine->initRandomSeed(seed);

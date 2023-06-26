@@ -57,7 +57,8 @@ namespace collections
          if (capacity == len)
          {
             auto new_backet := new int[](capacity + 4);
-            new_backet.write(0, capacity, backet);
+            Array<int>.copy(new_backet, backet, 0, capacity);
+            //new_backet.write(0, capacity, backet);
     
             backet := new_backet;
             _hashTable[index] := new_backet

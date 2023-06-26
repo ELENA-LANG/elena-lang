@@ -146,7 +146,6 @@ bool PathUtil :: removeFile(path_t path)
 {
    return ::remove(path.str()) != 0;;
 }
-
 #endif
 
 bool PathUtil :: ifExist(path_t path)

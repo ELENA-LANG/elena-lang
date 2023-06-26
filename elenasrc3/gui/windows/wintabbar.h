@@ -84,6 +84,11 @@ namespace elena_lang
          showCurrentTab();
       }
 
+      bool empty()
+      {
+         return _pages.count() == 0;
+      }
+
       void refresh() override;
 
       TabBar(NotifierBase* notifier, bool withAbovescore, int height);

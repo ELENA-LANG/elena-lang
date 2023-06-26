@@ -166,6 +166,11 @@ namespace elena_lang
       bool compareToken(ScriptEngineReaderBase& reader, ScriptBookmark& bm, int rule);
       bool compareTokenWithAny(ScriptEngineReaderBase& reader, ScriptBookmark& bm, int rule);
 
+      bool parseDirective(ScriptEngineReaderBase&, MemoryDump*) override
+      {
+         return false;
+      }
+
       bool parseGrammarRule(ScriptEngineReaderBase& reader) override;
 
       void parse(ScriptEngineReaderBase& reader, MemoryDump* output) override;

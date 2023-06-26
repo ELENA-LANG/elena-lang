@@ -3,7 +3,7 @@
 //
 //		This file contains the project class declaration
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PROJECT_H
@@ -34,7 +34,7 @@ namespace elena_lang
 
       void loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot);
 
-      void loadForwards(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath);
+      void loadParserTargets(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath);
 
       void loadSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath, IdentifierString& value);
 
@@ -46,8 +46,6 @@ namespace elena_lang
       void loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node& root);
 
       void loadDefaultConfig();
-
-      path_t PathSetting(ProjectOption option, ustr_t key) const;
 
    public:
       PlatformType SystemTarget();
@@ -66,6 +64,7 @@ namespace elena_lang
 
       ustr_t StringSetting(ProjectOption option) const override;
       path_t PathSetting(ProjectOption option) const override;
+      path_t PathSetting(ProjectOption option, ustr_t key) const override;
 
       void addBoolSetting(ProjectOption option, bool value);
       void addIntSetting(ProjectOption option, int value);
@@ -75,7 +74,7 @@ namespace elena_lang
 
       void forEachForward(void* arg, void(* feedback)(void* arg, ustr_t key, ustr_t value)) override;
 
-      void addSource(ustr_t ns, path_t path);
+      void addSource(ustr_t ns, path_t path, ustr_t target);
 
       bool loadConfigByName(path_t configPath, ustr_t name, bool markAsLoaded);
 

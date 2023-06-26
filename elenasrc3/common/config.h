@@ -50,6 +50,11 @@ namespace elena_lang
             xmlNode.readContent(s);
          }
 
+         void saveContent(ustr_t s)
+         {
+            xmlNode.setContent(s);
+         }
+
          bool isNotFound()
          {
             return xmlNode.isNotFound();
@@ -108,6 +113,8 @@ namespace elena_lang
       }
 
       void appendSetting(ustr_t xpath, ustr_t value);
+
+      void create();
 
       bool load(path_t path, FileEncoding encoding);
       bool save(path_t path, FileEncoding encoding);

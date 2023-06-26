@@ -152,6 +152,16 @@ void IDEWindow :: saveFile()
    _controller->doSaveFile(fileDialog, _model, false, true);
 }
 
+void IDEWindow::saveAll()
+{
+   _controller->doSaveAll(fileDialog, projectDialog, _model);
+}
+
+void IDEWindow :: saveProject()
+{
+   _controller->doSaveProject(fileDialog, projectDialog, _model, true);
+}
+
 void IDEWindow :: closeFile()
 {
    _controller->doCloseFile(fileDialog, messageDialog, _model);
@@ -225,6 +235,11 @@ void IDEWindow :: selectAll()
    _controller->sourceController.selectAll(_model->viewModel());
 }
 
+void IDEWindow :: includeFile()
+{
+   _controller->doInclude(_model);
+}
+
 void IDEWindow :: toggleProjectView(bool open)
 {
    GUIControlBase* projectView = _children[_model->ideScheme.projectView];
@@ -249,6 +264,22 @@ void IDEWindow :: openResultTab(int controlIndex)
    onLayoutChange(IDE_LAYOUT_CHANGED);
 }
 
+void IDEWindow :: closeResultTab(int controlIndex)
+{
+   _children[controlIndex]->hide();
+
+   TabBar* resultBar = (TabBar*)_children[_model->ideScheme.resultControl];
+
+   resultBar->removeTabChild((ControlBase*)_children[controlIndex]);
+
+   if (resultBar->empty()) {
+      resultBar->hide();
+   }
+   else resultBar->selectTab(0);
+
+   onLayoutChange(IDE_LAYOUT_CHANGED);
+}
+
 void IDEWindow :: toggleWindow(int child_id)
 {
    if (child_id == _model->ideScheme.projectView) {
@@ -259,11 +290,16 @@ void IDEWindow :: toggleWindow(int child_id)
    }
 }
 
-void IDEWindow :: toggleTabBarWindow(int child_id)
+bool IDEWindow :: toggleTabBarWindow(int child_id)
 {
    if (!_children[child_id]->visible()) {
       openResultTab(child_id);
+
+      return true;
    }
+
+   closeResultTab(child_id);
+   return false;
 }
 
 void IDEWindow :: setChildFocus(int controlIndex)
@@ -404,6 +440,7 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
    menu->checkItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
    menu->checkItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
    menu->checkItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
+   menu->checkItemById(IDM_VIEW_VMCONSOLE, _children[_model->ideScheme.vmConsoleControl]->visible());
 
    menu->enableMenuItemById(IDM_FILE_SAVE, !empty);
    menu->enableMenuItemById(IDM_FILE_CLOSE, !empty);
@@ -479,6 +516,12 @@ bool IDEWindow :: onCommand(int command)
       case IDM_FILE_SAVE:
          saveFile();
          break;
+      case IDM_FILE_SAVEALL:
+         saveAll();
+         break;
+      case IDM_FILE_SAVEPROJECT:
+         saveProject();
+         break;
       case IDM_FILE_CLOSE:
          closeFile();
          break;
@@ -520,7 +563,10 @@ bool IDEWindow :: onCommand(int command)
          selectAll();
          break;
       case IDM_PROJECT_COMPILE:
-         _controller->doCompileProject(projectDialog, _model);
+         _controller->doCompileProject(fileDialog, projectDialog, _model);
+         break;
+      case IDM_PROJECT_INCLUDE:
+         includeFile();
          break;
       case IDM_PROJECT_OPTION:
          _controller->doChangeProject(projectSettingsDialog, _model);
@@ -557,6 +603,12 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_VIEW_OUTPUT:
          toggleTabBarWindow(_model->ideScheme.compilerOutputControl);
+         break;
+      case IDM_VIEW_VMCONSOLE:
+         if (toggleTabBarWindow(_model->ideScheme.vmConsoleControl)) {
+            _controller->doStartVMConsole(_model);
+         }
+         else _controller->doStopVMConsole();
          break;
       case IDM_VIEW_MESSAGES:
          toggleTabBarWindow(_model->ideScheme.errorListControl);

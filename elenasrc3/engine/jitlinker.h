@@ -122,6 +122,8 @@ namespace elena_lang
 
          void writeVAddress32(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
             ref_t addressMask) override;
+         void writeMDataRef32(MemoryBase& target, pos_t position,
+            pos_t disp, ref_t addressMask) override;
          void writeRelAddress32(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
             ref_t addressMask) override;
          void writeVAddress64(MemoryBase& target, pos_t position, addr_t vaddress, pos64_t disp,
@@ -186,12 +188,15 @@ namespace elena_lang
       ref_t resolveWeakAction(ustr_t actionName);
 
       ref_t createAction(ustr_t actionName, ref_t weakAction, ref_t signature);
-      ref_t createSignature(ModuleBase* module, ref_t signature, VAddressMap& references);
+      ref_t createSignature(ModuleBase* module, ref_t signature, bool variadicOne, 
+         VAddressMap& references);
       mssg_t createMessage(ModuleBase* module, mssg_t message, VAddressMap& references);
 
       mssg_t parseMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);
       mssg_t parseMessageNameLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);
       Pair<mssg_t, addr_t> parseExtMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);
+
+      void generateOverloadListMetaAttribute(ModuleBase* module, mssg_t message, ref_t listRef);
 
       addr_t resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo sectionInfo, ref_t sectionMask);
 
@@ -229,8 +234,14 @@ namespace elena_lang
 
       addr_t resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode);
 
+      ref_t resolveAction(ustr_t actionName);
+
       void loadPreloaded(ustr_t preloadedSection);
       void prepare(JITCompilerBase* compiler);
+      void setCompiler(JITCompilerBase* compiler)
+      {
+         _compiler = compiler;
+      }
       void complete(JITCompilerBase* compiler, ustr_t superClass);
 
       JITLinker(ReferenceMapperBase* mapper, 

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      WinAPI Splitter class implementation
-//                                              (C)2022, by Aleksex Rakov
+//                                              (C)2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "winsplitter.h"

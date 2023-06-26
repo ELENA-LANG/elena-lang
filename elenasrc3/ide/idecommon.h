@@ -10,12 +10,16 @@
 #include "elena.h"
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x0052
+#define IDE_REVISION_NUMBER                           0x0055
 
 namespace elena_lang
 {
    constexpr auto PLATFORM_CATEGORY                   = "configuration/platform";
    constexpr auto NAMESPACE_CATEGORY                  = "configuration/project/namespace";
+   constexpr auto TEMPLATE_CATEGORY                   = "configuration/project/template";
+   constexpr auto OPTIONS_CATEGORY                    = "configuration/project/options";
+   constexpr auto TARGET_CATEGORY                     = "configuration/project/executable";
+   constexpr auto FILE_CATEGORY                       = "configuration/files/module/file";
 
    constexpr auto TARGET_SUB_CATEGORY                 = "project/executable";
    constexpr auto TEMPLATE_SUB_CATEGORY               = "project/template";
@@ -123,6 +127,9 @@ namespace elena_lang
 
       virtual bool start(path_t path, path_t commandLine, path_t curDir, bool readOnly) = 0;
       virtual void stop(int exitCode) = 0;
+
+      virtual bool write(const char* line, size_t length) = 0;
+      virtual bool write(wchar_t ch) = 0;
 
       ProcessBase()
          : _listeners(nullptr)
@@ -285,6 +292,12 @@ namespace elena_lang
       virtual ~DebugProcessBase() = default;
    };
 
+   class PathHelperBase
+   {
+   public:
+      virtual void makePathRelative(PathString& path, path_t rootPath) = 0;
+   };
+
    struct Breakpoint
    {
       int              row;
@@ -308,7 +321,8 @@ namespace elena_lang
    {
    public:
       virtual GUIApp* createApp() = 0;
-      virtual GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess) = 0;
+      virtual GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
+         ProcessBase* vmConsoleProcess) = 0;
    };
 }
 

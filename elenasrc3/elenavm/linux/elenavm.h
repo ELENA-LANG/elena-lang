@@ -4,8 +4,8 @@
 //                                              (C)2022, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
-#ifndef ELENART_H_INCLUDED
-#define ELENART_H_INCLUDED
+#ifndef ELENAVM_H_INCLUDED
+#define ELENAVM_H_INCLUDED
 
 #include "elenamachine.h"
 

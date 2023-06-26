@@ -241,6 +241,8 @@ namespace elena_lang
       void onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath);
       void onStop();
 
+      void readObjectContent(ContextBrowserBase* watch, void* item, addr_t address, int level,
+         DebugLineInfo* info);
       void readFields(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info);
       void readObjectArray(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info);
 
