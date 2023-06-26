@@ -146,6 +146,11 @@ public:
       return instance;
    }
 
+   void readLine(char* buffer, size_t length)
+   {
+      fgets(buffer, length, stdin);
+   }
+
    void print(ustr_t msg, ustr_t arg) override
    {
       ::print(msg.str(), arg.str());
