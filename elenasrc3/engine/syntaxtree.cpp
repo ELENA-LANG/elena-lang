@@ -16,10 +16,50 @@ using namespace elena_lang;
 
 void SyntaxTree :: loadTokens(TokenMap& map)
 {
-   
+   map.add("root", SyntaxKey::Root);
+   map.add("namespace", SyntaxKey::Namespace);
+   map.add("public_namespace", SyntaxKey::Namespace);
+   //   tokens.add("class", lxClass);
+   //   tokens.add("singleton", lxClass);
+   map.add("public_symbol", SyntaxKey::Symbol);
+   map.add("nested", SyntaxKey::NestedBlock);
+   map.add("script_method", SyntaxKey::Method);
+   map.add("script_function", SyntaxKey::Method);
+   //   tokens.add("method", lxClassMethod);
+   //   tokens.add("function", lxClassMethod);
+   map.add("get_method", SyntaxKey::Method);
+   map.add("message", SyntaxKey::Message);
+   map.add("code", SyntaxKey::CodeBlock);
+   map.add("object", SyntaxKey::Object);
+   map.add("expression", SyntaxKey::Expression);
+   map.add("get_expression", SyntaxKey::GetExpression);
+   map.add("returning", SyntaxKey::ReturnExpression);
+   map.add( "message_operation", SyntaxKey::MessageOperation);
+   map.add("property_operation", SyntaxKey::PropertyOperation);
+   map.add("symbol", SyntaxKey::Symbol);
+   //   tokens.add("preloaded_symbol", lxSymbol);
+   //   tokens.add("literal", lxLiteral);
+   map.add("identifier", SyntaxKey::identifier);
+   //   tokens.add("character", lxCharacter);
+   //   tokens.add("variable_identifier", lxIdentifier);
+   //   tokens.add("new_identifier", lxIdentifier);
+   //   tokens.add("prev_identifier", lxIdentifier);
+   map.add("integer", SyntaxKey::integer);
+   map.add("parameter", SyntaxKey::Parameter);
+   ////   tokens.add("include", lxInclude);
+   //   //tokens.add("forward", lxForward);
+   //   tokens.add("reference", lxReference);
+   //   tokens.add("new_reference", lxReference);
+   //   tokens.add("variable", lxVariable);
+   //   //tokens.add("assign", lxAssign);
+   //   //tokens.add("operator", lxOperator);
+   map.add("nameattr", SyntaxKey::Name);
+   map.add("property_parameter", SyntaxKey::PropertyOperation);
+   //   //tokens.add("import", lxImport);
+   //   tokens.add("loop_expression", lxExpression);
 }
 
-void SyntaxTree :: save(MemoryBase* section)
+bool SyntaxTree :: save(MemoryBase* section)
 {
    MemoryWriter writer(section);
 
@@ -28,6 +68,8 @@ void SyntaxTree :: save(MemoryBase* section)
 
    writer.writePos(_strings.length());
    writer.write(_strings.get(0), _strings.length());
+
+   return _body.length() > 0;
 }
 
 void SyntaxTree :: load(MemoryBase* section)

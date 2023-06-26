@@ -140,6 +140,7 @@ copy %~dp0\..\examples60\console\replace\*.l %~dp0\output\examples60\console\rep
 copy %~dp0\..\examples60\console\pi\*.l %~dp0\output\examples60\console\pi
 
 copy %~dp0\..\examples60\scripts\calc\*.l %~dp0\output\examples60\scripts\calc
+copy %~dp0\..\examples60\scripts\calc\*.es %~dp0\output\examples60\scripts\calc
 copy %~dp0\..\examples60\scripts\calc\*.prj %~dp0\output\examples60\scripts\calc
 
 copy %~dp0\..\examples60\rosetta\accumulator\*.l %~dp0\output\examples60\rosetta\accumulator

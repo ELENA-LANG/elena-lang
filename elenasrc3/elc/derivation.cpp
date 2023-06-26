@@ -105,6 +105,9 @@ void SyntaxTreeBuilder :: flush(SyntaxTreeWriter& writer, SyntaxNode node)
          case SyntaxKey::Declaration:
             flushDeclaration(writer, current);
             break;
+         case SyntaxKey::ExternalTree:
+            SyntaxTree::copyNode(writer, current);
+            break;
          default:
             SyntaxTree::copyNewNode(writer, current);
 
@@ -1298,7 +1301,11 @@ void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, 
 
 void SyntaxTreeBuilder::saveTree(SyntaxTree& tree)
 {
-   SyntaxTree::copyNode(_writer, tree.readRoot(), true);
+   _cacheWriter.newNode(SyntaxKey::ExternalTree);
+
+   SyntaxTree::copyNode(_cacheWriter, tree.readRoot(), false);
+
+   _cacheWriter.closeNode();
 }
 
 enum DeclarationType

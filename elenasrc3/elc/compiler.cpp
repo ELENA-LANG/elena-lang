@@ -944,7 +944,7 @@ ObjectInfo Compiler::MethodScope :: mapIdentifier(ustr_t identifier, bool refere
          return paramInfo;
       }
       else if (moduleScope->selfVar.compare(identifier)) {
-         if (EAttrs::test(attr, EAttr::Weak)) {
+         if (EAttrs::test(attr, EAttr::Weak) || targetSelfMode) {
             return mapSelf(false);
          }
          else if ((functionMode && !constructorMode) || closureMode || nestedMode) {
@@ -10094,6 +10094,7 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
    methodScope.functionMode = test(methodScope.message, FUNCTION_MESSAGE);
    methodScope.isEmbeddable = methodScope.checkHint(MethodHint::Stacksafe);
    methodScope.isExtension = methodScope.checkHint(MethodHint::Extension);
+   methodScope.targetSelfMode = methodScope.checkHint(MethodHint::TargetSelf);
    methodScope.nestedMode = scope.getScope(Scope::ScopeLevel::OwnerClass) != &scope;
 
    declareVMTMessage(methodScope, current, false, false);

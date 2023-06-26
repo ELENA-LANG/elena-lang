@@ -8,7 +8,7 @@
     <targets>
         <target name="eson" type="2">
             <option>[[ #grammar tree ]]</option>
-            <option>~\scripts\lscript.es</option>
+            <option>~\scripts\lscript60.es</option>
         </target>
     </targets>
     <files>

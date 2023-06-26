@@ -744,6 +744,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_MIXIN:
          hint = (ref_t)MethodHint::Mixin;
          return true;
+      case V_SCRIPTSELFMODE:
+         hint = (ref_t)MethodHint::TargetSelf;
+         return true;
       default:
          return false;
    }

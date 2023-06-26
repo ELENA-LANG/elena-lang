@@ -5,6 +5,7 @@ In development:
   [development]
     ### EPIC: elena 6.0 - redux ###
     === Iteration 16 ===
+    * missing source path
     * calc sample
 
     * script : declare and return a singleton

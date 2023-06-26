@@ -376,8 +376,6 @@ void CompilingProcess :: parseFileUserDefinedGrammar(SyntaxWriterBase* syntaxWri
 
       throw e;
    }
-
-   assert(false);
 }
 
 void CompilingProcess :: parseFile(path_t projectPath,

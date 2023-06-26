@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Tree template classes
 //
-//                                                 (C)2021, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef TREE_H

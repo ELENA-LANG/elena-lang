@@ -182,6 +182,8 @@ namespace elena_lang
       Column                  = 0x000201,
       Row                     = 0x000202,
 
+      ExternalTree            = 0x000301,
+
       Idle                    = 0x000F01,
    };
 
@@ -196,7 +198,7 @@ namespace elena_lang
    public:
       static void loadTokens(TokenMap& map);
 
-      void save(MemoryBase* section);
+      bool save(MemoryBase* section);
       void load(MemoryBase* section);
 
       static bool testSuperKey(SyntaxKey key, SyntaxKey superKey)

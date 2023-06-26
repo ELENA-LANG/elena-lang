@@ -89,6 +89,11 @@ void TreeScriptParser :: parseStatement(ScriptEngineReaderBase& reader, ScriptBo
 
 void TreeScriptParser :: parse(ScriptEngineReaderBase& reader, MemoryDump* output)
 {
+   MemoryWriter writer(output);
+   writer.writeDWord(0); // HOTFIX : end of tape
+   pos_t sizePos = writer.position();
+   writer.writeDWord(0);
+
    SyntaxTree       tree;
    SyntaxTreeWriter treeWriter(tree);
 
@@ -98,6 +103,12 @@ void TreeScriptParser :: parse(ScriptEngineReaderBase& reader, MemoryDump* outpu
 
       bm = reader.read();
    }
+
+   if (tree.save(output)) {
+      writer.seek(sizePos);
+      writer.writeDWord(output->length() - sizePos);
+   }
+   else output->clear();
 }
 
 bool TreeScriptParser::parseDirective(ScriptEngineReaderBase& reader, MemoryDump* output)

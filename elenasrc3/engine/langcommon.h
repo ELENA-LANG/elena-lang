@@ -26,6 +26,7 @@ namespace elena_lang
       Generic              = 0x00000100,
       RetOverload          = 0x00000200,
       Multimethod          = 0x00001000,
+      TargetSelf           = 0x00002000,
       Static               = 0x00004000,
       GetAccessor          = 0x00008000,
       Mixin                = 0x00010000,
@@ -157,6 +158,7 @@ namespace elena_lang
 
    /// modificator
    constexpr auto V_IGNOREDUPLICATE       = 0x80006001u;
+   constexpr auto V_SCRIPTSELFMODE        = 0x80006002u;
 
    /// accessors:
    constexpr auto V_GETACCESSOR           = 0x80005001u;
@@ -409,7 +411,20 @@ namespace elena_lang
    public:
       static void loadAttributes(AttributeMap& map)
       {
-         
+         //map.add("singleton", V_SINGLETON);
+         //map.add("preloaded_symbol", V_PRELOADED);
+         //map.add("function", V_FUNCTION);
+         map.add("get_method", V_GETACCESSOR);
+         map.add("script_method", V_SCRIPTSELFMODE);
+         map.add("public_namespace", V_PUBLIC);
+         map.add("script_function", V_SCRIPTSELFMODE);
+         map.add("public_symbol", V_PUBLIC);
+         //map.add("script_function", V_FUNCTION);
+         //map.add("variable_identifier", V_VARIABLE);
+         //map.add("new_reference", V_NEWOP);
+         //map.add("new_identifier", V_NEWOP);
+         //map.add("prev_identifier", V_PREVIOUS);
+         //map.add("loop_expression", V_LOOP);
       }
    };
 }
