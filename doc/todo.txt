@@ -9,7 +9,8 @@ In development:
      === Iteration 17 ===
     [!] x86 mta support
     [!] elt tutorial (stand-alone / in IDE)
-    * calc sample (uncomment install script)
+    [!] some bytecode optimizations
+    [!] rest of files / console samples
     * 5 rosetta code sample
 
     === Iteration 18 ===
@@ -28,6 +29,7 @@ In development:
 Backlog:
 ------   
     --- elena backlog
+    * uncomment rest of calc sample - supporting function
     * ide debugger : stepping in the loop (for)
     * elt : 2+3, "hello", "workd".insert(0, "hello ")
     * check : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/

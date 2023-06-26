@@ -1,20 +1,16 @@
 import extensions;
-import extensions'scripting;
+
+singleton Tester
+{
+   digit(o)
+   {
+      console.printLine(o);
+   }
+}
    
 public program()
 {
-   console.writeLine("Test");
+   var m := mssg digit;
 
-    var t := new ScriptEngine()
-            .loadScript("[[ #grammar build ]]")
-            .loadPath("~\scripts\grammar60.es")
-            .loadPath("~\scripts\tscript60.es");
-            
-   // var o := t.buildScript("public program() { console.writeLine(""Hello World"") }");
-
-   var o := t.buildScript("printMe(o) { system'console.writeLine(o) }").compile();
-    
-   var f := o.printMe();
-
-   f(2);
+   m(Tester, 1);
 }

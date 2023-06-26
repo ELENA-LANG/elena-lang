@@ -41,7 +41,7 @@
 
    #define parameter      ::= <= parameter ( nameattr ( identifier = $identifier )) =>;
 
-   #define message        ::= <= message = $identifier =>;
+   #define message        ::= <= message ( identifier = $identifier ) =>;
 
    #define s_name         ::= <= nameattr ( identifier = $identifier ) =>;
    #define m_name         ::= <= nameattr ( identifier = $identifier ) =>;

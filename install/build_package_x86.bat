@@ -139,9 +139,9 @@ copy %~dp0\..\examples60\console\goods\*.txt %~dp0\output\examples60\console\goo
 copy %~dp0\..\examples60\console\replace\*.l %~dp0\output\examples60\console\replace
 copy %~dp0\..\examples60\console\pi\*.l %~dp0\output\examples60\console\pi
 
-rem copy %~dp0\..\examples60\scripts\calc\*.l %~dp0\output\examples60\scripts\calc
-rem copy %~dp0\..\examples60\scripts\calc\*.es %~dp0\output\examples60\scripts\calc
-rem copy %~dp0\..\examples60\scripts\calc\*.prj %~dp0\output\examples60\scripts\calc
+copy %~dp0\..\examples60\scripts\calc\*.l %~dp0\output\examples60\scripts\calc
+copy %~dp0\..\examples60\scripts\calc\*.es %~dp0\output\examples60\scripts\calc
+copy %~dp0\..\examples60\scripts\calc\*.prj %~dp0\output\examples60\scripts\calc
 
 copy %~dp0\..\examples60\rosetta\accumulator\*.l %~dp0\output\examples60\rosetta\accumulator
 copy %~dp0\..\examples60\rosetta\ackermann\*.l %~dp0\output\examples60\rosetta\ackermann

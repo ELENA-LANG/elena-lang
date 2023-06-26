@@ -331,7 +331,6 @@ extension parserOp
    evaluatedWith(states)
    {
       var stateMachine := StateMachine.assign(states);
-        
       try
       {
          self.forEach:(ch)

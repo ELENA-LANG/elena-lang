@@ -1508,6 +1508,7 @@ labFound:
 
 labEnd:
   pop   edx 
+  mov   esi, [esp+4]
                                                                 
 end
 
