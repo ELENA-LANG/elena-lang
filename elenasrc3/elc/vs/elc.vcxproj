@@ -196,12 +196,14 @@
     <ClCompile Include="..\modulescope.cpp" />
     <ClCompile Include="..\parser.cpp" />
     <ClCompile Include="..\project.cpp" />
+    <ClCompile Include="..\separser.cpp" />
     <ClCompile Include="..\source.cpp" />
     <ClCompile Include="..\windows\elc.cpp" />
     <ClCompile Include="..\windows\ntimage.cpp" />
     <ClCompile Include="..\windows\ntlinker.cpp" />
     <ClCompile Include="..\windows\ntlinker32.cpp" />
     <ClCompile Include="..\windows\ntlinker64.cpp" />
+    <ClCompile Include="..\windows\winsyslibloader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\common.h" />
@@ -250,12 +252,14 @@
     <ClInclude Include="..\modulescope.h" />
     <ClInclude Include="..\parser.h" />
     <ClInclude Include="..\project.h" />
+    <ClInclude Include="..\separser.h" />
     <ClInclude Include="..\source.h" />
     <ClInclude Include="..\windows\constants.h" />
     <ClInclude Include="..\windows\ntimage.h" />
     <ClInclude Include="..\windows\ntlinker32.h" />
     <ClInclude Include="..\windows\ntlinker.h" />
     <ClInclude Include="..\windows\ntlinker64.h" />
+    <ClInclude Include="..\windows\winsyslibloader.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

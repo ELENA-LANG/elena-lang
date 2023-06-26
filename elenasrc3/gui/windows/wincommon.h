@@ -214,6 +214,8 @@ namespace elena_lang
       }
    };
 
+   void makePathRelative(PathString& path, path_t rootPath);
+
 }
 
 #endif

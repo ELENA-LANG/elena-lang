@@ -16,8 +16,8 @@ define CORE_THREAD_TABLE    2000Fh
 
 define ACTION_ORDER              9
 define ACTION_MASK            1E0h
-define ARG_MASK               05Fh
-define ARG_COUNT_MASK         01Fh
+define ARG_MASK               01Fh
+define ARG_ACTION_MASK        1DFh
 
 // ; TOC TABLE OFFSETS
 define toc_import            0000h
@@ -689,7 +689,7 @@ end
 // ; mlen
 inline % 15h
 
-  andi.   r14, r14, ARG_COUNT_MASK
+  andi.   r14, r14, ARG_MASK
 
 end
 
@@ -898,8 +898,9 @@ inline %079h
 
 end
 
-// ; fexp
+// ; fexpdp
 inline %07Ah
+
 end
 
 // ; fln
@@ -1679,6 +1680,13 @@ labEnd:
 
 end
 
+// ; xstorei
+inline % 0AEh
+
+  addi    r16, r15, __arg16_1
+  ld      r3, 0(r16)
+
+end
 
 // ; callr
 inline %0B0h
@@ -1711,7 +1719,7 @@ inline % 0B5h
 
 end
 
-// ; redirect
+// ; xredirect
 inline % 0B6h //; (r15 - object, r14 - message)
 
   mr      r20, r14
@@ -1722,7 +1730,7 @@ inline % 0B6h //; (r15 - object, r14 - message)
 
   lis     r18, __arg32hi_1
   addi    r18, r18, __arg32lo_1
-  andi.   r14, r14, ARG_MASK
+  andi.   r14, r14, ARG_ACTION_MASK
 
   li      r19, ~ARG_MASK
   addis   r19, r19, 0FFFFh

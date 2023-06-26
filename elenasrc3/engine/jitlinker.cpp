@@ -345,6 +345,16 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
    else _references->add(position, VAddressInfo(reference, module, addressMask, disp));
 }
 
+void JITLinker::JITLinkerReferenceHelper :: writeMDataRef32(MemoryBase& target, pos_t position,
+   pos_t disp, ref_t addressMask)
+{
+   if (!_owner->_virtualMode) {
+      ::writeVAddress32(&target, position, (addr_t)_owner->_imageProvider->getMDataSection()->get(0), disp, addressMask, false);
+   }
+   else ::writeVAddress32(&target, position, 0, disp, addressMask, _owner->_virtualMode);
+}
+
+
 void JITLinker::JITLinkerReferenceHelper :: writeVAddress32(MemoryBase& target, pos_t position, addr_t vaddress, 
    pos_t disp, ref_t addressMask)
 {
@@ -611,7 +621,7 @@ addr_t JITLinker :: loadMethod(ReferenceHelperBase& refHelper, MemoryReader& rea
    return _virtualMode ? position : (addr_t)writer.Memory()->get(position);
 }
 
-ref_t JITLinker::resolveWeakAction(ustr_t actionName)
+ref_t JITLinker :: resolveWeakAction(ustr_t actionName)
 {
    ref_t resolvedAction = _mapper->resolveAction(actionName, 0u);
    if (!resolvedAction) {
@@ -640,7 +650,8 @@ ref_t JITLinker :: createAction(ustr_t actionName, ref_t weakActionRef, ref_t si
    return actionRef;
 }
 
-ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, VAddressMap& references)
+ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, bool variadicOne, 
+   VAddressMap& references)
 {
    if (!signature)
       return 0;
@@ -650,6 +661,12 @@ ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, VAddress
 
    // resolve the signature name
    IdentifierString signatureName;
+
+   if (count != 0 && variadicOne) {
+      // HOTFIX : to tell apart vardiatic signature from normal ones (see further)
+      signatureName.append("#params");
+   }
+
    for (size_t i = 0; i < count; i++) {
       signatureName.append('$');
       auto referenceInfo = _loader->retrieveReferenceInfo(module, signReferences[i], mskVMTRef, _forwardResolver);
@@ -682,6 +699,11 @@ ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, VAddress
          }
       }
 
+      if (variadicOne) {
+         // HOTFIX : variadic signature should end with zero for correct multi-dispatching operation
+         _compiler->addSignatureStopper(writer);
+      }
+
       // HOTFIX : adding a mask to tell apart a message name from a signature in meta module
       _mapper->mapAction(*signatureName, resolvedSignature | SIGNATURE_MASK, 0u);
    }
@@ -700,7 +722,8 @@ mssg_t JITLinker :: createMessage(ModuleBase* module, mssg_t message, VAddressMa
    ref_t signature = 0;
    ustr_t actionName = module->resolveAction(actionRef, signature);
 
-   ref_t importedSignature = createSignature(module, signature, references);
+   bool variadic = (flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
+   ref_t importedSignature = createSignature(module, signature, variadic, references);
    ref_t importedAction = _mapper->resolveAction(actionName, importedSignature);
    if (!importedAction) {
       importedAction = createAction(actionName, resolveWeakAction(actionName), importedSignature);
@@ -849,6 +872,30 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
    return vaddress;
 }
 
+void JITLinker :: generateOverloadListMetaAttribute(ModuleBase* module, mssg_t message, ref_t listRef)
+{
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   // write the overload list name
+   ref_t signature;
+   ustr_t actionName = module->resolveAction(actionRef, signature);
+
+   IdentifierString fullName;
+   fullName.copy(module->name());
+   fullName.append('\'');
+
+   ByteCodeUtil::formatMessageName(fullName, module, actionName, nullptr, 0, argCount, flags);
+
+   ustr_t referenceName = module->resolveReference(listRef & ~mskAnyRef);
+
+   // resolve extension overloadlist
+   addr_t address = resolve(ReferenceInfo(module, referenceName), mskConstArray, false);
+
+   createGlobalAttribute(GA_EXT_OVERLOAD_LIST, *fullName, address);
+}
+
 void JITLinker :: resolveClassGlobalAttributes(ReferenceInfo referenceInfo, MemoryReader& vmtReader, addr_t vaddress)
 {
    pos_t attrCount = vmtReader.getPos();
@@ -870,6 +917,14 @@ void JITLinker :: resolveClassGlobalAttributes(ReferenceInfo referenceInfo, Memo
 
             _mapper->addLazyReference({ mskAutoSymbolRef, INVALID_POS, referenceInfo.module, symbolRef, 0 });
 
+            break;
+         }
+         case ClassAttribute::ExtOverloadList:
+         {
+            mssg_t message = vmtReader.getDWord();
+            ref_t listRef = vmtReader.getDWord();
+
+            generateOverloadListMetaAttribute(referenceInfo.module, message, listRef);
             break;
          }
          default:
@@ -1375,7 +1430,7 @@ void JITLinker :: copyMetaList(ModuleInfo info, ModuleInfoList& output)
 
 void JITLinker :: prepare(JITCompilerBase* compiler)
 {
-   _compiler = compiler;
+   setCompiler(compiler);
 
    _withDebugInfo = _compiler->isWithDebugInfo();
 
@@ -1551,6 +1606,11 @@ addr_t JITLinker :: resolveTLSSection(JITCompilerBase* compiler)
    addr_t address = compiler->allocateTLSIndex(&helper, writer);
 
    return address;
+}
+
+ref_t JITLinker :: resolveAction(ustr_t actionName)
+{
+   return resolveWeakAction(actionName);
 }
 
 void JITLinker :: loadPreloaded(ustr_t preloadedSection)

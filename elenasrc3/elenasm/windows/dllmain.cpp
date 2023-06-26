@@ -35,6 +35,13 @@ EXTERN_DLL_EXPORT int NewScopeSMLA()
    else return -1;
 }
 
+EXTERN_DLL_EXPORT void* InterpretFileSMLA(const char* pathStr, int encoding, bool autoDetect)
+{
+   PathString path(pathStr);
+
+   return engine->translate(0, *path, (FileEncoding)encoding, autoDetect);
+}
+
 EXTERN_DLL_EXPORT void* InterpretScopeFileSMLA(int scope_id, const char* pathStr, int encoding, bool autoDetect)
 {
    PathString path(pathStr);
@@ -45,6 +52,11 @@ EXTERN_DLL_EXPORT void* InterpretScopeFileSMLA(int scope_id, const char* pathStr
 EXTERN_DLL_EXPORT void* InterpretScopeScriptSMLA(int scope_id, ustr_t script)
 {
    return engine->translate(scope_id, script);
+}
+
+EXTERN_DLL_EXPORT void* InterpretScriptSMLA(ustr_t script)
+{
+   return engine->translate(0, script);
 }
 
 EXTERN_DLL_EXPORT int GetLengthSMLA(void* tape)

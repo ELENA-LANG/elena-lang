@@ -65,6 +65,8 @@ namespace elena_lang
    constexpr auto errMsgInvalidModule           = "linker: error 203: Invalid module file '%s'\n";
    constexpr auto errMsgCannotCreate            = "linker: error 204: Cannot create a file '%s'\n";
    constexpr auto errMsgInvalidFile             = "linker: error 205: Invalid file '%s'\n";
+   constexpr auto errMsgInvalidParserTarget     = "linker: error 206: Invalid parser target '%s'\n";
+   constexpr auto errMsgInvalidParserTargetType = "linker: error 207: Invalid parser target type '%s'\n";
    constexpr auto errMsgInvalidModuleVersion    = "linker: error 210: Obsolete module file '%s'\n";
    constexpr auto errMsgEmptyTarget             = "linker: error 212: Target is not specified\n";
 

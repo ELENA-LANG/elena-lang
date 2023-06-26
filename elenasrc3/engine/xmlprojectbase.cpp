@@ -3,7 +3,7 @@
 //
 //		This file contains the xml project base class implementation
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "xmlprojectbase.h"
@@ -20,11 +20,27 @@ ustr_t XmlProjectBase::StringSetting(ProjectOption option) const
    return node.identifier();
 }
 
-path_t XmlProjectBase::PathSetting(ProjectOption option) const
+path_t XmlProjectBase :: PathSetting(ProjectOption option) const
 {
    int fileIndex = _root.findChild(option).arg.value;
 
    return _paths.get(fileIndex);
+}
+
+
+path_t XmlProjectBase :: PathSetting(ProjectOption option, ustr_t key) const
+{
+   ProjectNode current = _root.findChild(option).firstChild();
+   while (current != ProjectOption::None) {
+      ProjectNode keyNode = current.findChild(ProjectOption::Key);
+      if (keyNode != ProjectOption::None && key.compare(keyNode.identifier())) {
+         return _paths.get(current.arg.value);
+      }
+
+      current = current.nextNode();
+   }
+
+   return nullptr;
 }
 
 bool XmlProjectBase::BoolSetting(ProjectOption option, bool defValue) const
@@ -148,7 +164,25 @@ void XmlProjectBase :: loadKeyCollection(ConfigFile& config, ConfigFile::Node& r
             if (valueNode == ProjectOption::None) {
                keyNode.appendChild(ProjectOption::Value, value.str());
             }
-            else keyNode.setStrArgument(value.str());
+            else valueNode.setStrArgument(value.str());
+         }
+      }
+   }
+}
+
+void XmlProjectBase :: loadForwards(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath)
+{
+   DynamicString<char> key, value;
+
+   ConfigFile::Collection collection;
+   if (config.select(root, xpath, collection)) {
+      for (auto it = collection.start(); !it.eof(); ++it) {
+         ConfigFile::Node node = *it;
+
+         if (node.readAttribute("key", key)) {
+            node.readContent(value);
+
+            addForward(key.str(), value.str());
          }
       }
    }

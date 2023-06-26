@@ -42,15 +42,18 @@ namespace elena_lang
       ControlBase* createErrorList(ControlBase* owner, NotifierBase* notifier);
       ControlBase* createProjectView(ControlBase* owner, NotifierBase* notifier);
       ControlBase* createDebugBrowser(ControlBase* owner, NotifierBase* notifier);
+      ControlBase* createVmConsoleControl(ControlBase* owner, ProcessBase* outputProcess);
       GUIControlBase* createMenu(ControlBase* owner);
       GUIControlBase* createDebugContextMenu(ControlBase* owner);
 
       void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
-         int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu);
+         int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, 
+         int vmConsoleOutput);
 
    public:
       GUIApp* createApp() override;
-      GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess) override;
+      GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
+         ProcessBase* vmConsoleProcess) override;
 
       IDEFactory(HINSTANCE instance, IDEModel* ideView, 
          IDEController* ideController,

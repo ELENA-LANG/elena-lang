@@ -1,11 +1,16 @@
 import extensions;
 
+singleton Tester
+{
+   digit(o)
+   {
+      console.printLine(o);
+   }
+}
+   
 public program()
 {
-   uint k := 2H;
-   uint l := 0AH;
+   var m := mssg digit;
 
-   var r := l < k;
-
-   Assert.ifTrue(r);  // 2 > 10
+   m(Tester, 1);
 }

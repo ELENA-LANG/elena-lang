@@ -60,7 +60,7 @@ namespace elena_lang
       CopyingToAcc         = 0x001F,
       Argument             = 0x0020,
       BranchOp             = 0x0021,
-      DirectResendOp       = 0x0022,
+      StrongRedirectOp     = 0x0022,
       ResendOp             = 0x0023,
       SealedDispatchingOp  = 0x0024,
       BoolSOp              = 0x0025,
@@ -137,6 +137,7 @@ namespace elena_lang
       IncIndex             = 0x006C,
       FreeVarStack         = 0x006D,
       FillOp               = 0x006E, // if the argument is 0 - the size is in sp[0]
+      StrongResendOp       = 0x006F,
 
       MaxOperationalKey    = 0x0070,
 
@@ -195,6 +196,7 @@ namespace elena_lang
       FalseConst           = 0x800D,
       Path                 = 0x800E,
       ClassName            = 0x800F,
+      Special              = 0x8010,
 
       Idle                 = 0x8FFF,
 

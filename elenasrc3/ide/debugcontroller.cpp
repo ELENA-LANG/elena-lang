@@ -878,22 +878,64 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
    else _process->setEvent(DEBUG_RESUME);
 }
 
+void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item, addr_t address, int level, 
+   DebugLineInfo* info)
+{
+   WatchContext context = { item, address };
+
+   addr_t vmtAddress = _process->getClassVMT(address);
+   int flags = _process->getClassFlags(vmtAddress);
+
+   int type = flags & elDebugMask;
+   switch (type) {
+      case elDebugDWORD:
+         watch->populateDWORD(&context, _process->getDWORD(address));
+         break;
+      case elDebugQWORD:
+         watch->populateQWORD(&context, _process->getQWORD(address));
+         break;
+      case elDebugFLOAT64:
+         watch->populateFLOAT64(&context, _process->getFLOAT64(address));
+         break;
+      case elDebugLiteral:
+      {
+         char value[DEBUG_MAX_STR_LENGTH + 1];
+         size_t length = _min(_process->getArrayLength(address), DEBUG_MAX_STR_LENGTH);
+         _process->readDump(address, value, length);
+         value[length] = 0;
+         watch->populateString(&context, value);
+         break;
+      }
+      case elDebugWideLiteral:
+      {
+         wide_c value[DEBUG_MAX_STR_LENGTH + 1];
+         size_t length = _min(_process->getArrayLength(address), DEBUG_MAX_STR_LENGTH) >> 1;
+         _process->readDump(address, (char*)value, length << 1);
+         value[length] = 0;
+         watch->populateWideString(&context, value);
+         break;
+      }
+      case elDebugArray:
+         readObjectArray(watch, item, address, level, info);
+         break;
+      case elDebugDWORDS:
+         readIntArrayLocal(watch, item, address, "content", level);
+         break;
+      default:
+         readFields(watch, item, address, level, info);
+         break;
+   }
+}
+
 void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, ustr_t className)
 {
    if (address != 0) {
       // read class VMT address if not provided
       IdentifierString classNameStr;
-      addr_t vmtAddress = 0;
+      addr_t vmtAddress = _process->getClassVMT(address);
       ref_t flags = 0;
-      if (emptystr(className)) {
-         vmtAddress = _process->getClassVMT(address);
-         flags = vmtAddress ? _process->getClassFlags(vmtAddress) : 0;
-      }
-      else {
+      if (!emptystr(className)) {
          classNameStr.copy(className);
-
-         vmtAddress = _provider.getClassAddress(className);
-         flags = _process->getClassFlags(vmtAddress);
       }
 
       DebugLineInfo* info = _provider.seekClassInfo(address, classNameStr, vmtAddress, flags);
@@ -901,48 +943,8 @@ void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, add
       WatchContext context = { parent, address };
       void* item = watch->addOrUpdate(&context, name, *classNameStr);
 
-      context.root = item;
-      if (level > 0) {
-         int type = flags & elDebugMask;
-         switch (type) {
-            case elDebugDWORD:
-               watch->populateDWORD(&context, _process->getDWORD(address));
-               break;
-            case elDebugQWORD:
-               watch->populateQWORD(&context, _process->getQWORD(address));
-               break;
-            case elDebugFLOAT64:
-               watch->populateFLOAT64(&context, _process->getFLOAT64(address));
-               break;
-            case elDebugLiteral:
-            {
-               char value[DEBUG_MAX_STR_LENGTH + 1];
-               size_t length = _min(_process->getArrayLength(address), DEBUG_MAX_STR_LENGTH);
-               _process->readDump(address, value, length);
-               value[length] = 0;
-               watch->populateString(&context, value);
-               break;
-            }
-            case elDebugWideLiteral:
-            {
-               wide_c value[DEBUG_MAX_STR_LENGTH + 1];
-               size_t length = _min(_process->getArrayLength(address), DEBUG_MAX_STR_LENGTH) >> 1;
-               _process->readDump(address, (char*)value, length << 1);
-               value[length] = 0;
-               watch->populateWideString(&context, value);
-               break;
-            }
-            case elDebugArray:
-               readObjectArray(watch, item, address, level, info);
-               break;
-            case elDebugDWORDS:
-               readIntArrayLocal(watch, item, address, "content", level);
-               break;
-            default:
-               readFields(watch, item, address, level, info);
-               break;
-         }
-      }
+      if (level > 0)
+         readObjectContent(watch, item, address, level, info);
 
       return item;
    }
@@ -1127,7 +1129,7 @@ void DebugController :: readContext(ContextBrowserBase* watch, void* parentItem,
       IdentifierString className;
       DebugLineInfo* info = _provider.seekClassInfo(address, className, vmtAddress, flags);
 
-      readFields(watch, parentItem, address, level, info);
+      readObjectContent(watch, parentItem, address, level, info);
    }
 }
 

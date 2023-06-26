@@ -178,13 +178,17 @@
     <ClInclude Include="..\..\common\streams.h" />
     <ClInclude Include="..\..\common\ustring.h" />
     <ClInclude Include="..\..\engine\dfa.h" />
+    <ClInclude Include="..\..\engine\langcommon.h" />
     <ClInclude Include="..\..\engine\scriptreader.h" />
+    <ClInclude Include="..\..\engine\syntaxtree.h" />
     <ClInclude Include="..\..\engine\textparser.h" />
     <ClInclude Include="..\cfparser.h" />
     <ClInclude Include="..\scriptmachine.h" />
     <ClInclude Include="..\scriptparser.h" />
     <ClInclude Include="..\smcommon.h" />
     <ClInclude Include="..\transformer.h" />
+    <ClInclude Include="..\treeparser.h" />
+    <ClInclude Include="..\vmparser.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -193,10 +197,13 @@
     <ClCompile Include="..\..\common\paths.cpp" />
     <ClCompile Include="..\..\common\ustring.cpp" />
     <ClCompile Include="..\..\engine\scriptreader.cpp" />
+    <ClCompile Include="..\..\engine\syntaxtree.cpp" />
     <ClCompile Include="..\cfparser.cpp" />
     <ClCompile Include="..\scriptmachine.cpp" />
     <ClCompile Include="..\scriptparser.cpp" />
     <ClCompile Include="..\transformer.cpp" />
+    <ClCompile Include="..\treeparser.cpp" />
+    <ClCompile Include="..\vmparser.cpp" />
     <ClCompile Include="..\windows\dllmain.cpp" />
   </ItemGroup>
   <ItemGroup>

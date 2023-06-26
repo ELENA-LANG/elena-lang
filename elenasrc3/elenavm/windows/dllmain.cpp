@@ -131,7 +131,7 @@ void printError(int errCode, ustr_t arg)
 
 // --- API export ---
 
-EXTERN_DLL_EXPORT void InitializeVMSTLA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
+EXTERN_DLL_EXPORT int InitializeVMSTLA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
 {
 #ifdef DEBUG_OUTPUT
    printf("InitializeVMSTLA.6 %x,%x\n", (int)env, (int)criricalHandler);
@@ -161,7 +161,43 @@ EXTERN_DLL_EXPORT void InitializeVMSTLA(SystemEnv* env, void* tape, const char* 
       retVal = -1;
    }
 
-   machine->Exit(retVal);
+   if (machine->isStandAlone())
+      machine->Exit(retVal);
+
+   return retVal;
+}
+
+EXTERN_DLL_EXPORT int EvaluateVMLA(void* tape)
+{
+#ifdef DEBUG_OUTPUT
+   printf("EvaluateVMSTLA.6 %x,%x\n", (int)env, (int)criricalHandler);
+
+   fflush(stdout);
+#endif
+
+   int retVal = 0;
+   try
+   {
+      machine->evaluate(tape);
+   }
+   catch (InternalError err)
+   {
+      printError(err.messageCode);
+      retVal = -1;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      printError(errVMReferenceNotFound, e.referenceInfo.referenceName);
+
+      retVal = -1;
+   }
+   catch (...)
+   {
+      printError(errVMBroken);
+      retVal = -1;
+   }
+
+   return retVal;
 }
 
 EXTERN_DLL_EXPORT void ExitLA(int retVal)
@@ -238,6 +274,23 @@ EXTERN_DLL_EXPORT addr_t LoadSymbolByString2LA(const char* ns, const char* symbo
 EXTERN_DLL_EXPORT mssg_t LoadMessageLA(const char* messageName)
 {
    return machine->loadMessage(messageName);
+}
+
+EXTERN_DLL_EXPORT mssg_t LoadActionLA(const char* actionName)
+{
+   return machine->loadAction(actionName);
+}
+
+/// <summary>
+/// Fills the passed dispatch list with references to extension message overload list
+/// </summary>
+/// <param name="moduleList">List of imported modules separated by semicolon</param>
+/// <param name="message">Extension message</param>
+/// <param name="output">Dispatch list</param>
+/// <returns></returns>
+EXTERN_DLL_EXPORT int LoadExtensionDispatcherLA(const char* moduleList, mssg_t message, void* output)
+{
+   return machine->loadExtensionDispatcher(moduleList, message, output);
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,

@@ -234,6 +234,11 @@ XmlTree::XmlTree(ustr_t rootTag)
    insert(_position, rootTag);
 }
 
+void XmlTree::loadXml(ustr_t content)
+{
+   _content.copy(content);
+}
+
 bool XmlTree :: load(path_t path, FileEncoding encoding)
 {
    TextFileReader reader(path, encoding, true);

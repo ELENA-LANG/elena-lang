@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Windows Image Section declaration
 //
-//                                              (C)2022, by Aleksey Rakov
+//                                             (C)2022-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINSECTION_H
@@ -39,6 +39,8 @@ namespace elena_lang
       void trim(pos_t position) override;
 
       bool write(pos_t position, const void* s, pos_t length) override;
+
+      void protect(bool writeAccess, bool executeAccess);
 
       WinImageSection(pos_t size, bool writeAccess, bool executeAccess, pos_t allocated = 0);
    };

@@ -11,14 +11,21 @@ namespace collections
          Item1 := o1
       }
         
-      T1 Item1 : rprop;
+      T1 Item1 : prop;
 
       at(int index)
       {
          index =>
             0 { ^ Item1 }
             : { OutOfRangeException.raise() }
-      }      
+      }
+
+      setAt(int index, object val)
+      {
+         index =>
+            0 { Item1 := val }
+            : { OutOfRangeException.raise() }
+      }
    }
 
    public sealed Tuple<T1, T2>
@@ -38,8 +45,8 @@ namespace collections
          Item1 := o1
       }
         
-      T1 Item1 : rprop;
-      T2 Item2 : rprop;
+      T1 Item1 : prop;
+      T2 Item2 : prop;
 
       at(int index)
       {
@@ -48,6 +55,14 @@ namespace collections
             1 { ^ Item2 }
             : { OutOfRangeException.raise() }
       }      
+
+      setAt(int index, object val)
+      {
+         index =>
+            0 { Item1 := val }
+            1 { Item2 := val }
+            : { OutOfRangeException.raise() }
+      }
    }
 
    public sealed Tuple<T1, T2, T3>
@@ -63,9 +78,9 @@ namespace collections
          Item3 := o3
       }
         
-      T1 Item1 : rprop;
-      T2 Item2 : rprop;
-      T3 Item3 : rprop;
+      T1 Item1 : prop;
+      T2 Item2 : prop;
+      T3 Item3 : prop;
 
       at(int index)
       {
@@ -75,6 +90,15 @@ namespace collections
             2 { ^ Item3 }
             : { OutOfRangeException.raise() }
       }      
+
+      setAt(int index, object val)
+      {
+         index =>
+            0 { Item1 := val }
+            1 { Item2 := val }
+            2 { Item3 := val }
+            : { OutOfRangeException.raise() }
+      }
    }
 
    public sealed Tuple<T1, T2, T3, T4>
@@ -91,10 +115,10 @@ namespace collections
          Item4 := o4
       }
         
-      T1 Item1 : rprop;
-      T2 Item2 : rprop;
-      T3 Item3 : rprop;
-      T4 Item4 : rprop;
+      T1 Item1 : prop;
+      T2 Item2 : prop;
+      T3 Item3 : prop;
+      T4 Item4 : prop;
 
       at(int index)
       {
@@ -105,6 +129,16 @@ namespace collections
             3 { ^ Item4 }
             : { OutOfRangeException.raise() }
       }      
+
+      setAt(int index, object val)
+      {
+         index =>
+            0 { Item1 := val }
+            1 { Item2 := val }
+            2 { Item3 := val }
+            3 { Item4 := val }
+            : { OutOfRangeException.raise() }
+      }
    }
 
    public sealed Tuple<T1, T2, T3, T4, T5>
@@ -122,11 +156,11 @@ namespace collections
          Item5 := o5;
       }
         
-      T1 Item1 : rprop;
-      T2 Item2 : rprop;
-      T3 Item3 : rprop;
-      T4 Item4 : rprop;
-      T5 Item5 : rprop;
+      T1 Item1 : prop;
+      T2 Item2 : prop;
+      T3 Item3 : prop;
+      T4 Item4 : prop;
+      T5 Item5 : prop;
 
       at(int index)
       {
@@ -138,6 +172,17 @@ namespace collections
             4 { ^ Item5 }
             : { OutOfRangeException.raise() }
       }      
+
+      setAt(int index, object val)
+      {
+         index =>
+            0 { Item1 := val }
+            1 { Item2 := val }
+            2 { Item3 := val }
+            3 { Item4 := val }
+            4 { Item5 := val }
+            : { OutOfRangeException.raise() }
+      }
    }
 
    public sealed Tuple<T1, T2, T3, T4, T5, T6>
@@ -156,12 +201,12 @@ namespace collections
          Item6 := o6;
       }
         
-      T1 Item1 : rprop;
-      T2 Item2 : rprop;
-      T3 Item3 : rprop;
-      T4 Item4 : rprop;
-      T5 Item5 : rprop;
-      T6 Item6 : rprop;
+      T1 Item1 : prop;
+      T2 Item2 : prop;
+      T3 Item3 : prop;
+      T4 Item4 : prop;
+      T5 Item5 : prop;
+      T6 Item6 : prop;
 
       at(int index)
       {
@@ -174,6 +219,17 @@ namespace collections
             5 { ^ Item6 }
             : { OutOfRangeException.raise() }
       }      
-   }
 
+      setAt(int index, object val)
+      {
+         index =>
+            0 { Item1 := val }
+            1 { Item2 := val }
+            2 { Item3 := val }
+            3 { Item4 := val }
+            4 { Item5 := val }
+            5 { Item6 := val }
+            : { OutOfRangeException.raise() }
+      }
+   }
 }

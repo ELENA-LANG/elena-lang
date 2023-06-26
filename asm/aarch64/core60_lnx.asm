@@ -31,6 +31,7 @@ procedure % INVOKER
   mov     x0, x1
 
   blr     x8
+  mov     x0, x10
 
   add     sp, sp, #16
   ldp     x29, x30, [sp], #16 

@@ -58,7 +58,7 @@ procedure % INVOKER
 
   call rax
   add  rsp, 32        // ; clear FrameHeader+arg
-  xor  eax, eax
+  mov  rax, rbx
 
   // ; restore registers
   pop  r15

@@ -35,6 +35,7 @@ namespace elena_lang
       Externals,
       Winapis,
       References,
+      ParserTargets,
 
       Namespace,
 
@@ -68,6 +69,9 @@ namespace elena_lang
 
       Key,
       Value,
+      Target,
+      TargetType,
+      TargetOption,
    };
 
    class FileIteratorBase
@@ -80,6 +84,7 @@ namespace elena_lang
       virtual bool eof() = 0;
 
       virtual bool loadKey(IdentifierString& retVal) = 0;
+      virtual bool loadTarget(IdentifierString& retVal) = 0;
 
       path_t operator*()
       {
@@ -116,6 +121,55 @@ namespace elena_lang
       virtual ~ModuleIteratorBase() = default;
    };
 
+   class CategoryIteratorBase
+   {
+   protected:
+      virtual void next() = 0;
+
+   public:
+      virtual ustr_t name() = 0;
+
+      virtual bool eof() = 0;
+
+      virtual void loadOptions(ProjectOption option, IdentifierString& value, char separator) = 0;
+      virtual bool loadOption(ProjectOption option, IdentifierString& value) = 0;
+
+      CategoryIteratorBase& operator ++()
+      {
+         next();
+
+         return *this;
+      }
+
+      virtual ~CategoryIteratorBase() = default;
+   };
+
+   struct ProjectTarget
+   {
+      int              type;
+      /**
+       * options are separated by \n
+       */
+      IdentifierString options;
+   };
+
+   typedef Map<ustr_t, ProjectTarget*, allocUStr, freeUStr, freeobj> ProjectTargets;
+
+   struct ProjectEnvironment
+   {
+      PathString       projectPath;
+      IdentifierString fileProlog;
+      IdentifierString fileEpilog;
+
+      ProjectTargets   targets;
+
+      ProjectEnvironment()
+         : targets(nullptr)
+      {
+         
+      }
+   };
+
    class ProjectBase : public ForwardResolverBase
    {
    public:
@@ -123,8 +177,11 @@ namespace elena_lang
 
       virtual FileIteratorBase* allocPrimitiveIterator() = 0;
       virtual FileIteratorBase* allocPackageIterator() = 0;
+      virtual CategoryIteratorBase* allocTargetIterator() = 0;
 
       virtual path_t PathSetting(ProjectOption option) const = 0;
+      virtual path_t PathSetting(ProjectOption option, ustr_t key) const = 0;
+
       virtual ustr_t StringSetting(ProjectOption option) const = 0;
       virtual bool BoolSetting(ProjectOption option, bool defValue = false) const = 0;
       virtual int IntSetting(ProjectOption option, int defValue = 0) const = 0;
@@ -162,6 +219,31 @@ namespace elena_lang
          path_t libPath = PathSetting(ProjectOption::LibPath);
          if (!libPath.empty())
             libraryProvider.setRootPath(libPath);
+      }
+
+      virtual void initEnvironment(ProjectEnvironment& env)
+      {
+         env.projectPath.copy(PathSetting(ProjectOption::ProjectPath));
+         env.fileProlog.copy(StringSetting(ProjectOption::Prolog));
+         env.fileEpilog.copy(StringSetting(ProjectOption::Epilog));
+
+         // load targets
+         auto target_it = allocTargetIterator();
+         while (!target_it->eof()) {
+            ustr_t name = target_it->name();
+
+            ProjectTarget* target = new ProjectTarget();
+            IdentifierString tmp;
+            if(target_it->loadOption(ProjectOption::TargetType, tmp)) {
+               target->type = tmp.toInt();
+            }
+
+            env.targets.add(name, target);
+
+            target_it->loadOptions(ProjectOption::TargetOption, target->options, '\n');
+            ++(*target_it);
+         }
+         freeobj(target_it);
       }
 
       virtual ~ProjectBase() = default;

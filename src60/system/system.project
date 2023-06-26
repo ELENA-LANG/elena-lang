@@ -79,8 +79,10 @@
         <include>lnx_app.l</include>
         <include>template_tests.l</include>
         <include>collections/list.l</include>
-	<include>collections/tuples.l</include>
+        <include>collections/queues.l</include>
+        <include>collections/tuples.l</include>
         <include>collections/maps.l</include>
+        <include>collections/template_tests.l</include>
         <include>math/math.l</include>
         <include>text/encoding.l</include>
         <include>text/textbuffer.l</include>
@@ -101,7 +103,11 @@
        <include>runtime/vectortable.l</include>
      </module>
      <module name="dynamic">
+       <include>dynamic/interpreters.l</include>
+       <include>dynamic/groups.l</include>
+       <include>dynamic/closure.l</include>
        <include>dynamic/tape.l</include>
+       <include>dynamic/expressions/expressions.l</include>
      </module>
   </files>
 </configuration>

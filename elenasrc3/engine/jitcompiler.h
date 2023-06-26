@@ -49,6 +49,7 @@ namespace elena_lang
       ByteCommand          command;
       JITConstants*        constants;
 
+      bool                 inlineMode;
       bool                 withDebugInfo;
       ref_t                frameOffset;
       ref_t                stackOffset;
@@ -137,9 +138,12 @@ namespace elena_lang
       friend void loadIOp(JITCompilerScope* scope);
       friend void loadIROp(JITCompilerScope* scope);
 
+      friend void compileAlloc(JITCompilerScope* scope);
+      friend void compileFree(JITCompilerScope* scope);
       friend void compileBreakpoint(JITCompilerScope* scope);
       friend void compileClose(JITCompilerScope* scope);
       friend void compileOpen(JITCompilerScope* scope);
+      friend void compileXOpen(JITCompilerScope* scope);
       friend void compileJump(JITCompilerScope* scope);
       friend void compileJeq(JITCompilerScope* scope);
       friend void compileJne(JITCompilerScope* scope);
@@ -149,6 +153,7 @@ namespace elena_lang
       friend void compileJgr(JITCompilerScope* scope);
       friend void compileDispatchMR(JITCompilerScope* scope);
       friend void compileHookDPR(JITCompilerScope* scope);
+      friend void compileXAssignSp(JITCompilerScope* scope);
 
       void loadCoreRoutines(
          LibraryLoaderBase* loader,
@@ -272,6 +277,7 @@ namespace elena_lang
       pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName, 
          ref_t weakActionRef, ref_t signature, bool virtualMode) override;
       pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode) override;
+      void addSignatureStopper(MemoryWriter& messageWriter) override;
 
       void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) override;
       void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) override;
@@ -348,6 +354,7 @@ namespace elena_lang
       pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName, ref_t weakActionRef, 
          ref_t signature, bool virtualMode) override;
       pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode) override;
+      void addSignatureStopper(MemoryWriter& messageWriter) override;
 
       void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) override;
       void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) override;
@@ -425,8 +432,11 @@ namespace elena_lang
    void loadIOp(JITCompilerScope* scope);
    void loadIROp(JITCompilerScope* scope);
 
+   void compileAlloc(JITCompilerScope* scope);
+   void compileFree(JITCompilerScope* scope);
    void compileClose(JITCompilerScope* scope);
    void compileOpen(JITCompilerScope* scope);
+   void compileXOpen(JITCompilerScope* scope);
    void compileBreakpoint(JITCompilerScope* scope);
    void compileJump(JITCompilerScope* scope);
    void compileJeq(JITCompilerScope* scope);
@@ -437,6 +447,7 @@ namespace elena_lang
    void compileJgr(JITCompilerScope* scope);
    void compileDispatchMR(JITCompilerScope* scope);
    void compileHookDPR(JITCompilerScope* scope);
+   void compileXAssignSp(JITCompilerScope* scope);
 }
 
 #endif

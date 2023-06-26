@@ -16,8 +16,8 @@ define CORE_THREAD_TABLE    2000Fh
 
 define ACTION_ORDER              9
 define ACTION_MASK            1E0h
-define ARG_MASK               05Fh
-define ARG_COUNT_MASK         01Fh
+define ARG_MASK               01Fh
+define ARG_ACTION_MASK        1DFh
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -500,17 +500,20 @@ end
 // ; loads
 inline % 14h
 
-  mov   edx, [ebx]
-  shr   edx, ACTION_ORDER
-  mov   eax, mdata : %0
-  mov   edx, [eax + edx]
+  mov    edx, [ebx]
+  shr    edx, ACTION_ORDER
+  mov    eax, mdata : %0
+  mov    ecx, [eax + edx * 8]
+  test   ecx, ecx
+  cmovnz edx, ecx
+  shl    edx, ACTION_ORDER
 
 end
 
 // ; mlen
 inline % 15h
 
-  and   edx, ARG_COUNT_MASK
+  and   edx, ARG_MASK
 
 end
 
@@ -530,6 +533,13 @@ end
 inline % 17h
 
   mov   ebx, esp
+
+end
+
+// ; xassignsp
+inline % 117h
+
+  lea   ebx, [esp + 4]
 
 end
 
@@ -1331,7 +1341,7 @@ end
 // ; xflushsi 0
 inline %1A4h
 
-  mov [esp+4], esi
+  mov [esp+__arg32_1], esi
 
 end 
 
@@ -1433,6 +1443,13 @@ inline % 1ADh
 
 end
 
+// ; xstorei
+inline % 0AEh
+
+  mov  esi, [ebx + __arg32_1]
+
+end
+
 // ; callr
 inline %0B0h
 
@@ -1464,7 +1481,7 @@ inline % 0B6h // (ebx - object, edx - message, esi - arg0, edi - arg1)
   push  edx 
   mov   edi, [ebx - elVMTOffset]
   mov   eax, __arg32_1
-  and   edx, ARG_MASK
+  and   edx, ARG_ACTION_MASK
   and   eax, ~ARG_MASK
   mov   esi, [edi - elVMTSizeOffset]
   or    edx, eax
@@ -1491,6 +1508,7 @@ labFound:
 
 labEnd:
   pop   edx 
+  mov   esi, [esp+4]
                                                                 
 end
 
@@ -1683,6 +1701,22 @@ inline %2CFh
 
   mov  ecx, 1
   call %GC_COLLECT
+
+end
+
+// ; system inject
+inline %5CFh
+
+  mov  [esp+4], esi
+  pop  esi
+  lea  eax, [edx*4]
+  sub  esp, eax
+  mov  ecx, edx
+  xor  eax, eax
+  mov  edi, esp
+  rep  stos
+  push esi
+  mov  esi, [esp+4]
 
 end
 

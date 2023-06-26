@@ -122,6 +122,8 @@ namespace elena_lang
 
       XmlNode insertNode(ustr_t xpath);
 
+      void loadXml(ustr_t content);
+
       bool load(path_t path, FileEncoding encoding);
       bool save(path_t path, FileEncoding encoding, bool withBOM, bool formatted);
 

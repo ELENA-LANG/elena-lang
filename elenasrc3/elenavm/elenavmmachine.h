@@ -12,59 +12,95 @@
 #include "jitlinker.h" 
 #include "codescope.h" 
 #include "projectbase.h"
+#include "xmlprojectbase.h"
 
 namespace elena_lang
 {
-   constexpr auto ELENAVM_GREETING        = "ELENA VM %d.%d.%d (C)2022 by Aleksex Rakov";
+   constexpr auto ELENAVM_GREETING        = "ELENA VM %d.%d.%d (C)2022-2023 by Aleksey Rakov";
    constexpr auto ELENAVM_INITIALIZING    = "Initializing...";
+
+   // --- ELENAVMConfiguration ---
+
+   class ELENAVMConfiguration : public XmlProjectBase
+   {
+   protected:
+      void loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node root);
+      bool loadConfig(path_t path);
+
+   public:
+      ustr_t resolveWinApi(ustr_t forward);
+
+      bool loadConfigByName(path_t configPath, ustr_t name);
+
+      void forEachForward(void* arg, void (*feedback)(void* arg, ustr_t key, ustr_t value)) override;
+
+      ELENAVMConfiguration(PlatformType platform, path_t path)
+         : XmlProjectBase(platform)
+      {
+         loadConfig(path);
+      }
+   };
 
    // --- ELENARTMachine ---
    class ELENAVMMachine : public ELENAMachine, public ImageProviderBase, public ExternalMapper
    {
    protected:
-      bool                 _initialized;
-      LibraryProvider      _libraryProvider;
-      PresenterBase*       _presenter;
-      ReferenceMapper      _mapper;
-      JITLinkerSettings    _settings;
-      SystemEnv*           _env;
+      bool                    _initialized;
+      LibraryProvider         _libraryProvider;
+      PresenterBase*          _presenter;
+      ReferenceMapper         _mapper;
+      JITLinkerSettings       _settings;
+      SystemEnv*              _env;
 
-      path_t               _rootPath;
+      bool                    _standAloneMode;
 
-      ProjectBase*         _configuration;
-      JITCompilerBase*     _compiler;
+      path_t                  _rootPath;
 
-      IdentifierString     _preloadedSection;
+      ELENAVMConfiguration*   _configuration;
+      JITCompilerBase*        _compiler;
+
+      IdentifierString        _preloadedSection;
 
       virtual addr_t resolveExternal(ustr_t dll, ustr_t function) = 0;
+
+      void loadConfig(ustr_t configName);
 
       void addForward(ustr_t forwardLine);
       void addPackage(ustr_t packageLine);
 
-      int interprete(SystemEnv* env, void* tape, pos_t size, const char* criricalHandlerReference);
+      addr_t interprete(SystemEnv* env, void* tape, pos_t size, 
+         const char* criricalHandlerReference, bool withConfiguration);
 
       void onNewCode(JITLinker& jitLinker);
 
-      void stopVM();
+      virtual void stopVM();
 
       bool configurateVM(MemoryReader& reader, SystemEnv* env);
-      void compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, 
+      bool compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, 
          ModuleBase* dummyModule);
 
-      void resumeVM(JITLinker& jitLinker, SystemEnv* env, void* criricalHandler);
+      virtual void resumeVM(JITLinker& jitLinker, SystemEnv* env, void* criricalHandler);
 
       void init(JITLinker& jitLinker, SystemEnv* env);
 
       AddressMap::Iterator externals() override;
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
+      ref_t loadSubject(ustr_t actionName);
+      ref_t loadDispatcherOverloadlist(ustr_t referenceName);
 
       void fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule);
 
+      addr_t loadReference(ustr_t name, int command);
+
    public:
+      bool isStandAlone() { return _standAloneMode; }
+
       addr_t resolveExternal(ustr_t reference) override;
 
       void startSTA(SystemEnv* env, void* tape, const char* criricalHandlerReference);
+
+      addr_t evaluate(void* tape);
 
       size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
       size_t loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length);
@@ -73,6 +109,9 @@ namespace elena_lang
       addr_t loadClassReference(ustr_t name);
 
       mssg_t loadMessage(ustr_t messageName);
+      mssg_t loadAction(ustr_t actionName);
+
+      int loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output);
 
       void Exit(int exitCode);
 

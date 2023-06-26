@@ -12,6 +12,8 @@
 #include "scriptparser.h"
 #include "textparser.h"
 #include "transformer.h"
+#include "treeparser.h"
+#include "vmparser.h"
 
 using namespace elena_lang;
 
@@ -47,6 +49,12 @@ ScriptEngineParserBase* ScriptEngine :: newParser(int id, ParserType type)
       case ParserType::Build:
          newOne = new ScriptEngineBuilder();
          break;
+      case ParserType::VMBuild:
+         newOne = new VMTapeParser();
+         break;
+      case ParserType::Tree:
+         newOne = new TreeScriptParser();
+         break;
       default:
          throw InvalidOperationError("Unknown parser type");
    }
@@ -64,11 +72,6 @@ ScriptEngineParserBase* ScriptEngine :: getParser(int id)
       return parser;
    }
    else throw InvalidOperationError("Scope is not created");
-}
-
-void ScriptEngine :: parseDirectives(ScriptEngineReaderBase& reader)
-{
-   return;
 }
 
 void ScriptEngine :: parseMetaScript(int id, ScriptEngineReaderBase& reader)
@@ -92,6 +95,12 @@ void ScriptEngine :: parseMetaScript(int id, ScriptEngineReaderBase& reader)
             else if (reader.compare("build")) {
                parser = newParser(id, ParserType::Build);
             }
+            else if (reader.compare("vmbuild")) {
+               parser = newParser(id, ParserType::VMBuild);
+            }
+            else if (reader.compare("tree")) {
+               parser = newParser(id, ParserType::Tree);
+            }
             else throw SyntaxError("unrecognized parser", bm.lineInfo);
          }
          else {
@@ -101,7 +110,7 @@ void ScriptEngine :: parseMetaScript(int id, ScriptEngineReaderBase& reader)
             if (reader.compare("#define")) {
                parser->parseGrammarRule(reader);
             }
-            else parseDirectives(reader);
+            else parser->parseDirective(reader, &_tape);
          }
       }
    }

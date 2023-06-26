@@ -49,11 +49,15 @@ namespace elena_lang
       PlatformType            _platform;
 
       ProcessBase*            _outputProcess;
+      ProcessBase*            _vmProcess;
       DebugController         _debugController;
       NotifierBase*           _notifier;
       WatchContext            _autoWatch;
 
+      PathHelperBase*         _pathHelper;
+
       void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
+      void saveConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node root, ConfigFile::Node platformRoot);
 
       path_t retrieveSourceName(ProjectModel* model, path_t sourcePath, NamespaceString& retVal);
 
@@ -73,9 +77,14 @@ namespace elena_lang
          return _debugController.isStarted();
       }
 
+      void includeFile(ProjectModel& model, path_t filePath);
+
+      void setProjectPath(ProjectModel& model, path_t projectFile);
+
       NotificationStatus openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
       NotificationStatus newProject(ProjectModel& model);
       NotificationStatus openProject(ProjectModel& model, path_t projectFile);
+      NotificationStatus saveProject(ProjectModel& model);
       NotificationStatus closeProject(ProjectModel& model);
 
       path_t getSourceByIndex(ProjectModel& model, int index);
@@ -85,6 +94,9 @@ namespace elena_lang
       void defineFullPath(ProjectModel& model, ustr_t ns, path_t path, PathString& fullPath);
 
       bool doCompileProject(ProjectModel& model, DebugAction postponedAction);
+
+      bool startVMConsole(ProjectModel& model);
+      void stopVMConsole();
 
       void doDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action);
       void doDebugStop(ProjectModel& model);
@@ -123,10 +135,12 @@ namespace elena_lang
             _notifier->notifyTreeItem(id, item, param);
       }
 
-      ProjectController(ProcessBase* outputProcess, DebugProcessBase* debugProcess, ProjectModel* model, SourceViewModel* sourceModel,
-         DebugSourceController* sourceController, PlatformType platform)
-         : _outputProcess(outputProcess), _debugController(debugProcess, model, sourceModel, this, sourceController),
-           _autoWatch({ nullptr, 0 })
+      ProjectController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* debugProcess, 
+         ProjectModel* model, SourceViewModel* sourceModel,
+         DebugSourceController* sourceController, PlatformType platform, PathHelperBase* pathHelper)
+         : _outputProcess(outputProcess), _vmProcess(vmConsoleProcess), _debugController(debugProcess, model, sourceModel, this, sourceController),
+           _autoWatch({ nullptr, 0 }),
+           _pathHelper(pathHelper)
       {
          //_notifier = nullptr;
          _platform = platform;
@@ -146,7 +160,10 @@ namespace elena_lang
 
       bool closeFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
          int index, NotificationStatus& status);
+      bool saveFile(FileDialogBase& dialog, IDEModel* model, int index, bool forcedMode);
       bool closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+         NotificationStatus& status);
+      bool saveAll(FileDialogBase& dialog, IDEModel* model, bool forcedMode,
          NotificationStatus& status);
 
       void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);
@@ -186,18 +203,22 @@ namespace elena_lang
       void doNewFile(IDEModel* model);
       void doOpenFile(FileDialogBase& dialog, IDEModel* model);
       bool doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
+      bool doSaveAll(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
       bool doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
       bool doCloseAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
       void doNewProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, ProjectSettingsBase& prjDialog, 
          IDEModel* model);
       bool doOpenProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
       bool doCloseProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
-      bool doSaveProject(FileDialogBase& dialog, IDEModel* model, bool forcedMode);
+      bool doSaveProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model, bool forcedMode);
 
-      bool doCompileProject(FileDialogBase& dialog, IDEModel* model);
+      bool doCompileProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
       void doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model);
       void doDebugAction(IDEModel* model, DebugAction action);
       void doDebugStop(IDEModel* model);
+
+      void doStartVMConsole(IDEModel* model);
+      void doStopVMConsole();
 
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param);
@@ -213,6 +234,8 @@ namespace elena_lang
       void onDebuggerStop(IDEModel* model);
       void onStatusChange(IDEModel* model, IDEStatus newStatus);
 
+      void doInclude(IDEModel* model);
+
       bool doExit(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
 
       bool onClose(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
@@ -221,12 +244,12 @@ namespace elena_lang
 
       void onProgramStop(IDEModel* model);
 
-      IDEController(ProcessBase* outputProcess, DebugProcessBase* process, IDEModel* model,
-         TextViewSettings& textViewSettings, PlatformType platform
+      IDEController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* process,
+         IDEModel* model, TextViewSettings& textViewSettings, PlatformType platform, PathHelperBase* pathHelper
       ) :
          sourceController(textViewSettings),
-         projectController(outputProcess, process, &model->projectModel, &model->sourceViewModel,
-            this, platform)
+         projectController(outputProcess, vmConsoleProcess, process, &model->projectModel, &model->sourceViewModel,
+            this, platform, pathHelper)
       {
          _notifier = nullptr;
          defaultEncoding = FileEncoding::UTF8;

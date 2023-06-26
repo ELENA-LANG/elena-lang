@@ -18,8 +18,8 @@ define CORE_THREAD_TABLE    2000Fh
 
 define ACTION_ORDER              9
 define ACTION_MASK            1E0h
-define ARG_MASK               05Fh
-define ARG_COUNT_MASK         01Fh
+define ARG_MASK               01Fh
+define ARG_ACTION_MASK        1DFh
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -526,7 +526,7 @@ end
 // ; mlen
 inline % 15h
 
-  and   edx, ARG_COUNT_MASK
+  and   edx, ARG_MASK
 
 end
 
@@ -549,6 +549,13 @@ end
 inline % 17h
 
   mov   rbx, rsp
+
+end
+
+// ; xassignsp
+inline % 117h
+
+  lea   rbx, [rsp + 8]
 
 end
 
@@ -1363,14 +1370,14 @@ end
 // ; xflushsi 0
 inline %1A4h
 
-  mov [rsp+8], r10
+  mov [rsp+__arg32_1], r10
 
 end 
 
 // ; xflushsi 1
 inline %2A4h
 
-  mov [rsp+16], r11
+  mov [rsp+__arg32_1], r11
 
 end 
 
@@ -1403,14 +1410,14 @@ end
 // ; xrefreshsi 0
 inline %1A7h
 
-  mov r10, [rsp+8]
+  mov r10, [rsp+__arg32_1]
 
 end 
 
 // ; xrefreshsi 1
 inline %2A7h
 
-  mov [rsp+16], r11
+  mov r11, [rsp+__arg32_1]
 
 end 
 
@@ -1496,6 +1503,13 @@ inline % 1ADh
 
 end
 
+// ; xstorei
+inline % 0AEh
+
+  mov  r10, [rbx + __arg32_1]
+
+end
+
 // ; callr
 inline %0B0h
 
@@ -1519,14 +1533,14 @@ inline % 0B5h
 
 end
 
-// ; redirect
+// ; xredirect
 inline % 0B6h // (rbx - object, rdx - message, r10 - arg0, r11 - arg1)
 
   mov  r15, rdx
   mov  r14, [rbx - elVMTOffset]
   xor  ecx, ecx
 
-  and  edx, ARG_MASK
+  and  edx, ARG_ACTION_MASK
   mov  eax, __arg32_1
   and  ecx, ~ARG_MASK
   or   edx, ecx

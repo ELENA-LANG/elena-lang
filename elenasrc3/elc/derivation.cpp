@@ -105,6 +105,9 @@ void SyntaxTreeBuilder :: flush(SyntaxTreeWriter& writer, SyntaxNode node)
          case SyntaxKey::Declaration:
             flushDeclaration(writer, current);
             break;
+         case SyntaxKey::ExternalTree:
+            SyntaxTree::copyNode(writer, current);
+            break;
          default:
             SyntaxTree::copyNewNode(writer, current);
 
@@ -449,6 +452,12 @@ void SyntaxTreeBuilder :: generateTemplateOperation(SyntaxTreeWriter& writer, Sc
    switch (operatorTerminal.key) {
       case SyntaxKey::AltOperation:
          templateName.append("alt#1#1");
+         break;
+      case SyntaxKey::IfNotOperation:
+         templateName.append("else#1#1");
+         break;
+      case SyntaxKey::IfOperation:
+         templateName.append("ifnil#1#1");
          break;
       default:
          assert(false);
@@ -1288,6 +1297,15 @@ void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, 
 
       current = current.nextNode();
    }
+}
+
+void SyntaxTreeBuilder::saveTree(SyntaxTree& tree)
+{
+   _cacheWriter.newNode(SyntaxKey::ExternalTree);
+
+   SyntaxTree::copyNode(_cacheWriter, tree.readRoot(), false);
+
+   _cacheWriter.closeNode();
 }
 
 enum DeclarationType

@@ -12,8 +12,9 @@
 #include "windows/win32controller.h"
 #include "windows/win32debugprocess.h"
 #include "windows/windialogs.h"
-#include "Resource.h"
 #include "text.h"
+
+#include <shlwapi.h>
 
 using namespace elena_lang;
 
@@ -33,6 +34,23 @@ constexpr auto TARGET_XPATH = "Win_x64";
 
 constexpr auto TEMPLATE_XPATH = "templates/*";
 
+class PathHelper : public PathHelperBase
+{
+public:
+   void makePathRelative(PathString& path, path_t rootPath) override
+   {
+      path_c tmpPath[MAX_PATH];
+
+      ::PathRelativePathTo(tmpPath, rootPath, FILE_ATTRIBUTE_DIRECTORY, *path, FILE_ATTRIBUTE_NORMAL);
+      if (!emptystr(tmpPath)) {
+         if (path_t(tmpPath).compareSub(L".\\", 0, 2)) {
+            path.copy(tmpPath + 2);
+         }
+         else path.copy(tmpPath);
+      }
+   }
+};
+
 typedef Win32DebugProcess    DebugProcess;
 
 // Forward declarations of functions included in this code module:
@@ -51,14 +69,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
    Text::TabSize = 4; // !! temporal
 
-   GUISettinngs  guiSettings = { true };
+   PathHelper       pathHelper;
+
+   GUISettinngs     guiSettings = { true };
    TextViewSettings textViewSettings = { EOLMode::CRLF, false, 3 };
 
    IDEModel          ideModel;
+   Win32Process      vmConsoleProcess(50);
    Win32Process      outputProcess(50);
    DebugProcess      debugProcess;
-   IDEController     ideController(&outputProcess, &debugProcess, &ideModel, 
-                        textViewSettings, CURRENT_PLATFORM);
+   IDEController     ideController(&outputProcess, &vmConsoleProcess, &debugProcess, &ideModel,
+                        textViewSettings, CURRENT_PLATFORM, &pathHelper);
    IDEFactory        factory(hInstance, &ideModel, &ideController, guiSettings);
 
    PathString configPath(ideModel.projectModel.paths.appPath);
@@ -70,7 +91,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    ideController.loadSystemConfig(&ideModel, *sysConfigPath, TEMPLATE_XPATH, TARGET_XPATH);
 
    GUIApp* app = factory.createApp();
-   GUIControlBase* ideWindow = factory.createMainWindow(app, &outputProcess);
+   GUIControlBase* ideWindow = factory.createMainWindow(app, &outputProcess, &vmConsoleProcess);
 
    ideController.setNotifier(app);
 

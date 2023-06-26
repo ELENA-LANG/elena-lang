@@ -63,8 +63,8 @@ int main()
    int argc;
    wchar_t** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
    
-   if (argc != 2) {
-      printf("ldoc {<module> | <path>}\n");
+   if (argc != 2 && argc != 3) {
+      printf("ldoc {<module> | <path>} <output>?\n");
       return -1;
    }
 
@@ -103,7 +103,7 @@ int main()
 
       PathString path(argv[1]);
       if(!generator.load(*path)) {
-         presenter.printPath(LDOC_MODULE_NOTLOADED, path.str());
+         presenter.printPathLine(LDOC_MODULE_NOTLOADED, path.str());
 
          return -1;
       }
@@ -111,13 +111,18 @@ int main()
    else {
       IdentifierString arg(argv[1]);
       if (!generator.loadByName(*arg)) {
-         presenter.printPath(LDOC_MODULE_NOTLOADED, argv[1]);
+         presenter.printPathLine(LDOC_MODULE_NOTLOADED, argv[1]);
 
          return -1;
       }
    }
 
-   generator.generate();
+   path_t output;
+   if (argc == 3) {
+      output = argv[2];
+   }
+
+   generator.generate(output);
 
    return 0;
 }

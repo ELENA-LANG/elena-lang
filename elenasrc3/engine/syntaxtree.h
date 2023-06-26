@@ -182,17 +182,23 @@ namespace elena_lang
       Column                  = 0x000201,
       Row                     = 0x000202,
 
+      ExternalTree            = 0x000301,
+
       Idle                    = 0x000F01,
    };
 
-   typedef Tree<SyntaxKey, SyntaxKey::None>::Writer SyntaxTreeWriter;
-   typedef Tree<SyntaxKey, SyntaxKey::None>::Node   SyntaxNode;
+   typedef Tree<SyntaxKey, SyntaxKey::None>::Writer      SyntaxTreeWriter;
+   typedef Tree<SyntaxKey, SyntaxKey::None>::Node        SyntaxNode;
+
+   typedef Map<ustr_t, SyntaxKey, allocUStr, freeUStr>   TokenMap;
 
    // --- SyntaxTree ---
    class SyntaxTree : public Tree<SyntaxKey, SyntaxKey::None>
    {
    public:
-      void save(MemoryBase* section);
+      static void loadTokens(TokenMap& map);
+
+      bool save(MemoryBase* section);
       void load(MemoryBase* section);
 
       static bool testSuperKey(SyntaxKey key, SyntaxKey superKey)

@@ -168,6 +168,55 @@ mssg_t ELENARTMachine :: loadMessage(ustr_t messageName)
    return encodeMessage(actionRef, argCount, flags);
 }
 
+mssg_t ELENARTMachine :: loadAction(ustr_t actionName)
+{
+   pos_t argCount = 0;
+   ref_t flags = 0;
+
+   ref_t actionRef = loadSubject(actionName);
+   if (!actionRef)
+      return 0;
+
+   return encodeMessage(actionRef, argCount, flags);
+}
+
+ref_t ELENARTMachine :: loadDispatcherOverloadlist(ustr_t referenceName)
+{
+   return retrieveGlobalAttribute(GA_EXT_OVERLOAD_LIST, referenceName);
+}
+
+int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output)
+{
+   // load message name
+   char messageName[IDENTIFIER_LEN];
+   size_t mssgLen = loadMessageName(message, messageName, IDENTIFIER_LEN);
+   messageName[mssgLen] = 0;
+
+   int len = 0;
+
+   // search message dispatcher
+   IdentifierString messageRef;
+   size_t listLen = getlength(moduleList);
+   size_t i = 0;
+   while (moduleList[i]) {
+      ustr_t ns = moduleList + i;
+
+      messageRef.copy(ns);
+      messageRef.append('\'');
+      messageRef.append(messageName);
+
+      ref_t listRef = loadDispatcherOverloadlist(*messageRef);
+      if (listRef) {
+         ((int*)output)[len] = listRef;
+         len++;
+      }
+
+      i += getlength(ns) + 1;
+   }
+
+   return len;
+}
+
 size_t ELENARTMachine :: loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length)
 {
    // lazy load of debug data
@@ -198,10 +247,10 @@ void ELENARTMachine :: startSTA(SystemEnv* env, void* entry)
    __routineProvider.InitSTA(env);
 
    // executing the program
-   int retVal = execute(env, entry);
+   execute(env, entry);
 
    // winding down system
-   Exit(retVal);
+   Exit(0);
 }
 
 int ELENARTMachine :: allocateThreadEntry(SystemEnv* env)
@@ -232,7 +281,7 @@ void ELENARTMachine :: startThread(SystemEnv* env, void* entry, int index)
 {
    void* arg = env->th_table->slots[index].arg;
    // executing the program
-   int retVal = execute(env, entry, arg);
+   execute(env, entry, arg);
 
    // winding down thread
    //ExitThread(retVal);

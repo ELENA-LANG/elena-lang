@@ -22,6 +22,9 @@ bool ConfigFile :: select(ustr_t xpath, Collection& collection)
 
 bool ConfigFile :: select(Node& node, ustr_t xpath, Collection& result)
 {
+   if (node.isNotFound())
+      return false;
+
    XmlNodeList xmlNodes(XmlNode::Default());
    if (_tree.selectNodes(node.xmlNode, xpath, xmlNodes)) {
       for (auto it = xmlNodes.start(); !it.eof(); ++it) {
@@ -57,6 +60,11 @@ void ConfigFile :: appendSetting(ustr_t xpath, ustr_t value)
       assert(false);
    }
    else node.setContent(value);
+}
+
+void ConfigFile :: create()
+{
+   _tree.loadXml("<configuration></configuration>");
 }
 
 bool ConfigFile :: load(path_t path, FileEncoding encoding)

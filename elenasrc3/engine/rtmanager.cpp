@@ -207,13 +207,14 @@ ref_t RTManager :: loadSubject(ustr_t actionName)
 
    MemoryReader reader(msection);
    IdentifierString messageName;
+   addr_t startPtr = (addr_t)msection->get(0);
    for (ref_t subjectRef = 1; true; subjectRef++) {
       if (MemoryBase::getDWord(msection, mtableOffset + subjectRef * MessageEntryLen) == 0) {
          pos_t namePtr = MemoryBase::getDWord(msection, mtableOffset + subjectRef * MessageEntryLen + sizeof(uintptr_t));
          if (!namePtr)
             break;
 
-         reader.seek(mtableOffset + namePtr);
+         reader.seek(static_cast<pos_t>(namePtr - startPtr));
          reader.readString(messageName);
          if (messageName.compare(actionName)) {
             return subjectRef;

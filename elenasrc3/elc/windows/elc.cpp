@@ -127,7 +127,7 @@ int main()
       PathString appPath;
       getAppPath(appPath);
 
-      JITSettings defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE };
+      JITSettings defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, 1, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       Project          project(*appPath, CURRENT_PLATFORM, &Presenter::getInstance());
       WinLinker        linker(&errorProcessor, &WinImageFormatter::getInstance(&project));
@@ -146,7 +146,7 @@ int main()
       wchar_t** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 
       if (argc < 2) {
-         Presenter::getInstance().print(ELC_HELP_INFO);
+         Presenter::getInstance().printLine(ELC_HELP_INFO);
          return -2;
       }
 
@@ -213,7 +213,7 @@ int main()
          else {
             FileNameString fileName(argv[i]);
             IdentifierString ns(*fileName);
-            project.addSource(*ns, argv[i]);
+            project.addSource(*ns, argv[i], nullptr);
          }
       }
 

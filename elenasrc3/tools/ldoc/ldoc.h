@@ -168,7 +168,7 @@ namespace elena_lang
       void generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName);
       void generateSymbolDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiSymbolInfo* symbolInfo, ustr_t bodyName);
       void generateExtendedDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName);
-      void generateModuleDoc(ApiModuleInfo* moduleInfo);
+      void generateModuleDoc(ApiModuleInfo* moduleInfo, path_t output);
 
       void loadMetaSections();
 
@@ -196,7 +196,7 @@ namespace elena_lang
       bool load(path_t path);
       bool loadByName(ustr_t name);
 
-      void generate();
+      void generate(path_t output);
 
       DocGenerator(LibraryProvider* provider, PresenterBase* presenter)
          : _classDescriptions(nullptr)

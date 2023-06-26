@@ -18,7 +18,7 @@ typedef String<text_t, CAPTION_LEN> CaptrionString;
 // --- ContextBrowser --
 
 ContextBrowser :: ContextBrowser(int width, int height, NotifierBase* notifier, int expandNotificationId)
-   : TreeView(width, height, notifier, 0, false, false)
+   : TreeView(width, height, notifier, 0, false, false), _rootItem(nullptr)
 {
    _expandNotificationId = expandNotificationId;
 }
@@ -138,7 +138,7 @@ void ContextBrowser :: removeUnused(WatchItems& refreshedItems)
    TreeViewItem current = getChild(_rootItem);
    while (current != nullptr) {
       bool found = false;
-      for (int i = 0; i < refreshedItems.count_pos(); i++) {
+      for (int i = 0; i < refreshedItems.count_int(); i++) {
          if (refreshedItems.get(i) == current) {
             found = true;
             break;

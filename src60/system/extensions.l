@@ -842,7 +842,6 @@ public extension stringOp : String
         
       ^ n != -1
    }
-
     
    string trimLeft(char ch)
    {
@@ -906,6 +905,35 @@ public extension stringOp : String
     
    string trim()
       = self.trimLeft($32).trimRight($32);
+
+   string replace(string replacee, string replacer)
+   {
+      string target := emptyString;
+      int    start := 0;
+      int    end := self.indexOf(start, replacee);
+      int    replaceeLen := replacee.Length;
+        
+      while (end != -1)
+      {
+         target := target
+                     .add(self.Substring(start, end - start))
+                     .add(replacer);
+            
+         start := end + replaceeLen;
+            
+         end := self.indexOf(start, replacee)
+      };
+    
+      if(start != 0)
+      {
+         ^ target.add(self.Substring(start))
+      }
+      else
+      {
+         ^ self
+      }
+   }
+
 }
 
 // --- charOp ---
