@@ -1,3 +1,26 @@
+## ELENA 6.0.4b
+*27.06.2023*
+
+- ELENE
+  - fixing variadic multimethod dispatcher
+
+- ELENAVM
+  - (re)implementing loading classes / symbols / messages / message names
+
+- API
+  - system'dynamic'DynamicTape
+  - system'dynamic'expressions'Expression
+
+- SAMPLES
+  - pi sample
+  - calc sample
+
+- Tools
+  - #553 : elt crash fixed
+
+- Misc  
+  - #579 : adding missing files to the installation package 
+
 ## ELENA 6.0.3b
 *30.05.2023*
 

@@ -4,8 +4,6 @@ In development:
 
   [development]
     ### EPIC: elena 6.0 - redux ###
-    === Iteration 16 ===
-
      === Iteration 17 ===
     [!] x86 mta support
     [!] elt tutorial (stand-alone / in IDE)
@@ -29,6 +27,7 @@ In development:
 Backlog:
 ------   
     --- elena backlog
+    * ppc64le / aarch64 : fix variadictest
     * uncomment rest of calc sample - supporting function
     * ide debugger : stepping in the loop (for)
     * elt : 2+3, "hello", "workd".insert(0, "hello ")
