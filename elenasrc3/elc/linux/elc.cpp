@@ -358,7 +358,7 @@ int main(int argc, char* argv[])
          else {
             FileNameString fileName(argv[i]);
 
-            project.addSource(*fileName, argv[i]);
+            project.addSource(*fileName, argv[i], null);
          }
       }
 
