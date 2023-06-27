@@ -2248,6 +2248,11 @@ bool ByteCodeWriter :: applyRules(CommandTape& tape)
    if (!_bcTransformer.loaded)
       return false;
 
+   if (_bcTransformer.apply(tape)) {
+      while (_bcTransformer.apply(tape));
+
+      return true;
+   }
    return false;
 }
 
@@ -2561,4 +2566,12 @@ void ByteCodeWriter :: loadBuildTreeRules(MemoryDump* dump)
 
    _btTransformer.trie.load(&reader);
    _btTransformer.loaded = true;
+}
+
+void ByteCodeWriter :: loadByteCodeRules(MemoryDump* dump)
+{
+   MemoryReader reader(dump);
+
+   _bcTransformer.trie.load(&reader);
+   _bcTransformer.loaded = true;
 }

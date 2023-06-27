@@ -1,0 +1,2 @@
+store sp:$1, peek sp:#1 => store sp, nop;
+

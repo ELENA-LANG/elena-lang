@@ -3,7 +3,7 @@
 //
 //		This file contains the Windows Presenter implementation
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "presenter.h"
@@ -198,3 +198,12 @@ void WinConsolePresenter :: printLine(ustr_t msg, ustr_t path, int col, int row,
    ::printLine(wstr.str(), wpath.str(), row, col, ws.str());
 }
 
+void WinConsolePresenter::showProgress()
+{
+   ::print(L".");
+}
+
+void WinConsolePresenter :: stopProgress()
+{
+   ::print(L"\n");
+}

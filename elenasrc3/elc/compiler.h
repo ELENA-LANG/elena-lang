@@ -948,6 +948,7 @@ namespace elena_lang
       CompilerLogic*         _logic;
       TemplateProssesorBase* _templateProcessor;
       ErrorProcessor*        _errorProcessor;
+      PresenterBase*         _presenter;
 
       bool                   _optMode;
       bool                   _tapeOptMode;
@@ -1394,6 +1395,7 @@ namespace elena_lang
          ustr_t ns, ExtensionMap* outerExtensionList) override;
 
       Compiler(
+         PresenterBase* presenter,
          ErrorProcessor* errorProcessor, 
          TemplateProssesorBase* templateProcessor,
          CompilerLogic* compilerLogic);

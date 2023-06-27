@@ -236,6 +236,12 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
       writer.closeNode();
       writer.closeNode();
 
+      if (_process->_verbose) {
+         ustr_t templateName = moduleScope.module->resolveReference(generatedReference);
+
+         _process->_presenter->print(ELC_COMPILING_TEMPLATE, templateName);
+      }
+
       _process->buildSyntaxTree(moduleScope, &syntaxTree, true, outerExtensionList);
    }
 
@@ -279,6 +285,7 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t prologName, pat
 
       _parser = new Parser(&syntax, terminals, _presenter);
       _compiler = new Compiler(
+         _presenter,
          _errorProcessor,
          &_templateGenerator,
          CompilerLogic::getInstance());
@@ -301,6 +308,8 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t prologName, pat
    if (btRuleReader.isOpen()) {
       _btRules.load(btRuleReader, btRuleReader.length());
    }
+
+   _verbose = false;
 }
 
 void CompilingProcess :: parseFileTemlate(ustr_t prolog, path_t name,
@@ -455,11 +464,16 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    ByteCodeWriter bcWriter(&_libraryProvider);
    if (_btRules.length() > 0)
       bcWriter.loadBuildTreeRules(&_btRules);
+   if (_bcRules.length() > 0)
+      bcWriter.loadByteCodeRules(&_bcRules);
 
    bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList, moduleScope.tapeOptMode);
 
    if (savingMode) {
-      _libraryProvider.saveModule( moduleScope.module);
+      // saving a module
+      printf(ELC_SAVING_MODULE, moduleScope.module->name());
+
+      _libraryProvider.saveModule(moduleScope.module);
       _libraryProvider.saveDebugModule(moduleScope.debugModule);
    }
 }
@@ -498,7 +512,7 @@ void CompilingProcess :: buildModule(ProjectEnvironment& env,
       &moduleScope, &_templateGenerator);
    parseModule(env, module_it, builder, moduleScope);
 
-   _presenter->printLine(ELC_COMPILING_MODULE, moduleScope.module->name());
+   _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
 
    buildSyntaxTree(moduleScope, syntaxTree, false, nullptr);
 }

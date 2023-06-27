@@ -3214,7 +3214,8 @@ namespace elena_lang
       Node getNode(pos_t position)
       {
          Node node = { _defValue };
-         _buffer.read(position, &node, sizeof(Node));
+         if (position != INVALID_POS)
+            _buffer.read(position, &node, sizeof(Node));
 
          return node;
       }
@@ -3380,13 +3381,24 @@ namespace elena_lang
          return (this->_position != node._position);
       }
 
-      pos_t Position() { return _position; }
+      pos_t position() { return _position; }
 
       T Value()
       {
          Node node = _trie->getNode(_position);
 
          return node.value;
+      }
+
+      MemoryTrieNode FirstChild()
+      {
+         Node node = _trie->getNode(_position);
+
+         pos_t childPosition = _trie->getLinkNodePosition(node.firstChildLink);
+         if (childPosition) {
+            return MemoryTrieNode(_trie, childPosition);
+         }
+         return { _trie, INVALID_POS };
       }
 
       ChildEnumerator Children()
@@ -3407,7 +3419,7 @@ namespace elena_lang
 
       void link(MemoryTrieNode& node)
       {
-         _trie->addChildLink(_position, node.Position());
+         _trie->addChildLink(_position, node.position());
       }
 
       MemoryTrieNode()
@@ -3448,7 +3460,7 @@ namespace elena_lang
          while (!children_it.eof()) {
             auto child = children_it.Node();
             if (child.Value() == item)
-               return child.Position();
+               return child.position();
 
             ++children_it;
          }
@@ -3469,7 +3481,7 @@ namespace elena_lang
       {
          while (!nodes.eof()) {
             auto child = nodes.Node();
-            if (!isTerminal(child.Value())/*child.Value() != terminalNode*/ && child.Position() != current.Position()) {
+            if (!isTerminal(child.Value())/*child.Value() != terminalNode*/ && child.position() != current.position()) {
                if (current.Value() == child.Value()) {
                   auto next = current.Children();
                   while (!next.eof()) {
@@ -3479,7 +3491,7 @@ namespace elena_lang
                      ++next;
                   }
                }
-               else if (failedNode.Position() != 0) {
+               else if (failedNode.position() != 0) {
                   auto it = failedNode.find(current.Value());
                   if (it.eof()) {
                      failedNode.link(current);

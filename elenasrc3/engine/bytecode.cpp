@@ -769,3 +769,107 @@ void CommandTape :: saveTo(MemoryWriter* writer)
       }
    }
 }
+
+// --- ByteCodeTransformer ---
+
+inline bool isOperational(ByteCode code)
+{
+   return /*test((int)code, (int)ByteCode::Label)
+   || */(code <= ByteCode::CallExtR && code > ByteCode::Breakpoint);
+}
+
+void ByteCodeTransformer :: transform(ByteCodeIterator trans_it, ByteCodeTrieNode replacement)
+{
+   ByteCodeIterator target_it = trans_it;
+
+   ByteCodePattern pattern = replacement.Value();
+   while (pattern.code != ByteCode::None) {
+      // skip meta commands (except label)
+      while (!isOperational((*trans_it).code))
+         --trans_it;
+
+      (*trans_it).code = pattern.code;
+
+      //switch (pattern.argType) {
+      //   case braAdd:
+      //      (*trans_it).argument += pattern.argument;
+      //      break;
+      //   case braValue:
+      //      (*trans_it).argument = pattern.argument;
+      //      break;
+      //   case braAditionalValue:
+      //      (*trans_it).additional = pattern.argument;
+      //      break;
+      //   case braCopy:
+      //      if (pattern.argument == 1) {
+      //         (*target_it).argument = (*trans_it).argument;
+      //      }
+      //      else if (pattern.argument == 2) {
+      //         (*target_it).additional = (*trans_it).argument;
+      //      }
+      //      break;
+      //}
+
+      trans_it.flush();
+
+      --trans_it;
+      replacement = replacement.FirstChild();
+      pattern = replacement.Value();
+   }
+
+}
+
+bool ByteCodeTransformer :: apply(CommandTape& commandTape)
+{
+   ByteCodePatterns  matchedOnes;
+   ByteCodePatterns  nextOnes;
+
+   ByteCodePatterns* matched = &matchedOnes;
+   ByteCodePatterns* followers = &nextOnes;
+   bool              reversed = false;
+
+   ByteCodeIterator bc_it = commandTape.start();
+   while (!bc_it.eof()) {
+      auto bc = *bc_it;
+
+      if (isOperational(bc.code)) {
+         matched->add({ &trie });
+         followers->clear();
+
+         for (auto it = matched->start(); !it.eof(); ++it) {
+            int arg = (*it).arg;
+            auto patternNode = (*it).node;
+            auto pattern = patternNode.Value();
+
+            for (auto child_it = patternNode.Children(); !child_it.eof(); ++child_it) {
+               auto currentPatternNode = child_it.Node();
+               auto currentPattern = currentPatternNode.Value();
+
+               if (currentPattern.match(bc, arg)) {
+                  if (currentPattern.code == ByteCode::Match) {
+                     transform(--bc_it, currentPatternNode.FirstChild());
+
+                     return true;
+                  }
+                  followers->add({ currentPatternNode, arg });
+               }
+            }
+         }
+
+         if (reversed) {
+            reversed = false;
+            followers = &nextOnes;
+            matched = &matchedOnes;
+         }
+         else {
+            reversed = true;
+            matched = &nextOnes;
+            followers = &matchedOnes;
+         }
+      }
+
+      ++bc_it;
+   }
+
+   return false;
+}

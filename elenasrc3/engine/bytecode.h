@@ -456,10 +456,19 @@ namespace elena_lang
       static void generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* module, MemoryDump& tapeSymbol);
    };
 
+   enum class ByteCodePatternType
+   {
+      None = 0,
+      Set,
+      Match,
+   };
+
    // --- ByteCodePattern ---
    struct ByteCodePattern
    {
-      ByteCode        code;
+      ByteCode             code;
+      ByteCodePatternType  argType;
+      int                  argValue;
 
       bool operator ==(ByteCode code) const
       {
@@ -473,7 +482,7 @@ namespace elena_lang
 
       bool operator ==(ByteCodePattern pattern)
       {
-         return (code == pattern.code/* && argumentType == pattern.argumentType && argument == pattern.argument*/);
+         return (code == pattern.code && argType == pattern.argType && argValue == pattern.argValue);
       }
 
       bool operator !=(ByteCodePattern pattern)
@@ -481,7 +490,31 @@ namespace elena_lang
          return !(*this == pattern);
       }
 
+      bool match(ByteCommand bc, int& arg)
+      {
+         if (code != bc.code)
+            return code == ByteCode::Match;
+
+         switch (argType) {
+            case ByteCodePatternType::Set:
+               arg = bc.arg1;
+               return true;
+            case ByteCodePatternType::Match:
+               return arg == bc.arg1;
+            default:
+               return true;
+         }
+      }
    };
+
+   typedef MemoryTrieNode<ByteCodePattern>   ByteCodeTrieNode;
+   struct ByteCodePatternContext
+   {
+      ByteCodeTrieNode node;
+      int              arg;
+   };
+
+   typedef CachedList<ByteCodePatternContext, 10> ByteCodePatterns;
 
    // --- ByteCodeTransformer ---
    struct ByteCodeTransformer
@@ -490,6 +523,10 @@ namespace elena_lang
 
       MemoryByteTrie trie;
       bool           loaded;
+
+      void transform(ByteCodeIterator trans_it, ByteCodeTrieNode replacement);
+
+      bool apply(CommandTape& tape);
 
       ByteCodeTransformer()
          : trie({ ByteCode::None })

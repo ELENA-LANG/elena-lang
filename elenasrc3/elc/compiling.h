@@ -69,6 +69,8 @@ namespace elena_lang
       MemoryDump          _bcRules;
       MemoryDump          _btRules;
 
+      bool                _verbose;
+
       void buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode, 
          ExtensionMap* outerExtensionList);
 

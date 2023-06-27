@@ -9,6 +9,11 @@ In development:
     [!] elt tutorial (stand-alone / in IDE)
     [!] some bytecode optimizations
     [!] rest of files / console samples
+
+    * optimization : extra temporal variables
+    + optimiation : assinging int constant
+    + optimiation : branching with int constant
+
     * 5 rosetta code sample
 
     === Iteration 18 ===
@@ -275,7 +280,6 @@ Backlog:
 
     * ldoc : show conversions in the separate section
 
-    * optimization : extra temporal variables
     * ide : highlight openning / closing brackets
     * api60 : Indexer2D?
     * native support for long to real
@@ -471,7 +475,6 @@ Backlog:
 
     + #319 : linux : MT
 
-    + optimiation : assinging int constant, 
     + no duplicate variable by boxing
     + optimization - true.Inverted should return constant directly, without calling symbol
     + loading call argument in reverse order, so no need to load self once again

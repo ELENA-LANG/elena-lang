@@ -521,10 +521,6 @@ bool LibraryProvider :: saveModule(ModuleBase* module)
    // re-creating path
    PathUtil::recreatePath(*path);
 
-   // saving a module
-   IdentifierString tmp(*path);
-   printf("saving %s\n", tmp.str());
-
    FileWriter writer(*path, FileEncoding::Raw, false);
    return dynamic_cast<Module*>(module)->save(writer);
 }

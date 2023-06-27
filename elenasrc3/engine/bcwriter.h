@@ -104,6 +104,7 @@ namespace elena_lang
 
    public:
       void loadBuildTreeRules(MemoryDump* dump);
+      void loadByteCodeRules(MemoryDump* dump);
 
       void save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList, bool tapeOptMode);
 

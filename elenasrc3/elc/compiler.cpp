@@ -1313,10 +1313,12 @@ bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
 // --- Compiler ---
 
 Compiler :: Compiler(
+   PresenterBase* presenter,
    ErrorProcessor* errorProcessor,
    TemplateProssesorBase* templateProcessor,
    CompilerLogic* compilerLogic)
 {
+   _presenter = presenter;
    _logic = compilerLogic;
    _errorProcessor = errorProcessor;
    _templateProcessor = templateProcessor;
@@ -11104,6 +11106,8 @@ void Compiler :: compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildT
          declareNamespace(ns, current);
 
          compileNamespace(writer, ns, current);
+
+         _presenter->showProgress();
       }
 
       current = current.nextNode();
