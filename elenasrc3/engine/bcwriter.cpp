@@ -205,6 +205,28 @@ void copyingLocal(CommandTape& tape, BuildNode& node, TapeScope&)
 void copyingToAcc(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int n = node.findChild(BuildKey::Size).arg.value;
+   switch (n) {
+      case 1:
+         tape.write(ByteCode::SwapSI);
+         tape.write(ByteCode::BLoad);
+         tape.write(ByteCode::SwapSI);
+         tape.write(ByteCode::Save);
+         break;
+      case 2:
+         tape.write(ByteCode::SwapSI);
+         tape.write(ByteCode::WLoad);
+         tape.write(ByteCode::SwapSI);
+         tape.write(ByteCode::Save);
+         break;
+      default:
+         tape.write(ByteCode::Copy, n);
+         break;
+   }
+}
+
+void copyingToAccExact(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int n = node.findChild(BuildKey::Size).arg.value;
 
    tape.write(ByteCode::Copy, n);
 }
@@ -1579,7 +1601,9 @@ ByteCodeWriter::Saver commands[] =
    intArraySOp, objArraySOp, copyingLocalArr, extMssgLiteral, loadingBynaryLen, unboxingMessage, loadingSubject, peekArgument,
 
    terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning, savingLInStack, uintCondOp,
-   uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp
+   uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp,
+
+   copyingToAccExact
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -1605,9 +1629,64 @@ inline bool duplicateBreakpoints(BuildNode lastNode)
    return false;
 }
 
+inline bool scanFrameForLocalAddresses(BuildNode& current, BuildKey destKey, int local)
+{
+   bool callOp = false;
+   int localCounter = 0;
+
+   while (current != BuildKey::CloseFrame) {
+      switch (current.key) {
+         case BuildKey::LocalAddress:
+            if (current.arg.value == local) {
+               if (callOp && current.nextNode().key == destKey) {
+                  return localCounter == 1;
+               }
+
+               localCounter++;
+            }
+            break;
+         case BuildKey::CallOp:
+         case BuildKey::DirectCallOp:
+            if (!callOp) {
+               callOp = true;
+            }
+            else return false;
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   return false;
+}
+
+inline bool doubleAssigningByRefHandler(BuildNode lastNode)
+{
+   // OPTTMIZATION CASE : ByRefHandler can directly pass the variable as byref arg
+   lastNode.setKey(BuildKey::Idle);
+
+   // scan the tree and find all local addresses used in the operation
+   BuildNode opNode = lastNode.nextNode();
+   if(scanFrameForLocalAddresses(opNode, BuildKey::Copying, lastNode.arg.value)) {
+      BuildNode byRefArg = BuildTree::gotoNode(lastNode, BuildKey::LocalAddress, lastNode.arg.value);
+      BuildNode copyOp = opNode.nextNode();
+
+      // modify the tree to exclude double copying
+      byRefArg.setArgumentValue(copyOp.arg.value);
+      opNode.setArgumentValue(copyOp.arg.value);
+      copyOp.setKey(BuildKey::Idle);
+
+      return true;
+   }
+
+   return false;
+}
+
 ByteCodeWriter::Transformer transformers[] =
 {
-   nullptr, duplicateBreakpoints
+   nullptr, duplicateBreakpoints, doubleAssigningByRefHandler
 };
 
 // --- ByteCodeWriter ---
@@ -2277,6 +2356,8 @@ void ByteCodeWriter :: optimizeTape(CommandTape& tape)
 inline bool isNonOperational(BuildKey key)
 {
    switch (key) {
+      case BuildKey::ByRefOpMark:
+         return false;
       case BuildKey::OpenStatement:
       case BuildKey::EndStatement:
          // NOTE : to simplify the patterns, ignore open / end statement commands

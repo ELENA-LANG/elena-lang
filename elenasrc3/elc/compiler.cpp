@@ -3734,6 +3734,7 @@ inline void createObject(BuildTreeWriter& writer, ClassInfo& info, ref_t referen
 inline void copyObjectToAcc(BuildTreeWriter& writer, ClassInfo& info, int offset)
 {
    if (test(info.header.flags, elStructureRole)) {
+      // NOTE : the target must be a stack allocated variable for size < 4
       writer.newNode(BuildKey::CopyingToAcc, offset);
       writer.appendNode(BuildKey::Size, info.size);
    }
@@ -5889,6 +5890,9 @@ ObjectInfo Compiler :: compileWeakOperation(BuildTreeWriter& writer, ExprScope& 
       ObjectInfo tempRetVal = declareTempLocal(scope, expectedRef, false);
 
       addByRefRetVal(messageArguments, tempRetVal);
+      // adding mark for optimization routine
+      if (tempRetVal.kind == ObjectKind::TempLocalAddress)
+         writer.appendNode(BuildKey::ByRefOpMark, tempRetVal.argument);
 
       compileMessageOperation(writer, scope, node, loperand, byRefHandler,
          signRef, messageArguments, EAttr::AlreadyResolved, updatedOuterArgs);
@@ -6907,6 +6911,8 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
       ObjectInfo tempRetVal = declareTempLocal(scope, expectedRef, false);
 
       addByRefRetVal(arguments, tempRetVal);
+      if (tempRetVal.kind == ObjectKind::TempLocalAddress)
+         writer.appendNode(BuildKey::ByRefOpMark, tempRetVal.argument);
 
       compileMessageOperation(writer, scope, node, source, byRefHandler,
          implicitSignatureRef, arguments, opMode | EAttr::AlreadyResolved, &outerArgsToUpdate);
@@ -7033,6 +7039,9 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
             ObjectInfo tempRetVal = declareTempLocal(scope, expectedRef, false);
 
             addByRefRetVal(arguments, tempRetVal);
+            // adding mark for optimization routine
+            if (tempRetVal.kind == ObjectKind::TempLocalAddress)
+               writer.appendNode(BuildKey::ByRefOpMark, tempRetVal.argument);
 
             compileMessageOperation(writer, scope, node, source, byRefHandler,
                implicitSignatureRef, arguments, opMode | EAttr::AlreadyResolved, &updatedOuterArgs);
@@ -7122,7 +7131,7 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
             operationType = BuildKey::AccFieldCopying;
             operand = target.reference;
          }
-         else operationType = BuildKey::CopyingToAcc;
+         else operationType = BuildKey::CopyingToAccExact;
          operand = target.reference;
          size = _logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
          if (size < 0) {

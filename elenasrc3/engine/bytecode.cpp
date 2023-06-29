@@ -109,7 +109,7 @@ ByteCode ByteCodeUtil :: code(ustr_t command)
          return (ByteCode)i;
    }
 
-   return ByteCode::None;
+   return command.compare("idle") ? ByteCode::Idle : ByteCode::None;
 }
 
 void ByteCodeUtil :: decode(ByteCode code, IdentifierString& target)

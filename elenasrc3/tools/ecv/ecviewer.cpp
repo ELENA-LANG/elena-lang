@@ -14,6 +14,7 @@
 using namespace elena_lang;
 
 constexpr int TABBING = 20;
+constexpr int INDENT  = 11;
 
 // --- trim ---
 
@@ -570,7 +571,7 @@ void ByteCodeViewer :: printSymbol(ustr_t name)
    }
 
    printLine("@symbol", name);
-   printByteCodes(code, 0, 4, _pageSize);
+   printByteCodes(code, 0, INDENT, _pageSize);
    printLine("@end");
 }
 
@@ -585,7 +586,7 @@ void ByteCodeViewer :: printProcedure(ustr_t name)
    }
 
    printLine("@procedure", name);
-   printByteCodes(code, 0, 4, _pageSize);
+   printByteCodes(code, 0, INDENT, _pageSize);
    printLine("@end");
 }
 
@@ -806,7 +807,7 @@ void ByteCodeViewer::printMethod(ustr_t name, bool fullInfo)
          if (test(methodInfo.hints, (ref_t)MethodHint::Abstract)) {
             printLine("  <abstract>");
          }
-         else printByteCodes(code, entry.codeOffset, 4, _pageSize);
+         else printByteCodes(code, entry.codeOffset, INDENT, _pageSize);
 
          printLine("@end");
 

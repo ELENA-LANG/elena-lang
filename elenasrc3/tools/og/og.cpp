@@ -182,8 +182,6 @@ void parseBuildCodeRule(BuildCodeTrie& trie, BuildKeyMap& dictionary, ScriptRead
    while (!token.compare(";")) {
       position = trie.add(position, decodeBuildPattern(dictionary, reader, token));
    }
-
-   reader.read(token);
 }
 
 int parseSourceRules(FileEncoding encoding, path_t path)

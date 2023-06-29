@@ -1049,6 +1049,40 @@ inline %90h
 
 end
 
+// ; copy 1
+inline %290h
+
+  mov  eax, [esi]
+  mov  byte ptr [ebx], al
+
+end
+
+// ; copy 2
+inline %390h
+
+  mov  eax, [esi]
+  mov  word ptr [ebx], ax
+
+end
+
+// ; copy 4
+inline %590h
+
+  mov  eax, [esi]
+  mov  dword ptr [ebx], eax
+
+end
+
+// ; copy 8
+inline %790h
+
+  mov  eax, [esi]
+  mov  edi, [esi+4]
+  mov  dword ptr [ebx], eax
+  mov  dword ptr [ebx+4], edi
+
+end
+
 // ; closen
 inline %91h
 

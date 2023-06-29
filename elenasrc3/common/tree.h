@@ -684,6 +684,17 @@ namespace elena_lang
 
          return Node();
       }
+      static Node gotoNode(Node current, Key key, int value)
+      {
+         while (current != defKey) {
+            if (current.key == key && current.arg.value == value)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return Node();
+      }
 
       static bool ifChildExists(Node node, Key key, int value)
       {

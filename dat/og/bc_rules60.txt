@@ -1,2 +1,3 @@
-store sp:$1, peek sp:#1 => store sp, nop;
+store sp:$1, peek sp:#1 => store sp, idle;
+store fp:$1, peek fp:#1 => store fp, idle;
 

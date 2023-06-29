@@ -1068,6 +1068,38 @@ inline %90h
 
 end
 
+// ; copy 1
+inline %290h
+
+  mov  rax, [r10]
+  mov  byte ptr [rbx], al
+
+end
+
+// ; copy 2
+inline %390h
+
+  mov  rax, [r10]
+  mov  word ptr [rbx], ax
+
+end
+
+// ; copy 4
+inline %590h
+
+  mov  rax, [r10]
+  mov  dword ptr [rbx], eax
+
+end
+
+// ; copy 8
+inline %790h
+
+  mov  rax, [r10]
+  mov  [rbx], rax
+
+end
+
 // ; closen
 inline %91h
 

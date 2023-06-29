@@ -8,13 +8,20 @@ In development:
     [!] x86 mta support
     [!] elt tutorial (stand-alone / in IDE)
     [!] some bytecode optimizations
-    [!] rest of files / console samples
+    [!] rest of files / console samples / rosetta code samples
+
+    * ide : find
+
+    * optimization : double copying (arithmeric operation)
+    * boxing an array, assinging to the local variable - get rid of double assigning
 
     * optimization : extra temporal variables
     + optimiation : assinging int constant
     + optimiation : branching with int constant
-
-    * 5 rosetta code sample
+    + optimiation : operation with int constant
+    + optimiation : typecast method (e.g m = self)
+    + optimiation : idle method (e.g m() {})
+    * field boxing : double assigning
 
     === Iteration 18 ===
     [!] x86 GUI support
@@ -32,6 +39,10 @@ In development:
 Backlog:
 ------   
     --- elena backlog
+    * data alignment : for normal structs - allign the data to 4/8 and make an operation aligned to 4/8;
+      so all stack allocated data is aligned to 4 / 8;
+      field are allocated to 4 / 8 for all cases except packed flag
+    * optimization : double assigning for external op
     * ppc64le / aarch64 : fix variadictest
     * uncomment rest of calc sample - supporting function
     * ide debugger : stepping in the loop (for)
@@ -183,7 +194,6 @@ Backlog:
     * system'collections'Map - migrating rest of methods
     * if statements with single statement
     * replace all default maps with optimized ones (e.g. SyntaxHash, TableHash, SyntaxTable)
-    * optimization : double assigning for external op
     * create github action workflow to build the project
     * inno setup : x86, x86-64
     * arm : uncomment loadv opcode : using and imm
@@ -233,7 +243,6 @@ Backlog:
     * ide : set focus on activate / after opening a file
     * ide : toolbar
     * ide : fix blicking on tab selecting (especially on opening a new project)
-    * ide : find
     * ide : replace
     * ide : replace all
     * ide : open the last opened file on the ide start
@@ -688,8 +697,6 @@ Backlog:
                 * test : branching external implementation : returning a value from closure 
                 * use stosd over stos
                 * field boxing : e.g x + x - should not be boxed twice
-                * field boxing : double assigning
-                * boxing an array, assinging to the local variable - get rid of double assigning
                 * operations with byte or word 
                 * saving dword or qword 
                 * simplify the operations with struct fields (size=1,2,4,8,...)

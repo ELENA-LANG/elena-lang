@@ -417,6 +417,9 @@ void* elena_lang :: retrieveCode(JITCompilerScope* scope)
       case 4:
          code = scope->compiler->_inlines[5][scope->code()];
          break;
+      case 8:
+         code = scope->compiler->_inlines[7][scope->code()];
+         break;
       case -1:
          code = scope->compiler->_inlines[6][scope->code()];
          break;

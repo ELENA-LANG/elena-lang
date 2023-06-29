@@ -138,24 +138,25 @@ namespace elena_lang
       FreeVarStack         = 0x006D,
       FillOp               = 0x006E, // if the argument is 0 - the size is in sp[0]
       StrongResendOp       = 0x006F,
+      CopyingToAccExact    = 0x0070,
 
-      MaxOperationalKey    = 0x0070,
+      MaxOperationalKey    = 0x0071,
 
-      Import               = 0x0070,
-      DictionaryOp         = 0x0071,
-      ObjOp                = 0x0072,
-      AttrDictionaryOp     = 0x0073,
-      DeclOp               = 0x0074,
-      DeclDictionaryOp     = 0x0075,
-      LoopOp               = 0x0076,
-      CatchOp              = 0x0077,
-      ExternOp             = 0x0078,
-      AltOp                = 0x0079,
-      ShortCircuitOp       = 0x007A,
-      Switching            = 0x007B,
-      SwitchOption         = 0x007C,
-      ElseOption           = 0x007D,
-      FinalOp              = 0x007E,
+      Import               = 0x0080,
+      DictionaryOp         = 0x0081,
+      ObjOp                = 0x0082,
+      AttrDictionaryOp     = 0x0083,
+      DeclOp               = 0x0084,
+      DeclDictionaryOp     = 0x0085,
+      LoopOp               = 0x0086,
+      CatchOp              = 0x0087,
+      ExternOp             = 0x0088,
+      AltOp                = 0x0089,
+      ShortCircuitOp       = 0x008A,
+      Switching            = 0x008B,
+      SwitchOption         = 0x008C,
+      ElseOption           = 0x008D,
+      FinalOp              = 0x008E,
 
       VariableInfo         = 0x0090,
       Variable             = 0x0091,
@@ -180,6 +181,8 @@ namespace elena_lang
       IntArrayParameter    = 0x00A9,
 
       BinaryArray          = 0x00B0,
+
+      ByRefOpMark          = 0x4001,
 
       Value                = 0x8001,
       Reserved             = 0x8002,      // reserved managed
@@ -226,6 +229,7 @@ namespace elena_lang
       static void loadBuildKeyMap(BuildKeyMap& map)
       {
          map.add("breakpoint", BuildKey::Breakpoint);
+         map.add("byrefmark", BuildKey::ByRefOpMark);
       }
    };
 

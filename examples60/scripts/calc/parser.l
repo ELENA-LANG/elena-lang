@@ -292,7 +292,7 @@ class StateMachine
 
    newNumberLeaf(leafLevel)
    {
-      _leaf := TreeLeaf.new(_level + leafLevel, mssgconst toReal<convertorOp>[1]);
+      _leaf := TreeLeaf.new(_level + leafLevel, mssgconst toReal<realConvertOp>[1]);
         
       _derivationTree.append(_leaf)
    }
