@@ -143,6 +143,11 @@ MessageDialogBase::Answer MessageDialog :: question(text_str message)
    else return Answer::No;
 }
 
+void MessageDialog :: info(text_str message)
+{
+   ::MessageBox(_owner->handle(), message, APP_NAME, MB_OK | MB_ICONWARNING);
+}
+
 // --- WinDialog ---
 
 BOOL CALLBACK WinDialog::DialogProc(HWND hWnd, size_t message, WPARAM wParam, LPARAM lParam)
@@ -170,10 +175,10 @@ void WinDialog :: doCommand(int id, int command)
    switch (id) {
       case IDOK:
          onOK();
-         ::EndDialog(_handle, -1);
+         ::EndDialog(_handle, IDOK);
          break;
       case IDCANCEL:
-         ::EndDialog(_handle, 0);
+         ::EndDialog(_handle, IDCANCEL);
          break;
    }
 }
@@ -182,6 +187,16 @@ int WinDialog :: show()
 {
    return (int)::DialogBoxParam(_instance, MAKEINTRESOURCE(_dialogId),
       _owner->handle(), (DLGPROC)DialogProc, (LPARAM)this);
+}
+
+void WinDialog :: clearComboBoxItem(int id)
+{
+   int counter = ::SendDlgItemMessage(_handle, id, CB_GETCOUNT, 0, 0);
+   while (counter > 0) {
+      ::SendDlgItemMessage(_handle, id, CB_DELETESTRING, 0, 0);
+
+      counter--;
+   }
 }
 
 void WinDialog :: addComboBoxItem(int id, const wchar_t* text)
@@ -212,6 +227,16 @@ void WinDialog :: setTextLimit(int id, int maxLength)
 void WinDialog :: getText(int id, wchar_t** text, int length)
 {
    ::SendDlgItemMessage(_handle, id, WM_GETTEXT, length, (LPARAM)text);
+}
+
+void WinDialog :: setCheckState(int id, bool value)
+{
+   ::SendDlgItemMessage(_handle, id, BM_SETCHECK, value ? BST_CHECKED : BST_UNCHECKED, 0);
+}
+
+bool WinDialog :: getCheckState(int id)
+{
+   return test((int)::SendDlgItemMessage(_handle, id, BM_GETCHECK, 0, 0), BST_CHECKED);
 }
 
 // --- ProjectSettings ---
@@ -314,4 +339,57 @@ void ProjectSettings :: onOK()
 bool ProjectSettings :: showModal()
 {
    return show() == IDOK;
+}
+
+// --- FindDialog ---
+
+FindDialog :: FindDialog(HINSTANCE instance, WindowBase* owner, FindModel* model)
+   : WinDialog(instance, owner)
+{
+   _dialogId = IDD_EDITOR_FIND;
+   _model = model;
+}
+
+void FindDialog :: copyHistory(int id, SearchHistory* history)
+{
+   clearComboBoxItem(id);
+
+   SearchHistory::Iterator it = history->start();
+   while (!it.eof()) {
+      addComboBoxItem(id, *it);
+
+      ++it;
+   }
+}
+
+bool FindDialog :: showModal()
+{
+   return show() == IDOK;
+}
+
+void FindDialog :: onCreate()
+{
+   setText(IDC_FIND_TEXT, _model->text.str());
+   //if (_model-> _replaceMode) {
+   //   setText(IDC_REPLACE_TEXT, _option->newText);
+   //}
+   setCheckState(IDC_FIND_CASE, _model->matchCase);
+   setCheckState(IDC_FIND_WHOLE, _model->wholeWord);
+
+   copyHistory(IDC_FIND_TEXT, &_model->searchHistory);
+
+   //if (_replaceHistory) {
+   //   copyHistory(IDC_REPLACE_TEXT, _replaceHistory);
+   //}
+}
+
+void FindDialog :: onOK()
+{
+   wchar_t s[200];
+
+   getText(IDC_FIND_TEXT, (wchar_t**)(&s), 255);
+   _model->text.copy(s);
+
+   _model->matchCase = getCheckState(IDC_FIND_CASE);
+   _model->wholeWord = getCheckState(IDC_FIND_WHOLE);
 }

@@ -43,6 +43,7 @@ namespace elena_lang
       FileDialog        projectDialog;
       MessageDialog     messageDialog;
       ProjectSettings   projectSettingsDialog;
+      FindDialog        findDialog;
       Clipboard         clipboard;
 
       HINSTANCE         _instance;
@@ -114,6 +115,9 @@ namespace elena_lang
       void commentText();
       void uncommentText();
       void selectAll();
+
+      void search();
+      void searchNext();
 
       void includeFile();
 

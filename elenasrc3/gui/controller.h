@@ -32,10 +32,18 @@ namespace elena_lang
 
       virtual Answer question(text_str message, const text_str param) = 0;
       virtual Answer question(text_str message) = 0;
+
+      virtual void info(text_str message) = 0;
    };
 
    // --- ProjectSettingsBase ---
    class ProjectSettingsBase
+   {
+   public:
+      virtual bool showModal() = 0;
+   };
+
+   class FindDialogBase
    {
    public:
       virtual bool showModal() = 0;
@@ -80,8 +88,8 @@ namespace elena_lang
       void redo(TextViewModelBase* model) override;
 
       void deleteText(TextViewModelBase* model) override;
-      void insertBlockText(TextViewModelBase* model, const text_t s, size_t length) override;
-      void deleteBlockText(TextViewModelBase* model, const text_t s, size_t length) override;
+      void insertBlockText(TextViewModelBase* model, const_text_t s, size_t length) override;
+      void deleteBlockText(TextViewModelBase* model, const_text_t s, size_t length) override;
 
       bool copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;
       void pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;
@@ -100,6 +108,9 @@ namespace elena_lang
       void selectAll(TextViewModelBase* model) override;
 
       void resizeModel(TextViewModelBase* model, Point size) override;
+
+      bool findText(TextViewModelBase* model, FindModel* findModel, 
+         NotificationStatus& status);
 
       TextViewController(TextViewSettings& settings)
       {

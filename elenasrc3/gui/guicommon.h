@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GUI common classes header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GUICOMMON_H
@@ -13,9 +13,10 @@ namespace elena_lang
 {
 #ifdef _MSC_VER
 
-   typedef wide_c  text_c;
-   typedef wide_c* text_t;
-   typedef wstr_t  text_str;
+   typedef wide_c          text_c;
+   typedef wide_c*         text_t;
+   typedef const wide_c*   const_text_t;
+   typedef wstr_t          text_str;
 
 #elif __GNUG__
 
@@ -25,9 +26,10 @@ namespace elena_lang
 
 #endif // _T
 
-   typedef char   text_c;
-   typedef char*  text_t;
-   typedef ustr_t text_str;
+   typedef char         text_c;
+   typedef char*        text_t;
+   typedef const char*  const_text_t;
+   typedef ustr_t       text_str;
 
 #endif
 

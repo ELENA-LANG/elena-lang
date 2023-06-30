@@ -10,6 +10,7 @@
 #include "controller.h"
 #include "editcontrol.h"
 #include "ideproject.h"
+#include "ideview.h"
 
 namespace elena_lang
 {
@@ -54,6 +55,8 @@ namespace elena_lang
       Answer question(text_str message, text_str param) override;
       Answer question(text_str message) override;
 
+      void info(text_str message) override;
+
       MessageDialog(WindowBase* owner)
       {
          _owner = owner;
@@ -77,10 +80,14 @@ namespace elena_lang
       void addComboBoxItem(int id, const wchar_t* text);
       void setComboBoxIndex(int id, int index);
       int  getComboBoxIndex(int id);
+      void clearComboBoxItem(int id);
 
       void setText(int id, const wchar_t* text);
       void getText(int id, wchar_t** text, int length);
       void setTextLimit(int id, int maxLength);
+
+      void setCheckState(int id, bool value);
+      bool getCheckState(int id);
 
    public:
       static BOOL CALLBACK DialogProc(HWND hwnd, size_t message, WPARAM wParam, LPARAM lParam);
@@ -107,6 +114,21 @@ namespace elena_lang
       bool showModal() override;
 
       ProjectSettings(HINSTANCE instance, WindowBase* owner, ProjectModel* model);
+   };
+
+   class FindDialog : public WinDialog, public FindDialogBase
+   {
+      FindModel* _model;
+
+      void copyHistory(int id, SearchHistory* history);
+
+      void onCreate() override;
+      void onOK() override;
+
+   public:
+      bool showModal() override;
+
+      FindDialog(HINSTANCE instance, WindowBase* owner, FindModel* model);
    };
 
 }

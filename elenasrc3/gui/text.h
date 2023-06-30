@@ -21,8 +21,8 @@ namespace elena_lang
    {
    public:
       virtual void onUpdate(size_t position) = 0;
-      virtual void onInsert(size_t position, size_t length, text_t line) = 0;
-      virtual void onErase(size_t position, size_t length, text_t line) = 0;
+      virtual void onInsert(size_t position, size_t length, const_text_t line) = 0;
+      virtual void onErase(size_t position, size_t length, const_text_t line) = 0;
 
       virtual ~TextWatcherBase() = default;
    };
@@ -289,8 +289,11 @@ namespace elena_lang
 
       int retrieveRowCount();
 
-      void insert(TextBookmark bookmark, text_t s, size_t length, bool checkRowCount);
+      void insert(TextBookmark bookmark, const_text_t s, size_t length, bool checkRowCount);
       void erase(TextBookmark bookmark, size_t length, bool checkRowCount);
+
+      bool compare(TextBookmark bookmark, const_text_t line, size_t len, bool matchCase, 
+         const_text_t terminators);
 
    public:
       static int TabSize;
@@ -311,11 +314,13 @@ namespace elena_lang
       void save(path_t path);
 
       bool insertChar(TextBookmark& bookmark, text_c ch);
-      bool insertLine(TextBookmark& bookmark, text_t s, size_t length);
+      bool insertLine(TextBookmark& bookmark, const_text_t s, size_t length);
       bool insertNewLine(TextBookmark& bookmark);
 
       bool eraseChar(TextBookmark& bookmark);
       bool eraseLine(TextBookmark& bookmark, size_t length);
+
+      bool findWord(TextBookmark& bookmark, const_text_t text, bool matchCase, const_text_t terminators);
 
       void attachWatcher(TextWatcherBase* watcher);
       void detachWatcher(TextWatcherBase* watcher);
@@ -403,8 +408,8 @@ namespace elena_lang
       bool bof() const;
 
       void onUpdate(size_t position) override;
-      void onInsert(size_t position, size_t length, text_t line) override;
-      void onErase(size_t position, size_t length, text_t line) override;
+      void onInsert(size_t position, size_t length, const_text_t line) override;
+      void onErase(size_t position, size_t length, const_text_t line) override;
 
       bool undo(Text* text, TextBookmark& caret);
       bool redo(Text* text, TextBookmark& caret);

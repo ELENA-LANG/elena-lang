@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE Messages
 //
-//                                            (C)2021-2022, by Aleksex Rakov
+//                                            (C)2021-2023, by Aleksex Rakov
 //---------------------------------------------------------------------------
 
 #ifndef MESSAGES_H
@@ -17,6 +17,8 @@ namespace elena_lang
 
    constexpr auto QUESTION_SAVE_FILECHANGES  = _T("Save changes to ");
    constexpr auto QUESTION_CLOSE_UNSAVED     = _T("Close the tab anyway");
+
+   constexpr auto NOT_FOUND_TEXT             = _T("Search string not found");
 
 }
 

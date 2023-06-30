@@ -55,6 +55,24 @@ namespace elena_lang
       virtual void onDocumentClose(int index) = 0;
    };
 
+   // --- FindModel ---
+   typedef List<text_c*, freestr> SearchHistory;
+
+   struct FindModel
+   {
+      String<text_c, 255>  text;
+      SearchHistory        searchHistory;
+
+      bool                 matchCase;
+      bool                 wholeWord;
+
+      FindModel()
+         : searchHistory(nullptr)
+      {
+         
+      }
+   };
+
    // --- TextViewBase ---
    class TextViewModelBase
    {
@@ -138,8 +156,8 @@ namespace elena_lang
 
       virtual void indent(TextViewModelBase* model) = 0;
       virtual void deleteText(TextViewModelBase* model) = 0;
-      virtual void insertBlockText(TextViewModelBase* model, const text_t s, size_t length) = 0;
-      virtual void deleteBlockText(TextViewModelBase* model, const text_t s, size_t length) = 0;
+      virtual void insertBlockText(TextViewModelBase* model, const_text_t s, size_t length) = 0;
+      virtual void deleteBlockText(TextViewModelBase* model, const_text_t s, size_t length) = 0;
 
       virtual bool copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard) = 0;
       virtual void pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard) = 0;

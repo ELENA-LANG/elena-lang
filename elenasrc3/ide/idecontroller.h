@@ -212,6 +212,9 @@ namespace elena_lang
       bool doCloseProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
       bool doSaveProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model, bool forcedMode);
 
+      bool doSearch(FindDialogBase& dialog, IDEModel* model);
+      bool doSearchNext(IDEModel* model);
+
       bool doCompileProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
       void doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model);
       void doDebugAction(IDEModel* model, DebugAction action);

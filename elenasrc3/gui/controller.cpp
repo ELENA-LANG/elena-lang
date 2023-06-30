@@ -205,7 +205,7 @@ void TextViewController :: deleteText(TextViewModelBase* model)
    notifyOnChange(model, status);
 }
 
-void TextViewController :: insertBlockText(TextViewModelBase* model, const text_t s, size_t length)
+void TextViewController :: insertBlockText(TextViewModelBase* model, const_text_t s, size_t length)
 {
    DocumentChangeStatus status = {};
    auto docView = model->DocView();
@@ -216,7 +216,7 @@ void TextViewController :: insertBlockText(TextViewModelBase* model, const text_
    notifyOnChange(model, status);
 }
 
-void TextViewController :: deleteBlockText(TextViewModelBase* model, const text_t s, size_t length)
+void TextViewController :: deleteBlockText(TextViewModelBase* model, const_text_t s, size_t length)
 {
    DocumentChangeStatus status = {};
    auto docView = model->DocView();
@@ -379,4 +379,22 @@ void TextViewController :: resizeModel(TextViewModelBase* model, Point size)
    }
 
    notifyOnChange(model, status);
+}
+
+bool TextViewController :: findText(TextViewModelBase* model, FindModel* findModel, NotificationStatus& status)
+{
+   DocumentChangeStatus docStatus = {};
+
+   auto docView = model->DocView();
+   if (docView && docView->findLine(docStatus, findModel->text.str(), findModel->matchCase, 
+      findModel->wholeWord)) 
+   {
+      notifyOnChange(model, docStatus);
+
+      status |= FRAME_CHANGED;
+
+      return true;
+   }
+
+   return false;
 }

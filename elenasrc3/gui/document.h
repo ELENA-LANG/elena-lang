@@ -84,8 +84,8 @@ namespace elena_lang
 
    public:
       void onUpdate(size_t position) override;
-      void onInsert(size_t position, size_t length, text_t line) override;
-      void onErase(size_t position, size_t length, text_t line) override;
+      void onInsert(size_t position, size_t length, const_text_t line) override;
+      void onErase(size_t position, size_t length, const_text_t line) override;
 
       pos_t proceed(pos_t position, ReaderInfo& info);
 
@@ -239,9 +239,9 @@ namespace elena_lang
 
       pos_t format(LexicalReader& reader);
 
-      void onInsert(size_t position, size_t length, text_t line) override;
+      void onInsert(size_t position, size_t length, const_text_t line) override;
       void onUpdate(size_t position) override;
-      void onErase(size_t position, size_t length, text_t line) override;
+      void onErase(size_t position, size_t length, const_text_t line) override;
 
       TextBookmark getCaretBookmark() { return _caret; }
 
@@ -357,8 +357,8 @@ namespace elena_lang
       void insertNewLine(DocumentChangeStatus& changeStatus);
       void insertLine(DocumentChangeStatus& changeStatus, text_t text, disp_t length);
 
-      virtual void blockInserting(DocumentChangeStatus& changeStatus, text_t subs, size_t length);
-      virtual void blockDeleting(DocumentChangeStatus& changeStatus, text_t subs, size_t length);
+      virtual void blockInserting(DocumentChangeStatus& changeStatus, const_text_t subs, size_t length);
+      virtual void blockDeleting(DocumentChangeStatus& changeStatus, const_text_t subs, size_t length);
 
       bool eraseSelection(DocumentChangeStatus& changeStatus);
       void eraseChar(DocumentChangeStatus& changeStatus, bool moveback);
@@ -371,6 +371,8 @@ namespace elena_lang
       void save(path_t path);
 
       void notifyOnChange(DocumentChangeStatus& changeStatus);
+
+      bool findLine(DocumentChangeStatus& changeStatus, const_text_t text, bool matchCase, bool wholeWord);
 
       DocumentView(Text* text, TextFormatterBase* formatter);
       virtual ~DocumentView();

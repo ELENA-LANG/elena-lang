@@ -35,25 +35,28 @@
 #define IDM_VIEW_MESSAGES           604
 #define IDM_VIEW_VMCONSOLE          605
 
-#define IDM_PROJECT_INCLUDE         701
-#define IDM_PROJECT_COMPILE         702
-#define IDM_PROJECT_OPTION          703
+#define IDM_SEARCH_FIND             701
+#define IDM_SEARCH_FINDNEXT         702
 
-#define IDM_DEBUG_RUN               801
-#define IDM_DEBUG_STEPOVER          802
-#define IDM_DEBUG_STEPINTO          803
-#define IDM_DEBUG_RUNTO             804
-#define IDM_DEBUG_STOP              805
-#define IDM_DEBUG_BREAKPOINT        806
-#define IDM_DEBUG_CLEARBREAKPOINT   807
+#define IDM_PROJECT_INCLUDE         801
+#define IDM_PROJECT_COMPILE         802
+#define IDM_PROJECT_OPTION          803
 
-#define IDM_DEBUG_INSPECT           810
-#define IDM_DEBUG_SWITCHHEXVIEW     811
+#define IDM_DEBUG_RUN               901
+#define IDM_DEBUG_STEPOVER          902
+#define IDM_DEBUG_STEPINTO          903
+#define IDM_DEBUG_RUNTO             904
+#define IDM_DEBUG_STOP              905
+#define IDM_DEBUG_BREAKPOINT        906
+#define IDM_DEBUG_CLEARBREAKPOINT   907
 
-#define IDM_WINDOW_NEXT             901
-#define IDM_WINDOW_PREVIOUS         902
+#define IDM_WINDOW_NEXT            1001
+#define IDM_WINDOW_PREVIOUS        1002
 
-#define IDM_HELP_API               1001
+#define IDM_HELP_API               1101
+
+#define IDM_DEBUG_INSPECT          1201
+#define IDM_DEBUG_SWITCHHEXVIEW    1202
 
 #define IDI_IDE                     107
 #define IDI_SMALL                   108
@@ -74,6 +77,11 @@
 #define IDC_SETTINGS_OUTPUT         805
 #define IDC_SETTINGS_DEBUG          806
 #define IDC_SETTINGS_ARGUMENT       807
+
+#define IDD_EDITOR_FIND            1000
+#define IDC_FIND_TEXT              1004
+#define IDC_FIND_CASE              1005
+#define IDC_FIND_WHOLE             1006
 
 #ifndef IDC_STATIC
 #define IDC_STATIC                  -1

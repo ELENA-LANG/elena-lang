@@ -10,8 +10,14 @@ In development:
     [!] some bytecode optimizations
     [!] rest of files / console samples / rosetta code samples
 
-    * ide : find
+    * new opcode : bcopy, wcopy x86, x86-64, ppc64le, aarch64 (see copyingToAcc)
 
+    * implementing corex : gc_alloc
+
+    * ide : set focus in the text editor on start / switch
+    * ide : replace
+    * implementing corex
+    * implementing corex: snop
     * optimization : double copying (arithmeric operation)
     * boxing an array, assinging to the local variable - get rid of double assigning
 

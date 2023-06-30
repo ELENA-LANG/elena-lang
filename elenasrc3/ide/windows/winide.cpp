@@ -116,6 +116,7 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
       *model->projectModel.paths.lastPath),
    messageDialog(this),
    projectSettingsDialog(instance, this, &model->projectModel),
+   findDialog(instance, this, &model->findModel),
    clipboard(this)
 {
    this->_instance = instance;
@@ -233,6 +234,20 @@ void IDEWindow :: uncommentText()
 void IDEWindow :: selectAll()
 {
    _controller->sourceController.selectAll(_model->viewModel());
+}
+
+void IDEWindow :: search()
+{
+   if (!_controller->doSearch(findDialog, _model)) {
+      messageDialog.info(NOT_FOUND_TEXT);
+   }
+}
+
+void IDEWindow :: searchNext()
+{
+   if (!_controller->doSearchNext(_model)) {
+      messageDialog.info(NOT_FOUND_TEXT);
+   }
 }
 
 void IDEWindow :: includeFile()
@@ -561,6 +576,12 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_EDIT_SELECTALL:
          selectAll();
+         break;
+      case IDM_SEARCH_FIND:
+         search();
+         break;
+      case IDM_SEARCH_FINDNEXT:
+         searchNext();
          break;
       case IDM_PROJECT_COMPILE:
          _controller->doCompileProject(fileDialog, projectDialog, _model);

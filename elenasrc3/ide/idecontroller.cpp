@@ -1403,3 +1403,30 @@ void IDEController :: doInclude(IDEModel* model)
 
    projectController.includeFile(model->projectModel, path);
 }
+
+bool IDEController :: doSearch(FindDialogBase& dialog, IDEModel* model)
+{
+   if (dialog.showModal()) {
+      NotificationStatus status = NONE_CHANGED;
+
+      if(sourceController.findText(model->viewModel(), &model->findModel, status)) {
+         _notifier->notify(NOTIFY_IDE_CHANGE, status);
+
+         return true;
+      }
+   }
+
+   return false;
+}
+
+bool IDEController :: doSearchNext(IDEModel* model)
+{
+   NotificationStatus status = NONE_CHANGED;
+
+   if (sourceController.findText(model->viewModel(), &model->findModel, status)) {
+      _notifier->notify(NOTIFY_IDE_CHANGE, status);
+
+      return true;
+   }
+   return false;
+}
