@@ -58,6 +58,8 @@ namespace elena_lang
       FSave          = 0x25,
       WRead          = 0x26,
       XJump          = 0x27,
+      BCopy          = 0x28,
+      WCopy          = 0x29,
       XGet           = 0x2E,
       XCall          = 0x2F,
 

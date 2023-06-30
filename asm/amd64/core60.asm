@@ -100,6 +100,9 @@ structure %CORE_GC_TABLE
   dq 0 // ; gc_perm_end           : +60h 
   dq 0 // ; gc_perm_current       : +68h 
 
+  dq 0 // ; reserved              : +70h 
+  dq 0 // ; reserved              : +78h 
+
 end
 
 // ; NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
@@ -676,6 +679,26 @@ end
 inline %027h
 
   jmp rbx
+
+end
+
+// ; bcopy
+inline %28h
+
+  mov  rsi, r10  
+  xor  rax, rax
+  mov  al, byte ptr [rsi]
+  mov  [rbx], rax
+
+end
+
+// ; wcopy
+inline %29h
+
+  mov  rsi, r10  
+  xor  rax, rax
+  mov  ax, word ptr [rsi]
+  mov  [rbx], rax
 
 end
 

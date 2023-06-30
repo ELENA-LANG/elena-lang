@@ -10,17 +10,15 @@ In development:
     [!] some bytecode optimizations
     [!] rest of files / console samples / rosetta code samples
 
-    * new opcode : bcopy, wcopy x86, x86-64, ppc64le, aarch64 (see copyingToAcc)
-
     * implementing corex : gc_alloc
-
     * ide : set focus in the text editor on start / switch
+    * warn if the extension method overrides the target method - it will not be called?
+
     * ide : replace
+    * implementing corex: snop, using im the code as well
     * implementing corex
-    * implementing corex: snop
     * optimization : double copying (arithmeric operation)
     * boxing an array, assinging to the local variable - get rid of double assigning
-
     * optimization : extra temporal variables
     + optimiation : assinging int constant
     + optimiation : branching with int constant
@@ -28,6 +26,7 @@ In development:
     + optimiation : typecast method (e.g m = self)
     + optimiation : idle method (e.g m() {})
     * field boxing : double assigning
+    * elt - exception handler
 
     === Iteration 18 ===
     [!] x86 GUI support
@@ -45,6 +44,7 @@ In development:
 Backlog:
 ------   
     --- elena backlog
+    * ide search : blicking too much (no need for several refresh)
     * data alignment : for normal structs - allign the data to 4/8 and make an operation aligned to 4/8;
       so all stack allocated data is aligned to 4 / 8;
       field are allocated to 4 / 8 for all cases except packed flag
@@ -847,10 +847,7 @@ Backlog:
  
                  * mta system : check the situation when too many threads (> MAX_THREAD)
                  * nested code : read only outer field
-                 * elt - exception handler
                  * script engine : do not allow left recursing (e.g. A -> AB )
                  * replace S -> AB / S -> AC with S -> A{B | C}, using forwards to resolve prediction log
                  * advanced script : templates,closures,exception handling
                  * an array of int - no need to fill, one by one?
-                 * optimize default multi-method, do we need frame?
-                 * warn if the extension method overrides the target method - it will not be called?

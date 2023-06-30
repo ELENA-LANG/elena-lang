@@ -25,7 +25,7 @@ CodeGenerator _codeGenerators[256] =
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadNop,
 
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
-   loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadOp, loadOp,
+   loadOp, loadOp, loadNop, loadNop, loadNop, loadNop, loadOp, loadOp,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -90,7 +90,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 150;
+constexpr size_t bcCommandNumber = 152;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -122,7 +122,8 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::LLoadDP, ByteCode::XLoadArgSI, ByteCode::XLoad, ByteCode::XLLoad, ByteCode::XSetFP,
    ByteCode::XAddDP, ByteCode::SelULtRR, ByteCode::UDivDPN, ByteCode::FRoundDP, ByteCode::FAbsDP,
    ByteCode::FSqrtDP, ByteCode::FExpDP, ByteCode::FLnDP, ByteCode::FSinDP, ByteCode::FCosDP,
-   ByteCode::FArctanDP, ByteCode::FPiDP, ByteCode::FillIR, ByteCode::XFillR, ByteCode::XStoreI
+   ByteCode::FArctanDP, ByteCode::FPiDP, ByteCode::FillIR, ByteCode::XFillR, ByteCode::XStoreI,
+   ByteCode::BCopy, ByteCode::WCopy
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,

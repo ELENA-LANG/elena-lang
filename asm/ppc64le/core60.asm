@@ -124,6 +124,9 @@ structure %CORE_GC_TABLE
   dq 0 // ; gc_perm_end           : +60h 
   dq 0 // ; gc_perm_current       : +68h 
 
+  dq 0 // ; gc_lock               : +70h 
+  dq 0 // ; reserved              : +78h 
+
 end
  
 // ; NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
@@ -856,6 +859,22 @@ inline %027h
 
   mtctr    r15            // ; put code address into ctr
   bctr                    // ; and jump to it
+
+end
+
+// ; bcopy
+inline %28h
+
+  lbz     r17, 0(r3)
+  std     r17, 0(r15)
+
+end
+
+// ; wcopy
+inline %29h
+
+  lwz     r17, 0(r3)
+  stw     r17, 0(r15)
 
 end
 

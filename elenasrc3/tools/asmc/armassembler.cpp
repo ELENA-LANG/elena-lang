@@ -2574,7 +2574,7 @@ bool Arm64Assembler::compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    return true;
 }
 
-bool Arm64Assembler::compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool Arm64Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope)
 {
    if (tokenInfo.compare("cset")) {
       compileCSET(tokenInfo, writer);
@@ -2670,7 +2670,7 @@ bool Arm64Assembler :: compileJOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    return false;
 }
 
-bool Arm64Assembler :: compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool Arm64Assembler :: compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope)
 {
    if (tokenInfo.compare("ldp")) {
       compileLDP(tokenInfo, writer);
@@ -2812,7 +2812,7 @@ bool Arm64Assembler :: compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    return true;
 }
 
-bool Arm64Assembler::compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool Arm64Assembler :: compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo&)
 {
    return false;
 }

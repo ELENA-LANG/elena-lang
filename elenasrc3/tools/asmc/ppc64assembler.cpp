@@ -1930,7 +1930,7 @@ bool PPC64Assembler :: compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    return true;
 }
 
-bool PPC64Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool PPC64Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope)
 {
    if (tokenInfo.compare("cmp")) {
       compileCMP(tokenInfo, writer);
@@ -2036,7 +2036,7 @@ bool PPC64Assembler :: compileJOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    return false;
 }
 
-bool PPC64Assembler :: compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool PPC64Assembler :: compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope)
 {
    if (tokenInfo.compare("lbz")) {
       compileLBZ(tokenInfo, writer);
@@ -2190,7 +2190,7 @@ bool PPC64Assembler::compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    return false;
 }
 
-bool PPC64Assembler :: compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool PPC64Assembler :: compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo&)
 {
    if (tokenInfo.compare("xor")) {
       compileXOR(tokenInfo, writer);

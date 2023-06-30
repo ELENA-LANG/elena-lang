@@ -1,5 +1,11 @@
 import extensions;
 
+A
+{
+   test(int n) {}
+   test(long l) {}
+}
+
 public program()
 {
     int n := 1234;

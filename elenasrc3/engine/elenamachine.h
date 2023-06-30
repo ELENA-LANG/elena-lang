@@ -110,6 +110,7 @@ namespace elena_lang
       static void Init(SystemEnv* env, SystemSettings settings);
       static void InitSTAExceptionHandling(SystemEnv* env, void* criticalHandler);
       static void InitMTAExceptionHandling(SystemEnv* env, int index, void* criticalHandler);
+      static void InitMTASignals(SystemEnv* env, int index);
       static void InitCriticalStruct(uintptr_t criticalDispatcher);
       static void InitSTA(SystemEnv* env);
 
@@ -118,6 +119,11 @@ namespace elena_lang
       static unsigned int GetRandomNumber(SeedStruct& seed);
 
       static void* CreateThread(int tt_index, int flags, void* threadProc);
+
+      static void GCSignalClear(void* handle);
+      static void GCSignalStop(void* handle);
+      static void GCWaitForSignal(void* handle);
+      static void GCWaitForSignals(size_t count, void* handles);
 
       static void RaiseError(int code);
 

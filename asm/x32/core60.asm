@@ -44,6 +44,8 @@ define gc_mg_wbar            0028h
 define gc_perm_start         002Ch 
 define gc_perm_end           0030h 
 define gc_perm_current       0034h 
+define gc_lock               0038h 
+define gc_signal             0040h 
 
 define et_current            0004h
 define tt_stack_frame        0008h
@@ -99,6 +101,9 @@ structure %CORE_GC_TABLE
   dd 0 // ; gc_perm_start         : +2Ch 
   dd 0 // ; gc_perm_end           : +30h 
   dd 0 // ; gc_perm_current       : +34h 
+
+  dd 0 // ; gc_lock               : +38h 
+  dd 0 // ; gc_signal             : +40h 
 
 end
 
@@ -677,6 +682,24 @@ end
 inline %027h
 
   jmp ebx
+
+end
+
+// ; bcopy
+inline %28h
+
+  xor  eax, eax
+  mov  al, byte ptr [esi]
+  mov  dword ptr [ebx], eax
+
+end
+
+// ; wcopy
+inline %29h
+
+  xor  eax, eax
+  mov  ax, word ptr [esi]
+  mov  dword ptr [ebx], eax
 
 end
 

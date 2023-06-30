@@ -207,16 +207,10 @@ void copyingToAcc(CommandTape& tape, BuildNode& node, TapeScope&)
    int n = node.findChild(BuildKey::Size).arg.value;
    switch (n) {
       case 1:
-         tape.write(ByteCode::SwapSI);
-         tape.write(ByteCode::BLoad);
-         tape.write(ByteCode::SwapSI);
-         tape.write(ByteCode::Save);
+         tape.write(ByteCode::BCopy);
          break;
       case 2:
-         tape.write(ByteCode::SwapSI);
-         tape.write(ByteCode::WLoad);
-         tape.write(ByteCode::SwapSI);
-         tape.write(ByteCode::Save);
+         tape.write(ByteCode::WCopy);
          break;
       default:
          tape.write(ByteCode::Copy, n);

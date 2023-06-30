@@ -340,7 +340,7 @@ void AssemblerBase :: declareProcedure(ScriptToken& tokenInfo, ProcedureInfo& pr
    read(tokenInfo);
 }
 
-bool AssemblerBase::compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
+bool AssemblerBase :: compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope, PrefixInfo& prefixScope)
 {
    switch (tokenInfo.token[0]) {
       case 'a':
@@ -348,7 +348,7 @@ bool AssemblerBase::compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, 
       case 'b':
          return compileBOpCode(tokenInfo, writer, labelScope);
       case 'c':
-         return compileCOpCode(tokenInfo, writer);
+         return compileCOpCode(tokenInfo, writer, prefixScope);
       case 'd':
          return compileDOpCode(tokenInfo, writer);
       case 'e':
@@ -360,7 +360,7 @@ bool AssemblerBase::compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, 
       case 'j':
          return compileJOpCode(tokenInfo, writer, labelScope);
       case 'l':
-         return compileLOpCode(tokenInfo, writer);
+         return compileLOpCode(tokenInfo, writer, prefixScope);
       case 'm':
          return compileMOpCode(tokenInfo, writer);
       case 'n':
@@ -378,7 +378,7 @@ bool AssemblerBase::compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, 
       case 'u':
          return compileUOpCode(tokenInfo, writer);
       case 'x':
-         return compileXOpCode(tokenInfo, writer);
+         return compileXOpCode(tokenInfo, writer, prefixScope);
       default:
          return false;
    }
@@ -386,6 +386,7 @@ bool AssemblerBase::compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, 
 
 void AssemblerBase :: compileProcedure(ScriptToken& tokenInfo, LabelHelper* helper)
 {
+   PrefixInfo    prefixScope;
    LabelScope    labelScope(helper);
    ProcedureInfo procInfo;
    declareProcedure(tokenInfo, procInfo);
@@ -394,7 +395,7 @@ void AssemblerBase :: compileProcedure(ScriptToken& tokenInfo, LabelHelper* help
    MemoryWriter writer(code);
 
    while (!tokenInfo.compare("end")) {
-      if (!compileOpCode(tokenInfo, writer, labelScope)) {
+      if (!compileOpCode(tokenInfo, writer, labelScope, prefixScope)) {
          if (tokenInfo.state != dfaEOF) {
             declareLabel(tokenInfo, writer, labelScope);
          }

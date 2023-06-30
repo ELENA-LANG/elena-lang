@@ -3,7 +3,7 @@
 //
 //		This header contains abstract Assembler declarations
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ASSEMBLER_H
@@ -87,6 +87,17 @@ namespace elena_lang
    protected:
       typedef Map<ustr_t, int, allocUStr, freeUStr> ConstantMap;
 
+      struct PrefixInfo
+      {
+         int value;
+
+         PrefixInfo()
+            : value(0)
+         {
+
+         }
+      };
+
       ScriptReader _reader;
       ModuleBase*  _target;
 
@@ -114,13 +125,13 @@ namespace elena_lang
 
       virtual bool compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual bool compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) = 0;
-      virtual bool compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
+      virtual bool compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope) = 0;
       virtual bool compileDOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual bool compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual bool compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual bool compileIOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual bool compileJOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) = 0;
-      virtual bool compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
+      virtual bool compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope) = 0;
       virtual bool compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual bool compileNOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual bool compileOOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
@@ -129,9 +140,9 @@ namespace elena_lang
       virtual bool compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual bool compileTOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual bool compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
-      virtual bool compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
+      virtual bool compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope) = 0;
 
-      virtual bool compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
+      virtual bool compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope, PrefixInfo& prefixScope);
 
       virtual void compileDBField(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual void compileDWField(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
