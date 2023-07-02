@@ -231,7 +231,8 @@ ControlBase* IDEFactory :: createErrorList(ControlBase* owner, NotifierBase* not
 
 ControlBase* IDEFactory :: createProjectView(ControlBase* owner, NotifierBase* notifier)
 {
-   TreeView* projectView = new TreeView(300, 50, notifier, NOTIFY_PROJECTVIEW_SEL, true);
+   TreeView* projectView = new TreeView(300, 50, notifier, 
+      NOTIFY_PROJECTVIEW_SEL, true);
    projectView->createControl(_instance, owner);
 
    return projectView;

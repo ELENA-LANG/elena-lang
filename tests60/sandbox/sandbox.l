@@ -1,16 +1,28 @@
 import extensions;
 
+//B
+//{
+// test(int n)
+//   {
+//      console.printLine("B(", n, ")");
+//   }
+//}
+
 A
 {
-   test(int n) {}
-   test(long l) {}
+   int cast() = 2;
 }
 
 public program()
 {
-    int n := 1234;
-    string s := n.toString();
-    int n2 := s.toInt();
+   var a := new A();
+//   var b := new B();
+//   
+//   b.test(a);
+
+//    int n := 1234;
+//    string s := n.toString();
+//    int n2 := s.toInt();
 
 //   int n := "abc".Length;
 //   console.writeLine(n);

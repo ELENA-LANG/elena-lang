@@ -7248,7 +7248,7 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
    if (targetRef == V_AUTO) {
       // support auto attribute
       exprVal = compileExpression(writer, scope, roperand,
-         0, EAttr::Parameter | EAttr::RetValExpected, nullptr);
+         0, EAttr::RetValExpected, nullptr);
 
       if (resolveAutoType(scope, exprVal, target)) {
          targetRef = retrieveStrongType(scope, exprVal);
@@ -7257,7 +7257,7 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
       else scope.raiseError(errInvalidOperation, roperand.parentNode());
    }
    else exprVal = compileExpression(writer, scope, roperand,
-      targetRef, EAttr::Parameter | EAttr::RetValExpected, nullptr);
+      targetRef, EAttr::RetValExpected, nullptr);
 
    if (!compileAssigningOp(writer, scope, target, exprVal))
       scope.raiseError(errInvalidOperation, loperand.parentNode());;

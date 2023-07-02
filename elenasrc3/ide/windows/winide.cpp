@@ -349,6 +349,8 @@ void IDEWindow :: onErrorHighlight(int index)
 void IDEWindow :: onProjectViewSel(size_t index)
 {
    _controller->doOpenProjectSourceByIndex(_model, index);
+
+   _children[_model->ideScheme.textFrameId]->setFocus();
 }
 
 void IDEWindow :: onDebugWatch()
@@ -443,6 +445,7 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
    if (test(status, FRAME_VISIBILITY_CHANGED)) {
       if (!empty) {
          _children[_model->ideScheme.textFrameId]->show();
+         _children[_model->ideScheme.textFrameId]->setFocus();
       }
       else _children[_model->ideScheme.textFrameId]->hide();
    }
