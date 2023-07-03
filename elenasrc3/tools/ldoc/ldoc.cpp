@@ -234,7 +234,7 @@ void parseTemplateName(IdentifierString& line)
 
    line.clear();
 
-   int last = 0;
+   size_t last = 0;
    bool first = true;
    for (size_t i = 0; i < temp.length(); i++) {
       if (temp[i] == '@') {
@@ -362,10 +362,10 @@ void writeType(TextFileWriter& writer, ustr_t type, bool fullReference = false)
    if (type.find('\'') != NOTFOUND_POS) {
       writer.writeText("<A HREF=\"");
 
-      pos_t index = type.findStr("&lt;");
+      size_t index = type.findStr("&lt;");
       NamespaceString ns(type);
       if (index != NOTFOUND_POS) {
-         for (pos_t i = index; i >= 0; i--) {
+         for (size_t i = index; i >= 0; i--) {
             if (type[i] == '\'') {
                ns.copy(type, i);
                break;
@@ -1187,7 +1187,7 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          }
 
          if (test(methodInfo.hints, (ref_t)MethodHint::Internal)) {
-            pos_t index = (*apiMethodInfo->name).findStr("$$");
+            size_t index = (*apiMethodInfo->name).findStr("$$");
             if (index != NOTFOUND_POS)
                apiMethodInfo->name.cut(0, index + 2);
 
@@ -1474,7 +1474,7 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             DescriptionMap descriptions(nullptr);
             IdentifierString descrName("$");
             descrName.append(referenceName);
-            descrName.replaceAll('\'', ' @', 0);
+            descrName.replaceAll('\'', '@', 0);
             descrName.insert(DESCRIPTION_SECTION, 0);
 
             loadDescriptions(_module->mapReference(*descrName), descriptions);
@@ -1485,7 +1485,7 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             DescriptionMap descriptions(nullptr);
             IdentifierString descrName("$");
             descrName.append(_module->resolveReference(extensionRef));
-            descrName.replaceAll('\'', ' @', 0);
+            descrName.replaceAll('\'', '@', 0);
             descrName.insert(DESCRIPTION_SECTION, 0);
 
             loadDescriptions(_module->mapReference(*descrName), descriptions);
@@ -1496,7 +1496,7 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             DescriptionMap descriptions(nullptr);
             IdentifierString descrName("$");
             descrName.append(referenceName);
-            descrName.replaceAll('\'', ' @', 0);
+            descrName.replaceAll('\'', '@', 0);
             descrName.insert(DESCRIPTION_SECTION, 0);
 
             loadDescriptions(_module->mapReference(*descrName), descriptions);

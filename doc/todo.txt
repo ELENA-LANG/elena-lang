@@ -10,15 +10,15 @@ In development:
     [!] some bytecode optimizations
     [!] rest of files / console samples / rosetta code samples
 
-    * an array of int - no need to fill, one by one?
-
+    * implement iif operator : a ? b : c
+    * if all operators are objects - use the optimized version
     * bool_expr ? 1 : 0 - the expression result should be strong-typed
+    * ide : set focus on activate / after opening a file
+
     * review code { int n := 3; } : extra assigning
     * optimization : double copying (arithmeric operation)
     * maybe we do no need to show the window which is already open (e.g. selecting the same file in the
       project view generates a lot of blicks) 
-
-    * ide : set focus on activate / after opening a file
     * console symbol should be strong one
     * warn on resending to itself (e.g. for constructor)
     * allocate constant array directly if possible
@@ -46,7 +46,6 @@ In development:
     * test : print german text
     * call internal
     * calling protected method
-    * implement iif operator : a ? b : c
     * examples : collatz, matrix
     * examples : p2, random 
     * ldoc : symbol should return the type and it should be possible to see its api (e.g. system'console)
@@ -81,6 +80,21 @@ In development:
     * review RealNumber.#new<system'IntNumber>[1], is a new object created twice
     * ide : crashed on end (freepath)
     * ide search : blicking too much (no need for several refresh), several notification per one event,
+    * 2*i should be compiled as i*2
+    * int operation : 1 + i
+    * optimize:
+        int dump[4];
+        dump[i*2] := 3;
+    * operations with stack-allocated array : dump[0] := 1;
+    * operation with dynamic array should be direct???
+    * ide message : display internal error
+    * uncomment lnx_console.l code
+    * unit tests : boolean operations
+    * int to short -> negative
+    * short to int -> negative
+    * comparision operations : short / byte / long operation
+    * boolean operators : &&, ||, ^^ - weak implementation
+    * ide different styles : use dark mode
 
     === Iteration 18 ===
     [!] x86 GUI support
@@ -101,6 +115,7 @@ In development:
 Backlog:
 ------   
     --- elena backlog
+    * generic branching operator
     * data alignment : for normal structs - allign the data to 4/8 and make an operation aligned to 4/8;
       so all stack allocated data is aligned to 4 / 8;
       field are allocated to 4 / 8 for all cases except packed flag
@@ -304,15 +319,6 @@ Backlog:
 
     * toPrintable should return both wide and string
 
-    * uncomment hello world
-    * uncomment lnx_console.l code
-    * unit tests : boolean operations
-    * int to short -> negative
-    * short to int -> negative
-    * comparision operations : short / byte / long operation
-    * boolean operators : &&, ||, ^^ - weak implementation
-
-    * ide different styles : use dark mode
     * ide toolbar
 
     * ldoc : show conversions in the separate section
@@ -730,7 +736,6 @@ Backlog:
                 * bytecode optimization : storefi peekfi ==  => storefi nop; (storefi and peekfi have the same argument, no need to name all 
                   possible values)
                 * copying  a buffer with unaligned size
-                * int operation : 1 + i
                 * check if there are extnension duplicates, probably no need to save extension multi-dispatcher
                 * alt - no need to assign temp local for local / field / param
                 * boxing byref variable : use intializing, direct assinging after creation without filling with nils
@@ -744,10 +749,8 @@ Backlog:
                 * optimize copying operation
                 * optimite yield operstions
                 * move all description to meta info using descr inline template
-                * ide message : display internal error
                 * ref argument should be a variable
                 * warn if the extension method is called from itself (short-cutting)
-                * (re)implement internal String.read<int,ref<byte>>
                 * (re)implement UnsafePointer.cast<string>
                 * (re)implement FileStrean.set length<int>
                 * debugger : do not copy template parameter terminal info
@@ -764,12 +767,6 @@ Backlog:
                 * should toReal work only for real numbers without fraction?
                 * script : support several operation in a row
                 * following rule does not work - function* code $eof
-                * 2*i should be compiled as i*2
-                * optimize:
-                     int dump[4];
-                     dump[i*2] := 3;
-                * operations with stack-allocated array : dump[0] := 1;
-                * operation with dynamic array should be direct???
                 * inline arg : variadic normal arg list
                 * inline arg : variadic long arg list
 
@@ -783,8 +780,6 @@ Backlog:
                 * Tester.test(n+m*n);
                  * remove idle variable / field / constant (e.g. 2)
                  * import hashtable design
-                * debugger should show ref variable value
-                * get rid of tape support??
                 * support namespace import, so the build script can be shortened
                  * building expression tree - raise an exceptoion with missing class name
                  * the following code should not be allowed - real n := n;

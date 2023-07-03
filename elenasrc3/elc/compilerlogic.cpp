@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 137;
+constexpr auto OperationLength = 138;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -454,6 +454,9 @@ constexpr Op Operations[OperationLength] =
    },
    {
       IF_ELSE_OPERATOR_ID, BuildKey::BranchOp, V_FLAG, V_CLOSURE, V_CLOSURE, V_CLOSURE
+   },
+   {
+      IF_ELSE_OPERATOR_ID, BuildKey::BranchOp, V_FLAG, V_OBJECT, V_OBJECT, V_OBJECT
    },
    {
       LEN_OPERATOR_ID, BuildKey::ObjArraySOp, V_OBJARRAY, 0, 0, V_INT32

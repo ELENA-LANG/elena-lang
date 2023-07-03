@@ -289,6 +289,9 @@ ObjectInfo Interpreter :: createConstCollection(ref_t arrayRef, ref_t typeRef, A
          case ObjectKind::StringLiteral:
             addConstArrayItem(arrayRef, arg.reference, mskLiteralRef);
             break;
+         case ObjectKind::IntLiteral:
+            addConstArrayItem(arrayRef, arg.reference, mskIntLiteralRef);
+            break;
          case ObjectKind::Singleton:
             addConstArrayItem(arrayRef, arg.reference, mskVMTRef);
             break;
@@ -3617,6 +3620,9 @@ ObjectInfo Compiler :: evalCollection(Interpreter& interpreter, Scope& scope, Sy
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Expression) {
          auto argInfo = evalExpression(interpreter, scope, current);
+
+         argInfo.typeInfo.typeRef = retrieveStrongType(scope, argInfo);
+
          if (!isConstant(argInfo.kind) || !_logic->isCompatible(*scope.moduleScope, { elementTypeRef }, argInfo.typeInfo, true))
             return {};
 
@@ -7446,6 +7452,41 @@ ObjectInfo Compiler :: compileSubCode(BuildTreeWriter& writer, ExprScope& scope,
    return retVal;
 }
 
+void Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode rnode,
+   SyntaxNode r2node, bool retValExpected)
+{
+   writer.newNode(BuildKey::Tape);
+
+   ObjectInfo subRetCode = {};
+   if (rnode == SyntaxKey::ClosureBlock) {
+      subRetCode = compileSubCode(writer, scope, rnode.firstChild(), retValExpected ? EAttr::RetValExpected : EAttr::None);
+   }
+   else subRetCode = compileExpression(writer, scope, rnode, 0, EAttr::None, nullptr);
+
+   if (retValExpected) {
+      writeObjectInfo(writer, scope, subRetCode);
+   }
+   writer.closeNode();
+
+   if (r2node != SyntaxKey::None) {
+      // NOTE : it should immediately follow if-block
+      writer.newNode(BuildKey::Tape);
+      ObjectInfo elseSubRetCode = {};
+      if (r2node == SyntaxKey::ClosureBlock) {
+         elseSubRetCode = compileSubCode(writer, scope, r2node.firstChild(), retValExpected ? EAttr::RetValExpected : EAttr::None);
+      }
+      else elseSubRetCode = compileExpression(writer, scope, r2node, 0, EAttr::None, nullptr);
+
+      if (retValExpected) {
+         writeObjectInfo(writer, scope, elseSubRetCode);
+      }
+      writer.closeNode();
+   }
+
+   writer.closeNode();
+
+}
+
 ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo loperand, SyntaxNode node, SyntaxNode rnode, 
    SyntaxNode r2node, int operatorId, ArgumentsInfo* updatedOuterArgs, bool retValExpected)
 {
@@ -7462,12 +7503,14 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
    else if (rnode == SyntaxKey::SwitchCode) {
       roperand = { ObjectKind::Closure, { V_CLOSURE }, 0 };
    }
+   else roperand = { ObjectKind::Object, { V_OBJECT }, 0 };
 
    if (r2node.existChild(SyntaxKey::ClosureBlock)) {
       r2node = r2node.findChild(SyntaxKey::ClosureBlock);
 
       roperand2 = { ObjectKind::Closure, { V_CLOSURE }, 0 };
    }
+   else roperand2 = { ObjectKind::Object, { V_OBJECT }, 0 };
 
    size_t     argLen = 2;
    ref_t      arguments[3] = {};
@@ -7487,24 +7530,8 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
 
       writer.newNode(op, operatorId);
       writer.appendNode(BuildKey::Const, scope.moduleScope->branchingInfo.trueRef);
-      writer.newNode(BuildKey::Tape);
-      ObjectInfo subRetCode = compileSubCode(writer, scope, rnode.firstChild(), retValExpected ? EAttr::RetValExpected : EAttr::None);
-      if (retValExpected) {
-         writeObjectInfo(writer, scope, subRetCode);
-      }
-      writer.closeNode();
 
-      if (r2node != SyntaxKey::None) {
-         // NOTE : it should immediately follow if-block
-         writer.newNode(BuildKey::Tape);
-         ObjectInfo elseSubRetCode = compileSubCode(writer, scope, r2node.firstChild(), retValExpected ? EAttr::RetValExpected : EAttr::None);
-         if (retValExpected) {
-            writeObjectInfo(writer, scope, elseSubRetCode);
-         }
-         writer.closeNode();
-      }
-
-      writer.closeNode();
+      compileBranchingOperands(writer, scope, rnode, r2node, retValExpected);
 
       if (retValExpected)
          retVal = { ObjectKind::Object };
