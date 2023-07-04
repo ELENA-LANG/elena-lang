@@ -10,8 +10,8 @@ In development:
     [!] some bytecode optimizations
     [!] rest of files / console samples / rosetta code samples
 
-    * ide : set focus on activate / after opening a file
     * review code { int n := 3; } : extra assigning
+    * ide : on start : set focus inside the edit frame if available
 
     * optimization : double copying (arithmeric operation)
     * maybe we do no need to show the window which is already open (e.g. selecting the same file in the
@@ -50,7 +50,6 @@ In development:
     * examples : datetime
     * examples : replace, trans 
     * examples : textdb, textfile 
-    * ide : on start : set focus inside the edit frame if available
     * unit tests : branching
     * unit tests : looping
     * unit tests : exceptions

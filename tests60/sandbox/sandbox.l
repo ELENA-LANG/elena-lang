@@ -2,11 +2,7 @@ import extensions;
 
 public program()
 {
-   var a := 1;
-   var b := 0;
-
-   /*int*/var n := true ? a : b;
-
+   int n := 2;
 
 
 //   int l := "abc".Length;

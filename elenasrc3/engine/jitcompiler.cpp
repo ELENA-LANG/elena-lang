@@ -1513,6 +1513,15 @@ void elena_lang::loadIndexNOp(JITCompilerScope* scope)
          case 0:
             code = scope->compiler->_inlines[5][scope->code()];
             break;
+         case 2:
+            code = scope->compiler->_inlines[7][scope->code()];
+            break;
+         case 3:
+            code = scope->compiler->_inlines[8][scope->code()];
+            break;
+         case 4:
+            code = scope->compiler->_inlines[9][scope->code()];
+            break;
          default:
             code = scope->compiler->_inlines[0][scope->code()];
             break;

@@ -2675,6 +2675,54 @@ inline %6F0h
 
 end 
 
+// ; openin 2, n
+inline %7F0h
+
+  push ebp
+  mov  ebp, esp
+  xor  eax, eax
+  sub  esp, __n_2
+  push ebp
+  push eax
+  mov  ebp, esp
+  push eax
+  push eax
+
+end 
+
+// ; openin 3, n
+inline %8F0h
+
+  push ebp
+  mov  ebp, esp
+  xor  eax, eax
+  sub  esp, __n_2
+  push ebp
+  push eax
+  mov  ebp, esp
+  push eax
+  push eax
+  push eax
+
+end 
+
+// ; openin 4, n
+inline %9F0h
+
+  push ebp
+  mov  ebp, esp
+  xor  eax, eax
+  sub  esp, __n_2
+  push ebp
+  push eax
+  mov  ebp, esp
+  push eax
+  push eax
+  push eax
+  push eax
+
+end 
+
 // ; xstoresir
 inline %0F1h
 
