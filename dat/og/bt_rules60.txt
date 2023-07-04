@@ -1,2 +1,3 @@
 breakpoint breakpoint = 1;
 byrefmark = 2;
+int_literal copying = 3;

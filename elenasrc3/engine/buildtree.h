@@ -139,6 +139,7 @@ namespace elena_lang
       FillOp               = 0x006E, // if the argument is 0 - the size is in sp[0]
       StrongResendOp       = 0x006F,
       CopyingToAccExact    = 0x0070,
+      SavingInt            = 0x0071,
 
       MaxOperationalKey    = 0x0071,
 
@@ -230,6 +231,8 @@ namespace elena_lang
       {
          map.add("breakpoint", BuildKey::Breakpoint);
          map.add("byrefmark", BuildKey::ByRefOpMark);
+         map.add("int_literal", BuildKey::IntLiteral);
+         map.add("copying", BuildKey::Copying);
       }
    };
 

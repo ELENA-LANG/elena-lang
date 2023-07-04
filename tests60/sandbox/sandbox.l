@@ -3,7 +3,9 @@ import extensions;
 public program()
 {
    int n := 2;
+   int m := 3;
 
+   int k := m + n;
 
 //   int l := "abc".Length;
 

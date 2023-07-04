@@ -1564,6 +1564,13 @@ void freeStack(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::DAlloc);
 }
 
+inline void savingInt(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   BuildNode value = node.findChild(BuildKey::Value);
+
+   tape.write(ByteCode::NSaveDPN, node.arg.value, value.arg.value);
+}
+
 inline void includeFrame(CommandTape& tape)
 {
    tape.write(ByteCode::Include);
@@ -1597,7 +1604,7 @@ ByteCodeWriter::Saver commands[] =
    terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning, savingLInStack, uintCondOp,
    uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp,
 
-   copyingToAccExact
+   copyingToAccExact, savingInt
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -1678,9 +1685,27 @@ inline bool doubleAssigningByRefHandler(BuildNode lastNode)
    return false;
 }
 
+inline bool intCopying(BuildNode lastNode)
+{
+   int size = lastNode.findChild(BuildKey::Size).arg.value;
+   if (size == 4) {
+      BuildNode constNode = lastNode.prevNode();
+      int value = constNode.findChild(BuildKey::Value).arg.value;
+
+      lastNode.appendChild(BuildKey::Value, value);
+      lastNode.setKey(BuildKey::SavingInt);
+
+      constNode.setKey(BuildKey::Idle);
+
+      return true;
+   }
+
+   return false;
+}
+
 ByteCodeWriter::Transformer transformers[] =
 {
-   nullptr, duplicateBreakpoints, doubleAssigningByRefHandler
+   nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying
 };
 
 // --- ByteCodeWriter ---

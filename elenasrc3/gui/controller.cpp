@@ -381,7 +381,7 @@ void TextViewController :: resizeModel(TextViewModelBase* model, Point size)
    notifyOnChange(model, status);
 }
 
-bool TextViewController :: findText(TextViewModelBase* model, FindModel* findModel, NotificationStatus& status)
+bool TextViewController :: findText(TextViewModelBase* model, FindModel* findModel)
 {
    DocumentChangeStatus docStatus = {};
 
@@ -390,8 +390,6 @@ bool TextViewController :: findText(TextViewModelBase* model, FindModel* findMod
       findModel->wholeWord)) 
    {
       notifyOnChange(model, docStatus);
-
-      status |= FRAME_CHANGED;
 
       return true;
    }

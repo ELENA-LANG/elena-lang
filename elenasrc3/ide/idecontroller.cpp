@@ -1407,11 +1407,7 @@ void IDEController :: doInclude(IDEModel* model)
 bool IDEController :: doSearch(FindDialogBase& dialog, IDEModel* model)
 {
    if (dialog.showModal()) {
-      NotificationStatus status = NONE_CHANGED;
-
-      if(sourceController.findText(model->viewModel(), &model->findModel, status)) {
-         _notifier->notify(NOTIFY_IDE_CHANGE, status);
-
+      if(sourceController.findText(model->viewModel(), &model->findModel)) {
          return true;
       }
    }
@@ -1421,11 +1417,7 @@ bool IDEController :: doSearch(FindDialogBase& dialog, IDEModel* model)
 
 bool IDEController :: doSearchNext(IDEModel* model)
 {
-   NotificationStatus status = NONE_CHANGED;
-
-   if (sourceController.findText(model->viewModel(), &model->findModel, status)) {
-      _notifier->notify(NOTIFY_IDE_CHANGE, status);
-
+   if (sourceController.findText(model->viewModel(), &model->findModel)) {
       return true;
    }
    return false;

@@ -9,13 +9,12 @@ In development:
     [!] elt tutorial (stand-alone / in IDE)
     [!] some bytecode optimizations
     [!] rest of files / console samples / rosetta code samples
+    [!] migrate all unit tests from 50
 
-    * review code { int n := 3; } : extra assigning
-    * ide : on start : set focus inside the edit frame if available
+    * optimize i := j + 1, i += 1
+    * ide debugger : fix screen flashing
 
-    * optimization : double copying (arithmeric operation)
-    * maybe we do no need to show the window which is already open (e.g. selecting the same file in the
-      project view generates a lot of blicks) 
+    * ldoc : all symbols should be in alphabetic order
     * console symbol should be strong one
     * warn on resending to itself (e.g. for constructor)
     * allocate constant array directly if possible
@@ -32,7 +31,6 @@ In development:
     * simplify code (see INPUT_RECORD operations)
     * api : provide field descriptions
     * call semidirect method
-    * ldoc : all symbols should be in alphabetic order
     * boxable self (structs) - do not box the self return
     * automatical conversion of int literal to int8, int16 and int64 if possible
     * test cases : nil dispatcher, multi dispatch, private method dispatching
@@ -54,7 +52,6 @@ In development:
     * unit tests : looping
     * unit tests : exceptions
     * opzimiation extension operation with a byte array parameter
-    * optimize i += 1
     * optimize assign inp_op direct_call embeddable
     * optimize direct_call direct_call embeddable
     * optimize pi sample
@@ -75,7 +72,6 @@ In development:
     * elt - exception handler
     * review RealNumber.#new<system'IntNumber>[1], is a new object created twice
     * ide : crashed on end (freepath)
-    * ide search : blicking too much (no need for several refresh), several notification per one event,
     * 2*i should be compiled as i*2
     * int operation : 1 + i
     * optimize:
@@ -166,14 +162,12 @@ Backlog:
     * ide : before compiling, make sure the source file is saved
 
     * new opcode : fexp - ppc64le
-    * ide debugger : fix screen flashing
     * switch expression
     * optimization : copy a sub array to another array
     * redesign switch statement : it should be possible to use as an expression as well
       (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
        console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
     * ide : closing unsaved file - closing unsaved
-    * ide : selecting an error line - try to get rid of blicking
     * ide : show hex number
     * ide : show project name as a app title (new / existing projects / single file project)
 
@@ -290,7 +284,6 @@ Backlog:
     * do:while : both statement are matched : do{ a } while(b) and do{ a } while{ b } which is not correct?
     * ide : error messages if the debug process failed
     * ide : toolbar
-    * ide : fix blicking on tab selecting (especially on opening a new project)
     * ide : replace
     * ide : replace all
     * ide : open the last opened file on the ide start

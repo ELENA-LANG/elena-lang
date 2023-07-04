@@ -488,8 +488,6 @@ void IDEWindow :: onTextFrameChange(NotificationStatus status)
 
    if (_model->sourceViewModel.DocView())
       _model->sourceViewModel.DocView()->notifyOnChange(changeStatus);
-
-   _children[_model->ideScheme.textFrameId]->refresh();
 }
 
 void IDEWindow :: onIDEChange(NotificationStatus status)
@@ -656,7 +654,7 @@ void IDEWindow :: refreshDebugNode()
 }
 
 void IDEWindow :: onStatusChange(StatusNMHDR* rec)
-{
+{  
    switch (rec->code) {
       case NOTIFY_ONSTART:
          _controller->init(_model);

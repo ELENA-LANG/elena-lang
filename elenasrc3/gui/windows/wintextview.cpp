@@ -413,10 +413,12 @@ void TextViewWindow :: onResize()
 void TextViewWindow :: onSetFocus()
 {
    if (_model) {
-      _caretVisible = true;
       createCaret(_styles->getLineHeight(), /*_view->docView->status.overwriteMode ? _view->styles.getStyle(STYLE_DEFAULT)->avgCharWidth : */1);
       showCaret();
-      refresh();
+
+      ControlBase::refresh();
+
+      //_caretVisible = true;
    }
 }
 
