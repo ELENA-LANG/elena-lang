@@ -471,7 +471,7 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
 
    if (savingMode) {
       // saving a module
-      printf(ELC_SAVING_MODULE, moduleScope.module->name());
+      _presenter->print(ELC_SAVING_MODULE, moduleScope.module->name());
 
       _libraryProvider.saveModule(moduleScope.module);
       _libraryProvider.saveDebugModule(moduleScope.debugModule);

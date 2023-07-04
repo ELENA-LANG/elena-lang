@@ -60,6 +60,7 @@ namespace elena_lang
       XJump          = 0x27,
       BCopy          = 0x28,
       WCopy          = 0x29,
+      XPeekEq        = 0x2A,
       XGet           = 0x2E,
       XCall          = 0x2F,
 
@@ -465,6 +466,13 @@ namespace elena_lang
       None = 0,
       Set,
       Match,
+      MatchArg
+   };
+
+   struct PatternArg
+   {
+      int arg1;
+      int arg2;
    };
 
    // --- ByteCodePattern ---
@@ -494,17 +502,33 @@ namespace elena_lang
          return !(*this == pattern);
       }
 
-      bool match(ByteCommand bc, int& arg)
+      bool checkLabel(ByteCodeIterator it, int label, int offset);
+
+      bool match(ByteCodeIterator& it, PatternArg& arg)
       {
+         auto bc = *it;
+
          if (code != bc.code)
             return code == ByteCode::Match;
 
          switch (argType) {
             case ByteCodePatternType::Set:
-               arg = bc.arg1;
+               if (argValue == 1) {
+                  arg.arg1 = bc.arg1;
+               }
+               else arg.arg2 = bc.arg1;
                return true;
             case ByteCodePatternType::Match:
-               return arg == bc.arg1;
+               return ((argValue == 1) ? arg.arg1 : arg.arg2) == bc.arg1;
+            case ByteCodePatternType::MatchArg:
+               switch (bc.code) {
+                  case ByteCode::Jne:
+                  case ByteCode::Jump:
+                     return checkLabel(it, bc.arg1, argValue);
+                  default:
+                     return argValue == bc.arg1;
+               }
+               break;               
             default:
                return true;
          }
@@ -515,7 +539,7 @@ namespace elena_lang
    struct ByteCodePatternContext
    {
       ByteCodeTrieNode node;
-      int              arg;
+      PatternArg       arg;
    };
 
    typedef CachedList<ByteCodePatternContext, 10> ByteCodePatterns;
@@ -528,7 +552,7 @@ namespace elena_lang
       MemoryByteTrie trie;
       bool           loaded;
 
-      void transform(ByteCodeIterator trans_it, ByteCodeTrieNode replacement);
+      void transform(ByteCodeIterator trans_it, ByteCodeTrieNode replacement, PatternArg& arg);
 
       bool apply(CommandTape& tape);
 

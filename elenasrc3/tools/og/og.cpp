@@ -64,13 +64,31 @@ ByteCodePattern decodePattern(ScriptReader& reader, ScriptToken& token)
 
          reader.read(token);
       }
-      else if (token.compare("#1")) {
-         pattern.argValue = 1;
-         pattern.argType = ByteCodePatternType::Match;
+      else if (token.compare("$2")) {
+         pattern.argValue = 2;
+         pattern.argType = ByteCodePatternType::Set;
 
          reader.read(token);
       }
+      else if (token.compare("#1")) {
+         pattern.argValue = 1;
+         pattern.argType = ByteCodePatternType::Match;
+         reader.read(token);
+      }
+      else if (token.compare("#2")) {
+         pattern.argValue = 2;
+         pattern.argType = ByteCodePatternType::Match;
+         reader.read(token);
+      }
       else throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
+   }
+   else if (token.compare("=")) {
+      reader.read(token);
+
+      pattern.argValue = token.token.toInt();
+      pattern.argType = ByteCodePatternType::MatchArg;
+
+      reader.read(token);
    }
 
    return pattern;

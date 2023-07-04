@@ -2,7 +2,10 @@ import extensions;
 
 public program()
 {
-   int n := false ? 1 : 0;
+   var a := 1;
+   var b := 0;
+
+   /*int*/var n := true ? a : b;
 
 
 

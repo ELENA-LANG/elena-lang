@@ -703,6 +703,13 @@ inline %29h
 
 end
 
+// ; xpeekeq
+inline %02Ah
+
+  cmovz ebx, esi
+
+end
+
 // ; xget
 inline %02Eh
 

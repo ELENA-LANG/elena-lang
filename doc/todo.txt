@@ -10,12 +10,9 @@ In development:
     [!] some bytecode optimizations
     [!] rest of files / console samples / rosetta code samples
 
-    * implement iif operator : a ? b : c
-    * if all operators are objects - use the optimized version
-    * bool_expr ? 1 : 0 - the expression result should be strong-typed
     * ide : set focus on activate / after opening a file
-
     * review code { int n := 3; } : extra assigning
+
     * optimization : double copying (arithmeric operation)
     * maybe we do no need to show the window which is already open (e.g. selecting the same file in the
       project view generates a lot of blicks) 
@@ -95,6 +92,7 @@ In development:
     * comparision operations : short / byte / long operation
     * boolean operators : &&, ||, ^^ - weak implementation
     * ide different styles : use dark mode
+    * bool_expr ? 1 : 0 - the expression result should be strong-typed
 
     === Iteration 18 ===
     [!] x86 GUI support
@@ -115,6 +113,9 @@ In development:
 Backlog:
 ------   
     --- elena backlog
+    * doc : multiple inheritance - tutorial
+
+    * implement analog of C# record
     * generic branching operator
     * data alignment : for normal structs - allign the data to 4/8 and make an operation aligned to 4/8;
       so all stack allocated data is aligned to 4 / 8;

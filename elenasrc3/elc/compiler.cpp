@@ -7458,7 +7458,7 @@ void Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprScope& sc
    writer.newNode(BuildKey::Tape);
 
    ObjectInfo subRetCode = {};
-   if (rnode == SyntaxKey::ClosureBlock) {
+   if (rnode == SyntaxKey::ClosureBlock || rnode == SyntaxKey::SwitchCode) {
       subRetCode = compileSubCode(writer, scope, rnode.firstChild(), retValExpected ? EAttr::RetValExpected : EAttr::None);
    }
    else subRetCode = compileExpression(writer, scope, rnode, 0, EAttr::None, nullptr);
@@ -7510,7 +7510,8 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
 
       roperand2 = { ObjectKind::Closure, { V_CLOSURE }, 0 };
    }
-   else roperand2 = { ObjectKind::Object, { V_OBJECT }, 0 };
+   else if (r2node != SyntaxKey::None) 
+      roperand2 = { ObjectKind::Object, { V_OBJECT }, 0 };
 
    size_t     argLen = 2;
    ref_t      arguments[3] = {};

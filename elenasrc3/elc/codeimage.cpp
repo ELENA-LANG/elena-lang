@@ -56,7 +56,7 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
    }
 
    // resolve the debug entry
-   _debugEntryPoint = INVALID_ADDR;
+   _debugEntryPoint = INVALID_POS;
 
    if (_systemTarget == PlatformType::VMClient) {
       MemoryDump tape;

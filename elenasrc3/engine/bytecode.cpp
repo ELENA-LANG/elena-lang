@@ -21,7 +21,7 @@ const char* _fnOpcodes[256] =
    "dtrans", "xassign", "lload", "convl", "xlcmp", "xload", "xlload", OPCODE_UNKNOWN,
 
    "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", "xjump",
-   "bcopy", "wcopy", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xget", "xcall",
+   "bcopy", "wcopy", "xpeekeq", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xget", "xcall",
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -778,7 +778,23 @@ inline bool isOperational(ByteCode code)
    || */(code <= ByteCode::CallExtR && code > ByteCode::Breakpoint);
 }
 
-void ByteCodeTransformer :: transform(ByteCodeIterator trans_it, ByteCodeTrieNode replacement)
+bool ByteCodePattern :: checkLabel(ByteCodeIterator it, int label, int offset)
+{
+   int current = 0;
+   while (!it.eof()) {
+      auto bc = *it;
+      if (bc.code == ByteCode::Label && bc.arg1 == label) {
+         return (current == offset);
+      }
+      if (isOperational(bc.code)) {
+         current++;
+      }
+
+      ++it;
+   }
+}
+
+void ByteCodeTransformer :: transform(ByteCodeIterator trans_it, ByteCodeTrieNode replacement, PatternArg& arg)
 {
    ByteCodeIterator target_it = trans_it;
 
@@ -788,9 +804,18 @@ void ByteCodeTransformer :: transform(ByteCodeIterator trans_it, ByteCodeTrieNod
       while (!isOperational((*trans_it).code))
          --trans_it;
 
-      (*trans_it).code = pattern.code;
-
-      //switch (pattern.argType) {
+      switch (pattern.argType) {
+         case ByteCodePatternType::Set:
+            if (pattern.argValue == 1) {
+               (*trans_it).arg1 = arg.arg1;
+            }
+            else (*trans_it).arg1 = arg.arg2;
+            trans_it.flush();
+            break;
+         case ByteCodePatternType::MatchArg:
+            (*trans_it).arg1 = pattern.argValue;
+            trans_it.flush();
+            break;
       //   case braAdd:
       //      (*trans_it).argument += pattern.argument;
       //      break;
@@ -808,8 +833,11 @@ void ByteCodeTransformer :: transform(ByteCodeIterator trans_it, ByteCodeTrieNod
       //         (*target_it).additional = (*trans_it).argument;
       //      }
       //      break;
-      //}
+         default:
+            break;
+      }
 
+      (*trans_it).code = pattern.code;
       trans_it.flush();
 
       --trans_it;
@@ -837,7 +865,7 @@ bool ByteCodeTransformer :: apply(CommandTape& commandTape)
          followers->clear();
 
          for (auto it = matched->start(); !it.eof(); ++it) {
-            int arg = (*it).arg;
+            PatternArg arg = (*it).arg;
             auto patternNode = (*it).node;
             auto pattern = patternNode.Value();
 
@@ -845,9 +873,9 @@ bool ByteCodeTransformer :: apply(CommandTape& commandTape)
                auto currentPatternNode = child_it.Node();
                auto currentPattern = currentPatternNode.Value();
 
-               if (currentPattern.match(bc, arg)) {
+               if (currentPattern.match(bc_it, arg)) {
                   if (currentPattern.code == ByteCode::Match) {
-                     transform(--bc_it, currentPatternNode.FirstChild());
+                     transform(--bc_it, currentPatternNode.FirstChild(), arg);
 
                      return true;
                   }

@@ -878,6 +878,13 @@ inline %29h
 
 end
 
+// ; xpeekeq
+inline %02Ah
+
+  iseleq  r15, r3, r15
+
+end
+
 // ; xget
 inline %02Eh
 

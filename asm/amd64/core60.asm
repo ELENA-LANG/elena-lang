@@ -702,6 +702,14 @@ inline %29h
 
 end
 
+
+// ; xpeekeq
+inline %02Ah
+
+  cmovz rbx, r10
+
+end
+
 // ; xget
 inline %02Eh
 

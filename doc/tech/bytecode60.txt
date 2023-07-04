@@ -125,6 +125,8 @@ ELENA byte codes (or ecodes)
 
    xlload                   - long:index := long:acc[index]
 
+   xpeekne                  - acc <= COMP.EQ ? sp[0] : acc
+
    xset fp:i                - fp[index + i] => acc
 
 

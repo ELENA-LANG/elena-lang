@@ -819,6 +819,13 @@ inline %29h
 
 end
 
+// ; xpeekeq
+inline %02Ah
+
+  csel    x10, x0, x10, eq
+
+end
+
 // ; xget
 inline %02Eh
 
