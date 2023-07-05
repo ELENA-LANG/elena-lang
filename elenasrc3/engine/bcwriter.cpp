@@ -1571,6 +1571,32 @@ inline void savingInt(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::NSaveDPN, node.arg.value, value.arg.value);
 }
 
+inline void loadingAccToIndex(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::Load);
+}
+
+inline void addingInt(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   BuildNode value = node.findChild(BuildKey::Value);
+
+   tape.write(ByteCode::NAddDPN, node.arg.value, value.arg.value);
+}
+
+inline void indexOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   BuildNode value = node.findChild(BuildKey::Value);
+
+   switch (node.arg.value) {
+      case MUL_OPERATOR_ID:
+         tape.write(ByteCode::MulN, value.arg.value);
+         break;
+      default:
+         assert(false);
+         break;
+   }
+}
+
 inline void includeFrame(CommandTape& tape)
 {
    tape.write(ByteCode::Include);
@@ -1604,7 +1630,7 @@ ByteCodeWriter::Saver commands[] =
    terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning, savingLInStack, uintCondOp,
    uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp,
 
-   copyingToAccExact, savingInt
+   copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -1703,9 +1729,90 @@ inline bool intCopying(BuildNode lastNode)
    return false;
 }
 
+inline bool intOpWithConsts(BuildNode lastNode)
+{
+   int size = lastNode.findChild(BuildKey::Size).arg.value;
+   if (size != 4)
+      return false;
+
+   BuildNode targetNode = lastNode;
+   BuildNode tempNode = targetNode.prevNode();
+   BuildNode opNode = tempNode.prevNode();
+   BuildNode savingOp2 = opNode.prevNode();
+   BuildNode intNode = savingOp2.prevNode();
+   BuildNode valueNode = intNode.findChild(BuildKey::Value);
+   BuildNode savingOp1 = intNode.prevNode();
+
+   int tempTarget = opNode.findChild(BuildKey::Index).arg.value;
+   if (tempTarget != tempNode.arg.value)
+      return false;
+
+   switch (opNode.arg.value) {
+      case ADD_OPERATOR_ID:
+      case SUB_OPERATOR_ID:
+         savingOp1.setKey(BuildKey::Copying);
+         savingOp1.setArgumentValue(targetNode.arg.value);
+         savingOp1.appendChild(BuildKey::Size, 4);
+         intNode.setKey(BuildKey::AddingInt);
+         intNode.setArgumentValue(targetNode.arg.value);
+         if (opNode.arg.value == SUB_OPERATOR_ID) {
+            // revert the value
+            valueNode.setArgumentValue(-valueNode.arg.value);
+         }
+         savingOp2.setKey(BuildKey::Idle);
+         opNode.setKey(BuildKey::Idle);
+         tempNode.setKey(BuildKey::Idle);
+         targetNode.setKey(BuildKey::Idle);
+         break;
+      case MUL_OPERATOR_ID:
+         savingOp1.setKey(BuildKey::LoadingAccToIndex);
+         savingOp1.setArgumentValue(0);
+         intNode.setKey(BuildKey::IndexOp);
+         intNode.setArgumentValue(opNode.arg.value);
+         savingOp2.setKey(BuildKey::SavingIndex);
+         savingOp2.setArgumentValue(targetNode.arg.value);
+         opNode.setKey(BuildKey::Idle);
+         tempNode.setKey(BuildKey::Idle);
+         targetNode.setKey(BuildKey::Idle);
+         break;
+      default:
+         return false;
+   }
+
+   return true;
+}
+
+inline bool assignIntOpWithConsts(BuildNode lastNode)
+{
+   BuildNode opNode = lastNode;
+   BuildNode savingOp = opNode.prevNode();
+   BuildNode intNode = savingOp.prevNode();
+   BuildNode valueNode = intNode.findChild(BuildKey::Value);
+
+   int tempTarget = opNode.findChild(BuildKey::Index).arg.value;
+
+   switch (opNode.arg.value) {
+      case ADD_ASSIGN_OPERATOR_ID:
+      case SUB_ASSIGN_OPERATOR_ID:
+         intNode.setKey(BuildKey::AddingInt);
+         intNode.setArgumentValue(tempTarget);
+         if (opNode.arg.value == SUB_ASSIGN_OPERATOR_ID) {
+            // revert the value
+            valueNode.setArgumentValue(-valueNode.arg.value);
+         }
+         savingOp.setKey(BuildKey::Idle);
+         opNode.setKey(BuildKey::Idle);
+         break;
+      default:
+         return false;
+   }
+
+   return true;
+}
+
 ByteCodeWriter::Transformer transformers[] =
 {
-   nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying
+   nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts
 };
 
 // --- ByteCodeWriter ---
@@ -2437,7 +2544,7 @@ bool ByteCodeWriter :: matchTriePatterns(BuildNode node)
             auto currentPatternValue = currentPattern.Value();
 
             if (currentPatternValue.match(current)) {
-               if (currentPatternValue.pattternId && transformers[currentPatternValue.pattternId](current))
+               if (currentPatternValue.patternId && transformers[currentPatternValue.patternId](current))
                   return true;
 
                followers->add(currentPattern);

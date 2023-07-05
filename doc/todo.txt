@@ -11,16 +11,17 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] migrate all unit tests from 50
 
-    * optimize i := j + 1, i += 1
     * ide debugger : fix screen flashing
-
+    * op : i*2+1;
+    * optimize: real pi := 0.0;
+    * optimize: pi += -1.0;
     * ldoc : all symbols should be in alphabetic order
+
     * console symbol should be strong one
     * warn on resending to itself (e.g. for constructor)
     * allocate constant array directly if possible
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
     * elena-lc : raise an error if the file in the project does not exist
-    * intRefOp & realRefOp ?
     * string to real : support e notation
     * intnumber.cast<'integer> - should returns itself without boxing
     * exception tests : methodnotfound, nilreference
@@ -55,7 +56,6 @@ In development:
     * optimize assign inp_op direct_call embeddable
     * optimize direct_call direct_call embeddable
     * optimize pi sample
-    * optimize r * n + 0.5r
     * optimize dirty_ptr := dirty_ptr + int
     * ide : replace
     * implementing corex: snop, using im the code as well
@@ -72,8 +72,6 @@ In development:
     * elt - exception handler
     * review RealNumber.#new<system'IntNumber>[1], is a new object created twice
     * ide : crashed on end (freepath)
-    * 2*i should be compiled as i*2
-    * int operation : 1 + i
     * optimize:
         int dump[4];
         dump[i*2] := 3;

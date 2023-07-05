@@ -178,15 +178,25 @@ BuildKeyPattern decodeBuildPattern(BuildKeyMap& dictionary, ScriptReader& reader
 
    if (token.compare("=")) {
       reader.read(token);
+      pattern.argument = token.token.toInt();
+      reader.read(token);
+   }
+
+   if (token.compare("=>")) {
+      reader.read(token);
 
       int patternId = token.token.toInt();
       if (!patternId)
          throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
 
-      pattern.pattternId = patternId;
+      pattern.patternId = patternId;
 
       reader.read(token);
    }
+   else if (token.compare(",")) {
+      reader.read(token);
+   }
+   else throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
 
    return pattern;
 }
@@ -207,7 +217,7 @@ int parseSourceRules(FileEncoding encoding, path_t path)
    BuildKeyMap dictionary({ BuildKey::None });
    BuildTree::loadBuildKeyMap(dictionary);
 
-   BuildCodeTrie       trie({ BuildKey::None });
+   BuildCodeTrie       trie({ });
 
    TextFileReader source(path.str(), encoding, false);
    ScriptReader reader(4, &source);

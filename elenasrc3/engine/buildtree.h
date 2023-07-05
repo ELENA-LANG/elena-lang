@@ -140,8 +140,11 @@ namespace elena_lang
       StrongResendOp       = 0x006F,
       CopyingToAccExact    = 0x0070,
       SavingInt            = 0x0071,
+      AddingInt            = 0x0072,
+      LoadingAccToIndex    = 0x0073,
+      IndexOp              = 0x0074,
 
-      MaxOperationalKey    = 0x0071,
+      MaxOperationalKey    = 0x0074,
 
       Import               = 0x0080,
       DictionaryOp         = 0x0081,
@@ -233,6 +236,9 @@ namespace elena_lang
          map.add("byrefmark", BuildKey::ByRefOpMark);
          map.add("int_literal", BuildKey::IntLiteral);
          map.add("copying", BuildKey::Copying);
+         map.add("local_address", BuildKey::LocalAddress);
+         map.add("saving_stack", BuildKey::SavingInStack);
+         map.add("intop", BuildKey::IntOp);
       }
    };
 
@@ -240,13 +246,15 @@ namespace elena_lang
    typedef Tree<BuildKey, BuildKey::None>::Writer BuildTreeWriter;
    typedef Tree<BuildKey, BuildKey::None>::Node   BuildNode;
 
+   constexpr int BuildKeyNoArg = INT_MAX;
+
    // --- BuildKeyPattern ---
    struct BuildKeyPattern
    {
       BuildKey type;
 
       int      argument;
-      int      pattternId;
+      int      patternId;
 
       bool operator ==(BuildKey type) const
       {
@@ -270,7 +278,17 @@ namespace elena_lang
 
       bool match(BuildNode node)
       {
-         return node.key == type;
+         return node.key == type && (argument == BuildKeyNoArg || node.arg.value == argument);
+      }
+
+      BuildKeyPattern()
+         : type(BuildKey::None), argument(BuildKeyNoArg), patternId(0)
+      {
+         
+      }
+      BuildKeyPattern(BuildKey type)
+         : type(type), argument(BuildKeyNoArg), patternId(0)
+      {
       }
    };
 
@@ -287,7 +305,7 @@ namespace elena_lang
       bool                 loaded;
 
       BuildTreeTransformer()
-         : trie({ BuildKey::None })
+         : trie({ })
       {
          loaded = false;
       }

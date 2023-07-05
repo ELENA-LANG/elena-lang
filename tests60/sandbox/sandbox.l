@@ -2,10 +2,13 @@ import extensions;
 
 public program()
 {
-   int n := 2;
-   int m := 3;
+   int n := 3;
 
-   int k := m + n;
+   n -= 2;
+
+//   int k := n + 1;
+
+
 
 //   int l := "abc".Length;
 
