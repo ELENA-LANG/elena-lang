@@ -143,8 +143,9 @@ namespace elena_lang
       AddingInt            = 0x0072,
       LoadingAccToIndex    = 0x0073,
       IndexOp              = 0x0074,
+      SavingIndexToAcc     = 0x0075,
 
-      MaxOperationalKey    = 0x0074,
+      MaxOperationalKey    = 0x0075,
 
       Import               = 0x0080,
       DictionaryOp         = 0x0081,
@@ -239,6 +240,10 @@ namespace elena_lang
          map.add("local_address", BuildKey::LocalAddress);
          map.add("saving_stack", BuildKey::SavingInStack);
          map.add("intop", BuildKey::IntOp);
+         map.add("create_struct", BuildKey::CreatingStruct);
+         map.add("assigning", BuildKey::Assigning);
+         map.add("copying_to_acc", BuildKey::CopyingToAcc);
+         map.add("local", BuildKey::Local);
       }
    };
 

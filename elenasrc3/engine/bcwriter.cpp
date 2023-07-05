@@ -1576,6 +1576,11 @@ inline void loadingAccToIndex(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::Load);
 }
 
+inline void savingIndexToAcc(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::Save);
+}
+
 inline void addingInt(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    BuildNode value = node.findChild(BuildKey::Value);
@@ -1630,7 +1635,7 @@ ByteCodeWriter::Saver commands[] =
    terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning, savingLInStack, uintCondOp,
    uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp,
 
-   copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp
+   copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -1810,9 +1815,31 @@ inline bool assignIntOpWithConsts(BuildNode lastNode)
    return true;
 }
 
+inline bool boxingInt(BuildNode lastNode)
+{
+   BuildNode copyNode = lastNode;
+   BuildNode localNode = copyNode.prevNode();
+   BuildNode savingOp = localNode.prevNode();
+   BuildNode localAddrOp = savingOp.prevNode();
+   BuildNode assigningOp = localAddrOp.prevNode();
+
+   if (assigningOp.arg.value != localNode.arg.value)
+      return false;
+
+   localAddrOp.setKey(BuildKey::LoadingIndex);
+   localAddrOp.setArgumentValue(localAddrOp.arg.value);
+
+   savingOp.setKey(BuildKey::SavingIndexToAcc);
+
+   localNode.setKey(BuildKey::Idle);
+   copyNode.setKey(BuildKey::Idle);
+
+   return true;
+}
+
 ByteCodeWriter::Transformer transformers[] =
 {
-   nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts
+   nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts, boxingInt
 };
 
 // --- ByteCodeWriter ---

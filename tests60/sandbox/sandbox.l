@@ -3,8 +3,9 @@ import extensions;
 public program()
 {
    int n := 3;
+   if (n == 3) 
+      console.writeLine(n);
 
-   n -= 2;
 
 //   int k := n + 1;
 
