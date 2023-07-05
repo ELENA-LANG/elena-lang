@@ -274,9 +274,11 @@ void IDEWindow :: openResultTab(int controlIndex)
       resultBar->selectTabChild((ControlBase*)_children[controlIndex]);
    }
 
-   resultBar->show();
+   if (!resultBar->visible()) {
+      resultBar->show();
 
-   onLayoutChange(IDE_LAYOUT_CHANGED);
+      onLayoutChange(IDE_LAYOUT_CHANGED);
+   }
 }
 
 void IDEWindow :: closeResultTab(int controlIndex)

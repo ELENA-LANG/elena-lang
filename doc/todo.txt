@@ -10,13 +10,18 @@ In development:
     [!] some bytecode optimizations
     [!] rest of files / console samples / rosetta code samples
     [!] migrate all unit tests from 50
+    [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * ide debugger : fix screen flashing
+    * optimize: i == 2
+    * optimize: i != 0
+    * optimize: i < 0
+    * optimize: i > 0
+    * optimize: i < MAX
+    * ldoc : all symbols should be in alphabetic order
+
     * op : i*2+1;
     * optimize: real pi := 0.0;
     * optimize: pi += -1.0;
-    * ldoc : all symbols should be in alphabetic order
-
     * console symbol should be strong one
     * warn on resending to itself (e.g. for constructor)
     * allocate constant array directly if possible
