@@ -9,15 +9,13 @@ In development:
     [!] elt tutorial (stand-alone / in IDE)
     [!] some bytecode optimizations
     [!] rest of files / console samples / rosetta code samples
-    [!] migrate all unit tests from 50
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * optimize: idle method
-    * optimize: get method - constant
-    * optimize: get method - self
     * optimize: get method - field
+    * ide : replace
 
     * op : i*2+1;
+    * migrate all unit tests from 50
     * optimize: real pi := 0.0;
     * optimize: pi += -1.0;
     * console symbol should be strong one
@@ -60,7 +58,6 @@ In development:
     * optimize direct_call direct_call embeddable
     * optimize pi sample
     * optimize dirty_ptr := dirty_ptr + int
-    * ide : replace
     * implementing corex: snop, using im the code as well
     * implementing corex
     * boxing an array, assinging to the local variable - get rid of double assigning

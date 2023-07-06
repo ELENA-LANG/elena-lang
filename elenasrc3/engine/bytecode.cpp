@@ -458,11 +458,12 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
             *blocks.getIt(index) = 1;
          }
       }
-      else if (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop) {
+      else if (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop 
+         && command.code != ByteCode::Breakpoint) 
+      {
          switch (command.code) {
             case ByteCode::Throw:
             case ByteCode::Quit:
-            //case bcQuitN:
             case ByteCode::JumpMR:
             case ByteCode::VJumpMR:
             case ByteCode::JumpVI:
@@ -535,7 +536,8 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
          importMode = false;
       }
 
-      bool isCommand = !importMode && (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop);
+      bool isCommand = !importMode && (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop 
+         && command.code != ByteCode::Breakpoint);
 
       if (index == blockEnd) {
          b_it++;
