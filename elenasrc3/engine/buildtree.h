@@ -162,6 +162,7 @@ namespace elena_lang
       SwitchOption         = 0x008C,
       ElseOption           = 0x008D,
       FinalOp              = 0x008E,
+      IntBranchOp          = 0x008F,
 
       VariableInfo         = 0x0090,
       Variable             = 0x0091,
@@ -244,6 +245,8 @@ namespace elena_lang
          map.add("assigning", BuildKey::Assigning);
          map.add("copying_to_acc", BuildKey::CopyingToAcc);
          map.add("local", BuildKey::Local);
+         map.add("intcondop", BuildKey::IntCondOp);
+         map.add("branchop", BuildKey::BranchOp);
       }
    };
 

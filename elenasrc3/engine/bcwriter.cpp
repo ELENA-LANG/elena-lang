@@ -1837,9 +1837,52 @@ inline bool boxingInt(BuildNode lastNode)
    return true;
 }
 
+inline BuildNode getPrevious(BuildNode node)
+{
+   node = node.prevNode();
+   switch (node.key) {
+      case BuildKey::VirtualBreakoint:
+      case BuildKey::EndStatement:
+      case BuildKey::OpenStatement:
+         return getPrevious(node);
+      default:
+         return node;
+   }
+}
+
+inline bool intBranchingOp(BuildNode lastNode)
+{
+   BuildNode branchNode = lastNode;
+   BuildNode localNode = branchNode.prevNode();
+   BuildNode assignNode = getPrevious(localNode);
+   BuildNode intOpNode = getPrevious(assignNode);
+
+   if (localNode.arg.value != assignNode.arg.value)
+      return false;
+
+   int op = intOpNode.arg.value;
+   switch (intOpNode.arg.value) {
+      case EQUAL_OPERATOR_ID:
+      case NOTEQUAL_OPERATOR_ID:
+         break;
+      default:
+         return false;
+   }
+
+   branchNode.setKey(BuildKey::IntBranchOp);
+   branchNode.setArgumentValue(op);
+
+   localNode.setKey(BuildKey::Idle);
+   assignNode.setKey(BuildKey::Idle);
+   intOpNode.setKey(BuildKey::Idle);
+
+   return true;
+}
+
 ByteCodeWriter::Transformer transformers[] =
 {
-   nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts, boxingInt
+   nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts,
+   boxingInt, intBranchingOp
 };
 
 // --- ByteCodeWriter ---
@@ -1975,6 +2018,54 @@ void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScop
          break;
       case ELSE_OPERATOR_ID:
          tape.write(ByteCode::CmpR, node.findChild(BuildKey::Const).arg.reference | mskVMTRef);
+         tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   BuildNode tapeNode = node.findChild(BuildKey::Tape);
+   saveTape(tape, tapeNode, tapeScope, paths, tapeOptMode);
+
+   if (ifElseMode) {
+      // HOTFIX : inject virtual breakpoint to fine-tune a debugger
+      BuildNode idleNode = {};
+      addVirtualBreakpoint(tape, idleNode, tapeScope);
+
+      tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
+
+      tape.setLabel();
+      saveTape(tape, tapeNode.nextNode(), tapeScope, paths, tapeOptMode);
+
+      tape.setLabel();
+   }
+   else {
+      if (!loopMode)
+         tape.setLabel();
+   }
+}
+
+void ByteCodeWriter :: saveIntBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
+   ReferenceMap& paths, bool tapeOptMode, bool loopMode)
+{
+   bool ifElseMode = node.arg.value == IF_ELSE_OPERATOR_ID;
+   if (ifElseMode) {
+      tape.newLabel();
+   }
+
+   if (!loopMode)
+      tape.newLabel();
+
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   tape.write(ByteCode::PeekSI, 1);
+   tape.write(ByteCode::ICmpN, 4);
+
+   switch (node.arg.value) {
+      case EQUAL_OPERATOR_ID:
+         tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
+         break;
+      case NOTEQUAL_OPERATOR_ID:
          tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
          break;
       default:
@@ -2416,6 +2507,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
          case BuildKey::BranchOp:
             saveBranching(tape, current, tapeScope, paths, tapeOptMode, loopMode);
             break;
+         case BuildKey::IntBranchOp:
+            saveIntBranching(tape, current, tapeScope, paths, tapeOptMode, loopMode);
+            break;
          case BuildKey::LoopOp:
             saveLoop(tape, current, tapeScope, paths, tapeOptMode);
             break;
@@ -2513,6 +2607,7 @@ inline bool isNonOperational(BuildKey key)
          return false;
       case BuildKey::OpenStatement:
       case BuildKey::EndStatement:
+      case BuildKey::VirtualBreakoint:
          // NOTE : to simplify the patterns, ignore open / end statement commands
          return true;
       default:

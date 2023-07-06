@@ -2,10 +2,18 @@ import extensions;
 
 public program()
 {
-   int n := 3;
-   if (n == 3) 
-      console.writeLine(n);
+   int n := 1;
+   int m := 3;
 
+//   if (n == m) 
+//      console.writeLine(n);
+
+//   while (n != m) {
+//      console.writeLine(n);
+
+//      n += 1;
+//   }
+   
 
 //   int k := n + 1;
 

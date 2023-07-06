@@ -64,7 +64,9 @@ namespace elena_lang
          ReferenceMap& paths, bool tapeOptMode, bool loopMode = false);
       void saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
          ReferenceMap& paths, bool tapeOptMode, bool loopMode);
-      void saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, 
+      void saveIntBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
+         ReferenceMap& paths, bool tapeOptMode, bool loopMode);
+      void saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths,
          bool tapeOptMode);
       void saveSwitching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths,
          bool tapeOptMode);

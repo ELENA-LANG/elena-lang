@@ -12,10 +12,14 @@ In development:
     [!] migrate all unit tests from 50
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * optimize: i == 2
-    * optimize: i != 0
-    * optimize: i < 0
-    * optimize: i > 0
+    * optimize: if(i == 2)
+
+    * optimize: if(i != 0)
+    * optimize: if(i < 0)
+    * optimize: if(i > 0)
+    * optimize: if(i <= 0)
+    * optimize: if(i >= 0)
+
     * optimize: i < MAX
     * ldoc : all symbols should be in alphabetic order
 
