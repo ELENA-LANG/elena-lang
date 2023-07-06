@@ -1,5 +1,7 @@
 import extensions;
 
+const int MAX = 50000000;
+
 public program()
 {
    int n := 2;
@@ -15,7 +17,7 @@ public program()
 //   console.writeLine(n <= m);
 //   console.writeLine(m <= n);
 
-   if (n >= 3) 
+   if (n < MAX) 
       console.writeLine(n);
 
 //   while (n < m) {

@@ -447,7 +447,6 @@ namespace elena_lang
          }
          else _top = _tale = new Item(item, nullptr);
          _count++;
-
       }
 
       void insert(int index, T item)
@@ -469,6 +468,8 @@ namespace elena_lang
          }
          else if (current != nullptr) {
             prev->next = new Item(item, prev->next);
+
+            _count++;
          }
          else addToTale(item);
       }

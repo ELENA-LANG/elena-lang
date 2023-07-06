@@ -1345,14 +1345,40 @@ ref_t DocGenerator :: findExtensionTarget(ref_t reference)
    else return 0;
 }
 
+inline void replace(IdentifierString& str, ustr_t oldStr, ustr_t newStr)
+{
+   size_t index = (*str).findStr(oldStr);
+   if (index != NOTFOUND_POS) {
+      str.cut(index, oldStr.length());
+      str.insert(newStr, index);
+   }
+}
+
 void DocGenerator :: loadClassPrefixes(ApiClassInfo* apiClassInfo, ref_t reference)
 {
    ClassInfo info;
    if (loadClassInfo(reference, info, true)) {
+      if (test(info.header.flags, elStateless) && test(info.header.flags, elSealed)) {
+         replace(apiClassInfo->prefix, "class", "singleton");
+      }
+
       if (test(info.header.flags, elAbstract)) {
          apiClassInfo->prefix.insert("abstract ", 0);
       }
    }
+}
+
+bool isTemplateDeclaration(ustr_t referenceName)
+{
+   size_t index = referenceName.find('#');
+   if (index == NOTFOUND_POS)
+      return false;
+
+   // if it is a template of template
+   if (referenceName.findSub(index + 1, '#') != NOTFOUND_POS)
+      return false;
+
+   return referenceName.findStr("@T1") != NOTFOUND_POS && referenceName.findStr("$private");
 }
 
 void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
@@ -1393,9 +1419,6 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
       ReferenceProperName properName(referenceName);
       ReferenceName fullName(*_rootNs, referenceName + 1);
 
-      if (referenceName.findStr("Tuple") != NOTFOUND_POS) 
-         classClassRef = classClassRef + 0;;
-
       // HOTFIX : skip internal class
       if (properName[0] == '$')
          return;
@@ -1426,7 +1449,7 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
       if (_module->mapSection(reference | mskVMTRef, true) || extensionRef) {
          bool templateBased = false;
          if (isTemplateBased(referenceName)) {
-            if (referenceName.findStr("@T1") != NOTFOUND_POS && referenceName.findStr("$private")) {
+            if (isTemplateDeclaration(referenceName)) {
                templateBased = true;
 
                parseTemplateName(properName);

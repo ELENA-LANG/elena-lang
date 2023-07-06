@@ -12,15 +12,11 @@ In development:
     [!] migrate all unit tests from 50
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * optimize: if(i >= 0 / n)
-
-    * optimize: i < MAX
-    * ldoc : all symbols should be in alphabetic order
-
     * optimize: idle method
     * optimize: get method - constant
     * optimize: get method - self
     * optimize: get method - field
+
     * op : i*2+1;
     * optimize: real pi := 0.0;
     * optimize: pi += -1.0;
