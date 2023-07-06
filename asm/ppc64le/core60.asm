@@ -2095,6 +2095,19 @@ inline %0D4h
 
 end
 
+// ; selgrrr
+inline %0D7h
+
+  ld      r16, toc_code(r2)
+  addis   r17, r16, __xdisp32hi_1 
+  addis   r18, r16, __xdisp32hi_2 
+  addi    r17, r17, __xdisp32lo_1 
+  addi    r18, r18, __xdisp32lo_2 
+
+  iselgr  r15, r17, r18
+
+end 
+
 // ; ianddpn
 inline %0D8h
 

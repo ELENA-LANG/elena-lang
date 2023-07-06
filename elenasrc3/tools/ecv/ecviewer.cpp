@@ -424,6 +424,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
          case ByteCode::SelULtRR:
+         case ByteCode::SelGrRR:
             addRArg(command.arg1, commandStr);
             addSecondRArg(command.arg2, commandStr, labels);
             break;

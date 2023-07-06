@@ -158,6 +158,7 @@ namespace elena_lang
       FDivDPN        = 0xD3,
       UDivDPN        = 0xD4,
 
+      SelGrRR        = 0xD7,
       IAndDPN        = 0xD8,
       IOrDPN         = 0xD9,
       IXorDPN        = 0xDA,

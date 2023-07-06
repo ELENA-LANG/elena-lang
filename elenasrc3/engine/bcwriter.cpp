@@ -781,11 +781,23 @@ void intCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
       case LESS_OPERATOR_ID:
          opCode = ByteCode::SelLtRR;
          break;
+      case GREATER_OPERATOR_ID:
+         opCode = ByteCode::SelLtRR;
+         inverted = true;
+         break;
       case EQUAL_OPERATOR_ID:
          opCode = ByteCode::SelEqRR;
          break;
       case NOTEQUAL_OPERATOR_ID:
          opCode = ByteCode::SelEqRR;
+         inverted = true;
+         break;
+      case NOTGREATER_OPERATOR_ID:
+         opCode = ByteCode::SelGrRR;
+         inverted = true;
+         break;
+      case NOTLESS_OPERATOR_ID:
+         opCode = ByteCode::SelLtRR;
          inverted = true;
          break;
       default:
@@ -1866,6 +1878,10 @@ inline bool intBranchingOp(BuildNode lastNode)
    switch (intOpNode.arg.value) {
       case EQUAL_OPERATOR_ID:
       case NOTEQUAL_OPERATOR_ID:
+      case LESS_OPERATOR_ID:
+      case GREATER_OPERATOR_ID:
+      case NOTGREATER_OPERATOR_ID:
+      case NOTLESS_OPERATOR_ID:
          break;
       default:
          return false;
@@ -2093,6 +2109,22 @@ void ByteCodeWriter :: saveIntBranching(CommandTape& tape, BuildNode node, TapeS
          case NOTEQUAL_OPERATOR_ID:
             tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
             break;
+         case LESS_OPERATOR_ID:
+            // should be inverted
+            tape.write(ByteCode::Jge, PseudoArg::CurrentLabel);
+            break;
+         case GREATER_OPERATOR_ID:
+            // should be inverted
+            tape.write(ByteCode::Jle, PseudoArg::CurrentLabel);
+            break;
+         case NOTGREATER_OPERATOR_ID:
+            // should be inverted
+            tape.write(ByteCode::Jgr, PseudoArg::CurrentLabel);
+            break;
+         case NOTLESS_OPERATOR_ID:
+            // should be inverted
+            tape.write(ByteCode::Jlt, PseudoArg::CurrentLabel);
+            break;
          default:
             assert(false);
             break;
@@ -2108,6 +2140,21 @@ void ByteCodeWriter :: saveIntBranching(CommandTape& tape, BuildNode node, TapeS
             break;
          case NOTEQUAL_OPERATOR_ID:
             tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
+            break;
+         case LESS_OPERATOR_ID:
+            tape.write(ByteCode::Jge, PseudoArg::CurrentLabel);
+            break;
+         case GREATER_OPERATOR_ID:
+            // should be inverted
+            tape.write(ByteCode::Jle, PseudoArg::CurrentLabel);
+            break;
+         case NOTGREATER_OPERATOR_ID:
+            // should be inverted
+            tape.write(ByteCode::Jgr, PseudoArg::CurrentLabel);
+            break;
+         case NOTLESS_OPERATOR_ID:
+            // should be inverted
+            tape.write(ByteCode::Jlt, PseudoArg::CurrentLabel);
             break;
          default:
             assert(false);

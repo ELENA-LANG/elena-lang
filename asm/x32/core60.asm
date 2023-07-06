@@ -1838,6 +1838,15 @@ inline %0D4h
 
 end
 
+// ; selgrrr
+inline %0D7h
+
+  mov   eax, __ptr32_1
+  mov   ebx, __ptr32_2
+  cmovg ebx, eax
+
+end
+
 // ; ianddpn
 inline %0D8h
 

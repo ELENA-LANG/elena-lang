@@ -53,7 +53,7 @@ const char* _fnOpcodes[256] =
    "cmp", "fcmp", "icmp", "tst flag", "tstn", "tst mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "cmp fp", "cmp sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xloadarg sp", "xcreate", "system",
 
-   "fadd dp", "fsub dp", "fmul dp", "fdiv dp", "udiv dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "fadd dp", "fsub dp", "fmul dp", "fdiv dp", "udiv dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "selgr",
    "iand dp", "ior dp", "ixor dp", "inot dp", "ishl dp", "ishr dp", "xopen", "selult",
 
    "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", "nsave dp", "xhook dp", "xnewn",
@@ -359,6 +359,8 @@ inline bool removeIdleJump(ByteCodeIterator it)
          case ByteCode::Jne:
          case ByteCode::Jeq:
          case ByteCode::Jlt:
+         case ByteCode::Jle:
+         case ByteCode::Jgr:
          case ByteCode::Jge:
          case ByteCode::JumpMR:
          case ByteCode::VJumpMR:
@@ -472,9 +474,9 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
             case ByteCode::Jeq:
             case ByteCode::Jne:
             case ByteCode::Jlt:
+            case ByteCode::Jle:
             case ByteCode::Jge:
             case ByteCode::Jgr:
-            case ByteCode::Jle:
                // remove the label from idle list
                idleLabels.exclude(command.arg1);
 
@@ -726,7 +728,9 @@ void CommandTape :: saveTo(MemoryWriter* writer)
          case ByteCode::Jeq:
          case ByteCode::Jne:
          case ByteCode::Jlt:
+         case ByteCode::Jle:
          case ByteCode::Jge:
+         case ByteCode::Jgr:
             writer->writeByte((char)command.code);
             if (!importMode) {
                // if forward jump, it should be resolved later

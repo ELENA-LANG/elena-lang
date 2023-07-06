@@ -1918,6 +1918,15 @@ inline %0D4h
 
 end
 
+// ; selgrrr
+inline %0D7h
+
+  mov   rax, __ptr64_1
+  mov   rbx, __ptr64_2
+  cmovg rbx, rax
+
+end
+
 // ; ianddpn
 inline %0D8h
 

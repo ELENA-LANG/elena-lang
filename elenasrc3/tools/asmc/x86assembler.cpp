@@ -2402,6 +2402,9 @@ bool X86Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    else if (tokenInfo.compare("cmovb")) {
       compileCMovcc(tokenInfo, writer, X86JumpType::JB);
    }
+   else if (tokenInfo.compare("cmovg")) {
+      compileCMovcc(tokenInfo, writer, X86JumpType::JG);
+   }
    else if (tokenInfo.compare("cmovl")) {
       compileCMovcc(tokenInfo, writer, X86JumpType::JL);
    }
