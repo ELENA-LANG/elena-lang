@@ -163,30 +163,31 @@ namespace elena_lang
       ElseOption           = 0x008D,
       FinalOp              = 0x008E,
       IntBranchOp          = 0x008F,
+      IntConstBranchOp     = 0x0090,
 
-      VariableInfo         = 0x0090,
-      Variable             = 0x0091,
-      VariableAddress      = 0x0092,
-      IntVariableAddress   = 0x0093,
-      LongVariableAddress  = 0x0094,
-      RealVariableAddress  = 0x0095,
-      ByteArrayAddress     = 0x0096,
-      ShortArrayAddress    = 0x0097,
-      IntArrayAddress      = 0x0098,
-      UIntVariableAddress  = 0x0099,
+      VariableInfo         = 0x00A0,
+      Variable             = 0x00A1,
+      VariableAddress      = 0x00A2,
+      IntVariableAddress   = 0x00A3,
+      LongVariableAddress  = 0x00A4,
+      RealVariableAddress  = 0x00A5,
+      ByteArrayAddress     = 0x00A6,
+      ShortArrayAddress    = 0x00A7,
+      IntArrayAddress      = 0x00A8,
+      UIntVariableAddress  = 0x00A9,
 
-      ParameterInfo        = 0x00A0,
-      Parameter            = 0x00A1,
-      IntParameterAddress  = 0x00A2,
-      LongParameterAddress = 0x00A3,
-      RealParameterAddress = 0x00A4,
-      ParameterAddress     = 0x00A5,
-      MethodName           = 0x00A6,
-      ShortArrayParameter  = 0x00A7,
-      ByteArrayParameter   = 0x00A8,
-      IntArrayParameter    = 0x00A9,
+      ParameterInfo        = 0x00B0,
+      Parameter            = 0x00B1,
+      IntParameterAddress  = 0x00B2,
+      LongParameterAddress = 0x00B3,
+      RealParameterAddress = 0x00B4,
+      ParameterAddress     = 0x00B5,
+      MethodName           = 0x00B6,
+      ShortArrayParameter  = 0x00B7,
+      ByteArrayParameter   = 0x00B8,
+      IntArrayParameter    = 0x00B9,
 
-      BinaryArray          = 0x00B0,
+      BinaryArray          = 0x00C0,
 
       ByRefOpMark          = 0x4001,
 
@@ -247,6 +248,7 @@ namespace elena_lang
          map.add("local", BuildKey::Local);
          map.add("intcondop", BuildKey::IntCondOp);
          map.add("branchop", BuildKey::BranchOp);
+         map.add("intbranchop", BuildKey::IntBranchOp);
       }
    };
 

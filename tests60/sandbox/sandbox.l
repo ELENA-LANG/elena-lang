@@ -2,15 +2,22 @@ import extensions;
 
 public program()
 {
-   int n := 1;
-   int m := 3;
+   int n := 3;
+//   int m := 3;
 
-//   if (n == m) 
+   while (n != 0) {
+      console.writeLine(n);
+
+      n -= 1;
+   }
+
+
+//   if (n != 0) 
 //      console.writeLine(n);
 
 //   while (n != m) {
 //      console.writeLine(n);
-
+//
 //      n += 1;
 //   }
    

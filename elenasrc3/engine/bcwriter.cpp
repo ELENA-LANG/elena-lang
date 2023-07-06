@@ -1734,6 +1734,21 @@ inline bool intCopying(BuildNode lastNode)
    return false;
 }
 
+inline BuildNode getPrevious(BuildNode node)
+{
+   node = node.prevNode();
+   switch (node.key) {
+      case BuildKey::VirtualBreakoint:
+      case BuildKey::EOPBreakpoint:
+      case BuildKey::EndStatement:
+      case BuildKey::OpenStatement:
+      case BuildKey::Idle:
+         return getPrevious(node);
+      default:
+         return node;
+   }
+}
+
 inline bool intOpWithConsts(BuildNode lastNode)
 {
    int size = lastNode.findChild(BuildKey::Size).arg.value;
@@ -1741,12 +1756,12 @@ inline bool intOpWithConsts(BuildNode lastNode)
       return false;
 
    BuildNode targetNode = lastNode;
-   BuildNode tempNode = targetNode.prevNode();
-   BuildNode opNode = tempNode.prevNode();
-   BuildNode savingOp2 = opNode.prevNode();
-   BuildNode intNode = savingOp2.prevNode();
+   BuildNode tempNode = getPrevious(targetNode);
+   BuildNode opNode = getPrevious(tempNode);
+   BuildNode savingOp2 = getPrevious(opNode);
+   BuildNode intNode = getPrevious(savingOp2);
    BuildNode valueNode = intNode.findChild(BuildKey::Value);
-   BuildNode savingOp1 = intNode.prevNode();
+   BuildNode savingOp1 = getPrevious(intNode);
 
    int tempTarget = opNode.findChild(BuildKey::Index).arg.value;
    if (tempTarget != tempNode.arg.value)
@@ -1790,8 +1805,8 @@ inline bool intOpWithConsts(BuildNode lastNode)
 inline bool assignIntOpWithConsts(BuildNode lastNode)
 {
    BuildNode opNode = lastNode;
-   BuildNode savingOp = opNode.prevNode();
-   BuildNode intNode = savingOp.prevNode();
+   BuildNode savingOp = getPrevious(opNode);
+   BuildNode intNode = getPrevious(savingOp);
    BuildNode valueNode = intNode.findChild(BuildKey::Value);
 
    int tempTarget = opNode.findChild(BuildKey::Index).arg.value;
@@ -1818,10 +1833,10 @@ inline bool assignIntOpWithConsts(BuildNode lastNode)
 inline bool boxingInt(BuildNode lastNode)
 {
    BuildNode copyNode = lastNode;
-   BuildNode localNode = copyNode.prevNode();
-   BuildNode savingOp = localNode.prevNode();
-   BuildNode localAddrOp = savingOp.prevNode();
-   BuildNode assigningOp = localAddrOp.prevNode();
+   BuildNode localNode = getPrevious(copyNode);
+   BuildNode savingOp = getPrevious(localNode);
+   BuildNode localAddrOp = getPrevious(savingOp);
+   BuildNode assigningOp = getPrevious(localAddrOp);
 
    if (assigningOp.arg.value != localNode.arg.value)
       return false;
@@ -1837,23 +1852,10 @@ inline bool boxingInt(BuildNode lastNode)
    return true;
 }
 
-inline BuildNode getPrevious(BuildNode node)
-{
-   node = node.prevNode();
-   switch (node.key) {
-      case BuildKey::VirtualBreakoint:
-      case BuildKey::EndStatement:
-      case BuildKey::OpenStatement:
-         return getPrevious(node);
-      default:
-         return node;
-   }
-}
-
 inline bool intBranchingOp(BuildNode lastNode)
 {
    BuildNode branchNode = lastNode;
-   BuildNode localNode = branchNode.prevNode();
+   BuildNode localNode = getPrevious(branchNode);
    BuildNode assignNode = getPrevious(localNode);
    BuildNode intOpNode = getPrevious(assignNode);
 
@@ -1879,10 +1881,32 @@ inline bool intBranchingOp(BuildNode lastNode)
    return true;
 }
 
+inline bool intConstBranchingOp(BuildNode lastNode)
+{
+   BuildNode branchNode = lastNode;
+   BuildNode savingOp2 = getPrevious(branchNode);
+   BuildNode intNode = getPrevious(savingOp2);
+   BuildNode savingOp1 = getPrevious(intNode);
+   BuildNode localOp = getPrevious(savingOp1);
+
+   BuildNode valueNode = intNode.findChild(BuildKey::Value);
+
+   branchNode.appendChild(BuildKey::Value, valueNode.arg.value);
+   branchNode.setKey(BuildKey::IntConstBranchOp);
+
+   savingOp2.setKey(BuildKey::Idle);
+   intNode.setKey(BuildKey::Idle);
+   savingOp1.setKey(BuildKey::Idle);
+
+   localOp.setKey(BuildKey::LoadingIndex);
+
+   return true;
+}
+
 ByteCodeWriter::Transformer transformers[] =
 {
    nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts,
-   boxingInt, intBranchingOp
+   boxingInt, intBranchingOp, intConstBranchingOp
 };
 
 // --- ByteCodeWriter ---
@@ -2057,20 +2081,38 @@ void ByteCodeWriter :: saveIntBranching(CommandTape& tape, BuildNode node, TapeS
    if (!loopMode)
       tape.newLabel();
 
-   // NOTE : sp[0] - loperand, sp[1] - roperand
-   tape.write(ByteCode::PeekSI, 1);
-   tape.write(ByteCode::ICmpN, 4);
+   if (node == BuildKey::IntBranchOp) {
+      // NOTE : sp[0] - loperand, sp[1] - roperand
+      tape.write(ByteCode::PeekSI, 1);
+      tape.write(ByteCode::ICmpN, 4);
 
-   switch (node.arg.value) {
-      case EQUAL_OPERATOR_ID:
-         tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
-         break;
-      case NOTEQUAL_OPERATOR_ID:
-         tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
-         break;
-      default:
-         assert(false);
-         break;
+      switch (node.arg.value) {
+         case EQUAL_OPERATOR_ID:
+            tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
+            break;
+         case NOTEQUAL_OPERATOR_ID:
+            tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
+            break;
+         default:
+            assert(false);
+            break;
+      }
+   }
+   else {
+      BuildNode valueNode = node.findChild(BuildKey::Value);
+
+      tape.write(ByteCode::CmpN, valueNode.arg.value);
+      switch (node.arg.value) {
+         case EQUAL_OPERATOR_ID:
+            tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
+            break;
+         case NOTEQUAL_OPERATOR_ID:
+            tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
+            break;
+         default:
+            assert(false);
+            break;
+      }
    }
 
    BuildNode tapeNode = node.findChild(BuildKey::Tape);
@@ -2508,6 +2550,7 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             saveBranching(tape, current, tapeScope, paths, tapeOptMode, loopMode);
             break;
          case BuildKey::IntBranchOp:
+         case BuildKey::IntConstBranchOp:
             saveIntBranching(tape, current, tapeScope, paths, tapeOptMode, loopMode);
             break;
          case BuildKey::LoopOp:
@@ -2604,10 +2647,12 @@ inline bool isNonOperational(BuildKey key)
 {
    switch (key) {
       case BuildKey::ByRefOpMark:
+      case BuildKey::IntBranchOp:
          return false;
       case BuildKey::OpenStatement:
       case BuildKey::EndStatement:
       case BuildKey::VirtualBreakoint:
+      case BuildKey::EOPBreakpoint:
          // NOTE : to simplify the patterns, ignore open / end statement commands
          return true;
       default:
