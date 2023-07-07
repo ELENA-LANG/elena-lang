@@ -716,7 +716,15 @@ public const struct WideString : BaseValue
       <= less(cast wide(ch));
 
    char at(int index)
-      = PrimitiveOperations.readUTF32(array, index);
+   {
+      int len := self.Length;
+      if (index < 0 || index >= len)
+      {
+         OutOfRangeException.raise()
+      };
+
+      ^ PrimitiveOperations.readUTF32(array, index);
+   }
 
    retoverload short at(int index)
       = array[index];
@@ -766,7 +774,7 @@ public const struct WideString : BaseValue
    {
       int l1 := self.Length;
       int l2 := s.Length;
-      string retVal := WideString.allocate(l1 + l2);
+      wide retVal := WideString.allocate(l1 + l2);
 
       self.copySubS(retVal, self, 0, index);
       self.copySubS(retVal, s, index, l2);    
@@ -783,10 +791,10 @@ public const struct WideString : BaseValue
    {
       int len1 := self.Length;
       int sindex := index + length;
-      string retVal := WideString.allocate(len1-length);
+      wide retVal := WideString.allocate(len1-length);
 
       self.copySubS(retVal, self, 0, index);
-      self.copySubS(retVal, self, sindex, len1 - length, index);
+      self.copySubS(retVal, self, index, len1 - sindex, sindex);
     
       ^ retVal;         
    }
@@ -794,7 +802,7 @@ public const struct WideString : BaseValue
    string Substring(int index, int length)
       : info("Returns the substring")
    {
-      ^ String.fromByteArray(array, index, length);
+      ^ WideString.fromShortArray(index, length, array);
    }
 
    int save(int index, int length, char[] buffer, int destIndex)

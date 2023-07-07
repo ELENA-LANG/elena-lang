@@ -15,6 +15,7 @@ In development:
     * ide : go to line
 
     * optimize : read 1, read 2, read 4, read 8
+    * optimize : write 1, write 2, write 4, write 8
     * implementing corex : set, ...
     * ide : tool bar
     * test $break for loop & sub loop

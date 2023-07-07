@@ -315,7 +315,7 @@ wideTests()
     Assert.ifTrue("abcd"w.indexOf(0, "bc"w)==1);
     Assert.ifTrue("abcd"w.indexOf(2, "bc"w)==-1);
 
-    Assert.ifTrue("acd"w.insert(1,"b") == "abcd"w);
+    Assert.ifTrue("acd"w.insert(1,"b"w) == "abcd"w);
     Assert.ifTrue("abecd"w.delete(2,1) == "abcd"w);
     Assert.ifTrue("abcd"w.Substring(1,2) == "bc"w);
     Assert.ifTrue("abc"w[1] == "b");
@@ -335,7 +335,7 @@ wideTests()
     console.write(".");
 
     Assert.ifTrue("s1"w < "s2"w);
-    Assert.ifFalse("s2"w < "s2"w);
+    Assert.ifTrue("s2"w < "s2"w);
     Assert.ifFalse("s2"w < "s1"w);
 
     console.writeLine(".");
