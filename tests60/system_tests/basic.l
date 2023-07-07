@@ -1,5 +1,64 @@
 import extensions;
 
+// --- ControlTest ---
+
+controlTest()
+{
+    console.write("controlTest:");
+    
+    var b1 := false;
+    if (true)
+    {
+        b1 := true
+    };
+    
+    var b2 := nil;
+    if (false)
+    {
+        b2 := false;
+    }
+    else
+    {
+        b2 := true
+    };
+    
+    Assert.ifTrue(b1);    
+    Assert.ifTrue(b2);    
+    
+    console.writeLine(".")
+}
+
+objectTest()
+{
+    console.write("objectTest:");
+    
+    var a := 1;
+    var b := "abc";
+    
+    Assert.ifTrue(a.equalReference(a) && a.equalReference(b).Inverted);
+    
+    console.writeLine(".")
+}
+
+// --- BooleanTest ---
+
+booleanTest()
+{
+    console.write("booleanTest:");
+    
+    var b1 := true;
+    var b2 := false;
+    
+    Assert.ifTrue(b1 == b1);
+    Assert.ifFalse(b1 == b2);
+    Assert.ifFalse(b2 == b1);
+    Assert.ifTrue(b2 == b2);
+    Assert.ifFalse(b2 != b2);
+    Assert.ifTrue(b1 != b2);
+    
+    console.writeLine(".")
+}
+
 // --- intTests ---
 
 intTests()
@@ -70,6 +129,12 @@ longTests()
 {
     console.write("longTests:");
 
+    long l1 := 100000000000000l;
+    long l2 := 5000000000000l;
+    
+    var l3 := l1 / l2;
+    Assert.ifTrue(l3 == 20);
+    
     int n32 := 23456;
     long n64 := n32;
     int in32 := -23458;
@@ -108,7 +173,7 @@ longTests()
     console.write(".");
 
     long l := 2l;
-    long l2 := -2l;
+    l2 := -2l;
     Assert.ifTrue(l == l);   
     Assert.ifTrue(l2 == l2); 
     Assert.ifFalse(l2 == l); 
@@ -131,6 +196,14 @@ longTests()
     Assert.ifFalse(l < n);  // ; false
     Assert.ifTrue(l2 < n);  // ; true
     Assert.ifFalse(l2 < n2);  // ; false
+    console.write(".");
+
+    long i := 0l;
+    i += 3l;
+    i -= 2l;
+    i *= 2l;
+    i /= 2l;
+    Assert.ifTrue(i == 1l);
 
     console.writeLine(".");
 }
@@ -190,6 +263,27 @@ gcTests()
 stringTests()
 {
     console.write("stringTests:");
+
+    Assert.ifTrue("abc" == "abc");
+    Assert.ifFalse("ab" == "abc");
+    Assert.ifTrue("ba" > "ab");
+    Assert.ifTrue("ab" < "abc");
+    Assert.ifTrue("abc" + "de" == "abcde");
+    console.write(".");
+
+    Assert.ifTrue("abcd".indexOf(0, "bc")==1);
+    Assert.ifTrue("abcd".indexOf(2, "bc")==-1);
+
+    Assert.ifTrue("acd".insert(1,"b") == "abcd");
+    Assert.ifTrue("abecd".delete(2,1) == "abcd");
+    Assert.ifTrue("abcd".Substring(1,2) == "bc");
+    Assert.ifTrue("abc"[1] == "b");
+    console.write(".");
+
+    Assert.ifFailed({ "abc"[-1] });
+    Assert.ifFailed({ "abc"[4] });
+    console.write(".");
+
     string s := "abc";
 
     Assert.ifTrue(s == "abc");
@@ -201,7 +295,7 @@ stringTests()
     console.write(".");
 
     Assert.ifTrue("s1" < "s2");
-    Assert.ifFalse("s2" < "s2");
+    Assert.ifTrue("s2" < "s2");
     Assert.ifFalse("s2" < "s1");
 
     console.writeLine(".");
@@ -211,6 +305,25 @@ stringTests()
 wideTests()
 {
     console.write("wideTests:");
+
+    Assert.ifTrue("abc"w == "abc"w);
+    Assert.ifFalse("ab"w == "abc"w);
+    Assert.ifTrue("ba"w > "ab"w);
+    Assert.ifTrue("ab"w < "abc"w);
+    Assert.ifTrue("abc"w + "de"w == "abcde"w);
+
+    Assert.ifTrue("abcd"w.indexOf(0, "bc"w)==1);
+    Assert.ifTrue("abcd"w.indexOf(2, "bc"w)==-1);
+
+    Assert.ifTrue("acd"w.insert(1,"b") == "abcd"w);
+    Assert.ifTrue("abecd"w.delete(2,1) == "abcd"w);
+    Assert.ifTrue("abcd"w.Substring(1,2) == "bc"w);
+    Assert.ifTrue("abc"w[1] == "b");
+
+    Assert.ifFailed({ "abc"w[-1] });
+    Assert.ifFailed({ "abc"w[4] });
+    console.write(".");
+
     wide s := "abc"w;
 
     Assert.ifTrue(s == "abc"w);

@@ -1407,8 +1407,25 @@ void IDEController :: doInclude(IDEModel* model)
 bool IDEController :: doSearch(FindDialogBase& dialog, IDEModel* model)
 {
    if (dialog.showModal()) {
-      if(sourceController.findText(model->viewModel(), &model->findModel)) {
-         return true;
+      if(!sourceController.findText(model->viewModel(), &model->findModel)) {
+         return false;
+      }
+   }
+
+   return true;
+}
+
+bool IDEController :: doReplace(FindDialogBase& dialog, MessageDialogBase& qusetionDialog, IDEModel* model)
+{
+   if (dialog.showModal()) {
+      while (sourceController.findText(model->viewModel(), &model->findModel)) {
+         auto result = qusetionDialog.question(REPLACE_TEXT);
+         if (result == MessageDialogBase::Cancel)
+            return true;
+         if (result == MessageDialogBase::Yes) {
+            if(!sourceController.replaceText(model->viewModel(), &model->findModel))
+               break;
+         }
       }
    }
 

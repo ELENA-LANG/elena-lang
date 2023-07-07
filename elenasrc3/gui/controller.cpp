@@ -396,3 +396,18 @@ bool TextViewController :: findText(TextViewModelBase* model, FindModel* findMod
 
    return false;
 }
+
+bool TextViewController :: replaceText(TextViewModelBase* model, FindModel* findModel)
+{
+   DocumentChangeStatus docStatus = {};
+
+   auto docView = model->DocView();
+   if (docView) {
+      docView->insertLine(docStatus, findModel->newText.str(), findModel->newText.length());
+      notifyOnChange(model, docStatus);
+
+      return true;
+   }
+
+   return false;
+}

@@ -110,6 +110,7 @@ namespace elena_lang
       void resizeModel(TextViewModelBase* model, Point size) override;
 
       bool findText(TextViewModelBase* model, FindModel* findModel);
+      bool replaceText(TextViewModelBase* model, FindModel* findModel);
 
       TextViewController(TextViewSettings& settings)
       {

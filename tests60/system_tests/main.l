@@ -2,6 +2,9 @@ public program()
 {
    console.writeLine("--- ELENA 6 API Unit Tests ---");
 
+   controlTest();
+   objectTest();
+   booleanTest();
    intTests();
    uintTests();
    longTests();

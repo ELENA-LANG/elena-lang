@@ -6,4 +6,4 @@ cmp, jne =3, set dp:$1, jump =2, set dp:$2 => cmp, set dp:$1, store sp=0, set dp
 cmp, jne =3, peek fp:$1, jump =2, peek fp:$2 => cmp, peek fp:$1, store sp=0, peek fp:$2, xpeekeq;
 peek fp:$1, copy, peek fp:#1 => peek fp, copy, idle;
 open, store fp, close => idle, idle, idle;
-open, store fp, set, close => idle, idle, set, idle;
+open, store fp, get i, close => idle, idle, get i, idle;

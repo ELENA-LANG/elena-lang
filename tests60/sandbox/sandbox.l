@@ -1,18 +1,14 @@
 import extensions;
 
-//A
-//{
-//  int x : prop;
-//}
-
-A
-{
-   object o : prop;
-}
-
 public program()
 {
-   var a := new A();
+   var s := "acd"w.insert(1,"b"w)
 
-   var o := a.o
+//    Assert.ifTrue("acd"w.insert(1,"b"w) == "abcd"w);
+//    Assert.ifTrue("abecd"w.delete(2,1) == "abcd"w);
+//    Assert.ifTrue("abcd"w.Substring(1,2) == "bc"w);
+//    Assert.ifTrue("abc"w[1] == "b");
+//
+//    Assert.ifFailed({ "abc"w[-1] });
+//    Assert.ifFailed({ "abc"w[4] });
 }

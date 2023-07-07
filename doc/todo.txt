@@ -11,11 +11,13 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * optimize: get method - field
-    * ide : replace
-
-    * op : i*2+1;
     * migrate all unit tests from 50
+    * ide : go to line
+
+    * optimize : read 1, read 2, read 4, read 8
+    * implementing corex : set, ...
+    * ide : tool bar
+    * test $break for loop & sub loop
     * optimize: real pi := 0.0;
     * optimize: pi += -1.0;
     * console symbol should be strong one
@@ -89,6 +91,7 @@ In development:
 
     === Iteration 18 ===
     [!] x86 GUI support
+    [!] pi sample optimization (under 9sec)
     * test all samples for win x86
 
     === Iteration 19 ===
@@ -191,7 +194,6 @@ Backlog:
     * arrange action for i386 / amd64 linux release
     * ide : debug vm client app
     * ide : editor context menu
-    * ide : tool bar
     * x86 : gui
     * system module - it should be possible to use type aliases (replace all cases of using direct types 
       for symbols in system (int,string,wide))

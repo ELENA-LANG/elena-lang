@@ -8,6 +8,18 @@ public class AssertException : Exception
 
 public singleton Assert
 {
+    ifFailed(Func f)
+    {
+        var failed := false;
+        f() \\ 
+            on:(e)
+            {
+                failed := true;
+            };
+            
+        Assert.ifTrue(failed);
+    }
+
     ifTrue(b)
     {
         ifnot(b)

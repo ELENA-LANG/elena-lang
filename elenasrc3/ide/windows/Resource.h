@@ -37,6 +37,7 @@
 
 #define IDM_SEARCH_FIND             701
 #define IDM_SEARCH_FINDNEXT         702
+#define IDM_SEARCH_REPLACE          703
 
 #define IDM_PROJECT_INCLUDE         801
 #define IDM_PROJECT_COMPILE         802
@@ -79,9 +80,11 @@
 #define IDC_SETTINGS_ARGUMENT       807
 
 #define IDD_EDITOR_FIND            1000
+#define IDD_EDITOR_REPLACE         1001
 #define IDC_FIND_TEXT              1004
 #define IDC_FIND_CASE              1005
 #define IDC_FIND_WHOLE             1006
+#define IDC_REPLACE_TEXT           1007
 
 #ifndef IDC_STATIC
 #define IDC_STATIC                  -1

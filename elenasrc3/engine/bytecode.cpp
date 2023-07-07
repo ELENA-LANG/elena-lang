@@ -494,7 +494,7 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
 
          index++;
       }
-      it++;
+      ++it;
    }
 
    int length = index;

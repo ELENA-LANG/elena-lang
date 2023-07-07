@@ -823,7 +823,7 @@ void DocumentView :: insertNewLine(DocumentChangeStatus& changeStatus)
    status.rowDifference += (_text->getRowCount() - rowCount);
 }
 
-void DocumentView :: insertLine(DocumentChangeStatus& changeStatus, text_t text, disp_t length)
+void DocumentView :: insertLine(DocumentChangeStatus& changeStatus, const_text_t text, disp_t length)
 {
    int rowCount = _text->getRowCount();
 

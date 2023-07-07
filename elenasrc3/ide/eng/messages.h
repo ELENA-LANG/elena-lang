@@ -19,6 +19,7 @@ namespace elena_lang
    constexpr auto QUESTION_CLOSE_UNSAVED     = _T("Close the tab anyway");
 
    constexpr auto NOT_FOUND_TEXT             = _T("Search string not found");
+   constexpr auto REPLACE_TEXT               = _T("Replace this occurence?");
 
 }
 

@@ -343,10 +343,11 @@ bool ProjectSettings :: showModal()
 
 // --- FindDialog ---
 
-FindDialog :: FindDialog(HINSTANCE instance, WindowBase* owner, FindModel* model)
+FindDialog :: FindDialog(HINSTANCE instance, WindowBase* owner, bool replaceMode, FindModel* model)
    : WinDialog(instance, owner)
 {
-   _dialogId = IDD_EDITOR_FIND;
+   _replaceMode = replaceMode;
+   _dialogId = replaceMode ? IDD_EDITOR_REPLACE : IDD_EDITOR_FIND;
    _model = model;
 }
 
@@ -370,9 +371,9 @@ bool FindDialog :: showModal()
 void FindDialog :: onCreate()
 {
    setText(IDC_FIND_TEXT, _model->text.str());
-   //if (_model-> _replaceMode) {
-   //   setText(IDC_REPLACE_TEXT, _option->newText);
-   //}
+   if (_replaceMode) {
+      setText(IDC_REPLACE_TEXT, _model->newText.str());
+   }
    setCheckState(IDC_FIND_CASE, _model->matchCase);
    setCheckState(IDC_FIND_WHOLE, _model->wholeWord);
 
@@ -389,6 +390,11 @@ void FindDialog :: onOK()
 
    getText(IDC_FIND_TEXT, (wchar_t**)(&s), 255);
    _model->text.copy(s);
+
+   if (_replaceMode) {
+      getText(IDC_REPLACE_TEXT, (wchar_t**)(&s), 255);
+      _model->newText.copy(s);
+   }
 
    _model->matchCase = getCheckState(IDC_FIND_CASE);
    _model->wholeWord = getCheckState(IDC_FIND_WHOLE);

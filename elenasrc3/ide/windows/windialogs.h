@@ -119,6 +119,7 @@ namespace elena_lang
    class FindDialog : public WinDialog, public FindDialogBase
    {
       FindModel* _model;
+      bool       _replaceMode;
 
       void copyHistory(int id, SearchHistory* history);
 
@@ -128,7 +129,7 @@ namespace elena_lang
    public:
       bool showModal() override;
 
-      FindDialog(HINSTANCE instance, WindowBase* owner, FindModel* model);
+      FindDialog(HINSTANCE instance, WindowBase* owner, bool replaceMode, FindModel* model);
    };
 
 }

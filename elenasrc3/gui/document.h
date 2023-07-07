@@ -355,7 +355,7 @@ namespace elena_lang
       }
       void insertChar(DocumentChangeStatus& changeStatus, text_c ch, size_t number);
       void insertNewLine(DocumentChangeStatus& changeStatus);
-      void insertLine(DocumentChangeStatus& changeStatus, text_t text, disp_t length);
+      void insertLine(DocumentChangeStatus& changeStatus, const_text_t text, disp_t length);
 
       virtual void blockInserting(DocumentChangeStatus& changeStatus, const_text_t subs, size_t length);
       virtual void blockDeleting(DocumentChangeStatus& changeStatus, const_text_t subs, size_t length);

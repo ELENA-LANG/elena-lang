@@ -61,6 +61,7 @@ namespace elena_lang
    struct FindModel
    {
       String<text_c, 255>  text;
+      String<text_c, 255>  newText;
       SearchHistory        searchHistory;
 
       bool                 matchCase;

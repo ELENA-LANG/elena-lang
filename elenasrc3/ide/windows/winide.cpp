@@ -116,7 +116,8 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
       *model->projectModel.paths.lastPath),
    messageDialog(this),
    projectSettingsDialog(instance, this, &model->projectModel),
-   findDialog(instance, this, &model->findModel),
+   findDialog(instance, this, false, &model->findModel),
+   replaceDialog(instance, this, true, &model->findModel),
    clipboard(this)
 {
    this->_instance = instance;
@@ -246,6 +247,13 @@ void IDEWindow :: search()
 void IDEWindow :: searchNext()
 {
    if (!_controller->doSearchNext(_model)) {
+      messageDialog.info(NOT_FOUND_TEXT);
+   }
+}
+
+void IDEWindow :: replace()
+{
+   if (!_controller->doReplace(replaceDialog, messageDialog, _model)) {
       messageDialog.info(NOT_FOUND_TEXT);
    }
 }
@@ -585,6 +593,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_SEARCH_FINDNEXT:
          searchNext();
+         break;
+      case IDM_SEARCH_REPLACE:
+         replace();
          break;
       case IDM_PROJECT_COMPILE:
          _controller->doCompileProject(fileDialog, projectDialog, _model);

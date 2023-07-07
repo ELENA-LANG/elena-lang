@@ -356,7 +356,15 @@ public const struct String : BaseValue,
    private copySubS(string dest, string sour, int index, int length, int sourIndex) : external(system'core_routines'__str_xcopysubs);
 
    char at(int index)
-      = PrimitiveOperations.readUTF32(array, index);
+   {
+      int len := self.Length;
+      if (index < 0 || index >= len)
+      {
+         OutOfRangeException.raise()
+      };
+
+      ^ PrimitiveOperations.readUTF32(array, index);
+   }
 
    retoverload byte at(int index)
       = array[index];
@@ -387,7 +395,7 @@ public const struct String : BaseValue,
    int indexOf(int index, string literal)
       : info("Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1")
    {
-      int sublen := literal.Length - index;
+      int sublen := literal.Length;
       int retVal := PrimitiveStringOperations.indexOf(self, literal, index, sublen);
         
       ^ retVal
@@ -739,7 +747,7 @@ public const struct WideString : BaseValue
    int indexOf(int index, wide literal)
       : info("Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1")   
    {
-      int sublen := literal.Length - index;
+      int sublen := literal.Length;
       int retVal := PrimitiveWideStringOperations.indexOf(self, literal, index, sublen);
         
       ^ retVal

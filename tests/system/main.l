@@ -6,15 +6,6 @@ public program()
 {
     console.writeLine:"--- ELENA API Tests ---";
 
-    controlTest();
-    objectTest();
-    booleanTest();
-    integerTest();
-    longTest();
-    realTest();
-    literalTest();
-    wideTest();
-
     mssgDispatchTest();
     multySelectTest();
     enumTest();

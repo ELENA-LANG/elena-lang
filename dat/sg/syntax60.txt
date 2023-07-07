@@ -260,6 +260,7 @@ ROOT_EXPRESSION ::=
 			T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
 			| ISNIL ^MESSAGE_OPERATION SINGLE_EXPRESSION ^ISNIL_OPERATION
 			| LT_EXPRESSION ^ TEMPLATE_BLOCK
+			| TRY ^MESSAGE_OPERATION TRY_R
 			| eps ^MESSAGE_OPERATION }
 		| L3 ^OBJECT { 
 			OPERATOR MESSAGE L3_R ^OPERATION_TEMPLATE
@@ -290,7 +291,7 @@ ROOT_EXPRESSION ::=
 	| reference { 
 		L3 ^OBJECT MESSAGE MESSAGE_R
 		| eps ^OBJECT }
-	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L3_OP* L4_OP* L5_OP* L6_OP?
+	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L0_OP* L3_OP* L4_OP* L5_OP* L6_OP? 
 	| "!" EXPRESSION ^NOT_OPERATION
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
 	| "~" SINGLE_EXPRESSION ^BNOT_OPERATION
@@ -398,7 +399,7 @@ EXPRESSION ::=
 	| reference { 
 		L3 ^OBJECT MESSAGE MESSAGE_R
 		| eps ^OBJECT }
-	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L3_OP* L4_OP* L5_OP* L6_OP?
+	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L0_OP* L3_OP* L4_OP* L5_OP* L6_OP?
 	| "(" SUB_EXPRESSION L2_OP? L3_OP* L4_OP* L5_OP* L7_OP* L8_OP?
 	| "{" BLOCK ^CLOSURE
 	| "*" EXPRESSION ^VALUE_OPERATION
@@ -425,7 +426,7 @@ NESTED_SUB_EXPRESSION ::=
 		| L5_O_OP
 		| eps ^OBJECT }
 	| reference ^OBJECT
-	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L4_OP* L5_OP* L6_OP?;
+	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L0_OP* L4_OP* L5_OP* L6_OP?;
 
 SUB_EXPRESSION ::=
 	identifier { 
