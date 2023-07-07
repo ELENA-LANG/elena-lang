@@ -414,7 +414,14 @@ public singleton longConvertor
    {
       int len := s.Length;
       long val := 0;
-      for (int i := 0, i < len, i := i + 1) {
+      int start := 0;
+      bool inverted := false;
+      if (s[0]==$45) {
+         start := 1;
+         inverted := true;
+      };
+
+      for (int i := start, i < len, i := i + 1) {
          byte c := s[i];
          int ch := c;
          ch := ch - 48;
@@ -425,14 +432,27 @@ public singleton longConvertor
          val := val + ch;
       };
 
+      if (inverted) {
+         val := -val;
+      };
+
       ^ val
    }
+
+   long convert(string s)
+      <= convert(s, 10);
 
    long convert(wide s, int radix)
    {
       int len := s.Length;
       long val := 0;
-      for (int i := 0, i < len, i := i + 1) {
+      int start := 0;
+      bool inverted := false;
+      if (s[0]==$45) {
+         start := 1;
+         inverted := true;
+      };
+      for (int i := start, i < len, i := i + 1) {
          short c := s[i];
          int ch := c;
          ch := ch - 48;
@@ -443,9 +463,15 @@ public singleton longConvertor
          val := val + ch;
       };
 
+      if (inverted) {
+         val := -val;
+      };
+
       ^ val
    }
 
+   long convert(wide s)
+      <= convert(s, 10);
 }
 
 // --- realConvertor ---

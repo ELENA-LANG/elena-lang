@@ -23,6 +23,12 @@ public program()
    dynamicLoadTests();
    interfaceTests();
    vardispatcherTest();
+   mssgDispatchTest();
+   multySelectTest();
+   enumTest();
+   textBufferTest();
+   loopTest();
+   actionTest();
 
    console.writeLine("--- Passed ---")
 }

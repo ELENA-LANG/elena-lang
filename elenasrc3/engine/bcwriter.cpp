@@ -1887,6 +1887,32 @@ inline bool intBranchingOp(BuildNode lastNode)
          return false;
    }
 
+   if (branchNode.arg.value == ELSE_OPERATOR_ID) {
+      // invert comparison if required
+      switch (op) {
+         case EQUAL_OPERATOR_ID:
+            op = NOTEQUAL_OPERATOR_ID;
+            break;
+         case NOTEQUAL_OPERATOR_ID:
+            op = EQUAL_OPERATOR_ID;
+            break;
+         case LESS_OPERATOR_ID:
+            op = NOTLESS_OPERATOR_ID;
+            break;
+         case GREATER_OPERATOR_ID:
+            op = NOTGREATER_OPERATOR_ID;
+            break;
+         case NOTGREATER_OPERATOR_ID:
+            op = GREATER_OPERATOR_ID;
+            break;
+         case NOTLESS_OPERATOR_ID:
+            op = LESS_OPERATOR_ID;
+            break;
+         default:
+            break;
+      }
+   }
+
    branchNode.setKey(BuildKey::IntBranchOp);
    branchNode.setArgumentValue(op);
 
@@ -2101,65 +2127,37 @@ void ByteCodeWriter :: saveIntBranching(CommandTape& tape, BuildNode node, TapeS
       // NOTE : sp[0] - loperand, sp[1] - roperand
       tape.write(ByteCode::PeekSI, 1);
       tape.write(ByteCode::ICmpN, 4);
-
-      switch (node.arg.value) {
-         case EQUAL_OPERATOR_ID:
-            tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
-            break;
-         case NOTEQUAL_OPERATOR_ID:
-            tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
-            break;
-         case LESS_OPERATOR_ID:
-            // should be inverted
-            tape.write(ByteCode::Jge, PseudoArg::CurrentLabel);
-            break;
-         case GREATER_OPERATOR_ID:
-            // should be inverted
-            tape.write(ByteCode::Jle, PseudoArg::CurrentLabel);
-            break;
-         case NOTGREATER_OPERATOR_ID:
-            // should be inverted
-            tape.write(ByteCode::Jgr, PseudoArg::CurrentLabel);
-            break;
-         case NOTLESS_OPERATOR_ID:
-            // should be inverted
-            tape.write(ByteCode::Jlt, PseudoArg::CurrentLabel);
-            break;
-         default:
-            assert(false);
-            break;
-      }
    }
    else {
       BuildNode valueNode = node.findChild(BuildKey::Value);
 
       tape.write(ByteCode::CmpN, valueNode.arg.value);
-      switch (node.arg.value) {
-         case EQUAL_OPERATOR_ID:
-            tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
-            break;
-         case NOTEQUAL_OPERATOR_ID:
-            tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
-            break;
-         case LESS_OPERATOR_ID:
-            tape.write(ByteCode::Jge, PseudoArg::CurrentLabel);
-            break;
-         case GREATER_OPERATOR_ID:
-            // should be inverted
-            tape.write(ByteCode::Jle, PseudoArg::CurrentLabel);
-            break;
-         case NOTGREATER_OPERATOR_ID:
-            // should be inverted
-            tape.write(ByteCode::Jgr, PseudoArg::CurrentLabel);
-            break;
-         case NOTLESS_OPERATOR_ID:
-            // should be inverted
-            tape.write(ByteCode::Jlt, PseudoArg::CurrentLabel);
-            break;
-         default:
-            assert(false);
-            break;
-      }
+   }
+   switch (node.arg.value) {
+      case EQUAL_OPERATOR_ID:
+         tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
+         break;
+      case LESS_OPERATOR_ID:
+         tape.write(ByteCode::Jge, PseudoArg::CurrentLabel);
+         break;
+      case GREATER_OPERATOR_ID:
+         // should be inverted
+         tape.write(ByteCode::Jle, PseudoArg::CurrentLabel);
+         break;
+      case NOTGREATER_OPERATOR_ID:
+         // should be inverted
+         tape.write(ByteCode::Jgr, PseudoArg::CurrentLabel);
+         break;
+      case NOTLESS_OPERATOR_ID:
+         // should be inverted
+         tape.write(ByteCode::Jlt, PseudoArg::CurrentLabel);
+         break;
+      default:
+         assert(false);
+         break;
    }
 
    BuildNode tapeNode = node.findChild(BuildKey::Tape);

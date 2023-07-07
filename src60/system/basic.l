@@ -1659,7 +1659,7 @@ public sealed const struct LongNumber : IntBaseNumber,
       = ~theValue;
 
    get long Negative()
-      = -theValue;
+      = -1l * theValue;
 
    string toPrintable()
       = stringConvertor.convert(self, 10);

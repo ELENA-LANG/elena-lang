@@ -1,4 +1,5 @@
 import extensions;
+import system'routines;
 
 // --- ControlTest ---
 
@@ -356,15 +357,41 @@ shortTests()
 conversionTests()
 {
     console.write("conversionTests:");
-    int n := 1234;
-    short w := n;
+
+    var n := "23".toInt();
+    var sn := n.toString();
+    Assert.ifTrue(sn == "23");
+    console.write(".");
+
+    Assert.ifTrue("1234567890123456".toLong() == 1234567890123456l);
+    Assert.ifTrue("-123".toInt() == -123);
+    Assert.ifTrue("-1234567890123456".toLong() == -1234567890123456l);
+    console.write(".");
+
+    Assert.ifTrue("23".toReal() == 23.0);
+    Assert.ifTrue("123.456789".toReal() == 123.456789);
+    Assert.ifTrue("-123.456789".toReal() == -123.456789);
+    console.write(".");
+
+    Assert.ifTrue(-2l.toInt() == -2);
+    Assert.ifTrue(-2.toLong() == -2l);
+    
+    Assert.ifTrue(-2.0.toInt() == -2);
+    Assert.ifTrue(-2.toReal() == -2.0);
+        
+    Assert.ifTrue(-2.0.toLong() == -2l);
+    Assert.ifTrue(-2l.toReal() == -2.0);
+    console.write(".");
+
+    int n2 := 1234;
+    short w := n2;
     Assert.ifTrue(w == 1234);
     console.write(".");
-    string s := n.toString();
+    string s := n2.toString();
     Assert.ifTrue(s == "1234");
     console.write(".");
-    int n2 := s.toInt();
-    Assert.ifTrue(n2 == n);
+    int n3 := s.toInt();
+    Assert.ifTrue(n3 == n2);
     console.writeLine(".");
 }
 
@@ -788,4 +815,127 @@ vardispatcherTest()
    Assert.ifTrue(r4 == 24);
 
    console.writeLine(".");
+}
+
+// --- mssgDispatchTest ---
+
+singleton DispatchTester
+{
+    mssgTest(x,y)
+    {
+        ^ x + y
+    }
+}
+
+mssgDispatchTest()
+{
+    console.write("mssgDispatchTest:");
+    
+    var mssg := mssg mssgTest[3];
+    var r := mssg(DispatchTester, 1, 2);
+    
+    Assert.ifTrue(r == 3);
+    
+    console.writeLine(".")
+}
+
+// --- MultySelectTest ---
+
+multySelectTest()
+{
+    console.write("mssgDispatchTest:");       
+    
+    var n := 3;
+    
+    n =>
+        1 { Assert.ifTrue(n==1); }
+        2 { Assert.ifTrue(n==2); }
+        3 { Assert.ifTrue(n==3); };
+        
+    console.writeLine(".")        
+}
+
+// --- enumTest ---
+
+enumTest()
+{
+    console.write("enumTest:");       
+    
+    var s := String.MinValue;
+    "123".forEach:(x)
+    {
+        s := x.toPrintable() + s;
+    };
+    
+    Assert.ifTrue(s == "321");
+        
+    console.writeLine(".")        
+}
+
+// --- TextBufferTest ---
+
+textBufferTest()
+{
+    console.write("textBufferTest:");
+    
+    var buffer := new system'text'TextBuilder();
+    
+    buffer.write:"a";
+    buffer.write:"b";
+    buffer.write:"c";
+
+    Assert.ifTrue(buffer.Value == "abc");
+
+    console.writeLine(".");
+}
+
+// --- LoopTest ---
+
+loopTest()
+{
+    console.write("loopTest:");
+    
+    int sum := 0;
+    for(int i := 0, i < 5, i += 1)
+    {
+        sum += i;
+    };
+    
+    Assert.ifTrue(sum == 10);
+    
+    int i := 5;
+    while (i > 0)
+    {
+        i -= 1;
+        
+        sum := sum - i;         
+    };
+    
+    Assert.ifTrue(sum == 0);
+    
+    console.writeLine(".")
+}
+
+// --- Action Test ---
+
+singleton ActionTester
+{
+    testWeak(Func1 f, arg)
+        = f(arg);
+    
+    testStrong(Func<int,int,int> f, int arg1, int arg2)
+        = f(arg1, arg2);
+}
+
+actionTest()
+{
+    console.write("actionTest:");
+    
+    var r := ActionTester.testWeak((x => x + 2), 1);
+    Assert.ifTrue(r == 3);
+    
+    var r2 := ActionTester.testStrong((int x, int y => x + y), 2, 3);
+    Assert.ifTrue(r2 == 5);
+
+    console.writeLine(".");
 }

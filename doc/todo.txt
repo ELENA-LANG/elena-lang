@@ -112,6 +112,7 @@ Backlog:
     --- elena backlog
     * doc : multiple inheritance - tutorial
 
+    * support lneg, lnot
     * implement analog of C# record
     * generic branching operator
     * data alignment : for normal structs - allign the data to 4/8 and make an operation aligned to 4/8;

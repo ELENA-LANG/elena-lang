@@ -2,28 +2,6 @@ import system'routines;
 import system'dynamic'expressions;
 import extensions;
 
-// --- mssgDispatchTest ---
-
-singleton DispatchTester
-{
-    mssgTest(x,y)
-    {
-        ^ x + y
-    }
-}
-
-mssgDispatchTest()
-{
-    console.write("mssgDispatchTest..");
-    
-    var mssg := mssg mssgTest[3];
-    var r := mssg(DispatchTester, 1, 2);
-    
-    Assert.ifTrue(r == 3);
-    
-    console.writeLine("done")
-}
-
 // --- MultySelectTest ---
 
 multySelectTest()
@@ -36,25 +14,6 @@ multySelectTest()
         1 { Assert.ifTrue(n==1); }
         2 { Assert.ifTrue(n==2); }
         3 { Assert.ifTrue(n==3); };
-        
-    console.writeLine("done")        
-}
-
-// --- enumTest ---
-
-enumTest()
-{
-    console.write("enumTest..");       
-    
-    var s := String.MinValue;
-    "123".forEach:(x)
-    {
-        console.write(x);
-        
-        s := x.toPrintable() + s;
-    };
-    
-    Assert.ifTrue(s == "321");
         
     console.writeLine("done")        
 }
@@ -100,30 +59,6 @@ singleton ExecTester
     }
 }
 
-// --- Action Test ---
-
-singleton ActionTester
-{
-    testWeak(Func1 f, arg)
-        = f(arg);
-    
-    testStrong(Func<int,int,int> f, int arg1, int arg2)
-        = f(arg1, arg2);
-}
-
-actionTest()
-{
-    console.write("actionTest...");
-    
-    var r := ActionTester.testWeak((x => x + 2), 1);
-    Assert.ifTrue(r == 3);
-    
-    var r2 := ActionTester.testStrong((int x, int y => x + y), 2, 3);
-    Assert.ifTrue(r2 == 5);
-
-    console.writeLine("done");
-}
-
 // --- ConvertorTest ---
 
 convertorTest()
@@ -152,33 +87,6 @@ convertorTest()
     Assert.ifTrue(-2l.toReal() == -2.0);
     
     console.writeLine("done")        
-}
-
-// --- LoopTest ---
-
-loopTest()
-{
-    console.write("loopTest..");
-    
-    int sum := 0;
-    for(int i := 0, i < 5, i += 1)
-    {
-        sum += i;
-    };
-    
-    Assert.ifTrue(sum == 10);
-    
-    int i := 5;
-    while (i > 0)
-    {
-        i -= 1;
-        
-        sum := sum - i;         
-    };
-    
-    Assert.ifTrue(sum == 0);
-    
-    console.writeLine("done")
 }
 
 // --- ExceptionTest ---
@@ -229,23 +137,6 @@ exceptionTest()
     Assert.ifTrue(passed2);
     
     console.writeLine("done")
-}
-
-// --- TextBufferTest ---
-
-textBufferTest()
-{
-    console.write("textBufferTest...");
-    
-    var buffer := new system'text'TextBuilder();
-    
-    buffer.write:"a";
-    buffer.write:"b";
-    buffer.write:"c";
-
-    Assert.ifTrue(*buffer == "abc");
-
-    console.writeLine("done");
 }
 
 nestedFieldsTest()
