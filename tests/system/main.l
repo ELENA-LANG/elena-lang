@@ -5,8 +5,7 @@ import extensions;
 public program()
 {
     console.writeLine:"--- ELENA API Tests ---";
-
-    nestedFieldsTest();
+    
     shortCircuitBooleanOperation();
     variadicTest();
     nestedTest();

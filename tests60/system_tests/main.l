@@ -31,6 +31,7 @@ public program()
    actionTest();
    arrayTest();
    exceptionTest();
+   nestedFieldsTest();
 
    console.writeLine("--- Passed ---")
 }

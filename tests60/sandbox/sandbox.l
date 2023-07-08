@@ -1,45 +1,32 @@
 import extensions;
 
-class MyException : Exception
-{
-    constructor new(s)
-        <= super new(s);
-}
-
-class MyException2 : Exception
-{
-    constructor new(s)
-        <= super new(s);
-}
-
 public program()
 {
-    bool passed2 := false;
-    try
+    var o := new
     {
-        try
+        field3 := 3;
+        
+        innerMost() => new
         {
-            MyException2.new("Nested OnError2 handler works").raise()
-        }
-        catch(MyException e)
-        {
-            console.writeLine:"!!Wrong handler";
-            Assert.ifTrue(false)
-        }
-    }
-    catch(MyException2 e)
-    {
-        passed2 := true;
+            field2 := 2;
+            
+            innerMost() => new
+            {
+                field1 := 1;
+                
+                innerMost() = this self;
+                
+                getField() = field1;
+                
+                getParentField() = field2;
+                
+                getParentParentField() = field3;
+            };
+        };
     };
-    Assert.ifTrue(passed2);
-
-
-//    var buffer := new system'text'TextBuilder();
-//    
-//    buffer.write:"a";
-//    buffer.write:"b";
-//    buffer.write:"c";
-//
-//    var s := buffer.Value;
-
+  
+    var n := o.innerMost();
+    Assert.ifEqual(n.getField(), 1);
+    Assert.ifEqual(n.getParentField(), 2);
+    Assert.ifEqual(n.getParentParentField(), 3);
 }

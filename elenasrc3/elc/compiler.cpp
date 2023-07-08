@@ -1276,6 +1276,15 @@ ObjectInfo Compiler::InlineClassScope :: mapIdentifier(ustr_t identifier, bool r
                }
                else return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference };
             }
+            case ObjectKind::Unknown:
+            {
+               // check if there is inherited fields
+               ObjectInfo fieldInfo = mapField(identifier, EAttr::None);
+               if (fieldInfo.kind != ObjectKind::Unknown) {
+                  return fieldInfo;
+               }
+               else return outer.outerObject;
+            }
             default:
                return outer.outerObject;
          }
