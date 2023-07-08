@@ -6,9 +6,6 @@ public program()
 {
     console.writeLine:"--- ELENA API Tests ---";
 
-    arrayTest();
-    exceptionTest();
-
     nestedFieldsTest();
     shortCircuitBooleanOperation();
     variadicTest();

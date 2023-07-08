@@ -2090,7 +2090,8 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
       if (_logic->isTryDispatchAllowed(scope, multiMethod)) {
          ref_t tryMessage = _logic->defineTryDispatcher(scope, multiMethod);
 
-         injectVirtualTryDispatch(classNode, methodType, info, tryMessage, multiMethod, info.methods.exist(tryMessage));
+         bool inherited = info.methods.exist(tryMessage);;
+         injectVirtualTryDispatch(classNode, methodType, info, tryMessage, multiMethod, inherited);
       }
    }
 }
@@ -7452,7 +7453,7 @@ ObjectInfo Compiler :: compileSubCode(BuildTreeWriter& writer, ExprScope& scope,
    return retVal;
 }
 
-void Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode rnode,
+ObjectInfo Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode rnode,
    SyntaxNode r2node, bool retValExpected)
 {
    writer.newNode(BuildKey::Tape);
@@ -7468,6 +7469,7 @@ void Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprScope& sc
    }
    writer.closeNode();
 
+   TypeInfo retType = {};
    if (r2node != SyntaxKey::None) {
       // NOTE : it should immediately follow if-block
       writer.newNode(BuildKey::Tape);
@@ -7479,12 +7481,20 @@ void Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprScope& sc
 
       if (retValExpected) {
          writeObjectInfo(writer, scope, elseSubRetCode);
+
+         if (subRetCode.typeInfo == elseSubRetCode.typeInfo)
+            retType = subRetCode.typeInfo;
       }
       writer.closeNode();
    }
 
    writer.closeNode();
 
+   ObjectInfo retVal = {};
+   if (retValExpected)
+      retVal = { ObjectKind::Object, retType, 0 };
+
+   return retVal;
 }
 
 ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo loperand, SyntaxNode node, SyntaxNode rnode, 
@@ -7532,10 +7542,7 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
       writer.newNode(op, operatorId);
       writer.appendNode(BuildKey::Const, scope.moduleScope->branchingInfo.trueRef);
 
-      compileBranchingOperands(writer, scope, rnode, r2node, retValExpected);
-
-      if (retValExpected)
-         retVal = { ObjectKind::Object };
+      retVal = compileBranchingOperands(writer, scope, rnode, r2node, retValExpected);
    }
    else {
       mssg_t message = 0;
@@ -9714,13 +9721,14 @@ void Compiler :: compileDispatchProberCode(BuildTreeWriter& writer, CodeScope& s
 
    SyntaxNode targetNode = node.findChild(SyntaxKey::Target);
    if (targetNode != SyntaxKey::None) {
-      writer.newNode(BuildKey::DirectCallOp, message);
+      writer.newNode(BuildKey::StrongRedirectOp, message);
       writer.appendNode(BuildKey::Type, targetNode.arg.reference);
       writer.closeNode();
    }
    else {
       writer.appendNode(BuildKey::AccSwapping, 1);
 
+      // get feedback arg
       writer.appendNode(BuildKey::RedirectOp, overwriteArgCount(scope.moduleScope->buildins.invoke_message, 2));
    }
 }

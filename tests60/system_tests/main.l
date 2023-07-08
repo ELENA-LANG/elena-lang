@@ -29,6 +29,8 @@ public program()
    textBufferTest();
    loopTest();
    actionTest();
+   arrayTest();
+   exceptionTest();
 
    console.writeLine("--- Passed ---")
 }

@@ -532,7 +532,7 @@ SUB_L3_SINGLE_EXPRESSION ::=
 
 SINGLE_EXPRESSION ::=
 	{ identifier | reference }+ ^OBJECT
-	| { string | integer | hexinteger } ^OBJECT
+	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT
 	| "(" SUB_SINGLE_EXPRESSION;
 
 L4_EXPRESSION ::=

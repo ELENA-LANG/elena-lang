@@ -1217,6 +1217,10 @@ void elena_lang :: loadMOp(JITCompilerScope* scope)
          case ARG32LO_1:
             scope->compiler->writeImm16(writer, scope->helper->importMessage(arg) & 0xFFFF, 0);
             break;
+         case NARG_2:
+            // HOTFIX : to provide the stack offset
+            writer->writeDWord(scope->stackOffset << scope->constants->indexPower);
+            break;
          default:
             // to make compiler happy
             break;

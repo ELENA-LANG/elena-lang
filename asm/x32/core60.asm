@@ -1671,7 +1671,7 @@ end
 // ; tstm
 inline % 0C5h // (ebx - object)
 
-  mov   [esp+4], esi                      // ; saving arg0
+  mov   [esp+__n_2], esi                      // ; saving arg0
   xor   ecx, ecx
   mov   edi, [ebx - elVMTOffset]
   mov   esi, [edi - elVMTSizeOffset]
@@ -1697,7 +1697,7 @@ labFound:
 
 labEnd:
   cmp   esi, 1
-  mov   esi, [esp+4]                                                              
+  mov   esi, [esp+__n_2]                                                              
 
 end
 

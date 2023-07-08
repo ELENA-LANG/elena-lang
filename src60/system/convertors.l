@@ -501,9 +501,14 @@ public singleton realConvertor
          intPartStr := s;
       };
 
+      bool inverted := false;
       int intPart := intConvertor.convert(intPartStr, 10);
-      real r := intPart;
+      if (intPart < 0) {
+         intPart := -intPart;
+         inverted := true;
+      };
 
+      real r := intPart;
       if (decimalPartStr != nil) {
          real frac := intConvertor.convert(decimalPartStr, 10);
          for (int i := 0, i < decimalPartStr.Length, i += 1) {
@@ -512,6 +517,9 @@ public singleton realConvertor
 
          r += frac;
       };
+
+      if (inverted)
+         r := r * -1.0;
 
       ^ r
    }

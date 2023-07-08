@@ -2115,7 +2115,9 @@ void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScop
 void ByteCodeWriter :: saveIntBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
    ReferenceMap& paths, bool tapeOptMode, bool loopMode)
 {
-   bool ifElseMode = node.arg.value == IF_ELSE_OPERATOR_ID;
+   BuildNode tapeNode = node.findChild(BuildKey::Tape);
+
+   bool ifElseMode = tapeNode.nextNode() == BuildKey::Tape;
    if (ifElseMode) {
       tape.newLabel();
    }
@@ -2160,7 +2162,6 @@ void ByteCodeWriter :: saveIntBranching(CommandTape& tape, BuildNode node, TapeS
          break;
    }
 
-   BuildNode tapeNode = node.findChild(BuildKey::Tape);
    saveTape(tape, tapeNode, tapeScope, paths, tapeOptMode);
 
    if (ifElseMode) {

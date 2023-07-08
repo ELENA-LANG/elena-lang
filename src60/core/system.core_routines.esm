@@ -82,6 +82,7 @@ procedure __exception_handler
   open            :3, :0 
   store           fp:1 
 
+  peek            fp:-2 
   tst             mssg:"function:#try_invoke[2]"
   jne             Lab01
 

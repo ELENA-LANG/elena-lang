@@ -12,6 +12,12 @@ In development:
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
     * migrate all unit tests from 50
+    * test cases : nil dispatcher, multi dispatch, private method dispatching
+    * unit tests : branching
+    * unit tests : looping
+    * unit tests : exceptions
+    * unit tests : boolean operations
+    * test for self : nestedFieldsTest
     * ide : go to line
 
     * optimize : read 1, read 2, read 4, read 8
@@ -38,7 +44,6 @@ In development:
     * call semidirect method
     * boxable self (structs) - do not box the self return
     * automatical conversion of int literal to int8, int16 and int64 if possible
-    * test cases : nil dispatcher, multi dispatch, private method dispatching
     * system'collections'Map - migrating rest of methods
     * system'String.Substring<'IntNumber,'IntNumber>[3] - why the parameters are boxed?
     * system'io'read[3] : uncomment code
@@ -53,9 +58,6 @@ In development:
     * examples : datetime
     * examples : replace, trans 
     * examples : textdb, textfile 
-    * unit tests : branching
-    * unit tests : looping
-    * unit tests : exceptions
     * opzimiation extension operation with a byte array parameter
     * optimize assign inp_op direct_call embeddable
     * optimize direct_call direct_call embeddable
@@ -82,13 +84,11 @@ In development:
     * operation with dynamic array should be direct???
     * ide message : display internal error
     * uncomment lnx_console.l code
-    * unit tests : boolean operations
     * int to short -> negative
     * short to int -> negative
     * comparision operations : short / byte / long operation
     * boolean operators : &&, ||, ^^ - weak implementation
     * ide different styles : use dark mode
-    * bool_expr ? 1 : 0 - the expression result should be strong-typed
 
     === Iteration 18 ===
     [!] x86 GUI support
@@ -297,7 +297,6 @@ Backlog:
     * ide - disable close if no files are open
     * ide - disable close project if the project is closed
     * vm : on stop : unprotected / remove executable flags, on start - reverse the action
-    * test for self : nestedFieldsTest
     * test three type of self : self, this self, weak self
     * gc - system_tests - why full collect happends so often
     * #15 : return double / long from external function
