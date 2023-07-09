@@ -42,15 +42,15 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l | (unsigned int)r);
 }
 
-//inline void testNodes(SyntaxNode node)
-//{
-//   SyntaxNode current = node.firstChild();
-//   while (current != SyntaxKey::None) {
-//      testNodes(current);
-//
-//      current = current.nextNode();
-//   }
-//}
+inline void testNodes(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      testNodes(current);
+
+      current = current.nextNode();
+   }
+}
 
 inline bool isSelfCall(ObjectInfo target)
 {
@@ -7703,6 +7703,9 @@ ObjectInfo Compiler :: compileIsNilOperation(BuildTreeWriter& writer, ExprScope&
 
    ObjectInfo loperand = {};
    SyntaxNode current = node.firstChild();
+
+   testNodes(current);
+
    if (current == SyntaxKey::MessageOperation || current == SyntaxKey::PropertyOperation) {
       SyntaxNode objNode = current.firstChild();
 

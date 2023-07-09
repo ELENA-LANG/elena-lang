@@ -32,6 +32,11 @@ public program()
    arrayTest();
    exceptionTest();
    nestedFieldsTest();
+   shortCircuitBooleanOperation();
+   nestedTest();
+   nestetNestedTest();
+   ifExpressionTest();
+   loopExpressionTest();
 
    console.writeLine("--- Passed ---")
 }

@@ -142,6 +142,9 @@ namespace expressions
       static Expression MessageCall(Message message, Expression t)
          = MessageCallExpression.new(message,t);      
 
+      static Expression MessageCall(Message message, Expression t, params Expression[] arguments)
+         = MessageCallExpression.new(message,t,params arguments);
+
       static Expression ExtensionOrMessageCall(Message message, Expression t, params Expression[] arguments)
          = ExtensionOrMessageCallExpression.new(message,t,params arguments);
 
@@ -175,6 +178,12 @@ namespace expressions
       static Expression Return(Expression expr)
          = new ReturnExpression(expr);
 
+      static Expression If(Expression cond, Expression body, Expression elseBody)
+         = new IfExpression(cond, body, elseBody);
+
+      static Expression Loop(Expression cond, Expression body)
+         = new LoopExpression(cond, body);
+
       static Expression Variable(string variable)
          = new VariableExpression(variable);
 
@@ -186,6 +195,12 @@ namespace expressions
            
       static Expression New(object t, Expression p0)
          = new NewExpression(t, p0);
+
+      static Expression Assigning(string variable, Expression expr)
+         = new AssigningExpression(variable, expr);
+
+      static Expression DeclareAndAssigning(string variable, Expression expr)
+         = new DeclaringAndAssigningExpression(variable, expr);
 
       static Expression Method(string name, Expression body, params ScopeIdentifier[] variables)
          = MethodExpression.new(name, body, params variables);
@@ -1203,6 +1218,128 @@ namespace expressions
       }
    }
 
+   public class IfExpression : Expression
+   {
+      Expression condition;
+      Expression body;
+      Expression elseBody;
+        
+      constructor(Expression condition, Expression body)
+      {
+         this condition := condition;
+         this body := body;
+      }
+
+      constructor(Expression condition, Expression body, Expression elseBody)
+      {
+         this condition := condition;
+         this body := body;
+         this elseBody := elseBody;
+      }
+
+      int prepare(ExpressionScope scope)
+      {
+         int max := condition.prepare(scope);
+         int current := body.prepare(scope);            
+         if (current > max)
+            max := current;
+                
+         //current := elseBody.?prepare(scope) ?? 0;         
+         current := elseBody.?prepare(scope);
+         if (current == nil)
+            current := 0;
+
+         if (current > max)
+            max := current;
+                
+         ^ max
+      }
+                
+      bool IsOperation = true;
+
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         condition.saveTo(list, scope, 0);
+         int bookmark := list.Length;
+         list.append(cast TapeFunction(nilValue));
+         body.saveTo(list, scope, 0);
+         if (elseBody != nil) {
+            int bookmark2 := list.Length;
+            list.append(cast TapeFunction(nilValue));
+                
+            //int offs := list.Length - bookmark - 1;
+            int offs := list.Length - bookmark;
+            offs := offs - 1;
+            list[bookmark] := new JumpIfNotFunction(offs);
+                
+            elseBody.saveTo(list, scope, 0);
+                
+            offs := list.Length - bookmark2;
+            offs := offs - 1;                
+            list[bookmark2] := new GoToFunction(offs);
+         }
+         else {
+            //int offs := list.Length - bookmark - 1;
+            int offs := list.Length - bookmark;
+            offs := offs - 1;
+                
+            list[bookmark] := new JumpIfNotFunction(offs);
+            list.append(ConstantFunction.load(nilValue)); // !! should be redesigned
+         }
+      }
+   }
+
+   public class LoopExpression : Expression
+   {
+      Expression condition;
+      Expression body;
+        
+      constructor(Expression condition, Expression body)
+      {
+         this condition := condition;
+         this body := body
+      }
+
+      int prepare(ExpressionScope scope)
+      {
+         int stackLevel1 := condition.prepare(scope);
+         int stackLevel2 := body.prepare(scope);
+            
+         if (stackLevel1 > stackLevel2)
+         {
+            ^ stackLevel1
+         }
+         else
+         {
+            ^ stackLevel2
+         }
+      }
+                
+      bool IsOperation = true;
+                
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         int top := list.Length;
+            
+         condition.saveTo(list, scope, 0);
+         int bookmark := list.Length;
+         list.append(cast TapeFunction(nilValue));
+         body.saveTo(list, scope, 0);
+            
+         int offs := top - list.Length - 1;
+            
+         list.append(new GoToFunction(offs));
+            
+         //offs := list.Length - bookmark - 1;
+         offs := list.Length - bookmark;
+         offs := offs - 1;
+            
+         list[bookmark] := new JumpIfNotFunction(offs);
+            
+         list.append(ConstantFunction.load(nilValue)); // !! should be redesigned
+      }
+   }
+
    public class IdentifierExpression : Expression
    {
       ScopeIdentifier ident;
@@ -1334,6 +1471,65 @@ namespace expressions
          if (index > 0) {
             list.append(new SavingFunction(index));
          }
+      }
+   }
+
+   public class AssigningExpression : Expression
+   {
+      ScopeIdentifier variable;
+      Expression      expression;  
+      TapeFunction    assigning;
+        
+      constructor(ScopeIdentifier variable, Expression expression)
+      {
+         this variable := variable;
+         this expression := expression
+      }
+
+      constructor(string variable, Expression expression)
+      {
+         this variable := ScopeIdentifier.Variable(variable);
+         this expression := expression
+      }
+
+      bool IsOperation = false;
+
+      int prepare(ExpressionScope scope)
+      {
+         assigning := scope.resolve(variable, true);
+            
+         ^ expression.prepare(scope)
+      }
+                
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         expression.saveTo(list, scope, 0);
+         list.append(assigning);
+         if (index > 0) {
+            list.append(new SavingFunction(index));
+         }
+      }
+   }
+
+   public class DeclaringAndAssigningExpression : AssigningExpression
+   {
+//        constructor(ScopeVariable variable, Expression expression)
+//        {
+//            this variable := variable;
+//            this expression := expression
+//        }
+
+      constructor(string variable, Expression expression)
+      {
+         this variable := ScopeIdentifier.Variable(variable);
+         this expression := expression
+      }
+
+      int prepare(ExpressionScope scope)
+      {
+         scope.declare(variable);
+            
+         ^ super.prepare(scope);
       }
    }
 

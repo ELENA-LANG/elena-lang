@@ -18,39 +18,24 @@ multySelectTest()
     console.writeLine("done")        
 }
 
-shortCircuitBooleanOperation()
-{
-    console.write("shortCircuitBooleanOperation..");
-    
-    int n := 0;
-    var b := (n != 0) && (1/n != 0);
-        
-    Assert.ifFalse(b);
-    
-    console.writeLine("done")
-}
+// --- variadicTest ---
 
-sealed class VariadicTested
+sealed class VariadicTester
 {
-    bool test1Called := false;
-    bool test2Called := false;
+    bool test1Passed := false;
     
-    test1(params int[] others)
+    testTwoArgs(params int[] args)
     {
-        test1Called := true
+        int length := args.Length;
+
+        test1Passed := length == 2;
     }
-    
-    test2(string s, params int[] others)
-    {
-        test2Called := true
-    }    
-    
+
     validate()
     {
-        Assert.ifTrue(test1Called).ifTrue(test2Called)
+       Assert.ifTrue(test1Passed);
     }
 }
-
 
 variadicTest()
 {
@@ -73,67 +58,7 @@ variadicTest()
     console.writeLine("done")
 }
 
-class NestedTester
-{
-    int param1;
-    int param2;
-    
-    constructor()
-    {
-        param1 := 1;
-        param2 := 2;
-    } 
-    
-    validate()
-    {
-        var c := { ^ param2 };        
-        
-        Assert.ifTrue(c() == param2);
-    }
-}
 
-nestedTest()
-{
-    console.write("nestedTest..");
-    
-    auto tester := new NestedTester();
-        
-    tester.validate();
-    
-    console.writeLine("done")
-}
-
-class NestetNestedTester
-{
-    int param1;
-    int param2;
-    
-    constructor()
-    {
-        param1 := 1;
-        param2 := 2;
-    } 
-    
-    validate()
-    {
-        var c := { ^ { ^ param2 } };        
-        var cc := c();
-        
-        Assert.ifTrue(cc() == param2);
-    }
-}
-
-
-nestetNestedTest()
-{
-    console.write("nestetNestedTest..");
-    
-    auto tester := new NestetNestedTester();
-        
-    tester.validate();
-    
-    console.writeLine("done")
-}
 
 //duplicateStructBoxing()
 //{
@@ -289,40 +214,6 @@ templateExtensionTest()
     console.writeLine("done")    
 }  
 
-public ifExpressionTest()
-{
-    console.write("ifExpressionTest..");
-    
-    auto c := DynamicSingleton.new(
-                Expression.Method(
-                   "eval",
-                   Expression.CodeBlock(                   
-                      Expression.If(                      
-                          Expression.MessageCall(
-                            new Message("notequal[2]"),
-                            Expression.Variable("a"),
-                            Expression.Variable("b")
-                          ),                             
-                          Expression.CodeBlock(                          
-                            Expression.Constant(true) 
-                          ),                             
-                          Expression.CodeBlock(                          
-                            Expression.Constant(false) 
-                          )
-                      )
-                   ),
-                   ScopeIdentifier.Variable("a"),
-                   ScopeIdentifier.Variable("b")
-                )
-             );
-
-    var o := c.compile();
-
-    Assert.ifTrue(o.eval(1,2));
-    Assert.ifFalse(o.eval(1,1));
-
-    console.writeLine("done")    
-}
 
 public loopExpressionTest()
 {

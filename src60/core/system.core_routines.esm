@@ -1620,6 +1620,43 @@ procedure __exit_closure
 
 end
 
+procedure __jumpifnot_closure
+
+  xflush     sp:0
+  xflush     sp:1
+
+  load
+  peek       sp:0
+
+  xopen      (32),[target],[index,len,mssg]
+
+  cmp        class:"system'BoolValue#false"   
+  jne        labSkip
+
+  xadd       dp:index
+  save       dp:index
+
+labSkip:
+
+end
+
+procedure __jump_closure
+
+  xflush     sp:0
+  xflush     sp:1
+
+  load
+  peek       sp:0
+
+  xopen      (32),[target],[index,len,mssg]
+
+  xadd       dp:index
+  save       dp:index
+
+labSkip:
+
+end
+
 procedure __thread_create(self,arg,flags,ptr)
 
   xflush     sp:0

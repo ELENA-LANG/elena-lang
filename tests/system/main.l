@@ -1,15 +1,10 @@
 import extensions;
+import system'dynamic'expressions;
 
 // --- Main ---
 
 public program()
 {
-    console.writeLine:"--- ELENA API Tests ---";
-    
-    shortCircuitBooleanOperation();
-    variadicTest();
-    nestedTest();
-    nestetNestedTest();
 //    duplicateStructBoxing();
 //    duplicateBoxing();
 
@@ -17,9 +12,4 @@ public program()
 
     //nilDispatcherTest();
     //templateExtensionTest();
-
-    ifExpressionTest();
-    loopExpressionTest();
-
-    console.writeLine:"--- Passed ---"
 }
