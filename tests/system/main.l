@@ -10,6 +10,5 @@ public program()
 
 //    stackSafeExtensions();
 
-    //nilDispatcherTest();
     //templateExtensionTest();
 }

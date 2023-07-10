@@ -11,17 +11,17 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * migrate all unit tests from 50
+    * migrate all unit tests from 50 : duplicateStructBoxing,duplicateBoxing
+
     * test cases : nil dispatcher, multi dispatch, private method dispatching
     * unit tests : branching
-    * unit tests : looping
-    * unit tests : exceptions
-    * unit tests : boolean operations
     * test for self : nestedFieldsTest
     * ide : go to line
 
     * optimize : read 1, read 2, read 4, read 8
     * optimize : write 1, write 2, write 4, write 8
+    * optimize : xwriteon 1/2/4/8
+    * optimize : xcopyon 1/2/4/8
     * implementing corex : set, ...
     * ide : tool bar
     * test $break for loop & sub loop
@@ -488,7 +488,7 @@ Backlog:
 
     * new feature : switch expression
 
-    * uncomment duplicateStructBoxing,duplicateBoxing,stackSafeExtensions,nilDispatcherTest,templateExtensionTest
+    * uncomment stackSafeExtensions,templateExtensionTest
 
     * migrate all samples
     * migrate all rosetta samples
@@ -768,7 +768,6 @@ Backlog:
                 * check nil boxing
                 * check boxing of incompatible types
                 * redesign invoke1..invoke31 - they should use the same class with messageid as a field
-                * primitive op where i is fields - i+=k
                 * primitive op where i,k are fields - i+k
                 * new system'dynamics'DynamicStruct() - raise an error
                 * Tester.test(n+m*n);
@@ -791,7 +790,6 @@ Backlog:
 
                  * supporting : const fields - constant values
                  * symbols : a += b
-                 * fields : a += b
                  * arrays : a[i] += b
 
                  * (re)implement hashTable, using links, load control and so on

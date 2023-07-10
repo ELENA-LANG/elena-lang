@@ -1263,3 +1263,98 @@ public loopExpressionTest()
 
     console.writeLine(".")    
 }
+
+A;
+
+class NilDispatcher
+{
+    int value := 0;
+    
+    testMe(int arg, A a)
+    {
+        value := arg + 1
+    }
+    
+    testMe(int arg, object a)
+    {
+        value := arg
+    }
+    
+    validate(int arg)
+    {
+        Assert.ifTrue(value == arg);
+        
+        value := 0
+    }
+}
+
+nilDispatcherTest()
+{
+   console.write("nilDispatcherTest:");
+    
+   auto d := new NilDispatcher();
+   var d2 := d;
+   A a := nil;
+   var b := nil;
+    
+   d.testMe(1, a) \ back:nil;
+   d.validate(2);
+
+   d.testMe(1, b) \ back:nil;
+   d.validate(1);
+   console.write(".");
+    
+   d.testMe(1, nil) \ back:nil;
+   d.validate(1);
+   console.write(".");
+
+   d2.testMe(1, a) \ back:nil;
+   d2.validate(1);
+    
+   d2.testMe(1, b) \ back:nil;
+   d2.validate(1);
+    
+   d2.testMe(1, nil) \ back:nil;
+   d2.validate(1);
+
+   console.writeLine(".")
+}
+
+duplicateBoxing()
+{
+    console.write("duplicateBoxing:");
+
+    var t := 0;
+    int t2 := 0;
+    console.then(
+    {
+        Assert.ifTrue(t == 0);
+        Assert.ifTrue(t2 == 0);
+        
+        t := 1;
+        t2 += 1;
+    }).then(
+    {
+        Assert.ifTrue(t == 1);
+        Assert.ifTrue(t2 == 1);
+        
+        t := 2;
+        t2 += 1;
+    });
+    
+    Assert.ifTrue(t == 2);
+    Assert.ifTrue(t2 == 2);
+
+//    var mode := -1;
+//    var value := false;
+//    value ? { mode := 0 } : { mode := 1 }  ;
+//    
+//    Assert.ifTrue(mode == 1);
+//    
+//    value := true;
+//    value ? { mode := 0 } : { mode := 1 }  ;
+//    
+//    Assert.ifTrue(mode == 0);
+
+    console.writeLine(".")
+}

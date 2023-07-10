@@ -2,64 +2,6 @@ import system'routines;
 import system'dynamic'expressions;
 import extensions;
 
-// --- MultySelectTest ---
-
-multySelectTest()
-{
-    console.write("mssgDispatchTest..");       
-    
-    var n := 3;
-    
-    n =>
-        1 { Assert.ifTrue(n==1); }
-        2 { Assert.ifTrue(n==2); }
-        3 { Assert.ifTrue(n==3); };
-        
-    console.writeLine("done")        
-}
-
-// --- variadicTest ---
-
-sealed class VariadicTester
-{
-    bool test1Passed := false;
-    
-    testTwoArgs(params int[] args)
-    {
-        int length := args.Length;
-
-        test1Passed := length == 2;
-    }
-
-    validate()
-    {
-       Assert.ifTrue(test1Passed);
-    }
-}
-
-variadicTest()
-{
-    console.write("variadicTest..");
-    
-    // run-time
-    var tester := new VariadicTested();
-    tester.test1(1,3,3);
-    tester.test2("hello",3,3);
-    
-    tester.validate();
-    
-    // compile-time
-    auto tester2 := new VariadicTested();
-    tester2.test1(1,3,3);
-    tester2.test2("hello",3,3);
-    
-    tester2.validate();
-    
-    console.writeLine("done")
-}
-
-
-
 //duplicateStructBoxing()
 //{
 //    console.write("duplicateStructBoxing..");
@@ -73,44 +15,6 @@ variadicTest()
 //    console.writeLine("done")
 //}
 
-duplicateBoxing()
-{
-    console.write("duplicateBoxing..");
-
-    var t := 0;
-    int t2 := 0;
-    console.then(
-    {
-        Assert.ifTrue(t == 0);
-        Assert.ifTrue(t2 == 0);
-        
-        t := 1;
-        t2 += 1;
-    }).then(
-    {
-        Assert.ifTrue(t == 1);
-        Assert.ifTrue(t2 == 1);
-        
-        t := 2;
-        t2 += 1;
-    });
-    
-    Assert.ifTrue(t == 2);
-    Assert.ifTrue(t2 == 2);
-
-    var mode := -1;
-    var value := false;
-    value ? { mode := 0 } : { mode := 1 }  ;
-    
-    Assert.ifTrue(mode == 1);
-    
-    value := true;
-    value ? { mode := 0 } : { mode := 1 }  ;
-    
-    Assert.ifTrue(mode == 0);
-
-    console.writeLine("done")
-}
 
 public stackSafeExtensions()
 {
@@ -136,57 +40,6 @@ public stackSafeExtensions()
 }
 A;
 
-//class NilDispatcher
-//{
-//    int value := 0;
-//    
-//    testMe(int arg, A a)
-//    {
-//        value := arg + 1
-//    }
-//    
-//    testMe(int arg, object a)
-//    {
-//        value := arg
-//    }
-//    
-//    validate(int arg)
-//    {
-//        Assert.ifTrue(value == arg);
-//        
-//        value := 0
-//    }
-//}
-//
-//nilDispatcherTest()
-//{
-//    console.write("nilDispatcherTest..");
-//    
-//    auto d := new NilDispatcher();
-//    var d2 := d;
-//    A a := nil;
-//    var b := nil;
-//    
-//    d.testMe(1, a) \ back:nil;
-//    d.validate(2);
-//    
-//    d.testMe(1, b) \ back:nil;
-//    d.validate(1);
-//    
-//    d.testMe(1, nil) \ back:nil;
-//    d.validate(1);
-//
-//    d2.testMe(1, a) \ back:nil;
-//    d2.validate(1);
-//    
-//    d2.testMe(1, b) \ back:nil;
-//    d2.validate(1);
-//    
-//    d2.testMe(1, nil) \ back:nil;
-//    d2.validate(1);
-//
-//    console.writeLine("done")
-//}
 
 public extension etOp
 {
@@ -214,58 +67,3 @@ templateExtensionTest()
     console.writeLine("done")    
 }  
 
-
-public loopExpressionTest()
-{
-    console.write("loopExpressionTest..");
-    
-    auto c := DynamicSingleton.new(
-                Expression.Method(
-                   "eval",
-                   Expression.CodeBlock(      
-                      Expression.DeclareAndAssigning(
-                        "i",
-                        Expression.Constant(0)
-                      ),          
-                      Expression.DeclareAndAssigning(
-                        "k",
-                        Expression.Constant(0)
-                      ),          
-                      Expression.Loop(                      
-                          Expression.MessageCall(
-                            new Message("less[2]"),
-                            Expression.Variable("i"),
-                            Expression.Variable("n")
-                          ),                             
-                          Expression.CodeBlock(
-                            Expression.Assigning(
-                                "k",
-                                Expression.MessageCall(
-                                    new Message("add[2]"),                          
-                                    Expression.Variable("k"),
-                                    Expression.Constant(2)
-                                )
-                            ), 
-                            Expression.Assigning(
-                                "i",
-                                Expression.MessageCall(
-                                    new Message("add[2]"),                          
-                                    Expression.Variable("i"),
-                                    Expression.Constant(1)
-                                )
-                            ) 
-                          )                     
-                      ),
-                      Expression.Variable("k")
-                   ),
-                   ScopeIdentifier.Variable("n")
-                )
-             );
-
-    var o := c.compile();
-
-    Assert.ifEqual(o.eval(4), 8);
-    Assert.ifEqual(o.eval(0), 0);
-
-    console.writeLine("done")    
-}

@@ -37,6 +37,8 @@ public program()
    nestetNestedTest();
    ifExpressionTest();
    loopExpressionTest();
+   nilDispatcherTest();
+   duplicateBoxing();
 
    console.writeLine("--- Passed ---")
 }

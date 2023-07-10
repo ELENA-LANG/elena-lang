@@ -42,15 +42,15 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l | (unsigned int)r);
 }
 
-inline void testNodes(SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      testNodes(current);
-
-      current = current.nextNode();
-   }
-}
+//inline void testNodes(SyntaxNode node)
+//{
+//   SyntaxNode current = node.firstChild();
+//   while (current != SyntaxKey::None) {
+//      testNodes(current);
+//
+//      current = current.nextNode();
+//   }
+//}
 
 inline bool isSelfCall(ObjectInfo target)
 {
@@ -3921,79 +3921,98 @@ int Compiler :: defineFieldSize(Scope& scope, ObjectInfo info)
    return size;
 }
 
-ObjectInfo Compiler :: boxArgumentLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool stackSafe)
+ObjectInfo Compiler :: boxLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info,
+   bool stackSafe)
+{
+   // allocating temporal variable
+   ObjectInfo tempLocal = {};
+   bool fixedArray = false;
+   int fixedSize = 0;
+   if ((info.typeInfo.isPrimitive() && _logic->isPrimitiveArrRef(info.typeInfo.typeRef))
+      || _logic->isEmbeddableArray(*scope.moduleScope, info.typeInfo.typeRef))
+   {
+      fixedSize = defineFieldSize(scope, info);
+
+      tempLocal = declareTempStructure(scope, { fixedSize });
+      tempLocal.typeInfo = info.typeInfo;
+
+      fixedArray = true;
+   }
+   else tempLocal = declareTempLocal(scope, info.typeInfo.typeRef, false);
+
+   if (stackSafe) {
+      tempLocal.mode = TargetMode::LocalUnboxingRequired;
+
+      scope.tempLocals.add({ info.kind, info.reference }, tempLocal);
+   }
+
+   writeObjectInfo(writer, scope, tempLocal);
+   writer.appendNode(BuildKey::SavingInStack, 0);
+
+   writeObjectInfo(writer, scope, scope.mapSelf());
+   if (info.kind == ObjectKind::FieldAddress || info.kind == ObjectKind::ReadOnlyField) {
+      writer.newNode(BuildKey::CopyingAccField, info.reference);
+   }
+   else {
+      writer.appendNode(BuildKey::Field, info.reference);
+      writer.newNode(BuildKey::CopyingAccField, 0);
+   }
+   
+   writer.appendNode(BuildKey::Size, tempLocal.extra);
+   writer.closeNode();
+
+   if (!stackSafe) {
+      ObjectInfo dynamicTempLocal = {};
+      if (fixedArray) {
+         ref_t typeRef = info.typeInfo.isPrimitive() ? resolvePrimitiveType(scope, info.typeInfo, false) : info.typeInfo.typeRef;
+
+         dynamicTempLocal = declareTempLocal(scope, typeRef, true);
+
+         writer.newNode(BuildKey::CreatingStruct, fixedSize);
+         writer.appendNode(BuildKey::Type, typeRef);
+         writer.closeNode();
+
+         writer.appendNode(BuildKey::Assigning, dynamicTempLocal.argument);
+
+         writeObjectInfo(writer, scope, tempLocal);
+         writer.appendNode(BuildKey::SavingInStack, 0);
+         writeObjectInfo(writer, scope, dynamicTempLocal);
+
+         writer.newNode(BuildKey::CopyingToAcc, tempLocal.reference);
+         writer.appendNode(BuildKey::Size, fixedSize);
+         writer.closeNode();
+
+         dynamicTempLocal.mode = TargetMode::UnboxingRequired;
+      }
+      else dynamicTempLocal = boxArgument(writer, scope, tempLocal, false, true, false);
+
+      scope.tempLocals.add({ info.kind, info.reference }, dynamicTempLocal);
+
+      return dynamicTempLocal;
+   }
+   else return tempLocal;
+}
+
+ObjectInfo Compiler :: boxArgumentLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, 
+   bool stackSafe, bool forced)
 {
    switch (info.kind) {
+      case ObjectKind::Field:
+      case ObjectKind::Outer:
+      case ObjectKind::OuterField:
+         if (forced) {
+            return boxLocally(writer, scope, info, stackSafe);
+         }
+         return info;
       case ObjectKind::ReadOnlyFieldAddress:
       case ObjectKind::FieldAddress:
-         if (info.argument == 0) {
+         if (info.argument == 0 && !forced) {
             ObjectInfo retVal = scope.mapSelf();
             retVal.typeInfo = info.typeInfo;
 
             return retVal;
          }
-         else {
-            // allocating temporal variable
-            ObjectInfo tempLocal = {};
-            bool fixedArray = false;
-            int fixedSize = 0;
-            if ((info.typeInfo.isPrimitive() && _logic->isPrimitiveArrRef(info.typeInfo.typeRef))
-               || _logic->isEmbeddableArray(*scope.moduleScope, info.typeInfo.typeRef))
-            {
-               fixedSize = defineFieldSize(scope, info);
-
-               tempLocal = declareTempStructure(scope, { fixedSize });
-               tempLocal.typeInfo = info.typeInfo;
-
-               fixedArray = true;
-            }
-            else tempLocal = declareTempLocal(scope, info.typeInfo.typeRef, false);
-
-            if (stackSafe) {
-               tempLocal.mode = TargetMode::LocalUnboxingRequired;
-
-               scope.tempLocals.add({ info.kind, info.reference }, tempLocal);
-            }
-
-            writeObjectInfo(writer, scope, tempLocal);
-            writer.appendNode(BuildKey::SavingInStack, 0);
-
-            writeObjectInfo(writer, scope, scope.mapSelf());
-            writer.newNode(BuildKey::AccFieldCopyingTo, info.reference);
-            writer.appendNode(BuildKey::Size, tempLocal.extra);
-            writer.closeNode();
-
-            if (!stackSafe) {
-               ObjectInfo dynamicTempLocal = {};
-               if (fixedArray) {
-                  ref_t typeRef = info.typeInfo.isPrimitive() ? resolvePrimitiveType(scope, info.typeInfo, false) : info.typeInfo.typeRef;
-
-                  dynamicTempLocal = declareTempLocal(scope, typeRef, true);
-
-                  writer.newNode(BuildKey::CreatingStruct, fixedSize);
-                  writer.appendNode(BuildKey::Type, typeRef);
-                  writer.closeNode();
-
-                  writer.appendNode(BuildKey::Assigning, dynamicTempLocal.argument);
-
-                  writeObjectInfo(writer, scope, tempLocal);
-                  writer.appendNode(BuildKey::SavingInStack, 0);
-                  writeObjectInfo(writer, scope, dynamicTempLocal);
-
-                  writer.newNode(BuildKey::CopyingToAcc, tempLocal.reference);
-                  writer.appendNode(BuildKey::Size, fixedSize);
-                  writer.closeNode();
-
-                  dynamicTempLocal.mode = TargetMode::UnboxingRequired;
-               }
-               else dynamicTempLocal = boxArgument(writer, scope, tempLocal, false, true, false);
-
-               scope.tempLocals.add({ info.kind, info.reference }, dynamicTempLocal);
-
-               return dynamicTempLocal;
-            }
-            else return tempLocal;
-         }
+         else return boxLocally(writer, scope, info, stackSafe);
       default:
          return info;
    }
@@ -4052,7 +4071,7 @@ ObjectInfo Compiler :: boxArgument(BuildTreeWriter& writer, ExprScope& scope, Ob
 {
    ObjectInfo retVal = { ObjectKind::Unknown };
 
-   info = boxArgumentLocally(writer, scope, info, stackSafe);
+   info = boxArgumentLocally(writer, scope, info, stackSafe, false);
 
    if (!stackSafe && isBoxingRequired(info, allowingRefArg)) {
       ObjectKey key = { info.kind, info.reference };
@@ -5759,7 +5778,7 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& sco
    }
 
    for (pos_t i = count; i > 0; i--) {
-      ObjectInfo arg = boxArgumentLocally(writer, scope, arguments[i - 1], true);
+      ObjectInfo arg = boxArgumentLocally(writer, scope, arguments[i - 1], true, false);
 
       writeObjectInfo(writer, scope, arg);
       switch (arg.kind) {
@@ -5989,8 +6008,8 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       else retVal = { ObjectKind::Object, { outputRef }, 0 };
 
       // box argument locally if required
-      loperand = boxArgumentLocally(writer, scope, loperand, true);
-      roperand = boxArgumentLocally(writer, scope, roperand, true);
+      loperand = boxArgumentLocally(writer, scope, loperand, true, false);
+      roperand = boxArgumentLocally(writer, scope, roperand, true, false);
 
       writeObjectInfo(writer, scope, loperand);
       writer.appendNode(BuildKey::SavingInStack, 0);
@@ -6494,7 +6513,7 @@ ObjectInfo Compiler :: unboxArguments(BuildTreeWriter& writer, ExprScope& scope,
       if (temp.mode == TargetMode::UnboxingRequired || temp.mode == TargetMode::RefUnboxingRequired
          || temp.mode == TargetMode::LocalUnboxingRequired)
       {
-         if (!resultSaved) {
+         if (!resultSaved && retVal.kind != ObjectKind::Unknown) {
             // presave the result
             ObjectInfo tempResult = declareTempLocal(scope, retVal.typeInfo.typeRef, false);
             compileAssigningOp(writer, scope, tempResult, retVal);
@@ -6809,7 +6828,7 @@ ObjectInfo Compiler :: compileNativeConversion(BuildTreeWriter& writer, ExprScop
 
    switch (operationKey) {
       case INT16_32_CONVERSION:
-         source = boxArgumentLocally(writer, scope, source, false);
+         source = boxArgumentLocally(writer, scope, source, false, false);
 
          retVal = allocateResult(scope, resolvePrimitiveType(scope, { V_INT32 }, false));
 
@@ -7144,7 +7163,7 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
          scope.markAsAssigned(target);
          fieldMode = true;
          if (target.reference) {
-            operationType = BuildKey::AccFieldCopying;
+            operationType = BuildKey::CopyingToAccField;
             operand = target.reference;
          }
          else operationType = BuildKey::CopyingToAccExact;
@@ -7345,8 +7364,8 @@ ObjectInfo Compiler :: compileAssignOperation(BuildTreeWriter& writer, ExprScope
    BuildKey op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, 2, dummy);
    if (op != BuildKey::None) {
       // box argument locally if required
-      loperand = boxArgumentLocally(writer, scope, loperand, true);
-      roperand = boxArgumentLocally(writer, scope, roperand, true);
+      loperand = boxArgumentLocally(writer, scope, loperand, true, true);
+      roperand = boxArgumentLocally(writer, scope, roperand, true, false);
 
       writeObjectInfo(writer, scope, roperand);
       writer.appendNode(BuildKey::SavingInStack, 0);
@@ -7354,6 +7373,8 @@ ObjectInfo Compiler :: compileAssignOperation(BuildTreeWriter& writer, ExprScope
       writer.newNode(op, operatorId);
       writer.appendNode(BuildKey::Index, loperand.argument);
       writer.closeNode();
+
+      unboxArguments(writer, scope, {}, &updatedOuterArgs);
 
       scope.reserveArgs(2);
    }
@@ -7703,8 +7724,6 @@ ObjectInfo Compiler :: compileIsNilOperation(BuildTreeWriter& writer, ExprScope&
 
    ObjectInfo loperand = {};
    SyntaxNode current = node.firstChild();
-
-   testNodes(current);
 
    if (current == SyntaxKey::MessageOperation || current == SyntaxKey::PropertyOperation) {
       SyntaxNode objNode = current.firstChild();
@@ -10603,6 +10622,7 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
    auto m_it = scope.info.methods.getIt(methodScope.message);
    if (!m_it.eof()) {
       (*m_it).inherited = true;
+      (*m_it).hints &= ~(ref_t)MethodHint::Abstract;
    }
    else scope.info.methods.add(methodScope.message, methodScope.info);
 
