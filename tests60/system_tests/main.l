@@ -39,6 +39,8 @@ public program()
    loopExpressionTest();
    nilDispatcherTest();
    duplicateBoxing();
+   templateExtensionTest();
+   stackSafeExtensions();
 
    console.writeLine("--- Passed ---")
 }

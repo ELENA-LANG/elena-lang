@@ -11,17 +11,12 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * migrate all unit tests from 50 : duplicateStructBoxing
-
-    * test cases : nil dispatcher, multi dispatch, private method dispatching
-    * unit tests : branching
-    * test for self : nestedFieldsTest
     * ide : go to line
-
     * optimize : read 1, read 2, read 4, read 8
     * optimize : write 1, write 2, write 4, write 8
     * optimize : xwriteon 1/2/4/8
     * optimize : xcopyon 1/2/4/8
+
     * implementing corex : set, ...
     * ide : tool bar
     * test $break for loop & sub loop
