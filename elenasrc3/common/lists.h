@@ -1770,7 +1770,7 @@ namespace elena_lang
          _buffer.clear();
 
          _count = 0;
-         _tale = 0;
+         _top = _tale = 0;
       }
 
       template<class SumT> SumT sum(SumT initValue, SumT(*lambda)(T item))

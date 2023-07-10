@@ -6549,6 +6549,8 @@ ObjectInfo Compiler :: unboxArguments(BuildTreeWriter& writer, ExprScope& scope,
    if (updatedOuterArgs)
       unboxOuterArgs(writer, scope, updatedOuterArgs);
 
+   scope.tempLocals.clear();
+
    return retVal;
 }
 

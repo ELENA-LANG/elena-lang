@@ -11,7 +11,7 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * migrate all unit tests from 50 : duplicateStructBoxing,duplicateBoxing
+    * migrate all unit tests from 50 : duplicateStructBoxing
 
     * test cases : nil dispatcher, multi dispatch, private method dispatching
     * unit tests : branching
@@ -89,6 +89,7 @@ In development:
     * comparision operations : short / byte / long operation
     * boolean operators : &&, ||, ^^ - weak implementation
     * ide different styles : use dark mode
+    * uncomment duplicateBoxing
 
     === Iteration 18 ===
     [!] x86 GUI support
