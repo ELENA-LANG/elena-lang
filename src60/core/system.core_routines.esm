@@ -1543,7 +1543,11 @@ procedure __saving_closure(obj, args)
   alloc      i:1
   xstore     i:0
   xassign
+
   free       i:1
+
+  xrefresh   sp:0
+  xrefresh   sp:1
 
 end
 

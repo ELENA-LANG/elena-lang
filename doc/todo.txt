@@ -11,8 +11,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * pass unit tests for x86-64
-
     * optimize : read 1, read 2, read 4, read 8
     * optimize : write 1, write 2, write 4, write 8
     * optimize : xwriteon 1/2/4/8
