@@ -215,6 +215,7 @@ namespace elena_lang
       bool doSearch(FindDialogBase& dialog, IDEModel* model);
       bool doSearchNext(IDEModel* model);
       bool doReplace(FindDialogBase& dialog, MessageDialogBase& qusetionDialog, IDEModel* model);
+      void doGoToLine(GotoDialogBase& dialog, IDEModel* model);
 
       bool doCompileProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
       void doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model);

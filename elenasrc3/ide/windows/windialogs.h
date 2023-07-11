@@ -83,7 +83,9 @@ namespace elena_lang
       void clearComboBoxItem(int id);
 
       void setText(int id, const wchar_t* text);
+      void setIntText(int id, int value);
       void getText(int id, wchar_t** text, int length);
+      int  getIntText(int id);
       void setTextLimit(int id, int maxLength);
 
       void setCheckState(int id, bool value);
@@ -130,6 +132,21 @@ namespace elena_lang
       bool showModal() override;
 
       FindDialog(HINSTANCE instance, WindowBase* owner, bool replaceMode, FindModel* model);
+   };
+
+   // --- GoToLineDialog ---
+
+   class GoToLineDialog : public WinDialog, public GotoDialogBase
+   {
+      int _lineNumber;
+
+      void onCreate() override;
+      void onOK() override;
+
+   public:
+      bool showModal(int& row) override;
+
+      GoToLineDialog(HINSTANCE instance, WindowBase* owner);
    };
 
 }

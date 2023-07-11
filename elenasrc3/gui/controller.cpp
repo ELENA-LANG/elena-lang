@@ -411,3 +411,18 @@ bool TextViewController :: replaceText(TextViewModelBase* model, FindModel* find
 
    return false;
 }
+
+void TextViewController :: goToLine(TextViewModelBase* model, int row)
+{
+   DocumentChangeStatus docStatus = {};
+
+   auto docView = model->DocView();
+   if (docView) {
+      Point caret = docView->getCaret();
+
+      caret.y = row - 1;
+
+      docView->setCaret(caret, false, docStatus);
+      notifyOnChange(model, docStatus);
+   }
+}

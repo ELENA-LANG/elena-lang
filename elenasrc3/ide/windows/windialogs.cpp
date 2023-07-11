@@ -219,6 +219,14 @@ void WinDialog :: setText(int id, const wchar_t* text)
    ::SendDlgItemMessage(_handle, id, WM_SETTEXT, 0, (LPARAM)text);
 }
 
+void WinDialog :: setIntText(int id, int value)
+{
+   String<text_c, 15> s;
+   s.appendInt(value);
+
+   ::SendDlgItemMessage(_handle, id, WM_SETTEXT, 0, (LPARAM)(s.str()));
+}
+
 void WinDialog :: setTextLimit(int id, int maxLength)
 {
    ::SendDlgItemMessage(_handle, id, EM_SETLIMITTEXT, maxLength, 0);
@@ -227,6 +235,15 @@ void WinDialog :: setTextLimit(int id, int maxLength)
 void WinDialog :: getText(int id, wchar_t** text, int length)
 {
    ::SendDlgItemMessage(_handle, id, WM_GETTEXT, length, (LPARAM)text);
+}
+
+int WinDialog :: getIntText(int id)
+{
+   wchar_t s[13];
+
+   ::SendDlgItemMessage(_handle, id, WM_GETTEXT, 12, (LPARAM)s);
+
+   return StrConvertor::toInt(s, 10);
 }
 
 void WinDialog :: setCheckState(int id, bool value)
@@ -398,4 +415,35 @@ void FindDialog :: onOK()
 
    _model->matchCase = getCheckState(IDC_FIND_CASE);
    _model->wholeWord = getCheckState(IDC_FIND_WHOLE);
+}
+
+// --- GoToLineDialog ---
+
+GoToLineDialog :: GoToLineDialog(HINSTANCE instance, WindowBase* owner)
+   : WinDialog(instance, owner)
+{
+   _dialogId = IDD_GOTOLINE;
+}
+
+void GoToLineDialog :: onCreate()
+{
+   setIntText(IDC_GOTOLINE_LINENUMBER, _lineNumber);
+}
+
+void GoToLineDialog :: onOK()
+{
+   _lineNumber = getIntText(IDC_GOTOLINE_LINENUMBER);
+}
+
+bool GoToLineDialog :: showModal(int& row)
+{
+   _lineNumber = row;
+
+   if (show() == IDOK) {
+      row = _lineNumber;
+
+      return true;
+   }
+
+   return false;
 }

@@ -38,6 +38,7 @@
 #define IDM_SEARCH_FIND             701
 #define IDM_SEARCH_FINDNEXT         702
 #define IDM_SEARCH_REPLACE          703
+#define IDM_SEARCH_GOTOLINE         704
 
 #define IDM_PROJECT_INCLUDE         801
 #define IDM_PROJECT_COMPILE         802
@@ -85,6 +86,10 @@
 #define IDC_FIND_CASE              1005
 #define IDC_FIND_WHOLE             1006
 #define IDC_REPLACE_TEXT           1007
+
+#define IDD_GOTOLINE               1100
+#define IDC_GOTOLINE_LINENUMBER   (IDD_GOTOLINE + 1)
+#define IDC_GOTOLINE_LABEL1       (IDD_GOTOLINE + 2)
 
 #ifndef IDC_STATIC
 #define IDC_STATIC                  -1

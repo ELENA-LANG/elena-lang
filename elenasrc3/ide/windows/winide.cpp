@@ -118,6 +118,7 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    projectSettingsDialog(instance, this, &model->projectModel),
    findDialog(instance, this, false, &model->findModel),
    replaceDialog(instance, this, true, &model->findModel),
+   gotoDialog(instance, this),
    clipboard(this)
 {
    this->_instance = instance;
@@ -249,6 +250,11 @@ void IDEWindow :: searchNext()
    if (!_controller->doSearchNext(_model)) {
       messageDialog.info(NOT_FOUND_TEXT);
    }
+}
+
+void IDEWindow :: goToLine()
+{
+   _controller->doGoToLine(gotoDialog, _model);
 }
 
 void IDEWindow :: replace()
@@ -593,6 +599,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_SEARCH_FINDNEXT:
          searchNext();
+         break;
+      case IDM_SEARCH_GOTOLINE:
+         goToLine();
          break;
       case IDM_SEARCH_REPLACE:
          replace();

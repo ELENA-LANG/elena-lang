@@ -1439,3 +1439,14 @@ bool IDEController :: doSearchNext(IDEModel* model)
    }
    return false;
 }
+
+void IDEController :: doGoToLine(GotoDialogBase& dialog, IDEModel* model)
+{
+   auto docView = model->viewModel()->DocView();
+   if (docView != nullptr) {
+      int row = docView->getCaret().y;
+      if (dialog.showModal(row)) {
+         sourceController.goToLine(model->viewModel(), row);
+      }
+   }
+}

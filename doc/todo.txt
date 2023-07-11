@@ -11,7 +11,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * ide : go to line
     * optimize : read 1, read 2, read 4, read 8
     * optimize : write 1, write 2, write 4, write 8
     * optimize : xwriteon 1/2/4/8
@@ -414,7 +413,6 @@ Backlog:
     * ppc64 : check direct method resolvement - e.g. call a private method
     * warn on not found message for the existing object
     * support constants
-    * copy : support 1, 2, any other size
     * ncopy / lcopy
     * boxing stack allocated variable
     * boxing stack allocated parameter for strong typed method
@@ -760,8 +758,6 @@ Backlog:
                 * inline arg : variadic normal arg list
                 * inline arg : variadic long arg list
 
-                * build : returning (goto)
-                * check nil boxing
                 * check boxing of incompatible types
                 * redesign invoke1..invoke31 - they should use the same class with messageid as a field
                 * primitive op where i,k are fields - i+k
@@ -804,8 +800,6 @@ Backlog:
                  * attribute cannot be used as a class constant - s the code - 
                        = { bool equal(o) = self(object); }; - is not allowed
                  * allow to work with ref<int> directly
-
-                 * uncomment __closuretape."#dispatch[1]  - check the subject correctly
 
                  * support public & private templates
                  * property templates cannot be used directly and class templates cannot be used as a property one

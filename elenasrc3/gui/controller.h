@@ -49,6 +49,12 @@ namespace elena_lang
       virtual bool showModal() = 0;
    };
 
+   class GotoDialogBase
+   {
+   public:
+      virtual bool showModal(int& row) = 0;
+   };
+
    // --- TextViewSettings ---
    struct TextViewSettings
    {
@@ -111,6 +117,8 @@ namespace elena_lang
 
       bool findText(TextViewModelBase* model, FindModel* findModel);
       bool replaceText(TextViewModelBase* model, FindModel* findModel);
+
+      void goToLine(TextViewModelBase* model, int row);
 
       TextViewController(TextViewSettings& settings)
       {
