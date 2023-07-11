@@ -666,13 +666,6 @@ labEnd:
 
 end
 
-// ; xassignsp
-inline % 17h
-
-  mov     x9, sp
-
-end
-
 // ; dtrans
 inline %18h
 
@@ -1715,6 +1708,13 @@ inline % 0AEh
 
   add     x11, x10, __arg12_1
   ldr     x0, [x11]
+
+end
+
+// ; xassignsp
+inline % 0AFh
+
+  add     x10, sp, __arg12_1
 
 end
 

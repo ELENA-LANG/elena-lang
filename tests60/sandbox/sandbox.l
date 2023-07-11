@@ -1,41 +1,35 @@
-import extensions;
+import extensions;   
+import system'dynamic'expressions;
 
 public program()
 {
-    console.write("duplicateBoxing:");
+    auto c := DynamicSingleton.new(
+                Expression.Method(
+                   "eval",
+                   Expression.CodeBlock(                   
+                      Expression.If(                      
+                          Expression.MessageCall(
+                            new Message("notequal[2]"),
+                            Expression.Variable("a"),
+                            Expression.Variable("b")
+                          ),                             
+                          Expression.CodeBlock(                          
+                            Expression.Constant(true) 
+                          ),                             
+                          Expression.CodeBlock(                          
+                            Expression.Constant(false) 
+                          )
+                      )
+                   ),
+                   ScopeIdentifier.Variable("a"),
+                   ScopeIdentifier.Variable("b")
+                )
+             );
 
-    var t := 0;
-    int t2 := 0;
-    console.then(
-    {
-        Assert.ifTrue(t == 0);
-        Assert.ifTrue(t2 == 0);
-        
-        t := 1;
-        t2 += 1;
-    }).then(
-    {
-        Assert.ifTrue(t == 1);
-        Assert.ifTrue(t2 == 1);
-        
-        t := 2;
-        t2 += 1;
-    });
-    
-    Assert.ifTrue(t == 2);
-    Assert.ifTrue(t2 == 2);
+    var o := c.compile();
 
-//    var mode := -1;
-//    var value := false;
-//    value ? { mode := 0 } : { mode := 1 }  ;
-//    
-//    Assert.ifTrue(mode == 1);
-//    
-//    value := true;
-//    value ? { mode := 0 } : { mode := 1 }  ;
-//    
-//    Assert.ifTrue(mode == 0);
-//
-//    console.writeLine("done")
+    Assert.ifTrue(o.eval(1,2));
+    Assert.ifFalse(o.eval(1,1));
 
+    console.writeLine(".")    
 }

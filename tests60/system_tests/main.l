@@ -41,6 +41,7 @@ public program()
    duplicateBoxing();
    templateExtensionTest();
    stackSafeExtensions();
+   genericTest();
 
    console.writeLine("--- Passed ---")
 }

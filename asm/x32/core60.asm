@@ -534,20 +534,6 @@ inline %16h
 
 end
 
-// ; xassignsp
-inline % 17h
-
-  mov   ebx, esp
-
-end
-
-// ; xassignsp
-inline % 117h
-
-  lea   ebx, [esp + 4]
-
-end
-
 // ; dtrans
 inline %18h
 
@@ -1511,6 +1497,13 @@ end
 inline % 0AEh
 
   mov  esi, [ebx + __arg32_1]
+
+end
+
+// ; setsp
+inline % 0AFh
+
+  lea   ebx, [esp + __arg32_1]
 
 end
 

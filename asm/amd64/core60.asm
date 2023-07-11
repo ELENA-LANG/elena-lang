@@ -548,20 +548,6 @@ inline %16h
 
 end
 
-// ; xassignsp
-inline % 17h
-
-  mov   rbx, rsp
-
-end
-
-// ; xassignsp
-inline % 117h
-
-  lea   rbx, [rsp + 8]
-
-end
-
 // ; dtrans
 inline %18h
 
@@ -1573,6 +1559,13 @@ inline % 0AEh
 
 end
 
+// ; setsp
+inline % 0AFh
+
+  lea   rbx, [rsp + __arg32_1]
+
+end
+
 // ; callr
 inline %0B0h
 
@@ -1605,8 +1598,8 @@ inline % 0B6h // (rbx - object, rdx - message, r10 - arg0, r11 - arg1)
 
   and  edx, ARG_ACTION_MASK
   mov  eax, __arg32_1
-  and  ecx, ~ARG_MASK
-  or   edx, ecx
+  and  eax, ~ARG_MASK
+  or   edx, eax
   mov  rsi, qword ptr[r14 - elVMTSizeOffset]
 
 labSplit:
@@ -1856,6 +1849,24 @@ inline %2CFh
 
   mov  ecx, 1
   call %GC_COLLECT
+
+end
+
+// ; system inject
+inline %5CFh
+
+  pop  rsi
+
+  lea  rax, [rdx*8]
+  add  eax, 8
+  and  eax, 0FFFFFFF0h
+  sub  rsp, rax
+  mov  rcx, rdx
+  xor  rax, rax
+  mov  rdi, rsp
+  rep  stos
+
+  push rsi
 
 end
 
@@ -2905,13 +2916,14 @@ inline % 5FAh
 
   mov  rsi, __ptr64_2
   xor  edx, edx
+  xor  ecx, ecx
 
   // ; count the number of args
   mov  rbx, rax
   mov  r9, -1
 labCountParam:
   lea  rbx, [rbx+8]
-  cmp  [rbx], r9
+  cmp  r9, [rbx]
   lea  rcx, [rcx+1]
   jnz  short labCountParam
   mov  r15, rcx
@@ -3050,12 +3062,13 @@ inline % 5FBh
 
   mov  rsi, __ptr64_2
   xor  edx, edx
+  xor  ecx, ecx
 
   mov  rbx, rax
   mov  r9, -1
 labCountParam:
   lea  rbx, [rbx+8]
-  cmp  [rbx], r9
+  cmp  r9, [rbx]
   lea  rcx, [rcx+1]
   jnz  short labCountParam
   mov  r15, rcx

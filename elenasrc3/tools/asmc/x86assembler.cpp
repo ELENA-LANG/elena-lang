@@ -3067,10 +3067,10 @@ bool X86_64Assembler :: compileCmp(X86Operand source, X86Operand target, MemoryW
       writer.writeByte(0x3B);
       X86Helper::writeModRM(writer, source, target);
    }
-   else if (source.isR64_M64() && target.isRX64()) {
-      writer.writeByte(0x4B);
-      writer.writeByte(0x39);
-      X86Helper::writeModRM(writer, target, source);
+   else if (source.isRX64() && target.isR64_M64()) {
+      writer.writeByte(0x4C);
+      writer.writeByte(0x3B);
+      X86Helper::writeModRM(writer, source, target);
    }
    else if (source.isR64_M64() && (target.type == X86OperandType::DD || target.type == X86OperandType::DB)) {
       target.type = X86OperandType::DD;

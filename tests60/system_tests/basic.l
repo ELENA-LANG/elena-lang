@@ -1408,3 +1408,11 @@ public stackSafeExtensions()
     console.writeLine(".")
 }
 
+genericTest()
+{
+    console.write("genericTest:");
+    
+    var r := cast int(nilValue);
+    Assert.ifTrue(r == nil);
+    console.writeLine(".")
+}

@@ -959,6 +959,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::PeekFI:
          case ByteCode::SetFP:
          case ByteCode::XSetFP:
+         case ByteCode::SetSP:
             return compileOpFrameI(tokenInfo, writer, opCommand, parameters, locals, true);
          case ByteCode::PeekSI:
          case ByteCode::StoreSI:

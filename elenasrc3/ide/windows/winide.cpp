@@ -787,7 +787,7 @@ void IDEWindow :: onDoubleClick(NMHDR* hdr)
    }
 }
 
-void IDEWindow :: onDebugWatchRClick(int controlIndex)
+void IDEWindow :: onDebugWatchRClick(size_t controlIndex)
 {
    DWORD dwpos = ::GetMessagePos();
    Point p(LOWORD(dwpos), HIWORD(dwpos));

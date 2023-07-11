@@ -21,7 +21,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, compileBreakpoint, loadNop, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
-   loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, compileXAssignSp,
+   loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadNop,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadNop,
 
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
@@ -49,7 +49,7 @@ CodeGenerator _codeGenerators[256] =
    loadFrameDispOp, loadFrameDispOp, loadNOp, loadNOp, loadNOp, loadFrameDispOp, loadFrameIndexOp, loadFrameDispOp,
 
    loadFrameDispOp, loadFrameIndexOp, loadStackIndexOp, loadStackIndexOp, loadStackIndexOp, loadFieldIndexOp, loadFieldIndexOp, loadStackIndexOp,
-   loadFrameIndexOp, loadStackIndexOp, loadFrameDispOp, loadStackIndexOp, loadFrameDispOp, loadROp, loadFieldIndexOp, loadNop,
+   loadFrameIndexOp, loadStackIndexOp, loadFrameDispOp, loadStackIndexOp, loadFrameDispOp, loadROp, loadFieldIndexOp, loadStackIndexOp,
 
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadVMTIndexOp, loadMOp, compileJlt,
    compileJge, compileJgr, compileJle, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -116,7 +116,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::BRead, ByteCode::LSave, ByteCode::FSave, ByteCode::FTruncDP, ByteCode::NConvFDP,
    ByteCode::XRedirectM, ByteCode::XCall, ByteCode::XGet, ByteCode::WRead, ByteCode::Assign,
    ByteCode::CreateR, ByteCode::MovFrm, ByteCode::DCopyDPN, ByteCode::DCopy, ByteCode::LoadS,
-   ByteCode::XJump, ByteCode::MLen, ByteCode::DAlloc, ByteCode::XAssignSP, ByteCode::DTrans,
+   ByteCode::XJump, ByteCode::MLen, ByteCode::DAlloc, ByteCode::SetSP, ByteCode::DTrans,
    ByteCode::XAssign, ByteCode::OrN, ByteCode::LSaveDP, ByteCode::LLoad, ByteCode::LSaveSI,
    ByteCode::ConvL, ByteCode::XLCmp, ByteCode::System, ByteCode::XCreateR, ByteCode::MulN,
    ByteCode::LLoadDP, ByteCode::XLoadArgSI, ByteCode::XLoad, ByteCode::XLLoad, ByteCode::XSetFP,
@@ -347,16 +347,6 @@ void elena_lang :: loadCode(JITCompilerScope* scope, void* code, ModuleBase* mod
 void elena_lang :: loadOp(JITCompilerScope* scope)
 {
    loadCode(scope, scope->compiler->_inlines[0][scope->code()], nullptr);
-}
-
-void elena_lang :: compileXAssignSp(JITCompilerScope* scope)
-{
-   int index = 0;
-
-   if (scope->stackOffset > 0)
-      index = 1;
-
-   loadCode(scope, scope->compiler->_inlines[index][scope->code()], nullptr);
 }
 
 void elena_lang :: loadSysOp(JITCompilerScope* scope)

@@ -17,7 +17,7 @@ const char* _fnOpcodes[256] =
    "nop", "breakpoint", OPCODE_UNKNOWN, "redirect", "quit", "mov env", "load", "len",
    "class", "save", "throw", "unhook", "loadv", "xcmp", "bload", "wload",
 
-   "incude", "exclude", "assign", "mov frm", "loads", "mlen", "dalloc", "xassignsp",
+   "incude", "exclude", "assign", "mov frm", "loads", "mlen", "dalloc", OPCODE_UNKNOWN,
    "dtrans", "xassign", "lload", "convl", "xlcmp", "xload", "xlload", OPCODE_UNKNOWN,
 
    "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", "xjump",
@@ -45,7 +45,7 @@ const char* _fnOpcodes[256] =
    "nconf dp", "ftrunc dp", "dcopy", "or n", "mul n", "xadd dp", "xset fp", "fround dp",
 
    "save dp", "store fp", "save sp", "store sp", "xflush sp", "get i", "assign i", "xrefresh sp",
-   "peek fp", "peek sp", "lsave dp", "lsave sp", "lload dp", "xfill", "xstore i", OPCODE_UNKNOWN,
+   "peek fp", "peek sp", "lsave dp", "lsave sp", "lload dp", "xfill", "xstore i", "set sp",
 
    "call", "call vt", "jump", "jeq", "jne", "jump vt", "xredirect mssg", "jlt",
    "jge", "jgr", "jle", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,

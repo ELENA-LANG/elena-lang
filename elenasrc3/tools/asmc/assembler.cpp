@@ -313,7 +313,7 @@ bool AssemblerBase :: getIntConstant(ScriptToken& tokenInfo, int& offset, ref_t&
    }
    else if (tokenInfo.state == dfaHexInteger) {
       reference = 0;
-      offset = tokenInfo.token.toInt(16);
+      offset = tokenInfo.token.toUInt(16);
    }
    else if (!getArgReference(tokenInfo, offset, reference)) {
       if (constants.exist(*tokenInfo.token)) {

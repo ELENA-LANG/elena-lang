@@ -1538,7 +1538,7 @@ procedure __saving_closure(obj, args)
   xflush     sp:1
 
   load
-  xassignsp
+  set        sp:0
 
   alloc      i:1
   xstore     i:0
@@ -1723,7 +1723,7 @@ labCopy:
   jne        labCopy
 
 labCopyEnd:
-  xassignsp
+  set        sp:0
   alloc      i:1
   store      sp:0
   set        terminator
@@ -1967,7 +1967,7 @@ labNext:
   jge        labSpecial
 
   // copy arguments
-  xassignsp
+  set        sp:0  
   store      sp:0
   load       dp:ptr
   add        n:1
