@@ -1195,6 +1195,49 @@ inline %95h
 
 end
 
+// ; read 0
+inline %195h
+
+end
+
+// ; read 1
+inline %295h
+
+  lea  eax, [esi+edx]
+  mov  ecx, [eax]
+  mov  byte ptr [ebx], cl
+
+end
+
+// ; read 2
+inline %395h
+
+  lea  eax, [esi+edx*2]
+  mov  ecx, [eax]
+  mov  word ptr [ebx], cx
+
+end
+
+// ; read 4
+inline %595h
+
+  lea  eax, [esi+edx*4]
+  mov  ecx, [eax]
+  mov  [ebx], ecx
+
+end
+
+// ; read 8
+inline %795h
+
+  lea  eax, [esi+edx*8]
+  mov  ecx, [eax]
+  mov  edi, [eax+4]
+  mov  [ebx], ecx
+  mov  [ebx+4], edi
+
+end
+
 // ; writen
 inline %96h
 
@@ -1208,6 +1251,49 @@ inline %96h
   mov  esi, ebx
   rep  movsb
   mov  esi, eax
+
+end
+
+// ; write 0
+inline %196h
+     
+end
+
+// ; write 1
+inline %296h
+
+  lea  eax, [esi+edx]
+  mov  ecx, [ebx]
+  mov  byte ptr [eax], cl
+
+end
+
+// ; write 2
+inline %396h
+
+  lea  eax, [esi+edx*2]
+  mov  ecx, [ebx]
+  mov  word ptr [eax], cx
+
+end
+
+// ; write 4
+inline %596h
+
+  lea  eax, [esi+edx*4]
+  mov  ecx, [ebx]
+  mov  [eax], ecx
+
+end
+
+// ; write 8
+inline %796h
+
+  lea  eax, [esi+edx*8]
+  mov  ecx, [ebx]
+  mov  edi, [ebx+4]
+  mov  [eax], ecx
+  mov  [eax+4], edi
 
 end
 
@@ -2550,6 +2636,41 @@ inline %0EAh
 
 end
 
+// ; xwrite o,1
+inline %1EAh
+
+  mov  ecx, [ebx + __arg32_1]
+  mov  byte ptr [esi], cl
+
+end
+
+// ; xwrite o,2
+inline %2EAh
+
+  mov  ecx, [ebx + __arg32_1]
+  mov  word ptr [esi], cx
+
+end
+
+// ; xwrite o,4
+inline %3EAh
+
+  mov  ecx, [ebx + __arg32_1]
+  mov  [esi], ecx
+
+end
+
+// ; xwrite o,8
+inline %4EAh
+
+  lea  eax, [ebx + __arg32_1]
+  mov  ecx, [eax]
+  mov  edi, [eax+4]
+  mov  [esi], ecx
+  mov  [esi+4], edi
+
+end
+
 // ; xcopyon
 inline %0EBh
 
@@ -2557,6 +2678,41 @@ inline %0EBh
   lea  edi, [ebx + __arg32_1]
   rep  movsb
   sub  esi, __n_2          // ; to set back ESI register
+
+end
+
+// ; xcopy 0, 1
+inline %1EBh
+
+  mov  eax, [esi]
+  mov  byte ptr [ebx + __arg32_1], al
+
+end
+
+// ; xcopy 0, 2
+inline %2EBh
+
+  mov  eax, [esi]
+  mov  word ptr [ebx + __arg32_1], ax
+
+end
+
+// ; xcopy 0, 4
+inline %3EBh
+
+  mov  eax, [esi]
+  mov  [ebx + __arg32_1], eax
+
+end
+
+// ; xcopy 0, 8
+inline %4EBh
+
+  lea  eax, [ebx + __arg32_1]
+  mov  ecx, [esi]
+  mov  edi, [esi+4]
+  mov  [eax], ecx
+  mov  [eax+4], edi
 
 end
 
