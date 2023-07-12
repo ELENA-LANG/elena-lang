@@ -11,10 +11,10 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * fix #524
+    * optimize: pi sample (~10 secs) 
     * ide debugger : stepping in the loop (for)
 
-    * optimize: pi sample (~10 secs) 
+    * #195 : implementing rosetta code samples
     * ide : context menu
     * optimize: real pi := 0.0;
     * ide : tool bar tool tips

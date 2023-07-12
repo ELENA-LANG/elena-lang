@@ -6289,7 +6289,8 @@ ref_t Compiler :: compileMessageArguments(BuildTreeWriter& writer, ExprScope& sc
    return 0;
 }
 
-ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& message, ref_t implicitSignatureRef, ObjectInfo object)
+ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& message, ref_t& implicitSignatureRef, 
+   ObjectInfo object)
 {
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
@@ -6367,6 +6368,7 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& me
       }
 
       // bad luck - we have to generate run-time extension dispatcher
+      implicitSignatureRef = 0;
       ref_t extRef = nsScope->extensionDispatchers.get(message);
       if (extRef == INVALID_REF) {
          extRef = compileExtensionDispatcher(writer, *nsScope, message, 0);
@@ -6441,6 +6443,8 @@ mssg_t Compiler :: resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectIn
       if (extensionRef != 0) {
          // if there is an extension to handle the compile-time resolved message - use it
          resolvedExtensionRef = extensionRef;
+
+         _logic->setSignatureStacksafe(*scope.moduleScope, implicitSignatureRef, stackSafeAttr);
 
          return resolvedMessage;
       }
