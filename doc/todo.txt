@@ -11,18 +11,19 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * ide : tool bar
-    * ide : toolbar
-    * implementing corex : set, ...
+    * fix #524
+    * ide debugger : stepping in the loop (for)
 
-    * test $break for loop & sub loop
+    * optimize: pi sample (~10 secs) 
     * ide : context menu
-    * optimize: pi sample
     * optimize: real pi := 0.0;
+    * ide : tool bar tool tips
     * optimize: pi += -1.0;
     * console symbol should be strong one
+    * implementing corex : throw, allocperm, ...
     * warn on resending to itself (e.g. for constructor)
     * ide : window list
+    * new rosetta code sample : Apply a digital filter
     * allocate constant array directly if possible
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
     * elena-lc : raise an error if the file in the project does not exist
@@ -89,6 +90,7 @@ In development:
     * ide different styles : use dark mode
     * uncomment duplicateBoxing
     * optimize : dcopy
+    * implementing corex : exclude / include (e.g. extern template)
 
     === Iteration 18 ===
     [!] x86 GUI support
@@ -121,7 +123,6 @@ Backlog:
     * optimization : double assigning for external op
     * ppc64le / aarch64 : fix variadictest
     * uncomment rest of calc sample - supporting function
-    * ide debugger : stepping in the loop (for)
     * elt : 2+3, "hello", "workd".insert(0, "hello ")
     * check : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
     * x86-64, ppc64, aarch64 : fix loads
@@ -593,7 +594,6 @@ Backlog:
     * [Inverted syntax]
     * [ Compiler/code generator ]
     * [ Brace expansion ]
-    * [ loop - continue - see Apply a digital filter]
     * [ optimization s.Length ]
     * [ debugger : step over fine tuning if (false) {} else {} ]
     * [ debugger : fine-tuning stepOver - stepInto ] 

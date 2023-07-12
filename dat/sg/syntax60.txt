@@ -71,6 +71,7 @@ __define XOR_OPERATION          6243;
 __define BREAK_OPERATION        6244;
 __define LAZY_OPERATION         6245;
 __define TUPLE_ASSIGNING        6246;
+__define CONTINUE_OPERATION     6247;
 __define MESSAGE_OPERATION      6337;
 __define PROPERTY_OPERATION     6340;
 __define EXPRESSION             6288;
@@ -306,7 +307,8 @@ ROOT_EXPRESSION ::=
 	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$ext" EXPRESSION ^EXTERN_OPERATION
-	| "$break" ^BREAK_OPERATION;
+	| "$break" ^BREAK_OPERATION
+	| "$continue" ^CONTINUE_OPERATION;
 
 NESTED_ROOT_EXPRESSION ::=
         identifier { 
@@ -357,7 +359,8 @@ NESTED_ROOT_EXPRESSION ::=
 	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$ext" EXPRESSION ^EXTERN_OPERATION
-	| "$break" ^BREAK_OPERATION;
+	| "$break" ^BREAK_OPERATION
+	| "$continue" ^CONTINUE_OPERATION;
 
 EXPRESSION ::=                                           
         identifier { 

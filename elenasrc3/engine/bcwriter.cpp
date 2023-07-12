@@ -1458,10 +1458,35 @@ void conversionOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
-void breakOp(CommandTape& tape, BuildNode& node, TapeScope&)
+void breakOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    tape.write(ByteCode::SetR, 0);
-   tape.write(ByteCode::Jump, PseudoArg::CurrentLabel);
+
+   int eolLabel = 0;
+   if (tapeScope.loopLabels.count() > 0) {
+      auto loopOp = tapeScope.loopLabels.peek();
+
+      eolLabel = loopOp.value2;
+   }
+   
+   if (eolLabel > 0) {
+      tape.write(ByteCode::Jump, eolLabel);
+   }
+   else tape.write(ByteCode::Jump, PseudoArg::CurrentLabel);
+}
+
+void continueOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   int bolLabel = 0;
+   if (tapeScope.loopLabels.count() > 0) {
+      auto loopOp = tapeScope.loopLabels.peek();
+
+      bolLabel = loopOp.value1;
+   }
+
+   if (bolLabel > 0) {
+      tape.write(ByteCode::Jump, bolLabel);
+   }
 }
 
 void loadingBynaryLen(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -1649,7 +1674,7 @@ ByteCodeWriter::Saver commands[] =
    terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning, savingLInStack, uintCondOp,
    uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp,
 
-   copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc
+   copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -2220,11 +2245,15 @@ void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& ta
 {
    int startLabel = tape.newLabel();
    tape.setLabel(true);
-   /*int eopLabel = */tape.newLabel();
+   int eopLabel = tape.newLabel();
+
+   tapeScope.loopLabels.push({ startLabel, eopLabel });
 
    saveTape(tape, node, tapeScope, paths, tapeOptMode, true);
 
    tape.write(ByteCode::Jump, startLabel);
+
+   tapeScope.loopLabels.pop();
 
    tape.setLabel();
    tape.releaseLabel();
@@ -2811,7 +2840,7 @@ void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMod
       &scope,
       node.findChild(BuildKey::Reserved).arg.value,
       node.findChild(BuildKey::ReservedN).arg.value,
-      classMode
+      classMode,
    };
 
    CommandTape tape;

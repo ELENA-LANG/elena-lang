@@ -144,6 +144,7 @@ namespace elena_lang
       LoadingAccToIndex    = 0x0073,
       IndexOp              = 0x0074,
       SavingIndexToAcc     = 0x0075,
+      ContinueOp           = 0x0076,
 
       MaxOperationalKey    = 0x0075,
 

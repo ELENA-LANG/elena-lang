@@ -292,6 +292,17 @@ end
 
 // ; ==== Command Set ==
 
+// ; throw
+inline %0Ah
+
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  ecx, [ecx+eax*4]
+  mov  edi, [ecx + et_current]
+  jmp  [edi + es_catch_addr]
+
+end
+
 // ; unhook
 inline %0Bh
 

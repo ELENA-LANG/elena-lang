@@ -7422,6 +7422,9 @@ ObjectInfo Compiler :: compileSpecialOperation(BuildTreeWriter& writer, ExprScop
       case BREAK_OPERATOR_ID:
          writer.appendNode(BuildKey::BreakOp);
          break;
+      case CONTINUE_OPERATOR_ID:
+         writer.appendNode(BuildKey::ContinueOp);
+         break;
       default:
          assert(false);
          break;
@@ -8897,6 +8900,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          retVal = compileOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS, targetRef, mode);
          break;
       case SyntaxKey::BreakOperation:
+      case SyntaxKey::ContinueOperation:
          retVal = compileSpecialOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS, targetRef);
          break;
       case SyntaxKey::AddAssignOperation:
@@ -8917,7 +8921,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
       case SyntaxKey::IfOperation:
       case SyntaxKey::IfNotOperation:
-   case SyntaxKey::IfElseOperation:
+      case SyntaxKey::IfElseOperation:
          retVal = compileBranchingOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS,
             EAttrs::test(mode, EAttr::RetValExpected));
          break;

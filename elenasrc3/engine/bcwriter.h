@@ -30,14 +30,24 @@ namespace elena_lang
          int               minimalArgList;
       };
 
+      typedef Stack<Pair<int, int>> LoopLabels;
+
       struct TapeScope
       {
-         Scope* scope;
+         Scope*      scope;
 
-         int    reserved;
-         int    reservedN;
+         int         reserved;
+         int         reservedN;
 
-         bool   classMode;
+         bool        classMode;
+
+         LoopLabels  loopLabels;
+
+         TapeScope(Scope* scope, int reserved, int reservedN, bool classMode)
+            : scope(scope), reserved(reserved), reservedN(reservedN), classMode(classMode), loopLabels({})
+         {
+            
+         }
       };
 
       typedef void(*Saver)(CommandTape& tape, BuildNode& node, TapeScope& scope);

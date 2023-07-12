@@ -110,6 +110,7 @@ namespace elena_lang
       BreakOperation          = 0x001864,
       LazyOperation           = 0x001865,
       TupleAssignOperation    = 0x001866,
+      ContinueOperation       = 0x001867,
       Postfix                 = 0x001068,
       TemplatePostfix         = 0x001069,
       //MethodPostfix           = 0x00106A,
