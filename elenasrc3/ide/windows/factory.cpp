@@ -1,10 +1,11 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "factory.h"
+
 #include "windows/winide.h"
 #include "windows/wintextview.h"
 #include "windows/wintextframe.h"
@@ -15,6 +16,8 @@
 #include "windows/wintreeview.h"
 #include "windows/wincontextbrowser.h"
 #include "windows/winmenu.h"
+#include "windows/wintoolbar.h"
+
 #include "Resource.h"
 
 #include <shlwapi.h>
@@ -104,6 +107,30 @@ MenuInfo browserContextMenuInfo[3] = {
       {IDM_DEBUG_SWITCHHEXVIEW, CONTEXT_MENU_SHOWHEX}
 };
 
+size_t AppToolBarButtonNumber = 19;
+
+ToolBarButton AppToolBarButtons[] =
+{
+   {IDM_FILE_NEW, IDR_FILENEW},
+   {IDM_FILE_OPEN, IDR_FILEOPEN},
+   {IDM_FILE_SAVE, IDR_FILESAVE},
+   {IDM_FILE_SAVEALL, IDR_SAVEALL},
+   {IDM_FILE_CLOSE, IDR_CLOSEFILE},
+   {IDM_PROJECT_CLOSE, IDR_CLOSEALL},
+   {0, IDR_SEPARATOR},
+   {IDM_EDIT_CUT, IDR_CUT},
+   {IDM_EDIT_COPY, IDR_COPY},
+   {IDM_EDIT_PASTE, IDR_PASTE},
+   {0, IDR_SEPARATOR},
+   {IDM_EDIT_UNDO, IDR_UNDO},
+   {IDM_EDIT_REDO, IDR_REDO},
+   {0, IDR_SEPARATOR},
+   {IDM_DEBUG_RUN, IDR_RUN},
+   {IDM_DEBUG_STEPINTO, IDR_STEPINTO},
+   {IDM_DEBUG_STEPOVER, IDR_STEPOVER},
+   {IDM_DEBUG_STOP, IDR_STOP},
+   {IDM_DEBUG_GOTOSOURCE, IDR_GOTO},
+};
 
 // --- IDEFactory ---
 
@@ -263,8 +290,19 @@ GUIControlBase* IDEFactory :: createDebugContextMenu(ControlBase* owner)
    return menu;
 }
 
+GUIControlBase* IDEFactory :: createToolbar(ControlBase* owner)
+{
+   ToolBar* toolBar = new ToolBar(16);
+
+   toolBar->createControl(_instance, owner, AppToolBarButtons, AppToolBarButtonNumber);
+   toolBar->show();
+
+   return toolBar;
+}
+
 void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
-   int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl)
+   int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl, 
+   int toolBarControl)
 {
    LoadStringW(_instance, IDC_COMPILER_OUTPUT, szCompilerOutput, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_COMPILER_MESSAGES, szErrorList, MAX_LOADSTRING);
@@ -281,6 +319,7 @@ void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compiler
    _model->ideScheme.statusBar = statusBar;
    _model->ideScheme.debugContextMenu = debugContextMenu;
    _model->ideScheme.vmConsoleControl = vmConsoleControl;
+   _model->ideScheme.toolBarControl = toolBarControl;
 
    _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
    _model->ideScheme.captions.add(errorList, szErrorList);
@@ -300,7 +339,7 @@ GUIApp* IDEFactory :: createApp()
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess, 
    ProcessBase* vmConsoleProcess)
 {
-   GUIControlBase* children[13];
+   GUIControlBase* children[14];
    int counter = 0;
 
    int textIndex = counter++;
@@ -316,6 +355,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    int menu = counter++;
    int debugContextMenu = counter++;
    int vmConsoleControl = counter++;
+   int toolBarControl = counter++;
 
    SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance);
    sdi->create(_instance, szSDI, nullptr);
@@ -337,15 +377,16 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[menu] = createMenu(sdi);
    children[debugContextMenu] = createDebugContextMenu(sdi);
    children[vmConsoleControl] = createVmConsoleControl((ControlBase*)children[tabBar], vmConsoleProcess);
+   children[toolBarControl] = createToolbar(sdi);
 
    vb->append(children[vsplitter]);
    vb->append(children[statusBarIndex]);
 
    sdi->populate(counter, children);
-   sdi->setLayout(textIndex, -1, bottomBox, -1, hsplitter);
+   sdi->setLayout(textIndex, toolBarControl, bottomBox, -1, hsplitter);
 
    initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView, browser, menu, statusBarIndex, 
-      debugContextMenu, vmConsoleControl);
+      debugContextMenu, vmConsoleControl, toolBarControl);
 
    return sdi;
 }

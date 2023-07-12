@@ -12,27 +12,35 @@ In development:
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
     * ide : tool bar
+    * ide : toolbar
     * implementing corex : set, ...
 
     * test $break for loop & sub loop
+    * ide : context menu
+    * optimize: pi sample
     * optimize: real pi := 0.0;
     * optimize: pi += -1.0;
     * console symbol should be strong one
     * warn on resending to itself (e.g. for constructor)
+    * ide : window list
     * allocate constant array directly if possible
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
     * elena-lc : raise an error if the file in the project does not exist
+    * ide : recent files / projects, clear the list
     * string to real : support e notation
     * intnumber.cast<'integer> - should returns itself without boxing
     * exception tests : methodnotfound, nilreference
+    * ide : about
     * uncomment ConsoleFactory type attributes
     * external operation : do not box the arguments
     * support constants in array size declaration (see lnx_console.l)
     * check why the struct is boxed (see INPUT_RECORD operations)
     * simplify code (see INPUT_RECORD operations)
     * api : provide field descriptions
+    * ide : editor settings
     * call semidirect method
     * boxable self (structs) - do not box the self return
+    * ide : debug goto source
     * automatical conversion of int literal to int8, int16 and int64 if possible
     * system'collections'Map - migrating rest of methods
     * system'String.Substring<'IntNumber,'IntNumber>[3] - why the parameters are boxed?
@@ -277,7 +285,6 @@ Backlog:
       as well, to pass the name there (currently it passed over template args which is not 100% correct)
     * do:while : both statement are matched : do{ a } while(b) and do{ a } while{ b } which is not correct?
     * ide : error messages if the debug process failed
-    * ide : toolbar
     * ide : replace
     * ide : replace all
     * ide : open the last opened file on the ide start
@@ -304,8 +311,6 @@ Backlog:
     * conversion : byte / short / int / long => real
 
     * toPrintable should return both wide and string
-
-    * ide toolbar
 
     * ldoc : show conversions in the separate section
 

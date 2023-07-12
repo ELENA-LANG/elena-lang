@@ -45,10 +45,11 @@ namespace elena_lang
       ControlBase* createVmConsoleControl(ControlBase* owner, ProcessBase* outputProcess);
       GUIControlBase* createMenu(ControlBase* owner);
       GUIControlBase* createDebugContextMenu(ControlBase* owner);
+      GUIControlBase* createToolbar(ControlBase* owner);
 
       void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
          int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, 
-         int vmConsoleOutput);
+         int vmConsoleOutput, int toolBarControl);
 
    public:
       GUIApp* createApp() override;

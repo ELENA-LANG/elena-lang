@@ -6,6 +6,26 @@
 
 #define IDM_ABOUT                   104
 
+#define  IDR_SEPARATOR              0
+
+#define	IDR_FILENEW                201
+#define	IDR_FILEOPEN               202
+#define	IDR_FILESAVE               203
+#define	IDR_SAVEALL                204
+#define	IDR_CLOSEFILE              205
+#define	IDR_CLOSEALL               206
+#define	IDR_CUT                    207
+#define	IDR_COPY                   208
+#define	IDR_PASTE                  209
+#define	IDR_UNDO                   210
+#define	IDR_REDO                   211
+#define	IDR_RUN                    212
+#define	IDR_STOP                   213
+#define	IDR_STEPINTO					214
+#define	IDR_STEPOVER               215
+#define	IDR_GOTO                   216
+#define  IDR_FILETREE               217
+
 #define IDM_FILE_NEW                401
 #define IDM_FILE_OPEN               402
 #define IDM_FILE_EXIT               403
@@ -51,6 +71,7 @@
 #define IDM_DEBUG_STOP              905
 #define IDM_DEBUG_BREAKPOINT        906
 #define IDM_DEBUG_CLEARBREAKPOINT   907
+#define IDM_DEBUG_GOTOSOURCE        908
 
 #define IDM_WINDOW_NEXT            1001
 #define IDM_WINDOW_PREVIOUS        1002
@@ -88,8 +109,8 @@
 #define IDC_REPLACE_TEXT           1007
 
 #define IDD_GOTOLINE               1100
-#define IDC_GOTOLINE_LINENUMBER   (IDD_GOTOLINE + 1)
-#define IDC_GOTOLINE_LABEL1       (IDD_GOTOLINE + 2)
+#define IDC_GOTOLINE_LINENUMBER    (IDD_GOTOLINE + 1)
+#define IDC_GOTOLINE_LABEL1        (IDD_GOTOLINE + 2)
 
 #ifndef IDC_STATIC
 #define IDC_STATIC                  -1
