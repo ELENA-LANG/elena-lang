@@ -7715,7 +7715,14 @@ ObjectInfo Compiler :: compileAltOperation(BuildTreeWriter& writer, ExprScope& s
    writer.newNode(BuildKey::Tape);
    SyntaxNode altNode = current.nextNode().firstChild();
 
+   if (target.mode == TargetMode::Casting) {
+      // HOTFIX : for the cast, the argument is a target
+      target = compileExpression(writer, scope, current.findChild(SyntaxKey::Expression),
+         0, EAttr::Parameter, nullptr);
+   }
+
    compileMessageOperationR(writer, scope, target, altNode.firstChild(), false);
+
    writer.closeNode();
 
    writer.closeNode();

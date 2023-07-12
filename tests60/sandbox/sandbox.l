@@ -1,15 +1,13 @@
 import extensions;   
 import system'dynamic'expressions;
 
+A;
+
+B;
+
 public program()
 {
-   for (int i := 1, i <= 5, i += 1) {
-      if (i == 3) {
-         i += 1;
+   A a := new A();
 
-         $continue;
-      };         
-
-      console.writeLine(i);   
-   }
+   B b := cast B(a) \ back:nilValue;
 }
