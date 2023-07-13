@@ -12,8 +12,8 @@ In development:
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
     * ide debugger : stepping in the loop (for)
-
     * #195 : implementing rosetta code samples
+
     * new rosetta code sample : Apply a digital filter
     * ide : context menu
 
@@ -746,7 +746,7 @@ Backlog:
                 * (re)implement FileStrean.set length<int>
                 * debugger : do not copy template parameter terminal info
                 * uncomment DebugController::parseMessage, cleanUp
-                * step over external / message / loop / if call?
+                * step over external / message call?
                 * step over last statement (without terminator)
                 * watch message / subject info
                 * uncomment validateUnresolved

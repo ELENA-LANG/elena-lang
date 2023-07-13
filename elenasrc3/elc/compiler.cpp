@@ -8625,6 +8625,8 @@ ObjectInfo Compiler :: compileLoopExpression(BuildTreeWriter& writer, ExprScope&
 
    compileExpression(writer, scope, node, 0, mode, nullptr);
 
+   writer.appendNode(BuildKey::VirtualBreakoint);
+
    writer.closeNode();
 
    return retVal;
