@@ -780,8 +780,8 @@ void CommandTape :: saveTo(MemoryWriter* writer)
 
 inline bool isOperational(ByteCode code)
 {
-   return /*test((int)code, (int)ByteCode::Label)
-   || */(code <= ByteCode::CallExtR && code > ByteCode::Breakpoint);
+   return test((int)code, (int)ByteCode::Label)
+      || (code <= ByteCode::CallExtR && code > ByteCode::Breakpoint);
 }
 
 bool ByteCodePattern :: checkLabel(ByteCodeIterator it, int label, int offset)

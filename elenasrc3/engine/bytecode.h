@@ -207,7 +207,7 @@ namespace elena_lang
       ImportOn       = 0x2002,
       ImportOff      = 0x2003,
 
-      Idle           = 0x3001,
+      Idle           = 0x4001,
 
       Match          = 0x8FFE,  // used in optimization engine
       None           = 0x8FFF,  // used in optimization engine

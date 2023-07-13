@@ -37,7 +37,7 @@ class ExpressionTree
             {
                 if (_tree.Level >= node.Level)
                 {
-                    node.Left := theTree;
+                    node.Left := _tree;
                     node.Right := nilValue;
                     
                     _tree := node
@@ -112,10 +112,10 @@ class TwentyFourGame
     {
         theNumbers := new object[]
         {
-            1 + randomGenerator.eval:9, 
-            1 + randomGenerator.eval:9, 
-            1 + randomGenerator.eval:9, 
-            1 + randomGenerator.eval:9
+            1 + randomGenerator.nextInt:9, 
+            1 + randomGenerator.nextInt:9, 
+            1 + randomGenerator.nextInt:9, 
+            1 + randomGenerator.nextInt:9
         }
     }
     
