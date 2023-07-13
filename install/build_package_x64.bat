@@ -163,6 +163,7 @@ copy %~dp0\..\examples60\rosetta\ninetynine\*.l %~dp0\output64\examples60\rosett
 copy %~dp0\..\examples60\rosetta\reverse_words_in_string\*.l %~dp0\output64\examples60\rosetta\reverse_words_in_string
 copy %~dp0\..\examples60\rosetta\smavg\*.l %~dp0\output64\examples60\rosetta\smavg
 copy %~dp0\..\examples60\rosetta\string_append\*.l %~dp0\output64\examples60\rosetta\string_append
+copy %~dp0\..\examples60\rosetta\twentyfour\*.l %~dp0\output64\examples60\rosetta\twentyfour
 
 7z a %~dp0\output64\%1.zip %~dp0\output64\*.* %~dp0\output64\* -r
 

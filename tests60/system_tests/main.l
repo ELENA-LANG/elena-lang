@@ -42,6 +42,7 @@ public program()
    templateExtensionTest();
    stackSafeExtensions();
    genericTest();
+   outerFieldAssigningTest();
 
    console.writeLine("--- Passed ---")
 }

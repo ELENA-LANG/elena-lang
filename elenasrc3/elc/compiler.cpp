@@ -7122,9 +7122,10 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
    BuildKey operationType = BuildKey::None;
    int operand = 0;
 
-   int size = 0;
+   int  size = 0;
    bool stackSafe = false;
    bool fieldMode = false;
+   bool fieldFieldMode = false;
    bool accMode = false;
    bool lenRequired = false;
 
@@ -7167,6 +7168,12 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
          operationType = BuildKey::FieldAssigning;
          operand = target.reference;
          fieldMode = true;
+         break;
+      case ObjectKind::OuterField:
+         scope.markAsAssigned(target);
+         operationType = BuildKey::FieldAssigning;
+         operand = target.extra;
+         fieldFieldMode = fieldMode = true;
          break;
       case ObjectKind::StaticField:
          scope.markAsAssigned(target);
@@ -7228,6 +7235,8 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
    if (fieldMode) {
       writer.appendNode(BuildKey::SavingInStack, 0);
       writeObjectInfo(writer, scope, scope.mapSelf());
+      if (fieldFieldMode)
+         writer.appendNode(BuildKey::Field, target.reference);
    }
    else if (accMode) {
       if(lenRequired)

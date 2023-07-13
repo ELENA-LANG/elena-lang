@@ -11,16 +11,21 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * ide debugger : stepping in the loop (for)
-    * #195 : implementing rosetta code samples
-
-    * new rosetta code sample : Apply a digital filter
+    * closure  : assigning outer field
+    * rosetta code samples : 24
     * ide : context menu
 
+    * optimize: IntNumber.add<'RealNumber>[2]
+    * review RealNumber.#new<system'IntNumber>[1], is a new object created twice
     * optimize: comparing with real
     * optimize: pi sample (~10 secs) 
-    * optimize: real pi := 0.0;
+    * pi optimization : assigning int-const to real (#86)
     * ide : tool bar tool tips
+    * test rosetta code samples (after 24)
+    * #195 : implementing rosetta code samples
+    * new rosetta code sample : Apply a digital filter
+    * the following code should not be allowed - real n := n;
+    * optimize: real pi := 0.0;
     * optimize: pi += -1.0;
     * console symbol should be strong one
     * implementing corex : allocperm, ...
@@ -42,6 +47,7 @@ In development:
     * api : provide field descriptions
     * ide : editor settings
     * boxable self (structs) - do not box the self return
+    * direct shift
     * ide : debug goto source
     * automatical conversion of int literal to int8, int16 and int64 if possible
     * system'collections'Map - migrating rest of methods
@@ -75,7 +81,6 @@ In development:
     * optimize intOp.Absolute method
     * field boxing : double assigning
     * elt - exception handler
-    * review RealNumber.#new<system'IntNumber>[1], is a new object created twice
     * ide : crashed on end (freepath)
     * optimize:
         int dump[4];
@@ -92,6 +97,9 @@ In development:
     * uncomment duplicateBoxing
     * optimize : dcopy
     * implementing corex : exclude / include (e.g. extern template)
+    * optimize: operation with int and real
+    * field boxing : e.g x + x - should not be boxed twice
+    + #69 : GC info 
 
     === Iteration 18 ===
     [!] x86 GUI support
@@ -464,10 +472,7 @@ Backlog:
 
     * globals
     * yield methods
-    * #206 : compile sqllite for 64bit
-    * #206 : samples, tutorials
 
-    - test all samples - x86 / x86-64
     - op code refactoring
 
     - IDE : smart spaces
@@ -535,31 +540,19 @@ Backlog:
 
     * xforms - set property returns the object itself, redesign the current mode; probably we could return the property value
 
-    * multi-theading
-    * thread - make sure stack is correctly aligned to 16
-
-    + housekeeping - review pipeline
     + closure tape : review how it could be optimized (e.g interpreter.solution1)
     + bf interpreter optimization
 
-    + housekeeping - review pipeline
     + #531 : Inhert should support only stateless interface type
-    + housekeeping - review pipeline
-    + #69 : GC info 
     + docs : introduce __target built-in variable
     + housekeeping - review pipeline
 
     * review setframe opcode - argument should be an index or absolute value?
     * test bsredirect, mindex
-    * uncomment BREAK, EXPAND_HEAP, ALLOC, HOOK, GET_COUNT, CALC_SIZE, THREAD_WAIT, END_FRAME
     * move ELENARTMachine::inherit to 64bit
 
     * test elenavm critical handler
-    * test : string insert / delete
-    * test string / wide operations
-    * fix chat sample
 
-    * test all samples
     * check all mtredirect commands (class, parent class)
     * test parent / flags / class commands
     * check core_readvmt
@@ -567,14 +560,9 @@ Backlog:
     * idle initializer (ignore movr idle commands )
     * idle sub esp, 0 -- ???
 
-    * int should take 4 byte in stack
     * size, lock - should be 32bit for x64
 
-    * use message, extension, symbol correctly for x32 and x64
     * message and messagename should not be the same
-
-    * do we need win64_pointers.l / win32_pointers.l and win64_strings.l / win32_strings.l or there is no difference?
-    * #280 64bit tool set
   
     + support run-time compilation
 
@@ -595,7 +583,6 @@ Backlog:
     * [Inverted syntax]
     * [ Compiler/code generator ]
     * [ Brace expansion ]
-    * [ optimization s.Length ]
     * [ debugger : step over fine tuning if (false) {} else {} ]
     * [ debugger : fine-tuning stepOver - stepInto ] 
     * [ unresolved abstract method - the warning is not shown (see system.prj) ]
@@ -622,17 +609,9 @@ Backlog:
     * [Brace expansion]
     * chat
     * graph
-    * [service release]
     * web server
-    * make compatible with ELENA 3.1, convert to and from ELENA 3.1
-    * pi optimization : assigning int-const to real (#86)
     * elena on rails
-    * [clear todos]
-    * [resolve open issues]
-    * [support ELENA 3.x syntax]
-    * get rid of EXPAND_HEAP in core (after retiring core GC routines)
     * test why analog example need large stack size
-    + optimization : merge several push 0, into single operation
 
     * linux : elenart.LoadMessageName/LoadSubject, method not found exception handling
     * external ops: operation inside external call - see HMENU.append
@@ -674,8 +653,6 @@ Backlog:
                 * extension message - can be applied only to the generic extension?
                 * ifheap - is not correctly recognize rdata allocated classes (constants are considered as stack allocated)
                 * if bug structure is allocated - it will be marked as root - will it work?
-                * do we need ENDFRAME?
-                * declaring several variables in a row?
 
                 * function closures : strong one - should be resolved directly if possible
                 * stack allocated variables : assigning nil, default constructor call, ...
@@ -708,11 +685,8 @@ Backlog:
                 * CharValue.new = $0 -> should create a new class
                 * test : branching external implementation : returning a value from closure 
                 * use stosd over stos
-                * field boxing : e.g x + x - should not be boxed twice
                 * operations with byte or word 
-                * saving dword or qword 
                 * simplify the operations with struct fields (size=1,2,4,8,...)
-                * copying 4,8,1,2 bytes
                 * review byte code in core_routines and BCWriter - check for more optimal opcodes
                 * optimization : assigning a field with a local - there should be direct byte code
                 * assigning a big number to short / byte local variable - should be truncated?
@@ -770,12 +744,10 @@ Backlog:
                  * import hashtable design
                 * support namespace import, so the build script can be shortened
                  * building expression tree - raise an exceptoion with missing class name
-                 * the following code should not be allowed - real n := n;
 
                  * variadic closure : correctly free argument list - using the code to free until the zero is encounter
                  * optimize compiler : more efficient hash table, caching the results
                  * the following code should generate an error - lazy::(n < 5) - missing ^
-                 * direct and, or, xor, shift, mul, div, equal, less
                  * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
 
                  * debugger : display message name

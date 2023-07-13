@@ -1416,3 +1416,33 @@ genericTest()
     Assert.ifTrue(r == nil);
     console.writeLine(".")
 }
+
+
+OuterFieldAssigner
+{
+   object target;
+
+   apply(arg)
+   {
+      self.then({
+         target := arg
+      });
+   }
+   
+   test(arg)
+   {
+      Assert.ifTrue(target == arg)
+   }
+}
+
+outerFieldAssigningTest()
+{
+   console.write("outerFieldAssigningTest:");
+
+   var tester := new OuterFieldAssigner();
+
+   tester.apply(2);
+   tester.test(2);
+
+   console.writeLine(".");
+}
