@@ -173,6 +173,7 @@ namespace elena_lang
    /// property:
    constexpr auto V_SEALED                = 0x80003001u;
    constexpr auto V_ABSTRACT              = 0x80003002u;
+   constexpr auto V_CLOSED                = 0x80003003u;
    constexpr auto V_PREDEFINED            = 0x80003005u;
 
    /// scope_prefix:

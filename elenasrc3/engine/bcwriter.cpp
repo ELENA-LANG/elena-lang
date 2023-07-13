@@ -157,6 +157,23 @@ void directCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::CallMR, node.arg.reference, targetRef | mskVMTRef);
 }
 
+void semiDirectCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
+
+   bool variadicOp = (node.arg.reference & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
+
+   pos_t argCount = getArgCount(node.arg.reference);
+   if (!variadicOp && (int)argCount < tapeScope.scope->minimalArgList) {
+      for (int i = argCount; i < tapeScope.scope->minimalArgList; i++) {
+         tape.write(ByteCode::XStoreSIR, i, 0);
+      }
+   }
+
+   tape.write(ByteCode::MovM, node.arg.reference);
+   tape.write(ByteCode::VCallMR, node.arg.reference, targetRef | mskVMTRef);
+}
+
 void exit(CommandTape& tape, BuildNode& node, TapeScope& scope)
 {
    tape.write(ByteCode::Quit);
@@ -1674,7 +1691,7 @@ ByteCodeWriter::Saver commands[] =
    terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning, savingLInStack, uintCondOp,
    uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp,
 
-   copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp
+   copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp, semiDirectCallOp
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -1700,6 +1717,39 @@ inline bool duplicateBreakpoints(BuildNode lastNode)
    return false;
 }
 
+inline BuildNode getPrevious(BuildNode node)
+{
+   node = node.prevNode();
+   switch (node.key) {
+      case BuildKey::VirtualBreakoint:
+      case BuildKey::Breakpoint:
+      case BuildKey::EOPBreakpoint:
+      case BuildKey::EndStatement:
+      case BuildKey::OpenStatement:
+      case BuildKey::Idle:
+         return getPrevious(node);
+      default:
+         return node;
+   }
+}
+
+inline BuildNode getNextNode(BuildNode node)
+{
+   node = node.nextNode();
+   switch (node.key) {
+      case BuildKey::VirtualBreakoint:
+      case BuildKey::Breakpoint:
+      case BuildKey::EOPBreakpoint:
+      case BuildKey::EndStatement:
+      case BuildKey::OpenStatement:
+      case BuildKey::Idle:
+         return getNextNode(node);
+      default:
+         return node;
+   }
+}
+
+
 inline bool scanFrameForLocalAddresses(BuildNode& current, BuildKey destKey, int local)
 {
    bool callOp = false;
@@ -1709,7 +1759,7 @@ inline bool scanFrameForLocalAddresses(BuildNode& current, BuildKey destKey, int
       switch (current.key) {
          case BuildKey::LocalAddress:
             if (current.arg.value == local) {
-               if (callOp && current.nextNode().key == destKey) {
+               if (callOp && getNextNode(current).key == destKey) {
                   return localCounter == 1;
                }
 
@@ -1723,6 +1773,8 @@ inline bool scanFrameForLocalAddresses(BuildNode& current, BuildKey destKey, int
             }
             else return false;
             break;
+         case BuildKey::None:
+            return false;
          default:
             break;
       }
@@ -1771,22 +1823,6 @@ inline bool intCopying(BuildNode lastNode)
    }
 
    return false;
-}
-
-inline BuildNode getPrevious(BuildNode node)
-{
-   node = node.prevNode();
-   switch (node.key) {
-      case BuildKey::VirtualBreakoint:
-      case BuildKey::Breakpoint:
-      case BuildKey::EOPBreakpoint:
-      case BuildKey::EndStatement:
-      case BuildKey::OpenStatement:
-      case BuildKey::Idle:
-         return getPrevious(node);
-      default:
-         return node;
-   }
 }
 
 inline bool intOpWithConsts(BuildNode lastNode)

@@ -2170,8 +2170,6 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
          mssg_t multiMethod = withRetOverload ? 0 : defineMultimethod(scope, current.arg.reference, scope.extensionClassRef != 0);
          if (multiMethod) {
             //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
-            current.appendChild(SyntaxKey::Multimethod, multiMethod);
-
             ref_t hints = (ref_t)MethodHint::Multimethod;
             if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_INTERNAL))
                hints |= (ref_t)MethodHint::Internal;
@@ -2185,6 +2183,11 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
             if (!m_it.eof()) {
                (*m_it).hints |= hints;
             }
+            else if (closed) {
+               // do not declare a new method for the closed class
+               current = current.nextNode();
+               continue;
+            }
             else {
                MethodInfo info = {};
                info.hints |= hints;
@@ -2193,6 +2196,8 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
 
                scope.info.methods.add(multiMethod, info);
             }
+
+            current.appendChild(SyntaxKey::Multimethod, multiMethod);
 
             if (retrieveMethod(implicitMultimethods, multiMethod) == 0) {
                implicitMultimethods.add({ multiMethod, VirtualType::Multimethod });
@@ -6631,6 +6636,9 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
             if (arguments[0].kind == ObjectKind::VArgParam)
                result.stackSafe = true;
 
+            break;
+         case MethodHint::Virtual:
+            operation = BuildKey::SemiDirectCallOp;
             break;
          default:
             break;

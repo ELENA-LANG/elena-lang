@@ -11,19 +11,21 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * optimize: pi sample (~10 secs) 
     * ide debugger : stepping in the loop (for)
 
     * #195 : implementing rosetta code samples
+    * new rosetta code sample : Apply a digital filter
     * ide : context menu
+
+    * optimize: comparing with real
+    * optimize: pi sample (~10 secs) 
     * optimize: real pi := 0.0;
     * ide : tool bar tool tips
     * optimize: pi += -1.0;
     * console symbol should be strong one
-    * implementing corex : throw, allocperm, ...
+    * implementing corex : allocperm, ...
     * warn on resending to itself (e.g. for constructor)
     * ide : window list
-    * new rosetta code sample : Apply a digital filter
     * allocate constant array directly if possible
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
     * elena-lc : raise an error if the file in the project does not exist
@@ -39,7 +41,6 @@ In development:
     * simplify code (see INPUT_RECORD operations)
     * api : provide field descriptions
     * ide : editor settings
-    * call semidirect method
     * boxable self (structs) - do not box the self return
     * ide : debug goto source
     * automatical conversion of int literal to int8, int16 and int64 if possible

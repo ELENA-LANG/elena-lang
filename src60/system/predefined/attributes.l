@@ -16,6 +16,7 @@
 /// property:
 #let attributesSymbols["sealed"]      := 80003001h;
 #let attributesSymbols["abstract"]    := 80003002h;
+#let attributesSymbols["closed"]      := 80003003h;
 #let attributesSymbols["predefined"]  := 80003005h;
 
 /// scope_prefix:

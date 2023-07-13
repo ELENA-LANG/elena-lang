@@ -632,6 +632,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
       case V_SEALED:
          flags |= elSealed;
          break;
+      case V_CLOSED:
+         flags |= elClosed;
+         break;
       case V_EXTENSION:
          flags |= elExtension;
          break;

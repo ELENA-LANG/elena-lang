@@ -1,21 +1,36 @@
 import extensions;   
 
+interface ITest
+{
+   abstract int Index
+   {
+      get();
+   }
+}
+
+class ATest
+{
+   int value;
+
+   constructor(int value)
+   {
+      this value := value
+   }
+
+   get int Index()
+   {
+      ^ value;
+   }
+
+   ITest cast() = new ITest { embeddable dispatch() => self; };
+}
+
 public program()
 {    
-//    int i := 5;
-    var m := 5;
-   
-    int j := 2;
-//    var n := 2;
-                         
-//    int r1 := i.mod(j);
-//    int r2 := i.mod(n);
-    int r3 := m.mod(j);
-//    int r4 := m.mod(n);
-    
-//    Assert.ifTrue(r1 == 1);
-//    Assert.ifTrue(r2 == 1);
-//    Assert.ifTrue(r3 == 1);
-//    Assert.ifTrue(r4 == 1);
-    
+   var a := new ATest(2);
+
+   ITest i := a;
+
+   int n := i.Index;
+   Assert.ifTrue(n == 2);
 }

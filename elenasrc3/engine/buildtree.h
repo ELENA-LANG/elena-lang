@@ -102,7 +102,7 @@ namespace elena_lang
       RealCondOp           = 0x0049,
       VirtualBreakoint     = 0x004A,
       ConversionOp         = 0x004B,
-      SemictResendOp       = 0x004C,
+      SemiResendOp         = 0x004C,
       NilCondOp            = 0x004D,
       AssignLocalToStack   = 0x004E,
       SetImmediateField    = 0x004F,
@@ -145,8 +145,9 @@ namespace elena_lang
       IndexOp              = 0x0074,
       SavingIndexToAcc     = 0x0075,
       ContinueOp           = 0x0076,
+      SemiDirectCallOp     = 0x0077,
 
-      MaxOperationalKey    = 0x0075,
+      MaxOperationalKey    = 0x0077,
 
       Import               = 0x0080,
       DictionaryOp         = 0x0081,
