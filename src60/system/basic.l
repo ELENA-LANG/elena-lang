@@ -831,7 +831,11 @@ public const struct IntNumber : IntBaseNumber,
 
    bool equal(real n)
             : info("Compares the integer value")
-      = new RealNumber(_value).equal(n);
+   {
+      real val := _value;
+
+      ^ val == n;
+   }
 
    bool less(byte b)
             : info("Compares the integer value")
@@ -851,7 +855,11 @@ public const struct IntNumber : IntBaseNumber,
 
    bool less(real n)
             : info("Compares the integer value")
-      = new RealNumber(_value).less(n);
+   {
+      real val := _value;
+
+      ^ val < n;
+   }
 
    bool equal(int n)
       = _value == n; 
@@ -940,19 +948,43 @@ public const struct IntNumber : IntBaseNumber,
 
    real add(real n)
             : info("Returns the sum")
-      = new RealNumber(self).add(n);
+   {
+      real val := _value;
+
+      val := val + n;
+
+      ^ val         
+   }
 
    real subtract(real n)
             : info("Returns the difference")
-      = new RealNumber(self).subtract(n);
+   {
+      real val := _value;
+
+      val := val - n;
+
+      ^ val         
+   }
 
    real multiply(real n)
             : info("Returns the product")
-      = new RealNumber(self).multiply(n);
+   {
+      real val := _value;
+
+      val := val * n;
+
+      ^ val         
+   }
 
    real divide(real n)
             : info("Returns the result of integer division")
-      = new RealNumber(self).divide(n);
+   {
+      real val := _value;
+
+      val := val / n;
+
+      ^ val         
+   }
 
    band(n)
       <= band(cast int(n));

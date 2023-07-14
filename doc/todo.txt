@@ -11,16 +11,13 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * ide : context menu
-    * optimize: IntNumber.add<'RealNumber>[2]
     * migrate the rest of system (object.l)
+    * ide : tool bar tool tips
+    * review RealNumber.#new<system'IntNumber>[1], is a new object created twice
 
     * migrate the rest of system
-    * review RealNumber.#new<system'IntNumber>[1], is a new object created twice
     * optimize: comparing with real
     * optimize: pi sample (~10 secs) 
-    * pi optimization : assigning int-const to real (#86)
-    * ide : tool bar tool tips
     * rosetta code samples : 99 bottles of beer
     * #195 : implementing rosetta code samples
     * new rosetta code sample : Apply a digital filter
@@ -44,6 +41,7 @@ In development:
     * support constants in array size declaration (see lnx_console.l)
     * check why the struct is boxed (see INPUT_RECORD operations)
     * simplify code (see INPUT_RECORD operations)
+    * pi optimization : int-real operation (#86)
     * api : provide field descriptions
     * ide : editor settings
     * boxable self (structs) - do not box the self return
@@ -102,6 +100,7 @@ In development:
     * implementing corex : exclude / include (e.g. extern template)
     * optimize: operation with int and real
     * field boxing : e.g x + x - should not be boxed twice
+    * why IntNumber.add<'RealNumber>[2] has no byref handler
     + #69 : GC info 
 
     === Iteration 18 ===

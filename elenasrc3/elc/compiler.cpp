@@ -6840,10 +6840,10 @@ ObjectInfo Compiler :: compileNativeConversion(BuildTreeWriter& writer, ExprScop
 {
    ObjectInfo retVal = {};
 
+   source = boxArgumentLocally(writer, scope, source, false, false);
+
    switch (operationKey) {
       case INT16_32_CONVERSION:
-         source = boxArgumentLocally(writer, scope, source, false, false);
-
          retVal = allocateResult(scope, resolvePrimitiveType(scope, { V_INT32 }, false));
 
          writeObjectInfo(writer, scope, retVal);
