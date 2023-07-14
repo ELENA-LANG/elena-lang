@@ -1,36 +1,5 @@
 // --- super object ---
 
-[info:"a common ancestor"]
-public class Object
-{
-    /// class constant - a class name 
-    const string __className := @classname;
-    
-    /// class constant - a package info
-    const __packageInfo      := @package; 
-    
-    [info:"Creates the object"]
-    constructor() {}
-    
-    [info:"Returns true if the specified object is equal to the current object; otherwise, false. By default compares the object references."]
-    bool equal(o) => intern system'core_routines'__object;
-       
-    [info:"Returns true if the specified object is not equal to the current object; otherwise, false. By default it inverts the result of equal[2]."]
-    bool notequal(o) = !self.equal(o);
-    
-    // virtual method declarations : forcing the output type                            
-    predefined bool less(o);
-    predefined bool greater(o);
-    predefined bool notless(o);
-    predefined bool notgreater(o);
-                
-    [info:"Returns the string representation. By default it returns the class name."]
-    string toPrintable() = __className;
-                
-    [info:"Implements a message dispatching in VMT"]
-    dispatch() => intern system'core_routines'__object;
-}
-
 [info:"a common boolean value"]
 public interface BoolValue
 {

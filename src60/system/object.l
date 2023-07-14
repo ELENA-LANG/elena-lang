@@ -7,6 +7,8 @@ public class Object
 {
    const string __className := $name __decl;
 
+   // const __packageInfo      := @package; 
+
    constructor() 
       : info("Creates the object")
    {

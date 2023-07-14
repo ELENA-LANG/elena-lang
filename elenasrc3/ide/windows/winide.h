@@ -50,6 +50,7 @@ namespace elena_lang
       Clipboard         clipboard;
 
       HINSTANCE         _instance;
+      HWND              _tabTTHandle;
 
       IDEModel*         _model;
       IDEController*    _controller;
@@ -72,6 +73,11 @@ namespace elena_lang
       void onTreeSelChanged(HWND wnd);
       void onChildRefresh(int controlId);
       void onTreeItemExpanded(NMTREEVIEW* rec);
+
+      bool isTabToolTip(HWND handle);
+
+      void onToolTip(NMTTDISPINFO* toolTip);
+      void onTabTip(NMTTDISPINFO* toolTip);
 
       void onLayoutChange(NotificationStatus status);
       void onIDEChange(NotificationStatus status);

@@ -11,10 +11,12 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * migrate the rest of system (object.l)
     * ide : tool bar tool tips
     * review RealNumber.#new<system'IntNumber>[1], is a new object created twice
+    * generate package info
+    * extension to read package info
 
+    * migrate the rest of system (object.l)
     * migrate the rest of system
     * optimize: comparing with real
     * optimize: pi sample (~10 secs) 
@@ -671,7 +673,6 @@ Backlog:
                 * closures: unboxing : struct fields
                 * auto determining the closure return value for closure templates
                 * stack allocated class and default constructor
-                * extension to read package info
                 * auto symbol
                 * auto method
                 * auto field

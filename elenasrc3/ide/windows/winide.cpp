@@ -936,6 +936,12 @@ void IDEWindow :: onNotify(NMHDR* hdr)
       case NM_RCLICK:
          onRClick(hdr);
          break;
+      case TTN_GETDISPINFO:
+         if (isTabToolTip(hdr->hwndFrom)) {
+            onTabTip((NMTTDISPINFO*)hdr);
+         }
+         else onToolTip((NMTTDISPINFO*)hdr);
+         break;
       default:
          break;
    }
@@ -1061,5 +1067,76 @@ void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
 
    if (changeStatus.textChanged || changeStatus.caretChanged) {
       _controller->onStatusChange(_model, IDEStatus::Ready);
+   }
+}
+
+bool IDEWindow :: isTabToolTip(HWND handle)
+{
+   if (!_tabTTHandle)
+      _tabTTHandle = ((ControlBase*)_children[_model->ideScheme.textFrameId])->getToolTipHandle();
+
+   return _tabTTHandle == handle;
+}
+
+void IDEWindow :: onTabTip(NMTTDISPINFOW* tip)
+{
+   const wchar_t* path = _model->sourceViewModel.getDocumentPath((int)tip->hdr.idFrom + 1);
+
+   tip->lpszText = (LPWSTR)path;
+}
+
+void IDEWindow :: onToolTip(NMTTDISPINFOW* toolTip)
+{
+   switch (toolTip->hdr.idFrom) {
+      case IDM_FILE_NEW:
+         toolTip->lpszText = (LPWSTR)HINT_NEW_FILE;
+         break;
+      case IDM_FILE_OPEN:
+         toolTip->lpszText = (LPWSTR)HINT_OPEN_FILE;
+         break;
+      case IDM_FILE_SAVE:
+         toolTip->lpszText = (LPWSTR)HINT_SAVE_FILE;
+         break;
+      case IDM_FILE_SAVEALL:
+         toolTip->lpszText = (LPWSTR)HINT_SAVEALL;
+         break;
+      case IDM_FILE_CLOSE:
+         toolTip->lpszText = (LPWSTR)HINT_CLOSE_FILE;
+         break;
+      case IDM_PROJECT_CLOSE:
+         toolTip->lpszText = (LPWSTR)HINT_CLOSE_PROJECT;
+         break;
+      case IDM_EDIT_CUT:
+         toolTip->lpszText = (LPWSTR)HINT_CUT;
+         break;
+      case IDM_EDIT_COPY:
+         toolTip->lpszText = (LPWSTR)HINT_COPY;
+         break;
+      case IDM_EDIT_PASTE:
+         toolTip->lpszText = (LPWSTR)HINT_PASTE;
+         break;
+      case IDM_EDIT_UNDO:
+         toolTip->lpszText = (LPWSTR)HINT_UNDO;
+         break;
+      case IDM_EDIT_REDO:
+         toolTip->lpszText = (LPWSTR)HINT_REDO;
+         break;
+      case IDM_DEBUG_RUN:
+         toolTip->lpszText = (LPWSTR)HINT_RUN;
+         break;
+      case IDM_DEBUG_STOP:
+         toolTip->lpszText = (LPWSTR)HINT_STOP;
+         break;
+      case IDM_DEBUG_STEPINTO:
+         toolTip->lpszText = (LPWSTR)HINT_STEPINTO;
+         break;
+      case IDM_DEBUG_STEPOVER:
+         toolTip->lpszText = (LPWSTR)HINT_STEPOVER;
+         break;
+      case IDM_DEBUG_GOTOSOURCE:
+         toolTip->lpszText = (LPWSTR)HINT_GOTOSOURCE;
+         break;
+      default:
+         break;
    }
 }

@@ -133,6 +133,11 @@ namespace elena_lang
          return (_handle == (HWND)param);
       }
 
+      HWND getToolTipHandle()
+      {
+         return TabCtrl_GetToolTips(_handle);
+      }
+
       bool visible() override;
 
       void showWindow(int cmdShow);
