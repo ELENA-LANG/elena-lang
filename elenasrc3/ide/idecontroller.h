@@ -134,6 +134,11 @@ namespace elena_lang
          if (_notifier)
             _notifier->notifyTreeItem(id, item, param);
       }
+      void notifyContextMenu(int id, short x, short y, bool hasSelection) override
+      {
+         if (_notifier)
+            _notifier->notifyContextMenu(id, x, y, hasSelection);
+      }
 
       ProjectController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* debugProcess, 
          ProjectModel* model, SourceViewModel* sourceModel,

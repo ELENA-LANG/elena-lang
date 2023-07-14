@@ -102,6 +102,11 @@ void Clipboard :: pasteFromClipboard(DocumentChangeStatus& status, DocumentView*
    }
 }
 
+bool Clipboard :: isAvailable()
+{
+   return (::IsClipboardFormatAvailable(CF_UNICODETEXT) == TRUE);
+}
+
 // --- IDEWindow ---
 
 IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance) : 
@@ -802,8 +807,6 @@ void IDEWindow :: onDebugWatchRClick(size_t controlIndex)
    ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.debugContextMenu]);
 
    menu->show(_handle, p);
-
-   //treeView->showContextMenu(LOWORD(dwpos), HIWORD(dwpos));
 }
 
 void IDEWindow :: onRClick(NMHDR* hdr)
@@ -850,6 +853,19 @@ void IDEWindow :: onTreeItem(TreeItemNMHDR* rec)
       default:
          break;
    }
+}
+
+void IDEWindow :: onContextMenu(ContextMenuNMHDR* rec)
+{
+   Point p(rec->x, rec->y);
+
+   ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.editorContextMenu]);
+
+   menu->enableMenuItemById(IDM_EDIT_CUT, rec->hasSelection);
+   menu->enableMenuItemById(IDM_EDIT_COPY, rec->hasSelection);
+   menu->enableMenuItemById(IDM_EDIT_PASTE, Clipboard::isAvailable());
+
+   menu->show(_handle, p);
 }
 
 void IDEWindow :: onDebugResult(int code)
@@ -901,6 +917,9 @@ void IDEWindow :: onNotify(NMHDR* hdr)
          break;
       case STATUS_COMPLETION:
          onComplition((CompletionNMHDR*)hdr);
+         break;
+      case CONTEXT_MENU_ON:
+         onContextMenu((ContextMenuNMHDR*)hdr);
          break;
       case TCN_SELCHANGE:
          onTabSelChanged(hdr->hwndFrom);

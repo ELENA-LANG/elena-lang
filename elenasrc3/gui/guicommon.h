@@ -154,6 +154,7 @@ namespace elena_lang
       virtual void notifySelection(int id, size_t param) = 0;
       virtual void notifyTreeItem(int id, size_t item, size_t param) = 0;
       virtual void notifyCompletion(int id, int param) = 0;
+      virtual void notifyContextMenu(int id, short x, short y, bool hasSelection) = 0;
    };
 
    // --- GUIApp ---

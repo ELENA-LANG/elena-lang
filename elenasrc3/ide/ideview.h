@@ -28,6 +28,7 @@ struct IDEScheme
    int               debugContextMenu;
    int               vmConsoleControl;
    int               toolBarControl;
+   int               editorContextMenu;
 
    Map<int, text_t>  captions;
 
@@ -43,6 +44,7 @@ struct IDEScheme
       debugContextMenu(-1),
       vmConsoleControl(-1),
       toolBarControl(-1),
+      editorContextMenu(-1),
       captions(nullptr)
    {
    }

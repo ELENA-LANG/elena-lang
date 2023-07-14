@@ -67,9 +67,11 @@ In development:
     * opzimiation extension operation with a byte array parameter
     * optimize assign inp_op direct_call embeddable
     * optimize direct_call direct_call embeddable
+    * ide : enable / disable toolbar buttons
     * optimize pi sample
     * optimize dirty_ptr := dirty_ptr + int
     * implementing corex: snop, using im the code as well
+    * ide : enable / disable menu commands
     * implementing corex
     * boxing an array, assinging to the local variable - get rid of double assigning
     * optimization : extra temporal variables
@@ -78,6 +80,7 @@ In development:
     + optimiation : operation with int constant
     + optimiation : typecast method (e.g m = self)
     + optimiation : idle method (e.g m() {})
+    * ide : debug watch context menu
     * optimize intOp.Absolute method
     * field boxing : double assigning
     * elt - exception handler

@@ -74,6 +74,8 @@ namespace elena_lang
    class TextViewWindow : public WindowBase, public DocumentNotifier
    {
    protected:
+      NotifierBase*           _notifier;
+
       TextViewModelBase*      _model;
       ViewStyles*             _styles;
       TextViewControllerBase* _controller;
@@ -139,6 +141,8 @@ namespace elena_lang
 
       void onScroll(int bar, int type);
 
+      void onContextMenu(short x, short y);
+
    public:
       void onDocumentUpdate(DocumentChangeStatus& changeStatus) override;
 
@@ -152,7 +156,7 @@ namespace elena_lang
 
       LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam) override;
 
-      TextViewWindow(TextViewModelBase* model, TextViewControllerBase* controller, ViewStyles* styles);
+      TextViewWindow(NotifierBase* notifier, TextViewModelBase* model, TextViewControllerBase* controller, ViewStyles* styles);
       virtual ~TextViewWindow();
    };
 }

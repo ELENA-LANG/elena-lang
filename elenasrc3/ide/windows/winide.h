@@ -30,6 +30,8 @@ namespace elena_lang
       void freeBuffer(HGLOBAL buffer);
 
    public:
+      static bool isAvailable();
+
       bool copyToClipboard(DocumentView* docView) override;
       void pasteFromClipboard(DocumentChangeStatus& status, DocumentView* docView) override;
 
@@ -56,6 +58,7 @@ namespace elena_lang
       void onSelection(SelectionNMHDR* rec);
       void onTreeItem(TreeItemNMHDR* rec);
       void onComplition(CompletionNMHDR* rec);
+      void onContextMenu(ContextMenuNMHDR* rec);
       //void onModelChange(ExtNMHDR* hdr);
       //void onNotifyMessage(ExtNMHDR* hdr);
 
