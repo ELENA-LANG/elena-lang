@@ -168,11 +168,13 @@ void ByteCodeViewer::printLine(ustr_t arg1, ustr_t arg2)
 void ByteCodeViewer :: nextRow(int& row, int pageSize)
 {
    row++;
-   if (row == pageSize - 1 && !_noPaging) {
+   if (row == pageSize - 2 && !_noPaging) {
+      row = 1;
+
+      _presenter->print("\nPress any key to continue..");
       getchar();
    }
-
-   _presenter->print("\n");
+   else _presenter->print("\n");
 }
 
 void ByteCodeViewer :: printLineAndCount(ustr_t arg1, ustr_t arg2, int& row, int pageSize)
@@ -862,6 +864,7 @@ void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo)
    size -= sizeof(ClassHeader);
    IdentifierString prefix;
    IdentifierString line;
+   int counter = 1;
    while (size > 0) {
       vmtReader.read((void*)&entry, sizeof(MethodEntry));
 
@@ -869,11 +872,15 @@ void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo)
       line.append('.');
       addMessage(line, entry.message);
 
-      prefix.copy(getMethodPrefix(test(entry.message, FUNCTION_MESSAGE)));
+      prefix.copy("#");
+      prefix.appendInt(counter);
+      prefix.append(": ");
+      prefix.append(getMethodPrefix(test(entry.message, FUNCTION_MESSAGE)));
 
       printLineAndCount(*prefix, *line, row, _pageSize);
 
       size -= sizeof(MethodEntry);
+      counter++;
    }
 }
 
@@ -897,7 +904,13 @@ bool ByteCodeViewer :: loadByName(ustr_t name)
 {
    _module = _provider->loadModule(name);
 
-   return _module != nullptr;
+   if (_module != nullptr) {
+      printModuleManifest();
+
+      return true;
+   }
+
+   return false;
 }
 
 void ByteCodeViewer :: listMembers()

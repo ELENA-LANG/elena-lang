@@ -11,10 +11,12 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * ide : tool bar tool tips
     * review RealNumber.#new<system'IntNumber>[1], is a new object created twice
     * generate package info
+    * ecv : print package info
+    * ecv : print message id (in bytecode view mode)
     * extension to read package info
+    * ide : window list
 
     * migrate the rest of system (object.l)
     * migrate the rest of system
@@ -29,7 +31,6 @@ In development:
     * console symbol should be strong one
     * implementing corex : allocperm, ...
     * warn on resending to itself (e.g. for constructor)
-    * ide : window list
     * allocate constant array directly if possible
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
     * elena-lc : raise an error if the file in the project does not exist
