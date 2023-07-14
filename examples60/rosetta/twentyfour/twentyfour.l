@@ -38,7 +38,7 @@ class ExpressionTree
                 if (_tree.Level >= node.Level)
                 {
                     node.Left := _tree;
-                    node.Right := nilValue;
+                    node.Right := nil;
                     
                     _tree := node
                 }
@@ -49,7 +49,7 @@ class ExpressionTree
                        { top := top.Right };
                                  
                     node.Left := top.Right;
-                    node.Right := nilValue;
+                    node.Right := nil;
                                  
                     top.Right := node
                 }

@@ -799,8 +799,7 @@ void intCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
          opCode = ByteCode::SelLtRR;
          break;
       case GREATER_OPERATOR_ID:
-         opCode = ByteCode::SelLtRR;
-         inverted = true;
+         opCode = ByteCode::SelGrRR;
          break;
       case EQUAL_OPERATOR_ID:
          opCode = ByteCode::SelEqRR;

@@ -70,6 +70,7 @@ intTests()
    int n := 2;
    int m := 3;
    int k := 4;
+   int l := 3;
                     
    Assert.ifTrue(2 + 3 * 4 == 14);
    Assert.ifTrue(n + m * k == 14);
@@ -82,6 +83,10 @@ intTests()
    Assert.ifTrue(n <= n);
    Assert.ifTrue(n >= n);
    Assert.ifFalse(n >= m);
+   Assert.ifFalse(m > l);
+   Assert.ifFalse(m < l);
+   Assert.ifTrue(m >= l);
+   Assert.ifTrue(m <= l);
    console.write(".");
 
    int m2 := 10;
@@ -921,7 +926,7 @@ LoopTester
 
    assert()
    {
-      Assert.ifTrue(x == -1)
+      Assert.ifTrue(x == 0)
    }
 }
 

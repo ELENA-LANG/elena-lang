@@ -94,6 +94,8 @@ ELENA byte codes (or ecodes)
 
    seleq r1, r2             - acc <= COMP.EQ ? r1 : r2
 
+   selgr r1, r2             - acc <= COMP.LE ? r1 : r2
+
    sellt r1, r2             - acc <= COMP.LE ? r1 : r2
 
    selult r1, r2            - temp1 : 4 << acc;

@@ -107,47 +107,12 @@ public sealed const struct MessageName
 {
     embeddable __subj theValue[4];
     
-    /// Creates a dynamic signature
-    constructor(string s)
-    {
-        intern system'core_routines'__signature.load(self, s)
-    }
-
-    Message getPropertyMessage()
-    {
-        intern system'core_routines'__signature.getProperty(self, ref Message message);
-        
-        ^ message
-    }
-
-    Message setPropertyMessage()
-    {
-        intern system'core_routines'__signature.setProperty(self, ref Message message);
-        
-        ^ message        
-    }
-
     get Message VariadicMessage()
     {
         intern system'core_routines'__signature.varidadic(self, ref Message message);
         
         ^ message        
     }
-
-    /// Compares the values
-    bool equal(MessageName subject)
-        = theValue == subject;
-
-    string toPrintable()
-    {
-        byte buffer[256];
-        int  length := extern elenart.LoadSubjectName(self, buffer, 255);
-        
-        ^ String.fromByteArray(0, length, buffer)
-    }
-
-    /// Qualifies incoming messages and redirects to the target
-    dispatch() => intern system'core_routines'__signature;
 }
 
 // --- Extension ---

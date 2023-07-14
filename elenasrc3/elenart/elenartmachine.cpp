@@ -145,6 +145,20 @@ size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t le
    return length;
 }
 
+size_t ELENARTMachine :: loadActionName(mssg_t message, char* buffer, size_t length)
+{
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   IdentifierString actionName;
+   loadSubjectName(actionName, actionRef);
+
+   StrConvertor::copy(buffer, *actionName, actionName.length(), length);
+
+   return length;
+}
+
 ref_t ELENARTMachine :: loadSubject(ustr_t actionName)
 {
    ImageSection msection(_mdata, 0x1000000);

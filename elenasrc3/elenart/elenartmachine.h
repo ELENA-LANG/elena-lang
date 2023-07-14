@@ -46,6 +46,7 @@ namespace elena_lang
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
       size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
+      size_t loadActionName(mssg_t messageRef, char* buffer, size_t length);
       size_t loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length);
 
       addr_t loadSymbol(ustr_t name);

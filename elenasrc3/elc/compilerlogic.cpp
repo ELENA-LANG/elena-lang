@@ -490,7 +490,8 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
       case V_OBJECT:
          return !isPrimitiveRef(source.typeRef);
       case V_INT32:
-         return source.typeRef == V_INT8 || source.typeRef == V_WORD32 || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32;
+         return source.typeRef == V_INT8 || source.typeRef == V_WORD32
+            || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32 || source.typeRef == V_MESSAGENAME;
       case V_INT64:
          return source.typeRef == V_PTR64 || source.typeRef == V_WORD64;
       case V_FLAG:
