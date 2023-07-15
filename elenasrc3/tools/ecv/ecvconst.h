@@ -11,12 +11,12 @@
 
 namespace elena_lang
 {
-   #define ECV_REVISION_NUMBER               0x0045
+   #define ECV_REVISION_NUMBER               0x0046
 
    constexpr auto ECV_GREETING = "ELENA command line ByteCode Viewer %d.%d.%d (C)2021-23 by Aleksey Rakov\n";
 
    constexpr auto ECV_MODULE_NOTLOADED = "cannot load a module: %s";
-   constexpr auto ECV_MODULE_LOADED    = "module %s loaded";
+   constexpr auto ECV_MODULE_LOADED    = "module %s loaded\n";
    constexpr auto ECV_SYMBOL_NOTFOUND  = "Symbol not found: %s";
    constexpr auto ECV_CLASS_NOTFOUND   = "Class not found: %s";
 

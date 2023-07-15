@@ -8772,7 +8772,7 @@ ref_t Compiler :: resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo
    }
 
    tupleName.append('#');
-   tupleName.appendInt(items.count());
+   tupleName.appendInt(items.count_int());
 
    ref_t templateReference = 0;
    if (isWeakReference(*tupleName)) {
@@ -11049,7 +11049,7 @@ void Compiler :: createPackageInfo(ModuleScopeBase* moduleScope, ManifestInfo& m
          return current == reference;
       }));
 
-   ReferenceName sectionName("'", PACKAGE_SECTION);
+   ReferenceName sectionName("", PACKAGE_SECTION);
    ref_t packageRef = moduleScope->module->mapReference(*sectionName);
 
    SyntaxTree tempTree;

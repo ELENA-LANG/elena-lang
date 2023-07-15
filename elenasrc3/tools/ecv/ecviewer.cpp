@@ -146,9 +146,36 @@ void ByteCodeViewer::printHelp()
    _presenter->print("?                       - list all classes\n");
 }
 
-void ByteCodeViewer::printModuleManifest()
+const char* manifestParameters[4] = { "namespace","name     ","version  ","author   " };
+
+void ByteCodeViewer :: printModuleManifest()
 {
    _presenter->print(ECV_MODULE_LOADED, _module->name());
+
+   ReferenceName sectionName("", PACKAGE_SECTION);
+
+   MemoryBase* section = _module->mapSection(
+      _module->mapReference(*sectionName, true) | mskConstArray, true);
+   if (section != nullptr) {
+      ref_t currentMask = 0;
+      ref_t currentRef = 0;
+      for (auto it = RelocationMap::Iterator(section->getReferences()); !it.eof(); ++it) {
+         int i = *it >> 2;
+         currentMask = it.key() & mskAnyRef;
+         currentRef = it.key() & ~mskAnyRef;
+
+         if (currentMask == mskLiteralRef) {
+            ustr_t value = _module->resolveConstant(currentRef);
+
+            IdentifierString line(manifestParameters[i]);
+            line.append(" : ");
+            line.append(value);
+            line.append("\n");
+
+            _presenter->print(*line);
+         }
+      }
+   }
 }
 
 void ByteCodeViewer::printLine(ustr_t arg1)
