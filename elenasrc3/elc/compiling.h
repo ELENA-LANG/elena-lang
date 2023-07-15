@@ -21,6 +21,15 @@ namespace elena_lang
    // --- CompilingProcess ---
    class CompilingProcess
    {
+      struct ModuleSettings
+      {
+         pos_t          stackAlingment;
+         pos_t          rawStackAlingment;
+         pos_t          ehTableEntrySize;
+         bool           debugMode;
+         ManifestInfo   manifestInfo;
+      };
+
       // --- TemplateGenerator ---
       class TemplateGenerator : public TemplateProssesorBase
       {
@@ -95,12 +104,9 @@ namespace elena_lang
          ModuleIteratorBase& module_it, 
          SyntaxTree* syntaxTree, 
          ForwardResolverBase* forwardResolver,
-         pos_t stackAlingment,
-         pos_t rawStackAlingment,
-         pos_t ehTableEntrySize,
+         ModuleSettings& moduleSettings,
          int minimalArgList,
-         int ptrSize,
-         bool withDebug);
+         int ptrSize);
 
       void configurate(Project& project);
       void cleanUp(ProjectBase& project);

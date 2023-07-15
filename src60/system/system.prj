@@ -14,6 +14,11 @@
      <template>lib60</template>
      <prolog> </prolog>
   </project>
+  <manifest>
+     <name>ELENA Standard Library</name>
+     <version>6.0.0</version>
+     <author>Aleksey Rakov</author>
+  </manifest>
   <files>
      <module name="predefined">
         <include>predefined\attributes.l</include>

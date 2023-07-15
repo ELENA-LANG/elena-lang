@@ -14,7 +14,6 @@
 #include "textparser.h"
 #include "syntaxtree.h"
 #include "projectbase.h"
-#include "errors.h"
 
 namespace elena_lang
 {
@@ -226,6 +225,14 @@ struct BuiltinReferences
       greater_message = less_message = 0;
       notgreater_message = notless_message = 0;
    }
+};
+
+// --- ManifestInfo ---
+struct ManifestInfo
+{
+   ustr_t maninfestName;
+   ustr_t maninfestVersion;
+   ustr_t maninfestAuthor;
 };
 
 // --- SizeInfo ---

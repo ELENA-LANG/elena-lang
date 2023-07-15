@@ -6,6 +6,8 @@
 //                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#include "errors.h"
+
 namespace elena_lang
 {
    constexpr auto MessageLength = 78;

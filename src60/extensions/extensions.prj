@@ -13,6 +13,11 @@
      <namespace>extensions</namespace>
      <template>lib60</template>
   </project>
+  <manifest>
+    <name>ELENA Extension Library</name>
+    <version>6.0.0</version>
+    <author>Alex Rakov</author>
+  </manifest>
   <files>
      <module>
         <include>control.l</include>

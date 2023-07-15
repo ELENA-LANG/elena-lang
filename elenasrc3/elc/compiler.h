@@ -1137,7 +1137,7 @@ namespace elena_lang
       ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors = false);
       ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors = false, bool resolveMode = true);
       ObjectInfo evalObject(Interpreter& interpreter, Scope& scope, SyntaxNode node);
-      ObjectInfo evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node);
+      ObjectInfo evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool anonymousOne);
       ObjectInfo evalPropertyOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
 
       void evalStatement(MetaScope& scope, SyntaxNode node);
@@ -1374,6 +1374,8 @@ namespace elena_lang
       void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef, 
          mssg_t messageRef, MethodHint type) override;
 
+      void createPackageInfo(ModuleScopeBase* moduleScope, ManifestInfo& manifestInfo);
+
    public:
       void setOptimizationMode(int optMode)
       {
@@ -1386,7 +1388,8 @@ namespace elena_lang
          _withMethodParamInfo = flag;
       }
 
-      void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver);
+      void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,
+         ManifestInfo& manifestInfo);
       void declare(ModuleScopeBase* moduleScope, SyntaxTree& input, ExtensionMap* outerExtensionList);
       void compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildTree& output, ExtensionMap* outerExtensionList);
 

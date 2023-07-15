@@ -163,6 +163,7 @@ namespace elena_lang
       FinalOperation          = 0x001CDA,
       ParameterBlock          = 0x0010F0,
       StaticInitializerMethod = 0x0010F1,
+      PrimitiveCollection     = 0x0018F2,
 
       Name                    = 0x000101,
       Namespace               = 0x000103,

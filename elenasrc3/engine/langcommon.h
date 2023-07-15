@@ -386,6 +386,10 @@ namespace elena_lang
    constexpr auto YGSIZE_PATH = "linker/ygsize";
    constexpr auto THREAD_COUNTER = "linker/threadcounter";
 
+   constexpr auto MANIFEST_NAME     = "manifest/name";
+   constexpr auto MANIFEST_VERSION  = "manifest/version";
+   constexpr auto MANIFEST_AUTHOR   = "manifest/author";
+
    inline ustr_t getPlatformName(PlatformType type)
    {
       switch (type) {

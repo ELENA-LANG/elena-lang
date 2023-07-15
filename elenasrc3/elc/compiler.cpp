@@ -301,7 +301,8 @@ ObjectInfo Interpreter :: createConstCollection(ref_t arrayRef, ref_t typeRef, A
       }
    }
 
-   section->addReference(typeRef | mskVMTRef, (pos_t)-4);
+   if (typeRef)
+      section->addReference(typeRef | mskVMTRef, (pos_t)-4);
 
    return { ObjectKind::ConstArray, { typeRef }, arrayRef };
 }
@@ -3605,30 +3606,36 @@ ObjectInfo Compiler :: evalPropertyOperation(Interpreter& interpreter, Scope& sc
    return {};
 }
 
-ObjectInfo Compiler :: evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node)
+ObjectInfo Compiler :: evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool anonymousOne)
 {
    SyntaxNode current = node.firstChild();
-   ObjectInfo typeInfo = evalObject(interpreter, scope, current);
-   if (typeInfo.kind != ObjectKind::Class)
-      scope.raiseError(errInvalidOperation, node);
 
-   current = current.nextNode();
+   ref_t collectionTypeRef = 0;
+   ref_t elementTypeRef = 0;
 
-   ref_t collectionTypeRef = retrieveStrongType(scope, typeInfo);
+   if (!anonymousOne) {
+      ObjectInfo typeInfo = evalObject(interpreter, scope, current);
+      if (typeInfo.kind != ObjectKind::Class)
+         scope.raiseError(errInvalidOperation, node);
 
-   ClassInfo collectionInfo;
-   if(!_logic->defineClassInfo(*scope.moduleScope, collectionInfo, collectionTypeRef, false, true))
-      scope.raiseError(errInvalidOperation, node);
+      current = current.nextNode();
 
-   if (!test(collectionInfo.header.flags, elDynamicRole))
-      scope.raiseError(errInvalidOperation, node);
+      collectionTypeRef = retrieveStrongType(scope, typeInfo);
 
-   // if the array was already created
-   if (node.arg.reference)
-      return { ObjectKind::ConstArray, { collectionTypeRef }, node.arg.reference };
+      ClassInfo collectionInfo;
+      if (!_logic->defineClassInfo(*scope.moduleScope, collectionInfo, collectionTypeRef, false, true))
+         scope.raiseError(errInvalidOperation, node);
 
-   auto fieldInfo = *(collectionInfo.fields.start());
-   ref_t elementTypeRef = retrieveStrongType(scope, { ObjectKind::Object, { fieldInfo.typeInfo.elementRef }, 0 });
+      if (!test(collectionInfo.header.flags, elDynamicRole))
+         scope.raiseError(errInvalidOperation, node);
+
+      // if the array was already created
+      if (node.arg.reference)
+         return { ObjectKind::ConstArray, { collectionTypeRef }, node.arg.reference };
+
+      auto fieldInfo = *(collectionInfo.fields.start());
+      elementTypeRef = retrieveStrongType(scope, { ObjectKind::Object, { fieldInfo.typeInfo.elementRef }, 0 });
+   }
 
    ArgumentsInfo arguments;
    EAttr paramMode = EAttr::Parameter;
@@ -3638,8 +3645,11 @@ ObjectInfo Compiler :: evalCollection(Interpreter& interpreter, Scope& scope, Sy
 
          argInfo.typeInfo.typeRef = retrieveStrongType(scope, argInfo);
 
-         if (!isConstant(argInfo.kind) || !_logic->isCompatible(*scope.moduleScope, { elementTypeRef }, argInfo.typeInfo, true))
+         if (!isConstant(argInfo.kind) 
+            || (elementTypeRef && !_logic->isCompatible(*scope.moduleScope, { elementTypeRef }, argInfo.typeInfo, true)))
+         {
             return {};
+         }
 
          arguments.add(argInfo);
       }
@@ -3647,11 +3657,14 @@ ObjectInfo Compiler :: evalCollection(Interpreter& interpreter, Scope& scope, Sy
       current = current.nextNode();
    }
 
-   ref_t nestedRef = mapConstantReference(scope);
-   if (!nestedRef)
-      nestedRef = scope.moduleScope->mapAnonymous();
+   ref_t nestedRef = node.arg.reference;
+   if (!nestedRef) {
+      nestedRef = mapConstantReference(scope);
+      if (!nestedRef)
+         nestedRef = scope.moduleScope->mapAnonymous();
 
-   node.setArgumentReference(nestedRef);
+      node.setArgumentReference(nestedRef);
+   }
 
    return interpreter.createConstCollection(nestedRef, collectionTypeRef, arguments);
 }
@@ -3676,7 +3689,10 @@ ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, Sy
          retVal = evalPropertyOperation(interpreter, scope, node, ignoreErrors);
          break;
       case SyntaxKey::CollectionExpression:
-         retVal = evalCollection(interpreter, scope, node);
+         retVal = evalCollection(interpreter, scope, node, false);
+         break;
+      case SyntaxKey::PrimitiveCollection:
+         retVal = evalCollection(interpreter, scope, node, true);
          break;
       default:
          if (ignoreErrors) {
@@ -11012,7 +11028,58 @@ bool Compiler :: reloadMetaData(ModuleScopeBase* moduleScope, ustr_t name)
    return true;
 }
 
-void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver)
+inline void addPackageItem(SyntaxTreeWriter& writer, ModuleBase* module, ustr_t str, ustr_t nilConst)
+{
+   writer.newNode(SyntaxKey::Expression);
+   writer.newNode(SyntaxKey::Object);
+   if (!emptystr(str)) {
+      writer.appendNode(SyntaxKey::string, str);
+   }
+   else writer.appendNode(SyntaxKey::identifier, nilConst);
+   writer.closeNode();
+   writer.closeNode();
+}
+
+void Compiler :: createPackageInfo(ModuleScopeBase* moduleScope, ManifestInfo& manifestInfo)
+{
+   IdentifierString nilValue;
+   nilValue.copy(moduleScope->predefined.retrieve<ref_t>("@nil", V_RECEIVED_VAR,
+      [](ref_t reference, ustr_t key, ref_t current)
+      {
+         return current == reference;
+      }));
+
+   ReferenceName sectionName("'", PACKAGE_SECTION);
+   ref_t packageRef = moduleScope->module->mapReference(*sectionName);
+
+   SyntaxTree tempTree;
+   SyntaxTreeWriter tempWriter(tempTree);
+
+   tempWriter.newNode(SyntaxKey::PrimitiveCollection, packageRef);
+
+   // namespace
+   addPackageItem(tempWriter, moduleScope->module, moduleScope->module->name(), *nilValue);
+
+   // package name
+   addPackageItem(tempWriter, moduleScope->module, manifestInfo.maninfestName, *nilValue);
+
+   // package version
+   addPackageItem(tempWriter, moduleScope->module, manifestInfo.maninfestVersion, *nilValue);
+
+   // package author
+   addPackageItem(tempWriter, moduleScope->module, manifestInfo.maninfestAuthor, *nilValue);
+
+   tempWriter.closeNode();
+
+   Interpreter interpreter(moduleScope, _logic);
+   MetaScope scope(nullptr, Scope::ScopeLevel::Namespace);
+   scope.module = moduleScope->module;
+   scope.moduleScope = moduleScope;
+   evalCollection(interpreter, scope, tempTree.readRoot(), true);
+}
+
+void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,
+   ManifestInfo& manifestInfo)
 {
    reloadMetaData(moduleScope, PREDEFINED_MAP);
    reloadMetaData(moduleScope, ATTRIBUTES_MAP);
@@ -11140,6 +11207,8 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
       {
          return current == reference;
       }));
+
+   createPackageInfo(moduleScope, manifestInfo);
 
    if (!moduleScope->tapeOptMode)
       moduleScope->tapeOptMode = _tapeOptMode;

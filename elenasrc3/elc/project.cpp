@@ -295,6 +295,10 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
 
       loadParserTargets(config, root, PARSER_TARGET_CATEGORY);
 
+      copySetting(config, root, MANIFEST_NAME, ProjectOption::ManifestName);
+      copySetting(config, root, MANIFEST_VERSION, ProjectOption::ManifestVersion);
+      copySetting(config, root, MANIFEST_AUTHOR, ProjectOption::ManifestAuthor);
+
       copySetting(config, root, MGSIZE_PATH, ProjectOption::GCMGSize);
       copySetting(config, root, YGSIZE_PATH, ProjectOption::GCYGSize);
       copySetting(config, root, DEBUGMODE_PATH, ProjectOption::DebugMode);

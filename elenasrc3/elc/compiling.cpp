@@ -492,21 +492,21 @@ void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTre
 void CompilingProcess :: buildModule(ProjectEnvironment& env,
    ModuleIteratorBase& module_it, SyntaxTree* syntaxTree,
    ForwardResolverBase* forwardResolver,
-   pos_t stackAlingment,
-   pos_t rawStackAlingment,
-   pos_t ehTableEntrySize,
+   ModuleSettings& moduleSettings,
    int minimalArgList,
-   int ptrSize,
-   bool withDebug)
+   int ptrSize)
 {
    ModuleScope moduleScope(
       &_libraryProvider,
       forwardResolver,
       _libraryProvider.createModule(module_it.name()),
-      withDebug ? _libraryProvider.createDebugModule(module_it.name()) : nullptr,
-      stackAlingment, rawStackAlingment, ehTableEntrySize, minimalArgList, ptrSize);
+      moduleSettings.debugMode ? _libraryProvider.createDebugModule(module_it.name()) : nullptr,
+      moduleSettings.stackAlingment, 
+      moduleSettings.rawStackAlingment, 
+      moduleSettings.ehTableEntrySize, 
+      minimalArgList, ptrSize);
 
-   _compiler->prepare(&moduleScope, forwardResolver);
+   _compiler->prepare(&moduleScope, forwardResolver, moduleSettings.manifestInfo);
 
    SyntaxTreeBuilder builder(syntaxTree, _errorProcessor,
       &moduleScope, &_templateGenerator);
@@ -553,14 +553,24 @@ void CompilingProcess :: compile(ProjectBase& project,
 
    auto module_it = project.allocModuleIterator();
    while (!module_it->eof()) {
+      ModuleSettings moduleSettings =
+      {
+         project.UIntSetting(ProjectOption::StackAlignment, defaultStackAlignment),
+         project.UIntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
+         project.UIntSetting(ProjectOption::EHTableEntrySize, defaultEHTableEntrySize),
+         project.BoolSetting(ProjectOption::DebugMode, true),
+         {
+            project.StringSetting(ProjectOption::ManifestName),
+            project.StringSetting(ProjectOption::ManifestVersion),
+            project.StringSetting(ProjectOption::ManifestAuthor)
+         }
+      };
+
       buildModule(
          env, *module_it, &syntaxTree, &project,
-         project.IntSetting(ProjectOption::StackAlignment, defaultStackAlignment),
-         project.IntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
-         project.IntSetting(ProjectOption::EHTableEntrySize, defaultEHTableEntrySize),
+         moduleSettings,
          minimalArgList,
-         sizeof(uintptr_t),
-         project.BoolSetting(ProjectOption::DebugMode, true));
+         sizeof(uintptr_t));
 
       ++(*module_it);
    }
