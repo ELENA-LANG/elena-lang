@@ -11,7 +11,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * ecv : print message id (in bytecode view mode)
     * extension to read package info
     * ide : window list
 

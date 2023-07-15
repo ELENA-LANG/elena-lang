@@ -139,11 +139,18 @@ mssg_t ByteCodeViewer :: resolveMessage(ustr_t messageName)
    return message;
 }
 
-void ByteCodeViewer::printHelp()
+void ByteCodeViewer :: printHelp()
 {
-   _presenter->print("-q                      - quit\n");
-   _presenter->print("#<symbol>               - view symbol byte codes\n");
+   _presenter->print("\n");
+   _presenter->print("list of commands\n");
    _presenter->print("?                       - list all classes\n");
+   _presenter->print("<class>                 - view class members\n");
+   _presenter->print("<class>.<message>       - view a method byte codes\n");
+   _presenter->print("<class>.<index>         - view a method specified by an index byte codes\n");
+   _presenter->print("#<symbol>               - view symbol byte codes\n");
+   _presenter->print("-q                      - quit\n");
+   _presenter->print("-b                      - toggle bytecode mode\n");
+   _presenter->print("-h                      - toggle method hints mode\n");
 }
 
 const char* manifestParameters[4] = { "namespace","name     ","version  ","author   " };
@@ -828,6 +835,11 @@ void ByteCodeViewer::printMethod(ustr_t name, bool fullInfo)
             line.append("->");
             line.append(_module->resolveReference(methodInfo.outputRef));
          }
+         if (_showMethodInfo && _showBytecodes) {
+            line.append(" [");
+            line.appendHex(message);
+            line.append("]");
+         }
 
          printLine(getMethodPrefix(test(entry.message, FUNCTION_MESSAGE)), *line);
 
@@ -940,17 +952,31 @@ bool ByteCodeViewer :: loadByName(ustr_t name)
    return false;
 }
 
+struct BCVSessionInfo
+{
+   ByteCodeViewer* viewer;
+   int             row;
+   int             pageSize;
+};
+
 void ByteCodeViewer :: listMembers()
 {
-   _module->forEachReference(_presenter, [](ModuleBase* module, ref_t reference, void* arg)
+   BCVSessionInfo info = { this, 1, _pageSize };
+
+   _module->forEachReference(&info, [](ModuleBase* module, ref_t reference, void* arg)
       {
          auto referenceName = module->resolveReference(reference);
+
+         BCVSessionInfo* info = (BCVSessionInfo*)arg;
+
          if (isWeakReference(referenceName)) {
             if (module->mapSection(reference | mskVMTRef, true)) {
-               ((ConsoleHelperBase*)arg)->print("class %s\n", referenceName.str());
+               info->viewer->printLineAndCount("class ", referenceName, 
+                  info->row, info->pageSize);
             }
             else if (module->mapSection(reference | mskSymbolRef, true)) {
-               ((ConsoleHelperBase*)arg)->print("symbol %s\n", referenceName.str());
+               info->viewer->printLineAndCount("symbol ", referenceName,
+                  info->row, info->pageSize);
             }
          }
       });
@@ -958,6 +984,8 @@ void ByteCodeViewer :: listMembers()
 
 void ByteCodeViewer :: runSession()
 {
+   printHelp();
+
    char              buffer[LINE_LEN];
    while (true) {
       _presenter->print("\n>");
