@@ -113,7 +113,7 @@ namespace elena_lang
       ContinueOperation       = 0x001867,
       Postfix                 = 0x001068,
       TemplatePostfix         = 0x001069,
-      //MethodPostfix           = 0x00106A,
+      ReferOperation          = 0x00186A,
       TemplateArg             = 0x001070,
       Dimension               = 0x001471,
       NestedBlock             = 0x001080,

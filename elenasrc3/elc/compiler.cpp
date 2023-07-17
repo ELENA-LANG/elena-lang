@@ -351,6 +351,11 @@ bool Interpreter :: evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInf
             break;
       }
    }
+   else if (operator_id == REFERENCE_OPERATOR_ID && loperand.kind == ObjectKind::Class) {
+      retVal = { ObjectKind::SelfPackage };
+
+      return true;
+   }
 
    return false;
 }
@@ -796,7 +801,14 @@ inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, Expressi
          return { ObjectKind::ClassConstant, staticFieldInfo.typeInfo, staticFieldInfo.valueRef };
       }
       else if (staticFieldInfo.offset < 0 && staticFieldInfo.valueRef != 0) {
-         return { ObjectKind::StaticConstField, staticFieldInfo.typeInfo, staticFieldInfo.offset };
+         return {
+            ObjectKind::StaticConstField,
+            staticFieldInfo.typeInfo,
+            staticFieldInfo.offset,
+            (staticFieldInfo.typeInfo.typeRef == V_PTR32 || staticFieldInfo.typeInfo.typeRef == V_PTR64)
+               ? TargetMode::BoxingPtr : TargetMode::None
+         };
+
       }
       else if (staticFieldInfo.valueRef)
          return { ObjectKind::StaticField, staticFieldInfo.typeInfo, staticFieldInfo.valueRef };
@@ -3680,6 +3692,7 @@ ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, Sy
       case SyntaxKey::AssignOperation:
       case SyntaxKey::AddAssignOperation:
       case SyntaxKey::NameOperation:
+      case SyntaxKey::ReferOperation:
          retVal = evalOperation(interpreter, scope, node, (int)node.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::Object:
@@ -3942,6 +3955,20 @@ int Compiler :: defineFieldSize(Scope& scope, ObjectInfo info)
    return size;
 }
 
+ObjectInfo Compiler :: boxPtrLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info)
+{
+   ObjectInfo tempLocal = declareTempLocal(scope, info.typeInfo.typeRef, false);
+
+   writeObjectInfo(writer, scope, info);
+   writer.appendNode(BuildKey::SavingInStack, 0);
+
+   writeObjectInfo(writer, scope, tempLocal);
+
+   writer.appendNode(BuildKey::SetImmediateField);
+
+   return tempLocal;
+}
+
 ObjectInfo Compiler :: boxLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info,
    bool stackSafe)
 {
@@ -3971,12 +3998,21 @@ ObjectInfo Compiler :: boxLocally(BuildTreeWriter& writer, ExprScope& scope, Obj
    writer.appendNode(BuildKey::SavingInStack, 0);
 
    writeObjectInfo(writer, scope, scope.mapSelf());
-   if (info.kind == ObjectKind::FieldAddress || info.kind == ObjectKind::ReadOnlyField) {
-      writer.newNode(BuildKey::CopyingAccField, info.reference);
-   }
-   else {
-      writer.appendNode(BuildKey::Field, info.reference);
-      writer.newNode(BuildKey::CopyingAccField, 0);
+
+   switch (info.kind) {
+      case ObjectKind::FieldAddress:
+      case ObjectKind::ReadOnlyField:
+         writer.newNode(BuildKey::CopyingAccField, info.reference);
+         break;
+      case ObjectKind::StaticConstField:
+         writer.appendNode(BuildKey::ClassOp, CLASS_OPERATOR_ID);
+         writer.appendNode(BuildKey::Field, info.reference);
+         writer.newNode(BuildKey::CopyingAccField, 0);
+         break;
+      default:
+         writer.appendNode(BuildKey::Field, info.reference);
+         writer.newNode(BuildKey::CopyingAccField, 0);
+         break;
    }
    
    writer.appendNode(BuildKey::Size, tempLocal.extra);
@@ -4034,6 +4070,11 @@ ObjectInfo Compiler :: boxArgumentLocally(BuildTreeWriter& writer, ExprScope& sc
             return retVal;
          }
          else return boxLocally(writer, scope, info, stackSafe);
+      case ObjectKind::StaticConstField:
+         if (info.mode == TargetMode::BoxingPtr) {
+            return boxPtrLocally(writer, scope, info);
+         }
+         else return info;
       default:
          return info;
    }
@@ -5641,6 +5682,11 @@ bool Compiler :: evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNo
       case ObjectKind::SelfName:
          constInfo.typeInfo = { V_STRING };
          constInfo.reference = mskNameLiteralRef;
+         setIndex = true;
+         break;
+      case ObjectKind::SelfPackage:
+         constInfo.typeInfo = { };
+         constInfo.reference = mskPackageRef;
          setIndex = true;
          break;
       default:
@@ -9017,6 +9063,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          retVal = compileCollection(writer, scope, current, mode);
          break;
       case SyntaxKey::Type:
+      case SyntaxKey::ReferOperation:
          scope.raiseError(errInvalidOperation, node);
          break;
       case SyntaxKey::Attribute:
@@ -11028,27 +11075,20 @@ bool Compiler :: reloadMetaData(ModuleScopeBase* moduleScope, ustr_t name)
    return true;
 }
 
-inline void addPackageItem(SyntaxTreeWriter& writer, ModuleBase* module, ustr_t str, ustr_t nilConst)
+inline void addPackageItem(SyntaxTreeWriter& writer, ModuleBase* module, ustr_t str)
 {
    writer.newNode(SyntaxKey::Expression);
    writer.newNode(SyntaxKey::Object);
-   if (!emptystr(str)) {
-      writer.appendNode(SyntaxKey::string, str);
+   if (emptystr(str)) {
+      writer.appendNode(SyntaxKey::string, "");
    }
-   else writer.appendNode(SyntaxKey::identifier, nilConst);
+   else writer.appendNode(SyntaxKey::string, str);
    writer.closeNode();
    writer.closeNode();
 }
 
 void Compiler :: createPackageInfo(ModuleScopeBase* moduleScope, ManifestInfo& manifestInfo)
 {
-   IdentifierString nilValue;
-   nilValue.copy(moduleScope->predefined.retrieve<ref_t>("@nil", V_RECEIVED_VAR,
-      [](ref_t reference, ustr_t key, ref_t current)
-      {
-         return current == reference;
-      }));
-
    ReferenceName sectionName("", PACKAGE_SECTION);
    ref_t packageRef = moduleScope->module->mapReference(*sectionName);
 
@@ -11058,16 +11098,16 @@ void Compiler :: createPackageInfo(ModuleScopeBase* moduleScope, ManifestInfo& m
    tempWriter.newNode(SyntaxKey::PrimitiveCollection, packageRef);
 
    // namespace
-   addPackageItem(tempWriter, moduleScope->module, moduleScope->module->name(), *nilValue);
+   addPackageItem(tempWriter, moduleScope->module, moduleScope->module->name());
 
    // package name
-   addPackageItem(tempWriter, moduleScope->module, manifestInfo.maninfestName, *nilValue);
+   addPackageItem(tempWriter, moduleScope->module, manifestInfo.maninfestName);
 
    // package version
-   addPackageItem(tempWriter, moduleScope->module, manifestInfo.maninfestVersion, *nilValue);
+   addPackageItem(tempWriter, moduleScope->module, manifestInfo.maninfestVersion);
 
    // package author
-   addPackageItem(tempWriter, moduleScope->module, manifestInfo.maninfestAuthor, *nilValue);
+   addPackageItem(tempWriter, moduleScope->module, manifestInfo.maninfestAuthor);
 
    tempWriter.closeNode();
 

@@ -308,6 +308,7 @@ namespace elena_lang
    constexpr auto XOR_OPERATOR_ID            = 0x0023;
    constexpr auto BREAK_OPERATOR_ID          = 0x0024;
    constexpr auto CONTINUE_OPERATOR_ID       = 0x0027;
+   constexpr auto REFERENCE_OPERATOR_ID      = 0x002A;
 
    constexpr auto ISNIL_OPERATOR_ID          = 0x003E;
    constexpr auto CLASS_OPERATOR_ID          = 0x003F;

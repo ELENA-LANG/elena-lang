@@ -753,6 +753,9 @@ void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader
             case mskPathLiteralRef:
                vaddress = resolveName(referenceInfo, true);
                break;
+            case mskPackageRef:
+               vaddress = resolvePackage(referenceInfo);
+               break;
             default:
                vaddress = resolve(
                   _loader->retrieveReferenceInfo(referenceInfo.module, fieldInfo.valueRef & ~mskAnyRef,
@@ -1230,6 +1233,13 @@ addr_t JITLinker :: resolveName(ReferenceInfo referenceInfo, bool onlyPath)
       return resolve(*ns, mskLiteralRef, false);
    }
    else return resolve(*fullName, mskLiteralRef, false);
+}
+
+addr_t JITLinker :: resolvePackage(ReferenceInfo referenceInfo)
+{
+   ReferenceName packageInfo("", PACKAGE_SECTION);
+
+   return resolve({ referenceInfo.module, *packageInfo }, mskConstArray, false);
 }
 
 mssg_t JITLinker :: parseMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references)

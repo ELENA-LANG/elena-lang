@@ -78,6 +78,7 @@ namespace elena_lang
       Constant,
       ConstArray,
       SelfName,
+      SelfPackage,
       MethodName,
       FieldName,
       StaticField,
@@ -101,7 +102,8 @@ namespace elena_lang
       RefUnboxingRequired,
       LocalUnboxingRequired,
       ArrayContent,
-      UnboxingVarArgument
+      UnboxingVarArgument,
+      BoxingPtr
    };
 
    struct ObjectInfo
@@ -1168,6 +1170,7 @@ namespace elena_lang
          bool stackSafe, bool forced);
       ObjectInfo boxLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info,
          bool stackSafe);
+      ObjectInfo boxPtrLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info);
       ObjectInfo boxVariadicArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info);
 
       ObjectInfo unboxArguments(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo retVal, ArgumentsInfo* updatedOuterArgs);

@@ -104,6 +104,7 @@
        <include>routines/sorting.l</include>
      </module>
      <module name="runtime">
+       <include>runtime/common.l</include>
        <include>runtime/gc_routines.l</include>
        <include>runtime/vectortable.l</include>
      </module>

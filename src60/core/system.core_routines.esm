@@ -1273,6 +1273,23 @@ procedure __classref_dispatcher
 
 end
 
+procedure __loadPackageInfo(self, ptr, index)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  peek       fp:index
+  load  
+  peek       fp:ptr
+  get        i:0
+  xget       
+
+  close      []
+
+end
+
 procedure __message_load (self, s)
 
   xflush     sp:0

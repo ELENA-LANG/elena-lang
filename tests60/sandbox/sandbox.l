@@ -1,10 +1,12 @@
-import extensions;   
+import extensions;
+import system'runtime;
+
+A;
 
 public program()
 {
-   string s := "anc";
-   int l := s.Length
+   var a := new Object();
+   var p := a.Package();
 
-//   int n := 3;
-//   real r := n;
+   console.writeLine(p.Name);
 }
