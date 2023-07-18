@@ -1175,6 +1175,24 @@ void IDEController :: doSelectPrevWindow(IDEModel* model)
    sourceController.selectPreviousDocument(&model->sourceViewModel);
 }
 
+void IDEController :: doSelectWindow(TextViewModelBase* viewModel, path_t path)
+{
+   ustr_t sourceName = viewModel->getDocumentNameByPath(path);
+   int index = sourceName.empty() ? 0 : viewModel->getDocumentIndex(sourceName);
+
+   if (index > 0) {
+      NotificationStatus status = NONE_CHANGED;
+
+      if(sourceController.selectDocument(viewModel, index, status)) {
+         if (test(status, FRAME_VISIBILITY_CHANGED))
+            status |= IDE_LAYOUT_CHANGED;
+
+         if (status != NONE_CHANGED)
+            _notifier->notify(NOTIFY_IDE_CHANGE, status);
+      }
+   }
+}
+
 path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
 {
    if (model->projectModel.sources.count() != 0) {

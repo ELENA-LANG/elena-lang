@@ -75,6 +75,16 @@
 
 #define IDM_WINDOW_NEXT            1001
 #define IDM_WINDOW_PREVIOUS        1002
+#define IDM_WINDOW_WINDOWS         1004
+#define IDM_WINDOW_FIRST           1005
+#define IDM_WINDOW_SECOND          1006
+#define IDM_WINDOW_THIRD           1007
+#define IDM_WINDOW_FOURTH          1008
+#define IDM_WINDOW_FIFTH           1009
+#define IDM_WINDOW_SIXTH           1010
+#define IDM_WINDOW_SEVENTH         1011
+#define IDM_WINDOW_EIGHTH          1012
+#define IDM_WINDOW_NINTH           1013
 
 #define IDM_HELP_API               1101
 
@@ -111,6 +121,10 @@
 #define IDD_GOTOLINE               1100
 #define IDC_GOTOLINE_LINENUMBER    (IDD_GOTOLINE + 1)
 #define IDC_GOTOLINE_LABEL1        (IDD_GOTOLINE + 2)
+
+#define IDD_WINDOWS                1200
+#define IDC_WINDOWS_LIST           1201
+#define IDC_WINDOWS_CLOSE          1202
 
 #ifndef IDC_STATIC
 #define IDC_STATIC                  -1

@@ -118,12 +118,12 @@ namespace elena_lang
 #pragma pack(pop)
 
    // --- IteratorBase ---
-   template <class T, class Item> class ListIteratorBase
+   template <class T, class Item, void(*FreeT)(T)> class ListIteratorBase
    {
       Item* _current;
 
-      friend class BListBase<T>;
-      friend class ListBase<T>;
+      friend class BListBase<T, FreeT>;
+      friend class ListBase<T, FreeT>;
 
    public:
       bool operator ==(const ListIteratorBase& it)
@@ -404,7 +404,7 @@ namespace elena_lang
       T     _defaultValue;
 
    public:
-      typedef ListIteratorBase<T, Item> Iterator;
+      typedef ListIteratorBase<T, Item, FreeT> Iterator;
 
       Iterator start() { return Iterator(_top); }
 
@@ -543,6 +543,40 @@ namespace elena_lang
          }
       }
 
+      void cut(Iterator& it)
+      {
+         Item* tmp = nullptr;
+         Item* previous = nullptr;
+
+         if (_top == it._current)
+            tmp = _top;
+         else {
+            previous = _top;
+            while (previous->next) {
+               if (previous->next == it._current) {
+                  tmp = previous->next;
+                  break;
+               }
+               previous = previous->next;
+            }
+         }
+         if (tmp) {
+            _count--;
+
+            if (tmp == _tale)
+               _tale = previous;
+            if (previous == nullptr) {
+               _top = _top->next;
+            }
+            else previous->next = tmp->next;
+
+            if (FreeT)
+               FreeT(tmp->item);
+
+            delete tmp;
+         }
+      }
+
       void clear()
       {
          while (_top) {
@@ -580,7 +614,7 @@ namespace elena_lang
       pos_t _count;
 
    public:
-      typedef ListIteratorBase<T, BItemBase<T>> Iterator;
+      typedef ListIteratorBase<T, BItemBase<T>, FreeT> Iterator;
 
       pos_t count() const
       {
@@ -660,7 +694,7 @@ namespace elena_lang
       T                  _defaultItem;
 
    public:
-      typedef ListIteratorBase<T, ItemBase<T>> Iterator;
+      typedef ListIteratorBase<T, ItemBase<T>, FreeT> Iterator;
 
       T DefaultValue() const { return _list.DefaultValue(); }
 
@@ -701,6 +735,11 @@ namespace elena_lang
       void cut(T item)
       {
          _list.cut(item);
+      }
+
+      void cut(Iterator it)
+      {
+         _list.cut(it);
       }
 
       template<class ArgT> void forEach(ArgT arg, void(*lambda)(ArgT arg, T item))
@@ -764,7 +803,7 @@ namespace elena_lang
       T                  _defaultItem;
 
    public:
-      typedef ListIteratorBase<T, ItemBase<T>> Iterator;
+      typedef ListIteratorBase<T, ItemBase<T>, FreeT> Iterator;
 
       T DefaultValue() const { return _list.DefaultValue(); }
 
@@ -870,7 +909,7 @@ namespace elena_lang
       T           _defaultItem;
 
    public:
-      typedef ListIteratorBase<T, ItemBase<T>> Iterator;
+      typedef ListIteratorBase<T, ItemBase<T>, nullptr> Iterator;
 
       Iterator start()
       {
@@ -981,7 +1020,7 @@ namespace elena_lang
       BListBase<T, FreeT> _list;
 
    public:
-      typedef ListIteratorBase<T, BItemBase<T>> Iterator;
+      typedef ListIteratorBase<T, BItemBase<T>, FreeT> Iterator;
 
       pos_t count() const { return _list.count(); }
 

@@ -146,6 +146,26 @@ namespace elena_lang
       virtual ~GUIControlBase() = default;
    };
 
+   // --- GUIMenuBase ---
+   class GUIMenuBase : public GUIControlBase
+   {
+   public:
+      virtual wchar_t getMnemonicAccKey() = 0;
+
+      virtual void checkMenuItemById(int id, bool checked) = 0;
+
+      virtual void insertSeparatorById(int positionId, int id) = 0;
+      virtual void insertMenuItemById(int positionId, int id, const_text_t caption) = 0;
+      virtual void insertMenuItemByIndex(int index, int command, const_text_t caption) = 0;
+
+      virtual void enableMenuItemById(int id, bool doEnable) = 0;
+      virtual void enableMenuItemByIndex(int index, bool doEnable) = 0;
+
+      virtual void eraseMenuItemById(int id) = 0;
+
+      virtual void renameMenuItemById(int id, const_text_t caption) =0 ;
+   };
+
    // --- NotifierBase ---
    class NotifierBase
    {

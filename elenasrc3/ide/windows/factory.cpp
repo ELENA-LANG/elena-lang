@@ -414,11 +414,11 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    vb->append(children[vsplitter]);
    vb->append(children[statusBarIndex]);
 
+   initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView, browser, menu, statusBarIndex,
+      debugContextMenu, vmConsoleControl, toolBarControl, contextEditor);
+
    sdi->populate(counter, children);
    sdi->setLayout(textIndex, toolBarControl, bottomBox, -1, hsplitter);
-
-   initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView, browser, menu, statusBarIndex, 
-      debugContextMenu, vmConsoleControl, toolBarControl, contextEditor);
 
    return sdi;
 }

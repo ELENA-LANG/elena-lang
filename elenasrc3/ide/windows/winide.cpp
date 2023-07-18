@@ -124,7 +124,8 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    findDialog(instance, this, false, &model->findModel),
    replaceDialog(instance, this, true, &model->findModel),
    gotoDialog(instance, this),
-   clipboard(this)
+   clipboard(this),
+   _windowList(controller, model->viewModel())
 {
    this->_instance = instance;
    this->_controller = controller;
@@ -475,11 +476,11 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
    }
 
    MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-   menu->checkItemById(IDM_VIEW_OUTPUT, _children[_model->ideScheme.compilerOutputControl]->visible());
-   menu->checkItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
-   menu->checkItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
-   menu->checkItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
-   menu->checkItemById(IDM_VIEW_VMCONSOLE, _children[_model->ideScheme.vmConsoleControl]->visible());
+   menu->checkMenuItemById(IDM_VIEW_OUTPUT, _children[_model->ideScheme.compilerOutputControl]->visible());
+   menu->checkMenuItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
+   menu->checkMenuItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
+   menu->checkMenuItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
+   menu->checkMenuItemById(IDM_VIEW_VMCONSOLE, _children[_model->ideScheme.vmConsoleControl]->visible());
 
    menu->enableMenuItemById(IDM_FILE_SAVE, !empty);
    menu->enableMenuItemById(IDM_FILE_CLOSE, !empty);
@@ -667,6 +668,17 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_DEBUG_INSPECT:
          refreshDebugNode();
+         break;
+      case IDM_WINDOW_FIRST:
+      case IDM_WINDOW_SECOND:
+      case IDM_WINDOW_THIRD:
+      case IDM_WINDOW_FOURTH:
+      case IDM_WINDOW_FIFTH:
+      case IDM_WINDOW_SIXTH:
+      case IDM_WINDOW_SEVENTH:
+      case IDM_WINDOW_EIGHTH:
+      case IDM_WINDOW_NINTH:
+         _windowList.select(command - IDM_WINDOW_FIRST + 1);
          break;
       default:
          return false;
@@ -1139,4 +1151,13 @@ void IDEWindow :: onToolTip(NMTTDISPINFOW* toolTip)
       default:
          break;
    }
+}
+
+void IDEWindow :: populate(size_t counter, GUIControlBase** children)
+{
+   SDIWindow::populate(counter, children);
+
+   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+
+   _windowList.assign(menu);
 }

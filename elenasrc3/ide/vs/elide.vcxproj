@@ -208,7 +208,9 @@
     <ClInclude Include="..\ideproject.h" />
     <ClInclude Include="..\ideview.h" />
     <ClInclude Include="..\ideworkspace.h" />
+    <ClInclude Include="..\menuhistory.h" />
     <ClInclude Include="..\sourceformatter.h" />
+    <ClInclude Include="..\windowlist.h" />
     <ClInclude Include="..\windows\editcontrol.h" />
     <ClInclude Include="..\windows\factory.h" />
     <ClInclude Include="..\windows\Resource.h" />
@@ -254,7 +256,9 @@
     <ClCompile Include="..\idecontroller.cpp" />
     <ClCompile Include="..\ideproject.cpp" />
     <ClCompile Include="..\ideview.cpp" />
+    <ClCompile Include="..\menuhistory.cpp" />
     <ClCompile Include="..\sourceformatter.cpp" />
+    <ClCompile Include="..\windowlist.cpp" />
     <ClCompile Include="..\windows\editcontrol.cpp" />
     <ClCompile Include="..\windows\factory.cpp" />
     <ClCompile Include="..\windows\main.cpp" />

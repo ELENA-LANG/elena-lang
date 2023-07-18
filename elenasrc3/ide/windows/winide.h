@@ -11,6 +11,7 @@
 #include "windows/windialogs.h"
 #include "idecontroller.h"
 #include "ideview.h"
+#include "windowlist.h"
 
 namespace elena_lang
 {
@@ -54,6 +55,8 @@ namespace elena_lang
 
       IDEModel*         _model;
       IDEController*    _controller;
+
+      WindowList        _windowList;
 
       void onStatusChange(StatusNMHDR* rec);
       void onSelection(SelectionNMHDR* rec);
@@ -144,6 +147,8 @@ namespace elena_lang
       void onDocumentUpdate(DocumentChangeStatus& changeStatus) override;
 
    public:
+      void populate(size_t counter, GUIControlBase** children) override;
+
       IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance);
    };
 

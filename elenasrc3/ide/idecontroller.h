@@ -237,6 +237,7 @@ namespace elena_lang
 
       void doSelectNextWindow(IDEModel* model);
       void doSelectPrevWindow(IDEModel* model);
+      void doSelectWindow(TextViewModelBase* viewModel, path_t path);
 
       void onCompilationCompletion(IDEModel* model, int exitCode, 
          text_str output, ErrorLogBase* log);
