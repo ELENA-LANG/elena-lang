@@ -66,6 +66,9 @@ public interface BoolValue
    get abstract bool Inverted()
                   : info("Inverts the value;<br/>has to be implemented");
 
+   abstract bool clone()
+                  : info("clones the value;<br/>has to be implemented");
+
    const static bool true : info("Returns true value")
       = BoolValue
       {
@@ -113,6 +116,9 @@ public interface BoolValue
          string toPrintable()
                   : info("Returns literal representation.")
             = "true";
+
+         clone()
+            = this self;
       };
 
    const static bool false
@@ -165,6 +171,9 @@ public interface BoolValue
          string toPrintable()
                   : info("Returns literal representation")
             = "false";
+
+         clone()
+            = this self;
    };
 }
 

@@ -1,12 +1,9 @@
 import extensions;
-import system'runtime;
-
-A;
 
 public program()
 {
-   var a := new Object();
-   var p := a.Package();
-
-   console.writeLine(p.Name);
+   real r := 1.0;
+   if (r == 1.0) {
+      console.writeLine(r)
+   }
 }

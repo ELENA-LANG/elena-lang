@@ -166,6 +166,7 @@ namespace elena_lang
       FinalOp              = 0x008E,
       IntBranchOp          = 0x008F,
       IntConstBranchOp     = 0x0090,
+      RealBranchOp         = 0x0091,
 
       VariableInfo         = 0x00A0,
       Variable             = 0x00A1,
@@ -249,6 +250,7 @@ namespace elena_lang
          map.add("copying_to_acc", BuildKey::CopyingToAcc);
          map.add("local", BuildKey::Local);
          map.add("intcondop", BuildKey::IntCondOp);
+         map.add("realcondop", BuildKey::RealCondOp);
          map.add("branchop", BuildKey::BranchOp);
          map.add("intbranchop", BuildKey::IntBranchOp);
       }

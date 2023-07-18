@@ -1928,18 +1928,18 @@ inline bool boxingInt(BuildNode lastNode)
    return true;
 }
 
-inline bool intBranchingOp(BuildNode lastNode)
+inline bool nativeBranchingOp(BuildNode lastNode)
 {
    BuildNode branchNode = lastNode;
    BuildNode localNode = getPrevious(branchNode);
    BuildNode assignNode = getPrevious(localNode);
-   BuildNode intOpNode = getPrevious(assignNode);
+   BuildNode nativeOpNode = getPrevious(assignNode);
 
    if (localNode.arg.value != assignNode.arg.value)
       return false;
 
-   int op = intOpNode.arg.value;
-   switch (intOpNode.arg.value) {
+   int op = nativeOpNode.arg.value;
+   switch (nativeOpNode.arg.value) {
       case EQUAL_OPERATOR_ID:
       case NOTEQUAL_OPERATOR_ID:
       case LESS_OPERATOR_ID:
@@ -1977,12 +1977,22 @@ inline bool intBranchingOp(BuildNode lastNode)
       }
    }
 
-   branchNode.setKey(BuildKey::IntBranchOp);
+   switch (nativeOpNode.key) {
+      case BuildKey::IntCondOp:
+         branchNode.setKey(BuildKey::IntBranchOp);
+         break;
+      case BuildKey::RealCondOp:
+         branchNode.setKey(BuildKey::RealBranchOp);
+         break;
+      default:
+         break;
+   }
+
    branchNode.setArgumentValue(op);
 
    localNode.setKey(BuildKey::Idle);
    assignNode.setKey(BuildKey::Idle);
-   intOpNode.setKey(BuildKey::Idle);
+   nativeOpNode.setKey(BuildKey::Idle);
 
    return true;
 }
@@ -2012,7 +2022,7 @@ inline bool intConstBranchingOp(BuildNode lastNode)
 ByteCodeWriter::Transformer transformers[] =
 {
    nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts,
-   boxingInt, intBranchingOp, intConstBranchingOp
+   boxingInt, nativeBranchingOp, intConstBranchingOp
 };
 
 // --- ByteCodeWriter ---
@@ -2176,7 +2186,7 @@ void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScop
    }
 }
 
-void ByteCodeWriter :: saveIntBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
+void ByteCodeWriter :: saveNativeBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
    ReferenceMap& paths, bool tapeOptMode, bool loopMode)
 {
    BuildNode tapeNode = node.findChild(BuildKey::Tape);
@@ -2189,16 +2199,29 @@ void ByteCodeWriter :: saveIntBranching(CommandTape& tape, BuildNode node, TapeS
    if (!loopMode)
       tape.newLabel();
 
-   if (node == BuildKey::IntBranchOp) {
-      // NOTE : sp[0] - loperand, sp[1] - roperand
-      tape.write(ByteCode::PeekSI, 1);
-      tape.write(ByteCode::ICmpN, 4);
-   }
-   else {
-      BuildNode valueNode = node.findChild(BuildKey::Value);
+   switch (node.key) {
+      case BuildKey::IntBranchOp:
+         // NOTE : sp[0] - loperand, sp[1] - roperand
+         tape.write(ByteCode::PeekSI, 1);
+         tape.write(ByteCode::ICmpN, 4);
+         break;
+      case BuildKey::RealBranchOp:
+         // NOTE : sp[0] - loperand, sp[1] - roperand
+         tape.write(ByteCode::PeekSI, 1);
+         tape.write(ByteCode::FCmpN, 8);
+         break;
+      case BuildKey::IntConstBranchOp:
+      {
+         BuildNode valueNode = node.findChild(BuildKey::Value);
 
-      tape.write(ByteCode::CmpN, valueNode.arg.value);
+         tape.write(ByteCode::CmpN, valueNode.arg.value);
+         break;
+      }
+      default:
+         assert(false);
+         break;
    }
+
    switch (node.arg.value) {
       case EQUAL_OPERATOR_ID:
          tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
@@ -2665,7 +2688,8 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::IntBranchOp:
          case BuildKey::IntConstBranchOp:
-            saveIntBranching(tape, current, tapeScope, paths, tapeOptMode, loopMode);
+         case BuildKey::RealBranchOp:
+            saveNativeBranching(tape, current, tapeScope, paths, tapeOptMode, loopMode);
             break;
          case BuildKey::LoopOp:
             saveLoop(tape, current, tapeScope, paths, tapeOptMode);
