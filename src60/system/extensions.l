@@ -932,8 +932,7 @@ public extension stringOp : String
       {
          ^ self
       }
-   }
-
+   }   
 }
 
 // --- charOp ---

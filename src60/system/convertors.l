@@ -840,7 +840,7 @@ public singleton stringConvertor
       int value := ch.Value;
 
       byte buffer[4];
-      int length := PrimitiveOperations.copyUTF32(buffer,0,value);
+      int length := PrimitiveOperations.copyUTF8_2_32(buffer,0,value);
 
       ^ String.fromByteArray(0, length, buffer);      
    }
@@ -864,7 +864,7 @@ public singleton wideConvertor
       int value := ch.Value;
 
       short buffer[2];
-      int length := PrimitiveOperations.copyUTF32(buffer,0,value);
+      int length := PrimitiveOperations.copyUTF16_2_32(buffer,0,value);
 
       ^ WideString.fromShortArray(0, length, buffer);      
    }  
@@ -885,7 +885,7 @@ public singleton byteArrayConvertor
          char ch := sour[i];
          int chVal := ch.Value;
          
-         int length := PrimitiveOperations.copyUTF32(dest,j,chVal);
+         int length := PrimitiveOperations.copyUTF8_2_32(dest,j,chVal);
          
          j += length;
          i += ch.WideLength;
@@ -907,7 +907,7 @@ public singleton shortArrayConvertor
          char ch := sour[i];
          int chVal := ch.Value;
          
-         int length := PrimitiveOperations.copyUTF32(dest, j, chVal);
+         int length := PrimitiveOperations.copyUTF16_2_32(dest, j, chVal);
          
          j += length;
          i += ch.Length;

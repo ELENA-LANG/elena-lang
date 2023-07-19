@@ -241,7 +241,7 @@ public const struct String : BaseValue,
       byte buffer[4];
       int chVal := ch.Value;
       int  length := ch.Length;
-      length := PrimitiveOperations.copyUTF32(buffer, 0, chVal);
+      length := PrimitiveOperations.copyUTF8_2_32(buffer, 0, chVal);
         
       int offs := 0;
       for (int i := 0, i < size, i := i + 1)
@@ -618,7 +618,7 @@ public const struct WideString : BaseValue
       short buffer[4];
       int chVal := ch.Value;
       int  length := ch.Length;
-      length := PrimitiveOperations.copyUTF32(buffer, 0, chVal);
+      length := PrimitiveOperations.copyUTF16_2_32(buffer, 0, chVal);
         
       int offs := 0;
       for (int i := 0, i < size, i := i + 1)

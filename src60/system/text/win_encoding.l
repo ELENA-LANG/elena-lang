@@ -18,7 +18,7 @@ namespace text
          short tmp[4];
          int chValue := ch.Value;
    
-         int tmpLen := PrimitiveOperations.copyUTF32(tmp, 0, chValue);
+         int tmpLen := PrimitiveOperations.copyUTF8_2_32(tmp, 0, chValue);
 
          int retVal := extern KERNEL32.WideCharToMultiByte(
             codePage, 0,

@@ -620,7 +620,7 @@ L6_EXPRESSION ::=
 		| eps ^OBJECT }
 	| reference ^OBJECT 
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L4_OP* L5_OP*
-	| "(" SUB_EXPRESSION
+	| "(" SUB_EXPRESSION L2_OP? L3_OP* L4_OP* L5_OP*
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
 	| "!" L6_EXPRESSION ^NOT_OPERATION
 	| "~" SINGLE_EXPRESSION ^BNOT_OPERATION
