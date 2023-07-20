@@ -117,7 +117,7 @@ public interface BoolValue
                   : info("Returns literal representation.")
             = "true";
 
-         clone()
+         bool clone()
             = this self;
       };
 
@@ -172,7 +172,7 @@ public interface BoolValue
                   : info("Returns literal representation")
             = "false";
 
-         clone()
+         bool clone()
             = this self;
    };
 }

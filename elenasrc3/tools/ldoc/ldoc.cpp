@@ -1713,8 +1713,11 @@ void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo, path_t output)
    summaryname.append("-summary");
    summaryname.append(".html");
 
-   PathString outPath;
-   outPath.copy(*name);
+   PathString outPath(output);
+   if (!output.empty()) {
+      outPath.combine(*name);
+   }
+   else outPath.copy(*name);
 
    PathString outSumPath(output);
    if (!output.empty()) {

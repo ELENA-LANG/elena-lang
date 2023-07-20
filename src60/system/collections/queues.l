@@ -258,11 +258,9 @@ namespace collections
          if (_index < _tale)
          {
             ^ true
-         }
-         else
-         {
-            ^ false
-         }    
+         };
+
+         ^ false
       }
             
       get Value()

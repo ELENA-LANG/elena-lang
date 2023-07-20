@@ -146,6 +146,11 @@
       {
          ^ WideString.fromShortArray(index, size, buffer);
       }
+
+      toShortArray(wide s, int index, int length, short[] output)
+      {
+         s.saveToShortArray(index, output, length);
+      }
    }
 
    // --- UTF8Encoder ---
