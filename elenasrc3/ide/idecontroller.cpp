@@ -924,8 +924,7 @@ void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)
       for (auto it = files.start(); !it.eof(); ++it) {
          if(openFile(model, *it, status)) {
             while (model->projectModel.lastOpenFiles.count() >= MAX_RECENT_FILES)
-               model->projectModel.lastOpenFiles.cut(
-                  model->projectModel.lastOpenFiles.get(model->projectModel.lastOpenFiles.count()));
+               model->projectModel.lastOpenFiles.cut(model->projectModel.lastOpenFiles.end());
 
             model->projectModel.lastOpenFiles.insert((*it).clone());
          }
@@ -1108,19 +1107,25 @@ bool IDEController :: closeFile(FileDialogBase& dialog, MessageDialogBase& mssgD
    return true;
 }
 
+bool IDEController :: doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, int index)
+{
+   NotificationStatus status = NONE_CHANGED;
+
+   if (index > 0) {
+      bool retVal = closeFile(dialog, mssgDialog, model, index, status);
+
+      if (status != NONE_CHANGED)
+         _notifier->notify(NOTIFY_IDE_CHANGE, status);
+   }
+
+   return false;
+}
+
 bool IDEController :: doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model)
 {
    auto docView = model->sourceViewModel.DocView();
    if (docView) {
-      NotificationStatus status = NONE_CHANGED;
-
-      int index = model->sourceViewModel.getCurrentIndex();
-      if (index > 0) {
-         bool retVal = closeFile(dialog, mssgDialog, model, index, status);
-
-         if (status != NONE_CHANGED)
-            _notifier->notify(NOTIFY_IDE_CHANGE, status);
-      }
+      return doCloseFile(dialog, mssgDialog, model, model->sourceViewModel.getCurrentIndex());
    }
    return false;
 }
@@ -1466,5 +1471,24 @@ void IDEController :: doGoToLine(GotoDialogBase& dialog, IDEModel* model)
       if (dialog.showModal(row)) {
          sourceController.goToLine(model->viewModel(), row);
       }
+   }
+}
+
+void IDEController :: doSelectWindow(FileDialogBase& fileDialog, MessageDialogBase& mssgDialog, WindowListDialogBase& dialog, 
+   IDEModel* model)
+{
+   auto retVal = dialog.selectWindow();
+   switch (retVal.value2) {
+      case WindowListDialogBase::Mode::Activate:
+      {
+         path_t path = model->sourceViewModel.getDocumentPath(retVal.value1);
+         doSelectWindow(model->viewModel(), path);
+         break;
+      }
+      case WindowListDialogBase::Mode::Close:
+         doCloseFile(fileDialog, mssgDialog, model, retVal.value1);
+         break;
+      default:
+         break;
    }
 }

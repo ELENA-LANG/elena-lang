@@ -77,10 +77,16 @@ namespace elena_lang
 
       virtual void doCommand(int id, int command);
 
+      void enable(int id, bool enabled);
+
       void addComboBoxItem(int id, const wchar_t* text);
       void setComboBoxIndex(int id, int index);
       int  getComboBoxIndex(int id);
       void clearComboBoxItem(int id);
+
+      void addListItem(int id, const wchar_t* text);
+      int  getListSelCount(int id);
+      int  getListIndex(int id);
 
       void setText(int id, const wchar_t* text);
       void setIntText(int id, int value);
@@ -147,6 +153,26 @@ namespace elena_lang
       bool showModal(int& row) override;
 
       GoToLineDialog(HINSTANCE instance, WindowBase* owner);
+   };
+
+   class WindowListDialog : public WinDialog, public WindowListDialogBase
+   {
+      TextViewModel* _model;
+      int            _selectedIndex;
+
+      void doCommand(int id, int command) override;
+
+      void onListChange();
+
+      int getSelectedWindow();
+
+   public:
+      SelectResult selectWindow() override;
+
+      void onCreate() override;
+      void onOK() override;
+
+      WindowListDialog(HINSTANCE instance, WindowBase* owner, TextViewModel* model);
    };
 
 }

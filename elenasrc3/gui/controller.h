@@ -55,6 +55,21 @@ namespace elena_lang
       virtual bool showModal(int& row) = 0;
    };
 
+   class WindowListDialogBase
+   {
+   public:
+      enum class Mode
+      {
+         None = 0,
+         Activate,
+         Close
+      };
+
+      typedef Pair<int, Mode, 0, Mode::None> SelectResult;
+
+      virtual SelectResult selectWindow() = 0;
+   };
+
    // --- TextViewSettings ---
    struct TextViewSettings
    {

@@ -124,6 +124,7 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    findDialog(instance, this, false, &model->findModel),
    replaceDialog(instance, this, true, &model->findModel),
    gotoDialog(instance, this),
+   windowDialog(instance, this, &model->sourceViewModel),
    clipboard(this),
    _windowList(controller, model->viewModel())
 {
@@ -679,6 +680,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_WINDOW_EIGHTH:
       case IDM_WINDOW_NINTH:
          _windowList.select(command - IDM_WINDOW_FIRST + 1);
+         break;
+      case IDM_WINDOW_WINDOWS:
+         _controller->doSelectWindow(fileDialog, messageDialog, windowDialog, _model);
          break;
       default:
          return false;

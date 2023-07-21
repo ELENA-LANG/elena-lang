@@ -214,6 +214,21 @@ int WinDialog :: getComboBoxIndex(int id)
    return (int)::SendDlgItemMessage(_handle, id, CB_GETCURSEL, 0, 0);
 }
 
+void WinDialog :: addListItem(int id, const wchar_t* text)
+{
+   ::SendDlgItemMessage(_handle, id, LB_ADDSTRING, 0, (LPARAM)text);
+}
+
+int WinDialog :: getListSelCount(int id)
+{
+   return (int)::SendDlgItemMessage(_handle, id, LB_GETSELCOUNT, 0, 0);
+}
+
+int WinDialog :: getListIndex(int id)
+{
+   return (int)::SendDlgItemMessage(_handle, id, LB_GETCURSEL, 0, 0);
+}
+
 void WinDialog :: setText(int id, const wchar_t* text)
 {
    ::SendDlgItemMessage(_handle, id, WM_SETTEXT, 0, (LPARAM)text);
@@ -254,6 +269,11 @@ void WinDialog :: setCheckState(int id, bool value)
 bool WinDialog :: getCheckState(int id)
 {
    return test((int)::SendDlgItemMessage(_handle, id, BM_GETCHECK, 0, 0), BST_CHECKED);
+}
+
+void WinDialog :: enable(int id, bool enabled)
+{
+   ::EnableWindow(::GetDlgItem(_handle, id), enabled ? TRUE : FALSE);
 }
 
 // --- ProjectSettings ---
@@ -446,4 +466,71 @@ bool GoToLineDialog :: showModal(int& row)
    }
 
    return false;
+}
+
+// --- WindowListDialog ---
+
+WindowListDialog :: WindowListDialog(HINSTANCE instance, WindowBase* owner, TextViewModel* model)
+   : WinDialog(instance, owner)
+{
+   _dialogId = IDD_WINDOWS;
+   _model = model;
+   _selectedIndex = -1;
+}
+
+void WindowListDialog :: onListChange()
+{
+   enable(IDOK, (getListSelCount(IDC_WINDOWS_LIST) == 1));
+}
+
+void WindowListDialog :: doCommand(int id, int command)
+{
+   switch (id) {
+      case IDC_WINDOWS_LIST:
+         if (command == LBN_SELCHANGE) {
+            onListChange();
+         }
+         break;
+      case IDC_WINDOWS_CLOSE:
+         _selectedIndex = getSelectedWindow();
+         ::EndDialog(_handle, -2);
+         break;
+      default:
+         WinDialog::doCommand(id, command);
+         break;
+   }
+}
+
+int WindowListDialog :: getSelectedWindow()
+{
+   return getListIndex(IDC_WINDOWS_LIST);
+}
+
+void WindowListDialog :: onOK()
+{
+   _selectedIndex = getSelectedWindow();
+}
+
+void WindowListDialog :: onCreate()
+{
+   int count = _model->getDocumentCount();
+   for (int i = 1; i <= count; i++) {
+      path_t path = _model->getDocumentPath(i);
+
+      addListItem(IDC_WINDOWS_LIST, path);
+   }
+}
+
+WindowListDialogBase::SelectResult WindowListDialog :: selectWindow()
+{
+   int retVal = show();
+
+   if (retVal == IDOK) {
+      return { _selectedIndex + 1, Mode::Activate };
+   }
+   if (retVal == -2) {
+      return { _selectedIndex + 1, Mode::Close };
+   }
+
+   return { 0, Mode::None };
 }

@@ -48,6 +48,7 @@ namespace elena_lang
       ProjectSettings   projectSettingsDialog;
       FindDialog        findDialog, replaceDialog;
       GoToLineDialog    gotoDialog;
+      WindowListDialog  windowDialog;
       Clipboard         clipboard;
 
       HINSTANCE         _instance;

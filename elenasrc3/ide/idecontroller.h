@@ -210,6 +210,7 @@ namespace elena_lang
       bool doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
       bool doSaveAll(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
       bool doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, int index);
       bool doCloseAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
       void doNewProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, ProjectSettingsBase& prjDialog, 
          IDEModel* model);
@@ -238,6 +239,9 @@ namespace elena_lang
       void doSelectNextWindow(IDEModel* model);
       void doSelectPrevWindow(IDEModel* model);
       void doSelectWindow(TextViewModelBase* viewModel, path_t path);
+
+      void doSelectWindow(FileDialogBase& fileDialog, MessageDialogBase& mssgDialog, WindowListDialogBase& dialog, 
+         IDEModel* model);
 
       void onCompilationCompletion(IDEModel* model, int exitCode, 
          text_str output, ErrorLogBase* log);

@@ -11,19 +11,19 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * optimize: real pi := 0.0;
-    * ide : window list
     * warn on resending to itself (e.g. for constructor)
+    * migrate the rest of system (basic.l - basic abstract types)
 
-    * migrate the rest of system (object.l)
     * ide : selecting file in the project view - no namespace provided
     * ide : goto library module doesn't work always
     * ide : goto nested class
     * ide : unident doesn't work
+    * ide : recent files - remove duplicates
     * migrate the rest of system
     * test UTF16Encoder : to / from utf8, to / from win2152, load file
     * optimize: pi sample (~10 secs) 
     * #195 : implementing rosetta code samples
+    * migrate the rest of system (basic.l)
     * migrate the rest of system (basic.l)
     * ldoc : show template based type correctly
     * new rosetta code sample : Apply a digital filter
@@ -77,6 +77,7 @@ In development:
     * implementing corex
     * boxing an array, assinging to the local variable - get rid of double assigning
     * optimization : extra temporal variables
+    * ide : window list - close several windows
     + optimiation : assinging int constant
     + optimiation : branching with int constant
     + optimiation : operation with int constant
