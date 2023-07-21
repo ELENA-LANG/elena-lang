@@ -87,9 +87,9 @@ public sealed Array<T> : Indexable<T>
       else
       {
          system'InvalidArgumentException.raise();
+      };
             
-         ^ nil // !! never reached
-      }
+      ^ nil // !! never reached
    }
 
    setAt(int n, T item)

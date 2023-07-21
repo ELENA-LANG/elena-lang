@@ -798,6 +798,8 @@ bool ByteCodePattern :: checkLabel(ByteCodeIterator it, int label, int offset)
 
       ++it;
    }
+
+   return false;
 }
 
 void ByteCodeTransformer :: transform(ByteCodeIterator trans_it, ByteCodeTrieNode replacement, PatternArg& arg)

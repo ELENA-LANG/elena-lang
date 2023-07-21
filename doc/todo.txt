@@ -11,20 +11,21 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * UTF16Encoder
-    * culture
-    * uppercase extension
-
-    * rosetta code samples : ABC problem
     * optimize: real pi := 0.0;
     * ide : window list
     * warn on resending to itself (e.g. for constructor)
 
     * migrate the rest of system (object.l)
+    * ide : selecting file in the project view - no namespace provided
+    * ide : goto library module doesn't work always
+    * ide : goto nested class
+    * ide : unident doesn't work
     * migrate the rest of system
+    * test UTF16Encoder : to / from utf8, to / from win2152, load file
     * optimize: pi sample (~10 secs) 
     * #195 : implementing rosetta code samples
     * migrate the rest of system (basic.l)
+    * ldoc : show template based type correctly
     * new rosetta code sample : Apply a digital filter
     * the following code should not be allowed - real n := n;
     * rosetta code samples : Abundant, deficient and perfect number classifications
@@ -171,7 +172,6 @@ Backlog:
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
-    * ldoc : put the symbols in the alphabetic order
     * ide : save project as
     * Class Constants : review doc and implement if requiered
     * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
@@ -206,7 +206,6 @@ Backlog:
     * introduce Nullable structure
     * show the signature for the typecast message if possible
     * ide : key combination doesn't work after closing the project
-    * ldoc : get rid of BaseEnumerator<TupleTuple#2,T1,T2> and so on
     * strong typed forward constant
     * arrange action for i386 / amd64 linux release
     * ide : debug vm client app
@@ -326,8 +325,6 @@ Backlog:
     * conversion : byte / short / int / long => real
 
     * toPrintable should return both wide and string
-
-    * ldoc : show conversions in the separate section
 
     * ide : highlight openning / closing brackets
     * api60 : Indexer2D?

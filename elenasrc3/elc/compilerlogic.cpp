@@ -2051,7 +2051,7 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
          mssg_t message = it.key();
 
          injectMethodOverloadList(compiler, scope, info.header.flags, message, 
-            info.methods, info.attributes, (void*)classRef, paramFeedback, ClassAttribute::OverloadList);
+            info.methods, info.attributes, (void*)(static_cast<uintptr_t>(classRef)), paramFeedback, ClassAttribute::OverloadList);
       }
    }
 }

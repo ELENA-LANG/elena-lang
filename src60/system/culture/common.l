@@ -3,8 +3,10 @@ namespace culture
    interface ILocale
    {
       abstract string toUppercase(string s);
+      abstract wide toUppercase(wide s);
 
       abstract string toLowercase(string s);
+      abstract wide toLowercase(wide s);
    }
 
    public extension stringCultureOp : String

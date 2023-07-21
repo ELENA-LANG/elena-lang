@@ -16,6 +16,8 @@
 constexpr auto ByRefPrefix = "'$auto'system@Reference#1&";
 constexpr auto ArrayPrefix = "'$auto'system@Array#1&";
 
+constexpr auto ArrayLink = "system.html#Array&lt;T1&gt;";
+
 using namespace elena_lang;
 
 constexpr auto DESCRIPTION_SECTION = "'meta$descriptions";
@@ -172,7 +174,7 @@ void parseNs(IdentifierString& ns, ustr_t root, ustr_t fullName)
    ns.append(fullName, last);
 }
 
-void parseTemplateType(IdentifierString& line, size_t index, bool argMode)
+bool parseTemplateType(IdentifierString& line, size_t index, bool argMode)
 {
    IdentifierString temp(line);
 
@@ -181,6 +183,7 @@ void parseTemplateType(IdentifierString& line, size_t index, bool argMode)
    size_t last = index;
    bool first = true;
    bool noCurlybrackets = false;
+   bool nsExpected = true;
    if (argMode && (*temp).startsWith(ByRefPrefix)) {
       // HOTFIX : recognize byref argument
 
@@ -190,12 +193,12 @@ void parseTemplateType(IdentifierString& line, size_t index, bool argMode)
       noCurlybrackets = true;
    }
    else if (argMode && (*temp).startsWith(ArrayPrefix)) {
-      // HOTFIX : recognize byref argument
-
+      // HOTFIX : recognize array argument
       temp.cut(0, getlength(ArrayPrefix));
 
       line.append("arrayof ");
       noCurlybrackets = true;
+      nsExpected = false;
    }
 
    for (size_t i = index; i < temp.length(); i++) {
@@ -226,6 +229,8 @@ void parseTemplateType(IdentifierString& line, size_t index, bool argMode)
       line.append((*temp) + last + 1);
       line.append("&gt;");
    }
+
+   return nsExpected;
 }
 
 void parseTemplateName(IdentifierString& line)
@@ -373,21 +378,26 @@ void writeType(TextFileWriter& writer, ustr_t type, bool fullReference = false)
          }
       }
 
-      if (emptystr(*ns)) {
-         writer.writeText("#");
+      if (arrayMode) {
+         writer.writeText(ArrayLink);
+         writer.writeText("\">");
       }
       else {
-         writeNs(writer, *ns);
-         writer.writeText(".html#");
-      }
-      writeRefName(writer, type + ns.length() + 1, false);
+         if (emptystr(*ns)) {
+            writer.writeText("#");
+         }
+         else {
+            writeNs(writer, *ns);
+            writer.writeText(".html#");
+         }
+         writeRefName(writer, type + ns.length() + 1, false);
 
-      writer.writeText("\">");
+         writer.writeText("\">");
+      }
       if (fullReference) {
          writer.writeText(type);
       }
       else writer.writeText(type + ns.length() + 1);
-
       writer.writeText("</A>");
    }
    else writer.writeText(type);
@@ -1021,7 +1031,7 @@ void DocGenerator :: loadParents(ApiClassInfo* apiClassInfo, ref_t reference)
    else apiClassInfo->parents.add(name.clone());
 }
 
-void validateTemplateType(IdentifierString& type, bool templateBased, bool argMode)
+bool validateTemplateType(IdentifierString& type, bool templateBased, bool argMode)
 {
    if (templateBased) {
       if (isTemplateBased(*type)) {
@@ -1034,11 +1044,13 @@ void validateTemplateType(IdentifierString& type, bool templateBased, bool argMo
          size_t index = (*type).findLast('\'');
          type.cut(0, index + 1);
       }
+
+      return true;
    }
    else if (isTemplateWeakReference(*type)) {
       NamespaceString ns(*type);
 
-      parseTemplateType(type, ns.length(), argMode);
+      return parseTemplateType(type, ns.length(), argMode);
    }
 }
 
@@ -1047,7 +1059,7 @@ void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs, bool templateB
    bool nsExpected = false;
    if (isTemplateWeakReference(line)) {
       type.copy(line);
-      nsExpected = true;
+      nsExpected = false;
    }
    else if (line[0] == '\'') {
       type.copy(rootNs);
@@ -1055,11 +1067,12 @@ void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs, bool templateB
    }
    else type.copy(line);
 
-   validateTemplateType(type, templateBased, argMode);
+   nsExpected &= validateTemplateType(type, templateBased, argMode);
 
    if (nsExpected) {
-      type.insert("'", 0);
-      type.insert(rootNs, 0);
+      size_t spacePos = (*type).find(' ');
+      type.insert("'", spacePos + 1);
+      type.insert(rootNs, spacePos + 1);
    }
 }
 

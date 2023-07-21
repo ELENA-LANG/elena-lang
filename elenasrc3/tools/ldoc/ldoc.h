@@ -3,7 +3,7 @@
 //
 //		This is a main file containing doc generator header
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef LODC_H
@@ -79,6 +79,7 @@ namespace elena_lang
             constructors(nullptr), convertors(nullptr), extensions(nullptr),
             properties(nullptr), staticProperties(nullptr)
       {
+         templateBased = false;
          virtualMode = false;
       }
    };

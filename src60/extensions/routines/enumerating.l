@@ -73,3 +73,11 @@ public extension fileExOp : File
 // --- printingLn ---
 
 public symbol printingLn = (line){ console.printLine:line };
+
+// --- func1Op ---
+
+public extension func1Op : Func1
+{
+    asComparator()
+        = new { bool equal(o) = self(o); };
+}

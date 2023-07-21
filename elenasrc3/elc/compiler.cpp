@@ -2196,8 +2196,8 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
             if (!m_it.eof()) {
                (*m_it).hints |= hints;
             }
-            else if (closed) {
-               // do not declare a new method for the closed class
+            else if (closed && !test(multiMethod, STATIC_MESSAGE)) {
+               // do not declare a new method for the closed class except the private one
                current = current.nextNode();
                continue;
             }
@@ -8920,7 +8920,7 @@ ObjectInfo Compiler :: compileCollection(BuildTreeWriter& writer, ExprScope& sco
       writer.newNode(BuildKey::CreatingStruct, arguments.count() * -sizeInfo.size);
    }
    else if (sizeInfo.size == 0) {
-      writer.newNode(BuildKey::CreatingClass, arguments.count());
+      writer.newNode(BuildKey::CreatingClass, arguments.count_pos());
    }
    else scope.raiseError(errInvalidOperation, node);
    writer.appendNode(BuildKey::Type, collectionTypeRef);

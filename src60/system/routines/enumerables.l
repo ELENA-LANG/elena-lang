@@ -318,4 +318,19 @@ public extension indexableOp
         
       ^ self
    }    
+
+   int indexOfElement(object element)
+   {
+      Indexer it := self.indexer();
+        
+      while (it.Available)
+      {
+         if (element == (*it))
+            { ^ it.Index };
+            
+         it.appendIndex:1;
+      };
+        
+      ^ -1
+   }
 }

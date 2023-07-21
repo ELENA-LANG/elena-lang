@@ -20,6 +20,12 @@ namespace culture
          _name := nil
       }
       
+      get static Current()
+         = Locale.new(emptyWideString);
+        
+      get static Invariant()
+         = new Locale();
+
       private strToUpper(short[] src, int length, short[] dest, ref int destLength)
       {
          int retVal := extern KERNEL32.LCMapStringEx(
@@ -53,8 +59,11 @@ namespace culture
       }
 
       string toUppercase(string s)
+         <= toUppercase(cast wide(s));
+
+      wide toUppercase(wide s)
       {
-         string retVal := nil;
+         wide retVal := emptyWideString;
 
          int     i := 0;
          int     len := s.Length;
@@ -66,23 +75,15 @@ namespace culture
                { s_len := len };
                 
             short src_tmp[32];
-            int   src_len := 32;
                 
             short dst_tmp[32];
             int   dst_len := 32;
     
-            UTF16Encoder.toShortArray(s, i, s_len, src_tmp);
+            UTF16Encoding.toShortArray(s, i, s_len, src_tmp);
 
-            self.strToUpper(src_tmp, src_len, dst_tmp, ref dst_len);
+            self.strToUpper(src_tmp, s_len, dst_tmp, ref dst_len);
     
-            if(nil == retVal)
-            { 
-               retVal := UTF16Encoding.toString(0, dst_len, dst_tmp) 
-            }
-            else
-            { 
-               retVal := retVal.add(UTF16Encoding.toString(0, dst_len, dst_tmp)) 
-            };
+            retVal := retVal.add(UTF16Encoding.toWideString(0, dst_len, dst_tmp));
                        
             i := i + s_len;
             len := len - s_len
@@ -92,8 +93,11 @@ namespace culture
       }
 
       string toLowercase(string s)
+         <= toLowercase(cast wide(s));
+
+      wide toLowercase(wide s)
       {
-         string retVal := nil;
+         wide retVal := emptyWideString;
 
          int     i := 0;
          int     len := s.Length;
@@ -105,23 +109,15 @@ namespace culture
                { s_len := len };
                 
             short src_tmp[32];
-            int   src_len := 32;
                 
             short dst_tmp[32];
             int   dst_len := 32;
     
-            UTF16Encoder.toShortArray(s, i, s_len, src_tmp);
+            UTF16Encoding.toShortArray(s, i, s_len, src_tmp);
 
-            self.strToLower(src_tmp, src_len, dst_tmp, ref dst_len);
+            self.strToLower(src_tmp, s_len, dst_tmp, ref dst_len);
     
-            if(nil == retVal)
-            { 
-               retVal := UTF16Encoding.toString(0, dst_len, dst_tmp) 
-            }
-            else
-            { 
-               retVal := retVal.add(UTF16Encoding.toString(0, dst_len, dst_tmp)) 
-            };
+            retVal := retVal.add(UTF16Encoding.toWideString(0, dst_len, dst_tmp));
                        
             i := i + s_len;
             len := len - s_len

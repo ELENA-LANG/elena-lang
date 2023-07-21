@@ -83,7 +83,6 @@
          ^ retVal
       }
 
-
       wide toWideString(int index, int size, byte[] buffer, Encoder encoder)
       {
          char tmp[128];
@@ -101,7 +100,9 @@
 
             i += subLen;
             len -= subLen;            
-         }
+         };
+
+         ^ retVal
       }
    }
 
@@ -160,7 +161,7 @@
       {
          int value := ch;
 
-         length := PrimitiveOperations.copyUTF32(byteArray, index, value)
+         length := PrimitiveOperations.copyUTF8_2_32(byteArray, index, value)
       }
 
       char convertToChar(byte[] byteArray, int index, ref int length)
@@ -181,8 +182,25 @@
       convertChar(char ch, byte[] byteArray, int index, ref int length)
       {
          int value := ch;
+         short tmp[2];
 
-         length := PrimitiveOperations.copyUTF16_2_32(byteArray, index, value)
+         int tmpLen := PrimitiveOperations.copyUTF16_2_32(tmp, 0, value);
+
+         byte hi := tmp[0].High;
+         byte lo := tmp[0].Low;
+         byteArray[index] := lo;
+         byteArray[index + 1] := hi;
+
+         length := 2;
+
+         if (tmpLen == 2) {
+            hi := tmp[1].High;
+            lo := tmp[1].Low;
+            byteArray[index + 2] := lo;
+            byteArray[index + 3] := hi;
+
+            length := 4;   
+         };
       }
       
       char convertToChar(byte[] byteArray, int index, ref int length)
