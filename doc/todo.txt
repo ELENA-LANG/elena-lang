@@ -11,17 +11,19 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * warn on resending to itself (e.g. for constructor)
+    * resend property (see forms Caption / Heigth and so on properties)
+    * resend to constant - no need for frame
+
     * migrate the rest of system (basic.l - basic abstract types)
+    * optimize: pi sample (~10 secs) - int + real operations (see the issue)
+    * ide : unident doesn't work
 
     * ide : selecting file in the project view - no namespace provided
     * ide : goto library module doesn't work always
     * ide : goto nested class
-    * ide : unident doesn't work
     * ide : recent files - remove duplicates
     * migrate the rest of system
     * test UTF16Encoder : to / from utf8, to / from win2152, load file
-    * optimize: pi sample (~10 secs) 
     * #195 : implementing rosetta code samples
     * migrate the rest of system (basic.l)
     * migrate the rest of system (basic.l)
@@ -636,7 +638,6 @@ Backlog:
     * api : use manifest info for module description
     * usability : dynamic loading : give the symbol / message in the InvalidArgument exception
 
-                * resend property (see forms Caption / Heigth and so on properties)
                 * duplicate boxing optimization : do not unbox presaved variable into temporal variable if it is not used
                   in the following sub expression (e.g a.then{ arg++ }.then{ arg++ }, second temp unboxing is not required;
                   the opcode can be optimized as well - get rid of duplicate acc loading code) - see duplicateTest
@@ -711,7 +712,6 @@ Backlog:
                 * read / write byte, short - without AND operation
                 * assigning struct field with int constant
                 * auto conversion methods should be marked as idle
-                * resend to constant - no need for frame
                 * optimize GC : bit cards
                 * optimize copying operation
                 * optimite yield operstions

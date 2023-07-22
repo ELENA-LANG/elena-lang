@@ -6625,10 +6625,92 @@ ObjectInfo Compiler :: unboxArguments(BuildTreeWriter& writer, ExprScope& scope,
    return retVal;
 }
 
+void Compiler :: writeMessageArguments(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, 
+   mssg_t message, ArgumentsInfo& arguments, ObjectInfo& lenLocal, int& stackSafeAttr,
+   bool targetOverridden, bool found, bool argUnboxingRequired, bool stackSafe)
+{
+   if (targetOverridden) {
+      target = boxArgument(writer, scope, target, stackSafe, false, false);
+   }
+
+   if (!found)
+      stackSafeAttr = 0;
+
+   pos_t counter = arguments.count_pos();
+   if (argUnboxingRequired) {
+      counter--;
+
+      ObjectInfo lenLocal = declareTempLocal(scope, scope.moduleScope->buildins.intReference, false);
+
+      // get length
+      writeObjectInfo(writer, scope, arguments[counter]);
+      writer.appendNode(BuildKey::SavingInStack);
+      writer.newNode(BuildKey::VArgSOp, LEN_OPERATOR_ID);
+      writer.appendNode(BuildKey::Index, lenLocal.argument);
+      writer.closeNode();
+
+      writer.appendNode(BuildKey::LoadingIndex, lenLocal.argument);
+      writer.newNode(BuildKey::UnboxMessage, arguments[counter].argument);
+      writer.appendNode(BuildKey::Index, counter);
+      writer.closeNode();
+   }
+
+   // box the arguments if required
+   int argMask = 1;
+   for (unsigned int i = 0; i < counter; i++) {
+      // NOTE : byref dynamic arg can be passed semi-directly (via temporal variable) if the method resolved directly
+      ObjectInfo arg = boxArgument(writer, scope, arguments[i],
+         test(stackSafeAttr, argMask), false, found);
+
+      arguments[i] = arg;
+      argMask <<= 1;
+   }
+
+   if (isOpenArg(message) && !argUnboxingRequired) {
+      // NOTE : in case of unboxing variadic argument, the terminator is already copied
+      arguments.add({ ObjectKind::Terminator });
+      counter++;
+   }
+
+   for (unsigned int i = counter; i > 0; i--) {
+      ObjectInfo arg = arguments[i - 1];
+
+      writeObjectInfo(writer, scope, arg);
+      writer.appendNode(BuildKey::SavingInStack, i - 1);
+   }
+}
+
+bool Compiler :: validateShortCircle(ExprScope& scope, mssg_t message, ObjectInfo target)
+{
+   ref_t targetRef = 0;
+   switch (target.kind) {
+      case ObjectKind::Class:
+         targetRef = target.reference;
+         break;
+      default:
+         targetRef = target.typeInfo.typeRef;
+         break;
+   }
+
+   MethodScope* methodScope = Scope::getScope<MethodScope>(scope, Scope::ScopeLevel::Method);
+   if (methodScope != nullptr) {
+      return (methodScope->message == message && methodScope->getClassRef() == targetRef);
+   }
+}
+
+inline SyntaxNode findMessageNode(SyntaxNode node)
+{
+   if (node == SyntaxKey::ResendDispatch) {
+      node = node.findChild(SyntaxKey::MessageOperation);
+   }
+   return node.findChild(SyntaxKey::Message);
+}
+
 ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo target,
    mssg_t weakMessage, ref_t implicitSignatureRef, ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs)
 {
-   bool argUnboxinhgRequired = EAttrs::testAndExclude(mode.attrs, EAttr::WithVariadicArg);
+   bool argUnboxingRequired = EAttrs::testAndExclude(mode.attrs, EAttr::WithVariadicArg);
+   bool checkShortCircle = EAttrs::testAndExclude(mode.attrs, EAttr::CheckShortCircle);
 
    ObjectInfo retVal(ObjectKind::Object);
 
@@ -6698,6 +6780,10 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
             if (arguments[0].kind == ObjectKind::VArgParam)
                result.stackSafe = true;
 
+            if (checkShortCircle && validateShortCircle(scope, message, target)) {
+               scope.raiseWarning(WARNING_LEVEL_1, wrnCallingItself, findMessageNode(node));
+            }
+
             break;
          case MethodHint::Virtual:
             operation = BuildKey::SemiDirectCallOp;
@@ -6716,7 +6802,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          if (getAction(message) == getAction(scope.moduleScope->buildins.constructor_message)) {
             scope.raiseError(errUnknownDefConstructor, node);
          }
-         else scope.raiseError(errUnknownMessage, node.findChild(SyntaxKey::Message));
+         else scope.raiseError(errUnknownMessage, findMessageNode(node));
       }
       else {
          bool weakTarget = targetRef == scope.moduleScope->buildins.superReference || result.withCustomDispatcher;
@@ -6724,7 +6810,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          // treat it as a weak reference
          targetRef = 0;
 
-         SyntaxNode messageNode = node.findChild(SyntaxKey::Message);
+         SyntaxNode messageNode = findMessageNode(node);
          if (weakTarget/* || ignoreWarning*/) {
             // ignore warning for super class / type-less one
          }
@@ -6750,57 +6836,10 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    }
 
    if (operation != BuildKey::None) {
-      ObjectInfo lenLocal = {};
       bool targetOverridden = (target != arguments[0]);
-      if (targetOverridden) {
-         target = boxArgument(writer, scope, target, result.stackSafe, false, false);
-      }
-
-      if (!found)
-         stackSafeAttr = 0;
-
-      pos_t counter = arguments.count_pos();
-      if (argUnboxinhgRequired) {
-         counter--;
-
-         ObjectInfo lenLocal = declareTempLocal(scope, scope.moduleScope->buildins.intReference, false);
-
-         // get length
-         writeObjectInfo(writer, scope, arguments[counter]);
-         writer.appendNode(BuildKey::SavingInStack);
-         writer.newNode(BuildKey::VArgSOp, LEN_OPERATOR_ID);
-         writer.appendNode(BuildKey::Index, lenLocal.argument);
-         writer.closeNode();
-
-         writer.appendNode(BuildKey::LoadingIndex, lenLocal.argument);
-         writer.newNode(BuildKey::UnboxMessage, arguments[counter].argument);
-         writer.appendNode(BuildKey::Index, counter);
-         writer.closeNode();
-      }
-
-      // box the arguments if required
-      int argMask = 1;
-      for (unsigned int i = 0; i < counter; i++) {
-         // NOTE : byref dynamic arg can be passed semi-directly (via temporal variable) if the method resolved directly
-         ObjectInfo arg = boxArgument(writer, scope, arguments[i],
-            test(stackSafeAttr, argMask), false, found);
-
-         arguments[i] = arg;
-         argMask <<= 1;
-      }
-
-      if (isOpenArg(message) && !argUnboxinhgRequired) {
-         // NOTE : in case of unboxing variadic argument, the terminator is already copied
-         arguments.add({ ObjectKind::Terminator });
-         counter++;
-      }
-
-      for (unsigned int i = counter; i > 0; i--) {
-         ObjectInfo arg = arguments[i - 1];
-
-         writeObjectInfo(writer, scope, arg);
-         writer.appendNode(BuildKey::SavingInStack, i - 1);
-      }
+      ObjectInfo lenLocal = {};
+      writeMessageArguments(writer, scope, target, message, arguments, lenLocal,
+         stackSafeAttr, targetOverridden, found, argUnboxingRequired, result.stackSafe);
 
       if (!targetOverridden) {
          writer.appendNode(BuildKey::Argument, 0);
@@ -6816,7 +6855,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 
       retVal = unboxArguments(writer, scope, retVal, updatedOuterArgs);
 
-      if (argUnboxinhgRequired) {
+      if (argUnboxingRequired) {
          writer.appendNode(BuildKey::LoadingIndex, lenLocal.argument);
          writer.appendNode(BuildKey::FreeVarStack);
       }
@@ -9771,7 +9810,7 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
       ref_t implicitSignatureRef = compileMessageArguments(writer, scope, current, arguments, expectedSignRef, 
          EAttr::NoPrimitives, &updatedOuterArgs, withVariadicArg);
 
-      EAttr opMode = EAttr::None;
+      EAttr opMode = EAttr::CheckShortCircle;
       if (withVariadicArg) {
          //messageRef |= VARIADIC_MESSAGE;
 

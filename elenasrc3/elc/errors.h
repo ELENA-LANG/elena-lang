@@ -77,7 +77,8 @@ namespace elena_lang
    constexpr auto wrnMsgInvalidHint          = "\n%s(%d:%d): warning 406: Attribute '%s' cannot be applied here\n";
    constexpr auto wrnMsgUnknownMessage       = "\n%s(%d:%d): warning 407: Message '%s' does not handled by the object\n";
    constexpr auto wrnMsgUnknownFunction      = "\n%s(%d:%d): warning 408: Function message does not handled by the object '%s'\n";
-   constexpr auto wrnMsgUnknownDefConstructor = "\n%s(%d:%d): warning 409: Explicit constructor is not defined in the object\n";
+   constexpr auto wrnMsgUnknownDefConstructor= "\n%s(%d:%d): warning 409: Explicit constructor is not defined in the object\n";
+   constexpr auto wrnMsgCallingItself        = "\n%s(%d:%d): warning 410: Calling itself can lead to short-circuiting\n";
    constexpr auto wrnMsgUnknownModule        = "\n%s(%d:%d): warning 413: Unknown module '%s'\n";
    constexpr auto wrnMsgTypeInherited        = "\n%s(%d:%d): warning 420: Type attribute is inherited\n";
    constexpr auto wrnMsgDuplicateInclude     = "\n%s(%d:%d): warning 425: '%s': duplicate inclusion\n";

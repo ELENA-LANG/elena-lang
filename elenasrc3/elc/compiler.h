@@ -1162,6 +1162,12 @@ namespace elena_lang
 
       void compileInlineInitializing(BuildTreeWriter& writer, ClassScope& classScope, SyntaxNode node);
 
+      void writeMessageArguments(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, 
+         mssg_t message, ArgumentsInfo& arguments, ObjectInfo& lenLocal, int& stackSafeAttr,
+         bool targetOverridden, bool found, bool argUnboxingRequired, bool stackSafe);
+
+      bool validateShortCircle(ExprScope& scope, mssg_t message, ObjectInfo target);
+
       ObjectInfo boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef = 0);
       ObjectInfo boxRefArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef = 0);
       ObjectInfo boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, 

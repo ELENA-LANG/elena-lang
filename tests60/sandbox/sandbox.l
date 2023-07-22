@@ -1,6 +1,13 @@
 import extensions;
  
+sealed B
+{
+   test()
+      <= test();
+}
+
 public program()
 {
-   real pi := 0.0;
+   var b := new B();
+   b.test()
 }
