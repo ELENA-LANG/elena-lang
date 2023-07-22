@@ -307,7 +307,7 @@ void SyntaxTreeBuilder :: flushResend(SyntaxTreeWriter& writer, Scope& scope, Sy
 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      if (current == SyntaxKey::MessageOperation) {
+      if (current == SyntaxKey::MessageOperation || current == SyntaxKey::PropertyOperation) {
          writer.newNode(current.key);
 
          SyntaxNode identNode = current.lastChild(SyntaxKey::TerminalMask);

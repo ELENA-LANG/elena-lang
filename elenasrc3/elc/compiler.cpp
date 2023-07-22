@@ -9763,6 +9763,8 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
    ObjectInfo retVal = {};
 
    if (!node.arg.reference) {
+      bool propertyMode = node.firstChild().key == SyntaxKey::PropertyOperation;
+
       SyntaxNode current = node.firstChild().firstChild();
       bool superMode = false;
       while (current == SyntaxKey::Attribute) {
@@ -9794,7 +9796,7 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
       ArgumentsInfo arguments;
       ArgumentsInfo updatedOuterArgs;
 
-      mssg_t messageRef = mapMessage(scope, current, false, false, false);
+      mssg_t messageRef = mapMessage(scope, current, propertyMode, false, false);
 
       mssg_t resolvedMessage = _logic->resolveSingleDispatch(*scope.moduleScope,
          retrieveType(scope, source), messageRef);

@@ -11,7 +11,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * resend property (see forms Caption / Heigth and so on properties)
     * resend to constant - no need for frame
 
     * migrate the rest of system (basic.l - basic abstract types)

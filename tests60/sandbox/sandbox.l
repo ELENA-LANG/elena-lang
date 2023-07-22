@@ -1,13 +1,21 @@
 import extensions;
  
-sealed B
+B
 {
-   test()
-      <= test();
+   getX()
+      <= X;  
+
+   int X : prop;
+
+   constructor()
+   {
+      X := 1;
+   }
 }
 
 public program()
 {
    var b := new B();
-   b.test()
+   
+   var x := b.getX();
 }
