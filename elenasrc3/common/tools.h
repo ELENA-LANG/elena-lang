@@ -205,6 +205,11 @@ inline unsigned int ptrToUInt32(void* ptr)
    return static_cast<unsigned int>(ptrVal);
 }
 
+inline void* UInt32ToPtr(unsigned int val)
+{
+   return (void*)(static_cast<uintptr_t>(val));
+}
+
 } // _ELENA_
 
 #endif // toolsH

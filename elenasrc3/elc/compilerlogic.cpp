@@ -2027,7 +2027,7 @@ ref_t paramFeedback(void* param, ref_t)
 
    return (ref_t)val;
 #else
-   return (ref_t)param;
+   return ptrToUInt32(param);
 #endif
 }
 
@@ -2051,7 +2051,7 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
          mssg_t message = it.key();
 
          injectMethodOverloadList(compiler, scope, info.header.flags, message, 
-            info.methods, info.attributes, (void*)(static_cast<uintptr_t>(classRef)), paramFeedback, ClassAttribute::OverloadList);
+            info.methods, info.attributes, UInt32ToPtr(classRef), paramFeedback, ClassAttribute::OverloadList);
       }
    }
 }
@@ -2262,4 +2262,30 @@ ref_t CompilerLogic :: resolveExtensionTemplate(ModuleScopeBase& scope, Compiler
    }
 
    return 0;
+}
+
+bool CompilerLogic :: isNumericType(ModuleScopeBase& scope, ref_t& reference)
+{
+   if (isCompatible(scope, { V_INT8 }, { reference }, false)) {
+      reference = V_INT8;
+
+      return true;
+   }
+   if (isCompatible(scope, { V_INT16 }, { reference }, false)) {
+      reference = V_INT16;
+
+      return true;
+   }
+   if (isCompatible(scope, { V_INT64 }, { reference }, false)) {
+      reference = V_INT64;
+
+      return true;
+   }
+   if (isCompatible(scope, { V_FLOAT64 }, { reference }, false)) {
+      reference = V_FLOAT64;
+
+      return true;
+   }
+
+   return false;
 }

@@ -11,10 +11,19 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * resend to constant - no need for frame
-
-    * migrate the rest of system (basic.l - basic abstract types)
-    * optimize: pi sample (~10 secs) - int + real operations (see the issue)
+    * native conversion from short to int / byte to int
+    * int + real operations (see the issue #86)
+    * int + byte operations
+    * int + short operations
+    * int + long operations
+    * comparision operations : short / byte / long operation
+    * operations with byte or word 
+    * compare int + real operations
+    * compare int + byte operations
+    * compare int + short operations
+    * compare int + long operations
+    * byte / short should support plus / minus operator
+    * optimize: pi sample (~10 secs) -
     * ide : unident doesn't work
 
     * ide : selecting file in the project view - no namespace provided
@@ -36,6 +45,7 @@ In development:
     * implementing corex : allocperm, ...
     * allocate constant array directly if possible
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
+    * migrate the rest of system (basic.l - ShortNumber)
     * elena-lc : raise an error if the file in the project does not exist
     * ide : recent files / projects, clear the list
     * string to real : support e notation
@@ -98,7 +108,6 @@ In development:
     * uncomment lnx_console.l code
     * int to short -> negative
     * short to int -> negative
-    * comparision operations : short / byte / long operation
     * boolean operators : &&, ||, ^^ - weak implementation
     * ide different styles : use dark mode
     * uncomment duplicateBoxing
@@ -266,7 +275,6 @@ Backlog:
     * ide : context menu
     * internal / auto-generated classes must not be included in run-time attributes
     * optimization : tuple / array unboxing
-    * native conversion from short to int / byte to int
     * extension template should contain all its arguments in the signature
     * support strong extension template arrayOp<T> : strong, weak
     * elena : nullable
@@ -372,7 +380,6 @@ Backlog:
     * generate abstract ebleddable
     * primitive operations : support all comparision operations (not only <, == and !=)
     * ushort, int8
-    * numberic constant should be implicitly converted to byte / short / long / real
     * closure should be sealed
     * jumping - aligning the target to 4 / 8
     * ide : display outputing in the real time
@@ -395,7 +402,6 @@ Backlog:
     * optimize String.prop:Length[1]
     * ide - open file - namespace should be added
     * do load self for expression with ret statement
-    * byte / short should support plus / minus operator
     * copydpn : optimization (by 4, 8, and if less then 8)
     * if virtual multi-method handler is overridden - redirect to the parent one
     * verifyMultimethods implements
@@ -687,7 +693,6 @@ Backlog:
                 * CharValue.new = $0 -> should create a new class
                 * test : branching external implementation : returning a value from closure 
                 * use stosd over stos
-                * operations with byte or word 
                 * simplify the operations with struct fields (size=1,2,4,8,...)
                 * review byte code in core_routines and BCWriter - check for more optimal opcodes
                 * optimization : assigning a field with a local - there should be direct byte code

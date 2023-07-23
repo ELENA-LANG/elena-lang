@@ -6696,6 +6696,8 @@ bool Compiler :: validateShortCircle(ExprScope& scope, mssg_t message, ObjectInf
    if (methodScope != nullptr) {
       return (methodScope->message == message && methodScope->getClassRef() == targetRef);
    }
+
+   return false;
 }
 
 inline SyntaxNode findMessageNode(SyntaxNode node)
@@ -8483,6 +8485,34 @@ inline bool isNormalConstant(ObjectInfo info)
    }
 }
 
+ObjectInfo Compiler :: convertIntLiteral(ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef)
+{
+   switch (targetRef) {
+      case V_INT8:
+         if (source.extra < 0 || source.extra > 255)
+            scope.raiseError(errInvalidOperation, node);
+         break;
+      case V_INT16:
+         if (source.extra < INT16_MIN || source.extra > INT16_MAX)
+            scope.raiseError(errInvalidOperation, node);
+         break;
+      case V_INT64:
+         source.kind = ObjectKind::LongLiteral;
+         break;
+      case V_FLOAT64:
+         source.kind = ObjectKind::Float64Literal;
+         source.reference = mapFloat64Const(scope, source.extra);
+         break;
+      default:
+         scope.raiseError(errInvalidOperation, node);
+         break;
+   }
+   
+   source.typeInfo = { targetRef };
+
+   return source;
+}
+
 ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source,
    ref_t targetRef)
 {
@@ -8529,15 +8559,25 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
 
       }
       else if (conversionRoutine.result == ConversionResult::Conversion) {
-         ArgumentsInfo arguments;
-         arguments.add(source);
-         ref_t signRef = scope.module->mapSignature(&source.typeInfo.typeRef, 1, false);
+         if (source.kind == ObjectKind::IntLiteral && _logic->isNumericType(*scope.moduleScope, targetRef)) {
+            // HOTFIX : convert int literal in place
+            source = convertIntLiteral(scope, node, source, targetRef);
+         }
+         else {
+            ArgumentsInfo arguments;
+            arguments.add(source);
+            ref_t signRef = scope.module->mapSignature(&source.typeInfo.typeRef, 1, false);
 
-         return compileNewOp(writer, scope, node, mapClassSymbol(scope, targetRef),
-            signRef, arguments);
+            return compileNewOp(writer, scope, node, mapClassSymbol(scope, targetRef),
+               signRef, arguments);
+         }
       }
       else if (conversionRoutine.result == ConversionResult::NativeConversion) {
-         source = compileNativeConversion(writer, scope, node, source, conversionRoutine.operationKey);
+         if (source.kind == ObjectKind::IntLiteral && _logic->isNumericType(*scope.moduleScope, targetRef)) {
+            // HOTFIX : convert int literal in place
+            source = convertIntLiteral(scope, node, source, targetRef);
+         }
+         else source = compileNativeConversion(writer, scope, node, source, conversionRoutine.operationKey);
       }
       else source = typecastObject(writer, scope, node, source, targetRef);
    }

@@ -36,8 +36,10 @@ void printLine(const wchar_t* wstr, ...)
 
 void WinConsolePresenter :: readLine(char* buffer, size_t length)
 {
+   int maxSize = static_cast<int>(length);
+
    // !! fgets is used instead of fgetws, because there is a strange bug in fgetws implementation
-   fgets(buffer, length, stdin);
+   fgets(buffer, maxSize, stdin);
 }
 
 void WinConsolePresenter :: print(ustr_t msg, ustr_t arg)

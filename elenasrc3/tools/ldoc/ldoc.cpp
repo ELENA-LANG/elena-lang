@@ -1052,6 +1052,8 @@ bool validateTemplateType(IdentifierString& type, bool templateBased, bool argMo
 
       return parseTemplateType(type, ns.length(), argMode);
    }
+
+   return false;
 }
 
 void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs, bool templateBased, bool argMode)
