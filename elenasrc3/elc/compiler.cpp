@@ -4639,7 +4639,7 @@ void Compiler :: registerTemplateSignature(TemplateScope& scope, SyntaxNode node
 void Compiler :: registerExtensionTemplateMethod(TemplateScope& scope, SyntaxNode& node)
 {
    IdentifierString messageName;
-   size_t argCount = 1;
+   pos_t argCount = 1;
    ref_t flags = 0;
    IdentifierString signaturePattern;
    ustr_t extensionName = scope.module->resolveReference(scope.reference);
@@ -6735,7 +6735,11 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       target = { ObjectKind::ConstantRole, { resolvedExtensionRef }, resolvedExtensionRef };
    }
 
-   stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
+   bool functionMode = test(message, FUNCTION_MESSAGE);
+   if (functionMode) {
+      stackSafeAttr >>= 1;
+   }
+   else stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
 
    ref_t targetRef = retrieveStrongType(scope, target);
 
@@ -6795,7 +6799,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       }
       if (operation != BuildKey::CallOp) {
          // if the method directly resolved and the target is not required to be dynamic, mark it as stacksafe
-         if (result.stackSafe)
+         if (result.stackSafe && !functionMode)
             stackSafeAttr |= 1;
       }
    }
@@ -8933,7 +8937,7 @@ ObjectInfo Compiler :: compileTupleCollectiom(BuildTreeWriter& writer, ExprScope
 
    ref_t tupleRef = resolveTupleClass(scope, node, arguments);
 
-   writer.newNode(BuildKey::CreatingClass, arguments.count());
+   writer.newNode(BuildKey::CreatingClass, arguments.count_pos());
    writer.appendNode(BuildKey::Type, tupleRef);
    writer.closeNode();
 
@@ -8996,7 +9000,7 @@ ObjectInfo Compiler :: compileCollection(BuildTreeWriter& writer, ExprScope& sco
    bool structMode = false;
    if (sizeInfo.size < 0) {
       structMode = true;
-      writer.newNode(BuildKey::CreatingStruct, arguments.count() * -sizeInfo.size);
+      writer.newNode(BuildKey::CreatingStruct, arguments.count_pos() * -sizeInfo.size);
    }
    else if (sizeInfo.size == 0) {
       writer.newNode(BuildKey::CreatingClass, arguments.count_pos());
@@ -10287,6 +10291,12 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
       // new stack frame
       writer.appendNode(BuildKey::OpenFrame);
       newFrame = true;
+
+      if (retExpr) {
+         // the object should not be created for returning expression
+         isDefConvConstructor = false;
+      }
+
    }
    else if (retExpr) {
       // new stack frame
