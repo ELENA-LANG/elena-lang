@@ -2019,10 +2019,48 @@ inline bool intConstBranchingOp(BuildNode lastNode)
    return true;
 }
 
+inline bool doubleAssigningConverting(BuildNode lastNode)
+{
+   BuildNode copyingNode = lastNode;
+   BuildNode tempNode = getPrevious(copyingNode);
+   BuildNode conversionOp = getPrevious(tempNode);
+   BuildNode sourceNode = getPrevious(conversionOp);
+   BuildNode savingOp1 = getPrevious(sourceNode);
+   BuildNode temp2Node = getPrevious(savingOp1);
+
+   int size = 0;
+   switch (conversionOp.arg.value) {
+      case INT16_32_CONVERSION:
+         size = 4;
+         break;
+      case INT32_64_CONVERSION:
+      case INT32_FLOAT64_CONVERSION:
+         size = 8;
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   if (tempNode.arg.value != temp2Node.arg.value)
+      return false;
+
+   int copySize = copyingNode.findChild(BuildKey::Size).arg.value;
+   if (copySize != size)
+      return false;
+
+   temp2Node.setArgumentValue(copyingNode.arg.value);
+
+   tempNode.setKey(BuildKey::Idle);
+   copyingNode.setKey(BuildKey::Idle);
+
+   return true;
+}
+
 ByteCodeWriter::Transformer transformers[] =
 {
    nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts,
-   boxingInt, nativeBranchingOp, intConstBranchingOp
+   boxingInt, nativeBranchingOp, intConstBranchingOp, doubleAssigningConverting
 };
 
 // --- ByteCodeWriter ---

@@ -253,6 +253,7 @@ namespace elena_lang
          map.add("realcondop", BuildKey::RealCondOp);
          map.add("branchop", BuildKey::BranchOp);
          map.add("intbranchop", BuildKey::IntBranchOp);
+         map.add("conversion_op", BuildKey::ConversionOp);
       }
    };
 

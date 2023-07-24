@@ -11,12 +11,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * native conversion from short to int / byte to int
-
-    * int to short -> negative
-    * short to int -> negative
-    * conversion : byte / short / long => real
-
     * int + real operations (see the issue #86)
     * int + byte operations
     * int + short operations
@@ -31,6 +25,7 @@ In development:
     * optimize: pi sample (~10 secs) -
     * ide : unident doesn't work
 
+    * conversion : byte / short / long => real
     * ide : selecting file in the project view - no namespace provided
     * ide : goto library module doesn't work always
     * ide : goto nested class
