@@ -156,6 +156,8 @@ namespace elena_lang
       virtual void redo(TextViewModelBase* model) = 0;
 
       virtual void indent(TextViewModelBase* model) = 0;
+      virtual void outdent(TextViewModelBase* model) = 0;
+
       virtual void deleteText(TextViewModelBase* model) = 0;
       virtual void insertBlockText(TextViewModelBase* model, const_text_t s, size_t length) = 0;
       virtual void deleteBlockText(TextViewModelBase* model, const_text_t s, size_t length) = 0;

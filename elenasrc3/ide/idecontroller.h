@@ -231,6 +231,9 @@ namespace elena_lang
       void doStartVMConsole(IDEModel* model);
       void doStopVMConsole();
 
+      void doIndent(IDEModel* model);
+      void doOutdent(IDEModel* model);
+
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param);
 

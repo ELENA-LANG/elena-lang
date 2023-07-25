@@ -1492,3 +1492,13 @@ void IDEController :: doSelectWindow(FileDialogBase& fileDialog, MessageDialogBa
          break;
    }
 }
+
+void IDEController :: doIndent(IDEModel* model)
+{
+   sourceController.indent(&model->sourceViewModel);
+}
+
+void IDEController :: doOutdent(IDEModel* model)
+{
+   sourceController.outdent(&model->sourceViewModel);
+}

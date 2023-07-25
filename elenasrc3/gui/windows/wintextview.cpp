@@ -560,7 +560,7 @@ bool TextViewWindow :: onKeyPressed(wchar_t ch)
 
       return true;
    }
-   else return false;
+   return false;
 }
 
 void TextViewWindow :: onContextMenu(short x, short y)

@@ -1932,7 +1932,7 @@ namespace elena_lang
          pos_t            _hashIndex;
          const HashTable* _hashTable;
 
-         HashTableIterator(const HashTable* hashTable, size_t hashIndex, Item* current)
+         HashTableIterator(const HashTable* hashTable, pos_t hashIndex, Item* current)
          {
             _hashTable = hashTable;
             _hashIndex = hashIndex;

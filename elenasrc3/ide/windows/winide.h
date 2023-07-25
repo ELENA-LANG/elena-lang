@@ -99,7 +99,7 @@ namespace elena_lang
       void onDebugWatchBrowse(size_t item, size_t param);
 
       void onProjectChange(bool empty);
-      void onProjectViewSel(size_t index);
+      void onProjectViewSel(int index);
 
       bool toggleTabBarWindow(int child_id);
       void toggleWindow(int child_id);

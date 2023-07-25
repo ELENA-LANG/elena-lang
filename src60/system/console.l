@@ -4,7 +4,7 @@ public interface IConsoleReader
 {
     abstract string readLine();
     
-//    abstract wide readWideLine();
+    abstract wide readWideLine();
     
     abstract char read();
     
@@ -17,19 +17,16 @@ public interface IConsoleWriter
 {
     abstract write(wide s);
     abstract write(string s);
-    abstract writeLine(wide s);
-    abstract writeLine(string s);
-    abstract writeLine();
     
 //    abstract refresh();
 }
 
 sealed class Console
 {
-   /*IConsoleReader*/object reader;
-   /*IConsoleWriter*/object writer;
+   IConsoleReader reader;
+   IConsoleWriter writer;
 
-   constructor(/*IConsoleReader*/ reader, /*IConsoleWriter*/ writer)
+   constructor(IConsoleReader reader, IConsoleWriter writer)
    {
       this reader := reader;
       this writer := writer;
@@ -63,4 +60,4 @@ sealed class Console
       = reader.readLine();   
 }
 
-public static console = new Console(io'stdConsoleReader, io'stdConsoleWriter);
+public static Console console = new Console(io'stdConsoleReader, io'stdConsoleWriter);

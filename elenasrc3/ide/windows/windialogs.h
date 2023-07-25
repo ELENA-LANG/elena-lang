@@ -103,6 +103,7 @@ namespace elena_lang
       int show();
 
       WinDialog(HINSTANCE instance, WindowBase* owner)
+         : _handle(nullptr)
       {
          _instance = instance;
          _owner = owner;

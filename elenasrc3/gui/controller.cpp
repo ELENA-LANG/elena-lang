@@ -93,6 +93,21 @@ void TextViewController :: indent(TextViewModelBase* model)
    notifyOnChange(model, status);
 }
 
+void TextViewController :: outdent(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+
+   if (_settings.tabUsing) {
+      docView->tabbing(status, '\t', 1, false);
+   }
+   else {
+      docView->tabbing(status, ' ', _settings.tabSize, false);
+   }
+
+   notifyOnChange(model, status);
+}
+
 void TextViewController :: undo(TextViewModelBase* model)
 {
    DocumentChangeStatus status = {};

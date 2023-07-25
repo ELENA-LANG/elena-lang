@@ -48,6 +48,12 @@
 #define IDM_EDIT_COMMENT            507
 #define IDM_EDIT_UNCOMMENT          508
 #define IDM_EDIT_SELECTALL          509
+#define IDM_EDIT_INDENT             510
+#define IDM_EDIT_OUTDENT            511
+#define IDM_EDIT_TRIM               512
+#define IDM_EDIT_ERASELINE          513
+#define IDM_EDIT_UPPERCASE          514
+#define IDM_EDIT_LOWERCASE          515
 
 #define IDM_VIEW_PROJECTVIEW        601 
 #define IDM_VIEW_OUTPUT             602

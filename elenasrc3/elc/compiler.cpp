@@ -4118,7 +4118,8 @@ ObjectInfo Compiler :: boxVariadicArgument(BuildTreeWriter& writer, ExprScope& s
 
    if (info.typeInfo.typeRef && info.typeInfo.typeRef != typeRef) {
       // if the conversion is required
-      ObjectInfo convInfo = convertObject(writer, scope, {}, destLocal, info.typeInfo.typeRef);
+      ObjectInfo convInfo = convertObject(writer, scope, {}, destLocal, 
+         info.typeInfo.typeRef, false);
 
       compileAssigningOp(writer, scope, destLocal, convInfo);
 
@@ -7038,7 +7039,7 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
    arguments.add(source);
 
    // NOTE : the operation target shouldn't be a primtive type
-   source = validateObject(writer, scope, node, source, 0, true, true);
+   source = validateObject(writer, scope, node, source, 0, true, true, false);
 
    current = current.nextNode();
    mssg_t messageRef = mapMessage(scope, current, true,
@@ -7155,7 +7156,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          bool dummy = false;
          compileMessageArguments(writer, scope, current, arguments, 0, EAttr::NoPrimitives, nullptr, dummy);
          if (arguments.count() == 1 && !dummy) {
-            retVal = convertObject(writer, scope, current, arguments[0], retrieveStrongType(scope, source));
+            retVal = convertObject(writer, scope, current, arguments[0], retrieveStrongType(scope, source), false);
          }
          else scope.raiseError(errInvalidOperation, node);
          break;
@@ -7163,7 +7164,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       default:
       {
          // NOTE : the operation target shouldn't be a primtive type
-         source = validateObject(writer, scope, node, source, 0, true, true);
+         source = validateObject(writer, scope, node, source, 0, true, true, false);
 
          current = current.nextNode();
          mssg_t messageRef = mapMessage(scope, current, false,
@@ -7777,7 +7778,7 @@ ObjectInfo Compiler :: compileMessageOperationR(BuildTreeWriter& writer, ExprSco
          bool dummy = false;
          compileMessageArguments(writer, scope, messageNode, arguments, 0, EAttr::NoPrimitives, &updatedOuterArgs, dummy);
          if (arguments.count() == 1 && !dummy) {
-            return convertObject(writer, scope, messageNode, arguments[0], retrieveStrongType(scope, target));
+            return convertObject(writer, scope, messageNode, arguments[0], retrieveStrongType(scope, target), false);
          }
          else scope.raiseError(errInvalidOperation, messageNode);
          break;
@@ -7785,7 +7786,7 @@ ObjectInfo Compiler :: compileMessageOperationR(BuildTreeWriter& writer, ExprSco
       default:
          {
             // NOTE : the operation target shouldn't be a primitive type
-            ObjectInfo source = validateObject(writer, scope, messageNode, target, 0, true, true);
+            ObjectInfo source = validateObject(writer, scope, messageNode, target, 0, true, true, false);
 
             mssg_t messageRef = mapMessage(scope, messageNode, propertyMode, false, false);
 
@@ -8518,7 +8519,7 @@ ObjectInfo Compiler :: convertIntLiteral(ExprScope& scope, SyntaxNode node, Obje
 }
 
 ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source,
-   ref_t targetRef)
+   ref_t targetRef, bool dynamicRequired)
 {
    if (!_logic->isCompatible(*scope.moduleScope, { targetRef }, source.typeInfo, false)) {
       if (source.typeInfo.typeRef == V_WRAPPER) {
@@ -8563,7 +8564,7 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
 
       }
       else if (conversionRoutine.result == ConversionResult::Conversion) {
-         if (source.kind == ObjectKind::IntLiteral && _logic->isNumericType(*scope.moduleScope, targetRef)) {
+         if (!dynamicRequired && source.kind == ObjectKind::IntLiteral && _logic->isNumericType(*scope.moduleScope, targetRef)) {
             // HOTFIX : convert int literal in place
             source = convertIntLiteral(scope, node, source, targetRef);
          }
@@ -8799,7 +8800,7 @@ ObjectInfo Compiler :: compileExternExpression(BuildTreeWriter& writer, ExprScop
 }
 
 ObjectInfo Compiler :: validateObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
-   ObjectInfo retVal, ref_t targetRef, bool noPrimitives, bool paramMode)
+   ObjectInfo retVal, ref_t targetRef, bool noPrimitives, bool paramMode, bool dynamicRequired)
 {
    if (!targetRef && retVal.typeInfo.isPrimitive() && noPrimitives) {
       targetRef = retrieveStrongType(scope, retVal);
@@ -8809,7 +8810,7 @@ ObjectInfo Compiler :: validateObject(BuildTreeWriter& writer, ExprScope& scope,
       retVal = saveToTempLocal(writer, scope, retVal);
    }
    if (targetRef) {
-      retVal = convertObject(writer, scope, node, retVal, targetRef);
+      retVal = convertObject(writer, scope, node, retVal, targetRef, dynamicRequired);
       if (paramMode && hasToBePresaved(retVal))
          retVal = saveToTempLocal(writer, scope, retVal);
    }
@@ -9038,6 +9039,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
 {
    bool paramMode = EAttrs::testAndExclude(mode, EAttr::Parameter);
    bool noPrimitives = EAttrs::testAndExclude(mode, EAttr::NoPrimitives);
+   bool dynamicRequired = EAttrs::testAndExclude(mode, EAttr::DynamicObject);
 
    ObjectInfo retVal;
 
@@ -9172,7 +9174,8 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
    }
 
-   retVal = validateObject(writer, scope, node, retVal, targetRef, noPrimitives, paramMode);
+   retVal = validateObject(writer, scope, node, retVal, targetRef, 
+      noPrimitives, paramMode, dynamicRequired);
 
    return retVal;
 }
@@ -9213,7 +9216,7 @@ inline SyntaxNode findObjectNode(SyntaxNode node)
    return {};
 }
 
-ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
+ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, EAttr mode)
 {
    ExprScope scope(&codeScope);
 
@@ -9227,7 +9230,8 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
    writer.appendNode(BuildKey::OpenStatement);
    addBreakpoint(writer, findObjectNode(node), BuildKey::Breakpoint);
 
-   ObjectInfo retVal = compileExpression(writer, scope, node.findChild(SyntaxKey::Expression), outputRef, EAttr::Root | EAttr::RetValExpected, nullptr);
+   ObjectInfo retVal = compileExpression(writer, scope, node.findChild(SyntaxKey::Expression), outputRef, 
+      mode | EAttr::Root | EAttr::RetValExpected, nullptr);
    if (codeScope.isByRefHandler()) {
       compileAssigningOp(writer, scope, codeScope.mapByRefReturnArg(), retVal);
 
@@ -9542,7 +9546,7 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
             exprRetVal = compileRootExpression(writer, codeScope, current);
             break;
          case SyntaxKey::ReturnExpression:
-            exprRetVal = retVal = compileRetExpression(writer, codeScope, current);
+            exprRetVal = retVal = compileRetExpression(writer, codeScope, current, EAttr::None);
             break;
          case SyntaxKey::CodeBlock:
          {
@@ -9600,7 +9604,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
          retVal = compileCode(writer, codeScope, bodyNode, scope.closureMode);
          break;
       case SyntaxKey::ReturnExpression:
-         retVal = compileRetExpression(writer, codeScope, bodyNode);
+         retVal = compileRetExpression(writer, codeScope, bodyNode, EAttr::None);
          break;
       case SyntaxKey::ResendDispatch:
          retVal = compileResendCode(writer, codeScope,
@@ -9631,7 +9635,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
       else {
          ref_t outputRef = scope.info.outputRef;
          if (outputRef && outputRef != V_AUTO) {
-            convertObject(writer, exprScope, node, retVal, outputRef);
+            convertObject(writer, exprScope, node, retVal, outputRef, false);
 
             exprScope.syncStack();
          }
@@ -10336,8 +10340,8 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
          case SyntaxKey::ResendDispatch:
             compileMethodCode(writer, scope, codeScope, node, newFrame);
             break;
-         case SyntaxKey::ReturnExpression:
-            compileRetExpression(writer, codeScope, current);
+      case SyntaxKey::ReturnExpression:
+            compileRetExpression(writer, codeScope, current, EAttr::DynamicObject);
             writer.appendNode(BuildKey::CloseFrame);
             break;
          case SyntaxKey::None:
@@ -10731,7 +10735,7 @@ void Compiler :: compileExpressionMethod(BuildTreeWriter& writer, MethodScope& s
    scope.selfLocal = codeScope.newLocal();
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
-   compileRetExpression(writer, codeScope, node);
+   compileRetExpression(writer, codeScope, node, EAttr::None);
 
    writer.appendNode(BuildKey::CloseFrame);
 

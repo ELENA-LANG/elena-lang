@@ -1187,7 +1187,8 @@ namespace elena_lang
       ObjectInfo declareTempLocal(ExprScope& scope, ref_t typeRef, bool dynamicOnly = true);
 
       ObjectInfo typecastObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
-      ObjectInfo convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
+      ObjectInfo convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, 
+         ref_t targetRef, bool dynamicRequired);
       ObjectInfo convertIntLiteral(ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
 
       bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);
@@ -1261,7 +1262,7 @@ namespace elena_lang
       ObjectInfo mapObject(Scope& scope, SyntaxNode node, ExpressionAttributes mode);
 
       ObjectInfo validateObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo retVal,
-         ref_t targetRef, bool noPrimitives, bool paramMode);
+         ref_t targetRef, bool noPrimitives, bool paramMode, bool dynamicRequired);
 
       ObjectInfo compileNested(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute mode,
          ArgumentsInfo* updatedOuterArgs);
@@ -1278,7 +1279,8 @@ namespace elena_lang
       ObjectInfo compileSubCode(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
          ExpressionAttribute mode, bool withoutNewScope = false);
       ObjectInfo compileRootExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
-      ObjectInfo compileRetExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
+      ObjectInfo compileRetExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node, 
+         ExpressionAttribute mode);
       ObjectInfo compileNestedExpression(BuildTreeWriter& writer, InlineClassScope& scope, ExprScope& ownerScope,
          ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs);
 

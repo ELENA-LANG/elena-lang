@@ -369,7 +369,7 @@ void IDEWindow :: onErrorHighlight(int index)
       _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
 }
 
-void IDEWindow :: onProjectViewSel(size_t index)
+void IDEWindow :: onProjectViewSel(int index)
 {
    _controller->doOpenProjectSourceByIndex(_model, index);
 
@@ -600,6 +600,12 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_EDIT_SELECTALL:
          selectAll();
+         break;
+      case IDM_EDIT_INDENT:
+         _controller->doIndent(_model);
+         break;
+      case IDM_EDIT_OUTDENT:
+         _controller->doOutdent(_model);
          break;
       case IDM_SEARCH_FIND:
          search();

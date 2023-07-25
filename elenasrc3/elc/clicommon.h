@@ -396,6 +396,7 @@ enum class ExpressionAttribute : pos64_t
    RetrievingType    = 0x00010000000,
    RetValExpected    = 0x00020000000,
    CheckShortCircle  = 0x00040000000,
+   DynamicObject     = 0x08000000000,
    Superior          = 0x10000000000,
    Lookahead         = 0x20000000000,
    NoDebugInfo       = 0x40000000000,

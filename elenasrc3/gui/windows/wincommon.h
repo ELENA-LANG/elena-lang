@@ -48,7 +48,7 @@ namespace elena_lang
    {
       NMHDR              nmhrd;
       int                code;
-      size_t             param;
+      int                param;
    };
 
    struct TreeItemNMHDR

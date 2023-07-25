@@ -781,6 +781,15 @@ public const struct ShortNumber : IntBaseNumber,
             : info("bitwise inversion")
       = ~theValue;
 
+   get short Negative()
+//      = -_value;
+   {
+      short v := 0;
+      v -= theValue;
+
+      ^ v
+   }
+
    short clone()
             : info("clones the value")
       = new ShortNumber(self);

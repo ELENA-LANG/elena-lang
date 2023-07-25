@@ -11,20 +11,17 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * ide : unident doesn't work
-    * byte / short should support plus / minus operator
-    * migrate the rest of system (basic.l - ShortNumber)
-    * console symbol should be strong one
+    * new rosetta code sample : Apply a digital filter
+    * the following code should not be allowed - real n := n;
 
     * ide : selecting file in the project view - no namespace provided
     * ide : goto library module doesn't work always
     * ide : goto nested class
     * ide : recent files - remove duplicates
     * test UTF16Encoder : to / from utf8, to / from win2152, load file
+    * migrate the rest of system (basic.l - IntNumber)
     * #195 : implementing rosetta code samples
     * ldoc : show template based type correctly
-    * new rosetta code sample : Apply a digital filter
-    * the following code should not be allowed - real n := n;
     * rosetta code samples : Abundant, deficient and perfect number classifications
     * ide : about
     * implementing corex : allocperm, ...
@@ -46,6 +43,7 @@ In development:
     * boxable self (structs) - do not box the self return
     * direct shift
     * ide : debug goto source
+    * ide : trim, erase line, upper case, lower case
     * automatical conversion of int literal to int8, int16 and int64 if possible
     * system'collections'Map - migrating rest of methods
     * system'String.Substring<'IntNumber,'IntNumber>[3] - why the parameters are boxed?

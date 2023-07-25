@@ -104,6 +104,7 @@ namespace elena_lang
       bool eraseChar(TextViewModelBase* model, bool moveback) override;
 
       void indent(TextViewModelBase* model) override;
+      void outdent(TextViewModelBase* model) override;
 
       void undo(TextViewModelBase* model) override;
       void redo(TextViewModelBase* model) override;

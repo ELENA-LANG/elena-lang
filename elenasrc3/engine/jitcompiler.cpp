@@ -2788,7 +2788,8 @@ void JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t 
    else {
       switch (mask) {
          case mskRef32:
-            MemoryBase::writeDWord(writer->Memory(), position, (uintptr_t)writer->Memory()->get(writer->position()));
+            MemoryBase::writeDWord(writer->Memory(), position, 
+               ptrToUInt32(writer->Memory()->get(writer->position())));
             writer->Memory()->addReference(mskCodeRef32, position);
             break;
          case mskRef64:
@@ -3261,11 +3262,11 @@ void JITCompiler32 :: updateVoidObject(MemoryBase* rdata, addr_t superAddress, b
 void JITCompiler32 :: writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode)
 {
    writer.writeDWord(category);
-   writer.writeDWord(getlength(value) + 9);
+   writer.writeDWord(getlength_int(value) + 9);
    writer.writeString(value);
 
    if (virtualMode) {
-      writer.writeDReference(address | mskRef32, 0);
+      writer.writeDReference((ref_t)address | mskRef32, 0);
    }
    else writer.writeDWord(address);
 }
@@ -3682,7 +3683,7 @@ void JITCompiler64 :: updateVoidObject(MemoryBase* rdata, addr_t superAddress, b
 {
    void* voidObj = _preloaded.get(VOIDOBJ);
    if (virtualMode) {
-      rdata->addReference(superAddress | mskRef64, (int64_t)voidObj & ~mskAnyRef);
+      rdata->addReference((ref_t)superAddress | mskRef64, ptrToUInt32(voidObj) & ~mskAnyRef);
    }
    else {
       *(addr_t*)voidObj = superAddress;
