@@ -2127,10 +2127,39 @@ inline bool doubleAssigningConverting(BuildNode lastNode)
    return true;
 }
 
+inline bool doubleAssigningIntRealOp(BuildNode lastNode)
+{
+   BuildNode copyingNode = lastNode;
+   BuildNode tempNode = getPrevious(copyingNode);
+   BuildNode opNode = getPrevious(tempNode);
+   BuildNode indexNode = opNode.findChild(BuildKey::Index);
+
+   if (tempNode.arg.value != indexNode.arg.value)
+      return false;
+
+   int copySize = copyingNode.findChild(BuildKey::Size).arg.value;
+   switch (opNode.key) {
+      case BuildKey::IntRealOp:
+      case BuildKey::RealIntOp:
+         if (copySize != 8)
+            return false;
+         break;
+      default:
+         break;
+   }
+
+   indexNode.setArgumentValue(copyingNode.arg.value);
+
+   tempNode.setKey(BuildKey::Idle);
+   copyingNode.setKey(BuildKey::Idle);
+
+   return true;
+}
+
 ByteCodeWriter::Transformer transformers[] =
 {
    nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts,
-   boxingInt, nativeBranchingOp, intConstBranchingOp, doubleAssigningConverting
+   boxingInt, nativeBranchingOp, intConstBranchingOp, doubleAssigningConverting, doubleAssigningIntRealOp
 };
 
 // --- ByteCodeWriter ---

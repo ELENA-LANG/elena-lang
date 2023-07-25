@@ -8,3 +8,5 @@ intcondop, assigning, local, branchop => 7;
 realcondop, assigning, local, branchop => 7;
 local_address, saving_stack, int_literal, saving_stack, intbranchop => 8;
 local_address, saving_stack, local_address, conversion_op, local_address, copying => 9;
+int_real_op, local_address, copying => 10;
+real_int_op, local_address, copying => 10;

@@ -256,6 +256,8 @@ namespace elena_lang
          map.add("branchop", BuildKey::BranchOp);
          map.add("intbranchop", BuildKey::IntBranchOp);
          map.add("conversion_op", BuildKey::ConversionOp);
+         map.add("int_real_op", BuildKey::IntRealOp);
+         map.add("real_int_op", BuildKey::RealIntOp);
       }
    };
 

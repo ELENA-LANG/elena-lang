@@ -11,7 +11,7 @@
 
 namespace elena_lang
 {
-   #define SG_REVISION_NUMBER            0x000C
+   #define SG_REVISION_NUMBER            0x000D
 
    constexpr auto OG_GREETING            = "ELENA command line optimization rule set generator %d.%d.%d (C)2023 by Aleksey Rakov\n";
 
