@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 142;
+constexpr auto OperationLength = 150;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -481,6 +481,31 @@ constexpr Op Operations[OperationLength] =
    },
    {
       INDEX_OPERATOR_ID, BuildKey::ObjArrayOp, V_ARGARRAY, V_INT32, 0, V_ELEMENT
+   },
+
+   {
+      ADD_OPERATOR_ID, BuildKey::IntRealOp, V_INT32, V_FLOAT64, 0, V_FLOAT64
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::IntRealOp, V_INT32, V_FLOAT64, 0, V_FLOAT64
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::IntRealOp, V_INT32, V_FLOAT64, 0, V_FLOAT64
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::IntRealOp, V_INT32, V_FLOAT64, 0, V_FLOAT64
+   },
+   {
+      ADD_OPERATOR_ID, BuildKey::RealIntOp, V_FLOAT64, V_INT32, 0, V_FLOAT64
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::RealIntOp, V_FLOAT64, V_INT32, 0, V_FLOAT64
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::RealIntOp, V_FLOAT64, V_INT32, 0, V_FLOAT64
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::RealIntOp, V_FLOAT64, V_INT32, 0, V_FLOAT64
    },
 };
 

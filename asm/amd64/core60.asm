@@ -714,11 +714,10 @@ end
 inline %070h
 
   mov  rax, r10
-  lea  rdi, [rbp + __arg32_1]
-  fld   qword ptr [rdi]
+  fld   qword ptr [rbx]
   fild  [rax]
   faddp
-  fstp  qword ptr [rdi]
+  fstp  qword ptr [rbx]
 
 end
 
@@ -726,12 +725,10 @@ end
 inline %071h
 
   mov  rax, r10
-  lea  rdi, [rbp + __arg32_1]
-
-  fld   qword ptr [rdi]
+  fld   qword ptr [rbx]
   fild  [rax]
   fsubp
-  fstp  qword ptr [rdi]
+  fstp  qword ptr [rbx]
 
 end
 
@@ -739,12 +736,10 @@ end
 inline %072h
 
   mov  rax, r10
-  lea  rdi, [rbp + __arg32_1]
-
-  fld   qword ptr [rdi]
+  fld   qword ptr [rbx]
   fild  [rax]
   fmulp
-  fstp  qword ptr [rdi]
+  fstp  qword ptr [rbx]
 
 end
 
@@ -752,12 +747,10 @@ end
 inline %073h
 
   mov  rax, r10
-  lea  rdi, [rbp + __arg32_1]
-
-  fld   qword ptr [rdi]
+  fld   qword ptr [rbx]
   fild  [rax]
   fdivp
-  fstp  qword ptr [rdi]
+  fstp  qword ptr [rbx]
 
 end
 

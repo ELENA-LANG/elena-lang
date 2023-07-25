@@ -465,6 +465,75 @@ void genericDispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::XRedirectM, message);
 }
 
+void intRealOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
+   if (!isAssignOp(node.arg.value)) {
+      tape.write(ByteCode::PeekSI);
+      tape.write(ByteCode::Load);
+      tape.write(ByteCode::SetDP, targetOffset);
+      tape.write(ByteCode::FSave);
+      tape.write(ByteCode::XMovSISI, 0, 1);
+   }
+
+   switch (node.arg.value) {
+      case ADD_OPERATOR_ID:
+      case ADD_ASSIGN_OPERATOR_ID:
+         tape.write(ByteCode::FAddDPN, targetOffset, 8);
+         break;
+      case SUB_OPERATOR_ID:
+      case SUB_ASSIGN_OPERATOR_ID:
+         tape.write(ByteCode::FSubDPN, targetOffset, 8);
+         break;
+      case MUL_OPERATOR_ID:
+      case MUL_ASSIGN_OPERATOR_ID:
+         tape.write(ByteCode::FMulDPN, targetOffset, 8);
+         break;
+      case DIV_OPERATOR_ID:
+      case DIV_ASSIGN_OPERATOR_ID:
+         tape.write(ByteCode::FDivDPN, targetOffset, 8);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
+void realIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
+   if (!isAssignOp(node.arg.value)) {
+      tape.write(ByteCode::CopyDPN, targetOffset, 8);
+      tape.write(ByteCode::XMovSISI, 0, 1);
+
+      tape.write(ByteCode::SetDP, targetOffset);
+   }
+
+   switch (node.arg.value) {
+      case ADD_OPERATOR_ID:
+      case ADD_ASSIGN_OPERATOR_ID:
+         tape.write(ByteCode::FIAdd, 8);
+         break;
+      case SUB_OPERATOR_ID:
+      case SUB_ASSIGN_OPERATOR_ID:
+         tape.write(ByteCode::FISub, 8);
+         break;
+      case MUL_OPERATOR_ID:
+      case MUL_ASSIGN_OPERATOR_ID:
+         tape.write(ByteCode::FIMul, 8);
+         break;
+      case DIV_OPERATOR_ID:
+      case DIV_ASSIGN_OPERATOR_ID:
+         tape.write(ByteCode::FIDiv, 8);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+}
+
 void realOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
@@ -1690,7 +1759,8 @@ ByteCodeWriter::Saver commands[] =
    terminatorReference, copyingItem, savingLongIndex, longIntCondOp, constantArray, staticAssigning, savingLInStack, uintCondOp,
    uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp,
 
-   copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp, semiDirectCallOp
+   copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp, semiDirectCallOp,
+   intRealOp, realIntOp
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

@@ -146,8 +146,10 @@ namespace elena_lang
       SavingIndexToAcc     = 0x0075,
       ContinueOp           = 0x0076,
       SemiDirectCallOp     = 0x0077,
+      IntRealOp            = 0x0078,
+      RealIntOp            = 0x0079,
 
-      MaxOperationalKey    = 0x0077,
+      MaxOperationalKey    = 0x0079,
 
       Import               = 0x0080,
       DictionaryOp         = 0x0081,

@@ -5,5 +5,5 @@ public program()
    int n := 3;
    real m := 2.2;
    
-   real r := m + n;
+   real r := n + m;
 }

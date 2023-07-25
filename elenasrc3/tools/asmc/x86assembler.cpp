@@ -903,7 +903,7 @@ void X86Assembler ::compileFsubp(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    read(tokenInfo);
 
-   writer.writeWord(0xF9DE);
+   writer.writeWord(0xE9DE);
 }
 
 void X86Assembler :: compileFldl2e(ScriptToken& tokenInfo, MemoryWriter& writer)
