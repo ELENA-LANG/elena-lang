@@ -144,6 +144,8 @@ namespace elena_lang
       void compileF2xm1(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFld1(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFaddp(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFsubp(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFdivp(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFscale(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFsin(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFcos(ScriptToken& tokenInfo, MemoryWriter& writer);

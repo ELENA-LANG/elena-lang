@@ -63,7 +63,12 @@ namespace elena_lang
       XGet           = 0x2E,
       XCall          = 0x2F,
 
-      MaxSingleOp    = 0x77,
+      MaxSingleOp    = 0x6F,
+
+      FIAdd          = 0x70,
+      FISub          = 0x71,
+      FIMul          = 0x72,
+      FIDiv          = 0x73,
 
       FAbsDP         = 0x78,
       FSqrtDP        = 0x79,

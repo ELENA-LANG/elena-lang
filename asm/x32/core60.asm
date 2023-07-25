@@ -710,6 +710,54 @@ inline %02Fh
 
 end
 
+// ; fiadd
+inline %070h
+
+  lea  edi, [ebp + __arg32_1]
+
+  fld   qword ptr [edi]
+  fild  [esi]
+  faddp
+  fstp  qword ptr [edi]
+
+end
+
+// ; fisub
+inline %071h
+
+  lea  edi, [ebp + __arg32_1]
+
+  fld   qword ptr [edi]
+  fild  [esi]
+  fsubp
+  fstp  qword ptr [edi]
+
+end
+
+// ; fimul
+inline %072h
+
+  lea  edi, [ebp + __arg32_1]
+
+  fld   qword ptr [edi]
+  fild  [esi]
+  fmulp
+  fstp  qword ptr [edi]
+
+end
+
+// ; fidiv
+inline %073h
+
+  lea  edi, [ebp + __arg32_1]
+
+  fld   qword ptr [edi]
+  fild  [esi]
+  fdivp
+  fstp  qword ptr [edi]
+
+end
+
 // ; fabsdp
 inline %078h
 

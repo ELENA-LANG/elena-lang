@@ -892,6 +892,20 @@ void X86Assembler :: compileFmulp(ScriptToken& tokenInfo, MemoryWriter& writer)
    writer.writeWord(0xC9DE);
 }
 
+void X86Assembler :: compileFdivp(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   read(tokenInfo);
+
+   writer.writeWord(0xF9DE);
+}
+
+void X86Assembler ::compileFsubp(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   read(tokenInfo);
+
+   writer.writeWord(0xF9DE);
+}
+
 void X86Assembler :: compileFldl2e(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    read(tokenInfo);
@@ -2460,6 +2474,9 @@ bool X86Assembler :: compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    else if (tokenInfo.compare("fdiv")) {
       compileFdiv(tokenInfo, writer);
    }
+   else if (tokenInfo.compare("fdivp")) {
+      compileFdivp(tokenInfo, writer);
+   }
    else if (tokenInfo.compare("ffree")) {
       compileFfree(tokenInfo, writer);
    }
@@ -2510,6 +2527,9 @@ bool X86Assembler :: compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    }
    else if (tokenInfo.compare("fsin")) {
       compileFsin(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fsubp")) {
+      compileFsubp(tokenInfo, writer);
    }
    else if (tokenInfo.compare("fcos")) {
       compileFcos(tokenInfo, writer);

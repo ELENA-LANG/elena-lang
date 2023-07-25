@@ -710,6 +710,57 @@ inline %02Fh
 
 end
 
+// ; fadd
+inline %070h
+
+  mov  rax, r10
+  lea  rdi, [rbp + __arg32_1]
+  fld   qword ptr [rdi]
+  fild  [rax]
+  faddp
+  fstp  qword ptr [rdi]
+
+end
+
+// ; fsub
+inline %071h
+
+  mov  rax, r10
+  lea  rdi, [rbp + __arg32_1]
+
+  fld   qword ptr [rdi]
+  fild  [rax]
+  fsubp
+  fstp  qword ptr [rdi]
+
+end
+
+// ; fmul
+inline %072h
+
+  mov  rax, r10
+  lea  rdi, [rbp + __arg32_1]
+
+  fld   qword ptr [rdi]
+  fild  [rax]
+  fmulp
+  fstp  qword ptr [rdi]
+
+end
+
+// ; fdiv
+inline %073h
+
+  mov  rax, r10
+  lea  rdi, [rbp + __arg32_1]
+
+  fld   qword ptr [rdi]
+  fild  [rax]
+  fdivp
+  fstp  qword ptr [rdi]
+
+end
+
 // ; fabsdp
 inline %078h
 
