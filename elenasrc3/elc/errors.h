@@ -59,6 +59,7 @@ namespace elena_lang
    constexpr auto errMsgDupProtectedMethod      = "\n%s(%d:%d): error 183: A protected method with the same name '%s' is already declared\n";
    constexpr auto errMsgUnknownDefConstructor   = "\n%s(%d:%d): error 184: A constructor is not defined for the class\n";
    constexpr auto errMsgUnknownMessage          = "\n%s(%d:%d): error 185: Message '%s' does not handled by the object\n";
+   constexpr auto errMsgAssígningToSelf         = "\n%s(%d:%d): error 186: Cannot assign a variable '%s' to itself\n";
 
    constexpr auto errMsgUnknownModule           = "\nlinker: error 201: Unknown module '%s'\n";
    constexpr auto errMsgUnresovableLink         = "\nlinker: error 202: Link '%s' is not resolved\n";

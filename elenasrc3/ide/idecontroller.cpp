@@ -137,7 +137,7 @@ void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t 
    }
 }
 
-path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourcePath, NamespaceString& name)
+path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourcePath, NamespaceString& name, PathString& subPath)
 {
    size_t projectPathLen = model->projectPath.length();
 
@@ -148,6 +148,7 @@ path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourc
       name.copy(model->getPackage());
       if (path.length() > projectPathLen) {
          name.pathToName(*path + projectPathLen);
+         subPath.copySubPath(*path + projectPathLen, true);
 
          _debugController.resolveNamespace(name);
       }
@@ -159,10 +160,14 @@ path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourc
 
       if (!rootPath.empty() && PathUtil::compare(sourcePath, rootPath, rootPathLen)) {
          name.pathToName(sourcePath + rootPathLen);
+         subPath.copySubPath(*path + rootPathLen, true);
 
          _debugController.resolveNamespace(name);
 
-         return sourcePath + rootPathLen;
+         pos_t rootNsPos = (*name).find('\'', name.length());
+         subPath.cut(0, rootNsPos + 1);
+
+         return sourcePath + rootPathLen + rootNsPos + 1;
       }
       else {
          FileNameString fileName(sourcePath);
@@ -181,9 +186,14 @@ void ProjectController :: defineSourceName(ProjectModel* model, path_t path, Nam
       retVal.copy("undefined");
    }
    else {
-      //_ELENA_::ReferenceNs module;
-      retrieveSourceName(model, path, retVal);
+      PathString subPath;
+      retrieveSourceName(model, path, retVal, subPath);
       retVal.append(':');
+
+      if (subPath.length() > 0) {
+         IdentifierString subStr(*subPath);
+         retVal.append(*subStr);
+      }
 
       FileNameString fileName(path, true);
       IdentifierString tmp(*fileName);
@@ -294,12 +304,13 @@ void ProjectController :: runToCursor(ProjectModel& model, SourceViewModel& sour
       path_t currentPath = sourceModel.getDocumentPath(index);
 
       NamespaceString ns;
-      currentPath = retrieveSourceName(&model, currentPath, ns);
+      PathString subPath;
+      currentPath = retrieveSourceName(&model, currentPath, ns, subPath);
 
-      // !! temporal solution : skip the project folder
-      size_t rootNsLen = (*ns).find('\'');
-
-      IdentifierString pathStr(currentPath + rootNsLen + 1);
+      FileNameString properName(currentPath, true);
+      subPath.combine(*properName);
+      
+      IdentifierString pathStr(*subPath);
       _debugController.runToCursor(*ns, *pathStr, currentDoc->getCaret().y);
    }
 }
@@ -392,6 +403,13 @@ void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, Co
       optionsOption.readContent(value);
 
       model.options.copy(value.str());
+   }
+
+   auto outputOption = config.selectNode(configRoot, OUTPUT_SUB_CATEGORY);
+   if (!outputOption.isNotFound()) {
+      outputOption.readContent(value);
+
+      model.outputPath.copy(value.str());
    }
 
    // load source files
@@ -643,7 +661,8 @@ void ProjectController :: toggleBreakpoint(ProjectModel& model, SourceViewModel&
       path_t currentPath = sourceModel.getDocumentPath(index);
 
       NamespaceString ns;
-      currentPath = retrieveSourceName(&model, currentPath, ns);
+      PathString subPath;
+      currentPath = retrieveSourceName(&model, currentPath, ns, subPath);
 
       bool addMode = true;
       IdentifierString pathStr(currentSource + currentSource.find(':') + 1);

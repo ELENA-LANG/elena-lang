@@ -7441,6 +7441,9 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
    if (!compileAssigningOp(writer, scope, target, exprVal))
       scope.raiseError(errInvalidOperation, loperand.parentNode());;
 
+   if (target == exprVal)
+      scope.raiseError(errAssígningToSelf, loperand.lastChild(SyntaxKey::TerminalMask));
+
    return target;
 }
 
