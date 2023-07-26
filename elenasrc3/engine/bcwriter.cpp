@@ -1228,8 +1228,6 @@ void objArraySOp(CommandTape& tape, BuildNode& node, TapeScope&)
 
 void objArrayOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
-   int targetOffset = node.findChild(BuildKey::Index).arg.value;
-
    switch (node.arg.value) {
       case SET_INDEXER_OPERATOR_ID:
          // load
@@ -1953,7 +1951,6 @@ inline bool assignIntOpWithConsts(BuildNode lastNode)
    BuildNode savingOp = getPrevious(opNode);
    BuildNode intNode = getPrevious(savingOp);
    BuildNode valueNode = intNode.findChild(BuildKey::Value);
-   BuildNode targetNode = getPrevious(intNode);
 
    int tempTarget = opNode.findChild(BuildKey::Index).arg.value;
 
