@@ -2284,11 +2284,24 @@ void Compiler :: generateClassFlags(ClassScope& scope, ref_t declaredFlags)
       scope.addAttribute(ClassAttribute::ExtensionRef, scope.extensionClassRef);
 }
 
-void Compiler :: generateClassStaticField(ClassScope& scope, SyntaxNode node, bool isConst, TypeInfo typeInfo)
+void Compiler :: generateClassStaticField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs)
 {
    ustr_t name = node.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
    if (scope.info.statics.exist(name)) {
       scope.raiseError(errDuplicatedField, node);
+   }
+
+   TypeInfo typeInfo = attrs.typeInfo;
+   bool  isConst = attrs.isConstant;
+   ref_t flags = scope.info.header.flags;
+
+   if (attrs.size < 0) {
+      if (!attrs.inlineArray) {
+         NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+         typeInfo.typeRef = resolveArrayTemplate(*scope.moduleScope, *nsScope->nsName, attrs.typeInfo.typeRef, true);
+      }
+      else scope.raiseError(errIllegalField, node);
    }
 
    if (isConst) {
@@ -2443,7 +2456,7 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node, bool si
          declareFieldAttributes(scope, current, attrs);
 
          if ((attrs.isConstant && !isClassClassMode) || attrs.isStatic) {
-            generateClassStaticField(scope, current, attrs.isConstant, attrs.typeInfo);
+            generateClassStaticField(scope, current, attrs);
          }
          else if (!isClassClassMode) {
             generateClassField(scope, current, attrs, singleField);
@@ -6913,7 +6926,7 @@ ObjectInfo Compiler :: compileNewArrayOp(BuildTreeWriter& writer, ExprScope& sco
          if (conversionRoutine.result == ConversionResult::BoxingRequired) {
             source.typeInfo = { targetRef };
          }
-         assert(conversionRoutine.result != ConversionResult::None);
+         else source.typeInfo = { sourceRef };
       }
       else source.typeInfo = { sourceRef };
 

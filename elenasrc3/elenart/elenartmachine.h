@@ -55,6 +55,8 @@ namespace elena_lang
       mssg_t loadMessage(ustr_t messageName);
       mssg_t loadAction(ustr_t actionName);
 
+      size_t loadClassName(addr_t classAddress, char* buffer, size_t length);
+
       int loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output);
 
       void initRandomSeed(SeedStruct& seed)

@@ -107,6 +107,11 @@ addr_t ELENARTMachine :: retrieveGlobalAttribute(int attribute, ustr_t name)
    return rtmanager.retrieveGlobalAttribute(attribute, name);
 }
 
+size_t ELENARTMachine :: loadClassName(addr_t classAddress, char* buffer, size_t length)
+{
+   return RTManager::loadClassName(classAddress, buffer, length);
+}
+
 addr_t ELENARTMachine :: loadSymbol(ustr_t name)
 {
    return retrieveGlobalAttribute(GA_SYMBOL_NAME, name);
@@ -136,6 +141,35 @@ size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t le
 
    IdentifierString messageName;
    ByteCodeUtil::formatMessageName(messageName, nullptr, *actionName, nullptr, 0, argCount, flags);
+
+   if (test(message, CONVERSION_MESSAGE)) {
+      size_t position = (*messageName).find('[');
+
+      ImageSection msection(_mdata, 0x1000000);
+      RTManager rtmanager(&msection, nullptr);
+
+      addr_t signatures[ARG_COUNT] = {};
+      if(rtmanager.loadSignature(actionRef, argCount, signatures)) {
+         for (pos_t i = 0; i < argCount; i++) {
+            char tmp[IDENTIFIER_LEN];
+
+            size_t len = loadClassName(signatures[i], tmp, IDENTIFIER_LEN);
+            tmp[len] = 0;
+
+            if (i == 0) {
+               messageName.insert("<>", position);
+               position++;
+            }
+            else {
+               messageName.insert(",", position);
+               position++;
+            }
+
+            messageName.insert(tmp, position);
+            position += (len + 1);
+         }
+      }
+   }
 
    StrConvertor::copy(buffer, *messageName, messageName.length(), length);
 
