@@ -181,7 +181,7 @@ int main(int argc, char* argv[])
 
        // Reading command-line arguments...
       if (argc < 2) {
-         Presenter::getInstance().print(ELC_HELP_INFO);
+         Presenter::getInstance().printLine(ELC_HELP_INFO);
          return -3;
       }
 
