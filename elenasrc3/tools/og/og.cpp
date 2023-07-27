@@ -142,7 +142,14 @@ int parseRuleSet(FileEncoding encoding, path_t path)
    ByteCodeTrieBuilder trie({ ByteCode::None });
 
    TextFileReader source(path.str(), encoding, false);
+   if(!source.isOpen()) {
+      printf(OG_FILENOTEXIST);
+
+      throw AbortError();
+   }
+
    ScriptReader reader(4, &source);
+
    ScriptToken  token;
 
    // add root
@@ -220,6 +227,12 @@ int parseSourceRules(FileEncoding encoding, path_t path)
    BuildCodeTrie       trie({ });
 
    TextFileReader source(path.str(), encoding, false);
+   if (!source.isOpen()) {
+      printf(OG_FILENOTEXIST);
+
+      throw AbortError();
+   }
+
    ScriptReader reader(4, &source);
    ScriptToken  token;
 

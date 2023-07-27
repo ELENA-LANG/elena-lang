@@ -39,7 +39,17 @@ fi
 #   exit 1
 # fi
 
-../../bin/og-cli -s ../../dat/og/bt_rules.txt
+../../bin/og-cli ../../dat/og/bc_rules60.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../../bin/og-cli -s ../../dat/og/bt_rules60.txt
 ret=$?
 if [ $ret -eq 0 ]
 then
