@@ -92,7 +92,7 @@ namespace elena_lang
       {errInvalidParserTarget, errMsgInvalidParserTarget},
       {errInvalidParserTargetType, errMsgInvalidParserTargetType},
       {wrnCallingItself, wrnMsgCallingItself},
-      {errAssigningToSelf, errMsgAssígningToSelf},
+      {errAssigningToSelf, errMsgAssigningToSelf},
    };
 
 }
