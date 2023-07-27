@@ -43,6 +43,8 @@ public program()
    stackSafeExtensions();
    genericTest();
    outerFieldAssigningTest();
+   methodNotFoundTest();
+   nilReferenceTest();
 
    console.writeLine("--- Passed ---")
 }

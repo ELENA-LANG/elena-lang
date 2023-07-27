@@ -11,14 +11,13 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * implementing corex : allocperm, ...
-    * exception tests : methodnotfound, nilreference
     * allocate constant array directly if possible
+    * ide : recent files - remove duplicates
+    * migrate the rest of system (basic.l - IntNumber)
+    * intnumber.cast<'integer> - should returns itself without boxing
 
     * ide : goto nested class
-    * ide : recent files - remove duplicates
     * test UTF16Encoder : to / from utf8, to / from win2152, load file
-    * migrate the rest of system (basic.l - IntNumber)
     * #195 : implementing rosetta code samples
     * ldoc : show template based type correctly
     * ide : about
@@ -28,7 +27,6 @@ In development:
     * elena-lc : raise an error if the file in the project does not exist
     * ide : recent files / projects, clear the list
     * string to real : support e notation
-    * intnumber.cast<'integer> - should returns itself without boxing
     * uncomment ConsoleFactory type attributes
     * external operation : do not box the arguments
     * support constants in array size declaration (see lnx_console.l)

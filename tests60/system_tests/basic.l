@@ -1474,3 +1474,47 @@ outerFieldAssigningTest()
 
    console.writeLine(".");
 }
+
+// --- methodNotFoundTest ---
+
+methodNotFoundTest()
+{
+   console.write("methodNotFoundTest:");
+
+   var o := 2;
+   var f := false;
+   try
+   {
+      o.fail()
+   }
+   catch(MethodNotFoundException e)
+   {
+      f := true;
+   };
+
+   Assert.ifTrue(f);
+
+   console.writeLine(".");
+}
+
+// --- methodNotFoundTest ---
+
+nilReferenceTest()
+{
+   console.write("nilReferenceTest:");
+
+   var o := nil;
+   var f := false;
+   try
+   {
+      o.fail()
+   }
+   catch(NilReferenceException e)
+   {
+      f := true;
+   };
+
+   Assert.ifTrue(f);
+
+   console.writeLine(".");
+}

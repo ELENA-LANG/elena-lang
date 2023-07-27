@@ -1,13 +1,28 @@
 import extensions;
-import system'collections;
-import system'routines;
+
+// --- methodNotFoundTest ---
+
+nilReferenceTest()
+{
+   console.write("nilReferenceTest:");
+
+   var o := nil;
+   var f := false;
+   try
+   {
+      o.fail()
+   }
+   catch(NilReferenceException e)
+   {
+      f := true;
+   };
+
+   Assert.ifTrue(f);
+
+   console.writeLine(".");
+}
  
 public program()
 {
-   ArrayList l := new ArrayList();
-
-   l.append(2);
-   l.append(1);
-
-   l.exchange(0,1);
+   nilReferenceTest();
 }

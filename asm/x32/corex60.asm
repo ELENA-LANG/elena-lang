@@ -288,6 +288,169 @@ labYGNextFrame:
 
 end
 
+// --- GC_ALLOCPERM ---
+// in: ecx - size ; out: ebx - created object
+procedure %GC_ALLOCPERM
+
+  // ; GCXT: set lock
+labStart:
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+
+labWait:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[edi], edx
+  jnz  short labWait
+
+  mov  eax, [data : %CORE_GC_TABLE + gc_perm_current]
+  add  ecx, eax
+  cmp  ecx, [data : %CORE_GC_TABLE + gc_perm_end]
+  jae  short labPERMCollect
+  mov  [data : %CORE_GC_TABLE + gc_perm_current], ecx
+  lea  ebx, [eax + elObjectOffset]
+
+  // ; GCXT: clear sync field
+  mov  edx, 0FFFFFFFFh
+  lea  ebx, [eax + elObjectOffset]
+  
+  // ; GCXT: free lock
+  // ; could we use mov [esi], 0 instead?
+  lock xadd [esi], edx
+
+  ret
+
+labPERMCollect:
+  // ; save registers
+  sub  ecx, eax
+
+  // ; GCXT: find the current thread entry
+  mov  edx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+
+  push esi
+
+  // ; GCXT: find the current thread entry
+  mov  eax, [edx+eax*4]
+
+  push ebp
+
+  // ; GCXT: lock frame
+  // ; get current thread event
+  mov  esi, [eax + tt_sync_event]
+  mov  [eax + tt_stack_frame], esp
+
+  push ecx
+
+  // ; === GCXT: safe point ===
+  mov  edx, [data : %CORE_GC_TABLE + gc_signal]
+  // ; if it is a collecting thread, starts the GC
+  test edx, edx                       
+  jz   short labConinue
+  // ; otherwise eax contains the collecting thread event
+
+  // ; signal the collecting thread that it is stopped
+  push edx
+  push esi
+  call extern "$rt.SignalStopGCLA"
+  add  esp, 4
+
+  // ; free lock
+  // ; could we use mov [esi], 0 instead?
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+  mov  ebx, 0FFFFFFFFh
+  lock xadd [edi], ebx
+
+  // ; stop until GC is ended
+  call extern "$rt.WaitForSignalGCLA"
+  add  esp, 4
+
+  // ; restore registers and try again
+  pop  ecx
+  pop  ebp
+  pop  esi
+
+  jmp  labStart
+
+labConinue:
+  mov  [data : %CORE_GC_TABLE + gc_signal], esi // set the collecting thread signal
+  mov  ebp, esp
+
+  // ; === thread synchronization ===
+
+  // ; create list of threads need to be stopped
+  mov  eax, esi
+  // ; get tls entry address  
+  mov  esi, data : %CORE_THREAD_TABLE + tt_slots
+  mov  edi, [esi - 4]
+labNext:
+  mov  edx, [esi]
+  test edx, edx
+  jz   short labSkipTT
+  cmp  eax, [edx + tt_sync_event]
+  setz cl
+  or   ecx, [edx + tt_flags]
+  test ecx, 1
+  // ; skip current thread signal / thread in safe region from wait list
+  jnz  short labSkipSave
+  push [edx + tt_sync_event]
+labSkipSave:
+
+  // ; reset all signal events
+  push [edx + tt_sync_event]
+  call extern "$rt.SignalClearGCLA"
+  add  esp, 4
+
+  lea  esi, [esi + 8]
+  mov  eax, [data : %CORE_GC_TABLE + gc_signal]
+labSkipTT:
+  sub  edi, 1
+  jnz  short labNext
+
+  mov  esi, data : %CORE_GC_TABLE + gc_lock
+  mov  edx, 0FFFFFFFFh
+  mov  ebx, ebp
+
+  // ; free lock
+  // ; could we use mov [esi], 0 instead?
+  lock xadd [esi], edx
+
+  mov  ecx, esp
+  sub  ebx, esp
+  jz   short labSkipWait
+
+  // ; wait until they all stopped
+  shr  ebx, 2
+  push ecx
+  push ebx
+  call extern "$rt.WaitForSignalsGCLA"
+
+labSkipWait:
+  // ; remove list
+  mov  esp, ebp     
+
+  // ==== GCXT end ==============
+
+  call extern "$rt.CollectPermGCLA"
+
+  mov  edi, eax
+
+  // ; GCXT: signal the collecting thread that GC is ended
+  // ; should it be placed into critical section?
+  xor  ecx, ecx
+  mov  esi, [data : %CORE_GC_TABLE + gc_signal]
+  // ; clear thread signal var
+  mov  [data : %CORE_GC_TABLE + gc_signal], ecx
+  push esi
+  call extern "$rt.SignalStopGCLA"
+
+  mov  ebx, edi
+  add  esp, 4
+
+  pop  esi
+  ret
+
+end
+
 // ; --- System Core Preloaded Routines --
 
 // ; ==== Command Set ==
