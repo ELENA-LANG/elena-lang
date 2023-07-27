@@ -1456,6 +1456,9 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode 
       
    }
    else {
+      if (node.existChild(SyntaxKey::InitExpression))
+         _errorProcessor->raiseTerminalError(errInvalidOperation, retrievePath(node), node);
+
       DeclarationType type = defineDeclarationType(writer.CurrentNode());
       switch (type) {
          case DeclarationType::Import:

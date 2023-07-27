@@ -11,9 +11,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * compiling : const arr := new int[] { 1, 2, 3 };
-
-    * set operation with constant array should not be allowed
     * ide : recent files - remove duplicates
     * migrate the rest of system (basic.l - IntNumber)
     * intnumber.cast<'integer> - should returns itself without boxing
