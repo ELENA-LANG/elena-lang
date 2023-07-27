@@ -90,7 +90,7 @@ namespace elena_lang
    constexpr auto errDupProtectedMethod      = 183;
    constexpr auto errUnknownDefConstructor   = 184;
    constexpr auto errUnknownMessage          = 185;
-   constexpr auto errAssígningToSelf         = 186;
+   constexpr auto errAssigningToSelf         = 186;
 
    constexpr auto errUnknownModule           = 201;
    constexpr auto errUnresovableLink         = 202;
