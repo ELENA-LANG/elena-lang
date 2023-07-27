@@ -18,7 +18,6 @@ void print(const char* msg, ...)
 
    vprintf(msg, argptr);
    va_end(argptr);
-   printf("\n");
 
    fflush(stdout);
 }
@@ -30,6 +29,7 @@ void printLine(const char* msg, ...)
 
    vprintf(msg, argptr);
    va_end(argptr);
+   printf("\n");
 
    fflush(stdout);
 }
