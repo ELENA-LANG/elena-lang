@@ -11,7 +11,9 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * allocate constant array directly if possible
+    * compiling : const arr := new int[] { 1, 2, 3 };
+
+    * set operation with constant array should not be allowed
     * ide : recent files - remove duplicates
     * migrate the rest of system (basic.l - IntNumber)
     * intnumber.cast<'integer> - should returns itself without boxing
@@ -764,7 +766,6 @@ Backlog:
                    boxed
                  * the following code does not work - theOwner.resize(int width, int height)  (see forms'SDIWindowListener.onsize)
                  * interface - can the wrapper class be saved to use it several times?
-                 * set operation with constant array should not be allowed
                  * support static prefix to allow operations with static field only
                  * sealed static fields, cannot be changed in the child classes?!
  

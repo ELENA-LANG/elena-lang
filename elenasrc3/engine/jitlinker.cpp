@@ -1166,10 +1166,6 @@ addr_t JITLinker :: resolveConstantArray(ReferenceInfo referenceInfo, ref_t sect
 
 addr_t JITLinker :: resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo sectionInfo, ref_t sectionMask)
 {
-   // get target image & resolve virtual address
-   MemoryBase* image = _imageProvider->getTargetSection(mskRDataRef);
-   MemoryWriter writer(image);
-
    ReferenceInfo  vmtReferenceInfo;
    VAddressMap    references({ 0, nullptr, 0, 0 });
 
@@ -1182,6 +1178,10 @@ addr_t JITLinker :: resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo
    if (!vmtReferenceInfo.referenceName.empty()) {
       vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
    }
+
+   // get target image & resolve virtual address
+   MemoryBase* image = _imageProvider->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
 
    // allocate object header
    _compiler->allocateHeader(writer, vmtVAddress, size, true, _virtualMode);

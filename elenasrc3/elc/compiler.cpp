@@ -197,6 +197,36 @@ void Interpreter :: addConstArrayItem(ref_t dictionaryRef, ref_t item, ref_t mas
    _logic->writeArrayReference(dictionary, item | mask);
 }
 
+void Interpreter :: addIntArrayItem(ref_t dictionaryRef, int value)
+{
+   MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskConstant, true);
+   if (!dictionary)
+      throw InternalError(errFatalError);
+
+   MemoryWriter writer(dictionary);
+   writer.writeDWord(value);
+}
+
+void Interpreter :: addLongArrayItem(ref_t dictionaryRef, long long value)
+{
+   MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskConstant, true);
+   if (!dictionary)
+      throw InternalError(errFatalError);
+
+   MemoryWriter writer(dictionary);
+   writer.writeQWord(value);
+}
+
+void Interpreter :: addFloatArrayItem(ref_t dictionaryRef, double value)
+{
+   MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskConstant, true);
+   if (!dictionary)
+      throw InternalError(errFatalError);
+
+   MemoryWriter writer(dictionary);
+   writer.write(&value, sizeof(value));
+}
+
 void Interpreter :: setTypeMapValue(ref_t dictionaryRef, ustr_t key, ref_t reference)
 {
    MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskTypeMapRef, true);
@@ -279,9 +309,10 @@ bool Interpreter :: evalDictionaryOp(ref_t operator_id, ArgumentsInfo& args)
    return false;
 }
 
-ObjectInfo Interpreter :: createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args)
+ObjectInfo Interpreter :: createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args, bool byValue)
 {
-   auto section = _scope->module->mapSection(arrayRef | mskConstArray, false);
+   ref_t mask = byValue ? mskConstant : mskConstArray;
+   auto section = _scope->module->mapSection(arrayRef | mask, false);
 
    for (size_t i = 0; i < args.count(); i++) {
       auto arg = args[i];
@@ -290,7 +321,28 @@ ObjectInfo Interpreter :: createConstCollection(ref_t arrayRef, ref_t typeRef, A
             addConstArrayItem(arrayRef, arg.reference, mskLiteralRef);
             break;
          case ObjectKind::IntLiteral:
-            addConstArrayItem(arrayRef, arg.reference, mskIntLiteralRef);
+            if (byValue) {
+               addIntArrayItem(arrayRef, arg.extra);
+            }
+            else addConstArrayItem(arrayRef, arg.reference, mskIntLiteralRef);
+            break;
+         case ObjectKind::LongLiteral:
+            if (byValue) {
+               ustr_t valStr = _scope->module->resolveConstant(arg.reference);
+               long long val = StrConvertor::toLong(valStr, 16);
+
+               addLongArrayItem(arrayRef, val);
+            }
+            else addConstArrayItem(arrayRef, arg.reference, mskLongLiteralRef);
+            break;
+         case ObjectKind::Float64Literal:
+            if (byValue) {
+               ustr_t valStr = _scope->module->resolveConstant(arg.reference);
+               double val = StrConvertor::toDouble(valStr);
+
+               addFloatArrayItem(arrayRef, val);
+            }
+            else addConstArrayItem(arrayRef, arg.reference, mskRealLiteralRef);
             break;
          case ObjectKind::Singleton:
             addConstArrayItem(arrayRef, arg.reference, mskVMTRef);
@@ -304,7 +356,8 @@ ObjectInfo Interpreter :: createConstCollection(ref_t arrayRef, ref_t typeRef, A
    if (typeRef)
       section->addReference(typeRef | mskVMTRef, (pos_t)-4);
 
-   return { ObjectKind::ConstArray, { typeRef }, arrayRef };
+   return { byValue ? ObjectKind::Constant : ObjectKind::ConstArray,
+      { typeRef }, arrayRef };
 }
 
 bool Interpreter :: evalObjArrayOp(ref_t operator_id, ArgumentsInfo& args)
@@ -3670,7 +3723,7 @@ ObjectInfo Compiler :: evalCollection(Interpreter& interpreter, Scope& scope, Sy
 
          argInfo.typeInfo.typeRef = retrieveStrongType(scope, argInfo);
 
-         if (!isConstant(argInfo.kind) 
+         if (!isConstant(argInfo.kind)
             || (elementTypeRef && !_logic->isCompatible(*scope.moduleScope, { elementTypeRef }, argInfo.typeInfo, true)))
          {
             return {};
@@ -3691,7 +3744,9 @@ ObjectInfo Compiler :: evalCollection(Interpreter& interpreter, Scope& scope, Sy
       node.setArgumentReference(nestedRef);
    }
 
-   return interpreter.createConstCollection(nestedRef, collectionTypeRef, arguments);
+   bool byValue = _logic->isEmbeddableArray(*scope.moduleScope, collectionTypeRef);
+
+   return interpreter.createConstCollection(nestedRef, collectionTypeRef, arguments, byValue);
 }
 
 ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors, bool resolveMode)
@@ -8986,8 +9041,11 @@ ObjectInfo Compiler :: compileCollection(BuildTreeWriter& writer, ExprScope& sco
    if (!test(collectionInfo.header.flags, elDynamicRole))
       scope.raiseError(errInvalidOperation, node);
 
-   if (constOne && node.arg.reference)
-      return { ObjectKind::ConstArray, { collectionTypeRef }, node.arg.reference };
+   if (constOne && node.arg.reference) {
+      bool byValue = _logic->isEmbeddableArray(*scope.moduleScope, collectionTypeRef);
+
+      return { byValue ? ObjectKind::Constant : ObjectKind::ConstArray, { collectionTypeRef }, node.arg.reference };
+   }
 
    auto fieldInfo = *(collectionInfo.fields.start());
    ref_t elementTypeRef = retrieveStrongType(scope, { ObjectKind::Object, { fieldInfo.typeInfo.elementRef }, 0 });
@@ -11058,7 +11116,6 @@ void Compiler :: compileClassClass(BuildTreeWriter& writer, ClassScope& classCla
    ustr_t name = scope.module->resolveReference(scope.reference);
    _errorProcessor->info(infoCurrentClass, name);
 #endif // FULL_OUTOUT_INFO
-
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(classClassScope, Scope::ScopeLevel::Namespace);
 

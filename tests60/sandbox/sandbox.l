@@ -1,28 +1,7 @@
 import extensions;
 
-// --- methodNotFoundTest ---
+const arr = new string[] { "1", "2", "3" };
 
-nilReferenceTest()
-{
-   console.write("nilReferenceTest:");
-
-   var o := nil;
-   var f := false;
-   try
-   {
-      o.fail()
-   }
-   catch(NilReferenceException e)
-   {
-      f := true;
-   };
-
-   Assert.ifTrue(f);
-
-   console.writeLine(".");
-}
- 
 public program()
 {
-   nilReferenceTest();
 }

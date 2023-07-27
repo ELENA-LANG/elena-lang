@@ -282,6 +282,9 @@ namespace elena_lang
 
       void addTypeListItem(ref_t dictionaryRef, ref_t symbolRef, ref_t mask);
       void addConstArrayItem(ref_t dictionaryRef, ref_t item, ref_t mask);
+      void addIntArrayItem(ref_t dictionaryRef, int value);
+      void addLongArrayItem(ref_t dictionaryRef, long long value);
+      void addFloatArrayItem(ref_t dictionaryRef, double value);
 
       bool evalDictionaryOp(ref_t operator_id, ArgumentsInfo& args);
 
@@ -294,7 +297,7 @@ namespace elena_lang
 
       bool eval(BuildKey key, ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
 
-      ObjectInfo createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args);
+      ObjectInfo createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args, bool byValue);
 
       Interpreter(ModuleScopeBase* scope, CompilerLogic* logic);
    };
