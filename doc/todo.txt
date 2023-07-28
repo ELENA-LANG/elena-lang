@@ -7,7 +7,6 @@ In development:
      === Iteration 17 ===
     [!] x86 mta support
     [!] elt tutorial (stand-alone / in IDE)
-    [!] some bytecode optimizations
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 

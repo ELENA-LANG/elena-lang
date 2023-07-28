@@ -37,16 +37,19 @@ namespace io
       }
    }
 
-   public class ConsoleWriter
+   public class ConsoleWriter : IConsoleWriter
    {
       method write(string s)
       {
          int l := s.Length;
          extern libc.write(1, s, l);
       }
+
+      write(wide s)
+        <= write(cast literal(s));
    }
 
-   public class ConsoleReader
+   public class ConsoleReader : IConsoleReader
    {
       char read()
       {
@@ -122,6 +125,9 @@ namespace io
     
          ^ output
       }
+
+      wide readWideLine()
+         = cast wide(self.readLine());
    }
 
    public stdConsoleWriter = new ConsoleWriter();
