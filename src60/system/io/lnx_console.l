@@ -46,7 +46,7 @@ namespace io
       }
 
       write(wide s)
-        <= write(cast literal(s));
+        <= write(cast string(s));
    }
 
    public class ConsoleReader : IConsoleReader
