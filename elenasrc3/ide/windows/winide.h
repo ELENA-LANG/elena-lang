@@ -58,6 +58,7 @@ namespace elena_lang
       IDEController*    _controller;
 
       WindowList        _windowList;
+      RecentList        _recentFileList;
 
       void onStatusChange(StatusNMHDR* rec);
       void onSelection(SelectionNMHDR* rec);

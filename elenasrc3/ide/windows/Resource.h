@@ -39,6 +39,18 @@
 #define IDM_PROJECT_CLOSE           411
 #define IDM_PROJECT_NEW             412
 
+#define IDM_FILE_FILES              420
+#define IDM_FILE_FILES_1            421
+#define IDM_FILE_FILES_2            422
+#define IDM_FILE_FILES_3            423
+#define IDM_FILE_FILES_4            424
+#define IDM_FILE_FILES_5            425
+#define IDM_FILE_FILES_6            426
+#define IDM_FILE_FILES_7            427
+#define IDM_FILE_FILES_8            428
+#define IDM_FILE_FILES_9            429
+#define IDM_FILE_FILES_CLEAR        430
+
 #define IDM_EDIT_UNDO               501
 #define IDM_EDIT_REDO               502
 #define IDM_EDIT_CUT                503

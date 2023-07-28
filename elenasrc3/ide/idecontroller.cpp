@@ -934,6 +934,17 @@ bool IDEController :: openProject(IDEModel* model, path_t projectFile, Notificat
    return true;
 }
 
+inline void removeDuplicate(ProjectPaths& lastOpenFiles, path_t value)
+{
+   for (auto it = lastOpenFiles.start(); !it.eof(); ++it) {
+      if (value.compare(*it)) {
+         lastOpenFiles.cut(it);
+
+         return;
+      }
+   }
+}
+
 void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)
 {
    NotificationStatus status = {};
@@ -942,6 +953,8 @@ void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)
    if (dialog.openFiles(files)) {
       for (auto it = files.start(); !it.eof(); ++it) {
          if(openFile(model, *it, status)) {
+            removeDuplicate(model->projectModel.lastOpenFiles, *it);
+
             while (model->projectModel.lastOpenFiles.count() >= MAX_RECENT_FILES)
                model->projectModel.lastOpenFiles.cut(model->projectModel.lastOpenFiles.end());
 
@@ -951,6 +964,22 @@ void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)
 
       _notifier->notify(NOTIFY_IDE_CHANGE, status);
    }
+}
+
+void IDEController :: doOpenFile(IDEModel* model, path_t path)
+{
+   NotificationStatus status = {};
+
+   if (openFile(model, path, status)) {
+      removeDuplicate(model->projectModel.lastOpenFiles, path);
+
+      while (model->projectModel.lastOpenFiles.count() >= MAX_RECENT_FILES)
+         model->projectModel.lastOpenFiles.cut(model->projectModel.lastOpenFiles.end());
+
+      model->projectModel.lastOpenFiles.insert(path.clone());
+   }
+
+   _notifier->notify(NOTIFY_IDE_CHANGE, status);
 }
 
 bool IDEController :: doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave)

@@ -528,11 +528,12 @@ namespace elena_lang
             if (_top == _tale) {
                _top = _tale = nullptr;
             }
-            else if (_tale == tmp) {
-               _tale = previous;
-            }
             else if (previous == nullptr) {
                _top = _top->next;
+            }
+            else if (_tale == tmp) {
+               _tale = previous;
+               previous->next = tmp->next;
             }
             else previous->next = tmp->next;
 
@@ -563,10 +564,15 @@ namespace elena_lang
          if (tmp) {
             _count--;
 
-            if (tmp == _tale)
-               _tale = previous;
-            if (previous == nullptr) {
+            if (_top == _tale) {
+               _top = _tale = nullptr;
+            }
+            else if (previous == nullptr) {
                _top = _top->next;
+            }
+            else if (_tale == tmp) {
+               _tale = previous;
+               previous->next = tmp->next;
             }
             else previous->next = tmp->next;
 

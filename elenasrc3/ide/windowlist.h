@@ -31,6 +31,27 @@ namespace elena_lang
       WindowList(IDEController* controller, TextViewModelBase* model);
    };
 
+   // --- RecentList ---
+   class RecentList : public MenuHistoryBase
+   {
+      IDEModel*      _ideModel;
+      IDEController* _controller;
+      ProjectPaths*  _recentList;
+
+   public:
+      void onDocumentNew(int index) override;
+      void onDocumentModeChanged(int index, bool modifiedMode) override;
+      void onDocumentClose(int index) override;
+      void onDocumentSelect(int index) override;
+
+      void assignList(ProjectPaths* recentList);
+      void reload();
+
+      void openFile(int index);
+
+      RecentList(IDEController* controller, IDEModel* model, int menuBaseId);
+   };
+
 } // elena:lang
 
 #endif // WINDOWLIST_H

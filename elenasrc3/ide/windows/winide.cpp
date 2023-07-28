@@ -126,7 +126,8 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    gotoDialog(instance, this),
    windowDialog(instance, this, &model->sourceViewModel),
    clipboard(this),
-   _windowList(controller, model->viewModel())
+   _windowList(controller, model->viewModel()),
+   _recentFileList(controller, model, IDM_FILE_FILES)
 {
    this->_instance = instance;
    this->_controller = controller;
@@ -155,6 +156,7 @@ void IDEWindow :: newProject()
 void IDEWindow :: openFile()
 {
    _controller->doOpenFile(fileDialog, _model);
+   _recentFileList.reload();
 }
 
 void IDEWindow :: saveFile()
@@ -687,6 +689,17 @@ bool IDEWindow :: onCommand(int command)
       case IDM_WINDOW_NINTH:
          _windowList.select(command - IDM_WINDOW_FIRST + 1);
          break;
+      case IDM_FILE_FILES_1:
+      case IDM_FILE_FILES_2:
+      case IDM_FILE_FILES_3:
+      case IDM_FILE_FILES_4:
+      case IDM_FILE_FILES_5:
+      case IDM_FILE_FILES_6:
+      case IDM_FILE_FILES_7:
+      case IDM_FILE_FILES_8:
+      case IDM_FILE_FILES_9:
+         _recentFileList.openFile(command - IDM_FILE_FILES);
+         break;
       case IDM_WINDOW_WINDOWS:
          _controller->doSelectWindow(fileDialog, messageDialog, windowDialog, _model);
          break;
@@ -707,6 +720,7 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
    switch (rec->code) {
       case NOTIFY_ONSTART:
          _controller->init(_model);
+         _recentFileList.assignList(&_model->projectModel.lastOpenFiles);
          break;
       case NOTIFY_IDE_CHANGE:
          onIDEChange(rec->status);
@@ -1170,4 +1184,5 @@ void IDEWindow :: populate(size_t counter, GUIControlBase** children)
    MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
 
    _windowList.assign(menu);
+   _recentFileList.assign(menu);
 }

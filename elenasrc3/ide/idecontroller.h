@@ -207,6 +207,7 @@ namespace elena_lang
 
       void doNewFile(IDEModel* model);
       void doOpenFile(FileDialogBase& dialog, IDEModel* model);
+      void doOpenFile(IDEModel* model, path_t path);
       bool doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
       bool doSaveAll(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
       bool doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);

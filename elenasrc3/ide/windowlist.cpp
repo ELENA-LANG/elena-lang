@@ -62,3 +62,58 @@ bool WindowList :: select(int listIndex)
 
    return false;
 }
+
+// --- RecentList ---
+
+RecentList :: RecentList(IDEController* controller, IDEModel* model, int menuBaseId)
+   : MenuHistoryBase(&model->sourceViewModel, 9, menuBaseId, _T("none"), true)
+{
+   _ideModel = model;
+   _controller = controller;
+   _recentList = nullptr;
+}
+
+void RecentList :: onDocumentClose(int)
+{
+   
+}
+
+void RecentList :: onDocumentModeChanged(int, bool)
+{
+   
+}
+
+void RecentList :: onDocumentNew(int index)
+{
+   
+}
+
+void RecentList :: onDocumentSelect(int)
+{
+   
+}
+
+void RecentList :: reload()
+{
+   _list.clear();
+
+   if (_recentList != nullptr) {
+      for (auto it = _recentList->start(); !it.eof(); ++it) {
+         _list.add((*it).clone());
+      }
+
+      reloadList();
+   }
+}
+
+void RecentList :: assignList(ProjectPaths* recentList)
+{
+   _recentList = recentList;
+
+   reload();
+}
+
+void RecentList :: openFile(int index)
+{
+   _controller->doOpenFile(_ideModel, _list.get(index));
+}
