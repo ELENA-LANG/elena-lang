@@ -10,8 +10,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * elena-lc : raise an error if the file in the project does not exist
-    * elc : using unassigned variable
     * migrate the rest of system (basic.l - LongNumber)
     * new rosetta code sample : Amb
 

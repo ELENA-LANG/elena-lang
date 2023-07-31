@@ -336,7 +336,7 @@ bool ProjectController :: compileProject(ProjectModel& model)
    appPath.combine(*model.paths.compilerPath);
 
    PathString cmdLine(*model.paths.compilerPath);
-   cmdLine.append(" ");
+   cmdLine.append(" -w3 "); // !! temporal
    cmdLine.append(*model.projectFile);
 
    PathString curDir;
@@ -353,7 +353,7 @@ bool ProjectController :: compileSingleFile(ProjectModel& model)
    appPath.combine(*model.paths.compilerPath);
 
    PathString cmdLine(*model.paths.compilerPath);
-   cmdLine.append(" ");
+   cmdLine.append(" -w3 "); // !! temporal
    cmdLine.append(singleProjectFile);
 
    PathString curDir;

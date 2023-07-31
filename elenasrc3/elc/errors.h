@@ -85,6 +85,7 @@ namespace elena_lang
    constexpr auto wrnMsgDuplicateInclude     = "\n%s(%d:%d): warning 425: '%s': duplicate inclusion\n";
    constexpr auto wrnMsgUnknownTypecast      = "\n%s(%d:%d): warning 426: typecasting routine cannot be found\n";
    constexpr auto wrnMsgUnsupportedOperator  = "\n%s(%d:%d): warning 427: operator handler is not defined for %s\n";
+   constexpr auto wrnMsgUnassignedVariable   = "\n%s(%d:%d): warning 428: an unassigned variable - '%s'\n";
 
    constexpr auto wrnMsgSyntaxFileNotFound   = "\nwarning 500: cannot open syntax file '%s'\n";
    constexpr auto wrnMsgInvalidConfig        = "\nwarning 501: invalid or unknown config file %s\n";

@@ -752,10 +752,13 @@ namespace elena_lang
          MethodScope(ClassScope* classScope);
       };
 
+      typedef Map<int, SyntaxNode> NodeMap;
+
       struct CodeScope : Scope
       {
          // scope local variables
          LocalMap locals;
+         NodeMap  localNodes;
 
          pos_t    allocated1, reserved1;       // defines managed frame size
          pos_t    allocated2, reserved2;       // defines unmanaged frame size
@@ -958,6 +961,7 @@ namespace elena_lang
       bool                   _optMode;
       bool                   _tapeOptMode;
       bool                   _withMethodParamInfo;
+      bool                   _trackingUnassigned;
 
       bool reloadMetaData(ModuleScopeBase* moduleScope, ustr_t name);
 
@@ -1138,6 +1142,8 @@ namespace elena_lang
       void declareExtension(ClassScope& scope, mssg_t message, bool internalOne);
 
       void declareModuleExtensionDispatcher(NamespaceScope& scope, SyntaxNode node);
+
+      void warnOnUnassignedLocal(SyntaxNode node, CodeScope& scope, int level);
 
       ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors = false);
       ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors = false, bool resolveMode = true);

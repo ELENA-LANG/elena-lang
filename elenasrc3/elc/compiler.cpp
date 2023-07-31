@@ -1041,14 +1041,14 @@ ObjectInfo Compiler::MethodScope :: mapIdentifier(ustr_t identifier, bool refere
 // --- Compiler::CodeScope ---
 
 Compiler::CodeScope :: CodeScope(MethodScope* parent)
-   : Scope(parent), locals({})
+   : Scope(parent), locals({}), localNodes({})
 {
    allocated1 = reserved1 = 0;
    allocated2 = reserved2 = 0;
 }
 
 Compiler::CodeScope :: CodeScope(CodeScope* parent)
-   : Scope(parent), locals({})
+   : Scope(parent), locals({}), localNodes({})
 {
    reserved1 = allocated1 = parent->allocated1;
    reserved2 = allocated2 = parent->allocated2;
@@ -1404,6 +1404,8 @@ Compiler :: Compiler(
    _optMode = false;
    _tapeOptMode = false;
    _withMethodParamInfo = false;
+
+   _trackingUnassigned = false;
 }
 
 inline ref_t resolveDictionaryMask(TypeInfo typeInfo)
@@ -5683,7 +5685,6 @@ bool Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typ
       }
    }
 
-
    ObjectInfo variable;
    variable.typeInfo = typeInfo;
    variable.kind = ObjectKind::Local;
@@ -5736,6 +5737,13 @@ bool Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typ
          size, true);
    }
    else scope.raiseError(errDuplicatedLocal, terminal);
+
+   if (_trackingUnassigned) {
+      if (size > 0) {
+         codeScope->localNodes.add(-(int)variable.reference, terminal);
+      }
+      else codeScope->localNodes.add((int)variable.reference, terminal);
+   }
 
    return true;
 }
@@ -9641,8 +9649,28 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
 
    injectVariableInfo(variableNode, codeScope);
 
+   if (_trackingUnassigned) {
+      // warn if the variable was not assigned
+      for (auto it = codeScope.locals.start(); !it.eof(); ++it) {
+         if ((*it).unassigned) {
+            if((*it).size > 0) {
+               warnOnUnassignedLocal(node, codeScope, -(*it).offset);
+            }
+            else warnOnUnassignedLocal(node, codeScope, (*it).offset);
+         }
+      }
+   }
+
    // NOTE : in the closure mode the last statement is the closure result
    return closureMode ? exprRetVal : retVal;
+}
+
+void Compiler :: warnOnUnassignedLocal(SyntaxNode node, CodeScope& scope, int level)
+{
+   SyntaxNode current = scope.localNodes.get(level);
+
+   if (current != SyntaxKey::None)
+      scope.raiseWarning(WARNING_LEVEL_3, wrnUnassignedVariable, current);
 }
 
 void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope,
@@ -11289,6 +11317,8 @@ void Compiler :: createPackageInfo(ModuleScopeBase* moduleScope, ManifestInfo& m
 void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,
    ManifestInfo& manifestInfo)
 {
+   _trackingUnassigned = (_errorProcessor->getWarningLevel() == WarningLevel::Level3);
+
    reloadMetaData(moduleScope, PREDEFINED_MAP);
    reloadMetaData(moduleScope, ATTRIBUTES_MAP);
    reloadMetaData(moduleScope, OPERATION_MAP);

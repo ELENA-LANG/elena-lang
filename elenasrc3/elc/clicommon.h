@@ -638,6 +638,21 @@ public:
       }
    }
 
+   WarningLevel getWarningLevel()
+   {
+      switch (_warningMasks) {
+         case WARNING_MASK_1:
+            return WarningLevel::Level1;
+         case WARNING_MASK_2:
+            return WarningLevel::Level2;
+         case WARNING_MASK_3:
+            return WarningLevel::Level3;
+         case WARNING_MASK_0:
+         default:
+            return WarningLevel::Level0;
+      }
+   }
+
    ErrorProcessor(PresenterBase* presenter)
    {
       _presenter = presenter;
