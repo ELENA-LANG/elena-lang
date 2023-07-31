@@ -2118,5 +2118,3 @@ public sealed class KeyValue
    dispatch() : info("Redirects the incoming messages to the object")
      => value;
 }
-
-//public real symbol Pi_value = PrimitiveRealOperations.getPi();

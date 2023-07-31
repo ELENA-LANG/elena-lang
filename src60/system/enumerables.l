@@ -259,6 +259,7 @@ class IntRangeEnumerator : Enumerator<int>
 
    constructor(int start, int end)
    {
+      this index := 0;
       this start := start;
       this end := end;
       

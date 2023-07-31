@@ -10,7 +10,7 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * new rosetta code sample : Amb
+    * new rosetta code sample : Amicable pairs, Anagrams, Anonymous recursion, Apply a callback
     * check why the struct is boxed (see INPUT_RECORD operations)
     * direct shift
     * ide : trim, erase line, upper case, lower case
@@ -21,6 +21,7 @@ In development:
     * ldoc : show template based type correctly
     * ide : about
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
+    * new rosetta code sample : Arithmetic evaluation
     * ide : recent projects
     * ide : recent files / projects, clear the list
     * string to real : support e notation
@@ -96,6 +97,7 @@ In development:
     * test all samples for win x86
     * optimize: pi += -1.0;
     * optimize: pi sample (<7 secs)
+    * new rosetta code sample : Amicable pairs (yields)
 
     === Iteration 19 ===
     [!] elenavm x64 dll
@@ -104,6 +106,7 @@ In development:
     [!] ide vm console x64
     * amd64 : implement system 5
     * test all samples for win x86-64
+    * optimize Amicable pairs
 
     === Iteration 20 ===
     [!] support mta_gui, vm_mta_console

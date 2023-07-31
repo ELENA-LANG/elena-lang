@@ -1109,7 +1109,7 @@ void Compiler::CodeScope :: syncStack(CodeScope* parentScope)
 
 void Compiler::CodeScope :: markAsAssigned(ObjectInfo object)
 {
-   if (object.kind == ObjectKind::Local/* || object.kind == okLocalAddress*/) {
+   if (object.kind == ObjectKind::Local || object.kind == ObjectKind::LocalAddress) {
       for (auto it = locals.start(); !it.eof(); ++it) {
          if ((*it).offset == (int)object.reference) {
             (*it).unassigned = false;
