@@ -10,8 +10,10 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * migrate the rest of system (basic.l - LongNumber)
     * new rosetta code sample : Amb
+    * check why the struct is boxed (see INPUT_RECORD operations)
+    * direct shift
+    * ide : trim, erase line, upper case, lower case
 
     * ide : goto nested class
     * test UTF16Encoder : to / from utf8, to / from win2152, load file
@@ -24,15 +26,13 @@ In development:
     * string to real : support e notation
     * external operation : do not box the arguments
     * support constants in array size declaration (see lnx_console.l)
-    * check why the struct is boxed (see INPUT_RECORD operations)
+    * migrate the rest of system (basic.l - byteConvertor)
     * simplify code (see INPUT_RECORD operations)
     * pi optimization : int-real operation (#86)
     * api : provide field descriptions
     * ide : editor settings
     * boxable self (structs) - do not box the self return
-    * direct shift
     * ide : debug goto source
-    * ide : trim, erase line, upper case, lower case
     * automatical conversion of int literal to int8, int16 and int64 if possible
     * system'collections'Map - migrating rest of methods
     * system'String.Substring<'IntNumber,'IntNumber>[3] - why the parameters are boxed?
