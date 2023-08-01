@@ -10,6 +10,9 @@
 #define LISTS_H
 #include <assert.h>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Waddress"
+
 namespace elena_lang
 {
    template <class T, void(*FreeT)(T) = nullptr> class BListBase;
@@ -3619,5 +3622,7 @@ namespace elena_lang
       return key;
    }
 }
+
+#pragma GCC diagnostic pop
 
 #endif
