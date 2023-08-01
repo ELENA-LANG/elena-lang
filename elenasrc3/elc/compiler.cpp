@@ -4547,8 +4547,6 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
       if (typeInfo.typeRef != V_ARGARRAY)
          scope.raiseError(errInvalidOperation, node);
    }
-   if (attributes.variableOne)
-      scope.raiseError(errInvalidOperation, node);
 }
 
 ref_t Compiler :: declareMultiType(Scope& scope, SyntaxNode& current, ref_t elementRef)
@@ -4669,6 +4667,9 @@ void Compiler :: registerTemplateSignature(TemplateScope& scope, SyntaxNode node
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
    ref_t ref = ns->resolveImplicitIdentifier(*templateName, false, true);
+   if (!ref)
+      scope.raiseError(errUnknownClass, node);
+
    ustr_t refName = scope.module->resolveReference(ref);
    if (isWeakReference(refName))
       signature.append(scope.module->name());

@@ -14,6 +14,7 @@ In development:
     * check why the struct is boxed (see INPUT_RECORD operations)
     * direct shift
     * ide : trim, erase line, upper case, lower case
+    * elc : unassigned variable - ingore by ref inplace / stack-allocated arrays variable (see PrimitiveIntOperations.getHashcode)
 
     * ide : goto nested class
     * test UTF16Encoder : to / from utf8, to / from win2152, load file

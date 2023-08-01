@@ -3247,9 +3247,7 @@ void JITCompiler32 :: updateVoidObject(MemoryBase* rdata, addr_t superAddress, b
    void* voidObj = _preloaded.get(VOIDOBJ);
    if (virtualMode) {
 #if defined _M_X64 || __x86_64__ || __PPC64__ || __aarch64__
-      int64_t tmp = (int64_t)voidObj;
-
-      rdata->addReference(superAddress | mskRef32, static_cast<ref_t>(tmp) & ~mskAnyRef);
+      rdata->addReference(addrToUInt32(superAddress) | mskRef32, ptrToUInt32(voidObj) & ~mskAnyRef);
 #else
       rdata->addReference(superAddress | mskRef32, (pos_t)voidObj & ~mskAnyRef);
 #endif

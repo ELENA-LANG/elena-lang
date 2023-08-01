@@ -608,6 +608,9 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
             //flushAttribute(writer, scope, current, attributeCategory, allowType, true);
             flushArrayType(writer, scope, current);
          }
+         else if (current == SyntaxKey::TemplateType) {
+            flushTemplateType(writer, scope, current, false);
+         }
          else flushAttribute(writer, scope, current, attributeCategory, allowType);
 
          current = current.nextNode();
