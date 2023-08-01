@@ -3268,7 +3268,7 @@ void JITCompiler32 :: writeAttribute(MemoryWriter& writer, int category, ustr_t 
    if (virtualMode) {
       writer.writeDReference((ref_t)address | mskRef32, 0);
    }
-   else writer.writeDWord(address);
+   else writer.writeDWord(addrToUInt32(address));
 }
 
 void JITCompiler32 :: allocateVariable(MemoryWriter& writer)

@@ -1111,6 +1111,8 @@ inline %08Fh
   call %GC_ALLOC
 
   mov  rcx, [r10]
+  and  rcx, 0FFFFFFFFh
+
   shl  ecx, 3
 
   mov  rax, __ptr64_1
@@ -1867,6 +1869,7 @@ inline %0CEh
   call %GC_ALLOCPERM
 
   mov  rcx, [r10]
+  and  rcx, 0FFFFFFFFh
   shl  ecx, 3
 
   mov  rax, __ptr64_1
@@ -2849,6 +2852,7 @@ inline %0F7h
   call %GC_ALLOC
 
   mov  rcx, [r10]
+  and  rcx, 0FFFFFFFFh
   mov  eax, __n_1
   imul ecx, eax
   or   ecx, struct_mask

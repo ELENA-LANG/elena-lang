@@ -10,8 +10,12 @@
 #define LISTS_H
 #include <assert.h>
 
+#ifdef __GNUC__
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Waddress"
+
+#endif
 
 namespace elena_lang
 {
@@ -3623,6 +3627,10 @@ namespace elena_lang
    }
 }
 
+#ifdef __GNUC__
+
 #pragma GCC diagnostic pop
+
+#endif
 
 #endif
