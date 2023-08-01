@@ -1581,18 +1581,20 @@ end
 
 // ; xfillr
 inline % 0ADh
-  mov  rax, __ptr64_1
-  mov  rdi, rbx
   mov  rcx, [r10]
+  mov  rax, __ptr64_1
+  and  rcx, 0FFFFFFFFh
+  mov  rdi, rbx
   rep  stos
 
 end
 
 // ; xfillr i,0
 inline % 1ADh
-  xor  rax, rax
-  mov  rdi, rbx
   mov  rcx, [r10]
+  xor  rax, rax
+  and  rcx, 0FFFFFFFFh
+  mov  rdi, rbx
   rep  stos
 
 end
