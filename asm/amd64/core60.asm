@@ -1110,12 +1110,11 @@ inline %08Fh
   and  ecx, page_mask 
   call %GC_ALLOC
 
-  mov  rcx, [r10]
-  and  rcx, 0FFFFFFFFh
-
+  mov  rcx, r10
+  mov  rax, __ptr64_1
+  mov  ecx, dword ptr [rcx]
   shl  ecx, 3
 
-  mov  rax, __ptr64_1
   mov  [rbx - elSizeOffset], rcx
   mov  [rbx - elVMTOffset], rax
 
@@ -1868,11 +1867,11 @@ inline %0CEh
   and  ecx, page_mask 
   call %GC_ALLOCPERM
 
-  mov  rcx, [r10]
-  and  rcx, 0FFFFFFFFh
+  mov  rcx, r10
+  mov  rax, __ptr64_1
+  mov  ecx, dword ptr [rcx]
   shl  ecx, 3
 
-  mov  rax, __ptr64_1
   mov  [rbx - elSizeOffset], rcx
   mov  [rbx - elVMTOffset], rax
 
@@ -2851,9 +2850,9 @@ inline %0F7h
   and  ecx, page_mask 
   call %GC_ALLOC
 
-  mov  rcx, [r10]
-  and  rcx, 0FFFFFFFFh
+  mov  rcx, r10
   mov  eax, __n_1
+  mov  ecx, dword ptr [rcx]
   imul ecx, eax
   or   ecx, struct_mask
 
