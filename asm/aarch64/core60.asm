@@ -835,6 +835,50 @@ inline %02Fh
 
 end
 
+// ; fadd
+inline %070h
+
+  ldr     x19, [x0]
+  ldr     d17, [x10]
+  scvtf   d18, x19
+  fadd    d17, d17, d18  
+  str     d17, [x10]
+
+end
+
+// ; fsub
+inline %071h
+
+  ldr     x19, [x0]
+  ldr     d17, [x10]
+  scvtf   d18, x19
+  fsub    d17, d17, d18  
+  str     d17, [x10]
+
+end
+
+// ; fmul
+inline %072h
+
+  ldr     x19, [x0]
+  ldr     d17, [x10]
+  scvtf   d18, x19
+  fmul    d17, d17, d18  
+  str     d17, [x10]
+
+end
+
+// ; fdiv
+inline %073h
+
+  ldr     x19, [x0]
+  ldr     d17, [x10]
+  scvtf   d18, x19
+  fdiv    d17, d17, d18  
+  str     d17, [x10]
+
+end
+
 // ; fabsdp
 inline %78h
 

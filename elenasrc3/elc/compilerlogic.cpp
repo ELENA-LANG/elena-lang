@@ -928,6 +928,9 @@ bool CompilerLogic :: validateTypeScopeAttribute(ref_t attrValue, TypeAttributes
       case V_CLASS:
          attributes.classOne = true;
          return true;
+      case V_CONVERSION:
+         attributes.typecastOne = true;
+         return true;
       default:
          return false;
    }

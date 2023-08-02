@@ -4956,6 +4956,9 @@ void Compiler :: declareExpressionAttributes(Scope& scope, SyntaxNode node, Type
                else if (attributes.newOp) {
                   mode |= ExpressionAttribute::NewOp;
                }
+               else if (attributes.typecastOne) {
+                  mode |= ExpressionAttribute::CastOp;
+               }
                else {
                   if (!attributes.variableOne) {
                      if (attributes.isNonempty())

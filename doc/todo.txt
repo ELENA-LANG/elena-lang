@@ -10,6 +10,7 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
+    * aarch64: opcode fiadd, fisub, fimul, fidiv
     * new rosetta code sample : Amicable pairs, Anagrams, Anonymous recursion, Apply a callback
     * check why the struct is boxed (see INPUT_RECORD operations)
     * direct shift

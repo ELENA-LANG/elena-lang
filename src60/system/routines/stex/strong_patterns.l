@@ -13,7 +13,7 @@ public StrongFilter<T> : Enumerator<T>
     
    //get T Value() => enumerator;
    T Value
-      = enumerator.Value;
+      = *enumerator;
     
    bool next()
    {
@@ -46,7 +46,7 @@ public StrongSelector<T1, T2> : Enumerator<T2>
       this enumerator := enumerator;
    }
     
-   get T2 Value() = selector(enumerator.get());
+   get T2 Value() = selector(*enumerator);
     
    bool next() = enumerator.next();
     
