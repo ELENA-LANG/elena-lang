@@ -2127,7 +2127,7 @@ inline %0D7h
   movk    x11,  __ptr32hi_1, lsl #16
   movk    x12,  __ptr32hi_2, lsl #16
 
-  csel    x10, x11, x12, gr
+  csel    x10, x11, x12, gt
 
 end
 

@@ -7664,7 +7664,13 @@ abstract public template <SPAN CLASS="typeNameLabel">Indexer&lt;T1&gt;</SPAN></P
 <LI>
 <UL CLASS="inheritance">
 <LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
 system'Indexer&lt;T1&gt;</LI>
+</UL>
+</LI>
 </UL>
 </LI>
 </UL>
@@ -7727,6 +7733,56 @@ system'Indexer&lt;T1&gt;</LI>
 <CODE>Length()</CODE>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Available()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> value)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Index()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Index(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length()</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -7738,6 +7794,22 @@ system'Indexer&lt;T1&gt;</LI>
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink">Indexer&lt;T1&gt;</SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -7768,6 +7840,15 @@ system'Indexer&lt;T1&gt;</LI>
 <TH CLASS="colLast" scope="col">Method</TH>
 </TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>abstract </i>&nbsp;</CODE></TD>
@@ -13162,19 +13243,7 @@ public template <SPAN CLASS="typeNameLabel">Reference&lt;T1&gt;</SPAN></PRE>
 <LI>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="#BaseVariable">'BaseVariable</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
 system'Reference&lt;T1&gt;</LI>
-</UL>
-</LI>
-</UL>
-</LI>
 </UL>
 </LI>
 </UL>
@@ -13197,14 +13266,6 @@ system'Reference&lt;T1&gt;</LI>
 <CODE>value</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>value</CODE>
-</TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -13223,17 +13284,6 @@ system'Reference&lt;T1&gt;</LI>
 <SPAN CLASS="memberNameLink">Reference&lt;T1&gt;</SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink">T1</SPAN> val)
-</CODE>
-<div class="block">
-Initializes a variable</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink">Reference&lt;T1&gt;</SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> val)
 </CODE>
 <div class="block">
 Initializes a variable</div>
@@ -13272,27 +13322,6 @@ Returns the variable value</div>
 Set the variable value</div>
 </TD>
 </TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Value()</CODE>
-<div class="block">
-Returns the variable value</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Value(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> val)
-</CODE>
-<div class="block">
-Set the variable value</div>
-</TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -13309,24 +13338,6 @@ Set the variable value</div>
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink">T1</SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()</CODE>
-<div class="block">
-Returns the variable value</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink">Reference&lt;T1&gt;</SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
 <div class="block">
@@ -13376,37 +13387,6 @@ Returns the value string representation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>dispatch</i>()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>equal(o)
-</CODE>
-<div class="block">
-Returns true if o is equal to the variable value; otherwise, false</div>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>toPrintable()
-</CODE>
-<div class="block">
-Returns the value string representation</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>

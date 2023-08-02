@@ -159,6 +159,7 @@ namespace elena_lang
       void compile();
 
       AssemblerBase(int tabSize, UStrReader* reader, ModuleBase* target);
+      AssemblerBase(const char** dfa, int tabSize, UStrReader* reader, ModuleBase* target);
    };
 
 }

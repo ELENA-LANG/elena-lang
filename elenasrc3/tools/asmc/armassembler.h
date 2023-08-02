@@ -187,11 +187,7 @@ namespace elena_lang
       void compileProcedure(ScriptToken& tokenInfo) override;
 
    public:
-      Arm64Assembler(int tabSize, UStrReader* reader, ModuleBase* target)
-         : AssemblerBase(tabSize, reader, target)
-      {
-
-      }
+      Arm64Assembler(int tabSize, UStrReader* reader, ModuleBase* target);
    };
 }
 

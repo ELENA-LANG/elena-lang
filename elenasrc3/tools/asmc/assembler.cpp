@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA Assembler
 //		classes.
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -17,6 +17,12 @@ using namespace elena_lang;
 
 AssemblerBase :: AssemblerBase(int tabSize, UStrReader* reader, ModuleBase* target)
    : _reader(tabSize, reader), constants(0)
+{
+   _target = target;
+}
+
+AssemblerBase :: AssemblerBase(const char** dfa, int tabSize, UStrReader* reader, ModuleBase* target)
+   : _reader(dfa, tabSize, reader), constants(0)
 {
    _target = target;
 }
