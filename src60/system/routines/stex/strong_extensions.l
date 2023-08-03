@@ -2,6 +2,16 @@ import system;
 
 public extension strongEnumerableOp<T>
 {
+   forEach(Func<T,object> f)
+   {
+      Enumerator<T> e := self.enumerator();
+        
+      while (e.next())
+      {
+         f(*e)
+      }
+   }
+
    Enumerator<T> filterBy(Func<T,bool> f)
       = new StrongFilter<T>(f, cast Enumerator<T>(self.enumerator()));
         
