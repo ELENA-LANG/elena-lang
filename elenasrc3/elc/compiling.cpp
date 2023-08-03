@@ -163,7 +163,11 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
 
       ref_t typeRef = (*it).arg.reference;
       ustr_t param = module->resolveReference(typeRef);
-      if (isWeakReference(param)) {
+      if (isTemplateWeakReference(param)) {
+         // HOTFIX : save template based reference as is
+         name.append(param);
+      }
+      else if (isWeakReference(param)) {
          name.append(module->name());
          name.append(param);
       }
@@ -192,7 +196,11 @@ ref_t CompilingProcess::TemplateGenerator :: declareTemplateName(ModuleScopeBase
 
       ref_t typeRef = (*it).arg.reference;
       ustr_t param = module->resolveReference(typeRef);
-      if (isWeakReference(param)) {
+      if (isTemplateWeakReference(param)) {
+         // if template based argument - pass as is
+         name.append(param);
+      }
+      else if (isWeakReference(param)) {
          name.append(module->name());
          name.append(param);
       }

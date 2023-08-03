@@ -1,7 +1,7 @@
-//import extensions;
-//import system'routines'stex;
-//import system'collections;
-// 
+import extensions;
+import system'routines'stex;
+import system'collections;
+ 
 //const int N = 20000;
 // 
 //extension op : IntNumber
@@ -24,16 +24,15 @@
 //            .selectBy:(int i => new Tuple<int,int>(i,divsums[i]));
 //    }
 //}
-// 
-//public program()
-//{
+ 
+public program()
+{
+        ^ /*new Range(0, 1)*/2
+            .selectBy:(int i => new Tuple<int,int>(i,i));
+
+
 //   N.AmicablePairs.forEach:(var Tuple<int,int> pair)
 //   {
 //      console.printLine(pair.Item1, " ", pair.Item2)
 //   }
-//}
-
-public program()
-{
-   console.writeLine("Hello")
 }

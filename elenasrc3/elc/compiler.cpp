@@ -7101,6 +7101,9 @@ ObjectInfo Compiler :: compileNewOp(BuildTreeWriter& writer, ExprScope& scope, S
    ObjectInfo retVal = compileMessageOperation(
       writer, scope, node, source, messageRef, signRef, arguments, EAttr::StrongResolved | EAttr::NoExtension, nullptr);
 
+   // HOTFIX : to use weak reference for the created class
+   retVal.typeInfo = { source.reference };
+
    return retVal;
 }
 
