@@ -2656,7 +2656,7 @@ inline %1E2h
   ldrsb   x17, [x0]
   ldrsb   x18, [x19]
 
-  sub     x17, x17, x18  
+  sub     x17, x18, x17  
 
   strb    w17, [x19]
 
@@ -2670,7 +2670,7 @@ inline %2E2h
   ldrsw   x17, [x0]
   ldrsw   x18, [x19]
 
-  sub     x17, x17, x18  
+  sub     x17, x18, x17  
 
   str     w17, [x19]
 
@@ -2684,7 +2684,7 @@ inline %4E2h
   ldr     x17, [x0]
   ldr     x18, [x19]
 
-  sub     x17, x17, x18  
+  sub     x17, x18, x17  
 
   str     x17, [x19]
 
