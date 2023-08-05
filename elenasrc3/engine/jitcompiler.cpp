@@ -2087,6 +2087,9 @@ void elena_lang::loadDPNOp(JITCompilerScope* scope)
          case NARG12_2:
             scope->compiler->writeImm12(writer, scope->command.arg2, 0);
             break;
+         case INV_NARG16_2:
+            scope->compiler->writeImm16(writer, scope->command.arg2, INV_ARG);
+            break;
          default:
             // to make compiler happy
             break;

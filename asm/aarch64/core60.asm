@@ -2876,7 +2876,7 @@ end
 inline %8E8h
 
   add     x19, x29, __arg12_1
-  mov     x18, __n16_2
+  mov     x18, -__n16_2
   ldrsw   x20, [x19]
 
   sub     x20, x20, x18
