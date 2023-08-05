@@ -35,7 +35,6 @@ namespace elena_lang
       // used for RISC CPUs to deal with "big" arguments
       int          mediumForm;
       int          extendedForm;
-      int          maxImm;
       // for ARM negative offsets should have a special treatment
       bool         noNegative;
    };
@@ -226,7 +225,7 @@ namespace elena_lang
          _constants.inlineMask = 0;
          _constants.alignmentVA = 8;
          _constants.unframedOffset = 0;
-         _constants.mediumForm = _constants.extendedForm = 0xFFFFFFFF;
+         _constants.mediumForm = _constants.extendedForm = INT32_MAX;
          _constants.noNegative = false;
       }
    };

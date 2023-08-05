@@ -2014,13 +2014,13 @@ inline void* elena_lang::retrieveICode(JITCompilerScope* scope, int arg)
          return scope->compiler->_inlines[4][scope->code()];
       default:
          if (arg < 0) {
-            if (-arg > scope->constants->maxImm)
+            if (-arg > scope->constants->mediumForm)
             {
                return scope->compiler->_inlines[9][scope->code()];
             }
             return scope->compiler->_inlines[8][scope->code()];
          }
-         if (arg > scope->constants->maxImm) {
+         if (arg > scope->constants->mediumForm) {
             return scope->compiler->_inlines[10][scope->code()];
          }
          return scope->compiler->_inlines[0][scope->code()];
