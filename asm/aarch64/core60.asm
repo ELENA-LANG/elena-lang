@@ -2872,6 +2872,42 @@ inline %0E8h
 
 end
 
+// ; nadddpn
+inline %8E8h
+
+  add     x19, x29, __arg12_1
+  mov     x18, __n16_2
+  ldrsw   x20, [x19]
+
+  sub     x20, x20, x18
+  str     w20, [x19]
+
+end
+
+// ; nadddpn
+inline %09E8h
+
+  movz    x18, __n16lo_1
+  add     x19, x29, __arg12_1
+  movk    x18, __n16hi_1, lsl #16
+  ldrsw   x20, [x19]
+  add     x20, x20, x18
+  str     w20, [x19]
+
+end
+
+// ; nadddpn
+inline %0AE8h
+
+  movz    x18, __n16lo_1
+  add     x19, x29, __arg12_1
+  movk    x18, __n16hi_1, lsl #16
+  ldrsw   x20, [x19]
+  add     x20, x20, x18
+  str     w20, [x19]
+
+end
+
 // ; dcopydpn
 inline %0E9h
 

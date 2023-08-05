@@ -2001,7 +2001,7 @@ void elena_lang::loadVMTROp(JITCompilerScope* scope)
    writer->seekEOF();
 }
 
-inline void* elena_lang::retrieveICode(JITCompilerScope* scope, unsigned int arg)
+inline void* elena_lang::retrieveICode(JITCompilerScope* scope, int arg)
 {
    switch (arg) {
       case 1:
@@ -2013,6 +2013,16 @@ inline void* elena_lang::retrieveICode(JITCompilerScope* scope, unsigned int arg
       case 8:
          return scope->compiler->_inlines[4][scope->code()];
       default:
+         if (arg < 0) {
+            if (-arg > scope->constants->maxImm)
+            {
+               return scope->compiler->_inlines[9][scope->code()];
+            }
+            return scope->compiler->_inlines[8][scope->code()];
+         }
+         if (arg > scope->constants->maxImm) {
+            return scope->compiler->_inlines[10][scope->code()];
+         }
          return scope->compiler->_inlines[0][scope->code()];
    }
 }

@@ -35,6 +35,7 @@ namespace elena_lang
       // used for RISC CPUs to deal with "big" arguments
       int          mediumForm;
       int          extendedForm;
+      int          maxImm;
       // for ARM negative offsets should have a special treatment
       bool         noNegative;
    };
@@ -99,7 +100,7 @@ namespace elena_lang
       friend void* retrieveCode(JITCompilerScope* scope);
       friend void* retrieveIndexRCode(JITCompilerScope* scope);
       friend void* retrieveCodeWithNegative(JITCompilerScope* scope);
-      friend void* retrieveICode(JITCompilerScope* scope, unsigned int arg);
+      friend void* retrieveICode(JITCompilerScope* scope, int arg);
       friend void* retrieveRCode(JITCompilerScope* scope, int arg);
 
       friend void loadOp(JITCompilerScope* scope);
@@ -391,7 +392,7 @@ namespace elena_lang
    inline void* retrieveCode(JITCompilerScope* scope);
    inline void* retrieveIndexRCode(JITCompilerScope* scope);
    inline void* retrieveCodeWithNegative(JITCompilerScope* scope);
-   inline void* retrieveICode(JITCompilerScope* scope, unsigned int arg);
+   inline void* retrieveICode(JITCompilerScope* scope, int arg);
    inline void* retrieveRCode(JITCompilerScope* scope, int arg);
 
    void loadNop(JITCompilerScope*);
