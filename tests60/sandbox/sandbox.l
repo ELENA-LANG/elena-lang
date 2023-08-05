@@ -2,7 +2,7 @@ import extensions;
  
 public program()
 {
-    console.write("longTests:");
+//    console.write("longTests:");
 /*
     long l1 := 100000000000000l;
     long l2 := 5000000000000l;
@@ -75,10 +75,10 @@ public program()
 */
     long i := 0l;
     i += 3l;
-    i -= 2l;
-    i *= 2l;
-    i /= 2l;
-    Assert.ifTrue(i == 1l);
+//    i -= 2l;
+//    i *= 2l;
+//    i /= 2l;
+//    Assert.ifTrue(i == 1l);
 
-    console.writeLine(".");
+//    console.writeLine(".");
 }
