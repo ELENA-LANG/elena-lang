@@ -73,8 +73,8 @@ public program()
     Assert.ifFalse(l2 < n2);  // ; false
     console.write(".");
 */
-    long i := 0l;
-    i += 3l;
+    long i := 3l;
+    i -= 2l;
 //    i -= 2l;
 //    i *= 2l;
 //    i /= 2l;
