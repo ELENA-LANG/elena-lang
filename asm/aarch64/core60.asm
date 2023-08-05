@@ -2860,12 +2860,13 @@ inline %0E7h
 
 end
 
-// ; nsavedpn
+// ; nadddpn
 inline %0E8h
 
   add     x19, x29, __arg12_1
   mov     x18, __n16_2
-  ldr     w20, [x19]
+  ldrsw   x20, [x19]
+
   add     x20, x20, x18
   str     w20, [x19]
 

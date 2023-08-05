@@ -85,6 +85,7 @@ In development:
     * field boxing : e.g x + x - should not be boxed twice
     * why IntNumber.add<'RealNumber>[2] has no byref handler
     + #69 : GC info 
+    * check the minimal program size - too many references unused
 
     === Iteration 18 ===
     [!] x86 GUI support
@@ -96,10 +97,12 @@ In development:
     * boxing stack allocated variable
     * boxing stack allocated parameter for strong typed method
     * test all samples for win x86
+    * optimize: String.prop:Length<ref>[2]
     * optimize: pi += -1.0;
     * optimize: pi sample (<7 secs)
     * rosetta code sample : Anagrams
     * new rosetta code sample : Amicable pairs (yields)
+
 
     === Iteration 19 ===
     [!] elenavm x64 dll
