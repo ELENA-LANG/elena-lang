@@ -9,9 +9,7 @@ In development:
     [!] elt tutorial (stand-alone / in IDE)
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
-
-    * migrate the rest of system (basic.l - byteConvertor)
-    * Pi / E values
+    
     * boxable self (structs) - do not box the self return
     * system'io'read[3] : uncomment code
 
@@ -26,6 +24,7 @@ In development:
     * ide : recent files / projects, clear the list
     * string to real : support e notation
     * external operation : do not box the arguments
+    * migrate the rest of system (templates.l)
     * support constants in array size declaration (see lnx_console.l)
     * simplify code (see INPUT_RECORD operations)
     * pi optimization : int-real operation (#86)
