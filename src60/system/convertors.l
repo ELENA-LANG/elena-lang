@@ -103,6 +103,9 @@ public singleton shortConvertor
       ^ s;
    }   
 
+   short convert(short s)
+      = s;
+
    short convert(int n)
    {
       self.convertInt(n, ref short s);
@@ -167,6 +170,9 @@ public singleton intConvertor
 
    int convert(BaseVariable v)
       <= convert(*v);
+
+   int convert(int n)
+      = n;
 
    int convert(byte b)
    {
@@ -272,6 +278,9 @@ public singleton uintConvertor
 
    uint convert(o)
       = cast uint(o);
+
+   uint convert(uint n)
+      = n;
 
    uint convert(int n)
    {

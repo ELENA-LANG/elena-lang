@@ -11,6 +11,7 @@ In development:
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
     * migrate the rest of system (basic.l - byteConvertor)
+    * Pi / E values
     * boxable self (structs) - do not box the self return
     * system'io'read[3] : uncomment code
 
