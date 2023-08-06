@@ -30,15 +30,18 @@ public program()
 //   console.write(".");
 
 
-   Assert.ifTrue("abcd"w.Substring(1,2) == "bc"w);
-   console.write(".");
+   var s := "abcd"w.Substring(1,2);
+   console.write(s);
 
-   Assert.ifTrue("abc"w[1] == "b");
-   console.write(".");
+//   Assert.ifTrue("abcd"w.Substring(1,2) == "bc"w);
+//   console.write(".");
 
-   Assert.ifFailed({ "abc"w[-1] });
-   console.write(".");  
+//   Assert.ifTrue("abc"w[1] == "b");
+//   console.write(".");
 
-   Assert.ifFailed({ "abc"w[4] });
-   console.write(".");
+//   Assert.ifFailed({ "abc"w[-1] });
+//   console.write(".");  
+
+//   Assert.ifFailed({ "abc"w[4] });
+//   console.write(".");
 }
