@@ -10,11 +10,7 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * new rosetta code sample : Anonymous recursion, Apply a callback
-    * check why the struct is boxed (see INPUT_RECORD operations)
-    * direct shift
     * ide : trim, erase line, upper case, lower case
-    * elc : unassigned variable - ingore by ref inplace / stack-allocated arrays variable (see PrimitiveIntOperations.getHashcode)
 
     * ide : goto nested class
     * test UTF16Encoder : to / from utf8, to / from win2152, load file

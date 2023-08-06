@@ -21,8 +21,7 @@ public singleton byteConvertor
 
    byte convert(short s)
    {
-      byte b;
-      self.convert(s, ref b);
+      self.convert(s, ref byte b);
 
       ^ b;      
    }
@@ -40,24 +39,21 @@ public singleton byteConvertor
          OutOfRangeException.raise();
       };
 
-      byte b;
-      self.convert(n, ref b);
+      self.convert(n, ref byte b);
 
       ^ b;
    }
 
    byte convert(uint n)
    {
-      byte b;
-      self.convert(n, ref b);
+      self.convert(n, ref byte b);
 
       ^ b;
    }
 
    byte convert(long n)
    {
-      byte b;
-      self.convert(n, ref b);
+      self.convert(n, ref byte b);
 
       ^ b;
    }
@@ -102,24 +98,21 @@ public singleton shortConvertor
 
    short convert(byte b)
    {
-      short s;
-      self.convertByte(b, ref s);
+      self.convertByte(b, ref short s);
 
       ^ s;
    }   
 
    short convert(int n)
    {
-      short s;
-      self.convertInt(n, ref s);
+      self.convertInt(n, ref short s);
 
       ^ s;
    }
 
    short convert(uint n)
    {
-      short s;
-      self.convertUInt(n, ref s);
+      self.convertUInt(n, ref short s);
 
       ^ s;
    }
@@ -205,8 +198,7 @@ public singleton intConvertor
 
    int convert(long l)
    {
-      int n;
-      self.convertLong(l, ref n);
+      self.convertLong(l, ref int n);
 
       ^ n;
    }
@@ -573,8 +565,7 @@ public singleton charConvertor
 
    char convert(int n)
    {
-      char ch;
-      self.convert(n, ref ch);
+      self.convert(n, ref char ch);
 
       ^ ch;
    }

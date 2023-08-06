@@ -7527,6 +7527,12 @@ ObjectInfo Compiler :: compileIndexerOperation(BuildTreeWriter& writer, ExprScop
          // if it is a new variable declaration - treat it like a new array
          declareVariable(scope, node, info.typeInfo, false); // !! temporal - typeref should be provided or super class
 
+         if (_trackingUnassigned) {
+            CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+
+            scope.markAsAssigned(codeScope->mapLocal(loperand.firstChild(SyntaxKey::TerminalMask).identifier()));
+         }
+
          return {}; // !! temporally
       }
       else if (info.kind == ObjectKind::MssgLiteral) {
@@ -8250,7 +8256,12 @@ ObjectInfo Compiler :: defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInf
             invalid = forwardMode;
 
             if (declareVariable(scope, node, declaredTypeInfo, ignoreDuplicates)) {
-               retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs | ExpressionAttribute::Local);
+               retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, 
+                  attrs | ExpressionAttribute::Local);
+
+               if (_trackingUnassigned && refOp) {
+                  scope.markAsAssigned(retVal);
+               }
             }
             else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
          }
