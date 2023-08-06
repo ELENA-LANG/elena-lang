@@ -799,7 +799,7 @@ public const struct WideString : BaseValue
       ^ retVal;         
    }
 
-   string Substring(int index, int length)
+   wide Substring(int index, int length)
       : info("Returns the substring")
    {
       ^ WideString.fromShortArray(index, length, array);
