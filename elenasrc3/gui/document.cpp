@@ -880,6 +880,115 @@ bool DocumentView :: eraseSelection(DocumentChangeStatus& changeStatus)
    return true;
 }
 
+void DocumentView :: trim(DocumentChangeStatus& changeStatus)
+{
+   int rowCount = _text->getRowCount();
+
+   Point caret = _caret.getCaret(false);
+   bool space = false;
+   if (caret.x == _caret.length_int()) {
+      _text->eraseChar(_caret);
+   }
+   else while (caret.x < _caret.length_int()) {
+      pos_t length;
+      text_t line = _text->getLine(_caret, length);
+
+      if (line[0] == ' ' || line[0] == '\t') {
+         _text->eraseChar(_caret);
+         space = true;
+      }
+      else if (!space) {
+         _text->eraseChar(_caret);
+      }
+      else break;
+   }
+
+   changeStatus.textChanged = true;
+
+   status.rowDifference += (_text->getRowCount() - rowCount);
+}
+
+void DocumentView :: eraseLine(DocumentChangeStatus& changeStatus)
+{
+   int rowCount = _text->getRowCount();
+
+   _caret.moveTo(0, _caret.row());
+
+   _text->eraseLine(_caret, _caret.length());
+   _text->eraseChar(_caret);
+
+   changeStatus.textChanged = true;
+   changeStatus.caretChanged = true;
+
+   status.rowDifference += (_text->getRowCount() - rowCount);
+}
+
+void DocumentView :: copyText(text_c* text, disp_t length)
+{
+   if (length == 0) {
+      text[0] = 0;
+   }
+   else {
+      _text->copyTo(_caret, text, length);
+   }
+}
+
+void DocumentView :: toLowercase(DocumentChangeStatus& changeStatus)
+{
+   disp_t selection = abs(_selection);
+
+   if (selection > 0) {
+      text_c* buffer = StrFactory::allocate(selection + 1, (text_str)nullptr);
+
+      copySelection(buffer);
+
+      StrUtil::lower(buffer);
+
+      insertLine(changeStatus, buffer, selection);
+
+      freestr(buffer);
+   }
+   else {
+      text_c buffer[2];
+      copyText(buffer, 1);
+
+      if (text_str(WHITESPACE).find(buffer[0]) == NOTFOUND_POS) {
+         StrUtil::lower(buffer);
+
+         eraseChar(changeStatus, false);
+         insertChar(changeStatus, buffer[0], 1);
+      }
+   }
+}
+
+void DocumentView :: toUppercase(DocumentChangeStatus& changeStatus)
+{
+   disp_t selection = abs(_selection);
+
+   if (selection > 0) {
+      text_c* buffer = StrFactory::allocate(selection + 1, (text_str)nullptr);
+
+      copySelection(buffer);
+
+      StrUtil::upper(buffer);
+
+      insertLine(changeStatus, buffer, selection);
+
+      freestr(buffer);
+   }
+   else {
+      text_c buffer[2];
+      copyText(buffer, 1);
+
+      if (text_str(WHITESPACE).find(buffer[0]) == NOTFOUND_POS) {
+         StrUtil::upper(buffer);
+
+         eraseChar(changeStatus, false);
+         insertChar(changeStatus, buffer[0], 1);
+      }
+   }
+}
+
 void DocumentView :: copySelection(text_c* text)
 {
    if (_selection == 0) {

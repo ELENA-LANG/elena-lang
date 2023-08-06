@@ -247,6 +247,26 @@ void IDEWindow :: selectAll()
    _controller->sourceController.selectAll(_model->viewModel());
 }
 
+void IDEWindow :: trim()
+{
+   _controller->sourceController.trim(_model->viewModel());
+}
+
+void IDEWindow :: eraseLine()
+{
+   _controller->sourceController.eraseLine(_model->viewModel());
+}
+
+void IDEWindow :: lowerCase()
+{
+   _controller->sourceController.lowerCase(_model->viewModel());
+}
+
+void IDEWindow :: upperCase()
+{
+   _controller->sourceController.upperCase(_model->viewModel());
+}
+
 void IDEWindow :: search()
 {
    if (!_controller->doSearch(findDialog, _model)) {
@@ -603,11 +623,23 @@ bool IDEWindow :: onCommand(int command)
       case IDM_EDIT_SELECTALL:
          selectAll();
          break;
+      case IDM_EDIT_TRIM:
+         trim();
+         break;
+      case IDM_EDIT_ERASELINE:
+         eraseLine();
+         break;
       case IDM_EDIT_INDENT:
          _controller->doIndent(_model);
          break;
       case IDM_EDIT_OUTDENT:
          _controller->doOutdent(_model);
+         break;
+      case IDM_EDIT_LOWERCASE:
+         lowerCase();
+         break;
+      case IDM_EDIT_UPPERCASE:
+         upperCase();
          break;
       case IDM_SEARCH_FIND:
          search();

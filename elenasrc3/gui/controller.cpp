@@ -220,6 +220,28 @@ void TextViewController :: deleteText(TextViewModelBase* model)
    notifyOnChange(model, status);
 }
 
+void TextViewController :: trim(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+   if (!docView->isReadOnly()) {
+      docView->trim(status);
+   }
+
+   notifyOnChange(model, status);
+}
+
+void TextViewController :: eraseLine(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+   if (!docView->isReadOnly()) {
+      docView->eraseLine(status);
+   }
+
+   notifyOnChange(model, status);
+}
+
 void TextViewController :: insertBlockText(TextViewModelBase* model, const_text_t s, size_t length)
 {
    DocumentChangeStatus status = {};
@@ -237,6 +259,28 @@ void TextViewController :: deleteBlockText(TextViewModelBase* model, const_text_
    auto docView = model->DocView();
    if (!docView->isReadOnly()) {
       docView->blockDeleting(status, s, length);
+   }
+
+   notifyOnChange(model, status);
+}
+
+void TextViewController :: lowerCase(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+   if (!docView->isReadOnly()) {
+      docView->toLowercase(status);
+   }
+
+   notifyOnChange(model, status);
+}
+
+void TextViewController :: upperCase(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+   if (!docView->isReadOnly()) {
+      docView->toUppercase(status);
    }
 
    notifyOnChange(model, status);

@@ -109,9 +109,15 @@ namespace elena_lang
       void undo(TextViewModelBase* model) override;
       void redo(TextViewModelBase* model) override;
 
+      void trim(TextViewModelBase* model) override;
+      void eraseLine(TextViewModelBase* model) override;
+
       void deleteText(TextViewModelBase* model) override;
       void insertBlockText(TextViewModelBase* model, const_text_t s, size_t length) override;
       void deleteBlockText(TextViewModelBase* model, const_text_t s, size_t length) override;
+
+      void upperCase(TextViewModelBase* model);
+      void lowerCase(TextViewModelBase* model);
 
       bool copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;
       void pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;

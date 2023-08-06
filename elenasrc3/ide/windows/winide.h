@@ -130,6 +130,10 @@ namespace elena_lang
       void commentText();
       void uncommentText();
       void selectAll();
+      void trim();
+      void eraseLine();
+      void upperCase();
+      void lowerCase();
 
       void search();
       void searchNext();

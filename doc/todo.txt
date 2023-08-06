@@ -10,7 +10,9 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * ide : trim, erase line, upper case, lower case
+    * migrate the rest of system (basic.l - byteConvertor)
+    * boxable self (structs) - do not box the self return
+    * system'io'read[3] : uncomment code
 
     * ide : goto nested class
     * test UTF16Encoder : to / from utf8, to / from win2152, load file
@@ -24,17 +26,14 @@ In development:
     * string to real : support e notation
     * external operation : do not box the arguments
     * support constants in array size declaration (see lnx_console.l)
-    * migrate the rest of system (basic.l - byteConvertor)
     * simplify code (see INPUT_RECORD operations)
     * pi optimization : int-real operation (#86)
     * api : provide field descriptions
     * ide : editor settings
-    * boxable self (structs) - do not box the self return
     * ide : debug goto source
     * automatical conversion of int literal to int8, int16 and int64 if possible
     * system'collections'Map - migrating rest of methods
     * system'String.Substring<'IntNumber,'IntNumber>[3] - why the parameters are boxed?
-    * system'io'read[3] : uncomment code
     * test : print german text
     * call internal
     * calling protected method
@@ -44,6 +43,7 @@ In development:
     * rosetta samples : 20
     * examples : datetime
     * examples : replace, trans 
+    * ide : duplicate line
     * examples : textdb, textfile 
     * opzimiation extension operation with a byte array parameter
     * optimize assign inp_op direct_call embeddable

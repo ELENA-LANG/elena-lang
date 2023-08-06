@@ -348,6 +348,7 @@ namespace elena_lang
       void moveToFrame(DocumentChangeStatus& changeStatus, int column, int row, bool selecting);
 
       void copySelection(text_c* text);
+      void copyText(text_c* text, disp_t length);
 
       void insertChar(DocumentChangeStatus& changeStatus, text_c ch)
       {
@@ -362,6 +363,12 @@ namespace elena_lang
 
       bool eraseSelection(DocumentChangeStatus& changeStatus);
       void eraseChar(DocumentChangeStatus& changeStatus, bool moveback);
+
+      void trim(DocumentChangeStatus& changeStatus);
+      void eraseLine(DocumentChangeStatus& changeStatus);
+
+      void toLowercase(DocumentChangeStatus& changeStatus);
+      void toUppercase(DocumentChangeStatus& changeStatus);
 
       void undo(DocumentChangeStatus& changeStatus);
       void redo(DocumentChangeStatus& changeStatus);
