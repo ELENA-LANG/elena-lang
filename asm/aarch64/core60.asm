@@ -992,10 +992,10 @@ inline %180h
 end 
 
 // ; setr -1
-inline %680h
+inline %980h
 
-  mov     x10, #0
-  sub     x10, x10, #1
+  movz    x10,  __n16lo_1
+  movk    x10,  __n16hi_1, lsl #16
 
 end 
 
@@ -2027,10 +2027,10 @@ inline %1C0h
 end 
 
 // ; cmpr -1
-inline %6C0h
+inline %9C0h
 
-  mov     x11, #0
-  sub     x11, x11, #1
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
   cmp     x10, x11
 
 end 

@@ -414,9 +414,6 @@ void* elena_lang :: retrieveCode(JITCompilerScope* scope)
       case 8:
          code = scope->compiler->_inlines[7][scope->code()];
          break;
-      case -1:
-         code = scope->compiler->_inlines[6][scope->code()];
-         break;
       default:
          if (arg > scope->constants->mediumForm) {
             return scope->compiler->_inlines[10][scope->code()];
