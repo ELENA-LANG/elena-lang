@@ -4,7 +4,9 @@ public program()
 {
    string s := "23";
 
-   console.writeLine(s.toReal());
+   int index := s.indexOf(0, $46);
+
+   console.writeLine(/*s.toReal()*/index);
 
 //   int radix := 10;
 
