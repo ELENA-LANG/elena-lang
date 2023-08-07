@@ -908,10 +908,9 @@ inline %180h
 end 
 
 // ; setr -1
-inline %680h
+inline %980h
 
-  xor  ebx, ebx
-  dec  ebx
+  mov  ebx, __arg32_1
 
 end 
 
@@ -1710,9 +1709,9 @@ inline %1C0h
 end 
 
 // ; cmpr -1
-inline %6C0h
+inline %9C0h
 
-  cmp  ebx, -1
+  cmp  ebx, __arg32_1
 
 end 
 

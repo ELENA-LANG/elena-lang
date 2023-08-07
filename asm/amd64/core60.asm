@@ -912,10 +912,10 @@ inline %180h
 end 
 
 // ; setr -1
-inline %680h
+inline %980h
 
-  xor  rbx, rbx
-  sub  rbx, 1
+  mov    ebx, __arg32_1
+  movsxd rbx, ebx
 
 end 
 
@@ -1694,10 +1694,11 @@ inline %1C0h
 end 
 
 // ; cmpr -1
-inline %6C0h
+inline %9C0h
 
-  mov  rax, -1
-  cmp  rbx, rax
+  mov    eax, __arg32_1
+  movsxd rax, eax
+  cmp    rbx, rax
 
 end 
 

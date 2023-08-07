@@ -959,7 +959,7 @@ inline %180h
 end 
 
 // ; setr -1
-inline %680h
+inline %980h
 
   li      r15, 0
   addi    r15, r15, -1
@@ -1815,7 +1815,7 @@ inline %1C0h
 end 
 
 // ; cmpr 1
-inline %6C0h
+inline %9C0h
 
   li      r16, 0
   addi    r16, r16, -1

@@ -1056,6 +1056,15 @@ void elena_lang :: loadROp(JITCompilerScope* scope)
       // locate relocation position
       writer->seek(position + entries->offset);
       switch (entries->reference) {
+         case ARG32_1:
+            writer->writeDWord(scope->command.arg1);
+            break;
+         case NARG16HI_1:
+            scope->compiler->writeImm16(writer, (scope->command.arg1 >> 16) & 0xFFFF, 0);
+            break;
+         case NARG16LO_1:
+            scope->compiler->writeImm16(writer, scope->command.arg1 & 0xFFFF, 0);
+            break;
          case PTR32_1:
             scope->compiler->writeArgAddress(scope, arg, 0, mskRef32);
             break;
