@@ -5,6 +5,16 @@ public program()
    string s := "23";
 
    int index := s.indexOf(0, $46);
+      if (index != -1) {
+         console.writeLine("not -1");
+
+         //intPartStr := s.Substring(0, index);
+         //decimalPartStr := s.Substring(index + 1);
+      }
+      else {
+         console.writeLine("-1");
+         //intPartStr := s;
+      };
 
    console.writeLine(/*s.toReal()*/index);
 
