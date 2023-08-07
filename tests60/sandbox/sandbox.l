@@ -3,32 +3,35 @@ import extensions;
 public program()
 {
    string s := "23";
-   int radix := 10;
 
-      int len := s.Length;
+   console.writeLine(s.toReal());
 
-   console.writeLine(len);
+//   int radix := 10;
 
-      int val := 0;
-      int start := 0;
+//      int len := s.Length;
+
+//   console.writeLine(len);
+
+//      int val := 0;
+//      int start := 0;
 //      bool inverted := false;
 //      if (s[0]==$45) {
 //         start := 1;
 //         inverted := true;
 //      };
 
-      for (int i := start, i < len, i := i + 1) {
-         byte c := s[i];
-         int ch := c;
-         ch := ch - 48;
-         if (ch >= radix) {
-            ch := ch - 7;
-         };
-         val := val * radix;
-         val := val + ch;
-      };
+//      for (int i := start, i < len, i := i + 1) {
+//         byte c := s[i];
+//         int ch := c;
+//         ch := ch - 48;
+//         if (ch >= radix) {
+//            ch := ch - 7;
+//         };
+//         val := val * radix;
+//         val := val + ch;
+//      };
 
-   console.writeLine(val);
+//   console.writeLine(val);
 
 //      if (inverted) {
 //         val := -val;
