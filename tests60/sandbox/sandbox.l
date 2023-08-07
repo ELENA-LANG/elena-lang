@@ -6,10 +6,10 @@ public program()
 //      string intPartStr := nil;
 //      string decimalPartStr := nil;
 
-   int index := s.indexOf(0, $46);
-   console.writeLine(index);
+   int index := /*s.indexOf(0, $46)*/-1;
+//   console.writeLine(index);
 
-   console.writeLine(index != -1);      
+//   console.writeLine(index != -1);      
 
       if (index != -1) {
 //         intPartStr := s.Substring(0, index);
