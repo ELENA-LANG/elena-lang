@@ -994,8 +994,9 @@ end
 // ; setr -1
 inline %980h
 
-  movz    x10,  __n16lo_1
-  movk    x10,  __n16hi_1, lsl #16
+  movz    x10, __n16lo_1
+  movk    x10, __n16hi_1, lsl #16
+  sxtw    x10, w10
 
 end 
 
@@ -1491,8 +1492,9 @@ end
 // ; cmpn n
 inline %0997h
 
-  movz    x18,  __n16lo_1
-  movk    x18,  __n16hi_1, lsl #16
+  movz    x18, __n16lo_1
+  movk    x18, __n16hi_1, lsl #16
+  sxtw    x18, w18
 
   cmp     x9, x18
 
@@ -2031,6 +2033,7 @@ inline %9C0h
 
   movz    x11,  __n16lo_1
   movk    x11,  __n16hi_1, lsl #16
+  sxtw    x11, w11
   cmp     x10, x11
 
 end 
