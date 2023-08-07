@@ -39,7 +39,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadNOp, loadNOp, loadNOp, loadNOp, loadNop, loadNop, loadNop, loadNop,
+   loadOp, loadOp, loadOp, loadOp, loadNop, loadNop, loadNop, loadNop,
    loadFrameDispOp, loadFrameDispOp, loadFrameDispOp, loadFrameDispOp, loadFrameDispOp, loadFrameDispOp, loadFrameDispOp, loadFrameDispOp,
 
    loadROp, loadFrameDispOp, loadLenOp, loadIndexOp, loadROp, loadROp, loadStackIndexOp, loadStackIndexOp,
@@ -392,8 +392,10 @@ inline int retrieveStackOpIndex(int stackIndex, int baseIndex)
 
 void* elena_lang :: retrieveCode(JITCompilerScope* scope)
 {
+   arg_t arg = scope->command.arg1;
+
    void* code = nullptr;
-   switch (scope->command.arg1) {
+   switch (arg) {
       case 0:
          code = scope->compiler->_inlines[1][scope->code()];
          break;
@@ -416,6 +418,12 @@ void* elena_lang :: retrieveCode(JITCompilerScope* scope)
          code = scope->compiler->_inlines[6][scope->code()];
          break;
       default:
+         if (arg > scope->constants->mediumForm) {
+            return scope->compiler->_inlines[10][scope->code()];
+         }
+         if (arg < 0) {
+            return scope->compiler->_inlines[9][scope->code()];
+         }
          code = scope->compiler->_inlines[0][scope->code()];
          break;
    }

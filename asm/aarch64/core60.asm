@@ -835,7 +835,7 @@ inline %02Fh
 
 end
 
-// ; fadd
+// ; fiadd
 inline %070h
 
   ldr     x19, [x0]
@@ -1242,6 +1242,48 @@ labEnd:
 
 end
 
+// ; copy
+inline %0990h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
+  mov     x12, x0
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x12], #1
+  strb    w14, [x13], #1
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; copy
+inline %0A90h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
+  mov     x12, x0
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x12], #1
+  strb    w14, [x13], #1
+  b       labLoop
+
+labEnd:
+
+end
+
 // ; closen
 inline %91h
 
@@ -1334,10 +1376,52 @@ inline %94h
 
 end
 
+// ; andn
+inline %0994h
+
+  movz    x19,  __n16lo_1
+  movk    x19,  __n16hi_1, lsl #16
+
+  and     x9, x9, x19
+
+end
+
+// ; andn
+inline %0A94h
+
+  movz    x19,  __n16lo_1
+  movk    x19,  __n16hi_1, lsl #16
+
+  and     x9, x9, x19
+
+end
+
 // ; readn
 inline %95h
 
   mov     x11, __n16_1
+  mov     x13, x10
+  mul     x14, x9, x11
+  add     x12, x0, x14
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x12], #1
+  strb    w14, [x13], #1
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; readn
+inline %0A95h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
   mov     x13, x10
   mul     x14, x9, x11
   add     x12, x0, x14
@@ -1374,10 +1458,52 @@ labEnd:
 
 end
 
+// ; writen
+inline %0A96h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
+  mov     x13, x10
+  mul     x14, x9, x11
+  add     x12, x0, x14
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x13], #1
+  strb    w14, [x12], #1
+  b       labLoop
+
+labEnd:
+
+end
+
 // ; cmpn n
 inline %97h
 
-  mov     x18, __n16_1   // ; temporally
+  mov     x18, __n16_1
+  cmp     x9, x18
+
+end
+
+// ; cmpn n
+inline %0997h
+
+  movz    x18,  __n16lo_1
+  movk    x18,  __n16hi_1, lsl #16
+
+  cmp     x9, x18
+
+end
+
+// ; cmpn n
+inline %0A97h
+
+  movz    x18,  __n16lo_1
+  movk    x18,  __n16hi_1, lsl #16
+
   cmp     x9, x18
 
 end
@@ -1426,7 +1552,27 @@ end
 // ; orn
 inline %9Bh
 
-  mov     x11, __n16_1   // ; temporally
+  mov     x11, __n16_1
+  orr     x9, x9, x11
+
+end
+
+// ; orn
+inline %099Bh
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
+  orr     x9, x9, x11
+
+end
+
+// ; orn
+inline %0A9Bh
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
   orr     x9, x9, x11
 
 end
@@ -1434,7 +1580,27 @@ end
 // ; muln
 inline %9Ch
 
-  mov     x11, __n16_1   // ; temporally
+  mov     x11, __n16_1
+  mul     x9, x9, x11
+
+end
+
+// ; muln
+inline %099Ch
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
+  mul     x9, x9, x11
+
+end
+
+// ; muln
+inline %0A9Ch
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
   mul     x9, x9, x11
 
 end
@@ -1936,6 +2102,25 @@ end
 
 // ; tstn
 inline %0C4h
+
+  mov     x11,  __n16_1
+
+  tst     x9, x11
+
+end
+
+// ; tstn
+inline %09C4h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
+  tst     x9, x11
+
+end
+
+// ; tstn
+inline %0AC4h
 
   movz    x11,  __n16lo_1
   movk    x11,  __n16hi_1, lsl #16
