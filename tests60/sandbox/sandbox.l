@@ -7,12 +7,18 @@ public program()
       string decimalPartStr := nil;
 
    int index := s.indexOf(0, $46);
+   console.writeLine(index);
+
       if (index != -1) {
          intPartStr := s.Substring(0, index);
          decimalPartStr := s.Substring(index + 1);
+
+         console.writeLine(" not -1");
       }
       else {
          intPartStr := s;
+
+         console.writeLine("-1");
       };
 
       console.writeLine(intPartStr);
