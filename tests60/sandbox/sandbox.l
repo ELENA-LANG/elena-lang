@@ -3,49 +3,51 @@ import extensions;
 public program()
 {
    string s := "23";
-      string intPartStr := nil;
-      string decimalPartStr := nil;
+//      string intPartStr := nil;
+//      string decimalPartStr := nil;
 
    int index := s.indexOf(0, $46);
    console.writeLine(index);
 
+   console.writeLine(index != -1);      
+
       if (index != -1) {
-         intPartStr := s.Substring(0, index);
-         decimalPartStr := s.Substring(index + 1);
+//         intPartStr := s.Substring(0, index);
+//         decimalPartStr := s.Substring(index + 1);
 
          console.writeLine(" not -1");
       }
       else {
-         intPartStr := s;
+//         intPartStr := s;
 
          console.writeLine("-1");
       };
 
-      console.writeLine(intPartStr);
-
-      bool inverted := false;
-      int intPart := intConvertor.convert(intPartStr, 10);
-      if (intPart < 0) {
-         intPart := -intPart;
-         inverted := true;
-      };
-
-      console.writeLine(intPart);
-
-      real r := intPart;
-      if (decimalPartStr != nil) {
-         real frac := intConvertor.convert(decimalPartStr, 10);
-         for (int i := 0, i < decimalPartStr.Length, i += 1) {
-            frac := frac * 0.1;
-         };
-
-         r += frac;
-      };
-
-      if (inverted)
-         r := r * -1.0;
-
-  console.writeLine(r);
+//      console.writeLine(intPartStr);
+//
+//      bool inverted := false;
+//      int intPart := intConvertor.convert(intPartStr, 10);
+//      if (intPart < 0) {
+//         intPart := -intPart;
+//         inverted := true;
+//      };
+//
+//      console.writeLine(intPart);
+//
+//      real r := intPart;
+//      if (decimalPartStr != nil) {
+//         real frac := intConvertor.convert(decimalPartStr, 10);
+//         for (int i := 0, i < decimalPartStr.Length, i += 1) {
+//            frac := frac * 0.1;
+//         };
+//
+//         r += frac;
+//      };
+//
+//      if (inverted)
+//         r := r * -1.0;
+//
+//  console.writeLine(r);
 
 
 //   int radix := 10;
