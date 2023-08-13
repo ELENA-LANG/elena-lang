@@ -649,9 +649,10 @@ inline % 16h
   lsr     x12, x12, #4
   lsl     x12, x12, #4
 
-  sub     sp, sp, x12   // ; allocate stack
-  mov     x11, 0
   mov     x13, sp
+  sub     x13, x13, x12   // ; allocate stack
+  mov     x11, 0
+  mov     sp, x13
 
 labLoop:
   cmp     x12, 0
