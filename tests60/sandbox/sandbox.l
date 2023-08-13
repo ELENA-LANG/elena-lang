@@ -5,6 +5,8 @@ singleton VariadicFunctionDispatchTester
    function(params int[] args)
    {
       int l := args.Length;
+      console.writeLine(l);
+
       int sum := 0;
       for (int i := 0, i < l, i += 1) {
          sum := sum + args[i]
