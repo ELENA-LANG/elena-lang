@@ -649,7 +649,7 @@ inline % 16h
   lsr     x12, x12, #4
   lsl     x12, x12, #4
 
-  sub     sp, sp,  x12   // ; allocate stack
+  sub     sp, sp, x12   // ; allocate stack
   mov     x11, 0
   mov     x13, sp
 

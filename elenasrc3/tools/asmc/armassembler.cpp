@@ -2495,7 +2495,7 @@ void Arm64Assembler :: compileSUB(ScriptToken& tokenInfo, MemoryWriter& writer)
       isValid = compileSUBImm(tokenInfo, rd, rn, rn2, writer);
    }
    else {
-      isValid = compileSUBSShifted(tokenInfo, rd, rn, rn2, 0, 0, writer);
+      isValid = compileSUBShifted(tokenInfo, rd, rn, rn2, 0, 0, writer);
    }
 
    if (!isValid)
