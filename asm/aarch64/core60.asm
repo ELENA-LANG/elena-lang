@@ -643,7 +643,7 @@ end
 // ; dalloc
 inline % 16h
 
-  lsl     x12, x14, #3
+  lsl     x12, x9, #3
 
   add     x12, x12, #8    // ; rounding to 10h
 
