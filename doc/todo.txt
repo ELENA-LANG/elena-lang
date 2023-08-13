@@ -9,10 +9,7 @@ In development:
     [!] elt tutorial (stand-alone / in IDE)
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
-    
-    * optimization : X x := new X(); where X is a struct
 
-    * system'io'read[3] : uncomment code
     * aarch64
     * new rosetta code sample : Arithmetic evaluation
     * ide : about
@@ -100,6 +97,7 @@ In development:
     * optimize: pi sample (<7 secs)
     * rosetta code sample : Anagrams
     * new rosetta code sample : Amicable pairs (yields)
+    * optimization : X x := new X(); where X is a struct
 
     === Iteration 19 ===
     [!] elenavm x64 dll

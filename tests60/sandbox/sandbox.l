@@ -1,21 +1,49 @@
 import extensions;
 
-struct XY
+singleton VariadicFunctionDispatchTester
 {
-   constructor()
+   function(params int[] args)
    {
-      x := 2;
-//      y := 3;
-   }
+      int l := args.Length;
+      int sum := 0;
+      for (int i := 0, i < l, i += 1) {
+         sum := sum + args[i]
+      };
 
-   int x : prop;
-//   int y : prop;
+      ^ sum
+   }
+}
+
+singleton VariadicDispatchTester
+{
+   product(params int[] args)
+   {
+      int l := args.Length;
+      int prod := 1;
+      for (int i := 0, i < l, i += 1) {
+         prod := prod * args[i]
+      };
+
+      ^ prod
+   }
 }
 
 public program()
 {
-   XY xy := new XY();
+   console.write("vardispatcherTest:");
 
-   Assert.ifTrue(xy.x == 2);
-//   Assert.ifTrue(xy.y == 3);
+   var r1 := VariadicFunctionDispatchTester(1,2,3);
+   Assert.ifTrue(r1 == 6);
+   var r2 := VariadicDispatchTester.product(1,2,3,4);
+   Assert.ifTrue(r2 == 24);
+   console.write(".");
+
+   var o := VariadicFunctionDispatchTester;
+   var o2 := VariadicDispatchTester;
+   var r3 := o(1,2,3);
+   Assert.ifTrue(r3 == 6);
+   var r4 := o2.product(1,2,3,4);
+   Assert.ifTrue(r4 == 24);
+
+   console.writeLine(".");
 }
