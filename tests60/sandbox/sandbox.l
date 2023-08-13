@@ -1,5 +1,19 @@
 import extensions;
 
+singleton VariadicFunctionDispatchTester
+{
+   function(params int[] args)
+   {
+      int l := args.Length;
+      int sum := 0;
+      for (int i := 0, i < l, i += 1) {
+         sum := sum + args[i]
+      };
+
+      ^ sum
+   }
+}
+
 singleton VariadicDispatchTester
 {
    product(params int[] args)
@@ -20,9 +34,13 @@ public program()
 {
    console.write("vardispatcherTest:");
 
-   var r2 := VariadicDispatchTester.product(1,2,3,4);
-   Assert.ifTrue(r2 == 24);
+   var r1 := VariadicFunctionDispatchTester(1,2,3);
    console.write(".");
+   Assert.ifTrue(r1 == 6);
+   console.write(".");
+//   var r2 := VariadicDispatchTester.product(1,2,3,4);
+//   Assert.ifTrue(r2 == 24);
+//   console.write(".");
 
 //   var o := VariadicFunctionDispatchTester;
 //   var o2 := VariadicDispatchTester;
