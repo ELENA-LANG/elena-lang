@@ -644,22 +644,20 @@ end
 inline % 16h
 
   lsl     x12, x9, #3
-
   add     x12, x12, #8    // ; rounding to 10h
 
   lsr     x12, x12, #4
   lsl     x12, x12, #4
 
   sub     sp, sp,  x12   // ; allocate stack
-  mov     x11, __arg12_1
-  mov     x12, 0
+  mov     x11, 0
   mov     x13, sp
 
 labLoop:
-  cmp     x11, 0
+  cmp     x12, 0
   beq     labEnd
-  sub     x11, x11, 8
-  str     x12, [x13], #8
+  sub     x12, x12, 8
+  str     x11, [x13], #8
   b       labLoop
 
 labEnd:
@@ -1923,7 +1921,7 @@ inline % 0AEh
 
 end
 
-// ; xassignsp
+// ; setsp
 inline % 0AFh
 
   add     x10, sp, __arg12_1
