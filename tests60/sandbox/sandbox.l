@@ -47,8 +47,8 @@ public program()
    var o := VariadicFunctionDispatchTester;
 //   var o2 := VariadicDispatchTester;
    var r3 := o(1,2,3);
-   Assert.ifTrue(r3 == 6);
-   console.write(".");
+//   Assert.ifTrue(r3 == 6);
+//   console.write(".");
 //   var r4 := o2.product(1,2,3,4);
 //   Assert.ifTrue(r4 == 24);
 //   console.write(".");

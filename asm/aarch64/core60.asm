@@ -3812,7 +3812,6 @@ end
 // ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 5FAh
 
-//;  mov  [rsp+8], r10                      // ; saving arg0
   str     x0, [sp]
 //;  lea  rax, [rsp + __n_2]
   add     x17, sp, __n12_2
@@ -4125,14 +4124,14 @@ labNextOverloadlist:
   ldr     x23, [x23, #8]
 
 //;  mov  ecx, __n_1
-  mov     x16, __n16_1
+  mov     x16, x17
 
 //;  lea  rbx, [r13 - 8]
   sub     x22, x23, #8
 
 labNextParam:
 //;  sub  ecx, 1
-  add     x16, x16, #1
+  sub     x16, x16, #1
 
 //;  jnz  short labMatching
   cmp     x16, x17
