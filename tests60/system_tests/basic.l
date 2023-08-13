@@ -1518,3 +1518,28 @@ nilReferenceTest()
 
    console.writeLine(".");
 }
+
+// --- structTest ---
+
+struct XY
+{
+   int x : prop;
+   int y : prop;
+
+   constructor()
+   {
+      x := 2;
+      y := 3;
+   }
+}
+
+structTest()
+{
+   console.write("structTest:");
+   XY xy := new XY();
+
+   Assert.ifTrue(xy.x == 2);
+   Assert.ifTrue(xy.y == 3);
+
+   console.writeLine(".");
+}

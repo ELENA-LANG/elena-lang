@@ -45,6 +45,7 @@ public program()
    outerFieldAssigningTest();
    methodNotFoundTest();
    nilReferenceTest();
+   structTest();
 
    console.writeLine("--- Passed ---")
 }

@@ -9761,7 +9761,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, 
          }
 
          writeObjectInfo(writer, exprScope,
-            boxArgument(writer, exprScope, retVal, false, true, false));
+            boxArgument(writer, exprScope, retVal, scope.checkHint(MethodHint::Stacksafe), true, false));
       }
    }
 
@@ -10460,7 +10460,7 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
          case SyntaxKey::ResendDispatch:
             compileMethodCode(writer, scope, codeScope, node, newFrame);
             break;
-      case SyntaxKey::ReturnExpression:
+         case SyntaxKey::ReturnExpression:
             compileRetExpression(writer, codeScope, current, EAttr::DynamicObject);
             writer.appendNode(BuildKey::CloseFrame);
             break;

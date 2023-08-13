@@ -10,16 +10,18 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
     
-    * boxable self (structs) - do not box the self return
+    * optimization : X x := new X(); where X is a struct
+
     * system'io'read[3] : uncomment code
+    * aarch64
+    * new rosetta code sample : Arithmetic evaluation
+    * ide : about
 
     * ide : goto nested class
     * test UTF16Encoder : to / from utf8, to / from win2152, load file
     * #195 : implementing rosetta code samples
     * ldoc : show template based type correctly
-    * ide : about
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
-    * new rosetta code sample : Arithmetic evaluation
     * ide : recent projects
     * ide : recent files / projects, clear the list
     * string to real : support e notation
@@ -98,7 +100,6 @@ In development:
     * optimize: pi sample (<7 secs)
     * rosetta code sample : Anagrams
     * new rosetta code sample : Amicable pairs (yields)
-
 
     === Iteration 19 ===
     [!] elenavm x64 dll
