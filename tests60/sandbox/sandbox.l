@@ -38,9 +38,9 @@ public program()
    console.write(".");
    Assert.ifTrue(r1 == 6);
    console.write(".");
-//   var r2 := VariadicDispatchTester.product(1,2,3,4);
-//   Assert.ifTrue(r2 == 24);
-//   console.write(".");
+   var r2 := VariadicDispatchTester.product(1,2,3,4);
+   Assert.ifTrue(r2 == 24);
+   console.write(".");
 
 //   var o := VariadicFunctionDispatchTester;
 //   var o2 := VariadicDispatchTester;
