@@ -98,6 +98,7 @@ In development:
     * rosetta code sample : Anagrams
     * new rosetta code sample : Amicable pairs (yields)
     * optimization : X x := new X(); where X is a struct
+    * new unit test : dispatchmr (both function and normal one)
 
     === Iteration 19 ===
     [!] elenavm x64 dll
