@@ -357,9 +357,7 @@ public program()
       }
       catch(Exception e)
       {
-         console.writeLine(e.toPrintable())
-            
-         //console.writeLine:"Invalid Expression"
+         console.writeLine:"Invalid Expression"
       };
         
       text.clear()

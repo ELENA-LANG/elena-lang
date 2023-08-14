@@ -105,9 +105,18 @@
 #define IDM_WINDOW_NINTH           1013
 
 #define IDM_HELP_API               1101
+#define IDM_HELP_ABOUT             1102
 
 #define IDM_DEBUG_INSPECT          1201
 #define IDM_DEBUG_SWITCHHEXVIEW    1202
+
+#define IDD_GOTOLINE               1300
+#define IDC_GOTOLINE_LINENUMBER    (IDD_GOTOLINE + 1)
+#define IDC_GOTOLINE_LABEL1        (IDD_GOTOLINE + 2)
+
+#define IDD_WINDOWS                1400
+#define IDC_WINDOWS_LIST           1401
+#define IDC_WINDOWS_CLOSE          1402
 
 #define IDI_IDE                     107
 #define IDI_SMALL                   108
@@ -129,23 +138,20 @@
 #define IDC_SETTINGS_DEBUG          806
 #define IDC_SETTINGS_ARGUMENT       807
 
-#define IDD_EDITOR_FIND            1000
-#define IDD_EDITOR_REPLACE         1001
-#define IDC_FIND_TEXT              1004
-#define IDC_FIND_CASE              1005
-#define IDC_FIND_WHOLE             1006
-#define IDC_REPLACE_TEXT           1007
+#define IDD_EDITOR_FIND            1500
+#define IDD_EDITOR_REPLACE         1501
+#define IDC_FIND_TEXT              1504
+#define IDC_FIND_CASE              1505
+#define IDC_FIND_WHOLE             1506
+#define IDC_REPLACE_TEXT           1507
 
-#define IDD_GOTOLINE               1100
-#define IDC_GOTOLINE_LINENUMBER    (IDD_GOTOLINE + 1)
-#define IDC_GOTOLINE_LABEL1        (IDD_GOTOLINE + 2)
-
-#define IDD_WINDOWS                1200
-#define IDC_WINDOWS_LIST           1201
-#define IDC_WINDOWS_CLOSE          1202
+#define IDD_ABOUT                  1600
+#define IDC_ABOUT_HOME             1601
+#define IDC_ABOUT_LICENCE_TEXT     1602
+#define IDC_ABOUT_BLOG             1603
 
 #ifndef IDC_STATIC
-#define IDC_STATIC                  -1
+#define IDC_STATIC                 -1
 #endif
 
 // Next default values for new objects
@@ -160,3 +166,6 @@
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif
+
+#define STRINGIZE2(s) #s
+#define STRINGIZE(s) STRINGIZE2(s)

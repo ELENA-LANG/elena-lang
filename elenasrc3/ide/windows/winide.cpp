@@ -127,7 +127,8 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    windowDialog(instance, this, &model->sourceViewModel),
    clipboard(this),
    _windowList(controller, model->viewModel()),
-   _recentFileList(controller, model, IDM_FILE_FILES)
+   _recentFileList(controller, model, IDM_FILE_FILES),
+   aboutDialog(instance, this)
 {
    this->_instance = instance;
    this->_controller = controller;
@@ -707,6 +708,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_HELP_API:
          openHelp();
          break;
+      case IDM_HELP_ABOUT:
+         showAbout();
+         break;
       case IDM_DEBUG_INSPECT:
          refreshDebugNode();
          break;
@@ -1105,6 +1109,11 @@ void IDEWindow :: openHelp()
    apiPath.combine(_T("..\\doc\\api\\index.html"));
 
    ShellExecute(NULL, _T("open"), *apiPath, nullptr, nullptr, SW_SHOW);
+}
+
+void IDEWindow :: showAbout()
+{
+   aboutDialog.show();
 }
 
 void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)

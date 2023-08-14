@@ -176,6 +176,15 @@ namespace elena_lang
       WindowListDialog(HINSTANCE instance, WindowBase* owner, TextViewModel* model);
    };
 
+   class AboutDialog : public WinDialog
+   {
+   public:
+      void onCreate() override;
+      void onOK() override;
+
+      AboutDialog(HINSTANCE instance, WindowBase* owner);
+   };
+
 }
 
 #endif

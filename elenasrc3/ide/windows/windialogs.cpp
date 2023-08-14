@@ -534,3 +534,21 @@ WindowListDialogBase::SelectResult WindowListDialog :: selectWindow()
 
    return { 0, Mode::None };
 }
+
+// --- AboutDialog ---
+
+AboutDialog :: AboutDialog(HINSTANCE instance, WindowBase* owner)
+   : WinDialog(instance, owner)
+{
+   _dialogId = IDD_ABOUT;
+}
+
+void AboutDialog :: onCreate()
+{
+   setText(IDC_ABOUT_LICENCE_TEXT, MIT_LICENSE);
+   setText(IDC_ABOUT_HOME, ELENA_HOMEPAGE);
+}
+
+void AboutDialog :: onOK()
+{
+}

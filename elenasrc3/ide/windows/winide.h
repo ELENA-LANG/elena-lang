@@ -50,6 +50,7 @@ namespace elena_lang
       GoToLineDialog    gotoDialog;
       WindowListDialog  windowDialog;
       Clipboard         clipboard;
+      AboutDialog       aboutDialog;
 
       HINSTANCE         _instance;
       HWND              _tabTTHandle;
@@ -143,6 +144,7 @@ namespace elena_lang
       void includeFile();
 
       void openHelp();
+      void showAbout();
 
       void refreshDebugNode();
 

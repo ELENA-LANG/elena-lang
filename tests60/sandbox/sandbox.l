@@ -1,57 +1,27 @@
 import extensions;
 
-singleton VariadicFunctionDispatchTester
-{
-   function(params int[] args)
-   {
-      int l := args.Length;
-      console.writeLine(l);
-
-      int sum := 0;
-      for (int i := 0, i < l, i += 1) {
-         sum := sum + args[i]
-      };
-
-      ^ sum
-   }
-}
-
-singleton VariadicDispatchTester
-{
-   product(params int[] args)
-   {
-      int l := args.Length;
-      console.writeLine(l);
-
-      int prod := 1;
-      for (int i := 0, i < l, i += 1) {
-         prod := prod * args[i]
-      };
-
-      ^ prod
-   }
-}
-
 public program()
 {
-   console.write("vardispatcherTest:");
-
-//   var r1 := VariadicFunctionDispatchTester(1,2,3);
-//   console.write(".");
-//   Assert.ifTrue(r1 == 6);
-//   console.write(".");
-//   var r2 := VariadicDispatchTester.product(1,2,3,4);
-//   Assert.ifTrue(r2 == 24);
-//   console.write(".");
-
-   var o := VariadicFunctionDispatchTester;
-//   var o2 := VariadicDispatchTester;
-   var r3 := o(1,2,3);
-//   Assert.ifTrue(r3 == 6);
-//   console.write(".");
-//   var r4 := o2.product(1,2,3,4);
-//   Assert.ifTrue(r4 == 24);
-//   console.write(".");
-
-//   console.writeLine(".");
+   var staticArray := new int[]{1, 2, 3};
+    
+   var array := system'Array.allocate:3;
+   array[0] := 1;
+   array[1] := 2;
+   array[2] := 3;
+   
+   int stackAllocatedArray[3];
+   stackAllocatedArray[0] := 1;
+   stackAllocatedArray[1] := 2;
+   stackAllocatedArray[2] := 3;
+   
+   var dynamicArray := new system'collections'ArrayList();
+   dynamicArray.append:1;
+   dynamicArray.append:2;
+   dynamicArray.append:4;
+   
+   dynamicArray[2] := 3;
+   
+   system'console.writeLine(array[0]);
+   system'console.writeLine(stackAllocatedArray[1]);
+   system'console.writeLine(dynamicArray[2]);      
 }
