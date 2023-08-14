@@ -206,6 +206,7 @@
     <ClInclude Include="..\idecommon.h" />
     <ClInclude Include="..\idecontroller.h" />
     <ClInclude Include="..\ideproject.h" />
+    <ClInclude Include="..\ideversion.h" />
     <ClInclude Include="..\ideview.h" />
     <ClInclude Include="..\ideworkspace.h" />
     <ClInclude Include="..\menuhistory.h" />

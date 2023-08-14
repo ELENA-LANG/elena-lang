@@ -43,6 +43,12 @@ namespace elena_lang
       virtual bool showModal() = 0;
    };
 
+   class EditorSettingsBase
+   {
+   public:
+      virtual bool showModal() = 0;
+   };
+
    class FindDialogBase
    {
    public:

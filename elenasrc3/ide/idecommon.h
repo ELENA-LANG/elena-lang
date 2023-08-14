@@ -10,8 +10,6 @@
 #include "elena.h"
 #include "guicommon.h"
 
-#define IDE_REVISION_NUMBER                           0x0065
-
 namespace elena_lang
 {
    constexpr auto PLATFORM_CATEGORY                   = "configuration/platform";

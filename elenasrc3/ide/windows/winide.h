@@ -51,6 +51,7 @@ namespace elena_lang
       WindowListDialog  windowDialog;
       Clipboard         clipboard;
       AboutDialog       aboutDialog;
+      EditorSettings    editorSettingsDialog;
 
       HINSTANCE         _instance;
       HWND              _tabTTHandle;

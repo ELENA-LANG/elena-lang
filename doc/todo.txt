@@ -10,7 +10,7 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * ide : editor settings
+
     * aarch64 : ifexpressiontest
     * system'collections'Map - migrating rest of methods
     * system'String.Substring<'IntNumber,'IntNumber>[3] - why the parameters are boxed?
@@ -26,6 +26,7 @@ In development:
     * ide : recent projects
     * ide : recent files / projects, clear the list
     * string to real : support e notation
+    * ide : editor settings - color scheme select (use dark mode)
     * support constants in array size declaration (see lnx_console.l)
     * simplify code (see INPUT_RECORD operations)
     * pi optimization : int-real operation (#86)
@@ -33,8 +34,6 @@ In development:
     * ide : debug goto source
     * automatical conversion of int literal to int8, int16 and int64 if possible
     * test : print german text
-    * call internal
-    * calling protected method
     * examples : collatz, matrix
     * examples : p2, random 
     * ldoc : symbol should return the type and it should be possible to see its api (e.g. system'console)
@@ -57,8 +56,6 @@ In development:
     * ide : window list - close several windows
     + optimiation : branching with int constant
     + optimiation : operation with int constant
-    + optimiation : typecast method (e.g m = self)
-    + optimiation : idle method (e.g m() {})
     * ide : debug watch context menu
     * optimize intOp.Absolute method
     * field boxing : double assigning
@@ -71,7 +68,6 @@ In development:
     * operation with dynamic array should be direct???
     * ide message : display internal error
     * boolean operators : &&, ||, ^^ - weak implementation
-    * ide different styles : use dark mode
     * uncomment duplicateBoxing
     * optimize : dcopy
     * implementing corex : exclude / include (e.g. extern template)
@@ -671,7 +667,6 @@ Backlog:
                 * ByteNumber#class.new[2] - idle command - "pushr 0"
                 * optimize IntNumber#class.#constructor[1]
                 * optimize array creation
-                * call internal function directly (without intermediate step in system'routines) when it is possible
                 * optimize xreadn, xwriten
                 * optimization : do not call idle method
                 * bytecode optimization : storefi peekfi ==  => storefi nop; (storefi and peekfi have the same argument, no need to name all 

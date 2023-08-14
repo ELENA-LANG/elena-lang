@@ -378,6 +378,29 @@ bool ProjectSettings :: showModal()
    return show() == IDOK;
 }
 
+// --- EditorSettings ---
+
+EditorSettings :: EditorSettings(HINSTANCE instance, WindowBase* owner)
+   : WinDialog(instance, owner)
+{
+   _dialogId = IDD_EDITOR_SETTINGS;
+}
+
+void EditorSettings::onCreate()
+{
+   
+}
+
+void EditorSettings :: onOK()
+{
+   
+}
+
+bool EditorSettings :: showModal()
+{
+   return show() == IDOK;
+}
+
 // --- FindDialog ---
 
 FindDialog :: FindDialog(HINSTANCE instance, WindowBase* owner, bool replaceMode, FindModel* model)

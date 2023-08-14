@@ -125,6 +125,17 @@ namespace elena_lang
       ProjectSettings(HINSTANCE instance, WindowBase* owner, ProjectModel* model);
    };
 
+   class EditorSettings : public WinDialog, public EditorSettingsBase
+   {
+      void onCreate() override;
+      void onOK() override;
+
+   public:
+      bool showModal() override;
+
+      EditorSettings(HINSTANCE instance, WindowBase* owner);
+   };
+
    class FindDialog : public WinDialog, public FindDialogBase
    {
       FindModel* _model;

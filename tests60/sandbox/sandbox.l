@@ -1,27 +1,11 @@
 import extensions;
 
+B
+{
+   idle() {}
+}
+
 public program()
 {
-   var staticArray := new int[]{1, 2, 3};
-    
-   var array := system'Array.allocate:3;
-   array[0] := 1;
-   array[1] := 2;
-   array[2] := 3;
-   
-   int stackAllocatedArray[3];
-   stackAllocatedArray[0] := 1;
-   stackAllocatedArray[1] := 2;
-   stackAllocatedArray[2] := 3;
-   
-   var dynamicArray := new system'collections'ArrayList();
-   dynamicArray.append:1;
-   dynamicArray.append:2;
-   dynamicArray.append:4;
-   
-   dynamicArray[2] := 3;
-   
-   system'console.writeLine(array[0]);
-   system'console.writeLine(stackAllocatedArray[1]);
-   system'console.writeLine(dynamicArray[2]);      
+   B b := new B();
 }

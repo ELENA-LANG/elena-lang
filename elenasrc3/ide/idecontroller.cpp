@@ -1550,3 +1550,8 @@ void IDEController :: doOutdent(IDEModel* model)
 {
    sourceController.outdent(&model->sourceViewModel);
 }
+
+void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog)
+{
+   editorDialog.showModal();
+}

@@ -128,7 +128,8 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    clipboard(this),
    _windowList(controller, model->viewModel()),
    _recentFileList(controller, model, IDM_FILE_FILES),
-   aboutDialog(instance, this)
+   aboutDialog(instance, this),
+   editorSettingsDialog(instance, this)
 {
    this->_instance = instance;
    this->_controller = controller;
@@ -735,6 +736,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_FILE_FILES_8:
       case IDM_FILE_FILES_9:
          _recentFileList.openFile(command - IDM_FILE_FILES);
+         break;
+      case IDM_EDITOR_OPTIONS:
+         _controller->doConfigureEditorSettings(editorSettingsDialog);
          break;
       case IDM_WINDOW_WINDOWS:
          _controller->doSelectWindow(fileDialog, messageDialog, windowDialog, _model);
