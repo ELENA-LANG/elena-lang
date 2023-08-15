@@ -1,11 +1,10 @@
 import extensions;
 
-B
-{
-   idle() {}
-}
+A;
 
 public program()
 {
-   B b := new B();
+   var o := nilValue;
+
+   A a := o;
 }
