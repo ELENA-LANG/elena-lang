@@ -380,7 +380,7 @@ namespace elena_lang
             return false;
 
          // First, determine the element size.
-         unsigned Size = 32;
+         unsigned Size = 64;
 
          do {
             Size /= 2;
