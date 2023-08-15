@@ -27,4 +27,6 @@ public program()
              );
 
    var o := c.compile();
+
+   Assert.ifTrue(o.eval(1,2));
 }
