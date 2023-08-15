@@ -830,7 +830,7 @@ bool Arm64Assembler :: compileADDImm(ScriptToken& tokenInfo, ARMOperand rd, ARMO
 bool Arm64Assembler :: compileANDImm(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand ry, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && ry.type == ARMOperandType::Imm) {
-      writer.writeDWord(ARMHelper::makeLogocalImm13Opcode(1, 3, 0x24, ry.imm, rn.type, rd.type));
+      writer.writeDWord(ARMHelper::makeLogicalImm13Opcode(1, 0, 0x24, ry.imm, rn.type, rd.type));
 
       if (ry.reference)
          writeReference(tokenInfo, ry.reference, writer, ASM_INVALID_SOURCE);
@@ -856,7 +856,7 @@ bool Arm64Assembler :: compileADRP(ScriptToken& tokenInfo, ARMOperand rt, ARMOpe
 bool Arm64Assembler :: compileANDSImm(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand ry, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && ry.type == ARMOperandType::Imm) {
-      writer.writeDWord(ARMHelper::makeLogocalImm13Opcode(1, 3, 0x24, ry.imm, rn.type, rd.type));
+      writer.writeDWord(ARMHelper::makeLogicalImm13Opcode(1, 3, 0x24, ry.imm, rn.type, rd.type));
 
       if (rn.reference)
          writeReference(tokenInfo, rn.reference, writer, ASM_INVALID_SOURCE);
@@ -1288,7 +1288,7 @@ bool Arm64Assembler :: compileMADD(ARMOperand rd, ARMOperand rn, ARMOperand rm, 
 bool Arm64Assembler :: compileORRImm(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand ry, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && ry.type == ARMOperandType::Imm) {
-      writer.writeDWord(ARMHelper::makeLogocalImm13Opcode(1, 2, 0x9, ry.imm, rn.type, rd.type));
+      writer.writeDWord(ARMHelper::makeLogicalImm13Opcode(1, 2, 0x9, ry.imm, rn.type, rd.type));
 
       if (rn.reference)
          writeReference(tokenInfo, rn.reference, writer, ASM_INVALID_SOURCE);

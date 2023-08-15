@@ -431,7 +431,7 @@ namespace elena_lang
          return true;
       }
 
-      static unsigned int makeLogocalImm13Opcode(int sf, int op, int s, int imm, ARMOperandType rn, ARMOperandType rd)
+      static unsigned int makeLogicalImm13Opcode(int sf, int op, int s, int imm, ARMOperandType rn, ARMOperandType rd)
       {
          int n = 0;
          int imms = 0;
