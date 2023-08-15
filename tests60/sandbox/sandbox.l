@@ -28,5 +28,6 @@ public program()
 
    var o := c.compile();
 
-   Assert.ifTrue(o.eval(1,2));
+   //Assert.ifTrue(o.eval(1,2));
+   Assert.ifFalse(o.eval(1,1));
 }
