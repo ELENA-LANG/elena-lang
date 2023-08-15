@@ -1183,6 +1183,16 @@ inline %8Dh
 
 end
 
+// ; addn
+inline %98Dh
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+  sxtw    x11, w11
+  add    x9, x9, x11
+
+end
+
 // ; setfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %08Eh
