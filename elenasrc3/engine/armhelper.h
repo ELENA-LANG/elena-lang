@@ -380,7 +380,7 @@ namespace elena_lang
             return false;
 
          // First, determine the element size.
-         unsigned Size = 64;
+         unsigned Size = 32;
 
          do {
             Size /= 2;
@@ -423,10 +423,11 @@ namespace elena_lang
          // Or the CTO value into the low bits, which must be below the Nth bit
          // bit mentioned above.
          imms |= (CTO - 1);
-         imms &= 0x3f;
 
          // Extract the seventh bit and toggle it to create the N field.
          N = ((imms >> 6) & 1) ^ 1;
+
+         imms &= 0x3f;
 
          return true;
       }
