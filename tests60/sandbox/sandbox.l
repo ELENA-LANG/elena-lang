@@ -25,4 +25,6 @@ public program()
                    ScopeIdentifier.Variable("b")
                 )
              );
+
+   var o := c.compile();
 }
