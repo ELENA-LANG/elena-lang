@@ -1399,6 +1399,40 @@ inline %9Ah
 
 end
 
+// ; dcopy 1
+inline %29Ah
+
+  mov  ecx, edx
+  mov  eax, esi
+  mov  edi, ebx
+  rep  movsb
+  mov  esi, eax
+
+end
+
+// ; dcopy 2
+inline %39Ah
+
+  mov  ecx, edx
+  shl  ecx, 1
+  mov  eax, esi
+  mov  edi, ebx
+  rep  movsb
+  mov  esi, eax
+
+end
+
+// ; dcopy 4
+inline %59Ah
+
+  mov  ecx, edx
+  mov  eax, esi
+  mov  edi, ebx
+  rep  movsd
+  mov  esi, eax
+
+end
+
 // ; orn
 inline %9Bh
 

@@ -64,7 +64,6 @@ In development:
     * ide message : display internal error
     * boolean operators : &&, ||, ^^ - weak implementation
     * uncomment duplicateBoxing
-    * optimize : dcopy
     * implementing corex : exclude / include (e.g. extern template)
     * optimize: operation with int and real
     * field boxing : e.g x + x - should not be boxed twice
@@ -90,6 +89,8 @@ In development:
     * optimization : X x := new X(); where X is a struct
     * new unit test : dispatchmr (both function and normal one)
     * optimize intOp.Absolute method - why no byref handler?
+    * optimize : dcopy - x86-64, aarch64, ppc64le
+    * optimize : dcopydpn - x86, x86-64, aarch64, ppc64le
 
     === Iteration 19 ===
     [!] elenavm x64 dll
