@@ -438,7 +438,8 @@ namespace elena_lang
          int imms = 0;
          int immr = 0;
 
-         decodeLogicalImmediate(imm, n, imms, immr);
+         if(!decodeLogicalImmediate(imm, n, imms, immr))
+            assert(false);
 
          return (sf << 31) | (op << 29) | (s << 23) | (n << 22) | (immr << 16) | (imms << 10)
             | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
