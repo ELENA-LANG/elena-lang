@@ -18,8 +18,6 @@ In development:
     * ldoc : show template based type correctly
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
     * new rosetta code sample : Associative array/Creation
-    * ide : about - show version
-    * migrate the rest of system (memory.l)
     * ide : recent projects
     * ide : recent files / projects, clear the list
     * string to real : support e notation
@@ -29,6 +27,7 @@ In development:
     * pi optimization : int-real operation (#86)
     * api : provide field descriptions
     * ide : debug goto source
+    * migrate the rest of system (memory.l)
     * automatical conversion of int literal to int8, int16 and int64 if possible
     * test : print german text
     * examples : collatz, matrix

@@ -160,7 +160,7 @@ public sealed Array<T> : Indexable<T>
 
 // --- Variadic Array template ---
 
-public sealed nonstructural VariadicArray<T> //: Indexable<T>
+public sealed nonstructural VariadicArray<T> : Indexable<T>
 {
    embeddable __string T[] array;
 
@@ -194,6 +194,21 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
          this index := -1
       }
    };
+
+   Indexer<T> indexer() = new BaseIndexer<T>
+   {
+      this index := 0;
+        
+      this length := self.Length;
+        
+      get T Value()
+         = self.at(this index.Value);
+            
+      set Value(T o)
+      {
+         self.setAt(this index.Value, o)
+      }
+   };    
 
    T[] cast()
    {
