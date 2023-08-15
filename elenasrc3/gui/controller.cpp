@@ -242,6 +242,17 @@ void TextViewController :: eraseLine(TextViewModelBase* model)
    notifyOnChange(model, status);
 }
 
+void TextViewController :: duplicateLine(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+   if (!docView->isReadOnly()) {
+      docView->duplicateLine(status);
+   }
+
+   notifyOnChange(model, status);
+}
+
 void TextViewController :: insertBlockText(TextViewModelBase* model, const_text_t s, size_t length)
 {
    DocumentChangeStatus status = {};

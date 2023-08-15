@@ -10,10 +10,7 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-
-    * aarch64 : ifexpressiontest
-    * system'collections'Map - migrating rest of methods
-    * system'String.Substring<'IntNumber,'IntNumber>[3] - why the parameters are boxed?
+    * aarch64 : methodnotfound
 
     * ide : goto nested class
     * test UTF16Encoder : to / from utf8, to / from win2152, load file
@@ -40,7 +37,6 @@ In development:
     * rosetta samples : 20
     * examples : datetime
     * examples : replace, trans 
-    * ide : duplicate line
     * examples : textdb, textfile 
     * opzimiation extension operation with a byte array parameter
     * optimize assign inp_op direct_call embeddable
@@ -57,7 +53,6 @@ In development:
     + optimiation : branching with int constant
     + optimiation : operation with int constant
     * ide : debug watch context menu
-    * optimize intOp.Absolute method
     * field boxing : double assigning
     * elt - exception handler
     * ide : crashed on end (freepath)
@@ -94,6 +89,7 @@ In development:
     * new rosetta code sample : Amicable pairs (yields)
     * optimization : X x := new X(); where X is a struct
     * new unit test : dispatchmr (both function and normal one)
+    * optimize intOp.Absolute method - why no byref handler?
 
     === Iteration 19 ===
     [!] elenavm x64 dll

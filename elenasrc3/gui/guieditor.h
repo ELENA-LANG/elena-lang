@@ -160,6 +160,7 @@ namespace elena_lang
 
       virtual void trim(TextViewModelBase* model) = 0;
       virtual void eraseLine(TextViewModelBase* model) = 0;
+      virtual void duplicateLine(TextViewModelBase* model) = 0;
 
       virtual void deleteText(TextViewModelBase* model) = 0;
       virtual void insertBlockText(TextViewModelBase* model, const_text_t s, size_t length) = 0;

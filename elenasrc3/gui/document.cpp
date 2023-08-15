@@ -923,6 +923,35 @@ void DocumentView :: eraseLine(DocumentChangeStatus& changeStatus)
    status.rowDifference += (_text->getRowCount() - rowCount);
 }
 
+void DocumentView :: duplicateLine(DocumentChangeStatus& changeStatus)
+{
+   int rowCount = _text->getRowCount();   
+
+   Point caret = _caret.getCaret(false);
+
+   _caret.moveTo(0, caret.y);
+
+   TextBookmark bm = _caret;
+   bm.moveTo(_caret.length_int(), caret.y);
+
+   disp_t length = bm.position() - _caret.position();
+   text_c* buffer = StrFactory::allocate(length + 1, (text_str)nullptr);
+   _text->copyTo(_caret, buffer, length);
+
+   _caret.moveTo(0, caret.y + 1);
+   _text->insertNewLine(_caret);
+   _text->insertLine(_caret, buffer, length);
+
+   freestr(buffer);
+
+   setCaret(caret.x, caret.y + 1, false, changeStatus);
+
+   changeStatus.textChanged = true;
+   changeStatus.caretChanged = true;
+
+   status.rowDifference += (_text->getRowCount() - rowCount);
+}
+
 void DocumentView :: copyText(text_c* text, disp_t length)
 {
    if (length == 0) {

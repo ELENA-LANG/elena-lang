@@ -366,6 +366,7 @@ namespace elena_lang
 
       void trim(DocumentChangeStatus& changeStatus);
       void eraseLine(DocumentChangeStatus& changeStatus);
+      void duplicateLine(DocumentChangeStatus& changeStatus);
 
       void toLowercase(DocumentChangeStatus& changeStatus);
       void toUppercase(DocumentChangeStatus& changeStatus);

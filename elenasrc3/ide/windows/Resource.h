@@ -78,6 +78,7 @@
 #define IDM_EDIT_ERASELINE             513
 #define IDM_EDIT_UPPERCASE             514
 #define IDM_EDIT_LOWERCASE             515
+#define IDM_EDIT_DUPLICATE             516
 
 #define IDM_VIEW_PROJECTVIEW           601 
 #define IDM_VIEW_OUTPUT                602

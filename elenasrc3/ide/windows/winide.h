@@ -134,6 +134,7 @@ namespace elena_lang
       void selectAll();
       void trim();
       void eraseLine();
+      void duplicateLine();
       void upperCase();
       void lowerCase();
 

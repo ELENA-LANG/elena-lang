@@ -259,6 +259,11 @@ void IDEWindow :: eraseLine()
    _controller->sourceController.eraseLine(_model->viewModel());
 }
 
+void IDEWindow :: duplicateLine()
+{
+   _controller->sourceController.duplicateLine(_model->viewModel());
+}
+
 void IDEWindow :: lowerCase()
 {
    _controller->sourceController.lowerCase(_model->viewModel());
@@ -630,6 +635,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_EDIT_ERASELINE:
          eraseLine();
+         break;
+      case IDM_EDIT_DUPLICATE:
+         duplicateLine();
          break;
       case IDM_EDIT_INDENT:
          _controller->doIndent(_model);

@@ -117,6 +117,7 @@ namespace elena_lang
 
       void trim(TextViewModelBase* model) override;
       void eraseLine(TextViewModelBase* model) override;
+      void duplicateLine(TextViewModelBase* model) override;
 
       void deleteText(TextViewModelBase* model) override;
       void insertBlockText(TextViewModelBase* model, const_text_t s, size_t length) override;
