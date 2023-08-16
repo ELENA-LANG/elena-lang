@@ -2,7 +2,7 @@ import extensions;
 
 public program()
 {
-//   console.write("methodNotFoundTest:");
+   console.write("methodNotFoundTest:");
 
    var o := 2;
    var f := false;
@@ -18,5 +18,5 @@ public program()
 
    Assert.ifTrue(f);
 
-//   console.writeLine(".");
+   console.writeLine(".");
 }
