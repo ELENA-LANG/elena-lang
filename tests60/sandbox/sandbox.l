@@ -1,12 +1,21 @@
 import extensions;
 
-extension op : IntNumber
-{
-   int X()
-      = 2;
-}
-
 public program()
 {
-   int n := 2.X();
+//   console.write("methodNotFoundTest:");
+
+   var o := 2;
+//   var f := false;
+//   try
+//   {
+      o.fail()
+//   }
+//   catch(MethodNotFoundException e)
+//   {
+//      f := true;
+//   };
+
+//   Assert.ifTrue(f);
+
+//   console.writeLine(".");
 }
