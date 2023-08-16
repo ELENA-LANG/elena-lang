@@ -12,6 +12,7 @@ In development:
 
     * ppc64le : wideTest
 
+    * rosetta code sample : Binary digits
     * ide : goto nested class
     * test UTF16Encoder : to / from utf8, to / from win2152, load file
     * #195 : implementing rosetta code samples
@@ -22,7 +23,6 @@ In development:
     * string to real : support e notation
     * support constants in array size declaration (see lnx_console.l)
     * simplify code (see INPUT_RECORD operations)
-    * rosetta code sample : Averages/Root mean square
     * pi optimization : int-real operation (#86)
     * api : provide field descriptions
     * ide : debug goto source

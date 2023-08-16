@@ -1,37 +1,48 @@
 import system'routines;
-import system'collections;
 import extensions;
+import extensions'text;
 
 extension op
 {
-    get Mode()
+    get Shuffled()
     {
-        var countMap := Dictionary.new(0);
-        self.forEach:(item)
-        {
-            countMap[item] := countMap[item] + 1
+        var original := self.toArray();
+        var shuffled := self.toArray();
+    
+        for (int i := 0, i < original.Length, i += 1) {
+            for (int j := 0, j < original.Length, j += 1) {
+                if (i != j && original[i] != shuffled[j] && original[j] != shuffled[i])
+                {
+                    shuffled.exchange(i,j)
+                }                
+            }
         };
     
-        countMap := countMap.Values.sort:(p,n => p > n);
+        ^ shuffled.summarize(new StringWriter()).toString()
+    }
     
-        var max := countMap.FirstMember;
-    
-        ^ countMap
-            .filterBy:(kv => max.equal(kv.Value))
-            .selectBy:(kv => kv.Key)
-            .toArray()
+    score(originalText)
+    {
+        var shuffled := self.toArray();
+        var original := originalText.toArray();
+        int score := 0;
+
+        for (int i := 0, i < original.Length, i += 1) {
+            if (original[i] == shuffled[i]) { score += 1 }
+        };
+        
+        ^ score
     }
 }
 
 public program()
 {
-    var array1 := new int[]{1, 1, 2, 4, 4};
-    var array2 := new int[]{1, 3, 6, 6, 6, 6, 7, 7, 12, 12, 17};
-    var array3 := new object[]{1, "blue", 2, 7.5r, 5, "green", "red", 5, 2, "blue", "white"};
-    
-    console 
-        .printLine("mode of (",array1.asEnumerable(),") is (",array1.Mode,")")
-        .printLine("mode of (",array2.asEnumerable(),") is (",array2.Mode,")")
-        .printLine("mode of (",array3.asEnumerable(),") is (",array3.Mode,")")
-        .readChar()
+    new string[]{"abracadabra", "seesaw", "grrrrrr", "pop", "up", "a"}.forEach:(s)
+    {
+        var shuffled_s := s.Shuffled;
+
+        console.printLine("The best shuffle of ",s," is ",shuffled_s,"(",shuffled_s.score(s),")")
+    };
+
+    console.readChar()
 }
