@@ -380,20 +380,27 @@ bool ProjectSettings :: showModal()
 
 // --- EditorSettings ---
 
-EditorSettings :: EditorSettings(HINSTANCE instance, WindowBase* owner)
+EditorSettings :: EditorSettings(HINSTANCE instance, WindowBase* owner, TextViewModelBase* model)
    : WinDialog(instance, owner)
 {
    _dialogId = IDD_EDITOR_SETTINGS;
+
+   _model = model;
 }
 
 void EditorSettings::onCreate()
 {
-   
+   addComboBoxItem(IDC_EDITOR_COLORSCHEME, _T("Default"));
+   addComboBoxItem(IDC_EDITOR_COLORSCHEME, _T("Classic"));
+
+   setComboBoxIndex(IDC_EDITOR_COLORSCHEME, _model->schemeIndex);
 }
 
 void EditorSettings :: onOK()
 {
-   
+   int index = getComboBoxIndex(IDC_EDITOR_COLORSCHEME);
+   if (index != -1)
+      _model->schemeIndex = index;
 }
 
 bool EditorSettings :: showModal()

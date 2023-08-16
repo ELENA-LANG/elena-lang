@@ -835,7 +835,7 @@ void IDEController :: saveConfig(IDEModel* model, path_t configPath)
 
 void IDEController :: init(IDEModel* model)
 {
-   NotificationStatus status = IDE_STATUS_CHANGED;
+   NotificationStatus status = IDE_STATUS_CHANGED | IDE_LAYOUT_CHANGED;
 
    if (model->projectModel.lastOpenFiles.count() > 0) {
       path_t path = model->projectModel.lastOpenFiles.get(1);
@@ -844,6 +844,7 @@ void IDEController :: init(IDEModel* model)
          model->changeStatus(IDEStatus::Ready);
       }
    }
+   else status |= PROJECT_CHANGED;
    
    _notifier->notify(NOTIFY_IDE_CHANGE, status);
 }
@@ -1551,7 +1552,12 @@ void IDEController :: doOutdent(IDEModel* model)
    sourceController.outdent(&model->sourceViewModel);
 }
 
-void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog)
+void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog, IDEModel* model)
 {
-   editorDialog.showModal();
+   int prevSchemeIndex = model->viewModel()->schemeIndex;
+
+   if(editorDialog.showModal()) {
+      if (prevSchemeIndex != model->viewModel()->schemeIndex)
+         _notifier->notify(NOTIFY_IDE_CHANGE, COLOR_SCHEME_CHANGED | FRAME_CHANGED);
+   }
 }

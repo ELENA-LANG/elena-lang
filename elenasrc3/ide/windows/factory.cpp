@@ -201,7 +201,7 @@ ControlBase* IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* no
    }
 
    // initialize view styles
-   _styles.assign(STYLE_MAX + 1, _schemes[viewModel->schemeIndex], viewModel->fontSize + 5, 20, &_fontFactory);
+   reloadStyles(viewModel);
 
    // initialize UI components
    TextViewWindow* view = new TextViewWindow(notifier, _model->viewModel(), 
@@ -213,6 +213,11 @@ ControlBase* IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* no
    frame->createControl(_instance, owner);
 
    return frame;
+}
+
+void IDEFactory :: reloadStyles(TextViewModelBase* viewModel)
+{
+   _styles.assign(STYLE_MAX + 1, _schemes[viewModel->schemeIndex], viewModel->fontSize + 5, 20, &_fontFactory);
 }
 
 ControlBase* IDEFactory :: createStatusbar(WindowBase* owner)
@@ -388,7 +393,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    int toolBarControl = counter++;
    int contextEditor = counter++;
 
-   SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance);
+   SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance, this);
    sdi->create(_instance, szSDI, nullptr);
 
    VerticalBox* vb = new VerticalBox(false, 1);

@@ -53,6 +53,8 @@ namespace elena_lang
       AboutDialog       aboutDialog;
       EditorSettings    editorSettingsDialog;
 
+      ViewFactoryBase*  _viewFactory;
+
       HINSTANCE         _instance;
       HWND              _tabTTHandle;
 
@@ -104,6 +106,8 @@ namespace elena_lang
       void onProjectChange(bool empty);
       void onProjectViewSel(int index);
 
+      void onColorSchemeChange();
+
       bool toggleTabBarWindow(int child_id);
       void toggleWindow(int child_id);
 
@@ -150,7 +154,6 @@ namespace elena_lang
 
       void refreshDebugNode();
 
-      void onIDEViewUpdate(bool forced);
       void onDebuggerStart();
       void onDebuggerHook();
       void onDebuggerUpdate(StatusNMHDR* rec);
@@ -159,7 +162,7 @@ namespace elena_lang
    public:
       void populate(size_t counter, GUIControlBase** children) override;
 
-      IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance);
+      IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance, ViewFactoryBase* viewFactory);
    };
 
 }

@@ -186,6 +186,13 @@ namespace elena_lang
       virtual void resizeModel(TextViewModelBase* model, Point size) = 0;
    };
 
+   // --- ViewFactoryBase ---
+   class ViewFactoryBase
+   {
+   public:
+      virtual void reloadStyles(TextViewModelBase* viewModel) = 0;
+   };
+
 }
 
 #endif

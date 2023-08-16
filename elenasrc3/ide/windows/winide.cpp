@@ -109,7 +109,7 @@ bool Clipboard :: isAvailable()
 
 // --- IDEWindow ---
 
-IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance) : 
+IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance, ViewFactoryBase* viewFactory) :
    SDIWindow(title), 
    fileDialog(instance,
       this, FileDialog::SourceFilter, 
@@ -129,8 +129,10 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    _windowList(controller, model->viewModel()),
    _recentFileList(controller, model, IDM_FILE_FILES),
    aboutDialog(instance, this),
-   editorSettingsDialog(instance, this)
+   editorSettingsDialog(instance, this, model->viewModel())
 {
+   this->_viewFactory = viewFactory;
+
    this->_instance = instance;
    this->_controller = controller;
    this->_model = model;
@@ -481,8 +483,10 @@ void IDEWindow :: onProjectChange(bool empty)
 
    MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
    menu->enableMenuItemById(IDM_PROJECT_CLOSE, !empty);
+   menu->enableMenuItemById(IDM_FILE_SAVEPROJECT, !empty);
 
    menu->enableMenuItemById(IDM_PROJECT_COMPILE, !empty);
+   menu->enableMenuItemById(IDM_PROJECT_OPTION, !empty);
    menu->enableMenuItemById(IDM_DEBUG_RUN, !empty);
    menu->enableMenuItemById(IDM_DEBUG_STEPINTO, !empty);
    menu->enableMenuItemById(IDM_DEBUG_STEPOVER, !empty);
@@ -513,7 +517,10 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
    menu->checkMenuItemById(IDM_VIEW_VMCONSOLE, _children[_model->ideScheme.vmConsoleControl]->visible());
 
    menu->enableMenuItemById(IDM_FILE_SAVE, !empty);
+   menu->enableMenuItemById(IDM_FILE_SAVEALL, !empty);
+   menu->enableMenuItemById(IDM_FILE_SAVEAS, !empty);
    menu->enableMenuItemById(IDM_FILE_CLOSE, !empty);
+   menu->enableMenuItemById(IDM_FILE_CLOSEALL, !empty);
 
    if (empty) {
       menu->enableMenuItemById(IDM_EDIT_UNDO, false);
@@ -525,6 +532,28 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
       menu->enableMenuItemById(IDM_EDIT_DELETE, false);
       menu->enableMenuItemById(IDM_EDIT_COMMENT, false);
       menu->enableMenuItemById(IDM_EDIT_UNCOMMENT, false);
+      menu->enableMenuItemById(IDM_EDIT_DUPLICATE, false);
+      menu->enableMenuItemById(IDM_EDIT_SELECTALL, false);
+      menu->enableMenuItemById(IDM_EDIT_ERASELINE, false);
+      menu->enableMenuItemById(IDM_EDIT_INDENT, false);
+      menu->enableMenuItemById(IDM_EDIT_OUTDENT, false);
+      menu->enableMenuItemById(IDM_EDIT_TRIM, false);
+      menu->enableMenuItemById(IDM_EDIT_UPPERCASE, false);
+      menu->enableMenuItemById(IDM_EDIT_LOWERCASE, false);
+
+      menu->enableMenuItemById(IDM_SEARCH_FIND, false);
+      menu->enableMenuItemById(IDM_SEARCH_FINDNEXT, false);
+      menu->enableMenuItemById(IDM_SEARCH_REPLACE, false);
+      menu->enableMenuItemById(IDM_SEARCH_GOTOLINE, false);
+
+      menu->enableMenuItemById(IDM_WINDOW_WINDOWS, false);
+      menu->enableMenuItemById(IDM_WINDOW_NEXT, false);
+      menu->enableMenuItemById(IDM_WINDOW_PREVIOUS, false);
+
+      menu->enableMenuItemById(IDM_DEBUG_CLEARBREAKPOINT, false);
+      menu->enableMenuItemById(IDM_DEBUG_BREAKPOINT, false);
+
+      menu->enableMenuItemById(IDM_PROJECT_INCLUDE, false);
    }
    else menu->enableMenuItemById(IDM_EDIT_PASTE, true);
 
@@ -533,6 +562,45 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
    if (!empty)
       _children[_model->ideScheme.textFrameId]->refresh();
 }
+
+
+//void IDEWindow :: onIDEViewUpdate(bool forced)
+//{
+//   auto doc = _model->viewModel()->DocView();
+//   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+//
+//   IDESttus status =
+//   {
+//      doc != nullptr,
+//      !_model->projectModel.empty,
+//      _controller->projectController.isStarted()
+//   };
+//
+//   if (doc != nullptr) {
+//      status.canUndo = doc->canUndo();
+//      status.canRedo = doc->canRedo();
+//      status.hasSelection = doc->hasSelection();
+//   }
+//
+//   if (forced || status.hasDocument != _ideStatus.hasDocument) {
+//
+//      menu->enableMenuItemById(IDM_EDIT_PASTE, status.hasDocument);
+//   }
+//
+//   if (forced || status.hasProject != _ideStatus.hasProject) {
+//      menu->enableMenuItemById(IDM_PROJECT_COMPILE, status.hasProject);
+//      menu->enableMenuItemById(IDM_DEBUG_RUN, status.hasProject);
+//      menu->enableMenuItemById(IDM_DEBUG_STEPINTO, status.hasProject);
+//      menu->enableMenuItemById(IDM_DEBUG_STEPOVER, status.hasProject);
+//      menu->enableMenuItemById(IDM_DEBUG_RUNTO, status.hasProject);
+//   }
+//
+//   if (forced || status.running != _ideStatus.running) {
+//      onDebuggerUpdate(status.running);
+//   }
+//
+//   _ideStatus = status;
+//}
 
 void IDEWindow :: onTextFrameChange(NotificationStatus status)
 {
@@ -544,6 +612,10 @@ void IDEWindow :: onTextFrameChange(NotificationStatus status)
 
 void IDEWindow :: onIDEChange(NotificationStatus status)
 {
+   if (test(status, COLOR_SCHEME_CHANGED)) {
+      onColorSchemeChange();
+   }
+
    if (test(status, IDE_LAYOUT_CHANGED)) {
       onLayoutChange(status);
    }
@@ -562,8 +634,6 @@ void IDEWindow :: onIDEChange(NotificationStatus status)
    if (test(status, FRAME_ACTIVATE)) {
       onActivate();
    }
-
-   //onIDEViewUpdate(true);
 }
 
 bool IDEWindow :: onCommand(int command)
@@ -746,7 +816,7 @@ bool IDEWindow :: onCommand(int command)
          _recentFileList.openFile(command - IDM_FILE_FILES);
          break;
       case IDM_EDITOR_OPTIONS:
-         _controller->doConfigureEditorSettings(editorSettingsDialog);
+         _controller->doConfigureEditorSettings(editorSettingsDialog, _model);
          break;
       case IDM_WINDOW_WINDOWS:
          _controller->doSelectWindow(fileDialog, messageDialog, windowDialog, _model);
@@ -1057,56 +1127,6 @@ void IDEWindow :: onDebuggerUpdate(StatusNMHDR* rec)
    }
 }
 
-//void IDEWindow :: onIDEViewUpdate(bool forced)
-//{
-//   auto doc = _model->viewModel()->DocView();
-//   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-//
-//   IDESttus status =
-//   {
-//      doc != nullptr,
-//      !_model->projectModel.empty,
-//      _controller->projectController.isStarted()
-//   };
-//
-//   if (doc != nullptr) {
-//      status.canUndo = doc->canUndo();
-//      status.canRedo = doc->canRedo();
-//      status.hasSelection = doc->hasSelection();
-//   }
-//
-//   if (forced || status.hasDocument != _ideStatus.hasDocument) {
-//      menu->enableMenuItemById(IDM_FILE_SAVE, status.hasDocument);
-//      menu->enableMenuItemById(IDM_FILE_CLOSE, status.hasDocument);
-//
-//      if (!status.hasDocument) {
-//         menu->enableMenuItemById(IDM_EDIT_UNDO, status.hasDocument);
-//         menu->enableMenuItemById(IDM_EDIT_REDO, status.hasDocument);
-//
-//         menu->enableMenuItemById(IDM_EDIT_CUT, status.hasDocument);
-//         menu->enableMenuItemById(IDM_EDIT_COPY, status.hasDocument);
-//         menu->enableMenuItemById(IDM_EDIT_DELETE, status.hasDocument);
-//         menu->enableMenuItemById(IDM_EDIT_COMMENT, status.hasDocument);
-//      }
-//
-//      menu->enableMenuItemById(IDM_EDIT_PASTE, status.hasDocument);
-//   }
-//
-//   if (forced || status.hasProject != _ideStatus.hasProject) {
-//      menu->enableMenuItemById(IDM_PROJECT_COMPILE, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_RUN, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_STEPINTO, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_STEPOVER, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_RUNTO, status.hasProject);
-//   }
-//
-//   if (forced || status.running != _ideStatus.running) {
-//      onDebuggerUpdate(status.running);
-//   }
-//
-//   _ideStatus = status;
-//}
-
 bool IDEWindow :: onClose()
 {
    if (!_controller->onClose(fileDialog, messageDialog, _model))
@@ -1238,4 +1258,9 @@ void IDEWindow :: populate(size_t counter, GUIControlBase** children)
 
    _windowList.assign(menu);
    _recentFileList.assign(menu);
+}
+
+void IDEWindow :: onColorSchemeChange()
+{
+   _viewFactory->reloadStyles(_model->viewModel());
 }

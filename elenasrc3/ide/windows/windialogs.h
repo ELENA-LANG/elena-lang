@@ -127,13 +127,15 @@ namespace elena_lang
 
    class EditorSettings : public WinDialog, public EditorSettingsBase
    {
+      TextViewModelBase* _model;
+
       void onCreate() override;
       void onOK() override;
 
    public:
       bool showModal() override;
 
-      EditorSettings(HINSTANCE instance, WindowBase* owner);
+      EditorSettings(HINSTANCE instance, WindowBase* owner, TextViewModelBase* model);
    };
 
    class FindDialog : public WinDialog, public FindDialogBase

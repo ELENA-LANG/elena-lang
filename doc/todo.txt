@@ -10,23 +10,23 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * ppc64le : core60
+    * ppc64le : wideTest
 
     * ide : goto nested class
     * test UTF16Encoder : to / from utf8, to / from win2152, load file
     * #195 : implementing rosetta code samples
     * ldoc : show template based type correctly
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
-    * new rosetta code sample : Associative array/Creation
     * ide : recent projects
     * ide : recent files / projects, clear the list
     * string to real : support e notation
-    * ide : editor settings - color scheme select (use dark mode)
     * support constants in array size declaration (see lnx_console.l)
     * simplify code (see INPUT_RECORD operations)
+    * rosetta code sample : Averages/Root mean square
     * pi optimization : int-real operation (#86)
     * api : provide field descriptions
     * ide : debug goto source
+    * ide : IDM_FILE_CLOSEALLBUT
     * migrate the rest of system (memory.l)
     * automatical conversion of int literal to int8, int16 and int64 if possible
     * test : print german text
@@ -44,9 +44,9 @@ In development:
     * optimize pi sample
     * optimize dirty_ptr := dirty_ptr + int
     * implementing corex: snop, using im the code as well
-    * ide : enable / disable menu commands
     * implementing corex
     * boxing an array, assinging to the local variable - get rid of double assigning
+    * ide : enable / disable menu commands
     * optimization : extra temporal variables
     * ide : window list - close several windows
     + optimiation : branching with int constant
@@ -74,6 +74,7 @@ In development:
     [!] x86 GUI support
     [!] pi sample optimization (under 9sec)
     [!] conditional boxing
+    * ide : dark color scheme
     * conditional boxing for stack allocated parameters (#324, #173)
     * conditional boxing of stacksafe arguments / self
     * intnumber.cast<'integer> - should returns itself without boxing
@@ -90,6 +91,7 @@ In development:
     * optimize intOp.Absolute method - why no byref handler?
     * optimize : dcopy - x86-64, aarch64, ppc64le
     * optimize : dcopydpn - x86, x86-64, aarch64, ppc64le
+    * ide : syntax highlighting (default / classic) 
 
     === Iteration 19 ===
     [!] elenavm x64 dll

@@ -17,7 +17,7 @@
 namespace elena_lang
 {
    // --- IDEFactory ---
-   class IDEFactory : public GUIFactoryBase
+   class IDEFactory : public GUIFactoryBase, public ViewFactoryBase
    {
    protected:
       FontFactory    _fontFactory;
@@ -53,6 +53,8 @@ namespace elena_lang
          int vmConsoleOutput, int toolBarControl, int contextEditor);
 
    public:
+      void reloadStyles(TextViewModelBase* viewModel) override;
+
       GUIApp* createApp() override;
       GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
          ProcessBase* vmConsoleProcess) override;

@@ -235,7 +235,7 @@ namespace elena_lang
       void doIndent(IDEModel* model);
       void doOutdent(IDEModel* model);
 
-      void doConfigureEditorSettings(EditorSettingsBase& editorDialog);
+      void doConfigureEditorSettings(EditorSettingsBase& editorDialog, IDEModel* model);
 
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param);
