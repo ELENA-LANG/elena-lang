@@ -27,16 +27,6 @@ else
   exit 1
 fi
 
-# ../bin/elena-og ../dat/og/rules.txt
-# ret=$?
-# if [ $ret -eq 0 ]
-# then
-#   echo .
-# else
-#   echo "Failure" >&2
-#   exit 1
-# fi
-
 ../../bin/og64-cli ../../dat/og/bc_rules60.txt
 ret=$?
 if [ $ret -eq 0 ]
