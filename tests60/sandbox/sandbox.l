@@ -5,14 +5,14 @@ public program()
 //   console.write("methodNotFoundTest:");
 
    var o := 2;
-//   var f := false;
+   var f := false;
    try
    {
       o.fail()
    }
    catch(MethodNotFoundException e)
    {
-//      f := true;
+      f := true;
       console.writeLine("error");
    };
 
