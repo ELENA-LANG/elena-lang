@@ -2105,7 +2105,7 @@ inline %0D7h
   addi    r17, r17, __xdisp32lo_1 
   addi    r18, r18, __xdisp32lo_2 
 
-  iselgr  r15, r17, r18
+  iselgt  r15, r17, r18
 
 end 
 

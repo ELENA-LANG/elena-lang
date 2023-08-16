@@ -105,6 +105,7 @@ namespace elena_lang
       void compileFSQRT(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileISELEQ(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileISELLT(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileISELGT(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileOR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileORI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLBZ(ScriptToken& tokenInfo, MemoryWriter& writer);
