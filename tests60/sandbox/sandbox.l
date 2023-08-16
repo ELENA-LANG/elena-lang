@@ -16,7 +16,7 @@ public program()
       console.writeLine("error");
    };
 
-//   Assert.ifTrue(f);
+   Assert.ifTrue(f);
 
 //   console.writeLine(".");
 }
