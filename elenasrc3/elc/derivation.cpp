@@ -739,7 +739,6 @@ void SyntaxTreeBuilder :: flushTemplateArg(SyntaxTreeWriter& writer, Scope& scop
       SyntaxNode current = node.firstChild();
 
       ref_t attributeCategory = V_CATEGORY_MAX;
-      bool dummy = false;
       while (current != nameNode) {
          bool allowType = current.nextNode() == nameNode;
          flushAttribute(writer, scope, current, attributeCategory, allowType);

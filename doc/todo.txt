@@ -10,7 +10,7 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * aarch64 : methodnotfound
+    * ppc64le : compile
 
     * ide : goto nested class
     * test UTF16Encoder : to / from utf8, to / from win2152, load file
