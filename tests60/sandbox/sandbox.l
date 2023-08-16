@@ -6,14 +6,15 @@ public program()
 
    var o := 2;
 //   var f := false;
-//   try
-//   {
+   try
+   {
       o.fail()
-//   }
-//   catch(MethodNotFoundException e)
-//   {
+   }
+   catch(MethodNotFoundException e)
+   {
 //      f := true;
-//   };
+      console.writeLine("error");
+   };
 
 //   Assert.ifTrue(f);
 
