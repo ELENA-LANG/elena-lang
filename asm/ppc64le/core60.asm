@@ -1424,8 +1424,9 @@ end
 inline %0997h
 
   lis     r18, __n16hi_1
-  addi    r18, r18, __n16lo_1
-
+  li      r19, __n16lo_1
+  andi.   r19, r19, 0FFFFh
+  add     r18, r18, r19
   cmp     r14, r18
 
 end
