@@ -2,14 +2,6 @@ import extensions;
 
 public program()
 {
-    Assert.ifTrue("abc"w == "abc"w);
-    console.write(".");
-    Assert.ifFalse("ab"w == "abc"w);
-    console.write(".");
-    Assert.ifTrue("ba"w > "ab"w);
-    console.write(".");
-    Assert.ifTrue("ab"w < "abc"w);
-    console.write(".");
     Assert.ifTrue("abc"w + "de"w == "abcde"w);
 
     Assert.ifTrue("abcd"w.indexOf(0, "bc"w)==1);
