@@ -1423,8 +1423,8 @@ end
 // ; cmpn n  (n > 07FFFh)
 inline %0A97h
 
-  lis     r18, __arg32hi_1
-  addi    r18, r18, __arg32lo_1
+  lis     r18, __n16hi_1
+  addi    r18, r18, __n16lo_1
 
   cmp     r14, r18
 
