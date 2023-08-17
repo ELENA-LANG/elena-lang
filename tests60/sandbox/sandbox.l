@@ -2,11 +2,8 @@ import extensions;
 
 public program()
 {
-   var r := -2.0.toInt();
-   console.writeLine(r)
-
-//    Assert.ifTrue(-2.0.toInt() == -2);
-//    console.write(".");
+    Assert.ifTrue(-2.0.toInt() == -2);
+    console.write(".");
 //    Assert.ifTrue(-2.toReal() == -2.0);
 //    console.write(".");    
 //    Assert.ifTrue(-2.0.toLong() == -2l);
