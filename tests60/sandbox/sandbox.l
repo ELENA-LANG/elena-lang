@@ -2,8 +2,13 @@ import extensions;
 
 public program()
 {
-   var r := -2.toReal();
+   int n := -2;
+   real r := n;
+
    console.writeLine(r);
+
+//   var r := -2.toReal();
+//   console.writeLine(r);
 
 //    Assert.ifTrue(-2.toReal() == -2.0);
 //    console.write(".");    
