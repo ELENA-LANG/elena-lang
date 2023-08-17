@@ -1448,7 +1448,7 @@ inline %098h
   addi    r19, r31, __arg16_1
 
   lfd     f17, 0(r15)
-  friz    f17, f17
+//;  friz    f17, f17
   fctidz  f18, f17
   stfd    f18, 0(r19) 
 
