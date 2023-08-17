@@ -1,48 +1,32 @@
-import system'routines;
 import extensions;
-import extensions'text;
-
-extension op
-{
-    get Shuffled()
-    {
-        var original := self.toArray();
-        var shuffled := self.toArray();
-    
-        for (int i := 0, i < original.Length, i += 1) {
-            for (int j := 0, j < original.Length, j += 1) {
-                if (i != j && original[i] != shuffled[j] && original[j] != shuffled[i])
-                {
-                    shuffled.exchange(i,j)
-                }                
-            }
-        };
-    
-        ^ shuffled.summarize(new StringWriter()).toString()
-    }
-    
-    score(originalText)
-    {
-        var shuffled := self.toArray();
-        var original := originalText.toArray();
-        int score := 0;
-
-        for (int i := 0, i < original.Length, i += 1) {
-            if (original[i] == shuffled[i]) { score += 1 }
-        };
-        
-        ^ score
-    }
-}
 
 public program()
 {
-    new string[]{"abracadabra", "seesaw", "grrrrrr", "pop", "up", "a"}.forEach:(s)
-    {
-        var shuffled_s := s.Shuffled;
+    Assert.ifTrue("abc"w == "abc"w);
+    console.write(".");
+    Assert.ifFalse("ab"w == "abc"w);
+    console.write(".");
+    Assert.ifTrue("ba"w > "ab"w);
+    console.write(".");
+    Assert.ifTrue("ab"w < "abc"w);
+    console.write(".");
+    Assert.ifTrue("abc"w + "de"w == "abcde"w);
 
-        console.printLine("The best shuffle of ",s," is ",shuffled_s,"(",shuffled_s.score(s),")")
-    };
+    Assert.ifTrue("abcd"w.indexOf(0, "bc"w)==1);
+    console.write(".");
+    Assert.ifTrue("abcd"w.indexOf(2, "bc"w)==-1);
+    console.write(".");
+    Assert.ifTrue("acd"w.insert(1,"b"w) == "abcd"w);
+    console.write(".");
+    Assert.ifTrue("abecd"w.delete(2,1) == "abcd"w);
+    console.write(".");
+    Assert.ifTrue("abcd"w.Substring(1,2) == "bc"w);
+    console.write(".");
+    Assert.ifTrue("abc"w[1] == "b");
+    console.write(".");
 
-    console.readChar()
+    Assert.ifFailed({ "abc"w[-1] });
+    console.write(".");
+    Assert.ifFailed({ "abc"w[4] });
+    console.write(".");
 }
