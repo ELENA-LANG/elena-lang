@@ -1392,7 +1392,7 @@ end
 // ; writen
 inline %96h
 
-  li      r16, __n16_1
+  li      r16, __n16_1      // ; n
   mr      r18, r15
   mulld   r20, r16, r14
   add     r19, r3, r20

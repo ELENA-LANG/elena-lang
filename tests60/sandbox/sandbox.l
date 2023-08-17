@@ -2,7 +2,16 @@ import extensions;
 
 public program()
 {
-   var r := "23".toReal();
+      int index := /*s.indexOf(0, $46)*/-1;
+      if (index != -1) {
+         console.writeLine("index = -1");
+      }
+      else {
+         console.writeLine("index == -1");
+      };
+
+
+//   var r := "23".toReal();
 
 //    Assert.ifTrue("23".toReal() == 23.0);
 //    console.write(".");
