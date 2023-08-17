@@ -1420,10 +1420,21 @@ inline %97h
 
 end
 
+// ; cmpn n  (n < 0)
+inline %0997h
+
+  lis     r18, __n16hi_1
+  addi    r18, r18, __n16lo_1
+
+  cmp     r14, r18
+
+end
+
 // ; cmpn n  (n > 07FFFh)
 inline %0A97h
 
-  lis     r18, __n16hi_1
+  li      r18, __n16hi_1
+  sldi    r18, r18, 16
   addi    r18, r18, __n16lo_1
 
   cmp     r14, r18
