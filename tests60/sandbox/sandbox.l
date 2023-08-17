@@ -2,12 +2,14 @@ import extensions;
 
 public program()
 {
-    Assert.ifTrue("23".toReal() == 23.0);
-    console.write(".");
-    Assert.ifTrue("123.456789".toReal() == 123.456789);
-    console.write(".");
-    Assert.ifTrue("-123.456789".toReal() == -123.456789);
-    console.write(".");
+   var r := "23".toReal();
+
+//    Assert.ifTrue("23".toReal() == 23.0);
+//    console.write(".");
+//    Assert.ifTrue("123.456789".toReal() == 123.456789);
+//    console.write(".");
+//    Assert.ifTrue("-123.456789".toReal() == -123.456789);
+//    console.write(".");
 
 //    Assert.ifTrue(-2l.toInt() == -2);
 //    Assert.ifTrue(-2.toLong() == -2l);
