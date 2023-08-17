@@ -3,6 +3,7 @@ import extensions;
 public program()
 {
     Assert.ifTrue("abc"w + "de"w == "abcde"w);
+    console.write(".");
 
     Assert.ifTrue("abcd"w.indexOf(0, "bc"w)==1);
     console.write(".");
