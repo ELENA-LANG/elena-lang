@@ -933,7 +933,7 @@ void PPC64Assembler ::compileEXTSW(ScriptToken& tokenInfo, MemoryWriter& writer)
    PPCOperand ry = readRegister(tokenInfo, ASM_INVALID_SOURCE);
 
    if (rx.isGPR() && ry.isGPR()) {
-      writer.writeDWord(PPCHelper::makeXCommand(31, ry.type,
+      writer.writeDWord(PPCHelper::makeX2Command(31, ry.type,
          rx.type, 986, 0));
    }
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
