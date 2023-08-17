@@ -2,29 +2,22 @@ import extensions;
 
 public program()
 {
-   int n := -2;
-   real r := n;
+   console.write("vardispatcherTest:");
 
-   console.writeLine(r);
+   var r1 := VariadicFunctionDispatchTester(1,2,3);
+   Assert.ifTrue(r1 == 6);
+   console.write(".");
+   var r2 := VariadicDispatchTester.product(1,2,3,4);
+   Assert.ifTrue(r2 == 24);
+   console.write(".");
 
-//   var r := -2.toReal();
-//   console.writeLine(r);
+   var o := VariadicFunctionDispatchTester;
+   var o2 := VariadicDispatchTester;
+   var r3 := o(1,2,3);
+   console.write(".");
+   Assert.ifTrue(r3 == 6);
+   var r4 := o2.product(1,2,3,4);
+   Assert.ifTrue(r4 == 24);
 
-//    Assert.ifTrue(-2.toReal() == -2.0);
-//    console.write(".");    
-//    Assert.ifTrue(-2.0.toLong() == -2l);
-//    console.write(".");  
-//    Assert.ifTrue(-2l.toReal() == -2.0);
-//    console.write(".");
-
-//    int n2 := 1234;
-//    short w := n2;
-//    Assert.ifTrue(w == 1234);
-//    console.write(".");
-//    string s := n2.toString();
-//    Assert.ifTrue(s == "1234");
-//    console.write(".");
-//    int n3 := s.toInt();
-//    Assert.ifTrue(n3 == n2);
-//    console.writeLine(".");
+   console.writeLine(".");
 }
