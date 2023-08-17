@@ -4,7 +4,7 @@ public program()
 {
       int index := /*s.indexOf(0, $46)*/-1;
       if (index != -1) {
-         console.writeLine("index = -1");
+         console.writeLine("index != -1");
       }
       else {
          console.writeLine("index == -1");
