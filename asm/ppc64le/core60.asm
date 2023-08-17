@@ -1433,9 +1433,9 @@ end
 // ; cmpn n  (n > 07FFFh)
 inline %0A97h
 
-  li      r18, __n16hi_1
-  sldi    r18, r18, 16
-  addi    r18, r18, __n16lo_1
+  lis     r18, __n16hi_1
+  li      r19, __n16lo_1
+  add     r18, r18, r19
 
   cmp     r14, r18
 
