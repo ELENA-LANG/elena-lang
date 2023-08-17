@@ -1,29 +1,22 @@
+import system'routines;
 import extensions;
+import extensions'routines;
+
+const int M = 3;
+const int N = 5; 
+
+Numbers(n)
+{
+    ^ Array.allocate(n).populate:(int n => n)
+}
 
 public program()
-{   
-   int ch:= 2;
-   if (ch > 0DBFFh)
-   {
-      InvalidOperationException.raise()
-   };
-   
-
-//    Assert.ifTrue("abcd"w.indexOf(0, "bc"w)==1);
-//    console.write(".");
-//    Assert.ifTrue("abcd"w.indexOf(2, "bc"w)==-1);
-//    console.write(".");
-//    Assert.ifTrue("acd"w.insert(1,"b"w) == "abcd"w);
-//    console.write(".");
-//    Assert.ifTrue("abecd"w.delete(2,1) == "abcd"w);
-//    console.write(".");
-//    Assert.ifTrue("abcd"w.Substring(1,2) == "bc"w);
-//    console.write(".");
-//    Assert.ifTrue("abc"w[1] == "b");
-//    console.write(".");
-//
-//    Assert.ifFailed({ "abc"w[-1] });
-//    console.write(".");
-//    Assert.ifFailed({ "abc"w[4] });
-//    console.write(".");
+{
+    var numbers := Numbers(N);    
+    Combinator.new(M, numbers).forEach:(row)
+    {
+        console.printLine(row.toString())
+    };
+    
+    console.readChar()
 }

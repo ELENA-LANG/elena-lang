@@ -1190,6 +1190,24 @@ bool IDEController :: closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDi
    return true;
 }
 
+bool IDEController :: closeAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+   NotificationStatus& status)
+{
+   int index = model->sourceViewModel.getCurrentIndex();
+   for (int i = 1; i < index; i++) {
+      if (!closeFile(dialog, mssgDialog, model, 1, status))
+         return false;
+   }
+
+   int count = model->sourceViewModel.getDocumentCount();
+   for (int i = 2; i <= count; i++) {
+      if (!closeFile(dialog, mssgDialog, model, 2, status))
+         return false;
+   }
+
+   return true;
+}
+
 bool IDEController :: saveAll(FileDialogBase& dialog, IDEModel* model, bool forcedMode,
    NotificationStatus& status)
 {
@@ -1205,6 +1223,19 @@ bool IDEController :: doCloseAll(FileDialogBase& dialog, MessageDialogBase& mssg
 {
    NotificationStatus status = NONE_CHANGED;
    if (closeAll(dialog, mssgDialog, model, status)) {
+      if (status != NONE_CHANGED)
+         _notifier->notify(NOTIFY_IDE_CHANGE, status);
+
+      return true;
+   }
+
+   return false;
+}
+
+bool IDEController :: doCloseAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model)
+{
+   NotificationStatus status = NONE_CHANGED;
+   if (closeAllButActive(dialog, mssgDialog, model, status)) {
       if (status != NONE_CHANGED)
          _notifier->notify(NOTIFY_IDE_CHANGE, status);
 

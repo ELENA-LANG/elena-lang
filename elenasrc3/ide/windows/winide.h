@@ -123,6 +123,7 @@ namespace elena_lang
       void saveProject();
       void closeFile();
       void closeAll();
+      void closeAllButActive();
       void newProject();
       void openProject();
       void closeProject();

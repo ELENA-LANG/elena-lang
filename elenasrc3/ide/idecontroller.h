@@ -168,6 +168,8 @@ namespace elena_lang
       bool saveFile(FileDialogBase& dialog, IDEModel* model, int index, bool forcedMode);
       bool closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
          NotificationStatus& status);
+      bool closeAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
+         NotificationStatus& status);
       bool saveAll(FileDialogBase& dialog, IDEModel* model, bool forcedMode,
          NotificationStatus& status);
 
@@ -213,6 +215,7 @@ namespace elena_lang
       bool doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
       bool doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, int index);
       bool doCloseAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool doCloseAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
       void doNewProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, ProjectSettingsBase& prjDialog, 
          IDEModel* model);
       bool doOpenProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);

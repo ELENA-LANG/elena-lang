@@ -188,6 +188,11 @@ void IDEWindow :: closeAll()
    _controller->doCloseAll(fileDialog, messageDialog, _model);
 }
 
+void IDEWindow :: closeAllButActive()
+{
+   _controller->doCloseAllButActive(fileDialog, messageDialog, _model);
+}
+
 void IDEWindow :: openProject()
 {
    _controller->doOpenProject(projectDialog, messageDialog, _model);
@@ -665,6 +670,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_FILE_CLOSEALL:
          closeAll();
+         break;
+      case IDM_FILE_CLOSEALLBUT:
+         closeAllButActive();
          break;
       case IDM_PROJECT_CLOSE:
          closeProject();

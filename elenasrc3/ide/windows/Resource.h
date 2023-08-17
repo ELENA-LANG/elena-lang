@@ -50,6 +50,7 @@
 #define IDM_PROJECT_OPEN               410
 #define IDM_PROJECT_CLOSE              411
 #define IDM_PROJECT_NEW                412
+#define IDM_FILE_CLOSEALLBUT           413
 
 #define IDM_FILE_FILES                 420
 #define IDM_FILE_FILES_1               421

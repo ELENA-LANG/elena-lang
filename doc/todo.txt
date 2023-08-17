@@ -10,9 +10,9 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * ppc64le : wideTest
+    * ppc64le : conversionTest
 
-    * rosetta code sample : Binary digits
+    * rosetta code sample : Command-line arguments
     * ide : goto nested class
     * test UTF16Encoder : to / from utf8, to / from win2152, load file
     * #195 : implementing rosetta code samples
@@ -26,7 +26,6 @@ In development:
     * pi optimization : int-real operation (#86)
     * api : provide field descriptions
     * ide : debug goto source
-    * ide : IDM_FILE_CLOSEALLBUT
     * migrate the rest of system (memory.l)
     * automatical conversion of int literal to int8, int16 and int64 if possible
     * test : print german text
@@ -92,6 +91,7 @@ In development:
     * optimize : dcopy - x86-64, aarch64, ppc64le
     * optimize : dcopydpn - x86, x86-64, aarch64, ppc64le
     * ide : syntax highlighting (default / classic) 
+    * rosetta code sample : Check that file exists
 
     === Iteration 19 ===
     [!] elenavm x64 dll
@@ -104,6 +104,7 @@ In development:
 
     === Iteration 20 ===
     [!] support mta_gui, vm_mta_console
+    * review ppc64le - find a better solution to deal with n16_lo > 07FFFFh (see cmpn)
 
 ------                                                           
 Backlog:
