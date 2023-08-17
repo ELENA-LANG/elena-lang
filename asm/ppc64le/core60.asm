@@ -830,7 +830,8 @@ end
 // ; fsave
 inline %25h
 
-  std     r14, 0(r1) 
+  extsw   r17, r14
+  std     r17, 0(r1) 
   lfd     f17, 0(r1) 
   fcfid   f17, f17
   stfd    f17, 0(r15)
