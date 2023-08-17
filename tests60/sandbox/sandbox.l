@@ -1,5 +1,33 @@
 import extensions;
 
+singleton VariadicFunctionDispatchTester
+{
+   function(params int[] args)
+   {
+      int l := args.Length;
+      int sum := 0;
+      for (int i := 0, i < l, i += 1) {
+         sum := sum + args[i]
+      };
+
+      ^ sum
+   }
+}
+
+singleton VariadicDispatchTester
+{
+   product(params int[] args)
+   {
+      int l := args.Length;
+      int prod := 1;
+      for (int i := 0, i < l, i += 1) {
+         prod := prod * args[i]
+      };
+
+      ^ prod
+   }
+}
+
 public program()
 {
    console.write("vardispatcherTest:");
