@@ -3646,7 +3646,7 @@ inline % 05FAh
 
 //;  xor  edx, edx
   li      r25, 0
-  li      r16, 0
+  li      r11, 0
 
   // ; count the number of args
   mr      r22, r17
@@ -3655,10 +3655,9 @@ inline % 05FAh
 labCountParam:
   addi    r22, r22, 8
   ld      r24, 0(r22)
-  addi    r16, r16, 1
+  addi    r11, r11, 1
   cmp     r24, r23
   bne     labCountParam
-  mr      r17, r16
 
 //;  mov  rbx, [rsi] // ; message from overload list
   ld      r22, 0(r21)                           //;!!
@@ -3675,16 +3674,17 @@ labNextOverloadlist:
 //;  mov  r13, [r9 + r13 * 2 + 8]
   add     r23, r23, r24
   ld      r23, 8(r23)
-  mr      r16, r17
+
+  li      r16, 0
+
 //;  lea  rbx, [r13 - 8]
   addi    r22, r23, -8
-  mr      r26, r22
 
 labNextParam:
 //;  add  ecx, 1
   addi    r16, r16, 1
 //;  jnz  short labMatching
-  cmp     r16,r17
+  cmp     r16,r11
   bne     labMatching
 
 //;  mov  r9, __ptr64_2  - r21
@@ -3700,10 +3700,10 @@ labNextParam:
   bctr
 
 labMatching:
-  addi    r20, r26, 8
+  addi    r20, r22, 8
   ld      r18, 0(r20)
   cmpwi   r18, 0
-  iseleq  r26, r26, r20
+  iseleq  r22, r22, r20
 
 //;  mov  rdi, [rax + rcx * 8]
   sldi    r19, r16, 3
@@ -3725,7 +3725,7 @@ labMatching:
 //;  mov  rdi, [rdi - elVMTOffset]
   ld      r18, -elVMTOffset(r18)
 //;  mov  rsi, [rbx + rcx * 8]
-  ld      r20, 0(r26)
+  ld      r20, 0(r22)
 
 labNextBaseClass:
 //;  cmp  rsi, rdi
