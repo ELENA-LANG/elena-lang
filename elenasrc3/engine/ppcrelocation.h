@@ -64,9 +64,10 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          break;
       case mskStatDataRef32Hi:
       {
-         addr_t addr = (base + space->stat) >> 16;
+         addr_t addr = base + space->stat;
 
-         *(unsigned short*)address += (unsigned short)(addr);
+         //*(unsigned short*)address += (unsigned short)(addr);
+         *(short*)address += getHiAdjusted(addr);
          break;
       }
       case mskStatDataRef32Lo:
@@ -78,9 +79,11 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
       }
       case mskRDataRef32Hi:
       {
-         addr_t addr = (base + space->rdata) >> 16;
+         addr_t addr = base + space->rdata;
 
-         *(unsigned short*)address += (unsigned short)(addr);
+         //*(unsigned short*)address += (unsigned short)(addr);
+         *(short*)address += getHiAdjusted(addr);
+
          break;
       }
       case mskRDataRef32Lo:
@@ -171,9 +174,10 @@ inline void ppc64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
       }
       case mskImportDisp32Hi:
       {
-         addr_t disp = space->importMapping.get(reference | mskImportRef64) >> 16;
+         addr_t disp = space->importMapping.get(reference | mskImportRef64);
 
-         *(unsigned short*)address += (unsigned short)(disp);
+         //*(unsigned short*)address += (unsigned short)(disp >> 16);
+         *(short*)address += getHiAdjusted(disp);
          break;
       }
       default:
