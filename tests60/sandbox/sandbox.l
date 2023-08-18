@@ -37,10 +37,10 @@ public program()
    Assert.ifTrue(r2 == 24);
    console.write(".");
 
-//   var o := VariadicFunctionDispatchTester;
-//   var o2 := VariadicDispatchTester;
-//   var r3 := o(1,2,3);
-//   console.write(".");
+   var o := VariadicFunctionDispatchTester;
+   var o2 := VariadicDispatchTester;
+   var r3 := o(1,2,3);
+   console.write(".");
 //   Assert.ifTrue(r3 == 6);
 //   var r4 := o2.product(1,2,3,4);
 //   Assert.ifTrue(r4 == 24);
