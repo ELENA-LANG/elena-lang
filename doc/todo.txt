@@ -4,9 +4,6 @@ In development:
 
   [development]
     ### EPIC: elena 6.0 - redux ###
-     === Iteration 17 ===
-    * ppc64le : vardispatcherTest
-
     === Iteration 18 ===
     [!] x86 GUI support
     [!] pi sample optimization (under 9sec)
