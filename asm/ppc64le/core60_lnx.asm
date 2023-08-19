@@ -74,7 +74,7 @@ procedure % VEH_HANDLER
 
   mr      r16, r3
   mr      r3, r14
-  mr      r14, r3
+  mr      r14, r16
 
   // ; temporally reloading TOC pointer
   lis   r2, rdata32_hi : %CORE_TOC
