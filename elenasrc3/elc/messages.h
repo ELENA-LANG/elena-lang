@@ -6,9 +6,11 @@
 //                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#include "errors.h"
+
 namespace elena_lang
 {
-   constexpr auto MessageLength = 78;
+   constexpr auto MessageLength = 81;
    const Pair<int, const char*, 0, nullptr> Messages[MessageLength] =
    {
       {errDuplicatedSymbol, errMsgDuplicatedSymbol},
@@ -88,7 +90,10 @@ namespace elena_lang
       {wrnUnknownTypecast, wrnMsgUnknownTypecast},
       {wrnUnsupportedOperator, wrnMsgUnsupportedOperator},
       {errInvalidParserTarget, errMsgInvalidParserTarget},
-      {errInvalidParserTargetType, errMsgInvalidParserTargetType}
+      {errInvalidParserTargetType, errMsgInvalidParserTargetType},
+      {wrnCallingItself, wrnMsgCallingItself},
+      {errAssigningToSelf, errMsgAssigningToSelf},
+      {wrnUnassignedVariable, wrnMsgUnassignedVariable},
    };
 
 }

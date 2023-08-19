@@ -246,6 +246,18 @@ void WindowApp::notifyCompletion(int messageCode, int param)
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
+void WindowApp :: notifyContextMenu(int id, short x, short y, bool hasSelection)
+{
+   ContextMenuNMHDR notification;
+   notification.nmhrd.code = id;
+   notification.nmhrd.hwndFrom = _hwnd;
+   notification.x = x;
+   notification.y = y;
+   notification.hasSelection = hasSelection;
+
+   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
+}
+
 int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, int notificationId, NotificationStatus notificationStatus)
 {
    // Perform application initialization:

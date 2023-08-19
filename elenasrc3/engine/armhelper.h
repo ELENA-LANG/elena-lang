@@ -423,21 +423,23 @@ namespace elena_lang
          // Or the CTO value into the low bits, which must be below the Nth bit
          // bit mentioned above.
          imms |= (CTO - 1);
-         imms &= 0x3f;
 
          // Extract the seventh bit and toggle it to create the N field.
          N = ((imms >> 6) & 1) ^ 1;
 
+         imms &= 0x3f;
+
          return true;
       }
 
-      static unsigned int makeLogocalImm13Opcode(int sf, int op, int s, int imm, ARMOperandType rn, ARMOperandType rd)
+      static unsigned int makeLogicalImm13Opcode(int sf, int op, int s, int imm, ARMOperandType rn, ARMOperandType rd)
       {
          int n = 0;
          int imms = 0;
          int immr = 0;
 
-         decodeLogicalImmediate(imm, n, imms, immr);
+         if(!decodeLogicalImmediate(imm, n, imms, immr))
+            assert(false);
 
          return (sf << 31) | (op << 29) | (s << 23) | (n << 22) | (immr << 16) | (imms << 10)
             | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);

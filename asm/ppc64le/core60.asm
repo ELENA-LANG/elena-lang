@@ -124,6 +124,9 @@ structure %CORE_GC_TABLE
   dq 0 // ; gc_perm_end           : +60h 
   dq 0 // ; gc_perm_current       : +68h 
 
+  dq 0 // ; gc_lock               : +70h 
+  dq 0 // ; reserved              : +78h 
+
 end
  
 // ; NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
@@ -591,7 +594,8 @@ inline % 0Ch
   andi.   r14, r14, ARG_MASK
 
   li      r19, ~ARG_MASK
-  addis   r19, r19, 0FFFFh
+  andi.   r19, r19, 0FFFFh
+  addis   r19, r19, 0FFFFh // ; note: to adjust hi word                    
 
   lwz     r18, 0(r15)
   and     r18, r18, r19
@@ -718,13 +722,6 @@ labEnd:
 
 end
 
-// ; xassignsp
-inline % 17h
-
-  mr      r15, r1
-
-end
-
 // ; dtrans
 inline %18h
 
@@ -834,7 +831,8 @@ end
 // ; fsave
 inline %25h
 
-  std     r14, 0(r1) 
+  extsw   r17, r14
+  std     r17, 0(r1) 
   lfd     f17, 0(r1) 
   fcfid   f17, f17
   stfd    f17, 0(r15)
@@ -859,6 +857,29 @@ inline %027h
 
 end
 
+// ; bcopy
+inline %28h
+
+  lbz     r17, 0(r3)
+  std     r17, 0(r15)
+
+end
+
+// ; wcopy
+inline %29h
+
+  lwz     r17, 0(r3)
+  stw     r17, 0(r15)
+
+end
+
+// ; xpeekeq
+inline %02Ah
+
+  iseleq  r15, r3, r15
+
+end
+
 // ; xget
 inline %02Eh
 
@@ -873,6 +894,50 @@ inline %02Fh
 
   mtctr    r15            // ; put code address into ctr
   bctrl                   // ; and call it
+
+end
+
+// ; fiadd
+inline %070h
+
+  lfd     f18, 0(r3) 
+  fcfid   f18, f18
+  lfd     f17, 0(r15)
+  fadd    f17, f17, f18  
+  stfd    f17, 0(r15)
+
+end
+
+// ; fsub
+inline %071h
+
+  lfd     f18, 0(r3) 
+  fcfid   f18, f18
+  lfd     f17, 0(r15)
+  fsub    f17, f18, f17
+  stfd    f17, 0(r15)
+
+end
+
+// ; fmul
+inline %072h
+
+  lfd     f18, 0(r3) 
+  fcfid   f18, f18
+  lfd     f17, 0(r15)
+  fmul    f17, f17, f18  
+  stfd    f17, 0(r15)
+
+end
+
+// ; fdiv
+inline %073h
+
+  lfd     f18, 0(r3) 
+  fcfid   f18, f18
+  lfd     f17, 0(r15)
+  fdiv    f17, f18, f17
+  stfd    f17, 0(r15)
 
 end
 
@@ -940,7 +1005,7 @@ inline %180h
 end 
 
 // ; setr -1
-inline %680h
+inline %980h
 
   li      r15, 0
   addi    r15, r15, -1
@@ -1329,7 +1394,7 @@ end
 // ; writen
 inline %96h
 
-  li      r16, __n16_1
+  li      r16, __n16_1      // ; n
   mr      r18, r15
   mulld   r20, r16, r14
   add     r19, r3, r20
@@ -1351,9 +1416,31 @@ end
 // ; cmpn n
 inline %97h
 
-  li       r18, __n16_1
+  li      r18, __n16_1
 
-  cmp      r14, r18
+  cmp     r14, r18
+
+end
+
+// ; cmpn n  (n < 0)
+inline %0997h
+
+  lis     r18, __n16hi_1
+  li      r19, __n16lo_1
+  andi.   r19, r19, 0FFFFh
+  add     r18, r18, r19
+  cmp     r14, r18
+
+end
+
+// ; cmpn n  (n > 07FFFh)
+inline %0A97h
+
+  li      r18, __n16lo_1
+  andi.   r18, r18, 0FFFFh
+  addis   r18, r18, __n16hi_1
+
+  cmp     r14, r18
 
 end
 
@@ -1363,8 +1450,8 @@ inline %098h
   addi    r19, r31, __arg16_1
 
   lfd     f17, 0(r15)
-  friz    f17, f17
-  fctiw   f18, f17
+//;  friz    f17, f17
+  fctidz  f18, f17
   stfd    f18, 0(r19) 
 
 // stfiwx
@@ -1688,6 +1775,14 @@ inline % 0AEh
 
 end
 
+// ; xassignsp
+inline % 0AFh
+
+  li      r16, __arg16_1
+  add     r15, r1, r16
+
+end
+
 // ; callr
 inline %0B0h
 
@@ -1726,13 +1821,14 @@ inline % 0B6h //; (r15 - object, r14 - message)
   ld      r16, -elVMTOffset(r15)      //; edi
   xor     r17, r17, r17               //; ecx 
   ld      r7, -elVMTSizeOffset(r16)   //; esi
-  li      r19, 1
 
   lis     r18, __arg32hi_1
   addi    r18, r18, __arg32lo_1
+
   andi.   r14, r14, ARG_ACTION_MASK
 
   li      r19, ~ARG_MASK
+  andi.   r19, r19, 0FFFFh
   addis   r19, r19, 0FFFFh
 
   and     r18, r18, r19
@@ -1788,7 +1884,7 @@ inline %1C0h
 end 
 
 // ; cmpr 1
-inline %6C0h
+inline %9C0h
 
   li      r16, 0
   addi    r16, r16, -1
@@ -2068,6 +2164,19 @@ inline %0D4h
   stw     r18, 0(r19)
 
 end
+
+// ; selgrrr
+inline %0D7h
+
+  ld      r16, toc_code(r2)
+  addis   r17, r16, __xdisp32hi_1 
+  addis   r18, r16, __xdisp32hi_2 
+  addi    r17, r17, __xdisp32lo_1 
+  addi    r18, r18, __xdisp32lo_2 
+
+  iselgt  r15, r17, r18
+
+end 
 
 // ; ianddpn
 inline %0D8h
@@ -3539,7 +3648,7 @@ inline % 05FAh
 
 //;  xor  edx, edx
   li      r25, 0
-  li      r16, 0
+  li      r11, 0
 
   // ; count the number of args
   mr      r22, r17
@@ -3548,10 +3657,9 @@ inline % 05FAh
 labCountParam:
   addi    r22, r22, 8
   ld      r24, 0(r22)
-  addi    r16, r16, 1
+  addi    r11, r11, 1
   cmp     r24, r23
   bne     labCountParam
-  mr      r17, r16
 
 //;  mov  rbx, [rsi] // ; message from overload list
   ld      r22, 0(r21)                           //;!!
@@ -3568,16 +3676,17 @@ labNextOverloadlist:
 //;  mov  r13, [r9 + r13 * 2 + 8]
   add     r23, r23, r24
   ld      r23, 8(r23)
-  mr      r16, r17
+
+  li      r16, 0
+
 //;  lea  rbx, [r13 - 8]
   addi    r22, r23, -8
-  mr      r26, r22
 
 labNextParam:
 //;  add  ecx, 1
   addi    r16, r16, 1
 //;  jnz  short labMatching
-  cmp     r16,r17
+  cmp     r16,r11
   bne     labMatching
 
 //;  mov  r9, __ptr64_2  - r21
@@ -3593,10 +3702,10 @@ labNextParam:
   bctr
 
 labMatching:
-  addi    r20, r26, 8
+  addi    r20, r22, 8
   ld      r18, 0(r20)
   cmpwi   r18, 0
-  iseleq  r26, r26, r20
+  iseleq  r22, r22, r20
 
 //;  mov  rdi, [rax + rcx * 8]
   sldi    r19, r16, 3
@@ -3618,7 +3727,7 @@ labMatching:
 //;  mov  rdi, [rdi - elVMTOffset]
   ld      r18, -elVMTOffset(r18)
 //;  mov  rsi, [rbx + rcx * 8]
-  ld      r20, 0(r26)
+  ld      r20, 0(r22)
 
 labNextBaseClass:
 //;  cmp  rsi, rdi

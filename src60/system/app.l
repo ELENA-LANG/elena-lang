@@ -4,8 +4,18 @@ entry()
    {
       forward program();
    }
-   catch(Exception err) {
-     console.writeLine(err)
+   catch::
+   {
+      function(AbortException e)
+      {
+      }
+    
+      function(Exception err)
+      {
+         console.writeLine(err);
+
+         extern ExitLA(-1);
+      }
    }
 }
 

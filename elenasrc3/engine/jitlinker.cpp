@@ -292,6 +292,8 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
    ref_t mask = reference & mskAnyRef;
    ref_t refID = reference & ~mskAnyRef;
 
+   assert(refID != 0);
+
    if (module == nullptr)
       module = _module;
 
@@ -751,6 +753,9 @@ void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader
             case mskPathLiteralRef:
                vaddress = resolveName(referenceInfo, true);
                break;
+            case mskPackageRef:
+               vaddress = resolvePackage(referenceInfo);
+               break;
             default:
                vaddress = resolve(
                   _loader->retrieveReferenceInfo(referenceInfo.module, fieldInfo.valueRef & ~mskAnyRef,
@@ -1161,10 +1166,6 @@ addr_t JITLinker :: resolveConstantArray(ReferenceInfo referenceInfo, ref_t sect
 
 addr_t JITLinker :: resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo sectionInfo, ref_t sectionMask)
 {
-   // get target image & resolve virtual address
-   MemoryBase* image = _imageProvider->getTargetSection(mskRDataRef);
-   MemoryWriter writer(image);
-
    ReferenceInfo  vmtReferenceInfo;
    VAddressMap    references({ 0, nullptr, 0, 0 });
 
@@ -1177,6 +1178,10 @@ addr_t JITLinker :: resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo
    if (!vmtReferenceInfo.referenceName.empty()) {
       vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
    }
+
+   // get target image & resolve virtual address
+   MemoryBase* image = _imageProvider->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
 
    // allocate object header
    _compiler->allocateHeader(writer, vmtVAddress, size, true, _virtualMode);
@@ -1228,6 +1233,13 @@ addr_t JITLinker :: resolveName(ReferenceInfo referenceInfo, bool onlyPath)
       return resolve(*ns, mskLiteralRef, false);
    }
    else return resolve(*fullName, mskLiteralRef, false);
+}
+
+addr_t JITLinker :: resolvePackage(ReferenceInfo referenceInfo)
+{
+   ReferenceName packageInfo("", PACKAGE_SECTION);
+
+   return resolve({ referenceInfo.module, *packageInfo }, mskConstArray, false);
 }
 
 mssg_t JITLinker :: parseMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references)

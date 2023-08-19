@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Menu Implementation File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "winmenu.h"
@@ -11,7 +11,7 @@ using namespace elena_lang;
 
 // --- MenuBase ---
 
-void MenuBase :: checkItemById(int id, bool checked)
+void MenuBase :: checkMenuItemById(int id, bool checked)
 {
    int flag = (checked ? MF_CHECKED : MF_UNCHECKED) | MF_BYCOMMAND;
 
@@ -23,6 +23,73 @@ void MenuBase :: enableMenuItemById(int id, bool enable)
    int flag = (enable ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)) | MF_BYCOMMAND;
 
    ::EnableMenuItem(_handle, id, flag);
+}
+
+void MenuBase :: enableMenuItemByIndex(int index, bool enable)
+{
+   int flag = (enable ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)) | MF_BYPOSITION;
+
+   ::EnableMenuItem(_handle, index, flag);
+}
+
+void MenuBase :: insertMenuItemById(int positionId, int id, const_text_t caption)
+{
+   MENUITEMINFO mii;
+
+   mii.cbSize = sizeof(MENUITEMINFO);
+   mii.fMask = MIIM_ID | MIIM_STRING;
+   mii.fType = MFT_STRING;
+   mii.wID = id;
+   mii.dwTypeData = (wchar_t*)caption;
+
+   ::InsertMenuItem(_handle, positionId, FALSE, &mii);
+}
+
+void MenuBase :: insertMenuItemByIndex(int index, int command, const_text_t caption)
+{
+   MENUITEMINFO mii;
+
+   mii.cbSize = sizeof(MENUITEMINFO);
+   mii.fMask = MIIM_ID | MIIM_STRING;
+   mii.fType = MFT_STRING;
+   mii.wID = command;
+   mii.dwTypeData = (wchar_t*)caption;
+
+   ::InsertMenuItem(_handle, index, TRUE, &mii);
+}
+
+void MenuBase :: insertSeparatorById(int positionId, int id)
+{
+   MENUITEMINFO mii;
+
+   mii.cbSize = sizeof(MENUITEMINFO);
+   mii.fMask = MIIM_ID;
+   mii.fType = MF_MENUBREAK;
+   mii.wID = id;
+
+   ::InsertMenuItem(_handle, positionId, FALSE, &mii);
+}
+
+void MenuBase :: renameMenuItemById(int id, const_text_t caption)
+{
+   MENUITEMINFO mii;
+
+   mii.cbSize = sizeof(MENUITEMINFO);
+   mii.fMask = MIIM_STRING;
+   mii.fType = MFT_STRING;
+   mii.dwTypeData = (wchar_t*)caption;
+
+   ::SetMenuItemInfo(_handle, id, FALSE, &mii);
+}
+
+void MenuBase :: eraseMenuItemById(int id)
+{
+   ::DeleteMenu(_handle, id, MF_BYCOMMAND);
+}
+
+wchar_t MenuBase :: getMnemonicAccKey()
+{
+   return '&';
 }
 
 // --- RootMenu ---

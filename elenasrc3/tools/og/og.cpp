@@ -33,12 +33,63 @@ ByteCodePattern decodePattern(ScriptReader& reader, ScriptToken& token)
 {
    ByteCodePattern pattern = { ByteCode::None };
 
-   pattern.code = ByteCodeUtil::code(token.token.str());
+   IdentifierString command(token.token.str());
+
+   size_t timePos = command.length();
+
+   reader.read(token);
+
+   command.append(' ');
+   command.append(token.token.str());
+
+   pattern.code = ByteCodeUtil::code(*command);
+   if (pattern.code == ByteCode::None) {
+      command.truncate(timePos);
+
+      pattern.code = ByteCodeUtil::code(*command);
+   }
+   else reader.read(token);
+
    if (pattern.code == ByteCode::None) {
       throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
    }
 
-   reader.read(token);
+   if (token.compare(":")) {
+      reader.read(token);
+
+      pattern.argType = ByteCodePatternType::Match;
+      if (token.compare("$1")) {
+         pattern.argValue = 1;
+         pattern.argType = ByteCodePatternType::Set;
+
+         reader.read(token);
+      }
+      else if (token.compare("$2")) {
+         pattern.argValue = 2;
+         pattern.argType = ByteCodePatternType::Set;
+
+         reader.read(token);
+      }
+      else if (token.compare("#1")) {
+         pattern.argValue = 1;
+         pattern.argType = ByteCodePatternType::Match;
+         reader.read(token);
+      }
+      else if (token.compare("#2")) {
+         pattern.argValue = 2;
+         pattern.argType = ByteCodePatternType::Match;
+         reader.read(token);
+      }
+      else throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
+   }
+   else if (token.compare("=")) {
+      reader.read(token);
+
+      pattern.argValue = token.token.toInt();
+      pattern.argType = ByteCodePatternType::MatchArg;
+
+      reader.read(token);
+   }
 
    return pattern;
 }
@@ -48,12 +99,18 @@ pos_t readTransformPart(pos_t position, ScriptReader& reader, ScriptToken& token
    if (!token.compare(";")) {
       ByteCodePattern pattern = decodePattern(reader, token);
 
+      if (token.compare(",")) {
+         reader.read(token);
+      }
+      else if (!token.compare(";"))
+         throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
+
       // should be saved in reverse order, to simplify transform algorithm
       position = readTransformPart(position, reader, token, trie);
 
       return trie.add(position, pattern);
    }
-   else return position;
+   return position;
 }
 
 void parseOpcodeRule(ScriptReader& reader, ScriptToken& token, ByteCodeTrieBuilder& trie)
@@ -64,6 +121,11 @@ void parseOpcodeRule(ScriptReader& reader, ScriptToken& token, ByteCodeTrieBuild
    pos_t position = trie.add(0, pattern);
 
    while (!token.compare("=>")) {
+      if (token.compare(",")) {
+         reader.read(token);
+      }
+      else throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
+
       position = trie.add(position, decodePattern(reader, token));
    }
 
@@ -80,7 +142,14 @@ int parseRuleSet(FileEncoding encoding, path_t path)
    ByteCodeTrieBuilder trie({ ByteCode::None });
 
    TextFileReader source(path.str(), encoding, false);
+   if(!source.isOpen()) {
+      printf(OG_FILENOTEXIST);
+
+      throw AbortError();
+   }
+
    ScriptReader reader(4, &source);
+
    ScriptToken  token;
 
    // add root
@@ -116,15 +185,25 @@ BuildKeyPattern decodeBuildPattern(BuildKeyMap& dictionary, ScriptReader& reader
 
    if (token.compare("=")) {
       reader.read(token);
+      pattern.argument = token.token.toInt();
+      reader.read(token);
+   }
+
+   if (token.compare("=>")) {
+      reader.read(token);
 
       int patternId = token.token.toInt();
       if (!patternId)
          throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
 
-      pattern.pattternId = patternId;
+      pattern.patternId = patternId;
 
       reader.read(token);
    }
+   else if (token.compare(",")) {
+      reader.read(token);
+   }
+   else throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
 
    return pattern;
 }
@@ -138,8 +217,6 @@ void parseBuildCodeRule(BuildCodeTrie& trie, BuildKeyMap& dictionary, ScriptRead
    while (!token.compare(";")) {
       position = trie.add(position, decodeBuildPattern(dictionary, reader, token));
    }
-
-   reader.read(token);
 }
 
 int parseSourceRules(FileEncoding encoding, path_t path)
@@ -147,9 +224,15 @@ int parseSourceRules(FileEncoding encoding, path_t path)
    BuildKeyMap dictionary({ BuildKey::None });
    BuildTree::loadBuildKeyMap(dictionary);
 
-   BuildCodeTrie       trie({ BuildKey::None });
+   BuildCodeTrie       trie({ });
 
    TextFileReader source(path.str(), encoding, false);
+   if (!source.isOpen()) {
+      printf(OG_FILENOTEXIST);
+
+      throw AbortError();
+   }
+
    ScriptReader reader(4, &source);
    ScriptToken  token;
 

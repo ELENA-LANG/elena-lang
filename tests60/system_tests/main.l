@@ -2,6 +2,9 @@ public program()
 {
    console.writeLine("--- ELENA 6 API Unit Tests ---");
 
+   controlTest();
+   objectTest();
+   booleanTest();
    intTests();
    uintTests();
    longTests();
@@ -20,6 +23,29 @@ public program()
    dynamicLoadTests();
    interfaceTests();
    vardispatcherTest();
+   mssgDispatchTest();
+   multySelectTest();
+   enumTest();
+   textBufferTest();
+   loopTest();
+   actionTest();
+   arrayTest();
+   exceptionTest();
+   nestedFieldsTest();
+   shortCircuitBooleanOperation();
+   nestedTest();
+   nestetNestedTest();
+   ifExpressionTest();
+   loopExpressionTest();
+   nilDispatcherTest();
+   duplicateBoxing();
+   templateExtensionTest();
+   stackSafeExtensions();
+   genericTest();
+   outerFieldAssigningTest();
+   methodNotFoundTest();
+   nilReferenceTest();
+   structTest();
 
    console.writeLine("--- Passed ---")
 }

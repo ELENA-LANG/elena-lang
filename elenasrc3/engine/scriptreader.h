@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Script Reader class declaration.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef SCRIPTREADER_H
@@ -58,6 +58,7 @@ namespace elena_lang
       }
 
       ScriptReader(int tabSize, UStrReader* reader);
+      ScriptReader(const char** dfa, int tabSize, UStrReader* reader);
    };
 }
 

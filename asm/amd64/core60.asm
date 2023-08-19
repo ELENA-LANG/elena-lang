@@ -100,6 +100,9 @@ structure %CORE_GC_TABLE
   dq 0 // ; gc_perm_end           : +60h 
   dq 0 // ; gc_perm_current       : +68h 
 
+  dq 0 // ; reserved              : +70h 
+  dq 0 // ; reserved              : +78h 
+
 end
 
 // ; NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
@@ -545,20 +548,6 @@ inline %16h
 
 end
 
-// ; xassignsp
-inline % 17h
-
-  mov   rbx, rsp
-
-end
-
-// ; xassignsp
-inline % 117h
-
-  lea   rbx, [rsp + 8]
-
-end
-
 // ; dtrans
 inline %18h
 
@@ -679,6 +668,34 @@ inline %027h
 
 end
 
+// ; bcopy
+inline %28h
+
+  mov  rsi, r10  
+  xor  rax, rax
+  mov  al, byte ptr [rsi]
+  mov  [rbx], rax
+
+end
+
+// ; wcopy
+inline %29h
+
+  mov  rsi, r10  
+  xor  rax, rax
+  mov  ax, word ptr [rsi]
+  mov  [rbx], rax
+
+end
+
+
+// ; xpeekeq
+inline %02Ah
+
+  cmovz rbx, r10
+
+end
+
 // ; xget
 inline %02Eh
 
@@ -690,6 +707,50 @@ end
 inline %02Fh
 
   call rbx
+
+end
+
+// ; fadd
+inline %070h
+
+  mov  rax, r10
+  fld   qword ptr [rbx]
+  fild  [rax]
+  faddp
+  fstp  qword ptr [rbx]
+
+end
+
+// ; fsub
+inline %071h
+
+  mov  rax, r10
+  fld   qword ptr [rbx]
+  fild  [rax]
+  fsubp
+  fstp  qword ptr [rbx]
+
+end
+
+// ; fmul
+inline %072h
+
+  mov  rax, r10
+  fld   qword ptr [rbx]
+  fild  [rax]
+  fmulp
+  fstp  qword ptr [rbx]
+
+end
+
+// ; fdiv
+inline %073h
+
+  mov  rax, r10
+  fld   qword ptr [rbx]
+  fild  [rax]
+  fdivp
+  fstp  qword ptr [rbx]
 
 end
 
@@ -851,10 +912,10 @@ inline %180h
 end 
 
 // ; setr -1
-inline %680h
+inline %980h
 
-  xor  rbx, rbx
-  sub  rbx, 1
+  mov    ebx, __arg32_1
+  movsxd rbx, ebx
 
 end 
 
@@ -1049,10 +1110,11 @@ inline %08Fh
   and  ecx, page_mask 
   call %GC_ALLOC
 
-  mov  rcx, [r10]
+  mov  rcx, r10
+  mov  rax, __ptr64_1
+  mov  ecx, dword ptr [rcx]
   shl  ecx, 3
 
-  mov  rax, __ptr64_1
   mov  [rbx - elSizeOffset], rcx
   mov  [rbx - elVMTOffset], rax
 
@@ -1065,6 +1127,38 @@ inline %90h
   mov  ecx, __n_1 
   mov  rdi, rbx
   rep  movsb
+
+end
+
+// ; copy 1
+inline %290h
+
+  mov  rax, [r10]
+  mov  byte ptr [rbx], al
+
+end
+
+// ; copy 2
+inline %390h
+
+  mov  rax, [r10]
+  mov  word ptr [rbx], ax
+
+end
+
+// ; copy 4
+inline %590h
+
+  mov  rax, [r10]
+  mov  dword ptr [rbx], eax
+
+end
+
+// ; copy 8
+inline %790h
+
+  mov  rax, [r10]
+  mov  [rbx], rax
 
 end
 
@@ -1487,18 +1581,22 @@ end
 
 // ; xfillr
 inline % 0ADh
+
+  mov  rcx, r10
   mov  rax, __ptr64_1
+  mov  ecx, dword ptr [rcx]
   mov  rdi, rbx
-  mov  rcx, [r10]
   rep  stos
 
 end
 
 // ; xfillr i,0
 inline % 1ADh
+
+  mov  rcx, r10
   xor  rax, rax
+  mov  ecx, dword ptr [rcx]
   mov  rdi, rbx
-  mov  rcx, [r10]
   rep  stos
 
 end
@@ -1507,6 +1605,13 @@ end
 inline % 0AEh
 
   mov  r10, [rbx + __arg32_1]
+
+end
+
+// ; setsp
+inline % 0AFh
+
+  lea   rbx, [rsp + __arg32_1]
 
 end
 
@@ -1542,8 +1647,8 @@ inline % 0B6h // (rbx - object, rdx - message, r10 - arg0, r11 - arg1)
 
   and  edx, ARG_ACTION_MASK
   mov  eax, __arg32_1
-  and  ecx, ~ARG_MASK
-  or   edx, ecx
+  and  eax, ~ARG_MASK
+  or   edx, eax
   mov  rsi, qword ptr[r14 - elVMTSizeOffset]
 
 labSplit:
@@ -1589,10 +1694,11 @@ inline %1C0h
 end 
 
 // ; cmpr -1
-inline %6C0h
+inline %9C0h
 
-  mov  rax, -1
-  cmp  rbx, rax
+  mov    eax, __arg32_1
+  movsxd rax, eax
+  cmp    rbx, rax
 
 end 
 
@@ -1766,10 +1872,11 @@ inline %0CEh
   and  ecx, page_mask 
   call %GC_ALLOCPERM
 
-  mov  rcx, [r10]
+  mov  rcx, r10
+  mov  rax, __ptr64_1
+  mov  ecx, dword ptr [rcx]
   shl  ecx, 3
 
-  mov  rax, __ptr64_1
   mov  [rbx - elSizeOffset], rcx
   mov  [rbx - elVMTOffset], rax
 
@@ -1793,6 +1900,24 @@ inline %2CFh
 
   mov  ecx, 1
   call %GC_COLLECT
+
+end
+
+// ; system inject
+inline %5CFh
+
+  pop  rsi
+
+  lea  rax, [rdx*8]
+  add  eax, 8
+  and  eax, 0FFFFFFF0h
+  sub  rsp, rax
+  mov  rcx, rdx
+  xor  rax, rax
+  mov  rdi, rsp
+  rep  stos
+
+  push rsi
 
 end
 
@@ -1852,6 +1977,15 @@ inline %0D4h
   mov  rax, [rbp+__arg32_1]
   div  ecx
   mov  dword ptr [rbp+__arg32_1], eax
+
+end
+
+// ; selgrrr
+inline %0D7h
+
+  mov   rax, __ptr64_1
+  mov   rbx, __ptr64_2
+  cmovg rbx, rax
 
 end
 
@@ -2721,8 +2855,9 @@ inline %0F7h
   and  ecx, page_mask 
   call %GC_ALLOC
 
-  mov  rcx, [r10]
+  mov  rcx, r10
   mov  eax, __n_1
+  mov  ecx, dword ptr [rcx]
   imul ecx, eax
   or   ecx, struct_mask
 
@@ -2833,13 +2968,14 @@ inline % 5FAh
 
   mov  rsi, __ptr64_2
   xor  edx, edx
+  xor  ecx, ecx
 
   // ; count the number of args
   mov  rbx, rax
   mov  r9, -1
 labCountParam:
   lea  rbx, [rbx+8]
-  cmp  [rbx], r9
+  cmp  r9, [rbx]
   lea  rcx, [rcx+1]
   jnz  short labCountParam
   mov  r15, rcx
@@ -2978,12 +3114,13 @@ inline % 5FBh
 
   mov  rsi, __ptr64_2
   xor  edx, edx
+  xor  ecx, ecx
 
   mov  rbx, rax
   mov  r9, -1
 labCountParam:
   lea  rbx, [rbx+8]
-  cmp  [rbx], r9
+  cmp  r9, [rbx]
   lea  rcx, [rcx+1]
   jnz  short labCountParam
   mov  r15, rcx

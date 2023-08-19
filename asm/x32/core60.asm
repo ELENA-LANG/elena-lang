@@ -44,6 +44,8 @@ define gc_mg_wbar            0028h
 define gc_perm_start         002Ch 
 define gc_perm_end           0030h 
 define gc_perm_current       0034h 
+define gc_lock               0038h 
+define gc_signal             0040h 
 
 define et_current            0004h
 define tt_stack_frame        0008h
@@ -99,6 +101,9 @@ structure %CORE_GC_TABLE
   dd 0 // ; gc_perm_start         : +2Ch 
   dd 0 // ; gc_perm_end           : +30h 
   dd 0 // ; gc_perm_current       : +34h 
+
+  dd 0 // ; gc_lock               : +38h 
+  dd 0 // ; gc_signal             : +40h 
 
 end
 
@@ -529,20 +534,6 @@ inline %16h
 
 end
 
-// ; xassignsp
-inline % 17h
-
-  mov   ebx, esp
-
-end
-
-// ; xassignsp
-inline % 117h
-
-  lea   ebx, [esp + 4]
-
-end
-
 // ; dtrans
 inline %18h
 
@@ -680,6 +671,31 @@ inline %027h
 
 end
 
+// ; bcopy
+inline %28h
+
+  xor  eax, eax
+  mov  al, byte ptr [esi]
+  mov  dword ptr [ebx], eax
+
+end
+
+// ; wcopy
+inline %29h
+
+  xor  eax, eax
+  mov  ax, word ptr [esi]
+  mov  dword ptr [ebx], eax
+
+end
+
+// ; xpeekeq
+inline %02Ah
+
+  cmovz ebx, esi
+
+end
+
 // ; xget
 inline %02Eh
 
@@ -691,6 +707,46 @@ end
 inline %02Fh
 
   call ebx
+
+end
+
+// ; fiadd
+inline %070h
+
+  fld   qword ptr [ebx]
+  fild  [esi]
+  faddp
+  fstp  qword ptr [ebx]
+
+end
+
+// ; fisub
+inline %071h
+
+  fld   qword ptr [ebx]
+  fild  [esi]
+  fsubp
+  fstp  qword ptr [ebx]
+
+end
+
+// ; fimul
+inline %072h
+
+  fld   qword ptr [ebx]
+  fild  [esi]
+  fmulp
+  fstp  qword ptr [ebx]
+
+end
+
+// ; fidiv
+inline %073h
+
+  fld   qword ptr [ebx]
+  fild  [esi]
+  fdivp
+  fstp  qword ptr [ebx]
 
 end
 
@@ -852,10 +908,9 @@ inline %180h
 end 
 
 // ; setr -1
-inline %680h
+inline %980h
 
-  xor  ebx, ebx
-  dec  ebx
+  mov  ebx, __arg32_1
 
 end 
 
@@ -1049,6 +1104,40 @@ inline %90h
 
 end
 
+// ; copy 1
+inline %290h
+
+  mov  eax, [esi]
+  mov  byte ptr [ebx], al
+
+end
+
+// ; copy 2
+inline %390h
+
+  mov  eax, [esi]
+  mov  word ptr [ebx], ax
+
+end
+
+// ; copy 4
+inline %590h
+
+  mov  eax, [esi]
+  mov  dword ptr [ebx], eax
+
+end
+
+// ; copy 8
+inline %790h
+
+  mov  eax, [esi]
+  mov  edi, [esi+4]
+  mov  dword ptr [ebx], eax
+  mov  dword ptr [ebx+4], edi
+
+end
+
 // ; closen
 inline %91h
 
@@ -1145,6 +1234,49 @@ inline %95h
 
 end
 
+// ; read 0
+inline %195h
+
+end
+
+// ; read 1
+inline %295h
+
+  lea  eax, [esi+edx]
+  mov  ecx, [eax]
+  mov  byte ptr [ebx], cl
+
+end
+
+// ; read 2
+inline %395h
+
+  lea  eax, [esi+edx*2]
+  mov  ecx, [eax]
+  mov  word ptr [ebx], cx
+
+end
+
+// ; read 4
+inline %595h
+
+  lea  eax, [esi+edx*4]
+  mov  ecx, [eax]
+  mov  [ebx], ecx
+
+end
+
+// ; read 8
+inline %795h
+
+  lea  eax, [esi+edx*8]
+  mov  ecx, [eax]
+  mov  edi, [eax+4]
+  mov  [ebx], ecx
+  mov  [ebx+4], edi
+
+end
+
 // ; writen
 inline %96h
 
@@ -1158,6 +1290,49 @@ inline %96h
   mov  esi, ebx
   rep  movsb
   mov  esi, eax
+
+end
+
+// ; write 0
+inline %196h
+     
+end
+
+// ; write 1
+inline %296h
+
+  lea  eax, [esi+edx]
+  mov  ecx, [ebx]
+  mov  byte ptr [eax], cl
+
+end
+
+// ; write 2
+inline %396h
+
+  lea  eax, [esi+edx*2]
+  mov  ecx, [ebx]
+  mov  word ptr [eax], cx
+
+end
+
+// ; write 4
+inline %596h
+
+  lea  eax, [esi+edx*4]
+  mov  ecx, [ebx]
+  mov  [eax], ecx
+
+end
+
+// ; write 8
+inline %796h
+
+  lea  eax, [esi+edx*8]
+  mov  ecx, [ebx]
+  mov  edi, [ebx+4]
+  mov  [eax], ecx
+  mov  [eax+4], edi
 
 end
 
@@ -1220,6 +1395,40 @@ inline %9Ah
   mov  eax, esi
   mov  edi, ebx
   rep  movsb
+  mov  esi, eax
+
+end
+
+// ; dcopy 1
+inline %29Ah
+
+  mov  ecx, edx
+  mov  eax, esi
+  mov  edi, ebx
+  rep  movsb
+  mov  esi, eax
+
+end
+
+// ; dcopy 2
+inline %39Ah
+
+  mov  ecx, edx
+  shl  ecx, 1
+  mov  eax, esi
+  mov  edi, ebx
+  rep  movsb
+  mov  esi, eax
+
+end
+
+// ; dcopy 4
+inline %59Ah
+
+  mov  ecx, edx
+  mov  eax, esi
+  mov  edi, ebx
+  rep  movsd
   mov  esi, eax
 
 end
@@ -1450,6 +1659,13 @@ inline % 0AEh
 
 end
 
+// ; setsp
+inline % 0AFh
+
+  lea   ebx, [esp + __arg32_1]
+
+end
+
 // ; callr
 inline %0B0h
 
@@ -1527,9 +1743,9 @@ inline %1C0h
 end 
 
 // ; cmpr -1
-inline %6C0h
+inline %9C0h
 
-  cmp  ebx, -1
+  cmp  ebx, __arg32_1
 
 end 
 
@@ -1607,7 +1823,7 @@ end
 // ; tstm
 inline % 0C5h // (ebx - object)
 
-  mov   [esp+4], esi                      // ; saving arg0
+  mov   [esp+__n_2], esi                      // ; saving arg0
   xor   ecx, ecx
   mov   edi, [ebx - elVMTOffset]
   mov   esi, [edi - elVMTSizeOffset]
@@ -1633,7 +1849,7 @@ labFound:
 
 labEnd:
   cmp   esi, 1
-  mov   esi, [esp+4]                                                              
+  mov   esi, [esp+__n_2]                                                              
 
 end
 
@@ -1771,6 +1987,15 @@ inline %0D4h
   mov  eax, [ebp+__arg32_1]
   div  dword ptr [esi]
   mov  [ebp+__arg32_1], eax
+
+end
+
+// ; selgrrr
+inline %0D7h
+
+  mov   eax, __ptr32_1
+  mov   ebx, __ptr32_2
+  cmovg ebx, eax
 
 end
 
@@ -2484,6 +2709,41 @@ inline %0EAh
 
 end
 
+// ; xwrite o,1
+inline %1EAh
+
+  mov  ecx, [ebx + __arg32_1]
+  mov  byte ptr [esi], cl
+
+end
+
+// ; xwrite o,2
+inline %2EAh
+
+  mov  ecx, [ebx + __arg32_1]
+  mov  word ptr [esi], cx
+
+end
+
+// ; xwrite o,4
+inline %3EAh
+
+  mov  ecx, [ebx + __arg32_1]
+  mov  [esi], ecx
+
+end
+
+// ; xwrite o,8
+inline %4EAh
+
+  lea  eax, [ebx + __arg32_1]
+  mov  ecx, [eax]
+  mov  edi, [eax+4]
+  mov  [esi], ecx
+  mov  [esi+4], edi
+
+end
+
 // ; xcopyon
 inline %0EBh
 
@@ -2491,6 +2751,41 @@ inline %0EBh
   lea  edi, [ebx + __arg32_1]
   rep  movsb
   sub  esi, __n_2          // ; to set back ESI register
+
+end
+
+// ; xcopy 0, 1
+inline %1EBh
+
+  mov  eax, [esi]
+  mov  byte ptr [ebx + __arg32_1], al
+
+end
+
+// ; xcopy 0, 2
+inline %2EBh
+
+  mov  eax, [esi]
+  mov  word ptr [ebx + __arg32_1], ax
+
+end
+
+// ; xcopy 0, 4
+inline %3EBh
+
+  mov  eax, [esi]
+  mov  [ebx + __arg32_1], eax
+
+end
+
+// ; xcopy 0, 8
+inline %4EBh
+
+  lea  eax, [ebx + __arg32_1]
+  mov  ecx, [esi]
+  mov  edi, [esi+4]
+  mov  [eax], ecx
+  mov  [eax+4], edi
 
 end
 
@@ -2608,6 +2903,54 @@ inline %6F0h
   sub  esp, __arg32_1
   mov  edi, esp
   rep  stos
+
+end 
+
+// ; openin 2, n
+inline %7F0h
+
+  push ebp
+  mov  ebp, esp
+  xor  eax, eax
+  sub  esp, __n_2
+  push ebp
+  push eax
+  mov  ebp, esp
+  push eax
+  push eax
+
+end 
+
+// ; openin 3, n
+inline %8F0h
+
+  push ebp
+  mov  ebp, esp
+  xor  eax, eax
+  sub  esp, __n_2
+  push ebp
+  push eax
+  mov  ebp, esp
+  push eax
+  push eax
+  push eax
+
+end 
+
+// ; openin 4, n
+inline %9F0h
+
+  push ebp
+  mov  ebp, esp
+  xor  eax, eax
+  sub  esp, __n_2
+  push ebp
+  push eax
+  mov  ebp, esp
+  push eax
+  push eax
+  push eax
+  push eax
 
 end 
 

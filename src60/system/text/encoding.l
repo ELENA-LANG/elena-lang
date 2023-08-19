@@ -1,4 +1,4 @@
-namespace text
+    namespace text
 {
    // --- Encoder ---
    public interface Encoder
@@ -61,11 +61,61 @@ namespace text
          self.convertTo(tmp, 0, j, output, outputIndex, ref outputLength);
       }
 
+      string toString(int index, int length, byte[] buffer)
+      {
+         char tmp[128];
+         string retVal := emptyString;
+         int i := index;
+         int len := length;
+         int subLen := 128;
+         while (len > 0) {
+            if (len < subLen)
+               subLen := len;
+
+            self.convertFrom(buffer, i, ref subLen, tmp, 0, ref int outputLen);
+            
+            retVal := retVal + String.copy(0, outputLen, tmp);
+
+            i += subLen;
+            len -= subLen;
+         };
+
+         ^ retVal
+      }
+
+      wide toWideString(int index, int size, byte[] buffer, Encoder encoder)
+      {
+         char tmp[128];
+         wide retVal := emptyWideString;
+         int len := size;
+         int subLen := 128;
+         int i := index;
+         while (len > 0) {
+            if (len < subLen)
+               subLen := len;
+
+            self.convertFrom(buffer, i, ref subLen, tmp, 0, ref int outputLen);
+            
+            retVal := retVal + WideString.copy(0, outputLen, tmp);
+
+            i += subLen;
+            len -= subLen;            
+         };
+
+         ^ retVal
+      }
    }
 
    // --- UTF8Encoding ---
    public singleton UTF8Encoding
    {
+      char toChar(byte b)
+      {
+         char retVal := charConvertor.convert(b);
+           
+         ^ retVal 
+      }
+
       string toString(int index, int size, byte[] buffer)
       {
          ^ String.fromByteArray(index, size, buffer);
@@ -75,12 +125,33 @@ namespace text
    // --- UTF16Encoding ---
    public singleton UTF16Encoding
    {
-       char toChar(short w)
-       {
-          char retVal := charConvertor.convert(w);
+      char toChar(short w)
+      {
+         char retVal := charConvertor.convert(w);
            
-          ^ retVal 
-       }
+         ^ retVal 
+      }
+
+      char toChar(short[] shortArray, int index, ref int length)
+      {
+         int value := PrimitiveOperations.readUTF32(shortArray, index);
+
+         char ch := value;
+
+         length := ch.WideLength;         
+
+         ^ ch
+      }
+
+      wide toWideString(int index, int size, short[] buffer)
+      {
+         ^ WideString.fromShortArray(index, size, buffer);
+      }
+
+      toShortArray(wide s, int index, int length, short[] output)
+      {
+         s.saveToShortArray(index, output, length);
+      }
    }
 
    // --- UTF8Encoder ---
@@ -90,7 +161,7 @@ namespace text
       {
          int value := ch;
 
-         length := PrimitiveOperations.copyUTF32(byteArray, index, value)
+         length := PrimitiveOperations.copyUTF8_2_32(byteArray, index, value)
       }
 
       char convertToChar(byte[] byteArray, int index, ref int length)
@@ -104,4 +175,53 @@ namespace text
          ^ ch
       }
    }   
+
+   // --- UTF16Encoder ---
+   public sealed singleton UTF16Encoder : Encoder
+   {
+      convertChar(char ch, byte[] byteArray, int index, ref int length)
+      {
+         int value := ch;
+         short tmp[2];
+
+         int tmpLen := PrimitiveOperations.copyUTF16_2_32(tmp, 0, value);
+
+         byte hi := tmp[0].High;
+         byte lo := tmp[0].Low;
+         byteArray[index] := lo;
+         byteArray[index + 1] := hi;
+
+         length := 2;
+
+         if (tmpLen == 2) {
+            hi := tmp[1].High;
+            lo := tmp[1].Low;
+            byteArray[index + 2] := lo;
+            byteArray[index + 3] := hi;
+
+            length := 4;   
+         };
+      }
+      
+      char convertToChar(byte[] byteArray, int index, ref int length)
+      {
+         short tmp[2];
+
+         int subLen := 4;
+         int len := byteArray.Length;
+         if (len - index < 4)
+            subLen := 2;
+            
+         PrimitiveArrayOperations.copyToShortArray(byteArray, index, subLen, tmp, 0);
+   
+         int value := PrimitiveOperations.readUTF32(tmp, 0);
+
+         char ch := value;
+
+         length := ch.WideLength;         
+         length *= 2;
+
+         ^ ch
+      }
+   }
 }

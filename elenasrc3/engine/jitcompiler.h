@@ -99,7 +99,7 @@ namespace elena_lang
       friend void* retrieveCode(JITCompilerScope* scope);
       friend void* retrieveIndexRCode(JITCompilerScope* scope);
       friend void* retrieveCodeWithNegative(JITCompilerScope* scope);
-      friend void* retrieveICode(JITCompilerScope* scope, unsigned int arg);
+      friend void* retrieveICode(JITCompilerScope* scope, int arg);
       friend void* retrieveRCode(JITCompilerScope* scope, int arg);
 
       friend void loadOp(JITCompilerScope* scope);
@@ -153,7 +153,6 @@ namespace elena_lang
       friend void compileJgr(JITCompilerScope* scope);
       friend void compileDispatchMR(JITCompilerScope* scope);
       friend void compileHookDPR(JITCompilerScope* scope);
-      friend void compileXAssignSp(JITCompilerScope* scope);
 
       void loadCoreRoutines(
          LibraryLoaderBase* loader,
@@ -226,7 +225,7 @@ namespace elena_lang
          _constants.inlineMask = 0;
          _constants.alignmentVA = 8;
          _constants.unframedOffset = 0;
-         _constants.mediumForm = _constants.extendedForm = 0xFFFFFFFF;
+         _constants.mediumForm = _constants.extendedForm = INT32_MAX;
          _constants.noNegative = false;
       }
    };
@@ -392,7 +391,7 @@ namespace elena_lang
    inline void* retrieveCode(JITCompilerScope* scope);
    inline void* retrieveIndexRCode(JITCompilerScope* scope);
    inline void* retrieveCodeWithNegative(JITCompilerScope* scope);
-   inline void* retrieveICode(JITCompilerScope* scope, unsigned int arg);
+   inline void* retrieveICode(JITCompilerScope* scope, int arg);
    inline void* retrieveRCode(JITCompilerScope* scope, int arg);
 
    void loadNop(JITCompilerScope*);
@@ -447,7 +446,6 @@ namespace elena_lang
    void compileJgr(JITCompilerScope* scope);
    void compileDispatchMR(JITCompilerScope* scope);
    void compileHookDPR(JITCompilerScope* scope);
-   void compileXAssignSp(JITCompilerScope* scope);
 }
 
 #endif

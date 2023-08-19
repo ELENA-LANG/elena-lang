@@ -1,10 +1,11 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "factory.h"
+
 #include "windows/winide.h"
 #include "windows/wintextview.h"
 #include "windows/wintextframe.h"
@@ -15,6 +16,8 @@
 #include "windows/wintreeview.h"
 #include "windows/wincontextbrowser.h"
 #include "windows/winmenu.h"
+#include "windows/wintoolbar.h"
+
 #include "Resource.h"
 
 #include <shlwapi.h>
@@ -51,6 +54,13 @@ WCHAR szVMOutput[MAX_LOADSTRING];               // the vm terminal output captio
 #define CONTEXT_MENU_SHOWHEX                    _T("Show as hexadecimal")
 
 #define CONTEXT_MENU_SHOWHEX                    _T("Show as hexadecimal")
+#define CONTEXT_MENU_CLOSE                      _T("Close\tCtrl+W")
+#define CONTEXT_MENU_CUT                        _T("Cut\tCtrl+X")
+#define CONTEXT_MENU_COPY                       _T("Copy\tCtrl+C")
+#define CONTEXT_MENU_PASTE                      _T("Paste\tCtrl+V")
+#define CONTEXT_MENU_TOGGLE                     _T("Toggle Breakpoint\tF5")
+#define CONTEXT_MENU_RUNTO                      _T("Run to Cursor\tF4")
+#define CONTEXT_MENU_INSPECT                    _T("Inspect\tCtrl+I")
 
 // !! temporally
 #define IDE_CHARSET_ANSI                        ANSI_CHARSET
@@ -104,6 +114,41 @@ MenuInfo browserContextMenuInfo[3] = {
       {IDM_DEBUG_SWITCHHEXVIEW, CONTEXT_MENU_SHOWHEX}
 };
 
+MenuInfo contextMenuInfo[8] = {
+   {IDM_FILE_CLOSE, CONTEXT_MENU_CLOSE},
+   {0, NULL},
+   {IDM_EDIT_CUT, CONTEXT_MENU_CUT},
+   {IDM_EDIT_COPY, CONTEXT_MENU_COPY},
+   {IDM_EDIT_PASTE, CONTEXT_MENU_PASTE},
+   {0, NULL},
+   {IDM_DEBUG_BREAKPOINT, CONTEXT_MENU_TOGGLE},
+   {IDM_DEBUG_RUNTO, CONTEXT_MENU_RUNTO},
+};
+
+size_t AppToolBarButtonNumber = 19;
+
+ToolBarButton AppToolBarButtons[] =
+{
+   {IDM_FILE_NEW, IDR_FILENEW},
+   {IDM_FILE_OPEN, IDR_FILEOPEN},
+   {IDM_FILE_SAVE, IDR_FILESAVE},
+   {IDM_FILE_SAVEALL, IDR_SAVEALL},
+   {IDM_FILE_CLOSE, IDR_CLOSEFILE},
+   {IDM_PROJECT_CLOSE, IDR_CLOSEALL},
+   {0, IDR_SEPARATOR},
+   {IDM_EDIT_CUT, IDR_CUT},
+   {IDM_EDIT_COPY, IDR_COPY},
+   {IDM_EDIT_PASTE, IDR_PASTE},
+   {0, IDR_SEPARATOR},
+   {IDM_EDIT_UNDO, IDR_UNDO},
+   {IDM_EDIT_REDO, IDR_REDO},
+   {0, IDR_SEPARATOR},
+   {IDM_DEBUG_RUN, IDR_RUN},
+   {IDM_DEBUG_STEPINTO, IDR_STEPINTO},
+   {IDM_DEBUG_STEPOVER, IDR_STEPOVER},
+   {IDM_DEBUG_STOP, IDR_STOP},
+   {IDM_DEBUG_GOTOSOURCE, IDR_GOTO},
+};
 
 // --- IDEFactory ---
 
@@ -156,16 +201,23 @@ ControlBase* IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* no
    }
 
    // initialize view styles
-   _styles.assign(STYLE_MAX + 1, _schemes[viewModel->schemeIndex], viewModel->fontSize + 5, 20, &_fontFactory);
+   reloadStyles(viewModel);
 
    // initialize UI components
-   TextViewWindow* view = new TextViewWindow(_model->viewModel(), &_controller->sourceController, &_styles);
-   TextViewFrame* frame = new TextViewFrame(notifier, _settings.withTabAboverscore, view, _model->viewModel(), NOTIFY_TEXTFRAME_SEL);
+   TextViewWindow* view = new TextViewWindow(notifier, _model->viewModel(), 
+      &_controller->sourceController, &_styles);
+   TextViewFrame* frame = new TextViewFrame(notifier, _settings.withTabAboverscore, view, 
+      _model->viewModel(), NOTIFY_TEXTFRAME_SEL);
 
    view->create(_instance, szTextView, owner);
    frame->createControl(_instance, owner);
 
    return frame;
+}
+
+void IDEFactory :: reloadStyles(TextViewModelBase* viewModel)
+{
+   _styles.assign(STYLE_MAX + 1, _schemes[viewModel->schemeIndex], viewModel->fontSize + 5, 20, &_fontFactory);
 }
 
 ControlBase* IDEFactory :: createStatusbar(WindowBase* owner)
@@ -231,7 +283,8 @@ ControlBase* IDEFactory :: createErrorList(ControlBase* owner, NotifierBase* not
 
 ControlBase* IDEFactory :: createProjectView(ControlBase* owner, NotifierBase* notifier)
 {
-   TreeView* projectView = new TreeView(300, 50, notifier, NOTIFY_PROJECTVIEW_SEL, true);
+   TreeView* projectView = new TreeView(300, 50, notifier, 
+      NOTIFY_PROJECTVIEW_SEL, true);
    projectView->createControl(_instance, owner);
 
    return projectView;
@@ -262,8 +315,28 @@ GUIControlBase* IDEFactory :: createDebugContextMenu(ControlBase* owner)
    return menu;
 }
 
+GUIControlBase* IDEFactory :: createEditorContextMenu(ControlBase* owner)
+{
+   ContextMenu* menu = new ContextMenu();
+
+   menu->create(8, contextMenuInfo);
+
+   return menu;
+}
+
+GUIControlBase* IDEFactory :: createToolbar(ControlBase* owner)
+{
+   ToolBar* toolBar = new ToolBar(16);
+
+   toolBar->createControl(_instance, owner, AppToolBarButtons, AppToolBarButtonNumber);
+   toolBar->show();
+
+   return toolBar;
+}
+
 void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
-   int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl)
+   int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl, 
+   int toolBarControl, int contextEditor)
 {
    LoadStringW(_instance, IDC_COMPILER_OUTPUT, szCompilerOutput, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_COMPILER_MESSAGES, szErrorList, MAX_LOADSTRING);
@@ -280,6 +353,8 @@ void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compiler
    _model->ideScheme.statusBar = statusBar;
    _model->ideScheme.debugContextMenu = debugContextMenu;
    _model->ideScheme.vmConsoleControl = vmConsoleControl;
+   _model->ideScheme.toolBarControl = toolBarControl;
+   _model->ideScheme.editorContextMenu = contextEditor;
 
    _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
    _model->ideScheme.captions.add(errorList, szErrorList);
@@ -299,7 +374,7 @@ GUIApp* IDEFactory :: createApp()
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess, 
    ProcessBase* vmConsoleProcess)
 {
-   GUIControlBase* children[13];
+   GUIControlBase* children[15];
    int counter = 0;
 
    int textIndex = counter++;
@@ -315,8 +390,10 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    int menu = counter++;
    int debugContextMenu = counter++;
    int vmConsoleControl = counter++;
+   int toolBarControl = counter++;
+   int contextEditor = counter++;
 
-   SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance);
+   SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance, this);
    sdi->create(_instance, szSDI, nullptr);
 
    VerticalBox* vb = new VerticalBox(false, 1);
@@ -336,15 +413,17 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[menu] = createMenu(sdi);
    children[debugContextMenu] = createDebugContextMenu(sdi);
    children[vmConsoleControl] = createVmConsoleControl((ControlBase*)children[tabBar], vmConsoleProcess);
+   children[toolBarControl] = createToolbar(sdi);
+   children[contextEditor] = createEditorContextMenu(sdi);
 
    vb->append(children[vsplitter]);
    vb->append(children[statusBarIndex]);
 
-   sdi->populate(counter, children);
-   sdi->setLayout(textIndex, -1, bottomBox, -1, hsplitter);
+   initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView, browser, menu, statusBarIndex,
+      debugContextMenu, vmConsoleControl, toolBarControl, contextEditor);
 
-   initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView, browser, menu, statusBarIndex, 
-      debugContextMenu, vmConsoleControl);
+   sdi->populate(counter, children);
+   sdi->setLayout(textIndex, toolBarControl, bottomBox, -1, hsplitter);
 
    return sdi;
 }

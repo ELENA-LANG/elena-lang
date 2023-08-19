@@ -163,7 +163,11 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
 
       ref_t typeRef = (*it).arg.reference;
       ustr_t param = module->resolveReference(typeRef);
-      if (isWeakReference(param)) {
+      if (isTemplateWeakReference(param)) {
+         // HOTFIX : save template based reference as is
+         name.append(param);
+      }
+      else if (isWeakReference(param)) {
          name.append(module->name());
          name.append(param);
       }
@@ -192,7 +196,11 @@ ref_t CompilingProcess::TemplateGenerator :: declareTemplateName(ModuleScopeBase
 
       ref_t typeRef = (*it).arg.reference;
       ustr_t param = module->resolveReference(typeRef);
-      if (isWeakReference(param)) {
+      if (isTemplateWeakReference(param)) {
+         // if template based argument - pass as is
+         name.append(param);
+      }
+      else if (isWeakReference(param)) {
          name.append(module->name());
          name.append(param);
       }
@@ -235,6 +243,12 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
 
       writer.closeNode();
       writer.closeNode();
+
+      if (_process->_verbose) {
+         ustr_t templateName = moduleScope.module->resolveReference(generatedReference);
+
+         _process->_presenter->print(ELC_COMPILING_TEMPLATE, templateName);
+      }
 
       _process->buildSyntaxTree(moduleScope, &syntaxTree, true, outerExtensionList);
    }
@@ -279,6 +293,7 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t prologName, pat
 
       _parser = new Parser(&syntax, terminals, _presenter);
       _compiler = new Compiler(
+         _presenter,
          _errorProcessor,
          &_templateGenerator,
          CompilerLogic::getInstance());
@@ -301,6 +316,8 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t prologName, pat
    if (btRuleReader.isOpen()) {
       _btRules.load(btRuleReader, btRuleReader.length());
    }
+
+   _verbose = false;
 }
 
 void CompilingProcess :: parseFileTemlate(ustr_t prolog, path_t name,
@@ -455,11 +472,16 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    ByteCodeWriter bcWriter(&_libraryProvider);
    if (_btRules.length() > 0)
       bcWriter.loadBuildTreeRules(&_btRules);
+   if (_bcRules.length() > 0)
+      bcWriter.loadByteCodeRules(&_bcRules);
 
    bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList, moduleScope.tapeOptMode);
 
    if (savingMode) {
-      _libraryProvider.saveModule( moduleScope.module);
+      // saving a module
+      _presenter->print(ELC_SAVING_MODULE, moduleScope.module->name());
+
+      _libraryProvider.saveModule(moduleScope.module);
       _libraryProvider.saveDebugModule(moduleScope.debugModule);
    }
 }
@@ -478,27 +500,27 @@ void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTre
 void CompilingProcess :: buildModule(ProjectEnvironment& env,
    ModuleIteratorBase& module_it, SyntaxTree* syntaxTree,
    ForwardResolverBase* forwardResolver,
-   pos_t stackAlingment,
-   pos_t rawStackAlingment,
-   pos_t ehTableEntrySize,
+   ModuleSettings& moduleSettings,
    int minimalArgList,
-   int ptrSize,
-   bool withDebug)
+   int ptrSize)
 {
    ModuleScope moduleScope(
       &_libraryProvider,
       forwardResolver,
       _libraryProvider.createModule(module_it.name()),
-      withDebug ? _libraryProvider.createDebugModule(module_it.name()) : nullptr,
-      stackAlingment, rawStackAlingment, ehTableEntrySize, minimalArgList, ptrSize);
+      moduleSettings.debugMode ? _libraryProvider.createDebugModule(module_it.name()) : nullptr,
+      moduleSettings.stackAlingment, 
+      moduleSettings.rawStackAlingment, 
+      moduleSettings.ehTableEntrySize, 
+      minimalArgList, ptrSize);
 
-   _compiler->prepare(&moduleScope, forwardResolver);
+   _compiler->prepare(&moduleScope, forwardResolver, moduleSettings.manifestInfo);
 
    SyntaxTreeBuilder builder(syntaxTree, _errorProcessor,
       &moduleScope, &_templateGenerator);
    parseModule(env, module_it, builder, moduleScope);
 
-   _presenter->printLine(ELC_COMPILING_MODULE, moduleScope.module->name());
+   _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
 
    buildSyntaxTree(moduleScope, syntaxTree, false, nullptr);
 }
@@ -539,14 +561,24 @@ void CompilingProcess :: compile(ProjectBase& project,
 
    auto module_it = project.allocModuleIterator();
    while (!module_it->eof()) {
+      ModuleSettings moduleSettings =
+      {
+         project.UIntSetting(ProjectOption::StackAlignment, defaultStackAlignment),
+         project.UIntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
+         project.UIntSetting(ProjectOption::EHTableEntrySize, defaultEHTableEntrySize),
+         project.BoolSetting(ProjectOption::DebugMode, true),
+         {
+            project.StringSetting(ProjectOption::ManifestName),
+            project.StringSetting(ProjectOption::ManifestVersion),
+            project.StringSetting(ProjectOption::ManifestAuthor)
+         }
+      };
+
       buildModule(
          env, *module_it, &syntaxTree, &project,
-         project.IntSetting(ProjectOption::StackAlignment, defaultStackAlignment),
-         project.IntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
-         project.IntSetting(ProjectOption::EHTableEntrySize, defaultEHTableEntrySize),
+         moduleSettings,
          minimalArgList,
-         sizeof(uintptr_t),
-         project.BoolSetting(ProjectOption::DebugMode, true));
+         sizeof(uintptr_t));
 
       ++(*module_it);
    }

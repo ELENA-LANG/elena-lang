@@ -94,7 +94,7 @@ namespace collections
       shift(offset)
       {
          int i := *_top;
-         int n := *_tale - 1;
+         int n := (*_tale) - 1;
             
          var topItem := _list.at(i);
             
@@ -258,11 +258,9 @@ namespace collections
          if (_index < _tale)
          {
             ^ true
-         }
-         else
-         {
-            ^ false
-         }    
+         };
+
+         ^ false
       }
             
       get Value()

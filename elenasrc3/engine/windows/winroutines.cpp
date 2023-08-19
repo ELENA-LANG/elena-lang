@@ -193,3 +193,30 @@ long long SystemRoutineProvider :: GenerateSeed()
 
    return seed;
 }
+
+void SystemRoutineProvider :: InitMTASignals(SystemEnv* env, int index)
+{
+   env->th_table->slots[index].content->tt_sync_event = ::CreateEvent(0, -1, 0, 0);
+   env->th_table->slots[index].content->tt_flags = 0;
+}
+
+void SystemRoutineProvider :: GCSignalStop(void* handle)
+{
+   ::SetEvent((HANDLE)handle);
+}
+
+void SystemRoutineProvider :: GCWaitForSignals(size_t count, void* handles)
+{
+   if (count > 0)
+      ::WaitForMultipleObjects(count, (HANDLE*)handles, -1, -1);
+}
+
+void SystemRoutineProvider :: GCWaitForSignal(void* handle)
+{
+   ::WaitForSingleObject((HANDLE)handle, -1);
+}
+
+void SystemRoutineProvider :: GCSignalClear(void* handle)
+{
+   ::ResetEvent((HANDLE)handle);
+}

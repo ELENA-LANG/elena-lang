@@ -3,7 +3,7 @@
 //
 //		This file contains the Windows Presenter implementation
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "presenter.h"
@@ -36,8 +36,10 @@ void printLine(const wchar_t* wstr, ...)
 
 void WinConsolePresenter :: readLine(char* buffer, size_t length)
 {
+   int maxSize = static_cast<int>(length);
+
    // !! fgets is used instead of fgetws, because there is a strange bug in fgetws implementation
-   fgets(buffer, length, stdin);
+   fgets(buffer, maxSize, stdin);
 }
 
 void WinConsolePresenter :: print(ustr_t msg, ustr_t arg)
@@ -198,3 +200,12 @@ void WinConsolePresenter :: printLine(ustr_t msg, ustr_t path, int col, int row,
    ::printLine(wstr.str(), wpath.str(), row, col, ws.str());
 }
 
+void WinConsolePresenter::showProgress()
+{
+   ::print(L".");
+}
+
+void WinConsolePresenter :: stopProgress()
+{
+   ::print(L"\n");
+}

@@ -63,6 +63,17 @@ int XmlProjectBase::IntSetting(ProjectOption option, int defValue) const
    else return defValue;
 }
 
+unsigned int XmlProjectBase :: UIntSetting(ProjectOption option, unsigned int defValue) const
+{
+   ustr_t val = StringSetting(option);
+   if (!val.empty()) {
+      unsigned int intValue = StrConvertor::toUInt(val, 10);
+
+      return intValue;
+   }
+   else return defValue;
+}
+
 XmlProjectBase :: XmlProjectBase(PlatformType platform)
    : _paths(nullptr), _forwards(nullptr)
 {

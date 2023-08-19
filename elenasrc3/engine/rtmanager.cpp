@@ -5,9 +5,21 @@
 //---------------------------------------------------------------------------
 
 #include "rtmanager.h"
+
+#include "core.h"
 #include "streams.h"
 
 using namespace elena_lang;
+
+#if _M_IX86 || __i386__
+
+constexpr int elVMTClassOffset = elVMTClassOffset32;
+
+#else
+
+constexpr int elVMTClassOffset = elVMTClassOffset64;
+
+#endif
 
 // --- RTManager ---
 
@@ -184,6 +196,26 @@ size_t RTManager :: retriveAddressInfo(LibraryLoaderBase& provider, addr_t retAd
 
 constexpr pos_t MessageEntryLen = sizeof(uintptr_t) * 2;
 
+bool RTManager :: loadSignature(ref_t subjectRef, pos_t argCount, addr_t* addresses)
+{
+   pos_t mtableOffset = MemoryBase::getDWord(msection, 0);
+   ref_t actionPtr = MemoryBase::getDWord(msection, mtableOffset + subjectRef * MessageEntryLen);
+   if (actionPtr != 0) {
+      size_t counter = 0;
+
+      uintptr_t singPtr = 0;
+      msection->read(mtableOffset + subjectRef * MessageEntryLen + sizeof(uintptr_t), &singPtr, sizeof(uintptr_t));
+
+      for (pos_t i = 0; i < argCount; i++) {
+         addresses[i] = ((addr_t*)singPtr)[i];
+      }
+
+      return true;
+   }
+
+   return false;
+}
+
 void RTManager :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef)
 {
    pos_t mtableOffset = MemoryBase::getDWord(msection, 0);
@@ -250,4 +282,17 @@ addr_t RTManager :: retrieveGlobalAttribute(int attribute, ustr_t name)
    }
 
    return 0;
+}
+
+size_t RTManager :: loadClassName(addr_t classAddress, char* buffer, size_t length)
+{
+   uintptr_t namePtr = *(uintptr_t*)(classAddress - sizeof(uintptr_t) * 1 - elVMTClassOffset);
+
+   char* name = (char*)namePtr;
+
+   if (!ustr_t(name).copyTo(buffer, length))
+      return 0;
+
+   return length;
+
 }

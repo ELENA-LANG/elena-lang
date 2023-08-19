@@ -102,9 +102,14 @@ void Clipboard :: pasteFromClipboard(DocumentChangeStatus& status, DocumentView*
    }
 }
 
+bool Clipboard :: isAvailable()
+{
+   return (::IsClipboardFormatAvailable(CF_UNICODETEXT) == TRUE);
+}
+
 // --- IDEWindow ---
 
-IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance) : 
+IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance, ViewFactoryBase* viewFactory) :
    SDIWindow(title), 
    fileDialog(instance,
       this, FileDialog::SourceFilter, 
@@ -116,8 +121,18 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
       *model->projectModel.paths.lastPath),
    messageDialog(this),
    projectSettingsDialog(instance, this, &model->projectModel),
-   clipboard(this)
+   findDialog(instance, this, false, &model->findModel),
+   replaceDialog(instance, this, true, &model->findModel),
+   gotoDialog(instance, this),
+   windowDialog(instance, this, &model->sourceViewModel),
+   clipboard(this),
+   _windowList(controller, model->viewModel()),
+   _recentFileList(controller, model, IDM_FILE_FILES),
+   aboutDialog(instance, this),
+   editorSettingsDialog(instance, this, model->viewModel())
 {
+   this->_viewFactory = viewFactory;
+
    this->_instance = instance;
    this->_controller = controller;
    this->_model = model;
@@ -145,6 +160,7 @@ void IDEWindow :: newProject()
 void IDEWindow :: openFile()
 {
    _controller->doOpenFile(fileDialog, _model);
+   _recentFileList.reload();
 }
 
 void IDEWindow :: saveFile()
@@ -170,6 +186,11 @@ void IDEWindow :: closeFile()
 void IDEWindow :: closeAll()
 {
    _controller->doCloseAll(fileDialog, messageDialog, _model);
+}
+
+void IDEWindow :: closeAllButActive()
+{
+   _controller->doCloseAllButActive(fileDialog, messageDialog, _model);
 }
 
 void IDEWindow :: openProject()
@@ -235,6 +256,57 @@ void IDEWindow :: selectAll()
    _controller->sourceController.selectAll(_model->viewModel());
 }
 
+void IDEWindow :: trim()
+{
+   _controller->sourceController.trim(_model->viewModel());
+}
+
+void IDEWindow :: eraseLine()
+{
+   _controller->sourceController.eraseLine(_model->viewModel());
+}
+
+void IDEWindow :: duplicateLine()
+{
+   _controller->sourceController.duplicateLine(_model->viewModel());
+}
+
+void IDEWindow :: lowerCase()
+{
+   _controller->sourceController.lowerCase(_model->viewModel());
+}
+
+void IDEWindow :: upperCase()
+{
+   _controller->sourceController.upperCase(_model->viewModel());
+}
+
+void IDEWindow :: search()
+{
+   if (!_controller->doSearch(findDialog, _model)) {
+      messageDialog.info(NOT_FOUND_TEXT);
+   }
+}
+
+void IDEWindow :: searchNext()
+{
+   if (!_controller->doSearchNext(_model)) {
+      messageDialog.info(NOT_FOUND_TEXT);
+   }
+}
+
+void IDEWindow :: goToLine()
+{
+   _controller->doGoToLine(gotoDialog, _model);
+}
+
+void IDEWindow :: replace()
+{
+   if (!_controller->doReplace(replaceDialog, messageDialog, _model)) {
+      messageDialog.info(NOT_FOUND_TEXT);
+   }
+}
+
 void IDEWindow :: includeFile()
 {
    _controller->doInclude(_model);
@@ -259,9 +331,11 @@ void IDEWindow :: openResultTab(int controlIndex)
       resultBar->selectTabChild((ControlBase*)_children[controlIndex]);
    }
 
-   resultBar->show();
+   if (!resultBar->visible()) {
+      resultBar->show();
 
-   onLayoutChange(IDE_LAYOUT_CHANGED);
+      onLayoutChange(IDE_LAYOUT_CHANGED);
+   }
 }
 
 void IDEWindow :: closeResultTab(int controlIndex)
@@ -331,9 +405,11 @@ void IDEWindow :: onErrorHighlight(int index)
       _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
 }
 
-void IDEWindow :: onProjectViewSel(size_t index)
+void IDEWindow :: onProjectViewSel(int index)
 {
    _controller->doOpenProjectSourceByIndex(_model, index);
+
+   _children[_model->ideScheme.textFrameId]->setFocus();
 }
 
 void IDEWindow :: onDebugWatch()
@@ -412,8 +488,10 @@ void IDEWindow :: onProjectChange(bool empty)
 
    MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
    menu->enableMenuItemById(IDM_PROJECT_CLOSE, !empty);
+   menu->enableMenuItemById(IDM_FILE_SAVEPROJECT, !empty);
 
    menu->enableMenuItemById(IDM_PROJECT_COMPILE, !empty);
+   menu->enableMenuItemById(IDM_PROJECT_OPTION, !empty);
    menu->enableMenuItemById(IDM_DEBUG_RUN, !empty);
    menu->enableMenuItemById(IDM_DEBUG_STEPINTO, !empty);
    menu->enableMenuItemById(IDM_DEBUG_STEPOVER, !empty);
@@ -428,6 +506,7 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
    if (test(status, FRAME_VISIBILITY_CHANGED)) {
       if (!empty) {
          _children[_model->ideScheme.textFrameId]->show();
+         _children[_model->ideScheme.textFrameId]->setFocus();
       }
       else _children[_model->ideScheme.textFrameId]->hide();
    }
@@ -436,14 +515,17 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
    }
 
    MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-   menu->checkItemById(IDM_VIEW_OUTPUT, _children[_model->ideScheme.compilerOutputControl]->visible());
-   menu->checkItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
-   menu->checkItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
-   menu->checkItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
-   menu->checkItemById(IDM_VIEW_VMCONSOLE, _children[_model->ideScheme.vmConsoleControl]->visible());
+   menu->checkMenuItemById(IDM_VIEW_OUTPUT, _children[_model->ideScheme.compilerOutputControl]->visible());
+   menu->checkMenuItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
+   menu->checkMenuItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
+   menu->checkMenuItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
+   menu->checkMenuItemById(IDM_VIEW_VMCONSOLE, _children[_model->ideScheme.vmConsoleControl]->visible());
 
    menu->enableMenuItemById(IDM_FILE_SAVE, !empty);
+   menu->enableMenuItemById(IDM_FILE_SAVEALL, !empty);
+   menu->enableMenuItemById(IDM_FILE_SAVEAS, !empty);
    menu->enableMenuItemById(IDM_FILE_CLOSE, !empty);
+   menu->enableMenuItemById(IDM_FILE_CLOSEALL, !empty);
 
    if (empty) {
       menu->enableMenuItemById(IDM_EDIT_UNDO, false);
@@ -455,6 +537,28 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
       menu->enableMenuItemById(IDM_EDIT_DELETE, false);
       menu->enableMenuItemById(IDM_EDIT_COMMENT, false);
       menu->enableMenuItemById(IDM_EDIT_UNCOMMENT, false);
+      menu->enableMenuItemById(IDM_EDIT_DUPLICATE, false);
+      menu->enableMenuItemById(IDM_EDIT_SELECTALL, false);
+      menu->enableMenuItemById(IDM_EDIT_ERASELINE, false);
+      menu->enableMenuItemById(IDM_EDIT_INDENT, false);
+      menu->enableMenuItemById(IDM_EDIT_OUTDENT, false);
+      menu->enableMenuItemById(IDM_EDIT_TRIM, false);
+      menu->enableMenuItemById(IDM_EDIT_UPPERCASE, false);
+      menu->enableMenuItemById(IDM_EDIT_LOWERCASE, false);
+
+      menu->enableMenuItemById(IDM_SEARCH_FIND, false);
+      menu->enableMenuItemById(IDM_SEARCH_FINDNEXT, false);
+      menu->enableMenuItemById(IDM_SEARCH_REPLACE, false);
+      menu->enableMenuItemById(IDM_SEARCH_GOTOLINE, false);
+
+      menu->enableMenuItemById(IDM_WINDOW_WINDOWS, false);
+      menu->enableMenuItemById(IDM_WINDOW_NEXT, false);
+      menu->enableMenuItemById(IDM_WINDOW_PREVIOUS, false);
+
+      menu->enableMenuItemById(IDM_DEBUG_CLEARBREAKPOINT, false);
+      menu->enableMenuItemById(IDM_DEBUG_BREAKPOINT, false);
+
+      menu->enableMenuItemById(IDM_PROJECT_INCLUDE, false);
    }
    else menu->enableMenuItemById(IDM_EDIT_PASTE, true);
 
@@ -464,18 +568,59 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
       _children[_model->ideScheme.textFrameId]->refresh();
 }
 
+
+//void IDEWindow :: onIDEViewUpdate(bool forced)
+//{
+//   auto doc = _model->viewModel()->DocView();
+//   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+//
+//   IDESttus status =
+//   {
+//      doc != nullptr,
+//      !_model->projectModel.empty,
+//      _controller->projectController.isStarted()
+//   };
+//
+//   if (doc != nullptr) {
+//      status.canUndo = doc->canUndo();
+//      status.canRedo = doc->canRedo();
+//      status.hasSelection = doc->hasSelection();
+//   }
+//
+//   if (forced || status.hasDocument != _ideStatus.hasDocument) {
+//
+//      menu->enableMenuItemById(IDM_EDIT_PASTE, status.hasDocument);
+//   }
+//
+//   if (forced || status.hasProject != _ideStatus.hasProject) {
+//      menu->enableMenuItemById(IDM_PROJECT_COMPILE, status.hasProject);
+//      menu->enableMenuItemById(IDM_DEBUG_RUN, status.hasProject);
+//      menu->enableMenuItemById(IDM_DEBUG_STEPINTO, status.hasProject);
+//      menu->enableMenuItemById(IDM_DEBUG_STEPOVER, status.hasProject);
+//      menu->enableMenuItemById(IDM_DEBUG_RUNTO, status.hasProject);
+//   }
+//
+//   if (forced || status.running != _ideStatus.running) {
+//      onDebuggerUpdate(status.running);
+//   }
+//
+//   _ideStatus = status;
+//}
+
 void IDEWindow :: onTextFrameChange(NotificationStatus status)
 {
    DocumentChangeStatus changeStatus = { test(status, FRAME_CHANGED) };
 
    if (_model->sourceViewModel.DocView())
       _model->sourceViewModel.DocView()->notifyOnChange(changeStatus);
-
-   _children[_model->ideScheme.textFrameId]->refresh();
 }
 
 void IDEWindow :: onIDEChange(NotificationStatus status)
 {
+   if (test(status, COLOR_SCHEME_CHANGED)) {
+      onColorSchemeChange();
+   }
+
    if (test(status, IDE_LAYOUT_CHANGED)) {
       onLayoutChange(status);
    }
@@ -494,8 +639,6 @@ void IDEWindow :: onIDEChange(NotificationStatus status)
    if (test(status, FRAME_ACTIVATE)) {
       onActivate();
    }
-
-   //onIDEViewUpdate(true);
 }
 
 bool IDEWindow :: onCommand(int command)
@@ -527,6 +670,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_FILE_CLOSEALL:
          closeAll();
+         break;
+      case IDM_FILE_CLOSEALLBUT:
+         closeAllButActive();
          break;
       case IDM_PROJECT_CLOSE:
          closeProject();
@@ -561,6 +707,39 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_EDIT_SELECTALL:
          selectAll();
+         break;
+      case IDM_EDIT_TRIM:
+         trim();
+         break;
+      case IDM_EDIT_ERASELINE:
+         eraseLine();
+         break;
+      case IDM_EDIT_DUPLICATE:
+         duplicateLine();
+         break;
+      case IDM_EDIT_INDENT:
+         _controller->doIndent(_model);
+         break;
+      case IDM_EDIT_OUTDENT:
+         _controller->doOutdent(_model);
+         break;
+      case IDM_EDIT_LOWERCASE:
+         lowerCase();
+         break;
+      case IDM_EDIT_UPPERCASE:
+         upperCase();
+         break;
+      case IDM_SEARCH_FIND:
+         search();
+         break;
+      case IDM_SEARCH_FINDNEXT:
+         searchNext();
+         break;
+      case IDM_SEARCH_GOTOLINE:
+         goToLine();
+         break;
+      case IDM_SEARCH_REPLACE:
+         replace();
          break;
       case IDM_PROJECT_COMPILE:
          _controller->doCompileProject(fileDialog, projectDialog, _model);
@@ -616,8 +795,39 @@ bool IDEWindow :: onCommand(int command)
       case IDM_HELP_API:
          openHelp();
          break;
+      case IDM_HELP_ABOUT:
+         showAbout();
+         break;
       case IDM_DEBUG_INSPECT:
          refreshDebugNode();
+         break;
+      case IDM_WINDOW_FIRST:
+      case IDM_WINDOW_SECOND:
+      case IDM_WINDOW_THIRD:
+      case IDM_WINDOW_FOURTH:
+      case IDM_WINDOW_FIFTH:
+      case IDM_WINDOW_SIXTH:
+      case IDM_WINDOW_SEVENTH:
+      case IDM_WINDOW_EIGHTH:
+      case IDM_WINDOW_NINTH:
+         _windowList.select(command - IDM_WINDOW_FIRST + 1);
+         break;
+      case IDM_FILE_FILES_1:
+      case IDM_FILE_FILES_2:
+      case IDM_FILE_FILES_3:
+      case IDM_FILE_FILES_4:
+      case IDM_FILE_FILES_5:
+      case IDM_FILE_FILES_6:
+      case IDM_FILE_FILES_7:
+      case IDM_FILE_FILES_8:
+      case IDM_FILE_FILES_9:
+         _recentFileList.openFile(command - IDM_FILE_FILES);
+         break;
+      case IDM_EDITOR_OPTIONS:
+         _controller->doConfigureEditorSettings(editorSettingsDialog, _model);
+         break;
+      case IDM_WINDOW_WINDOWS:
+         _controller->doSelectWindow(fileDialog, messageDialog, windowDialog, _model);
          break;
       default:
          return false;
@@ -632,10 +842,11 @@ void IDEWindow :: refreshDebugNode()
 }
 
 void IDEWindow :: onStatusChange(StatusNMHDR* rec)
-{
+{  
    switch (rec->code) {
       case NOTIFY_ONSTART:
          _controller->init(_model);
+         _recentFileList.assignList(&_model->projectModel.lastOpenFiles);
          break;
       case NOTIFY_IDE_CHANGE:
          onIDEChange(rec->status);
@@ -743,7 +954,7 @@ void IDEWindow :: onDoubleClick(NMHDR* hdr)
    }
 }
 
-void IDEWindow :: onDebugWatchRClick(int controlIndex)
+void IDEWindow :: onDebugWatchRClick(size_t controlIndex)
 {
    DWORD dwpos = ::GetMessagePos();
    Point p(LOWORD(dwpos), HIWORD(dwpos));
@@ -758,8 +969,6 @@ void IDEWindow :: onDebugWatchRClick(int controlIndex)
    ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.debugContextMenu]);
 
    menu->show(_handle, p);
-
-   //treeView->showContextMenu(LOWORD(dwpos), HIWORD(dwpos));
 }
 
 void IDEWindow :: onRClick(NMHDR* hdr)
@@ -806,6 +1015,19 @@ void IDEWindow :: onTreeItem(TreeItemNMHDR* rec)
       default:
          break;
    }
+}
+
+void IDEWindow :: onContextMenu(ContextMenuNMHDR* rec)
+{
+   Point p(rec->x, rec->y);
+
+   ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.editorContextMenu]);
+
+   menu->enableMenuItemById(IDM_EDIT_CUT, rec->hasSelection);
+   menu->enableMenuItemById(IDM_EDIT_COPY, rec->hasSelection);
+   menu->enableMenuItemById(IDM_EDIT_PASTE, Clipboard::isAvailable());
+
+   menu->show(_handle, p);
 }
 
 void IDEWindow :: onDebugResult(int code)
@@ -858,6 +1080,9 @@ void IDEWindow :: onNotify(NMHDR* hdr)
       case STATUS_COMPLETION:
          onComplition((CompletionNMHDR*)hdr);
          break;
+      case CONTEXT_MENU_ON:
+         onContextMenu((ContextMenuNMHDR*)hdr);
+         break;
       case TCN_SELCHANGE:
          onTabSelChanged(hdr->hwndFrom);
          break;
@@ -872,6 +1097,12 @@ void IDEWindow :: onNotify(NMHDR* hdr)
          break;
       case NM_RCLICK:
          onRClick(hdr);
+         break;
+      case TTN_GETDISPINFO:
+         if (isTabToolTip(hdr->hwndFrom)) {
+            onTabTip((NMTTDISPINFO*)hdr);
+         }
+         else onToolTip((NMTTDISPINFO*)hdr);
          break;
       default:
          break;
@@ -904,56 +1135,6 @@ void IDEWindow :: onDebuggerUpdate(StatusNMHDR* rec)
    }
 }
 
-//void IDEWindow :: onIDEViewUpdate(bool forced)
-//{
-//   auto doc = _model->viewModel()->DocView();
-//   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-//
-//   IDESttus status =
-//   {
-//      doc != nullptr,
-//      !_model->projectModel.empty,
-//      _controller->projectController.isStarted()
-//   };
-//
-//   if (doc != nullptr) {
-//      status.canUndo = doc->canUndo();
-//      status.canRedo = doc->canRedo();
-//      status.hasSelection = doc->hasSelection();
-//   }
-//
-//   if (forced || status.hasDocument != _ideStatus.hasDocument) {
-//      menu->enableMenuItemById(IDM_FILE_SAVE, status.hasDocument);
-//      menu->enableMenuItemById(IDM_FILE_CLOSE, status.hasDocument);
-//
-//      if (!status.hasDocument) {
-//         menu->enableMenuItemById(IDM_EDIT_UNDO, status.hasDocument);
-//         menu->enableMenuItemById(IDM_EDIT_REDO, status.hasDocument);
-//
-//         menu->enableMenuItemById(IDM_EDIT_CUT, status.hasDocument);
-//         menu->enableMenuItemById(IDM_EDIT_COPY, status.hasDocument);
-//         menu->enableMenuItemById(IDM_EDIT_DELETE, status.hasDocument);
-//         menu->enableMenuItemById(IDM_EDIT_COMMENT, status.hasDocument);
-//      }
-//
-//      menu->enableMenuItemById(IDM_EDIT_PASTE, status.hasDocument);
-//   }
-//
-//   if (forced || status.hasProject != _ideStatus.hasProject) {
-//      menu->enableMenuItemById(IDM_PROJECT_COMPILE, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_RUN, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_STEPINTO, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_STEPOVER, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_RUNTO, status.hasProject);
-//   }
-//
-//   if (forced || status.running != _ideStatus.running) {
-//      onDebuggerUpdate(status.running);
-//   }
-//
-//   _ideStatus = status;
-//}
-
 bool IDEWindow :: onClose()
 {
    if (!_controller->onClose(fileDialog, messageDialog, _model))
@@ -968,6 +1149,11 @@ void IDEWindow :: openHelp()
    apiPath.combine(_T("..\\doc\\api\\index.html"));
 
    ShellExecute(NULL, _T("open"), *apiPath, nullptr, nullptr, SW_SHOW);
+}
+
+void IDEWindow :: showAbout()
+{
+   aboutDialog.show();
 }
 
 void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
@@ -999,4 +1185,90 @@ void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
    if (changeStatus.textChanged || changeStatus.caretChanged) {
       _controller->onStatusChange(_model, IDEStatus::Ready);
    }
+}
+
+bool IDEWindow :: isTabToolTip(HWND handle)
+{
+   if (!_tabTTHandle)
+      _tabTTHandle = ((ControlBase*)_children[_model->ideScheme.textFrameId])->getToolTipHandle();
+
+   return _tabTTHandle == handle;
+}
+
+void IDEWindow :: onTabTip(NMTTDISPINFOW* tip)
+{
+   const wchar_t* path = _model->sourceViewModel.getDocumentPath((int)tip->hdr.idFrom + 1);
+
+   tip->lpszText = (LPWSTR)path;
+}
+
+void IDEWindow :: onToolTip(NMTTDISPINFOW* toolTip)
+{
+   switch (toolTip->hdr.idFrom) {
+      case IDM_FILE_NEW:
+         toolTip->lpszText = (LPWSTR)HINT_NEW_FILE;
+         break;
+      case IDM_FILE_OPEN:
+         toolTip->lpszText = (LPWSTR)HINT_OPEN_FILE;
+         break;
+      case IDM_FILE_SAVE:
+         toolTip->lpszText = (LPWSTR)HINT_SAVE_FILE;
+         break;
+      case IDM_FILE_SAVEALL:
+         toolTip->lpszText = (LPWSTR)HINT_SAVEALL;
+         break;
+      case IDM_FILE_CLOSE:
+         toolTip->lpszText = (LPWSTR)HINT_CLOSE_FILE;
+         break;
+      case IDM_PROJECT_CLOSE:
+         toolTip->lpszText = (LPWSTR)HINT_CLOSE_PROJECT;
+         break;
+      case IDM_EDIT_CUT:
+         toolTip->lpszText = (LPWSTR)HINT_CUT;
+         break;
+      case IDM_EDIT_COPY:
+         toolTip->lpszText = (LPWSTR)HINT_COPY;
+         break;
+      case IDM_EDIT_PASTE:
+         toolTip->lpszText = (LPWSTR)HINT_PASTE;
+         break;
+      case IDM_EDIT_UNDO:
+         toolTip->lpszText = (LPWSTR)HINT_UNDO;
+         break;
+      case IDM_EDIT_REDO:
+         toolTip->lpszText = (LPWSTR)HINT_REDO;
+         break;
+      case IDM_DEBUG_RUN:
+         toolTip->lpszText = (LPWSTR)HINT_RUN;
+         break;
+      case IDM_DEBUG_STOP:
+         toolTip->lpszText = (LPWSTR)HINT_STOP;
+         break;
+      case IDM_DEBUG_STEPINTO:
+         toolTip->lpszText = (LPWSTR)HINT_STEPINTO;
+         break;
+      case IDM_DEBUG_STEPOVER:
+         toolTip->lpszText = (LPWSTR)HINT_STEPOVER;
+         break;
+      case IDM_DEBUG_GOTOSOURCE:
+         toolTip->lpszText = (LPWSTR)HINT_GOTOSOURCE;
+         break;
+      default:
+         break;
+   }
+}
+
+void IDEWindow :: populate(size_t counter, GUIControlBase** children)
+{
+   SDIWindow::populate(counter, children);
+
+   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+
+   _windowList.assign(menu);
+   _recentFileList.assign(menu);
+}
+
+void IDEWindow :: onColorSchemeChange()
+{
+   _viewFactory->reloadStyles(_model->viewModel());
 }

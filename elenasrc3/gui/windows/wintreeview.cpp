@@ -70,7 +70,7 @@ void TreeView :: onSelChanged()
 
 size_t TreeView :: getParam(TreeViewItem item)
 {
-   TVITEM itemRec;
+   TVITEM itemRec;   
 
    itemRec.mask = TVIF_PARAM;
    itemRec.hItem = item;

@@ -12,11 +12,11 @@
 
 using namespace elena_lang;
 
-constexpr auto WHITESPACE = _T(" \r\t");
-constexpr auto OPERATORS = _T("(){}[]:=<>.,^@+-*/!~?;\"");
+constexpr auto WHITESPACE     = _T(" \r\t");
+constexpr auto OPERATORS      = _T("(){}[]:=<>.,^@+-*/!~?;\"");
+constexpr auto TERMINATORS    = _T(" (){}[]:=<>\r.,^@+-*/!~?\t;\"");
 
 constexpr auto UNDO_BUFFER_SIZE = 0x40000;
-
 
 // --- LexicalFormatter ---
 
@@ -128,11 +128,11 @@ void LexicalFormatter :: onUpdate(size_t)
    format();
 }
 
-void LexicalFormatter :: onInsert(size_t, size_t, text_t)
+void LexicalFormatter :: onInsert(size_t, size_t, const_text_t)
 {
 }
 
-void LexicalFormatter  :: onErase(size_t, size_t, text_t)
+void LexicalFormatter  :: onErase(size_t, size_t, const_text_t)
 {
 }
 
@@ -246,7 +246,7 @@ DocumentView :: ~DocumentView()
    _text->detachWatcher(this);
 }
 
-void DocumentView :: onInsert(size_t position, size_t length, text_t line)
+void DocumentView :: onInsert(size_t position, size_t length, const_text_t line)
 {
    _undoBuffer.onInsert(position, length, line);
 
@@ -274,7 +274,7 @@ void DocumentView :: onUpdate(size_t position)
    //status.frameChanged = true;
 }
 
-void DocumentView :: onErase(size_t position, size_t length, text_t line)
+void DocumentView :: onErase(size_t position, size_t length, const_text_t line)
 {
    _undoBuffer.onErase(position, length, line);
 
@@ -651,7 +651,7 @@ void DocumentView :: notifyOnChange(DocumentChangeStatus& changeStatus)
    }
 }
 
-void DocumentView :: blockInserting(DocumentChangeStatus& changeStatus, text_t subs, size_t length)
+void DocumentView :: blockInserting(DocumentChangeStatus& changeStatus, const_text_t subs, size_t length)
 {
    _text->validateBookmark(_caret);
 
@@ -688,7 +688,7 @@ void DocumentView :: blockInserting(DocumentChangeStatus& changeStatus, text_t s
    }
 }
 
-void DocumentView :: blockDeleting(DocumentChangeStatus& changeStatus, text_t subs, size_t length)
+void DocumentView :: blockDeleting(DocumentChangeStatus& changeStatus, const_text_t subs, size_t length)
 {
    _text->validateBookmark(_caret);
 
@@ -823,7 +823,7 @@ void DocumentView :: insertNewLine(DocumentChangeStatus& changeStatus)
    status.rowDifference += (_text->getRowCount() - rowCount);
 }
 
-void DocumentView :: insertLine(DocumentChangeStatus& changeStatus, text_t text, disp_t length)
+void DocumentView :: insertLine(DocumentChangeStatus& changeStatus, const_text_t text, disp_t length)
 {
    int rowCount = _text->getRowCount();
 
@@ -880,6 +880,144 @@ bool DocumentView :: eraseSelection(DocumentChangeStatus& changeStatus)
    return true;
 }
 
+void DocumentView :: trim(DocumentChangeStatus& changeStatus)
+{
+   int rowCount = _text->getRowCount();
+
+   Point caret = _caret.getCaret(false);
+   bool space = false;
+   if (caret.x == _caret.length_int()) {
+      _text->eraseChar(_caret);
+   }
+   else while (caret.x < _caret.length_int()) {
+      pos_t length;
+      text_t line = _text->getLine(_caret, length);
+
+      if (line[0] == ' ' || line[0] == '\t') {
+         _text->eraseChar(_caret);
+         space = true;
+      }
+      else if (!space) {
+         _text->eraseChar(_caret);
+      }
+      else break;
+   }
+
+   changeStatus.textChanged = true;
+
+   status.rowDifference += (_text->getRowCount() - rowCount);
+}
+
+void DocumentView :: eraseLine(DocumentChangeStatus& changeStatus)
+{
+   int rowCount = _text->getRowCount();
+
+   _caret.moveTo(0, _caret.row());
+
+   _text->eraseLine(_caret, _caret.length());
+   _text->eraseChar(_caret);
+
+   changeStatus.textChanged = true;
+   changeStatus.caretChanged = true;
+
+   status.rowDifference += (_text->getRowCount() - rowCount);
+}
+
+void DocumentView :: duplicateLine(DocumentChangeStatus& changeStatus)
+{
+   int rowCount = _text->getRowCount();   
+
+   Point caret = _caret.getCaret(false);
+
+   _caret.moveTo(0, caret.y);
+
+   TextBookmark bm = _caret;
+   bm.moveTo(_caret.length_int(), caret.y);
+
+   disp_t length = bm.position() - _caret.position();
+   text_c* buffer = StrFactory::allocate(length + 1, (text_str)nullptr);
+   _text->copyTo(_caret, buffer, length);
+
+   _caret.moveTo(0, caret.y + 1);
+   _text->insertNewLine(_caret);
+   _text->insertLine(_caret, buffer, length);
+
+   freestr(buffer);
+
+   setCaret(caret.x, caret.y + 1, false, changeStatus);
+
+   changeStatus.textChanged = true;
+   changeStatus.caretChanged = true;
+
+   status.rowDifference += (_text->getRowCount() - rowCount);
+}
+
+void DocumentView :: copyText(text_c* text, disp_t length)
+{
+   if (length == 0) {
+      text[0] = 0;
+   }
+   else {
+      _text->copyTo(_caret, text, length);
+   }
+}
+
+void DocumentView :: toLowercase(DocumentChangeStatus& changeStatus)
+{
+   disp_t selection = abs(_selection);
+
+   if (selection > 0) {
+      text_c* buffer = StrFactory::allocate(selection + 1, (text_str)nullptr);
+
+      copySelection(buffer);
+
+      StrUtil::lower(buffer);
+
+      insertLine(changeStatus, buffer, selection);
+
+      freestr(buffer);
+   }
+   else {
+      text_c buffer[2];
+      copyText(buffer, 1);
+
+      if (text_str(WHITESPACE).find(buffer[0]) == NOTFOUND_POS) {
+         StrUtil::lower(buffer);
+
+         eraseChar(changeStatus, false);
+         insertChar(changeStatus, buffer[0], 1);
+      }
+   }
+}
+
+void DocumentView :: toUppercase(DocumentChangeStatus& changeStatus)
+{
+   disp_t selection = abs(_selection);
+
+   if (selection > 0) {
+      text_c* buffer = StrFactory::allocate(selection + 1, (text_str)nullptr);
+
+      copySelection(buffer);
+
+      StrUtil::upper(buffer);
+
+      insertLine(changeStatus, buffer, selection);
+
+      freestr(buffer);
+   }
+   else {
+      text_c buffer[2];
+      copyText(buffer, 1);
+
+      if (text_str(WHITESPACE).find(buffer[0]) == NOTFOUND_POS) {
+         StrUtil::upper(buffer);
+
+         eraseChar(changeStatus, false);
+         insertChar(changeStatus, buffer[0], 1);
+      }
+   }
+}
+
 void DocumentView :: copySelection(text_c* text)
 {
    if (_selection == 0) {
@@ -923,4 +1061,16 @@ bool DocumentView :: canRedo()
 bool DocumentView :: canUndo()
 {
    return !_undoBuffer.bof();
+}
+
+bool DocumentView :: findLine(DocumentChangeStatus& changeStatus, const_text_t text, bool matchCase, bool wholeWord)
+{
+   TextBookmark bookmark = _caret;
+   if (_text->findWord(bookmark, text, matchCase, wholeWord ? TERMINATORS : nullptr)) {
+      setCaret(bookmark.getCaret(false), false, changeStatus);
+      setCaret({ _caret.column() + getlength_int(text), _caret.row() }, true, changeStatus);
+
+      return true;
+   }
+   else return false;
 }

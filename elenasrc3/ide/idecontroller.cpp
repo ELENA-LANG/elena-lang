@@ -137,7 +137,7 @@ void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t 
    }
 }
 
-path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourcePath, NamespaceString& name)
+path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourcePath, NamespaceString& name, PathString& subPath)
 {
    size_t projectPathLen = model->projectPath.length();
 
@@ -148,6 +148,7 @@ path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourc
       name.copy(model->getPackage());
       if (path.length() > projectPathLen) {
          name.pathToName(*path + projectPathLen);
+         subPath.copySubPath(*path + projectPathLen, true);
 
          _debugController.resolveNamespace(name);
       }
@@ -159,10 +160,14 @@ path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourc
 
       if (!rootPath.empty() && PathUtil::compare(sourcePath, rootPath, rootPathLen)) {
          name.pathToName(sourcePath + rootPathLen);
+         subPath.copySubPath(*path + rootPathLen, true);
 
          _debugController.resolveNamespace(name);
 
-         return sourcePath + rootPathLen;
+         pos_t rootNsPos = (*name).find('\'', name.length());
+         subPath.cut(0, rootNsPos + 1);
+
+         return sourcePath + rootPathLen + rootNsPos + 1;
       }
       else {
          FileNameString fileName(sourcePath);
@@ -181,9 +186,14 @@ void ProjectController :: defineSourceName(ProjectModel* model, path_t path, Nam
       retVal.copy("undefined");
    }
    else {
-      //_ELENA_::ReferenceNs module;
-      retrieveSourceName(model, path, retVal);
+      PathString subPath;
+      retrieveSourceName(model, path, retVal, subPath);
       retVal.append(':');
+
+      if (subPath.length() > 0) {
+         IdentifierString subStr(*subPath);
+         retVal.append(*subStr);
+      }
 
       FileNameString fileName(path, true);
       IdentifierString tmp(*fileName);
@@ -294,12 +304,13 @@ void ProjectController :: runToCursor(ProjectModel& model, SourceViewModel& sour
       path_t currentPath = sourceModel.getDocumentPath(index);
 
       NamespaceString ns;
-      currentPath = retrieveSourceName(&model, currentPath, ns);
+      PathString subPath;
+      currentPath = retrieveSourceName(&model, currentPath, ns, subPath);
 
-      // !! temporal solution : skip the project folder
-      size_t rootNsLen = (*ns).find('\'');
-
-      IdentifierString pathStr(currentPath + rootNsLen + 1);
+      FileNameString properName(currentPath, true);
+      subPath.combine(*properName);
+      
+      IdentifierString pathStr(*subPath);
       _debugController.runToCursor(*ns, *pathStr, currentDoc->getCaret().y);
    }
 }
@@ -325,7 +336,7 @@ bool ProjectController :: compileProject(ProjectModel& model)
    appPath.combine(*model.paths.compilerPath);
 
    PathString cmdLine(*model.paths.compilerPath);
-   cmdLine.append(" ");
+   cmdLine.append(" -w3 "); // !! temporal
    cmdLine.append(*model.projectFile);
 
    PathString curDir;
@@ -342,7 +353,7 @@ bool ProjectController :: compileSingleFile(ProjectModel& model)
    appPath.combine(*model.paths.compilerPath);
 
    PathString cmdLine(*model.paths.compilerPath);
-   cmdLine.append(" ");
+   cmdLine.append(" -w3 "); // !! temporal
    cmdLine.append(singleProjectFile);
 
    PathString curDir;
@@ -392,6 +403,13 @@ void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, Co
       optionsOption.readContent(value);
 
       model.options.copy(value.str());
+   }
+
+   auto outputOption = config.selectNode(configRoot, OUTPUT_SUB_CATEGORY);
+   if (!outputOption.isNotFound()) {
+      outputOption.readContent(value);
+
+      model.outputPath.copy(value.str());
    }
 
    // load source files
@@ -643,7 +661,8 @@ void ProjectController :: toggleBreakpoint(ProjectModel& model, SourceViewModel&
       path_t currentPath = sourceModel.getDocumentPath(index);
 
       NamespaceString ns;
-      currentPath = retrieveSourceName(&model, currentPath, ns);
+      PathString subPath;
+      currentPath = retrieveSourceName(&model, currentPath, ns, subPath);
 
       bool addMode = true;
       IdentifierString pathStr(currentSource + currentSource.find(':') + 1);
@@ -816,7 +835,7 @@ void IDEController :: saveConfig(IDEModel* model, path_t configPath)
 
 void IDEController :: init(IDEModel* model)
 {
-   NotificationStatus status = IDE_STATUS_CHANGED;
+   NotificationStatus status = IDE_STATUS_CHANGED | IDE_LAYOUT_CHANGED;
 
    if (model->projectModel.lastOpenFiles.count() > 0) {
       path_t path = model->projectModel.lastOpenFiles.get(1);
@@ -825,6 +844,7 @@ void IDEController :: init(IDEModel* model)
          model->changeStatus(IDEStatus::Ready);
       }
    }
+   else status |= PROJECT_CHANGED;
    
    _notifier->notify(NOTIFY_IDE_CHANGE, status);
 }
@@ -915,6 +935,17 @@ bool IDEController :: openProject(IDEModel* model, path_t projectFile, Notificat
    return true;
 }
 
+inline void removeDuplicate(ProjectPaths& lastOpenFiles, path_t value)
+{
+   for (auto it = lastOpenFiles.start(); !it.eof(); ++it) {
+      if (value.compare(*it)) {
+         lastOpenFiles.cut(it);
+
+         return;
+      }
+   }
+}
+
 void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)
 {
    NotificationStatus status = {};
@@ -923,9 +954,10 @@ void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)
    if (dialog.openFiles(files)) {
       for (auto it = files.start(); !it.eof(); ++it) {
          if(openFile(model, *it, status)) {
+            removeDuplicate(model->projectModel.lastOpenFiles, *it);
+
             while (model->projectModel.lastOpenFiles.count() >= MAX_RECENT_FILES)
-               model->projectModel.lastOpenFiles.cut(
-                  model->projectModel.lastOpenFiles.get(model->projectModel.lastOpenFiles.count()));
+               model->projectModel.lastOpenFiles.cut(model->projectModel.lastOpenFiles.end());
 
             model->projectModel.lastOpenFiles.insert((*it).clone());
          }
@@ -933,6 +965,22 @@ void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)
 
       _notifier->notify(NOTIFY_IDE_CHANGE, status);
    }
+}
+
+void IDEController :: doOpenFile(IDEModel* model, path_t path)
+{
+   NotificationStatus status = {};
+
+   if (openFile(model, path, status)) {
+      removeDuplicate(model->projectModel.lastOpenFiles, path);
+
+      while (model->projectModel.lastOpenFiles.count() >= MAX_RECENT_FILES)
+         model->projectModel.lastOpenFiles.cut(model->projectModel.lastOpenFiles.end());
+
+      model->projectModel.lastOpenFiles.insert(path.clone());
+   }
+
+   _notifier->notify(NOTIFY_IDE_CHANGE, status);
 }
 
 bool IDEController :: doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave)
@@ -1108,19 +1156,25 @@ bool IDEController :: closeFile(FileDialogBase& dialog, MessageDialogBase& mssgD
    return true;
 }
 
+bool IDEController :: doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, int index)
+{
+   NotificationStatus status = NONE_CHANGED;
+
+   if (index > 0) {
+      bool retVal = closeFile(dialog, mssgDialog, model, index, status);
+
+      if (status != NONE_CHANGED)
+         _notifier->notify(NOTIFY_IDE_CHANGE, status);
+   }
+
+   return false;
+}
+
 bool IDEController :: doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model)
 {
    auto docView = model->sourceViewModel.DocView();
    if (docView) {
-      NotificationStatus status = NONE_CHANGED;
-
-      int index = model->sourceViewModel.getCurrentIndex();
-      if (index > 0) {
-         bool retVal = closeFile(dialog, mssgDialog, model, index, status);
-
-         if (status != NONE_CHANGED)
-            _notifier->notify(NOTIFY_IDE_CHANGE, status);
-      }
+      return doCloseFile(dialog, mssgDialog, model, model->sourceViewModel.getCurrentIndex());
    }
    return false;
 }
@@ -1130,6 +1184,24 @@ bool IDEController :: closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDi
 {
    while (model->sourceViewModel.getDocumentCount() > 0) {
       if (!closeFile(dialog, mssgDialog, model, 1, status))
+         return false;
+   }
+
+   return true;
+}
+
+bool IDEController :: closeAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+   NotificationStatus& status)
+{
+   int index = model->sourceViewModel.getCurrentIndex();
+   for (int i = 1; i < index; i++) {
+      if (!closeFile(dialog, mssgDialog, model, 1, status))
+         return false;
+   }
+
+   int count = model->sourceViewModel.getDocumentCount();
+   for (int i = 2; i <= count; i++) {
+      if (!closeFile(dialog, mssgDialog, model, 2, status))
          return false;
    }
 
@@ -1160,6 +1232,19 @@ bool IDEController :: doCloseAll(FileDialogBase& dialog, MessageDialogBase& mssg
    return false;
 }
 
+bool IDEController :: doCloseAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model)
+{
+   NotificationStatus status = NONE_CHANGED;
+   if (closeAllButActive(dialog, mssgDialog, model, status)) {
+      if (status != NONE_CHANGED)
+         _notifier->notify(NOTIFY_IDE_CHANGE, status);
+
+      return true;
+   }
+
+   return false;
+}
+
 bool IDEController :: doExit(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model)
 {
    return doCloseAll(dialog, mssgDialog, model);
@@ -1173,6 +1258,24 @@ void IDEController :: doSelectNextWindow(IDEModel* model)
 void IDEController :: doSelectPrevWindow(IDEModel* model)
 {
    sourceController.selectPreviousDocument(&model->sourceViewModel);
+}
+
+void IDEController :: doSelectWindow(TextViewModelBase* viewModel, path_t path)
+{
+   ustr_t sourceName = viewModel->getDocumentNameByPath(path);
+   int index = sourceName.empty() ? 0 : viewModel->getDocumentIndex(sourceName);
+
+   if (index > 0) {
+      NotificationStatus status = NONE_CHANGED;
+
+      if(sourceController.selectDocument(viewModel, index, status)) {
+         if (test(status, FRAME_VISIBILITY_CHANGED))
+            status |= IDE_LAYOUT_CHANGED;
+
+         if (status != NONE_CHANGED)
+            _notifier->notify(NOTIFY_IDE_CHANGE, status);
+      }
+   }
 }
 
 path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
@@ -1402,4 +1505,90 @@ void IDEController :: doInclude(IDEModel* model)
    path_t path = model->sourceViewModel.getDocumentPath(model->sourceViewModel.getCurrentIndex());
 
    projectController.includeFile(model->projectModel, path);
+}
+
+bool IDEController :: doSearch(FindDialogBase& dialog, IDEModel* model)
+{
+   if (dialog.showModal()) {
+      if(!sourceController.findText(model->viewModel(), &model->findModel)) {
+         return false;
+      }
+   }
+
+   return true;
+}
+
+bool IDEController :: doReplace(FindDialogBase& dialog, MessageDialogBase& qusetionDialog, IDEModel* model)
+{
+   if (dialog.showModal()) {
+      while (sourceController.findText(model->viewModel(), &model->findModel)) {
+         auto result = qusetionDialog.question(REPLACE_TEXT);
+         if (result == MessageDialogBase::Cancel)
+            return true;
+         if (result == MessageDialogBase::Yes) {
+            if(!sourceController.replaceText(model->viewModel(), &model->findModel))
+               break;
+         }
+      }
+   }
+
+   return false;
+}
+
+bool IDEController :: doSearchNext(IDEModel* model)
+{
+   if (sourceController.findText(model->viewModel(), &model->findModel)) {
+      return true;
+   }
+   return false;
+}
+
+void IDEController :: doGoToLine(GotoDialogBase& dialog, IDEModel* model)
+{
+   auto docView = model->viewModel()->DocView();
+   if (docView != nullptr) {
+      int row = docView->getCaret().y;
+      if (dialog.showModal(row)) {
+         sourceController.goToLine(model->viewModel(), row);
+      }
+   }
+}
+
+void IDEController :: doSelectWindow(FileDialogBase& fileDialog, MessageDialogBase& mssgDialog, WindowListDialogBase& dialog, 
+   IDEModel* model)
+{
+   auto retVal = dialog.selectWindow();
+   switch (retVal.value2) {
+      case WindowListDialogBase::Mode::Activate:
+      {
+         path_t path = model->sourceViewModel.getDocumentPath(retVal.value1);
+         doSelectWindow(model->viewModel(), path);
+         break;
+      }
+      case WindowListDialogBase::Mode::Close:
+         doCloseFile(fileDialog, mssgDialog, model, retVal.value1);
+         break;
+      default:
+         break;
+   }
+}
+
+void IDEController :: doIndent(IDEModel* model)
+{
+   sourceController.indent(&model->sourceViewModel);
+}
+
+void IDEController :: doOutdent(IDEModel* model)
+{
+   sourceController.outdent(&model->sourceViewModel);
+}
+
+void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog, IDEModel* model)
+{
+   int prevSchemeIndex = model->viewModel()->schemeIndex;
+
+   if(editorDialog.showModal()) {
+      if (prevSchemeIndex != model->viewModel()->schemeIndex)
+         _notifier->notify(NOTIFY_IDE_CHANGE, COLOR_SCHEME_CHANGED | FRAME_CHANGED);
+   }
 }
