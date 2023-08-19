@@ -67,6 +67,7 @@ copy %~dp0\..\bin\amd64\core60_win.bin %~dp0\output64\bin\amd64
 copy %~dp0\..\bin\amd64\corex60.bin %~dp0\output64\bin\amd64
 
 copy %~dp0\..\bin\templates\*.cfg %~dp0\output64\bin\templates\
+copy %~dp0\..\bin\scripts\*.es %~dp0\output64\bin\scripts\
 
 copy %~dp0\..\doc\license %~dp0\output64\doc\
 copy %~dp0\..\doc\contributors %~dp0\output64\doc\
@@ -87,11 +88,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 
 move %~dp0..\dat\sg\syntax60.dat %~dp0\output64\bin\
 
-%~dp0\..\bin\og64-cli -s %~dp0\..\dat\og\bc_rules60.dat 
-%~dp0\..\bin\og-cli -s %~dp0\..\dat\og\bt_rules60.dat 
+%~dp0\..\bin\og64-cli %~dp0\..\dat\og\bc_rules60.txt
+%~dp0\..\bin\og-cli -s %~dp0\..\dat\og\bt_rules60.txt
 
-move %~dp0..\dat\sg\bt_rules60.dat %~dp0\output\bin\
-move %~dp0..\dat\sg\bc_rules60.dat %~dp0\output\bin\
+move %~dp0..\dat\og\bt_rules60.dat %~dp0\output64\bin\
+move %~dp0..\dat\og\bc_rules60.dat %~dp0\output64\bin\
 
 md %~dp0\lib60_64
 

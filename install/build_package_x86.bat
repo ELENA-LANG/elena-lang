@@ -94,11 +94,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 
 move %~dp0..\dat\sg\syntax60.dat %~dp0\output\bin\
 
-%~dp0\..\bin\og-cli -s %~dp0\..\dat\og\bc_rules60.dat 
-%~dp0\..\bin\og-cli -s %~dp0\..\dat\og\bt_rules60.dat 
+%~dp0\..\bin\og-cli %~dp0\..\dat\og\bc_rules60.txt
+%~dp0\..\bin\og-cli -s %~dp0\..\dat\og\bt_rules60.txt
 
-move %~dp0..\dat\sg\bt_rules60.dat %~dp0\output\bin\
-move %~dp0..\dat\sg\bc_rules60.dat %~dp0\output\bin\
+move %~dp0..\dat\og\bt_rules60.dat %~dp0\output\bin\
+move %~dp0..\dat\og\bc_rules60.dat %~dp0\output\bin\
 
 md %~dp0\lib60
 
