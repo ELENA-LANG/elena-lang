@@ -1824,9 +1824,11 @@ inline % 0B6h //; (r15 - object, r14 - message)
 
   lis     r18, __arg32hi_1
   addi    r18, r18, __arg32lo_1
+
   andi.   r14, r14, ARG_ACTION_MASK
 
   li      r19, ~ARG_MASK
+  andi.   r19, r19, 0FFFFh
   addis   r19, r19, 0FFFFh
 
   and     r18, r18, r19
