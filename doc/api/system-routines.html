@@ -362,6 +362,62 @@ system'routines'Filter</LI>
 </UL>
 <HR>
 </DIV>
+<A NAME="ifDecrescent">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'routines'</DIV>
+<H2 title="ifDecrescent" class="title">ifDecrescent</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">ifDecrescent</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">system'Func2</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'routines'ifDecrescent</LI>
+</UL>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="ifOrdered">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'routines'</DIV>
+<H2 title="ifOrdered" class="title">ifOrdered</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">ifOrdered</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">system'Func2</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'routines'ifOrdered</LI>
+</UL>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="IndexerSortingAgent">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -509,7 +565,7 @@ system'routines'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">QuickSorting</SPAN></PRE>
+public singleton <SPAN CLASS="typeNameLabel">QuickSorting</SPAN></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -975,62 +1031,6 @@ system'routines'SortingAgent</LI>
 </UL>
 <HR>
 </DIV>
-<A NAME="ifDecrescent">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'routines'</DIV>
-<H2 title="ifDecrescent" class="title">ifDecrescent</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">ifDecrescent</SPAN></PRE>
-<BR>
-</DIV>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">system'Func2</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'routines'ifDecrescent</LI>
-</UL>
-</LI>
-</UL>
-<HR>
-</DIV>
-<A NAME="ifOrdered">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'routines'</DIV>
-<H2 title="ifOrdered" class="title">ifOrdered</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">ifOrdered</SPAN></PRE>
-<BR>
-</DIV>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">system'Func2</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'routines'ifOrdered</LI>
-</UL>
-</LI>
-</UL>
-<HR>
-</DIV>
 <A NAME="Summing">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -1464,9 +1464,10 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get property </i>&nbsp;</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>FirstMember()</CODE>
+<CODE>sequenceEqual(<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable">Enumerable</A></SPAN> list)
+</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1474,10 +1475,18 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <CODE>
 <i>get property </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>LastMember()</CODE>
+<CODE>FirstMember()</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get property </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>LastMember()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1486,7 +1495,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1495,7 +1504,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1504,7 +1513,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1513,7 +1522,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1522,7 +1531,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1531,7 +1540,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1540,12 +1549,21 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>ascendant()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>sequenceEqual(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> array)
 </CODE>
 </TD>
 </TR>
@@ -1570,9 +1588,18 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexOfElement(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> element)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>populate(<SPAN CLASS="memberNameLink"><A HREF="system-routines.html#Func&lt;T1,T2&gt;">Func&lt;IntNumber,Object&gt;</A></SPAN> f)
+<CODE>populate(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;system'IntNumber,system'Object&gt;</A></SPAN> f)
 </CODE>
 </TD>
 </TR>

@@ -87,6 +87,7 @@ EXTERN_DLL_EXPORT void InitializeMTLA(SystemEnv* env, SymbolList* entry, void* c
 
    int index = machine->allocateThreadEntry(env);
    __routineProvider.InitMTAExceptionHandling(env, index, criricalHandler);
+   __routineProvider.InitMTASignals(env, index);
 
    machine->startSTA(env, entry);
 }
@@ -116,6 +117,7 @@ EXTERN_DLL_EXPORT void StartThreadLA(SystemEnv* env, void* criricalHandler, void
 #endif
 
    __routineProvider.InitMTAExceptionHandling(env, index, criricalHandler);
+   __routineProvider.InitMTASignals(env, index);
 
    machine->startThread(env, entryPoint, index);
 }
@@ -140,6 +142,11 @@ EXTERN_DLL_EXPORT void* ForcedCollectGCLA(void* roots, int fullMode)
 EXTERN_DLL_EXPORT size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)
 {
    return machine->loadMessageName((mssg_t)message, buffer, length);
+}
+
+EXTERN_DLL_EXPORT size_t LoadActionNameLA(size_t message, char* buffer, size_t length)
+{
+   return machine->loadActionName((mssg_t)message, buffer, length);
 }
 
 EXTERN_DLL_EXPORT size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, size_t length)
@@ -213,6 +220,26 @@ EXTERN_DLL_EXPORT void GetRandomSeedLA(SeedStruct& seed)
 EXTERN_DLL_EXPORT unsigned int GetRandomIntLA(SeedStruct& seed)
 {
    return machine->getRandomNumber(seed);
+}
+
+EXTERN_DLL_EXPORT void SignalStopGCLA(void* handle)
+{
+   SystemRoutineProvider::GCSignalStop(handle);
+}
+
+EXTERN_DLL_EXPORT void WaitForSignalGCLA(void* handle)
+{
+   SystemRoutineProvider::GCWaitForSignal(handle);
+}
+
+EXTERN_DLL_EXPORT void SignalClearGCLA(void* handle)
+{
+   SystemRoutineProvider::GCSignalClear(handle);
+}
+
+EXTERN_DLL_EXPORT void WaitForSignalsGCLA(size_t count, void* handles)
+{
+   SystemRoutineProvider::GCWaitForSignals(count, handles);
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,

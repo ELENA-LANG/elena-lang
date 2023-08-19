@@ -28,7 +28,11 @@ namespace elena_lang
 
       size_t retriveAddressInfo(LibraryLoaderBase& provider, addr_t retAddress, char* buffer, size_t length);
 
+      bool loadSignature(ref_t subjectRef, pos_t argCount, addr_t* addresses);
+
       addr_t retrieveGlobalAttribute(int attribute, ustr_t name);
+
+      static size_t loadClassName(addr_t classAddress, char* buffer, size_t length);
 
       RTManager(MemoryBase* msection, MemoryBase* dbgsection);
    };

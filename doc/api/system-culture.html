@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 5.8: Module system'culture
+ELENA Standard Library 6.0: Module system'culture
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 5.8: Module system'culture
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>5.8
+ELENA&nbsp;Standard&nbsp;Library<br>6.0
 </STRONG>
 </DIV>
 </DIV>
@@ -32,9 +32,20 @@ system'culture'</DIV>
 <H2 title="Locale" class="title">Locale</H2>
 </DIV>
 <DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">Locale</SPAN></PRE>
+<BR>
+</DIV>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Object">'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="-$private-culture.html#ILocale">'$private'culture'ILocale</A></SPAN></LI>
 <LI>
 <UL CLASS="inheritance">
 <LI>
@@ -42,17 +53,9 @@ system'culture'Locale</LI>
 </UL>
 </LI>
 </UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">Locale</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -63,10 +66,10 @@ sealed Class <SPAN CLASS="typeNameLabel">Locale</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theName</CODE>
+<CODE>_name</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -75,39 +78,11 @@ sealed Class <SPAN CLASS="typeNameLabel">Locale</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Static Property Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Property accessor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>static get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Current</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>static get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Invariant</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -130,22 +105,29 @@ sealed Class <SPAN CLASS="typeNameLabel">Locale</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== COVERSION SUMMARY =========== -->
+<!-- ========== STATIC PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Conversion Summary</H3>
+<H3>Static Property Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-culture.html#Locale">Locale</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
+<CODE>Current()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Invariant()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -163,27 +145,42 @@ sealed Class <SPAN CLASS="typeNameLabel">Locale</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>strToUpper(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A><I>[]</I></SPAN> src, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A><I>[]</I></SPAN> dest, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destLength)
+<CODE>toUppercase(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>strToLower(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A><I>[]</I></SPAN> src, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A><I>[]</I></SPAN> dest, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destLength)
+<CODE>toUppercase(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toLowercase(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toLowercase(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="currentLocale">
@@ -191,11 +188,18 @@ sealed Class <SPAN CLASS="typeNameLabel">Locale</SPAN></PRE>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
 <DIV CLASS="subTitle">
-system'culture'culture'</DIV>
+system'culture'</DIV>
 <H2 title="currentLocale" class="title">currentLocale</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<DIV CLASS="summary">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Symbol Summary</H3>
@@ -204,14 +208,12 @@ system'culture'culture'</DIV>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Name</TH>
 </TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"></SPAN></CODE>
-</TD>
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-culture.html#Locale">Locale</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>symbol currentLocale</CODE>
+<CODE>currentLocale</CODE>
 </TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -223,11 +225,18 @@ system'culture'culture'</DIV>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
 <DIV CLASS="subTitle">
-system'culture'culture'</DIV>
+system'culture'</DIV>
 <H2 title="invariantLocale" class="title">invariantLocale</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<DIV CLASS="summary">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Symbol Summary</H3>
@@ -236,23 +245,21 @@ system'culture'culture'</DIV>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Name</TH>
 </TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"></SPAN></CODE>
-</TD>
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-culture.html#Locale">Locale</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>symbol invariantLocale</CODE>
+<CODE>invariantLocale</CODE>
 </TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
 </DIV>
 <HR>
 </DIV>
-<A NAME="ext-String">
+<A NAME="String">
 </A>
-<!-- ======== START OF EXTENSION DATA ======== -->
+<!-- ======== START OF CLASS DATA ======== -->
 <DIV CLASS="header">
 <DIV CLASS="subTitle">
 system'</DIV>
@@ -263,13 +270,11 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-<SPAN CLASS="typeNameLabel">String</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">String</SPAN><BR/>
+<I>A UTF-8 literal value</I></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- ========== EXTNSION SUMMARY =========== -->
+<!-- ========== EXTENSION SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Extension Summary</H3>
@@ -281,81 +286,42 @@ system'</DIV>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>toUpper(<SPAN CLASS="memberNameLink"><A HREF="system-culture.html#Locale">Locale</A></SPAN> locale)
+<CODE>toUpper(<SPAN CLASS="memberNameLink"><A HREF="system-$private-culture.html#ILocale">ILocale</A></SPAN> locale)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>toLower(<SPAN CLASS="memberNameLink"><A HREF="system-culture.html#Locale">Locale</A></SPAN> locale)
+<CODE>toUpper()
 </CODE>
 </TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="ext-WideString">
-</A>
-<!-- ======== START OF EXTENSION DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'</DIV>
-<H2 title="WideString" class="title">WideString</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-<SPAN CLASS="typeNameLabel">WideString</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- ========== EXTNSION SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Extension Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Extension Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>toUpper(<SPAN CLASS="memberNameLink"><A HREF="system-culture.html#Locale">Locale</A></SPAN> locale)
+<CODE>toLower(<SPAN CLASS="memberNameLink"><A HREF="system-$private-culture.html#ILocale">ILocale</A></SPAN> locale)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>extension </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>toLower(<SPAN CLASS="memberNameLink"><A HREF="system-culture.html#Locale">Locale</A></SPAN> locale)
+<CODE>toLower()
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <DIV CLASS="bottomNav">
@@ -369,7 +335,7 @@ system'</DIV>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>5.8
+ELENA&nbsp;Standard&nbsp;Library<br>6.0
 </STRONG>
 </DIV>
 </DIV>

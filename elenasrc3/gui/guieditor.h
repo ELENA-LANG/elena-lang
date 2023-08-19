@@ -55,6 +55,25 @@ namespace elena_lang
       virtual void onDocumentClose(int index) = 0;
    };
 
+   // --- FindModel ---
+   typedef List<text_c*, freestr> SearchHistory;
+
+   struct FindModel
+   {
+      String<text_c, 255>  text;
+      String<text_c, 255>  newText;
+      SearchHistory        searchHistory;
+
+      bool                 matchCase;
+      bool                 wholeWord;
+
+      FindModel()
+         : searchHistory(nullptr)
+      {
+         
+      }
+   };
+
    // --- TextViewBase ---
    class TextViewModelBase
    {
@@ -137,9 +156,15 @@ namespace elena_lang
       virtual void redo(TextViewModelBase* model) = 0;
 
       virtual void indent(TextViewModelBase* model) = 0;
+      virtual void outdent(TextViewModelBase* model) = 0;
+
+      virtual void trim(TextViewModelBase* model) = 0;
+      virtual void eraseLine(TextViewModelBase* model) = 0;
+      virtual void duplicateLine(TextViewModelBase* model) = 0;
+
       virtual void deleteText(TextViewModelBase* model) = 0;
-      virtual void insertBlockText(TextViewModelBase* model, const text_t s, size_t length) = 0;
-      virtual void deleteBlockText(TextViewModelBase* model, const text_t s, size_t length) = 0;
+      virtual void insertBlockText(TextViewModelBase* model, const_text_t s, size_t length) = 0;
+      virtual void deleteBlockText(TextViewModelBase* model, const_text_t s, size_t length) = 0;
 
       virtual bool copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard) = 0;
       virtual void pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard) = 0;
@@ -159,6 +184,13 @@ namespace elena_lang
       virtual void moveToFrame(TextViewModelBase* model, int col, int row, bool kbShift) = 0;
 
       virtual void resizeModel(TextViewModelBase* model, Point size) = 0;
+   };
+
+   // --- ViewFactoryBase ---
+   class ViewFactoryBase
+   {
+   public:
+      virtual void reloadStyles(TextViewModelBase* viewModel) = 0;
    };
 
 }

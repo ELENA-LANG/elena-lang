@@ -518,7 +518,7 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
 
       for (auto it = copy.statics.start(); !it.eof(); ++it) {
          auto info = *it;
-         if (info.typeInfo.typeRef)
+         if (info.typeInfo.typeRef && !isPrimitiveRef(info.typeInfo.typeRef))
             info.typeInfo.typeRef = importReference(exporter, info.typeInfo.typeRef);
 
          if (info.typeInfo.elementRef)

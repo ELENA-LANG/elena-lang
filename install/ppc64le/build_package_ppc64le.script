@@ -1,5 +1,5 @@
 #!/bin/bash
-RELEASE=elena-6.0.4.ppc64le-linux
+RELEASE=elena-6.0.5.ppc64le-linux
 
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
@@ -27,17 +27,17 @@ else
   exit 1
 fi
 
-# ../bin/elena-og ../dat/og/rules.txt
-# ret=$?
-# if [ $ret -eq 0 ]
-# then
-#   echo .
-# else
-#   echo "Failure" >&2
-#   exit 1
-# fi
+../../bin/og64-cli ../../dat/og/bc_rules60.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
 
-../../bin/og64-cli -s ../../dat/og/bt_rules.txt
+../../bin/og64-cli -s ../../dat/og/bt_rules60.txt
 ret=$?
 if [ $ret -eq 0 ]
 then

@@ -961,7 +961,7 @@ bool ScriptEngineCFParser :: compareTokenWithAny(ScriptEngineReaderBase& reader,
       if (terminal.compare(ruleTerminal))
          return true;
 
-      rule += getlength(ruleTerminal) + 1;
+      rule += getlength_int(ruleTerminal) + 1;
       ruleTerminal = getBodyText(rule);
    } while (!emptystr(ruleTerminal));
 

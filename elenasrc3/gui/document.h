@@ -84,8 +84,8 @@ namespace elena_lang
 
    public:
       void onUpdate(size_t position) override;
-      void onInsert(size_t position, size_t length, text_t line) override;
-      void onErase(size_t position, size_t length, text_t line) override;
+      void onInsert(size_t position, size_t length, const_text_t line) override;
+      void onErase(size_t position, size_t length, const_text_t line) override;
 
       pos_t proceed(pos_t position, ReaderInfo& info);
 
@@ -239,9 +239,9 @@ namespace elena_lang
 
       pos_t format(LexicalReader& reader);
 
-      void onInsert(size_t position, size_t length, text_t line) override;
+      void onInsert(size_t position, size_t length, const_text_t line) override;
       void onUpdate(size_t position) override;
-      void onErase(size_t position, size_t length, text_t line) override;
+      void onErase(size_t position, size_t length, const_text_t line) override;
 
       TextBookmark getCaretBookmark() { return _caret; }
 
@@ -348,6 +348,7 @@ namespace elena_lang
       void moveToFrame(DocumentChangeStatus& changeStatus, int column, int row, bool selecting);
 
       void copySelection(text_c* text);
+      void copyText(text_c* text, disp_t length);
 
       void insertChar(DocumentChangeStatus& changeStatus, text_c ch)
       {
@@ -355,13 +356,20 @@ namespace elena_lang
       }
       void insertChar(DocumentChangeStatus& changeStatus, text_c ch, size_t number);
       void insertNewLine(DocumentChangeStatus& changeStatus);
-      void insertLine(DocumentChangeStatus& changeStatus, text_t text, disp_t length);
+      void insertLine(DocumentChangeStatus& changeStatus, const_text_t text, disp_t length);
 
-      virtual void blockInserting(DocumentChangeStatus& changeStatus, text_t subs, size_t length);
-      virtual void blockDeleting(DocumentChangeStatus& changeStatus, text_t subs, size_t length);
+      virtual void blockInserting(DocumentChangeStatus& changeStatus, const_text_t subs, size_t length);
+      virtual void blockDeleting(DocumentChangeStatus& changeStatus, const_text_t subs, size_t length);
 
       bool eraseSelection(DocumentChangeStatus& changeStatus);
       void eraseChar(DocumentChangeStatus& changeStatus, bool moveback);
+
+      void trim(DocumentChangeStatus& changeStatus);
+      void eraseLine(DocumentChangeStatus& changeStatus);
+      void duplicateLine(DocumentChangeStatus& changeStatus);
+
+      void toLowercase(DocumentChangeStatus& changeStatus);
+      void toUppercase(DocumentChangeStatus& changeStatus);
 
       void undo(DocumentChangeStatus& changeStatus);
       void redo(DocumentChangeStatus& changeStatus);
@@ -371,6 +379,8 @@ namespace elena_lang
       void save(path_t path);
 
       void notifyOnChange(DocumentChangeStatus& changeStatus);
+
+      bool findLine(DocumentChangeStatus& changeStatus, const_text_t text, bool matchCase, bool wholeWord);
 
       DocumentView(Text* text, TextFormatterBase* formatter);
       virtual ~DocumentView();

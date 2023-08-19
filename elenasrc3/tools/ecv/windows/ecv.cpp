@@ -114,7 +114,7 @@ void getAppPath(PathString& appPath)
 
 int main()
 {
-   printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2011-2022 by Aleksey Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ECV_REVISION_NUMBER);
+   printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2011-2023 by Aleksey Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ECV_REVISION_NUMBER);
 
    // Reading command-line arguments...
    int argc;
@@ -154,7 +154,7 @@ int main()
    ByteCodeViewer viewer(&provider, &consoleHelper, rows);
 
    if (argc < 2) {
-      consoleHelper.print("ecv <module name> | ecv -p<module path>");
+      consoleHelper.print("ecv-cli <module name> | ecv-cli <module path>");
       return 0;
    }
 

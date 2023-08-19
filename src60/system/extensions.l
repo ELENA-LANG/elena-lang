@@ -438,6 +438,17 @@ public extension longOp : LongNumber
       ^ retVal
    }    
 
+   long mod(n)
+   {
+      long x := self;
+      long y := cast long(n);
+        
+      long z := x / y;
+      z := z * y;
+        
+      ^ new LongNumber(x - z)
+   }
+
    bool isOdd()
       = self.mod:2l != 0l;
         
@@ -932,8 +943,7 @@ public extension stringOp : String
       {
          ^ self
       }
-   }
-
+   }   
 }
 
 // --- charOp ---

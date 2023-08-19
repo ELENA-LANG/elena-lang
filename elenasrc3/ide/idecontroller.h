@@ -59,7 +59,7 @@ namespace elena_lang
       void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
       void saveConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node root, ConfigFile::Node platformRoot);
 
-      path_t retrieveSourceName(ProjectModel* model, path_t sourcePath, NamespaceString& retVal);
+      path_t retrieveSourceName(ProjectModel* model, path_t sourcePath, NamespaceString& retVal, PathString& subPath);
 
       bool onDebugAction(ProjectModel& model, DebugAction action);
       bool isOutaged(bool noWarning);
@@ -134,6 +134,11 @@ namespace elena_lang
          if (_notifier)
             _notifier->notifyTreeItem(id, item, param);
       }
+      void notifyContextMenu(int id, short x, short y, bool hasSelection) override
+      {
+         if (_notifier)
+            _notifier->notifyContextMenu(id, x, y, hasSelection);
+      }
 
       ProjectController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* debugProcess, 
          ProjectModel* model, SourceViewModel* sourceModel,
@@ -162,6 +167,8 @@ namespace elena_lang
          int index, NotificationStatus& status);
       bool saveFile(FileDialogBase& dialog, IDEModel* model, int index, bool forcedMode);
       bool closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+         NotificationStatus& status);
+      bool closeAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
          NotificationStatus& status);
       bool saveAll(FileDialogBase& dialog, IDEModel* model, bool forcedMode,
          NotificationStatus& status);
@@ -202,15 +209,23 @@ namespace elena_lang
 
       void doNewFile(IDEModel* model);
       void doOpenFile(FileDialogBase& dialog, IDEModel* model);
+      void doOpenFile(IDEModel* model, path_t path);
       bool doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
       bool doSaveAll(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
       bool doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, int index);
       bool doCloseAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool doCloseAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
       void doNewProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, ProjectSettingsBase& prjDialog, 
          IDEModel* model);
       bool doOpenProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
       bool doCloseProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
       bool doSaveProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model, bool forcedMode);
+
+      bool doSearch(FindDialogBase& dialog, IDEModel* model);
+      bool doSearchNext(IDEModel* model);
+      bool doReplace(FindDialogBase& dialog, MessageDialogBase& qusetionDialog, IDEModel* model);
+      void doGoToLine(GotoDialogBase& dialog, IDEModel* model);
 
       bool doCompileProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
       void doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model);
@@ -220,6 +235,11 @@ namespace elena_lang
       void doStartVMConsole(IDEModel* model);
       void doStopVMConsole();
 
+      void doIndent(IDEModel* model);
+      void doOutdent(IDEModel* model);
+
+      void doConfigureEditorSettings(EditorSettingsBase& editorDialog, IDEModel* model);
+
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param);
 
@@ -227,6 +247,10 @@ namespace elena_lang
 
       void doSelectNextWindow(IDEModel* model);
       void doSelectPrevWindow(IDEModel* model);
+      void doSelectWindow(TextViewModelBase* viewModel, path_t path);
+
+      void doSelectWindow(FileDialogBase& fileDialog, MessageDialogBase& mssgDialog, WindowListDialogBase& dialog, 
+         IDEModel* model);
 
       void onCompilationCompletion(IDEModel* model, int exitCode, 
          text_str output, ErrorLogBase* log);

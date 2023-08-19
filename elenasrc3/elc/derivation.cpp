@@ -307,7 +307,7 @@ void SyntaxTreeBuilder :: flushResend(SyntaxTreeWriter& writer, Scope& scope, Sy
 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      if (current == SyntaxKey::MessageOperation) {
+      if (current == SyntaxKey::MessageOperation || current == SyntaxKey::PropertyOperation) {
          writer.newNode(current.key);
 
          SyntaxNode identNode = current.lastChild(SyntaxKey::TerminalMask);
@@ -608,6 +608,9 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
             //flushAttribute(writer, scope, current, attributeCategory, allowType, true);
             flushArrayType(writer, scope, current);
          }
+         else if (current == SyntaxKey::TemplateType) {
+            flushTemplateType(writer, scope, current, false);
+         }
          else flushAttribute(writer, scope, current, attributeCategory, allowType);
 
          current = current.nextNode();
@@ -736,7 +739,6 @@ void SyntaxTreeBuilder :: flushTemplateArg(SyntaxTreeWriter& writer, Scope& scop
       SyntaxNode current = node.firstChild();
 
       ref_t attributeCategory = V_CATEGORY_MAX;
-      bool dummy = false;
       while (current != nameNode) {
          bool allowType = current.nextNode() == nameNode;
          flushAttribute(writer, scope, current, attributeCategory, allowType);
@@ -1456,6 +1458,9 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode 
       
    }
    else {
+      if (node.existChild(SyntaxKey::InitExpression))
+         _errorProcessor->raiseTerminalError(errInvalidOperation, retrievePath(node), node);
+
       DeclarationType type = defineDeclarationType(writer.CurrentNode());
       switch (type) {
          case DeclarationType::Import:

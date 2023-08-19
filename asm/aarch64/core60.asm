@@ -100,6 +100,9 @@ structure %CORE_GC_TABLE
   dq 0 // ; gc_perm_end           : +60h 
   dq 0 // ; gc_perm_current       : +68h 
 
+  dq 0 // ; gc_lock               : +70h 
+  dq 0 // ; reserved              : +78h 
+
 end
 
 // ; NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
@@ -640,33 +643,25 @@ end
 // ; dalloc
 inline % 16h
 
-  lsl     x12, x14, #3
-
+  lsl     x12, x9, #3
   add     x12, x12, #8    // ; rounding to 10h
 
   lsr     x12, x12, #4
   lsl     x12, x12, #4
 
-  sub     sp, sp,  x12   // ; allocate stack
-  mov     x11, __arg12_1
-  mov     x12, 0
   mov     x13, sp
+  sub     x13, x13, x12   // ; allocate stack
+  mov     x11, 0
+  mov     sp, x13
 
 labLoop:
-  cmp     x11, 0
+  cmp     x12, 0
   beq     labEnd
-  sub     x11, x11, 8
-  str     x12, [x13], #8
+  sub     x12, x12, 8
+  str     x11, [x13], #8
   b       labLoop
 
 labEnd:
-
-end
-
-// ; xassignsp
-inline % 17h
-
-  mov     x9, sp
 
 end
 
@@ -800,6 +795,29 @@ inline %027h
 
 end
 
+// ; bcopy
+inline %28h
+
+  ldrsb   x17, [x0]
+  str     x17, [x10]
+
+end
+
+// ; wcopy
+inline %29h
+
+  ldrsw   x17, [x0]
+  str     x17, [x10]
+
+end
+
+// ; xpeekeq
+inline %02Ah
+
+  csel    x10, x0, x10, eq
+
+end
+
 // ; xget
 inline %02Eh
 
@@ -813,6 +831,50 @@ end
 inline %02Fh
 
   blr     x10
+
+end
+
+// ; fiadd
+inline %070h
+
+  ldr     x19, [x0]
+  ldr     d17, [x10]
+  scvtf   d18, x19
+  fadd    d17, d17, d18  
+  str     d17, [x10]
+
+end
+
+// ; fsub
+inline %071h
+
+  ldr     x19, [x0]
+  ldr     d17, [x10]
+  scvtf   d18, x19
+  fsub    d17, d17, d18  
+  str     d17, [x10]
+
+end
+
+// ; fmul
+inline %072h
+
+  ldr     x19, [x0]
+  ldr     d17, [x10]
+  scvtf   d18, x19
+  fmul    d17, d17, d18  
+  str     d17, [x10]
+
+end
+
+// ; fdiv
+inline %073h
+
+  ldr     x19, [x0]
+  ldr     d17, [x10]
+  scvtf   d18, x19
+  fdiv    d17, d17, d18  
+  str     d17, [x10]
 
 end
 
@@ -929,10 +991,11 @@ inline %180h
 end 
 
 // ; setr -1
-inline %680h
+inline %980h
 
-  mov     x10, #0
-  sub     x10, x10, #1
+  movz    x10, __n16lo_1
+  movk    x10, __n16hi_1, lsl #16
+  sxtw    x10, w10
 
 end 
 
@@ -1120,6 +1183,16 @@ inline %8Dh
 
 end
 
+// ; addn
+inline %98Dh
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+  sxtw    x11, w11
+  add    x9, x9, x11
+
+end
+
 // ; setfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %08Eh
@@ -1164,6 +1237,48 @@ end
 inline %90h
 
   mov     x11, __n16_1
+  mov     x12, x0
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x12], #1
+  strb    w14, [x13], #1
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; copy
+inline %0990h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
+  mov     x12, x0
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x12], #1
+  strb    w14, [x13], #1
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; copy
+inline %0A90h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
   mov     x12, x0
   mov     x13, x10
 
@@ -1271,10 +1386,52 @@ inline %94h
 
 end
 
+// ; andn
+inline %0994h
+
+  movz    x19,  __n16lo_1
+  movk    x19,  __n16hi_1, lsl #16
+
+  and     x9, x9, x19
+
+end
+
+// ; andn
+inline %0A94h
+
+  movz    x19,  __n16lo_1
+  movk    x19,  __n16hi_1, lsl #16
+
+  and     x9, x9, x19
+
+end
+
 // ; readn
 inline %95h
 
   mov     x11, __n16_1
+  mov     x13, x10
+  mul     x14, x9, x11
+  add     x12, x0, x14
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x12], #1
+  strb    w14, [x13], #1
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; readn
+inline %0A95h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
   mov     x13, x10
   mul     x14, x9, x11
   add     x12, x0, x14
@@ -1311,10 +1468,53 @@ labEnd:
 
 end
 
+// ; writen
+inline %0A96h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
+  mov     x13, x10
+  mul     x14, x9, x11
+  add     x12, x0, x14
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  ldrb    w14, [x13], #1
+  strb    w14, [x12], #1
+  b       labLoop
+
+labEnd:
+
+end
+
 // ; cmpn n
 inline %97h
 
-  mov     x18, __n16_1   // ; temporally
+  mov     x18, __n16_1
+  cmp     x9, x18
+
+end
+
+// ; cmpn n
+inline %0997h
+
+  movz    x18, __n16lo_1
+  movk    x18, __n16hi_1, lsl #16
+  sxtw    x18, w18
+
+  cmp     x9, x18
+
+end
+
+// ; cmpn n
+inline %0A97h
+
+  movz    x18,  __n16lo_1
+  movk    x18,  __n16hi_1, lsl #16
+
   cmp     x9, x18
 
 end
@@ -1363,7 +1563,27 @@ end
 // ; orn
 inline %9Bh
 
-  mov     x11, __n16_1   // ; temporally
+  mov     x11, __n16_1
+  orr     x9, x9, x11
+
+end
+
+// ; orn
+inline %099Bh
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
+  orr     x9, x9, x11
+
+end
+
+// ; orn
+inline %0A9Bh
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
   orr     x9, x9, x11
 
 end
@@ -1371,7 +1591,27 @@ end
 // ; muln
 inline %9Ch
 
-  mov     x11, __n16_1   // ; temporally
+  mov     x11, __n16_1
+  mul     x9, x9, x11
+
+end
+
+// ; muln
+inline %099Ch
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
+  mul     x9, x9, x11
+
+end
+
+// ; muln
+inline %0A9Ch
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
   mul     x9, x9, x11
 
 end
@@ -1692,6 +1932,13 @@ inline % 0AEh
 
 end
 
+// ; setsp
+inline % 0AFh
+
+  add     x10, sp, __arg12_1
+
+end
+
 // ; callr
 inline %0B0h
 
@@ -1735,7 +1982,8 @@ inline % 0B6h //; (r15 - object, r14 - message)
 
   movz    x14,  __arg32lo_1
   movk    x14,  __arg32hi_1, lsl #16
-  and     x9, x9, ARG_ACTION_MASK
+  mov     x15, ARG_ACTION_MASK
+  and     x9, x9, x15
   movz    x16,  ~ARG_MASK
   movk    x16,  #0FFFFh, lsl #16
   and     x14, x14, x16
@@ -1791,10 +2039,11 @@ inline %1C0h
 end 
 
 // ; cmpr -1
-inline %6C0h
+inline %9C0h
 
-  mov     x11, #0
-  sub     x11, x11, #1
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+  sxtw    x11, w11
   cmp     x10, x11
 
 end 
@@ -1866,6 +2115,25 @@ end
 
 // ; tstn
 inline %0C4h
+
+  mov     x11,  __n16_1
+
+  tst     x9, x11
+
+end
+
+// ; tstn
+inline %09C4h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+
+  tst     x9, x11
+
+end
+
+// ; tstn
+inline %0AC4h
 
   movz    x11,  __n16lo_1
   movk    x11,  __n16hi_1, lsl #16
@@ -2090,6 +2358,18 @@ inline %0D4h
   udiv    x18, x18, x17    // ; sp[0] / temp
 
   str     w18, [x19]
+
+end
+
+// ; selgrrr
+inline %0D7h
+
+  movz    x11,  __ptr32lo_1
+  movz    x12,  __ptr32lo_2
+  movk    x11,  __ptr32hi_1, lsl #16
+  movk    x12,  __ptr32hi_2, lsl #16
+
+  csel    x10, x11, x12, gt
 
 end
 
@@ -2574,7 +2854,7 @@ inline %1E2h
   ldrsb   x17, [x0]
   ldrsb   x18, [x19]
 
-  sub     x17, x17, x18  
+  sub     x17, x18, x17  
 
   strb    w17, [x19]
 
@@ -2588,7 +2868,7 @@ inline %2E2h
   ldrsw   x17, [x0]
   ldrsw   x18, [x19]
 
-  sub     x17, x17, x18  
+  sub     x17, x18, x17  
 
   str     w17, [x19]
 
@@ -2602,7 +2882,7 @@ inline %4E2h
   ldr     x17, [x0]
   ldr     x18, [x19]
 
-  sub     x17, x17, x18  
+  sub     x17, x18, x17  
 
   str     x17, [x19]
 
@@ -2778,12 +3058,49 @@ inline %0E7h
 
 end
 
-// ; nsavedpn
+// ; nadddpn
 inline %0E8h
 
   add     x19, x29, __arg12_1
   mov     x18, __n16_2
-  ldr     w20, [x19]
+  ldrsw   x20, [x19]
+
+  add     x20, x20, x18
+  str     w20, [x19]
+
+end
+
+// ; nadddpn
+inline %8E8h
+
+  add     x19, x29, __arg12_1
+  mov     x18, -__n16_2
+  ldrsw   x20, [x19]
+
+  sub     x20, x20, x18
+  str     w20, [x19]
+
+end
+
+// ; nadddpn
+inline %09E8h
+
+  movz    x18, __n16lo_1
+  add     x19, x29, __arg12_1
+  movk    x18, __n16hi_1, lsl #16
+  ldrsw   x20, [x19]
+  add     x20, x20, x18
+  str     w20, [x19]
+
+end
+
+// ; nadddpn
+inline %0AE8h
+
+  movz    x18, __n16lo_1
+  add     x19, x29, __arg12_1
+  movk    x18, __n16hi_1, lsl #16
+  ldrsw   x20, [x19]
   add     x20, x20, x18
   str     w20, [x19]
 
@@ -3505,7 +3822,6 @@ end
 // ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 5FAh
 
-//;  mov  [rsp+8], r10                      // ; saving arg0
   str     x0, [sp]
 //;  lea  rax, [rsp + __n_2]
   add     x17, sp, __n12_2
@@ -3520,7 +3836,7 @@ inline % 5FAh
 
 //;  xor  edx, edx
   mov     x25, #0
-  mov     x11, #0
+  mov     x11, #0                           // ; number of args
 
   // ; count the number of args
   mov     x22, x17
@@ -3529,10 +3845,9 @@ inline % 5FAh
 labCountParam:
   add     x22, x22, #8
   ldr     x24, [x22]
-  add     x16, x16, 1
+  add     x11, x11, 1
   cmp     x24, x23
   bne     labCountParam
-  mov     x17, x11
 
 //;  mov  rbx, [rsi] // ; message from overload list
   ldr     x22, [x21, #0]
@@ -3551,18 +3866,16 @@ labNextOverloadlist:
   add     x23, x23, x24
   ldr     x23, [x23, #8]
 
-//;  mov  ecx, __n_1
-  mov     x16, x17
+  mov     x16, 0                                 // ; current arg
 
 //;  lea  rbx, [r13 - 8]
-  sub     x22, x23, #8
+  sub     x22, x23, #8                           // ; overload list ptr
 
 labNextParam:
-//;  sub  ecx, 1
-  sub     x16, x16, #1
+  add     x16, x16, #1
 
 //;  jnz  short labMatching
-  cmp     x16, x17
+  cmp     x16, x11
   bne     labMatching
 
 //;  mov  r9, __ptr64_2  - r21
@@ -3580,10 +3893,10 @@ labNextParam:
   br      x17
 
 labMatching:
-  add     x20, x26, #8
+  add     x20, x22, #8
   ldr     x18, [x20]
   cmp     x18, #0
-  csel    x26, x26, x20, eq
+  csel    x22, x22, x20, eq
 
 //;  mov  rdi, [rax + rcx * 8]
   lsl     x19, x16, #3
@@ -3607,7 +3920,7 @@ labMatching:
   ldr     x18, [x18, #0]
 
 //;  mov  rsi, [rbx + rcx * 8]
-  ldr     x20, [x26]
+  ldr     x20, [x22]
 
 labNextBaseClass:
 //;  cmp  rsi, rdi
@@ -3818,14 +4131,14 @@ labNextOverloadlist:
   ldr     x23, [x23, #8]
 
 //;  mov  ecx, __n_1
-  mov     x16, __n16_1
+  mov     x16, x17
 
 //;  lea  rbx, [r13 - 8]
   sub     x22, x23, #8
 
 labNextParam:
 //;  sub  ecx, 1
-  add     x16, x16, #1
+  sub     x16, x16, #1
 
 //;  jnz  short labMatching
   cmp     x16, x17

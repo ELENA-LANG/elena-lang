@@ -1,3 +1,63 @@
+## ELENA 6.0.5
+*19.08.2023*
+
+- ELENA
+  - [ADDED]implementing corex60 routines
+  - [ADDED]constant array of integers
+  - [ADDED]native support for ?: operator
+  - [FIXED]#524 : Alt expression breaks the compilation
+  - [ADDED]message name functionality
+  - [ADDED]new opcodes : fiadd, fisub, fimul, fidiv
+
+- ELC
+  - [ADDED]basic bytecode optimization rules
+  - [ADDED]basic build optimization rules
+  - [ADDED]warn on unassigned variables
+  - [FIXED]nested class fields
+  - [FIXED]assignment operations with integers
+  - [FIXED]calling an interface / closed-class method
+  - [FIXED]warning on resending to itself (e.g. for constructor)
+  - [FIXED]resending to the property
+  - [FIXED]template-based extensions
+  - [FIXED]template of template
+  - [FIXED]do not box the returning self for the stacksafe method
+
+- ELENAVM
+
+- API
+  - [FIXED]string comparison routines
+  - [FIXED]conversion routines
+  - [FIXED]nested exception catching
+  - [ADDED]number of new unit-tests
+  - [ADDED]system'runtime'commonOp - extension to read package info
+  - [ADDED]system'culture
+  - [ADDED]system'routines'stex
+  - [ADDED]new unit-tests: methodnotfound, nilreference
+
+- SAMPLES
+  - [ADDED]24 sample
+
+- IDE
+  - [ADDED]Find dialog
+  - [ADDED]Goto dialog
+  - [ADDED]Toolbar dialog
+  - [ADDED]Context menu
+  - [FIXED]IDE blinking issues
+  - [ADDED]Window menu
+  - [ADDED]Unident
+  - [FIXED]Running to the cursor
+  - [ADDED]Recent files
+  - [ADDED]erase line, trim, upper case, lower case
+  - [ADDED]About dialog
+  - [ADDED]Editor settings
+  - [ADDED]Duplicate line
+  - [ADDED]close all but active
+
+- Tools
+  - [FIXED]API Doc generation
+  - [ADDED]ecv-cli: showing the method number
+  - [ADDED]ecv-cli: showing the module manifest info
+
 ## ELENA 6.0.4b
 *27.06.2023*
 

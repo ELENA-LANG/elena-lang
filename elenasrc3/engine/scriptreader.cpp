@@ -21,6 +21,12 @@ ScriptReader::ScriptReader(int tabSize, UStrReader* reader)
    
 }
 
+ScriptReader :: ScriptReader(const char** dfa, int tabSize, UStrReader* reader)
+   : TextParser(dfa, tabSize, reader)
+{
+
+}
+
 bool ScriptReader::read(ScriptToken& tokenInfo)
 {
    char terminalState = TextParser::read(dfaStart, tokenInfo.state, tokenInfo.lineInfo);

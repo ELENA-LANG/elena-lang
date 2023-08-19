@@ -185,6 +185,12 @@ namespace elena_lang
          return (opcode << 26) | (((unsigned int)rt & 0x1F) << 21)
             | (((unsigned int)rb & 0x1F) << 11) | (xo << 1) | rc;
       }
+      static unsigned int makeX2Command(unsigned int opcode, PPCOperandType rt, PPCOperandType rb,
+         int xo, int rc)
+      {
+         return (opcode << 26) | (((unsigned int)rt & 0x1F) << 21)
+            | (((unsigned int)rb & 0x1F) << 16) | (xo << 1) | rc;
+      }
 
       static unsigned int makeDCommand(unsigned int opcode, PPCOperandType rs, PPCOperandType ra, int d)
       {

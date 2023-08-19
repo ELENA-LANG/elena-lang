@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 137;
+constexpr auto OperationLength = 150;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -79,6 +79,9 @@ constexpr Op Operations[OperationLength] =
    },
    {
       NAME_OPERATOR_ID, BuildKey::DeclOp, V_DECLARATION, 0, 0, V_STRING
+   },
+   {
+      REFERENCE_OPERATOR_ID, BuildKey::DeclOp, V_DECLARATION, 0, 0, V_STRING
    },
    {
       ADD_ASSIGN_OPERATOR_ID, BuildKey::ObjArrayOp, V_OBJARRAY, V_OBJECT, 0, V_OBJECT
@@ -138,10 +141,19 @@ constexpr Op Operations[OperationLength] =
       NOTEQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_INT32, V_INT32, 0, V_FLAG
    },
    {
+      GREATER_OPERATOR_ID, BuildKey::IntCondOp, V_INT32, V_INT32, 0, V_FLAG
+   },
+   {
       EQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG
    },
    {
       LESS_OPERATOR_ID, BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG
+   },
+   {
+      NOTGREATER_OPERATOR_ID, BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG
+   },
+   {
+      NOTLESS_OPERATOR_ID, BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG
    },
    {
       NOTEQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG
@@ -456,6 +468,9 @@ constexpr Op Operations[OperationLength] =
       IF_ELSE_OPERATOR_ID, BuildKey::BranchOp, V_FLAG, V_CLOSURE, V_CLOSURE, V_CLOSURE
    },
    {
+      IF_ELSE_OPERATOR_ID, BuildKey::BranchOp, V_FLAG, V_OBJECT, V_OBJECT, V_OBJECT
+   },
+   {
       LEN_OPERATOR_ID, BuildKey::ObjArraySOp, V_OBJARRAY, 0, 0, V_INT32
    },
    {
@@ -466,6 +481,31 @@ constexpr Op Operations[OperationLength] =
    },
    {
       INDEX_OPERATOR_ID, BuildKey::ObjArrayOp, V_ARGARRAY, V_INT32, 0, V_ELEMENT
+   },
+
+   {
+      ADD_OPERATOR_ID, BuildKey::IntRealOp, V_INT32, V_FLOAT64, 0, V_FLOAT64
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::IntRealOp, V_INT32, V_FLOAT64, 0, V_FLOAT64
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::IntRealOp, V_INT32, V_FLOAT64, 0, V_FLOAT64
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::IntRealOp, V_INT32, V_FLOAT64, 0, V_FLOAT64
+   },
+   {
+      ADD_OPERATOR_ID, BuildKey::RealIntOp, V_FLOAT64, V_INT32, 0, V_FLOAT64
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::RealIntOp, V_FLOAT64, V_INT32, 0, V_FLOAT64
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::RealIntOp, V_FLOAT64, V_INT32, 0, V_FLOAT64
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::RealIntOp, V_FLOAT64, V_INT32, 0, V_FLOAT64
    },
 };
 
@@ -478,7 +518,8 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
       case V_OBJECT:
          return !isPrimitiveRef(source.typeRef);
       case V_INT32:
-         return source.typeRef == V_INT8 || source.typeRef == V_WORD32 || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32;
+         return source.typeRef == V_INT8 || source.typeRef == V_WORD32
+            || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32 || source.typeRef == V_MESSAGENAME;
       case V_INT64:
          return source.typeRef == V_PTR64 || source.typeRef == V_WORD64;
       case V_FLAG:
@@ -619,6 +660,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
          break;
       case V_SEALED:
          flags |= elSealed;
+         break;
+      case V_CLOSED:
+         flags |= elClosed;
          break;
       case V_EXTENSION:
          flags |= elExtension;
@@ -883,6 +927,9 @@ bool CompilerLogic :: validateTypeScopeAttribute(ref_t attrValue, TypeAttributes
          return true;
       case V_CLASS:
          attributes.classOne = true;
+         return true;
+      case V_CONVERSION:
+         attributes.typecastOne = true;
          return true;
       default:
          return false;
@@ -2008,7 +2055,7 @@ ref_t paramFeedback(void* param, ref_t)
 
    return (ref_t)val;
 #else
-   return (ref_t)param;
+   return ptrToUInt32(param);
 #endif
 }
 
@@ -2032,7 +2079,7 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
          mssg_t message = it.key();
 
          injectMethodOverloadList(compiler, scope, info.header.flags, message, 
-            info.methods, info.attributes, (void*)classRef, paramFeedback, ClassAttribute::OverloadList);
+            info.methods, info.attributes, UInt32ToPtr(classRef), paramFeedback, ClassAttribute::OverloadList);
       }
    }
 }
@@ -2243,4 +2290,30 @@ ref_t CompilerLogic :: resolveExtensionTemplate(ModuleScopeBase& scope, Compiler
    }
 
    return 0;
+}
+
+bool CompilerLogic :: isNumericType(ModuleScopeBase& scope, ref_t& reference)
+{
+   if (isCompatible(scope, { V_INT8 }, { reference }, false)) {
+      reference = V_INT8;
+
+      return true;
+   }
+   if (isCompatible(scope, { V_INT16 }, { reference }, false)) {
+      reference = V_INT16;
+
+      return true;
+   }
+   if (isCompatible(scope, { V_INT64 }, { reference }, false)) {
+      reference = V_INT64;
+
+      return true;
+   }
+   if (isCompatible(scope, { V_FLOAT64 }, { reference }, false)) {
+      reference = V_FLOAT64;
+
+      return true;
+   }
+
+   return false;
 }

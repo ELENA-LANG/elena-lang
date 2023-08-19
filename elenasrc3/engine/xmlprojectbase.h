@@ -213,6 +213,7 @@ namespace elena_lang
       bool BoolSetting(ProjectOption option, bool defValue = false) const override;
 
       int IntSetting(ProjectOption option, int defValue) const override;
+      unsigned UIntSetting(ProjectOption option, unsigned int defValue) const override;
 
       ModuleIteratorBase* allocModuleIterator() override
       {

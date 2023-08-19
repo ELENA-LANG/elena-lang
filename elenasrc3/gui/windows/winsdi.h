@@ -134,7 +134,7 @@ namespace elena_lang
    public:
       static void registerSDIWindow(HINSTANCE hInstance, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon);
 
-      void populate(size_t counter, GUIControlBase** children)
+      virtual void populate(size_t counter, GUIControlBase** children)
       {
          _children = new GUIControlBase *[counter];
          for (size_t i = 0; i < counter; i++) {

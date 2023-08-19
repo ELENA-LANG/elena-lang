@@ -37,23 +37,22 @@ namespace io
          ^ h;
       }
 
-      newWriter()
+      IConsoleWriter newWriter()
       {
          handle h := ConsoleFactory.OutputHandle;
          int    dwMode := extern KERNEL32.GetFileType(h);
          if (dwMode == FILE_TYPE_CHAR) {
             ^ new ConsoleWriter(h)
-         }
-         else {
-            ^ new ConsoleFileWriter(h)            
-         }
+         };
+
+         ^ new ConsoleFileWriter(h)            
       }
 
-      newReader()
+      IConsoleReader newReader()
          = new ConsoleReader(ConsoleFactory.InputHandle);
    }
 
-   sealed class ConsoleFileWriter
+   sealed class ConsoleFileWriter : IConsoleWriter
    {
       handle h;
 
@@ -68,6 +67,9 @@ namespace io
       {
          this h := h
       }
+
+      write(wide s)
+         <= write(cast string(s));
 
       write(string literal)
       {
@@ -99,7 +101,7 @@ namespace io
       }      
    }
 
-   public class ConsoleWriter
+   public class ConsoleWriter : IConsoleWriter
    {
       handle h;
 
@@ -123,7 +125,7 @@ namespace io
       }
    }
 
-   public class ConsoleReader
+   public class ConsoleReader : IConsoleReader
    {
       handle h;
 
@@ -217,6 +219,6 @@ namespace io
          = self.readWideLine();
    }
 
-   public stdConsoleWriter = ConsoleFactory.newWriter();
-   public stdConsoleReader = ConsoleFactory.newReader();
+   public IConsoleWriter stdConsoleWriter = ConsoleFactory.newWriter();
+   public IConsoleReader stdConsoleReader = ConsoleFactory.newReader();
 }

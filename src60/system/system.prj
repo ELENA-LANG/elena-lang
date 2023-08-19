@@ -14,6 +14,11 @@
      <template>lib60</template>
      <prolog> </prolog>
   </project>
+  <manifest>
+     <name>ELENA Standard Library</name>
+     <version>6.0.0</version>
+     <author>Aleksey Rakov</author>
+  </manifest>
   <files>
      <module name="predefined">
         <include>predefined\attributes.l</include>
@@ -52,6 +57,8 @@
         <include>math\math.l</include>
         <include>calendar\win_datetime.l</include>
         <include>calendar\dates.l</include>
+        <include>culture\common.l</include>
+        <include>culture\win_locale.l</include>
         <include>text\encoding.l</include>
         <include>text\win_encoding.l</include>
         <include>text\textbuffer.l</include>
@@ -67,7 +74,12 @@
        <include>routines\patterns.l</include>
        <include>routines\sorting.l</include>
      </module>
+     <module name="routines'stex">
+       <include>routines\stex\strong_extensions.l</include>
+       <include>routines\stex\strong_patterns.l</include>
+     </module>
      <module name="runtime">
+       <include>runtime\common.l</include>
        <include>runtime\gc_routines.l</include>
        <include>runtime\vectortable.l</include>
      </module>

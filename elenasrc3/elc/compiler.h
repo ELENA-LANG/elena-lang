@@ -78,6 +78,7 @@ namespace elena_lang
       Constant,
       ConstArray,
       SelfName,
+      SelfPackage,
       MethodName,
       FieldName,
       StaticField,
@@ -101,7 +102,8 @@ namespace elena_lang
       RefUnboxingRequired,
       LocalUnboxingRequired,
       ArrayContent,
-      UnboxingVarArgument
+      UnboxingVarArgument,
+      BoxingPtr
    };
 
    struct ObjectInfo
@@ -280,6 +282,9 @@ namespace elena_lang
 
       void addTypeListItem(ref_t dictionaryRef, ref_t symbolRef, ref_t mask);
       void addConstArrayItem(ref_t dictionaryRef, ref_t item, ref_t mask);
+      void addIntArrayItem(ref_t dictionaryRef, int value);
+      void addLongArrayItem(ref_t dictionaryRef, long long value);
+      void addFloatArrayItem(ref_t dictionaryRef, double value);
 
       bool evalDictionaryOp(ref_t operator_id, ArgumentsInfo& args);
 
@@ -292,7 +297,7 @@ namespace elena_lang
 
       bool eval(BuildKey key, ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
 
-      ObjectInfo createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args);
+      ObjectInfo createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args, bool byValue);
 
       Interpreter(ModuleScopeBase* scope, CompilerLogic* logic);
    };
@@ -747,10 +752,13 @@ namespace elena_lang
          MethodScope(ClassScope* classScope);
       };
 
+      typedef Map<int, SyntaxNode> NodeMap;
+
       struct CodeScope : Scope
       {
          // scope local variables
          LocalMap locals;
+         NodeMap  localNodes;
 
          pos_t    allocated1, reserved1;       // defines managed frame size
          pos_t    allocated2, reserved2;       // defines unmanaged frame size
@@ -948,10 +956,12 @@ namespace elena_lang
       CompilerLogic*         _logic;
       TemplateProssesorBase* _templateProcessor;
       ErrorProcessor*        _errorProcessor;
+      PresenterBase*         _presenter;
 
       bool                   _optMode;
       bool                   _tapeOptMode;
       bool                   _withMethodParamInfo;
+      bool                   _trackingUnassigned;
 
       bool reloadMetaData(ModuleScopeBase* moduleScope, ustr_t name);
 
@@ -975,7 +985,7 @@ namespace elena_lang
 
       ref_t mapTemplateType(Scope& scope, SyntaxNode terminal, pos_t parameterCount);
 
-      ref_t mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& resolvedMessage, ref_t implicitSignatureRef,
+      ref_t mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& resolvedMessage, ref_t& implicitSignatureRef,
          ObjectInfo object);
          
       mssg_t defineMultimethod(Scope& scope, mssg_t messageRef, bool extensionMode);
@@ -1078,7 +1088,7 @@ namespace elena_lang
       void generateMethodDeclaration(ClassScope& scope, SyntaxNode node, bool closed, bool hideDuplicate);
       void generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey, bool closed);
       void generateClassField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool singleField);
-      void generateClassStaticField(ClassScope& scope, SyntaxNode node, bool isConst, TypeInfo typeInfo);
+      void generateClassStaticField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs);
       void generateClassFields(ClassScope& scope, SyntaxNode node, bool singleField);
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
@@ -1133,10 +1143,12 @@ namespace elena_lang
 
       void declareModuleExtensionDispatcher(NamespaceScope& scope, SyntaxNode node);
 
+      void warnOnUnassignedLocal(SyntaxNode node, CodeScope& scope, int level);
+
       ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors = false);
       ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors = false, bool resolveMode = true);
       ObjectInfo evalObject(Interpreter& interpreter, Scope& scope, SyntaxNode node);
-      ObjectInfo evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node);
+      ObjectInfo evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool anonymousOne);
       ObjectInfo evalPropertyOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
 
       void evalStatement(MetaScope& scope, SyntaxNode node);
@@ -1159,11 +1171,21 @@ namespace elena_lang
 
       void compileInlineInitializing(BuildTreeWriter& writer, ClassScope& classScope, SyntaxNode node);
 
+      void writeMessageArguments(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, 
+         mssg_t message, ArgumentsInfo& arguments, ObjectInfo& lenLocal, int& stackSafeAttr,
+         bool targetOverridden, bool found, bool argUnboxingRequired, bool stackSafe);
+
+      bool validateShortCircle(ExprScope& scope, mssg_t message, ObjectInfo target);
+
       ObjectInfo boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef = 0);
       ObjectInfo boxRefArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef = 0);
       ObjectInfo boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, 
          bool stackSafe, bool boxInPlace, bool allowingRefArg, ref_t targetRef = 0);
-      ObjectInfo boxArgumentLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, bool stackSafe);
+      ObjectInfo boxArgumentLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, 
+         bool stackSafe, bool forced);
+      ObjectInfo boxLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info,
+         bool stackSafe);
+      ObjectInfo boxPtrLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info);
       ObjectInfo boxVariadicArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info);
 
       ObjectInfo unboxArguments(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo retVal, ArgumentsInfo* updatedOuterArgs);
@@ -1174,7 +1196,9 @@ namespace elena_lang
       ObjectInfo declareTempLocal(ExprScope& scope, ref_t typeRef, bool dynamicOnly = true);
 
       ObjectInfo typecastObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
-      ObjectInfo convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
+      ObjectInfo convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, 
+         ref_t targetRef, bool dynamicRequired);
+      ObjectInfo convertIntLiteral(ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
 
       bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);
 
@@ -1215,6 +1239,8 @@ namespace elena_lang
       ObjectInfo compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId,
          ref_t expectedRef, ExpressionAttribute mode);
       ObjectInfo compileSpecialOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId, ref_t expectedRef);
+      ObjectInfo compileBranchingOperands(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode rnode,
+         SyntaxNode r2node, bool retValExpected);
       ObjectInfo compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo loperand, SyntaxNode node, SyntaxNode rnode,
          SyntaxNode r2node, int operatorId, ArgumentsInfo* updatedOuterArgs, bool retValExpected);
       ObjectInfo compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
@@ -1245,7 +1271,7 @@ namespace elena_lang
       ObjectInfo mapObject(Scope& scope, SyntaxNode node, ExpressionAttributes mode);
 
       ObjectInfo validateObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo retVal,
-         ref_t targetRef, bool noPrimitives, bool paramMode);
+         ref_t targetRef, bool noPrimitives, bool paramMode, bool dynamicRequired);
 
       ObjectInfo compileNested(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute mode,
          ArgumentsInfo* updatedOuterArgs);
@@ -1262,7 +1288,8 @@ namespace elena_lang
       ObjectInfo compileSubCode(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
          ExpressionAttribute mode, bool withoutNewScope = false);
       ObjectInfo compileRootExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
-      ObjectInfo compileRetExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
+      ObjectInfo compileRetExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node, 
+         ExpressionAttribute mode);
       ObjectInfo compileNestedExpression(BuildTreeWriter& writer, InlineClassScope& scope, ExprScope& ownerScope,
          ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs);
 
@@ -1368,6 +1395,8 @@ namespace elena_lang
       void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef, 
          mssg_t messageRef, MethodHint type) override;
 
+      void createPackageInfo(ModuleScopeBase* moduleScope, ManifestInfo& manifestInfo);
+
    public:
       void setOptimizationMode(int optMode)
       {
@@ -1380,7 +1409,8 @@ namespace elena_lang
          _withMethodParamInfo = flag;
       }
 
-      void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver);
+      void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,
+         ManifestInfo& manifestInfo);
       void declare(ModuleScopeBase* moduleScope, SyntaxTree& input, ExtensionMap* outerExtensionList);
       void compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildTree& output, ExtensionMap* outerExtensionList);
 
@@ -1394,6 +1424,7 @@ namespace elena_lang
          ustr_t ns, ExtensionMap* outerExtensionList) override;
 
       Compiler(
+         PresenterBase* presenter,
          ErrorProcessor* errorProcessor, 
          TemplateProssesorBase* templateProcessor,
          CompilerLogic* compilerLogic);

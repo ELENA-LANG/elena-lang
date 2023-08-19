@@ -55,6 +55,7 @@ namespace elena_lang
    constexpr auto IMPORTS_SECTION            = "$import";
    constexpr auto EXTENSION_SECTION          = "#extensions";
    constexpr auto INITIALIZER_SECTION        = "#initializer";
+   constexpr auto PACKAGE_SECTION            = "#package";
 
    constexpr auto NAMESPACE_REF              = "$namespace";
 
@@ -355,6 +356,7 @@ namespace elena_lang
    constexpr ref_t mskPSTRRef             = 0x23000000u;
    constexpr ref_t mskAutoSymbolRef       = 0x24000000u;
    constexpr ref_t mskMssgNameLiteralRef  = 0x25000000u;
+   constexpr ref_t mskPackageRef          = 0x26000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

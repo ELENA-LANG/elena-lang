@@ -634,6 +634,15 @@ namespace elena_lang
       virtual void printPathLine(ustr_t msg, path_t arg) = 0;
       virtual void printPathLine(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
 
+      /**
+       * indicates the continues process
+       */
+      virtual void showProgress() = 0;
+      /**
+       * indicates the end of the process
+       */
+      virtual void stopProgress() = 0;
+
       virtual ~PresenterBase() = default;
    };
 

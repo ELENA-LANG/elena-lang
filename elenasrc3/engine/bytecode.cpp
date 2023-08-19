@@ -17,11 +17,11 @@ const char* _fnOpcodes[256] =
    "nop", "breakpoint", OPCODE_UNKNOWN, "redirect", "quit", "mov env", "load", "len",
    "class", "save", "throw", "unhook", "loadv", "xcmp", "bload", "wload",
 
-   "incude", "exclude", "assign", "mov frm", "loads", "mlen", "dalloc", "xassignsp",
+   "incude", "exclude", "assign", "mov frm", "loads", "mlen", "dalloc", OPCODE_UNKNOWN,
    "dtrans", "xassign", "lload", "convl", "xlcmp", "xload", "xlload", OPCODE_UNKNOWN,
 
    "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", "xjump",
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xget", "xcall",
+   "bcopy", "wcopy", "xpeekeq", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xget", "xcall",
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -35,7 +35,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "fiadd", "fisub", "fimul", "fidiv", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "fabs dp", "fsqrt dp", "fexp dp", "fln dp", "fsin dp", "fcos dp", "farctan dp", "fpi dp",
 
    "set", "set dp", "nlen", "xassign i", "peek", "store", "xswap sp", "swap sp",
@@ -45,7 +45,7 @@ const char* _fnOpcodes[256] =
    "nconf dp", "ftrunc dp", "dcopy", "or n", "mul n", "xadd dp", "xset fp", "fround dp",
 
    "save dp", "store fp", "save sp", "store sp", "xflush sp", "get i", "assign i", "xrefresh sp",
-   "peek fp", "peek sp", "lsave dp", "lsave sp", "lload dp", "xfill", "xstore i", OPCODE_UNKNOWN,
+   "peek fp", "peek sp", "lsave dp", "lsave sp", "lload dp", "xfill", "xstore i", "set sp",
 
    "call", "call vt", "jump", "jeq", "jne", "jump vt", "xredirect mssg", "jlt",
    "jge", "jgr", "jle", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -53,7 +53,7 @@ const char* _fnOpcodes[256] =
    "cmp", "fcmp", "icmp", "tst flag", "tstn", "tst mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "cmp fp", "cmp sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xloadarg sp", "xcreate", "system",
 
-   "fadd dp", "fsub dp", "fmul dp", "fdiv dp", "udiv dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "fadd dp", "fsub dp", "fmul dp", "fdiv dp", "udiv dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "selgr",
    "iand dp", "ior dp", "ixor dp", "inot dp", "ishl dp", "ishr dp", "xopen", "selult",
 
    "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", "nsave dp", "xhook dp", "xnewn",
@@ -109,7 +109,7 @@ ByteCode ByteCodeUtil :: code(ustr_t command)
          return (ByteCode)i;
    }
 
-   return ByteCode::None;
+   return command.compare("idle") ? ByteCode::Idle : ByteCode::None;
 }
 
 void ByteCodeUtil :: decode(ByteCode code, IdentifierString& target)
@@ -359,6 +359,8 @@ inline bool removeIdleJump(ByteCodeIterator it)
          case ByteCode::Jne:
          case ByteCode::Jeq:
          case ByteCode::Jlt:
+         case ByteCode::Jle:
+         case ByteCode::Jgr:
          case ByteCode::Jge:
          case ByteCode::JumpMR:
          case ByteCode::VJumpMR:
@@ -456,11 +458,12 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
             *blocks.getIt(index) = 1;
          }
       }
-      else if (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop) {
+      else if (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop 
+         && command.code != ByteCode::Breakpoint) 
+      {
          switch (command.code) {
             case ByteCode::Throw:
             case ByteCode::Quit:
-            //case bcQuitN:
             case ByteCode::JumpMR:
             case ByteCode::VJumpMR:
             case ByteCode::JumpVI:
@@ -472,9 +475,9 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
             case ByteCode::Jeq:
             case ByteCode::Jne:
             case ByteCode::Jlt:
+            case ByteCode::Jle:
             case ByteCode::Jge:
             case ByteCode::Jgr:
-            case ByteCode::Jle:
                // remove the label from idle list
                idleLabels.exclude(command.arg1);
 
@@ -491,7 +494,7 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
 
          index++;
       }
-      it++;
+      ++it;
    }
 
    int length = index;
@@ -533,7 +536,8 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
          importMode = false;
       }
 
-      bool isCommand = !importMode && (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop);
+      bool isCommand = !importMode && (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop 
+         && command.code != ByteCode::Breakpoint);
 
       if (index == blockEnd) {
          b_it++;
@@ -726,7 +730,9 @@ void CommandTape :: saveTo(MemoryWriter* writer)
          case ByteCode::Jeq:
          case ByteCode::Jne:
          case ByteCode::Jlt:
+         case ByteCode::Jle:
          case ByteCode::Jge:
+         case ByteCode::Jgr:
             writer->writeByte((char)command.code);
             if (!importMode) {
                // if forward jump, it should be resolved later
@@ -768,4 +774,138 @@ void CommandTape :: saveTo(MemoryWriter* writer)
             break;
       }
    }
+}
+
+// --- ByteCodeTransformer ---
+
+inline bool isOperational(ByteCode code)
+{
+   return test((int)code, (int)ByteCode::Label)
+      || (code <= ByteCode::CallExtR && code > ByteCode::Breakpoint);
+}
+
+bool ByteCodePattern :: checkLabel(ByteCodeIterator it, int label, int offset)
+{
+   int current = 0;
+   while (!it.eof()) {
+      auto bc = *it;
+      if (bc.code == ByteCode::Label && bc.arg1 == label) {
+         return (current == offset);
+      }
+      if (isOperational(bc.code)) {
+         current++;
+      }
+
+      ++it;
+   }
+
+   return false;
+}
+
+void ByteCodeTransformer :: transform(ByteCodeIterator trans_it, ByteCodeTrieNode replacement, PatternArg& arg)
+{
+   ByteCodeIterator target_it = trans_it;
+
+   ByteCodePattern pattern = replacement.Value();
+   while (pattern.code != ByteCode::None) {
+      // skip meta commands (except label)
+      while (!isOperational((*trans_it).code))
+         --trans_it;
+
+      switch (pattern.argType) {
+         case ByteCodePatternType::Set:
+            if (pattern.argValue == 1) {
+               (*trans_it).arg1 = arg.arg1;
+            }
+            else (*trans_it).arg1 = arg.arg2;
+            trans_it.flush();
+            break;
+         case ByteCodePatternType::MatchArg:
+            (*trans_it).arg1 = pattern.argValue;
+            trans_it.flush();
+            break;
+      //   case braAdd:
+      //      (*trans_it).argument += pattern.argument;
+      //      break;
+      //   case braValue:
+      //      (*trans_it).argument = pattern.argument;
+      //      break;
+      //   case braAditionalValue:
+      //      (*trans_it).additional = pattern.argument;
+      //      break;
+      //   case braCopy:
+      //      if (pattern.argument == 1) {
+      //         (*target_it).argument = (*trans_it).argument;
+      //      }
+      //      else if (pattern.argument == 2) {
+      //         (*target_it).additional = (*trans_it).argument;
+      //      }
+      //      break;
+         default:
+            break;
+      }
+
+      (*trans_it).code = pattern.code;
+      trans_it.flush();
+
+      --trans_it;
+      replacement = replacement.FirstChild();
+      pattern = replacement.Value();
+   }
+
+}
+
+bool ByteCodeTransformer :: apply(CommandTape& commandTape)
+{
+   ByteCodePatterns  matchedOnes;
+   ByteCodePatterns  nextOnes;
+
+   ByteCodePatterns* matched = &matchedOnes;
+   ByteCodePatterns* followers = &nextOnes;
+   bool              reversed = false;
+
+   ByteCodeIterator bc_it = commandTape.start();
+   while (!bc_it.eof()) {
+      auto bc = *bc_it;
+
+      if (isOperational(bc.code)) {
+         matched->add({ &trie });
+         followers->clear();
+
+         for (auto it = matched->start(); !it.eof(); ++it) {
+            PatternArg arg = (*it).arg;
+            auto patternNode = (*it).node;
+            auto pattern = patternNode.Value();
+
+            for (auto child_it = patternNode.Children(); !child_it.eof(); ++child_it) {
+               auto currentPatternNode = child_it.Node();
+               auto currentPattern = currentPatternNode.Value();
+
+               if (currentPattern.match(bc_it, arg)) {
+                  if (currentPattern.code == ByteCode::Match) {
+                     transform(--bc_it, currentPatternNode.FirstChild(), arg);
+
+                     return true;
+                  }
+                  followers->add({ currentPatternNode, arg });
+               }
+            }
+         }
+
+         if (reversed) {
+            reversed = false;
+            followers = &nextOnes;
+            matched = &matchedOnes;
+         }
+         else {
+            reversed = true;
+            matched = &nextOnes;
+            followers = &matchedOnes;
+         }
+      }
+
+      ++bc_it;
+   }
+
+   return false;
 }

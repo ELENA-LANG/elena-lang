@@ -87,7 +87,7 @@ void ScriptParser :: parse(path_t filePath, SyntaxTree& tree)
       bool valid = false;
 
       DumpReader reader(tape, 8);
-      size_t length = 8;
+      pos_t length = 8;
       if (reader.getDWord() == 0) {
          length = reader.getDWord();
          reader.setSize(length + 4);

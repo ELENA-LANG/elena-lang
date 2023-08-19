@@ -63,7 +63,7 @@ int VMTapeParser :: writeBuildScriptArgumentList(ScriptEngineReaderBase& reader,
 
    pos_t position = writer.writeAndGetArgPosition(VM_ALLOC_CMD, 0);
 
-   int counter = 0;
+   size_t counter = 0;
    ScriptBookmark bm = callStack.pop();
    while (!bm.compare(terminator)) {
       writeBuildScriptStatement(reader, bm, callStack, writer);

@@ -66,6 +66,9 @@ public interface BoolValue
    get abstract bool Inverted()
                   : info("Inverts the value;<br/>has to be implemented");
 
+   abstract bool clone()
+                  : info("clones the value;<br/>has to be implemented");
+
    const static bool true : info("Returns true value")
       = BoolValue
       {
@@ -113,6 +116,9 @@ public interface BoolValue
          string toPrintable()
                   : info("Returns literal representation.")
             = "true";
+
+         bool clone()
+            = this self;
       };
 
    const static bool false
@@ -165,6 +171,9 @@ public interface BoolValue
          string toPrintable()
                   : info("Returns literal representation")
             = "false";
+
+         bool clone()
+            = this self;
    };
 }
 
@@ -772,6 +781,15 @@ public const struct ShortNumber : IntBaseNumber,
             : info("bitwise inversion")
       = ~theValue;
 
+   get short Negative()
+//      = -_value;
+   {
+      short v := 0;
+      v -= theValue;
+
+      ^ v
+   }
+
    short clone()
             : info("clones the value")
       = new ShortNumber(self);
@@ -831,7 +849,11 @@ public const struct IntNumber : IntBaseNumber,
 
    bool equal(real n)
             : info("Compares the integer value")
-      = new RealNumber(_value).equal(n);
+   {
+      real val := _value;
+
+      ^ val == n;
+   }
 
    bool less(byte b)
             : info("Compares the integer value")
@@ -851,7 +873,11 @@ public const struct IntNumber : IntBaseNumber,
 
    bool less(real n)
             : info("Compares the integer value")
-      = new RealNumber(_value).less(n);
+   {
+      real val := _value;
+
+      ^ val < n;
+   }
 
    bool equal(int n)
       = _value == n; 
@@ -940,19 +966,43 @@ public const struct IntNumber : IntBaseNumber,
 
    real add(real n)
             : info("Returns the sum")
-      = new RealNumber(self).add(n);
+   {
+      real val := _value;
+
+      val := val + n;
+
+      ^ val         
+   }
 
    real subtract(real n)
             : info("Returns the difference")
-      = new RealNumber(self).subtract(n);
+   {
+      real val := _value;
+
+      val := val - n;
+
+      ^ val         
+   }
 
    real multiply(real n)
             : info("Returns the product")
-      = new RealNumber(self).multiply(n);
+   {
+      real val := _value;
+
+      val := val * n;
+
+      ^ val         
+   }
 
    real divide(real n)
             : info("Returns the result of integer division")
-      = new RealNumber(self).divide(n);
+   {
+      real val := _value;
+
+      val := val / n;
+
+      ^ val         
+   }
 
    band(n)
       <= band(cast int(n));
@@ -1659,7 +1709,7 @@ public sealed const struct LongNumber : IntBaseNumber,
       = ~theValue;
 
    get long Negative()
-      = -theValue;
+      = -1l * theValue;
 
    string toPrintable()
       = stringConvertor.convert(self, 10);
@@ -2068,5 +2118,3 @@ public sealed class KeyValue
    dispatch() : info("Redirects the incoming messages to the object")
      => value;
 }
-
-//public real symbol Pi_value = PrimitiveRealOperations.getPi();

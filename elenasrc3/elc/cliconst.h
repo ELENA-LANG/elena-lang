@@ -13,7 +13,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x0198
+   #define ELC_REVISION_NUMBER               0x01CB
 
 #if defined _M_IX86 || _M_X64
 
@@ -37,14 +37,17 @@ namespace elena_lang
    constexpr auto ELC_SUCCESSFUL_LINKING     = "Successfully linked\n";
    constexpr auto ELC_UNSUCCESSFUL           = "Compiled with errors\n";
 
-   constexpr auto ELC_PARSING_FILE           = "\nParsing %s";
-   constexpr auto ELC_COMPILING_MODULE       = "\nCompiling %s";
+   constexpr auto ELC_PARSING_FILE           = "Parsing %s";
+   constexpr auto ELC_COMPILING_MODULE       = "Compiling %s";
+   constexpr auto ELC_COMPILING_TEMPLATE     = "\nCompiling %s";
+
+   constexpr auto ELC_SAVING_MODULE          = "\nsaving %s\n";
 
    constexpr auto ELC_HELP_INFO              = "elena-cli {source-file+}";
 
    constexpr auto SYNTAX_FILE                = "syntax60.dat";
-   constexpr auto BC_RULES_FILE              = "bc_rules.dat";
-   constexpr auto BT_RULES_FILE              = "bt_rules.dat";
+   constexpr auto BC_RULES_FILE              = "bc_rules60.dat";
+   constexpr auto BT_RULES_FILE              = "bt_rules60.dat";
 
    constexpr auto VA_ALIGNMENT               = 0x08;
 

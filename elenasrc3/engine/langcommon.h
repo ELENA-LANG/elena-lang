@@ -90,6 +90,7 @@ namespace elena_lang
    constexpr auto errDupProtectedMethod      = 183;
    constexpr auto errUnknownDefConstructor   = 184;
    constexpr auto errUnknownMessage          = 185;
+   constexpr auto errAssigningToSelf         = 186;
 
    constexpr auto errUnknownModule           = 201;
    constexpr auto errUnresovableLink         = 202;
@@ -109,11 +110,13 @@ namespace elena_lang
    constexpr auto wrnUnknownMessage          = 407;
    constexpr auto wrnUnknownFunction         = 408;
    constexpr auto wrnUnknownDefConstructor   = 409;
+   constexpr auto wrnCallingItself           = 410;
    constexpr auto wrnUnknownModule           = 413;
    constexpr auto wrnTypeInherited           = 420;
    constexpr auto wrnDuplicateInclude        = 425;
    constexpr auto wrnUnknownTypecast         = 426;
    constexpr auto wrnUnsupportedOperator     = 427;
+   constexpr auto wrnUnassignedVariable      = 428;
 
    constexpr auto wrnSyntaxFileNotFound      = 500;
    constexpr auto wrnInvalidConfig           = 501;
@@ -173,6 +176,7 @@ namespace elena_lang
    /// property:
    constexpr auto V_SEALED                = 0x80003001u;
    constexpr auto V_ABSTRACT              = 0x80003002u;
+   constexpr auto V_CLOSED                = 0x80003003u;
    constexpr auto V_PREDEFINED            = 0x80003005u;
 
    /// scope_prefix:
@@ -306,6 +310,8 @@ namespace elena_lang
    constexpr auto OR_OPERATOR_ID             = 0x0022;
    constexpr auto XOR_OPERATOR_ID            = 0x0023;
    constexpr auto BREAK_OPERATOR_ID          = 0x0024;
+   constexpr auto CONTINUE_OPERATOR_ID       = 0x0027;
+   constexpr auto REFERENCE_OPERATOR_ID      = 0x002A;
 
    constexpr auto ISNIL_OPERATOR_ID          = 0x003E;
    constexpr auto CLASS_OPERATOR_ID          = 0x003F;
@@ -383,6 +389,10 @@ namespace elena_lang
    constexpr auto MGSIZE_PATH = "linker/mgsize";
    constexpr auto YGSIZE_PATH = "linker/ygsize";
    constexpr auto THREAD_COUNTER = "linker/threadcounter";
+
+   constexpr auto MANIFEST_NAME     = "manifest/name";
+   constexpr auto MANIFEST_VERSION  = "manifest/version";
+   constexpr auto MANIFEST_AUTHOR   = "manifest/author";
 
    inline ustr_t getPlatformName(PlatformType type)
    {

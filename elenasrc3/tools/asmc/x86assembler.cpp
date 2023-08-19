@@ -13,6 +13,8 @@
 
 using namespace elena_lang;
 
+constexpr auto LOCK_PREFIX = 0x0001;
+
 // --- X86Assembler ---
 
 X86Operand X86Assembler :: defineDBDisp(X86Operand operand)
@@ -632,6 +634,18 @@ void X86Assembler :: compileCmp(ScriptToken& tokenInfo, MemoryWriter& writer)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void X86Assembler :: compileCmpxchg(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope)
+{
+   X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
+
+   if (!compileCmpxchg(sour, dest, writer, prefixScope))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void X86Assembler :: compileCMovcc(ScriptToken& tokenInfo, MemoryWriter& writer, X86JumpType type)
 {
    X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
@@ -876,6 +890,20 @@ void X86Assembler :: compileFmulp(ScriptToken& tokenInfo, MemoryWriter& writer)
    read(tokenInfo);
 
    writer.writeWord(0xC9DE);
+}
+
+void X86Assembler :: compileFdivp(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   read(tokenInfo);
+
+   writer.writeWord(0xF9DE);
+}
+
+void X86Assembler ::compileFsubp(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   read(tokenInfo);
+
+   writer.writeWord(0xE9DE);
 }
 
 void X86Assembler :: compileFldl2e(ScriptToken& tokenInfo, MemoryWriter& writer)
@@ -1266,6 +1294,18 @@ void X86Assembler :: compileTest(ScriptToken& tokenInfo, MemoryWriter& writer)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void X86Assembler :: compileXadd(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope)
+{
+   X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
+
+   if (!compileXadd(sour, dest, writer, prefixScope))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void X86Assembler::compileXor(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
@@ -1476,6 +1516,23 @@ bool X86Assembler :: compileCmp(X86Operand source, X86Operand target, MemoryWrit
       writer.writeByte(0x80);
       X86Helper::writeModRM(writer, X86Operand(X86OperandType::R8 + 7), source);
       X86Helper::writeImm(writer, target);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileCmpxchg(X86Operand source, X86Operand target, MemoryWriter& writer, PrefixInfo& prefixScope)
+{
+   if (test(prefixScope.value, LOCK_PREFIX)) {
+      writer.writeByte(0xF0);
+
+      prefixScope.value &= ~LOCK_PREFIX;
+   }
+   if (source.isR32_M32() && target.isR32()) {
+      writer.writeByte(0x0F);
+      writer.writeByte(0xB1);
+      X86Helper::writeModRM(writer, target, source);
    }
    else return false;
 
@@ -1994,6 +2051,10 @@ bool X86Assembler :: compileOr(X86Operand source, X86Operand target, MemoryWrite
       writer.writeByte(0x09);
       X86Helper::writeModRM(writer, target, source);
    }
+   else if (source.isR32() && target.isR32_M32()) {
+      writer.writeByte(0x0B);
+      X86Helper::writeModRM(writer, source, target);
+   }
    else if (source.isR32_M32() && target.type == X86OperandType::DB) {
       writer.writeByte(0x83);
       X86Helper::writeModRM(writer, { X86OperandType::R32 + 1 }, source);
@@ -2242,6 +2303,29 @@ bool X86Assembler :: compileTest(X86Operand source, X86Operand target, MemoryWri
       X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 0), source);
       X86Helper::writeImm(writer, target);   
    }
+   else if (source.isR32_M32() && target.type == X86OperandType::DB) {
+      writer.writeByte(0xF7);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 0), source);
+      writer.writeDWord(target.offset);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileXadd(X86Operand source, X86Operand target, MemoryWriter& writer, PrefixInfo& prefixScope)
+{
+   if (test(prefixScope.value, LOCK_PREFIX)) {
+      writer.writeByte(0xF0);
+
+      prefixScope.value &= ~LOCK_PREFIX;
+   }
+
+   if (source.isR32_M32() && target.isR32()) {
+      writer.writeByte(0x0F);
+      writer.writeByte(0xC0);
+      X86Helper::writeModRM(writer, target, source);
+   }
    else return false;
 
    return true;
@@ -2315,7 +2399,7 @@ bool X86Assembler :: compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    return false;
 }
 
-bool X86Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool X86Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope)
 {
    if (tokenInfo.compare("call")) {
       compileCall(tokenInfo, writer);
@@ -2326,8 +2410,14 @@ bool X86Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    else if (tokenInfo.compare("cmp")) {
       compileCmp(tokenInfo, writer);
    }
+   else if (tokenInfo.compare("cmpxchg")) {
+      compileCmpxchg(tokenInfo, writer, prefixScope);
+   }
    else if (tokenInfo.compare("cmovb")) {
       compileCMovcc(tokenInfo, writer, X86JumpType::JB);
+   }
+   else if (tokenInfo.compare("cmovg")) {
+      compileCMovcc(tokenInfo, writer, X86JumpType::JG);
    }
    else if (tokenInfo.compare("cmovl")) {
       compileCMovcc(tokenInfo, writer, X86JumpType::JL);
@@ -2384,6 +2474,9 @@ bool X86Assembler :: compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    else if (tokenInfo.compare("fdiv")) {
       compileFdiv(tokenInfo, writer);
    }
+   else if (tokenInfo.compare("fdivp")) {
+      compileFdivp(tokenInfo, writer);
+   }
    else if (tokenInfo.compare("ffree")) {
       compileFfree(tokenInfo, writer);
    }
@@ -2434,6 +2527,9 @@ bool X86Assembler :: compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    }
    else if (tokenInfo.compare("fsin")) {
       compileFsin(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("fsubp")) {
+      compileFsubp(tokenInfo, writer);
    }
    else if (tokenInfo.compare("fcos")) {
       compileFcos(tokenInfo, writer);
@@ -2517,10 +2613,15 @@ bool X86Assembler :: compileJOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    return true;
 }
 
-bool X86Assembler :: compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool X86Assembler :: compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope)
 {
    if (tokenInfo.compare("lea")) {
       compileLea(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("lock")) {
+      prefixScope.value |= LOCK_PREFIX;
+
+      read(tokenInfo);
    }
    else return false;
 
@@ -2671,9 +2772,12 @@ bool X86Assembler :: compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    return false;
 }
 
-bool X86Assembler :: compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool X86Assembler :: compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope)
 {
-   if (tokenInfo.compare("xor")) {
+   if (tokenInfo.compare("xadd")) {
+      compileXadd(tokenInfo, writer, prefixScope);
+   }
+   else if (tokenInfo.compare("xor")) {
       compileXor(tokenInfo, writer);
    }
    else return false;
@@ -2913,6 +3017,20 @@ bool X86_64Assembler :: compileAnd(X86Operand source, X86Operand target, MemoryW
       writer.writeByte(0x21);
       X86Helper::writeModRM(writer, target, source);
    }
+   else if (source.isR64_M64() && target.type == X86OperandType::DD) {
+      writer.writeByte(0x48);
+      writer.writeByte(0x81);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
+      X86Helper::writeImm(writer, target);
+   }
+   else if (source.isR64_M64() && target.type == X86OperandType::DB) {
+      writer.writeByte(0x48);
+      writer.writeByte(0x81);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
+
+      target.type = X86OperandType::DD;
+      X86Helper::writeImm(writer, target);
+   }
    else return X86Assembler::compileAnd(source, target, writer);
 
    return true;
@@ -2983,10 +3101,10 @@ bool X86_64Assembler :: compileCmp(X86Operand source, X86Operand target, MemoryW
       writer.writeByte(0x3B);
       X86Helper::writeModRM(writer, source, target);
    }
-   else if (source.isR64_M64() && target.isRX64()) {
-      writer.writeByte(0x4B);
-      writer.writeByte(0x39);
-      X86Helper::writeModRM(writer, target, source);
+   else if (source.isRX64() && target.isR64_M64()) {
+      writer.writeByte(0x4C);
+      writer.writeByte(0x3B);
+      X86Helper::writeModRM(writer, source, target);
    }
    else if (source.isR64_M64() && (target.type == X86OperandType::DD || target.type == X86OperandType::DB)) {
       target.type = X86OperandType::DD;

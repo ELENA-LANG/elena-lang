@@ -3,7 +3,7 @@
 //
 //		This file contains AARCH64 Assembler implementation
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -14,7 +14,35 @@
 
 using namespace elena_lang;
 
+// an alternative DFA tablem where # is separate from the following digits
+const char* alt_token_dfa[17] =
+{
+     ".????????BB??B??????????????????BDFLND??QQDDDDDHEEEEEEEEEEDDDD?D?CCCCCCCCCCCCCCCCCCCCCCCCCCQ?DDC?CCCCCCCCCCCCCCCCCCCCCCCCCCDDDD?",
+     "*********BB*********************B***********************************************************************************************",
+     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAAAAACCCCCCCCCCAAAAAAACCCCCCCCCCCCCCCCCCCCCCCCCCAAAACACCCCCCCCCCCCCCCCCCCCCCCCCCAAAAA",
+     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAADDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEEEEEEEEEEAAAAAAAKKKKKKAAAAAAAAAAAAAAAAAAAAAAAAAAEEEEEEEJAAAAAAAAAAAAAAAAAAAAAAA",
+     "?FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFGFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+     "*IIIIIIIII*II*IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII",
+     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+     "????????????????????????????????????????????????KKKKKKKKKK???????KKKKKK?????????????????????????????????J???????????????????????",
+     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACCCCCCCCCCCCCCCCCCCCCCCCCCAAAACACCCCCCCCCCCCCCCCCCCCCCCCCCAAAAA",
+     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAAAAA???????????A?????MMMMMMMMMMMMMMMMMMMMMMMMMM??????MMMMMMMMMMMMMMMMMMMMMMMMMM?????",
+     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANNNNNNNNNN?A?????NNNNNNNNNNNNNNNNNNNNNNNNNN??????NNNNNNNNNNNNNNNNNNNNNNNNNN?????",
+     "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????",
+     "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????",
+     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+};
+
 // --- Arm64Assembler ---
+
+Arm64Assembler :: Arm64Assembler(int tabSize, UStrReader* reader, ModuleBase* target)
+   : AssemblerBase(alt_token_dfa, tabSize, reader, target)
+{
+   
+}
 
 int Arm64Assembler :: readIntArg(ScriptToken& tokenInfo, ref_t& reference, bool skipRead)
 {
@@ -395,7 +423,7 @@ ARMOperand Arm64Assembler :: readImmArg(ScriptToken& tokenInfo)
 
    if (tokenInfo.state == dfaQuote) {
       ustr_t val = *tokenInfo.token;
-      pos_t index = val.find('E');
+      size_t index = val.find('E');
 
       int sign = 0;
       if (val[index + 1] == '-') {
@@ -660,6 +688,11 @@ JumpType Arm64Assembler :: readCond(ScriptToken& tokenInfo)
 
       return  JumpType::LT;
    }
+   else if (tokenInfo.compare("gt")) {
+      read(tokenInfo);
+
+      return  JumpType::GT;
+   }
    else if (tokenInfo.compare("cc")) {
       read(tokenInfo);
 
@@ -698,6 +731,7 @@ void Arm64Assembler :: writeReference(ScriptToken& tokenInfo, ref_t reference, M
       case NARG16HI_1:
       case NARG16LO_1:
       case NARG16HI_2:
+      case INV_NARG16_2:
          writer.Memory()->addReference(reference, writer.position() - 4);
          break;
       case PTR32HI_1:
@@ -796,7 +830,7 @@ bool Arm64Assembler :: compileADDImm(ScriptToken& tokenInfo, ARMOperand rd, ARMO
 bool Arm64Assembler :: compileANDImm(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand ry, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && ry.type == ARMOperandType::Imm) {
-      writer.writeDWord(ARMHelper::makeLogocalImm13Opcode(1, 3, 0x24, ry.imm, rn.type, rd.type));
+      writer.writeDWord(ARMHelper::makeLogicalImm13Opcode(1, 0, 0x24, ry.imm, rn.type, rd.type));
 
       if (ry.reference)
          writeReference(tokenInfo, ry.reference, writer, ASM_INVALID_SOURCE);
@@ -822,7 +856,7 @@ bool Arm64Assembler :: compileADRP(ScriptToken& tokenInfo, ARMOperand rt, ARMOpe
 bool Arm64Assembler :: compileANDSImm(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand ry, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && ry.type == ARMOperandType::Imm) {
-      writer.writeDWord(ARMHelper::makeLogocalImm13Opcode(1, 3, 0x24, ry.imm, rn.type, rd.type));
+      writer.writeDWord(ARMHelper::makeLogicalImm13Opcode(1, 3, 0x24, ry.imm, rn.type, rd.type));
 
       if (rn.reference)
          writeReference(tokenInfo, rn.reference, writer, ASM_INVALID_SOURCE);
@@ -1254,7 +1288,7 @@ bool Arm64Assembler :: compileMADD(ARMOperand rd, ARMOperand rn, ARMOperand rm, 
 bool Arm64Assembler :: compileORRImm(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand ry, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && ry.type == ARMOperandType::Imm) {
-      writer.writeDWord(ARMHelper::makeLogocalImm13Opcode(1, 2, 0x9, ry.imm, rn.type, rd.type));
+      writer.writeDWord(ARMHelper::makeLogicalImm13Opcode(1, 2, 0x9, ry.imm, rn.type, rd.type));
 
       if (rn.reference)
          writeReference(tokenInfo, rn.reference, writer, ASM_INVALID_SOURCE);
@@ -2461,7 +2495,7 @@ void Arm64Assembler :: compileSUB(ScriptToken& tokenInfo, MemoryWriter& writer)
       isValid = compileSUBImm(tokenInfo, rd, rn, rn2, writer);
    }
    else {
-      isValid = compileSUBSShifted(tokenInfo, rd, rn, rn2, 0, 0, writer);
+      isValid = compileSUBShifted(tokenInfo, rd, rn, rn2, 0, 0, writer);
    }
 
    if (!isValid)
@@ -2574,7 +2608,7 @@ bool Arm64Assembler::compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    return true;
 }
 
-bool Arm64Assembler::compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool Arm64Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope)
 {
    if (tokenInfo.compare("cset")) {
       compileCSET(tokenInfo, writer);
@@ -2670,7 +2704,7 @@ bool Arm64Assembler :: compileJOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    return false;
 }
 
-bool Arm64Assembler :: compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool Arm64Assembler :: compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope)
 {
    if (tokenInfo.compare("ldp")) {
       compileLDP(tokenInfo, writer);
@@ -2812,7 +2846,7 @@ bool Arm64Assembler :: compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    return true;
 }
 
-bool Arm64Assembler::compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool Arm64Assembler :: compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo&)
 {
    return false;
 }
