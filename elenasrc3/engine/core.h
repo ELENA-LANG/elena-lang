@@ -119,6 +119,9 @@ namespace elena_lang
       uintptr_t   gc_perm_start;
       uintptr_t   gc_perm_end;
       uintptr_t   gc_perm_current;
+
+      size_t      gc_lock;             // NOTE : used only for MTA 
+      size_t      gc_signal;           // NOTE : used only for MTA 
    };
 
    // --- GCRoot ---
@@ -163,6 +166,8 @@ namespace elena_lang
       uintptr_t        eh_critical;
       ExceptionStruct* eh_current;
       uintptr_t        tt_stack_frame;
+      void*            tt_sync_event;
+      size_t           tt_flags;
    };
 
    // --- ThreadTable ---

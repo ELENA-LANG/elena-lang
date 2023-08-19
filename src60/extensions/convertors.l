@@ -183,18 +183,6 @@ public extension arrayConvertOp
 
 public extension convertorOp
 {
-   string toString()
-      = stringExConvertor.convert(self);
-    
-   string toString(int radix)
-      = stringConvertor.convert(self, radix);
-        
-   int toInt()
-      = intConvertor.convert(self);
-        
-   real toReal()
-      = realConvertor.convert:self;
-
    convertTo(target)
       = new Variant(self).saveTo(target);
 }

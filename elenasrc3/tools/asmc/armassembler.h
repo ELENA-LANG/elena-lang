@@ -162,13 +162,13 @@ namespace elena_lang
 
       bool compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;
-      bool compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope) override;
       bool compileDOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileIOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileJOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;
-      bool compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope) override;
       bool compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileNOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileOOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
@@ -177,7 +177,7 @@ namespace elena_lang
       bool compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileTOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
-      bool compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope) override;
 
       void compileDBField(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       void compileDWField(ScriptToken& tokenInfo, MemoryWriter& writer) override;
@@ -187,11 +187,7 @@ namespace elena_lang
       void compileProcedure(ScriptToken& tokenInfo) override;
 
    public:
-      Arm64Assembler(int tabSize, UStrReader* reader, ModuleBase* target)
-         : AssemblerBase(tabSize, reader, target)
-      {
-
-      }
+      Arm64Assembler(int tabSize, UStrReader* reader, ModuleBase* target);
    };
 }
 

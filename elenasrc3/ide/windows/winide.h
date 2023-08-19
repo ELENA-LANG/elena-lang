@@ -11,6 +11,7 @@
 #include "windows/windialogs.h"
 #include "idecontroller.h"
 #include "ideview.h"
+#include "windowlist.h"
 
 namespace elena_lang
 {
@@ -30,6 +31,8 @@ namespace elena_lang
       void freeBuffer(HGLOBAL buffer);
 
    public:
+      static bool isAvailable();
+
       bool copyToClipboard(DocumentView* docView) override;
       void pasteFromClipboard(DocumentChangeStatus& status, DocumentView* docView) override;
 
@@ -43,17 +46,29 @@ namespace elena_lang
       FileDialog        projectDialog;
       MessageDialog     messageDialog;
       ProjectSettings   projectSettingsDialog;
+      FindDialog        findDialog, replaceDialog;
+      GoToLineDialog    gotoDialog;
+      WindowListDialog  windowDialog;
       Clipboard         clipboard;
+      AboutDialog       aboutDialog;
+      EditorSettings    editorSettingsDialog;
+
+      ViewFactoryBase*  _viewFactory;
 
       HINSTANCE         _instance;
+      HWND              _tabTTHandle;
 
       IDEModel*         _model;
       IDEController*    _controller;
+
+      WindowList        _windowList;
+      RecentList        _recentFileList;
 
       void onStatusChange(StatusNMHDR* rec);
       void onSelection(SelectionNMHDR* rec);
       void onTreeItem(TreeItemNMHDR* rec);
       void onComplition(CompletionNMHDR* rec);
+      void onContextMenu(ContextMenuNMHDR* rec);
       //void onModelChange(ExtNMHDR* hdr);
       //void onNotifyMessage(ExtNMHDR* hdr);
 
@@ -61,12 +76,17 @@ namespace elena_lang
 
       void onDoubleClick(NMHDR* hdr);
       void onRClick(NMHDR* hdr);
-      void onDebugWatchRClick(int index);
+      void onDebugWatchRClick(size_t index);
 
       void onTabSelChanged(HWND wnd);
       void onTreeSelChanged(HWND wnd);
       void onChildRefresh(int controlId);
       void onTreeItemExpanded(NMTREEVIEW* rec);
+
+      bool isTabToolTip(HWND handle);
+
+      void onToolTip(NMTTDISPINFO* toolTip);
+      void onTabTip(NMTTDISPINFO* toolTip);
 
       void onLayoutChange(NotificationStatus status);
       void onIDEChange(NotificationStatus status);
@@ -84,7 +104,9 @@ namespace elena_lang
       void onDebugWatchBrowse(size_t item, size_t param);
 
       void onProjectChange(bool empty);
-      void onProjectViewSel(size_t index);
+      void onProjectViewSel(int index);
+
+      void onColorSchemeChange();
 
       bool toggleTabBarWindow(int child_id);
       void toggleWindow(int child_id);
@@ -101,6 +123,7 @@ namespace elena_lang
       void saveProject();
       void closeFile();
       void closeAll();
+      void closeAllButActive();
       void newProject();
       void openProject();
       void closeProject();
@@ -114,21 +137,33 @@ namespace elena_lang
       void commentText();
       void uncommentText();
       void selectAll();
+      void trim();
+      void eraseLine();
+      void duplicateLine();
+      void upperCase();
+      void lowerCase();
+
+      void search();
+      void searchNext();
+      void replace();
+      void goToLine();
 
       void includeFile();
 
       void openHelp();
+      void showAbout();
 
       void refreshDebugNode();
 
-      void onIDEViewUpdate(bool forced);
       void onDebuggerStart();
       void onDebuggerHook();
       void onDebuggerUpdate(StatusNMHDR* rec);
       void onDocumentUpdate(DocumentChangeStatus& changeStatus) override;
 
    public:
-      IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance);
+      void populate(size_t counter, GUIControlBase** children) override;
+
+      IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance, ViewFactoryBase* viewFactory);
    };
 
 }

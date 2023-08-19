@@ -39,6 +39,9 @@ namespace elena_lang
       void printPathLine(ustr_t msg, path_t arg) override;
       void printLine(ustr_t msg) override;
       void printLine(ustr_t msg, ustr_t path, int col, int row, ustr_t s) override;
+
+      void showProgress() override;
+      void stopProgress() override;
    };
 }
 

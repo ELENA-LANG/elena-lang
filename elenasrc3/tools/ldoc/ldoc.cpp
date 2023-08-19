@@ -16,6 +16,8 @@
 constexpr auto ByRefPrefix = "'$auto'system@Reference#1&";
 constexpr auto ArrayPrefix = "'$auto'system@Array#1&";
 
+constexpr auto ArrayLink = "system.html#Array&lt;T1&gt;";
+
 using namespace elena_lang;
 
 constexpr auto DESCRIPTION_SECTION = "'meta$descriptions";
@@ -172,7 +174,7 @@ void parseNs(IdentifierString& ns, ustr_t root, ustr_t fullName)
    ns.append(fullName, last);
 }
 
-void parseTemplateType(IdentifierString& line, size_t index, bool argMode)
+bool parseTemplateType(IdentifierString& line, size_t index, bool argMode)
 {
    IdentifierString temp(line);
 
@@ -181,6 +183,7 @@ void parseTemplateType(IdentifierString& line, size_t index, bool argMode)
    size_t last = index;
    bool first = true;
    bool noCurlybrackets = false;
+   bool nsExpected = true;
    if (argMode && (*temp).startsWith(ByRefPrefix)) {
       // HOTFIX : recognize byref argument
 
@@ -190,12 +193,12 @@ void parseTemplateType(IdentifierString& line, size_t index, bool argMode)
       noCurlybrackets = true;
    }
    else if (argMode && (*temp).startsWith(ArrayPrefix)) {
-      // HOTFIX : recognize byref argument
-
+      // HOTFIX : recognize array argument
       temp.cut(0, getlength(ArrayPrefix));
 
       line.append("arrayof ");
       noCurlybrackets = true;
+      nsExpected = false;
    }
 
    for (size_t i = index; i < temp.length(); i++) {
@@ -226,6 +229,8 @@ void parseTemplateType(IdentifierString& line, size_t index, bool argMode)
       line.append((*temp) + last + 1);
       line.append("&gt;");
    }
+
+   return nsExpected;
 }
 
 void parseTemplateName(IdentifierString& line)
@@ -234,7 +239,7 @@ void parseTemplateName(IdentifierString& line)
 
    line.clear();
 
-   int last = 0;
+   size_t last = 0;
    bool first = true;
    for (size_t i = 0; i < temp.length(); i++) {
       if (temp[i] == '@') {
@@ -362,10 +367,10 @@ void writeType(TextFileWriter& writer, ustr_t type, bool fullReference = false)
    if (type.find('\'') != NOTFOUND_POS) {
       writer.writeText("<A HREF=\"");
 
-      pos_t index = type.findStr("&lt;");
+      size_t index = type.findStr("&lt;");
       NamespaceString ns(type);
       if (index != NOTFOUND_POS) {
-         for (pos_t i = index; i >= 0; i--) {
+         for (size_t i = index; i >= 0; i--) {
             if (type[i] == '\'') {
                ns.copy(type, i);
                break;
@@ -373,21 +378,26 @@ void writeType(TextFileWriter& writer, ustr_t type, bool fullReference = false)
          }
       }
 
-      if (emptystr(*ns)) {
-         writer.writeText("#");
+      if (arrayMode) {
+         writer.writeText(ArrayLink);
+         writer.writeText("\">");
       }
       else {
-         writeNs(writer, *ns);
-         writer.writeText(".html#");
-      }
-      writeRefName(writer, type + ns.length() + 1, false);
+         if (emptystr(*ns)) {
+            writer.writeText("#");
+         }
+         else {
+            writeNs(writer, *ns);
+            writer.writeText(".html#");
+         }
+         writeRefName(writer, type + ns.length() + 1, false);
 
-      writer.writeText("\">");
+         writer.writeText("\">");
+      }
       if (fullReference) {
          writer.writeText(type);
       }
       else writer.writeText(type + ns.length() + 1);
-
       writer.writeText("</A>");
    }
    else writer.writeText(type);
@@ -1021,7 +1031,7 @@ void DocGenerator :: loadParents(ApiClassInfo* apiClassInfo, ref_t reference)
    else apiClassInfo->parents.add(name.clone());
 }
 
-void validateTemplateType(IdentifierString& type, bool templateBased, bool argMode)
+bool validateTemplateType(IdentifierString& type, bool templateBased, bool argMode)
 {
    if (templateBased) {
       if (isTemplateBased(*type)) {
@@ -1034,12 +1044,16 @@ void validateTemplateType(IdentifierString& type, bool templateBased, bool argMo
          size_t index = (*type).findLast('\'');
          type.cut(0, index + 1);
       }
+
+      return true;
    }
    else if (isTemplateWeakReference(*type)) {
       NamespaceString ns(*type);
 
-      parseTemplateType(type, ns.length(), argMode);
+      return parseTemplateType(type, ns.length(), argMode);
    }
+
+   return false;
 }
 
 void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs, bool templateBased, bool argMode)
@@ -1047,7 +1061,7 @@ void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs, bool templateB
    bool nsExpected = false;
    if (isTemplateWeakReference(line)) {
       type.copy(line);
-      nsExpected = true;
+      nsExpected = false;
    }
    else if (line[0] == '\'') {
       type.copy(rootNs);
@@ -1055,11 +1069,12 @@ void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs, bool templateB
    }
    else type.copy(line);
 
-   validateTemplateType(type, templateBased, argMode);
+   nsExpected &= validateTemplateType(type, templateBased, argMode);
 
    if (nsExpected) {
-      type.insert("'", 0);
-      type.insert(rootNs, 0);
+      size_t spacePos = (*type).find(' ');
+      type.insert("'", spacePos + 1);
+      type.insert(rootNs, spacePos + 1);
    }
 }
 
@@ -1187,7 +1202,7 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          }
 
          if (test(methodInfo.hints, (ref_t)MethodHint::Internal)) {
-            pos_t index = (*apiMethodInfo->name).findStr("$$");
+            size_t index = (*apiMethodInfo->name).findStr("$$");
             if (index != NOTFOUND_POS)
                apiMethodInfo->name.cut(0, index + 2);
 
@@ -1345,14 +1360,40 @@ ref_t DocGenerator :: findExtensionTarget(ref_t reference)
    else return 0;
 }
 
+inline void replace(IdentifierString& str, ustr_t oldStr, ustr_t newStr)
+{
+   size_t index = (*str).findStr(oldStr);
+   if (index != NOTFOUND_POS) {
+      str.cut(index, oldStr.length());
+      str.insert(newStr, index);
+   }
+}
+
 void DocGenerator :: loadClassPrefixes(ApiClassInfo* apiClassInfo, ref_t reference)
 {
    ClassInfo info;
    if (loadClassInfo(reference, info, true)) {
+      if (test(info.header.flags, elStateless) && test(info.header.flags, elSealed)) {
+         replace(apiClassInfo->prefix, "class", "singleton");
+      }
+
       if (test(info.header.flags, elAbstract)) {
          apiClassInfo->prefix.insert("abstract ", 0);
       }
    }
+}
+
+bool isTemplateDeclaration(ustr_t referenceName)
+{
+   size_t index = referenceName.find('#');
+   if (index == NOTFOUND_POS)
+      return false;
+
+   // if it is a template of template
+   if (referenceName.findSub(index + 1, '#') != NOTFOUND_POS)
+      return false;
+
+   return referenceName.findStr("@T1") != NOTFOUND_POS && referenceName.findStr("$private");
 }
 
 void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
@@ -1393,9 +1434,6 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
       ReferenceProperName properName(referenceName);
       ReferenceName fullName(*_rootNs, referenceName + 1);
 
-      if (referenceName.findStr("Tuple") != NOTFOUND_POS) 
-         classClassRef = classClassRef + 0;;
-
       // HOTFIX : skip internal class
       if (properName[0] == '$')
          return;
@@ -1426,7 +1464,7 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
       if (_module->mapSection(reference | mskVMTRef, true) || extensionRef) {
          bool templateBased = false;
          if (isTemplateBased(referenceName)) {
-            if (referenceName.findStr("@T1") != NOTFOUND_POS && referenceName.findStr("$private")) {
+            if (isTemplateDeclaration(referenceName)) {
                templateBased = true;
 
                parseTemplateName(properName);
@@ -1474,7 +1512,7 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             DescriptionMap descriptions(nullptr);
             IdentifierString descrName("$");
             descrName.append(referenceName);
-            descrName.replaceAll('\'', ' @', 0);
+            descrName.replaceAll('\'', '@', 0);
             descrName.insert(DESCRIPTION_SECTION, 0);
 
             loadDescriptions(_module->mapReference(*descrName), descriptions);
@@ -1485,7 +1523,7 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             DescriptionMap descriptions(nullptr);
             IdentifierString descrName("$");
             descrName.append(_module->resolveReference(extensionRef));
-            descrName.replaceAll('\'', ' @', 0);
+            descrName.replaceAll('\'', '@', 0);
             descrName.insert(DESCRIPTION_SECTION, 0);
 
             loadDescriptions(_module->mapReference(*descrName), descriptions);
@@ -1496,7 +1534,7 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             DescriptionMap descriptions(nullptr);
             IdentifierString descrName("$");
             descrName.append(referenceName);
-            descrName.replaceAll('\'', ' @', 0);
+            descrName.replaceAll('\'', '@', 0);
             descrName.insert(DESCRIPTION_SECTION, 0);
 
             loadDescriptions(_module->mapReference(*descrName), descriptions);
@@ -1690,8 +1728,11 @@ void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo, path_t output)
    summaryname.append("-summary");
    summaryname.append(".html");
 
-   PathString outPath;
-   outPath.copy(*name);
+   PathString outPath(output);
+   if (!output.empty()) {
+      outPath.combine(*name);
+   }
+   else outPath.copy(*name);
 
    PathString outSumPath(output);
    if (!output.empty()) {

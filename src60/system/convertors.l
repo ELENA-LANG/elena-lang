@@ -21,8 +21,7 @@ public singleton byteConvertor
 
    byte convert(short s)
    {
-      byte b;
-      self.convert(s, ref b);
+      self.convert(s, ref byte b);
 
       ^ b;      
    }
@@ -40,24 +39,21 @@ public singleton byteConvertor
          OutOfRangeException.raise();
       };
 
-      byte b;
-      self.convert(n, ref b);
+      self.convert(n, ref byte b);
 
       ^ b;
    }
 
    byte convert(uint n)
    {
-      byte b;
-      self.convert(n, ref b);
+      self.convert(n, ref byte b);
 
       ^ b;
    }
 
    byte convert(long n)
    {
-      byte b;
-      self.convert(n, ref b);
+      self.convert(n, ref byte b);
 
       ^ b;
    }
@@ -102,24 +98,24 @@ public singleton shortConvertor
 
    short convert(byte b)
    {
-      short s;
-      self.convertByte(b, ref s);
+      self.convertByte(b, ref short s);
 
       ^ s;
    }   
 
+   short convert(short s)
+      = s;
+
    short convert(int n)
    {
-      short s;
-      self.convertInt(n, ref s);
+      self.convertInt(n, ref short s);
 
       ^ s;
    }
 
    short convert(uint n)
    {
-      short s;
-      self.convertUInt(n, ref s);
+      self.convertUInt(n, ref short s);
 
       ^ s;
    }
@@ -175,6 +171,9 @@ public singleton intConvertor
    int convert(BaseVariable v)
       <= convert(*v);
 
+   int convert(int n)
+      = n;
+
    int convert(byte b)
    {
       int n := b;
@@ -205,8 +204,7 @@ public singleton intConvertor
 
    int convert(long l)
    {
-      int n;
-      self.convertLong(l, ref n);
+      self.convertLong(l, ref int n);
 
       ^ n;
    }
@@ -280,6 +278,9 @@ public singleton uintConvertor
 
    uint convert(o)
       = cast uint(o);
+
+   uint convert(uint n)
+      = n;
 
    uint convert(int n)
    {
@@ -414,7 +415,14 @@ public singleton longConvertor
    {
       int len := s.Length;
       long val := 0;
-      for (int i := 0, i < len, i := i + 1) {
+      int start := 0;
+      bool inverted := false;
+      if (s[0]==$45) {
+         start := 1;
+         inverted := true;
+      };
+
+      for (int i := start, i < len, i := i + 1) {
          byte c := s[i];
          int ch := c;
          ch := ch - 48;
@@ -425,14 +433,27 @@ public singleton longConvertor
          val := val + ch;
       };
 
+      if (inverted) {
+         val := -val;
+      };
+
       ^ val
    }
+
+   long convert(string s)
+      <= convert(s, 10);
 
    long convert(wide s, int radix)
    {
       int len := s.Length;
       long val := 0;
-      for (int i := 0, i < len, i := i + 1) {
+      int start := 0;
+      bool inverted := false;
+      if (s[0]==$45) {
+         start := 1;
+         inverted := true;
+      };
+      for (int i := start, i < len, i := i + 1) {
          short c := s[i];
          int ch := c;
          ch := ch - 48;
@@ -443,9 +464,15 @@ public singleton longConvertor
          val := val + ch;
       };
 
+      if (inverted) {
+         val := -val;
+      };
+
       ^ val
    }
 
+   long convert(wide s)
+      <= convert(s, 10);
 }
 
 // --- realConvertor ---
@@ -475,9 +502,14 @@ public singleton realConvertor
          intPartStr := s;
       };
 
+      bool inverted := false;
       int intPart := intConvertor.convert(intPartStr, 10);
-      real r := intPart;
+      if (intPart < 0) {
+         intPart := -intPart;
+         inverted := true;
+      };
 
+      real r := intPart;
       if (decimalPartStr != nil) {
          real frac := intConvertor.convert(decimalPartStr, 10);
          for (int i := 0, i < decimalPartStr.Length, i += 1) {
@@ -486,6 +518,9 @@ public singleton realConvertor
 
          r += frac;
       };
+
+      if (inverted)
+         r := r * -1.0;
 
       ^ r
    }
@@ -539,8 +574,7 @@ public singleton charConvertor
 
    char convert(int n)
    {
-      char ch;
-      self.convert(n, ref ch);
+      self.convert(n, ref char ch);
 
       ^ ch;
    }
@@ -806,7 +840,7 @@ public singleton stringConvertor
       int value := ch.Value;
 
       byte buffer[4];
-      int length := PrimitiveOperations.copyUTF32(buffer,0,value);
+      int length := PrimitiveOperations.copyUTF8_2_32(buffer,0,value);
 
       ^ String.fromByteArray(0, length, buffer);      
    }
@@ -830,7 +864,7 @@ public singleton wideConvertor
       int value := ch.Value;
 
       short buffer[2];
-      int length := PrimitiveOperations.copyUTF32(buffer,0,value);
+      int length := PrimitiveOperations.copyUTF16_2_32(buffer,0,value);
 
       ^ WideString.fromShortArray(0, length, buffer);      
    }  
@@ -851,7 +885,7 @@ public singleton byteArrayConvertor
          char ch := sour[i];
          int chVal := ch.Value;
          
-         int length := PrimitiveOperations.copyUTF32(dest,j,chVal);
+         int length := PrimitiveOperations.copyUTF8_2_32(dest,j,chVal);
          
          j += length;
          i += ch.WideLength;
@@ -873,7 +907,7 @@ public singleton shortArrayConvertor
          char ch := sour[i];
          int chVal := ch.Value;
          
-         int length := PrimitiveOperations.copyUTF32(dest, j, chVal);
+         int length := PrimitiveOperations.copyUTF16_2_32(dest, j, chVal);
          
          j += length;
          i += ch.Length;

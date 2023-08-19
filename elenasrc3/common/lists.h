@@ -10,6 +10,13 @@
 #define LISTS_H
 #include <assert.h>
 
+#ifdef __GNUC__
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Waddress"
+
+#endif
+
 namespace elena_lang
 {
    template <class T, void(*FreeT)(T) = nullptr> class BListBase;
@@ -118,12 +125,12 @@ namespace elena_lang
 #pragma pack(pop)
 
    // --- IteratorBase ---
-   template <class T, class Item> class ListIteratorBase
+   template <class T, class Item, void(*FreeT)(T)> class ListIteratorBase
    {
       Item* _current;
 
-      friend class BListBase<T>;
-      friend class ListBase<T>;
+      friend class BListBase<T, FreeT>;
+      friend class ListBase<T, FreeT>;
 
    public:
       bool operator ==(const ListIteratorBase& it)
@@ -404,7 +411,7 @@ namespace elena_lang
       T     _defaultValue;
 
    public:
-      typedef ListIteratorBase<T, Item> Iterator;
+      typedef ListIteratorBase<T, Item, FreeT> Iterator;
 
       Iterator start() { return Iterator(_top); }
 
@@ -447,7 +454,6 @@ namespace elena_lang
          }
          else _top = _tale = new Item(item, nullptr);
          _count++;
-
       }
 
       void insert(int index, T item)
@@ -469,6 +475,8 @@ namespace elena_lang
          }
          else if (current != nullptr) {
             prev->next = new Item(item, prev->next);
+
+            _count++;
          }
          else addToTale(item);
       }
@@ -527,11 +535,51 @@ namespace elena_lang
             if (_top == _tale) {
                _top = _tale = nullptr;
             }
+            else if (previous == nullptr) {
+               _top = _top->next;
+            }
             else if (_tale == tmp) {
                _tale = previous;
+               previous->next = tmp->next;
+            }
+            else previous->next = tmp->next;
+
+            if (FreeT)
+               FreeT(tmp->item);
+
+            delete tmp;
+         }
+      }
+
+      void cut(Iterator& it)
+      {
+         Item* tmp = nullptr;
+         Item* previous = nullptr;
+
+         if (_top == it._current)
+            tmp = _top;
+         else {
+            previous = _top;
+            while (previous->next) {
+               if (previous->next == it._current) {
+                  tmp = previous->next;
+                  break;
+               }
+               previous = previous->next;
+            }
+         }
+         if (tmp) {
+            _count--;
+
+            if (_top == _tale) {
+               _top = _tale = nullptr;
             }
             else if (previous == nullptr) {
                _top = _top->next;
+            }
+            else if (_tale == tmp) {
+               _tale = previous;
+               previous->next = tmp->next;
             }
             else previous->next = tmp->next;
 
@@ -579,7 +627,7 @@ namespace elena_lang
       pos_t _count;
 
    public:
-      typedef ListIteratorBase<T, BItemBase<T>> Iterator;
+      typedef ListIteratorBase<T, BItemBase<T>, FreeT> Iterator;
 
       pos_t count() const
       {
@@ -659,7 +707,7 @@ namespace elena_lang
       T                  _defaultItem;
 
    public:
-      typedef ListIteratorBase<T, ItemBase<T>> Iterator;
+      typedef ListIteratorBase<T, ItemBase<T>, FreeT> Iterator;
 
       T DefaultValue() const { return _list.DefaultValue(); }
 
@@ -700,6 +748,11 @@ namespace elena_lang
       void cut(T item)
       {
          _list.cut(item);
+      }
+
+      void cut(Iterator it)
+      {
+         _list.cut(it);
       }
 
       template<class ArgT> void forEach(ArgT arg, void(*lambda)(ArgT arg, T item))
@@ -763,7 +816,7 @@ namespace elena_lang
       T                  _defaultItem;
 
    public:
-      typedef ListIteratorBase<T, ItemBase<T>> Iterator;
+      typedef ListIteratorBase<T, ItemBase<T>, FreeT> Iterator;
 
       T DefaultValue() const { return _list.DefaultValue(); }
 
@@ -869,7 +922,7 @@ namespace elena_lang
       T           _defaultItem;
 
    public:
-      typedef ListIteratorBase<T, ItemBase<T>> Iterator;
+      typedef ListIteratorBase<T, ItemBase<T>, nullptr> Iterator;
 
       Iterator start()
       {
@@ -980,7 +1033,7 @@ namespace elena_lang
       BListBase<T, FreeT> _list;
 
    public:
-      typedef ListIteratorBase<T, BItemBase<T>> Iterator;
+      typedef ListIteratorBase<T, BItemBase<T>, FreeT> Iterator;
 
       pos_t count() const { return _list.count(); }
 
@@ -1769,7 +1822,7 @@ namespace elena_lang
          _buffer.clear();
 
          _count = 0;
-         _tale = 0;
+         _top = _tale = 0;
       }
 
       template<class SumT> SumT sum(SumT initValue, SumT(*lambda)(T item))
@@ -1892,7 +1945,7 @@ namespace elena_lang
          pos_t            _hashIndex;
          const HashTable* _hashTable;
 
-         HashTableIterator(const HashTable* hashTable, size_t hashIndex, Item* current)
+         HashTableIterator(const HashTable* hashTable, pos_t hashIndex, Item* current)
          {
             _hashTable = hashTable;
             _hashIndex = hashIndex;
@@ -3214,7 +3267,8 @@ namespace elena_lang
       Node getNode(pos_t position)
       {
          Node node = { _defValue };
-         _buffer.read(position, &node, sizeof(Node));
+         if (position != INVALID_POS)
+            _buffer.read(position, &node, sizeof(Node));
 
          return node;
       }
@@ -3380,13 +3434,24 @@ namespace elena_lang
          return (this->_position != node._position);
       }
 
-      pos_t Position() { return _position; }
+      pos_t position() { return _position; }
 
       T Value()
       {
          Node node = _trie->getNode(_position);
 
          return node.value;
+      }
+
+      MemoryTrieNode FirstChild()
+      {
+         Node node = _trie->getNode(_position);
+
+         pos_t childPosition = _trie->getLinkNodePosition(node.firstChildLink);
+         if (childPosition) {
+            return MemoryTrieNode(_trie, childPosition);
+         }
+         return { _trie, INVALID_POS };
       }
 
       ChildEnumerator Children()
@@ -3407,7 +3472,7 @@ namespace elena_lang
 
       void link(MemoryTrieNode& node)
       {
-         _trie->addChildLink(_position, node.Position());
+         _trie->addChildLink(_position, node.position());
       }
 
       MemoryTrieNode()
@@ -3448,7 +3513,7 @@ namespace elena_lang
          while (!children_it.eof()) {
             auto child = children_it.Node();
             if (child.Value() == item)
-               return child.Position();
+               return child.position();
 
             ++children_it;
          }
@@ -3469,7 +3534,7 @@ namespace elena_lang
       {
          while (!nodes.eof()) {
             auto child = nodes.Node();
-            if (!isTerminal(child.Value())/*child.Value() != terminalNode*/ && child.Position() != current.Position()) {
+            if (!isTerminal(child.Value())/*child.Value() != terminalNode*/ && child.position() != current.position()) {
                if (current.Value() == child.Value()) {
                   auto next = current.Children();
                   while (!next.eof()) {
@@ -3479,7 +3544,7 @@ namespace elena_lang
                      ++next;
                   }
                }
-               else if (failedNode.Position() != 0) {
+               else if (failedNode.position() != 0) {
                   auto it = failedNode.find(current.Value());
                   if (it.eof()) {
                      failedNode.link(current);
@@ -3561,5 +3626,11 @@ namespace elena_lang
       return key;
    }
 }
+
+#ifdef __GNUC__
+
+#pragma GCC diagnostic pop
+
+#endif
 
 #endif

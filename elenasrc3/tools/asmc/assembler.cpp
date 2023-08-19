@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA Assembler
 //		classes.
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -17,6 +17,12 @@ using namespace elena_lang;
 
 AssemblerBase :: AssemblerBase(int tabSize, UStrReader* reader, ModuleBase* target)
    : _reader(tabSize, reader), constants(0)
+{
+   _target = target;
+}
+
+AssemblerBase :: AssemblerBase(const char** dfa, int tabSize, UStrReader* reader, ModuleBase* target)
+   : _reader(dfa, tabSize, reader), constants(0)
 {
    _target = target;
 }
@@ -313,7 +319,7 @@ bool AssemblerBase :: getIntConstant(ScriptToken& tokenInfo, int& offset, ref_t&
    }
    else if (tokenInfo.state == dfaHexInteger) {
       reference = 0;
-      offset = tokenInfo.token.toInt(16);
+      offset = tokenInfo.token.toUInt(16);
    }
    else if (!getArgReference(tokenInfo, offset, reference)) {
       if (constants.exist(*tokenInfo.token)) {
@@ -340,7 +346,7 @@ void AssemblerBase :: declareProcedure(ScriptToken& tokenInfo, ProcedureInfo& pr
    read(tokenInfo);
 }
 
-bool AssemblerBase::compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
+bool AssemblerBase :: compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope, PrefixInfo& prefixScope)
 {
    switch (tokenInfo.token[0]) {
       case 'a':
@@ -348,7 +354,7 @@ bool AssemblerBase::compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, 
       case 'b':
          return compileBOpCode(tokenInfo, writer, labelScope);
       case 'c':
-         return compileCOpCode(tokenInfo, writer);
+         return compileCOpCode(tokenInfo, writer, prefixScope);
       case 'd':
          return compileDOpCode(tokenInfo, writer);
       case 'e':
@@ -360,7 +366,7 @@ bool AssemblerBase::compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, 
       case 'j':
          return compileJOpCode(tokenInfo, writer, labelScope);
       case 'l':
-         return compileLOpCode(tokenInfo, writer);
+         return compileLOpCode(tokenInfo, writer, prefixScope);
       case 'm':
          return compileMOpCode(tokenInfo, writer);
       case 'n':
@@ -378,7 +384,7 @@ bool AssemblerBase::compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, 
       case 'u':
          return compileUOpCode(tokenInfo, writer);
       case 'x':
-         return compileXOpCode(tokenInfo, writer);
+         return compileXOpCode(tokenInfo, writer, prefixScope);
       default:
          return false;
    }
@@ -386,6 +392,7 @@ bool AssemblerBase::compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, 
 
 void AssemblerBase :: compileProcedure(ScriptToken& tokenInfo, LabelHelper* helper)
 {
+   PrefixInfo    prefixScope;
    LabelScope    labelScope(helper);
    ProcedureInfo procInfo;
    declareProcedure(tokenInfo, procInfo);
@@ -394,7 +401,7 @@ void AssemblerBase :: compileProcedure(ScriptToken& tokenInfo, LabelHelper* help
    MemoryWriter writer(code);
 
    while (!tokenInfo.compare("end")) {
-      if (!compileOpCode(tokenInfo, writer, labelScope)) {
+      if (!compileOpCode(tokenInfo, writer, labelScope, prefixScope)) {
          if (tokenInfo.state != dfaEOF) {
             declareLabel(tokenInfo, writer, labelScope);
          }

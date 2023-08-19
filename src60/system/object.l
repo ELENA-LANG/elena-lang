@@ -5,7 +5,8 @@
 public class Object
    : info("a common ancestor")
 {
-   const string __className := $name __decl;
+   const string __className   := $name __decl;
+   const __ptr __packageInfo  := $reference __decl;
 
    constructor() 
       : info("Creates the object")
@@ -51,4 +52,3 @@ public extension commonOp
             : info("Executes the parameter function and pass itself as a parameter")
       = f(self);
 }
-

@@ -93,6 +93,21 @@ void TextViewController :: indent(TextViewModelBase* model)
    notifyOnChange(model, status);
 }
 
+void TextViewController :: outdent(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+
+   if (_settings.tabUsing) {
+      docView->tabbing(status, '\t', 1, false);
+   }
+   else {
+      docView->tabbing(status, ' ', _settings.tabSize, false);
+   }
+
+   notifyOnChange(model, status);
+}
+
 void TextViewController :: undo(TextViewModelBase* model)
 {
    DocumentChangeStatus status = {};
@@ -205,7 +220,40 @@ void TextViewController :: deleteText(TextViewModelBase* model)
    notifyOnChange(model, status);
 }
 
-void TextViewController :: insertBlockText(TextViewModelBase* model, const text_t s, size_t length)
+void TextViewController :: trim(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+   if (!docView->isReadOnly()) {
+      docView->trim(status);
+   }
+
+   notifyOnChange(model, status);
+}
+
+void TextViewController :: eraseLine(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+   if (!docView->isReadOnly()) {
+      docView->eraseLine(status);
+   }
+
+   notifyOnChange(model, status);
+}
+
+void TextViewController :: duplicateLine(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+   if (!docView->isReadOnly()) {
+      docView->duplicateLine(status);
+   }
+
+   notifyOnChange(model, status);
+}
+
+void TextViewController :: insertBlockText(TextViewModelBase* model, const_text_t s, size_t length)
 {
    DocumentChangeStatus status = {};
    auto docView = model->DocView();
@@ -216,12 +264,34 @@ void TextViewController :: insertBlockText(TextViewModelBase* model, const text_
    notifyOnChange(model, status);
 }
 
-void TextViewController :: deleteBlockText(TextViewModelBase* model, const text_t s, size_t length)
+void TextViewController :: deleteBlockText(TextViewModelBase* model, const_text_t s, size_t length)
 {
    DocumentChangeStatus status = {};
    auto docView = model->DocView();
    if (!docView->isReadOnly()) {
       docView->blockDeleting(status, s, length);
+   }
+
+   notifyOnChange(model, status);
+}
+
+void TextViewController :: lowerCase(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+   if (!docView->isReadOnly()) {
+      docView->toLowercase(status);
+   }
+
+   notifyOnChange(model, status);
+}
+
+void TextViewController :: upperCase(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+   if (!docView->isReadOnly()) {
+      docView->toUppercase(status);
    }
 
    notifyOnChange(model, status);
@@ -379,4 +449,50 @@ void TextViewController :: resizeModel(TextViewModelBase* model, Point size)
    }
 
    notifyOnChange(model, status);
+}
+
+bool TextViewController :: findText(TextViewModelBase* model, FindModel* findModel)
+{
+   DocumentChangeStatus docStatus = {};
+
+   auto docView = model->DocView();
+   if (docView && docView->findLine(docStatus, findModel->text.str(), findModel->matchCase, 
+      findModel->wholeWord)) 
+   {
+      notifyOnChange(model, docStatus);
+
+      return true;
+   }
+
+   return false;
+}
+
+bool TextViewController :: replaceText(TextViewModelBase* model, FindModel* findModel)
+{
+   DocumentChangeStatus docStatus = {};
+
+   auto docView = model->DocView();
+   if (docView) {
+      docView->insertLine(docStatus, findModel->newText.str(), findModel->newText.length());
+      notifyOnChange(model, docStatus);
+
+      return true;
+   }
+
+   return false;
+}
+
+void TextViewController :: goToLine(TextViewModelBase* model, int row)
+{
+   DocumentChangeStatus docStatus = {};
+
+   auto docView = model->DocView();
+   if (docView) {
+      Point caret = docView->getCaret();
+
+      caret.y = row - 1;
+
+      docView->setCaret(caret, false, docStatus);
+      notifyOnChange(model, docStatus);
+   }
 }

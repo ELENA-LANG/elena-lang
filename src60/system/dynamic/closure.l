@@ -139,3 +139,30 @@ public singleton JumpToEnd : TapeFunction
     mixin function(params object[] args) : external(system'core_routines'__exit_closure);
 }
 
+// --- JumpIfNotFunction ---
+
+public struct JumpIfNotFunction : TapeFunction
+{
+   int index;
+    
+   constructor(int index)
+   {
+      this index := index
+   }
+    
+   mixin function(params object[] args) : external(system'core_routines'__jumpifnot_closure);
+}
+
+// --- GoToFunction ---
+
+public struct GoToFunction : TapeFunction
+{
+   int index;
+    
+   constructor(int index)
+   {
+      this index := index
+   }
+    
+   mixin function(params object[] args) : external(system'core_routines'__jump_closure);
+}

@@ -10,6 +10,7 @@
 #include "controller.h"
 #include "editcontrol.h"
 #include "ideproject.h"
+#include "ideview.h"
 
 namespace elena_lang
 {
@@ -54,6 +55,8 @@ namespace elena_lang
       Answer question(text_str message, text_str param) override;
       Answer question(text_str message) override;
 
+      void info(text_str message) override;
+
       MessageDialog(WindowBase* owner)
       {
          _owner = owner;
@@ -74,13 +77,25 @@ namespace elena_lang
 
       virtual void doCommand(int id, int command);
 
+      void enable(int id, bool enabled);
+
       void addComboBoxItem(int id, const wchar_t* text);
       void setComboBoxIndex(int id, int index);
       int  getComboBoxIndex(int id);
+      void clearComboBoxItem(int id);
+
+      void addListItem(int id, const wchar_t* text);
+      int  getListSelCount(int id);
+      int  getListIndex(int id);
 
       void setText(int id, const wchar_t* text);
+      void setIntText(int id, int value);
       void getText(int id, wchar_t** text, int length);
+      int  getIntText(int id);
       void setTextLimit(int id, int maxLength);
+
+      void setCheckState(int id, bool value);
+      bool getCheckState(int id);
 
    public:
       static BOOL CALLBACK DialogProc(HWND hwnd, size_t message, WPARAM wParam, LPARAM lParam);
@@ -88,6 +103,7 @@ namespace elena_lang
       int show();
 
       WinDialog(HINSTANCE instance, WindowBase* owner)
+         : _handle(nullptr)
       {
          _instance = instance;
          _owner = owner;
@@ -107,6 +123,79 @@ namespace elena_lang
       bool showModal() override;
 
       ProjectSettings(HINSTANCE instance, WindowBase* owner, ProjectModel* model);
+   };
+
+   class EditorSettings : public WinDialog, public EditorSettingsBase
+   {
+      TextViewModelBase* _model;
+
+      void onCreate() override;
+      void onOK() override;
+
+   public:
+      bool showModal() override;
+
+      EditorSettings(HINSTANCE instance, WindowBase* owner, TextViewModelBase* model);
+   };
+
+   class FindDialog : public WinDialog, public FindDialogBase
+   {
+      FindModel* _model;
+      bool       _replaceMode;
+
+      void copyHistory(int id, SearchHistory* history);
+
+      void onCreate() override;
+      void onOK() override;
+
+   public:
+      bool showModal() override;
+
+      FindDialog(HINSTANCE instance, WindowBase* owner, bool replaceMode, FindModel* model);
+   };
+
+   // --- GoToLineDialog ---
+
+   class GoToLineDialog : public WinDialog, public GotoDialogBase
+   {
+      int _lineNumber;
+
+      void onCreate() override;
+      void onOK() override;
+
+   public:
+      bool showModal(int& row) override;
+
+      GoToLineDialog(HINSTANCE instance, WindowBase* owner);
+   };
+
+   class WindowListDialog : public WinDialog, public WindowListDialogBase
+   {
+      TextViewModel* _model;
+      int            _selectedIndex;
+
+      void doCommand(int id, int command) override;
+
+      void onListChange();
+
+      int getSelectedWindow();
+
+   public:
+      SelectResult selectWindow() override;
+
+      void onCreate() override;
+      void onOK() override;
+
+      WindowListDialog(HINSTANCE instance, WindowBase* owner, TextViewModel* model);
+   };
+
+   class AboutDialog : public WinDialog
+   {
+   public:
+      void onCreate() override;
+      void onOK() override;
+
+      AboutDialog(HINSTANCE instance, WindowBase* owner);
    };
 
 }

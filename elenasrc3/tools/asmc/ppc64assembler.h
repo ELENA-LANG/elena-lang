@@ -88,6 +88,8 @@ namespace elena_lang
       void compileCMPWI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMPDI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFCTIW(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFCTID(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileFCTIDZ(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileDIVD(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileDIVW(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileDIVWU(ScriptToken& tokenInfo, MemoryWriter& writer);
@@ -105,6 +107,7 @@ namespace elena_lang
       void compileFSQRT(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileISELEQ(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileISELLT(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileISELGT(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileOR(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileORI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileLBZ(ScriptToken& tokenInfo, MemoryWriter& writer);
@@ -147,13 +150,13 @@ namespace elena_lang
 
       bool compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;
-      bool compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope) override;
       bool compileDOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileEOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileFOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileIOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileJOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;
-      bool compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope) override;
       bool compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileNOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileOOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
@@ -162,7 +165,7 @@ namespace elena_lang
       bool compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileTOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileUOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
-      bool compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope) override;
 
       void compileProcedure(ScriptToken& tokenInfo) override;
 

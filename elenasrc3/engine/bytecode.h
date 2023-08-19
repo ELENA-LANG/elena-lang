@@ -41,7 +41,6 @@ namespace elena_lang
       LoadS          = 0x14,
       MLen           = 0x15,
       DAlloc         = 0x16,
-      XAssignSP      = 0x17,
       DTrans         = 0x18,
       XAssign        = 0x19,
       LLoad          = 0x1A,
@@ -58,8 +57,16 @@ namespace elena_lang
       FSave          = 0x25,
       WRead          = 0x26,
       XJump          = 0x27,
+      BCopy          = 0x28,
+      WCopy          = 0x29,
+      XPeekEq        = 0x2A,
       XGet           = 0x2E,
       XCall          = 0x2F,
+
+      FIAdd          = 0x70,
+      FISub          = 0x71,
+      FIMul          = 0x72,
+      FIDiv          = 0x73,
 
       MaxSingleOp    = 0x77,
 
@@ -121,6 +128,7 @@ namespace elena_lang
       LLoadDP        = 0xAC,
       XFillR         = 0xAD,
       XStoreI        = 0xAE,
+      SetSP          = 0xAF,
 
       CallR          = 0xB0,
       CallVI         = 0xB1,
@@ -155,6 +163,7 @@ namespace elena_lang
       FDivDPN        = 0xD3,
       UDivDPN        = 0xD4,
 
+      SelGrRR        = 0xD7,
       IAndDPN        = 0xD8,
       IOrDPN         = 0xD9,
       IXorDPN        = 0xDA,
@@ -202,6 +211,8 @@ namespace elena_lang
 
       ImportOn       = 0x2002,
       ImportOff      = 0x2003,
+
+      Idle           = 0x4001,
 
       Match          = 0x8FFE,  // used in optimization engine
       None           = 0x8FFF,  // used in optimization engine
@@ -456,10 +467,26 @@ namespace elena_lang
       static void generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* module, MemoryDump& tapeSymbol);
    };
 
+   enum class ByteCodePatternType
+   {
+      None = 0,
+      Set,
+      Match,
+      MatchArg
+   };
+
+   struct PatternArg
+   {
+      int arg1;
+      int arg2;
+   };
+
    // --- ByteCodePattern ---
    struct ByteCodePattern
    {
-      ByteCode        code;
+      ByteCode             code;
+      ByteCodePatternType  argType;
+      int                  argValue;
 
       bool operator ==(ByteCode code) const
       {
@@ -473,7 +500,7 @@ namespace elena_lang
 
       bool operator ==(ByteCodePattern pattern)
       {
-         return (code == pattern.code/* && argumentType == pattern.argumentType && argument == pattern.argument*/);
+         return (code == pattern.code && argType == pattern.argType && argValue == pattern.argValue);
       }
 
       bool operator !=(ByteCodePattern pattern)
@@ -481,7 +508,47 @@ namespace elena_lang
          return !(*this == pattern);
       }
 
+      bool checkLabel(ByteCodeIterator it, int label, int offset);
+
+      bool match(ByteCodeIterator& it, PatternArg& arg)
+      {
+         auto bc = *it;
+
+         if (code != bc.code)
+            return code == ByteCode::Match;
+
+         switch (argType) {
+            case ByteCodePatternType::Set:
+               if (argValue == 1) {
+                  arg.arg1 = bc.arg1;
+               }
+               else arg.arg2 = bc.arg1;
+               return true;
+            case ByteCodePatternType::Match:
+               return ((argValue == 1) ? arg.arg1 : arg.arg2) == bc.arg1;
+            case ByteCodePatternType::MatchArg:
+               switch (bc.code) {
+                  case ByteCode::Jne:
+                  case ByteCode::Jump:
+                     return checkLabel(it, bc.arg1, argValue);
+                  default:
+                     return argValue == bc.arg1;
+               }
+               break;               
+            default:
+               return true;
+         }
+      }
    };
+
+   typedef MemoryTrieNode<ByteCodePattern>   ByteCodeTrieNode;
+   struct ByteCodePatternContext
+   {
+      ByteCodeTrieNode node;
+      PatternArg       arg;
+   };
+
+   typedef CachedList<ByteCodePatternContext, 10> ByteCodePatterns;
 
    // --- ByteCodeTransformer ---
    struct ByteCodeTransformer
@@ -490,6 +557,10 @@ namespace elena_lang
 
       MemoryByteTrie trie;
       bool           loaded;
+
+      void transform(ByteCodeIterator trans_it, ByteCodeTrieNode replacement, PatternArg& arg);
+
+      bool apply(CommandTape& tape);
 
       ByteCodeTransformer()
          : trie({ ByteCode::None })

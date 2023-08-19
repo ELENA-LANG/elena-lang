@@ -87,9 +87,9 @@ public sealed Array<T> : Indexable<T>
       else
       {
          system'InvalidArgumentException.raise();
+      };
             
-         ^ nil // !! never reached
-      }
+      ^ nil // !! never reached
    }
 
    setAt(int n, T item)
@@ -160,7 +160,7 @@ public sealed Array<T> : Indexable<T>
 
 // --- Variadic Array template ---
 
-public sealed nonstructural VariadicArray<T> //: Indexable<T>
+public sealed nonstructural VariadicArray<T> : Indexable<T>
 {
    embeddable __string T[] array;
 
@@ -194,6 +194,21 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
          this index := -1
       }
    };
+
+   Indexer<T> indexer() = new BaseIndexer<T>
+   {
+      this index := 0;
+        
+      this length := self.Length;
+        
+      get T Value()
+         = self.at(this index.Value);
+            
+      set Value(T o)
+      {
+         self.setAt(this index.Value, o)
+      }
+   };    
 
    T[] cast()
    {
@@ -241,7 +256,7 @@ public const struct String : BaseValue,
       byte buffer[4];
       int chVal := ch.Value;
       int  length := ch.Length;
-      length := PrimitiveOperations.copyUTF32(buffer, 0, chVal);
+      length := PrimitiveOperations.copyUTF8_2_32(buffer, 0, chVal);
         
       int offs := 0;
       for (int i := 0, i < size, i := i + 1)
@@ -356,7 +371,15 @@ public const struct String : BaseValue,
    private copySubS(string dest, string sour, int index, int length, int sourIndex) : external(system'core_routines'__str_xcopysubs);
 
    char at(int index)
-      = PrimitiveOperations.readUTF32(array, index);
+   {
+      int len := self.Length;
+      if (index < 0 || index >= len)
+      {
+         OutOfRangeException.raise()
+      };
+
+      ^ PrimitiveOperations.readUTF32(array, index);
+   }
 
    retoverload byte at(int index)
       = array[index];
@@ -387,7 +410,7 @@ public const struct String : BaseValue,
    int indexOf(int index, string literal)
       : info("Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1")
    {
-      int sublen := literal.Length - index;
+      int sublen := literal.Length;
       int retVal := PrimitiveStringOperations.indexOf(self, literal, index, sublen);
         
       ^ retVal
@@ -610,7 +633,7 @@ public const struct WideString : BaseValue
       short buffer[4];
       int chVal := ch.Value;
       int  length := ch.Length;
-      length := PrimitiveOperations.copyUTF32(buffer, 0, chVal);
+      length := PrimitiveOperations.copyUTF16_2_32(buffer, 0, chVal);
         
       int offs := 0;
       for (int i := 0, i < size, i := i + 1)
@@ -708,7 +731,15 @@ public const struct WideString : BaseValue
       <= less(cast wide(ch));
 
    char at(int index)
-      = PrimitiveOperations.readUTF32(array, index);
+   {
+      int len := self.Length;
+      if (index < 0 || index >= len)
+      {
+         OutOfRangeException.raise()
+      };
+
+      ^ PrimitiveOperations.readUTF32(array, index);
+   }
 
    retoverload short at(int index)
       = array[index];
@@ -739,7 +770,7 @@ public const struct WideString : BaseValue
    int indexOf(int index, wide literal)
       : info("Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1")   
    {
-      int sublen := literal.Length - index;
+      int sublen := literal.Length;
       int retVal := PrimitiveWideStringOperations.indexOf(self, literal, index, sublen);
         
       ^ retVal
@@ -758,7 +789,7 @@ public const struct WideString : BaseValue
    {
       int l1 := self.Length;
       int l2 := s.Length;
-      string retVal := WideString.allocate(l1 + l2);
+      wide retVal := WideString.allocate(l1 + l2);
 
       self.copySubS(retVal, self, 0, index);
       self.copySubS(retVal, s, index, l2);    
@@ -775,18 +806,18 @@ public const struct WideString : BaseValue
    {
       int len1 := self.Length;
       int sindex := index + length;
-      string retVal := WideString.allocate(len1-length);
+      wide retVal := WideString.allocate(len1-length);
 
       self.copySubS(retVal, self, 0, index);
-      self.copySubS(retVal, self, sindex, len1 - length, index);
+      self.copySubS(retVal, self, index, len1 - sindex, sindex);
     
       ^ retVal;         
    }
 
-   string Substring(int index, int length)
+   wide Substring(int index, int length)
       : info("Returns the substring")
    {
-      ^ String.fromByteArray(array, index, length);
+      ^ WideString.fromShortArray(index, length, array);
    }
 
    int save(int index, int length, char[] buffer, int destIndex)

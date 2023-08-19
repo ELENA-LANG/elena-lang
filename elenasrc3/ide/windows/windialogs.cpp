@@ -143,6 +143,11 @@ MessageDialogBase::Answer MessageDialog :: question(text_str message)
    else return Answer::No;
 }
 
+void MessageDialog :: info(text_str message)
+{
+   ::MessageBox(_owner->handle(), message, APP_NAME, MB_OK | MB_ICONWARNING);
+}
+
 // --- WinDialog ---
 
 BOOL CALLBACK WinDialog::DialogProc(HWND hWnd, size_t message, WPARAM wParam, LPARAM lParam)
@@ -170,10 +175,10 @@ void WinDialog :: doCommand(int id, int command)
    switch (id) {
       case IDOK:
          onOK();
-         ::EndDialog(_handle, -1);
+         ::EndDialog(_handle, IDOK);
          break;
       case IDCANCEL:
-         ::EndDialog(_handle, 0);
+         ::EndDialog(_handle, IDCANCEL);
          break;
    }
 }
@@ -182,6 +187,16 @@ int WinDialog :: show()
 {
    return (int)::DialogBoxParam(_instance, MAKEINTRESOURCE(_dialogId),
       _owner->handle(), (DLGPROC)DialogProc, (LPARAM)this);
+}
+
+void WinDialog :: clearComboBoxItem(int id)
+{
+   int counter = ::SendDlgItemMessage(_handle, id, CB_GETCOUNT, 0, 0);
+   while (counter > 0) {
+      ::SendDlgItemMessage(_handle, id, CB_DELETESTRING, 0, 0);
+
+      counter--;
+   }
 }
 
 void WinDialog :: addComboBoxItem(int id, const wchar_t* text)
@@ -199,9 +214,32 @@ int WinDialog :: getComboBoxIndex(int id)
    return (int)::SendDlgItemMessage(_handle, id, CB_GETCURSEL, 0, 0);
 }
 
+void WinDialog :: addListItem(int id, const wchar_t* text)
+{
+   ::SendDlgItemMessage(_handle, id, LB_ADDSTRING, 0, (LPARAM)text);
+}
+
+int WinDialog :: getListSelCount(int id)
+{
+   return (int)::SendDlgItemMessage(_handle, id, LB_GETSELCOUNT, 0, 0);
+}
+
+int WinDialog :: getListIndex(int id)
+{
+   return (int)::SendDlgItemMessage(_handle, id, LB_GETCURSEL, 0, 0);
+}
+
 void WinDialog :: setText(int id, const wchar_t* text)
 {
    ::SendDlgItemMessage(_handle, id, WM_SETTEXT, 0, (LPARAM)text);
+}
+
+void WinDialog :: setIntText(int id, int value)
+{
+   String<text_c, 15> s;
+   s.appendInt(value);
+
+   ::SendDlgItemMessage(_handle, id, WM_SETTEXT, 0, (LPARAM)(s.str()));
 }
 
 void WinDialog :: setTextLimit(int id, int maxLength)
@@ -212,6 +250,30 @@ void WinDialog :: setTextLimit(int id, int maxLength)
 void WinDialog :: getText(int id, wchar_t** text, int length)
 {
    ::SendDlgItemMessage(_handle, id, WM_GETTEXT, length, (LPARAM)text);
+}
+
+int WinDialog :: getIntText(int id)
+{
+   wchar_t s[13];
+
+   ::SendDlgItemMessage(_handle, id, WM_GETTEXT, 12, (LPARAM)s);
+
+   return StrConvertor::toInt(s, 10);
+}
+
+void WinDialog :: setCheckState(int id, bool value)
+{
+   ::SendDlgItemMessage(_handle, id, BM_SETCHECK, value ? BST_CHECKED : BST_UNCHECKED, 0);
+}
+
+bool WinDialog :: getCheckState(int id)
+{
+   return test((int)::SendDlgItemMessage(_handle, id, BM_GETCHECK, 0, 0), BST_CHECKED);
+}
+
+void WinDialog :: enable(int id, bool enabled)
+{
+   ::EnableWindow(::GetDlgItem(_handle, id), enabled ? TRUE : FALSE);
 }
 
 // --- ProjectSettings ---
@@ -314,4 +376,209 @@ void ProjectSettings :: onOK()
 bool ProjectSettings :: showModal()
 {
    return show() == IDOK;
+}
+
+// --- EditorSettings ---
+
+EditorSettings :: EditorSettings(HINSTANCE instance, WindowBase* owner, TextViewModelBase* model)
+   : WinDialog(instance, owner)
+{
+   _dialogId = IDD_EDITOR_SETTINGS;
+
+   _model = model;
+}
+
+void EditorSettings::onCreate()
+{
+   addComboBoxItem(IDC_EDITOR_COLORSCHEME, _T("Default"));
+   addComboBoxItem(IDC_EDITOR_COLORSCHEME, _T("Classic"));
+
+   setComboBoxIndex(IDC_EDITOR_COLORSCHEME, _model->schemeIndex);
+}
+
+void EditorSettings :: onOK()
+{
+   int index = getComboBoxIndex(IDC_EDITOR_COLORSCHEME);
+   if (index != -1)
+      _model->schemeIndex = index;
+}
+
+bool EditorSettings :: showModal()
+{
+   return show() == IDOK;
+}
+
+// --- FindDialog ---
+
+FindDialog :: FindDialog(HINSTANCE instance, WindowBase* owner, bool replaceMode, FindModel* model)
+   : WinDialog(instance, owner)
+{
+   _replaceMode = replaceMode;
+   _dialogId = replaceMode ? IDD_EDITOR_REPLACE : IDD_EDITOR_FIND;
+   _model = model;
+}
+
+void FindDialog :: copyHistory(int id, SearchHistory* history)
+{
+   clearComboBoxItem(id);
+
+   SearchHistory::Iterator it = history->start();
+   while (!it.eof()) {
+      addComboBoxItem(id, *it);
+
+      ++it;
+   }
+}
+
+bool FindDialog :: showModal()
+{
+   return show() == IDOK;
+}
+
+void FindDialog :: onCreate()
+{
+   setText(IDC_FIND_TEXT, _model->text.str());
+   if (_replaceMode) {
+      setText(IDC_REPLACE_TEXT, _model->newText.str());
+   }
+   setCheckState(IDC_FIND_CASE, _model->matchCase);
+   setCheckState(IDC_FIND_WHOLE, _model->wholeWord);
+
+   copyHistory(IDC_FIND_TEXT, &_model->searchHistory);
+
+   //if (_replaceHistory) {
+   //   copyHistory(IDC_REPLACE_TEXT, _replaceHistory);
+   //}
+}
+
+void FindDialog :: onOK()
+{
+   wchar_t s[200];
+
+   getText(IDC_FIND_TEXT, (wchar_t**)(&s), 255);
+   _model->text.copy(s);
+
+   if (_replaceMode) {
+      getText(IDC_REPLACE_TEXT, (wchar_t**)(&s), 255);
+      _model->newText.copy(s);
+   }
+
+   _model->matchCase = getCheckState(IDC_FIND_CASE);
+   _model->wholeWord = getCheckState(IDC_FIND_WHOLE);
+}
+
+// --- GoToLineDialog ---
+
+GoToLineDialog :: GoToLineDialog(HINSTANCE instance, WindowBase* owner)
+   : WinDialog(instance, owner)
+{
+   _dialogId = IDD_GOTOLINE;
+}
+
+void GoToLineDialog :: onCreate()
+{
+   setIntText(IDC_GOTOLINE_LINENUMBER, _lineNumber);
+}
+
+void GoToLineDialog :: onOK()
+{
+   _lineNumber = getIntText(IDC_GOTOLINE_LINENUMBER);
+}
+
+bool GoToLineDialog :: showModal(int& row)
+{
+   _lineNumber = row;
+
+   if (show() == IDOK) {
+      row = _lineNumber;
+
+      return true;
+   }
+
+   return false;
+}
+
+// --- WindowListDialog ---
+
+WindowListDialog :: WindowListDialog(HINSTANCE instance, WindowBase* owner, TextViewModel* model)
+   : WinDialog(instance, owner)
+{
+   _dialogId = IDD_WINDOWS;
+   _model = model;
+   _selectedIndex = -1;
+}
+
+void WindowListDialog :: onListChange()
+{
+   enable(IDOK, (getListSelCount(IDC_WINDOWS_LIST) == 1));
+}
+
+void WindowListDialog :: doCommand(int id, int command)
+{
+   switch (id) {
+      case IDC_WINDOWS_LIST:
+         if (command == LBN_SELCHANGE) {
+            onListChange();
+         }
+         break;
+      case IDC_WINDOWS_CLOSE:
+         _selectedIndex = getSelectedWindow();
+         ::EndDialog(_handle, -2);
+         break;
+      default:
+         WinDialog::doCommand(id, command);
+         break;
+   }
+}
+
+int WindowListDialog :: getSelectedWindow()
+{
+   return getListIndex(IDC_WINDOWS_LIST);
+}
+
+void WindowListDialog :: onOK()
+{
+   _selectedIndex = getSelectedWindow();
+}
+
+void WindowListDialog :: onCreate()
+{
+   int count = _model->getDocumentCount();
+   for (int i = 1; i <= count; i++) {
+      path_t path = _model->getDocumentPath(i);
+
+      addListItem(IDC_WINDOWS_LIST, path);
+   }
+}
+
+WindowListDialogBase::SelectResult WindowListDialog :: selectWindow()
+{
+   int retVal = show();
+
+   if (retVal == IDOK) {
+      return { _selectedIndex + 1, Mode::Activate };
+   }
+   if (retVal == -2) {
+      return { _selectedIndex + 1, Mode::Close };
+   }
+
+   return { 0, Mode::None };
+}
+
+// --- AboutDialog ---
+
+AboutDialog :: AboutDialog(HINSTANCE instance, WindowBase* owner)
+   : WinDialog(instance, owner)
+{
+   _dialogId = IDD_ABOUT;
+}
+
+void AboutDialog :: onCreate()
+{
+   setText(IDC_ABOUT_LICENCE_TEXT, MIT_LICENSE);
+   setText(IDC_ABOUT_HOME, ELENA_HOMEPAGE);
+}
+
+void AboutDialog :: onOK()
+{
 }

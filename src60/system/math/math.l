@@ -31,6 +31,12 @@ namespace math
 
       mod(BaseVariable v, object m)
          = (*v).mod(m);
+
+      real pi()
+         = Pi_value;
+
+      real e()
+         = 1.0.exp();
    }
 
    public extension mathOp

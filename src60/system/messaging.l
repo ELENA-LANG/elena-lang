@@ -66,6 +66,9 @@ public sealed const struct MessageName
       self.loadMessageName(mssg);
    }
 
+   bool equal(MessageName subject)
+      = value == subject;
+
    Message getPropertyMessage()
    {
       self.createGetProperty(ref Message message);
@@ -80,6 +83,15 @@ public sealed const struct MessageName
       ^ message
    }
 
-   dispatch() : external(system'core_routines'__mssgname_dispatcher);
+   string toPrintable()
+   {
+      byte buffer[256];
+      int  length := extern LoadActionNameLA(self, buffer, 255);
+        
+      ^ String.fromByteArray(0, length, buffer)
+   }
+
+   dispatch() : external(system'core_routines'__mssgname_dispatcher),
+      info("Qualifies incoming messages and redirects to the target");
 }
 

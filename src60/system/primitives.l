@@ -17,7 +17,7 @@ internal singleton PrimitiveOperations
          int chVal := ch.Value;
          int chLen := ch.Length;
          
-         PrimitiveOperations.copyUTF32(dest, j, chVal);
+         PrimitiveOperations.copyUTF8_2_32(dest, j, chVal);
          
          j += chLen;
       }
@@ -186,7 +186,7 @@ internal singleton PrimitiveOperations
       ^ subStrLength;
    }
 
-   int copyUTF32(byte[] dest, int index, int value)
+   int copyUTF8_2_32(byte[] dest, int index, int value)
    {
       int length := 0;
       int n := value;
@@ -267,7 +267,7 @@ internal singleton PrimitiveOperations
       ^ length;
    }
 
-   int copyUTF32(short[] dest, int index, int value)
+   int copyUTF16_2_32(short[] dest, int index, int value)
    {
       int length := 0;
       int n := value;
@@ -562,12 +562,12 @@ internal singleton PrimitiveWideStringOperations
       };
 
       sLen -= length;
-      int i := 0;
+      int i := index;
       while (i < sLen) {
          bool isEqual := true;
          int j := 0;         
          while (j < length) {
-            char ch1 := subs[i + j];
+            char ch1 := s[i + j];
             char ch2 := subs[j];
             int len1 := ch2.Length;
             int len2 := ch2.Length;
@@ -579,7 +579,8 @@ internal singleton PrimitiveWideStringOperations
          };
          if (isEqual) {
             ^ i
-         }
+         };
+         i += 1;
       };
 
       ^ -1
@@ -662,4 +663,32 @@ internal singleton PrimitiveIntOperations
 
       ^ retVal
    }
+}
+
+// --- PrimitiveArrayOperations ---
+
+internal singleton PrimitiveArrayOperations
+{
+   int copyToShortArray(byte[] byteArray, int index, int length, short[] output, outputIndex)
+   {
+      int outputLen := 0;
+      int len := length;
+      int i := index;
+      int j := outputIndex;
+      while (len > 1) {
+         short tmp := byteArray[i + 1];
+         tmp *= 100h;
+         tmp += byteArray[i];
+
+         output[j] := tmp;
+
+         i += 2;
+         len -= 2;
+
+         outputLen += 1;
+         j += 1;
+      };
+
+      ^ outputLen;
+   }      
 }

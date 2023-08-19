@@ -3,7 +3,7 @@
 //
 //		This is a main file containing doc generator header
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef LODC_H
@@ -79,6 +79,7 @@ namespace elena_lang
             constructors(nullptr), convertors(nullptr), extensions(nullptr),
             properties(nullptr), staticProperties(nullptr)
       {
+         templateBased = false;
          virtualMode = false;
       }
    };
@@ -96,10 +97,16 @@ namespace elena_lang
 
    inline int sortApiClassInfo(ApiClassInfo* p, ApiClassInfo* n)
    {
-      if ((*p->name).greater((*n->name))) {
+      IdentifierString pname(*p->name);
+      IdentifierString nname(*n->name);
+
+      pname.lower();
+      nname.lower();
+
+      if ((*pname).greater((*nname))) {
          return -1;
       }
-      else if ((*p->name).compare((*n->name))) {
+      else if ((*pname).compare((*nname))) {
          return 0;
       }
       else return 1;
@@ -107,10 +114,16 @@ namespace elena_lang
 
    inline int sortApiSymbolInfo(ApiSymbolInfo* p, ApiSymbolInfo* n)
    {
-      if ((*p->name).greater((*n->name))) {
+      IdentifierString pname(*p->name);
+      IdentifierString nname(*n->name);
+
+      pname.lower();
+      nname.lower();
+
+      if ((*pname).greater((*nname))) {
          return -1;
       }
-      else if ((*p->name).compare((*n->name))) {
+      else if ((*pname).compare((*nname))) {
          return 0;
       }
       else return 1;

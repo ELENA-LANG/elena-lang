@@ -30,14 +30,24 @@ namespace elena_lang
          int               minimalArgList;
       };
 
+      typedef Stack<Pair<int, int>> LoopLabels;
+
       struct TapeScope
       {
-         Scope* scope;
+         Scope*      scope;
 
-         int    reserved;
-         int    reservedN;
+         int         reserved;
+         int         reservedN;
 
-         bool   classMode;
+         bool        classMode;
+
+         LoopLabels  loopLabels;
+
+         TapeScope(Scope* scope, int reserved, int reservedN, bool classMode)
+            : scope(scope), reserved(reserved), reservedN(reservedN), classMode(classMode), loopLabels({})
+         {
+            
+         }
       };
 
       typedef void(*Saver)(CommandTape& tape, BuildNode& node, TapeScope& scope);
@@ -64,7 +74,9 @@ namespace elena_lang
          ReferenceMap& paths, bool tapeOptMode, bool loopMode = false);
       void saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
          ReferenceMap& paths, bool tapeOptMode, bool loopMode);
-      void saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, 
+      void saveNativeBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
+         ReferenceMap& paths, bool tapeOptMode, bool loopMode);
+      void saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths,
          bool tapeOptMode);
       void saveSwitching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths,
          bool tapeOptMode);
@@ -104,6 +116,7 @@ namespace elena_lang
 
    public:
       void loadBuildTreeRules(MemoryDump* dump);
+      void loadByteCodeRules(MemoryDump* dump);
 
       void save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList, bool tapeOptMode);
 

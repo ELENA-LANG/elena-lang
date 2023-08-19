@@ -94,6 +94,8 @@ ELENA byte codes (or ecodes)
 
    seleq r1, r2             - acc <= COMP.EQ ? r1 : r2
 
+   selgr r1, r2             - acc <= COMP.LE ? r1 : r2
+
    sellt r1, r2             - acc <= COMP.LE ? r1 : r2
 
    selult r1, r2            - temp1 : 4 << acc;
@@ -107,6 +109,8 @@ ELENA byte codes (or ecodes)
 
    set fp:i                 - fp[i] => acc
 
+   set sp:i                 - sp[i] => acc
+
    store r                  - acc => [r]
 
    wload                    - index := word([acc])
@@ -117,13 +121,13 @@ ELENA byte codes (or ecodes)
    xassign i                - acc[i] := sp[0];
                               direct operation
 
-   xassignsp                - sp => acc
-
    xget                     - acc[index] => acc
 
    xload                    - index := acc[index]
 
    xlload                   - long:index := long:acc[index]
+
+   xpeekne                  - acc <= COMP.EQ ? sp[0] : acc
 
    xset fp:i                - fp[index + i] => acc
 
@@ -226,6 +230,8 @@ ELENA byte codes (or ecodes)
 
  Object operations:
  ------------------
+   bcopy                    - byte:sp[0] >> int:acc, n bytes
+
    bread                    - byte:sp[0][index*n] >> int:acc, 
 
    class                    - acc := acc.class
@@ -279,6 +285,8 @@ ELENA byte codes (or ecodes)
 
    redirect                 - search acc::VMT for the message in index;
                               if found jumps to it; binary search is used ; index, acc presaved
+
+   wcopy                    - word:sp[0] >> int:acc, 
 
    wread                    - word:sp[0][index*n] >> int:acc, 
 
@@ -344,9 +352,17 @@ ELENA byte codes (or ecodes)
                               [dp[disp]] /= temp;
                               n = 8  
 
-   fexp dp:disp            -  double:tmp << sp[0];
+   fexp dp:disp             -  double:tmp << sp[0];
                               double:dp[disp] := exp(tmp)
 
+   fiadd                    - double:[acc] += int:[sp[0]]
+ 
+   fidiv                    - double:[acc] /= int:[sp[0]]
+ 
+   fimul                    - double:[acc] *= int:[sp[0]]
+
+   fisub                    - double:[acc] -= int:[sp[0]]
+ 
    fmul dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] *= temp;
                               n = 8  
@@ -354,9 +370,9 @@ ELENA byte codes (or ecodes)
    fround dp:disp           - double:tmp << sp[0];
                               double:dp[disp] := trunc(tmp)
 
-   fsqrt dp:disp           -  double:tmp << sp[0];
+   fsqrt dp:disp            - double:tmp << sp[0];
                               double:dp[disp] := sqrt(tmp)
-
+ 
    fsub dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] -= temp;
                               n = 8  

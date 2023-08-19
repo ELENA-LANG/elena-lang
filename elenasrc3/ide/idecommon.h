@@ -8,9 +8,7 @@
 #define IDECOMMON_H
 
 #include "elena.h"
-#include "guicommon.h"
-
-#define IDE_REVISION_NUMBER                           0x0055
+#include "guieditor.h"
 
 namespace elena_lang
 {
@@ -25,6 +23,7 @@ namespace elena_lang
    constexpr auto TEMPLATE_SUB_CATEGORY               = "project/template";
    constexpr auto NAMESPACE_SUB_CATEGORY              = "project/namespace";
    constexpr auto OPTIONS_SUB_CATEGORY                = "project/options";
+   constexpr auto OUTPUT_SUB_CATEGORY                 = "project/output";
 
    constexpr auto MODULE_CATEGORY                     = "files/*";
 
@@ -75,6 +74,7 @@ namespace elena_lang
    constexpr NotificationStatus IDE_COMPILATION_STARTED  = 0x00040;
    constexpr NotificationStatus OUTPUT_SHOWN             = 0x00080;
    constexpr NotificationStatus FRAME_ACTIVATE           = 0x00100;
+   constexpr NotificationStatus COLOR_SCHEME_CHANGED     = 0x00200;
 
    // --- PathSettings ---
    struct PathSettings
@@ -320,6 +320,8 @@ namespace elena_lang
    class GUIFactoryBase
    {
    public:
+      virtual void reloadStyles(TextViewModelBase* model) = 0;
+
       virtual GUIApp* createApp() = 0;
       virtual GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
          ProcessBase* vmConsoleProcess) = 0;

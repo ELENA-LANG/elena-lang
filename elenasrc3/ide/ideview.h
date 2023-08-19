@@ -27,6 +27,8 @@ struct IDEScheme
    int               statusBar;
    int               debugContextMenu;
    int               vmConsoleControl;
+   int               toolBarControl;
+   int               editorContextMenu;
 
    Map<int, text_t>  captions;
 
@@ -41,26 +43,16 @@ struct IDEScheme
       statusBar(-1),
       debugContextMenu(-1),
       vmConsoleControl(-1),
+      toolBarControl(-1),
+      editorContextMenu(-1),
       captions(nullptr)
    {
    }
 };
 
-// --- IDEListener ---
-
-//class IDEListener
-//{
-//public:
-//   virtual void onIDEChange() = 0;
-//};
-
-//typedef List<IDEListener*> IDEListenerListeners;
-
 // --- IDEModel ---
 class IDEModel
 {
-//   IDEListenerListeners listeners;
-
 public:
    IDEStatus       status;
 
@@ -68,18 +60,16 @@ public:
    ProjectModel    projectModel;
    IDEScheme       ideScheme;
 
+   FindModel       findModel;
+
    bool            appMaximized;
 
    SourceViewModel* viewModel() { return &sourceViewModel; }
 
-   //void attachListener(IDEListener* listener);
-
    void changeStatus(IDEStatus status);
 
-   //void onIDEChange();
-
    IDEModel()
-      : /*listeners(nullptr), */projectModel(&status)
+      : projectModel(&status)
    {
       status = IDEStatus::Empty;
       appMaximized = false;

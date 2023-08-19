@@ -34,10 +34,11 @@ namespace elena_lang
       bool mssgNameLiteral;
       bool newOp;
       bool classOne;
+      bool typecastOne;
 
       bool isNonempty() const
       {
-         return variableOne || variadicOne || byRefOne || mssgNameLiteral || newOp;
+         return variableOne || variadicOne || byRefOne || mssgNameLiteral || newOp || typecastOne;
       }
    };
 
@@ -112,6 +113,8 @@ namespace elena_lang
       bool isMultiMethod(ClassInfo& info, MethodInfo& methodInfo);
 
       bool isValidOp(int operatorId, const int* validOperators, size_t len);
+
+      bool isNumericType(ModuleScopeBase& scope, ref_t& reference);
 
       void tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, ClassInfo& info, bool classClassMode);
       void tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef);

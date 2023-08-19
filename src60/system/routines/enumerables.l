@@ -144,11 +144,31 @@ public extension enumerableOp
    summarize()
       = self.summarize(new Variable());
 
-    seekFor(val)
-        = (x => val.equal(x)).retrieve(cast Enumerator(self.enumerator()));
+   seekFor(val)
+      = (x => val.equal(x)).retrieve(cast Enumerator(self.enumerator()));
 
-    bool ifExists(val)
-        = nil != self.seekFor(val);
+   bool ifExists(val)
+      = nil != self.seekFor(val);
+
+   bool sequenceEqual(Enumerable list)
+   {
+      Enumerator it1 := self.enumerator();
+      Enumerator it2 := list.enumerator();
+        
+      while (it1.next())
+      {
+            ifnot(it2.next())
+                { ^ false };
+            
+            ifnot ((*it1).equal(*it2))
+                { ^ false }
+      };
+        
+      if(it2.next())
+         { ^ false };
+        
+      ^ true
+   }
 
    get FirstMember()
    {
@@ -250,6 +270,26 @@ public extension indexableOp
    ascendant()
       = self.clone().sort(ifOrdered);
 
+   bool sequenceEqual(array)
+   {
+      if (self.Length != array.Length)
+         { ^ false };
+            
+      Indexer a := self.indexer();
+      Indexer b := array.indexer();
+        
+      while (a.Available)
+      {
+         ifnot ((*a) == (*b))
+            { ^ false };
+                
+         a.appendIndex:1;
+         b.appendIndex:1
+      };
+          
+      ^ true                
+   }
+
    sequenceReverse()
       = self.sequenceReverse(0, self.Length);
             
@@ -278,4 +318,19 @@ public extension indexableOp
         
       ^ self
    }    
+
+   int indexOfElement(object element)
+   {
+      Indexer it := self.indexer();
+        
+      while (it.Available)
+      {
+         if (element == (*it))
+            { ^ it.Index };
+            
+         it.appendIndex:1;
+      };
+        
+      ^ -1
+   }
 }

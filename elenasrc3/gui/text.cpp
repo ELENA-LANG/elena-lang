@@ -729,7 +729,7 @@ void Text :: save(path_t path)
    }
 }
 
-void Text :: insert(TextBookmark bookmark, text_t s, size_t length, bool checkRowCount)
+void Text :: insert(TextBookmark bookmark, const_text_t s, size_t length, bool checkRowCount)
 {
    size_t position = bookmark.longPosition();
 
@@ -838,7 +838,7 @@ void Text :: erase(TextBookmark bookmark, size_t length, bool checkRowCount)
    }
 }
 
-bool Text :: insertLine(TextBookmark& bookmark, text_t s, size_t length)
+bool Text :: insertLine(TextBookmark& bookmark, const_text_t s, size_t length)
 {
    validateBookmark(bookmark);
 
@@ -926,6 +926,58 @@ bool Text :: eraseLine(TextBookmark& bookmark, size_t length)
    _rowCount = retrieveRowCount();
 
    return true;
+}
+
+inline bool check(text_c ch1, text_c ch2, bool matchCase)
+{
+   if (matchCase) {
+      return (ch1 == ch2);
+   }
+   return (StrUtil::lower(ch1) == StrUtil::lower(ch2));
+}
+
+bool Text :: compare(TextBookmark bookmark, const_text_t line, size_t len, bool matchCase, const_text_t terminators)
+{
+   if (terminators) {
+      if (bookmark.go(-1)) {
+         if ((text_str(terminators).find((*bookmark._page).text[bookmark._offset]) == -1)) {
+            return false;
+         }
+         else bookmark.go(1);
+      }
+   }
+
+   for (size_t i = 0; i < len; i++) {
+      if (!check((*bookmark._page).text[bookmark._offset], line[i], matchCase))
+         return false;
+
+      if (!bookmark.go(1))
+         return (i == (len - 1));
+   }
+   if (terminators) {
+      return (text_str(terminators).find((*bookmark._page).text[bookmark._offset]) != -1);
+   }
+   else return true;
+}
+
+bool Text :: findWord(TextBookmark& bookmark, const_text_t line, bool matchCase, const_text_t terminators)
+{
+   validateBookmark(bookmark);
+   bookmark.normalize();
+
+   size_t len = getlength(line);
+   text_c ch = line[0];
+   while (true) {
+      if (check((*bookmark._page).text[bookmark._offset], ch, matchCase)) {
+         if (compare(bookmark, line, len, matchCase, terminators)) {
+            bookmark._virtual_column = bookmark._column;
+            return true;
+         }
+      }
+      if (!bookmark.move(1))
+         break;
+   }
+   return false;
 }
 
 // --- TextHistory::HistoryWriter ---
@@ -1176,24 +1228,24 @@ void TextHistory :: onUpdate(size_t)
 {
 }
 
-void TextHistory :: onInsert(size_t position, size_t length, text_t line)
+void TextHistory :: onInsert(size_t position, size_t length, const_text_t line)
 {
    if (_locking)
       return;
 
    _buffer->trim(_offset);
 
-   writeOperation(Operation::Insert, (pos_t)position, (pos_t)length, line);
+   writeOperation(Operation::Insert, (pos_t)position, (pos_t)length, (void*)line);
 }
 
-void TextHistory :: onErase(size_t position, size_t length, text_t line)
+void TextHistory :: onErase(size_t position, size_t length, const_text_t line)
 {
    if (_locking)
       return;
 
    _buffer->trim(_offset);
 
-   writeOperation(Operation::Erase, (pos_t)position, (pos_t)length, line);
+   writeOperation(Operation::Erase, (pos_t)position, (pos_t)length, (void*)line);
 }
 
 bool TextHistory :: bof() const

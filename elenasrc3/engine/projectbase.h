@@ -58,6 +58,10 @@ namespace elena_lang
       EHTableEntrySize,
       ThreadCounter,
 
+      ManifestName,
+      ManifestVersion,
+      ManifestAuthor,
+
       // flags
       DebugMode,
       MappingOutputMode,
@@ -185,6 +189,7 @@ namespace elena_lang
       virtual ustr_t StringSetting(ProjectOption option) const = 0;
       virtual bool BoolSetting(ProjectOption option, bool defValue = false) const = 0;
       virtual int IntSetting(ProjectOption option, int defValue = 0) const = 0;
+      virtual unsigned int UIntSetting(ProjectOption option, unsigned int defValue = 0) const = 0;
 
       virtual void initLoader(LibraryProviderBase& libraryProvider)
       {

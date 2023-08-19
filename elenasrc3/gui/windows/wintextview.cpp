@@ -42,9 +42,12 @@ void ViewStyles::release()
 
 // --- TextViewWindow ---
 
-TextViewWindow :: TextViewWindow(TextViewModelBase* model, TextViewControllerBase* controller, ViewStyles* styles)
+TextViewWindow :: TextViewWindow(NotifierBase* notifier, TextViewModelBase* model, 
+   TextViewControllerBase* controller, ViewStyles* styles)
    : WindowBase(nullptr, 50, 50)
 {
+   _notifier = notifier;
+
    _model = model;
    _styles = styles;
    _controller = controller;
@@ -413,10 +416,12 @@ void TextViewWindow :: onResize()
 void TextViewWindow :: onSetFocus()
 {
    if (_model) {
-      _caretVisible = true;
       createCaret(_styles->getLineHeight(), /*_view->docView->status.overwriteMode ? _view->styles.getStyle(STYLE_DEFAULT)->avgCharWidth : */1);
       showCaret();
-      refresh();
+
+      ControlBase::refresh();
+
+      //_caretVisible = true;
    }
 }
 
@@ -555,7 +560,16 @@ bool TextViewWindow :: onKeyPressed(wchar_t ch)
 
       return true;
    }
-   else return false;
+   return false;
+}
+
+void TextViewWindow :: onContextMenu(short x, short y)
+{
+   auto docView = _model->DocView();
+
+   if (_notifier && docView) {
+      _notifier->notifyContextMenu(CONTEXT_MENU_ON, x, y, docView->hasSelection());
+   }
 }
 
 LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
@@ -595,6 +609,9 @@ LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
       case WM_HSCROLL:
          onScroll(SB_HORZ, LOWORD(wParam));
          return 0;
+      case WM_CONTEXTMENU:
+         onContextMenu(LOWORD(lParam), HIWORD(lParam));
+         break;
       default:
          // to make compiler happy
          break;

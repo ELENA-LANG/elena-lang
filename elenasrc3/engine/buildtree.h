@@ -11,6 +11,7 @@
 
 #include "elena.h"
 #include "tree.h"
+#include <climits>
 
 namespace elena_lang
 {
@@ -83,8 +84,8 @@ namespace elena_lang
       ShortOp              = 0x0036,
       ByteCondOp           = 0x0037,
       ShortCondOp          = 0x0038,
-      AccFieldCopying      = 0x0039,
-      AccFieldCopyingTo    = 0x003A,
+      CopyingToAccField    = 0x0039,
+      CopyingAccField      = 0x003A,
       LocalReference       = 0x003B,
       RefParamAssigning    = 0x003C,
       StaticVar            = 0x003D,
@@ -102,7 +103,7 @@ namespace elena_lang
       RealCondOp           = 0x0049,
       VirtualBreakoint     = 0x004A,
       ConversionOp         = 0x004B,
-      SemictResendOp       = 0x004C,
+      SemiResendOp         = 0x004C,
       NilCondOp            = 0x004D,
       AssignLocalToStack   = 0x004E,
       SetImmediateField    = 0x004F,
@@ -138,48 +139,63 @@ namespace elena_lang
       FreeVarStack         = 0x006D,
       FillOp               = 0x006E, // if the argument is 0 - the size is in sp[0]
       StrongResendOp       = 0x006F,
+      CopyingToAccExact    = 0x0070,
+      SavingInt            = 0x0071,
+      AddingInt            = 0x0072,
+      LoadingAccToIndex    = 0x0073,
+      IndexOp              = 0x0074,
+      SavingIndexToAcc     = 0x0075,
+      ContinueOp           = 0x0076,
+      SemiDirectCallOp     = 0x0077,
+      IntRealOp            = 0x0078,
+      RealIntOp            = 0x0079,
 
-      MaxOperationalKey    = 0x0070,
+      MaxOperationalKey    = 0x0079,
 
-      Import               = 0x0070,
-      DictionaryOp         = 0x0071,
-      ObjOp                = 0x0072,
-      AttrDictionaryOp     = 0x0073,
-      DeclOp               = 0x0074,
-      DeclDictionaryOp     = 0x0075,
-      LoopOp               = 0x0076,
-      CatchOp              = 0x0077,
-      ExternOp             = 0x0078,
-      AltOp                = 0x0079,
-      ShortCircuitOp       = 0x007A,
-      Switching            = 0x007B,
-      SwitchOption         = 0x007C,
-      ElseOption           = 0x007D,
-      FinalOp              = 0x007E,
+      Import               = 0x0080,
+      DictionaryOp         = 0x0081,
+      ObjOp                = 0x0082,
+      AttrDictionaryOp     = 0x0083,
+      DeclOp               = 0x0084,
+      DeclDictionaryOp     = 0x0085,
+      LoopOp               = 0x0086,
+      CatchOp              = 0x0087,
+      ExternOp             = 0x0088,
+      AltOp                = 0x0089,
+      ShortCircuitOp       = 0x008A,
+      Switching            = 0x008B,
+      SwitchOption         = 0x008C,
+      ElseOption           = 0x008D,
+      FinalOp              = 0x008E,
+      IntBranchOp          = 0x008F,
+      IntConstBranchOp     = 0x0090,
+      RealBranchOp         = 0x0091,
 
-      VariableInfo         = 0x0090,
-      Variable             = 0x0091,
-      VariableAddress      = 0x0092,
-      IntVariableAddress   = 0x0093,
-      LongVariableAddress  = 0x0094,
-      RealVariableAddress  = 0x0095,
-      ByteArrayAddress     = 0x0096,
-      ShortArrayAddress    = 0x0097,
-      IntArrayAddress      = 0x0098,
-      UIntVariableAddress  = 0x0099,
+      VariableInfo         = 0x00A0,
+      Variable             = 0x00A1,
+      VariableAddress      = 0x00A2,
+      IntVariableAddress   = 0x00A3,
+      LongVariableAddress  = 0x00A4,
+      RealVariableAddress  = 0x00A5,
+      ByteArrayAddress     = 0x00A6,
+      ShortArrayAddress    = 0x00A7,
+      IntArrayAddress      = 0x00A8,
+      UIntVariableAddress  = 0x00A9,
 
-      ParameterInfo        = 0x00A0,
-      Parameter            = 0x00A1,
-      IntParameterAddress  = 0x00A2,
-      LongParameterAddress = 0x00A3,
-      RealParameterAddress = 0x00A4,
-      ParameterAddress     = 0x00A5,
-      MethodName           = 0x00A6,
-      ShortArrayParameter  = 0x00A7,
-      ByteArrayParameter   = 0x00A8,
-      IntArrayParameter    = 0x00A9,
+      ParameterInfo        = 0x00B0,
+      Parameter            = 0x00B1,
+      IntParameterAddress  = 0x00B2,
+      LongParameterAddress = 0x00B3,
+      RealParameterAddress = 0x00B4,
+      ParameterAddress     = 0x00B5,
+      MethodName           = 0x00B6,
+      ShortArrayParameter  = 0x00B7,
+      ByteArrayParameter   = 0x00B8,
+      IntArrayParameter    = 0x00B9,
 
-      BinaryArray          = 0x00B0,
+      BinaryArray          = 0x00C0,
+
+      ByRefOpMark          = 0x4001,
 
       Value                = 0x8001,
       Reserved             = 0x8002,      // reserved managed
@@ -226,6 +242,23 @@ namespace elena_lang
       static void loadBuildKeyMap(BuildKeyMap& map)
       {
          map.add("breakpoint", BuildKey::Breakpoint);
+         map.add("byrefmark", BuildKey::ByRefOpMark);
+         map.add("int_literal", BuildKey::IntLiteral);
+         map.add("copying", BuildKey::Copying);
+         map.add("local_address", BuildKey::LocalAddress);
+         map.add("saving_stack", BuildKey::SavingInStack);
+         map.add("intop", BuildKey::IntOp);
+         map.add("create_struct", BuildKey::CreatingStruct);
+         map.add("assigning", BuildKey::Assigning);
+         map.add("copying_to_acc", BuildKey::CopyingToAcc);
+         map.add("local", BuildKey::Local);
+         map.add("intcondop", BuildKey::IntCondOp);
+         map.add("realcondop", BuildKey::RealCondOp);
+         map.add("branchop", BuildKey::BranchOp);
+         map.add("intbranchop", BuildKey::IntBranchOp);
+         map.add("conversion_op", BuildKey::ConversionOp);
+         map.add("int_real_op", BuildKey::IntRealOp);
+         map.add("real_int_op", BuildKey::RealIntOp);
       }
    };
 
@@ -233,13 +266,15 @@ namespace elena_lang
    typedef Tree<BuildKey, BuildKey::None>::Writer BuildTreeWriter;
    typedef Tree<BuildKey, BuildKey::None>::Node   BuildNode;
 
+   constexpr int BuildKeyNoArg = INT_MAX;
+
    // --- BuildKeyPattern ---
    struct BuildKeyPattern
    {
       BuildKey type;
 
       int      argument;
-      int      pattternId;
+      int      patternId;
 
       bool operator ==(BuildKey type) const
       {
@@ -263,7 +298,17 @@ namespace elena_lang
 
       bool match(BuildNode node)
       {
-         return node.key == type;
+         return node.key == type && (argument == BuildKeyNoArg || node.arg.value == argument);
+      }
+
+      BuildKeyPattern()
+         : type(BuildKey::None), argument(BuildKeyNoArg), patternId(0)
+      {
+         
+      }
+      BuildKeyPattern(BuildKey type)
+         : type(type), argument(BuildKeyNoArg), patternId(0)
+      {
       }
    };
 
@@ -280,7 +325,7 @@ namespace elena_lang
       bool                 loaded;
 
       BuildTreeTransformer()
-         : trie({ BuildKey::None })
+         : trie({ })
       {
          loaded = false;
       }

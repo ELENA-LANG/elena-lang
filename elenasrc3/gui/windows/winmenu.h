@@ -12,7 +12,7 @@
 namespace  elena_lang
 {
    // --- Menu ---
-   class MenuBase : public GUIControlBase
+   class MenuBase : public GUIMenuBase
    {
    protected:
       HMENU  _handle;
@@ -33,8 +33,19 @@ namespace  elena_lang
       void setFocus() override {}
       void refresh() override {}
 
-      void checkItemById(int id, bool checked);
-      void enableMenuItemById(int id, bool enabled);
+      wchar_t getMnemonicAccKey() override;
+
+      void checkMenuItemById(int id, bool checked) override;
+      void enableMenuItemById(int id, bool enabled) override;
+      void enableMenuItemByIndex(int index, bool doEnable) override;
+
+      void insertMenuItemById(int positionId, int id, const_text_t caption) override;
+      void insertMenuItemByIndex(int index, int command, const_text_t caption) override;
+      void insertSeparatorById(int positionId, int id) override;
+
+      void renameMenuItemById(int id, const_text_t caption) override;
+
+      void eraseMenuItemById(int id) override;
    };
 
    class RootMenu : public MenuBase

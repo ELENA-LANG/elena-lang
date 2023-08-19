@@ -698,7 +698,7 @@ namespace elena_lang
       {
          const char* s = (char*)_dump + _offset;
 
-         seek(_offset + getlength(s) + 1);
+         seek(_offset + getlength_pos(s) + 1);
 
          return s;
 
@@ -707,7 +707,7 @@ namespace elena_lang
       {
          const wide_c* s = (const wide_c*)((char*)_dump + _offset);
 
-         seek(_offset + (getlength(s) << 1) + 1);
+         seek(_offset + (getlength_pos(s) << 1) + 1);
 
          return s;
       }

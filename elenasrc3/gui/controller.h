@@ -32,6 +32,8 @@ namespace elena_lang
 
       virtual Answer question(text_str message, const text_str param) = 0;
       virtual Answer question(text_str message) = 0;
+
+      virtual void info(text_str message) = 0;
    };
 
    // --- ProjectSettingsBase ---
@@ -39,6 +41,39 @@ namespace elena_lang
    {
    public:
       virtual bool showModal() = 0;
+   };
+
+   class EditorSettingsBase
+   {
+   public:
+      virtual bool showModal() = 0;
+   };
+
+   class FindDialogBase
+   {
+   public:
+      virtual bool showModal() = 0;
+   };
+
+   class GotoDialogBase
+   {
+   public:
+      virtual bool showModal(int& row) = 0;
+   };
+
+   class WindowListDialogBase
+   {
+   public:
+      enum class Mode
+      {
+         None = 0,
+         Activate,
+         Close
+      };
+
+      typedef Pair<int, Mode, 0, Mode::None> SelectResult;
+
+      virtual SelectResult selectWindow() = 0;
    };
 
    // --- TextViewSettings ---
@@ -75,13 +110,21 @@ namespace elena_lang
       bool eraseChar(TextViewModelBase* model, bool moveback) override;
 
       void indent(TextViewModelBase* model) override;
+      void outdent(TextViewModelBase* model) override;
 
       void undo(TextViewModelBase* model) override;
       void redo(TextViewModelBase* model) override;
 
+      void trim(TextViewModelBase* model) override;
+      void eraseLine(TextViewModelBase* model) override;
+      void duplicateLine(TextViewModelBase* model) override;
+
       void deleteText(TextViewModelBase* model) override;
-      void insertBlockText(TextViewModelBase* model, const text_t s, size_t length) override;
-      void deleteBlockText(TextViewModelBase* model, const text_t s, size_t length) override;
+      void insertBlockText(TextViewModelBase* model, const_text_t s, size_t length) override;
+      void deleteBlockText(TextViewModelBase* model, const_text_t s, size_t length) override;
+
+      void upperCase(TextViewModelBase* model);
+      void lowerCase(TextViewModelBase* model);
 
       bool copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;
       void pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;
@@ -100,6 +143,11 @@ namespace elena_lang
       void selectAll(TextViewModelBase* model) override;
 
       void resizeModel(TextViewModelBase* model, Point size) override;
+
+      bool findText(TextViewModelBase* model, FindModel* findModel);
+      bool replaceText(TextViewModelBase* model, FindModel* findModel);
+
+      void goToLine(TextViewModelBase* model, int row);
 
       TextViewController(TextViewSettings& settings)
       {

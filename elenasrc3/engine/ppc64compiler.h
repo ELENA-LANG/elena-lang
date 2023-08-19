@@ -49,7 +49,8 @@ namespace elena_lang
 
       PPC64leJITCompiler()
          : JITCompiler64()
-      {         
+      {
+         _constants.mediumForm = _constants.extendedForm = 0x7FFF;
       }
    };
 

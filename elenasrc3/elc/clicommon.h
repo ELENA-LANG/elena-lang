@@ -14,7 +14,6 @@
 #include "textparser.h"
 #include "syntaxtree.h"
 #include "projectbase.h"
-#include "errors.h"
 
 namespace elena_lang
 {
@@ -228,6 +227,14 @@ struct BuiltinReferences
    }
 };
 
+// --- ManifestInfo ---
+struct ManifestInfo
+{
+   ustr_t maninfestName;
+   ustr_t maninfestVersion;
+   ustr_t maninfestAuthor;
+};
+
 // --- SizeInfo ---
 struct SizeInfo
 {
@@ -388,6 +395,8 @@ enum class ExpressionAttribute : pos64_t
    WithVariadicArg   = 0x00008000000,
    RetrievingType    = 0x00010000000,
    RetValExpected    = 0x00020000000,
+   CheckShortCircle  = 0x00040000000,
+   DynamicObject     = 0x08000000000,
    Superior          = 0x10000000000,
    Lookahead         = 0x20000000000,
    NoDebugInfo       = 0x40000000000,
@@ -626,6 +635,21 @@ public:
             break;
          default:
             break;
+      }
+   }
+
+   WarningLevel getWarningLevel()
+   {
+      switch (_warningMasks) {
+         case WARNING_MASK_1:
+            return WarningLevel::Level1;
+         case WARNING_MASK_2:
+            return WarningLevel::Level2;
+         case WARNING_MASK_3:
+            return WarningLevel::Level3;
+         case WARNING_MASK_0:
+         default:
+            return WarningLevel::Level0;
       }
    }
 
