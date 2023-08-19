@@ -594,7 +594,8 @@ inline % 0Ch
   andi.   r14, r14, ARG_MASK
 
   li      r19, ~ARG_MASK
-  addis   r19, r19, 0FFFFh
+  andi.   r19, r19, 0FFFFh
+  addis   r19, r19, 0FFFFh // ; note: to adjust hi word                    
 
   lwz     r18, 0(r15)
   and     r18, r18, r19

@@ -5,14 +5,38 @@ In development:
   [development]
     ### EPIC: elena 6.0 - redux ###
      === Iteration 17 ===
+    * ppc64le : vardispatcherTest
+
+    === Iteration 18 ===
+    [!] x86 GUI support
+    [!] pi sample optimization (under 9sec)
+    [!] conditional boxing
     [!] x86 mta support
     [!] elt tutorial (stand-alone / in IDE)
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
-
-    * ppc64le : vardispatcherTest
-
-    * rosetta code sample : Command-line arguments
+    * ide : dark color scheme
+    * conditional boxing for stack allocated parameters (#324, #173)
+    * conditional boxing of stacksafe arguments / self
+    * intnumber.cast<'integer> - should returns itself without boxing
+    * boxing stack allocated variable
+    * boxing stack allocated parameter for strong typed method
+    * test all samples for win x86
+    * optimize: String.prop:Length<ref>[2]
+    * optimize: pi += -1.0;
+    * optimize: pi sample (<7 secs)
+    * rosetta code sample : Anagrams
+    * new rosetta code sample : Amicable pairs (yields)
+    * optimization : X x := new X(); where X is a struct
+    * new unit test : dispatchmr (both function and normal one)
+    * optimize intOp.Absolute method - why no byref handler?
+    * optimize : dcopy - x86-64, aarch64, ppc64le
+    * optimize : dcopydpn - x86, x86-64, aarch64, ppc64le
+    * ide : syntax highlighting (default / classic) 
+    * rosetta code sample : Check that file exists
+    * rosetta code sample : Command-line arguments, Conway's Game of Life, Create a file
+    * rosetta code sample : Create a two-dimensional array at runtime
+    * rosetta code sample : Define a primitive data type
     * ide : goto nested class
     * test UTF16Encoder : to / from utf8, to / from win2152, load file
     * #195 : implementing rosetta code samples
@@ -68,30 +92,6 @@ In development:
     * why IntNumber.add<'RealNumber>[2] has no byref handler
     + #69 : GC info 
     * check the minimal program size - too many references unused
-
-    === Iteration 18 ===
-    [!] x86 GUI support
-    [!] pi sample optimization (under 9sec)
-    [!] conditional boxing
-    * ide : dark color scheme
-    * conditional boxing for stack allocated parameters (#324, #173)
-    * conditional boxing of stacksafe arguments / self
-    * intnumber.cast<'integer> - should returns itself without boxing
-    * boxing stack allocated variable
-    * boxing stack allocated parameter for strong typed method
-    * test all samples for win x86
-    * optimize: String.prop:Length<ref>[2]
-    * optimize: pi += -1.0;
-    * optimize: pi sample (<7 secs)
-    * rosetta code sample : Anagrams
-    * new rosetta code sample : Amicable pairs (yields)
-    * optimization : X x := new X(); where X is a struct
-    * new unit test : dispatchmr (both function and normal one)
-    * optimize intOp.Absolute method - why no byref handler?
-    * optimize : dcopy - x86-64, aarch64, ppc64le
-    * optimize : dcopydpn - x86, x86-64, aarch64, ppc64le
-    * ide : syntax highlighting (default / classic) 
-    * rosetta code sample : Check that file exists
 
     === Iteration 19 ===
     [!] elenavm x64 dll

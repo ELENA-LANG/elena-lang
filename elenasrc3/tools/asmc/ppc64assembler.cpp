@@ -728,7 +728,7 @@ bool PPC64Assembler :: compileXOR(PPCOperand ra, PPCOperand rs, PPCOperand rb, M
 void PPC64Assembler :: compileORI(ScriptToken& tokenInfo, PPCOperand ra, PPCOperand rs, int i, ref_t reference, MemoryWriter& writer)
 {
    if (ra.isGPR() && rs.isGPR()) {
-      writer.writeDWord(PPCHelper::makeDCommand(15, rs.type, ra.type, i));
+      writer.writeDWord(PPCHelper::makeDCommand(24, rs.type, ra.type, i));
 
       if (reference)
          writeDReference(tokenInfo, reference, writer, ASM_INVALID_DESTINATION);
