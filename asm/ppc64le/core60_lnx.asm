@@ -80,10 +80,10 @@ procedure % VEH_HANDLER
   lis   r2, rdata32_hi : %CORE_TOC
   addi  r2, r2, rdata32_lo : %CORE_TOC
 
-  ld      r14, toc_data(r2)
-  addis   r14, r14, data_disp32hi : %CORE_ET_TABLE
-  addi    r14, r14, data_disp32lo : %CORE_ET_TABLE
-  ld      r0, 0(r14)
+  ld      r16, toc_data(r2)
+  addis   r16, r16, data_disp32hi : %CORE_ET_TABLE
+  addi    r16, r16, data_disp32lo : %CORE_ET_TABLE
+  ld      r0, 0(r16)
 
   mtctr   r0
   bctr
