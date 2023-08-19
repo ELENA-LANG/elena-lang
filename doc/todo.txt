@@ -89,6 +89,7 @@ In development:
     * why IntNumber.add<'RealNumber>[2] has no byref handler
     + #69 : GC info 
     * check the minimal program size - too many references unused
+    * inno setup : x86, x86-64
 
     === Iteration 19 ===
     [!] elenavm x64 dll
@@ -250,7 +251,6 @@ Backlog:
     * if statements with single statement
     * replace all default maps with optimized ones (e.g. SyntaxHash, TableHash, SyntaxTable)
     * create github action workflow to build the project
-    * inno setup : x86, x86-64
     * arm : uncomment loadv opcode : using and imm
     * arm / ppc : supporting indexes bigger than arg12 or arg16
     * async programming

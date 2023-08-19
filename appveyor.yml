@@ -1,4 +1,4 @@
-version: 6.0.5.{build}
+version: 6.0.6.{build}
 branches:
   only:
   - master
@@ -10,7 +10,7 @@ platform:
 - x64
 
 after_build:
-  - cmd: call install\build_package_%PLATFORM%.bat elena.%APPVEYOR_BUILD_VERSION%-%PLATFORM%
+  - cmd: call install\build_package_%PLATFORM%.bat elena-lang.%APPVEYOR_BUILD_VERSION%-%PLATFORM%
 
 build:
   verbosity: minimal
