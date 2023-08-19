@@ -1821,7 +1821,6 @@ inline % 0B6h //; (r15 - object, r14 - message)
   ld      r16, -elVMTOffset(r15)      //; edi
   xor     r17, r17, r17               //; ecx 
   ld      r7, -elVMTSizeOffset(r16)   //; esi
-  li      r19, 1
 
   lis     r18, __arg32hi_1
   addi    r18, r18, __arg32lo_1
