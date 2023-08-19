@@ -1,9 +1,15 @@
 import extensions;
 
-A;
-
 public program()
 {
-   var o := nilValue;
-   A a := o;
+   var o := nil;
+   var f := false;
+   try
+   {
+      o.fail()
+   }
+   catch(NilReferenceException e)
+   {
+      f := true;
+   };
 }
