@@ -4,6 +4,7 @@ define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
 define GC_COLLECT	    10004h
 define GC_ALLOCPERM	    10005h
+define THREAD_WAIT          10007h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
@@ -451,9 +452,75 @@ labSkipWait:
 
 end
 
+// --- THREAD_WAIT ---
+// GCXT: it is presumed that gc lock is on, edx - contains the collecting thread event handle
+
+procedure % THREAD_WAIT
+
+  push ebx
+  push ebp
+  mov  edi, esp
+
+  push edx                  // hHandle
+
+  // ; set lock
+  mov  ebx, data : %CORE_GC_TABLE + gc_lock
+labWait:
+  mov edx, 1
+  xor eax, eax  
+  lock cmpxchg dword ptr[ebx], edx
+  jnz  short labWait
+
+  // ; find the current thread entry
+  mov  edx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]  
+  mov  eax, [edx+eax*4]
+
+  mov  esi, [eax+tt_sync_event]   // ; get current thread event
+  mov  [eax+tt_stack_frame], edi  // ; lock stack frame
+
+  // ; signal the collecting thread that it is stopped
+  push esi
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+
+  // ; signal the collecting thread that it is stopped
+  call extern "$rt.SignalStopGCLA"
+  add  esp, 4
+
+  // ; free lock
+  // ; could we use mov [esi], 0 instead?
+  mov  ebx, 0FFFFFFFFh
+  lock xadd [edi], ebx
+
+  // ; stop until GC is ended
+  call extern "$rt.WaitForSignalGCLA"
+
+  add  esp, 8
+  pop  ebx
+
+  ret
+
+end
+
 // ; --- System Core Preloaded Routines --
 
 // ; ==== Command Set ==
+
+// ; snop
+inline % 2
+
+  // ; safe point
+  mov  edx, [data : %CORE_GC_TABLE + gc_signal]
+  test edx, edx                       // ; if it is a collecting thread, waits
+  jz   short labConinue               // ; otherwise goes on
+
+  nop
+  nop
+  call %THREAD_WAIT                   // ; waits until the GC is stopped
+
+labConinue:
+
+end
 
 // ; throw
 inline %0Ah

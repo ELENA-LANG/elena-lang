@@ -7,6 +7,7 @@ define VEH_HANDLER          10003h
 define GC_COLLECT	    10004h
 define GC_ALLOCPERM	    10005h
 define PREPARE	            10006h
+define THREAD_WAIT          10007h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
@@ -345,7 +346,16 @@ procedure %PREPARE
 
 end
 
+procedure %THREAD_WAIT
+
+end
+
 // ; ==== Command Set ==
+
+// ; snop
+inline % 2
+
+end
 
 // ; redirect
 inline % 03h // (rbx - object, rdx - message, r10 - arg0, r11 - arg1)

@@ -18,7 +18,7 @@ using namespace elena_lang;
 
 CodeGenerator _codeGenerators[256] =
 {
-   loadNop, compileBreakpoint, loadNop, loadOp, loadOp, loadOp, loadOp, loadOp,
+   loadNop, compileBreakpoint, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadNop,
@@ -83,14 +83,14 @@ constexpr ref_t coreConstants[coreConstantNumber] =
 };
 
 // preloaded gc routines
-constexpr int coreFunctionNumber = 6;
+constexpr int coreFunctionNumber = 7;
 constexpr ref_t coreFunctions[coreFunctionNumber] =
 {
-   INVOKER, GC_ALLOC, EXCEPTION_HANDLER, GC_COLLECT, GC_ALLOCPERM, PREPARE
+   INVOKER, GC_ALLOC, EXCEPTION_HANDLER, GC_COLLECT, GC_ALLOCPERM, PREPARE, THREAD_WAIT
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 158;
+constexpr size_t bcCommandNumber = 159;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -124,7 +124,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::FSqrtDP, ByteCode::FExpDP, ByteCode::FLnDP, ByteCode::FSinDP, ByteCode::FCosDP,
    ByteCode::FArctanDP, ByteCode::FPiDP, ByteCode::FillIR, ByteCode::XFillR, ByteCode::XStoreI,
    ByteCode::BCopy, ByteCode::WCopy, ByteCode::XPeekEq, ByteCode::SelGrRR, ByteCode::FIAdd,
-   ByteCode::FISub,ByteCode::FIMul,ByteCode::FIDiv,
+   ByteCode::FISub,ByteCode::FIMul,ByteCode::FIDiv, ByteCode::SNop
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,

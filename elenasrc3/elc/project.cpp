@@ -85,6 +85,11 @@ PlatformType Project :: TargetType()
    return _platform & PlatformType::TargetTypeMask;
 }
 
+PlatformType Project :: ThreadModeType()
+{
+   return _platform & PlatformType::ThreadMask;
+}
+
 void Project :: addSource(ustr_t ns, path_t path, ustr_t target)
 {
    if (!_loaded && _projectName.empty())

@@ -12,6 +12,10 @@ In development:
     [!] elt tutorial (stand-alone / in IDE)
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
+
+    * implementing corex: snop
+    * corex : snop, throw, unhook, include, exclude, trylock, freelock, rethrow, hook, system
+
     * ide : dark color scheme
     * conditional boxing for stack allocated parameters (#324, #173)
     * conditional boxing of stacksafe arguments / self
@@ -63,7 +67,6 @@ In development:
     * ide : enable / disable toolbar buttons
     * optimize pi sample
     * optimize dirty_ptr := dirty_ptr + int
-    * implementing corex: snop, using im the code as well
     * implementing corex
     * boxing an array, assinging to the local variable - get rid of double assigning
     * ide : enable / disable menu commands

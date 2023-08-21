@@ -20,6 +20,7 @@ namespace elena_lang
       // commands:
       Nop            = 0x00,
       Breakpoint     = 0x01,
+      SNop           = 0x02,
       Redirect       = 0x03,
       Quit           = 0x04,
       MovEnv         = 0x05,

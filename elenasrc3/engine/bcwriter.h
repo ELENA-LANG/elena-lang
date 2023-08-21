@@ -40,11 +40,12 @@ namespace elena_lang
          int         reservedN;
 
          bool        classMode;
+         bool        threadFriendly;
 
          LoopLabels  loopLabels;
 
-         TapeScope(Scope* scope, int reserved, int reservedN, bool classMode)
-            : scope(scope), reserved(reserved), reservedN(reservedN), classMode(classMode), loopLabels({})
+         TapeScope(Scope* scope, int reserved, int reservedN, bool classMode, bool threadFriendly)
+            : scope(scope), reserved(reserved), reservedN(reservedN), classMode(classMode), threadFriendly(threadFriendly), loopLabels({})
          {
             
          }
@@ -97,15 +98,15 @@ namespace elena_lang
       void saveMethodInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
 
       void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 
-         ReferenceMap& paths, bool tapeOptMode);
+         ReferenceMap& paths, bool tapeOptMode, bool threadFriendly);
 
       void saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths, 
-         bool tapeOptMode);
+         bool tapeOptMode, bool threadFriendly);
 
       void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
-         ReferenceMap& paths, bool tapeOptMode);
+         ReferenceMap& paths, bool tapeOptMode, bool threadFriendly);
       void saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
-         ReferenceMap& paths, bool tapeOptMode);
+         ReferenceMap& paths, bool tapeOptMode, bool threadFriendly);
 
       bool applyRules(CommandTape& tape);
 
@@ -118,7 +119,8 @@ namespace elena_lang
       void loadBuildTreeRules(MemoryDump* dump);
       void loadByteCodeRules(MemoryDump* dump);
 
-      void save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList, bool tapeOptMode);
+      void save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList, 
+         bool tapeOptMode, bool threadFriendly);
 
       ByteCodeWriter(LibraryLoaderBase* loader);
    };
