@@ -13,8 +13,11 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * implementing corex: snop
-    * corex : snop, throw, unhook, include, exclude, trylock, freelock, rethrow, hook, system
+    * ide : unable / disable after close project / open file
+    * rosetta code sample : Check that file exists
+    * rosetta code sample : Command-line arguments, Conway's Game of Life, Create a file
+    * rosetta code sample : Create a two-dimensional array at runtime
+    * corex : throw, unhook, include, exclude, trylock, freelock, rethrow, hook, system
 
     * ide : dark color scheme
     * conditional boxing for stack allocated parameters (#324, #173)
@@ -34,9 +37,6 @@ In development:
     * optimize : dcopy - x86-64, aarch64, ppc64le
     * optimize : dcopydpn - x86, x86-64, aarch64, ppc64le
     * ide : syntax highlighting (default / classic) 
-    * rosetta code sample : Check that file exists
-    * rosetta code sample : Command-line arguments, Conway's Game of Life, Create a file
-    * rosetta code sample : Create a two-dimensional array at runtime
     * rosetta code sample : Define a primitive data type
     * ide : goto nested class
     * test UTF16Encoder : to / from utf8, to / from win2152, load file

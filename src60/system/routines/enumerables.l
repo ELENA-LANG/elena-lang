@@ -203,6 +203,13 @@ public extension enumerableOp
 
    zipForEach(enumerable, func2)
       = self.zipBy(enumerable, func2).forEach:idleFunc1;
+
+   accumulate(variable, operation)
+   {
+      Accumulating.new(variable, operation).run(cast Enumerator(self.enumerator()));
+
+      ^ variable.Value
+   }
 }
 
 // --- indexableOp ---

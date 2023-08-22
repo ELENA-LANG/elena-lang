@@ -2,14 +2,8 @@ import extensions;
 
 public program()
 {
-   var o := nil;
-   var f := false;
-   try
-   {
-      o.fail()
-   }
-   catch(NilReferenceException e)
-   {
-      f := true;
-   };
+    var ch := $97;
+
+    console.printLine:ch;
+    console.printLine(ch.toInt())
 }

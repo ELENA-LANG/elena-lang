@@ -61,6 +61,27 @@ public class Summing : BasePattern
    function(param) { _result.append(param) }
 }
 
+// --- Accumulating ---
+
+public class Accumulating : BasePattern
+{
+   Func2 _operation;
+    
+   constructor new(object variable, Func2 operation)
+   {
+      _result := variable;
+      _operation := operation
+   }
+
+   constructor new(object variable, ExtensionMessage operation)
+   {
+      _result := variable;
+      _operation := (a,b){ operation(a, b) }
+   }
+
+   function(param) { _result.Value := _operation(_result.Value, param) }
+}
+
 // --- Filtering ---
 
 public class Filter : Enumerator
@@ -188,3 +209,4 @@ public class ZipEnumerator : Enumerator
 
    enumerable() => _enumerator1;
 }
+
