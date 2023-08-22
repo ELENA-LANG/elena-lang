@@ -289,6 +289,200 @@ labYGNextFrame:
 
 end
 
+// ; --- GC_COLLECT ---
+// ; in: ecx - fullmode (0, 1)
+inline % GC_COLLECT
+
+  // ; GCXT: set lock
+labStart:
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+
+labWait:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[edi], edx
+  jnz  short labWait
+
+  // ; GCXT: find the current thread entry
+  mov  edx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+
+  push esi
+
+  // ; GCXT: find the current thread entry
+  mov  eax, [edx+eax*4]
+
+  push ebp
+
+  // ; GCXT: lock frame
+  // ; get current thread event
+  mov  esi, [eax + tt_sync_event]
+  mov  [eax + tt_stack_frame], esp
+
+  push ecx
+
+
+  // ; === GCXT: safe point ===
+  mov  edx, [data : %CORE_GC_TABLE + gc_signal]
+  // ; if it is a collecting thread, starts the GC
+  test edx, edx                       
+  jz   short labConinue
+  // ; otherwise eax contains the collecting thread event
+
+  // ; signal the collecting thread that it is stopped
+  push edx
+  push esi
+  call extern "$rt.SignalStopGCLA"
+  add  esp, 4
+
+  // ; free lock
+  // ; could we use mov [esi], 0 instead?
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+  mov  ebx, 0FFFFFFFFh
+  lock xadd [edi], ebx
+
+  // ; stop until GC is ended
+  call extern "$rt.WaitForSignalGCLA"
+  add  esp, 4
+
+  // ; restore registers and try again
+  pop  ecx
+  pop  ebp
+  pop  esi
+
+  jmp  labStart
+
+labConinue:
+  mov  [data : %CORE_GC_TABLE + gc_signal], esi // set the collecting thread signal
+  mov  ebp, esp
+
+  // ; === thread synchronization ===
+
+  // ; create list of threads need to be stopped
+  mov  eax, esi
+  // ; get tls entry address  
+  mov  esi, data : %CORE_THREAD_TABLE + tt_slots
+  mov  edi, [esi - 4]
+labNext:
+  mov  edx, [esi]
+  test edx, edx
+  jz   short labSkipTT
+  cmp  eax, [edx + tt_sync_event]
+  setz cl
+  or   ecx, [edx + tt_flags]
+  test ecx, 1
+  // ; skip current thread signal / thread in safe region from wait list
+  jnz  short labSkipSave
+  push [edx + tt_sync_event]
+labSkipSave:
+
+  // ; reset all signal events
+  push [edx + tt_sync_event]
+  call extern "$rt.SignalClearGCLA"
+  add  esp, 4
+
+  lea  esi, [esi + 8]
+  mov  eax, [data : %CORE_GC_TABLE + gc_signal]
+labSkipTT:
+  sub  edi, 1
+  jnz  short labNext
+
+  mov  esi, data : %CORE_GC_TABLE + gc_lock
+  mov  edx, 0FFFFFFFFh
+  mov  ebx, ebp
+
+  // ; free lock
+  // ; could we use mov [esi], 0 instead?
+  lock xadd [esi], edx
+
+  mov  ecx, esp
+  sub  ebx, esp
+  jz   short labSkipWait
+
+  // ; wait until they all stopped
+  shr  ebx, 2
+  push ecx
+  push ebx
+  call extern "$rt.WaitForSignalsGCLA"
+
+labSkipWait:
+  // ; remove list
+  mov  esp, ebp     
+
+  // ==== GCXT end ==============
+  
+  // ; create set of roots
+  mov  ebp, esp
+  xor  ecx, ecx
+  push ecx        // ; reserve place 
+  push ecx
+  push ecx
+
+  // ;   save static roots
+  mov  ecx, [rdata : %SYSTEM_ENV]
+  mov  esi, stat : %0
+  shl  ecx, 2
+  push esi
+  push ecx
+
+  // ;   collect frames
+  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]  
+  mov  ecx, eax
+
+labYGNextFrame:
+  mov  esi, eax
+  mov  eax, [esi]
+  test eax, eax
+  jnz  short labYGNextFrame
+  
+  push ecx
+  sub  ecx, esi
+  neg  ecx
+  push ecx  
+  
+  mov  eax, [esi + 4]
+  test eax, eax
+  mov  ecx, eax
+  jnz  short labYGNextFrame
+
+  mov [ebp-4], esp      // ; save position for roots
+
+  mov  ebx, [ebp]
+  mov  eax, esp
+
+  // ; restore frame to correctly display a call stack
+  mov  edx, ebp
+  mov  ebp, [edx+4]
+
+  // ; call GC routine
+  push edx
+  push ebx
+  push eax
+  call extern "$rt.ForcedCollectGCLA"
+
+  mov  ebp, [esp+8] 
+  add  esp, 12
+  mov  edi, eax
+
+  // ; GCXT: signal the collecting thread that GC is ended
+  // ; should it be placed into critical section?
+  xor  ecx, ecx
+  mov  esi, [data : %CORE_GC_TABLE + gc_signal]
+  // ; clear thread signal var
+  mov  [data : %CORE_GC_TABLE + gc_signal], ecx
+  push esi
+  call extern "$rt.SignalStopGCLA"
+
+  mov  ebx, edi
+
+  mov  esp, ebp 
+  pop  ecx 
+  pop  ebp
+  pop  esi
+  ret
+
+end
+
 // --- GC_ALLOCPERM ---
 // in: ecx - size ; out: ebx - created object
 procedure %GC_ALLOCPERM
@@ -547,6 +741,30 @@ inline %0Bh
   mov  esp, [edi + es_catch_level]
 
   mov  [ecx + et_current], eax
+
+end
+
+// ; exclude
+inline % 10h
+                                                       
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  esi, [ecx+eax*4]
+  mov  [esi + tt_flags], 1
+  push ebp     
+  mov  [esi + tt_stack_frame], esp
+
+end
+
+// ; include
+inline % 11h
+
+  add  esp, 4                                                       
+
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  esi, [ecx+eax*4]
+  mov  [esi + tt_flags], 0
 
 end
 

@@ -16,11 +16,11 @@ In development:
     * rosetta code sample : Check that file exists
     * rosetta code sample : Command-line arguments, Conway's Game of Life, Create a file
     * rosetta code sample : Create a two-dimensional array at runtime
-    * corex : throw, unhook, include, exclude, trylock, freelock, rethrow, hook, system
 
     * ide : dark color scheme
     * conditional boxing for stack allocated parameters (#324, #173)
     * conditional boxing of stacksafe arguments / self
+    * corex : system
     * intnumber.cast<'integer> - should returns itself without boxing
     * boxing stack allocated variable
     * boxing stack allocated parameter for strong typed method
@@ -92,6 +92,7 @@ In development:
     + #69 : GC info 
     * check the minimal program size - too many references unused
     * inno setup : x86, x86-64
+    * corex : tests - lock test, GC test, printing in one thread / calling GC in another
 
     === Iteration 19 ===
     [!] elenavm x64 dll
