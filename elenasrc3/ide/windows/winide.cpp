@@ -534,33 +534,39 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
       menu->enableMenuItemById(IDM_EDIT_CUT, false);
       menu->enableMenuItemById(IDM_EDIT_COPY, false);
       menu->enableMenuItemById(IDM_EDIT_PASTE, false);
-      menu->enableMenuItemById(IDM_EDIT_DELETE, false);
-      menu->enableMenuItemById(IDM_EDIT_COMMENT, false);
-      menu->enableMenuItemById(IDM_EDIT_UNCOMMENT, false);
-      menu->enableMenuItemById(IDM_EDIT_DUPLICATE, false);
-      menu->enableMenuItemById(IDM_EDIT_SELECTALL, false);
-      menu->enableMenuItemById(IDM_EDIT_ERASELINE, false);
-      menu->enableMenuItemById(IDM_EDIT_INDENT, false);
-      menu->enableMenuItemById(IDM_EDIT_OUTDENT, false);
-      menu->enableMenuItemById(IDM_EDIT_TRIM, false);
-      menu->enableMenuItemById(IDM_EDIT_UPPERCASE, false);
-      menu->enableMenuItemById(IDM_EDIT_LOWERCASE, false);
-
-      menu->enableMenuItemById(IDM_SEARCH_FIND, false);
-      menu->enableMenuItemById(IDM_SEARCH_FINDNEXT, false);
-      menu->enableMenuItemById(IDM_SEARCH_REPLACE, false);
-      menu->enableMenuItemById(IDM_SEARCH_GOTOLINE, false);
-
-      menu->enableMenuItemById(IDM_WINDOW_WINDOWS, false);
-      menu->enableMenuItemById(IDM_WINDOW_NEXT, false);
-      menu->enableMenuItemById(IDM_WINDOW_PREVIOUS, false);
-
-      menu->enableMenuItemById(IDM_DEBUG_CLEARBREAKPOINT, false);
-      menu->enableMenuItemById(IDM_DEBUG_BREAKPOINT, false);
 
       menu->enableMenuItemById(IDM_PROJECT_INCLUDE, false);
    }
-   else menu->enableMenuItemById(IDM_EDIT_PASTE, true);
+   else {
+      menu->enableMenuItemById(IDM_EDIT_PASTE, true);
+
+      menu->enableMenuItemById(IDM_PROJECT_INCLUDE, true);
+   }
+
+   menu->enableMenuItemById(IDM_EDIT_DELETE, !empty);
+   menu->enableMenuItemById(IDM_EDIT_COMMENT, !empty);
+   menu->enableMenuItemById(IDM_EDIT_UNCOMMENT, !empty);
+
+   menu->enableMenuItemById(IDM_EDIT_DUPLICATE, !empty);
+   menu->enableMenuItemById(IDM_EDIT_SELECTALL, !empty);
+   menu->enableMenuItemById(IDM_EDIT_ERASELINE, !empty);
+   menu->enableMenuItemById(IDM_EDIT_INDENT, !empty);
+   menu->enableMenuItemById(IDM_EDIT_OUTDENT, !empty);
+   menu->enableMenuItemById(IDM_EDIT_TRIM, !empty);
+   menu->enableMenuItemById(IDM_EDIT_UPPERCASE, !empty);
+   menu->enableMenuItemById(IDM_EDIT_LOWERCASE, !empty);
+
+   menu->enableMenuItemById(IDM_SEARCH_FIND, !empty);
+   menu->enableMenuItemById(IDM_SEARCH_FINDNEXT, !empty);
+   menu->enableMenuItemById(IDM_SEARCH_REPLACE, !empty);
+   menu->enableMenuItemById(IDM_SEARCH_GOTOLINE, !empty);
+
+   menu->enableMenuItemById(IDM_WINDOW_WINDOWS, !empty);
+   menu->enableMenuItemById(IDM_WINDOW_NEXT, !empty);
+   menu->enableMenuItemById(IDM_WINDOW_PREVIOUS, !empty);
+
+   menu->enableMenuItemById(IDM_DEBUG_CLEARBREAKPOINT, !empty);
+   menu->enableMenuItemById(IDM_DEBUG_BREAKPOINT, !empty);
 
    onResize();
 

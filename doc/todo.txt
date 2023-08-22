@@ -13,7 +13,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * ide : unable / disable after close project / open file
     * rosetta code sample : Check that file exists
     * rosetta code sample : Command-line arguments, Conway's Game of Life, Create a file
     * rosetta code sample : Create a two-dimensional array at runtime
