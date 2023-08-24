@@ -1076,7 +1076,7 @@ namespace elena_lang
 
       ref_t generateConstant(Scope& scope, ObjectInfo& info, ref_t reference);
 
-      mssg_t defineByRefMethod(ClassScope& scope, SyntaxNode node);
+      mssg_t defineByRefMethod(ClassScope& scope, SyntaxNode node/*, bool isExtension*/);
 
       void declareFieldMetaInfo(FieldScope& scope, SyntaxNode node);
       void declareFieldMetaInfos(ClassScope& scope, SyntaxNode node);

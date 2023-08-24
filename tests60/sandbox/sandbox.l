@@ -1,9 +1,8 @@
+import system'routines;
 import extensions;
-
+ 
 public program()
 {
-    var ch := $97;
-
-    console.printLine:ch;
-    console.printLine(ch.toInt())
-}
+    program_arguments.forEvery:(int i)
+        { console.printLine("Argument ",i," is ",program_arguments[i]) }
+}  

@@ -231,6 +231,20 @@ public extension indexableOp<T>
         
       ^ self
    }
+
+   forEvery(Func<int,T> fn)
+   {
+      Indexer it := self.indexer();
+        
+      while (it.Available)
+      {
+         int i := it.Index;
+            
+         fn(i);
+            
+         it.appendIndex:1
+      }
+   }    
 }
 
 public extension indexableOp

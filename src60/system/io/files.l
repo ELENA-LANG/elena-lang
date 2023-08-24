@@ -9,8 +9,8 @@ namespace io
          _path := path
       }
 
-//      bool Available
-//         = fileControl.isAvailable(_path);
+      bool Available
+         = fileControl.isAvailable(_path);
 
       TextReader textreader() = fileControl.newReader(_path);
    }
@@ -26,8 +26,7 @@ namespace io
          _path := path
       }
 
-//      bool Available
-//         = directoryControl.isAvailable(thePath);    
-
+      bool Available
+         = directoryControl.isAvailable(_path);    
    }   
 }

@@ -191,5 +191,36 @@ namespace io
    singleton fileControl
    {
       TextReader newReader(path) = TextStreamReader.new:path;
+
+      bool isAvailable(path)
+      {
+         int ret := extern KERNEL32.GetFileAttributesW(cast wide(path));
+            
+         if(ret != 0FFFFFFFFh)
+         {
+            ret := ret & FILE_ATTRIBUTE_DIRECTORY;
+                
+            ^ ret == 0
+         };
+                
+         ^ false
+      }      
+   }
+
+   singleton directoryControl
+   {
+      bool isAvailable(path)
+      {
+         int ret := extern KERNEL32.GetFileAttributesW(cast wide(path));
+         
+         if(ret != 0FFFFFFFFh)
+            {
+               ret := ret & FILE_ATTRIBUTE_DIRECTORY;
+                    
+               ^ ret != 0
+            };
+                
+         ^ false
+      }    
    }
 }

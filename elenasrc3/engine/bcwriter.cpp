@@ -16,6 +16,16 @@ using namespace elena_lang;
 
 typedef ByteCodeWriter::TapeScope TapeScope;
 
+//inline void testNodes(BuildNode node)
+//{
+//   BuildNode current = node.firstChild();
+//   while (current != BuildKey::None) {
+//      testNodes(current);
+//
+//      current = current.nextNode();
+//   }
+//}
+
 inline BuildKey operator | (const BuildKey& l, const BuildKey& r)
 {
    return (BuildKey)((uint32_t)l | (uint32_t)r);
@@ -1715,6 +1725,12 @@ inline void indexOp(CommandTape& tape, BuildNode& node, TapeScope&)
    BuildNode value = node.findChild(BuildKey::Value);
 
    switch (node.arg.value) {
+      case ADD_OPERATOR_ID:
+         tape.write(ByteCode::AddN, value.arg.value);
+         break;
+      case SUB_OPERATOR_ID:
+         tape.write(ByteCode::SubN, value.arg.value);
+         break;
       case MUL_OPERATOR_ID:
          tape.write(ByteCode::MulN, value.arg.value);
          break;
@@ -1948,6 +1964,50 @@ inline bool intOpWithConsts(BuildNode lastNode)
    return true;
 }
 
+inline bool intOpWithConsts2(BuildNode lastNode)
+{
+   BuildNode copyingOp = lastNode;
+   BuildNode targetNode2 = getPrevious(copyingOp);
+   BuildNode stackOp = getPrevious(targetNode2);
+   BuildNode tempOp = getPrevious(stackOp);
+   BuildNode assigningOp = getPrevious(tempOp);
+   BuildNode createOp = getPrevious(assigningOp);
+   BuildNode intOp = getPrevious(createOp);
+   BuildNode stackOp2 = getPrevious(intOp);
+   BuildNode intLiteralOp = getPrevious(stackOp2);
+   BuildNode stackOp3 = getPrevious(intLiteralOp);
+   BuildNode sourceOp = getPrevious(stackOp3);
+
+   BuildNode valueNode = intLiteralOp.findChild(BuildKey::Value);
+   BuildNode intOpIndex = intOp.findChild(BuildKey::Index);
+
+   if (targetNode2.arg.reference != assigningOp.arg.reference)
+      return false;
+
+   if (tempOp.arg.reference != intOpIndex.arg.reference)
+      return false;
+
+   // !! temporal - exclude div
+   if (intOp.arg.value == DIV_OPERATOR_ID)
+      return false;
+
+   tempOp.setKey(BuildKey::LoadingIndex);
+   tempOp.setArgumentReference(sourceOp.arg.reference);
+
+   stackOp.setKey(BuildKey::IndexOp);
+   stackOp.setArgumentValue(intOp.arg.value);
+   stackOp.appendChild(BuildKey::Value, valueNode.arg.value);
+   copyingOp.setKey(BuildKey::SavingIndexToAcc);
+
+   intOp.setKey(BuildKey::Idle);
+   stackOp2.setKey(BuildKey::Idle);
+   intLiteralOp.setKey(BuildKey::Idle);
+   stackOp3.setKey(BuildKey::Idle);
+   sourceOp.setKey(BuildKey::Idle);
+
+   return true;
+}
+
 inline bool assignIntOpWithConsts(BuildNode lastNode)
 {
    BuildNode opNode = lastNode;
@@ -2159,7 +2219,8 @@ inline bool doubleAssigningIntRealOp(BuildNode lastNode)
 ByteCodeWriter::Transformer transformers[] =
 {
    nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts,
-   boxingInt, nativeBranchingOp, intConstBranchingOp, doubleAssigningConverting, doubleAssigningIntRealOp
+   boxingInt, nativeBranchingOp, intConstBranchingOp, doubleAssigningConverting, doubleAssigningIntRealOp,
+   intOpWithConsts2
 };
 
 // --- ByteCodeWriter ---

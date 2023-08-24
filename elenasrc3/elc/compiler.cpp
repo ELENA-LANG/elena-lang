@@ -2195,7 +2195,7 @@ void Compiler :: injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType
    }
 }
 
-mssg_t Compiler :: defineByRefMethod(ClassScope& scope, SyntaxNode node)
+mssg_t Compiler :: defineByRefMethod(ClassScope& scope, SyntaxNode node/*, bool isExtension*/)
 {
    ref_t outputRef = node.findChild(SyntaxKey::OutputType).arg.reference;
    // NOTE : the embedable type should be read-only, otherwise it is possible that the changes will be lost
@@ -2204,11 +2204,13 @@ mssg_t Compiler :: defineByRefMethod(ClassScope& scope, SyntaxNode node)
       pos_t argCount;
       decodeMessage(node.arg.reference, actionRef, argCount, flags);
 
+      size_t argDiff = /*isExtension ? 0 : */1;
+
       ref_t signRef = 0;
       ustr_t actionName = scope.module->resolveAction(actionRef, signRef);
       ref_t signArgs[ARG_COUNT];
       size_t signLen = scope.module->resolveSignature(signRef, signArgs);
-      if (signLen == (size_t)argCount - 1) {
+      if (signLen == (size_t)argCount - argDiff) {
          signArgs[signLen++] = resolvePrimitiveType(scope, { V_WRAPPER, outputRef }, true);
 
          mssg_t byRefMessage = encodeMessage(
@@ -2276,7 +2278,9 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
          if (methodKey != SyntaxKey::Constructor && !test(hints, (ref_t)MethodHint::Constant)) {
             // HOTFIX : do not generate byref handler for methods returning constant value & variadic method
             if ((current.arg.reference & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE) {
-               mssg_t byRefMethod = withRetOverload ? 0 : defineByRefMethod(scope, current);
+               mssg_t byRefMethod = withRetOverload ? 
+                  0 : defineByRefMethod(scope, current/*, scope.extensionClassRef != 0*/);
+
                if (byRefMethod) {
                   current.appendChild(SyntaxKey::ByRefRetMethod, byRefMethod);
 
@@ -6817,7 +6821,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    }
 
    bool functionMode = test(message, FUNCTION_MESSAGE);
-   if (functionMode) {
+   if (functionMode && target.kind != ObjectKind::ConstantRole) {
       stackSafeAttr >>= 1;
    }
    else stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
