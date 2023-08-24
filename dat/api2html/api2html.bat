@@ -6,5 +6,6 @@
 ..\..\bin\ldoc extensions
 ..\..\bin\ldoc extensions'routines
 ..\..\bin\ldoc extensions'scripting
+..\..\bin\ldoc cellular
 
 copy *.html ..\..\doc\api

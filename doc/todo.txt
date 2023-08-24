@@ -12,13 +12,17 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * rosetta code sample : Conway's Game of Life, Create a file
+    * intmatrix
+    * cellular
+
+    * rosetta code sample : Conway's Game of Life, Create a file, Compare_a_list_of_strings
     * rosetta code sample : Create a two-dimensional array at runtime
 
     * conditional boxing for stack allocated parameters (#324, #173)
     * conditional boxing of stacksafe arguments / self
     * conditional boxing
 
+    * ide : syntax highlighting (default / classic) 
     * ide : dark color scheme
     * intnumber.cast<'integer> - should returns itself without boxing
     * boxing stack allocated variable
@@ -31,7 +35,6 @@ In development:
     * new unit test : dispatchmr (both function and normal one)
     * optimize : dcopy - x86-64, aarch64, ppc64le
     * optimize : dcopydpn - x86, x86-64, aarch64, ppc64le
-    * ide : syntax highlighting (default / classic) 
     * rosetta code sample : Define a primitive data type
     * ide : goto nested class
     * test UTF16Encoder : to / from utf8, to / from win2152, load file

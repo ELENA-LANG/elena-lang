@@ -1,0 +1,23 @@
+<configuration>
+  <platform key="Win_x86">
+     <project>
+        <executable>gameoflife</executable>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <executable>gameoflife64</executable>
+     </project>
+  </platform>
+  <project>
+     <namespace>gameoflife</namespace>
+     <template>console</template>
+  </project>
+  <files>
+     <module>
+            <include>view.l</include>
+            <include>gameoflife.l</include>
+            <include>model.l</include>
+     </module>
+  </files>
+</configuration>
