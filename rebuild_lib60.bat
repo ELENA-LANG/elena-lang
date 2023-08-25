@@ -77,6 +77,11 @@ bin\elena64-cli src60\extensions\extensions.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elena64-cli src60\cellular\cellular.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 bin\ldoc system doc\api
 bin\ldoc system'routines doc\api
 bin\ldoc extensions doc\api

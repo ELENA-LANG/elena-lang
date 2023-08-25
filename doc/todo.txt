@@ -6,35 +6,30 @@ In development:
     ### EPIC: elena 6.0 - redux ###
     === Iteration 18 ===
     [!] x86 GUI support
-    [!] pi sample optimization (under 9sec)
     [!] x86 mta support
     [!] elt tutorial (stand-alone / in IDE)
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * intmatrix
-    * cellular
-
-    * rosetta code sample : Conway's Game of Life, Create a file, Compare_a_list_of_strings
-    * rosetta code sample : Create a two-dimensional array at runtime
-
     * conditional boxing for stack allocated parameters (#324, #173)
     * conditional boxing of stacksafe arguments / self
     * conditional boxing
 
+    * cellular
+    * rosetta code sample : Conway's Game of Life, Create a file, Compare_a_list_of_strings
+    * rosetta code sample : Create a two-dimensional array at runtime
+    * migrate rest of elena 5.0 functionality (infinite enumeration, ...)
+    * if statements with single statement
     * ide : syntax highlighting (default / classic) 
     * ide : dark color scheme
     * intnumber.cast<'integer> - should returns itself without boxing
     * boxing stack allocated variable
     * boxing stack allocated parameter for strong typed method
     * test all samples for win x86
-    * optimize: String.prop:Length<ref>[2]
+    * migrate the rest of system (memory.l)
     * rosetta code sample : Anagrams
     * new rosetta code sample : Amicable pairs (yields)
-    * optimization : X x := new X(); where X is a struct
     * new unit test : dispatchmr (both function and normal one)
-    * optimize : dcopy - x86-64, aarch64, ppc64le
-    * optimize : dcopydpn - x86, x86-64, aarch64, ppc64le
     * rosetta code sample : Define a primitive data type
     * ide : goto nested class
     * test UTF16Encoder : to / from utf8, to / from win2152, load file
@@ -45,11 +40,8 @@ In development:
     * ide : recent files / projects, clear the list
     * string to real : support e notation
     * support constants in array size declaration (see lnx_console.l)
-    * simplify code (see INPUT_RECORD operations)
-    * pi optimization : int-real operation (#86)
     * api : provide field descriptions
     * ide : debug goto source
-    * migrate the rest of system (memory.l)
     * automatical conversion of int literal to int8, int16 and int64 if possible
     * test : print german text
     * examples : collatz, matrix
@@ -60,32 +52,83 @@ In development:
     * examples : replace, trans 
     * examples : textdb, textfile 
     * ide : enable / disable toolbar buttons
-    * optimize pi sample
     * implementing corex
     * ide : enable / disable menu commands
     * ide : window list - close several windows
     * ide : debug watch context menu
-    * field boxing : double assigning
     * elt - exception handler
-    * ide : crashed on end (freepath)
-    * optimize:
-        int dump[4];
-        dump[i*2] := 3;
-    * operations with stack-allocated array : dump[0] := 1;
-    * operation with dynamic array should be direct???
     * ide message : display internal error
     * boolean operators : &&, ||, ^^ - weak implementation
     * uncomment duplicateBoxing
-    * field boxing : e.g x + x - should not be boxed twice
     + #69 : GC info 
-    * check the minimal program size - too many references unused
     * inno setup : x86, x86-64
     * corex : tests - lock test, GC test, printing in one thread / calling GC in another
-    * optimize intOp.Absolute method - why no byref handler?
-    * why IntNumber.add<'RealNumber>[2] has no byref handler
-    * optimize: pi sample (<8 secs)
+    * api : uncomment ExtensionDispatcher and SymbolCollection
+    * elenavm : implementing loadDispatcherOverloadlist
+    * elenavm : implementing rest of dll api
+    * conversion to int - raise an error if not valid
+    * ide : brackets highlight
+    * #15 : return double / long from external function
+    * #47 : Evaluating an expression in a symbol
+    * toPrintable should return both wide and string
+    * native support for long to real
+    * native support for real to long
+    * pi & e constants
+    * prop template : weak
+    * generate default constructor if there is an initializer
+    * repeate-until statements
+    * primitive operations : support all comparision operations (not only <, == and !=)
+    * closure should be sealed
+    * jumping - aligning the target to 4 / 8
+    * mark String.fromByteArray as internal one
+    * simplify - isCompatible - could we get rid of special cases for V_FLAG?
+    * optimization: it should be possible to convert int liteal directly to v_int8 / v_int16 / v_int64,
+      depending on the value size
+    * inside the method, "$name __decl" should return the method full name?
+    * constant field must have assigning expression
+    * class constant (should be a static variable / pure constant - no entry in VMT)
+    * init_handler : call previous one if avialable
+    * do load self for expression with ret statement
+    * verifyMultimethods implements
+    * explicit multimethod
+    * call interface method
+    * nested class cannot have static methods
+    * generic extension - should the output type be set? 
+    * use direct reference for - BoolValue#true.Inverted
+    * equal native bool operation
+    * static symbol should be thread-safe
+    * warn if multiret method is correct : the type should be compatible with the returning type of main handler
+    * warn if multiret method is correct : there should exist a main handler
+    * class constants
+    * mt : note on creating closure - lock GC
+    * editor - do we need checkmode? it seems like not
+    * warn on not found message for the existing object
+    * support constants
+    * ncopy / lcopy
+    * module template - to include basic import statement
+    * module template - probably should include meta dictionary for attributes / types / ...
+    * asmc : raise an error if the label was not resolved
+    * warn if the method was overriden but the output type was not specify
+    * raise an error if the overridden output type was changed
+    * isCompatble - cache the results
+    * external call : pass int constants directly
+    * validate if all abstract methods are declared
+    * retro : is CONVERSION_MESSAGE flag is really required?
+    * for windows x86-64 allocate shadow memory
+    * for linux amd64 allocate shadow memory
+    * redux : add output convertion for the method without the explicit return statement
+    * globals
+    * yield methods
+    + support output redirecting
+    + debugger : stack allocated int value 
+    + test finally block with locally allocated variables
+    + optimize a ? b : c - do not use branching
+    * test if with unknown object
+    * uncomment fieldinit routines, yield methods
+    * ide : styling source code
 
     === Iteration 19 ===
+    [!] pi sample optimization (under 9sec)
     [!] elenavm x64 dll
     [!] elenavm x64 : script executing
     [!] vm terminal x64
@@ -93,6 +136,7 @@ In development:
     * amd64 : implement system 5
     * test all samples for win x86-64
     * optimize Amicable pairs
+    * optimize: pi sample (<8 secs)
 
     === Iteration 20 ===
     [!] support mta_gui, vm_mta_console
@@ -103,27 +147,19 @@ Backlog:
 ------   
     --- elena backlog
     * doc : multiple inheritance - tutorial
-
     * support lneg, lnot
     * implement analog of C# record
     * generic branching operator
     * data alignment : for normal structs - allign the data to 4/8 and make an operation aligned to 4/8;
       so all stack allocated data is aligned to 4 / 8;
       field are allocated to 4 / 8 for all cases except packed flag
-    * optimization : double assigning for external op
-    * ppc64le / aarch64 : fix variadictest
     * uncomment rest of calc sample - supporting function
     * elt : 2+3, "hello", "workd".insert(0, "hello ")
     * check : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
     * x86-64, ppc64, aarch64 : fix loads
     * ppc64, aarch64 : fix xrefresh / xflush - use arg instead of direct values
     * execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
-    * api : uncomment ExtensionDispatcher and SymbolCollection
-    * elenavm : implementing loadDispatcherOverloadlist
-    * elenavm : implementing rest of dll api
     * review install scripts : include all existing samples, use different output folders
-    * elc : improve the compilation speed
-
     * ide : refreshing auto watch - with the same name, unused
     * ide : set / remove breakpoints
     * ide : menu - clear all breakpoints
@@ -132,8 +168,6 @@ Backlog:
     * #580 : new feature : use C# 7.0 style namespace (single line one)
     * ide : exclude the file from the project
     * ide : hide / show include / exclude  depending if the file is a part of the project
-
-    ! migrate rest of elena 5.0 functionality (infinite enumeration, ...)
     ! script and db samples
     ! x86 : gui
     ! api functionality for existing classes : rest of system
@@ -150,13 +184,11 @@ Backlog:
     * ide : save project as
     * Class Constants : review doc and implement if requiered
     * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
-    * optimization : copy a sub array to another array - starting
     * x86 : gui - starting - new project type
     * ide : before compiling, make sure the source file is saved
 
     * new opcode : fexp - ppc64le
     * switch expression
-    * optimization : copy a sub array to another array
     * redesign switch statement : it should be possible to use as an expression as well
       (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
        console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
@@ -166,10 +198,7 @@ Backlog:
 
     * elenavm : preloaded symbol, support preloaded symbols : dynamic
     * elenavm : loading preloaded symbols for newly loaded modules
-
-    * optimization : copy a sub array to another array
     * int32 : implement direct neg, not operations; use it directly for IntNumber
-
     * Dynamic programming in ELENA : bf loop - https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
     * ELENA Script Engine : compiling JavaScript file - https://www.reddit.com/r/elena_lang/comments/6h6nyz/elena_script_engine_compiling_javascript_file/
     * method templates
@@ -179,7 +208,6 @@ Backlog:
     * review system warnings
     * prefix nullable / nable - allow to assign nil
     * introduce Nullable structure
-    * show the signature for the typecast message if possible
     * ide : key combination doesn't work after closing the project
     * strong typed forward constant
     * arrange action for i386 / amd64 linux release
@@ -195,8 +223,6 @@ Backlog:
     * ppc64le / aarch64 : fexp - improve quality / performace
     * test fexpdp opcode
 
-    ! x86 : multi-threading : sync, thread-safe gc, snop
-    ! x86-64 : multi-threading : open another thread
     ! sm : generate advances templates from vm console
     ! elena vm : helloworld sample Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
     ! elena sm : script samples Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
@@ -206,31 +232,17 @@ Backlog:
     ! x86-64 : multi-threading
     ! x86-64 : gui
     ! x86-64 : script samples
-    * templates with parameters: template can have attribute values in the brackets after the main body
-      e.g : info("My class"), MyTemplateWithArg<int>(-2). This feature could be used for the field template
     * migrate: amb, anagram
     * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
     ! elena vm : aarch64, ppc64
     ! elena vm : ppc64
     ! ppc64le : multi-threading
-    --- output redux ---
-    --- elena redux ---
-    --- ide redux ---
-    --- docs / tutorials ---
-    --- x86, x86-64, i386, amd64, ppc64le, arm64 ---
-
-    --- elena tutorials ---
     * review Producing a code in run-time
     * raise an error if the constructor does not handle the argument (if the multimethod is auto generated)
     * read an article about meta programming in Ruby, try to do similar
     * Func<T> / Func1 should use semi-direct call for the function invoke
     * overloading the method return, put it in the first page as a feature
     * lazy expressions, put it in the first page as a feature
-
-    --- elena redux ---
-    * fillir - optimization for 1,2,3,4
-    * dispatch opcode optimization for 1,2,3,4
-    * gc fune-tuning, promote the part of YG to MG if it survive several collecting cycles
     * debugger info : save the path relative to the src60 path?
     * ide : brackets highlight
     * ide : auto indent
@@ -238,23 +250,13 @@ Backlog:
     * ide : rest of menu options
     * ide : context menu
     * internal / auto-generated classes must not be included in run-time attributes
-    * optimization : tuple / array unboxing
-    * extension template should contain all its arguments in the signature
-    * support strong extension template arrayOp<T> : strong, weak
-    * elena : nullable
-    * if statements with single statement
     * replace all default maps with optimized ones (e.g. SyntaxHash, TableHash, SyntaxTable)
     * create github action workflow to build the project
     * arm : uncomment loadv opcode : using and imm
     * arm / ppc : supporting indexes bigger than arg12 or arg16
     * async programming
     * rename movfrm to xmovfp
-    * support single dispatch for constructors
-    * optimization single dispatching
     * redesign : for 64 bit:object size offset should be 8, instead of 4
-    * conversion to int - raise an error if not valid
-    * implement correct string,real,byte,short,long hash functions
-    * dispatch optimization : for 1,2,3 args
     * optimization : WinEncoder.convertChar (do not use the intermediate buffer)
     * ldoc : consoleOp extension should be visible
     * debugger watch: variadic argument list
@@ -268,47 +270,17 @@ Backlog:
     * new features : expression patters, DI
     * unit tests via postfix pattern
     * ide debugger : callstack
-    * system porting : UnsafePointer, characterController, caseStringOp, caseWideOp
-      as well, to pass the name there (currently it passed over template args which is not 100% correct)
     * do:while : both statement are matched : do{ a } while(b) and do{ a } while{ b } which is not correct?
     * ide : error messages if the debug process failed
-    * ide : replace
-    * ide : replace all
     * ide : open the last opened file on the ide start
     * ide : remember last open project
-    * ide : project settings
-    * ide : editor settings
-    * api : migrate VariadicArray, Matrix<T>, BitArray, BitArray32, IntMatrix, RealMatrix
-    * elena : allow to initialize class in-place
     * ide - disable close if no files are open
     * ide - disable close project if the project is closed
     * vm : on stop : unprotected / remove executable flags, on start - reverse the action
     * test three type of self : self, this self, weak self
-    * gc - system_tests - why full collect happends so often
-    * #15 : return double / long from external function
-    * #47 : Evaluating an expression in a symbol
-
-    * ide - tab
-    * ide - close project
-    * ide - close single file project
     * ide - closing old files on opening a project
-    * ide - documentview must be part of the view, rather than the model
-
-    * toPrintable should return both wide and string
-
     * ide : highlight openning / closing brackets
-    * api60 : Indexer2D?
-    * native support for long to real
-    * native support for real to long
-    * pi & e constants
-    * prop template : weak
-    * generate default constructor if there is an initializer
-    * do not box when stack-allocated self is returned from the stack-safe method
-    * tests : mg->yg collecting - x86, x86-64, i386, amd64, ppc64le, arm64
-    * repeate-until statements
     * aarch64 : setting mask for size (createn, ...)
-    * optimization : fields should be aligned to 4 / 8 and the copy operation should take this into account,
-      except for special type of structs - packed one
     * ide : fix errors with font size / switching to error list / clear high light on click
     * ide : react on mouse
     * ide : new menu option : open output
@@ -330,423 +302,17 @@ Backlog:
     * linux ide : compile project
     * editor - edit text
     * editor - correctly destroy tabbar / frame / view
-    * introducing read number
     * script module template
-    * include opcode : add snop command for multi-thread mode
-    * x86, x86-64, i386, amd64, ppc64le, arm64 : fibonacci - recursive
-    * embeddable method - do not box self
-    * exclude embeddable return for auto field
-    * generate abstract ebleddable
-    * primitive operations : support all comparision operations (not only <, == and !=)
     * ushort, int8
-    * closure should be sealed
-    * jumping - aligning the target to 4 / 8
-    * ide : display outputing in the real time
     * fix the following code : writeDisp32Hi, writeDisp32Low, writeXDisp32Hi, writeXDisp32Low in
       vm mode - correct base should be used;       
-    * CORE_ET_TABLE info should be thread safe
     * VEH_HANDLER should exclude the current frame if it was invoked from external code (callext - should 
       store the current frame in the extra variable, and clear it after the operation end)
-    * mark String.fromByteArray as internal one
-    * createnr - optimization for 1,2,4,8 
-    * simplify - isCompatible - could we get rid of special cases for V_FLAG?
-    * optimization: it should be possible to convert int liteal directly to v_int8 / v_int16 / v_int64,
-      depending on the value size
-    * inside the method, "$name __decl" should return the method full name?
-    * constant field must have assigning expression
-    * class constant (should be a static variable / pure constant - no entry in VMT)
-    * init_handler : call previous one if avialable
     * operator names should be configurable
-    * optimize String.prop:Length[1]
-    * ide - open file - namespace should be added
-    * do load self for expression with ret statement
-    * copydpn : optimization (by 4, 8, and if less then 8)
-    * if virtual multi-method handler is overridden - redirect to the parent one
-    * verifyMultimethods implements
-    * explicit multimethod
-    * call interface method
-    * compiler - if the method has no call operarion, no need to set arg length
-    * bcwriter : openFrame - should flush only used arguments (e.g. for test[1] - only one xflush)
-    * dispatch opcode : optimize for 1,2,3,4 arguments
-    * optimization sealed dispatching
-    * optimization xstore sp:0, 0 and xstore sp:1, 0 - should be replaced with xor operation
-    * no need to store an argument for the function (constructor)
-    * nested class cannot have static methods
-    * ppc64 optimization : use store multiple for alloc / open opcodes - for filling the stack with zeros
-    * optimization : xstore sp:1, r:0 - should be replaced with direct assinging 0 to register
-    * generic extension - should the output type be set? 
-    * use direct reference for - BoolValue#true.Inverted
-    * equal native bool operation
-    * ppc64le : r2 should be saved in the stack for the optimization
-    * static symbol should be thread-safe
-    * optimization : copy substring
-    * native support for integer comparision operations
-    * warn if multiret method is correct : the type should be compatible with the returning type of main handler
-    * warn if multiret method is correct : there should exist a main handler
-    * optimization : duplicate nops??
-    * class constants
-    * mt : note on creating closure - lock GC
-
-    * editor - do we need checkmode? it seems like not
-
-    * ppc64 : check direct method resolvement - e.g. call a private method
-    * warn on not found message for the existing object
-    * support constants
-    * ncopy / lcopy
-    * module template - to include basic import statement
-    * module template - probably should include meta dictionary for attributes / types / ...
-    * asmc : raise an error if the label was not resolved
-    * warn if the method was overriden but the output type was not specify
-    * raise an error if the overridden output type was changed
-    * optimization : copying ops
-    * isCompatble - cache the results
-    * external call : pass int constants directly
-    * aarch64 : use - ldr x17, [x16, #PLT_GOT+0x10] to load value without using another operation
-    * aarch64 : use adrp to load some 32bit addresses
-    * validate if all abstract methods are declared
-    * retro : is CONVERSION_MESSAGE flag is really required?
-
-
-    * for windows x86-64 allocate shadow memory
-    * for linux amd64 allocate shadow memory
-
-    * ide : editor
-    * ide : save last open file / project
-    * ide : project settings
-    * ide : styling source code
-    * call a message / closure; debugger
-    * redux : add output convertion for the method without the explicit return statement
-
-    * optimization : openheader / open - there should be an optimized version for n < 4 - with reserved raw stack
-    * fix : for ppc64 / arm64 - there should be alternative version to deal with args more than 9 / 12 / 16 bits
-
-    * optimization - openin - increase number of optimization - open 4,0; open 1,n; open 2,n; open 3,n; open 4,n
-    * modules - add reference cache
-    * elenavm support : windows / linus, x86, ppc64le, arm64
     * setr - 32 / 64 references (two addressing modes)
-
     * win64 executable: 32bit opcodes for assigning can be used
-
     * elena 6.0 cool features : compile type operator overriding
-
     * #206 : interpreter sample - x86, x86-64
-
-    - migrate the rest of system'io module
-
     * #386 : writeRef32Hi, writeRef32Hi - for non virtual mode - should offset the address to be correctly mapped to opcode
-
-    * globals
-    * yield methods
-
-    - op code refactoring
-
     - IDE : smart spaces
-
     + support low and high part of addresses (for ppc64) - e.g. offset 80000000h offset - low, 80000000h - high, offset <<= 2
-    - compileRootExpression - we probably could move the code here from compileExpression for topexpression
-
-    + support output redirecting
-    + debugger : stack allocated int value 
-    + test finally block with locally allocated variables
-    + optimize a ? b : c - do not use branching
-
-    + abortexception - translit - why is not reconized
-
-    * introduce prop inline attribute - to add property wrapper around existing field;
-
-    * new feature : switch expression
-
-    * uncomment stackSafeExtensions,templateExtensionTest
-
-    * migrate all samples
-    * migrate all rosetta samples
-    * docs - all code in docs should work
-    * test if with unknown object
-    * uncomment fieldinit routines, yield methods
-    * uncomment all code
-
-    + #319 : linux : MT
-
-    + no duplicate variable by boxing
-    + optimization - true.Inverted should return constant directly, without calling symbol
-    + loading call argument in reverse order, so no need to load self once again
-    + optimization : embeddable return - extra variable
-    + optimization : dispatching to the primitive field (e.g. ref<byte>)
-    + optimization : branching - extra temporal variable
-    + (re)implement long invert op
-    + warn if both a parameter and a local variable have the same name
-    + dispatcin : do not use frame if not nessesary
-    + optimization : do not use frame if not nessesary
-    + * operator with object wrapper - sould be pass direct value, so no need for dispatcin in ref interface
-      e.g: theIndex.append(cast int(theDiff)); - should be written theIndex.append(*theDiff); and the stack-allocated
-     object should be passed as is
-    + QuckSorting : optimize the code - built-in branching should be used 
-    + extension with primitive arrays - no need to box
-    + new attribute - constant operation - do indicate that the class itself is not changed
-
-    * do not save the external operation if the result is not assigned or passed as an argument
-    * optimization - duplicate assigning : external call, message call
-    * symbol - do not use a frame if not requiered (e.g. it is a leaf call)
-    * optimization : method returning constant
-    * by default always allocate 4 variables, assigning argument list - could we do it only once for a whole statement?
-    * idle typecast method should simply return itself
-    * optimize generated code : assigning, boxing, returning
-
-    + mixings ruby style
-    * corex - edi should contain the thread TLS pointer??
-    + introduce inline attribute testOp so all marked function will be executed by Tester class (e.g extensions'tests)
-    + should we get rid of loadi / savei??
-
-    + post : mixin instead of mutli-inheritance (lec24) - simple way to include several roles into the class
-    + housekeeping - review pipeline
-    * migrate all samples to win64
-    + using inline arguments in the code : some ideas
-    + compilation speed - Amicable pairs variants
-
-    * xforms - set property returns the object itself, redesign the current mode; probably we could return the property value
-
-    + closure tape : review how it could be optimized (e.g interpreter.solution1)
-    + bf interpreter optimization
-
-    + #531 : Inhert should support only stateless interface type
-    + docs : introduce __target built-in variable
-    + housekeeping - review pipeline
-
-    * review setframe opcode - argument should be an index or absolute value?
-    * test bsredirect, mindex
-    * move ELENARTMachine::inherit to 64bit
-
-    * test elenavm critical handler
-
-    * check all mtredirect commands (class, parent class)
-    * test parent / flags / class commands
-    * check core_readvmt
-
-    * idle initializer (ignore movr idle commands )
-    * idle sub esp, 0 -- ???
-
-    * size, lock - should be 32bit for x64
-
-    * message and messagename should not be the same
-  
-    + support run-time compilation
-
-    * Lexi project:
-        - load simple text and display it
-        - add border / scroller
-        - add control
-        - load TeX
-    * [Multisplit]
-    * interface should save resolved methods!!
-    * [Loops/Wrong ranges]
-    * [Range consolidation]
-    * [S-expressions]
-    * [Last letter-first letter]
-    * [Latin Squares in reduced form]
-    * [Letter frequency]
-    * [Long literals, with continuations]
-    * [Inverted syntax]
-    * [ Compiler/code generator ]
-    * [ Brace expansion ]
-    * [ debugger : step over fine tuning if (false) {} else {} ]
-    * [ debugger : fine-tuning stepOver - stepInto ] 
-    * [ unresolved abstract method - the warning is not shown (see system.prj) ]
-    * [ ide : after including a new file; when the file is clicked in Project view a duplicate tab is opened. ]
-    * [ ide : correct caption : lixi'ui'win32 : winimpl.l => lexi:ui/win32/winimpl.l ]
-    * [ ide : click on view does not change document ]
-    * [ exception in exception - currently this exception is simply ignored ]
-    * [ Constrained genericity ]
-    * #523 : in compile time when there is only single variant of multi-method, and there
-          are conversion rountines for the arguments - the arguments should be automatically typecasted to
-          expected types;
-    [move intern system'core_routines'__exception.register() into sta_start / mta_start?]
-    * #515 : Resolving an interface in run-time 
-        - proxy redirect class
-        - generate proxy redirect class if the target class is not sealed or closed
-    * create a new class in run-time with fields
-    * [API Docs : Func1 has one argument which is not shown]
-    * tscript : support property assignment
-    * compiled code to expression tree
-    * [pipeline]
-    * expression tree to source
-    * source to expression tree
-    * dispatching a method return
-    * [Brace expansion]
-    * chat
-    * graph
-    * web server
-    * elena on rails
-    * test why analog example need large stack size
-
-    * linux : elenart.LoadMessageName/LoadSubject, method not found exception handling
-    * external ops: operation inside external call - see HMENU.append
-    * chat
-    * rosetta code samples: Sockets, Zhang-Suen thinning algorithm
-    * timer
-    * upndown
-    * refactoring : classROp.setField should be either internal or not available at all (because
-                    it is not possible to enforce types)
-
-    * docs
-
-    * api doc :  static method descriptions;
-                 field descriptions;
-                 dispatch methods;
-                 template based extensions; 
-                 api descriptions;
-                 param descriptions
-    * api : use manifest info for module description
-    * usability : dynamic loading : give the symbol / message in the InvalidArgument exception
-
-                * duplicate boxing optimization : do not unbox presaved variable into temporal variable if it is not used
-                  in the following sub expression (e.g a.then{ arg++ }.then{ arg++ }, second temp unboxing is not required;
-                  the opcode can be optimized as well - get rid of duplicate acc loading code) - see duplicateTest
-                * redux : closure tape generation (reusing local variables for nested scopes)
-                * debugger : sub code - do not show the variable from noncurrent sub codes
-
-                * sqlite : support float / blob
-                * String / WideString - add<'Char>
-                * support module description from manifest
-                * support field / static field meta description
-                * closure unboxing: field addr
-                * check why system'dynamic'expressions'SymbolInfo#class cannot resolve DynamicSingleton
-                  in dynamic mode
-                * closures: presaved arguments
-                * closures: race conditions
-                * closures: returning a value
-                * extension message - can be applied only to the generic extension?
-                * ifheap - is not correctly recognize rdata allocated classes (constants are considered as stack allocated)
-                * if bug structure is allocated - it will be marked as root - will it work?
-
-                * function closures : strong one - should be resolved directly if possible
-                * stack allocated variables : assigning nil, default constructor call, ...
-                * stack allocation should not be cleared
-                * system'Extension : variadic argument should be boxed directly into extension
-                * replacing embeddable constructor call with direct operarions?
-                * initialize property
-                * countable
-                * implement analog of C# enum
-                * analog of C# $ strings
-                * function return type : e.g. int f() = 1;
-                * properties in properties
-                * readonly fields
-                * closures: unboxing : struct fields
-                * auto determining the closure return value for closure templates
-                * stack allocated class and default constructor
-                * auto symbol
-                * auto method
-                * auto field
-                * emptyWideString cannot be used before its declaration (see String)
-                * property - append, ...
-                * should child have an access to the parent static fields?
-                * private extension method should be possible to use for internal work
-                * it should be possible to extend attributes / template statements from anoter libraries
-                * do-while - if the second agrument is code brackets?
-                * static fields should be accessaible from strong typed extensions
-                * yield can be used only for yieldable method
-                * yieldable method can be declared only for normal class
-                * CharValue.new = $0 -> should create a new class
-                * test : branching external implementation : returning a value from closure 
-                * use stosd over stos
-                * simplify the operations with struct fields (size=1,2,4,8,...)
-                * review byte code in core_routines and BCWriter - check for more optimal opcodes
-                * optimization : assigning a field with a local - there should be direct byte code
-                * assigning a big number to short / byte local variable - should be truncated?
-                * optimize interface implementation . try to use direct / semi-direct call when possible
-                * optimize operations with int[], short[], byte[] arrays
-                * ByteNumber#class.new[2] - idle command - "pushr 0"
-                * optimize IntNumber#class.#constructor[1]
-                * optimize array creation
-                * optimize xreadn, xwriten
-                * optimization : do not call idle method
-                * bytecode optimization : storefi peekfi ==  => storefi nop; (storefi and peekfi have the same argument, no need to name all 
-                  possible values)
-                * copying  a buffer with unaligned size
-                * check if there are extnension duplicates, probably no need to save extension multi-dispatcher
-                * alt - no need to assign temp local for local / field / param
-                * boxing byref variable : use intializing, direct assinging after creation without filling with nils
-                * CreateClass / CreateStruct with initializers - no need to clear newly created object
-                * resolving byref template - cache the resolved results
-                * read / write byte, short - without AND operation
-                * assigning struct field with int constant
-                * auto conversion methods should be marked as idle
-                * optimize GC : bit cards
-                * optimize copying operation
-                * optimite yield operstions
-                * move all description to meta info using descr inline template
-                * ref argument should be a variable
-                * warn if the extension method is called from itself (short-circuiting)
-                * (re)implement UnsafePointer.cast<string>
-                * (re)implement FileStrean.set length<int>
-                * debugger : do not copy template parameter terminal info
-                * uncomment DebugController::parseMessage, cleanUp
-                * step over external / message call?
-                * step over last statement (without terminator)
-                * watch message / subject info
-                * uncomment validateUnresolved
-                * error by viewing translit sample
-                * port Linux IDE
-
-                * fix bug with inserting unicode character
-                * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)
-                * should toReal work only for real numbers without fraction?
-                * script : support several operation in a row
-                * following rule does not work - function* code $eof
-                * inline arg : variadic normal arg list
-                * inline arg : variadic long arg list
-
-                * check boxing of incompatible types
-                * redesign invoke1..invoke31 - they should use the same class with messageid as a field
-                * primitive op where i,k are fields - i+k
-                * new system'dynamics'DynamicStruct() - raise an error
-                * Tester.test(n+m*n);
-                 * remove idle variable / field / constant (e.g. 2)
-                 * import hashtable design
-                 * support namespace import, so the build script can be shortened
-                 * building expression tree - raise an exceptoion with missing class name
-
-                 * variadic closure : correctly free argument list - using the code to free until the zero is encounter
-                 * optimize compiler : more efficient hash table, caching the results
-                 * the following code should generate an error - lazy::(n < 5) - missing ^
-                 * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
-
-                 * debugger : display message name
-                 * optimize hash table implementation (both weak and strong typed)
-                 * support seriaization properties - indicating which properties should be serilized
-                 * warn if the attribute value is not set
-
-                 * supporting : const fields - constant values
-                 * symbols : a += b
-                 * arrays : a[i] += b
-
-                 * (re)implement hashTable, using links, load control and so on
-
-                 * implement Heap, Balanced Search Tree and Hash tables, review Map<T,Key> template, if it could be
-                   optimized
-                 * implement correctly - a[i][j] += 1 (see World Cup group stage)
-                 * modify quicksort to use insert selection for smaller amount (test on anagram)
-
-                 * review elenasm - simplify the coordination info, probably it should be encoded into the log itself,
-                   so no need to fill the list (what about the string in calc sample)
-
-                 * (re)implement tape debugger
-
-                 * simplify operations with ref variable - if (0 == (cast int(theTop))) { ... }
-                 * attribute cannot be used as a class constant - s the code - 
-                       = { bool equal(o) = self(object); }; - is not allowed
-                 * allow to work with ref<int> directly
-
-                 * support public & private templates
-                 * property templates cannot be used directly and class templates cannot be used as a property one
-
-                 * unboxing of boxing (in case if analizer does not resolve the issue)
-                 * optimizate operations with byref dynamic variable (no need for boxing / unboxing) - should be locally
-                   boxed
-                 * the following code does not work - theOwner.resize(int width, int height)  (see forms'SDIWindowListener.onsize)
-                 * interface - can the wrapper class be saved to use it several times?
-                 * support static prefix to allow operations with static field only
-                 * sealed static fields, cannot be changed in the child classes?!
- 
-                 * mta system : check the situation when too many threads (> MAX_THREAD)
-                 * nested code : read only outer field
-                 * script engine : do not allow left recursing (e.g. A -> AB )
