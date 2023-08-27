@@ -1,8 +1,17 @@
-import system'routines;
 import extensions;
+
+singleton Tester
+{
+   printMe(int n)
+   {
+      console.writeLine(n)
+   }
+} 
  
 public program()
 {
-    program_arguments.forEvery:(int i)
-        { console.printLine("Argument ",i," is ",program_arguments[i]) }
+   int n := 23;
+
+   Tester.printMe:12;
+   Tester.printMe:n;
 }  

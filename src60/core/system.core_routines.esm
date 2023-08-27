@@ -2256,6 +2256,8 @@ end
 
 symbol vm_sta_start
 
+  system      4
+
   open header [arg1],[envptr,ex_struct:ex_struct_size]
   
   xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"

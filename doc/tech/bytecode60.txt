@@ -440,6 +440,8 @@ ELENA byte codes (or ecodes)
    tstm m                   - search for m in acc:VMT;
                               COMP.EQ := found
 
+   tststck                  - COMP.EQ := acc in the stack scope;
+
    cmp  fp:i                - COMP.EQ := (acc == fp[i]);
 
    cmp  sp:i                - COMP.EQ := (acc == sp[i]);

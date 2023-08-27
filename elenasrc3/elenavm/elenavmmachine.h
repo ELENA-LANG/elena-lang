@@ -110,6 +110,7 @@ namespace elena_lang
 
       mssg_t loadMessage(ustr_t messageName);
       mssg_t loadAction(ustr_t actionName);
+      size_t loadActionName(mssg_t message, char* buffer, size_t length);
 
       int loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output);
 

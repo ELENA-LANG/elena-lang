@@ -3970,12 +3970,11 @@ ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& sc
       copyArray(writer, 0);
    }
    else {
-      createObject(writer, argInfo, typeRef);
-
-      writer.appendNode(BuildKey::Assigning, tempLocal.argument);
-
       writeObjectInfo(writer, scope, info);
       writer.appendNode(BuildKey::SavingInStack, 0);
+
+      createObject(writer, argInfo, typeRef);
+      writer.appendNode(BuildKey::Assigning, tempLocal.argument);
       writeObjectInfo(writer, scope, tempLocal);
 
       copyObjectToAcc(writer, argInfo, tempLocal.reference);

@@ -2738,9 +2738,10 @@ void JITCompiler :: prepare(
    }
 }
 
-void JITCompiler :: populatePreloaded(uintptr_t th_table)
+void JITCompiler :: populatePreloaded(uintptr_t th_table, uintptr_t th_single_content)
 {
    _preloaded.add(CORE_THREAD_TABLE, (void*)th_table);
+   _preloaded.add(CORE_SINGLE_CONTENT, (void*)th_single_content);
 }
 
 void* JITCompiler :: getSystemEnv()

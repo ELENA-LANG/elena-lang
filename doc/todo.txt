@@ -11,9 +11,17 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
+    * store the stack root in system 5 / system 4
+    * new opcode : tststck (x86, x86-64, ppc64le, aarch64, x86mt)
+    * new option - turn on/off conditional boxing
+
     * conditional boxing for stack allocated parameters (#324, #173)
     * conditional boxing of stacksafe arguments / self
     * conditional boxing
+
+    * tutorial : Multiple inheritance in ELENA
+    * arithmeval - comma
+    * calc - doesn't work
 
     * cellular
     * rosetta code sample : Conway's Game of Life, Create a file, Compare_a_list_of_strings

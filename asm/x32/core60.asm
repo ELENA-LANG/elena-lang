@@ -1930,7 +1930,7 @@ inline %2CFh
 
 end
 
-// ; system inject
+// ; system startup
 inline %5CFh
 
   mov  [esp+4], esi

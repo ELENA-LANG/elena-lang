@@ -578,7 +578,8 @@ namespace elena_lang
 
       virtual void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) = 0;
 
-      virtual void populatePreloaded(uintptr_t eh_table) = 0;
+      virtual void populatePreloaded(
+         uintptr_t eh_table, uintptr_t th_single_content) = 0;
 
       virtual void* getSystemEnv() = 0;
 

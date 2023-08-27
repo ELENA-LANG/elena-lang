@@ -281,6 +281,11 @@ EXTERN_DLL_EXPORT mssg_t LoadActionLA(const char* actionName)
    return machine->loadAction(actionName);
 }
 
+EXTERN_DLL_EXPORT size_t LoadActionNameLA(size_t message, char* buffer, size_t length)
+{
+   return machine->loadActionName((mssg_t)message, buffer, length);
+}
+
 /// <summary>
 /// Fills the passed dispatch list with references to extension message overload list
 /// </summary>

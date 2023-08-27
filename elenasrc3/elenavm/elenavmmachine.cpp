@@ -113,7 +113,9 @@ void ELENAVMMachine :: init(JITLinker& linker, SystemEnv* exeEnv)
    _presenter->printLine(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER);
    _presenter->printLine(ELENAVM_INITIALIZING);
 
-   _compiler->populatePreloaded((uintptr_t)exeEnv->th_table);
+   _compiler->populatePreloaded(
+      (uintptr_t)exeEnv->th_table,
+      (uintptr_t)exeEnv->th_single_content);
 
    linker.prepare(_compiler);
 
@@ -569,6 +571,20 @@ mssg_t ELENAVMMachine :: loadAction(ustr_t actionName)
       return 0;
 
    return encodeMessage(actionRef, argCount, flags);
+}
+
+size_t ELENAVMMachine :: loadActionName(mssg_t message, char* buffer, size_t length)
+{
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   IdentifierString actionName;
+   loadSubjectName(actionName, actionRef);
+
+   StrConvertor::copy(buffer, *actionName, actionName.length(), length);
+
+   return length;
 }
 
 addr_t ELENAVMMachine :: loadSymbol(ustr_t name)
