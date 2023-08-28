@@ -691,7 +691,7 @@ inline %17h
   cset    x12, lt
   cmp     x10, x14
   cset    x13, gt
-  or      x12, x12, x13
+  orr     x12, x12, x13
 
   cmp     x12, 0
 
