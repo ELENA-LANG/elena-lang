@@ -157,4 +157,8 @@ namespace io
    {
       TextReader newReader(path) = TextStreamReader.new:path;
    }
+
+   singleton directoryControl
+   {
+   }
 }
