@@ -11,7 +11,7 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * test conditional boxing : ppc64le, aarch64
+    * test conditional boxing : ppc64le
     * #324 : conditional boxing for stack allocated parameters
     * #173 : conditional boxing for  self
     * turn on conditional boxing by default
