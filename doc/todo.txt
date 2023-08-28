@@ -11,9 +11,10 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * test conditional boxing : x86-64, ppc64le, aarch64
+    * test conditional boxing : ppc64le, aarch64
     * #324 : conditional boxing for stack allocated parameters
     * #173 : conditional boxing for  self
+    * turn on conditional boxing by default
 
     * corex : fix GC_ALLOC, collecting thread frames
     * tutorial : Multiple inheritance in ELENA
