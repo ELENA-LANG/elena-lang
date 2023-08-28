@@ -739,6 +739,7 @@ end
 // ; tststck
 inline %17h
 
+  ld      r16, toc_data(r2)
   addis   r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
   addi    r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
   ld      r16, tt_stack_root(r16)
