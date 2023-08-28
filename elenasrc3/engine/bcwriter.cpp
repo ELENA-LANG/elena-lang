@@ -2730,6 +2730,18 @@ void ByteCodeWriter :: saveAlternate(CommandTape& tape, BuildNode node, TapeScop
    tape.setLabel();
 }
 
+void ByteCodeWriter :: saveStackCondOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
+{
+   tape.newLabel();
+
+   tape.write(ByteCode::TstStck);
+   tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
+
+   saveTape(tape, node, tapeScope, paths, tapeOptMode);
+
+   tape.setLabel();
+}
+
 inline void saveDebugSymbol(DebugSymbol symbol, int offset, ustr_t name, TapeScope& tapeScope)
 {
    DebugLineInfo info = { symbol };
@@ -2913,6 +2925,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::ShortCircuitOp:
             saveShortCircuitOp(tape, current, tapeScope, paths, tapeOptMode);
+            break;
+         case BuildKey::StackCondOp:
+            saveStackCondOp(tape, current, tapeScope, paths, tapeOptMode);
             break;
          case BuildKey::Path:
          case BuildKey::Idle:

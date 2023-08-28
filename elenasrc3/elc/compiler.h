@@ -103,7 +103,8 @@ namespace elena_lang
       LocalUnboxingRequired,
       ArrayContent,
       UnboxingVarArgument,
-      BoxingPtr
+      BoxingPtr,
+      Conditional
    };
 
    struct ObjectInfo
@@ -962,6 +963,7 @@ namespace elena_lang
       bool                   _tapeOptMode;
       bool                   _withMethodParamInfo;
       bool                   _trackingUnassigned;
+      bool                   _withConditionalBoxing;
 
       bool reloadMetaData(ModuleScopeBase* moduleScope, ustr_t name);
 
@@ -1407,6 +1409,11 @@ namespace elena_lang
       void setMethodParamInfo(bool flag)
       {
          _withMethodParamInfo = flag;
+      }
+
+      void setConditionalBoxing(bool flag)
+      {
+         _withConditionalBoxing = flag;
       }
 
       void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,

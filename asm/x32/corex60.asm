@@ -38,6 +38,7 @@ define et_current            0004h
 define tt_stack_frame        0008h
 define tt_sync_event         000Ch
 define tt_flags              0010h
+define tt_stack_root         0014h
 
 define es_prev_struct        0000h
 define es_catch_addr         0004h
@@ -765,6 +766,25 @@ inline % 11h
   mov  eax, [data : %CORE_TLS_INDEX]
   mov  esi, [ecx+eax*4]
   mov  [esi + tt_flags], 0
+
+end
+
+// ; tststck
+inline %17h
+
+  xor  ecx, ecx
+
+  // ; COREX
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  esi, [ecx+eax*4]
+  mov  eax, [esi + tt_stack_root]
+
+  cmp  ebx, esp
+  setl cl
+  cmp  ebx, eax
+  setg ch
+  cmp  ecx, 0
 
 end
 

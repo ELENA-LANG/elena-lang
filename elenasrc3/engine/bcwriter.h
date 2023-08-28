@@ -93,6 +93,7 @@ namespace elena_lang
          bool tapeOptMode);
       void saveShortCircuitOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths,
          bool tapeOptMode);
+      void saveStackCondOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode);
       void saveVariableInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
       void saveParameterInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
       void saveMethodInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);

@@ -13,7 +13,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x01CF
+   #define ELC_REVISION_NUMBER               0x01D0
 
 #if defined _M_IX86 || _M_X64
 
@@ -43,7 +43,7 @@ namespace elena_lang
 
    constexpr auto ELC_SAVING_MODULE          = "\nsaving %s\n";
 
-   constexpr auto ELC_HELP_INFO              = "elena-cli {source-file+}";
+   constexpr auto ELC_HELP_INFO              = "elena-cli {-key} {source-file+ | project-file}\nkeys: m - turning on address mapping output\n      r - clean the compilation output\n      t{template name} - loading the project template\n      p - set the base path\n      wX- turns off warnings with level X=1,2,4\n      xp[-] - turning on/off a generation the parameter meta info\n      xb[-] - turning on/off a conditional boxing";
 
    constexpr auto SYNTAX_FILE                = "syntax60.dat";
    constexpr auto BC_RULES_FILE              = "bc_rules60.dat";

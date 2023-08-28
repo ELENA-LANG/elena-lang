@@ -55,7 +55,7 @@ void init(HMODULE hModule)
    // !! temporal : hard-coded constants
    machine = new ELENARTMachine(
       *rootPath, *execPath, *configPath, CURRENT_PLATFORM,
-      __routineProvider.RetrieveMDataPtr((void*)IMAGE_BASE, 0x1000000));
+      __routineProvider.RetrieveMDataPtr(UInt32ToPtr(IMAGE_BASE), 0x1000000));
 }
 
 // --- API export ---

@@ -986,7 +986,7 @@ ObjectInfo Compiler::MethodScope :: mapParameter(ustr_t identifier, ExpressionAt
          if (byRef) {
             return { ObjectKind::ByRefParamAddress, { local.typeInfo.elementRef }, prefix - local.offset, local.size };
          }
-         else return { ObjectKind::ParamAddress, local.typeInfo, prefix - local.offset };
+         else return { ObjectKind::ParamAddress, local.typeInfo, prefix - local.offset, TargetMode::Conditional };
       }
       else if (local.typeInfo.typeRef == V_ARGARRAY) {
          TargetMode mode = TargetMode::None;
@@ -1404,6 +1404,7 @@ Compiler :: Compiler(
    _optMode = false;
    _tapeOptMode = false;
    _withMethodParamInfo = false;
+   _withConditionalBoxing = false;
 
    _trackingUnassigned = false;
 }
@@ -3894,6 +3895,7 @@ ObjectInfo Compiler :: boxRefArgumentInPlace(BuildTreeWriter& writer, ExprScope&
 
 ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef)
 {
+   bool condBoxing = info.mode == TargetMode::Conditional && _withConditionalBoxing;
    ref_t typeRef = targetRef;
    if (!typeRef)
       typeRef = retrieveStrongType(scope, info);
@@ -3971,6 +3973,10 @@ ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& sc
    }
    else {
       writeObjectInfo(writer, scope, info);
+
+      if (condBoxing)
+         writer.newNode(BuildKey::StackCondOp, IF_OPERATOR_ID);
+
       writer.appendNode(BuildKey::SavingInStack, 0);
 
       createObject(writer, argInfo, typeRef);
@@ -3978,6 +3984,9 @@ ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& sc
       writeObjectInfo(writer, scope, tempLocal);
 
       copyObjectToAcc(writer, argInfo, tempLocal.reference);
+
+      if (condBoxing)
+         writer.closeNode();
    }
 
    if (!_logic->isReadOnly(argInfo))
@@ -7119,7 +7128,7 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
 
    SyntaxNode current = node.firstChild();
    ObjectInfo source = compileObject(writer, scope, current, EAttr::Parameter, &outerArgsToUpdate);
-   if (source.mode != TargetMode::None)
+   if (source.mode != TargetMode::None && source.mode != TargetMode::Conditional)
       scope.raiseError(errInvalidOperation, node);
 
    arguments.add(source);

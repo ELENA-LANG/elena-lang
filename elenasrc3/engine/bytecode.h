@@ -42,6 +42,7 @@ namespace elena_lang
       LoadS          = 0x14,
       MLen           = 0x15,
       DAlloc         = 0x16,
+      TstStck        = 0x17,
       DTrans         = 0x18,
       XAssign        = 0x19,
       LLoad          = 0x1A,

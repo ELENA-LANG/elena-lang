@@ -541,6 +541,9 @@ void CompilingProcess :: configurate(Project& project)
 
    bool withMethodParamInfo = project.BoolSetting(ProjectOption::GenerateParamNameInfo, true);
    _compiler->setMethodParamInfo(withMethodParamInfo);
+
+   bool withConditionalBoxing = project.BoolSetting(ProjectOption::ConditionalBoxing, false);
+   _compiler->setConditionalBoxing(withConditionalBoxing);
 }
 
 void CompilingProcess :: compile(ProjectBase& project,

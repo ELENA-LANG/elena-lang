@@ -134,7 +134,7 @@ void ELENAVMMachine :: stopVM()
 
 void ELENAVMMachine :: addForward(ustr_t forwardLine)
 {
-   pos_t index = forwardLine.find('=');
+   size_t index = forwardLine.find('=');
    if (index != NOTFOUND_POS) {
       ustr_t fullReference = forwardLine + index + 1;
 
@@ -146,7 +146,7 @@ void ELENAVMMachine :: addForward(ustr_t forwardLine)
 
 void ELENAVMMachine :: addPackage(ustr_t packageLine)
 {
-   pos_t index = packageLine.find('=');
+   size_t index = packageLine.find('=');
    if (index != NOTFOUND_POS) {
       PathString path(packageLine + index + 1);
       IdentifierString ns(packageLine, index);

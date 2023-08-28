@@ -169,6 +169,7 @@ namespace elena_lang
       uintptr_t        tt_stack_frame;
       void*            tt_sync_event;
       size_t           tt_flags;
+      uintptr_t        tt_stack_root;
    };
 
    // --- ThreadTable ---

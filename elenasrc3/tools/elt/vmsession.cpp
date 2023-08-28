@@ -110,7 +110,7 @@ bool VMSession :: executeScript(const char* script)
    void* tape = InterpretScriptSMLA(script);
    if (tape == nullptr) {
       char error[0x200];
-      int length = GetStatusSMLA(error, 0x200);
+      size_t length = GetStatusSMLA(error, 0x200);
       error[length] = 0;
       if (!emptystr(error)) {
          _presenter->printLine(ELT_SCRIPT_FAILED, error);

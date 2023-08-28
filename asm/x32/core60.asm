@@ -50,6 +50,7 @@ define gc_signal             0040h
 
 define et_current            0004h
 define tt_stack_frame        0008h
+define tt_stack_root         0014h
 
 define es_prev_struct        0000h
 define es_catch_addr         0004h
@@ -76,6 +77,9 @@ structure % CORE_SINGLE_CONTENT
   dd 0 // ; et_critical_handler    ; +x00   - pointer to ELENA critical handler
   dd 0 // ; et_current             ; +x04   - pointer to the current exception struct
   dd 0 // ; tt_stack_frame         ; +x08   - pointer to the stack frame
+  dd 0 // ; reserved
+  dd 0 // ; reserved
+  dd 0 // ; tt_stack_root
 
 end
  
@@ -541,6 +545,19 @@ inline %16h
   xor  eax, eax
   mov  edi, esp
   rep  stos
+
+end
+
+// ; tststck
+inline %17h
+
+  xor  ecx, ecx
+  mov  eax,[data : %CORE_SINGLE_CONTENT + tt_stack_root]
+  cmp  ebx, esp
+  setl cl
+  cmp  ebx, eax
+  setg ch
+  cmp  ecx, 0
 
 end
 
@@ -1941,6 +1958,7 @@ inline %5CFh
   xor  eax, eax
   mov  edi, esp
   rep  stos
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_root], edi
   push esi
   mov  esi, [esp+4]
 

@@ -11,14 +11,13 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * store the stack root in system 5 / system 4
-    * new opcode : tststck (x86, x86-64, ppc64le, aarch64, x86mt)
-    * new option - turn on/off conditional boxing
-
-    * conditional boxing for stack allocated parameters (#324, #173)
+    * #324 : conditional boxing for stack allocated parameters
     * conditional boxing of stacksafe arguments / self
     * conditional boxing
+    * #173 : conditional boxing for  self
+    * test conditional boxing : x86, x86-64, ppc64le, aarch64
 
+    * corex : fix GC_ALLOC, collecting thread frames
     * tutorial : Multiple inheritance in ELENA
     * arithmeval - comma
     * calc - doesn't work

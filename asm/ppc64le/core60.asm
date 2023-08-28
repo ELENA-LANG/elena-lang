@@ -58,6 +58,7 @@ define gc_perm_current       0068h
 
 define et_current            0008h
 define tt_stack_frame        0010h
+define tt_stack_root         0028h
 
 define es_prev_struct        0000h
 define es_catch_addr         0008h
@@ -98,6 +99,9 @@ structure % CORE_SINGLE_CONTENT
   dq 0 // ; et_critical_handler    ; +x00   - pointer to ELENA critical handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
   dq 0 // ; tt_stack_frame         ; +x10   - pointer to the stack frame
+  dq 0 // ; reserved
+  dq 0 // ; reserved
+  dq 0 // ; tt_stack_root
 
 end
  
@@ -729,6 +733,25 @@ labLoop:
   b       labLoop
 
 labEnd:
+
+end
+
+// ; tststck
+inline %17h
+
+  addis   r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi    r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
+  ld      r16, tt_stack_root(r16)
+
+  li      r17, 0
+  li      r18, 1
+  cmp     r15, r1
+  isellt  r19, r17, r18
+  cmp     r15, r16
+  isellt  r20, r17, r18
+  or      r19, r19, r20
+
+  cmpwi   r19, 0
 
 end
 
@@ -2102,6 +2125,15 @@ inline %4CFh
   ld      r12, toc_prepare(r2)
   mtctr   r12            
   bctrl                   
+
+end
+
+// ; system startup
+inline %5CFh
+
+  addis   r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi    r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
+  std     r1, tt_stack_root(r16)
 
 end
 

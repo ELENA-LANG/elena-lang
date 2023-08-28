@@ -17,7 +17,7 @@ const char* _fnOpcodes[256] =
    "nop", "breakpoint", "snop", "redirect", "quit", "mov env", "load", "len",
    "class", "save", "throw", "unhook", "loadv", "xcmp", "bload", "wload",
 
-   "incude", "exclude", "assign", "mov frm", "loads", "mlen", "dalloc", OPCODE_UNKNOWN,
+   "incude", "exclude", "assign", "mov frm", "loads", "mlen", "dalloc", "tststck",
    "dtrans", "xassign", "lload", "convl", "xlcmp", "xload", "xlload", OPCODE_UNKNOWN,
 
    "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", "xjump",

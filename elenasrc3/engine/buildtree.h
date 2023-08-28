@@ -149,8 +149,9 @@ namespace elena_lang
       SemiDirectCallOp     = 0x0077,
       IntRealOp            = 0x0078,
       RealIntOp            = 0x0079,
+      StackCondOp          = 0x007A,
 
-      MaxOperationalKey    = 0x0079,
+      MaxOperationalKey    = 0x007A,
 
       Import               = 0x0080,
       DictionaryOp         = 0x0081,

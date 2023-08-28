@@ -48,6 +48,7 @@ define gc_perm_current       0068h
 
 define et_current            0008h
 define tt_stack_frame        0010h
+define tt_stack_root         0028h
 
 define es_prev_struct        0000h
 define es_catch_addr         0008h
@@ -74,6 +75,9 @@ structure % CORE_SINGLE_CONTENT
   dq 0 // ; et_crtitical_handler   ; +x00   - pointer to ELENA exception handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
   dq 0 // ; tt_stack_frame         ; +x10   - pointer to the stack frame
+  dq 0 // ; reserved
+  dq 0 // ; reserved
+  dq 0 // ; tt_stack_root
 
 end
  
@@ -555,6 +559,19 @@ inline %16h
   xor  rax, rax
   mov  rdi, rsp
   rep  stos
+
+end
+
+// ; tststck
+inline %17h
+
+  xor  ecx, ecx
+  mov  rax,[data : %CORE_SINGLE_CONTENT + tt_stack_root]
+  cmp  rbx, rsp
+  setl cl
+  cmp  rbx, rax
+  setg ch
+  cmp  ecx, 0
 
 end
 
@@ -1913,7 +1930,7 @@ inline %2CFh
 
 end
 
-// ; system inject
+// ; system start up
 inline %5CFh
 
   pop  rsi
@@ -1926,6 +1943,7 @@ inline %5CFh
   xor  rax, rax
   mov  rdi, rsp
   rep  stos
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_root], rdi
 
   push rsi
 
