@@ -2311,26 +2311,19 @@ inline %0CFh
 
 end
 
-
-// ; system 4
+// ; system startup
 inline %4CFh
 
   mov     x12, sp
 
-  movz    x17,  code_ptr32lo : %PREPARE
-  movk    x17,  code_ptr32hi : %PREPARE, lsl #16
-  blr     x17
-
-end
-
-// ; system startup
-inline %5CFh
-
-  mov     x19, sp
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
   add     x14, x14, # tt_stack_root
-  str     x19, [x14]
+  str     x12, [x14]
+
+  movz    x17,  code_ptr32lo : %PREPARE
+  movk    x17,  code_ptr32hi : %PREPARE, lsl #16
+  blr     x17
 
 end
 

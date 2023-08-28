@@ -335,6 +335,8 @@ end
 
 procedure %PREPARE
 
+  ret
+
 end
 
 procedure %THREAD_WAIT
@@ -1948,6 +1950,17 @@ inline %2CFh
 end
 
 // ; system startup
+inline %4CFh
+
+  finit
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_root], esp  
+
+  mov  eax, esp
+  call %PREPARE
+
+end
+
+// ; system stack allocation
 inline %5CFh
 
   mov  [esp+4], esi
@@ -1958,7 +1971,6 @@ inline %5CFh
   xor  eax, eax
   mov  edi, esp
   rep  stos
-  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_root], edi
   push esi
   mov  esi, [esp+4]
 
@@ -3006,8 +3018,6 @@ end
 
 // ; openheaderin
 inline %0F2h
-
-  finit
 
   push ebp
   xor  eax, eax

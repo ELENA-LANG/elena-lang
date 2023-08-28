@@ -348,6 +348,8 @@ end
 
 procedure %PREPARE
 
+  ret
+
 end
 
 procedure %THREAD_WAIT
@@ -1930,7 +1932,18 @@ inline %2CFh
 
 end
 
-// ; system start up
+// ; system startup
+inline %4CFh
+
+  finit
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_root], rsp
+
+  mov  rax, rsp
+  call %PREPARE
+
+end
+
+// ; system stack allocation
 inline %5CFh
 
   pop  rsi
@@ -1943,7 +1956,6 @@ inline %5CFh
   xor  rax, rax
   mov  rdi, rsp
   rep  stos
-  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_root], rdi
 
   push rsi
 

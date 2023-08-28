@@ -2116,8 +2116,12 @@ inline %0CFh
 
 end
 
-// ; system 4
+// ; system startup
 inline %4CFh
+
+  addis   r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi    r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
+  std     r1, tt_stack_root(r16)
 
   lis     r2, rdata32_hi : %CORE_TOC
   addi    r2, r2, rdata32_lo : %CORE_TOC
@@ -2125,15 +2129,6 @@ inline %4CFh
   ld      r12, toc_prepare(r2)
   mtctr   r12            
   bctrl                   
-
-end
-
-// ; system startup
-inline %5CFh
-
-  addis   r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
-  addi    r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
-  std     r1, tt_stack_root(r16)
 
 end
 

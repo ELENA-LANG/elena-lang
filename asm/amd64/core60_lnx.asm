@@ -183,14 +183,6 @@ end
 
 // ; ==== Overridden Command Set ==
 
-// ; system prepare
-inline %4CFh
-
-  mov  rax, rsp
-  call %PREPARE
-
-end
-
 // ; openheaderin
 inline %0F2h
 

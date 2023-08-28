@@ -60,14 +60,6 @@ end
 
 // ; ==== Overridden Command Set ==
 
-// ; system prepare
-inline %4CFh
-
-  mov  eax, esp
-  call %PREPARE
-
-end
-
 // ; openheaderin
 inline %0F2h
 

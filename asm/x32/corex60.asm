@@ -4,6 +4,7 @@ define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
 define GC_COLLECT	    10004h
 define GC_ALLOCPERM	    10005h
+define PREPARE	            10006h
 define THREAD_WAIT          10007h
 
 define CORE_TOC             20001h
@@ -750,10 +751,10 @@ inline % 10h
                                                        
   mov  ecx, fs:[2Ch]
   mov  eax, [data : %CORE_TLS_INDEX]
-  mov  esi, [ecx+eax*4]
-  mov  [esi + tt_flags], 1
+  mov  edi, [ecx+eax*4]
+  mov  [edi + tt_flags], 1
   push ebp     
-  mov  [esi + tt_stack_frame], esp
+  mov  [edi + tt_stack_frame], esp
 
 end
 
@@ -761,11 +762,10 @@ end
 inline % 11h
 
   add  esp, 4                                                       
-
   mov  ecx, fs:[2Ch]
   mov  eax, [data : %CORE_TLS_INDEX]
-  mov  esi, [ecx+eax*4]
-  mov  [esi + tt_flags], 0
+  mov  edi, [ecx+eax*4]
+  mov  [edi + tt_flags], 0
 
 end
 
@@ -777,8 +777,8 @@ inline %17h
   // ; COREX
   mov  ecx, fs:[2Ch]
   mov  eax, [data : %CORE_TLS_INDEX]
-  mov  esi, [ecx+eax*4]
-  mov  eax, [esi + tt_stack_root]
+  mov  edi, [ecx+eax*4]
+  mov  eax, [edi + tt_stack_root]
 
   cmp  ebx, esp
   setl cl
@@ -796,6 +796,24 @@ inline %3CFh
   mov  eax, [ecx + eax * 4]
   mov  edi, data : %CORE_THREAD_TABLE + tt_slots
   mov  [edi + edx * 8], eax
+
+  mov  edi, [ecx+eax*4]
+  mov  [edi + tt_stack_root], esp
+
+end
+
+// ; system startup
+inline %4CFh
+
+  finit
+
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  edi, [ecx+eax*4]
+  mov  [edi + tt_stack_root], esp
+
+  mov  eax, esp
+  call %PREPARE
 
 end
 
