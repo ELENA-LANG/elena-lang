@@ -747,9 +747,9 @@ inline %17h
   li      r17, 0
   li      r18, 1
   cmpld   r15, r1
-  isellt  r19, r17, r18
+  isellt  r19, r18, r17
   cmpld   r15, r16
-  iselgt  r20, r17, r18
+  iselgt  r20, r18, r17
   or      r19, r19, r20
 
   cmpwi   r19, 0
