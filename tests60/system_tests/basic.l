@@ -1531,6 +1531,7 @@ struct XY
       this x := x;
       this y := y;
    }
+   set(long r, long r2) {}
 
    constructor()
    {
@@ -1544,6 +1545,14 @@ singleton StructTest
    testMe(XY r)
    {
       r.set(1,2);
+   }
+
+   testMe2(XY r)
+   {
+      var a := 3;
+      var b := 4;
+
+      r.set(a,b);
    }
 }
 
@@ -1561,6 +1570,12 @@ structTest()
    StructTest.testMe(xy2);
    Assert.ifTrue(xy2.x == 1);
    Assert.ifTrue(xy2.y == 2);
+
+   console.write(".");
+
+   StructTest.testMe2(xy2);
+   Assert.ifTrue(xy2.x == 3);
+   Assert.ifTrue(xy2.y == 4);
 
    console.writeLine(".");
 }
