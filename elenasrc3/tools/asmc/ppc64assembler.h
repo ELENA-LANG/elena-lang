@@ -85,6 +85,7 @@ namespace elena_lang
       void compileBSO(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileCMP(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMPL(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileCMPLW(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMPWI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMPDI(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileFCTIW(ScriptToken& tokenInfo, MemoryWriter& writer);

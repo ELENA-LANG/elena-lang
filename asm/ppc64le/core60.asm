@@ -2555,7 +2555,7 @@ inline %0DFh
   lwz      r17, 0(r3)
   lwz      r18, 0(r15)
 
-  cmpl     r17, r18
+  cmplw    r17, r18
 
   ld      r16, toc_code(r2)
   addis   r17, r16, __xdisp32hi_1 
