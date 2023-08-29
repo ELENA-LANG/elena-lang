@@ -231,7 +231,7 @@ namespace elena_lang
       static unsigned int makeXCommand(unsigned int opcode, int bc, int l, PPCOperandType ra, PPCOperandType rb,
          int xo)
       {
-         return (opcode << 26) | ((bc & 0x1F) << 23) | (l << 22) | (((unsigned int)ra & 0x1F) << 16)
+         return (opcode << 26) | ((bc & 0x7) << 23) | (l << 21) | (((unsigned int)ra & 0x1F) << 16)
             | (((unsigned int)rb & 0x1F) << 11) | (xo << 1) | 0;
       }
 
