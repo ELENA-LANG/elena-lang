@@ -104,7 +104,8 @@ namespace elena_lang
       ArrayContent,
       UnboxingVarArgument,
       BoxingPtr,
-      Conditional
+      Conditional,
+      ConditionalUnboxingRequired,
    };
 
    struct ObjectInfo

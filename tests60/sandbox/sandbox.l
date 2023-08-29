@@ -74,23 +74,21 @@ singleton Tester
 //   }
    testMe2(XY r)
    {
-//      var a := 3;
-//      var b := 4;
-//
-//      r.set(a,b);
-//
-      r.set(3,4);
+      var a := 3;
+      var b := 4;
+
+      r.set(a,b);
    }
 }
 
 public program()
 {
-//   XY xy := new XY();
+   XY xy := new XY();
    var xy2 := new XY();
 
-//   Tester.testMe(xy);
+   Tester.testMe2(xy);
    Tester.testMe2(xy2);
 
-//   xy.printMe();
+   xy.printMe();
    xy2.printMe();
 }

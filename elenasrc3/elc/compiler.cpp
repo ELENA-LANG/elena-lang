@@ -7344,6 +7344,7 @@ bool Compiler :: compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, O
          operand = target.reference;
          break;
       case ObjectKind::SelfBoxableLocal:
+      case ObjectKind::ParamAddress:
          accMode = true;
          operationType = BuildKey::CopyingToAcc;
          operand = target.reference;
