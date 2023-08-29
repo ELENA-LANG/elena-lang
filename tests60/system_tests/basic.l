@@ -1526,6 +1526,12 @@ struct XY
    int x : prop;
    int y : prop;
 
+   set(int x, int y)
+   {
+      this x := x;
+      this y := y;
+   }
+
    constructor()
    {
       x := 2;
@@ -1533,13 +1539,28 @@ struct XY
    }
 }
 
+singleton StructTest
+{
+   testMe(XY r)
+   {
+      r.set(1,2);
+   }
+}
+
 structTest()
 {
    console.write("structTest:");
    XY xy := new XY();
+   var xy2 := new XY();
 
    Assert.ifTrue(xy.x == 2);
    Assert.ifTrue(xy.y == 3);
+
+   console.write(".");
+
+   StructTest.testMe(xy2);
+   Assert.ifTrue(xy2.x == 1);
+   Assert.ifTrue(xy2.y == 2);
 
    console.writeLine(".");
 }

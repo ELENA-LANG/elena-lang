@@ -4,14 +4,14 @@ import extensions;
 
 public interface RuleSet
 {
-   abstract proceed(Space s, int i, int j, ref int newState);
+   abstract int proceed(Space s, int i, int j);
 }
 
 public singleton randomSet : RuleSet
 {
-   proceed(Space s, int i, int j, ref int newState)
+   int proceed(Space s, int i, int j)
    {
-      newState := randomGenerator.eval(0,2)
+      ^ randomGenerator.eval(0,2)
    }
 }
 

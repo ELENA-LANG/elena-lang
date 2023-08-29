@@ -1,44 +1,38 @@
-////import extensions.
-//import cellular;
-//
+import cellular;
+
 //const int maxX = 48;
 //const int maxY = 28;
-//
-//sealed class Model
-//{
-//   Space   theSpace;
-//   RuleSet theRuleSet;
-//   bool    started;
-//
+
+sealed class Model
+{
+   Space   _space;
+   RuleSet _ruleSet;
+   bool    _started;
+
 //   event Func<Space, object> OnUpdate;
 //    
 //   constructor newRandomset(RuleSet transformSet)
 //   {
-//      theSpace := IntMatrixSpace.allocate(maxY, maxX, randomSet);
+//      _space := IntMatrixSpace.allocate(maxY, maxX, randomSet);
 //
-//      theRuleSet := transformSet;
+//      _ruleSet := transformSet;
 //        
-//      started := false
+//      _started := false
 //   }
 //    
 //   constructor newLoaded(RuleSet initSet, RuleSet transformSet)
 //   {
-//      theSpace := IntMatrixSpace.allocate(maxY, maxX, initSet);
+//      _space := IntMatrixSpace.allocate(maxY, maxX, initSet);
 //                        
-//      theRuleSet := transformSet;
+//      _ruleSet := transformSet;
 //        
-//      started := false
+//      _started := false
 //   }
 //    
 //   private onUpdate()
 //   {
 //      OnUpdate.?(theSpace)
 //   }
-//    
-////    init
-////    [
-////        $self $onUpdate.
-////    ]
 //    
 //   run()
 //   {
@@ -53,4 +47,4 @@
 //        
 //      self.onUpdate()
 //   }
-//}
+}

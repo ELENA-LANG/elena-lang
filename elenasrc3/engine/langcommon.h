@@ -11,6 +11,9 @@
 
 namespace elena_lang
 {
+   // default settings
+   constexpr bool DEFAULT_CONDITIONAL_BOXING = false;
+
    enum class MethodHint : ref_t
    {
       Mask                 = 0x0000000F,

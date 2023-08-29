@@ -9333,6 +9333,7 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
    ExprScope scope(&codeScope);
 
    bool autoMode = false;
+   bool dynamicRequired = EAttrs::testAndExclude(mode, EAttr::DynamicObject);
    ref_t outputRef = codeScope.getOutputRef();
    if (outputRef == V_AUTO) {
       autoMode = true;
@@ -9350,7 +9351,8 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
       retVal = {};
    }
    else {
-      retVal = boxArgument(writer, scope, retVal, false, true, false);
+      retVal = boxArgument(writer, scope, retVal, 
+         !dynamicRequired && retVal.kind == ObjectKind::SelfBoxableLocal, true, false);
 
       if (!hasToBePresaved(retVal)) {
          writeObjectInfo(writer, scope, retVal);
