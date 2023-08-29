@@ -11,6 +11,12 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
+    * event handler
+
+    * turn on conditional boxing by default
+    * #324 : conditional boxing for stack allocated parameters
+    * #173 : conditional boxing for  self
+
     * cellular
     * rosetta code sample : Conway's Game of Life, Create a file, Compare_a_list_of_strings
     * rosetta code sample : Create a two-dimensional array at runtime
@@ -127,9 +133,6 @@ In development:
     * test if with unknown object
     * uncomment fieldinit routines, yield methods
     * ide : styling source code
-    * turn on conditional boxing by default
-    * #324 : conditional boxing for stack allocated parameters
-    * #173 : conditional boxing for  self
 
     === Iteration 19 ===
     [!] pi sample optimization (under 9sec)

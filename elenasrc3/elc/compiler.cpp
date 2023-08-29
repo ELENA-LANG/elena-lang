@@ -3990,7 +3990,7 @@ ObjectInfo Compiler :: boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& sc
    }
 
    if (!_logic->isReadOnly(argInfo))
-      tempLocal.mode = TargetMode::UnboxingRequired;
+      tempLocal.mode = condBoxing ? TargetMode::ConditionalUnboxingRequired : TargetMode::UnboxingRequired;
 
    return tempLocal;
 }
@@ -6675,7 +6675,7 @@ ObjectInfo Compiler :: unboxArguments(BuildTreeWriter& writer, ExprScope& scope,
       ObjectInfo temp = *it;
 
       if (temp.mode == TargetMode::UnboxingRequired || temp.mode == TargetMode::RefUnboxingRequired
-         || temp.mode == TargetMode::LocalUnboxingRequired)
+         || temp.mode == TargetMode::LocalUnboxingRequired || temp.mode == TargetMode::ConditionalUnboxingRequired)
       {
          if (!resultSaved && retVal.kind != ObjectKind::Unknown) {
             // presave the result
@@ -6705,6 +6705,12 @@ ObjectInfo Compiler :: unboxArguments(BuildTreeWriter& writer, ExprScope& scope,
          }
          else if (key.value1 == ObjectKind::FieldAddress) {
             unboxArgumentLocaly(writer, scope, temp, key);
+         }
+         else if (temp.mode == TargetMode::ConditionalUnboxingRequired) {
+            writeObjectInfo(writer, scope, { key.value1, temp.typeInfo, key.value2 });
+            writer.newNode(BuildKey::StackCondOp);
+            compileAssigningOp(writer, scope, { key.value1, temp.typeInfo, key.value2 }, temp);
+            writer.closeNode();
          }
          else compileAssigningOp(writer, scope, { key.value1, temp.typeInfo, key.value2 }, temp);
       }
