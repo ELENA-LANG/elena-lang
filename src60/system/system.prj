@@ -44,6 +44,7 @@
         <include>win_basic.l</include>
         <include>dynamic.l</include>
         <include>exceptions.l</include>
+        <include>events.l</include>
         <include>console.l</include>
         <include>app.l</include>
         <include>win_app.l</include>

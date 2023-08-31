@@ -2086,6 +2086,80 @@ labEnd:
 
 end
 
+procedure __event_dispatcher
+
+  redirect
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[arr],[mssg, index]
+
+  get        i:0
+  store      fp:arr
+  
+  nsave      dp:index, 0
+  save       dp:mssg
+
+  // ; copy the call stack
+  load       dp:mssg
+  mlen
+
+  set        fp:2
+  store      sp:2
+
+  set        fp:-1
+  store      sp:1
+
+  cmp        n:0
+  jeq        labCopyEnd
+
+labCopy:
+  add        n:-1
+
+  peek       sp:1
+  xget
+  store      sp:0
+
+  neg
+  peek       sp:2
+  xassign
+  neg
+
+  cmp        n:0
+  jne        labCopy
+
+labCopyEnd:
+  peek       fp:arr  
+
+labNext:
+  len
+  xcmp       dp:index  
+  jeq        labEnd
+
+  load       dp:index
+  xget
+  add        n:1
+  save       dp:index
+
+  load       dp:mssg
+  call       vt:0
+  
+  peek       fp:arr  
+  jump       labNext
+
+labEnd:
+  peek       fp:arr
+
+  close      []
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+  jump       vt:0
+
+end
+
 procedure critical_exception_handler
 
   cmp         n:EXCEPTION_ACCESS_VIOLATION

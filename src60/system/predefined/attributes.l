@@ -18,6 +18,7 @@
 #let attributesSymbols["abstract"]    := 80003002h;
 #let attributesSymbols["closed"]      := 80003003h;
 #let attributesSymbols["predefined"]  := 80003005h;
+#let attributesSymbols["override"]    := 80003006h;
 
 /// scope_prefix:
 #let attributesSymbols["const"]       := 80002001h;

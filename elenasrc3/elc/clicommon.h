@@ -464,6 +464,7 @@ struct FieldAttributes
    bool     isReadonly;
    bool     inlineArray;
    bool     fieldArray;
+   bool     overrideMode;
 };
 
 // --- CompilerBase ---

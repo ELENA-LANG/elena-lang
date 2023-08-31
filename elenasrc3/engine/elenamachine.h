@@ -109,8 +109,8 @@ namespace elena_lang
 
       static void Init(SystemEnv* env, SystemSettings settings);
       static void InitSTAExceptionHandling(SystemEnv* env, void* criticalHandler);
-      static void InitMTAExceptionHandling(SystemEnv* env, int index, void* criticalHandler);
-      static void InitMTASignals(SystemEnv* env, int index);
+      static void InitMTAExceptionHandling(SystemEnv* env, size_t index, void* criticalHandler);
+      static void InitMTASignals(SystemEnv* env, size_t index);
       static void InitCriticalStruct(uintptr_t criticalDispatcher);
       static void InitSTA(SystemEnv* env);
 

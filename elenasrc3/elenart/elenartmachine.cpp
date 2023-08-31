@@ -301,10 +301,10 @@ void ELENARTMachine :: startSTA(SystemEnv* env, void* entry)
    Exit(0);
 }
 
-int ELENARTMachine :: allocateThreadEntry(SystemEnv* env)
+size_t ELENARTMachine :: allocateThreadEntry(SystemEnv* env)
 {
    if (env->th_table->counter < env->threadCounter) {
-      int index = env->th_table->counter;
+      size_t index = env->th_table->counter;
 
       env->th_table->counter++;
 

@@ -2387,6 +2387,23 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SyntaxNode node, Fi
    }
 }
 
+inline bool checkPreviousDeclaration(SyntaxNode node, ustr_t name)
+{
+   SyntaxNode current = node.prevNode();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Field) {
+         ustr_t currentName = node.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+
+         if (currentName.compare(name))
+            return true;
+      }
+
+      current = current.prevNode();
+   }
+
+   return false;
+}
+
 void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
    FieldAttributes& attrs, bool singleField)
 {
@@ -2474,7 +2491,14 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
    }
    else {
       if (scope.info.fields.exist(name)) {
-         scope.raiseError(errDuplicatedField, node);
+         if (attrs.overrideMode && checkPreviousDeclaration(node, name)) {
+            // override the field type if both declared in the same scope
+            auto it = scope.info.fields.getIt(name);
+            (*it).typeInfo = typeInfo;
+         }
+         else scope.raiseError(errDuplicatedField, node);
+
+         return;
       }
 
       // if it is a structure field

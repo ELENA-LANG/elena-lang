@@ -21,7 +21,7 @@ void SystemRoutineProvider :: InitSTAExceptionHandling(SystemEnv* env, void* cri
    InitCriticalStruct((uintptr_t)env->veh_handler);
 }
 
-void SystemRoutineProvider :: InitMTAExceptionHandling(SystemEnv* env, int index, void* criticalHandler)
+void SystemRoutineProvider :: InitMTAExceptionHandling(SystemEnv* env, size_t index, void* criticalHandler)
 {
    env->th_table->slots[index].content->eh_critical = (uintptr_t)criticalHandler;
 

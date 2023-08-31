@@ -64,7 +64,7 @@ namespace elena_lang
          __routineProvider.InitRandomSeed(seed, __routineProvider.GenerateSeed());
       }
 
-      int allocateThreadEntry(SystemEnv* env);
+      size_t allocateThreadEntry(SystemEnv* env);
 
       void* allocateThread(SystemEnv* env, void* arg, void* threadProc, int flags);
 
