@@ -93,6 +93,19 @@ public singleton arrayConvertorEx
       = arr;
 }
 
+// --- intmatrixExConvertor ---
+
+public singleton intmatrixExConvertor
+{
+   IntMatrix convert(Array a)
+   {
+      int n := a.Length;
+      int m := a[0].length;
+
+      ^ IntMatrix.allocate(n, m).populate:(int i, int j => a.at(i).at(j).toInt() )
+   }   
+}
+
 // --- enumerableConvertor ---
 
 singleton enumerableConvertor
@@ -177,6 +190,13 @@ public extension arrayConvertOp
    Array toArray()
       = arrayConvertorEx.convert(self);
 
+}
+
+// --- intArrayConvertOp ---
+public extension intArrayConvertOp
+{
+   Array toIntMatrix()
+      = intmatrixExConvertor.convert(self);
 }
 
 // --- convertorOp ---

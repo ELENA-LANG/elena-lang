@@ -32,107 +32,98 @@ public interface Space
     
    abstract update(RuleSet rs);
     
-   abstract read(int i, int j, ref int retVal);
-
-   embeddable int at(int i, int j)
-   {
-      int retVal := 0;
-      self.read(i, j, ref retVal);
-        
-      ^ retVal
-   }
+   abstract int at(int i, int j);
 }
 
-//public sealed class IntMatrixSpace : Space
-//{
-//    IntMatrix theMatrix;
-//    int       theN;
-//    int       theM;
-//    
-//    constructor allocate(int n, int m)
-//    {
-//        theN := n;
-//        theM := m;
-//        
-//        theMatrix := IntMatrix.allocate(n, m);
-//
-//        for (int i := 0, i < theN, i+=1)
-//        {
-//            for (int j := 0, j < theM, j+=1)
-//            {
-//                theMatrix.setAt(i, j, 0)
-//            }
-//        }
-//    }
-//
-//    constructor allocate(int n, int m, RuleSet rs)
-//        <= allocate(n, m)
-//    {
-//        self.internalUpdate(rs, theMatrix)
-//    }
-//
-//    private internalUpdate(RuleSet rs, IntMatrix matrix)
-//    {
-//        for (int i := 0, i < theN, i += 1)
-//        {
-//            for(int j := 0, j < theM, j += 1)            
-//            {
-//                int cell := 0;
-//                rs.proceed(self, i, j, ref cell);
-//                    
-//                matrix.setAt(i, j, cell)
-//            }
-//        }
-//    }
-//
-//    update(RuleSet rs)
-//    {
-//        IntMatrix newMatrix := IntMatrix.allocate(theN, theM);
-//        
-//        self.internalUpdate(rs, newMatrix);
-//        
-//        theMatrix := newMatrix
-//    }
-//
-//    read(int k, int l, ref int retVal)
-//    {
-//        int i := k;
-//        if(i < 0)
-//        {
-//            i := theN + i
-//        };
-//        
-//        if(i >= theN)
-//        {
-//            i := i.mod:theN
-//        };
-//        
-//        int j := l;
-//        if(j < 0)
-//        {
-//            j := theM + j
-//        };
-//        if(j >= theM)
-//        {
-//            j := j.mod:theM
-//        };
-//        
-//        theMatrix.read(i, j, ref retVal)
-//    }
-//    
-//    int Rows
-//    {
-//        get()
-//        {
-//            ^ theN
-//        }
-//    }
-//    
-//    int Columns
-//    {
-//        get()
-//        {
-//            ^ theM
-//        }
-//    }
-//}
+public sealed class IntMatrixSpace : Space
+{
+   IntMatrix _matrix;
+   int       _n;
+   int       _m;
+    
+   constructor allocate(int n, int m)
+   {
+      _n := n;
+      _m := m;
+        
+      _matrix := IntMatrix.allocate(n, m);
+
+      for (int i := 0, i < _n, i+=1)
+      {
+         for (int j := 0, j < _m, j+=1)
+         {
+            _matrix.setAt(i, j, 0)
+         }
+      }
+   }
+
+   constructor allocate(int n, int m, RuleSet rs)
+      <= allocate(n, m)
+   {
+      self.internalUpdate(rs, _matrix)
+   }
+
+   private internalUpdate(RuleSet rs, IntMatrix matrix)
+   {
+      for (int i := 0, i < _n, i += 1)
+      {
+         for(int j := 0, j < _m, j += 1)            
+         {
+            int cell := rs.proceed(self, i, j);
+                    
+            matrix.setAt(i, j, cell)
+         }
+      }
+   }
+
+   update(RuleSet rs)
+   {
+      IntMatrix newMatrix := IntMatrix.allocate(_n, _m);
+        
+      self.internalUpdate(rs, newMatrix);
+        
+      _matrix := newMatrix
+   }
+
+   int at(int k, int l)
+   {
+      int i := k;
+      if(i < 0)
+      {
+         i := _n + i
+      };
+        
+      if(i >= _n)
+      {
+         i := i.mod:_n
+      };
+        
+      int j := l;
+      if(j < 0)
+      {
+         j := _m + j
+      };
+      if(j >= _m)
+      {
+         j := j.mod:_m
+      };
+      
+      ^ _matrix.at(i, j)
+   }
+    
+   int Rows
+   {
+      get()
+      {
+         ^ _n
+      }
+   }
+    
+   int Columns
+   {
+      get()
+      {
+         ^ _m
+      }
+   }
+}

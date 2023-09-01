@@ -554,14 +554,6 @@ public sealed class IntMatrix
       _array[index] := v
    }
 
-   /// Reads an integer value at the specified position and saves it into an output variable
-   read(int i, int j, ref int retVal)
-   {
-      int index := i * _columns + j;
-        
-      retVal := _array[index];
-   }
-
    int at(int i, int j)
    {
       int index := i * _columns + j;
