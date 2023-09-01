@@ -32,7 +32,7 @@ public field event<name, T>
 {
    override EventHandler<T> name;
 
-   set name(f)
+   set name(T f)
    {
       if (nil == name)
       {

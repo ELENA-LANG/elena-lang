@@ -2105,24 +2105,23 @@ procedure __event_dispatcher
   load       dp:mssg
   mlen
 
-  set        fp:2
-  store      sp:2
-
-  set        fp:-1
+  set        sp:0
   store      sp:1
 
   cmp        n:0
   jeq        labCopyEnd
 
+  dalloc
+
 labCopy:
   add        n:-1
 
-  peek       sp:1
+  set        fp:-1
   xget
   store      sp:0
 
   neg
-  peek       sp:2
+  peek       sp:1
   xassign
   neg
 
@@ -2152,11 +2151,6 @@ labEnd:
   peek       fp:arr
 
   close      []
-
-  xrefresh   sp:0
-  xrefresh   sp:1
-
-  jump       vt:0
 
 end
 
