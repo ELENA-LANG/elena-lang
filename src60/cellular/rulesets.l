@@ -11,7 +11,7 @@ public singleton randomSet : RuleSet
 {
    int proceed(Space s, int i, int j)
    {
-      ^ randomGenerator.eval(0,2)
+      ^ randomGenerator.nextInt(0,2)
    }
 }
 
@@ -24,7 +24,7 @@ public class LoadedSet : RuleSet
       _set := m
    }
     
-   constructor load(list)
+   constructor load(Array list)
       <= load(list.toIntMatrix());
     
    int proceed(Space s, int i, int j)

@@ -195,7 +195,7 @@ public extension arrayConvertOp
 // --- intArrayConvertOp ---
 public extension intArrayConvertOp
 {
-   Array toIntMatrix()
+   IntMatrix toIntMatrix()
       = intmatrixExConvertor.convert(self);
 }
 

@@ -28,23 +28,23 @@ sealed class Model
 //        
 //      _started := false
 //   }
-//    
-//   private onUpdate()
-//   {
-//      OnUpdate.?(theSpace)
-//   }
-//    
-//   run()
-//   {
-//      if (started)
-//      { 
-//            theSpace.update(theRuleSet) 
-//      }
-//      else
-//      {
-//            started := true
-//      };
-//        
-//      self.onUpdate()
-//   }
+    
+   private onUpdate()
+   {
+      OnUpdate.?(_space)
+   }
+    
+   run()
+   {
+      if (_started)
+      { 
+         _space.update(_ruleSet) 
+      }
+      else
+      {
+         _started := true
+      };
+        
+      self.onUpdate()
+   }
 }

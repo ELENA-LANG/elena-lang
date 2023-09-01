@@ -1,12 +1,12 @@
 <configuration>
   <platform key="Win_x86">
      <project>
-        <executable>gameoflife</executable>
+        <executable>gameoflife.exe</executable>
      </project>
   </platform>
   <platform key="Win_x64">
      <project>
-        <executable>gameoflife64</executable>
+        <executable>gameoflife64.exe</executable>
      </project>
   </platform>
   <project>

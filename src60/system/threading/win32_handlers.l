@@ -24,5 +24,15 @@ public sealed struct ThreadHandle
    {
       extern KERNEL32.ResumeThread(_handle)
    }
+}
 
+public singleton threadControl
+{
+   sleep(int interval)
+   {
+      extern
+      {
+         extern KERNEL32.Sleep(interval)
+      }
+   }
 }

@@ -8,7 +8,7 @@ public interface IConsoleReader
     
     abstract char read();
     
-//    get abstract bool KeyAvailable();
+    get abstract bool KeyAvailable();
 }
 
 // --- IConsoleWriter ---
@@ -18,6 +18,8 @@ public interface IConsoleWriter
     abstract write(wide s);
     abstract write(string s);
     
+   abstract clear();
+
 //    abstract refresh();
 }
 
@@ -53,6 +55,14 @@ sealed class Console
       char retVal := reader.read();
         
       ^ retVal
+   }
+
+   get bool KeyAvailable()
+      => reader;   
+
+   clear()
+   {
+      writer.clear()
    }
 
    string readLine()

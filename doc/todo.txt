@@ -12,6 +12,7 @@ In development:
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
     * cellular
+
     * rosetta code sample : Conway's Game of Life, Create a file, Compare_a_list_of_strings
     * rosetta code sample : Create a two-dimensional array at runtime
 

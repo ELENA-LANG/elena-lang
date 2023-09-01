@@ -1,7 +1,7 @@
-//import system'threading;
+import system'threading;
 import cellular;
 
-//const int DELAY = 50;
+const int DELAY = 50;
 
 singleton gameOfLifeRuleSet : RuleSet
 {
@@ -25,28 +25,28 @@ singleton gameOfLifeRuleSet : RuleSet
    }
 }
 
-//playGame(Model model)
-//{
-//   console.clear();
-//    
-//   model.OnUpdate := (Space sp){ sp.print() };
-//
-//   until (console.KeyAvailable)
-//   {
-//      model.run();
-//        
-//      threadControl.sleep:DELAY
-//   };
-//
-//   console.readChar()
-//}
-//
-////public test
-////[
-////    playGame(Model newLoaded(LoadedSet load(testSet), gameOfLifeRuleSet)).
-////]
+playGame(Model model)
+{
+   console.clear();
+    
+   model.OnUpdate := (Space sp){ sp.print() };
+
+   until (console.KeyAvailable)
+   {
+      model.run();
+        
+      threadControl.sleep:DELAY
+   };
+
+   console.readChar()
+}
+
+//public test
+//[
+//    playGame(Model newLoaded(LoadedSet load(testSet), gameOfLifeRuleSet)).
+//]
 
 public program()
 {
-    /*playGame(*/Model.newRandomset(gameOfLifeRuleSet)/*)*/
+    playGame(Model.newRandomset(gameOfLifeRuleSet))
 }
