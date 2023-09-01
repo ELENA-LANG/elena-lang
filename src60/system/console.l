@@ -15,10 +15,12 @@ public interface IConsoleReader
 
 public interface IConsoleWriter
 {
-    abstract write(wide s);
-    abstract write(string s);
+   abstract write(wide s);
+   abstract write(string s);
     
    abstract clear();
+
+   abstract setCursorPosition(int x, int y);
 
 //    abstract refresh();
 }
@@ -59,6 +61,9 @@ sealed class Console
 
    get bool KeyAvailable()
       => reader;   
+
+   setCursorPosition(int x, int y)
+      => writer;
 
    clear()
    {

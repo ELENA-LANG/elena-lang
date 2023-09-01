@@ -152,6 +152,13 @@ namespace io
          }
       }
 
+      setCursorPosition(int x, int y)
+      {
+         int coord := y * 10000h + x;
+                    
+         extern KERNEL32.SetConsoleCursorPosition(handle, coord)
+      }
+
       clear()
       {
          auto buffer := new CONSOLE_SCREEN_BUFFER_INFO();
@@ -195,6 +202,10 @@ namespace io
       }
 
       clear()
+      {
+      }
+
+      setCursorPosition(int x, int y)
       {
       }
    }

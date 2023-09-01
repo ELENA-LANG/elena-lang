@@ -11,9 +11,11 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * cellular
+    * test console.KeyAvailable
 
-    * rosetta code sample : Conway's Game of Life, Create a file, Compare_a_list_of_strings
+    * rosetta code sample : Conway's Game of Life
+
+    * rosetta code sample : Create a file, Compare_a_list_of_strings
     * rosetta code sample : Create a two-dimensional array at runtime
 
     * corex : fix GC_ALLOC, collecting thread frames
