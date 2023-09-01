@@ -2093,7 +2093,7 @@ procedure __event_dispatcher
   xflush     sp:0
   xflush     sp:1
 
-  open       (2),[arr],[mssg, index]
+  open       (2),[arr,tmp],[mssg, index]
 
   get        i:0
   store      fp:arr
@@ -2105,12 +2105,11 @@ procedure __event_dispatcher
   load       dp:mssg
   mlen
 
-  set        sp:0
-  store      sp:1
-
   cmp        n:0
   jeq        labCopyEnd
 
+  set        sp:0
+  store      fp:tmp
   dalloc
 
 labCopy:
@@ -2121,7 +2120,7 @@ labCopy:
   store      sp:0
 
   neg
-  peek       sp:1
+  peek       fp:tmp
   xassign
   neg
 
