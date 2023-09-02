@@ -1,20 +1,12 @@
-import extensions;
-
-singleton Tester
-{
-   run()
-   {
-      int i := 0;
-      while (true) {
-         if (console.KeyAvailable)
-            $break;
-
-         i := i + 1;
-      }
-   }
-}
-
+import system'io;
+ 
 public program()
-{
-   Tester.run();
+{ 
+    File.assign("output.txt").textwriter().close();
+ 
+    File.assign("\output.txt").textwriter().close();        
+ 
+    Directory.assign("docs").create();
+ 
+    Directory.assign("\docs").create();
 }

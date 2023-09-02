@@ -188,9 +188,81 @@ namespace io
       }
    }
 
+   singleton fileStreamHelper
+   {
+      Stream openForWrite(string path, bool appendMode)
+      {
+         if(appendMode) { ^ FileStream.openForAppend(path) };
+            
+         ^ FileStream.openForReWrite(path)
+      }
+   }
+
+   // --- StreamWriter ---   
+   public class StreamWriter : TextWriter
+   {
+      Stream  _stream;
+      Encoder _encoder;
+    
+      constructor new(Stream stream, Encoder encoder)
+      {
+         _buffer := new TextBuilder();
+         _stream := stream;
+         _encoder := encoder;
+    
+         _newLineConstant := newLineConstant;                
+         _newLineLength := _newLineConstant.Length;
+      }
+    
+      constructor new(path)
+         <= new(FileStream.openForReWrite(path), UTF8Encoder);
+            
+      constructor new(string path, bool appendMode)
+         <= new(fileStreamHelper.openForWrite(path, appendMode), UTF8Encoder);
+            
+      Stream Stream = _stream;        
+            
+      Encoder Encoder = _encoder;
+            
+      write(char[] input, int length)
+      {
+         int  total := length;
+         byte buffer[64];
+         int  blockLength := 0;
+         int  bufferLength := 0;
+         int  offset := 0;
+            
+         while (total > 0)
+         {
+            if(total < 64)
+            { 
+               blockLength := total 
+            }
+            else
+            { 
+               blockLength := 64 
+            };
+                    
+            _encoder.convertTo(offset, ref blockLength, input, buffer, ref bufferLength);
+                
+            _stream.write(buffer, bufferLength);
+                
+            total := total - blockLength;
+            offset := offset + blockLength
+         }
+      }
+        
+      close()
+      {
+         _stream.close()
+      }
+   }
+
    singleton fileControl
    {
       TextReader newReader(path) = TextStreamReader.new:path;
+
+      TextWriter writer(path) = StreamWriter.new:path;
 
       bool isAvailable(path)
       {
@@ -222,5 +294,18 @@ namespace io
                 
          ^ false
       }    
+
+      create(path)
+      {
+         wide s := cast wide(path); // !! temporal
+            
+         int ret := extern KERNEL32.CreateDirectoryW(
+                /*cast wide(path)*/s,
+                0);
+                
+         if(ret == 0)
+            { IOException.new("Cannot create a directory").raise() }
+      }
+      
    }
 }

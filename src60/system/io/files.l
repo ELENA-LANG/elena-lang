@@ -13,6 +13,8 @@ namespace io
          = fileControl.isAvailable(_path);
 
       TextReader textreader() = fileControl.newReader(_path);
+
+      TextWriter textwriter() = fileControl.writer(_path);
    }
 
    // --- Directory ---
@@ -28,5 +30,11 @@ namespace io
 
       bool Available
          = directoryControl.isAvailable(_path);    
+
+      create()
+      {
+         directoryControl.create(_path);
+      }     
+      
    }   
 }
