@@ -287,7 +287,7 @@ namespace io
 
             extern
             {
-               extern KERNEL32.PeekConsoleInputW(handle, dump, 1, ref numberRead)
+               extern KERNEL32.PeekConsoleInputW(h, dump, 1, ref numberRead)
             };
 
             if (0 == numberRead)
@@ -306,7 +306,7 @@ namespace io
 
             extern
             {
-               extern KERNEL32.ReadConsoleInputW(handle, dump, 1, ref numberRead)
+               extern KERNEL32.ReadConsoleInputW(h, dump, 1, ref numberRead)
             }                
          };
 

@@ -1,34 +1,20 @@
 import extensions;
 
-class MyClass
+singleton Tester
 {
-    doInit()
-    {
-        console.writeLine:"onInit fired!"
-    }
-}
+   run()
+   {
+      int i := 0;
+      while (true) {
+         if (console.KeyAvailable)
+            $break;
 
-class MainClass
-{
-    Func onInit:event; // a field with the same name is declared as well
-
-    init()
-    {
-        // call the function if it is not nil
-        onInit.?()
-    }    
+         i := i + 1;
+      }
+   }
 }
 
 public program()
 {
-    var class := new MyClass();
-
-    var mainClass := new MainClass();
-
-    // adding an event handler 
-    mainClass.onInit := { class.doInit() };
-    // adding the second event handler 
-    mainClass.onInit := { console.writeLine:"I'm fired too!!" }; 
-
-    mainClass.init()
+   Tester.run();
 }
