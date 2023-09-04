@@ -11,9 +11,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * rosetta code sample : Create a two-dimensional array at runtime
-
-    * corex : fix GC_ALLOC, collecting thread frames
     * tutorial : Multiple inheritance in ELENA
     * calc - doesn't work
 

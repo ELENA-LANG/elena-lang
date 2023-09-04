@@ -233,8 +233,21 @@ labSkipWait:
   push esi
   push ecx
 
-  // ;   collect frames
-  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]  
+  // ; == GCXT: save frames ==
+  mov  eax, data : %CORE_THREAD_TABLE
+  mov  ebx, [eax]
+
+labYGNextThread:  
+  sub  ebx, 1
+  mov  eax, data : %CORE_THREAD_TABLE + tt_slots
+  
+  // ; get tls entry address
+  mov  esi, [eax+ebx*4]            
+  test esi, esi
+  jz   short labYGNextThreadSkip
+
+  // ; get the top frame pointer
+  mov  eax, [esi + tt_stack_frame]
   mov  ecx, eax
 
 labYGNextFrame:
@@ -252,6 +265,13 @@ labYGNextFrame:
   test eax, eax
   mov  ecx, eax
   jnz  short labYGNextFrame
+  nop
+  nop
+
+labYGNextThreadSkip:
+  test ebx, ebx
+  jnz  short labYGNextThread
+  // ; == GCXT: end ==
 
   mov [ebp-4], esp      // ; save position for roots
 

@@ -248,12 +248,12 @@ public sealed Matrix<T>
     
    constructor load(params)
    {
-      theRows := params.Rows;
-      theColumns := params.Columns;
+      _rows := params.Rows;
+      _columns := params.Columns;
         
       int len := _rows * _columns;
         
-      theArray := new T[](/*theRows * theColumns*/len);
+      _array := new T[](/*theRows * theColumns*/len);
         
       int i := 0;
       int j := 0;
