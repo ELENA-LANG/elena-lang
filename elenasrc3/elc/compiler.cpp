@@ -7202,7 +7202,7 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
       retVal = tempRetVal;
    }
    else retVal = compileMessageOperation(writer, scope, node, source, messageRef,
-      0, arguments, opMode, &outerArgsToUpdate);
+      implicitSignatureRef, arguments, opMode, &outerArgsToUpdate);
 
    return retVal;
 }
@@ -8675,14 +8675,22 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
          switch (source.kind) {
             case ObjectKind::TempLocalAddress:
             case ObjectKind::LocalAddress:
-            case ObjectKind::ParamAddress:
             case ObjectKind::IntLiteral:
             case ObjectKind::MssgLiteral:
             case ObjectKind::CharacterLiteral:
             case ObjectKind::RefLocal:
-            case ObjectKind::SelfBoxableLocal:
             case ObjectKind::ParamReference:
                source.typeInfo.typeRef = targetRef;
+               break;
+            case ObjectKind::SelfBoxableLocal:
+            case ObjectKind::ParamAddress:
+               if (source.mode == TargetMode::Conditional && source.typeInfo.typeRef != targetRef) {
+                  source.mode = TargetMode::None;
+                  source.typeInfo.typeRef = targetRef;
+
+                  return source;
+               }
+               else source.typeInfo.typeRef = targetRef;
                break;
             default:
                if (source.kind == ObjectKind::SelfLocal && source.mode == TargetMode::ArrayContent) {

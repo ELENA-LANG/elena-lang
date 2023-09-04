@@ -12,7 +12,7 @@
 namespace elena_lang
 {
    // default settings
-   constexpr bool DEFAULT_CONDITIONAL_BOXING = false;
+   constexpr bool DEFAULT_CONDITIONAL_BOXING = true;
 
    enum class MethodHint : ref_t
    {
