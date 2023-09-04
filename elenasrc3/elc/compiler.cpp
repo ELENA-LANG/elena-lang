@@ -960,7 +960,7 @@ ObjectInfo Compiler::MethodScope :: mapSelf(bool memberMode)
          return { ObjectKind::Param, { classScope->extensionClassRef }, -1 };
       }
       else if (isEmbeddable) {
-         return { ObjectKind::SelfBoxableLocal, { getClassRef(false) }, (ref_t)selfLocal };
+         return { ObjectKind::SelfBoxableLocal, { getClassRef(false) }, (ref_t)selfLocal, TargetMode::Conditional };
       }
       else return { ObjectKind::SelfLocal, { getClassRef(false) }, (ref_t)selfLocal };
    }
