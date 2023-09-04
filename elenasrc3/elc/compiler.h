@@ -1316,7 +1316,7 @@ namespace elena_lang
          bool withDebugInfo);
       void endMethod(BuildTreeWriter& writer, MethodScope& scope);
 
-      void compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, 
+      void compileMethodCode(BuildTreeWriter& writer, ClassScope* classScope, MethodScope& scope, CodeScope& codeScope,
          SyntaxNode node, bool newFrame);
       void compileDefConvConstructorCode(BuildTreeWriter& writer, MethodScope& scope, 
          SyntaxNode node, bool newFrame);

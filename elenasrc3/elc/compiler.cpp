@@ -9736,11 +9736,9 @@ void Compiler :: warnOnUnassignedLocal(SyntaxNode node, CodeScope& scope, int le
       scope.raiseWarning(WARNING_LEVEL_3, wrnUnassignedVariable, current);
 }
 
-void Compiler :: compileMethodCode(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope,
+void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classScope, MethodScope& scope, CodeScope& codeScope,
    SyntaxNode node, bool newFrame)
 {
-   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
-
    if (!newFrame) {
       if (scope.checkHint(MethodHint::Multimethod)) {
          compileMultidispatch(writer, codeScope, *classScope, node, false);
@@ -10296,6 +10294,8 @@ void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& s
 
 void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
 {
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
    SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
 
    CodeScope codeScope(&scope);
@@ -10323,7 +10323,7 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
       case SyntaxKey::ReturnExpression:
       case SyntaxKey::ResendDispatch:
       case SyntaxKey::Redirect:
-         compileMethodCode(writer, scope, codeScope, node, false);
+         compileMethodCode(writer, classScope, scope, codeScope, node, false);
          break;
       case SyntaxKey::DirectResend:
          compileDirectResendCode(writer, codeScope, current);
@@ -10474,6 +10474,12 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
    }
    else if (!test(classFlags, elDynamicRole) && classClassScope.info.methods.exist(defConstrMssg))
    {
+      if (scope.checkHint(MethodHint::Multimethod)) {
+         // NOTE : the dispatch statement must be before the default constructor call
+         // to avoid the doublicate allocating
+         compileMultidispatch(writer, codeScope, classClassScope, node, false);
+      }
+
       // new stack frame
       writer.appendNode(BuildKey::OpenFrame);
       newFrame = true;
@@ -10503,7 +10509,7 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
       switch (current.key) {
          case SyntaxKey::CodeBlock:
          case SyntaxKey::ResendDispatch:
-            compileMethodCode(writer, scope, codeScope, node, newFrame);
+            compileMethodCode(writer, &classClassScope, scope, codeScope, node, newFrame);
             break;
          case SyntaxKey::ReturnExpression:
             compileRetExpression(writer, codeScope, current, EAttr::DynamicObject);
@@ -10911,6 +10917,8 @@ void Compiler :: compileExpressionMethod(BuildTreeWriter& writer, MethodScope& s
 
 void Compiler :: compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
 {
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
    beginMethod(writer, scope, node, BuildKey::Method, false);
 
    CodeScope codeScope(&scope);
@@ -10919,7 +10927,7 @@ void Compiler :: compileClosureMethod(BuildTreeWriter& writer, MethodScope& scop
    switch (current.key) {
       case SyntaxKey::CodeBlock:
       case SyntaxKey::ReturnExpression:
-         compileMethodCode(writer, scope, codeScope, node, false);
+         compileMethodCode(writer, classScope, scope, codeScope, node, false);
          break;
       default:
          break;
