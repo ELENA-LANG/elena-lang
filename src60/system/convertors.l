@@ -851,6 +851,12 @@ public singleton stringConvertor
    string convert(BaseVariable v, int radix)
       <= convert(*v, radix);
 
+   string convert(wide w)
+      = w;
+
+   string convert(string s)
+      = s;
+
    string convert(o)
       = o.toPrintable();
 }
@@ -859,7 +865,7 @@ public singleton stringConvertor
 
 public singleton wideConvertor
 {
-   string convert(char ch)
+   wide convert(char ch)
    {
       int value := ch.Value;
 
@@ -868,6 +874,12 @@ public singleton wideConvertor
 
       ^ WideString.fromShortArray(0, length, buffer);      
    }  
+
+//   wide convert(BaseVariable v)
+//      <= convert(*v);
+//    
+//   wide convert(BaseVariable v, int radix)
+//      <= convert(*v, radix);
 
    wide convert(o)
       = o.toPrintable();

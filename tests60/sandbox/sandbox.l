@@ -1,12 +1,11 @@
-import system'io;
+import extensions;
+ 
+public singleton wideConvertorX
+{
+//   wide convert(BaseVariable v)
+//      <= convert(*v);
+}
  
 public program()
 {
-    File.assign("output.txt").delete();
- 
-    File.assign("\output.txt").delete();        
- 
-    Directory.assign("docs").delete();
- 
-    Directory.assign("\docs").delete();
 }

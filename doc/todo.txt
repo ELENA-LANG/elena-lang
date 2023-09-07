@@ -11,12 +11,15 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * UTF operations : utf8 to utf32
-    * UTF operations : utf32 to utf8
-    * UTF operations : utf16 to utf32
-    * UTF operations : utf32 to utf16
+    * fix broken code:
 
-    * rosetta code sample : Delete a file, Digital root, Dot product
+        public singleton wideConvertorX
+        {
+           wide convert(BaseVariable v)
+              <= convert(*v);
+        }
+
+
     * migrate the rest of system (memory.l)
 
     * tutorial : Multiple inheritance in ELENA
