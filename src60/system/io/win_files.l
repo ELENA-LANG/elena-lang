@@ -217,6 +217,9 @@ namespace io
       constructor new(path)
          <= new(FileStream.openForReWrite(path), UTF8Encoder);
             
+      constructor new(path, Encoder encoder)
+         <= new(FileStream.openForReWrite(path), encoder);
+            
       constructor new(string path, bool appendMode)
          <= new(fileStreamHelper.openForWrite(path, appendMode), UTF8Encoder);
             
@@ -243,7 +246,7 @@ namespace io
                blockLength := 64 
             };
                     
-            _encoder.convertTo(offset, ref blockLength, input, buffer, ref bufferLength);
+            _encoder.convertTo(input, offset, ref blockLength, buffer, 0, ref bufferLength);
                 
             _stream.write(buffer, bufferLength);
                 

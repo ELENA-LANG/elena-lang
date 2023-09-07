@@ -840,7 +840,7 @@ public singleton stringConvertor
       int value := ch.Value;
 
       byte buffer[4];
-      int length := PrimitiveOperations.copyUTF8_2_32(buffer,0,value);
+      int length := UTFOperations.convertUTF32_2_8(value, buffer, 0, 4);
 
       ^ String.fromByteArray(0, length, buffer);      
    }
@@ -864,7 +864,7 @@ public singleton wideConvertor
       int value := ch.Value;
 
       short buffer[2];
-      int length := PrimitiveOperations.copyUTF16_2_32(buffer,0,value);
+      int length := UTFOperations.convertUTF32_2_16(value, buffer, 0, 2);
 
       ^ WideString.fromShortArray(0, length, buffer);      
    }  
@@ -877,15 +877,15 @@ public singleton wideConvertor
 
 public singleton byteArrayConvertor
 {
-   int convert(byte[] dest, int destIndex, int length, wide sour)
+   int convert(wide sour, int sourLen, byte[] dest, int destIndex, int destLen)
    {
       int i := 0;
       int j := 0;
-      while (i < length) {
+      while (i < sourLen) {
          char ch := sour[i];
          int chVal := ch.Value;
          
-         int length := PrimitiveOperations.copyUTF8_2_32(dest,j,chVal);
+         int length := UTFOperations.convertUTF32_2_8(chVal, dest, destIndex + j, destLen);
          
          j += length;
          i += ch.WideLength;
@@ -899,15 +899,15 @@ public singleton byteArrayConvertor
 
 public singleton shortArrayConvertor
 {
-   int convert(short[] dest, int destIndex, int length, string sour)
+   int convert(string sour, int sourLen, short[] dest, int destIndex, int destLen)
    {
       int i := 0;
       int j := 0;
-      while (i < length) {
+      while (i < sourLen) {
          char ch := sour[i];
          int chVal := ch.Value;
          
-         int length := PrimitiveOperations.copyUTF16_2_32(dest, j, chVal);
+         int length := UTFOperations.convertUTF32_2_16(chVal, dest, destIndex + j, destLen);
          
          j += length;
          i += ch.Length;

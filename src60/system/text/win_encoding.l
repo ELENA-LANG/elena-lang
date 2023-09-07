@@ -18,7 +18,7 @@ namespace text
          short tmp[4];
          int chValue := ch.Value;
    
-         int tmpLen := PrimitiveOperations.copyUTF8_2_32(tmp, 0, chValue);
+         int tmpLen := UTFOperations.convertUTF32_2_16(chValue, tmp, 0, 4);
 
          int retVal := extern KERNEL32.WideCharToMultiByte(
             codePage, 0,
@@ -39,8 +39,9 @@ namespace text
 
          int converted := extern KERNEL32.MultiByteToWideChar(codePage, MB_ERR_INVALID_CHARS, byteArray, byteArrayLen, tmp, 4);
          
-         int ch := PrimitiveOperations.readUTF32(tmp, 0);
+         UTFOperations.convertUTF16_2_32(tmp, 0, converted, ref int value);
 
+         char ch := value;
          ^ ch
       }
    }

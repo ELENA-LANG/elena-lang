@@ -723,7 +723,7 @@ public const struct String : BaseValue,
       byte buffer[4];
       int chVal := ch.Value;
       int  length := ch.Length;
-      length := PrimitiveOperations.copyUTF8_2_32(buffer, 0, chVal);
+      length := UTFOperations.convertUTF32_2_8(chVal, buffer, 0, 4);
         
       int offs := 0;
       for (int i := 0, i < size, i := i + 1)
@@ -741,15 +741,15 @@ public const struct String : BaseValue,
 
    /// Creates the copy of a subarray        
    constructor copy(int index, int length, char[] charArray)
-      <= allocate(PrimitiveOperations.calcSubStringLength(index, length, charArray))
+      <= allocate(UTFOperations.calcSubStringLength(index, length, charArray))
    {
-      PrimitiveOperations.copy(this array, index, length, charArray);
+      PrimitiveArrayOperations.copyCharArray(charArray, index, length, this array);
    }
 
    internal constructor fromByteArray(int index, int size, byte[] buffer)
       <= allocate(size)
    {
-      PrimitiveOperations.copy(array, index, size, buffer);
+      PrimitiveArrayOperations.copy(buffer, index, size, array);
 
       // add tailing zero
       byte z := 0;
@@ -767,7 +767,7 @@ public const struct String : BaseValue,
       short buffer[256];            
       if (l < 256)
       {
-         m := shortArrayConvertor.convert(buffer, 0, l, self);
+         m := shortArrayConvertor.convert(self, l, buffer, 0, 256);
 
          ^ WideString.fromShortArray(0, m, buffer)
       };
@@ -781,7 +781,7 @@ public const struct String : BaseValue,
             page := 256
          };
 
-         m := shortArrayConvertor.convert(buffer, 0, page, self.Substring(i,page));
+         m := shortArrayConvertor.convert(self.Substring(i,page), page, buffer, 0, 256);
 
          retVal := retVal.add(WideString.fromShortArray(0, m, buffer));
 
@@ -845,7 +845,11 @@ public const struct String : BaseValue,
          OutOfRangeException.raise()
       };
 
-      ^ PrimitiveOperations.readUTF32(array, index);
+      UTFOperations.convertUTF8_2_32(array, index, len, ref int retVal);
+
+      char ch := retVal;
+
+      ^ ch;
    }
 
    retoverload byte at(int index)
@@ -1100,7 +1104,7 @@ public const struct WideString : BaseValue
       short buffer[4];
       int chVal := ch.Value;
       int  length := ch.Length;
-      length := PrimitiveOperations.copyUTF16_2_32(buffer, 0, chVal);
+      length := UTFOperations.convertUTF32_2_16(chVal, buffer, 0, length);
         
       int offs := 0;
       for (int i := 0, i < size, i := i + 1)
@@ -1118,15 +1122,15 @@ public const struct WideString : BaseValue
 
    /// Creates the copy of a subarray        
    constructor copy(int index, int length, char[] charArray)
-      <= allocate(PrimitiveOperations.calcSubWideStringLength(index, length, charArray))
+      <= allocate(UTFOperations.calcSubWideStringLength(index, length, charArray))
    {
-      PrimitiveOperations.copy(this array, index, length, charArray);
+      PrimitiveArrayOperations.copyCharArray(charArray, index, length, this array);
    }
 
    internal constructor fromShortArray(int index, int size, short[] buffer)
       <= allocate(size)
    {
-      PrimitiveOperations.copy(array, index, size, buffer);
+      PrimitiveArrayOperations.copy(buffer, index, size, array);
 
       // add tailing zero
       short z := 0;
@@ -1142,7 +1146,7 @@ public const struct WideString : BaseValue
       byte buffer[256];            
       if (l < 128)
       {
-         m := byteArrayConvertor.convert(buffer, 0, l, self);
+         m := byteArrayConvertor.convert(self, l, buffer, 0, 256);
 
          ^ String.fromByteArray(0, m, buffer)
       };
@@ -1156,7 +1160,7 @@ public const struct WideString : BaseValue
             page := 256
          };
 
-         m := byteArrayConvertor.convert(buffer, 0, page, self.Substring(i,page));
+         m := byteArrayConvertor.convert(self.Substring(i,page), page, buffer, 0, 256);
 
          retVal := retVal.add(String.fromByteArray(0, m, buffer));
 
@@ -1205,7 +1209,11 @@ public const struct WideString : BaseValue
          OutOfRangeException.raise()
       };
 
-      ^ PrimitiveOperations.readUTF32(array, index);
+      UTFOperations.convertUTF16_2_32(array, index, len, ref int retVal);
+
+      char ch := retVal;
+
+      ^ ch;
    }
 
    retoverload short at(int index)

@@ -1,4 +1,68 @@
+import extensions;
+ 
+sealed struct TinyInt : BaseNumber
+{
+   int value;
+ 
+   int cast() = value;
+ 
+   constructor(int n)
+   {
+      if (n <= 1 || n >= 10)
+      {
+            InvalidArgumentException.raise()
+      };
+ 
+      value := n
+   }
+ 
+   cast t(string s)
+   {
+      value := s.toInt();
+ 
+      if (value <= 1 || value >= 10)
+      {
+            InvalidArgumentException.raise()
+      }
+   }
+    
+   TinyInt add(TinyInt t)
+      = value + (cast int(t));
+ 
+   TinyInt subtract(TinyInt t)
+      = value - (cast int(t));
+ 
+   TinyInt multiply(TinyInt t)
+      = value * (cast int(t));
+ 
+   TinyInt divide(TinyInt t)
+      = value / (cast int(t));
+ 
+   bool equal(TinyInt t)        
+      = value == (cast int(t));
+ 
+   bool less(TinyInt t)        
+      = value == (cast int(t));
+
+   string toPrintable()
+      => value;
+}
+ 
 public program()
 {
-   var a := new Console();
+   TinyInt i := 4t;
+   TinyInt j := i + i;
+ 
+   console.printLine("4t = ", i);
+   console.printLine("8t = ", j);
+   console.writeLine("4t + 8t = ");
+
+   try
+   {
+      i + j
+   }
+   catch(InvalidArgumentException e)
+   {
+      console.printLine("A value is out of range")
+   }
 }

@@ -1972,7 +1972,7 @@ public const struct CharValue : BaseValue,
          : info("Retuns the number of bytes to represent the symbol in UTF-8") 
    {
       int val := _value;
-      int len := PrimitiveOperations.getCharLength(val);
+      int len := UTFOperations.getCharLength(val);
       
       ^ len
    }
@@ -1980,7 +1980,7 @@ public const struct CharValue : BaseValue,
    get int WideLength()
          : info("Retuns the number of bytes to represent the symbol in UTF-16") 
    {
-      int len := PrimitiveOperations.getCharWideLength(_value);
+      int len := UTFOperations.getCharWideLength(_value);
       
       ^ len
    }

@@ -11,6 +11,14 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
+    * UTF operations : utf8 to utf32
+    * UTF operations : utf32 to utf8
+    * UTF operations : utf16 to utf32
+    * UTF operations : utf32 to utf16
+
+    * test UTF16Encoder : to / from utf8, to / from win2152, load file
+    * test writing to the file
+
     * rosetta code sample : Define a primitive data type, Delegates, Delete a file, Digital root, Dot product
     * migrate the rest of system (memory.l)
 
@@ -25,7 +33,6 @@ In development:
     * new rosetta code sample : Amicable pairs (yields)
     * new unit test : dispatchmr (both function and normal one)
     * ide : goto nested class
-    * test UTF16Encoder : to / from utf8, to / from win2152, load file
     * #195 : implementing rosetta code samples
     * ldoc : show template based type correctly
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
@@ -132,6 +139,7 @@ In development:
     * using / finally statements in ELENA
     * uncomment multi-method validation
     * rosetta code sample : Anagrams
+    * migrate all rosetta examples from examples/rosetta to examples60 and remove them
 
     === Iteration 19 ===
     [!] pi sample optimization (under 9sec)
