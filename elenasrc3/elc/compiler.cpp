@@ -7965,7 +7965,7 @@ ObjectInfo Compiler :: compileAltOperation(BuildTreeWriter& writer, ExprScope& s
 
    ObjectInfo target = {};
    SyntaxNode current = node.firstChild();
-   if (current == SyntaxKey::MessageOperation) {
+   if (current == SyntaxKey::MessageOperation || current == SyntaxKey::PropertyOperation) {
       SyntaxNode objNode = current.firstChild();
 
       target = compileObject(writer, scope, objNode, EAttr::Parameter, nullptr);
@@ -7973,7 +7973,7 @@ ObjectInfo Compiler :: compileAltOperation(BuildTreeWriter& writer, ExprScope& s
       writer.newNode(BuildKey::AltOp, ehLocal.argument);
 
       writer.newNode(BuildKey::Tape);
-      compileMessageOperationR(writer, scope, target, objNode.nextNode(), false);
+      compileMessageOperationR(writer, scope, target, objNode.nextNode(), current == SyntaxKey::PropertyOperation);
       writer.closeNode();
    }
    else scope.raiseError(errInvalidOperation, node);

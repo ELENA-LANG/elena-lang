@@ -16,10 +16,7 @@ In development:
     * UTF operations : utf16 to utf32
     * UTF operations : utf32 to utf16
 
-    * test UTF16Encoder : to / from utf8, to / from win2152, load file
-    * test writing to the file
-
-    * rosetta code sample : Define a primitive data type, Delegates, Delete a file, Digital root, Dot product
+    * rosetta code sample : Delete a file, Digital root, Dot product
     * migrate the rest of system (memory.l)
 
     * tutorial : Multiple inheritance in ELENA

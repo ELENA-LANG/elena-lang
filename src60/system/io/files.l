@@ -15,6 +15,10 @@ namespace io
       TextReader textreader() = fileControl.newReader(_path);
 
       TextWriter textwriter() = fileControl.writer(_path);
+
+      delete()
+         = fileControl.delete(_path);
+
    }
 
    // --- Directory ---
@@ -35,6 +39,8 @@ namespace io
       {
          directoryControl.create(_path);
       }     
-      
+
+      delete()
+         = directoryControl.delete(_path);      
    }   
 }

@@ -280,6 +280,15 @@ namespace io
                 
          ^ false
       }      
+
+      bool delete(path)
+      {
+         wide s := cast wide(path); // !! temporal
+            
+         int ret := extern KERNEL32.DeleteFileW(/*cast wide(path)*/s);
+            
+         ^ ret != 0
+      }
    }
 
    singleton directoryControl
@@ -309,6 +318,14 @@ namespace io
          if(ret == 0)
             { IOException.new("Cannot create a directory").raise() }
       }
-      
+ 
+      delete(path)
+      {
+         wide s := cast wide(path); // !! temporal
+            
+         int ret := extern KERNEL32.RemoveDirectoryW(/*cast wide(path)*/s);
+            
+         ^ ret != 0
+      }
    }
 }
