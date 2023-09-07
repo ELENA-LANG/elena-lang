@@ -1,8 +1,4 @@
-A;
-
-public A AA = new A();
-
 public program()
 {
-
+   var a := new Console();
 }

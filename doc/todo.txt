@@ -11,10 +11,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * warn if the public symbol returns internal / private class
-    * console class should be public with internal constructor
-    * ldoc : symbol should return the type and it should be possible to see its api (e.g. system'console)
-
     * tutorial : Multiple inheritance in ELENA
     * calc - doesn't work
 
@@ -75,7 +71,6 @@ In development:
     * primitive operations : support all comparision operations (not only <, == and !=)
     * closure should be sealed
     * jumping - aligning the target to 4 / 8
-    * mark String.fromByteArray as internal one
     * simplify - isCompatible - could we get rid of special cases for V_FLAG?
     * optimization: it should be possible to convert int liteal directly to v_int8 / v_int16 / v_int64,
       depending on the value size
@@ -134,6 +129,7 @@ In development:
     ! api functionality for existing classes : rest of system
     ! api functionality for existing classes : externals
     * using / finally statements in ELENA
+    * uncomment multi-method validation
 
     === Iteration 19 ===
     [!] pi sample optimization (under 9sec)

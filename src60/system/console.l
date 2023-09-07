@@ -25,12 +25,12 @@ public interface IConsoleWriter
 //    abstract refresh();
 }
 
-sealed class Console
+public sealed class Console
 {
    IConsoleReader reader;
    IConsoleWriter writer;
 
-   constructor(IConsoleReader reader, IConsoleWriter writer)
+   internal constructor(IConsoleReader reader, IConsoleWriter writer)
    {
       this reader := reader;
       this writer := writer;

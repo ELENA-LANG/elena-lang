@@ -3229,11 +3229,13 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
                if ((methodScope.message & ~STATIC_MESSAGE) == scope.moduleScope->buildins.constructor_message) {
                   withDefaultConstructor = true;
                }
-               else if (getArgCount(methodScope.message) == 0 && methodScope.checkHint(MethodHint::Protected)) {
-                  // check if it is protected default constructor
+               else if (getArgCount(methodScope.message) == 0 && (methodScope.checkHint(MethodHint::Protected) 
+                  || methodScope.checkHint(MethodHint::Internal)))
+               {
+                  // check if it is protected / iternal default constructor
                   ref_t dummy = 0;
                   ustr_t actionName = scope.module->resolveAction(getAction(methodScope.message), dummy);
-                  if (actionName.endsWith(CONSTRUCTOR_MESSAGE2))
+                  if (actionName.endsWith(CONSTRUCTOR_MESSAGE2) || actionName.endsWith(CONSTRUCTOR_MESSAGE))
                      withDefaultConstructor = true;
                }
             }
@@ -10359,7 +10361,7 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
    endMethod(writer, scope);
 }
 
-bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool& isProtectedDefConst)
+bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool internalOne, bool& isProtectedDefConst)
 {
    ref_t actionRef = getAction(message);
    if (actionRef == getAction(scope.moduleScope->buildins.constructor_message)) {
@@ -10378,6 +10380,12 @@ bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, mssg_t message, 
          return true;
       }
       else return actionName.endsWith(CONSTRUCTOR_MESSAGE);
+   }
+   else if (internalOne) {
+      ref_t dummy = 0;
+      ustr_t actionName = scope.module->resolveAction(actionRef, dummy);
+
+      return actionName.endsWith(CONSTRUCTOR_MESSAGE);
    }
    else return false;
 }
@@ -10439,7 +10447,7 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
    ClassScope& classClassScope, SyntaxNode node)
 {
    bool isProtectedDefConst = false;
-   bool isDefConvConstructor = isDefaultOrConversionConstructor(scope, scope.message, isProtectedDefConst);
+   bool isDefConvConstructor = isDefaultOrConversionConstructor(scope, scope.message, scope.checkHint(MethodHint::Internal), isProtectedDefConst);
 
    mssg_t defConstrMssg = scope.moduleScope->buildins.constructor_message;
    mssg_t protectedDefConstructor = classClassScope.getMssgAttribute(defConstrMssg, ClassAttribute::ProtectedAlias);
