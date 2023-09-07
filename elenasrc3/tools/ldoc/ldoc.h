@@ -50,6 +50,12 @@ namespace elena_lang
       IdentifierString  name;
       IdentifierString  shortDescr;
       IdentifierString  type;
+
+      ApiFieldInfo()
+         : special(false)
+      {
+         
+      }
    };
 
    typedef List<ApiFieldInfo*, freeobj> ApiFieldInfoList;

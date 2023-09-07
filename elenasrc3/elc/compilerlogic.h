@@ -192,6 +192,8 @@ namespace elena_lang
          }
       }
 
+      bool isLessAccessible(ModuleScopeBase& scope, Visibility sourceVisibility, ref_t targetRef);
+
       void generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_t parentRef, VirtualMethods& methods);
 
       static CompilerLogic* getInstance()

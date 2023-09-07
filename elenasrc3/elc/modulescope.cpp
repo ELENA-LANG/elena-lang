@@ -25,6 +25,17 @@ inline ustr_t getVisibilityPrefix(Visibility visibility)
    }
 }
 
+inline Visibility getVisibility(ustr_t name)
+{
+   if (name.findStr(PRIVATE_PREFIX_NS) != NOTFOUND_POS)
+      return Visibility::Private;
+
+   if (name.findStr(INTERNAL_PREFIX_NS) != NOTFOUND_POS)
+      return Visibility::Internal;
+
+   return Visibility::Public;
+}
+
 inline ref_t mapNewIdentifier(ModuleBase* module, ustr_t identifier, Visibility visibility)
 {
    ustr_t prefix = getVisibilityPrefix(visibility);
@@ -606,4 +617,11 @@ bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ustr_t name, bo
 bool ModuleScope :: isDeclared(ref_t reference)
 {
    return mapSection(reference | mskMetaClassInfoRef, true) != nullptr;
+}
+
+Visibility ModuleScope :: retrieveVisibility(ref_t reference)
+{
+   ustr_t referenceName = module->resolveReference(reference);
+
+   return getVisibility(referenceName);
 }

@@ -120,6 +120,7 @@ namespace elena_lang
    constexpr auto wrnUnknownTypecast         = 426;
    constexpr auto wrnUnsupportedOperator     = 427;
    constexpr auto wrnUnassignedVariable      = 428;
+   constexpr auto wrnLessAccessible          = 429;
 
    constexpr auto wrnSyntaxFileNotFound      = 500;
    constexpr auto wrnInvalidConfig           = 501;

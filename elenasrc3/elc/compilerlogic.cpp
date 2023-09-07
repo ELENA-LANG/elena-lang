@@ -2320,3 +2320,13 @@ bool CompilerLogic :: isNumericType(ModuleScopeBase& scope, ref_t& reference)
 
    return false;
 }
+
+bool CompilerLogic :: isLessAccessible(ModuleScopeBase& scope, Visibility sourceVisibility, ref_t targetRef)
+{
+   if (!targetRef)
+      return false;
+
+   Visibility targetVisibility = scope.retrieveVisibility(targetRef);
+
+   return sourceVisibility > targetVisibility;
+}

@@ -514,7 +514,7 @@ namespace elena_lang
 
       bool match(ByteCodeIterator& it, PatternArg& arg)
       {
-         auto bc = *it;
+         ByteCommand bc = *it;
 
          if (code != bc.code)
             return code == ByteCode::Match;

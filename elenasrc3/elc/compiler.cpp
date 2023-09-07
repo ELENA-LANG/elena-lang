@@ -9544,6 +9544,9 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
          scope.raiseError(errInvalidOperation, node);
    }
 
+   if (_logic->isLessAccessible(*scope.moduleScope, scope.visibility, scope.info.typeRef))
+      scope.raiseWarning(WARNING_LEVEL_1, wrnLessAccessible, node);
+
    scope.save();
 }
 
@@ -11254,6 +11257,7 @@ void Compiler :: compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, S
          {
             SymbolScope symbolScope(&ns, current.arg.reference, ns.defaultVisibility);
             symbolScope.isStatic = SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_STATIC);
+            symbolScope.visibility = ns.moduleScope->retrieveVisibility(symbolScope.reference);
 
             compileSymbol(writer, symbolScope, current);
             break;

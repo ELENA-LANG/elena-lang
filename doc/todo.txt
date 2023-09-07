@@ -11,6 +11,10 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
+    * warn if the public symbol returns internal / private class
+    * console class should be public with internal constructor
+    * ldoc : symbol should return the type and it should be possible to see its api (e.g. system'console)
+
     * tutorial : Multiple inheritance in ELENA
     * calc - doesn't work
 
@@ -38,7 +42,6 @@ In development:
     * test : print german text
     * examples : collatz, matrix
     * examples : p2, random 
-    * ldoc : symbol should return the type and it should be possible to see its api (e.g. system'console)
     * rosetta samples : 20
     * examples : datetime
     * examples : replace, trans 
@@ -121,6 +124,16 @@ In development:
     * test text file reader / writer (with encoders)
     * test binary file reader / writer
     * constructor - single dispatcher
+    * ide : refreshing auto watch - with the same name, unused
+    * ide : set / remove breakpoints
+    * ide : menu - clear all breakpoints
+    * ide : open via dialog - set proper namespace
+    * ide : save project as
+    * ide : exclude the file from the project
+    * ide : hide / show include / exclude  depending if the file is a part of the project
+    ! api functionality for existing classes : rest of system
+    ! api functionality for existing classes : externals
+    * using / finally statements in ELENA
 
     === Iteration 19 ===
     [!] pi sample optimization (under 9sec)
@@ -157,18 +170,9 @@ Backlog:
     * ppc64, aarch64 : fix xrefresh / xflush - use arg instead of direct values
     * execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
     * review install scripts : include all existing samples, use different output folders
-    * ide : refreshing auto watch - with the same name, unused
-    * ide : set / remove breakpoints
-    * ide : menu - clear all breakpoints
-    * ide : open via dialog - set proper namespace
     * review extensions warnings
     * #580 : new feature : use C# 7.0 style namespace (single line one)
-    * ide : exclude the file from the project
-    * ide : hide / show include / exclude  depending if the file is a part of the project
     ! script and db samples
-    ! x86 : gui
-    ! api functionality for existing classes : rest of system
-    ! api functionality for existing classes : externals
     ! elena sm : x86-64
     ! sm : generate some basic templates from vm console - hello world sample
     ! script samples : win x86, win x86-64, linix i386, linux amd64
@@ -178,7 +182,6 @@ Backlog:
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
-    * ide : save project as
     * Class Constants : review doc and implement if requiered
     * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
     * x86 : gui - starting - new project type
@@ -225,7 +228,6 @@ Backlog:
     ! elena sm : script samples Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
     ! migrate all script engine tutorials : linix aarch64, linux ppc64le
     ! elena sm : linux
-    ! i386 : multi-threading
     ! x86-64 : multi-threading
     ! x86-64 : gui
     ! x86-64 : script samples

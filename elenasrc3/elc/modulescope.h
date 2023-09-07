@@ -90,6 +90,8 @@ public:
 
    bool isDeclared(ref_t reference) override;
 
+   Visibility retrieveVisibility(ref_t reference) override;
+
    ModuleScope(LibraryLoaderBase* loader, 
       ForwardResolverBase* forwardResolver, 
       ModuleBase* module,

@@ -149,10 +149,10 @@ enum class TemplateType
 
 enum class Visibility
 {
-   Private,
-   Internal,
-   Public,
-   Protected
+   Private = 1,
+   Internal = 2,
+   Protected = 3,
+   Public = 4,
 };
 
 struct BranchingInfo
@@ -333,6 +333,8 @@ public:
    virtual bool includeNamespace(IdentifierList& importedNs, ustr_t name, bool& duplicateInclusion) = 0;
 
    virtual ExternalInfo mapExternal(ustr_t dllAlias, ustr_t functionName) = 0;
+
+   virtual Visibility retrieveVisibility(ref_t reference) = 0;
 
    ModuleScopeBase(ModuleBase* module,
       ModuleBase* debugModule,

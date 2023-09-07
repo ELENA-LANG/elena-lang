@@ -1,26 +1,8 @@
-struct X
-{
-   int x;
+A;
 
-   constructor()
-   {
-      x := 0;
-   }
-
-   get()
-   {
-      var r := self;
-
-      ^ r
-   }
-}
+public A AA = new A();
 
 public program()
 {
-   X x := new X();
-   var r := x.get();
-
-   var x2 := new X();
-   var r2 := x2.get();
 
 }

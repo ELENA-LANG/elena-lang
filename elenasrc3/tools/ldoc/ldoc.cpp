@@ -370,11 +370,16 @@ void writeType(TextFileWriter& writer, ustr_t type, bool fullReference = false)
       size_t index = type.findStr("&lt;");
       NamespaceString ns(type);
       if (index != NOTFOUND_POS) {
-         for (size_t i = index; i >= 0; i--) {
+         size_t i = index;
+         while (true) {
             if (type[i] == '\'') {
                ns.copy(type, i);
                break;
             }
+            if (i != 0) {
+               i--;
+            }
+            else break;
          }
       }
 
