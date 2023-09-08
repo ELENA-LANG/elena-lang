@@ -6,6 +6,9 @@ public singleton wideConvertorX
 //      <= convert(*v);
 }
  
+A : Reference<BaseVariable> {}
+
 public program()
 {
+//   Reference<BaseVariable> r := nil;
 }
