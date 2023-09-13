@@ -111,6 +111,10 @@ ELENA byte codes (or ecodes)
 
    set sp:i                 - sp[i] => acc
 
+   shr i                    - index := index >> i
+
+   shl i                    - index := index << i
+
    store r                  - acc => [r]
 
    wload                    - index := word([acc])
@@ -128,6 +132,8 @@ ELENA byte codes (or ecodes)
    xlload                   - long:index := long:acc[index]
 
    xpeekne                  - acc <= COMP.EQ ? sp[0] : acc
+
+   xset dp:i                - dp[index + i] => acc
 
    xset fp:i                - fp[index + i] => acc
 

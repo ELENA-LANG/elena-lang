@@ -80,10 +80,6 @@ namespace elena_lang
 
    constexpr auto PROGRAM_ENTRY              = "$forwards'program";         // used by the linker to define the debug entry
 
-   constexpr auto RETVAL_ARG                 = "$retVal";
-   constexpr auto PARENT_VAR                 = "$parent";
-   constexpr auto OWNER_VAR                  = "$owner";
-
    constexpr auto SYSTEM_FORWARD             = "$system_entry";   // the system entry
    constexpr auto SUPER_FORWARD              = "$super";          // the common class predecessor
    constexpr auto INTLITERAL_FORWARD         = "$int";            // the int literal
@@ -132,13 +128,13 @@ namespace elena_lang
    constexpr auto PARAMETER_NAMES            = "parameter_names";
 
    // --- ELENA verb messages ---
-   constexpr auto DISPATCH_MESSAGE        = "#dispatch";
-   constexpr auto CONSTRUCTOR_MESSAGE     = "#constructor";
-   constexpr auto CONSTRUCTOR_MESSAGE2    = "#constructor2";   // protected constructor
-   constexpr auto CAST_MESSAGE            = "#cast";
-   constexpr auto INVOKE_MESSAGE          = "#invoke";
-   constexpr auto TRY_INVOKE_MESSAGE      = "#try_invoke";
-   constexpr auto INIT_MESSAGE            = "#init";
+   constexpr auto DISPATCH_MESSAGE           = "#dispatch";
+   constexpr auto CONSTRUCTOR_MESSAGE        = "#constructor";
+   constexpr auto CONSTRUCTOR_MESSAGE2       = "#constructor2";   // protected constructor
+   constexpr auto CAST_MESSAGE               = "#cast";
+   constexpr auto INVOKE_MESSAGE             = "#invoke";
+   constexpr auto TRY_INVOKE_MESSAGE         = "#try_invoke";
+   constexpr auto INIT_MESSAGE               = "#init";
 
    constexpr auto ADD_MESSAGE             = "add";
    constexpr auto SUB_MESSAGE             = "subtract";
@@ -155,7 +151,7 @@ namespace elena_lang
    constexpr auto NOT_MESSAGE             = "Inverted";
    constexpr auto NEGATE_MESSAGE          = "Negative";
    constexpr auto VALUE_MESSAGE           = "Value";
-   constexpr auto ITEM_MESSAGE = "Value";
+   constexpr auto ITEM_MESSAGE            = "Value";
    constexpr auto NOTEQUAL_MESSAGE        = "notequal";
    constexpr auto LESS_MESSAGE            = "less";
    constexpr auto NOTLESS_MESSAGE         = "notless";
@@ -311,6 +307,7 @@ namespace elena_lang
       SingleDispatch    = 0xA09,
       ExtOverloadList   = 0x90A,
       Initializer       = 0x10B,
+      YieldContextSize  = 0x80C,
    };
 
    // === Reference constants ====

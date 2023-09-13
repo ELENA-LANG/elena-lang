@@ -716,6 +716,10 @@ namespace elena_lang
          {
             return checkHint(MethodHint::Generic);
          }
+         bool isYieldable()
+         {
+            return checkHint(MethodHint::Yieldable);
+         }
 
          ref_t getClassRef(bool ownerClass = true)
          {
@@ -1255,6 +1259,7 @@ namespace elena_lang
       ObjectInfo compileTupleAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
 
       void compileSwitchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
+      void compileYieldOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
 
       ObjectInfo defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo declaredTypeInfo, bool variableMode,
          bool forwardMode, bool refOp, bool mssgOp, bool memberMode, bool& invalid, ExpressionAttribute attrs);
@@ -1328,6 +1333,7 @@ namespace elena_lang
 
       void compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, 
          bool withGenerics, bool withOpenArgGenerics);
+      void compileYieldInitializing(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
       void compileInitializerMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode classNode);
       void compileStaticInitializerMethod(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode classNode);
       void compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);

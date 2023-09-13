@@ -111,9 +111,10 @@ namespace elena_lang
       LazyOperation           = 0x001865,
       TupleAssignOperation    = 0x001866,
       ContinueOperation       = 0x001867,
-      Postfix                 = 0x001068,
-      TemplatePostfix         = 0x001069,
-      ReferOperation          = 0x00186A,
+      YieldOperation          = 0x001868,
+      Postfix                 = 0x001069,
+      TemplatePostfix         = 0x00106A,
+      ReferOperation          = 0x00186B,
       TemplateArg             = 0x001070,
       Dimension               = 0x001471,
       NestedBlock             = 0x001080,
@@ -185,6 +186,7 @@ namespace elena_lang
       Row                     = 0x000202,
 
       ExternalTree            = 0x000301,
+      YieldContext            = 0x000302,
 
       Idle                    = 0x000F01,
    };

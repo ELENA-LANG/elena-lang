@@ -475,7 +475,8 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    if (_bcRules.length() > 0)
       bcWriter.loadByteCodeRules(&_bcRules);
 
-   bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList, moduleScope.tapeOptMode, moduleScope.threadFriendly);
+   bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList, moduleScope.ptrSize,
+      moduleScope.tapeOptMode, moduleScope.threadFriendly);
 
    if (savingMode) {
       // saving a module

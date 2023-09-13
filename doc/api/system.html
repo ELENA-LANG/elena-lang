@@ -4416,18 +4416,18 @@ system'charConvertor</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> retVal)
+<CODE>convert(o)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -4436,7 +4436,47 @@ system'charConvertor</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+</CODE>
+<div class="block">
+Converts a literal string into a character</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
+</CODE>
+<div class="block">
+Converts a wide string into a character</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> w)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b)
 </CODE>
 </TD>
 </TR>
@@ -16690,6 +16730,24 @@ system'stringConvertor</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> w)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -18744,9 +18802,90 @@ system'wideConvertor</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> value)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN> v)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN> v, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
 </TD>
 </TR>

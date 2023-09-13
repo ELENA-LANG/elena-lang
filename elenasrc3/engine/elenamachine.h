@@ -118,7 +118,7 @@ namespace elena_lang
       static void InitRandomSeed(SeedStruct& seed, long long seedNumber);
       static unsigned int GetRandomNumber(SeedStruct& seed);
 
-      static void* CreateThread(int tt_index, int flags, void* threadProc);
+      static void* CreateThread(size_t tt_index, int flags, void* threadProc);
 
       static void GCSignalClear(void* handle);
       static void GCSignalStop(void* handle);

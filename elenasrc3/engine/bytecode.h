@@ -70,8 +70,11 @@ namespace elena_lang
       FIMul          = 0x72,
       FIDiv          = 0x73,
 
-      MaxSingleOp    = 0x77,
+      MaxSingleOp    = 0x74,
 
+      Shl            = 0x75,
+      Shr            = 0x76,
+      XSetDP         = 0x77,
       FAbsDP         = 0x78,
       FSqrtDP        = 0x79,
       FExpDP         = 0x7A,

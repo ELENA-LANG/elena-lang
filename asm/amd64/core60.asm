@@ -783,6 +783,72 @@ inline %073h
 
 end
 
+// ; shl
+inline %075h
+
+  mov  ecx, __n_1
+  shl  edx, cl
+
+end
+
+// ; shl
+inline %275h
+
+  shl  edx, 1
+
+end
+
+// ; shl
+inline %375h
+
+  shl  edx, 2
+
+end
+
+// ; shl
+inline %475h
+
+  shl  edx, 3
+
+end
+
+// ; shr
+inline %076h
+
+  mov  ecx, __n_1
+  shr  edx, cl
+
+end
+
+// ; shr
+inline %276h
+
+  shr  edx, 1
+
+end
+
+// ; shr
+inline %376h
+
+  shr  edx, 2
+
+end
+
+// ; shr
+inline %476h
+
+  shr  edx, 3
+
+end
+
+// ; xsetdp
+inline %077h
+
+  lea  rax, [rdx*8]
+  lea  rbx, [rbp + rax + __arg32_1]
+
+end 
+
 // ; fabsdp
 inline %078h
 
@@ -1387,7 +1453,7 @@ end
 // ; xsetfp
 inline %09Eh
 
-  lea  rax, [rdx*4]
+  lea  rax, [rdx*8]
   lea  rbx, [rbp + rax + __arg32_1]
 
 end 

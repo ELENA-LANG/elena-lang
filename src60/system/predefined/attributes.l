@@ -17,6 +17,7 @@
 #let attributesSymbols["sealed"]      := 80003001h;
 #let attributesSymbols["abstract"]    := 80003002h;
 #let attributesSymbols["closed"]      := 80003003h;
+#let attributesSymbols["yieldable"]   := 80003004h;
 #let attributesSymbols["predefined"]  := 80003005h;
 #let attributesSymbols["override"]    := 80003006h;
 

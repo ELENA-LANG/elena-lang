@@ -35,7 +35,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "fiadd", "fisub", "fimul", "fidiv", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "fiadd", "fisub", "fimul", "fidiv", OPCODE_UNKNOWN, "shl", "shr", "xset dp",
    "fabs dp", "fsqrt dp", "fexp dp", "fln dp", "fsin dp", "fcos dp", "farctan dp", "fpi dp",
 
    "set", "set dp", "nlen", "xassign i", "peek", "store", "xswap sp", "swap sp",

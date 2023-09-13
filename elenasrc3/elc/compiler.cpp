@@ -3189,6 +3189,22 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
 
    //   current = current.nextNode();
    //}
+
+   if (methodScope.checkHint(MethodHint::Yieldable)) {
+      // raise an error if the class is a struct
+      // only a single yield method is allowed
+
+      // inject yield context assigning
+      node.parentNode()
+         .appendChild(SyntaxKey::AssignOperation)
+         .appendChild(SyntaxKey::YieldContext, methodScope.message);
+
+      // inject yield context field
+      node.parentNode()
+         .appendChild(SyntaxKey::Field)
+         .appendChild(SyntaxKey::Name)
+         .appendChild(SyntaxKey::identifier, YIELD_CONTEXT_FIELD);
+   }
 }
 
 void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor)
@@ -5835,30 +5851,35 @@ bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node)
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::AssignOperation) {
          found = true;
-         SyntaxNode lnode = current.findChild(SyntaxKey::Object);
-         ObjectInfo target = mapObject(scope, lnode, EAttr::None);
-         switch (target.kind) {
-            case ObjectKind::Field:
-               evalulated = false;
-               break;
-            case ObjectKind::ClassConstant:
-               if (target.reference == INVALID_REF) {
-                  if(evalClassConstant(lnode.firstChild(SyntaxKey::TerminalMask).identifier(),
-                     scope, current.firstChild(SyntaxKey::ScopeMask), target))
-                  {
-                     current.setKey(SyntaxKey::Idle);
+         SyntaxNode lnode = current.findChild(SyntaxKey::Object, SyntaxKey::YieldContext);
+         if (lnode == SyntaxKey::YieldContext) {
+            return false;
+         }
+         else {
+            ObjectInfo target = mapObject(scope, lnode, EAttr::None);
+            switch (target.kind) {
+               case ObjectKind::Field:
+                  evalulated = false;
+                  break;
+               case ObjectKind::ClassConstant:
+                  if (target.reference == INVALID_REF) {
+                     if (evalClassConstant(lnode.firstChild(SyntaxKey::TerminalMask).identifier(),
+                        scope, current.firstChild(SyntaxKey::ScopeMask), target))
+                     {
+                        current.setKey(SyntaxKey::Idle);
+                     }
+                     else scope.raiseError(errInvalidOperation, current);
                   }
-                  else scope.raiseError(errInvalidOperation, current);
-               }
-               break;
-            case ObjectKind::StaticField:
-               if (!current.arg.reference) {
-                  current.setArgumentReference(compileStaticAssigning(scope, current));
-               }
-               break;
-            default:
-               evalulated = false;
-               break;
+                  break;
+               case ObjectKind::StaticField:
+                  if (!current.arg.reference) {
+                     current.setArgumentReference(compileStaticAssigning(scope, current));
+                  }
+                  break;
+               default:
+                  evalulated = false;
+                  break;
+            }
          }
       }
       current = current.nextNode();
@@ -9187,6 +9208,73 @@ ObjectInfo Compiler :: compileCollection(BuildTreeWriter& writer, ExprScope& sco
    return { ObjectKind::Object, { collectionTypeRef }, 0 };
 }
 
+void Compiler :: compileYieldOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
+{
+   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+   MethodScope* methodScope = Scope::getScope<MethodScope>(scope, Scope::ScopeLevel::Method);
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
+   if (!methodScope->isYieldable())
+      scope.raiseError(errInvalidOperation, node);
+
+   //   int index = methodScope->getAttribute(maYieldContext);
+   //   int index2 = methodScope->getAttribute(maYieldLocals);
+   //
+   //   EAttrs objectMode(mode);
+   //   objectMode.include(HINT_NOPRIMITIVES);
+   //
+   //   objectNode.injectAndReplaceNode(lxSeqExpression);
+   //   SNode retExprNode = objectNode.firstChild(lxObjectMask);
+   //
+   //   YieldScope* yieldScope = (YieldScope*)scope.getScope(Scope::ScopeLevel::slYieldScope);
+   //
+   //   // save context
+   //   if (codeScope->reserved2 > 0) {
+   //      SNode exprNode = objectNode.insertNode(lxExpression);
+   //      SNode copyNode = exprNode.appendNode(lxCopying, codeScope->reserved2 << 2);
+   //      SNode fieldNode = copyNode.appendNode(lxFieldExpression);
+   //      fieldNode.appendNode(lxSelfLocal, 1);
+   //      fieldNode.appendNode(lxField, index);
+   //      fieldNode.appendNode(lxFieldAddress, 4);
+   //      copyNode.appendNode(lxLocalAddress, -2);
+   //
+   //      yieldScope->yieldContext.add(copyNode);
+   //   }
+   //
+   //   // save locals
+   //   int localsSize = codeScope->allocated1 - methodScope->preallocated;
+   //   if (localsSize) {
+   //      SNode expr2Node = objectNode.insertNode(lxExpression);
+   //      SNode copy2Node = expr2Node.appendNode(lxCopying, localsSize << 2);
+   //      SNode field2Node = copy2Node.appendNode(lxFieldExpression);
+   //      field2Node.appendNode(lxSelfLocal, 1);
+   //      field2Node.appendNode(lxField, index2);
+   //      SNode localNode = copy2Node.appendNode(lxLocalAddress, methodScope->preallocated/* + localsSize*//* - 1*/);
+   //
+   //      yieldScope->yieldLocals.add(localNode);
+   //
+   //      // HOTFIX : reset yield locals field on yield return to mark mg->yg reference
+   //      SNode expr3Node = objectNode.insertNode(lxAssigning);
+   //      SNode src3 = expr3Node.appendNode(lxFieldExpression);
+   //      src3.appendNode(lxSelfLocal, 1);
+   //      src3.appendNode(lxField, index2);
+   //      SNode dst3 = expr3Node.appendNode(lxFieldExpression);
+   //      dst3.appendNode(lxSelfLocal, 1);
+   //      dst3.appendNode(lxField, index2);
+   //   }
+
+   ObjectInfo contextField = classScope->mapField(YIELD_CONTEXT_FIELD, EAttr::None);
+
+   writeObjectInfo(writer, scope, contextField);
+   writer.appendNode(BuildKey::SavingStackDump);
+
+   writer.newNode(BuildKey::YieldingOp);
+   writer.newNode(BuildKey::Tape);
+   compileRetExpression(writer, *codeScope, node, EAttr::None);
+   writer.closeNode();
+   writer.closeNode();
+}
+
 ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
    ref_t targetRef, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs)
 {
@@ -9232,6 +9320,9 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::BreakOperation:
       case SyntaxKey::ContinueOperation:
          retVal = compileSpecialOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS, targetRef);
+         break;
+      case SyntaxKey::YieldOperation:
+         compileYieldOperation(writer, scope, current);
          break;
       case SyntaxKey::AddAssignOperation:
       case SyntaxKey::SubAssignOperation:
@@ -9749,6 +9840,12 @@ void Compiler :: warnOnUnassignedLocal(SyntaxNode node, CodeScope& scope, int le
       scope.raiseWarning(WARNING_LEVEL_3, wrnUnassignedVariable, current);
 }
 
+inline void clearYieldContext()
+{
+   // clearing yield context
+//   writer.appendNode(BuildKey::SavingStackDump);
+}
+
 void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classScope, MethodScope& scope, CodeScope& codeScope,
    SyntaxNode node, bool newFrame)
 {
@@ -9767,6 +9864,17 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
    scope.selfLocal = codeScope.newLocal();
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
+   if (scope.isYieldable()) {
+      ExprScope exprScope(&codeScope);
+
+      allocateLocalAddress(&codeScope, sizeof(addr_t), false);
+
+      ObjectInfo contextField = classScope->mapField(YIELD_CONTEXT_FIELD, EAttr::None);
+
+      writeObjectInfo(writer, exprScope, contextField);
+      writer.appendNode(BuildKey::LoadingStackDump);
+      writer.appendNode(BuildKey::YieldDispatch);
+   }
    if (scope.isGeneric()) {
       scope.messageLocalAddress = allocateLocalAddress(&codeScope, sizeof(mssg_t), false);
       writer.appendNode(BuildKey::SavingIndex, scope.messageLocalAddress);
@@ -9780,6 +9888,9 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
          retVal = compileCode(writer, codeScope, bodyNode, scope.closureMode);
          break;
       case SyntaxKey::ReturnExpression:
+         if (scope.isYieldable()) {
+            clearYieldContext();
+         }
          retVal = compileRetExpression(writer, codeScope, bodyNode, EAttr::None);
          break;
       case SyntaxKey::ResendDispatch:
@@ -9821,6 +9932,10 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
       }
    }
 
+   if (scope.isYieldable()) {
+      clearYieldContext();
+   }
+
    writer.appendNode(BuildKey::CloseFrame);
 
    if (scope.checkHint(MethodHint::Constant)) {
@@ -9832,6 +9947,28 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
       }
       else scope.raiseError(errInvalidConstAttr, node);
    }
+}
+
+void Compiler :: compileYieldInitializing(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node)
+{
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
+   ObjectInfo contextField = classScope->mapField(YIELD_CONTEXT_FIELD, EAttr::None);
+
+   ExprScope exprScope(&scope);
+
+   pos_t contextSize = classScope->getMssgAttribute(node.arg.reference, ClassAttribute::YieldContextSize);
+
+   writer.appendNode(BuildKey::NilReference);
+   writer.appendNode(BuildKey::SavingInStack);
+
+   writer.newNode(BuildKey::CreatingStruct, contextSize);
+   writer.appendNode(BuildKey::Type, scope.moduleScope->buildins.superReference);
+   writer.closeNode();
+
+   writer.appendNode(BuildKey::SetImmediateField, 0);
+
+   compileAssigningOp(writer, exprScope, contextField, { ObjectKind::Object });
 }
 
 void Compiler :: compileInitializerMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode classNode)
@@ -9851,7 +9988,10 @@ void Compiler :: compileInitializerMethod(BuildTreeWriter& writer, MethodScope& 
    SyntaxNode current = classNode.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::AssignOperation) {
-         compileRootExpression(writer, codeScope, current);
+         if (current.existChild(SyntaxKey::YieldContext)) {
+            compileYieldInitializing(writer, codeScope, current.findChild(SyntaxKey::YieldContext));
+         }
+         else compileRootExpression(writer, codeScope, current);
       }
       current = current.nextNode();
    }
@@ -10359,6 +10499,10 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
 
    codeScope.syncStack(&scope);
    endMethod(writer, scope);
+
+   if (scope.isYieldable()) {
+      classScope->addMssgAttribute(scope.message, ClassAttribute::YieldContextSize, scope.reserved2);
+   }
 }
 
 bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool internalOne, bool& isProtectedDefConst)

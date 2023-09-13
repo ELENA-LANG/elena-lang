@@ -794,6 +794,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_SCRIPTSELFMODE:
          hint = (ref_t)MethodHint::TargetSelf;
          return true;
+      case V_YIELDABLE:
+         hint = (ref_t)MethodHint::Yieldable;
+         return true;
       default:
          return false;
    }

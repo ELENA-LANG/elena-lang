@@ -261,6 +261,15 @@ void copyingLocalArr(CommandTape& tape, BuildNode& node, TapeScope&)
    else tape.write(ByteCode::DTrans);
 }
 
+void copyingToLocalArr(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int n = node.findChild(BuildKey::Size).arg.value;
+
+   assert(n > 0);
+
+   tape.write(ByteCode::DCopyDPN, node.arg.reference, n);
+}
+
 void assignToStack(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int n = node.findChild(BuildKey::Index).arg.value;
@@ -313,7 +322,7 @@ void creatingStruct(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    ref_t typeRef = node.findChild(BuildKey::Type).arg.reference;
 
-   tape.write(ByteCode::NewNR, node.arg.value, typeRef | mskVMTRef);
+   tape.write(ByteCode::NewNR, node.arg.value, typeRef ? typeRef | mskVMTRef : 0);
 }
 
 void openStatement(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
@@ -1740,6 +1749,67 @@ inline void indexOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+inline void loadingStackDump(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   // store sp:0
+   // len
+   // shr ptr_size_order
+   // neg
+   // xset dp:0
+   // neg
+   // dcopy ptr_size
+
+   tape.write(ByteCode::StoreSI);
+   tape.write(ByteCode::Len);
+   switch (tapeScope.scope->ptrSize) {
+      case 4:
+         tape.write(ByteCode::Shr, 2);
+         break;
+      case 8:
+         tape.write(ByteCode::Shr, 3);
+         break;
+      default:
+         assert(false);
+         break;
+   }
+   tape.write(ByteCode::Neg);
+   tape.write(ByteCode::XSetDP, 0);
+   tape.write(ByteCode::Neg);
+   tape.write(ByteCode::DCopy, tapeScope.scope->ptrSize);
+   tape.write(ByteCode::PeekSI);
+}
+
+inline void savingStackDump(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   // store sp:0
+   // len
+   // shr ptr_size_order
+   // neg
+   // xset dp:0
+   // neg
+   // dcopy ptr_size
+
+   tape.write(ByteCode::StoreSI);
+   tape.write(ByteCode::Len);
+   switch (tapeScope.scope->ptrSize) {
+      case 4:
+         tape.write(ByteCode::Shr, 2);
+         break;
+      case 8:
+         tape.write(ByteCode::Shr, 3);
+         break;
+   default:
+      assert(false);
+      break;
+   }
+   tape.write(ByteCode::Neg);
+   tape.write(ByteCode::XSetDP, 0);
+   tape.write(ByteCode::Neg);
+   tape.write(ByteCode::SwapSI);
+   tape.write(ByteCode::DCopy, tapeScope.scope->ptrSize);
+   tape.write(ByteCode::PeekSI);
+}
+
 inline void includeFrame(CommandTape& tape, bool withThreadSafeNop)
 {
    if (withThreadSafeNop)
@@ -1753,6 +1823,7 @@ inline void excludeFrame(CommandTape& tape)
    tape.write(ByteCode::Exclude);
 }
 
+// build code table
 ByteCodeWriter::Saver commands[] =
 {
    nullptr, openFrame, closeFrame, nilReference, symbolCall, classReference, sendOp, exit,
@@ -1777,7 +1848,7 @@ ByteCodeWriter::Saver commands[] =
    uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp,
 
    copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp, semiDirectCallOp,
-   intRealOp, realIntOp
+   intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -2742,6 +2813,38 @@ void ByteCodeWriter :: saveStackCondOp(CommandTape& tape, BuildNode node, TapeSc
    tape.setLabel();
 }
 
+void ByteCodeWriter :: saveYielding(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
+{
+   BuildNode index = node.findChild(BuildKey::Index);
+
+   tape.newLabel();
+
+   tape.write(ByteCode::XHookDPR, index.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
+
+   BuildNode tapeNode = node.findChild(BuildKey::Tape);
+   saveTape(tape, tapeNode, tapeScope, paths, tapeOptMode);
+
+   tape.setLabel();
+}
+
+void ByteCodeWriter :: saveYieldDispatch(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
+   ReferenceMap& paths, bool tapeOptMode)
+{
+   // get i:0
+   // cmp r:0
+   // jeq labStart
+   // xjump
+   // labStart:
+
+   tape.newLabel();
+
+   tape.write(ByteCode::GetI);
+   tape.write(ByteCode::CmpR);
+   tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
+   tape.write(ByteCode::XJump);
+   tape.setLabel();
+}
+
 inline void saveDebugSymbol(DebugSymbol symbol, int offset, ustr_t name, TapeScope& tapeScope)
 {
    DebugLineInfo info = { symbol };
@@ -2929,6 +3032,12 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
          case BuildKey::StackCondOp:
             saveStackCondOp(tape, current, tapeScope, paths, tapeOptMode);
             break;
+         case BuildKey::YieldingOp:
+            saveYielding(tape, current, tapeScope, paths, tapeOptMode);
+            break;
+         case BuildKey::YieldDispatch:
+            saveYieldDispatch(tape, current, tapeScope, paths, tapeOptMode);
+            break;
          case BuildKey::Path:
          case BuildKey::Idle:
             // ignore path node
@@ -2943,12 +3052,12 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
 }
 
 void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
-   ReferenceMap& paths, bool tapeOptMode, bool threadFriendly)
+   int ptrSize, ReferenceMap& paths, bool tapeOptMode, bool threadFriendly)
 {
    auto section = moduleScope->mapSection(node.arg.reference | mskSymbolRef, false);
    MemoryWriter writer(section);
 
-   Scope scope = { nullptr, &writer, moduleScope, nullptr, nullptr, minimalArgList };
+   Scope scope = { nullptr, &writer, moduleScope, nullptr, nullptr, minimalArgList, ptrSize };
 
    if (moduleScope->debugModule) {
       // initialize debug info writers
@@ -3188,7 +3297,7 @@ pos_t ByteCodeWriter :: savePath(BuildNode node, Scope& scope, ReferenceMap& pat
 }
 
 void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
-   ReferenceMap& paths, bool tapeOptMode, bool threadFriendly)
+   int ptrSize, ReferenceMap& paths, bool tapeOptMode, bool threadFriendly)
 {
    // initialize bytecode writer
    MemoryWriter codeWriter(moduleScope->mapSection(node.arg.reference | mskClassRef, false));
@@ -3216,7 +3325,7 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
 
    vmtWriter.write(&info.header, sizeof(ClassHeader));  // header
 
-   Scope scope = { &vmtWriter, &codeWriter, moduleScope, nullptr, nullptr, minimalArgList };
+   Scope scope = { &vmtWriter, &codeWriter, moduleScope, nullptr, nullptr, minimalArgList, ptrSize };
    if (moduleScope->debugModule) {
       // initialize debug info writers
       MemoryWriter debugWriter(moduleScope->debugModule->mapSection(DEBUG_LINEINFO_ID, false));
@@ -3267,7 +3376,7 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
 }
 
 void ByteCodeWriter :: save(BuildTree& tree, SectionScopeBase* moduleScope, 
-   int minimalArgList, bool tapeOptMode, bool threadFriendly)
+   int minimalArgList, int ptrSize, bool tapeOptMode, bool threadFriendly)
 {
    ReferenceMap paths(INVALID_POS);
 
@@ -3276,10 +3385,10 @@ void ByteCodeWriter :: save(BuildTree& tree, SectionScopeBase* moduleScope,
    while (current != BuildKey::None) {
       switch (current.key) {
          case BuildKey::Symbol:
-            saveSymbol(current, moduleScope, minimalArgList, paths, tapeOptMode, threadFriendly);
+            saveSymbol(current, moduleScope, minimalArgList, ptrSize, paths, tapeOptMode, threadFriendly);
             break;
          case BuildKey::Class:
-            saveClass(current, moduleScope, minimalArgList, paths, tapeOptMode, threadFriendly);
+            saveClass(current, moduleScope, minimalArgList, ptrSize, paths, tapeOptMode, threadFriendly);
             break;
          default:
             // to make compiler happy

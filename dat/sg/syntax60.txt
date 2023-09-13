@@ -72,7 +72,8 @@ __define BREAK_OPERATION        6244;
 __define LAZY_OPERATION         6245;
 __define TUPLE_ASSIGNING        6246;
 __define CONTINUE_OPERATION     6247;
-__define REFER_OPERATION        6250;
+__define YIELD_OPERATION        6248;
+__define REFER_OPERATION        6251;
 __define MESSAGE_OPERATION      6337;
 __define PROPERTY_OPERATION     6340;
 __define EXPRESSION             6288;
@@ -94,8 +95,8 @@ __define SWITCH_LAST_OPTION     6354;
 __define SWITCH_CODE 	        6355;
 __define COLLECTION_EXPRESSION  6356;
 __define TUPLE_COLLECTION 	6357;
-__define POSTFIX                4200;
-__define TEMPLATE_POSTFIX       4201;
+__define POSTFIX                4201;
+__define TEMPLATE_POSTFIX       4202;
 __define TEMPLATE_ARG           4208;
 __define DIMENSION              5233;
 __define RESEND                 7366;
@@ -312,7 +313,8 @@ ROOT_EXPRESSION ::=
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$ext" EXPRESSION ^EXTERN_OPERATION
 	| "$break" ^BREAK_OPERATION
-	| "$continue" ^CONTINUE_OPERATION;
+	| "$continue" ^CONTINUE_OPERATION
+	| "$yield" EXPRESSION ^YIELD_OPERATION;
 
 NESTED_ROOT_EXPRESSION ::=
         identifier { 

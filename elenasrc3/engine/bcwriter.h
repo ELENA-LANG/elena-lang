@@ -28,6 +28,7 @@ namespace elena_lang
          MemoryWriter*     debugStrings;
 
          int               minimalArgList;
+         int               ptrSize;
       };
 
       typedef Stack<Pair<int, int>> LoopLabels;
@@ -94,6 +95,8 @@ namespace elena_lang
       void saveShortCircuitOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths,
          bool tapeOptMode);
       void saveStackCondOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode);
+      void saveYielding(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode);
+      void saveYieldDispatch(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode);
       void saveVariableInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
       void saveParameterInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
       void saveMethodInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
@@ -105,9 +108,9 @@ namespace elena_lang
          bool tapeOptMode, bool threadFriendly);
 
       void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
-         ReferenceMap& paths, bool tapeOptMode, bool threadFriendly);
+         int ptrSize, ReferenceMap& paths, bool tapeOptMode, bool threadFriendly);
       void saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
-         ReferenceMap& paths, bool tapeOptMode, bool threadFriendly);
+         int ptrSize, ReferenceMap& paths, bool tapeOptMode, bool threadFriendly);
 
       bool applyRules(CommandTape& tape);
 
@@ -121,7 +124,7 @@ namespace elena_lang
       void loadByteCodeRules(MemoryDump* dump);
 
       void save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList, 
-         bool tapeOptMode, bool threadFriendly);
+         int ptrSize, bool tapeOptMode, bool threadFriendly);
 
       ByteCodeWriter(LibraryLoaderBase* loader);
    };

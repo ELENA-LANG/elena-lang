@@ -149,9 +149,11 @@ namespace elena_lang
       SemiDirectCallOp     = 0x0077,
       IntRealOp            = 0x0078,
       RealIntOp            = 0x0079,
-      StackCondOp          = 0x007A,
+      CopyingArrTo         = 0x007A,
+      LoadingStackDump     = 0x007B,
+      SavingStackDump      = 0x007C,
 
-      MaxOperationalKey    = 0x007A,
+      MaxOperationalKey    = 0x007C,
 
       Import               = 0x0080,
       DictionaryOp         = 0x0081,
@@ -171,6 +173,9 @@ namespace elena_lang
       IntBranchOp          = 0x008F,
       IntConstBranchOp     = 0x0090,
       RealBranchOp         = 0x0091,
+      YieldingOp           = 0x0092,
+      StackCondOp          = 0x0093,
+      YieldDispatch        = 0x0094,
 
       VariableInfo         = 0x00A0,
       Variable             = 0x00A1,

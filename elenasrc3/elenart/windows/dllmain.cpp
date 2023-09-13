@@ -85,7 +85,7 @@ EXTERN_DLL_EXPORT void InitializeMTLA(SystemEnv* env, SymbolList* entry, void* c
    fflush(stdout);
 #endif
 
-   int index = machine->allocateThreadEntry(env);
+   size_t index = machine->allocateThreadEntry(env);
    __routineProvider.InitMTAExceptionHandling(env, index, criricalHandler);
    __routineProvider.InitMTASignals(env, index);
 

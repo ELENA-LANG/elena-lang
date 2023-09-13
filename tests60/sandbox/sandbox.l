@@ -1,14 +1,28 @@
 import extensions;
  
-public singleton wideConvertorX
+A
 {
-//   wide convert(BaseVariable v)
-//      <= convert(*v);
+   int x := 0;
+
+   yieldable function()
+   {
+      while (true) {
+         x := x + 1;
+
+         $yield x;
+      }
+   }
 }
- 
-A : Reference<BaseVariable> {}
 
 public program()
 {
-//   Reference<BaseVariable> r := nil;
+   A a := new A();
+
+   console.printLine(a());
+   console.printLine(a());
+   console.printLine(a());
+   console.printLine(a());
+   console.printLine(a());
+   console.printLine(a());
+   console.printLine(a());
 }

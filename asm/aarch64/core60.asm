@@ -910,6 +910,43 @@ inline %073h
 
 end
 
+
+// ; shl
+inline %75h
+
+  mov     x18, __n16_1
+  lsl     x9, x9, x18
+
+end
+
+// ; shr
+inline %76h
+
+  mov     x18, __n16_1
+  lsr     x9, x9, x18
+
+end
+
+// ; xsetdp
+// ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
+inline %077h
+
+  lsl     x14, x9, #3
+  sub     x10, x29, -__arg12_1
+  sub     x10, x10, x14
+
+end 
+
+// ; xsetdp
+// ; NOTE : it is presumed that arg1 > 0 (it is inverted in jitcompiler)
+inline %577h
+
+  lsl     x14, x9, #3
+  add     x10, x29, __arg12_1
+  add     x10, x10, x14
+
+end 
+
 // ; fabsdp
 inline %78h
 

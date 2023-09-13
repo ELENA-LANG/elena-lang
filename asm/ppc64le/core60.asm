@@ -975,6 +975,32 @@ inline %073h
 
 end
 
+// ; shl
+inline %75h
+
+  li      r18, __n16_1
+  sld     r14, r14, r18
+
+end
+
+// ; shr
+inline %76h
+
+  li      r18, __n16_1
+  srd     r14, r14, r18
+
+end
+
+// ; xsetdp
+inline %077h
+
+  li      r16, __arg16_1
+  add     r15, r31, r16
+  sldi    r18, r14, 3
+  add     r15, r15, r18
+
+end 
+
 // ; fabsdp
 inline %078h
 

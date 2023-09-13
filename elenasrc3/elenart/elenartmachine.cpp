@@ -230,7 +230,7 @@ mssg_t ELENARTMachine :: loadAction(ustr_t actionName)
 
 ref_t ELENARTMachine :: loadDispatcherOverloadlist(ustr_t referenceName)
 {
-   return retrieveGlobalAttribute(GA_EXT_OVERLOAD_LIST, referenceName);
+   return addrToUInt32(retrieveGlobalAttribute(GA_EXT_OVERLOAD_LIST, referenceName));
 }
 
 int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output)
@@ -311,13 +311,13 @@ size_t ELENARTMachine :: allocateThreadEntry(SystemEnv* env)
       return index;
    }
 
-   return -1;
+   return INVALID_SIZE;
 }
 
 void* ELENARTMachine :: allocateThread(SystemEnv* env, void* arg, void* threadProc, int flags)
 {
-   int index = allocateThreadEntry(env);
-   if (index == -1)
+   size_t index = allocateThreadEntry(env);
+   if (index == INVALID_SIZE)
       return nullptr;
 
    env->th_table->slots[index].arg = arg;
