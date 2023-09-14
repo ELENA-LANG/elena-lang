@@ -63,7 +63,6 @@ In development:
     * native support for long to real
     * native support for real to long
     * pi & e constants
-    * prop template : weak
     * generate default constructor if there is an initializer
     * repeate-until statements
     * primitive operations : support all comparision operations (not only <, == and !=)
