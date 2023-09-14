@@ -9217,60 +9217,16 @@ void Compiler :: compileYieldOperation(BuildTreeWriter& writer, ExprScope& scope
    if (!methodScope->isYieldable())
       scope.raiseError(errInvalidOperation, node);
 
-   //   int index = methodScope->getAttribute(maYieldContext);
-   //   int index2 = methodScope->getAttribute(maYieldLocals);
-   //
-   //   EAttrs objectMode(mode);
-   //   objectMode.include(HINT_NOPRIMITIVES);
-   //
-   //   objectNode.injectAndReplaceNode(lxSeqExpression);
-   //   SNode retExprNode = objectNode.firstChild(lxObjectMask);
-   //
-   //   YieldScope* yieldScope = (YieldScope*)scope.getScope(Scope::ScopeLevel::slYieldScope);
-   //
-   //   // save context
-   //   if (codeScope->reserved2 > 0) {
-   //      SNode exprNode = objectNode.insertNode(lxExpression);
-   //      SNode copyNode = exprNode.appendNode(lxCopying, codeScope->reserved2 << 2);
-   //      SNode fieldNode = copyNode.appendNode(lxFieldExpression);
-   //      fieldNode.appendNode(lxSelfLocal, 1);
-   //      fieldNode.appendNode(lxField, index);
-   //      fieldNode.appendNode(lxFieldAddress, 4);
-   //      copyNode.appendNode(lxLocalAddress, -2);
-   //
-   //      yieldScope->yieldContext.add(copyNode);
-   //   }
-   //
-   //   // save locals
-   //   int localsSize = codeScope->allocated1 - methodScope->preallocated;
-   //   if (localsSize) {
-   //      SNode expr2Node = objectNode.insertNode(lxExpression);
-   //      SNode copy2Node = expr2Node.appendNode(lxCopying, localsSize << 2);
-   //      SNode field2Node = copy2Node.appendNode(lxFieldExpression);
-   //      field2Node.appendNode(lxSelfLocal, 1);
-   //      field2Node.appendNode(lxField, index2);
-   //      SNode localNode = copy2Node.appendNode(lxLocalAddress, methodScope->preallocated/* + localsSize*//* - 1*/);
-   //
-   //      yieldScope->yieldLocals.add(localNode);
-   //
-   //      // HOTFIX : reset yield locals field on yield return to mark mg->yg reference
-   //      SNode expr3Node = objectNode.insertNode(lxAssigning);
-   //      SNode src3 = expr3Node.appendNode(lxFieldExpression);
-   //      src3.appendNode(lxSelfLocal, 1);
-   //      src3.appendNode(lxField, index2);
-   //      SNode dst3 = expr3Node.appendNode(lxFieldExpression);
-   //      dst3.appendNode(lxSelfLocal, 1);
-   //      dst3.appendNode(lxField, index2);
-   //   }
-
    ObjectInfo contextField = classScope->mapField(YIELD_CONTEXT_FIELD, EAttr::None);
+
+   writer.newNode(BuildKey::YieldingOp, -scope.moduleScope->ptrSize);
+   writer.newNode(BuildKey::Tape);
 
    writeObjectInfo(writer, scope, contextField);
    writer.appendNode(BuildKey::SavingStackDump);
 
-   writer.newNode(BuildKey::YieldingOp);
-   writer.newNode(BuildKey::Tape);
    compileRetExpression(writer, *codeScope, node, EAttr::None);
+
    writer.closeNode();
    writer.closeNode();
 }
@@ -9867,13 +9823,14 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
    if (scope.isYieldable()) {
       ExprScope exprScope(&codeScope);
 
-      allocateLocalAddress(&codeScope, sizeof(addr_t), false);
+      // reserve the place for the next step
+      int offset = allocateLocalAddress(&codeScope, sizeof(addr_t), false);
 
       ObjectInfo contextField = classScope->mapField(YIELD_CONTEXT_FIELD, EAttr::None);
 
       writeObjectInfo(writer, exprScope, contextField);
       writer.appendNode(BuildKey::LoadingStackDump);
-      writer.appendNode(BuildKey::YieldDispatch);
+      writer.appendNode(BuildKey::YieldDispatch, offset);
    }
    if (scope.isGeneric()) {
       scope.messageLocalAddress = allocateLocalAddress(&codeScope, sizeof(mssg_t), false);

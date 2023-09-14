@@ -1760,21 +1760,8 @@ inline void loadingStackDump(CommandTape& tape, BuildNode& node, TapeScope& tape
    // dcopy ptr_size
 
    tape.write(ByteCode::StoreSI);
-   tape.write(ByteCode::Len);
-   switch (tapeScope.scope->ptrSize) {
-      case 4:
-         tape.write(ByteCode::Shr, 2);
-         break;
-      case 8:
-         tape.write(ByteCode::Shr, 3);
-         break;
-      default:
-         assert(false);
-         break;
-   }
-   tape.write(ByteCode::Neg);
-   tape.write(ByteCode::XSetDP, 0);
-   tape.write(ByteCode::Neg);
+   tape.write(ByteCode::NLen, tapeScope.scope->ptrSize);
+   tape.write(ByteCode::SetDP, -tapeScope.scope->ptrSize);
    tape.write(ByteCode::DCopy, tapeScope.scope->ptrSize);
    tape.write(ByteCode::PeekSI);
 }
@@ -1782,29 +1769,13 @@ inline void loadingStackDump(CommandTape& tape, BuildNode& node, TapeScope& tape
 inline void savingStackDump(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    // store sp:0
-   // len
-   // shr ptr_size_order
-   // neg
-   // xset dp:0
-   // neg
+   // nlen ptr_size_order
+   // set dp:0
    // dcopy ptr_size
 
    tape.write(ByteCode::StoreSI);
-   tape.write(ByteCode::Len);
-   switch (tapeScope.scope->ptrSize) {
-      case 4:
-         tape.write(ByteCode::Shr, 2);
-         break;
-      case 8:
-         tape.write(ByteCode::Shr, 3);
-         break;
-   default:
-      assert(false);
-      break;
-   }
-   tape.write(ByteCode::Neg);
-   tape.write(ByteCode::XSetDP, 0);
-   tape.write(ByteCode::Neg);
+   tape.write(ByteCode::NLen, tapeScope.scope->ptrSize);
+   tape.write(ByteCode::SetDP, -tapeScope.scope->ptrSize);
    tape.write(ByteCode::SwapSI);
    tape.write(ByteCode::DCopy, tapeScope.scope->ptrSize);
    tape.write(ByteCode::PeekSI);
@@ -2815,11 +2786,9 @@ void ByteCodeWriter :: saveStackCondOp(CommandTape& tape, BuildNode node, TapeSc
 
 void ByteCodeWriter :: saveYielding(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
 {
-   BuildNode index = node.findChild(BuildKey::Index);
-
    tape.newLabel();
 
-   tape.write(ByteCode::XHookDPR, index.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
+   tape.write(ByteCode::XLabelDPR, node.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
 
    BuildNode tapeNode = node.findChild(BuildKey::Tape);
    saveTape(tape, tapeNode, tapeScope, paths, tapeOptMode);

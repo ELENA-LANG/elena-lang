@@ -39,7 +39,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadOp, loadOp, loadOp, loadOp, loadNop, loadNOp, loadNOp, loadFrameDispOp,
+   loadOp, loadOp, loadOp, loadOp, loadNop, loadNOp, loadNOp, loadNop,
    loadFrameDispOp, loadFrameDispOp, loadFrameDispOp, loadFrameDispOp, loadFrameDispOp, loadFrameDispOp, loadFrameDispOp, loadFrameDispOp,
 
    loadROp, loadFrameDispOp, loadLenOp, loadIndexOp, loadROp, loadROp, loadStackIndexOp, loadStackIndexOp,
@@ -57,7 +57,7 @@ CodeGenerator _codeGenerators[256] =
    loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadNop, loadNop,
    loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadArgIndexOp, loadROp, loadSysOp,
 
-   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop, loadRROp,
+   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, compileHookDPR, loadRROp,
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, compileXOpen, loadRROp,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp2, compileHookDPR, loadNewOp,
@@ -125,7 +125,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::FArctanDP, ByteCode::FPiDP, ByteCode::FillIR, ByteCode::XFillR, ByteCode::XStoreI,
    ByteCode::BCopy, ByteCode::WCopy, ByteCode::XPeekEq, ByteCode::SelGrRR, ByteCode::FIAdd,
    ByteCode::FISub,ByteCode::FIMul,ByteCode::FIDiv, ByteCode::SNop, ByteCode::TstStck,
-   ByteCode::XSetDP, ByteCode::Shl, ByteCode::Shr
+   ByteCode::Shl, ByteCode::Shr, ByteCode::XLabelDPR
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,

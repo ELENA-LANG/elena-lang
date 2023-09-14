@@ -11,21 +11,18 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * new opcode xsetdp, shr
+    * yieldable operator
 
-    * yieldable context : declare a context field
-    * yieldable constructor : assigning a context field in the constructor / initializer
+    * yieldable: reference locals are declared as fields
 
     * yieldable : raise an error if the class is a struct
     * yieldable : only a single yield method is allowed
 
-
     * yield operator
     * yieldable method can be only for nonstruct class
-
     * uncomment fieldinit routines, yield methods
     * yield methods
-    * migrate rest of elena 5.0 functionality (infinite enumeration, ...)
+    * new rosetta code sample : Amicable pairs (yields)
 
     * tutorial : Multiple inheritance in ELENA
     * calc - doesn't work
@@ -34,7 +31,6 @@ In development:
     * ide : dark color scheme
     * test all samples for win x86
     * rosetta code sample : Dynamic variable names
-    * new rosetta code sample : Amicable pairs (yields)
     * new unit test : dispatchmr (both function and normal one)
     * ide : goto nested class
     * #195 : implementing rosetta code samples

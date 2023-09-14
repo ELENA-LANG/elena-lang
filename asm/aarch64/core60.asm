@@ -927,26 +927,6 @@ inline %76h
 
 end
 
-// ; xsetdp
-// ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
-inline %077h
-
-  lsl     x14, x9, #3
-  sub     x10, x29, -__arg12_1
-  sub     x10, x10, x14
-
-end 
-
-// ; xsetdp
-// ; NOTE : it is presumed that arg1 > 0 (it is inverted in jitcompiler)
-inline %577h
-
-  lsl     x14, x9, #3
-  add     x10, x29, __arg12_1
-  add     x10, x10, x14
-
-end 
-
 // ; fabsdp
 inline %78h
 
@@ -2431,6 +2411,18 @@ inline %0D4h
   udiv    x18, x18, x17    // ; sp[0] / temp
 
   str     w18, [x19]
+
+end
+
+// ; xhookdpr
+inline %0D6h
+
+  add     x13, x29, __arg12_1
+
+  movz    x16,  __ptr32lo_2
+  movk    x16,  __ptr32hi_2, lsl #16
+
+  str     x16, [x13]
 
 end
 

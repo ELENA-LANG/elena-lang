@@ -841,14 +841,6 @@ inline %476h
 
 end
 
-// ; xsetdp
-inline %077h
-
-  lea  rax, [rdx*8]
-  lea  rbx, [rbp + rax + __arg32_1]
-
-end 
-
 // ; fabsdp
 inline %078h
 
@@ -2083,6 +2075,15 @@ inline %0D4h
   mov  rax, [rbp+__arg32_1]
   div  ecx
   mov  dword ptr [rbp+__arg32_1], eax
+
+end
+
+// ; xlabeldpr
+inline %0D6h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rcx, __ptr64_2
+  mov  [rdi], rcx
 
 end
 

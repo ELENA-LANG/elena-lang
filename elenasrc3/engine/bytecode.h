@@ -74,7 +74,6 @@ namespace elena_lang
 
       Shl            = 0x75,
       Shr            = 0x76,
-      XSetDP         = 0x77,
       FAbsDP         = 0x78,
       FSqrtDP        = 0x79,
       FExpDP         = 0x7A,
@@ -168,6 +167,7 @@ namespace elena_lang
       FDivDPN        = 0xD3,
       UDivDPN        = 0xD4,
 
+      XLabelDPR      = 0xD6,
       SelGrRR        = 0xD7,
       IAndDPN        = 0xD8,
       IOrDPN         = 0xD9,
@@ -414,6 +414,7 @@ namespace elena_lang
             case ByteCode::SelLtRR:
             case ByteCode::SelULtRR:
             case ByteCode::XHookDPR:
+            case ByteCode::XLabelDPR:
             case ByteCode::CreateNR:
             case ByteCode::FillIR:
                return true;

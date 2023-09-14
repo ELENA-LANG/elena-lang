@@ -6,6 +6,8 @@ A
 
    yieldable function()
    {
+      int n := 0;
+
       while (true) {
          x := x + 1;
 
@@ -18,11 +20,6 @@ public program()
 {
    A a := new A();
 
-   console.printLine(a());
-   console.printLine(a());
-   console.printLine(a());
-   console.printLine(a());
-   console.printLine(a());
-   console.printLine(a());
-   console.printLine(a());
+   for(int i := 0, i < 200, i += 1) 
+      console.printLine(a());
 }

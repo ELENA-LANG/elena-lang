@@ -991,16 +991,6 @@ inline %76h
 
 end
 
-// ; xsetdp
-inline %077h
-
-  li      r16, __arg16_1
-  add     r15, r31, r16
-  sldi    r18, r14, 3
-  add     r15, r15, r18
-
-end 
-
 // ; fabsdp
 inline %078h
 
@@ -2227,6 +2217,19 @@ inline %0D4h
   divwu   r18, r18, r17  
 
   stw     r18, 0(r19)
+
+end
+
+// ; xlabeldpr
+inline %0D6h
+
+  addi    r19, r31, __arg16_1
+
+  ld      r12, toc_code(r2)
+  addis   r12, r12, __disp32hi_2
+  addi    r12, r12, __disp32lo_2
+
+  std     r19, 0(r12)
 
 end
 

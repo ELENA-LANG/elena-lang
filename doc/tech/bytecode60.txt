@@ -133,8 +133,6 @@ ELENA byte codes (or ecodes)
 
    xpeekne                  - acc <= COMP.EQ ? sp[0] : acc
 
-   xset dp:i                - dp[index + i] => acc
-
    xset fp:i                - fp[index + i] => acc
 
 
@@ -489,9 +487,9 @@ ELENA byte codes (or ecodes)
 
  Misc operations:
  ---------------- 
-   hook  dp:i, label        - set a handler to the specified label
+   label dp:i, r            - assign a specified address / label to dp[i]
 
    throw                    - raise an exception (acc contains the exception object)
 
-   xhook dp:i, r            - set a handler to the specified address
+   xhook dp:i, r            - set a handler to the specified address / label
 

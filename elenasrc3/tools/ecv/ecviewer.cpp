@@ -465,6 +465,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             addSecondRArg(command.arg2, commandStr, labels);
             break;
          case ByteCode::XHookDPR:
+         case ByteCode::XLabelDPR:
             addArg(command.arg1, commandStr);
             addSecondRArg(command.arg2, commandStr, labels);
             break;

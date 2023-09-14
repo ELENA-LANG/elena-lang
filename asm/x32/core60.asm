@@ -837,14 +837,6 @@ inline %476h
 
 end
 
-// ; xsetdp
-inline %077h
-
-  lea  eax, [edx*4]
-  lea  ebx, [ebp + eax + __arg32_1]
-
-end 
-
 // ; fabsdp
 inline %078h
 
@@ -2093,6 +2085,15 @@ inline %0D4h
   mov  eax, [ebp+__arg32_1]
   div  dword ptr [esi]
   mov  [ebp+__arg32_1], eax
+
+end
+
+// ; xlabeldpr
+inline %0D6h
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, __ptr32_2
+  mov  [edi], eax
 
 end
 

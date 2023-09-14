@@ -35,7 +35,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "fiadd", "fisub", "fimul", "fidiv", OPCODE_UNKNOWN, "shl", "shr", "xset dp",
+   "fiadd", "fisub", "fimul", "fidiv", OPCODE_UNKNOWN, "shl", "shr", OPCODE_UNKNOWN,
    "fabs dp", "fsqrt dp", "fexp dp", "fln dp", "fsin dp", "fcos dp", "farctan dp", "fpi dp",
 
    "set", "set dp", "nlen", "xassign i", "peek", "store", "xswap sp", "swap sp",
@@ -53,7 +53,7 @@ const char* _fnOpcodes[256] =
    "cmp", "fcmp", "icmp", "tst flag", "tstn", "tst mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "cmp fp", "cmp sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xloadarg sp", "xcreate", "system",
 
-   "fadd dp", "fsub dp", "fmul dp", "fdiv dp", "udiv dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "selgr",
+   "fadd dp", "fsub dp", "fmul dp", "fdiv dp", "udiv dp", OPCODE_UNKNOWN, "xlabel dp", "selgr",
    "iand dp", "ior dp", "ixor dp", "inot dp", "ishl dp", "ishr dp", "xopen", "selult",
 
    "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", "nsave dp", "xhook dp", "xnewn",
@@ -484,6 +484,7 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
                addJump(command.arg1, index, labels, jumps, fixes);
                break;
             case ByteCode::XHookDPR:
+            case ByteCode::XLabelDPR:
                idleLabels.exclude(command.arg2 & ~mskLabelRef);
 
                addJump(command.arg2 & ~mskLabelRef, index, labels, jumps, fixes);
@@ -751,6 +752,7 @@ void CommandTape :: saveTo(MemoryWriter* writer)
 
             break;
          case ByteCode::XHookDPR:
+         case ByteCode::XLabelDPR:
             writer->writeByte((char)command.code);
             writer->write(&command.arg1, sizeof(arg_t));
 
