@@ -2277,8 +2277,8 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
          }
 
          if (methodKey != SyntaxKey::Constructor && !test(hints, (ref_t)MethodHint::Constant)) {
-            // HOTFIX : do not generate byref handler for methods returning constant value & variadic method
-            if ((current.arg.reference & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE) {
+            // HOTFIX : do not generate byref handler for methods returning constant value & variadic method & yieldable
+            if ((current.arg.reference & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE && !SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_YIELDABLE)) {
                mssg_t byRefMethod = withRetOverload ? 
                   0 : defineByRefMethod(scope, current/*, scope.extensionClassRef != 0*/);
 
@@ -2478,6 +2478,9 @@ bool Compiler :: generateClassField(ClassScope& scope, FieldAttributes& attrs, u
 
       // if it is a structure field
       if (test(scope.info.header.flags, elStructureRole)) {
+         if (test(scope.info.header.flags, elWithYieldable))
+            return false;
+
          if (sizeInfo.size <= 0)
             return false;
 
@@ -3200,6 +3203,10 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
    //}
 
    if (methodScope.checkHint(MethodHint::Yieldable)) {
+      // raise an error if the method has arguments
+      if (getArgCount(methodScope.message) > 1 || (test(methodScope.message, FUNCTION_MESSAGE) && getArgCount(methodScope.message) > 0))
+         methodScope.raiseError(errIllegalMethod, node);
+
       // raise an error if the class is a struct
       // only a single yield method is allowed
 
@@ -3216,7 +3223,7 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
    }
 }
 
-void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor)
+void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor, bool& yieldMethodNotAllowed)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -3245,6 +3252,13 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
                current.setArgumentReference(methodScope.message);
             }
             else methodScope.message = current.arg.reference;
+
+            if (methodScope.isYieldable()) {
+               if (yieldMethodNotAllowed) {
+                  scope.raiseError(errIllegalMethod, current);
+               }
+               else yieldMethodNotAllowed = true;
+            }
 
             declareMethodMetaInfo(methodScope, current);
             declareMethod(methodScope, current, scope.abstractMode);
@@ -3380,7 +3394,13 @@ void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
 
    bool withConstructors = false;
    bool withDefConstructor = false;
-   declareVMT(scope, node, withConstructors, withDefConstructor);
+   bool yieldMethodNotAllowed = test(scope.info.header.flags, elWithYieldable) || test(declaredFlags, elStructureRole);
+   declareVMT(scope, node, withConstructors, withDefConstructor, yieldMethodNotAllowed);
+
+   if (yieldMethodNotAllowed && !test(scope.info.header.flags, elWithYieldable) && !test(declaredFlags, elStructureRole)) {
+      // HOTFIX : trying to figure out if the yield method was declared inside declareVMT
+      declaredFlags |= elWithYieldable;
+   }
 
    // NOTE : generateClassDeclaration should be called for the proper class before a class class one
    //        due to dynamic array implementation (auto-generated default constructor should be removed)
@@ -11274,7 +11294,8 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
 
    bool withConstructors = false;
    bool withDefaultConstructor = false;
-   declareVMT(scope, node, withConstructors, withDefaultConstructor);
+   bool yieldMethodNotAllowed = true;
+   declareVMT(scope, node, withConstructors, withDefaultConstructor, yieldMethodNotAllowed);
    if (withConstructors)
       scope.raiseError(errIllegalConstructor, node);
 

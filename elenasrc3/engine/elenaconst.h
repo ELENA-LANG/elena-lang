@@ -186,6 +186,7 @@ namespace elena_lang
    constexpr ref_t elMessageName          = 0x01000000;
    constexpr ref_t elWithGenerics         = 0x02000000;
    constexpr ref_t elVirtualVMT           = 0x04000000;
+   constexpr ref_t elWithYieldable        = 0x08000000;
    constexpr ref_t elTemplatebased        = 0x40000000;
 
    constexpr ref_t elDebugMask            = 0x001F0000;

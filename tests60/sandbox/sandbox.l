@@ -2,24 +2,24 @@ import extensions;
  
 A
 {
-   int x := 0;
-
-   yieldable function()
+   yieldable long next()
    {
-      var n := 0;
+        long n_2 := 1l; 
+        long n_1 := 1l;
 
-      while (true) {
-         n := n + 1;
+        $yield n_2;             
+        $yield n_1;
 
-         $yield n;
-      }
+
    }
+
+   yieldable long next2() {}
 }
 
 public program()
 {
    A a := new A();
 
-   for(int i := 0, i < 200, i += 1) 
+   for(int i := 0, i < 2, i += 1) 
       console.printLine(a());
 }
