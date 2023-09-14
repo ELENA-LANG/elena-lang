@@ -1085,6 +1085,9 @@ namespace elena_lang
 
       mssg_t defineByRefMethod(ClassScope& scope, SyntaxNode node/*, bool isExtension*/);
 
+      bool generateClassField(ClassScope& scope, FieldAttributes& attrs, ustr_t name, int sizeHint, 
+         TypeInfo typeInfo, bool singleField);
+
       void declareFieldMetaInfo(FieldScope& scope, SyntaxNode node);
       void declareFieldMetaInfos(ClassScope& scope, SyntaxNode node);
 
@@ -1100,6 +1103,7 @@ namespace elena_lang
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
       bool declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo, bool ignoreDuplicate);
+      bool declareYieldVariable(Scope& scope, ustr_t name, TypeInfo typeInfo);
 
       ObjectInfo declareTempStructure(ExprScope& scope, SizeInfo sizeInfo);
 

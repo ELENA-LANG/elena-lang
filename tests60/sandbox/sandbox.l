@@ -6,12 +6,12 @@ A
 
    yieldable function()
    {
-      int n := 0;
+      var n := 0;
 
       while (true) {
-         x := x + 1;
+         n := n + 1;
 
-         $yield x;
+         $yield n;
       }
    }
 }

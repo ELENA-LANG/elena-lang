@@ -11,17 +11,14 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * yieldable operator
-
-    * yieldable: reference locals are declared as fields
-
     * yieldable : raise an error if the class is a struct
     * yieldable : only a single yield method is allowed
-
-    * yield operator
     * yieldable method can be only for nonstruct class
-    * uncomment fieldinit routines, yield methods
     * yield methods
+
+    * review Rosetta code samples: Digits, A, B, C
+
+    * uncomment fieldinit routines, yield methods
     * new rosetta code sample : Amicable pairs (yields)
 
     * tutorial : Multiple inheritance in ELENA

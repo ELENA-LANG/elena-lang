@@ -2404,40 +2404,22 @@ inline bool checkPreviousDeclaration(SyntaxNode node, ustr_t name)
    return false;
 }
 
-void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
-   FieldAttributes& attrs, bool singleField)
+bool Compiler :: generateClassField(ClassScope& scope, FieldAttributes& attrs, ustr_t name, int sizeHint, 
+   TypeInfo typeInfo, bool singleField)
 {
-   TypeInfo typeInfo = attrs.typeInfo;
-   int   sizeHint = attrs.size;
+   int offset = 0;
    bool  embeddable = attrs.isEmbeddable;
    bool  readOnly = attrs.isReadonly;
    ref_t flags = scope.info.header.flags;
 
-   if (sizeHint == -1) {
-      if (singleField && attrs.inlineArray) {
-         scope.info.header.flags |= elDynamicRole;
-      }
-      else if (!test(scope.info.header.flags, elStructureRole)) {
-         NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-
-         typeInfo.typeRef = resolveArrayTemplate(*scope.moduleScope, *nsScope->nsName, attrs.typeInfo.typeRef, true);
-      }
-      else scope.raiseError(errIllegalField, node);
-
-      sizeHint = 0;
-   }
-
-   int offset = 0;
-   ustr_t name = node.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
-
    // a role cannot have fields
    if (test(flags, elStateless))
-      scope.raiseError(errIllegalField, node);
+      return false;
 
    SizeInfo sizeInfo = {};
    if (typeInfo.isPrimitive()) {
       if (!sizeHint) {
-         scope.raiseError(errIllegalField, node);
+         return false;
       }
       // for primitive types size should be specified
       else sizeInfo.size = sizeHint;
@@ -2452,16 +2434,16 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
          typeInfo.elementRef = typeInfo.typeRef;
          typeInfo.typeRef = _logic->definePrimitiveArray(*scope.moduleScope, typeInfo.elementRef, true);
       }
-      else scope.raiseError(errIllegalField, node);
+      else return false;
    }
 
    if (test(flags, elWrapper) && scope.info.fields.count() > 0) {
       // wrapper may have only one field
-      scope.raiseError(errIllegalField, node);
+      return false;
    }
    else if (embeddable && !attrs.fieldArray) {
       if (!singleField || scope.info.fields.count() > 0)
-         scope.raiseError(errIllegalField, node);
+         return false;
 
       // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
       if (test(scope.info.header.flags, elSealed)) {
@@ -2487,27 +2469,20 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
 
          scope.info.fields.add(name, { -2, typeInfo, readOnly });
       }
-      else scope.raiseError(errIllegalField, node);
+      else return false;
    }
    else {
       if (scope.info.fields.exist(name)) {
-         if (attrs.overrideMode && checkPreviousDeclaration(node, name)) {
-            // override the field type if both declared in the same scope
-            auto it = scope.info.fields.getIt(name);
-            (*it).typeInfo = typeInfo;
-         }
-         else scope.raiseError(errDuplicatedField, node);
-
-         return;
+         return false;
       }
 
       // if it is a structure field
       if (test(scope.info.header.flags, elStructureRole)) {
          if (sizeInfo.size <= 0)
-            scope.raiseError(errIllegalField, node);
+            return false;
 
          if (scope.info.size != 0 && scope.info.fields.count() == 0)
-            scope.raiseError(errIllegalField, node);
+            return false;
 
          offset = scope.info.size;
          scope.info.size += sizeInfo.size;
@@ -2519,13 +2494,47 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
       else {
          // primitive / virtual classes cannot be declared
          if (sizeInfo.size != 0 && typeInfo.isPrimitive())
-            scope.raiseError(errIllegalField, node);
+            return false;
 
          scope.info.header.flags |= elNonStructureRole;
 
          offset = scope.info.fields.count();
          scope.info.fields.add(name, { offset, typeInfo, readOnly });
       }
+   }
+
+   return true;
+}
+
+void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
+   FieldAttributes& attrs, bool singleField)
+{
+   TypeInfo typeInfo = attrs.typeInfo;
+   int   sizeHint = attrs.size;
+
+   if (sizeHint == -1) {
+      if (singleField && attrs.inlineArray) {
+         scope.info.header.flags |= elDynamicRole;
+      }
+      else if (!test(scope.info.header.flags, elStructureRole)) {
+         NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+         typeInfo.typeRef = resolveArrayTemplate(*scope.moduleScope, *nsScope->nsName, attrs.typeInfo.typeRef, true);
+      }
+      else scope.raiseError(errIllegalField, node);
+
+      sizeHint = 0;
+   }
+
+   ustr_t name = node.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+   if (!generateClassField(scope, attrs, name, sizeHint, typeInfo, singleField))
+   {
+      if (attrs.overrideMode && checkPreviousDeclaration(node, name)) {
+         // override the field type if both declared in the same scope
+         auto it = scope.info.fields.getIt(name);
+         (*it).typeInfo = typeInfo;
+      }
+      else scope.raiseError(errIllegalField, node);
    }
 }
 
@@ -5713,6 +5722,16 @@ int Compiler :: resolveArraySize(Scope& scope, SyntaxNode node)
    }
 }
 
+bool Compiler :: declareYieldVariable(Scope& scope, ustr_t name, TypeInfo typeInfo)
+{
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
+   FieldAttributes attrs = { typeInfo };
+
+   // NOTE : should return false to indicate that it is not a variable
+   return !generateClassField(*classScope, attrs, name, 0, typeInfo, false);
+}
+
 bool Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo, bool ignoreDuplicate)
 {
    int size = 0;
@@ -5725,6 +5744,7 @@ bool Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typ
 
    ExprScope* exprScope = Scope::getScope<ExprScope>(scope, Scope::ScopeLevel::Expr);
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+   MethodScope* methodScope = Scope::getScope<MethodScope>(scope, Scope::ScopeLevel::Method);
    if (codeScope == nullptr) {
       scope.raiseError(errInvalidOperation, terminal);
       return false; // the code will never be reached
@@ -5784,6 +5804,10 @@ bool Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typ
    }
    else if (size != 0) {
       scope.raiseError(errInvalidOperation, terminal);
+   }
+   else if (methodScope && methodScope->isYieldable()) {
+      // NOTE : yieildable method is a special case when the referece variable is declared as a special class field
+      return declareYieldVariable(scope, *identifier, typeInfo);
    }
    else variable.reference = codeScope->newLocal();
 
