@@ -2001,9 +2001,43 @@ bool CompilerLogic :: resolveCallType(ModuleScopeBase& scope, ref_t classRef, ms
    return false;
 }
 
-void CompilerLogic :: verifyMultimethods()
+bool CompilerLogic :: isNeedVerification(ClassInfo& info, VirtualMethodList& implicitMultimethods)
 {
-   
+   // HOTFIX : Make sure the multi-method methods have the same output type as generic one
+   for (auto it = implicitMultimethods.start(); !it.eof(); it++) {
+      auto vm = *it;
+
+      mssg_t message = vm.value1;
+
+      auto methodInfo = info.methods.get(message);
+      ref_t outputRef = methodInfo.outputRef;
+      if (outputRef != 0) {
+         // Bad luck we have to verify all overloaded methods
+         return true;
+      }
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: verifyMultimethod(ModuleScopeBase& scope, ClassInfo& info, mssg_t message)
+{
+   auto methodInfo = info.methods.get(message);
+   if (methodInfo.multiMethod != 0) {
+      auto multiMethodInfo = info.methods.get(methodInfo.multiMethod);
+      ref_t outputRefMulti = multiMethodInfo.outputRef;
+      if (outputRefMulti != 0) {
+         ref_t outputRef = methodInfo.outputRef;
+         if (outputRef == 0) {
+            return false;
+         }
+         else if (!isCompatible(scope, { outputRefMulti }, { outputRef }, true)) {
+            return false;
+         }
+      }
+   }
+
+   return true;
 }
 
 inline ustr_t resolveActionName(ModuleBase* module, mssg_t message)

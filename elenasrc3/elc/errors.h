@@ -39,6 +39,7 @@ namespace elena_lang
    constexpr auto errMsgIllegalStaticMethod     = "\n%s(%d:%d): error 151: Static method cannot be declared\n";
    constexpr auto errMsgIllegalMethod           = "\n%s(%d:%d): error 152: Illegal method declaration\n";
    constexpr auto errMsgIllegalOperation        = "\n%s(%d:%d): error 153: Illegal operation\n";
+   constexpr auto errMsgNotCompatibleMulti      = "\n%s(%d:%d): error 157: type attribute should be the same for the overloaded method '%s'\n";
    constexpr auto errMsgTypeAlreadyDeclared     = "\n%s(%d:%d): error 158: type attribute cannot be overridden\n";
    constexpr auto errMsgAbstractMethods         = "\n%s(%d:%d): error 159: Class contains abstract methods\n";
 

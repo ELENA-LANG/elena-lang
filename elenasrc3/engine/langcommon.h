@@ -76,6 +76,7 @@ namespace elena_lang
    constexpr auto errIllegalStaticMethod     = 151;
    constexpr auto errIllegalMethod           = 152;
    constexpr auto errIllegalOperation        = 153;
+   constexpr auto errNotCompatibleMulti      = 157;
    constexpr auto errTypeAlreadyDeclared     = 158;
    constexpr auto errAbstractMethods         = 159;
    constexpr auto errDispatcherInInterface   = 160;

@@ -167,7 +167,8 @@ namespace elena_lang
          mssg_t message, ClassInfo::MethodMap& methods, ClassAttributes& attributes,
          void* param, ref_t(*resolve)(void*, ref_t), ClassAttribute attribute);
 
-      void verifyMultimethods();
+      bool isNeedVerification(ClassInfo& info, VirtualMethodList& implicitMultimethods);
+      bool verifyMultimethod(ModuleScopeBase& scope, ClassInfo& info, mssg_t message);
 
       mssg_t resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, 
          ref_t implicitSignatureRef, int& stackSafeAttr, bool selfCall);

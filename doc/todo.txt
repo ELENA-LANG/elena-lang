@@ -11,12 +11,13 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
+    * ide : syntax highlighting (default / classic) 
+
     * review Rosetta code samples: A, B, C
     * new rosetta code sample : Amicable pairs (yields)
     * tutorial : Multiple inheritance in ELENA
     * calc - doesn't work
 
-    * ide : syntax highlighting (default / classic) 
     * ide : dark color scheme
     * test all samples for win x86
     * rosetta code sample : Dynamic variable names
@@ -31,7 +32,6 @@ In development:
     * support constants in array size declaration (see lnx_console.l)
     * api : provide field descriptions
     * ide : debug goto source
-    * automatical conversion of int literal to int8, int16 and int64 if possible
     * test : print german text
     * examples : collatz, matrix
     * examples : p2, random 
@@ -45,10 +45,10 @@ In development:
     * ide : window list - close several windows
     * ide : debug watch context menu
     * elt - exception handler
+    * closure should be sealed
     * ide message : display internal error
     * boolean operators : &&, ||, ^^ - weak implementation
     * migrate the rest of system (win32_pointers.l)
-    * uncomment duplicateBoxing
     + #69 : GC info 
     * inno setup : x86, x86-64
     * corex : tests - lock test, GC test, printing in one thread / calling GC in another
@@ -66,7 +66,6 @@ In development:
     * generate default constructor if there is an initializer
     * repeate-until statements
     * primitive operations : support all comparision operations (not only <, == and !=)
-    * closure should be sealed
     * jumping - aligning the target to 4 / 8
     * simplify - isCompatible - could we get rid of special cases for V_FLAG?
     * optimization: it should be possible to convert int liteal directly to v_int8 / v_int16 / v_int64,
@@ -99,7 +98,6 @@ In development:
     * raise an error if the overridden output type was changed
     * isCompatble - cache the results
     * external call : pass int constants directly
-    * validate if all abstract methods are declared
     * retro : is CONVERSION_MESSAGE flag is really required?
     * for windows x86-64 allocate shadow memory
     * for linux amd64 allocate shadow memory
@@ -124,7 +122,6 @@ In development:
     ! api functionality for existing classes : rest of system
     ! api functionality for existing classes : externals
     * using / finally statements in ELENA
-    * uncomment multi-method validation
     * rosetta code sample : Anagrams
     * migrate all rosetta examples from examples/rosetta to examples60 and remove them
     * uncomment fieldinit routines

@@ -497,6 +497,19 @@ singleton BoxingProber
    }
 }
 
+struct XInteger
+{
+   int x;
+
+   constructor(int x)
+   {
+      this x := x;
+   }
+
+   int cast()
+      = x;
+}
+
 boxingTests()
 {
    console.write("boxingTests:");
@@ -532,7 +545,13 @@ boxingTests()
 
    x.test(0,1);
    x.test(1,b);
+   console.write(".");
 
+   var xint := new XInteger(2);
+
+   var nint := cast int(xint);
+
+   Assert.ifTrue(nint.instanceOf(IntNumber));
    console.writeLine(".");
 }
 

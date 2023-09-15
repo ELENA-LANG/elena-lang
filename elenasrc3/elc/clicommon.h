@@ -721,6 +721,18 @@ public:
    virtual ~SysLibraryLoaderBase() = default;
 };
 
+// --- VirtualMethodList ---
+enum class VirtualType : int
+{
+   None = 0,
+   Multimethod,
+   EmbeddableWrapper,
+   AbstractEmbeddableWrapper
+};
+
+typedef Pair<mssg_t, VirtualType, 0, VirtualType::None>  VirtualMethod;
+typedef List<VirtualMethod>                              VirtualMethodList;
+
 }
 
 #endif // CLICOMMON_H

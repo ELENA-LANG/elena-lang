@@ -2068,9 +2068,9 @@ void Compiler :: generateMethodDeclaration(ClassScope& scope, SyntaxNode node, b
    }
 }
 
-inline mssg_t retrieveMethod(Compiler::VirtualMethodList& implicitMultimethods, mssg_t multiMethod)
+inline mssg_t retrieveMethod(VirtualMethodList& implicitMultimethods, mssg_t multiMethod)
 {
-   return implicitMultimethods.retrieve<mssg_t>(multiMethod, [](mssg_t arg, Compiler::VirtualMethod current)
+   return implicitMultimethods.retrieve<mssg_t>(multiMethod, [](mssg_t arg, VirtualMethod current)
       {
          return current.value1 == arg;
       }).value1;
@@ -2225,6 +2225,21 @@ mssg_t Compiler :: defineByRefMethod(ClassScope& scope, SyntaxNode node/*, bool 
    return 0;
 }
 
+void Compiler ::verifyMultimethods(Scope& scope, SyntaxNode node, SyntaxKey methodKey, ClassInfo& info, VirtualMethodList& implicitMultimethods)
+{
+   if (_logic->isNeedVerification(info, implicitMultimethods)) {
+      SyntaxNode current = node.firstChild();
+      while (current != SyntaxKey::None) {
+         if (current == methodKey) {
+            if(!_logic->verifyMultimethod(*scope.moduleScope, info, current.arg.reference)) {
+               scope.raiseError(errNotCompatibleMulti, current.findChild(SyntaxKey::Name));
+            }
+         }
+         current = current.nextNode();
+      }
+   }
+}
+
 void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey, bool closed)
 {
    VirtualMethodList implicitMultimethods({});
@@ -2333,7 +2348,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
    }
 
    if (implicitMultimethods.count() > 0)
-      _logic->verifyMultimethods(/**scope.moduleScope, root, scope.info, implicitMultimethods*/);
+      verifyMultimethods(scope, node, methodKey, scope.info, implicitMultimethods);
 }
 
 void Compiler :: generateClassFlags(ClassScope& scope, ref_t declaredFlags)
@@ -4218,6 +4233,10 @@ ObjectInfo Compiler :: boxArgumentLocally(BuildTreeWriter& writer, ExprScope& sc
       case ObjectKind::FieldAddress:
          if (info.argument == 0 && !forced) {
             ObjectInfo retVal = scope.mapSelf();
+            // HOTFIX : no conditional boxing in this case
+            if (retVal.mode == TargetMode::Conditional)
+               retVal.mode = TargetMode::None;
+
             retVal.typeInfo = info.typeInfo;
 
             return retVal;

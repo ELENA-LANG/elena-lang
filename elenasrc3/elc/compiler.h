@@ -321,17 +321,6 @@ namespace elena_lang
    //      irObsolete
       };
 
-      enum class VirtualType : int
-      {
-         None = 0,
-         Multimethod,
-         EmbeddableWrapper,
-         AbstractEmbeddableWrapper
-      };
-
-      typedef Pair<mssg_t, VirtualType, 0, VirtualType::None>  VirtualMethod;
-      typedef List<VirtualMethod>                              VirtualMethodList;
-
       struct Scope
       {
          enum class ScopeLevel
@@ -1084,6 +1073,8 @@ namespace elena_lang
       ref_t generateConstant(Scope& scope, ObjectInfo& info, ref_t reference);
 
       mssg_t defineByRefMethod(ClassScope& scope, SyntaxNode node/*, bool isExtension*/);
+
+      void verifyMultimethods(Scope& scope, SyntaxNode node, SyntaxKey methodKey, ClassInfo& info, VirtualMethodList& implicitMultimethods);
 
       bool generateClassField(ClassScope& scope, FieldAttributes& attrs, ustr_t name, int sizeHint, 
          TypeInfo typeInfo, bool singleField);
