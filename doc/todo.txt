@@ -15,14 +15,13 @@ In development:
     * lock statement
     * ide : recent files / projects, clear the list
     * support constants in array size declaration (see lnx_console.l)
+    * rosetta code sample : D
 
-    * review Rosetta code samples: C
     * tutorial : Multiple inheritance in ELENA
     * calc - doesn't work
 
     * ide : dark color scheme, change the window background color
     * test all samples for win x86
-    * rosetta code sample : Dynamic variable names
     * new unit test : dispatchmr (both function and normal one)
     * ide : goto nested class
     * #195 : implementing rosetta code samples

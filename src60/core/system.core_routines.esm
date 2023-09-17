@@ -1075,7 +1075,7 @@ procedure __ptrCopyTo (self, arr, len)
 
 end
 
-procedure __copySubStr (dest, index, len, sour)
+procedure __copySubStr (self, dest, index, len, sour)
 
   xflush     sp:0
   xflush     sp:1
@@ -1114,7 +1114,7 @@ labNext:
 
 end
 
-procedure __copySubWStr (dest, index, len, sour)
+procedure __copySubWStr (self, dest, index, len, sour)
 
   xflush     sp:0
   xflush     sp:1

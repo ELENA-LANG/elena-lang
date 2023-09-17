@@ -1,14 +1,9 @@
+import system'routines;
 import extensions;
-import system'math;
- 
+
 public program()
 {
-    var n := 1;
- 
-    until(n.sqr().mod:1000000 == 269696)
-    {
-        n += 1
-    };
- 
-    console.printLine(n)
+   var src := "Hello";
+   var dst := src;          //  copying the reference
+   var copy := src.clone(); //  copying the content
 }

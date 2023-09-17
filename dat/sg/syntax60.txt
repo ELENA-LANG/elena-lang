@@ -249,7 +249,7 @@ ROOT_EXPRESSION ::=
 		| reference { 
 			L3 ^OBJECT MESSAGE L3_R 
 			| eps ^OBJECT }
-		| L0 ^OBJECT L0_R {
+		| L0 ^OBJECT L0_R L0_OP* {
 			L1_OP
 			| L3 MESSAGE {
 				L3_R L3_OP*
@@ -374,7 +374,7 @@ EXPRESSION ::=
 		{ identifier | reference }+ { 
 			L0 ^OBJECT L0_R L1_OP?
 			| { DYNAMIC_DIMENSION ^ARRAY_TYPE }+ {
-				L2 ^OBJECT L2_R 
+				L2 ^OBJECT L2_R L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L9_OP?
 				| "{" ^OBJECT COLLECTION "}" ^ COLLECTION_EXPRESSION L3_OP* }
 			| ASSIGN ^OBJECT ASSIGN_R
 			| L2 ^OBJECT L2_R L3_OP* L5_OP* L6_OP? L7_OP* { L8_OP | L9_OP }?
@@ -443,6 +443,9 @@ SUB_EXPRESSION ::=
 	identifier { 
 		identifier+ {
 			L2 ^OBJECT L2_R L3_OP* L5_OP* { L8_OP | L9_OP }? ")"
+			| { DYNAMIC_DIMENSION ^ARRAY_TYPE }+ {
+				L2 ^OBJECT L2_R L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L9_OP?
+				| "{" ^OBJECT COLLECTION "}" ^ COLLECTION_EXPRESSION L3_OP* } ")"
 			| "," ^ PARAMETER PARAMETER { "," PARAMETER }* { 
 				"=>" RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION
  				| ")" "{" BLOCK ^CLOSURE ^EXPRESSION }
