@@ -63,6 +63,7 @@ namespace elena_lang
 
       WindowList        _windowList;
       RecentList        _recentFileList;
+      RecentList        _recentProjectList;
 
       void onStatusChange(StatusNMHDR* rec);
       void onSelection(SelectionNMHDR* rec);

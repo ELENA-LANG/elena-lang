@@ -1,7 +1,7 @@
 ﻿//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Controller implementation File
-//                                             (C)2005-2022, by Aleksey Rakov
+//                                             (C)2005-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <tchar.h>
@@ -12,6 +12,7 @@
 using namespace elena_lang;
 
 constexpr auto MAX_RECENT_FILES = 10;
+constexpr auto MAX_RECENT_PROJECTS = 10;
 
 inline ustr_t getPlatformName(PlatformType type)
 {
@@ -811,6 +812,7 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
       model->sourceViewModel.schemeIndex = loadSetting(config, SCHEME_SETTINGS, 1);
 
       loadRecentFiles(config, RECENTFILES_SETTINGS, model->projectModel.lastOpenFiles);
+      loadRecentFiles(config, RECENTPROJECTS_SETTINGS, model->projectModel.lastOpenProjects);
 
       return true;
    }
@@ -829,6 +831,7 @@ void IDEController :: saveConfig(IDEModel* model, path_t configPath)
    saveSetting(config, SCHEME_SETTINGS, model->sourceViewModel.schemeIndex);
 
    saveRecentFiles(config, RECENTFILE_SETTINGS, model->projectModel.lastOpenFiles);
+   saveRecentFiles(config, RECENTPROJECTS_SETTINGS, model->projectModel.lastOpenProjects);
 
    config.save(*model->projectModel.paths.configPath, FileEncoding::UTF8);
 }
@@ -837,11 +840,18 @@ void IDEController :: init(IDEModel* model)
 {
    NotificationStatus status = IDE_STATUS_CHANGED | IDE_LAYOUT_CHANGED;
 
-   if (model->projectModel.lastOpenFiles.count() > 0) {
-      path_t path = model->projectModel.lastOpenFiles.get(1);
+   if (model->projectModel.lastOpenProjects.count() > 0) {
+      PathString path(model->projectModel.lastOpenProjects.get(1));
 
-      if (openFile(model, path, status)) {
-         model->changeStatus(IDEStatus::Ready);
+      if (PathUtil::checkExtension(*path, "l")) {
+         if (openFile(model, *path, status)) {
+            model->changeStatus(IDEStatus::Ready);
+         }
+      }
+      else {
+         if (openProject(model, *path, status)) {
+            model->changeStatus(IDEStatus::Ready);
+         }
       }
    }
    else status |= PROJECT_CHANGED;
@@ -878,10 +888,33 @@ void IDEController :: doNewFile(IDEModel* model)
    _notifier->notify(NOTIFY_IDE_CHANGE, status);
 }
 
+inline void removeDuplicate(ProjectPaths& lastOpenFiles, path_t value)
+{
+   for (auto it = lastOpenFiles.start(); !it.eof(); ++it) {
+      if (value.compare(*it)) {
+         lastOpenFiles.cut(it);
+
+         return;
+      }
+   }
+}
+
+inline void addToRecentProjects(IDEModel* model, path_t path)
+{
+   removeDuplicate(model->projectModel.lastOpenProjects, path);
+
+   while (model->projectModel.lastOpenProjects.count() >= MAX_RECENT_PROJECTS)
+      model->projectModel.lastOpenProjects.cut(model->projectModel.lastOpenProjects.end());
+
+   model->projectModel.lastOpenProjects.insert(path.clone());
+}
+
 bool IDEController :: openFile(IDEModel* model, path_t sourceFile, NotificationStatus& status)
 {
    if (model->projectModel.name.empty()) {
       status |= projectController.openSingleFileProject(model->projectModel, sourceFile);
+
+      addToRecentProjects(model, sourceFile);
    }
 
    return openFile(&model->sourceViewModel, &model->projectModel, sourceFile, status);
@@ -933,17 +966,6 @@ bool IDEController :: openProject(IDEModel* model, path_t projectFile, Notificat
    status |= projectController.openProject(model->projectModel, projectFile);
 
    return true;
-}
-
-inline void removeDuplicate(ProjectPaths& lastOpenFiles, path_t value)
-{
-   for (auto it = lastOpenFiles.start(); !it.eof(); ++it) {
-      if (value.compare(*it)) {
-         lastOpenFiles.cut(it);
-
-         return;
-      }
-   }
 }
 
 void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)
@@ -1050,6 +1072,8 @@ bool IDEController :: doOpenProject(FileDialogBase& dialog, MessageDialogBase& m
          return false;
 
       if (openProject(model, *path, status)) {
+         addToRecentProjects(model, *path);
+
          model->changeStatus(IDEStatus::Ready);
          status |= IDE_LAYOUT_CHANGED;
 
@@ -1063,6 +1087,20 @@ bool IDEController :: doOpenProject(FileDialogBase& dialog, MessageDialogBase& m
    return false;
 }
 
+void IDEController :: doOpenProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, path_t path)
+{
+   NotificationStatus status = {};
+
+   if (!closeProject(dialog, mssgDialog, model, status))
+      return;
+
+   if (PathUtil::checkExtension(path, "l")) {
+      openFile(model, path, status);
+   }
+   else openProject(model, path, status);
+
+   _notifier->notify(NOTIFY_IDE_CHANGE, status);
+}
 
 bool IDEController :: doSaveProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model, bool forcedMode)
 {

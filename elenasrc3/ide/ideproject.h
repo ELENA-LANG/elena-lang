@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Project Model header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PROJECT_H
@@ -19,6 +19,7 @@ namespace elena_lang
 
    constexpr auto RECENTFILES_SETTINGS = "configuration/recent_files/*";
    constexpr auto RECENTFILE_SETTINGS  = "configuration/recent_files/path";
+   constexpr auto RECENTPROJECTS_SETTINGS = "configuration/recent_projects/path";
 
    // --- Map types ---
    typedef List<path_t, freepath>      ProjectPaths;
@@ -63,6 +64,7 @@ namespace elena_lang
       ProjectPaths      addedSources;
 
       ProjectPaths      lastOpenFiles;
+      ProjectPaths      lastOpenProjects;
 
       Breakpoints       breakpoints;
 

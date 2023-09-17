@@ -34,7 +34,6 @@ namespace elena_lang
    // --- RecentList ---
    class RecentList : public MenuHistoryBase
    {
-      IDEModel*      _ideModel;
       IDEController* _controller;
       ProjectPaths*  _recentList;
 
@@ -47,7 +46,7 @@ namespace elena_lang
       void assignList(ProjectPaths* recentList);
       void reload();
 
-      void openFile(int index);
+      path_t getPath(int index);
 
       RecentList(IDEController* controller, IDEModel* model, int menuBaseId);
    };

@@ -128,6 +128,7 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    clipboard(this),
    _windowList(controller, model->viewModel()),
    _recentFileList(controller, model, IDM_FILE_FILES),
+   _recentProjectList(controller, model, IDM_FILE_PROJECTS),
    aboutDialog(instance, this),
    editorSettingsDialog(instance, this, model->viewModel())
 {
@@ -161,6 +162,7 @@ void IDEWindow :: openFile()
 {
    _controller->doOpenFile(fileDialog, _model);
    _recentFileList.reload();
+   _recentProjectList.reload();
 }
 
 void IDEWindow :: saveFile()
@@ -196,6 +198,7 @@ void IDEWindow :: closeAllButActive()
 void IDEWindow :: openProject()
 {
    _controller->doOpenProject(projectDialog, messageDialog, _model);
+   _recentProjectList.reload();
 }
 
 void IDEWindow :: closeProject()
@@ -827,7 +830,34 @@ bool IDEWindow :: onCommand(int command)
       case IDM_FILE_FILES_7:
       case IDM_FILE_FILES_8:
       case IDM_FILE_FILES_9:
-         _recentFileList.openFile(command - IDM_FILE_FILES);
+      {
+         PathString path(_recentFileList.getPath(command - IDM_FILE_FILES));
+         _controller->doOpenFile(_model, *path);
+         _recentFileList.reload();
+         break;
+      }
+      case IDM_FILE_PROJECTS_1:
+      case IDM_FILE_PROJECTS_2:
+      case IDM_FILE_PROJECTS_3:
+      case IDM_FILE_PROJECTS_4:
+      case IDM_FILE_PROJECTS_5:
+      case IDM_FILE_PROJECTS_6:
+      case IDM_FILE_PROJECTS_7:
+      case IDM_FILE_PROJECTS_8:
+      case IDM_FILE_PROJECTS_9:
+      {
+         PathString path(_recentProjectList.getPath(command - IDM_FILE_PROJECTS));
+         _controller->doOpenProject(projectDialog, messageDialog, _model, *path);
+         _recentProjectList.reload();
+         break;
+      }
+      case IDM_FILE_FILES_CLEAR:
+         _model->projectModel.lastOpenFiles.clear();
+         _recentFileList.reload();
+         break;
+      case IDM_FILE_PROJECTS_CLEAR:
+         _model->projectModel.lastOpenProjects.clear();
+         _recentProjectList.reload();
          break;
       case IDM_EDITOR_OPTIONS:
          _controller->doConfigureEditorSettings(editorSettingsDialog, _model);
@@ -853,6 +883,7 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
       case NOTIFY_ONSTART:
          _controller->init(_model);
          _recentFileList.assignList(&_model->projectModel.lastOpenFiles);
+         _recentProjectList.assignList(&_model->projectModel.lastOpenProjects);
          break;
       case NOTIFY_IDE_CHANGE:
          onIDEChange(rec->status);
@@ -1272,6 +1303,7 @@ void IDEWindow :: populate(size_t counter, GUIControlBase** children)
 
    _windowList.assign(menu);
    _recentFileList.assign(menu);
+   _recentProjectList.assign(menu);
 }
 
 void IDEWindow :: onColorSchemeChange()
