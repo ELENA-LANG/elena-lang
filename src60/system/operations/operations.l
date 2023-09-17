@@ -114,6 +114,15 @@ public template extern(body) : __included(statementTemplates)
    $ext body
 }
 
+// --- using statement ---
+
+public template using<expr>(block) : __included(statementTemplates)
+{
+   auto v := expr;
+    
+   block $fnl (v.close());
+}
+
 // --- operator templates ---
 
 // .\
