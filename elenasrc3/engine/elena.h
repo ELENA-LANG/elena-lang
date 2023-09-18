@@ -1104,9 +1104,10 @@ namespace elena_lang
       {
          struct Source { addr_t nameRef; } source;
          struct Module { addr_t nameRef; int flags; } classSource;
-         struct Step { addr_t address; } step;
-         struct Local { addr_t nameRef; int offset; } local;
-         struct Field { addr_t nameRef; int offset; } field;
+         struct Step   { addr_t address; } step;
+         struct Local  { addr_t nameRef; int offset; } local;
+         struct Field  { addr_t nameRef; int offset; } field;
+         struct Info   { addr_t nameRef; int size; } info;
          struct Offset { pos_t disp; } offset;
       } addresses;
 

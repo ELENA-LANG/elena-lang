@@ -2334,9 +2334,19 @@ void ByteCodeWriter :: saveFieldDebugInfo(Scope& scope, ClassInfo& info)
 
       ref_t typeRef = (*it).typeInfo.typeRef;
       if (typeRef && isStruct) {
-         DebugLineInfo classInfo = { DebugSymbol::ClassInfo };
+         DebugLineInfo classInfo = { DebugSymbol::FieldInfo };
 
-         classInfo.addresses.source.nameRef = scope.debugStrings->position();
+         classInfo.addresses.info.nameRef = scope.debugStrings->position();
+         if (isStruct) {
+            auto next_it = it;
+            ++next_it;
+
+            if (next_it.eof()) {
+               classInfo.addresses.info.size = info.size - (*it).offset;
+            }
+            else classInfo.addresses.info.size = (*next_it).offset - (*it).offset;
+         }
+
          if (!isPrimitiveRef(typeRef)) {
             ustr_t typeName = scope.moduleScope->module->resolveReference(typeRef);
             if (isWeakReference(typeName)) {
@@ -2883,7 +2893,7 @@ inline void saveParameterDebugSymbol(DebugSymbol symbol, int offset, ustr_t name
    tapeScope.scope->debug->write(&frameInfo, sizeof(frameInfo));
 
    if (!emptystr(className)) {
-      DebugLineInfo classInfo = { DebugSymbol::ClassInfo };
+      DebugLineInfo classInfo = { DebugSymbol::ParameterInfo };
       classInfo.addresses.source.nameRef= tapeScope.scope->debugStrings->position();
       tapeScope.scope->debug->write(&classInfo, sizeof(classInfo));
       tapeScope.scope->debugStrings->writeString(className);

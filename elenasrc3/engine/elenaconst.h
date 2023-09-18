@@ -283,8 +283,9 @@ namespace elena_lang
       IntArrayParameter    = 0x0208,
 
       FrameInfo            = 0x0301,
-      ClassInfo            = 0x0302,
+      ParameterInfo        = 0x0302,
       MessageInfo          = 0x0303,
+      FieldInfo            = 0x0304,
    };
 
    // --- ClassAttribute ---
