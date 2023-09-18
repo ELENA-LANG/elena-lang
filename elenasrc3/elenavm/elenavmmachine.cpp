@@ -471,27 +471,33 @@ addr_t ELENAVMMachine :: resolveExternal(ustr_t referenceName)
 
 void ELENAVMMachine :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef)
 {
-   
+   JITLinker* jitLinker = new JITLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
+      &_settings, nullptr);
+
+   jitLinker->setCompiler(_compiler);
+
+   ustr_t name = jitLinker->retrieveResolvedAction(subjectRef);
+
+   actionName.copy(name);
+
+   delete jitLinker;
 }
 
 size_t ELENAVMMachine :: loadMessageName(mssg_t message, char* buffer, size_t length)
 {
-   //ref_t actionRef, flags;
-   //pos_t argCount = 0;
-   //decodeMessage(message, actionRef, argCount, flags);
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
 
-   //IdentifierString actionName;
-   //loadSubjectName(actionName, actionRef);
+   IdentifierString actionName;
+   loadSubjectName(actionName, actionRef);
 
-   //IdentifierString messageName;
-   //ByteCodeUtil::formatMessageName(messageName, nullptr, *actionName, nullptr, 0, argCount, flags);
+   IdentifierString messageName;
+   ByteCodeUtil::formatMessageName(messageName, nullptr, *actionName, nullptr, 0, argCount, flags);
 
-   //StrConvertor::copy(buffer, *messageName, messageName.length(), length);
+   StrConvertor::copy(buffer, *messageName, messageName.length(), length);
 
-   //return length;
-
-   // !! temporal
-   return 0;
+   return length;
 }
 
 size_t ELENAVMMachine :: loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length)

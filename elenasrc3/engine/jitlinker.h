@@ -235,6 +235,8 @@ namespace elena_lang
 
       addr_t resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode);
 
+      ustr_t retrieveResolvedAction(ref_t reference);
+
       ref_t resolveAction(ustr_t actionName);
 
       void loadPreloaded(ustr_t preloadedSection);
