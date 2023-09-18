@@ -12,33 +12,54 @@ In development:
     [!] https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
     [!] tutorial : Multiple inheritance in ELENA
 
+    * debugger : reference<int>
+    + debugger : stack allocated int value 
+
+    * test text file reader (with encoders)
+    * warn if multiret method is correct : the type should be compatible with the returning type of main handler
+    * warn if multiret method is correct : there should exist a main handler
+    * warn on not found message for the existing object
+    * warn if the method was overriden but the output type was not specify
     * calc - doesn't work
+    * review system warnings
+    * review extensions warnings
     * ide : enable / disable toolbar buttons
     + #69 : GC info 
+    * rosetta code sample : Exceptions/Catch an exception thrown in a nested call, Execute Brain****, 
 
+    * ide : styling source code
     * ide : dark color scheme, change the window background color
-    * rosetta code sample : E
+    * ide : goto nested class
+    * ide : debug goto source
+    * ide : enable / disable menu commands
+    * ide : window list - close several windows
+    * ide : debug watch context menu
+    * ide message : display internal error
+    * ide : brackets highlight
+    * ide : refreshing auto watch - with the same name, unused
+    * ide : set / remove breakpoints
+    * ide : menu - clear all breakpoints
+    * ide : open via dialog - set proper namespace
+    * ide : save project as
+    * ide : exclude the file from the project
+    * ide : hide / show include / exclude  depending if the file is a part of the project
+
     * test all samples for win x86
     * new unit test : dispatchmr (both function and normal one)
-    * ide : goto nested class
     * #195 : implementing rosetta code samples
     * ldoc : show template based type correctly
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
+    * rosetta code sample : F
     * string to real : support e notation
     * api : provide field descriptions
-    * ide : debug goto source
     * examples : collatz, matrix
     * examples : p2, random 
     * examples : datetime
     * examples : replace, trans 
     * examples : textdb, textfile 
     * implementing corex
-    * ide : enable / disable menu commands
-    * ide : window list - close several windows
-    * ide : debug watch context menu
     * elt - exception handler
     * closure should be sealed
-    * ide message : display internal error
     * boolean operators : &&, ||, ^^ - weak implementation
     * migrate the rest of system (win32_pointers.l)
     * inno setup : x86, x86-64
@@ -47,7 +68,6 @@ In development:
     * elenavm : implementing loadDispatcherOverloadlist
     * elenavm : implementing rest of dll api
     * conversion to int - raise an error if not valid
-    * ide : brackets highlight
     * #15 : return double / long from external function
     * #47 : Evaluating an expression in a symbol
     * toPrintable should return both wide and string
@@ -74,42 +94,25 @@ In development:
     * use direct reference for - BoolValue#true.Inverted
     * equal native bool operation
     * static symbol should be thread-safe
-    * warn if multiret method is correct : the type should be compatible with the returning type of main handler
-    * warn if multiret method is correct : there should exist a main handler
     * class constants
     * mt : note on creating closure - lock GC
     * editor - do we need checkmode? it seems like not
-    * warn on not found message for the existing object
     * support constants
     * ncopy / lcopy
     * module template - to include basic import statement
     * module template - probably should include meta dictionary for attributes / types / ...
     * asmc : raise an error if the label was not resolved
-    * warn if the method was overriden but the output type was not specify
     * raise an error if the overridden output type was changed
     * isCompatble - cache the results
     * external call : pass int constants directly
-    * retro : is CONVERSION_MESSAGE flag is really required?
-    * for windows x86-64 allocate shadow memory
     * for linux amd64 allocate shadow memory
     * redux : add output convertion for the method without the explicit return statement
     * globals
-    + support output redirecting
-    + debugger : stack allocated int value 
     + test finally block with locally allocated variables
     + optimize a ? b : c - do not use branching
     * test if with unknown object
-    * ide : styling source code
-    * test text file reader / writer (with encoders)
     * test binary file reader / writer
     * constructor - single dispatcher
-    * ide : refreshing auto watch - with the same name, unused
-    * ide : set / remove breakpoints
-    * ide : menu - clear all breakpoints
-    * ide : open via dialog - set proper namespace
-    * ide : save project as
-    * ide : exclude the file from the project
-    * ide : hide / show include / exclude  depending if the file is a part of the project
     ! api functionality for existing classes : rest of system
     ! api functionality for existing classes : externals
     * rosetta code sample : Anagrams
@@ -128,6 +131,8 @@ In development:
     * optimize: pi sample (<8 secs)
     * optimize: if (nil == name) {} else {}
     * optimize: if (a == b) {} else {}
+    * retro : is CONVERSION_MESSAGE flag is really required?
+    * for windows x86-64 allocate shadow memory
 
     === Iteration 20 ===
     [!] support mta_gui, vm_mta_console
@@ -151,7 +156,6 @@ Backlog:
     * ppc64, aarch64 : fix xrefresh / xflush - use arg instead of direct values
     * execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
     * review install scripts : include all existing samples, use different output folders
-    * review extensions warnings
     * #580 : new feature : use C# 7.0 style namespace (single line one)
     ! script and db samples
     ! elena sm : x86-64
@@ -186,7 +190,6 @@ Backlog:
     * by exiting thread (must be called on thread proc exit) - remove entry from table slots
     * for time being keep SINGLE_THREAD_CONTEXT empty, after the migrating it
       must be made empty 
-    * review system warnings
     * prefix nullable / nable - allow to assign nil
     * introduce Nullable structure
     * ide : key combination doesn't work after closing the project

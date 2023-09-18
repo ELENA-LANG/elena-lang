@@ -576,7 +576,7 @@ L4_EXPRESSION ::=
 		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP*
 		| eps ^OBJECT }
 	| reference ^OBJECT 
-	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT
+	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L3_OP*
 	| "(" SUB_EXPRESSION
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
 	| "!" L4_EXPRESSION ^NOT_OPERATION

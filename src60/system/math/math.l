@@ -47,6 +47,9 @@ namespace math
       frac()
          = cast real(self).frac();
     
+      ln()
+         = cast real(self).ln();
+    
       sin()
          = cast real(self).sin();
     

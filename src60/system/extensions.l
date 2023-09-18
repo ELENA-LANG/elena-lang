@@ -950,6 +950,18 @@ public extension stringOp : String
 
 public extension charOp : CharValue
 {
+   int Hashcode
+   {
+      // Reads the object hash code into the output parameter
+      get()
+      {
+         int value := self;
+         int retVal := PrimitiveIntOperations.getHashcode(value);
+
+         ^ retVal
+      }
+   }
+
    bool isWhitespace()
    {
       self =>
