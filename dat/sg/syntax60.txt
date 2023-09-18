@@ -898,7 +898,8 @@ POSTFIX ::=
 
 DIMENSION ::=
         integer
-        | hexinteger;	
+        | hexinteger
+	| identifier;
 
 COMPLEX_NAME ::=
 	identifier;

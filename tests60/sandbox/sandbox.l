@@ -1,9 +1,12 @@
-import system'routines;
 import extensions;
+
+const int NCCS = 32;
+
+struct A
+{
+   byte c_cc[NCCS];
+}
 
 public program()
 {
-   var src := "Hello";
-   var dst := src;          //  copying the reference
-   var copy := src.clone(); //  copying the content
 }

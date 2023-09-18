@@ -1844,7 +1844,7 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
       }
       case ObjectKind::IntLiteral:
       {
-         nsScope->defineIntConstant(retVal.reference, retVal.extra);
+         nsScope->defineIntConstant(constRef, retVal.extra);
 
          dataWriter.writeDWord(retVal.extra);
 
@@ -4574,6 +4574,8 @@ void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bo
       if (operand.kind == ObjectKind::IntLiteral) {
          NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
          nsScope->defineIntConstant(operand.reference, operand.extra);
+
+         scope.info.valueRef = operand.reference;
       }
    }
 }
@@ -5519,11 +5521,12 @@ ref_t Compiler :: resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool
 
 int Compiler :: resolveSize(Scope& scope, SyntaxNode node)
 {
-   if (node == SyntaxKey::integer) {
-      return StrConvertor::toInt(node.identifier(), 10);
-   }
-   else if (node == SyntaxKey::hexinteger) {
-      return StrConvertor::toInt(node.identifier(), 16);
+   Interpreter interpreter(scope.moduleScope, _logic);
+
+   ObjectInfo retVal = evalObject(interpreter, scope, node);
+
+   if (retVal.kind == ObjectKind::IntLiteral) {
+      return retVal.extra;
    }
    else {
       scope.raiseError(errInvalidSyntax, node);
