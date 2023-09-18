@@ -62,6 +62,8 @@ namespace elena_lang
       BCopy          = 0x28,
       WCopy          = 0x29,
       XPeekEq        = 0x2A,
+      TryLock        = 0x2B,
+      FreeLock       = 0x2C,
       XGet           = 0x2E,
       XCall          = 0x2F,
 

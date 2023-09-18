@@ -1537,6 +1537,11 @@ bool X86Assembler :: compileCmpxchg(X86Operand source, X86Operand target, Memory
       writer.writeByte(0xB1);
       X86Helper::writeModRM(writer, target, source);
    }
+   else if (source.isR8_M8() && target.isR8()) {
+      writer.writeByte(0x0F);
+      writer.writeByte(0xB0);
+      X86Helper::writeModRM(writer, target, source);
+   }
    else return false;
 
    return true;
@@ -2325,6 +2330,11 @@ bool X86Assembler :: compileXadd(X86Operand source, X86Operand target, MemoryWri
    }
 
    if (source.isR32_M32() && target.isR32()) {
+      writer.writeByte(0x0F);
+      writer.writeByte(0xC0);
+      X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR8_M8() && target.isR8()) {
       writer.writeByte(0x0F);
       writer.writeByte(0xC0);
       X86Helper::writeModRM(writer, target, source);

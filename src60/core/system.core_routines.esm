@@ -2153,6 +2153,25 @@ labEnd:
 
 end
 
+procedure __enterCritical
+
+  peek        sp:0
+
+labWait:
+  snop
+  trylock
+  jne         labWait  
+
+end
+
+
+procedure __leaveCritical
+
+  peek        sp:0
+  freelock
+
+end
+
 procedure critical_exception_handler
 
   cmp         n:EXCEPTION_ACCESS_VIOLATION

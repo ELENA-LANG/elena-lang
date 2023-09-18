@@ -165,7 +165,7 @@ path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourc
 
          _debugController.resolveNamespace(name);
 
-         pos_t rootNsPos = (*name).find('\'', name.length());
+         size_t rootNsPos = (*name).find('\'', name.length());
          subPath.cut(0, rootNsPos + 1);
 
          return sourcePath + rootPathLen + rootNsPos + 1;

@@ -487,9 +487,13 @@ ELENA byte codes (or ecodes)
 
  Misc operations:
  ---------------- 
+   freelock                 - free acc
+
    label dp:i, r            - assign a specified address / label to dp[i]
 
    throw                    - raise an exception (acc contains the exception object)
+
+   trylock                  - try to lock acc, if already locked COMP.EQ = 0
 
    xhook dp:i, r            - set a handler to the specified address / label
 

@@ -725,6 +725,19 @@ inline %02Ah
 
 end
 
+
+// ; trylock
+inline %02Bh
+
+  xor  eax, eax
+
+end
+
+// ; freelock
+inline %02Ch
+
+end
+
 // ; xget
 inline %02Eh
 

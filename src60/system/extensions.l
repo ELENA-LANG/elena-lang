@@ -1076,3 +1076,10 @@ public extension stringWeakOp
       ^ self
    }
 }
+
+public extension threadObjectOp
+{
+   enterCriticalSection() : external(system'core_routines'__enterCritical);
+
+   leaveCriticalSection() : external(system'core_routines'__leaveCritical);
+}

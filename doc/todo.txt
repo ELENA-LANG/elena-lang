@@ -11,8 +11,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
 
-    * lock statement
-    * ide : recent files / projects, clear the list
     * support constants in array size declaration (see lnx_console.l)
     * rosetta code sample : D
 

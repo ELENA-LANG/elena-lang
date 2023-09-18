@@ -50,6 +50,7 @@ define es_catch_frame        000Ch
 define tt_slots             00004h
 
 // ; --- Object header fields ---
+define elSyncOffset          0004h
 define elSizeOffset          0004h
 define elVMTOffset           0008h 
 define elObjectOffset        0008h
@@ -805,6 +806,27 @@ inline %17h
   cmp  ebx, eax
   setg ch
   cmp  ecx, 0
+
+end
+
+// ; trylock
+inline %02Bh
+
+  // ; GCXT: try to lock
+  xor  eax, eax
+  mov  ecx, 1
+  lock cmpxchg byte ptr[ebx - elSyncOffset], cl
+  test eax, eax 
+
+end
+
+// ; freelock
+inline %02Ch
+
+  mov  ecx, -1
+
+  // ; free lock
+  lock xadd byte ptr [ebx - elSyncOffset], cl
 
 end
 

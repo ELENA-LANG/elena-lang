@@ -914,6 +914,17 @@ inline %02Ah
 
 end
 
+
+// ; trylock
+inline %02Bh
+
+end
+
+// ; freelock
+inline %02Ch
+
+end
+
 // ; xget
 inline %02Eh
 

@@ -123,6 +123,17 @@ public template using<expr>(block) : __included(statementTemplates)
    block $fnl (v.close());
 }
 
+// --- lock statement ---
+
+public template lock<expr>(block) : __included(statementTemplates)
+{
+   auto v := expr;
+
+   v.enterCriticalSection();
+    
+   block $fnl (v.leaveCriticalSection());
+}
+
 // --- operator templates ---
 
 // .\
