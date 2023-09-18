@@ -9,10 +9,12 @@ In development:
     [!] x86 mta support
     [!] elt tutorial (stand-alone / in IDE)
     [!] rest of files / console samples / rosetta code samples
-    [!]https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
+    [!] https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
+    [!] tutorial : Multiple inheritance in ELENA
 
-    * tutorial : Multiple inheritance in ELENA
     * calc - doesn't work
+    * ide : enable / disable toolbar buttons
+    + #69 : GC info 
 
     * ide : dark color scheme, change the window background color
     * rosetta code sample : E
@@ -25,14 +27,11 @@ In development:
     * string to real : support e notation
     * api : provide field descriptions
     * ide : debug goto source
-    * test : print german text
     * examples : collatz, matrix
     * examples : p2, random 
-    * rosetta samples : 20
     * examples : datetime
     * examples : replace, trans 
     * examples : textdb, textfile 
-    * ide : enable / disable toolbar buttons
     * implementing corex
     * ide : enable / disable menu commands
     * ide : window list - close several windows
@@ -42,7 +41,6 @@ In development:
     * ide message : display internal error
     * boolean operators : &&, ||, ^^ - weak implementation
     * migrate the rest of system (win32_pointers.l)
-    + #69 : GC info 
     * inno setup : x86, x86-64
     * corex : tests - lock test, GC test, printing in one thread / calling GC in another
     * api : uncomment ExtensionDispatcher and SymbolCollection

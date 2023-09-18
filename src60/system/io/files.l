@@ -16,6 +16,13 @@ namespace io
 
       TextWriter textwriter() = fileControl.writer(_path);
 
+      saveContent(string content)
+      {
+         using(TextWriter writer := fileControl.writer(_path)) {
+            writer.write(content);
+         }
+      }    
+
       delete()
          = fileControl.delete(_path);
 

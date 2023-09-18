@@ -230,20 +230,20 @@ namespace io
       write(char[] input, int length)
       {
          int  total := length;
-         byte buffer[64];
+         byte buffer[128];
          int  blockLength := 0;
          int  bufferLength := 0;
          int  offset := 0;
             
          while (total > 0)
          {
-            if(total < 64)
+            if(total < 32)
             { 
                blockLength := total 
             }
             else
             { 
-               blockLength := 64 
+               blockLength := 32
             };
                     
             _encoder.convertTo(input, offset, ref blockLength, buffer, 0, ref bufferLength);

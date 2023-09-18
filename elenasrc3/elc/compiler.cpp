@@ -1815,6 +1815,8 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
    if (!constRef)
       constRef = scope.moduleScope->mapAnonymous("const");
 
+   ref_t valueRef = constRef;
+
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
    MemoryWriter dataWriter(module->mapSection(constRef | mskConstant, false));
    switch (retVal.kind) {
@@ -1844,7 +1846,9 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
       }
       case ObjectKind::IntLiteral:
       {
-         nsScope->defineIntConstant(constRef, retVal.extra);
+         valueRef = retVal.reference;
+
+         nsScope->defineIntConstant(valueRef, retVal.extra);
 
          dataWriter.writeDWord(retVal.extra);
 
@@ -1872,7 +1876,7 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
    dataWriter.Memory()->addReference(typeRef | mskVMTRef, (pos_t)-4);
 
    // save constant meta info
-   SymbolInfo constantInfo = { SymbolType::Constant, constRef, typeRef, false };
+   SymbolInfo constantInfo = { SymbolType::Constant, valueRef, typeRef, false };
    MemoryWriter metaWriter(module->mapSection(constRef | mskMetaSymbolInfoRef, false));
    constantInfo.save(&metaWriter);
 
@@ -9579,10 +9583,14 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
             scope.info.typeRef = retrieveStrongType(scope, retVal);
             break;
          case ObjectKind::StringLiteral:
-         case ObjectKind::IntLiteral:
          case ObjectKind::Float64Literal:
             scope.info.symbolType = SymbolType::Constant;
             scope.info.valueRef = constRef;
+            scope.info.typeRef = retrieveStrongType(scope, retVal);
+            break;
+         case ObjectKind::IntLiteral:
+            scope.info.symbolType = SymbolType::Constant;
+            scope.info.valueRef = retVal.reference;
             scope.info.typeRef = retrieveStrongType(scope, retVal);
             break;
          case ObjectKind::Constant:

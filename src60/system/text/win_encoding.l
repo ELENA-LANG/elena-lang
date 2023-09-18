@@ -48,4 +48,6 @@ namespace text
 
    // --- OEMEncoder ---
    public static Encoder OEMEncoder = new WinEncoder(1);
+   public static Encoder Win1250Encoder = new WinEncoder(1250);
+   public static Encoder Win1251Encoder = new WinEncoder(1251);
 }
