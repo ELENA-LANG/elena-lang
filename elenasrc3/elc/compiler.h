@@ -1070,7 +1070,7 @@ namespace elena_lang
       void checkMethodDuplicates(ClassScope& scope, SyntaxNode node, mssg_t message, 
          mssg_t publicMessage, bool protectedOne, bool internalOne);
 
-      ref_t generateConstant(Scope& scope, ObjectInfo& info, ref_t reference);
+      ref_t generateConstant(Scope& scope, ObjectInfo& info, ref_t reference, bool saveScope = true);
 
       mssg_t defineByRefMethod(ClassScope& scope, SyntaxNode node/*, bool isExtension*/);
 

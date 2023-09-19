@@ -480,10 +480,21 @@ void Compiler::NamespaceScope::raiseWarning(int level, int message, SyntaxNode t
 
 ObjectInfo Compiler::NamespaceScope :: defineConstant(SymbolInfo info)
 {
-   if (info.typeRef == moduleScope->buildins.intReference && intConstants.exist(info.valueRef)) {
-      int value = intConstants.get(info.valueRef);
+   if (info.typeRef == moduleScope->buildins.intReference) {
+      int value = 0;
+      if(!intConstants.exist(info.valueRef)) {
+         auto sectionInfo = moduleScope->getSection(module->resolveReference(info.valueRef), mskConstant, true);
+         assert(sectionInfo.section != nullptr);
 
-      return { ObjectKind::IntLiteral, { V_INT32 }, info.valueRef, value };
+         MemoryReader reader(sectionInfo.section);
+         
+         value = reader.getDWord();
+
+         defineIntConstant(info.valueRef, value);
+      }
+      else value = intConstants.get(info.valueRef);
+
+      return { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(*this, value), value };
    }
    else if (info.symbolType == SymbolType::ConstantArray) {
       return { ObjectKind::ConstArray, { info.typeRef }, info.valueRef, info.valueRef };
@@ -1794,7 +1805,7 @@ void Compiler :: checkMethodDuplicates(ClassScope& scope, SyntaxNode node, mssg_
    }
 }
 
-ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t constRef)
+ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t constRef, bool saveScope)
 {
    // check if the constant can be resolved immediately
    switch (retVal.kind) {
@@ -1815,8 +1826,6 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
    ModuleBase* module = scope.module;
    if (!constRef)
       constRef = scope.moduleScope->mapAnonymous("const");
-
-   ref_t valueRef = constRef;
 
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
    MemoryWriter dataWriter(module->mapSection(constRef | mskConstant, false));
@@ -1847,9 +1856,7 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
       }
       case ObjectKind::IntLiteral:
       {
-         valueRef = retVal.reference;
-
-         nsScope->defineIntConstant(valueRef, retVal.extra);
+         nsScope->defineIntConstant(constRef, retVal.extra);
 
          dataWriter.writeDWord(retVal.extra);
 
@@ -1877,9 +1884,11 @@ ref_t Compiler :: generateConstant(Scope& scope, ObjectInfo& retVal, ref_t const
    dataWriter.Memory()->addReference(typeRef | mskVMTRef, (pos_t)-4);
 
    // save constant meta info
-   SymbolInfo constantInfo = { SymbolType::Constant, valueRef, typeRef, false };
-   MemoryWriter metaWriter(module->mapSection(constRef | mskMetaSymbolInfoRef, false));
-   constantInfo.save(&metaWriter);
+   if (saveScope) {
+      SymbolInfo constantInfo = { SymbolType::Constant, constRef, typeRef, false };
+      MemoryWriter metaWriter(module->mapSection(constRef | mskMetaSymbolInfoRef, false), 0);
+      constantInfo.save(&metaWriter);
+   }
 
    return constRef;
 }
@@ -4584,9 +4593,7 @@ void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bo
       ObjectInfo operand = evalExpression(interpreter, scope, node.findChild(SyntaxKey::GetExpression).firstChild(), true);
       if (operand.kind == ObjectKind::IntLiteral) {
          NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-         nsScope->defineIntConstant(operand.reference, operand.extra);
-
-         scope.info.valueRef = operand.reference;
+         nsScope->defineIntConstant(scope.reference, operand.extra);
       }
    }
 }
@@ -5905,6 +5912,9 @@ bool Compiler :: evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNo
          setIndex = true;
          break;
       case ObjectKind::StringLiteral:
+      case ObjectKind::WideStringLiteral:
+      case ObjectKind::IntLiteral:
+      case ObjectKind::Float64Literal:
          constInfo.typeInfo = retVal.typeInfo;
          constInfo.reference = generateConstant(scope, retVal, 0);
          break;
@@ -9584,7 +9594,7 @@ void Compiler :: saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_
 
 bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
 {
-   ref_t constRef = generateConstant(scope, retVal, scope.reference);
+   ref_t constRef = generateConstant(scope, retVal, scope.reference, false);
    if (constRef) {
       switch (retVal.kind) {
          case ObjectKind::Singleton:
@@ -9600,7 +9610,7 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
             break;
          case ObjectKind::IntLiteral:
             scope.info.symbolType = SymbolType::Constant;
-            scope.info.valueRef = retVal.reference;
+            scope.info.valueRef = constRef;
             scope.info.typeRef = retrieveStrongType(scope, retVal);
             break;
          case ObjectKind::Constant:

@@ -391,6 +391,11 @@ namespace elena_lang
          return _memory;
       }
 
+      bool unassigned() const
+      {
+         return _memory == nullptr;
+      }
+
       void* address() const
       {
          return _memory->get(_position);

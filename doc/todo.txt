@@ -6,18 +6,9 @@ In development:
     ### EPIC: elena 6.0 - redux ###
     === Iteration 18 ===
     [!] x86 GUI support
-    [!] x86 mta support
-    [!] elt tutorial (stand-alone / in IDE)
     [!] rest of files / console samples / rosetta code samples
-    [!] https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
-    [!] tutorial : Multiple inheritance in ELENA
     [!] api functionality for existing classes : rest of system
 
-    * class constant (should be a static variable / pure constant - no entry in VMT)
-
-    * support const int m = 2 as int literal (in the same module, in another module, in the class)
-    * two types of class constants : normal ones and virtial ones (__className and accumulators)
-    * Class Constants : review doc and implement if requiered
     * accumulator const fields (#348)
     * constant field must have assigning expression
 
@@ -105,12 +96,11 @@ In development:
     * constructor - single dispatcher
 
     === Iteration 19 ===
+    [!] x86 mta support
+    [!] elt tutorial (stand-alone / in IDE)
+    [!] https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
+    [!] tutorial : Multiple inheritance in ELENA
     [!] pi sample optimization (under 9sec)
-    [!] elenavm x64 dll
-    [!] elenavm x64 : script executing
-    [!] vm terminal x64
-    [!] ide vm console x64
-    [!] api functionality for existing classes : externals
     * amd64 : implement system 5
     * test all samples for win x86-64
     * optimize Amicable pairs
@@ -123,6 +113,10 @@ In development:
     * for linux amd64 allocate shadow memory
 
     === Iteration 20 ===
+    [!] elenavm x64 dll
+    [!] elenavm x64 : script executing
+    [!] vm terminal x64
+    [!] ide vm console x64
     [!] support mta_gui, vm_mta_console
     * review ppc64le - find a better solution to deal with n16_lo > 07FFFFh (see cmpn)
 

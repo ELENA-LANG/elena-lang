@@ -38,22 +38,18 @@ import extensions;
 
 class A
 {
-   const string nickName := "first";
-}
-
-class B : A
-{
-   this nickName := "second";
+   const int N := 200;
 
    printNickname()
    {
-      console.printLine(nickName);
+      console.printLine(N);
    }
 }
 
+
 public program()
 {
-   var a := new B();
+   var a := new A();
    a.printNickname();
 
 //   var a := new A();
