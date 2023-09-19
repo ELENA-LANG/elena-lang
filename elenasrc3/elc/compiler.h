@@ -301,6 +301,8 @@ namespace elena_lang
 
       ObjectInfo createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args, bool byValue);
 
+      void copyConstCollection(ref_t sourRef, ref_t destRef, bool byValue);
+
       Interpreter(ModuleScopeBase* scope, CompilerLogic* logic);
    };
 
@@ -620,8 +622,10 @@ namespace elena_lang
             return test(info.header.flags, elClassClass);
          }
 
-         ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr);
+         ObjectInfo mapMember(ustr_t identifier) override;
 
+         ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr);
+         
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
 
          ObjectInfo mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode) override;
@@ -1161,6 +1165,9 @@ namespace elena_lang
 
       bool evalInitializers(ClassScope& scope, SyntaxNode node);
       bool evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode node, ObjectInfo& constInfo);
+      bool evalAccumClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode node, ObjectInfo& constInfo);
+
+      bool inheritConstFields(ClassScope& scope, ClassScope& classClassscope, SyntaxNode node);
 
       ref_t compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope, mssg_t genericMessage, 
          ref_t outputRef);

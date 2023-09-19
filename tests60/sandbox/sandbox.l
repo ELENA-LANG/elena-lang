@@ -1,20 +1,20 @@
 import extensions;
 
-//class Base
-//{
-//    // declaring accumulator attribute
-//    const object[] theFamily;
-//    
-//    // adding a reference to the class
-//    this theFamily += Base;
-//    
-//    // declaring inheritable static method (it will be accessible in all derived classes)
-//    sealed static printFamily()
-//    {
-//        console.printLine(theFamily.asEnumerable())
-//    }
-//}
-//
+class Base
+{
+    // declaring accumulator attribute
+    const object[] theFamily;
+    
+    // adding a reference to the class
+    this theFamily += Base;
+    
+    // declaring inheritable static method (it will be accessible in all derived classes)
+    sealed static printFamily()
+    {
+        console.printLine(theFamily.asEnumerable())
+    }
+}
+
 //class A : Base
 //{
 //    // adding a reference to the derived class
@@ -26,35 +26,14 @@ import extensions;
 //    // adding a reference to the derived class
 //    this theFamily += B;
 //}    
-//
-//public program()
-//{
+
+public program()
+{
+   Base.printFamily();
+
 //    console.print("A:");
 //    A.printFamily();
 //    
 //    console.print("B:");
 //    B.printFamily();
-//}
-
-class A
-{
-   const int N := 200;
-
-   printNickname()
-   {
-      console.printLine(N);
-   }
-}
-
-
-public program()
-{
-   var a := new A();
-   a.printNickname();
-
-//   var a := new A();
-//   var b := new B();
-//
-//   a.printNickname();
-//   b.printNickname();
 }

@@ -309,6 +309,26 @@ bool Interpreter :: evalDictionaryOp(ref_t operator_id, ArgumentsInfo& args)
    return false;
 }
 
+void Interpreter :: copyConstCollection(ref_t sourRef, ref_t destRef, bool byValue)
+{
+   ref_t mask = byValue ? mskConstant : mskConstArray;
+
+   auto sourceInfo = _scope->getSection(_scope->module->resolveReference(sourRef), mask, true);
+   MemoryBase* target = _scope->module->mapSection(sourRef | mask, false);
+
+   MemoryReader reader(sourceInfo.section);
+   MemoryWriter writer(target);
+   
+   writer.copyFrom(&reader, sourceInfo.section->length());
+
+   for (auto it = RelocationMap::Iterator(sourceInfo.section->getReferences()); !it.eof(); ++it) {
+      ref_t currentMask = it.key() & mskAnyRef;
+      ref_t currentRef = it.key() & ~mskAnyRef;
+      
+      target->addReference(_scope->importReference(sourceInfo.module, currentRef) | currentMask, *it);
+   }
+}
+
 ObjectInfo Interpreter :: createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args, bool byValue)
 {
    ref_t mask = byValue ? mskConstant : mskConstArray;
@@ -345,6 +365,7 @@ ObjectInfo Interpreter :: createConstCollection(ref_t arrayRef, ref_t typeRef, A
             else addConstArrayItem(arrayRef, arg.reference, mskRealLiteralRef);
             break;
          case ObjectKind::Singleton:
+         case ObjectKind::Class:
             addConstArrayItem(arrayRef, arg.reference, mskVMTRef);
             break;
          default:
@@ -916,6 +937,11 @@ ObjectInfo Compiler::ClassScope :: mapDictionary(ustr_t identifier, bool referen
       return Scope::mapDictionary(identifier, referenceOne, mode);
    }
    else return retVal;
+}
+
+ObjectInfo Compiler::ClassScope :: mapMember(ustr_t identifier)
+{
+   return mapField(identifier, EAttr::InitializerScope);
 }
 
 void Compiler::ClassScope :: save()
@@ -3469,6 +3495,10 @@ void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
 
       declareClassClass(classClassScope, node, scope.info.header.parentRef);
 
+      if(scope.info.header.parentRef != 0 && inheritConstFields(scope, classClassScope, node)) {
+         classClassScope.save();
+      }
+
       // HOTFIX : if the default constructor is private - a class cannot be inherited
       if (withDefConstructor
          && classClassScope.info.methods.exist(scope.moduleScope->buildins.constructor_message | STATIC_MESSAGE))
@@ -5890,6 +5920,86 @@ bool Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typ
    return true;
 }
 
+inline ref_t mapClassConst(ModuleScopeBase* moduleScope, ref_t reference)
+{
+   IdentifierString name(moduleScope->module->resolveReference(reference));
+   name.append(STATICFIELD_POSTFIX);
+
+   return moduleScope->mapAnonymous(*name + 1);
+}
+
+inline bool isInherited(ModuleBase* module, ref_t reference, ref_t staticRef)
+{
+   ustr_t name = module->resolveReference(reference);
+   ustr_t statName = module->resolveReference(staticRef);
+   size_t len = getlength(name);
+
+   if (statName[len] == '#' && statName.compare(name, len)) {
+      return true;
+   }
+   else return false;
+}
+
+bool Compiler :: evalAccumClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode node, ObjectInfo& constInfo)
+{
+   ref_t collectionTypeRef = retrieveStrongType(scope, constInfo);
+   ClassInfo collectionInfo;
+   if (!_logic->defineClassInfo(*scope.moduleScope, collectionInfo, collectionTypeRef, false, true))
+      scope.raiseError(errInvalidOperation, node);
+
+   if (!test(collectionInfo.header.flags, elDynamicRole))
+      scope.raiseError(errInvalidOperation, node);
+
+   bool byValue = _logic->isEmbeddableArray(*scope.moduleScope, collectionTypeRef);
+
+   Interpreter interpreter(scope.moduleScope, _logic);
+
+   bool newOne = true;
+   if (constInfo.reference != INVALID_REF) {
+      // HOTFIX : inherit accumulating attribute list
+      ClassInfo parentInfo;
+      scope.moduleScope->loadClassInfo(parentInfo, scope.info.header.parentRef);
+      ref_t targtListRef = constInfo.reference;
+      ref_t parentListRef = parentInfo.statics.get(constName).valueRef;
+
+      if (parentListRef != INVALID_REF && !isInherited(scope.module, scope.reference, targtListRef)) {
+         constInfo.reference = mapClassConst(scope.moduleScope, scope.reference);
+
+         // inherit the parent list
+         interpreter.copyConstCollection(parentListRef, constInfo.reference, byValue);
+      }
+
+      newOne = false;
+   }
+   else constInfo.reference = mapClassConst(scope.moduleScope, scope.reference);
+
+   auto fieldInfo = *(collectionInfo.fields.start());
+   ref_t elementTypeRef = retrieveStrongType(scope, { ObjectKind::Object, { fieldInfo.typeInfo.elementRef }, 0 });
+
+   ObjectInfo value = evalExpression(interpreter, scope, node);
+   if (value.kind == ObjectKind::Symbol && value.reference == scope.reference) {
+      // HOTFIX : recognize the class
+      value = { ObjectKind::Class, { scope.info.header.classRef }, scope.reference };
+   }
+
+   ArgumentsInfo arguments;
+   arguments.add(value);
+
+   interpreter.createConstCollection(constInfo.reference, newOne ? collectionTypeRef : 0, arguments, byValue);
+
+   auto it = scope.info.statics.getIt(constName);
+   assert(!it.eof());
+
+   (*it).valueRef = constInfo.reference;
+   if (!(*it).offset) {
+      scope.info.header.staticSize++;
+
+      (*it).offset = -((int)scope.info.header.staticSize);
+   }
+
+   return true;
+}
+
 bool Compiler :: evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode node, ObjectInfo& constInfo)
 {
    Interpreter interpreter(scope.moduleScope, _logic);
@@ -5953,7 +6063,9 @@ bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node)
                   break;
                case ObjectKind::ClassConstant:
                   if (target.reference == INVALID_REF) {
-                     if (evalClassConstant(lnode.firstChild(SyntaxKey::TerminalMask).identifier(),
+                     ustr_t fieldName = lnode.firstChild(SyntaxKey::TerminalMask).identifier();
+
+                     if (evalClassConstant(fieldName,
                         scope, current.firstChild(SyntaxKey::ScopeMask), target))
                      {
                         current.setKey(SyntaxKey::Idle);
@@ -5970,6 +6082,23 @@ bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node)
                   evalulated = false;
                   break;
             }
+         }
+      }
+      else if (current == SyntaxKey::AddAssignOperation) {
+         SyntaxNode lnode = current.findChild(SyntaxKey::Object);
+         ObjectInfo target = mapObject(scope, lnode, EAttr::None);
+         switch (target.kind) {
+            case ObjectKind::ClassConstant:
+               if (evalAccumClassConstant(lnode.firstChild(SyntaxKey::TerminalMask).identifier(),
+                  scope, current.firstChild(SyntaxKey::ScopeMask), target))
+               {
+                  current.setKey(SyntaxKey::Idle);
+               }
+               else scope.raiseError(errInvalidOperation, current);
+               break;
+            default:
+               evalulated = false;
+               break;
          }
       }
       current = current.nextNode();
@@ -11377,18 +11506,38 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
    scope.save();
 }
 
-void Compiler :: validateClassFields(ClassScope& scope, SyntaxNode node)
+bool Compiler :: inheritConstFields(ClassScope& scope, ClassScope& classClassscope, SyntaxNode node)
 {
+   bool inherited = false;
+
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Field) {
          ustr_t name = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
 
-         auto it = scope.info.fields.get(name);
-         if (it.offset != -1) {
-            FieldAttributes attrs = {};
-            readFieldAttributes(scope, current, attrs, false);
+         FieldAttributes attrs = {};
+         readFieldAttributes(scope, current, attrs, true);
+         if (attrs.isConstant) {
+            auto info = scope.info.statics.get(name);
+
+            classClassscope.info.statics.add(name, info);
+
+            inherited = true;
          }
+      }
+
+      current = current.nextNode();
+   }
+   return inherited;
+}
+
+void Compiler :: validateClassFields(ClassScope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Field) {
+         FieldAttributes attrs = {};
+         readFieldAttributes(scope, current, attrs, false);
       }
 
       current = current.nextNode();
