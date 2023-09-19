@@ -11,15 +11,19 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
     [!] tutorial : Multiple inheritance in ELENA
+    [!] api functionality for existing classes : rest of system
 
-    + debugger : stack allocated int value 
+    * class constant (should be a static variable / pure constant - no entry in VMT)
 
-    * test text file reader (with encoders)
-    * warn if multiret method is correct : the type should be compatible with the returning type of main handler
-    * warn if multiret method is correct : there should exist a main handler
-    * warn on not found message for the existing object
-    * warn if the method was overriden but the output type was not specify
-    * calc - doesn't work
+    * support const int m = 2 as int literal (in the same module, in another module, in the class)
+    * two types of class constants : normal ones and virtial ones (__className and accumulators)
+    * Class Constants : review doc and implement if requiered
+    * accumulator const fields (#348)
+    * constant field must have assigning expression
+
+    * globals
+    * const fields
+    * external call : pass int constants directly
     * review system warnings
     * review extensions warnings
     * ide : enable / disable toolbar buttons
@@ -33,6 +37,7 @@ In development:
     * ide : enable / disable menu commands
     * ide : window list - close several windows
     * ide : debug watch context menu
+    * ide : byref parameter
     * ide message : display internal error
     * ide : brackets highlight
     * ide : refreshing auto watch - with the same name, unused
@@ -43,20 +48,23 @@ In development:
     * ide : exclude the file from the project
     * ide : hide / show include / exclude  depending if the file is a part of the project
 
-    * test all samples for win x86
-    * new unit test : dispatchmr (both function and normal one)
-    * #195 : implementing rosetta code samples
-    * ldoc : show template based type correctly
-    * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
-    * rosetta code sample : F
-    * string to real : support e notation
-    * api : provide field descriptions
-    * examples : collatz, matrix
+    * examples : calc - doesn't work
     * examples : p2, random 
     * examples : datetime
     * examples : replace, trans 
     * examples : textdb, textfile 
-    * implementing corex
+    * examples : collatz, matrix
+    * examples : test all samples for win x86
+    * examples : rosetta code sample : F
+    * examples : rosetta code Anagrams
+    * examples : migrate all rosetta examples from examples/rosetta to examples60 and remove them
+
+    * new unit test : dispatchmr (both function and normal one)
+    * #195 : implementing rosetta code samples
+    * ldoc : show template based type correctly
+    * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
+    * string to real : support e notation
+    * api : provide field descriptions
     * elt - exception handler
     * closure should be sealed
     * boolean operators : &&, ||, ^^ - weak implementation
@@ -70,53 +78,31 @@ In development:
     * #15 : return double / long from external function
     * #47 : Evaluating an expression in a symbol
     * toPrintable should return both wide and string
-    * native support for long to real
-    * native support for real to long
     * pi & e constants
     * generate default constructor if there is an initializer
     * repeate-until statements
     * primitive operations : support all comparision operations (not only <, == and !=)
-    * jumping - aligning the target to 4 / 8
     * simplify - isCompatible - could we get rid of special cases for V_FLAG?
     * optimization: it should be possible to convert int liteal directly to v_int8 / v_int16 / v_int64,
       depending on the value size
     * inside the method, "$name __decl" should return the method full name?
-    * constant field must have assigning expression
-    * class constant (should be a static variable / pure constant - no entry in VMT)
-    * init_handler : call previous one if avialable
     * do load self for expression with ret statement
-    * verifyMultimethods implements
-    * explicit multimethod
-    * call interface method
     * nested class cannot have static methods
     * generic extension - should the output type be set? 
     * use direct reference for - BoolValue#true.Inverted
     * equal native bool operation
     * static symbol should be thread-safe
-    * class constants
     * mt : note on creating closure - lock GC
     * editor - do we need checkmode? it seems like not
-    * support constants
     * ncopy / lcopy
     * module template - to include basic import statement
     * module template - probably should include meta dictionary for attributes / types / ...
     * asmc : raise an error if the label was not resolved
-    * raise an error if the overridden output type was changed
-    * isCompatble - cache the results
-    * external call : pass int constants directly
-    * for linux amd64 allocate shadow memory
-    * redux : add output convertion for the method without the explicit return statement
-    * globals
     + test finally block with locally allocated variables
     + optimize a ? b : c - do not use branching
     * test if with unknown object
     * test binary file reader / writer
     * constructor - single dispatcher
-    ! api functionality for existing classes : rest of system
-    ! api functionality for existing classes : externals
-    * rosetta code sample : Anagrams
-    * migrate all rosetta examples from examples/rosetta to examples60 and remove them
-    * uncomment fieldinit routines
 
     === Iteration 19 ===
     [!] pi sample optimization (under 9sec)
@@ -124,6 +110,7 @@ In development:
     [!] elenavm x64 : script executing
     [!] vm terminal x64
     [!] ide vm console x64
+    [!] api functionality for existing classes : externals
     * amd64 : implement system 5
     * test all samples for win x86-64
     * optimize Amicable pairs
@@ -132,6 +119,8 @@ In development:
     * optimize: if (a == b) {} else {}
     * retro : is CONVERSION_MESSAGE flag is really required?
     * for windows x86-64 allocate shadow memory
+    * isCompatble - cache the results
+    * for linux amd64 allocate shadow memory
 
     === Iteration 20 ===
     [!] support mta_gui, vm_mta_console
@@ -166,7 +155,6 @@ Backlog:
     ! elenavm : test all rosetta code samples for vm
     ! elenavm : critical exception handlers
 
-    * Class Constants : review doc and implement if requiered
     * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
     * x86 : gui - starting - new project type
     * ide : before compiling, make sure the source file is saved

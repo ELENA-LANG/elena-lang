@@ -850,21 +850,22 @@ inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, Expressi
    }
    else {
       auto staticFieldInfo = info.statics.get(identifier);
-      if (staticFieldInfo.valueRef && staticFieldInfo.offset == 0) {
-         return { ObjectKind::ClassConstant, staticFieldInfo.typeInfo, staticFieldInfo.valueRef };
-      }
-      else if (staticFieldInfo.offset < 0 && staticFieldInfo.valueRef != 0) {
-         return {
-            ObjectKind::StaticConstField,
-            staticFieldInfo.typeInfo,
-            staticFieldInfo.offset,
-            (staticFieldInfo.typeInfo.typeRef == V_PTR32 || staticFieldInfo.typeInfo.typeRef == V_PTR64)
-               ? TargetMode::BoxingPtr : TargetMode::None
-         };
+      if (staticFieldInfo.valueRef) {
+         if (staticFieldInfo.offset == 0) {
+            return { ObjectKind::ClassConstant, staticFieldInfo.typeInfo, staticFieldInfo.valueRef };
+         }
+         else if (staticFieldInfo.offset < 0) {
+            return {
+               ObjectKind::StaticConstField,
+               staticFieldInfo.typeInfo,
+               staticFieldInfo.offset,
+               (staticFieldInfo.typeInfo.typeRef == V_PTR32 || staticFieldInfo.typeInfo.typeRef == V_PTR64)
+                  ? TargetMode::BoxingPtr : TargetMode::None
+            };
 
+         }
+         else return { ObjectKind::StaticField, staticFieldInfo.typeInfo, staticFieldInfo.valueRef };
       }
-      else if (staticFieldInfo.valueRef)
-         return { ObjectKind::StaticField, staticFieldInfo.typeInfo, staticFieldInfo.valueRef };
 
       return {};
    }
@@ -4460,6 +4461,12 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
          writeObjectInfo(writer, scope, { ObjectKind::Param, info.typeInfo, info.reference });
          writer.appendNode(BuildKey::Field);
          break;
+      case ObjectKind::ClassConstant:
+         if (info.reference == INVALID_REF)
+            throw InternalError(errFatalError);
+
+         writer.appendNode(BuildKey::ConstantReference, info.reference);
+         break;
       case ObjectKind::Object:
          break;
       default:
@@ -5881,6 +5888,9 @@ bool Compiler :: evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNo
    Interpreter interpreter(scope.moduleScope, _logic);
    MetaScope metaScope(&scope, Scope::ScopeLevel::Class);
 
+   auto it = scope.info.statics.getIt(constName);
+   assert(!it.eof());
+
    ObjectInfo retVal = evalExpression(interpreter, metaScope, node, false, false);
    bool setIndex = false;
    switch (retVal.kind) {
@@ -5894,13 +5904,13 @@ bool Compiler :: evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNo
          constInfo.reference = mskPackageRef;
          setIndex = true;
          break;
+      case ObjectKind::StringLiteral:
+         constInfo.typeInfo = retVal.typeInfo;
+         constInfo.reference = generateConstant(scope, retVal, 0);
+         break;
       default:
          return false;
    }
-
-   auto it = scope.info.statics.getIt(constName);
-
-   assert(!it.eof());
 
    (*it).valueRef = constInfo.reference;
    if (setIndex && !(*it).offset) {

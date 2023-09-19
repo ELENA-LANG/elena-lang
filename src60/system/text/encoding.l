@@ -166,7 +166,7 @@
 
       char convertToChar(byte[] byteArray, int index, ref int sourLen)
       {
-         UTFOperations.convertUTF8_2_32(byteArray, index, sourLen, ref int value);
+         sourLen := UTFOperations.convertUTF8_2_32(byteArray, index, sourLen, ref int value);
          char ch := value;
 
          ^ ch

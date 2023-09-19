@@ -1,23 +1,64 @@
-//import system'io;
-//import extensions;
-//import extensions'routines;
+import extensions;
+
+//class Base
+//{
+//    // declaring accumulator attribute
+//    const object[] theFamily;
+//    
+//    // adding a reference to the class
+//    this theFamily += Base;
+//    
+//    // declaring inheritable static method (it will be accessible in all derived classes)
+//    sealed static printFamily()
+//    {
+//        console.printLine(theFamily.asEnumerable())
+//    }
+//}
+//
+//class A : Base
+//{
+//    // adding a reference to the derived class
+//    this theFamily += A;
+//}    
+//
+//class B : Base
+//{
+//    // adding a reference to the derived class
+//    this theFamily += B;
+//}    
 //
 //public program()
 //{
-////    if (program_arguments.Length == 1)
-////        { console.writeLine:"Please provide the path to the file to view"; AbortException.raise() };
-//
-//    File.assign(/*program_arguments[1]*/"sandbox.l").forEachLine:printingLn;
-//  
-//    console.readChar() // wait for any key
+//    console.print("A:");
+//    A.printFamily();
+//    
+//    console.print("B:");
+//    B.printFamily();
 //}
 
-A
+class A
 {
-   Reference<int> ref := 2;
+   const string nickName := "first";
+}
+
+class B : A
+{
+   this nickName := "second";
+
+   printNickname()
+   {
+      console.printLine(nickName);
+   }
 }
 
 public program()
 {
-   var a := new A();
+   var a := new B();
+   a.printNickname();
+
+//   var a := new A();
+//   var b := new B();
+//
+//   a.printNickname();
+//   b.printNickname();
 }
