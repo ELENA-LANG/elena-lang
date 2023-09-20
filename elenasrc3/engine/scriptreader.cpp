@@ -48,4 +48,16 @@ bool ScriptReader::read(ScriptToken& tokenInfo)
 
    return true;
 }
- 
+
+void ScriptReader :: switchMode(DFAMode mode)
+{
+   switch (mode)  {
+      case DFAMode::Symbolic:
+         setDFA(symbolic_dfa);
+         break;
+      case DFAMode::Normal:
+         setDFA(token_dfa);
+      default:
+         break;
+   }
+}

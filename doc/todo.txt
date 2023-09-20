@@ -9,12 +9,14 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * external call : pass int constants directly
-    * review system warnings
-    * review extensions warnings
+    * __tape_eval : support variadic arg list (__invokeV1, __loadTerminator)
+
+    * rosetta code sample : Execute Brain****, 
+
+    * #47 : Evaluating an expression in a symbol
     * ide : enable / disable toolbar buttons
     + #69 : GC info 
-    * rosetta code sample : Exceptions/Catch an exception thrown in a nested call, Execute Brain****, 
+    * generate default constructor if there is an initializer
 
     * ide : styling source code
     * ide : dark color scheme, change the window background color
@@ -44,9 +46,14 @@ In development:
     * examples : rosetta code sample : F
     * examples : rosetta code Anagrams
     * examples : migrate all rosetta examples from examples/rosetta to examples60 and remove them
+    * #195 : implementing rosetta code samples
+
+    * review system warnings
+    * review extensions warnings
+    * migrate the rest of system (win32_pointers.l)
+    * api : uncomment ExtensionDispatcher and SymbolCollection
 
     * new unit test : dispatchmr (both function and normal one)
-    * #195 : implementing rosetta code samples
     * ldoc : show template based type correctly
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
     * string to real : support e notation
@@ -54,21 +61,15 @@ In development:
     * elt - exception handler
     * closure should be sealed
     * boolean operators : &&, ||, ^^ - weak implementation
-    * migrate the rest of system (win32_pointers.l)
     * inno setup : x86, x86-64
-    * corex : tests - lock test, GC test, printing in one thread / calling GC in another
-    * api : uncomment ExtensionDispatcher and SymbolCollection
     * elenavm : implementing loadDispatcherOverloadlist
     * elenavm : implementing rest of dll api
     * conversion to int - raise an error if not valid
     * #15 : return double / long from external function
-    * #47 : Evaluating an expression in a symbol
     * toPrintable should return both wide and string
     * pi & e constants
-    * generate default constructor if there is an initializer
     * repeate-until statements
     * primitive operations : support all comparision operations (not only <, == and !=)
-    * simplify - isCompatible - could we get rid of special cases for V_FLAG?
     * optimization: it should be possible to convert int liteal directly to v_int8 / v_int16 / v_int64,
       depending on the value size
     * inside the method, "$name __decl" should return the method full name?
@@ -78,7 +79,6 @@ In development:
     * use direct reference for - BoolValue#true.Inverted
     * equal native bool operation
     * static symbol should be thread-safe
-    * mt : note on creating closure - lock GC
     * editor - do we need checkmode? it seems like not
     * ncopy / lcopy
     * module template - to include basic import statement
@@ -96,6 +96,7 @@ In development:
     [!] https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
     [!] tutorial : Multiple inheritance in ELENA
     [!] pi sample optimization (under 9sec)
+    * corex : tests - lock test, GC test, printing in one thread / calling GC in another
     * amd64 : implement system 5
     * test all samples for win x86-64
     * optimize Amicable pairs
@@ -106,6 +107,7 @@ In development:
     * for windows x86-64 allocate shadow memory
     * isCompatble - cache the results
     * for linux amd64 allocate shadow memory
+    * mt : note on creating closure - lock GC
 
     === Iteration 20 ===
     [!] elenavm x64 dll
@@ -223,8 +225,6 @@ Backlog:
       it cannot be resolved by template generation
     * elena : nested classes should not be loadable at runtime
     * system'MessageName : port / test functionality
-    * global attributes : maybe it should contain the string reference, instead of the string itself
-      (data duplication : many class names are already stored) or every record should be aligned to 4/8
     * internal / protected conversion : should it be supported (see system'Symbol conversion from pointer)?
     * new features : expression patters, DI
     * unit tests via postfix pattern

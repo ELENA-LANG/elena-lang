@@ -990,6 +990,24 @@ void ScriptEngineCFParser :: insertForwards(Stack<Pair<int, int>>& forwards, int
    }
 }
 
+bool ScriptEngineCFParser :: parseDirective(ScriptEngineReaderBase& reader, MemoryDump*)
+{
+   do {
+      if (reader.compare(";")) {
+         break;
+      }
+      else if (reader.compare("symbolic")) {
+         _symbolMode = true;
+      }
+      else return false;
+
+      reader.read();
+   } while (true);
+
+   return true;
+
+}
+
 inline void clearPreviousForwards(Stack<Pair<int, int>>& forwards, int level)
 {
    //if (forwards.peek().value2 < level)
@@ -1124,8 +1142,8 @@ void ScriptEngineCFParser :: generateOutput(pos_t offset, ScriptEngineReaderBase
 
 void ScriptEngineCFParser :: parse(ScriptEngineReaderBase& reader, MemoryDump* output)
 {
-   //if (_symbolMode)
-   //   reader.switchDFA(dfaSymbolic);
+   if (_symbolMode)
+      reader.turnSymbolMode();
 
    ScriptEngineLog log;
 

@@ -207,6 +207,17 @@ labDefault:
 
 end
 
+procedure __extensionvar
+
+  xstore     i:1
+  get        i:0
+  or         n:FUNCTION_MESSAGE
+
+  jump       vt:0
+
+end
+
+
 procedure __str_equal (s1, s2)
 
   xflush     sp:0
@@ -2031,6 +2042,8 @@ labNext:
   jump       labNext
 
 labSpecial:
+
+
   peek        fp:buffer
   store       sp:3    
   set         dp:size

@@ -4468,6 +4468,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::Symbol:
          writer.appendNode(BuildKey::SymbolCall, info.reference);
          break;
+      case ObjectKind::Extension:
       case ObjectKind::Class:
       case ObjectKind::ClassSelf:
       case ObjectKind::Singleton:

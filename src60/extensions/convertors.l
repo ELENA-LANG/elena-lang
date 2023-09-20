@@ -117,14 +117,6 @@ singleton enumerableConvertor
       = new Enumerable { Enumerator enumerator() = o.enumerator(); };
 }
 
-// --- convertOp ---
-
-public extension convertOp
-{
-   convertTo(target)
-      = new Variant(self).saveTo(target);   
-}
-
 // --- stringConvertor ---
 
 public extension stringConvertOp
@@ -205,4 +197,25 @@ public extension convertorOp
 {
    convertTo(target)
       = new Variant(self).saveTo(target);
+
+   int toInt()
+      = intConvertor.convert(self);   
+
+   long toLong()
+      = longConvertor.convert:self;
+
+   real toReal()
+      = realConvertor.convert:self;
+}
+
+// --- convertor ---
+
+public singleton convertor 
+{ 
+   generic(n)
+   {
+      /*MessageName*/var mssg := __received.MessageName;
+
+      ^ mssg(new ExtensionVariable(extensions'convertorOp, n))
+   }
 }
