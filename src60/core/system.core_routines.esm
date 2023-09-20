@@ -2042,7 +2042,11 @@ labNext:
   jump       labNext
 
 labSpecial:
+  cmp        n:022h
+  jeq        labTerminator
 
+  cmp        n:021h
+  jeq        labVardiatic
 
   peek        fp:buffer
   store       sp:3    
@@ -2054,6 +2058,70 @@ labSpecial:
   store       sp:0
   mov         mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
   call        mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]", class:"system'text'UTF8Encoding"
+
+  // ; store the result
+  load       dp:ptr
+  store      sp:0
+  set        fp:0
+  xassign
+  nadd       dp:ptr, -1
+
+  // i += size
+  set        dp:size
+  store      sp:0
+  iadd       dp:index, 4
+
+  jump       labNext
+
+labTerminator:
+  load       dp:ptr
+  set        terminator
+  store      sp:0
+  set        fp:0
+  xassign
+  nadd       dp:ptr, -1
+
+  iadd       dp:index, 4
+
+  jump       labNext
+
+labVardiatic:
+  mov        n:0
+
+labVarLen:
+  load       dp:ptr
+  xget
+  add        n:1
+  cmp        terminator
+  jne        labVarLen
+  save       dp:command
+
+  // copy arguments
+  set        sp:0  
+  store      sp:0
+  load       dp:ptr
+  xset       fp:0
+  swap       sp:0
+  load       dp:command
+  dtrans
+
+  set        dp:command
+  store      sp:0
+  iadd       dp:ptr, 4
+
+  // loadClass
+  call       extern:LoadClassByBufferLA(buffer, *index, *size)
+  cmp        n:0
+  jeq        labNotFound 
+
+  // ; !! NOTE : we taking advantage that the operation with sp:0 does not affect the real stack
+  save       sp:0
+  peek       sp:0
+  xrefresh   sp:0
+
+  mov        mssg : "function:params:#constructor[1]"
+
+  call       vt:0
 
   // ; store the result
   load       dp:ptr
