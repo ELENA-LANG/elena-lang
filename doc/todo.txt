@@ -13,7 +13,6 @@ In development:
     * constant field must have assigning expression
 
     * globals
-    * const fields
     * external call : pass int constants directly
     * review system warnings
     * review extensions warnings

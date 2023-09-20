@@ -314,7 +314,7 @@ void Interpreter :: copyConstCollection(ref_t sourRef, ref_t destRef, bool byVal
    ref_t mask = byValue ? mskConstant : mskConstArray;
 
    auto sourceInfo = _scope->getSection(_scope->module->resolveReference(sourRef), mask, true);
-   MemoryBase* target = _scope->module->mapSection(sourRef | mask, false);
+   MemoryBase* target = _scope->module->mapSection(destRef | mask, false);
 
    MemoryReader reader(sourceInfo.section);
    MemoryWriter writer(target);
@@ -953,6 +953,28 @@ void Compiler::ClassScope :: save()
    MemoryWriter metaWriter(section);
    info.save(&metaWriter);
 }
+
+// --- ClassClassScope ---
+
+Compiler::ClassClassScope::ClassClassScope(Scope* parent, ref_t reference, Visibility visibility, ClassInfo* classInfo)
+   : ClassScope(parent, reference, visibility),
+      classInfo(classInfo)
+{
+}
+
+ObjectInfo Compiler::ClassClassScope :: mapField(ustr_t identifier, ExpressionAttribute attr)
+{
+   auto retVal = ClassScope::mapField(identifier, attr);
+   if (retVal.kind == ObjectKind::Unknown) {
+      retVal = mapClassInfoField(*classInfo, identifier, attr, true);
+      // NOTE : override the class constant field - to proper reference it
+      if (retVal.kind == ObjectKind::StaticConstField)
+         retVal.kind = ObjectKind::ClassStaticConstField;
+   }
+
+   return retVal;
+};
+
 
 // --- Compiler::MethodScope ---
 
@@ -3495,10 +3517,6 @@ void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
 
       declareClassClass(classClassScope, node, scope.info.header.parentRef);
 
-      if(scope.info.header.parentRef != 0 && inheritConstFields(scope, classClassScope, node)) {
-         classClassScope.save();
-      }
-
       // HOTFIX : if the default constructor is private - a class cannot be inherited
       if (withDefConstructor
          && classClassScope.info.methods.exist(scope.moduleScope->buildins.constructor_message | STATIC_MESSAGE))
@@ -4221,6 +4239,10 @@ ObjectInfo Compiler :: boxLocally(BuildTreeWriter& writer, ExprScope& scope, Obj
          writer.appendNode(BuildKey::Field, info.reference);
          writer.newNode(BuildKey::CopyingAccField, 0);
          break;
+      case ObjectKind::ClassStaticConstField:
+         writer.appendNode(BuildKey::Field, info.reference);
+         writer.newNode(BuildKey::CopyingAccField, 0);
+         break;
       default:
          writer.appendNode(BuildKey::Field, info.reference);
          writer.newNode(BuildKey::CopyingAccField, 0);
@@ -4287,6 +4309,7 @@ ObjectInfo Compiler :: boxArgumentLocally(BuildTreeWriter& writer, ExprScope& sc
          }
          else return boxLocally(writer, scope, info, stackSafe);
       case ObjectKind::StaticConstField:
+      case ObjectKind::ClassStaticConstField:
          if (info.mode == TargetMode::BoxingPtr) {
             return boxPtrLocally(writer, scope, info);
          }
@@ -4491,6 +4514,10 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::StaticConstField:
          writeObjectInfo(writer, scope, scope.mapSelf());
          writer.appendNode(BuildKey::ClassOp, CLASS_OPERATOR_ID);
+         writer.appendNode(BuildKey::Field, info.reference);
+         break;
+      case ObjectKind::ClassStaticConstField:
+         writeObjectInfo(writer, scope, scope.mapSelf());
          writer.appendNode(BuildKey::Field, info.reference);
          break;
       case ObjectKind::StaticField:
@@ -5942,6 +5969,9 @@ inline bool isInherited(ModuleBase* module, ref_t reference, ref_t staticRef)
 
 bool Compiler :: evalAccumClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode node, ObjectInfo& constInfo)
 {
+   auto it = scope.info.statics.getIt(constName);
+   assert(!it.eof());
+
    ref_t collectionTypeRef = retrieveStrongType(scope, constInfo);
    ClassInfo collectionInfo;
    if (!_logic->defineClassInfo(*scope.moduleScope, collectionInfo, collectionTypeRef, false, true))
@@ -5959,8 +5989,8 @@ bool Compiler :: evalAccumClassConstant(ustr_t constName, ClassScope& scope, Syn
       // HOTFIX : inherit accumulating attribute list
       ClassInfo parentInfo;
       scope.moduleScope->loadClassInfo(parentInfo, scope.info.header.parentRef);
-      ref_t targtListRef = constInfo.reference;
-      ref_t parentListRef = parentInfo.statics.get(constName).valueRef;
+      ref_t targtListRef = (*it).valueRef & ~mskAnyRef;
+      ref_t parentListRef = parentInfo.statics.get(constName).valueRef & ~mskAnyRef;
 
       if (parentListRef != INVALID_REF && !isInherited(scope.module, scope.reference, targtListRef)) {
          constInfo.reference = mapClassConst(scope.moduleScope, scope.reference);
@@ -5987,10 +6017,7 @@ bool Compiler :: evalAccumClassConstant(ustr_t constName, ClassScope& scope, Syn
 
    interpreter.createConstCollection(constInfo.reference, newOne ? collectionTypeRef : 0, arguments, byValue);
 
-   auto it = scope.info.statics.getIt(constName);
-   assert(!it.eof());
-
-   (*it).valueRef = constInfo.reference;
+   (*it).valueRef = constInfo.reference | (byValue ? mskConstant : mskConstArray);
    if (!(*it).offset) {
       scope.info.header.staticSize++;
 
@@ -6089,6 +6116,7 @@ bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node)
          ObjectInfo target = mapObject(scope, lnode, EAttr::None);
          switch (target.kind) {
             case ObjectKind::ClassConstant:
+            case ObjectKind::StaticConstField:
                if (evalAccumClassConstant(lnode.firstChild(SyntaxKey::TerminalMask).identifier(),
                   scope, current.firstChild(SyntaxKey::ScopeMask), target))
                {
@@ -11506,31 +11534,6 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
    scope.save();
 }
 
-bool Compiler :: inheritConstFields(ClassScope& scope, ClassScope& classClassscope, SyntaxNode node)
-{
-   bool inherited = false;
-
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      if (current == SyntaxKey::Field) {
-         ustr_t name = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
-
-         FieldAttributes attrs = {};
-         readFieldAttributes(scope, current, attrs, true);
-         if (attrs.isConstant) {
-            auto info = scope.info.statics.get(name);
-
-            classClassscope.info.statics.add(name, info);
-
-            inherited = true;
-         }
-      }
-
-      current = current.nextNode();
-   }
-   return inherited;
-}
-
 void Compiler :: validateClassFields(ClassScope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
@@ -11627,7 +11630,7 @@ void Compiler :: compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, S
 
             // compile class class if it available
             if (classScope.info.header.classRef != classScope.reference && classScope.info.header.classRef != 0) {
-               ClassScope classClassScope(&ns, classScope.info.header.classRef, classScope.visibility);
+               ClassClassScope classClassScope(&ns, classScope.info.header.classRef, classScope.visibility, &classScope.info);
                ns.moduleScope->loadClassInfo(classClassScope.info, classClassScope.reference, false);
 
                compileClassClass(writer, classClassScope, classScope, current);

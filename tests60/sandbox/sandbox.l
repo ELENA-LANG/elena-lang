@@ -15,25 +15,23 @@ class Base
     }
 }
 
-//class A : Base
-//{
-//    // adding a reference to the derived class
-//    this theFamily += A;
-//}    
-//
-//class B : Base
-//{
-//    // adding a reference to the derived class
-//    this theFamily += B;
-//}    
+class A : Base
+{
+    // adding a reference to the derived class
+    this theFamily += A;
+}    
+
+class B : Base
+{
+    // adding a reference to the derived class
+    this theFamily += B;
+}    
 
 public program()
 {
-   Base.printFamily();
-
-//    console.print("A:");
-//    A.printFamily();
-//    
-//    console.print("B:");
-//    B.printFamily();
+    console.print("A:");
+    A.printFamily();
+    
+    console.print("B:");
+    B.printFamily();
 }

@@ -760,7 +760,7 @@ void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader
                vaddress = resolve(
                   _loader->retrieveReferenceInfo(referenceInfo.module, fieldInfo.valueRef & ~mskAnyRef,
                      mask, _forwardResolver),
-                  mskVMTRef, false);
+                  mask, false);
          }
 
          assert(vaddress != INVALID_REF);

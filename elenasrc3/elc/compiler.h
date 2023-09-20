@@ -83,6 +83,7 @@ namespace elena_lang
       FieldName,
       StaticField,
       StaticConstField,
+      ClassStaticConstField,
       Wrapper,
       ClosureInfo,
       MemberInfo,
@@ -624,7 +625,7 @@ namespace elena_lang
 
          ObjectInfo mapMember(ustr_t identifier) override;
 
-         ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr);
+         virtual ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr);
          
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
 
@@ -633,6 +634,17 @@ namespace elena_lang
          void save();
 
          ClassScope(Scope* parent, ref_t reference, Visibility visibility);
+      };
+
+      class ClassClassScope : public ClassScope
+      {
+         // the reference to the proper class info (used for resolving class constants)
+         ClassInfo* classInfo;
+
+      public:
+         ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr) override;
+
+         ClassClassScope(Scope* parent, ref_t reference, Visibility visibility, ClassInfo* classInfo);
       };
 
       struct MethodScope : Scope
@@ -1166,8 +1178,6 @@ namespace elena_lang
       bool evalInitializers(ClassScope& scope, SyntaxNode node);
       bool evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode node, ObjectInfo& constInfo);
       bool evalAccumClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode node, ObjectInfo& constInfo);
-
-      bool inheritConstFields(ClassScope& scope, ClassScope& classClassscope, SyntaxNode node);
 
       ref_t compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope, mssg_t genericMessage, 
          ref_t outputRef);
