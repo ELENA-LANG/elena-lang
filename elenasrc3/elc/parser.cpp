@@ -39,6 +39,8 @@ parse_key_t Parser :: resolveTerminal(SourceInfo& info)
          return _terminalKeys.identifier;
       case dfaReference:
          return _terminalKeys.reference;
+      case dfaGlobal:
+         return _terminalKeys.globalreference;
       case dfaQuote:
       case dfaQuoteCode:
          return _terminalKeys.string;

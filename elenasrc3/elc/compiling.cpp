@@ -282,6 +282,7 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t prologName, pat
          SyntaxTree::toParseKey(SyntaxKey::eof),
          SyntaxTree::toParseKey(SyntaxKey::identifier),
          SyntaxTree::toParseKey(SyntaxKey::reference),
+         SyntaxTree::toParseKey(SyntaxKey::globalreference),
          SyntaxTree::toParseKey(SyntaxKey::string),
          SyntaxTree::toParseKey(SyntaxKey::character),
          SyntaxTree::toParseKey(SyntaxKey::wide),

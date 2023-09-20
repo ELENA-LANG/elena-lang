@@ -6,6 +6,7 @@ __define hexinteger         12295;
 __define reference          12296;
 __defineterminal "}"        12297;
 __define character          12298;
+__define global		    12299;
 __define wide               12300;
 __define constant           12301;
 __define long               12302;
@@ -251,7 +252,7 @@ ROOT_EXPRESSION ::=
 				| eps ^PROPERTY_OPERATION }
 			| eps ^OBJECT }
 		| "," ^OBJECT SUB_VARIABLE { "," SUB_VARIABLE }* ASSIGN EXPRESSION ^TUPLE_ASSIGNING 
-		| reference { 
+		| { reference | global } { 
 			L3 ^OBJECT MESSAGE L3_R 
 			| eps ^OBJECT }
 		| L0 ^OBJECT L0_R L0_OP* {
@@ -298,7 +299,7 @@ ROOT_EXPRESSION ::=
 		| T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
 		| "=>" ^OBJECT { SWITCH_OPTION+ SWITCH_LAST_OPTION? } ^SWITCH_OPERATION
 		| eps ^OBJECT }
-	| reference { 
+	| { reference | global } { 
 		L3 ^OBJECT MESSAGE MESSAGE_R
 		| eps ^OBJECT }
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L0_OP* L3_OP* L4_OP* L5_OP* L6_OP? 
@@ -359,7 +360,7 @@ NESTED_ROOT_EXPRESSION ::=
 		| T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
 		| "=>" ^OBJECT { SWITCH_OPTION+ SWITCH_LAST_OPTION? } ^SWITCH_OPERATION
 		| eps ^OBJECT }
-	| reference { 
+	| { reference | global } { 
 		L3 ^OBJECT MESSAGE MESSAGE_R
 		| eps ^OBJECT }
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L4_OP* L5_OP* L6_OP?
@@ -412,7 +413,7 @@ EXPRESSION ::=
 		| TRY ^OBJECT TRY_R
 		| NESTED_EXPRESSION ^NESTED L3_OP*
 		| eps ^OBJECT }
-	| reference { 
+	| { reference | global } { 
 		L3 ^OBJECT MESSAGE MESSAGE_R
 		| eps ^OBJECT }
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L0_OP* L3_OP* L4_OP* L5_OP* L6_OP?
@@ -442,7 +443,7 @@ NESTED_SUB_EXPRESSION ::=
 		| L4_O_OP
 		| L5_O_OP
 		| eps ^OBJECT }
-	| reference ^OBJECT
+	| { reference | global } ^OBJECT
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L0_OP* L4_OP* L5_OP* L6_OP?;
 
 SUB_EXPRESSION ::=
@@ -474,7 +475,7 @@ SUB_EXPRESSION ::=
 			"{" ^ PARAMETER BLOCK ^CLOSURE ^EXPRESSION
 			| eps ^OBJECT ^EXPRESSION }
 	}
-	| reference { 
+	| { reference | global } { 
 		L3 ^OBJECT MESSAGE MESSAGE_R ")"
 		| ")" ^OBJECT }
 	| { string | integer | hexinteger | long | constant | character | wide } ^OBJECT L4_OP* L5_OP* L6_OP? {
@@ -517,7 +518,7 @@ SUB_SINGLE_EXPRESSION ::=
 		| L4_O_OP  ")"
 		| L5_O_OP   ")"
 		| ")" ^OBJECT }
-	| reference ^OBJECT ")"
+	| { reference | global } ^OBJECT ")"
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L4_OP* L5_OP* L6_OP? ")";
 
 SUB_L3_SINGLE_EXPRESSION ::=
@@ -554,7 +555,7 @@ SUB_L3_SINGLE_EXPRESSION ::=
 			"{" ^ PARAMETER BLOCK ^CLOSURE
 			| eps ^OBJECT }
 	}
-	| reference ^OBJECT  ")"
+	| { reference | global } ^OBJECT  ")"
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT ")"
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION ")"
 	| "!" EXPRESSION ^NOT_OPERATION ")"
@@ -565,7 +566,7 @@ SUB_L3_SINGLE_EXPRESSION ::=
 	| "$len" SINGLE_EXPRESSION ^LEN_OPERATION ")";
 
 SINGLE_EXPRESSION ::=
-	{ identifier | reference }+ ^OBJECT
+	{ identifier | reference | global }+ ^OBJECT
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT
 	| "(" SUB_SINGLE_EXPRESSION;
 
@@ -580,7 +581,7 @@ L4_EXPRESSION ::=
 		| L2 ^OBJECT L2_R
 		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP*
 		| eps ^OBJECT }
-	| reference ^OBJECT 
+	| { reference | global } ^OBJECT 
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L3_OP*
 	| "(" SUB_EXPRESSION
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
@@ -603,7 +604,7 @@ L5_EXPRESSION ::=
 		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP*L4_OP*
 		| L4_O_OP L4_OP*
 		| eps ^OBJECT }
-	| reference ^OBJECT 
+	| { reference | global } ^OBJECT 
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L4_OP*
 	| "(" SUB_EXPRESSION L3_OP* L4_OP*
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
@@ -626,7 +627,7 @@ L3_F ::=
 
 L3_SINGLE_EXPRESSION ::=
 	identifier ^OBJECT
-	| reference ^OBJECT 
+	| { reference | global } ^OBJECT 
 	| { string | integer | hexinteger | character | constant | long | real } ^OBJECT
 	| "(" SUB_L3_SINGLE_EXPRESSION;
 
@@ -643,7 +644,7 @@ L6_EXPRESSION ::=
 		| L4_O_OP L4_OP*
 		| L5_O_OP 
 		| eps ^OBJECT }
-	| reference ^OBJECT 
+	| { reference | global } ^OBJECT 
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L4_OP* L5_OP*
 	| "(" SUB_EXPRESSION L2_OP? L3_OP* L4_OP* L5_OP*
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
@@ -668,7 +669,7 @@ L7_EXPRESSION ::=
 		| L5_O_OP 
 		| L6_O_OP
 		| eps ^OBJECT }
-	| reference ^OBJECT 
+	| { reference | global } ^OBJECT 
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L4_OP* L5_OP* L6_OP?
 	| "(" SUB_EXPRESSION L6_OP?
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
@@ -863,7 +864,8 @@ TEMPLATE_BRACKETS ::=
 
 TEMPLATE_ARG ::=
 	identifier { TEMPLATE_BRACKETS ^ TEMPLATE_TYPE }?
-	| reference;
+	| reference
+	| global;
 
 PARAMETER ::=
 	identifier+ { 

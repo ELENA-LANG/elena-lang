@@ -382,6 +382,10 @@ namespace elena_lang
          {
             return {};
          }
+         virtual ObjectInfo mapGlobal(ustr_t globalReference)
+         {
+            return {};
+         }
 
          virtual ObjectInfo mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode)
          {
@@ -907,6 +911,7 @@ namespace elena_lang
          }
 
          ObjectInfo mapMember(ustr_t identifier) override;
+         ObjectInfo mapGlobal(ustr_t globalReference) override;
 
          void markAsAssigned(ObjectInfo object) override
          {

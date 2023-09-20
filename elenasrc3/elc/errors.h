@@ -26,6 +26,7 @@ namespace elena_lang
    constexpr auto errMsgDuplicatedField         = "\n%s(%d:%d): error 109: Field '%s' already exists in the class\n";
    constexpr auto errMsgUnknownVariableType     = "\n%s(%d:%d): error 110: Type of the variable '%s' doesn't exist\n";
    constexpr auto errMsgIllegalField            = "\n%s(%d:%d): error 111: Illegal field declaration '%s'\n";
+   constexpr auto errMsgNoInitializer           = "\n%s(%d:%d): error 112: A field declaration '%s' must have an initializer\n";
    constexpr auto errMsgTooManyParameters       = "\n%s(%d:%d): error 113: Too many parameters for '%s' message\n";
    constexpr auto errMsgDuplicatedDefinition    = "\n%s(%d:%d): error 119: Duplicate definition: '%s' already declared\n";
    constexpr auto errMsgInvalidIntNumber        = "\n%s(%d:%d): error 130: Invalid integer value %s\n";

@@ -64,6 +64,7 @@ namespace elena_lang
    constexpr auto errDuplicatedField         = 109;
    constexpr auto errUnknownVariableType     = 110;
    constexpr auto errIllegalField            = 111;
+   constexpr auto errNoInitializer           = 112;
    constexpr auto errTooManyParameters       = 113;
    constexpr auto errDuplicatedDefinition    = 119;
    constexpr auto errInvalidIntNumber        = 130;

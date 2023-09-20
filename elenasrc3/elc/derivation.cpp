@@ -1564,6 +1564,9 @@ void SyntaxTreeBuilder :: appendTerminal(parse_key_t key, ustr_t value, LineInfo
          _cacheWriter.newNode(syntaxKey, quote.str());
          break;
       }
+      case SyntaxKey::globalreference:
+         _cacheWriter.newNode(syntaxKey, value + 1);
+         break;
       default:
          _cacheWriter.newNode(syntaxKey, value);
          break;

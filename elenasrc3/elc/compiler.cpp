@@ -1225,6 +1225,13 @@ int Compiler::ExprScope :: newTempLocal()
    return tempAllocated1;
 }
 
+ObjectInfo Compiler::ExprScope :: mapGlobal(ustr_t globalReference)
+{
+   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(*this, ScopeLevel::Namespace);
+
+   return nsScope->mapGlobal(globalReference, EAttr::None);
+}
+
 ObjectInfo Compiler::ExprScope :: mapMember(ustr_t identifier)
 {
    MethodScope* methodScope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
@@ -8563,6 +8570,10 @@ ObjectInfo Compiler :: defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInf
          retVal = mapClassSymbol(scope, retrieveStrongType(scope, retVal));
          break;
       }
+      case SyntaxKey::globalreference:
+         invalid = variableMode;
+         retVal = scope.mapGlobal(node.identifier());
+         break;
       case SyntaxKey::identifier:
       case SyntaxKey::reference:
          if (variableMode) {
@@ -11541,6 +11552,14 @@ void Compiler :: validateClassFields(ClassScope& scope, SyntaxNode node)
       if (current == SyntaxKey::Field) {
          FieldAttributes attrs = {};
          readFieldAttributes(scope, current, attrs, false);
+
+         if (attrs.isConstant) {
+            ustr_t name = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+
+            auto fieldInfo = scope.info.statics.get(name);
+            if (fieldInfo.valueRef == INVALID_REF)
+               scope.raiseError(errNoInitializer, current.findChild(SyntaxKey::Name));
+         }
       }
 
       current = current.nextNode();
