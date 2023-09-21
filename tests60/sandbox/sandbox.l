@@ -9,15 +9,15 @@ const bf_program = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..++
 
 class TapeAssembler
 {    
-    Stack            theBrackets;
-    List<Expression> theTape;
+    Stack            _brackets;
+    List<Expression> _tape;
     
     constructor()
     {
-        theBrackets := new Stack();
-        theTape := new List<Expression>();
+        _brackets := new Stack();
+        _tape := new List<Expression>();
         
-        theTape.append(Expression.DeclareAndAssigning(
+        _tape.append(Expression.DeclareAndAssigning(
             "ptr",
             Expression.Constant(0)));
     }
@@ -29,8 +29,8 @@ class TapeAssembler
     
     open()
     {
-        theBrackets.push(theTape);
-        theTape := new List<Expression>();
+        _brackets.push(_tape);
+        _tape := new List<Expression>();
     }
     
     close()
@@ -45,30 +45,30 @@ class TapeAssembler
                              ),
                              Expression.Constant($0)
                           ),
-                          Expression.CodeBlock(theTape.Value));
+                          Expression.CodeBlock(_tape.Value));
                           
-        theTape := theBrackets.pop();
-        theTape.append(loop)                 
+        _tape := _brackets.pop();
+        _tape.append(loop)                 
     }
     
     input()
     {
-        theTape.append(
-            Expression.MessageCall(
-                new Message("setAt[3]"),
-                Expression.Variable("tape"),
-                Expression.Variable("ptr"),
-                Expression.MessageCall(
-                    new Message("readChar[1]"),
-                    Expression.Constant(console)
-                )
+       _tape.append(
+          Expression.MessageCall(
+             new Message("setAt[3]"),
+             Expression.Variable("tape"),
+             Expression.Variable("ptr"),
+             Expression.MessageCall(
+                new Message("readChar[1]"),
+                Expression.Constant(console)
+             )
             )
         )
     }
     
     output()
     {
-        theTape.append(
+        _tape.append(
             Expression.MessageCall(
                  new Message("write[2]"),
                  Expression.Constant(console), 
@@ -83,7 +83,7 @@ class TapeAssembler
     
     next()
     {
-        theTape.append(
+        _tape.append(
             Expression.Assigning(
                 "ptr",
                 Expression.MessageCall(
@@ -94,7 +94,7 @@ class TapeAssembler
     
     previous()
     {
-        theTape.append(
+        _tape.append(
             Expression.Assigning(
                 "ptr",
                 Expression.MessageCall(
@@ -105,7 +105,7 @@ class TapeAssembler
     
     increase()
     {
-        theTape.append(
+        _tape.append(
             Expression.MessageCall(
                 new Message("setAt[3]"),            
                 Expression.Variable("tape"),
@@ -132,7 +132,7 @@ class TapeAssembler
     
     decrease()
     {
-        theTape.append(
+        _tape.append(
             Expression.MessageCall(
                 new Message("setAt[3]"),            
                 Expression.Variable("tape"),
@@ -162,8 +162,9 @@ class TapeAssembler
         var program := DynamicSingleton.new(
                     Expression.Method(
                        "eval",
-                       "tape",                   
-                       Expression.CodeBlock(theTape.Value))).compiled();           
+                       Expression.CodeBlock(_tape.Value),
+                       ScopeIdentifier.Variable("tape"))
+                    ).compile();           
                    
         ^(tape){ program.eval(tape) }
     }

@@ -487,11 +487,9 @@ namespace collections
             _index -= 1;
                 
             ^ true
-         }
-         else
-         {
-            ^ false
-         }
+         };
+
+         ^ false
       }
             
       get Value()

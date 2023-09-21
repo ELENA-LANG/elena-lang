@@ -9,8 +9,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * __tape_eval : support variadic arg list (__invokeV1)
-
     * rosetta code sample : Execute Brain****, 
 
     * #47 : Evaluating an expression in a symbol

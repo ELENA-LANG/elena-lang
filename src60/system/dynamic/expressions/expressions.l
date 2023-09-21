@@ -169,6 +169,9 @@ namespace expressions
       static Expression CodeBlock(params Expression[] statements)
          = CodeblockExpression.new(params statements);
 
+      static Expression CodeBlock(Expression[] statements)
+         = CodeblockExpression.new(statements);
+
       static Expression SetDynamicProperty(Expression m, Expression t, Expression v)
          = SetDynamicPropertyExpression.new(m, t, v);
 
