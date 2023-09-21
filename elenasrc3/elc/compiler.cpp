@@ -7460,10 +7460,10 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
       &outerArgsToUpdate, variadicArgList);
    EAttr opMode = EAttr::None;
    if (variadicArgList) {
-      //// HOTFIX : set variadic flag if required
-      //messageRef |= VARIADIC_MESSAGE;
+      // HOTFIX : set variadic flag if required
+      messageRef |= VARIADIC_MESSAGE;
 
-      //opMode = EAttr::WithVariadicArg;
+      opMode = EAttr::WithVariadicArg;
    }
 
    mssg_t byRefHandler = resolveByRefHandler(scope, retrieveStrongType(scope, source), expectedRef, messageRef, implicitSignatureRef);
@@ -8220,9 +8220,9 @@ ObjectInfo Compiler :: compileMessageOperationR(BuildTreeWriter& writer, ExprSco
 
             EAttr opMode = EAttr::None;
             if (withVariadicArg) {
-               //messageRef |= VARIADIC_MESSAGE;
+               messageRef |= VARIADIC_MESSAGE;
 
-               //opMode = EAttr::WithVariadicArg;
+               opMode = EAttr::WithVariadicArg;
             }
 
             return compileMessageOperation(writer, scope, messageNode, source, messageRef,
@@ -10398,9 +10398,9 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
 
       EAttr opMode = EAttr::CheckShortCircle;
       if (withVariadicArg) {
-         //messageRef |= VARIADIC_MESSAGE;
+         messageRef |= VARIADIC_MESSAGE;
 
-         //opMode = EAttr::WithVariadicArg;
+         opMode = opMode | EAttr::WithVariadicArg;
       }
 
       retVal = compileMessageOperation(writer, scope, node, target, messageRef,

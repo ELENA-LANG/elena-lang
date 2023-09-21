@@ -45,6 +45,7 @@ In development:
     * examples : rosetta code Anagrams
     * examples : migrate all rosetta examples from examples/rosetta to examples60 and remove them
     * #195 : implementing rosetta code samples
+    * examples : tutorials
 
     * review system warnings
     * review extensions warnings
