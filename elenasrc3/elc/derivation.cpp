@@ -483,6 +483,8 @@ void SyntaxTreeBuilder :: generateTemplateOperation(SyntaxTreeWriter& writer, Sc
    if (_templateProcessor->importCodeTemplate(*_moduleScope, templateRef, writer.CurrentNode(),
       arguments, parameters))
    {
+      if (writer.CurrentNode() == SyntaxKey::Expression)
+         writer.CurrentNode().setKey(SyntaxKey::CodeBlock);
    }
    else {
       _errorProcessor->raiseTerminalError(errInvalidOperation, retrievePath(node), node);

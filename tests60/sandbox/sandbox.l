@@ -5,7 +5,8 @@ import system'dynamic'expressions;
 import extensions;
 import extensions'scripting;
 
-const bf_program = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.";
+//const bf_program = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.";
+const bf_program = "+";
 
 class TapeAssembler
 {    

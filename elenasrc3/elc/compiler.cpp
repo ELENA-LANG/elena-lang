@@ -42,15 +42,15 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l | (unsigned int)r);
 }
 
-//inline void testNodes(SyntaxNode node)
-//{
-//   SyntaxNode current = node.firstChild();
-//   while (current != SyntaxKey::None) {
-//      testNodes(current);
-//
-//      current = current.nextNode();
-//   }
-//}
+inline void testNodes(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      testNodes(current);
+
+      current = current.nextNode();
+   }
+}
 
 inline bool isSelfCall(ObjectInfo target)
 {
@@ -9598,7 +9598,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          retVal = compileClosure(writer, scope, current, mode, updatedOuterArgs);
          break;
       case SyntaxKey::CodeBlock:
-         compileSubCode(writer, scope, current, mode, true);
+         retVal = compileSubCode(writer, scope, current, mode, true);
          break;
       case SyntaxKey::SwitchOperation:
          compileSwitchOperation(writer, scope, current);
@@ -9690,8 +9690,21 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
    writer.appendNode(BuildKey::OpenStatement);
    addBreakpoint(writer, findObjectNode(node), BuildKey::Breakpoint);
 
-   ObjectInfo retVal = compileExpression(writer, scope, node.findChild(SyntaxKey::Expression), outputRef, 
-      mode | EAttr::Root | EAttr::RetValExpected, nullptr);
+   ObjectInfo retVal = {};
+   SyntaxNode exprNode = node.findChild(SyntaxKey::Expression, SyntaxKey::CodeBlock);
+   switch (exprNode.key) {
+      case SyntaxKey::Expression:
+         retVal = compileExpression(writer, scope, node.findChild(SyntaxKey::Expression), outputRef,
+            mode | EAttr::Root | EAttr::RetValExpected, nullptr);
+         break;
+      case SyntaxKey::CodeBlock:
+         retVal = compileCode(writer, codeScope, exprNode, true);
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
    if (codeScope.isByRefHandler()) {
       compileAssigningOp(writer, scope, codeScope.mapByRefReturnArg(), retVal);
 
@@ -9727,11 +9740,9 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
    return retVal;
 }
 
-ObjectInfo Compiler :: compileRootExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
+ObjectInfo Compiler :: compileRootExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, EAttr mode)
 {
    ExprScope scope(&codeScope);
-
-   ExpressionAttribute mode = EAttr::None;
 
    writer.appendNode(BuildKey::OpenStatement);
    addBreakpoint(writer, findObjectNode(node), BuildKey::Breakpoint);
@@ -9999,6 +10010,8 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
 
 ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode)
 {
+   testNodes(node);
+
    ObjectInfo retVal = {};
    ObjectInfo exprRetVal = {};
 
@@ -10007,11 +10020,13 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
    BuildNode variableNode = writer.CurrentNode();
    writer.closeNode();
 
+   EAttr mode = closureMode ? EAttr::RetValExpected : EAttr::None;
+
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Expression:
-            exprRetVal = compileRootExpression(writer, codeScope, current);
+            exprRetVal = compileRootExpression(writer, codeScope, current, mode);
             break;
          case SyntaxKey::ReturnExpression:
             exprRetVal = retVal = compileRetExpression(writer, codeScope, current, EAttr::None);
@@ -10211,7 +10226,7 @@ void Compiler :: compileInitializerMethod(BuildTreeWriter& writer, MethodScope& 
          if (current.existChild(SyntaxKey::YieldContext)) {
             compileYieldInitializing(writer, codeScope, current.findChild(SyntaxKey::YieldContext));
          }
-         else compileRootExpression(writer, codeScope, current);
+         else compileRootExpression(writer, codeScope, current, EAttr::None);
       }
       current = current.nextNode();
    }
