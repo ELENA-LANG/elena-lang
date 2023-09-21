@@ -2045,7 +2045,7 @@ labSpecial:
   cmp        n:022h
   jeq        labTerminator
 
-  cmp        n:021h
+  cmp        n:020h
   jeq        labVardiatic
 
   peek        fp:buffer
@@ -2081,25 +2081,25 @@ labTerminator:
   xassign
   nadd       dp:ptr, -1
 
-  iadd       dp:index, 4
-
   jump       labNext
 
 labVardiatic:
-  mov        n:0
+  nsave      dp:command, 0
+  load       dp:ptr
 
 labVarLen:
-  load       dp:ptr
-  xget
   add        n:1
+  set        fp:0
+  xget
+  nadd       dp:command, 1
   cmp        terminator
   jne        labVarLen
-  save       dp:command
 
   // copy arguments
   set        sp:0  
   store      sp:0
   load       dp:ptr
+  add        n:1
   xset       fp:0
   swap       sp:0
   load       dp:command

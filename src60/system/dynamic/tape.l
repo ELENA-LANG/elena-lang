@@ -7,6 +7,9 @@ public mixin DynamicTape
 {
    __string TapeFunction[] list;
 
+   constructor(params TapeFunction[] args)
+      <= load(params args);
+
    internal constructor allocate(int len)
       = new TapeFunction[](len);
    
