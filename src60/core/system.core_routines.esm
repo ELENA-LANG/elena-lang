@@ -1579,6 +1579,36 @@ procedure __saving_closure(obj, args)
 
 end
 
+procedure __copytostack_closure(obj, args)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  alloc      i:2
+  store      sp:1
+
+  load
+  set        fp:0
+  neg
+  xget
+  store      sp:0
+
+  peek       sp:1
+  mov        n:4
+  xload
+
+  set        sp:0
+  xassign
+
+  free       i:2
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+  peek       sp:0
+
+end
+
 procedure __local_closure(obj, args)
 
   xflush     sp:0

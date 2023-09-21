@@ -187,6 +187,9 @@ namespace expressions
       static Expression Loop(Expression cond, Expression body)
          = new LoopExpression(cond, body);
 
+      static Expression VariableByIndex(int index)
+         = new VariableByIndexExpression(index);
+
       static Expression Variable(string variable)
          = new VariableExpression(variable);
 
@@ -1341,6 +1344,31 @@ namespace expressions
             
          list.append(ConstantFunction.load(nilValue)); // !! should be redesigned
       }
+   }
+
+   public struct VariableByIndexExpression : Expression
+   {
+      int varIndex;
+        
+      constructor(int index)
+      {
+         this varIndex := index
+      }
+        
+      bool IsOperation = false;
+        
+      int prepare(ExpressionScope scope) 
+         = 1;
+            
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         if (index == 0) {
+            list.append(new LocalFunction(varIndex));
+         }
+         else {
+            list.append(new CopyToStackFunction(varIndex, index));
+         }
+      }        
    }
 
    public class IdentifierExpression : Expression
