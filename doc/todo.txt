@@ -15,24 +15,7 @@ In development:
     * ide : enable / disable toolbar buttons
     + #69 : GC info 
     * generate default constructor if there is an initializer
-
-    * ide : styling source code
-    * ide : dark color scheme, change the window background color
-    * ide : goto nested class
-    * ide : debug goto source
-    * ide : enable / disable menu commands
-    * ide : window list - close several windows
-    * ide : debug watch context menu
-    * ide : byref parameter
-    * ide message : display internal error
-    * ide : brackets highlight
-    * ide : refreshing auto watch - with the same name, unused
-    * ide : set / remove breakpoints
-    * ide : menu - clear all breakpoints
-    * ide : open via dialog - set proper namespace
-    * ide : save project as
-    * ide : exclude the file from the project
-    * ide : hide / show include / exclude  depending if the file is a part of the project
+    * raise an error if the constructor does not handle the argument (if the multimethod is auto generated)
 
     * examples : calc - doesn't work
     * examples : p2, random 
@@ -53,7 +36,6 @@ In development:
     * api : uncomment ExtensionDispatcher and SymbolCollection
 
     * new unit test : dispatchmr (both function and normal one)
-    * ldoc : show template based type correctly
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
     * string to real : support e notation
     * api : provide field descriptions
@@ -116,161 +98,4 @@ In development:
     [!] support mta_gui, vm_mta_console
     * review ppc64le - find a better solution to deal with n16_lo > 07FFFFh (see cmpn)
 
-------                                                           
-Backlog:
-------   
-    --- elena backlog
-    * doc : multiple inheritance - tutorial
-    * support lneg, lnot
-    * implement analog of C# record
-    * generic branching operator
-    * data alignment : for normal structs - allign the data to 4/8 and make an operation aligned to 4/8;
-      so all stack allocated data is aligned to 4 / 8;
-      field are allocated to 4 / 8 for all cases except packed flag
-    * uncomment rest of calc sample - supporting function
-    * elt : 2+3, "hello", "workd".insert(0, "hello ")
-    * check : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
-    * x86-64, ppc64, aarch64 : fix loads
-    * ppc64, aarch64 : fix xrefresh / xflush - use arg instead of direct values
-    * execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
-    * review install scripts : include all existing samples, use different output folders
-    * #580 : new feature : use C# 7.0 style namespace (single line one)
-    ! script and db samples
-    ! elena sm : x86-64
-    ! sm : generate some basic templates from vm console - hello world sample
-    ! script samples : win x86, win x86-64, linix i386, linux amd64
-    ! migrate all script engine tutorials : win x86, win x86-64, linix i386, linux amd64
-    ! regression tests : github issues
-    ! elc : using custom grammar for parsing a source
-    ! elenavm : test all rosetta code samples for vm
-    ! elenavm : critical exception handlers
-
-    * fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
-    * x86 : gui - starting - new project type
-    * ide : before compiling, make sure the source file is saved
-
-    * new opcode : fexp - ppc64le
-    * switch expression
-    * redesign switch statement : it should be possible to use as an expression as well
-      (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
-       console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
-    * ide : closing unsaved file - closing unsaved
-    * ide : show hex number
-    * ide : show project name as a app title (new / existing projects / single file project)
-
-    * elenavm : preloaded symbol, support preloaded symbols : dynamic
-    * elenavm : loading preloaded symbols for newly loaded modules
-    * int32 : implement direct neg, not operations; use it directly for IntNumber
-    * Dynamic programming in ELENA : bf loop - https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
-    * ELENA Script Engine : compiling JavaScript file - https://www.reddit.com/r/elena_lang/comments/6h6nyz/elena_script_engine_compiling_javascript_file/
-    * method templates
-    * by exiting thread (must be called on thread proc exit) - remove entry from table slots
-    * for time being keep SINGLE_THREAD_CONTEXT empty, after the migrating it
-      must be made empty 
-    * prefix nullable / nable - allow to assign nil
-    * introduce Nullable structure
-    * ide : key combination doesn't work after closing the project
-    * strong typed forward constant
-    * arrange action for i386 / amd64 linux release
-    * ide : debug vm client app
-    * ide : editor context menu
-    * x86 : gui
-    * system module - it should be possible to use type aliases (replace all cases of using direct types 
-      for symbols in system (int,string,wide))
-    * console & files samples
-    * new opcode : fln - ppc64le, arm64
-    * new opcode : fsin, fcos, farctan, fpi - ppc64le, arm64
-    * setup pipeline for windows / linux x86 & x86-64, retire appvayor
-    * ppc64le / aarch64 : fexp - improve quality / performace
-    * test fexpdp opcode
-
-    ! sm : generate advances templates from vm console
-    ! elena vm : helloworld sample Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
-    ! elena sm : script samples Windows x86-64, Linux x86 / x86-64 / ppc64le / aarch64
-    ! migrate all script engine tutorials : linix aarch64, linux ppc64le
-    ! elena sm : linux
-    ! x86-64 : multi-threading
-    ! x86-64 : gui
-    ! x86-64 : script samples
-    * migrate: amb, anagram
-    * review documentation - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
-    ! elena vm : aarch64, ppc64
-    ! elena vm : ppc64
-    ! ppc64le : multi-threading
-    * review Producing a code in run-time
-    * raise an error if the constructor does not handle the argument (if the multimethod is auto generated)
-    * read an article about meta programming in Ruby, try to do similar
-    * Func<T> / Func1 should use semi-direct call for the function invoke
-    * overloading the method return, put it in the first page as a feature
-    * lazy expressions, put it in the first page as a feature
-    * debugger info : save the path relative to the src60 path?
-    * ide : brackets highlight
-    * ide : auto indent
-    * ide : highlight syntax
-    * ide : rest of menu options
-    * ide : context menu
-    * internal / auto-generated classes must not be included in run-time attributes
-    * replace all default maps with optimized ones (e.g. SyntaxHash, TableHash, SyntaxTable)
-    * create github action workflow to build the project
-    * arm : uncomment loadv opcode : using and imm
-    * arm / ppc : supporting indexes bigger than arg12 or arg16
-    * async programming
-    * rename movfrm to xmovfp
-    * redesign : for 64 bit:object size offset should be 8, instead of 4
-    * optimization : WinEncoder.convertChar (do not use the intermediate buffer)
-    * ldoc : consoleOp extension should be visible
-    * debugger watch: variadic argument list
-    * external inline template should be private / internal. Currently it is not possible because
-      it cannot be resolved by template generation
-    * elena : nested classes should not be loadable at runtime
-    * system'MessageName : port / test functionality
-    * internal / protected conversion : should it be supported (see system'Symbol conversion from pointer)?
-    * new features : expression patters, DI
-    * unit tests via postfix pattern
-    * ide debugger : callstack
-    * do:while : both statement are matched : do{ a } while(b) and do{ a } while{ b } which is not correct?
-    * ide : error messages if the debug process failed
-    * ide : open the last opened file on the ide start
-    * ide : remember last open project
-    * ide - disable close if no files are open
-    * ide - disable close project if the project is closed
-    * vm : on stop : unprotected / remove executable flags, on start - reverse the action
-    * test three type of self : self, this self, weak self
-    * ide - closing old files on opening a project
-    * ide : highlight openning / closing brackets
-    * aarch64 : setting mask for size (createn, ...)
-    * ide : fix errors with font size / switching to error list / clear high light on click
-    * ide : react on mouse
-    * ide : new menu option : open output
-    * editor - status bar : col, row, ins / ovr
-    * editor - modified doc mark, 
-    * editor - black theme
-    * editor - highlightning
-    * editor - open project
-    * editor - enable / disable menu commands
-    * linux sdi - menu
-    * linux ide : new file
-    * linux ide : edit
-    * linux editor - open / close / save / exit
-    * linux debugger
-    * linux debuggrt : watch
-    * linux ide : compile single file
-    * linux ide : output
-    * linux ide : error list
-    * linux ide : compile project
-    * editor - edit text
-    * editor - correctly destroy tabbar / frame / view
-    * script module template
-    * ushort, int8
-    * fix the following code : writeDisp32Hi, writeDisp32Low, writeXDisp32Hi, writeXDisp32Low in
-      vm mode - correct base should be used;       
-    * VEH_HANDLER should exclude the current frame if it was invoked from external code (callext - should 
-      store the current frame in the extra variable, and clear it after the operation end)
-    * operator names should be configurable
-    * setr - 32 / 64 references (two addressing modes)
-    * win64 executable: 32bit opcodes for assigning can be used
-    * elena 6.0 cool features : compile type operator overriding
-    * #206 : interpreter sample - x86, x86-64
-    * #386 : writeRef32Hi, writeRef32Hi - for non virtual mode - should offset the address to be correctly mapped to opcode
-    - IDE : smart spaces
-    + support low and high part of addresses (for ppc64) - e.g. offset 80000000h offset - low, 80000000h - high, offset <<= 2
+    === Iteration 21 ===

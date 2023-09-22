@@ -2454,7 +2454,6 @@ void elena_lang::compileOpen(JITCompilerScope* scope)
 void elena_lang :: compileXOpen(JITCompilerScope* scope)
 {
    scope->frameOffset = scope->compiler->calcFrameOffset(scope->command.arg2);
-   scope->stackOffset = 0;
 }
 
 void elena_lang :: compileAlloc(JITCompilerScope* scope)

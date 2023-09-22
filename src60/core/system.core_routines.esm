@@ -1584,20 +1584,25 @@ procedure __copytostack_closure(obj, args)
   xflush     sp:0
   xflush     sp:1
 
+  xopen      (32),[target],[index,len,mssg,tmp]
+
+  mov        n:4
+  xload
+  save       dp:tmp
+  load
+
+  set        sp:0
   alloc      i:2
+
   store      sp:1
 
-  load
   set        fp:0
   neg
   xget
   store      sp:0
 
   peek       sp:1
-  mov        n:4
-  xload
-
-  set        sp:0
+  load       dp:tmp
   xassign
 
   free       i:2
@@ -1675,7 +1680,7 @@ procedure __exit_closure
 
   peek       sp:0
 
-  xopen      (32),[target],[index,len,mssg]
+  xopen      (32),[target],[index,len,mssg,tmp]
 
   load       dp:len
   save       dp:index 
@@ -1690,7 +1695,7 @@ procedure __jumpifnot_closure
   load
   peek       sp:0
 
-  xopen      (32),[target],[index,len,mssg]
+  xopen      (32),[target],[index,len,mssg,tmp]
 
   cmp        class:"system'BoolValue#false"   
   jne        labSkip
@@ -1710,7 +1715,7 @@ procedure __jump_closure
   load
   peek       sp:0
 
-  xopen      (32),[target],[index,len,mssg]
+  xopen      (32),[target],[index,len,mssg,tmp]
 
   xadd       dp:index
   save       dp:index
@@ -1746,7 +1751,7 @@ procedure __closuretape
   xflush     sp:0
   xflush     sp:1
 
-  open       (32),[target],[index,len,mssg]
+  open       (32),[target],[index,len,mssg,tmp]
       
   save       dp:mssg
     
