@@ -1281,7 +1281,7 @@ public loopExpressionTest()
 {
     console.write("loopExpressionTest:");
     
-    auto c := DynamicSingleton.new(
+    auto c := DynamicSingleton.load(
                 Expression.Method(
                    "eval",
                    Expression.CodeBlock(      
