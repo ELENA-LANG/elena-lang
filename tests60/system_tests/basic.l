@@ -1246,7 +1246,7 @@ public ifExpressionTest()
 {
     console.write("ifExpressionTest:");
     
-    auto c := DynamicSingleton.new(
+    auto c := DynamicSingleton.load(
                 Expression.Method(
                    "eval",
                    Expression.CodeBlock(                   

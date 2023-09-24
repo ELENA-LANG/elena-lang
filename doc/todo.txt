@@ -9,8 +9,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * calling variadic method directly
-
     * rosetta code sample : Execute Brain****, 
     * test elt
 
@@ -19,6 +17,9 @@ In development:
     + #69 : GC info 
     * generate default constructor if there is an initializer
     * raise an error if the constructor does not handle the argument (if the multimethod is auto generated)
+    * calling variadic method directly : without arguments
+    * fix ldoc (List<T>, Quuee<T>, Stack<T>, VarTuple<TKey, TValue>) 
+    * redirect abstract byref handler
 
     * examples : calc - doesn't work
     * examples : p2, random 

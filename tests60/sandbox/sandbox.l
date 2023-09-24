@@ -184,36 +184,25 @@ import extensions;
 //    bfProgram(bfTape)
 //}
 
-//public program()
-//{
-//   console.writeLine("test");
-//
-//    auto c := DynamicSingleton.new(
-//                Expression.Method(
-//                   "test",
-//                   Expression.CodeBlock(      
-//                     Expression.MessageCall(
-//                        new Message("writeLine[2]"),
-//                        Expression.Constant(console),
-//                        Expression.Variable("n")
-//                     )
-//                   ),
-//                   ScopeIdentifier.Variable("n")
-//                )
-//             );
-//
-//   var o := c.compile();
-//
-//   o.test(2);
-//}
-
-A
-{
-   test(arg) {}
-
-   test(int arg1, params object[] args){}
-}
-
 public program()
 {
+   console.writeLine("test");
+
+    auto c := DynamicSingleton.load(
+                Expression.Method(
+                   "test",
+                   Expression.CodeBlock(      
+                     Expression.MessageCall(
+                        new Message("writeLine[2]"),
+                        Expression.Constant(console),
+                        Expression.Variable("n")
+                     )
+                   ),
+                   ScopeIdentifier.Variable("n")
+                )
+             );
+
+   var o := c.compile();
+
+   o.test(2);
 }

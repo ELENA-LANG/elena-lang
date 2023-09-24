@@ -54,8 +54,8 @@ namespace expressions
 
       abstract reserveStack(int level);
 
-//      abstract TapeFunction resolve(ScopeIdentifier ident, bool assignMode);
-//
+      abstract TapeFunction resolve(ScopeIdentifier ident, bool assignMode);
+
 //      abstract TapeFunction resolveExtension(Message message);
 //
 //      abstract declare(ScopeIdentifier variable);
@@ -83,9 +83,9 @@ namespace expressions
 //        
 //      TapeFunction resolveExtension(Message message)
 //         = nil;    
-//
-//      TapeFunction resolve(ScopeIdentifier ident, bool assignMode)
-//         = nil; 
+
+      TapeFunction resolve(ScopeIdentifier ident, bool assignMode)
+         = nil; 
    }
 
    public sealed class RootExpressionScope : interface<ExpressionScope>
@@ -140,12 +140,12 @@ namespace expressions
       }
         
 //      int ScopeLevel = *reserved;
-//        
-//      TapeFunction resolve(ScopeIdentifier variable, bool assignMode) 
-//      {
-//         ^ parent.?resolve(variable, assignMode)
-//      }
-//    
+        
+      TapeFunction resolve(ScopeIdentifier variable, bool assignMode) 
+      {
+         ^ parent.?resolve(variable, assignMode)
+      }
+    
 //      declare(ScopeIdentifier variable)
 //      {
 //         ^ nil
@@ -161,7 +161,7 @@ namespace expressions
 //         = new SymbolExpression(s);
 
       static Expression MessageCall(Message message, Expression t, params Expression[] arguments)
-         = MessageCallExpression.new(message,t,params arguments);
+         = MessageCallExpression.load(message,t,params arguments);
 
 //      static Expression ExtensionOrMessageCall(Message message, Expression t, params Expression[] arguments)
 //         = ExtensionOrMessageCallExpression.new(message,t,params arguments);
@@ -860,28 +860,6 @@ namespace expressions
 //                
 //            int Reserved 
 //               = scope.Reserved;
-//
-//            TapeFunction resolve(ScopeIdentifier variable, bool assignMode)
-//            {
-//               int len := parameters.Length;
-//               for(int i := 0, i < len, i+=1) {
-//                  if (variable == parameters[i])
-//                  {
-//                     int index := i + 1;
-//                                
-//                     if (assignMode) 
-//                     {
-//                        NotSupportedException.raise()
-//                     }
-//                     else 
-//                     {
-//                        ^ new LocalFunction(index)
-//                     };                                
-//                  }
-//               };
-//                    
-//               ^ scope.resolve(variable, assignMode)
-//            }
 //        
 //            TapeFunction resolveExtension(Message message)
 //               => scope;    
@@ -911,8 +889,45 @@ namespace expressions
       {
       }
 
-      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      saveTo(List<TapeFunction> list, ExpressionScope parentScope, int index)
       {
+         auto scope := ExpressionScope
+         {
+            int Reserved
+               = parentScope.Reserved;
+
+            int ScopeLevel
+               = parentScope.ScopeLevel;
+
+            reserveStack(int level)
+               => parentScope;
+
+            int allocTempVariable()
+               = parentScope.allocTempVariable();
+
+            TapeFunction resolve(ScopeIdentifier variable, bool assignMode)
+            {
+               int len := parameters.Length;
+               for(int i := 0, i < len, i+=1) {
+                  if (variable == parameters[i])
+                  {
+                     int index := i + 1;
+                                
+                     if (assignMode) 
+                     {
+                        NotSupportedException.raise()
+                     }
+                     else 
+                     {
+                        ^ new LocalFunction(index)
+                     };                                
+                  }
+               };
+                    
+               ^ parentScope.resolve(variable, assignMode)
+            }
+         };
+
          body.saveTo(list, scope, index);
       }
 
@@ -928,7 +943,7 @@ namespace expressions
          self.saveTo(list, scope, 0);
          
          int allocated := scope.StackSize;
-         int declared := scope.Declared;
+         int declared := scope.ScopeLevel;
          int reserved := scope.Reserved;
 
          allocated += declared;
@@ -936,7 +951,7 @@ namespace expressions
 
          list[0] := new AllocFunction(allocated);
 
-         ^ DynamicTape.load(list)         
+         ^ DynamicTape.new(list)         
       }
    }
 
@@ -1239,6 +1254,9 @@ namespace expressions
             int Reserved = *reserved;
 
             int ScopeLevel = parentScope.ScopeLevel;
+
+            TapeFunction resolve(ScopeIdentifier ident, bool assignMode)
+               => parentScope;
 
             reserveStack(int level)
                => parentScope;
@@ -1775,7 +1793,7 @@ namespace expressions
             Message message := methods[i].Key;
             auto tape := methods[i].compile(scope);
 
-            list.add(new Tuple<Message,DynamicTape>(message, tape));
+            list.append(new Tuple<Message,DynamicTape>(message, tape));
          };
             
          ^ DynamicClass.create(list);
