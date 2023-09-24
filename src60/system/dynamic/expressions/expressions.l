@@ -187,8 +187,8 @@ namespace expressions
       static Expression Loop(Expression cond, Expression body)
          = new LoopExpression(cond, body);
 
-//      static Expression VariableByIndex(int index)
-//         = new VariableByIndexExpression(index);
+      static Expression VariableByIndex(int index)
+         = new VariableByIndexExpression(index);
 
       static Expression Variable(string variable)
          = new VariableExpression(variable);
@@ -1095,63 +1095,6 @@ namespace expressions
 
       bool IsOperation = true;
         
-//      int prepare(ExpressionScope scope, int reserved)
-//      {
-//         auto codeScope := new ExpressionScope
-//         {
-//            int Reserved = scope.Reserved;
-//                
-//            bool reserve(int level)
-//               = scope.reserve(level);
-//                
-//            int allocTempVariable()
-//            {
-//               int index := variables.Length + 1;
-//               scope.reserve(index);
-//                                        
-//               index := index + scope.ScopeLevel;
-//                    
-//               variables.append(ScopeIdentifier.TempVariable(index));
-//                    
-//               ^ index
-//            }
-//            int ScopeLevel = scope.ScopeLevel + variables.Length;
-//        
-//            TapeFunction resolveExtension(Message message)
-//               => scope;    
-//
-//         };
-//
-//         int maxStackLevel := 0;
-//         int len := statements.Length;
-//         for(int i := 0, i < len, i+=1) {
-//            int current := statements[i].prepare(codeScope);
-//            if (current > maxStackLevel)
-//               { maxStackLevel := current }
-//         };
-//            
-//         ^ maxStackLevel
-//      }
-        
-//      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
-//      {
-//         int len := statements.Length;
-//         for(int i := 0, i < len, i+=1) {
-//            statements[i].saveTo(list, scope, 0);
-//         };
-//
-//         if (index > 0)
-//            { list.append(new SavingFunction(index)) };
-//      }      
-
-//      int prepare(ExpressionScope scope, int reserved)
-//      {
-//      }
-//
-//      saveTo(List<TapeFunction> list, ExpressionScope scope, int reserved)
-//      {
-//      }
-
       declare(ExpressionScope parentScope)
       {
       }
@@ -1197,6 +1140,8 @@ namespace expressions
                reserved.append(1);
                while (parentScope.Reserved < *reserved)
                   parentScope.allocTempVariable();
+
+               ^ *reserved;
             }
 
             allocVariable(ScopeIdentifier variable)
@@ -1463,30 +1408,32 @@ namespace expressions
       }
    }
 
-//   public struct VariableByIndexExpression : Expression
-//   {
-//      int varIndex;
-//        
-//      constructor(int index)
-//      {
-//         this varIndex := index
-//      }
-//        
-//      bool IsOperation = false;
-//        
-//      int prepare(ExpressionScope scope) 
-//         = 1;
-//            
-//      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
-//      {
-//         if (index == 0) {
-//            list.append(new LocalFunction(varIndex));
-//         }
-//         else {
-//            list.append(new CopyToStackFunction(varIndex, index));
-//         }
-//      }        
-//   }
+   public struct VariableByIndexExpression : Expression
+   {
+      int varIndex;
+        
+      constructor(int index)
+      {
+         this varIndex := index
+      }
+        
+      bool IsOperation = false;
+        
+      declare(ExpressionScope scope) 
+      {
+         scope.reserveStack(1);
+      }   
+            
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         if (index == 0) {
+            list.append(new LocalFunction(varIndex));
+         }
+         else {
+            list.append(new CopyToStackFunction(varIndex, index));
+         }
+      }        
+   }
 
    public class IdentifierExpression : Expression
    {

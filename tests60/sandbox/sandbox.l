@@ -5,8 +5,7 @@ import system'dynamic'expressions;
 import extensions;
 import extensions'scripting;
 
-//const bf_program = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.";
-const bf_program = "+";
+const bf_program = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.";
 
 class TapeAssembler
 {    
@@ -46,7 +45,7 @@ class TapeAssembler
                              ),
                              Expression.Constant($0)
                           ),
-                          Expression.CodeBlock(_tape.Value));
+                          CodeblockExpression.new(_tape.Value));
                           
         _tape := _brackets.pop();
         _tape.append(loop)                 
@@ -160,10 +159,10 @@ class TapeAssembler
     
     compiled()
     {
-        var program := DynamicSingleton.new(
+        var program := DynamicSingleton.load(
                     Expression.Method(
                        "eval",
-                       Expression.CodeBlock(_tape.Value),
+                       CodeblockExpression.new(_tape.Value),
                        ScopeIdentifier.Variable("tape"))
                     ).compile();           
                    
@@ -181,5 +180,6 @@ public program()
 
     var bfTape := Array.allocate(1024).populate:(n => $0);
 
+    console.writeLine(bf_program);
     bfProgram(bfTape)
 }

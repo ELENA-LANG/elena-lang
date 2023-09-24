@@ -9,9 +9,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * rosetta code sample : Execute Brain****, 
-    * test elt
-
     * #47 : Evaluating an expression in a symbol
     * ide : enable / disable toolbar buttons
     + #69 : GC info 
@@ -21,6 +18,7 @@ In development:
     * fix ldoc (List<T>, Quuee<T>, Stack<T>, VarTuple<TKey, TValue>) 
     * redirect abstract byref handler
 
+    * examples : rosetta code sample : F
     * examples : calc - doesn't work
     * examples : p2, random 
     * examples : datetime
@@ -28,11 +26,11 @@ In development:
     * examples : textdb, textfile 
     * examples : collatz, matrix
     * examples : test all samples for win x86
-    * examples : rosetta code sample : F
     * examples : rosetta code Anagrams
     * examples : migrate all rosetta examples from examples/rosetta to examples60 and remove them
     * #195 : implementing rosetta code samples
     * examples : tutorials
+    * test elt
 
     * review system warnings
     * review extensions warnings
