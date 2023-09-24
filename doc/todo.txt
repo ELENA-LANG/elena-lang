@@ -9,7 +9,10 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
+    * calling variadic method directly
+
     * rosetta code sample : Execute Brain****, 
+    * test elt
 
     * #47 : Evaluating an expression in a symbol
     * ide : enable / disable toolbar buttons

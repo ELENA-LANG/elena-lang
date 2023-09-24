@@ -92,6 +92,7 @@ namespace elena_lang
       bool isRole(ClassInfo& info);
       bool isAbstract(ClassInfo& info);
       bool isReadOnly(ClassInfo& info);
+      bool withVariadicsMethods(ClassInfo& info);
 
       bool isDynamic(ClassInfo& info);
       bool isEmbeddableArray(ClassInfo& info);
@@ -121,7 +122,7 @@ namespace elena_lang
 
       bool validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_t message);
       void validateClassDeclaration(ModuleScopeBase& scope, ErrorProcessorBase* errorProcessor, ClassInfo& info,
-         bool& emptyStructure, bool& disptacherNotAllowed, bool& withAbstractMethods);
+         bool& emptyStructure, bool& dispatcherNotAllowed, bool& withAbstractMethods, mssg_t& mixedUpVariadicMessage);
 
       void writeAttributeMapEntry(MemoryBase* section, ustr_t key, int value);
       void writeAttributeMapEntry(MemoryBase* section, ustr_t key, ustr_t value);

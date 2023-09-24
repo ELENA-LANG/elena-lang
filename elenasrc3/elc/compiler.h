@@ -1012,8 +1012,8 @@ namespace elena_lang
 
       int defineFieldSize(Scope& scope, ObjectInfo info);
 
-      ObjectInfo defineArrayType(Scope& scope, ObjectInfo info);
-      ref_t defineArrayType(Scope& scope, ref_t elementRef);
+      ObjectInfo defineArrayType(Scope& scope, ObjectInfo info, bool declarationMode);
+      ref_t defineArrayType(Scope& scope, ref_t elementRef, bool declarationMode);
 
       ref_t retrieveStrongType(Scope& scope, ObjectInfo info);
       ref_t retrieveType(Scope& scope, ObjectInfo info);

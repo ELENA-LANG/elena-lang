@@ -282,6 +282,8 @@ public:
 
    Map<ref_t, SizeInfo> cachedSizes;
    Map<ref_t, ref_t>    cachedClassReferences;
+   Map<ref_t, bool>     cachedEmbeddableReadonlys;
+   Map<ref_t, bool>     cachedEmbeddables;
 
    virtual bool isStandardOne() = 0;
 
@@ -351,7 +353,9 @@ public:
       aliases(0),
       operations(0),
       cachedSizes({}),
-      cachedClassReferences(0)
+      cachedClassReferences(0),
+      cachedEmbeddableReadonlys(false),
+      cachedEmbeddables(false)
    {
       this->module = module;
       this->debugModule = debugModule;

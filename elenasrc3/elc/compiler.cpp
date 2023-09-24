@@ -2676,13 +2676,23 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, re
    bool emptyStructure = false;
    bool customDispatcher = false;
    bool withAbstractMethods = false;
-   _logic->validateClassDeclaration(*scope.moduleScope, _errorProcessor, scope.info, emptyStructure, customDispatcher, withAbstractMethods);
+   mssg_t mixedUpVariadicMessage = 0;
+   _logic->validateClassDeclaration(*scope.moduleScope, _errorProcessor, scope.info, 
+      emptyStructure, customDispatcher, withAbstractMethods, mixedUpVariadicMessage);
    if (withAbstractMethods)
       scope.raiseError(errAbstractMethods, node);
    if (emptyStructure)
       scope.raiseError(errEmptyStructure, node.findChild(SyntaxKey::Name));
    if (customDispatcher)
       scope.raiseError(errDispatcherInInterface, node.findChild(SyntaxKey::Name));
+   if (mixedUpVariadicMessage) {
+      IdentifierString messageName;
+      ByteCodeUtil::resolveMessageName(messageName, scope.module, mixedUpVariadicMessage);
+
+      _errorProcessor->info(infoMixedUpVariadic, *messageName);
+
+      scope.raiseError(errMixedUpVariadicMessage, node.findChild(SyntaxKey::Name));
+   }
 
    _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, scope.isClassClass());
 
@@ -5317,16 +5327,21 @@ void Compiler :: declareTemplateAttributes(Scope& scope, SyntaxNode node,
    }
 }
 
-ref_t Compiler :: defineArrayType(Scope& scope, ref_t elementRef)
+ref_t Compiler :: defineArrayType(Scope& scope, ref_t elementRef, bool declarationMode)
 {
-   return _logic->definePrimitiveArray(*scope.moduleScope, elementRef,
+   ref_t retVal = _logic->definePrimitiveArray(*scope.moduleScope, elementRef,
       _logic->isEmbeddable(*scope.moduleScope, elementRef));
+
+   if (!retVal && declarationMode)
+      retVal = V_OBJARRAY;
+
+   return retVal;
 }
 
-ObjectInfo Compiler :: defineArrayType(Scope& scope, ObjectInfo info)
+ObjectInfo Compiler :: defineArrayType(Scope& scope, ObjectInfo info, bool declarationMode)
 {
    ref_t elementRef = info.typeInfo.typeRef;
-   ref_t arrayRef = defineArrayType(scope, elementRef);
+   ref_t arrayRef = defineArrayType(scope, elementRef, declarationMode);
 
    info.typeInfo.typeRef = arrayRef;
    info.typeInfo.elementRef = elementRef;
@@ -5519,7 +5534,7 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribu
       if (attributes.variadicOne) {
          return { V_ARGARRAY, elementRef };
       }
-      else return { defineArrayType(scope, elementRef), elementRef };
+      else return { defineArrayType(scope, elementRef, declarationMode), elementRef };
    }
    else return {};
 }

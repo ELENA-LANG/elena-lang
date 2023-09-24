@@ -66,6 +66,7 @@ namespace elena_lang
    constexpr auto errIllegalField            = 111;
    constexpr auto errNoInitializer           = 112;
    constexpr auto errTooManyParameters       = 113;
+   constexpr auto errMixedUpVariadicMessage  = 114;
    constexpr auto errDuplicatedDefinition    = 119;
    constexpr auto errInvalidIntNumber        = 130;
    constexpr auto errCannotEval              = 140;
@@ -140,6 +141,7 @@ namespace elena_lang
    constexpr auto infoCurrentMethod          = 702;
    constexpr auto infoCurrentClass           = 703;
    constexpr auto infoAbstractMetod          = 704;
+   constexpr auto infoMixedUpVariadic        = 705;
 
    constexpr auto errVMBroken                = 800;
    constexpr auto errVMNotInitialized        = 801;
