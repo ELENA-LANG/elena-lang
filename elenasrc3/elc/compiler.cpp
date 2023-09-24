@@ -5838,12 +5838,26 @@ inline int newLocalAddr(int disp, int allocated)
    return -disp - allocated;
 }
 
-int Compiler :: allocateLocalAddress(CodeScope* codeScope, int size, bool binaryArray)
+int Compiler :: allocateLocalAddress(Scope& scope, int size, bool binaryArray)
 {
-   if (binaryArray)
-      codeScope->allocLocalAddress(4);
+   int retVal = 0;
 
-   int retVal = codeScope->allocLocalAddress(size);
+   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+   if (codeScope != nullptr) {
+      if (binaryArray)
+         codeScope->allocLocalAddress(4);
+
+      retVal = codeScope->allocLocalAddress(size);
+   }
+   else {
+      SymbolScope* symbolScope = Scope::getScope<SymbolScope>(scope, Scope::ScopeLevel::Symbol);
+      assert(symbolScope != nullptr);
+
+      if (binaryArray)
+         symbolScope->allocLocalAddress(4);
+
+      retVal = symbolScope->allocLocalAddress(size);
+   }
 
    return newLocalAddr(sizeof(intptr_t), retVal);
 }
@@ -5934,13 +5948,13 @@ bool Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typ
       //binaryArray = true;
       size = size * (-((int)localInfo.size));
 
-      variable.reference = allocateLocalAddress(codeScope, size, true);
+      variable.reference = allocateLocalAddress(*codeScope, size, true);
    }
    else if (_logic->isEmbeddableStruct(localInfo) && size == 0) {
       size = align(_logic->defineStructSize(localInfo).size,
          scope.moduleScope->rawStackAlingment);
 
-      variable.reference = allocateLocalAddress(codeScope, size, false);
+      variable.reference = allocateLocalAddress(*codeScope, size, false);
    }
    else if (size != 0) {
       scope.raiseError(errInvalidOperation, terminal);
@@ -6352,10 +6366,8 @@ ObjectInfo Compiler :: declareTempStructure(ExprScope& scope, SizeInfo sizeInfo)
    if (sizeInfo.size <= 0)
       return {};
 
-   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
-
    ObjectInfo retVal = { ObjectKind::TempLocalAddress };
-   retVal.reference = allocateLocalAddress(codeScope, sizeInfo.size, false);
+   retVal.reference = allocateLocalAddress(scope, sizeInfo.size, false);
    retVal.extra = sizeInfo.size;
 
    scope.syncStack();
@@ -8847,10 +8859,8 @@ ObjectInfo Compiler :: declareTempLocal(ExprScope& scope, ref_t typeRef, bool dy
 ObjectInfo Compiler :: saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo object)
 {
    if (object.kind == ObjectKind::Extern) {
-      CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
-
       auto sizeInfo = _logic->defineStructSize(*scope.moduleScope, object.typeInfo.typeRef);
-      int tempLocal = allocateLocalAddress(codeScope, sizeInfo.size, false);
+      int tempLocal = allocateLocalAddress(scope, sizeInfo.size, false);
 
       if (sizeInfo.size == 8) {
          writer.appendNode(BuildKey::SavingLongIndex, tempLocal);
@@ -10117,7 +10127,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
       ExprScope exprScope(&codeScope);
 
       // reserve the place for the next step
-      int offset = allocateLocalAddress(&codeScope, sizeof(addr_t), false);
+      int offset = allocateLocalAddress(codeScope, sizeof(addr_t), false);
 
       ObjectInfo contextField = classScope->mapField(YIELD_CONTEXT_FIELD, EAttr::None);
 
@@ -10126,7 +10136,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
       writer.appendNode(BuildKey::YieldDispatch, offset);
    }
    if (scope.isGeneric()) {
-      scope.messageLocalAddress = allocateLocalAddress(&codeScope, sizeof(mssg_t), false);
+      scope.messageLocalAddress = allocateLocalAddress(codeScope, sizeof(mssg_t), false);
       writer.appendNode(BuildKey::SavingIndex, scope.messageLocalAddress);
    }
 
@@ -11121,7 +11131,7 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
          // save the target
          ObjectInfo tempTarget = saveToTempLocal(writer, exprScope, { ObjectKind::Object });
          // save incoming message
-         scope.messageLocalAddress =  allocateLocalAddress(&codeScope, sizeof(mssg_t), false);
+         scope.messageLocalAddress =  allocateLocalAddress(codeScope, sizeof(mssg_t), false);
          writer.appendNode(BuildKey::SavingIndex, scope.messageLocalAddress);
          // unbox argument list
          writer.appendNode(BuildKey::LoadArgCount, 1);

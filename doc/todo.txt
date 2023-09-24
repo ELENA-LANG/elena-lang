@@ -9,7 +9,8 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * #47 : Evaluating an expression in a symbol
+    * examples : rosetta code sample : Fibonacci sequence,File input/output,File size,Filter,First-class functions,
+
     * ide : enable / disable toolbar buttons
     + #69 : GC info 
     * generate default constructor if there is an initializer
@@ -18,7 +19,7 @@ In development:
     * fix ldoc (List<T>, Quuee<T>, Stack<T>, VarTuple<TKey, TValue>) 
     * redirect abstract byref handler
 
-    * examples : rosetta code sample : F
+    * examples : rosetta code sample : F - First-class functions/Use numbers analogously
     * examples : calc - doesn't work
     * examples : p2, random 
     * examples : datetime

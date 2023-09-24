@@ -570,6 +570,15 @@ namespace elena_lang
             else return Scope::getScope(level);
          }
 
+         int allocLocalAddress(int size)
+         {
+            int retVal = reserved2;
+
+            reserved2 += align(size, moduleScope->rawStackAlingment);
+
+            return retVal;
+         }
+
          void save();
          void load();
 
@@ -1057,7 +1066,7 @@ namespace elena_lang
 
       void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool declarationMode);
 
-      int allocateLocalAddress(CodeScope* codeScope, int size, bool binaryArray);
+      int allocateLocalAddress(Scope& scope, int size, bool binaryArray);
 
       ObjectInfo allocateResult(ExprScope& scope, ref_t resultRef);
 
