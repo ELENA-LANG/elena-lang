@@ -1,16 +1,8 @@
-A
-{
-   int n := 2;
+import extensions;
 
-   printMe()
-   {
-      console.writeLine(n)
-   }
-}
+f(x,y){ ^ x * y }
  
 public program()
 {
-   var a := new A();
-
-   a.printMe()
+   var r := f(2,3.5);
 }

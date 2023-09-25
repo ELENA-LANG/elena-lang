@@ -5,12 +5,11 @@ In development:
   [development]
     ### EPIC: elena 6.0 - redux ###
     === Iteration 18 ===
-    [!] x86 GUI support
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * examples : rosetta code sample : First-class functions/Use numbers analogously, Function composition, Function definition
     * api : fix ldoc (List<T>, Quuee<T>, Stack<T>, VarTuple<TKey, TValue>) 
+    * x86 GUI STA support
 
     * examples : rosetta code sample : G
     * examples : calc - doesn't work
