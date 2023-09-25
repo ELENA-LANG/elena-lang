@@ -1157,7 +1157,7 @@ size_t ustr_t::find(char c, size_t defValue)
 
 size_t ustr_t::findSub(size_t index, char c, size_t defValue)
 {
-   return util_find(_string + index, c, getlength(_string), defValue - index) + index;
+   return util_find(_string + index, c, getlength(_string) - index, defValue - index) + index;
 }
 
 size_t ustr_t::findSub(size_t index, char c, size_t length, size_t defValue)
@@ -1238,7 +1238,7 @@ size_t wstr_t::find(wide_c c, size_t defValue)
 
 size_t wstr_t::findSub(size_t index, char c, size_t defValue)
 {
-   return util_find(_string + index, c, getlength(_string), defValue - index) + index;
+   return util_find(_string + index, c, getlength(_string) - index, defValue - index) + index;
 }
 
 size_t wstr_t::findSub(size_t index, char c, size_t length, size_t defValue)

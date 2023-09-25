@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 5.8: Module cellular
+ELENA Standard Library 6.0: Module cellular
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 5.8: Module cellular
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>5.8
+ELENA&nbsp;Standard&nbsp;Library<br>6.0
 </STRONG>
 </DIV>
 </DIV>
@@ -32,9 +32,20 @@ cellular'</DIV>
 <H2 title="IntMatrixSpace" class="title">IntMatrixSpace</H2>
 </DIV>
 <DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">IntMatrixSpace</SPAN></PRE>
+<BR>
+</DIV>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="cellular.html#Space">cellular'Space</A></SPAN></LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#Space">'Space</A></SPAN></LI>
 <LI>
 <UL CLASS="inheritance">
 <LI>
@@ -42,17 +53,9 @@ cellular'IntMatrixSpace</LI>
 </UL>
 </LI>
 </UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">IntMatrixSpace</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -63,26 +66,26 @@ sealed Class <SPAN CLASS="typeNameLabel">IntMatrixSpace</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntMatrix">IntMatrix</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntMatrix">IntMatrix</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theMatrix</CODE>
+<CODE>_matrix</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theN</CODE>
+<CODE>_n</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theM</CODE>
+<CODE>_m</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -91,11 +94,11 @@ sealed Class <SPAN CLASS="typeNameLabel">IntMatrixSpace</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -115,41 +118,32 @@ sealed Class <SPAN CLASS="typeNameLabel">IntMatrixSpace</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="cellular.html#IntMatrixSpace">IntMatrixSpace</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
-<!-- =========== PROPERTY SUMMARY =========== -->
+<!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Property Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Property accessor</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Rows</CODE>
+<CODE>Rows()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Columns</CODE>
+<CODE>Columns()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -167,36 +161,24 @@ sealed Class <SPAN CLASS="typeNameLabel">IntMatrixSpace</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>internalUpdate(<SPAN CLASS="memberNameLink"><A HREF="cellular.html#RuleSet">RuleSet</A></SPAN> rs, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntMatrix">IntMatrix</A></SPAN> matrix)
+<CODE>update(<SPAN CLASS="memberNameLink"><A HREF="cellular.html#RuleSet">RuleSet</A></SPAN> rs)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>update(<SPAN CLASS="memberNameLink"><A HREF="cellular.html#RuleSet">RuleSet</A></SPAN> rs)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> k, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> l, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> retVal)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> k, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> l)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="LoadedSet">
@@ -208,9 +190,20 @@ cellular'</DIV>
 <H2 title="LoadedSet" class="title">LoadedSet</H2>
 </DIV>
 <DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">LoadedSet</SPAN></PRE>
+<BR>
+</DIV>
 <UL CLASS="inheritance">
 <LI>
-<SPAN CLASS="memberNameLink"><A HREF="cellular.html#RuleSet">cellular'RuleSet</A></SPAN></LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#RuleSet">'RuleSet</A></SPAN></LI>
 <LI>
 <UL CLASS="inheritance">
 <LI>
@@ -218,17 +211,9 @@ cellular'LoadedSet</LI>
 </UL>
 </LI>
 </UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">LoadedSet</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -239,10 +224,10 @@ Class <SPAN CLASS="typeNameLabel">LoadedSet</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntMatrix">IntMatrix</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntMatrix">IntMatrix</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theSet</CODE>
+<CODE>_set</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -251,11 +236,11 @@ Class <SPAN CLASS="typeNameLabel">LoadedSet</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -269,9 +254,9 @@ Class <SPAN CLASS="typeNameLabel">LoadedSet</SPAN></PRE>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="cellular.html#LoadedSet">LoadedSet</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="cellular.html#LoadedSet">LoadedSet</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>()
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN> list)
 </CODE>
 </TD>
 </TR>
@@ -290,18 +275,70 @@ Class <SPAN CLASS="typeNameLabel">LoadedSet</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>proceed(<SPAN CLASS="memberNameLink"><A HREF="cellular.html#Space">Space</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> newState)
+<CODE>proceed(<SPAN CLASS="memberNameLink"><A HREF="cellular.html#Space">Space</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
+<HR>
+</DIV>
+<A NAME="randomSet">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+cellular'</DIV>
+<H2 title="randomSet" class="title">randomSet</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public singleton <SPAN CLASS="typeNameLabel">randomSet</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#RuleSet">'RuleSet</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+cellular'randomSet</LI>
+</UL>
 </LI>
 </UL>
-</DIV>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>proceed(<SPAN CLASS="memberNameLink"><A HREF="cellular.html#Space">Space</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
 <HR>
 </DIV>
 <A NAME="RuleSet">
@@ -317,19 +354,26 @@ cellular'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-Interface <SPAN CLASS="typeNameLabel">RuleSet</SPAN></PRE>
+abstract public class <SPAN CLASS="typeNameLabel">RuleSet</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- ========== COVERSION SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+cellular'RuleSet</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Conversion Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Conversion Method</TH>
 </TR>
 <TR CLASS="altColor">
@@ -337,8 +381,7 @@ Interface <SPAN CLASS="typeNameLabel">RuleSet</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="cellular.html#RuleSet">RuleSet</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
+<CODE><i>cast</i>()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -356,18 +399,15 @@ Interface <SPAN CLASS="typeNameLabel">RuleSet</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>proceed(<SPAN CLASS="memberNameLink"><A HREF="cellular.html#Space">Space</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> newState)
+<CODE>proceed(<SPAN CLASS="memberNameLink"><A HREF="cellular.html#Space">Space</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="Space">
@@ -383,19 +423,54 @@ cellular'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-Interface <SPAN CLASS="typeNameLabel">Space</SPAN></PRE>
+abstract public class <SPAN CLASS="typeNameLabel">Space</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+cellular'Space</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<!-- ========== COVERSION SUMMARY =========== -->
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Rows()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Columns()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Conversion Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Conversion Method</TH>
 </TR>
 <TR CLASS="altColor">
@@ -403,36 +478,7 @@ Interface <SPAN CLASS="typeNameLabel">Space</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="cellular.html#Space">Space</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- =========== PROPERTY SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Property Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Property accessor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>abstract get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Rows</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>abstract get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Columns</CODE>
+<CODE><i>cast</i>()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -459,7 +505,7 @@ Interface <SPAN CLASS="typeNameLabel">Space</SPAN></PRE>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<i>abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>update(<SPAN CLASS="memberNameLink"><A HREF="cellular.html#RuleSet">RuleSet</A></SPAN> rs)
 </CODE>
@@ -468,16 +514,7 @@ Interface <SPAN CLASS="typeNameLabel">Space</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> retVal)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
 </CODE>
@@ -486,64 +523,6 @@ Interface <SPAN CLASS="typeNameLabel">Space</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="randomSet">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-cellular'</DIV>
-<H2 title="randomSet" class="title">randomSet</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="cellular.html#RuleSet">cellular'RuleSet</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-cellular'randomSet</LI>
-</UL>
-</LI>
-</UL>
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-sealed Singleton <SPAN CLASS="typeNameLabel">randomSet</SPAN></PRE>
-<BR>
-</DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>proceed(<SPAN CLASS="memberNameLink"><A HREF="cellular.html#Space">Space</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> newState)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <DIV CLASS="bottomNav">
@@ -557,7 +536,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">randomSet</SPAN></PRE>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>5.8
+ELENA&nbsp;Standard&nbsp;Library<br>6.0
 </STRONG>
 </DIV>
 </DIV>

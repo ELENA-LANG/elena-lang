@@ -8,10 +8,12 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * api : fix ldoc (List<T>, Quuee<T>, Stack<T>, VarTuple<TKey, TValue>) 
     * x86 GUI STA support
-
+    * ldoc : fix Map<T1,T2> - type of _list field
     * examples : rosetta code sample : G
+    * api : fix ldoc (Quue<T>, Stack<T>, VarTuple<TKey, TValue>) 
+
+    * examples : rosetta code sample : H
     * examples : calc - doesn't work
     * examples : p2, random 
     * examples : datetime
