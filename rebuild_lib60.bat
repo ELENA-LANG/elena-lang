@@ -62,6 +62,11 @@ bin\elena-cli src60\cellular\cellular.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elena-cli src60\forms\forms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 bin\asm-cli -bc64 src60\core\system.core_routines.esm lib60_64
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
@@ -84,9 +89,15 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 
 bin\ldoc system doc\api
 bin\ldoc system'routines doc\api
+bin\ldoc system'runtime doc\api
+bin\ldoc system'threading doc\api
+bin\ldoc system'dynamic doc\api
+bin\ldoc system'winforms doc\api
 bin\ldoc extensions doc\api
 bin\ldoc extensions'routines doc\api
 bin\ldoc extensions'scripting doc\api
+bin\ldoc cellular doc\api
+bin\ldoc forms doc\api
 
 bin\elena-cli tests60\system_tests\system_tests.prj
 @echo off 

@@ -96,5 +96,13 @@
        <include>dynamic\tape.l</include>
        <include>dynamic\expressions\expressions.l</include>
      </module>
+     <module name="winforms">
+       <include>winforms\win_common.l</include>
+       <include>winforms\win_handles.l</include>
+       <include>winforms\win_controls.l</include>
+       <include>winforms\win_windows.l</include>
+       <include>winforms\win_dialogs.l</include>
+       <include>winforms\win_app.l</include>
+     </module>
   </files>
 </configuration>

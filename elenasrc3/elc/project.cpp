@@ -85,6 +85,11 @@ PlatformType Project :: TargetType()
    return _platform & PlatformType::TargetTypeMask;
 }
 
+PlatformType Project :: UITargetType()
+{
+   return _platform & PlatformType::UIMask;
+}
+
 PlatformType Project :: ThreadModeType()
 {
    return _platform & PlatformType::ThreadMask;

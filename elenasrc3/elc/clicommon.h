@@ -686,7 +686,7 @@ protected:
    ErrorProcessorBase* _errorProcessor;
 
 public:
-   virtual LinkResult run(ProjectBase& project, ImageProviderBase& provider) = 0;
+   virtual LinkResult run(ProjectBase& project, ImageProviderBase& provider, PlatformType uiType) = 0;
 
    LinkerBase(ErrorProcessorBase* errorProcessor)
    {

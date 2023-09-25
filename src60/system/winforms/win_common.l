@@ -1,0 +1,9 @@
+// --- message box flags ---
+public const int MB_ICONWARNING     = 00000030h;
+public const int MB_ICONEXCLAMATION = 00000030h;
+public const int MB_ICONINFORMATION = 00000040h;
+public const int MB_ICONASTERISK    = 00000040h;
+public const int MB_ICONQUESTION    = 00000020h;
+public const int MB_ICONSTOP        = 00000010h;
+public const int MB_ICONERROR       = 00000010h;
+public const int MB_ICONHAND        = 00000010h;

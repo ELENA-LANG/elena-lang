@@ -598,6 +598,8 @@ void CompilingProcess :: compile(ProjectBase& project,
 
 void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS)
 {
+   PlatformType uiType = project.UITargetType();
+
    _presenter->print(ELC_LINKING);
 
    TargetImageInfo imageInfo;
@@ -617,7 +619,7 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS
    TargetImage code(project.SystemTarget(), &project, &_libraryProvider, _jitCompilerFactory,
       imageInfo, addressMapper);
 
-   auto result = linker.run(project, code);
+   auto result = linker.run(project, code, uiType);
 
    _presenter->print(ELC_SUCCESSFUL_LINKING);
 
@@ -704,6 +706,7 @@ int CompilingProcess :: build(Project& project,
       // generating target when required
       switch (targetType) {
          case PlatformType::Console:
+         case PlatformType::GUI:
             link(project, linker, false);
             break;
          case PlatformType::MTA_Console:

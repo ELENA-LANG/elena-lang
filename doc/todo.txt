@@ -8,8 +8,8 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * examples : rosetta code sample : Generate lower case ASCII alphabet,Generic swap,Greatest common divisor,Greatest element of a list,Guess the number
     * x86 GUI STA support
+    * ldoc : internal constructor
     * ldoc : fix Map<T1,T2> - type of _list field
     * examples : rosetta code sample : G, Guess the number/With feedback
     * api : fix ldoc (Quue<T>, Stack<T>, VarTuple<TKey, TValue>) 

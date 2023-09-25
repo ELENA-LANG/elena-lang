@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Executive Linker class declaration
 //		Supported platforms: Win64
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef NTLINKER64_H
@@ -16,7 +16,7 @@ namespace elena_lang
    class Win64NtLinker : public WinNtLinker
    {
    protected:
-      void prepareNtImage(ImageProviderBase& provider, WinNtExecutableImage& image) override;
+      void prepareNtImage(ImageProviderBase& provider, WinNtExecutableImage& image, PlatformType uiType) override;
 
       void writeNtHeader(WinNtExecutableImage& image, FileWriter& file) override;
 

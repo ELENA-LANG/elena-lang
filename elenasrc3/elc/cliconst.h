@@ -13,7 +13,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x01EE
+   #define ELC_REVISION_NUMBER               0x01EF
 
 #if defined _M_IX86 || _M_X64
 
@@ -59,6 +59,8 @@ namespace elena_lang
                return VM_CONSOLE_KEY;
             case PlatformType::Library:
                return LIBRARY_KEY;
+            case PlatformType::GUI_App:
+               return VM_GUI_KEY;
             default:
                return "undefined";
          }
@@ -71,6 +73,8 @@ namespace elena_lang
                return MT_CONSOLE_KEY;
             case PlatformType::Library:
                return LIBRARY_KEY;
+            case PlatformType::GUI_App:
+               return GUI_KEY;
             default:
                return "undefined";
          }

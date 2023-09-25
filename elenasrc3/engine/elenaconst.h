@@ -243,6 +243,8 @@ namespace elena_lang
       Library        = 0x00000,
       Console        = 0x01000,
       MTA_Console    = 0x11000,
+      GUI_App        = 0x02000,
+
    };
 
    // --- ELENA Debug symbol constants ---
