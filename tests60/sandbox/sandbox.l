@@ -1,9 +1,16 @@
+A
+{
+   int n := 2;
 
-import extensions;
-
-symbol C        = 2.0 / 3.0;
-
+   printMe()
+   {
+      console.writeLine(n)
+   }
+}
+ 
 public program()
 {
-   console.writeLine(C)
+   var a := new A();
+
+   a.printMe()
 }

@@ -3113,6 +3113,14 @@ inline bool isNested(BuildKey key)
       case BuildKey::ExternOp:
       case BuildKey::ShortCircuitOp:
       case BuildKey::BranchOp:
+      case BuildKey::FinalOp:
+      case BuildKey::IntBranchOp:
+      case BuildKey::IntConstBranchOp:
+      case BuildKey::RealBranchOp:
+      case BuildKey::YieldingOp:
+      case BuildKey::SwitchOption:
+      case BuildKey::ElseOption:
+      case BuildKey::StackCondOp:
       case BuildKey::Tape:
          return true;
       default:
