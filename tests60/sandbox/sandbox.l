@@ -1,8 +1,22 @@
 import extensions;
-
-f(x,y){ ^ x * y }
  
 public program()
 {
-   var r := f(2,3.5);
+    int randomNumber := randomGenerator.nextInt(1,10);
+    console.printLine("I'm thinking of a number between 1 and 10.  Can you guess it?");
+    bool numberCorrect := false;
+    until(numberCorrect)
+    {
+        console.print("Guess: ");
+        int userGuess := console.readLine().toInt();
+        if (randomNumber == userGuess)
+        {
+            numberCorrect := true;
+            console.printLine("Congrats!!  You guessed right!")
+        }
+        else
+        {
+            console.printLine("That's not it.  Guess again.")
+        }
+    }
 }

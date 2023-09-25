@@ -206,6 +206,9 @@ public extension convertorOp
 
    real toReal()
       = realConvertor.convert:self;
+
+   char toChar()
+      = charConvertor.convert:self;
 }
 
 // --- convertor ---

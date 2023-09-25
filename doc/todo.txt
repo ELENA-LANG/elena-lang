@@ -8,9 +8,10 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
+    * examples : rosetta code sample : Generate lower case ASCII alphabet,Generic swap,Greatest common divisor,Greatest element of a list,Guess the number
     * x86 GUI STA support
     * ldoc : fix Map<T1,T2> - type of _list field
-    * examples : rosetta code sample : G
+    * examples : rosetta code sample : G, Guess the number/With feedback
     * api : fix ldoc (Quue<T>, Stack<T>, VarTuple<TKey, TValue>) 
 
     * examples : rosetta code sample : H
@@ -43,8 +44,9 @@ In development:
     + test finally block with locally allocated variables
     * test if with unknown object
 
-    * api : provide field descriptions
-    * api : see #618
+    * ldoc : generates html files for non-existing namespace (system-routines-system-summary.html)
+    * ldoc : provide field descriptions
+    * ldoc : see #618
 
     * elt - exception handler
     * asmc : raise an error if the label was not resolved

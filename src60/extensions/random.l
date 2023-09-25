@@ -8,11 +8,11 @@ struct Seed
    int z4;
 }
 
-sealed struct RandomGenerator
+public sealed struct RandomGenerator
 {
    Seed _seed;
     
-   constructor()
+   internal constructor()
    {
       extern GetRandomSeedLA(_seed);
    }
@@ -58,7 +58,7 @@ sealed struct RandomGenerator
 }
 
 // --- randomGenerator ---
-public static randomGenerator = new RandomGenerator();
+public static RandomGenerator randomGenerator = new RandomGenerator();
 
 // -- ERandomizer --
 
