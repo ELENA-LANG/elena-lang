@@ -65,6 +65,8 @@ namespace elena_lang
       RecentList        _recentFileList;
       RecentList        _recentProjectList;
 
+      void enableMenuItemById(int id, bool doEnable, bool toolBarItemAvailable);
+
       void onStatusChange(StatusNMHDR* rec);
       void onSelection(SelectionNMHDR* rec);
       void onTreeItem(TreeItemNMHDR* rec);

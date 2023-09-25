@@ -9,14 +9,10 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * ide : enable / disable toolbar buttons
-    * examples : rosetta code sample : F - First-class functions/Use numbers analogously
+    * examples : rosetta code sample : First-class functions/Use numbers analogously, Function composition, Function definition
+    * api : fix ldoc (List<T>, Quuee<T>, Stack<T>, VarTuple<TKey, TValue>) 
 
-    * raise an error if the constructor does not handle the argument (if the multimethod is auto generated)
-    * calling variadic method directly : without arguments
-    * fix ldoc (List<T>, Quuee<T>, Stack<T>, VarTuple<TKey, TValue>) 
-    * redirect abstract byref handler
-
+    * examples : rosetta code sample : G
     * examples : calc - doesn't work
     * examples : p2, random 
     * examples : datetime
@@ -34,42 +30,45 @@ In development:
     * review extensions warnings
     * migrate the rest of system (win32_pointers.l)
     * api : uncomment ExtensionDispatcher and SymbolCollection
-
-    * new unit test : dispatchmr (both function and normal one)
-    * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
-    * string to real : support e notation
-    * api : provide field descriptions
-    * elt - exception handler
-    * closure should be sealed
-    * boolean operators : &&, ||, ^^ - weak implementation
-    * inno setup : x86, x86-64
-    * elenavm : implementing loadDispatcherOverloadlist
-    * elenavm : implementing rest of dll api
     * conversion to int - raise an error if not valid
-    * #15 : return double / long from external function
     * toPrintable should return both wide and string
+    * string to real : support e notation
     * pi & e constants
     * repeate-until statements
-    * primitive operations : support all comparision operations (not only <, == and !=)
-    * optimization: it should be possible to convert int liteal directly to v_int8 / v_int16 / v_int64,
-      depending on the value size
-    * inside the method, "$name __decl" should return the method full name?
-    * do load self for expression with ret statement
+    * raise an error if the constructor does not handle the argument (if the multimethod is auto generated)
+
+    * new unit test : dispatchmr (both function and normal one)
+    * test binary file reader / writer
+    + test finally block with locally allocated variables
+    * test if with unknown object
+
+    * api : provide field descriptions
+    * api : see #618
+
+    * elt - exception handler
+    * asmc : raise an error if the label was not resolved
+
+    * #15 : return double / long from external function
+    * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
+    * closure should be sealed
+    * boolean operators : &&, ||, ^^ - weak implementation
     * nested class cannot have static methods
-    * generic extension - should the output type be set? 
-    * use direct reference for - BoolValue#true.Inverted
-    * equal native bool operation
-    * static symbol should be thread-safe
-    * editor - do we need checkmode? it seems like not
+    * inside the method, "$name __decl" should return the method full name?
+    * constructor - single dispatcher
     * ncopy / lcopy
+    * static symbol should be thread-safe
     * module template - to include basic import statement
     * module template - probably should include meta dictionary for attributes / types / ...
-    * asmc : raise an error if the label was not resolved
-    + test finally block with locally allocated variables
-    + optimize a ? b : c - do not use branching
-    * test if with unknown object
-    * test binary file reader / writer
-    * constructor - single dispatcher
+    * generic extension - should the output type be set? 
+    * do load self for expression with ret statement
+    * use direct reference for - BoolValue#true.Inverted
+    * calling variadic method directly : without arguments
+    * redirect abstract byref handler
+
+    * inno setup : x86, x86-64
+
+    * elenavm : implementing loadDispatcherOverloadlist
+    * elenavm : implementing rest of dll api
 
     === Iteration 19 ===
     [!] x86 mta support

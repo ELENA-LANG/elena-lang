@@ -12,6 +12,7 @@
 
 #include "windows/wintreeview.h"
 #include "windows/wintabbar.h"
+#include "windows/wintoolbar.h"
 #include "windows/winmenu.h"
 #include "windows/wintextframe.h"
 
@@ -434,6 +435,18 @@ void IDEWindow :: onDebugWatchBrowse(size_t item, size_t param)
    }
 }
 
+void IDEWindow :: enableMenuItemById(int id, bool doEnable, bool toolBarItemAvailable)
+{
+   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+
+   menu->enableMenuItemById(id, doEnable);
+   if (toolBarItemAvailable) {
+      ToolBar* toolBar = dynamic_cast<ToolBar*>(_children[_model->ideScheme.toolBarControl]);
+
+      toolBar->enableItemById(id, doEnable);
+   }
+}
+
 void IDEWindow :: onProjectChange(bool empty)
 {
    TreeView* projectTree = dynamic_cast<TreeView*>(_children[_model->ideScheme.projectView]);
@@ -489,17 +502,16 @@ void IDEWindow :: onProjectChange(bool empty)
 
    toggleProjectView(!empty);
 
-   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-   menu->enableMenuItemById(IDM_PROJECT_CLOSE, !empty);
-   menu->enableMenuItemById(IDM_FILE_SAVEPROJECT, !empty);
+   enableMenuItemById(IDM_PROJECT_CLOSE, !empty, true);
+   enableMenuItemById(IDM_FILE_SAVEPROJECT, !empty, false);
 
-   menu->enableMenuItemById(IDM_PROJECT_COMPILE, !empty);
-   menu->enableMenuItemById(IDM_PROJECT_OPTION, !empty);
-   menu->enableMenuItemById(IDM_DEBUG_RUN, !empty);
-   menu->enableMenuItemById(IDM_DEBUG_STEPINTO, !empty);
-   menu->enableMenuItemById(IDM_DEBUG_STEPOVER, !empty);
-   menu->enableMenuItemById(IDM_DEBUG_RUNTO, !empty);
-   menu->enableMenuItemById(IDM_DEBUG_STOP, !empty);
+   enableMenuItemById(IDM_PROJECT_COMPILE, !empty, false);
+   enableMenuItemById(IDM_PROJECT_OPTION, !empty, false);
+   enableMenuItemById(IDM_DEBUG_RUN, !empty, true);
+   enableMenuItemById(IDM_DEBUG_STEPINTO, !empty, true);
+   enableMenuItemById(IDM_DEBUG_STEPOVER, !empty, true);
+   enableMenuItemById(IDM_DEBUG_RUNTO, !empty, false);
+   enableMenuItemById(IDM_DEBUG_STOP, !empty, true);
 }
 
 void IDEWindow :: onLayoutChange(NotificationStatus status)
@@ -524,97 +536,58 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
    menu->checkMenuItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
    menu->checkMenuItemById(IDM_VIEW_VMCONSOLE, _children[_model->ideScheme.vmConsoleControl]->visible());
 
-   menu->enableMenuItemById(IDM_FILE_SAVE, !empty);
-   menu->enableMenuItemById(IDM_FILE_SAVEALL, !empty);
-   menu->enableMenuItemById(IDM_FILE_SAVEAS, !empty);
-   menu->enableMenuItemById(IDM_FILE_CLOSE, !empty);
-   menu->enableMenuItemById(IDM_FILE_CLOSEALL, !empty);
+   enableMenuItemById(IDM_FILE_SAVE, !empty, true);
+   enableMenuItemById(IDM_FILE_SAVEALL, !empty, true);
+   enableMenuItemById(IDM_FILE_SAVEAS, !empty, false);
+   enableMenuItemById(IDM_FILE_CLOSE, !empty, true);
+   enableMenuItemById(IDM_FILE_CLOSEALL, !empty, false);
 
    if (empty) {
-      menu->enableMenuItemById(IDM_EDIT_UNDO, false);
-      menu->enableMenuItemById(IDM_EDIT_REDO, false);
+      enableMenuItemById(IDM_EDIT_UNDO, false, true);
+      enableMenuItemById(IDM_EDIT_REDO, false, true);
       
-      menu->enableMenuItemById(IDM_EDIT_CUT, false);
-      menu->enableMenuItemById(IDM_EDIT_COPY, false);
-      menu->enableMenuItemById(IDM_EDIT_PASTE, false);
+      enableMenuItemById(IDM_EDIT_CUT, false, true);
+      enableMenuItemById(IDM_EDIT_COPY, false, true);
+      enableMenuItemById(IDM_EDIT_PASTE, false, true);
 
-      menu->enableMenuItemById(IDM_PROJECT_INCLUDE, false);
+      enableMenuItemById(IDM_PROJECT_INCLUDE, false, false);
    }
    else {
-      menu->enableMenuItemById(IDM_EDIT_PASTE, true);
+      enableMenuItemById(IDM_EDIT_PASTE, true, true);
 
-      menu->enableMenuItemById(IDM_PROJECT_INCLUDE, true);
+      enableMenuItemById(IDM_PROJECT_INCLUDE, true, false);
    }
 
-   menu->enableMenuItemById(IDM_EDIT_DELETE, !empty);
-   menu->enableMenuItemById(IDM_EDIT_COMMENT, !empty);
-   menu->enableMenuItemById(IDM_EDIT_UNCOMMENT, !empty);
+   enableMenuItemById(IDM_EDIT_DELETE, !empty, false);
+   enableMenuItemById(IDM_EDIT_COMMENT, !empty, false);
+   enableMenuItemById(IDM_EDIT_UNCOMMENT, !empty, false);
 
-   menu->enableMenuItemById(IDM_EDIT_DUPLICATE, !empty);
-   menu->enableMenuItemById(IDM_EDIT_SELECTALL, !empty);
-   menu->enableMenuItemById(IDM_EDIT_ERASELINE, !empty);
-   menu->enableMenuItemById(IDM_EDIT_INDENT, !empty);
-   menu->enableMenuItemById(IDM_EDIT_OUTDENT, !empty);
-   menu->enableMenuItemById(IDM_EDIT_TRIM, !empty);
-   menu->enableMenuItemById(IDM_EDIT_UPPERCASE, !empty);
-   menu->enableMenuItemById(IDM_EDIT_LOWERCASE, !empty);
+   enableMenuItemById(IDM_EDIT_DUPLICATE, !empty, false);
+   enableMenuItemById(IDM_EDIT_SELECTALL, !empty, false);
+   enableMenuItemById(IDM_EDIT_ERASELINE, !empty, false);
+   enableMenuItemById(IDM_EDIT_INDENT, !empty, false);
+   enableMenuItemById(IDM_EDIT_OUTDENT, !empty, false);
+   enableMenuItemById(IDM_EDIT_TRIM, !empty, false);
+   enableMenuItemById(IDM_EDIT_UPPERCASE, !empty, false);
+   enableMenuItemById(IDM_EDIT_LOWERCASE, !empty, false);
 
-   menu->enableMenuItemById(IDM_SEARCH_FIND, !empty);
-   menu->enableMenuItemById(IDM_SEARCH_FINDNEXT, !empty);
-   menu->enableMenuItemById(IDM_SEARCH_REPLACE, !empty);
-   menu->enableMenuItemById(IDM_SEARCH_GOTOLINE, !empty);
+   enableMenuItemById(IDM_SEARCH_FIND, !empty, false);
+   enableMenuItemById(IDM_SEARCH_FINDNEXT, !empty, false);
+   enableMenuItemById(IDM_SEARCH_REPLACE, !empty, false);
+   enableMenuItemById(IDM_SEARCH_GOTOLINE, !empty, false);
 
-   menu->enableMenuItemById(IDM_WINDOW_WINDOWS, !empty);
-   menu->enableMenuItemById(IDM_WINDOW_NEXT, !empty);
-   menu->enableMenuItemById(IDM_WINDOW_PREVIOUS, !empty);
+   enableMenuItemById(IDM_WINDOW_WINDOWS, !empty, false);
+   enableMenuItemById(IDM_WINDOW_NEXT, !empty, false);
+   enableMenuItemById(IDM_WINDOW_PREVIOUS, !empty, false);
 
-   menu->enableMenuItemById(IDM_DEBUG_CLEARBREAKPOINT, !empty);
-   menu->enableMenuItemById(IDM_DEBUG_BREAKPOINT, !empty);
+   enableMenuItemById(IDM_DEBUG_CLEARBREAKPOINT, !empty, false);
+   enableMenuItemById(IDM_DEBUG_BREAKPOINT, !empty, false);
 
    onResize();
 
    if (!empty)
       _children[_model->ideScheme.textFrameId]->refresh();
 }
-
-
-//void IDEWindow :: onIDEViewUpdate(bool forced)
-//{
-//   auto doc = _model->viewModel()->DocView();
-//   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-//
-//   IDESttus status =
-//   {
-//      doc != nullptr,
-//      !_model->projectModel.empty,
-//      _controller->projectController.isStarted()
-//   };
-//
-//   if (doc != nullptr) {
-//      status.canUndo = doc->canUndo();
-//      status.canRedo = doc->canRedo();
-//      status.hasSelection = doc->hasSelection();
-//   }
-//
-//   if (forced || status.hasDocument != _ideStatus.hasDocument) {
-//
-//      menu->enableMenuItemById(IDM_EDIT_PASTE, status.hasDocument);
-//   }
-//
-//   if (forced || status.hasProject != _ideStatus.hasProject) {
-//      menu->enableMenuItemById(IDM_PROJECT_COMPILE, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_RUN, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_STEPINTO, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_STEPOVER, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_RUNTO, status.hasProject);
-//   }
-//
-//   if (forced || status.running != _ideStatus.running) {
-//      onDebuggerUpdate(status.running);
-//   }
-//
-//   _ideStatus = status;
-//}
 
 void IDEWindow :: onTextFrameChange(NotificationStatus status)
 {
