@@ -59,6 +59,7 @@ inline bool isSelfCall(ObjectInfo target)
       case ObjectKind::SelfBoxableLocal:
          //case okOuterSelf:
       case ObjectKind::ClassSelf:
+      case ObjectKind::ConstructorSelf:
       //case okInternalSelf:
          return true;
       default:
@@ -3270,7 +3271,7 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
       methodScope.info.hints |= (ref_t)MethodHint::Normal;
    }
    else if (methodScope.checkHint(MethodHint::Constructor)) {
-      if (abstractMode && !methodScope.isPrivate()) {
+      if (abstractMode && !methodScope.isPrivate() && !methodScope.isProtected()) {
          // abstract class cannot have public constructors
          methodScope.raiseError(errIllegalConstructorAbstract, node);
       }
@@ -4501,6 +4502,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       case ObjectKind::ParamReference:
       case ObjectKind::SelfBoxableLocal:
       case ObjectKind::ByRefParamAddress:
+      case ObjectKind::ConstructorSelf:
          writer.appendNode(BuildKey::Local, info.reference);
          break;
       case ObjectKind::LocalField:
@@ -6191,7 +6193,8 @@ ObjectInfo Compiler :: mapClassSymbol(Scope& scope, ref_t classRef)
       retVal.typeInfo = { classClassRef };
 
       ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
-      if (classScope != nullptr && classScope->reference == retVal.typeInfo.typeRef) {
+      if (classScope != nullptr && (classScope->reference == retVal.typeInfo.typeRef))
+      {
          retVal.kind = ObjectKind::ClassSelf;
       }
 
@@ -10103,6 +10106,16 @@ inline void clearYieldContext()
 //   writer.appendNode(BuildKey::SavingStackDump);
 }
 
+ObjectInfo Compiler :: mapConstructorTarget(MethodScope& scope)
+{
+   ObjectInfo classSymbol = mapClassSymbol(scope, scope.getClassRef());
+
+   if (!test(scope.message, FUNCTION_MESSAGE)) {
+      return { ObjectKind::ConstructorSelf, classSymbol.typeInfo, scope.selfLocal, classSymbol.reference };
+   }
+   else return classSymbol;
+}
+
 void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classScope, MethodScope& scope, CodeScope& codeScope,
    SyntaxNode node, bool newFrame)
 {
@@ -10153,8 +10166,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
          break;
       case SyntaxKey::ResendDispatch:
          retVal = compileResendCode(writer, codeScope,
-            scope.constructorMode ?
-               mapClassSymbol(scope, scope.getClassRef()) : scope.mapSelf(),
+            scope.constructorMode ? mapConstructorTarget(scope) : scope.mapSelf(),
             bodyNode);
 
          if (codeScope.isByRefHandler() && retVal.kind != ObjectKind::Unknown) {
@@ -10398,20 +10410,36 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
 
       ObjectInfo target = source;
       if (superMode) {
-         if (source.kind == ObjectKind::SelfLocal) {
-            source.kind = ObjectKind::SuperLocal;
-            target = source;
-         }
-         else if (source.kind == ObjectKind::Class) {
-            // NOTE : for the constructor redirect - use the class parent as a target (still keeping the original class
-            // as a parameter)
-            ClassInfo classInfo;
-            if (_logic->defineClassInfo(*codeScope.moduleScope, classInfo, source.reference, true)) {
-               target = mapClassSymbol(codeScope, classInfo.header.parentRef);
+         switch (source.kind) {
+            case ObjectKind::SelfLocal:
+               source.kind = ObjectKind::SuperLocal;
+               target = source;
+               break;
+            case ObjectKind::ConstructorSelf:
+            case ObjectKind::Class:
+            case ObjectKind::ClassSelf:
+            {
+               // NOTE : for the constructor redirect - use the class parent as a target (still keeping the original class
+               // as a parameter)
+               ClassInfo classInfo;
+               if (_logic->defineClassInfo(*codeScope.moduleScope, classInfo, 
+                  source.kind == ObjectKind::ConstructorSelf ? source.extra : source.reference, 
+                  true)) 
+               {
+                  ObjectInfo temp = mapClassSymbol(codeScope, classInfo.header.parentRef);
+                  if (source.kind == ObjectKind::ConstructorSelf) {
+                     target.typeInfo = temp.typeInfo;
+                     target.extra = temp.reference;
+                  }
+                  else target = temp;
+               }
+               else codeScope.raiseError(errInvalidOperation, node);
+               break;
             }
-            else codeScope.raiseError(errInvalidOperation, node);
+            default:
+               codeScope.raiseError(errInvalidOperation, node);
+               break;
          }
-         else codeScope.raiseError(errInvalidOperation, node);
       }
 
       ExprScope scope(&codeScope);
@@ -10846,7 +10874,7 @@ void Compiler :: compileDefConvConstructorCode(BuildTreeWriter& writer, MethodSc
 }
 
 void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
-   ClassScope& classClassScope, SyntaxNode node)
+   ClassScope& classClassScope, SyntaxNode node, bool abstractMode)
 {
    bool isProtectedDefConst = false;
    bool isDefConvConstructor = isDefaultOrConversionConstructor(scope, scope.message, scope.checkHint(MethodHint::Internal), isProtectedDefConst);
@@ -10862,6 +10890,9 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
       // if private default constructor is declared - use it
       defConstrMssg = defConstrMssg | STATIC_MESSAGE;
    }
+
+   // NOTE : special case - abstract class with a protected constructor
+   bool protectedAbstractMode = scope.isProtected() && abstractMode;
 
    beginMethod(writer, scope, node, BuildKey::Method, true);
 
@@ -10893,7 +10924,8 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
       writer.appendNode(BuildKey::OpenFrame);
       newFrame = true;
    }
-   else if (!test(classFlags, elDynamicRole) && classClassScope.info.methods.exist(defConstrMssg))
+   else if (!test(classFlags, elDynamicRole) 
+      && (classClassScope.info.methods.exist(defConstrMssg) || protectedAbstractMode))
    {
       if (scope.checkHint(MethodHint::Multimethod)) {
          // NOTE : the dispatch statement must be before the default constructor call
@@ -11295,7 +11327,7 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
             _errorProcessor->info(infoCurrentMethod, *messageName);
 #endif // FULL_OUTOUT_INFO
 
-            compileConstructor(writer, methodScope, classClassScope, current);
+            compileConstructor(writer, methodScope, classClassScope, current, scope.isAbstract());
             break;
          }
          default:

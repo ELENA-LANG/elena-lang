@@ -42,6 +42,9 @@ namespace elena_lang
       Symbol,
       Class,
       ClassSelf,
+      // NOTE : used for the constructor resend operation
+      // it is a message self argument
+      ConstructorSelf, 
       Method,
       Object,
       Singleton,
@@ -177,7 +180,15 @@ namespace elena_lang
          this->kind = kind;
          this->typeInfo = typeInfo;
          this->reference = reference;
-         this->extra = extra;
+         this->extra = (int)extra;
+         mode = TargetMode::None;
+      }
+      ObjectInfo(ObjectKind kind, TypeInfo typeInfo, int argument, ref_t extra)
+      {
+         this->kind = kind;
+         this->typeInfo = typeInfo;
+         this->reference = argument;
+         this->extra = (int)extra;
          mode = TargetMode::None;
       }
       ObjectInfo(ObjectKind kind, TypeInfo typeInfo, ref_t reference, int extra)
@@ -636,6 +647,11 @@ namespace elena_lang
             return test(info.header.flags, elClassClass);
          }
 
+         bool isAbstract()
+         {
+            return test(info.header.flags, elAbstract);
+         }
+
          ObjectInfo mapMember(ustr_t identifier) override;
 
          virtual ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr);
@@ -712,6 +728,11 @@ namespace elena_lang
          bool isPrivate() const
          {
             return test(message, STATIC_MESSAGE);
+         }
+
+         bool isProtected() const
+         {
+            return test(info.hints, (ref_t)MethodHint::Protected);
          }
 
          static bool checkHint(MethodInfo& methodInfo, MethodHint hint)
@@ -1005,6 +1026,7 @@ namespace elena_lang
 
       ExternalInfo mapExternal(Scope& scope, SyntaxNode node);
       ObjectInfo mapClassSymbol(Scope& scope, ref_t classRef);
+      ObjectInfo mapConstructorTarget(MethodScope& scope);
 
       ref_t mapNested(ExprScope& ownerScope, ExpressionAttribute mode);
       ref_t mapConstantReference(Scope& scope);
@@ -1367,7 +1389,8 @@ namespace elena_lang
       void compileExpressionMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode);
       void compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
-      void compileConstructor(BuildTreeWriter& writer, MethodScope& scope, ClassScope& classClassScope, SyntaxNode node);
+      void compileConstructor(BuildTreeWriter& writer, MethodScope& scope, ClassScope& classClassScope, 
+         SyntaxNode node, bool abstractMode);
       void compileCustomDispatcher(BuildTreeWriter& writer, ClassScope& scope);
       void compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef);
       void compileClosureClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node);

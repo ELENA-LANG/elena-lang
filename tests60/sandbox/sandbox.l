@@ -1,22 +1,27 @@
 import extensions;
+
+abstract class Base
+{
+   protected constructor new()
+   {
+   }   
+}
+
+abstract class A : Base
+{
+   protected constructor new()
+      <= super new();
+}
  
+B : A
+{
+   constructor new()
+      <= super new()
+   {
+   }
+}
+
 public program()
 {
-    int randomNumber := randomGenerator.nextInt(1,10);
-    console.printLine("I'm thinking of a number between 1 and 10.  Can you guess it?");
-    bool numberCorrect := false;
-    until(numberCorrect)
-    {
-        console.print("Guess: ");
-        int userGuess := console.readLine().toInt();
-        if (randomNumber == userGuess)
-        {
-            numberCorrect := true;
-            console.printLine("Congrats!!  You guessed right!")
-        }
-        else
-        {
-            console.printLine("That's not it.  Guess again.")
-        }
-    }
+   var b := B.new();
 }

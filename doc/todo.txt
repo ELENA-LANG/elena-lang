@@ -9,6 +9,7 @@ In development:
     [!] api functionality for existing classes : rest of system
 
     * x86 GUI STA support
+
     * ldoc : internal constructor
     * ldoc : fix Map<T1,T2> - type of _list field
     * examples : rosetta code sample : G, Guess the number/With feedback
@@ -67,6 +68,7 @@ In development:
     * use direct reference for - BoolValue#true.Inverted
     * calling variadic method directly : without arguments
     * redirect abstract byref handler
+    * warn on redirect to itself
 
     * inno setup : x86, x86-64
 
