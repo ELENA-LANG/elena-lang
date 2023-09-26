@@ -96,6 +96,9 @@
        <include>dynamic\tape.l</include>
        <include>dynamic\expressions\expressions.l</include>
      </module>
+     <module name="drawing">
+       <include>drawing\common.l</include>
+     </module>
      <module name="winforms">
        <include>winforms\win_common.l</include>
        <include>winforms\win_handles.l</include>

@@ -11,7 +11,7 @@ public class Exception
    }
 
    constructor new()
-      <= weak new(self.__getClassName());
+      <= new(self.__getClassName());
 
    on(handler) : external(system'core_routines'__exception_handler); 
 
