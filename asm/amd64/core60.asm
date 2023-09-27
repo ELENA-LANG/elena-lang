@@ -752,6 +752,24 @@ inline %02Fh
 
 end
 
+
+// ; attach
+inline %030h
+
+  push 0 
+  push rbp     
+  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+
+end
+
+// ; detach
+inline %031h
+
+  pop  rbp
+  add  rsp, 4
+
+end
+
 // ; fadd
 inline %070h
 

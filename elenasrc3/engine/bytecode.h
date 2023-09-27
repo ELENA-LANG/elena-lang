@@ -67,6 +67,9 @@ namespace elena_lang
       XGet           = 0x2E,
       XCall          = 0x2F,
 
+      Attach         = 0x30,
+      Detach         = 0x31,
+
       FIAdd          = 0x70,
       FISub          = 0x71,
       FIMul          = 0x72,

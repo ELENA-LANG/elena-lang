@@ -624,6 +624,9 @@ bool ByteCodeAssembler :: compileOpIN(ScriptToken& tokenInfo, MemoryWriter& writ
 bool ByteCodeAssembler :: compileOpII(ScriptToken& tokenInfo, MemoryWriter& writer,
    ByteCommand& command, bool skipRead)
 {
+   if (tokenInfo.compare(":"))
+      read(tokenInfo);
+
    command.arg1 = readI(tokenInfo, skipRead);
 
    read(tokenInfo, ",", ASM_COMMA_EXPECTED);
@@ -631,6 +634,8 @@ bool ByteCodeAssembler :: compileOpII(ScriptToken& tokenInfo, MemoryWriter& writ
    command.arg2 = readI(tokenInfo);
 
    ByteCodeUtil::write(writer, command);
+
+   read(tokenInfo);
 
    return true;
 }
@@ -781,12 +786,24 @@ bool ByteCodeAssembler :: compileCallExt(ScriptToken& tokenInfo, MemoryWriter& w
    else return false;
 
    ReferenceName function(RT_FORWARD);
-   function.append(".");
-   function.append(*tokenInfo.token);
 
-   command.arg1 = _module->mapReference(*function) | mskExternalRef;
+   functionName.copy(*tokenInfo.token);
 
    read(tokenInfo);
+   if (tokenInfo.compare(".")) {
+      read(tokenInfo);
+
+      function.copy(*functionName);
+      functionName.copy(*tokenInfo.token);
+
+      read(tokenInfo);
+   }
+
+   function.append(".");
+   function.append(*functionName);
+
+   command.arg1 = _module->mapReference(*function) | mskExternalRef;
+   
    if (tokenInfo.compare("(")) {
       List<Operand> args(Operand::Default());
 
@@ -953,6 +970,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::CloseN:
             return compileCloseOpN(tokenInfo, writer, opCommand, dataSize, constants);
          case ByteCode::MovSIFI:
+         case ByteCode::XMovSISI:
             return compileOpII(tokenInfo, writer, opCommand, true);
          case ByteCode::StoreFI:
          case ByteCode::CmpFI:

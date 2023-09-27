@@ -751,6 +751,21 @@ inline %02Fh
 
 end
 
+// ; attach
+inline %030h
+
+  push ebp     
+  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+
+end
+
+// ; detach
+inline %031h
+
+  pop  ebp
+
+end
+
 // ; fiadd
 inline %070h
 

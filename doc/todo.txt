@@ -8,6 +8,8 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
+    * new opcodes : attach, detach
+
     * x86 GUI STA support
 
     * ldoc : internal constructor
@@ -33,12 +35,7 @@ In development:
     * review extensions warnings
     * migrate the rest of system (win32_pointers.l)
     * api : uncomment ExtensionDispatcher and SymbolCollection
-    * conversion to int - raise an error if not valid
-    * toPrintable should return both wide and string
-    * string to real : support e notation
-    * pi & e constants
     * repeate-until statements
-    * raise an error if the constructor does not handle the argument (if the multimethod is auto generated)
 
     * new unit test : dispatchmr (both function and normal one)
     * test binary file reader / writer
@@ -52,6 +49,7 @@ In development:
     * elt - exception handler
     * asmc : raise an error if the label was not resolved
 
+    * do we need open header at all? it looks like the complete copy of open?
     * #15 : return double / long from external function
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
     * closure should be sealed

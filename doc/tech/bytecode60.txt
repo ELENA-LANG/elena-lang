@@ -172,10 +172,17 @@ ELENA byte codes (or ecodes)
    alloc i                  - sp += i ; reserve and fill with zeros; 
                               new sp value is aligned to 2 in x86-64 mode
 
+   attach                   - include the exluded managed frame link;
+                              should immediately preceed open opcode
+
    convl                    - index => long:index
 
    dalloc                   - sp += index ; reserve and fill with zeros; 
                               new sp value is aligned to 2 in x86-64 mode
+
+   detach                   - deatching the current from;
+                              has to immediately follow close opcode;
+                              has to be paired with attach opcode
 
    free i                   - sp -= i ; release the stack; 
                               new sp value is aligned to 2 in x86-64 mode

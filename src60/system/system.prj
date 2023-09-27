@@ -41,6 +41,7 @@
         <include>messaging.l</include>
         <include>closures.l</include>
         <include>convertors.l</include>
+        <include>pointers.l</include>
         <include>win_basic.l</include>
         <include>dynamic.l</include>
         <include>exceptions.l</include>
@@ -101,6 +102,7 @@
      </module>
      <module name="winforms">
        <include>winforms\win_common.l</include>
+       <include>winforms\win32_exceptions.l</include>
        <include>winforms\win_handles.l</include>
        <include>winforms\win_controls.l</include>
        <include>winforms\win_windows.l</include>

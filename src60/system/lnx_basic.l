@@ -10,13 +10,6 @@ public sealed const struct Handle
    }
 }
 
-// --- UnsafePointer ---
-
-public sealed const struct UnsafePointer
-{
-   embeddable __ptr pointer;
-}
-
 // --- CallStack ---
 
 public sealed class CallStack

@@ -32,8 +32,8 @@ public closed class SDIForm : BaseWinForm
                             styles,
                             x, y, width, height,
                             WindowHandle.Default, 
-                            CurrentInstance,
-                            new SDIWindowListener(self))
+                            CurrentInstance//,
+                            /*new SDIWindowListener(self)*/)
    }
 }
 
@@ -48,21 +48,23 @@ public class SDIDialog : SDIForm
 
    internal createHandle()
    {
-      int styles := WS_POPUPWINDOW || WS_DLGFRAME;
-      if(theVisible)
-         { styles := styles || WS_VISIBLE };
+      int styles := WS_DIALOGWINDOW;
+      if(_visible)
+         { styles := styles | WS_VISIBLE };
         
-      theRegion.read(ref int x, ref int y, ref int width, ref int height);
+      _region.read(ref int x, ref int y, ref int width, ref int height);
         
+      var def := WindowHandle.Default;
+
       _handle := new WindowHandle(
-                            WS_EX_DLGMODALFRAME || WS_EX_CONTROLPARENT,
+                            EX_SDI_OVERLAPPEDWINDOW,
                             SDIWindowClass,
-                            theCaption,
+                            cast wide(_caption),
                             styles,
                             x, y, width, height,
-                            cast WindowHandle(theParent),
-                            CurrentInstance,
-                            new ChildWindowListener(self));
+                            def/*WindowHandle.Default*/,
+                            CurrentInstance/*,
+                            new ChildWindowListener(self)*/);
    }
 
 }

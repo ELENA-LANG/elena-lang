@@ -101,10 +101,6 @@ inline void YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*& shado
    uintptr_t  new_ptr = 0;
    GCRoot     current;
 
-   if (size == 0x28) {
-      size = 0x28;
-   }
-
    //printf("YGCollect %llx,%llx\n", (long long)ptr, (long long)size);
 
    // ; collect roots
@@ -466,8 +462,8 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
          // ; try to allocate in the mg
          while (table->gc_end - table->gc_mg_current < size) {
             // ; bad luck, we have to expand GC
-            int inc = AlignHeapSize(size - (table->gc_end - table->gc_mg_current));
-            int header_inc = AlignHeapSize(inc >> page_size_order_minus2);
+            size_t inc = AlignHeapSize(size - (table->gc_end - table->gc_mg_current));
+            size_t header_inc = AlignHeapSize(inc >> page_size_order_minus2);
 
             if (ExpandHeap((void*)table->gc_end, inc)) {
                ExpandHeap((void*)(table->gc_header + ((inc) >> page_size_order_minus2)), heapheader_inc);
