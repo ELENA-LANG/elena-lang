@@ -2,11 +2,11 @@ const int Size = 1000000;
 
 public sealed const struct WindowHandle
 {
-   embeddable __ptr _handle;
+   handle _handle;
 
    constructor()
    {
-      pointer ptr := UnsafePointer.Empty;
+      handle ptr := Handle.Empty;
 
       _handle := ptr
    }

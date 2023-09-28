@@ -134,7 +134,7 @@
 
       char toChar(short[] shortArray, int index, ref int length)
       {
-         int chLen := UTFOperations.convertUTF16_2_32(shortArray, index, *length, ref int value);
+         int chLen := UTFOperations.convertUTF16_2_32(shortArray, index, length, ref int value);
          char ch := value;
 
          length := chLen;

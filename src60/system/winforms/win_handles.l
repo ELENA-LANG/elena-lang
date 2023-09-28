@@ -4,19 +4,22 @@ import system;
 
 public sealed const struct HInstance
 {
-   embeddable __ptr _handle;
+   handle _handle;
     
-   constructor(pointer handle)
+   constructor(handle handle)
    {
       _handle := handle
    }
         
    get constructor Current()
    {
-      pointer h := extern KERNEL32.GetModuleHandleW(0);
+      handle h := extern KERNEL32.GetModuleHandleW(0);
         
       _handle := h
    }
+
+   handle Handle
+      = _handle;
 }
 
 // --- HINSTANCE ---
@@ -40,7 +43,7 @@ public sealed struct MSG
 
 public sealed struct CREATESTRUCT
 {
-    pointer   createParam : rprop;
+    pointer   CreateParam : rprop;
     HInstance instance; 
     int       menu;
     int       parent;

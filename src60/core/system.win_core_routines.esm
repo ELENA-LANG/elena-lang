@@ -1,0 +1,74 @@
+//        ELENA Language 6.0
+//      inline system library
+
+define WM_CREATE         1;
+
+procedure __setWndPtr(self, ptr)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  set        procedure:"system'win_core_routines'windProc"
+  store      sp:0
+  peek       fp:ptr
+  xassign    i:0
+
+  close      []
+  quit
+
+end
+
+procedure windProc
+
+  set         sp:0
+
+  xloadarg    sp:1
+  cmp         n:WM_CREATE
+  jeq         labCreate
+
+  alloc       i:4   
+  
+  xstore      i:3
+  xmov        sp:3,0 
+
+  xstore      i:2
+  xmov        sp:2,0
+
+  xstore      i:1
+  xmov        sp:1,0
+
+  load
+  save        sp:0
+
+  call        extern:USER32.DefWindowProcW,4
+  quit
+
+labCreate:
+  attach
+  open        (5),[arg],[hwnd]          // ; open new frame
+
+  xstore      i:3
+
+  $load
+  $save       dp:hwnd
+
+  get         i:3
+  store       fp:arg
+
+  peek        sp:0
+  store       sp:2
+  set         dp:hwnd
+  store       sp:1
+
+  peek        fp:arg
+  get         i:0
+  get         i:0
+
+  vcall       mssg:"onWMCreate<system'Handle,system'winforms'CREATESTRUCT>[3]", class:"system'winforms'WindowCallback"
+  close []
+  detach
+  quit
+
+end

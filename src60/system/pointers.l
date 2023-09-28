@@ -1,18 +1,49 @@
+// --- Handle ---
 
-// --- UnsafePointer ---
-
-public sealed const struct UnsafePointer
+public sealed const struct Handle
 {
-   embeddable __ptr pointer;
+   embeddable __ptr _value;
 
    private clear() : external(system'core_routines'__clearPtr); 
+
+   get constructor Default()
+      = new Handle();   
 
    constructor()
    {
       self.clear();
    }
 
-   get constructor Empty()
+   constructor(pointer ptr)
+   {
+      _value := ptr
+   }
+
+   bool isUnassigned()
+   {
+      ^ _value == 0;
+   }
+}
+
+// --- UnsafePointer ---
+
+public sealed const struct UnsafePointer
+{
+   embeddable __ptr _pointer;
+
+   private clear() : external(system'core_routines'__clearPtr);
+
+   constructor()
+   {
+      self.clear();
+   }
+
+   constructor(pointer ptr)
+   {
+      _pointer := ptr
+   }
+
+   get constructor Default()
       = new UnsafePointer();   
 
    private readIntPtr(ref int retVal) : external(system'core_routines'__readIntPtr);
@@ -21,7 +52,7 @@ public sealed const struct UnsafePointer
 
    bool isUnassigned()
    {
-      ^ pointer == 0;
+      ^ _pointer == 0;
    }
 
    // unsafe code

@@ -6,7 +6,7 @@ public sealed struct WNDCLASS
    pointer   lpfnWndProc : prop;
    int       cbClsExtra : prop;
    int       cbWndExtra : prop;
-   HInstance hInstance : prop;
+   handle    hInstance : prop;
    int       hIcon : prop;
    int       hCursor : prop;
    int       hbrBackground : prop;
@@ -29,7 +29,7 @@ singleton windowClassControl
 
       struct.style := style;
       struct.hbrBackground := background;
-      struct.hInstance := instance;
+      struct.hInstance := instance.Handle;
       struct.cbClsExtra := 0;
       struct.cbWndExtra := 0;
       struct.hIcon := 0;
@@ -53,13 +53,11 @@ singleton windowClassControl
 // --- WindowCallback ---
 public closed class WindowCallback
 {
-   onWMCreate(WindowHandle hwnd, int message, int wParam, CREATESTRUCT struct)
+   onWMCreate(Handle hwnd, CREATESTRUCT struct)
    {
       pointer param := struct.CreateParam;
 
       extern USER32.SetWindowLongW(hwnd, GWL_USERDATA, param);
-
-      extern USER32.DefWindowProcW(hwnd, message, wParam, struct);
    }
 }
 

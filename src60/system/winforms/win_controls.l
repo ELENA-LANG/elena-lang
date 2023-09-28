@@ -4,17 +4,23 @@ import system;
 
 public sealed const struct WindowHandle
 {
-   embeddable __ptr _handle;
+   handle _handle;
 
    constructor()
    {
-      _handle := UnsafePointer.Empty
+      _handle := Handle.Default
+   }
+
+   constructor(handle h)
+   {
+      _handle := h 
    }
 
    constructor(int dwExStyle, wide className, wide windowName, int style, int x, int y, int width, int height, 
       WindowHandle parent, HInstance instance, pointer paramPtr)
    {
-      pointer h := UnsafePointer.Empty;
+      handle hinstance := instance.Handle;
+      handle h := UnsafePointer.Default;
       extern
       {
          h := extern USER32.CreateWindowExW(
@@ -26,9 +32,9 @@ public sealed const struct WindowHandle
             y,
             width,
             height,
-            parent,
+            parent.Handle,
             0,
-            instance,
+            hinstance,
             paramPtr)
       };
 
@@ -39,11 +45,14 @@ public sealed const struct WindowHandle
 
    }
 
+   handle Handle
+      = _handle;
+
    get constructor Default()
       = new WindowHandle();
 
 }
 
 WindowHandle defaultHandle
-    = new WindowHandle();
+    = WindowHandle.Default;
 

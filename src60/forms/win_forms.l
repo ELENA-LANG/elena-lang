@@ -34,7 +34,7 @@ public closed class SDIForm : BaseWinForm
    {
       int styles := WS_OVERLAPPEDWINDOW;
       if(_visible)
-         { styles := styles || WS_VISIBLE };
+         { styles := styles | WS_VISIBLE };
         
       _region.read(ref int x, ref int y, ref int width, ref int height);
 
