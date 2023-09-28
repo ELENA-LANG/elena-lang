@@ -47,6 +47,11 @@ bin\asm-cli -bc32 src60\core\system.core_routines.esm lib60
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
 
+bin\asm-cli -bc32 src60\core\system.win_core_routines.esm lib60
+@echo off 
+if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+@echo on
+
 bin\elena-cli src60\system\system.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
@@ -68,6 +73,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 bin\asm-cli -bc64 src60\core\system.core_routines.esm lib60_64
+@echo off 
+if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+@echo on
+
+bin\asm-cli -bc64 src60\core\system.win_core_routines.esm lib60_64
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on

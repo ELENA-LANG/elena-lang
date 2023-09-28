@@ -55,7 +55,7 @@ CodeGenerator _codeGenerators[256] =
    compileJge, compileJgr, compileJle, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadNop, loadNop,
-   loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadArgIndexOp, loadROp, loadSysOp,
+   loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadStackIndexOp, loadROp, loadSysOp,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, compileHookDPR, loadRROp,
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, compileXOpen, loadRROp,

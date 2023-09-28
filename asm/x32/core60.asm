@@ -755,13 +755,19 @@ end
 inline %030h
 
   push ebp     
+
+  xor  eax, eax
   mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push ebp
+  push eax
+  mov  ebp, esp
 
 end
 
 // ; detach
 inline %031h
 
+  add  esp, 8
   pop  ebp
 
 end
@@ -3260,6 +3266,13 @@ end
 inline %5F6h
 
   mov  esi, [esp+4]
+
+end
+
+// ; xmovsisi 1, 0
+inline %6F6h
+
+  mov  [esp+__arg32_1], esi
 
 end
 

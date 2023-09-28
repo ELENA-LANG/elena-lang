@@ -2412,54 +2412,6 @@ procedure func_invoker(arg)
 
 end
 
-procedure __setWndPtr(self, ptr)
-
-  xflush     sp:0
-  xflush     sp:1
-
-  open       (2),[]
-
-  set        procedure:"system'core_routines'windProc"
-  store      sp:0
-  peek       fp:ptr
-  xassign    i:0
-
-  close      []
-  quit
-
-end
-
-procedure windProc
-
-  set         sp:0
-
-  xloadarg    sp:1
-  cmp         n:WM_CREATE
-  jeq         labCreate
-
-  alloc       i:4   
-  xstore      i:3
-  xmov        sp:0,3 
-  xstore      i:2
-  xmov        sp:0,2
-  xstore      i:1
-  xmov        sp:0,1
-  load
-  save        sp:0
-  call        extern:USER32.DefWindowProcW
-  quit
-
-labCreate:
-  attach
-  open header [],[]           // ; open new frame
-
-
-  close []
-  detach
-  quit
-
-end
-
 procedure thread_start
 
   xloadarg    sp:1

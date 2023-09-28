@@ -54,15 +54,13 @@ public class SDIDialog : SDIForm
         
       _region.read(ref int x, ref int y, ref int width, ref int height);
         
-      var def := WindowHandle.Default;
-
       _handle := new WindowHandle(
                             EX_SDI_OVERLAPPEDWINDOW,
                             SDIWindowClass,
                             cast wide(_caption),
                             styles,
                             x, y, width, height,
-                            def/*WindowHandle.Default*/,
+                            WindowHandle.Default,
                             CurrentInstance/*,
                             new ChildWindowListener(self)*/);
    }

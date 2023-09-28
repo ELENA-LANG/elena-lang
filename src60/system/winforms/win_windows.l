@@ -18,7 +18,7 @@ public sealed struct WNDCLASS
 
 singleton windowClassControl
 {
-   private assignWndPtr(pointer wndPtr) : external(system'core_routines'__setWndPtr);
+   private assignWndPtr(pointer wndPtr) : external(system'win_core_routines'__setWndPtr);
 
    wide createClass(string name, HInstance instance, int style, int background)
    {

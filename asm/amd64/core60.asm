@@ -752,21 +752,25 @@ inline %02Fh
 
 end
 
-
 // ; attach
 inline %030h
 
-  push 0 
   push rbp     
+  push 0 
+
+  xor  eax, eax
   mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
 
 end
 
 // ; detach
 inline %031h
 
+  add  rsp, 24
   pop  rbp
-  add  rsp, 4
 
 end
 

@@ -822,7 +822,7 @@ bool ByteCodeAssembler :: compileCallExt(ScriptToken& tokenInfo, MemoryWriter& w
          ByteCodeUtil::write(writer, ByteCode::AllocI, stackSize);
 
       int index = 0;
-      for(auto it = args.start(); !it.eof(); ++it) {
+      for (auto it = args.start(); !it.eof(); ++it) {
          writeArg(writer, *it, index++);
       }
 
@@ -833,6 +833,14 @@ bool ByteCodeAssembler :: compileCallExt(ScriptToken& tokenInfo, MemoryWriter& w
       if (stackSize > 0)
          ByteCodeUtil::write(writer, ByteCode::FreeI, stackSize);
    }
+   else if (tokenInfo.compare(",")) {
+      command.arg2 = readI(tokenInfo);
+
+      ByteCodeUtil::write(writer, command);
+
+      read(tokenInfo);
+   }
+   else return false;
 
    return true;
 }
