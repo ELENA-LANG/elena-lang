@@ -11,7 +11,8 @@ public sealed const struct WindowHandle
       _handle := UnsafePointer.Empty
    }
 
-   constructor(int dwExStyle, wide className, wide windowName, int style, int x, int y, int width, int height, WindowHandle parent, HInstance instance/*, object param*/)
+   constructor(int dwExStyle, wide className, wide windowName, int style, int x, int y, int width, int height, 
+      WindowHandle parent, HInstance instance, pointer paramPtr)
    {
       pointer h := UnsafePointer.Empty;
       extern
@@ -28,7 +29,7 @@ public sealed const struct WindowHandle
             parent,
             0,
             instance,
-            /*paramIndex*/0)
+            paramPtr)
       };
 
       if (h==0)

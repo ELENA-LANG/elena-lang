@@ -50,6 +50,24 @@ singleton windowClassControl
    }
 }
 
+// --- WindowCallback ---
+public closed class WindowCallback
+{
+   onWMCreate(WindowHandle hwnd, int message, int wParam, CREATESTRUCT struct)
+   {
+      pointer param := struct.CreateParam;
+
+      extern USER32.SetWindowLongW(hwnd, GWL_USERDATA, param);
+
+      extern USER32.DefWindowProcW(hwnd, message, wParam, struct);
+   }
+}
+
+// --- SDIWindowCallback ---
+public class SDIWindowCallback : WindowCallback
+{
+}
+
 // --- SDIWindowClass ---
 
 public static wide SDIWindowClass = windowClassControl.createClass("ELENA.SDIWINDOW.6.0", CurrentInstance, WS_ELENAWINDOW, COLOR_BACKGROUND);

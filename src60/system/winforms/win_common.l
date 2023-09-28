@@ -1,3 +1,4 @@
+public const int GWL_USERDATA            = -21;
 
 // --- styles ---
 public const int WS_OVERLAPPEDWINDOW     = 00CF0000h;

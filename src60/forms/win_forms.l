@@ -1,4 +1,5 @@
 import system'winforms;
+import system'runtime;
 
 // --- BaseForm ---
 
@@ -8,6 +9,18 @@ public abstract class BaseWinForm : BaseWinContainer
         <= super new()
     {
     }
+}
+
+// --- SDI ---
+
+class SDIWindowListener : SDIWindowCallback
+{
+   SDIForm _owner;
+    
+   constructor(SDIForm owner)
+   {
+      _owner := owner
+   }
 }
 
 public closed class SDIForm : BaseWinForm
@@ -24,7 +37,9 @@ public closed class SDIForm : BaseWinForm
          { styles := styles || WS_VISIBLE };
         
       _region.read(ref int x, ref int y, ref int width, ref int height);
-        
+
+      pointer paramPtr := PermVectorTable.allocate(new SDIWindowListener(self));
+
       _handle := new WindowHandle(
                             EX_SDI_OVERLAPPEDWINDOW,
                             SDIWindowClass, 
@@ -32,8 +47,8 @@ public closed class SDIForm : BaseWinForm
                             styles,
                             x, y, width, height,
                             WindowHandle.Default, 
-                            CurrentInstance//,
-                            /*new SDIWindowListener(self)*/)
+                            CurrentInstance,
+                            paramPtr)
    }
 }
 
@@ -54,6 +69,8 @@ public class SDIDialog : SDIForm
         
       _region.read(ref int x, ref int y, ref int width, ref int height);
         
+      pointer paramPtr := PermVectorTable.allocate(new SDIWindowListener(self));
+
       _handle := new WindowHandle(
                             EX_SDI_OVERLAPPEDWINDOW,
                             SDIWindowClass,
@@ -61,8 +78,8 @@ public class SDIDialog : SDIForm
                             styles,
                             x, y, width, height,
                             WindowHandle.Default,
-                            CurrentInstance/*,
-                            new ChildWindowListener(self)*/);
+                            CurrentInstance,
+                            paramPtr);
    }
 
 }

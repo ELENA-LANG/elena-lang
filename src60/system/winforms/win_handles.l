@@ -1,3 +1,5 @@
+import system;
+
 // --- HInstance ---
 
 public sealed const struct HInstance
@@ -32,4 +34,22 @@ public sealed struct MSG
    int    _time;
    int    _x;
    int    _y;    
+}
+
+// --- CREATESTRUCT ---
+
+public sealed struct CREATESTRUCT
+{
+    pointer   createParam : rprop;
+    HInstance instance; 
+    int       menu;
+    int       parent;
+    int       height;
+    int       width;
+    int       y;
+    int       x;
+    int       style;
+    pointer   namePtr;
+    pointer   classPtr;
+    int       exStyle;
 }
