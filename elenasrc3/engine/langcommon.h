@@ -67,6 +67,7 @@ namespace elena_lang
    constexpr auto errNoInitializer           = 112;
    constexpr auto errTooManyParameters       = 113;
    constexpr auto errMixedUpVariadicMessage  = 114;
+   constexpr auto errRedirectToItself        = 115;
    constexpr auto errDuplicatedDefinition    = 119;
    constexpr auto errInvalidIntNumber        = 130;
    constexpr auto errCannotEval              = 140;

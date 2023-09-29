@@ -7118,6 +7118,9 @@ bool Compiler :: validateShortCircle(ExprScope& scope, mssg_t message, ObjectInf
       case ObjectKind::Class:
          targetRef = target.reference;
          break;
+      case ObjectKind::ConstructorSelf:
+         targetRef = target.extra;
+         break;
       default:
          targetRef = target.typeInfo.typeRef;
          break;
@@ -7218,7 +7221,10 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
                result.stackSafe = true;
 
             if (checkShortCircle && validateShortCircle(scope, message, target)) {
-               scope.raiseWarning(WARNING_LEVEL_1, wrnCallingItself, findMessageNode(node));
+               if (target.kind == ObjectKind::ConstructorSelf) {
+                  scope.raiseError(errRedirectToItself, node);
+               }
+               else scope.raiseWarning(WARNING_LEVEL_1, wrnCallingItself, findMessageNode(node));
             }
 
             break;

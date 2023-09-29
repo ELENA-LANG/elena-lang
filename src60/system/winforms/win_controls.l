@@ -1,5 +1,8 @@
 import system;
 
+// --- classes ---
+public const wide ButtonClass = "Button"w;
+
 // --- WindowHandle ---
 
 public sealed const struct WindowHandle

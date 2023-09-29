@@ -8,11 +8,7 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * examples : rosetta code sample : G, Guess the number/With feedback
-
-    * ldoc : internal constructor
-    * ldoc : fix Map<T1,T2> - type of _list field
-    * api : fix ldoc (Quue<T>, Stack<T>, VarTuple<TKey, TValue>) 
+    * examples : rosetta code sample : GUI component interaction
 
     * examples : rosetta code sample : H
     * examples : calc - doesn't work
@@ -60,10 +56,6 @@ In development:
     * module template - probably should include meta dictionary for attributes / types / ...
     * generic extension - should the output type be set? 
     * do load self for expression with ret statement
-    * use direct reference for - BoolValue#true.Inverted
-    * calling variadic method directly : without arguments
-    * redirect abstract byref handler
-    * warn on redirect to itself
 
     * inno setup : x86, x86-64
 
@@ -76,7 +68,7 @@ In development:
     [!] https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-in-a-nutshell
     [!] tutorial : Multiple inheritance in ELENA
     [!] pi sample optimization (under 9sec)
-    [!] review #622 
+    [!] review #622, #620
     * corex : tests - lock test, GC test, printing in one thread / calling GC in another
     * amd64 : implement system 5
     * test all samples for win x86-64

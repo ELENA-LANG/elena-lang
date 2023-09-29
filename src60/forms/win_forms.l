@@ -5,10 +5,18 @@ import system'runtime;
 
 public abstract class BaseWinForm : BaseWinContainer
 {
-    protected constructor new()
-        <= super new()
-    {
-    }
+   protected constructor new()
+      <= super new()
+   {
+   }
+
+   appendControl(BaseControl control)
+   {
+      control.Parent := self;
+        
+      _controls.append(control)
+   }
+
 }
 
 // --- SDI ---

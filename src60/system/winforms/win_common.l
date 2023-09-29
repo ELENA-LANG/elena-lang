@@ -32,6 +32,17 @@ public const int MB_ICONSTOP        = 00000010h;
 public const int MB_ICONERROR       = 00000010h;
 public const int MB_ICONHAND        = 00000010h;
 
+// --- button styles ---
+
+public const int BS_PUSHBUTTON           = 0; 
+public const int BS_DEFPUSHBUTTON        = 1; 
+public const int BS_AUTOCHECKBOX         = 3;
+public const int BS_GROUPBOX             = 7;
+public const int BS_AUTORADIOBUTTON      = 9;
+
+public const int BST_CHECKED             = 1;
+public const int BST_UNCHECKED           = 0;
+
 // --- Window Color Constants
 
 public const int COLOR_BACKGROUND = 5;

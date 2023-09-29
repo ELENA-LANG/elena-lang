@@ -6,7 +6,11 @@ public abstract class BaseControl
 {
    bool   _visible;
    bool   _enabled;
+   bool   _tabStop;
+
    Region _region;   
+
+   object _parent;
 
    wide   _caption;
 
@@ -17,6 +21,26 @@ public abstract class BaseControl
       set(s)
       {
          _caption := s
+      }
+   }
+
+   Parent = _parent;    
+
+   set internal Parent(object o)
+   {
+      if(nil == o)
+      {
+         if(nil == _parent)
+            { InvalidOperationException.new:"A control already unbound".raise() };
+            
+         _parent := nil
+      }
+      else
+      {
+         if(nil != _parent)
+            { InvalidOperationException.new:"A control already bound".raise() };
+            
+         _parent := o
       }
    }
 
@@ -31,5 +55,6 @@ public abstract class BaseControl
       _enabled := true;
       _region := new Region();   
       _caption := emptyWideString;
+      _tabStop := false;
    }
 }

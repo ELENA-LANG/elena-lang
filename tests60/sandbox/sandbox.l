@@ -1,20 +1,14 @@
-const int Size = 1000000;
+import extensions;
 
-public sealed const struct WindowHandle
+A
 {
-   handle _handle;
-
-   constructor()
+   constructor new()
+      <= super new()
    {
-      handle ptr := Handle.Empty;
-
-      _handle := ptr
    }
 }
-
+ 
 public program()
 {
-   auto h := new WindowHandle();
-
-   extern USER32.CreateWindowExW(h);
+   var a := A.new()
 }
