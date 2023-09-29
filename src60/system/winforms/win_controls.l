@@ -2,6 +2,7 @@ import system;
 
 // --- classes ---
 public const wide ButtonClass = "Button"w;
+public const wide EditClass   = "Edit"w;
 
 // --- WindowHandle ---
 
@@ -54,6 +55,10 @@ public sealed const struct WindowHandle
    get constructor Default()
       = new WindowHandle();
 
+   setPosition(int x, int y, int cx, int cy, int flags)
+   {
+      extern USER32.SetWindowPos(_handle, 0, x, y, cx, cy, flags)
+   }
 }
 
 WindowHandle defaultHandle

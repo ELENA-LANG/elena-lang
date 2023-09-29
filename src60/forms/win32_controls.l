@@ -5,6 +5,7 @@ import system'collections;
 
 public interface IControl
 {
+   abstract open();
 }
 
 // --- BaseWindowControl ---
@@ -36,6 +37,17 @@ public abstract class BaseWinControl : BaseControl
       self.onCreate()
    }   
 
+   setRegion(int x, int y, int width, int height)
+   {
+      super.setRegion(x, y, width, height);
+        
+      ifnot(nil == _handle)
+      {
+         _handle.setPosition(x, y, 0, 0, SWP_NOSIZE);
+         _handle.setPosition(0, 0, width, height, SWP_NOMOVE)
+      }        
+   }
+
    WindowHandle cast() = _handle;
 }
 
@@ -54,6 +66,65 @@ public abstract class BaseWinContainer : BaseWinControl
    open()
    {
       super.open();
+        
+      int len := _controls.Length;
+      for (int i := 0, i < len, i += 1) {
+         _controls[i].open()
+      }
+   }
+}
+
+// --- BaseEdit ---
+
+abstract class BaseEdit : BaseWinControl
+{
+   protected constructor new()
+      <= super new()
+   {
+   }
+
+   internal updateStyles(ref int retVal)
+   {
+      int styles := retVal;
+        
+      if(_visible)
+         { styles := styles | WS_VISIBLE };
+      if(_tabStop)
+         { styles := styles | WS_TABSTOP };
+            
+      retVal := styles
+   }
+
+}
+
+// --- Edit ---
+
+public sealed class Edit : BaseEdit, interface<IControl>
+{
+   constructor new()
+      <= super new()
+   {
+      _tabStop := true
+   }
+
+   internal createHandle()
+   {
+      WindowHandle parent := _parent;
+        
+      int styles := WS_CHILD | WS_BORDER;
+      self.updateStyles(ref styles);
+        
+      _region.read(ref int x, ref int y, ref int width, ref int height);
+        
+      _handle := new WindowHandle(
+                     WS_EX_CLIENTEDGE,
+                     EditClass, 
+                     _caption, 
+                     styles,
+                     x, y, width, height,
+                     parent, 
+                     CurrentInstance,
+                     UnsafePointer.Default)                        
    }
 }
 

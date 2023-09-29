@@ -1,5 +1,8 @@
 public const int GWL_USERDATA            = -21;
 
+public const int SWP_NOSIZE       = 0001h;
+public const int SWP_NOMOVE       = 0002h;
+
 // --- styles ---
 public const int WS_OVERLAPPEDWINDOW     = 00CF0000h;
 public const int WS_DIALOGWINDOW         = 00C80000h;

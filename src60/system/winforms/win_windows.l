@@ -64,6 +64,11 @@ public closed class WindowCallback
    {
       extern USER32.DefWindowProcW(hwnd, WM_DESTROY, 0, 0);
    }
+
+   onWMCommand(Handle hwnd, int wParam, Handle control)
+   {
+      
+   }
 }
 
 // --- SDIWindowCallback ---
