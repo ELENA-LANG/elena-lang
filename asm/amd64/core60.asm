@@ -774,6 +774,13 @@ inline %031h
 
 end
 
+// ; xquit
+inline %34h
+
+  mov  rax, rdx
+  ret
+
+end
 // ; fadd
 inline %070h
 

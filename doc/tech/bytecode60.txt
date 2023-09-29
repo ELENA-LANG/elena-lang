@@ -47,6 +47,9 @@ ELENA byte codes (or ecodes)
    quit                     - terminates the procedure;
                               acc / index are not affected
 
+   xquit                    - terminates the procedure;
+                              function result is index
+
 
  Register operations:
  --------------------

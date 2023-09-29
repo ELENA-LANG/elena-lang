@@ -53,6 +53,10 @@ singleton windowClassControl
 // --- WindowCallback ---
 public closed class WindowCallback
 {
+   onClick(Handle control)
+   {
+   }
+
    onWMCreate(Handle hwnd, CREATESTRUCT struct)
    {
       pointer param := struct.CreateParam;
@@ -67,7 +71,13 @@ public closed class WindowCallback
 
    onWMCommand(Handle hwnd, int wParam, Handle control)
    {
-      
+      if (control == 0)
+         { ^ self };
+
+      int command := wParam $shr 16;
+
+      if (command == BN_CLICKED)
+         { self.onClick(control); ^ self };      
    }
 }
 

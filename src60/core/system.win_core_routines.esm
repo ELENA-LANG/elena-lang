@@ -52,7 +52,7 @@ labDefault:
   save        sp:0
 
   call        extern:USER32.DefWindowProcW,4
-  quit
+  xquit
 
 labCreate:
   attach
@@ -82,7 +82,9 @@ labCreate:
   $clear  
 
   detach
-  quit
+
+  mov         n:0 
+  xquit
 
 labDestroy:
   attach
@@ -117,7 +119,9 @@ labDestroy:
   $clear  
 
   detach
-  quit
+
+  mov         n:0 
+  xquit
 
 labCommand:
   attach
@@ -164,6 +168,8 @@ labCommand:
   $clear  
 
   detach
-  quit
+
+  mov         n:0 
+  xquit
 
 end

@@ -27,7 +27,7 @@ CodeGenerator _codeGenerators[256] =
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadNop, loadOp, loadOp,
 
-   loadOp, loadOp, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
+   loadOp, loadOp, loadNop, loadNop, loadOp, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -90,7 +90,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 167;
+constexpr size_t bcCommandNumber = 168;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -126,7 +126,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::BCopy, ByteCode::WCopy, ByteCode::XPeekEq, ByteCode::SelGrRR, ByteCode::FIAdd,
    ByteCode::FISub,ByteCode::FIMul,ByteCode::FIDiv, ByteCode::SNop, ByteCode::TstStck,
    ByteCode::Shl, ByteCode::Shr, ByteCode::XLabelDPR, ByteCode::TryLock, ByteCode::FreeLock,
-   ByteCode::Attach, ByteCode::Detach
+   ByteCode::Attach, ByteCode::Detach, ByteCode::XQuit
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,

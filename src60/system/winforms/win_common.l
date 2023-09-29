@@ -46,6 +46,10 @@ public const int BS_AUTORADIOBUTTON      = 9;
 public const int BST_CHECKED             = 1;
 public const int BST_UNCHECKED           = 0;
 
+// --- Notifications ---
+public const int BN_CLICKED       = 0000h;
+public const int EN_CHANGE        = 0300h;
+
 // --- Window Color Constants
 
 public const int COLOR_BACKGROUND = 5;

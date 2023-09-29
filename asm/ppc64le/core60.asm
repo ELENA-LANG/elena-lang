@@ -942,6 +942,14 @@ inline %02Fh
 
 end
 
+// ; xquit
+inline %034h
+
+  mr      r3, r14
+  blr
+
+end
+
 // ; fiadd
 inline %070h
 

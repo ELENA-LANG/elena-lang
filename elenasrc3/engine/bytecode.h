@@ -69,6 +69,7 @@ namespace elena_lang
 
       Attach         = 0x30,
       Detach         = 0x31,
+      XQuit          = 0x34,
 
       FIAdd          = 0x70,
       FISub          = 0x71,

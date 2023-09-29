@@ -877,6 +877,14 @@ inline %02Fh
 
 end
 
+// ; xquit
+inline %034h
+
+  mov     x0, x9
+  ret     x30
+
+end
+
 // ; fiadd
 inline %070h
 
