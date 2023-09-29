@@ -38,6 +38,11 @@ public sealed class SDIApplication
    {
       messageBox.open("ELENA", e.Message, MB_ICONEXCLAMATION);
    }   
+
+   stop()
+   {
+      extern USER32.PostQuitMessage(0)
+   }
 }
 
 public static SDIApplication program = new SDIApplication(); 

@@ -2,6 +2,9 @@
 //      inline system library
 
 define WM_CREATE         1;
+define WM_DESTROY        2;
+
+define GWL_USERDATA    -21;
 
 procedure __setWndPtr(self, ptr)
 
@@ -27,7 +30,10 @@ procedure windProc
   xloadarg    sp:1
   cmp         n:WM_CREATE
   jeq         labCreate
+  cmp         n:WM_DESTROY
+  jeq         labDestroy
 
+labDefault:
   alloc       i:4   
   
   xstore      i:3
@@ -68,6 +74,45 @@ labCreate:
 
   vcall       mssg:"onWMCreate<system'Handle,system'winforms'CREATESTRUCT>[3]", class:"system'winforms'WindowCallback"
   close []
+
+  // ; NOTE : to clear the frame variables, because of two scopes
+  $clear  
+
+  detach
+  quit
+
+labDestroy:
+  attach
+  open        (5),[],[hwnd,ptr]          // ; open new frame
+
+  $load
+  $save       dp:hwnd
+
+  alloc       i:2
+  mov         n:GWL_USERDATA
+  save        sp:1
+  load        dp:hwnd
+  save        sp:0
+
+  call        extern:USER32.GetWindowLongW,2
+
+  cmp         n:0
+  jeq         labDefault
+  save        dp:ptr
+
+  set         dp:hwnd
+  store       sp:1
+
+  set         dp:ptr
+  get         i:0
+  get         i:0
+
+  vcall       mssg:"onWMDestoy<system'Handle>[2]", class:"system'winforms'WindowCallback"
+  close []
+
+  // ; NOTE : to clear the frame variables, because of two scopes
+  $clear  
+
   detach
   quit
 

@@ -28,6 +28,8 @@ public abstract class BaseWinControl : BaseControl
         
       self.onCreate()
    }   
+
+   WindowHandle cast() = _handle;
 }
 
 // --- BaseWinContainer ---

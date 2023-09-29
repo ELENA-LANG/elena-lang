@@ -16,7 +16,14 @@ public abstract class BaseWinForm : BaseWinContainer
 class SDIWindowListener : SDIWindowCallback
 {
    SDIForm _owner;
-    
+
+   onWMDestoy(Handle hwnd)
+   {
+      super.onWMDestoy(hwnd);
+
+      //TODO : free PermVectorTable entry to reuse it
+   }
+
    constructor(SDIForm owner)
    {
       _owner := owner

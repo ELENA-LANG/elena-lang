@@ -10,6 +10,21 @@ public abstract class BaseControl
 
    wide   _caption;
 
+   string Caption
+   {
+      get() = _caption;
+        
+      set(s)
+      {
+         _caption := s
+      }
+   }
+
+   setRegion(int x, int y, int width, int height)
+   {
+      _region.set(x, y, width, height);
+   }
+
    protected constructor new()
    {
       _visible := true;

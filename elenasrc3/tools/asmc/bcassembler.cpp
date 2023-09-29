@@ -976,7 +976,17 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::OpenHeaderIN:
             return compileOpenOp(tokenInfo, writer, opCommand, locals, dataLocals, constants, dataSize);
          case ByteCode::CloseN:
-            return compileCloseOpN(tokenInfo, writer, opCommand, dataSize, constants);
+            if (compileCloseOpN(tokenInfo, writer, opCommand, dataSize, constants)) {
+               if (tokenInfo.compare("$clear")) {
+                  dataSize = 0;
+                  locals.clear();
+                  dataLocals.clear();
+
+                  read(tokenInfo);
+               }
+               return true;
+            }
+            return false;
          case ByteCode::MovSIFI:
          case ByteCode::XMovSISI:
             return compileOpII(tokenInfo, writer, opCommand, true);

@@ -1923,7 +1923,9 @@ labNext:
 labEnd:
   load       dp:command
 
-  close      []
+  close      [] 
+  // ; NOTE : to clear the frame variables, because of two scopes
+  $clear  
 
   xrefresh   sp:0
   xrefresh   sp:1

@@ -59,11 +59,22 @@ public closed class WindowCallback
 
       extern USER32.SetWindowLongW(hwnd, GWL_USERDATA, param);
    }
+
+   onWMDestoy(Handle hwnd)
+   {
+      extern USER32.DefWindowProcW(hwnd, WM_DESTROY, 0, 0);
+   }
 }
 
 // --- SDIWindowCallback ---
 public class SDIWindowCallback : WindowCallback
 {
+   onWMDestoy(Handle hwnd)
+   {
+      super.onWMDestoy(hwnd);
+
+      forward program.stop()
+   }
 }
 
 // --- SDIWindowClass ---

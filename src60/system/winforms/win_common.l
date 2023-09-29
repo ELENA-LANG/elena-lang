@@ -48,3 +48,6 @@ public const int IDC_ARROW        = 7F00h;
 
 public const int MF_STRING        = 00000000h;
 public const int MF_POPUP         = 00000010h;
+
+// --- messages ---
+public const int WM_DESTROY       = 02h;
