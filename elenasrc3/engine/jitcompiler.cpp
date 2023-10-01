@@ -55,7 +55,7 @@ CodeGenerator _codeGenerators[256] =
    compileJge, compileJgr, compileJle, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadNop, loadNop,
-   loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadStackIndexOp, loadROp, loadSysOp,
+   loadFrameIndexOp, loadStackIndexOp, compileClose, loadNop, loadNop, loadFrameIndexOp, loadROp, loadSysOp,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, compileHookDPR, loadRROp,
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, compileXOpen, loadRROp,
@@ -63,7 +63,7 @@ CodeGenerator _codeGenerators[256] =
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp2, compileHookDPR, loadNewOp,
    loadDPNOp, loadDPNOp, loadONOp, loadONOp, loadVMTROp, loadMROp, loadRROp, loadRROp,
 
-   compileOpen, loadStackIndexROp, compileOpen, loadStackIndexFrameIndexOp, loadNewOp, loadNewNOp, loadStackIndexIndexOp, loadCreateNOp,
+   compileOpen, loadStackIndexROp, compileExtOpen, loadStackIndexFrameIndexOp, loadNewOp, loadNewNOp, loadStackIndexIndexOp, loadCreateNOp,
    loadIROp, loadFrameIndexROp, compileDispatchMR, compileDispatchMR, loadVMTROp, loadMROp, loadCallOp, loadNop,
 };
 
@@ -90,12 +90,12 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 168;
+constexpr size_t bcCommandNumber = 167;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
    ByteCode::FreeI, ByteCode::SaveDP, ByteCode::StoreFI, ByteCode::OpenIN, ByteCode::XStoreSIR,
-   ByteCode::OpenHeaderIN, ByteCode::CallExtR, ByteCode::MovSIFI, ByteCode::PeekFI, ByteCode::Load,
+   ByteCode::ExtOpenIN, ByteCode::CallExtR, ByteCode::MovSIFI, ByteCode::PeekFI, ByteCode::Load,
    ByteCode::SaveSI, ByteCode::CallR, ByteCode::Quit, ByteCode::MovM, ByteCode::CallVI,
    ByteCode::StoreSI, ByteCode::Redirect, ByteCode::NewIR, ByteCode::XFlushSI, ByteCode::Copy,
    ByteCode::NewNR, ByteCode::CallMR, ByteCode::VCallMR, ByteCode::DispatchMR, ByteCode::CopyDPN,
@@ -119,14 +119,14 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::XJump, ByteCode::MLen, ByteCode::DAlloc, ByteCode::SetSP, ByteCode::DTrans,
    ByteCode::XAssign, ByteCode::OrN, ByteCode::LSaveDP, ByteCode::LLoad, ByteCode::LSaveSI,
    ByteCode::ConvL, ByteCode::XLCmp, ByteCode::System, ByteCode::XCreateR, ByteCode::MulN,
-   ByteCode::LLoadDP, ByteCode::XLoadArgSI, ByteCode::XLoad, ByteCode::XLLoad, ByteCode::XSetFP,
+   ByteCode::LLoadDP, ByteCode::XLoadArgFI, ByteCode::XLoad, ByteCode::XLLoad, ByteCode::XSetFP,
    ByteCode::XAddDP, ByteCode::SelULtRR, ByteCode::UDivDPN, ByteCode::FRoundDP, ByteCode::FAbsDP,
    ByteCode::FSqrtDP, ByteCode::FExpDP, ByteCode::FLnDP, ByteCode::FSinDP, ByteCode::FCosDP,
    ByteCode::FArctanDP, ByteCode::FPiDP, ByteCode::FillIR, ByteCode::XFillR, ByteCode::XStoreI,
    ByteCode::BCopy, ByteCode::WCopy, ByteCode::XPeekEq, ByteCode::SelGrRR, ByteCode::FIAdd,
    ByteCode::FISub,ByteCode::FIMul,ByteCode::FIDiv, ByteCode::SNop, ByteCode::TstStck,
    ByteCode::Shl, ByteCode::Shr, ByteCode::XLabelDPR, ByteCode::TryLock, ByteCode::FreeLock,
-   ByteCode::Attach, ByteCode::Detach, ByteCode::XQuit
+   ByteCode::XQuit, ByteCode::ExtCloseN
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
@@ -2446,7 +2446,15 @@ void elena_lang::compileClose(JITCompilerScope* scope)
 
 void elena_lang::compileOpen(JITCompilerScope* scope)
 {
-   scope->frameOffset = scope->compiler->calcFrameOffset(scope->command.arg2);
+   scope->frameOffset = scope->compiler->calcFrameOffset(scope->command.arg2, false);
+   scope->stackOffset = 0;
+
+   loadIndexNOp(scope);
+}
+
+void elena_lang :: compileExtOpen(JITCompilerScope* scope)
+{
+   scope->frameOffset = scope->compiler->calcFrameOffset(scope->command.arg2, true);
    scope->stackOffset = 0;
 
    loadIndexNOp(scope);
@@ -2454,7 +2462,7 @@ void elena_lang::compileOpen(JITCompilerScope* scope)
 
 void elena_lang :: compileXOpen(JITCompilerScope* scope)
 {
-   scope->frameOffset = scope->compiler->calcFrameOffset(scope->command.arg2);
+   scope->frameOffset = scope->compiler->calcFrameOffset(scope->command.arg2, false);
 }
 
 void elena_lang :: compileAlloc(JITCompilerScope* scope)

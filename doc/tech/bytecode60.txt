@@ -30,15 +30,18 @@ ELENA byte codes (or ecodes)
 
  Frame operations:
  -----------------              
+   extclose n               - restore the previous frame;
+                              should be paired with extopen;
+
+   extopen i, n              - init the frame header offset ; allocating both
+                              unmanaged (n) and managed stack (i * 4 / 8);
+                              it should be used only when calling ELENA code from outside; 
+                              mnemonic: open header [a,b,c,...],[$a,$b,$c,...]
+
    open i, n                - save the last frame and open the new frame ; allocating both
                               unmanaged (n) and managed stack (i * 4 / 8);
                               should be used only in thr program main body; 
                               mnemonic: open [a,b,c,...],[$a,$b,$c,...]
-
-   open header i, n         - init the frame header offset ; allocating both
-                              unmanaged (n) and managed stack (i * 4 / 8);
-                              it should be used only in thread program main body; 
-                              mnemonic: open header [a,b,c,...],[$a,$b,$c,...]
 
    close n                  - restore the previous frame;
                               should be paired with open;

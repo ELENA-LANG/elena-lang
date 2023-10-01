@@ -2296,6 +2296,24 @@ inline %2C9h
 
 end 
 
+// ; extclosen
+inline %0CAh
+
+  add     x29, x29, __n12_1
+  mov     sp, x29
+  ldp     x29, x30, [sp], #16
+  
+end
+
+// ; extclosen 0
+inline %1CAh
+
+  mov     sp, x29
+  ldp     x29, x30, [sp], #16
+  
+end
+
+
 // ; xloadargsi
 inline %0CDh
 
@@ -3440,7 +3458,7 @@ inline %7F1h
 
 end
 
-// ; openheaderin
+// ; extopenin
 inline %0F2h
 
   stp     x29, x30, [sp, #-16]! 
@@ -3469,7 +3487,7 @@ labEnd:
 
 end 
 
-// ; openheaderin 0, 0
+// ; extopenin 0, 0
 inline %1F2h
 
    stp     x29, x30, [sp, #-16]! 
@@ -3477,7 +3495,7 @@ inline %1F2h
 
 end 
 
-// ; openheaderin 1, 0
+// ; extopenin 1, 0
 inline %2F2h
 
    mov     x11, #0
@@ -3487,7 +3505,7 @@ inline %2F2h
 
 end 
 
-// ; openheaderin 2, 0
+// ; extopenin 2, 0
 inline %3F2h
 
    mov     x11, #0
@@ -3497,7 +3515,7 @@ inline %3F2h
 
 end 
 
-// ; openheaderin 3, 0
+// ; extopenin 3, 0
 inline %4F2h
 
    mov     x11, #0
@@ -3508,7 +3526,7 @@ inline %4F2h
 
 end 
 
-// ; openheaderin 0, n
+// ; extopenin 0, n
 inline %5F2h
 
   stp     x29, x30, [sp, #-16]! 
@@ -3523,7 +3541,7 @@ inline %5F2h
 
 end 
 
-// ; openheaderin i, 0
+// ; extopenin i, 0
 inline %6F2h
 
   stp     x29, x30, [sp, #-16]! 

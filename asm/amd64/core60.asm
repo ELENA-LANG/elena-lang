@@ -752,28 +752,6 @@ inline %02Fh
 
 end
 
-// ; attach
-inline %030h
-
-  push rbp     
-  push 0 
-
-  xor  eax, eax
-  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
-  push rbp
-  push rax
-  mov  rbp, rsp
-
-end
-
-// ; detach
-inline %031h
-
-  add  rsp, 24
-  pop  rbp
-
-end
-
 // ; xquit
 inline %34h
 
@@ -1956,10 +1934,33 @@ inline %2C9h
 
 end 
 
-// ; xloadargsi
+// ; extclosen
+inline %0CAh
+
+  add  rbp, __n_1
+  mov  rsp, rbp
+  pop  rbp
+
+  add  rsp, 24
+  pop  rbp
+  
+end
+
+// ; extclosen 0
+inline %1CAh
+
+  mov  rsp, rbp
+  pop  rbp
+
+  add  rsp, 24
+  pop  rbp
+  
+end
+
+// ; xloadargfi
 inline %0CDh
 
-  mov rdx, [rsp + __arg32_1]
+  mov  rdx, qword ptr [rbp + __arg32_1]
 
 end 
 
@@ -1980,7 +1981,7 @@ end
 // ; xloadarg si:3
 inline %3CDh
 
- // ; mov rdi, rdi - idle operation
+ // ; mov rdx, rdx - idle operation
 
 end 
 
@@ -2813,8 +2814,17 @@ inline %7F1h
 
 end
 
-// ; openheaderin
+// ; extopenin
 inline %0F2h
+
+  push rbp     
+  push 0 
+
+  xor  eax, eax
+  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
 
   push rbp
   xor  rax, rax
@@ -2830,16 +2840,34 @@ inline %0F2h
 
 end 
 
-// ; openheaderin 0, 0
+// ; extopenin 0, 0
 inline %1F2h
+
+  push rbp     
+  push 0 
+
+  xor  eax, eax
+  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
 
   push rbp
   mov  rbp, rsp
 
 end 
 
-// ; openheaderin 1, 0
+// ; extopenin 1, 0
 inline %2F2h
+
+  push rbp     
+  push 0 
+
+  xor  eax, eax
+  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
 
   push rbp
   mov  rbp, rsp
@@ -2847,9 +2875,18 @@ inline %2F2h
 
 end 
 
-// ; openheaderin 2, 0
+// ; extopenin 2, 0
 inline %3F2h
 
+  push rbp     
+  push 0 
+
+  xor  eax, eax
+  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
+
   push rbp
   xor  rax, rax
   mov  rbp, rsp
@@ -2858,9 +2895,18 @@ inline %3F2h
 
 end 
 
-// ; openheaderin 3, 0
+// ; extopenin 3, 0
 inline %4F2h
 
+  push rbp     
+  push 0 
+
+  xor  eax, eax
+  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
+
   push rbp
   xor  rax, rax
   mov  rbp, rsp
@@ -2870,8 +2916,17 @@ inline %4F2h
 
 end 
 
-// ; openheaderin 0, n
+// ; extopenin 0, n
 inline %5F2h
+
+  push rbp     
+  push 0 
+
+  xor  eax, eax
+  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
 
   push rbp
   xor  rax, rax
@@ -2883,8 +2938,17 @@ inline %5F2h
 
 end 
 
-// ; openheaderin i, 0
+// ; extopenin i, 0
 inline %6F2h
+
+  push rbp     
+  push 0 
+
+  xor  eax, eax
+  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
 
   push rbp
   xor  rax, rax

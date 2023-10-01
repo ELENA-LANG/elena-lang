@@ -751,27 +751,6 @@ inline %02Fh
 
 end
 
-// ; attach
-inline %030h
-
-  push ebp     
-
-  xor  eax, eax
-  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
-  push ebp
-  push eax
-  mov  ebp, esp
-
-end
-
-// ; detach
-inline %031h
-
-  add  esp, 8
-  pop  ebp
-
-end
-
 // ; xquit
 inline %34h
 
@@ -2002,10 +1981,33 @@ inline %1C9h
 
 end 
 
-// ; xloadargsi
+// ; extclosen
+inline %0CAh
+
+  add  ebp, __n_1
+  mov  esp, ebp
+  pop  ebp
+  
+  add  esp, 8
+  pop  ebp
+
+end
+
+// ; extclosen 0
+inline %1CAh
+
+  mov  esp, ebp
+  pop  ebp
+
+  add  esp, 8
+  pop  ebp
+  
+end
+
+// ; xloadargfi
 inline %0CDh
 
-  mov edx, [esp + __arg32_1]
+  mov  edx, [ebp + __arg32_1]
 
 end 
 
@@ -3124,8 +3126,16 @@ inline %6F1h
 
 end
 
-// ; openheaderin
+// ; extopenin
 inline %0F2h
+
+  push ebp     
+
+  xor  eax, eax
+  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push ebp
+  push eax
+  mov  ebp, esp
 
   push ebp
   xor  eax, eax
@@ -3141,16 +3151,32 @@ inline %0F2h
 
 end 
 
-// ; openheaderin 0, 0
+// ; extopenin 0, 0
 inline %1F2h
+
+  push ebp     
+
+  xor  eax, eax
+  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push ebp
+  push eax
+  mov  ebp, esp
 
   push ebp
   mov  ebp, esp
 
 end 
 
-// ; openheaderin 1, 0
+// ; extopenin 1, 0
 inline %2F2h
+
+  push ebp     
+
+  xor  eax, eax
+  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push ebp
+  push eax
+  mov  ebp, esp
 
   push ebp
   mov  ebp, esp
@@ -3158,9 +3184,17 @@ inline %2F2h
 
 end 
 
-// ; openheaderin 2, 0
+// ; extopenin 2, 0
 inline %3F2h
 
+  push ebp     
+
+  xor  eax, eax
+  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push ebp
+  push eax
+  mov  ebp, esp
+
   push ebp
   xor  eax, eax
   mov  ebp, esp
@@ -3169,9 +3203,17 @@ inline %3F2h
 
 end 
 
-// ; openheaderin 3, 0
+// ; extopenin 3, 0
 inline %4F2h
 
+  push ebp     
+
+  xor  eax, eax
+  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push ebp
+  push eax
+  mov  ebp, esp
+
   push ebp
   xor  eax, eax
   mov  ebp, esp
@@ -3181,8 +3223,16 @@ inline %4F2h
 
 end 
 
-// ; openheaderin 0, n
+// ; extopenin 0, n
 inline %5F2h
+
+  push ebp     
+
+  xor  eax, eax
+  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push ebp
+  push eax
+  mov  ebp, esp
 
   push ebp
   xor  eax, eax
@@ -3194,8 +3244,16 @@ inline %5F2h
 
 end 
 
-// ; openheaderin i, 0
+// ; extopenin i, 0
 inline %6F2h
+
+  push ebp     
+
+  xor  eax, eax
+  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push ebp
+  push eax
+  mov  ebp, esp
 
   push ebp
   xor  eax, eax

@@ -8,6 +8,9 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
+    * redesign : open header => openext / closeext, getrid of attach / detach
+    * xloadarg i:1  -> returns the argument with frame / without frame
+
     * examples : rosetta code sample : GUI component interaction
 
     * examples : rosetta code sample : H
@@ -42,7 +45,6 @@ In development:
     * elt - exception handler
     * asmc : raise an error if the label was not resolved
 
-    * do we need open header at all? it looks like the complete copy of open?
     * #15 : return double / long from external function
     * byrefHandler : if it is not contain the explicit return, assign self to byref retVal
     * closure should be sealed

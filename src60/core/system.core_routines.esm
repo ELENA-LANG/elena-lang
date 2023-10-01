@@ -2416,11 +2416,11 @@ end
 
 procedure thread_start
 
-  xloadarg    sp:1
-
   system      3
 
-  open header [arg1],[ptr,envptr,ex_struct:ex_struct_size]
+  open        [arg1],[ptr,envptr,ex_struct:ex_struct_size]
+
+  xloadarg    fp:1
   
   $save       dp:ptr
 
@@ -2448,7 +2448,7 @@ symbol sta_start
 
   system      4
 
-  open header [arg1],[argv, envptr,ex_struct:ex_struct_size]
+  open        [arg1],[argv, envptr,ex_struct:ex_struct_size]
 
   xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
 
@@ -2474,7 +2474,7 @@ symbol mta_start
   mov         n:0
   system      3
 
-  open header [arg1],[envptr,ex_struct:ex_struct_size]
+  open        [arg1],[envptr,ex_struct:ex_struct_size]
   
   xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
 
@@ -2496,7 +2496,7 @@ symbol vm_sta_start
 
   system      4
 
-  open header [arg1],[envptr,ex_struct:ex_struct_size]
+  open        [arg1],[envptr,ex_struct:ex_struct_size]
   
   xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
 

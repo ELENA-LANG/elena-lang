@@ -5,7 +5,11 @@ import system'collections;
 
 public interface IControl
 {
+   abstract IControl retrieve(Handle handle);
+
    abstract open();
+
+   abstract click();
 }
 
 // --- BaseWindowControl ---
@@ -48,6 +52,17 @@ public abstract class BaseWinControl : BaseControl
       }        
    }
 
+   IControl retrieve(Handle handle)
+   {
+      if(nil == _handle)
+         { ^ nil };
+            
+      if(_handle == handle)
+         { ^ self };
+            
+      ^ nil 
+   }
+
    WindowHandle cast() = _handle;
 }
 
@@ -62,6 +77,23 @@ public abstract class BaseWinContainer : BaseWinControl
    {
       _controls := new List<IControl>();
    }
+
+   IControl retrieve(Handle handle)
+   {
+      if(_handle == handle)
+            { ^ self };
+
+      int len := _controls.Length;
+      IControl current;
+      for (int i := 0, i < len, i += 1) {
+         current := _controls[i].retrieve(handle);
+         if (current != nil) {
+            ^ current;
+         }
+      };
+                            
+      ^ nil
+   }        
 
    open()
    {
@@ -132,10 +164,17 @@ public sealed class Edit : BaseEdit, interface<IControl>
 
 public abstract class BaseButton : BaseWinControl
 {
+   Func1 onClick : event;
+
    protected constructor new()
       <= super new()
    {
       _tabStop := true
+   }
+
+   click()
+   {
+      onClick.?(self)
    }
 
    internal updateStyles(ref int retVal)

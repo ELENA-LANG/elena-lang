@@ -2103,6 +2103,33 @@ inline %2C9h
 
 end 
 
+// ; extclosen
+inline %0CAh
+
+  addi    r31, r31, __n16_1  // ; skip unframed stack
+  mr      r1, r31              // ; restore stack pointer
+
+  ld      r31, 00h(r1)         // ; restore frame pointer
+  ld      r0,  08h(r1)         // ; restore  return address
+
+  mtlr    r0
+  addi    r1, r1, 10h          // ; free stack
+  
+end
+
+// ; extclosen 0
+inline %1CAh
+
+  mr      r1, r31              // ; restore stack pointer
+
+  ld      r31, 00h(r1)         // ; restore frame pointer
+  ld      r0,  08h(r1)         // ; restore  return address
+
+  mtlr    r0
+  addi    r1, r1, 10h          // ; free stack
+  
+end
+
 // ; xloadargsi
 inline %0CDh
 
@@ -3253,7 +3280,7 @@ inline %7F1h
 
 end
 
-// ; openheaderin
+// ; extopenin
 inline %0F2h
 
   // ; loading TOC pointer
@@ -3292,7 +3319,7 @@ labEnd:
 
 end 
 
-// ; openheaderin 0, 0
+// ; extopenin 0, 0
 inline %1F2h
 
   // ; loading TOC pointer
@@ -3308,7 +3335,7 @@ inline %1F2h
 
 end 
 
-// ; openheaderin 1, 0
+// ; extopenin 1, 0
 inline %2F2h
 
   // ; loading TOC pointer
@@ -3326,7 +3353,7 @@ inline %2F2h
 
 end 
 
-// ; openheaderin 2, 0
+// ; extopenin 2, 0
 inline %3F2h
 
   // ; loading TOC pointer
@@ -3344,7 +3371,7 @@ inline %3F2h
 
 end 
 
-// ; openheaderin 3, 0
+// ; extopenin 3, 0
 inline %4F2h
 
   // ; loading TOC pointer
@@ -3364,7 +3391,7 @@ inline %4F2h
 
 end 
 
-// ; openheaderin 0, n
+// ; extopenin 0, n
 inline %5F2h
 
   // ; loading TOC pointer
@@ -3385,7 +3412,7 @@ inline %5F2h
 
 end 
 
-// ; openheaderin i, 0
+// ; extopenin i, 0
 inline %6F2h
 
   // ; loading TOC pointer

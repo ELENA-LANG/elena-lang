@@ -51,7 +51,7 @@ const char* _fnOpcodes[256] =
    "jge", "jgr", "jle", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "cmp", "fcmp", "icmp", "tst flag", "tstn", "tst mssg", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   "cmp fp", "cmp sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xloadarg sp", "xcreate", "system",
+   "cmp fp", "cmp sp", "extclose", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xloadarg fp", "xcreate", "system",
 
    "fadd dp", "fsub dp", "fmul dp", "fdiv dp", "udiv dp", OPCODE_UNKNOWN, "xlabel dp", "selgr",
    "iand dp", "ior dp", "ixor dp", "inot dp", "ishl dp", "ishr dp", "xopen", "selult",
@@ -59,7 +59,7 @@ const char* _fnOpcodes[256] =
    "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", "nsave dp", "xhook dp", "xnewn",
    "nadd dp", "dcopy dp", "xwrite offs", "xcopy offs", "vjump mssg", "jump mssg", "seleq", "sellt",
 
-   "open", "xstore sp", "open header", "mov sp", "new", "newn", "xmov sp", "createn",
+   "open", "xstore sp", "extopen", "mov sp", "new", "newn", "xmov sp", "createn",
    "fillir", "xstore fp", "xdispatch mssg", "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
 };
 

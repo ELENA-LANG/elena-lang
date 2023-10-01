@@ -67,8 +67,6 @@ namespace elena_lang
       XGet           = 0x2E,
       XCall          = 0x2F,
 
-      Attach         = 0x30,
-      Detach         = 0x31,
       XQuit          = 0x34,
 
       FIAdd          = 0x70,
@@ -160,8 +158,9 @@ namespace elena_lang
       TstM           = 0xC5,
       CmpFI          = 0xC8,
       CmpSI          = 0xC9,
+      ExtCloseN      = 0xCA,
 
-      XLoadArgSI     = 0xCD,
+      XLoadArgFI     = 0xCD,
       XCreateR       = 0xCE,
       System         = 0xCF,
 
@@ -203,7 +202,7 @@ namespace elena_lang
 
       OpenIN         = 0xF0,
       XStoreSIR      = 0xF1,
-      OpenHeaderIN   = 0xF2,
+      ExtOpenIN      = 0xF2,
       MovSIFI        = 0xF3,
       NewIR          = 0xF4,
       NewNR          = 0xF5,

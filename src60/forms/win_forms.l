@@ -25,6 +25,15 @@ class SDIWindowListener : SDIWindowCallback
 {
    SDIForm _owner;
 
+   onClick(Handle handle)
+   {
+      auto control := _owner.retrieve(handle);
+      if(nil != control)
+         { control.click() };
+        
+      super.onClick(handle)
+   }
+
    onWMDestoy(Handle hwnd)
    {
       super.onWMDestoy(hwnd);

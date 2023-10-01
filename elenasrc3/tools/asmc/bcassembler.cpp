@@ -973,9 +973,10 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileCallExt(tokenInfo, writer, opCommand, parameters, locals, dataLocals, constants);
          case ByteCode::XOpenIN:
          case ByteCode::OpenIN:
-         case ByteCode::OpenHeaderIN:
+         case ByteCode::ExtOpenIN:
             return compileOpenOp(tokenInfo, writer, opCommand, locals, dataLocals, constants, dataSize);
          case ByteCode::CloseN:
+         case ByteCode::ExtCloseN:
             if (compileCloseOpN(tokenInfo, writer, opCommand, dataSize, constants)) {
                if (tokenInfo.compare("$clear")) {
                   dataSize = 0;
@@ -996,6 +997,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::SetFP:
          case ByteCode::XSetFP:
          case ByteCode::SetSP:
+         case ByteCode::XLoadArgFI:
             return compileOpFrameI(tokenInfo, writer, opCommand, parameters, locals, true);
          case ByteCode::PeekSI:
          case ByteCode::StoreSI:
@@ -1004,7 +1006,6 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::XSwapSI:
          case ByteCode::SwapSI:
          case ByteCode::XRefreshSI:
-         case ByteCode::XLoadArgSI:
          case ByteCode::SaveSI:
             return compileOpStackI(tokenInfo, writer, opCommand, true);
          case ByteCode::SaveDP:

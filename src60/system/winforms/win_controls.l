@@ -49,6 +49,9 @@ public sealed const struct WindowHandle
 
    }
 
+   bool equal(Handle h)
+      = _handle == h;
+
    handle Handle
       = _handle;
 
@@ -59,6 +62,8 @@ public sealed const struct WindowHandle
    {
       extern USER32.SetWindowPos(_handle, 0, x, y, cx, cy, flags)
    }
+
+
 }
 
 WindowHandle defaultHandle
