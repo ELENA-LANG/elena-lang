@@ -8,9 +8,8 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * examples : rosetta code sample : GUI component interaction
-
     * examples : rosetta code sample : H
+
     * examples : calc - doesn't work
     * examples : p2, random 
     * examples : datetime

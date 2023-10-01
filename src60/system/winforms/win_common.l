@@ -35,6 +35,22 @@ public const int MB_ICONSTOP        = 00000010h;
 public const int MB_ICONERROR       = 00000010h;
 public const int MB_ICONHAND        = 00000010h;
 
+// --- message box buttons ---
+public const int MB_ABORTRETRYIGNORE  = 00000002h;
+public const int MB_CANCELTRYCONTINUE = 00000006h;
+public const int MB_HELP              = 00000003h;
+public const int MB_OK                = 00000000h;
+public const int MB_OKCANCEL          = 00000001h;
+public const int MB_RETRYCANCEL       = 00000005h;
+public const int MB_YESNO             = 00000004h;
+public const int MB_YESNOCANCEL       = 00000003h;
+
+public const int IDNO                 = 7;
+public const int IDOK                 = 1;
+public const int IDRETRY              = 4;
+public const int IDTRYAGAIN           = 10;
+public const int IDYES                = 6;
+
 // --- button styles ---
 
 public const int BS_PUSHBUTTON           = 0; 
@@ -69,3 +85,6 @@ public const int MF_POPUP         = 00000010h;
 
 // --- messages ---
 public const int WM_DESTROY       = 02h;
+public const int WM_SETTEXT       = 0Ch;
+public const int WM_GETTEXT       = 0Dh;
+public const int WM_GETTEXTLENGTH = 0Eh;

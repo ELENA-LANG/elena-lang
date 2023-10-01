@@ -63,7 +63,29 @@ public sealed const struct WindowHandle
       extern USER32.SetWindowPos(_handle, 0, x, y, cx, cy, flags)
    }
 
-
+   setCaption(wide s)
+   {
+      extern USER32.SendMessageW(_handle, WM_SETTEXT, 0, s)
+   }
+    
+   wide getCaption()
+   {
+      int length := extern USER32.SendMessageW(_handle, WM_GETTEXTLENGTH, 0, 0);
+        
+      if (length == 0)
+      { 
+         ^ emptyWideString 
+      }
+      else
+      {
+         wide caption := WideString.allocate(length);
+         length := length + 1;
+            
+         extern USER32.SendMessageW(_handle, WM_GETTEXT, length, caption);
+            
+         ^ caption
+      }
+   }
 }
 
 WindowHandle defaultHandle

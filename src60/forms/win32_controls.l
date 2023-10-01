@@ -41,6 +41,70 @@ public abstract class BaseWinControl : BaseControl
       self.onCreate()
    }   
 
+   set Caption(string s)
+   {
+      _caption := s;
+            
+      ifnot(nil == _handle)
+      {
+         _handle.setCaption(cast wide(s))
+      }
+   }
+    
+   set Caption(wide s)
+   {
+      _caption := s;
+            
+      ifnot(nil == _handle)
+      {
+         _handle.setCaption(s)
+      }
+   }
+        
+   set Caption(v)
+   {
+      self.Caption := cast string(v)
+   }
+
+//   string Caption
+//   {
+//      set(string s)
+//      {
+//         theCaption := s;
+//         //super.Caption := s;
+//            
+//         ifnot(nil == _handle)
+//         {
+//            _handle.setCaption(cast wide(s))
+//         }
+//      }
+//    
+//      set(wide s)
+//      {
+//         _caption := s;
+//            
+//         ifnot(nil == _handle)
+//         {
+//            _handle.setCaption(s)
+//         }
+//      }
+//        
+//      set(v)
+//      {
+//         self.Caption := cast string(v)
+//      }
+//   }
+
+   get string Caption()
+   {
+      ifnot(nil == _handle)
+      {
+         _caption := _handle.getCaption()
+      };
+            
+      ^ _caption
+   }
+
    setRegion(int x, int y, int width, int height)
    {
       super.setRegion(x, y, width, height);

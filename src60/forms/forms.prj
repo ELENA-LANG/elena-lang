@@ -23,6 +23,7 @@
         <include>controls.l</include>
         <include>win32_controls.l</include>
         <include>win_forms.l</include>
+        <include>win_dialogs.l</include>
      </module>
   </files>
 </configuration>
