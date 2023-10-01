@@ -1,14 +1,28 @@
 import extensions;
 
-A
+sealed A
 {
+   Func1 onFire : event;
+
    constructor new()
-      <= super new()
    {
+      onFire := (arg){ self.test(arg) }
+   }
+
+   private test(arg)
+   {
+      console.printLine(arg)
+   }
+
+   fire(arg)
+   {
+      onFire(arg)
    }
 }
  
 public program()
 {
-   var a := A.new()
+   A a := A.new();
+
+   a.fire("Hello");
 }

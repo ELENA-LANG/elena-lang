@@ -115,6 +115,23 @@ abstract class BaseEdit : BaseWinControl
    {
    }
 
+   string Value = self.Caption;
+
+//   get retoverload Value(ref wide retVal)
+//   {
+//      retVal := self.Caption
+//   }
+    
+   set Value(string value)
+   {
+      self.Caption := cast WideString(value);
+   }   
+
+   set Value(wide value)
+   {
+      self.Caption := value;
+   }   
+
    internal updateStyles(ref int retVal)
    {
       int styles := retVal;

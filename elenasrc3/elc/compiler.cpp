@@ -57,7 +57,7 @@ inline bool isSelfCall(ObjectInfo target)
    switch (target.kind) {
       case ObjectKind::SelfLocal:
       case ObjectKind::SelfBoxableLocal:
-         //case okOuterSelf:
+      case ObjectKind::OuterSelf:
       case ObjectKind::ClassSelf:
       case ObjectKind::ConstructorSelf:
       //case okInternalSelf:
