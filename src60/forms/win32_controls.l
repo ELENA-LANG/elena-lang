@@ -170,6 +170,70 @@ public abstract class BaseWinContainer : BaseWinControl
    }
 }
 
+// --- Label ---
+public closed class Label : BaseWinControl, interface<IControl>
+{
+   constructor new()
+      <= super new()
+   {
+   }
+
+   internal createHandle()
+   {
+      WindowHandle parent := _parent;
+   
+      int styles := WS_CHILD;
+      if(_visible)
+         { styles := styles | WS_VISIBLE };
+        
+      _region.read(ref int x, ref int y, ref int width, ref int height);
+        
+      _handle := new WindowHandle(
+                        0,
+                        StaticClass, 
+                        cast wide(_caption), 
+                        styles,
+                        x, y, width, height,
+                        parent, 
+                        CurrentInstance,
+                        UnsafePointer.Default)
+   }
+}
+
+// --- Label ---
+
+public class StaticLabel : Label
+{
+   constructor new()
+      <= super new()
+   {
+   }
+    
+   internal createHandle()
+   {
+      WindowHandle parent := _parent;
+      if(parent == 0)
+         { InvalidOperationException.new("The parent window is closed").raise() };
+        
+      int styles := WS_CHILD | SS_SIMPLE;
+      if(_visible)
+         { styles := styles | WS_VISIBLE };
+        
+      _region.read(ref int x, ref int y, ref int width, ref int height);
+        
+      _handle := new WindowHandle(
+                        0,
+                        StaticClass, 
+                        cast wide(_caption), 
+                        styles,
+                        x, y, width, height,
+                        parent, 
+                        CurrentInstance,
+                        UnsafePointer.Default)
+                        
+   }
+}
+
 // --- BaseEdit ---
 
 abstract class BaseEdit : BaseWinControl

@@ -3,6 +3,7 @@ import system;
 // --- classes ---
 public const wide ButtonClass = "Button"w;
 public const wide EditClass   = "Edit"w;
+public const wide StaticClass = "Static"w;
 
 // --- WindowHandle ---
 

@@ -51,16 +51,19 @@ public const int IDRETRY              = 4;
 public const int IDTRYAGAIN           = 10;
 public const int IDYES                = 6;
 
+// --- static styles ---
+public const int SS_SIMPLE            = 0000000Bh;
+
 // --- button styles ---
 
-public const int BS_PUSHBUTTON           = 0; 
-public const int BS_DEFPUSHBUTTON        = 1; 
-public const int BS_AUTOCHECKBOX         = 3;
-public const int BS_GROUPBOX             = 7;
-public const int BS_AUTORADIOBUTTON      = 9;
+public const int BS_PUSHBUTTON        = 0; 
+public const int BS_DEFPUSHBUTTON     = 1; 
+public const int BS_AUTOCHECKBOX      = 3;
+public const int BS_GROUPBOX          = 7;
+public const int BS_AUTORADIOBUTTON   = 9;
 
-public const int BST_CHECKED             = 1;
-public const int BST_UNCHECKED           = 0;
+public const int BST_CHECKED          = 1;
+public const int BST_UNCHECKED        = 0;
 
 // --- Notifications ---
 public const int BN_CLICKED       = 0000h;

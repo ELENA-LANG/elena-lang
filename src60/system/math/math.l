@@ -37,6 +37,12 @@ namespace math
 
       real e()
          = 1.0.exp();
+                
+      Radian
+         = cast real(self).Radian;
+                
+      Degree
+         = cast real(self).Degree;
    }
 
    public extension mathOp

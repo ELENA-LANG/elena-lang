@@ -723,6 +723,27 @@ public extension realOp : RealNumber
       ^ neg ? (a * -1.0r) : a 
    }
 
+            
+   get real Radian()
+   {
+      real value := self;
+        
+      value := value * Pi_value;
+      value := value / 180.0r;
+        
+      ^ value
+   }
+            
+   get real Degree()
+   {
+      real value := self;
+        
+      value := value * 180.0r;
+      value := value / Pi_value;
+        
+      ^ value
+   }
+
    bool isZero()
       = self.equal(0.0);
         

@@ -583,7 +583,7 @@ L4_EXPRESSION ::=
 		| eps ^OBJECT }
 	| { reference | global } ^OBJECT 
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L3_OP*
-	| "(" SUB_EXPRESSION
+	| "(" SUB_EXPRESSION L3_OP*
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION L3_OP*
 	| "!" L4_EXPRESSION ^NOT_OPERATION
 	| "~" SINGLE_EXPRESSION ^BNOT_OPERATION

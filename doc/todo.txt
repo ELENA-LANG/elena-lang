@@ -8,8 +8,9 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * examples : rosetta code sample : H
+    * examples : rosetta code sample : Higher-order functions,History variables, Horner's rule for polynomial evaluation
 
+    * examples : rosetta code sample : I
     * examples : calc - doesn't work
     * examples : p2, random 
     * examples : datetime
@@ -17,7 +18,7 @@ In development:
     * examples : textdb, textfile 
     * examples : collatz, matrix
     * examples : test all samples for win x86
-    * examples : rosetta code Anagrams
+    * examples : rosetta code Anagrams, Hailstone sequence, Happy numbers
     * examples : migrate all rosetta examples from examples/rosetta to examples60 and remove them
     * #195 : implementing rosetta code samples
     * examples : tutorials
