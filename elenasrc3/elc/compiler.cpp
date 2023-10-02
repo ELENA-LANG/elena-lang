@@ -4608,6 +4608,8 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, 
          return moduleScope.buildins.wideReference;
       case V_MESSAGE:
          return moduleScope.buildins.messageReference;
+      case V_MESSAGENAME:
+         return moduleScope.buildins.messageNameReference;
       case V_EXTMESSAGE64:
       case V_EXTMESSAGE128:
          return moduleScope.buildins.extMessageReference;
@@ -7056,7 +7058,7 @@ ObjectInfo Compiler :: unboxArguments(BuildTreeWriter& writer, ExprScope& scope,
    return retVal;
 }
 
-void Compiler :: writeMessageArguments(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, 
+void Compiler :: writeMessageArguments(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo& target, 
    mssg_t message, ArgumentsInfo& arguments, ObjectInfo& lenLocal, int& stackSafeAttr,
    bool targetOverridden, bool found, bool argUnboxingRequired, bool stackSafe)
 {
@@ -11869,6 +11871,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.literalReference = safeMapReference(moduleScope, forwardResolver, LITERAL_FORWARD);
    moduleScope->buildins.wideReference = safeMapReference(moduleScope, forwardResolver, WIDELITERAL_FORWARD);
    moduleScope->buildins.messageReference = safeMapReference(moduleScope, forwardResolver, MESSAGE_FORWARD);
+   moduleScope->buildins.messageNameReference = safeMapReference(moduleScope, forwardResolver, MESSAGE_NAME_FORWARD);
    moduleScope->buildins.extMessageReference = safeMapReference(moduleScope, forwardResolver, EXT_MESSAGE_FORWARD);
    moduleScope->buildins.wrapperTemplateReference = safeMapReference(moduleScope, forwardResolver, WRAPPER_FORWARD);
    moduleScope->buildins.arrayTemplateReference = safeMapReference(moduleScope, forwardResolver, ARRAY_FORWARD);

@@ -1226,7 +1226,7 @@ namespace elena_lang
 
       void compileInlineInitializing(BuildTreeWriter& writer, ClassScope& classScope, SyntaxNode node);
 
-      void writeMessageArguments(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, 
+      void writeMessageArguments(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo& target, 
          mssg_t message, ArgumentsInfo& arguments, ObjectInfo& lenLocal, int& stackSafeAttr,
          bool targetOverridden, bool found, bool argUnboxingRequired, bool stackSafe);
 

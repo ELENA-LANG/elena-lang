@@ -313,6 +313,9 @@ public singleton uintConvertor
       ^ self.convert(n);
    }
 
+   uint convert(string s)
+      <= convert(s, 10);
+
    uint convert(string s, int radix)
    {
       int len := s.Length;

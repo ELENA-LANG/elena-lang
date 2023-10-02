@@ -51,14 +51,30 @@ public sealed const struct ClassReference
    dispatch() : external(system'core_routines'__classref_dispatcher);
 }
 
+// --- Extension ---
+
+public mixin Extension
+{
+    object target;
+    object extender;
+    
+    constructor(target, extender)
+    {
+        this target := target;
+        this extender := extender;
+    }
+    
+    dispatch() : external(system'core_routines'__extension);
+}
+
 // --- ExplicitExtension ---
 
 public mixin ExtensionVariable
 {
-   object extension;
    object target;
+   object extension;
     
-   constructor(extension, target)
+   constructor(target, extension)
    {
       this target := target;
       this extension := extension;

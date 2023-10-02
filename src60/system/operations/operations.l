@@ -23,6 +23,13 @@ public template ifnot<expr>(falsePart) : __included(statementTemplates)
    cast bool(expr) ! { falsePart }
 }
 
+// --- ifnot:else ---
+
+public template ifnot::else<expr>(falsePart,truePart) : __included(statementTemplates)
+{
+   cast bool(expr) ? { truePart } : { falsePart }
+}
+
 // --- while ---
 
 public template while<expr>(loopBody) : __included(statementTemplates)

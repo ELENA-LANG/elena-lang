@@ -648,6 +648,9 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elFinal)) {
       printLineAndCount("@flag ", "elFinal", row, pageSize);
    }
+   if (test(flags, elGroup)) {
+      printLineAndCount("@flag ", "elGroup", row, pageSize);
+   }
    if (test(flags, elNestedClass)) {
       printLineAndCount("@flag ", "elNestedClass", row, pageSize);
    }

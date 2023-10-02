@@ -1,8 +1,25 @@
 import extensions;
+import system'dynamic'expressions;
+import system'dynamic;
  
 public program()
 {
-    var first := (f => f());
-    var second := {"second"};
-    console.printLine(first(second))
+   var code := new SymbolCollection(
+      new SymbolInfo(
+         "program",
+         new DynamicSingleton(
+            new ActionMethodExpression(
+               new CodeblockExpression(
+                  new ExtensionOrMessageCallExpression(
+                     new SymbolExpression("system'console"),
+                     "writeLine",
+                     new IntConstantExpression("2") 
+                  )
+               )
+            )
+         )
+      )      
+   );
+
+   code.eval();
 }

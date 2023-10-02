@@ -673,6 +673,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
       case V_TEMPLATEBASED:
          flags |= elTemplatebased;
          break;
+      case V_MIXIN:
+         flags |= elGroup;
+         break;
       case 0:
          // ignore idle
          break;

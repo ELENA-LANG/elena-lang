@@ -1,4 +1,5 @@
-//
+import system;
+
 //public const struct ExtensionDispatcher
 //{
 //   embeddable __string pointer[] array;
@@ -40,3 +41,9 @@
 //
 //   }
 //}
+
+public extension dynamicOp
+{
+   mixInto(role)
+      = new Extension(self, role);
+}

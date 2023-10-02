@@ -219,6 +219,19 @@ procedure __extensionvar
 
 end
 
+procedure __extension
+
+  store      sp:0
+
+  get        i:0
+  redirect
+
+  peek       sp:0
+  get        i:1
+
+  jump       vt:0
+
+end
 
 procedure __str_equal (s1, s2)
 

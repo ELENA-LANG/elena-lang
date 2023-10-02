@@ -177,6 +177,7 @@ struct BuiltinReferences
    ref_t   literalReference;
    ref_t   wideReference;
    ref_t   messageReference, extMessageReference;
+   ref_t   messageNameReference;
    ref_t   wrapperTemplateReference;
    ref_t   arrayTemplateReference;
    ref_t   argArrayTemplateReference;
@@ -207,6 +208,7 @@ struct BuiltinReferences
       longReference = realReference = 0;
       literalReference = wideReference = 0;
       messageReference = extMessageReference = 0;
+      messageNameReference = 0;
       wrapperTemplateReference = 0;
       arrayTemplateReference = argArrayTemplateReference = 0;
       closureTemplateReference = lazyExpressionReference = tupleTemplateReference = 0;

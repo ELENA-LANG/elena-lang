@@ -61,9 +61,9 @@ void VMSession :: executeCommandLine(const char* line)
 {
    DynamicString<char> command;
 
+   command.append(*_prefix);
    command.append(_body.str());
    command.append('\n');
-   command.append(*_prefix);
    command.append(line);
    command.append(*_postfix);
 
@@ -151,10 +151,10 @@ bool VMSession :: execute(void* tape)
 
 void VMSession::printHelp()
 {
-   _presenter->print("-q                   - quit\n");
-   _presenter->print("-h                   - help\n");
-   _presenter->print("-l <path>            - execute a script from file\n");
-   _presenter->print("<script>             - execute script\n");
+   _presenter->print("-q                         - quit\n");
+   _presenter->print("-h                         - help\n");
+   _presenter->print("-l <path>                  - execute a script from file\n");
+   _presenter->print("{ <script>; }*\n <script>                  - execute script\n");
 }
 
 bool VMSession :: executeCommand(const char* line, bool& running)

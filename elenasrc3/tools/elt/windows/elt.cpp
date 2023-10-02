@@ -37,6 +37,8 @@ int main()
    session.loadScript(ELT_GRAMMAR_CONFIG);
    session.loadScript(ELT_TSCRIPT_CONFIG);
 
+   session.printHelp();
+
    //// load script passed via command line arguments
    //if (argc > 1) {
    //   for (int i = 1; i < argc; i++) {
