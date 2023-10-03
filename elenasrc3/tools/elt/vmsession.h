@@ -9,6 +9,8 @@
 #ifndef ELTVMSESSION_H
 #define ELTVMSESSION_H
 
+#include "core.h"
+
 namespace elena_lang
 {
    class VMSession
@@ -23,6 +25,9 @@ namespace elena_lang
       IdentifierString     _postfix;
 
       DynamicString<char>  _body;
+
+      SystemEnv            _env;
+      ThreadContent        _tcontext;
 
       bool connect(void* tape);
       bool execute(void* tape);

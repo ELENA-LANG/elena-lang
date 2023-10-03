@@ -103,7 +103,7 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    _settings.alignment = codeAlignment;
 
    // configurate the loader
-   _configuration->initLoader(_libraryProvider);
+   //_configuration->initLoader(_libraryProvider);
 
    _compiler = jitCompilerFactory(&_libraryProvider, platform);
 }
@@ -112,6 +112,8 @@ void ELENAVMMachine :: init(JITLinker& linker, SystemEnv* exeEnv)
 {
    _presenter->printLine(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER);
    _presenter->printLine(ELENAVM_INITIALIZING);
+
+   _configuration->initLoader(_libraryProvider);
 
    _compiler->populatePreloaded(
       (uintptr_t)exeEnv->th_table,
@@ -155,9 +157,9 @@ void ELENAVMMachine :: addPackage(ustr_t packageLine)
    }
 }
 
-void ELENAVMMachine :: loadConfig(ustr_t configName)
+bool ELENAVMMachine :: loadConfig(ustr_t configName)
 {
-   _configuration->loadConfigByName(_rootPath, configName);
+   return _configuration->loadConfigByName(_rootPath, configName);
 }
 
 bool ELENAVMMachine :: configurateVM(MemoryReader& reader, SystemEnv* env)
@@ -192,7 +194,8 @@ bool ELENAVMMachine :: configurateVM(MemoryReader& reader, SystemEnv* env)
             addPackage(strArg);
             break;
          case VM_CONFIG_CMD:
-            loadConfig(strArg);
+            if (!loadConfig(strArg))
+               return false;
             break;
          case VM_TERMINAL_CMD:
             _standAloneMode = false;
@@ -397,17 +400,18 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
    Module* dummyModule = new Module();
    MemoryDump tapeSymbol;
 
+   addr_t criricalHandler = 0;
    if (!withConfiguration || configurateVM(reader, env)) {
       jitLinker = new JITLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
          &_settings, nullptr);
 
       if (!_initialized) {
          init(*jitLinker, env);
+
+         criricalHandler = jitLinker->resolve(criricalHandlerReference, mskProcedureRef, false);
       }
       else jitLinker->setCompiler(_compiler);
    }
-
-   addr_t criricalHandler = _initialized ? 0 : jitLinker->resolve(criricalHandlerReference, mskProcedureRef, false);
 
    if (compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule)) {
       SymbolList list;
@@ -421,7 +425,11 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
 
       return execute(env, address);
    }
-   else return 0;
+   if (!_standAloneMode) {
+      resumeVM(*jitLinker, env, (void*)criricalHandler);
+   }
+
+   return 0;
 }
 
 void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, const char* criricalHandlerReference)

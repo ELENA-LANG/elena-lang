@@ -63,7 +63,7 @@ namespace elena_lang
 
       virtual addr_t resolveExternal(ustr_t dll, ustr_t function) = 0;
 
-      void loadConfig(ustr_t configName);
+      bool loadConfig(ustr_t configName);
 
       void addForward(ustr_t forwardLine);
       void addPackage(ustr_t packageLine);

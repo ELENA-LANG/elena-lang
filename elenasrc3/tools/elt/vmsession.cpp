@@ -8,7 +8,6 @@
 
 #include "elena.h"
 #include "vmsession.h"
-#include "core.h"
 #include "elenasm.h"
 #include "elenavm.h"
 #include "eltconst.h"
@@ -27,6 +26,7 @@ const char* trim(const char* s)
 // --- VMSession ---
 
 VMSession :: VMSession(PresenterBase* presenter)
+   : _env({})
 {
    _started = false;
 
@@ -123,12 +123,11 @@ bool VMSession :: executeScript(const char* script)
 
 bool VMSession :: connect(void* tape)
 {
-   SystemEnv env = { };
+   _env.gc_yg_size = 0x15000;
+   _env.gc_mg_size = 0x54000;
+   _env.th_single_content = &_tcontext;
 
-   env.gc_yg_size = 0x15000;
-   env.gc_mg_size = 0x54000;
-
-   int retVal = InitializeVMSTLA(&env, tape, nullptr);
+   int retVal = InitializeVMSTLA(&_env, tape, ELT_EXCEPTION_HANDLER);
    if (retVal != 0) {
       _presenter->printLine(ELT_STARTUP_FAILED);
 

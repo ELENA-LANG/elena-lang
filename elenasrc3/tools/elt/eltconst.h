@@ -23,6 +23,8 @@ namespace elena_lang
    constexpr auto ELT_STARTUP_FAILED         = "ELENAVM: Start has failed";
    constexpr auto ELT_CODE_FAILED            = "ELENAVM: Operation has failed";
    constexpr auto ELT_SCRIPT_FAILED          = "\nFailed:%s";
+
+   constexpr auto ELT_EXCEPTION_HANDLER      = "system'core_routines'critical_exception_handler";
 }
 
 #endif

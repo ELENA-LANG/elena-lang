@@ -11,7 +11,7 @@
   </platform>
   <project>
      <namespace>helloworld</namespace>
-     <template>vm_console</template>
+     <template>console</template>
   </project>
   <files>
      <module>

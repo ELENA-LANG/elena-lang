@@ -1,25 +1,24 @@
 import extensions;
-import system'dynamic'expressions;
-import system'dynamic;
  
 public program()
 {
-   var code := new SymbolCollection(
-      new SymbolInfo(
-         "program",
-         new DynamicSingleton(
-            new ActionMethodExpression(
-               new CodeblockExpression(
-                  new ExtensionOrMessageCallExpression(
-                     new SymbolExpression("system'console"),
-                     "writeLine",
-                     new IntConstantExpression("2") 
-                  )
-               )
-            )
-         )
-      )      
-   );
+   var tape :=  new system'dynamic'expressions'SymbolCollection ( 
+     new system'dynamic'expressions'SymbolInfo ( 
+       "program", 
+        new system'dynamic'expressions'DynamicSingleton ( 
+          new system'dynamic'expressions'ActionMethodExpression ( 
+            new system'dynamic'expressions'CodeblockExpression ( 
+              new system'dynamic'expressions'ExtensionOrMessageCallExpression ( 
+                new system'dynamic'expressions'SymbolExpression ( "system'console" ) ,
+                "writeLine" ,
+                new system'dynamic'expressions'IntConstantExpression ( "2" ) 
+              ) 
+            ) 
+          ) 
+        ) 
+      ) 
+   ); 
 
-   code.eval();
+
+   tape.eval();
 }
