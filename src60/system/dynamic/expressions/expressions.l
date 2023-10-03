@@ -152,12 +152,12 @@ namespace expressions
       static Expression IntConstant(string value)
          = new IntConstantExpression(value);
 
-//      static Expression GetProperty(MessageName name, Expression t)
-//         = GetPropertyExpression.new(name, t);
-//
-//      static Expression SetProperty(MessageName name, Expression t, Expression v)
-//         = SetPropertyExpression.new(name, t, v);
-//
+      static Expression GetProperty(MessageName name, Expression t)
+         = GetPropertyExpression.new(name, t);
+
+      static Expression SetProperty(MessageName name, Expression t, Expression v)
+         = SetPropertyExpression.new(name, t, v);
+
 //      static Expression Closure(Expression body)
 //         = new ClosureExpression(body);        
 //              
@@ -584,82 +584,79 @@ namespace expressions
       }
    }
 
-//   public class GetPropertyExpression : Expression
-//   {
-//      MessageName _name;
-//      Expression  _target;
-//        
-//      constructor(Expression t, string message)
-//         <= new(new MessageName(message), t);
-//            
-//      constructor new(MessageName name, Expression t)
-//      {
-//         _name := name;
-//         _target := t
-//      }
-//                
-//      bool IsOperation = true;
-//
-//      int prepare(ExpressionScope scope)
-//         = _target.prepare(scope);
-//        
-//      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
-//      {
-//         _target.saveTo(list, scope, 0);
-//            
-//         auto mssg := _name.getPropertyMessage();
-//         list.append(MessageFunction.load(mssg));
-//         if (index > 0) {
-//            list.append(new SavingFunction(index));
-//         }
-//      }
-//   }
-//
-//   public class SetPropertyExpression : Expression
-//   {
-//      MessageName _name;
-//      Expression  _target;
-//      Expression  _value;
-//        
-//      constructor(Expression t, string message, Expression v)
-//         <= new(new MessageName(message), t, v);
-//            
-//      constructor new(MessageName name, Expression t, Expression v)
-//      {
-//         _name := name;
-//         _target := t;
-//         _value := v
-//      }
-//        
-//      bool IsOperation = true;
-//        
-//      int prepare(ExpressionScope scope)
-//      {
-//         int maxStackSize := 2;
-//         int argStackSize := _target.prepare(scope);
-//         if (argStackSize > maxStackSize)
-//            { maxStackSize := argStackSize; };
-//            
-//         argStackSize := _value.prepare(scope);            
-//         if (argStackSize > maxStackSize)
-//                { maxStackSize := argStackSize; };
-//            
-//         ^ maxStackSize;
-//      }
-//        
-//      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
-//      {
-//         _value.saveTo(list, scope, 1);
-//         _target.saveTo(list, scope, 0);
-//            
-//         auto mssg := _name.setPropertyMessage();
-//         list.append(MessageFunction.load(mssg));
-//            
-//         if (index > 0) {
-//            list.append(new SavingFunction(index));
-//         }
-//      }
-//   }
+   public class GetPropertyExpression : Expression
+   {
+      MessageName _name;
+      Expression  _target;
+        
+      constructor(Expression t, string message)
+         <= new(new MessageName(message), t);
+            
+      constructor new(MessageName name, Expression t)
+      {
+         _name := name;
+         _target := t
+      }
+                
+      bool IsOperation = true;
+
+      declare(ExpressionScope scope)
+      {
+         _target.declare(scope);
+         scope.reserveStack(1);
+      }
+
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         _target.saveTo(list, scope, 0);
+            
+         auto mssg := _name.getPropertyMessage();
+         list.append(MessageFunction.load(mssg));
+         if (index > 0) {
+            list.append(new SavingFunction(index));
+         }
+      }
+   }
+
+   public class SetPropertyExpression : Expression
+   {
+      MessageName _name;
+      Expression  _target;
+      Expression  _value;
+        
+      constructor(Expression t, string message, Expression v)
+         <= new(new MessageName(message), t, v);
+            
+      constructor new(MessageName name, Expression t, Expression v)
+      {
+         _name := name;
+         _target := t;
+         _value := v
+      }
+        
+      bool IsOperation = true;
+        
+      declare(ExpressionScope scope)
+      {
+         _target.declare(scope);
+         _value.declare(scope);      
+
+         scope.reserveStack(2);
+      }
+        
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         _value.saveTo(list, scope, 1);
+         _target.saveTo(list, scope, 0);
+            
+         auto mssg := _name.setPropertyMessage();
+         list.append(MessageFunction.load(mssg));
+            
+         if (index > 0) {
+            list.append(new SavingFunction(index));
+         }
+      }
+   }
 
    public class ConstantExpression : Expression
    {
@@ -1791,6 +1788,25 @@ namespace expressions
             
          var program := tape.program;
          ^ program();
+      }
+
+      safeEval()
+      {
+         try
+         {
+            self.eval();
+         }
+         catch::
+         {
+            function(AbortException e)
+            {
+            }
+          
+            function(Exception err)
+            {
+               console.writeLine(err);
+            }
+         }
       }
    }
 }

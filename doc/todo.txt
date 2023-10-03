@@ -8,14 +8,12 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * elt : execute an operation and print the result
-    * elt : 2+3, "hello", "workd".insert(0, "hello ")
+    * elenavm : implementing loadDispatcherOverloadlist
     * elt : print a number : printLine
     * elt : print a string : printLine
-    * elt - exception handler
+
     * test elt : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
     * sm : generate some basic templates from vm console - hello world sample
-    * elenavm : implementing loadDispatcherOverloadlist
     * elenavm : preloaded symbol, support preloaded symbols : dynamic
     * elenavm : loading preloaded symbols for newly loaded modules
 

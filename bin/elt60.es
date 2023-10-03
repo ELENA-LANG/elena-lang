@@ -1,6 +1,6 @@
 [[ 
     #grammar vmbuild
     #config vm_client
-    #postfix " ^ ""eval[1]"" "
+    #postfix " ^ ""safeEval[1]"" "
     #start;
 ]]
