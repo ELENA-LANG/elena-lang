@@ -36,7 +36,7 @@ namespace elena_lang
 
       addr_t retrieveGlobalAttribute(int attribute, ustr_t name);
 
-      ref_t loadDispatcherOverloadlist(ustr_t referenceName);
+      addr_t loadDispatcherOverloadlist(ustr_t referenceName);
 
       void Exit(int exitCode);
 

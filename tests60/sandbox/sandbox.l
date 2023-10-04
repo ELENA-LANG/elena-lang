@@ -1,8 +1,9 @@
 import extensions;
 
- 
 public program()
 {
+   "Start".printMe();
+
    var tape :=  new system'dynamic'expressions'SymbolCollection ( 
      new system'dynamic'expressions'SymbolInfo ( 
        "program", 

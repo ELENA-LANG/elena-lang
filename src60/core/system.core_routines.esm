@@ -1636,6 +1636,10 @@ procedure __extdispatcher
   jne       labDefault
 
   free      i:1
+
+  xrefresh  sp:0
+  xrefresh  sp:1
+
   xdispatch i:1
 
   jump      labDefault2

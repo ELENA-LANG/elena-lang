@@ -1702,14 +1702,14 @@ namespace expressions
                 
          TapeFunction resolveExtension(Message message)
          {
-            auto varMessage := message.MessageName.VariadicMessage;
-                    
             var op := ExtensionDispatcher.load(message, imports);
             if (op != nil)
             {
                ^ ExtensionMessageFunction.load(message, op)
             }
             else {
+               auto varMessage := message.MessageName.VariadicMessage;
+                    
                var op2 := VariadicExtensionDispatcher.load(varMessage, imports);
                if (op2 != nil) {
                   ^ ExtensionMessageFunction.load(message, op2)

@@ -8,7 +8,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * elenart : implementing loadDispatcherOverloadlist
     * elenavm : implementing loadDispatcherOverloadlist
     * elt : calling an extension
     * elt : print a number : printLine
