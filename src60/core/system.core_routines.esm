@@ -7,6 +7,7 @@ define ELENA_ERR_OUT_OF_MEMORY     103h;
 
 define FUNCTION_MESSAGE       00000020h;
 define PROPERTY_MESSAGE       000000C0h;
+define VARIADIC_MESSAGE       00000080h;
 define PROP_ARG_MASK          000000DFh;
 define ARG_MASK               0000001Fh;
 
@@ -144,7 +145,7 @@ end
 
 procedure __message_dispatcher
 
-  tstn        FUNCTION_MESSAGE
+  tst         n:FUNCTION_MESSAGE
   jeq         labDefault
 
   loadv
@@ -178,7 +179,7 @@ end
 
 procedure __ext_message_dispatcher
 
-  tstn        FUNCTION_MESSAGE
+  tst         n:FUNCTION_MESSAGE
   jeq         labDefault
 
   loadv
@@ -1440,7 +1441,7 @@ end
 
 procedure __mssgname_dispatcher
 
-  tstn        FUNCTION_MESSAGE
+  tst         n:FUNCTION_MESSAGE
   jeq         labDefault
 
   loadv
@@ -1670,6 +1671,72 @@ labDefault2:
 
 end
 
+procedure __vextdispatcher (arg)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  tst        n:VARIADIC_MESSAGE
+  jne        labUnboxing
+
+  xdispatch  i:1, variadic
+  jump       labError
+
+labUnboxing:
+  open       (2),[target],[mssg]
+
+  store      fp:target
+  save       dp:mssg
+
+  and        n:ARG_MASK
+  add        n:1
+  dalloc
+  set        sp:0
+  alloc      i:1
+  store      sp:0
+  set        fp:arg
+  swap       sp:0
+  sub        n:1
+  dtrans
+  swap       sp:0
+  set        terminator
+  swap       sp:0
+  xassign
+  free       i:1
+
+  load       dp:mssg
+  and        n:0FFFFFFE0h
+  or         n:082h
+
+  peek       fp:target
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+  call       vt:0
+
+  close      []
+  $clear
+  quit
+
+labError:
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
+
+end
+
 procedure __saving_closure(obj, args)
 
   xflush     sp:0
@@ -1855,7 +1922,7 @@ end
 
 procedure __closuretape
 
-  tstn       FUNCTION_MESSAGE
+  tst        n:FUNCTION_MESSAGE
   jeq        labDefault
 
   xflush     sp:0

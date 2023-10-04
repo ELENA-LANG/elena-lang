@@ -8,9 +8,7 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * elt : calling an extension
     * elt : print a number : printLine
-    * elt : print a string : printLine
 
     * examples : rosetta code sample : Interactive programming (repl)
     * #15 : return double / long from external function

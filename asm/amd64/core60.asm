@@ -3323,82 +3323,13 @@ inline % 9FAh
 
 //; !! temporally commented
 
-//;  mov  r8,  rbx
-//;  mov  [rsp+8], r10                      // ; saving arg0
-//;  lea  rax, [rsp + __n_2]
-//;  mov  [rsp+16], r11                     // ; saving arg1
+end
 
-//;  mov  rsi, __ptr64_2
-//;  xor  edx, edx
-//;  xor  ecx, ecx
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 0AFAh
 
-//;  // ; count the number of args
-//;  mov  rbx, rax
-//;  mov  r9, -1
-//;labCountParam:
-//;  lea  rbx, [rbx+8]
-//;  cmp  r9, [rbx]
-//;  lea  rcx, [rcx+1]
-//;  jnz  short labCountParam
-//;  mov  r15, rcx
-
-//;  mov  rbx, [rsi] // ; message from overload list
-
-//;labNextOverloadlist:
-//;  mov  r9, mdata : %0
-//;  shr  ebx, ACTION_ORDER
-//;  lea  r13, [rbx*8]
-//;  mov  r13, [r9 + r13 * 2 + 8]
-//;  xor  ecx, ecx
-//;  lea  rbx, [r13 - 8]
-
-//;  mov  r14, rbx
-
-//;labNextParam:
-//;  add  ecx, 1
-//;  cmp  rcx, r15
-//;  jnz  short labMatching
-//;
-//;  mov  r9, __ptr64_2
-//;  lea  r13, [rdx * 8]
-//;  mov  rbx, r8
-//;  mov  rax, [r9 + r13 * 2 + 8]
-//;  mov  rdx, [r9 + r13 * 2]
-//;  jmp  rax
-
-//;labMatching:
-//;  mov    rdi, r14
-//;  lea    rdi, [rdi + 8]
-//;  cmp    [rdi], 0
-//;  cmovnz r14, rdi
-
-//;  mov  rdi, [rax + rcx * 8]
-
-//;  //; check nil
-//;  mov   rsi, rdata : %VOIDPTR + elObjectOffset
-//;  test  rdi, rdi                                              
-//;  cmovz rdi, rsi
-
-//;  mov  rdi, [rdi - elVMTOffset]
-//;  mov  rsi, r14
-//;  mov  rsi, [rsi]
-
-//;labNextBaseClass:
-//;  cmp  rsi, rdi
-//;  jz   labNextParam
-//;  mov  rdi, [rdi - elPackageOffset]
-//;  and  rdi, rdi
-//;  jnz  short labNextBaseClass
-
-//;  add  edx, 1
-//;  mov  r13, __ptr64_2
-//;  lea  r9, [rdx * 8]
-//;  mov  rbx, [r13 + r9 * 2] // ; message from overload list
-//;  and  rbx, rbx
-//;  jnz  labNextOverloadlist
-
-//;  mov  rbx, r8
-//;  mov  edx, __arg32_1
+//; !! temporally commented
 
 end
 

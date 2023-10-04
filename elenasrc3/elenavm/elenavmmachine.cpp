@@ -299,7 +299,7 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
       }
    }
 
-   if (symbols.count() == 0)
+   if (symbols.count() == 0 && _preloadedList.count() == 0)
       return false;
 
    MemoryWriter writer(&tapeSymbol);
@@ -310,6 +310,7 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
    ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
 
    fillPreloadedSymbols(jitLinker, writer, dummyModule);
+
    for(size_t i = 0; i < symbols.count(); i++) {
       auto p = symbols[i];
       ref_t mask = p.value1 & mskAnyRef;
@@ -420,8 +421,6 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
    }
 
    if (compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule)) {
-      SymbolList list;
-
       void* address = (void*)jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
 
       resumeVM(*jitLinker, env, (void*)criricalHandler);
@@ -537,12 +536,14 @@ addr_t ELENAVMMachine :: loadReference(ustr_t name, int command)
    MemoryWriter tapeWriter(&tape);
 
    addVMTapeEntry(tapeWriter, VM_INIT_CMD);
-   addVMTapeEntry(tapeWriter, command, name);
+   if (!emptystr(name))
+      addVMTapeEntry(tapeWriter, command, name);
    addVMTapeEntry(tapeWriter, VM_ENDOFTAPE_CMD);
 
    interprete(_env, tape.get(0), tape.length(), nullptr, true);
 
-   return _mapper.resolveReference({ nullptr, name }, getCmdMask(command));
+   return emptystr(name)
+      ? 0 : _mapper.resolveReference({ nullptr, name }, getCmdMask(command));
 }
 
 addr_t ELENAVMMachine :: loadClassReference(ustr_t name)
@@ -612,6 +613,22 @@ addr_t ELENAVMMachine :: loadSymbol(ustr_t name)
    return loadReference(name, VM_CALLSYMBOL_CMD);
 }
 
+bool ELENAVMMachine :: loadModule(ustr_t ns)
+{
+   auto retVal = _libraryProvider.loadModuleIfRequired(ns);
+   if (retVal == LibraryProvider::ModuleRequestResult::Loaded) {
+      if (_preloadedList.count() > 0) {
+         loadReference(nullptr, 0);
+
+         return true;
+      }
+   }
+   else if (retVal == LibraryProvider::ModuleRequestResult::NotFound)
+      return false;
+
+   return false;
+}
+
 addr_t ELENAVMMachine :: retrieveGlobalAttribute(int attribute, ustr_t name)
 {
    IdentifierString currentName;
@@ -662,6 +679,8 @@ int ELENAVMMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
    size_t i = 0;
    while (moduleList[i]) {
       ustr_t ns = moduleList + i;
+
+      loadModule(ns);
 
       messageRef.copy(ns);
       messageRef.append('\'');

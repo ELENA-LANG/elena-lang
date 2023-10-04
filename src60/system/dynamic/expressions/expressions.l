@@ -1651,7 +1651,22 @@ namespace expressions
       } 
    }
     
-   public class SymbolCollection
+   public sealed class ImportInfo
+   {
+      string[]     imports;
+
+      constructor(string import)
+      {
+         imports := new string[] { import };
+      }
+
+      string[] declare(string[] declared)
+      {
+         ^ declared + imports
+      }
+   }
+
+   public sealed class SymbolCollection
          : info("a dynamic namespace, containing list of symbols")
    {
       SymbolInfo[] symbols;
@@ -1671,10 +1686,20 @@ namespace expressions
 
       constructor(params SymbolInfo[] symbols)
          <= load(params symbols);
-                                
+
+      constructor(ImportInfo imports, SymbolInfo symbol1)
+         <= load(imports, symbol1);
+                                                
       constructor load(params SymbolInfo[] symbols)
       {
          this symbols := symbols;        
+      }
+                                                
+      constructor load(ImportInfo importInfo, params SymbolInfo[] symbols)
+      {
+         this symbols := symbols;
+         
+         imports := importInfo.declare(imports);
       }
  
       compile()

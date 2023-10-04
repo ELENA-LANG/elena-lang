@@ -97,6 +97,10 @@ namespace elena_lang
 
       addr_t loadReference(ustr_t name, int command);
 
+      void resolvePreloaded();
+
+      bool loadModule(ustr_t ns);
+
    public:
       bool isStandAlone() { return _standAloneMode; }
 
@@ -127,8 +131,16 @@ namespace elena_lang
 
       void onLoad(ModuleBase*) override;
 
-      //void generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol);
-      
+      void initRandomSeed(SeedStruct& seed)
+      {
+         __routineProvider.InitRandomSeed(seed, __routineProvider.GenerateSeed());
+      }
+
+      unsigned int getRandomNumber(SeedStruct& seed)
+      {
+         return __routineProvider.GetRandomNumber(seed);
+      }
+
       ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
          int codeAlignment, JITSettings gcSettings,
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType));

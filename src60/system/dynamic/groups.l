@@ -104,7 +104,7 @@ public const struct VariadicExtensionDispatcher
       ^ VariadicExtensionDispatcher.copy(output, len)
    }
     
-//   dispatch() : external(system'core_routines'__vextdispatcher);
+   dispatch() : external(system'core_routines'__vextdispatcher);
 }
 
 public extension dynamicOp

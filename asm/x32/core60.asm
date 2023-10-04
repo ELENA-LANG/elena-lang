@@ -3669,6 +3669,113 @@ labEnd:
 
 end
 
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 0AFAh
+
+  mov  [esp+4], esi                      // ; saving arg0
+  lea  eax, [esp + __n_2]
+
+  push edx 
+  mov  ecx, __n_1
+  push ecx
+  xor  ecx, ecx
+  push ecx
+  push ecx
+  push ebx
+
+  mov  ebx, eax 
+
+labCountParam:
+  lea  ebx, [ebx+4]
+  cmp  [ebx], -1
+  lea  ecx, [ecx+1]
+  jnz  short labCountParam
+  mov  [esp+4], ecx 
+
+  mov  ebx, [esp]
+  mov  ecx, [esp+12]
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  test esi, esi
+  jz   labEnd
+
+labNextList:
+  xor  edx, edx
+  mov  ebx, [esi] // ; message from overload list
+
+labNextOverloadlist:
+  shr  ebx, ACTION_ORDER
+  mov  edi, mdata : %0
+  mov  ebx, [edi + ebx * 8 + 4]
+  xor  ecx, ecx
+
+  lea  ebx, [ebx - 4]
+  mov  [esp+8], ebx
+
+labNextParam:
+  add  ecx, 1
+  cmp  ecx, [esp+4]
+  jnz  short labMatching
+
+  mov  ecx, [esp+12]
+  pop  ebx
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  add  esp, 16
+  mov  eax, [esi + edx * 8 + 4]
+  mov  edx, [esi + edx * 8]
+  mov  esi, [esp+4]                      // ; restore arg0
+  jmp  eax
+
+labMatching:
+  mov    esi, [esp+8]
+  lea    edi, [esi+4]
+  cmp    [edi], 0
+  cmovnz esi, edi
+  mov    [esp+8], esi
+
+  mov  edi, [eax + ecx * 4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
+  test  edi, edi
+  cmovz edi, esi
+
+  mov  edi, [edi - elVMTOffset]
+  mov  esi, [esp+8]
+  mov  esi, [esi]
+
+labNextBaseClass:
+  cmp  esi, edi
+  jz   labNextParam
+  mov  edi, [edi - elPackageOffset]
+  and  edi, edi
+  jnz  short labNextBaseClass
+
+  mov  ecx, [esp+12]
+  mov  ebx, [esp]
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  add  edx, 1
+  mov  ebx, [esi + edx * 8] // ; message from overload list
+  and  ebx, ebx
+  jnz  labNextOverloadlist
+
+  add  [esp+12], 1
+  mov  ebx, [esp]
+  mov  ecx, [esp+12]
+
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  test esi, esi
+  jnz  labNextList
+
+labEnd:
+  pop  ebx
+  add  esp, 12
+
+  pop  edx
+  mov  esi, [esp+4]                      // ; restore arg0
+
+end
+
 // ; dispatchmr
 // ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 0FBh

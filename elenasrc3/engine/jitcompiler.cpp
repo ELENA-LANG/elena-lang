@@ -2588,7 +2588,10 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
 
    void* code = nullptr;
    if ((scope->command.arg1 & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
-      code = scope->compiler->_inlines[5][scope->code()];
+      if (!scope->command.arg2) {
+         code = scope->compiler->_inlines[10][scope->code()];
+      }
+      else code = scope->compiler->_inlines[5][scope->code()];
    }
    else if (!scope->command.arg2) {
       code = scope->compiler->_inlines[9][scope->code()];

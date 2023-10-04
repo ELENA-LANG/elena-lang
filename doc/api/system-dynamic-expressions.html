@@ -2167,6 +2167,116 @@ system'dynamic'expressions'IfExpression</LI>
 </UL>
 <HR>
 </DIV>
+<A NAME="ImportInfo">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'dynamic'expressions'</DIV>
+<H2 title="ImportInfo" class="title">ImportInfo</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">ImportInfo</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'dynamic'expressions'ImportInfo</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">String</A><I>[]</I></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>imports</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#ImportInfo">ImportInfo</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> import)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#ImportInfo">ImportInfo</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">String</A><I>[]</I></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>declare(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">String</A><I>[]</I></SPAN> declared)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="IntConstantExpression">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -3663,7 +3773,25 @@ system'dynamic'expressions'SymbolCollection</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#SymbolCollection">SymbolCollection</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#ImportInfo">ImportInfo</A></SPAN> imports, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#SymbolInfo">SymbolInfo</A></SPAN> symbol1)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#SymbolCollection">SymbolCollection</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
 <CODE>load(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#SymbolInfo">SymbolInfo</A></SPAN><i>[]</i> symbols)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#SymbolCollection">SymbolCollection</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#ImportInfo">ImportInfo</A></SPAN> importInfo, <i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#SymbolInfo">SymbolInfo</A></SPAN><i>[]</i> symbols)
 </CODE>
 </TD>
 </TR>

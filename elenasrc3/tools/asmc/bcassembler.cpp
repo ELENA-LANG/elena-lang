@@ -1053,7 +1053,6 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::SelULtRR:
             return compileRR(tokenInfo, writer, opCommand, true);
          case ByteCode::ICmpN:
-         case ByteCode::TstN:
          case ByteCode::NLen:
          case ByteCode::ReadN:
          case ByteCode::WriteN:
@@ -1068,6 +1067,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::CmpN:
          case ByteCode::MulN:
          case ByteCode::TstFlag:
+         case ByteCode::TstN:
             return compileOpN(tokenInfo, writer, opCommand, constants, false);
          case ByteCode::Copy:
             return compileOpN(tokenInfo, writer, opCommand, constants, true);
@@ -1132,14 +1132,23 @@ bool ByteCodeAssembler :: compileXDispatchMR(ScriptToken& tokenInfo, MemoryWrite
       ref_t arg2 = readReference(tokenInfo);
 
       ByteCodeUtil::write(writer, command.code, arg, arg2);
+
+      read(tokenInfo);
    }
    else {
       int arg2 = readN(tokenInfo, constants);
 
+      read(tokenInfo);
+      if (tokenInfo.compare(",")) {
+         read(tokenInfo, "variadic", ASM_INVALID_COMMAND);
+
+         arg2 |= VARIADIC_MESSAGE;
+
+         read(tokenInfo);
+      }
+
       ByteCodeUtil::write(writer, command.code, arg2, 0);
    }
-
-   read(tokenInfo);
 
    return true;
 }

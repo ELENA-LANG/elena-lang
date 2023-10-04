@@ -1510,7 +1510,11 @@ void JITLinker :: complete(JITCompilerBase* compiler, ustr_t superClass)
    // fix attribute image - specify the attribute size
    MemoryBase* aSection = _imageProvider->getADataSection();
    MemoryWriter aWriter(aSection);
-   aWriter.align(8, 0);
+
+   // HOTFIX : do align the attribute table only for the virtual mode
+   if (_virtualMode)
+      aWriter.align(8, 0);
+
    aWriter.seek(0);
    aWriter.writePos(aSection->length());
 }

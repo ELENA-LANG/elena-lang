@@ -574,3 +574,26 @@ void LibraryProvider :: loadDistributedSymbols(ustr_t virtualSymbolName, ModuleI
       loadDistributedSymbols(*it, virtualSymbolName, list);
    }
 }
+
+LibraryProvider::ModuleRequestResult LibraryProvider :: loadModuleIfRequired(ustr_t name)
+{
+   NamespaceString ns;
+   ns.copy(name);
+
+   while (!ns.empty()) {
+      if (!_modules.exist(*ns)) {
+         LoadResult result = LoadResult::NotFound;
+
+         loadModule(*ns, result, true);
+
+         if (result == LoadResult::Successful) {
+            return ModuleRequestResult::Loaded;
+         }
+      }
+      else return ModuleRequestResult::AlreadyLoaded;
+
+      ns.trimLastSubNs();
+   }
+
+   return ModuleRequestResult::NotFound;
+}

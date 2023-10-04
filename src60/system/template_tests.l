@@ -17,13 +17,3 @@ template_test()
    Func<T1,T2,T3,T4,T5> f4 := nil;
    Func<T1,T2,T3,T4,T5,T6> f5 := nil;
 }
-
-
-
-public extension testOp
-{
-   printMe()
-   {
-      console.writeLine(self)
-   }
-}

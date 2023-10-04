@@ -298,6 +298,16 @@ EXTERN_DLL_EXPORT int LoadExtensionDispatcherLA(const char* moduleList, mssg_t m
    return machine->loadExtensionDispatcher(moduleList, message, output);
 }
 
+EXTERN_DLL_EXPORT void GetRandomSeedLA(SeedStruct& seed)
+{
+   machine->initRandomSeed(seed);
+}
+
+EXTERN_DLL_EXPORT unsigned int GetRandomIntLA(SeedStruct& seed)
+{
+   return machine->getRandomNumber(seed);
+}
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
