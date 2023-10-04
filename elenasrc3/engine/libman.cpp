@@ -540,32 +540,37 @@ bool LibraryProvider::saveDebugModule(ModuleBase* module)
    return dynamic_cast<Module*>(module)->save(writer);
 }
 
+void LibraryProvider :: loadDistributedSymbols(ModuleBase* module, ustr_t virtualSymbolName, ModuleInfoList& list)
+{
+   IdentifierString rootName("'", virtualSymbolName);
+
+   ref_t reference = module->mapReference(*rootName, true);
+   if (reference) {
+      list.add({ module, reference });
+   }
+
+   // get list of nested namespaces
+   IdentifierString nsSectionName("'", NAMESPACES_SECTION);
+   auto nsSection = module->mapSection(module->mapReference(*nsSectionName, true) | mskLiteralListRef, true);
+   if (nsSection) {
+      MemoryReader nsReader(nsSection);
+      while (!nsReader.eof()) {
+         IdentifierString nsProperName("'");
+         nsReader.appendString(nsProperName);
+         nsProperName.append("'");
+         nsProperName.append(virtualSymbolName);
+
+         reference = module->mapReference(*nsProperName, true);
+         if (reference) {
+            list.add({ module, reference });
+         }
+      }
+   }
+}
+
 void LibraryProvider :: loadDistributedSymbols(ustr_t virtualSymbolName, ModuleInfoList& list)
 {
    for (auto it = _modules.start(); !it.eof(); ++it) {
-      IdentifierString rootName("'", virtualSymbolName);
-
-      ref_t reference = (*it)->mapReference(*rootName, true);
-      if (reference) {
-         list.add({ *it, reference });
-      }
-
-      // get list of nested namespaces
-      IdentifierString nsSectionName("'", NAMESPACES_SECTION);
-      auto nsSection = (*it)->mapSection((*it)->mapReference(*nsSectionName, true) | mskLiteralListRef, true);
-      if (nsSection) {
-         MemoryReader nsReader(nsSection);
-         while (!nsReader.eof()) {
-            IdentifierString nsProperName("'");
-            nsReader.appendString(nsProperName);
-            nsProperName.append("'");
-            nsProperName.append(virtualSymbolName);
-
-            reference = (*it)->mapReference(*nsProperName, true);
-            if (reference) {
-               list.add({ *it, reference });
-            }
-         }
-      }
+      loadDistributedSymbols(*it, virtualSymbolName, list);
    }
 }

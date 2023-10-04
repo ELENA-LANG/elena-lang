@@ -8,7 +8,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * elenavm : implementing loadDispatcherOverloadlist
     * elt : calling an extension
     * elt : print a number : printLine
     * elt : print a string : printLine
@@ -43,8 +42,6 @@ In development:
 
     * test elt : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
     * sm : generate some basic templates from vm console - hello world sample
-    * elenavm : preloaded symbol, support preloaded symbols : dynamic
-    * elenavm : loading preloaded symbols for newly loaded modules
 
     * new unit test : dispatchmr (both function and normal one)
     * test binary file reader / writer
@@ -72,7 +69,7 @@ In development:
 
     * inno setup : x86, x86-64
 
-    * elenavm : implementing rest of dll api
+    * elenavm : implementing rest of dll api (loadAddressInfo)
 
     === Iteration 19 ===
     [!] x86 mta support

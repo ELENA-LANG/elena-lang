@@ -42,7 +42,7 @@ namespace elena_lang
    };
 
    // --- ELENARTMachine ---
-   class ELENAVMMachine : public ELENAMachine, public ImageProviderBase, public ExternalMapper
+   class ELENAVMMachine : public ELENAMachine, public ImageProviderBase, public ExternalMapper, public LibraryLoaderListenerBase
    {
    protected:
       bool                    _initialized;
@@ -53,6 +53,7 @@ namespace elena_lang
       SystemEnv*              _env;
 
       bool                    _standAloneMode;
+      bool                    _startUpCode;
 
       path_t                  _rootPath;
 
@@ -60,6 +61,9 @@ namespace elena_lang
       JITCompilerBase*        _compiler;
 
       IdentifierString        _preloadedSection;
+      ModuleInfoList          _preloadedList;
+
+      addr_t retrieveGlobalAttribute(int attribute, ustr_t name);
 
       virtual addr_t resolveExternal(ustr_t dll, ustr_t function) = 0;
 
@@ -89,7 +93,7 @@ namespace elena_lang
       ref_t loadSubject(ustr_t actionName);
       addr_t loadDispatcherOverloadlist(ustr_t referenceName);
 
-      void fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule);
+      void fillPreloadedSymbols(JITLinker& jitLinker, MemoryWriter& writer, ModuleBase* dummyModule);
 
       addr_t loadReference(ustr_t name, int command);
 
@@ -120,6 +124,8 @@ namespace elena_lang
       {
          return _env;
       }
+
+      void onLoad(ModuleBase*) override;
 
       //void generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol);
       

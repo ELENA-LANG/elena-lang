@@ -89,12 +89,13 @@ void ELENAVMConfiguration :: forEachForward(void* arg, void (*feedback)(void* ar
 ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform, 
    int codeAlignment, JITSettings gcSettings,
    JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
-      : _mapper(this), _rootPath(configPath)
+      : _mapper(this), _rootPath(configPath), _preloadedList({})
 {
    _standAloneMode = true;
    _initialized = false;
    _presenter = presenter;
    _env = nullptr;
+   _startUpCode = true;
 
    _configuration = new ELENAVMConfiguration(platform, configPath);
 
@@ -102,8 +103,7 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    _settings.virtualMode = false;
    _settings.alignment = codeAlignment;
 
-   // configurate the loader
-   //_configuration->initLoader(_libraryProvider);
+   _libraryProvider.addListener(this);
 
    _compiler = jitCompilerFactory(&_libraryProvider, platform);
 }
@@ -214,9 +214,14 @@ bool ELENAVMMachine :: configurateVM(MemoryReader& reader, SystemEnv* env)
    return true;
 }
 
-void ELENAVMMachine :: fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule)
+void ELENAVMMachine :: fillPreloadedSymbols(JITLinker& jitLinker, MemoryWriter& writer, ModuleBase* dummyModule)
 {
    ModuleInfoList symbolList({});
+   for (auto it = _preloadedList.start(); !it.eof(); ++it) {
+      jitLinker.copyMetaList(*it, symbolList);
+   }
+   _preloadedList.clear();
+
    _mapper.forEachLazyReference<ModuleInfoList*>(&symbolList, [](ModuleInfoList* symbolList, LazyReferenceInfo info)
       {
          if (info.mask == mskAutoSymbolRef) {
@@ -234,7 +239,6 @@ void ELENAVMMachine :: fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* du
       }
       else ByteCodeUtil::write(writer, ByteCode::CallR, dummyModule->mapReference(symbolName) | mskSymbolRef);
    }
-
 }
 
 inline ref_t getCmdMask(int command)
@@ -305,7 +309,7 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
 
    ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
 
-   fillPreloadedSymbols(writer, dummyModule);
+   fillPreloadedSymbols(jitLinker, writer, dummyModule);
    for(size_t i = 0; i < symbols.count(); i++) {
       auto p = symbols[i];
       ref_t mask = p.value1 & mskAnyRef;
@@ -369,9 +373,11 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
 
 void ELENAVMMachine :: onNewCode(JITLinker& jitLinker)
 {
-   ustr_t superClass = _configuration->resolveForward(SUPER_FORWARD);
+   ustr_t superClass = !_startUpCode ? nullptr : _configuration->resolveForward(SUPER_FORWARD);
 
    jitLinker.complete(_compiler, superClass);
+
+   _startUpCode = false;
 
    _mapper.clearLazyReferences();
 }
@@ -606,10 +612,38 @@ addr_t ELENAVMMachine :: loadSymbol(ustr_t name)
    return loadReference(name, VM_CALLSYMBOL_CMD);
 }
 
+addr_t ELENAVMMachine :: retrieveGlobalAttribute(int attribute, ustr_t name)
+{
+   IdentifierString currentName;
+
+   MemoryReader reader(getADataSection());
+   pos_t size = reader.getDWord();
+
+   pos_t pos = reader.position();
+   while (pos < size) {
+      int current = reader.getDWord();
+      pos_t offset = reader.getDWord() + sizeof(addr_t);
+
+      if (current == attribute) {
+         reader.readString(currentName);
+         if (currentName.compare(name)) {
+            addr_t address = 0;
+            reader.read(&address, sizeof(address));
+
+            return address;
+         }
+      }
+
+      pos += offset;
+      reader.seek(pos);
+   }
+
+   return 0;
+}
+
 addr_t ELENAVMMachine :: loadDispatcherOverloadlist(ustr_t referenceName)
 {
-   // !! temporal
-   return 0;
+   return retrieveGlobalAttribute(GA_EXT_OVERLOAD_LIST, referenceName);
 }
 
 int ELENAVMMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output)
@@ -643,4 +677,13 @@ int ELENAVMMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
    }
 
    return len;
+}
+
+void ELENAVMMachine :: onLoad(ModuleBase* module)
+{
+   if (!_preloadedSection.empty()) {
+      IdentifierString nameToResolve(META_PREFIX, *_preloadedSection);
+
+      _libraryProvider.loadDistributedSymbols(module, *nameToResolve, _preloadedList);
+   }
 }

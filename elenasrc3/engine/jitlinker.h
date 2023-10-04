@@ -226,8 +226,6 @@ namespace elena_lang
 
       addr_t resolve(ReferenceInfo refrenceInfo, ref_t sectionMask, bool silentMode);
 
-      void copyMetaList(ModuleInfo info, ModuleInfoList& output);
-
    public:
       addr_t resolveTape(ustr_t referenceName, MemoryBase* tape);
       addr_t resolveTemporalByteCode(MemoryDump& tapeSymbol, ModuleBase* module);
@@ -246,6 +244,8 @@ namespace elena_lang
          _compiler = compiler;
       }
       void complete(JITCompilerBase* compiler, ustr_t superClass);
+
+      void copyMetaList(ModuleInfo info, ModuleInfoList& output);
 
       JITLinker(ReferenceMapperBase* mapper, 
          LibraryLoaderBase* loader, ForwardResolverBase* forwardResolver,
