@@ -606,7 +606,7 @@ addr_t ELENAVMMachine :: loadSymbol(ustr_t name)
    return loadReference(name, VM_CALLSYMBOL_CMD);
 }
 
-ref_t ELENAVMMachine :: loadDispatcherOverloadlist(ustr_t referenceName)
+addr_t ELENAVMMachine :: loadDispatcherOverloadlist(ustr_t referenceName)
 {
    // !! temporal
    return 0;
@@ -616,10 +616,11 @@ int ELENAVMMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
 {
    // load message name
    char messageName[IDENTIFIER_LEN];
-   size_t mssgLen = loadMessageName(message, messageName, IDENTIFIER_LEN);
+   size_t mssgLen = loadMessageName(message | FUNCTION_MESSAGE, messageName, IDENTIFIER_LEN);
    messageName[mssgLen] = 0;
 
-   int len = 0;
+   int len = 1;
+   ((addr_t*)output)[0] = message;
 
    // search message dispatcher
    IdentifierString messageRef;
@@ -632,9 +633,9 @@ int ELENAVMMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
       messageRef.append('\'');
       messageRef.append(messageName);
 
-      ref_t listRef = loadDispatcherOverloadlist(*messageRef);
+      addr_t listRef = loadDispatcherOverloadlist(*messageRef);
       if (listRef) {
-         ((int*)output)[len] = listRef;
+         ((addr_t*)output)[len] = listRef;
          len++;
       }
 

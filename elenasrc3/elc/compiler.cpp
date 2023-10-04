@@ -9819,6 +9819,7 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
             scope.info.typeRef = retrieveStrongType(scope, retVal);
             break;
          case ObjectKind::StringLiteral:
+         case ObjectKind::WideStringLiteral:
          case ObjectKind::Float64Literal:
             scope.info.symbolType = SymbolType::Constant;
             scope.info.valueRef = constRef;
@@ -12534,33 +12535,33 @@ void Compiler :: declareModuleExtensionDispatcher(NamespaceScope& scope, SyntaxN
          }
       }
 
-      if (genericMethods.count() > 0) {
-         // if there are extension methods in the namespace
-         ref_t extRef = scope.moduleScope->mapAnonymous();
-         ClassScope classScope(&scope, extRef, Visibility::Private);
-         declareClassParent(classScope.info.header.parentRef, classScope, {});
-         classScope.extensionDispatcher = true;
-         classScope.info.header.classRef = classScope.reference;
-         classScope.extensionClassRef = scope.moduleScope->buildins.superReference;
-         generateClassFlags(classScope, elExtension | elSealed | elAutoLoaded);
+      it++;
+   }
 
-         for (auto g_it = genericMethods.start(); !g_it.eof(); ++g_it) {
-            mssg_t genericMessage = *g_it;
+   if (genericMethods.count() > 0) {
+      // if there are extension methods in the namespace
+      ref_t extRef = scope.moduleScope->mapAnonymous();
+      ClassScope classScope(&scope, extRef, Visibility::Private);
+      declareClassParent(classScope.info.header.parentRef, classScope, {});
+      classScope.extensionDispatcher = true;
+      classScope.info.header.classRef = classScope.reference;
+      classScope.extensionClassRef = scope.moduleScope->buildins.superReference;
+      generateClassFlags(classScope, elExtension | elSealed | elAutoLoaded);
 
-            _logic->injectMethodOverloadList(this, *scope.moduleScope,
-               classScope.info.header.flags, genericMessage | FUNCTION_MESSAGE, methods,
-               classScope.info.attributes, &targets, targetResolver, ClassAttribute::ExtOverloadList);
-         }
+      for (auto g_it = genericMethods.start(); !g_it.eof(); ++g_it) {
+         mssg_t genericMessage = *g_it;
 
-         classScope.save();
-
-         // build the class tree
-         node.appendChild(SyntaxKey::Class, extRef);
-
-         // save as preloaded class
-         saveAsPreloaded(_logic, *scope.nsName, scope.module, extRef, mskVMTRef);
+         _logic->injectMethodOverloadList(this, *scope.moduleScope,
+            classScope.info.header.flags, genericMessage | FUNCTION_MESSAGE, methods,
+            classScope.info.attributes, &targets, targetResolver, ClassAttribute::ExtOverloadList);
       }
 
-      it++;
+      classScope.save();
+
+      // build the class tree
+      node.appendChild(SyntaxKey::Class, extRef);
+
+      // save as preloaded class
+      saveAsPreloaded(_logic, *scope.nsName, scope.module, extRef, mskVMTRef);
    }
 }

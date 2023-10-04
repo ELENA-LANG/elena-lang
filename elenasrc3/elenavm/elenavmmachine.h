@@ -87,7 +87,7 @@ namespace elena_lang
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
       ref_t loadSubject(ustr_t actionName);
-      ref_t loadDispatcherOverloadlist(ustr_t referenceName);
+      addr_t loadDispatcherOverloadlist(ustr_t referenceName);
 
       void fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule);
 
