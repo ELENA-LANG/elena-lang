@@ -156,10 +156,12 @@ namespace elena_lang
       TstFlag        = 0xC3,
       TstN           = 0xC4,
       TstM           = 0xC5,
+      XCmpSI         = 0xC6,
       CmpFI          = 0xC8,
       CmpSI          = 0xC9,
       ExtCloseN      = 0xCA,
-
+      LLoadSI        = 0xCB,
+      LoadSI         = 0xCC,
       XLoadArgFI     = 0xCD,
       XCreateR       = 0xCE,
       System         = 0xCF,

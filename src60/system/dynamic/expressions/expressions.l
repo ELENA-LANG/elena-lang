@@ -132,7 +132,7 @@ namespace expressions
       }
 
       TapeFunction resolveExtension(Message message)
-         = nil;    
+         => parent;    
    }
 
    public interface Expression
@@ -1655,7 +1655,7 @@ namespace expressions
          : info("a dynamic namespace, containing list of symbols")
    {
       SymbolInfo[] symbols;
-//      string[]     imports := new string[] { "system" };
+      string[]     imports := new string[] { "system" };
 
       constructor(SymbolInfo symbol1)
          <= load(symbol1);
@@ -1695,31 +1695,26 @@ namespace expressions
                
          allocVariable(ScopeIdentifier variable)
          {
-            NotSupportedException.raise();
+            auto subarr := new string[] { variable.Name };
+                    
+            imports := imports + subarr
          }
-
-   //         declare(ScopeIdentifier variable) 
-//         {
-////            auto subarr := new string[] { variable.Name };
-//                    
-////            imports := imports + subarr
-//         }
                 
          TapeFunction resolveExtension(Message message)
          {
-//            auto varMessage := message.MessageName.VariadicMessage;
-//                    
-//            var op := ExtensionDispatcher.load(message, imports);
-//            if (op != nil)
-//            {
-//               ^ ExtensionMessageFunction.load(op, message)
-//            }
-//            else {
-//               var op2 := VariadicExtensionDispatcher.load(varMessage, imports);
-//               if (op2 != nil) {
-//                  ^ VariadicExtensionMessageFunction.load(op2, message)
-//               }
-//            };
+            auto varMessage := message.MessageName.VariadicMessage;
+                    
+            var op := ExtensionDispatcher.load(message, imports);
+            if (op != nil)
+            {
+               ^ ExtensionMessageFunction.load(message, op)
+            }
+            else {
+               var op2 := VariadicExtensionDispatcher.load(varMessage, imports);
+               if (op2 != nil) {
+                  ^ ExtensionMessageFunction.load(message, op2)
+               }
+            };
                     
             ^ nil
          }

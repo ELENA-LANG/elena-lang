@@ -21,6 +21,7 @@ define ptr_size64                     8;
                                       
 define get_prop_mssg                0C1h;
 define set_prop_mssg                0C2h;
+define variadic_mssg                080h;
 
 define __realSize                     8;
 
@@ -1427,6 +1428,16 @@ procedure __mssgname_setprop (self, mssg)
 
 end
 
+procedure __mssgname_variadic (self, mssg)
+
+  mov        n:2
+  loadv
+  or         n:variadic_mssg
+  peek       sp:1
+  save
+
+end
+
 procedure __mssgname_dispatcher
 
   tstn        FUNCTION_MESSAGE
@@ -1604,6 +1615,54 @@ procedure __ext_closure
   xrefresh  sp:0
 
   jump      vt:0
+
+end
+
+procedure __extdispatcher
+
+  xflush     sp:0
+  xflush     sp:1
+
+  alloc     i:1
+  xstore    i:0
+
+// ; temporally commented out to allow call from interpreter tape
+//  // check if it is invoke
+//  and        SPECIAL_MESSAGE
+//  ifn        labDefault 0 
+
+  loadv
+  xcmp      sp:0
+  jne       labDefault
+
+  free      i:1
+  xdispatch i:1
+
+  jump      labDefault2
+
+labDefault:
+  load      sp:0
+  free      i:1
+
+labDefault2:
+  peek      sp:0
+  redirect 
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
 
 end
 

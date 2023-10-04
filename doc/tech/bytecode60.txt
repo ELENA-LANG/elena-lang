@@ -72,7 +72,8 @@ ELENA byte codes (or ecodes)
 
    loadv                    - index.action := [acc].action
 
-   loads                    - index := [acc].action
+   loads                    - index := [acc].action;
+                              loading the message name
 
    lsave                    - long:[acc] := index
 
@@ -199,6 +200,8 @@ ELENA byte codes (or ecodes)
 
    load dp:disp             - index := dp[disp]
 
+   load sp:i                - index := sp[i]
+
    lsave dp:disp            - dp[disp]  := long:index
 
    lsave sp:disp            - sp[disp]  := long:index
@@ -217,7 +220,7 @@ ELENA byte codes (or ecodes)
 
    save dp:disp             - dp[disp]  := index
 
-   save sp:disp             - sp[disp]  := index
+   save sp:i                - sp[i]  := index
 
    store fp:i               - fp[i] := acc
 
@@ -311,6 +314,10 @@ ELENA byte codes (or ecodes)
 
    xcopy disp, n            - sp[0] >> temp, n bytes;
                               temp >> acc[disp];
+
+   xdispatch i              - index - message, acc[i], acc[i+1], ... - list of overload list, null terminated;
+                              searches in overload list for mathced signature, if found jumps to direct address;
+                              otherwise goes to the next one, until zero is encountered
 
    xdispatch m, r           - search in message table r the message in index and provided parameter list; 
                               if found jumps directly to it;
@@ -492,6 +499,8 @@ ELENA byte codes (or ecodes)
                               COMP.LT := (index < temp);
 
    xcmp  dp:i               - COMP.EQ := (index == dp[i]);
+
+   xcmp sp:i                - COMP.EQ := (index == sp[i]);
 
    xlcmp                    - long:temp << long:acc[0];
                               COMP.EQ := (long:index == long:temp);

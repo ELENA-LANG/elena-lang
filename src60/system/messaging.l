@@ -55,6 +55,8 @@ public sealed const struct MessageName
 
    private createSetProperty(ref Message mssg) : external(system'core_routines'__mssgname_setprop);
 
+   private createVariadic(ref Message mssg) : external(system'core_routines'__mssgname_variadic);
+
    /// Creates a dynamic signature
    constructor(string s)
    {
@@ -81,6 +83,13 @@ public sealed const struct MessageName
       self.createSetProperty(ref Message message);
         
       ^ message
+   }
+
+   get Message VariadicMessage()
+   {
+      self.createVariadic(ref Message message);
+        
+      ^ message        
    }
 
    string toPrintable()

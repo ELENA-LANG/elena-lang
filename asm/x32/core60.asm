@@ -1732,6 +1732,14 @@ inline %0ABh
 
 end 
 
+// ; lsavesi 0
+inline %1ABh
+
+  mov eax, esi
+  xor edx, edx
+
+end 
+
 // ; lloaddp
 inline %0ACh
 
@@ -1960,6 +1968,20 @@ labEnd:
 
 end
 
+// ; xcmpsi
+inline %0C6h
+
+  cmp  edx, [esp + __arg32_1]
+
+end 
+
+// ; xcmpsi 0
+inline %1C6h
+
+  cmp  edx, esi
+
+end 
+
 // ; cmpfi
 inline %0C8h
 
@@ -2003,6 +2025,37 @@ inline %1CAh
   pop  ebp
   
 end
+
+// ; lloadsi
+inline %0CBh
+
+  lea  edi, [esp + __arg32_1]
+  mov  eax, [edi]
+  mov  edx, [edi+4]
+
+end 
+
+// ; lloadsi 0
+inline %1CBh
+
+  mov  eax, esi
+  xor  edx, edx
+
+end 
+
+// ; loadsi
+inline %0CCh
+
+  mov edx, [esp + __arg32_1]
+
+end 
+
+// ; loadsi 0
+inline %1CCh
+
+  mov edx, esi
+
+end 
 
 // ; xloadargfi
 inline %0CDh
@@ -3450,7 +3503,7 @@ labNextBaseClass:
 
 end
 
-// ; dispatchmr
+// ; xdispatchmr
 // ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 5FAh
 
@@ -3529,6 +3582,90 @@ labNextBaseClass:
   pop  ebx
   mov  esi, [esp+4]                      // ; restore arg0
   mov  edx, __arg32_1
+
+end
+
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 9FAh
+
+  mov  [esp+4], esi                      // ; saving arg0
+  lea  eax, [esp + __n_2]
+
+  mov  ecx, __n_1
+  push ecx
+  push edx 
+  push ebx
+
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  test esi, esi
+  jz   labEnd
+
+labNextList:
+  xor  edx, edx
+  mov  ebx, [esi] // ; message from overload list
+
+labNextOverloadlist:
+  shr  ebx, ACTION_ORDER
+  mov  edi, mdata : %0
+  mov  ecx, [esp+4]
+  mov  ebx, [edi + ebx * 8 + 4]
+  and  ecx, ARG_MASK
+  lea  ebx, [ebx - 4]
+
+labNextParam:
+  sub  ecx, 1
+  jnz  short labMatching
+
+  mov  ecx, [esp+8]
+  pop  ebx
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  add  esp, 8
+  mov  eax, [esi + edx * 8 + 4]
+  mov  edx, [esi + edx * 8]
+  mov  esi, [esp+4]                      // ; restore arg0
+  jmp  eax
+
+labMatching:
+  mov  edi, [eax + ecx * 4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
+  test  edi, edi
+  cmovz edi, esi
+
+  mov  edi, [edi - elVMTOffset]
+  mov  esi, [ebx + ecx * 4]
+
+labNextBaseClass:
+  cmp  esi, edi
+  jz   labNextParam
+  mov  edi, [edi - elPackageOffset]
+  and  edi, edi
+  jnz  short labNextBaseClass
+
+  mov  ecx, [esp+8]
+  mov  ebx, [esp]
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  add  edx, 1
+  mov  esi, [esi]
+  mov  ebx, [esi + edx * 8] // ; message from overload list
+  and  ebx, ebx
+  jnz  labNextOverloadlist
+
+  add  [esp+8], 1
+  mov  ebx, [esp]
+  mov  ecx, [esp+8]
+
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  test esi, esi
+  jnz  labNextList
+
+labEnd:
+  pop  ebx
+  pop  edx
+  add  esp, 4
+  mov  esi, [esp+4]                      // ; restore arg0
 
 end
 

@@ -1002,11 +1002,13 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::PeekSI:
          case ByteCode::StoreSI:
          case ByteCode::CmpSI:
+         case ByteCode::XCmpSI:
          case ByteCode::XFlushSI:
          case ByteCode::XSwapSI:
          case ByteCode::SwapSI:
          case ByteCode::XRefreshSI:
          case ByteCode::SaveSI:
+         case ByteCode::LoadSI:
             return compileOpStackI(tokenInfo, writer, opCommand, true);
          case ByteCode::SaveDP:
          case ByteCode::LSaveDP:
@@ -1044,6 +1046,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::VCallMR:
          case ByteCode::JumpMR:
          case ByteCode::VJumpMR:
+         case ByteCode::DispatchMR:
             return compileMR(tokenInfo, writer, opCommand, false);
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
@@ -1094,6 +1097,8 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::IDivDPN:
          case ByteCode::UDivDPN:
             return compileDDispN(tokenInfo, writer, opCommand, dataLocals, constants, true);
+         case ByteCode::XDispatchMR:
+            return compileXDispatchMR(tokenInfo, writer, opCommand, constants);
          default:
             return false;
       }
@@ -1102,6 +1107,41 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
       ByteCodeUtil::write(writer, opCommand);
       return true;
    }
+}
+
+bool ByteCodeAssembler :: compileXDispatchMR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
+   ReferenceMap& constants)
+{
+   bool normalMode = false;
+   if (tokenInfo.compare("mssg")) {
+      normalMode = true;
+   }
+   else if (!tokenInfo.compare("i"))
+      return false;
+
+   read(tokenInfo);
+
+   if (!tokenInfo.compare(":"))
+      return false;
+
+   if (normalMode) {
+      mssg_t arg = readM(tokenInfo);
+
+      read(tokenInfo, ",", ASM_COMMA_EXPECTED);
+
+      ref_t arg2 = readReference(tokenInfo);
+
+      ByteCodeUtil::write(writer, command.code, arg, arg2);
+   }
+   else {
+      int arg2 = readN(tokenInfo, constants);
+
+      ByteCodeUtil::write(writer, command.code, arg2, 0);
+   }
+
+   read(tokenInfo);
+
+   return true;
 }
 
 bool ByteCodeAssembler :: declareLabel(ustr_t label, ScriptToken& tokenInfo, MemoryWriter& writer, 

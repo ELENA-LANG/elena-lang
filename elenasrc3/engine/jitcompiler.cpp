@@ -54,7 +54,7 @@ CodeGenerator _codeGenerators[256] =
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadVMTIndexOp, loadMOp, compileJlt,
    compileJge, compileJgr, compileJle, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadNop, loadNop,
+   loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadStackIndexOp, loadNop,
    loadFrameIndexOp, loadStackIndexOp, compileClose, loadNop, loadNop, loadFrameIndexOp, loadROp, loadSysOp,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, compileHookDPR, loadRROp,
@@ -90,7 +90,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 167;
+constexpr size_t bcCommandNumber = 169;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -126,7 +126,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::BCopy, ByteCode::WCopy, ByteCode::XPeekEq, ByteCode::SelGrRR, ByteCode::FIAdd,
    ByteCode::FISub,ByteCode::FIMul,ByteCode::FIDiv, ByteCode::SNop, ByteCode::TstStck,
    ByteCode::Shl, ByteCode::Shr, ByteCode::XLabelDPR, ByteCode::TryLock, ByteCode::FreeLock,
-   ByteCode::XQuit, ByteCode::ExtCloseN
+   ByteCode::XQuit, ByteCode::ExtCloseN, ByteCode::XCmpSI, ByteCode::LoadSI
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
@@ -2589,6 +2589,9 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
    void* code = nullptr;
    if ((scope->command.arg1 & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
       code = scope->compiler->_inlines[5][scope->code()];
+   }
+   else if (!scope->command.arg2) {
+      code = scope->compiler->_inlines[9][scope->code()];
    }
    else code = scope->compiler->_inlines[0][scope->code()];
 

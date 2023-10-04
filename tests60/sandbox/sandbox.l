@@ -1,4 +1,5 @@
 import extensions;
+
  
 public program()
 {
@@ -9,16 +10,18 @@ public program()
           new system'dynamic'expressions'ActionMethodExpression ( 
             new system'dynamic'expressions'CodeblockExpression ( 
               new system'dynamic'expressions'ExtensionOrMessageCallExpression ( 
-                new system'dynamic'expressions'SymbolExpression ( "system'console" ) ,
-                "writeLine" ,
-                new system'dynamic'expressions'IntConstantExpression ( "2" ) 
+                 new system'dynamic'expressions'IntConstantExpression ( "2" ),
+                 "printMe" 
+
+//                new system'dynamic'expressions'SymbolExpression ( "system'console" ) ,
+//                "printLine" ,
+//                new system'dynamic'expressions'IntConstantExpression ( "2" ) 
               ) 
             ) 
           ) 
         ) 
       ) 
    ); 
-
 
    tape.eval();
 }

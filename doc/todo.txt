@@ -8,14 +8,11 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
+    * elenart : implementing loadDispatcherOverloadlist
     * elenavm : implementing loadDispatcherOverloadlist
+    * elt : calling an extension
     * elt : print a number : printLine
     * elt : print a string : printLine
-
-    * test elt : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
-    * sm : generate some basic templates from vm console - hello world sample
-    * elenavm : preloaded symbol, support preloaded symbols : dynamic
-    * elenavm : loading preloaded symbols for newly loaded modules
 
     * examples : rosetta code sample : Interactive programming (repl)
     * #15 : return double / long from external function
@@ -44,7 +41,11 @@ In development:
     * review system warnings
     * review extensions warnings
     * migrate the rest of system (win32_pointers.l)
-    * api : uncomment ExtensionDispatcher and SymbolCollection
+
+    * test elt : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
+    * sm : generate some basic templates from vm console - hello world sample
+    * elenavm : preloaded symbol, support preloaded symbols : dynamic
+    * elenavm : loading preloaded symbols for newly loaded modules
 
     * new unit test : dispatchmr (both function and normal one)
     * test binary file reader / writer
@@ -81,6 +82,7 @@ In development:
     [!] tutorial : Multiple inheritance in ELENA
     [!] pi sample optimization (under 9sec)
     [!] review #622, #620
+    * x86-64 : implement xdispatch i
     * corex : tests - lock test, GC test, printing in one thread / calling GC in another
     * amd64 : implement system 5
     * test all samples for win x86-64
@@ -101,5 +103,6 @@ In development:
     [!] ide vm console x64
     [!] support mta_gui, vm_mta_console
     * review ppc64le - find a better solution to deal with n16_lo > 07FFFFh (see cmpn)
+    * ppc64le,aarch64 : implement xdispatch i
 
     === Iteration 21 ===

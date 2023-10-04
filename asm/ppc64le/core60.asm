@@ -1622,7 +1622,7 @@ end
 // ; savesi
 inline %0A2h
 
-  std     r14, __arg16_1(r1)  
+  stw     r14, __arg16_1(r1)  
 
 end 
 
@@ -2073,6 +2073,28 @@ labEnd:
                                
 end
 
+// ; cmpsi
+inline %0C6h
+
+  ld      r16, __arg16_1(r1)  
+  cmp     r14, r16
+
+end 
+
+// ; cmpsi 0
+inline %1C6h
+
+  cmp     r14, r3
+
+end 
+
+// ; cmpsi 1
+inline %2C6h
+
+  cmp     r14, r4
+
+end 
+
 // ; cmpfi
 inline %0C8h
 
@@ -2129,6 +2151,48 @@ inline %1CAh
   addi    r1, r1, 10h          // ; free stack
   
 end
+
+// ; lloadsi
+inline %0CBh
+
+  ld      r14, __arg16_1(r1)  
+
+end 
+
+// ; lloadsi 0
+inline %1CBh
+
+  mr      r14, r3
+
+end 
+
+// ; lloadsi 1
+inline %2CBh
+
+  mr      r14, r4
+
+end 
+
+// ; loadsi
+inline %0CCh
+
+  lwz     r14, __arg16_1(r1)  
+
+end 
+
+// ; loadsi 0
+inline %1CCh
+
+  mr      r14, r3
+
+end 
+
+// ; loadsi 1
+inline %2CCh
+
+  mr      r14, r4
+
+end 
 
 // ; xloadargsi
 inline %0CDh
@@ -3871,6 +3935,14 @@ labNextBaseClass:
   cmpwi   r22, 0
 //;  jnz  labNextOverloadlist
   bne     labNextOverloadlist
+
+end
+
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 9FAh
+
+//; !! temporally commented
 
 end
 

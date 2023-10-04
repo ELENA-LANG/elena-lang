@@ -506,7 +506,7 @@ end
 // ; save
 inline %9
 
-  str    x9, [x10]
+  str    w9, [x10]
 
 end
 
@@ -2251,6 +2251,31 @@ labEnd:
                                
 end
 
+// ; xcmpsi
+inline %0C6h
+
+  add     x11, sp, __arg12_1
+  ldr     x11, [x11]
+  cmp     x9, x11
+
+end 
+
+// ; xcmpsi 0
+inline %1C6h
+
+  mov     x11, x0
+  cmp     x9, x11
+
+end 
+
+// ; xcmpsi 1
+inline %2C6h
+
+  mov     x11, x1
+  cmp     x9, x11
+
+end 
+
 // ; cmpfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %0C8h
@@ -2313,6 +2338,49 @@ inline %1CAh
   
 end
 
+// ; lloadsi
+inline %0CBh
+
+  add     x11, sp, __arg12_1
+  ldr     x9, [x11]
+
+end 
+
+// ; lloadsi 0
+inline %1CBh
+
+  mov     x9, x0
+
+end 
+
+// ; lloadsi 1
+inline %2CBh
+
+  mov     x9, x1
+
+end 
+
+// ; loadsi
+inline %0CCh
+
+  add     x11, sp, __arg12_1
+  ldrsw   x9, [x11]
+
+end 
+
+// ; loadsi 0
+inline %1CCh
+
+  mov     x9, x0
+
+end 
+
+// ; loadsi 1
+inline %2CCh
+
+  mov     x9, x1
+
+end 
 
 // ; xloadargsi
 inline %0CDh
@@ -4055,6 +4123,14 @@ labNextBaseClass:
   cmp     x22, 0
 //;  jnz  labNextOverloadlist
   bne     labNextOverloadlist
+
+end
+
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 9FAh
+
+//; !! temporally commented
 
 end
 

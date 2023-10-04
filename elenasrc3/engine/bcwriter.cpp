@@ -474,6 +474,8 @@ void xdispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    mssg_t message = node.findChild(BuildKey::Message).arg.reference;
 
+   assert(node.arg.reference);
+
    tape.write(ByteCode::XDispatchMR, message, node.arg.reference | mskConstArray);
 }
 
