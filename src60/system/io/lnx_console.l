@@ -47,6 +47,14 @@ namespace io
 
       write(wide s)
         <= write(cast string(s));
+
+      setCursorPosition(int x, int y)
+      {
+      }
+
+      clear()
+      {
+      }      
    }
 
    public class ConsoleReader : IConsoleReader
