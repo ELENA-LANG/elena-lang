@@ -136,6 +136,11 @@ namespace io
 
       wide readWideLine()
          = cast wide(self.readLine());
+
+      get bool KeyAvailable()
+      {
+         ^ false
+      }
    }
 
    public stdConsoleWriter = new ConsoleWriter();
