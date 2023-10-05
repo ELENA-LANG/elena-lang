@@ -1677,7 +1677,7 @@ procedure __vextdispatcher (arg)
   xflush     sp:1
 
   tst        n:VARIADIC_MESSAGE
-  jne        labUnboxing
+  jeq        labUnboxing
 
   xdispatch  i:1, variadic
   jump       labError

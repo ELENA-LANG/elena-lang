@@ -13,8 +13,12 @@ public program()
             new system'dynamic'expressions'CodeblockExpression ( 
               new system'dynamic'expressions'ExtensionOrMessageCallExpression ( 
                 new system'dynamic'expressions'SymbolExpression ( "system'console" ) ,
-                "printLine" ,
-                new system'dynamic'expressions'IntConstantExpression ( "2" ) 
+                "writeLine" ,
+                new system'dynamic'expressions'ExtensionOrMessageCallExpression ( 
+                  new system'dynamic'expressions'SymbolExpression ( "system'console" ) ,
+                  "printLine" ,
+                  new system'dynamic'expressions'IntConstantExpression ( "2" ) 
+                ) 
               ) 
             ) 
           ) 

@@ -8,13 +8,10 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * #366 : elenasm - the rule member after eps is ignored
-    * elt : print a number : printLine
-
     * examples : rosetta code sample : Interactive programming (repl)
+    * examples : rosetta code sample : J
     * #15 : return double / long from external function
     * repeate-until statements
-    * examples : rosetta code sample : J
     * script and db samples
 
     * examples : rosetta code sample : K

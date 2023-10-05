@@ -43,6 +43,17 @@ bool VMTapeParser :: parseDirective(ScriptEngineReaderBase& reader, MemoryDump* 
          }
          else throw SyntaxError("Invalid directive", bm.lineInfo);
       }
+      else if (reader.compare("#set")) {
+         ScriptBookmark bm = reader.read();
+         if (reader.compare("preloaded")) {
+            bm = reader.read();
+            if (bm.state == dfaIdentifier) {
+               writer.write(VM_PRELOADED_CMD, reader.lookup(bm));
+            }
+            else throw SyntaxError("Invalid directive", bm.lineInfo);
+         }
+         else throw SyntaxError("Invalid directive", bm.lineInfo);
+      }
       else if (reader.compare("#postfix")) {
          ScriptBookmark bm = reader.read();
 

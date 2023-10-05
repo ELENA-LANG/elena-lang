@@ -416,6 +416,9 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
          init(*jitLinker, env);
 
          criricalHandler = jitLinker->resolve(criricalHandlerReference, mskProcedureRef, false);
+
+         if (!_standAloneMode)
+            env = _env;
       }
       else jitLinker->setCompiler(_compiler);
    }
