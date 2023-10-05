@@ -1600,6 +1600,25 @@ procedure __mssg_closure
 
 end
 
+procedure __funcmssg_closure
+
+  xflush     sp:0
+  xflush     sp:1
+
+  alloc      i:1
+  xstore     i:1
+  load       sp:0
+  free       i:1
+
+  set        fp:0
+  neg
+  xget
+
+  load
+  jump       vt:0
+
+end
+
 procedure __ext_closure
 
   xflush     sp:0

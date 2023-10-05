@@ -42,6 +42,28 @@ public struct MessageFunction : TapeFunction
    mixin function(params object[] args) : external(system'core_routines'__mssg_closure);
 }
 
+// --- FuncFunction ---
+
+public struct FuncFunction : TapeFunction
+{
+   Message  message;
+   int      targetIndex;
+    
+   constructor(string message, int targetIndex)
+      <= load(new Message(message), targetIndex);
+    
+   constructor load(string message, int targetIndex)
+      <= load(new Message(message), targetIndex);
+    
+   constructor load(Message message, int targetIndex)
+   {
+      this message := message;
+      this targetIndex := targetIndex;
+   }
+    
+   mixin function(params object[] args) : external(system'core_routines'__funcmssg_closure);
+}
+
 // --- ExtensionMessageFunction ---
 
 public class ExtensionMessageFunction : TapeFunction

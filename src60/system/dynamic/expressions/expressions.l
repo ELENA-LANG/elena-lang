@@ -172,9 +172,9 @@ namespace expressions
 //
 //      static Expression GetDynamicProperty(Expression m, Expression t)
 //         = GetDynamicPropertyExpression.new(m, t);
-//
-//      static Expression Return(Expression expr)
-//         = new ReturnExpression(expr);
+
+      static Expression Return(Expression expr)
+         = new ReturnExpression(expr);
 
       static Expression If(Expression cond, Expression body, Expression elseBody)
          = new IfExpression(cond, body, elseBody);
@@ -197,6 +197,9 @@ namespace expressions
 //      static Expression New(object t, Expression p0)
 //         = new NewExpression(t, p0);
 
+      static Expression FunctionCall(params Expression[] arguments)
+         = FunctionCallExpression.new(params arguments);
+
       static Expression Assigning(string variable, Expression expr)
          = new AssigningExpression(variable, expr);
 
@@ -212,9 +215,6 @@ namespace expressions
       object Key = nil;
 
       get abstract bool IsOperation();
-
-//      abstract int prepare(ExpressionScope scope, int reserved)
-//         : info("Prepares the expression tree. Returns the maximal size of the preallocated stack");
 
       abstract declare(ExpressionScope parentScope);
 
@@ -267,75 +267,36 @@ namespace expressions
          list.append(operation);                  
       }
 
-//      internal static saveMessageCallTo(List<TapeFunction> list, ExpressionScope scope, Expression target, 
-//                                            Expression[] arguments, TapeFunction operation)
-//      {
-//         int len := arguments.Length;
-//         
-//            
-//         // first pass - preallocating sub expr 
-//         if (target.IsOperation && len > 0) {
-//            int tempVar := scope.allocTempVariable();
-//            tempVar += scope.ScopeLevel;
-//            target.saveTo(list, scope, 0);
-//            list.append(new AssigningFunction(tempVar));
-//                
-//            tempVariables.!push(Expression.VariableByIndex(tempVar));                
-//         };
-//            
-//         for (int i := 0, i < len, i += 1) {
-//            if (arguments[i].IsOperation) {
-//               int tempVar := scope.allocTempVariable();
-//               tempVar += scope.ScopeLevel;
-//                                    
-//               arguments[i].saveTo(list, scope, 0);
-//               list.append(new AssigningFunction(tempVar));
-//                
-//               tempVariables.!push(Expression.VariableByIndex(tempVar));
-//            }
-//         };
-//            
-//         for (int i := 0, i < len, i += 1) {
-//            if (arguments[i].IsOperation) {
-//               tempVariables.pop().saveTo(list, scope, i + 1) 
-//            }
-//            else {
-//               arguments[i].saveTo(list, scope, i + 1) 
-//            }
-//         };
-//
-//         // second pass - the operation
-//      }
-//
-//      internal static saveFunctionCallTo(List<TapeFunction> list, ExpressionScope scope, 
-//                                            Expression[] arguments, TapeFunction operation)
-//      {
-//         int len := arguments.Length;
-//         Queue<Expression> tempVariables := nil;
-//            
-//         for (int i := 0, i < len, i += 1) {
-//            if (arguments[i].IsOperation) {
-//               int tempVar := scope.allocTempVariable();
-//               tempVar += scope.ScopeLevel;
-//                                    
-//               arguments[i].saveTo(list, scope, 0);
-//               list.append(new AssigningFunction(tempVar));
-//                
-//               tempVariables.!push(Expression.VariableByIndex(tempVar));
-//            }
-//         };
-//            
-//         for (int i := 0, i < len, i += 1) {
-//            if (arguments[i].IsOperation) {
-//               tempVariables.pop().saveTo(list, scope, i + 1) 
-//            }
-//            else {
-//               arguments[i].saveTo(list, scope, i) 
-//            }
-//         };
-//                                    
-//         list.append(operation);
-//      }
+      internal static saveMessageCallTo(List<TapeFunction> list, ExpressionScope scope,
+                                            Expression[] arguments, TapeFunction operation)        
+      {
+         int len := arguments.Length;
+         Queue<Expression> tempVariables := nil;
+
+         // first pass - preallocating sub expr 
+         for (int i := 0, i < len, i += 1) {
+            if (arguments[i].IsOperation) {
+               int tempVar := scope.allocTempVariable() + scope.ScopeLevel;
+
+               arguments[i].saveTo(list, scope, 0);
+               list.append(new AssigningFunction(tempVar));
+                
+               tempVariables.!push(Expression.VariableByIndex(tempVar));
+            }
+         };
+            
+         // second pass - the operation
+         for (int i := 0, i < len, i += 1) {
+            if (arguments[i].IsOperation) {
+               tempVariables.pop().saveTo(list, scope, i) 
+            }
+            else {
+               arguments[i].saveTo(list, scope, i) 
+            }
+         };
+                                    
+         list.append(operation);                  
+      }
 
       // temporal generic solution
       eval()
@@ -395,6 +356,103 @@ namespace expressions
 
          scope.reserveStack(1);
       }                
+   }
+
+   public class FunctionCallExpression : Expression
+   {
+      Message      _message;
+      Expression   _target;
+      Expression[] _arguments;
+
+      constructor new(Expression t)
+      {
+         _message := new Message("function:#invoke[0]");
+         _target := t;
+         _arguments := new Expression[](0);
+      }
+
+      constructor load(Expression t, params Expression[] arguments)
+      {
+         int len := arguments.Length;
+
+         _message := new Message("function:#invoke[" + len.toPrintable() + "]");
+         _target := t;
+         _arguments := arguments;
+      }
+
+      constructor(Expression t)
+         <= new(t);
+        
+      constructor(Expression t, Expression p1)
+         <= load(t, p1);
+        
+      constructor(Expression t, Expression p1, Expression p2)
+         <= load(t, p1, p2);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3)
+         <= load(t, p1, p2, p3);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4)
+         <= load(t, p1, p2, p3, p4);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5)
+         <= load(t, p1, p2, p3, p4, p5);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6)
+         <= load(t, p1, p2, p3, p4, p5, p6);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7)
+         <= load(t, p1, p2, p3, p4, p5, p6, p7);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8)
+         <= load(t, p1, p2, p3, p4, p5, p6, p7, p8);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
+         <= load(t, p1, p2, p3, p4, p5, p6, p7, p8, p9);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
+         <= load(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11)
+         <= load(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12)
+         <= load(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+
+      bool IsOperation = true;
+
+      declare(ExpressionScope scope)
+      {
+         _target.declare(scope);
+         int len := _arguments.Length;
+         for(int i := 0, i < len, i+=1) {
+            _arguments[i].declare(scope);
+         };
+
+         scope.reserveStack(len);
+      }
+
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         int tempVar := scope.allocTempVariable() + scope.ScopeLevel;
+         _target.saveTo(list, scope, 0);
+         list.append(new AssigningFunction(tempVar));
+
+         Expression.saveMessageCallTo(list, scope, _arguments, FuncFunction.load(_message, tempVar));                                                            
+         if (index > 0) {
+            list.append(new SavingFunction(index));
+         }
+      }
    }
                 	
    public class MessageCallExpression : Expression
@@ -1247,27 +1305,31 @@ namespace expressions
 //         }
 //      }
 //   }
-//
-//   public class ReturnExpression : Expression
-//   {
-//      Expression expr;
-//        
-//      constructor(Expression expr)
-//      {
-//         this expr := expr
-//      }
-//        
-//      bool IsOperation = false;
-//
-//      int prepare(ExpressionScope scope)
-//         = expr.prepare(scope);
-//
-//      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
-//      {
-//         expr.saveTo(list, scope, 0);
-//         list.append(JumpToEnd)
-//      }
-//   }
+
+   public class ReturnExpression : Expression
+   {
+      Expression expr;
+        
+      constructor(Expression expr)
+      {
+         this expr := expr
+      }
+        
+      bool IsOperation = false;
+
+      declare(ExpressionScope scope)
+      {
+         expr.declare(scope);
+                
+         scope.reserveStack(1);
+      }
+
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         expr.saveTo(list, scope, 0);
+         list.append(JumpToEnd)
+      }
+   }
 
    public class IfExpression : Expression
    {
