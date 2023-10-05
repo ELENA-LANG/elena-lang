@@ -22,6 +22,7 @@ namespace elena_lang
       PresenterBase*       _presenter;
 
       IdentifierString     _prefix;
+      size_t               _prefixBookmark;
       IdentifierString     _postfix;
 
       DynamicString<char>  _body;

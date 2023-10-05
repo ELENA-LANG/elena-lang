@@ -8,6 +8,7 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
+    * #366 : elenasm - the rule member after eps is ignored
     * elt : print a number : printLine
 
     * examples : rosetta code sample : Interactive programming (repl)

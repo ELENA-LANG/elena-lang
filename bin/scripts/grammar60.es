@@ -8,28 +8,24 @@
 <= 
    system'dynamic'expressions'SymbolCollection ( 
 =>
-                                     "namespace" "(" member* ")"
+                                     "namespace" "(" import* member* ")"
 <= ) =>;
 
    #define namespace      ::= 
 <= 
    system'dynamic'expressions'SymbolCollection ( 
 =>
-                                     "public_namespace" "(" member* ")"
+                                     "public_namespace" "(" import* member* ")"
 <= ) =>;
 
-   #define member         ::=
+   #define import         ::=
 <=
-   system'dynamic'expressions'SymbolInfo (
-     system'dynamic'expressions'DynamicImport (
-       system'dynamic'expressions'ScopeIdentifier (
-=>
-                                     "import" "(" "identifier" "=" ident_quote ")"
+   system'dynamic'expressions'ImportInfo (
+=> 
+                                    "import" "(" "identifier" "=" ident_quote ")"
 <=
-       )
-     )
-   )
-=>;
+   ) 
+=>; 
 
    #define member         ::=
 <=

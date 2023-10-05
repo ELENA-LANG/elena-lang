@@ -1,10 +1,9 @@
 [[
    #grammar cf
 
-   #define start          ::= <= root ( public_namespace ( => member+ $eof <= )) =>;
+   #define start          ::= <= root ( public_namespace ( => import* member+ $eof <= )) =>;
    #define start          ::= $eof;
 
-   #define member         ::= import;
    #define member         ::= function;
 
    #define import         ::= 

@@ -33,6 +33,8 @@ VMSession :: VMSession(PresenterBase* presenter)
    _encoding = FileEncoding::UTF8;
 
    _presenter = presenter;
+
+   _prefixBookmark = 0;
 }
 
 bool VMSession :: loadTemplate(path_t path)
@@ -51,6 +53,8 @@ bool VMSession :: loadTemplate(path_t path)
          _postfix.copy(*content + index + 2);
       }
       else _prefix.copy(*content);
+
+      _prefixBookmark = 0;
 
       return true;
    }
@@ -151,8 +155,10 @@ bool VMSession :: execute(void* tape)
 void VMSession::printHelp()
 {
    _presenter->print("-q                         - quit\n");
+   _presenter->print("-c                         - clear\n");
    _presenter->print("-h                         - help\n");
    _presenter->print("-l <path>                  - execute a script from file\n");
+   _presenter->print("-p<script>;                - prepand the prefix code\n");
    _presenter->print("{ <script>; }*\n <script>                  - execute script\n");
 }
 
@@ -173,6 +179,14 @@ bool VMSession :: executeCommand(const char* line, bool& running)
    }
    else if (line[1] == 'c') {
       _body.clear();
+      _prefix.cut(0, _prefixBookmark);
+      _prefixBookmark = 0;
+   }
+   else if (line[1] == 'p') {
+      ustr_t snipet = line + 2;
+
+      _prefix.insert(snipet, _prefixBookmark);
+      _prefixBookmark += getlength(snipet);
    }
    else return false;
 

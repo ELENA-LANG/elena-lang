@@ -643,7 +643,10 @@ void ScriptEngineCFParser :: defineGrammarRuleMember(ScriptEngineReaderBase& rea
    }
    else if (bm.state == dfaPrivate) {
       if (rule.terminal) {
-         rule.nonterminal = defineGrammarRuleMember(reader, bm, ruleId, rule.nonterminal);
+         if (rule.type == RuleType::Chomski) {
+            rule.terminal = defineGrammarRuleMember(reader, bm, ruleId, rule.terminal);
+         }
+         else rule.nonterminal = defineGrammarRuleMember(reader, bm, ruleId, rule.nonterminal);
       }
       else if (rule.nonterminal) {
          rule.type = RuleType::Chomski;
@@ -828,9 +831,9 @@ pos_t ScriptEngineCFParser :: buildDerivationTree(ScriptEngineReaderBase& reader
       //while (!p_it.Eof()) {
       //   auto r = *p_it;
 
-      //   ident_t rName = retrieveKey(_names.start(), r.ruleId, DEFAULT_STR);
+      //   ustr_t rName = retrieveKey(_names.start(), r.ruleId, DEFAULT_STR);
       //   if (getlength(rName) != 0) {
-      //      printf("%s\n", rName.c_str());
+      //      printf("%s\n", rName.str());
       //   }
       //   else printf("?\n");
 
