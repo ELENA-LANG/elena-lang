@@ -1,15 +1,3 @@
-// --- Handle ---
-
-public sealed const struct Handle
-{
-   embeddable __word value[4];
-
-   constructor(int intValue)
-   {
-      value := intValue
-   }
-}
-
 // --- CallStack ---
 
 public sealed class CallStack
