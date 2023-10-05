@@ -16,7 +16,7 @@ namespace io
       int c_cflag;		/* control mode flags */
       int c_lflag;		/* local mode flags */
       int c_line;		/* line discipline */
-      byte c_cc[NCCS];		/* control characters */
+      byte c_cc[/*NCCS*/32];		/* control characters */
       int c_ispeed;		/* input speed */
       int c_ospeed;		/* output speed */
     
