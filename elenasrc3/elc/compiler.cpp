@@ -3263,9 +3263,12 @@ void Compiler :: declareClosureMessage(MethodScope& methodScope, SyntaxNode node
       methodScope.message = declareClosureParameters(methodScope, argNode);
 }
 
-void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool abstractMode)
+void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool abstractMode, bool staticNotAllowed)
 {
    if (methodScope.checkHint(MethodHint::Static)) {
+      if (staticNotAllowed)
+         methodScope.raiseError(errIllegalStaticMethod, node);
+
       node.setKey(SyntaxKey::StaticMethod);
 
       methodScope.info.hints |= (ref_t)MethodHint::Normal;
@@ -3318,7 +3321,8 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
    }
 }
 
-void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor, bool& yieldMethodNotAllowed)
+void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor, 
+   bool& yieldMethodNotAllowed, bool staticNotAllowed)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -3356,7 +3360,7 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
             }
 
             declareMethodMetaInfo(methodScope, current);
-            declareMethod(methodScope, current, scope.abstractMode);
+            declareMethod(methodScope, current, scope.abstractMode, staticNotAllowed);
 
             if (methodScope.checkHint(MethodHint::Constructor)) {
                withConstructors = true;
@@ -3490,7 +3494,8 @@ void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
    bool withConstructors = false;
    bool withDefConstructor = false;
    bool yieldMethodNotAllowed = test(scope.info.header.flags, elWithYieldable) || test(declaredFlags, elStructureRole);
-   declareVMT(scope, node, withConstructors, withDefConstructor, yieldMethodNotAllowed);
+   declareVMT(scope, node, withConstructors, withDefConstructor,
+      yieldMethodNotAllowed, false);
 
    if (yieldMethodNotAllowed && !test(scope.info.header.flags, elWithYieldable) && !test(declaredFlags, elStructureRole)) {
       // HOTFIX : trying to figure out if the yield method was declared inside declareVMT
@@ -11615,7 +11620,7 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
    bool withConstructors = false;
    bool withDefaultConstructor = false;
    bool yieldMethodNotAllowed = true;
-   declareVMT(scope, node, withConstructors, withDefaultConstructor, yieldMethodNotAllowed);
+   declareVMT(scope, node, withConstructors, withDefaultConstructor, yieldMethodNotAllowed, true);
    if (withConstructors)
       scope.raiseError(errIllegalConstructor, node);
 

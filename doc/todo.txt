@@ -8,7 +8,6 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * nested class cannot have static methods
     * elenavm : implementing rest of dll api (loadAddressInfo)
 
     * examples : rosetta code sample : L
