@@ -8,10 +8,16 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * asmc : raise an error if the label was not resolved
-    * examples : rosetta code sample : N
+    * examples : Runtime evaluation
+    * examples : Respond to an unknown method call
+    * examples : rosetta code sample : Reflection/List methods,Reflection/List properties, Return multiple values,Runtime evaluation/In an environment, 
 
-    * examples : rosetta code sample : O
+    * examples : rosetta code sample : S
+
+    * examples : rosetta code Anagrams, Hailstone sequence, Happy numbers, Maximum triangle path sum, Run-length encoding
+    * examples : rosetta code Middle three digits, Old lady swallowed a fly, Old Russian measure of length
+    * examples : rosetta code Real constants and functions, Rot-13, Roman numerals/Encode, Roman numerals/Decode, 
+
     * examples : calc - doesn't work
     * examples : p2, random 
     * examples : datetime
@@ -19,8 +25,6 @@ In development:
     * examples : textdb, textfile 
     * examples : collatz, matrix
     * examples : test all samples for win x86
-    * examples : rosetta code Anagrams, Hailstone sequence, Happy numbers, Maximum triangle path sum
-    * examples : rosetta code Middle three digits
     * examples : migrate all rosetta examples from examples/rosetta to examples60 and remove them
     * examples : manboy example - till 20
     * #195 : implementing rosetta code samples
@@ -29,6 +33,7 @@ In development:
     * test : https://www.reddit.com/r/elena_lang/comments/7o3s8b/dynamic_programming_in_elena_evaluating_a_code_in/
     * test : https://www.reddit.com/r/elena_lang/comments/7o1zvq/dynamic_programming_in_elena_conditional/
     * test : https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
+    * add new variant using multi ret - https://www.rosettacode.org/wiki/Return_multiple_values#Elena
     * script and db samples
 
     * review system warnings

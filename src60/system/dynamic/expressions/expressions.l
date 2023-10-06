@@ -7,7 +7,7 @@ namespace expressions
 {
    const int mode_lcl   = 1;
 
-   symbol used : preloaded = new object[]{Expression, DynamicSingleton/*,DynamicExpressionSymbol*/,SymbolCollection/*,DynamicImport*/};
+   symbol used : preloaded = new object[]{Expression, DynamicSingleton,DynamicExpressionSymbol,SymbolCollection/*,DynamicImport*/};
 
    public class ScopeIdentifier
    {

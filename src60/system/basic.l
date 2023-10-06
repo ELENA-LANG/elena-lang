@@ -1933,6 +1933,8 @@ public sealed const struct RealNumber : BaseNumber,
 
 public real Pi_value = PrimitiveRealOperations.getPi();
 
+public real E_value = PrimitiveRealOperations.getE();
+
 // --- CharValue ---
 
 public const struct CharValue : BaseValue,

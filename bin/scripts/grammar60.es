@@ -51,6 +51,13 @@
 <= 
      system'dynamic'expressions'SymbolInfo ( 
 =>
+                                   "public_symbol" "(" s_name symbol_expr ")"
+<=   ) =>;
+
+   #define member         ::=
+<= 
+     system'dynamic'expressions'SymbolInfo ( 
+=>
                                    "singleton" "(" s_name class_expr ")"
 <=   ) =>;
 
@@ -77,7 +84,7 @@
 <=
        system'dynamic'expressions'DynamicExpressionSymbol (
 =>
-                                   operation
+                                   get_expression
 <=     ) =>;
 
   #define expr_symbol     ::= 
@@ -179,6 +186,8 @@
 <=
                )
 =>;
+
+  #define get_expression  ::= $ object operation?;
 
   #define expression      ::= $ object operation?;
   #define expression      ::= new_call;

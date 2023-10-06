@@ -105,6 +105,13 @@ internal singleton PrimitiveRealOperations
       ^ retVal
    }
 
+   real getE()
+   {
+      real retVal := self.exp(1.0r);
+        
+      ^ retVal
+   }
+
    int normalizeFloat(ref real value)
    {
       real positiveExpThreshold := 1.0e7;

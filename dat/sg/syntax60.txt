@@ -478,7 +478,7 @@ SUB_EXPRESSION ::=
 	| { reference | global } { 
 		L3 ^OBJECT MESSAGE MESSAGE_R ")"
 		| ")" ^OBJECT }
-	| { string | integer | hexinteger | long | constant | character | wide } ^OBJECT L4_OP* L5_OP* L6_OP? {
+	| { string | integer | hexinteger | long | constant | character | wide } ^OBJECT L4_OP* L5_OP* L6_OP? L7_OP* {
 		"," ^EXPRESSION EXPRESSION { "," EXPRESSION }* ^ TUPLE_COLLECTION
 		| eps
 	}  ")" ^EXPRESSION
@@ -639,10 +639,10 @@ L6_EXPRESSION ::=
 			| L2 ^OBJECT L2_R L3_OP*
 			| NESTED_EXPRESSION ^NESTED L3_OP*
 			| eps ^OBJECT }
-		| L0 ^OBJECT L0_R L3_OP* L4_OP*
+		| L0 ^OBJECT L0_R L3_OP* L4_OP* L5_OP*
 		| L2 ^OBJECT L2_R
-		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP* L4_OP*
-		| L4_O_OP L4_OP*
+		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP* L4_OP* L5_OP*
+		| L4_O_OP L4_OP* L5_OP*
 		| L5_O_OP 
 		| eps ^OBJECT }
 	| { reference | global } ^OBJECT 
@@ -665,9 +665,9 @@ L7_EXPRESSION ::=
 			| eps ^OBJECT }
 		| L0 ^OBJECT L0_R L3_OP* L4_OP* L5_OP* L6_OP?
 		| L2 ^OBJECT L2_R
-		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP* L4_OP* L6_OP?
-		| L4_O_OP L4_OP*
-		| L5_O_OP 
+		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP* L4_OP* L5_OP* L6_OP?
+		| L4_O_OP L4_OP* L5_OP* L6_OP?
+		| L5_O_OP L6_OP?
 		| L6_O_OP
 		| eps ^OBJECT }
 	| { reference | global } ^OBJECT 

@@ -1,13 +1,12 @@
 [[
    #grammar cf
 
-   #define start          ::= <= root ( => member+ $eof <= ) =>;
+   #define start          ::= <= root ( namespace ( => member+ $eof <= ) ) =>;
    #define start          ::= $eof;
 
    #define member         ::= symbol;
    
-   #define symbol         ::= <= public_symbol ( => s_name "=" get_expression ";" <= ) =>;
-   #define get_expression ::= <= get_expression ( => expression <= ) =>;
+   #define symbol         ::= <= public_symbol ( => s_name "=" expression ";" <= ) =>;
 
    #define statement      ::= expression ";";
    #define expression     ::= <= expression ( => expr_operation <= ) =>;
@@ -16,11 +15,13 @@
    #define expr_operation ::= $ object operation* ;
 
    #define object         ::= <= object ( => identifier <= ) =>;
+   #define object         ::= <= object ( => reference <= ) =>;
    #define object         ::= <= object ( => integer <= ) =>;
+   #define object         ::= <= object ( => literal <= ) =>;
    #define object         ::= singleton;
 
-   #define operation      ::= ^ <= message_operation ( => "." message m_args <= ) =>;
-   #define operation      ::= ^ <= property_operation ( => "." message <= ) =>;
+   #define operation      ::= "." message m_args;
+   #define operation      ::= "." message;
 
    #define m_args         ::= "(" ")";
    #define m_args         ::= "(" m_arg next_arg* ")";
@@ -47,5 +48,7 @@
    #define m_name         ::= <= nameattr ( identifier = $identifier ) =>;
 
    #define identifier     ::= <= identifier = $identifier =>;
+   #define reference      ::= <= reference = $reference =>;
    #define integer        ::= <= integer = $numeric =>;
+   #define literal        ::= <= literal = "$literal" =>;
 ]]
