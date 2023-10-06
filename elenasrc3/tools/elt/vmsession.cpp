@@ -158,7 +158,7 @@ void VMSession::printHelp()
    _presenter->print("-c                         - clear\n");
    _presenter->print("-h                         - help\n");
    _presenter->print("-l <path>                  - execute a script from file\n");
-   _presenter->print("-p<script>;                - prepand the prefix code\n");
+   _presenter->print("-p<script>;                - prepend the prefix code\n");
    _presenter->print("{ <script>; }*\n <script>                  - execute script\n");
 }
 

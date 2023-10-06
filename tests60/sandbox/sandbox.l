@@ -8,12 +8,13 @@ public program()
    new system'dynamic'expressions'DynamicSingleton ( 
      new system'dynamic'expressions'ActionMethodExpression ( 
        new system'dynamic'expressions'ScopeIdentifier ( "s1" ) ,
+       new system'dynamic'expressions'ScopeIdentifier ( "s2" ) ,
        new system'dynamic'expressions'CodeblockExpression ( 
          new system'dynamic'expressions'ReturnExpression ( 
-           new system'dynamic'expressions'IdentifierExpression ( 
-             new system'dynamic'expressions'ScopeIdentifier ( 
-               "s1" 
-             ) 
+           new system'dynamic'expressions'MessageCallExpression ( 
+             new system'dynamic'expressions'IdentifierExpression ( new system'dynamic'expressions'ScopeIdentifier ( "s1" ) ),  
+             "add",
+             new system'dynamic'expressions'IdentifierExpression ( new system'dynamic'expressions'ScopeIdentifier ( "s2" ) )  
            ) 
          ) 
        ) 
@@ -34,7 +35,8 @@ public program()
                  "f" 
                ) 
              ),
-             new system'dynamic'expressions'IntConstantExpression ( "2" ) 
+             new system'dynamic'expressions'IntConstantExpression ( "2" ),
+             new system'dynamic'expressions'IntConstantExpression ( "3" ) 
            ) 
          ) 
        ) 
@@ -45,5 +47,5 @@ public program()
 
    tape.eval();
 
-   tape.f
+   var r := mssg f
 }

@@ -286,7 +286,7 @@ namespace expressions
          };
             
          // second pass - the operation
-         for (int i := 0, i < len, i += 1) {
+         for (int i := len - 1, i >= 0, i -= 1) {
             if (arguments[i].IsOperation) {
                tempVariables.pop().saveTo(list, scope, i) 
             }
@@ -1099,7 +1099,6 @@ namespace expressions
    public class CodeblockExpression : Expression
    {
       Expression[]          statements;
-//      List<ScopeIdentifier> variables;
         
       constructor(params Expression[] statements)
       {
@@ -1808,11 +1807,11 @@ namespace expressions
 
          TapeFunction resolve(ScopeIdentifier variable, bool assignModemode) 
          {
-//            var refName := variable.Name;
-//            int mode := variable.Mode;
-//                    
-//            if (mode == 0/* || mode == mode_class*/)
-//            {
+            string refName := variable.Name;
+            int mode := variable.Mode;
+                    
+            if (mode == 0/* || mode == mode_class*/)
+            {
 //               // look for external references
 //               if(imports != nil) {
 //                  int len := imports.Length;
@@ -1825,14 +1824,14 @@ namespace expressions
 //                  }
 //               };
 //                        
-//               var prop := new MessageName(refName).getPropertyMessage();
-//                        
-//               var symbol := prop(set);
-//               if (symbol != nil)
-//               {
-//                  ^ ConstantFunction.load(symbol);
-//               }
-//            };
+               var prop := new MessageName(refName).getPropertyMessage();
+                        
+               var symbol := prop(set);
+               if (symbol != nil)
+               {
+                  ^ ConstantFunction.load(symbol);
+               }
+            };
                     
             ^ nil
          }                
