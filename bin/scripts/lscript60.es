@@ -14,10 +14,10 @@
 
    #define expr_operation ::= $ object operation* ;
 
-   #define object         ::= <= object ( => identifier <= ) =>;
-   #define object         ::= <= object ( => reference <= ) =>;
-   #define object         ::= <= object ( => integer <= ) =>;
-   #define object         ::= <= object ( => literal <= ) =>;
+   #define object         ::= identifier;
+   #define object         ::= reference;
+   #define object         ::= integer;
+   #define object         ::= literal;
    #define object         ::= singleton;
 
    #define operation      ::= "." message m_args;

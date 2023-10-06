@@ -7,7 +7,7 @@ namespace expressions
 {
    const int mode_lcl   = 1;
 
-   symbol used : preloaded = new object[]{Expression, DynamicSingleton,DynamicExpressionSymbol,SymbolCollection/*,DynamicImport*/};
+   symbol used : preloaded = new object[]{Expression, DynamicSingleton,DynamicExpressionSymbol,SymbolCollection};
 
    public class ScopeIdentifier
    {
@@ -310,14 +310,14 @@ namespace expressions
          List<TapeFunction> list := new List<TapeFunction>(8);
    
          // reserve the alloc place
-         list.append(nil);
+         list.append(nilValue);
 
          auto scope := new RootExpressionScope(parentScope);
 
          self.saveTo(list, scope, 0);
          
          int allocated := scope.StackSize;
-         int declared := scope.ScopeLevel;
+         int declared := scope.Declared;
          int reserved := scope.Reserved;
 
          allocated += declared;
@@ -325,7 +325,7 @@ namespace expressions
 
          list[0] := new AllocFunction(allocated);
 
-         ^ DynamicTape.load(list)         
+         ^ DynamicTape.new(list)
       }
    }
 
@@ -1658,6 +1658,25 @@ namespace expressions
       abstract compile(set, ExpressionScope scope);
    }
 
+   // --- DynamicExpressionSymbol ---
+   public sealed class DynamicExpressionSymbol : DynamicSymbol
+   {
+      Expression expr;
+        
+      constructor(Expression expr)
+      {
+         this expr := expr
+      }
+        
+      compile()
+         <= compile(nil, IdleExpressionScope);
+
+      compile(set, ExpressionScope parentScope)
+      {
+         ^ expr.compile(parentScope)
+      }        
+   }
+
    // --- DynamicSingleton ---
    public sealed class DynamicSingleton : DynamicSymbol
    {
@@ -1764,7 +1783,7 @@ namespace expressions
       }
  
       compile()
-         <= compile(nil, new DynamicStruct());
+         <= compile(new DynamicStruct());
  
       compile(set)
          <= compile(set, new ExpressionScope

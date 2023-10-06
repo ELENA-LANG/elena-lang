@@ -36,7 +36,7 @@ constexpr auto CHARACTER_MODE       = 11;
 constexpr auto WITHFORWARD_MASK = 0x80000000;
 constexpr auto POSTFIXSAVE_MODE = 0x80000000;
 
-#define TRACING_INFO
+//#define TRACING_INFO
 
 void saveReference(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log)
 {

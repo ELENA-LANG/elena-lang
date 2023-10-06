@@ -10,10 +10,11 @@ In development:
 
     * examples : Runtime evaluation
     * examples : Respond to an unknown method call
-    * examples : rosetta code sample : Reflection/List methods,Reflection/List properties, Return multiple values,Runtime evaluation/In an environment, 
 
     * examples : rosetta code sample : S
 
+    * examples : rosetta code sample : Return multiple values,Runtime evaluation/In an environment, 
+    * examples : rosetta code Reflection/List methods,Reflection/List properties
     * examples : rosetta code Anagrams, Hailstone sequence, Happy numbers, Maximum triangle path sum, Run-length encoding
     * examples : rosetta code Middle three digits, Old lady swallowed a fly, Old Russian measure of length
     * examples : rosetta code Real constants and functions, Rot-13, Roman numerals/Encode, Roman numerals/Decode, 
