@@ -64,6 +64,8 @@ namespace elena_lang
    {
       bool              templateBased;
       bool              virtualMode;
+      bool              completed;
+      bool              classCompleted;
 
       IdentifierString  prefix;
       IdentifierString  fullName;
@@ -87,6 +89,7 @@ namespace elena_lang
       {
          templateBased = false;
          virtualMode = false;
+         completed = classCompleted = false;
       }
    };
 

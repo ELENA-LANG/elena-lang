@@ -11,7 +11,7 @@
 
 namespace elena_lang
 {
-   #define LDOC_REVISION_NUMBER           0x0017
+   #define LDOC_REVISION_NUMBER           0x0018
 
    constexpr auto LDOC_GREETING           = "ELENA command line Html Documentation generator %d.%d.%d (C)2021-23 by Aleksey Rakov\n";
    constexpr auto LDOC_READING            = "Reading...\n";

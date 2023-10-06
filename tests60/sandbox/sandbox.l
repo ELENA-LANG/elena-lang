@@ -2,7 +2,11 @@ import extensions;
  
 public program()
 {
-   var o := 2;
-
-   o.fail()
+    bool a := true;
+    bool b := false;
+ 
+    console.printLine("a and b is ", a && b);
+    console.printLine("a or b is ", a || b);
+    console.printLine("Not a is ", a.Inverted);
+    console.printLine("a xor b is ", a ^^ b)
 }

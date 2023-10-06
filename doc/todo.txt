@@ -8,8 +8,7 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * examples : rosetta code sample : L
-    * ldod : duplicate declarations for Enumerator<T>
+    * examples : rosetta code sample : Loop_over_multiple_arrays_simultaneously, ..
 
     * examples : rosetta code sample : M
     * examples : calc - doesn't work

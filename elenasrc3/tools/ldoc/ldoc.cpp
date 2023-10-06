@@ -1517,6 +1517,11 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
                info->shortDescr.copy(descr);
          }
          else if (!extensionRef){
+            if (classClassRef && info->classCompleted)
+               return;
+            if (!classClassRef && info->completed)
+               return;
+
             info->virtualMode = false;
 
             info->prefix.copy(*prefix);
@@ -1536,6 +1541,9 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             loadDescriptions(_module->mapReference(*descrName), descriptions);
 
             loadConstructors(info, classClassRef, &descriptions);
+
+            // HOTFIX : to skip duplicates
+            info->classCompleted = true;
          }
          else if (extensionRef != 0) {
             DescriptionMap descriptions(nullptr);
@@ -1558,6 +1566,9 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             loadDescriptions(_module->mapReference(*descrName), descriptions);
 
             loadClassMembers(info, reference, &descriptions);
+
+            // HOTFIX : to skip duplicates
+            info->completed = true;
          }
       }
       else if (_module->mapSection(reference | mskSymbolRef, true)) {
