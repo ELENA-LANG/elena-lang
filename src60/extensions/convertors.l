@@ -6,9 +6,9 @@ singleton stringExConvertor
 {
 //    string convert(RealMatrix a)
 //        = realmatrixExConvertor.toString(a);
-//
-//    string convert(IntMatrix a)
-//        = intmatrixExConvertor.toString(a);
+
+    string convert(IntMatrix a)
+        = intmatrixExConvertor.toString(a);
 
    string convert(Indexer it)
    {
@@ -104,6 +104,58 @@ public singleton intmatrixExConvertor
 
       ^ IntMatrix.allocate(n, m).populate:(int i, int j => a.at(i).at(j).toInt() )
    }   
+    
+   string toString(IntMatrix matrix)
+   {
+      auto output := new TextBuilder();
+        
+      int l := 0;
+      matrix.readLengthsTo(ref int n, ref int m);
+        
+      for (int i := 0, i < n, i += 1)
+      {
+         for (int j := 0, j < m, j += 1)
+         {
+            int r := matrix.at(i, j);
+                
+            output.write:r.write:","
+         };
+         l := output.Length;
+         l -= 1;
+         output.Length := l;
+            
+         output.write(newLineConstant)
+      };
+        
+      ^ output.Value
+   }
+    
+   wide toWide(IntMatrix matrix)
+   {
+      auto output := new TextBuilder();
+        
+      int l := 0;
+      matrix.readLengthsTo(ref int n, ref int m);
+        
+      for (int i := 0, i < n, i += 1)
+      {
+         for (int j := 0, j < m, j += 1)
+         {
+            int r := matrix.at(i, j);
+                
+            output.write:r.write:","
+         };
+         l := output.Length;
+         l -= 1;
+         output.Length := l;
+            
+         output.write(newLineConstant)
+      };
+        
+      wide ret := output.Value;
+        
+      ^ ret
+   }
 }
 
 // --- enumerableConvertor ---

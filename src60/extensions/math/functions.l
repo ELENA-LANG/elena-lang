@@ -160,4 +160,14 @@ namespace math
       real function(real operand)
          = operand.log10();
    }   
+
+   public min(l1,l2)
+   {
+      ^ (l1 < l2) ? l1 : l2;
+   }
+    
+   public max(l1,l2)
+   {
+      ^ (l1 > l2) ? l1 : l2;
+   }
 }

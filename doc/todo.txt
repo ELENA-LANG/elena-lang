@@ -8,9 +8,10 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * examples : rosetta code sample : Loop_over_multiple_arrays_simultaneously, ..
+    * asmc : raise an error if the label was not resolved
+    * examples : rosetta code sample : N
 
-    * examples : rosetta code sample : M
+    * examples : rosetta code sample : O
     * examples : calc - doesn't work
     * examples : p2, random 
     * examples : datetime
@@ -18,8 +19,10 @@ In development:
     * examples : textdb, textfile 
     * examples : collatz, matrix
     * examples : test all samples for win x86
-    * examples : rosetta code Anagrams, Hailstone sequence, Happy numbers
+    * examples : rosetta code Anagrams, Hailstone sequence, Happy numbers, Maximum triangle path sum
+    * examples : rosetta code Middle three digits
     * examples : migrate all rosetta examples from examples/rosetta to examples60 and remove them
+    * examples : manboy example - till 20
     * #195 : implementing rosetta code samples
     * examples : tutorials
     * test : https://www.reddit.com/r/elena_lang/comments/7oa098/dynamic_programming_in_elena_call_your_code_from/
@@ -34,27 +37,6 @@ In development:
 
     * test elt : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
     * sm : generate some basic templates from vm console - hello world sample
-
-    * new unit test : dispatchmr (both function and normal one)
-    * test binary file reader / writer
-    + test finally block with locally allocated variables
-    * test if with unknown object
-
-    * ldoc : generates html files for non-existing namespace (system-routines-system-summary.html)
-    * ldoc : provide field descriptions
-    * ldoc : see #618
-
-    * asmc : raise an error if the label was not resolved
-
-    * boolean operators : &&, ||, ^^ - weak implementation
-    * inside the method, "$name __decl" should return the method full name?
-    * constructor - single dispatcher
-    * ncopy / lcopy
-    * static symbol should be thread-safe
-    * module template - to include basic import statement
-    * module template - probably should include meta dictionary for attributes / types / ...
-    * generic extension - should the output type be set? 
-    * do load self for expression with ret statement
 
     * inno setup : x86, x86-64
 

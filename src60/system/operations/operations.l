@@ -85,6 +85,13 @@ public template for<initExpr,condExpr,stepExpr>(loopBody) : __included(statement
    $rep cast bool(condExpr) ? { loopBody; stepExpr; }
 }
 
+public template for<init_expr,condExpr,step_expr1, step_expr2>(loopBody) : __included(statementTemplates)
+{
+   init_expr;
+
+   $rep cast bool(condExpr) ? { loopBody; step_expr1; step_expr2; }
+}
+
 public template for<init_expr1, init_expr2,condExpr,step_expr1, step_expr2>(loopBody) : __included(statementTemplates)
 {
    init_expr1;

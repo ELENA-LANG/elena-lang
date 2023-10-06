@@ -8432,7 +8432,7 @@ ObjectInfo Compiler :: compileCatchOperation(BuildTreeWriter& writer, ExprScope&
 
    writer.closeNode();
 
-   return {};
+   return { ObjectKind::Object };
 }
 
 ObjectInfo Compiler :: mapStringConstant(Scope& scope, SyntaxNode node)

@@ -1,12 +1,20 @@
 import extensions;
+import system'collections;
+ 
+F = (n => (n == 0) ? 1 : (n - M(F(n-1))) );
+M = (n => (n == 0) ? 0 : (n - F(M(n-1))) );
  
 public program()
 {
-    bool a := true;
-    bool b := false;
+    var ra := new ArrayList();
+    var rb := new ArrayList();
  
-    console.printLine("a and b is ", a && b);
-    console.printLine("a or b is ", a || b);
-    console.printLine("Not a is ", a.Inverted);
-    console.printLine("a xor b is ", a ^^ b)
+    for(int i := 0, i <= 19, i += 1)
+    {
+        ra.append(F(i));
+        rb.append(M(i))
+    };
+ 
+    console.printLine(ra.asEnumerable());
+    console.printLine(rb.asEnumerable())
 }
