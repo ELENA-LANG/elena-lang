@@ -331,6 +331,14 @@ void ByteCodeViewer :: addSecondArg(arg_t arg, IdentifierString& commandStr)
    addArg(arg, commandStr);
 }
 
+void ByteCodeViewer :: addSecondArg(arg_t arg, ustr_t prefix, IdentifierString& commandStr)
+{
+   commandStr.append(", ");
+   commandStr.append(prefix);
+
+   addArg(arg, commandStr);
+}
+
 void ByteCodeViewer :: addFPArg(arg_t arg, IdentifierString& commandStr)
 {
    commandStr.append("fp:");
@@ -430,7 +438,10 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
       switch (command.code) {
          case ByteCode::CallExtR:
             addRArg(command.arg1, commandStr);
-            addSecondArg(command.arg2, commandStr);
+            if (test(command.arg2, (int)0x80000000)) {
+               addSecondArg(command.arg2 & 0x7FFFFFFF, "long ", commandStr);
+            }
+            else addSecondArg(command.arg2, commandStr);
             break;
          case ByteCode::XStoreSIR:
             addArg(command.arg1, commandStr);

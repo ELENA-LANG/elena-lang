@@ -752,6 +752,13 @@ inline %02Fh
 
 end
 
+// ; xfsave
+inline %30h
+
+  fstp qword ptr [rbx]
+
+end
+
 // ; xquit
 inline %34h
 

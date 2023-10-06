@@ -751,6 +751,13 @@ inline %02Fh
 
 end
 
+// ; xfsave
+inline %30h
+
+  fstp qword ptr [ebx]
+
+end
+
 // ; xquit
 inline %34h
 
@@ -3950,5 +3957,20 @@ inline %1FEh
 
   call extern __ptr32_1
   mov  edx, eax
+
+end
+
+// ; callext
+inline %6FEh
+
+  mov  [esp], esi
+  call extern __ptr32_1
+
+end
+
+// ; callext
+inline %7FEh
+
+  call extern __ptr32_1
 
 end

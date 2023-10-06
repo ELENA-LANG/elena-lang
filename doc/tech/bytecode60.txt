@@ -132,6 +132,8 @@ ELENA byte codes (or ecodes)
    xassign i                - acc[i] := sp[0];
                               direct operation
 
+   xfsave                    - double:[acc] := double:index
+
    xget                     - acc[index] => acc
 
    xload                    - index := acc[index]

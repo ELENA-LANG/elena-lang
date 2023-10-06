@@ -877,6 +877,13 @@ inline %02Fh
 
 end
 
+// ; xfsave
+inline %25h
+
+  str     d0, [x10]
+
+end
+
 // ; xquit
 inline %034h
 

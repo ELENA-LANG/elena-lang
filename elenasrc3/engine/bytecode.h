@@ -67,6 +67,7 @@ namespace elena_lang
       XGet           = 0x2E,
       XCall          = 0x2F,
 
+      XFSave         = 0x30,
       XQuit          = 0x34,
 
       FIAdd          = 0x70,

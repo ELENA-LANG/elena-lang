@@ -39,5 +39,9 @@
      <module name="scripting">
        <include>scripting\interpreter.l</include>
      </module>
+     <module name="dynamic">
+       <include>dynamic\json.l</include>
+       <include>dynamic\derserializer.l</include>
+     </module>
   </files>
 </configuration>

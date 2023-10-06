@@ -441,7 +441,12 @@ void savingLInStack(CommandTape& tape, BuildNode& node, TapeScope&)
 
 void extCallOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
-   tape.write(ByteCode::CallExtR, node.arg.reference | mskExternalRef, node.findChild(BuildKey::Count).arg.value);
+   int arg2 = node.findChild(BuildKey::Count).arg.value;
+   // HOTFIX : special case - long call
+   if (node.existChild(BuildKey::LongMode))
+      arg2 |= 0x80000000;
+
+   tape.write(ByteCode::CallExtR, node.arg.reference | mskExternalRef, arg2);
 }
 
 void savingIndex(CommandTape& tape, BuildNode& node, TapeScope&)

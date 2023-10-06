@@ -8,9 +8,8 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * examples : rosetta code sample : Interactive programming (repl)
-    * examples : rosetta code sample : J
     * #15 : return double / long from external function
+
     * repeate-until statements
     * script and db samples
 

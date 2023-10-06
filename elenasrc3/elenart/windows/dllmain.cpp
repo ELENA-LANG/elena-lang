@@ -200,6 +200,12 @@ EXTERN_DLL_EXPORT mssg_t LoadActionLA(const char* actionName)
    return machine->loadAction(actionName);
 }
 
+// !! temporal
+EXTERN_DLL_EXPORT double getDouble()
+{
+   return 2.3;
+}
+
 /// <summary>
 /// Fills the passed dispatch list with references to extension message overload list
 /// </summary>

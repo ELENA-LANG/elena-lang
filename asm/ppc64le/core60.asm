@@ -950,6 +950,13 @@ inline %034h
 
 end
 
+// ; fsave
+inline %25h
+
+  stfd    f3, 0(r15)
+
+end
+
 // ; fiadd
 inline %070h
 

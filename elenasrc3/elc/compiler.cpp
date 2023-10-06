@@ -4002,7 +4002,8 @@ void Compiler :: evalStatement(MetaScope& scope, SyntaxNode node)
 
 inline bool hasToBePresaved(ObjectInfo retVal)
 {
-   return retVal.kind == ObjectKind::Object || retVal.kind == ObjectKind::Extern || retVal.kind == ObjectKind::Symbol;
+   return retVal.kind == ObjectKind::Object || retVal.kind == ObjectKind::Extern
+      || retVal.kind == ObjectKind::Symbol;
 }
 
 inline void createObject(BuildTreeWriter& writer, ClassInfo& info, ref_t reference)
@@ -6300,6 +6301,8 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& sco
 
    writer.newNode(BuildKey::ExtCallOp, externalRef);
 
+   BuildNode opNode = writer.CurrentNode();
+
    writer.appendNode(BuildKey::Count, count);
 
    writer.closeNode();
@@ -6313,6 +6316,12 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& sco
    else if (retType.typeRef == V_INT64 &&  _logic->isCompatible(*scope.moduleScope, { V_INT32 }, { expectedRef }, true)) {
       // HOTFIX 64bit : allow to convert the external operation to int32
       retType = { expectedRef };
+   }
+   else if (retType.typeRef == V_INT32 && _logic->isCompatible(*scope.moduleScope, { V_INT64 }, { expectedRef }, true)) {
+      retType = { expectedRef };
+
+      // HOTFIX : special case - returning long in 32 bit mode
+      opNode.appendChild(BuildKey::LongMode);
    }
 
    return { ObjectKind::Extern, retType, 0 };

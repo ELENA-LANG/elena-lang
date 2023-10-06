@@ -77,6 +77,7 @@ namespace elena_lang
 
       void addArg(arg_t arg, IdentifierString& commandStr);
       void addSecondArg(arg_t arg, IdentifierString& commandStr);
+      void addSecondArg(arg_t arg, ustr_t prefix, IdentifierString& commandStr);
 
       void addLabel(arg_t arg, IdentifierString& commandStr, List<pos_t>& labels);
 

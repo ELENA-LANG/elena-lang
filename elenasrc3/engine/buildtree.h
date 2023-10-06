@@ -219,6 +219,7 @@ namespace elena_lang
       Path                 = 0x800E,
       ClassName            = 0x800F,
       Special              = 0x8010,
+      LongMode             = 0x8011,
 
       Idle                 = 0x8FFF,
 

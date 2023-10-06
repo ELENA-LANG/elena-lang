@@ -1244,25 +1244,36 @@ void elena_lang::loadCallOp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
+   int prefix = 0;
+   int arg2 = scope->command.arg2;
+   if (test(arg2, (int)0x80000000)) {
+      arg2 &= 0x7FFFFFFF;
+
+      prefix = 6;
+      // HOTFIX : only 6 & 7 slot is used
+      if (arg2 > 1)
+         arg2 = 0;
+   }
+
    void* code = nullptr;
-   switch (scope->command.arg2) {
+   switch (arg2) {
        case 0:
-           code = scope->compiler->_inlines[1][scope->code()];
+           code = scope->compiler->_inlines[prefix + 1][scope->code()];
            break;
        case 1:
-           code = scope->compiler->_inlines[2][scope->code()];
+           code = scope->compiler->_inlines[prefix + 2][scope->code()];
            break;
        case 2:
-           code = scope->compiler->_inlines[3][scope->code()];
+           code = scope->compiler->_inlines[prefix + 3][scope->code()];
            break;
        case 3:
-           code = scope->compiler->_inlines[4][scope->code()];
+           code = scope->compiler->_inlines[prefix + 4][scope->code()];
            break;
        case 4:
-          code = scope->compiler->_inlines[5][scope->code()];
+          code = scope->compiler->_inlines[prefix + 5][scope->code()];
           break;
        default:
-           code = scope->compiler->_inlines[0][scope->code()];
+           code = scope->compiler->_inlines[prefix + 0][scope->code()];
            break;
    }
 
