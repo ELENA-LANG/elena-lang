@@ -8,9 +8,10 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * elenavm : implementing rest of dll api (loadAddressInfo)
-
     * examples : rosetta code sample : L
+    * ldod : duplicate declarations for Enumerator<T>
+
+    * examples : rosetta code sample : M
     * examples : calc - doesn't work
     * examples : p2, random 
     * examples : datetime
@@ -40,7 +41,6 @@ In development:
     + test finally block with locally allocated variables
     * test if with unknown object
 
-    * ldod : duplicate declarations for Enumerator<T>
     * ldoc : generates html files for non-existing namespace (system-routines-system-summary.html)
     * ldoc : provide field descriptions
     * ldoc : see #618

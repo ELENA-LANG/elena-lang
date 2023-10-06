@@ -2,7 +2,7 @@ import extensions;
  
 public program()
 {
-   var f := new {
-      test() {}
-   };
+   var o := 2;
+
+   o.fail()
 }

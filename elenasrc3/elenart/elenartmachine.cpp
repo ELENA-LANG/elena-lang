@@ -282,7 +282,7 @@ size_t ELENARTMachine :: loadAddressInfo(addr_t retPoint, char* lineInfo, size_t
       _providerInitialized = true;
    }
 
-   return rtmanager.retriveAddressInfo(_libraryProvider, retPoint, lineInfo, length);
+   return rtmanager.retriveAddressInfo(_libraryProvider, retPoint, lineInfo, length, false);
 }
 
 void ELENARTMachine :: Exit(int exitCode)

@@ -13,6 +13,7 @@
 #include "xmlprojectbase.h"
 #include "bytecode.h"
 #include "module.h"
+#include "rtmanager.h"
 
 using namespace elena_lang;
 
@@ -518,8 +519,9 @@ size_t ELENAVMMachine :: loadMessageName(mssg_t message, char* buffer, size_t le
 
 size_t ELENAVMMachine :: loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length)
 {
-   // !! temporal
-   return 0;
+   RTManager rtmanager(nullptr, getTargetDebugSection());
+
+   return rtmanager.retriveAddressInfo(_libraryProvider, retPoint, lineInfo, length, true);
 }
 
 inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command, ustr_t arg)
