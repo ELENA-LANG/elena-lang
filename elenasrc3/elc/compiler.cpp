@@ -4002,7 +4002,7 @@ void Compiler :: evalStatement(MetaScope& scope, SyntaxNode node)
 
 inline bool hasToBePresaved(ObjectInfo retVal)
 {
-   return retVal.kind == ObjectKind::Object || retVal.kind == ObjectKind::Extern
+   return retVal.kind == ObjectKind::Object || retVal.kind == ObjectKind::Extern || retVal.kind == ObjectKind::FloatExtern
       || retVal.kind == ObjectKind::Symbol;
 }
 
@@ -6322,6 +6322,11 @@ ObjectInfo Compiler :: compileExternalOp(BuildTreeWriter& writer, ExprScope& sco
 
       // HOTFIX : special case - returning long in 32 bit mode
       opNode.appendChild(BuildKey::LongMode);
+   }
+   else if (_logic->isCompatible(*scope.moduleScope, { V_FLOAT64 }, { expectedRef }, true)) {
+      retType = { expectedRef };
+
+      return { ObjectKind::FloatExtern, retType, 0 };
    }
 
    return { ObjectKind::Extern, retType, 0 };
@@ -8886,6 +8891,14 @@ ObjectInfo Compiler :: saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope
          writer.appendNode(BuildKey::SavingLongIndex, tempLocal);
       }
       else writer.appendNode(BuildKey::SavingIndex, tempLocal);
+
+      return { ObjectKind::TempLocalAddress, object.typeInfo, (ref_t)tempLocal };
+   }
+   else if (object.kind == ObjectKind::FloatExtern) {
+      auto sizeInfo = _logic->defineStructSize(*scope.moduleScope, object.typeInfo.typeRef);
+      int tempLocal = allocateLocalAddress(scope, sizeInfo.size, false);
+
+      writer.appendNode(BuildKey::SavingFloatIndex, tempLocal);
 
       return { ObjectKind::TempLocalAddress, object.typeInfo, (ref_t)tempLocal };
    }

@@ -66,6 +66,7 @@ namespace elena_lang
       TempLocalAddress,
       SelfBoxableLocal, // the argument can be stack allocated
       Extern,
+      FloatExtern,
       NewVariable,
       ReadOnlyFieldAddress,
       FieldAddress,

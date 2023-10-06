@@ -459,6 +459,12 @@ void savingLongIndex(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::LSaveDP, node.arg.value);
 }
 
+void savingFloatIndex(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::SetDP, node.arg.value);
+   tape.write(ByteCode::XFSave);
+}
+
 void loadingIndex(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::LoadDP, node.arg.value);
@@ -1826,7 +1832,7 @@ ByteCodeWriter::Saver commands[] =
    uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp,
 
    copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp, semiDirectCallOp,
-   intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump
+   intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

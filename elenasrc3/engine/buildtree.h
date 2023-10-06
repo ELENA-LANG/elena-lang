@@ -152,8 +152,9 @@ namespace elena_lang
       CopyingArrTo         = 0x007A,
       LoadingStackDump     = 0x007B,
       SavingStackDump      = 0x007C,
+      SavingFloatIndex     = 0x007D,
 
-      MaxOperationalKey    = 0x007C,
+      MaxOperationalKey    = 0x007D,
 
       Import               = 0x0080,
       DictionaryOp         = 0x0081,
