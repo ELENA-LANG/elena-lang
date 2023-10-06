@@ -11462,7 +11462,7 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
    else parentRef = scope.moduleScope->buildins.lazyExpressionReference;
 
    declareClassParent(parentRef, scope, node);
-   generateClassFlags(scope, elNestedClass);
+   generateClassFlags(scope, elNestedClass | elSealed);
 
    // handle the abstract flag
    if (test(scope.info.header.flags, elAbstract)) {

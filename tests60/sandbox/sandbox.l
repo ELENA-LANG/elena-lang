@@ -2,5 +2,7 @@ import extensions;
  
 public program()
 {
-   real r := extern getDouble();
+    auto f := (x){ console.writeLine(x) };
+ 
+    f(2);
 }
