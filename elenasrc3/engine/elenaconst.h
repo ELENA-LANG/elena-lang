@@ -157,6 +157,9 @@ namespace elena_lang
    constexpr auto NOTLESS_MESSAGE         = "notless";
    constexpr auto GREATER_MESSAGE         = "greater";
    constexpr auto NOTGREATER_MESSAGE      = "notgreater";
+   constexpr auto AND_MESSAGE             = "and";
+   constexpr auto OR_MESSAGE              = "or";
+   constexpr auto XOR_MESSAGE             = "xor";
 
    // --- constant string lengths ---
    constexpr auto TEMPLATE_PREFIX_NS_LEN = 7;

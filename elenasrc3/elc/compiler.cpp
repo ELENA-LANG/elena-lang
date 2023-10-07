@@ -6380,6 +6380,12 @@ mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId
          return scope->buildins.value_message;
       case SET_INDEXER_OPERATOR_ID:
          return scope->buildins.set_refer_message;
+      case AND_OPERATOR_ID:
+         return scope->buildins.and_message;
+      case OR_OPERATOR_ID:
+         return scope->buildins.or_message;
+      case XOR_OPERATOR_ID:
+         return scope->buildins.xor_message;
       default:
          throw InternalError(errFatalError);
    }
@@ -7924,27 +7930,86 @@ ObjectInfo Compiler :: compileIndexerOperation(BuildTreeWriter& writer, ExprScop
    return compileOperation(writer, scope, node, operatorId, expectedRef, EAttr::None);
 }
 
+inline bool isConditionalOp(SyntaxKey key)
+{
+   switch (key) {
+      case SyntaxKey::EqualOperation:
+      case SyntaxKey::NotEqualOperation:
+      case SyntaxKey::LessOperation:
+      case SyntaxKey::NotLessOperation:
+      case SyntaxKey::GreaterOperation:
+      case SyntaxKey::NotGreaterOperation:
+         return true;
+      default:
+         return false;
+   }
+}
+
 ObjectInfo Compiler :: compileBoolOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId)
 {
    SyntaxNode lnode = node.firstChild();
    SyntaxNode rnode = lnode.nextNode();
 
-   writer.newNode(BuildKey::ShortCircuitOp, operatorId);
+   ObjectInfo loperand = {};
 
-   writer.appendNode(BuildKey::TrueConst, scope.moduleScope->branchingInfo.trueRef);
-   writer.appendNode(BuildKey::FalseConst, scope.moduleScope->branchingInfo.falseRef);
+   bool condOp = isConditionalOp(lnode.key);
+   bool nativeOp = false;
+   if (!condOp) {
+      // If it is not a comparison operation
+      // we have to define if native short-circuit evaluation can be used
+      loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter, nullptr);
 
-   writer.newNode(BuildKey::Tape);
-   writeObjectInfo(writer, scope, compileExpression(writer, scope, lnode, scope.moduleScope->branchingInfo.typeRef, EAttr::None, nullptr));
-   writer.closeNode();
+      nativeOp = _logic->isCompatible(*scope.moduleScope, 
+         { scope.moduleScope->branchingInfo.typeRef }, loperand.typeInfo, true);
+   }
+   else nativeOp = true;
 
-   writer.newNode(BuildKey::Tape);
-   writeObjectInfo(writer, scope, compileExpression(writer, scope, rnode, scope.moduleScope->branchingInfo.typeRef, EAttr::None, nullptr));
-   writer.closeNode();
+   if (nativeOp) {
+      writer.newNode(BuildKey::ShortCircuitOp, operatorId);
 
-   writer.closeNode();
+      writer.appendNode(BuildKey::TrueConst, scope.moduleScope->branchingInfo.trueRef);
+      writer.appendNode(BuildKey::FalseConst, scope.moduleScope->branchingInfo.falseRef);
 
-   return { ObjectKind::Object, { scope.moduleScope->branchingInfo.typeRef }, 0 };
+      writer.newNode(BuildKey::Tape);
+      if (loperand.kind == ObjectKind::Unknown)
+         loperand = compileExpression(writer, scope, lnode, scope.moduleScope->branchingInfo.typeRef, EAttr::None, nullptr);
+
+      writeObjectInfo(writer, scope, loperand);
+      writer.closeNode();
+
+      writer.newNode(BuildKey::Tape);
+      writeObjectInfo(writer, scope, compileExpression(writer, scope, rnode, scope.moduleScope->branchingInfo.typeRef, EAttr::None, nullptr));
+      writer.closeNode();
+
+      writer.closeNode();
+
+      return { ObjectKind::Object, { scope.moduleScope->branchingInfo.typeRef }, 0 };
+   }
+   else {
+      // bad luck - we have to implement weak short-circuit evaluation
+      // using lazy expression
+      SyntaxTree tempTree;
+      SyntaxTreeWriter treeWriter(tempTree);
+      treeWriter.newNode(SyntaxKey::LazyOperation);
+      SyntaxTree::copyNode(treeWriter, rnode, true);
+      treeWriter.closeNode();
+
+      ObjectInfo roperand = compileClosure(writer, scope, tempTree.readRoot(), EAttr::Parameter, nullptr);
+      ref_t      arguments[2] = 
+      {
+         retrieveType(scope, loperand),
+         retrieveType(scope, roperand)
+      };
+
+      ArgumentsInfo messageArguments;
+      messageArguments.add(loperand);
+      messageArguments.add(roperand);
+
+      mssg_t message = resolveOperatorMessage(scope.moduleScope, operatorId);
+
+      return compileWeakOperation(writer, scope, node, arguments, 2, loperand,
+         messageArguments, message, 0, nullptr);
+   }
 }
 
 ObjectInfo Compiler :: compileAssignOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
@@ -11949,6 +12014,15 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
          2, 0);
    moduleScope->buildins.bxor_message =
       encodeMessage(moduleScope->module->mapAction(BXOR_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.and_message =
+      encodeMessage(moduleScope->module->mapAction(AND_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.or_message =
+      encodeMessage(moduleScope->module->mapAction(OR_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.xor_message =
+      encodeMessage(moduleScope->module->mapAction(XOR_MESSAGE, 0, false),
          2, 0);
    moduleScope->buildins.refer_message =
       encodeMessage(moduleScope->module->mapAction(REFER_MESSAGE, 0, false),

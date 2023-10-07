@@ -192,6 +192,7 @@ struct BuiltinReferences
    mssg_t  init_message;
    mssg_t  add_message, sub_message, mul_message, div_message;
    mssg_t  band_message, bor_message, bxor_message;
+   mssg_t  and_message, or_message, xor_message;
    mssg_t  refer_message, set_refer_message;
    mssg_t  if_message, iif_message;
    mssg_t  equal_message;
@@ -219,6 +220,7 @@ struct BuiltinReferences
       invoke_message = init_message = 0;
       add_message = sub_message = mul_message = div_message = 0;
       band_message = bor_message = bxor_message = 0;
+      and_message = or_message = xor_message = 0;
       refer_message = set_refer_message = 0;
       if_message = iif_message = 0;
       equal_message = 0;

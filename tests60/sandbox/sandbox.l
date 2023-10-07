@@ -1,94 +1,116 @@
-import extensions;
+//import extensions;
+//import system'routines;
+//import system'collections;
+// 
+//sealed class Trit
+//{
+//   bool _value;
+// 
+////   bool cast() = _value;
+//// 
+////   constructor(object v)
+////   {
+////      if (v != nil)
+////      {
+////         _value := cast bool(v);
+////      }        
+////   }
+//// 
+////   Trit equivalent(b)
+////      = _value.equal(cast bool(b)) \ back:nilValue;
+//// 
+////   Trit Inverted
+////      = _value.Inverted \ back:nilValue;
+//// 
+////   Trit and(b)
+////   {
+////      if (nil == _value)
+////      {
+////         ^ b.and:nil \ back:nilValue
+////      }
+////      else
+////      {
+////         ^ _value.and($lazy cast bool(b)) \ back:nilValue
+////      }
+////   }
+//// 
+////   Trit or(b)
+////   {
+////      if (nil == _value)
+////      {
+////         ^ b.or:nilValue \ back:nilValue
+////      }
+////      else
+////      {
+////         ^ _value.or($lazy cast bool(b)) \ back:nilValue
+////      }
+////   }
+//// 
+////   Trit implies(b)
+////      = self.Inverted.or(b);
+//// 
+////   string toPrintable() = _value.toPrintable() \ back:"maybe";
+//}
+// 
+//public program()
+//{
+//   Trit a := true;
+//   Trit b := nilValue;
+//
+//   console.writeLine(a && b);
+//
+////    List<Trit> values := new Trit[]{true, nilValue, false};
+////    values.forEach:(left)
+////    {
+////        console.printLine("¬",left," = ", left.Inverted);
+////        values.forEach:(right)
+////        {
+////            console.printLine(left, " & ", right, " = ", left && right);
+////            console.printLine(left, " | ", right, " = ", left || right);
+////            console.printLine(left, " → ", right, " = ", left.implies:right);
+////            console.printLine(left, " ≡ ", right, " = ", left.equivalent:right)
+////        }
+////    }
+//}
 
-const MAXN = 1000000;
-
-extension mathOp
+A
 {
-    isPrime()
-    {
-        int n := cast int(self);
-        
-        if (n < 2) { ^ false };        
-        if (n < 4) { ^ true };        
-        if (n.mod:2 == 0) { ^ false };
-        if (n < 9) { ^ true }; 
-        if (n.mod:3 == 0) { ^ false };
-        
-        int r := n.sqrt();
-        int f := 5;
-        while (f <= r)
-        {
-            if ((n.mod(f) == 0) || (n.mod(f + 2) == 0))
-                { ^ false };
-                
-            f := f + 6            
-        };
-        
-        ^ true
-    }
-    
-    isRightTruncatable()
-    {
-        int n := self;
-        
-        while (n != 0)
-        {
-            ifnot (n.isPrime())
-                { ^ false };
-            
-            n := n / 10
-        };
-        
-        ^ true
-    }
+   bool check()
+   {
+      console.writeLine("A checked");
 
-    isLeftTruncatable()
-    {
-        int n := self;
-        int tens := 1;
-        
-        while (tens < n)
-            { tens := tens * 10 };
-            
-        while (n != 0)
-        {
-            ifnot (n.isPrime())
-                { ^ false };
+      ^ false;
+   }
 
-            tens := tens / 10;
-            n := n - (n / tens * tens)
-        };
-        
-        ^ true
-    }
+   and(b)
+   {
+      if (self.check())
+      {
+         b.check()
+      }
+   }
+}
+
+B
+{
+   bool check()
+   {
+      console.writeLine("B checked");
+
+      ^ false;
+   }
 }
 
 public program()
 {
-    var n := MAXN;
-    var max_lt := 0;
-    var max_rt := 0;
+    int n := 0;
+    var b2 := (n != 0) && (1/n != 0);
 
-    while (max_lt == 0 || max_rt == 0)
-    {
-        if(n.toString().indexOf("0") == -1)
-        {
-            if ((max_lt == 0) && (n.isLeftTruncatable()))
-                {
-                    max_lt := n
-                };
-                
-            if ((max_rt == 0) && (n.isRightTruncatable()))
-                {
-                    max_rt := n
-                }
-        };
-                        
-        n := n - 1
-    };
 
-    console.printLine("Largest truncable left is ",max_lt);   
-    console.printLine("Largest truncable right is ",max_rt);
-    
-    console.readChar()
+   A a := new A(); 
+   B b := new B(); 
+
+   (a.check() && b.check());
+
+   a && b;
 }
