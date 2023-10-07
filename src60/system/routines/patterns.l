@@ -2,6 +2,56 @@ import system;
 
 idleFunc1 = (x){};
 
+// --- Toping ---
+
+public class TopFilter : Enumerator
+{
+   Reference<int>   _offset;
+   Reference<int>   _counter;
+   Enumerator       _enumerator;
+    
+   constructor new(int counter, Enumerator enumerator)
+   {
+       _counter := counter;
+      _offset := 0;
+      _enumerator := enumerator;
+   }
+    
+   constructor new(int counter, int offset, Enumerator enumerator)
+   {
+      _counter := counter;
+      _offset := offset;
+        
+      _enumerator := enumerator;
+   }
+    
+   get Value() = *_enumerator;
+    
+   bool next()
+   {
+      if (_counter != 0)
+      {
+         while (_enumerator.next())
+         {
+            if (_offset == 0)
+            {
+               _counter.reduce(1); ^ true
+            }
+            else
+            {
+               _offset.reduce(1)
+            }
+         }
+      };
+        
+      ^ false
+   }
+    
+   reset() => _enumerator;
+    
+   enumerable() => _enumerator;
+}
+
 // --- Selecting ---
 
 public class Selector : Enumerator

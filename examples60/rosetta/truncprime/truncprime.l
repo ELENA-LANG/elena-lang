@@ -1,4 +1,3 @@
-import system'calendar;
 import extensions;
 
 const MAXN = 1000000;
@@ -66,8 +65,6 @@ extension mathOp
 
 public program()
 {
-    var start := now;
-    
     var n := MAXN;
     var max_lt := 0;
     var max_rt := 0;
@@ -90,13 +87,8 @@ public program()
         n := n - 1
     };
 
-    var end := now;
-    
     console.printLine("Largest truncable left is ",max_lt);   
     console.printLine("Largest truncable right is ",max_rt);
-    
-    var diff := end - start;
-    console.printLine("Time elapsed in msec:",diff.Milliseconds);
     
     console.readChar()
 }

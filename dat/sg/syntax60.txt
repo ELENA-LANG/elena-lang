@@ -270,6 +270,7 @@ ROOT_EXPRESSION ::=
 			| ISNIL ^MESSAGE_OPERATION SINGLE_EXPRESSION ^ISNIL_OPERATION
 			| LT_EXPRESSION ^ TEMPLATE_BLOCK
 			| TRY ^MESSAGE_OPERATION TRY_R
+			| L3 ^MESSAGE_OPERATION MESSAGE MESSAGE_R
 			| eps ^MESSAGE_OPERATION }
 		| L3 ^OBJECT { 
 			OPERATOR MESSAGE? L3_R ^OPERATION_TEMPLATE
@@ -397,7 +398,8 @@ EXPRESSION ::=
 			| eps ^OBJECT }
 		| L0 ^OBJECT L0_R L0_OP* {
 			L1_OP
-			| L3_OP L5_OP*
+			| L3_OP L3_OP* L4_OP* L5_OP*
+			| L4_OP L4_OP* L5_OP*
 			| L5_OP
 			| L6_OP
 			| eps }
@@ -460,11 +462,11 @@ SUB_EXPRESSION ::=
 				"{" ^ PARAMETER BLOCK ^CLOSURE ^EXPRESSION
 				| eps ^OBJECT ^EXPRESSION }
 		}
-		| L0 ^OBJECT L0_R L3_OP* L5_OP* L6_OP? ")"
+		| L0 ^OBJECT L0_R L3_OP* L4_OP* L5_OP* L6_OP? ")"
 		| L2 ^OBJECT L2_R L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L9_OP? ")"
 		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L9_OP? ")"
-		| L4_O_OP L4_OP* L5_OP* ")"
-		| L5_O_OP ")" 
+		| L4_O_OP L4_OP* L5_OP* L6_OP? L7_OP* ")"
+		| L5_O_OP L5_OP* L6_OP? L7_OP* ")" 
 		| L6_O_OP L7_OP* ")"
 		| L7_O_OP ")"
 		| "=>" ^ PARAMETER RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION
@@ -600,7 +602,7 @@ L5_EXPRESSION ::=
 			| L2 ^OBJECT L2_R L3_OP*
 			| NESTED_EXPRESSION ^NESTED L3_OP*
 			| eps ^OBJECT }
-		| L0 ^OBJECT L0_R L0_OP*
+		| L0 ^OBJECT L0_R L0_OP* L3_OP*
 		| L2 ^OBJECT L2_R
 		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP*L4_OP*
 		| L4_O_OP L4_OP*
@@ -646,7 +648,7 @@ L6_EXPRESSION ::=
 		| L5_O_OP 
 		| eps ^OBJECT }
 	| { reference | global } ^OBJECT 
-	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L4_OP* L5_OP*
+	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L3_OP* L4_OP* L5_OP*
 	| "(" SUB_EXPRESSION L2_OP? L3_OP* L4_OP* L5_OP*
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION L3_OP* L4_OP* L5_OP*
 	| "!" L6_EXPRESSION ^NOT_OPERATION
@@ -672,7 +674,7 @@ L7_EXPRESSION ::=
 		| eps ^OBJECT }
 	| { reference | global } ^OBJECT 
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L4_OP* L5_OP* L6_OP?
-	| "(" SUB_EXPRESSION L6_OP?
+	| "(" SUB_EXPRESSION  L2_OP? L3_OP* L4_OP* L5_OP* L6_OP?
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
 	| "!" L7_EXPRESSION ^NOT_OPERATION
 	| "~" SINGLE_EXPRESSION ^BNOT_OPERATION

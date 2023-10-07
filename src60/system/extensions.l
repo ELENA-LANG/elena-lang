@@ -797,6 +797,12 @@ public extension stringOp : String
       }        
    }
 
+   int indexOf(string s)
+      = self.indexOf(0, s);
+
+   int indexOf(char ch)
+      = self.indexOf(0, ch);
+
    int Hashcode
    {
       // Reads the object hash code into the output parameter

@@ -134,6 +134,9 @@ public extension enumerableOp
    selectBy(selector)
       = Selector.new(selector, cast Enumerator(self.enumerator()));
 
+   top(counter)
+      = TopFilter.new(cast int(counter), cast Enumerator(self.enumerator()));
+
    summarize(var)
    {
       new Summing(var).run(cast Enumerator(self.enumerator()));
@@ -210,6 +213,63 @@ public extension enumerableOp
 
       ^ variable.Value
    }
+
+   bool allMatchedBy(Func1 f)
+   {
+      auto en := cast Enumerator(self.enumerator());
+      while (en.next())
+      {
+         ifnot (f(*en))
+         {
+            ^ false
+         }
+      };
+     
+      ^ true
+   }
+
+   get MaximalMember()
+   {
+      auto en := cast Enumerator(self.enumerator());
+        
+      object maximal := nil;
+      while (en.next())
+      {
+            var item := *en;
+            if (nil == maximal)
+            {
+                maximal := item
+            }
+            else if (maximal < item)
+            {
+                maximal := item
+            }
+      };
+        
+      ^ maximal   
+   }
+    
+   get MinimalMember()
+   {
+      auto en := cast Enumerator(self.enumerator());
+        
+      object maximal := nil;
+      while (en.next())
+      {
+         var item := *en;
+         if (nil == maximal)
+         {
+            maximal := item
+         }
+         else if (maximal > item)
+         {
+            maximal := item
+         }
+      };
+        
+      ^ maximal   
+   }
+
 }
 
 // --- indexableOp ---
@@ -354,4 +414,29 @@ public extension indexableOp
         
       ^ -1
    }
+
+   bool isSorted(Func2 compareFunc)
+   {
+      auto it := cast Indexer(self.indexer());
+      if (it.Available)
+      {
+         var previous := *it;
+         it.appendIndex:1;
+         while (it.Available)
+         {
+            ifnot (compareFunc(previous, *it))
+            {
+               ^ false
+            };
+                
+            previous := *it;
+            it.appendIndex:1
+         }
+      };
+        
+      ^ true
+   }
+
+   isAscendant()
+      = self.isSorted(ifOrdered);
 }

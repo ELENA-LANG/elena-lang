@@ -8,16 +8,18 @@ In development:
     [!] rest of files / console samples / rosetta code samples
     [!] api functionality for existing classes : rest of system
 
-    * examples : Runtime evaluation
-    * examples : Respond to an unknown method call
+    * examples : rosetta code sample : U
 
-    * examples : rosetta code sample : S
-
+    * examples : rosetta code sample : Ternary logic, Time a function, Top rank per group, Trabb Pardo–Knuth algorithm, Tree traversal
+    * examples : rosetta code sample : Trigonometric functions, Truncate a file, Twelve statements
+    * examples : rosetta code sample : Sort three variables, String case, Terminal control/Clear the screen, Terminal control/Cursor positioning
+    * examples : rosetta code sample : Set of real numbers, Sequence of primes by trial division,Sort disjoint sublist
     * examples : rosetta code sample : Return multiple values,Runtime evaluation/In an environment, 
     * examples : rosetta code Reflection/List methods,Reflection/List properties
     * examples : rosetta code Anagrams, Hailstone sequence, Happy numbers, Maximum triangle path sum, Run-length encoding
     * examples : rosetta code Middle three digits, Old lady swallowed a fly, Old Russian measure of length
     * examples : rosetta code Real constants and functions, Rot-13, Roman numerals/Encode, Roman numerals/Decode, 
+    * examples : Sockets, Sleep, Sorting algorithms/Sleep sort
 
     * examples : calc - doesn't work
     * examples : p2, random 
