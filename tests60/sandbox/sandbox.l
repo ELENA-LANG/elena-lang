@@ -1,116 +1,78 @@
-//import extensions;
-//import system'routines;
-//import system'collections;
-// 
-//sealed class Trit
-//{
-//   bool _value;
-// 
-////   bool cast() = _value;
-//// 
-////   constructor(object v)
-////   {
-////      if (v != nil)
-////      {
-////         _value := cast bool(v);
-////      }        
-////   }
-//// 
-////   Trit equivalent(b)
-////      = _value.equal(cast bool(b)) \ back:nilValue;
-//// 
-////   Trit Inverted
-////      = _value.Inverted \ back:nilValue;
-//// 
-////   Trit and(b)
-////   {
-////      if (nil == _value)
-////      {
-////         ^ b.and:nil \ back:nilValue
-////      }
-////      else
-////      {
-////         ^ _value.and($lazy cast bool(b)) \ back:nilValue
-////      }
-////   }
-//// 
-////   Trit or(b)
-////   {
-////      if (nil == _value)
-////      {
-////         ^ b.or:nilValue \ back:nilValue
-////      }
-////      else
-////      {
-////         ^ _value.or($lazy cast bool(b)) \ back:nilValue
-////      }
-////   }
-//// 
-////   Trit implies(b)
-////      = self.Inverted.or(b);
-//// 
-////   string toPrintable() = _value.toPrintable() \ back:"maybe";
-//}
-// 
-//public program()
-//{
-//   Trit a := true;
-//   Trit b := nilValue;
-//
-//   console.writeLine(a && b);
-//
-////    List<Trit> values := new Trit[]{true, nilValue, false};
-////    values.forEach:(left)
-////    {
-////        console.printLine("¬",left," = ", left.Inverted);
-////        values.forEach:(right)
-////        {
-////            console.printLine(left, " & ", right, " = ", left && right);
-////            console.printLine(left, " | ", right, " = ", left || right);
-////            console.printLine(left, " → ", right, " = ", left.implies:right);
-////            console.printLine(left, " ≡ ", right, " = ", left.equivalent:right)
-////        }
-////    }
-//}
-
-A
+import extensions;
+import system'routines;
+import system'collections;
+ 
+sealed class Trit
 {
-   bool check()
+   bool _value;
+ 
+   bool cast() = _value;
+ 
+   constructor(object v)
    {
-      console.writeLine("A checked");
-
-      ^ false;
-   }
-
-   and(b)
-   {
-      if (self.check())
+      if (v != nil)
       {
-         b.check()
+         _value := cast bool(v);
+      }        
+   }
+ 
+   Trit equivalent(b)
+   {
+      var val2 := cast bool(b) \ back:nil;
+
+      if (val2 != nil && _value != nil)
+      {
+         ^ _value.equal(val2)
+      };
+
+      ^  nilValue;
+   }
+ 
+   Trit Inverted
+      = _value.Inverted \ back:nilValue;
+ 
+   Trit and(b)
+   {
+      if (nil == _value)
+      {
+         ^ b.and:nil \ back:nilValue
+      }
+      else
+      {
+         ^ _value.and(/*$lazy cast bool(*/b/*)*/) \ back:nilValue
       }
    }
-}
-
-B
-{
-   bool check()
+ 
+   Trit or(b)
    {
-      console.writeLine("B checked");
-
-      ^ false;
+      if (nil == _value)
+      {
+         ^ b.or:nilValue \ back:nilValue
+      }
+      else
+      {
+         ^ _value.or(/*$lazy cast bool(*/b/*)*/) \ back:nilValue
+      }
    }
+ 
+   Trit implies(b)
+      = self.Inverted.or(b);
+ 
+   string toPrintable() = _value.toPrintable() \ back:"maybe";
 }
-
+ 
 public program()
 {
-    int n := 0;
-    var b2 := (n != 0) && (1/n != 0);
-
-
-   A a := new A(); 
-   B b := new B(); 
-
-   (a.check() && b.check());
-
-   a && b;
+    List<Trit> values := new Trit[]{true, nilValue, false};
+    values.forEach:(left)
+    {
+        console.printLine("¬",left," = ", left.Inverted);
+        values.forEach:(right)
+        {
+            console.printLine(left, " & ", right, " = ", left && right);
+            console.printLine(left, " | ", right, " = ", left || right);
+            console.printLine(left, " → ", right, " = ", left.implies:right);
+            console.printLine(left, " ≡ ", right, " = ", left.equivalent:right)
+        }
+    }
 }

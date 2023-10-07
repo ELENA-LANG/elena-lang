@@ -52,6 +52,53 @@ public class TopFilter : Enumerator
    enumerable() => _enumerator;
 }
 
+// --- SkipFilter ---
+
+public class SkipFilter : Enumerator
+{
+   int        _counter;    
+   bool       _skipped;    
+   Enumerator _enumerator;
+    
+   constructor new(int counter, Enumerator en)
+   {
+      _counter := counter;
+      _skipped := false;
+      _enumerator := en
+   }
+    
+   get Value() = *_enumerator;
+    
+   bool next()
+   {
+      ifnot (_skipped)
+      {
+         _skipped := true;
+            
+         int i := _counter;
+         while (i > 0)            
+         {
+            ifnot (_enumerator.next())
+            {
+               ^ false
+            };
+                
+            i -= 1
+         }
+      };
+        
+      ^ _enumerator.next()
+   }
+    
+   reset()
+   {
+      _enumerator.reset();
+      _skipped := false
+   }
+    
+   enumerable() => _enumerator;
+}
+
 // --- Selecting ---
 
 public class Selector : Enumerator
@@ -258,5 +305,16 @@ public class ZipEnumerator : Enumerator
    }
 
    enumerable() => _enumerator1;
+}
+
+// --- patternOp ---
+
+public extension patternOp
+{
+   skipping(int counter)
+      = SkipFilter.new(counter, cast Enumerator(self.enumerator()));
+
+   last(int counter)
+      = TopFilter.new(counter, self.Length - counter, cast Enumerator(self.enumerator()));
 }
 

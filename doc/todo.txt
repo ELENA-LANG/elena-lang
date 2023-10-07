@@ -8,12 +8,10 @@ In development:
     [!] rest of files / console samples
     [!] api functionality for existing classes : rest of system
 
-    * examples : rosetta code sample : Ternary logic
-
     * examples : rosetta code sample : World Cup group stage, Y combinator, Zeckendorf arithmetic, Zeckendorf number representation, Zhang-Suen thinning algorithm, 
     * examples : rosetta code sample : UTF-8 encode and decode, Vigenère cipher, Walk a directory/Non-recursively, Wireworld, Word wrap, 
     * examples : rosetta code sample : Time a function, Top rank per group, Trabb Pardo–Knuth algorithm, Tree traversal
-    * examples : rosetta code sample : Trigonometric functions, Truncate a file, Twelve statements, Unbias a random generator
+    * examples : rosetta code sample : Trigonometric functions, Truncate a file, Unbias a random generator
     * examples : rosetta code sample : Sort three variables, String case, Terminal control/Clear the screen, Terminal control/Cursor positioning
     * examples : rosetta code sample : Set of real numbers, Sequence of primes by trial division,Sort disjoint sublist
     * examples : rosetta code sample : Return multiple values,Runtime evaluation/In an environment, 
