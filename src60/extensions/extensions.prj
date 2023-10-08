@@ -35,6 +35,7 @@
      <module name="routines">
        <include>routines\enumerating.l</include>
        <include>routines\combinations.l</include>
+       <include>routines\compound.l</include>
      </module>
      <module name="scripting">
        <include>scripting\interpreter.l</include>

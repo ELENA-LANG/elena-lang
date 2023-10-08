@@ -8,9 +8,11 @@ In development:
     [!] rest of files / console samples
     [!] api functionality for existing classes : rest of system
 
+    * Roman numerals/Encode
+
     * examples : rosetta code sample : World Cup group stage, Y combinator, Zeckendorf arithmetic, Zeckendorf number representation, Zhang-Suen thinning algorithm, 
     * examples : rosetta code sample : UTF-8 encode and decode, Vigenère cipher, Walk a directory/Non-recursively, Wireworld, Word wrap, 
-    * examples : rosetta code sample : Time a function, Top rank per group, Trabb Pardo–Knuth algorithm, Tree traversal
+    * examples : rosetta code sample : Time a function, Top rank per group, Trabb Pardo–Knuth algorithm
     * examples : rosetta code sample : Trigonometric functions, Truncate a file, Unbias a random generator
     * examples : rosetta code sample : Sort three variables, String case, Terminal control/Clear the screen, Terminal control/Cursor positioning
     * examples : rosetta code sample : Set of real numbers, Sequence of primes by trial division,Sort disjoint sublist
@@ -18,7 +20,7 @@ In development:
     * examples : rosetta code Reflection/List methods,Reflection/List properties
     * examples : rosetta code Anagrams, Hailstone sequence, Happy numbers, Maximum triangle path sum, Run-length encoding
     * examples : rosetta code Middle three digits, Old lady swallowed a fly, Old Russian measure of length
-    * examples : rosetta code Real constants and functions, Rot-13, Roman numerals/Encode, Roman numerals/Decode, 
+    * examples : rosetta code Real constants and functions, Rot-13, Roman numerals/Decode, 
     * examples : Sockets, Sleep, Sorting algorithms/Sleep sort, gui_component_interaction 
 
     * examples : calc - doesn't work
@@ -55,6 +57,7 @@ In development:
     [!] tutorial : Multiple inheritance in ELENA
     [!] pi sample optimization (under 9sec)
     [!] review #622, #620
+    [!] x86-64 : samples / rosetta code samples
     * x86-64 : implement xdispatch i
     * corex : tests - lock test, GC test, printing in one thread / calling GC in another
     * amd64 : implement system 5

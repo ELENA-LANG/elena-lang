@@ -1,78 +1,32 @@
-import extensions;
-import system'routines;
 import system'collections;
+import system'routines;
+import extensions;
+import extensions'text;
  
-sealed class Trit
+static RomanDictionary = Dictionary.new()
+                            .setAt(1000, "M")
+                            .setAt(900, "CM")
+                            .setAt(500, "D")
+                            .setAt(400, "CD")
+                            .setAt(100, "C")
+                            .setAt(90, "XC")
+                            .setAt(50, "L")
+                            .setAt(40, "XL")
+                            .setAt(10, "X")
+                            .setAt(9, "IX")
+                            .setAt(5, "V")
+                            .setAt(4, "IV")
+                            .setAt(1, "I");
+ 
+extension op
 {
-   bool _value;
- 
-   bool cast() = _value;
- 
-   constructor(object v)
-   {
-      if (v != nil)
-      {
-         _value := cast bool(v);
-      }        
-   }
- 
-   Trit equivalent(b)
-   {
-      var val2 := cast bool(b) \ back:nil;
-
-      if (val2 != nil && _value != nil)
-      {
-         ^ _value.equal(val2)
-      };
-
-      ^  nilValue;
-   }
- 
-   Trit Inverted
-      = _value.Inverted \ back:nilValue;
- 
-   Trit and(b)
-   {
-      if (nil == _value)
-      {
-         ^ b.and:nil \ back:nilValue
-      }
-      else
-      {
-         ^ _value.and(/*$lazy cast bool(*/b/*)*/) \ back:nilValue
-      }
-   }
- 
-   Trit or(b)
-   {
-      if (nil == _value)
-      {
-         ^ b.or:nilValue \ back:nilValue
-      }
-      else
-      {
-         ^ _value.or(/*$lazy cast bool(*/b/*)*/) \ back:nilValue
-      }
-   }
- 
-   Trit implies(b)
-      = self.Inverted.or(b);
- 
-   string toPrintable() = _value.toPrintable() \ back:"maybe";
+   toRoman()
+      = RomanDictionary.accumulate(new StringWriter("I", self), (m,kv => m.replace(new StringWriter("I",kv.Key).Value, kv.Value)));
 }
  
 public program()
 {
-    List<Trit> values := new Trit[]{true, nilValue, false};
-    values.forEach:(left)
-    {
-        console.printLine("¬",left," = ", left.Inverted);
-        values.forEach:(right)
-        {
-            console.printLine(left, " & ", right, " = ", left && right);
-            console.printLine(left, " | ", right, " = ", left || right);
-            console.printLine(left, " → ", right, " = ", left.implies:right);
-            console.printLine(left, " ≡ ", right, " = ", left.equivalent:right)
-        }
-    }
+    console.printLine("1990 : ", 1990.toRoman());
+    console.printLine("2008 : ", 2008.toRoman());
+    console.printLine("1666 : ", 1666.toRoman())
 }

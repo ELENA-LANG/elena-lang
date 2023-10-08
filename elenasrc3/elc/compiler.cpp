@@ -8421,6 +8421,9 @@ ObjectInfo Compiler :: compileIsNilOperation(BuildTreeWriter& writer, ExprScope&
 
       loperand = saveToTempLocal(writer, scope, { ObjectKind::Object });
    }
+   else if (current == SyntaxKey::Object) {
+      loperand = compileObject(writer, scope, current, EAttr::Parameter, nullptr);
+   }
    else scope.raiseError(errInvalidOperation, node);
 
    SyntaxNode altNode = current.nextNode();

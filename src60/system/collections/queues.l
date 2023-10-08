@@ -124,12 +124,12 @@ namespace collections
          _tale := 0;
       }
         
-//      constructor allocate(int capacity)
-//      
-//         _array := new List<T>(capacity);
-//         _top := 0;
-//         _tale := 0;
-//      }
+      constructor allocate(int capacity)
+      {
+         _array := new List<T>(capacity);
+         _top := 0;
+         _tale := 0;
+      }
             
       int Length
       {
