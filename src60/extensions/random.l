@@ -36,8 +36,7 @@ public sealed struct RandomGenerator
     
    int nextInt()
    {
-      int nextValue := 0;
-      self.eval(ref nextValue);
+      int nextValue := self.eval();
         
       ^ new IntNumber(nextValue)
    }
