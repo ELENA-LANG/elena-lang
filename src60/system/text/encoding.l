@@ -120,6 +120,17 @@
       {
          ^ String.fromByteArray(index, size, buffer);
       }
+
+      int getCharCount(string s)
+      {
+         int len := 0;
+         auto en := s.enumerator();
+         while (en.next()) {
+            len += 1;
+         };
+
+         ^ len
+      }
    }
 
    // --- UTF16Encoding ---
@@ -150,6 +161,17 @@
       toShortArray(wide s, int index, int length, short[] output)
       {
          s.saveToShortArray(index, output, length);
+      }
+
+      int getCharCount(wide s)
+      {
+         int len := 0;
+         auto en := s.enumerator();
+         while (en.next()) {
+            len += 1;
+         };
+
+         ^ len
       }
    }
 

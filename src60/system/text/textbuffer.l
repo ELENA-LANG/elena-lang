@@ -51,7 +51,7 @@ namespace text
     
 //      get multiret Value(ref wide r)
 //      {
-//            r := WideString.copy(0, theLength.Value, theBuffer);
+//            r := WideString.copy(0, _length.Value, theBuffer);
 //      }
     
       wide cast()
@@ -237,56 +237,56 @@ namespace text
 //                i += 1
 //            }
 //        }
-//    
-//        insert(int index, int length, char[] array)
-//        {
-//            self.reserve(length);
-//            
-//            theBuffer.move(index, theLength.Value, length);
-//            
-//            theBuffer.write(index, length, array);
-//            
-//            theLength.append(length)
-//        }
-//
-//        insert(int index, string s)
-//        {
-//            int length := 0;
-//            UTF8Encoding.charCount(s, ref length);
-//    
-//            self.reserve(length);
-//            
-//            theBuffer.move(index, cast int(theLength), length);
-//            
-//            s.save(index, theBuffer, ref length);
-//            
-//            theLength.append(length)
-//        }
-//
-//        insert(int index, wide s)
-//        {
-//            int length := 0;
-//            UTF16Encoding.charCount(s, ref length);
-//    
-//            self.reserve(length);
-//            
-//            theBuffer.move(index, cast int(theLength), length);
-//            
-//            s.save(index, theBuffer, ref length);
-//            
-//            theLength.append(length)
-//        }
-//        
-//        insert(int index, char ch)
-//        {
-//            self.reserve(1);
-//            
-//            theBuffer.move(index, cast int(theLength), 1);
-//            
-//            theBuffer.write(index, ch);
-//            
-//            theLength.append(1)
-//        }
+    
+      insert(int index, int length, char[] array)
+      {
+         self.reserve(length);
+         
+         int bufLen := *_length;   
+         Array<char>.move(_buffer, index, bufLen, -length);
+         Array<char>.copyTo(_buffer, array, index, length);
+            
+         _length.append(length)
+      }
+
+      insert(int index, string s)
+      {
+         int length := UTF8Encoding.getCharCount(s);
+    
+         self.reserve(length);
+         
+         int bufLen := *_length;   
+         Array<char>.move(_buffer, index, bufLen, -length);
+            
+         s.save(0, s.Length, _buffer, index);
+            
+         _length.append(length)
+      }
+
+      insert(int index, wide s)
+      {
+         int length := UTF16Encoding.getCharCount(s);
+    
+         self.reserve(length);
+            
+         int bufLen := *_length;   
+         Array<char>.move(_buffer, index, bufLen, -length);
+            
+         s.save(0, s.Length, _buffer, index);
+            
+         _length.append(length)
+      }
+        
+      insert(int index, char ch)
+      {
+         self.reserve(1);
+            
+         _buffer.move(index, cast int(_length), 1);
+            
+         _buffer.write(index, ch);
+            
+         _length.append(1)
+      }
 
       int indexOf(int position, char value)
       {
@@ -430,7 +430,7 @@ namespace text
 //            if (length == 0)
 //                { ^ emptyWideString };
 //                
-//            ^ WideString.copy(index, length, theBuffer)
+//            ^ WideString.copy(index, length, _buffer)
 //        }
 
       delete(int index, int length)
@@ -446,7 +446,7 @@ namespace text
     
 //        trim(int n)
 //        {
-//            theLength.reduce(n)
+//            _length.reduce(n)
 //        }
    }
 }

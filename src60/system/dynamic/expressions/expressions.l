@@ -22,7 +22,9 @@ namespace expressions
         
       bool equal(ScopeIdentifier var)
       {
-         if (var.Name == Name && var.Mode == Mode)
+         int varMode := var.Mode;
+
+         if (var.Name == Name && (varMode == Mode || varMode == 0))
          {
             ^ true
          };
@@ -314,6 +316,7 @@ namespace expressions
 
          auto scope := new RootExpressionScope(parentScope);
 
+         self.declare(scope);         
          self.saveTo(list, scope, 0);
          
          int allocated := scope.StackSize;

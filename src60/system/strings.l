@@ -34,9 +34,21 @@ public sealed Array<T> : Indexable<T>
 
    static move(Array<T> target, int index, int length, int offset)
    {
-      for (int i := 0, i < length, i += 1)
-      {
-         target[i] := target[i + offset]
+      if (offset > 0) {
+         for (int i := 0, i < length, i += 1)
+         {
+            target[i] := target[i + offset]
+         }
+      }
+      else {
+         int i := length;
+         int j := length - offset;
+         while (i > index) {
+            i -= 1;
+            j -= 1;
+
+            target[j] := target[i];
+         }
       }
    }
 

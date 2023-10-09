@@ -7,7 +7,8 @@ In development:
     === Iteration 18 ===
     [!] api functionality for existing classes : rest of system
 
-    * examples : scripts
+    * TextBuffer.insert
+    * examples : scripts : interpreter
     * examples : calc - doesn't work
 
     * Roman numerals/Encode
@@ -22,6 +23,7 @@ In development:
     * examples : rosetta code Anagrams, Hailstone sequence, Happy numbers, Maximum triangle path sum, Run-length encoding
     * examples : rosetta code Middle three digits, Old lady swallowed a fly, Old Russian measure of length
     * examples : rosetta code Real constants and functions, Rot-13, Roman numerals/Decode, 
+    * examples : execute B*
     * examples : Sockets, Sleep, Sorting algorithms/Sleep sort, gui_component_interaction 
 
     * examples : test all samples for win x86

@@ -32,15 +32,14 @@
 //}
 
 import extensions;
-import extensions'math;
-import system'routines;
+import system'text;
 
 public program()
 {
-   RealMatrix m := RealMatrix.allocate(2,2).populate:(int i,int j)
-            { 
-                ^ "2".toReal()
-            };
+   var output := new TextBuilder();
+      
+   output.write("ade");
+   output.insert(1, "bc");
 
-   var o := m.Decomposed;
+   var s := *output;
 }

@@ -213,8 +213,8 @@ end
 
 procedure __extensionvar
 
-  xstore     i:1
-  get        i:0
+  xstore     i:0
+  get        i:1
   or         n:FUNCTION_MESSAGE
 
   jump       vt:0

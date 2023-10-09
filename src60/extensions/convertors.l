@@ -257,13 +257,13 @@ public extension convertorOp
 
 // --- convertor ---
 
-public singleton convertor 
+public singleton intConvertExt
 { 
    generic(n)
    {
       /*MessageName*/var mssg := __received.MessageName;
 
-      ^ mssg(new ExtensionVariable(extensions'convertorOp, n))
+      ^ mssg(new ExtensionVariable(n, extensions'intConvertOp))
    }
 }
 

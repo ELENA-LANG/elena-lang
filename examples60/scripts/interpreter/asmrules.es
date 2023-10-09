@@ -2,8 +2,13 @@
    #grammar build
    #grammar cf
 
-   #define start      ::= <= system'dynamic'DynamicTape ( => command commands <= ) =>;
-   #define start      ::= <= system'dynamic'DynamicTape ( => comment commands <= ) =>;
+   #define start      ::= 
+<= 
+	system'dynamic'DynamicTape ( 
+		system'dynamic'AllocFunction ( "1" ) 
+		system'dynamic'LocalFunction ( "2" ) => command commands 
+<=      ) =>;
+
    #define start      ::= $eof;
 
    #define commands   ::= command commands;
