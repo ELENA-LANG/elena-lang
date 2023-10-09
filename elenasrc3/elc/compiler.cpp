@@ -3717,6 +3717,15 @@ void Compiler :: copyParentNamespaceExtensions(NamespaceScope& source, Namespace
 
 void Compiler :: declareNamespace(NamespaceScope& ns, SyntaxNode node, bool ignoreImport, bool ignoreExtensions)
 {
+   // load the namespace name if available
+   SyntaxNode nameNode = node.findChild(SyntaxKey::Name);
+   if (nameNode == SyntaxKey::Name) {
+      if (ns.nsName.length() > 0)
+         ns.nsName.append('\'');
+
+      ns.nsName.append(nameNode.firstChild(SyntaxKey::TerminalMask).identifier());
+   }
+
    if (!ignoreExtensions) {
       // HOTFIX : load the module internal and public extensions
       loadExtensions(ns, false);
@@ -3728,12 +3737,6 @@ void Compiler :: declareNamespace(NamespaceScope& ns, SyntaxNode node, bool igno
       switch (current.key) {
          case SyntaxKey::SourcePath:
             ns.sourcePath.copy(current.identifier());
-            break;
-         case SyntaxKey::Name:
-            if (ns.nsName.length() > 0)
-               ns.nsName.append('\'');
-
-            ns.nsName.append(current.firstChild(SyntaxKey::TerminalMask).identifier());
             break;
          case SyntaxKey::Import:
             if (!ignoreImport) {

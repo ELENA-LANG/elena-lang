@@ -1,32 +1,46 @@
-import system'collections;
-import system'routines;
+//import system'collections;
+//import system'routines;
+//import extensions;
+//import extensions'text;
+// 
+//static RomanDictionary = Dictionary.new()
+//                            .setAt(1000, "M")
+//                            .setAt(900, "CM")
+//                            .setAt(500, "D")
+//                            .setAt(400, "CD")
+//                            .setAt(100, "C")
+//                            .setAt(90, "XC")
+//                            .setAt(50, "L")
+//                            .setAt(40, "XL")
+//                            .setAt(10, "X")
+//                            .setAt(9, "IX")
+//                            .setAt(5, "V")
+//                            .setAt(4, "IV")
+//                            .setAt(1, "I");
+// 
+//extension op
+//{
+//   toRoman()
+//      = RomanDictionary.accumulate(new StringWriter("I", self), (m,kv => m.replace(new StringWriter("I",kv.Key).Value, kv.Value)));
+//}
+// 
+//public program()
+//{
+//    console.printLine("1990 : ", 1990.toRoman());
+//    console.printLine("2008 : ", 2008.toRoman());
+//    console.printLine("1666 : ", 1666.toRoman())
+//}
+
 import extensions;
-import extensions'text;
- 
-static RomanDictionary = Dictionary.new()
-                            .setAt(1000, "M")
-                            .setAt(900, "CM")
-                            .setAt(500, "D")
-                            .setAt(400, "CD")
-                            .setAt(100, "C")
-                            .setAt(90, "XC")
-                            .setAt(50, "L")
-                            .setAt(40, "XL")
-                            .setAt(10, "X")
-                            .setAt(9, "IX")
-                            .setAt(5, "V")
-                            .setAt(4, "IV")
-                            .setAt(1, "I");
- 
-extension op
-{
-   toRoman()
-      = RomanDictionary.accumulate(new StringWriter("I", self), (m,kv => m.replace(new StringWriter("I",kv.Key).Value, kv.Value)));
-}
- 
+import extensions'math;
+import system'routines;
+
 public program()
 {
-    console.printLine("1990 : ", 1990.toRoman());
-    console.printLine("2008 : ", 2008.toRoman());
-    console.printLine("1666 : ", 1666.toRoman())
+   RealMatrix m := RealMatrix.allocate(2,2).populate:(int i,int j)
+            { 
+                ^ "2".toReal()
+            };
+
+   var o := m.Decomposed;
 }

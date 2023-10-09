@@ -1,6 +1,7 @@
 import system'text;
 import system'collections;
 import system'routines;
+import system'calendar;
 
 singleton stringExConvertor
 {
@@ -250,15 +251,6 @@ public extension convertorOp
    convertTo(target)
       = new Variant(self).saveTo(target);
 
-   int toInt()
-      = intConvertor.convert(self);   
-
-   long toLong()
-      = longConvertor.convert:self;
-
-   real toReal()
-      = realConvertor.convert:self;
-
    char toChar()
       = charConvertor.convert:self;
 }
@@ -273,4 +265,10 @@ public singleton convertor
 
       ^ mssg(new ExtensionVariable(extensions'convertorOp, n))
    }
+}
+
+public extension dateFormatterOp : Date
+{
+    string toShortTimeString()
+        = cast TimeStruct(self).toShortTime();
 }

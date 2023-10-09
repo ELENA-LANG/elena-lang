@@ -1,9 +1,9 @@
 // based on http://cboard.cprogramming.com/cplusplus-programming/30001-determinant-calculation.html prelude sample
 
 // --- default namespaces ---
-import system'routines;
 import extensions;
 import extensions'math;
+import system'routines;
 
 // --- factory ---
 
@@ -16,13 +16,13 @@ class Matrix
         theMatrix := matrix
     }
     
-    constructor create(n, name)
+    constructor create(int n, string name)
         <= new (RealMatrix.allocate(n,n).populate:(int i,int j)
             { 
                 ^ console.print("Enter ",name,"[",i,",",j,"]=").readLine().toReal()
             });
     
-    constructor newIdentityOf(n)
+    constructor newIdentityOf(int n)
         <= new(RealMatrix.allocate(n,n).populate:(int i, int j =>
             cast RealNumber((i == j) ? 1.0r : 0.0r )));
     
