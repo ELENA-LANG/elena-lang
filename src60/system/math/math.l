@@ -46,7 +46,19 @@ namespace math
    }
 
    public extension mathOp
-   {
+   {            
+      Rounded
+         = cast real(self).Rounded;
+      
+      RoundedInt
+         = intConvertor.convert(cast real(self).Rounded);
+      
+      Integer
+         = cast real(self).Integer;
+      
+      IntegerInt
+         = intConvertor.convert(cast real(self).Integer);
+
       mod(n)
          = mathController.mod(self, n);
     

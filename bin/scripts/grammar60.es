@@ -61,8 +61,8 @@
                                    "singleton" "(" s_name class_expr ")"
 <=   ) =>;
 
-  #define symbol_expr     ::= "expression" "(" nested_symbol ")"; 
-  #define symbol_expr     ::= "expression" "(" expr_symbol ")"; 
+  #define symbol_expr     ::= "get_expression" "(" nested_symbol ")"; 
+  #define symbol_expr     ::= "get_expression" "(" expr_symbol ")"; 
                               
   #define class_expr      ::= 
 <=

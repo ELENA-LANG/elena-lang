@@ -1,45 +1,29 @@
-//import system'collections;
-//import system'routines;
-//import extensions;
-//import extensions'text;
-// 
-//static RomanDictionary = Dictionary.new()
-//                            .setAt(1000, "M")
-//                            .setAt(900, "CM")
-//                            .setAt(500, "D")
-//                            .setAt(400, "CD")
-//                            .setAt(100, "C")
-//                            .setAt(90, "XC")
-//                            .setAt(50, "L")
-//                            .setAt(40, "XL")
-//                            .setAt(10, "X")
-//                            .setAt(9, "IX")
-//                            .setAt(5, "V")
-//                            .setAt(4, "IV")
-//                            .setAt(1, "I");
-// 
-//extension op
-//{
-//   toRoman()
-//      = RomanDictionary.accumulate(new StringWriter("I", self), (m,kv => m.replace(new StringWriter("I",kv.Key).Value, kv.Value)));
-//}
-// 
-//public program()
-//{
-//    console.printLine("1990 : ", 1990.toRoman());
-//    console.printLine("2008 : ", 2008.toRoman());
-//    console.printLine("1666 : ", 1666.toRoman())
-//}
-
 import extensions;
-import system'text;
-
+import system'routines;
+import system'culture;
+ 
+extension op
+{
+    sortSublist(indices)
+    {
+        var subList := indices.orderBy:(x => x)
+                            .zipBy(indices.selectBy:(i => self[i]) 
+                                .orderBy:(x => x), (index,val => new{ Index = index; Value = val; })) 
+                            .toArray();
+ 
+        var list := self.clone();
+        subList.forEach:(r)
+        {
+            list[r.Index] := r.Value
+        };
+ 
+        ^ list
+    }
+}
+ 
 public program()
 {
-   var output := new TextBuilder();
-      
-   output.write("ade");
-   output.insert(1, "bc");
-
-   var s := *output;
+    var list := new int[]{ 7, 6, 5, 4, 3, 2, 1, 0 };
+ 
+    console.printLine(list.sortSublist(new int[]{6, 1, 7}).asEnumerable())
 }

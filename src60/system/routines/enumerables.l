@@ -134,6 +134,9 @@ public extension enumerableOp
    selectBy(selector)
       = Selector.new(selector, cast Enumerator(self.enumerator()));
 
+   orderBy(orderFunc)
+      = OrderingEnumerator.new(orderFunc, cast Enumerator(self.enumerator()));
+
    top(counter)
       = TopFilter.new(cast int(counter), cast Enumerator(self.enumerator()));
 

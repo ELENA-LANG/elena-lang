@@ -7,22 +7,22 @@ In development:
     === Iteration 18 ===
     [!] api functionality for existing classes : rest of system
 
-    * TextBuffer.insert
-    * examples : scripts : interpreter
-    * examples : calc - doesn't work
+    * examples : Run-length encoding
 
-    * Roman numerals/Encode
+    - uncomment rest of calc sample - supporting function
+
+    * examples : scripts
+
     * examples : rosetta code sample : World Cup group stage, Y combinator, Zeckendorf arithmetic, Zeckendorf number representation, Zhang-Suen thinning algorithm, 
     * examples : rosetta code sample : UTF-8 encode and decode, Vigenère cipher, Walk a directory/Non-recursively, Wireworld, Word wrap, 
     * examples : rosetta code sample : Time a function, Top rank per group, Trabb Pardo–Knuth algorithm
     * examples : rosetta code sample : Trigonometric functions, Truncate a file, Unbias a random generator
-    * examples : rosetta code sample : Sort three variables, String case, Terminal control/Clear the screen, Terminal control/Cursor positioning
-    * examples : rosetta code sample : Set of real numbers, Sequence of primes by trial division,Sort disjoint sublist
-    * examples : rosetta code sample : Return multiple values,Runtime evaluation/In an environment, 
+    * examples : rosetta code sample : Terminal control/Clear the screen, Terminal control/Cursor positioning
+    * examples : rosetta code sample : Return multiple values,Runtime evaluation/In an environment,Runtime evaluation,
     * examples : rosetta code Reflection/List methods,Reflection/List properties
-    * examples : rosetta code Anagrams, Hailstone sequence, Happy numbers, Maximum triangle path sum, Run-length encoding
+    * examples : rosetta code Anagrams, Hailstone sequence, Happy numbers, Maximum triangle path sum
     * examples : rosetta code Middle three digits, Old lady swallowed a fly, Old Russian measure of length
-    * examples : rosetta code Real constants and functions, Rot-13, Roman numerals/Decode, 
+    * examples : rosetta code Real constants and functions, Rot-13,
     * examples : execute B*
     * examples : Sockets, Sleep, Sorting algorithms/Sleep sort, gui_component_interaction 
 
@@ -67,6 +67,7 @@ In development:
     * for linux amd64 allocate shadow memory
     * mt : note on creating closure - lock GC
     * examples : manboy example - till 20
+    * calc - dynamic version
 
     === Iteration 20 ===
     [!] elenavm x64 dll

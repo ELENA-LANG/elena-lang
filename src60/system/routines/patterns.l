@@ -1,4 +1,5 @@
 import system;
+import system'collections;
 
 idleFunc1 = (x){};
 
@@ -128,6 +129,52 @@ public class Selector : Enumerator
    }    
     
    enumerable() => _enumerator;
+}
+
+// --- OrderingEnumerator ---
+
+public class OrderingEnumerator : Enumerator
+{
+    Enumerator _enumerator;
+    Func2      _orderFunc;   
+    Enumerator _listEnumerator;
+    
+    constructor new(Func2 orderFunc, Enumerator enumerator)
+    {
+        _orderFunc := orderFunc;
+        _enumerator := enumerator;
+        
+        self.reset();
+    }
+    
+    constructor new(Func1 orderVal, Enumerator enumerator)
+    {
+        _orderFunc := (p,n => orderVal(p) < orderVal(n) );
+        _enumerator := enumerator;
+        
+        self.reset()
+    }
+    
+    constructor new(ExtensionMessage fn, Enumerator enumerator)
+        <= new((x,y => fn(x, y)), enumerator);
+    
+    reset()
+    {
+        _enumerator.reset();
+        
+        Array list := new Summing(new ArrayList()).run(_enumerator);
+        list.sort(_orderFunc);
+        
+        _listEnumerator := list.enumerator();
+    }
+    
+    get Value() = *_listEnumerator;
+    
+    bool next()
+        = _listEnumerator.next();
+        
+    enumerable()
+        => _enumerator;
 }
 
 // === patterns ===

@@ -6,22 +6,24 @@
 
    #define member         ::= symbol;
    
-   #define symbol         ::= <= public_symbol ( => s_name "=" expression ";" <= ) =>;
+   #define symbol         ::= <= public_symbol ( => s_name "=" get_expression ";" <= ) =>;
 
    #define statement      ::= expression ";";
+   #define get_expression ::= <= get_expression ( => expr_operation <= ) =>;
+
    #define expression     ::= <= expression ( => expr_operation <= ) =>;
    #define ret_expr       ::= <= returning ( => "^" expression ";" <= ) =>;
 
    #define expr_operation ::= $ object operation* ;
 
-   #define object         ::= identifier;
-   #define object         ::= reference;
-   #define object         ::= integer;
-   #define object         ::= literal;
+   #define object         ::= <= object ( => identifier <= ) =>;
+   #define object         ::= <= object ( => reference <= ) =>;
+   #define object         ::= <= object ( => integer <= ) =>;
+   #define object         ::= <= object ( => literal <= ) =>;
    #define object         ::= singleton;
 
-   #define operation      ::= "." message m_args;
-   #define operation      ::= "." message;
+   #define operation      ::= ^ <= message_operation ( => "." message m_args <= ) =>;
+   #define operation      ::= ^ <= property_operation ( => "." message <= ) =>;
 
    #define m_args         ::= "(" ")";
    #define m_args         ::= "(" m_arg next_arg* ")";

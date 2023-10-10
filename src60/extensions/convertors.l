@@ -269,6 +269,6 @@ public singleton intConvertExt
 
 public extension dateFormatterOp : Date
 {
-    string toShortTimeString()
-        = cast TimeStruct(self).toShortTime();
+   string toShortTimeString()
+      = cast TimeStruct(self).toShortTime();
 }
