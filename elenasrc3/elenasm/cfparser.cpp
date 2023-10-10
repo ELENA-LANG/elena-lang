@@ -900,7 +900,7 @@ void ScriptEngineCFParser :: defineGrammarRule(ScriptEngineReaderBase& reader, S
          if (!rule.prefix1Ptr) {
             bookmarkMode = true;
          }
-         else throw SyntaxError("invalid grammar rule", bm.lineInfo);
+         else throw SyntaxError("invalid grammar rule : cannot have prefix / postfix segments", bm.lineInfo);
 
          bm = reader.read();
       }
