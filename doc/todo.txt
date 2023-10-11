@@ -7,7 +7,7 @@ In development:
     === Iteration 18 ===
     [!] api functionality for existing classes : rest of system
 
-    * examples : scripts: js, live
+    * examples : scripts: live
 
     * examples : Run-length encoding
 
