@@ -1,29 +1,41 @@
-import extensions;
+import system'collections;
 import system'routines;
-import system'culture;
- 
-extension op
-{
-    sortSublist(indices)
-    {
-        var subList := indices.orderBy:(x => x)
-                            .zipBy(indices.selectBy:(i => self[i]) 
-                                .orderBy:(x => x), (index,val => new{ Index = index; Value = val; })) 
-                            .toArray();
- 
-        var list := self.clone();
-        subList.forEach:(r)
-        {
-            list[r.Index] := r.Value
-        };
- 
-        ^ list
-    }
-}
- 
+import extensions;
+
+unit2mult = new Map<string, real>()
+    .setAt("arshin",     0.7112r)
+    .setAt("centimeter", 0.01r)     
+    .setAt("diuym",      0.0254r)
+    .setAt("fut",        0.3048r)
+    .setAt("kilometer",  1000.0r)   
+    .setAt("liniya",     0.00254r)
+    .setAt("meter",      1.0r)
+    .setAt("milia",      7467.6r)
+    .setAt("piad",       0.1778r)
+    .setAt("sazhen",     2.1336r)
+    .setAt("tochka",     0.000254r) 
+    .setAt("vershok",    0.04445r)
+    .setAt("versta",     1066.8r);
+
 public program()
 {
-    var list := new int[]{ 7, 6, 5, 4, 3, 2, 1, 0 };
- 
-    console.printLine(list.sortSublist(new int[]{6, 1, 7}).asEnumerable())
+    if (program_arguments.Length != 3)
+        { console.writeLine:"need two arguments - number then units"; AbortException.raise() };
+        
+    real value := program_arguments[1].toReal();    
+    string unit := program_arguments[2];
+    ifnot (unit2mult.containsKey(unit))
+    {
+        console.printLine("only following units are supported:",
+            unit2mult.selectBy:(x=>x.Item1).asEnumerable());
+            
+        AbortException.raise()
+    };
+    
+    console.printLine(value," ",unit," to:");
+
+    unit2mult.forEach:(u,mlt)
+    {
+        console.printPaddingLeft(30, u, ":").printLine(value * unit2mult[unit] / mlt)
+    }    
 }

@@ -792,20 +792,6 @@ public singleton stringConvertor
       index := i;
       length := len;
    }
-
-   private int skipTrailingZerros(int value)
-   {
-      int n := value;
-      while (n != 0) {
-         int r := n.mod(10);
-         if (r != 0) {
-            ^ n;
-         };
-         n := n / 10;            
-      };
-
-      ^ n;
-   }
    
    string convert(real value)
    {
@@ -817,7 +803,7 @@ public singleton stringConvertor
          r := 0.0 - r;
       };
 
-      PrimitiveRealOperations.splitReal(r, ref int integerPart, ref int decimalPart, ref int exponent);
+      PrimitiveRealOperations.splitReal(r, ref int integerPart, ref int decimalPart, ref int decimalPartLen, ref int exponent);
 
       byte buffer[40];
       int length := 0;
@@ -847,8 +833,18 @@ public singleton stringConvertor
       };
 
       // write decimal part
-      decimalPart := self.skipTrailingZerros(decimalPart);
       self.writeInteger(buffer, decimalPart, ref index, ref length);
+
+      // write leading zeros
+      decimalPartLen -= length;
+
+      for (int i := 0, i < decimalPartLen, i += 1) {
+         buffer[index] := 30h;
+         index -= 1;
+         length += 1;
+      };
+
+      int dotIndex := index;
 
       // decimal sign    
       tmp := 46;  
@@ -863,6 +859,15 @@ public singleton stringConvertor
       if (negative) {
          tmp := 45;
          self.writeByte(buffer, tmp, ref index, ref length); 
+      };
+
+      int last := 39;
+      while (buffer[last] == 30h) {
+         last -= 1;
+         length -= 1;
+      };
+      if (last == dotIndex) {
+         length += 1;
       };
 
       ^ String.fromByteArray(index + 1, length, buffer);      

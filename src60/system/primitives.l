@@ -199,7 +199,7 @@ internal singleton PrimitiveRealOperations
       ^ exponent;
    }
 
-   splitReal(real value, ref int integerPart, ref int decimalPart, ref int exponent)
+   splitReal(real value, ref int integerPart, ref int decimalPart, ref int decimalPartLen, ref int exponent)
    {  
       real r := value;
 
@@ -210,8 +210,9 @@ internal singleton PrimitiveRealOperations
 
       remainder := value - remainder;
 
+      decimalPartLen := 9;
       remainder := remainder * 1.0e9;
-      
+
       int decPart := intConvertor.convert(remainder);
 
       // rounding
