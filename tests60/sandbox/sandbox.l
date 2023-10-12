@@ -1,41 +1,41 @@
-import system'collections;
-import system'routines;
-import extensions;
-
-unit2mult = new Map<string, real>()
-    .setAt("arshin",     0.7112r)
-    .setAt("centimeter", 0.01r)     
-    .setAt("diuym",      0.0254r)
-    .setAt("fut",        0.3048r)
-    .setAt("kilometer",  1000.0r)   
-    .setAt("liniya",     0.00254r)
-    .setAt("meter",      1.0r)
-    .setAt("milia",      7467.6r)
-    .setAt("piad",       0.1778r)
-    .setAt("sazhen",     2.1336r)
-    .setAt("tochka",     0.000254r) 
-    .setAt("vershok",    0.04445r)
-    .setAt("versta",     1066.8r);
+//import extensions;
+// 
+//const Creatures = new string[]{"fly", "spider", "bird", "cat", "dog", "goat", "cow", "horse"};
+//const Comments = new string[]
+//{
+//            "I don't know why she swallowed that fly"$10"Perhaps she'll die",
+//            "That wiggled and jiggled and tickled inside her",
+//            "How absurd, to swallow a bird",
+//            "Imagine that. She swallowed a cat",
+//            "What a hog to swallow a dog",
+//            "She just opened her throat and swallowed that goat",
+//            "I don't know how she swallowed that cow",
+//            "She's dead of course"
+//};
+// 
+//public program()
+//{
+//    for(int i := 0, i < Creatures.Length, i += 1)
+//    {
+//        console
+//            .printLineFormatted("There was an old lady who swallowed a {0}",Creatures[i])
+//            .printLine(Comments[i]);
+// 
+//        if(i != 0 && i != Creatures.Length - 1)
+//        {
+//            for(int j := i, j > 0, j -= 1)
+//            {
+//                console.printLineFormatted("She swallowed the {0} to catch the {1}",Creatures[j],Creatures[j - 1])
+//            };
+// 
+//            console.writeLine(Comments[0])
+//        };
+// 
+//        console.writeLine()
+//    }
+//}
 
 public program()
 {
-    if (program_arguments.Length != 3)
-        { console.writeLine:"need two arguments - number then units"; AbortException.raise() };
-        
-    real value := program_arguments[1].toReal();    
-    string unit := program_arguments[2];
-    ifnot (unit2mult.containsKey(unit))
-    {
-        console.printLine("only following units are supported:",
-            unit2mult.selectBy:(x=>x.Item1).asEnumerable());
-            
-        AbortException.raise()
-    };
-    
-    console.printLine(value," ",unit," to:");
-
-    unit2mult.forEach:(u,mlt)
-    {
-        console.printPaddingLeft(30, u, ":").printLine(value * unit2mult[unit] / mlt)
-    }    
+   console.writeLine:"I don't know why she swallowed that fly"$10"Perhaps she'll die";
 }

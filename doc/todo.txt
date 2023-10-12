@@ -9,7 +9,7 @@ In development:
 
     * examples : scripts: live
 
-    * examples : Old Russian measure of length
+    * examples : Old lady swallowed a fly
 
     * examples : rosetta code sample : World Cup group stage, Y combinator, Zeckendorf arithmetic, Zeckendorf number representation, Zhang-Suen thinning algorithm, 
     * examples : rosetta code sample : UTF-8 encode and decode, Vigenère cipher, Walk a directory/Non-recursively, Wireworld, Word wrap, 
@@ -19,7 +19,7 @@ In development:
     * examples : rosetta code sample : Return multiple values,Runtime evaluation/In an environment,Runtime evaluation,
     * examples : rosetta code Reflection/List methods,Reflection/List properties
     * examples : rosetta code Anagrams, Hailstone sequence, Happy numbers, Maximum triangle path sum
-    * examples : rosetta code Middle three digits, Old lady swallowed a fly
+    * examples : rosetta code Middle three digits, 
     * examples : rosetta code Real constants and functions, Rot-13,
     * examples : execute B*
     * examples : Sockets, Sleep, Sorting algorithms/Sleep sort, gui_component_interaction 
