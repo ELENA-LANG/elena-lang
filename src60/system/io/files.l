@@ -1,4 +1,5 @@
 import system'text;
+import system'collections;
 
 namespace io
 {
@@ -86,6 +87,17 @@ namespace io
 
       bool Available
          = directoryControl.isAvailable(_path);    
+
+      string[] getFiles()
+         <= getFiles("*.*");
+        
+      string[] getFiles(string mask)
+      {
+         auto l := new List<string>();
+         SearchFiles(_path, mask, l);
+            
+         ^l.Value;
+      }
 
       create()
       {
