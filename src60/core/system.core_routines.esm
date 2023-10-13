@@ -108,7 +108,6 @@ Lab01:
   call            vt:0 
 
 Lab00:
-  peek            fp:1 
   close           :0 
   quit             
 

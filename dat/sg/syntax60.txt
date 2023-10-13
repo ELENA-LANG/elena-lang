@@ -420,7 +420,7 @@ EXPRESSION ::=
 	| { reference | global } { 
 		L3 ^OBJECT MESSAGE MESSAGE_R
 		| eps ^OBJECT }
-	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L0_OP* L3_OP* L4_OP* L5_OP* L6_OP?
+	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L0_OP* L3_OP* L4_OP* L5_OP* L6_OP? L9_OP*
 	| "(" SUB_EXPRESSION L2_OP? L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP?
 	| "{" BLOCK ^CLOSURE
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION L3_OP* L4_OP* L5_OP* L6_OP? 
@@ -519,7 +519,7 @@ SUB_SINGLE_EXPRESSION ::=
 			| eps ^OBJECT } ")"
 		| L0 ^OBJECT L0_R  ")"
 		| ASSIGN ^OBJECT ASSIGN_R  ")"
-		| L2 ^OBJECT L2_R L9_OP?  ")"
+		| L2 ^OBJECT L2_R L3_OP* L4_OP* L5_OP* L9_OP? ")"
 		| L3 ^OBJECT MESSAGE MESSAGE_R L3_OP* L4_OP* L5_OP* L6_OP? L9_OP? ")"
 		| L4_O_OP  ")"
 		| L5_O_OP   ")"
@@ -549,7 +549,7 @@ SUB_L3_SINGLE_EXPRESSION ::=
 				| eps ^OBJECT }
 		}
 		| L0 ^OBJECT L0_R ")" 
-		| L2 ^OBJECT L2_R L9_OP? ")" 
+		| L2 ^OBJECT L2_R L3_OP* L4_OP* L5_OP* L9_OP? ")" 
 		| L3 ^OBJECT MESSAGE MESSAGE_R ")" 
 		| L4_O_OP L4_OP* ")" 
 		| L5_O_OP ")" 

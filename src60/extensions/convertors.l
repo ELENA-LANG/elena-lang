@@ -170,6 +170,42 @@ singleton enumerableConvertor
       = new Enumerable { Enumerator enumerator() = o.enumerator(); };
 }
 
+public singleton byteArrayExConvertor
+{
+   byte[] convert(string s)
+   {
+      int    i := 0;
+      byte[] retVal := nil;
+      int    length := s.Length; 
+      int    remaining := length;
+            
+      while (i < length)
+      {
+         byte tmp[64];
+         int  tmp_len := 64;
+         int  len := remaining;
+         if (len > tmp_len)
+            { len := tmp_len };
+              
+         UTF8Encoder.toByteArray(s, i, ref len, tmp, 0, ref tmp_len);
+                
+         if (nil == retVal)
+         { 
+            retVal := class Array<byte>.copy(tmp, 0, tmp_len)
+         }
+         else
+         { 
+            retVal := retVal.add(tmp_len, tmp) 
+         };
+                
+         i := i + len;
+         remaining := remaining - len
+      };
+            
+      ^ retVal
+   }  
+}
+
 // --- stringConvertor ---
 
 public extension stringConvertOp
@@ -253,6 +289,9 @@ public extension convertorOp
 
    char toChar()
       = charConvertor.convert:self;
+
+   byte[] toByteArray()
+      = byteArrayExConvertor.convert:self;
 }
 
 // --- convertor ---

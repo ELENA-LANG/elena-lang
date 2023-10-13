@@ -9,20 +9,20 @@ In development:
 
     * examples : scripts: live
 
-    * examples : Old lady swallowed a fly
+    * examples : Vigenère cipher
 
-    * examples : rosetta code sample : World Cup group stage, Y combinator, Zeckendorf arithmetic, Zeckendorf number representation, Zhang-Suen thinning algorithm, 
-    * examples : rosetta code sample : UTF-8 encode and decode, Vigenère cipher, Walk a directory/Non-recursively, Wireworld, Word wrap, 
+    * examples : rosetta code sample : Walk a directory/Non-recursively, Wireworld, Word wrap, 
     * examples : rosetta code sample : Time a function, Top rank per group, Trabb Pardo–Knuth algorithm
     * examples : rosetta code sample : Trigonometric functions, Truncate a file, Unbias a random generator
     * examples : rosetta code sample : Terminal control/Clear the screen, Terminal control/Cursor positioning
     * examples : rosetta code sample : Return multiple values,Runtime evaluation/In an environment,Runtime evaluation,
     * examples : rosetta code Reflection/List methods,Reflection/List properties
-    * examples : rosetta code Anagrams, Hailstone sequence, Happy numbers, Maximum triangle path sum
-    * examples : rosetta code Middle three digits, 
     * examples : rosetta code Real constants and functions, Rot-13,
-    * examples : execute B*
+
+    * examples : execute B*, Happy numbers, Maximum triangle path sum
     * examples : Sockets, Sleep, Sorting algorithms/Sleep sort, gui_component_interaction 
+    * examples : rosetta code sample : Zeckendorf arithmetic, Zeckendorf number representation, Zhang-Suen thinning algorithm, 
+    * examples : rosetta code Anagrams, Hailstone sequence
 
     * examples : test all samples for win x86
     * examples : tutorials

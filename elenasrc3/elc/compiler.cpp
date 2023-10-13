@@ -6618,7 +6618,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    }
 
    BuildKey   op = BuildKey::None;
-   ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter, &updatedOuterArgs);
+   ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter | EAttr::RetValExpected, &updatedOuterArgs);
    ObjectInfo roperand = {};
    ObjectInfo ioperand = {};
 
@@ -6631,13 +6631,13 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       if (operatorId == SET_OPERATOR_ID)
          rTargetRef = retrieveType(scope, loperand);
 
-      roperand = compileExpression(writer, scope, rnode, rTargetRef, EAttr::Parameter, &updatedOuterArgs);
+      roperand = compileExpression(writer, scope, rnode, rTargetRef, EAttr::Parameter | EAttr::RetValExpected, &updatedOuterArgs);
 
       arguments.add(roperand);
    }
 
    if (inode != SyntaxKey::None) {
-      arguments.add(compileExpression(writer, scope, inode, 0, EAttr::Parameter, &updatedOuterArgs));
+      arguments.add(compileExpression(writer, scope, inode, 0, EAttr::Parameter | EAttr::RetValExpected, &updatedOuterArgs));
    }
 
    return compileOperation(writer, scope, node, arguments, operatorId, expectedRef, &updatedOuterArgs);
