@@ -6971,6 +6971,10 @@ mssg_t Compiler :: resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectIn
          return resolvedMessage;
       }
 
+      // HOTFIX : do not check variadic message for the properties
+      if ((weakMessage & PREFIX_MESSAGE_MASK) == PROPERTY_MESSAGE)
+         return weakMessage;
+
       // check if the extension handles the variadic message
       mssg_t variadicMessage = resolveVariadicMessage(scope, weakMessage);
 

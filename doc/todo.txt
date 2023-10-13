@@ -7,11 +7,9 @@ In development:
     === Iteration 18 ===
     [!] api functionality for existing classes : rest of system
 
-    * examples : rosetta code sample : Walk a directory/Non-recursively,
+    * examples : Time a function, 
     * examples : scripts: live
 
-    * examples : rosetta code sample : Time a function, 
-    * examples : rosetta code sample : Truncate a file, 
     * examples : rosetta code sample : Terminal control/Clear the screen, Terminal control/Cursor positioning
     * examples : rosetta code sample : Runtime evaluation/In an environment,Runtime evaluation,
     * examples : rosetta code Reflection/List methods,Reflection/List properties

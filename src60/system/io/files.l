@@ -12,6 +12,10 @@ namespace io
          _path := path
       }
 
+      string cast() = _path;
+    
+      wide cast() = _path;
+
       bool Available
          = fileControl.isAvailable(_path);
 
