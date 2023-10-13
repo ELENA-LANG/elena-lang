@@ -1,38 +1,24 @@
-import system'routines;
+import system'math;
 import extensions;
- 
-extension op : String
-{
-    string printAsString()
-    {
-       console.print(self," ")
-    }
- 
-    string printAsUTF8Array()
-    {
-        self.toByteArray().forEach:(b){ console.print(b.toString(16)," ") }
-    }
- 
-    string printAsUTF32()
-    {
-        self.toArray().forEach:(c){ console.print("U+",c.toInt().toString(16)," ") }
-    }
-}
  
 public program()
 {
-    "A".printAsString().printAsUTF8Array().printAsUTF32();
+    console.printLine("Radians:");
+    console.printLine("sin(π/3) = ",(Pi_value/3).sin());
+    console.printLine("cos(π/3) = ",(Pi_value/3).cos());
+    console.printLine("tan(π/3) = ",(Pi_value/3).tan());
+    console.printLine("arcsin(1/2) = ",0.5r.arcsin());
+    console.printLine("arccos(1/2) = ",0.5r.arccos());
+    console.printLine("arctan(1/2) = ",0.5r.arctan());
     console.printLine();
  
-    "ö".printAsString().printAsUTF8Array().printAsUTF32();
-    console.printLine();
+    console.printLine("Degrees:");
+    console.printLine("sin(60º) = ",60.0r.Radian.sin());
+    console.printLine("cos(60º) = ",60.0r.Radian.cos());
+    console.printLine("tan(60º) = ",60.0r.Radian.tan());
+    console.printLine("arcsin(1/2) = ",0.5r.arcsin().Degree,"º");
+    console.printLine("arccos(1/2) = ",0.5r.arccos().Degree,"º");
+    console.printLine("arctan(1/2) = ",0.5r.arctan().Degree,"º");
  
-    "Ж".printAsString().printAsUTF8Array().printAsUTF32();
-    console.printLine();
- 
-    "€".printAsString().printAsUTF8Array().printAsUTF32();
-    console.printLine();
- 
-    "𝄞".printAsString().printAsUTF8Array().printAsUTF32();
-    console.printLine();
+    console.readChar()
 }

@@ -177,6 +177,59 @@ public class OrderingEnumerator : Enumerator
         => _enumerator;
 }
 
+// --- GroupingEnumerator ---
+
+public class GroupingEnumerator : Enumerator
+{
+   Dictionary _dictionary;
+   Enumerator _enumerator;
+   Func1      _groupFunc;   
+   Enumerator _groupEnumerator;
+    
+   constructor new(Func1 grouper, Enumerator enumerator)
+   {
+      _groupFunc := grouper;
+      _dictionary := Dictionary.new();
+      _enumerator := enumerator;
+        
+      self.reset()
+   }
+    
+   constructor new(ExtensionMessage fn, Enumerator enumerator)
+      <= new((x => fn(x)), enumerator);
+    
+   reset()
+   {
+      _enumerator.reset();
+        
+      while (_enumerator.next())
+      {
+         var item := *_enumerator;
+         var key := _groupFunc(item);
+            
+         var groupItem := _dictionary[key];
+         if (nil == groupItem)
+         {
+            groupItem := new ArrayList();
+                
+            _dictionary[key] := groupItem
+         };
+            
+         groupItem.append:item
+      };
+        
+      _groupEnumerator := _dictionary.enumerator();
+   }
+    
+   get Value() = *_groupEnumerator;
+    
+   bool next()
+      = _groupEnumerator.next();
+        
+   enumerable()
+      => _enumerator;
+}
+
 // === patterns ===
 
 // --- BasePattern ---

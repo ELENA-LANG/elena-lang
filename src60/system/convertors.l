@@ -1106,7 +1106,7 @@ public singleton wideConvertor
          r := 0.0 - r;
       };
 
-      PrimitiveRealOperations.splitReal(r, ref int integerPart, ref int decimalPart, ref int exponent);
+      PrimitiveRealOperations.splitReal(r, ref int integerPart, ref int decimalPart, ref int decimalPartLen, ref int exponent);
 
       short buffer[40];
       int length := 0;
@@ -1136,8 +1136,18 @@ public singleton wideConvertor
       };
 
       // write decimal part
-      decimalPart := self.skipTrailingZerros(decimalPart);
       self.writeInteger(buffer, decimalPart, ref index, ref length);
+
+      // write leading zeros
+      decimalPartLen -= length;
+
+      for (int i := 0, i < decimalPartLen, i += 1) {
+         buffer[index] := 30h;
+         index -= 1;
+         length += 1;
+      };
+
+      int dotIndex := index;
 
       // decimal sign    
       tmp := 46;  
@@ -1152,6 +1162,15 @@ public singleton wideConvertor
       if (negative) {
          tmp := 45;
          self.writeByte(buffer, tmp, ref index, ref length); 
+      };
+
+      int last := 39;
+      while (buffer[last] == 30h) {
+         last -= 1;
+         length -= 1;
+      };
+      if (last == dotIndex) {
+         length += 1;
       };
 
       ^ WideString.fromShortArray(index + 1, length, buffer);      

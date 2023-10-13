@@ -9,20 +9,19 @@ In development:
 
     * examples : scripts: live
 
-    * examples : Vigenère cipher
+    * examples : Return multiple values
 
-    * examples : rosetta code sample : Walk a directory/Non-recursively, Wireworld, Word wrap, 
-    * examples : rosetta code sample : Time a function, Top rank per group, Trabb Pardo–Knuth algorithm
-    * examples : rosetta code sample : Trigonometric functions, Truncate a file, Unbias a random generator
+    * examples : rosetta code sample : Walk a directory/Non-recursively, , 
+    * examples : rosetta code sample : Time a function, 
+    * examples : rosetta code sample : Truncate a file, 
     * examples : rosetta code sample : Terminal control/Clear the screen, Terminal control/Cursor positioning
-    * examples : rosetta code sample : Return multiple values,Runtime evaluation/In an environment,Runtime evaluation,
+    * examples : rosetta code sample : Runtime evaluation/In an environment,Runtime evaluation,
     * examples : rosetta code Reflection/List methods,Reflection/List properties
-    * examples : rosetta code Real constants and functions, Rot-13,
 
-    * examples : execute B*, Happy numbers, Maximum triangle path sum
+    * examples : execute B*, Happy numbers, Maximum triangle path sum, Word wrap, Real constants and functions, 
     * examples : Sockets, Sleep, Sorting algorithms/Sleep sort, gui_component_interaction 
     * examples : rosetta code sample : Zeckendorf arithmetic, Zeckendorf number representation, Zhang-Suen thinning algorithm, 
-    * examples : rosetta code Anagrams, Hailstone sequence
+    * examples : rosetta code Anagrams, Hailstone sequence, Trabb Pardo–Knuth algorithm
 
     * examples : test all samples for win x86
     * examples : tutorials

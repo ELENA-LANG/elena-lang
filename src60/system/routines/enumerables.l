@@ -137,6 +137,9 @@ public extension enumerableOp
    selectBy(selector)
       = Selector.new(selector, cast Enumerator(self.enumerator()));
 
+   groupBy(groupFunc)
+      = GroupingEnumerator.new(groupFunc, cast Enumerator(self.enumerator()));
+
    orderBy(orderFunc)
       = OrderingEnumerator.new(orderFunc, cast Enumerator(self.enumerator()));
 

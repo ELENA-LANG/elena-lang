@@ -1114,6 +1114,24 @@ public extension stringWeakOp
             
       ^ self
    }
+    
+   writePaddingLeft(line, int width)
+   {
+      var paddedStr := line.padLeft($32, width);
+
+      self.write(paddedStr);
+            
+      ^ self
+   }
+    
+   writePaddingRight(line, int width)
+   {
+      var paddedStr := line.padRight($32, width);
+
+      self.write(paddedStr);
+            
+      ^ self
+   }
 }
 
 public extension threadObjectOp
