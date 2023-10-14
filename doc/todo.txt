@@ -7,11 +7,9 @@ In development:
     === Iteration 18 ===
     [!] api functionality for existing classes : rest of system
 
-    * examples : Time a function, 
-    * examples : scripts: live
+    * examples : Runtime evaluation
 
-    * examples : rosetta code sample : Terminal control/Clear the screen, Terminal control/Cursor positioning
-    * examples : rosetta code sample : Runtime evaluation/In an environment,Runtime evaluation,
+    * examples : rosetta code sample : Runtime evaluation/In an environment,
     * examples : rosetta code Reflection/List methods,Reflection/List properties
 
     * examples : execute B*, Happy numbers, Maximum triangle path sum, Word wrap, Real constants and functions, 
@@ -19,6 +17,7 @@ In development:
     * examples : rosetta code sample : Zeckendorf arithmetic, Zeckendorf number representation, Zhang-Suen thinning algorithm, 
     * examples : rosetta code Anagrams, Hailstone sequence, Trabb Pardo–Knuth algorithm
 
+    * forms samples
     * examples : test all samples for win x86
     * examples : tutorials
     * test : https://www.reddit.com/r/elena_lang/comments/7oa098/dynamic_programming_in_elena_call_your_code_from/
@@ -27,7 +26,6 @@ In development:
     * test : https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
     * add new variant using multi ret - https://www.rosettacode.org/wiki/Return_multiple_values#Elena
     * db samples
-    * forms samples
 
     * review system warnings
     * review extensions warnings

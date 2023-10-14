@@ -1,28 +1,6 @@
-import system'io;
-import extensions;
- 
-extension fileOp : File
-{
-    set Length(int len)
-    {
-        auto stream := FileStream.openForEdit(self);
- 
-        stream.Length := len;
- 
-        stream.close()
-    }
-}
- 
+import extensions'scripting;
+
 public program()
 {
-    if (program_arguments.Length != 3)
-        { console.printLine:"Please provide the path to the file and a new length"; AbortException.raise() };
- 
-    auto file := File.assign(program_arguments[1]);
-    var length := program_arguments[2].toInt();
- 
-    ifnot(file.Available)
-        { console.printLine("File ",file," does not exist"); AbortException.raise() };
- 
-    file.Length := length
+   lscript.interpret("system'console.writeLine(""Hello World"")");
 }

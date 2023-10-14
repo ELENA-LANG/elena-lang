@@ -186,27 +186,27 @@ namespace io
 
       clear()
       {
-         auto buffer := new CONSOLE_SCREEN_BUFFER_INFO();
+         CONSOLE_SCREEN_BUFFER_INFO buffer := new CONSOLE_SCREEN_BUFFER_INFO();
          int  length := 0;
          int  retVal := 0;
     
-         extern KERNEL32.GetConsoleScreenBufferInfo(handle, buffer);
+         extern KERNEL32.GetConsoleScreenBufferInfo(h, buffer);
     
          short sizeX := buffer.SizeX;
          short sizeY := buffer.SizeY;
                     
          length := sizeX * sizeY;
             
-         extern KERNEL32.FillConsoleOutputCharacterW(handle, cast short(32), length, 0, ref retVal);
+         extern KERNEL32.FillConsoleOutputCharacterW(h, cast short(32), length, 0, ref retVal);
             
-         extern KERNEL32.SetConsoleCursorPosition(handle, 0)
+         extern KERNEL32.SetConsoleCursorPosition(h, 0)
       }
 
       setCursorPosition(int x, int y)
       {
          int coord := y * 10000h + x;
                     
-         extern KERNEL32.SetConsoleCursorPosition(handle, coord)
+         extern KERNEL32.SetConsoleCursorPosition(h, coord)
       }
    }
 

@@ -187,9 +187,30 @@
                )
 =>;
 
-  #define get_expression  ::= $ object operation?;
+  #define get_expression  ::= inner_expr;
 
-  #define expression      ::= $ object operation?;
+  #define expression      ::= "expression" "(" inner_expr ")";
+
+  #define inner_expr      ::= "message_operation" "(" call_expression ")";
+  #define inner_expr      ::= object_expr;
+
+  #define call_expression ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                              object_expr message expression*
+<=
+               )
+=>;
+
+  #define object_expr     ::= "object" "("  object ")";
+
+
+
+
+  #define get_expression  ::= $ object operation?; // !! obsolete
+
+  #define expression      ::= $ object operation?;   // !! obsolete
   #define expression      ::= new_call;
   #define expression      ::= var_assign_expr;
 
