@@ -119,7 +119,7 @@
 <=
        system'dynamic'expressions'MethodExpression (
 =>
-                                   "method" "(" m_name parameter* body ")"
+                                   "method" "(" m_name parameter_block? body ")"
 <=
        )
 =>;
@@ -128,7 +128,7 @@
 <=
        system'dynamic'expressions'MethodExpression (
 =>
-                                   "script_method" "(" m_name parameter* body ")"
+                                   "script_method" "(" m_name parameter_block? body ")"
 <=
        )
 =>;
@@ -142,6 +142,15 @@
        )
 =>;
 
+  #define parameter_block ::=
+<=
+         system'dynamic'expressions'MethodParameterList (
+=>
+                                   param_str param_str*
+<=
+         )
+=>;
+
   #define parameter       ::= 
 <=
          system'dynamic'expressions'ScopeIdentifier (
@@ -150,6 +159,9 @@
 <=
          )
 =>;
+
+  #define param_str       ::= 
+                                   "parameter" "(" p_name ")";
 
   #define body            ::=
 <=
@@ -199,6 +211,15 @@
                system'dynamic'expressions'MessageCallExpression (
 =>
                               object_expr message expression*
+<=
+               )
+=>;
+
+  #define call_expression ::=
+<=
+               system'dynamic'expressions'FunctionCallExpression (
+=>
+                              object_expr expression*
 <=
                )
 =>;

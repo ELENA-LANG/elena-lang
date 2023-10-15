@@ -6,10 +6,10 @@ In development:
     ### EPIC: elena 6.0 - redux ###
     === Iteration 18 ===
     [!] api functionality for existing classes : rest of system
+    
+    * test all script samples
+    * examples : Runtime evaluation/In an environment
 
-    * examples : Runtime evaluation
-
-    * examples : rosetta code sample : Runtime evaluation/In an environment,
     * examples : rosetta code Reflection/List methods,Reflection/List properties
 
     * examples : execute B*, Happy numbers, Maximum triangle path sum, Word wrap, Real constants and functions, 

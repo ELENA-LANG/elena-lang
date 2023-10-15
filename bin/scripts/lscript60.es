@@ -24,6 +24,7 @@
 
    #define operation      ::= ^ <= message_operation ( => "." message m_args <= ) =>;
    #define operation      ::= ^ <= property_operation ( => "." message <= ) =>;
+   #define operation      ::= ^ <= message_operation ( =>  m_args <= ) =>;
 
    #define m_args         ::= "(" ")";
    #define m_args         ::= "(" m_arg next_arg* ")";

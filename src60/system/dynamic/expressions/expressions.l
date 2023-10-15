@@ -24,7 +24,7 @@ namespace expressions
       {
          int varMode := var.Mode;
 
-         if (var.Name == Name && (varMode == Mode || varMode == 0))
+         if (var.Name == Name && (varMode == Mode || Mode == 0))
          {
             ^ true
          };

@@ -167,8 +167,6 @@ addr_t DebugInfoProvider :: getClassAddress(ustr_t name)
 bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressReader, DebugProcessBase* process)
 {
    bool isClass = true;
-   if (reference.findStr("sandbox'$inline0") != NOTFOUND_POS)
-      isClass = true;
 
    //bool isClass = true;
    ModuleBase* module = nullptr;
@@ -257,9 +255,6 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             {
                addr_t stepAddress = 0;
                addressReader.read(&stepAddress, sizeof(addr_t));
-
-               if (stepAddress > 0x00503af00)
-                  stepAddress |= 0;
 
                ((DebugLineInfo*)current)->addresses.step.address = stepAddress;
                // virtual end of expression should be stepped over automatically by debugger

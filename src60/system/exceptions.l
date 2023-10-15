@@ -98,6 +98,9 @@ public class NotSupportedException : Exception
 
 public class SymbolLoaderException
 {
+   /// Creates the exception
+   constructor new(string symbolName)
+      <= super new("Symbol " + symbolName + " cannot be loaded");
 }
 
 // --- InvalidOperationException ---
