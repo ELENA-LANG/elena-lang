@@ -96,7 +96,7 @@ public class NotSupportedException : Exception
       <= super new(message);
 }
 
-public class SymbolLoaderException
+public class SymbolLoaderException : Exception
 {
    /// Creates the exception
    constructor new(string symbolName)

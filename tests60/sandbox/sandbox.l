@@ -1,6 +1,12 @@
+import extensions;
 import extensions'scripting;
 
 public program()
 {
-   lscript.interpret("system'console.writeLine(""Hello World"")");
+    var text := program_arguments[1];
+    var arg := program_arguments[2];
+    
+    var program := lscript.interpret(text);
+    console.printLine(
+        text,",",arg," = ",program.eval(arg.toReal()));
 }

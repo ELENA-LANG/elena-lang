@@ -7,8 +7,8 @@ In development:
     === Iteration 18 ===
     [!] api functionality for existing classes : rest of system
     
-    * test all script samples
-    * examples : Runtime evaluation/In an environment
+    * calc
+    * test script samples / elt
 
     * examples : rosetta code Reflection/List methods,Reflection/List properties
 

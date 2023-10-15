@@ -150,6 +150,8 @@ namespace elena_lang
       void defineGrammarRuleMemberPostfix(ScriptEngineReaderBase& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId);
       void defineGrammarRuleMember(ScriptEngineReaderBase& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId, int& applyMode);
 
+      int defineIfRule(ScriptEngineReaderBase& reader, ScriptBookmark& bm, Rule& rule);
+
       void defineGrammarRule(ScriptEngineReaderBase& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId);
 
       void addRule(int id, Rule& rule);

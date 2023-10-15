@@ -1776,7 +1776,7 @@ bool X86Assembler :: compileFsub(X86Operand source, X86Operand target, MemoryWri
    }
    else if (source.type == X86OperandType::ST && target.type == X86OperandType::ST && target.offset == 0) {
       writer.writeByte(0xDC);
-      writer.writeByte(0xE8 + target.offset);
+      writer.writeByte(0xE8 + source.offset);
    }
    else return false;
 

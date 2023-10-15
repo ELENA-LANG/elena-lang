@@ -15,6 +15,7 @@ constexpr auto IDENTIFIER_KEYWORD   = "$identifier";
 constexpr auto LITERAL_KEYWORD      = "$literal";
 constexpr auto NUMERIC_KEYWORD      = "$numeric";
 constexpr auto EPS_KEYWORD          = "$eps";
+constexpr auto IF_KEYWORD           = "$if";   // NOTE : conditional eps rule 
 constexpr auto EOF_KEYWORD          = "$eof";
 constexpr auto EOL_KEYWORD          = "$eol";
 constexpr auto ANYCHR_KEYWORD       = "$chr"; // > 32
@@ -32,6 +33,8 @@ constexpr auto LETTER_MODE          = 8;
 constexpr auto MULTI_MODE           = 9;
 constexpr auto EXCLUDE_MODE         = 10;
 constexpr auto CHARACTER_MODE       = 11;
+constexpr auto IF_MODE              = 12;
+constexpr auto IFNOT_MODE           = 13;
 
 constexpr auto WITHFORWARD_MASK = 0x80000000;
 constexpr auto POSTFIXSAVE_MODE = 0x80000000;
@@ -129,6 +132,11 @@ bool multiselectApplyRule(ScriptEngineCFParser::Rule& rule, ScriptBookmark& bm, 
 bool excludeApplyRule(ScriptEngineCFParser::Rule& rule, ScriptBookmark& bm, ScriptEngineReaderBase& reader, ScriptEngineCFParser* parser)
 {
    return bm.state == dfaIdentifier && !parser->compareTokenWithAny(reader, bm, rule.terminal);
+}
+
+bool excludeSpecialApplyRule(ScriptEngineCFParser::Rule& rule, ScriptBookmark& bm, ScriptEngineReaderBase& reader, ScriptEngineCFParser* parser)
+{
+   return !parser->compareTokenWithAny(reader, bm, rule.terminal);
 }
 
 bool normalApplyRule(ScriptEngineCFParser::Rule& rule, ScriptBookmark& bm, ScriptEngineReaderBase& reader, ScriptEngineCFParser* parser)
@@ -262,6 +270,16 @@ void ScriptEngineCFParser :: defineApplyRule(Rule& rule, int mode, bool forwardM
                rule.apply = nonterminalApplyRule;
                rule.nonterminal = 0;
                rule.terminal = 0;
+               rule.type = RuleType::Eps;
+               break;
+            case IFNOT_MODE:
+               rule.apply = excludeSpecialApplyRule;
+               rule.nonterminal = 0;
+               rule.type = RuleType::Eps;
+               break;
+            case IF_MODE:
+               rule.apply = normalApplyRule;
+               rule.nonterminal = 0;
                rule.type = RuleType::Eps;
                break;
             case EOL_MODE:
@@ -596,6 +614,24 @@ void ScriptEngineCFParser :: defineGrammarRuleMemberPostfix(ScriptEngineReaderBa
    }
 }
 
+int ScriptEngineCFParser :: defineIfRule(ScriptEngineReaderBase& reader, ScriptBookmark& bm, Rule& rule)
+{
+   bm = reader.read();
+
+   rule.terminal = INVALID_POS;
+
+   int applyMode = IF_MODE;
+
+   if (bm.state != dfaQuote) {
+      rule.terminal = writeRegExprBodyText(reader, applyMode);
+      if (applyMode == EXCLUDE_MODE)
+         applyMode = IFNOT_MODE;
+   }
+   else rule.terminal = writeBodyText(reader.lookup(bm));
+
+   return applyMode;
+}
+
 void ScriptEngineCFParser :: defineGrammarRuleMember(ScriptEngineReaderBase& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId, int& applyMode)
 {
    if (bm.state == dfaQuote || reader.compare("(")) {
@@ -669,6 +705,12 @@ void ScriptEngineCFParser :: defineGrammarRuleMember(ScriptEngineReaderBase& rea
             rule.nonterminal = INVALID_POS;
             rule.terminal = INVALID_POS;
             applyMode = IDLE_MODE;
+         }
+         else if (reader.compare(IF_KEYWORD)) {
+            if (rule.nonterminal)
+               throw SyntaxError("invalid grammar rule", bm.lineInfo);
+
+            applyMode = defineIfRule(reader, bm, rule);
          }
          else if (reader.compare(EOF_KEYWORD)) {
             applyMode = EOF_MODE;

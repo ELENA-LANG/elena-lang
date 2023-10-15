@@ -14,17 +14,25 @@
    #define expression     ::= <= expression ( => expr_operation <= ) =>;
    #define ret_expr       ::= <= returning ( => "^" expression ";" <= ) =>;
 
-   #define expr_operation ::= $ object operation* ;
+   #define expr_operation ::= $ object operation*;
 
-   #define object         ::= <= object ( => identifier <= ) =>;
-   #define object         ::= <= object ( => reference <= ) =>;
-   #define object         ::= <= object ( => integer <= ) =>;
-   #define object         ::= <= object ( => literal <= ) =>;
+   #define object         ::= <= object ( => terminal <= ) =>;
    #define object         ::= singleton;
 
-   #define operation      ::= ^ <= message_operation ( => "." message m_args <= ) =>;
-   #define operation      ::= ^ <= property_operation ( => "." message <= ) =>;
-   #define operation      ::= ^ <= message_operation ( =>  m_args <= ) =>;
+   #define terminal       ::= identifier;
+   #define terminal       ::= reference;
+   #define terminal       ::= integer;
+   #define terminal       ::= literal;
+
+   #define operation      ::= "." message mssg_call;
+   #define operation      ::= "." message prop_call;
+   #define operation      ::= function_call;
+
+   #define mssg_call      ::= ^ <= message_operation ( =>  m_args <= ) =>;
+   #define prop_call      ::= ^ <= property_operation ( => not_bracket <= ) => ;
+   #define function_call  ::= ^ <= message_operation ( => m_args <= ) =>;
+
+   #define not_bracket    ::= $if (!"(");
 
    #define m_args         ::= "(" ")";
    #define m_args         ::= "(" m_arg next_arg* ")";
