@@ -25,6 +25,8 @@ namespace elena_lang
 
       ref_t loadSubject(ustr_t actionName);
 
+      mssg_t loadWeakMessage(mssg_t message, bool vmMode);
+
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
 
       size_t retriveAddressInfo(LibraryLoaderBase& provider, addr_t retAddress, char* buffer, 

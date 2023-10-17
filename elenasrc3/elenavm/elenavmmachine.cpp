@@ -711,3 +711,11 @@ void ELENAVMMachine :: onLoad(ModuleBase* module)
       _libraryProvider.loadDistributedSymbols(module, *nameToResolve, _preloadedList);
    }
 }
+
+size_t ELENAVMMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_t skip, size_t maxLength)
+{
+   MemoryBase* msection = getMDataSection();
+
+   return SystemRoutineProvider::LoadMessages(msection, classPtr, output, 
+      skip, maxLength, true);
+}

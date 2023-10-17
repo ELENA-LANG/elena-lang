@@ -978,6 +978,15 @@ procedure __intToChar
 
 end
 
+procedure __intToMssg
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
 procedure __intHash (self,n,r)
 
   peek       sp:1

@@ -7,12 +7,9 @@ In development:
     === Iteration 18 ===
     [!] api functionality for existing classes : rest of system
     
-    * calc
-    * test script samples / elt
+    * examples : Maximum triangle path sum
 
-    * examples : rosetta code Reflection/List methods,Reflection/List properties
-
-    * examples : execute B*, Happy numbers, Maximum triangle path sum, Word wrap, Real constants and functions, 
+    * examples : execute B*, Happy numbers, Word wrap, Real constants and functions, 
     * examples : Sockets, Sleep, Sorting algorithms/Sleep sort, gui_component_interaction 
     * examples : rosetta code sample : Zeckendorf arithmetic, Zeckendorf number representation, Zhang-Suen thinning algorithm, 
     * examples : rosetta code Anagrams, Hailstone sequence, Trabb Pardo–Knuth algorithm

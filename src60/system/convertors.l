@@ -1229,3 +1229,18 @@ public singleton shortArrayConvertor
       ^ j
    }   
 }
+
+// --- mssgConvertor ---
+
+public singleton mssgConvertor
+{
+   convert(int n, ref Message retVal) : external(system'core_routines'__intToMssg);
+
+   Message convert(int n)
+      : info("Converting int value to the string<br/>NOTE : unsafe operation")
+   {
+      self.convert(n, ref Message m);
+
+      ^ m;
+   }
+}

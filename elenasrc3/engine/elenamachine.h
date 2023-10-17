@@ -125,6 +125,9 @@ namespace elena_lang
       static void GCWaitForSignal(void* handle);
       static void GCWaitForSignals(size_t count, void* handles);
 
+      static size_t LoadMessages(MemoryBase* msection, void* classPtr, mssg_t* output, size_t skip,
+         size_t maxLength, bool vmMode);
+
       static void RaiseError(int code);
 
       static void Exit(int exitCode);

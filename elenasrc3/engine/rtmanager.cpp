@@ -300,5 +300,20 @@ size_t RTManager :: loadClassName(addr_t classAddress, char* buffer, size_t leng
       return 0;
 
    return length;
+}
 
+mssg_t RTManager :: loadWeakMessage(mssg_t message, bool vmMode)
+{
+   ref_t actionRef = 0, flags = 0;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   pos_t mtableOffset = vmMode ? 0 : MemoryBase::getDWord(msection, 0);
+   MemoryReader reader(msection, mtableOffset);
+
+   reader.seek(reader.position() + actionRef * sizeof(uintptr_t) * 2);
+
+   pos_t weakActionRef = reader.getPos();
+
+   return weakActionRef ? encodeMessage(weakActionRef, argCount, flags) : message;
 }

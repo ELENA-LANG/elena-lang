@@ -1,12 +1,24 @@
+import system'routines;
+import system'dynamic;
 import extensions;
-import extensions'scripting;
+ 
+class MyClass
+{
+    int X    : prop;
+    string Y : prop;
+}
 
 public program()
 {
-    var text := program_arguments[1];
-    var arg := program_arguments[2];
-    
-    var program := lscript.interpret(text);
-    console.printLine(
-        text,",",arg," = ",program.eval(arg.toReal()));
+    var o := new MyClass
+    {
+        this X := 2;
+ 
+        this Y := "String";
+    };
+
+    MyClass.__getProperties().forEach:(p)
+    {
+        console.printLine("o.",p,"=",p.getPropertyValue(o))
+    }
 }

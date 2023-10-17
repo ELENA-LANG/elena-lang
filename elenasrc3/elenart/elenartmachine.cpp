@@ -335,3 +335,12 @@ void ELENARTMachine :: startThread(SystemEnv* env, void* entry, int index)
    // winding down thread
    //ExitThread(retVal);
 }
+
+size_t ELENARTMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_t skip, size_t maxLength)
+{
+   ImageSection msection(_mdata, 0x1000000);
+
+   return SystemRoutineProvider::LoadMessages(&msection, classPtr, output, skip, 
+      maxLength, false);
+}
+

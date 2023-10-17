@@ -92,6 +92,7 @@
        <include>threading\thread.l</include>
      </module>
      <module name="dynamic">
+       <include>dynamic\reflection.l</include>
        <include>dynamic\interpreters.l</include>
        <include>dynamic\groups.l</include>
        <include>dynamic\closure.l</include>

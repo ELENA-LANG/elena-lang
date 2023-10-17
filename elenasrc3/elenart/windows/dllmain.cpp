@@ -212,6 +212,11 @@ EXTERN_DLL_EXPORT int LoadExtensionDispatcherLA(const char* moduleList, mssg_t m
    return machine->loadExtensionDispatcher(moduleList, message, output);
 }
 
+EXTERN_DLL_EXPORT size_t LoadClassMessagesLA(void* classPtr, mssg_t* output, size_t skip, size_t maxLength)
+{
+   return machine->loadClassMessages(classPtr, output, skip, maxLength);
+}
+
 EXTERN_DLL_EXPORT void GetRandomSeedLA(SeedStruct& seed)
 {
    machine->initRandomSeed(seed);
