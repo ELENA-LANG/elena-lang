@@ -57,15 +57,33 @@ SourceReader::SourceReader(int tabSize, UStrReader* reader)
 
 }
 
-void SourceReader :: copyToken(char* token, size_t length)
+ustr_t SourceReader :: copyToken(char* token, size_t length)
 {
    size_t tokenLen = _position - _startPosition;
 
    StrConvertor::copy(token, _line + _startPosition, tokenLen, length);
    token[length] = 0;
+
+   return token;
 }
 
-SourceInfo SourceReader :: read(char* line, size_t length)
+ustr_t SourceReader :: copyQuote(char* token, size_t length, List<char*, freestr>& dynamicStrings)
+{
+   size_t tokenLen = _position - _startPosition;
+   if (tokenLen > length) {
+      char* str = StrFactory::allocate(tokenLen + 1, DEFAULT_STR);
+
+      StrConvertor::copy(str, _line + _startPosition, tokenLen, tokenLen);
+      str[tokenLen] = 0;
+
+      dynamicStrings.add(str);
+
+      return str;
+   }
+   else return copyToken(token, length);
+}
+
+SourceInfo SourceReader :: read(char* line, size_t length, List<char*, freestr>& dynamicStrings)
 {
    SourceInfo info;
 
@@ -88,8 +106,10 @@ SourceInfo SourceReader :: read(char* line, size_t length)
          break;
    }
 
-   copyToken(line, length);
-   info.symbol = line;
+   if (IsQuoteToken(info.state)) {
+      info.symbol = copyQuote(line, length, dynamicStrings);
+   }
+   else info.symbol = copyToken(line, length);
 
    _operatorMode = IsOperator(info.state);
 

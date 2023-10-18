@@ -7025,8 +7025,10 @@ void Compiler :: unboxOuterArgs(BuildTreeWriter& writer, ExprScope& scope, Argum
             closure.extra = info.reference;
             compileAssigningOp(writer, scope, source, closure);
          }
+         else if (source.kind == ObjectKind::Outer) {
+            // ignore outer fields
+         }
          else assert(false);
-
       }
       else assert(false);
    }
