@@ -7,11 +7,11 @@ In development:
     === Iteration 18 ===
     [!] api functionality for existing classes : rest of system
     
-    * examples : Happy numbers, 
+    * examples : Zhang-Suen thinning algorithm
 
     * examples : execute B*, 
-    * examples : Sockets, Sleep, Sorting algorithms/Sleep sort, gui_component_interaction 
-    * examples : rosetta code sample : Zeckendorf arithmetic, Zeckendorf number representation, Zhang-Suen thinning algorithm, 
+    * examples : Sockets, Sleep, Sorting algorithms/Sleep sort, 
+    * examples : rosetta code sample : Zeckendorf arithmetic, Zeckendorf number representation,  
     * examples : rosetta code Anagrams, Hailstone sequence, Trabb Pardo–Knuth algorithm
 
     * forms samples
