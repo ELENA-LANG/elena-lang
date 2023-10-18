@@ -146,8 +146,8 @@ namespace elena_lang
       bool isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo target, TypeInfo source);
 
       bool isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage);
-      bool isMessageCompatibleWithSignature(ModuleScopeBase& scope, mssg_t targetMessage,
-         ref_t* sourceSignature, size_t len);
+      bool isMessageCompatibleWithSignature(ModuleScopeBase& scope, ref_t targetRef, 
+         mssg_t targetMessage, ref_t* sourceSignature, size_t len, int& stackSafeAttr);
 
       ref_t retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, 
          pos_t signLen, int& stackSafeAttrs);

@@ -1035,7 +1035,7 @@ namespace elena_lang
       ref_t mapTemplateType(Scope& scope, SyntaxNode terminal, pos_t parameterCount);
 
       ref_t mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& resolvedMessage, ref_t& implicitSignatureRef,
-         ObjectInfo object);
+         ObjectInfo object, int& stackSafeAttr);
          
       mssg_t defineMultimethod(Scope& scope, mssg_t messageRef, bool extensionMode);
 

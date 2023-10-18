@@ -1,16 +1,44 @@
-import system'math;
 import extensions;
+import system'collections;
+import system'routines;
+ 
+isHappy(int n)
+{
+    auto cache := new List<int>(5);
+    int sum := 0;
+    int num := n;
+    while (num != 1)
+    {
+        if (cache.indexOfElement:num != -1)
+        {
+            ^ false
+        };
+        cache.append(num);
+        while (num != 0)
+        {
+            int digit := num.mod:10;
+            sum += (digit*digit);
+            num /= 10
+        };
+        num := sum;
+        sum := 0
+    };
+ 
+    ^ true
+}
  
 public program()
 {
-    console.printLine(E_value);       //E
-    console.printLine(Pi_value);      //PI
-    console.printLine(10.sqrt());     //Square Root        
-    console.printLine(10.ln());       //Logarithm        
-    console.printLine(10.log10());    // Base 10 Logarithm
-    console.printLine(10.exp());      //Exponential       
-    console.printLine(10.Absolute); //Absolute value
-    console.printLine(10.0r.floor()); //Floor
-    console.printLine(10.0r.ceil());  //Ceiling    
-    console.printLine(2.power(5));    //Exponentiation    
+    auto happynums  := new List<int>(8);
+    int num := 1;
+    while (happynums.Length < 8)
+    {
+        if (isHappy(num))
+        {
+            happynums.append(num)
+        };
+ 
+        num += 1
+    };
+    console.printLine("First 8 happy numbers: ", happynums.asEnumerable())
 }

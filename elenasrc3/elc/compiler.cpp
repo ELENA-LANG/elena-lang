@@ -6812,7 +6812,7 @@ ref_t Compiler :: compileMessageArguments(BuildTreeWriter& writer, ExprScope& sc
 }
 
 ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& message, ref_t& implicitSignatureRef, 
-   ObjectInfo object)
+   ObjectInfo object, int& stackSafeAttr)
 {
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
@@ -6850,16 +6850,19 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& me
       scope.module->mapSignature(signatures, signatureLen, false);
       mssg_t resolvedMessage = 0;
       ref_t resolvedExtRef = 0;
+      int resolvedStackSafeAttr = 0;
       int counter = 0;
       while (!it.eof()) {
          auto extInfo = *it;
-         /*ref_t targetRef = */nsScope->resolveExtensionTarget(extInfo.value1);
-         if (_logic->isMessageCompatibleWithSignature(*scope.moduleScope, extInfo.value2,
-            signatures, signatureLen))
+         ref_t targetRef = nsScope->resolveExtensionTarget(extInfo.value1);
+         int extStackAttr = 0;
+         if (_logic->isMessageCompatibleWithSignature(*scope.moduleScope, targetRef, extInfo.value2,
+            signatures, signatureLen, extStackAttr))
          {
             if (!resolvedMessage) {
                resolvedMessage = extInfo.value2;
                resolvedExtRef = extInfo.value1;
+               resolvedStackSafeAttr = extStackAttr;
             }
             else if (_logic->isSignatureCompatible(*scope.moduleScope, resolvedMessage, extInfo.value2)) {
                //NOTE : if the extension is more precise than the previous resolved one - use the new one  
@@ -6884,6 +6887,7 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& me
          else {
             // if we are lucky - use the resolved one
             message = resolvedMessage;
+            stackSafeAttr = resolvedStackSafeAttr;
 
             return resolvedExtRef;
          }
@@ -6961,12 +6965,14 @@ mssg_t Compiler :: resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectIn
          return weakMessage;
       }
 
-      ref_t extensionRef = mapExtension(writer, scope, resolvedMessage, implicitSignatureRef, target);
+      resolvedStackSafeAttr = 0;
+      ref_t extensionRef = mapExtension(writer, scope, resolvedMessage, implicitSignatureRef, 
+         target, resolvedStackSafeAttr);
       if (extensionRef != 0) {
+         stackSafeAttr = resolvedStackSafeAttr;
+
          // if there is an extension to handle the compile-time resolved message - use it
          resolvedExtensionRef = extensionRef;
-
-         _logic->setSignatureStacksafe(*scope.moduleScope, implicitSignatureRef, stackSafeAttr);
 
          return resolvedMessage;
       }
@@ -6978,8 +6984,12 @@ mssg_t Compiler :: resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectIn
       // check if the extension handles the variadic message
       mssg_t variadicMessage = resolveVariadicMessage(scope, weakMessage);
 
-      extensionRef = mapExtension(writer, scope, variadicMessage, implicitSignatureRef, target);
+      resolvedStackSafeAttr = 0;
+      extensionRef = mapExtension(writer, scope, variadicMessage, implicitSignatureRef, 
+         target, resolvedStackSafeAttr);
       if (extensionRef != 0) {
+         stackSafeAttr = resolvedStackSafeAttr;
+
          // if there is an extension to handle the compile-time resolved message - use it
          resolvedExtensionRef = extensionRef;
 

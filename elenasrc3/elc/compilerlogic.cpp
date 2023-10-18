@@ -1735,12 +1735,17 @@ bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, mssg_t targe
    return isSignatureCompatible(scope, getSignature(scope, targetMessage), sourceSignatures, len);
 }
 
-bool CompilerLogic :: isMessageCompatibleWithSignature(ModuleScopeBase& scope, mssg_t targetMessage, 
-   ref_t* sourceSignature, size_t len)
+bool CompilerLogic :: isMessageCompatibleWithSignature(ModuleScopeBase& scope, ref_t targetRef, 
+   mssg_t targetMessage, ref_t* sourceSignature, size_t len, int& stackSafeAttr)
 {
    ref_t targetSignRef = getSignature(scope, targetMessage);
 
    if (isSignatureCompatible(scope, targetSignRef, sourceSignature, len)) {
+      if (isStacksafeArg(scope, targetRef))
+         stackSafeAttr |= 1;
+
+      setSignatureStacksafe(scope, targetSignRef, stackSafeAttr);
+
       return true;
    }
    else return false;
