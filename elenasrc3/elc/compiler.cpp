@@ -7084,8 +7084,20 @@ ObjectInfo Compiler :: unboxArguments(BuildTreeWriter& writer, ExprScope& scope,
       }
    }
 
-   if (updatedOuterArgs)
+   if (updatedOuterArgs) {
+      if (updatedOuterArgs->count() > 0) {
+         if (!resultSaved && retVal.kind != ObjectKind::Unknown) {
+            // presave the result
+            ObjectInfo tempResult = declareTempLocal(scope, retVal.typeInfo.typeRef, false);
+            compileAssigningOp(writer, scope, tempResult, retVal);
+            retVal = tempResult;
+
+            resultSaved = true;
+         }
+      }
+
       unboxOuterArgs(writer, scope, updatedOuterArgs);
+   }      
 
    scope.tempLocals.clear();
 

@@ -157,6 +157,9 @@ namespace math
 
    public singleton log10
    {
+      function(operand)
+         = cast real(operand).log10();
+        
       real function(real operand)
          = operand.log10();
    }   
