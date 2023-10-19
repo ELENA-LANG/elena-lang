@@ -942,18 +942,18 @@ inline %02Fh
 
 end
 
+// ; xfsave
+inline %30h
+
+  stfd    f3, 0(r15)
+
+end
+
 // ; xquit
 inline %034h
 
   mr      r3, r14
   blr
-
-end
-
-// ; fsave
-inline %25h
-
-  stfd    f3, 0(r15)
 
 end
 
