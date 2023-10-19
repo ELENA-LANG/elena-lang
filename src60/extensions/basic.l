@@ -75,3 +75,33 @@ public sealed class Real : BaseVariable, Reference<real>
         
     dispatch() => value;
 }
+
+public sealed class LongInteger : BaseVariable, Reference<long>
+{
+    constructor()
+    {
+        value := 0l
+    }
+    
+    constructor(long n) 
+    {
+        value := n
+    }
+    
+    append(long n)
+    {
+        long v := value;
+        v := v + n;
+        
+        value := v
+    }
+    
+    reduce(long n)
+    {
+        long v := value;
+        v := v - n;
+        
+        value := v
+    }
+}
+

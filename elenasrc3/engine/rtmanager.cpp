@@ -41,15 +41,18 @@ void RTManager :: loadRootPackage(LibraryProviderBase& provider, path_t rootPath
    provider.addPackage(ns, rootPath);
 }
 
-bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider, ustr_t& symbol, ustr_t& method, ustr_t& path, int& row)
+bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider, ustr_t& symbol, ustr_t& method, 
+   ustr_t& path, int& row, bool vmMode)
 {
    MemoryReader reader(dbgsection);
 
-   // skip a debugger entry pointer
+   // skip a debugger entry pointer for the stand-alone application
    addr_t tempAddr = 0;
-   reader.read(&tempAddr, sizeof(tempAddr));
+   if (!vmMode) {
+      reader.read(&tempAddr, sizeof(tempAddr));
 
-   ustr_t ns = reader.getString(DEFAULT_STR);
+      ustr_t ns = reader.getString(DEFAULT_STR);
+   }
 
    // search through debug section until the ret point is inside two consecutive steps within the same object
    int index = 0;
@@ -106,12 +109,12 @@ bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider
             lineReader.read(&info, sizeof(DebugLineInfo));
             switch (info.symbol) {
                case DebugSymbol::Procedure:
-                  stringReader.seek(info.addresses.source.nameRef);
+                  stringReader.seek(addrToUInt32(info.addresses.source.nameRef));
                   path = stringReader.getString(DEFAULT_STR);
                   method = nullptr;
                   break;
                case DebugSymbol::MessageInfo:
-                  stringReader.seek(info.addresses.source.nameRef);
+                  stringReader.seek(addrToUInt32(info.addresses.source.nameRef));
                   method = stringReader.getString(DEFAULT_STR);
                   break;
                case DebugSymbol::Class:               // NOTE : to take into account vmt address
@@ -163,14 +166,17 @@ inline void copy(char* buffer, int value, size_t& copied)
    copied += length;
 }
 
-size_t RTManager :: retriveAddressInfo(LibraryLoaderBase& provider, addr_t retAddress, char* buffer, size_t maxLength)
+size_t RTManager :: retriveAddressInfo(LibraryLoaderBase& provider, addr_t retAddress, char* buffer, 
+   size_t maxLength, bool vmMode)
 {
    ustr_t symbol  = nullptr;
    ustr_t method  = nullptr;
    ustr_t path    = nullptr;
    int row        = -1;
 
-   if (readAddressInfo(retAddress, provider, symbol, method, path, row)) {
+   if (readAddressInfo(retAddress, provider, symbol, method, path, 
+      row, vmMode)) 
+   {
       size_t copied = 0;
       copy(buffer, symbol, copied, maxLength - 2);
       if (!emptystr(method)) {
@@ -294,5 +300,20 @@ size_t RTManager :: loadClassName(addr_t classAddress, char* buffer, size_t leng
       return 0;
 
    return length;
+}
 
+mssg_t RTManager :: loadWeakMessage(mssg_t message, bool vmMode)
+{
+   ref_t actionRef = 0, flags = 0;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   pos_t mtableOffset = vmMode ? 0 : MemoryBase::getDWord(msection, 0);
+   MemoryReader reader(msection, mtableOffset);
+
+   reader.seek(reader.position() + actionRef * sizeof(uintptr_t) * 2);
+
+   pos_t weakActionRef = reader.getPos();
+
+   return weakActionRef ? encodeMessage(weakActionRef, argCount, flags) : message;
 }

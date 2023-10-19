@@ -42,7 +42,7 @@ namespace elena_lang
    };
 
    // --- ELENARTMachine ---
-   class ELENAVMMachine : public ELENAMachine, public ImageProviderBase, public ExternalMapper
+   class ELENAVMMachine : public ELENAMachine, public ImageProviderBase, public ExternalMapper, public LibraryLoaderListenerBase
    {
    protected:
       bool                    _initialized;
@@ -53,6 +53,7 @@ namespace elena_lang
       SystemEnv*              _env;
 
       bool                    _standAloneMode;
+      bool                    _startUpCode;
 
       path_t                  _rootPath;
 
@@ -60,10 +61,13 @@ namespace elena_lang
       JITCompilerBase*        _compiler;
 
       IdentifierString        _preloadedSection;
+      ModuleInfoList          _preloadedList;
+
+      addr_t retrieveGlobalAttribute(int attribute, ustr_t name);
 
       virtual addr_t resolveExternal(ustr_t dll, ustr_t function) = 0;
 
-      void loadConfig(ustr_t configName);
+      bool loadConfig(ustr_t configName);
 
       void addForward(ustr_t forwardLine);
       void addPackage(ustr_t packageLine);
@@ -87,11 +91,15 @@ namespace elena_lang
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
       ref_t loadSubject(ustr_t actionName);
-      ref_t loadDispatcherOverloadlist(ustr_t referenceName);
+      addr_t loadDispatcherOverloadlist(ustr_t referenceName);
 
-      void fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule);
+      void fillPreloadedSymbols(JITLinker& jitLinker, MemoryWriter& writer, ModuleBase* dummyModule);
 
       addr_t loadReference(ustr_t name, int command);
+
+      void resolvePreloaded();
+
+      bool loadModule(ustr_t ns);
 
    public:
       bool isStandAlone() { return _standAloneMode; }
@@ -110,6 +118,9 @@ namespace elena_lang
 
       mssg_t loadMessage(ustr_t messageName);
       mssg_t loadAction(ustr_t actionName);
+      size_t loadActionName(mssg_t message, char* buffer, size_t length);
+
+      size_t loadClassMessages(void* classPtr, mssg_t* output, size_t skip, size_t maxLength);
 
       int loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output);
 
@@ -120,8 +131,18 @@ namespace elena_lang
          return _env;
       }
 
-      //void generateAutoSymbol(ModuleInfoList& list, ModuleBase* module, MemoryDump& tapeSymbol);
-      
+      void onLoad(ModuleBase*) override;
+
+      void initRandomSeed(SeedStruct& seed)
+      {
+         __routineProvider.InitRandomSeed(seed, __routineProvider.GenerateSeed());
+      }
+
+      unsigned int getRandomNumber(SeedStruct& seed)
+      {
+         return __routineProvider.GetRandomNumber(seed);
+      }
+
       ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
          int codeAlignment, JITSettings gcSettings,
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType));

@@ -1,0 +1,10 @@
+import system'culture;
+ 
+public program()
+{
+    string s1 := "alphaBETA";
+ 
+    console.writeLine(s1.toLower(currentLocale));
+    console.writeLine(s1.toUpper(currentLocale));
+    console.readChar()
+}

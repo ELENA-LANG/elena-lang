@@ -108,7 +108,7 @@ void ElfLinker :: prepareElfImage(ImageProviderBase& provider, ElfExecutableImag
       image.withDebugInfo);
 }
 
-LinkResult ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider)
+LinkResult ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType)
 {
    bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode, true);
    ElfExecutableImage image(withDebugMode);

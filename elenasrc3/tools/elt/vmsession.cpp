@@ -8,7 +8,6 @@
 
 #include "elena.h"
 #include "vmsession.h"
-#include "core.h"
 #include "elenasm.h"
 #include "elenavm.h"
 #include "eltconst.h"
@@ -27,12 +26,15 @@ const char* trim(const char* s)
 // --- VMSession ---
 
 VMSession :: VMSession(PresenterBase* presenter)
+   : _env({})
 {
    _started = false;
 
    _encoding = FileEncoding::UTF8;
 
    _presenter = presenter;
+
+   _prefixBookmark = 0;
 }
 
 bool VMSession :: loadTemplate(path_t path)
@@ -52,6 +54,8 @@ bool VMSession :: loadTemplate(path_t path)
       }
       else _prefix.copy(*content);
 
+      _prefixBookmark = 0;
+
       return true;
    }
    else return false;
@@ -61,9 +65,9 @@ void VMSession :: executeCommandLine(const char* line)
 {
    DynamicString<char> command;
 
+   command.append(*_prefix);
    command.append(_body.str());
    command.append('\n');
-   command.append(*_prefix);
    command.append(line);
    command.append(*_postfix);
 
@@ -110,7 +114,7 @@ bool VMSession :: executeScript(const char* script)
    void* tape = InterpretScriptSMLA(script);
    if (tape == nullptr) {
       char error[0x200];
-      int length = GetStatusSMLA(error, 0x200);
+      size_t length = GetStatusSMLA(error, 0x200);
       error[length] = 0;
       if (!emptystr(error)) {
          _presenter->printLine(ELT_SCRIPT_FAILED, error);
@@ -123,12 +127,11 @@ bool VMSession :: executeScript(const char* script)
 
 bool VMSession :: connect(void* tape)
 {
-   SystemEnv env = { };
+   _env.gc_yg_size = 0x15000;
+   _env.gc_mg_size = 0x54000;
+   _env.th_single_content = &_tcontext;
 
-   env.gc_yg_size = 0x15000;
-   env.gc_mg_size = 0x54000;
-
-   int retVal = InitializeVMSTLA(&env, tape, nullptr);
+   int retVal = InitializeVMSTLA(&_env, tape, ELT_EXCEPTION_HANDLER);
    if (retVal != 0) {
       _presenter->printLine(ELT_STARTUP_FAILED);
 
@@ -151,10 +154,12 @@ bool VMSession :: execute(void* tape)
 
 void VMSession::printHelp()
 {
-   _presenter->print("-q                   - quit\n");
-   _presenter->print("-h                   - help\n");
-   _presenter->print("-l <path>            - execute a script from file\n");
-   _presenter->print("<script>             - execute script\n");
+   _presenter->print("-q                         - quit\n");
+   _presenter->print("-c                         - clear\n");
+   _presenter->print("-h                         - help\n");
+   _presenter->print("-l <path>                  - execute a script from file\n");
+   _presenter->print("-p<script>;                - prepend the prefix code\n");
+   _presenter->print("{ <script>; }*\n <script>                  - execute script\n");
 }
 
 bool VMSession :: executeCommand(const char* line, bool& running)
@@ -174,6 +179,14 @@ bool VMSession :: executeCommand(const char* line, bool& running)
    }
    else if (line[1] == 'c') {
       _body.clear();
+      _prefix.cut(0, _prefixBookmark);
+      _prefixBookmark = 0;
+   }
+   else if (line[1] == 'p') {
+      ustr_t snipet = line + 2;
+
+      _prefix.insert(snipet, _prefixBookmark);
+      _prefixBookmark += getlength(snipet);
    }
    else return false;
 

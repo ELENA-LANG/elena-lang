@@ -44,3 +44,14 @@ public singleton Assert
       }
    }
 }
+
+// --- testOp ---
+
+public extension testOp
+{
+    assertTrue()
+        = Assert.ifTrue(self);
+    
+    assertFalse()
+        = Assert.ifFalse(self);
+}

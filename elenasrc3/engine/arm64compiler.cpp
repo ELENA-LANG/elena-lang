@@ -18,7 +18,7 @@ const Pair<ByteCode, CodeGenerator, ByteCode::None, nullptr> Overloads[Overloads
 {
    { ByteCode::CallExtR, ARM64loadCallOp},
    { ByteCode::OpenIN, ARM64compileOpenIN},
-   { ByteCode::OpenHeaderIN, ARM64compileOpenIN},
+   { ByteCode::ExtOpenIN, ARM64compileOpenIN},
 };
 
 void elena_lang::ARM64loadCallOp(JITCompilerScope* scope)

@@ -1,0 +1,123 @@
+//        ELENA Language 6.0
+//      inline system library
+
+define WM_CREATE         1;
+define WM_DESTROY        2;
+define WM_COMMAND      273;
+
+define GWL_USERDATA    -21;
+
+procedure __setWndPtr(self, ptr)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  set        procedure:"system'win_core_routines'windProc"
+  store      sp:0
+  peek       fp:ptr
+  xassign    i:0
+
+  close      []
+  quit
+
+end
+
+procedure windProc (arg1,arg2,arg3,arg4)
+
+  extopen     (4),[arg],[hwnd,msg,wparam,lparam,ptr]
+
+  xloadarg    fp:arg3
+  save        dp:wparam
+  xloadarg    fp:arg4
+  save        dp:lparam
+  xloadarg    fp:arg1
+  save        dp:hwnd
+  xloadarg    fp:arg2
+  save        dp:msg
+
+  cmp         n:WM_CREATE
+  jeq         labCreate
+  cmp         n:WM_DESTROY
+  jeq         labDestroy
+  cmp         n:WM_COMMAND
+  jeq         labCommand
+
+labDefault:
+  call        extern:USER32.DefWindowProcW(*hwnd,*msg,*wparam,*lparam)
+  jump        labEnd2
+
+labCreate:
+  peek        fp:arg4
+  store       fp:arg
+
+  set         dp:hwnd
+  store       sp:1
+
+  peek        fp:arg
+  store       sp:2
+
+  get         i:0
+  get         i:0
+
+  vcall       mssg:"onWMCreate<system'Handle,system'winforms'CREATESTRUCT>[3]", class:"system'winforms'WindowCallback"
+
+  jump        labEnd
+
+labDestroy:
+  mov         n:GWL_USERDATA
+  save        sp:1
+  load        dp:hwnd
+  save        sp:0
+
+  call        extern:USER32.GetWindowLongW,2
+
+  cmp         n:0
+  jeq         labDefault
+  save        dp:ptr
+
+  set         dp:hwnd
+  store       sp:1
+
+  set         dp:ptr
+  get         i:0
+  get         i:0
+
+  vcall       mssg:"onWMDestoy<system'Handle>[2]", class:"system'winforms'WindowCallback"
+
+  jump        labEnd
+
+labCommand:
+  mov         n:GWL_USERDATA
+  save        sp:1
+  load        dp:hwnd
+  save        sp:0
+
+  call        extern:USER32.GetWindowLongW,2
+
+  cmp         n:0
+  jeq         labDefault
+  save        dp:ptr
+
+  set         dp:hwnd
+  store       sp:1
+  set         dp:wparam
+  store       sp:2
+  set         dp:lparam
+  store       sp:3
+
+  set         dp:ptr
+  get         i:0
+  get         i:0
+
+  vcall       mssg:"onWMCommand<system'Handle,system'IntNumber,system'Handle>[4]", class:"system'winforms'WindowCallback"
+
+labEnd:
+  mov         n:0 
+
+labEnd2:
+  extclose    []
+  xquit
+
+end

@@ -20,6 +20,7 @@ namespace elena_lang
       // commands:
       Nop            = 0x00,
       Breakpoint     = 0x01,
+      SNop           = 0x02,
       Redirect       = 0x03,
       Quit           = 0x04,
       MovEnv         = 0x05,
@@ -41,6 +42,7 @@ namespace elena_lang
       LoadS          = 0x14,
       MLen           = 0x15,
       DAlloc         = 0x16,
+      TstStck        = 0x17,
       DTrans         = 0x18,
       XAssign        = 0x19,
       LLoad          = 0x1A,
@@ -60,16 +62,23 @@ namespace elena_lang
       BCopy          = 0x28,
       WCopy          = 0x29,
       XPeekEq        = 0x2A,
+      TryLock        = 0x2B,
+      FreeLock       = 0x2C,
       XGet           = 0x2E,
       XCall          = 0x2F,
+
+      XFSave         = 0x30,
+      XQuit          = 0x34,
 
       FIAdd          = 0x70,
       FISub          = 0x71,
       FIMul          = 0x72,
       FIDiv          = 0x73,
 
-      MaxSingleOp    = 0x77,
+      MaxSingleOp    = 0x74,
 
+      Shl            = 0x75,
+      Shr            = 0x76,
       FAbsDP         = 0x78,
       FSqrtDP        = 0x79,
       FExpDP         = 0x7A,
@@ -148,10 +157,13 @@ namespace elena_lang
       TstFlag        = 0xC3,
       TstN           = 0xC4,
       TstM           = 0xC5,
+      XCmpSI         = 0xC6,
       CmpFI          = 0xC8,
       CmpSI          = 0xC9,
-
-      XLoadArgSI     = 0xCD,
+      ExtCloseN      = 0xCA,
+      LLoadSI        = 0xCB,
+      LoadSI         = 0xCC,
+      XLoadArgFI     = 0xCD,
       XCreateR       = 0xCE,
       System         = 0xCF,
 
@@ -163,6 +175,7 @@ namespace elena_lang
       FDivDPN        = 0xD3,
       UDivDPN        = 0xD4,
 
+      XLabelDPR      = 0xD6,
       SelGrRR        = 0xD7,
       IAndDPN        = 0xD8,
       IOrDPN         = 0xD9,
@@ -192,7 +205,7 @@ namespace elena_lang
 
       OpenIN         = 0xF0,
       XStoreSIR      = 0xF1,
-      OpenHeaderIN   = 0xF2,
+      ExtOpenIN      = 0xF2,
       MovSIFI        = 0xF3,
       NewIR          = 0xF4,
       NewNR          = 0xF5,
@@ -409,6 +422,7 @@ namespace elena_lang
             case ByteCode::SelLtRR:
             case ByteCode::SelULtRR:
             case ByteCode::XHookDPR:
+            case ByteCode::XLabelDPR:
             case ByteCode::CreateNR:
             case ByteCode::FillIR:
                return true;
@@ -512,7 +526,7 @@ namespace elena_lang
 
       bool match(ByteCodeIterator& it, PatternArg& arg)
       {
-         auto bc = *it;
+         ByteCommand bc = *it;
 
          if (code != bc.code)
             return code == ByteCode::Match;

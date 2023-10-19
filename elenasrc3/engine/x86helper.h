@@ -32,6 +32,7 @@ namespace elena_lang
       DL         = 0x00200302,
       BL         = 0x00200303,
       AH         = 0x00200304,
+      CH         = 0x00200305,
       DH         = 0x00200306,
       BH         = 0x00200307,
 

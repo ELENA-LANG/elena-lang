@@ -75,4 +75,11 @@ void ScriptEngineReader :: reset()
    buffer.clear();
 }
 
-// --- ScriptEngineLog ---
+bool ScriptEngineReader :: turnSymbolMode()
+{
+   sourceReader.switchMode(ScriptReader::DFAMode::Symbolic);
+
+   return true;
+}
+
+

@@ -7,6 +7,9 @@ public mixin DynamicTape
 {
    __string TapeFunction[] list;
 
+   constructor(params TapeFunction[] args)
+      <= load(params args);
+
    internal constructor allocate(int len)
       = new TapeFunction[](len);
    
@@ -22,7 +25,7 @@ public mixin DynamicTape
       }
    }
 
-   constructor load(List<TapeFunction> args)
+   constructor new(List<TapeFunction> args)
       <= allocate(args.Length)
    {
       int i := args.Length;
@@ -34,7 +37,7 @@ public mixin DynamicTape
       }
    }
         
-   constructor load(List<TapeFunction> args, int index, int length)        
+   constructor new(List<TapeFunction> args, int index, int length)        
       <= allocate(length)
    {
       int i := index;
@@ -48,7 +51,7 @@ public mixin DynamicTape
       }
    }
         
-   constructor load(List<object> args, int index, int length)        
+   constructor new(List<object> args, int index, int length)        
       <= allocate(length)
    {
       int i := index;

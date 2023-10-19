@@ -279,9 +279,8 @@ void WinDialog :: enable(int id, bool enabled)
 // --- ProjectSettings ---
 
 ProjectSettings :: ProjectSettings(HINSTANCE instance, WindowBase* owner, ProjectModel* model)
-   : WinDialog(instance, owner)
+   : WinDialog(instance, owner, IDD_SETTINGS)
 {
-   _dialogId = IDD_SETTINGS;
    _model = model;
 }
 
@@ -381,10 +380,8 @@ bool ProjectSettings :: showModal()
 // --- EditorSettings ---
 
 EditorSettings :: EditorSettings(HINSTANCE instance, WindowBase* owner, TextViewModelBase* model)
-   : WinDialog(instance, owner)
+   : WinDialog(instance, owner, IDD_EDITOR_SETTINGS)
 {
-   _dialogId = IDD_EDITOR_SETTINGS;
-
    _model = model;
 }
 
@@ -411,10 +408,9 @@ bool EditorSettings :: showModal()
 // --- FindDialog ---
 
 FindDialog :: FindDialog(HINSTANCE instance, WindowBase* owner, bool replaceMode, FindModel* model)
-   : WinDialog(instance, owner)
+   : WinDialog(instance, owner, replaceMode ? IDD_EDITOR_REPLACE : IDD_EDITOR_FIND)
 {
    _replaceMode = replaceMode;
-   _dialogId = replaceMode ? IDD_EDITOR_REPLACE : IDD_EDITOR_FIND;
    _model = model;
 }
 
@@ -470,9 +466,8 @@ void FindDialog :: onOK()
 // --- GoToLineDialog ---
 
 GoToLineDialog :: GoToLineDialog(HINSTANCE instance, WindowBase* owner)
-   : WinDialog(instance, owner)
+   : WinDialog(instance, owner, IDD_GOTOLINE)
 {
-   _dialogId = IDD_GOTOLINE;
 }
 
 void GoToLineDialog :: onCreate()
@@ -501,9 +496,8 @@ bool GoToLineDialog :: showModal(int& row)
 // --- WindowListDialog ---
 
 WindowListDialog :: WindowListDialog(HINSTANCE instance, WindowBase* owner, TextViewModel* model)
-   : WinDialog(instance, owner)
+   : WinDialog(instance, owner, IDD_WINDOWS)
 {
-   _dialogId = IDD_WINDOWS;
    _model = model;
    _selectedIndex = -1;
 }
@@ -568,9 +562,8 @@ WindowListDialogBase::SelectResult WindowListDialog :: selectWindow()
 // --- AboutDialog ---
 
 AboutDialog :: AboutDialog(HINSTANCE instance, WindowBase* owner)
-   : WinDialog(instance, owner)
+   : WinDialog(instance, owner, IDD_ABOUT)
 {
-   _dialogId = IDD_ABOUT;
 }
 
 void AboutDialog :: onCreate()

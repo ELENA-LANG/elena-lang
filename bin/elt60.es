@@ -1,6 +1,8 @@
 [[ 
     #grammar vmbuild
-    #config vm_console
-    #postfix " ^ ""eval[1]"" "
+    #config vm_client
+    #set preloaded preloadedSymbols
+
+    #postfix " ^ ""safeEval[1]"" "
     #start;
 ]]

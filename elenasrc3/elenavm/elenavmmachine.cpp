@@ -13,6 +13,7 @@
 #include "xmlprojectbase.h"
 #include "bytecode.h"
 #include "module.h"
+#include "rtmanager.h"
 
 using namespace elena_lang;
 
@@ -89,12 +90,13 @@ void ELENAVMConfiguration :: forEachForward(void* arg, void (*feedback)(void* ar
 ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform, 
    int codeAlignment, JITSettings gcSettings,
    JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
-      : _mapper(this), _rootPath(configPath)
+      : _mapper(this), _rootPath(configPath), _preloadedList({})
 {
    _standAloneMode = true;
    _initialized = false;
    _presenter = presenter;
    _env = nullptr;
+   _startUpCode = true;
 
    _configuration = new ELENAVMConfiguration(platform, configPath);
 
@@ -102,8 +104,7 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    _settings.virtualMode = false;
    _settings.alignment = codeAlignment;
 
-   // configurate the loader
-   _configuration->initLoader(_libraryProvider);
+   _libraryProvider.addListener(this);
 
    _compiler = jitCompilerFactory(&_libraryProvider, platform);
 }
@@ -113,7 +114,11 @@ void ELENAVMMachine :: init(JITLinker& linker, SystemEnv* exeEnv)
    _presenter->printLine(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER);
    _presenter->printLine(ELENAVM_INITIALIZING);
 
-   _compiler->populatePreloaded((uintptr_t)exeEnv->th_table);
+   _configuration->initLoader(_libraryProvider);
+
+   _compiler->populatePreloaded(
+      (uintptr_t)exeEnv->th_table,
+      (uintptr_t)exeEnv->th_single_content);
 
    linker.prepare(_compiler);
 
@@ -132,7 +137,7 @@ void ELENAVMMachine :: stopVM()
 
 void ELENAVMMachine :: addForward(ustr_t forwardLine)
 {
-   pos_t index = forwardLine.find('=');
+   size_t index = forwardLine.find('=');
    if (index != NOTFOUND_POS) {
       ustr_t fullReference = forwardLine + index + 1;
 
@@ -144,7 +149,7 @@ void ELENAVMMachine :: addForward(ustr_t forwardLine)
 
 void ELENAVMMachine :: addPackage(ustr_t packageLine)
 {
-   pos_t index = packageLine.find('=');
+   size_t index = packageLine.find('=');
    if (index != NOTFOUND_POS) {
       PathString path(packageLine + index + 1);
       IdentifierString ns(packageLine, index);
@@ -153,9 +158,9 @@ void ELENAVMMachine :: addPackage(ustr_t packageLine)
    }
 }
 
-void ELENAVMMachine :: loadConfig(ustr_t configName)
+bool ELENAVMMachine :: loadConfig(ustr_t configName)
 {
-   _configuration->loadConfigByName(_rootPath, configName);
+   return _configuration->loadConfigByName(_rootPath, configName);
 }
 
 bool ELENAVMMachine :: configurateVM(MemoryReader& reader, SystemEnv* env)
@@ -190,7 +195,8 @@ bool ELENAVMMachine :: configurateVM(MemoryReader& reader, SystemEnv* env)
             addPackage(strArg);
             break;
          case VM_CONFIG_CMD:
-            loadConfig(strArg);
+            if (!loadConfig(strArg))
+               return false;
             break;
          case VM_TERMINAL_CMD:
             _standAloneMode = false;
@@ -209,9 +215,14 @@ bool ELENAVMMachine :: configurateVM(MemoryReader& reader, SystemEnv* env)
    return true;
 }
 
-void ELENAVMMachine :: fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule)
+void ELENAVMMachine :: fillPreloadedSymbols(JITLinker& jitLinker, MemoryWriter& writer, ModuleBase* dummyModule)
 {
    ModuleInfoList symbolList({});
+   for (auto it = _preloadedList.start(); !it.eof(); ++it) {
+      jitLinker.copyMetaList(*it, symbolList);
+   }
+   _preloadedList.clear();
+
    _mapper.forEachLazyReference<ModuleInfoList*>(&symbolList, [](ModuleInfoList* symbolList, LazyReferenceInfo info)
       {
          if (info.mask == mskAutoSymbolRef) {
@@ -229,7 +240,6 @@ void ELENAVMMachine :: fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* du
       }
       else ByteCodeUtil::write(writer, ByteCode::CallR, dummyModule->mapReference(symbolName) | mskSymbolRef);
    }
-
 }
 
 inline ref_t getCmdMask(int command)
@@ -290,7 +300,7 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
       }
    }
 
-   if (symbols.count() == 0)
+   if (symbols.count() == 0 && _preloadedList.count() == 0)
       return false;
 
    MemoryWriter writer(&tapeSymbol);
@@ -300,7 +310,8 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
 
    ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
 
-   fillPreloadedSymbols(writer, dummyModule);
+   fillPreloadedSymbols(jitLinker, writer, dummyModule);
+
    for(size_t i = 0; i < symbols.count(); i++) {
       auto p = symbols[i];
       ref_t mask = p.value1 & mskAnyRef;
@@ -364,9 +375,11 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
 
 void ELENAVMMachine :: onNewCode(JITLinker& jitLinker)
 {
-   ustr_t superClass = _configuration->resolveForward(SUPER_FORWARD);
+   ustr_t superClass = !_startUpCode ? nullptr : _configuration->resolveForward(SUPER_FORWARD);
 
    jitLinker.complete(_compiler, superClass);
+
+   _startUpCode = false;
 
    _mapper.clearLazyReferences();
 }
@@ -395,21 +408,23 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
    Module* dummyModule = new Module();
    MemoryDump tapeSymbol;
 
+   addr_t criricalHandler = 0;
    if (!withConfiguration || configurateVM(reader, env)) {
       jitLinker = new JITLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
          &_settings, nullptr);
 
       if (!_initialized) {
          init(*jitLinker, env);
+
+         criricalHandler = jitLinker->resolve(criricalHandlerReference, mskProcedureRef, false);
+
+         if (!_standAloneMode)
+            env = _env;
       }
       else jitLinker->setCompiler(_compiler);
    }
 
-   addr_t criricalHandler = _initialized ? 0 : jitLinker->resolve(criricalHandlerReference, mskProcedureRef, false);
-
    if (compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule)) {
-      SymbolList list;
-
       void* address = (void*)jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
 
       resumeVM(*jitLinker, env, (void*)criricalHandler);
@@ -419,7 +434,11 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
 
       return execute(env, address);
    }
-   else return 0;
+   if (!_standAloneMode) {
+      resumeVM(*jitLinker, env, (void*)criricalHandler);
+   }
+
+   return 0;
 }
 
 void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
@@ -469,33 +488,40 @@ addr_t ELENAVMMachine :: resolveExternal(ustr_t referenceName)
 
 void ELENAVMMachine :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef)
 {
-   
+   JITLinker* jitLinker = new JITLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
+      &_settings, nullptr);
+
+   jitLinker->setCompiler(_compiler);
+
+   ustr_t name = jitLinker->retrieveResolvedAction(subjectRef);
+
+   actionName.copy(name);
+
+   delete jitLinker;
 }
 
 size_t ELENAVMMachine :: loadMessageName(mssg_t message, char* buffer, size_t length)
 {
-   //ref_t actionRef, flags;
-   //pos_t argCount = 0;
-   //decodeMessage(message, actionRef, argCount, flags);
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
 
-   //IdentifierString actionName;
-   //loadSubjectName(actionName, actionRef);
+   IdentifierString actionName;
+   loadSubjectName(actionName, actionRef);
 
-   //IdentifierString messageName;
-   //ByteCodeUtil::formatMessageName(messageName, nullptr, *actionName, nullptr, 0, argCount, flags);
+   IdentifierString messageName;
+   ByteCodeUtil::formatMessageName(messageName, nullptr, *actionName, nullptr, 0, argCount, flags);
 
-   //StrConvertor::copy(buffer, *messageName, messageName.length(), length);
+   StrConvertor::copy(buffer, *messageName, messageName.length(), length);
 
-   //return length;
-
-   // !! temporal
-   return 0;
+   return length;
 }
 
 size_t ELENAVMMachine :: loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length)
 {
-   // !! temporal
-   return 0;
+   RTManager rtmanager(nullptr, getTargetDebugSection());
+
+   return rtmanager.retriveAddressInfo(_libraryProvider, retPoint, lineInfo, length, true);
 }
 
 inline void addVMTapeEntry(MemoryWriter& rdataWriter, pos_t command, ustr_t arg)
@@ -515,12 +541,14 @@ addr_t ELENAVMMachine :: loadReference(ustr_t name, int command)
    MemoryWriter tapeWriter(&tape);
 
    addVMTapeEntry(tapeWriter, VM_INIT_CMD);
-   addVMTapeEntry(tapeWriter, command, name);
+   if (!emptystr(name))
+      addVMTapeEntry(tapeWriter, command, name);
    addVMTapeEntry(tapeWriter, VM_ENDOFTAPE_CMD);
 
    interprete(_env, tape.get(0), tape.length(), nullptr, true);
 
-   return _mapper.resolveReference({ nullptr, name }, getCmdMask(command));
+   return emptystr(name)
+      ? 0 : _mapper.resolveReference({ nullptr, name }, getCmdMask(command));
 }
 
 addr_t ELENAVMMachine :: loadClassReference(ustr_t name)
@@ -571,25 +599,84 @@ mssg_t ELENAVMMachine :: loadAction(ustr_t actionName)
    return encodeMessage(actionRef, argCount, flags);
 }
 
+size_t ELENAVMMachine :: loadActionName(mssg_t message, char* buffer, size_t length)
+{
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   IdentifierString actionName;
+   loadSubjectName(actionName, actionRef);
+
+   StrConvertor::copy(buffer, *actionName, actionName.length(), length);
+
+   return length;
+}
+
 addr_t ELENAVMMachine :: loadSymbol(ustr_t name)
 {
    return loadReference(name, VM_CALLSYMBOL_CMD);
 }
 
-ref_t ELENAVMMachine :: loadDispatcherOverloadlist(ustr_t referenceName)
+bool ELENAVMMachine :: loadModule(ustr_t ns)
 {
-   // !! temporal
+   auto retVal = _libraryProvider.loadModuleIfRequired(ns);
+   if (retVal == LibraryProvider::ModuleRequestResult::Loaded) {
+      if (_preloadedList.count() > 0) {
+         loadReference(nullptr, 0);
+
+         return true;
+      }
+   }
+   else if (retVal == LibraryProvider::ModuleRequestResult::NotFound)
+      return false;
+
+   return false;
+}
+
+addr_t ELENAVMMachine :: retrieveGlobalAttribute(int attribute, ustr_t name)
+{
+   IdentifierString currentName;
+
+   MemoryReader reader(getADataSection());
+   pos_t size = reader.getDWord();
+
+   pos_t pos = reader.position();
+   while (pos < size) {
+      int current = reader.getDWord();
+      pos_t offset = reader.getDWord() + sizeof(addr_t);
+
+      if (current == attribute) {
+         reader.readString(currentName);
+         if (currentName.compare(name)) {
+            addr_t address = 0;
+            reader.read(&address, sizeof(address));
+
+            return address;
+         }
+      }
+
+      pos += offset;
+      reader.seek(pos);
+   }
+
    return 0;
+}
+
+addr_t ELENAVMMachine :: loadDispatcherOverloadlist(ustr_t referenceName)
+{
+   return retrieveGlobalAttribute(GA_EXT_OVERLOAD_LIST, referenceName);
 }
 
 int ELENAVMMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output)
 {
    // load message name
    char messageName[IDENTIFIER_LEN];
-   size_t mssgLen = loadMessageName(message, messageName, IDENTIFIER_LEN);
+   size_t mssgLen = loadMessageName(message | FUNCTION_MESSAGE, messageName, IDENTIFIER_LEN);
    messageName[mssgLen] = 0;
 
-   int len = 0;
+   int len = 1;
+   ((addr_t*)output)[0] = message;
 
    // search message dispatcher
    IdentifierString messageRef;
@@ -598,13 +685,15 @@ int ELENAVMMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
    while (moduleList[i]) {
       ustr_t ns = moduleList + i;
 
+      loadModule(ns);
+
       messageRef.copy(ns);
       messageRef.append('\'');
       messageRef.append(messageName);
 
-      ref_t listRef = loadDispatcherOverloadlist(*messageRef);
+      addr_t listRef = loadDispatcherOverloadlist(*messageRef);
       if (listRef) {
-         ((int*)output)[len] = listRef;
+         ((addr_t*)output)[len] = listRef;
          len++;
       }
 
@@ -612,4 +701,21 @@ int ELENAVMMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
    }
 
    return len;
+}
+
+void ELENAVMMachine :: onLoad(ModuleBase* module)
+{
+   if (!_preloadedSection.empty()) {
+      IdentifierString nameToResolve(META_PREFIX, *_preloadedSection);
+
+      _libraryProvider.loadDistributedSymbols(module, *nameToResolve, _preloadedList);
+   }
+}
+
+size_t ELENAVMMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_t skip, size_t maxLength)
+{
+   MemoryBase* msection = getMDataSection();
+
+   return SystemRoutineProvider::LoadMessages(msection, classPtr, output, 
+      skip, maxLength, true);
 }

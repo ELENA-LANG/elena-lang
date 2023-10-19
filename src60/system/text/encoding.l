@@ -120,6 +120,17 @@
       {
          ^ String.fromByteArray(index, size, buffer);
       }
+
+      int getCharCount(string s)
+      {
+         int len := 0;
+         auto en := s.enumerator();
+         while (en.next()) {
+            len += 1;
+         };
+
+         ^ len
+      }
    }
 
    // --- UTF16Encoding ---
@@ -134,11 +145,10 @@
 
       char toChar(short[] shortArray, int index, ref int length)
       {
-         int value := PrimitiveOperations.readUTF32(shortArray, index);
-
+         int chLen := UTFOperations.convertUTF16_2_32(shortArray, index, length, ref int value);
          char ch := value;
 
-         length := ch.WideLength;         
+         length := chLen;
 
          ^ ch
       }
@@ -152,6 +162,17 @@
       {
          s.saveToShortArray(index, output, length);
       }
+
+      int getCharCount(wide s)
+      {
+         int len := 0;
+         auto en := s.enumerator();
+         while (en.next()) {
+            len += 1;
+         };
+
+         ^ len
+      }
    }
 
    // --- UTF8Encoder ---
@@ -161,16 +182,14 @@
       {
          int value := ch;
 
-         length := PrimitiveOperations.copyUTF8_2_32(byteArray, index, value)
+         int byteLen := byteArray.Length;
+         length := UTFOperations.convertUTF32_2_8(value, byteArray, index, byteLen);
       }
 
-      char convertToChar(byte[] byteArray, int index, ref int length)
+      char convertToChar(byte[] byteArray, int index, ref int sourLen)
       {
-         int value := PrimitiveOperations.readUTF32(byteArray, index);
-
+         sourLen := UTFOperations.convertUTF8_2_32(byteArray, index, sourLen, ref int value);
          char ch := value;
-
-         length := ch.Length;
 
          ^ ch
       }
@@ -184,7 +203,7 @@
          int value := ch;
          short tmp[2];
 
-         int tmpLen := PrimitiveOperations.copyUTF16_2_32(tmp, 0, value);
+         int tmpLen := UTFOperations.convertUTF32_2_16(value, tmp, 0, 2);
 
          byte hi := tmp[0].High;
          byte lo := tmp[0].Low;
@@ -214,12 +233,10 @@
             
          PrimitiveArrayOperations.copyToShortArray(byteArray, index, subLen, tmp, 0);
    
-         int value := PrimitiveOperations.readUTF32(tmp, 0);
+         int length := UTFOperations.convertUTF16_2_32(tmp, 0, 2, ref int value);
+         length *= 2;
 
          char ch := value;
-
-         length := ch.WideLength;         
-         length *= 2;
 
          ^ ch
       }

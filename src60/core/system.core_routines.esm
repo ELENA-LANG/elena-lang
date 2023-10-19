@@ -7,6 +7,7 @@ define ELENA_ERR_OUT_OF_MEMORY     103h;
 
 define FUNCTION_MESSAGE       00000020h;
 define PROPERTY_MESSAGE       000000C0h;
+define VARIADIC_MESSAGE       00000080h;
 define PROP_ARG_MASK          000000DFh;
 define ARG_MASK               0000001Fh;
 
@@ -21,6 +22,7 @@ define ptr_size64                     8;
                                       
 define get_prop_mssg                0C1h;
 define set_prop_mssg                0C2h;
+define variadic_mssg                080h;
 
 define __realSize                     8;
 
@@ -28,6 +30,8 @@ define elMessage              00200000h;
 define elSubject              01000000h;
 
 define err_ret          -1;
+
+define WM_CREATE         1;
 
 procedure __object_dispatcher
 
@@ -104,7 +108,6 @@ Lab01:
   call            vt:0 
 
 Lab00:
-  peek            fp:1 
   close           :0 
   quit             
 
@@ -141,7 +144,7 @@ end
 
 procedure __message_dispatcher
 
-  tstn        FUNCTION_MESSAGE
+  tst         n:FUNCTION_MESSAGE
   jeq         labDefault
 
   loadv
@@ -175,7 +178,7 @@ end
 
 procedure __ext_message_dispatcher
 
-  tstn        FUNCTION_MESSAGE
+  tst         n:FUNCTION_MESSAGE
   jeq         labDefault
 
   loadv
@@ -204,6 +207,30 @@ labDefault:
 
   set        mssgconst : "new[3]"
   throw
+
+end
+
+procedure __extensionvar
+
+  xstore     i:0
+  get        i:1
+  or         n:FUNCTION_MESSAGE
+
+  jump       vt:0
+
+end
+
+procedure __extension
+
+  store      sp:0
+
+  get        i:0
+  redirect
+
+  peek       sp:0
+  get        i:1
+
+  jump       vt:0
 
 end
 
@@ -951,6 +978,15 @@ procedure __intToChar
 
 end
 
+procedure __intToMssg
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
 procedure __intHash (self,n,r)
 
   peek       sp:1
@@ -1056,6 +1092,38 @@ procedure __readIntPtr
 
 end
 
+procedure __clearPtr(self)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  set        nil
+  store      sp:0
+  peek       fp:self
+  xassign    i:0
+
+  close      []
+
+end
+
+procedure __assignPtr(self, ptr)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  peek       fp:ptr
+  store      sp:0
+  peek       fp:self
+  xassign    i:0
+
+  close      []
+
+end
+
 procedure __ptrCopyTo (self, arr, len)
 
   xflush     sp:0
@@ -1075,7 +1143,7 @@ procedure __ptrCopyTo (self, arr, len)
 
 end
 
-procedure __copySubStr (dest, index, len, sour)
+procedure __copySubStr (self, dest, index, len, sour)
 
   xflush     sp:0
   xflush     sp:1
@@ -1114,7 +1182,7 @@ labNext:
 
 end
 
-procedure __copySubWStr (dest, index, len, sour)
+procedure __copySubWStr (self, dest, index, len, sour)
 
   xflush     sp:0
   xflush     sp:1
@@ -1369,9 +1437,19 @@ procedure __mssgname_setprop (self, mssg)
 
 end
 
+procedure __mssgname_variadic (self, mssg)
+
+  mov        n:2
+  loadv
+  or         n:variadic_mssg
+  peek       sp:1
+  save
+
+end
+
 procedure __mssgname_dispatcher
 
-  tstn        FUNCTION_MESSAGE
+  tst         n:FUNCTION_MESSAGE
   jeq         labDefault
 
   loadv
@@ -1530,6 +1608,31 @@ procedure __mssg_closure
 
 end
 
+procedure __funcmssg_closure
+
+  xflush     sp:0
+  xflush     sp:1
+
+  alloc      i:1
+  xstore     i:1
+  load       sp:0
+  store      sp:0
+
+  set        fp:0
+  neg
+  xget
+
+  swap       sp:0
+  load
+  peek       sp:0
+
+  free       i:1
+  xrefresh   sp:0
+
+  jump       vt:0
+
+end
+
 procedure __ext_closure
 
   xflush     sp:0
@@ -1549,6 +1652,124 @@ procedure __ext_closure
 
 end
 
+procedure __extdispatcher
+
+  xflush     sp:0
+  xflush     sp:1
+
+  alloc     i:1
+  xstore    i:0
+
+// ; temporally commented out to allow call from interpreter tape
+//  // check if it is invoke
+//  and        SPECIAL_MESSAGE
+//  ifn        labDefault 0 
+
+  loadv
+  xcmp      sp:0
+  jne       labDefault
+
+  free      i:1
+
+  xrefresh  sp:0
+  xrefresh  sp:1
+
+  xdispatch i:1
+
+  jump      labDefault2
+
+labDefault:
+  load      sp:0
+  free      i:1
+
+labDefault2:
+  peek      sp:0
+  redirect 
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
+
+end
+
+procedure __vextdispatcher (arg)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  tst        n:VARIADIC_MESSAGE
+  jeq        labUnboxing
+
+  xdispatch  i:1, variadic
+  jump       labError
+
+labUnboxing:
+  open       (2),[target],[mssg]
+
+  store      fp:target
+  save       dp:mssg
+
+  and        n:ARG_MASK
+  add        n:1
+  dalloc
+  set        sp:0
+  alloc      i:1
+  store      sp:0
+  set        fp:arg
+  swap       sp:0
+  sub        n:1
+  dtrans
+  swap       sp:0
+  set        terminator
+  swap       sp:0
+  xassign
+  free       i:1
+
+  load       dp:mssg
+  and        n:0FFFFFFE0h
+  or         n:082h
+
+  peek       fp:target
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+  call       vt:0
+
+  close      []
+  $clear
+  quit
+
+labError:
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  set        class : "system'MethodNotFoundException"
+  store      sp:0
+
+  set        mssgconst : "new[3]"
+  throw
+
+end
+
 procedure __saving_closure(obj, args)
 
   xflush     sp:0
@@ -1565,6 +1786,41 @@ procedure __saving_closure(obj, args)
 
   xrefresh   sp:0
   xrefresh   sp:1
+
+end
+
+procedure __copytostack_closure(obj, args)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  xopen      (32),[target],[index,len,mssg,tmp]
+
+  mov        n:4
+  xload
+  save       dp:tmp
+  load
+
+  set        sp:0
+  alloc      i:2
+
+  store      sp:1
+
+  set        fp:0
+  neg
+  xget
+  store      sp:0
+
+  peek       sp:1
+  load       dp:tmp
+  xassign
+
+  free       i:2
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+  peek       sp:0
 
 end
 
@@ -1634,7 +1890,7 @@ procedure __exit_closure
 
   peek       sp:0
 
-  xopen      (32),[target],[index,len,mssg]
+  xopen      (32),[target],[index,len,mssg,tmp]
 
   load       dp:len
   save       dp:index 
@@ -1649,7 +1905,7 @@ procedure __jumpifnot_closure
   load
   peek       sp:0
 
-  xopen      (32),[target],[index,len,mssg]
+  xopen      (32),[target],[index,len,mssg,tmp]
 
   cmp        class:"system'BoolValue#false"   
   jne        labSkip
@@ -1669,7 +1925,7 @@ procedure __jump_closure
   load
   peek       sp:0
 
-  xopen      (32),[target],[index,len,mssg]
+  xopen      (32),[target],[index,len,mssg,tmp]
 
   xadd       dp:index
   save       dp:index
@@ -1699,13 +1955,13 @@ end
 
 procedure __closuretape
 
-  tstn       FUNCTION_MESSAGE
+  tst        n:FUNCTION_MESSAGE
   jeq        labDefault
 
   xflush     sp:0
   xflush     sp:1
 
-  open       (32),[target],[index,len,mssg]
+  open       (32),[target],[index,len,mssg,tmp]
       
   save       dp:mssg
     
@@ -1843,7 +2099,9 @@ labNext:
 labEnd:
   load       dp:command
 
-  close      []
+  close      [] 
+  // ; NOTE : to clear the frame variables, because of two scopes
+  $clear  
 
   xrefresh   sp:0
   xrefresh   sp:1
@@ -2031,6 +2289,12 @@ labNext:
   jump       labNext
 
 labSpecial:
+  cmp        n:022h
+  jeq        labTerminator
+
+  cmp        n:020h
+  jeq        labVardiatic
+
   peek        fp:buffer
   store       sp:3    
   set         dp:size
@@ -2041,6 +2305,70 @@ labSpecial:
   store       sp:0
   mov         mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
   call        mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]", class:"system'text'UTF8Encoding"
+
+  // ; store the result
+  load       dp:ptr
+  store      sp:0
+  set        fp:0
+  xassign
+  nadd       dp:ptr, -1
+
+  // i += size
+  set        dp:size
+  store      sp:0
+  iadd       dp:index, 4
+
+  jump       labNext
+
+labTerminator:
+  load       dp:ptr
+  set        terminator
+  store      sp:0
+  set        fp:0
+  xassign
+  nadd       dp:ptr, -1
+
+  jump       labNext
+
+labVardiatic:
+  nsave      dp:command, 0
+  load       dp:ptr
+
+labVarLen:
+  add        n:1
+  set        fp:0
+  xget
+  nadd       dp:command, 1
+  cmp        terminator
+  jne        labVarLen
+
+  // copy arguments
+  set        sp:0  
+  store      sp:0
+  load       dp:ptr
+  add        n:1
+  xset       fp:0
+  swap       sp:0
+  load       dp:command
+  dtrans
+
+  set        dp:command
+  store      sp:0
+  iadd       dp:ptr, 4
+
+  // loadClass
+  call       extern:LoadClassByBufferLA(buffer, *index, *size)
+  cmp        n:0
+  jeq        labNotFound 
+
+  // ; !! NOTE : we taking advantage that the operation with sp:0 does not affect the real stack
+  save       sp:0
+  peek       sp:0
+  xrefresh   sp:0
+
+  mov        mssg : "function:params:#constructor[1]"
+
+  call       vt:0
 
   // ; store the result
   load       dp:ptr
@@ -2083,6 +2411,92 @@ labEnd:
 
   close      []
   quit
+
+end
+
+procedure __event_dispatcher
+
+  redirect
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[arr,tmp],[mssg, index]
+
+  get        i:0
+  store      fp:arr
+  
+  nsave      dp:index, 0
+  save       dp:mssg
+
+  // ; copy the call stack
+  load       dp:mssg
+  mlen
+
+  cmp        n:0
+  jeq        labCopyEnd
+
+  set        sp:0
+  store      fp:tmp
+  dalloc
+
+labCopy:
+  add        n:-1
+
+  set        fp:-1
+  xget
+  store      sp:0
+
+  neg
+  peek       fp:tmp
+  xassign
+  neg
+
+  cmp        n:0
+  jne        labCopy
+
+labCopyEnd:
+  peek       fp:arr  
+
+labNext:
+  len
+  xcmp       dp:index  
+  jeq        labEnd
+
+  load       dp:index
+  xget
+  add        n:1
+  save       dp:index
+
+  load       dp:mssg
+  call       vt:0
+  
+  peek       fp:arr  
+  jump       labNext
+
+labEnd:
+  peek       fp:arr
+
+  close      []
+
+end
+
+procedure __enterCritical
+
+  peek        sp:0
+
+labWait:
+  snop
+  trylock
+  jne         labWait  
+
+end
+
+
+procedure __leaveCritical
+
+  peek        sp:0
+  freelock
 
 end
 
@@ -2178,11 +2592,11 @@ end
 
 procedure thread_start
 
-  xloadarg    sp:1
-
   system      3
 
-  open header [arg1],[ptr,envptr,ex_struct:ex_struct_size]
+  open        [arg1],[ptr,envptr,ex_struct:ex_struct_size]
+
+  xloadarg    fp:1
   
   $save       dp:ptr
 
@@ -2210,7 +2624,7 @@ symbol sta_start
 
   system      4
 
-  open header [arg1],[argv, envptr,ex_struct:ex_struct_size]
+  open        [arg1],[argv, envptr,ex_struct:ex_struct_size]
 
   xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
 
@@ -2236,7 +2650,7 @@ symbol mta_start
   mov         n:0
   system      3
 
-  open header [arg1],[envptr,ex_struct:ex_struct_size]
+  open        [arg1],[envptr,ex_struct:ex_struct_size]
   
   xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
 
@@ -2256,7 +2670,9 @@ end
 
 symbol vm_sta_start
 
-  open header [arg1],[envptr,ex_struct:ex_struct_size]
+  system      4
+
+  open        [arg1],[envptr,ex_struct:ex_struct_size]
   
   xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
 

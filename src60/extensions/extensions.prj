@@ -15,7 +15,7 @@
   </project>
   <manifest>
     <name>ELENA Extension Library</name>
-    <version>6.0.0</version>
+    <version>6.0.1</version>
     <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -31,13 +31,22 @@
         <include>text\strings.l</include>
         <include>text\words.l</include>
         <include>math\functions.l</include>
+        <include>math\matrix.l</include>
      </module>
      <module name="routines">
        <include>routines\enumerating.l</include>
        <include>routines\combinations.l</include>
+       <include>routines\compound.l</include>
      </module>
      <module name="scripting">
        <include>scripting\interpreter.l</include>
+       <include>scripting\win_scripts.l</include>
+       <include>scripting\lscript.l</include>
+       <include>scripting\tscript.l</include>
+     </module>
+     <module name="dynamic">
+       <include>dynamic\json.l</include>
+       <include>dynamic\derserializer.l</include>
      </module>
   </files>
 </configuration>

@@ -13,6 +13,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+..\..\bin\elena-cli -pamb amb.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 ..\..\bin\elena-cli -panonymrec anonymrec.l
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
@@ -104,6 +109,26 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 ..\..\bin\elena-cli -ptwentyfour twentyfour.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli gameoflife\gameoflife.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pdynamic_var dynamic_var.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pknutalg knutalg.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pmanboy manboy.l
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

@@ -1,31 +1,32 @@
-// --- Handle ---
-
-public sealed const struct Handle
-{
-   embeddable __ptr value;
-
-   constructor(pointer ptr)
-   {
-      value := ptr
-   }
-
-   bool isUnassigned()
-   {
-      ^ value == 0;
-   }
-}
 
 // --- UnsafePointer ---
 
 public sealed const struct UnsafePointer
 {
-   embeddable __ptr pointer;
+   embeddable __ptr _pointer;
+
+   private clear() : external(system'core_routines'__clearPtr);
+
+   constructor()
+   {
+      self.clear();
+   }
+
+   constructor(pointer ptr)
+   {
+      _pointer := ptr
+   }
+
+   get constructor Default()
+      = new UnsafePointer();   
 
    private readIntPtr(ref int retVal) : external(system'core_routines'__readIntPtr);
 
+   assignPtr(wide str) : external(system'core_routines'__assignPtr); 
+
    bool isUnassigned()
    {
-      ^ pointer == 0;
+      ^ _pointer == 0;
    }
 
    // unsafe code
@@ -102,3 +103,105 @@ public sealed class CallStack
       ^ callStackText
    }
 }
+
+// --- COORD ---
+
+public sealed struct COORD
+{
+   short _x;
+   short _y;
+
+   constructor()
+   {
+      _x := 0;
+      _y := 0;
+   }
+
+   write(short x, short y)
+   {
+      _x := x;
+      _y := y
+   }
+
+   write(COORD r)
+   {
+      short tmp := r.X;
+      _x := tmp;
+
+      tmp := r.Y;
+      _y := tmp
+   }
+    
+   short X
+   {
+      get()
+      {
+         ^ _x
+      }
+   }
+    
+   short Y
+   {    
+      get()
+      {
+         ^ _y
+      }
+   }
+}
+
+// --- SMALL_RECT --
+
+public sealed struct SMALL_RECT
+{
+   short _left;
+   short _top;
+   short _right;
+   short _bottom;
+    
+   short Left
+   {
+      get()
+      {
+         ^ _left
+      }
+   }
+    
+   short Top
+   {
+      get()
+      {
+         ^ _top
+      }
+   }
+    
+   short Right
+   {
+      get()
+      {
+         ^ _right
+      }        
+   }
+    
+   short Bottom
+   {
+      get()
+      {
+         ^ _bottom
+      }
+   }
+    
+   write(SMALL_RECT r)
+   {
+      short tmp := r.Left;
+      _left := tmp;
+        
+      tmp := r.Top;
+      _top := tmp;
+        
+      tmp := r.Right;
+      _right := tmp;
+        
+      tmp := r.Bottom;
+      _bottom := tmp;
+   }
+}    

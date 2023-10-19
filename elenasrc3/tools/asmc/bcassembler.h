@@ -185,6 +185,9 @@ namespace elena_lang
       bool compileCallExt(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
          ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
 
+      bool compileXDispatchMR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
+         ReferenceMap& constants);
+
       bool compileJcc(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
          ByteCodeLabelHelper& lh);
 

@@ -4,7 +4,7 @@ namespace collections
    {
       int _hashMask;
 
-      List<Tuple<TKey, TValue>> _list;
+      List<VarTuple<TKey, TValue>> _list;
       int[][]                   _hashTable; 
 
       private init(int capacity, int hashLength)
@@ -12,7 +12,7 @@ namespace collections
          _hashMask := hashLength;
             
          _hashTable := new int[][](hashLength);
-         _list := new List<Tuple<TKey, TValue>>(capacity);
+         _list := new List<VarTuple<TKey, TValue>>(capacity);
       }
 
       constructor()
@@ -25,7 +25,7 @@ namespace collections
          self.init(capacity,hashLength)
       }      
 
-      private Tuple<TKey, TValue> retrieve(int index, TKey key)
+      private VarTuple<TKey, TValue> retrieve(int index, TKey key)
       {
          auto backet := _hashTable[index];
          if (nil == backet)
@@ -47,7 +47,7 @@ namespace collections
                { ^ item }
          };
     
-         auto new_item := new Tuple<TKey, TValue>(key);
+         auto new_item := new VarTuple<TKey, TValue>(key);
     
          int i := _list.Length;
          _list.append(new_item);
@@ -97,7 +97,7 @@ namespace collections
       /// Returns a dictionary enumerator
       Enumerator<Tuple<TKey, TValue>> enumerator() => _list;
         
-      Array<Tuple<TKey, TValue>> Values = _list.Value;
+      Array<VarTuple<TKey, TValue>> Values = _list.Value;
     
       get TValue[] MapValues()
       {

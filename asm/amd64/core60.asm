@@ -7,6 +7,7 @@ define VEH_HANDLER          10003h
 define GC_COLLECT	    10004h
 define GC_ALLOCPERM	    10005h
 define PREPARE	            10006h
+define THREAD_WAIT          10007h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
@@ -47,6 +48,7 @@ define gc_perm_current       0068h
 
 define et_current            0008h
 define tt_stack_frame        0010h
+define tt_stack_root         0028h
 
 define es_prev_struct        0000h
 define es_catch_addr         0008h
@@ -73,6 +75,9 @@ structure % CORE_SINGLE_CONTENT
   dq 0 // ; et_crtitical_handler   ; +x00   - pointer to ELENA exception handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
   dq 0 // ; tt_stack_frame         ; +x10   - pointer to the stack frame
+  dq 0 // ; reserved
+  dq 0 // ; reserved
+  dq 0 // ; tt_stack_root
 
 end
  
@@ -343,9 +348,20 @@ end
 
 procedure %PREPARE
 
+  ret
+
+end
+
+procedure %THREAD_WAIT
+
 end
 
 // ; ==== Command Set ==
+
+// ; snop
+inline % 2
+
+end
 
 // ; redirect
 inline % 03h // (rbx - object, rdx - message, r10 - arg0, r11 - arg1)
@@ -548,6 +564,19 @@ inline %16h
 
 end
 
+// ; tststck
+inline %17h
+
+  xor  ecx, ecx
+  mov  rax,[data : %CORE_SINGLE_CONTENT + tt_stack_root]
+  cmp  rbx, rsp
+  setl cl
+  cmp  rbx, rax
+  setg ch
+  cmp  ecx, 0
+
+end
+
 // ; dtrans
 inline %18h
 
@@ -696,6 +725,19 @@ inline %02Ah
 
 end
 
+
+// ; trylock
+inline %02Bh
+
+  xor  eax, eax
+
+end
+
+// ; freelock
+inline %02Ch
+
+end
+
 // ; xget
 inline %02Eh
 
@@ -710,6 +752,20 @@ inline %02Fh
 
 end
 
+// ; xfsave
+inline %30h
+
+  fstp qword ptr [rbx]
+
+end
+
+// ; xquit
+inline %34h
+
+  mov  rax, rdx
+  ret
+
+end
 // ; fadd
 inline %070h
 
@@ -751,6 +807,64 @@ inline %073h
   fild  [rax]
   fdivp
   fstp  qword ptr [rbx]
+
+end
+
+// ; shl
+inline %075h
+
+  mov  ecx, __n_1
+  shl  edx, cl
+
+end
+
+// ; shl
+inline %275h
+
+  shl  edx, 1
+
+end
+
+// ; shl
+inline %375h
+
+  shl  edx, 2
+
+end
+
+// ; shl
+inline %475h
+
+  shl  edx, 3
+
+end
+
+// ; shr
+inline %076h
+
+  mov  ecx, __n_1
+  shr  edx, cl
+
+end
+
+// ; shr
+inline %276h
+
+  shr  edx, 1
+
+end
+
+// ; shr
+inline %376h
+
+  shr  edx, 2
+
+end
+
+// ; shr
+inline %476h
+
+  shr  edx, 3
 
 end
 
@@ -1358,7 +1472,7 @@ end
 // ; xsetfp
 inline %09Eh
 
-  lea  rax, [rdx*4]
+  lea  rax, [rdx*8]
   lea  rbx, [rbp + rax + __arg32_1]
 
 end 
@@ -1799,6 +1913,27 @@ labEnd:
                                
 end
 
+// ; xcmpsi
+inline %0C6h
+
+  cmp rdx, qword ptr [rsp + __arg32_1]
+
+end 
+
+// ; xcmpsi 0
+inline %1C6h
+
+  cmp rdx, r10
+
+end 
+
+// ; xcmpsi 1
+inline %2C6h
+
+  cmp rdx, r11
+
+end 
+
 // ; cmpfi
 inline %0C8h
 
@@ -1827,10 +1962,76 @@ inline %2C9h
 
 end 
 
-// ; xloadargsi
-inline %0CDh
+// ; extclosen
+inline %0CAh
+
+  add  rbp, __n_1
+  mov  rsp, rbp
+  pop  rbp
+
+  add  rsp, 24
+  pop  rbp
+  
+end
+
+// ; extclosen 0
+inline %1CAh
+
+  mov  rsp, rbp
+  pop  rbp
+
+  add  rsp, 24
+  pop  rbp
+  
+end
+
+// ; lloadsi
+inline %0CBh
 
   mov rdx, [rsp + __arg32_1]
+
+end 
+
+// ; lloadsi 0
+inline %1CBh
+
+  mov rdx, r10
+
+end 
+
+// ; lloadsi 1
+inline %2CBh
+
+  mov rdx, r11
+
+end 
+
+// ; loadsi
+inline %0CCh
+
+  mov rax, [rsp + __arg32_1]
+  mov edx, eax
+
+end 
+
+// ; loadsi 0
+inline %1CCh
+
+  mov rdx, r10
+
+end 
+
+// ; loadsi 1
+inline %2CCh
+
+  mov rdx, r11
+
+end 
+
+// ; xloadargfi
+inline %0CDh
+
+  mov  rdx, qword ptr [rbp + __arg32_1]
 
 end 
 
@@ -1851,7 +2052,7 @@ end
 // ; xloadarg si:3
 inline %3CDh
 
- // ; mov rdi, rdi - idle operation
+ // ; mov rdx, rdx - idle operation
 
 end 
 
@@ -1903,7 +2104,18 @@ inline %2CFh
 
 end
 
-// ; system inject
+// ; system startup
+inline %4CFh
+
+  finit
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_root], rsp
+
+  mov  rax, rsp
+  call %PREPARE
+
+end
+
+// ; system stack allocation
 inline %5CFh
 
   pop  rsi
@@ -1977,6 +2189,15 @@ inline %0D4h
   mov  rax, [rbp+__arg32_1]
   div  ecx
   mov  dword ptr [rbp+__arg32_1], eax
+
+end
+
+// ; xlabeldpr
+inline %0D6h
+
+  lea  rdi, [rbp + __arg32_1]
+  mov  rcx, __ptr64_2
+  mov  [rdi], rcx
 
 end
 
@@ -2664,8 +2885,17 @@ inline %7F1h
 
 end
 
-// ; openheaderin
+// ; extopenin
 inline %0F2h
+
+  push rbp     
+  push 0 
+
+  xor  eax, eax
+  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
 
   push rbp
   xor  rax, rax
@@ -2681,16 +2911,34 @@ inline %0F2h
 
 end 
 
-// ; openheaderin 0, 0
+// ; extopenin 0, 0
 inline %1F2h
+
+  push rbp     
+  push 0 
+
+  xor  eax, eax
+  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
 
   push rbp
   mov  rbp, rsp
 
 end 
 
-// ; openheaderin 1, 0
+// ; extopenin 1, 0
 inline %2F2h
+
+  push rbp     
+  push 0 
+
+  xor  eax, eax
+  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
 
   push rbp
   mov  rbp, rsp
@@ -2698,9 +2946,18 @@ inline %2F2h
 
 end 
 
-// ; openheaderin 2, 0
+// ; extopenin 2, 0
 inline %3F2h
 
+  push rbp     
+  push 0 
+
+  xor  eax, eax
+  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
+
   push rbp
   xor  rax, rax
   mov  rbp, rsp
@@ -2709,9 +2966,18 @@ inline %3F2h
 
 end 
 
-// ; openheaderin 3, 0
+// ; extopenin 3, 0
 inline %4F2h
 
+  push rbp     
+  push 0 
+
+  xor  eax, eax
+  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
+
   push rbp
   xor  rax, rax
   mov  rbp, rsp
@@ -2721,8 +2987,17 @@ inline %4F2h
 
 end 
 
-// ; openheaderin 0, n
+// ; extopenin 0, n
 inline %5F2h
+
+  push rbp     
+  push 0 
+
+  xor  eax, eax
+  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
 
   push rbp
   xor  rax, rax
@@ -2734,8 +3009,17 @@ inline %5F2h
 
 end 
 
-// ; openheaderin i, 0
+// ; extopenin i, 0
 inline %6F2h
+
+  push rbp     
+  push 0 
+
+  xor  eax, eax
+  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
 
   push rbp
   xor  rax, rax
@@ -3037,6 +3321,22 @@ labNextBaseClass:
 
   mov  rbx, r8
   mov  edx, __arg32_1
+
+end
+
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 9FAh
+
+//; !! temporally commented
+
+end
+
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 0AFAh
+
+//; !! temporally commented
 
 end
 

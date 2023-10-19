@@ -5,5 +5,6 @@ cmp, jne =3, set :$1, jump =2, set :$2 => cmp, set :$1, store sp=0, set :$2, xpe
 cmp, jne =3, set dp:$1, jump =2, set dp:$2 => cmp, set dp:$1, store sp=0, set dp:$2, xpeekeq;
 cmp, jne =3, peek fp:$1, jump =2, peek fp:$2 => cmp, peek fp:$1, store sp=0, peek fp:$2, xpeekeq;
 peek fp:$1, copy, peek fp:#1 => peek fp, copy, idle;
+peek fp:$1, save, peek fp:#1 => peek fp, save, idle;
 open, store fp, close => idle, idle, idle;
 open, store fp, get i, close => idle, idle, get i, idle;

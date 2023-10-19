@@ -35,11 +35,13 @@ void SourceViewModel :: setTraceLine(int row, bool withCursor)
 
 void SourceViewModel :: clearTraceLine()
 {
-   DocumentChangeStatus status = {};
+   if (_currentView != nullptr) {
+      DocumentChangeStatus status = {};
 
-   _currentView->removeMarker(STYLE_TRACE_LINE, status);
+      _currentView->removeMarker(STYLE_TRACE_LINE, status);
 
-   _currentView->notifyOnChange(status);
+      _currentView->notifyOnChange(status);
+   }
 }
 
 void SourceViewModel :: setErrorLine(int row, int column, bool withCursor)

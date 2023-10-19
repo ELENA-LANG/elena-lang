@@ -113,6 +113,9 @@ public extension enumerableOp
    forEach(Func1 f)
       = f.run(cast Enumerator(self.enumerator()));
 
+   forEach(Func2 f)
+      = self.forEach:(t => f(t.Item1,t.Item2));
+
    forEach(fn)
       = self.forEach:(n){ fn(n) };
 
@@ -133,6 +136,15 @@ public extension enumerableOp
 
    selectBy(selector)
       = Selector.new(selector, cast Enumerator(self.enumerator()));
+
+   groupBy(groupFunc)
+      = GroupingEnumerator.new(groupFunc, cast Enumerator(self.enumerator()));
+
+   orderBy(orderFunc)
+      = OrderingEnumerator.new(orderFunc, cast Enumerator(self.enumerator()));
+
+   top(counter)
+      = TopFilter.new(cast int(counter), cast Enumerator(self.enumerator()));
 
    summarize(var)
    {
@@ -203,6 +215,70 @@ public extension enumerableOp
 
    zipForEach(enumerable, func2)
       = self.zipBy(enumerable, func2).forEach:idleFunc1;
+
+   accumulate(variable, operation)
+   {
+      Accumulating.new(variable, operation).run(cast Enumerator(self.enumerator()));
+
+      ^ variable.Value
+   }
+
+   bool allMatchedBy(Func1 f)
+   {
+      auto en := cast Enumerator(self.enumerator());
+      while (en.next())
+      {
+         ifnot (f(*en))
+         {
+            ^ false
+         }
+      };
+     
+      ^ true
+   }
+
+   get MaximalMember()
+   {
+      auto en := cast Enumerator(self.enumerator());
+        
+      object maximal := nil;
+      while (en.next())
+      {
+            var item := *en;
+            if (nil == maximal)
+            {
+                maximal := item
+            }
+            else if (maximal < item)
+            {
+                maximal := item
+            }
+      };
+        
+      ^ maximal   
+   }
+    
+   get MinimalMember()
+   {
+      auto en := cast Enumerator(self.enumerator());
+        
+      object maximal := nil;
+      while (en.next())
+      {
+         var item := *en;
+         if (nil == maximal)
+         {
+            maximal := item
+         }
+         else if (maximal > item)
+         {
+            maximal := item
+         }
+      };
+        
+      ^ maximal   
+   }
+
 }
 
 // --- indexableOp ---
@@ -224,6 +300,20 @@ public extension indexableOp<T>
         
       ^ self
    }
+
+   forEvery(Func<int,T> fn)
+   {
+      Indexer it := self.indexer();
+        
+      while (it.Available)
+      {
+         int i := it.Index;
+            
+         fn(i);
+            
+         it.appendIndex:1
+      }
+   }    
 }
 
 public extension indexableOp
@@ -333,4 +423,29 @@ public extension indexableOp
         
       ^ -1
    }
+
+   bool isSorted(Func2 compareFunc)
+   {
+      auto it := cast Indexer(self.indexer());
+      if (it.Available)
+      {
+         var previous := *it;
+         it.appendIndex:1;
+         while (it.Available)
+         {
+            ifnot (compareFunc(previous, *it))
+            {
+               ^ false
+            };
+                
+            previous := *it;
+            it.appendIndex:1
+         }
+      };
+        
+      ^ true
+   }
+
+   isAscendant()
+      = self.isSorted(ifOrdered);
 }

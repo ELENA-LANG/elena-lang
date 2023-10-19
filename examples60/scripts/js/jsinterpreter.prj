@@ -1,0 +1,26 @@
+<configuration>
+    <project>
+        <executable>interpreter.exe</executable>
+        <options></options>
+        <namespace>interpreter</namespace>
+        <template>console</template>
+    </project>
+    <targets>
+        <target name="js" type="2">
+            <option>[[ #grammar tree ]]</option>
+            <option>~\scripts\jscript60.es</option>
+        </target>
+    </targets>
+    <files>
+        <module name="js" target="js">
+            <include>fibonacci.js</include>
+        </module>
+        <module>
+            <file>main.l</file>
+        </module>
+    </files>
+    <forwards>
+        <forward key="jsprogram">interpreter'js'program</forward>
+        <forward key="program">interpreter'stat_program</forward>
+    </forwards>
+</configuration>

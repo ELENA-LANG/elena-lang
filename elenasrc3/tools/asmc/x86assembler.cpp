@@ -72,51 +72,54 @@ bool X86Assembler :: setOffset(X86Operand& operand, X86Operand disp)
 X86Operand X86Assembler :: defineRegister(ustr_t token)
 {
    if (token.compare("al")) {
-      return X86Operand(X86OperandType::AL);
+      return { X86OperandType::AL };
    }
    else if (token.compare("ah")) {
-      return X86Operand(X86OperandType::AH);
+      return { X86OperandType::AH };
    }
    else if (token.compare("ax")) {
-      return X86Operand(X86OperandType::AX);
+      return { X86OperandType::AX };
    }
    else if (token.compare("eax")) {
-      return X86Operand(X86OperandType::EAX);
+      return { X86OperandType::EAX };
    }
    else if (token.compare("ebx")) {
-      return X86Operand(X86OperandType::EBX);
+      return { X86OperandType::EBX };
    }
    else if (token.compare("cl")) {
-      return X86Operand(X86OperandType::CL);
+      return { X86OperandType::CL };
+   }
+   else if (token.compare("ch")) {
+      return { X86OperandType::CH };
    }
    else if (token.compare("cx")) {
-      return X86Operand(X86OperandType::CX);
+      return { X86OperandType::CX };
    }
    else if (token.compare("ecx")) {
-      return X86Operand(X86OperandType::ECX);
+      return { X86OperandType::ECX };
    }
    else if (token.compare("dl")) {
-      return X86Operand(X86OperandType::DL);
+      return { X86OperandType::DL };
    }
    else if (token.compare("dx")) {
-      return X86Operand(X86OperandType::DX);
+      return { X86OperandType::DX };
    }
    else if (token.compare("edx")) {
-      return X86Operand(X86OperandType::EDX);
+      return { X86OperandType::EDX };
    }
    else if (token.compare("esp")) {
-      return X86Operand(X86OperandType::ESP);
+      return { X86OperandType::ESP };
    }
    else if (token.compare("ebp")) {
-      return X86Operand(X86OperandType::EBP);
+      return { X86OperandType::EBP };
    }
    else if (token.compare("esi")) {
-      return X86Operand(X86OperandType::ESI);
+      return { X86OperandType::ESI };
    }
    else if (token.compare("edi")) {
-      return X86Operand(X86OperandType::EDI);
+      return { X86OperandType::EDI };
    }
-   else return X86Operand(X86OperandType::Unknown);
+   else return { X86OperandType::Unknown };
 }
 
 X86Operand X86Assembler :: defineOperand(ScriptToken& tokenInfo, X86OperandType prefix, ustr_t errorMessage)
@@ -1534,6 +1537,11 @@ bool X86Assembler :: compileCmpxchg(X86Operand source, X86Operand target, Memory
       writer.writeByte(0xB1);
       X86Helper::writeModRM(writer, target, source);
    }
+   else if (source.isR8_M8() && target.isR8()) {
+      writer.writeByte(0x0F);
+      writer.writeByte(0xB0);
+      X86Helper::writeModRM(writer, target, source);
+   }
    else return false;
 
    return true;
@@ -1768,7 +1776,7 @@ bool X86Assembler :: compileFsub(X86Operand source, X86Operand target, MemoryWri
    }
    else if (source.type == X86OperandType::ST && target.type == X86OperandType::ST && target.offset == 0) {
       writer.writeByte(0xDC);
-      writer.writeByte(0xE8 + target.offset);
+      writer.writeByte(0xE8 + source.offset);
    }
    else return false;
 
@@ -2326,6 +2334,11 @@ bool X86Assembler :: compileXadd(X86Operand source, X86Operand target, MemoryWri
       writer.writeByte(0xC0);
       X86Helper::writeModRM(writer, target, source);
    }
+   else if (source.isR8_M8() && target.isR8()) {
+      writer.writeByte(0x0F);
+      writer.writeByte(0xC0);
+      X86Helper::writeModRM(writer, target, source);
+   }
    else return false;
 
    return true;
@@ -2716,11 +2729,17 @@ bool X86Assembler::compileSOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
    else if (tokenInfo.compare("setae")) {
       compileSetcc(tokenInfo, writer, X86JumpType::JAE);
    }
+   else if (tokenInfo.compare("setnc")) {
+      compileSetcc(tokenInfo, writer, X86JumpType::JAE);
+   }
    else if (tokenInfo.compare("sete")) {
       compileSetcc(tokenInfo, writer, X86JumpType::JE);
    }
-   else if (tokenInfo.compare("setnc")) {
-      compileSetcc(tokenInfo, writer, X86JumpType::JAE);
+   else if (tokenInfo.compare("setg")) {
+      compileSetcc(tokenInfo, writer, X86JumpType::JG);
+   }
+   else if (tokenInfo.compare("setl")) {
+      compileSetcc(tokenInfo, writer, X86JumpType::JL);
    }
    else if (tokenInfo.compare("setns")) {
       compileSetcc(tokenInfo, writer, X86JumpType::JNS);

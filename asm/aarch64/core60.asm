@@ -4,7 +4,8 @@ define GC_ALLOC	             10002h
 define VEH_HANDLER           10003h
 define GC_COLLECT	     10004h
 define GC_ALLOCPERM	     10005h
-define PREPARE	            10006h
+define PREPARE	             10006h
+define THREAD_WAIT          10007h
 
 define CORE_TOC              20001h
 define SYSTEM_ENV            20002h
@@ -44,6 +45,7 @@ define gc_perm_current       0068h
 
 define et_current            0008h
 define tt_stack_frame        0010h
+define tt_stack_root         0028h
 
 define es_prev_struct        0000h
 define es_catch_addr         0008h
@@ -73,6 +75,9 @@ structure % CORE_SINGLE_CONTENT
   dq 0 // ; critical_handler       ; +x00   - pointer to ELENA critical exception handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
   dq 0 // ; tt_stack_frame         ; +x10   - pointer to the stack frame
+  dq 0 // ; reserved
+  dq 0 // ; reserved
+  dq 0 // ; tt_stack_root
 
 end
  
@@ -408,7 +413,16 @@ procedure %PREPARE
 
 end
 
+procedure %THREAD_WAIT
+
+end
+
 // ; ==== Command Set ==
+
+// ; snop
+inline % 2
+
+end
 
 // ; redirect
 inline % 03h //; (r15 - object, r14 - message)
@@ -492,7 +506,7 @@ end
 // ; save
 inline %9
 
-  str    x9, [x10]
+  str    w9, [x10]
 
 end
 
@@ -665,6 +679,24 @@ labEnd:
 
 end
 
+// ; tststck
+inline %17h
+
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+  add     x14, x14, # tt_stack_root
+  ldr     x14, [x14]
+
+  cmp     x10, sp
+  cset    x12, lt
+  cmp     x10, x14
+  cset    x13, gt
+  orr     x12, x12, x13
+
+  cmp     x12, 0
+
+end
+
 // ; dtrans
 inline %18h
 
@@ -818,6 +850,17 @@ inline %02Ah
 
 end
 
+
+// ; trylock
+inline %02Bh
+
+end
+
+// ; freelock
+inline %02Ch
+
+end
+
 // ; xget
 inline %02Eh
 
@@ -831,6 +874,21 @@ end
 inline %02Fh
 
   blr     x10
+
+end
+
+// ; xfsave
+inline %30h
+
+  str     d0, [x10]
+
+end
+
+// ; xquit
+inline %034h
+
+  mov     x0, x9
+  ret     x30
 
 end
 
@@ -875,6 +933,23 @@ inline %073h
   scvtf   d18, x19
   fdiv    d17, d17, d18  
   str     d17, [x10]
+
+end
+
+
+// ; shl
+inline %75h
+
+  mov     x18, __n16_1
+  lsl     x9, x9, x18
+
+end
+
+// ; shr
+inline %76h
+
+  mov     x18, __n16_1
+  lsr     x9, x9, x18
 
 end
 
@@ -2183,6 +2258,31 @@ labEnd:
                                
 end
 
+// ; xcmpsi
+inline %0C6h
+
+  add     x11, sp, __arg12_1
+  ldr     x11, [x11]
+  cmp     x9, x11
+
+end 
+
+// ; xcmpsi 0
+inline %1C6h
+
+  mov     x11, x0
+  cmp     x9, x11
+
+end 
+
+// ; xcmpsi 1
+inline %2C6h
+
+  mov     x11, x1
+  cmp     x9, x11
+
+end 
+
 // ; cmpfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %0C8h
@@ -2225,6 +2325,67 @@ inline %2C9h
 
   mov     x11, x1
   cmp     x10, x11
+
+end 
+
+// ; extclosen
+inline %0CAh
+
+  add     x29, x29, __n12_1
+  mov     sp, x29
+  ldp     x29, x30, [sp], #16
+  
+end
+
+// ; extclosen 0
+inline %1CAh
+
+  mov     sp, x29
+  ldp     x29, x30, [sp], #16
+  
+end
+
+// ; lloadsi
+inline %0CBh
+
+  add     x11, sp, __arg12_1
+  ldr     x9, [x11]
+
+end 
+
+// ; lloadsi 0
+inline %1CBh
+
+  mov     x9, x0
+
+end 
+
+// ; lloadsi 1
+inline %2CBh
+
+  mov     x9, x1
+
+end 
+
+// ; loadsi
+inline %0CCh
+
+  add     x11, sp, __arg12_1
+  ldrsw   x9, [x11]
+
+end 
+
+// ; loadsi 0
+inline %1CCh
+
+  mov     x9, x0
+
+end 
+
+// ; loadsi 1
+inline %2CCh
+
+  mov     x9, x1
 
 end 
 
@@ -2279,11 +2440,15 @@ inline %0CFh
 
 end
 
-
-// ; system 4
+// ; system startup
 inline %4CFh
 
   mov     x12, sp
+
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+  add     x14, x14, # tt_stack_root
+  str     x12, [x14]
 
   movz    x17,  code_ptr32lo : %PREPARE
   movk    x17,  code_ptr32hi : %PREPARE, lsl #16
@@ -2358,6 +2523,18 @@ inline %0D4h
   udiv    x18, x18, x17    // ; sp[0] / temp
 
   str     w18, [x19]
+
+end
+
+// ; xhookdpr
+inline %0D6h
+
+  add     x13, x29, __arg12_1
+
+  movz    x16,  __ptr32lo_2
+  movk    x16,  __ptr32hi_2, lsl #16
+
+  str     x16, [x13]
 
 end
 
@@ -3356,7 +3533,7 @@ inline %7F1h
 
 end
 
-// ; openheaderin
+// ; extopenin
 inline %0F2h
 
   stp     x29, x30, [sp, #-16]! 
@@ -3385,7 +3562,7 @@ labEnd:
 
 end 
 
-// ; openheaderin 0, 0
+// ; extopenin 0, 0
 inline %1F2h
 
    stp     x29, x30, [sp, #-16]! 
@@ -3393,7 +3570,7 @@ inline %1F2h
 
 end 
 
-// ; openheaderin 1, 0
+// ; extopenin 1, 0
 inline %2F2h
 
    mov     x11, #0
@@ -3403,7 +3580,7 @@ inline %2F2h
 
 end 
 
-// ; openheaderin 2, 0
+// ; extopenin 2, 0
 inline %3F2h
 
    mov     x11, #0
@@ -3413,7 +3590,7 @@ inline %3F2h
 
 end 
 
-// ; openheaderin 3, 0
+// ; extopenin 3, 0
 inline %4F2h
 
    mov     x11, #0
@@ -3424,7 +3601,7 @@ inline %4F2h
 
 end 
 
-// ; openheaderin 0, n
+// ; extopenin 0, n
 inline %5F2h
 
   stp     x29, x30, [sp, #-16]! 
@@ -3439,7 +3616,7 @@ inline %5F2h
 
 end 
 
-// ; openheaderin i, 0
+// ; extopenin i, 0
 inline %6F2h
 
   stp     x29, x30, [sp, #-16]! 
@@ -3953,6 +4130,22 @@ labNextBaseClass:
   cmp     x22, 0
 //;  jnz  labNextOverloadlist
   bne     labNextOverloadlist
+
+end
+
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 9FAh
+
+//; !! temporally commented
+
+end
+
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 0AFAh
+
+//; !! temporally commented
 
 end
 

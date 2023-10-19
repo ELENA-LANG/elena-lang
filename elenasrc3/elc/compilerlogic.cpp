@@ -673,6 +673,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
       case V_TEMPLATEBASED:
          flags |= elTemplatebased;
          break;
+      case V_MIXIN:
+         flags |= elGroup;
+         break;
       case 0:
          // ignore idle
          break;
@@ -712,6 +715,9 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
          break;
       case V_READONLY:
          attrs.isReadonly = true;
+         break;
+      case V_OVERRIDE:
+         attrs.overrideMode = true;
          break;
       default:
          return false;
@@ -790,6 +796,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
          return true;
       case V_SCRIPTSELFMODE:
          hint = (ref_t)MethodHint::TargetSelf;
+         return true;
+      case V_YIELDABLE:
+         hint = (ref_t)MethodHint::Yieldable;
          return true;
       default:
          return false;
@@ -965,22 +974,54 @@ bool CompilerLogic :: validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_
    return true;
 }
 
-void CompilerLogic :: validateClassDeclaration(ModuleScopeBase& scope, ErrorProcessorBase* errorProcessor, ClassInfo& info,
-   bool& emptyStructure, bool& disptacherNotAllowed, bool& withAbstractMethods)
+inline bool existsNormalMethod(ModuleScopeBase& scope, ClassInfo& info, mssg_t variadicMssg)
 {
+   ref_t dummy = 0;
+   ref_t actionRef = getAction(variadicMssg);
+   ustr_t actionName = scope.module->resolveAction(actionRef, dummy);
+   if (actionName.compare(CONSTRUCTOR_MESSAGE) || actionName.compare(CONSTRUCTOR_MESSAGE2))
+      return false;
+
+   for (auto it = info.methods.start(); !it.eof(); ++it) {
+      auto mssg = it.key();
+
+      if ((mssg & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE) {
+         ustr_t currentActionName = scope.module->resolveAction(getAction(mssg), dummy);
+
+         if (currentActionName.compare(actionName))
+            return true;
+      }
+   }
+
+   return false;
+}
+
+void CompilerLogic :: validateClassDeclaration(ModuleScopeBase& scope, ErrorProcessorBase* errorProcessor, ClassInfo& info,
+   bool& emptyStructure, bool& dispatcherNotAllowed, bool& withAbstractMethods, mssg_t& mixedUpVariadicMessage)
+{
+   bool abstractOne = isAbstract(info);
+   bool withVariadic = withVariadicsMethods(info);
+
    // check abstract methods
-   if (!isAbstract(info)) {
+   if (!abstractOne || withVariadic) {
       for (auto it = info.methods.start(); !it.eof(); ++it) {
          auto mssg = it.key();
          auto methodInfo = *it;
 
-         if (test(methodInfo.hints, (ref_t)MethodHint::Abstract)) {
+         if (!abstractOne && test(methodInfo.hints, (ref_t)MethodHint::Abstract)) {
             IdentifierString messageName;
             ByteCodeUtil::resolveMessageName(messageName, scope.module, mssg);
 
             errorProcessor->info(infoAbstractMetod, *messageName);
 
             withAbstractMethods = true;
+         }
+         if (withVariadic && ((mssg & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE)) {
+            if (existsNormalMethod(scope, info, mssg)) {
+               // NOTE : check only the first mismatched variadic message
+               mixedUpVariadicMessage = mssg;
+               withVariadic = false;
+            }
          }
       }
    }
@@ -993,7 +1034,7 @@ void CompilerLogic :: validateClassDeclaration(ModuleScopeBase& scope, ErrorProc
    if (test(info.header.flags, elNoCustomDispatcher)) {
       auto dispatchInfo = info.methods.get(scope.buildins.dispatch_message);
 
-      disptacherNotAllowed = !dispatchInfo.inherited;
+      dispatcherNotAllowed = !dispatchInfo.inherited;
    }
 }
 
@@ -1043,6 +1084,11 @@ bool CompilerLogic :: isAbstract(ClassInfo& info)
    return test(info.header.flags, elAbstract);
 }
 
+bool CompilerLogic :: withVariadicsMethods(ClassInfo& info)
+{
+   return test(info.header.flags, elWithVariadics);
+}
+
 bool CompilerLogic :: isReadOnly(ClassInfo& info)
 {
    return test(info.header.flags, elReadOnlyRole);
@@ -1076,9 +1122,16 @@ bool CompilerLogic :: isEmbeddableStruct(ClassInfo& info)
 
 bool CompilerLogic :: isEmbeddable(ModuleScopeBase& scope, ref_t reference)
 {
+   if (scope.cachedEmbeddables.exist(reference))
+      return scope.cachedEmbeddables.get(reference);
+
    ClassInfo info;
    if (defineClassInfo(scope, info, reference, true)) {
-      return isEmbeddable(info);
+      auto retVal = isEmbeddable(info);
+
+      scope.cachedEmbeddables.add(reference, retVal);
+
+      return retVal;
    }
 
    return false;
@@ -1099,9 +1152,16 @@ bool CompilerLogic :: isEmbeddableAndReadOnly(ClassInfo& info)
 
 bool CompilerLogic :: isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t reference)
 {
+   if (scope.cachedEmbeddableReadonlys.exist(reference))
+      return scope.cachedEmbeddableReadonlys.get(reference);
+
    ClassInfo info;
    if (defineClassInfo(scope, info, reference, true)) {
-      return isEmbeddableAndReadOnly(info);
+      auto retVal = isEmbeddableAndReadOnly(info);
+
+      scope.cachedEmbeddableReadonlys.add(reference, retVal);
+
+      return retVal;
    }
 
    return false;
@@ -1675,12 +1735,17 @@ bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, mssg_t targe
    return isSignatureCompatible(scope, getSignature(scope, targetMessage), sourceSignatures, len);
 }
 
-bool CompilerLogic :: isMessageCompatibleWithSignature(ModuleScopeBase& scope, mssg_t targetMessage, 
-   ref_t* sourceSignature, size_t len)
+bool CompilerLogic :: isMessageCompatibleWithSignature(ModuleScopeBase& scope, ref_t targetRef, 
+   mssg_t targetMessage, ref_t* sourceSignature, size_t len, int& stackSafeAttr)
 {
    ref_t targetSignRef = getSignature(scope, targetMessage);
 
    if (isSignatureCompatible(scope, targetSignRef, sourceSignature, len)) {
+      if (isStacksafeArg(scope, targetRef))
+         stackSafeAttr |= 1;
+
+      setSignatureStacksafe(scope, targetSignRef, stackSafeAttr);
+
       return true;
    }
    else return false;
@@ -1995,9 +2060,43 @@ bool CompilerLogic :: resolveCallType(ModuleScopeBase& scope, ref_t classRef, ms
    return false;
 }
 
-void CompilerLogic :: verifyMultimethods()
+bool CompilerLogic :: isNeedVerification(ClassInfo& info, VirtualMethodList& implicitMultimethods)
 {
-   
+   // HOTFIX : Make sure the multi-method methods have the same output type as generic one
+   for (auto it = implicitMultimethods.start(); !it.eof(); it++) {
+      auto vm = *it;
+
+      mssg_t message = vm.value1;
+
+      auto methodInfo = info.methods.get(message);
+      ref_t outputRef = methodInfo.outputRef;
+      if (outputRef != 0) {
+         // Bad luck we have to verify all overloaded methods
+         return true;
+      }
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: verifyMultimethod(ModuleScopeBase& scope, ClassInfo& info, mssg_t message)
+{
+   auto methodInfo = info.methods.get(message);
+   if (methodInfo.multiMethod != 0) {
+      auto multiMethodInfo = info.methods.get(methodInfo.multiMethod);
+      ref_t outputRefMulti = multiMethodInfo.outputRef;
+      if (outputRefMulti != 0) {
+         ref_t outputRef = methodInfo.outputRef;
+         if (outputRef == 0) {
+            return false;
+         }
+         else if (!isCompatible(scope, { outputRefMulti }, { outputRef }, true)) {
+            return false;
+         }
+      }
+   }
+
+   return true;
 }
 
 inline ustr_t resolveActionName(ModuleBase* module, mssg_t message)
@@ -2316,4 +2415,14 @@ bool CompilerLogic :: isNumericType(ModuleScopeBase& scope, ref_t& reference)
    }
 
    return false;
+}
+
+bool CompilerLogic :: isLessAccessible(ModuleScopeBase& scope, Visibility sourceVisibility, ref_t targetRef)
+{
+   if (!targetRef)
+      return false;
+
+   Visibility targetVisibility = scope.retrieveVisibility(targetRef);
+
+   return sourceVisibility > targetVisibility;
 }

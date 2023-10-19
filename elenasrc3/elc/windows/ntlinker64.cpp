@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Executive Win64 Linker class body
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "clicommon.h"
@@ -22,9 +22,9 @@ using namespace elena_lang;
 
 // --- Win64NtLinker ---
 
-void Win64NtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableImage& image)
+void Win64NtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableImage& image, PlatformType uiType)
 {
-   WinNtLinker::prepareNtImage(provider, image);
+   WinNtLinker::prepareNtImage(provider, image, uiType);
 
    image.machine = IMAGE_FILE_MACHINE_AMD64;
    image.optionalHeaderSize = IMAGE_SIZEOF_NT_OPTIONAL_HEADER_64;

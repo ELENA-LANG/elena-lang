@@ -34,9 +34,21 @@ public sealed Array<T> : Indexable<T>
 
    static move(Array<T> target, int index, int length, int offset)
    {
-      for (int i := 0, i < length, i += 1)
-      {
-         target[i] := target[i + offset]
+      if (offset > 0) {
+         for (int i := 0, i < length, i += 1)
+         {
+            target[i] := target[i + offset]
+         }
+      }
+      else {
+         int i := length;
+         int j := length - offset;
+         while (i > index) {
+            i -= 1;
+            j -= 1;
+
+            target[j] := target[i];
+         }
       }
    }
 
@@ -225,6 +237,473 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
 
 }
 
+// --- matrixof ---
+
+public sealed Matrix<T>
+{
+   T[] _array;
+   int _rows;
+   int _columns;
+    
+   constructor allocate(int rows, int columns)
+   {
+      _rows := rows;
+      _columns := columns;
+        
+      int len := _rows * _columns;
+        
+      _array := new T[](len)
+   }
+    
+   constructor allocate(rows, columns)
+      <= allocate(cast int(rows), cast int(columns));
+    
+   constructor load(params)
+   {
+      _rows := params.Rows;
+      _columns := params.Columns;
+        
+      int len := _rows * _columns;
+        
+      _array := new T[](/*theRows * theColumns*/len);
+        
+      int i := 0;
+      int j := 0;
+        
+      while (i < _rows)
+      {
+         j := 0;
+         while (j < _columns)
+         {
+            T val := params.at(i,j);
+                
+            self.setAt(i, j, val);
+                
+            j := j + 1
+         };
+            
+         i := i + 1
+      }
+   }    
+    
+   int Length
+   {
+      get()
+      {
+         ^ _rows
+      }
+   }    
+
+   int Columns
+   {
+      get()
+      {
+         ^ _columns
+      }
+   }
+
+   int Rows
+   {
+      get()
+      {
+         ^ _rows
+      }
+   }
+
+   /// Writes an integer value at the specified position
+   setAt(int i, int j, T v)
+   {        
+      int index := i * _columns + j;
+        
+      _array[index] := v
+   }
+
+   /// Reads an integer value at the specified position and saves it into an output variable
+   read(int i, int j, ref T retVal)
+   {
+      int index := i * _columns + j;
+        
+      retVal := _array[index];
+   }
+
+   T at(int i, int j)
+   {
+      self.read(i, j, ref T retVal);
+      ^ retVal
+   }
+
+   /// Returns a row
+   at(i) = new
+   {
+      Length = _columns;
+        
+      at(j)
+         = self.at(i,j);
+        
+      setAt(j, v)
+      {
+         self.setAt(i,j,v)
+      }
+   };
+
+   Enumerator enumerator() 
+   {
+      int i := 0;
+      int j := -1;
+      int length1 := _rows;
+      int length2 := _columns;
+        
+      ^ new Enumerator
+          {
+             get Value() = self.at(i, j);
+              
+             enumerable() = self;
+              
+             reset() { i := 0; j := -1; }
+              
+             bool next()
+             {
+                ifnot (i < length1)
+                {
+                   ^ false
+                };
+                  
+                j := j + 1;
+                  
+                ifnot (j < length2)
+                {
+                   j := -1;
+                   i := i + 1;
+                      
+                   ^ false
+                };
+                  
+                ^ true
+             }
+          }
+   }
+}
+
+// === basic memory classes ===
+
+// --- BitArray ---
+
+public sealed class BitArray
+{
+   int[] _array;
+   int   _length;
+    
+   /// Creates the array with the specified length
+   constructor allocate(int length)
+   {
+      _length := length;
+      _array := new int[](length / 32 + 1)
+   }
+    
+   int Length
+   {
+      get()
+      {
+         ^ _length
+      }
+   }
+    
+   at(index)
+      = self.at(cast int(index));
+    
+   bool at(int index)
+   {
+      int arr_index := index / 32;
+      int bit_index := arr_index * 32;
+      bit_index := index - arr_index;
+        
+      int bit_mask := 1;
+      if (bit_index != 0)
+         { bit_mask := bit_mask $shl bit_index };
+        
+      int bits := _array[arr_index];
+        
+      ^ (bits & bit_mask) != 0
+   }
+
+   setAt(int index, bool value)
+   {
+      int arr_index := index / 32;
+      int bit_index := arr_index * 32;
+      bit_index := index - arr_index;
+        
+      int bit_mask := 1;
+      if (bit_index != 0)
+         { bit_mask := bit_mask $shl bit_index };
+        
+      int bits := _array[arr_index];
+        
+      if(value)
+      { 
+         bits := bits | bit_mask 
+      }
+      else
+      {  
+         bit_mask := bit_mask.BInverted;
+            
+         bits := bits & bit_mask
+      };
+            
+      _array[arr_index] := bits
+   }
+    
+   /// Returns the array enumerator
+   Enumerator<bool> enumerator() = new BitArrayEnumerator(self);
+
+   /// Returns the array indexer
+   Indexer<bool> indexer() = new BitArrayIndexer(self);
+}
+
+// --- BitArray32 ---
+
+public sealed class BitArray32
+{
+   int _value;
+    
+   constructor load(int value)
+   {
+      _value := value
+   }
+    
+   int Length = 32;
+    
+   write(int value)
+   {
+      _value := value
+   }
+    
+   bool at(int index)
+   {
+      int bit_mask := 1;
+      if (index != 0)
+         { bit_mask := bit_mask $shl index };
+        
+      ^ (_value & bit_mask) != 0
+   }
+    
+   setAt(int index, bool value)
+   {
+      int bit_mask := 1;
+      if (index != 0)
+         { bit_mask := bit_mask $shl index };
+        
+      if(value)
+      { 
+         _value := _value | bit_mask 
+      }
+      else
+      {  
+         bit_mask := bit_mask.BInverted;
+            
+         _value := _value & bit_mask
+      }
+   }
+    
+   /// Returns the array enumerator
+   Enumerator<bool> enumerator() = new BitArray32Enumerator(self);
+
+   /// Returns the array indexer
+   Indexer<bool> indexer() = new BitArray32Indexer(self);
+}
+
+// --- IntMatrix ---
+
+public sealed class IntMatrix
+{
+   int[] _array;
+   int   _rows;
+   int   _columns;
+    
+   constructor allocate(int rows, int columns)
+   {
+      _rows := rows;
+      _columns := columns;
+        
+      _array := new int[](columns * rows)
+   }
+        
+   /// Reads the matrix lengths to the output parameter
+   readLengthsTo(ref int rows, ref int columns)
+   {
+      rows := _rows;
+      columns := _columns
+   }
+
+   int Length
+   {
+      get()
+      {
+         ^ _rows
+      }
+   }    
+
+   int Columns
+   {
+      get()
+      {
+         ^ _columns
+      }
+   }
+
+   int Rows
+   {
+      get()
+      {
+         ^ _rows
+      }
+   }
+
+   /// Writes an integer value at the specified position
+   setAt(int i, int j, int v)
+   {
+      int index := i * _columns + j;
+        
+      _array[index] := v
+   }
+
+   int at(int i, int j)
+   {
+      int index := i * _columns + j;
+      int retVal := _array[index];
+        
+      ^ retVal
+   }
+
+   /// Returns a row
+   at(int i) = new Indexable<int>
+   {
+      Length = _columns;
+        
+      Indexer<int> indexer() = new BaseIndexer<int>
+      {
+         this index := 0;
+            
+         this length := self.Columns;
+            
+         get int Value()
+            = self.at(i, index);
+                
+         set Value(int o)
+         {
+            self.setAt(i,index,o);
+         }                        
+      }; 
+        
+      int at(int j)
+         = self.at(i,j);
+        
+      setAt(int j, int v)
+      {
+         self.setAt(i,j,v)
+      }
+   };
+}
+
+// --- RealMatrix ---
+
+public sealed class RealMatrix
+{
+   real[] _array;
+   int    _rows;
+   int    _columns;
+    
+   constructor allocate(int rows, int columns)
+   {
+      _rows := rows;
+      _columns := columns;
+        
+      _array := new real[](columns * rows)
+   }
+        
+   /// Reads the matrix lengths to the output parameter
+   readLengthsTo(ref int rows, ref int columns)
+   {
+      rows := _rows;
+      columns := _columns
+   }
+
+   int Length
+   {
+      get()
+      {
+         ^ _rows
+      }
+   }    
+
+   int Columns
+   {
+      get()
+      {
+         ^ _columns
+      }
+   }
+
+   int Rows
+   {
+      get()
+      {
+         ^ _rows
+      }
+   }
+
+   /// Writes a real value at the specified position
+   setAt(int i, int j, real v)
+   {
+      int index := i * _columns + j;
+        
+      _array[index] := v
+   }
+
+   /// Reads a real value at the specified position and saves it into an output variable
+   read(int i, int j, ref real retVal)
+   {
+      int index := i * _columns + j;
+        
+      retVal := _array[index];
+   }
+
+   real at(int i, int j)
+   {
+      int index := i * _columns + j;
+      real retVal := _array[index];
+        
+      ^ retVal
+   }
+
+   at(int i) = new Indexable<real>
+   {
+      Length = _columns;
+        
+      Indexer<real> indexer() = new BaseIndexer<real>
+      {
+         this index := 0;
+            
+         this length := self.Columns;
+            
+         get real Value()
+            = self.at(i,index);
+                
+         set Value(real o)
+         {
+            self.setAt(i,index,o);
+         }                        
+      }; 
+        
+      real at(int j)
+         = self.at(i,j);
+        
+      setAt(int j, real v)
+      {
+         self.setAt(i,j,v)
+      }
+   };
+}
+
 // --- String ---
 
 public const struct String : BaseValue, 
@@ -256,7 +735,7 @@ public const struct String : BaseValue,
       byte buffer[4];
       int chVal := ch.Value;
       int  length := ch.Length;
-      length := PrimitiveOperations.copyUTF8_2_32(buffer, 0, chVal);
+      length := UTFOperations.convertUTF32_2_8(chVal, buffer, 0, 4);
         
       int offs := 0;
       for (int i := 0, i < size, i := i + 1)
@@ -274,15 +753,15 @@ public const struct String : BaseValue,
 
    /// Creates the copy of a subarray        
    constructor copy(int index, int length, char[] charArray)
-      <= allocate(PrimitiveOperations.calcSubStringLength(index, length, charArray))
+      <= allocate(UTFOperations.calcSubStringLength(index, length, charArray))
    {
-      PrimitiveOperations.copy(this array, index, length, charArray);
+      PrimitiveArrayOperations.copyCharArray(charArray, index, length, this array);
    }
 
    internal constructor fromByteArray(int index, int size, byte[] buffer)
       <= allocate(size)
    {
-      PrimitiveOperations.copy(array, index, size, buffer);
+      PrimitiveArrayOperations.copy(buffer, index, size, array);
 
       // add tailing zero
       byte z := 0;
@@ -300,7 +779,7 @@ public const struct String : BaseValue,
       short buffer[256];            
       if (l < 256)
       {
-         m := shortArrayConvertor.convert(buffer, 0, l, self);
+         m := shortArrayConvertor.convert(self, l, buffer, 0, 256);
 
          ^ WideString.fromShortArray(0, m, buffer)
       };
@@ -314,7 +793,7 @@ public const struct String : BaseValue,
             page := 256
          };
 
-         m := shortArrayConvertor.convert(buffer, 0, page, self.Substring(i,page));
+         m := shortArrayConvertor.convert(self.Substring(i,page), page, buffer, 0, 256);
 
          retVal := retVal.add(WideString.fromShortArray(0, m, buffer));
 
@@ -378,7 +857,11 @@ public const struct String : BaseValue,
          OutOfRangeException.raise()
       };
 
-      ^ PrimitiveOperations.readUTF32(array, index);
+      UTFOperations.convertUTF8_2_32(array, index, len, ref int retVal);
+
+      char ch := retVal;
+
+      ^ ch;
    }
 
    retoverload byte at(int index)
@@ -633,7 +1116,7 @@ public const struct WideString : BaseValue
       short buffer[4];
       int chVal := ch.Value;
       int  length := ch.Length;
-      length := PrimitiveOperations.copyUTF16_2_32(buffer, 0, chVal);
+      length := UTFOperations.convertUTF32_2_16(chVal, buffer, 0, length);
         
       int offs := 0;
       for (int i := 0, i < size, i := i + 1)
@@ -651,15 +1134,15 @@ public const struct WideString : BaseValue
 
    /// Creates the copy of a subarray        
    constructor copy(int index, int length, char[] charArray)
-      <= allocate(PrimitiveOperations.calcSubWideStringLength(index, length, charArray))
+      <= allocate(UTFOperations.calcSubWideStringLength(index, length, charArray))
    {
-      PrimitiveOperations.copy(this array, index, length, charArray);
+      PrimitiveArrayOperations.copyCharArray(charArray, index, length, this array);
    }
 
    internal constructor fromShortArray(int index, int size, short[] buffer)
       <= allocate(size)
    {
-      PrimitiveOperations.copy(array, index, size, buffer);
+      PrimitiveArrayOperations.copy(buffer, index, size, array);
 
       // add tailing zero
       short z := 0;
@@ -675,7 +1158,7 @@ public const struct WideString : BaseValue
       byte buffer[256];            
       if (l < 128)
       {
-         m := byteArrayConvertor.convert(buffer, 0, l, self);
+         m := byteArrayConvertor.convert(self, l, buffer, 0, 256);
 
          ^ String.fromByteArray(0, m, buffer)
       };
@@ -689,7 +1172,7 @@ public const struct WideString : BaseValue
             page := 256
          };
 
-         m := byteArrayConvertor.convert(buffer, 0, page, self.Substring(i,page));
+         m := byteArrayConvertor.convert(self.Substring(i,page), page, buffer, 0, 256);
 
          retVal := retVal.add(String.fromByteArray(0, m, buffer));
 
@@ -738,7 +1221,11 @@ public const struct WideString : BaseValue
          OutOfRangeException.raise()
       };
 
-      ^ PrimitiveOperations.readUTF32(array, index);
+      UTFOperations.convertUTF16_2_32(array, index, len, ref int retVal);
+
+      char ch := retVal;
+
+      ^ ch;
    }
 
    retoverload short at(int index)
@@ -1258,4 +1745,242 @@ public sealed ArrayIndexer : Indexer
          ^ retVal
       }
    }
+}
+
+// --- BitArrayIndexer ---
+
+/// An array indexer
+class BitArrayIndexer : Indexer<bool>
+{
+   BitArray       _array;
+   Reference<int> _index;
+
+   /// Returns the parameter indexer
+   constructor(BitArray array)
+   {
+      _array := array;
+      _index := 0
+   }
+    
+   /// Returns false if the index out of range
+   get bool Available()
+   {
+      int length := _array.Length;
+      int index := _index.Value;
+        
+      ^ index < length
+   }
+
+   /// Returns the current member
+   get bool Value()
+   {
+      int index := _index.Value;
+        
+      ^ _array.at(index)
+   }
+    
+   /// Sets the current member
+   set Value(bool val)
+   {
+      int index := _index.Value;
+        
+      _array.setAt(_index, val)
+   }
+    
+   int Index
+   {
+      /// Reads the current index and saves it into an output parameter
+      get()
+      {
+         int retVal := _index.Value;
+            
+         ^ retVal
+      }
+        
+      /// Sets the index by specified value
+      set(val)
+      {
+         _index.Value := val
+      }
+   }
+    
+   appendIndex(int val)
+   {
+      _index.append(val)
+   }
+   
+   int Length
+   {
+      /// Reads the length to the output parameter    
+      get()
+      {
+         int retVal := _array.Length;
+            
+         ^ retVal
+      }
+   }
+        
+   Indexer cast() = new Indexer { embeddable dispatch() => self; };        
+}
+
+// --- BitArrayEnumerator ---
+
+/// An array enumerator
+class BitArrayEnumerator : Enumerator<bool>
+{
+   BitArray       _array;
+   Reference<int> _index;
+    
+   /// Creates an array enumerator
+   constructor(BitArray a)
+   {
+      _array := a;
+      _index := -1
+   }
+
+   /// Resets the enumerator
+   reset()
+   {
+      _index.Value := -1
+   }
+
+   /// Goes to the next enumeration member and returns true if it is not the last member
+   bool next()
+   {
+      int length := _array.Length;
+        
+      _index.append(1);
+        
+      int index := _index.Value;
+
+      ^ index < length
+   }
+    
+   /// Returns the current object
+   get bool Value()
+   {
+      int index := _index.Value;
+        
+      ^ _array.at(index)
+   }
+        
+   enumerable() = _array;
+    
+   Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+}
+
+// --- BitArray32Indexer ---
+
+/// An array indexer
+class BitArray32Indexer : Indexer<bool>
+{
+   BitArray32     _array;
+   Reference<int> _index;
+
+   /// Returns the parameter indexer
+   constructor(BitArray32 bs)
+   {
+      _array := bs;
+      _index := 0
+   }
+    
+   /// Returns false if the index out of range
+   get bool Available()
+   {
+      int index := _index;
+        
+      ^ index < 32
+   }
+
+   /// Returns the current member
+   get bool Value()
+   {
+      int index := _index;
+        
+      ^ _array.at(index)
+   }
+    
+   /// Sets the current member
+   set Value(bool val)
+   {
+      int index := _index;
+        
+      _array.setAt(index, val)
+   }
+
+   int Index
+   {    
+      /// Reads the current index and saves it into an output parameter
+      get()
+      {
+         int retVal := _index.Value;
+            
+         ^ retVal
+      }
+        
+      /// Sets the index by specified value
+      set(val)
+      {
+         _index.Value := val
+      }
+   }
+    
+   appendIndex(int val)
+   {
+      _index.append(val)
+   }
+    
+   int Length
+   {
+      /// Reads the length to the output parameter    
+      get()
+         = _array.Length;
+//         => _array;
+   }
+  
+   Indexer cast() = new Indexer { embeddable dispatch() => self; };        
+}
+
+// --- BitArray32Enumerator ---
+
+// An array enumerator
+class BitArray32Enumerator : Enumerator<bool>
+{
+   BitArray32     _array;
+   Reference<int> _index;
+    
+   /// Creates an array enumerator
+   constructor(BitArray32 bs)
+   {
+      _array := bs;
+      _index := -1
+   }
+
+   /// Resets the enumerator
+   reset()
+   {
+      _index.Value := -1
+   }
+
+   /// Goes to the next enumeration member and returns true if it is not the last member
+   bool next()
+   {
+      _index.append(1);
+
+      int index := _index;
+
+      ^ index < 32
+   }
+    
+   /// Returns the current object
+   get bool Value()
+   {
+      int index := _index;
+        
+      ^ _array.at(index)
+   }
+        
+   enumerable() = _array;        
+    
+   Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
 }

@@ -5,6 +5,7 @@ define VEH_HANDLER          10003h
 define GC_COLLECT	    10004h
 define GC_ALLOCPERM	    10005h
 define PREPARE	            10006h
+define THREAD_WAIT          10007h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
@@ -49,6 +50,7 @@ define gc_signal             0040h
 
 define et_current            0004h
 define tt_stack_frame        0008h
+define tt_stack_root         0014h
 
 define es_prev_struct        0000h
 define es_catch_addr         0004h
@@ -75,6 +77,9 @@ structure % CORE_SINGLE_CONTENT
   dd 0 // ; et_critical_handler    ; +x00   - pointer to ELENA critical handler
   dd 0 // ; et_current             ; +x04   - pointer to the current exception struct
   dd 0 // ; tt_stack_frame         ; +x08   - pointer to the stack frame
+  dd 0 // ; reserved
+  dd 0 // ; reserved
+  dd 0 // ; tt_stack_root
 
 end
  
@@ -330,9 +335,20 @@ end
 
 procedure %PREPARE
 
+  ret
+
+end
+
+procedure %THREAD_WAIT
+
 end
 
 // ; ==== Command Set ==
+
+// ; snop
+inline % 2
+
+end
 
 // ; redirect
 inline % 03h // (ebx - object, edx - message, esi - arg0, edi - arg1)
@@ -534,6 +550,19 @@ inline %16h
 
 end
 
+// ; tststck
+inline %17h
+
+  xor  ecx, ecx
+  mov  eax,[data : %CORE_SINGLE_CONTENT + tt_stack_root]
+  cmp  ebx, esp
+  setl cl
+  cmp  ebx, eax
+  setg ch
+  cmp  ecx, 0
+
+end
+
 // ; dtrans
 inline %18h
 
@@ -696,6 +725,18 @@ inline %02Ah
 
 end
 
+// ; trylock
+inline %02Bh
+
+  xor  eax, eax
+
+end
+
+// ; freelock
+inline %02Ch
+
+end
+
 // ; xget
 inline %02Eh
 
@@ -707,6 +748,21 @@ end
 inline %02Fh
 
   call ebx
+
+end
+
+// ; xfsave
+inline %30h
+
+  fstp qword ptr [ebx]
+
+end
+
+// ; xquit
+inline %34h
+
+  mov  eax, edx 
+  ret
 
 end
 
@@ -747,6 +803,64 @@ inline %073h
   fild  [esi]
   fdivp
   fstp  qword ptr [ebx]
+
+end
+
+// ; shl
+inline %075h
+
+  mov  ecx, __n_1
+  shl  edx, cl
+
+end
+
+// ; shl
+inline %275h
+
+  shl  edx, 1
+
+end
+
+// ; shl
+inline %375h
+
+  shl  edx, 2
+
+end
+
+// ; shl
+inline %475h
+
+  shl  edx, 3
+
+end
+
+// ; shr
+inline %076h
+
+  mov  ecx, __n_1
+  shr  edx, cl
+
+end
+
+// ; shr
+inline %276h
+
+  shr  edx, 1
+
+end
+
+// ; shr
+inline %376h
+
+  shr  edx, 2
+
+end
+
+// ; shr
+inline %476h
+
+  shr  edx, 3
 
 end
 
@@ -1625,6 +1739,14 @@ inline %0ABh
 
 end 
 
+// ; lsavesi 0
+inline %1ABh
+
+  mov eax, esi
+  xor edx, edx
+
+end 
+
 // ; lloaddp
 inline %0ACh
 
@@ -1853,6 +1975,20 @@ labEnd:
 
 end
 
+// ; xcmpsi
+inline %0C6h
+
+  cmp  edx, [esp + __arg32_1]
+
+end 
+
+// ; xcmpsi 0
+inline %1C6h
+
+  cmp  edx, esi
+
+end 
+
 // ; cmpfi
 inline %0C8h
 
@@ -1874,10 +2010,64 @@ inline %1C9h
 
 end 
 
-// ; xloadargsi
-inline %0CDh
+// ; extclosen
+inline %0CAh
+
+  add  ebp, __n_1
+  mov  esp, ebp
+  pop  ebp
+  
+  add  esp, 8
+  pop  ebp
+
+end
+
+// ; extclosen 0
+inline %1CAh
+
+  mov  esp, ebp
+  pop  ebp
+
+  add  esp, 8
+  pop  ebp
+  
+end
+
+// ; lloadsi
+inline %0CBh
+
+  lea  edi, [esp + __arg32_1]
+  mov  eax, [edi]
+  mov  edx, [edi+4]
+
+end 
+
+// ; lloadsi 0
+inline %1CBh
+
+  mov  eax, esi
+  xor  edx, edx
+
+end 
+
+// ; loadsi
+inline %0CCh
 
   mov edx, [esp + __arg32_1]
+
+end 
+
+// ; loadsi 0
+inline %1CCh
+
+  mov edx, esi
+
+end 
+
+// ; xloadargfi
+inline %0CDh
+
+  mov  edx, [ebp + __arg32_1]
 
 end 
 
@@ -1920,7 +2110,18 @@ inline %2CFh
 
 end
 
-// ; system inject
+// ; system startup
+inline %4CFh
+
+  finit
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_root], esp  
+
+  mov  eax, esp
+  call %PREPARE
+
+end
+
+// ; system stack allocation
 inline %5CFh
 
   mov  [esp+4], esi
@@ -1987,6 +2188,15 @@ inline %0D4h
   mov  eax, [ebp+__arg32_1]
   div  dword ptr [esi]
   mov  [ebp+__arg32_1], eax
+
+end
+
+// ; xlabeldpr
+inline %0D6h
+
+  lea  edi, [ebp + __arg32_1]
+  mov  eax, __ptr32_2
+  mov  [edi], eax
 
 end
 
@@ -2976,10 +3186,16 @@ inline %6F1h
 
 end
 
-// ; openheaderin
+// ; extopenin
 inline %0F2h
 
-  finit
+  push ebp     
+
+  xor  eax, eax
+  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push ebp
+  push eax
+  mov  ebp, esp
 
   push ebp
   xor  eax, eax
@@ -2995,16 +3211,32 @@ inline %0F2h
 
 end 
 
-// ; openheaderin 0, 0
+// ; extopenin 0, 0
 inline %1F2h
+
+  push ebp     
+
+  xor  eax, eax
+  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push ebp
+  push eax
+  mov  ebp, esp
 
   push ebp
   mov  ebp, esp
 
 end 
 
-// ; openheaderin 1, 0
+// ; extopenin 1, 0
 inline %2F2h
+
+  push ebp     
+
+  xor  eax, eax
+  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push ebp
+  push eax
+  mov  ebp, esp
 
   push ebp
   mov  ebp, esp
@@ -3012,9 +3244,17 @@ inline %2F2h
 
 end 
 
-// ; openheaderin 2, 0
+// ; extopenin 2, 0
 inline %3F2h
 
+  push ebp     
+
+  xor  eax, eax
+  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push ebp
+  push eax
+  mov  ebp, esp
+
   push ebp
   xor  eax, eax
   mov  ebp, esp
@@ -3023,9 +3263,17 @@ inline %3F2h
 
 end 
 
-// ; openheaderin 3, 0
+// ; extopenin 3, 0
 inline %4F2h
 
+  push ebp     
+
+  xor  eax, eax
+  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push ebp
+  push eax
+  mov  ebp, esp
+
   push ebp
   xor  eax, eax
   mov  ebp, esp
@@ -3035,8 +3283,16 @@ inline %4F2h
 
 end 
 
-// ; openheaderin 0, n
+// ; extopenin 0, n
 inline %5F2h
+
+  push ebp     
+
+  xor  eax, eax
+  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push ebp
+  push eax
+  mov  ebp, esp
 
   push ebp
   xor  eax, eax
@@ -3048,8 +3304,16 @@ inline %5F2h
 
 end 
 
-// ; openheaderin i, 0
+// ; extopenin i, 0
 inline %6F2h
+
+  push ebp     
+
+  xor  eax, eax
+  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push ebp
+  push eax
+  mov  ebp, esp
 
   push ebp
   xor  eax, eax
@@ -3128,6 +3392,13 @@ end
 inline %5F6h
 
   mov  esi, [esp+4]
+
+end
+
+// ; xmovsisi 1, 0
+inline %6F6h
+
+  mov  [esp+__arg32_1], esi
 
 end
 
@@ -3239,7 +3510,7 @@ labNextBaseClass:
 
 end
 
-// ; dispatchmr
+// ; xdispatchmr
 // ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 5FAh
 
@@ -3318,6 +3589,197 @@ labNextBaseClass:
   pop  ebx
   mov  esi, [esp+4]                      // ; restore arg0
   mov  edx, __arg32_1
+
+end
+
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 9FAh
+
+  mov  [esp+4], esi                      // ; saving arg0
+  lea  eax, [esp + __n_2]
+
+  mov  ecx, __n_1
+  push ecx
+  push edx 
+  push ebx
+
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  test esi, esi
+  jz   labEnd
+
+labNextList:
+  xor  edx, edx
+  mov  ebx, [esi] // ; message from overload list
+
+labNextOverloadlist:
+  shr  ebx, ACTION_ORDER
+  mov  edi, mdata : %0
+  mov  ecx, [esp+4]
+  mov  ebx, [edi + ebx * 8 + 4]
+  and  ecx, ARG_MASK
+  lea  ebx, [ebx - 4]
+
+labNextParam:
+  sub  ecx, 1
+  jnz  short labMatching
+
+  mov  ecx, [esp+8]
+  pop  ebx
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  add  esp, 8
+  mov  eax, [esi + edx * 8 + 4]
+  mov  edx, [esi + edx * 8]
+  mov  esi, [esp+4]                      // ; restore arg0
+  jmp  eax
+
+labMatching:
+  mov  edi, [eax + ecx * 4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
+  test  edi, edi
+  cmovz edi, esi
+
+  mov  edi, [edi - elVMTOffset]
+  mov  esi, [ebx + ecx * 4]
+
+labNextBaseClass:
+  cmp  esi, edi
+  jz   labNextParam
+  mov  edi, [edi - elPackageOffset]
+  and  edi, edi
+  jnz  short labNextBaseClass
+
+  mov  ecx, [esp+8]
+  mov  ebx, [esp]
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  add  edx, 1
+  mov  esi, [esi]
+  mov  ebx, [esi + edx * 8] // ; message from overload list
+  and  ebx, ebx
+  jnz  labNextOverloadlist
+
+  add  [esp+8], 1
+  mov  ebx, [esp]
+  mov  ecx, [esp+8]
+
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  test esi, esi
+  jnz  labNextList
+
+labEnd:
+  pop  ebx
+  pop  edx
+  add  esp, 4
+  mov  esi, [esp+4]                      // ; restore arg0
+
+end
+
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 0AFAh
+
+  mov  [esp+4], esi                      // ; saving arg0
+  lea  eax, [esp + __n_2]
+
+  push edx 
+  mov  ecx, __n_1
+  push ecx
+  xor  ecx, ecx
+  push ecx
+  push ecx
+  push ebx
+
+  mov  ebx, eax 
+
+labCountParam:
+  lea  ebx, [ebx+4]
+  cmp  [ebx], -1
+  lea  ecx, [ecx+1]
+  jnz  short labCountParam
+  mov  [esp+4], ecx 
+
+  mov  ebx, [esp]
+  mov  ecx, [esp+12]
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  test esi, esi
+  jz   labEnd
+
+labNextList:
+  xor  edx, edx
+  mov  ebx, [esi] // ; message from overload list
+
+labNextOverloadlist:
+  shr  ebx, ACTION_ORDER
+  mov  edi, mdata : %0
+  mov  ebx, [edi + ebx * 8 + 4]
+  xor  ecx, ecx
+
+  lea  ebx, [ebx - 4]
+  mov  [esp+8], ebx
+
+labNextParam:
+  add  ecx, 1
+  cmp  ecx, [esp+4]
+  jnz  short labMatching
+
+  mov  ecx, [esp+12]
+  pop  ebx
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  add  esp, 16
+  mov  eax, [esi + edx * 8 + 4]
+  mov  edx, [esi + edx * 8]
+  mov  esi, [esp+4]                      // ; restore arg0
+  jmp  eax
+
+labMatching:
+  mov    esi, [esp+8]
+  lea    edi, [esi+4]
+  cmp    [edi], 0
+  cmovnz esi, edi
+  mov    [esp+8], esi
+
+  mov  edi, [eax + ecx * 4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
+  test  edi, edi
+  cmovz edi, esi
+
+  mov  edi, [edi - elVMTOffset]
+  mov  esi, [esp+8]
+  mov  esi, [esi]
+
+labNextBaseClass:
+  cmp  esi, edi
+  jz   labNextParam
+  mov  edi, [edi - elPackageOffset]
+  and  edi, edi
+  jnz  short labNextBaseClass
+
+  mov  ecx, [esp+12]
+  mov  ebx, [esp]
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  add  edx, 1
+  mov  ebx, [esi + edx * 8] // ; message from overload list
+  and  ebx, ebx
+  jnz  labNextOverloadlist
+
+  add  [esp+12], 1
+  mov  ebx, [esp]
+  mov  ecx, [esp+12]
+
+  mov  esi, [ebx + ecx * 4]   // ; get next overload list
+  test esi, esi
+  jnz  labNextList
+
+labEnd:
+  pop  ebx
+  add  esp, 12
+
+  pop  edx
+  mov  esi, [esp+4]                      // ; restore arg0
 
 end
 
@@ -3495,5 +3957,20 @@ inline %1FEh
 
   call extern __ptr32_1
   mov  edx, eax
+
+end
+
+// ; callext
+inline %6FEh
+
+  mov  [esp], esi
+  call extern __ptr32_1
+
+end
+
+// ; callext
+inline %7FEh
+
+  call extern __ptr32_1
 
 end

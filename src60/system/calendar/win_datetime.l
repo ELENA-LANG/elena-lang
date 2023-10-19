@@ -270,7 +270,7 @@ namespace calendar
       {
          byte buffer[127];
     
-         int length := extern KERNEL32.GetTimeFormatW(
+         int length := extern KERNEL32.GetTimeFormatA(
             0,flags,self,0,buffer,255);
                 
          if (length == 0)

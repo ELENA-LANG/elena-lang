@@ -219,6 +219,7 @@ namespace elena_lang
       void doNewProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, ProjectSettingsBase& prjDialog, 
          IDEModel* model);
       bool doOpenProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      void doOpenProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, path_t path);
       bool doCloseProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
       bool doSaveProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model, bool forcedMode);
 

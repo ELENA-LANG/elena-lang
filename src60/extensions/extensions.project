@@ -25,7 +25,7 @@
   </project>
   <manifest>
     <name>ELENA Extension Library</name>
-    <version>6.0.0</version>
+    <version>6.0.1</version>
     <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -41,6 +41,7 @@
         <include>text/strings.l</include>
         <include>text/words.l</include>
         <include>math/functions.l</include>
+        <include>math/matrix.l</include>
      </module>
      <module name="routines">
        <include>routines/enumerating.l</include>

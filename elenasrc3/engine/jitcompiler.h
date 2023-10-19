@@ -79,7 +79,7 @@ namespace elena_lang
 
       CodeGenerator* codeGenerators();
 
-      virtual int calcFrameOffset(int argument) = 0;
+      virtual int calcFrameOffset(int argument, bool extMode) = 0;
       virtual int calcTotalSize(int numberOfFields) = 0;
       virtual int calcTotalStructSize(int size) = 0;
 
@@ -143,6 +143,7 @@ namespace elena_lang
       friend void compileBreakpoint(JITCompilerScope* scope);
       friend void compileClose(JITCompilerScope* scope);
       friend void compileOpen(JITCompilerScope* scope);
+      friend void compileExtOpen(JITCompilerScope* scope);
       friend void compileXOpen(JITCompilerScope* scope);
       friend void compileJump(JITCompilerScope* scope);
       friend void compileJeq(JITCompilerScope* scope);
@@ -209,7 +210,8 @@ namespace elena_lang
 
       void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) override;
 
-      void populatePreloaded(uintptr_t eh_table) override;
+      void populatePreloaded(
+         uintptr_t eh_table, uintptr_t th_single_content) override;
 
       addr_t allocateTLSIndex(ReferenceHelperBase* helper, MemoryWriter& writer) override;
 
@@ -234,9 +236,9 @@ namespace elena_lang
    class JITCompiler32 : public JITCompiler
    {
    protected:
-      int calcFrameOffset(int argument) override
+      int calcFrameOffset(int argument, bool extMode) override
       {
-         return 4 + (argument > 0 ? align(argument + 8, 4) : 0);
+         return (extMode ? 16  : 4) + (argument > 0 ? align(argument + 8, 4) : 0);
       }
 
       int calcTotalSize(int numberOfFields) override;
@@ -310,9 +312,9 @@ namespace elena_lang
    class JITCompiler64 : public JITCompiler
    {
    protected:
-      int calcFrameOffset(int argument) override
+      int calcFrameOffset(int argument, bool extMode) override
       {
-         return 8 + (argument > 0 ? align(argument + 16, 16) : 0);
+         return (extMode ? 40 : 8) + (argument > 0 ? align(argument + 16, 16) : 0);
       }
 
       int calcTotalSize(int numberOfFields) override;
@@ -435,6 +437,7 @@ namespace elena_lang
    void compileFree(JITCompilerScope* scope);
    void compileClose(JITCompilerScope* scope);
    void compileOpen(JITCompilerScope* scope);
+   void compileExtOpen(JITCompilerScope* scope);
    void compileXOpen(JITCompilerScope* scope);
    void compileBreakpoint(JITCompilerScope* scope);
    void compileJump(JITCompilerScope* scope);

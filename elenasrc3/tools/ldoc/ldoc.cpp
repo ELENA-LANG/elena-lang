@@ -18,6 +18,9 @@ constexpr auto ArrayPrefix = "'$auto'system@Array#1&";
 
 constexpr auto ArrayLink = "system.html#Array&lt;T1&gt;";
 
+constexpr auto ARRAY_TEMPLATE_PREFIX = "Array&lt;T";
+constexpr auto REF_TEMPLATE_PREFIX = "Reference&lt;T";
+
 using namespace elena_lang;
 
 constexpr auto DESCRIPTION_SECTION = "'meta$descriptions";
@@ -192,7 +195,7 @@ bool parseTemplateType(IdentifierString& line, size_t index, bool argMode)
       line.append("ref ");
       noCurlybrackets = true;
    }
-   else if (argMode && (*temp).startsWith(ArrayPrefix)) {
+   else if ((*temp).startsWith(ArrayPrefix)) {
       // HOTFIX : recognize array argument
       temp.cut(0, getlength(ArrayPrefix));
 
@@ -364,17 +367,32 @@ void writeType(TextFileWriter& writer, ustr_t type, bool fullReference = false)
    }
 
    writer.writeText("<SPAN CLASS=\"memberNameLink\">");
-   if (type.find('\'') != NOTFOUND_POS) {
+   if (type.findStr(ARRAY_TEMPLATE_PREFIX) != NOTFOUND_POS) {
+      writer.writeText("<A HREF=\"system.html#Array&lt;T1&gt;\">");
+      writer.writeText(type);
+      writer.writeText("</A>");
+   }
+   else if (type.findStr(REF_TEMPLATE_PREFIX) != NOTFOUND_POS) {
+      writer.writeText("<A HREF=\"system.html#Reference&lt;T1&gt;\">");
+      writer.writeText(type);
+      writer.writeText("</A>");
+   }
+   else if (type.find('\'') != NOTFOUND_POS) {
       writer.writeText("<A HREF=\"");
 
       size_t index = type.findStr("&lt;");
       NamespaceString ns(type);
       if (index != NOTFOUND_POS) {
-         for (size_t i = index; i >= 0; i--) {
+         size_t i = index;
+         while (true) {
             if (type[i] == '\'') {
                ns.copy(type, i);
                break;
             }
+            if (i != 0) {
+               i--;
+            }
+            else break;
          }
       }
 
@@ -1393,7 +1411,7 @@ bool isTemplateDeclaration(ustr_t referenceName)
    if (referenceName.findSub(index + 1, '#') != NOTFOUND_POS)
       return false;
 
-   return referenceName.findStr("@T1") != NOTFOUND_POS && referenceName.findStr("$private");
+   return referenceName.findStr("@T1") != NOTFOUND_POS/* && referenceName.findStr("$private") != NOTFOUND_POS*/;
 }
 
 void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
@@ -1499,6 +1517,11 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
                info->shortDescr.copy(descr);
          }
          else if (!extensionRef){
+            if (classClassRef && info->classCompleted)
+               return;
+            if (!classClassRef && info->completed)
+               return;
+
             info->virtualMode = false;
 
             info->prefix.copy(*prefix);
@@ -1518,6 +1541,9 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             loadDescriptions(_module->mapReference(*descrName), descriptions);
 
             loadConstructors(info, classClassRef, &descriptions);
+
+            // HOTFIX : to skip duplicates
+            info->classCompleted = true;
          }
          else if (extensionRef != 0) {
             DescriptionMap descriptions(nullptr);
@@ -1540,6 +1566,9 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             loadDescriptions(_module->mapReference(*descrName), descriptions);
 
             loadClassMembers(info, reference, &descriptions);
+
+            // HOTFIX : to skip duplicates
+            info->completed = true;
          }
       }
       else if (_module->mapSection(reference | mskSymbolRef, true)) {

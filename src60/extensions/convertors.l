@@ -1,14 +1,15 @@
 import system'text;
 import system'collections;
 import system'routines;
+import system'calendar;
 
 singleton stringExConvertor
 {
 //    string convert(RealMatrix a)
 //        = realmatrixExConvertor.toString(a);
-//
-//    string convert(IntMatrix a)
-//        = intmatrixExConvertor.toString(a);
+
+    string convert(IntMatrix a)
+        = intmatrixExConvertor.toString(a);
 
    string convert(Indexer it)
    {
@@ -93,6 +94,71 @@ public singleton arrayConvertorEx
       = arr;
 }
 
+// --- intmatrixExConvertor ---
+
+public singleton intmatrixExConvertor
+{
+   IntMatrix convert(Array a)
+   {
+      int n := a.Length;
+      int m := a[0].length;
+
+      ^ IntMatrix.allocate(n, m).populate:(int i, int j => a.at(i).at(j).toInt() )
+   }   
+    
+   string toString(IntMatrix matrix)
+   {
+      auto output := new TextBuilder();
+        
+      int l := 0;
+      matrix.readLengthsTo(ref int n, ref int m);
+        
+      for (int i := 0, i < n, i += 1)
+      {
+         for (int j := 0, j < m, j += 1)
+         {
+            int r := matrix.at(i, j);
+                
+            output.write:r.write:","
+         };
+         l := output.Length;
+         l -= 1;
+         output.Length := l;
+            
+         output.write(newLineConstant)
+      };
+        
+      ^ output.Value
+   }
+    
+   wide toWide(IntMatrix matrix)
+   {
+      auto output := new TextBuilder();
+        
+      int l := 0;
+      matrix.readLengthsTo(ref int n, ref int m);
+        
+      for (int i := 0, i < n, i += 1)
+      {
+         for (int j := 0, j < m, j += 1)
+         {
+            int r := matrix.at(i, j);
+                
+            output.write:r.write:","
+         };
+         l := output.Length;
+         l -= 1;
+         output.Length := l;
+            
+         output.write(newLineConstant)
+      };
+        
+      wide ret := output.Value;
+        
+      ^ ret
+   }
+}
+
 // --- enumerableConvertor ---
 
 singleton enumerableConvertor
@@ -104,12 +170,40 @@ singleton enumerableConvertor
       = new Enumerable { Enumerator enumerator() = o.enumerator(); };
 }
 
-// --- convertOp ---
-
-public extension convertOp
+public singleton byteArrayExConvertor
 {
-   convertTo(target)
-      = new Variant(self).saveTo(target);   
+   byte[] convert(string s)
+   {
+      int    i := 0;
+      byte[] retVal := nil;
+      int    length := s.Length; 
+      int    remaining := length;
+            
+      while (i < length)
+      {
+         byte tmp[64];
+         int  tmp_len := 64;
+         int  len := remaining;
+         if (len > tmp_len)
+            { len := tmp_len };
+              
+         UTF8Encoder.toByteArray(s, i, ref len, tmp, 0, ref tmp_len);
+                
+         if (nil == retVal)
+         { 
+            retVal := class Array<byte>.copy(tmp, 0, tmp_len)
+         }
+         else
+         { 
+            retVal := retVal.add(tmp_len, tmp) 
+         };
+                
+         i := i + len;
+         remaining := remaining - len
+      };
+            
+      ^ retVal
+   }  
 }
 
 // --- stringConvertor ---
@@ -179,10 +273,41 @@ public extension arrayConvertOp
 
 }
 
+// --- intArrayConvertOp ---
+public extension intArrayConvertOp
+{
+   IntMatrix toIntMatrix()
+      = intmatrixExConvertor.convert(self);
+}
+
 // --- convertorOp ---
 
 public extension convertorOp
 {
    convertTo(target)
       = new Variant(self).saveTo(target);
+
+   char toChar()
+      = charConvertor.convert:self;
+
+   byte[] toByteArray()
+      = byteArrayExConvertor.convert:self;
+}
+
+// --- convertor ---
+
+public singleton intConvertExt
+{ 
+   generic(n)
+   {
+      /*MessageName*/var mssg := __received.MessageName;
+
+      ^ mssg(new ExtensionVariable(n, extensions'intConvertOp))
+   }
+}
+
+public extension dateFormatterOp : Date
+{
+   string toShortTimeString()
+      = cast TimeStruct(self).toShortTime();
 }

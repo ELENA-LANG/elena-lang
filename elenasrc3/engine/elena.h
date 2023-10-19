@@ -578,7 +578,8 @@ namespace elena_lang
 
       virtual void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) = 0;
 
-      virtual void populatePreloaded(uintptr_t eh_table) = 0;
+      virtual void populatePreloaded(
+         uintptr_t eh_table, uintptr_t th_single_content) = 0;
 
       virtual void* getSystemEnv() = 0;
 
@@ -1103,9 +1104,10 @@ namespace elena_lang
       {
          struct Source { addr_t nameRef; } source;
          struct Module { addr_t nameRef; int flags; } classSource;
-         struct Step { addr_t address; } step;
-         struct Local { addr_t nameRef; int offset; } local;
-         struct Field { addr_t nameRef; int offset; } field;
+         struct Step   { addr_t address; } step;
+         struct Local  { addr_t nameRef; int offset; } local;
+         struct Field  { addr_t nameRef; int offset; } field;
+         struct Info   { addr_t nameRef; int size; } info;
          struct Offset { pos_t disp; } offset;
       } addresses;
 

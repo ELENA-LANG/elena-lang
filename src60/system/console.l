@@ -8,25 +8,29 @@ public interface IConsoleReader
     
     abstract char read();
     
-//    get abstract bool KeyAvailable();
+    get abstract bool KeyAvailable();
 }
 
 // --- IConsoleWriter ---
 
 public interface IConsoleWriter
 {
-    abstract write(wide s);
-    abstract write(string s);
+   abstract write(wide s);
+   abstract write(string s);
     
+   abstract clear();
+
+   abstract setCursorPosition(int x, int y);
+
 //    abstract refresh();
 }
 
-sealed class Console
+public sealed class Console
 {
    IConsoleReader reader;
    IConsoleWriter writer;
 
-   constructor(IConsoleReader reader, IConsoleWriter writer)
+   internal constructor(IConsoleReader reader, IConsoleWriter writer)
    {
       this reader := reader;
       this writer := writer;
@@ -53,6 +57,17 @@ sealed class Console
       char retVal := reader.read();
         
       ^ retVal
+   }
+
+   get bool KeyAvailable()
+      => reader;   
+
+   setCursorPosition(int x, int y)
+      => writer;
+
+   clear()
+   {
+      writer.clear()
    }
 
    string readLine()

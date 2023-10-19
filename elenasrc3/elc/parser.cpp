@@ -39,6 +39,8 @@ parse_key_t Parser :: resolveTerminal(SourceInfo& info)
          return _terminalKeys.identifier;
       case dfaReference:
          return _terminalKeys.reference;
+      case dfaGlobal:
+         return _terminalKeys.globalreference;
       case dfaQuote:
       case dfaQuoteCode:
          return _terminalKeys.string;
@@ -110,18 +112,21 @@ void Parser :: parse(UStrReader* source, SyntaxWriterBase* writer)
    TerminalInfo terminalInfo;
    ParserStack  stack(0);
 
+   List<char*, freestr> dynamicStrings(nullptr);
    SourceReader reader(4, source);
 
    stack.push(pkStart);
    do {
-      terminalInfo.info = reader.read(_buffer, IDENTIFIER_LEN);
+      terminalInfo.info = reader.read(_buffer, IDENTIFIER_LEN, dynamicStrings);
       terminalInfo.key = resolveTerminal(terminalInfo.info);
 
       if (!derive(terminalInfo, stack, writer))
          throw ParserError(_presenter->getMessage(errInvalidSyntax), terminalInfo.info.lineInfo, terminalInfo.info.symbol);
 
       if (test(terminalInfo.key, pkTraceble))
-         writer->appendTerminal(terminalInfo.key, _buffer, terminalInfo.info.lineInfo);
+         writer->appendTerminal(terminalInfo.key, terminalInfo.info.symbol, terminalInfo.info.lineInfo);
 
    } while (terminalInfo.key != eof);
+
+   dynamicStrings.clear();
 }

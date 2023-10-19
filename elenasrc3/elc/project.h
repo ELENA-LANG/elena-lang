@@ -51,6 +51,8 @@ namespace elena_lang
       PlatformType SystemTarget();
       PlatformType Platform();
       PlatformType TargetType();
+      PlatformType UITargetType();
+      PlatformType ThreadModeType();
 
       ustr_t ProjectName()
       {

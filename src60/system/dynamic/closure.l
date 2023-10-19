@@ -42,6 +42,28 @@ public struct MessageFunction : TapeFunction
    mixin function(params object[] args) : external(system'core_routines'__mssg_closure);
 }
 
+// --- FuncFunction ---
+
+public struct FuncFunction : TapeFunction
+{
+   Message  message;
+   int      targetIndex;
+    
+   constructor(string message, int targetIndex)
+      <= load(new Message(message), targetIndex);
+    
+   constructor load(string message, int targetIndex)
+      <= load(new Message(message), targetIndex);
+    
+   constructor load(Message message, int targetIndex)
+   {
+      this message := message;
+      this targetIndex := targetIndex;
+   }
+    
+   mixin function(params object[] args) : external(system'core_routines'__funcmssg_closure);
+}
+
 // --- ExtensionMessageFunction ---
 
 public class ExtensionMessageFunction : TapeFunction
@@ -78,11 +100,30 @@ public struct SavingFunction : TapeFunction
    mixin function(params object[] args) : external(system'core_routines'__saving_closure);
 }
 
+public struct CopyToStackFunction : TapeFunction
+{
+   int index;
+   int offs;
+    
+   constructor(int index, int offs)
+   {
+        this index := index;
+        this offs := offs;
+   }
+    
+   mixin function(params object[] args) : external(system'core_routines'__copytostack_closure);
+}
+
 // --- AllocFunction ---
 
 public struct AllocFunction : TapeFunction
 {
    int size;
+    
+   constructor(string strSize)
+   {
+      this size := intConvertor.convert(strSize)
+   }
     
    constructor(int size)
    {
@@ -115,6 +156,11 @@ public struct LocalFunction : TapeFunction
    constructor(int index)
    {
       this index := index
+   }
+    
+   constructor(string strIndex)
+   {
+      this index := intConvertor.convert(strIndex)
    }
     
    mixin function(params object[] args) : external(system'core_routines'__local_closure);

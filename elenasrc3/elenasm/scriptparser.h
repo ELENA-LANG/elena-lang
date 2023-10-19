@@ -48,6 +48,8 @@ namespace elena_lang
    public:
       virtual bool eof() = 0;
 
+      virtual bool turnSymbolMode() = 0;
+
       virtual ScriptBookmark read() = 0;
 
       virtual ustr_t lookup(ScriptBookmark& bm) = 0;
@@ -81,6 +83,8 @@ namespace elena_lang
       bool compare(ustr_t value) override;
 
       void reset() override;
+
+      bool turnSymbolMode() override;
 
       ScriptEngineReader(UStrReader* textReader);
       ScriptEngineReader(UStrReader* textReader, CoordMap* coordinates);

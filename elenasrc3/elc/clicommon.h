@@ -149,10 +149,10 @@ enum class TemplateType
 
 enum class Visibility
 {
-   Private,
-   Internal,
-   Public,
-   Protected
+   Private = 1,
+   Internal = 2,
+   Protected = 3,
+   Public = 4,
 };
 
 struct BranchingInfo
@@ -177,6 +177,7 @@ struct BuiltinReferences
    ref_t   literalReference;
    ref_t   wideReference;
    ref_t   messageReference, extMessageReference;
+   ref_t   messageNameReference;
    ref_t   wrapperTemplateReference;
    ref_t   arrayTemplateReference;
    ref_t   argArrayTemplateReference;
@@ -191,6 +192,7 @@ struct BuiltinReferences
    mssg_t  init_message;
    mssg_t  add_message, sub_message, mul_message, div_message;
    mssg_t  band_message, bor_message, bxor_message;
+   mssg_t  and_message, or_message, xor_message;
    mssg_t  refer_message, set_refer_message;
    mssg_t  if_message, iif_message;
    mssg_t  equal_message;
@@ -207,6 +209,7 @@ struct BuiltinReferences
       longReference = realReference = 0;
       literalReference = wideReference = 0;
       messageReference = extMessageReference = 0;
+      messageNameReference = 0;
       wrapperTemplateReference = 0;
       arrayTemplateReference = argArrayTemplateReference = 0;
       closureTemplateReference = lazyExpressionReference = tupleTemplateReference = 0;
@@ -217,6 +220,7 @@ struct BuiltinReferences
       invoke_message = init_message = 0;
       add_message = sub_message = mul_message = div_message = 0;
       band_message = bor_message = bxor_message = 0;
+      and_message = or_message = xor_message = 0;
       refer_message = set_refer_message = 0;
       if_message = iif_message = 0;
       equal_message = 0;
@@ -278,9 +282,12 @@ public:
    int                  ptrSize;
 
    bool                 tapeOptMode;
+   bool                 threadFriendly;
 
    Map<ref_t, SizeInfo> cachedSizes;
    Map<ref_t, ref_t>    cachedClassReferences;
+   Map<ref_t, bool>     cachedEmbeddableReadonlys;
+   Map<ref_t, bool>     cachedEmbeddables;
 
    virtual bool isStandardOne() = 0;
 
@@ -333,6 +340,8 @@ public:
 
    virtual ExternalInfo mapExternal(ustr_t dllAlias, ustr_t functionName) = 0;
 
+   virtual Visibility retrieveVisibility(ref_t reference) = 0;
+
    ModuleScopeBase(ModuleBase* module,
       ModuleBase* debugModule,
       pos_t stackAlingment, 
@@ -340,14 +349,17 @@ public:
       pos_t ehTableEntrySize,
       int minimalArgList,
       int ptrSize,
-      bool tapeOptMode
+      bool tapeOptMode,
+      bool threadFriendly
    ) :
       predefined(0),
       attributes(0),
       aliases(0),
       operations(0),
       cachedSizes({}),
-      cachedClassReferences(0)
+      cachedClassReferences(0),
+      cachedEmbeddableReadonlys(false),
+      cachedEmbeddables(false)
    {
       this->module = module;
       this->debugModule = debugModule;
@@ -357,6 +369,7 @@ public:
       this->minimalArgList = minimalArgList;
       this->ptrSize = ptrSize;
       this->tapeOptMode = tapeOptMode;
+      this->threadFriendly = threadFriendly;
    }
 };
 
@@ -461,6 +474,7 @@ struct FieldAttributes
    bool     isReadonly;
    bool     inlineArray;
    bool     fieldArray;
+   bool     overrideMode;
 };
 
 // --- CompilerBase ---
@@ -676,7 +690,7 @@ protected:
    ErrorProcessorBase* _errorProcessor;
 
 public:
-   virtual LinkResult run(ProjectBase& project, ImageProviderBase& provider) = 0;
+   virtual LinkResult run(ProjectBase& project, ImageProviderBase& provider, PlatformType uiType) = 0;
 
    LinkerBase(ErrorProcessorBase* errorProcessor)
    {
@@ -714,6 +728,18 @@ public:
 
    virtual ~SysLibraryLoaderBase() = default;
 };
+
+// --- VirtualMethodList ---
+enum class VirtualType : int
+{
+   None = 0,
+   Multimethod,
+   EmbeddableWrapper,
+   AbstractEmbeddableWrapper
+};
+
+typedef Pair<mssg_t, VirtualType, 0, VirtualType::None>  VirtualMethod;
+typedef List<VirtualMethod>                              VirtualMethodList;
 
 }
 

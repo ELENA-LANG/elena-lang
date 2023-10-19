@@ -62,7 +62,7 @@ namespace elena_lang
    protected:
       ImageFormatter* _imageFormatter;
 
-      virtual void prepareNtImage(ImageProviderBase& provider, WinNtExecutableImage& image);
+      virtual void prepareNtImage(ImageProviderBase& provider, WinNtExecutableImage& image, PlatformType uiType);
 
       void writeDOSStub(path_t appPath, FileWriter& file);
       void writeExecutableHeader(WinNtExecutableImage& image, FileWriter& file);
@@ -73,7 +73,7 @@ namespace elena_lang
       bool createDebugFile(ImageProviderBase& provider, WinNtExecutableImage& image, path_t debugFilePath);
 
    public:
-      LinkResult run(ProjectBase& project, ImageProviderBase& code) override;
+      LinkResult run(ProjectBase& project, ImageProviderBase& code, PlatformType uiType) override;
 
       WinNtLinker(ErrorProcessorBase* errorProcessor, ImageFormatter* imageFormatter)
          : LinkerBase(errorProcessor)

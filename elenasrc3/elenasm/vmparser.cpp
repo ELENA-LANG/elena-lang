@@ -43,6 +43,17 @@ bool VMTapeParser :: parseDirective(ScriptEngineReaderBase& reader, MemoryDump* 
          }
          else throw SyntaxError("Invalid directive", bm.lineInfo);
       }
+      else if (reader.compare("#set")) {
+         ScriptBookmark bm = reader.read();
+         if (reader.compare("preloaded")) {
+            bm = reader.read();
+            if (bm.state == dfaIdentifier) {
+               writer.write(VM_PRELOADED_CMD, reader.lookup(bm));
+            }
+            else throw SyntaxError("Invalid directive", bm.lineInfo);
+         }
+         else throw SyntaxError("Invalid directive", bm.lineInfo);
+      }
       else if (reader.compare("#postfix")) {
          ScriptBookmark bm = reader.read();
 
@@ -63,7 +74,7 @@ int VMTapeParser :: writeBuildScriptArgumentList(ScriptEngineReaderBase& reader,
 
    pos_t position = writer.writeAndGetArgPosition(VM_ALLOC_CMD, 0);
 
-   size_t counter = 0;
+   int counter = 0;
    ScriptBookmark bm = callStack.pop();
    while (!bm.compare(terminator)) {
       writeBuildScriptStatement(reader, bm, callStack, writer);
@@ -77,7 +88,7 @@ int VMTapeParser :: writeBuildScriptArgumentList(ScriptEngineReaderBase& reader,
 
    // NOTE : we need to reverse the order of arguments
    if (counter > 1) {
-      for (size_t i = 0; i < counter; i++) {
+      for (int i = 0; i < counter; i++) {
          writer.fixArg(argPositions[i], counter - i - 1);
       }
    }

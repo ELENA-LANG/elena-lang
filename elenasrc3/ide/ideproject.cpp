@@ -11,7 +11,9 @@ using namespace elena_lang;
 // --- ProjectModel ---
 
 ProjectModel :: ProjectModel(IDEStatus* status)
-   : lastOpenFiles(nullptr), sources(nullptr), addedSources(nullptr),
+   : lastOpenFiles(nullptr),
+   lastOpenProjects(nullptr),
+   sources(nullptr), addedSources(nullptr),
    breakpoints({}), projectTypeList(nullptr)
 {
    this->status = status;
@@ -21,14 +23,6 @@ ProjectModel :: ProjectModel(IDEStatus* status)
    this->empty = true;
    this->started = false;
    this->notSaved = false;
-
-#ifdef _M_IX86
-   this->paths.libraryRoot.copy("C:\\Alex\\ELENA\\lib60\\");      // !! temporal
-#else
-   this->paths.libraryRoot.copy("C:\\Alex\\ELENA\\lib60_64\\");      // !! temporal
-#endif
-
-   this->paths.librarySourceRoot.copy("C:\\Alex\\ELENA\\src60\\");// !! temporal
 
    // !!NOTE : make sure the path separator should tail the path
    if (this->paths.librarySourceRoot[this->paths.librarySourceRoot.length() - 1] != PATH_SEPARATOR)

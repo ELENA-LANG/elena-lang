@@ -55,7 +55,7 @@ void init(HMODULE hModule)
    // !! temporal : hard-coded constants
    machine = new ELENARTMachine(
       *rootPath, *execPath, *configPath, CURRENT_PLATFORM,
-      __routineProvider.RetrieveMDataPtr((void*)IMAGE_BASE, 0x1000000));
+      __routineProvider.RetrieveMDataPtr(UInt32ToPtr(IMAGE_BASE), 0x1000000));
 }
 
 // --- API export ---
@@ -85,7 +85,7 @@ EXTERN_DLL_EXPORT void InitializeMTLA(SystemEnv* env, SymbolList* entry, void* c
    fflush(stdout);
 #endif
 
-   int index = machine->allocateThreadEntry(env);
+   size_t index = machine->allocateThreadEntry(env);
    __routineProvider.InitMTAExceptionHandling(env, index, criricalHandler);
    __routineProvider.InitMTASignals(env, index);
 
@@ -210,6 +210,11 @@ EXTERN_DLL_EXPORT mssg_t LoadActionLA(const char* actionName)
 EXTERN_DLL_EXPORT int LoadExtensionDispatcherLA(const char* moduleList, mssg_t message, void* output)
 {
    return machine->loadExtensionDispatcher(moduleList, message, output);
+}
+
+EXTERN_DLL_EXPORT size_t LoadClassMessagesLA(void* classPtr, mssg_t* output, size_t skip, size_t maxLength)
+{
+   return machine->loadClassMessages(classPtr, output, skip, maxLength);
 }
 
 EXTERN_DLL_EXPORT void GetRandomSeedLA(SeedStruct& seed)

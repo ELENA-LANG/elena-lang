@@ -1,0 +1,13 @@
+<configuration>
+    <project>
+        <executable>linterpreter.exe</executable>
+        <options></options>
+        <namespace>linterpreter</namespace>
+        <template>vm_console</template>
+    </project>
+    <files>
+        <module>
+            <file>main.l</file>
+        </module>
+    </files>
+</configuration>

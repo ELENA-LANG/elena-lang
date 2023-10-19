@@ -760,7 +760,7 @@ void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader
                vaddress = resolve(
                   _loader->retrieveReferenceInfo(referenceInfo.module, fieldInfo.valueRef & ~mskAnyRef,
                      mask, _forwardResolver),
-                  mskVMTRef, false);
+                  mask, false);
          }
 
          assert(vaddress != INVALID_REF);
@@ -1282,6 +1282,13 @@ Pair<mssg_t, addr_t> JITLinker :: parseExtMessageLiteral(ustr_t messageLiteral, 
    return retVal;
 }
 
+ustr_t JITLinker :: retrieveResolvedAction(ref_t reference)
+{
+   ref_t dummy = 0;
+   return _mapper->retrieveAction(reference, dummy);
+}
+
+
 addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMask)
 {
    ReferenceInfo vmtReferenceInfo = referenceInfo;
@@ -1503,7 +1510,11 @@ void JITLinker :: complete(JITCompilerBase* compiler, ustr_t superClass)
    // fix attribute image - specify the attribute size
    MemoryBase* aSection = _imageProvider->getADataSection();
    MemoryWriter aWriter(aSection);
-   aWriter.align(8, 0);
+
+   // HOTFIX : do align the attribute table only for the virtual mode
+   if (_virtualMode)
+      aWriter.align(8, 0);
+
    aWriter.seek(0);
    aWriter.writePos(aSection->length());
 }
@@ -1533,6 +1544,9 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
    if (address == INVALID_ADDR) {
       switch (sectionMask) {
          case mskSymbolRef:
+            address = resolveBytecodeSection(referenceInfo, sectionMask,
+               _loader->getSection(referenceInfo, sectionMask, mskMetaSymbolInfoRef, silentMode));
+            break;
          case mskProcedureRef:
             address = resolveBytecodeSection(referenceInfo, sectionMask, 
                _loader->getSection(referenceInfo, sectionMask, mskMetaSymbolInfoRef, silentMode));

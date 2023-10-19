@@ -1,0 +1,16 @@
+<configuration>
+  <platform key="Win_x86">
+     <project>
+        <executable>simple.exe</executable>
+     </project>
+  </platform>
+  <project>
+     <namespace>swapp</namespace>
+     <template>gui</template>
+  </project>
+  <files>
+     <module>
+        <include>main.l</include>
+     </module>
+  </files>
+</configuration>

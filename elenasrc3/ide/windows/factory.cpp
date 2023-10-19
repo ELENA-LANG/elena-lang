@@ -173,6 +173,17 @@ IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel,
    _model->projectModel.paths.appPath.copy(*_pathSettings.appPath);
    _model->projectModel.paths.compilerPath.copy(CLI_PATH);
    _model->projectModel.paths.vmTerminalPath.copy(ELT_CLI_PATH);
+
+   _model->projectModel.paths.libraryRoot.copy(*_model->projectModel.paths.appPath);
+#ifdef _M_IX86
+   
+   _model->projectModel.paths.libraryRoot.combine("..\\lib60\\");      // !! temporal
+#else
+   _model->projectModel.paths.libraryRoot.combine("..\\lib60_64\\");      // !! temporal
+#endif
+
+   _model->projectModel.paths.librarySourceRoot.copy(*_model->projectModel.paths.appPath);
+   _model->projectModel.paths.librarySourceRoot.combine("..\\src60\\");// !! temporal
 }
 
 void IDEFactory :: registerClasses()

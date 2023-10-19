@@ -51,7 +51,7 @@ namespace text
     
 //      get multiret Value(ref wide r)
 //      {
-//            r := WideString.copy(0, theLength.Value, theBuffer);
+//            r := WideString.copy(0, _length.Value, theBuffer);
 //      }
     
       wide cast()
@@ -148,145 +148,145 @@ namespace text
          }
       }
 
-//        private readIndex(string s, ref int i, ref int retVal)
-//        {
-//            char ch := $0;
-//            int  n := 0;
-//            int  v := 0;
-//            
-//            int i_val := i;
-//            
-//            s.read(i_val, ref ch);
-//            while (ch != $125)
-//            {
-//                n := intConvertor.convert(ch);
-//                if(n >= 30h && n <= 39h)
-//                {               
-//                    n := n - 30h;
-//                    
-//                    v := v * 10;
-//                    v := v + n
-//                }
-//                else
-//                { 
-//                    InvalidArgumentException.raise()
-//                };
-//                    
-//                i := i + 1;
-//                i_val := i;
-//                s.read(i_val, ref ch)
-//            };
-//            
-//            retVal := v
-//        }
-//    
-//        writeFormatted(string s, params object[] args)
-//        {
-//            int  len := s.Length;
-//            int  i := 0;
-//            char ch := $0;
-//            int  chlen := 0;
-//            int  index := 0;
-//            
-//            while (i < len)
-//            {
-//                s.read(i, ref ch);
-//                
-//                if (ch == $123)
-//                { 
-//                    i := i + 1;
-//                    
-//                    self.readIndex(s, ref i, ref index);
-//                    self.write(args[index]);
-//                    
-//                    chlen := 1
-//                }
-//                else
-//                {
-//                    self.write(ch);
-//                    chlen := ch.Length
-//                };
-//                
-//                i := i + chlen
-//            }
-//        }
-//    
-//        fill(string s, int counter)
-//        {
-//            for (int i := 0, i < counter, i += 1)
-//            {
-//                self.write(s)
-//            }
-//        }
-//    
-//        fill(wide s, int counter)
-//        {
-//            for (int i := 0, i < counter, i += 1)
-//            {
-//                self.write(s)
-//            }
-//        }
-//    
-//        fill(char ch, int counter)
-//        {
-//            int i := 0;
-//            while (i < counter)
-//            {
-//                self.write(ch);
-//                
-//                i += 1
-//            }
-//        }
-//    
-//        insert(int index, int length, char[] array)
-//        {
-//            self.reserve(length);
-//            
-//            theBuffer.move(index, theLength.Value, length);
-//            
-//            theBuffer.write(index, length, array);
-//            
-//            theLength.append(length)
-//        }
-//
-//        insert(int index, string s)
-//        {
-//            int length := 0;
-//            UTF8Encoding.charCount(s, ref length);
-//    
-//            self.reserve(length);
-//            
-//            theBuffer.move(index, cast int(theLength), length);
-//            
-//            s.save(index, theBuffer, ref length);
-//            
-//            theLength.append(length)
-//        }
-//
-//        insert(int index, wide s)
-//        {
-//            int length := 0;
-//            UTF16Encoding.charCount(s, ref length);
-//    
-//            self.reserve(length);
-//            
-//            theBuffer.move(index, cast int(theLength), length);
-//            
-//            s.save(index, theBuffer, ref length);
-//            
-//            theLength.append(length)
-//        }
-//        
-//        insert(int index, char ch)
-//        {
-//            self.reserve(1);
-//            
-//            theBuffer.move(index, cast int(theLength), 1);
-//            
-//            theBuffer.write(index, ch);
-//            
-//            theLength.append(1)
-//        }
+      private int readIndex(string s, ref int i)
+      {
+         char ch := $0;
+         int  n := 0;
+         int  v := 0;
+            
+         int i_val := i;
+            
+         ch := s[i_val];
+         while (ch != $125)
+         {
+            n := intConvertor.convert(ch);
+            if(n >= 30h && n <= 39h)
+            {               
+               n := n - 30h;
+                    
+               v := v * 10;
+               v := v + n
+            }
+            else
+            { 
+               InvalidArgumentException.raise()
+            };
+                    
+            i := i + 1;
+            i_val := i;
+            ch := s[i_val]
+         };
+            
+         ^ v
+      }
+    
+      writeFormatted(string s, params object[] args)
+      {
+         int  len := s.Length;
+         int  i := 0;
+         char ch := $0;
+         int  chlen := 0;
+         int  index := 0;
+            
+         while (i < len)
+         {
+            ch := s[i];
+                
+            if (ch == $123)
+            { 
+               i := i + 1;
+                    
+               index := self.readIndex(s, ref i);
+               self.write(args[index]);
+                    
+               chlen := 1
+            }
+            else
+            {
+               self.write(ch);
+               chlen := ch.Length
+            };
+                
+            i := i + chlen
+         }
+      }
+    
+      fill(string s, int counter)
+      {
+         for (int i := 0, i < counter, i += 1)
+         {
+            self.write(s)
+         }
+      }
+    
+      fill(wide s, int counter)
+      {
+         for (int i := 0, i < counter, i += 1)
+         {
+            self.write(s)
+         }
+      }
+    
+      fill(char ch, int counter)
+      {
+         int i := 0;
+         while (i < counter)
+         {
+            self.write(ch);
+                
+            i += 1
+         }
+      }
+    
+      insert(int index, int length, char[] array)
+      {
+         self.reserve(length);
+         
+         int bufLen := *_length;   
+         Array<char>.move(_buffer, index, bufLen, -length);
+         Array<char>.copyTo(_buffer, array, index, length);
+            
+         _length.append(length)
+      }
+
+      insert(int index, string s)
+      {
+         int length := UTF8Encoding.getCharCount(s);
+    
+         self.reserve(length);
+         
+         int bufLen := *_length;   
+         Array<char>.move(_buffer, index, bufLen, -length);
+            
+         s.save(0, s.Length, _buffer, index);
+            
+         _length.append(length)
+      }
+
+      insert(int index, wide s)
+      {
+         int length := UTF16Encoding.getCharCount(s);
+    
+         self.reserve(length);
+            
+         int bufLen := *_length;   
+         Array<char>.move(_buffer, index, bufLen, -length);
+            
+         s.save(0, s.Length, _buffer, index);
+            
+         _length.append(length)
+      }
+        
+      insert(int index, char ch)
+      {
+         self.reserve(1);
+            
+         _buffer.move(index, cast int(_length), 1);
+            
+         _buffer.write(index, ch);
+            
+         _length.append(1)
+      }
 
       int indexOf(int position, char value)
       {
@@ -430,7 +430,7 @@ namespace text
 //            if (length == 0)
 //                { ^ emptyWideString };
 //                
-//            ^ WideString.copy(index, length, theBuffer)
+//            ^ WideString.copy(index, length, _buffer)
 //        }
 
       delete(int index, int length)
@@ -446,7 +446,7 @@ namespace text
     
 //        trim(int n)
 //        {
-//            theLength.reduce(n)
+//            _length.reduce(n)
 //        }
    }
 }

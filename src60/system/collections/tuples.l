@@ -11,7 +11,7 @@ namespace collections
          Item1 := o1
       }
         
-      T1 Item1 : prop;
+      T1 Item1 : rprop;
 
       at(int index)
       {
@@ -45,7 +45,44 @@ namespace collections
          Item1 := o1
       }
         
-      T1 Item1 : prop;
+      T1 Item1 : rprop;
+      T2 Item2 : rprop;
+
+      at(int index)
+      {
+         index =>
+            0 { ^ Item1 }
+            1 { ^ Item2 }
+            : { OutOfRangeException.raise() }
+      }      
+
+      setAt(int index, object val)
+      {
+         index =>
+            0 { Item1 := val }
+            1 { Item2 := val }
+            : { OutOfRangeException.raise() }
+      }
+   }
+
+   public sealed VarTuple<T1, T2>
+   {
+      constructor()
+      {
+      }    
+        
+      constructor(T1 o1, T2 o2)
+      {
+         Item1 := o1;
+         Item2 := o2
+      }
+        
+      constructor(T1 o1)
+      {
+         Item1 := o1
+      }
+        
+      T1 Item1 : rprop;
       T2 Item2 : prop;
 
       at(int index)
@@ -78,9 +115,9 @@ namespace collections
          Item3 := o3
       }
         
-      T1 Item1 : prop;
-      T2 Item2 : prop;
-      T3 Item3 : prop;
+      T1 Item1 : rprop;
+      T2 Item2 : rprop;
+      T3 Item3 : rprop;
 
       at(int index)
       {
@@ -115,10 +152,10 @@ namespace collections
          Item4 := o4
       }
         
-      T1 Item1 : prop;
-      T2 Item2 : prop;
-      T3 Item3 : prop;
-      T4 Item4 : prop;
+      T1 Item1 : rprop;
+      T2 Item2 : rprop;
+      T3 Item3 : rprop;
+      T4 Item4 : rprop;
 
       at(int index)
       {
@@ -156,11 +193,11 @@ namespace collections
          Item5 := o5;
       }
         
-      T1 Item1 : prop;
-      T2 Item2 : prop;
-      T3 Item3 : prop;
-      T4 Item4 : prop;
-      T5 Item5 : prop;
+      T1 Item1 : rprop;
+      T2 Item2 : rprop;
+      T3 Item3 : rprop;
+      T4 Item4 : rprop;
+      T5 Item5 : rprop;
 
       at(int index)
       {
@@ -201,12 +238,12 @@ namespace collections
          Item6 := o6;
       }
         
-      T1 Item1 : prop;
-      T2 Item2 : prop;
-      T3 Item3 : prop;
-      T4 Item4 : prop;
-      T5 Item5 : prop;
-      T6 Item6 : prop;
+      T1 Item1 : rprop;
+      T2 Item2 : rprop;
+      T3 Item3 : rprop;
+      T4 Item4 : rprop;
+      T5 Item5 : rprop;
+      T6 Item6 : rprop;
 
       at(int index)
       {

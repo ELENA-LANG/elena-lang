@@ -18,14 +18,17 @@ using namespace elena_lang;
 
 CodeGenerator _codeGenerators[256] =
 {
-   loadNop, compileBreakpoint, loadNop, loadOp, loadOp, loadOp, loadOp, loadOp,
+   loadNop, compileBreakpoint, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
-   loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadNop,
+   loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadNop,
 
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
-   loadOp, loadOp, loadOp, loadNop, loadNop, loadNop, loadOp, loadOp,
+   loadOp, loadOp, loadOp, loadOp, loadOp, loadNop, loadOp, loadOp,
+
+   loadOp, loadNop, loadNop, loadNop, loadOp, loadNop, loadNop, loadNop,
+   loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -36,10 +39,7 @@ CodeGenerator _codeGenerators[256] =
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
-   loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
-
-   loadOp, loadOp, loadOp, loadOp, loadNop, loadNop, loadNop, loadNop,
+   loadOp, loadOp, loadOp, loadOp, loadNop, loadNOp, loadNOp, loadNop,
    loadFrameDispOp, loadFrameDispOp, loadFrameDispOp, loadFrameDispOp, loadFrameDispOp, loadFrameDispOp, loadFrameDispOp, loadFrameDispOp,
 
    loadROp, loadFrameDispOp, loadLenOp, loadIndexOp, loadROp, loadROp, loadStackIndexOp, loadStackIndexOp,
@@ -54,16 +54,16 @@ CodeGenerator _codeGenerators[256] =
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadVMTIndexOp, loadMOp, compileJlt,
    compileJge, compileJgr, compileJle, loadNop, loadNop, loadNop, loadNop, loadNop,
 
-   loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadNop, loadNop,
-   loadFrameIndexOp, loadStackIndexOp, loadNop, loadNop, loadNop, loadArgIndexOp, loadROp, loadSysOp,
+   loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadStackIndexOp, loadNop,
+   loadFrameIndexOp, loadStackIndexOp, compileClose, loadStackIndexOp, loadStackIndexOp, loadFrameIndexOp, loadROp, loadSysOp,
 
-   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, loadNop, loadRROp,
+   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadNop, compileHookDPR, loadRROp,
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, compileXOpen, loadRROp,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp2, compileHookDPR, loadNewOp,
    loadDPNOp, loadDPNOp, loadONOp, loadONOp, loadVMTROp, loadMROp, loadRROp, loadRROp,
 
-   compileOpen, loadStackIndexROp, compileOpen, loadStackIndexFrameIndexOp, loadNewOp, loadNewNOp, loadStackIndexIndexOp, loadCreateNOp,
+   compileOpen, loadStackIndexROp, compileExtOpen, loadStackIndexFrameIndexOp, loadNewOp, loadNewNOp, loadStackIndexIndexOp, loadCreateNOp,
    loadIROp, loadFrameIndexROp, compileDispatchMR, compileDispatchMR, loadVMTROp, loadMROp, loadCallOp, loadNop,
 };
 
@@ -83,19 +83,19 @@ constexpr ref_t coreConstants[coreConstantNumber] =
 };
 
 // preloaded gc routines
-constexpr int coreFunctionNumber = 6;
+constexpr int coreFunctionNumber = 7;
 constexpr ref_t coreFunctions[coreFunctionNumber] =
 {
-   INVOKER, GC_ALLOC, EXCEPTION_HANDLER, GC_COLLECT, GC_ALLOCPERM, PREPARE
+   INVOKER, GC_ALLOC, EXCEPTION_HANDLER, GC_COLLECT, GC_ALLOCPERM, PREPARE, THREAD_WAIT
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 158;
+constexpr size_t bcCommandNumber = 170;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
    ByteCode::FreeI, ByteCode::SaveDP, ByteCode::StoreFI, ByteCode::OpenIN, ByteCode::XStoreSIR,
-   ByteCode::OpenHeaderIN, ByteCode::CallExtR, ByteCode::MovSIFI, ByteCode::PeekFI, ByteCode::Load,
+   ByteCode::ExtOpenIN, ByteCode::CallExtR, ByteCode::MovSIFI, ByteCode::PeekFI, ByteCode::Load,
    ByteCode::SaveSI, ByteCode::CallR, ByteCode::Quit, ByteCode::MovM, ByteCode::CallVI,
    ByteCode::StoreSI, ByteCode::Redirect, ByteCode::NewIR, ByteCode::XFlushSI, ByteCode::Copy,
    ByteCode::NewNR, ByteCode::CallMR, ByteCode::VCallMR, ByteCode::DispatchMR, ByteCode::CopyDPN,
@@ -119,12 +119,14 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::XJump, ByteCode::MLen, ByteCode::DAlloc, ByteCode::SetSP, ByteCode::DTrans,
    ByteCode::XAssign, ByteCode::OrN, ByteCode::LSaveDP, ByteCode::LLoad, ByteCode::LSaveSI,
    ByteCode::ConvL, ByteCode::XLCmp, ByteCode::System, ByteCode::XCreateR, ByteCode::MulN,
-   ByteCode::LLoadDP, ByteCode::XLoadArgSI, ByteCode::XLoad, ByteCode::XLLoad, ByteCode::XSetFP,
+   ByteCode::LLoadDP, ByteCode::XLoadArgFI, ByteCode::XLoad, ByteCode::XLLoad, ByteCode::XSetFP,
    ByteCode::XAddDP, ByteCode::SelULtRR, ByteCode::UDivDPN, ByteCode::FRoundDP, ByteCode::FAbsDP,
    ByteCode::FSqrtDP, ByteCode::FExpDP, ByteCode::FLnDP, ByteCode::FSinDP, ByteCode::FCosDP,
    ByteCode::FArctanDP, ByteCode::FPiDP, ByteCode::FillIR, ByteCode::XFillR, ByteCode::XStoreI,
    ByteCode::BCopy, ByteCode::WCopy, ByteCode::XPeekEq, ByteCode::SelGrRR, ByteCode::FIAdd,
-   ByteCode::FISub,ByteCode::FIMul,ByteCode::FIDiv,
+   ByteCode::FISub,ByteCode::FIMul,ByteCode::FIDiv, ByteCode::SNop, ByteCode::TstStck,
+   ByteCode::Shl, ByteCode::Shr, ByteCode::XLabelDPR, ByteCode::TryLock, ByteCode::FreeLock,
+   ByteCode::XQuit, ByteCode::ExtCloseN, ByteCode::XCmpSI, ByteCode::LoadSI, ByteCode::XFSave
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
@@ -1242,25 +1244,36 @@ void elena_lang::loadCallOp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
+   int prefix = 0;
+   int arg2 = scope->command.arg2;
+   if (test(arg2, (int)0x80000000)) {
+      arg2 &= 0x7FFFFFFF;
+
+      prefix = 6;
+      // HOTFIX : only 6 & 7 slot is used
+      if (arg2 > 1)
+         arg2 = 0;
+   }
+
    void* code = nullptr;
-   switch (scope->command.arg2) {
+   switch (arg2) {
        case 0:
-           code = scope->compiler->_inlines[1][scope->code()];
+           code = scope->compiler->_inlines[prefix + 1][scope->code()];
            break;
        case 1:
-           code = scope->compiler->_inlines[2][scope->code()];
+           code = scope->compiler->_inlines[prefix + 2][scope->code()];
            break;
        case 2:
-           code = scope->compiler->_inlines[3][scope->code()];
+           code = scope->compiler->_inlines[prefix + 3][scope->code()];
            break;
        case 3:
-           code = scope->compiler->_inlines[4][scope->code()];
+           code = scope->compiler->_inlines[prefix + 4][scope->code()];
            break;
        case 4:
-          code = scope->compiler->_inlines[5][scope->code()];
+          code = scope->compiler->_inlines[prefix + 5][scope->code()];
           break;
        default:
-           code = scope->compiler->_inlines[0][scope->code()];
+           code = scope->compiler->_inlines[prefix + 0][scope->code()];
            break;
    }
 
@@ -2444,7 +2457,15 @@ void elena_lang::compileClose(JITCompilerScope* scope)
 
 void elena_lang::compileOpen(JITCompilerScope* scope)
 {
-   scope->frameOffset = scope->compiler->calcFrameOffset(scope->command.arg2);
+   scope->frameOffset = scope->compiler->calcFrameOffset(scope->command.arg2, false);
+   scope->stackOffset = 0;
+
+   loadIndexNOp(scope);
+}
+
+void elena_lang :: compileExtOpen(JITCompilerScope* scope)
+{
+   scope->frameOffset = scope->compiler->calcFrameOffset(scope->command.arg2, true);
    scope->stackOffset = 0;
 
    loadIndexNOp(scope);
@@ -2452,8 +2473,7 @@ void elena_lang::compileOpen(JITCompilerScope* scope)
 
 void elena_lang :: compileXOpen(JITCompilerScope* scope)
 {
-   scope->frameOffset = scope->compiler->calcFrameOffset(scope->command.arg2);
-   scope->stackOffset = 0;
+   scope->frameOffset = scope->compiler->calcFrameOffset(scope->command.arg2, false);
 }
 
 void elena_lang :: compileAlloc(JITCompilerScope* scope)
@@ -2579,7 +2599,13 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
 
    void* code = nullptr;
    if ((scope->command.arg1 & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
-      code = scope->compiler->_inlines[5][scope->code()];
+      if (!scope->command.arg2) {
+         code = scope->compiler->_inlines[10][scope->code()];
+      }
+      else code = scope->compiler->_inlines[5][scope->code()];
+   }
+   else if (!scope->command.arg2) {
+      code = scope->compiler->_inlines[9][scope->code()];
    }
    else code = scope->compiler->_inlines[0][scope->code()];
 
@@ -2738,9 +2764,10 @@ void JITCompiler :: prepare(
    }
 }
 
-void JITCompiler :: populatePreloaded(uintptr_t th_table)
+void JITCompiler :: populatePreloaded(uintptr_t th_table, uintptr_t th_single_content)
 {
    _preloaded.add(CORE_THREAD_TABLE, (void*)th_table);
+   _preloaded.add(CORE_SINGLE_CONTENT, (void*)th_single_content);
 }
 
 void* JITCompiler :: getSystemEnv()

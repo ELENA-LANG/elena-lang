@@ -81,6 +81,10 @@ md %~dp0\output64\src60\extensions
 xcopy %~dp0\..\src60\extensions\*.l %~dp0\output64\src60\extensions /s
 xcopy %~dp0\..\src60\extensions\*.prj %~dp0\output64\src60\extensions /s
 
+md %~dp0\output64\src60\cellular
+xcopy %~dp0\..\src60\cellular\*.l %~dp0\output64\src60\cellular /s
+xcopy %~dp0\..\src60\cellular\*.prj %~dp0\output64\src60\cellular /s
+
 %~dp0\..\bin\sg64-cli.exe %~dp0\..\dat\sg\syntax60.txt
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
@@ -107,6 +111,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 %~dp0\output64\bin\elena64-cli %~dp0\output64\src60\extensions\extensions.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\output64\bin\elena64-cli %~dp0\output64\src60\cellular\cellular.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

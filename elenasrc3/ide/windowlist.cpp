@@ -68,7 +68,6 @@ bool WindowList :: select(int listIndex)
 RecentList :: RecentList(IDEController* controller, IDEModel* model, int menuBaseId)
    : MenuHistoryBase(&model->sourceViewModel, 9, menuBaseId, _T("none"), true)
 {
-   _ideModel = model;
    _controller = controller;
    _recentList = nullptr;
 }
@@ -113,7 +112,7 @@ void RecentList :: assignList(ProjectPaths* recentList)
    reload();
 }
 
-void RecentList :: openFile(int index)
+path_t RecentList :: getPath(int index)
 {
-   _controller->doOpenFile(_ideModel, _list.get(index));
+   return _list.get(index);
 }

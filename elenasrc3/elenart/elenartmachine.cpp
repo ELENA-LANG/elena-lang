@@ -228,7 +228,7 @@ mssg_t ELENARTMachine :: loadAction(ustr_t actionName)
    return encodeMessage(actionRef, argCount, flags);
 }
 
-ref_t ELENARTMachine :: loadDispatcherOverloadlist(ustr_t referenceName)
+addr_t ELENARTMachine :: loadDispatcherOverloadlist(ustr_t referenceName)
 {
    return retrieveGlobalAttribute(GA_EXT_OVERLOAD_LIST, referenceName);
 }
@@ -237,10 +237,11 @@ int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
 {
    // load message name
    char messageName[IDENTIFIER_LEN];
-   size_t mssgLen = loadMessageName(message, messageName, IDENTIFIER_LEN);
+   size_t mssgLen = loadMessageName(message | FUNCTION_MESSAGE, messageName, IDENTIFIER_LEN);
    messageName[mssgLen] = 0;
 
-   int len = 0;
+   int len = 1;
+   ((addr_t*)output)[0] = message;
 
    // search message dispatcher
    IdentifierString messageRef;
@@ -253,9 +254,9 @@ int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
       messageRef.append('\'');
       messageRef.append(messageName);
 
-      ref_t listRef = loadDispatcherOverloadlist(*messageRef);
+      addr_t listRef = loadDispatcherOverloadlist(*messageRef);
       if (listRef) {
-         ((int*)output)[len] = listRef;
+         ((addr_t*)output)[len] = listRef;
          len++;
       }
 
@@ -281,7 +282,7 @@ size_t ELENARTMachine :: loadAddressInfo(addr_t retPoint, char* lineInfo, size_t
       _providerInitialized = true;
    }
 
-   return rtmanager.retriveAddressInfo(_libraryProvider, retPoint, lineInfo, length);
+   return rtmanager.retriveAddressInfo(_libraryProvider, retPoint, lineInfo, length, false);
 }
 
 void ELENARTMachine :: Exit(int exitCode)
@@ -301,23 +302,23 @@ void ELENARTMachine :: startSTA(SystemEnv* env, void* entry)
    Exit(0);
 }
 
-int ELENARTMachine :: allocateThreadEntry(SystemEnv* env)
+size_t ELENARTMachine :: allocateThreadEntry(SystemEnv* env)
 {
    if (env->th_table->counter < env->threadCounter) {
-      int index = env->th_table->counter;
+      size_t index = env->th_table->counter;
 
       env->th_table->counter++;
 
       return index;
    }
 
-   return -1;
+   return INVALID_SIZE;
 }
 
 void* ELENARTMachine :: allocateThread(SystemEnv* env, void* arg, void* threadProc, int flags)
 {
-   int index = allocateThreadEntry(env);
-   if (index == -1)
+   size_t index = allocateThreadEntry(env);
+   if (index == INVALID_SIZE)
       return nullptr;
 
    env->th_table->slots[index].arg = arg;
@@ -334,3 +335,12 @@ void ELENARTMachine :: startThread(SystemEnv* env, void* entry, int index)
    // winding down thread
    //ExitThread(retVal);
 }
+
+size_t ELENARTMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_t skip, size_t maxLength)
+{
+   ImageSection msection(_mdata, 0x1000000);
+
+   return SystemRoutineProvider::LoadMessages(&msection, classPtr, output, skip, 
+      maxLength, false);
+}
+

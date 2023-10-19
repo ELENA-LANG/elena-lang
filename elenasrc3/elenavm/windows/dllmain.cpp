@@ -281,6 +281,11 @@ EXTERN_DLL_EXPORT mssg_t LoadActionLA(const char* actionName)
    return machine->loadAction(actionName);
 }
 
+EXTERN_DLL_EXPORT size_t LoadActionNameLA(size_t message, char* buffer, size_t length)
+{
+   return machine->loadActionName((mssg_t)message, buffer, length);
+}
+
 /// <summary>
 /// Fills the passed dispatch list with references to extension message overload list
 /// </summary>
@@ -291,6 +296,21 @@ EXTERN_DLL_EXPORT mssg_t LoadActionLA(const char* actionName)
 EXTERN_DLL_EXPORT int LoadExtensionDispatcherLA(const char* moduleList, mssg_t message, void* output)
 {
    return machine->loadExtensionDispatcher(moduleList, message, output);
+}
+
+EXTERN_DLL_EXPORT size_t LoadClassMessagesLA(void* classPtr, mssg_t* output, size_t skip, size_t maxLength)
+{
+   return machine->loadClassMessages(classPtr, output, skip, maxLength);
+}
+
+EXTERN_DLL_EXPORT void GetRandomSeedLA(SeedStruct& seed)
+{
+   machine->initRandomSeed(seed);
+}
+
+EXTERN_DLL_EXPORT unsigned int GetRandomIntLA(SeedStruct& seed)
+{
+   return machine->getRandomNumber(seed);
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,

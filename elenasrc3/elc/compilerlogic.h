@@ -92,6 +92,7 @@ namespace elena_lang
       bool isRole(ClassInfo& info);
       bool isAbstract(ClassInfo& info);
       bool isReadOnly(ClassInfo& info);
+      bool withVariadicsMethods(ClassInfo& info);
 
       bool isDynamic(ClassInfo& info);
       bool isEmbeddableArray(ClassInfo& info);
@@ -121,7 +122,7 @@ namespace elena_lang
 
       bool validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_t message);
       void validateClassDeclaration(ModuleScopeBase& scope, ErrorProcessorBase* errorProcessor, ClassInfo& info,
-         bool& emptyStructure, bool& disptacherNotAllowed, bool& withAbstractMethods);
+         bool& emptyStructure, bool& dispatcherNotAllowed, bool& withAbstractMethods, mssg_t& mixedUpVariadicMessage);
 
       void writeAttributeMapEntry(MemoryBase* section, ustr_t key, int value);
       void writeAttributeMapEntry(MemoryBase* section, ustr_t key, ustr_t value);
@@ -145,8 +146,8 @@ namespace elena_lang
       bool isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo target, TypeInfo source);
 
       bool isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage);
-      bool isMessageCompatibleWithSignature(ModuleScopeBase& scope, mssg_t targetMessage,
-         ref_t* sourceSignature, size_t len);
+      bool isMessageCompatibleWithSignature(ModuleScopeBase& scope, ref_t targetRef, 
+         mssg_t targetMessage, ref_t* sourceSignature, size_t len, int& stackSafeAttr);
 
       ref_t retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, 
          pos_t signLen, int& stackSafeAttrs);
@@ -167,7 +168,8 @@ namespace elena_lang
          mssg_t message, ClassInfo::MethodMap& methods, ClassAttributes& attributes,
          void* param, ref_t(*resolve)(void*, ref_t), ClassAttribute attribute);
 
-      void verifyMultimethods();
+      bool isNeedVerification(ClassInfo& info, VirtualMethodList& implicitMultimethods);
+      bool verifyMultimethod(ModuleScopeBase& scope, ClassInfo& info, mssg_t message);
 
       mssg_t resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, 
          ref_t implicitSignatureRef, int& stackSafeAttr, bool selfCall);
@@ -191,6 +193,8 @@ namespace elena_lang
                return false;
          }
       }
+
+      bool isLessAccessible(ModuleScopeBase& scope, Visibility sourceVisibility, ref_t targetRef);
 
       void generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_t parentRef, VirtualMethods& methods);
 

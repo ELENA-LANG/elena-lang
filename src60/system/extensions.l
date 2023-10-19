@@ -723,6 +723,27 @@ public extension realOp : RealNumber
       ^ neg ? (a * -1.0r) : a 
    }
 
+            
+   get real Radian()
+   {
+      real value := self;
+        
+      value := value * Pi_value;
+      value := value / 180.0r;
+        
+      ^ value
+   }
+            
+   get real Degree()
+   {
+      real value := self;
+        
+      value := value * 180.0r;
+      value := value / Pi_value;
+        
+      ^ value
+   }
+
    bool isZero()
       = self.equal(0.0);
         
@@ -775,6 +796,12 @@ public extension stringOp : String
          ^ emptyString
       }        
    }
+
+   int indexOf(string s)
+      = self.indexOf(0, s);
+
+   int indexOf(char ch)
+      = self.indexOf(0, ch);
 
    int Hashcode
    {
@@ -950,6 +977,18 @@ public extension stringOp : String
 
 public extension charOp : CharValue
 {
+   int Hashcode
+   {
+      // Reads the object hash code into the output parameter
+      get()
+      {
+         int value := self;
+         int retVal := PrimitiveIntOperations.getHashcode(value);
+
+         ^ retVal
+      }
+   }
+
    bool isWhitespace()
    {
       self =>
@@ -1075,4 +1114,29 @@ public extension stringWeakOp
             
       ^ self
    }
+    
+   writePaddingLeft(line, int width)
+   {
+      var paddedStr := line.padLeft($32, width);
+
+      self.write(paddedStr);
+            
+      ^ self
+   }
+    
+   writePaddingRight(line, int width)
+   {
+      var paddedStr := line.padRight($32, width);
+
+      self.write(paddedStr);
+            
+      ^ self
+   }
+}
+
+public extension threadObjectOp
+{
+   enterCriticalSection() : external(system'core_routines'__enterCritical);
+
+   leaveCriticalSection() : external(system'core_routines'__leaveCritical);
 }
