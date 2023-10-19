@@ -105,6 +105,11 @@ md %~dp0\lib60_64
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+%~dp0\..\bin\asm64-cli -bc64 %~dp0\..\src60\core\system.win_core_routines.esm %~dp0\output64\lib60_64
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 %~dp0\output64\bin\elena64-cli %~dp0\output64\src60\system\system.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
