@@ -2265,6 +2265,9 @@ inline %4CFh
   mtctr   r12            
   bctrl                   
 
+  lis     r2, rdata32_hi : %CORE_TOC
+  addi    r2, r2, rdata32_lo : %CORE_TOC
+
 end
 
 // ; faddndp
