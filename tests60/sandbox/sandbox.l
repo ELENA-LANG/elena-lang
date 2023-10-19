@@ -1,44 +1,50 @@
-import extensions;
 import system'collections;
-import system'routines;
+import extensions;
  
-isHappy(int n)
+const int maxNumber = 100000;
+ 
+Hailstone(int n,Map<int,int> lengths)
 {
-    auto cache := new List<int>(5);
-    int sum := 0;
-    int num := n;
-    while (num != 1)
+    if (n == 1)
     {
-        if (cache.indexOfElement:num != -1)
-        {
-            ^ false
-        };
-        cache.append(num);
-        while (num != 0)
-        {
-            int digit := num.mod:10;
-            sum += (digit*digit);
-            num /= 10
-        };
-        num := sum;
-        sum := 0
+        ^ 1
     };
  
-    ^ true
+    while (true)
+    {
+        if (lengths.containsKey(n))
+        {
+            ^ lengths[n]
+        }
+        else
+        {
+            if (n.isEven())
+            {
+                lengths[n] := 1 + Hailstone(n/2, lengths)
+            }
+            else
+            {
+                lengths[n] := 1 + Hailstone(3*n + 1, lengths)
+            }
+        }
+    }
 }
  
 public program()
 {
-    auto happynums  := new List<int>(8);
-    int num := 1;
-    while (happynums.Length < 8)
-    {
-        if (isHappy(num))
-        {
-            happynums.append(num)
-        };
+    int longestChain := 0;
+    int longestNumber := 0;
+    auto recursiveLengths := new Map<int,int>(4096,4096);
  
-        num += 1
+    for(int i := 1, i < maxNumber, i+=1)
+    {
+        var chainLength := Hailstone(i, recursiveLengths);
+        if (longestChain < chainLength)
+        {
+               longestChain := chainLength;
+               longestNumber := i
+        }
     };
-    console.printLine("First 8 happy numbers: ", happynums.asEnumerable())
+ 
+    console.printFormatted("max below {0}: {1} ({2} steps)", maxNumber, longestNumber, longestChain)
 }

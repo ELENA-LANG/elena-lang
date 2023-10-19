@@ -878,7 +878,7 @@ inline %02Fh
 end
 
 // ; xfsave
-inline %25h
+inline %30h
 
   str     d0, [x10]
 

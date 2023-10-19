@@ -5,33 +5,9 @@ In development:
   [development]
     ### EPIC: elena 6.0 - redux ###
     === Iteration 18 ===
-    [!] api functionality for existing classes : rest of system
-    
-    * examples : Zhang-Suen thinning algorithm
-
-    * examples : execute B*, 
-    * examples : Sockets, Sleep, Sorting algorithms/Sleep sort, 
-    * examples : rosetta code sample : Zeckendorf arithmetic, Zeckendorf number representation,  
-    * examples : rosetta code Anagrams, Hailstone sequence, Trabb Pardo–Knuth algorithm
+    * examples : rosetta code Anagrams, Hailstone sequence
 
     * forms samples
-    * examples : test all samples for win x86
-    * examples : tutorials
-    * test : https://www.reddit.com/r/elena_lang/comments/7oa098/dynamic_programming_in_elena_call_your_code_from/
-    * test : https://www.reddit.com/r/elena_lang/comments/7o3s8b/dynamic_programming_in_elena_evaluating_a_code_in/
-    * test : https://www.reddit.com/r/elena_lang/comments/7o1zvq/dynamic_programming_in_elena_conditional/
-    * test : https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
-    * add new variant using multi ret - https://www.rosettacode.org/wiki/Return_multiple_values#Elena
-    * db samples
-
-    * review system warnings
-    * review extensions warnings
-    * migrate the rest of system (win32_pointers.l)
-
-    * test elt : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
-    * sm : generate some basic templates from vm console - hello world sample
-
-    * inno setup : x86, x86-64
 
     === Iteration 19 ===
     [!] x86 mta support
@@ -41,20 +17,21 @@ In development:
     [!] pi sample optimization (under 9sec)
     [!] review #622, #620
     [!] x86-64 : samples / rosetta code samples
-    * x86-64 : implement xdispatch i
-    * corex : tests - lock test, GC test, printing in one thread / calling GC in another
-    * amd64 : implement system 5
-    * test all samples for win x86-64
-    * optimize Amicable pairs
-    * optimize: pi sample (<8 secs)
-    * optimize: if (nil == name) {} else {}
-    * optimize: if (a == b) {} else {}
-    * retro : is CONVERSION_MESSAGE flag is really required?
-    * for windows x86-64 allocate shadow memory
-    * isCompatble - cache the results
-    * for linux amd64 allocate shadow memory
-    * mt : note on creating closure - lock GC
     * examples : manboy example - till 20
+    * examples : tutorials
+    * test : https://www.reddit.com/r/elena_lang/comments/7oa098/dynamic_programming_in_elena_call_your_code_from/
+    * test : https://www.reddit.com/r/elena_lang/comments/7o3s8b/dynamic_programming_in_elena_evaluating_a_code_in/
+    * test : https://www.reddit.com/r/elena_lang/comments/7o1zvq/dynamic_programming_in_elena_conditional/
+    * test : https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
+    * add new variant using multi ret - https://www.rosettacode.org/wiki/Return_multiple_values#Elena
+    * db samples
+    * review system warnings
+    * review extensions warnings
+    * migrate the rest of system (win32_pointers.l)
+    * test elt : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
+    * sm : generate some basic templates from vm console - hello world sample
+
+    * inno setup : x86, x86-64
 
     === Iteration 20 ===
     [!] elenavm x64 dll
