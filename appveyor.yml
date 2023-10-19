@@ -28,7 +28,7 @@ deploy:
   description: 'ELENA Nightly Build'
   provider: GitHub
   auth_token:
-    secure: 1rvO0d3X3m2IC6FheCCIRv4IdkOuahHvt1uZeph/H//jaPJkYZAx/McyxBghl8xT
+    secure: znFqEeEkeb1s0OK4PAPT4KrYnCJowIxxWzRq3apGne3bSH1XFsz9U+E1JAgpCwwF
   artifact: nightly-build
   draft: false
   prerelease: true
