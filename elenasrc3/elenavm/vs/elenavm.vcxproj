@@ -187,6 +187,7 @@
     <ClInclude Include="..\..\engine\libman.h" />
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\projectbase.h" />
+    <ClInclude Include="..\..\engine\rtmanager.h" />
     <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\engine\windows\pehelper.h" />
     <ClInclude Include="..\..\engine\windows\presenter.h" />
@@ -221,6 +222,7 @@
     <ClCompile Include="..\..\engine\jitlinker.cpp" />
     <ClCompile Include="..\..\engine\libman.cpp" />
     <ClCompile Include="..\..\engine\module.cpp" />
+    <ClCompile Include="..\..\engine\rtmanager.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
     <ClCompile Include="..\..\engine\windows\pehelper.cpp" />
     <ClCompile Include="..\..\engine\windows\presenter.cpp" />

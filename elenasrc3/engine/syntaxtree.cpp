@@ -30,15 +30,26 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("get_method", SyntaxKey::Method);
    map.add("message", SyntaxKey::Message);
    map.add("code", SyntaxKey::CodeBlock);
+   map.add("closure", SyntaxKey::ClosureBlock);
    map.add("object", SyntaxKey::Object);
    map.add("expression", SyntaxKey::Expression);
    map.add("get_expression", SyntaxKey::GetExpression);
    map.add("returning", SyntaxKey::ReturnExpression);
    map.add( "message_operation", SyntaxKey::MessageOperation);
    map.add("property_operation", SyntaxKey::PropertyOperation);
+
+   map.add("equal_operation", SyntaxKey::EqualOperation);
+   map.add("less_operation", SyntaxKey::LessOperation);
+   map.add("greater_operation", SyntaxKey::GreaterOperation);
+   map.add("notgreater_operation", SyntaxKey::NotGreaterOperation);
+   map.add("add_operation", SyntaxKey::AddOperation);
+   map.add("sub_operation", SyntaxKey::SubOperation);
+
+   map.add("if_operation", SyntaxKey::IfOperation);
+
    map.add("symbol", SyntaxKey::Symbol);
    //   tokens.add("preloaded_symbol", lxSymbol);
-   //   tokens.add("literal", lxLiteral);
+   map.add("literal", SyntaxKey::string);
    map.add("identifier", SyntaxKey::identifier);
    //   tokens.add("character", lxCharacter);
    //   tokens.add("variable_identifier", lxIdentifier);
@@ -48,13 +59,12 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("parameter", SyntaxKey::Parameter);
    ////   tokens.add("include", lxInclude);
    //   //tokens.add("forward", lxForward);
-   //   tokens.add("reference", lxReference);
+   map.add("reference", SyntaxKey::reference);
    //   tokens.add("new_reference", lxReference);
    //   tokens.add("variable", lxVariable);
    //   //tokens.add("assign", lxAssign);
-   //   //tokens.add("operator", lxOperator);
    map.add("nameattr", SyntaxKey::Name);
-   map.add("property_parameter", SyntaxKey::PropertyOperation);
+   map.add("property_parameter", SyntaxKey::PropertyOperation); // !!temporal - should be removed
    //   //tokens.add("import", lxImport);
    //   tokens.add("loop_expression", lxExpression);
 }

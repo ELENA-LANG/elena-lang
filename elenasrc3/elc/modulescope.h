@@ -90,6 +90,8 @@ public:
 
    bool isDeclared(ref_t reference) override;
 
+   Visibility retrieveVisibility(ref_t reference) override;
+
    ModuleScope(LibraryLoaderBase* loader, 
       ForwardResolverBase* forwardResolver, 
       ModuleBase* module,
@@ -98,8 +100,10 @@ public:
       pos_t rawStackAlingment,
       pos_t ehTableEntrySize,
       int minimalArgList,
-      int ptrSize)
-      : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, ehTableEntrySize, minimalArgList, ptrSize, false)
+      int ptrSize,
+      bool multiThreadMode)
+      : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, ehTableEntrySize, 
+         minimalArgList, ptrSize, false, multiThreadMode)
    {
       this->loader = loader;
       this->forwardResolver = forwardResolver;

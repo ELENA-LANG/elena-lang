@@ -234,6 +234,9 @@ int main(int argc, char* argv[])
                   if (argv[i][2] == 'p') {
                      project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');
                   }
+                  else if (argv[i][2] == 'b') {
+                     project.addBoolSetting(ProjectOption::ConditionalBoxing, argv[i][3] != '-');
+                  }
                   break;
                default:
                   break;

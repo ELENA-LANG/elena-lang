@@ -56,3 +56,13 @@ HWND ToolBar :: createControl(HINSTANCE instance, ControlBase* owner,
 
    return _handle;
 }
+
+void ToolBar :: enableItemById(int id, bool doEnable)
+{
+   TBBUTTONINFO info;
+   info.cbSize = sizeof(TBBUTTONINFO);
+   info.dwMask = TBIF_STATE;
+   info.fsState = (BYTE)(doEnable ? TBSTATE_ENABLED : 0);
+
+   ::SendMessage(_handle, TB_SETBUTTONINFO, id, (LPARAM)&info);
+}

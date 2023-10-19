@@ -16,7 +16,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>6.0.0</version>
+     <version>6.0.1</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
@@ -41,9 +41,11 @@
         <include>messaging.l</include>
         <include>closures.l</include>
         <include>convertors.l</include>
+        <include>pointers.l</include>
         <include>win_basic.l</include>
         <include>dynamic.l</include>
         <include>exceptions.l</include>
+        <include>events.l</include>
         <include>console.l</include>
         <include>app.l</include>
         <include>win_app.l</include>
@@ -64,10 +66,12 @@
         <include>text\textbuffer.l</include>
         <include>io\common.l</include>
         <include>io\streamreader.l</include>
+        <include>io\streamwriter.l</include>
         <include>io\win_console.l</include>
         <include>io\files.l</include>
         <include>io\ioexceptions.l</include>
         <include>io\win_files.l</include>
+        <include>io\win_getfiles.l</include>
      </module>
      <module name="routines">
        <include>routines\enumerables.l</include>
@@ -88,11 +92,24 @@
        <include>threading\thread.l</include>
      </module>
      <module name="dynamic">
+       <include>dynamic\reflection.l</include>
        <include>dynamic\interpreters.l</include>
        <include>dynamic\groups.l</include>
        <include>dynamic\closure.l</include>
        <include>dynamic\tape.l</include>
        <include>dynamic\expressions\expressions.l</include>
+     </module>
+     <module name="drawing">
+       <include>drawing\common.l</include>
+     </module>
+     <module name="winforms">
+       <include>winforms\win_common.l</include>
+       <include>winforms\win32_exceptions.l</include>
+       <include>winforms\win_handles.l</include>
+       <include>winforms\win_controls.l</include>
+       <include>winforms\win_windows.l</include>
+       <include>winforms\win_dialogs.l</include>
+       <include>winforms\win_app.l</include>
      </module>
   </files>
 </configuration>

@@ -38,11 +38,32 @@ public field prop<name, T>
    }
 }
 
+public field prop<name>
+{
+   get name()
+   {
+      ^ name
+   }
+
+   set name(value)
+   {
+      name := value
+   }
+}
+
 // --- rprop ---
 
 public field rprop<name, T>
 {
    get T name()
+   {
+      ^ name
+   }
+}
+
+public field rprop<name>
+{
+   get name()
    {
       ^ name
    }

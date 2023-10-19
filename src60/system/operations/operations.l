@@ -23,6 +23,13 @@ public template ifnot<expr>(falsePart) : __included(statementTemplates)
    cast bool(expr) ! { falsePart }
 }
 
+// --- ifnot:else ---
+
+public template ifnot::else<expr>(falsePart,truePart) : __included(statementTemplates)
+{
+   cast bool(expr) ? { truePart } : { falsePart }
+}
+
 // --- while ---
 
 public template while<expr>(loopBody) : __included(statementTemplates)
@@ -78,6 +85,13 @@ public template for<initExpr,condExpr,stepExpr>(loopBody) : __included(statement
    $rep cast bool(condExpr) ? { loopBody; stepExpr; }
 }
 
+public template for<init_expr,condExpr,step_expr1, step_expr2>(loopBody) : __included(statementTemplates)
+{
+   init_expr;
+
+   $rep cast bool(condExpr) ? { loopBody; step_expr1; step_expr2; }
+}
+
 public template for<init_expr1, init_expr2,condExpr,step_expr1, step_expr2>(loopBody) : __included(statementTemplates)
 {
    init_expr1;
@@ -112,6 +126,26 @@ public template try::finally(try_block,finally_block) : __included(statementTemp
 public template extern(body) : __included(statementTemplates)
 {
    $ext body
+}
+
+// --- using statement ---
+
+public template using<expr>(block) : __included(statementTemplates)
+{
+   auto v := expr;
+    
+   block $fnl (v.close());
+}
+
+// --- lock statement ---
+
+public template lock<expr>(block) : __included(statementTemplates)
+{
+   auto v := expr;
+
+   v.enterCriticalSection();
+    
+   block $fnl (v.leaveCriticalSection());
 }
 
 // --- operator templates ---

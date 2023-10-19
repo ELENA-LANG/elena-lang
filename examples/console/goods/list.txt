@@ -1,2 +1,0 @@
-juice;12.20;water;20.30
-candies;10;cookies;30;bread;5

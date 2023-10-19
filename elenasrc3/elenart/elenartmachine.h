@@ -36,7 +36,7 @@ namespace elena_lang
 
       addr_t retrieveGlobalAttribute(int attribute, ustr_t name);
 
-      ref_t loadDispatcherOverloadlist(ustr_t referenceName);
+      addr_t loadDispatcherOverloadlist(ustr_t referenceName);
 
       void Exit(int exitCode);
 
@@ -57,6 +57,8 @@ namespace elena_lang
 
       size_t loadClassName(addr_t classAddress, char* buffer, size_t length);
 
+      size_t loadClassMessages(void* classPtr, mssg_t* output, size_t skip, size_t maxLength);
+
       int loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output);
 
       void initRandomSeed(SeedStruct& seed)
@@ -64,7 +66,7 @@ namespace elena_lang
          __routineProvider.InitRandomSeed(seed, __routineProvider.GenerateSeed());
       }
 
-      int allocateThreadEntry(SystemEnv* env);
+      size_t allocateThreadEntry(SystemEnv* env);
 
       void* allocateThread(SystemEnv* env, void* arg, void* threadProc, int flags);
 

@@ -1,3 +1,65 @@
+## ELENA 6.0.6
+*19.10.2023*
+
+- ELENA
+  - [ADDED]snop opcode
+  - [ADDED]xfsave opcode
+  - [ADDED]opcodes : xcmp sp, load sp
+  - [ADDED]$yield operator
+  - [ADDED]yieldable method
+  - [ADDED]using statements
+  - [ADDED]lock statement
+  - [ADDED]class constants
+  - [ADDED]globals
+
+- ELC
+  - [ADDED]MTA support for x86
+  - [ADDED]#321,#173 - conditional boxing
+  - [ADDED]warn if the outpur type is less accessible than the symbol
+  - [ADDED]variadic and normal methods cannot have similar names
+  - [ADDED]weak implementations of &&, ||, ^^
+  - [FIXED]struct typecast handler : do not copy the struct
+  - [FIXED]constructor explicit multi-dispatch handler
+  - [FIXED]support constants in array size declaration
+  - [FIXED]passing variadic argument to another method
+  - [FIXED]#47 : Evaluating an expression in a symbol
+  - [FIXED]duplicates in GA_EXT_OVERLOAD_LIST
+  - [FIXED]#15 - return double / long from external function
+
+- ELENAVM
+  - [ADDED]preloaded symbols
+  - [ADDED]loadAddressInfo
+  - [FIXED]LoadExtensionDispatcherLA
+  - [FIXED]LoadActionNameLA
+
+- ELENASM
+  - [FIXED]#366 - Script engine rule not recognized correctly
+
+- API
+  - [ADDED]event property template
+  - [ADDED]system'winforms module
+  - [ADDED]forms module
+  - [ADDED]forms'SDIDialog
+  - [ADDED]forms'Button
+  - [ADDED]forms'Edit
+  - [ADDED]forms'Label
+  - [ADDED]system'dynamic'ExtensionDispatcher
+  - [FIXED]Console class should be public with internal constructor
+  - [FIXED]system'io'StreamWriter
+  - [FIXED]system'collections'Stack
+  - [FIXED]system'dynamic'DynamicTape - variadic functions
+  - [FIXED]dynamic expressions
+
+- SAMPLES
+  - [ADDED] Conway's Game of Life
+
+- IDE
+  - [ADDED]recent open projects
+  - [FIXED]debug watch : Reference<int>
+
+- Tools
+  - [FIXED] elt-cli
+
 ## ELENA 6.0.5
 *19.08.2023*
 

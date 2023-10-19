@@ -27,6 +27,8 @@ public:
    HWND createControl(HINSTANCE instance, ControlBase* owner,
       ToolBarButton* buttons, size_t counter);
 
+   void enableItemById(int id, bool doEnable);
+
    ToolBar(int iconSize);
 };
 

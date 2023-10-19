@@ -483,6 +483,8 @@ void SyntaxTreeBuilder :: generateTemplateOperation(SyntaxTreeWriter& writer, Sc
    if (_templateProcessor->importCodeTemplate(*_moduleScope, templateRef, writer.CurrentNode(),
       arguments, parameters))
    {
+      if (writer.CurrentNode() == SyntaxKey::Expression)
+         writer.CurrentNode().setKey(SyntaxKey::CodeBlock);
    }
    else {
       _errorProcessor->raiseTerminalError(errInvalidOperation, retrievePath(node), node);
@@ -1089,6 +1091,25 @@ void SyntaxTreeBuilder :: flushSubScope(SyntaxTreeWriter& writer, Scope& scope, 
    }
 }
 
+inline void copyTypeAttributes(SyntaxTreeWriter& writer, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Type:
+         case SyntaxKey::TemplateType:
+         case SyntaxKey::ArrayType:
+            SyntaxTree::copyNodeSafe(writer, current, true);
+            current.setKey(SyntaxKey::Idle);
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool functionMode)
 {
    writer.newNode(node.key);
@@ -1097,7 +1118,14 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
       flushDescriptor(writer,  scope, node);
       flushClassMemberPostfixes(writer, scope, node/*, false*/);
    }
-   else writer.appendNode(SyntaxKey::Attribute, V_FUNCTION);
+   else {
+      writer.appendNode(SyntaxKey::Attribute, V_FUNCTION);
+
+      // HOTFIX : move the type attribute ti the method
+      SyntaxNode classNode = writer.CurrentNode().parentNode();
+
+      copyTypeAttributes(writer, classNode);
+   }
 
    SyntaxNode member = node.firstChild(SyntaxKey::MemberMask);
    switch (member.key) {
@@ -1126,6 +1154,7 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
          return;
       }
       case SyntaxKey::InitExpression:
+      case SyntaxKey::AccumExpression:
       {
          bool isInitizializer = SyntaxTree::ifChildExists(writer.CurrentNode(), SyntaxKey::Attribute, V_MEMBER);
 
@@ -1134,14 +1163,14 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
          writer.CurrentNode().setKey(isInitizializer ? SyntaxKey::Idle : SyntaxKey::Field);
          writer.closeNode();
 
-         writer.newNode(SyntaxKey::AssignOperation);
+         writer.newNode(member.key == SyntaxKey::InitExpression ? SyntaxKey::AssignOperation : SyntaxKey::AddAssignOperation);
          writer.newNode(SyntaxKey::Object);
          if (isInitizializer)
             writer.appendNode(SyntaxKey::Attribute, V_MEMBER);
          flushCollection(writer, scope, nameNode);
          writer.closeNode();
 
-         flushExpression(writer, scope, node.findChild(SyntaxKey::InitExpression).firstChild());
+         flushExpression(writer, scope, node.findChild(member.key).firstChild());
          break;
       }
       case SyntaxKey::Dimension:
@@ -1563,6 +1592,9 @@ void SyntaxTreeBuilder :: appendTerminal(parse_key_t key, ustr_t value, LineInfo
          _cacheWriter.newNode(syntaxKey, quote.str());
          break;
       }
+      case SyntaxKey::globalreference:
+         _cacheWriter.newNode(syntaxKey, value + 1);
+         break;
       default:
          _cacheWriter.newNode(syntaxKey, value);
          break;

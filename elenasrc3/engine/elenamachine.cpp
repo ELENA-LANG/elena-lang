@@ -7,8 +7,25 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
+#include "rtmanager.h"
 
 using namespace elena_lang;
+
+#if _M_IX86 || __i386__
+
+typedef VMTHeader32  VMTHeader;
+typedef VMTEntry32   VMTEntry;
+
+constexpr int elVMTClassOffset = elVMTClassOffset32;
+
+#else
+
+typedef VMTHeader64  VMTHeader;
+typedef VMTEntry64   VMTEntry;
+
+constexpr int elVMTClassOffset = elVMTClassOffset64;
+
+#endif
 
 // --- SystemRoutineProvider ---
 
@@ -21,7 +38,7 @@ void SystemRoutineProvider :: InitSTAExceptionHandling(SystemEnv* env, void* cri
    InitCriticalStruct((uintptr_t)env->veh_handler);
 }
 
-void SystemRoutineProvider :: InitMTAExceptionHandling(SystemEnv* env, int index, void* criticalHandler)
+void SystemRoutineProvider :: InitMTAExceptionHandling(SystemEnv* env, size_t index, void* criticalHandler)
 {
    env->th_table->slots[index].content->eh_critical = (uintptr_t)criticalHandler;
 
@@ -119,6 +136,38 @@ unsigned int SystemRoutineProvider :: GetRandomNumber(SeedStruct& seed)
    seed.z4 = ((seed.z4 & 4294967168U) << 13) ^ b;
 
    return (seed.z1 ^ seed.z2 ^ seed.z3 ^ seed.z4);
+}
+
+size_t SystemRoutineProvider :: LoadMessages(MemoryBase* msection, void* classPtr, mssg_t* output, size_t skip, 
+   size_t maxLength, bool vmMode)
+{
+   RTManager manager(msection, nullptr);
+
+   VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
+   size_t counter = 0;
+   // NOTE : skip the dispatcher
+   for (pos_t i = 1; i < header->count; i++) {
+      if (skip != 0) {
+         skip--;
+      }
+      else if (counter < maxLength) {
+         mssg_t weakMessage = ((VMTEntry*)classPtr)[i].message;
+         bool duplicate = false;
+         for (size_t i = 0; i < counter; i++) {
+            if (output[i] == weakMessage) {
+               duplicate = true;
+               break;
+            }              
+         }
+         if (!duplicate) {
+            output[counter] = manager.loadWeakMessage(weakMessage, vmMode);
+            counter++;
+         }         
+      }
+      else break;
+   }
+
+   return counter;
 }
 
 // --- ELENAMachine ---

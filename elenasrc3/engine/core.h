@@ -49,6 +49,7 @@ namespace elena_lang
    constexpr ref_t GC_COLLECT                = 0x10004;
    constexpr ref_t GC_ALLOCPERM              = 0x10005;
    constexpr ref_t PREPARE                   = 0x10006;
+   constexpr ref_t THREAD_WAIT               = 0x10007;
 
    constexpr ref_t CORE_TOC                  = 0x20001;
    constexpr ref_t SYSTEM_ENV                = 0x20002;
@@ -168,6 +169,7 @@ namespace elena_lang
       uintptr_t        tt_stack_frame;
       void*            tt_sync_event;
       size_t           tt_flags;
+      uintptr_t        tt_stack_root;
    };
 
    // --- ThreadTable ---

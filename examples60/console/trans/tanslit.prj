@@ -1,0 +1,22 @@
+<configuration>
+  <platform key="Win_x86">
+     <project>
+        <executable>translit</executable>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <executable>translit64</executable>
+     </project>
+  </platform>
+  <project>
+     <namespace>translit</namespace>
+     <template>console</template>
+  </project>
+  <files>
+     <module>
+        <include>translit.l</include>
+        <include>control.l</include>
+     </module>
+  </files>
+</configuration>

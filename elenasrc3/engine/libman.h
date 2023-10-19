@@ -43,6 +43,13 @@ namespace elena_lang
       ModuleBase* resolveIndirectWeakModule(ustr_t referenceName, ref_t& reference, bool silentMode);
 
    public:
+      enum class ModuleRequestResult
+      {
+         NotFound,
+         AlreadyLoaded,
+         Loaded
+      };
+
       ustr_t Namespace() override
       {
          return *_namespace;
@@ -96,6 +103,23 @@ namespace elena_lang
       bool saveDebugModule(ModuleBase* module);
 
       ModuleBase* loadModule(ustr_t name);
+
+      ModuleRequestResult loadModuleIfRequired(ustr_t name);
+
+      void addListener(LibraryLoaderListenerBase* listener)
+      {
+         _listeners.add(listener);
+
+         // notify the listener on already loaded modules
+         ModuleMap::Iterator it = _modules.start();
+         while (!it.eof()) {
+            onModuleLoad(*it);
+
+            ++it;
+         }
+      }
+
+      void loadDistributedSymbols(ModuleBase* module, ustr_t virtualSymbolName, ModuleInfoList& list);
 
       LibraryProvider();
    };

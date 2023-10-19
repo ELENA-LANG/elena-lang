@@ -157,7 +157,20 @@ namespace math
 
    public singleton log10
    {
+      function(operand)
+         = cast real(operand).log10();
+        
       real function(real operand)
          = operand.log10();
    }   
+
+   public min(l1,l2)
+   {
+      ^ (l1 < l2) ? l1 : l2;
+   }
+    
+   public max(l1,l2)
+   {
+      ^ (l1 > l2) ? l1 : l2;
+   }
 }

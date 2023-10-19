@@ -37,16 +37,48 @@ namespace math
 
       real e()
          = 1.0.exp();
+                
+      Radian
+         = realConvertor.convert(self).Radian;
+                
+      Degree
+         = realConvertor.convert(self).Degree;
    }
 
    public extension mathOp
-   {
+   {            
+      Rounded
+         = cast real(self).Rounded;
+      
+      RoundedInt
+         = intConvertor.convert(cast real(self).Rounded);
+      
+      Integer
+         = cast real(self).Integer;
+      
+      IntegerInt
+         = intConvertor.convert(cast real(self).Integer);
+
       mod(n)
          = mathController.mod(self, n);
     
       frac()
          = cast real(self).frac();
     
+      real exp()
+         = cast real(self).exp();
+    
+      ln()
+         = cast real(self).ln();
+    
+      real log10()
+      {
+         real x := mathOp.ln(self).ln();
+         real y := mathOp.ln(10);
+            
+         ^ x / y
+      }
+
       sin()
          = cast real(self).sin();
     

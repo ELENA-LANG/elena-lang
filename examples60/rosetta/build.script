@@ -207,3 +207,13 @@
  else
    echo .
  fi
+
+ ../../bin/elena-cli gameoflife/gameoflife.prj
+ ret=$?
+ if [ $ret -eq -2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi

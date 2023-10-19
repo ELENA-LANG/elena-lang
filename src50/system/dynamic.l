@@ -100,21 +100,6 @@ public sealed const struct ExtensionMessage
     dispatch() => intern system'core_routines'__extmessage;
 }
 
-// --- MessageName ---
-
-/// A dynamic message extender
-public sealed const struct MessageName
-{
-    embeddable __subj theValue[4];
-    
-    get Message VariadicMessage()
-    {
-        intern system'core_routines'__signature.varidadic(self, ref Message message);
-        
-        ^ message        
-    }
-}
-
 // --- Extension ---
 
 public mixin Extension

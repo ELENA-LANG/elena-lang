@@ -30,15 +30,18 @@ ELENA byte codes (or ecodes)
 
  Frame operations:
  -----------------              
+   extclose n               - restore the previous frame;
+                              should be paired with extopen;
+
+   extopen i, n              - init the frame header offset ; allocating both
+                              unmanaged (n) and managed stack (i * 4 / 8);
+                              it should be used only when calling ELENA code from outside; 
+                              mnemonic: open header [a,b,c,...],[$a,$b,$c,...]
+
    open i, n                - save the last frame and open the new frame ; allocating both
                               unmanaged (n) and managed stack (i * 4 / 8);
                               should be used only in thr program main body; 
                               mnemonic: open [a,b,c,...],[$a,$b,$c,...]
-
-   open header i, n         - init the frame header offset ; allocating both
-                              unmanaged (n) and managed stack (i * 4 / 8);
-                              it should be used only in thread program main body; 
-                              mnemonic: open header [a,b,c,...],[$a,$b,$c,...]
 
    close n                  - restore the previous frame;
                               should be paired with open;
@@ -46,6 +49,9 @@ ELENA byte codes (or ecodes)
 
    quit                     - terminates the procedure;
                               acc / index are not affected
+
+   xquit                    - terminates the procedure;
+                              function result is index
 
 
  Register operations:
@@ -66,7 +72,8 @@ ELENA byte codes (or ecodes)
 
    loadv                    - index.action := [acc].action
 
-   loads                    - index := [acc].action
+   loads                    - index := [acc].action;
+                              loading the message name
 
    lsave                    - long:[acc] := index
 
@@ -111,6 +118,10 @@ ELENA byte codes (or ecodes)
 
    set sp:i                 - sp[i] => acc
 
+   shr i                    - index := index >> i
+
+   shl i                    - index := index << i
+
    store r                  - acc => [r]
 
    wload                    - index := word([acc])
@@ -120,6 +131,8 @@ ELENA byte codes (or ecodes)
 
    xassign i                - acc[i] := sp[0];
                               direct operation
+
+   xfsave                    - double:[acc] := double:index
 
    xget                     - acc[index] => acc
 
@@ -168,10 +181,17 @@ ELENA byte codes (or ecodes)
    alloc i                  - sp += i ; reserve and fill with zeros; 
                               new sp value is aligned to 2 in x86-64 mode
 
+   attach                   - include the exluded managed frame link;
+                              should immediately preceed open opcode
+
    convl                    - index => long:index
 
    dalloc                   - sp += index ; reserve and fill with zeros; 
                               new sp value is aligned to 2 in x86-64 mode
+
+   detach                   - deatching the current from;
+                              has to immediately follow close opcode;
+                              has to be paired with attach opcode
 
    free i                   - sp -= i ; release the stack; 
                               new sp value is aligned to 2 in x86-64 mode
@@ -181,6 +201,8 @@ ELENA byte codes (or ecodes)
    load fp:i                - index := fp[i]
 
    load dp:disp             - index := dp[disp]
+
+   load sp:i                - index := sp[i]
 
    lsave dp:disp            - dp[disp]  := long:index
 
@@ -200,7 +222,7 @@ ELENA byte codes (or ecodes)
 
    save dp:disp             - dp[disp]  := index
 
-   save sp:disp             - sp[disp]  := index
+   save sp:i                - sp[i]  := index
 
    store fp:i               - fp[i] := acc
 
@@ -294,6 +316,10 @@ ELENA byte codes (or ecodes)
 
    xcopy disp, n            - sp[0] >> temp, n bytes;
                               temp >> acc[disp];
+
+   xdispatch i              - index - message, acc[i], acc[i+1], ... - list of overload list, null terminated;
+                              searches in overload list for mathced signature, if found jumps to direct address;
+                              otherwise goes to the next one, until zero is encountered
 
    xdispatch m, r           - search in message table r the message in index and provided parameter list; 
                               if found jumps directly to it;
@@ -440,6 +466,8 @@ ELENA byte codes (or ecodes)
    tstm m                   - search for m in acc:VMT;
                               COMP.EQ := found
 
+   tststck                  - COMP.EQ := acc in the stack scope;
+
    cmp  fp:i                - COMP.EQ := (acc == fp[i]);
 
    cmp  sp:i                - COMP.EQ := (acc == sp[i]);
@@ -474,6 +502,8 @@ ELENA byte codes (or ecodes)
 
    xcmp  dp:i               - COMP.EQ := (index == dp[i]);
 
+   xcmp sp:i                - COMP.EQ := (index == sp[i]);
+
    xlcmp                    - long:temp << long:acc[0];
                               COMP.EQ := (long:index == long:temp);
                               COMP.LT := (long:index < long:temp);
@@ -481,9 +511,13 @@ ELENA byte codes (or ecodes)
 
  Misc operations:
  ---------------- 
-   hook  dp:i, label        - set a handler to the specified label
+   freelock                 - free acc
+
+   label dp:i, r            - assign a specified address / label to dp[i]
 
    throw                    - raise an exception (acc contains the exception object)
 
-   xhook dp:i, r            - set a handler to the specified address
+   trylock                  - try to lock acc, if already locked COMP.EQ = 0
+
+   xhook dp:i, r            - set a handler to the specified address / label
 

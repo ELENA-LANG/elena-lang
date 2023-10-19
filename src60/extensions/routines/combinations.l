@@ -194,7 +194,7 @@ public class SequentialEnumerator : BaseRowEnumerator
       self.reset()
    }
         
-   constructor new(params object[] arguments)
+   constructor load(params object[] arguments)
       <= new(cast object[](arguments));
 
    reset()

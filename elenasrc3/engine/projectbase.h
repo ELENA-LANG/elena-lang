@@ -67,6 +67,7 @@ namespace elena_lang
       MappingOutputMode,
       OptimizationMode,
       GenerateParamNameInfo,
+      ConditionalBoxing,
 
       Prolog,
       Epilog,
@@ -155,6 +156,11 @@ namespace elena_lang
        * options are separated by \n
        */
       IdentifierString options;
+
+      ProjectTarget()
+         : type(0)
+      {
+      }
    };
 
    typedef Map<ustr_t, ProjectTarget*, allocUStr, freeUStr, freeobj> ProjectTargets;

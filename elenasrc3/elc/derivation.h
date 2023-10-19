@@ -53,13 +53,13 @@ namespace elena_lang
                   ref_t index = arguments.get(node.identifier());
                   if (index) {
                      parameterKey = SyntaxKey::TemplateArgParameter;
-                     parameterIndex = index;
+                     parameterIndex = index + nestedLevel;
                      return true;
                   }
                   index = parameters.get(node.identifier());
                   if (index) {
                      parameterKey = SyntaxKey::TemplateParameter;
-                     parameterIndex = index;
+                     parameterIndex = index + nestedLevel;
                      return true;
                   }
                   return false;
@@ -69,12 +69,12 @@ namespace elena_lang
                   ref_t index = arguments.get(node.identifier());
                   if (index == 1) {
                      parameterKey = SyntaxKey::NameParameter;
-                     parameterIndex = index;
+                     parameterIndex = index + nestedLevel;
                      return true;
                   }
                   else if (index > 1) {
                      parameterKey = SyntaxKey::TemplateArgParameter;
-                     parameterIndex = index;
+                     parameterIndex = index + nestedLevel;
                      return true;
                   }
                   return false;

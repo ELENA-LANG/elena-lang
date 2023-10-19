@@ -50,6 +50,14 @@ namespace elena_lang
       }
 
    public:
+      enum class DFAMode
+      {
+         Normal = 0,
+         Symbolic
+      };
+
+      void switchMode(DFAMode mode);
+
       bool read(ScriptToken& token);
 
       void resetReader()

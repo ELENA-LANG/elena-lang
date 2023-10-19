@@ -5,6 +5,7 @@ define VEH_HANDLER          10003h
 define GC_COLLECT	    10004h
 define GC_ALLOCPERM	    10005h
 define PREPARE	            10006h
+define THREAD_WAIT          10007h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
@@ -57,6 +58,7 @@ define gc_perm_current       0068h
 
 define et_current            0008h
 define tt_stack_frame        0010h
+define tt_stack_root         0028h
 
 define es_prev_struct        0000h
 define es_catch_addr         0008h
@@ -97,6 +99,9 @@ structure % CORE_SINGLE_CONTENT
   dq 0 // ; et_critical_handler    ; +x00   - pointer to ELENA critical handler
   dq 0 // ; et_current             ; +x08   - pointer to the current exception struct
   dq 0 // ; tt_stack_frame         ; +x10   - pointer to the stack frame
+  dq 0 // ; reserved
+  dq 0 // ; reserved
+  dq 0 // ; tt_stack_root
 
 end
  
@@ -469,7 +474,16 @@ procedure %PREPARE
 
 end
 
+procedure %THREAD_WAIT
+
+end
+
 // ; ==== Command Set ==
+
+// ; snop
+inline % 2
+
+end
 
 // ; redirect
 inline % 03h //; (r15 - object, r14 - message)
@@ -722,6 +736,26 @@ labEnd:
 
 end
 
+// ; tststck
+inline %17h
+
+  ld      r16, toc_data(r2)
+  addis   r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi    r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
+  ld      r16, tt_stack_root(r16)
+
+  li      r17, 0
+  li      r18, 1
+  cmpld   r15, r1
+  isellt  r19, r18, r17
+  cmpld   r15, r16
+  iselgt  r20, r18, r17
+  or      r19, r19, r20
+
+  cmpwi   r19, 0
+
+end
+
 // ; dtrans
 inline %18h
 
@@ -880,6 +914,17 @@ inline %02Ah
 
 end
 
+
+// ; trylock
+inline %02Bh
+
+end
+
+// ; freelock
+inline %02Ch
+
+end
+
 // ; xget
 inline %02Eh
 
@@ -894,6 +939,21 @@ inline %02Fh
 
   mtctr    r15            // ; put code address into ctr
   bctrl                   // ; and call it
+
+end
+
+// ; xfsave
+inline %30h
+
+  stfd    f3, 0(r15)
+
+end
+
+// ; xquit
+inline %034h
+
+  mr      r3, r14
+  blr
 
 end
 
@@ -938,6 +998,22 @@ inline %073h
   lfd     f17, 0(r15)
   fdiv    f17, f18, f17
   stfd    f17, 0(r15)
+
+end
+
+// ; shl
+inline %75h
+
+  li      r18, __n16_1
+  sld     r14, r14, r18
+
+end
+
+// ; shr
+inline %76h
+
+  li      r18, __n16_1
+  srd     r14, r14, r18
 
 end
 
@@ -1553,7 +1629,7 @@ end
 // ; savesi
 inline %0A2h
 
-  std     r14, __arg16_1(r1)  
+  stw     r14, __arg16_1(r1)  
 
 end 
 
@@ -2004,6 +2080,28 @@ labEnd:
                                
 end
 
+// ; cmpsi
+inline %0C6h
+
+  ld      r16, __arg16_1(r1)  
+  cmp     r14, r16
+
+end 
+
+// ; cmpsi 0
+inline %1C6h
+
+  cmp     r14, r3
+
+end 
+
+// ; cmpsi 1
+inline %2C6h
+
+  cmp     r14, r4
+
+end 
+
 // ; cmpfi
 inline %0C8h
 
@@ -2031,6 +2129,75 @@ end
 inline %2C9h
 
   cmp     r15, r4
+
+end 
+
+// ; extclosen
+inline %0CAh
+
+  addi    r31, r31, __n16_1  // ; skip unframed stack
+  mr      r1, r31              // ; restore stack pointer
+
+  ld      r31, 00h(r1)         // ; restore frame pointer
+  ld      r0,  08h(r1)         // ; restore  return address
+
+  mtlr    r0
+  addi    r1, r1, 10h          // ; free stack
+  
+end
+
+// ; extclosen 0
+inline %1CAh
+
+  mr      r1, r31              // ; restore stack pointer
+
+  ld      r31, 00h(r1)         // ; restore frame pointer
+  ld      r0,  08h(r1)         // ; restore  return address
+
+  mtlr    r0
+  addi    r1, r1, 10h          // ; free stack
+  
+end
+
+// ; lloadsi
+inline %0CBh
+
+  ld      r14, __arg16_1(r1)  
+
+end 
+
+// ; lloadsi 0
+inline %1CBh
+
+  mr      r14, r3
+
+end 
+
+// ; lloadsi 1
+inline %2CBh
+
+  mr      r14, r4
+
+end 
+
+// ; loadsi
+inline %0CCh
+
+  lwz     r14, __arg16_1(r1)  
+
+end 
+
+// ; loadsi 0
+inline %1CCh
+
+  mr      r14, r3
+
+end 
+
+// ; loadsi 1
+inline %2CCh
+
+  mr      r14, r4
 
 end 
 
@@ -2083,15 +2250,23 @@ inline %0CFh
 
 end
 
-// ; system 4
+// ; system startup
 inline %4CFh
 
   lis     r2, rdata32_hi : %CORE_TOC
   addi    r2, r2, rdata32_lo : %CORE_TOC
 
+  ld      r16, toc_data(r2)
+  addis   r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi    r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
+  std     r1, tt_stack_root(r16)
+
   ld      r12, toc_prepare(r2)
   mtctr   r12            
   bctrl                   
+
+  lis     r2, rdata32_hi : %CORE_TOC
+  addi    r2, r2, rdata32_lo : %CORE_TOC
 
 end
 
@@ -2162,6 +2337,19 @@ inline %0D4h
   divwu   r18, r18, r17  
 
   stw     r18, 0(r19)
+
+end
+
+// ; xlabeldpr
+inline %0D6h
+
+  addi    r19, r31, __arg16_1
+
+  ld      r12, toc_code(r2)
+  addis   r12, r12, __disp32hi_2
+  addi    r12, r12, __disp32lo_2
+
+  std     r19, 0(r12)
 
 end
 
@@ -2516,7 +2704,7 @@ inline %0DFh
   lwz      r17, 0(r3)
   lwz      r18, 0(r15)
 
-  cmpl     r17, r18
+  cmplw    r17, r18
 
   ld      r16, toc_code(r2)
   addis   r17, r16, __xdisp32hi_1 
@@ -3166,7 +3354,7 @@ inline %7F1h
 
 end
 
-// ; openheaderin
+// ; extopenin
 inline %0F2h
 
   // ; loading TOC pointer
@@ -3205,7 +3393,7 @@ labEnd:
 
 end 
 
-// ; openheaderin 0, 0
+// ; extopenin 0, 0
 inline %1F2h
 
   // ; loading TOC pointer
@@ -3221,7 +3409,7 @@ inline %1F2h
 
 end 
 
-// ; openheaderin 1, 0
+// ; extopenin 1, 0
 inline %2F2h
 
   // ; loading TOC pointer
@@ -3239,7 +3427,7 @@ inline %2F2h
 
 end 
 
-// ; openheaderin 2, 0
+// ; extopenin 2, 0
 inline %3F2h
 
   // ; loading TOC pointer
@@ -3257,7 +3445,7 @@ inline %3F2h
 
 end 
 
-// ; openheaderin 3, 0
+// ; extopenin 3, 0
 inline %4F2h
 
   // ; loading TOC pointer
@@ -3277,7 +3465,7 @@ inline %4F2h
 
 end 
 
-// ; openheaderin 0, n
+// ; extopenin 0, n
 inline %5F2h
 
   // ; loading TOC pointer
@@ -3298,7 +3486,7 @@ inline %5F2h
 
 end 
 
-// ; openheaderin i, 0
+// ; extopenin i, 0
 inline %6F2h
 
   // ; loading TOC pointer
@@ -3757,6 +3945,22 @@ labNextBaseClass:
   cmpwi   r22, 0
 //;  jnz  labNextOverloadlist
   bne     labNextOverloadlist
+
+end
+
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 9FAh
+
+//; !! temporally commented
+
+end
+
+// ; xdispatchmr
+// ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 0AFAh
+
+//; !! temporally commented
 
 end
 

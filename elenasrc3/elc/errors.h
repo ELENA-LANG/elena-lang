@@ -26,7 +26,10 @@ namespace elena_lang
    constexpr auto errMsgDuplicatedField         = "\n%s(%d:%d): error 109: Field '%s' already exists in the class\n";
    constexpr auto errMsgUnknownVariableType     = "\n%s(%d:%d): error 110: Type of the variable '%s' doesn't exist\n";
    constexpr auto errMsgIllegalField            = "\n%s(%d:%d): error 111: Illegal field declaration '%s'\n";
+   constexpr auto errMsgNoInitializer           = "\n%s(%d:%d): error 112: A field declaration '%s' must have an initializer\n";
    constexpr auto errMsgTooManyParameters       = "\n%s(%d:%d): error 113: Too many parameters for '%s' message\n";
+   constexpr auto errMsgMixedUpVariadicMessage  = "\n%s(%d:%d): error 114: The class '%s' contains variadic and normal methods with the same name\n";
+   constexpr auto errMsgRedirectToItself        = "\n%s(%d:%d): error 115: Redirecting message '%s' to itself\n";
    constexpr auto errMsgDuplicatedDefinition    = "\n%s(%d:%d): error 119: Duplicate definition: '%s' already declared\n";
    constexpr auto errMsgInvalidIntNumber        = "\n%s(%d:%d): error 130: Invalid integer value %s\n";
    constexpr auto errMsgCannotEval              = "\n%s(%d:%d): error 140: Cannot evaluate the expression %s\n";
@@ -39,6 +42,7 @@ namespace elena_lang
    constexpr auto errMsgIllegalStaticMethod     = "\n%s(%d:%d): error 151: Static method cannot be declared\n";
    constexpr auto errMsgIllegalMethod           = "\n%s(%d:%d): error 152: Illegal method declaration\n";
    constexpr auto errMsgIllegalOperation        = "\n%s(%d:%d): error 153: Illegal operation\n";
+   constexpr auto errMsgNotCompatibleMulti      = "\n%s(%d:%d): error 157: type attribute should be the same for the overloaded method '%s'\n";
    constexpr auto errMsgTypeAlreadyDeclared     = "\n%s(%d:%d): error 158: type attribute cannot be overridden\n";
    constexpr auto errMsgAbstractMethods         = "\n%s(%d:%d): error 159: Class contains abstract methods\n";
 
@@ -86,6 +90,7 @@ namespace elena_lang
    constexpr auto wrnMsgUnknownTypecast      = "\n%s(%d:%d): warning 426: typecasting routine cannot be found\n";
    constexpr auto wrnMsgUnsupportedOperator  = "\n%s(%d:%d): warning 427: operator handler is not defined for %s\n";
    constexpr auto wrnMsgUnassignedVariable   = "\n%s(%d:%d): warning 428: an unassigned variable - '%s'\n";
+   constexpr auto wrnMsgLessAccessible       = "\n%s(%d:%d): warning 429: the returning type is less accessible than '%s'\n";
 
    constexpr auto wrnMsgSyntaxFileNotFound   = "\nwarning 500: cannot open syntax file '%s'\n";
    constexpr auto wrnMsgInvalidConfig        = "\nwarning 501: invalid or unknown config file %s\n";
@@ -108,6 +113,7 @@ namespace elena_lang
    constexpr auto infoMsgCurrentMethod       = "\ninfo 702:   compiling method %s\n";
    constexpr auto infoMsgCurrentClass        = "\ninfo 703: compiling class %s\n";
    constexpr auto infoMsgAbstractMetod       = "\ninfo 704:   abstract method %s\n";
+   constexpr auto infoMssgMixedUpVariadic    = "\ninfo 705:   mixed-up variadic method %s\n";
 
 } // _ELENA_
 

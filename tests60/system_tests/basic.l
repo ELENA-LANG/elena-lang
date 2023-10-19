@@ -497,6 +497,19 @@ singleton BoxingProber
    }
 }
 
+struct XInteger
+{
+   int x;
+
+   constructor(int x)
+   {
+      this x := x;
+   }
+
+   int cast()
+      = x;
+}
+
 boxingTests()
 {
    console.write("boxingTests:");
@@ -532,7 +545,13 @@ boxingTests()
 
    x.test(0,1);
    x.test(1,b);
+   console.write(".");
 
+   var xint := new XInteger(2);
+
+   var nint := cast int(xint);
+
+   Assert.ifTrue(nint.instanceOf(IntNumber));
    console.writeLine(".");
 }
 
@@ -691,23 +710,36 @@ public singleDispatchTest()
 
 sealed class VariadicTester
 {
-    bool test1Called := false;
-    bool test2Called := false;
+   bool test1Called := false;
+   bool test2Called := false;
     
-    test1(params int[] others)
-    {
-        test1Called := true
-    }
+   test1(params int[] others)
+   {
+      test1Called := true
+   }
     
-    test2(string s, params int[] others)
-    {
-        test2Called := true
-    }    
+   test2(string s, params int[] others)
+   {
+      test2Called := true
+   }    
+
+   int sum(params int[] numbers)
+   {
+      int sum := 0;
+      for (int i := 0, i < numbers.Length, i += 1) {
+         sum += numbers[i];
+      };
+
+      ^ sum;
+   }
+
+   int passAndSum(params int[] numbers)
+      <= sum(params numbers);
     
-    validate()
-    {
-        Assert.ifTrue(test1Called).ifTrue(test2Called)
-    }
+   validate()
+   {
+      Assert.ifTrue(test1Called).ifTrue(test2Called)
+   }
 }
 
 variadicTest()
@@ -721,13 +753,21 @@ variadicTest()
     
     tester.validate();
     console.write(".");
+
+    Assert.ifTrue(tester.sum(1,2,3)==6);
+    Assert.ifTrue(tester.passAndSum(1,2,3)==6);
+    console.write(".");
     
     // compile-time
     auto tester2 := new VariadicTester();
+
     tester2.test1(1,3,3);
-    tester2.test2("hello",3,3);
-    
+    tester2.test2("hello",3,3);    
     tester2.validate();
+    console.write(".");
+
+    Assert.ifTrue(tester.sum(1,2,3)==6);
+    Assert.ifTrue(tester.passAndSum(1,2,3)==6);
     
     console.writeLine(".")
 }
@@ -1206,7 +1246,7 @@ public ifExpressionTest()
 {
     console.write("ifExpressionTest:");
     
-    auto c := DynamicSingleton.new(
+    auto c := DynamicSingleton.load(
                 Expression.Method(
                    "eval",
                    Expression.CodeBlock(                   
@@ -1241,7 +1281,7 @@ public loopExpressionTest()
 {
     console.write("loopExpressionTest:");
     
-    auto c := DynamicSingleton.new(
+    auto c := DynamicSingleton.load(
                 Expression.Method(
                    "eval",
                    Expression.CodeBlock(      
@@ -1526,6 +1566,13 @@ struct XY
    int x : prop;
    int y : prop;
 
+   set(int x, int y)
+   {
+      this x := x;
+      this y := y;
+   }
+   set(long r, long r2) {}
+
    constructor()
    {
       x := 2;
@@ -1533,13 +1580,42 @@ struct XY
    }
 }
 
+singleton StructTest
+{
+   testMe(XY r)
+   {
+      r.set(1,2);
+   }
+
+   testMe2(XY r)
+   {
+      var a := 3;
+      var b := 4;
+
+      r.set(a,b);
+   }
+}
+
 structTest()
 {
    console.write("structTest:");
    XY xy := new XY();
+   var xy2 := new XY();
 
    Assert.ifTrue(xy.x == 2);
    Assert.ifTrue(xy.y == 3);
+
+   console.write(".");
+
+   StructTest.testMe(xy2);
+   Assert.ifTrue(xy2.x == 1);
+   Assert.ifTrue(xy2.y == 2);
+
+   console.write(".");
+
+   StructTest.testMe2(xy2);
+   Assert.ifTrue(xy2.x == 3);
+   Assert.ifTrue(xy2.y == 4);
 
    console.writeLine(".");
 }

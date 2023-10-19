@@ -158,7 +158,7 @@ bool WinNtLinker :: createDebugFile(ImageProviderBase& provider, WinNtExecutable
    return true;
 }
 
-void WinNtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableImage& image)
+void WinNtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableImage& image, PlatformType uiType)
 {
    // !! temporal
    image.fileAlignment = FILE_ALIGNMENT;
@@ -174,29 +174,28 @@ void WinNtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableI
    image.characteristics |= IMAGE_FILE_LOCAL_SYMS_STRIPPED;
    image.characteristics |= IMAGE_FILE_LINE_NUMS_STRIPPED;
 
-   //   switch (info.project->IntSetting(opPlatform, ptWin32Console) & mtUIMask)
-   //   {
-   //   case mtGUI:
-   //      header.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_GUI;
-   //      break;
-   //   case mtCUI:
-   //   default:
-         image.subsystem = IMAGE_SUBSYSTEM_WINDOWS_CUI; // !! temporal
-   //      break;
-   //   }
+   switch (uiType) {
+      case PlatformType::GUI:
+         image.subsystem = IMAGE_SUBSYSTEM_WINDOWS_GUI;
+         break;
+      case PlatformType::CUI:
+      default:
+         image.subsystem = IMAGE_SUBSYSTEM_WINDOWS_CUI;
+         break;
+   }
 
    image.headerSize = IMAGE_SIZEOF_FILE_HEADER;
    image.headerSize += IMAGE_SIZEOF_SECTION_HEADER * image.imageSections.headers.count();
 }
 
-LinkResult WinNtLinker :: run(ProjectBase& project, ImageProviderBase& provider)
+LinkResult WinNtLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType uiType)
 {
    bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode, true); // !! temporally by default the debug mode is on
 
    WinNtExecutableImage image(withDebugMode);
 
    image.addressSpace.entryPoint = (pos_t)provider.getEntryPoint();
-   prepareNtImage(provider, image);
+   prepareNtImage(provider, image, uiType);
 
    PathString exePath(project.PathSetting(ProjectOption::TargetPath));
    exePath.changeExtension(L"exe");

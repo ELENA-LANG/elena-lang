@@ -8,28 +8,24 @@
 <= 
    system'dynamic'expressions'SymbolCollection ( 
 =>
-                                     "namespace" "(" member* ")"
+                                     "namespace" "(" import* member* ")"
 <= ) =>;
 
    #define namespace      ::= 
 <= 
    system'dynamic'expressions'SymbolCollection ( 
 =>
-                                     "public_namespace" "(" member* ")"
+                                     "public_namespace" "(" import* member* ")"
 <= ) =>;
 
-   #define member         ::=
+   #define import         ::=
 <=
-   system'dynamic'expressions'SymbolInfo (
-     system'dynamic'expressions'DynamicImport (
-       system'dynamic'expressions'ScopeIdentifier (
-=>
-                                     "import" "(" "identifier" "=" ident_quote ")"
+   system'dynamic'expressions'ImportInfo (
+=> 
+                                    "import" "(" "identifier" "=" ident_quote ")"
 <=
-       )
-     )
-   )
-=>;
+   ) 
+=>; 
 
    #define member         ::=
 <=
@@ -55,11 +51,18 @@
 <= 
      system'dynamic'expressions'SymbolInfo ( 
 =>
+                                   "public_symbol" "(" s_name symbol_expr ")"
+<=   ) =>;
+
+   #define member         ::=
+<= 
+     system'dynamic'expressions'SymbolInfo ( 
+=>
                                    "singleton" "(" s_name class_expr ")"
 <=   ) =>;
 
-  #define symbol_expr     ::= "expression" "(" nested_symbol ")"; 
-  #define symbol_expr     ::= "expression" "(" expr_symbol ")"; 
+  #define symbol_expr     ::= "get_expression" "(" nested_symbol ")"; 
+  #define symbol_expr     ::= "get_expression" "(" expr_symbol ")"; 
                               
   #define class_expr      ::= 
 <=
@@ -81,7 +84,7 @@
 <=
        system'dynamic'expressions'DynamicExpressionSymbol (
 =>
-                                   operation
+                                   get_expression
 <=     ) =>;
 
   #define expr_symbol     ::= 
@@ -116,7 +119,7 @@
 <=
        system'dynamic'expressions'MethodExpression (
 =>
-                                   "method" "(" m_name parameter* body ")"
+                                   "method" "(" m_name parameter_block? body ")"
 <=
        )
 =>;
@@ -125,7 +128,7 @@
 <=
        system'dynamic'expressions'MethodExpression (
 =>
-                                   "script_method" "(" m_name parameter* body ")"
+                                   "script_method" "(" m_name parameter_block? body ")"
 <=
        )
 =>;
@@ -139,6 +142,15 @@
        )
 =>;
 
+  #define parameter_block ::=
+<=
+         system'dynamic'expressions'MethodParameterList (
+=>
+                                   param_str param_str*
+<=
+         )
+=>;
+
   #define parameter       ::= 
 <=
          system'dynamic'expressions'ScopeIdentifier (
@@ -147,6 +159,9 @@
 <=
          )
 =>;
+
+  #define param_str       ::= 
+                                   "parameter" "(" p_name ")";
 
   #define body            ::=
 <=
@@ -184,7 +199,39 @@
                )
 =>;
 
-  #define expression      ::= $ object operation?;
+  #define get_expression  ::= inner_expr;
+
+  #define expression      ::= "expression" "(" inner_expr ")";
+
+  #define inner_expr      ::= "message_operation" "(" call_expression ")";
+  #define inner_expr      ::= object_expr;
+
+  #define call_expression ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                              object_expr message expression*
+<=
+               )
+=>;
+
+  #define call_expression ::=
+<=
+               system'dynamic'expressions'FunctionCallExpression (
+=>
+                              object_expr expression*
+<=
+               )
+=>;
+
+  #define object_expr     ::= "object" "("  object ")";
+
+
+
+
+  #define get_expression  ::= $ object operation?; // !! obsolete
+
+  #define expression      ::= $ object operation?;   // !! obsolete
   #define expression      ::= new_call;
   #define expression      ::= var_assign_expr;
 

@@ -35,6 +35,7 @@ namespace elena_lang
    constexpr char dfaGenericReal    = '[';
    constexpr char dfaReal           = ']';
    constexpr char dfaRealPostfix    = '_';
+   constexpr char dfaGlobal         = 'a';
 
    constexpr char dfaPrivate        = 'N';
    constexpr char dfaLong           = '?';
@@ -188,6 +189,11 @@ namespace elena_lang
          _position++;
       }
 
+      void setDFA(const char** dfa)
+      {
+         _dfa = dfa;
+      }
+
    public:
       void step(T ch, char& state, char& terminateState)
       {
@@ -248,6 +254,11 @@ namespace elena_lang
             _position = 0;
             _line[0] = 0;
          }
+      }
+
+      void switchDFA(const char** dfa)
+      {
+         _dfa = dfa;
       }
 
       TextParser(const char** dfa, int tabSize, TextReader<T>* reader)

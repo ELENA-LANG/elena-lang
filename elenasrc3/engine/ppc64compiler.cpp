@@ -18,7 +18,7 @@ const Pair<ByteCode, CodeGenerator, ByteCode::None, nullptr> Overloads[Overloads
 {
    { ByteCode::CallExtR, PPC64loadCallOp},
    { ByteCode::OpenIN, PPC64compileOpenIN},
-   { ByteCode::OpenHeaderIN, PPC64compileOpenIN},
+   { ByteCode::ExtOpenIN, PPC64compileOpenIN},
 };
 
 //inline void x86_64AllocStack(int args, MemoryWriter* code)

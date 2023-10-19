@@ -167,8 +167,6 @@ addr_t DebugInfoProvider :: getClassAddress(ustr_t name)
 bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressReader, DebugProcessBase* process)
 {
    bool isClass = true;
-   if (reference.findStr("sandbox'$inline0") != NOTFOUND_POS)
-      isClass = true;
 
    //bool isClass = true;
    ModuleBase* module = nullptr;
@@ -245,7 +243,8 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
                break;
             case DebugSymbol::Field:
             case DebugSymbol::FieldAddress:
-            case DebugSymbol::ClassInfo:
+            case DebugSymbol::ParameterInfo:
+            case DebugSymbol::FieldInfo:
                // replace field name reference with the name
                stringReader.seek(info.addresses.source.nameRef);
 
@@ -256,9 +255,6 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             {
                addr_t stepAddress = 0;
                addressReader.read(&stepAddress, sizeof(addr_t));
-
-               if (stepAddress > 0x00503af00)
-                  stepAddress |= 0;
 
                ((DebugLineInfo*)current)->addresses.step.address = stepAddress;
                // virtual end of expression should be stepped over automatically by debugger
@@ -1093,6 +1089,22 @@ void DebugController :: readObjectArray(ContextBrowserBase* watch, void* parent,
    }
 }
 
+void* DebugController :: readFieldValue(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, int size, ustr_t className)
+{
+   if (level > 0) {
+      if (size == 4) {
+         return readUIntLocal(watch, parent, address, name, level);
+      }
+      else {
+         WatchContext context = { parent, address };
+         void* item = watch->addOrUpdate(&context, name, className);
+
+         return item;
+      }
+   }
+   else return nullptr;
+}
+
 void DebugController :: readFields(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info)
 {
    if (level <= 0 || info == nullptr)
@@ -1100,23 +1112,29 @@ void DebugController :: readFields(ContextBrowserBase* watch, void* parent, addr
 
    size_t index = 1;
    while (info[index].symbol == DebugSymbol::Field || info[index].symbol == DebugSymbol::FieldAddress) {
+      bool isStruct = info[index].symbol == DebugSymbol::FieldAddress;
       ustr_t name = (const char*)info[index].addresses.field.nameRef;
       addr_t fieldAddress = 0;
       ustr_t className = nullptr;
-      if (info[index].symbol == DebugSymbol::Field) {
+      if (!isStruct) {
          fieldAddress = _process->getField(address, info[index].addresses.field.offset);
       }
       else {
          fieldAddress = _process->getFieldAddress(address, info[index].addresses.field.offset);
       }
       index++;
-      if (info[index].symbol == DebugSymbol::ClassInfo) {
-         className = (const char*)info[index].addresses.source.nameRef;
+      int size = 0;
+      if (info[index].symbol == DebugSymbol::FieldInfo) {
+         className = (const char*)info[index].addresses.info.nameRef;
+         size = info[index].addresses.info.size;
 
          index++;
       }
 
-      readObject(watch, parent, fieldAddress, name, level - 1, className);
+      if (isStruct && size != 0) {
+         readFieldValue(watch, parent, fieldAddress, name, level - 1, size, className);
+      }
+      else readObject(watch, parent, fieldAddress, name, level - 1, className);
    }
 }
 
@@ -1148,7 +1166,7 @@ inline disp_t getFrameDisp(DebugLineInfo& frameInfo, disp_t offset)
 
 inline const char* getClassInfo(DebugLineInfo& frameInfo)
 {
-   if (frameInfo.symbol == DebugSymbol::ClassInfo) {
+   if (frameInfo.symbol == DebugSymbol::ParameterInfo) {
       return (const char*)frameInfo.addresses.source.nameRef;
    }
    else return nullptr;

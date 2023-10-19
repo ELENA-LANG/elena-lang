@@ -313,6 +313,9 @@ public singleton uintConvertor
       ^ self.convert(n);
    }
 
+   uint convert(string s)
+      <= convert(s, 10);
+
    uint convert(string s, int radix)
    {
       int len := s.Length;
@@ -579,12 +582,42 @@ public singleton charConvertor
       ^ ch;
    }
 
+   char convert(string s)
+      : info("Converts a literal string into a character")
+   {
+      char ch := s[0];
+      if (ch.Length != s.Length)
+         InvalidArgumentException.raise();
+
+      ^ ch
+   }        
+
+   char convert(wide s)
+      : info("Converts a wide string into a character")
+   {
+      char ch := s[0];
+      if (ch.WideLength != s.Length)
+         InvalidArgumentException.raise();
+
+      ^ ch
+   }      
+
    char convert(short w)
    {
       int n := w;
 
       ^ self.convert(n);
    }
+
+   char convert(byte b)
+   {
+      int n := b;
+
+      ^ self.convert(n);
+   }
+
+   char convert(o)
+      = cast char(o);
 }
 
 // --- stringConvertor ---
@@ -759,20 +792,6 @@ public singleton stringConvertor
       index := i;
       length := len;
    }
-
-   private int skipTrailingZerros(int value)
-   {
-      int n := value;
-      while (n != 0) {
-         int r := n.mod(10);
-         if (r != 0) {
-            ^ n;
-         };
-         n := n / 10;            
-      };
-
-      ^ n;
-   }
    
    string convert(real value)
    {
@@ -784,7 +803,7 @@ public singleton stringConvertor
          r := 0.0 - r;
       };
 
-      PrimitiveRealOperations.splitReal(r, ref int integerPart, ref int decimalPart, ref int exponent);
+      PrimitiveRealOperations.splitReal(r, ref int integerPart, ref int decimalPart, ref int decimalPartLen, ref int exponent);
 
       byte buffer[40];
       int length := 0;
@@ -814,8 +833,18 @@ public singleton stringConvertor
       };
 
       // write decimal part
-      decimalPart := self.skipTrailingZerros(decimalPart);
       self.writeInteger(buffer, decimalPart, ref index, ref length);
+
+      // write leading zeros
+      decimalPartLen -= length;
+
+      for (int i := 0, i < decimalPartLen, i += 1) {
+         buffer[index] := 30h;
+         index -= 1;
+         length += 1;
+      };
+
+      int dotIndex := index;
 
       // decimal sign    
       tmp := 46;  
@@ -832,6 +861,15 @@ public singleton stringConvertor
          self.writeByte(buffer, tmp, ref index, ref length); 
       };
 
+      int last := 39;
+      while (buffer[last] == 30h) {
+         last -= 1;
+         length -= 1;
+      };
+      if (last == dotIndex) {
+         length += 1;
+      };
+
       ^ String.fromByteArray(index + 1, length, buffer);      
    }
 
@@ -840,7 +878,7 @@ public singleton stringConvertor
       int value := ch.Value;
 
       byte buffer[4];
-      int length := PrimitiveOperations.copyUTF8_2_32(buffer,0,value);
+      int length := UTFOperations.convertUTF32_2_8(value, buffer, 0, 4);
 
       ^ String.fromByteArray(0, length, buffer);      
    }
@@ -851,6 +889,12 @@ public singleton stringConvertor
    string convert(BaseVariable v, int radix)
       <= convert(*v, radix);
 
+   string convert(wide w)
+      = w;
+
+   string convert(string s)
+      = s;
+
    string convert(o)
       = o.toPrintable();
 }
@@ -859,15 +903,284 @@ public singleton stringConvertor
 
 public singleton wideConvertor
 {
-   string convert(char ch)
+   wide convert(char ch)
    {
       int value := ch.Value;
 
       short buffer[2];
-      int length := PrimitiveOperations.copyUTF16_2_32(buffer,0,value);
+      int length := UTFOperations.convertUTF32_2_16(value, buffer, 0, 2);
 
       ^ WideString.fromShortArray(0, length, buffer);      
    }  
+
+   wide convert(byte b, int radix)
+   {
+      int n := b;
+
+      ^ self.convert(n, radix);
+   }
+
+   wide convert(int value, int radix)
+   {
+      int n := value;
+      if (n < 0)
+      {
+         n := 0 - n;
+      };   
+
+      short buffer[36];
+      short tmp;
+      int len := 0;
+      int index := 35;
+      while (n >= radix) {
+         int r := n.mod(radix);
+         n := n / radix;
+
+         tmp := 48 + r;
+         if (r > 9) {
+            tmp :=tmp + 7;
+         };
+
+         buffer[index] := tmp;
+         index := index - 1;
+         len := len + 1;
+      };
+      tmp := 48 + n;
+      if (n > 9) {
+         tmp :=tmp + 7;
+      };
+
+      buffer[index] := tmp;
+      len := len + 1;
+
+      if (value < 0) {
+        index := index - 1;
+        tmp := 45;
+        buffer[index] := tmp;
+        len := len + 1;
+      };
+
+      ^ WideString.fromShortArray(index, len, buffer);
+   }
+
+   wide convert(int value)
+      <= convert(value, 10);
+
+   wide convert(long value, int radix)
+   {
+      long r := radix;
+      long n := value;
+      if (n < 0)
+      {
+         n := 0 - n;
+      };   
+
+      short buffer[24];
+      short tmp;
+      int len := 0;
+      int index := 23;
+      while (n >= r) {
+         long rest := n.mod(r);
+         n := n / r;
+
+         tmp := rest;
+         tmp := tmp + 48;
+         buffer[index] := tmp;
+         index := index - 1;
+         len := len + 1;
+      };
+      tmp := n;
+      tmp := tmp + 48;
+      buffer[index] := tmp;
+      len := len + 1;
+
+      if (value < 0) {
+        index := index - 1;
+        tmp := 45;
+        buffer[index] := tmp;
+        len := len + 1;
+      };
+
+      ^ WideString.fromShortArray(index, len, buffer);
+   }
+
+   wide convert(uint value, int radix)
+   {
+      uint n := value;
+      uint uradix := radix;
+
+      short buffer[12];
+      short tmp;
+      int len := 0;
+      int index := 11;
+      while (n >= uradix) {
+         uint r := n.mod(uradix);
+         n := n / uradix;
+
+         tmp := 48 + r;
+         if (r > 9) {
+            tmp :=tmp + 7;
+         };
+
+         buffer[index] := tmp;
+         index := index - 1;
+         len := len + 1;
+      };
+      tmp := 48 + n;
+      if (n > 9) {
+         tmp := tmp + 7;
+      };
+
+      buffer[index] := tmp;
+      len := len + 1;
+
+      ^ WideString.fromShortArray(index, len, buffer);
+   }
+
+   wide convert(short value, int radix)
+   {
+      int intValue := value;
+
+      ^ self.convert(intValue, radix);
+   }
+
+   private writeInteger(short[] buffer, int value, ref int index, ref int length)
+   {
+      int i := index;
+      int len := length;
+
+      int decimalPart := value;
+      short tmp := 0;
+      while (decimalPart >= 10) {
+         int r := decimalPart.mod(10);
+         decimalPart := decimalPart / 10;
+
+         tmp := 48 + r;
+         buffer[i] := tmp;
+         i := i - 1;
+         len := len + 1;
+      };
+      tmp := 48 + decimalPart;
+      buffer[i] := tmp;
+      i := i - 1;
+      len := len + 1;
+
+      index := i;
+      length := len;
+   }
+
+   private writeByte(short[] buffer, short b, ref int index, ref int length)
+   {
+      int i := index;
+      int len := length;
+
+      buffer[i] := b;
+      i := i - 1;
+      len := len + 1;
+
+      index := i;
+      length := len;
+   }
+
+   private int skipTrailingZerros(int value)
+   {
+      int n := value;
+      while (n != 0) {
+         int r := n.mod(10);
+         if (r != 0) {
+            ^ n;
+         };
+         n := n / 10;            
+      };
+
+      ^ n;
+   }
+   
+   wide convert(real value)
+   {
+      real r := value;
+
+      bool negative := false;
+      if (r < 0.0) {
+         negative := true;
+         r := 0.0 - r;
+      };
+
+      PrimitiveRealOperations.splitReal(r, ref int integerPart, ref int decimalPart, ref int decimalPartLen, ref int exponent);
+
+      short buffer[40];
+      int length := 0;
+      int index := 39;
+      short tmp := 0;
+
+      // write exponent part
+      if (exponent < 0) {
+         exponent := -exponent;
+
+         self.writeInteger(buffer, exponent, ref index, ref length);
+
+         // -
+         tmp := 45;
+         self.writeByte(buffer, tmp, ref index, ref length);
+
+         // e
+         tmp := 101;
+         self.writeByte(buffer, tmp, ref index, ref length);
+      };
+      if (exponent > 0) {
+         self.writeInteger(buffer, exponent, ref index, ref length);
+
+         // e
+         tmp := 101;
+         self.writeByte(buffer, tmp, ref index, ref length);
+      };
+
+      // write decimal part
+      self.writeInteger(buffer, decimalPart, ref index, ref length);
+
+      // write leading zeros
+      decimalPartLen -= length;
+
+      for (int i := 0, i < decimalPartLen, i += 1) {
+         buffer[index] := 30h;
+         index -= 1;
+         length += 1;
+      };
+
+      int dotIndex := index;
+
+      // decimal sign    
+      tmp := 46;  
+      buffer[index] := tmp;
+      index := index - 1;
+      length := length + 1;
+
+      // write integer part
+      self.writeInteger(buffer, integerPart, ref index, ref length);
+
+      // sign
+      if (negative) {
+         tmp := 45;
+         self.writeByte(buffer, tmp, ref index, ref length); 
+      };
+
+      int last := 39;
+      while (buffer[last] == 30h) {
+         last -= 1;
+         length -= 1;
+      };
+      if (last == dotIndex) {
+         length += 1;
+      };
+
+      ^ WideString.fromShortArray(index + 1, length, buffer);      
+   }
+
+   wide convert(BaseVariable v)
+      <= convert(*v);
+    
+   wide convert(BaseVariable v, int radix)
+      <= convert(*v, radix);
 
    wide convert(o)
       = o.toPrintable();
@@ -877,15 +1190,15 @@ public singleton wideConvertor
 
 public singleton byteArrayConvertor
 {
-   int convert(byte[] dest, int destIndex, int length, wide sour)
+   int convert(wide sour, int sourLen, byte[] dest, int destIndex, int destLen)
    {
       int i := 0;
       int j := 0;
-      while (i < length) {
+      while (i < sourLen) {
          char ch := sour[i];
          int chVal := ch.Value;
          
-         int length := PrimitiveOperations.copyUTF8_2_32(dest,j,chVal);
+         int length := UTFOperations.convertUTF32_2_8(chVal, dest, destIndex + j, destLen);
          
          j += length;
          i += ch.WideLength;
@@ -899,15 +1212,15 @@ public singleton byteArrayConvertor
 
 public singleton shortArrayConvertor
 {
-   int convert(short[] dest, int destIndex, int length, string sour)
+   int convert(string sour, int sourLen, short[] dest, int destIndex, int destLen)
    {
       int i := 0;
       int j := 0;
-      while (i < length) {
+      while (i < sourLen) {
          char ch := sour[i];
          int chVal := ch.Value;
          
-         int length := PrimitiveOperations.copyUTF16_2_32(dest, j, chVal);
+         int length := UTFOperations.convertUTF32_2_16(chVal, dest, destIndex + j, destLen);
          
          j += length;
          i += ch.Length;
@@ -915,4 +1228,19 @@ public singleton shortArrayConvertor
 
       ^ j
    }   
+}
+
+// --- mssgConvertor ---
+
+public singleton mssgConvertor
+{
+   convert(int n, ref Message retVal) : external(system'core_routines'__intToMssg);
+
+   Message convert(int n)
+      : info("Converting int value to the string<br/>NOTE : unsafe operation")
+   {
+      self.convert(n, ref Message m);
+
+      ^ m;
+   }
 }

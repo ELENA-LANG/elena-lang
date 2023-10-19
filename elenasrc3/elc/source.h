@@ -35,11 +35,16 @@ namespace elena_lang
    {
       bool _operatorMode;
 
-      void copyToken(char* token, size_t length);
+      ustr_t copyToken(char* token, size_t length);
+      ustr_t copyQuote(char* token, size_t length, List<char*, freestr>& dynamicStrings);
 
       bool IsOperator(char state)
       {
          return (state == dfaOperator || state == dfaAltOperator || state == dfaGrOperator);
+      }
+      bool IsQuoteToken(char state)
+      {
+         return (state == dfaQuote || state == dfaWideQuote || state == dfaCharacter);
       }
 
       void resolveSignAmbiguity(SourceInfo& info)
@@ -87,7 +92,7 @@ namespace elena_lang
       }
 
    public:
-      SourceInfo read(char* line, size_t length);
+      SourceInfo read(char* line, size_t length, List<char*, freestr>& dynamicStrings);
 
       SourceReader(int tabSize, UStrReader* source);
    };

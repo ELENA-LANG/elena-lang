@@ -21,7 +21,7 @@ const Pair<ByteCode, CodeGenerator, ByteCode::None, nullptr> Overloads[Overloads
    { ByteCode::FreeI, x86_64compileStackOp},
    { ByteCode::AllocI, x86_64compileStackOp},
    { ByteCode::OpenIN, x86_64compileOpenIN},
-   { ByteCode::OpenHeaderIN, x86_64compileOpenIN},
+   { ByteCode::ExtOpenIN, x86_64compileOpenIN},
 };
 
 inline void x86_64AllocStack(int args, MemoryWriter* code)

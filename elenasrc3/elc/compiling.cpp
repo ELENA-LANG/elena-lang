@@ -282,6 +282,7 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t prologName, pat
          SyntaxTree::toParseKey(SyntaxKey::eof),
          SyntaxTree::toParseKey(SyntaxKey::identifier),
          SyntaxTree::toParseKey(SyntaxKey::reference),
+         SyntaxTree::toParseKey(SyntaxKey::globalreference),
          SyntaxTree::toParseKey(SyntaxKey::string),
          SyntaxTree::toParseKey(SyntaxKey::character),
          SyntaxTree::toParseKey(SyntaxKey::wide),
@@ -475,7 +476,8 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    if (_bcRules.length() > 0)
       bcWriter.loadByteCodeRules(&_bcRules);
 
-   bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList, moduleScope.tapeOptMode);
+   bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList, moduleScope.ptrSize,
+      moduleScope.tapeOptMode, moduleScope.threadFriendly);
 
    if (savingMode) {
       // saving a module
@@ -512,7 +514,8 @@ void CompilingProcess :: buildModule(ProjectEnvironment& env,
       moduleSettings.stackAlingment, 
       moduleSettings.rawStackAlingment, 
       moduleSettings.ehTableEntrySize, 
-      minimalArgList, ptrSize);
+      minimalArgList, ptrSize,
+      moduleSettings.multiThreadMode);
 
    _compiler->prepare(&moduleScope, forwardResolver, moduleSettings.manifestInfo);
 
@@ -540,13 +543,17 @@ void CompilingProcess :: configurate(Project& project)
 
    bool withMethodParamInfo = project.BoolSetting(ProjectOption::GenerateParamNameInfo, true);
    _compiler->setMethodParamInfo(withMethodParamInfo);
+
+   bool withConditionalBoxing = project.BoolSetting(ProjectOption::ConditionalBoxing, DEFAULT_CONDITIONAL_BOXING);
+   _compiler->setConditionalBoxing(withConditionalBoxing);
 }
 
 void CompilingProcess :: compile(ProjectBase& project,
    pos_t defaultStackAlignment,
    pos_t defaultRawStackAlignment,
    pos_t defaultEHTableEntrySize,
-   int minimalArgList)
+   int minimalArgList,
+   bool multiThreadMode)
 {
    if (_parser == nullptr) {
       _errorProcessor->raiseInternalError(errParserNotInitialized);
@@ -567,6 +574,7 @@ void CompilingProcess :: compile(ProjectBase& project,
          project.UIntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
          project.UIntSetting(ProjectOption::EHTableEntrySize, defaultEHTableEntrySize),
          project.BoolSetting(ProjectOption::DebugMode, true),
+         multiThreadMode,
          {
             project.StringSetting(ProjectOption::ManifestName),
             project.StringSetting(ProjectOption::ManifestVersion),
@@ -590,6 +598,8 @@ void CompilingProcess :: compile(ProjectBase& project,
 
 void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS)
 {
+   PlatformType uiType = project.UITargetType();
+
    _presenter->print(ELC_LINKING);
 
    TargetImageInfo imageInfo;
@@ -609,7 +619,7 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS
    TargetImage code(project.SystemTarget(), &project, &_libraryProvider, _jitCompilerFactory,
       imageInfo, addressMapper);
 
-   auto result = linker.run(project, code);
+   auto result = linker.run(project, code, uiType);
 
    _presenter->print(ELC_SUCCESSFUL_LINKING);
 
@@ -681,6 +691,8 @@ int CompilingProcess :: build(Project& project,
 
       PlatformType targetType = project.TargetType();
 
+      bool multiThreadMode = project.ThreadModeType() == PlatformType::MultiThread;
+
       // Project Greetings
       _presenter->printLine(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()),
          getTargetTypeName(targetType, project.SystemTarget()));
@@ -689,11 +701,12 @@ int CompilingProcess :: build(Project& project,
       _presenter->printLine(ELC_CLEANING);
       cleanUp(project);
 
-      compile(project, defaultStackAlignment, defaultRawStackAlignment, defaultEHTableEntrySize, minimalArgList);
+      compile(project, defaultStackAlignment, defaultRawStackAlignment, defaultEHTableEntrySize, minimalArgList, multiThreadMode);
 
       // generating target when required
       switch (targetType) {
          case PlatformType::Console:
+         case PlatformType::GUI:
             link(project, linker, false);
             break;
          case PlatformType::MTA_Console:

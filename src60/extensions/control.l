@@ -38,3 +38,12 @@ public extension invokeOp : MessageName
         mssg(target, value)
     }
 }
+
+// --- exchange ---
+
+public exchange(ref object l, ref object r)
+{
+    var tmp := l;
+    l := r;
+    r := tmp
+}

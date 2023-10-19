@@ -1,295 +1,78 @@
 // --- PrimitiveOperations ---
 
-internal singleton PrimitiveOperations
+internal singleton PrimitiveArrayOperations
 {
-   copy(byte[] dest, int index, int size, byte[] sour)
+   copy(byte[] sour, int index, int size, byte[] dest)
    {
       for (int i := 0, i < size, i := i + 1) {
          dest[i] := sour[index + i];
       }
    }
 
-   copy(byte[] dest, int index, int size, char[] sour)
+   copy(short[] sour, int index, int size, short[] dest)
    {
+      for (int i := 0, i < size, i := i + 1) {
+         dest[i] := sour[index + i];
+      }
+   }
+
+   int copyCharArray(char[] sour, int index, int size, byte[] dest)
+   {
+      int destLen := dest.Length;
+
       int j := 0;
       for (int i := 0, i < size, i := i + 1) {
          char ch := sour[index + i];
          int chVal := ch.Value;
          int chLen := ch.Length;
          
-         PrimitiveOperations.copyUTF8_2_32(dest, j, chVal);
+         UTFOperations.convertUTF32_2_8(chVal, dest, j, destLen);
          
          j += chLen;
-      }
+      };
+
+      ^ j
    }
 
-   copy(short[] dest, int index, int size, short[] sour)
+   int copyCharArray(char[] sour, int index, int size, short[] dest)
    {
+      int destLen := dest.Length;
+
+      int j := 0;
       for (int i := 0, i < size, i := i + 1) {
-         dest[i] := sour[index + i];
-      }
-   }
-
-   int getCharLength(int code)
-   {
-      if (code < 80h)
-      {
-         ^ 1
-      };
-      if (code < 800h)
-      {
-         ^ 2
-      };
-      if (code < 10000h)
-      {
-         ^ 3
-      };
-
-      ^ 4
-   }
-
-   int getCharWideLength(int code)
-   {
-      if (code < 0D800h)
-      {
-         ^ 1
-      };
-
-      ^ 2
-   }
-
-   int readUTF32(byte[] sour, int index)
-   {
-      int ch := sour[index];
-      if (ch < 80h)
-      {
-         ^ ch
-      };
-      if (ch < 0C0h)
-      {
-         InvalidOperationException.raise()
-      };
-      if (ch < 0E0h)
-      {
-         int ch2 := sour[index + 1];
-         int mask := ch2 & 0C0h;
-         if (mask != 80h) {
-            InvalidOperationException.raise()
-         };
-         ch := ch $shl 6;
-         ch2 := ch2 + ch;
-         ch2 := ch2 - 3080h;
-       
-         ^ ch2
-      };
-      if (ch < 0F0h) {
-         int ch2 := sour[index + 1];
-         int ch3 := sour[index + 2];
-
-         int mask := ch2 & 0C0h;
-         if (mask != 80h) {
-            InvalidOperationException.raise()
-         };
-
-         ch := ch $shl 12;
-         ch2 := ch2 $shl 6;
-         ch := ch + ch2;
-
-         int mask2 := ch3 & 0C0h;
-         if (mask2 != 80h) {
-            InvalidOperationException.raise()
-         };
-         ch3 := ch3 + ch;
-         ch3 := ch3 - 0E2080h;
-         ^ ch3
-      };
-      if (ch < 0F8h) {
-         int ch2 := sour[index + 1];
-         int ch3 := sour[index + 2];
-         int ch4 := sour[index + 3];
-
-         int mask := ch2 & 0C0h;
-         if (mask != 80h) {
-            InvalidOperationException.raise()
-         };
-
-         ch := ch $shl 18;
-         ch2 := ch2 $shl 12;
-         ch := ch + ch2;
-
-         int mask2 := ch3 & 0C0h;
-         if (mask2 != 80h) {
-            InvalidOperationException.raise()
-         };
-
-         ch3 := ch3 $shl 6;
-         ch := ch + ch3;
-
-         int mask3 := ch4 & 0C0h;
-         if (mask3 != 80h) {
-            InvalidOperationException.raise()
-         };
+         char ch := sour[index + i];
+         int chVal := ch.Value;
+         int chLen := ch.Length;
          
-         ch4 := ch4 + ch3;
-         ch4 := ch4 - 3C82080h;
-         ^ ch4
-      };
-
-      InvalidOperationException.raise()    
-   }
-
-   int readUTF32(short[] sour, int index)
-   {
-      int ch := sour[index];
-      if (ch > 0DBFFh)
-      {
-         InvalidOperationException.raise()
-      };
-
-      if (ch < 0D800h)
-      {
-         ^ ch
-      };
-
-      int ch2 := ch $shl 10;
-      int ch3 := sour[index + 1];
-      if (ch3 > 0DBFFh)
-      {
-         InvalidOperationException.raise()
-      };
-      ch += ch3;
-
-      ch -= 35FDC00h;
-
-      ^ ch
-   }
-
-   int calcSubStringLength(int index, int length, char[] array)
-   {
-      int subStrLength := 0;
-      for(int i := 0, i < length, i += 1)
-      {
-         subStrLength += array[i].Length;
-      };
-
-      ^ subStrLength;
-   }
-
-   int calcSubWideStringLength(int index, int length, char[] array)
-   {
-      int subStrLength := 0;
-      for(int i := 0, i < length, i += 1)
-      {
-         subStrLength += array[i].WideLength;
-      };
-
-      ^ subStrLength;
-   }
-
-   int copyUTF8_2_32(byte[] dest, int index, int value)
-   {
-      int length := 0;
-      int n := value;
-
-      if (value < 080h)
-      {
-         byte b := n;
-
-         length := 1;
-         dest[index] := b;
-
-         ^ length
-      };
-      if (value < 0800h)
-      {
-         int n2 := value $shr 6;
-         n2 := n2 + 0C0h;
-
-         n := n & 03Fh;
-         n := n + 080h;
+         UTFOperations.convertUTF32_2_16(chVal, dest, j, destLen);
          
-         byte b := n;
-         byte b2 := n2;
-
-         length := 2;
-         dest[index] := b2;         
-         dest[index + 1] := b;
-
-         ^ length
-      };
-      if (value < 10000h)
-      {
-         int n3 := value $shr 12;
-         n3 := n3 + 0E0h;
-
-         int n2 := value $shr 6;
-         n2 := n2 & 03Fh;
-         n2 := n2 + 080h;
-         
-         n := n & 03Fh;
-         n := n + 80h;
-
-         length := 3;
-         byte b3 := n3;
-         byte b2 := n2;
-         byte b := n;
-         dest[index] := b3;
-         dest[index + 1] := b2;
-         dest[index + 2] := b;
-
-         ^ length
+         j += chLen;
       };
 
-      int n4 := value $shr 18;
-      n4 := n4 & 0Fh;
-      n4 := n4 + 0F0h;
-
-      int n3 := value $shr 12;
-      n3 := n3 + 0E0h;
-
-      int n2 := value $shr 6;
-      n2 := n2 & 03Fh;
-      n2 := n2 + 080h;
-         
-      n := n & 03Fh;
-      n := n + 80h;
-
-      length := 4;
-      byte b4 := n4;
-      byte b3 := n3;
-      byte b2 := n2;
-      byte b := n;
-      dest[index] := b4;
-      dest[index + 1] := b3;
-      dest[index + 2] := b2;
-      dest[index + 3] := b;      
-      
-      ^ length;
+      ^ j
    }
 
-   int copyUTF16_2_32(short[] dest, int index, int value)
+   int copyToShortArray(byte[] byteArray, int index, int length, short[] output, outputIndex)
    {
-      int length := 0;
-      int n := value;
-      if (n < 010000h) {
-         short s := shortConvertor.convert(n); 
-         
-         dest[index] := s;
+      int outputLen := 0;
+      int len := length;
+      int i := index;
+      int j := outputIndex;
+      while (len > 1) {
+         short tmp := byteArray[i + 1];
+         tmp *= 100h;
+         tmp += byteArray[i];
 
-         ^ 1
+         output[j] := tmp;
+
+         i += 2;
+         len -= 2;
+
+         outputLen += 1;
+         j += 1;
       };
-      
-      int n2 := n $shr 10;
-      n2 += 0D7C0h;
-      short tmp := shortConvertor.convert(n2); 
-      dest[index] := tmp;
-      
-      n := n & 03FFh;
-      n += 0DC00h;
-      tmp := shortConvertor.convert(n); 
-      dest[index] := tmp;
 
-      ^ 2;   
+      ^ outputLen;
    }
 }
 
@@ -319,6 +102,13 @@ internal singleton PrimitiveRealOperations
    {
       self.getPi(ref real retVal);
       
+      ^ retVal
+   }
+
+   real getE()
+   {
+      real retVal := self.exp(1.0r);
+        
       ^ retVal
    }
 
@@ -409,7 +199,7 @@ internal singleton PrimitiveRealOperations
       ^ exponent;
    }
 
-   splitReal(real value, ref int integerPart, ref int decimalPart, ref int exponent)
+   splitReal(real value, ref int integerPart, ref int decimalPart, ref int decimalPartLen, ref int exponent)
    {  
       real r := value;
 
@@ -420,8 +210,9 @@ internal singleton PrimitiveRealOperations
 
       remainder := value - remainder;
 
+      decimalPartLen := 9;
       remainder := remainder * 1.0e9;
-      
+
       int decPart := intConvertor.convert(remainder);
 
       // rounding
@@ -665,30 +456,259 @@ internal singleton PrimitiveIntOperations
    }
 }
 
-// --- PrimitiveArrayOperations ---
+// --- UTFOperations ---
 
-internal singleton PrimitiveArrayOperations
+internal singleton UTFOperations
 {
-   int copyToShortArray(byte[] byteArray, int index, int length, short[] output, outputIndex)
+   int convertUTF8_2_32(byte[] sour, int index, int length, ref int retVal)
    {
-      int outputLen := 0;
-      int len := length;
-      int i := index;
-      int j := outputIndex;
-      while (len > 1) {
-         short tmp := byteArray[i + 1];
-         tmp *= 100h;
-         tmp += byteArray[i];
+      int ch := sour[index];
+      int mask := ch & 080h;
+      if (mask == 0)
+      {
+         retVal := ch;
 
-         output[j] := tmp;
-
-         i += 2;
-         len -= 2;
-
-         outputLen += 1;
-         j += 1;
+         ^ 1
       };
 
-      ^ outputLen;
+      int ch2 := sour[index + 1];
+
+      mask := ch & 0E0h;
+      if (mask == 0C0h) {
+         ch := ch & 1Fh;
+         ch2 := ch2 & 3Fh;
+
+         ch := ch $shl 6;
+      
+         ch += ch2;
+         retVal := ch;            
+
+         ^ 2
+      };
+
+      int ch3 := sour[index + 2];
+
+      mask := ch & 0F0h;
+      if (mask == 0E0h) {
+         ch := ch & 0Fh;
+         ch2 := ch2 & 03Fh;
+         ch3 := ch3 & 03Fh;
+
+         ch := ch $shl 12;
+         ch2 := ch2 $shl 6;
+         
+         ch += ch2;
+         ch += ch3;
+         retVal := ch;            
+
+         ^ 3
+      };
+     
+      int ch4 := sour[index + 3];
+
+      ch := ch & 7;
+      ch2 := ch2 & 03Fh;
+      ch3 := ch3 & 03Fh;
+      ch4 := ch4 & 03Fh;
+
+      ch := ch $shl 18;
+      ch2 := ch2 $shl 12;
+      ch3 := ch3 $shl 6;
+      
+      ch += ch2;
+      ch += ch3;
+      retVal := ch;            
+
+      ^ 4
+   }
+
+   int convertUTF16_2_32(short[] sour, int index, int length, ref int retVal)
+   {
+      int ch := sour[index];
+      
+      if (ch < 0D800h) {
+         retVal := ch;
+
+         ^ 1;
+      };
+
+      int checkVal := ch - 0D800h;
+      if (checkVal < 2048) 
+         InvalidOperationException.raise();
+
+      int ch2 := sour[index];
+
+      int high_surrogate := ch & 0FFFFFC00h;
+      int low_surrogate := ch2 & 0FFFFFC00h;
+      
+      if (high_surrogate == 0D800h && low_surrogate == 0DC00h) {
+         high_surrogate := high_surrogate $shl 10;
+
+         high_surrogate += low_surrogate;
+         high_surrogate -= 35FDC00h;
+
+         retVal := high_surrogate;
+         ^ 2;
+      };
+
+      InvalidOperationException.raise();
+
+      ^ 0;   
+   }
+
+   int convertUTF32_2_8(int value, byte[] dest, int index, int length)
+   {
+      if (value < 80h) {
+         byte b := intConvertor.convert(value);
+
+         dest[index] := b;
+
+         ^ 1;
+      };
+
+      if (value < 800h) {
+         int n1 := value $shr 6;
+         n1 := n1 | 0C0h;
+
+         int n2 := value & 03Fh;
+         n2 := n2 | 080h;  
+
+         byte b1 := intConvertor.convert(n1);
+         byte b2 := intConvertor.convert(n2);
+
+         dest[index] := b1;
+         dest[index + 1] := b2;
+
+         ^ 2;
+      };
+      
+      if (value < 10000h) {
+         int n1 := value $shr 12;
+         n1 := n1 | 0E0h;
+
+         int n2 := value $shr 6;
+         n2 := n2 & 03Fh;
+         n2 := n2 | 080h;  
+
+         int n3 := value & 03Fh;
+         n3 := n3 | 080h;  
+
+         byte b1 := intConvertor.convert(n1);
+         byte b2 := intConvertor.convert(n2);
+         byte b3 := intConvertor.convert(n3);
+
+         dest[index] := b1;
+         dest[index + 1] := b2;
+         dest[index + 2] := b3;
+
+         ^ 3;
+      };
+
+      if (value < 200000h) {
+         int n1 := value $shr 18;
+         n1 := n1 | 0F0h;
+
+         int n2 := value $shr 12;
+         n2 := n2 & 03Fh;
+         n2 := n2 | 080h;  
+
+         int n3 := value $shr 6;
+         n3 := n3 & 03Fh;
+         n3 := n3 | 080h;  
+
+         int n4 := value & 03Fh;
+         n4 := n4 | 080h;  
+
+         byte b1 := intConvertor.convert(n1);
+         byte b2 := intConvertor.convert(n2);
+         byte b3 := intConvertor.convert(n3);
+         byte b4 := intConvertor.convert(n4);
+
+         dest[index] := b1;
+         dest[index + 1] := b2;
+         dest[index + 2] := b3;
+         dest[index + 3] := b4;
+
+         ^ 4;
+      };
+
+      InvalidOperationException.raise();
+
+      ^ 0;   
+   }
+   
+   int convertUTF32_2_16(int value, short[] dest, int index, int length)  
+   {
+      int length := 0;
+      int n := value;
+      if (n < 010000h) {
+         short s := shortConvertor.convert(n); 
+         
+         dest[index] := s;
+
+         ^ 1
+      };
+      
+      int n2 := n $shr 10;
+      n2 += 0D7C0h;
+      short tmp := shortConvertor.convert(n2); 
+      dest[index] := tmp;
+      
+      n := n & 03FFh;
+      n += 0DC00h;
+      tmp := shortConvertor.convert(n); 
+      dest[index + 1] := tmp;
+
+      ^ 2;        
    }      
+
+   int getCharLength(int code)
+   {
+      if (code < 80h)
+      {
+         ^ 1
+      };
+      if (code < 800h)
+      {
+         ^ 2
+      };
+      if (code < 10000h)
+      {
+         ^ 3
+      };
+
+      ^ 4
+   }
+
+   int getCharWideLength(int code)
+   {
+      if (code < 0D800h)
+      {
+         ^ 1
+      };
+
+      ^ 2
+   }
+
+   int calcSubStringLength(int index, int length, char[] array)
+   {
+      int subStrLength := 0;
+      for(int i := 0, i < length, i += 1)
+      {
+         subStrLength += array[i].Length;
+      };
+
+      ^ subStrLength;
+   }
+
+   int calcSubWideStringLength(int index, int length, char[] array)
+   {
+      int subStrLength := 0;
+      for(int i := 0, i < length, i += 1)
+      {
+         subStrLength += array[i].WideLength;
+      };
+
+      ^ subStrLength;
+   }
 }

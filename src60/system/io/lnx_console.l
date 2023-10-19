@@ -47,6 +47,14 @@ namespace io
 
       write(wide s)
         <= write(cast string(s));
+
+      setCursorPosition(int x, int y)
+      {
+      }
+
+      clear()
+      {
+      }      
    }
 
    public class ConsoleReader : IConsoleReader
@@ -128,6 +136,11 @@ namespace io
 
       wide readWideLine()
          = cast wide(self.readLine());
+
+      get bool KeyAvailable()
+      {
+         ^ false
+      }
    }
 
    public stdConsoleWriter = new ConsoleWriter();

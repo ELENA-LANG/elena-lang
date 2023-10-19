@@ -12,6 +12,7 @@
 
 #include "windows/wintreeview.h"
 #include "windows/wintabbar.h"
+#include "windows/wintoolbar.h"
 #include "windows/winmenu.h"
 #include "windows/wintextframe.h"
 
@@ -128,6 +129,7 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    clipboard(this),
    _windowList(controller, model->viewModel()),
    _recentFileList(controller, model, IDM_FILE_FILES),
+   _recentProjectList(controller, model, IDM_FILE_PROJECTS),
    aboutDialog(instance, this),
    editorSettingsDialog(instance, this, model->viewModel())
 {
@@ -161,6 +163,7 @@ void IDEWindow :: openFile()
 {
    _controller->doOpenFile(fileDialog, _model);
    _recentFileList.reload();
+   _recentProjectList.reload();
 }
 
 void IDEWindow :: saveFile()
@@ -196,6 +199,7 @@ void IDEWindow :: closeAllButActive()
 void IDEWindow :: openProject()
 {
    _controller->doOpenProject(projectDialog, messageDialog, _model);
+   _recentProjectList.reload();
 }
 
 void IDEWindow :: closeProject()
@@ -431,6 +435,18 @@ void IDEWindow :: onDebugWatchBrowse(size_t item, size_t param)
    }
 }
 
+void IDEWindow :: enableMenuItemById(int id, bool doEnable, bool toolBarItemAvailable)
+{
+   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+
+   menu->enableMenuItemById(id, doEnable);
+   if (toolBarItemAvailable) {
+      ToolBar* toolBar = dynamic_cast<ToolBar*>(_children[_model->ideScheme.toolBarControl]);
+
+      toolBar->enableItemById(id, doEnable);
+   }
+}
+
 void IDEWindow :: onProjectChange(bool empty)
 {
    TreeView* projectTree = dynamic_cast<TreeView*>(_children[_model->ideScheme.projectView]);
@@ -486,17 +502,16 @@ void IDEWindow :: onProjectChange(bool empty)
 
    toggleProjectView(!empty);
 
-   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-   menu->enableMenuItemById(IDM_PROJECT_CLOSE, !empty);
-   menu->enableMenuItemById(IDM_FILE_SAVEPROJECT, !empty);
+   enableMenuItemById(IDM_PROJECT_CLOSE, !empty, true);
+   enableMenuItemById(IDM_FILE_SAVEPROJECT, !empty, false);
 
-   menu->enableMenuItemById(IDM_PROJECT_COMPILE, !empty);
-   menu->enableMenuItemById(IDM_PROJECT_OPTION, !empty);
-   menu->enableMenuItemById(IDM_DEBUG_RUN, !empty);
-   menu->enableMenuItemById(IDM_DEBUG_STEPINTO, !empty);
-   menu->enableMenuItemById(IDM_DEBUG_STEPOVER, !empty);
-   menu->enableMenuItemById(IDM_DEBUG_RUNTO, !empty);
-   menu->enableMenuItemById(IDM_DEBUG_STOP, !empty);
+   enableMenuItemById(IDM_PROJECT_COMPILE, !empty, false);
+   enableMenuItemById(IDM_PROJECT_OPTION, !empty, false);
+   enableMenuItemById(IDM_DEBUG_RUN, !empty, true);
+   enableMenuItemById(IDM_DEBUG_STEPINTO, !empty, true);
+   enableMenuItemById(IDM_DEBUG_STEPOVER, !empty, true);
+   enableMenuItemById(IDM_DEBUG_RUNTO, !empty, false);
+   enableMenuItemById(IDM_DEBUG_STOP, !empty, true);
 }
 
 void IDEWindow :: onLayoutChange(NotificationStatus status)
@@ -521,91 +536,58 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
    menu->checkMenuItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
    menu->checkMenuItemById(IDM_VIEW_VMCONSOLE, _children[_model->ideScheme.vmConsoleControl]->visible());
 
-   menu->enableMenuItemById(IDM_FILE_SAVE, !empty);
-   menu->enableMenuItemById(IDM_FILE_SAVEALL, !empty);
-   menu->enableMenuItemById(IDM_FILE_SAVEAS, !empty);
-   menu->enableMenuItemById(IDM_FILE_CLOSE, !empty);
-   menu->enableMenuItemById(IDM_FILE_CLOSEALL, !empty);
+   enableMenuItemById(IDM_FILE_SAVE, !empty, true);
+   enableMenuItemById(IDM_FILE_SAVEALL, !empty, true);
+   enableMenuItemById(IDM_FILE_SAVEAS, !empty, false);
+   enableMenuItemById(IDM_FILE_CLOSE, !empty, true);
+   enableMenuItemById(IDM_FILE_CLOSEALL, !empty, false);
 
    if (empty) {
-      menu->enableMenuItemById(IDM_EDIT_UNDO, false);
-      menu->enableMenuItemById(IDM_EDIT_REDO, false);
+      enableMenuItemById(IDM_EDIT_UNDO, false, true);
+      enableMenuItemById(IDM_EDIT_REDO, false, true);
       
-      menu->enableMenuItemById(IDM_EDIT_CUT, false);
-      menu->enableMenuItemById(IDM_EDIT_COPY, false);
-      menu->enableMenuItemById(IDM_EDIT_PASTE, false);
-      menu->enableMenuItemById(IDM_EDIT_DELETE, false);
-      menu->enableMenuItemById(IDM_EDIT_COMMENT, false);
-      menu->enableMenuItemById(IDM_EDIT_UNCOMMENT, false);
-      menu->enableMenuItemById(IDM_EDIT_DUPLICATE, false);
-      menu->enableMenuItemById(IDM_EDIT_SELECTALL, false);
-      menu->enableMenuItemById(IDM_EDIT_ERASELINE, false);
-      menu->enableMenuItemById(IDM_EDIT_INDENT, false);
-      menu->enableMenuItemById(IDM_EDIT_OUTDENT, false);
-      menu->enableMenuItemById(IDM_EDIT_TRIM, false);
-      menu->enableMenuItemById(IDM_EDIT_UPPERCASE, false);
-      menu->enableMenuItemById(IDM_EDIT_LOWERCASE, false);
+      enableMenuItemById(IDM_EDIT_CUT, false, true);
+      enableMenuItemById(IDM_EDIT_COPY, false, true);
+      enableMenuItemById(IDM_EDIT_PASTE, false, true);
 
-      menu->enableMenuItemById(IDM_SEARCH_FIND, false);
-      menu->enableMenuItemById(IDM_SEARCH_FINDNEXT, false);
-      menu->enableMenuItemById(IDM_SEARCH_REPLACE, false);
-      menu->enableMenuItemById(IDM_SEARCH_GOTOLINE, false);
-
-      menu->enableMenuItemById(IDM_WINDOW_WINDOWS, false);
-      menu->enableMenuItemById(IDM_WINDOW_NEXT, false);
-      menu->enableMenuItemById(IDM_WINDOW_PREVIOUS, false);
-
-      menu->enableMenuItemById(IDM_DEBUG_CLEARBREAKPOINT, false);
-      menu->enableMenuItemById(IDM_DEBUG_BREAKPOINT, false);
-
-      menu->enableMenuItemById(IDM_PROJECT_INCLUDE, false);
+      enableMenuItemById(IDM_PROJECT_INCLUDE, false, false);
    }
-   else menu->enableMenuItemById(IDM_EDIT_PASTE, true);
+   else {
+      enableMenuItemById(IDM_EDIT_PASTE, true, true);
+
+      enableMenuItemById(IDM_PROJECT_INCLUDE, true, false);
+   }
+
+   enableMenuItemById(IDM_EDIT_DELETE, !empty, false);
+   enableMenuItemById(IDM_EDIT_COMMENT, !empty, false);
+   enableMenuItemById(IDM_EDIT_UNCOMMENT, !empty, false);
+
+   enableMenuItemById(IDM_EDIT_DUPLICATE, !empty, false);
+   enableMenuItemById(IDM_EDIT_SELECTALL, !empty, false);
+   enableMenuItemById(IDM_EDIT_ERASELINE, !empty, false);
+   enableMenuItemById(IDM_EDIT_INDENT, !empty, false);
+   enableMenuItemById(IDM_EDIT_OUTDENT, !empty, false);
+   enableMenuItemById(IDM_EDIT_TRIM, !empty, false);
+   enableMenuItemById(IDM_EDIT_UPPERCASE, !empty, false);
+   enableMenuItemById(IDM_EDIT_LOWERCASE, !empty, false);
+
+   enableMenuItemById(IDM_SEARCH_FIND, !empty, false);
+   enableMenuItemById(IDM_SEARCH_FINDNEXT, !empty, false);
+   enableMenuItemById(IDM_SEARCH_REPLACE, !empty, false);
+   enableMenuItemById(IDM_SEARCH_GOTOLINE, !empty, false);
+
+   enableMenuItemById(IDM_WINDOW_WINDOWS, !empty, false);
+   enableMenuItemById(IDM_WINDOW_NEXT, !empty, false);
+   enableMenuItemById(IDM_WINDOW_PREVIOUS, !empty, false);
+
+   enableMenuItemById(IDM_DEBUG_CLEARBREAKPOINT, !empty, false);
+   enableMenuItemById(IDM_DEBUG_BREAKPOINT, !empty, false);
 
    onResize();
 
    if (!empty)
       _children[_model->ideScheme.textFrameId]->refresh();
 }
-
-
-//void IDEWindow :: onIDEViewUpdate(bool forced)
-//{
-//   auto doc = _model->viewModel()->DocView();
-//   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-//
-//   IDESttus status =
-//   {
-//      doc != nullptr,
-//      !_model->projectModel.empty,
-//      _controller->projectController.isStarted()
-//   };
-//
-//   if (doc != nullptr) {
-//      status.canUndo = doc->canUndo();
-//      status.canRedo = doc->canRedo();
-//      status.hasSelection = doc->hasSelection();
-//   }
-//
-//   if (forced || status.hasDocument != _ideStatus.hasDocument) {
-//
-//      menu->enableMenuItemById(IDM_EDIT_PASTE, status.hasDocument);
-//   }
-//
-//   if (forced || status.hasProject != _ideStatus.hasProject) {
-//      menu->enableMenuItemById(IDM_PROJECT_COMPILE, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_RUN, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_STEPINTO, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_STEPOVER, status.hasProject);
-//      menu->enableMenuItemById(IDM_DEBUG_RUNTO, status.hasProject);
-//   }
-//
-//   if (forced || status.running != _ideStatus.running) {
-//      onDebuggerUpdate(status.running);
-//   }
-//
-//   _ideStatus = status;
-//}
 
 void IDEWindow :: onTextFrameChange(NotificationStatus status)
 {
@@ -821,7 +803,34 @@ bool IDEWindow :: onCommand(int command)
       case IDM_FILE_FILES_7:
       case IDM_FILE_FILES_8:
       case IDM_FILE_FILES_9:
-         _recentFileList.openFile(command - IDM_FILE_FILES);
+      {
+         PathString path(_recentFileList.getPath(command - IDM_FILE_FILES));
+         _controller->doOpenFile(_model, *path);
+         _recentFileList.reload();
+         break;
+      }
+      case IDM_FILE_PROJECTS_1:
+      case IDM_FILE_PROJECTS_2:
+      case IDM_FILE_PROJECTS_3:
+      case IDM_FILE_PROJECTS_4:
+      case IDM_FILE_PROJECTS_5:
+      case IDM_FILE_PROJECTS_6:
+      case IDM_FILE_PROJECTS_7:
+      case IDM_FILE_PROJECTS_8:
+      case IDM_FILE_PROJECTS_9:
+      {
+         PathString path(_recentProjectList.getPath(command - IDM_FILE_PROJECTS));
+         _controller->doOpenProject(projectDialog, messageDialog, _model, *path);
+         _recentProjectList.reload();
+         break;
+      }
+      case IDM_FILE_FILES_CLEAR:
+         _model->projectModel.lastOpenFiles.clear();
+         _recentFileList.reload();
+         break;
+      case IDM_FILE_PROJECTS_CLEAR:
+         _model->projectModel.lastOpenProjects.clear();
+         _recentProjectList.reload();
          break;
       case IDM_EDITOR_OPTIONS:
          _controller->doConfigureEditorSettings(editorSettingsDialog, _model);
@@ -847,6 +856,7 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
       case NOTIFY_ONSTART:
          _controller->init(_model);
          _recentFileList.assignList(&_model->projectModel.lastOpenFiles);
+         _recentProjectList.assignList(&_model->projectModel.lastOpenProjects);
          break;
       case NOTIFY_IDE_CHANGE:
          onIDEChange(rec->status);
@@ -1266,6 +1276,7 @@ void IDEWindow :: populate(size_t counter, GUIControlBase** children)
 
    _windowList.assign(menu);
    _recentFileList.assign(menu);
+   _recentProjectList.assign(menu);
 }
 
 void IDEWindow :: onColorSchemeChange()

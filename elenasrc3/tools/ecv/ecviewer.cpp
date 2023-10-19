@@ -331,6 +331,14 @@ void ByteCodeViewer :: addSecondArg(arg_t arg, IdentifierString& commandStr)
    addArg(arg, commandStr);
 }
 
+void ByteCodeViewer :: addSecondArg(arg_t arg, ustr_t prefix, IdentifierString& commandStr)
+{
+   commandStr.append(", ");
+   commandStr.append(prefix);
+
+   addArg(arg, commandStr);
+}
+
 void ByteCodeViewer :: addFPArg(arg_t arg, IdentifierString& commandStr)
 {
    commandStr.append("fp:");
@@ -430,7 +438,10 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
       switch (command.code) {
          case ByteCode::CallExtR:
             addRArg(command.arg1, commandStr);
-            addSecondArg(command.arg2, commandStr);
+            if (test(command.arg2, (int)0x80000000)) {
+               addSecondArg(command.arg2 & 0x7FFFFFFF, "long ", commandStr);
+            }
+            else addSecondArg(command.arg2, commandStr);
             break;
          case ByteCode::XStoreSIR:
             addArg(command.arg1, commandStr);
@@ -452,10 +463,20 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
          case ByteCode::JumpMR:
          case ByteCode::VJumpMR:
          case ByteCode::DispatchMR:
-         case ByteCode::XDispatchMR:
             commandStr.append(":");
             addMessage(commandStr, command.arg1);
             addSecondRArg(command.arg2, commandStr, labels);
+            break;
+         case ByteCode::XDispatchMR:
+            if (command.arg2) {
+               commandStr.append("mssg:");
+               addMessage(commandStr, command.arg1);
+               addSecondRArg(command.arg2, commandStr, labels);
+            }
+            else {
+               commandStr.append("i:");
+               commandStr.appendInt(getArgCount(command.arg1));
+            }
             break;
          case ByteCode::SelEqRR:
          case ByteCode::SelLtRR:
@@ -465,6 +486,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             addSecondRArg(command.arg2, commandStr, labels);
             break;
          case ByteCode::XHookDPR:
+         case ByteCode::XLabelDPR:
             addArg(command.arg1, commandStr);
             addSecondRArg(command.arg2, commandStr, labels);
             break;
@@ -646,6 +668,9 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    }
    if (test(flags, elFinal)) {
       printLineAndCount("@flag ", "elFinal", row, pageSize);
+   }
+   if (test(flags, elGroup)) {
+      printLineAndCount("@flag ", "elGroup", row, pageSize);
    }
    if (test(flags, elNestedClass)) {
       printLineAndCount("@flag ", "elNestedClass", row, pageSize);

@@ -9,6 +9,8 @@
 #ifndef ELTVMSESSION_H
 #define ELTVMSESSION_H
 
+#include "core.h"
+
 namespace elena_lang
 {
    class VMSession
@@ -20,11 +22,13 @@ namespace elena_lang
       PresenterBase*       _presenter;
 
       IdentifierString     _prefix;
+      size_t               _prefixBookmark;
       IdentifierString     _postfix;
 
       DynamicString<char>  _body;
 
-      void printHelp();
+      SystemEnv            _env;
+      ThreadContent        _tcontext;
 
       bool connect(void* tape);
       bool execute(void* tape);
@@ -36,6 +40,8 @@ namespace elena_lang
       bool executeCommand(const char* line, bool& running);
 
    public:
+      void printHelp();
+
       bool loadTemplate(path_t path);
 
       bool loadScript(ustr_t pathStr);

@@ -35,20 +35,4 @@
 //    }
 //}
 
-// --- using statement ---
-
-#declare using<expr>(block)
-{
-    auto v := expr;
-    
-    try
-    {
-        block;
-    }
-    finally
-    {
-        v.close()
-    }
-}
-
 // === inline operator templates ===
