@@ -4,11 +4,6 @@ In development:
 
   [development]
     ### EPIC: elena 6.0 - redux ###
-    === Iteration 18 ===
-    * examples : rosetta code Anagrams, Hailstone sequence
-
-    * forms samples
-
     === Iteration 19 ===
     [!] x86 mta support
     [!] elt tutorial (stand-alone / in IDE)
@@ -17,6 +12,8 @@ In development:
     [!] pi sample optimization (under 9sec)
     [!] review #622, #620
     [!] x86-64 : samples / rosetta code samples
+    * fix #624
+    * forms samples
     * examples : manboy example - till 20
     * examples : tutorials
     * test : https://www.reddit.com/r/elena_lang/comments/7oa098/dynamic_programming_in_elena_call_your_code_from/
