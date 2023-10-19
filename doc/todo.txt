@@ -2,10 +2,31 @@
 In development:
 ------         
 
-  [development]
-    ### EPIC: elena 6.0 - redux ###
-    === Iteration 19 ===
+[development]
+  ### EPIC: elena 6.0 - redux ###
+  === Iteration 19 ===
+  dev:
+  op:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
 
-    === Iteration 20 ===
+  === Iteration 20 ===
+  dev:
+  op:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
 
-    === Iteration 21 ===
+  === Iteration 21 ===
+  dev:
+  op:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:

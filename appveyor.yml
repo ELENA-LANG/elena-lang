@@ -1,4 +1,4 @@
-version: 6.0.6.{build}
+version: 6.0.7.{build}
 branches:
   only:
   - master
@@ -18,7 +18,7 @@ build:
 
 artifacts:
   # archive the generated packages in the ci.appveyor.com build report
-  - path: install\output\*.zip
+  - path: install\output%PLATFORM%\*.zip
     name: nightly-build
 
 deploy:
