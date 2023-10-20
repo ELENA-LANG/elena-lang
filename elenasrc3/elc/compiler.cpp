@@ -6882,8 +6882,9 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& me
       }
 
       if (resolvedMessage) {
-         if (counter > 1 && implicitSignatureRef == 0) {
+         if (counter > 1 && (implicitSignatureRef == 0 && getArgCount(message) > 1)) {
             // HOTFIX : does not resolve an ambigous extension for a weak message
+            // excluding messages without arguments
          }
          else {
             // if we are lucky - use the resolved one
