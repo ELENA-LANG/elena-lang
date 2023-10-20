@@ -76,7 +76,7 @@ internal singleton PrimitiveArrayOperations
    }
 }
 
-/*internal*/public singleton PrimitiveRealOperations
+internal singleton PrimitiveRealOperations
 {
    trunc(real r, ref real retVal) : external(system'core_routines'__realTrunc);
 
