@@ -3046,7 +3046,8 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
 
       weakSignature = false;
 
-      scope.parameters.add(*scope.moduleScope->selfVar, { 1, { signature[0] } });
+      auto sizeInfo = _logic->defineStructSize(*scope.moduleScope, signature[0]);
+      scope.parameters.add(*scope.moduleScope->selfVar, { 1, { signature[0] }, sizeInfo.size });
 
       flags |= FUNCTION_MESSAGE;
    }
@@ -7228,7 +7229,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    }
 
    bool functionMode = test(message, FUNCTION_MESSAGE);
-   if (functionMode && target.kind != ObjectKind::ConstantRole) {
+   if (functionMode/* && target.kind != ObjectKind::ConstantRole*/) {
       stackSafeAttr >>= 1;
    }
    else stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage

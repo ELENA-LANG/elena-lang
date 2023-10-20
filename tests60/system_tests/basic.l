@@ -510,6 +510,13 @@ struct XInteger
       = x;
 }
 
+extension boxOp : IntNumber
+{
+   bool check(object arg)
+      = arg == self;
+}
+
+
 boxingTests()
 {
    console.write("boxingTests:");
@@ -552,6 +559,12 @@ boxingTests()
    var nint := cast int(xint);
 
    Assert.ifTrue(nint.instanceOf(IntNumber));
+   console.write(".");
+
+   int n2 := 2;
+   int m2 := 2;
+
+   Assert.ifTrue(n2.check(m2));
    console.writeLine(".");
 }
 

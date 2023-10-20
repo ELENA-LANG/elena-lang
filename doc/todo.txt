@@ -5,28 +5,40 @@ In development:
 [development]
   ### EPIC: elena 6.0 - redux ###
   === Iteration 19 ===
-  dev:
-  op:
-  maint:
-  exp:
-  ide:
-  tools:
-  prom:
+  dev: #613, patterns, #608, #623, #629
+  op:github actions : x86
+  opt:#601, #602
+  maint:backlog, #616
+  exp:using expression trees in real-life apps (see c#)
+  ide:backlog, vm debugger
+  tools:backlog
+  prom:interodunction to elena 6.0
+  port:gui samples, db samples, xforms
+  --------------------------------------
+  * pi - under 10 sec : #604 - using byref handler
+  * debugger - nested classes
+  * #624
 
   === Iteration 20 ===
   dev:
   op:
+  opt: pi - under 8 sec
   maint:
   exp:
   ide:
   tools:
   prom:
+  port:x86 mt, x86-64 vm
+  --------------------------------------
 
   === Iteration 21 ===
   dev:
   op:
+  opt:
   maint:
   exp:
   ide:
   tools:
   prom:
+  port:
+  --------------------------------------

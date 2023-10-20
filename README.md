@@ -128,7 +128,7 @@ Reach out with any questions you may have and we'll make sure to answer them as 
 ## Resources
 - **Nightly builds:** <https://ci.appveyor.com/project/arakov/elena-lang/build/artifacts>
 - **ELENA Documentation** <https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual>
-- **ELENA API 5.0** <https://elena-lang.github.io/api/index.html>
+- **ELENA API 6.0** <https://elena-lang.github.io/api/index.html>
 - **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
 - **Tutorials:** <https://github.com/ELENA-LANG/tutorials>
 - **ELENA reddit:** <https://www.reddit.com/r/elena_lang/>
