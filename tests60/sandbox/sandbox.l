@@ -14,9 +14,41 @@
 //    console.printLine(pi);
 //}
 
+//extension op
+//{
+//   int get()
+//   {
+//      int n := 2;
+//
+//      ^ n
+//   }
+//}
+//
+//public program()
+//{
+//   int r := "dummy".get();
+//}
+
+extension op : real
+{
+   real xln()
+   {
+      real retVal := PrimitiveRealOperations.ln(self);
+
+      ^ retVal
+   }
+
+}
+
 public program()
 {
-   int n := 3;
+   real n := 1.0;
+   real r := n.xln();
 
-   bool b := n.isOdd();
+   
+
+//   string s := "Hello";
+//   int len := s.Length;
+
+//   console.writeLine("Hello");
 }

@@ -999,6 +999,36 @@ namespace elena_lang
          InlineClassScope(ExprScope* owner, ref_t reference);
       };
 
+      struct MessageResolution
+      {
+         bool   resolved;
+         mssg_t message;
+         ref_t  extensionRef;
+         int    stackSafeAttr;
+
+         MessageResolution()
+         {
+            this->resolved = false;
+            this->message = 0;
+            this->extensionRef = 0;
+            this->stackSafeAttr = 0;
+         }
+         MessageResolution(bool resolved, mssg_t message)
+         {
+            this->resolved = resolved;
+            this->message = message;
+            this->extensionRef = 0;
+            this->stackSafeAttr = 0;
+         }
+         MessageResolution(mssg_t message)
+         {
+            this->resolved = false;
+            this->message = message;
+            this->extensionRef = 0;
+            this->stackSafeAttr = 0;
+         }
+      };
+
    private:
       CompilerLogic*         _logic;
       TemplateProssesorBase* _templateProcessor;
@@ -1074,9 +1104,10 @@ namespace elena_lang
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
          ustr_t prefix, SyntaxKey argKey);
 
-      mssg_t resolveByRefHandler(Scope& scope, ref_t targetRef, ref_t expectedRef, mssg_t weakMessage, ref_t& signatureRef);
-      mssg_t resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectInfo target, ExprScope& scope, mssg_t weakMessage,
-         ref_t implicitSignatureRef, bool ignoreExtensions, ref_t& resolvedExtensionRef, int& stackSafeAttr);
+      MessageResolution resolveByRefHandler(BuildTreeWriter& writer, ObjectInfo source, ExprScope& scope, ref_t expectedRef,
+         mssg_t weakMessage, ref_t& signatureRef, bool noExtensions);
+      MessageResolution resolveMessageAtCompileTime(BuildTreeWriter& writer, ObjectInfo target, ExprScope& scope, 
+         mssg_t weakMessage, ref_t implicitSignatureRef, bool ignoreExtensions, bool ignoreVariadics);
       mssg_t resolveOperatorMessage(ModuleScopeBase* scope, int operatorId);
       mssg_t resolveVariadicMessage(Scope& scope, mssg_t message);
 
@@ -1269,7 +1300,7 @@ namespace elena_lang
       ObjectInfo compileNativeConversion(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t operationKey);
 
       ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo target, 
-         mssg_t message, ref_t implicitSignatureRef, ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs);
+         MessageResolution resolution, ref_t implicitSignatureRef, ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs);
       ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
          ref_t targetRef, ExpressionAttribute attrs);
       ObjectInfo compilePropertyOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
