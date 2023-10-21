@@ -1,6 +1,6 @@
 //import system'calendar;
 import extensions;
-//
+
 //const int MAX = 50000000;
 //
 //public program()
@@ -14,32 +14,26 @@ import extensions;
 //    console.printLine(pi);
 //}
 
-//extension op
-//{
-//   int get()
-//   {
-//      int n := 2;
-//
-//      ^ n
-//   }
-//}
-//
-//public program()
-//{
-//   int r := "dummy".get();
-//}
-
-extension op
+singleton LookaheadHelper
 {
-   int toXInt()
+   int X()
    {
-      int n := intConvertor.convert(self);
+      int r := 2;
 
-      ^ n
-   }
+      ^ r   
+   }   
+
+   WeakX()
+   {
+      ^ 3;
+   }   
 }
 
 public program()
 {
-   var n := "23".toXInt();
+   int r := LookaheadHelper.X() + 1;
+   int r2 := LookaheadHelper.WeakX() + 1;
+
+   Assert.ifTrue(r == 3);
+   Assert.ifTrue(r2 == 4);
 }

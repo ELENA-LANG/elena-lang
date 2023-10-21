@@ -1475,6 +1475,8 @@ Compiler :: Compiler(
    _withConditionalBoxing = false;
 
    _trackingUnassigned = false;
+
+   _lookaheadOptMode = true; // !! temporal
 }
 
 inline ref_t resolveDictionaryMask(TypeInfo typeInfo)
@@ -6619,7 +6621,8 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    }
 
    BuildKey   op = BuildKey::None;
-   ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter | EAttr::RetValExpected, &updatedOuterArgs);
+   ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, 
+      EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode, &updatedOuterArgs);
    ObjectInfo roperand = {};
    ObjectInfo ioperand = {};
 
@@ -6632,13 +6635,15 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       if (operatorId == SET_OPERATOR_ID)
          rTargetRef = retrieveType(scope, loperand);
 
-      roperand = compileExpression(writer, scope, rnode, rTargetRef, EAttr::Parameter | EAttr::RetValExpected, &updatedOuterArgs);
+      roperand = compileExpression(writer, scope, rnode, rTargetRef, 
+         EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode, &updatedOuterArgs);
 
       arguments.add(roperand);
    }
 
    if (inode != SyntaxKey::None) {
-      arguments.add(compileExpression(writer, scope, inode, 0, EAttr::Parameter | EAttr::RetValExpected, &updatedOuterArgs));
+      arguments.add(compileExpression(writer, scope, inode, 0, 
+         EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode, &updatedOuterArgs));
    }
 
    return compileOperation(writer, scope, node, arguments, operatorId, expectedRef, &updatedOuterArgs);
@@ -9703,22 +9708,74 @@ void Compiler :: compileYieldOperation(BuildTreeWriter& writer, ExprScope& scope
    writer.closeNode();
 }
 
+ObjectInfo Compiler :: compileLookAheadExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
+   ref_t targetRef, ExpressionAttribute mode)
+{
+   BuildNode lastNode = writer.CurrentNode().lastChild();
+
+   ObjectInfo retVal;
+
+   switch (node.key) {
+      case SyntaxKey::MessageOperation:
+         retVal = compileMessageOperation(writer, scope, node, targetRef, mode);
+         break;
+      case SyntaxKey::PropertyOperation:
+         retVal = compilePropertyOperation(writer, scope, node, targetRef, mode);
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   if (!targetRef && _logic->isEmbeddable(*scope.moduleScope, retVal.typeInfo.typeRef)) {
+      targetRef = retVal.typeInfo.typeRef;
+      // bad luck, we must rollback the changes and compile again
+      lastNode = lastNode.nextNode();
+      while (lastNode != BuildKey::None) {
+         lastNode.setKey(BuildKey::Idle);
+
+         lastNode = lastNode.nextNode();
+      }
+
+      switch (node.key) {
+         case SyntaxKey::MessageOperation:
+            retVal = compileMessageOperation(writer, scope, node, targetRef, mode);
+            break;
+         case SyntaxKey::PropertyOperation:
+            retVal = compilePropertyOperation(writer, scope, node, targetRef, mode);
+            break;
+         default:
+            assert(false);
+            break;
+      }
+   }
+
+   return retVal;
+}
+
 ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
    ref_t targetRef, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs)
 {
    bool paramMode = EAttrs::testAndExclude(mode, EAttr::Parameter);
    bool noPrimitives = EAttrs::testAndExclude(mode, EAttr::NoPrimitives);
    bool dynamicRequired = EAttrs::testAndExclude(mode, EAttr::DynamicObject);
+   bool lookaheadMode = EAttrs::testAndExclude(mode, EAttr::LookaheadExprMode) && _lookaheadOptMode;
 
    ObjectInfo retVal;
 
    SyntaxNode current = node == SyntaxKey::Expression ? node.firstChild() : node;
    switch (current.key) {
       case SyntaxKey::MessageOperation:
-         retVal = compileMessageOperation(writer, scope, current, targetRef, mode);
+         if (lookaheadMode) {
+            retVal = compileLookAheadExpression(writer, scope, current, targetRef, mode);
+         }
+         else retVal = compileMessageOperation(writer, scope, current, targetRef, mode);
          break;
       case SyntaxKey::PropertyOperation:
-         retVal = compilePropertyOperation(writer, scope, current, targetRef, mode);
+         if (lookaheadMode) {
+            retVal = compileLookAheadExpression(writer, scope, current, targetRef, mode);
+         }
+         else retVal = compilePropertyOperation(writer, scope, current, targetRef, mode);
          break;
       case SyntaxKey::AssignOperation:
       case SyntaxKey::AddOperation:

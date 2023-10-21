@@ -1036,6 +1036,7 @@ namespace elena_lang
       PresenterBase*         _presenter;
 
       bool                   _optMode;
+      bool                   _lookaheadOptMode;
       bool                   _tapeOptMode;
       bool                   _withMethodParamInfo;
       bool                   _trackingUnassigned;
@@ -1298,6 +1299,9 @@ namespace elena_lang
       ObjectInfo compileNewOp(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
          ObjectInfo source, ref_t signRef, ArgumentsInfo& arguments);
       ObjectInfo compileNativeConversion(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t operationKey);
+
+      ObjectInfo compileLookAheadExpression(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
+         ref_t targetRef, ExpressionAttribute attrs);
 
       ObjectInfo compileMessageOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo target, 
          MessageResolution resolution, ref_t implicitSignatureRef, ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs);

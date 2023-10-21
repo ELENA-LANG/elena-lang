@@ -46,6 +46,7 @@ public program()
    methodNotFoundTest();
    nilReferenceTest();
    structTest();
+   lookaheadTests();
 
    console.writeLine("--- Passed ---")
 }

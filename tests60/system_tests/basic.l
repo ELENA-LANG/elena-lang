@@ -1632,3 +1632,30 @@ structTest()
 
    console.writeLine(".");
 }
+
+singleton LookaheadHelper
+{
+   int X()
+   {
+      int r := 2;
+
+      ^ r   
+   }   
+
+   WeakX()
+   {
+      ^ 3;
+   }   
+}
+
+public lookaheadTests()
+{
+   console.write("lookaheadTests:");
+   int r := LookaheadHelper.X() + 1;
+   int r2 := LookaheadHelper.WeakX() + 1;
+
+   Assert.ifTrue(r == 3);
+   Assert.ifTrue(r2 == 4);
+
+   console.writeLine(".");
+}

@@ -15,10 +15,9 @@ In development:
   prom:interodunction to elena 6.0
   port:gui samples, db samples, xforms
   --------------------------------------
-
-  * pi - under 10 sec : 
   * debugger - nested classes
   * #624
+  * gui samples
 
   === Iteration 20 ===
   dev:
