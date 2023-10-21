@@ -59,6 +59,15 @@ namespace elena_lang
       return actionRef;
    }
 
+   inline ref_t getFlags(mssg_t message)
+   {
+      ref_t actionRef, flags;
+      pos_t argCount;
+      decodeMessage(message, actionRef, argCount, flags);
+
+      return flags;
+   }
+
    inline pos_t getArgCount(mssg_t message)
    {
       ref_t actionRef, flags;

@@ -400,6 +400,7 @@ enum class ExpressionAttribute : pos64_t
    Extern            = 0x00000080000,
    Member            = 0x00000100000,
    ProbeMode         = 0x00000200000,
+   AllowPrivateCall  = 0x00000400000,
    InitializerScope  = 0x00000800000,
    NestedDecl        = 0x00001000000,
    ConstantExpr      = 0x00002000000,

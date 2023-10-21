@@ -1,5 +1,5 @@
 //import system'calendar;
-//import extensions;
+import extensions;
 //
 //const int MAX = 50000000;
 //
@@ -29,26 +29,17 @@
 //   int r := "dummy".get();
 //}
 
-extension op : real
+extension op
 {
-   real xln()
+   int toXInt()
    {
-      real retVal := PrimitiveRealOperations.ln(self);
+      int n := intConvertor.convert(self);
 
-      ^ retVal
+      ^ n
    }
-
 }
 
 public program()
 {
-   real n := 1.0;
-   real r := n.xln();
-
-   
-
-//   string s := "Hello";
-//   int len := s.Length;
-
-//   console.writeLine("Hello");
+   var n := "23".toXInt();
 }

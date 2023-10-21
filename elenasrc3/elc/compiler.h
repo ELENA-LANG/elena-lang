@@ -1156,7 +1156,7 @@ namespace elena_lang
 
       ref_t generateConstant(Scope& scope, ObjectInfo& info, ref_t reference, bool saveScope = true);
 
-      mssg_t defineByRefMethod(ClassScope& scope, SyntaxNode node/*, bool isExtension*/);
+      mssg_t defineByRefMethod(ClassScope& scope, SyntaxNode node, bool isExtension);
 
       void verifyMultimethods(Scope& scope, SyntaxNode node, SyntaxKey methodKey, ClassInfo& info, VirtualMethodList& implicitMultimethods);
 

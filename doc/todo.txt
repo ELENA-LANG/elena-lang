@@ -15,7 +15,6 @@ In development:
   prom:interodunction to elena 6.0
   port:gui samples, db samples, xforms
   --------------------------------------
-  * #604 - using byref handler
 
   * pi - under 10 sec : 
   * debugger - nested classes

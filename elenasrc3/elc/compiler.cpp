@@ -2266,7 +2266,7 @@ void Compiler :: injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType
    }
 }
 
-mssg_t Compiler :: defineByRefMethod(ClassScope& scope, SyntaxNode node/*, bool isExtension*/)
+mssg_t Compiler :: defineByRefMethod(ClassScope& scope, SyntaxNode node, bool isExtension)
 {
    ref_t outputRef = node.findChild(SyntaxKey::OutputType).arg.reference;
    // NOTE : the embedable type should be read-only, otherwise it is possible that the changes will be lost
@@ -2275,7 +2275,7 @@ mssg_t Compiler :: defineByRefMethod(ClassScope& scope, SyntaxNode node/*, bool 
       pos_t argCount;
       decodeMessage(node.arg.reference, actionRef, argCount, flags);
 
-      size_t argDiff = /*isExtension ? 0 : */1;
+      size_t argDiff = isExtension ? 0 : 1;
 
       ref_t signRef = 0;
       ustr_t actionName = scope.module->resolveAction(actionRef, signRef);
@@ -2365,7 +2365,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
             // HOTFIX : do not generate byref handler for methods returning constant value & variadic method & yieldable
             if ((current.arg.reference & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE && !SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_YIELDABLE)) {
                mssg_t byRefMethod = withRetOverload ? 
-                  0 : defineByRefMethod(scope, current/*, scope.extensionClassRef != 0*/);
+                  0 : defineByRefMethod(scope, current, scope.extensionClassRef != 0);
 
                if (byRefMethod) {
                   current.appendChild(SyntaxKey::ByRefRetMethod, byRefMethod);
@@ -7212,6 +7212,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
 {
    bool argUnboxingRequired = EAttrs::testAndExclude(mode.attrs, EAttr::WithVariadicArg);
    bool checkShortCircle = EAttrs::testAndExclude(mode.attrs, EAttr::CheckShortCircle);
+   bool allowPrivateCall = EAttrs::testAndExclude(mode.attrs, EAttr::AllowPrivateCall);
 
    ObjectInfo retVal(ObjectKind::Object);
 
@@ -7240,7 +7241,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    if (found) {
       switch (result.visibility) {
          case Visibility::Private:
-            if (isSelfCall(target)) {
+            if (allowPrivateCall || isSelfCall(target)) {
                resolution.message = result.message;
             }
             else found = false;
@@ -7599,6 +7600,8 @@ Compiler::MessageResolution Compiler :: resolveByRefHandler(BuildTreeWriter& wri
          signatureRef, noExtensions, true);
 
       if (resolution.resolved || argCount == 1) {
+         ref_t resolvedFlags = resolution.resolved ? getFlags(resolution.message) : flags;
+
          // check if there is a byref handler for the resolved message or the message has no arguments
          ref_t resolvedSignRef = 0;
          ustr_t actionName = scope.module->resolveAction(getAction(resolution.message), resolvedSignRef);
@@ -7606,7 +7609,7 @@ Compiler::MessageResolution Compiler :: resolveByRefHandler(BuildTreeWriter& wri
          ref_t byRefType = retrieveStrongType(scope, { ObjectKind::Object, { V_WRAPPER, expectedRef }, 0 });
          ref_t byRefSignature = _logic->defineByRefSignature(*scope.moduleScope, resolvedSignRef, byRefType);
 
-         ref_t byRefMessage = encodeMessage(scope.module->mapAction(actionName, byRefSignature, false), argCount + 1, flags);
+         ref_t byRefMessage = encodeMessage(scope.module->mapAction(actionName, byRefSignature, false), argCount + 1, resolvedFlags);
 
          ref_t byRefTarget = resolution.extensionRef ? resolution.extensionRef : targetRef;
          CheckMethodResult dummy = {};
@@ -10829,19 +10832,22 @@ void Compiler :: compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope
    ObjectInfo tempRetVal = declareTempLocal(scope, targetRef, false);
 
    ObjectInfo target = methodScope.mapSelf();
-   arguments.add(target);
+   MessageResolution resolution = { true, handler };
+   if (methodScope.isExtension) {
+      resolution.extensionRef = methodScope.getClassRef();
+   }
+   else arguments.add(target);
+
    for (auto it = methodScope.parameters.start(); !it.eof(); ++it) {
       arguments.add(methodScope.mapParameter(it.key(), EAttr::None));
    }
    addByRefRetVal(arguments, tempRetVal);
 
    ref_t signRef = getSignature(scope.module, handler);
-
-   MessageResolution resolution = { true, handler };
    _logic->setSignatureStacksafe(*scope.moduleScope, signRef, resolution.stackSafeAttr);
 
    /*ObjectInfo retVal = */compileMessageOperation(writer, scope, {}, target, resolution,
-      signRef, arguments, EAttr::None, nullptr);
+      signRef, arguments, EAttr::AllowPrivateCall, nullptr);
 
    // return temp variable
    writeObjectInfo(writer, scope,
