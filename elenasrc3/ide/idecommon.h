@@ -60,6 +60,7 @@ namespace elena_lang
    constexpr int NOTIFY_DEBUG_START                      = 16;
    constexpr int NOTIFY_DEBUG_CONTEXT_EXPANDED           = 17;
    constexpr int NOTIFY_DEBUG_LOAD                       = 18;
+   constexpr int NOTIFY_DEBUG_NOSOURCE                   = 19;
 
    // --- Notification statuses ---
    constexpr NotificationStatus IDE_ONSTART              = -1;

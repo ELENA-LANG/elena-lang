@@ -11655,6 +11655,9 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
 
    writer.newNode(BuildKey::Class, scope.reference);
 
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+   writer.appendNode(BuildKey::Path, *ns->sourcePath);
+
    MethodScope methodScope(&scope);
    declareClosureMessage(methodScope, node);
 

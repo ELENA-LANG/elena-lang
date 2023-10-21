@@ -17,6 +17,7 @@ namespace elena_lang
 
    constexpr auto QUESTION_SAVE_FILECHANGES  = _T("Save changes to ");
    constexpr auto QUESTION_CLOSE_UNSAVED     = _T("Close the tab anyway");
+   constexpr auto QUESTION_NOSOURCE_CONTINUE = _T("The source code is not found. Do you want to continue?");
 
    constexpr auto NOT_FOUND_TEXT             = _T("Search string not found");
    constexpr auto REPLACE_TEXT               = _T("Replace this occurence?");

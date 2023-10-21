@@ -312,7 +312,7 @@ void ProjectController :: runToCursor(ProjectModel& model, SourceViewModel& sour
       subPath.combine(*properName);
       
       IdentifierString pathStr(*subPath);
-      _debugController.runToCursor(*ns, *pathStr, currentDoc->getCaret().y);
+      _debugController.runToCursor(*ns, *pathStr, currentDoc->getCaret().y + 1);
    }
 }
 
@@ -1629,4 +1629,12 @@ void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog
       if (prevSchemeIndex != model->viewModel()->schemeIndex)
          _notifier->notify(NOTIFY_IDE_CHANGE, COLOR_SCHEME_CHANGED | FRAME_CHANGED);
    }
+}
+
+void IDEController :: onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel* model)
+{
+   auto result = mssgDialog.question(QUESTION_NOSOURCE_CONTINUE);
+
+   if (result == MessageDialogBase::Answer::Yes)
+      doDebugAction(model, DebugAction::StepInto);
 }

@@ -258,6 +258,7 @@ namespace elena_lang
       void onDebuggerHook(IDEModel* model);
       void onDebuggerStop(IDEModel* model);
       void onStatusChange(IDEModel* model, IDEStatus newStatus);
+      void onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel* model);
 
       void doInclude(IDEModel* model);
 
