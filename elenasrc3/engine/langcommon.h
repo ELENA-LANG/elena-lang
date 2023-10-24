@@ -24,7 +24,7 @@ namespace elena_lang
       Virtual              = 0x00000005,
       Dispatcher           = 0x00000007,
 
-      Embeddable           = 0x00000040,
+      //Embeddable           = 0x00000040,
       Function             = 0x00000080,
       Generic              = 0x00000100,
       RetOverload          = 0x00000200,

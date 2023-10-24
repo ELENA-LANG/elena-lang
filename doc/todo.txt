@@ -16,10 +16,6 @@ In development:
   port:gui samples, db samples, xforms
   --------------------------------------
 
-  * the code : XYs := default - is used to call inplace constructor
-
-  * get rid of embeddable method attribute
-
   * simplify assinging 
 
   * for structure : default / conversion constructors have a special version to be called for initializing in place;

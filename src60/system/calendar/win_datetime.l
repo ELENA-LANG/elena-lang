@@ -100,12 +100,12 @@ namespace calendar
          extern KERNEL32.FileTimeToSystemTime(ref fileTime, self)
       }
 
-      embeddable constructor(SystemTime time)
+      constructor(SystemTime time)
       {
          self.init(time)
       }
 
-      embeddable constructor()
+      constructor()
       {
          _year := 0;
          _month := 0;
