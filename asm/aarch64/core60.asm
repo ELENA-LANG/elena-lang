@@ -953,6 +953,34 @@ inline %76h
 
 end
 
+// ; xsaven
+inline %77
+
+  mov    x18, __n16_1
+  str    w18, [x10]
+
+end
+
+// ; xsave n
+inline %0977h
+
+  movz    x18, __n16lo_1
+  movk    x18, __n16hi_1, lsl #16
+
+  str    w18, [x10]
+
+end
+
+// ; xsave n
+inline %0A77h
+
+  movz    x18,  __n16lo_1
+  movk    x18,  __n16hi_1, lsl #16
+
+  str     w18, [x10]
+
+end
+
 // ; fabsdp
 inline %78h
 
@@ -2522,6 +2550,26 @@ inline %0D4h
 
   udiv    x18, x18, x17    // ; sp[0] / temp
 
+  str     w18, [x19]
+
+end
+
+// ; xsavedispn
+inline %0D5h
+
+  add     x19, x10, __arg12_1
+  mov     x18, __n16_2
+  sxth    x18, x18
+  str     w18, [x19]
+
+end
+
+// ; xsavedispn (n > 0FFFFh)
+inline %01D5h
+
+  add     x19, x10, __arg12_1
+  movz    x18,  __n16_2
+  movk    x18,  __n16hi_2, lsl #16
   str     w18, [x19]
 
 end

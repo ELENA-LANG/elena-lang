@@ -35,7 +35,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "fiadd", "fisub", "fimul", "fidiv", OPCODE_UNKNOWN, "shl", "shr", OPCODE_UNKNOWN,
+   "fiadd", "fisub", "fimul", "fidiv", OPCODE_UNKNOWN, "shl", "shr", "xsave n",
    "fabs dp", "fsqrt dp", "fexp dp", "fln dp", "fsin dp", "fcos dp", "farctan dp", "fpi dp",
 
    "set", "set dp", "nlen", "xassign i", "peek", "store", "xswap sp", "swap sp",
@@ -53,7 +53,7 @@ const char* _fnOpcodes[256] =
    "cmp", "fcmp", "icmp", "tst flag", "tst n", "tst mssg", "xcmp sp", OPCODE_UNKNOWN,
    "cmp fp", "cmp sp", "extclose", "lload sp", "load sp", "xloadarg fp", "xcreate", "system",
 
-   "fadd dp", "fsub dp", "fmul dp", "fdiv dp", "udiv dp", OPCODE_UNKNOWN, "xlabel dp", "selgr",
+   "fadd dp", "fsub dp", "fmul dp", "fdiv dp", "udiv dp", "xsave disp", "xlabel dp", "selgr",
    "iand dp", "ior dp", "ixor dp", "inot dp", "ishl dp", "ishr dp", "xopen", "selult",
 
    "copy dp", "iadd dp", "isub dp", "imul dp", "idiv dp", "nsave dp", "xhook dp", "xnewn",

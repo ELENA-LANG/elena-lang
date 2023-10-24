@@ -1017,6 +1017,35 @@ inline %76h
 
 end
 
+// ; xsaven
+inline %77h
+
+  li      r18, __n16_1
+  stw     r18, 0(r15)
+
+end
+
+// ; xsaven
+inline %977h
+
+  lis     r18, __n16hi_1
+  li      r19, __n16lo_1
+  andi.   r19, r19, 0FFFFh
+  add     r18, r18, r19
+  stw     r18, 0(r15)
+
+end
+
+// ; xsaven
+inline %0A77h
+
+  li      r18, __n16lo_1
+  andi.   r18, r18, 0FFFFh
+  addis   r18, r18, __n16hi_1
+  stw     r18, 0(r15)
+
+end
+
 // ; fabsdp
 inline %078h
 
@@ -2337,6 +2366,27 @@ inline %0D4h
   divwu   r18, r18, r17  
 
   stw     r18, 0(r19)
+
+end
+
+// ; xsavedispn
+inline %0D5h
+
+  addi    r19, r15, __arg16_1
+  li      r17, __n16_2
+  stw     r17, 0(r19)
+
+end
+
+// ; xsavedispn
+inline %1D5h
+
+  addi    r19, r15, __arg16_1
+
+  li      r17, __n16lo_1
+  andi.   r17, r17, 0FFFFh
+  addis   r17, r17, __n16hi_1
+  stw     r17, 0(r19)
 
 end
 

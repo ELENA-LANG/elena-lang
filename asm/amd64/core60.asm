@@ -868,6 +868,22 @@ inline %476h
 
 end
 
+// ; xsaven
+inline %077h
+
+  mov  eax, __n_1
+  mov  dword ptr [rbx], eax
+
+end
+
+// ; xsaven
+inline %177h
+
+  xor  eax, eax
+  mov  dword ptr [rbx], eax
+
+end
+
 // ; fabsdp
 inline %078h
 
@@ -2189,6 +2205,14 @@ inline %0D4h
   mov  rax, [rbp+__arg32_1]
   div  ecx
   mov  dword ptr [rbp+__arg32_1], eax
+
+end
+
+// ; xsavedispn
+inline %0D5h
+
+  mov  eax, __n_2
+  mov  dword ptr [rbx+__arg32_1], eax
 
 end
 

@@ -40,20 +40,18 @@ struct XY
       console.writeLine(y);  
    }
 
-//   embeddable constructor(int x)
-//   {
-//      this x := x;
-//      this y := 0;
-//   }
+   embeddable constructor(int x)
+   {
+      this x := x;
+      this y := 0;
+   }
 }
 
 public program()
 {
-   XY xy := default;
+//   XY xy := default;
 
-//   uint n := 2u;
-
-//   var xy := /*new XY()*/2;
+   XY xy := 2;
    xy.printMe();
 //   XY xy := 2;
 }

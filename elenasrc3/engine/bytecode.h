@@ -79,6 +79,7 @@ namespace elena_lang
 
       Shl            = 0x75,
       Shr            = 0x76,
+      XSaveN         = 0x77,
       FAbsDP         = 0x78,
       FSqrtDP        = 0x79,
       FExpDP         = 0x7A,
@@ -174,7 +175,7 @@ namespace elena_lang
       FMulDPN        = 0xD2,
       FDivDPN        = 0xD3,
       UDivDPN        = 0xD4,
-
+      XSaveDispN     = 0xD5,
       XLabelDPR      = 0xD6,
       SelGrRR        = 0xD7,
       IAndDPN        = 0xD8,

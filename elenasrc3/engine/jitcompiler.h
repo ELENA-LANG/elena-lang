@@ -133,6 +133,7 @@ namespace elena_lang
       friend void loadVMTROp(JITCompilerScope* scope);
       friend void loadDPNOp(JITCompilerScope* scope);
       friend void loadDPNOp2(JITCompilerScope* scope);
+      friend void loadDispNOp(JITCompilerScope* scope);
       friend void loadDPROp(JITCompilerScope* scope);
       friend void loadDPLabelOp(JITCompilerScope* scope);
       friend void loadIOp(JITCompilerScope* scope);
@@ -428,6 +429,7 @@ namespace elena_lang
    void loadVMTROp(JITCompilerScope* scope);
    void loadDPNOp(JITCompilerScope* scope);
    void loadDPNOp2(JITCompilerScope* scope);
+   void loadDispNOp(JITCompilerScope* scope);
    void loadDPROp(JITCompilerScope* scope);
    void loadDPLabelOp(JITCompilerScope* scope);
    void loadIOp(JITCompilerScope* scope);
