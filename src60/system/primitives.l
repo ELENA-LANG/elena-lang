@@ -429,13 +429,13 @@ internal singleton PrimitiveWideStringOperations
       ^ j
    }
 
-   save(short[] dest, short[] sour, int index, int length)
+   save(short[] dest, int destIndex, short[] sour, int index, int length)
    {
       int i := 0;
       while (i < length) {
          short b := sour[index + i];
 
-         dest[i] := b;
+         dest[destIndex + i] := b;
 
          i += 1;
       };

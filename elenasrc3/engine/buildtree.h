@@ -203,6 +203,7 @@ namespace elena_lang
       BinaryArray          = 0x00C0,
 
       ByRefOpMark          = 0x4001,
+      InplaceCall          = 0x4002,
 
       Value                = 0x8001,
       Reserved             = 0x8002,      // reserved managed
@@ -251,6 +252,7 @@ namespace elena_lang
       {
          map.add("breakpoint", BuildKey::Breakpoint);
          map.add("byrefmark", BuildKey::ByRefOpMark);
+         map.add("inplacemark", BuildKey::InplaceCall);
          map.add("int_literal", BuildKey::IntLiteral);
          map.add("copying", BuildKey::Copying);
          map.add("local_address", BuildKey::LocalAddress);
@@ -267,6 +269,7 @@ namespace elena_lang
          map.add("conversion_op", BuildKey::ConversionOp);
          map.add("int_real_op", BuildKey::IntRealOp);
          map.add("real_int_op", BuildKey::RealIntOp);
+         map.add("direct_call_op", BuildKey::DirectCallOp);
       }
    };
 

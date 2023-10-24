@@ -1,50 +1,60 @@
-import system'collections;
+import system'routines;
+import system'dynamic'expressions;
+
+
 import extensions;
- 
-const int maxNumber = 100000;
- 
-Hailstone(int n,Map<int,int> lengths)
+//
+//struct XY
+//{
+//   int x/* : prop*/;
+//   int y/* : prop*/;
+//
+//   embeddable constructor()
+//   {
+//      x := 1;
+//      y := 2;
+//   }
+//}
+// 
+//public program()
+//{
+//   XY xy := new XY();
+//
+////   var x := xy.x;
+//}
+
+struct XY
 {
-    if (n == 1)
-    {
-        ^ 1
-    };
- 
-    while (true)
-    {
-        if (lengths.containsKey(n))
-        {
-            ^ lengths[n]
-        }
-        else
-        {
-            if (n.isEven())
-            {
-                lengths[n] := 1 + Hailstone(n/2, lengths)
-            }
-            else
-            {
-                lengths[n] := 1 + Hailstone(3*n + 1, lengths)
-            }
-        }
-    }
+   int x;
+   int y;
+
+   constructor()
+   {
+      x := 1;
+      y := 2;
+   }
+
+   printMe()
+   {
+      console.writeLine(x);  
+      console.writeLine(y);  
+   }
+
+//   embeddable constructor(int x)
+//   {
+//      this x := x;
+//      this y := 0;
+//   }
 }
- 
+
 public program()
 {
-    int longestChain := 0;
-    int longestNumber := 0;
-    auto recursiveLengths := new Map<int,int>(4096,4096);
- 
-    for(int i := 1, i < maxNumber, i+=1)
-    {
-        var chainLength := Hailstone(i, recursiveLengths);
-        if (longestChain < chainLength)
-        {
-               longestChain := chainLength;
-               longestNumber := i
-        }
-    };
- 
-    console.printFormatted("max below {0}: {1} ({2} steps)", maxNumber, longestNumber, longestChain)
+   XY xy := default;
+
+//   uint n := 2u;
+
+//   var xy := /*new XY()*/2;
+   xy.printMe();
+//   XY xy := 2;
 }
+

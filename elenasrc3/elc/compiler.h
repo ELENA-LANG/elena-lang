@@ -38,6 +38,7 @@ namespace elena_lang
       ExtMssgLiteral,
       Template,
       Nil,
+      Default,
       Terminator,
       Symbol,
       Class,
@@ -1409,10 +1410,17 @@ namespace elena_lang
 
       void compileMethodCode(BuildTreeWriter& writer, ClassScope* classScope, MethodScope& scope, CodeScope& codeScope,
          SyntaxNode node, bool newFrame);
-      void compileDefConvConstructorCode(BuildTreeWriter& writer, MethodScope& scope, 
-         SyntaxNode node, bool newFrame);
+      void compileConstructorCode(BuildTreeWriter& writer, SyntaxNode node, SyntaxNode current, MethodScope& scope,
+         CodeScope& codeScope, ClassScope& classClassScope, bool isDefConvConstructor, ref_t classFlags, bool newFrame);
+      void compileInplaceDefConstructorCode(BuildTreeWriter& writer, SyntaxNode current, MethodScope& scope,
+         CodeScope& codeScope, ClassScope& classClassScope, ref_t classFlags, bool newFrame);
+      void compileDefConvConstructorCode(BuildTreeWriter& writer, MethodScope& scope,
+         SyntaxNode node, bool& newFrame);
 
-      mssg_t compileByRefHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node, 
+      mssg_t declareInplaceConstructorHandler(MethodScope& invokerScope, ClassScope& classClassScope);
+      mssg_t compileInplaceConstructorHandler(BuildTreeWriter& writer, MethodScope& invokerScope,
+         ClassScope& classClassScope, SyntaxNode current, mssg_t handler);
+      mssg_t compileByRefHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node,
          mssg_t byRefHandler);
       void compileByRefRedirectHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node,
          mssg_t byRefHandler);
@@ -1476,7 +1484,8 @@ namespace elena_lang
          mssg_t message, mssg_t dispatchMessage, bool inherited);
       void injectVirtualTryDispatch(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, mssg_t dispatchMessage, ref_t resendTarget);
 
-      void injectDefaultConstructor(ClassScope& scope, SyntaxNode node, bool protectedOne);
+      void injectDefaultConstructor(ClassScope& scope, SyntaxNode node, 
+         bool protectedOne, bool withClearOption);
 
       void injectVariableInfo(BuildNode node, CodeScope& codeScope);
 

@@ -634,6 +634,8 @@ ObjectInfo Compiler::NamespaceScope :: definePredefined(ref_t reference, Express
    switch (reference) {
       case V_NIL:
          return { ObjectKind::Nil, { reference }, 0 };
+      case V_DEFAULT:
+         return { ObjectKind::Default, { reference }, 0 };
       default:
          return {};
    }
@@ -3538,7 +3540,8 @@ void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
 
       if (!withDefConstructor &&!scope.abstractMode && !test(scope.info.header.flags, elDynamicRole)) {
          // if default constructor has to be created
-         injectDefaultConstructor(scope, node, withConstructors);
+         injectDefaultConstructor(scope, node, withConstructors, 
+            test(scope.info.header.flags, elStructureRole));
       }
 
       declareClassClass(classClassScope, node, scope.info.header.parentRef);
@@ -4034,6 +4037,23 @@ inline void createObject(BuildTreeWriter& writer, ClassInfo& info, ref_t referen
    }
 }
 
+inline void fillObject(BuildTreeWriter& writer, ClassInfo& info, int ptrSize)
+{
+   // NOTE : for simplicity FillOp is used 
+   switch (ptrSize) {
+      case 4:
+         writer.appendNode(BuildKey::FillOp, align(info.size, 4) >> 2);
+         break;
+      case 8:
+         writer.appendNode(BuildKey::FillOp, align(info.size, 8) >> 3);
+         break;
+      default:
+         assert(false);
+         break;
+   }
+   
+}
+
 inline void copyObjectToAcc(BuildTreeWriter& writer, ClassInfo& info, int offset)
 {
    if (test(info.header.flags, elStructureRole)) {
@@ -4483,6 +4503,7 @@ void Compiler :: writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, Obje
       //   writer.appendNode(BuildKey::MetaArray, info.reference);
       //   break;
       case ObjectKind::Nil:
+      case ObjectKind::Default:
          writer.appendNode(BuildKey::NilReference, 0);
          break;
       case ObjectKind::Terminator:
@@ -7521,6 +7542,20 @@ ObjectInfo Compiler :: compileNewOp(BuildTreeWriter& writer, ExprScope& scope, S
    ObjectInfo retVal = compileMessageOperation(
       writer, scope, node, source, messageRef, signRef, arguments, EAttr::StrongResolved | EAttr::NoExtension, nullptr);
 
+   if (arguments.count_pos() == 0 && source.kind == ObjectKind::Class) {
+      ref_t signature[1] = { source.reference };
+      mssg_t inplaceMessage = encodeMessage(
+         scope.module->mapAction(CONSTRUCTOR_MESSAGE, 
+            scope.module->mapSignature(signature, 1, false), false), 1, STATIC_MESSAGE);
+
+      CheckMethodResult dummy = {};
+      if (_logic->resolveCallType(*scope.moduleScope, 
+         retrieveStrongType(scope, source), inplaceMessage, dummy)) 
+      {
+         writer.appendNode(BuildKey::InplaceCall, inplaceMessage);
+      }
+   }
+
    // HOTFIX : to use weak reference for the created class
    retVal.typeInfo = { source.reference };
 
@@ -7979,8 +8014,14 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
    else exprVal = compileExpression(writer, scope, roperand,
       targetRef, EAttr::RetValExpected, nullptr);
 
+   if (exprVal.kind == ObjectKind::Default && _logic->isEmbeddable(*scope.moduleScope, targetRef)) {
+      ArgumentsInfo arguments;
+
+      exprVal = compileNewOp(writer, scope, roperand, mapClassSymbol(scope, targetRef), 0, arguments);
+   }
+
    if (!compileAssigningOp(writer, scope, target, exprVal))
-      scope.raiseError(errInvalidOperation, loperand.parentNode());;
+      scope.raiseError(errInvalidOperation, loperand.parentNode());
 
    if (target == exprVal)
       scope.raiseError(errAssigningToSelf, loperand.lastChild(SyntaxKey::TerminalMask));
@@ -10801,6 +10842,105 @@ void Compiler :: compileDispatchProberCode(BuildTreeWriter& writer, CodeScope& s
    }
 }
 
+mssg_t Compiler :: declareInplaceConstructorHandler(MethodScope& invokerScope, ClassScope& classClassScope)
+{
+   ClassScope* classScope = Scope::getScope<ClassScope>(invokerScope, Scope::ScopeLevel::Class);
+
+   ref_t actionRef, flags;
+   pos_t argCount;
+   decodeMessage(invokerScope.message, actionRef, argCount, flags);
+
+   flags &= ~FUNCTION_MESSAGE;
+
+   ref_t signRef = 0;
+   ustr_t actionName = invokerScope.module->resolveAction(actionRef, signRef);
+   ref_t signArgs[ARG_COUNT];
+   size_t signLen = invokerScope.module->resolveSignature(signRef, signArgs);
+
+   // insert a struct variable
+   for (size_t i = signLen; i > 0; i--)
+      signArgs[i] = signArgs[i - 1];
+
+   signArgs[0] = classScope->reference;
+   signLen++;
+
+   mssg_t inplaceMessage = encodeMessage(
+      invokerScope.module->mapAction(
+         actionName, invokerScope.module->mapSignature(signArgs, signLen, false), false), argCount + 1, flags | STATIC_MESSAGE);
+
+   MethodInfo info = { };
+
+   info.hints |= (ref_t)MethodHint::Private;
+   info.hints |= (ref_t)MethodHint::Sealed;
+   info.hints |= (ref_t)MethodHint::Stacksafe;
+
+   classClassScope.info.methods.add(inplaceMessage, info);
+   classClassScope.save();
+
+   return inplaceMessage;
+}
+
+mssg_t Compiler :: compileInplaceConstructorHandler(BuildTreeWriter& writer, MethodScope& invokerScope, ClassScope& classClassScope, 
+   SyntaxNode current, mssg_t byRefMessage)
+{
+   SyntaxNode mathodNode = current.parentNode();
+
+   ClassScope* classScope = Scope::getScope<ClassScope>(invokerScope, Scope::ScopeLevel::Class);
+
+   MethodScope privateScope(classScope);
+   // copy parameters
+   for (auto it = invokerScope.parameters.start(); !it.eof(); ++it) {
+      privateScope.parameters.add(it.key(), *it);
+   }
+
+   privateScope.info = classClassScope.info.methods.get(byRefMessage);
+
+   privateScope.message = byRefMessage | STATIC_MESSAGE;
+   privateScope.info.hints |= (ref_t)MethodHint::Private;
+   privateScope.info.hints |= (ref_t)MethodHint::Sealed;
+   privateScope.info.hints |= (ref_t)MethodHint::Stacksafe;
+
+   privateScope.byRefReturnMode = true;
+   privateScope.nestedMode = invokerScope.nestedMode;
+   privateScope.functionMode = false;
+   privateScope.isEmbeddable = _logic->isEmbeddableStruct(classScope->info);
+   privateScope.constructorMode = true;
+
+   // NOTE self local is a first argument
+   privateScope.selfLocal = -1;
+
+   CodeScope codeScope(&privateScope);
+   beginMethod(writer, privateScope, mathodNode, BuildKey::Method, true);
+   writer.appendNode(BuildKey::OpenFrame);
+
+   if (classScope->info.methods.exist(invokerScope.moduleScope->buildins.init_message)) {
+      compileInlineInitializing(writer, *classScope, mathodNode);
+   }
+   if (mathodNode.existChild(SyntaxKey::FillingAttr)) {
+      ExprScope exprScope(&codeScope);
+
+      writeObjectInfo(writer, exprScope, privateScope.mapSelf());
+      fillObject(writer, classScope->info, invokerScope.moduleScope->ptrSize);
+   }
+
+   switch (current.key) {
+      case SyntaxKey::CodeBlock:
+         compileCode(writer, codeScope, current, false);
+         break;
+      case SyntaxKey::None:
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   codeScope.syncStack(&privateScope);
+   writer.appendNode(BuildKey::CloseFrame);
+   endMethod(writer, privateScope);
+
+   return privateScope.message;
+}
+
 mssg_t Compiler :: compileByRefHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node, mssg_t byRefHandler)
 {
    ClassScope* classScope = Scope::getScope<ClassScope>(invokerScope, Scope::ScopeLevel::Class);
@@ -11109,7 +11249,7 @@ void Compiler :: compileInlineInitializing(BuildTreeWriter& writer, ClassScope& 
 }
 
 void Compiler :: compileDefConvConstructorCode(BuildTreeWriter& writer, MethodScope& scope,
-   SyntaxNode node, bool newFrame)
+   SyntaxNode node, bool& newFrame)
 {
    if (!newFrame) {
       // new stack frame
@@ -11123,10 +11263,81 @@ void Compiler :: compileDefConvConstructorCode(BuildTreeWriter& writer, MethodSc
       throw InternalError(errFatalError);
 
    createObject(writer, classScope->info, classScope->reference);
+}
 
-   // call field initializers if available for default constructor
-   if(classScope->info.methods.exist(scope.moduleScope->buildins.init_message)) {
-      compileInlineInitializing(writer, *classScope, node);
+void Compiler :: compileInplaceDefConstructorCode(BuildTreeWriter& writer, SyntaxNode current, MethodScope& scope,
+   CodeScope& codeScope, ClassScope& classClassScope, ref_t classFlags, bool newFrame)
+{
+   mssg_t privateHandler = declareInplaceConstructorHandler(scope, classClassScope);
+
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
+   // calling the byref handler
+   ExprScope exprScope(&codeScope);
+   ArgumentsInfo arguments;
+
+   scope.selfLocal = codeScope.newLocal();
+   writer.appendNode(BuildKey::Assigning, scope.selfLocal);
+
+   ObjectInfo target = mapClassSymbol(scope, classScope->reference);
+   MessageResolution resolution = { true, privateHandler };
+
+   arguments.add(scope.mapSelf());
+   for (auto it = scope.parameters.start(); !it.eof(); ++it) {
+      arguments.add(scope.mapParameter(it.key(), EAttr::None));
+   }
+
+   ref_t signRef = getSignature(scope.module, privateHandler);
+   _logic->setSignatureStacksafe(*scope.moduleScope, signRef, resolution.stackSafeAttr);
+
+   compileMessageOperation(writer, exprScope, {}, target, resolution,
+      signRef, arguments, EAttr::AllowPrivateCall, nullptr);
+
+   // return the created object
+   writeObjectInfo(writer, exprScope, scope.mapSelf());
+
+   exprScope.syncStack();
+   writer.appendNode(BuildKey::CloseFrame);
+
+   codeScope.syncStack(&scope);
+   endMethod(writer, scope);
+
+   compileInplaceConstructorHandler(writer, scope, classClassScope,
+      current, privateHandler);
+}
+
+void Compiler :: compileConstructorCode(BuildTreeWriter& writer, SyntaxNode node, SyntaxNode current, MethodScope& scope,
+   CodeScope& codeScope, ClassScope& classClassScope, bool isDefConvConstructor, ref_t classFlags, bool newFrame)
+{
+   if (isDefConvConstructor) {
+      // if it is a default / conversion (unnamed) constructor
+      // call field initializers if available for default constructor
+      ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
+      if (node.existChild(SyntaxKey::FillingAttr))
+         fillObject(writer, classScope->info, scope.moduleScope->ptrSize);
+
+      if (classScope->info.methods.exist(scope.moduleScope->buildins.init_message)) {
+         compileInlineInitializing(writer, *classScope, node);
+      }
+   }
+
+   switch (current.key) {
+      case SyntaxKey::CodeBlock:
+      case SyntaxKey::ResendDispatch:
+         compileMethodCode(writer, &classClassScope, scope, codeScope, node, newFrame);
+         break;
+      case SyntaxKey::ReturnExpression:
+         compileRetExpression(writer, codeScope, current, EAttr::DynamicObject);
+         writer.appendNode(BuildKey::CloseFrame);
+         break;
+      case SyntaxKey::None:
+         if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
+            writer.appendNode(BuildKey::CloseFrame);
+            break;
+         }
+      default:
+         throw InternalError(errFatalError);
    }
 }
 
@@ -11211,28 +11422,25 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
       compileConstructorDispatchCode(writer, codeScope, classClassScope, current);
    }
    else {
+      bool inPlaceConstructor = false;
       if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
          // if it is a default / conversion (unnamed) constructor
          // it should create the object
          compileDefConvConstructorCode(writer, scope, node, newFrame);
+
+         if (getArgCount(scope.message) < 2 && test(classFlags, elStructureRole) && !isProtectedDefConst)
+            inPlaceConstructor = true;
       }
-      switch (current.key) {
-         case SyntaxKey::CodeBlock:
-         case SyntaxKey::ResendDispatch:
-            compileMethodCode(writer, &classClassScope, scope, codeScope, node, newFrame);
-            break;
-         case SyntaxKey::ReturnExpression:
-            compileRetExpression(writer, codeScope, current, EAttr::DynamicObject);
-            writer.appendNode(BuildKey::CloseFrame);
-            break;
-         case SyntaxKey::None:
-            if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
-               writer.appendNode(BuildKey::CloseFrame);
-               break;
-            }
-         default:
-            throw InternalError(errFatalError);
+
+      if (inPlaceConstructor) {
+         compileInplaceDefConstructorCode(writer, current, scope, codeScope,
+            classClassScope, classFlags, newFrame);
+
+         // NOTE : the procedure closes the scope itself
+         return;
       }
+      else compileConstructorCode(writer, node, current, scope, codeScope, 
+         classClassScope, isDefConvConstructor, classFlags, newFrame);
    }
 
    codeScope.syncStack(&scope);
@@ -12609,7 +12817,8 @@ void Compiler :: injectInheritedStaticMethod(SyntaxNode classNode, SyntaxKey met
    resendNode.appendChild(SyntaxKey::Target, reference);
 }
 
-void Compiler :: injectDefaultConstructor(ClassScope& scope, SyntaxNode node, bool protectedOne)
+void Compiler :: injectDefaultConstructor(ClassScope& scope, SyntaxNode node, 
+   bool protectedOne, bool withClearOption)
 {
    mssg_t message = protectedOne ? scope.moduleScope->buildins.protected_constructor_message
                         : scope.moduleScope->buildins.constructor_message;
@@ -12621,6 +12830,9 @@ void Compiler :: injectDefaultConstructor(ClassScope& scope, SyntaxNode node, bo
    methodNode.appendChild(SyntaxKey::Autogenerated);
    methodNode.appendChild(SyntaxKey::Hints, (ref_t)hints);
    methodNode.appendChild(SyntaxKey::OutputType, scope.reference);
+
+   if (withClearOption)
+      methodNode.appendChild(SyntaxKey::FillingAttr);
 }
 
 void Compiler :: injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode,

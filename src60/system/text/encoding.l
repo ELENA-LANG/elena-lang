@@ -158,9 +158,9 @@
          ^ WideString.fromShortArray(index, size, buffer);
       }
 
-      toShortArray(wide s, int index, int length, short[] output)
+      toShortArray(wide s, int index, int length, short[] output, int outputIndex)
       {
-         s.saveToShortArray(index, output, length);
+         s.saveToShortArray(index, output, length, outputIndex);
       }
 
       int getCharCount(wide s)

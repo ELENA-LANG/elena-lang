@@ -11,3 +11,4 @@ intcondop, assigning, local, branchop => 7;
 realcondop, assigning, local, branchop => 7;
 int_real_op, local_address, copying => 10;
 real_int_op, local_address, copying => 10;
+direct_call_op, inplacemark, copying => 12;

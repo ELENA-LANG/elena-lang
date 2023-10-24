@@ -1874,6 +1874,15 @@ inline BuildNode getPrevious(BuildNode node)
    }
 }
 
+inline void setChild(BuildNode node, BuildKey childKey, ref_t childArg)
+{
+   BuildNode child = node.findChild(childKey);
+   if (child.key == childKey) {
+      child.setArgumentReference(childArg);
+   }
+   else node.appendChild(childKey, childArg);
+}
+
 inline BuildNode getNextNode(BuildNode node)
 {
    node = node.nextNode();
@@ -2271,11 +2280,40 @@ inline bool doubleAssigningIntRealOp(BuildNode lastNode)
    return true;
 }
 
+inline bool inplaceCallOp(BuildNode lastNode)
+{
+   BuildNode markNode = getPrevious(lastNode);
+   BuildNode callNode = getPrevious(markNode);
+   BuildNode classNode = getPrevious(callNode);
+
+   if (classNode == BuildKey::ClassReference && getArgCount(callNode.arg.reference) == 0 
+      && getArgCount(markNode.arg.reference) == 1) 
+   {
+      int targetOffset = lastNode.arg.value;
+
+      classNode.setKey(BuildKey::LocalAddress);
+      classNode.setArgumentValue(targetOffset);
+
+      markNode.setKey(callNode.key);
+      markNode.setArgumentReference(markNode.arg.reference);
+      setChild(markNode, BuildKey::Type, callNode.findChild(BuildKey::Type).arg.reference);
+
+      callNode.setKey(BuildKey::SavingInStack);
+      callNode.setArgumentValue(0);
+
+      lastNode.setKey(BuildKey::Idle);
+
+      return true;
+   }
+
+   return false;
+}
+
 ByteCodeWriter::Transformer transformers[] =
 {
    nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts,
    boxingInt, nativeBranchingOp, intConstBranchingOp, doubleAssigningConverting, doubleAssigningIntRealOp,
-   intOpWithConsts2
+   intOpWithConsts2, inplaceCallOp
 };
 
 // --- ByteCodeWriter ---
@@ -3032,6 +3070,7 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::Path:
          case BuildKey::Idle:
+         case BuildKey::InplaceCall:
             // ignore path node
             break;
          default:
@@ -3103,6 +3142,7 @@ inline bool isNonOperational(BuildKey key)
 {
    switch (key) {
       case BuildKey::ByRefOpMark:
+      case BuildKey::InplaceCall:
       case BuildKey::IntBranchOp:
          return false;
       case BuildKey::OpenStatement:

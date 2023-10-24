@@ -1,4 +1,5 @@
 import system;
+import system'text;
 
 public singleton messageBox
 {
@@ -60,48 +61,48 @@ class BaseFileDialog
      
    constructor create(WindowHandle parent, wide[] filters, int filterIndex, int maxFile, wide caption, int flags)
    {
-//        int   s_length := 0;
-//        int   buf_size := 0;
-//        
-//        theParent := parent;
-//        theFilterIndex := filterIndex;
-//        
-//        theFileName := new short[](maxFile + 1);
-//        theFileName[0] := 0;
-//        
-//        theMaxFile := maxFile;
-//        theCaption := caption;
-//        theFlags := flags;
-//        
-//        // calculate the filter buffer size
-//        int length := filters.Length;
-//        for (int i := 0, i < length, i += 1)
-//        {
-//            wide filter := filters[i];
-//            s_length := filter.Length;
-//            buf_size := buf_size + s_length;
-//            buf_size := buf_size + 1
-//        };
-//        buf_size := buf_size + 2;
-//
-//        // fill the filter buffer        
-//        theFilters := new short[](buf_size);
-//        buf_size := 0;
-//        for (int i := 0, i < length, i += 1)
-//        {
-//            wide filter := filters[i];
-//            s_length := filter.Length;
-//            
-//            UTF16Encoding.convert(buf_size, s_length, filter, theFilters);
-//            
-//            buf_size := buf_size + s_length;
-//            
-//            theFilters[buf_size] := 0;
-//            
-//            buf_size := buf_size + 1
-//        };
-//        theFilters[buf_size] := 0;
-//        theFilters[buf_size + 1] := 0;
+      int   s_length := 0;
+      int   buf_size := 0;
+        
+      _parent := parent;
+      _filterIndex := filterIndex;
+        
+      _fileName := new short[](maxFile + 1);
+      _fileName[0] := 0;
+        
+      _maxFile := maxFile;
+      _caption := caption;
+      _flags := flags;
+        
+      // calculate the filter buffer size
+      int length := filters.Length;
+      for (int i := 0, i < length, i += 1)
+      {
+         wide filter := filters[i];
+         s_length := filter.Length;
+         buf_size := buf_size + s_length;
+         buf_size := buf_size + 1
+      };
+      buf_size := buf_size + 2;
+
+      // fill the filter buffer        
+      _filters := new short[](buf_size);
+      buf_size := 0;
+      for (int i := 0, i < length, i += 1)
+      {
+         wide filter := filters[i];
+         s_length := filter.Length;
+            
+         UTF16Encoding.toShortArray(filter, 0, s_length, _filters, buf_size);
+
+         buf_size := buf_size + s_length;
+            
+         _filters[buf_size] := 0;
+            
+         buf_size := buf_size + 1
+      };
+      _filters[buf_size] := 0;
+      _filters[buf_size + 1] := 0;
    }    
     
    internal prepare(tagOFNA struct)

@@ -1310,8 +1310,8 @@ public const struct WideString : BaseValue
    int save(int index, int length, char[] buffer, int destIndex)
       = PrimitiveWideStringOperations.save(buffer, self, index, length, destIndex);
 
-   internal saveToShortArray(int index, short[] buffer, int length)
-      = PrimitiveWideStringOperations.save(buffer, this array, index, length);
+   internal saveToShortArray(int index, short[] buffer, int length, int outputIndex)
+      = PrimitiveWideStringOperations.save(buffer, outputIndex, this array, index, length);
 
    Enumerator<char> enumerator()
          : info("Returns the string enumerator")

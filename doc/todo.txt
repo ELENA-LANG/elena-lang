@@ -8,17 +8,31 @@ In development:
   dev: #613, patterns, #608, #623, #629
   op:github actions : x86
   opt:#601, #602
-  maint:backlog, #616
+  maint:backlog, #616, system module warnings
   exp:using expression trees in real-life apps (see c#)
-  ide:backlog, vm debugger
+  ide:backlog, vm debugger, debugger watch - struct
   tools:backlog
   prom:interodunction to elena 6.0
   port:gui samples, db samples, xforms
   --------------------------------------
 
-  * #624
+  * the code : XYs := default - is used to call inplace constructor
+
+  * get rid of embeddable method attribute
+
+  * simplify assinging 
+
+  * for structure : default / conversion constructors have a special version to be called for initializing in place;
+    no byref hanlder for named constructors; 
+  * IntNumber.#constructor must create a dynamic object
+
+  * pointer h := UnsafePointer.Empty; - embeddable constructor call
+  * initialize struct with zeros - default built-in variable; 
+
   * gui samples
   * #629
+  * anagram #132
+  * #602 : set r:xx, store sp:0 -> one command
 
   === Iteration 20 ===
   dev:

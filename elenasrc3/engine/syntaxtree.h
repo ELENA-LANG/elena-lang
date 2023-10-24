@@ -182,6 +182,7 @@ namespace elena_lang
       Target                  = 0x00010E,
       ByRefRetMethod          = 0x00010F,
       NameArgParameter        = 0x000110,
+      FillingAttr             = 0x000111,
 
       Column                  = 0x000201,
       Row                     = 0x000202,

@@ -1613,6 +1613,7 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, 
 
    switch (sourceInfo.typeRef) {
       case V_NIL:
+      case V_DEFAULT:
          // nil is compatible with a super class for the message dispatching
          // and with all types for all other cases
          if (!ignoreNils || targetInfo.typeRef == scope.buildins.superReference)
