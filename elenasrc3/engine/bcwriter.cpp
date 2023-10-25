@@ -252,6 +252,16 @@ void copyingToAccExact(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::Copy, n);
 }
 
+void intCopyingToAccField(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int value = node.findChild(BuildKey::Value).arg.value;
+
+   if (!node.arg.value) {
+      tape.write(ByteCode::XSaveN, value);
+   }
+   else tape.write(ByteCode::XSaveDispN, node.arg.value, value);
+}
+
 void copyingLocalArr(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int n = node.findChild(BuildKey::Size).arg.value;
@@ -1832,7 +1842,7 @@ ByteCodeWriter::Saver commands[] =
    uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp,
 
    copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp, semiDirectCallOp,
-   intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex
+   intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex, intCopyingToAccField
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -2309,11 +2319,44 @@ inline bool inplaceCallOp(BuildNode lastNode)
    return false;
 }
 
+inline bool intConstAssigning(BuildNode lastNode)
+{
+   BuildNode localNode = getPrevious(lastNode);
+   BuildNode savingNode = getPrevious(localNode);
+   BuildNode intNode = getPrevious(savingNode);
+
+   BuildNode value = intNode.findChild(BuildKey::Value);
+
+   if (lastNode == BuildKey::CopyingToAccExact) {
+      int size = lastNode.findChild(BuildKey::Size).arg.value;
+      if (size != 4)
+         return false;
+
+      lastNode.setKey(BuildKey::IntCopyingToAccField);
+      lastNode.setArgumentValue(0);
+   }
+   else if (lastNode == BuildKey::CopyingToAccField) {
+      int size = lastNode.findChild(BuildKey::Size).arg.value;
+      if (size != 4)
+         return false;
+
+      lastNode.setKey(BuildKey::IntCopyingToAccField);
+   }
+   else return false;
+
+   setChild(lastNode, BuildKey::Value, value.arg.value);
+
+   intNode.setKey(BuildKey::Idle);
+   savingNode.setKey(BuildKey::Idle);
+
+   return true;
+}
+
 ByteCodeWriter::Transformer transformers[] =
 {
    nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts,
    boxingInt, nativeBranchingOp, intConstBranchingOp, doubleAssigningConverting, doubleAssigningIntRealOp,
-   intOpWithConsts2, inplaceCallOp
+   intOpWithConsts2, inplaceCallOp, intConstAssigning
 };
 
 // --- ByteCodeWriter ---

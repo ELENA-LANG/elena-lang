@@ -153,8 +153,9 @@ namespace elena_lang
       LoadingStackDump     = 0x007B,
       SavingStackDump      = 0x007C,
       SavingFloatIndex     = 0x007D,
+      IntCopyingToAccField = 0x007E,
 
-      MaxOperationalKey    = 0x007D,
+      MaxOperationalKey    = 0x007E,
 
       Import               = 0x0080,
       DictionaryOp         = 0x0081,
@@ -261,6 +262,8 @@ namespace elena_lang
          map.add("create_struct", BuildKey::CreatingStruct);
          map.add("assigning", BuildKey::Assigning);
          map.add("copying_to_acc", BuildKey::CopyingToAcc);
+         map.add("copying_to_acc_exact", BuildKey::CopyingToAccExact);
+         map.add("copying_to_acc_field", BuildKey::CopyingToAccField);
          map.add("local", BuildKey::Local);
          map.add("intcondop", BuildKey::IntCondOp);
          map.add("realcondop", BuildKey::RealCondOp);
