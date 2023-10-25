@@ -40,7 +40,7 @@ struct XY
       console.writeLine(y);  
    }
 
-   embeddable constructor(int x)
+   constructor(int x)
    {
       this x := x;
       this y := 0;
@@ -53,6 +53,5 @@ public program()
 
    XY xy := 2;
    xy.printMe();
-//   XY xy := 2;
 }
 

@@ -7542,11 +7542,15 @@ ObjectInfo Compiler :: compileNewOp(BuildTreeWriter& writer, ExprScope& scope, S
    ObjectInfo retVal = compileMessageOperation(
       writer, scope, node, source, messageRef, signRef, arguments, EAttr::StrongResolved | EAttr::NoExtension, nullptr);
 
-   if (arguments.count_pos() == 0 && source.kind == ObjectKind::Class) {
-      ref_t signature[1] = { source.reference };
+   if (arguments.count_pos() < 2 && source.kind == ObjectKind::Class) {      
+      pos_t argCount = arguments.count_pos() + 1;
+      ref_t signature[2] = { source.reference, 0};
+      if (argCount == 2)
+         signature[1] = retrieveStrongType(scope, arguments[0]);
+
       mssg_t inplaceMessage = encodeMessage(
-         scope.module->mapAction(CONSTRUCTOR_MESSAGE, 
-            scope.module->mapSignature(signature, 1, false), false), 1, STATIC_MESSAGE);
+         scope.module->mapAction(CONSTRUCTOR_MESSAGE,
+            scope.module->mapSignature(signature, argCount, false), false), argCount, STATIC_MESSAGE);
 
       CheckMethodResult dummy = {};
       if (_logic->resolveCallType(*scope.moduleScope, 
@@ -9260,7 +9264,8 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
          else {
             ArgumentsInfo arguments;
             arguments.add(source);
-            ref_t signRef = scope.module->mapSignature(&source.typeInfo.typeRef, 1, false);
+            ref_t typeRef = retrieveStrongType(scope, source);
+            ref_t signRef = scope.module->mapSignature(&typeRef, 1, false);
 
             return compileNewOp(writer, scope, node, mapClassSymbol(scope, targetRef),
                signRef, arguments);

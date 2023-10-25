@@ -2315,6 +2315,31 @@ inline bool inplaceCallOp(BuildNode lastNode)
 
       return true;
    }
+   else if (classNode == BuildKey::ClassReference && getArgCount(callNode.arg.reference) == 1
+      && getArgCount(markNode.arg.reference) == 2)
+   {
+      BuildNode savingNode = getPrevious(classNode);
+      if (savingNode == BuildKey::SavingInStack && savingNode.arg.value == 0) {
+         savingNode.setArgumentValue(1);
+      }
+      else return false;
+
+      int targetOffset = lastNode.arg.value;
+
+      classNode.setKey(BuildKey::LocalAddress);
+      classNode.setArgumentValue(targetOffset);
+
+      markNode.setKey(callNode.key);
+      markNode.setArgumentReference(markNode.arg.reference);
+      setChild(markNode, BuildKey::Type, callNode.findChild(BuildKey::Type).arg.reference);
+
+      callNode.setKey(BuildKey::SavingInStack);
+      callNode.setArgumentValue(0);
+
+      lastNode.setKey(BuildKey::Idle);
+
+      return true;
+   }
 
    return false;
 }

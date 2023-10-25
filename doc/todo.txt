@@ -16,16 +16,10 @@ In development:
   port:gui samples, db samples, xforms
   --------------------------------------
 
-  * simplify assinging 
-
-  * for structure : default / conversion constructors have a special version to be called for initializing in place;
-    no byref hanlder for named constructors; 
-  * IntNumber.#constructor must create a dynamic object
-
-  * pointer h := UnsafePointer.Empty; - embeddable constructor call
-  * initialize struct with zeros - default built-in variable; 
+  * tutorial
 
   * gui samples
+  * pointer h := UnsafePointer.Empty; - embeddable constructor call
   * #629
   * anagram #132
   * #602 : set r:xx, store sp:0 -> one command
