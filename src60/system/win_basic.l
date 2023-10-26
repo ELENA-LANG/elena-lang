@@ -17,12 +17,17 @@ public sealed const struct UnsafePointer
       _pointer := ptr
    }
 
+   constructor(object obj)
+   {
+      self.assignPtr(obj);
+   }
+
    get constructor Default()
       = new UnsafePointer();   
 
    private readIntPtr(ref int retVal) : external(system'core_routines'__readIntPtr);
 
-   assignPtr(wide str) : external(system'core_routines'__assignPtr); 
+   private assignPtr(object obj) : external(system'core_routines'__assignPtr); 
 
    bool isUnassigned()
    {

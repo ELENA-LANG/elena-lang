@@ -24,6 +24,16 @@ public abstract class BaseControl
       }
    }
 
+   bool Enabled
+   {
+      get() = _enabled;
+        
+      set(bool value)
+      {
+         _enabled := value
+      }
+   }
+
    Parent = _parent;    
 
    set internal Parent(object o)

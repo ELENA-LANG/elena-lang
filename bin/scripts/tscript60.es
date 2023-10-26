@@ -28,7 +28,16 @@
 <=
    singleton (
 =>
-                              public_prefix? name f_decl
+                              name f_decl
+<=
+   )
+=>;
+
+   #define function       ::= 
+<=
+   public_singleton (
+=>
+                              "public" name f_decl
 <=
    )
 =>;
@@ -155,7 +164,7 @@
         )
 =>;
 
-   #define expression     ::= l5_expression;
+   #define expression     ::= <= expression ( => l5_expression <= ) => ;
 
    #define l5_expression  ::= $ l4_expression l5_operations;
 
@@ -165,7 +174,7 @@
 
    #define l2_expression  ::= $ l1_expression l2_operations;
 
-   #define l1_expression  ::= <= expression ( => object l1_operations <= ) =>;
+   #define l1_expression  ::= <= expression ( => object_expr l1_operations <= ) =>;
 
    #define l5_operations  ::= ^ <= expression ( => l5_operation <= ) =>;
    #define l5_operations  ::= $eps;
@@ -195,7 +204,7 @@
    #define next_l3_op     ::= <= ; => l3_operation next_l3_op;
    #define next_l3_op     ::= $eps;
 
-   #define l2_operations  ::= ^ <= expression ( => l2_operation next_l2_op <= ) =>;
+   #define l2_operations  ::= ^ <= message_operation ( => l2_operation next_l2_op <= ) =>;
    #define l2_operations  ::= $eps;
 
    #define l2_operation   ::= "." message m_args;
@@ -211,6 +220,8 @@
 
    #define next_l1_op     ::= <= ; => l1_operation next_l1_op;
    #define next_l1_op     ::= $eps;
+
+   #define object_expr    ::= <= object ( => object <= ) =>;
 
    #define object         ::= s_object;
    #define object         ::= "new" new_identifier;
@@ -242,7 +253,7 @@
    #define new_identifier ::= <= new_identifier = $identifier =>;
 
    #define property       ::= <= message = $identifier property_parameter = 0 =>;
-   #define message        ::= <= message = $identifier =>;
+   #define message        ::= <= message ( identifier = $identifier ) =>;
    #define identifier     ::= <= identifier = $identifier =>;
    #define integer        ::= <= integer = $numeric =>;
    #define literal        ::= <= literal = "$literal" =>;

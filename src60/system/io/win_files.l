@@ -267,6 +267,8 @@ namespace io
 
       TextWriter writer(path) = StreamWriter.new:path;
 
+      TextWriter logger(path) = StreamWriter.new(path, true);
+
       bool isAvailable(path)
       {
          int ret := extern KERNEL32.GetFileAttributesW(cast wide(path));

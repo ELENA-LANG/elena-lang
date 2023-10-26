@@ -442,9 +442,11 @@ namespace elena_lang
    public:
       static void loadAttributes(AttributeMap& map)
       {
-         //map.add("singleton", V_SINGLETON);
+         map.add("singleton", V_SINGLETON);
+         map.add("public_singleton", V_SINGLETON);
+         map.add("public_singleton", V_PUBLIC);
          //map.add("preloaded_symbol", V_PRELOADED);
-         //map.add("function", V_FUNCTION);
+         map.add("function", V_FUNCTION);
          map.add("get_method", V_GETACCESSOR);
          map.add("script_method", V_SCRIPTSELFMODE);
          map.add("public_namespace", V_PUBLIC);

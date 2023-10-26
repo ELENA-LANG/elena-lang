@@ -57,11 +57,11 @@ public sealed class OpenFileDialog : FileDialog
     
    bool run()
    {
-//      var dialog := new system'winforms'OpenFileDialog(theParent, theFilters, 0, 255, theTitle);
-//   
-//      theSelectedPath := dialog.select();
-//        
-//      ^ (nil != theSelectedPath)
+      var dialog := new system'winforms'OpenFileDialog(_parent, _filters, 0, 255, _title);
+
+      _selectedPath := dialog.select();
+
+      ^ (nil != _selectedPath)
    }    
 }
 
@@ -74,11 +74,11 @@ public sealed class SaveFileDialog : FileDialog
     
    bool run()
    {
-//      var dialog := new system'winforms'SaveFileDialog(theParent, theFilters, 0, 255, theTitle);
-//   
-//      theSelectedPath := dialog.select();
-//        
-//      ^ (nil != theSelectedPath)
+      var dialog := new system'winforms'SaveFileDialog(_parent, _filters, 0, 255, _title);
+
+      _selectedPath := dialog.select();
+
+      ^ (nil != _selectedPath)
    }    
 }
 

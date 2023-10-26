@@ -87,6 +87,19 @@ public sealed const struct WindowHandle
          ^ caption
       }
    }
+
+   setEnabled(int value)
+   {
+      extern USER32.EnableWindow(_handle, value)
+   }            
+    
+   bool isEnabled()
+   {
+      int visible := extern USER32.IsWindowEnabled(_handle);
+        
+      ^ (visible != 0)
+   }
+
 }
 
 WindowHandle defaultHandle

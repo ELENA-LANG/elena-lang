@@ -91,3 +91,10 @@ public const int WM_DESTROY       = 02h;
 public const int WM_SETTEXT       = 0Ch;
 public const int WM_GETTEXT       = 0Dh;
 public const int WM_GETTEXTLENGTH = 0Eh;
+
+public const int OFN_PATHMUSTEXIST = 00000800h;
+public const int OFN_EXPLORER      = 00080000h;
+public const int OFN_LONGNAMES     = 00200000h;
+public const int OFN_HIDEREADONLY  = 00000004h;
+
+public const int DS_CENTER         = 0800h;

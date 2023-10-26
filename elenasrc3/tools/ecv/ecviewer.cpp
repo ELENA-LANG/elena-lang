@@ -13,7 +13,7 @@
 
 using namespace elena_lang;
 
-constexpr int TABBING = 20;
+constexpr int TABBING = 15;
 constexpr int INDENT  = 11;
 
 // --- trim ---
@@ -126,6 +126,8 @@ mssg_t ByteCodeViewer :: resolveMessageByIndex(MemoryBase* vmt, int index)
 
       size -= sizeof(MethodEntry);
    }
+   printLine("Message index is too big");
+
    return 0;
 }
 
@@ -150,6 +152,7 @@ void ByteCodeViewer :: printHelp()
    _presenter->print("#<symbol>               - view symbol byte codes\n");
    _presenter->print("-q                      - quit\n");
    _presenter->print("-b                      - toggle bytecode mode\n");
+   _presenter->print("-p                      - toggle pagination mode\n");
    _presenter->print("-h                      - toggle method hints mode\n");
 }
 
@@ -219,6 +222,14 @@ void ByteCodeViewer :: printLineAndCount(ustr_t arg1, ustr_t arg2, int& row, int
    nextRow(row, pageSize);
 }
 
+inline void appendPrefix(IdentifierString& commandStr, ustr_t prefix)
+{
+   if (commandStr.length() > prefix.length()) {
+      commandStr.truncate(commandStr.length() - prefix.length() + 1);      
+   }
+   commandStr.append(prefix);
+}
+
 void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
 {
    ustr_t referenceName = nullptr;
@@ -236,53 +247,53 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
 
    switch (mask) {
       case mskArrayRef:
-         commandStr.append("array:");
+         appendPrefix(commandStr, "array:");
          break;
       case mskTypeListRef:
-         commandStr.append("marray:");
+         appendPrefix(commandStr, "marray:");
          break;
       case mskSymbolRef:
-         commandStr.append("symbol:");
+         appendPrefix(commandStr, "symbol:");
          break;
       case mskVMTRef:
-         commandStr.append("class:");
+         appendPrefix(commandStr, "class:");
          break;
       case mskLongLiteralRef:
-         commandStr.append("longconst:");
+         appendPrefix(commandStr, "longconst:");
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskRealLiteralRef:
-         commandStr.append("realconst:");
+         appendPrefix(commandStr, "realconst:");
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskIntLiteralRef:
-         commandStr.append("intconst:");
+         appendPrefix(commandStr, "intconst:");
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskLiteralRef:
-         commandStr.append("strconst:");
+         appendPrefix(commandStr, "strconst:");
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskWideLiteralRef:
-         commandStr.append("wideconst:");
+         appendPrefix(commandStr, "wideconst:");
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskCharacterRef:
-         commandStr.append("charconst:");
+         appendPrefix(commandStr, "charconst:");
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskStaticVariable:
-         commandStr.append("static:");
+         appendPrefix(commandStr, "static:");
          break;
       case mskProcedureRef:
-         commandStr.append("procedure:");
+         appendPrefix(commandStr, "procedure:");
          break;
       case mskMssgLiteralRef:
       case mskExtMssgLiteralRef:
-         commandStr.append("mssgconst:");
+         appendPrefix(commandStr, "mssg:");
          break;
       case mskMssgNameLiteralRef:
-         commandStr.append("mssgnameconst:");
+         appendPrefix(commandStr, "mssgname:");
          break;
       default:
          commandStr.append(":");
@@ -566,6 +577,8 @@ void ByteCodeViewer :: printCommand(ByteCommand& command, int indent,
       for (int i = 0; i < indent; i++)
          commandLine.append(" ");
 
+      size_t startIndex = commandLine.length();
+
       ByteCodeUtil::decode(command.code, commandLine);
 
       // HOTFIX : remove tailing double colon
@@ -573,9 +586,10 @@ void ByteCodeViewer :: printCommand(ByteCommand& command, int indent,
          commandLine.truncate(commandLine.length() - 2);
       }
 
-      size_t tabbing = TABBING;
+      size_t tabbing = startIndex + TABBING;
+      size_t spaceIndex = (*commandLine).findSub(startIndex, ' ', commandLine.length());
       while (commandLine.length() < tabbing) {
-         commandLine.append(" ");
+         commandLine.insert(" ", spaceIndex);
       }
 
       addCommandArguments(command, commandLine, labels, commandPosition);

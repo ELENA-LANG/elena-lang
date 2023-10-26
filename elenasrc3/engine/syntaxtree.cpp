@@ -20,13 +20,14 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("namespace", SyntaxKey::Namespace);
    map.add("public_namespace", SyntaxKey::Namespace);
    //   tokens.add("class", lxClass);
-   //   tokens.add("singleton", lxClass);
+   map.add("singleton", SyntaxKey::Class);
+   map.add("public_singleton", SyntaxKey::Class);
    map.add("public_symbol", SyntaxKey::Symbol);
    map.add("nested", SyntaxKey::NestedBlock);
    map.add("script_method", SyntaxKey::Method);
    map.add("script_function", SyntaxKey::Method);
    //   tokens.add("method", lxClassMethod);
-   //   tokens.add("function", lxClassMethod);
+   map.add("function", SyntaxKey::Method);
    map.add("get_method", SyntaxKey::Method);
    map.add("message", SyntaxKey::Message);
    map.add("code", SyntaxKey::CodeBlock);
@@ -35,7 +36,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("expression", SyntaxKey::Expression);
    map.add("get_expression", SyntaxKey::GetExpression);
    map.add("returning", SyntaxKey::ReturnExpression);
-   map.add( "message_operation", SyntaxKey::MessageOperation);
+   map.add("message_operation", SyntaxKey::MessageOperation);
    map.add("property_operation", SyntaxKey::PropertyOperation);
 
    map.add("equal_operation", SyntaxKey::EqualOperation);

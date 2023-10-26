@@ -32,7 +32,7 @@ public class MainWindow : SDIDialog
    Button BtmDelTxt;
    Button BtmInfo;
 
-   File   theSavedFile;
+   File   _savedFile;
 
    constructor new()
       <= super new()
@@ -161,34 +161,34 @@ public class MainWindow : SDIDialog
       // Save
       BtmSave.onClick := (args)
          {
-//            var dialog := SaveFileDialog.new(self);
-//            dialog.addFilter("Text Files", "*.txt");
-//            dialog.Caption := "Select a file";
-//                
-//            if (dialog.run())
-//            {
-//               theSavedFile := File.assign(dialog.Selected);
-//                    
-//               var writer := theSavedFile.logger();
-//                    
-//               writer 
-//                  .printLine:"//-------------------------------------------------------------------------------"
-//                  .printLine("Name: ",Name.Value," ",SurName.Value," ",OtName.Value)
-//                  .printLine("Email: ",Email.Value)
-//                  .printLine("Age: ",Age.Value)
-//                  .printLine("PhoneNumber:",PhoneNumber.Value)
-//                  .printLine:"//-------------------------------------------------------------------------------";
-//
-//               writer.close();
-//
-//               BtmDelTxt.Enabled := true
-//            }
+            var dialog := SaveFileDialog.new(self);
+            dialog.addFilter("Text Files", "*.txt");
+            dialog.Caption := "Select a file";
+                
+            if (dialog.run())
+            {
+               _savedFile := File.assign(dialog.Selected);
+                    
+               var writer := _savedFile.logger();
+                    
+               writer 
+                  .printLine:"//-------------------------------------------------------------------------------"
+                  .printLine("Name: ",Name.Value," ",SurName.Value," ",OtName.Value)
+                  .printLine("Email: ",Email.Value)
+                  .printLine("Age: ",Age.Value)
+                  .printLine("PhoneNumber:",PhoneNumber.Value)
+                  .printLine:"//-------------------------------------------------------------------------------";
+
+               writer.close();
+
+               BtmDelTxt.Enabled := true
+            }
          };
         
       // Del TXT
       BtmDelTxt.onClick := (args)
       {
-         theSavedFile.delete()
+         _savedFile.delete()
       };
 
       // Exit

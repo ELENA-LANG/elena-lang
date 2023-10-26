@@ -37,9 +37,8 @@ singleton windowClassControl
       struct.lpszMenuName := 0;
       struct.lpfnWndProc := wndPtr;      
 
-      pointer namePtr;
       wide wideName := name;
-      namePtr.assignPtr(wideName);
+      pointer namePtr := wideName;
       struct.lpszClassName := namePtr;
         
       extern {

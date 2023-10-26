@@ -107,42 +107,15 @@ class BaseFileDialog
     
    internal prepare(tagOFNA struct)
    {
-//        pointer ptr := 0;
-//        
-//        byte b := 0;
-//        struct.fill(0, 76, b);
-//        
-////      lStructSize;
-//        struct.write(0, 76);        
-//          
-////      hwndOwner;
-//        ptr := new UnsafePointer(theParent);
-//        ptr.saveTo(struct, 4);
-//          
-////      hInstance;
-//        ptr := new UnsafePointer(CurrentInstance);
-//        ptr.saveTo(struct, 8);
-//
-////        lpstrFilter;
-//        ptr := new UnsafePointer(theFilters);
-//        ptr.savePtrTo(struct, 12);
-//
-////        nFilterIndex;
-//        struct.write(24, theFilterIndex);
-//
-////        lpstrFile;
-//        ptr := new UnsafePointer(theFileName);
-//        ptr.savePtrTo(struct, 28);
-//
-////        nMaxFile;
-//        struct.write(32, theMaxFile);
-//
-////        lpstrTitle;
-//        ptr := new UnsafePointer(theCaption);
-//        ptr.savePtrTo(struct, 48);
-//
-////        Flags;
-//        struct.write(52, theFlags)
+      struct.lStructSize := 76;
+      struct.hwndOwner := _parent.Handle;
+      struct.hInstance := CurrentInstance.Handle;
+      struct.lpstrFilter := _filters;
+      struct.nFilterIndex := _filterIndex;
+      struct.lpstrFile := _fileName;
+      struct.nMaxFile := _maxFile;
+      struct.lpstrTitle := _caption;
+      struct.FlagsEx := _flags;
    }
 }
 
@@ -150,30 +123,30 @@ class BaseFileDialog
 
 public sealed class OpenFileDialog : BaseFileDialog
 {
-//    constructor(WindowHandle parent, wide[] filters, int filterIndex, int maxFile, wide caption)
-//        <= create(parent, filters, filterIndex, maxFile, caption, 
-//                    OFN_PATHMUSTEXIST | OFN_EXPLORER | OFN_LONGNAMES | DS_CENTER | OFN_HIDEREADONLY);
+   constructor(WindowHandle parent, wide[] filters, int filterIndex, int maxFile, wide caption)
+      <= super create(parent, filters, filterIndex, maxFile, caption, 
+            OFN_PATHMUSTEXIST | OFN_EXPLORER | OFN_LONGNAMES | DS_CENTER | OFN_HIDEREADONLY);
     
-    select()
-    {
-//        byte struct[76];
-//        
-//        self.prepare(struct);
-//        // NOTE: !! it should be any object creation between two lines
-//        int retVal := extern Comdlg32.GetOpenFileNameW(struct);
-//
-//        if (retVal == 0)
-//        { 
-//            ^ nil 
-//        }
-//        else
-//        {
-//            int length := extern KERNEL32.lstrlenW(theFileName);
-//            
-//            var s := UTF16Encoding.toWide(0, length, theFileName); 
-//            
-//            ^ s
-//        }                
+   select()
+   {
+      tagOFNA struct := default;
+
+      self.prepare(struct);
+      // NOTE: !! it should be any object creation between two lines
+      int retVal := extern Comdlg32.GetOpenFileNameW(struct);
+
+      if (retVal == 0)
+      { 
+         ^ nil 
+      }
+      else
+      {
+         int length := extern KERNEL32.lstrlenW(_fileName);
+            
+         var s := UTF16Encoding.toWideString(0, length, _fileName); 
+            
+         ^ s
+      }                
     }
 }
 
@@ -181,29 +154,29 @@ public sealed class OpenFileDialog : BaseFileDialog
 
 public sealed class SaveFileDialog : BaseFileDialog
 {
-//    constructor(WindowHandle parent, wide[] filters, int filterIndex, int maxFile, wide caption)
-//        <= create(parent, filters, filterIndex, maxFile, caption,
-//            OFN_PATHMUSTEXIST | OFN_EXPLORER | OFN_LONGNAMES | DS_CENTER | OFN_HIDEREADONLY);
+   constructor(WindowHandle parent, wide[] filters, int filterIndex, int maxFile, wide caption)
+      <= super create(parent, filters, filterIndex, maxFile, caption,
+         OFN_PATHMUSTEXIST | OFN_EXPLORER | OFN_LONGNAMES | DS_CENTER | OFN_HIDEREADONLY);
     
-    select()
-    {
-//        byte struct[76];
-//        
-//        self.prepare(struct);
-//        // NOTE: !! it should be any object creation between two lines
-//        int retVal := extern Comdlg32.GetSaveFileNameW(struct);
-//        
-//        if (retVal == 0)
-//        { 
-//            ^ nil 
-//        }
-//        else
-//        {
-//            int length := extern KERNEL32.lstrlenW(theFileName);
-//            
-//            var s := UTF16Encoding.toWide(0, length, theFileName); 
-//            
-//            ^ s
-//        }
+   select()
+   {
+      tagOFNA struct := default;
+
+      self.prepare(struct);
+      // NOTE: !! it should be any object creation between two lines
+      int retVal := extern Comdlg32.GetSaveFileNameW(struct);
+        
+      if (retVal == 0)
+      { 
+         ^ nil 
+      }
+      else
+      {
+         int length := extern KERNEL32.lstrlenW(_fileName);
+            
+         var s := UTF16Encoding.toWideString(0, length, _fileName); 
+            
+         ^ s
+      }
     }
 }
