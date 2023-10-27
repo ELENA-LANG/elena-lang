@@ -7542,7 +7542,7 @@ ObjectInfo Compiler :: compileNewOp(BuildTreeWriter& writer, ExprScope& scope, S
    ObjectInfo retVal = compileMessageOperation(
       writer, scope, node, source, messageRef, signRef, arguments, EAttr::StrongResolved | EAttr::NoExtension, nullptr);
 
-   if (arguments.count_pos() < 2 && source.kind == ObjectKind::Class) {      
+   if (arguments.count_pos() < 2 && (source.kind == ObjectKind::Class || source.kind == ObjectKind::ClassSelf)) {
       pos_t argCount = arguments.count_pos() + 1;
       ref_t signature[2] = { source.reference, 0};
       if (argCount == 2)
@@ -11766,6 +11766,33 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
 void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
+   // first pass - compile constructors
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Constructor:
+         {
+            MethodScope methodScope(&scope);
+            initializeMethod(classClassScope, methodScope, current);
+            methodScope.constructorMode = true;
+
+   #ifdef FULL_OUTOUT_INFO
+            IdentifierString messageName;
+            ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
+
+            _errorProcessor->info(infoCurrentMethod, *messageName);
+   #endif // FULL_OUTOUT_INFO
+
+            compileConstructor(writer, methodScope, classClassScope, current, scope.isAbstract());
+            break;
+         }
+         default:
+            break;
+      }
+      current = current.nextNode();
+   }
+
+   // second pass - compile static methods
+   current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::StaticMethod:
@@ -11784,26 +11811,9 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
 
             break;
          }
-         case SyntaxKey::Constructor:
-         {
-            MethodScope methodScope(&scope);
-            initializeMethod(classClassScope, methodScope, current);
-            methodScope.constructorMode = true;
-
-#ifdef FULL_OUTOUT_INFO
-            IdentifierString messageName;
-            ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
-
-            _errorProcessor->info(infoCurrentMethod, *messageName);
-#endif // FULL_OUTOUT_INFO
-
-            compileConstructor(writer, methodScope, classClassScope, current, scope.isAbstract());
-            break;
-         }
          default:
             break;
       }
-
       current = current.nextNode();
    }
 

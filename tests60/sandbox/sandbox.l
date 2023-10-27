@@ -2,12 +2,12 @@ public sealed const struct XUnsafePointer
 {
    embeddable __ptr _pointer;
 
+   get static XUnsafePointer Default()
+      = new XUnsafePointer();   
+
    constructor()
    {
    }
-
-   get static XUnsafePointer Default()
-      = new XUnsafePointer();   
 }
 
 public program()

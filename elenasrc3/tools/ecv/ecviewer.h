@@ -66,7 +66,7 @@ namespace elena_lang
 
       void addIArg(arg_t arg, IdentifierString& commandStr);
 
-      void addRArg(arg_t arg, IdentifierString& commandStr);
+      void addRArg(arg_t arg, IdentifierString& commandStr, bool withTabbing = true);
       void addSecondRArg(arg_t arg, IdentifierString& commandStr, List<pos_t>& labels);
 
       void addSPArg(arg_t arg, IdentifierString& commandStr);

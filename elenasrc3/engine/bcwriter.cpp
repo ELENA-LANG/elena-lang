@@ -2344,6 +2344,39 @@ inline bool inplaceCallOp(BuildNode lastNode)
    return false;
 }
 
+inline bool inplaceCallOp2(BuildNode lastNode)
+{
+   BuildNode localNode = getPrevious(lastNode);
+   BuildNode savingNode = getPrevious(localNode);
+   BuildNode markNode = getPrevious(savingNode);
+   BuildNode callNode = getPrevious(markNode);
+   BuildNode classNode = getPrevious(callNode);
+
+   if (classNode == BuildKey::ClassReference && getArgCount(callNode.arg.reference) == 0
+      && getArgCount(markNode.arg.reference) == 1)
+   {
+      int targetOffset = localNode.arg.value;
+
+      classNode.setKey(BuildKey::Local);
+      classNode.setArgumentValue(targetOffset);
+
+      markNode.setKey(callNode.key);
+      markNode.setArgumentReference(markNode.arg.reference);
+      setChild(markNode, BuildKey::Type, callNode.findChild(BuildKey::Type).arg.reference);
+
+      callNode.setKey(BuildKey::SavingInStack);
+      callNode.setArgumentValue(0);
+
+      savingNode.setKey(BuildKey::Idle);
+      localNode.setKey(BuildKey::Idle);
+      lastNode.setKey(BuildKey::Idle);
+
+      return true;
+   }
+
+   return false;
+}
+
 inline bool intConstAssigning(BuildNode lastNode)
 {
    BuildNode localNode = getPrevious(lastNode);
@@ -2381,7 +2414,7 @@ ByteCodeWriter::Transformer transformers[] =
 {
    nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts,
    boxingInt, nativeBranchingOp, intConstBranchingOp, doubleAssigningConverting, doubleAssigningIntRealOp,
-   intOpWithConsts2, inplaceCallOp, intConstAssigning
+   intOpWithConsts2, inplaceCallOp, intConstAssigning, inplaceCallOp2
 };
 
 // --- ByteCodeWriter ---

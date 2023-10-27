@@ -222,15 +222,15 @@ void ByteCodeViewer :: printLineAndCount(ustr_t arg1, ustr_t arg2, int& row, int
    nextRow(row, pageSize);
 }
 
-inline void appendPrefix(IdentifierString& commandStr, ustr_t prefix)
+inline void appendPrefix(IdentifierString& commandStr, ustr_t prefix, bool withTabbing)
 {
-   if (commandStr.length() > prefix.length()) {
+   if (withTabbing && commandStr.length() > prefix.length()) {
       commandStr.truncate(commandStr.length() - prefix.length() + 1);      
    }
    commandStr.append(prefix);
 }
 
-void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
+void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr, bool withTabbing)
 {
    ustr_t referenceName = nullptr;
    ref_t mask = arg & mskAnyRef;
@@ -247,53 +247,53 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
 
    switch (mask) {
       case mskArrayRef:
-         appendPrefix(commandStr, "array:");
+         appendPrefix(commandStr, "array:", withTabbing);
          break;
       case mskTypeListRef:
-         appendPrefix(commandStr, "marray:");
+         appendPrefix(commandStr, "marray:", withTabbing);
          break;
       case mskSymbolRef:
-         appendPrefix(commandStr, "symbol:");
+         appendPrefix(commandStr, "symbol:", withTabbing);
          break;
       case mskVMTRef:
-         appendPrefix(commandStr, "class:");
+         appendPrefix(commandStr, "class:", withTabbing);
          break;
       case mskLongLiteralRef:
-         appendPrefix(commandStr, "longconst:");
+         appendPrefix(commandStr, "longconst:", withTabbing);
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskRealLiteralRef:
-         appendPrefix(commandStr, "realconst:");
+         appendPrefix(commandStr, "realconst:", withTabbing);
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskIntLiteralRef:
-         appendPrefix(commandStr, "intconst:");
+         appendPrefix(commandStr, "intconst:", withTabbing);
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskLiteralRef:
-         appendPrefix(commandStr, "strconst:");
+         appendPrefix(commandStr, "strconst:", withTabbing);
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskWideLiteralRef:
-         appendPrefix(commandStr, "wideconst:");
+         appendPrefix(commandStr, "wideconst:", withTabbing);
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskCharacterRef:
-         appendPrefix(commandStr, "charconst:");
+         appendPrefix(commandStr, "charconst:", withTabbing);
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskStaticVariable:
-         appendPrefix(commandStr, "static:");
+         appendPrefix(commandStr, "static:", withTabbing);
          break;
       case mskProcedureRef:
-         appendPrefix(commandStr, "procedure:");
+         appendPrefix(commandStr, "procedure:", withTabbing);
          break;
       case mskMssgLiteralRef:
       case mskExtMssgLiteralRef:
-         appendPrefix(commandStr, "mssg:");
+         appendPrefix(commandStr, "mssg:", withTabbing);
          break;
       case mskMssgNameLiteralRef:
-         appendPrefix(commandStr, "mssgname:");
+         appendPrefix(commandStr, "mssgname:", withTabbing);
          break;
       default:
          commandStr.append(":");
@@ -320,7 +320,7 @@ void ByteCodeViewer :: addSecondRArg(arg_t arg, IdentifierString& commandStr, Li
    if ((arg & mskAnyRef) == mskLabelRef) {
       addLabel(arg & ~mskAnyRef, commandStr, labels);
    }
-   else addRArg(arg, commandStr);
+   else addRArg(arg, commandStr, false);
 }
 
 void ByteCodeViewer :: addArg(arg_t arg, IdentifierString& commandStr)

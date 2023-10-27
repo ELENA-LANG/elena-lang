@@ -13,11 +13,11 @@ In development:
   ide:backlog, vm debugger, debugger watch - struct
   tools:backlog
   prom:tutorial 2 - bytecodes / program entry / linker
-  port:gui samples, db samples, xforms
+  port:gui samples, db samples, xforms, elenasm / elt for linux
   --------------------------------------
 
-  * pointer h := UnsafePointer.Empty; - embeddable constructor call
   * #629
+
   * test ls example
   * gui samples - agenda
   * #602 : set r:xx, store sp:0 -> one command
