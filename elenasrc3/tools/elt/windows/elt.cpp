@@ -35,7 +35,7 @@ int main()
 
    session.loadScript(ELT_CONFIG);
    session.loadScript(ELT_GRAMMAR_CONFIG);
-   session.loadScript(ELT_TSCRIPT_CONFIG);
+   session.loadScript(ELT_LSCRIPT_CONFIG);
 
    session.printHelp();
 

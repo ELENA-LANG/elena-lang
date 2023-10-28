@@ -3195,6 +3195,12 @@ pos_t JITCompiler32 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter&
    return actionRef;
 }
 
+void JITCompiler32 :: addActionEntryStopper(MemoryWriter& messageWriter)
+{
+   messageWriter.writeDWord(0);
+   messageWriter.writeDWord(0);
+}
+
 pos_t JITCompiler32 :: addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode)
 {
    pos_t position = writer.position();
@@ -3632,6 +3638,12 @@ pos_t JITCompiler64 :: addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress
    else writer.writeQWord(0);
 
    return position;
+}
+
+void JITCompiler64 :: addActionEntryStopper(MemoryWriter& messageWriter)
+{
+   messageWriter.writeQWord(0);
+   messageWriter.writeQWord(0);
 }
 
 void JITCompiler64 :: addSignatureStopper(MemoryWriter& writer)

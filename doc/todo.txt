@@ -16,19 +16,26 @@ In development:
   port:gui samples, db samples, xforms, elenavm / elt for linux
   --------------------------------------
 
-  * #629 : Post increment/decrement operators
-  * field += n - test
-  * field ++ - test
+  * simple program for tscript60 / lscript60 / compiler custom grammar
 
-  * test ls example
+  * redesign lscript60 : simpile program hello world, operation, ...
+  * redesign grammar60
+
+  * support basic operations for standalone / syntax guided compile
+
+  * test ls example (all examples)
+  * test elt
+  * get rid of tscript60
+
   * gui samples - agenda
   * #602 : set r:xx, store sp:0 -> one command
+  * test script samples
   * anagram #132
   * gui samples
   * elenasm for linux
 
   === Iteration 20 ===
-  dev:
+  dev: async programming (char sample)
   op:
   opt: pi - under 8 sec
   maint:

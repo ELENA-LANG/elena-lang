@@ -1,62 +1,117 @@
 [[
    #grammar cf
 
-   #define start          ::= <= root ( namespace ( => member+ $eof <= ) ) =>;
+   #define start          ::= <= root ( public_namespace ( => import* member+ $eof <= )) =>;
    #define start          ::= $eof;
 
-   #define member         ::= symbol;
-   
-   #define symbol         ::= <= public_symbol ( => s_name "=" get_expression ";" <= ) =>;
+   #define member         ::= function;
 
-   #define statement      ::= expression ";";
-   #define get_expression ::= <= get_expression ( => expr_operation <= ) =>;
+   #define import         ::= 
+<=
+    import (
+=>
+                             "import" identifier ";"
+<=
+    )
+=>;
 
-   #define expression     ::= <= expression ( => expr_operation <= ) =>;
-   #define ret_expr       ::= <= returning ( => "^" expression ";" <= ) =>;
+   #define import         ::= 
+<=
+    import (
+=>
+                             "import" reference ";"
+<=
+    )
+=>;
 
-   #define expr_operation ::= $ object operation*;
+   #define function       ::= 
+<=
+   singleton (
+=>
+                              name f_decl
+<=
+   )
+=>;
+
+   #define function       ::= 
+<=
+   public_singleton (
+=>
+                              "public" name f_decl
+<=
+   )
+=>;
+
+   #define f_decl         ::=
+<=
+     function (
+=>
+                              f_parameters body 
+<=
+     )
+=>;
+
+   #define body           ::= 
+<=
+     code (
+=>
+                              "{" statement next_statement
+<=
+     )
+=>;
+
+   #define statement      ::= expression;
+   #define statement      ::= ret_expr;
+
+   #define ret_expr       ::= <= returning ( => "^" expression <= ) =>;
+
+   #define expression     ::= <= expression ( => l4 <= ) =>;
+
+   #define l3_expression  ::= <= expression ( => l4 <= ) =>;
+
+   #define l4             ::= $ object l1_operation* l2_operation* l4_operation*;
+
+   #define l3             ::= $ object l1_operation* l2_operation*;
+
+   #define l2             ::= $ object l1_operation* l2_operation*;
+
+   #define l1_operation   ::= function_call;
+
+   #define l2_operation   ::= "." message mssg_call;
+
+   #define l4_operation   ::= ^ <= add_operation ( => "+" l3_expression <= ) =>;
+
+   #define mssg_call      ::= ^ <= message_operation ( =>  args <= ) =>;
+
+   #define function_call  ::= ^ <= message_operation ( =>  args <= ) =>;
+
+   #define args           ::= "(" ")";
+   #define args           ::= "(" arg next_arg* ")";
+
+   #define arg            ::= expression;
+   #define next_arg       ::= "," arg;
 
    #define object         ::= <= object ( => terminal <= ) =>;
-   #define object         ::= singleton;
 
    #define terminal       ::= identifier;
    #define terminal       ::= reference;
    #define terminal       ::= integer;
    #define terminal       ::= literal;
 
-   #define operation      ::= "." message mssg_call;
-   #define operation      ::= "." message prop_call;
-   #define operation      ::= function_call;
+   #define next_statement ::= ";" statement next_statement;
+   #define next_statement ::= ";" "}";
+   #define next_statement ::= "}";
 
-   #define mssg_call      ::= ^ <= message_operation ( =>  m_args <= ) =>;
-   #define prop_call      ::= ^ <= property_operation ( => not_bracket <= ) => ;
-   #define function_call  ::= ^ <= message_operation ( => m_args <= ) =>;
+   #define f_parameters   ::= "(" parameters;
 
-   #define not_bracket    ::= $if (!"(");
-
-   #define m_args         ::= "(" ")";
-   #define m_args         ::= "(" m_arg next_arg* ")";
-
-   #define m_arg          ::= expression;
-   #define next_arg       ::= "," m_arg;
-
-   #define singleton      ::= <= nested ( => "{" method* "}" <= ) =>;  
-
-   #define method         ::= <= get_method ( => m_name ret_body <= ) =>;
-   #define method         ::= <= script_method ( => m_name "(" parameters? ")" body <= ) =>;  
-
-   #define ret_body       ::= <= returning ( => "=" expression ";" <= ) =>;
-   #define body           ::= <= code ( => "{" statement* ret_expr? "}" <= ) =>;
-
-   #define parameters     ::= parameter next_parameter*;
-   #define next_parameter ::= "," parameter;
+   #define parameters     ::= parameter { "," parameter }* ")";
+   #define parameters     ::= ")";
 
    #define parameter      ::= <= parameter ( nameattr ( identifier = $identifier )) =>;
 
    #define message        ::= <= message ( identifier = $identifier ) =>;
 
-   #define s_name         ::= <= nameattr ( identifier = $identifier ) =>;
-   #define m_name         ::= <= nameattr ( identifier = $identifier ) =>;
+   #define name           ::= <= nameattr ( identifier = $identifier ) =>; 
 
    #define identifier     ::= <= identifier = $identifier =>;
    #define reference      ::= <= reference = $reference =>;

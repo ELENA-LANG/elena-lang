@@ -40,11 +40,15 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("property_operation", SyntaxKey::PropertyOperation);
 
    map.add("equal_operation", SyntaxKey::EqualOperation);
+   map.add("notequal_operation", SyntaxKey::NotEqualOperation);
    map.add("less_operation", SyntaxKey::LessOperation);
    map.add("greater_operation", SyntaxKey::GreaterOperation);
    map.add("notgreater_operation", SyntaxKey::NotGreaterOperation);
+   map.add("notless_operation", SyntaxKey::NotLessOperation);
    map.add("add_operation", SyntaxKey::AddOperation);
    map.add("sub_operation", SyntaxKey::SubOperation);
+   map.add("mul_operation", SyntaxKey::MulOperation);
+   map.add("div_operation", SyntaxKey::DivOperation);
 
    map.add("if_operation", SyntaxKey::IfOperation);
 

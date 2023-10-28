@@ -908,7 +908,6 @@ pos_t ScriptEngineCFParser :: buildDerivationTree(ScriptEngineReaderBase& reader
    }
 
    throw SyntaxError("invalid syntax", bm.lineInfo);
-
 }
 
 void ScriptEngineCFParser :: defineGrammarRule(ScriptEngineReaderBase& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId)

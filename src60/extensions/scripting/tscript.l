@@ -23,5 +23,5 @@ public singleton tscript
     
       var s := ns.program;
       ^ s()
-   }        
+   }
 }

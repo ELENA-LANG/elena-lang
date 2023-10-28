@@ -356,7 +356,6 @@ void JITLinker::JITLinkerReferenceHelper :: writeMDataRef32(MemoryBase& target, 
    else ::writeVAddress32(&target, position, 0, disp, addressMask, _owner->_virtualMode);
 }
 
-
 void JITLinker::JITLinkerReferenceHelper :: writeVAddress32(MemoryBase& target, pos_t position, addr_t vaddress, 
    pos_t disp, ref_t addressMask)
 {
@@ -1487,6 +1486,13 @@ void JITLinker :: complete(JITCompilerBase* compiler, ustr_t superClass)
       // set voidobj
       addr_t superAddr = resolve(superClass, mskVMTRef, true);
       compiler->updateVoidObject(_imageProvider->getRDataSection(), superAddr, _virtualMode);
+   }
+
+   // terminate the mdata table with zero records for virtual mode
+   if (_virtualMode) {
+      MemoryBase* mSection = _imageProvider->getMDataSection();
+      MemoryWriter mWriter(mSection);
+      compiler->addActionEntryStopper(mWriter);
    }
 
    // fix message body references
