@@ -47,6 +47,7 @@ public program()
    nilReferenceTest();
    structTest();
    lookaheadTests();
+   incTest();
 
    console.writeLine("--- Passed ---")
 }

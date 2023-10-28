@@ -36,6 +36,7 @@ namespace elena_lang
    constexpr char dfaReal           = ']';
    constexpr char dfaRealPostfix    = '_';
    constexpr char dfaGlobal         = 'a';
+   constexpr char dfaIncOperator    = 'c';
 
    constexpr char dfaPrivate        = 'N';
    constexpr char dfaLong           = '?';

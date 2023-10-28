@@ -709,6 +709,12 @@ void intSOp(CommandTape& tape, BuildNode& node, TapeScope&)
       case BNOT_OPERATOR_ID:
          tape.write(ByteCode::INotDPN, targetOffset, 4);
          break;
+      case INC_OPERATOR_ID:
+         tape.write(ByteCode::NAddDPN, targetOffset, 1);
+         break;
+      case DEC_OPERATOR_ID:
+         tape.write(ByteCode::NAddDPN, targetOffset, -1);
+         break;
       default:
          throw InternalError(errFatalError);
    }

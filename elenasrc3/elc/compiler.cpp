@@ -8152,21 +8152,30 @@ ObjectInfo Compiler :: compileAssignOperation(BuildTreeWriter& writer, ExprScope
 
    ArgumentsInfo updatedOuterArgs;
    ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter, &updatedOuterArgs);
-   ObjectInfo roperand = compileExpression(writer, scope, rnode, 0, EAttr::Parameter, &updatedOuterArgs);
-
+   ObjectInfo roperand = {};
+      
+   size_t     argLen = 1;
    ref_t      arguments[2] = {};
    arguments[0] = loperand.typeInfo.typeRef;
-   arguments[1] = roperand.typeInfo.typeRef;
+
+   if (rnode != SyntaxKey::None) {
+      roperand = compileExpression(writer, scope, rnode, 0, EAttr::Parameter, &updatedOuterArgs);
+      arguments[1] = roperand.typeInfo.typeRef;
+      argLen++;
+   }
 
    ref_t dummy = 0;
-   BuildKey op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, 2, dummy);
+   BuildKey op = _logic->resolveOp(*scope.moduleScope, operatorId, arguments, argLen, dummy);
    if (op != BuildKey::None) {
       // box argument locally if required
       loperand = boxArgumentLocally(writer, scope, loperand, true, true);
-      roperand = boxArgumentLocally(writer, scope, roperand, true, false);
 
-      writeObjectInfo(writer, scope, roperand);
-      writer.appendNode(BuildKey::SavingInStack, 0);
+      if (roperand.kind != ObjectKind::Unknown) {
+         roperand = boxArgumentLocally(writer, scope, roperand, true, false);
+
+         writeObjectInfo(writer, scope, roperand);
+         writer.appendNode(BuildKey::SavingInStack, 0);
+      }
 
       writer.newNode(op, operatorId);
       writer.appendNode(BuildKey::Index, loperand.argument);
@@ -9859,6 +9868,8 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::SubAssignOperation:
       case SyntaxKey::MulAssignOperation:
       case SyntaxKey::DivAssignOperation:
+      case SyntaxKey::IncOperation:
+      case SyntaxKey::DecOperation:
          retVal = compileAssignOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS, targetRef);
          break;
       case SyntaxKey::AndOperation:
@@ -10919,6 +10930,9 @@ mssg_t Compiler :: compileInplaceConstructorHandler(BuildTreeWriter& writer, Met
    writer.appendNode(BuildKey::OpenFrame);
 
    if (classScope->info.methods.exist(invokerScope.moduleScope->buildins.init_message)) {
+      ExprScope exprScope(&codeScope);
+      writeObjectInfo(writer, exprScope, privateScope.mapSelf());
+
       compileInlineInitializing(writer, *classScope, mathodNode);
    }
    if (mathodNode.existChild(SyntaxKey::FillingAttr)) {

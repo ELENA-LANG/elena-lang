@@ -40,7 +40,8 @@ namespace elena_lang
 
       bool IsOperator(char state)
       {
-         return (state == dfaOperator || state == dfaAltOperator || state == dfaGrOperator);
+         return (state == dfaOperator || state == dfaAltOperator 
+            || state == dfaGrOperator || state == dfaIncOperator);
       }
       bool IsQuoteToken(char state)
       {

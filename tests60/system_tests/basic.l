@@ -1659,3 +1659,33 @@ public lookaheadTests()
 
    console.writeLine(".");
 }
+
+struct IncTestStruct
+{
+   int x := 0;
+   int y := 1;
+
+   act()
+   {
+      x++;
+      y--;
+   }
+
+   assert()
+   {
+      Assert.ifTrue(x == 1);
+      Assert.ifTrue(y == 0);
+   }
+}
+
+incTest()
+{
+   console.write("incTest:");
+
+   IncTestStruct struct := new IncTestStruct();
+
+   struct.act();
+   struct.assert();
+
+   console.writeLine(".");
+}

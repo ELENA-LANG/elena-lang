@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 150;
+constexpr auto OperationLength = 154;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -126,6 +126,12 @@ constexpr Op Operations[OperationLength] =
       BNOT_OPERATOR_ID, BuildKey::IntSOp, V_INT32, 0, 0, V_INT32
    },
    {
+      INC_OPERATOR_ID, BuildKey::IntSOp, V_INT32, 0, 0, V_INT32
+   },
+   {
+      DEC_OPERATOR_ID, BuildKey::IntSOp, V_INT32, 0, 0, V_INT32
+   },
+   {
       SHL_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
    },
    {
@@ -193,6 +199,12 @@ constexpr Op Operations[OperationLength] =
    },
    {
       BNOT_OPERATOR_ID, BuildKey::IntSOp, V_UINT32, 0, 0, V_UINT32
+   },
+   {
+      INC_OPERATOR_ID, BuildKey::IntSOp, V_UINT32, 0, 0, V_UINT32
+   },
+   {
+      DEC_OPERATOR_ID, BuildKey::IntSOp, V_UINT32, 0, 0, V_UINT32
    },
    {
       SHL_OPERATOR_ID, BuildKey::IntOp, V_UINT32, V_UINT32, 0, V_UINT32

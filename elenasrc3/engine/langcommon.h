@@ -326,6 +326,8 @@ namespace elena_lang
    constexpr auto CONTINUE_OPERATOR_ID       = 0x0027;
    constexpr auto YIELD_OPERATOR_ID          = 0x0028;
    constexpr auto REFERENCE_OPERATOR_ID      = 0x002B;
+   constexpr auto INC_OPERATOR_ID            = 0x002C;
+   constexpr auto DEC_OPERATOR_ID            = 0x002D;
 
    constexpr auto ISNIL_OPERATOR_ID          = 0x003E;
    constexpr auto CLASS_OPERATOR_ID          = 0x003F;
