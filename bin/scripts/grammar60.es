@@ -8,24 +8,27 @@
 <= 
    system'dynamic'expressions'SymbolCollection ( 
 =>
-                                     "namespace" "(" import* member* ")"
+                                     "namespace" "(" imports? member* ")"
 <= ) =>;
 
    #define namespace      ::= 
 <= 
    system'dynamic'expressions'SymbolCollection ( 
 =>
-                                     "public_namespace" "(" import* member* ")"
+                                     "public_namespace" "(" imports? member* ")"
 <= ) =>;
 
-   #define import         ::=
+   #define imports        ::=
 <=
    system'dynamic'expressions'ImportInfo (
-=> 
-                                    "import" "(" "identifier" "=" ident_quote ")"
+=>
+                                      import import*
 <=
    ) 
-=>; 
+=>;
+
+   #define import         ::=
+                                    "import" "(" "nameattr" "(" "identifier" "=" ident_quote ")" ")"; 
 
    #define member         ::=
 <= 
@@ -126,7 +129,7 @@
 
   #define call_expression ::=
 <=
-               system'dynamic'expressions'MessageCallExpression (
+               system'dynamic'expressions'ExtensionOrMessageCallExpression (
 =>
                               object_expr message expression*
 <=
@@ -138,15 +141,6 @@
                system'dynamic'expressions'FunctionCallExpression (
 =>
                               object_expr expression*
-<=
-               )
-=>;
-
-  #define call_expression ::=
-<=
-               system'dynamic'expressions'MessageCallExpression (
-=>
-                              expression message expression*
 <=
                )
 =>;

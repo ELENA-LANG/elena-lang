@@ -1738,9 +1738,9 @@ namespace expressions
    {
       string[]     imports;
 
-      constructor(string import)
+      constructor(params string[] import_strings)
       {
-         imports := new string[] { import };
+         imports := import_strings;
       }
 
       string[] declare(string[] declared)
@@ -1834,18 +1834,18 @@ namespace expressions
                     
             if (mode == 0/* || mode == mode_class*/)
             {
-//               // look for external references
-//               if(imports != nil) {
-//                  int len := imports.Length;
-//                  for(int i := 0, i < len, i+=1) {
-//                     var symbol := Symbol.tryLoad(imports[i], refName);
-//                     if (symbol != nil)
-//                     {
-//                        ^ ConstantFunction.load(symbol)
-//                     }
-//                  }
-//               };
-//                        
+               // look for external references
+               if(imports != nil) {
+                  int len := imports.Length;
+                  for(int i := 0, i < len, i++) {
+                     var symbol := Symbol.tryLoad(imports[i], refName);
+                     if (symbol != nil)
+                     {
+                        ^ ConstantFunction.load(symbol)
+                     }
+                  }
+               };
+
                var prop := new MessageName(refName).getPropertyMessage();
                         
                var symbol := prop(set);

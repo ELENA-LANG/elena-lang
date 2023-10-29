@@ -71,7 +71,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    //   tokens.add("new_reference", lxReference);
    map.add("nameattr", SyntaxKey::Name);
    map.add("property_parameter", SyntaxKey::PropertyOperation); // !!temporal - should be removed
-   //   //tokens.add("import", lxImport);
+   map.add("import", SyntaxKey::Import);
    //   tokens.add("loop_expression", lxExpression);
 }
 

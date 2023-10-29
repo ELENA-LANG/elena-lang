@@ -9,18 +9,22 @@
    #define import         ::= 
 <=
     import (
+       nameattr (
 =>
                              "import" identifier ";"
 <=
+       )
     )
 =>;
 
    #define import         ::= 
 <=
     import (
+       nameattr (
 =>
                              "import" reference ";"
 <=
+       )
     )
 =>;
 
