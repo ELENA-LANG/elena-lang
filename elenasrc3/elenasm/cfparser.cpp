@@ -1016,6 +1016,9 @@ void ScriptEngineCFParser :: insertForwards(Stack<Pair<int, int>>& forwards, int
 {
    int minLevel = INT_MAX;
 
+   Stack<int> reversedList(0);
+   int lastForward = -1;
+
    auto it = forwards.start();
    while (!it.eof()) {
       auto f = *it;
@@ -1027,11 +1030,21 @@ void ScriptEngineCFParser :: insertForwards(Stack<Pair<int, int>>& forwards, int
             minLevel = f.value2;
       }
       else if (f.value2 <= minLevel) {
-         log.write(getBodyText(f.value1));
+         if (lastForward != -1)
+            reversedList.push(lastForward);
+
+         lastForward = f.value1;
       }
 
       ++it;
    }
+
+   if (lastForward != -1)
+      log.write(getBodyText(lastForward));
+
+   // save in the correct order
+   while (reversedList.count() > 0)
+      log.write(getBodyText(reversedList.pop()));
 }
 
 bool ScriptEngineCFParser :: parseDirective(ScriptEngineReaderBase& reader, MemoryDump*)

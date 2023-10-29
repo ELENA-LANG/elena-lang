@@ -23,7 +23,8 @@ In development:
 
   * support basic operations for standalone / syntax guided compile
 
-  * test ls example (all examples)
+  * test all script samples
+
   * test elt
   * get rid of tscript60
 

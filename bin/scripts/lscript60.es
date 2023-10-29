@@ -67,7 +67,9 @@
    #define statement      ::= expression;
    #define statement      ::= ret_expr;
    #define statement      ::= "var" decl_variable;
-   #define statement      ::= branching ;
+   #define statement      ::= branching;
+   #define statement      ::= looping;
+   #define statement      ::= assign_expr;
 
    #define decl_variable  ::= <= expression ( assign_operation ( => new_variable ":=" expression <= ) ) =>;
 
@@ -86,14 +88,43 @@
                 )
              )
 =>;
+   #define looping      ::= 
+<= 
+             expression
+             (
+                loop_expression (
+                   if_operation (
+=>
+
+                              "while" "(" expression ")" code_brackets
+<=
+                   )
+                )
+             )
+=>;
+
+   #define assign_expr    ::=
+<=
+             expression
+             (
+                assign_operation ( 
+=>
+                              variable ":=" expression
+<=
+                )
+             )
+=>;
 
    #define expression     ::= <= expression ( => l5 <= ) =>;
+   #define expression     ::= <= expression ( => new_operation <= ) =>;
+
+   #define l2_expression  ::= <= expression ( => l2 <= ) =>;
 
    #define l3_expression  ::= <= expression ( => l3 <= ) =>;
 
    #define l4_expression  ::= <= expression ( => l4 <= ) =>;
 
-   #define l5             ::= $ object l1_operation* l2_operation* l4_operation* l5_operation?;
+   #define l5             ::= $ object l1_operation* l2_operation* l3_operation* l4_operation* l5_operation?;
 
    #define l4             ::= $ object l1_operation* l2_operation* l4_operation*;
 
@@ -101,15 +132,24 @@
 
    #define l2             ::= $ object l1_operation* l2_operation*;
 
+   #define new_operation  ::= <= message_operation ( => "new" new_terminal args <= ) =>;
+
    #define l1_operation   ::= function_call;
 
    #define l2_operation   ::= "." message mssg_call;
+   #define l2_operation   ::= "." message prop_call;
+
+   #define l3_operation   ::= ^ <= mul_operation ( => "*" l2_expression <= ) =>;
+   #define l3_operation   ::= ^ <= div_operation ( => "/" l2_expression <= ) =>;
 
    #define l4_operation   ::= ^ <= add_operation ( => "+" l3_expression <= ) =>;
 
    #define l5_operation   ::= ^ <= equal_operation ( => "==" l4_expression <= ) =>;
 
+   #define l5_operation   ::= ^ <= less_operation ( => "<" l4_expression <= ) =>;
+
    #define mssg_call      ::= ^ <= message_operation ( =>  args <= ) =>;
+   #define prop_call      ::= ^ <= property_operation ( => not_bracket <= ) =>;
 
    #define function_call  ::= ^ <= message_operation ( =>  args <= ) =>;
 
@@ -120,6 +160,7 @@
    #define next_arg       ::= "," arg;
 
    #define new_variable   ::= <= new_variable ( => identifier <= ) =>;
+   #define new_terminal   ::= <= new_identifier ( => identifier <= ) =>;
 
    #define else_code_brackets ::= "else" code_brackets;
 
@@ -137,12 +178,15 @@
                  )
 =>;
 
+   #define object         ::= "(" expression ")";
    #define object         ::= <= object ( => terminal <= ) =>;
+   #define variable       ::= <= object ( => identifier <= ) =>;
 
    #define terminal       ::= identifier;
    #define terminal       ::= reference;
    #define terminal       ::= integer;
    #define terminal       ::= literal;
+   #define terminal       ::= character;
 
    #define next_statement ::= ";" statement next_statement;
    #define next_statement ::= ";" "}";
@@ -159,8 +203,11 @@
 
    #define name           ::= <= nameattr ( identifier = $identifier ) =>; 
 
+   #define not_bracket    ::= $if (!"(");
+
    #define identifier     ::= <= identifier = $identifier =>;
    #define reference      ::= <= reference = $reference =>;
    #define integer        ::= <= integer = $numeric =>;
    #define literal        ::= <= literal = "$literal" =>;
+   #define character      ::= <= character = $character =>;
 ]]

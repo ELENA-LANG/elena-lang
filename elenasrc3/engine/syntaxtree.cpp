@@ -34,6 +34,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("closure", SyntaxKey::ClosureBlock);
    map.add("object", SyntaxKey::Object);
    map.add("new_variable", SyntaxKey::Object);
+   map.add("new_identifier", SyntaxKey::Object);
    map.add("expression", SyntaxKey::Expression);
    map.add("get_expression", SyntaxKey::GetExpression);
    map.add("returning", SyntaxKey::ReturnExpression);
@@ -54,12 +55,13 @@ void SyntaxTree :: loadTokens(TokenMap& map)
 
    map.add("if_operation", SyntaxKey::IfOperation);
    map.add("branch_operation", SyntaxKey::BranchOperation);
+   map.add("loop_expression", SyntaxKey::LoopOperation);
 
    map.add("symbol", SyntaxKey::Symbol);
    //   tokens.add("preloaded_symbol", lxSymbol);
    map.add("literal", SyntaxKey::string);
    map.add("identifier", SyntaxKey::identifier);
-   //   tokens.add("character", lxCharacter);
+   map.add("character", SyntaxKey::character);
    //   tokens.add("variable_identifier", lxIdentifier);
    //   tokens.add("new_identifier", lxIdentifier);
    //   tokens.add("prev_identifier", lxIdentifier);
@@ -71,8 +73,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    //   tokens.add("new_reference", lxReference);
    map.add("nameattr", SyntaxKey::Name);
    map.add("property_parameter", SyntaxKey::PropertyOperation); // !!temporal - should be removed
-   map.add("import", SyntaxKey::Import);
-   //   tokens.add("loop_expression", lxExpression);
+   map.add("import", SyntaxKey::Import);   
 }
 
 bool SyntaxTree :: save(MemoryBase* section)

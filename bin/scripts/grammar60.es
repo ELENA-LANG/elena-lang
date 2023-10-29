@@ -88,14 +88,18 @@
 
   #define root_expr       ::= expression;
   #define root_expr       ::= "assign_operation" "(" variable ")";
+  #define root_expr       ::= "assign_operation" "(" assigning ")";
   #define root_expr       ::= branching; 
+  #define root_expr       ::= looping; 
 
   #define branching       ::= "branch_operation" "(" branch_op ")";
+  #define looping         ::= "loop_expression" "(" "if_operation" "("  loop_op ")" ")";
 
   #define expression      ::= "expression" "(" expression ")";
   #define expression      ::= "message_operation" "(" call_expression ")";
   #define expression      ::= "add_operation" "(" add_expression ")";
   #define expression      ::= "equal_operation" "(" equal_expression ")";
+  #define expression      ::= "less_operation" "(" less_expression ")";
   #define expression      ::= object_expr;
  
   #define branch_op       ::= 
@@ -107,6 +111,15 @@
                )
 =>;
 
+  #define loop_op       ::= 
+<=
+               system'dynamic'expressions'LoopExpression (
+=>
+                              expression closure_body
+<=
+               )
+=>;
+
   #define closure_body       ::= "expression" "(" "closure" "(" body ")" ")";
 
   #define variable        ::= 
@@ -114,6 +127,15 @@
                system'dynamic'expressions'DeclaringAndAssigningExpression (
 =>
                               "new_variable" "(" identifier ")" expression
+<=
+               )
+=>;
+
+  #define assigning        ::= 
+<=
+               system'dynamic'expressions'AssigningExpression (
+=>
+                              "object" "(" identifier ")" expression
 <=
                )
 =>;
@@ -168,6 +190,18 @@
 
   #define equal_operation ::=
                <= "equal" => expression;
+
+  #define less_expression ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                              expression less_operation
+<=
+               )
+=>;
+
+  #define less_operation ::=
+               <= "less" => expression;
 
   #define object_expr     ::= "object" "(" object ")";
 
