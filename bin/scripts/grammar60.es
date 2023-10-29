@@ -84,11 +84,36 @@
   #define statement       ::= ret_expression; 
 
   #define root_expr       ::= expression;
+  #define root_expr       ::= "assign_operation" "(" variable ")";
+  #define root_expr       ::= branching; 
+
+  #define branching       ::= "branch_operation" "(" branch_op ")";
 
   #define expression      ::= "expression" "(" expression ")";
   #define expression      ::= "message_operation" "(" call_expression ")";
   #define expression      ::= "add_operation" "(" add_expression ")";
+  #define expression      ::= "equal_operation" "(" equal_expression ")";
   #define expression      ::= object_expr;
+ 
+  #define branch_op       ::= 
+<=
+               system'dynamic'expressions'IfExpression (
+=>
+                              expression closure_body closure_body?
+<=
+               )
+=>;
+
+  #define closure_body       ::= "expression" "(" "closure" "(" body ")" ")";
+
+  #define variable        ::= 
+<=
+               system'dynamic'expressions'DeclaringAndAssigningExpression (
+=>
+                              "new_variable" "(" identifier ")" expression
+<=
+               )
+=>;
 
   #define ret_expression  ::= 
 <=
@@ -137,6 +162,18 @@
 
   #define add_operation ::=
                <= "add" => expression;
+
+  #define equal_expression ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                              expression equal_operation
+<=
+               )
+=>;
+
+  #define equal_operation ::=
+               <= "equal" => expression;
 
   #define object_expr     ::= "object" "(" object ")";
 

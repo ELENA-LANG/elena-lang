@@ -33,6 +33,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("code", SyntaxKey::CodeBlock);
    map.add("closure", SyntaxKey::ClosureBlock);
    map.add("object", SyntaxKey::Object);
+   map.add("new_variable", SyntaxKey::Object);
    map.add("expression", SyntaxKey::Expression);
    map.add("get_expression", SyntaxKey::GetExpression);
    map.add("returning", SyntaxKey::ReturnExpression);
@@ -49,8 +50,10 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("sub_operation", SyntaxKey::SubOperation);
    map.add("mul_operation", SyntaxKey::MulOperation);
    map.add("div_operation", SyntaxKey::DivOperation);
+   map.add("assign_operation", SyntaxKey::AssignOperation);
 
    map.add("if_operation", SyntaxKey::IfOperation);
+   map.add("branch_operation", SyntaxKey::BranchOperation);
 
    map.add("symbol", SyntaxKey::Symbol);
    //   tokens.add("preloaded_symbol", lxSymbol);
@@ -66,8 +69,6 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    //   //tokens.add("forward", lxForward);
    map.add("reference", SyntaxKey::reference);
    //   tokens.add("new_reference", lxReference);
-   //   tokens.add("variable", lxVariable);
-   //   //tokens.add("assign", lxAssign);
    map.add("nameattr", SyntaxKey::Name);
    map.add("property_parameter", SyntaxKey::PropertyOperation); // !!temporal - should be removed
    //   //tokens.add("import", lxImport);

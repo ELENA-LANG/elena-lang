@@ -62,12 +62,34 @@
 
    #define statement      ::= expression;
    #define statement      ::= ret_expr;
+   #define statement      ::= "var" decl_variable;
+   #define statement      ::= branching ;
+
+   #define decl_variable  ::= <= expression ( assign_operation ( => new_variable ":=" expression <= ) ) =>;
 
    #define ret_expr       ::= <= returning ( => "^" expression <= ) =>;
 
-   #define expression     ::= <= expression ( => l4 <= ) =>;
+   #define branching      ::= 
+<= 
+             expression
+             (
+                branch_operation
+                (
+=>
 
-   #define l3_expression  ::= <= expression ( => l4 <= ) =>;
+                              "if" "(" expression ")" code_brackets else_code_brackets?
+<=
+                )
+             )
+=>;
+
+   #define expression     ::= <= expression ( => l5 <= ) =>;
+
+   #define l3_expression  ::= <= expression ( => l3 <= ) =>;
+
+   #define l4_expression  ::= <= expression ( => l4 <= ) =>;
+
+   #define l5             ::= $ object l1_operation* l2_operation* l4_operation* l5_operation?;
 
    #define l4             ::= $ object l1_operation* l2_operation* l4_operation*;
 
@@ -81,6 +103,8 @@
 
    #define l4_operation   ::= ^ <= add_operation ( => "+" l3_expression <= ) =>;
 
+   #define l5_operation   ::= ^ <= equal_operation ( => "==" l4_expression <= ) =>;
+
    #define mssg_call      ::= ^ <= message_operation ( =>  args <= ) =>;
 
    #define function_call  ::= ^ <= message_operation ( =>  args <= ) =>;
@@ -90,6 +114,24 @@
 
    #define arg            ::= expression;
    #define next_arg       ::= "," arg;
+
+   #define new_variable   ::= <= new_variable ( => identifier <= ) =>;
+
+   #define else_code_brackets ::= "else" code_brackets;
+
+   #define code_brackets ::= 
+<=
+
+                 expression (
+                    closure (
+                       code (
+=>
+                                "{" statement next_statement
+<=
+                       )
+                    )
+                 )
+=>;
 
    #define object         ::= <= object ( => terminal <= ) =>;
 

@@ -9888,6 +9888,12 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          retVal = compileBranchingOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS,
             EAttrs::test(mode, EAttr::RetValExpected));
          break;
+      case SyntaxKey::BranchOperation:
+         // HOTFIX : used for script based code
+         retVal = compileBranchingOperation(writer, scope, current, 
+            (current.firstChild().nextNode().nextNode() != SyntaxKey::None ? IF_ELSE_OPERATOR_ID : IF_OPERATOR_ID),
+            EAttrs::test(mode, EAttr::RetValExpected));
+         break;
       case SyntaxKey::LoopOperation:
          retVal = compileLoopExpression(writer, scope, current.firstChild(), mode);
          break;

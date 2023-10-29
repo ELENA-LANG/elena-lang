@@ -455,7 +455,7 @@ namespace elena_lang
          map.add("script_function", V_SCRIPTSELFMODE);
          map.add("public_symbol", V_PUBLIC);
          //map.add("script_function", V_FUNCTION);
-         //map.add("variable_identifier", V_VARIABLE);
+         map.add("new_variable", V_VARIABLE);
          //map.add("new_reference", V_NEWOP);
          //map.add("new_identifier", V_NEWOP);
          //map.add("prev_identifier", V_PREVIOUS);
