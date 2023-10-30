@@ -1014,37 +1014,13 @@ bool ScriptEngineCFParser :: compareTokenWithAny(ScriptEngineReaderBase& reader,
 
 void ScriptEngineCFParser :: insertForwards(Stack<Pair<int, int>>& forwards, int level, ScriptEngineLog& log)
 {
-   int minLevel = INT_MAX;
-
-   Stack<int> reversedList(0);
-   int lastForward = -1;
-
-   auto it = forwards.start();
-   while (!it.eof()) {
-      auto f = *it;
-      if (f.value2 <= level)
+   while (forwards.count() > 0 && forwards.peek().value2 <= level) {
+      auto bm = forwards.pop();
+      if (!bm.value1)
          break;
 
-      if (!f.value1) {
-         if (minLevel > f.value2)
-            minLevel = f.value2;
-      }
-      else if (f.value2 <= minLevel) {
-         if (lastForward != -1)
-            reversedList.push(lastForward);
-
-         lastForward = f.value1;
-      }
-
-      ++it;
+      log.write(getBodyText(bm.value1));
    }
-
-   if (lastForward != -1)
-      log.write(getBodyText(lastForward));
-
-   // save in the correct order
-   while (reversedList.count() > 0)
-      log.write(getBodyText(reversedList.pop()));
 }
 
 bool ScriptEngineCFParser :: parseDirective(ScriptEngineReaderBase& reader, MemoryDump*)
@@ -1062,17 +1038,18 @@ bool ScriptEngineCFParser :: parseDirective(ScriptEngineReaderBase& reader, Memo
    } while (true);
 
    return true;
-
 }
 
-inline void clearPreviousForwards(Stack<Pair<int, int>>& forwards, int level)
+inline void updateForwardLevel(Stack<Pair<int, int>>& forwards, int minLevel)
 {
-   //if (forwards.peek().value2 < level)
-   //   return;
+   for (auto it = forwards.start(); !it.eof(); ++it) {
+      auto bm = *it;
+      if (bm.value2 < minLevel)
+         break;
 
-   auto f = forwards.pop();
-   while (f.value1 || f.value2 != level)
-      f = forwards.pop();
+      bm.value2 = minLevel;
+      *it = bm;
+   }
 }
 
 void ScriptEngineCFParser :: generateOutput(pos_t offset, ScriptEngineReaderBase& scriptReader, ScriptEngineLog& log)
@@ -1080,6 +1057,7 @@ void ScriptEngineCFParser :: generateOutput(pos_t offset, ScriptEngineReaderBase
    if (offset == 0)
       return;
 
+   Stack<Pair<int, int>> bookmarks(Pair<int, int>(0, -1));
    Stack<Pair<int, int>> forwards(Pair<int, int>(0, -1));
 
    MemoryReader reader(&_body, (pos_t)offset);
@@ -1087,6 +1065,7 @@ void ScriptEngineCFParser :: generateOutput(pos_t offset, ScriptEngineReaderBase
    TraceItem item = {};
    reader.read(&item, sizeof(TraceItem));
    int level = 0;
+   bool forwardAvailable = false;
    while (true) {
       if (!item.ruleKey) {
          level++;
@@ -1095,23 +1074,37 @@ void ScriptEngineCFParser :: generateOutput(pos_t offset, ScriptEngineReaderBase
 
       // if forward declaration
       if (test(item.ruleKey, WITHFORWARD_MASK)) {
-         //int key = (item.ruleKey & ~WITHFORWARD_MASK) >> 8;
-         //ident_t keyName = retrieveKey(_names.start(), key, DEFAULT_STR);
+#ifdef TRACING_INFO
+         ustr_t keyName = _names.retrieve<ref_t>(DEFAULT_STR, (item.ruleKey & ~WITHFORWARD_MASK) >> 8, [](ref_t reference, ustr_t key, ref_t current)
+            {
+               return current == reference;
+            });
+#endif
 
          Rule rule = _table.get(item.ruleKey & ~WITHFORWARD_MASK);
          if (test(rule.type, RuleType::WithBookmark)) {
-            forwards.push(Pair<int, int>(0, level));
+            bookmarks.push({ 0, level });
+            while (forwards.count() > 0 && forwards.peek().value2 > level) {
+               auto bm = forwards.pop();
+
+               bookmarks.push({ bm.value1, level });
+            }
+
+            forwardAvailable = forwards.count() > 0;
          }
          else if (test(rule.type, RuleType::WithForward)) {
+            forwardAvailable = true;
+
             forwards.push(Pair<int, int>(rule.prefix1Ptr, level));
          }
       }
+      else if (forwardAvailable)
+         updateForwardLevel(forwards, level);
+
       stack.push(item);
 
       if (item.previous == 0)
          break;
-
-      //    save into forwards
 
       reader.seek(item.previous);
       reader.read(&item, sizeof(TraceItem));
@@ -1161,9 +1154,7 @@ void ScriptEngineCFParser :: generateOutput(pos_t offset, ScriptEngineReaderBase
          Rule rule = _table.get(item.ruleKey & ~WITHFORWARD_MASK);
 
          if (test(rule.type, RuleType::WithBookmark)) {
-            clearPreviousForwards(forwards, level);
-
-            insertForwards(forwards, level, log);
+            insertForwards(bookmarks, level, log);
          }
 
          if (rule.prefix1Ptr != 0) {

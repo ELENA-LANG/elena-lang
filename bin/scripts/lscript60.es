@@ -126,9 +126,9 @@
 
    #define l5             ::= $ object l1_operation* l2_operation* l3_operation* l4_operation* l5_operation?;
 
-   #define l4             ::= $ object l1_operation* l2_operation* l4_operation*;
+   #define l4             ::= $ object l1_operation* l2_operation* l3_operation* l4_operation*;
 
-   #define l3             ::= $ object l1_operation* l2_operation*;
+   #define l3             ::= $ object l1_operation* l2_operation* l3_operation*;
 
    #define l2             ::= $ object l1_operation* l2_operation*;
 
@@ -145,13 +145,12 @@
    #define l4_operation   ::= ^ <= add_operation ( => "+" l3_expression <= ) =>;
 
    #define l5_operation   ::= ^ <= equal_operation ( => "==" l4_expression <= ) =>;
-
    #define l5_operation   ::= ^ <= less_operation ( => "<" l4_expression <= ) =>;
 
    #define mssg_call      ::= ^ <= message_operation ( =>  args <= ) =>;
    #define prop_call      ::= ^ <= property_operation ( => not_bracket <= ) =>;
 
-   #define function_call  ::= ^ <= message_operation ( =>  args <= ) =>;
+   #define function_call  ::= ^ <= message_operation ( => args <= ) =>;
 
    #define args           ::= "(" ")";
    #define args           ::= "(" arg next_arg* ")";

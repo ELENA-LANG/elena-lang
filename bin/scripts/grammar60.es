@@ -97,7 +97,10 @@
 
   #define expression      ::= "expression" "(" expression ")";
   #define expression      ::= "message_operation" "(" call_expression ")";
+  #define expression      ::= "property_operation" "(" prop_expression ")";
   #define expression      ::= "add_operation" "(" add_expression ")";
+  #define expression      ::= "mul_operation" "(" mul_expression ")";
+  #define expression      ::= "div_operation" "(" div_expression ")";
   #define expression      ::= "equal_operation" "(" equal_expression ")";
   #define expression      ::= "less_operation" "(" less_expression ")";
   #define expression      ::= object_expr;
@@ -149,11 +152,29 @@
                )
 =>;
 
+  #define prop_expression ::=
+<=
+               system'dynamic'expressions'GetPropertyExpression (
+=>
+                              expression message
+<=
+               )
+=>;
+
+  #define call_expression ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                              new_object expression*
+<=
+               )
+=>;
+
   #define call_expression ::=
 <=
                system'dynamic'expressions'ExtensionOrMessageCallExpression (
 =>
-                              object_expr message expression*
+                              expression message expression*
 <=
                )
 =>;
@@ -178,6 +199,30 @@
 
   #define add_operation ::=
                <= "add" => expression;
+
+  #define mul_expression ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                              expression mul_operation
+<=
+               )
+=>;
+
+  #define mul_operation ::=
+               <= "multiply" => expression;
+
+  #define div_expression ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                              expression div_operation
+<=
+               )
+=>;
+
+  #define div_operation ::=
+               <= "divide" => expression;
 
   #define equal_expression ::=
 <=
@@ -204,6 +249,15 @@
                <= "less" => expression;
 
   #define object_expr     ::= "object" "(" object ")";
+
+  #define new_object      ::=
+<=
+                       system'dynamic'expressions'ClassIdentifierExpression ( 
+=>
+                              "new_identifier" "(" "identifier" "=" ident_quote ")"
+<=
+                       )
+=>;
 
   #define object          ::=
 <=
