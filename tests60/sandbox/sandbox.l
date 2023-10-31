@@ -51,7 +51,7 @@ public sealed const struct XSymbol
    }
 
    static XSymbol Default
-      = default;
+      = /*default*/nil;
 }
 
 public program()
