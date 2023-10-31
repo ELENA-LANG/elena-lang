@@ -163,7 +163,7 @@
 
   #define call_expression ::=
 <=
-               system'dynamic'expressions'MessageCallExpression (
+               system'dynamic'expressions'NewExpression (
 =>
                               new_object expression*
 <=

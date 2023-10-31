@@ -6,6 +6,10 @@ public sealed const struct Symbol
 
    private load(string name) : external(system'core_routines'__symbol_load);
    private copy(pointer ptr) : external(system'core_routines'__symbol_copy);
+   private bool compare(symbol s) : external(system'core_routines'__symbol_equal);
+
+   static Symbol Default
+      = default;
 
    /// Loads a symbol
    constructor(string name)
@@ -18,6 +22,9 @@ public sealed const struct Symbol
       self.copy(ptr);
    }
 
+   bool equal(Symbol s)
+      = self.compare(s);
+
    static Symbol tryLoad(string ns, string name)
    {
       pointer ptr := extern LoadSymbolByString2LA(ns, name);
@@ -27,7 +34,7 @@ public sealed const struct Symbol
       }
       else
       {
-         ^ nil
+         ^ default
       }
    }
 

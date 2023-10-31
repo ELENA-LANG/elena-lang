@@ -1275,10 +1275,20 @@ end
 
 procedure __symbol_copy
 
-  peek       sp:2
-  load
   peek       sp:1
+  load
+  peek       sp:0
   save
+
+end
+
+procedure __symbol_equal
+
+  peek        sp:0
+  load
+  peek        sp:1
+  xcmp
+  seleq       class:"system'BoolValue#true", class:"system'BoolValue#false"
 
 end
 

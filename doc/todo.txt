@@ -16,6 +16,11 @@ In development:
   port:gui samples, db samples, xforms, elenavm / elt for linux
   --------------------------------------
 
+  * #630 : Nil reference cannot be assigned to struct 
+
+  * comparing Symbols
+  * comparing with Symbol.Default
+
   * simple program for tscript60 / lscript60 / compiler custom grammar
 
   * redesign lscript60 : simpile program hello world, operation, ...

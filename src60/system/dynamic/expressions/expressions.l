@@ -6,6 +6,7 @@ import system'text;
 namespace expressions
 {
    const int mode_lcl   = 1;
+   const int mode_class = 4;
 
    symbol used : preloaded = new object[]{Expression, DynamicSingleton,DynamicExpressionSymbol,SymbolCollection};
 
@@ -154,6 +155,9 @@ namespace expressions
       static Expression IntConstant(string value)
          = new IntConstantExpression(value);
 
+      static Expression CharConstant(string value)
+         = new CharConstantExpression(value);
+
       static Expression GetProperty(MessageName name, Expression t)
          = GetPropertyExpression.new(name, t);
 
@@ -170,7 +174,7 @@ namespace expressions
          = CodeblockExpression.load(params statements);
 
 //      static Expression SetDynamicProperty(Expression m, Expression t, Expression v)
-//         = SetDynamicPropertyExpression.new(m, t, v);
+//         = SetDynamicPropertyExpression.NewExpressionm, t, v);
 //
 //      static Expression GetDynamicProperty(Expression m, Expression t)
 //         = GetDynamicPropertyExpression.new(m, t);
@@ -190,14 +194,17 @@ namespace expressions
       static Expression Variable(string variable)
          = new VariableExpression(variable);
 
-//      static Expression ClassReference(string s)
-//         = new ConstantExpression(new ClassReference(s));
-//
-//      static Expression New(object t)
-//         = new NewExpression(t);
-//           
-//      static Expression New(object t, Expression p0)
-//         = new NewExpression(t, p0);
+      static Expression ClassReference(string s)
+         = new ConstantExpression(new ClassReference(s));
+
+      static Expression ClassIdentifier(string s)
+         = new ClassIdentifierExpression(s);
+
+      static Expression New(object t)
+         = new NewExpression(t);
+           
+      static Expression New(object t, Expression p0)
+         = new NewExpression(t, p0);
 
       static Expression FunctionCall(params Expression[] arguments)
          = FunctionCallExpression.new(params arguments);
@@ -332,6 +339,33 @@ namespace expressions
       }
    }
 
+   public class ClassIdentifierExpression : Expression
+   {
+      ScopeIdentifier name;
+                
+      constructor(string name)
+      {
+         this name := new ScopeIdentifier(name, mode_class);
+      }
+        
+      bool IsOperation = false;
+        
+      declare(ExpressionScope scope)
+      {
+         scope.reserveStack(1);
+      }
+        
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         TapeFunction  classIdentifier := scope.resolve(name, false);
+
+         list.append(classIdentifier);
+         if (index > 0) {
+            list.append(new SavingFunction(index));
+         }
+      }
+   }
+
    public class SymbolExpression : Expression
    {
       Symbol symbol;
@@ -458,6 +492,74 @@ namespace expressions
       }
    }
                 	
+   public class NewExpression : FunctionCallExpression
+   {
+      constructor new(Expression t)
+      {
+         _message := new Message("function:#constructor[0]");
+         _target := t;
+         _arguments := new Expression[](0);
+      }
+
+      constructor load(Expression t, params Expression[] arguments)
+      {
+         int len := arguments.Length;
+
+         _message := new Message("function:#constructor[" + len.toPrintable() + "]");
+         _target := t;
+         _arguments := arguments;
+      }
+
+      constructor(Expression t)
+         <= new(t);
+        
+      constructor(Expression t, Expression p1)
+         <= load(t, p1);
+        
+      constructor(Expression t, Expression p1, Expression p2)
+         <= load(t, p1, p2);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3)
+         <= load(t, p1, p2, p3);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4)
+         <= load(t, p1, p2, p3, p4);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5)
+         <= load(t, p1, p2, p3, p4, p5);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6)
+         <= load(t, p1, p2, p3, p4, p5, p6);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7)
+         <= load(t, p1, p2, p3, p4, p5, p6, p7);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8)
+         <= load(t, p1, p2, p3, p4, p5, p6, p7, p8);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
+         <= load(t, p1, p2, p3, p4, p5, p6, p7, p8, p9);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
+         <= load(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11)
+         <= load(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
+        
+      constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12)
+         <= load(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+   }
+
    public class MessageCallExpression : Expression
    {
       Message      _message;
@@ -752,6 +854,17 @@ namespace expressions
       constructor(o)
       {
          this object := intConvertor.convert(o)
+      }
+   }
+
+   public class CharConstantExpression : ConstantExpression
+   {
+      constructor(string o)
+      {
+         if (o.Length == 0) {
+            this object := $0;
+         }
+         else this object := *(o.enumerator());
       }
    }
 
@@ -1503,104 +1616,6 @@ namespace expressions
       }
    }
 
-//   // --- NewExpression
-//
-//   public class NewExpression : Expression
-//   {
-//      Message      _message;
-//      object       _target;
-//      Expression[] _arguments;
-//
-//      constructor new(object t)
-//      {
-//         _message := new Message("#constructor[0]");
-//         _target := t;
-//         _arguments := new Expression[](0);
-//      }
-//
-//      constructor new(object t, params Expression[] arguments)
-//      {
-//         int len := arguments.Length;
-//
-//         _message := new Message("#constructor[" + len.toPrintable() + "]");
-//         _target := t;
-//         _arguments := arguments;
-//      }
-//
-//      constructor(object t)
-//         <= new(t);
-//        
-//      constructor(object t, Expression p1)
-//         <= new(t, p1);
-//        
-//      constructor(object t, Expression p1, Expression p2)
-//         <= new(t, p1, p2);
-//        
-//      constructor(object t, string message, Expression p1, Expression p2, Expression p3)
-//         <= new(t, p1, p2, p3);
-//        
-//      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4)
-//         <= new(t, p1, p2, p3, p4);
-//        
-//      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5)
-//         <= new(t, p1, p2, p3, p4, p5);
-//        
-//      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5, Expression p6)
-//         <= new(t, p1, p2, p3, p4, p5, p6);
-//        
-//      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5, Expression p6, Expression p7)
-//         <= new(t, p1, p2, p3, p4, p5, p6, p7);
-//        
-//      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5, Expression p6, Expression p7, Expression p8)
-//         <= new(t, p1, p2, p3, p4, p5, p6, p7, p8);
-//        
-//      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
-//         <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9);
-//        
-//      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
-//         <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
-//        
-//      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                    Expression p11)
-//         <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
-//        
-//      constructor(object t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                    Expression p11, Expression p12)
-//         <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
-//
-//      bool IsOperation = true;
-//
-//      int prepare(ExpressionScope scope)
-//      {
-//         int len := _arguments.Length;
-//         int maxStackSize := len + 1;
-//            
-//         for(int i := 0, i < len, i+=1) {
-//            int argStackSize := _arguments[i].prepare(scope);
-//            if (argStackSize > maxStackSize)
-//               { maxStackSize := argStackSize; }
-//         };
-//
-//         ^ maxStackSize
-//      }
-//
-//      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
-//      {
-//         Expression.saveFunctionCallTo(list, scope, _arguments, ExtensionMessageFunction.load(_message, _target));                                                            
-//         if (index > 0) {
-//            list.append(new SavingFunction(index));
-//         }
-//      }
-//   }
-
    public class AssigningExpression : Expression
    {
       ScopeIdentifier variable;
@@ -1832,14 +1847,14 @@ namespace expressions
             string refName := variable.Name;
             int mode := variable.Mode;
                     
-            if (mode == 0/* || mode == mode_class*/)
+            if (mode == 0 || mode == mode_class)
             {
                // look for external references
                if(imports != nil) {
                   int len := imports.Length;
                   for(int i := 0, i < len, i++) {
                      var symbol := Symbol.tryLoad(imports[i], refName);
-                     if (symbol != nil)
+                     if (symbol != default)
                      {
                         ^ ConstantFunction.load(symbol)
                      }
