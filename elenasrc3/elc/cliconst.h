@@ -13,7 +13,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x0219
+   #define ELC_REVISION_NUMBER               0x021A
 
 #if defined _M_IX86 || _M_X64
 

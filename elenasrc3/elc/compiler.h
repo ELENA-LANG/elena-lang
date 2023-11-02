@@ -1412,14 +1412,14 @@ namespace elena_lang
          SyntaxNode node, bool newFrame);
       void compileConstructorCode(BuildTreeWriter& writer, SyntaxNode node, SyntaxNode current, MethodScope& scope,
          CodeScope& codeScope, ClassScope& classClassScope, bool isDefConvConstructor, ref_t classFlags, bool newFrame);
-      void compileInplaceDefConstructorCode(BuildTreeWriter& writer, SyntaxNode current, MethodScope& scope,
+      void compileInplaceDefConstructorCode(BuildTreeWriter& writer, SyntaxNode current, SyntaxNode methodNode, MethodScope& scope,
          CodeScope& codeScope, ClassScope& classClassScope, ref_t classFlags, bool newFrame);
       void compileDefConvConstructorCode(BuildTreeWriter& writer, MethodScope& scope,
          SyntaxNode node, bool& newFrame);
 
       mssg_t declareInplaceConstructorHandler(MethodScope& invokerScope, ClassScope& classClassScope);
       mssg_t compileInplaceConstructorHandler(BuildTreeWriter& writer, MethodScope& invokerScope,
-         ClassScope& classClassScope, SyntaxNode current, mssg_t handler);
+         ClassScope& classClassScope, SyntaxNode current, SyntaxNode methodNode, mssg_t handler);
       mssg_t compileByRefHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node,
          mssg_t byRefHandler);
       void compileByRefRedirectHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node,

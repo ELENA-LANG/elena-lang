@@ -10903,10 +10903,8 @@ mssg_t Compiler :: declareInplaceConstructorHandler(MethodScope& invokerScope, C
 }
 
 mssg_t Compiler :: compileInplaceConstructorHandler(BuildTreeWriter& writer, MethodScope& invokerScope, ClassScope& classClassScope, 
-   SyntaxNode current, mssg_t byRefMessage)
+   SyntaxNode current, SyntaxNode methodNode, mssg_t byRefMessage)
 {
-   SyntaxNode mathodNode = current.parentNode();
-
    ClassScope* classScope = Scope::getScope<ClassScope>(invokerScope, Scope::ScopeLevel::Class);
 
    MethodScope privateScope(classScope);
@@ -10932,16 +10930,16 @@ mssg_t Compiler :: compileInplaceConstructorHandler(BuildTreeWriter& writer, Met
    privateScope.selfLocal = -1;
 
    CodeScope codeScope(&privateScope);
-   beginMethod(writer, privateScope, mathodNode, BuildKey::Method, true);
+   beginMethod(writer, privateScope, methodNode, BuildKey::Method, true);
    writer.appendNode(BuildKey::OpenFrame);
 
    if (classScope->info.methods.exist(invokerScope.moduleScope->buildins.init_message)) {
       ExprScope exprScope(&codeScope);
       writeObjectInfo(writer, exprScope, privateScope.mapSelf());
 
-      compileInlineInitializing(writer, *classScope, mathodNode);
+      compileInlineInitializing(writer, *classScope, methodNode);
    }
-   if (mathodNode.existChild(SyntaxKey::FillingAttr)) {
+   if (methodNode.existChild(SyntaxKey::FillingAttr)) {
       ExprScope exprScope(&codeScope);
 
       writeObjectInfo(writer, exprScope, privateScope.mapSelf());
@@ -11290,8 +11288,8 @@ void Compiler :: compileDefConvConstructorCode(BuildTreeWriter& writer, MethodSc
    createObject(writer, classScope->info, classScope->reference);
 }
 
-void Compiler :: compileInplaceDefConstructorCode(BuildTreeWriter& writer, SyntaxNode current, MethodScope& scope,
-   CodeScope& codeScope, ClassScope& classClassScope, ref_t classFlags, bool newFrame)
+void Compiler :: compileInplaceDefConstructorCode(BuildTreeWriter& writer, SyntaxNode current, SyntaxNode methodNode, 
+   MethodScope& scope, CodeScope& codeScope, ClassScope& classClassScope, ref_t classFlags, bool newFrame)
 {
    mssg_t privateHandler = declareInplaceConstructorHandler(scope, classClassScope);
 
@@ -11328,7 +11326,7 @@ void Compiler :: compileInplaceDefConstructorCode(BuildTreeWriter& writer, Synta
    endMethod(writer, scope);
 
    compileInplaceConstructorHandler(writer, scope, classClassScope,
-      current, privateHandler);
+      current, methodNode, privateHandler);
 }
 
 void Compiler :: compileConstructorCode(BuildTreeWriter& writer, SyntaxNode node, SyntaxNode current, MethodScope& scope,
@@ -11453,12 +11451,12 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
          // it should create the object
          compileDefConvConstructorCode(writer, scope, node, newFrame);
 
-         if (getArgCount(scope.message) < 2 && test(classFlags, elStructureRole) && !isProtectedDefConst)
+         if (getArgCount(scope.message) < 2 && test(classFlags, elStructureRole))
             inPlaceConstructor = true;
       }
 
       if (inPlaceConstructor) {
-         compileInplaceDefConstructorCode(writer, current, scope, codeScope,
+         compileInplaceDefConstructorCode(writer, current, node, scope, codeScope,
             classClassScope, classFlags, newFrame);
 
          // NOTE : the procedure closes the scope itself
