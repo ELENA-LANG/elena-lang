@@ -10039,6 +10039,12 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
    }
 
    if (codeScope.isByRefHandler()) {
+      if (retVal.kind == ObjectKind::Default && _logic->isEmbeddable(*scope.moduleScope, outputRef)) {
+         ArgumentsInfo arguments;
+
+         retVal = compileNewOp(writer, scope, node, mapClassSymbol(scope, outputRef), 0, arguments);
+      }
+
       compileAssigningOp(writer, scope, codeScope.mapByRefReturnArg(), retVal);
 
       retVal = {};
