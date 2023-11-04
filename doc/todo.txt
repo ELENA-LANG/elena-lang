@@ -16,6 +16,7 @@ In development:
   port:gui samples, db samples, xforms, elenavm / elt for linux
   --------------------------------------
 
+  * default - native / weak implemenation
   * #630 : Nil reference cannot be assigned to struct 
 
   * comparing Symbols

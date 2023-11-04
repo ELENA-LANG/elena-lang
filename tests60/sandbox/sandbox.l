@@ -1,4 +1,4 @@
-//import extensions;
+import extensions;
 ////import extensions'scripting;
 ////
 ////public program()
@@ -42,19 +42,43 @@
 //   
 //}
 
-public sealed const struct XSymbol
+//public sealed const struct XSymbol
+//{
+//   __ptr pointer;
+//
+//   constructor(pointer ptr)
+//   {
+//   }
+//
+//   static XSymbol Default
+//      = default/*nil*/;
+//}
+
+struct IncTestStruct
 {
-   __ptr pointer;
+   int x := 0;
+   int y := 1;
 
-   constructor(pointer ptr)
-   {
-   }
+//   act()
+//   {
+//      x++;
+//      y--;
+//   }
 
-   static XSymbol Default
-      = default/*nil*/;
+//   assert()
+//   {
+//      Assert.ifTrue(x == 1);
+//      Assert.ifTrue(y == 0);
+//   }
 }
 
 public program()
 {
-   XSymbol s := XSymbol.Default;
+   IncTestStruct struct := new IncTestStruct();
+
+   var r2 := struct;
+//
+//   struct.act();
+//
+//   var r := struct;
 }

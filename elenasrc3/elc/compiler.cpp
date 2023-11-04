@@ -7552,11 +7552,11 @@ ObjectInfo Compiler :: compileNewOp(BuildTreeWriter& writer, ExprScope& scope, S
          scope.module->mapAction(CONSTRUCTOR_MESSAGE,
             scope.module->mapSignature(signature, argCount, false), false), argCount, STATIC_MESSAGE);
 
-      CheckMethodResult dummy = {};
+      CheckMethodResult result = {};
       if (_logic->resolveCallType(*scope.moduleScope, 
-         retrieveStrongType(scope, source), inplaceMessage, dummy)) 
+         retrieveStrongType(scope, source), inplaceMessage, result)) 
       {
-         writer.appendNode(BuildKey::InplaceCall, inplaceMessage);
+         writer.appendNode(BuildKey::InplaceCall, result.message);
       }
    }
 
@@ -10039,13 +10039,18 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
    }
 
    if (codeScope.isByRefHandler()) {
-      if (retVal.kind == ObjectKind::Default && _logic->isEmbeddable(*scope.moduleScope, outputRef)) {
+      ObjectInfo byRefTarget = codeScope.mapByRefReturnArg();
+
+      if (retVal.kind == ObjectKind::Default && 
+         _logic->isEmbeddable(*scope.moduleScope, byRefTarget.typeInfo.typeRef)) 
+      {
          ArgumentsInfo arguments;
 
-         retVal = compileNewOp(writer, scope, node, mapClassSymbol(scope, outputRef), 0, arguments);
+         retVal = compileNewOp(writer, scope, node, 
+            mapClassSymbol(scope, byRefTarget.typeInfo.typeRef), 0, arguments);
       }
 
-      compileAssigningOp(writer, scope, codeScope.mapByRefReturnArg(), retVal);
+      compileAssigningOp(writer, scope, byRefTarget, retVal);
 
       retVal = {};
    }
@@ -10896,6 +10901,15 @@ mssg_t Compiler :: declareInplaceConstructorHandler(MethodScope& invokerScope, C
       invokerScope.module->mapAction(
          actionName, invokerScope.module->mapSignature(signArgs, signLen, false), false), argCount + 1, flags | STATIC_MESSAGE);
 
+   if (MethodScope::checkHint(invokerScope.info, MethodHint::Protected)) {
+      mssg_t publicInplaceMessage = encodeMessage(
+         invokerScope.module->mapAction(
+            CONSTRUCTOR_MESSAGE, invokerScope.module->mapSignature(signArgs, signLen, false), false), argCount + 1, flags | STATIC_MESSAGE);
+
+      classClassScope.addMssgAttribute(publicInplaceMessage,
+         ClassAttribute::ProtectedAlias, inplaceMessage);
+   }
+
    MethodInfo info = { };
 
    info.hints |= (ref_t)MethodHint::Private;
@@ -10939,17 +10953,17 @@ mssg_t Compiler :: compileInplaceConstructorHandler(BuildTreeWriter& writer, Met
    beginMethod(writer, privateScope, methodNode, BuildKey::Method, true);
    writer.appendNode(BuildKey::OpenFrame);
 
-   if (classScope->info.methods.exist(invokerScope.moduleScope->buildins.init_message)) {
-      ExprScope exprScope(&codeScope);
-      writeObjectInfo(writer, exprScope, privateScope.mapSelf());
-
-      compileInlineInitializing(writer, *classScope, methodNode);
-   }
    if (methodNode.existChild(SyntaxKey::FillingAttr)) {
       ExprScope exprScope(&codeScope);
 
       writeObjectInfo(writer, exprScope, privateScope.mapSelf());
       fillObject(writer, classScope->info, invokerScope.moduleScope->ptrSize);
+   }
+   if (classScope->info.methods.exist(invokerScope.moduleScope->buildins.init_message)) {
+      ExprScope exprScope(&codeScope);
+      writeObjectInfo(writer, exprScope, privateScope.mapSelf());
+
+      compileInlineInitializing(writer, *classScope, methodNode);
    }
 
    switch (current.key) {
