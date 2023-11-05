@@ -1853,7 +1853,7 @@ namespace expressions
                if(imports != nil) {
                   int len := imports.Length;
                   for(int i := 0, i < len, i++) {
-                     var symbol := Symbol.tryLoad(imports[i], refName);
+                     Symbol symbol := Symbol.tryLoad(imports[i], refName);
                      if (symbol != Symbol.Default)
                      {
                         ^ ConstantFunction.load(symbol)

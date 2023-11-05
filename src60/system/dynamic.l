@@ -25,6 +25,9 @@ public sealed const struct Symbol
    bool equal(Symbol s)
       = self.compare(s);
 
+   bool notequal(Symbol s)
+      = !self.compare(s);
+
    static Symbol tryLoad(string ns, string name)
    {
       pointer ptr := extern LoadSymbolByString2LA(ns, name);
