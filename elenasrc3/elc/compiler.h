@@ -1030,6 +1030,13 @@ namespace elena_lang
          }
       };
 
+      struct WriterContext
+      {
+         BuildTreeWriter* writer;
+         ExprScope*       scope;
+         SyntaxNode       node;
+      };
+
    private:
       CompilerLogic*         _logic;
       TemplateProssesorBase* _templateProcessor;
@@ -1242,7 +1249,7 @@ namespace elena_lang
 
       void evalStatement(MetaScope& scope, SyntaxNode node);
 
-      void writeObjectInfo(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info);
+      void writeObjectInfo(WriterContext& context, ObjectInfo info);
 
       void addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey);
 
@@ -1261,26 +1268,24 @@ namespace elena_lang
 
       void compileInlineInitializing(BuildTreeWriter& writer, ClassScope& classScope, SyntaxNode node);
 
-      void writeMessageArguments(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo& target, 
+      void writeMessageArguments(WriterContext& context, ObjectInfo& target, 
          mssg_t message, ArgumentsInfo& arguments, ObjectInfo& lenLocal, int& stackSafeAttr,
          bool targetOverridden, bool found, bool argUnboxingRequired, bool stackSafe);
 
       bool validateShortCircle(ExprScope& scope, mssg_t message, ObjectInfo target);
 
-      ObjectInfo boxArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef = 0);
-      ObjectInfo boxRefArgumentInPlace(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, ref_t targetRef = 0);
-      ObjectInfo boxArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, 
+      ObjectInfo boxArgumentInPlace(WriterContext& context, ObjectInfo info, ref_t targetRef = 0);
+      ObjectInfo boxRefArgumentInPlace(WriterContext& context, ObjectInfo info, ref_t targetRef = 0);
+      ObjectInfo boxArgument(WriterContext& context, ObjectInfo info, 
          bool stackSafe, bool boxInPlace, bool allowingRefArg, ref_t targetRef = 0);
-      ObjectInfo boxArgumentLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info, 
-         bool stackSafe, bool forced);
-      ObjectInfo boxLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info,
-         bool stackSafe);
-      ObjectInfo boxPtrLocally(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info);
-      ObjectInfo boxVariadicArgument(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo info);
+      ObjectInfo boxArgumentLocally(WriterContext& context, ObjectInfo info, bool stackSafe, bool forced);
+      ObjectInfo boxLocally(WriterContext& context, ObjectInfo info, bool stackSafe);
+      ObjectInfo boxPtrLocally(WriterContext& context, ObjectInfo info);
+      ObjectInfo boxVariadicArgument(WriterContext& context, ObjectInfo info);
 
-      ObjectInfo unboxArguments(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo retVal, ArgumentsInfo* updatedOuterArgs);
-      void unboxArgumentLocaly(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo tempLocal, ObjectKey targetKey);
-      void unboxOuterArgs(BuildTreeWriter& writer, ExprScope& scope, ArgumentsInfo* updatedOuterArgs);
+      ObjectInfo unboxArguments(WriterContext& context, ObjectInfo retVal, ArgumentsInfo* updatedOuterArgs);
+      void unboxArgumentLocaly(WriterContext& context, ObjectInfo tempLocal, ObjectKey targetKey);
+      void unboxOuterArgs(WriterContext& context, ArgumentsInfo* updatedOuterArgs);
 
       ObjectInfo saveToTempLocal(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo object);
       ObjectInfo declareTempLocal(ExprScope& scope, ref_t typeRef, bool dynamicOnly = true);
@@ -1292,10 +1297,10 @@ namespace elena_lang
 
       bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);
 
-      ObjectInfo compileExternalOp(BuildTreeWriter& writer, ExprScope& scope, ref_t externalRef, bool stdCall, 
+      ObjectInfo compileExternalOp(WriterContext& context, ref_t externalRef, bool stdCall, 
          ArgumentsInfo& arguments, ref_t expectedRef);
 
-      ObjectInfo compileNewArrayOp(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, 
+      ObjectInfo compileNewArrayOp(WriterContext& context, ObjectInfo source,
          ref_t targetRef, ArgumentsInfo& arguments);
       ObjectInfo compileNewOp(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
          ObjectInfo source, ref_t signRef, ArgumentsInfo& arguments);
@@ -1311,7 +1316,7 @@ namespace elena_lang
       ObjectInfo compilePropertyOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
          ref_t targetRef, ExpressionAttribute attrs);
 
-      bool compileAssigningOp(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo target, ObjectInfo source);
+      bool compileAssigningOp(WriterContext& context, ObjectInfo target, ObjectInfo source);
       ObjectInfo compileAssigning(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode loperand, 
          SyntaxNode roperand, ExpressionAttribute mode);
 
@@ -1334,7 +1339,7 @@ namespace elena_lang
       ObjectInfo compileSpecialOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId, ref_t expectedRef);
       ObjectInfo compileBranchingOperands(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode rnode,
          SyntaxNode r2node, bool retValExpected);
-      ObjectInfo compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, ObjectInfo loperand, SyntaxNode node, SyntaxNode rnode,
+      ObjectInfo compileBranchingOperation(WriterContext& context, ObjectInfo loperand, SyntaxNode rnode,
          SyntaxNode r2node, int operatorId, ArgumentsInfo* updatedOuterArgs, bool retValExpected);
       ObjectInfo compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
          int operatorId, bool retValExpected);
