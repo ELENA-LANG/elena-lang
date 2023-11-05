@@ -16,9 +16,6 @@ In development:
   port:gui samples, db samples, xforms, elenavm / elt for linux
   --------------------------------------
 
-  * default - if reference type - returns nil, if struct - compiles the default constructor call
-
-
   * #630 : Nil reference cannot be assigned to struct 
 
   * comparing Symbols

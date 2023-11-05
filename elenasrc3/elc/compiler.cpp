@@ -7964,6 +7964,10 @@ bool Compiler :: compileAssigningOp(WriterContext& context, ObjectInfo target, O
    context.writer->newNode(operationType, operand);
    if (size != 0) {
       context.writer->appendNode(BuildKey::Size, size);
+
+      // HOTFIX : nil cannit be assigned to a struct
+      if (exprVal.kind == ObjectKind::Nil)
+         context.scope->raiseError(errInvalidOperation, context.node);
    }
    context.writer->closeNode();
 
