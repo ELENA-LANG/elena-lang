@@ -100,8 +100,6 @@ public sealed Array<T> : Indexable<T>
       {
          system'InvalidArgumentException.raise();
       };
-            
-      ^ nil // !! never reached
    }
 
    setAt(int n, T item)
