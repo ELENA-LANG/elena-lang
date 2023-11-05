@@ -42,43 +42,19 @@ import extensions;
 //   
 //}
 
-//public sealed const struct XSymbol
-//{
-//   __ptr pointer;
-//
-//   constructor(pointer ptr)
-//   {
-//   }
-//
-//   static XSymbol Default
-//      = default/*nil*/;
-//}
-
-struct IncTestStruct
+public sealed const struct XSymbol
 {
-   int x := 0;
-   int y := 1;
+   __ptr pointer;
 
-//   act()
-//   {
-//      x++;
-//      y--;
-//   }
+   constructor(pointer ptr)
+   {
+   }
 
-//   assert()
-//   {
-//      Assert.ifTrue(x == 1);
-//      Assert.ifTrue(y == 0);
-//   }
+   static XSymbol Default
+      = default/*nil*/;
 }
 
 public program()
 {
-   IncTestStruct struct := new IncTestStruct();
-
-   var r2 := struct;
-//
-//   struct.act();
-//
-//   var r := struct;
+   XSymbol s := XSymbol.Default;
 }

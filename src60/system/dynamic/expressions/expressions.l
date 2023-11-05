@@ -1854,7 +1854,7 @@ namespace expressions
                   int len := imports.Length;
                   for(int i := 0, i < len, i++) {
                      var symbol := Symbol.tryLoad(imports[i], refName);
-                     if (symbol != default)
+                     if (symbol != Symbol.Default)
                      {
                         ^ ConstantFunction.load(symbol)
                      }

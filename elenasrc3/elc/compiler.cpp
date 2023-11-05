@@ -4503,7 +4503,6 @@ void Compiler :: writeObjectInfo(WriterContext& context, ObjectInfo info)
       //   writer.appendNode(BuildKey::MetaArray, info.reference);
       //   break;
       case ObjectKind::Nil:
-      case ObjectKind::Default:
          context.writer->appendNode(BuildKey::NilReference, 0);
          break;
       case ObjectKind::Terminator:
@@ -8035,12 +8034,6 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
    else exprVal = compileExpression(writer, scope, roperand,
       targetRef, EAttr::RetValExpected, nullptr);
 
-   if (exprVal.kind == ObjectKind::Default && _logic->isEmbeddable(*scope.moduleScope, targetRef)) {
-      ArgumentsInfo arguments;
-
-      exprVal = compileNewOp(writer, scope, roperand, mapClassSymbol(scope, targetRef), 0, arguments);
-   }
-
    WriterContext context = { &writer, &scope, loperand };
    if (!compileAssigningOp(context, target, exprVal))
       scope.raiseError(errInvalidOperation, loperand.parentNode());
@@ -9248,6 +9241,16 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
 {
    WriterContext context = { &writer, &scope, node };
    if (!_logic->isCompatible(*scope.moduleScope, { targetRef }, source.typeInfo, false)) {
+      if (source.kind == ObjectKind::Default) {
+         if (_logic->isEmbeddable(*context.scope->moduleScope, targetRef)) {
+            ArgumentsInfo arguments;
+
+            return compileNewOp(*context.writer, *context.scope, context.node,
+               mapClassSymbol(*context.scope, targetRef), 0, arguments);
+         }
+         else return { ObjectKind::Nil, { V_NIL } };
+      }
+
       if (source.typeInfo.typeRef == V_WRAPPER) {
          // unbox wrapper for the conversion
          source.typeInfo = { source.typeInfo.elementRef };
@@ -10056,7 +10059,14 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 
    bool autoMode = false;
    bool dynamicRequired = EAttrs::testAndExclude(mode, EAttr::DynamicObject);
-   ref_t outputRef = codeScope.getOutputRef();
+   ref_t outputRef = 0;
+   if (codeScope.isByRefHandler()) {
+      ObjectInfo byRefTarget = codeScope.mapByRefReturnArg();
+
+      outputRef = byRefTarget.typeInfo.typeRef;
+   }
+   else outputRef = codeScope.getOutputRef();
+
    if (outputRef == V_AUTO) {
       autoMode = true;
       outputRef = 0;
@@ -10082,15 +10092,6 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 
    if (codeScope.isByRefHandler()) {
       ObjectInfo byRefTarget = codeScope.mapByRefReturnArg();
-
-      if (retVal.kind == ObjectKind::Default && 
-         _logic->isEmbeddable(*scope.moduleScope, byRefTarget.typeInfo.typeRef)) 
-      {
-         ArgumentsInfo arguments;
-
-         retVal = compileNewOp(writer, scope, node, 
-            mapClassSymbol(scope, byRefTarget.typeInfo.typeRef), 0, arguments);
-      }
 
       compileAssigningOp(context, byRefTarget, retVal);
 
