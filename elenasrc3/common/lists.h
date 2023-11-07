@@ -961,7 +961,10 @@ namespace elena_lang
 
       T peek() const
       {
-         return _list.peek();
+         if (_list.count() != 0) {
+            return _list.peek();
+         }
+         return _defaultItem;
       }
 
       T pop()
@@ -969,7 +972,7 @@ namespace elena_lang
          if (_list.count() != 0) {
             return _list.cutTop();
          }
-         else return _defaultItem;
+         return _defaultItem;
       }
 
       void clear()

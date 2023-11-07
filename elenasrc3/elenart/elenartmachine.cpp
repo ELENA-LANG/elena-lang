@@ -263,6 +263,9 @@ int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
       i += getlength(ns) + 1;
    }
 
+   // HOTFIX : putting terminator
+   ((addr_t*)output)[len] = 0;
+
    return len;
 }
 

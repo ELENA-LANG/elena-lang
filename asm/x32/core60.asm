@@ -3666,7 +3666,7 @@ labMatching:
   cmovz edi, esi
 
   mov  edi, [edi - elVMTOffset]
-  mov  esi, [ebx + ecx * 4]
+  mov  esi, [ebx + ecx * 4 + 4]
 
 labNextBaseClass:
   cmp  esi, edi

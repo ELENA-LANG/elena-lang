@@ -30,6 +30,9 @@
    #define import         ::=
                                     "import" "(" "nameattr" "(" "identifier" "=" ident_quote ")" ")"; 
 
+   #define import         ::=
+                                    "import" "(" "nameattr" "(" "reference" "=" ref_quote ")" ")"; 
+
    #define member         ::=
 <= 
      system'dynamic'expressions'SymbolInfo ( 

@@ -63,15 +63,7 @@ void TreeScriptParser :: parseStatement(ScriptEngineReaderBase& reader, ScriptBo
 
          bm = reader.read();
 
-         if (key == SyntaxKey::character) {
-            // HOTFIX : to support character
-            ustr_t s = reader.lookup(bm);
-            QuoteString quote(s, s.length_pos());
-
-            writer.newNode(key, quote.str());
-
-         }
-         else if (bm.state == dfaInteger && reader.compare("0")) {
+         if (bm.state == dfaInteger && reader.compare("0")) {
             writer.newNode(key);
          }
          else writer.newNode(key, reader.lookup(bm));

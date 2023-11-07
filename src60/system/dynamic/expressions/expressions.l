@@ -257,6 +257,11 @@ namespace expressions
          };
             
          // second pass - the operation
+         Expression firstArg := target;
+         if (target.IsOperation && len > 0) {
+            firstArg := tempVariables.pop() 
+         };
+
          for (int i := 0, i < len, i += 1) {
             if (arguments[i].IsOperation) {
                tempVariables.pop().saveTo(list, scope, i + 1) 
@@ -266,12 +271,7 @@ namespace expressions
             }
          };
 
-         if (target.IsOperation && len > 0) {
-            tempVariables.pop().saveTo(list, scope, 0) 
-         }
-         else {
-            target.saveTo(list, scope, 0)
-         };
+         firstArg.saveTo(list, scope, 0);
                                     
          list.append(operation);                  
       }
@@ -861,10 +861,9 @@ namespace expressions
    {
       constructor(string o)
       {
-         if (o.Length == 0) {
-            this object := $0;
-         }
-         else this object := *(o.enumerator());
+         int n := intConvertor.convert(o.Substring(1));
+
+         this object := charConvertor.convert(n)
       }
    }
 

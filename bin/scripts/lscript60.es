@@ -5,6 +5,7 @@
    #define start          ::= $eof;
 
    #define member         ::= function;
+   #define member         ::= symbol;
 
    #define import         ::= 
 <=
@@ -64,6 +65,11 @@
      )
 =>;
 
+   #define symbol         ::= <= public_symbol ( => s_name "=" get_expression ";" <= ) =>;
+
+   #define method         ::= <= get_method ( => name ret_statement ";" <= ) =>;
+   #define method         ::= <= script_method ( => name f_parameters body <= ) =>;
+
    #define statement      ::= expression;
    #define statement      ::= ret_expr;
    #define statement      ::= "var" decl_variable;
@@ -74,6 +80,7 @@
    #define decl_variable  ::= <= expression ( assign_operation ( => new_variable ":=" expression <= ) ) =>;
 
    #define ret_expr       ::= <= returning ( => "^" expression <= ) =>;
+   #define ret_statement  ::= <= returning ( => "=" expression <= ) =>;
 
    #define branching      ::= 
 <= 
@@ -115,8 +122,18 @@
              )
 =>;
 
+   #define get_expression ::= <= get_expression ( => l5 <= ) =>;
    #define expression     ::= <= expression ( => l5 <= ) =>;
    #define expression     ::= <= expression ( => new_operation <= ) =>;
+
+   #define s_expression     ::= 
+<=
+        expression (
+=>
+                              s_object
+<=
+        )
+=>;
 
    #define l2_expression  ::= <= expression ( => l2 <= ) =>;
 
@@ -154,6 +171,7 @@
 
    #define args           ::= "(" ")";
    #define args           ::= "(" arg next_arg* ")";
+   #define args           ::= ":" s_expression;
 
    #define arg            ::= expression;
    #define next_arg       ::= "," arg;
@@ -177,8 +195,12 @@
                  )
 =>;
 
+   #define singleton      ::= <= nested ( => "{" method* "}" <= ) =>;
+
    #define object         ::= "(" expression ")";
+   #define object         ::= singleton;
    #define object         ::= <= object ( => terminal <= ) =>;
+   #define s_object       ::= <= object ( => terminal <= ) =>;
    #define variable       ::= <= object ( => identifier <= ) =>;
 
    #define terminal       ::= identifier;
@@ -201,6 +223,7 @@
    #define message        ::= <= message ( identifier = $identifier ) =>;
 
    #define name           ::= <= nameattr ( identifier = $identifier ) =>; 
+   #define s_name         ::= <= nameattr ( identifier = $identifier ) =>;
 
    #define not_bracket    ::= $if (!"(");
 

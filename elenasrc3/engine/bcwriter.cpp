@@ -3117,6 +3117,8 @@ void ByteCodeWriter :: saveExternOp(CommandTape& tape, BuildNode node, TapeScope
 void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
    ReferenceMap& paths, bool tapeOptMode, bool loopMode)
 {
+   bool weakLoop = loopMode;
+
    BuildNode current = node.firstChild();
    while (current != BuildKey::None) {
       switch (current.key) {
@@ -3139,11 +3141,13 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::BranchOp:
             saveBranching(tape, current, tapeScope, paths, tapeOptMode, loopMode);
+            weakLoop = false;
             break;
          case BuildKey::IntBranchOp:
          case BuildKey::IntConstBranchOp:
          case BuildKey::RealBranchOp:
             saveNativeBranching(tape, current, tapeScope, paths, tapeOptMode, loopMode);
+            weakLoop = false;
             break;
          case BuildKey::LoopOp:
             saveLoop(tape, current, tapeScope, paths, tapeOptMode);
@@ -3186,6 +3190,11 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
       }
    
       current = current.nextNode();
+   }
+
+   if (weakLoop) {
+      tape.write(ByteCode::CmpR, 0);
+      tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
    }
 }
 

@@ -1287,7 +1287,6 @@ ustr_t JITLinker :: retrieveResolvedAction(ref_t reference)
    return _mapper->retrieveAction(reference, dummy);
 }
 
-
 addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMask)
 {
    ReferenceInfo vmtReferenceInfo = referenceInfo;
