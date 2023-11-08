@@ -816,7 +816,12 @@ void ByteCodeTransformer :: transform(ByteCodeIterator trans_it, ByteCodeTrieNod
 
       switch (pattern.argType) {
          case ByteCodePatternType::Set:
-            if (pattern.argValue == 1) {
+            if (pattern.argValue == 3) {
+               (*trans_it).arg1 = arg.arg1;
+               trans_it.flush();
+               (*trans_it).arg2 = arg.arg2;
+            }
+            else if (pattern.argValue == 1) {
                (*trans_it).arg1 = arg.arg1;
             }
             else (*trans_it).arg1 = arg.arg2;

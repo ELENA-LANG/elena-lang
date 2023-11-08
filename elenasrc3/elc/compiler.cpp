@@ -617,6 +617,7 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, Express
                      default:
                         break;
                   }
+                  info.typeInfo = { symbolInfo.typeRef };
                }
             }
          }

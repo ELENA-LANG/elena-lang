@@ -179,6 +179,9 @@ namespace expressions
 //      static Expression GetDynamicProperty(Expression m, Expression t)
 //         = GetDynamicPropertyExpression.new(m, t);
 
+      static Expression Nested(DynamicSingleton expr)
+         = new NestedExpression(expr);          
+
       static Expression Return(Expression expr)
          = new ReturnExpression(expr);
 
@@ -1730,6 +1733,33 @@ namespace expressions
             
          ^ DynamicClass.create(list);
       }
+   }
+
+   public class NestedExpression : Expression
+   {
+      DynamicSingleton singleton;
+
+      constructor(DynamicSingleton singleton)
+      {
+         this singleton := singleton;
+      }
+
+      bool IsOperation = true;
+
+      declare(ExpressionScope parentScope)
+      {
+         parentScope.reserveStack(1);
+      }
+
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         var tape := singleton.compile(nil, scope);
+
+         list.append(ConstantFunction.load(tape));
+         if (index > 0) {
+            list.append(new SavingFunction(index));
+         }
+      }      
    }
 
    public class SymbolInfo

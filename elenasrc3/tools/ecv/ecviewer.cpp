@@ -150,10 +150,11 @@ void ByteCodeViewer :: printHelp()
    _presenter->print("<class>.<message>       - view a method byte codes\n");
    _presenter->print("<class>.<index>         - view a method specified by an index byte codes\n");
    _presenter->print("#<symbol>               - view symbol byte codes\n");
-   _presenter->print("-q                      - quit\n");
    _presenter->print("-b                      - toggle bytecode mode\n");
-   _presenter->print("-p                      - toggle pagination mode\n");
    _presenter->print("-h                      - toggle method hints mode\n");
+   _presenter->print("-p                      - toggle pagination mode\n");
+   _presenter->print("-q                      - quit\n");
+   _presenter->print("-t                      - toggle ignore-breakpoint mode\n");
 }
 
 const char* manifestParameters[4] = { "namespace","name     ","version  ","author   " };
@@ -612,6 +613,10 @@ void ByteCodeViewer :: printByteCodes(MemoryBase* section, pos_t address, int in
 
       ByteCodeUtil::read(reader, command);
 
+      // ignore a breakpoint if required
+      if (command.code == ByteCode::Breakpoint && _ignoreBreakpoints)
+         continue;
+
       printCommand(command, indent, labels, position);
       nextRow(row, pageSize);
    }
@@ -1055,6 +1060,10 @@ void ByteCodeViewer :: runSession()
             case 'b':
                _showBytecodes = !_showBytecodes;
                _presenter->print("Bytecode mode is %s", _showBytecodes ? "true" : "false");
+               break;
+            case 't':
+               _ignoreBreakpoints= !_ignoreBreakpoints;
+               _presenter->print("Ignore breakpoint mode is %s", _ignoreBreakpoints ? "true" : "false");
                break;
             case 'h':
                _showMethodInfo = !_showMethodInfo;

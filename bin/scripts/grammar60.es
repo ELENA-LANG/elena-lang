@@ -37,6 +37,20 @@
 <= 
      system'dynamic'expressions'SymbolInfo ( 
 =>
+                                   "symbol" "(" s_name symbol_expr ")"
+<=   ) =>;
+
+   #define member         ::=
+<= 
+     system'dynamic'expressions'SymbolInfo ( 
+=>
+                                   "public_symbol" "(" s_name symbol_expr ")"
+<=   ) =>;
+
+   #define member         ::=
+<= 
+     system'dynamic'expressions'SymbolInfo ( 
+=>
                                    "singleton" "(" s_name class_expr ")"
 <=   ) =>;
 
@@ -57,7 +71,15 @@
        )
 =>;
 
+  #define symbol_expr     ::= 
+<=
+       system'dynamic'expressions'DynamicExpressionSymbol (
+=>
+                                   "get_expression" "(" expression ")"
+<=     ) =>;
+
   #define class_member    ::= function;
+  #define class_member    ::= method;
 
   #define function        ::= 
 <=
@@ -68,6 +90,24 @@
        )
 =>;
 
+  #define method          ::= 
+<=
+       system'dynamic'expressions'MethodExpression (
+=>
+                                   "script_method" "(" m_name parameter_block? body ")"
+<=
+       )
+=>;
+
+  #define parameter_block ::=
+<=
+         system'dynamic'expressions'MethodParameterList (
+=>
+                                   param_str param_str*
+<=
+         )
+=>;
+
   #define parameter       ::= 
 <=
          system'dynamic'expressions'ScopeIdentifier (
@@ -76,6 +116,8 @@
 <=
          )
 =>;
+  #define param_str       ::= 
+                                   "parameter" "(" p_name ")";
 
   #define body            ::=
 <=
@@ -253,6 +295,15 @@
 
   #define object_expr     ::= "object" "(" object ")";
 
+  #define object_expr   ::= 
+<=
+     system'dynamic'expressions'NestedExpression (
+       system'dynamic'expressions'DynamicSingleton (
+=>
+                                   "nested" "(" class_member* ")"
+<=     ) 
+     )=>;
+
   #define new_object      ::=
 <=
                        system'dynamic'expressions'ClassIdentifierExpression ( 
@@ -312,6 +363,7 @@
   #define message         ::= "message" "(" identifier ")";
 
   #define s_name          ::= "nameattr" "(" identifier ")" ;
+  #define m_name          ::= "nameattr" "(" identifier ")" ;
   #define p_name          ::= "nameattr" "(" identifier ")" ;
 
   #define identifier      ::= "identifier" "=" ident_quote;

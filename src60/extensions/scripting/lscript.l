@@ -17,6 +17,16 @@ public singleton lscript
       ^ s();
    }
 
+   interpretLine(string script)
+   {
+      string full_script := "program=" + script + ";";
+
+      var ns := self.eval(full_script);
+    
+      var s := ns.program;
+      ^ s();
+   }
+
    interpretPath(string path)
    {
       var ns := self.evalPath(path);

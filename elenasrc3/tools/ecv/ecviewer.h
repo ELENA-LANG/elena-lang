@@ -41,6 +41,7 @@ namespace elena_lang
       bool               _pathMode;
       bool               _showBytecodes;
       bool               _showMethodInfo;
+      bool               _ignoreBreakpoints;
 
       MemoryBase* findProcedureCode(ustr_t referenceName);
       MemoryBase* findSymbolCode(ustr_t referenceName);
@@ -115,6 +116,7 @@ namespace elena_lang
          _pathMode = false;
          _showBytecodes = false;
          _showMethodInfo = false;
+         _ignoreBreakpoints = true;
       }
       virtual ~ByteCodeViewer()
       {

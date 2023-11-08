@@ -42,7 +42,6 @@
        <include>scripting\interpreter.l</include>
        <include>scripting\win_scripts.l</include>
        <include>scripting\lscript.l</include>
-       <include>scripting\tscript.l</include>
      </module>
      <module name="dynamic">
        <include>dynamic\json.l</include>
