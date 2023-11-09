@@ -14,8 +14,7 @@ procedure __setWndPtr(self, ptr)
 
   open       (2),[]
 
-  set        procedure:"system'win_core_routines'windProc"
-  store      sp:0
+  xstore     sp:0, procedure:"system'win_core_routines'windProc"
   peek       fp:ptr
   xassign    i:0
 

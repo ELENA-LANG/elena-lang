@@ -439,7 +439,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             addLabel(command.arg1 + commandPosition + 5, commandStr, labels);
             break;
          case ByteCode::AssignI:
-            addIArg(command.arg1, commandStr);
+            addArg(command.arg1, commandStr);
             break;
          default:
             addArg(command.arg1, commandStr);
@@ -456,6 +456,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             else addSecondArg(command.arg2, commandStr);
             break;
          case ByteCode::XStoreSIR:
+         case ByteCode::XStoreFIR:
             addArg(command.arg1, commandStr);
             addSecondRArg(command.arg2, commandStr, labels);
             break;

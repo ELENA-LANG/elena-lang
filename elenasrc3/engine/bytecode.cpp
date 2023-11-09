@@ -269,36 +269,40 @@ mssg_t ByteCodeUtil :: resolveMessageName(ustr_t messageName, ModuleBase* module
    return encodeMessage(actionRef, argCount, flags);
 }
 
+inline ref_t importRArg(ref_t arg, SectionScopeBase* target, ModuleBase* importer)
+{
+   if (arg != -1) {
+      ref_t mask = arg & mskAnyRef;
+      switch (mask) {
+         case mskMssgLiteralRef:
+         case mskMssgNameLiteralRef:
+            return target->importMessageConstant(importer, arg & ~mskAnyRef) | mask;
+            break;
+         case mskExtMssgLiteralRef:
+            return target->importExtMessageConstant(importer, arg & ~mskAnyRef) | mask;
+            break;
+         case mskExternalRef:
+            return target->importExternal(importer, arg & ~mskAnyRef) | mask;
+            break;
+         default:
+            return target->importReference(importer, arg & ~mskAnyRef) | mask;
+            break;
+      }
+   }
+   return arg;
+}
+
 void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* target, ModuleBase* importer)
 {
    if (isRCommand(command.code)) {
-      // HOTFIX : ignore -1
-      if (command.arg1 != -1) {
-         ref_t mask = command.arg1 & mskAnyRef;
-         switch (mask) {
-            case mskMssgLiteralRef:
-            case mskMssgNameLiteralRef:
-               command.arg1 = target->importMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
-               break;
-            case mskExtMssgLiteralRef:
-               command.arg1 = target->importExtMessageConstant(importer, command.arg1 & ~mskAnyRef) | mask;
-               break;
-            case mskExternalRef:
-               command.arg1 = target->importExternal(importer, command.arg1 & ~mskAnyRef) | mask;
-               break;
-            default:
-               command.arg1 = target->importReference(importer, command.arg1 & ~mskAnyRef) | mask;
-               break;
-         }
-      }      
+      command.arg1 = importRArg(command.arg1, target, importer);
    }
    else if (isMCommand(command.code)) {
       command.arg1 = target->importMessage(importer, command.arg1);
    }
 
    if (isR2Command(command.code)) {
-      ref_t mask = command.arg2 & mskAnyRef;
-      command.arg2 = target->importReference(importer, command.arg2 & ~mskAnyRef) | mask;
+      command.arg2 = importRArg(command.arg2, target, importer);
    }
 }
 
@@ -862,6 +866,12 @@ void ByteCodeTransformer :: transform(ByteCodeIterator trans_it, ByteCodeTrieNod
 
 }
 
+inline void skipImport(ByteCodeIterator& bc_it)
+{
+   while ((*bc_it).code != ByteCode::ImportOff)
+      ++bc_it;
+}
+
 bool ByteCodeTransformer :: apply(CommandTape& commandTape)
 {
    ByteCodePatterns  matchedOnes;
@@ -874,6 +884,10 @@ bool ByteCodeTransformer :: apply(CommandTape& commandTape)
    ByteCodeIterator bc_it = commandTape.start();
    while (!bc_it.eof()) {
       auto bc = *bc_it;
+
+      // HOTFIX : skip an optimization for import block due to issues with branhing
+      if (bc.code == ByteCode::ImportOn)
+         skipImport(bc_it);
 
       if (isOperational(bc.code)) {
          matched->add({ &trie });

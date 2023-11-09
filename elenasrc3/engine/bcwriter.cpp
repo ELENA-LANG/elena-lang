@@ -3180,9 +3180,10 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             saveYieldDispatch(tape, current, tapeScope, paths, tapeOptMode);
             break;
          case BuildKey::Path:
-         case BuildKey::Idle:
          case BuildKey::InplaceCall:
-            // ignore path node
+            // ignore special nodes
+            break;
+         case BuildKey::Idle:
             break;
          default:
             _commands[(int)current.key](tape, current, tapeScope);

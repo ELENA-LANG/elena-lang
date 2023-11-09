@@ -172,6 +172,7 @@ namespace elena_lang
       bool compileOpIN(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
          ReferenceMap& constants, bool skipRead);
       bool compileOpII(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
+      bool compileOpIR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileMR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead);
       bool compileNR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
          ReferenceMap& constants, bool skipRead);

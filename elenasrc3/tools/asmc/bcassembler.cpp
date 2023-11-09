@@ -640,6 +640,24 @@ bool ByteCodeAssembler :: compileOpII(ScriptToken& tokenInfo, MemoryWriter& writ
    return true;
 }
 
+bool ByteCodeAssembler :: compileOpIR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, bool skipRead)
+{
+   if (tokenInfo.compare(":"))
+      read(tokenInfo);
+
+   command.arg1 = readI(tokenInfo, skipRead);
+
+   read(tokenInfo, ",", ASM_COMMA_EXPECTED);
+
+   ref_t arg2 = readReference(tokenInfo);
+
+   ByteCodeUtil::write(writer, command.code, command.arg1, arg2);
+
+   read(tokenInfo);
+
+   return true;
+}
+
 int ByteCodeAssembler :: readArgList(ScriptToken& tokenInfo, ReferenceMap& locals, ReferenceMap& constants,
    int factor, bool allowSize)
 {
@@ -991,6 +1009,9 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::MovSIFI:
          case ByteCode::XMovSISI:
             return compileOpII(tokenInfo, writer, opCommand, true);
+         case ByteCode::XStoreSIR:
+         case ByteCode::XStoreFIR:
+            return compileOpIR(tokenInfo, writer, opCommand, true);
          case ByteCode::StoreFI:
          case ByteCode::CmpFI:
          case ByteCode::PeekFI:

@@ -16,11 +16,8 @@ In development:
   port:gui samples, db samples, xforms, elenavm / elt for linux
   --------------------------------------
 
-  * #602 : set r:xx, store sp:0 -> xstore fp:i, r
-  * #602 : set r:xx, store fp:0 -> xstore sp:i, r
-  * pass unit tests
-
   * anagram #132
+
   * gui samples
   * elenasm for linux
   * gui samples - agenda - critical error
