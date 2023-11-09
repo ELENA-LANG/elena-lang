@@ -39,6 +39,7 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86;
 
 constexpr int DEFAULT_MGSIZE              = 344064;
 constexpr int DEFAULT_YGSIZE              = 86016;
+constexpr int DEFAULT_SACKRESERV          = 0x200000;
 
 constexpr int MINIMAL_ARG_LIST            = 1;
 
@@ -55,6 +56,7 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86_64;
 
 constexpr int DEFAULT_MGSIZE              = 688128;
 constexpr int DEFAULT_YGSIZE              = 204800;
+constexpr int DEFAULT_SACKRESERV          = 0x200000;
 
 constexpr int MINIMAL_ARG_LIST            = 2;
 
@@ -127,7 +129,7 @@ int main()
       PathString appPath;
       getAppPath(appPath);
 
-      JITSettings defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, 1, true };
+      JITSettings defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_SACKRESERV, 1, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       Project          project(*appPath, CURRENT_PLATFORM, &Presenter::getInstance());
       WinLinker        linker(&errorProcessor, &WinImageFormatter::getInstance(&project));
@@ -170,6 +172,16 @@ int main()
                case 'r':
                   cleanMode = true;
                   break;
+               case 's':
+               {
+                  IdentifierString setting(argv[i] + 2);
+                  if (setting.compare("stackReserv:", 0, 12)) {
+                     ustr_t valStr = *setting + 12;
+                     int val = StrConvertor::toInt(valStr, 10);
+                     project.addIntSetting(ProjectOption::StackReserved, val);
+                  }
+                  break;
+               }
                case 't':
                {
                   IdentifierString configName(argv[i] + 2);

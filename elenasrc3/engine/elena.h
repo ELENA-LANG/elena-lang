@@ -203,6 +203,8 @@ namespace elena_lang
       virtual addr_t getDebugEntryPoint() = 0;
       virtual addr_t getTLSVariable() = 0;
 
+      virtual pos_t getStackReserved() = 0;
+
       virtual ~ImageProviderBase() = default;
    };
 
@@ -480,6 +482,7 @@ namespace elena_lang
    {
       pos_t    mgSize;
       pos_t    ygSize;
+      pos_t    stackReserved;
       pos_t    threadCounter;
       bool     classSymbolAutoLoad;
    };

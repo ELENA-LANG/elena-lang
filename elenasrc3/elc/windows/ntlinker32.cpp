@@ -31,10 +31,10 @@ void Win32NtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutabl
    image.characteristics |= IMAGE_FILE_32BIT_MACHINE;
 
    image.headerSize += IMAGE_SIZEOF_NT_OPTIONAL_HEADER;
+   image.stackInfo.reserve = provider.getStackReserved();
 
    // !! temporal
    image.stackInfo.commit = 0x1000;
-   image.stackInfo.reserve = 0x100000;
    image.heapInfo.commit = 0x1000;
    image.heapInfo.reserve = 0x100000;
 }

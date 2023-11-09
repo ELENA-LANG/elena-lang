@@ -12,7 +12,7 @@ In development:
   exp:using expression trees in real-life apps (see c#)
   ide:backlog, vm debugger, debugger watch - struct
   tools:backlog
-  prom:tutorial 2 - bytecodes / program entry / linker
+  prom:tutorial 2 - program entry / linker
   port:gui samples, db samples, xforms, elenavm / elt for linux
   --------------------------------------
 

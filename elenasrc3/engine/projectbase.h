@@ -57,6 +57,7 @@ namespace elena_lang
       GCYGSize,
       EHTableEntrySize,
       ThreadCounter,
+      StackReserved,
 
       ManifestName,
       ManifestVersion,

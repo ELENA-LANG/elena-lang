@@ -28,6 +28,7 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
 {
    _systemTarget = systemTarget;
    _tlsVariable = INVALID_ADDR;
+   _stackReserved = imageInfo.coreSettings.stackReserved;
 
    JITCompilerBase* compiler = jitCompilerFactory(loader, imageInfo.type);
 

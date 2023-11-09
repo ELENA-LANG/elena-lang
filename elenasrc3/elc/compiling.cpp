@@ -608,6 +608,7 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS
    imageInfo.autoClassSymbol = project.BoolSetting(ProjectOption::ClassSymbolAutoLoad, _defaultCoreSettings.classSymbolAutoLoad);
    imageInfo.coreSettings.mgSize = project.IntSetting(ProjectOption::GCMGSize, _defaultCoreSettings.mgSize);
    imageInfo.coreSettings.ygSize = project.IntSetting(ProjectOption::GCYGSize, _defaultCoreSettings.ygSize);
+   imageInfo.coreSettings.stackReserved = project.IntSetting(ProjectOption::StackReserved, _defaultCoreSettings.stackReserved);
    imageInfo.coreSettings.threadCounter = project.IntSetting(ProjectOption::ThreadCounter, _defaultCoreSettings.threadCounter);
    imageInfo.ns = project.StringSetting(ProjectOption::Namespace);
    imageInfo.withTLS = withTLS;

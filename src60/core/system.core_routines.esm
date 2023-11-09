@@ -4,6 +4,7 @@
 define EXCEPTION_ACCESS_VIOLATION  101h;
 define ELENA_ERR_DIVIDE_BY_ZERO    102h;
 define ELENA_ERR_OUT_OF_MEMORY     103h;
+define ELENA_ERR_STACKOVERFLOW     105h;
 
 define FUNCTION_MESSAGE       00000020h;
 define PROPERTY_MESSAGE       000000C0h;
@@ -2509,6 +2510,9 @@ procedure critical_exception_handler
   cmp         n:ELENA_ERR_OUT_OF_MEMORY
   jeq         labOutOfMemory
 
+  cmp         n:ELENA_ERR_STACKOVERFLOW
+  jeq         labStackOverflow
+
   xstore      sp:0, class : "system'CriticalException"
   set         mssgconst : "new[1]"
   throw
@@ -2525,7 +2529,12 @@ labDivisionByZero:
 
 labOutOfMemory:
   xstore      sp:0, class : "system'OutOfMemoryException"
-  set         mssgconst : "new[0]"
+  set         mssgconst : "new[1]"
+  throw
+
+labStackOverflow:
+  xstore      sp:0, class : "system'StackOverflowException"
+  set         mssgconst : "new[1]"
   throw
 
 end

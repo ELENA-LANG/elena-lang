@@ -114,6 +114,11 @@ LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
          ExceptionInfo->ContextRecord->Eip = CriticalHandler;
 
          return EXCEPTION_CONTINUE_EXECUTION;
+      case STATUS_STACK_OVERFLOW:
+         ExceptionInfo->ContextRecord->Edx = ExceptionInfo->ContextRecord->Eip;
+         ExceptionInfo->ContextRecord->Eax = ELENA_ERR_STACKOVERFLOW;
+         ExceptionInfo->ContextRecord->Eip = CriticalHandler;
+         return EXCEPTION_CONTINUE_EXECUTION;
       default:
          if (ExceptionInfo->ExceptionRecord->ExceptionCode < 0xE0000000) {
             ExceptionInfo->ContextRecord->Edx = ExceptionInfo->ContextRecord->Eip;

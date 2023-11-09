@@ -126,6 +126,23 @@ public class OutOfRangeException : Exception
       <= super new(message);
 }
 
+// --- StackOverflowException ---
+public class StackOverflowException : Exception
+{
+   /// Creates the exception
+   constructor new()
+      <= new("Stack overflow");
+
+   /// Creates the exception
+   constructor new(string message)
+   {
+      this message := message;
+   }
+
+   string toPrintable()
+      = message;
+}
+
 // --- AbortException ---
 
 public class AbortException : Exception,

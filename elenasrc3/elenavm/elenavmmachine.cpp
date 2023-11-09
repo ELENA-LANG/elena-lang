@@ -459,6 +459,7 @@ void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, const char* crirical
 
       _settings.jitSettings.ygSize = env->gc_yg_size;
       _settings.jitSettings.mgSize = env->gc_mg_size;
+      _settings.jitSettings.stackReserved = _settings.jitSettings.stackReserved;
    }
 }
 
