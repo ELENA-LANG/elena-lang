@@ -8,6 +8,8 @@ public interface SortingAgent
    }    
     
    abstract at(int index);
+   
+   abstract setAt(int index, object value);
     
    abstract exchange(int i, int j);
 }
@@ -33,6 +35,11 @@ public sealed ArraySortingAgent : SortingAgent
     
    at(int index)
       = a[index];
+
+   setAt(int index, object value)
+   {
+      a[index] := value;
+   }
 
    exchange(int i, int j)
    {
@@ -70,6 +77,13 @@ public sealed IndexerSortingAgent : SortingAgent
       a.Index := index;
         
       ^ *a
+   }
+    
+   setAt(int index, object value)
+   {
+      a.Index := index;
+        
+      a.Value := value
    }
 
    exchange(int i, int j)
