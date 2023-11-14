@@ -112,6 +112,7 @@ namespace elena_lang
       BoxingPtr,
       Conditional,
       ConditionalUnboxingRequired,
+      Weak
    };
 
    struct ObjectInfo

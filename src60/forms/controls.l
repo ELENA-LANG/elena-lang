@@ -34,6 +34,17 @@ public abstract class BaseControl
       }
    }
 
+   bool Visible
+   {
+      get() = _visible;
+        
+        
+      set(v)
+      {
+         _visible := v
+      }
+   }
+
    Parent = _parent;    
 
    set internal Parent(object o)

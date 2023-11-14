@@ -1123,7 +1123,7 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ustr_t identifier)
    Parameter local = locals.get(identifier);
    if (local.offset != -1) {
       if (local.size > 0) {
-         return { ObjectKind::LocalAddress, local.typeInfo, local.offset };
+         return { ObjectKind::LocalAddress, local.typeInfo, local.offset};
       }
       else return { ObjectKind::Local, local.typeInfo, local.offset };
    }
@@ -6965,6 +6965,9 @@ Compiler::MessageResolution Compiler :: resolveMessageAtCompileTime(BuildTreeWri
 {
    MessageResolution resolution = {};
 
+   if (target.mode == TargetMode::Weak)
+      return { weakMessage };
+
    ref_t targetRef = retrieveStrongType(scope, target);
 
    // try to resolve the message as is
@@ -7272,7 +7275,8 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
    ref_t targetRef = retrieveStrongType(scope, target);
 
    CheckMethodResult result = {};
-   bool found = _logic->resolveCallType(*scope.moduleScope, targetRef, resolution.message, result);
+   bool found = target.mode != TargetMode::Weak 
+      ? _logic->resolveCallType(*scope.moduleScope, targetRef, resolution.message, result) : false;
    if (found) {
       switch (result.visibility) {
          case Visibility::Private:
@@ -7342,7 +7346,7 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          else scope.raiseError(errUnknownMessage, findMessageNode(node));
       }
       else {
-         bool weakTarget = targetRef == scope.moduleScope->buildins.superReference || result.withCustomDispatcher;
+         bool weakTarget = targetRef == scope.moduleScope->buildins.superReference || result.withCustomDispatcher || target.mode == TargetMode::Weak;
 
          // treat it as a weak reference
          targetRef = 0;
@@ -7640,6 +7644,9 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
 Compiler::MessageResolution Compiler :: resolveByRefHandler(BuildTreeWriter& writer, ObjectInfo source, ExprScope& scope, ref_t expectedRef,
    mssg_t weakMessage, ref_t& signatureRef, bool noExtensions)
 {
+   if (source.mode == TargetMode::Weak)
+      return {};
+
    ref_t targetRef = retrieveStrongType(scope, source);
 
    pos_t argCount = 0;
@@ -7779,8 +7786,8 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
          if (!test(messageRef, FUNCTION_MESSAGE))
             arguments.add(source);
 
-         mssg_t resolvedMessage = _logic->resolveSingleDispatch(*scope.moduleScope,
-            retrieveType(scope, source), messageRef);
+         mssg_t resolvedMessage = source.mode != TargetMode::Weak ? _logic->resolveSingleDispatch(*scope.moduleScope,
+            retrieveType(scope, source), messageRef) : 0;
 
          ref_t expectedSignRef = 0;
          if (resolvedMessage)
@@ -8967,6 +8974,11 @@ ObjectInfo Compiler :: defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInf
          invalid = true;
          break;
    }
+
+   if (EAttrs::test(attrs, EAttr::Weak)) {
+      assert(retVal.mode == TargetMode::None);
+      retVal.mode = TargetMode::Weak;
+   }      
 
    return retVal;
 }

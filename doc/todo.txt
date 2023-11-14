@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 6.0 - redux ###
   === Iteration 19 ===
-  dev: #613, patterns, #608, #623, #629
+  dev: #613, patterns, #608, #629
   op:github actions : x86
   opt:#601, #602
   maint:backlog, #616, system module warnings
@@ -16,16 +16,14 @@ In development:
   port:gui samples, db samples, xforms, elenavm / elt for linux
   --------------------------------------
 
-  * weak operation
-  * #601 : - x + x - avoid double boxing
+  * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
 
-  * elenasm for linux
+  * #623 - Overriding property set accessor
 
-  * gui panel : not visible
-  * gui panel : support resize 
   * gui samples - c_a_g
   * gui samples - agenda - critical error
   * gui samples
+  * gui panel : support resize 
   * #601
 
   === Iteration 20 ===

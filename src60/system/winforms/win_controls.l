@@ -1,4 +1,5 @@
 import system;
+import system'drawing;
 
 // --- classes ---
 public const wide ButtonClass = "Button"w;
@@ -100,6 +101,36 @@ public sealed const struct WindowHandle
       ^ (visible != 0)
    }
 
+   setChecked(int n)
+   {
+      extern USER32.SendMessageW(_handle, BM_SETCHECK, n, 0)
+   }
+
+   bool isChecked()
+   {
+      int r := extern USER32.SendMessageW(_handle, BM_GETCHECK, 0, 0);
+
+	  ^ (r == BST_CHECKED)
+   }    
+
+   setVisible(int n)
+   {
+      extern USER32.ShowWindow(_handle, n)
+   }
+    
+   bool isVisible()
+   {
+      int visible := extern USER32.IsWindowVisible(_handle);
+        
+      ^ (visible != 0)
+   }
+
+   get HDC HDC()
+   {
+      HDC dc := extern USER32.GetDC(_handle);
+
+      ^ dc
+   }
 }
 
 WindowHandle defaultHandle

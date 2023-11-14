@@ -1,11 +1,14 @@
 import system'winforms;
 import system'collections;
 import system'runtime;
+import system'drawing;
 
 // --- IControl ---
 
 public interface IControl
 {
+   get abstract object Control();
+
    abstract IControl retrieve(Handle handle);
 
    abstract open();
@@ -23,6 +26,8 @@ public abstract class BaseWinControl : BaseControl
       <= super new()
    {
    }
+
+   get Control() = self;
 
    internal abstract createHandle();
 
@@ -104,6 +109,35 @@ public abstract class BaseWinControl : BaseControl
       };
             
       ^ _caption
+   }
+
+   bool Visible
+   {
+      set(bool v)
+      {
+         super.Visible := v;
+            
+         ifnot(nil == _handle)
+         {
+            _handle.setVisible(_visible ? 5 : 0);
+         }
+      }
+   }
+
+   bool Enabled
+   {
+      set(value)
+      {
+         super.Enabled := value;
+            
+         ifnot(nil == _handle)
+         {
+            int val := _enabled ? -1 : 0;
+                
+            _handle.setEnabled(val)
+         }
+            
+      } 
    }
 
    setRegion(int x, int y, int width, int height)
@@ -367,6 +401,71 @@ public sealed class Button : BaseButton, interface<IControl>
 
 }
 
+// --- RadioButton ---
+
+public closed class RadioButton : BaseButton, interface<IControl>
+{
+   bool _checked;
+    
+   constructor new()
+      <= super new()
+   {
+      _checked := false
+   }
+    
+   constructor new(string caption)
+      <= new()
+   {
+      _checked := false;
+        
+      self.Caption := caption
+   }
+
+   bool Checked
+   {
+      get()
+      {
+         ifnot(nil == _handle)
+            { _checked := _handle.isChecked() };
+                
+         ^ _checked
+      }
+        
+      set(v)
+      {
+         _checked := v;
+            
+         ifnot(nil == _handle)
+         {
+            _handle.setChecked(v ? BST_CHECKED : BST_UNCHECKED)
+         }
+      }
+   }
+
+   internal createHandle()
+   {
+      WindowHandle parent := _parent;
+        
+      int styles := WS_CHILD | BS_AUTORADIOBUTTON;
+      self.updateStyles(ref styles);
+        
+      _region.read(ref int x, ref int y, ref int width, ref int height);
+        
+      _handle := new WindowHandle(
+                        0,
+                        ButtonClass, 
+                        cast wide(_caption), 
+                        styles,
+                        x, y, width, height,
+                        parent, 
+                        CurrentInstance,
+                        UnsafePointer.Default);
+                        
+      if(_checked)
+         { self.Checked := true }
+   }
+}
+
 // --- Paintbox ---
 
 class PaintboxListener : WindowCallback
@@ -473,13 +572,13 @@ public abstract class BasePanel : BaseWinContainer
       _controls.append(control)        
    }
 
-//   internal appendControlInternal(ImageList control)
-//    {
-//        control.Parent := self;
-//        
-//        theControls.append(control)        
-//    }
-//    
+   internal appendControlInternal(ImageList control)
+   {
+      control.Parent := self;
+        
+      _controls.append(control)        
+   }
+    
 //    int Width
 //    {
 //        set(int v)
@@ -554,14 +653,14 @@ public sealed class Panel : BasePanel, interface<IControl>
    {
    }
     
-//    appendControl(BaseControl control)
-//    {
-//        self.appendControlInternal(control);
-//    }
-//    appendControl(ImageList control)
-//    {
-//        self.appendControlInternal(control);
-//    }
+   appendControl(BaseControl control)
+   {
+      self.appendControlInternal(control);
+   }
+   appendControl(ImageList control)
+   {
+      self.appendControlInternal(control);
+   }
 
    internal createHandle()
    {
@@ -618,7 +717,7 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
 
       int styles := WS_CHILD | WS_CLIPSIBLINGS;
       if(_visible)
-            { styles := styles || WS_VISIBLE };
+            { styles := styles | WS_VISIBLE };
                         
       _region.read(ref int x, ref int y, ref int width, ref int height);
         
@@ -637,18 +736,77 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
       if(_selected != -1 && nil != onIndexChanged)
          { onIndexChanged(self) }
    }
-   
+
+   int SelectedIndex
+   {
+      get() = _selected;
+        
+      set(n)
+      {
+         ifnot(-1 == _selected)
+            { self.setChecked(false) };
+            
+         _selected := n;
+        
+         self.setChecked(true);
+        
+         onIndexChanged.?(self);
+      }
+   }
+
+   private setChecked(value)
+   {
+      int len := _controls.Length;
+      IControl current;
+      for (int i := 1, i < len, i += 1) {
+         current := _controls[i];
+         int index := i - 1;
+         if (index == _selected)
+         {
+            current.Control.Checked := value;
+                
+            ^ self
+         }
+      };
+   }
+
+   appendItem(string s)
+   {
+      self.appendControlInternal(RadioButton.new(s));
+   }
 }
 
 // --- ImageList ---
 
 public sealed class ImageList : Object, interface<IControl>
 {
+   object      _parent;
+   List<Image> _images; 
+
    constructor new()
    {
 //        theIndex := 0;
-//        theImages := new List<Image>();
+      _images := new List<Image>();
 //        
 //        theSize :=  new Dimension(50, 50)
    }
+
+   Parent = _parent;    
+
+   set internal Parent(object o)
+   {
+      _parent := o
+   }
+
+   open()
+   {
+      WindowHandle parent := _parent;
+      HDC parentDC := parent.HDC;        
+
+      int len := _images.Length;
+      for (int i := 0, i < len, i += 1) {
+         _images[i].open(parentDC)
+      }
+   }
+
 }

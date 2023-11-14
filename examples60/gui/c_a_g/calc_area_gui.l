@@ -46,148 +46,148 @@ public class MainWindow : SDIDialog
       pnlFormula   := Panel.new();
       self.appendControl:pnlFormula;
 
-//        // Text Box
-//        valUm        := Edit.new();
-//        valDois      := Edit.new();
-//        valTres      := Edit.new();
-//        self
-//            .appendControl:valUm
-//            .appendControl:valDois
-//            .appendControl:valTres;
-//
-//        // Buttons
-//        BtmCalc      := Button.new();
-//        BtmInfo      := Button.new();
-//        BtmSalv      := Button.new();
-//        BtmSair      := Button.new();
-//        self
-//            .appendControl:BtmCalc
-//            .appendControl:BtmInfo
-//            .appendControl:BtmSalv
-//            .appendControl:BtmSair;
-//
-//        // Labels
-//        valor        := Label.new();
-//        info         := Label.new();
-//        letter1      := Label.new();
-//        letter2      := Label.new();
-//        letter3      := Label.new();
-//        self
-//            .appendControl:valor
-//            .appendControl:info
-//            .appendControl:letter1
-//            .appendControl:letter2
-//            .appendControl:letter3;
-//
-//        // Radio Button
-//        Tconta       := RadioButtonGroup.new();
-//		Econta1      := RadioButtonGroup.new();
-//		Econta2      := RadioButtonGroup.new();
-//		Econta3      := RadioButtonGroup.new();
-//        Econta4      := RadioButtonGroup.new();
-//        self
-//            .appendControl:Tconta
-//            .appendControl:Econta1
-//            .appendControl:Econta2
-//            .appendControl:Econta3
-//            .appendControl:Econta4;
-//
-//        // Images Formulas
-//        thePaintbox  := Imagebox.new();
-//        theImageList := ImageList.new();
-//        pnlFormula 
-//            .appendControl:theImageList
-//            .appendControl:thePaintbox;
-//        // -----------------------------------------------------------
+      // Text Box
+      valUm        := Edit.new();
+      valDois      := Edit.new();
+      valTres      := Edit.new();
+      self
+         .appendControl:valUm
+         .appendControl:valDois
+         .appendControl:valTres;
+
+      // Buttons
+      BtmCalc      := Button.new();
+      BtmInfo      := Button.new();
+      BtmSalv      := Button.new();
+      BtmSair      := Button.new();
+      self
+         .appendControl:BtmCalc
+         .appendControl:BtmInfo
+         .appendControl:BtmSalv
+         .appendControl:BtmSair;
+
+      // Labels
+      valor        := Label.new();
+      info         := Label.new();
+      letter1      := Label.new();
+      letter2      := Label.new();
+      letter3      := Label.new();
+      self
+         .appendControl:valor
+         .appendControl:info
+         .appendControl:letter1
+         .appendControl:letter2
+         .appendControl:letter3;
+
+      // Radio Button
+      Tconta       := RadioButtonGroup.new();
+      Econta1      := RadioButtonGroup.new();
+      Econta2      := RadioButtonGroup.new();
+      Econta3      := RadioButtonGroup.new();
+      Econta4      := RadioButtonGroup.new();
+      self
+         .appendControl:Tconta
+         .appendControl:Econta1
+         .appendControl:Econta2
+         .appendControl:Econta3
+         .appendControl:Econta4;
+
+      // Images Formulas
+      _paintbox  := Imagebox.new();
+      _imageList := ImageList.new();
+      pnlFormula 
+         .appendControl:_imageList
+         .appendControl:_paintbox;
+      // -----------------------------------------------------------
 
       // Form ------------------------------------------------------------------------
       self.setRegion(250, 200, 600, 400);
       self.Caption := "Calc. Area GUI :-------------------------: ver. 0.5";
 
-//        // Panels ----------------------------------------------------------------------
-//        pnlFormula.setRegion(190, 200, 400, 170);
-//        pnlFormula.Caption := "Formula";            
-//
-//        // Radio Button ----------------------------------------------------------------
-//        Tconta.setRegion(7, 1, 150, 100);
-//        Tconta.Caption := "Escolha do calculo";
-//        Tconta
-//            .appendItem:"&Paralelogramos"
-//            .appendItem:"&Trapezio"
-//            .appendItem:"&Circulos"
-//            .appendItem:"&Triangulos";
-//
-////        Econta1
-//        Econta1.setRegion(7, 105, 150, 100);
-//        Econta1.Caption := " Escolha do calculo ";
-//        Econta1
-//            .appendItem:"&Retangulo"
-//            .appendItem:"&Quadrado"
-//            .appendItem:"&Paralelogramo"
-//            .appendItem:"&Losango";
-//
-//        Econta2.setRegion(7, 105, 150, 100);
-//        Econta2.Caption := " Escolha do calculo ";
-//        Econta2
-//            .appendItem:"&Retangulo"
-//            .appendItem:"&Isosceles"
-//            .appendItem:"&Escaleno";
-//        Econta2.Visible := false;
-//
-//        Econta3.setRegion(7, 105, 150, 100);
-//        Econta3.Caption := " Escolha do calculo ";
-//        Econta3
-//            .appendItem:"&Circulo"
-//            .appendItem:"&Coroa circular"
-//            .appendItem:"&Setor circular";
-//        Econta3.Visible := false;
-//
-//        Econta4.setRegion(7, 105, 150, 100);
-//        Econta4.Caption := " Escolha do calculo ";
-//        Econta4
-//            .appendItem:"&Qualquer"
-//            .appendItem:"&Retangulo"
-//            .appendItem:"&Func dos lados"
-//            .appendItem:"&Retangulo"
-//            .appendItem:"&Func lds ang";
-//        Econta4.Visible := false;
-//
-//        Tconta.SelectedIndex := 0;
-//        Econta1.SelectedIndex := 0;
-//
-//        // Text Box ---------------------------------------------------------------------
-//        valUm.setRegion(185, 10, 150, 22);
-//
-//        valDois.setRegion(185, 40, 150, 22);
-//        
-//        valTres.setRegion(185, 70, 150, 22);
-//
-//        // Buttons -----------------------------------------------------------------------
-//        BtmCalc.setRegion(430, 10, 150, 22);
-//        BtmCalc.Caption := "Calcular";
-//        
-//        BtmInfo.setRegion(430, 40, 150, 22);
-//        BtmInfo.Caption := "Infos";
-//        
-//        BtmSalv.setRegion(430, 70, 150, 22);
-//        BtmSalv.Caption := "Salvar";
-//
-//        BtmSair.setRegion(430, 100, 150, 22);
-//        BtmSair.Caption := "Sair";
-//
-//        // Labels ------------------------------------------------------------------------
-//        valor.setRegion(170, 105, 245, 22);
-//        valor.Caption := "Res: ";
-//        
-//        info.setRegion(170, 135, 250, 22);
-//        info.Caption := "Info: ";
-//        
-//        letter1.setRegion(170, 15, 14, 22);
-//        
-//        letter2.setRegion(170, 45, 14, 22);
-//        
-//        letter3.setRegion(170, 75, 14, 22);
-//
+      // Panels ----------------------------------------------------------------------
+      pnlFormula.setRegion(190, 200, 400, 170);
+      pnlFormula.Caption := "Formula";            
+
+      // Radio Button ----------------------------------------------------------------
+      Tconta.setRegion(7, 1, 150, 100);
+      Tconta.Caption := "Escolha do calculo";
+      Tconta
+         .appendItem:"&Paralelogramos"
+         .appendItem:"&Trapezio"
+         .appendItem:"&Circulos"
+         .appendItem:"&Triangulos";
+
+      // Econta1
+      Econta1.setRegion(7, 105, 150, 100);
+      Econta1.Caption := " Escolha do calculo ";
+      Econta1
+         .appendItem:"&Retangulo"
+         .appendItem:"&Quadrado"
+         .appendItem:"&Paralelogramo"
+         .appendItem:"&Losango";
+
+      Econta2.setRegion(7, 105, 150, 100);
+      Econta2.Caption := " Escolha do calculo ";
+      Econta2
+         .appendItem:"&Retangulo"
+         .appendItem:"&Isosceles"
+         .appendItem:"&Escaleno";
+      Econta2.Visible := false;
+
+      Econta3.setRegion(7, 105, 150, 100);
+      Econta3.Caption := " Escolha do calculo ";
+      Econta3
+         .appendItem:"&Circulo"
+         .appendItem:"&Coroa circular"
+         .appendItem:"&Setor circular";
+      Econta3.Visible := false;
+
+      Econta4.setRegion(7, 105, 150, 100);
+      Econta4.Caption := " Escolha do calculo ";
+      Econta4
+         .appendItem:"&Qualquer"
+         .appendItem:"&Retangulo"
+         .appendItem:"&Func dos lados"
+         .appendItem:"&Retangulo"
+         .appendItem:"&Func lds ang";
+      Econta4.Visible := false;
+
+      Tconta.SelectedIndex := 0;
+      Econta1.SelectedIndex := 0;
+
+      // Text Box ---------------------------------------------------------------------
+      valUm.setRegion(185, 10, 150, 22);
+
+      valDois.setRegion(185, 40, 150, 22);
+        
+      valTres.setRegion(185, 70, 150, 22);
+
+      // Buttons -----------------------------------------------------------------------
+      BtmCalc.setRegion(430, 10, 150, 22);
+      BtmCalc.Caption := "Calcular";
+        
+      BtmInfo.setRegion(430, 40, 150, 22);
+      BtmInfo.Caption := "Infos";
+        
+      BtmSalv.setRegion(430, 70, 150, 22);
+      BtmSalv.Caption := "Salvar";
+
+      BtmSair.setRegion(430, 100, 150, 22);
+      BtmSair.Caption := "Sair";
+
+      // Labels ------------------------------------------------------------------------
+      valor.setRegion(170, 105, 245, 22);
+      valor.Caption := "Res: ";
+        
+      info.setRegion(170, 135, 250, 22);
+      info.Caption := "Info: ";
+        
+      letter1.setRegion(170, 15, 14, 22);
+        
+      letter2.setRegion(170, 45, 14, 22);
+        
+      letter3.setRegion(170, 75, 14, 22);
+
 //        // Image Formula -----------------------------------------------------------------
 //        thePaintbox.setRegion(12, 22, 379, 139);
 //

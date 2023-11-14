@@ -9,6 +9,7 @@ mkdir -p /usr/lib/elena/core/amd64/
 mkdir -p /usr/lib/elena/lib60_64
 
 cp ../../bin/libelenart60_64.so /usr/lib/elena/
+cp ../../bin/libelenasm60_64.so /usr/lib/elena/
 # cp ../bin/libelenavm.so /usr/lib/elena/
 cp ../../bin/elena64-cli /usr/bin/
 

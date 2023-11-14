@@ -101,6 +101,8 @@
      </module>
      <module name="drawing">
        <include>drawing\common.l</include>
+       <include>drawing\win_handles.l</include>
+       <include>drawing\win_graphics.l</include>
      </module>
      <module name="winforms">
        <include>winforms\win_common.l</include>

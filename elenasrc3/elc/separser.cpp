@@ -42,6 +42,14 @@ ScriptParser :: ScriptParser()
    _Release = (void(__cdecl*)(void*))_library->loadFunction("ReleaseSMLA");
 
 #else
+
+   _library = new WinSysLibraryLoader(SCRIPTENGINE_LIB);
+
+   *(void **)(&_InterpretScript) = _library.loadFunction("InterpretScriptSMLA");
+   *(void **)(&_InterpretFile) = _library.loadFunction("InterpretFileSMLA");
+   *(void **)(&_GetStatus) = _library.loadFunction("GetStatusSMLA");
+   *(void **)(&_Release) = _library.loadFunction("ReleaseSMLA");
+
 #endif
 }
 

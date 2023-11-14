@@ -1,8 +1,27 @@
 import extensions;
 
+A
+{
+   string _caption;
+
+   string Caption
+   {
+      set(string s)
+      {
+         _caption := s;
+      }
+      
+      set(wide s)
+      {
+         _caption := string cast(s);
+      }
+   }
+}
+
 public program()
 {
-   int x := 2;
+   auto a := new A();
 
-   var n := weak x.add:x;
+   a.Caption := "Hello";
+   a.Caption := "Hello"w;
 }

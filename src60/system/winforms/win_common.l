@@ -45,6 +45,9 @@ public const int MB_RETRYCANCEL       = 00000005h;
 public const int MB_YESNO             = 00000004h;
 public const int MB_YESNOCANCEL       = 00000003h;
 
+public const int BM_SETCHECK          = 00F1h;
+public const int BM_GETCHECK          = 00F0h;
+
 public const int IDNO                 = 7;
 public const int IDOK                 = 1;
 public const int IDRETRY              = 4;
