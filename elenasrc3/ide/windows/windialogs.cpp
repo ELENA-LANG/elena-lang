@@ -191,7 +191,7 @@ int WinDialog :: show()
 
 void WinDialog :: clearComboBoxItem(int id)
 {
-   int counter = ::SendDlgItemMessage(_handle, id, CB_GETCOUNT, 0, 0);
+   LRESULT counter = ::SendDlgItemMessage(_handle, id, CB_GETCOUNT, 0, 0);
    while (counter > 0) {
       ::SendDlgItemMessage(_handle, id, CB_DELETESTRING, 0, 0);
 

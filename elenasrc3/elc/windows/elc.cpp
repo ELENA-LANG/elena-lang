@@ -192,6 +192,9 @@ int main()
                case 'p':
                   project.setBasePath(argv[i] + 2);
                   break;
+               case 'v':
+                  process.setVerboseOn();
+                  break;
                case 'w':
                   if (argv[i][2] == '0') {
                      errorProcessor.setWarningLevel(WarningLevel::Level0);

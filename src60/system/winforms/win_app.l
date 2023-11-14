@@ -36,7 +36,7 @@ public sealed class SDIApplication
 
    error(string caption, Exception e)
    {
-      messageBox.open("ELENA", e.Message, MB_ICONEXCLAMATION);
+      messageBox.open("ELENA", /*e.Message*/e.toPrintable(), MB_ICONEXCLAMATION);
    }   
 
    stop()

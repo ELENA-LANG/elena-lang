@@ -1,5 +1,6 @@
 import system'winforms;
 import system'collections;
+import system'runtime;
 
 // --- IControl ---
 
@@ -364,4 +365,290 @@ public sealed class Button : BaseButton, interface<IControl>
                         UnsafePointer.Default)                        
    }
 
+}
+
+// --- Paintbox ---
+
+class PaintboxListener : WindowCallback
+{
+    Paintbox _owner;
+    
+    constructor(Paintbox owner)
+    {
+        _owner := owner
+    }
+}
+
+public closed class Paintbox : BaseWinControl, interface<IControl>
+{
+   constructor new()
+      <= super new()
+   {
+//        theCanvas := new Canvas()
+   }
+
+   internal createHandle()
+   {
+      WindowHandle parent := _parent;
+
+      int styles := WS_CHILD;
+      if(_visible)
+         { styles := styles | WS_VISIBLE };
+                        
+      _region.read(ref int x, ref int y, ref int width, ref int height);
+       
+      pointer paramPtr := PermVectorTable.allocate(new PaintboxListener(self)); 
+
+      _handle := new WindowHandle(
+                        WS_EX_TRANSPARENT,
+                        PaintboxClass,
+                        cast wide(_caption),
+                        styles,
+                        x, y, width, height,
+                        parent,
+                        CurrentInstance,
+                        paramPtr)
+   }
+}
+
+public sealed class Imagebox : Paintbox
+{
+   constructor new()
+      <= super new()
+   {
+//      theNeedToRefresh := false
+   }
+}
+
+// --- Frame ---
+
+public sealed class Frame : BaseWinControl, interface<IControl>
+{
+   constructor new()
+      <= super new()
+   {
+   }
+   
+   internal createHandle()
+   {
+      WindowHandle parent := _parent;
+        
+      int styles := WS_CHILD | BS_GROUPBOX;
+      if(_visible)
+         styles := styles | WS_VISIBLE;
+        
+      _region.read(ref int x, ref int y, ref int width, ref int height);
+        
+      _handle := new WindowHandle(
+                        WS_EX_TRANSPARENT,
+                        ButtonClass, 
+                        cast wide(_caption), 
+                        styles,
+                        x, y, width, height,
+                        parent, 
+                        CurrentInstance,
+                        UnsafePointer.Default)
+   }
+}
+
+// --- BasePanel ---
+
+public abstract class BasePanel : BaseWinContainer
+{
+   Frame _frame;
+
+   protected constructor new()
+      <= super new()
+   {
+      _frame := Frame.new();
+
+      // NOTE : a frame should be the first element
+      self.appendControlInternal:_frame
+   }
+
+   internal appendControlInternal(BaseControl control)
+   {
+      control.Parent := self;
+
+      _controls.append(control)        
+   }
+
+//   internal appendControlInternal(ImageList control)
+//    {
+//        control.Parent := self;
+//        
+//        theControls.append(control)        
+//    }
+//    
+//    int Width
+//    {
+//        set(int v)
+//        {
+//            super.Width := v;
+//            
+//            theFrame.Width := v
+//        }        
+//    }
+//    
+//    int Height
+//    {
+//        set(int h)
+//        {
+//            super.Height := h;
+//            
+//            theFrame.Height := h
+//        }
+//    }
+            
+   setRegion(int x, int y, int width, int height)
+   {
+      super.setRegion(x, y, width, height);
+        
+      _frame.setRegion(0, 0, width, height);
+   }
+    
+//   string Caption
+//   {
+//      set(string caption)
+//      {
+//            theFrame.Caption := caption
+//      }
+//        
+//      set(wide caption)
+//      {
+//         theFrame.Caption := caption
+//      }
+//   }    
+
+   set Caption(string s)
+   {
+      _frame.Caption := s
+   }
+    
+   set Caption(wide s)
+   {
+      _frame.Caption := s
+   }
+
+//    internal resize(WindowHandle handle, int width, int height)
+//    {
+//        theFrame.Width := width;
+//        theFrame.Height := height
+//    }    
+}
+
+class PanelListener : WindowCallback
+{
+   Panel _owner;
+    
+   constructor(Panel owner)
+   {
+      _owner := owner
+   }    
+}
+
+public sealed class Panel : BasePanel, interface<IControl>
+{
+   constructor new()
+      <= super new()
+   {
+   }
+    
+//    appendControl(BaseControl control)
+//    {
+//        self.appendControlInternal(control);
+//    }
+//    appendControl(ImageList control)
+//    {
+//        self.appendControlInternal(control);
+//    }
+
+   internal createHandle()
+   {
+      WindowHandle parent := _parent;
+
+      int styles := WS_CHILD | WS_CLIPSIBLINGS;
+      if(_visible)
+         { styles := styles | WS_VISIBLE };
+
+      _region.read(ref int x, ref int y, ref int width, ref int height);
+
+      pointer paramPtr := PermVectorTable.allocate(new PanelListener(self));
+
+      _handle := new WindowHandle(
+                        WS_EX_CONTROLPARENT,
+                        PanelClass,
+                        cast wide(_caption),
+                        styles,
+                        x, y, width, height,
+                        parent,
+                        CurrentInstance,
+                        paramPtr)
+                        
+   }
+}
+
+// --- RadioButtonGroup ---
+
+class RadioButtonGroupListener : WindowCallback
+{
+   RadioButtonGroup _owner;
+
+   constructor(RadioButtonGroup owner)
+   {
+      _owner := owner
+   }
+}
+
+public sealed class RadioButtonGroup : BasePanel, interface<IControl>
+{
+   int   _selected;
+
+   Func1 onIndexChanged : event;
+    
+   constructor new()
+        <= super new()
+   {
+      _selected := -1
+   }
+
+   internal createHandle()
+   {
+      WindowHandle parent := _parent;
+
+      int styles := WS_CHILD | WS_CLIPSIBLINGS;
+      if(_visible)
+            { styles := styles || WS_VISIBLE };
+                        
+      _region.read(ref int x, ref int y, ref int width, ref int height);
+        
+      pointer paramPtr := PermVectorTable.allocate(new RadioButtonGroupListener(self));
+
+      _handle := new WindowHandle(
+                        WS_EX_CONTROLPARENT,
+                        PanelClass,
+                        cast wide(_caption),
+                        styles,
+                        x, y, width, height,
+                        parent,
+                        CurrentInstance,
+                        paramPtr);
+                                                
+      if(_selected != -1 && nil != onIndexChanged)
+         { onIndexChanged(self) }
+   }
+   
+}
+
+// --- ImageList ---
+
+public sealed class ImageList : Object, interface<IControl>
+{
+   constructor new()
+   {
+//        theIndex := 0;
+//        theImages := new List<Image>();
+//        
+//        theSize :=  new Dimension(50, 50)
+   }
 }

@@ -129,6 +129,11 @@ namespace elena_lang
          int minimalArgList);
       int clean(Project& project);
 
+      void setVerboseOn()
+      {
+         _verbose = true;
+      }
+
       CompilingProcess(PathString& appPath, path_t prologName, path_t epilogName,
          PresenterBase* presenter, ErrorProcessor* errorProcessor,
          pos_t codeAlignment,

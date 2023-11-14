@@ -39,7 +39,7 @@ bool PathUtil :: compare(path_t s1, path_t s2, size_t length)
    return true;
 }
 
-bool PathUtil::compare(path_t path1, path_t path2)
+bool PathUtil :: compare(path_t path1, path_t path2)
 {
    size_t l1 = path1.length();
    size_t l2 = path2.length();

@@ -10,20 +10,26 @@ In development:
   opt:#601, #602
   maint:backlog, #616, system module warnings
   exp:using expression trees in real-life apps (see c#)
-  ide:backlog, vm debugger, debugger watch - struct
+  ide:backlog (#617), vm debugger, debugger watch - struct
   tools:backlog
   prom:tutorial 2 - program entry / linker
   port:gui samples, db samples, xforms, elenavm / elt for linux
   --------------------------------------
 
-  * anagram #132
+  * weak operation
+  * #601 : - x + x - avoid double boxing
 
-  * gui samples
   * elenasm for linux
+
+  * gui panel : not visible
+  * gui panel : support resize 
+  * gui samples - c_a_g
   * gui samples - agenda - critical error
+  * gui samples
+  * #601
 
   === Iteration 20 ===
-  dev: async programming (char sample)
+  dev: async programming (instant messagange sample (chat) )
   op:
   opt: pi - under 8 sec
   maint:

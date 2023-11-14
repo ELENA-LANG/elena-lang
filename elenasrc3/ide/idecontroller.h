@@ -147,7 +147,7 @@ namespace elena_lang
            _autoWatch({ nullptr, 0 }),
            _pathHelper(pathHelper)
       {
-         //_notifier = nullptr;
+         _notifier = nullptr;
          _platform = platform;
       }
    };

@@ -515,6 +515,8 @@ NotificationStatus ProjectController :: newProject(ProjectModel& model)
 
 NotificationStatus ProjectController :: openProject(ProjectModel& model, path_t projectFile)
 {
+   NotificationStatus status = PROJECT_CHANGED;
+
    ustr_t key = getPlatformName(_platform);
 
    setProjectPath(model, projectFile);
@@ -541,9 +543,11 @@ NotificationStatus ProjectController :: openProject(ProjectModel& model, path_t 
 
       loadConfig(model, projectConfig, root);
       loadConfig(model, projectConfig, platformRoot);
+
+      status |= IDE_LAYOUT_CHANGED;
    }
 
-   return PROJECT_CHANGED;
+   return status;
 }
 
 void ProjectController :: setProjectPath(ProjectModel& model, path_t projectFile)

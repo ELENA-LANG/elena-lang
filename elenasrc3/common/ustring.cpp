@@ -584,6 +584,9 @@ bool inline util_compare(const char* s1, const char* s2, size_t length)
 
 inline size_t util_find(const char* s, char ch, size_t length, size_t defValue)
 {
+   if (length == 0)
+      return defValue;
+
    const char* p = (const char*)memchr(s, ch, length);
    if (p == nullptr) {
       return defValue;
@@ -1157,7 +1160,11 @@ size_t ustr_t::find(char c, size_t defValue)
 
 size_t ustr_t::findSub(size_t index, char c, size_t defValue)
 {
-   return util_find(_string + index, c, getlength(_string) - index, defValue - index) + index;
+   size_t len = getlength(_string);
+   if (len < index)
+      return defValue;
+
+   return util_find(_string + index, c, len - index, defValue - index) + index;
 }
 
 size_t ustr_t::findSub(size_t index, char c, size_t length, size_t defValue)

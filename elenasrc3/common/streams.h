@@ -599,7 +599,7 @@ namespace elena_lang
       {
          size_t lenToWrite = Size - _offset;
          if (StrConvertor::copy(_text + _offset, s, length, lenToWrite)) {
-            seek(_offset + lenToWrite);
+            seek(_offset + (pos_t)lenToWrite);
 
             return true;
          }
