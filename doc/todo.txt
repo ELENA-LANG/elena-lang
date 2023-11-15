@@ -7,7 +7,7 @@ In development:
   === Iteration 19 ===
   dev: #613, patterns, #608, #629
   op:github actions : x86
-  opt:#601, #602
+  opt:#602
   maint:backlog, #616, system module warnings
   exp:using expression trees in real-life apps (see c#)
   ide:backlog (#617), vm debugger, debugger watch - struct
@@ -18,18 +18,22 @@ In development:
 
   * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
 
-  * #623 - Overriding property set accessor
+  * #601:
+    - band with int literal
+    - band with declared int constant
+
+    - operation with int constant (division, band, bor, bxor, shiftLeft, shiftRight)
+    - branching with int constant
+    - constant expression e.g. :  2 + 3, N + 1, N | M, N | 2
 
   * gui samples - c_a_g
-  * gui samples - agenda - critical error
   * gui samples
-  * gui panel : support resize 
-  * #601
+  * gui samples - agenda - critical error
 
   === Iteration 20 ===
   dev: async programming (instant messagange sample (chat) )
   op:
-  opt: pi - under 8 sec
+  opt: pi - under 8 sec, #601
   maint:
   exp:
   ide:

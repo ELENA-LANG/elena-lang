@@ -6,6 +6,88 @@ public const int IMAGE_BITMAP     = 0;
 
 public const int LR_LOADFROMFILE  = 0010h;
 
+// --- RECT ---
+
+public sealed struct RECT
+{
+   int       _left;
+   int       _top;
+   int       _right;
+   int       _bottom;
+    
+   constructor()
+   {
+      _left := 0;
+      _top := 0;
+      _right := 0;
+      _bottom := 0
+   }
+    
+   int Left
+   {
+      get() = _left;
+        
+      set(int v)
+      {
+         _left := v
+      }
+   }
+    
+   int Top
+   {
+      get() = _top;
+        
+      set(int v)
+      {
+         _top := v
+      }
+   }
+    
+   int Right
+   {
+      get() = _right;
+        
+      set(int v)
+      {
+         _right := v
+      }
+   }
+    
+   int Bottom
+   {
+      get() = _bottom;
+        
+      set(int v)
+      {
+         _bottom := v
+      }
+   }
+
+   int Width
+   {
+      get()
+      {
+         int x2 := _right;
+         int x1 := _left;
+         int w := x2 - x1;
+            
+         ^ w
+      }
+   }
+
+   int Height
+   {
+      get()
+      {
+         int y2 := _bottom;
+         int y1 := _top;
+         int h := y2 - y1;
+            
+         ^ h
+      }
+   }
+}
+
 // --- HDC ---
 
 public sealed const struct HDC

@@ -188,31 +188,31 @@ public class MainWindow : SDIDialog
         
       letter3.setRegion(170, 75, 14, 22);
 
-//        // Image Formula -----------------------------------------------------------------
-//        thePaintbox.setRegion(12, 22, 379, 139);
-//
-//        // Image List Formulas -----------------------------------------------------------
-//        theImageList.assign:thePaintbox;
-//        theImageList.setRegion(0, 0, 379, 139);
-//        theImageList.appendImage:"..\formulas\Paralelogramos\bitmap1.bmp";
-//        theImageList.appendImage:"..\formulas\Paralelogramos\bitmap2.bmp";
-//        theImageList.appendImage:"..\formulas\Paralelogramos\bitmap3.bmp";
-//		theImageList.appendImage:"..\formulas\Paralelogramos\bitmap4.bmp";
-//
-//        theImageList.appendImage:"..\formulas\Trapezio\bitmap1.bmp";
-//        theImageList.appendImage:"..\formulas\Trapezio\bitmap2.bmp";
-//        theImageList.appendImage:"..\formulas\Trapezio\bitmap3.bmp";
-//
-//        theImageList.appendImage:"..\formulas\Circulo\bitmap1.bmp";
-//        theImageList.appendImage:"..\formulas\Circulo\bitmap2.bmp";
-//        theImageList.appendImage:"..\formulas\Circulo\bitmap3.bmp";
-//        
-//        theImageList.appendImage:"..\formulas\Triangulos\bitmap1.bmp";
-//        theImageList.appendImage:"..\formulas\Triangulos\bitmap2.bmp";
-//        theImageList.appendImage:"..\formulas\Triangulos\bitmap3.bmp";
-//        theImageList.appendImage:"..\formulas\Triangulos\bitmap4.bmp";
-//        theImageList.appendImage:"..\formulas\Triangulos\bitmap5.bmp";
-//
+      // Image Formula -----------------------------------------------------------------
+      _paintbox.setRegion(12, 22, 379, 139);
+
+      // Image List Formulas -----------------------------------------------------------
+      _imageList.assign:_paintbox;
+      _imageList.setRegion(0, 0, 379, 139);
+      _imageList.appendImage:"..\formulas\Paralelogramos\bitmap1.bmp";
+      _imageList.appendImage:"..\formulas\Paralelogramos\bitmap2.bmp";
+      _imageList.appendImage:"..\formulas\Paralelogramos\bitmap3.bmp";
+      _imageList.appendImage:"..\formulas\Paralelogramos\bitmap4.bmp";
+
+      _imageList.appendImage:"..\formulas\Trapezio\bitmap1.bmp";
+      _imageList.appendImage:"..\formulas\Trapezio\bitmap2.bmp";
+      _imageList.appendImage:"..\formulas\Trapezio\bitmap3.bmp";
+
+      _imageList.appendImage:"..\formulas\Circulo\bitmap1.bmp";
+      _imageList.appendImage:"..\formulas\Circulo\bitmap2.bmp";
+      _imageList.appendImage:"..\formulas\Circulo\bitmap3.bmp";
+        
+      _imageList.appendImage:"..\formulas\Triangulos\bitmap1.bmp";
+      _imageList.appendImage:"..\formulas\Triangulos\bitmap2.bmp";
+      _imageList.appendImage:"..\formulas\Triangulos\bitmap3.bmp";
+      _imageList.appendImage:"..\formulas\Triangulos\bitmap4.bmp";
+      _imageList.appendImage:"..\formulas\Triangulos\bitmap5.bmp";
+
 //        // Events ------------------------------------------------------------------------
 //        // Radio Buttons -----------------------------------------------------------------
 //        Tconta.onIndexChanged := (args){ self.TipoDoCalculo(Tconta.SelectedIndex) };
@@ -268,7 +268,7 @@ public class MainWindow : SDIDialog
 //    
 //    private TipoDoObj(int index)
 //	{
-//        theImageList.SelectedIndex := index;
+//        _imageList.SelectedIndex := index;
 //     
 //        valTres.Visible := false;
 //        valDois.Visible := false;
@@ -436,7 +436,7 @@ public class MainWindow : SDIDialog
 //    {   
 //        var result := 0;
 //                
-//        (theImageList.SelectedIndex) =>
+//        (_imageList.SelectedIndex) =>
 //            0 {
 //                var H := valUm.Value.toReal();
 //                var B := valDois.Value.toReal();

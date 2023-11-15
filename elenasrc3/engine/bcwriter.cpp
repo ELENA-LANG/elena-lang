@@ -655,6 +655,46 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void intOpWithConst(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand
+   int sourceOffset = node.findChild(BuildKey::Index).arg.value;
+   int targetOffset = node.findChild(BuildKey::Source).arg.value;
+   int value = node.findChild(BuildKey::Value).arg.value;
+
+   // loaddpn
+   tape.write(ByteCode::LoadDP, sourceOffset);
+
+   switch (node.arg.value) {
+      case ADD_OPERATOR_ID:
+         tape.write(ByteCode::AddN, value);
+         break;
+      case SUB_OPERATOR_ID:
+         tape.write(ByteCode::SubN, value);
+         break;
+      case MUL_OPERATOR_ID:
+         tape.write(ByteCode::MulN, value);
+         break;
+      case BAND_OPERATOR_ID:
+         tape.write(ByteCode::AddN, value);
+         break;
+      case BOR_OPERATOR_ID:
+         tape.write(ByteCode::OrN, value);
+         break;
+      case SHL_OPERATOR_ID:
+         tape.write(ByteCode::Shl, value);
+         break;
+      case SHR_OPERATOR_ID:
+         tape.write(ByteCode::Shr, value);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+
+   // savedpn
+   tape.write(ByteCode::SaveDP, targetOffset);
+}
+
 void uintOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
@@ -1848,7 +1888,7 @@ ByteCodeWriter::Saver commands[] =
    uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp,
 
    copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp, semiDirectCallOp,
-   intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex, intCopyingToAccField
+   intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex, intCopyingToAccField, intOpWithConst
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -2004,6 +2044,7 @@ inline bool intOpWithConsts(BuildNode lastNode)
    BuildNode intNode = getPrevious(savingOp2);
    BuildNode valueNode = intNode.findChild(BuildKey::Value);
    BuildNode savingOp1 = getPrevious(intNode);
+   BuildNode sourceNode = getPrevious(savingOp1);
 
    int tempTarget = opNode.findChild(BuildKey::Index).arg.value;
    if (tempTarget != tempNode.arg.value)
@@ -2036,6 +2077,24 @@ inline bool intOpWithConsts(BuildNode lastNode)
          opNode.setKey(BuildKey::Idle);
          tempNode.setKey(BuildKey::Idle);
          targetNode.setKey(BuildKey::Idle);
+         break;
+      case BAND_OPERATOR_ID:
+      case BOR_OPERATOR_ID:
+      case SHL_OPERATOR_ID:
+      case SHR_OPERATOR_ID:
+         setChild(valueNode, BuildKey::Source, sourceNode.arg.value);
+         setChild(valueNode, BuildKey::Index, targetNode.arg.value);
+         valueNode.setKey(BuildKey::IntConstOp);
+         valueNode.setArgumentValue(opNode.arg.value);   
+
+         targetNode.setKey(BuildKey::Idle);
+         tempNode.setKey(BuildKey::Idle);
+         opNode.setKey(BuildKey::Idle);
+         savingOp2.setKey(BuildKey::Idle);
+         intNode.setKey(BuildKey::Idle);
+         targetNode.setKey(BuildKey::Idle);
+         savingOp1.setKey(BuildKey::Idle);
+         sourceNode.setKey(BuildKey::Idle);
          break;
       default:
          return false;

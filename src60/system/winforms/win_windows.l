@@ -56,6 +56,10 @@ public closed class WindowCallback
    {
    }
 
+   onSize(Handle control, int width, int height)
+   {
+   }
+
    onWMCreate(Handle hwnd, CREATESTRUCT struct)
    {
       pointer param := struct.CreateParam;
@@ -66,6 +70,14 @@ public closed class WindowCallback
    onWMDestoy(Handle hwnd)
    {
       extern USER32.DefWindowProcW(hwnd, WM_DESTROY, 0, 0);
+   }
+
+   onWMSize(Handle hwnd, int lParam)
+   {
+      int width := lParam & 0FFFFh;
+      int height := lParam $shr 16;
+
+      self.onSize(hwnd, width, height);
    }
 
    onWMCommand(Handle hwnd, int wParam, Handle control)

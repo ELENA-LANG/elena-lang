@@ -11,6 +11,8 @@ public interface IControl
 
    abstract IControl retrieve(Handle handle);
 
+   abstract setRegion(int x, int y, int width, int height);
+
    abstract open();
 
    abstract click();
@@ -163,6 +165,11 @@ public abstract class BaseWinControl : BaseControl
    }
 
    WindowHandle cast() = _handle;
+
+   internal resize(Handle hwnd, int width, int height)
+   {
+      _region.writeDimension(width, height)
+   }  
 }
 
 // --- BaseWinContainer ---
@@ -470,20 +477,57 @@ public closed class RadioButton : BaseButton, interface<IControl>
 
 class PaintboxListener : WindowCallback
 {
-    Paintbox _owner;
+   Paintbox _owner;
     
-    constructor(Paintbox owner)
-    {
-        _owner := owner
-    }
+   constructor(Paintbox owner)
+   {
+      _owner := owner
+   }
+
+   onSize(Handle control, int width, int height)
+   {
+      _owner.resize(control, width, height);
+   }
+
+   onWMDestoy(Handle hwnd)
+   {
+      _owner.destroy();
+        
+      super.onWMDestoy(hwnd)
+   }
 }
 
 public closed class Paintbox : BaseWinControl, interface<IControl>
 {
+   Canvas  _canvas;
+
+   Func<object,Canvas,object> onPaint : event;
+
    constructor new()
       <= super new()
    {
-//        theCanvas := new Canvas()
+      _canvas := new Canvas()
+   }
+
+   internal destroy()
+   {
+      _canvas.free()
+   }
+ 
+   internal paint()
+   {
+      PAINTSTRUCT struct := new PAINTSTRUCT();
+        
+      struct.begin(_handle);
+      HDC dc := struct.HDC;
+        
+      _canvas.open(dc);
+        
+      onPaint.?(self, _canvas);
+
+      _canvas.close();
+
+      struct.end(_handle)
    }
 
    internal createHandle()
@@ -629,11 +673,11 @@ public abstract class BasePanel : BaseWinContainer
       _frame.Caption := s
    }
 
-//    internal resize(WindowHandle handle, int width, int height)
-//    {
-//        theFrame.Width := width;
-//        theFrame.Height := height
-//    }    
+   internal resize(Handle handle, int width, int height)
+   {
+      _frame.Width := width;
+      _frame.Height := height
+   }    
 }
 
 class PanelListener : WindowCallback
@@ -644,6 +688,11 @@ class PanelListener : WindowCallback
    {
       _owner := owner
    }    
+
+   onSize(Handle control, int width, int height)
+   {
+      _owner.resize(control, width, height);
+   }
 }
 
 public sealed class Panel : BasePanel, interface<IControl>
@@ -696,6 +745,11 @@ class RadioButtonGroupListener : WindowCallback
    constructor(RadioButtonGroup owner)
    {
       _owner := owner
+   }
+
+   onSize(Handle control, int width, int height)
+   {
+      _owner.resize(control, width, height);
    }
 }
 
@@ -774,22 +828,64 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
    {
       self.appendControlInternal(RadioButton.new(s));
    }
+
+   setRegion(int x, int y, int width, int height)
+   {
+      super.setRegion(x, y, width, height);
+        
+      self.resize()
+   }
+
+   internal resize()
+   {
+      int width := _region.Width;
+      int height := _region.Height;
+
+      if (_handle != nil) {
+         self.resize(_handle, width, height)
+      }
+      else self.resize(Handle.Default, width, height)
+   }
+            
+   internal resize(Handle handle, int width, int height)
+   {
+      int len := _controls.Length;
+      IControl current;
+      for (int i := 1, i < len, i += 1) {
+         current := _controls[i];
+         int index := i - 1;
+            
+         current.setRegion(4, 18 + index * 20, width - 6, 20);
+      };
+        
+      super.resize(handle, width, height)
+   }
 }
 
 // --- ImageList ---
 
 public sealed class ImageList : Object, interface<IControl>
 {
+   Dimension    _size;
    object      _parent;
-   List<Image> _images; 
+   List<Image> _images;
+   int         _index;   
 
    constructor new()
    {
-//        theIndex := 0;
+      _index := 0;
       _images := new List<Image>();
-//        
-//        theSize :=  new Dimension(50, 50)
+
+      _size :=  new Dimension(50, 50)
    }
+
+   setRegion(int x, int y, int width, int height)
+   {
+      _size.Width := width;
+      _size.Height := height
+   }
+
+   get Control() = self;
 
    Parent = _parent;    
 
@@ -797,6 +893,26 @@ public sealed class ImageList : Object, interface<IControl>
    {
       _parent := o
    }
+
+   assign(Paintbox paintbox)
+   {
+      paintbox.onPaint := (object sender, Canvas canvas)
+      {
+         int width := _size.Width;
+         int height := _size.Height;
+            
+         auto image := _images[_index];
+            
+         canvas.write(image, 0, 0, width, height)
+      }
+   }
+
+   IControl retrieve(Handle handle)
+   {
+      ^ nil
+   }
+    
+   click() {}
 
    open()
    {
@@ -807,6 +923,11 @@ public sealed class ImageList : Object, interface<IControl>
       for (int i := 0, i < len, i += 1) {
          _images[i].open(parentDC)
       }
+   }
+
+   appendImage(string path)
+   {        
+      _images.append(Image.load(path, _size))
    }
 
 }

@@ -136,3 +136,42 @@ public sealed const struct WindowHandle
 WindowHandle defaultHandle
     = WindowHandle.Default;
 
+// --- PAINTSTRUCT ---
+
+public sealed struct PAINTSTRUCT
+{
+   HDC  _HDC;
+   int  _erase;
+   RECT _rect;
+   int  _restore;
+   int  _incUpdate;
+    
+   int  dummy0;
+   int  dummy1;
+   int  dummy2;
+   int  dummy3;
+   int  dummy4;
+   int  dummy5;
+   int  dummy6;
+   int  dummy7;
+
+   constructor()
+   {
+   }
+
+   get HDC HDC()
+   {
+      ^ _HDC
+   }
+            
+   begin(WindowHandle handle)
+   {
+      extern USER32.BeginPaint(handle, self)
+   }
+    
+   end(WindowHandle handle)
+   {
+      extern USER32.EndPaint(handle, self)
+   }
+}
+

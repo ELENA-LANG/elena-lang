@@ -154,6 +154,7 @@ namespace elena_lang
       SavingStackDump      = 0x007C,
       SavingFloatIndex     = 0x007D,
       IntCopyingToAccField = 0x007E,
+      IntConstOp           = 0x007F,
 
       MaxOperationalKey    = 0x007E,
 
@@ -223,6 +224,7 @@ namespace elena_lang
       ClassName            = 0x800F,
       Special              = 0x8010,
       LongMode             = 0x8011,
+      Source               = 0x8012,
 
       Idle                 = 0x8FFF,
 

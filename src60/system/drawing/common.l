@@ -202,5 +202,20 @@ public sealed struct Region //: BaseValue
       width := _width;
       height := _height;
    }
+    
+   writeDimension(int width, int height)
+   {
+      _width := width;
+      _height := height
+   }
    
+   readDimensionTo(ref int width, ref int height)
+   {
+      width := _width;
+      height := _height;
+   }
+    
+   Dimension Dimension
+      = new Dimension(_width, _height);
+
 }

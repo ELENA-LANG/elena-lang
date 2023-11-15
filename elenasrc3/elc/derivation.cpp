@@ -1012,7 +1012,7 @@ bool ifTypeRelatedExists(SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      if (isTypeRelated(node))
+      if (isTypeRelated(current))
          return true;
 
       current = current.nextNode();
@@ -1054,8 +1054,8 @@ void SyntaxTreeBuilder :: flushSubScopeMember(SyntaxTreeWriter& writer, Scope& s
       {
          writer.newNode(SyntaxKey::Method);
          flushDescriptor(writer, scope, node, true, true);
-         // COMPILER MAGIC : recognize property type - if the accessor-method has a parameter - header type should be copied into the parameter
 
+         // COMPILER MAGIC : recognize property type - if the accessor-method has a parameter - header type should be copied into the parameter
          SyntaxNode paramNode = node.findChild(SyntaxKey::Parameter);
          copyHeader(writer, scope, headerNode, paramNode == SyntaxKey::None);
 
