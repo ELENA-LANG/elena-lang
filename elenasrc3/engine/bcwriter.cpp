@@ -658,8 +658,8 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
 void intOpWithConst(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand
-   int sourceOffset = node.findChild(BuildKey::Index).arg.value;
-   int targetOffset = node.findChild(BuildKey::Source).arg.value;
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+   int sourceOffset = node.findChild(BuildKey::Source).arg.value;
    int value = node.findChild(BuildKey::Value).arg.value;
 
    // loaddpn
@@ -676,7 +676,7 @@ void intOpWithConst(CommandTape& tape, BuildNode& node, TapeScope&)
          tape.write(ByteCode::MulN, value);
          break;
       case BAND_OPERATOR_ID:
-         tape.write(ByteCode::AddN, value);
+         tape.write(ByteCode::AndN, value);
          break;
       case BOR_OPERATOR_ID:
          tape.write(ByteCode::OrN, value);
@@ -2082,16 +2082,15 @@ inline bool intOpWithConsts(BuildNode lastNode)
       case BOR_OPERATOR_ID:
       case SHL_OPERATOR_ID:
       case SHR_OPERATOR_ID:
-         setChild(valueNode, BuildKey::Source, sourceNode.arg.value);
-         setChild(valueNode, BuildKey::Index, targetNode.arg.value);
-         valueNode.setKey(BuildKey::IntConstOp);
-         valueNode.setArgumentValue(opNode.arg.value);   
+         setChild(intNode, BuildKey::Source, sourceNode.arg.value);
+         setChild(intNode, BuildKey::Index, targetNode.arg.value);
+         intNode.setKey(BuildKey::IntConstOp);
+         intNode.setArgumentValue(opNode.arg.value);
 
          targetNode.setKey(BuildKey::Idle);
          tempNode.setKey(BuildKey::Idle);
          opNode.setKey(BuildKey::Idle);
          savingOp2.setKey(BuildKey::Idle);
-         intNode.setKey(BuildKey::Idle);
          targetNode.setKey(BuildKey::Idle);
          savingOp1.setKey(BuildKey::Idle);
          sourceNode.setKey(BuildKey::Idle);

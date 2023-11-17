@@ -94,6 +94,7 @@ public const int WM_DESTROY       = 02h;
 public const int WM_SETTEXT       = 0Ch;
 public const int WM_GETTEXT       = 0Dh;
 public const int WM_GETTEXTLENGTH = 0Eh;
+public const int WM_PAINT         = 0Fh;
 
 public const int OFN_PATHMUSTEXIST = 00000800h;
 public const int OFN_EXPLORER      = 00080000h;

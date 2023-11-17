@@ -156,7 +156,7 @@ namespace elena_lang
       IntCopyingToAccField = 0x007E,
       IntConstOp           = 0x007F,
 
-      MaxOperationalKey    = 0x007E,
+      MaxOperationalKey    = 0x007F,
 
       Import               = 0x0080,
       DictionaryOp         = 0x0081,

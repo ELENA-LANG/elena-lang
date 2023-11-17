@@ -307,6 +307,7 @@ namespace elena_lang
 
       bool evalObjArrayOp(ref_t operator_id, ArgumentsInfo& args);
       bool evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
+      bool evalIntOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
 
    public:
       ObjectInfo mapStringConstant(ustr_t s);
@@ -1050,6 +1051,7 @@ namespace elena_lang
       bool                   _withMethodParamInfo;
       bool                   _trackingUnassigned;
       bool                   _withConditionalBoxing;
+      bool                   _evaluateOp;
 
       bool reloadMetaData(ModuleScopeBase* moduleScope, ustr_t name);
 
@@ -1523,6 +1525,11 @@ namespace elena_lang
       void setConditionalBoxing(bool flag)
       {
          _withConditionalBoxing = flag;
+      }
+
+      void setEvaluateOp(bool flag)
+      {
+         _evaluateOp = flag;
       }
 
       void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,

@@ -127,14 +127,14 @@ void declareTemplateParameters(ModuleBase* module, TemplateTypeList& typeList,
    dummyWriter.closeNode();
 }
 
-inline ref_t mapIntConstant(Compiler::Scope& scope, int integer)
+inline ref_t mapIntConstant(ModuleScopeBase* moduleScope, int integer)
 {
    String<char, 20> s;
 
    // convert back to string as a decimal integer
    s.appendInt(integer, 16);
 
-   return scope.moduleScope->module->mapConstant(s.str());
+   return moduleScope->module->mapConstant(s.str());
 }
 
 inline bool isConstant(ObjectKind kind)
@@ -399,6 +399,99 @@ bool Interpreter :: evalObjArrayOp(ref_t operator_id, ArgumentsInfo& args)
    return false;
 }
 
+bool Interpreter :: evalIntOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
+{
+   ObjectInfo loperand = args[0];
+   ObjectInfo roperand = args[1];
+
+   switch (operator_id) {
+      case ADD_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra + roperand.extra;
+
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+
+            return true;
+         }
+         break;
+      case SUB_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra - roperand.extra;
+
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+
+            return true;
+         }
+         break;
+      case MUL_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra * roperand.extra;
+
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+
+            return true;
+         }
+         break;
+      case DIV_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra / roperand.extra;
+
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+
+            return true;
+         }
+         break;
+      case BAND_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra & roperand.extra;
+
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+
+            return true;
+         }
+         break;
+      case BOR_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra | roperand.extra;
+
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+
+            return true;
+         }
+         break;
+      case BXOR_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra ^ roperand.extra;
+
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+
+            return true;
+         }
+         break;
+      case SHL_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra << roperand.extra;
+
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+
+            return true;
+         }
+         break;
+      case SHR_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra >> roperand.extra;
+
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+
+            return true;
+         }
+         break;
+      default:
+         break;
+   }
+   return false;
+}
+
 bool Interpreter :: evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
 {
    ObjectInfo loperand = args[0];
@@ -446,6 +539,8 @@ bool Interpreter :: eval(BuildKey key, ref_t operator_id, ArgumentsInfo& argumen
       //   return evalDeclDictionaryOp(operator_id, arguments);
       case BuildKey::DeclOp:
          return evalDeclOp(operator_id, arguments, retVal);
+      case BuildKey::IntOp:
+         return evalIntOp(operator_id, arguments, retVal);
       default:
          return false;
    }
@@ -516,7 +611,7 @@ ObjectInfo Compiler::NamespaceScope :: defineConstant(SymbolInfo info)
       }
       else value = intConstants.get(info.valueRef);
 
-      return { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(*this, value), value };
+      return { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(moduleScope, value), value };
    }
    else if (info.symbolType == SymbolType::ConstantArray) {
       return { ObjectKind::ConstArray, { info.typeRef }, info.valueRef, info.valueRef };
@@ -1476,6 +1571,7 @@ Compiler :: Compiler(
    _tapeOptMode = false;
    _withMethodParamInfo = false;
    _withConditionalBoxing = false;
+   _evaluateOp = false;
 
    _trackingUnassigned = false;
 
@@ -3787,22 +3883,25 @@ ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope, Syn
       SyntaxNode sublnode = lnode.firstChild(SyntaxKey::DeclarationMask);
       SyntaxNode subrnode = sublnode.nextNode(SyntaxKey::DeclarationMask);
 
-      loperand = evalExpression(interpreter, scope, sublnode);
-      ioperand = evalExpression(interpreter, scope, subrnode);
-      roperand = evalExpression(interpreter, scope, rnode);
+      loperand = evalExpression(interpreter, scope, sublnode, ignoreErrors);
+      ioperand = evalExpression(interpreter, scope, subrnode, ignoreErrors);
+      roperand = evalExpression(interpreter, scope, rnode, ignoreErrors);
 
       if (operator_id == SET_OPERATOR_ID) {
          operator_id = SET_INDEXER_OPERATOR_ID;
       }
-      else scope.raiseError(errCannotEval, node);
+      else if (!ignoreErrors) {
+         scope.raiseError(errCannotEval, node);
+      }
+      else return {};
 
       argCount = 3;
    }
    else {
-      loperand = evalExpression(interpreter, scope, lnode);
+      loperand = evalExpression(interpreter, scope, lnode, ignoreErrors);
       if (rnode != SyntaxKey::None) {
          argCount = 2;
-         roperand = evalExpression(interpreter, scope, rnode);
+         roperand = evalExpression(interpreter, scope, rnode, ignoreErrors);
       }
    }
 
@@ -3826,7 +3925,10 @@ ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope, Syn
 
    ObjectInfo retVal = loperand;
    if (!interpreter.eval(opKey, operator_id, arguments, retVal)) {
-      scope.raiseError(errCannotEval, node);
+      if (!ignoreErrors) {
+         scope.raiseError(errCannotEval, node);
+      }
+      else return {};
    }
 
    return retVal;
@@ -3843,7 +3945,7 @@ ObjectInfo Compiler :: evalPropertyOperation(Interpreter& interpreter, Scope& sc
 {
    SyntaxNode lnode = node.firstChild();
 
-   ObjectInfo loperand = evalObject(interpreter, scope, lnode);
+   ObjectInfo loperand = evalExpression(interpreter, scope, lnode, ignoreErrors);
    mssg_t message = mapMessage(scope, node.findChild(SyntaxKey::Message), true, false, false);
 
    switch (loperand.kind) {
@@ -3946,10 +4048,19 @@ ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, Sy
          retVal = evalExpression(interpreter, scope, node.firstChild(SyntaxKey::DeclarationMask), ignoreErrors, resolveMode);
          break;
       case SyntaxKey::AssignOperation:
+      case SyntaxKey::AddOperation:
+      case SyntaxKey::SubOperation:
+      case SyntaxKey::MulOperation:
+      case SyntaxKey::DivOperation:
+      case SyntaxKey::BAndOperation:
+      case SyntaxKey::BOrOperation:
+      case SyntaxKey::BXorOperation:
+      case SyntaxKey::ShlOperation:
+      case SyntaxKey::ShrOperation:
       case SyntaxKey::AddAssignOperation:
       case SyntaxKey::NameOperation:
       case SyntaxKey::ReferOperation:
-         retVal = evalOperation(interpreter, scope, node, (int)node.key - OPERATOR_MAKS);
+         retVal = evalOperation(interpreter, scope, node, (int)node.key - OPERATOR_MAKS, ignoreErrors);
          break;
       case SyntaxKey::Object:
          retVal = evalObject(interpreter, scope, node);
@@ -6639,6 +6750,13 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
 ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, SyntaxNode rnode,
    int operatorId, ref_t expectedRef)
 {
+   if (_evaluateOp) {
+      Interpreter interpreter(scope.moduleScope, _logic);
+      ObjectInfo evalRetVal = evalExpression(interpreter, scope, node.parentNode(), true);
+      if (evalRetVal.kind != ObjectKind::Unknown)
+         return evalRetVal;
+   }
+
    ObjectInfo     retVal;
    ArgumentsInfo  updatedOuterArgs;
 
@@ -8006,7 +8124,7 @@ ObjectInfo Compiler :: compileTupleAssigning(BuildTreeWriter& writer, ExprScope&
    for (pos_t i = 0; i < targets.count_pos(); i++) {
       arguments.clear();
       arguments.add(exprVal);
-      arguments.add({ ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(scope, i), i});
+      arguments.add({ ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(scope.moduleScope, i), i});
 
       ObjectInfo targetVar = targets[i];
 
@@ -8047,9 +8165,18 @@ ObjectInfo Compiler :: compileAssigning(BuildTreeWriter& writer, ExprScope& scop
       targetRef, EAttr::RetValExpected, nullptr);
 
    WriterContext context = { &writer, &scope, loperand };
-   if (!compileAssigningOp(context, target, exprVal))
-      scope.raiseError(errInvalidOperation, loperand.parentNode());
-
+   if (!compileAssigningOp(context, target, exprVal)) {
+      switch (target.kind) {
+         case ObjectKind::ReadOnlyField:
+         case ObjectKind::ReadOnlyFieldAddress:
+            scope.raiseError(errAssigningRealOnly, loperand.parentNode());
+            break;
+         default:
+            scope.raiseError(errInvalidOperation, loperand.parentNode());
+            break;
+      }
+   }
+      
    if (target == exprVal)
       scope.raiseError(errAssigningToSelf, loperand.lastChild(SyntaxKey::TerminalMask));
 
@@ -8734,7 +8861,7 @@ ObjectInfo Compiler :: mapIntConstant(Scope& scope, SyntaxNode node, int radix)
    if (errno == ERANGE)
       scope.raiseError(errInvalidIntNumber, node);
 
-   return { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(scope, integer), integer };
+   return { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(scope.moduleScope, integer), integer };
 }
 
 ObjectInfo Compiler :: mapUIntConstant(Scope& scope, SyntaxNode node, int radix)

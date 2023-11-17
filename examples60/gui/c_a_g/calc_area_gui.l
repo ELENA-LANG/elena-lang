@@ -213,11 +213,11 @@ public class MainWindow : SDIDialog
       _imageList.appendImage:"..\formulas\Triangulos\bitmap4.bmp";
       _imageList.appendImage:"..\formulas\Triangulos\bitmap5.bmp";
 
-//        // Events ------------------------------------------------------------------------
-//        // Radio Buttons -----------------------------------------------------------------
-//        Tconta.onIndexChanged := (args){ self.TipoDoCalculo(Tconta.SelectedIndex) };
-//
-//        Econta1.onIndexChanged := (args){ self.TipoDoObj(Econta1.SelectedIndex) };
+      // Events ------------------------------------------------------------------------
+      // Radio Buttons -----------------------------------------------------------------
+      Tconta.onIndexChanged := (args){ self.TipoDoCalculo(Tconta.SelectedIndex) };
+
+      Econta1.onIndexChanged := (args){ self.TipoDoObj(Econta1.SelectedIndex) };
 //        Econta2.onIndexChanged := (args){ self.TipoDoObj(4 + Econta2.SelectedIndex) };
 //        Econta3.onIndexChanged := (args){ self.TipoDoObj(7 + Econta3.SelectedIndex) };
 //        Econta4.onIndexChanged := (args){ self.TipoDoObj(10 + Econta4.SelectedIndex) };
@@ -234,204 +234,204 @@ public class MainWindow : SDIDialog
 //
 //        BtmSair.onClick := (args)
 //            { forward program.stop() }
-    }
+   }
 
-//    private TipoDoCalculo(int index)
-//    {
-//        Econta1.Visible := false;
-//        Econta2.Visible := false;
-//        Econta3.Visible := false;
-//        Econta4.Visible := false;
-//
-//        index =>
-//            0 {
-//                    Econta1.Visible := true;
-//
-//                    Econta1.SelectedIndex := 0
-//              }
-//            1 {
-//                    Econta2.Visible := true;
-//
-//                    Econta2.SelectedIndex := 0
-//              }
-//            2 {
-//                    Econta3.Visible := true;
-//
-//                    Econta3.SelectedIndex := 0
-//              }
-//            3 {
-//                    Econta4.Visible := true;
-//
-//                    Econta4.SelectedIndex := 0
-//              }
-//    }
-//    
-//    private TipoDoObj(int index)
-//	{
-//        _imageList.SelectedIndex := index;
-//     
-//        valTres.Visible := false;
-//        valDois.Visible := false;
-//        letter3.Visible := false;
-//        letter2.Visible := false;
-//     
-//        valUm.Value := "";
-//        valDois.Value := "";
-//        valTres.Value :="";
-//     
-//        valor.Caption := "Res: ";
-//        info.Caption  := "Info: ";
-//                
-//        index =>
-//            0 {
-//                valUm.Visible := true;
-//                valDois.Visible := true;
-//                letter1.Visible := true;
-//                letter2.Visible := true;
-//            
-//                letter1.Caption := "h: ";
-//                letter2.Caption := "b: ";
-//            }           
-//            1 {
-//                valUm.Visible := true;
-//                letter1.Visible := true;
-//            
-//                letter1.Caption := "b: "
-//            }
-//            2 {
-//                valUm.Visible := true;
-//                valDois.Visible := true;
-//                letter1.Visible := true;
-//                letter2.Visible := true;
-//            
-//                letter1.Caption := "h: ";
-//                letter2.Caption := "b: ";
-//            }            
-//            3 {
-//                valUm.Visible := true;
-//                valDois.Visible := true;
-//                letter1.Visible := true;
-//                letter2.Visible := true;
-//            
-//                letter1.Caption := "D: ";
-//                letter2.Caption := "d: ";
-//            }           
-//            4 {
-//                valUm.Visible := true;
-//                valDois.Visible := true;
-//                valTres.Visible := true;
-//                letter1.Visible := true;
-//                letter2.Visible := true;
-//                letter3.Visible := true;
-//            
-//                letter1.Caption := "B: ";
-//                letter2.Caption := "b: ";
-//                letter3.Caption := "h: ";
-//            }
-//            5 {
-//                valUm  .Visible := true;
-//                valDois.Visible := true;
-//                valTres.Visible := true;
-//                letter1.Visible := true;
-//                letter2.Visible := true;
-//                letter3.Visible := true;
-//            
-//                letter1.Caption := "B: ";
-//                letter2.Caption := "b: ";
-//                letter3.Caption := "h: ";
-//            }
-//            6 {
-//                valUm  .Visible := true;
-//                valDois.Visible := true;
-//                valTres.Visible := true;
-//                letter1.Visible := true;
-//                letter2.Visible := true;
-//                letter3.Visible := true;
-//            
-//                letter1.Caption := "B: ";
-//                letter2.Caption := "b: ";
-//                letter3.Caption := "h: ";
-//            }
-//            7 {
-//                valUm  .Visible := true;
-//                letter1.Visible := true;
-//            
-//                letter1.Caption := "r: ";
-//            }
-//            8 {
-//                valUm  .Visible := true;
-//                valDois.Visible := true;
-//                letter1.Visible := true;
-//                letter2.Visible := true;
-//            
-//                letter1.Caption := "R: ";
-//                letter2.Caption := "r: ";
-//            }
-//            9 {
-//                valUm  .Visible := true;
-//                valDois.Visible := true;
-//                letter1.Visible := true;
-//                letter2.Visible := true;
-//            
-//                letter1.Caption := "Al: ";
-//                letter2.Caption := "r: ";
-//            
-//                info.Caption := "Info: Al = Alfa ( angulo )"
-//            }
-//            10 {
-//                valUm  .Visible := true;
-//                valDois.Visible := true;
-//                letter1.Visible := true;
-//                letter2.Visible := true;
-//            
-//                letter1.Caption := "B: ";
-//                letter2.Caption := "H: ";
-//            }
-//            11 {
-//                valUm  .Visible := true;
-//                valDois.Visible := true;
-//                letter1.Visible := true;
-//                letter2.Visible := true;
-//            
-//                letter1.Caption := "B: ";
-//                letter2.Caption := "C: ";
-//            }
-//            12 {
-//                valUm  .Visible := true;
-//                letter1.Visible := true;
-//            
-//                letter1.Caption := "A: ";
-//            }
-//            13 {
-//                valUm  .Visible := true;
-//                valDois.Visible := true;
-//                valTres.Visible := true;
-//                letter1.Visible := true;
-//                letter2.Visible := true;
-//                letter3.Visible := true;
-//            
-//                letter1.Caption := "a: ";
-//                letter2.Caption := "b: ";
-//                letter3.Caption := "c: ";
-//            }
-//            14 {
-//                valUm  .Visible := true;
-//                valDois.Visible := true;
-//                valTres.Visible := true;
-//                letter1.Visible := true;
-//                letter2.Visible := true;
-//                letter3.Visible := true;
-//            
-//                letter1.Caption := "Al: ";
-//                letter2.Caption := "a: ";
-//                letter3.Caption := "b: ";
-//            
-//                info.Caption := "Info: Al = Alfa ( angulo )"
-//            };
-//
-//		thePaintbox.refresh()
-//	}            
-// 
+   private TipoDoCalculo(int index)
+   {
+      Econta1.Visible := false;
+      Econta2.Visible := false;
+      Econta3.Visible := false;
+      Econta4.Visible := false;
+
+      index =>
+         0 {
+            Econta1.Visible := true;
+
+            Econta1.SelectedIndex := 0
+         }
+         1 {
+            Econta2.Visible := true;
+
+            Econta2.SelectedIndex := 0
+         }
+         2 {
+            Econta3.Visible := true;
+
+            Econta3.SelectedIndex := 0
+         }
+         3 {
+            Econta4.Visible := true;
+
+            Econta4.SelectedIndex := 0
+         }
+   }
+    
+   private TipoDoObj(int index)
+   {
+      _imageList.SelectedIndex := index;
+     
+      valTres.Visible := false;
+      valDois.Visible := false;
+      letter3.Visible := false;
+      letter2.Visible := false;
+     
+      valUm.Value := "";
+      valDois.Value := "";
+      valTres.Value :="";
+     
+      valor.Caption := "Res: ";
+      info.Caption  := "Info: ";
+                
+      index =>
+         0 {
+            valUm.Visible := true;
+            valDois.Visible := true;
+            letter1.Visible := true;
+            letter2.Visible := true;
+            
+            letter1.Caption := "h: ";
+            letter2.Caption := "b: ";
+         }           
+         1 {
+            valUm.Visible := true;
+            letter1.Visible := true;
+            
+            letter1.Caption := "b: "
+         }
+         2 {
+            valUm.Visible := true;
+            valDois.Visible := true;
+            letter1.Visible := true;
+            letter2.Visible := true;
+            
+            letter1.Caption := "h: ";
+            letter2.Caption := "b: ";
+         }            
+         3 {
+            valUm.Visible := true;
+            valDois.Visible := true;
+            letter1.Visible := true;
+            letter2.Visible := true;
+            
+            letter1.Caption := "D: ";
+            letter2.Caption := "d: ";
+         }           
+         4 {
+            valUm.Visible := true;
+            valDois.Visible := true;
+            valTres.Visible := true;
+            letter1.Visible := true;
+            letter2.Visible := true;
+            letter3.Visible := true;
+            
+            letter1.Caption := "B: ";
+            letter2.Caption := "b: ";
+            letter3.Caption := "h: ";
+         }
+         5 {
+            valUm  .Visible := true;
+            valDois.Visible := true;
+            valTres.Visible := true;
+            letter1.Visible := true;
+            letter2.Visible := true;
+            letter3.Visible := true;
+            
+            letter1.Caption := "B: ";
+            letter2.Caption := "b: ";
+            letter3.Caption := "h: ";
+         }
+         6 {
+            valUm  .Visible := true;
+            valDois.Visible := true;
+            valTres.Visible := true;
+            letter1.Visible := true;
+            letter2.Visible := true;
+            letter3.Visible := true;
+            
+            letter1.Caption := "B: ";
+            letter2.Caption := "b: ";
+            letter3.Caption := "h: ";
+         }
+         7 {
+            valUm  .Visible := true;
+            letter1.Visible := true;
+            
+            letter1.Caption := "r: ";
+         }
+         8 {
+            valUm  .Visible := true;
+            valDois.Visible := true;
+            letter1.Visible := true;
+            letter2.Visible := true;
+            
+            letter1.Caption := "R: ";
+            letter2.Caption := "r: ";
+         }
+         9 {
+            valUm  .Visible := true;
+            valDois.Visible := true;
+            letter1.Visible := true;
+            letter2.Visible := true;
+            
+            letter1.Caption := "Al: ";
+            letter2.Caption := "r: ";
+            
+            info.Caption := "Info: Al = Alfa ( angulo )"
+         }
+         10 {
+            valUm  .Visible := true;
+            valDois.Visible := true;
+            letter1.Visible := true;
+            letter2.Visible := true;
+            
+            letter1.Caption := "B: ";
+            letter2.Caption := "H: ";
+         }
+         11 {
+            valUm  .Visible := true;
+            valDois.Visible := true;
+            letter1.Visible := true;
+            letter2.Visible := true;
+            
+            letter1.Caption := "B: ";
+            letter2.Caption := "C: ";
+         }
+         12 {
+            valUm  .Visible := true;
+            letter1.Visible := true;
+            
+            letter1.Caption := "A: ";
+         }
+         13 {
+            valUm  .Visible := true;
+            valDois.Visible := true;
+            valTres.Visible := true;
+            letter1.Visible := true;
+            letter2.Visible := true;
+            letter3.Visible := true;
+            
+            letter1.Caption := "a: ";
+            letter2.Caption := "b: ";
+            letter3.Caption := "c: ";
+         }
+         14 {
+            valUm  .Visible := true;
+            valDois.Visible := true;
+            valTres.Visible := true;
+            letter1.Visible := true;
+            letter2.Visible := true;
+            letter3.Visible := true;
+            
+            letter1.Caption := "Al: ";
+            letter2.Caption := "a: ";
+            letter3.Caption := "b: ";
+            
+            info.Caption := "Info: Al = Alfa ( angulo )"
+         };
+
+      //_paintbox.refresh()
+   }            
+ 
 //    private onButtonClick()
 //    {   
 //        var result := 0;

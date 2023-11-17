@@ -169,7 +169,14 @@ public abstract class BaseWinControl : BaseControl
    internal resize(Handle hwnd, int width, int height)
    {
       _region.writeDimension(width, height)
-   }  
+   }
+
+   refresh()
+   {
+      if(nil != _handle)
+         { _handle.refresh() }
+   }
+
 }
 
 // --- BaseWinContainer ---
@@ -489,6 +496,11 @@ class PaintboxListener : WindowCallback
       _owner.resize(control, width, height);
    }
 
+   onWMPaint(Handle hwnd)
+   {
+      _owner.paint();
+   }
+
    onWMDestoy(Handle hwnd)
    {
       _owner.destroy();
@@ -556,10 +568,73 @@ public closed class Paintbox : BaseWinControl, interface<IControl>
 
 public sealed class Imagebox : Paintbox
 {
+    HBITMAP  _image;
+    HDC      _imageDC;
+    bool     _needToRefresh;
+
    constructor new()
       <= super new()
    {
-//      theNeedToRefresh := false
+      _needToRefresh := false
+   }
+
+   internal destroy()
+   {
+      super.destroy();
+        
+      _image.free();
+      _imageDC.free()
+   }
+
+   internal paint()
+   {
+      if(_needToRefresh)
+         { self.refresh() };
+        
+      PAINTSTRUCT struct := new PAINTSTRUCT();
+        
+      struct.begin(_handle);
+        
+      _region.readDimensionTo(ref int width, ref int height);
+        
+      HDC dc := struct.HDC;
+        
+      dc.copy(0, 0, width, height, _imageDC, 0, 0, SRCCOPY);
+//        int err := system'external'KERNEL32 GetLastError.
+                
+      struct.end(_handle)
+   }
+
+   refresh()
+   {
+      if(nil == _handle)
+         { ^ self };
+        
+      onPaint.?(self, _canvas);
+
+      super.refresh();
+      _needToRefresh := false
+   }
+ 
+   internal resize(Handle handle, int width, int height)
+   {
+      WindowHandle hwnd := handle;
+
+      ifnot(nil == _image)
+      {
+         _image.free();
+         _imageDC.free()
+      };
+            
+      HDC dc := hwnd.HDC;
+            
+      _image := HBITMAP.create(dc, width, height);
+      _imageDC := HDC.newCompatible(dc);
+      _image.select(_imageDC);
+
+      _canvas.open(_imageDC);
+
+      _needToRefresh := true
    }
 }
 
@@ -928,6 +1003,16 @@ public sealed class ImageList : Object, interface<IControl>
    appendImage(string path)
    {        
       _images.append(Image.load(path, _size))
+   }
+
+   int SelectedIndex
+   {
+      get() = _index;
+        
+      set(int n)
+      {
+         _index := n
+      }
    }
 
 }

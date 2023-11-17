@@ -131,6 +131,18 @@ public sealed const struct WindowHandle
 
       ^ dc
    }
+
+   refresh()
+   {
+      handle copy := _handle;
+        
+      extern
+      {
+         extern USER32.InvalidateRect(copy, 0, 1);
+         extern USER32.UpdateWindow(copy)
+      }
+   }
+
 }
 
 WindowHandle defaultHandle

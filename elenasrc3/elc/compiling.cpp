@@ -546,6 +546,9 @@ void CompilingProcess :: configurate(Project& project)
 
    bool withConditionalBoxing = project.BoolSetting(ProjectOption::ConditionalBoxing, DEFAULT_CONDITIONAL_BOXING);
    _compiler->setConditionalBoxing(withConditionalBoxing);
+
+   bool evalOpFlag = project.BoolSetting(ProjectOption::EvaluateOp, DEFAULT_EVALUATE_OP);
+   _compiler->setEvaluateOp(evalOpFlag);
 }
 
 void CompilingProcess :: compile(ProjectBase& project,

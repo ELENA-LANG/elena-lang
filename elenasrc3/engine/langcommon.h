@@ -13,6 +13,7 @@ namespace elena_lang
 {
    // default settings
    constexpr bool DEFAULT_CONDITIONAL_BOXING = true;
+   constexpr bool DEFAULT_EVALUATE_OP = true;
 
    enum class MethodHint : ref_t
    {
@@ -68,6 +69,7 @@ namespace elena_lang
    constexpr auto errTooManyParameters       = 113;
    constexpr auto errMixedUpVariadicMessage  = 114;
    constexpr auto errRedirectToItself        = 115;
+   constexpr auto errAssigningRealOnly       = 116;
    constexpr auto errDuplicatedDefinition    = 119;
    constexpr auto errInvalidIntNumber        = 130;
    constexpr auto errCannotEval              = 140;

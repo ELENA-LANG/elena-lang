@@ -5,10 +5,10 @@ In development:
 [development]
   ### EPIC: elena 6.0 - redux ###
   === Iteration 19 ===
-  dev: #613, patterns, #608, #629
+  dev: patterns, #608
   op:github actions : x86
   opt:#602
-  maint:backlog, #616, system module warnings
+  maint:#616, system module warnings
   exp:using expression trees in real-life apps (see c#)
   ide:backlog (#617), vm debugger, debugger watch - struct
   tools:backlog
@@ -18,13 +18,11 @@ In development:
 
   * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
 
-  * #601:
-    - band with int literal
-    - band with declared int constant
-
-    - operation with int constant (division, band, bor, bxor, shiftLeft, shiftRight)
-    - branching with int constant
-    - constant expression e.g. :  2 + 3, N + 1, N | M, N | 2
+  * #620 - backlog:
+    - test three type of self : self, this self, weak self 
+    - use direct reference for - BoolValue#true.Inverted
+    - int32 : implement direct neg, not operations; use it directly for IntNumber
+    - ushort, int8
 
   * gui samples - c_a_g
   * gui samples
@@ -34,7 +32,7 @@ In development:
   dev: async programming (instant messagange sample (chat) )
   op:
   opt: pi - under 8 sec, #601
-  maint:
+  maint:#620
   exp:
   ide:
   tools:

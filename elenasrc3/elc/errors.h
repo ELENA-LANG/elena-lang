@@ -30,6 +30,7 @@ namespace elena_lang
    constexpr auto errMsgTooManyParameters       = "\n%s(%d:%d): error 113: Too many parameters for '%s' message\n";
    constexpr auto errMsgMixedUpVariadicMessage  = "\n%s(%d:%d): error 114: The class '%s' contains variadic and normal methods with the same name\n";
    constexpr auto errMsgRedirectToItself        = "\n%s(%d:%d): error 115: Redirecting message '%s' to itself\n";
+   constexpr auto errMssgAssigningRealOnly      = "\n%s(%d:%d): error 116: Read-only field '%s' cannot be changed\n";
    constexpr auto errMsgDuplicatedDefinition    = "\n%s(%d:%d): error 119: Duplicate definition: '%s' already declared\n";
    constexpr auto errMsgInvalidIntNumber        = "\n%s(%d:%d): error 130: Invalid integer value %s\n";
    constexpr auto errMsgCannotEval              = "\n%s(%d:%d): error 140: Cannot evaluate the expression %s\n";

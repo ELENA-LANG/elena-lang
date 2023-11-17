@@ -172,14 +172,14 @@ public sealed const struct HBITMAP
 
    constructor create(HDC dc, int width, int height)
    {
-      int h := extern GDI32.CreateCompatibleBitmap(dc, width, height);
+      pointer h := extern GDI32.CreateCompatibleBitmap(dc, width, height);
         
       _handle := h
    }
 
    embeddable constructor load(wide path, int width, int height)
    {
-      int h := extern USER32.LoadImageW(
+      pointer h := extern USER32.LoadImageW(
             0,   
             path,
             IMAGE_BITMAP,

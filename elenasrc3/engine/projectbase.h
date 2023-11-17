@@ -69,6 +69,7 @@ namespace elena_lang
       OptimizationMode,
       GenerateParamNameInfo,
       ConditionalBoxing,
+      EvaluateOp,
 
       Prolog,
       Epilog,
