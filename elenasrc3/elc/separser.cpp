@@ -20,6 +20,8 @@
 
 #else
 
+#include "linux/elfsyslibloader.h"
+
 #define SCRIPTENGINE_LIB "/usr/lib/elena/libelenasm60.so"
 
 #endif
