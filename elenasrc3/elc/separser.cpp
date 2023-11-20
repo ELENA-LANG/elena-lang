@@ -43,7 +43,7 @@ ScriptParser :: ScriptParser()
 
 #else
 
-   _library = new WinSysLibraryLoader(SCRIPTENGINE_LIB);
+   _library = new ElfSysLibraryLoader(SCRIPTENGINE_LIB);
 
    *(void **)(&_InterpretScript) = _library.loadFunction("InterpretScriptSMLA");
    *(void **)(&_InterpretFile) = _library.loadFunction("InterpretFileSMLA");
