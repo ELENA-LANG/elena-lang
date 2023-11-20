@@ -45,10 +45,10 @@ ScriptParser :: ScriptParser()
 
    _library = new ElfSysLibraryLoader(SCRIPTENGINE_LIB);
 
-   *(void **)(&_InterpretScript) = _library.loadFunction("InterpretScriptSMLA");
-   *(void **)(&_InterpretFile) = _library.loadFunction("InterpretFileSMLA");
-   *(void **)(&_GetStatus) = _library.loadFunction("GetStatusSMLA");
-   *(void **)(&_Release) = _library.loadFunction("ReleaseSMLA");
+   *(void **)(&_InterpretScript) = _library->loadFunction("InterpretScriptSMLA");
+   *(void **)(&_InterpretFile) = _library->loadFunction("InterpretFileSMLA");
+   *(void **)(&_GetStatus) = _library->loadFunction("GetStatusSMLA");
+   *(void **)(&_Release) = _library->loadFunction("ReleaseSMLA");
 
 #endif
 }
