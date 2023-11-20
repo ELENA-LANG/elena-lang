@@ -202,6 +202,23 @@ public extension shortOp : ShortNumber
         
    bool isNonnegative()
       = self <= 0;
+
+   get byte High()
+   {
+      short w := self;
+      w := w & 0FF00h;
+      w := w.shiftRight(8);
+        
+      ^ byteConvertor.convert(w)
+   }
+        
+   get byte Low()
+   {
+      short w := self;
+      w := w & 0FFh;
+        
+      ^ byteConvertor.convert(w)
+   }
 }
 
 // --- intOp ---
@@ -790,11 +807,9 @@ public extension stringOp : String
          len := len - index;
             
          ^ self.Substring(index, len)
-      }
-      else
-      {
-         ^ emptyString
-      }        
+      };
+
+      ^ emptyString
    }
 
    int indexOf(string s)
@@ -965,11 +980,9 @@ public extension stringOp : String
       if(start != 0)
       {
          ^ target.add(self.Substring(start))
-      }
-      else
-      {
-         ^ self
-      }
+      };
+
+      ^ self
    }   
 }
 

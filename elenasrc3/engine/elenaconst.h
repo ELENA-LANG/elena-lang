@@ -85,8 +85,10 @@ namespace elena_lang
    constexpr auto INTLITERAL_FORWARD         = "$int";            // the int literal
    constexpr auto LONGLITERAL_FORWARD        = "$long";           // the long literal
    constexpr auto REALLITERAL_FORWARD        = "$real";           // the real literal
-   constexpr auto INT8LITERAL_FORWARD        = "$byte";           // the int literal
+   constexpr auto INT8LITERAL_FORWARD        = "$int8";           // the int literal
+   constexpr auto UINT8LITERAL_FORWARD       = "$uint8";          // the int literal
    constexpr auto INT16LITERAL_FORWARD       = "$short";          // the int literal
+   constexpr auto UINT16LITERAL_FORWARD      = "$ushort";         // the int literal
    constexpr auto LITERAL_FORWARD            = "$string";         // the string literal
    constexpr auto WIDELITERAL_FORWARD        = "$wide";           // the wide string literal
    constexpr auto CHAR_FORWARD               = "$char";           // the char literal
@@ -152,6 +154,7 @@ namespace elena_lang
    constexpr auto NEGATE_MESSAGE          = "Negative";
    constexpr auto VALUE_MESSAGE           = "Value";
    constexpr auto ITEM_MESSAGE            = "Value";
+   constexpr auto BNOT_MESSAGE            = "BInverted";
    constexpr auto NOTEQUAL_MESSAGE        = "notequal";
    constexpr auto LESS_MESSAGE            = "less";
    constexpr auto NOTLESS_MESSAGE         = "notless";
@@ -160,6 +163,9 @@ namespace elena_lang
    constexpr auto AND_MESSAGE             = "and";
    constexpr auto OR_MESSAGE              = "or";
    constexpr auto XOR_MESSAGE             = "xor";
+   constexpr auto SHL_MESSAGE             = "shiftLeft";
+   constexpr auto SHR_MESSAGE             = "shiftRight";
+      
 
    // --- constant string lengths ---
    constexpr auto TEMPLATE_PREFIX_NS_LEN = 7;

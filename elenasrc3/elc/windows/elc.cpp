@@ -220,6 +220,13 @@ int main()
                      project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');
                   }
                   break;
+               case 'f':
+               {
+                  IdentifierString setting(argv[i] + 2);
+                  process.addForward(*setting);
+
+                  break;
+               }                  
                default:
                   break;
             }

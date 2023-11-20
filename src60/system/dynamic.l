@@ -6,7 +6,7 @@ public sealed const struct Symbol
 
    private load(string name) : external(system'core_routines'__symbol_load);
    private copy(pointer ptr) : external(system'core_routines'__symbol_copy);
-   private bool compare(symbol s) : external(system'core_routines'__symbol_equal);
+   private bool compare(Symbol s) : external(system'core_routines'__symbol_equal);
 
    static Symbol Default
       = default;

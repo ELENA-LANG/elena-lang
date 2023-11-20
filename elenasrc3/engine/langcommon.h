@@ -282,6 +282,8 @@ namespace elena_lang
    constexpr auto V_WORD64                = 0x8000001Eu;
    constexpr auto V_UINT32                = 0x8000001Fu;
    constexpr auto V_DEFAULT               = 0x80000020u;
+   constexpr auto V_UINT8                 = 0x80000021u;
+   constexpr auto V_UINT16                = 0x80000022u;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;
@@ -339,6 +341,7 @@ namespace elena_lang
    constexpr auto INT32_64_CONVERSION        = 0x001;
    constexpr auto INT32_FLOAT64_CONVERSION   = 0x002;
    constexpr auto INT16_32_CONVERSION        = 0x003;
+   constexpr auto INT8_32_CONVERSION         = 0x004;
 
    // === Global Attributes ===
    constexpr auto GA_SYMBOL_NAME             = 0x0001;

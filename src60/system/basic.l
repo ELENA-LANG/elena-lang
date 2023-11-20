@@ -253,7 +253,7 @@ public abstract class IntBaseNumber : BaseNumber,
 public const struct ByteNumber : IntBaseNumber,
    info("an unsigned 8 bit integer")
 {
-   embeddable __int theValue[1];
+   embeddable __uint theValue[1];
 
    static byte MinValue
             : info("returns the minimal value (0)")
@@ -515,6 +515,273 @@ public const struct ByteNumber : IntBaseNumber,
       = new ByteNumber(self);
 }
 
+// --- SByteNumber ---
+
+public const struct SByteNumber : IntBaseNumber,
+   info("a signed 8 bit integer")
+{
+   embeddable __int _value[1];
+
+   static sbyte MinValue
+            : info("returns the minimal value (-127)")
+      = -128;
+
+   static sbyte MaxValue
+            : info("Returns the maxial value (128)")
+      = 127;
+
+   constructor()
+            : info("Returns the default value")
+      = 0;
+
+   constructor(sbyte b)
+            : info("Creates the object with a specified value")
+      = b;
+
+   constructor(int n)
+            : info("Creates the object with a specified value")
+      = sbyteConvertor.convert(n);
+
+   add(o)
+     <= add(cast sbyte(o));
+
+   subtract(o)
+     <= subtract(cast sbyte(o));
+
+   multiply(o)
+     <= multiply(cast sbyte(o));
+
+   divide(o)
+     <= divide(cast sbyte(o));
+
+   sbyte add(sbyte n)
+            : info("Returns the sum")
+      = _value + n;   
+
+   sbyte subtract(sbyte n)
+            : info("Returns the difference")
+      = _value - n;   
+
+   sbyte multiply(sbyte n)
+            : info("Returns the product")
+      = _value * n;   
+
+   sbyte divide(sbyte n)
+            : info("Returns the result of integer division")
+      = _value / n;   
+
+   short add(short n)
+            : info("Returns the sum")
+      = new ShortNumber(self).add(n);   
+
+   short subtract(short n)
+            : info("Returns the difference")
+      = new ShortNumber(self).subtract(n);   
+
+   short multiply(short n)
+            : info("Returns the product")
+      = new ShortNumber(self).multiply(n);   
+
+   short divide(short n)
+            : info("Returns the result of integer division")
+      = new ShortNumber(self).divide(n);   
+
+   int add(int n)
+            : info("Returns the sum")
+      = new IntNumber(self).add(n);   
+
+   int subtract(int n)
+            : info("Returns the difference")
+      = new IntNumber(self).subtract(n);   
+
+   int multiply(int n)
+            : info("Returns the product")
+      = new IntNumber(self).multiply(n);   
+
+   int divide(int n)
+            : info("Returns the result of integer division")
+      = new IntNumber(self).divide(n);   
+
+   int add(long n)
+            : info("Returns the sum")
+      = new LongNumber(self).add(n);   
+
+   int subtract(long n)
+            : info("Returns the difference")
+      = new LongNumber(self).subtract(n);   
+
+   int multiply(long n)
+            : info("Returns the product")
+      = new LongNumber(self).multiply(n);   
+
+   int divide(long n)
+            : info("Returns the result of integer division")
+      = new LongNumber(self).divide(n);   
+
+   real add(real n)
+            : info("Returns the sum")
+      = new RealNumber(self).add(n);   
+
+   real subtract(real n)
+            : info("Returns the difference")
+      = new RealNumber(self).subtract(n);   
+
+   real multiply(real n)
+            : info("Returns the product")
+      = new RealNumber(self).multiply(n);   
+
+   real divide(real n)
+            : info("Returns the result of integer division")
+      = new RealNumber(self).divide(n);   
+
+   bool equal(o)
+   {
+      var n := cast sbyte(o) ?? nil;
+      (nil == n)
+          ? { ^ false };
+
+      ^ self.equal(n)
+   }
+
+   bool less(o)
+      <= less(cast sbyte(o));
+
+   bool equal(sbyte b)
+            : info("Compares the value")
+      = _value == b;
+
+   bool less(sbyte b)
+      = _value < b;
+
+   bool equal(short s)
+            : info("Compares the value")
+      = new ShortNumber(self).equal(s);
+
+   bool less(short s)
+      = new ShortNumber(self).less(s);
+
+   bool equal(int n)
+            : info("Compares the value")
+      = new IntNumber(self).equal(n);
+
+   bool less(int n)
+            : info("Compares the value")
+      = new IntNumber(self).less(n);
+
+   bool equal(long n)
+            : info("Compares the value")
+      = new LongNumber(self).equal(n);
+
+   bool less(long n)
+            : info("Compares the value")
+      = new LongNumber(self).less(n);
+
+   bool equal(real n)
+            : info("Compares the value")
+      = new RealNumber(self).equal(n);
+
+   bool less(real n)
+            : info("Compares the value")
+      = new RealNumber(self).less(n);
+
+   band(n)
+      <= band(cast sbyte(n));
+
+   bor(n)
+      <= bor(cast sbyte(n));
+
+   bxor(n)
+      <= bxor(cast sbyte(n));
+
+   sbyte band(sbyte n)
+            : info("Returns the result of bitwise AND operation")
+      = _value & n;
+
+   sbyte bor(sbyte n)
+            : info("Returns the result of bitwise OR operation")
+      = _value | n;
+
+   sbyte bxor(sbyte n)
+            : info("Returns the result of bitwise XOR operation")
+      = _value ^ n;
+
+   short band(short n)
+            : info("Returns the result of bitwise AND operation")
+      = new ShortNumber(n).band(n);
+
+   short bor(short n)
+            : info("Returns the result of bitwise OR operation")
+      = new ShortNumber(n).bor(n);
+
+   short bxor(short n)
+            : info("Returns the result of bitwise XOR operation")
+      = new ShortNumber(n).bxor(n);
+
+   int band(int n)
+            : info("Returns the result of bitwise AND operation")
+      = new IntNumber(n).band(n);
+
+   int bor(int n)
+            : info("Returns the result of bitwise OR operation")
+      = new IntNumber(n).bor(n);
+
+   int bxor(int n)
+            : info("Returns the result of bitwise XOR operation")
+      = new IntNumber(n).bxor(n);
+
+   long band(long n)
+            : info("Returns the result of bitwise AND operation")
+      = new LongNumber(n).band(n);
+
+   long bor(long n)
+            : info("Returns the result of bitwise OR operation")
+      = new LongNumber(n).bor(n);
+
+   long bxor(long n)
+            : info("Returns the result of bitwise XOR operation")
+      = new LongNumber(n).bxor(n);
+
+   short cast()
+            : info("Returns the value as a short integer")
+      = shortConvertor.convert(self);
+
+   int cast()
+            : info("returns the value as an integer")
+      = intConvertor.convert(self);
+
+   uint cast()
+            : info("returns the value as an unsigned integer")
+      = uintConvertor.convert(self);
+
+   long cast()
+            : info("Returns the value as a long integer")
+      = longConvertor.convert(self);
+
+   real cast()
+            : info("Returns the value as a real number")
+      = realConvertor.convert(self);
+
+   sbyte shiftLeft(int val)
+            : info("shifts an integer value to the left by a specified number of bits")
+      = _value $shl val;
+
+   sbyte shiftRight(int val)
+            : info("shifts an integer value to the right by a specified number of bits")
+      = _value $shr val;
+
+   get sbyte BInverted()
+            : info("bitwise inversion")
+      = ~_value;
+
+   string toPrintable()
+            : info("returns the literal presentation")
+      = stringConvertor.convert(self, 10);
+
+   sbyte clone()
+            : info("clones the value")
+      = new SByteNumber(self);
+}
+
 // --- ShortNumber ---
 
 public const struct ShortNumber : IntBaseNumber,
@@ -539,6 +806,10 @@ public const struct ShortNumber : IntBaseNumber,
       = s;
 
    constructor(byte b)
+            : info("creates the object with specified value")
+      = shortConvertor.convert(b);
+
+   constructor(sbyte b)
             : info("creates the object with specified value")
       = shortConvertor.convert(b);
 
@@ -793,6 +1064,294 @@ public const struct ShortNumber : IntBaseNumber,
    short clone()
             : info("clones the value")
       = new ShortNumber(self);
+}
+
+// --- UShortNumber ---
+
+public const struct UShortNumber : IntBaseNumber,
+         info("an unsigned 16 bit integer")
+{
+   embeddable __uint _value[2];
+
+   static ushort MinValue
+            : info("Returns the minimal value (0)")
+      = 0;
+
+   static ushort MaxValue
+            : info("Returns the maxial value (65535)")
+      = 65535;
+
+   constructor()
+            : info("creates the object with a default value (0)")
+      = 0;
+
+   constructor(ushort s)
+            : info("creates the object with specified value")
+      = s;
+
+   constructor(short s)
+            : info("creates the object with specified value")
+      = ushortConvertor.convert(s);
+
+   constructor(byte b)
+            : info("creates the object with specified value")
+      = ushortConvertor.convert(b);
+
+   constructor(int n)
+      = ushortConvertor.convert(n);
+
+   add(o)
+     <= add(cast ushort(o));
+
+   subtract(o)
+     <= subtract(cast ushort(o));
+
+   multiply(o)
+     <= multiply(cast ushort(o));
+
+   divide(o)
+     <= divide(cast ushort(o));
+
+   ushort add(ushort n)
+            : info ("returns the sum")
+      = _value + n;   
+
+   ushort subtract(ushort n)
+            : info ("returns the difference")
+      = _value - n;   
+
+   ushort multiply(ushort n)
+            : info ("returns the product")
+      = _value * n;   
+
+   ushort divide(ushort n)
+            : info("returns the result of integer division")
+      = _value / n;
+
+   ushort add(byte n)
+            : info ("returns the sum")
+      <= add(new UShortNumber(n));
+
+   ushort subtract(byte n)
+            : info ("returns the difference")
+      <= subtract(new UShortNumber(n));
+
+   ushort multiply(byte n)
+            : info ("returns the product")
+      <= multiply(new UShortNumber(n));
+
+   ushort divide(byte n)
+            : info("returns the result of integer division")
+      <= divide(new UShortNumber(n));
+
+   int add(int n)
+            : info("returns the sum")
+      = new IntNumber(_value).add(n);   
+
+   int subtract(int n)
+            : info ("returns the difference")
+      = new IntNumber(_value).subtract(n);   
+
+   int multiply(int n)
+            : info ("returns the product")
+      = new IntNumber(_value).multiply(n);   
+
+   int divide(int n)
+            : info ("returns the result of integer division")
+      = new IntNumber(_value).divide(n);   
+
+   long add(long n)
+            : info ("returns the sum")
+      = new LongNumber(_value).add(n);   
+
+   long subtract(long n)
+            : info ("returns the difference")
+      = new LongNumber(_value).subtract(n);   
+
+   long multiply(long n)
+            : info ("returns the product")
+      = new LongNumber(_value).multiply(n);   
+
+   long divide(long n)
+            : info ("returns the result of integer division")
+      = new LongNumber(_value).divide(n);   
+
+   real add(real n)
+            : info ("returns the sum")
+      = new RealNumber(_value).add(n);   
+
+   real subtract(real n)
+            : info ("returns the difference")
+      = new RealNumber(_value).subtract(n);   
+
+   real multiply(real n)
+            : info ("returns the product")
+      = new RealNumber(_value).multiply(n);   
+
+   real divide(real n)
+            : info ("returns the result of integer division")
+      = new RealNumber(_value).divide(n);   
+
+   bool equal(o)
+   {
+      var n := cast short(o) ?? nil;
+      (nil == n)
+         ? { ^ false };
+
+      ^ self.equal(n)
+   }
+
+   band(n)
+      <= band(cast ushort(n));
+
+   bor(n)
+      <= bor(cast ushort(n));
+
+   bxor(n)
+      <= bxor(cast ushort(n));
+
+   ushort band(ushort n)
+            : info("Returns the result of bitwise AND operation")
+      = _value & n;
+
+   ushort bor(ushort n)
+            : info("Returns the result of bitwise OR operation")
+      = _value | n;
+
+   ushort bxor(ushort n)
+            : info("Returns the result of bitwise XOR operation")
+      = _value ^ n;
+
+   ushort band(byte n)
+            : info("Returns the result of bitwise AND operation")
+      <= band(new UShortNumber(n));
+
+   ushort bor(byte n)
+            : info("Returns the result of bitwise OR operation")
+      <= bor(new UShortNumber(n));
+
+   ushort bxor(byte n)
+            : info("Returns the result of bitwise XOR operation")
+      <= bxor(new UShortNumber(n));
+
+   int band(int n)
+            : info("Returns the result of bitwise AND operation")
+      = new IntNumber(self).band(n);
+
+   int bor(int n)
+            : info("Returns the result of bitwise OR operation")
+      = new IntNumber(self).bor(n);
+
+   int bxor(int n)
+            : info("Returns the result of bitwise XOR operation")
+      = new IntNumber(self).bxor(n);
+
+   long band(long n)
+            : info("Returns the result of bitwise AND operation")
+      = new LongNumber(self).band(n);
+
+   long bor(long n)
+            : info("Returns the result of bitwise OR operation")
+      = new LongNumber(self).bor(n);
+
+   long bxor(long n)
+            : info("Returns the result of bitwise XOR operation")
+      = new LongNumber(self).bxor(n);
+
+   bool less(o)
+      <= less(cast ushort(o));
+
+   bool equal(ushort b)
+         : info("compares the value")
+      = _value == b;
+
+   bool less(ushort b)
+         : info("compares the value")
+      = _value < b;
+
+   bool equal(byte b)
+         : info("compares the value")
+      <= equal(new UShortNumber(b));
+
+   bool less(byte b)
+         : info("compares the value")
+      <= less(new UShortNumber(b));
+
+   bool equal(int n)
+         : info("compares the value")
+      = new IntNumber(_value).equal(n);
+
+   bool less(int n)
+         : info("compares the value")
+      = new IntNumber(_value).less(n);
+
+   bool equal(long n)
+         : info("compares the value")
+      = new LongNumber(_value).equal(n);
+
+   bool less(long n)
+         : info("compares the value")
+      = new LongNumber(_value).less(n);
+
+   bool equal(real n)
+         : info("compares the value")
+      = new RealNumber(_value).equal(n);
+
+   bool less(real n)
+         : info("compares the value")
+      = new RealNumber(_value).less(n);
+
+   byte cast()
+         : info("Returns the byte value") 
+      = byteConvertor.convert(self);
+
+   short cast()
+            : info("Returns the signed short value") 
+      = shortConvertor.convert(self);
+
+   int cast()
+            : info("Returns the integer value") 
+      = intConvertor.convert(self);
+
+   uint cast()
+            : info("Returns the unsigned integer value") 
+      = uintConvertor.convert(self);
+
+   long cast()
+            : info("Returns the long integer value") 
+      = longConvertor.convert(self);
+
+   real cast()
+            : info("Returns the real number value") 
+      = realConvertor.convert(self);
+
+   string toPrintable()
+      = stringConvertor.convert(self, 10);
+
+   ushort shiftLeft(int val)
+            : info("shifts an integer value to the left by a specified number of bits")
+      = _value $shl val;
+
+   ushort shiftRight(int val)
+            : info("shifts an integer value to the right by a specified number of bits")
+      = _value $shr val;
+
+   get ushort BInverted()
+            : info("bitwise inversion")
+      = ~_value;
+
+   get ushort Negative()
+//      = -_value;
+   {
+      ushort v := 0;
+      v -= _value;
+
+      ^ v
+   }
+
+   ushort clone()
+            : info("clones the value")
+      = new UShortNumber(self);
 }
 
 // --- IntNumber ---
@@ -1108,8 +1667,7 @@ public const struct IntNumber : IntBaseNumber,
       = ~_value;
 
    get int Negative()
-//      = -_value;
-      = 0 - _value;
+      = -_value;
 
    bool allMask(int operand)
          : info("Returns true if all the mask bits are set")

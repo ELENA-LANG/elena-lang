@@ -80,6 +80,24 @@ public singleton byteConvertor
    }
 }
 
+// --- sbyteConvertor ---
+
+public singleton sbyteConvertor
+{
+   convert(int n, ref sbyte retVal) : external(system'core_routines'__intToSByte);
+
+   sbyte convert(int n)
+   {
+      if (n > 127 || n < -128) {
+         OutOfRangeException.raise();
+      };
+
+      self.convert(n, ref sbyte b);
+
+      ^ b;
+   }
+}
+
 // --- shortConvertor ---
 
 public singleton shortConvertor
@@ -153,6 +171,21 @@ public singleton shortConvertor
       int n := intConvertor.convert(s, radix);
 
       ^ self.convert(n)
+   }
+}
+
+// --- ushortConvertor ---
+
+public singleton ushortConvertor
+{
+   ushort convert(ushort s)
+      = s;
+
+   ushort convert(short s)
+   {
+      int n := s;
+
+      ^ n
    }
 }
 

@@ -281,9 +281,9 @@ namespace text
       {
          self.reserve(1);
             
-         _buffer.move(index, cast int(_length), 1);
+         Array<char>.move(_buffer, index, *_length, 1);
             
-         _buffer.write(index, ch);
+         _buffer[index] := ch;
             
          _length.append(1)
       }
@@ -296,7 +296,7 @@ namespace text
          int len := *_length;
          while (index < len)
          {
-            _buffer.read(index, ref current);
+            current := _buffer[index];
                 
             if (current == value)
                { ^ index };
@@ -372,8 +372,8 @@ namespace text
          char nextCh := $0;
             
          strLen := s.Length;
-            
-         s.read(0, ref firstCh);
+           
+         firstCh := s[0];
          firstChLen := firstCh.Length;
             
          int maxIndex := *_length;
@@ -390,7 +390,7 @@ namespace text
                while (j < strLen)
                {
                   current := _buffer[index + j];
-                  s.read(j, ref nextCh);
+                  nextCh := s[j];
                         
                   if (nextCh == current)
                   { 

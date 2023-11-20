@@ -103,7 +103,7 @@ typedef ElfARM64ImageFormatter LinuxImageFormatter;
 
 constexpr int DEFAULT_MGSIZE = 688128;
 constexpr int DEFAULT_YGSIZE = 204800;
-constexpr intDEFAULT_SACKRESERV = 0x100000;
+constexpr int DEFAULT_STACKRESERV = 0x100000;
 
 class Presenter : public LinuxConsolePresenter
 {
@@ -167,7 +167,7 @@ int main(int argc, char* argv[])
 
       PathString dataPath(DATA_PATH);
 
-      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_SACKRESERV, 1, true };
+      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       Project          project(*dataPath, CURRENT_PLATFORM, &Presenter::getInstance());
       LinuxLinker      linker(&errorProcessor, &LinuxImageFormatter::getInstance(&project));

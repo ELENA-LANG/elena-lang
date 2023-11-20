@@ -1113,12 +1113,7 @@ ObjectInfo Compiler::MethodScope :: mapSelf(bool memberMode)
       return { ObjectKind::Param, { }, -1 };
    }
    else if (selfLocal != 0) {
-      if (isExtension) {
-         ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
-
-         return { ObjectKind::Param, { classScope->extensionClassRef }, -1 };
-      }
-      else if (isEmbeddable) {
+      if (isEmbeddable) {
          return { ObjectKind::SelfBoxableLocal, { getClassRef(false) }, (ref_t)selfLocal, TargetMode::Conditional };
       }
       else return { ObjectKind::SelfLocal, { getClassRef(false) }, (ref_t)selfLocal };
@@ -4735,10 +4730,14 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, 
    bool declarationMode)
 {
    switch (typeInfo.typeRef) {
+      case V_UINT8:
+         return moduleScope.buildins.uint8Reference;
       case V_INT8:
-         return moduleScope.buildins.byteReference;
+         return moduleScope.buildins.int8Reference;
       case V_INT16:
          return moduleScope.buildins.shortReference;
+      case V_UINT16:
+         return moduleScope.buildins.ushortReference;
       case V_INT32:
          return moduleScope.buildins.intReference;
       case V_INT64:
@@ -5820,6 +5819,13 @@ void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAt
 
                if (attrs.typeInfo.isPrimitive())
                   attrs.typeInfo = { resolvePrimitiveType(scope, attrs.typeInfo, declarationMode) };
+
+               if (!declarationMode) {
+                  NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+                  resolveArrayTemplate(*scope.moduleScope, *nsScope->nsName,
+                     attrs.typeInfo.typeRef, declarationMode);
+               }
             }
             else if (attrs.size == -1) {
                // if it is a nested array
@@ -5872,6 +5878,14 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
             break;
          case V_UINTBINARY:
             switch (attrs.size) {
+               case 1:
+                  attrs.typeInfo.typeRef = V_UINT8;
+                  attrs.fieldArray = false;
+                  break;
+               case 2:
+                  attrs.typeInfo.typeRef = V_UINT16;
+                  attrs.fieldArray = false;
+                  break;
                case 4:
                   attrs.typeInfo.typeRef = V_UINT32;
                   attrs.fieldArray = false;
@@ -6531,6 +6545,12 @@ mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId
          return scope->buildins.or_message;
       case XOR_OPERATOR_ID:
          return scope->buildins.xor_message;
+      case SHL_OPERATOR_ID:
+         return scope->buildins.shl_message;
+      case SHR_OPERATOR_ID:
+         return scope->buildins.shr_message;
+      case BNOT_OPERATOR_ID:
+         return scope->buildins.bnot_message;
       default:
          throw InternalError(errFatalError);
    }
@@ -6704,6 +6724,7 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
          case BuildKey::IntCondOp:
          case BuildKey::UIntCondOp:
          case BuildKey::ByteCondOp:
+         case BuildKey::UByteCondOp:
          case BuildKey::ShortCondOp:
          case BuildKey::LongCondOp:
          case BuildKey::LongIntCondOp:
@@ -7606,6 +7627,16 @@ ObjectInfo Compiler :: compileNativeConversion(BuildTreeWriter& writer, ExprScop
    source = boxArgumentLocally(context, source, false, false);
 
    switch (operationKey) {
+      case INT8_32_CONVERSION:
+         retVal = allocateResult(scope, resolvePrimitiveType(scope, { V_INT32 }, false));
+
+         writeObjectInfo(context, retVal);
+         writer.appendNode(BuildKey::SavingInStack, 0);
+
+         writeObjectInfo(context, source);
+
+         writer.appendNode(BuildKey::ConversionOp, operationKey);
+         break;
       case INT16_32_CONVERSION:
          retVal = allocateResult(scope, resolvePrimitiveType(scope, { V_INT32 }, false));
 
@@ -9355,12 +9386,20 @@ inline bool isNormalConstant(ObjectInfo info)
 ObjectInfo Compiler :: convertIntLiteral(ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef)
 {
    switch (targetRef) {
-      case V_INT8:
+      case V_UINT8:
          if (source.extra < 0 || source.extra > 255)
+            scope.raiseError(errInvalidOperation, node);
+         break;
+      case V_INT8:
+         if (source.extra < INT8_MIN || source.extra > INT8_MAX)
             scope.raiseError(errInvalidOperation, node);
          break;
       case V_INT16:
          if (source.extra < INT16_MIN || source.extra > INT16_MAX)
+            scope.raiseError(errInvalidOperation, node);
+         break;
+      case V_UINT16:
+         if (source.extra < 0 || source.extra > 65535)
             scope.raiseError(errInvalidOperation, node);
          break;
       case V_INT64:
@@ -10488,6 +10527,12 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
                varNode.appendChild(BuildKey::Index, localInfo.offset);
             }
             else if (_logic->isCompatible(*codeScope.moduleScope,
+               { V_UINT8 }, { localInfo.typeInfo.elementRef }, false))
+            {
+               BuildNode varNode = node.appendChild(BuildKey::ByteArrayAddress, it.key());
+               varNode.appendChild(BuildKey::Index, localInfo.offset);
+            }
+            else if (_logic->isCompatible(*codeScope.moduleScope,
                { V_INT16 }, { localInfo.typeInfo.elementRef }, false))
             {
                BuildNode varNode = node.appendChild(BuildKey::ShortArrayAddress, it.key());
@@ -10508,7 +10553,11 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
             BuildNode varNode = node.appendChild(BuildKey::UIntVariableAddress, it.key());
             varNode.appendChild(BuildKey::Index, localInfo.offset);
          }
-         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.byteReference) {
+         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.int8Reference) {
+            BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
+            varNode.appendChild(BuildKey::Index, localInfo.offset);
+         }
+         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.uint8Reference) {
             BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
             varNode.appendChild(BuildKey::Index, localInfo.offset);
          }
@@ -12583,7 +12632,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.longReference = safeMapReference(moduleScope, forwardResolver, LONGLITERAL_FORWARD);
    moduleScope->buildins.realReference = safeMapReference(moduleScope, forwardResolver, REALLITERAL_FORWARD);
    moduleScope->buildins.shortReference = safeMapReference(moduleScope, forwardResolver, INT16LITERAL_FORWARD);
-   moduleScope->buildins.byteReference = safeMapReference(moduleScope, forwardResolver, INT8LITERAL_FORWARD);
+   moduleScope->buildins.ushortReference = safeMapReference(moduleScope, forwardResolver, UINT16LITERAL_FORWARD);
+   moduleScope->buildins.int8Reference = safeMapReference(moduleScope, forwardResolver, INT8LITERAL_FORWARD);
+   moduleScope->buildins.uint8Reference = safeMapReference(moduleScope, forwardResolver, UINT8LITERAL_FORWARD);
    moduleScope->buildins.literalReference = safeMapReference(moduleScope, forwardResolver, LITERAL_FORWARD);
    moduleScope->buildins.wideReference = safeMapReference(moduleScope, forwardResolver, WIDELITERAL_FORWARD);
    moduleScope->buildins.messageReference = safeMapReference(moduleScope, forwardResolver, MESSAGE_FORWARD);
@@ -12635,6 +12686,12 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.bor_message =
       encodeMessage(moduleScope->module->mapAction(BOR_MESSAGE, 0, false),
          2, 0);
+   moduleScope->buildins.shl_message =
+      encodeMessage(moduleScope->module->mapAction(SHL_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.shr_message =
+      encodeMessage(moduleScope->module->mapAction(SHR_MESSAGE, 0, false),
+         2, 0);
    moduleScope->buildins.bxor_message =
       encodeMessage(moduleScope->module->mapAction(BXOR_MESSAGE, 0, false),
          2, 0);
@@ -12671,6 +12728,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.value_message =
          encodeMessage(moduleScope->module->mapAction(VALUE_MESSAGE, 0, false),
             1, PROPERTY_MESSAGE);
+   moduleScope->buildins.bnot_message =
+      encodeMessage(moduleScope->module->mapAction(BNOT_MESSAGE, 0, false),
+         1, PROPERTY_MESSAGE);
    moduleScope->buildins.notequal_message =
       encodeMessage(moduleScope->module->mapAction(NOTEQUAL_MESSAGE, 0, false),
          2, 0);

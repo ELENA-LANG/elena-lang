@@ -50,7 +50,7 @@ struct Op
    ref_t    output;
 };
 
-constexpr auto OperationLength = 156;
+constexpr auto OperationLength = 187;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -124,6 +124,9 @@ constexpr Op Operations[OperationLength] =
    },
    {
       BNOT_OPERATOR_ID, BuildKey::IntSOp, V_INT32, 0, 0, V_INT32
+   },
+   { 
+      NEGATE_OPERATOR_ID, BuildKey::IntSOp, V_INT32, 0, 0, V_INT32
    },
    {
       INC_OPERATOR_ID, BuildKey::IntSOp, V_INT32, 0, 0, V_INT32
@@ -351,16 +354,55 @@ constexpr Op Operations[OperationLength] =
       SHR_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT32, 0, V_INT8
    },
    {
-      ADD_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+      ADD_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, V_UINT8
    },
    {
-      SUB_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+      SUB_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, V_UINT8
    },
    {
-      MUL_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+      MUL_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, V_UINT8
    },
    {
-      DIV_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, 0
+   },
+   {
+      BAND_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, V_UINT8
+   },
+   {
+      BOR_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, V_UINT8
+   },
+   {
+      BXOR_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, V_UINT8
+   },
+   {
+      BNOT_OPERATOR_ID, BuildKey::ByteSOp, V_UINT8, 0, 0, V_UINT8
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, V_UINT8
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::ByteCondOp, V_UINT8, V_UINT8, 0, V_FLAG
+   },
+   {
+      LESS_OPERATOR_ID, BuildKey::UByteCondOp, V_UINT8, V_UINT8, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::ByteCondOp, V_UINT8, V_UINT8, 0, V_FLAG
+   },
+   {
+      SHL_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_INT32, 0, V_UINT8
+   },
+   {
+      SHR_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_INT32, 0, V_UINT8
    },
    {
       ADD_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, 0
@@ -400,6 +442,57 @@ constexpr Op Operations[OperationLength] =
    },
    {
       NOTEQUAL_OPERATOR_ID, BuildKey::ShortCondOp, V_INT16, V_INT16, 0, V_FLAG
+   },
+   {
+      ADD_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
+   },
+   {     
+      DIV_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
+   }, 
+   {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, 0
+   },
+   {
+      BAND_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
+   },
+   {
+      BOR_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
+   },
+   {
+      BXOR_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
+   },
+   {
+      BNOT_OPERATOR_ID, BuildKey::ShortSOp, V_UINT16, 0, 0, V_UINT16
+   },
+   {
+      SHL_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_INT32, 0, V_UINT16
+   },
+   {
+      SHR_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_INT32, 0, V_UINT16
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::ShortCondOp, V_UINT16, V_UINT16, 0, V_FLAG
+   },
+   {
+      LESS_OPERATOR_ID, BuildKey::UShortCondOp, V_UINT16, V_UINT16, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::ShortCondOp, V_UINT16, V_UINT16, 0, V_FLAG
    },
    {
       ADD_OPERATOR_ID, BuildKey::RealOp, V_FLOAT64, V_FLOAT64, 0, V_FLOAT64
@@ -500,7 +593,6 @@ constexpr Op Operations[OperationLength] =
    {
       INDEX_OPERATOR_ID, BuildKey::ObjArrayOp, V_ARGARRAY, V_INT32, 0, V_ELEMENT
    },
-
    {
       ADD_OPERATOR_ID, BuildKey::IntRealOp, V_INT32, V_FLOAT64, 0, V_FLOAT64
    },
@@ -536,8 +628,7 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
       case V_OBJECT:
          return !isPrimitiveRef(source.typeRef);
       case V_INT32:
-         return source.typeRef == V_INT8 || source.typeRef == V_WORD32
-            || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32 || source.typeRef == V_MESSAGENAME;
+         return source.typeRef == V_WORD32 || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32 || source.typeRef == V_MESSAGENAME;
       case V_INT64:
          return source.typeRef == V_PTR64 || source.typeRef == V_WORD64;
       case V_FLAG:
@@ -1279,9 +1370,11 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
          case V_INT32:
          case V_UINT32:
          case V_INT8:
+         case V_UINT8:
          case V_PTR32:
          case V_WORD32:
          case V_INT16:
+         case V_UINT16:
             info.header.flags |= elDebugDWORD;
             break;
          case V_INT64:
@@ -1503,11 +1596,13 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.size = 4;
          break;
       case V_INT8:
+      case V_UINT8:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
          info.size = 1;
          break;
       case V_INT16:
+      case V_UINT16:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
          info.size = 2;
@@ -1932,6 +2027,12 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
       if (compatible)
          return { ConversionResult::BoxingRequired };
 
+      if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_UINT8 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, INT8_32_CONVERSION, 1 };
+      }
+      if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_INT8 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, INT8_32_CONVERSION, 1 };
+      }
       if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_INT16 }, sourceInfo, false)) {
          return { ConversionResult::NativeConversion, INT16_32_CONVERSION, 1 };
       }
@@ -2410,6 +2511,11 @@ bool CompilerLogic :: isNumericType(ModuleScopeBase& scope, ref_t& reference)
 {
    if (isCompatible(scope, { V_INT8 }, { reference }, false)) {
       reference = V_INT8;
+
+      return true;
+   }
+   if (isCompatible(scope, { V_UINT8 }, { reference }, false)) {
+      reference = V_UINT8;
 
       return true;
    }

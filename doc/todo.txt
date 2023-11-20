@@ -8,7 +8,7 @@ In development:
   dev: patterns, #608
   op:github actions : x86
   opt:#602
-  maint:#616, system module warnings
+  maint:#616, system module warnings, #622
   exp:using expression trees in real-life apps (see c#)
   ide:backlog (#617), vm debugger, debugger watch - struct
   tools:backlog
@@ -18,15 +18,19 @@ In development:
 
   * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
 
-  * #620 - backlog:
-    - test three type of self : self, this self, weak self 
-    - use direct reference for - BoolValue#true.Inverted
-    - int32 : implement direct neg, not operations; use it directly for IntNumber
-    - ushort, int8
+ * int + long operations, long + int operations    
+
+  * #86 :
+    -long
+    -real
+    long + real operations
 
   * gui samples - c_a_g
   * gui samples
   * gui samples - agenda - critical error
+
+  * system warnings 
+  * extensions warnings 
 
   === Iteration 20 ===
   dev: async programming (instant messagange sample (chat) )

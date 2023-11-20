@@ -171,9 +171,9 @@ struct BranchingInfo
 struct BuiltinReferences
 {
    ref_t   superReference;
-   ref_t   intReference, shortReference, byteReference;
+   ref_t   intReference, shortReference, uint8Reference;
    ref_t   longReference, realReference;
-   ref_t   uintReference;
+   ref_t   uintReference, int8Reference, ushortReference;
    ref_t   literalReference;
    ref_t   wideReference;
    ref_t   messageReference, extMessageReference;
@@ -200,12 +200,14 @@ struct BuiltinReferences
    mssg_t  notequal_message;
    mssg_t  less_message, greater_message;
    mssg_t  notless_message, notgreater_message;
+   mssg_t  shl_message, shr_message, bnot_message;
 
    BuiltinReferences()
    {
       superReference = intReference = 0;
-      shortReference = byteReference = 0;
+      shortReference = uint8Reference = 0;
       uintReference = 0;
+      int8Reference = ushortReference = 0;
       longReference = realReference = 0;
       literalReference = wideReference = 0;
       messageReference = extMessageReference = 0;
@@ -228,6 +230,7 @@ struct BuiltinReferences
       notequal_message = 0;
       greater_message = less_message = 0;
       notgreater_message = notless_message = 0;
+      bnot_message = shl_message = shr_message = 0;
    }
 };
 

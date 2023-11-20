@@ -95,11 +95,9 @@ public sealed Array<T> : Indexable<T>
       if (n < len)
       { 
          ^ array[n] 
-      }
-      else
-      {
-         system'InvalidArgumentException.raise();
       };
+
+      system'InvalidArgumentException.raise();
    }
 
    setAt(int n, T item)

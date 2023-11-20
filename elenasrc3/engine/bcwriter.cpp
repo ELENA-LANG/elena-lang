@@ -749,6 +749,12 @@ void intSOp(CommandTape& tape, BuildNode& node, TapeScope&)
       case BNOT_OPERATOR_ID:
          tape.write(ByteCode::INotDPN, targetOffset, 4);
          break;
+      case NEGATE_OPERATOR_ID:
+         tape.write(ByteCode::PeekSI);
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::Neg);
+         tape.write(ByteCode::SaveDP, targetOffset);
+         break;
       case INC_OPERATOR_ID:
          tape.write(ByteCode::NAddDPN, targetOffset, 1);
          break;
@@ -1004,6 +1010,75 @@ void uintCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
          break;
       case NOTEQUAL_OPERATOR_ID:
          tape.write(ByteCode::ICmpN, 4);
+         opCode = ByteCode::SelEqRR;
+         inverted = true;
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   if (!inverted) {
+      tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
+   }
+   else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
+}
+
+void uint8CondOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   bool inverted = false;
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   tape.write(ByteCode::PeekSI, 1);
+
+   ByteCode opCode = ByteCode::None;
+   switch (node.arg.value) {
+      case LESS_OPERATOR_ID:
+         opCode = ByteCode::SelULtRR;
+         break;
+      case EQUAL_OPERATOR_ID:
+         tape.write(ByteCode::ICmpN, 1);
+         opCode = ByteCode::SelEqRR;
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         tape.write(ByteCode::ICmpN, 1);
+         opCode = ByteCode::SelEqRR;
+         inverted = true;
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   if (!inverted) {
+      tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
+   }
+   else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
+}
+
+
+void uint16CondOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   bool inverted = false;
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   tape.write(ByteCode::PeekSI, 1);
+
+   ByteCode opCode = ByteCode::None;
+   switch (node.arg.value) {
+      case LESS_OPERATOR_ID:
+         opCode = ByteCode::SelULtRR;
+         break;
+      case EQUAL_OPERATOR_ID:
+         tape.write(ByteCode::ICmpN, 2);
+         opCode = ByteCode::SelEqRR;
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         tape.write(ByteCode::ICmpN, 2);
          opCode = ByteCode::SelEqRR;
          inverted = true;
          break;
@@ -1608,6 +1683,11 @@ void assignImmediateAccField(CommandTape& tape, BuildNode& node, TapeScope&)
 void conversionOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    switch (node.arg.reference) {
+      case INT8_32_CONVERSION:
+         tape.write(ByteCode::BLoad);
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::Save);
+         break;
       case INT16_32_CONVERSION:
          tape.write(ByteCode::WLoad);
          tape.write(ByteCode::PeekSI, 0);
@@ -1888,7 +1968,8 @@ ByteCodeWriter::Saver commands[] =
    uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp,
 
    copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp, semiDirectCallOp,
-   intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex, intCopyingToAccField, intOpWithConst
+   intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex, intCopyingToAccField, intOpWithConst,
+   uint8CondOp, uint16CondOp
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -2016,7 +2097,7 @@ inline bool doubleAssigningByRefHandler(BuildNode lastNode)
 inline bool intCopying(BuildNode lastNode)
 {
    int size = lastNode.findChild(BuildKey::Size).arg.value;
-   if (size == 4) {
+   if (size == 4 || size == 1 || size == 2) {
       BuildNode constNode = lastNode.prevNode();
       int value = constNode.findChild(BuildKey::Value).arg.value;
 
@@ -2299,6 +2380,7 @@ inline bool doubleAssigningConverting(BuildNode lastNode)
    int size = 0;
    switch (conversionOp.arg.value) {
       case INT16_32_CONVERSION:
+      case INT8_32_CONVERSION:
          size = 4;
          break;
       case INT32_64_CONVERSION:

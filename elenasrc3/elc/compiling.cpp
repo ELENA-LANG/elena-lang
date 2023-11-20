@@ -264,7 +264,8 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t prologName, pat
    JITSettings defaultCoreSettings,
    JITCompilerBase* (*compilerFactory)(LibraryLoaderBase*, PlatformType)
 ) :
-   _templateGenerator(this)
+   _templateGenerator(this),
+   _forwards(nullptr)
 {
    _prologName = prologName;
    _epilogName = epilogName;
@@ -549,6 +550,18 @@ void CompilingProcess :: configurate(Project& project)
 
    bool evalOpFlag = project.BoolSetting(ProjectOption::EvaluateOp, DEFAULT_EVALUATE_OP);
    _compiler->setEvaluateOp(evalOpFlag);
+
+   // load program forwards
+   for (auto it = _forwards.start(); !it.eof(); ++it) {
+      ustr_t f = *it;
+
+      size_t index = f.find('=');
+      if (index != NOTFOUND_POS) {
+         IdentifierString key(f, index);
+
+         project.addForward(*key, f + index + 1);
+      }
+   }
 }
 
 void CompilingProcess :: compile(ProjectBase& project,

@@ -780,6 +780,9 @@ void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
             case V_INT32:
                line.append(" of __int[4]");
                break;
+            case V_UINT32:
+               line.append(" of __uint[4]");
+               break;
             case V_PTR32:
                line.append(" of __ptr[4]");
                break;
@@ -788,6 +791,15 @@ void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
                break;
             case V_INT8:
                line.append(" of __int[1]");
+               break;
+            case V_UINT8:
+               line.append(" of __uint[1]");
+               break;
+            case V_INT16:
+               line.append(" of __int[2]");
+               break;
+            case V_UINT16:
+               line.append(" of __uint[2]");
                break;
             case V_WORD32:
                line.append(" of __word[4]");

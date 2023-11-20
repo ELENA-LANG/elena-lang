@@ -81,6 +81,8 @@ namespace elena_lang
 
       bool                _verbose;
 
+      IdentifierList      _forwards;
+
       void buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode, 
          ExtensionMap* outerExtensionList);
 
@@ -120,6 +122,11 @@ namespace elena_lang
       void link(Project& project, LinkerBase& linker, bool withTLS);
 
    public:
+      void addForward(ustr_t f)
+      {
+         _forwards.add(f.clone());
+      }
+
       void greeting();
       int build(Project& project, 
          LinkerBase& linker, 

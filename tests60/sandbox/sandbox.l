@@ -1,20 +1,16 @@
 import extensions;
 
-class A
+/*public program()
 {
-   readonly object x;
+   int n := 5;
+   long l := 6l;
 
-   constructor()
-   {
-      x := new object();
-   }
-
-   test()
-   {
-      x := 2
-   }
+   long r := l + n;
 }
+*/
 
 public program()
-{
-}
+   = "the program result";
+
+public mySystemEntry =
+   console.printLine("My program returns ", program());
