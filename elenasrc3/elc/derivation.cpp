@@ -445,11 +445,11 @@ void SyntaxTreeBuilder :: generateTemplateOperation(SyntaxTreeWriter& writer, Sc
    List<SyntaxNode> arguments({});
    List<SyntaxNode> parameters({});
 
-   SyntaxNode op = node.findChild(SyntaxKey::MessageOperation);
-   SyntaxNode operatorTerminal = op.findChild(SyntaxKey::Operator).firstChild();
+   SyntaxNode operation = node.firstChild();
+   SyntaxNode op = operation.findChild(SyntaxKey::MessageOperation);
 
    IdentifierString templateName("operator:");
-   switch (operatorTerminal.key) {
+   switch (operation.key) {
       case SyntaxKey::AltOperation:
          templateName.append("alt#1#1");
          break;
@@ -1610,6 +1610,12 @@ void SyntaxTreeBuilder :: injectNode(parse_key_t key)
    SyntaxNode current = _cacheWriter.CurrentNode();
    current.injectNode(SyntaxTree::fromParseKey(key));
 }  
+
+void SyntaxTreeBuilder :: renameNode(parse_key_t key)
+{
+   SyntaxNode current = _cacheWriter.CurrentNode();
+   current.setKey(SyntaxTree::fromParseKey(key));
+}
 
 void SyntaxTreeBuilder :: closeNode()
 {

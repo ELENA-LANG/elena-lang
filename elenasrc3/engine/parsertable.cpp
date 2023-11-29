@@ -79,7 +79,7 @@ ParserTable::ParserTable()
 
 bool ParserTable :: registerSymbol(parse_key_t& key, ustr_t value, bool terminalOne)
 {
-   if (key >= pkAnySymbolMask)
+   if (key >= pkMaxKey)
       throw ParserOverflowError();
 
    if (terminalOne)

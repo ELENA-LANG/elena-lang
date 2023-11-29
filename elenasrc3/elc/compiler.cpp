@@ -3419,7 +3419,7 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
 }
 
 void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor, 
-   bool& yieldMethodNotAllowed, bool staticNotAllowed)
+   bool& yieldMethodNotAllowed, bool staticNotAllowed, bool templateBased)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -3438,7 +3438,7 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
          {
             MethodScope methodScope(&scope);
             methodScope.isExtension = scope.extensionClassRef != 0;
-            declareMethodAttributes(methodScope, current, methodScope.isExtension);
+            declareMethodAttributes(methodScope, current, methodScope.isExtension, templateBased);
 
             if (!current.arg.reference) {
                // NOTE : an extension method must be strong-resolved
@@ -3592,7 +3592,7 @@ void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
    bool withDefConstructor = false;
    bool yieldMethodNotAllowed = test(scope.info.header.flags, elWithYieldable) || test(declaredFlags, elStructureRole);
    declareVMT(scope, node, withConstructors, withDefConstructor,
-      yieldMethodNotAllowed, false);
+      yieldMethodNotAllowed, false, test(declaredFlags, elTemplatebased));
 
    if (yieldMethodNotAllowed && !test(scope.info.header.flags, elWithYieldable) && !test(declaredFlags, elStructureRole)) {
       // HOTFIX : trying to figure out if the yield method was declared inside declareVMT
@@ -4866,8 +4866,11 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Type:
-         case SyntaxKey::TemplateType:
             // if it is a type attribute
+            typeInfo = resolveTypeAttribute(scope, current, attributes, declarationMode, false);
+            break;
+         case SyntaxKey::TemplateType:
+            // if it is a template type attribute
             typeInfo = resolveTypeAttribute(scope, current, attributes, declarationMode, false);
             break;
          case SyntaxKey::ArrayType:
@@ -4912,7 +4915,18 @@ ref_t Compiler :: declareMultiType(Scope& scope, SyntaxNode& current, ref_t elem
    return resolveTupleClass(scope, current, items);
 }
 
-void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode)
+inline ref_t resloveWeakSelfReference(ModuleScopeBase* moduleScope, ref_t weakRef, ref_t classRef)
+{
+   ref_t resolvedRef = moduleScope->resolveWeakTemplateReferenceID(weakRef);
+
+   // HOTFIX : if it is a weak reference to the class - use the strong one
+   if (resolvedRef == classRef) {
+      return classRef;
+   }
+   else return weakRef;
+}
+
+void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode, bool templateBased)
 {
    if (exensionMode)
       scope.info.hints |= (ref_t)MethodHint::Extension;
@@ -4941,8 +4955,8 @@ void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node, bo
             break;
          }
          case SyntaxKey::Type:
-         case SyntaxKey::TemplateType:
          case SyntaxKey::ArrayType:
+         case SyntaxKey::TemplateType:
             // if it is a type attribute
             if (scope.info.outputRef) {
                scope.info.outputRef = declareMultiType(scope, current, scope.info.outputRef);
@@ -4950,6 +4964,9 @@ void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node, bo
                continue;
             }
             else scope.info.outputRef = resolveStrongTypeAttribute(scope, current, true, false);
+            if (templateBased)
+               scope.info.outputRef = resloveWeakSelfReference(scope.moduleScope, scope.info.outputRef, scope.getClassRef());
+
             break;
          case SyntaxKey::Name:
          {
@@ -7731,6 +7748,18 @@ ObjectInfo Compiler :: compileNewOp(BuildTreeWriter& writer, ExprScope& scope, S
    return retVal;
 }
 
+bool invalidObjectMode(ObjectInfo info)
+{
+   switch (info.mode) {
+      case TargetMode::None:
+      case TargetMode::Conditional:
+      case TargetMode::Weak:
+         return false;
+      default:
+         return true;
+   }
+}
+
 ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node,
    ref_t expectedRef, ExpressionAttribute attrs)
 {
@@ -7740,7 +7769,7 @@ ObjectInfo Compiler :: compilePropertyOperation(BuildTreeWriter& writer, ExprSco
 
    SyntaxNode current = node.firstChild();
    ObjectInfo source = compileObject(writer, scope, current, EAttr::Parameter, &outerArgsToUpdate);
-   if (source.mode != TargetMode::None && source.mode != TargetMode::Conditional)
+   if (invalidObjectMode(source))
       scope.raiseError(errInvalidOperation, node);
 
    arguments.add(source);
@@ -9802,6 +9831,8 @@ ref_t Compiler :: resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo
 
    for (size_t i = 0; i < items.count(); i++) {
       ref_t typeRef = retrieveStrongType(scope, items[i]);
+      if (!typeRef)
+         typeRef = scope.moduleScope->buildins.superReference;
 
       dummyWriter.newNode(SyntaxKey::TemplateArg, typeRef);
       dummyWriter.newNode(SyntaxKey::Type);
@@ -12004,6 +12035,10 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
             IdentifierString messageName;
             ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
 
+            // !! temporal
+            if (messageName.compare("static:getItem<'IntNumber,'Object>[3]"))
+               methodScope.message |= 0;
+
             _errorProcessor->info(infoCurrentMethod, *messageName);
 #endif // FULL_OUTOUT_INFO
 
@@ -12357,7 +12392,7 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
    bool withConstructors = false;
    bool withDefaultConstructor = false;
    bool yieldMethodNotAllowed = true;
-   declareVMT(scope, node, withConstructors, withDefaultConstructor, yieldMethodNotAllowed, true);
+   declareVMT(scope, node, withConstructors, withDefaultConstructor, yieldMethodNotAllowed, true, false);
    if (withConstructors)
       scope.raiseError(errIllegalConstructor, node);
 
@@ -13155,8 +13190,7 @@ void Compiler :: injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode
    mssg_t message, ustr_t retVar, ref_t classRef)
 {
    SyntaxNode methNode = classNode.appendChild(SyntaxKey::Method, message);
-   //methNode.appendChild(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
-   //methNode.appendChild(lxAttribute, tpEmbeddable);
+   methNode.appendChild(SyntaxKey::Autogenerated, -1); // -1 indicates autogenerated method
    methNode.appendChild(SyntaxKey::Hints, (ref_t)MethodHint::Sealed | (ref_t)MethodHint::Conversion);
 
    if (classRef) {

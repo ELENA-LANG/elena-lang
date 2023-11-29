@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 6.0 - redux ###
   === Iteration 19 ===
-  dev: patterns, #608
+  dev: #608
   op:github actions : x86
   opt:#602
   maint:#616, system module warnings, #622
@@ -13,21 +13,26 @@ In development:
   ide:backlog (#617), vm debugger, debugger watch - struct
   tools:backlog
   prom:tutorial 2 - program entry / linker
-  port:gui samples, db samples, xforms, elenavm / elt for linux
+  port:db samples, elenavm / elt for linux
   --------------------------------------
 
   * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
 
- * int + long operations, long + int operations    
+  * multi-value return type
 
-  * #86 :
-    -long
-    -real
-    long + real operations
+  * multi-value type take into account the expected value
 
-  * gui samples - c_a_g
-  * gui samples
-  * gui samples - agenda - critical error
+  * check multi value return from function
+
+  * default: should use class.Default if the constructor is protected / private
+  * remove temporal solution for Map<Key,T> (see retrieve(int index, TKey key))
+
+  * test ++
+
+  * #563 : patterns
+  * #562 : nullable
+
+   int? varNullableInt := nil;
 
   * system warnings 
   * extensions warnings 
@@ -41,7 +46,7 @@ In development:
   ide:
   tools:
   prom:
-  port:x86 mt, x86-64 vm
+  port:gui samples, xforms, x86 mt, x86-64 vm
   --------------------------------------
 
   === Iteration 21 ===

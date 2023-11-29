@@ -542,6 +542,47 @@ void intRealOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void intLongOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
+   if (!isAssignOp(node.arg.value)) {
+      tape.write(ByteCode::PeekSI);
+      tape.write(ByteCode::Load);
+      tape.write(ByteCode::ConvL);
+      tape.write(ByteCode::LSaveDP, targetOffset);
+      tape.write(ByteCode::XMovSISI, 0, 1);
+   }
+
+   switch (node.arg.value) {
+      case ADD_OPERATOR_ID:
+         tape.write(ByteCode::IAddDPN, targetOffset, 8);
+         break;
+      case SUB_OPERATOR_ID:
+         tape.write(ByteCode::ISubDPN, targetOffset, 8);
+         break;
+      case MUL_OPERATOR_ID:
+         tape.write(ByteCode::IMulDPN, targetOffset, 8);
+         break;
+      case DIV_OPERATOR_ID:
+         tape.write(ByteCode::IDivDPN, targetOffset, 8);
+         break;
+      case BAND_OPERATOR_ID:
+         tape.write(ByteCode::IAndDPN, targetOffset, 8);
+         break;
+      case BOR_OPERATOR_ID:
+         tape.write(ByteCode::IOrDPN, targetOffset, 8);
+         break;
+      case BXOR_OPERATOR_ID:
+         tape.write(ByteCode::IXorDPN, targetOffset, 8);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+
+}
+
 void realIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
@@ -1969,7 +2010,7 @@ ByteCodeWriter::Saver commands[] =
 
    copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp, semiDirectCallOp,
    intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex, intCopyingToAccField, intOpWithConst,
-   uint8CondOp, uint16CondOp
+   uint8CondOp, uint16CondOp, intLongOp
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

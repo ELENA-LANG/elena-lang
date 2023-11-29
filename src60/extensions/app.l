@@ -11,7 +11,7 @@ class ProgramLoop
       _control := control;
         
       // if initializing is not defined - do nothing
-      _control.\initializing();
+      _control\.initializing();
    }
     
    stop() { _active := false }

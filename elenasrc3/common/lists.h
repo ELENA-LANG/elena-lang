@@ -2083,6 +2083,18 @@ namespace elena_lang
          else return Iterator(this, index, current);
       }
 
+      Iterator nextIt(Key key, Iterator it)
+      {
+         size_t index = it._hashIndex;
+
+         Item* current = it._current->next;
+
+         if (current && (current->key != key)) {
+            return Iterator(this, hashSize, nullptr);
+         }
+         else return Iterator(this, index, current);
+      }
+
       T get(Key key) const
       {
          Iterator it = getIt(key);

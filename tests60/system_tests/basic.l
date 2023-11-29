@@ -1689,3 +1689,32 @@ incTest()
 
    console.writeLine(".");
 }
+
+
+singleton MultiValGetter
+{
+   object, object getMultiVal()
+   {
+      ^ ("Alex", 13)
+   }
+}
+
+multiValTest()
+{
+   console.write("multiValTest:");
+
+   var n := 2;
+   var t := (n + 1,"abc");
+
+   Assert.ifTrue(t.Item1 == 3);
+   Assert.ifTrue(t.Item2 == "abc");
+
+   console.write(".");
+
+   auto t2 := MultiValGetter.getMultiVal();
+
+   Assert.ifTrue(t2.Item1 == "Alex");
+   Assert.ifTrue(t2.Item2 == 13);
+
+   console.writeLine(".");
+}

@@ -184,6 +184,7 @@ namespace elena_lang
       void newNode(parse_key_t key, ustr_t arg) override;
       void appendTerminal(parse_key_t key, ustr_t value, LineInfo lineInfo) override;
       void injectNode(parse_key_t key) override;
+      void renameNode(parse_key_t key) override;
 
       void closeNode() override;
 

@@ -169,6 +169,7 @@ namespace elena_lang
       StaticInitializerMethod = 0x0010F1,
       PrimitiveCollection     = 0x0018F2,
       BranchOperation         = 0x0018F3,
+      LessExpression          = 0x0010F4,
 
       Name                    = 0x000101,
       Namespace               = 0x000103,

@@ -47,7 +47,9 @@ namespace collections
                { ^ item }
          };
     
-         auto new_item := new VarTuple<TKey, TValue>(key);
+         //auto new_item := new VarTuple<TKey, TValue>(key, default);
+         TValue defVal; // !! temporal
+         auto new_item := new VarTuple<TKey, TValue>(key, defVal);
     
          int i := _list.Length;
          _list.append(new_item);

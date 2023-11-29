@@ -1,16 +1,29 @@
 import extensions;
 
-/*public program()
+singleton MultiValGetter
 {
-   int n := 5;
-   long l := 6l;
-
-   long r := l + n;
+   object, object getMultiVal()
+   {
+      ^ ("Alex", 13)
+//      ^ ("Alex".add("."), 13)
+   }
 }
-*/
 
 public program()
-   = "the program result";
+{
+   auto t := MultiValGetter.getMultiVal();
+   console.printLine("Item1=",t.Item1,", Item2=", t.Item2);
 
-public mySystemEntry =
-   console.printLine("My program returns ", program());
+//    var n := 2;
+
+//    var t := (n + 1,"abc");
+//    var t := (n, "abc");
+       
+//    console.printLine("Item1=",t.Item1,", Item2=", t.Item2);
+    
+ //   var a;
+//    var b;
+    
+//    a,b := t;
+//    console.printLine("a=",a,", b=", t.Item2);
+}

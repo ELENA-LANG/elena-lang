@@ -157,8 +157,9 @@ namespace elena_lang
       IntConstOp           = 0x007F,
       UByteCondOp          = 0x0080,
       UShortCondOp         = 0x0081,
+      IntLongOp            = 0x0082,
 
-      MaxOperationalKey    = 0x0081,
+      MaxOperationalKey    = 0x0082,
 
       Import               = 0x0090,
       DictionaryOp         = 0x0091,

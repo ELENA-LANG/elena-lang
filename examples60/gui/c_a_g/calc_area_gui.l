@@ -93,11 +93,11 @@ public class MainWindow : SDIDialog
          .appendControl:Econta4;
 
       // Images Formulas
-      _paintbox  := Imagebox.new();
-      _imageList := ImageList.new();
-      pnlFormula 
-         .appendControl:_imageList
-         .appendControl:_paintbox;
+//      _paintbox  := Imagebox.new();
+//      _imageList := ImageList.new();
+//      pnlFormula 
+//         .appendControl:_imageList
+//         .appendControl:_paintbox;
       // -----------------------------------------------------------
 
       // Form ------------------------------------------------------------------------
@@ -189,9 +189,10 @@ public class MainWindow : SDIDialog
       letter3.setRegion(170, 75, 14, 22);
 
       // Image Formula -----------------------------------------------------------------
-      _paintbox.setRegion(12, 22, 379, 139);
+//      _paintbox.setRegion(12, 22, 379, 139);
 
       // Image List Formulas -----------------------------------------------------------
+/*
       _imageList.assign:_paintbox;
       _imageList.setRegion(0, 0, 379, 139);
       _imageList.appendImage:"..\formulas\Paralelogramos\bitmap1.bmp";
@@ -212,7 +213,7 @@ public class MainWindow : SDIDialog
       _imageList.appendImage:"..\formulas\Triangulos\bitmap3.bmp";
       _imageList.appendImage:"..\formulas\Triangulos\bitmap4.bmp";
       _imageList.appendImage:"..\formulas\Triangulos\bitmap5.bmp";
-
+*/
       // Events ------------------------------------------------------------------------
       // Radio Buttons -----------------------------------------------------------------
       Tconta.onIndexChanged := (args){ self.TipoDoCalculo(Tconta.SelectedIndex) };
@@ -268,7 +269,7 @@ public class MainWindow : SDIDialog
     
    private TipoDoObj(int index)
    {
-      _imageList.SelectedIndex := index;
+//      _imageList.SelectedIndex := index;
      
       valTres.Visible := false;
       valDois.Visible := false;

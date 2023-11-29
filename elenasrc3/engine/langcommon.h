@@ -333,6 +333,8 @@ namespace elena_lang
    constexpr auto INC_OPERATOR_ID            = 0x002C;
    constexpr auto DEC_OPERATOR_ID            = 0x002D;
 
+   constexpr int MAX_OPERATOR_ID             = 0x002D;
+
    constexpr auto ISNIL_OPERATOR_ID          = 0x003E;
    constexpr auto CLASS_OPERATOR_ID          = 0x003F;
    constexpr auto SET_INDEXER_OPERATOR_ID    = 0x0201;

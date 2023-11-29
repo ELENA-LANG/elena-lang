@@ -48,6 +48,7 @@ public program()
    structTest();
    lookaheadTests();
    incTest();
+   multiValTest();
 
    console.writeLine("--- Passed ---")
 }

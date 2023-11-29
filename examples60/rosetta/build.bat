@@ -18,6 +18,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+..\..\bin\elena-cli -panagram anagram.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 ..\..\bin\elena-cli -panonymrec anonymrec.l
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
@@ -108,12 +113,17 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-..\..\bin\elena-cli -ptwentyfour twentyfour.l
+..\..\bin\elena-cli -pcombinations combinations.l
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-..\..\bin\elena-cli gameoflife\gameoflife.prj
+..\..\bin\elena-cli -pcomplist complist.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pdoors doors.l
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
@@ -123,12 +133,147 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+..\..\bin\elena-cli -pevolutionary evolutionary.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pfirstclass firstclass.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli gameoflife\gameoflife.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 ..\..\bin\elena-cli -pknutalg knutalg.l
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+..\..\bin\elena-cli -ploop_multiple_arrays loopma.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 ..\..\bin\elena-cli -pmanboy manboy.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pmedian median.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pninetynine ninetynine.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -preverse_words_in_string reverse_words.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli simple_windowed_app\simple_windowed_app.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -psmavg smavg.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pstring_append string_append.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pstring_case string_case.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pstring_comparison string_comparision.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pstring_concatenation string_concatenation.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pstring_interpolation string_interpolation.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pstring_matching string_matching.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pstring_prepend string_prepend.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -ptokenizer tokenizer.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -ptoppergroup toppergroup.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -ptreeview treeview.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -ptrigonometric trigonometric.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -ptruncprime truncprime.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -ptwelvestats twelvestats.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -ptwentyfour twentyfour.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pwireworld wireworld.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pycombinator ycombinator.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pzeckendorf_arithm zeckendorf_arithm.l
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elena-cli -pzhangsuen zhangsuen.l
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

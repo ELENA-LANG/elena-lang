@@ -40,11 +40,6 @@ namespace collections
          Item2 := o2
       }
         
-      constructor(T1 o1)
-      {
-         Item1 := o1
-      }
-        
       T1 Item1 : rprop;
       T2 Item2 : rprop;
 
@@ -63,6 +58,10 @@ namespace collections
             1 { Item2 := val }
             : { OutOfRangeException.raise() }
       }
+
+      Tuple<object,object> cast()
+         = new Tuple<object,object>(Item1, Item2);
+//         = ();        
    }
 
    public sealed VarTuple<T1, T2>
@@ -75,11 +74,6 @@ namespace collections
       {
          Item1 := o1;
          Item2 := o2
-      }
-        
-      constructor(T1 o1)
-      {
-         Item1 := o1
       }
         
       T1 Item1 : rprop;
@@ -151,7 +145,7 @@ namespace collections
          Item3 := o3;
          Item4 := o4
       }
-        
+
       T1 Item1 : rprop;
       T2 Item2 : rprop;
       T3 Item3 : rprop;

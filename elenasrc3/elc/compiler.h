@@ -1142,7 +1142,7 @@ namespace elena_lang
       void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool identifierDeclarationMode);
       void declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& fldeclaredFlagsags);
       void declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& mode);
-      void declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode);
+      void declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode, bool templateBased);
       void declareArgumentAttributes(MethodScope& scope, SyntaxNode node, TypeInfo& typeInfo, bool declarationMode);
       void declareDictionaryAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo, bool& superMode);
       void declareExpressionAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo, ExpressionAttributes& mode);
@@ -1216,7 +1216,7 @@ namespace elena_lang
       void declareMethodMetaInfo(MethodScope& scope, SyntaxNode node);
       void declareMethod(MethodScope& scope, SyntaxNode node, bool abstractMode, bool staticNotAllowed);
       void declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor, 
-         bool& yieldMethodNotAllowed, bool staticNotAllowed);
+         bool& yieldMethodNotAllowed, bool staticNotAllowed, bool templateBased);
 
       void declareSymbol(SymbolScope& scope, SyntaxNode node);
       void declareClassClass(ClassScope& classClassScope, SyntaxNode node, ref_t parentRef);

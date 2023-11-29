@@ -368,7 +368,7 @@ public abstract class BaseButton : BaseWinControl
 
    click()
    {
-      onClick.?(self)
+      onClick?.(self)
    }
 
    internal updateStyles(ref int retVal)
@@ -535,7 +535,7 @@ public closed class Paintbox : BaseWinControl, interface<IControl>
         
       _canvas.open(dc);
         
-      onPaint.?(self, _canvas);
+      onPaint?.(self, _canvas);
 
       _canvas.close();
 
@@ -610,7 +610,7 @@ public sealed class Imagebox : Paintbox
       if(nil == _handle)
          { ^ self };
         
-      onPaint.?(self, _canvas);
+      onPaint?.(self, _canvas);
 
       super.refresh();
       _needToRefresh := false
@@ -822,6 +822,11 @@ class RadioButtonGroupListener : WindowCallback
       _owner := owner
    }
 
+   onClick(Handle control)
+   {
+      _owner.onClick(control);
+   }
+
    onSize(Handle control, int width, int height)
    {
       _owner.resize(control, width, height);
@@ -879,7 +884,7 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
         
          self.setChecked(true);
         
-         onIndexChanged.?(self);
+         onIndexChanged?.(self);
       }
    }
 
@@ -934,6 +939,27 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
       };
         
       super.resize(handle, width, height)
+   }
+
+   internal onClick(Handle handle)
+   {
+      var retVal := nil;
+      int len := _controls.Length;
+      IControl current;
+      for (int i := 1, i < len, i += 1) {
+         current := _controls[i];            
+            
+         retVal := current.retrieve(handle);
+         if(nil != retVal)
+         {
+            int index := i - 1;
+            _selected := index;
+                
+            onIndexChanged?.(self);
+                
+            ^ self
+         }
+      }
    }
 }
 

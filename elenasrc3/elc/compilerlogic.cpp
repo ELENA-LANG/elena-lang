@@ -39,18 +39,9 @@ bool testMethodHint(ref_t hint, MethodHint mask)
    return test(hint, (ref_t)mask);
 }
 
-struct Op
-{
-   int      operatorId;
-   BuildKey operation;
+typedef CompilerLogic::Op Op;
 
-   ref_t    loperand;
-   ref_t    roperand;
-   ref_t    ioperand;
-   ref_t    output;
-};
-
-constexpr auto OperationLength = 187;
+constexpr auto OperationLength = 194;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -274,6 +265,27 @@ constexpr Op Operations[OperationLength] =
    },
    {
       SHR_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT32, 0, V_INT64
+   },
+   {
+      ADD_OPERATOR_ID, BuildKey::IntLongOp, V_INT32, V_INT64, 0, V_INT64
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::IntLongOp, V_INT32, V_INT64, 0, V_INT64
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::IntLongOp, V_INT32, V_INT64, 0, V_INT64
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::IntLongOp, V_INT32, V_INT64, 0, V_INT64
+   },
+   {
+      BAND_OPERATOR_ID, BuildKey::IntLongOp, V_INT32, V_INT64, 0, V_INT64
+   },
+   {
+      BOR_OPERATOR_ID, BuildKey::IntLongOp, V_INT32, V_INT64, 0, V_INT64
+   },
+   {
+      BXOR_OPERATOR_ID, BuildKey::IntLongOp, V_INT32, V_INT64, 0, V_INT64
    },
    {
       BNOT_OPERATOR_ID, BuildKey::LongSOp, V_INT64, 0, 0, V_INT64
@@ -644,6 +656,13 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
 
 // --- CompilerLogic ---
 
+void CompilerLogic :: loadOperations()
+{
+   for (size_t i = 0; i < OperationLength; i++) {
+      _operations.add(Operations[i].operatorId, Operations[i]);
+   }
+}
+
 bool CompilerLogic :: isValidOp(int operatorId, const int* validOperators, size_t len)
 {
    for (size_t i = 0; i < len; ++i) {
@@ -657,17 +676,20 @@ bool CompilerLogic :: isValidOp(int operatorId, const int* validOperators, size_
 BuildKey CompilerLogic :: resolveOp(ModuleScopeBase& scope, int operatorId, ref_t* arguments, size_t length,
    ref_t& outputRef)
 {
-   for(size_t i = 0; i < OperationLength; i++) {
-      if (Operations[i].operatorId == operatorId) {
-         bool compatible = isCompatible(scope, { Operations[i].loperand }, { arguments[0] }, false);
-         compatible = compatible && (length <= 1 || isCompatible(scope, { Operations[i].roperand }, { arguments[1] }, false));
-         compatible = compatible && (length <= 2 || isCompatible(scope, { Operations[i].ioperand }, { arguments[2] }, false));
-         if (compatible) {
-            outputRef = Operations[i].output;
+   auto it = _operations.getIt(operatorId);
+   while (!it.eof()) {
+      Op op = *it;
 
-            return Operations[i].operation;
-         }
+      bool compatible = isCompatible(scope, { op.loperand }, { arguments[0] }, false);
+      compatible = compatible && (length <= 1 || isCompatible(scope, { op.roperand }, { arguments[1] }, false));
+      compatible = compatible && (length <= 2 || isCompatible(scope, { op.ioperand }, { arguments[2] }, false));
+      if (compatible) {
+         outputRef = op.output;
+
+         return op.operation;
       }
+
+      it = _operations.nextIt(operatorId, it);
    }
 
    return BuildKey::None;
