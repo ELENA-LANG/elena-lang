@@ -1738,6 +1738,50 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
    else return V_OBJARRAY;
 }
 
+bool CompilerLogic :: isTemplateCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef)
+{
+   ustr_t targetName = scope.module->resolveReference(targetRef);
+   ustr_t sourceName = scope.module->resolveReference(sourceRef);
+
+   size_t pos = targetName.find('&');
+
+   // check if it is the same template
+   if (sourceName.length() < pos || !targetName.compare(sourceName, pos))
+      return false;
+
+   // check if the signature is compatible
+   size_t targetStart = pos + 1;
+   size_t sourceStart = pos + 1;
+
+   while (true) {
+      size_t targetEndPos = targetName.findSub(targetStart, '&', targetName.length());
+      size_t sourceEndPos = sourceName.findSub(sourceStart, '&', sourceName.length());
+
+      IdentifierString targetArg;
+      IdentifierString sourceArg;
+
+      targetArg.copy(targetName.str() + targetStart, targetEndPos - targetStart);
+      sourceArg.copy(sourceName.str() + sourceStart, sourceEndPos - sourceStart);
+
+      targetArg.replaceAll('@', '\'', 0);
+      sourceArg.replaceAll('@', '\'', 0);
+
+      ref_t targetArgRef = scope.mapFullReference(*targetArg);
+      ref_t sourceArgRef = scope.mapFullReference(*sourceArg);
+
+      if (!isCompatible(scope, { targetArgRef }, { sourceArgRef }, true))
+         return false;
+
+      if (targetEndPos >= targetName.length() || sourceEndPos >= sourceName.length())
+         break;
+
+      targetStart = targetEndPos + 1;
+      sourceStart = sourceEndPos + 1;
+   }
+
+   return true;
+}
+
 bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, bool ignoreNils)
 {
    if ((!targetInfo.typeRef || targetInfo.typeRef == scope.buildins.superReference) && !sourceInfo.isPrimitive())

@@ -8168,16 +8168,32 @@ ObjectInfo Compiler :: compileTupleAssigning(BuildTreeWriter& writer, ExprScope&
    ArgumentsInfo arguments;
 
    SyntaxNode current = node.firstChild();
-   targets.add(mapObject(scope, current, EAttr::None));
-   current = current.nextNode();
-   while (current == SyntaxKey::SubVariable) {
-      ObjectInfo subVar = mapObject(scope, current, EAttr::NewVariable | EAttr::IgnoreDuplicate);
-      if (subVar.kind == ObjectKind::Unknown)
-         scope.raiseError(errUnknownObject, current);
+   if (current == SyntaxKey::TupleCollection) {
+      SyntaxNode identNode = current.firstChild();
+      while (identNode != SyntaxKey::None) {
+         SyntaxNode objNode = identNode.firstChild();
+         if (objNode == SyntaxKey::Object) {
+            targets.add(mapObject(scope, objNode, EAttr::None));
+         }
+         else scope.raiseError(errInvalidOperation, identNode);
 
-      targets.add(subVar);
+         identNode = identNode.nextNode();
+      }
 
       current = current.nextNode();
+   }
+   else {
+      targets.add(mapObject(scope, current, EAttr::None));
+      current = current.nextNode();
+      while (current == SyntaxKey::SubVariable) {
+         ObjectInfo subVar = mapObject(scope, current, EAttr::NewVariable | EAttr::IgnoreDuplicate);
+         if (subVar.kind == ObjectKind::Unknown)
+            scope.raiseError(errUnknownObject, current);
+
+         targets.add(subVar);
+
+         current = current.nextNode();
+      }
    }
 
    ObjectInfo exprVal = compileExpression(writer, scope, current, 0, EAttr::Parameter, nullptr);
@@ -9455,10 +9471,23 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
    if (!_logic->isCompatible(*scope.moduleScope, { targetRef }, source.typeInfo, false)) {
       if (source.kind == ObjectKind::Default) {
          if (_logic->isEmbeddable(*context.scope->moduleScope, targetRef)) {
+            ObjectInfo classSymbol = mapClassSymbol(*context.scope, targetRef);
+
             ArgumentsInfo arguments;
 
-            return compileNewOp(*context.writer, *context.scope, context.node,
-               mapClassSymbol(*context.scope, targetRef), 0, arguments);
+            CheckMethodResult dummy = {};
+            if (_logic->resolveCallType(*scope.moduleScope, classSymbol.typeInfo.typeRef, scope.moduleScope->buildins.constructor_message, dummy) 
+               && dummy.visibility == Visibility::Public) 
+            {
+               return compileNewOp(*context.writer, *context.scope, context.node,
+                  classSymbol, 0, arguments);
+            }
+            else {
+               // BAD LUCK : Default property should be returned
+               return compileWeakOperation(writer, scope, node, nullptr, 0, classSymbol,
+                  arguments, scope.moduleScope->buildins.default_message, targetRef, nullptr);
+
+            }
          }
          else return { ObjectKind::Nil, { V_NIL } };
       }
@@ -9874,7 +9903,7 @@ ref_t Compiler :: resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo
       templateReference, parameters, false, nullptr);
 }
 
-ObjectInfo Compiler :: compileTupleCollectiom(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node)
+ObjectInfo Compiler :: compileTupleCollectiom(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ref_t targetRef)
 {
    WriterContext context = { &writer, &scope, node };
 
@@ -9894,6 +9923,9 @@ ObjectInfo Compiler :: compileTupleCollectiom(BuildTreeWriter& writer, ExprScope
    }
 
    ref_t tupleRef = resolveTupleClass(scope, node, arguments);
+
+   if (_logic->isTemplateCompatible(*scope.moduleScope, targetRef, tupleRef))
+      tupleRef = targetRef;
 
    writer.newNode(BuildKey::CreatingClass, arguments.count_pos());
    writer.appendNode(BuildKey::Type, tupleRef);
@@ -10211,7 +10243,7 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
          break;
       }
       case SyntaxKey::TupleCollection:
-         retVal = compileTupleCollectiom(writer, scope, current);
+         retVal = compileTupleCollectiom(writer, scope, current, targetRef);
          break;
       case SyntaxKey::TupleAssignOperation:
          retVal = compileTupleAssigning(writer, scope, current);
@@ -12763,6 +12795,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.value_message =
          encodeMessage(moduleScope->module->mapAction(VALUE_MESSAGE, 0, false),
             1, PROPERTY_MESSAGE);
+   moduleScope->buildins.default_message =
+      encodeMessage(moduleScope->module->mapAction(DEFAULT_MESSAGE, 0, false),
+         1, PROPERTY_MESSAGE);
    moduleScope->buildins.bnot_message =
       encodeMessage(moduleScope->module->mapAction(BNOT_MESSAGE, 0, false),
          1, PROPERTY_MESSAGE);

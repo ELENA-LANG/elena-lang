@@ -1452,7 +1452,7 @@ namespace elena_lang
       void compileClassVMT(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope, SyntaxNode node);
 
       ObjectInfo compileCollection(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ExpressionAttribute mode);
-      ObjectInfo compileTupleCollectiom(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
+      ObjectInfo compileTupleCollectiom(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ref_t targetRef);
 
       void compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, SyntaxNode node);
       void compileClassSymbol(BuildTreeWriter& writer, ClassScope& scope);

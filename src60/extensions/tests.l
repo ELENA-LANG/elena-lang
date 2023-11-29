@@ -43,6 +43,14 @@ public singleton Assert
          AssertException.raise("Assertion failed")
       }
    }
+
+   ifNil(b)
+   {
+      ifnot(nil == b)
+      {
+         AssertException.raise("Assertion failed")
+      }
+   }
 }
 
 // --- testOp ---

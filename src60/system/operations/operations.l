@@ -100,6 +100,27 @@ public template for<init_expr1, init_expr2,condExpr,step_expr1, step_expr2>(loop
    $rep cast bool(condExpr) ? { loopBody; step_expr1; step_expr2; }
 }
 
+//// --- foreach ---
+//
+//public template foreach::in<item, collection>(loopBody) : __included(statementTemplates)
+//{
+//   auto en := collection.enumerator();
+//
+//   while (en.next())
+//   {
+//      item := *en;
+//
+//      loopBody;
+//   }
+//}
+
+// --- try ---
+
+public template try(try_block) : __included(statementTemplates)
+{
+   try_block \\ back:nil;
+}
+
 // --- try:catch ---
 
 public template try::catch(try_block,catch_block) : __included(statementTemplates)

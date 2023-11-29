@@ -1716,5 +1716,64 @@ multiValTest()
    Assert.ifTrue(t2.Item1 == "Alex");
    Assert.ifTrue(t2.Item2 == 13);
 
+   console.write(".");
+
+   var i1, i2 := MultiValGetter.getMultiVal();
+   Assert.ifTrue(i1 == "Alex");
+   Assert.ifTrue(i2 == 13);
+
+   console.write(".");
+
+   (string x1, int x2) := MultiValGetter.getMultiVal();
+   Assert.ifTrue(x1 == "Alex");
+   Assert.ifTrue(x2 == 13);
+
+   console.writeLine(".");
+}
+
+// -- defaultTest --
+
+DefaultA;
+
+struct DefaultB
+{
+   int x := 0;
+
+   internal int X() = x;
+
+   bool equal(DefaultB val)
+      = x == val.X();
+}
+
+struct DefaultC
+{
+   int y;
+
+   internal int Y() = y;
+
+   bool equal(DefaultC val)
+      = y == val.Y();
+
+   static DefaultC Default
+      = DefaultC.load(0);
+
+   constructor load(int v)
+   {
+      y := v
+   }
+}
+
+defaultTest()
+{
+   console.write("defaultTest:");
+
+   DefaultA a := default;
+   DefaultB b := default;
+   DefaultC c := default;
+
+   Assert.ifNil(a);
+   Assert.ifEqual(b, new DefaultB());
+   Assert.ifEqual(c, DefaultC.load(0));
+
    console.writeLine(".");
 }

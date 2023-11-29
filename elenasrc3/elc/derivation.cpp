@@ -517,6 +517,9 @@ void SyntaxTreeBuilder :: flushExpressionMember(SyntaxTreeWriter& writer, Scope&
       case SyntaxKey::TemplateOperation:
          generateTemplateOperation(writer, scope, current);
          break;
+      case SyntaxKey::TupleBlock:
+         flushExpression(writer, scope, current);
+         break;
       default:
          if (SyntaxTree::testSuperKey(current.key, SyntaxKey::Expression)) {
             current.setKey(SyntaxKey::Expression);

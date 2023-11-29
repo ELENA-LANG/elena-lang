@@ -154,6 +154,7 @@ namespace elena_lang
    constexpr auto NEGATE_MESSAGE          = "Negative";
    constexpr auto VALUE_MESSAGE           = "Value";
    constexpr auto ITEM_MESSAGE            = "Value";
+   constexpr auto DEFAULT_MESSAGE         = "Default";
    constexpr auto BNOT_MESSAGE            = "BInverted";
    constexpr auto NOTEQUAL_MESSAGE        = "notequal";
    constexpr auto LESS_MESSAGE            = "less";

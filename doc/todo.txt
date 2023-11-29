@@ -5,37 +5,33 @@ In development:
 [development]
   ### EPIC: elena 6.0 - redux ###
   === Iteration 19 ===
-  dev: #608
+  dev: #608, #562
   op:github actions : x86
   opt:#602
   maint:#616, system module warnings, #622
   exp:using expression trees in real-life apps (see c#)
   ide:backlog (#617), vm debugger, debugger watch - struct
   tools:backlog
-  prom:tutorial 2 - program entry / linker
+  prom:tutorial forwards
   port:db samples, elenavm / elt for linux
   --------------------------------------
 
   * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
 
-  * multi-value return type
+  * it should be possible to use your own operation patterns, module should contain the meta declaration to use the oepration
+    patterns
 
-  * multi-value type take into account the expected value
+  * meta command to use statement templates
 
-  * check multi value return from function
+  * #563 : patterns (https://endjin.com/blog/2022/02/pattern-matching-in-csharp)
 
-  * default: should use class.Default if the constructor is protected / private
-  * remove temporal solution for Map<Key,T> (see retrieve(int index, TKey key))
-
-  * test ++
-
-  * #563 : patterns
-  * #562 : nullable
-
-   int? varNullableInt := nil;
+  * if:is
+  * foreach:in
 
   * system warnings 
   * extensions warnings 
+  * review code - check for the common patterns
+  * chat sample
 
   === Iteration 20 ===
   dev: async programming (instant messagange sample (chat) )

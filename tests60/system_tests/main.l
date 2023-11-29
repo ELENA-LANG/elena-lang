@@ -49,6 +49,7 @@ public program()
    lookaheadTests();
    incTest();
    multiValTest();
+   defaultTest();
 
    console.writeLine("--- Passed ---")
 }

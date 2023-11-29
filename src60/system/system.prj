@@ -28,6 +28,9 @@
         <include>operations\inline.l</include>
         <include>operations\operations.l</include>
      </module>
+     <module name="operations'advanced">
+        <include>operations\advanced\operations.l</include>
+     </module>
      <module>
         <include>aliases.l</include>
         <include>base.l</include>
