@@ -261,7 +261,7 @@ namespace calendar
             0, flags,self,0,buffer,255);
                 
          if (length == 0)
-            { FormatException.new:"Invalid date".raise() };
+            { FormatException.new("Invalid date").raise() };
     
          ^ String.fromByteArray(0, length - 1, buffer)
       }
@@ -274,7 +274,7 @@ namespace calendar
             0,flags,self,0,buffer,255);
                 
          if (length == 0)
-            { FormatException.new:"Invalid time".raise() };
+            { FormatException.new("Invalid time").raise() };
     
          ^ String.fromByteArray(0, length - 1, buffer)
       }
@@ -287,7 +287,7 @@ namespace calendar
             0, flags,self,0,buffer,255);
                 
          if (length == 0)
-            { FormatException.new:"Invalid date".raise() };
+            { FormatException.new("Invalid date").raise() };
     
          ^ WideString.fromShortArray(0, length - 1, buffer)
       }
@@ -300,7 +300,7 @@ namespace calendar
             0,flags,self,0,buffer,255);
                 
          if (length == 0)
-            { FormatException.new:"Invalid time".raise() };
+            { FormatException.new("Invalid time").raise() };
     
          ^ WideString.fromShortArray(0, length - 1, buffer)
       }

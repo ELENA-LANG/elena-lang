@@ -49,10 +49,10 @@ namespace text
       string Value
          = String.copy(0, *_length, _buffer);
     
-//      get multiret Value(ref wide r)
-//      {
-//            r := WideString.copy(0, _length.Value, theBuffer);
-//      }
+      get retoverload wide Value()
+      {
+         ^ WideString.copy(0, _length.Value, _buffer);
+      }
     
       wide cast()
          = WideString.copy(0, *_length, _buffer);
@@ -67,7 +67,7 @@ namespace text
     
       append(line)
       {
-         self.write:line
+         self.write(line)
       }
                                         
       private reserve(int len)
@@ -425,13 +425,13 @@ namespace text
          ^ String.copy(index, length, _buffer)
       }
     
-//        wide WideSubstring(int index, int length)
-//        {
-//            if (length == 0)
-//                { ^ emptyWideString };
-//                
-//            ^ WideString.copy(index, length, _buffer)
-//        }
+      wide WideSubstring(int index, int length)
+      {
+         if (length == 0)
+            { ^ emptyWideString };
+                
+         ^ WideString.copy(index, length, _buffer)
+      }
 
       delete(int index, int length)
       {
@@ -444,9 +444,9 @@ namespace text
          _length.reduce(length)
       }
     
-//        trim(int n)
-//        {
-//            _length.reduce(n)
-//        }
+      trim(int n)
+      {
+         _length.Value := n
+      }
    }
 }

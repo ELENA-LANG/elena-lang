@@ -454,6 +454,38 @@ internal singleton PrimitiveIntOperations
 
       ^ retVal
    }
+
+   saveToByteArray(int n, byte[] dest, int index)
+   {
+      byte b := n & 0FFh;
+      dest[index] := b;
+      
+      n := n $shr 8;
+      b := n & 0FFh;
+      dest[index + 1] := b;
+
+      n := n $shr 8;
+      b := n & 0FFh;
+      dest[index + 2] := b;
+
+      n := n $shr 8;
+      b := n & 0FFh;
+      dest[index + 3] := b;
+   }
+}
+
+// --- PrimitiveLongOperations ---
+
+internal singleton PrimitiveLongOperations
+{
+   saveToByteArray(long n, byte[] dest, int index)
+   {
+      int lo := n.Low;
+      PrimitiveIntOperations.saveToByteArray(lo, dest, index);
+
+      int hi := n.High;
+      PrimitiveIntOperations.saveToByteArray(hi, dest, index + 4);
+   }
 }
 
 // --- UTFOperations ---

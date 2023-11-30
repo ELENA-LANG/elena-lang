@@ -2085,7 +2085,7 @@ namespace elena_lang
 
       Iterator nextIt(Key key, Iterator it)
       {
-         size_t index = it._hashIndex;
+         pos_t index = it._hashIndex;
 
          Item* current = it._current->next;
 

@@ -937,7 +937,7 @@ enumTest()
     console.write("enumTest:");       
     
     var s := String.MinValue;
-    "123".forEach:(x)
+    "123".forEach::(x)
     {
         s := x.toPrintable() + s;
     };
@@ -955,9 +955,9 @@ textBufferTest()
     
     var buffer := new system'text'TextBuilder();
     
-    buffer.write:"a";
-    buffer.write:"b";
-    buffer.write:"c";
+    buffer.write("a");
+    buffer.write("b");
+    buffer.write("c");
 
     Assert.ifTrue(buffer.Value == "abc");
 
@@ -1076,7 +1076,7 @@ singleton ExecTester
 {
     break()
     {
-        MyException.new:"OnError handler works".raise()
+        MyException.new("OnError handler works").raise()
     }
     
     break2()
@@ -1097,7 +1097,7 @@ exceptionTest()
     console.write("exceptionTest:");
     
     bool raised := false;
-    ExecTester.break() \\ on:(e){ raised := true };
+    ExecTester.break() \\ on::(e){ raised := true };
     Assert.ifTrue(raised);
     console.write(".");
     
@@ -1129,7 +1129,7 @@ exceptionTest()
         }
         catch(MyException e)
         {
-            console.writeLine:"!!Wrong handler";
+            console.writeLine("!!Wrong handler");
             Assert.ifTrue(false)
         }
     }
@@ -1378,24 +1378,24 @@ nilDispatcherTest()
    A a := nil;
    var b := nil;
     
-   d.testMe(1, a) \ back:nil;
+   d.testMe(1, a) \ back(nil);
    d.validate(2);
 
-   d.testMe(1, b) \ back:nil;
+   d.testMe(1, b) \ back(nil);
    d.validate(1);
    console.write(".");
     
-   d.testMe(1, nil) \ back:nil;
+   d.testMe(1, nil) \ back(nil);
    d.validate(1);
    console.write(".");
 
-   d2.testMe(1, a) \ back:nil;
+   d2.testMe(1, a) \ back(nil);
    d2.validate(1);
     
-   d2.testMe(1, b) \ back:nil;
+   d2.testMe(1, b) \ back(nil);
    d2.validate(1);
     
-   d2.testMe(1, nil) \ back:nil;
+   d2.testMe(1, nil) \ back(nil);
    d2.validate(1);
 
    console.writeLine(".")

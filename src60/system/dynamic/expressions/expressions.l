@@ -147,7 +147,7 @@ namespace expressions
          = MessageCallExpression.load(message,t,params arguments);
 
       static Expression ExtensionOrMessageCall(Message message, Expression t, params Expression[] arguments)
-         = ExtensionOrMessageCallExpression.new(message,t,params arguments);
+         = ExtensionOrMessageCallExpression.load(message,t,params arguments);
 
       static Expression Constant(object o)
          = new ConstantExpression(o);
@@ -210,7 +210,7 @@ namespace expressions
          = new NewExpression(t, p0);
 
       static Expression FunctionCall(params Expression[] arguments)
-         = FunctionCallExpression.new(params arguments);
+         = FunctionCallExpression.load(params arguments);
 
       static Expression Assigning(string variable, Expression expr)
          = new AssigningExpression(variable, expr);
@@ -955,7 +955,7 @@ namespace expressions
          this message := new Message(*text);
       }
         
-      Key = message;
+      object Key = message;
 
       bool IsOperation = false;
 
@@ -1911,7 +1911,7 @@ namespace expressions
                 
             var symbolName := info.Name;
             if (symbolName == nil) {
-               info.Symbol.compile(scope);
+               info.Symbol.compile(set, scope);
             }
             else {
                MessageName name := new MessageName(symbolName);

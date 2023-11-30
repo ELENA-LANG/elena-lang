@@ -223,8 +223,8 @@ namespace io
       {
          handle h := extern KERNEL32.GetStdHandle(0FFFFFFF6h);
 
-         INPUT_RECORD dump;
-         KEY_EVENT_RECORD rec;
+         INPUT_RECORD dump := default;
+         KEY_EVENT_RECORD rec := default;
 
          int   numberRead := 0;
          short eventType := 0;
@@ -274,8 +274,8 @@ namespace io
 
       get bool KeyAvailable()
       {
-         INPUT_RECORD     dump;
-         KEY_EVENT_RECORD rec;
+         INPUT_RECORD     dump := default;
+         KEY_EVENT_RECORD rec := default;
 
          int          numberRead := 0;
          short        eventType := 0;

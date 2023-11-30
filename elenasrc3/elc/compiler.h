@@ -848,6 +848,13 @@ namespace elena_lang
             return scope ? scope->byRefReturnMode : false;
          }
 
+         bool isExtension()
+         {
+            MethodScope* scope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
+
+            return scope ? scope->isExtension : false;
+         }
+
          bool resolveAutoType(ObjectInfo& info, TypeInfo typeInfo) override;
 
          void markAsAssigned(ObjectInfo object) override;
@@ -1052,8 +1059,9 @@ namespace elena_lang
       bool                   _trackingUnassigned;
       bool                   _withConditionalBoxing;
       bool                   _evaluateOp;
+      bool                   _verbose;
 
-      bool reloadMetaData(ModuleScopeBase* moduleScope, ustr_t name);
+      void loadMetaData(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t name);
 
       void importExtensions(NamespaceScope& ns, ustr_t importedNs);
       void loadExtensions(NamespaceScope& ns, bool internalOne);
@@ -1481,12 +1489,12 @@ namespace elena_lang
       void injectInitializer(SyntaxNode classNode, SyntaxKey methodType, mssg_t message);
 
       bool injectVirtualStrongTypedMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
-         mssg_t message, mssg_t resendMessage, ref_t outputRef, Visibility visibility);
+         mssg_t message, mssg_t resendMessage, ref_t outputRef, Visibility visibility, bool isExtension);
 
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
          ClassInfo& classInfo, mssg_t message, bool inherited, ref_t outputRef, Visibility visibility);
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, 
-         mssg_t resendMessage, ref_t resendTarget, ref_t outputRef, Visibility visibility);
+         mssg_t resendMessage, ref_t resendTarget, ref_t outputRef, Visibility visibility, bool isExtension);
 
       void injectVirtualTryDispatch(SyntaxNode classNode, SyntaxKey methodType, ClassInfo& info, 
          mssg_t message, mssg_t dispatchMessage, bool inherited);
@@ -1530,6 +1538,11 @@ namespace elena_lang
       void setEvaluateOp(bool flag)
       {
          _evaluateOp = flag;
+      }
+
+      void setVerboseOn()
+      {
+         _verbose = true;
       }
 
       void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,

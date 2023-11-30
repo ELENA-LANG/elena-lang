@@ -22,10 +22,10 @@ singleton windowClassControl
 
    wide createClass(string name, HInstance instance, int style, int background)
    {
-      pointer wndPtr;
+      pointer wndPtr := default;
       self.assignWndPtr(wndPtr);
 
-      WNDCLASS struct;
+      WNDCLASS struct := default;
 
       struct.style := style;
       struct.hbrBackground := background;

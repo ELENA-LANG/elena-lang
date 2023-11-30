@@ -133,7 +133,7 @@ int main()
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       Project          project(*appPath, CURRENT_PLATFORM, &Presenter::getInstance());
       WinLinker        linker(&errorProcessor, &WinImageFormatter::getInstance(&project));
-      CompilingProcess process(appPath, L"<prolog>", L"<epilog>", 
+      CompilingProcess process(appPath, L"<moduleProlog>", L"<prolog>", L"<epilog>",
          &Presenter::getInstance(), &errorProcessor,
          VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 
@@ -241,7 +241,7 @@ int main()
          else {
             FileNameString fileName(argv[i]);
             IdentifierString ns(*fileName);
-            project.addSource(*ns, argv[i], nullptr);
+            project.addSource(*ns, argv[i], nullptr, 0);
          }
       }
 

@@ -102,6 +102,16 @@ namespace elena_lang
             return _node.identifier();
          }
 
+         int hints() override
+         {
+            ProjectNode hintNode = _node.findChild(ProjectOption::Hints);
+            if (hintNode == ProjectOption::Hints) {
+               return StrConvertor::toInt(hintNode.identifier(), 10);
+            }
+            
+            return 0;
+         }
+
          bool eof() override
          {
             return _node != ProjectOption::Module;

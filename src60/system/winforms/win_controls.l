@@ -77,16 +77,14 @@ public sealed const struct WindowHandle
       if (length == 0)
       { 
          ^ emptyWideString 
-      }
-      else
-      {
-         wide caption := WideString.allocate(length);
-         length := length + 1;
+      };
+
+      wide caption := WideString.allocate(length);
+      length := length + 1;
             
-         extern USER32.SendMessageW(_handle, WM_GETTEXT, length, caption);
+      extern USER32.SendMessageW(_handle, WM_GETTEXT, length, caption);
             
-         ^ caption
-      }
+      ^ caption
    }
 
    setEnabled(int value)

@@ -212,8 +212,8 @@ void SystemRoutineProvider :: GCSignalStop(void* handle)
 
 void SystemRoutineProvider :: GCWaitForSignals(size_t count, void* handles)
 {
-   if (count > 0)
-      ::WaitForMultipleObjects(count, (HANDLE*)handles, -1, -1);
+   if (count != 0)
+      ::WaitForMultipleObjects((DWORD)count, (HANDLE*)handles, -1, -1);
 }
 
 void SystemRoutineProvider :: GCWaitForSignal(void* handle)

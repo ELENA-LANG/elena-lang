@@ -9,7 +9,7 @@ public extension objectOp
                   info("Returns the object class");
 
    bool safeEqual(o)
-      = self.equal:o \ back:false;
+      = self.equal(o) \ back(false);
 
    bool isEmpty()
    {
@@ -100,10 +100,10 @@ public extension byteOp : ByteNumber
    }
 
    bool isOdd()
-      = self.mod:2 != 0;
+      = self.mod(2) != 0;
         
    bool isEven()
-      = self.mod:2 == 0;
+      = self.mod(2) == 0;
         
    bool isZero()
       = self.equal(0);
@@ -186,10 +186,10 @@ public extension shortOp : ShortNumber
    }    
 
    bool isOdd()
-      = self.mod:2 != 0;
+      = self.mod(2) != 0;
         
    bool isEven()
-      = self.mod:2 == 0;
+      = self.mod(2) == 0;
         
    bool isZero()
       = self.equal(0);
@@ -283,7 +283,7 @@ public extension intOp : IntNumber
    }
 
    real realDiv(n)
-      = new RealNumber(self).divide:n;
+      = new RealNumber(self).divide(n);
 
    int mod(int operand)
    {
@@ -302,10 +302,10 @@ public extension intOp : IntNumber
    }
 
    bool isOdd()
-      = self.mod:2 != 0;
+      = self.mod(2) != 0;
         
    bool isEven()
-      = self.mod:2 == 0;
+      = self.mod(2) == 0;
         
    bool isZero()
       = self.equal(0);
@@ -368,13 +368,13 @@ public extension uintOp : UIntNumber
       = self.mod(cast uint(operand));
 
    real realDiv(n)
-      = new RealNumber(self).divide:n;
+      = new RealNumber(self).divide(n);
 
    bool isOdd()
-      = self.mod:2 != 0;
+      = self.mod(2) != 0;
         
    bool isEven()
-      = self.mod:2 == 0;
+      = self.mod(2) == 0;
         
    bool isZero()
       = self.equal(0);
@@ -444,7 +444,7 @@ public extension longOp : LongNumber
    }
 
    real realDiv(n)
-      = new RealNumber(self).divide:n;
+      = new RealNumber(self).divide(n);
 
    long mod(long operand)
    {
@@ -467,10 +467,10 @@ public extension longOp : LongNumber
    }
 
    bool isOdd()
-      = self.mod:2l != 0l;
+      = self.mod(2l) != 0l;
         
    bool isEven()
-      = self.mod:2l == 0l;
+      = self.mod(2l) == 0l;
         
    bool isZero()
       = self.equal(0l);

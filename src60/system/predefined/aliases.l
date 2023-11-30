@@ -18,5 +18,3 @@
 #let aliasTypes["message"] := system'Message;
 #let aliasTypes["handle"]  := system'Handle;
 #let aliasTypes["pointer"] := system'UnsafePointer;
-
-#reload aliasTypes;

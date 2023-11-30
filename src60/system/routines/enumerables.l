@@ -114,19 +114,19 @@ public extension enumerableOp
       = f.run(cast Enumerator(self.enumerator()));
 
    forEach(Func2 f)
-      = self.forEach:(t => f(t.Item1,t.Item2));
+      = self.forEach::(t => f(t.Item1,t.Item2));
 
    forEach(fn)
-      = self.forEach:(n){ fn(n) };
+      = self.forEach::(n){ fn(n) };
 
    seekEach(Func1 f)
       = f.retrieve(cast Enumerator(self.enumerator()));
 
    seekEach(ExtensionMessage extMessage)
-      = self.seekEach:(n => extMessage(n));
+      = self.seekEach::(n => extMessage(n));
         
    seekEach(fn)
-      = self.seekEach:(n => fn(n));
+      = self.seekEach::(n => fn(n));
 
    seekEach(object param, Func2 f)
       = f.retrieve(param, cast Enumerator(self.enumerator()));
@@ -214,7 +214,7 @@ public extension enumerableOp
       = ZipEnumerator.new(zipper, cast Enumerator(self.enumerator()), cast Enumerator(enumerable.enumerator()));
 
    zipForEach(enumerable, func2)
-      = self.zipBy(enumerable, func2).forEach:idleFunc1;
+      = self.zipBy(enumerable, func2).forEach(idleFunc1);
 
    accumulate(variable, operation)
    {
@@ -295,7 +295,7 @@ public extension indexableOp<T>
             
          it.Value := f(i);
             
-         it.appendIndex:1
+         it.appendIndex(1)
       };
         
       ^ self
@@ -311,7 +311,7 @@ public extension indexableOp<T>
             
          fn(i);
             
-         it.appendIndex:1
+         it.appendIndex(1)
       }
    }    
 }
@@ -350,12 +350,12 @@ public extension indexableOp
             
          it.Value := f(i);
             
-         it.appendIndex:1
+         it.appendIndex(1)
       };
    }    
 
    populate(action)
-      = self.populate:(int n){ ^action(n) };
+      = self.populate::(int n){ ^action(n) };
 
    ascendant()
       = self.clone().sort(ifOrdered);
@@ -373,8 +373,8 @@ public extension indexableOp
          ifnot ((*a) == (*b))
             { ^ false };
                 
-         a.appendIndex:1;
-         b.appendIndex:1
+         a.appendIndex(1);
+         b.appendIndex(1)
       };
           
       ^ true                
@@ -418,7 +418,7 @@ public extension indexableOp
          if (element == (*it))
             { ^ it.Index };
             
-         it.appendIndex:1;
+         it.appendIndex(1);
       };
         
       ^ -1
@@ -430,7 +430,7 @@ public extension indexableOp
       if (it.Available)
       {
          var previous := *it;
-         it.appendIndex:1;
+         it.appendIndex(1);
          while (it.Available)
          {
             ifnot (compareFunc(previous, *it))
@@ -439,7 +439,7 @@ public extension indexableOp
             };
                 
             previous := *it;
-            it.appendIndex:1
+            it.appendIndex(1)
          }
       };
         

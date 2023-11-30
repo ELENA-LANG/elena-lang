@@ -61,7 +61,7 @@ namespace elena_lang
          TemplateGenerator(CompilingProcess* process);
       };
 
-      path_t              _prologName, _epilogName;
+      path_t              _modulePrologName, _prologName, _epilogName;
 
       PresenterBase*      _presenter;
       ErrorProcessor*     _errorProcessor;
@@ -139,9 +139,10 @@ namespace elena_lang
       void setVerboseOn()
       {
          _verbose = true;
+         _compiler->setVerboseOn();
       }
 
-      CompilingProcess(PathString& appPath, path_t prologName, path_t epilogName,
+      CompilingProcess(PathString& appPath, path_t modulePrologName, path_t prologName, path_t epilogName,
          PresenterBase* presenter, ErrorProcessor* errorProcessor,
          pos_t codeAlignment,
          JITSettings defaultCoreSettings,

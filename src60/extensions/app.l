@@ -25,7 +25,7 @@ class ProgramLoop
         
       while (_active)
       {
-         console.write:prompt;
+         console.write(prompt);
 
          console.printLine(_control.proceed(console.readLine()))
       }

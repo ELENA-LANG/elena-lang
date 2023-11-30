@@ -1567,6 +1567,7 @@ Compiler :: Compiler(
    _withMethodParamInfo = false;
    _withConditionalBoxing = false;
    _evaluateOp = false;
+   _verbose = false;
 
    _trackingUnassigned = false;
 
@@ -1867,6 +1868,16 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
 
    // create a meta section
    scope.moduleScope->module->mapSection(reference | mask, false);
+}
+
+void Compiler :: loadMetaData(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t name)
+{
+   IdentifierString metaForward(META_PREFIX, name);
+
+   ustr_t reference = forwardResolver->resolveForward(*metaForward);
+
+   if (!reference.empty())
+      CompilerLogic::loadMetaData(moduleScope, reference);
 }
 
 Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed)
@@ -3680,16 +3691,6 @@ void Compiler :: declareMembers(NamespaceScope& ns, SyntaxNode node)
             MetaScope scope(&ns, Scope::ScopeLevel::Namespace);
 
             evalStatement(scope, current);
-            break;
-         }
-         case SyntaxKey::ReloadStatement:
-         {
-            IdentifierString dictionaryName(
-               FORWARD_PREFIX_NS,
-               META_PREFIX,
-               current.firstChild(SyntaxKey::TerminalMask).identifier());
-
-            reloadMetaData(ns.moduleScope, *dictionaryName);
             break;
          }
          case SyntaxKey::Template:
@@ -6919,7 +6920,7 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
 
    SyntaxNode classNode = classWriter.CurrentNode();
    injectVirtualMultimethod(classNode, SyntaxKey::Method, genericMessage | FUNCTION_MESSAGE, genericMessage,
-      0, outputRef, Visibility::Public);
+      0, outputRef, Visibility::Public, true);
 
    classWriter.closeNode();
    classWriter.closeNode();
@@ -7504,15 +7505,23 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
       else {
          bool weakTarget = targetRef == scope.moduleScope->buildins.superReference || result.withCustomDispatcher || target.mode == TargetMode::Weak;
 
-         // treat it as a weak reference
-         targetRef = 0;
-
          SyntaxNode messageNode = findMessageNode(node);
          if (weakTarget/* || ignoreWarning*/) {
             // ignore warning for super class / type-less one
          }
          else if (messageNode == SyntaxKey::None) {
             if (test(resolution.message, CONVERSION_MESSAGE)) {
+               if (_verbose) {
+                  IdentifierString messageName;
+                  ByteCodeUtil::resolveMessageName(messageName, scope.module, resolution.message);
+
+                  _errorProcessor->info(infoUnknownMessage, *messageName);
+
+                  ustr_t name = scope.module->resolveReference(targetRef);
+                  if (!name.empty())
+                     _errorProcessor->info(infoTargetClass, name);
+               }
+
                scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownTypecast, node);
             }
             else if (resolution.message == scope.moduleScope->buildins.refer_message) {
@@ -7520,7 +7529,23 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
             }
             else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownFunction, node);
          }
-         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, messageNode);
+         else {
+            if (_verbose) {
+               IdentifierString messageName;
+               ByteCodeUtil::resolveMessageName(messageName, scope.module, resolution.message);
+
+               _errorProcessor->info(infoUnknownMessage, *messageName);
+
+               ustr_t name = scope.module->resolveReference(targetRef);
+               if (!name.empty())
+                  _errorProcessor->info(infoTargetClass, name);
+            }
+
+            scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, messageNode);
+         }
+
+         // treat it as a weak reference
+         targetRef = 0;
       }
    }
 
@@ -8469,6 +8494,19 @@ ObjectInfo Compiler :: compileSpecialOperation(BuildTreeWriter& writer, ExprScop
    return retVal;
 }
 
+inline bool isSimpleNode(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+
+   if (current == SyntaxKey::Expression && current.nextNode() == SyntaxKey::None) {
+      return isSimpleNode(current);
+   }
+   else if (current == SyntaxKey::Object && current.nextNode() == SyntaxKey::None) {
+      return true;
+   }
+   return false;
+}
+
 ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId, ref_t expectedRef,
    ExpressionAttribute mode)
 {
@@ -8479,6 +8517,12 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       // assign operation is a special case
       if (loperand == SyntaxKey::IndexerOperation) {
          return compileOperation(writer, scope, loperand, roperand, SET_INDEXER_OPERATOR_ID, expectedRef);
+      }
+      else if (loperand == SyntaxKey::Expression) {
+         if (!isSimpleNode(loperand))
+            scope.raiseError(errInvalidOperation, loperand);
+
+         return compileAssigning(writer, scope, loperand.firstChild(), roperand, mode);
       }
       else return compileAssigning(writer, scope, loperand, roperand, mode);
 
@@ -11074,7 +11118,7 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
       ArgumentsInfo arguments;
       ArgumentsInfo updatedOuterArgs;
 
-      mssg_t messageRef = mapMessage(scope, current, propertyMode, false, false);
+      mssg_t messageRef = mapMessage(scope, current, propertyMode, codeScope.isExtension(), false);
 
       mssg_t resolvedMessage = _logic->resolveSingleDispatch(*scope.moduleScope,
          retrieveType(scope, source), messageRef);
@@ -12601,45 +12645,6 @@ inline ref_t safeMapWeakReference(ModuleScopeBase* moduleScope, ForwardResolverB
    else return 0;
 }
 
-bool Compiler :: reloadMetaData(ModuleScopeBase* moduleScope, ustr_t name)
-{
-   if (name.compare(PREDEFINED_MAP)) {
-      moduleScope->predefined.clear();
-
-      auto predefinedInfo = moduleScope->getSection(PREDEFINED_MAP, mskAttributeMapRef, true);
-      if (predefinedInfo.section) {
-         _logic->readAttributeMap(predefinedInfo.section, moduleScope->predefined);
-      }
-   }
-   else if (name.compare(ATTRIBUTES_MAP)) {
-      moduleScope->attributes.clear();
-
-      auto attributeInfo = moduleScope->getSection(ATTRIBUTES_MAP, mskAttributeMapRef, true);
-      if (attributeInfo.section) {
-         _logic->readAttributeMap(attributeInfo.section, moduleScope->attributes);
-      }
-   }
-   else if (name.compare(OPERATION_MAP)) {
-      moduleScope->operations.clear();
-
-      auto operationInfo = moduleScope->getSection(OPERATION_MAP, mskTypeMapRef, true);
-      if (operationInfo.section) {
-         _logic->readTypeMap(operationInfo.module, operationInfo.section, moduleScope->operations, moduleScope);
-      }
-   }
-   else if (name.compare(ALIASES_MAP)) {
-      moduleScope->aliases.clear();
-
-      auto aliasInfo = moduleScope->getSection(ALIASES_MAP, mskTypeMapRef, true);
-      if (aliasInfo.section) {
-         _logic->readTypeMap(aliasInfo.module, aliasInfo.section, moduleScope->aliases, moduleScope);
-      }
-   }
-   else return false;
-
-   return true;
-}
-
 inline void addPackageItem(SyntaxTreeWriter& writer, ModuleBase* module, ustr_t str)
 {
    writer.newNode(SyntaxKey::Expression);
@@ -12688,10 +12693,10 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
 {
    _trackingUnassigned = (_errorProcessor->getWarningLevel() == WarningLevel::Level3);
 
-   reloadMetaData(moduleScope, PREDEFINED_MAP);
-   reloadMetaData(moduleScope, ATTRIBUTES_MAP);
-   reloadMetaData(moduleScope, OPERATION_MAP);
-   reloadMetaData(moduleScope, ALIASES_MAP);
+   loadMetaData(moduleScope, forwardResolver, PREDEFINED_MAP);
+   loadMetaData(moduleScope, forwardResolver, ATTRIBUTES_MAP);
+   loadMetaData(moduleScope, forwardResolver, OPERATION_MAP);
+   loadMetaData(moduleScope, forwardResolver, ALIASES_MAP);
 
    // cache the frequently used references
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
@@ -12896,7 +12901,8 @@ void Compiler :: declareModule(ModuleScopeBase* moduleScope, SyntaxNode node, Ex
 
 void Compiler :: declare(ModuleScopeBase* moduleScope, SyntaxTree& input, ExtensionMap* outerExtensionList)
 {
-   validateScope(moduleScope);
+   if (moduleScope->withValidation())
+      validateScope(moduleScope);
 
    SyntaxNode root = input.readRoot();
    // declare all member identifiers
@@ -12929,7 +12935,7 @@ void Compiler :: compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildT
    writer.closeNode();
 }
 
-inline SyntaxNode newVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, Visibility visibility)
+inline SyntaxNode newVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, Visibility visibility, bool isExtension)
 {
    ref_t hints = (ref_t)MethodHint::Multimethod | (methodType == SyntaxKey::StaticMethod ? (ref_t)MethodHint::Sealed : (ref_t)MethodHint::Normal);
 
@@ -12943,6 +12949,9 @@ inline SyntaxNode newVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodTy
       default:
          break;
    }
+
+   if (isExtension)
+      hints |= (ref_t)MethodHint::Extension;
 
    SyntaxNode methodNode = classNode.appendChild(methodType, message);
    methodNode.appendChild(SyntaxKey::Hints, hints);
@@ -13040,7 +13049,7 @@ inline bool isSingleDispatch(SyntaxNode node, SyntaxKey methodType, mssg_t messa
 }
 
 bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
-   mssg_t message, mssg_t resendMessage, ref_t outputRef, Visibility visibility )
+   mssg_t message, mssg_t resendMessage, ref_t outputRef, Visibility visibility, bool isExtension)
 {
    ref_t actionRef = getAction(resendMessage);
    ref_t signRef = 0;
@@ -13062,14 +13071,14 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, Synta
    if (!strongOne)
       return false;
 
-   SyntaxNode methodNode = newVirtualMultimethod(classNode, methodType, message, visibility);
+   SyntaxNode methodNode = newVirtualMultimethod(classNode, methodType, message, visibility, isExtension);
    methodNode.appendChild(SyntaxKey::Autogenerated, -1); // -1 indicates autogenerated multi-method
 
    if (outputRef)
       methodNode.appendChild(SyntaxKey::OutputType, outputRef);
 
    SyntaxNode resendExpr = methodNode.appendChild(SyntaxKey::ResendDispatch);
-   SyntaxNode operationNode = resendExpr.appendChild(SyntaxKey::MessageOperation);
+   SyntaxNode operationNode = resendExpr.appendChild(((resendMessage & PREFIX_MESSAGE_MASK) == PROPERTY_MESSAGE) ? SyntaxKey::PropertyOperation : SyntaxKey::MessageOperation);
    operationNode.appendChild(SyntaxKey::Message).appendChild(SyntaxKey::identifier, actionName);
 
    String<char, 10> arg;
@@ -13098,6 +13107,8 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, Synta
 void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
    ClassInfo& info, mssg_t message, bool inherited, ref_t outputRef, Visibility visibility)
 {
+   bool isExtension = test(info.header.flags, elExtension);
+
    mssg_t resendMessage = message;
    ref_t  resendTarget = 0;
 
@@ -13110,7 +13121,8 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
    // try to resolve an argument list in run-time if it is only a single dispatch and argument list is not weak
    // !! temporally do not support variadic arguments
    if (isSingleDispatch(classNode, methodType, message, resendMessage) && ((message & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE) &&
-      injectVirtualStrongTypedMultimethod(classNode, methodType, scope, message, resendMessage, outputRef, visibility))
+      injectVirtualStrongTypedMultimethod(classNode, methodType, scope, message, resendMessage, 
+         outputRef, visibility, isExtension))
    {
       // mark the message as a signle dispatcher if the class is sealed / closed / class class
       // and default multi-method was not explicitly declared
@@ -13140,14 +13152,15 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
          resendMessage = encodeMessage(signRef, argCount, flags);
       }
 
-      injectVirtualMultimethod(classNode, methodType, message, resendMessage, resendTarget, outputRef, visibility);
+      injectVirtualMultimethod(classNode, methodType, message, resendMessage, resendTarget, 
+         outputRef, visibility, isExtension);
    }
 }
 
 void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message,
-   mssg_t resendMessage, ref_t resendTarget, ref_t outputRef, Visibility visibility)
+   mssg_t resendMessage, ref_t resendTarget, ref_t outputRef, Visibility visibility, bool isExtension)
 {
-   SyntaxNode methodNode = newVirtualMultimethod(classNode, methodType, message, visibility);
+   SyntaxNode methodNode = newVirtualMultimethod(classNode, methodType, message, visibility, isExtension);
    methodNode.appendChild(SyntaxKey::Autogenerated, -1); // -1 indicates autogenerated multi-method
 
    if (outputRef)

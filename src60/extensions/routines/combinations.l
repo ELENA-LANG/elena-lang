@@ -28,7 +28,7 @@ singleton sequentialNext : BaseStrategy
     
    BaseStrategy eval(Indexer[] indexers, int length)
    {
-      if(nil == (indexers.seekEach:(indexer)
+      if(nil == (indexers.seekEach::(indexer)
          {
             auto it := cast Indexer(indexer); 
                     
@@ -44,7 +44,7 @@ singleton sequentialNext : BaseStrategy
         
    at(Indexer[] indexers, int length)
    {
-      ^ Array.allocate(length).populate:(int i => indexers.at(i).Value)
+      ^ Array.allocate(length).populate::(int i => indexers.at(i).Value)
    }
 }
 
@@ -56,7 +56,7 @@ singleton sequentialStart : BaseStrategy
     
    BaseStrategy eval(Indexer[] indexers, int length)
    {
-      indexers.forEach:(indexer){ indexer.Index := 0 };
+      indexers.forEach::(indexer){ indexer.Index := 0 };
         
       ^ sequentialNext
    }
@@ -70,7 +70,7 @@ singleton parallelNext : BaseStrategy
     
    BaseStrategy eval(Indexer[] indexers, int length)
    {
-      if(nil != (indexers.seekEach:(indexer)
+      if(nil != (indexers.seekEach::(indexer)
                {
                   auto it := cast Indexer(indexer); 
                     
@@ -83,7 +83,7 @@ singleton parallelNext : BaseStrategy
         
    at(Indexer[] indexers, int length)
    {
-      ^ Array.allocate(length).populate:(int i => indexers.at(i).Value)
+      ^ Array.allocate(length).populate::(int i => indexers.at(i).Value)
    }
 }
 
@@ -95,7 +95,7 @@ singleton parallelStart : BaseStrategy
     
    BaseStrategy eval(Indexer[] indexers, int length)
    {
-      indexers.forEach:(indexer){ indexer.Index := 0 };
+      indexers.forEach::(indexer){ indexer.Index := 0 };
         
       ^ parallelNext
    }
@@ -109,7 +109,7 @@ singleton combinationNext : BaseStrategy
 
    at(Indexer[] indexers, int length)
    {
-      ^ Array.allocate(length).populate:(int i => indexers.at(i).Value)
+      ^ Array.allocate(length).populate::(int i => indexers.at(i).Value)
    }
 
    BaseStrategy eval(Indexer[] indexers, int length)
@@ -119,7 +119,7 @@ singleton combinationNext : BaseStrategy
         
       Indexer currentIndexer := indexers[i];
         
-      if(currentIndexer.appendIndex:1.Available)
+      if(currentIndexer.appendIndex(1).Available)
          { ^ self };
              
       while (i > 0 && (indexers[i - 1].Index + k - i + 1) >= length)
@@ -128,7 +128,7 @@ singleton combinationNext : BaseStrategy
       if(i == 0)
          { ^ combinationEnd };
         
-      indexers[i - 1].appendIndex:1;
+      indexers[i - 1].appendIndex(1);
         
       for (int j := i,j <= k - 1, j += 1) {
          indexers[j].Index := indexers[j - 1].Index + 1
@@ -254,7 +254,7 @@ public class Combinator : BaseRowEnumerator
    }
         
    constructor new(int subLength, set)
-      <= new(Array.allocate(subLength).populate:(int n => set))
+      <= new(Array.allocate(subLength).populate::(int n => set))
    {
       _totalLength := set.Length
    }

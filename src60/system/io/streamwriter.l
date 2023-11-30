@@ -24,29 +24,28 @@ namespace io
          self.write(buffer, 1)
       }
     
-      write(short int)
+      write(short n)
       {
          byte buffer[4];
             
-         buffer.write(0, int);
+         buffer[0] := n.Low;
+         buffer[1] := n.High;
                     
          self.write(buffer, 2)
       }
     
       write(char ch)
       {
-         byte buffer[4];
-            
-         buffer.write(0, ch);
-                    
-         self.write(buffer, 4)
+         int value := ch;
+
+         self.write(value);
       }
     
       write(int int)
       {
          byte buffer[4];
-            
-         buffer.write(0, int);
+
+         PrimitiveLongOperations.saveToByteArray(int, buffer, 0);
                     
          self.write(buffer, 4)
       }
@@ -54,8 +53,8 @@ namespace io
       write(long long)
       {
          byte buffer[8];
-            
-         buffer.write(0, long);
+
+         PrimitiveLongOperations.saveToByteArray(long, buffer, 0);
                     
          self.write(buffer, 8)
       }
@@ -96,7 +95,7 @@ namespace io
         
       writeLine(line)
       {
-         self.write:line.write:_newLineConstant
+         self.write(line).write(_newLineConstant)
       }
         
       write(object)

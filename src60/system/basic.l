@@ -239,11 +239,11 @@ public abstract class IntBaseNumber : BaseNumber,
 
    bool allMask(operand)
          : info("Returns true if all the mask bits are set")
-      = self.band:operand == operand;
+      = self.band(operand) == operand;
 
    bool anyMask(operand)
          : info("Returns true if any of the mask bits are set")
-      = 0 != self.band:operand;
+      = 0 != self.band(operand);
 
    get abstract BInverted();
 }
@@ -253,7 +253,7 @@ public abstract class IntBaseNumber : BaseNumber,
 public const struct ByteNumber : IntBaseNumber,
    info("an unsigned 8 bit integer")
 {
-   embeddable __uint theValue[1];
+   embeddable __uint _value[1];
 
    static byte MinValue
             : info("returns the minimal value (0)")
@@ -262,6 +262,9 @@ public const struct ByteNumber : IntBaseNumber,
    static byte MaxValue
             : info("Returns the maxial value (255)")
       = 255;
+
+   static byte Default
+      = 0;
 
    constructor()
             : info("Returns the default value")
@@ -289,91 +292,92 @@ public const struct ByteNumber : IntBaseNumber,
 
    byte add(byte n)
             : info("Returns the sum")
-      = theValue + n;   
+      = _value + n;   
 
    byte subtract(byte n)
             : info("Returns the difference")
-      = theValue - n;   
+      = _value - n;   
 
    byte multiply(byte n)
             : info("Returns the product")
-      = theValue * n;   
+      = _value * n;   
 
    byte divide(byte n)
             : info("Returns the result of integer division")
-      = theValue / n;   
+      = _value / n;   
 
    short add(short n)
             : info("Returns the sum")
-      = new ShortNumber(theValue).add(n);   
+      = new ShortNumber(_value).add(n);   
 
    short subtract(short n)
             : info("Returns the difference")
-      = new ShortNumber(theValue).subtract(n);   
+      = new ShortNumber(_value).subtract(n);   
 
    short multiply(short n)
             : info("Returns the product")
-      = new ShortNumber(theValue).multiply(n);   
+      = new ShortNumber(_value).multiply(n);   
 
    short divide(short n)
             : info("Returns the result of integer division")
-      = new ShortNumber(theValue).divide(n);   
+      = new ShortNumber(_value).divide(n);   
 
    int add(int n)
             : info("Returns the sum")
-      = new IntNumber(theValue).add(n);   
+      = new IntNumber(_value).add(n);   
 
    int subtract(int n)
             : info("Returns the difference")
-      = new IntNumber(theValue).subtract(n);   
+      = new IntNumber(_value).subtract(n);   
 
    int multiply(int n)
             : info("Returns the product")
-      = new IntNumber(theValue).multiply(n);   
+      = new IntNumber(_value).multiply(n);   
 
    int divide(int n)
             : info("Returns the result of integer division")
-      = new IntNumber(theValue).divide(n);   
+      = new IntNumber(_value).divide(n);   
 
    int add(long n)
             : info("Returns the sum")
-      = new LongNumber(theValue).add(n);   
+      = new LongNumber(_value).add(n);   
 
    int subtract(long n)
             : info("Returns the difference")
-      = new LongNumber(theValue).subtract(n);   
+      = new LongNumber(_value).subtract(n);   
 
    int multiply(long n)
             : info("Returns the product")
-      = new LongNumber(theValue).multiply(n);   
+      = new LongNumber(_value).multiply(n);   
 
    int divide(long n)
             : info("Returns the result of integer division")
-      = new LongNumber(theValue).divide(n);   
+      = new LongNumber(_value).divide(n);   
 
    real add(real n)
             : info("Returns the sum")
-      = new RealNumber(theValue).add(n);   
+      = new RealNumber(_value).add(n);   
 
    real subtract(real n)
             : info("Returns the difference")
-      = new RealNumber(theValue).subtract(n);   
+      = new RealNumber(_value).subtract(n);   
 
    real multiply(real n)
             : info("Returns the product")
-      = new RealNumber(theValue).multiply(n);   
+      = new RealNumber(_value).multiply(n);   
 
    real divide(real n)
             : info("Returns the result of integer division")
-      = new RealNumber(theValue).divide(n);   
+      = new RealNumber(_value).divide(n);   
 
    bool equal(o)
    {
-      var n := cast byte(o) ?? nil;
-      (nil == n)
-          ? { ^ false };
+      if (o :is byte b)
+      {  
+         ^ _value == b
+      };
 
-      ^ self.equal(n)
+      ^ false
    }
 
    bool less(o)
@@ -381,25 +385,25 @@ public const struct ByteNumber : IntBaseNumber,
 
    bool equal(byte b)
             : info("Compares the value")
-      = theValue == b;
+      = _value == b;
 
    bool less(byte b)
-      = theValue < b;
+      = _value < b;
 
    bool equal(short s)
             : info("Compares the value")
-      = new ShortNumber(theValue).equal(s);
+      = new ShortNumber(_value).equal(s);
 
    bool less(short s)
-      = new ShortNumber(theValue).less(s);
+      = new ShortNumber(_value).less(s);
 
    bool equal(int n)
             : info("Compares the value")
-      = new IntNumber(theValue).equal(n);
+      = new IntNumber(_value).equal(n);
 
    bool less(int n)
             : info("Compares the value")
-      = new IntNumber(theValue).less(n);
+      = new IntNumber(_value).less(n);
 
    bool equal(long n)
             : info("Compares the value")
@@ -411,11 +415,11 @@ public const struct ByteNumber : IntBaseNumber,
 
    bool equal(real n)
             : info("Compares the value")
-      = new RealNumber(theValue).equal(n);
+      = new RealNumber(_value).equal(n);
 
    bool less(real n)
             : info("Compares the value")
-      = new RealNumber(theValue).less(n);
+      = new RealNumber(_value).less(n);
 
    band(n)
       <= band(cast byte(n));
@@ -428,15 +432,15 @@ public const struct ByteNumber : IntBaseNumber,
 
    byte band(byte n)
             : info("Returns the result of bitwise AND operation")
-      = theValue & n;
+      = _value & n;
 
    byte bor(byte n)
             : info("Returns the result of bitwise OR operation")
-      = theValue | n;
+      = _value | n;
 
    byte bxor(byte n)
             : info("Returns the result of bitwise XOR operation")
-      = theValue ^ n;
+      = _value ^ n;
 
    short band(short n)
             : info("Returns the result of bitwise AND operation")
@@ -496,15 +500,15 @@ public const struct ByteNumber : IntBaseNumber,
 
    byte shiftLeft(int val)
             : info("shifts an integer value to the left by a specified number of bits")
-      = theValue $shl val;
+      = _value $shl val;
 
    byte shiftRight(int val)
             : info("shifts an integer value to the right by a specified number of bits")
-      = theValue $shr val;
+      = _value $shr val;
 
    get byte BInverted()
             : info("bitwise inversion")
-      = ~theValue;
+      = ~_value;
 
    string toPrintable()
             : info("returns the literal presentation")
@@ -529,6 +533,9 @@ public const struct SByteNumber : IntBaseNumber,
    static sbyte MaxValue
             : info("Returns the maxial value (128)")
       = 127;
+
+   static sbyte Default
+      = 0;
 
    constructor()
             : info("Returns the default value")
@@ -636,11 +643,12 @@ public const struct SByteNumber : IntBaseNumber,
 
    bool equal(o)
    {
-      var n := cast sbyte(o) ?? nil;
-      (nil == n)
-          ? { ^ false };
+      if (o :is sbyte n)
+      {
+         ^ _value == n;
+      };
 
-      ^ self.equal(n)
+      ^ false
    }
 
    bool less(o)
@@ -787,7 +795,7 @@ public const struct SByteNumber : IntBaseNumber,
 public const struct ShortNumber : IntBaseNumber,
          info("a signed 16 bit integer")
 {
-   embeddable __int theValue[2];
+   embeddable __int _value[2];
 
    static short MinValue
             : info("Returns the minimal value (-32768)")
@@ -796,6 +804,9 @@ public const struct ShortNumber : IntBaseNumber,
    static short MaxValue
             : info("Returns the maxial value (32767)")
       = 32767;
+
+   static short Default
+      = 0;
 
    constructor()
             : info("creates the object with a default value (0)")
@@ -830,19 +841,19 @@ public const struct ShortNumber : IntBaseNumber,
 
    short add(short n)
             : info ("returns the sum")
-      = theValue + n;   
+      = _value + n;   
 
    short subtract(short n)
             : info ("returns the difference")
-      = theValue - n;   
+      = _value - n;   
 
    short multiply(short n)
             : info ("returns the product")
-      = theValue * n;   
+      = _value * n;   
 
    short divide(short n)
             : info("returns the result of integer division")
-      = theValue / n;   
+      = _value / n;   
 
    short add(byte n)
             : info ("returns the sum")
@@ -862,59 +873,60 @@ public const struct ShortNumber : IntBaseNumber,
 
    int add(int n)
             : info("returns the sum")
-      = new IntNumber(theValue).add(n);   
+      = new IntNumber(_value).add(n);   
 
    int subtract(int n)
             : info ("returns the difference")
-      = new IntNumber(theValue).subtract(n);   
+      = new IntNumber(_value).subtract(n);   
 
    int multiply(int n)
             : info ("returns the product")
-      = new IntNumber(theValue).multiply(n);   
+      = new IntNumber(_value).multiply(n);   
 
    int divide(int n)
             : info ("returns the result of integer division")
-      = new IntNumber(theValue).divide(n);   
+      = new IntNumber(_value).divide(n);   
 
    long add(long n)
             : info ("returns the sum")
-      = new LongNumber(theValue).add(n);   
+      = new LongNumber(_value).add(n);   
 
    long subtract(long n)
             : info ("returns the difference")
-      = new LongNumber(theValue).subtract(n);   
+      = new LongNumber(_value).subtract(n);   
 
    long multiply(long n)
             : info ("returns the product")
-      = new LongNumber(theValue).multiply(n);   
+      = new LongNumber(_value).multiply(n);   
 
    long divide(long n)
             : info ("returns the result of integer division")
-      = new LongNumber(theValue).divide(n);   
+      = new LongNumber(_value).divide(n);   
 
    real add(real n)
             : info ("returns the sum")
-      = new RealNumber(theValue).add(n);   
+      = new RealNumber(_value).add(n);   
 
    real subtract(real n)
             : info ("returns the difference")
-      = new RealNumber(theValue).subtract(n);   
+      = new RealNumber(_value).subtract(n);   
 
    real multiply(real n)
             : info ("returns the product")
-      = new RealNumber(theValue).multiply(n);   
+      = new RealNumber(_value).multiply(n);   
 
    real divide(real n)
             : info ("returns the result of integer division")
-      = new RealNumber(theValue).divide(n);   
+      = new RealNumber(_value).divide(n);   
 
    bool equal(o)
    {
-      var n := cast short(o) ?? nil;
-      (nil == n)
-         ? { ^ false };
+      if (o :is short n)
+      {
+         ^ _value == n
+      };
 
-      ^ self.equal(n)
+      ^ false
    }
 
    band(n)
@@ -928,15 +940,15 @@ public const struct ShortNumber : IntBaseNumber,
 
    short band(short n)
             : info("Returns the result of bitwise AND operation")
-      = theValue & n;
+      = _value & n;
 
    short bor(short n)
             : info("Returns the result of bitwise OR operation")
-      = theValue | n;
+      = _value | n;
 
    short bxor(short n)
             : info("Returns the result of bitwise XOR operation")
-      = theValue ^ n;
+      = _value ^ n;
 
    short band(byte n)
             : info("Returns the result of bitwise AND operation")
@@ -979,11 +991,11 @@ public const struct ShortNumber : IntBaseNumber,
 
    bool equal(short b)
          : info("compares the value")
-      = theValue == b;
+      = _value == b;
 
    bool less(short b)
          : info("compares the value")
-      = theValue < b;
+      = _value < b;
 
    bool equal(byte b)
          : info("compares the value")
@@ -995,27 +1007,27 @@ public const struct ShortNumber : IntBaseNumber,
 
    bool equal(int n)
          : info("compares the value")
-      = new IntNumber(theValue).equal(n);
+      = new IntNumber(_value).equal(n);
 
    bool less(int n)
          : info("compares the value")
-      = new IntNumber(theValue).less(n);
+      = new IntNumber(_value).less(n);
 
    bool equal(long n)
          : info("compares the value")
-      = new LongNumber(theValue).equal(n);
+      = new LongNumber(_value).equal(n);
 
    bool less(long n)
          : info("compares the value")
-      = new LongNumber(theValue).less(n);
+      = new LongNumber(_value).less(n);
 
    bool equal(real n)
          : info("compares the value")
-      = new RealNumber(theValue).equal(n);
+      = new RealNumber(_value).equal(n);
 
    bool less(real n)
          : info("compares the value")
-      = new RealNumber(theValue).less(n);
+      = new RealNumber(_value).less(n);
 
    byte cast()
          : info("Returns the byte value") 
@@ -1042,21 +1054,21 @@ public const struct ShortNumber : IntBaseNumber,
 
    short shiftLeft(int val)
             : info("shifts an integer value to the left by a specified number of bits")
-      = theValue $shl val;
+      = _value $shl val;
 
    short shiftRight(int val)
             : info("shifts an integer value to the right by a specified number of bits")
-      = theValue $shr val;
+      = _value $shr val;
 
    get short BInverted()
             : info("bitwise inversion")
-      = ~theValue;
+      = ~_value;
 
    get short Negative()
 //      = -_value;
    {
       short v := 0;
-      v -= theValue;
+      v -= _value;
 
       ^ v
    }
@@ -1080,6 +1092,9 @@ public const struct UShortNumber : IntBaseNumber,
    static ushort MaxValue
             : info("Returns the maxial value (65535)")
       = 65535;
+
+   static ushort Default
+      = 0;
 
    constructor()
             : info("creates the object with a default value (0)")
@@ -1194,11 +1209,12 @@ public const struct UShortNumber : IntBaseNumber,
 
    bool equal(o)
    {
-      var n := cast short(o) ?? nil;
-      (nil == n)
-         ? { ^ false };
+      if (o :is ushort n)
+      {
+         ^ _value == n
+      };
 
-      ^ self.equal(n)
+      ^ false
    }
 
    band(n)
@@ -1369,6 +1385,9 @@ public const struct IntNumber : IntBaseNumber,
             : info("Creates the object with the maximal value")
       = 2147483647;
 
+   static int Default
+      = 0;
+
    constructor()
       = 0;
 
@@ -1388,11 +1407,12 @@ public const struct IntNumber : IntBaseNumber,
 
    bool equal(o)
    {
-      var n := cast int(o) ?? nil;
-      (nil == n)
-         ? { ^ false };
+      if (o :is int n)
+      {
+         ^ _value == n
+      };
 
-      ^ self.equal(n)
+      ^ false
    }
 
    bool less(o)
@@ -1734,6 +1754,9 @@ public sealed const struct UIntNumber : IntBaseNumber,
             : info("Creates the object with the maximal value")
       = 0FFFFFFFFh;
 
+   static uint Default
+      = 0;
+
    string toPrintable()
             : info("Returns the literal presentation")
          = stringConvertor.convert(self, 16);
@@ -1759,11 +1782,12 @@ public sealed const struct UIntNumber : IntBaseNumber,
 
    bool equal(o)
    {
-      var n := cast uint(o) ?? nil;
-      (nil == n)
-         ? { ^ false };
+      if (o :is uint n)
+      {
+         ^ _value == n
+      };
 
-      ^ self.equal(n)
+      ^ false
    }
 
    bool less(n)
@@ -2019,7 +2043,7 @@ public sealed const struct UIntNumber : IntBaseNumber,
 public sealed const struct LongNumber : IntBaseNumber,
    info("A signed 64 bit integer value")
 {
-   embeddable __int theValue[8];
+   embeddable __int _value[8];
 
    static long MinValue
             : info("Returns the minimal value")
@@ -2028,6 +2052,9 @@ public sealed const struct LongNumber : IntBaseNumber,
    static long MaxValue
             : info("Returns the maximal value")
       = 9223372036854775807l;
+
+   static long Default
+      = 0l;
 
    constructor()
             : info("Creates the object with a default value (0)")
@@ -2075,12 +2102,12 @@ public sealed const struct LongNumber : IntBaseNumber,
 
    bool equal(o)
    {
-      var n := cast long(o) ?? nil;
-      (nil == n)
-         ? { ^ false };
+      if (o :is long n)
+      {
+         ^ _value == n
+      };
 
-
-       ^ self.equal(n)
+      ^ false
    }
 
    bool less(o)
@@ -2088,11 +2115,11 @@ public sealed const struct LongNumber : IntBaseNumber,
 
    bool equal(long n)
             : info("Compares the value")
-      = theValue == n;
+      = _value == n;
 
    bool less(long n)
             : info("Compares the value")
-      = theValue < n;
+      = _value < n;
 
    bool equal(byte b)
       <= equal(cast long(b));
@@ -2131,16 +2158,16 @@ public sealed const struct LongNumber : IntBaseNumber,
       <= divide(cast long(n));
 
    long add(long n)
-      = theValue + n;
+      = _value + n;
 
    long subtract(long n)
-      = theValue - n;
+      = _value - n;
 
    long multiply(long n)
-      = theValue * n;
+      = _value * n;
 
    long divide(long n)
-      = theValue / n;
+      = _value / n;
 
    long add(byte n)
       <= add(cast long(n));
@@ -2212,13 +2239,13 @@ public sealed const struct LongNumber : IntBaseNumber,
       <= band(cast long(n));
 
    long band(long n)
-      = theValue & n;
+      = _value & n;
 
    long bor(long n)
-      = theValue | n;
+      = _value | n;
 
    long bxor(long n)
-      = theValue ^ n;
+      = _value ^ n;
 
    long band(byte n)
       <= band(cast long(n));
@@ -2257,23 +2284,23 @@ public sealed const struct LongNumber : IntBaseNumber,
       <= bxor(cast long(n));
 
    long shiftLeft(int val)
-      = theValue $shl val;
+      = _value $shl val;
    
    long shiftRight(int val)
-      = theValue $shr val;
+      = _value $shr val;
 
    get long BInverted()
             : info("Bitwise inversion")
-      = ~theValue;
+      = ~_value;
 
    get long Negative()
-      = -1l * theValue;
+      = -1l * _value;
 
    string toPrintable()
       = stringConvertor.convert(self, 10);
 
    long clone()
-      = new LongNumber(theValue);
+      = new LongNumber(_value);
 }
 
 // --- RealNumber ---
@@ -2281,7 +2308,7 @@ public sealed const struct LongNumber : IntBaseNumber,
 public sealed const struct RealNumber : BaseNumber,
       info("A 64bit float numeric value")
 {
-   embeddable __float theValue[8];
+   embeddable __float _value[8];
 
    static real MinValue
             : info("Returns the minimal value")
@@ -2290,6 +2317,9 @@ public sealed const struct RealNumber : BaseNumber,
    static real MaxValue
             : info("Returns the maximal value")
       = 1.7976931348623157e+308r;
+
+   static real Default
+      = 0.0;
 
    static real NegativeInfinity 
             : info("Returns the negative infinity")
@@ -2333,12 +2363,12 @@ public sealed const struct RealNumber : BaseNumber,
 
    bool equal(o)
    {
-      var n := cast real(o) ?? nil;
-      (nil == n)
-         ? { ^ false };
+      if (o :is real r)
+      {
+         ^ _value == r
+      };
 
-
-       ^ self.equal(n)
+       ^ false
    }
 
    bool less(n)
@@ -2346,11 +2376,11 @@ public sealed const struct RealNumber : BaseNumber,
 
    bool equal(real n)
             : info("Compares the value")
-      = theValue == n;
+      = _value == n;
    
    bool less(real n)
             : info("Compares the value")
-      = theValue < n;
+      = _value < n;
 
    add(n)
       <= add(cast real(n));
@@ -2366,19 +2396,19 @@ public sealed const struct RealNumber : BaseNumber,
 
    real add(real n)
             : info("Returns the sum")
-      = theValue + n;
+      = _value + n;
 
    real subtract(real n)
             : info("Returns the difference")
-      = theValue - n;
+      = _value - n;
 
    real multiply(real n)
             : info("Returns the product")
-      = theValue * n;
+      = _value * n;
 
    real divide(real n)
             : info("Returns the result of integer division")
-      = theValue / n;
+      = _value / n;
 
    bool equal(int n)
             : info("Returns the result of integer division")
@@ -2486,7 +2516,7 @@ public sealed const struct RealNumber : BaseNumber,
 
    get real Negative()
             : info("Negates the value")
-      = 0.0 - theValue;
+      = 0.0 - _value;
 }
 
 public real Pi_value = PrimitiveRealOperations.getPi();
@@ -2508,6 +2538,9 @@ public const struct CharValue : BaseValue,
             : info("Returns the maximal possible character value (010FFFFh)")
 //      = $010FFFFh;
       = $1114111;
+
+   static char Default
+      = $0;
 
    constructor()
             : info("Creates the object with a default value (0)")
@@ -2630,7 +2663,7 @@ public singleton nilValue
          ^ true
       };
 
-      if (super.equal:object)
+      if (super.equal(object))
       {
          ^ true
       };

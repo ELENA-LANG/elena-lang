@@ -67,7 +67,7 @@ public class CompoundEnumerator : Enumerator
     
    reset()
    {
-      enumerators.forEach:(e){e.reset()}
+      enumerators.forEach::(e){e.reset()}
    }
     
    enumerable() = self;

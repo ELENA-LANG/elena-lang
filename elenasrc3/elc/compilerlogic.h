@@ -150,13 +150,11 @@ namespace elena_lang
 
       void writeAttributeMapEntry(MemoryBase* section, ustr_t key, int value);
       void writeAttributeMapEntry(MemoryBase* section, ustr_t key, ustr_t value);
-      bool readAttributeMap(MemoryBase* section, ReferenceMap& map);
 
       void writeArrayEntry(MemoryBase* section, ref_t reference);
       void writeArrayReference(MemoryBase* section, ref_t reference);
 
       void writeTypeMapEntry(MemoryBase* section, ustr_t key, ref_t reference);
-      bool readTypeMap(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
 
       //void writeDeclDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference);
       //bool readDeclDictionary(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
@@ -228,6 +226,12 @@ namespace elena_lang
       {
          loadOperations();
       }
+
+      static bool readAttributeMap(MemoryBase* section, ReferenceMap& map);
+      static bool readTypeMap(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
+
+      static bool loadMetaData(ModuleScopeBase* moduleScope, ustr_t name);
+      static bool clearMetaData(ModuleScopeBase* moduleScope, ustr_t name);
 
       static CompilerLogic* getInstance()
       {

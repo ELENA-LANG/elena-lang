@@ -76,7 +76,7 @@ namespace elena_lang
 
       void forEachForward(void* arg, void(* feedback)(void* arg, ustr_t key, ustr_t value)) override;
 
-      void addSource(ustr_t ns, path_t path, ustr_t target);
+      void addSource(ustr_t ns, path_t path, ustr_t target, ustr_t hints);
 
       bool loadConfigByName(path_t configPath, ustr_t name, bool markAsLoaded);
 

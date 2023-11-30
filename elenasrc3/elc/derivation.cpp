@@ -96,6 +96,12 @@ void SyntaxTreeBuilder :: flush(SyntaxTreeWriter& writer, SyntaxNode node)
          case SyntaxKey::MetaDictionary:
             flushDictionary(writer, current);
             break;
+         case SyntaxKey::LoadStatement:
+            loadMetaSection(current);
+            break;
+         case SyntaxKey::ClearStatement:
+            clearMetaSection(current);
+            break;
          case SyntaxKey::MetaExpression:
          {
             Scope scope;
@@ -130,6 +136,10 @@ void SyntaxTreeBuilder :: parseStatement(SyntaxTreeWriter& writer, Scope& scope,
          case SyntaxKey::identifier:
             postfix.append(':');
             postfix.append(current.identifier());
+            break;
+         case SyntaxKey::ComplexName:
+            postfix.append(':');
+            postfix.append(current.firstChild().identifier());
             break;
          case SyntaxKey::Expression:
             writer.newNode(SyntaxKey::Idle);
@@ -1545,21 +1555,6 @@ ref_t SyntaxTreeBuilder :: mapAttribute(SyntaxNode terminal, bool allowType, ref
    return ref;
 }
 
-//void SyntaxTreeBuilder :: recognizeDeclarationAttributes(SyntaxNode node)
-//{
-//   recognizeAttributes(node, node.lastChild(SyntaxKey::TerminalMask));
-//}
-//
-//SyntaxTreeBuilder::ScopeType SyntaxTreeBuilder :: recognizeDeclaration(SyntaxNode node)
-//{
-//   recognizeDeclarationAttributes(node);
-//
-//   ScopeType type = ScopeType::Unknown;
-//
-//
-//   return type;
-//}
-
 void SyntaxTreeBuilder :: newNode(parse_key_t key)
 {
    SyntaxKey syntaxKey = SyntaxTree::fromParseKey(key);
@@ -1631,6 +1626,32 @@ void SyntaxTreeBuilder :: closeNode()
       _cacheWriter.clear();
       _cacheWriter.newNode(SyntaxKey::Root);
    }
+}
+
+void SyntaxTreeBuilder :: loadMetaSection(SyntaxNode node)
+{
+   SyntaxNode terminalNode = node.firstChild(SyntaxKey::TerminalMask);
+   if (terminalNode == SyntaxKey::reference) {
+      CompilerLogic::loadMetaData(_moduleScope, terminalNode.identifier());
+   }
+   else if (terminalNode == SyntaxKey::identifier) {
+      // !! temporal - to debug
+      assert(false);
+
+      SyntaxNode rootNode = node.parentNode();
+      SyntaxNode nsNode = rootNode.findChild(SyntaxKey::Namespace);
+
+      ReferenceName fullName(nsNode.identifier(), terminalNode.identifier());
+
+      CompilerLogic::loadMetaData(_moduleScope, *fullName);
+   }
+}
+
+void SyntaxTreeBuilder :: clearMetaSection(SyntaxNode node)
+{
+   SyntaxNode terminalNode = node.firstChild(SyntaxKey::TerminalMask);
+
+   CompilerLogic::clearMetaData(_moduleScope, terminalNode.identifier());
 }
 
 // --- TemplateProssesor ---

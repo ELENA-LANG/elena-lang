@@ -6,6 +6,9 @@ public sealed const struct Message
 
    private load(string name) : external(system'core_routines'__message_load);
   
+   static Message Default
+      = default;
+
    constructor(string name)
    {
       self.load(name);
@@ -56,6 +59,9 @@ public sealed const struct MessageName
    private createSetProperty(ref Message mssg) : external(system'core_routines'__mssgname_setprop);
 
    private createVariadic(ref Message mssg) : external(system'core_routines'__mssgname_variadic);
+
+   static MessageName Default
+      = default;
 
    /// Creates a dynamic signature
    constructor(string s)

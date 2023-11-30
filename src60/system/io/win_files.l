@@ -153,7 +153,7 @@ namespace io
          <= new(FileStream.openForRead(path), UTF8Encoder);
             
       constructor new(string path, Encoder encoder)
-         <= new(FileStream.openForRead:path, encoder);
+         <= new(FileStream.openForRead(path), encoder);
     
       bool Available = _open;
     
@@ -263,9 +263,9 @@ namespace io
 
    singleton fileControl
    {
-      TextReader newReader(path) = TextStreamReader.new:path;
+      TextReader newReader(path) = TextStreamReader.new(path);
 
-      TextWriter writer(path) = StreamWriter.new:path;
+      TextWriter writer(path) = StreamWriter.new(path);
 
       TextWriter logger(path) = StreamWriter.new(path, true);
 

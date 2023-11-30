@@ -18,19 +18,12 @@ In development:
 
   * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
 
-  * it should be possible to use your own operation patterns, module should contain the meta declaration to use the oepration
-    patterns
-
-  * meta command to use statement templates
-
-  * #563 : patterns (https://endjin.com/blog/2022/02/pattern-matching-in-csharp)
-
-  * if:is
-  * foreach:in
-
   * system warnings 
-  * extensions warnings 
+
+  * review code base : (samples, rosetta code samples, tutorials)
   * review code - check for the common patterns
+
+  * extensions warnings 
   * chat sample
 
   === Iteration 20 ===

@@ -177,7 +177,7 @@ public sealed const struct HBITMAP
       _handle := h
    }
 
-   embeddable constructor load(wide path, int width, int height)
+   constructor load(wide path, int width, int height)
    {
       pointer h := extern USER32.LoadImageW(
             0,   

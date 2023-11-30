@@ -178,7 +178,7 @@ public extension inputOp
    {
       var line := self.readLine();
         
-      line.convertTo:var;
+      line.convertTo(var);
         
       ^ var
    }

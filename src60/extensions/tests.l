@@ -20,7 +20,7 @@ public singleton Assert
    {
       var failed := false;
       f() \\ 
-         on:(e)
+         on::(e)
          {
             failed := true;
          };

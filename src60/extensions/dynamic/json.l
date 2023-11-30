@@ -35,7 +35,7 @@ singleton helper
          token =>
             "," { token := helper.readNext(e) }
             "}" { eof := true }
-            : { JsonException.new().raise() }
+            ! { JsonException.new().raise() }
       };
         
       ^ target
@@ -53,7 +53,7 @@ singleton helper
          token =>
             "," { token := helper.readNext(e) }
             "]" { eof := true }
-            : { JsonException.new().raise() }
+            ! { JsonException.new().raise() }
       };
         
       ^ target

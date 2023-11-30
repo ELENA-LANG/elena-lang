@@ -124,6 +124,9 @@ namespace elena_lang
       void generateTemplateStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void generateTemplateOperation(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
+      void loadMetaSection(SyntaxNode node);
+      void clearMetaSection(SyntaxNode node);
+
       void flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 

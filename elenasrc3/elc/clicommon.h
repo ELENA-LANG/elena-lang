@@ -295,6 +295,7 @@ public:
    Map<ref_t, bool>     cachedEmbeddables;
 
    virtual bool isStandardOne() = 0;
+   virtual bool withValidation() = 0;
 
    virtual bool isDeclared(ref_t reference) = 0;
 

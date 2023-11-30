@@ -15,6 +15,13 @@ namespace elena_lang
    constexpr bool DEFAULT_CONDITIONAL_BOXING = true;
    constexpr bool DEFAULT_EVALUATE_OP = true;
 
+   enum MetaHint : int
+   {
+      mhNone           = 0,
+      mhStandart       = 1,
+      mhNoValidation   = 2,
+   };
+
    enum class MethodHint : ref_t
    {
       Mask                 = 0x0000000F,
@@ -145,6 +152,8 @@ namespace elena_lang
    constexpr auto infoCurrentClass           = 703;
    constexpr auto infoAbstractMetod          = 704;
    constexpr auto infoMixedUpVariadic        = 705;
+   constexpr auto infoUnknownMessage         = 706;
+   constexpr auto infoTargetClass            = 707;
 
    constexpr auto errVMBroken                = 800;
    constexpr auto errVMNotInitialized        = 801;
@@ -389,26 +398,27 @@ namespace elena_lang
    constexpr auto VM_CONSOLE_KEY    = "VM STA Console";
    constexpr auto VM_GUI_KEY        = "VM STA GUI";
 
-   constexpr auto CONFIG_ROOT = "configuration";
-   constexpr auto PLATFORM_CATEGORY = "configuration/platform";
-   constexpr auto TEMPLATE_CATEGORY = "templates/*";
-   constexpr auto PRIMITIVE_CATEGORY = "primitives/*";
-   constexpr auto FORWARD_CATEGORY = "forwards/*";
-   constexpr auto EXTERNAL_CATEGORY = "externals/*";
-   constexpr auto WINAPI_CATEGORY = "winapi/*";
-   constexpr auto REFERENCE_CATEGORY = "references/*";
-   constexpr auto MODULE_CATEGORY = "files/*";
-   constexpr auto FILE_CATEGORY = "include/*";
-   constexpr auto PARSER_TARGET_CATEGORY = "targets/*";
+   constexpr auto CONFIG_ROOT             = "configuration";
+   constexpr auto PLATFORM_CATEGORY       = "configuration/platform";
+   constexpr auto TEMPLATE_CATEGORY       = "templates/*";
+   constexpr auto PRIMITIVE_CATEGORY      = "primitives/*";
+   constexpr auto FORWARD_CATEGORY        = "forwards/*";
+   constexpr auto EXTERNAL_CATEGORY       = "externals/*";
+   constexpr auto WINAPI_CATEGORY         = "winapi/*";
+   constexpr auto REFERENCE_CATEGORY      = "references/*";
+   constexpr auto MODULE_CATEGORY         = "files/*";
+   constexpr auto FILE_CATEGORY           = "include/*";
+   constexpr auto PARSER_TARGET_CATEGORY  = "targets/*";
 
-   constexpr auto LIB_PATH = "project/libpath";
-   constexpr auto OUTPUT_PATH = "project/output";
-   constexpr auto TARGET_PATH = "project/executable";
-   constexpr auto PROJECT_TEMPLATE = "project/template";
-   constexpr auto NAMESPACE_KEY = "project/namespace";
-   constexpr auto DEBUGMODE_PATH = "project/debuginfo";
-   constexpr auto FILE_PROLOG = "project/prolog";
-   constexpr auto FILE_EPILOG = "project/epilog";
+   constexpr auto LIB_PATH                = "project/libpath";
+   constexpr auto OUTPUT_PATH             = "project/output";
+   constexpr auto TARGET_PATH             = "project/executable";
+   constexpr auto PROJECT_TEMPLATE        = "project/template";
+   constexpr auto NAMESPACE_KEY           = "project/namespace";
+   constexpr auto DEBUGMODE_PATH          = "project/debuginfo";
+   constexpr auto FILE_PROLOG             = "project/prolog";
+   constexpr auto FILE_EPILOG             = "project/epilog";
+   constexpr auto MODULE_PROLOG           = "project/moduleProlog";
 
    constexpr auto PLATFORMTYPE_KEY        = "system/platform";
 

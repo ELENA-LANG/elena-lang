@@ -1447,7 +1447,15 @@ bool CompilerLogic :: readTypeMap(ModuleBase* extModule, MemoryBase* section, Re
       if (type == 2) {
          ref_t reference = reader.getRef();
          if (scope->module != extModule) {
-            reference = scope->importReference(extModule, reference);
+            if (scope->isStandardOne()) {
+               // HOTFIX : import predefined references
+               ustr_t name = extModule->resolveReference(reference);
+               if (NamespaceString::compareNs(name, scope->module->name())) {
+                  reference = scope->module->mapReference(name + getlength(STANDARD_MODULE));
+               }
+               else reference = scope->importReference(extModule, reference);
+            }
+            else reference = scope->importReference(extModule, reference);
          }
 
          map.add(*key, reference);
@@ -2612,4 +2620,70 @@ bool CompilerLogic :: isLessAccessible(ModuleScopeBase& scope, Visibility source
    Visibility targetVisibility = scope.retrieveVisibility(targetRef);
 
    return sourceVisibility > targetVisibility;
+}
+
+bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t name)
+{
+   ReferenceProperName sectionName(name);
+   NamespaceString ns(name);
+
+   IdentifierString dictionaryName(ns.str(), "'", META_PREFIX);
+   dictionaryName.append(sectionName.str());
+
+   if ((*sectionName).compare(PREDEFINED_MAP)) {
+      auto predefinedInfo = moduleScope->getSection(*dictionaryName, mskAttributeMapRef, true);
+      if (predefinedInfo.section) {
+         readAttributeMap(predefinedInfo.section, moduleScope->predefined);
+
+         return true;
+      }
+   }
+   else if ((*sectionName).compare(ATTRIBUTES_MAP)) {
+      auto attributeInfo = moduleScope->getSection(*dictionaryName, mskAttributeMapRef, true);
+
+      if (attributeInfo.section) {
+         readAttributeMap(attributeInfo.section, moduleScope->attributes);
+
+         return true;
+      }
+   }
+   else if ((*sectionName).compare(OPERATION_MAP)) {
+      auto operationInfo = moduleScope->getSection(*dictionaryName, mskTypeMapRef, true);
+
+      if (operationInfo.section) {
+         readTypeMap(operationInfo.module, operationInfo.section, moduleScope->operations, moduleScope);
+
+         return true;
+      }
+   }
+   else if ((*sectionName).compare(ALIASES_MAP)) {
+      auto aliasInfo = moduleScope->getSection(*dictionaryName, mskTypeMapRef, true);
+
+      if (aliasInfo.section) {
+         readTypeMap(aliasInfo.module, aliasInfo.section, moduleScope->aliases, moduleScope);
+
+         return true;
+      }
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: clearMetaData(ModuleScopeBase* moduleScope, ustr_t name)
+{
+   if (name.compare(PREDEFINED_MAP)) {
+      moduleScope->predefined.clear();
+   }
+   else if (name.compare(ATTRIBUTES_MAP)) {
+      moduleScope->attributes.clear();
+   }
+   else if (name.compare(OPERATION_MAP)) {
+      moduleScope->operations.clear();
+   }
+   else if (name.compare(ALIASES_MAP)) {
+      moduleScope->aliases.clear();
+   }
+   else return false;
+
+   return true;
 }

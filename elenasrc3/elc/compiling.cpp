@@ -258,7 +258,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
 
 // --- CompilingProcess ---
 
-CompilingProcess :: CompilingProcess(PathString& appPath, path_t prologName, path_t epilogName,
+CompilingProcess :: CompilingProcess(PathString& appPath, path_t modulePrologName, path_t prologName, path_t epilogName,
    PresenterBase* presenter, ErrorProcessor* errorProcessor,
    pos_t codeAlignment,
    JITSettings defaultCoreSettings,
@@ -267,6 +267,7 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t prologName, pat
    _templateGenerator(this),
    _forwards(nullptr)
 {
+   _modulePrologName = modulePrologName;
    _prologName = prologName;
    _epilogName = epilogName;
 
@@ -440,6 +441,8 @@ void CompilingProcess :: parseModule(ProjectEnvironment& env,
 {
    IdentifierString target;
 
+   parseFileTemlate(*env.moduleProlog, _modulePrologName, &builder);
+
    auto& file_it = module_it.files();
    while (!file_it.eof()) {
       builder.newNode(SyntaxTree::toParseKey(SyntaxKey::Namespace));
@@ -452,7 +455,7 @@ void CompilingProcess :: parseModule(ProjectEnvironment& env,
       }
 
       // generating syntax tree
-      parseFileTemlate(*env.fileProlog, _prologName, &builder); // !! temporal explicit prolog
+      parseFileTemlate(*env.fileProlog, _prologName, &builder);
       parseFile(*env.projectPath, file_it, &builder, parserTarget);
       parseFileTemlate(*env.fileEpilog, _epilogName, &builder);
 
@@ -516,7 +519,12 @@ void CompilingProcess :: buildModule(ProjectEnvironment& env,
       moduleSettings.rawStackAlingment, 
       moduleSettings.ehTableEntrySize, 
       minimalArgList, ptrSize,
-      moduleSettings.multiThreadMode);
+      moduleSettings.multiThreadMode,
+      module_it.hints());
+
+   // Validation : standart module must be named "system"
+   if (moduleScope.isStandardOne())
+      assert(module_it.name().compare(STANDARD_MODULE));
 
    _compiler->prepare(&moduleScope, forwardResolver, moduleSettings.manifestInfo);
 

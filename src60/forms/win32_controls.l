@@ -681,7 +681,7 @@ public abstract class BasePanel : BaseWinContainer
       _frame := Frame.new();
 
       // NOTE : a frame should be the first element
-      self.appendControlInternal:_frame
+      self.appendControlInternal(_frame)
    }
 
    internal appendControlInternal(BaseControl control)

@@ -2,6 +2,8 @@ import extensions;
 
 public program()
 {
-   var o := nil;
-      o.fail()
+  foreach(char ch :in "abc")
+  {
+     console.printLine(ch)
+  }
 }

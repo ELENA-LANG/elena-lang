@@ -417,7 +417,7 @@ namespace collections
 
          int i := _list.Length;
 
-         _list.append:newItem;
+         _list.append(newItem);
 
          // Extend a backet
          int capacity := backet.Length;

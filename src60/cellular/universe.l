@@ -95,7 +95,7 @@ public sealed class IntMatrixSpace : Space
         
       if(i >= _n)
       {
-         i := i.mod:_n
+         i := i.mod(_n)
       };
         
       int j := l;
@@ -105,7 +105,7 @@ public sealed class IntMatrixSpace : Space
       };
       if(j >= _m)
       {
-         j := j.mod:_m
+         j := j.mod(_m)
       };
       
       ^ _matrix.at(i, j)

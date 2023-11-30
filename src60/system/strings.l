@@ -4,6 +4,12 @@ public sealed Array<T> : Indexable<T>
 {
    embeddable __string T[] array;
 
+   static Array<T> Default
+      = nil;
+
+   static Array<T> MinValue
+      = new T[](0);
+
    constructor allocate(int length)
       = new T[](length);   
 
@@ -98,6 +104,8 @@ public sealed Array<T> : Indexable<T>
       };
 
       system'InvalidArgumentException.raise();
+
+      ^ default
    }
 
    setAt(int n, T item)
@@ -176,6 +184,11 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
 
    T at(int n)
       = array[n];
+
+   setAt(int n, T item)
+   {
+      array[n] := item;
+   }  
 
    int Length
    {
@@ -832,15 +845,23 @@ public const struct String : BaseValue,
 
    bool equal(o)
    {
-      auto s := cast string(o) ?? nil;
-      (nil == s)
-         ? { ^ false };
+      if (o :is string s)
+      {
+         ^ self.equal(s)
+      };
 
-      ^ self.equal(s)
+      ^ false
    }
 
    bool less(o)
-      <= less(cast string(o));
+   {
+      if (o :is string s)
+      {
+         ^ self.less(s)
+      };
+
+      ^ false
+   }
 
    private copySubS(string dest, string sour, int index, int length) : external(system'core_routines'__str_copysubs);
    private copySubS(string dest, string sour, int index, int length, int sourIndex) : external(system'core_routines'__str_xcopysubs);
@@ -1115,7 +1136,7 @@ public const struct WideString : BaseValue
       length := UTFOperations.convertUTF32_2_16(chVal, buffer, 0, length);
         
       int offs := 0;
-      for (int i := 0, i < size, i := i + 1)
+      for (int i := 0, i < size, i++)
       {
          for (int j := 0, j < length, j := j + 1) {
             array[offs] := buffer[j];
@@ -1189,15 +1210,23 @@ public const struct WideString : BaseValue
 
    bool equal(o)
    {
-      auto s := cast wide(o) ?? nil;
-      (nil == s)
-         ? { ^ false };
+      if (o :is wide w)
+      {
+         ^ self.equal(w)
+      };
 
-      ^ self.equal(s)
+      ^ false
    }
-   
+
    bool less(o)
-      <= less(cast wide(o));
+   {
+      if (o :is wide w)
+      {
+         ^ self.less(w)
+      };
+
+      ^ false
+   }
 
    bool equal(wide s) : external(system'core_routines'__wstr_equal);
 

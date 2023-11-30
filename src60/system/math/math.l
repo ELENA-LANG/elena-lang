@@ -21,13 +21,13 @@ namespace math
          = n.Absolute;
             
       mod(byte n, object m)
-         = n.mod:m;
+         = n.mod(m);
             
       mod(short n, object m)
-         = n.mod:m;
+         = n.mod(m);
             
       mod(int n, object m)
-         = n.mod:m;      
+         = n.mod(m);      
 
       mod(BaseVariable v, object m)
          = (*v).mod(m);

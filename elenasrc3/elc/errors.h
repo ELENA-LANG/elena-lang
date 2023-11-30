@@ -115,6 +115,8 @@ namespace elena_lang
    constexpr auto infoMsgCurrentClass        = "\ninfo 703: compiling class %s\n";
    constexpr auto infoMsgAbstractMetod       = "\ninfo 704:   abstract method %s\n";
    constexpr auto infoMssgMixedUpVariadic    = "\ninfo 705:   mixed-up variadic method %s\n";
+   constexpr auto infoMsgUnknownMessage      = "\ninfo 706:   unhandled message: %s\n";
+   constexpr auto infoMsgTargetClass         = "info 707:   target class: %s\n";
 
 } // _ELENA_
 

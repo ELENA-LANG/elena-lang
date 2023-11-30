@@ -52,14 +52,14 @@ public abstract class BaseControl
       if(nil == o)
       {
          if(nil == _parent)
-            { InvalidOperationException.new:"A control already unbound".raise() };
+            { InvalidOperationException.new("A control already unbound").raise() };
             
          _parent := nil
       }
       else
       {
          if(nil != _parent)
-            { InvalidOperationException.new:"A control already bound".raise() };
+            { InvalidOperationException.new("A control already bound").raise() };
             
          _parent := o
       }

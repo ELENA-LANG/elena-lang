@@ -215,7 +215,7 @@ public class GroupingEnumerator : Enumerator
             _dictionary[key] := groupItem
          };
             
-         groupItem.append:item
+         groupItem.append(item)
       };
         
       _groupEnumerator := _dictionary.enumerator();
@@ -351,11 +351,11 @@ public class RangeEnumerator : Enumerator
 
         if(_forward)
         {
-            _variable.reduce:_step 
+            _variable.reduce(_step) 
         }
         else
         {
-            _variable.append:_step
+            _variable.append(_step)
         }
     }    
     
@@ -364,9 +364,9 @@ public class RangeEnumerator : Enumerator
     bool next()
     {
         if(_forward)
-            { _variable.append:_step; ^ (_variable <= _end) };
+            { _variable.append(_step); ^ (_variable <= _end) };
         
-        _variable.reduce:_step; 
+        _variable.reduce(_step); 
         
         ^ (_variable >= _end)
     }

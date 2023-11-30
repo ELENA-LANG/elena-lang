@@ -17,7 +17,7 @@ singleton stringExConvertor
       while (it.Available)
       {
          output.write((*it).toString());
-         output.write:",";
+         output.write(",");
             
          it.appendIndex(1)
       };
@@ -35,7 +35,7 @@ singleton stringExConvertor
       while(en.next())
       {
          output.write((*en).toString());
-         output.write:",";
+         output.write(",");
       };
 
       int length := output.Length;
@@ -85,7 +85,7 @@ public singleton arrayConvertorEx
    {
       ArrayList retVal := new ArrayList();
 
-      en.forEach:(x){ retVal.append:x };
+      en.forEach::(x){ retVal.append(x) };
 
       ^ retVal
    }
@@ -103,7 +103,7 @@ public singleton intmatrixExConvertor
       int n := a.Length;
       int m := a[0].length;
 
-      ^ IntMatrix.allocate(n, m).populate:(int i, int j => a.at(i).at(j).toInt() )
+      ^ IntMatrix.allocate(n, m).populate::(int i, int j => a.at(i).at(j).toInt() )
    }   
     
    string toString(IntMatrix matrix)
@@ -119,7 +119,7 @@ public singleton intmatrixExConvertor
          {
             int r := matrix.at(i, j);
                 
-            output.write:r.write:","
+            output.write(r).write(",")
          };
          l := output.Length;
          l -= 1;
@@ -144,7 +144,7 @@ public singleton intmatrixExConvertor
          {
             int r := matrix.at(i, j);
                 
-            output.write:r.write:","
+            output.write(r).write(",")
          };
          l := output.Length;
          l -= 1;
@@ -288,10 +288,10 @@ public extension convertorOp
       = new Variant(self).saveTo(target);
 
    char toChar()
-      = charConvertor.convert:self;
+      = charConvertor.convert(self);
 
    byte[] toByteArray()
-      = byteArrayExConvertor.convert:self;
+      = byteArrayExConvertor.convert(self);
 }
 
 // --- convertor ---

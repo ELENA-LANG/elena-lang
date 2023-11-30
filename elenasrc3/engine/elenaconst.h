@@ -46,8 +46,6 @@ namespace elena_lang
 
    // --- ELENA predefined module names ---
    constexpr auto BINARY_MODULE              = "$binary";
-   constexpr auto PREDEFINED_MODULE          = "system'predefined"; // NOTE : system'predefined module should preceed system one
-   constexpr auto OPERATIONS_MODULE          = "system'operations"; // NOTE : system'predefined module should preceed system one
    constexpr auto STANDARD_MODULE            = "system";
 
    // --- ELENA special sections ---
@@ -70,10 +68,11 @@ namespace elena_lang
    constexpr auto AUTO_SYMBOL_PREFIX         = "@autosymbol";
    constexpr auto INLINE_CLASSNAME           = "$inline";          // nested class generic name
 
-   constexpr auto PREDEFINED_MAP             = "$forwards'meta$predefined";
-   constexpr auto ATTRIBUTES_MAP             = "$forwards'meta$attributes";
-   constexpr auto OPERATION_MAP              = "$forwards'meta$statementTemplates";
-   constexpr auto ALIASES_MAP                = "$forwards'meta$aliasTypes";
+   constexpr auto OPERATION_MAP              = "statementTemplates";
+   constexpr auto PREDEFINED_MAP             = "predefinedSymbols";
+   constexpr auto ATTRIBUTES_MAP             = "attributeSymbols";
+   constexpr auto ALIASES_MAP                = "aliasTypes";
+
    constexpr auto STARTUP_ENTRY              = "$auto'startUpSymbol";
 
    constexpr auto VM_TAPE                    = "$elena'meta$startUpTape";

@@ -101,7 +101,7 @@ namespace math
          b.readLengthsTo(ref int m, ref int p);
                     
          ifnot(j == m)
-            { MatrixException.new:"Invalid argument".raise() };
+            { MatrixException.new("Invalid argument").raise() };
     
          auto r := RealMatrix.allocate(n, p);
          for(int i := 0, i < n, i += 1)
@@ -136,14 +136,14 @@ namespace math
          a.readLengthsTo(ref int n, ref int m);
             
          if(n != m)
-            { MatrixException.new:"Invalid argument".raise() };
+            { MatrixException.new("Invalid argument").raise() };
             
          // toggle tracks row swaps. +1 -> even, -1 -> odd. used by MatrixDeterminant
          bool even := true;
     
          // permutation matrix
          auto pm := new int[](n);
-         pm.populate:(int i => i);
+         pm.populate::(int i => i);
     
          // each column, j is counter for coulmns
          int  max_col := 0;
