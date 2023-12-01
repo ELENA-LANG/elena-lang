@@ -59,11 +59,11 @@ namespace io
          self.write(buffer, 8)
       }
     
-      write(real long)
+      write(real r)
       {
          byte buffer[8];
             
-         buffer.write(0, long);
+         PrimitiveRealOperations.saveToByteArray(r, buffer, 0);
                     
          self.write(buffer, 8)
       }

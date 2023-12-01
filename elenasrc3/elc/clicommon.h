@@ -585,6 +585,9 @@ class ErrorProcessor : public ErrorProcessorBase
 
          _presenter->print(_presenter->getMessage(code), pathArg, col.arg.value, row.arg.value, terminal.identifier());
       }
+      else {
+         _presenter->print(_presenter->getMessage(code), pathArg, 0, 0, "<unknown>");
+      }
    }
 
 public:

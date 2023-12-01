@@ -489,6 +489,9 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
          if (info.multiMethod)
             info.multiMethod = importMessage(exporter, info.multiMethod);
 
+         if (info.byRefHandler)
+            info.byRefHandler = importMessage(exporter, info.byRefHandler);
+
          if (inheritMode) {
             info.inherited = true;
 

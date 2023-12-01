@@ -26,7 +26,11 @@ controlTest()
     
     Assert.ifTrue(b1);    
     Assert.ifTrue(b2);    
-    
+    console.write(".");
+
+    bool b3 := true;
+    Assert.ifEqual(b3 ? 2.0 : 3.0, 2.0);
+
     console.writeLine(".")
 }
 

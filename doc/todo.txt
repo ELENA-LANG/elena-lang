@@ -18,13 +18,14 @@ In development:
 
   * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
 
+  * UnsafePointer - copy real to byte array
+
   * system warnings 
 
   * review code base : (samples, rosetta code samples, tutorials)
   * review code - check for the common patterns
 
   * extensions warnings 
-  * chat sample
 
   === Iteration 20 ===
   dev: async programming (instant messagange sample (chat) )

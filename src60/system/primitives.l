@@ -9,6 +9,13 @@ internal singleton PrimitiveArrayOperations
       }
    }
 
+   copyTo(byte[] sour, int size, byte[] dest, int destIndex)
+   {
+      for (int i := 0, i < size, i := i + 1) {
+         dest[destIndex + i] := sour[i];
+      }
+   }
+
    copy(short[] sour, int index, int size, short[] dest)
    {
       for (int i := 0, i < size, i := i + 1) {
@@ -242,6 +249,20 @@ internal singleton PrimitiveRealOperations
       self.hash(r, ref int retVal);
 
       ^ retVal
+   }
+
+   saveToByteArray(real r, byte[] dest, int index)
+   {
+      pointer ptr := r;
+      if (index == 0) {
+         ptr.copyTo(dest, 8);
+      }
+      else {
+         byte tmp[8];
+         ptr.copyTo(tmp, 8);
+
+         PrimitiveArrayOperations.copyTo(tmp, 8, dest, index);
+      }
    }
 }
 

@@ -154,6 +154,7 @@ namespace elena_lang
    constexpr auto infoMixedUpVariadic        = 705;
    constexpr auto infoUnknownMessage         = 706;
    constexpr auto infoTargetClass            = 707;
+   constexpr auto infoScopeMethod            = 708;
 
    constexpr auto errVMBroken                = 800;
    constexpr auto errVMNotInitialized        = 801;

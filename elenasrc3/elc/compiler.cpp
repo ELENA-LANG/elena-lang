@@ -7510,18 +7510,32 @@ ObjectInfo Compiler :: compileMessageOperation(BuildTreeWriter& writer, ExprScop
             // ignore warning for super class / type-less one
          }
          else if (messageNode == SyntaxKey::None) {
-            if (test(resolution.message, CONVERSION_MESSAGE)) {
-               if (_verbose) {
-                  IdentifierString messageName;
-                  ByteCodeUtil::resolveMessageName(messageName, scope.module, resolution.message);
+            if (_verbose) {
+               IdentifierString messageName;
+               ByteCodeUtil::resolveMessageName(messageName, scope.module, resolution.message);
 
-                  _errorProcessor->info(infoUnknownMessage, *messageName);
+               _errorProcessor->info(infoUnknownMessage, *messageName);
 
-                  ustr_t name = scope.module->resolveReference(targetRef);
-                  if (!name.empty())
-                     _errorProcessor->info(infoTargetClass, name);
+               ustr_t name = scope.module->resolveReference(targetRef);
+               if (!name.empty())
+                  _errorProcessor->info(infoTargetClass, name);
+
+               MethodScope* methodScope = Scope::getScope<MethodScope>(scope, Scope::ScopeLevel::Method);
+               if (methodScope != nullptr) {
+                  messageName.clear();
+                  ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope->message);
+
+                  ustr_t name = scope.module->resolveReference(methodScope->getClassRef(false));
+                  if (!name.empty()) {
+                     messageName.insert(".", 0);
+                     messageName.insert(name, 0);
+                  }
+
+                  _errorProcessor->info(infoScopeMethod, *messageName);
                }
+            }
 
+            if (test(resolution.message, CONVERSION_MESSAGE)) {
                scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownTypecast, node);
             }
             else if (resolution.message == scope.moduleScope->buildins.refer_message) {
@@ -13079,7 +13093,9 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, Synta
 
    SyntaxNode resendExpr = methodNode.appendChild(SyntaxKey::ResendDispatch);
    SyntaxNode operationNode = resendExpr.appendChild(((resendMessage & PREFIX_MESSAGE_MASK) == PROPERTY_MESSAGE) ? SyntaxKey::PropertyOperation : SyntaxKey::MessageOperation);
-   operationNode.appendChild(SyntaxKey::Message).appendChild(SyntaxKey::identifier, actionName);
+
+   if (!actionName.compare(INVOKE_MESSAGE))
+      operationNode.appendChild(SyntaxKey::Message).appendChild(SyntaxKey::identifier, actionName);
 
    String<char, 10> arg;
    for (size_t i = 0; i < signLen; i++) {
