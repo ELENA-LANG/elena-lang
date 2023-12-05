@@ -725,6 +725,7 @@ bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& vis
          type = TemplateType::InlineProperty;
          break;
       case V_TEMPLATE:
+      case V_WEAK:
          break;
       default:
       {

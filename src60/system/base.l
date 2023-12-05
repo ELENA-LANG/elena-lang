@@ -71,7 +71,7 @@ public field rprop<name>
 
 // --- interface<T> ---
 
-public interface<T>
+public weak interface<T>
 {
    T cast() = new T
    {

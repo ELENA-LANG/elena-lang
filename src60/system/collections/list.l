@@ -965,9 +965,6 @@ namespace collections
          _length.append(1)
       }
     
-      append(object)
-         <= append(cast T(object));
-    
       appendRange(Enumerator<T> e)
       {
          while(e.next())

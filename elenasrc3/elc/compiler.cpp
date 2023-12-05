@@ -1701,7 +1701,7 @@ mssg_t Compiler :: mapMethodName(MethodScope& scope, pos_t paramCount, ustr_t ac
 }
 
 ref_t Compiler :: retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters,
-   ustr_t prefix, SyntaxKey argKey)
+   ustr_t prefix, SyntaxKey argKey, ustr_t postFix)
 {
    SyntaxNode identNode = node.firstChild(SyntaxKey::TerminalMask);
 
@@ -1726,6 +1726,8 @@ ref_t Compiler :: retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<
    templateName.append(identNode.identifier());
    templateName.append('#');
    templateName.appendInt(parameters.count());
+   if (!postFix.empty())
+      templateName.append(postFix);
 
    NamespaceScope* ns = &scope;
    ref_t reference = ns->resolveImplicitIdentifier(*templateName, false, true);
@@ -1740,7 +1742,7 @@ ref_t Compiler :: retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<
    return reference;
 }
 
-bool Compiler :: importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target)
+bool Compiler :: importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target, bool weakOne)
 {
    TypeAttributes attributes = {};
 
@@ -1755,7 +1757,7 @@ bool Compiler :: importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target
    declareTemplateParameters(scope.module, typeList, dummyTree, parameters);
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   ref_t templateRef = retrieveTemplate(*ns, node, parameters, nullptr, SyntaxKey::None);
+   ref_t templateRef = retrieveTemplate(*ns, node, parameters, nullptr, SyntaxKey::None, weakOne ? WEAK_POSTFIX : nullptr);
    if (!templateRef)
       return false;
 
@@ -1770,7 +1772,7 @@ bool Compiler :: importInlineTemplate(Scope& scope, SyntaxNode node, ustr_t post
    List<SyntaxNode> parameters({});
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix, SyntaxKey::Expression);
+   ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix, SyntaxKey::Expression, nullptr);
    if (!templateRef)
       return false;
 
@@ -1810,7 +1812,7 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
    writer.closeNode();
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix, SyntaxKey::TemplateArg);
+   ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix, SyntaxKey::TemplateArg, nullptr);
    if (!templateRef)
       return false;
 
@@ -2855,12 +2857,15 @@ void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode node, bool 
          {
             SyntaxNode child = current.firstChild();
             if (child == SyntaxKey::TemplateType) {
-               if (!parentRef) {
+               if (importTemplate(scope, child, node, true)) {
+                  // try to import as weak template
+               }
+               else if (!parentRef) {
                   parentNode = current;
 
                   parentRef = resolveStrongTypeAttribute(scope, child, extensionMode, false);
                }
-               else if (!importTemplate(scope, child, node))
+               else if (!importTemplate(scope, child, node, false))
                   scope.raiseError(errUnknownTemplate, current);
             }
             else if (!parentRef) {
@@ -5251,6 +5256,9 @@ void Compiler :: declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
    int argCount = SyntaxTree::countChild(node, SyntaxKey::TemplateArg);
    postfix.append('#');
    postfix.appendInt(argCount);
+
+   if (SyntaxTree::ifChildExists(node, SyntaxKey::Attribute, V_WEAK))
+      postfix.append(WEAK_POSTFIX);
 
    IdentifierString prefix;
    switch (scope.type) {

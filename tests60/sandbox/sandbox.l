@@ -1,20 +1,29 @@
 import extensions;
+import system'collections;
 
-interface I
-{
-   get abstract int Reserved();
+   public sealed XList<T>
+   {
+//      T[]            _array;
+    
+      /// Appends a new object to the end of the list
+      append(T object)
+      {
+         console.writeLine(object)
+      }
+    
+//      append(object)
+//         <= append(cast T(object));
 }
 
-public sealed class C : interface<I>
+A
 {
-   int Reserved = 2;
+   int cast() = 3;
 }
 
 public program()
 {
-   auto c := new C();
+   auto l := new XList<int>();
 
-   I i := c;
-   
-   console.printLine(i.Reserved);
+   l.append(2);
+   l.append(new A());
 }

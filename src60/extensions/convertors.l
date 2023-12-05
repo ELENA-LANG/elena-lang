@@ -195,7 +195,7 @@ public singleton byteArrayExConvertor
          }
          else
          { 
-            retVal := retVal.add(tmp_len, tmp) 
+            retVal := retVal.add(tmp, tmp_len) 
          };
                 
          i := i + len;

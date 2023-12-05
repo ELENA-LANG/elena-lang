@@ -1122,7 +1122,7 @@ namespace elena_lang
       bool resolveAutoType(ExprScope& scope, ObjectInfo source, ObjectInfo& target);
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
-         ustr_t prefix, SyntaxKey argKey);
+         ustr_t prefix, SyntaxKey argKey, ustr_t postFix);
 
       MessageResolution resolveByRefHandler(BuildTreeWriter& writer, ObjectInfo source, ExprScope& scope, ref_t expectedRef,
          mssg_t weakMessage, ref_t& signatureRef, bool noExtensions);
@@ -1133,7 +1133,7 @@ namespace elena_lang
 
       bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool internalOne, bool& isProtectedDefConst);
 
-      bool importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target);
+      bool importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target, bool weakOne);
       bool importInlineTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
       bool importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
       void importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNode);
