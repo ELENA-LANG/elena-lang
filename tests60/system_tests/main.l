@@ -50,6 +50,7 @@ public program()
    incTest();
    multiValTest();
    defaultTest();
+   retValTests();
 
    console.writeLine("--- Passed ---")
 }

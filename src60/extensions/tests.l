@@ -51,6 +51,11 @@ public singleton Assert
          AssertException.raise("Assertion failed")
       }
    }
+
+   ifInstanceOf(object, class)
+   {
+      Assert.ifTrue(object.instanceOf(class));
+   }
 }
 
 // --- testOp ---

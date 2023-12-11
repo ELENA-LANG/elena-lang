@@ -12,10 +12,10 @@ namespace math
 
    internal singleton MatrixHelper
    {
-      /*(RealMatrix, bool)*/ getDecomposed()
+      ::(RealMatrix, bool) getDecomposed(RealMatrix m)
       {
          // create matrix copy
-         auto a := self.clone();
+         auto a := m.clone();
     
          real v := 0.0r;
          real t := 0.0r;
@@ -219,10 +219,10 @@ namespace math
             
       get real Determinant()
       {
-//         auto a, even := MatrixHelper.getDecomposed(cast RealMatrix(self));
+         (RealMatrix a, bool even) := MatrixHelper.getDecomposed(cast RealMatrix(self));
          real deter := 1.0r;
          real v := 0.0r;
-/*    
+    
          ifnot(even)
             { deter := deter * (-1.0r) };
             
@@ -234,7 +234,7 @@ namespace math
                 
             deter := deter * v
          };
-*/                
+                
          ^ deter
       }
                 

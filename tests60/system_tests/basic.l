@@ -1781,3 +1781,27 @@ defaultTest()
 
    console.writeLine(".");
 }
+
+// -- retValTests --
+
+RetValA
+{
+   eval() {}
+}
+
+extension RetValAOp : RetValA
+{
+   extendEval() {}
+}
+
+retValTests()
+{
+   console.write("retValTests:");
+
+   auto a := new RetValA();
+
+   Assert.ifInstanceOf(a.eval(), RetValA);
+   Assert.ifInstanceOf(a.extendEval(), RetValA);
+
+   console.writeLine(".");
+}

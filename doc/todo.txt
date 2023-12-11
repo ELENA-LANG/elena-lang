@@ -17,10 +17,8 @@ In development:
 
   * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
 
-  * extensions'math'matrixOp : no need to use mixInto extension, multi return can be used
-  * test matrix sample
-
   * review code base : (samples, rosetta code samples, tutorials)
+
   * review code - check for the common patterns
   * tools:backlog
   * #608

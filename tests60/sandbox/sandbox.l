@@ -1,23 +1,30 @@
 import extensions;
 
-singleton Helper
+A
 {
-//   int, bool getPair()
-//   {
-//      ^ (2,true)
-//   }
-
-   ::(int, bool) getPair2()
-   {
-      ^ (2,true)
-   }
+   eval() {}
 }
+
+extension AOp : A
+{
+   extendEval() {}
+}
+
+retValTests()
+{
+   auto a := new A();
+
+   console.writeLine(a.eval());
+   console.writeLine(a.extendEval());
+
+   Assert.ifInstanceOf(a.eval(), A);
+   Assert.ifInstanceOf(a.extendEval(), A);
+}
+
 
 public program()
 {
-//   int n, bool b := Helper.getPair();
-//   console.printLine(n,",",b)
+   retValTests()
 
-   (int n2, bool b2) := Helper.getPair2();
-   console.printLine(n2,",",b2)
+//   console.print("Enter ").readLine()/*.toReal()*/
 }

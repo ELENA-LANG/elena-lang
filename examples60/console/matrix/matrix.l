@@ -23,7 +23,7 @@ class Matrix
             });
     
     constructor newIdentityOf(int n)
-        <= new(RealMatrix.allocate(n,n).populate:(int i, int j =>
+        <= new(RealMatrix.allocate(n,n).populate::(int i, int j =>
             cast RealNumber((i == j) ? 1.0r : 0.0r )));
     
     add(matrix)
@@ -58,7 +58,7 @@ Your choice:";
     {
         choice =>
             "1" {
-                console.write:"Enter the order of matrix: ";
+                console.write("Enter the order of matrix: ");
                 var N := console.readLine().toInt();
                 
                 var matrixA := Matrix.create(N, "A");
@@ -74,7 +74,7 @@ Your choice:";
                 ^ sum.toString()
             }
             "2" {
-                console.write:"Enter the order of matrix: ";
+                console.write("Enter the order of matrix: ");
                 var N := console.readLine().toInt();
                 
                 var matrixA := Matrix.create(N, "A");
@@ -90,7 +90,7 @@ Your choice:";
                 ^ diff.toString()
             }
             "3" {
-                console.write:"Enter the order of matrix: ";
+                console.write("Enter the order of matrix: ");
                 var N := console.readLine().toInt();
                 
                 var matrixA := Matrix.create(N, "A");
@@ -106,7 +106,7 @@ Your choice:";
                 ^ product.toString()
             }
             "4" {
-                console.write:"Enter the order of matrix: ";
+                console.write("Enter the order of matrix: ");
                 var N := console.readLine().toInt();
                 
                 var matrixA := Matrix.create(N, "A");
@@ -116,7 +116,7 @@ Your choice:";
                 ^ matrixA.Determinant
             }
             "5" {
-                console.write:"Enter the order of matrix: ";
+                console.write("Enter the order of matrix: ");
                 var N := console.readLine().toInt();
                 
                 RealMatrix identity := Matrix.newIdentityOf(N);

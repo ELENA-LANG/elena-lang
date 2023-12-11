@@ -10882,7 +10882,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
       ExprScope exprScope(&codeScope);
       WriterContext context = { &writer, &exprScope, node };
 
-      retVal = scope.mapSelf();
+      retVal = scope.mapSelf(!scope.isExtension);
       if (codeScope.isByRefHandler()) {
          compileAssigningOp(context, codeScope.mapByRefReturnArg(), retVal);
       }
