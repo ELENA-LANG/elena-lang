@@ -1110,6 +1110,11 @@ bool Compiler::MethodScope :: checkType(MethodInfo& methodInfo, MethodHint type)
 ObjectInfo Compiler::MethodScope :: mapSelf(bool memberMode)
 {
    if (!memberMode) {
+      if (isExtension) {
+         ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
+
+         return { ObjectKind::Param, { classScope->extensionClassRef }, -1 };
+      }
       return { ObjectKind::Param, { }, -1 };
    }
    else if (selfLocal != 0) {
@@ -10882,6 +10887,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
       ExprScope exprScope(&codeScope);
       WriterContext context = { &writer, &exprScope, node };
 
+      // NOTE : extension should re
       retVal = scope.mapSelf(!scope.isExtension);
       if (codeScope.isByRefHandler()) {
          compileAssigningOp(context, codeScope.mapByRefReturnArg(), retVal);

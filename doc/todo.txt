@@ -17,6 +17,7 @@ In development:
 
   * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
 
+  * use tuples for translit
   * review code base : (samples, rosetta code samples, tutorials)
 
   * review code - check for the common patterns

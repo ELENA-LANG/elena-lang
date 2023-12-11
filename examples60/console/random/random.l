@@ -17,7 +17,7 @@ public program()
    var intCounts := new int[](distGroupCount);
    var realCounts := new int[](distGroupCount);
 
-   console.printLine:"Random reals:";
+   console.printLine("Random reals:");
    for(int i := 0, i < rows, i += 1)
    {
       for(int j := 0, j <= cols, j += 1)
@@ -29,7 +29,7 @@ public program()
    };
 
    console.writeLine();
-   console.writeLine:"Random integers:";
+   console.writeLine("Random integers:");
    for(int i := 0, i < rows, i += 1)
    {
       for(int j := 0, j <= cols, j += 1)
@@ -41,7 +41,7 @@ public program()
    };
 
    console.writeLine();
-   console.writeLine:"Distribution";
+   console.writeLine("Distribution");
 
    for(int i := 0, i < runCount, i += 1)
    {
