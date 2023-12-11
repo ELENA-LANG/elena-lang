@@ -17,7 +17,7 @@ class Matrix
     }
     
     constructor create(int n, string name)
-        <= new (RealMatrix.allocate(n,n).populate:(int i,int j)
+        <= new (RealMatrix.allocate(n,n).populate::(int i,int j)
             { 
                 ^ console.print("Enter ",name,"[",i,",",j,"]=").readLine().toReal()
             });

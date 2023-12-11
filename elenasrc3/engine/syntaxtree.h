@@ -171,6 +171,7 @@ namespace elena_lang
       PrimitiveCollection     = 0x0018F2,
       BranchOperation         = 0x0018F3,
       TupleBlock              = 0x0010F4,
+      TupleType               = 0x0010F5,
 
       Name                    = 0x000101,
       Namespace               = 0x000103,

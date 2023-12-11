@@ -144,6 +144,21 @@ bool CompilingProcess::TemplateGenerator :: importCodeTemplate(ModuleScopeBase& 
    return true;
 }
 
+size_t getLengthSkipPostfix(ustr_t name)
+{
+   size_t len = name.length();
+
+   for (size_t i = len - 1; i != 0; i--) {
+      if (name[i] == '\'' || name[i] == '&') {
+         break;
+      }
+      else if (name[i] == '#')
+         return i;
+   }
+
+   return len;
+}
+
 ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility,
    ref_t templateRef, List<SyntaxNode>& parameters, bool& alreadyDeclared)
 {
@@ -163,15 +178,18 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
 
       ref_t typeRef = (*it).arg.reference;
       ustr_t param = module->resolveReference(typeRef);
+
+      size_t paramLen = getLengthSkipPostfix(param);
+
       if (isTemplateWeakReference(param)) {
          // HOTFIX : save template based reference as is
-         name.append(param);
+         name.append(param, paramLen);
       }
       else if (isWeakReference(param)) {
          name.append(module->name());
-         name.append(param);
+         name.append(param, paramLen);
       }
-      else name.append(param);
+      else name.append(param, paramLen);
    }
    name.replaceAll('\'', '@', 0);
 

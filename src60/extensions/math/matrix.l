@@ -10,6 +10,98 @@ namespace math
          <= super new(s);
    }
 
+   internal singleton MatrixHelper
+   {
+      /*(RealMatrix, bool)*/ getDecomposed()
+      {
+         // create matrix copy
+         auto a := self.clone();
+    
+         real v := 0.0r;
+         real t := 0.0r;
+            
+         a.readLengthsTo(ref int n, ref int m);
+            
+         if(n != m)
+            { MatrixException.new("Invalid argument").raise() };
+            
+         // toggle tracks row swaps. +1 -> even, -1 -> odd. used by MatrixDeterminant
+         bool even := true;
+    
+         // permutation matrix
+         auto pm := new int[](n);
+         pm.populate::(int i => i);
+    
+         // each column, j is counter for coulmns
+         int  max_col := 0;
+         real max := 0.0r;
+            
+         for (int j := 0, j < n, j += 1)
+         {
+            // find largest value in col j
+            a.read(j, j, ref max);
+            max := abs(max);
+                
+            max_col := j;
+            for (int i := j + 1, i < n, i += 1)
+            {
+               a.read(i, j, ref v);
+               v := abs(v);
+               if(v > max)
+               {
+                  max := v;
+                  max_col := i
+               }
+            };
+      
+            // if largest value not on pivot, swap rows
+            if(max_col != j)
+            {
+               for(int k := 0, k < n, k += 1)
+               {
+                  a.read(j, k, ref t);
+                  a.read(max_col, k, ref v);
+    
+                  a.setAt(j, k, v);
+                  a.setAt(max_col, k, t);
+               };
+    
+               // switch two rows in permutation matrix
+               pm/*~intArrayOp*/.exchange(j, max_col);
+    
+               even := even.Inverted
+            };
+                            
+            if(0.0r == max)
+               { MatrixException.new("The matrix is singular!").raise() };
+    
+            a.read(j, j, ref t);
+                
+            for (int i := j + 1, i < n, i += 1)
+            {
+               a.read(i, j, ref v);
+               v := v / t;
+                    
+               a.setAt(i, j, v);
+    
+               for (int k := j + 1, k < n, k += 1)
+               {
+                  a.read(i, j, ref v);
+                  a.read(j, k, ref real c);
+                  v := v * c;
+    
+                  a.read(i, k, ref c);
+                  v := c - v;
+                        
+                  a.setAt(i, k, v)
+               }
+            };
+         };
+    
+         ^ (a, even);
+      }      
+   }
+
    public extension matrixOp : RealMatrix
    {
       RealMatrix clone()
@@ -124,106 +216,16 @@ namespace math
             
          ^ r
       }
-
-      get Decomposed()
-      {
-         // create matrix copy
-         auto a := self.clone();
-    
-         real v := 0.0r;
-         real t := 0.0r;
-            
-         a.readLengthsTo(ref int n, ref int m);
-            
-         if(n != m)
-            { MatrixException.new("Invalid argument").raise() };
-            
-         // toggle tracks row swaps. +1 -> even, -1 -> odd. used by MatrixDeterminant
-         bool even := true;
-    
-         // permutation matrix
-         auto pm := new int[](n);
-         pm.populate::(int i => i);
-    
-         // each column, j is counter for coulmns
-         int  max_col := 0;
-         real max := 0.0r;
-            
-         for (int j := 0, j < n, j += 1)
-         {
-            // find largest value in col j
-            a.read(j, j, ref max);
-            max := abs(max);
-                
-            max_col := j;
-            for (int i := j + 1, i < n, i += 1)
-            {
-               a.read(i, j, ref v);
-               v := abs(v);
-               if(v > max)
-               {
-                  max := v;
-                  max_col := i
-               }
-            };
-      
-            // if largest value not on pivot, swap rows
-            if(max_col != j)
-            {
-               for(int k := 0, k < n, k += 1)
-               {
-                  a.read(j, k, ref t);
-                  a.read(max_col, k, ref v);
-    
-                  a.setAt(j, k, v);
-                  a.setAt(max_col, k, t);
-               };
-    
-               // switch two rows in permutation matrix
-               pm/*~intArrayOp*/.exchange(j, max_col);
-    
-               even := even.Inverted
-            };
-                            
-            if(0.0r == max)
-               { MatrixException.new("The matrix is singular!").raise() };
-    
-            a.read(j, j, ref t);
-                
-            for (int i := j + 1, i < n, i += 1)
-            {
-               a.read(i, j, ref v);
-               v := v / t;
-                    
-               a.setAt(i, j, v);
-    
-               for (int k := j + 1, k < n, k += 1)
-               {
-                  a.read(i, j, ref v);
-                  a.read(j, k, ref real c);
-                  v := v * c;
-    
-                  a.read(i, k, ref c);
-                  v := c - v;
-                        
-                  a.setAt(i, k, v)
-               }
-            };
-         };
-    
-         ^ a.mixInto(new { Even = even; } );
-      }
             
       get real Determinant()
       {
-         var lum := (cast RealMatrix(self)).Decomposed;
+//         auto a, even := MatrixHelper.getDecomposed(cast RealMatrix(self));
          real deter := 1.0r;
          real v := 0.0r;
-    
-         ifnot(lum.Even)
+/*    
+         ifnot(even)
             { deter := deter * (-1.0r) };
             
-         auto a := cast RealMatrix(lum);
          a.readLengthsTo(ref int n, ref int m);
             
          for (int i := 0, i < n, i += 1)
@@ -232,7 +234,7 @@ namespace math
                 
             deter := deter * v
          };
-                
+*/                
          ^ deter
       }
                 

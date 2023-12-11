@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 6.0 - redux ###
   === Iteration 19 ===
-  dev: #608, #562
+  dev: #562
   op:github actions : x86
   opt:#602
   maint:#616, system module warnings, #622
@@ -17,11 +17,13 @@ In development:
 
   * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
 
-  * extensions warnings 
+  * extensions'math'matrixOp : no need to use mixInto extension, multi return can be used
+  * test matrix sample
 
   * review code base : (samples, rosetta code samples, tutorials)
   * review code - check for the common patterns
   * tools:backlog
+  * #608
 
   === Iteration 20 ===
   dev: async programming (instant messagange sample (chat) )

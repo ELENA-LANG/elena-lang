@@ -1,29 +1,23 @@
 import extensions;
-import system'collections;
 
-   public sealed XList<T>
-   {
-//      T[]            _array;
-    
-      /// Appends a new object to the end of the list
-      append(T object)
-      {
-         console.writeLine(object)
-      }
-    
-//      append(object)
-//         <= append(cast T(object));
-}
-
-A
+singleton Helper
 {
-   int cast() = 3;
+//   int, bool getPair()
+//   {
+//      ^ (2,true)
+//   }
+
+   ::(int, bool) getPair2()
+   {
+      ^ (2,true)
+   }
 }
 
 public program()
 {
-   auto l := new XList<int>();
+//   int n, bool b := Helper.getPair();
+//   console.printLine(n,",",b)
 
-   l.append(2);
-   l.append(new A());
+   (int n2, bool b2) := Helper.getPair2();
+   console.printLine(n2,",",b2)
 }

@@ -572,6 +572,18 @@ void SyntaxTreeBuilder :: flushDictionary(SyntaxTreeWriter& writer, SyntaxNode n
    writer.closeNode();
 }
 
+void SyntaxTreeBuilder :: flushTupleType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& attributeCategory)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::SubDeclaration) {
+         flushTypeAttribute(writer, scope, current, attributeCategory, true, true);
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool withNameNode, 
    bool typeDescriptor)
 {
@@ -607,6 +619,11 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
          }
 
          writer.closeNode();
+      }
+      else if (current == SyntaxKey::TupleType) {
+         flushTupleType(writer, scope, current, attributeCategory);
+
+         current = current.nextNode();
       }
       else if (current == SyntaxKey::SubDeclaration) {
          flushDescriptor(writer, scope, current, withNameNode, typeDescriptor);

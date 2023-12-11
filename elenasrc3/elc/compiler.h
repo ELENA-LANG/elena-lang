@@ -1061,6 +1061,8 @@ namespace elena_lang
       bool                   _evaluateOp;
       bool                   _verbose;
 
+      void showContextInfo(ExprScope& scope, mssg_t message, ref_t targetRef);
+
       void loadMetaData(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t name);
 
       void importExtensions(NamespaceScope& ns, ustr_t importedNs);
@@ -1303,7 +1305,7 @@ namespace elena_lang
 
       ObjectInfo typecastObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
       ObjectInfo convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, 
-         ref_t targetRef, bool dynamicRequired);
+         ref_t targetRef, bool dynamicRequired, bool withoutBoxing);
       ObjectInfo convertIntLiteral(ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
 
       bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);

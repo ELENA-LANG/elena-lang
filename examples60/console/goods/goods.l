@@ -39,9 +39,9 @@ class Adapter
     write(s)
     {
         ifnot(0 == _bm.Length)
-           { _bm.append:";" };
+           { _bm.append(";") };
         
-        _bm.append:s
+        _bm.append(s)
     }
 
     read(variable)
@@ -52,7 +52,7 @@ class Adapter
         }
         else
         {
-            _bm.find:";";
+            _bm.find(";");
             
             _bm.Marked.convertTo(variable);
             
@@ -73,9 +73,9 @@ public program()
     var list := new List();
     var adapter := new Adapter();
 
-    File.assign(program_arguments[1]).forEachLine:(line)
+    File.assign(program_arguments[1]).forEachLine::(line)
     {
-        adapter.write:line;
+        adapter.write(line);
 
         var name := new StringWriter();
         var price := Real.new();
@@ -88,7 +88,7 @@ public program()
         }
     };
 
-    list.forEach:printingLn;
+    list.forEach(printingLn);
 
     console.readChar()
 }

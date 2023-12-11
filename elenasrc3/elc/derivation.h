@@ -150,6 +150,7 @@ namespace elena_lang
       void flushExpressionMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMethodCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushTupleType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory);
 
       void copyHeader(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool includeType);
       void copyType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
