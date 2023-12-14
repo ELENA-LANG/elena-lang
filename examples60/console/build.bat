@@ -68,7 +68,7 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-..\..\bin\elena-cli trans\tanslit.prj
+..\..\bin\elena-cli trans\translit.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

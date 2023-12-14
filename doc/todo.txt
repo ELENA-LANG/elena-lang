@@ -5,30 +5,28 @@ In development:
 [development]
   ### EPIC: elena 6.0 - redux ###
   === Iteration 19 ===
-  dev: #562
   op:github actions : x86
   opt:#602
   maint:#616, system module warnings, #622
   exp:using expression trees in real-life apps (see c#)
   ide:backlog (#617), vm debugger, debugger watch - struct
   prom:tutorial forwards
-  port:db samples, elenavm / elt for linux
+  port:elenavm / elt for linux
   --------------------------------------
 
   * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
 
-  * use tuples for translit
-  * review code base : (samples, rosetta code samples, tutorials)
+  * Nullable support #562
 
-  * review code - check for the common patterns
-  * tools:backlog
-  * #608
+  * review code base : (rosetta code samples: AMB, tutorials)
+
+  * db samples
 
   === Iteration 20 ===
-  dev: async programming (instant messagange sample (chat) )
+  dev: async programming (instant messagange sample (chat) ), #608
   op:
   opt: pi - under 8 sec, #601
-  maint:#620
+  maint:#620, tools:backlog
   exp:
   ide:
   tools:

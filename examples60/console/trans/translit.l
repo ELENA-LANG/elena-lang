@@ -6,38 +6,38 @@ import extensions;
 
 /*const*/ rusLatRules = new object[]
 {
-    new { from = "а"; to = "a"; },
-    new { from = "б"; to = "b"; },
-    new { from = "в"; to = "v"; },
-    new { from = "г"; to = "g"; },
-    new { from = "д"; to = "d"; },
-    new { from = "е"; to = "e"; },
-    new { from = "ë"; to = "jo"; },
-    new { from = "ж"; to = "zh"; },
-    new { from = "з"; to = "z"; },
-    new { from = "и"; to = "i"; },
-    new { from = "й"; to = "ij"; },
-    new { from = "к"; to = "k"; },
-    new { from = "л"; to = "l"; },
-    new { from = "m"; to = "m"; },
-    new { from = "н"; to = "n"; },
-    new { from = "о"; to = "о"; },
-    new { from = "п"; to = "p"; },
-    new { from = "р"; to = "r"; },
-    new { from = "c"; to = "s"; },
-    new { from = "т"; to = "t"; },
-    new { from = "у"; to = "u"; },
-    new { from = "ф"; to = "f"; },
-    new { from = "х"; to = "h"; },
-    new { from = "ц"; to = "c"; },
-    new { from = "ч"; to = "ch"; },
-    new { from = "ш"; to = "sh"; },
-    new { from = "щ"; to = "w"; },
-    new { from = "ы"; to = "y"; },
-    new { from = "ь"; to = "'"; },
-    new { from = "э"; to = "je"; },
-    new { from = "ю"; to = "ju"; },
-    new { from = "я"; to = "ja"; }
+    ( "а", "a" ),
+    ( "б", "b" ),
+    ( "в", "v" ),
+    ( "г", "g" ),
+    ( "д", "d" ),
+    ( "е", "e" ),
+    ( "ë", "jo" ),
+    ( "ж", "zh" ),
+    ( "з", "z" ),
+    ( "и", "i" ),
+    ( "й", "ij" ),
+    ( "к", "k" ),
+    ( "л", "l" ),
+    ( "m", "m" ),
+    ( "н", "n" ),
+    ( "о", "о" ),
+    ( "п", "p" ),
+    ( "р", "r" ),
+    ( "c", "s" ),
+    ( "т", "t" ),
+    ( "у", "u" ),
+    ( "ф", "f" ),
+    ( "х", "h" ),
+    ( "ц", "c" ),
+    ( "ч", "ch" ),
+    ( "ш", "sh" ),
+    ( "щ", "w" ),
+    ( "ы", "y" ),
+    ( "ь", "'" ),
+    ( "э", "je" ),
+    ( "ю", "ju" ),
+    ( "я", "ja" )
 };
 
 // === Transliteration ===
@@ -46,10 +46,10 @@ Transliteration(text)
 {
    var output := new TextBuilder();
     
-   text.forEach:(ch)
+   text.forEach::(ch)
    {
-      var rule := rusLatRules.seekEach:
-         (x => x.from == ch.toPrintable() );
+      var rule := rusLatRules.seekEach::
+         (x => x.Item1 == ch.toPrintable() );
                 
       if (nil == rule)
       { 
@@ -57,7 +57,7 @@ Transliteration(text)
       }
       else
       { 
-         output.write(rule.to)
+         output.write(rule.Item2)
       }
    };
     

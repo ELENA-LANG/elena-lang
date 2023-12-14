@@ -9557,13 +9557,15 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
 
             CheckMethodResult dummy = {};
             if (_logic->resolveCallType(*scope.moduleScope, classSymbol.typeInfo.typeRef, scope.moduleScope->buildins.constructor_message, dummy) 
-               && dummy.visibility == Visibility::Public) 
+               && (dummy.visibility == Visibility::Public || (dummy.visibility == Visibility::Protected && isSelfCall(classSymbol))))
             {
                return compileNewOp(*context.writer, *context.scope, context.node,
                   classSymbol, 0, arguments);
             }
             else {
                // BAD LUCK : Default property should be returned
+               arguments.add(classSymbol);
+
                return compileWeakOperation(writer, scope, node, nullptr, 0, classSymbol,
                   arguments, scope.moduleScope->buildins.default_message, targetRef, nullptr);
 
