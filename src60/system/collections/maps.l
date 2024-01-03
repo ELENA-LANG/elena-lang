@@ -37,7 +37,7 @@ namespace collections
          };
             
          int len := backet[0];
-         for (int i := 1, i < len, i += 1)
+         for (int i := 1; i < len; i += 1)
          {
             int j := backet[i];
                 
@@ -148,7 +148,7 @@ namespace collections
          };
             
          int len := backet[0];
-         for (int i := 1, i < len, i += 1)
+         for (int i := 1; i < len; i += 1)
          {
             int j := backet[i];
                 

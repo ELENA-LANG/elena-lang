@@ -130,7 +130,7 @@ singleton combinationNext : BaseStrategy
         
       indexers[i - 1].appendIndex(1);
         
-      for (int j := i,j <= k - 1, j += 1) {
+      for (int j := i; j <= k - 1; j += 1) {
          indexers[j].Index := indexers[j - 1].Index + 1
       };
             
@@ -148,7 +148,7 @@ singleton combinationStart : BaseStrategy
    {
       int len := indexers.Length;
          
-      for (int i := 0, i < len, i+=1) {
+      for (int i := 0; i < len; i+=1) {
          indexers[i].Index := i
       };
         
@@ -186,7 +186,7 @@ public class SequentialEnumerator : BaseRowEnumerator
       _length := arguments.Length;
       _indexers := new Indexer[](_length);
         
-      for (int i := 0, i < _length, i += 1)
+      for (int i := 0; i < _length; i += 1)
       {
          _indexers[i] := arguments[i].indexer()
       };
@@ -212,7 +212,7 @@ public class ParallelEnumerator : BaseRowEnumerator
       _length := arguments.Length;
       _indexers := new Indexer[](_length);
         
-      for (int i := 0, i < _length, i += 1)
+      for (int i := 0; i < _length; i += 1)
       {
          Indexer it := arguments[i].indexer();
             
@@ -243,7 +243,7 @@ public class Combinator : BaseRowEnumerator
         
       _indexers := new Indexer[](_length);
         
-      for (int i := 0, i < _length, i += 1)
+      for (int i := 0; i < _length; i += 1)
       {
          Indexer it := arguments[i].indexer();
             

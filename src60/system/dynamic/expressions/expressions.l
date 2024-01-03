@@ -248,7 +248,7 @@ namespace expressions
             tempVariables!.push(Expression.VariableByIndex(tempVar));                
          };
 
-         for (int i := 0, i < len, i += 1) {
+         for (int i := 0; i < len; i += 1) {
             if (arguments[i].IsOperation) {
                int tempVar := scope.allocTempVariable() + scope.ScopeLevel;
 
@@ -265,7 +265,7 @@ namespace expressions
             firstArg := tempVariables.pop() 
          };
 
-         for (int i := 0, i < len, i += 1) {
+         for (int i := 0; i < len; i += 1) {
             if (arguments[i].IsOperation) {
                tempVariables.pop().saveTo(list, scope, i + 1) 
             }
@@ -286,7 +286,7 @@ namespace expressions
          Queue<Expression> tempVariables := nil;
 
          // first pass - preallocating sub expr 
-         for (int i := 0, i < len, i += 1) {
+         for (int i := 0; i < len; i += 1) {
             if (arguments[i].IsOperation) {
                int tempVar := scope.allocTempVariable() + scope.ScopeLevel;
 
@@ -298,7 +298,7 @@ namespace expressions
          };
             
          // second pass - the operation
-         for (int i := len - 1, i >= 0, i -= 1) {
+         for (int i := len - 1; i >= 0; i -= 1) {
             if (arguments[i].IsOperation) {
                tempVariables.pop().saveTo(list, scope, i) 
             }
@@ -475,7 +475,7 @@ namespace expressions
       {
          _target.declare(scope);
          int len := _arguments.Length;
-         for(int i := 0, i < len, i+=1) {
+         for(int i := 0; i < len; i+=1) {
             _arguments[i].declare(scope);
          };
 
@@ -638,7 +638,7 @@ namespace expressions
       {
          _target.declare(scope);
          int len := _arguments.Length;
-         for(int i := 0, i < len, i+=1) {
+         for(int i := 0; i < len; i+=1) {
             _arguments[i].declare(scope);
          };
 
@@ -729,7 +729,7 @@ namespace expressions
       {
          _target.declare(scope);
          int len := _arguments.Length;
-         for(int i := 0, i < len, i+=1) {
+         for(int i := 0; i < len; i+=1) {
             _arguments[i].declare(scope);
          };
 
@@ -882,7 +882,7 @@ namespace expressions
          parameters[0] := ScopeIdentifier.Variable("$tape");
          parameters[1] := ScopeIdentifier.Variable("self");
 
-         for (int i := 0, i < len, i += 1)
+         for (int i := 0; i < len; i += 1)
          {
             parameters[i + 2] := ScopeIdentifier.Variable(variables[i])
          };
@@ -917,7 +917,7 @@ namespace expressions
          parameters[0] := new ScopeIdentifier("$tape", 0);
          parameters[1] := ScopeIdentifier.Variable("self");
 
-         for (int i := 0, i < len, i += 1)
+         for (int i := 0; i < len; i += 1)
          {
             parameters[i + 2] := params[i]
          };
@@ -990,7 +990,7 @@ namespace expressions
             TapeFunction resolve(ScopeIdentifier variable, bool assignMode)
             {
                int len := parameters.Length;
-               for(int i := 0, i < len, i+=1) {
+               for(int i := 0; i < len; i+=1) {
                   if (variable == parameters[i])
                   {
                      int index := i + 1;
@@ -1253,7 +1253,7 @@ namespace expressions
             TapeFunction resolve(ScopeIdentifier variable, bool assignMode)
             {
                int len := variables.Length;
-               for(int i := 0, i < len, i+=1) {
+               for(int i := 0; i < len; i+=1) {
                   if (variable == variables[i].Item1)
                   {
                      int index := variables[i].Item2;
@@ -1298,11 +1298,11 @@ namespace expressions
          };
 
          int len := statements.Length;
-         for(int i := 0, i < len, i+=1) {
+         for(int i := 0; i < len; i+=1) {
             statements[i].declare(scope);
          };
 
-         for(int i := 0, i < len, i+=1) {
+         for(int i := 0; i < len; i+=1) {
             reserved.Value := 0;
 
             statements[i].saveTo(list, scope, 0);
@@ -1724,7 +1724,7 @@ namespace expressions
       {
          auto list := new List<Tuple<Message,DynamicTape>>();
          int len := methods.Length;
-         for (int i := 0, i < len, i += 1) {
+         for (int i := 0; i < len; i += 1) {
             Message message := methods[i].Key;
             auto tape := methods[i].compile(scope);
 
@@ -1881,7 +1881,7 @@ namespace expressions
                // look for external references
                if(imports != nil) {
                   int len := imports.Length;
-                  for(int i := 0, i < len, i++) {
+                  for(int i := 0; i < len; i++) {
                      Symbol symbol := Symbol.tryLoad(imports[i], refName);
                      if (symbol != Symbol.Default)
                      {
@@ -1906,7 +1906,7 @@ namespace expressions
       compile(set, ExpressionScope scope)
       {
          int len := symbols.Length;
-         for (int i := 0, i < len, i+=1) {
+         for (int i := 0; i < len; i+=1) {
             auto info := symbols[i];
                 
             var symbolName := info.Name;

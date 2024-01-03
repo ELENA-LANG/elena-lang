@@ -18,9 +18,9 @@ public program()
    var realCounts := new int[](distGroupCount);
 
    console.printLine("Random reals:");
-   for(int i := 0, i < rows, i += 1)
+   for(int i := 0; i < rows; i += 1)
    {
-      for(int j := 0, j <= cols, j += 1)
+      for(int j := 0; j <= cols; j += 1)
       {
          console.printPaddingRight(12, randomGenerator.nextReal());
       };
@@ -30,9 +30,9 @@ public program()
 
    console.writeLine();
    console.writeLine("Random integers:");
-   for(int i := 0, i < rows, i += 1)
+   for(int i := 0; i < rows; i += 1)
    {
-      for(int j := 0, j <= cols, j += 1)
+      for(int j := 0; j <= cols; j += 1)
       {
          console.printPaddingRight(12, randomGenerator.nextInt());
       };
@@ -43,7 +43,7 @@ public program()
    console.writeLine();
    console.writeLine("Distribution");
 
-   for(int i := 0, i < runCount, i += 1)
+   for(int i := 0; i < runCount; i += 1)
    {
       int index := (randomGenerator.nextInt(0, IntNumber.MaxValue) / intGroupSize).toInt();
       if(index < distGroupCount)
@@ -54,7 +54,7 @@ public program()
          { realCounts[index] := realCounts[index] + 1 }
    };    
 
-   for(int i := 0, i < distGroupCount, i += 1)
+   for(int i := 0; i < distGroupCount; i += 1)
    {
       console.printPaddingLeft(12, (i * intGroupSize).toInt(),"-");
       console.printPaddingLeft(12, ((i + 1) * intGroupSize - 1).toInt());

@@ -198,7 +198,7 @@ public abstract class BaseWinContainer : BaseWinControl
 
       int len := _controls.Length;
       IControl current;
-      for (int i := 0, i < len, i += 1) {
+      for (int i := 0; i < len; i += 1) {
          current := _controls[i].retrieve(handle);
          if (current != nil) {
             ^ current;
@@ -213,7 +213,7 @@ public abstract class BaseWinContainer : BaseWinControl
       super.open();
         
       int len := _controls.Length;
-      for (int i := 0, i < len, i += 1) {
+      for (int i := 0; i < len; i += 1) {
          _controls[i].open()
       }
    }
@@ -892,7 +892,7 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
    {
       int len := _controls.Length;
       IControl current;
-      for (int i := 1, i < len, i += 1) {
+      for (int i := 1; i < len; i += 1) {
          current := _controls[i];
          int index := i - 1;
          if (index == _selected)
@@ -931,7 +931,7 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
    {
       int len := _controls.Length;
       IControl current;
-      for (int i := 1, i < len, i += 1) {
+      for (int i := 1; i < len; i += 1) {
          current := _controls[i];
          int index := i - 1;
             
@@ -946,7 +946,7 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
       var retVal := nil;
       int len := _controls.Length;
       IControl current;
-      for (int i := 1, i < len, i += 1) {
+      for (int i := 1; i < len; i += 1) {
          current := _controls[i];            
             
          retVal := current.retrieve(handle);
@@ -1021,7 +1021,7 @@ public sealed class ImageList : Object, interface<IControl>
       HDC parentDC := parent.HDC;        
 
       int len := _images.Length;
-      for (int i := 0, i < len, i += 1) {
+      for (int i := 0; i < len; i += 1) {
          _images[i].open(parentDC)
       }
    }

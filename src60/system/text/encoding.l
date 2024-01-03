@@ -25,7 +25,7 @@
       convertTo(char[] chars, int index, ref int len, byte[] output, int outputIndex, ref int outputLen)
       {
          int j := outputIndex;
-         for (int i := 0, i < len, i += 1) {
+         for (int i := 0; i < len; i += 1) {
             char ch := chars[i + index];
 
             self.convertChar(ch, output, j, ref int chLen);

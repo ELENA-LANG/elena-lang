@@ -177,7 +177,7 @@ namespace text
          _value := emptyString;
          _newLine := newLineConstant;
             
-         for (int i := 0, i < count, i += 1)
+         for (int i := 0; i < count; i += 1)
          {
             self.append(s);
          }

@@ -130,6 +130,7 @@ void SyntaxTreeBuilder :: flush(SyntaxTreeWriter& writer, SyntaxNode node)
 void SyntaxTreeBuilder :: parseStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current, 
    List<SyntaxNode>& arguments, List<SyntaxNode>& parameters, IdentifierString& postfix)
 {
+   bool firstExpr = true;
    scope.nestedLevel += 0x100;
    while (current != SyntaxKey::None) {
       switch (current.key) {
@@ -137,11 +138,28 @@ void SyntaxTreeBuilder :: parseStatement(SyntaxTreeWriter& writer, Scope& scope,
             postfix.append(':');
             postfix.append(current.identifier());
             break;
-         case SyntaxKey::ComplexName:
-            postfix.append(':');
-            postfix.append(current.firstChild().identifier());
-            break;
+         //case SyntaxKey::ComplexName:
+         //   postfix.append(':');
+         //   postfix.append(current.firstChild().identifier());
+         //   break;
          case SyntaxKey::Expression:
+            if (!firstExpr) {
+               // if it is a templare with a complex name
+               SyntaxNode objNode = current.firstChild();
+               if (objNode != SyntaxKey::Object)
+                  objNode = objNode.firstChild();
+
+               if (objNode == SyntaxKey::Object && objNode.firstChild() == SyntaxKey::identifier) {
+                  SyntaxNode attrNode = objNode.firstChild();
+                  if (attrNode.nextNode() != SyntaxKey::None) {
+                     postfix.append(':');
+                     postfix.append(attrNode.identifier());
+                     attrNode.setKey(SyntaxKey::Idle);
+                  }
+               }
+            }
+            else firstExpr = false;
+
             writer.newNode(SyntaxKey::Idle);
             flushExpression(writer, scope, current);
             arguments.add(writer.CurrentNode().firstChild());
@@ -356,6 +374,9 @@ void SyntaxTreeBuilder :: flushObject(SyntaxTreeWriter& writer, Scope& scope, Sy
    writer.newNode(node.key);
 
    SyntaxNode current = node.firstChild();
+   if (current == SyntaxKey::Idle)
+      current = current.nextNode();
+
    if (current == SyntaxKey::TemplateType) {
       writer.newNode(SyntaxKey::TemplateType);
       if (current.nextNode() == SyntaxKey::identifier) {
@@ -501,6 +522,14 @@ void SyntaxTreeBuilder :: generateTemplateOperation(SyntaxTreeWriter& writer, Sc
    }
 }
 
+void SyntaxTreeBuilder :: flushNullable(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+{
+   SyntaxNode objNode = node.firstChild();
+   SyntaxNode current = objNode.nextNode();   
+
+   flushExpression(writer, scope, node);
+}
+
 void SyntaxTreeBuilder :: flushExpressionMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current)
 {
    switch (current.key) {
@@ -529,6 +558,11 @@ void SyntaxTreeBuilder :: flushExpressionMember(SyntaxTreeWriter& writer, Scope&
          break;
       case SyntaxKey::TupleBlock:
          flushExpression(writer, scope, current);
+         break;
+      case SyntaxKey::NullableType:
+         flushNullable(writer, scope, current);
+         break;
+      case SyntaxKey::Idle:
          break;
       default:
          if (SyntaxTree::testSuperKey(current.key, SyntaxKey::Expression)) {

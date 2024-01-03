@@ -372,7 +372,7 @@ public const struct ByteNumber : IntBaseNumber,
 
    bool equal(o)
    {
-      if (o :is byte b)
+      if (o; is byte b)
       {  
          ^ _value == b
       };
@@ -643,7 +643,7 @@ public const struct SByteNumber : IntBaseNumber,
 
    bool equal(o)
    {
-      if (o :is sbyte n)
+      if (o; is sbyte n)
       {
          ^ _value == n;
       };
@@ -921,7 +921,7 @@ public const struct ShortNumber : IntBaseNumber,
 
    bool equal(o)
    {
-      if (o :is short n)
+      if (o; is short n)
       {
          ^ _value == n
       };
@@ -1209,7 +1209,7 @@ public const struct UShortNumber : IntBaseNumber,
 
    bool equal(o)
    {
-      if (o :is ushort n)
+      if (o; is ushort n)
       {
          ^ _value == n
       };
@@ -1407,7 +1407,7 @@ public const struct IntNumber : IntBaseNumber,
 
    bool equal(o)
    {
-      if (o :is int n)
+      if (o; is int n)
       {
          ^ _value == n
       };
@@ -1782,7 +1782,7 @@ public sealed const struct UIntNumber : IntBaseNumber,
 
    bool equal(o)
    {
-      if (o :is uint n)
+      if (o; is uint n)
       {
          ^ _value == n
       };
@@ -2102,7 +2102,7 @@ public sealed const struct LongNumber : IntBaseNumber,
 
    bool equal(o)
    {
-      if (o :is long n)
+      if (o; is long n)
       {
          ^ _value == n
       };
@@ -2363,7 +2363,7 @@ public sealed const struct RealNumber : BaseNumber,
 
    bool equal(o)
    {
-      if (o :is real r)
+      if (o; is real r)
       {
          ^ _value == r
       };

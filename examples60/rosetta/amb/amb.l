@@ -37,7 +37,7 @@ class AmbValueCollection
     
     constructor new(params object[] args)
     {
-        _combinator := SequentialEnumerator.new(params args)
+        _combinator := SequentialEnumerator.load(params args)
     }
 
     seek(cond)
@@ -71,23 +71,22 @@ singleton ambOperator
 
 // --- Program ---
 
-public program()
+public program2()
 {
-//    try
-//    {
+    try
+    {
         ambOperator.for(new object[]{1,2,4}, new object[]{4,5,6}).seek::(a,b => a * b == 8).do::
             (a,b){ console.printLine(a," * ",b," = 8") };
-//    }
-//    catch(Exception e)
-//    {
-//        console.printLine("AMB is angry")
-//    };
+    }
+    catch(Exception e)
+    {
+        console.printLine("AMB is angry")
+    };
         
     console.readChar()
 }
 
-//public program()
-public program2()
+public program()
 {
     try
     {

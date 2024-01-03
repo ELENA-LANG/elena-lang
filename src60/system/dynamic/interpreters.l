@@ -13,7 +13,7 @@ public mixin Struct
       <= allocate(list.Length)
    {
       int len := list.Length;
-      for(int i := 0, i < len, i := i + 1)
+      for(int i := 0; i < len; i := i + 1)
       {
          items[i] := list[i]
       }
@@ -23,7 +23,7 @@ public mixin Struct
       <= allocate(list.Length)
    {
       int len := list.Length;
-      for(int i := 0, i < len, i := i + 1)
+      for(int i := 0; i < len; i := i + 1)
       {
          items[i] := list[i]
       }
@@ -46,7 +46,7 @@ public mixin Struct
         
       auto newArr := Struct.allocate(newLength);
         
-      for(int i := 0, i < len, i += 1)
+      for(int i := 0; i < len; i += 1)
       {
          newArr[i] := items[i];
       };

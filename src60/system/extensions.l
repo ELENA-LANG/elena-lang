@@ -63,7 +63,7 @@ public extension byteOp : ByteNumber
       byte x := self;
       byte r := 1;
         
-      for (int i := 0, i < y, i += 1)
+      for (int i := 0; i < y; i += 1)
       {
          r := r * x
       };
@@ -149,7 +149,7 @@ public extension shortOp : ShortNumber
       short x := self;
       short r := 1;
         
-      for (int i := 0, i < y, i += 1)
+      for (int i := 0; i < y; i += 1)
       {
          r := r * x
       };
@@ -253,7 +253,7 @@ public extension intOp : IntNumber
       if (x == 0)
          { r := 0 };
         
-      for(int i := 0, i < y, i += 1)
+      for(int i := 0; i < y; i += 1)
       {
          r := r * x
       };
@@ -398,7 +398,7 @@ public extension longOp : LongNumber
       long x := self;
       long r := 1;
         
-      for(long i := 0l, i < y, i += 1l)
+      for(long i := 0l; i < y; i += 1l)
       {
          r := r * x;
       };
@@ -1053,7 +1053,7 @@ public extension weakArrayOp
         it.Index := index;
         
         auto a := Array.allocate(length);
-        for (int i := 0, i < length, i += 1)
+        for (int i := 0; i < length; i += 1)
         {
             a[i] := *it;
             
@@ -1077,7 +1077,7 @@ public extension stringWeakOp
 {
    fillString(s, int counter)
    {
-      for (int i := 0, i < counter, i += 1)
+      for (int i := 0; i < counter; i += 1)
       {
             self.write(s)
       };

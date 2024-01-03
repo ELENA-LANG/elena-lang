@@ -213,7 +213,7 @@ namespace text
     
       fill(string s, int counter)
       {
-         for (int i := 0, i < counter, i += 1)
+         for (int i := 0; i < counter; i += 1)
          {
             self.write(s)
          }
@@ -221,7 +221,7 @@ namespace text
     
       fill(wide s, int counter)
       {
-         for (int i := 0, i < counter, i += 1)
+         for (int i := 0; i < counter; i += 1)
          {
             self.write(s)
          }

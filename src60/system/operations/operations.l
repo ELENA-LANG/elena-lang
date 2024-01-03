@@ -52,7 +52,7 @@ public template until<expr>(loopBody) : __included(statementTemplates)
      ! { loopBody }
 }
 
-public template until<step_expr, cond_expr>(loop_body) : __included(statementTemplates)
+public template for::until<step_expr, cond_expr>(loop_body) : __included(statementTemplates)
 {
     step_expr;
     
@@ -104,27 +104,13 @@ public template for<init_expr,condExpr,step_expr1, step_expr2>(loopBody) : __inc
    $rep cast bool(condExpr) ? { loopBody; step_expr1; step_expr2; }
 }
 
-public template for<init_expr1, init_expr2,condExpr,step_expr1, step_expr2>(loopBody) : __included(statementTemplates)
+public template for::and<init_expr1, init_expr2,condExpr,step_expr1, step_expr2>(loopBody) : __included(statementTemplates)
 {
    init_expr1;
    init_expr2;
 
    $rep cast bool(condExpr) ? { loopBody; step_expr1; step_expr2; }
 }
-
-//// --- foreach ---
-//
-//public template foreach::in<item, collection>(loopBody) : __included(statementTemplates)
-//{
-//   auto en := collection.enumerator();
-//
-//   while (en.next())
-//   {
-//      item := *en;
-//
-//      loopBody;
-//   }
-//}
 
 // --- try ---
 

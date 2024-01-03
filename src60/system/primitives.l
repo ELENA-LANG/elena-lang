@@ -4,21 +4,21 @@ internal singleton PrimitiveArrayOperations
 {
    copy(byte[] sour, int index, int size, byte[] dest)
    {
-      for (int i := 0, i < size, i := i + 1) {
+      for (int i := 0; i < size; i := i + 1) {
          dest[i] := sour[index + i];
       }
    }
 
    copyTo(byte[] sour, int size, byte[] dest, int destIndex)
    {
-      for (int i := 0, i < size, i := i + 1) {
+      for (int i := 0; i < size; i := i + 1) {
          dest[destIndex + i] := sour[i];
       }
    }
 
    copy(short[] sour, int index, int size, short[] dest)
    {
-      for (int i := 0, i < size, i := i + 1) {
+      for (int i := 0; i < size; i := i + 1) {
          dest[i] := sour[index + i];
       }
    }
@@ -28,7 +28,7 @@ internal singleton PrimitiveArrayOperations
       int destLen := dest.Length;
 
       int j := 0;
-      for (int i := 0, i < size, i := i + 1) {
+      for (int i := 0; i < size; i := i + 1) {
          char ch := sour[index + i];
          int chVal := ch.Value;
          int chLen := ch.Length;
@@ -46,7 +46,7 @@ internal singleton PrimitiveArrayOperations
       int destLen := dest.Length;
 
       int j := 0;
-      for (int i := 0, i < size, i := i + 1) {
+      for (int i := 0; i < size; i := i + 1) {
          char ch := sour[index + i];
          int chVal := ch.Value;
          int chLen := ch.Length;
@@ -746,7 +746,7 @@ internal singleton UTFOperations
    int calcSubStringLength(int index, int length, char[] array)
    {
       int subStrLength := 0;
-      for(int i := 0, i < length, i += 1)
+      for(int i := 0; i < length; i += 1)
       {
          subStrLength += array[i].Length;
       };
@@ -757,7 +757,7 @@ internal singleton UTFOperations
    int calcSubWideStringLength(int index, int length, char[] array)
    {
       int subStrLength := 0;
-      for(int i := 0, i < length, i += 1)
+      for(int i := 0; i < length; i += 1)
       {
          subStrLength += array[i].WideLength;
       };

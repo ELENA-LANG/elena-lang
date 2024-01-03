@@ -46,12 +46,12 @@ extension bsortOp
      
     bsort()
     {
-        for (int i := self.Length / 2, i >= 0, i -= 1)
+        for (int i := self.Length / 2; i >= 0; i -= 1)
         {
             self.bsortRange(i, self.Length - 1);
         };
         
-        for (int i := self.Length - 1, i >= 0, i -= 1)
+        for (int i := self.Length - 1; i >= 0; i -= 1)
         {
             self.exchange(i, 0);
             

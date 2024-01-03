@@ -18,9 +18,9 @@ public program()
     stackAllocatedArray[2] := 3;            
     
     var dynamicArray := new system'collections'ArrayList();
-    dynamicArray.append:1;
-    dynamicArray.append:2;
-    dynamicArray.append:4;
+    dynamicArray.append(1);
+    dynamicArray.append(2);
+    dynamicArray.append(4);
  
     dynamicArray[2] := 3;    
     

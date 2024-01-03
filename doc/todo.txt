@@ -14,12 +14,21 @@ In development:
   port:elenavm / elt for linux
   --------------------------------------
 
-  * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
+  * nullable variable
+  * nullable method parameter
+  * nullable template argument
+  * nullable closure argument
 
   * Nullable support #562
 
-  * review code base : (rosetta code samples: AMB, tutorials)
+  --------------------------------------
 
+  * raise an error for the code like: f(a;b);
+  * raise an error var "abc";
+  * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
+  * api : extension to read class properties as array member (e.g object["field"])
+  * snake game : text / gui version
+  * review code base : (rosetta code samples: D, tutorials)
   * db samples
 
   === Iteration 20 ===

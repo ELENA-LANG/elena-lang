@@ -106,7 +106,7 @@ public singleton QuickSorting
    {
       a.exchange(pivot, start);
       int i := start + 1;
-      for (int j := i, j <= end, j += 1)
+      for (int j := i; j <= end; j += 1)
       {
          if (compf(a[j], a[start]))
          {

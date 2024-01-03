@@ -36,14 +36,14 @@ namespace math
          int  max_col := 0;
          real max := 0.0r;
             
-         for (int j := 0, j < n, j += 1)
+         for (int j := 0; j < n; j += 1)
          {
             // find largest value in col j
             a.read(j, j, ref max);
             max := abs(max);
                 
             max_col := j;
-            for (int i := j + 1, i < n, i += 1)
+            for (int i := j + 1; i < n; i += 1)
             {
                a.read(i, j, ref v);
                v := abs(v);
@@ -57,7 +57,7 @@ namespace math
             // if largest value not on pivot, swap rows
             if(max_col != j)
             {
-               for(int k := 0, k < n, k += 1)
+               for(int k := 0; k < n; k += 1)
                {
                   a.read(j, k, ref t);
                   a.read(max_col, k, ref v);
@@ -77,14 +77,14 @@ namespace math
     
             a.read(j, j, ref t);
                 
-            for (int i := j + 1, i < n, i += 1)
+            for (int i := j + 1; i < n; i += 1)
             {
                a.read(i, j, ref v);
                v := v / t;
                     
                a.setAt(i, j, v);
     
-               for (int k := j + 1, k < n, k += 1)
+               for (int k := j + 1; k < n; k += 1)
                {
                   a.read(i, j, ref v);
                   a.read(j, k, ref real c);
@@ -109,9 +109,9 @@ namespace math
          self.readLengthsTo(ref int n, ref int m);
             
          auto r := RealMatrix.allocate(n, m);
-         for(int i := 0, i < n, i += 1)
+         for(int i := 0; i < n; i += 1)
          {
-            for(int j := 0, j < m, j += 1)
+            for(int j := 0; j < m; j += 1)
             {
                self.read(i, j, ref real v);
                     
@@ -126,9 +126,9 @@ namespace math
       {
          self.readLengthsTo(ref int n, ref int m);
             
-         for(int i := 0, i < n, i += 1)
+         for(int i := 0; i < n; i += 1)
          {
-            for(int j := 0, j < m, j += 1)
+            for(int j := 0; j < m; j += 1)
             {
                self.setAt(i, j, f(i,j))
             }
@@ -147,9 +147,9 @@ namespace math
             { MatrixException.new("Two matrices must have an equal number of rows and columns to be added").raise() };
                 
          auto r := RealMatrix.allocate(n, m);
-         for(int i := 0, i < n, i += 1)
+         for(int i := 0; i < n; i += 1)
          {
-            for(int j := 0, j < m, j += 1)
+            for(int j := 0; j < m; j += 1)
             {
                self.read(i, j, ref real r1);
                b.read(i, j, ref real r2);
@@ -173,9 +173,9 @@ namespace math
             { MatrixException.new("Two matrices must have an equal number of rows and columns to be added").raise() };
                 
          auto r := RealMatrix.allocate(n, m);
-         for(int i := 0, i < n, i += 1)
+         for(int i := 0; i < n; i += 1)
          {
-            for(int j := 0, j < m, j += 1)
+            for(int j := 0; j < m; j += 1)
             {
                self.read(i, j, ref real r1);
                b.read(i, j, ref real r2);
@@ -196,12 +196,12 @@ namespace math
             { MatrixException.new("Invalid argument").raise() };
     
          auto r := RealMatrix.allocate(n, p);
-         for(int i := 0, i < n, i += 1)
+         for(int i := 0; i < n; i += 1)
          {
-            for(int j := 0, j < p, j += 1)
+            for(int j := 0; j < p; j += 1)
             {
                real v := 0.0r;
-               for(int k := 0, k < m, k += 1)
+               for(int k := 0; k < m; k += 1)
                {
                   self.read(i, k, ref real r1);
                   b.read(k, j, ref real r2);
@@ -228,7 +228,7 @@ namespace math
             
          a.readLengthsTo(ref int n, ref int m);
             
-         for (int i := 0, i < n, i += 1)
+         for (int i := 0; i < n; i += 1)
          {
             a.read(i, i, ref v);
                 
@@ -244,9 +244,9 @@ namespace math
             
          self.readLengthsTo(ref int n, ref int m);
             
-         for(int i := 0, i < n, i += 1)
+         for(int i := 0; i < n; i += 1)
          {
-            for(int j := 0, j < m, j += 1)
+            for(int j := 0; j < m; j += 1)
             {
                self.read(i, j, ref real r);
                     

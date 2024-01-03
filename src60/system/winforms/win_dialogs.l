@@ -76,7 +76,7 @@ class BaseFileDialog
         
       // calculate the filter buffer size
       int length := filters.Length;
-      for (int i := 0, i < length, i += 1)
+      for (int i := 0; i < length; i += 1)
       {
          wide filter := filters[i];
          s_length := filter.Length;
@@ -88,7 +88,7 @@ class BaseFileDialog
       // fill the filter buffer        
       _filters := new short[](buf_size);
       buf_size := 0;
-      for (int i := 0, i < length, i += 1)
+      for (int i := 0; i < length; i += 1)
       {
          wide filter := filters[i];
          s_length := filter.Length;

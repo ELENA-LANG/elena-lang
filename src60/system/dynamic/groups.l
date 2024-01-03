@@ -11,7 +11,7 @@ public const struct ExtensionDispatcher
    internal constructor copy(pointer[] array, int length)
       <= allocate(length)
    {
-      for(int i := 0 , i < length, i += 1)
+      for(int i := 0; i < length; i += 1)
       {
          _array[i] := array[i]
       }
@@ -24,7 +24,7 @@ public const struct ExtensionDispatcher
       byte tmp[1024];
       int nsLen := namespaces.Length;
       int tmpIndex := 0;
-      for(int i := 0, i < nsLen, i+=1) {
+      for(int i := 0; i < nsLen; i+=1) {
          auto s := namespaces[i];
          int sLen := s.Length;
 
@@ -64,7 +64,7 @@ public const struct VariadicExtensionDispatcher
    internal constructor copy(pointer[] array, int length)
       <= allocate(length)
    {
-      for(int i := 0 , i < length, i += 1)
+      for(int i := 0; i < length; i += 1)
       {
          _array[i] := array[i]
       }
@@ -77,7 +77,7 @@ public const struct VariadicExtensionDispatcher
       byte tmp[1024];
       int nsLen := namespaces.Length;
       int tmpIndex := 0;
-      for(int i := 0, i < nsLen, i+=1) {
+      for(int i := 0; i < nsLen; i+=1) {
          auto s := namespaces[i];
          int sLen := s.Length;
             

@@ -74,6 +74,7 @@ namespace elena_lang
       InitExpression          = 0x001C37,
       ExtensionTemplate       = 0x001038,
       AccumExpression         = 0x001C39,
+      NullableType            = 0x00103A,
       IndexerOperation        = 0x001841,
       AssignOperation         = 0x001842,
       AddAssignOperation      = 0x001843,

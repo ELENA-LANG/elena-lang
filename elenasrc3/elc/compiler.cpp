@@ -10080,6 +10080,13 @@ ObjectInfo Compiler :: compileCollection(BuildTreeWriter& writer, ExprScope& sco
       writer.newNode(BuildKey::CreatingStruct, arguments.count_pos() * -sizeInfo.size);
    }
    else if (sizeInfo.size == 0) {
+      WriterContext context = { &writer, &scope, {} };
+
+      // box the collection items
+      for (size_t i = 0; i < arguments.count(); i++) {
+         arguments[i] = boxArgument(context, arguments[i], false, true, false);
+      }
+
       writer.newNode(BuildKey::CreatingClass, arguments.count_pos());
    }
    else scope.raiseError(errInvalidOperation, node);

@@ -71,7 +71,7 @@ public singleton arrayConvertorEx
          var it := o.indexer();
          int len := it.Length;
          arr := Array.allocate(len);
-         for (int i := 0, i < len, i += 1)
+         for (int i := 0; i < len; i += 1)
          {
             arr[i] := *it;
             it.appendIndex(1)
@@ -113,9 +113,9 @@ public singleton intmatrixExConvertor
       int l := 0;
       matrix.readLengthsTo(ref int n, ref int m);
         
-      for (int i := 0, i < n, i += 1)
+      for (int i := 0; i < n; i += 1)
       {
-         for (int j := 0, j < m, j += 1)
+         for (int j := 0; j < m; j += 1)
          {
             int r := matrix.at(i, j);
                 
@@ -138,9 +138,9 @@ public singleton intmatrixExConvertor
       int l := 0;
       matrix.readLengthsTo(ref int n, ref int m);
         
-      for (int i := 0, i < n, i += 1)
+      for (int i := 0; i < n; i += 1)
       {
-         for (int j := 0, j < m, j += 1)
+         for (int j := 0; j < m; j += 1)
          {
             int r := matrix.at(i, j);
                 

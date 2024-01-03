@@ -263,7 +263,7 @@ realTests()
 gcTests()
 {
    console.write("gcTests:");
-   for (int i := 0, i < 100000, i := i + 1)
+   for (int i := 0; i < 100000; i := i + 1)
    {
       new IntNumber();
    };
@@ -359,6 +359,14 @@ shortTests()
     console.write("shortTests:");
     short w := 1234;
     Assert.ifTrue(w == 1234);
+    console.write(".");
+
+    short n := 2;
+    short m := 3;
+    short k := 4;
+    short l := 3;
+                    
+    Assert.ifTrue(n + m * k == 14);
     console.writeLine(".");
 }
 
@@ -743,7 +751,7 @@ sealed class VariadicTester
    int sum(params int[] numbers)
    {
       int sum := 0;
-      for (int i := 0, i < numbers.Length, i += 1) {
+      for (int i := 0; i < numbers.Length; i += 1) {
          sum += numbers[i];
       };
 
@@ -854,7 +862,7 @@ singleton VariadicFunctionDispatchTester
    {
       int l := args.Length;
       int sum := 0;
-      for (int i := 0, i < l, i += 1) {
+      for (int i := 0; i < l; i += 1) {
          sum := sum + args[i]
       };
 
@@ -868,7 +876,7 @@ singleton VariadicDispatchTester
    {
       int l := args.Length;
       int prod := 1;
-      for (int i := 0, i < l, i += 1) {
+      for (int i := 0; i < l; i += 1) {
          prod := prod * args[i]
       };
 
@@ -992,7 +1000,7 @@ loopTest()
     console.write("loopTest:");
     
     int sum := 0;
-    for(int i := 0, i < 5, i += 1)
+    for(int i := 0; i < 5; i += 1)
     {
         sum += i;
     };

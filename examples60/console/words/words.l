@@ -21,8 +21,8 @@ class WordList
    {
       _total := _total + 1;
 
-         ifnot(_list.ifExists(word))
-            { _list.append(word) }
+      ifnot(_list.ifExists(word))
+         { _list.append(word) }
    }
 
    total_words = _total;
@@ -40,7 +40,7 @@ public program()
 
    // read until the empty string is not entered
    var text := new StringWriter();
-   until(string line := console.readLine(), line.isEmpty())
+   for(string line := console.readLine(); until line.isEmpty())
    {
       text.writeLine(line)
    };

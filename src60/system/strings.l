@@ -16,7 +16,7 @@ public sealed Array<T> : Indexable<T>
    constructor copy(T[] array, int index, int length)
       <= allocate(length)
    {
-      for(int i := 0 , i < length, i += 1)
+      for(int i := 0; i < length; i += 1)
       {
          this array[i] := array[i + index]
       }
@@ -24,7 +24,7 @@ public sealed Array<T> : Indexable<T>
 
    static copy(Array<T> target, Array<T> source, int index, int length)
    {      
-      for(int i := 0 , i < length, i += 1)
+      for(int i := 0; i < length; i += 1)
       {
          target[i] := source[i + index]
       }
@@ -32,7 +32,7 @@ public sealed Array<T> : Indexable<T>
 
    static copyTo(Array<T> target, Array<T> source, int index, int length)
    {      
-      for(int i := 0 , i < length, i += 1)
+      for(int i := 0; i < length; i += 1)
       {
          target[i + index] := source[i]
       }
@@ -41,7 +41,7 @@ public sealed Array<T> : Indexable<T>
    static move(Array<T> target, int index, int length, int offset)
    {
       if (offset > 0) {
-         for (int i := 0, i < length, i += 1)
+         for (int i := 0; i < length; i += 1)
          {
             target[i] := target[i + offset]
          }
@@ -151,11 +151,11 @@ public sealed Array<T> : Indexable<T>
         
       auto retVal := new T[](length1 + length2);
 
-      for (int i:=0, i < length1, i += 1) {
+      for (int i:=0; i < length1; i += 1) {
          retVal[i] := array[i]
       };
 
-      for (int i:=0, i < length2, i += 1) {
+      for (int i:=0; i < length2; i += 1) {
          retVal[length1 + i] := a[i]
       };
             
@@ -166,7 +166,7 @@ public sealed Array<T> : Indexable<T>
    {
       int len := self.Length;
       T[] copy := new T[](len);
-      for(int i := 0, i < len, i+=1) {
+      for(int i := 0; i < len; i+=1) {
          copy[i] := array[i]
       };
         
@@ -236,7 +236,7 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
       int len := self.Length;
         
       T[] copy := new T[](len);
-      for(int i := 0, i < len, i += 1)
+      for(int i := 0; i < len; i += 1)
       {
          copy[i] := array[i]
       };
@@ -747,9 +747,9 @@ public const struct String : BaseValue,
       length := UTFOperations.convertUTF32_2_8(chVal, buffer, 0, 4);
         
       int offs := 0;
-      for (int i := 0, i < size, i := i + 1)
+      for (int i := 0; i < size; i := i + 1)
       {
-         for (int j := 0, j < length, j := j + 1) {
+         for (int j := 0; j < length; j := j + 1) {
             array[offs] := buffer[j];
             offs := offs + 1;
          }
@@ -845,7 +845,7 @@ public const struct String : BaseValue,
 
    bool equal(o)
    {
-      if (o :is string s)
+      if (o; is string s)
       {
          ^ self.equal(s)
       };
@@ -855,7 +855,7 @@ public const struct String : BaseValue,
 
    bool less(o)
    {
-      if (o :is string s)
+      if (o; is string s)
       {
          ^ self.less(s)
       };
@@ -1136,9 +1136,9 @@ public const struct WideString : BaseValue
       length := UTFOperations.convertUTF32_2_16(chVal, buffer, 0, length);
         
       int offs := 0;
-      for (int i := 0, i < size, i++)
+      for (int i := 0; i < size; i++)
       {
-         for (int j := 0, j < length, j := j + 1) {
+         for (int j := 0; j < length; j := j + 1) {
             array[offs] := buffer[j];
             offs := offs + 1;
          }
@@ -1210,7 +1210,7 @@ public const struct WideString : BaseValue
 
    bool equal(o)
    {
-      if (o :is wide w)
+      if (o; is wide w)
       {
          ^ self.equal(w)
       };
@@ -1220,7 +1220,7 @@ public const struct WideString : BaseValue
 
    bool less(o)
    {
-      if (o :is wide w)
+      if (o; is wide w)
       {
          ^ self.less(w)
       };
@@ -1606,7 +1606,7 @@ public sealed Array : Indexable
    constructor copy(int index, int length, Array array)
       <= allocate(length)
    {
-      for(int i := 0 , i < length, i += 1)
+      for(int i := 0; i < length; i += 1)
       {
          this array[i] := array[i + index]
       }
@@ -1620,11 +1620,11 @@ public sealed Array : Indexable
         
       auto retVal := Array.allocate(length1 + length2);
 
-      for (int i:=0, i < length1, i += 1) {
+      for (int i:=0; i < length1; i += 1) {
          retVal[i] := array[i]
       };
 
-      for (int i:=0, i < length2, i += 1) {
+      for (int i:=0; i < length2; i += 1) {
          retVal[length1 + i] := a[i]
       };
             
