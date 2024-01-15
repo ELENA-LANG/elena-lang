@@ -45,6 +45,43 @@ public sealed Reference<T> : BaseVariable,
    dispatch() => value;
 }
 
+public nonstructural Nullable<T>
+{
+   T _value;
+
+   constructor()
+   {
+      _value := nil;
+   }
+
+   constructor(T value)
+   {
+      _value := value
+   }
+
+   T Value
+      = _value;
+
+   bool hasValue
+      = _value != nil;
+
+   bool equal(Nullable<T> val)
+   {
+      if (self.hasValue)
+      {
+         if (val.hasValue)
+         {
+            ^ _value == val.Value
+         }
+      }
+      else {
+         ^ !val.hasValue;
+      };         
+
+      ^ false
+   }
+}
+
 public class BaseExtender
 {
    object object;

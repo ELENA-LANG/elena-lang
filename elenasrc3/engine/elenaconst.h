@@ -78,6 +78,7 @@ namespace elena_lang
    constexpr auto STARTUP_ENTRY              = "$auto'startUpSymbol";
 
    constexpr auto VM_TAPE                    = "$elena'meta$startUpTape";
+   constexpr auto VOID_FORWARD               = "$elena'void";
 
    constexpr auto PROGRAM_ENTRY              = "$forwards'program";         // used by the linker to define the debug entry
 
@@ -107,6 +108,7 @@ namespace elena_lang
    constexpr auto UINT_FORWARD               = "$uint";           // the uint wrapper
    constexpr auto PTR_FORWARD                = "$ptr";            // the ptr wrapper
    constexpr auto LAZY_FORWARD               = "$lazy";
+   constexpr auto NULLABLE_FORWARD           = "$nullable";
    constexpr auto PRELOADED_FORWARD          = "preloadedSymbols";
    constexpr auto START_FORWARD              = "$symbol_entry";
 

@@ -219,6 +219,7 @@ namespace elena_lang
       void allocateThreadContent(MemoryWriter* tlsWriter) override;
 
       void* getSystemEnv() override;
+      void* getVoid() override;
 
       JITCompiler()
          : _inlines{}, _preloaded(nullptr)

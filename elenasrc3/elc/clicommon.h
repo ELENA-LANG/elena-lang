@@ -180,6 +180,7 @@ struct BuiltinReferences
    ref_t   messageNameReference;
    ref_t   wrapperTemplateReference;
    ref_t   arrayTemplateReference;
+   ref_t   nullableTemplateReference;
    ref_t   argArrayTemplateReference;
    ref_t   closureTemplateReference, tupleTemplateReference;
    ref_t   lazyExpressionReference;
@@ -215,6 +216,7 @@ struct BuiltinReferences
       messageNameReference = 0;
       wrapperTemplateReference = 0;
       arrayTemplateReference = argArrayTemplateReference = 0;
+      nullableTemplateReference = 0;
       closureTemplateReference = lazyExpressionReference = tupleTemplateReference = 0;
       pointerReference = 0;
 
@@ -716,7 +718,8 @@ enum class ConversionResult
    BoxingRequired,
    VariadicBoxingRequired,
    Conversion,
-   NativeConversion
+   NativeConversion,
+   DynamicConversion
 };
 
 // --- ConversionRoutine ---

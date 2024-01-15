@@ -3,7 +3,7 @@
 //
 //		This file contains Syntax Tree Builder class implementation
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -527,7 +527,21 @@ void SyntaxTreeBuilder :: flushNullable(SyntaxTreeWriter& writer, Scope& scope, 
    SyntaxNode objNode = node.firstChild();
    SyntaxNode current = objNode.nextNode();   
 
-   flushExpression(writer, scope, node);
+   writer.newNode(SyntaxKey::Object);
+
+   writer.newNode(node.key);
+   ref_t attributeCategory = V_CATEGORY_MAX;
+   flushTypeAttribute(writer, scope, objNode, attributeCategory, true, true);
+   writer.closeNode();
+
+   SyntaxNode subNode = current.firstChild();
+   SyntaxNode identNode = subNode.firstChild();
+   if (identNode == SyntaxKey::identifier && subNode.nextNode() == SyntaxKey::None) {
+      flushIdentifier(writer, identNode, scope.ignoreTerminalInfo);
+   }
+   else _errorProcessor->raiseTerminalError(errInvalidOperation, retrievePath(node), node);
+
+   writer.closeNode();
 }
 
 void SyntaxTreeBuilder :: flushExpressionMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current)

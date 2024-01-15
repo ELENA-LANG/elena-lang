@@ -595,6 +595,7 @@ namespace elena_lang
          uintptr_t eh_table, uintptr_t th_single_content) = 0;
 
       virtual void* getSystemEnv() = 0;
+      virtual void* getVoid() = 0;
 
       virtual void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) = 0;
       virtual void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) = 0;

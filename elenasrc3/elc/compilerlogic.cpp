@@ -2080,7 +2080,20 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
    return 0;
 }
 
-ref_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, 
+mssg_t CompilerLogic :: retrieveDynamicConvertor(ModuleScopeBase& scope, ref_t targetRef)
+{
+   ref_t classClassRef = getClassClassRef(scope, targetRef);
+   mssg_t messageRef = overwriteArgCount(scope.buildins.constructor_message, 1);
+
+   CheckMethodResult dummy = {};
+   if (checkMethod(scope, classClassRef, messageRef, dummy)) {
+      return messageRef;
+   }
+
+   return 0;
+}
+
+mssg_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, 
    pos_t signLen, int& stackSafeAttrs)
 {
    ref_t classClassRef = getClassClassRef(scope, targetRef);
@@ -2094,6 +2107,7 @@ ref_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t
       return resolvedMessage;
 
    stackSafeAttrs = 0;
+
    return 0;
 }
 
@@ -2157,6 +2171,14 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
       mssg_t messageRef = retrieveImplicitConstructor(scope, targetRef, signRef, 1, stackSafeAttrs);
       if (messageRef)
          return { ConversionResult::Conversion, messageRef, stackSafeAttrs };
+
+      if (!sourceRef || sourceRef == scope.buildins.superReference) {
+         // if it is a weak argument / check dynamic convertor
+         mssg_t messageRef = retrieveDynamicConvertor(scope, targetRef);
+         if (messageRef)
+            return { ConversionResult::DynamicConversion, messageRef, stackSafeAttrs };
+      }
+
    }
 
    return {};

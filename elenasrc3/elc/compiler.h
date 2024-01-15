@@ -1111,6 +1111,7 @@ namespace elena_lang
       ref_t resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef);
       ref_t resolveWrapperTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
       ref_t resolveArrayTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
+      ref_t resolveNullableTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
       ref_t resolveArgArrayTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
       ref_t resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo& items);
 
@@ -1481,7 +1482,7 @@ namespace elena_lang
 
       void injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool interfaceBased);
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
-         ClassInfo& info, mssg_t multiMethod);
+         ref_t targetRef, ClassInfo& info, mssg_t multiMethod);
       void injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
          ref_t targetRef, ClassInfo& info, mssg_t multiMethod, bool abstractOne);
 
@@ -1494,7 +1495,7 @@ namespace elena_lang
          mssg_t message, mssg_t resendMessage, ref_t outputRef, Visibility visibility, bool isExtension);
 
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
-         ClassInfo& classInfo, mssg_t message, bool inherited, ref_t outputRef, Visibility visibility);
+         ref_t targetRef, ClassInfo& classInfo, mssg_t message, bool inherited, ref_t outputRef, Visibility visibility);
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, 
          mssg_t resendMessage, ref_t resendTarget, ref_t outputRef, Visibility visibility, bool isExtension);
 
@@ -1511,7 +1512,7 @@ namespace elena_lang
 
       void injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t outputRef, SyntaxKey key, ustr_t arg);
 
-      void injectInheritedStaticMethod(SyntaxNode node, SyntaxKey methodType, ref_t reference, mssg_t message, ref_t outputRef);
+      void injectStrongRedirectMethod(SyntaxNode node, SyntaxKey methodType, ref_t reference, mssg_t message, mssg_t redirectMessage, ref_t outputRef);
 
       void callInitMethod(BuildTreeWriter& writer, SyntaxNode node, ExprScope& exprScope, ClassInfo& info, ref_t reference);
 

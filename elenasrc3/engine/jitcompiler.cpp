@@ -2864,6 +2864,11 @@ void* JITCompiler :: getSystemEnv()
    return _preloaded.get(SYSTEM_ENV);
 }
 
+void* JITCompiler :: getVoid()
+{
+   return _preloaded.get(VOIDPTR);
+}
+
 CodeGenerator* JITCompiler :: codeGenerators()
 {
    return _codeGenerators;

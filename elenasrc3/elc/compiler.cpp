@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class implementation.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "compiler.h"
@@ -2320,7 +2320,7 @@ void Compiler :: injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool
 }
 
 void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
-   ClassInfo& info, mssg_t multiMethod)
+   ref_t targetRef, ClassInfo& info, mssg_t multiMethod)
 {
    MethodInfo methodInfo = {};
 
@@ -2346,7 +2346,7 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
       if (MethodScope::checkHint(methodInfo, MethodHint::Predefined))
          inherited = false;
 
-      injectVirtualMultimethod(classNode, methodType, scope, info, multiMethod, inherited, methodInfo.outputRef, visibility);
+      injectVirtualMultimethod(classNode, methodType, scope, targetRef, info, multiMethod, inherited, methodInfo.outputRef, visibility);
 
       // COMPILER MAGIC : injecting try-multi-method dispather
       if (_logic->isTryDispatchAllowed(scope, multiMethod)) {
@@ -2366,7 +2366,7 @@ void Compiler :: injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType
       auto methodInfo = *it;
       switch (methodInfo.value2) {
          case VirtualType::Multimethod:
-            injectVirtualMultimethod(classNode, methodType, scope, info, methodInfo.value1);
+            injectVirtualMultimethod(classNode, methodType, scope, targetRef, info, methodInfo.value1);
             break;
          case VirtualType::EmbeddableWrapper:
             injectVirtualEmbeddableWrapper(classNode, methodType, scope, targetRef, info, methodInfo.value1, false);
@@ -3526,7 +3526,7 @@ void Compiler :: inheritStaticMethods(ClassScope& scope, SyntaxNode classNode)
       if (key.value2 == ClassAttribute::SealedStatic) {
          auto methodInfo = scope.info.methods.get(key.value1);
          if (methodInfo.inherited)
-            injectInheritedStaticMethod(classNode, SyntaxKey::StaticMethod, *it, key.value1, methodInfo.outputRef);
+            injectStrongRedirectMethod(classNode, SyntaxKey::StaticMethod, *it, key.value1, key.value1, methodInfo.outputRef);
       }
    }
 
@@ -4777,6 +4777,8 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, 
       case V_INT32ARRAY:
       case V_BINARYARRAY:
          return resolveArrayTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
+      case V_NULLABLE:
+         return resolveNullableTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
       case V_NIL:
          return moduleScope.buildins.superReference;
       case V_ARGARRAY:
@@ -4885,6 +4887,7 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
             typeInfo = resolveTypeAttribute(scope, current, attributes, declarationMode, false);
             break;
          case SyntaxKey::ArrayType:
+         case SyntaxKey::NullableType:
             // if it is a type attribute
             typeInfo = resolveTypeScope(scope, current, attributes, declarationMode, false);
             break;
@@ -5322,6 +5325,7 @@ void Compiler :: declareExpressionAttributes(Scope& scope, SyntaxNode node, Type
          case SyntaxKey::Type:
          case SyntaxKey::TemplateType:
          case SyntaxKey::ArrayType:
+         case SyntaxKey::NullableType:
             if (!EAttrs::test(mode.attrs, EAttr::NoTypeAllowed)) {
                TypeAttributes attributes = {};
                typeInfo = resolveTypeAttribute(scope, current, attributes, false, false);
@@ -5674,6 +5678,11 @@ ref_t Compiler :: resolveArrayTemplate(ModuleScopeBase& moduleScope, ustr_t ns, 
    return resolveTemplate(moduleScope, ns, moduleScope.buildins.arrayTemplateReference, elementRef, declarationMode);
 }
 
+ref_t Compiler :: resolveNullableTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode)
+{
+   return resolveTemplate(moduleScope, ns, moduleScope.buildins.nullableTemplateReference, elementRef, declarationMode);
+}
+
 ref_t Compiler :: resolveArgArrayTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode)
 {
    return resolveTemplate(moduleScope, ns, moduleScope.buildins.argArrayTemplateReference, elementRef, declarationMode);
@@ -5699,6 +5708,7 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribu
             elementRef = resolveTypeIdentifier(scope, current.identifier(), node.key, declarationMode, allowRole);
             break;
          case SyntaxKey::ArrayType:
+         case SyntaxKey::NullableType:
             elementRef = resolvePrimitiveType(scope, resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole), declarationMode);
             break;
          default:
@@ -5714,6 +5724,9 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribu
          return { V_ARGARRAY, elementRef };
       }
       else return { defineArrayType(scope, elementRef, declarationMode), elementRef };
+   }
+   else if (node == SyntaxKey::NullableType) {
+      return { resolvePrimitiveType(scope, { V_NULLABLE, elementRef }, declarationMode) };
    }
    else return {};
 }
@@ -5732,23 +5745,13 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAtt
             return { node.arg.reference };
 
          SyntaxNode current = node.firstChild();
-         if (current == SyntaxKey::Type || current == SyntaxKey::ArrayType) {
+         if (current == SyntaxKey::Type || current == SyntaxKey::ArrayType || current == SyntaxKey::NullableType) {
             // !! should be refactored
             typeInfo = resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole);
          }
          else if (current == SyntaxKey::TemplateType) {
             typeInfo.typeRef = resolveTypeTemplate(scope, current, attributes, declarationMode);
          }
-         //else if (current == SyntaxKey::Object) {
-         //   assert(false);
-
-         //   // NOTE : template type is declared inside object node duee to current syntax grammar
-         //   SyntaxNode objNode = current.firstChild();
-         //   if (objNode == SyntaxKey::TemplateType) {
-         //      typeInfo.typeRef = resolveTypeTemplate(scope, objNode, declarationMode, true);
-         //   }
-         //   else typeInfo = resolveTypeAttribute(scope, current, declarationMode, allowRole);
-         //}
          else if (SyntaxTree::test(current.key, SyntaxKey::TerminalMask)) {
             if (current.nextNode() == SyntaxKey::TemplateArg) {
                // !! should be refactored : TemplateType should be used instead
@@ -5770,6 +5773,9 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAtt
             scope.raiseError(errInvalidOperation, node);
          break;
       }
+      case SyntaxKey::NullableType:
+         typeInfo = resolveTypeScope(scope, node, attributes, declarationMode, allowRole);
+         break;
       default:
          if (SyntaxTree::test(node.key, SyntaxKey::TerminalMask)) {
             typeInfo.typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
@@ -9638,6 +9644,13 @@ ObjectInfo Compiler :: convertObject(BuildTreeWriter& writer, ExprScope& scope, 
                signRef, arguments);
          }
       }
+      else if (conversionRoutine.result == ConversionResult::DynamicConversion) {
+         ArgumentsInfo arguments;
+         arguments.add(source);
+
+         return compileNewOp(writer, scope, node, mapClassSymbol(scope, targetRef),
+            0, arguments);
+      }
       else if (conversionRoutine.result == ConversionResult::NativeConversion) {
          if (source.kind == ObjectKind::IntLiteral && _logic->isNumericType(*scope.moduleScope, targetRef)) {
             // HOTFIX : convert int literal in place
@@ -11065,6 +11078,12 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
          writer.closeNode();
       }
       else if (node.arg.reference) {
+         // if it is a special case of the multimethod - conversion dispatcher
+         // the argument should be typecasted
+         if (getArgCount(message) == 1 && getAction(message) == getAction(scope.moduleScope->buildins.constructor_message)) {
+            writer.appendNode(BuildKey::Argument);
+         }
+
          writer.appendNode(BuildKey::RedirectOp, node.arg.reference);
       }
       else {
@@ -12385,7 +12404,7 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
       classWriter.newNode(SyntaxKey::Class, scope.reference);
 
       SyntaxNode classNode = classWriter.CurrentNode();
-      injectVirtualMultimethod(classNode, SyntaxKey::Method, *scope.moduleScope, scope.info, multiMethod);
+      injectVirtualMultimethod(classNode, SyntaxKey::Method, *scope.moduleScope, scope.reference, scope.info, multiMethod);
 
       classWriter.closeNode();
       classWriter.closeNode();
@@ -12761,6 +12780,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.wrapperTemplateReference = safeMapReference(moduleScope, forwardResolver, WRAPPER_FORWARD);
    moduleScope->buildins.arrayTemplateReference = safeMapReference(moduleScope, forwardResolver, ARRAY_FORWARD);
    moduleScope->buildins.argArrayTemplateReference = safeMapReference(moduleScope, forwardResolver, VARIADIC_ARRAY_FORWARD);
+   moduleScope->buildins.nullableTemplateReference = safeMapReference(moduleScope, forwardResolver, NULLABLE_FORWARD);
 
    moduleScope->buildins.closureTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, CLOSURE_FORWARD);
    moduleScope->buildins.tupleTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, TUPLE_FORWARD);
@@ -13153,7 +13173,7 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, Synta
 }
 
 void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
-   ClassInfo& info, mssg_t message, bool inherited, ref_t outputRef, Visibility visibility)
+   ref_t targetRef, ClassInfo& info, mssg_t message, bool inherited, ref_t outputRef, Visibility visibility)
 {
    bool isExtension = test(info.header.flags, elExtension);
 
@@ -13182,6 +13202,23 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
          // if virtual multi-method handler is overridden
          // redirect to the parent one
          resendTarget = info.header.parentRef;
+      }
+      else if (methodType == SyntaxKey::Constructor && actionRef == getAction(scope.buildins.constructor_message) && argCount == 1) {
+         // conversion constructor multi-method is a special case
+         // instead of redirecting to the most generic handler
+         // it should try to typecast the argument
+
+         ref_t signRef = scope.module->mapSignature(&targetRef, 1, false);
+         ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
+         resendMessage = encodeMessage(actionRef, 1, CONVERSION_MESSAGE);
+
+         ref_t voidRef = scope.module->mapReference(VOID_FORWARD);
+         ref_t voidSignRef = scope.module->mapSignature(&voidRef, 1, false);
+         ref_t voidActionRef = scope.module->mapAction(CONSTRUCTOR_MESSAGE, signRef, false);
+
+         // void dispatcher should be added as well to correctly catch nil argument
+         injectStrongRedirectMethod(classNode, SyntaxKey::Constructor, targetRef, message, 
+            encodeMessage(voidActionRef, 1, flags), outputRef);
       }
       else {
          ref_t dummy = 0;
@@ -13255,12 +13292,12 @@ void Compiler :: injectInitializer(SyntaxNode classNode, SyntaxKey methodType, m
    methodNode.appendChild(SyntaxKey::FieldInitializer);
 }
 
-void Compiler :: injectInheritedStaticMethod(SyntaxNode classNode, SyntaxKey methodType, ref_t reference, mssg_t message, ref_t outputRef)
+void Compiler :: injectStrongRedirectMethod(SyntaxNode classNode, SyntaxKey methodType, ref_t reference, mssg_t message, mssg_t redirectMessage, ref_t outputRef)
 {
    SyntaxNode methodNode = classNode.appendChild(methodType, message);
    methodNode.appendChild(SyntaxKey::OutputType, outputRef);
 
-   SyntaxNode resendNode = methodNode.appendChild(SyntaxKey::DirectResend, message);
+   SyntaxNode resendNode = methodNode.appendChild(SyntaxKey::DirectResend, redirectMessage);
    resendNode.appendChild(SyntaxKey::Target, reference);
 }
 

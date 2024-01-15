@@ -13,22 +13,31 @@ In development:
   prom:tutorial forwards
   port:elenavm / elt for linux
   --------------------------------------
+  * DISCUSSION : conversion constructor to handle nil - should it be generated every time; only for auto generated multi-method conversion routine;
+    only if special convertor is declared
 
-  * nullable variable
+  * for auto generated single distpach conversion routine, it should support nil type ($elena'void) as well?
+    (method ( SyntaxKey::DirectResend message ( SyntaxKey::Target r ) ))
+
+  * Nullable should have special conversion constructor to handle nil 
+  * Nullable - ValueOrDefault to returen value or default value
+  --------------------------------------
+
   * nullable method parameter
+  * nullable method ret value
+
   * nullable template argument
   * nullable closure argument
 
-  * Nullable support #562
-
+  * Nullable support #56
   --------------------------------------
 
+  * review code base : (samples, rosetta code samples, tutorials)
   * raise an error for the code like: f(a;b);
   * raise an error var "abc";
   * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
   * api : extension to read class properties as array member (e.g object["field"])
   * snake game : text / gui version
-  * review code base : (rosetta code samples: D, tutorials)
   * db samples
 
   === Iteration 20 ===
