@@ -67,6 +67,9 @@ public nonstructural Nullable<T>
    T Value
       = _value;
 
+   T cast()
+      = _value;
+
    bool hasValue
       = _value != nil;
 

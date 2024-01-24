@@ -680,7 +680,7 @@ class DispatchType
 {
    _content;
 
-   constructor(content)
+   constructor(int content)
    {
       _content := content;
    }
@@ -689,13 +689,12 @@ class DispatchType
       = _content;
 }
 
-
 class DispatchTypeCompatible
 {
    _dummy;
    _content;
 
-   constructor(content)
+   constructor(int content)
    {
       _content := content;
    }   

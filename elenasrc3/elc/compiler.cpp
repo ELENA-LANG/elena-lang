@@ -9789,6 +9789,15 @@ ref_t Compiler :: mapConstantReference(Scope& ownerScope)
    return nestedRef;
 }
 
+inline ref_t retrieveTypeRef(ModuleScopeBase& scope, ref_t reference)
+{
+   IdentifierString name(scope.module->resolveReference(reference));
+   if ((*name).endsWith(CLASSCLASS_POSTFIX))
+      name.truncate(name.length() - getlength(CLASSCLASS_POSTFIX));
+
+   return scope.module->mapReference(*name);
+}
+
 ref_t Compiler :: mapNested(ExprScope& ownerScope, ExpressionAttribute mode)
 {
    ref_t nestedRef = 0;
@@ -13220,7 +13229,9 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
          // instead of redirecting to the most generic handler
          // it should try to typecast the argument
 
-         ref_t signRef = scope.module->mapSignature(&targetRef, 1, false);
+         ref_t typeRef = retrieveTypeRef(scope, targetRef);
+
+         ref_t signRef = scope.module->mapSignature(&typeRef, 1, false);
          ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
          resendMessage = encodeMessage(actionRef, 1, CONVERSION_MESSAGE);
       }
