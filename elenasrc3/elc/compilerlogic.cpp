@@ -941,6 +941,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_YIELDABLE:
          hint = (ref_t)MethodHint::Yieldable;
          return true;
+      case V_NIL_CONVERSION:
+         hint = (ref_t)MethodHint::Conversion | (ref_t)MethodHint::Nullable;
+         return true;
       default:
          return false;
    }
@@ -958,6 +961,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(ref_t attribute, ref_t& hi
       case V_FUNCTION:
       case V_CONVERSION:
       case V_GENERIC:
+      case V_NIL_CONVERSION:
          return validateMethodAttribute(attribute, hint, dummy);
       default:
          return false;

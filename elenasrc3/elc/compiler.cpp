@@ -3222,6 +3222,14 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
             flags |= FUNCTION_MESSAGE;
             scope.info.hints |= (ref_t)MethodHint::Constructor;
          }
+         else if (paramCount == 1 && unnamedMessage && weakSignature && scope.checkHint(MethodHint::Nullable)) {
+            ref_t voidSignRef = scope.module->mapSignature(&scope.moduleScope->buildins.nilValueReference, 1, false);
+            actionRef = scope.module->mapAction(CONSTRUCTOR_MESSAGE, voidSignRef, false);
+
+            flags |= FUNCTION_MESSAGE;
+
+            unnamedMessage = false;
+         }
          else scope.raiseError(errIllegalMethod, node);
       }
       else if (scope.checkHint(MethodHint::Constructor) && unnamedMessage) {
@@ -11795,6 +11803,9 @@ void Compiler :: compileConstructorCode(BuildTreeWriter& writer, SyntaxNode node
          compileRetExpression(writer, codeScope, current, EAttr::DynamicObject);
          writer.appendNode(BuildKey::CloseFrame);
          break;
+      case SyntaxKey::DirectResend:
+         compileDirectResendCode(writer, codeScope, current);
+         break;
       case SyntaxKey::None:
          if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
             writer.appendNode(BuildKey::CloseFrame);
@@ -11835,7 +11846,7 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
    bool retExpr = current == SyntaxKey::ReturnExpression;
 
    bool newFrame = false;
-   if (current == SyntaxKey::ResendDispatch || current == SyntaxKey::RedirectDispatch) {
+   if (current == SyntaxKey::ResendDispatch || current == SyntaxKey::RedirectDispatch || current == SyntaxKey::DirectResend) {
       // do not create a frame for resend operation
       // the object should not be created, because of redirecting
       isDefConvConstructor = false;
@@ -12765,6 +12776,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
 
    // cache the frequently used references
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
+   moduleScope->buildins.nilValueReference = safeMapReference(moduleScope, forwardResolver, NILVALUE_FORWARD);
    moduleScope->buildins.intReference = safeMapReference(moduleScope, forwardResolver, INTLITERAL_FORWARD);
    moduleScope->buildins.longReference = safeMapReference(moduleScope, forwardResolver, LONGLITERAL_FORWARD);
    moduleScope->buildins.realReference = safeMapReference(moduleScope, forwardResolver, REALLITERAL_FORWARD);
@@ -13211,14 +13223,6 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
          ref_t signRef = scope.module->mapSignature(&targetRef, 1, false);
          ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
          resendMessage = encodeMessage(actionRef, 1, CONVERSION_MESSAGE);
-
-         ref_t voidRef = scope.module->mapReference(VOID_FORWARD);
-         ref_t voidSignRef = scope.module->mapSignature(&voidRef, 1, false);
-         ref_t voidActionRef = scope.module->mapAction(CONSTRUCTOR_MESSAGE, signRef, false);
-
-         // void dispatcher should be added as well to correctly catch nil argument
-         injectStrongRedirectMethod(classNode, SyntaxKey::Constructor, targetRef, message, 
-            encodeMessage(voidActionRef, 1, flags), outputRef);
       }
       else {
          ref_t dummy = 0;

@@ -170,7 +170,7 @@ struct BranchingInfo
 
 struct BuiltinReferences
 {
-   ref_t   superReference;
+   ref_t   superReference, nilValueReference;
    ref_t   intReference, shortReference, uint8Reference;
    ref_t   longReference, realReference;
    ref_t   uintReference, int8Reference, ushortReference;
@@ -207,6 +207,7 @@ struct BuiltinReferences
    BuiltinReferences()
    {
       superReference = intReference = 0;
+      nilValueReference = 0;
       shortReference = uint8Reference = 0;
       uintReference = 0;
       int8Reference = ushortReference = 0;

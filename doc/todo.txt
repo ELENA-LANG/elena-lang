@@ -13,13 +13,12 @@ In development:
   prom:tutorial forwards
   port:elenavm / elt for linux
   --------------------------------------
-  * DISCUSSION : conversion constructor to handle nil - should it be generated every time; only for auto generated multi-method conversion routine;
-    only if special convertor is declared
-
   * for auto generated single distpach conversion routine, it should support nil type ($elena'void) as well?
     (method ( SyntaxKey::DirectResend message ( SyntaxKey::Target r ) ))
 
-  * Nullable should have special conversion constructor to handle nil 
+  * sample
+  * fix unit tests
+
   * Nullable - ValueOrDefault to returen value or default value
   --------------------------------------
 

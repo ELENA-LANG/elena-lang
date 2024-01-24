@@ -59,6 +59,11 @@ public nonstructural Nullable<T>
       _value := value
    }
 
+   __nil_constructor(arg)
+   {
+      _value := nil;
+   }
+
    T Value
       = _value;
 

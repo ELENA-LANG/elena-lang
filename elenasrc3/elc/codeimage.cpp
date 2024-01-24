@@ -92,7 +92,7 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
       if (_entryPoint == INVALID_POS)
          throw JITUnresolvedException(ReferenceInfo(SYSTEM_FORWARD));
 
-      ustr_t superClass = resolver->resolveForward(SUPER_FORWARD);
+      ustr_t superClass = resolver->resolveForward(NILVALUE_FORWARD);
       linker.complete(compiler, superClass);
 
       freeobj(dummyModule);

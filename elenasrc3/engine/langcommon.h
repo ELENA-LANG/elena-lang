@@ -36,6 +36,7 @@ namespace elena_lang
       Function             = 0x00000080,
       Generic              = 0x00000100,
       RetOverload          = 0x00000200,
+      Nullable             = 0x00000400,
       Multimethod          = 0x00001000,
       TargetSelf           = 0x00002000,
       Static               = 0x00004000,
@@ -244,6 +245,7 @@ namespace elena_lang
    constexpr auto V_TEMPLATEBASED         = 0x80001028u;
    constexpr auto V_WEAK                  = 0x80001029u;
    constexpr auto V_INTERFACE_DISPATCHER  = 0x8000102Au;
+   constexpr auto V_NIL_CONVERSION        = 0x8000102Bu;
 
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;

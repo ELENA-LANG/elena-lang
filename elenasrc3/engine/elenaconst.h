@@ -78,12 +78,12 @@ namespace elena_lang
    constexpr auto STARTUP_ENTRY              = "$auto'startUpSymbol";
 
    constexpr auto VM_TAPE                    = "$elena'meta$startUpTape";
-   constexpr auto VOID_FORWARD               = "$elena'void";
 
    constexpr auto PROGRAM_ENTRY              = "$forwards'program";         // used by the linker to define the debug entry
 
    constexpr auto SYSTEM_FORWARD             = "$system_entry";   // the system entry
    constexpr auto SUPER_FORWARD              = "$super";          // the common class predecessor
+   constexpr auto NILVALUE_FORWARD           = "$nil";            // the nil value
    constexpr auto INTLITERAL_FORWARD         = "$int";            // the int literal
    constexpr auto LONGLITERAL_FORWARD        = "$long";           // the long literal
    constexpr auto REALLITERAL_FORWARD        = "$real";           // the real literal

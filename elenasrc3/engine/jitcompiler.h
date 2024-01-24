@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT compiler class.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef JITCOMPILER_H
@@ -219,7 +219,6 @@ namespace elena_lang
       void allocateThreadContent(MemoryWriter* tlsWriter) override;
 
       void* getSystemEnv() override;
-      void* getVoid() override;
 
       JITCompiler()
          : _inlines{}, _preloaded(nullptr)

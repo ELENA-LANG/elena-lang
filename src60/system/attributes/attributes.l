@@ -60,6 +60,7 @@
 #let attributeSymbols["__probe"]     := 80001026h;
 #let attributeSymbols["template"]    := 80001027h;
 #let attributeSymbols["weak"]        := 80001029h;
+#let attributeSymbols["__nil_constructor"] := 8000102Bh;
 
 /// primitive types
 #let attributeSymbols["__string"]    := 80000801h;

@@ -1475,9 +1475,9 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
    // prepare jit compiler
    _compiler->prepare(_loader, _imageProvider, &helper, nullptr, _jitSettings, _virtualMode);
 
-   // set predefined references
-   // - nil
-   _mapper->mapReference({ VOID_FORWARD }, (addr_t)_compiler->getVoid(), mskVMTRef);
+   //// set predefined references
+   //// - nil
+   //_mapper->mapReference({ VOID_FORWARD }, (addr_t)_compiler->getVoid(), mskVMTRef);
 
    // fix not loaded references
    fixReferences(references, _imageProvider->getTextSection());
