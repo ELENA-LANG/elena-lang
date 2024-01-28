@@ -1,11 +1,9 @@
 import extensions;
 
-singleton Helper
-{
-   int? get() = 2;
-}
-
 public program()
 {
-   var n := Helper.get()
+    until(string line := console.write(">").readLine(); line == "")
+    {
+        proceed(r, line.split());        
+    }
 }

@@ -164,20 +164,20 @@ namespace expressions
       static Expression SetProperty(MessageName name, Expression t, Expression v)
          = SetPropertyExpression.new(name, t, v);
 
-//      static Expression Closure(Expression body)
-//         = new ClosureExpression(body);        
-//              
-//      static Expression Closure(Expression body, params ScopeIdentifier[] variables)
-//         = ClosureExpression.new(body, params variables);        
+      static Expression Closure(Expression body)
+         = new ClosureExpression(body);        
+              
+      static Expression Closure(Expression body, params ScopeIdentifier[] variables)
+         = ClosureExpression.new(body, params variables);        
 
       static Expression CodeBlock(params Expression[] statements)
          = CodeblockExpression.load(params statements);
 
-//      static Expression SetDynamicProperty(Expression m, Expression t, Expression v)
-//         = SetDynamicPropertyExpression.NewExpressionm, t, v);
-//
-//      static Expression GetDynamicProperty(Expression m, Expression t)
-//         = GetDynamicPropertyExpression.new(m, t);
+      static Expression SetDynamicProperty(Expression m, Expression t, Expression v)
+         = SetDynamicPropertyExpression.new(m, t, v);
+
+      static Expression GetDynamicProperty(Expression m, Expression t)
+         = GetDynamicPropertyExpression.new(m, t);
 
       static Expression Nested(DynamicSingleton expr)
          = new NestedExpression(expr);          
@@ -1132,34 +1132,34 @@ namespace expressions
       }
    }
 
-//   public class ClosureExpression : Expression
-//   {
-//      ScopeIdentifier[] parameters;
-//      Expression        body;
-//        
-//      constructor(Expression body)
-//      {
-//         this parameters := new ScopeIdentifier[](0);
-//            
-//         this body := body;
-//      } 
-//        
-//      constructor new(Expression body, params ScopeIdentifier[] params)
-//      {
-//         // revese the order
-//         int len := params.Length;
-//         this parameters := new ScopeIdentifier[](len + 1);
-//         parameters[0] := new ScopeIdentifier("$tape", 0);
-//         for (int i := 0, i < len, i += 1)
-//         {
-//            parameters[i + 1] := params[i]
-//         };
-//            
-//         this body := body;
-//      } 
-//
-//      bool IsOperation = true;
-//     
+   public class ClosureExpression : Expression
+   {
+      ScopeIdentifier[] parameters;
+      Expression        body;
+        
+      constructor(Expression body)
+      {
+         this parameters := new ScopeIdentifier[](0);
+            
+         this body := body;
+      } 
+        
+      constructor new(Expression body, params ScopeIdentifier[] params)
+      {
+         // revese the order
+         int len := params.Length;
+         this parameters := new ScopeIdentifier[](len + 1);
+         parameters[0] := new ScopeIdentifier("$tape", 0);
+         for (int i := 0; i < len; i += 1)
+         {
+            parameters[i + 1] := params[i]
+         };
+            
+         this body := body;
+      } 
+
+      bool IsOperation = true;
+     
 //      int prepare(ExpressionScope scope)
 //      {
 //         auto closureScope := new ExpressionScope
@@ -1212,7 +1212,15 @@ namespace expressions
 //      {    
 //         body.saveTo(list, scope, index);
 //      }    
-//   }      
+
+      declare(ExpressionScope parentScope)
+      {
+      }
+
+      saveTo(List<TapeFunction> list, ExpressionScope parentScope, int index)
+      {
+      }
+   }      
 
    public class CodeblockExpression : Expression
    {
@@ -1313,115 +1321,102 @@ namespace expressions
       }
    }
 
-//   public class SetDynamicPropertyExpression : Expression
-//   {
-//      Expression _property;
-//      Expression  _target;
-//      Expression  _value;
-//      int         _tempVariable;  
-//        
-//      constructor(Expression t, Expression p, Expression v)
-//            <= new(p, t, v);
-//            
-//      constructor new(Expression p, Expression t, Expression v)
-//      {
-//         _property := Expression.MessageCall( 
-//                        new Message("setPropertyMessage[1]"),
-//                        Expression.New(
-//                           system'MessageName,
-//                           p
-//                        )
-//                     );
-//            
-//         _target := t;
-//         _value := v
-//      }
-//        
-//      bool IsOperation = true;
-//        
-//      int prepare(ExpressionScope scope)
-//      {
-//         _tempVariable := scope.allocTempVariable();
-//            
-//         int maxStackLevel := _property.prepare(scope);
-//
-//         int current := _target.prepare(scope);
-//         if (current > maxStackLevel)
-//            { maxStackLevel := current };
-//
-//         current := _value.prepare(scope);
-//         if (current > maxStackLevel)
-//            { maxStackLevel := current };
-//                                    
-//         ^ maxStackLevel;
-//      }
-//        
-//      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
-//      {
-//         _property.saveTo(list, scope, 0);
-//         list.append(new AssigningFunction(_tempVariable));                       
-//            
-//         _value.saveTo(list, scope, 1);
-//         _target.saveTo(list, scope, 0);
-//
-//         list.append(new DynamicMessageFunction(_tempVariable));
-//            
-//         if (index > 0) {
-//            list.append(new SavingFunction(index));
-//         }
-//      }
-//   }
-//
-//   public class GetDynamicPropertyExpression : Expression
-//   {
-//      Expression   _property;
-//      Expression   _target;
-//      int          _tempVariable;  
-//        
-//      constructor(Expression t, Expression p)
-//         <= new(p, t);
-//            
-//      constructor new(Expression p, Expression t)
-//      {
-//         _property := Expression.MessageCall( 
-//                           new Message("getPropertyMessage[1]"),
-//                           Expression.New(
-//                              system'MessageName,
-//                              p
-//                           )
-//                        );
-//            
-//         _target := t
-//      }
-//        
-//      bool IsOperation = true;
-//        
-//      int prepare(ExpressionScope scope)
-//      {
-//         _tempVariable := scope.allocTempVariable();
-//            
-//         int maxStackLevel := _property.prepare(scope);
-//         int current := _target.prepare(scope);
-//         if (current > maxStackLevel)
-//            { maxStackLevel := current };
-//            
-//         ^ maxStackLevel;
-//      }
-//
-//      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
-//      {
-//         _property.saveTo(list, scope, 0);
-//         list.append(new AssigningFunction(_tempVariable));                       
-//            
-//         _target.saveTo(list, scope, 0);
-//
-//         list.append(new DynamicMessageFunction(_tempVariable));
-//            
-//         if (index > 0) {
-//            list.append(new SavingFunction(index));
-//         }
-//      }
-//   }
+   public class SetDynamicPropertyExpression : Expression
+   {
+      Expression _property;
+      Expression _target;
+      Expression _value;
+        
+      constructor(Expression t, Expression p, Expression v)
+            <= new(p, t, v);
+            
+      constructor new(Expression p, Expression t, Expression v)
+      {
+         _property := Expression.MessageCall( 
+                        new Message("setPropertyMessage[1]"),
+                        Expression.New(
+                           system'MessageName,
+                           p
+                        )
+                     );
+            
+         _target := t;
+         _value := v
+      }
+        
+      bool IsOperation = true;
+        
+      declare(ExpressionScope scope)
+      {
+         _property.declare(scope);
+         _target.declare(scope);
+         _value.declare(scope);      
+
+         scope.reserveStack(2);
+      }
+
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         int tempVar := scope.allocTempVariable() + scope.ScopeLevel;
+         _property.saveTo(list, scope, 0);
+         list.append(new AssigningFunction(tempVar));                       
+
+         _value.saveTo(list, scope, 1);
+         _target.saveTo(list, scope, 0);
+
+         list.append(new DynamicMessageFunction(tempVar));
+
+         if (index > 0)
+            { list.append(new SavingFunction(index)) };
+      }
+   }
+
+   public class GetDynamicPropertyExpression : Expression
+   {
+      Expression   _property;
+      Expression   _target;
+      int          _tempVariable;  
+        
+      constructor(Expression t, Expression p)
+         <= new(p, t);
+            
+      constructor new(Expression p, Expression t)
+      {
+         _property := Expression.MessageCall( 
+                           new Message("getPropertyMessage[1]"),
+                           Expression.New(
+                              system'MessageName,
+                              p
+                           )
+                        );
+            
+         _target := t
+      }
+        
+      bool IsOperation = true;
+        
+      declare(ExpressionScope scope)
+      {
+         _property.declare(scope);
+         _target.declare(scope);
+
+         scope.reserveStack(1);
+      }
+
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         int tempVar := scope.allocTempVariable() + scope.ScopeLevel;
+         _property.saveTo(list, scope, 0);
+         list.append(new AssigningFunction(tempVar));                       
+
+         _target.saveTo(list, scope, 0);
+
+         list.append(new DynamicMessageFunction(tempVar));
+
+         if (index > 0)
+            { list.append(new SavingFunction(index)) };
+      }
+   }
 
    public class ReturnExpression : Expression
    {

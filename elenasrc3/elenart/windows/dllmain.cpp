@@ -217,6 +217,11 @@ EXTERN_DLL_EXPORT size_t LoadClassMessagesLA(void* classPtr, mssg_t* output, siz
    return machine->loadClassMessages(classPtr, output, skip, maxLength);
 }
 
+EXTERN_DLL_EXPORT bool CheckClassMessageLA(void* classPtr, mssg_t message)
+{
+   return machine->checkClassMessage(classPtr, message);
+}
+
 EXTERN_DLL_EXPORT void GetRandomSeedLA(SeedStruct& seed)
 {
    machine->initRandomSeed(seed);

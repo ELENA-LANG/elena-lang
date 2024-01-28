@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Machine common routines implementation
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -168,6 +168,20 @@ size_t SystemRoutineProvider :: LoadMessages(MemoryBase* msection, void* classPt
    }
 
    return counter;
+}
+
+bool SystemRoutineProvider :: CheckMessage(MemoryBase* msection, void* classPtr, mssg_t message)
+{
+   RTManager manager(msection, nullptr);
+
+   VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
+   size_t counter = 0;
+   // NOTE : skip the dispatcher
+   for (pos_t i = 1; i < header->count; i++) {
+      if (((VMTEntry*)classPtr)[i].message == message)
+         return true;
+   }
+   return false;
 }
 
 // --- ELENAMachine ---

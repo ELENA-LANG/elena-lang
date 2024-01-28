@@ -6,10 +6,13 @@ In development:
   ### EPIC: elena 6.0 - redux ###
   === Iteration 19 ===
   --------------------------------------
-  * review code base : (samples, rosetta code samples, tutorials)
+  * ExprTree2 example
+
+  * review code base : tutorials
 
   --------------------------------------
-
+  * test - Interactive programming
+  * Sorting algorithms/Sleep sort, Vigenère cipher, Walk a directory/Non-recursively
   * raise an error for the code like: f(a;b);
   * raise an error var "abc";
   * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)

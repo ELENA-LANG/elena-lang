@@ -10036,7 +10036,7 @@ ObjectInfo Compiler :: compileTupleCollectiom(BuildTreeWriter& writer, ExprScope
 
    ref_t tupleRef = resolveTupleClass(scope, node, arguments);
 
-   if (_logic->isTemplateCompatible(*scope.moduleScope, targetRef, tupleRef))
+   if (_logic->isTemplateCompatible(*scope.moduleScope, targetRef, tupleRef, true))
       tupleRef = targetRef;
 
    writer.newNode(BuildKey::CreatingClass, arguments.count_pos());

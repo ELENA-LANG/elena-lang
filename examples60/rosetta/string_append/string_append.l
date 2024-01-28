@@ -3,7 +3,7 @@ import extensions'text;
 public program()
 {
     var s := StringWriter.load("Hello");
-    s.append:" World";
+    s.append(" World");
     
-    console.writeLine:s.readChar()
+    console.writeLine(s).readChar()
 }

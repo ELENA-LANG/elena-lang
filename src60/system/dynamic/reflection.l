@@ -46,4 +46,11 @@ public extension classROp
 
       ^ list.Value
    }
+
+   bool respondTo(Message m)
+   {
+      int retVal := extern CheckClassMessageLA(self, m);
+
+      ^ retVal != 0
+   }
 }

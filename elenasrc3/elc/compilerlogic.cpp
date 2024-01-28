@@ -1763,7 +1763,7 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
    else return V_OBJARRAY;
 }
 
-bool CompilerLogic :: isTemplateCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef)
+bool CompilerLogic :: isTemplateCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef, bool weakCompatible)
 {
    ustr_t targetName = scope.module->resolveReference(targetRef);
    ustr_t sourceName = scope.module->resolveReference(sourceRef);
@@ -1773,6 +1773,9 @@ bool CompilerLogic :: isTemplateCompatible(ModuleScopeBase& scope, ref_t targetR
    // check if it is the same template
    if (sourceName.length() < pos || !targetName.compare(sourceName, pos))
       return false;
+
+   if (weakCompatible)
+      return true;
 
    // check if the signature is compatible
    size_t targetStart = pos + 1;

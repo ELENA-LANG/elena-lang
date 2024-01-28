@@ -166,7 +166,7 @@ namespace elena_lang
 
       bool isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, bool ignoreNils);
       bool isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo target, TypeInfo source);
-      bool isTemplateCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef);
+      bool isTemplateCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef, bool weakCompatible);
 
       bool isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage);
       bool isMessageCompatibleWithSignature(ModuleScopeBase& scope, ref_t targetRef, 
