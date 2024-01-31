@@ -164,11 +164,8 @@ namespace expressions
       static Expression SetProperty(MessageName name, Expression t, Expression v)
          = SetPropertyExpression.new(name, t, v);
 
-      static Expression Closure(Expression body)
-         = new ClosureExpression(body);        
-              
       static Expression Closure(Expression body, params ScopeIdentifier[] variables)
-         = ClosureExpression.new(body, params variables);        
+         = ClosureExpression.load(body, params variables);        
 
       static Expression CodeBlock(params Expression[] statements)
          = CodeblockExpression.load(params statements);
@@ -203,11 +200,11 @@ namespace expressions
       static Expression ClassIdentifier(string s)
          = new ClassIdentifierExpression(s);
 
-      static Expression New(object t)
+      static Expression New(Expression t)
          = new NewExpression(t);
            
-      static Expression New(object t, Expression p0)
-         = new NewExpression(t, p0);
+      static Expression New(Expression t, Expression p0)
+         = NewExpression.load(t, p0);
 
       static Expression FunctionCall(params Expression[] arguments)
          = FunctionCallExpression.load(params arguments);
@@ -1144,7 +1141,7 @@ namespace expressions
          this body := body;
       } 
         
-      constructor new(Expression body, params ScopeIdentifier[] params)
+      constructor load(Expression body, params ScopeIdentifier[] params)
       {
          // revese the order
          int len := params.Length;
@@ -1160,65 +1157,58 @@ namespace expressions
 
       bool IsOperation = true;
      
-//      int prepare(ExpressionScope scope)
-//      {
-//         auto closureScope := new ExpressionScope
-//         {
-//            int ScopeLevel = parameters.Length;
-//                
-//            bool reserve(int index)
-//               = scope.reserve(index);
-//                
-//            int allocTempVariable()
-//               = scope.allocTempVariable();
-//                
-//            int Reserved 
-//               = scope.Reserved;
-//                
-//            TapeFunction resolve(ScopeIdentifier variable, bool assignMode)
-//            {
-//               int len := parameters.Length;
-//               for(int i := 0, i < len, i+=1) {
-//                  if (variable == parameters[i])
-//                  {
-//                     int index := i + 1;
-//                            
-//                     if (assignMode) 
-//                     {
-//                        NotSupportedException.raise()
-//                     }
-//                     else 
-//                     {
-//                        ^ new LocalFunction(index)
-//                     };                                
-//                  }
-//               };
-//                    
-//               ^ scope.resolve(variable, assignMode)
-//            }
-//        
-//            TapeFunction resolveExtension(Message message)
-//               => scope;    
-//
-//            declare(ScopeIdentifier variable)
-//            {
-//            }            
-//         };
-//
-//         ^ body.prepare(closureScope);
-//      }
-//     
-//      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
-//      {    
-//         body.saveTo(list, scope, index);
-//      }    
-
-      declare(ExpressionScope parentScope)
+      declare(ExpressionScope scope)
       {
       }
 
       saveTo(List<TapeFunction> list, ExpressionScope parentScope, int index)
       {
+         int level := parameters.Length;
+
+         auto scope := ExpressionScope
+         {
+            int Reserved
+               = parentScope.Reserved;
+
+            int ScopeLevel
+               = parentScope.ScopeLevel + level;
+
+            reserveStack(int level)
+               => parentScope;
+
+            allocVariable(ScopeIdentifier variable)
+               => parentScope;
+
+            int allocTempVariable()
+               = parentScope.allocTempVariable();
+
+            TapeFunction resolve(ScopeIdentifier variable, bool assignMode)
+            {
+               int len := parameters.Length;
+               for(int i := 0; i < len; i+=1) {
+                  if (variable == parameters[i])
+                  {
+                     int index := i + 1;
+                                
+                     if (assignMode) 
+                     {
+                        NotSupportedException.raise()
+                     }
+                     else 
+                     {
+                        ^ new LocalFunction(index)
+                     };                                
+                  }
+               };
+                    
+               ^ parentScope.resolve(variable, assignMode)
+            }
+
+            TapeFunction resolveExtension(Message message)
+               => parentScope;
+         };
+
+         body.saveTo(list, scope, index);
       }
    }      
 
@@ -1335,7 +1325,7 @@ namespace expressions
          _property := Expression.MessageCall( 
                         new Message("setPropertyMessage[1]"),
                         Expression.New(
-                           system'MessageName,
+                           Expression.Constant(system'MessageName),
                            p
                         )
                      );
@@ -1385,7 +1375,7 @@ namespace expressions
          _property := Expression.MessageCall( 
                            new Message("getPropertyMessage[1]"),
                            Expression.New(
-                              system'MessageName,
+                              Expression.Constant(system'MessageName),
                               p
                            )
                         );

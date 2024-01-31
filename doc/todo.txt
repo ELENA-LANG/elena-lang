@@ -6,7 +6,7 @@ In development:
   ### EPIC: elena 6.0 - redux ###
   === Iteration 19 ===
   --------------------------------------
-  * ExprTree2 example
+  * jsontodto example
 
   * review code base : tutorials
 
