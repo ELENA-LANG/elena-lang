@@ -8,10 +8,7 @@ A
 
    printDto()
    {
-      var o := dto_properties;
-         var m := o[0];
-
-      console.writeLine(dto_properties[0]);
+      console.printLine(dto_properties.asEnumerable());
    }
 }
 

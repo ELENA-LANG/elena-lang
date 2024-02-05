@@ -3,7 +3,7 @@
 //
 //		This file contains Module scope class declaration.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef MODULESCOPE_H
@@ -28,6 +28,7 @@ public:
    bool isStandardOne() override;
    bool withValidation() override;
 
+   ref_t importAction(ModuleBase* referenceModule, ref_t signRef) override;
    ref_t importSignature(ModuleBase* referenceModule, ref_t signRef) override;
    ref_t importMessage(ModuleBase* referenceModule, mssg_t message) override;
    ref_t importReference(ModuleBase* referenceModule, ustr_t referenceName) override;

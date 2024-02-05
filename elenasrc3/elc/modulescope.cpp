@@ -303,6 +303,17 @@ ref_t ModuleScope :: importConstant(ModuleBase* referenceModule, ref_t reference
    return  module->mapConstant(value);
 }
 
+ref_t ModuleScope :: importAction(ModuleBase* referenceModule, ref_t reference)
+{
+   if (!reference)
+      return 0;
+
+   ref_t signRef = 0;
+   ustr_t value = referenceModule->resolveAction(reference, signRef);
+
+   return  module->mapAction(value, 0, signRef ? importSignature(referenceModule, signRef) : 0);
+}
+
 ref_t ModuleScope :: importMessageConstant(ModuleBase* referenceModule, ref_t reference)
 {
    if (!reference)

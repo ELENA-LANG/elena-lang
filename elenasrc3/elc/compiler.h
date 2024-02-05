@@ -1268,7 +1268,7 @@ namespace elena_lang
 
       void addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey);
 
-      bool evalInitializers(ClassScope& scope, SyntaxNode node, bool ignoreEvaluationError);
+      bool evalInitializers(ClassScope& scope, SyntaxNode node);
       bool evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode node, ObjectInfo& constInfo);
       bool evalAccumClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode node, ObjectInfo& constInfo);
 
@@ -1475,7 +1475,7 @@ namespace elena_lang
 
       ref_t compileStaticAssigning(ClassScope& scope, SyntaxNode node);
 
-      void generateClassFieldTypes(ClassScope& scope, SyntaxNode node);
+      void recreateFieldType(ClassScope& scope, SyntaxNode node, ustr_t fieldName);
       void validateClassFields(ClassScope& scope, SyntaxNode node);
 
       void validateScope(ModuleScopeBase* moduleScope);

@@ -335,8 +335,11 @@ void Interpreter :: copyConstCollection(ref_t sourRef, ref_t destRef, bool byVal
    for (auto it = RelocationMap::Iterator(sourceInfo.section->getReferences()); !it.eof(); ++it) {
       ref_t currentMask = it.key() & mskAnyRef;
       ref_t currentRef = it.key() & ~mskAnyRef;
-      
-      target->addReference(_scope->importReference(sourceInfo.module, currentRef) | currentMask, *it);
+
+      if (currentMask == mskMssgNameLiteralRef) {
+         target->addReference(_scope->importAction(sourceInfo.module, currentRef) | currentMask, *it);
+      }
+      else target->addReference(_scope->importReference(sourceInfo.module, currentRef) | currentMask, *it);
    }
 }
 
@@ -2313,7 +2316,7 @@ void Compiler :: injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool
    if (test(scope.info.header.flags, elClassClass)) {
    }
    else {
-      if (!evalInitializers(scope, classNode, true)) {
+      if (!evalInitializers(scope, classNode)) {
          injectInitializer(classNode, SyntaxKey::Method, scope.moduleScope->buildins.init_message);
       }
 
@@ -6327,7 +6330,26 @@ bool Compiler :: evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNo
    return true;
 }
 
-bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node, bool ignoreEvaluationError)
+void Compiler :: recreateFieldType(ClassScope& scope, SyntaxNode node, ustr_t fieldName)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current.key == SyntaxKey::Field) {
+         ustr_t name = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+
+         if (name.compare(fieldName)) {
+            FieldAttributes attrs = {};
+            readFieldAttributes(scope, current, attrs, false);
+
+            break;
+         }
+      }
+
+      current = current.nextNode();
+   }
+}
+
+bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node)
 {
    bool found = false;
    bool evalulated = true;
@@ -6355,8 +6377,7 @@ bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node, bool ignor
                      {
                         current.setKey(SyntaxKey::Idle);
                      }
-                     else if (!ignoreEvaluationError)
-                        scope.raiseError(errInvalidOperation, current);
+                     else scope.raiseError(errInvalidOperation, current);
                   }
                   break;
                case ObjectKind::StaticField:
@@ -6381,8 +6402,16 @@ bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node, bool ignor
                {
                   current.setKey(SyntaxKey::Idle);
                }
-               else if (!ignoreEvaluationError)
-                  scope.raiseError(errInvalidOperation, current);
+               else {
+                  // HOTFIX : try to create the field property
+                  recreateFieldType(scope, node, lnode.firstChild(SyntaxKey::TerminalMask).identifier());
+                  if (evalAccumClassConstant(lnode.firstChild(SyntaxKey::TerminalMask).identifier(),
+                     scope, current.firstChild(SyntaxKey::ScopeMask), target))
+                  {
+                     current.setKey(SyntaxKey::Idle);
+                  }
+                  else scope.raiseError(errInvalidOperation, current);
+               }
                break;
             default:
                evalulated = false;
@@ -12600,46 +12629,20 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
    scope.save();
 }
 
-void Compiler :: generateClassFieldTypes(ClassScope& scope, SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      if (current == SyntaxKey::Field) {
-         FieldAttributes attrs = {};
-         readFieldAttributes(scope, current, attrs, false);
-      }
-
-      current = current.nextNode();
-   }
-}
-
 void Compiler :: validateClassFields(ClassScope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Field) {
          FieldAttributes attrs = {};
+         readFieldAttributes(scope, current, attrs, false);
 
-         SyntaxNode fieldNode = current.firstChild();
-         while (fieldNode != SyntaxKey::None) {
-            switch (fieldNode.key) {
-               case SyntaxKey::Attribute:
-                  if (!_logic->validateFieldAttribute(fieldNode.arg.reference, attrs))
-                     scope.raiseError(errInvalidHint, fieldNode);
+         if (attrs.isConstant) {
+            ustr_t name = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
 
-                  if (attrs.isConstant) {
-                     ustr_t name = fieldNode.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
-
-                     auto fieldInfo = scope.info.statics.get(name);
-                     if (fieldInfo.valueRef == INVALID_REF)
-                        scope.raiseError(errNoInitializer, fieldNode.findChild(SyntaxKey::Name));
-                  }
-                  break;
-               default:
-                  break;
-            }
-
-            fieldNode = fieldNode.nextNode();
+            auto fieldInfo = scope.info.statics.get(name);
+            if (fieldInfo.valueRef == INVALID_REF)
+               scope.raiseError(errNoInitializer, current.findChild(SyntaxKey::Name));
          }
       }
 
@@ -12659,11 +12662,6 @@ void Compiler :: compileClass(BuildTreeWriter& writer, ClassScope& scope, Syntax
 
    // validate field types
    if (scope.info.fields.count() > 0 || scope.info.statics.count() > 0) {
-      generateClassFieldTypes(scope, node);
-
-      // try once again to evaluate class field initialiers
-      evalInitializers(scope, node, false);
-
       validateClassFields(scope, node);
    }
 
