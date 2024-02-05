@@ -2973,6 +2973,45 @@ void JITCompiler :: allocateThreadContent(MemoryWriter* tlsWriter)
    tlsWriter->write(&content, (pos_t)sizeof(ThreadContent));
 }
 
+void JITCompiler :: writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo)
+{
+   MemoryBase* section = sectionInfo->section;
+
+   pos_t position = writer.position();
+
+   writer.write(section->get(0), section->length());
+
+   writer.align(4, 0);
+
+   for (auto it = RelocationMap::Iterator(section->getReferences()); !it.eof(); ++it) {
+      pos_t imageOffset = *it + position;
+
+      if (*it == (pos_t)-4) {
+         // skip VMT reference
+      }
+      else {
+         ref_t currentMask = it.key() & mskAnyRef;
+         ref_t currentRef = it.key() & ~mskAnyRef;
+         ref_t dummy = 0;
+
+         writer.seek(imageOffset);
+
+         switch (currentMask) {
+            case mskMssgNameLiteralRef:
+               writer.writeDWord(helper->importMessage(
+                  ByteCodeUtil::resolveMessageName(
+                     sectionInfo->module->resolveAction(currentRef, dummy), sectionInfo->module, true)));
+               break;
+            default:
+               assert(false);
+               break;
+         }
+
+         writer.seekEOF();
+      }
+   }
+}
+
 // --- JITCompiler32 ---
 
 inline void insertVMTEntry32(VMTEntry32* entries, pos_t count, pos_t index)
@@ -3365,13 +3404,6 @@ void JITCompiler32 :: writeCollection(ReferenceHelperBase* helper, MemoryWriter&
 void JITCompiler32 :: writeVariable(MemoryWriter& writer)
 {
    writer.writeDWord(0);
-}
-
-void JITCompiler32 :: writeDump(MemoryWriter& writer, SectionInfo* sectionInfo)
-{
-   writer.write(sectionInfo->section->get(0), sectionInfo->section->length());
-
-   writer.align(4, 0);
 }
 
 void JITCompiler32 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode)
@@ -3843,9 +3875,9 @@ void JITCompiler64 :: updateVoidObject(MemoryBase* rdata, addr_t superAddress, b
    }
 }
 
-void JITCompiler64 :: writeDump(MemoryWriter& writer, SectionInfo* sectionInfo)
+void JITCompiler64 :: writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo)
 {
-   writer.write(sectionInfo->section->get(0), sectionInfo->section->length());
+   JITCompiler::writeDump(helper, writer, sectionInfo);
 
    writer.align(8, 0);
 }

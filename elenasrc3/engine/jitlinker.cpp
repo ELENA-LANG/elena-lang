@@ -1188,7 +1188,8 @@ addr_t JITLinker :: resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo
 
    _mapper->mapReference(referenceInfo, vaddress, sectionMask);
 
-   _compiler->writeDump(writer, &sectionInfo);
+   JITLinkerReferenceHelper helper(this, sectionInfo.module, &references);
+   _compiler->writeDump(&helper, writer, &sectionInfo);
 
    fixReferences(references, image);
 

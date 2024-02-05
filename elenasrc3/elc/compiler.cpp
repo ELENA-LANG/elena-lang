@@ -228,6 +228,16 @@ void Interpreter :: addFloatArrayItem(ref_t dictionaryRef, double value)
    writer.write(&value, sizeof(value));
 }
 
+void Interpreter :: addMssgNameArrayItem(ref_t dictionaryRef, ref_t constRef)
+{
+   MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskConstant, true);
+   if (!dictionary)
+      throw InternalError(errFatalError);
+
+   MemoryWriter writer(dictionary);
+   writer.writeDReference(constRef | mskMssgNameLiteralRef, /*constRef | mskMssgNameLiteralRef*/0);
+}
+
 void Interpreter :: setTypeMapValue(ref_t dictionaryRef, ustr_t key, ref_t reference)
 {
    MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskTypeMapRef, true);
@@ -368,6 +378,9 @@ ObjectInfo Interpreter :: createConstCollection(ref_t arrayRef, ref_t typeRef, A
          case ObjectKind::Singleton:
          case ObjectKind::Class:
             addConstArrayItem(arrayRef, arg.reference, mskVMTRef);
+            break;
+         case ObjectKind::MssgNameLiteral:
+            addMssgNameArrayItem(arrayRef, arg.reference);
             break;
          default:
             assert(false);
@@ -2300,7 +2313,7 @@ void Compiler :: injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool
    if (test(scope.info.header.flags, elClassClass)) {
    }
    else {
-      if (!evalInitializers(scope, classNode)) {
+      if (!evalInitializers(scope, classNode, true)) {
          injectInitializer(classNode, SyntaxKey::Method, scope.moduleScope->buildins.init_message);
       }
 
@@ -6220,7 +6233,7 @@ bool Compiler :: evalAccumClassConstant(ustr_t constName, ClassScope& scope, Syn
    ref_t collectionTypeRef = retrieveStrongType(scope, constInfo);
    ClassInfo collectionInfo;
    if (!_logic->defineClassInfo(*scope.moduleScope, collectionInfo, collectionTypeRef, false, true))
-      scope.raiseError(errInvalidOperation, node);
+      return false;
 
    if (!test(collectionInfo.header.flags, elDynamicRole))
       scope.raiseError(errInvalidOperation, node);
@@ -6314,7 +6327,7 @@ bool Compiler :: evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNo
    return true;
 }
 
-bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node)
+bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node, bool ignoreEvaluationError)
 {
    bool found = false;
    bool evalulated = true;
@@ -6342,7 +6355,8 @@ bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node)
                      {
                         current.setKey(SyntaxKey::Idle);
                      }
-                     else scope.raiseError(errInvalidOperation, current);
+                     else if (!ignoreEvaluationError)
+                        scope.raiseError(errInvalidOperation, current);
                   }
                   break;
                case ObjectKind::StaticField:
@@ -6367,7 +6381,8 @@ bool Compiler :: evalInitializers(ClassScope& scope, SyntaxNode node)
                {
                   current.setKey(SyntaxKey::Idle);
                }
-               else scope.raiseError(errInvalidOperation, current);
+               else if (!ignoreEvaluationError)
+                  scope.raiseError(errInvalidOperation, current);
                break;
             default:
                evalulated = false;
@@ -12585,20 +12600,46 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
    scope.save();
 }
 
-void Compiler :: validateClassFields(ClassScope& scope, SyntaxNode node)
+void Compiler :: generateClassFieldTypes(ClassScope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Field) {
          FieldAttributes attrs = {};
          readFieldAttributes(scope, current, attrs, false);
+      }
 
-         if (attrs.isConstant) {
-            ustr_t name = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+      current = current.nextNode();
+   }
+}
 
-            auto fieldInfo = scope.info.statics.get(name);
-            if (fieldInfo.valueRef == INVALID_REF)
-               scope.raiseError(errNoInitializer, current.findChild(SyntaxKey::Name));
+void Compiler :: validateClassFields(ClassScope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Field) {
+         FieldAttributes attrs = {};
+
+         SyntaxNode fieldNode = current.firstChild();
+         while (fieldNode != SyntaxKey::None) {
+            switch (fieldNode.key) {
+               case SyntaxKey::Attribute:
+                  if (!_logic->validateFieldAttribute(fieldNode.arg.reference, attrs))
+                     scope.raiseError(errInvalidHint, fieldNode);
+
+                  if (attrs.isConstant) {
+                     ustr_t name = fieldNode.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+
+                     auto fieldInfo = scope.info.statics.get(name);
+                     if (fieldInfo.valueRef == INVALID_REF)
+                        scope.raiseError(errNoInitializer, fieldNode.findChild(SyntaxKey::Name));
+                  }
+                  break;
+               default:
+                  break;
+            }
+
+            fieldNode = fieldNode.nextNode();
          }
       }
 
@@ -12618,6 +12659,11 @@ void Compiler :: compileClass(BuildTreeWriter& writer, ClassScope& scope, Syntax
 
    // validate field types
    if (scope.info.fields.count() > 0 || scope.info.statics.count() > 0) {
+      generateClassFieldTypes(scope, node);
+
+      // try once again to evaluate class field initialiers
+      evalInitializers(scope, node, false);
+
       validateClassFields(scope, node);
    }
 
@@ -13304,7 +13350,7 @@ void Compiler :: injectInitializer(SyntaxNode classNode, SyntaxKey methodType, m
    methodNode.appendChild(SyntaxKey::Hints, (ref_t)MethodHint::Initializer);
    methodNode.appendChild(SyntaxKey::Autogenerated);
 
-   methodNode.appendChild(SyntaxKey::FieldInitializer);
+   methodNode.appendChild(SyntaxKey::FieldInitializer); // NOTE : it is a place holder
 }
 
 void Compiler :: injectStrongRedirectMethod(SyntaxNode classNode, SyntaxKey methodType, ref_t reference, mssg_t message, mssg_t redirectMessage, ref_t outputRef)

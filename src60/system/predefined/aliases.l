@@ -16,5 +16,6 @@
 #let aliasTypes["string"]  := system'String;
 #let aliasTypes["wide"]    := system'WideString;
 #let aliasTypes["message"] := system'Message;
+#let aliasTypes["subject"] := system'MessageName;
 #let aliasTypes["handle"]  := system'Handle;
 #let aliasTypes["pointer"] := system'UnsafePointer;

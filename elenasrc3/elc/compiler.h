@@ -302,6 +302,7 @@ namespace elena_lang
       void addIntArrayItem(ref_t dictionaryRef, int value);
       void addLongArrayItem(ref_t dictionaryRef, long long value);
       void addFloatArrayItem(ref_t dictionaryRef, double value);
+      void addMssgNameArrayItem(ref_t dictionaryRef, ref_t constRef);
 
       bool evalDictionaryOp(ref_t operator_id, ArgumentsInfo& args);
 
@@ -1267,7 +1268,7 @@ namespace elena_lang
 
       void addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey);
 
-      bool evalInitializers(ClassScope& scope, SyntaxNode node);
+      bool evalInitializers(ClassScope& scope, SyntaxNode node, bool ignoreEvaluationError);
       bool evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode node, ObjectInfo& constInfo);
       bool evalAccumClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode node, ObjectInfo& constInfo);
 
@@ -1474,6 +1475,7 @@ namespace elena_lang
 
       ref_t compileStaticAssigning(ClassScope& scope, SyntaxNode node);
 
+      void generateClassFieldTypes(ClassScope& scope, SyntaxNode node);
       void validateClassFields(ClassScope& scope, SyntaxNode node);
 
       void validateScope(ModuleScopeBase* moduleScope);

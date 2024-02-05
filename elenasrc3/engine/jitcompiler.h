@@ -209,6 +209,8 @@ namespace elena_lang
          writer->writeDWord(value);
       }
 
+      void writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
+
       void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) override;
 
       void populatePreloaded(
@@ -295,7 +297,6 @@ namespace elena_lang
       void writeExtMessage(MemoryWriter& writer, Pair<mssg_t, addr_t> extensionInfo, bool virtualMode) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
       void writeVariable(MemoryWriter& writer) override;
-      void writeDump(MemoryWriter& writer, SectionInfo* sectionInfo) override;
 
       void writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode) override;
 
@@ -373,7 +374,7 @@ namespace elena_lang
       void writeExtMessage(MemoryWriter& writer, Pair<mssg_t, addr_t> extensionInfo, bool virtualMode) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
       void writeVariable(MemoryWriter& writer) override;
-      void writeDump(MemoryWriter& writer, SectionInfo* sectionInfo) override;
+      void writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
 
       void writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode) override;
 
