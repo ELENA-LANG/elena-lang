@@ -69,6 +69,30 @@ public field rprop<name>
    }
 }
 
+// --- dto_prop ---
+
+public field dto_prop<name, T>
+{
+   get T name()
+   {
+      ^ name
+   }
+
+   set name(T value)
+   {
+      name := value
+   }
+
+   const subject[] __dto_properties;
+
+   this __dto_properties += mssg name;
+
+   static MessageName[] __dto_properties()
+   {
+      ^ __dto_properties
+   }
+}
+
 // --- interface<T> ---
 
 public weak interface<T>

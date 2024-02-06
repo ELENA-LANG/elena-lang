@@ -1,29 +1,23 @@
 import extensions;
 
-A
+singleton Helper
 {
-   const subject[] dto_properties;
-
-   this dto_properties += mssg test;
-
-   printDto()
+   testArg(arg1,arg2)
    {
-      console.printLine(dto_properties.asEnumerable());
+      console.writeLine("testArg");
    }
-}
 
-B : A
-{
-   this dto_properties += mssg test_b;
+   testVarg(params object[] args)
+   {
+      //var m := Expression.MessageCall(mssg testArg[2], )
+
+      auto m := mssg testArg[2];
+
+      m.invoke(Helper, params args)
+   }
 }
 
 public program()
 {
-   var a := new A();
-   var b := new B();
-
-   console.writeLine("A:");
-   a.printDto();
-   console.writeLine("B:");
-   b.printDto();
+   Helper.testVarg(1,2);
 }

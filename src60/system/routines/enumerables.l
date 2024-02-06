@@ -119,6 +119,12 @@ public extension enumerableOp
    forEach(fn)
       = self.forEach::(n){ fn(n) };
 
+   forEachPair(object object, Func2 f)
+      = f.run(object, cast Enumerator(self.enumerator()));
+
+   forEachPair(object,f)
+      = self.forEachPair(object, (o,n){ f(o,n) });
+
    seekEach(Func1 f)
       = f.retrieve(cast Enumerator(self.enumerator()));
 
@@ -356,6 +362,22 @@ public extension indexableOp
 
    populate(action)
       = self.populate::(int n){ ^action(n) };
+
+   deepClone()
+   {
+      var copy := self.clone();
+        
+      Indexer indexer := copy.indexer();
+        
+      while(indexer.Available)
+      {
+         indexer.Value := (*indexer).clone();
+            
+         indexer.appendIndex(1)
+      };
+        
+      ^ copy
+   }
 
    ascendant()
       = self.clone().sort(ifOrdered);

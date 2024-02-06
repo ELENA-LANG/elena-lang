@@ -6,35 +6,24 @@ In development:
   ### EPIC: elena 6.0 - redux ###
   === Iteration 19 ===
   --------------------------------------
-  * jsontodto example
-
-  * review code base : tutorials
-
-  --------------------------------------
-  * test - Interactive programming
-  * Sorting algorithms/Sleep sort, Vigenère cipher, Walk a directory/Non-recursively
-  * raise an error for the code like: f(a;b);
-  * raise an error var "abc";
-  * test elenasm for linux : i386, amd64, ppc64le, aarch64 (calc, interpreter, js)
-  * api : extension to read class properties as array member (e.g object["field"])
-  * snake game : text / gui version
-  * db samples
   * build all platforms
 
   === Iteration 20 ===
+  --------------------------------------
   dev: async programming (instant messagange sample (chat) ), #608
   op:github actions : x86
   opt: pi - under 8 sec, #601,#602
   maint:#620, tools:backlog,#616, system module warnings, #622
-  exp:using expression trees in real-life apps (see c#)
+  exp:snake game : text / gui version, using expression trees in real-life apps (see c#)
   ide:backlog (#617), vm debugger, debugger watch - struct
   tools:
   prom:
-  port:gui samples, xforms, x86 mt, x86-64 vm,elenavm / elt for linux
+  port:db samples, gui samples, xforms, x86 mt, x86-64 vm,elenavm / elt for linux
   --------------------------------------
 
   === Iteration 21 ===
-  dev:
+  --------------------------------------
+  dev: 
   op:
   opt:
   maint:
@@ -44,3 +33,15 @@ In development:
   prom:
   port:
   --------------------------------------
+
+  === Iteration 22 ===
+  --------------------------------------
+  dev: 
+  op:
+  opt:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
+  port:

@@ -260,6 +260,7 @@ namespace elena_lang
    constexpr auto V_POINTER               = 0x8000080Au;
    constexpr auto V_EXTMESSAGE            = 0x8000080Bu;
    constexpr auto V_TYPEOF                = 0x8000080Cu;
+   //constexpr auto V_INLINEARG             = 0x8000080Du;
 
    /// primitive types
    constexpr auto V_STRING                = 0x80000001u;
