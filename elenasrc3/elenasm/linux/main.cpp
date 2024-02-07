@@ -7,28 +7,20 @@ using namespace elena_lang;
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
+#define ROOT_PATH          "/usr/lib/elena"
+
 static ScriptEngine* engine = nullptr;
 
-void loadDLLPath(PathString& rootPath, HMODULE hModule)
+void init()
 {
-   TCHAR path[MAX_PATH + 1];
-
-   ::GetModuleFileName(hModule, path, MAX_PATH);
-
-   rootPath.copySubPath(path, true);
-   rootPath.lower();
-}
-
-void init(HMODULE hModule)
-{
-   PathString rootPath;
-   loadDLLPath(rootPath, hModule);
-
-   engine = new ScriptEngine(*rootPath);
+   engine = new ScriptEngine(ROOT_PATH);
 }
 
 int NewScopeSMLA()
 {
+   if (engine == nullptr)
+      init();
+
    if (engine) {
       return engine->newScope();
    }
@@ -37,6 +29,9 @@ int NewScopeSMLA()
 
 void* InterpretFileSMLA(const char* pathStr, int encoding, bool autoDetect)
 {
+   if (engine == nullptr)
+      init();
+
    PathString path(pathStr);
 
    return engine->translate(0, *path, (FileEncoding)encoding, autoDetect);
@@ -44,6 +39,9 @@ void* InterpretFileSMLA(const char* pathStr, int encoding, bool autoDetect)
 
 void* InterpretScopeFileSMLA(int scope_id, const char* pathStr, int encoding, bool autoDetect)
 {
+   if (engine == nullptr)
+      init();
+
    PathString path(pathStr);
 
    return engine->translate(scope_id, *path, (FileEncoding)encoding, autoDetect);
@@ -51,16 +49,25 @@ void* InterpretScopeFileSMLA(int scope_id, const char* pathStr, int encoding, bo
 
 void* InterpretScopeScriptSMLA(int scope_id, const char* script)
 {
+   if (engine == nullptr)
+      init();
+
    return engine->translate(scope_id, script);
 }
 
 void* InterpretScriptSMLA(const char* script)
 {
+   if (engine == nullptr)
+      init();
+
    return engine->translate(0, script);
 }
 
 int GetLengthSMLA(void* tape)
 {
+   if (engine == nullptr)
+      init();
+
    if (tape) {
       return engine->getLength(tape);
    }
@@ -69,6 +76,9 @@ int GetLengthSMLA(void* tape)
 
 void ReleaseSMLA(void* tape)
 {
+   if (engine == nullptr)
+      init();
+
    if (tape)
       engine->free(tape);
 }
