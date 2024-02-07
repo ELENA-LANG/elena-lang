@@ -207,6 +207,16 @@ int main(int argc, char* argv[])
                case 'r':
                   cleanMode = true;
                   break;
+               case 's':
+               {
+                  IdentifierString setting(argv[i] + 2);
+                  if (setting.compare("stackReserv:", 0, 12)) {
+                     ustr_t valStr = *setting + 12;
+                     int val = StrConvertor::toInt(valStr, 10);
+                     project.addIntSetting(ProjectOption::StackReserved, val);
+                  }
+                  break;
+               }
                case 't':
                {
                   IdentifierString configName(argv[i] + 2);
@@ -216,6 +226,9 @@ int main(int argc, char* argv[])
                }
                case 'p':
                   project.setBasePath(argv[i] + 2);
+                  break;
+               case 'v':
+                  process.setVerboseOn();
                   break;
                case 'w':
                   if (argv[i][2] == '0') {
@@ -232,13 +245,23 @@ int main(int argc, char* argv[])
                   }
                   break;
                case 'x':
-                  if (argv[i][2] == 'p') {
-                     project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');
-                  }
-                  else if (argv[i][2] == 'b') {
+                  if (argv[i][2] == 'b') {
                      project.addBoolSetting(ProjectOption::ConditionalBoxing, argv[i][3] != '-');
                   }
+                  else if (argv[i][2] == 'e') {
+                     project.addBoolSetting(ProjectOption::EvaluateOp, argv[i][3] != '-');
+                  }
+                  else if (argv[i][2] == 'p') {
+                     project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');
+                  }
                   break;
+               case 'f':
+               {
+                  IdentifierString setting(argv[i] + 2);
+                  process.addForward(*setting);
+
+                  break;
+               }
                default:
                   break;
             }
