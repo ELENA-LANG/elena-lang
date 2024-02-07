@@ -66,7 +66,7 @@
         <include>operations/operations.l</include>
      </module>
      <module name="operations'advanced" hints="2">
-        <include>operations/advanced\operations.l</include>
+        <include>operations/advanced/operations.l</include>
      </module>
      <module hints="1">
         <include>base.l</include>
