@@ -105,7 +105,7 @@ labYGCollect:
   push rbp
 
   // ; lock frame
-  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], rsp
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
 
   push rcx
 
