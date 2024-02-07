@@ -21,6 +21,7 @@ define gc_mg_wbar            0050h
 
 define et_current            0008h
 define tt_stack_frame        0010h
+define tt_stack_root         0028h
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
