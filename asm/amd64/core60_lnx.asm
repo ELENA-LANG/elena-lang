@@ -125,7 +125,7 @@ labYGCollect:
   push rcx
 
   // ;   collect frames
-  mov  rax, [data : %CORE_THREAD_TABLE + tt_stack_frame]  
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]  
   mov  rcx, rax
 
 labYGNextFrame:
