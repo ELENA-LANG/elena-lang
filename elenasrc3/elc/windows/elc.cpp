@@ -241,7 +241,7 @@ int main()
          else {
             FileNameString fileName(argv[i]);
             IdentifierString ns(*fileName);
-            project.addSource(*ns, argv[i], nullptr, 0);
+            project.addSource(*ns, argv[i], nullptr, nullptr);
          }
       }
 
