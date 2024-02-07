@@ -27,9 +27,9 @@ extern "C"
 
    DLL_PUBLIC void* InterpretScopeFileSMLA(int scope_id, const char* pathStr, int encoding, bool autoDetect);
    
-   DLL_PUBLIC void* InterpretScopeScriptSMLA(int scope_id, ustr_t script);
+   DLL_PUBLIC void* InterpretScopeScriptSMLA(int scope_id, const char* script);
 
-   DLL_PUBLIC void* InterpretScriptSMLA(ustr_t script);
+   DLL_PUBLIC void* InterpretScriptSMLA(const char* script);
 
    DLL_PUBLIC int GetLengthSMLA(void* tape);
 

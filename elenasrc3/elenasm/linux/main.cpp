@@ -49,12 +49,12 @@ void* InterpretScopeFileSMLA(int scope_id, const char* pathStr, int encoding, bo
    return engine->translate(scope_id, *path, (FileEncoding)encoding, autoDetect);
 }
 
-void* InterpretScopeScriptSMLA(int scope_id, ustr_t script)
+void* InterpretScopeScriptSMLA(int scope_id, const char* script)
 {
    return engine->translate(scope_id, script);
 }
 
-void* InterpretScriptSMLA(ustr_t script)
+void* InterpretScriptSMLA(const char* script)
 {
    return engine->translate(0, script);
 }
