@@ -6,8 +6,7 @@ define PREPARE	            10006h
 
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
-define CORE_THREAD_TABLE    2000Bh
-define CORE_ET_TABLE        2000Bh
+define CORE_SINGLE_CONTENT  2000Bh
 
 // ; --- GC TABLE OFFSETS ---
 define gc_header             0000h
@@ -79,7 +78,7 @@ procedure % VEH_HANDLER
 
   mov  r10, rdx
   mov  rdx, rax   // ; set exception code
-  mov  rax, [data : % CORE_ET_TABLE]
+  mov  rax, [data : % CORE_SINGLE_CONTENT]
   jmp  rax
 
 end
