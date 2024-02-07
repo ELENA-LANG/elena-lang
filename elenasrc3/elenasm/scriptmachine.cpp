@@ -17,6 +17,13 @@
 
 using namespace elena_lang;
 
+#ifndef _MAX_PATH
+
+#define _MAX_PATH 260
+
+#endif // !_MAX_PATH
+
+
 // --- ScriptEngine ---
 
 ScriptEngine :: ScriptEngine(path_t rootPath)
