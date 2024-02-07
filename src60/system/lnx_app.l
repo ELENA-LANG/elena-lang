@@ -9,7 +9,7 @@ singleton CommandLineFactory
         int argc := extern GetArgCLA();
 
         var args := Array.allocate(argc);
-        for (int i := 0, i < argc, i := i + 1) {
+        for (int i := 0; i < argc; i++) {
             len := extern GetArgLA(i, buf, 255);
             
             args[i] := String.fromByteArray(0, len, buf)
