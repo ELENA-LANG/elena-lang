@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Source Reader class declaration.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef TEXTPARSER_H
@@ -71,6 +71,12 @@ namespace elena_lang
       {
          position = defPosition;
          column = row = 0;
+      }
+      LineInfo(pos_t defPosition, pos_t col, pos_t row)
+      {
+         this->position = defPosition;
+         this->column = col;
+         this->row = row;
       }
    };
 
