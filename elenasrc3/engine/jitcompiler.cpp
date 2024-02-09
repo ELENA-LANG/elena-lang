@@ -1493,7 +1493,8 @@ void elena_lang::loadFrameIndexROp(JITCompilerScope* scope)
                scope->command.arg1 << scope->constants->indexPower, scope->frameOffset));
             break;
          case ARG16_1:
-            scope->compiler->writeImm16(writer, scope->command.arg1 << scope->constants->indexPower, 0);
+            writer->writeWord((unsigned short)getFPOffset(
+               scope->command.arg1 << scope->constants->indexPower, scope->frameOffset));
             break;
          case PTR32_2:
             if (scope->command.arg2)
