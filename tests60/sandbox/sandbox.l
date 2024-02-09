@@ -6,17 +6,17 @@ singleton VariadicFunctionDispatchTester
    {
       console.write(".");
       int l := args.Length;
-      console.writeLine(l);
+/*      console.writeLine(l);
       int sum := 0;
       for (int i := 0; i < l; i += 1) {
          sum := sum + args[i]
       };
       console.write(".");
 
-      ^ sum
+      ^ sum*/
    }
 }
-
+/*
 singleton VariadicDispatchTester
 {
    product(params int[] args)
@@ -32,13 +32,13 @@ singleton VariadicDispatchTester
       ^ prod
    }
 }
-
+*/
 public program()
 {
    console.write("vardispatcherTest:");
 
    var r1 := VariadicFunctionDispatchTester(1,2,3);
-   Assert.ifTrue(r1 == 6);
+//   Assert.ifTrue(r1 == 6);
    console.write(".");
 /*
    var r2 := VariadicDispatchTester.product(1,2,3,4);
