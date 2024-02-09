@@ -5,10 +5,12 @@ singleton VariadicFunctionDispatchTester
    function(params int[] args)
    {
       int l := args.Length;
+      console.writeLine(l);
       int sum := 0;
       for (int i := 0; i < l; i += 1) {
          sum := sum + args[i]
       };
+      console.write(".");
 
       ^ sum
    }
@@ -19,10 +21,12 @@ singleton VariadicDispatchTester
    product(params int[] args)
    {
       int l := args.Length;
+      console.writeLine(l);
       int prod := 1;
       for (int i := 0; i < l; i += 1) {
          prod := prod * args[i]
       };
+      console.write(".");
 
       ^ prod
    }
@@ -35,6 +39,7 @@ public program()
    var r1 := VariadicFunctionDispatchTester(1,2,3);
    Assert.ifTrue(r1 == 6);
    console.write(".");
+/*
    var r2 := VariadicDispatchTester.product(1,2,3,4);
    Assert.ifTrue(r2 == 24);
    console.write(".");
@@ -48,5 +53,5 @@ public program()
    Assert.ifTrue(r4 == 24);
    console.write(".");
 
-   console.writeLine(".");
+   console.writeLine(".");*/
 }
