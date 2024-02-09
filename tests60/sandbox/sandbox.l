@@ -1,65 +1,52 @@
 import extensions;
 
-sealed class VariadicTester
+singleton VariadicFunctionDispatchTester
 {
-   bool test1Called := false;
-   bool test2Called := false;
-    
-   test1(params int[] others)
+   function(params int[] args)
    {
-      test1Called := true
-   }
-    
-   test2(string s, params int[] others)
-   {
-      test2Called := true
-   }    
-
-   int sum(params int[] numbers)
-   {
+      int l := args.Length;
       int sum := 0;
-      for (int i := 0; i < numbers.Length; i += 1) {
-         sum += numbers[i];
+      for (int i := 0; i < l; i += 1) {
+         sum := sum + args[i]
       };
 
-      ^ sum;
+      ^ sum
    }
+}
 
-   int passAndSum(params int[] numbers)
-      <= sum(params numbers);
-    
-   validate()
+singleton VariadicDispatchTester
+{
+   product(params int[] args)
    {
-      Assert.ifTrue(test1Called).ifTrue(test2Called)
+      int l := args.Length;
+      int prod := 1;
+      for (int i := 0; i < l; i += 1) {
+         prod := prod * args[i]
+      };
+
+      ^ prod
    }
 }
 
 public program()
 {
-    console.write("variadicTest:");
-    
-    // run-time
-    var tester := new VariadicTester();
-    tester.test1(1,3,3);
-    tester.test2("hello",3,3);
-    
-    tester.validate();
-    console.write(".");
+   console.write("vardispatcherTest:");
 
-    Assert.ifTrue(tester.sum(1,2,3)==6);
-    Assert.ifTrue(tester.passAndSum(1,2,3)==6);
-    console.write(".");
-    
-    // compile-time
-    auto tester2 := new VariadicTester();
+   var r1 := VariadicFunctionDispatchTester(1,2,3);
+   Assert.ifTrue(r1 == 6);
+   console.write(".");
+   var r2 := VariadicDispatchTester.product(1,2,3,4);
+   Assert.ifTrue(r2 == 24);
+   console.write(".");
 
-    tester2.test1(1,3,3);
-    tester2.test2("hello",3,3);    
-    tester2.validate();
-    console.write(".");
+   var o := VariadicFunctionDispatchTester;
+   var o2 := VariadicDispatchTester;
+   var r3 := o(1,2,3);
+   Assert.ifTrue(r3 == 6);
+   console.write(".");
+   var r4 := o2.product(1,2,3,4);
+   Assert.ifTrue(r4 == 24);
+   console.write(".");
 
-    Assert.ifTrue(tester.sum(1,2,3)==6);
-    Assert.ifTrue(tester.passAndSum(1,2,3)==6);
-    
-    console.writeLine(".")
+   console.writeLine(".");
 }
