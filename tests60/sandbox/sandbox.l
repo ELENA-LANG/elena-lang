@@ -2,14 +2,8 @@ import extensions;
 
 public program()
 {
-    int n2 := 1234;
-    short w := n2;
-    Assert.ifTrue(w == 1234);
+    Assert.ifTrue("23".toReal() == 23.0);
+    Assert.ifTrue("123.456789".toReal() == 123.456789);
+    Assert.ifTrue("-123.456789".toReal() == -123.456789);
     console.write(".");
-    string s := n2.toString();
-    Assert.ifTrue(s == "1234");
-    console.write(".");
-    int n3 := s.toInt();
-    Assert.ifTrue(n3 == n2);
-    console.writeLine(".");
 }
