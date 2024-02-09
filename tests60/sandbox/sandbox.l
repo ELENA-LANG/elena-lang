@@ -1,23 +1,31 @@
 import extensions;
 
-singleton Helper
-{
-   testArg(arg1,arg2)
-   {
-      console.writeLine("testArg");
-   }
-
-   testVarg(params object[] args)
-   {
-      //var m := Expression.MessageCall(mssg testArg[2], )
-
-      auto m := mssg testArg[2];
-
-      m.invoke(Helper, params args)
-   }
-}
-
 public program()
 {
-   Helper.testVarg(1,2);
+    console.write("controlTest:");
+    
+    var b1 := false;
+    console.write(".");
+    if (true)
+    {
+        b1 := true
+    };
+    console.write(".");
+    
+    var b2 := nil;
+    console.write(".");
+    if (false)
+    {
+        b2 := false;
+    }
+    else
+    {
+        b2 := true
+    };
+    console.write(".");
+    
+    Assert.ifTrue(b1);    
+    console.write(".");
+    Assert.ifTrue(b2);    
+    console.write(".");
 }
