@@ -98,6 +98,7 @@ namespace elena_lang
 
       friend void* retrieveCode(JITCompilerScope* scope);
       friend void* retrieveIndexRCode(JITCompilerScope* scope);
+      friend void* retrieveFrameIndexRCode(JITCompilerScope* scope);
       friend void* retrieveCodeWithNegative(JITCompilerScope* scope);
       friend void* retrieveICode(JITCompilerScope* scope, int arg);
       friend void* retrieveRCode(JITCompilerScope* scope, int arg);
@@ -396,6 +397,7 @@ namespace elena_lang
 
    inline void* retrieveCode(JITCompilerScope* scope);
    inline void* retrieveIndexRCode(JITCompilerScope* scope);
+   inline void* retrieveFrameIndexRCode(JITCompilerScope* scope);
    inline void* retrieveCodeWithNegative(JITCompilerScope* scope);
    inline void* retrieveICode(JITCompilerScope* scope, int arg);
    inline void* retrieveRCode(JITCompilerScope* scope, int arg);

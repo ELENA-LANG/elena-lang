@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT compiler class implementation.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -428,6 +428,33 @@ void* elena_lang :: retrieveCode(JITCompilerScope* scope)
          break;
    }
    return code;
+}
+
+void* elena_lang::retrieveFrameIndexRCode(JITCompilerScope* scope)
+{
+   arg_t arg = scope->command.arg1;
+
+   size_t index = 0;
+   switch (arg) {
+      case 0:
+         index = 1;
+         break;
+      case 1:
+         index = 2;
+         break;
+      default:
+         if (arg > scope->constants->mediumForm) {
+            index = 3;
+         }
+         else if (arg < 0) {
+            index = 4;
+         }
+         break;
+   }
+   if (scope->command.arg2 == 0)
+      index += 5;
+
+   return scope->compiler->_inlines[index][scope->code()];
 }
 
 void* elena_lang :: retrieveIndexRCode(JITCompilerScope* scope)
@@ -1473,7 +1500,7 @@ void elena_lang::loadFrameIndexROp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
-   void* code = retrieveCode(scope);
+   void* code = retrieveFrameIndexRCode(scope);
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));

@@ -3375,7 +3375,7 @@ inline %1F1h
   addis   r16, r16, __xdisp32hi_2
   addi    r16, r16, __xdisp32lo_2
 
-  mr    r3, r16
+  mr      r3, r16
 
 end
 
@@ -3386,7 +3386,7 @@ inline %2F1h
   addis   r16, r16, __xdisp32hi_2
   addi    r16, r16, __xdisp32lo_2
 
-  mr    r4, r16
+  mr      r4, r16
 
 end
 
@@ -3752,6 +3752,14 @@ inline %0F9h
   ld      r16, toc_code(r2)
   addis   r16, r16, __xdisp32hi_2
   addi    r16, r16, __xdisp32lo_2
+  std     r16, __arg16_1(r31)
+
+end
+
+// ; xstorefir
+inline %5F9h
+
+  li      r16, 0
   std     r16, __arg16_1(r31)
 
 end
