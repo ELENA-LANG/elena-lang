@@ -35,7 +35,7 @@ singleton VariadicDispatchTester
 */
 public program()
 {
-   console.write("vardispatcherTest:");
+//   console.write("vardispatcherTest:");
 
    var r1 := VariadicFunctionDispatchTester(1,2,3);
 //   Assert.ifTrue(r1 == 6);
