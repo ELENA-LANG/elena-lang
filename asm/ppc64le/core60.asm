@@ -3752,7 +3752,7 @@ inline %0F9h
   ld      r16, toc_code(r2)
   addis   r16, r16, __xdisp32hi_2
   addi    r16, r16, __xdisp32lo_2
-  std     r16, __arg16_1(r1)
+  std     r16, __arg16_1(r31)
 
 end
 
