@@ -18,34 +18,31 @@ public program()
 
       console.write(".");
 
-      console.writeLine(intPartStr);
-
-      console.write(".");
-
-      int len := s.Length;
-      int val := 0;
-      int start := 0;
       bool inverted := false;
-      if (s[0]==$45) {
-         start := 1;
+      int intPart := intConvertor.convert(intPartStr, 10);
+      if (intPart < 0) {
+         intPart := -intPart;
+         inverted := true;
       };
 
       console.write(".");
 
-      for (int i := start; i < len; i := i + 1) {
-         byte c := s[i];
-         int ch := c;
-         ch := ch - 48;
-         if (ch >= 10) {
-            ch := ch - 7;
+      real r := intPart;
+      if (decimalPartStr != nil) {
+         console.write("+");
+
+         real frac := intConvertor.convert(decimalPartStr, 10);
+         for (int i := 0; i < decimalPartStr.Length; i += 1) {
+            frac := frac * 0.1;
          };
-         val := val * /*radix*/10;
-         val := val + ch;
+
+         r += frac;
       };
 
+      console.write(".");
 
-
-//      int intPart := intConvertor.convert(intPartStr, 10);
+      if (inverted)
+         r := r * -1.0;
 
 
 
