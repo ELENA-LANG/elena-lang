@@ -474,7 +474,7 @@ void* elena_lang :: retrieveIndexRCode(JITCompilerScope* scope)
       index += 5;
    }
    else if (scope->command.arg2 == -1) {
-      index += 5;
+      index += 8;
    }
 
    return scope->compiler->_inlines[index][scope->code()];
