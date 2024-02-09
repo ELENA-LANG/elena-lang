@@ -4,6 +4,7 @@ singleton VariadicFunctionDispatchTester
 {
    function(params int[] args)
    {
+      console.write(".");
       int l := args.Length;
       console.writeLine(l);
       int sum := 0;
