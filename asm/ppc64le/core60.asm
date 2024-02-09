@@ -3390,6 +3390,15 @@ inline %2F1h
 
 end
 
+// ; xstoresir :n, 0
+inline %5F1h
+
+  li      r16, 0
+
+  std   r16, __arg16_1(r1)
+
+end
+
 // ; xstoresir :0, 0
 inline %6F1h
 
@@ -3401,6 +3410,32 @@ end
 inline %7F1h
 
   li    r4, 0
+
+end
+
+// ; xstoresir :n, -1
+inline %8F1h
+
+  li      r16, 0
+  addi    r16, r16, -1
+
+  std   r16, __arg16_1(r1)
+
+end
+
+// ; xstoresir :0, -1
+inline %9F1h
+
+  li    r3, 0
+  addi  r3, r3, -1
+
+end
+
+// ; xstoresir :1, -1
+inline %0AF1h
+
+  li    r4, 0
+  addi  r4, r4, -1
 
 end
 

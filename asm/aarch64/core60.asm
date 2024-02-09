@@ -3581,6 +3581,40 @@ inline %7F1h
 
 end
 
+// ; xstoresir :n, -1
+inline %8F1h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+  sxtw    x11, w11
+
+  add     x12, sp, __arg12_1
+  str     x11, [x12]
+
+end
+
+// ; xstoresir :0, -1
+inline %9F1h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+  sxtw    x11, w11
+
+  mov     x0, x11
+
+end
+
+// ; xstoresir :1, -1
+inline %0AF1h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+  sxtw    x11, w11
+
+  mov     x1, x11
+
+end
+
 // ; extopenin
 inline %0F2h
 
