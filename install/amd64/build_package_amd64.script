@@ -186,7 +186,8 @@ fi
 
  echo compiling shared files
 
- cp ../../dat/og/bt_rules.txt ./$RELEASE/usr/share/elena
+ cp ../../dat/og/bt_rules60.dat ./$RELEASE/usr/share/elena
+ cp ../../dat/og/bc_rules60.dat ./$RELEASE/usr/share/elena
  cp ../../dat/sg/syntax60.dat ./$RELEASE/usr/share/elena
 
  echo copying binaries
