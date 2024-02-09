@@ -954,7 +954,7 @@ inline %76h
 end
 
 // ; xsaven
-inline %77
+inline %77h
 
   mov    x18, __n16_1
   str    w18, [x10]
