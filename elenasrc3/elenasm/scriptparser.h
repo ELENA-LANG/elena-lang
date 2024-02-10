@@ -162,7 +162,7 @@ namespace elena_lang
       }
 
       ScriptEngineLog()
-         : _coordinates({ INVALID_POS })
+         : _coordinates({ INVALID_POS, 0, 0 })
       {
       }
    };

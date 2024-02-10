@@ -183,48 +183,48 @@ class TapeCGenerator
     
     open()
     {
-        theOutput.printLine:"while (*p) {"
+        theOutput.printLine("while (*p) {")
     }
 
     close()
     {
-        theOutput.printLine:"}"
+        theOutput.printLine("}")
     }
     
     input()
     {
-        theOutput.printLine:"*p = getchar();"
+        theOutput.printLine("*p = getchar();")
     }
     
     output()
     {
-        theOutput.printLine:"putchar(*p);"
+        theOutput.printLine("putchar(*p);")
     }
     
     next()
     {
-        theOutput.printLine:"++p;"
+        theOutput.printLine("++p;")
     }
     
     previous()
     {
-        theOutput.printLine:"--p;"
+        theOutput.printLine("--p;")
     }
 
     increase()
     {
-        theOutput.printLine:"++*p;"
+        theOutput.printLine("++*p;")
     }
     
     decrease()
     {
-        theOutput.printLine:"--*p;"
+        theOutput.printLine("--*p;")
     }
     
     compile()
     {
         theOutput.insert(0,"void execute(char* p) {");
-        theOutput.printLine:"}";
+        theOutput.printLine("}");
         
         ^ theOutput.Value
     }
@@ -292,7 +292,7 @@ public solution0()
                 )
              );
 
-    var bf_tape := Array.allocate(1024).populate:(n => $0);
+    var bf_tape := Array.allocate(1024).populate::(n => $0);
     var o := c.compile();
 
     o.eval(bf_tape)
@@ -303,7 +303,7 @@ public solution1()
     var bfProgram := new TapeAssembler()
         .input().open().output().input().close().compile();
                     
-    var bfTape := Array.allocate(1024).populate:(n => $0);
+    var bfTape := Array.allocate(1024).populate::(n => $0);
     
     bfProgram(bfTape)
 }
@@ -316,7 +316,7 @@ public solution2()
 
     var bfProgram := TapeAssembler.load(bfAssemblyProgram).compile();
 
-    var bfTape := Array.allocate(1024).populate:(n => $0);
+    var bfTape := Array.allocate(1024).populate::(n => $0);
 
     bfProgram(bfTape)
 }
@@ -329,7 +329,7 @@ public solution3(string path)
 
     var bfProgram := TapeAssembler.load(bfAssemblyProgram).compile();
 
-    var bfTape := Array.allocate(1024).populate:(n => $0);
+    var bfTape := Array.allocate(1024).populate::(n => $0);
 
     bfProgram(bfTape)
 }
@@ -351,7 +351,7 @@ public program()
 
    if (program_arguments.Length == 1)
    { 
-      console.write:"Please provide the path to the file to interpret"; AbortException.raise() 
+      console.write("Please provide the path to the file to interpret"); AbortException.raise() 
    }
    else if (program_arguments.Length == 3) {
       solution := program_arguments[2].toInt();
@@ -372,7 +372,7 @@ public program()
       3 {
          solution3(path)
       }
-      : {
+      ! {
          solution4(path)
       };
 }

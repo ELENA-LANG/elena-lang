@@ -312,7 +312,7 @@ void ProjectController :: runToCursor(ProjectModel& model, SourceViewModel& sour
       subPath.combine(*properName);
       
       IdentifierString pathStr(*subPath);
-      _debugController.runToCursor(*ns, *pathStr, currentDoc->getCaret().y);
+      _debugController.runToCursor(*ns, *pathStr, currentDoc->getCaret().y + 1);
    }
 }
 
@@ -515,6 +515,8 @@ NotificationStatus ProjectController :: newProject(ProjectModel& model)
 
 NotificationStatus ProjectController :: openProject(ProjectModel& model, path_t projectFile)
 {
+   NotificationStatus status = PROJECT_CHANGED;
+
    ustr_t key = getPlatformName(_platform);
 
    setProjectPath(model, projectFile);
@@ -541,9 +543,11 @@ NotificationStatus ProjectController :: openProject(ProjectModel& model, path_t 
 
       loadConfig(model, projectConfig, root);
       loadConfig(model, projectConfig, platformRoot);
+
+      status |= IDE_LAYOUT_CHANGED;
    }
 
-   return PROJECT_CHANGED;
+   return status;
 }
 
 void ProjectController :: setProjectPath(ProjectModel& model, path_t projectFile)
@@ -1629,4 +1633,12 @@ void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog
       if (prevSchemeIndex != model->viewModel()->schemeIndex)
          _notifier->notify(NOTIFY_IDE_CHANGE, COLOR_SCHEME_CHANGED | FRAME_CHANGED);
    }
+}
+
+void IDEController :: onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel* model)
+{
+   auto result = mssgDialog.question(QUESTION_NOSOURCE_CONTINUE);
+
+   if (result == MessageDialogBase::Answer::Yes)
+      doDebugAction(model, DebugAction::StepInto);
 }

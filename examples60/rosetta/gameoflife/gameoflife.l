@@ -35,7 +35,7 @@ playGame(Model model)
    {
       model.run();
         
-      threadControl.sleep:DELAY
+      threadControl.sleep(DELAY)
    };
 
    console.readChar()

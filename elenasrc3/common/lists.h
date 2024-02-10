@@ -961,7 +961,10 @@ namespace elena_lang
 
       T peek() const
       {
-         return _list.peek();
+         if (_list.count() != 0) {
+            return _list.peek();
+         }
+         return _defaultItem;
       }
 
       T pop()
@@ -969,7 +972,7 @@ namespace elena_lang
          if (_list.count() != 0) {
             return _list.cutTop();
          }
-         else return _defaultItem;
+         return _defaultItem;
       }
 
       void clear()
@@ -2073,6 +2076,18 @@ namespace elena_lang
          Item* current = _table[index];
          while (current && (current->key < key))
             current = current->next;
+
+         if (current && (current->key != key)) {
+            return Iterator(this, hashSize, nullptr);
+         }
+         else return Iterator(this, index, current);
+      }
+
+      Iterator nextIt(Key key, Iterator it)
+      {
+         pos_t index = it._hashIndex;
+
+         Item* current = it._current->next;
 
          if (current && (current->key != key)) {
             return Iterator(this, hashSize, nullptr);

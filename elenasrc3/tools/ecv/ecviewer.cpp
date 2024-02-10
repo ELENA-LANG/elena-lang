@@ -13,7 +13,7 @@
 
 using namespace elena_lang;
 
-constexpr int TABBING = 20;
+constexpr int TABBING = 15;
 constexpr int INDENT  = 11;
 
 // --- trim ---
@@ -126,6 +126,8 @@ mssg_t ByteCodeViewer :: resolveMessageByIndex(MemoryBase* vmt, int index)
 
       size -= sizeof(MethodEntry);
    }
+   printLine("Message index is too big");
+
    return 0;
 }
 
@@ -148,9 +150,11 @@ void ByteCodeViewer :: printHelp()
    _presenter->print("<class>.<message>       - view a method byte codes\n");
    _presenter->print("<class>.<index>         - view a method specified by an index byte codes\n");
    _presenter->print("#<symbol>               - view symbol byte codes\n");
-   _presenter->print("-q                      - quit\n");
    _presenter->print("-b                      - toggle bytecode mode\n");
    _presenter->print("-h                      - toggle method hints mode\n");
+   _presenter->print("-p                      - toggle pagination mode\n");
+   _presenter->print("-q                      - quit\n");
+   _presenter->print("-t                      - toggle ignore-breakpoint mode\n");
 }
 
 const char* manifestParameters[4] = { "namespace","name     ","version  ","author   " };
@@ -219,7 +223,15 @@ void ByteCodeViewer :: printLineAndCount(ustr_t arg1, ustr_t arg2, int& row, int
    nextRow(row, pageSize);
 }
 
-void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
+inline void appendPrefix(IdentifierString& commandStr, ustr_t prefix, bool withTabbing)
+{
+   if (withTabbing && commandStr.length() > prefix.length()) {
+      commandStr.truncate(commandStr.length() - prefix.length() + 1);      
+   }
+   commandStr.append(prefix);
+}
+
+void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr, bool withTabbing)
 {
    ustr_t referenceName = nullptr;
    ref_t mask = arg & mskAnyRef;
@@ -236,53 +248,53 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr)
 
    switch (mask) {
       case mskArrayRef:
-         commandStr.append("array:");
+         appendPrefix(commandStr, "array:", withTabbing);
          break;
       case mskTypeListRef:
-         commandStr.append("marray:");
+         appendPrefix(commandStr, "marray:", withTabbing);
          break;
       case mskSymbolRef:
-         commandStr.append("symbol:");
+         appendPrefix(commandStr, "symbol:", withTabbing);
          break;
       case mskVMTRef:
-         commandStr.append("class:");
+         appendPrefix(commandStr, "class:", withTabbing);
          break;
       case mskLongLiteralRef:
-         commandStr.append("longconst:");
+         appendPrefix(commandStr, "longconst:", withTabbing);
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskRealLiteralRef:
-         commandStr.append("realconst:");
+         appendPrefix(commandStr, "realconst:", withTabbing);
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskIntLiteralRef:
-         commandStr.append("intconst:");
+         appendPrefix(commandStr, "intconst:", withTabbing);
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskLiteralRef:
-         commandStr.append("strconst:");
+         appendPrefix(commandStr, "strconst:", withTabbing);
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskWideLiteralRef:
-         commandStr.append("wideconst:");
+         appendPrefix(commandStr, "wideconst:", withTabbing);
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskCharacterRef:
-         commandStr.append("charconst:");
+         appendPrefix(commandStr, "charconst:", withTabbing);
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
       case mskStaticVariable:
-         commandStr.append("static:");
+         appendPrefix(commandStr, "static:", withTabbing);
          break;
       case mskProcedureRef:
-         commandStr.append("procedure:");
+         appendPrefix(commandStr, "procedure:", withTabbing);
          break;
       case mskMssgLiteralRef:
       case mskExtMssgLiteralRef:
-         commandStr.append("mssgconst:");
+         appendPrefix(commandStr, "mssg:", withTabbing);
          break;
       case mskMssgNameLiteralRef:
-         commandStr.append("mssgnameconst:");
+         appendPrefix(commandStr, "mssgname:", withTabbing);
          break;
       default:
          commandStr.append(":");
@@ -309,7 +321,7 @@ void ByteCodeViewer :: addSecondRArg(arg_t arg, IdentifierString& commandStr, Li
    if ((arg & mskAnyRef) == mskLabelRef) {
       addLabel(arg & ~mskAnyRef, commandStr, labels);
    }
-   else addRArg(arg, commandStr);
+   else addRArg(arg, commandStr, false);
 }
 
 void ByteCodeViewer :: addArg(arg_t arg, IdentifierString& commandStr)
@@ -427,7 +439,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             addLabel(command.arg1 + commandPosition + 5, commandStr, labels);
             break;
          case ByteCode::AssignI:
-            addIArg(command.arg1, commandStr);
+            addArg(command.arg1, commandStr);
             break;
          default:
             addArg(command.arg1, commandStr);
@@ -444,6 +456,7 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
             else addSecondArg(command.arg2, commandStr);
             break;
          case ByteCode::XStoreSIR:
+         case ByteCode::XStoreFIR:
             addArg(command.arg1, commandStr);
             addSecondRArg(command.arg2, commandStr, labels);
             break;
@@ -566,6 +579,8 @@ void ByteCodeViewer :: printCommand(ByteCommand& command, int indent,
       for (int i = 0; i < indent; i++)
          commandLine.append(" ");
 
+      size_t startIndex = commandLine.length();
+
       ByteCodeUtil::decode(command.code, commandLine);
 
       // HOTFIX : remove tailing double colon
@@ -573,9 +588,10 @@ void ByteCodeViewer :: printCommand(ByteCommand& command, int indent,
          commandLine.truncate(commandLine.length() - 2);
       }
 
-      size_t tabbing = TABBING;
+      size_t tabbing = startIndex + TABBING;
+      size_t spaceIndex = (*commandLine).findSub(startIndex, ' ', commandLine.length());
       while (commandLine.length() < tabbing) {
-         commandLine.append(" ");
+         commandLine.insert(" ", spaceIndex);
       }
 
       addCommandArguments(command, commandLine, labels, commandPosition);
@@ -597,6 +613,10 @@ void ByteCodeViewer :: printByteCodes(MemoryBase* section, pos_t address, int in
       pos_t position = reader.position();
 
       ByteCodeUtil::read(reader, command);
+
+      // ignore a breakpoint if required
+      if (command.code == ByteCode::Breakpoint && _ignoreBreakpoints)
+         continue;
 
       printCommand(command, indent, labels, position);
       nextRow(row, pageSize);
@@ -760,6 +780,9 @@ void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
             case V_INT32:
                line.append(" of __int[4]");
                break;
+            case V_UINT32:
+               line.append(" of __uint[4]");
+               break;
             case V_PTR32:
                line.append(" of __ptr[4]");
                break;
@@ -768,6 +791,15 @@ void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
                break;
             case V_INT8:
                line.append(" of __int[1]");
+               break;
+            case V_UINT8:
+               line.append(" of __uint[1]");
+               break;
+            case V_INT16:
+               line.append(" of __int[2]");
+               break;
+            case V_UINT16:
+               line.append(" of __uint[2]");
                break;
             case V_WORD32:
                line.append(" of __word[4]");
@@ -1041,6 +1073,10 @@ void ByteCodeViewer :: runSession()
             case 'b':
                _showBytecodes = !_showBytecodes;
                _presenter->print("Bytecode mode is %s", _showBytecodes ? "true" : "false");
+               break;
+            case 't':
+               _ignoreBreakpoints= !_ignoreBreakpoints;
+               _presenter->print("Ignore breakpoint mode is %s", _ignoreBreakpoints ? "true" : "false");
                break;
             case 'h':
                _showMethodInfo = !_showMethodInfo;

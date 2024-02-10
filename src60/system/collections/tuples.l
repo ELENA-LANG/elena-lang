@@ -17,14 +17,14 @@ namespace collections
       {
          index =>
             0 { ^ Item1 }
-            : { OutOfRangeException.raise() }
+            ! { OutOfRangeException.raise() }
       }
 
       setAt(int index, object val)
       {
          index =>
             0 { Item1 := val }
-            : { OutOfRangeException.raise() }
+            ! { OutOfRangeException.raise() }
       }
    }
 
@@ -40,11 +40,6 @@ namespace collections
          Item2 := o2
       }
         
-      constructor(T1 o1)
-      {
-         Item1 := o1
-      }
-        
       T1 Item1 : rprop;
       T2 Item2 : rprop;
 
@@ -53,7 +48,7 @@ namespace collections
          index =>
             0 { ^ Item1 }
             1 { ^ Item2 }
-            : { OutOfRangeException.raise() }
+            ! { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val)
@@ -61,8 +56,12 @@ namespace collections
          index =>
             0 { Item1 := val }
             1 { Item2 := val }
-            : { OutOfRangeException.raise() }
+            ! { OutOfRangeException.raise() }
       }
+
+      Tuple<object,object> cast()
+         = new Tuple<object,object>(Item1, Item2);
+//         = ();        
    }
 
    public sealed VarTuple<T1, T2>
@@ -77,11 +76,6 @@ namespace collections
          Item2 := o2
       }
         
-      constructor(T1 o1)
-      {
-         Item1 := o1
-      }
-        
       T1 Item1 : rprop;
       T2 Item2 : prop;
 
@@ -90,7 +84,7 @@ namespace collections
          index =>
             0 { ^ Item1 }
             1 { ^ Item2 }
-            : { OutOfRangeException.raise() }
+            ! { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val)
@@ -98,7 +92,7 @@ namespace collections
          index =>
             0 { Item1 := val }
             1 { Item2 := val }
-            : { OutOfRangeException.raise() }
+            ! { OutOfRangeException.raise() }
       }
    }
 
@@ -125,7 +119,7 @@ namespace collections
             0 { ^ Item1 }
             1 { ^ Item2 }
             2 { ^ Item3 }
-            : { OutOfRangeException.raise() }
+            ! { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val)
@@ -134,7 +128,7 @@ namespace collections
             0 { Item1 := val }
             1 { Item2 := val }
             2 { Item3 := val }
-            : { OutOfRangeException.raise() }
+            ! { OutOfRangeException.raise() }
       }
    }
 
@@ -151,7 +145,7 @@ namespace collections
          Item3 := o3;
          Item4 := o4
       }
-        
+
       T1 Item1 : rprop;
       T2 Item2 : rprop;
       T3 Item3 : rprop;
@@ -164,7 +158,7 @@ namespace collections
             1 { ^ Item2 }
             2 { ^ Item3 }
             3 { ^ Item4 }
-            : { OutOfRangeException.raise() }
+            ! { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val)
@@ -174,7 +168,7 @@ namespace collections
             1 { Item2 := val }
             2 { Item3 := val }
             3 { Item4 := val }
-            : { OutOfRangeException.raise() }
+            ! { OutOfRangeException.raise() }
       }
    }
 
@@ -207,7 +201,7 @@ namespace collections
             2 { ^ Item3 }
             3 { ^ Item4 }
             4 { ^ Item5 }
-            : { OutOfRangeException.raise() }
+            ! { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val)
@@ -218,7 +212,7 @@ namespace collections
             2 { Item3 := val }
             3 { Item4 := val }
             4 { Item5 := val }
-            : { OutOfRangeException.raise() }
+            ! { OutOfRangeException.raise() }
       }
    }
 
@@ -254,7 +248,7 @@ namespace collections
             3 { ^ Item4 }
             4 { ^ Item5 }
             5 { ^ Item6 }
-            : { OutOfRangeException.raise() }
+            ! { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val)
@@ -266,7 +260,7 @@ namespace collections
             3 { Item4 := val }
             4 { Item5 := val }
             5 { Item6 := val }
-            : { OutOfRangeException.raise() }
+            ! { OutOfRangeException.raise() }
       }
    }
 }

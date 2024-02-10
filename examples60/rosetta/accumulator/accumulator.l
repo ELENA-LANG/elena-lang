@@ -11,7 +11,7 @@ ELENA is OO language, so a function is in fact an object
 */
 
 function(acc)
-    = (n => acc.append:n);
+    = (n => acc.append(n));
 
 accumulator(n)
     = function(new Variable(n));

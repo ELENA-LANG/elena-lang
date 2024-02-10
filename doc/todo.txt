@@ -2,10 +2,46 @@
 In development:
 ------         
 
-  [development]
-    ### EPIC: elena 6.0 - redux ###
-    === Iteration 19 ===
+[development]
+  ### EPIC: elena 6.0 - redux ###
+  === Iteration 19 ===
+  --------------------------------------
+  * build all platforms
 
-    === Iteration 20 ===
+  === Iteration 20 ===
+  --------------------------------------
+  dev: async programming (instant messagange sample (chat) ), #608
+  op:github actions : x86
+  opt: pi - under 8 sec, #601,#602
+  maint:#620, tools:backlog,#616, system module warnings, #622
+  exp:snake game : text / gui version, using expression trees in real-life apps (see c#)
+  ide:backlog (#617), vm debugger, debugger watch - struct
+  tools:
+  prom:
+  port:db samples, gui samples, xforms, x86 mt, x86-64 vm,elenavm / elt for linux
+  --------------------------------------
 
-    === Iteration 21 ===
+  === Iteration 21 ===
+  --------------------------------------
+  dev: 
+  op:
+  opt:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
+  port:
+  --------------------------------------
+
+  === Iteration 22 ===
+  --------------------------------------
+  dev: 
+  op:
+  opt:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
+  port:

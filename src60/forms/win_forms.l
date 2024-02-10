@@ -41,6 +41,11 @@ class SDIWindowListener : SDIWindowCallback
       //TODO : free PermVectorTable entry to reuse it
    }
 
+   onSize(Handle control, int width, int height)
+   {
+      _owner.resize(control, width, height);
+   }
+
    constructor(SDIForm owner)
    {
       _owner := owner

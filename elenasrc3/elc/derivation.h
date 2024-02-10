@@ -124,6 +124,9 @@ namespace elena_lang
       void generateTemplateStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void generateTemplateOperation(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
+      void loadMetaSection(SyntaxNode node);
+      void clearMetaSection(SyntaxNode node);
+
       void flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
@@ -140,6 +143,7 @@ namespace elena_lang
       void flushResend(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushObject(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushNested(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushNullable(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current);
       void flushClosure(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushExpressionCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
@@ -147,6 +151,7 @@ namespace elena_lang
       void flushExpressionMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMethodCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushTupleType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory);
 
       void copyHeader(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool includeType);
       void copyType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
@@ -184,6 +189,7 @@ namespace elena_lang
       void newNode(parse_key_t key, ustr_t arg) override;
       void appendTerminal(parse_key_t key, ustr_t value, LineInfo lineInfo) override;
       void injectNode(parse_key_t key) override;
+      void renameNode(parse_key_t key) override;
 
       void closeNode() override;
 

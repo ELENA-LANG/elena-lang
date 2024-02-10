@@ -28,6 +28,7 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
 {
    _systemTarget = systemTarget;
    _tlsVariable = INVALID_ADDR;
+   _stackReserved = imageInfo.coreSettings.stackReserved;
 
    JITCompilerBase* compiler = jitCompilerFactory(loader, imageInfo.type);
 
@@ -91,7 +92,7 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
       if (_entryPoint == INVALID_POS)
          throw JITUnresolvedException(ReferenceInfo(SYSTEM_FORWARD));
 
-      ustr_t superClass = resolver->resolveForward(SUPER_FORWARD);
+      ustr_t superClass = resolver->resolveForward(NILVALUE_FORWARD);
       linker.complete(compiler, superClass);
 
       freeobj(dummyModule);

@@ -4,6 +4,7 @@
 define EXCEPTION_ACCESS_VIOLATION  101h;
 define ELENA_ERR_DIVIDE_BY_ZERO    102h;
 define ELENA_ERR_OUT_OF_MEMORY     103h;
+define ELENA_ERR_STACKOVERFLOW     105h;
 
 define FUNCTION_MESSAGE       00000020h;
 define PROPERTY_MESSAGE       000000C0h;
@@ -47,8 +48,7 @@ procedure __object_dispatcher
   save
   store      sp:2
 
-  set        class : "system'MethodNotFoundException"
-  store      sp:0
+  xstore     sp:0, class : "system'MethodNotFoundException"
 
   set        mssgconst : "new[3]"
   throw
@@ -90,8 +90,8 @@ procedure __exception_handler
   tst             mssg:"function:#try_invoke[2]"
   jne             Lab01
 
-  set             mssgconst:"fallback[2]"
-  store           sp:1 
+  xstore          sp:1, mssgconst:"fallback[2]"
+
   peek            fp:1 
   store           sp:0 
   peek            fp:-2 
@@ -168,8 +168,7 @@ labDefault:
   save
   store      sp:2
 
-  set        class : "system'MethodNotFoundException"
-  store      sp:0
+  xstore     sp:0, class : "system'MethodNotFoundException"
 
   set        mssgconst : "new[3]"
   throw
@@ -202,8 +201,7 @@ labDefault:
   save
   store      sp:2
 
-  set        class : "system'MethodNotFoundException"
-  store      sp:0
+  xstore     sp:0, class : "system'MethodNotFoundException"
 
   set        mssgconst : "new[3]"
   throw
@@ -714,6 +712,15 @@ procedure __intToByte
 
 end
 
+procedure __intToSByte
+
+  peek       sp:1
+  bload
+  peek       sp:2
+  save
+
+end
+
 procedure __uintToByte
 
   peek       sp:1
@@ -1099,8 +1106,7 @@ procedure __clearPtr(self)
 
   open       (2),[]
 
-  set        nil
-  store      sp:0
+  xstore     sp:0, nil
   peek       fp:self
   xassign    i:0
 
@@ -1259,8 +1265,7 @@ procedure __symbol_load (self, s)
   peek       fp:s
   store      sp:1
 
-  set        class : "system'SymbolLoaderException"
-  store      sp:0
+  xstore     sp:0, class : "system'SymbolLoaderException"
 
   set        mssgconst : "new[2]"
   throw
@@ -1275,10 +1280,20 @@ end
 
 procedure __symbol_copy
 
-  peek       sp:2
-  load
   peek       sp:1
+  load
+  peek       sp:0
   save
+
+end
+
+procedure __symbol_equal
+
+  peek        sp:0
+  load
+  peek        sp:1
+  xcmp
+  seleq       class:"system'BoolValue#true", class:"system'BoolValue#false"
 
 end
 
@@ -1317,8 +1332,7 @@ procedure __classref_load (self, s)
   peek       fp:s
   store      sp:1
 
-  set        class : "system'TypeLoaderException"
-  store      sp:0
+  xstore     sp:0, class : "system'TypeLoaderException"
 
   set        mssgconst : "new[2]"
   throw
@@ -1369,8 +1383,7 @@ procedure __message_load (self, s)
   cmp  n:0
   jne  labExit
 
-  set        class : "system'InvalidArgumentException"
-  store      sp:0
+  xstore     sp:0, class : "system'InvalidArgumentException"
 
   set        mssgconst : "new[1]"
   throw
@@ -1403,8 +1416,7 @@ procedure __messagename_loadbystr (self, s)
   cmp  n:0
   jne  labExit
 
-  set        class : "system'InvalidArgumentException"
-  store      sp:0
+  xstore     sp:0, class : "system'InvalidArgumentException"
 
   set        mssgconst : "new[1]"
   throw
@@ -1470,8 +1482,7 @@ labDefault:
   save
   store      sp:2
 
-  set        class : "system'MethodNotFoundException"
-  store      sp:0
+  xstore     sp:0, class : "system'MethodNotFoundException"
 
   set        mssgconst : "new[3]"
   throw
@@ -1696,8 +1707,7 @@ labDefault2:
   save
   store      sp:2
 
-  set        class : "system'MethodNotFoundException"
-  store      sp:0
+  xstore     sp:0, class : "system'MethodNotFoundException"
 
   set        mssgconst : "new[3]"
   throw
@@ -1762,8 +1772,7 @@ labError:
   save
   store      sp:2
 
-  set        class : "system'MethodNotFoundException"
-  store      sp:0
+  xstore     sp:0, class : "system'MethodNotFoundException"
 
   set        mssgconst : "new[3]"
   throw
@@ -2043,8 +2052,7 @@ labDefault:
   save
   store      sp:2
 
-  set        class : "system'MethodNotFoundException"
-  store      sp:0
+  xstore     sp:0, class : "system'MethodNotFoundException"
 
   set        mssgconst : "new[3]"
   throw
@@ -2116,8 +2124,7 @@ labEnd:
   save
   store      sp:2
 
-  set        class : "system'MethodNotFoundException"
-  store      sp:0
+  xstore     sp:0, class : "system'MethodNotFoundException"
 
   set        mssgconst : "new[3]"
   throw
@@ -2192,8 +2199,7 @@ labEnd:
   save
   store      sp:2
 
-  set        class : "system'MethodNotFoundException"
-  store      sp:0
+  xstore     sp:0, class : "system'MethodNotFoundException"
 
   set        mssgconst : "new[3]"
   throw
@@ -2301,8 +2307,10 @@ labSpecial:
   store       sp:2
   set         dp:index
   store       sp:1
-  set         class:"system'text'UTF8Encoding"
-  store       sp:0
+
+  xstore      sp:0, class:"system'text'UTF8Encoding"
+  peek        sp:0
+
   mov         mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
   call        mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]", class:"system'text'UTF8Encoding"
 
@@ -2322,8 +2330,7 @@ labSpecial:
 
 labTerminator:
   load       dp:ptr
-  set        terminator
-  store      sp:0
+  xstore     sp:0, terminator
   set        fp:0
   xassign
   nadd       dp:ptr, -1
@@ -2392,13 +2399,14 @@ labNotFound:
   store      sp:2
   set        dp:index
   store      sp:1
-  set        class:"system'text'UTF8Encoding"
-  store      sp:0
+
+  xstore     sp:0, class:"system'text'UTF8Encoding"
+  peek       sp:0
+
   mov        mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
   call       mssg:"toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]", class:"system'text'UTF8Encoding"
   store      sp:1
-  set        class : "system'TypeLoaderException"
-  store      sp:0
+  xstore     sp:0, class : "system'TypeLoaderException"
 
   set        mssgconst : "new[2]"
   throw
@@ -2511,27 +2519,31 @@ procedure critical_exception_handler
   cmp         n:ELENA_ERR_OUT_OF_MEMORY
   jeq         labOutOfMemory
 
-  set         class : "system'CriticalException"
-  store       sp:0
+  cmp         n:ELENA_ERR_STACKOVERFLOW
+  jeq         labStackOverflow
+
+  xstore      sp:0, class : "system'CriticalException"
   set         mssgconst : "new[1]"
   throw
 
 labAccessViolation:
-  set         class : "system'NilReferenceException"
-  store       sp:0
+  xstore      sp:0, class : "system'NilReferenceException"
   set         mssgconst : "new[1]"
   throw
 
 labDivisionByZero:
-  set         class : "system'DivisionByZeroException"
-  store       sp:0
+  xstore      sp:0, class : "system'DivisionByZeroException"
   set         mssgconst : "new[1]"
   throw
 
 labOutOfMemory:
-  set         class : "system'OutOfMemoryException"
-  store       sp:0
-  set         mssgconst : "new[0]"
+  xstore      sp:0, class : "system'OutOfMemoryException"
+  set         mssgconst : "new[1]"
+  throw
+
+labStackOverflow:
+  xstore      sp:0, class : "system'StackOverflowException"
+  set         mssgconst : "new[1]"
   throw
 
 end

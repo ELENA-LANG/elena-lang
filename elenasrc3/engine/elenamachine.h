@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Machine common types
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENAMACHINE_H
@@ -127,6 +127,8 @@ namespace elena_lang
 
       static size_t LoadMessages(MemoryBase* msection, void* classPtr, mssg_t* output, size_t skip,
          size_t maxLength, bool vmMode);
+
+      static bool CheckMessage(MemoryBase* msection, void* classPtr, mssg_t message);
 
       static void RaiseError(int code);
 

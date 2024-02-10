@@ -10,7 +10,7 @@
 
 namespace elena_lang
 {
-   constexpr auto MessageLength = 88;
+   constexpr auto MessageLength = 92;
    const Pair<int, const char*, 0, nullptr> Messages[MessageLength] =
    {
       {errDuplicatedSymbol, errMsgDuplicatedSymbol},
@@ -66,6 +66,9 @@ namespace elena_lang
       {errDupInternalMethod, errMsgDupInternalMethod},
       {infoNewMethod, infoMsgNewMethod},
       {infoCurrentMethod, infoMsgCurrentMethod},
+      {infoUnknownMessage, infoMsgUnknownMessage},
+      {infoTargetClass, infoMsgTargetClass},
+      {infoScopeMethod, infoMsgScopeMethod},
       {infoCurrentClass, infoMsgCurrentClass},
       {infoAbstractMetod, infoMsgAbstractMetod},
       {errClosedParent, errMsgClosedParent},
@@ -100,7 +103,8 @@ namespace elena_lang
       {errMixedUpVariadicMessage, errMsgMixedUpVariadicMessage},
       {infoMixedUpVariadic, infoMssgMixedUpVariadic},
       {errRedirectToItself, errMsgRedirectToItself},
-      {errIllegalStaticMethod, errMsgIllegalStaticMethod }
+      {errIllegalStaticMethod, errMsgIllegalStaticMethod },
+      {errAssigningRealOnly, errMssgAssigningRealOnly }
    };
 
 }

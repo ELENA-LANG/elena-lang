@@ -86,7 +86,7 @@ namespace io
       {
          int retVal := 0;
 
-         for (int i := 0, i < len, i += 1)
+         for (int i := 0; i < len; i++)
          {
             retVal += 1;
 

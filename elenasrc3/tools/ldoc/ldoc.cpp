@@ -269,6 +269,43 @@ void parseTemplateName(IdentifierString& line)
    line.append("&gt;");
 }
 
+void retrieveTemplateType(IdentifierString& line)
+{
+   IdentifierString temp(*line);
+   IdentifierString ns;
+
+   line.clear();
+
+   size_t last = 0;
+   bool first = true;
+   for (size_t i = 0; i < temp.length(); i++) {
+      if (temp[i] == '@') {
+         if (!first)
+            temp[i] = '\'';
+         last = i;
+      }
+      else if (temp[i] == '#') {
+         ns.copy(*temp + 1, last);
+         ns.replaceAll('@', '\'', 0);
+         line.append(*ns);
+         line.append((*temp) + last + 1, i - last - 1);
+      }
+      else if (temp[i] == '&') {
+         if (first) {
+            line.append("&lt;");
+            first = false;
+         }
+         else {
+            line.append((*temp) + last + 1, i - last - 1);
+            line.append(',');
+         }
+      }
+   }
+
+   line.append((*temp) + last + 1);
+   line.append("&gt;");
+}
+
 void parseTemplateName(ReferenceProperName& name)
 {
    IdentifierString temp(*name);
@@ -1056,7 +1093,7 @@ bool validateTemplateType(IdentifierString& type, bool templateBased, bool argMo
          if (isTemplateWeakReference(*type))
             type.cut(0, 6);
 
-         parseTemplateName(type);
+         retrieveTemplateType(type);
       }
       else if ((*type).findStr("$private'T") != NOTFOUND_POS) {
          size_t index = (*type).findLast('\'');

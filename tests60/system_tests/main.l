@@ -46,6 +46,11 @@ public program()
    methodNotFoundTest();
    nilReferenceTest();
    structTest();
+   lookaheadTests();
+   incTest();
+   multiValTest();
+   defaultTest();
+   retValTests();
 
    console.writeLine("--- Passed ---")
 }

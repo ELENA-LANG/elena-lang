@@ -45,6 +45,9 @@ public const int MB_RETRYCANCEL       = 00000005h;
 public const int MB_YESNO             = 00000004h;
 public const int MB_YESNOCANCEL       = 00000003h;
 
+public const int BM_SETCHECK          = 00F1h;
+public const int BM_GETCHECK          = 00F0h;
+
 public const int IDNO                 = 7;
 public const int IDOK                 = 1;
 public const int IDRETRY              = 4;
@@ -91,3 +94,11 @@ public const int WM_DESTROY       = 02h;
 public const int WM_SETTEXT       = 0Ch;
 public const int WM_GETTEXT       = 0Dh;
 public const int WM_GETTEXTLENGTH = 0Eh;
+public const int WM_PAINT         = 0Fh;
+
+public const int OFN_PATHMUSTEXIST = 00000800h;
+public const int OFN_EXPLORER      = 00080000h;
+public const int OFN_LONGNAMES     = 00200000h;
+public const int OFN_HIDEREADONLY  = 00000004h;
+
+public const int DS_CENTER         = 0800h;

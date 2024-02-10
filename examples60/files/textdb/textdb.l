@@ -84,11 +84,11 @@ class Record
 public program() 
 {
     if (program_arguments.Length == 1)
-        { console.write:"Please provide the path to the file to view"; AbortException.raise() };
+        { console.write("Please provide the path to the file to view"); AbortException.raise() };
 
     var db := new List().append(new Record());
     
-    File.assign(program_arguments[1]).forEachLine:(line)
+    File.assign(program_arguments[1]).forEachLine::(line)
     {
         if (line.Length == 0)
         { 
@@ -97,7 +97,7 @@ public program()
         else
         {
             // split record line                    
-            var keyValue := line.splitBy:":";
+            var keyValue := line.splitBy(":");
             var name  := keyValue[0];
             var value := keyValue[1];
 
@@ -109,7 +109,7 @@ public program()
     };
     
     // print the list
-    db.forEach:printingLn;
+    db.forEach(printingLn);
 
     console.readChar()
 }

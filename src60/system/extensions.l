@@ -9,7 +9,7 @@ public extension objectOp
                   info("Returns the object class");
 
    bool safeEqual(o)
-      = self.equal:o \ back:false;
+      = self.equal(o) \ back(false);
 
    bool isEmpty()
    {
@@ -63,7 +63,7 @@ public extension byteOp : ByteNumber
       byte x := self;
       byte r := 1;
         
-      for (int i := 0, i < y, i += 1)
+      for (int i := 0; i < y; i += 1)
       {
          r := r * x
       };
@@ -100,10 +100,10 @@ public extension byteOp : ByteNumber
    }
 
    bool isOdd()
-      = self.mod:2 != 0;
+      = self.mod(2) != 0;
         
    bool isEven()
-      = self.mod:2 == 0;
+      = self.mod(2) == 0;
         
    bool isZero()
       = self.equal(0);
@@ -149,7 +149,7 @@ public extension shortOp : ShortNumber
       short x := self;
       short r := 1;
         
-      for (int i := 0, i < y, i += 1)
+      for (int i := 0; i < y; i += 1)
       {
          r := r * x
       };
@@ -186,10 +186,10 @@ public extension shortOp : ShortNumber
    }    
 
    bool isOdd()
-      = self.mod:2 != 0;
+      = self.mod(2) != 0;
         
    bool isEven()
-      = self.mod:2 == 0;
+      = self.mod(2) == 0;
         
    bool isZero()
       = self.equal(0);
@@ -202,6 +202,23 @@ public extension shortOp : ShortNumber
         
    bool isNonnegative()
       = self <= 0;
+
+   get byte High()
+   {
+      short w := self;
+      w := w & 0FF00h;
+      w := w.shiftRight(8);
+        
+      ^ byteConvertor.convert(w)
+   }
+        
+   get byte Low()
+   {
+      short w := self;
+      w := w & 0FFh;
+        
+      ^ byteConvertor.convert(w)
+   }
 }
 
 // --- intOp ---
@@ -236,7 +253,7 @@ public extension intOp : IntNumber
       if (x == 0)
          { r := 0 };
         
-      for(int i := 0, i < y, i += 1)
+      for(int i := 0; i < y; i += 1)
       {
          r := r * x
       };
@@ -266,7 +283,7 @@ public extension intOp : IntNumber
    }
 
    real realDiv(n)
-      = new RealNumber(self).divide:n;
+      = new RealNumber(self).divide(n);
 
    int mod(int operand)
    {
@@ -285,10 +302,10 @@ public extension intOp : IntNumber
    }
 
    bool isOdd()
-      = self.mod:2 != 0;
+      = self.mod(2) != 0;
         
    bool isEven()
-      = self.mod:2 == 0;
+      = self.mod(2) == 0;
         
    bool isZero()
       = self.equal(0);
@@ -351,13 +368,13 @@ public extension uintOp : UIntNumber
       = self.mod(cast uint(operand));
 
    real realDiv(n)
-      = new RealNumber(self).divide:n;
+      = new RealNumber(self).divide(n);
 
    bool isOdd()
-      = self.mod:2 != 0;
+      = self.mod(2) != 0;
         
    bool isEven()
-      = self.mod:2 == 0;
+      = self.mod(2) == 0;
         
    bool isZero()
       = self.equal(0);
@@ -381,7 +398,7 @@ public extension longOp : LongNumber
       long x := self;
       long r := 1;
         
-      for(long i := 0l, i < y, i += 1l)
+      for(long i := 0l; i < y; i += 1l)
       {
          r := r * x;
       };
@@ -427,7 +444,7 @@ public extension longOp : LongNumber
    }
 
    real realDiv(n)
-      = new RealNumber(self).divide:n;
+      = new RealNumber(self).divide(n);
 
    long mod(long operand)
    {
@@ -450,10 +467,10 @@ public extension longOp : LongNumber
    }
 
    bool isOdd()
-      = self.mod:2l != 0l;
+      = self.mod(2l) != 0l;
         
    bool isEven()
-      = self.mod:2l == 0l;
+      = self.mod(2l) == 0l;
         
    bool isZero()
       = self.equal(0l);
@@ -790,11 +807,9 @@ public extension stringOp : String
          len := len - index;
             
          ^ self.Substring(index, len)
-      }
-      else
-      {
-         ^ emptyString
-      }        
+      };
+
+      ^ emptyString
    }
 
    int indexOf(string s)
@@ -965,11 +980,9 @@ public extension stringOp : String
       if(start != 0)
       {
          ^ target.add(self.Substring(start))
-      }
-      else
-      {
-         ^ self
-      }
+      };
+
+      ^ self
    }   
 }
 
@@ -1040,7 +1053,7 @@ public extension weakArrayOp
         it.Index := index;
         
         auto a := Array.allocate(length);
-        for (int i := 0, i < length, i += 1)
+        for (int i := 0; i < length; i += 1)
         {
             a[i] := *it;
             
@@ -1064,7 +1077,7 @@ public extension stringWeakOp
 {
    fillString(s, int counter)
    {
-      for (int i := 0, i < counter, i += 1)
+      for (int i := 0; i < counter; i += 1)
       {
             self.write(s)
       };

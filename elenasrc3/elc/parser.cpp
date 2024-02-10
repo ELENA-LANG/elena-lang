@@ -83,12 +83,27 @@ bool Parser :: derive(TerminalInfo& terminalInfo, ParserStack& stack, SyntaxWrit
       }
       else {
          if (traceble) {
-            if (!test(current, pkInjectable)) {
+            if (!testany(current, pkInjectable)) {
                stack.push(0);
                writer->newNode(current);
             }
             else {
-               writer->injectNode(current & ~pkInjectable);
+               parse_key_t key = current & ~pkAnySymbolMask;
+               switch (key) {
+                  case pkClose:
+                     writer->closeNode();
+                     break;
+                  case pkDiscard:
+                     stack.pop();
+                     break;
+                  default:
+                     if (test(current, pkInjectable)) {
+                        writer->injectNode(current & ~pkInjectable);
+                     }
+                     else writer->renameNode(current & ~pkRenaming);
+                     break;
+               }
+
                current = stack.pop();
                continue;
             }

@@ -1,5 +1,5 @@
 #!/bin/bash
-RELEASE=elena-6.0.6.ppc64le-linux
+RELEASE=elena-6.0.7.ppc64le-linux
 
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
@@ -8,6 +8,7 @@ mkdir -p /usr/lib/elena/core/ppc64le/
 mkdir -p /usr/lib/elena/lib60_64
 
 cp ../../bin/libelenart60_64.so /usr/lib/elena/
+cp ../../bin/libelenasm60_64.so /usr/lib/elena/
 # cp ../bin/libelenavm.so /usr/lib/elena/
 cp ../../bin/elena64-cli /usr/bin/
 
@@ -173,7 +174,8 @@ fi
 
  echo compiling shared files
 
- cp ../../dat/og/bt_rules.txt ./$RELEASE/usr/share/elena
+ cp ../../dat/og/bt_rules60.dat ./$RELEASE/usr/share/elena
+ cp ../../dat/og/bc_rules60.dat ./$RELEASE/usr/share/elena
  cp ../../dat/sg/syntax60.dat ./$RELEASE/usr/share/elena
 
  echo copying binaries

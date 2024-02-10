@@ -20,7 +20,7 @@ public singleton Assert
    {
       var failed := false;
       f() \\ 
-         on:(e)
+         on::(e)
          {
             failed := true;
          };
@@ -42,6 +42,19 @@ public singleton Assert
       {
          AssertException.raise("Assertion failed")
       }
+   }
+
+   ifNil(b)
+   {
+      ifnot(nil == b)
+      {
+         AssertException.raise("Assertion failed")
+      }
+   }
+
+   ifInstanceOf(object, class)
+   {
+      Assert.ifTrue(object.instanceOf(class));
    }
 }
 

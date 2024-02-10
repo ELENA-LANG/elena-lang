@@ -85,7 +85,7 @@ namespace collections
 
             cap := *_capacity;
             Array newArray := Array.allocate(cap);
-            for(int i := 0, i < len, i := i + 1)
+            for(int i := 0; i < len; i := i + 1)
             {
                newArray[i] := _array[i];
             };
@@ -110,7 +110,7 @@ namespace collections
          if (nil != subarray)
          {
             int len := subarray.Length;
-            for(int i := 0, i < len, i += 1)
+            for(int i := 0; i < len; i += 1)
             {
                self.append(subarray.at(i))
             }
@@ -403,7 +403,7 @@ namespace collections
          var int[] backet := /*cast int[](*/hashItem/*)*/;
          int  length := backet[0];
 
-         for (int i := 1, i < length, i += 1)
+         for (int i := 1; i < length; i += 1)
          {
             int itemIndex := backet[i];
 
@@ -417,7 +417,7 @@ namespace collections
 
          int i := _list.Length;
 
-         _list.append:newItem;
+         _list.append(newItem);
 
          // Extend a backet
          int capacity := backet.Length;
@@ -499,7 +499,7 @@ namespace collections
          var int[] backet := /*cast int[](*/hashItem/*)*/;
          int  length := backet[0];
 
-         for (int i := 1, i < length, i += 1)
+         for (int i := 1; i < length; i += 1)
          {
             int itemIndex := backet[i];
 
@@ -852,7 +852,7 @@ namespace collections
          _capacity := size;
          _array := new T[](size);
             
-         for(int i := 0, i < len, i += 1)
+         for(int i := 0; i < len; i += 1)
          {
             _array[i] := a[i]
          }
@@ -891,7 +891,7 @@ namespace collections
          _capacity := size;
          _array := new T[](size);
             
-         for(int i := 0, i < len, i += 1)
+         for(int i := 0; i < len; i += 1)
          {
             int j := i + index;
                 
@@ -921,7 +921,7 @@ namespace collections
                 
             var T[] newArray := new T[](cap);
     
-            for(int i := 0, i < len, i += 1)
+            for(int i := 0; i < len; i += 1)
             {
                //newArray[i] := theArray[i]
                T tmp := _array[i];
@@ -965,9 +965,6 @@ namespace collections
          _length.append(1)
       }
     
-      append(object)
-         <= append(cast T(object));
-    
       appendRange(Enumerator<T> e)
       {
          while(e.next())
@@ -983,7 +980,7 @@ namespace collections
          self.expand();
             
          int len := *_length;
-         for (int i := len, i > index, i -= 1)
+         for (int i := len; i > index; i -= 1)
          {
             _array[i] := _array[i - 1]
          };
@@ -1065,7 +1062,7 @@ namespace collections
          int len := *_length;
          var T[] copy := new T[](len);
             
-         for (int i := 0, i < len, i += 1)
+         for (int i := 0; i < len; i += 1)
          {
             copy[i] := _array[i]
          };

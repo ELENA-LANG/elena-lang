@@ -21,7 +21,7 @@ fib(n)
 
 public program()
 {
-   for (int i := -1, i <= 10, i += 1) 
+   for (int i := -1; i <= 10; i += 1) 
    {
       console.print("fib(",i,")=");
       try
@@ -30,7 +30,7 @@ public program()
       }
       catch(Exception e)
       {
-         console.printLine:"invalid"
+         console.printLine("invalid")
       }
    };
     

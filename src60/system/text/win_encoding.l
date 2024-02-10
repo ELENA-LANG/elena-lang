@@ -25,7 +25,7 @@ namespace text
             tmp,
             tmpLen, buffer, length, 0, 0);
 
-         for (int i := 0, i < retVal, i += 1) {
+         for (int i := 0; i < retVal; i += 1) {
             byteArray[index + i] := buffer[i]
          };
 

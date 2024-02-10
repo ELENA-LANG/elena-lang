@@ -121,7 +121,7 @@ namespace io
     
    public SearchFiles(string path, string mask, List<string> output)
    {
-      WIN32_FIND_DATA ffd;
+      WIN32_FIND_DATA ffd := default;
       handle          hFind;  
         
       wide criteria := path + "\" + mask;
@@ -167,7 +167,7 @@ namespace io
     
    public SearchDirectories(string path, string mask, List<string> output)
    {
-      WIN32_FIND_DATA ffd;
+      WIN32_FIND_DATA ffd := default;
       handle          hFind;  
         
       wide criteria := path + "\" + mask;

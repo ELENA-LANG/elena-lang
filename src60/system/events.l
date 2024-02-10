@@ -14,7 +14,7 @@ public sealed EventHandler<TF>
         
       TF[] functions := new TF[](len + 1);
 
-      for (int i := 0, i < len, i += 1) {
+      for (int i := 0; i < len; i += 1) {
          functions[i] := this functions[i]
       };
         

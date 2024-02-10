@@ -72,7 +72,7 @@ public extension fileExOp : File
 
 // --- printingLn ---
 
-public symbol printingLn = (line){ console.printLine:line };
+public symbol printingLn = (line){ console.printLine(line) };
 
 // --- func1Op ---
 

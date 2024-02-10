@@ -61,7 +61,7 @@ namespace elena_lang
          TemplateGenerator(CompilingProcess* process);
       };
 
-      path_t              _prologName, _epilogName;
+      path_t              _modulePrologName, _prologName, _epilogName;
 
       PresenterBase*      _presenter;
       ErrorProcessor*     _errorProcessor;
@@ -80,6 +80,8 @@ namespace elena_lang
       MemoryDump          _btRules;
 
       bool                _verbose;
+
+      IdentifierList      _forwards;
 
       void buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode, 
          ExtensionMap* outerExtensionList);
@@ -120,6 +122,11 @@ namespace elena_lang
       void link(Project& project, LinkerBase& linker, bool withTLS);
 
    public:
+      void addForward(ustr_t f)
+      {
+         _forwards.add(f.clone());
+      }
+
       void greeting();
       int build(Project& project, 
          LinkerBase& linker, 
@@ -129,7 +136,13 @@ namespace elena_lang
          int minimalArgList);
       int clean(Project& project);
 
-      CompilingProcess(PathString& appPath, path_t prologName, path_t epilogName,
+      void setVerboseOn()
+      {
+         _verbose = true;
+         _compiler->setVerboseOn();
+      }
+
+      CompilingProcess(PathString& appPath, path_t modulePrologName, path_t prologName, path_t epilogName,
          PresenterBase* presenter, ErrorProcessor* errorProcessor,
          pos_t codeAlignment,
          JITSettings defaultCoreSettings,

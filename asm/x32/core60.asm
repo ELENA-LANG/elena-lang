@@ -864,6 +864,22 @@ inline %476h
 
 end
 
+// ; xsaven
+inline %077h
+
+  mov  eax, __n_1
+  mov  dword ptr [ebx], eax
+
+end
+
+// ; xsaven
+inline %177h
+
+  xor  eax, eax
+  mov  dword ptr [ebx], eax
+
+end
+
 // ; fabsdp
 inline %078h
 
@@ -2188,6 +2204,14 @@ inline %0D4h
   mov  eax, [ebp+__arg32_1]
   div  dword ptr [esi]
   mov  [ebp+__arg32_1], eax
+
+end
+
+// ; xsavedispn
+inline %0D5h
+
+  mov  eax, __n_2
+  mov  [ebx+__arg32_1], eax
 
 end
 
@@ -3642,7 +3666,7 @@ labMatching:
   cmovz edi, esi
 
   mov  edi, [edi - elVMTOffset]
-  mov  esi, [ebx + ecx * 4]
+  mov  esi, [ebx + ecx * 4 + 4]
 
 labNextBaseClass:
   cmp  esi, edi

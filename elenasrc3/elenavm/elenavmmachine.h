@@ -143,6 +143,11 @@ namespace elena_lang
          return __routineProvider.GetRandomNumber(seed);
       }
 
+      pos_t getStackReserved() override
+      {
+         return _settings.jitSettings.stackReserved;
+      }
+
       ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
          int codeAlignment, JITSettings gcSettings,
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType));

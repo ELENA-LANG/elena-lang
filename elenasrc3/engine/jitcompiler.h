@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT compiler class.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef JITCOMPILER_H
@@ -98,6 +98,7 @@ namespace elena_lang
 
       friend void* retrieveCode(JITCompilerScope* scope);
       friend void* retrieveIndexRCode(JITCompilerScope* scope);
+      friend void* retrieveFrameIndexRCode(JITCompilerScope* scope);
       friend void* retrieveCodeWithNegative(JITCompilerScope* scope);
       friend void* retrieveICode(JITCompilerScope* scope, int arg);
       friend void* retrieveRCode(JITCompilerScope* scope, int arg);
@@ -133,6 +134,7 @@ namespace elena_lang
       friend void loadVMTROp(JITCompilerScope* scope);
       friend void loadDPNOp(JITCompilerScope* scope);
       friend void loadDPNOp2(JITCompilerScope* scope);
+      friend void loadDispNOp(JITCompilerScope* scope);
       friend void loadDPROp(JITCompilerScope* scope);
       friend void loadDPLabelOp(JITCompilerScope* scope);
       friend void loadIOp(JITCompilerScope* scope);
@@ -208,6 +210,8 @@ namespace elena_lang
          writer->writeDWord(value);
       }
 
+      void writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
+
       void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) override;
 
       void populatePreloaded(
@@ -278,6 +282,7 @@ namespace elena_lang
       pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName, 
          ref_t weakActionRef, ref_t signature, bool virtualMode) override;
       pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode) override;
+      void addActionEntryStopper(MemoryWriter& messageWriter) override;
       void addSignatureStopper(MemoryWriter& messageWriter) override;
 
       void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) override;
@@ -293,7 +298,6 @@ namespace elena_lang
       void writeExtMessage(MemoryWriter& writer, Pair<mssg_t, addr_t> extensionInfo, bool virtualMode) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
       void writeVariable(MemoryWriter& writer) override;
-      void writeDump(MemoryWriter& writer, SectionInfo* sectionInfo) override;
 
       void writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode) override;
 
@@ -355,6 +359,7 @@ namespace elena_lang
       pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName, ref_t weakActionRef, 
          ref_t signature, bool virtualMode) override;
       pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode) override;
+      void addActionEntryStopper(MemoryWriter& messageWriter) override;
       void addSignatureStopper(MemoryWriter& messageWriter) override;
 
       void addBreakpoint(MemoryWriter& writer, MemoryWriter& codeWriter, bool virtualMode) override;
@@ -370,7 +375,7 @@ namespace elena_lang
       void writeExtMessage(MemoryWriter& writer, Pair<mssg_t, addr_t> extensionInfo, bool virtualMode) override;
       void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
       void writeVariable(MemoryWriter& writer) override;
-      void writeDump(MemoryWriter& writer, SectionInfo* sectionInfo) override;
+      void writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) override;
 
       void writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode) override;
 
@@ -392,6 +397,7 @@ namespace elena_lang
 
    inline void* retrieveCode(JITCompilerScope* scope);
    inline void* retrieveIndexRCode(JITCompilerScope* scope);
+   inline void* retrieveFrameIndexRCode(JITCompilerScope* scope);
    inline void* retrieveCodeWithNegative(JITCompilerScope* scope);
    inline void* retrieveICode(JITCompilerScope* scope, int arg);
    inline void* retrieveRCode(JITCompilerScope* scope, int arg);
@@ -428,6 +434,7 @@ namespace elena_lang
    void loadVMTROp(JITCompilerScope* scope);
    void loadDPNOp(JITCompilerScope* scope);
    void loadDPNOp2(JITCompilerScope* scope);
+   void loadDispNOp(JITCompilerScope* scope);
    void loadDPROp(JITCompilerScope* scope);
    void loadDPLabelOp(JITCompilerScope* scope);
    void loadIOp(JITCompilerScope* scope);

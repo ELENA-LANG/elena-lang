@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Machine declaration
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -263,6 +263,9 @@ int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
       i += getlength(ns) + 1;
    }
 
+   // HOTFIX : putting terminator
+   ((addr_t*)output)[len] = 0;
+
    return len;
 }
 
@@ -334,6 +337,13 @@ void ELENARTMachine :: startThread(SystemEnv* env, void* entry, int index)
 
    // winding down thread
    //ExitThread(retVal);
+}
+
+bool ELENARTMachine :: checkClassMessage(void* classPtr, mssg_t message)
+{
+   ImageSection msection(_mdata, 0x1000000);
+
+   return SystemRoutineProvider::CheckMessage(&msection, classPtr, message);
 }
 
 size_t ELENARTMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_t skip, size_t maxLength)

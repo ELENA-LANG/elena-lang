@@ -80,6 +80,46 @@ public sealed struct Point
     }
 }
 
+// --- Dimension ---
+
+public sealed struct Dimension //:: BaseValue
+{
+   int _width;
+   int _height;
+    
+   constructor()
+   {
+      _width := 0;
+      _height := 0
+   }
+    
+   constructor(int width, int height)
+   {
+      _width := width;
+      _height := height
+   }
+    
+   int Width
+   {
+      get() = _width;
+        
+      set(v)
+      {
+         _width := v
+      }
+   }
+
+   int Height
+   {
+      get() = _height;
+        
+      set(v)
+      {
+         _height := v
+      }
+   }
+}
+
 public sealed struct Region //: BaseValue
 {
    int _x;
@@ -162,5 +202,20 @@ public sealed struct Region //: BaseValue
       width := _width;
       height := _height;
    }
+    
+   writeDimension(int width, int height)
+   {
+      _width := width;
+      _height := height
+   }
    
+   readDimensionTo(ref int width, ref int height)
+   {
+      width := _width;
+      height := _height;
+   }
+    
+   Dimension Dimension
+      = new Dimension(_width, _height);
+
 }

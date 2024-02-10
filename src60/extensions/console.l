@@ -8,7 +8,7 @@ public extension outputOp
    print(params object[] list)
    {
       int len := list.Length;
-      for(int i := 0, i < len, i := i + 1)
+      for(int i := 0; i < len; i := i + 1)
       {
          object obj := list[i];
 
@@ -19,7 +19,7 @@ public extension outputOp
    printLine(params object[] list)
    {
       int len := list.Length;
-      for(int i := 0, i < len, i := i + 1)
+      for(int i := 0; i < len; i := i + 1)
       {
          object obj := list[i];
 
@@ -142,7 +142,7 @@ public extension outputPaddingOp
       auto buffer := new TextBuilder();
         
       int len := list.Length;
-      for (int i := 0, i < len, i += 1)
+      for (int i := 0; i < len; i += 1)
       {
          object obj := list[i];
             
@@ -159,7 +159,7 @@ public extension outputPaddingOp
       auto buffer := new TextBuilder();
         
       int len := list.Length;
-      for (int i := 0, i < len, i += 1)
+      for (int i := 0; i < len; i += 1)
       {
          object obj := list[i];
             
@@ -178,7 +178,7 @@ public extension inputOp
    {
       var line := self.readLine();
         
-      line.convertTo:var;
+      line.convertTo(var);
         
       ^ var
    }
@@ -190,7 +190,7 @@ public extension inputOp
       Array params := line.splitBy($32);
 
       int len := args.Length;
-      for(int i := 0, i < len, i := i + 1)
+      for(int i := 0; i < len; i := i + 1)
       {
          params[i].convertTo(args[i]);
       };

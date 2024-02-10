@@ -356,7 +356,6 @@ void JITLinker::JITLinkerReferenceHelper :: writeMDataRef32(MemoryBase& target, 
    else ::writeVAddress32(&target, position, 0, disp, addressMask, _owner->_virtualMode);
 }
 
-
 void JITLinker::JITLinkerReferenceHelper :: writeVAddress32(MemoryBase& target, pos_t position, addr_t vaddress, 
    pos_t disp, ref_t addressMask)
 {
@@ -1189,7 +1188,8 @@ addr_t JITLinker :: resolveConstantDump(ReferenceInfo referenceInfo, SectionInfo
 
    _mapper->mapReference(referenceInfo, vaddress, sectionMask);
 
-   _compiler->writeDump(writer, &sectionInfo);
+   JITLinkerReferenceHelper helper(this, sectionInfo.module, &references);
+   _compiler->writeDump(&helper, writer, &sectionInfo);
 
    fixReferences(references, image);
 
@@ -1287,7 +1287,6 @@ ustr_t JITLinker :: retrieveResolvedAction(ref_t reference)
    ref_t dummy = 0;
    return _mapper->retrieveAction(reference, dummy);
 }
-
 
 addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMask)
 {
@@ -1477,6 +1476,10 @@ void JITLinker :: prepare(JITCompilerBase* compiler)
    // prepare jit compiler
    _compiler->prepare(_loader, _imageProvider, &helper, nullptr, _jitSettings, _virtualMode);
 
+   //// set predefined references
+   //// - nil
+   //_mapper->mapReference({ VOID_FORWARD }, (addr_t)_compiler->getVoid(), mskVMTRef);
+
    // fix not loaded references
    fixReferences(references, _imageProvider->getTextSection());
 }
@@ -1487,6 +1490,13 @@ void JITLinker :: complete(JITCompilerBase* compiler, ustr_t superClass)
       // set voidobj
       addr_t superAddr = resolve(superClass, mskVMTRef, true);
       compiler->updateVoidObject(_imageProvider->getRDataSection(), superAddr, _virtualMode);
+   }
+
+   // terminate the mdata table with zero records for virtual mode
+   if (_virtualMode) {
+      MemoryBase* mSection = _imageProvider->getMDataSection();
+      MemoryWriter mWriter(mSection);
+      compiler->addActionEntryStopper(mWriter);
    }
 
    // fix message body references

@@ -16,20 +16,25 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>6.0.1</version>
+     <version>6.0.3</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
-     <module name="predefined">
-        <include>predefined\attributes.l</include>
-        <include>predefined\predefined.l</include>
+     <module name="attributes" hints="2">
+        <include>attributes\attributes.l</include>
      </module>
-     <module name="operations">
+     <module name="predefined" hints="2">
+        <include>predefined\predefined.l</include>
+        <include>predefined\aliases.l</include>
+     </module>
+     <module name="operations" hints="2">
         <include>operations\inline.l</include>
         <include>operations\operations.l</include>
      </module>
-     <module>
-        <include>aliases.l</include>
+     <module name="operations'advanced" hints="2">
+        <include>operations\advanced\operations.l</include>
+     </module>
+     <module hints="1">
         <include>base.l</include>
         <include>object.l</include>
         <include>basic.l</include>
@@ -101,6 +106,8 @@
      </module>
      <module name="drawing">
        <include>drawing\common.l</include>
+       <include>drawing\win_handles.l</include>
+       <include>drawing\win_graphics.l</include>
      </module>
      <module name="winforms">
        <include>winforms\win_common.l</include>

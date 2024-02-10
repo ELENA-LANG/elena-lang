@@ -37,14 +37,14 @@ class AmbValueCollection
     
     constructor new(params object[] args)
     {
-        _combinator := SequentialEnumerator.new(params args)
+        _combinator := SequentialEnumerator.load(params args)
     }
 
     seek(cond)
     {
         _combinator.reset();
 
-        _combinator.seekEach:(v => dispatcher.eval(v,cond))
+        _combinator.seekEach::(v => dispatcher.eval(v,cond))
     }
     
     do(f)
@@ -71,16 +71,16 @@ singleton ambOperator
 
 // --- Program ---
 
-public program1()
+public program2()
 {
     try
     {
-        ambOperator.for(new object[]{1,2,4}, new object[]{4,5,6}).seek:(a,b => a * b == 8).do:
+        ambOperator.for(new object[]{1,2,4}, new object[]{4,5,6}).seek::(a,b => a * b == 8).do::
             (a,b){ console.printLine(a," * ",b," = 8") };
     }
     catch(Exception e)
     {
-        console.printLine:"AMB is angry"
+        console.printLine("AMB is angry")
     };
         
     console.readChar()
@@ -96,12 +96,12 @@ public program()
                 new object[]{"frog", "elephant", "thing"},
                 new object[]{"walked", "treaded", "grows"}, 
                 new object[]{"slowly", "quickly"})
-            .seek:(a,b,c,d => joinable(a,b) && joinable(b,c) && joinable(c,d) )
-            .do:(a,b,c,d) { console.printLine(a," ",b," ",c," ",d) }
+            .seek::(a,b,c,d => joinable(a,b) && joinable(b,c) && joinable(c,d) )
+            .do::(a,b,c,d) { console.printLine(a," ",b," ",c," ",d) }
     }
     catch(Exception e)
     {
-        console.printLine:"AMB is angry"
+        console.printLine("AMB is angry")
     };
         
     console.readChar()

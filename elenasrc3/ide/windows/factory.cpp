@@ -150,6 +150,15 @@ ToolBarButton AppToolBarButtons[] =
    {IDM_DEBUG_GOTOSOURCE, IDR_GOTO},
 };
 
+inline void canonicalize(PathString& path)
+{
+   wchar_t p[MAX_PATH];
+
+   ::PathCanonicalize(p, path.str());
+
+   path.copy(p);
+}
+
 // --- IDEFactory ---
 
 IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel, 
@@ -184,6 +193,8 @@ IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel,
 
    _model->projectModel.paths.librarySourceRoot.copy(*_model->projectModel.paths.appPath);
    _model->projectModel.paths.librarySourceRoot.combine("..\\src60\\");// !! temporal
+
+   canonicalize(_model->projectModel.paths.librarySourceRoot);
 }
 
 void IDEFactory :: registerClasses()

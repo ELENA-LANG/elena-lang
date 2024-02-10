@@ -45,7 +45,7 @@ namespace collections
          }
          else
          { 
-             _list.append:object 
+             _list.append(object)
          };
                 
          _tale.append(1)
@@ -57,7 +57,7 @@ namespace collections
          int tale := _tale;
             
          if (tale == top)
-            { InvalidOperationException.new:"Queue is empty".raise() };
+            { InvalidOperationException.new("Queue is empty").raise() };
                 
          ^ _list.at(top)
       }
@@ -68,7 +68,7 @@ namespace collections
          int tale := *_tale;
             
          if(tale == top)
-            { InvalidOperationException.new:"Queue is empty".raise() };
+            { InvalidOperationException.new("Queue is empty").raise() };
     
          var item := _list.at(top);
                                         
@@ -183,7 +183,7 @@ namespace collections
          int tale := *_tale;
             
          if (tale == top)
-            { InvalidOperationException.new:"Queue is empty".raise() };
+            { InvalidOperationException.new("Queue is empty").raise() };
                 
          ^ _array.at(top)
       }        
@@ -194,7 +194,7 @@ namespace collections
          int tale := *_tale;
             
          if (tale == top)
-            { InvalidOperationException.new:"Queue is empty".raise() };
+            { InvalidOperationException.new("Queue is empty").raise() };
                             
          T item := _array.at(top);
                             
@@ -424,7 +424,7 @@ namespace collections
       T peek()
       {
          if (0 == *_top)
-            { InvalidOperationException.new:"Stack is empty".raise() };
+            { InvalidOperationException.new("Stack is empty").raise() };
                 
          ^ _array.at(*_top - 1)
       }
@@ -432,7 +432,7 @@ namespace collections
       T pop()
       {
          if (0 == *_top)
-            { InvalidOperationException.new:"Stack is empty".raise() };
+            { InvalidOperationException.new("Stack is empty").raise() };
                 
          _top.reduce(1);
             

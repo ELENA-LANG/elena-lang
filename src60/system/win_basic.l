@@ -17,12 +17,17 @@ public sealed const struct UnsafePointer
       _pointer := ptr
    }
 
+   constructor(object obj)
+   {
+      self.assignPtr(obj);
+   }
+
    get constructor Default()
       = new UnsafePointer();   
 
    private readIntPtr(ref int retVal) : external(system'core_routines'__readIntPtr);
 
-   assignPtr(wide str) : external(system'core_routines'__assignPtr); 
+   private assignPtr(object obj) : external(system'core_routines'__assignPtr); 
 
    bool isUnassigned()
    {
@@ -91,7 +96,7 @@ public sealed class CallStack
       pointer address;
       string  callStackText := emptyString;
       int     length := stack.Length;
-      for (int i := 1, i < length, i += 1) {
+      for (int i := 1; i < length; i += 1) {
          address := stack[i];
 
          bufferLength := extern LoadAddressInfoLM(address, buffer, 512);

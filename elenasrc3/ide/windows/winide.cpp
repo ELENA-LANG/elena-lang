@@ -870,6 +870,9 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
       case NOTIFY_DEBUG_CHANGE:
          onDebuggerUpdate(rec);
          break;
+      case NOTIFY_DEBUG_NOSOURCE:
+         onDebuggerSourceNotFound(rec);
+         break;
       default:
          break;
    }
@@ -1143,6 +1146,18 @@ void IDEWindow :: onDebuggerUpdate(StatusNMHDR* rec)
    if (test(rec->status, FRAME_CHANGED)) {
       onTextFrameChange(rec->status);
    }
+}
+
+void IDEWindow :: onDebuggerSourceNotFound(StatusNMHDR* rec)
+{
+   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+   menu->enableMenuItemById(IDM_DEBUG_STOP, true);
+
+   if (test(rec->status, FRAME_CHANGED)) {
+      onTextFrameChange(rec->status);
+   }
+
+   _controller->onDebuggerNoSource(messageDialog, _model);
 }
 
 bool IDEWindow :: onClose()

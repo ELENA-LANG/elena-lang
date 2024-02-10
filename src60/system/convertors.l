@@ -80,6 +80,24 @@ public singleton byteConvertor
    }
 }
 
+// --- sbyteConvertor ---
+
+public singleton sbyteConvertor
+{
+   convert(int n, ref sbyte retVal) : external(system'core_routines'__intToSByte);
+
+   sbyte convert(int n)
+   {
+      if (n > 127 || n < -128) {
+         OutOfRangeException.raise();
+      };
+
+      self.convert(n, ref sbyte b);
+
+      ^ b;
+   }
+}
+
 // --- shortConvertor ---
 
 public singleton shortConvertor
@@ -156,6 +174,21 @@ public singleton shortConvertor
    }
 }
 
+// --- ushortConvertor ---
+
+public singleton ushortConvertor
+{
+   ushort convert(ushort s)
+      = s;
+
+   ushort convert(short s)
+   {
+      int n := s;
+
+      ^ n
+   }
+}
+
 // --- intConvertor ---
 
 public singleton intConvertor
@@ -227,7 +260,7 @@ public singleton intConvertor
          inverted := true;
       };
 
-      for (int i := start, i < len, i := i + 1) {
+      for (int i := start; i < len; i := i + 1) {
          byte c := s[i];
          int ch := c;
          ch := ch - 48;
@@ -252,7 +285,7 @@ public singleton intConvertor
    {
       int len := s.Length;
       int val := 0;
-      for (int i := 0, i < len, i := i + 1) {
+      for (int i := 0; i < len; i := i + 1) {
          short c := s[i];
          int ch := c;
          ch := ch - 48;
@@ -321,7 +354,7 @@ public singleton uintConvertor
       int len := s.Length;
       uint val := 0;
       uint r := radix;
-      for (int i := 0, i < len, i := i + 1) {
+      for (int i := 0; i < len; i := i + 1) {
          byte c := s[i];
          uint ch := c;
          ch := ch - 48;
@@ -339,7 +372,7 @@ public singleton uintConvertor
    {
       int len := s.Length;
       uint val := 0;
-      for (int i := 0, i < len, i := i + 1) {
+      for (int i := 0; i < len; i := i + 1) {
          short c := s[i];
          int ch := c;
          ch := ch - 48;
@@ -425,7 +458,7 @@ public singleton longConvertor
          inverted := true;
       };
 
-      for (int i := start, i < len, i := i + 1) {
+      for (int i := start; i < len; i := i + 1) {
          byte c := s[i];
          int ch := c;
          ch := ch - 48;
@@ -456,7 +489,7 @@ public singleton longConvertor
          start := 1;
          inverted := true;
       };
-      for (int i := start, i < len, i := i + 1) {
+      for (int i := start; i < len; i := i + 1) {
          short c := s[i];
          int ch := c;
          ch := ch - 48;
@@ -515,7 +548,7 @@ public singleton realConvertor
       real r := intPart;
       if (decimalPartStr != nil) {
          real frac := intConvertor.convert(decimalPartStr, 10);
-         for (int i := 0, i < decimalPartStr.Length, i += 1) {
+         for (int i := 0; i < decimalPartStr.Length; i += 1) {
             frac := frac * 0.1;
          };
 
@@ -838,7 +871,7 @@ public singleton stringConvertor
       // write leading zeros
       decimalPartLen -= length;
 
-      for (int i := 0, i < decimalPartLen, i += 1) {
+      for (int i := 0; i < decimalPartLen; i += 1) {
          buffer[index] := 30h;
          index -= 1;
          length += 1;
@@ -1141,7 +1174,7 @@ public singleton wideConvertor
       // write leading zeros
       decimalPartLen -= length;
 
-      for (int i := 0, i < decimalPartLen, i += 1) {
+      for (int i := 0; i < decimalPartLen; i += 1) {
          buffer[index] := 30h;
          index -= 1;
          length += 1;

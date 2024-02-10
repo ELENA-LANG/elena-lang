@@ -56,9 +56,12 @@ inline ref_t mapExistingIdentifier(ModuleBase* module, ustr_t identifier, Visibi
 
 bool ModuleScope :: isStandardOne()
 {
-   return module->name().compare(STANDARD_MODULE) 
-      || module->name().compare(PREDEFINED_MODULE)
-      || module->name().compare(OPERATIONS_MODULE);      
+   return test(hints, mhStandart);
+}
+
+bool ModuleScope :: withValidation()
+{
+   return !test(hints, mhNoValidation);
 }
 
 inline void findUninqueName(ModuleBase* module, IdentifierString& name)
@@ -300,6 +303,17 @@ ref_t ModuleScope :: importConstant(ModuleBase* referenceModule, ref_t reference
    return  module->mapConstant(value);
 }
 
+ref_t ModuleScope :: importAction(ModuleBase* referenceModule, ref_t reference)
+{
+   if (!reference)
+      return 0;
+
+   ref_t signRef = 0;
+   ustr_t value = referenceModule->resolveAction(reference, signRef);
+
+   return  module->mapAction(value, 0, signRef ? importSignature(referenceModule, signRef) : 0);
+}
+
 ref_t ModuleScope :: importMessageConstant(ModuleBase* referenceModule, ref_t reference)
 {
    if (!reference)
@@ -485,6 +499,9 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBa
 
          if (info.multiMethod)
             info.multiMethod = importMessage(exporter, info.multiMethod);
+
+         if (info.byRefHandler)
+            info.byRefHandler = importMessage(exporter, info.byRefHandler);
 
          if (inheritMode) {
             info.inherited = true;

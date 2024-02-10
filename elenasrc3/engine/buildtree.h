@@ -153,56 +153,62 @@ namespace elena_lang
       LoadingStackDump     = 0x007B,
       SavingStackDump      = 0x007C,
       SavingFloatIndex     = 0x007D,
+      IntCopyingToAccField = 0x007E,
+      IntConstOp           = 0x007F,
+      UByteCondOp          = 0x0080,
+      UShortCondOp         = 0x0081,
+      IntLongOp            = 0x0082,
 
-      MaxOperationalKey    = 0x007D,
+      MaxOperationalKey    = 0x0082,
 
-      Import               = 0x0080,
-      DictionaryOp         = 0x0081,
-      ObjOp                = 0x0082,
-      AttrDictionaryOp     = 0x0083,
-      DeclOp               = 0x0084,
-      DeclDictionaryOp     = 0x0085,
-      LoopOp               = 0x0086,
-      CatchOp              = 0x0087,
-      ExternOp             = 0x0088,
-      AltOp                = 0x0089,
-      ShortCircuitOp       = 0x008A,
-      Switching            = 0x008B,
-      SwitchOption         = 0x008C,
-      ElseOption           = 0x008D,
-      FinalOp              = 0x008E,
-      IntBranchOp          = 0x008F,
-      IntConstBranchOp     = 0x0090,
-      RealBranchOp         = 0x0091,
-      YieldingOp           = 0x0092,
-      StackCondOp          = 0x0093,
-      YieldDispatch        = 0x0094,
+      Import               = 0x0090,
+      DictionaryOp         = 0x0091,
+      ObjOp                = 0x0092,
+      AttrDictionaryOp     = 0x0093,
+      DeclOp               = 0x0094,
+      DeclDictionaryOp     = 0x0095,
+      LoopOp               = 0x0096,
+      CatchOp              = 0x0097,
+      ExternOp             = 0x0098,
+      AltOp                = 0x0099,
+      ShortCircuitOp       = 0x009A,
+      Switching            = 0x009B,
+      SwitchOption         = 0x009C,
+      ElseOption           = 0x009D,
+      FinalOp              = 0x009E,
+      IntBranchOp          = 0x009F,
+      IntConstBranchOp     = 0x00A0,
+      RealBranchOp         = 0x00A1,
+      YieldingOp           = 0x00A2,
+      StackCondOp          = 0x00A3,
+      YieldDispatch        = 0x00A4,
 
-      VariableInfo         = 0x00A0,
-      Variable             = 0x00A1,
-      VariableAddress      = 0x00A2,
-      IntVariableAddress   = 0x00A3,
-      LongVariableAddress  = 0x00A4,
-      RealVariableAddress  = 0x00A5,
-      ByteArrayAddress     = 0x00A6,
-      ShortArrayAddress    = 0x00A7,
-      IntArrayAddress      = 0x00A8,
-      UIntVariableAddress  = 0x00A9,
+      VariableInfo         = 0x00B0,
+      Variable             = 0x00B1,
+      VariableAddress      = 0x00B2,
+      IntVariableAddress   = 0x00B3,
+      LongVariableAddress  = 0x00B4,
+      RealVariableAddress  = 0x00B5,
+      ByteArrayAddress     = 0x00B6,
+      ShortArrayAddress    = 0x00B7,
+      IntArrayAddress      = 0x00B8,
+      UIntVariableAddress  = 0x00B9,
 
-      ParameterInfo        = 0x00B0,
-      Parameter            = 0x00B1,
-      IntParameterAddress  = 0x00B2,
-      LongParameterAddress = 0x00B3,
-      RealParameterAddress = 0x00B4,
-      ParameterAddress     = 0x00B5,
-      MethodName           = 0x00B6,
-      ShortArrayParameter  = 0x00B7,
-      ByteArrayParameter   = 0x00B8,
-      IntArrayParameter    = 0x00B9,
+      ParameterInfo        = 0x00C0,
+      Parameter            = 0x00C1,
+      IntParameterAddress  = 0x00C2,
+      LongParameterAddress = 0x00C3,
+      RealParameterAddress = 0x00C4,
+      ParameterAddress     = 0x00C5,
+      MethodName           = 0x00C6,
+      ShortArrayParameter  = 0x00C7,
+      ByteArrayParameter   = 0x00C8,
+      IntArrayParameter    = 0x00C9,
 
-      BinaryArray          = 0x00C0,
+      BinaryArray          = 0x00D0,
 
       ByRefOpMark          = 0x4001,
+      InplaceCall          = 0x4002,
 
       Value                = 0x8001,
       Reserved             = 0x8002,      // reserved managed
@@ -221,6 +227,7 @@ namespace elena_lang
       ClassName            = 0x800F,
       Special              = 0x8010,
       LongMode             = 0x8011,
+      Source               = 0x8012,
 
       Idle                 = 0x8FFF,
 
@@ -251,6 +258,7 @@ namespace elena_lang
       {
          map.add("breakpoint", BuildKey::Breakpoint);
          map.add("byrefmark", BuildKey::ByRefOpMark);
+         map.add("inplacemark", BuildKey::InplaceCall);
          map.add("int_literal", BuildKey::IntLiteral);
          map.add("copying", BuildKey::Copying);
          map.add("local_address", BuildKey::LocalAddress);
@@ -259,6 +267,8 @@ namespace elena_lang
          map.add("create_struct", BuildKey::CreatingStruct);
          map.add("assigning", BuildKey::Assigning);
          map.add("copying_to_acc", BuildKey::CopyingToAcc);
+         map.add("copying_to_acc_exact", BuildKey::CopyingToAccExact);
+         map.add("copying_to_acc_field", BuildKey::CopyingToAccField);
          map.add("local", BuildKey::Local);
          map.add("intcondop", BuildKey::IntCondOp);
          map.add("realcondop", BuildKey::RealCondOp);
@@ -267,6 +277,7 @@ namespace elena_lang
          map.add("conversion_op", BuildKey::ConversionOp);
          map.add("int_real_op", BuildKey::IntRealOp);
          map.add("real_int_op", BuildKey::RealIntOp);
+         map.add("direct_call_op", BuildKey::DirectCallOp);
       }
    };
 

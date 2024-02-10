@@ -489,13 +489,6 @@ ELENA byte codes (or ecodes)
                               COMP.LT := (temp2 < temp1);
                               n = 1,2,4,8 
 
-   system n                 - invokes system command
-                              n = 1 -> forced minor collect;
-                              n = 2 -> forced major collect
-                              n = 3 -> assign TLS entry to the THREAD_TABLE at index
-                              n = 4 -> prepare the program (should be the first command) 
-                              n = 5 -> inject the stack (note, should be called ouside the frame)
-
    xcmp                     - temp << acc[0];
                               COMP.EQ := (index == temp);
                               COMP.LT := (index < temp);
@@ -514,6 +507,13 @@ ELENA byte codes (or ecodes)
    freelock                 - free acc
 
    label dp:i, r            - assign a specified address / label to dp[i]
+
+   system n                 - invokes system command
+                              n = 1 -> forced minor collect;
+                              n = 2 -> forced major collect
+                              n = 3 -> assign TLS entry to the THREAD_TABLE at index
+                              n = 4 -> prepare the program (should be the first command) 
+                              n = 5 -> inject the stack (note, should be called ouside the frame)
 
    throw                    - raise an exception (acc contains the exception object)
 

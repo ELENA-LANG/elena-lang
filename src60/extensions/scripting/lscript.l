@@ -11,18 +11,27 @@ public singleton lscript
         
    interpret(string script)
    {
-      var full_script := "program=" + script + ";";
-        
+      var ns := self.eval(script);
+    
+      var s := ns.program;
+      ^ s();
+   }
+
+   interpretLine(string script)
+   {
+      string full_script := "program=" + script + ";";
+
       var ns := self.eval(full_script);
     
       var s := ns.program;
-                            
-      if (script[0]==$123) {
-         ^ s
-      }                            
-      else
-      {
-         ^ s();
-      }                    
-   }        
+      ^ s();
+   }
+
+   interpretPath(string path)
+   {
+      var ns := self.evalPath(path);
+    
+      var s := ns.program;
+      ^ s()
+   }
 }

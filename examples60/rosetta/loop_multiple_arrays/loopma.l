@@ -9,7 +9,7 @@ public programUsingFor()
     var a2 := new string[]{"A","B","C"};
     var a3 := new int[]{1,2,3};
     
-    for(int i := 0, i < a1.Length, i += 1)
+    for(int i := 0; i < a1.Length; i += 1)
     {
         console.printLine(a1[i], a2[i], a3[i])
     };
@@ -25,8 +25,8 @@ public programUsingZip()
     var zipped := a1.zipBy(a2,(first,second => first + second.toString() ))
                        .zipBy(a3, (first,second => first + second.toString() ));
     
-    zipped.forEach:(e)
-        { console.writeLine:e };
+    zipped.forEach::(e)
+        { console.writeLine(e) };
     
     console.readChar()
 }

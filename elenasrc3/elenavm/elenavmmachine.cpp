@@ -246,7 +246,8 @@ inline ref_t getCmdMask(int command)
 {
    switch (command) {
       case VM_CALLSYMBOL_CMD:
-         return mskSymbolRef;
+      case VM_TRYCALLSYMBOL_CMD:
+          return mskSymbolRef;
       case VM_CALLCLASS_CMD:
          return mskVMTRef;
       case VM_STRING_CMD:
@@ -279,6 +280,12 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
          case VM_CALLCLASS_CMD:
             jitLinker.resolve(strArg, getCmdMask(command), false);
             symbols.add({ dummyModule->mapReference(strArg) | getCmdMask(command), 0 });
+            break;
+         case VM_TRYCALLSYMBOL_CMD:
+            if (jitLinker.resolve(strArg, getCmdMask(command), true) != INVALID_ADDR) {
+               symbols.add({ dummyModule->mapReference(strArg) | getCmdMask(command), 0 });
+            }
+            else return false;
             break;
          case VM_STRING_CMD:
             jitLinker.resolve(strArg, getCmdMask(command), false);
@@ -452,6 +459,7 @@ void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, const char* crirical
 
       _settings.jitSettings.ygSize = env->gc_yg_size;
       _settings.jitSettings.mgSize = env->gc_mg_size;
+      _settings.jitSettings.stackReserved = _settings.jitSettings.stackReserved;
    }
 }
 
@@ -615,7 +623,9 @@ size_t ELENAVMMachine :: loadActionName(mssg_t message, char* buffer, size_t len
 
 addr_t ELENAVMMachine :: loadSymbol(ustr_t name)
 {
-   return loadReference(name, VM_CALLSYMBOL_CMD);
+   addr_t addr = loadReference(name, VM_TRYCALLSYMBOL_CMD);
+
+   return addr != INVALID_ADDR ? addr : 0;
 }
 
 bool ELENAVMMachine :: loadModule(ustr_t ns)

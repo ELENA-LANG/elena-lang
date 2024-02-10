@@ -17,6 +17,6 @@ public program()
     map["key4"]:= "foo4";
 
     // Enumerate
-    map.forEach:
+    map.forEach::
         (tuple){ console.printLine(tuple.Item1," : ",tuple.Item2) }
 }

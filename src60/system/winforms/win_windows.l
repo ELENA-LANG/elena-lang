@@ -22,10 +22,10 @@ singleton windowClassControl
 
    wide createClass(string name, HInstance instance, int style, int background)
    {
-      pointer wndPtr;
+      pointer wndPtr := default;
       self.assignWndPtr(wndPtr);
 
-      WNDCLASS struct;
+      WNDCLASS struct := default;
 
       struct.style := style;
       struct.hbrBackground := background;
@@ -37,9 +37,8 @@ singleton windowClassControl
       struct.lpszMenuName := 0;
       struct.lpfnWndProc := wndPtr;      
 
-      pointer namePtr;
       wide wideName := name;
-      namePtr.assignPtr(wideName);
+      pointer namePtr := wideName;
       struct.lpszClassName := namePtr;
         
       extern {
@@ -57,6 +56,10 @@ public closed class WindowCallback
    {
    }
 
+   onSize(Handle control, int width, int height)
+   {
+   }
+
    onWMCreate(Handle hwnd, CREATESTRUCT struct)
    {
       pointer param := struct.CreateParam;
@@ -67,6 +70,19 @@ public closed class WindowCallback
    onWMDestoy(Handle hwnd)
    {
       extern USER32.DefWindowProcW(hwnd, WM_DESTROY, 0, 0);
+   }
+
+   onWMPaint(Handle hwnd)
+   {
+      extern USER32.DefWindowProcW(hwnd, WM_PAINT, 0, 0);
+   }
+
+   onWMSize(Handle hwnd, int lParam)
+   {
+      int width := lParam & 0FFFFh;
+      int height := lParam $shr 16;
+
+      self.onSize(hwnd, width, height);
    }
 
    onWMCommand(Handle hwnd, int wParam, Handle control)
@@ -95,3 +111,5 @@ public class SDIWindowCallback : WindowCallback
 // --- SDIWindowClass ---
 
 public static wide SDIWindowClass = windowClassControl.createClass("ELENA.SDIWINDOW.6.0", CurrentInstance, WS_ELENAWINDOW, COLOR_BACKGROUND);
+public static wide PaintboxClass  = windowClassControl.createClass("ELENA.Paintbox.6.0", CurrentInstance, CS_VREDRAW | CS_HREDRAW, 0);
+public static wide PanelClass     = windowClassControl.createClass("ELENA.PANEL.6.0", CurrentInstance, CS_VREDRAW | CS_HREDRAW, COLOR_BACKGROUND);
