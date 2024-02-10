@@ -1,0 +1,17 @@
+<configuration>
+  <platform key="Win_x86">
+     <project>
+        <executable>c_a_g.exe</executable>
+     </project>
+  </platform>
+  <project>
+     <namespace>c_a_g</namespace>
+     <template>gui</template>
+  </project>
+  <files>
+     <module>
+        <include>calc_area_gui.l</include>
+     </module>
+  </files>
+</configuration>
+

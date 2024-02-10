@@ -115,7 +115,7 @@ singleton operatorState
          $40 {      // (
             ^ weak self.newBracket().gotoStarting()  
          }
-         : {
+         ! {
             ^ weak self.newToken().append(ch).gotoToken()
          }
    }
@@ -141,8 +141,8 @@ singleton tokenState
          $47 {      // /
             ^ weak self.newFraction().gotoOperator()
          }
-         : {
-            ^ weak self.append:ch
+         ! {
+            ^ weak self.append(ch)
          }
    }
 }    
@@ -158,8 +158,8 @@ singleton startState
          $45 { // -
             ^ weak self.newToken().append("0").newDifference().gotoOperator()
          }
-         : {
-            ^ weak self.newToken().append:ch.gotoToken()
+         ! {
+            ^ weak self.newToken().append(ch).gotoToken()
          }
    }
 }    
@@ -227,7 +227,7 @@ class Scope
    closeBracket()
    {
       if (_level < 10)
-         { InvalidArgumentException.new:"Invalid expression".raise() };
+         { InvalidArgumentException.new("Invalid expression").raise() };
         
       _level := _level - 10
    }            
@@ -236,17 +236,17 @@ class Scope
    {
       if(ch >= $48 && ch < $58)
       { 
-         _token.append:ch 
+         _token.append(ch)
       }
       else
       { 
-         InvalidArgumentException.new:"Invalid expression".raise()
+         InvalidArgumentException.new("Invalid expression").raise()
       }
    }
             
    append(string s)
    {
-      s.forEach:(ch){ self.append:ch }
+      s.forEach::(ch){ self.append(ch) }
    }
                                                          
    gotoStarting()
@@ -338,7 +338,7 @@ class Parser
    {
       var scope := Scope.new(self);
 
-      text.forEach:(ch){ scope.eval:ch };
+      text.forEach::(ch){ scope.eval(ch) };
 
       ^ scope.Number
    }
@@ -353,11 +353,11 @@ public program()
    {
       try
       {
-         console.printLine("=",parser.run:text)
+         console.printLine("=",parser.run(text))
       }
       catch(Exception e)
       {
-         console.writeLine:"Invalid Expression"
+         console.writeLine("Invalid Expression")
       };
         
       text.clear()

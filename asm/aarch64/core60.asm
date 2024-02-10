@@ -953,6 +953,34 @@ inline %76h
 
 end
 
+// ; xsaven
+inline %77h
+
+  mov    x18, __n16_1
+  str    w18, [x10]
+
+end
+
+// ; xsave n
+inline %0977h
+
+  movz    x18, __n16lo_1
+  movk    x18, __n16hi_1, lsl #16
+
+  str    w18, [x10]
+
+end
+
+// ; xsave n
+inline %0A77h
+
+  movz    x18,  __n16lo_1
+  movk    x18,  __n16hi_1, lsl #16
+
+  str     w18, [x10]
+
+end
+
 // ; fabsdp
 inline %78h
 
@@ -2526,6 +2554,26 @@ inline %0D4h
 
 end
 
+// ; xsavedispn
+inline %0D5h
+
+  add     x19, x10, __arg12_1
+  mov     x18, __n16_2
+  sxth    x18, x18
+  str     w18, [x19]
+
+end
+
+// ; xsavedispn (n > 0FFFFh)
+inline %01D5h
+
+  add     x19, x10, __arg12_1
+  movz    x18,  __n16_2
+  movk    x18,  __n16hi_2, lsl #16
+  str     w18, [x19]
+
+end
+
 // ; xhookdpr
 inline %0D6h
 
@@ -3530,6 +3578,40 @@ end
 inline %7F1h
 
   mov     x1, #0
+
+end
+
+// ; xstoresir :n, -1
+inline %8F1h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+  sxtw    x11, w11
+
+  add     x12, sp, __arg12_1
+  str     x11, [x12]
+
+end
+
+// ; xstoresir :0, -1
+inline %9F1h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+  sxtw    x11, w11
+
+  mov     x0, x11
+
+end
+
+// ; xstoresir :1, -1
+inline %0AF1h
+
+  movz    x11,  __n16lo_1
+  movk    x11,  __n16hi_1, lsl #16
+  sxtw    x11, w11
+
+  mov     x1, x11
 
 end
 

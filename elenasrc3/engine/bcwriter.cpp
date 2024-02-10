@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code compiler class implementation.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -250,6 +250,16 @@ void copyingToAccExact(CommandTape& tape, BuildNode& node, TapeScope&)
    int n = node.findChild(BuildKey::Size).arg.value;
 
    tape.write(ByteCode::Copy, n);
+}
+
+void intCopyingToAccField(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int value = node.findChild(BuildKey::Value).arg.value;
+
+   if (!node.arg.value) {
+      tape.write(ByteCode::XSaveN, value);
+   }
+   else tape.write(ByteCode::XSaveDispN, node.arg.value, value);
 }
 
 void copyingLocalArr(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -532,6 +542,47 @@ void intRealOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void intLongOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+
+   if (!isAssignOp(node.arg.value)) {
+      tape.write(ByteCode::PeekSI);
+      tape.write(ByteCode::Load);
+      tape.write(ByteCode::ConvL);
+      tape.write(ByteCode::LSaveDP, targetOffset);
+      tape.write(ByteCode::XMovSISI, 0, 1);
+   }
+
+   switch (node.arg.value) {
+      case ADD_OPERATOR_ID:
+         tape.write(ByteCode::IAddDPN, targetOffset, 8);
+         break;
+      case SUB_OPERATOR_ID:
+         tape.write(ByteCode::ISubDPN, targetOffset, 8);
+         break;
+      case MUL_OPERATOR_ID:
+         tape.write(ByteCode::IMulDPN, targetOffset, 8);
+         break;
+      case DIV_OPERATOR_ID:
+         tape.write(ByteCode::IDivDPN, targetOffset, 8);
+         break;
+      case BAND_OPERATOR_ID:
+         tape.write(ByteCode::IAndDPN, targetOffset, 8);
+         break;
+      case BOR_OPERATOR_ID:
+         tape.write(ByteCode::IOrDPN, targetOffset, 8);
+         break;
+      case BXOR_OPERATOR_ID:
+         tape.write(ByteCode::IXorDPN, targetOffset, 8);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+
+}
+
 void realIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
@@ -645,6 +696,46 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+void intOpWithConst(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand
+   int targetOffset = node.findChild(BuildKey::Index).arg.value;
+   int sourceOffset = node.findChild(BuildKey::Source).arg.value;
+   int value = node.findChild(BuildKey::Value).arg.value;
+
+   // loaddpn
+   tape.write(ByteCode::LoadDP, sourceOffset);
+
+   switch (node.arg.value) {
+      case ADD_OPERATOR_ID:
+         tape.write(ByteCode::AddN, value);
+         break;
+      case SUB_OPERATOR_ID:
+         tape.write(ByteCode::SubN, value);
+         break;
+      case MUL_OPERATOR_ID:
+         tape.write(ByteCode::MulN, value);
+         break;
+      case BAND_OPERATOR_ID:
+         tape.write(ByteCode::AndN, value);
+         break;
+      case BOR_OPERATOR_ID:
+         tape.write(ByteCode::OrN, value);
+         break;
+      case SHL_OPERATOR_ID:
+         tape.write(ByteCode::Shl, value);
+         break;
+      case SHR_OPERATOR_ID:
+         tape.write(ByteCode::Shr, value);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+
+   // savedpn
+   tape.write(ByteCode::SaveDP, targetOffset);
+}
+
 void uintOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
@@ -698,6 +789,18 @@ void intSOp(CommandTape& tape, BuildNode& node, TapeScope&)
    switch (node.arg.value) {
       case BNOT_OPERATOR_ID:
          tape.write(ByteCode::INotDPN, targetOffset, 4);
+         break;
+      case NEGATE_OPERATOR_ID:
+         tape.write(ByteCode::PeekSI);
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::Neg);
+         tape.write(ByteCode::SaveDP, targetOffset);
+         break;
+      case INC_OPERATOR_ID:
+         tape.write(ByteCode::NAddDPN, targetOffset, 1);
+         break;
+      case DEC_OPERATOR_ID:
+         tape.write(ByteCode::NAddDPN, targetOffset, -1);
          break;
       default:
          throw InternalError(errFatalError);
@@ -948,6 +1051,75 @@ void uintCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
          break;
       case NOTEQUAL_OPERATOR_ID:
          tape.write(ByteCode::ICmpN, 4);
+         opCode = ByteCode::SelEqRR;
+         inverted = true;
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   if (!inverted) {
+      tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
+   }
+   else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
+}
+
+void uint8CondOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   bool inverted = false;
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   tape.write(ByteCode::PeekSI, 1);
+
+   ByteCode opCode = ByteCode::None;
+   switch (node.arg.value) {
+      case LESS_OPERATOR_ID:
+         opCode = ByteCode::SelULtRR;
+         break;
+      case EQUAL_OPERATOR_ID:
+         tape.write(ByteCode::ICmpN, 1);
+         opCode = ByteCode::SelEqRR;
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         tape.write(ByteCode::ICmpN, 1);
+         opCode = ByteCode::SelEqRR;
+         inverted = true;
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   if (!inverted) {
+      tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
+   }
+   else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
+}
+
+
+void uint16CondOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   bool inverted = false;
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   tape.write(ByteCode::PeekSI, 1);
+
+   ByteCode opCode = ByteCode::None;
+   switch (node.arg.value) {
+      case LESS_OPERATOR_ID:
+         opCode = ByteCode::SelULtRR;
+         break;
+      case EQUAL_OPERATOR_ID:
+         tape.write(ByteCode::ICmpN, 2);
+         opCode = ByteCode::SelEqRR;
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         tape.write(ByteCode::ICmpN, 2);
          opCode = ByteCode::SelEqRR;
          inverted = true;
          break;
@@ -1552,6 +1724,11 @@ void assignImmediateAccField(CommandTape& tape, BuildNode& node, TapeScope&)
 void conversionOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    switch (node.arg.reference) {
+      case INT8_32_CONVERSION:
+         tape.write(ByteCode::BLoad);
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::Save);
+         break;
       case INT16_32_CONVERSION:
          tape.write(ByteCode::WLoad);
          tape.write(ByteCode::PeekSI, 0);
@@ -1832,7 +2009,8 @@ ByteCodeWriter::Saver commands[] =
    uintOp, mssgNameLiteral, vargSOp, loadArgCount, incIndex, freeStack, fillOp, strongResendOp,
 
    copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp, semiDirectCallOp,
-   intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex
+   intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex, intCopyingToAccField, intOpWithConst,
+   uint8CondOp, uint16CondOp, intLongOp
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -1872,6 +2050,15 @@ inline BuildNode getPrevious(BuildNode node)
       default:
          return node;
    }
+}
+
+inline void setChild(BuildNode node, BuildKey childKey, ref_t childArg)
+{
+   BuildNode child = node.findChild(childKey);
+   if (child.key == childKey) {
+      child.setArgumentReference(childArg);
+   }
+   else node.appendChild(childKey, childArg);
 }
 
 inline BuildNode getNextNode(BuildNode node)
@@ -1951,7 +2138,7 @@ inline bool doubleAssigningByRefHandler(BuildNode lastNode)
 inline bool intCopying(BuildNode lastNode)
 {
    int size = lastNode.findChild(BuildKey::Size).arg.value;
-   if (size == 4) {
+   if (size == 4 || size == 1 || size == 2) {
       BuildNode constNode = lastNode.prevNode();
       int value = constNode.findChild(BuildKey::Value).arg.value;
 
@@ -1979,6 +2166,7 @@ inline bool intOpWithConsts(BuildNode lastNode)
    BuildNode intNode = getPrevious(savingOp2);
    BuildNode valueNode = intNode.findChild(BuildKey::Value);
    BuildNode savingOp1 = getPrevious(intNode);
+   BuildNode sourceNode = getPrevious(savingOp1);
 
    int tempTarget = opNode.findChild(BuildKey::Index).arg.value;
    if (tempTarget != tempNode.arg.value)
@@ -2011,6 +2199,23 @@ inline bool intOpWithConsts(BuildNode lastNode)
          opNode.setKey(BuildKey::Idle);
          tempNode.setKey(BuildKey::Idle);
          targetNode.setKey(BuildKey::Idle);
+         break;
+      case BAND_OPERATOR_ID:
+      case BOR_OPERATOR_ID:
+      case SHL_OPERATOR_ID:
+      case SHR_OPERATOR_ID:
+         setChild(intNode, BuildKey::Source, sourceNode.arg.value);
+         setChild(intNode, BuildKey::Index, targetNode.arg.value);
+         intNode.setKey(BuildKey::IntConstOp);
+         intNode.setArgumentValue(opNode.arg.value);
+
+         targetNode.setKey(BuildKey::Idle);
+         tempNode.setKey(BuildKey::Idle);
+         opNode.setKey(BuildKey::Idle);
+         savingOp2.setKey(BuildKey::Idle);
+         targetNode.setKey(BuildKey::Idle);
+         savingOp1.setKey(BuildKey::Idle);
+         sourceNode.setKey(BuildKey::Idle);
          break;
       default:
          return false;
@@ -2216,6 +2421,7 @@ inline bool doubleAssigningConverting(BuildNode lastNode)
    int size = 0;
    switch (conversionOp.arg.value) {
       case INT16_32_CONVERSION:
+      case INT8_32_CONVERSION:
          size = 4;
          break;
       case INT32_64_CONVERSION:
@@ -2271,11 +2477,131 @@ inline bool doubleAssigningIntRealOp(BuildNode lastNode)
    return true;
 }
 
+inline bool inplaceCallOp(BuildNode lastNode)
+{
+   BuildNode markNode = getPrevious(lastNode);
+   BuildNode callNode = getPrevious(markNode);
+   BuildNode classNode = getPrevious(callNode);
+
+   if (classNode == BuildKey::ClassReference && getArgCount(callNode.arg.reference) == 0 
+      && getArgCount(markNode.arg.reference) == 1) 
+   {
+      int targetOffset = lastNode.arg.value;
+
+      classNode.setKey(BuildKey::LocalAddress);
+      classNode.setArgumentValue(targetOffset);
+
+      markNode.setKey(callNode.key);
+      markNode.setArgumentReference(markNode.arg.reference);
+      setChild(markNode, BuildKey::Type, callNode.findChild(BuildKey::Type).arg.reference);
+
+      callNode.setKey(BuildKey::SavingInStack);
+      callNode.setArgumentValue(0);
+
+      lastNode.setKey(BuildKey::Idle);
+
+      return true;
+   }
+   else if (classNode == BuildKey::ClassReference && getArgCount(callNode.arg.reference) == 1
+      && getArgCount(markNode.arg.reference) == 2)
+   {
+      BuildNode savingNode = getPrevious(classNode);
+      if (savingNode == BuildKey::SavingInStack && savingNode.arg.value == 0) {
+         savingNode.setArgumentValue(1);
+      }
+      else return false;
+
+      int targetOffset = lastNode.arg.value;
+
+      classNode.setKey(BuildKey::LocalAddress);
+      classNode.setArgumentValue(targetOffset);
+
+      markNode.setKey(callNode.key);
+      markNode.setArgumentReference(markNode.arg.reference);
+      setChild(markNode, BuildKey::Type, callNode.findChild(BuildKey::Type).arg.reference);
+
+      callNode.setKey(BuildKey::SavingInStack);
+      callNode.setArgumentValue(0);
+
+      lastNode.setKey(BuildKey::Idle);
+
+      return true;
+   }
+
+   return false;
+}
+
+inline bool inplaceCallOp2(BuildNode lastNode)
+{
+   BuildNode localNode = getPrevious(lastNode);
+   BuildNode savingNode = getPrevious(localNode);
+   BuildNode markNode = getPrevious(savingNode);
+   BuildNode callNode = getPrevious(markNode);
+   BuildNode classNode = getPrevious(callNode);
+
+   if (classNode == BuildKey::ClassReference && getArgCount(callNode.arg.reference) == 0
+      && getArgCount(markNode.arg.reference) == 1)
+   {
+      int targetOffset = localNode.arg.value;
+
+      classNode.setKey(BuildKey::Local);
+      classNode.setArgumentValue(targetOffset);
+
+      markNode.setKey(callNode.key);
+      markNode.setArgumentReference(markNode.arg.reference);
+      setChild(markNode, BuildKey::Type, callNode.findChild(BuildKey::Type).arg.reference);
+
+      callNode.setKey(BuildKey::SavingInStack);
+      callNode.setArgumentValue(0);
+
+      savingNode.setKey(BuildKey::Idle);
+      localNode.setKey(BuildKey::Idle);
+      lastNode.setKey(BuildKey::Idle);
+
+      return true;
+   }
+
+   return false;
+}
+
+inline bool intConstAssigning(BuildNode lastNode)
+{
+   BuildNode localNode = getPrevious(lastNode);
+   BuildNode savingNode = getPrevious(localNode);
+   BuildNode intNode = getPrevious(savingNode);
+
+   BuildNode value = intNode.findChild(BuildKey::Value);
+
+   if (lastNode == BuildKey::CopyingToAccExact) {
+      int size = lastNode.findChild(BuildKey::Size).arg.value;
+      if (size != 4)
+         return false;
+
+      lastNode.setKey(BuildKey::IntCopyingToAccField);
+      lastNode.setArgumentValue(0);
+   }
+   else if (lastNode == BuildKey::CopyingToAccField) {
+      int size = lastNode.findChild(BuildKey::Size).arg.value;
+      if (size != 4)
+         return false;
+
+      lastNode.setKey(BuildKey::IntCopyingToAccField);
+   }
+   else return false;
+
+   setChild(lastNode, BuildKey::Value, value.arg.value);
+
+   intNode.setKey(BuildKey::Idle);
+   savingNode.setKey(BuildKey::Idle);
+
+   return true;
+}
+
 ByteCodeWriter::Transformer transformers[] =
 {
    nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts,
    boxingInt, nativeBranchingOp, intConstBranchingOp, doubleAssigningConverting, doubleAssigningIntRealOp,
-   intOpWithConsts2
+   intOpWithConsts2, inplaceCallOp, intConstAssigning, inplaceCallOp2
 };
 
 // --- ByteCodeWriter ---
@@ -2972,6 +3298,8 @@ void ByteCodeWriter :: saveExternOp(CommandTape& tape, BuildNode node, TapeScope
 void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
    ReferenceMap& paths, bool tapeOptMode, bool loopMode)
 {
+   bool weakLoop = loopMode;
+
    BuildNode current = node.firstChild();
    while (current != BuildKey::None) {
       switch (current.key) {
@@ -2994,11 +3322,13 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::BranchOp:
             saveBranching(tape, current, tapeScope, paths, tapeOptMode, loopMode);
+            weakLoop = false;
             break;
          case BuildKey::IntBranchOp:
          case BuildKey::IntConstBranchOp:
          case BuildKey::RealBranchOp:
             saveNativeBranching(tape, current, tapeScope, paths, tapeOptMode, loopMode);
+            weakLoop = false;
             break;
          case BuildKey::LoopOp:
             saveLoop(tape, current, tapeScope, paths, tapeOptMode);
@@ -3031,8 +3361,10 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             saveYieldDispatch(tape, current, tapeScope, paths, tapeOptMode);
             break;
          case BuildKey::Path:
+         case BuildKey::InplaceCall:
+            // ignore special nodes
+            break;
          case BuildKey::Idle:
-            // ignore path node
             break;
          default:
             _commands[(int)current.key](tape, current, tapeScope);
@@ -3040,6 +3372,11 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
       }
    
       current = current.nextNode();
+   }
+
+   if (weakLoop) {
+      tape.write(ByteCode::CmpR, 0);
+      tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
    }
 }
 
@@ -3103,6 +3440,7 @@ inline bool isNonOperational(BuildKey key)
 {
    switch (key) {
       case BuildKey::ByRefOpMark:
+      case BuildKey::InplaceCall:
       case BuildKey::IntBranchOp:
          return false;
       case BuildKey::OpenStatement:

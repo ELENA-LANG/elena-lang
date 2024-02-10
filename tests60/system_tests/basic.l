@@ -26,7 +26,11 @@ controlTest()
     
     Assert.ifTrue(b1);    
     Assert.ifTrue(b2);    
-    
+    console.write(".");
+
+    bool b3 := true;
+    Assert.ifEqual(b3 ? 2.0 : 3.0, 2.0);
+
     console.writeLine(".")
 }
 
@@ -259,7 +263,7 @@ realTests()
 gcTests()
 {
    console.write("gcTests:");
-   for (int i := 0, i < 100000, i := i + 1)
+   for (int i := 0; i < 100000; i := i + 1)
    {
       new IntNumber();
    };
@@ -355,6 +359,14 @@ shortTests()
     console.write("shortTests:");
     short w := 1234;
     Assert.ifTrue(w == 1234);
+    console.write(".");
+
+    short n := 2;
+    short m := 3;
+    short k := 4;
+    short l := 3;
+                    
+    Assert.ifTrue(n + m * k == 14);
     console.writeLine(".");
 }
 
@@ -510,6 +522,13 @@ struct XInteger
       = x;
 }
 
+extension boxOp : IntNumber
+{
+   bool check(object arg)
+      = arg == self;
+}
+
+
 boxingTests()
 {
    console.write("boxingTests:");
@@ -552,6 +571,12 @@ boxingTests()
    var nint := cast int(xint);
 
    Assert.ifTrue(nint.instanceOf(IntNumber));
+   console.write(".");
+
+   int n2 := 2;
+   int m2 := 2;
+
+   Assert.ifTrue(n2.check(m2));
    console.writeLine(".");
 }
 
@@ -655,7 +680,7 @@ class DispatchType
 {
    _content;
 
-   constructor(content)
+   constructor(int content)
    {
       _content := content;
    }
@@ -664,13 +689,12 @@ class DispatchType
       = _content;
 }
 
-
 class DispatchTypeCompatible
 {
    _dummy;
    _content;
 
-   constructor(content)
+   constructor(int content)
    {
       _content := content;
    }   
@@ -726,7 +750,7 @@ sealed class VariadicTester
    int sum(params int[] numbers)
    {
       int sum := 0;
-      for (int i := 0, i < numbers.Length, i += 1) {
+      for (int i := 0; i < numbers.Length; i += 1) {
          sum += numbers[i];
       };
 
@@ -837,7 +861,7 @@ singleton VariadicFunctionDispatchTester
    {
       int l := args.Length;
       int sum := 0;
-      for (int i := 0, i < l, i += 1) {
+      for (int i := 0; i < l; i += 1) {
          sum := sum + args[i]
       };
 
@@ -851,7 +875,7 @@ singleton VariadicDispatchTester
    {
       int l := args.Length;
       int prod := 1;
-      for (int i := 0, i < l, i += 1) {
+      for (int i := 0; i < l; i += 1) {
          prod := prod * args[i]
       };
 
@@ -924,7 +948,7 @@ enumTest()
     console.write("enumTest:");       
     
     var s := String.MinValue;
-    "123".forEach:(x)
+    "123".forEach::(x)
     {
         s := x.toPrintable() + s;
     };
@@ -942,9 +966,9 @@ textBufferTest()
     
     var buffer := new system'text'TextBuilder();
     
-    buffer.write:"a";
-    buffer.write:"b";
-    buffer.write:"c";
+    buffer.write("a");
+    buffer.write("b");
+    buffer.write("c");
 
     Assert.ifTrue(buffer.Value == "abc");
 
@@ -975,7 +999,7 @@ loopTest()
     console.write("loopTest:");
     
     int sum := 0;
-    for(int i := 0, i < 5, i += 1)
+    for(int i := 0; i < 5; i += 1)
     {
         sum += i;
     };
@@ -1063,7 +1087,7 @@ singleton ExecTester
 {
     break()
     {
-        MyException.new:"OnError handler works".raise()
+        MyException.new("OnError handler works").raise()
     }
     
     break2()
@@ -1084,7 +1108,7 @@ exceptionTest()
     console.write("exceptionTest:");
     
     bool raised := false;
-    ExecTester.break() \\ on:(e){ raised := true };
+    ExecTester.break() \\ on::(e){ raised := true };
     Assert.ifTrue(raised);
     console.write(".");
     
@@ -1116,7 +1140,7 @@ exceptionTest()
         }
         catch(MyException e)
         {
-            console.writeLine:"!!Wrong handler";
+            console.writeLine("!!Wrong handler");
             Assert.ifTrue(false)
         }
     }
@@ -1365,24 +1389,24 @@ nilDispatcherTest()
    A a := nil;
    var b := nil;
     
-   d.testMe(1, a) \ back:nil;
+   d.testMe(1, a) \ back(nil);
    d.validate(2);
 
-   d.testMe(1, b) \ back:nil;
+   d.testMe(1, b) \ back(nil);
    d.validate(1);
    console.write(".");
     
-   d.testMe(1, nil) \ back:nil;
+   d.testMe(1, nil) \ back(nil);
    d.validate(1);
    console.write(".");
 
-   d2.testMe(1, a) \ back:nil;
+   d2.testMe(1, a) \ back(nil);
    d2.validate(1);
     
-   d2.testMe(1, b) \ back:nil;
+   d2.testMe(1, b) \ back(nil);
    d2.validate(1);
     
-   d2.testMe(1, nil) \ back:nil;
+   d2.testMe(1, nil) \ back(nil);
    d2.validate(1);
 
    console.writeLine(".")
@@ -1616,6 +1640,175 @@ structTest()
    StructTest.testMe2(xy2);
    Assert.ifTrue(xy2.x == 3);
    Assert.ifTrue(xy2.y == 4);
+
+   console.writeLine(".");
+}
+
+singleton LookaheadHelper
+{
+   int X()
+   {
+      int r := 2;
+
+      ^ r   
+   }   
+
+   WeakX()
+   {
+      ^ 3;
+   }   
+}
+
+public lookaheadTests()
+{
+   console.write("lookaheadTests:");
+   int r := LookaheadHelper.X() + 1;
+   int r2 := LookaheadHelper.WeakX() + 1;
+
+   Assert.ifTrue(r == 3);
+   Assert.ifTrue(r2 == 4);
+
+   console.writeLine(".");
+}
+
+struct IncTestStruct
+{
+   int x := 0;
+   int y := 1;
+
+   act()
+   {
+      x++;
+      y--;
+   }
+
+   assert()
+   {
+      Assert.ifTrue(x == 1);
+      Assert.ifTrue(y == 0);
+   }
+}
+
+incTest()
+{
+   console.write("incTest:");
+
+   IncTestStruct struct := new IncTestStruct();
+
+   struct.act();
+   struct.assert();
+
+   console.writeLine(".");
+}
+
+
+singleton MultiValGetter
+{
+   object, object getMultiVal()
+   {
+      ^ ("Alex", 13)
+   }
+}
+
+multiValTest()
+{
+   console.write("multiValTest:");
+
+   var n := 2;
+   var t := (n + 1,"abc");
+
+   Assert.ifTrue(t.Item1 == 3);
+   Assert.ifTrue(t.Item2 == "abc");
+
+   console.write(".");
+
+   auto t2 := MultiValGetter.getMultiVal();
+
+   Assert.ifTrue(t2.Item1 == "Alex");
+   Assert.ifTrue(t2.Item2 == 13);
+
+   console.write(".");
+
+   var i1, i2 := MultiValGetter.getMultiVal();
+   Assert.ifTrue(i1 == "Alex");
+   Assert.ifTrue(i2 == 13);
+
+   console.write(".");
+
+   (string x1, int x2) := MultiValGetter.getMultiVal();
+   Assert.ifTrue(x1 == "Alex");
+   Assert.ifTrue(x2 == 13);
+
+   console.writeLine(".");
+}
+
+// -- defaultTest --
+
+DefaultA;
+
+struct DefaultB
+{
+   int x := 0;
+
+   internal int X() = x;
+
+   bool equal(DefaultB val)
+      = x == val.X();
+}
+
+struct DefaultC
+{
+   int y;
+
+   internal int Y() = y;
+
+   bool equal(DefaultC val)
+      = y == val.Y();
+
+   static DefaultC Default
+      = DefaultC.load(0);
+
+   constructor load(int v)
+   {
+      y := v
+   }
+}
+
+defaultTest()
+{
+   console.write("defaultTest:");
+
+   DefaultA a := default;
+   DefaultB b := default;
+   DefaultC c := default;
+
+   Assert.ifNil(a);
+   Assert.ifEqual(b, new DefaultB());
+   Assert.ifEqual(c, DefaultC.load(0));
+
+   console.writeLine(".");
+}
+
+// -- retValTests --
+
+RetValA
+{
+   eval() {}
+}
+
+extension RetValAOp : RetValA
+{
+   extendEval() {}
+}
+
+retValTests()
+{
+   console.write("retValTests:");
+
+   auto a := new RetValA();
+
+   Assert.ifInstanceOf(a.eval(), RetValA);
+   Assert.ifInstanceOf(a.extendEval(), RetValA);
 
    console.writeLine(".");
 }

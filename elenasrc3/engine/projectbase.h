@@ -57,6 +57,7 @@ namespace elena_lang
       GCYGSize,
       EHTableEntrySize,
       ThreadCounter,
+      StackReserved,
 
       ManifestName,
       ManifestVersion,
@@ -68,7 +69,9 @@ namespace elena_lang
       OptimizationMode,
       GenerateParamNameInfo,
       ConditionalBoxing,
+      EvaluateOp,
 
+      ModuleProlog,
       Prolog,
       Epilog,
 
@@ -77,6 +80,7 @@ namespace elena_lang
       Target,
       TargetType,
       TargetOption,
+      Hints,
    };
 
    class FileIteratorBase
@@ -112,6 +116,8 @@ namespace elena_lang
 
    public:
       virtual ustr_t name() = 0;
+
+      virtual int hints() = 0;
 
       virtual bool eof() = 0;
 
@@ -168,6 +174,7 @@ namespace elena_lang
    struct ProjectEnvironment
    {
       PathString       projectPath;
+      IdentifierString moduleProlog;
       IdentifierString fileProlog;
       IdentifierString fileEpilog;
 
@@ -235,6 +242,7 @@ namespace elena_lang
       virtual void initEnvironment(ProjectEnvironment& env)
       {
          env.projectPath.copy(PathSetting(ProjectOption::ProjectPath));
+         env.moduleProlog.copy(StringSetting(ProjectOption::ModuleProlog));
          env.fileProlog.copy(StringSetting(ProjectOption::Prolog));
          env.fileEpilog.copy(StringSetting(ProjectOption::Epilog));
 

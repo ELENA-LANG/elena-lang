@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class implementation.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -39,18 +39,9 @@ bool testMethodHint(ref_t hint, MethodHint mask)
    return test(hint, (ref_t)mask);
 }
 
-struct Op
-{
-   int      operatorId;
-   BuildKey operation;
+typedef CompilerLogic::Op Op;
 
-   ref_t    loperand;
-   ref_t    roperand;
-   ref_t    ioperand;
-   ref_t    output;
-};
-
-constexpr auto OperationLength = 150;
+constexpr auto OperationLength = 198;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -125,6 +116,15 @@ constexpr Op Operations[OperationLength] =
    {
       BNOT_OPERATOR_ID, BuildKey::IntSOp, V_INT32, 0, 0, V_INT32
    },
+   { 
+      NEGATE_OPERATOR_ID, BuildKey::IntSOp, V_INT32, 0, 0, V_INT32
+   },
+   {
+      INC_OPERATOR_ID, BuildKey::IntSOp, V_INT32, 0, 0, V_INT32
+   },
+   {
+      DEC_OPERATOR_ID, BuildKey::IntSOp, V_INT32, 0, 0, V_INT32
+   },
    {
       SHL_OPERATOR_ID, BuildKey::IntOp, V_INT32, V_INT32, 0, V_INT32
    },
@@ -157,6 +157,12 @@ constexpr Op Operations[OperationLength] =
    },
    {
       NOTEQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_WORD32, V_WORD32, 0, V_FLAG
+   },
+   {
+      NOTLESS_OPERATOR_ID, BuildKey::IntCondOp, V_PTR32, V_PTR32, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::IntCondOp, V_PTR32, V_PTR32, 0, V_FLAG
    },
    {
       ADD_OPERATOR_ID, BuildKey::UIntOp, V_UINT32, V_UINT32, 0, V_UINT32
@@ -193,6 +199,12 @@ constexpr Op Operations[OperationLength] =
    },
    {
       BNOT_OPERATOR_ID, BuildKey::IntSOp, V_UINT32, 0, 0, V_UINT32
+   },
+   {
+      INC_OPERATOR_ID, BuildKey::IntSOp, V_UINT32, 0, 0, V_UINT32
+   },
+   {
+      DEC_OPERATOR_ID, BuildKey::IntSOp, V_UINT32, 0, 0, V_UINT32
    },
    {
       SHL_OPERATOR_ID, BuildKey::IntOp, V_UINT32, V_UINT32, 0, V_UINT32
@@ -253,6 +265,27 @@ constexpr Op Operations[OperationLength] =
    },
    {
       SHR_OPERATOR_ID, BuildKey::LongOp, V_INT64, V_INT32, 0, V_INT64
+   },
+   {
+      ADD_OPERATOR_ID, BuildKey::IntLongOp, V_INT32, V_INT64, 0, V_INT64
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::IntLongOp, V_INT32, V_INT64, 0, V_INT64
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::IntLongOp, V_INT32, V_INT64, 0, V_INT64
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::IntLongOp, V_INT32, V_INT64, 0, V_INT64
+   },
+   {
+      BAND_OPERATOR_ID, BuildKey::IntLongOp, V_INT32, V_INT64, 0, V_INT64
+   },
+   {
+      BOR_OPERATOR_ID, BuildKey::IntLongOp, V_INT32, V_INT64, 0, V_INT64
+   },
+   {
+      BXOR_OPERATOR_ID, BuildKey::IntLongOp, V_INT32, V_INT64, 0, V_INT64
    },
    {
       BNOT_OPERATOR_ID, BuildKey::LongSOp, V_INT64, 0, 0, V_INT64
@@ -333,16 +366,55 @@ constexpr Op Operations[OperationLength] =
       SHR_OPERATOR_ID, BuildKey::ByteOp, V_INT8, V_INT32, 0, V_INT8
    },
    {
-      ADD_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+      ADD_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, V_UINT8
    },
    {
-      SUB_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+      SUB_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, V_UINT8
    },
    {
-      MUL_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+      MUL_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, V_UINT8
    },
    {
-      DIV_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, 0
+   },
+   {
+      BAND_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, V_UINT8
+   },
+   {
+      BOR_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, V_UINT8
+   },
+   {
+      BXOR_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, V_UINT8
+   },
+   {
+      BNOT_OPERATOR_ID, BuildKey::ByteSOp, V_UINT8, 0, 0, V_UINT8
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_UINT8, 0, V_UINT8
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::ByteCondOp, V_UINT8, V_UINT8, 0, V_FLAG
+   },
+   {
+      LESS_OPERATOR_ID, BuildKey::UByteCondOp, V_UINT8, V_UINT8, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::ByteCondOp, V_UINT8, V_UINT8, 0, V_FLAG
+   },
+   {
+      SHL_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_INT32, 0, V_UINT8
+   },
+   {
+      SHR_OPERATOR_ID, BuildKey::ByteOp, V_UINT8, V_INT32, 0, V_UINT8
    },
    {
       ADD_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, 0
@@ -355,6 +427,18 @@ constexpr Op Operations[OperationLength] =
    },
    {
       DIV_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, 0
+   },
+   {
+      ADD_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
    },
    {
       BAND_OPERATOR_ID, BuildKey::ShortOp, V_INT16, V_INT16, 0, V_INT16
@@ -382,6 +466,57 @@ constexpr Op Operations[OperationLength] =
    },
    {
       NOTEQUAL_OPERATOR_ID, BuildKey::ShortCondOp, V_INT16, V_INT16, 0, V_FLAG
+   },
+   {
+      ADD_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
+   },
+   {     
+      DIV_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
+   }, 
+   {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, 0
+   },
+   {
+      BAND_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
+   },
+   {
+      BOR_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
+   },
+   {
+      BXOR_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
+   },
+   {
+      BNOT_OPERATOR_ID, BuildKey::ShortSOp, V_UINT16, 0, 0, V_UINT16
+   },
+   {
+      SHL_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_INT32, 0, V_UINT16
+   },
+   {
+      SHR_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_INT32, 0, V_UINT16
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::ShortCondOp, V_UINT16, V_UINT16, 0, V_FLAG
+   },
+   {
+      LESS_OPERATOR_ID, BuildKey::UShortCondOp, V_UINT16, V_UINT16, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::ShortCondOp, V_UINT16, V_UINT16, 0, V_FLAG
    },
    {
       ADD_OPERATOR_ID, BuildKey::RealOp, V_FLOAT64, V_FLOAT64, 0, V_FLOAT64
@@ -482,7 +617,6 @@ constexpr Op Operations[OperationLength] =
    {
       INDEX_OPERATOR_ID, BuildKey::ObjArrayOp, V_ARGARRAY, V_INT32, 0, V_ELEMENT
    },
-
    {
       ADD_OPERATOR_ID, BuildKey::IntRealOp, V_INT32, V_FLOAT64, 0, V_FLOAT64
    },
@@ -518,8 +652,7 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
       case V_OBJECT:
          return !isPrimitiveRef(source.typeRef);
       case V_INT32:
-         return source.typeRef == V_INT8 || source.typeRef == V_WORD32
-            || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32 || source.typeRef == V_MESSAGENAME;
+         return source.typeRef == V_WORD32 || source.typeRef == V_MESSAGE || source.typeRef == V_PTR32 || source.typeRef == V_MESSAGENAME;
       case V_INT64:
          return source.typeRef == V_PTR64 || source.typeRef == V_WORD64;
       case V_FLAG:
@@ -535,6 +668,13 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
 
 // --- CompilerLogic ---
 
+void CompilerLogic :: loadOperations()
+{
+   for (size_t i = 0; i < OperationLength; i++) {
+      _operations.add(Operations[i].operatorId, Operations[i]);
+   }
+}
+
 bool CompilerLogic :: isValidOp(int operatorId, const int* validOperators, size_t len)
 {
    for (size_t i = 0; i < len; ++i) {
@@ -548,17 +688,20 @@ bool CompilerLogic :: isValidOp(int operatorId, const int* validOperators, size_
 BuildKey CompilerLogic :: resolveOp(ModuleScopeBase& scope, int operatorId, ref_t* arguments, size_t length,
    ref_t& outputRef)
 {
-   for(size_t i = 0; i < OperationLength; i++) {
-      if (Operations[i].operatorId == operatorId) {
-         bool compatible = isCompatible(scope, { Operations[i].loperand }, { arguments[0] }, false);
-         compatible = compatible && (length <= 1 || isCompatible(scope, { Operations[i].roperand }, { arguments[1] }, false));
-         compatible = compatible && (length <= 2 || isCompatible(scope, { Operations[i].ioperand }, { arguments[2] }, false));
-         if (compatible) {
-            outputRef = Operations[i].output;
+   auto it = _operations.getIt(operatorId);
+   while (!it.eof()) {
+      Op op = *it;
 
-            return Operations[i].operation;
-         }
+      bool compatible = isCompatible(scope, { op.loperand }, { arguments[0] }, false);
+      compatible = compatible && (length <= 1 || isCompatible(scope, { op.roperand }, { arguments[1] }, false));
+      compatible = compatible && (length <= 2 || isCompatible(scope, { op.ioperand }, { arguments[2] }, false));
+      if (compatible) {
+         outputRef = op.output;
+
+         return op.operation;
       }
+
+      it = _operations.nextIt(operatorId, it);
    }
 
    return BuildKey::None;
@@ -594,6 +737,7 @@ bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& vis
          type = TemplateType::InlineProperty;
          break;
       case V_TEMPLATE:
+      case V_WEAK:
          break;
       default:
       {
@@ -785,9 +929,6 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_GENERIC:
          hint = (ref_t)MethodHint::Sealed | (ref_t)MethodHint::Generic;
          return true;
-      case V_EMBEDDABLE:
-         hint = (ref_t)MethodHint::Embeddable;
-         return true;
       case V_INTERFACE_DISPATCHER:
          hint = (ref_t)MethodHint::InterfaceDispatcher;
          return true;
@@ -799,6 +940,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
          return true;
       case V_YIELDABLE:
          hint = (ref_t)MethodHint::Yieldable;
+         return true;
+      case V_NIL_CONVERSION:
+         hint = (ref_t)MethodHint::Conversion | (ref_t)MethodHint::Nullable;
          return true;
       default:
          return false;
@@ -817,6 +961,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(ref_t attribute, ref_t& hi
       case V_FUNCTION:
       case V_CONVERSION:
       case V_GENERIC:
+      case V_NIL_CONVERSION:
          return validateMethodAttribute(attribute, hint, dummy);
       default:
          return false;
@@ -1264,9 +1409,11 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
          case V_INT32:
          case V_UINT32:
          case V_INT8:
+         case V_UINT8:
          case V_PTR32:
          case V_WORD32:
          case V_INT16:
+         case V_UINT16:
             info.header.flags |= elDebugDWORD;
             break;
          case V_INT64:
@@ -1317,7 +1464,15 @@ bool CompilerLogic :: readTypeMap(ModuleBase* extModule, MemoryBase* section, Re
       if (type == 2) {
          ref_t reference = reader.getRef();
          if (scope->module != extModule) {
-            reference = scope->importReference(extModule, reference);
+            if (scope->isStandardOne()) {
+               // HOTFIX : import predefined references
+               ustr_t name = extModule->resolveReference(reference);
+               if (NamespaceString::compareNs(name, scope->module->name())) {
+                  reference = scope->module->mapReference(name + getlength(STANDARD_MODULE));
+               }
+               else reference = scope->importReference(extModule, reference);
+            }
+            else reference = scope->importReference(extModule, reference);
          }
 
          map.add(*key, reference);
@@ -1488,11 +1643,13 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.size = 4;
          break;
       case V_INT8:
+      case V_UINT8:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
          info.size = 1;
          break;
       case V_INT16:
+      case V_UINT16:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
          info.size = 2;
@@ -1604,6 +1761,53 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
       return V_BINARYARRAY;
    }
    else return V_OBJARRAY;
+}
+
+bool CompilerLogic :: isTemplateCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef, bool weakCompatible)
+{
+   ustr_t targetName = scope.module->resolveReference(targetRef);
+   ustr_t sourceName = scope.module->resolveReference(sourceRef);
+
+   size_t pos = targetName.find('&');
+
+   // check if it is the same template
+   if (sourceName.length() < pos || !targetName.compare(sourceName, pos))
+      return false;
+
+   if (weakCompatible)
+      return true;
+
+   // check if the signature is compatible
+   size_t targetStart = pos + 1;
+   size_t sourceStart = pos + 1;
+
+   while (true) {
+      size_t targetEndPos = targetName.findSub(targetStart, '&', targetName.length());
+      size_t sourceEndPos = sourceName.findSub(sourceStart, '&', sourceName.length());
+
+      IdentifierString targetArg;
+      IdentifierString sourceArg;
+
+      targetArg.copy(targetName.str() + targetStart, targetEndPos - targetStart);
+      sourceArg.copy(sourceName.str() + sourceStart, sourceEndPos - sourceStart);
+
+      targetArg.replaceAll('@', '\'', 0);
+      sourceArg.replaceAll('@', '\'', 0);
+
+      ref_t targetArgRef = scope.mapFullReference(*targetArg);
+      ref_t sourceArgRef = scope.mapFullReference(*sourceArg);
+
+      if (!isCompatible(scope, { targetArgRef }, { sourceArgRef }, true))
+         return false;
+
+      if (targetEndPos >= targetName.length() || sourceEndPos >= sourceName.length())
+         break;
+
+      targetStart = targetEndPos + 1;
+      sourceStart = sourceEndPos + 1;
+   }
+
+   return true;
 }
 
 bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, bool ignoreNils)
@@ -1883,7 +2087,20 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
    return 0;
 }
 
-ref_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, 
+mssg_t CompilerLogic :: retrieveDynamicConvertor(ModuleScopeBase& scope, ref_t targetRef)
+{
+   ref_t classClassRef = getClassClassRef(scope, targetRef);
+   mssg_t messageRef = overwriteArgCount(scope.buildins.constructor_message, 1);
+
+   CheckMethodResult dummy = {};
+   if (checkMethod(scope, classClassRef, messageRef, dummy)) {
+      return messageRef;
+   }
+
+   return 0;
+}
+
+mssg_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, 
    pos_t signLen, int& stackSafeAttrs)
 {
    ref_t classClassRef = getClassClassRef(scope, targetRef);
@@ -1897,6 +2114,7 @@ ref_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t
       return resolvedMessage;
 
    stackSafeAttrs = 0;
+
    return 0;
 }
 
@@ -1917,6 +2135,12 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
       if (compatible)
          return { ConversionResult::BoxingRequired };
 
+      if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_UINT8 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, INT8_32_CONVERSION, 1 };
+      }
+      if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_INT8 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, INT8_32_CONVERSION, 1 };
+      }
       if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_INT16 }, sourceInfo, false)) {
          return { ConversionResult::NativeConversion, INT16_32_CONVERSION, 1 };
       }
@@ -1954,6 +2178,14 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
       mssg_t messageRef = retrieveImplicitConstructor(scope, targetRef, signRef, 1, stackSafeAttrs);
       if (messageRef)
          return { ConversionResult::Conversion, messageRef, stackSafeAttrs };
+
+      if (!sourceRef || sourceRef == scope.buildins.superReference) {
+         // if it is a weak argument / check dynamic convertor
+         mssg_t messageRef = retrieveDynamicConvertor(scope, targetRef);
+         if (messageRef)
+            return { ConversionResult::DynamicConversion, messageRef, stackSafeAttrs };
+      }
+
    }
 
    return {};
@@ -2398,6 +2630,11 @@ bool CompilerLogic :: isNumericType(ModuleScopeBase& scope, ref_t& reference)
 
       return true;
    }
+   if (isCompatible(scope, { V_UINT8 }, { reference }, false)) {
+      reference = V_UINT8;
+
+      return true;
+   }
    if (isCompatible(scope, { V_INT16 }, { reference }, false)) {
       reference = V_INT16;
 
@@ -2425,4 +2662,70 @@ bool CompilerLogic :: isLessAccessible(ModuleScopeBase& scope, Visibility source
    Visibility targetVisibility = scope.retrieveVisibility(targetRef);
 
    return sourceVisibility > targetVisibility;
+}
+
+bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t name)
+{
+   ReferenceProperName sectionName(name);
+   NamespaceString ns(name);
+
+   IdentifierString dictionaryName(ns.str(), "'", META_PREFIX);
+   dictionaryName.append(sectionName.str());
+
+   if ((*sectionName).compare(PREDEFINED_MAP)) {
+      auto predefinedInfo = moduleScope->getSection(*dictionaryName, mskAttributeMapRef, true);
+      if (predefinedInfo.section) {
+         readAttributeMap(predefinedInfo.section, moduleScope->predefined);
+
+         return true;
+      }
+   }
+   else if ((*sectionName).compare(ATTRIBUTES_MAP)) {
+      auto attributeInfo = moduleScope->getSection(*dictionaryName, mskAttributeMapRef, true);
+
+      if (attributeInfo.section) {
+         readAttributeMap(attributeInfo.section, moduleScope->attributes);
+
+         return true;
+      }
+   }
+   else if ((*sectionName).compare(OPERATION_MAP)) {
+      auto operationInfo = moduleScope->getSection(*dictionaryName, mskTypeMapRef, true);
+
+      if (operationInfo.section) {
+         readTypeMap(operationInfo.module, operationInfo.section, moduleScope->operations, moduleScope);
+
+         return true;
+      }
+   }
+   else if ((*sectionName).compare(ALIASES_MAP)) {
+      auto aliasInfo = moduleScope->getSection(*dictionaryName, mskTypeMapRef, true);
+
+      if (aliasInfo.section) {
+         readTypeMap(aliasInfo.module, aliasInfo.section, moduleScope->aliases, moduleScope);
+
+         return true;
+      }
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: clearMetaData(ModuleScopeBase* moduleScope, ustr_t name)
+{
+   if (name.compare(PREDEFINED_MAP)) {
+      moduleScope->predefined.clear();
+   }
+   else if (name.compare(ATTRIBUTES_MAP)) {
+      moduleScope->attributes.clear();
+   }
+   else if (name.compare(OPERATION_MAP)) {
+      moduleScope->operations.clear();
+   }
+   else if (name.compare(ALIASES_MAP)) {
+      moduleScope->aliases.clear();
+   }
+   else return false;
+
+   return true;
 }

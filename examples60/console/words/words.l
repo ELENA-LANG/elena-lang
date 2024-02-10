@@ -21,8 +21,8 @@ class WordList
    {
       _total := _total + 1;
 
-         ifnot(_list.ifExists(word))
-            { _list.append(word) }
+      ifnot(_list.ifExists(word))
+         { _list.append(word) }
    }
 
    total_words = _total;
@@ -36,18 +36,18 @@ class WordList
 
 public program()
 {
-   console.writeLine:"Enter the text(to stop press enter two times):";
+   console.writeLine("Enter the text(to stop press enter two times):");
 
    // read until the empty string is not entered
    var text := new StringWriter();
-   until(string line := console.readLine(), line.isEmpty())
+   for(string line := console.readLine(); until line.isEmpty())
    {
       text.writeLine(line)
    };
                 
    var list := new WordList();
 
-   text.forEachWord:(word){ list.append:word };
+   text.forEachWord::(word){ list.append(word) };
 
    console.printLine("There are ",list.unique_words," unique words out of ",list.total_words);
    if (list.total_words > 0)

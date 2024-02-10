@@ -24,6 +24,11 @@ public sealed struct ThreadHandle
    {
       extern KERNEL32.ResumeThread(_handle)
    }
+                                                                   
+   close()
+   {
+      extern KERNEL32.CloseHandle(_handle)
+   }
 }
 
 public singleton threadControl

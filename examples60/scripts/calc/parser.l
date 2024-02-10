@@ -23,7 +23,7 @@ extension lexicalOp
          $45 { ^ mssg minus }
          $46 { ^ mssg dot }
          $47 { ^ mssg slash }
-         : { ^ mssg unknown }
+         ! { ^ mssg unknown }
    }
 }
 
@@ -333,7 +333,7 @@ extension parserOp
       var stateMachine := StateMachine.assign(states);
       try
       {
-         self.forEach:(ch)
+         self.forEach::(ch)
          {
             var type := ch.LexicalType;
         

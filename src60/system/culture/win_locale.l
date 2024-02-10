@@ -79,7 +79,7 @@ namespace culture
             short dst_tmp[32];
             int   dst_len := 32;
     
-            UTF16Encoding.toShortArray(s, i, s_len, src_tmp);
+            UTF16Encoding.toShortArray(s, i, s_len, src_tmp, 0);
 
             self.strToUpper(src_tmp, s_len, dst_tmp, ref dst_len);
     
@@ -113,7 +113,7 @@ namespace culture
             short dst_tmp[32];
             int   dst_len := 32;
     
-            UTF16Encoding.toShortArray(s, i, s_len, src_tmp);
+            UTF16Encoding.toShortArray(s, i, s_len, src_tmp, 0);
 
             self.strToLower(src_tmp, s_len, dst_tmp, ref dst_len);
     

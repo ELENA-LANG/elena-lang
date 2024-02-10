@@ -161,6 +161,7 @@ namespace elena_lang
       void onDebuggerStart();
       void onDebuggerHook();
       void onDebuggerUpdate(StatusNMHDR* rec);
+      void onDebuggerSourceNotFound(StatusNMHDR* rec);
       void onDocumentUpdate(DocumentChangeStatus& changeStatus) override;
 
    public:

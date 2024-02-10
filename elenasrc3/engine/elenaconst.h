@@ -46,8 +46,6 @@ namespace elena_lang
 
    // --- ELENA predefined module names ---
    constexpr auto BINARY_MODULE              = "$binary";
-   constexpr auto PREDEFINED_MODULE          = "system'predefined"; // NOTE : system'predefined module should preceed system one
-   constexpr auto OPERATIONS_MODULE          = "system'operations"; // NOTE : system'predefined module should preceed system one
    constexpr auto STANDARD_MODULE            = "system";
 
    // --- ELENA special sections ---
@@ -56,6 +54,8 @@ namespace elena_lang
    constexpr auto EXTENSION_SECTION          = "#extensions";
    constexpr auto INITIALIZER_SECTION        = "#initializer";
    constexpr auto PACKAGE_SECTION            = "#package";
+
+   constexpr auto WEAK_POSTFIX               = "#weak";
 
    constexpr auto NAMESPACE_REF              = "$namespace";
 
@@ -70,10 +70,11 @@ namespace elena_lang
    constexpr auto AUTO_SYMBOL_PREFIX         = "@autosymbol";
    constexpr auto INLINE_CLASSNAME           = "$inline";          // nested class generic name
 
-   constexpr auto PREDEFINED_MAP             = "$forwards'meta$predefined";
-   constexpr auto ATTRIBUTES_MAP             = "$forwards'meta$attributes";
-   constexpr auto OPERATION_MAP              = "$forwards'meta$statementTemplates";
-   constexpr auto ALIASES_MAP                = "$forwards'meta$aliasTypes";
+   constexpr auto OPERATION_MAP              = "statementTemplates";
+   constexpr auto PREDEFINED_MAP             = "predefinedSymbols";
+   constexpr auto ATTRIBUTES_MAP             = "attributeSymbols";
+   constexpr auto ALIASES_MAP                = "aliasTypes";
+
    constexpr auto STARTUP_ENTRY              = "$auto'startUpSymbol";
 
    constexpr auto VM_TAPE                    = "$elena'meta$startUpTape";
@@ -82,11 +83,14 @@ namespace elena_lang
 
    constexpr auto SYSTEM_FORWARD             = "$system_entry";   // the system entry
    constexpr auto SUPER_FORWARD              = "$super";          // the common class predecessor
+   constexpr auto NILVALUE_FORWARD           = "$nil";            // the nil value
    constexpr auto INTLITERAL_FORWARD         = "$int";            // the int literal
    constexpr auto LONGLITERAL_FORWARD        = "$long";           // the long literal
    constexpr auto REALLITERAL_FORWARD        = "$real";           // the real literal
-   constexpr auto INT8LITERAL_FORWARD        = "$byte";           // the int literal
+   constexpr auto INT8LITERAL_FORWARD        = "$int8";           // the int literal
+   constexpr auto UINT8LITERAL_FORWARD       = "$uint8";          // the int literal
    constexpr auto INT16LITERAL_FORWARD       = "$short";          // the int literal
+   constexpr auto UINT16LITERAL_FORWARD      = "$ushort";         // the int literal
    constexpr auto LITERAL_FORWARD            = "$string";         // the string literal
    constexpr auto WIDELITERAL_FORWARD        = "$wide";           // the wide string literal
    constexpr auto CHAR_FORWARD               = "$char";           // the char literal
@@ -104,6 +108,7 @@ namespace elena_lang
    constexpr auto UINT_FORWARD               = "$uint";           // the uint wrapper
    constexpr auto PTR_FORWARD                = "$ptr";            // the ptr wrapper
    constexpr auto LAZY_FORWARD               = "$lazy";
+   constexpr auto NULLABLE_FORWARD           = "$nullable";
    constexpr auto PRELOADED_FORWARD          = "preloadedSymbols";
    constexpr auto START_FORWARD              = "$symbol_entry";
 
@@ -152,6 +157,8 @@ namespace elena_lang
    constexpr auto NEGATE_MESSAGE          = "Negative";
    constexpr auto VALUE_MESSAGE           = "Value";
    constexpr auto ITEM_MESSAGE            = "Value";
+   constexpr auto DEFAULT_MESSAGE         = "Default";
+   constexpr auto BNOT_MESSAGE            = "BInverted";
    constexpr auto NOTEQUAL_MESSAGE        = "notequal";
    constexpr auto LESS_MESSAGE            = "less";
    constexpr auto NOTLESS_MESSAGE         = "notless";
@@ -160,6 +167,9 @@ namespace elena_lang
    constexpr auto AND_MESSAGE             = "and";
    constexpr auto OR_MESSAGE              = "or";
    constexpr auto XOR_MESSAGE             = "xor";
+   constexpr auto SHL_MESSAGE             = "shiftLeft";
+   constexpr auto SHR_MESSAGE             = "shiftRight";
+      
 
    // --- constant string lengths ---
    constexpr auto TEMPLATE_PREFIX_NS_LEN = 7;

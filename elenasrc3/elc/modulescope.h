@@ -3,7 +3,7 @@
 //
 //		This file contains Module scope class declaration.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef MODULESCOPE_H
@@ -17,6 +17,8 @@ namespace elena_lang
 // --- ModuleScope ---
 class ModuleScope : public ModuleScopeBase
 {
+   int                  hints;
+
    LibraryLoaderBase*   loader;
    ForwardResolverBase* forwardResolver;
 
@@ -24,7 +26,9 @@ class ModuleScope : public ModuleScopeBase
 
 public:
    bool isStandardOne() override;
+   bool withValidation() override;
 
+   ref_t importAction(ModuleBase* referenceModule, ref_t signRef) override;
    ref_t importSignature(ModuleBase* referenceModule, ref_t signRef) override;
    ref_t importMessage(ModuleBase* referenceModule, mssg_t message) override;
    ref_t importReference(ModuleBase* referenceModule, ustr_t referenceName) override;
@@ -101,12 +105,14 @@ public:
       pos_t ehTableEntrySize,
       int minimalArgList,
       int ptrSize,
-      bool multiThreadMode)
+      bool multiThreadMode,
+      int moduleHint)
       : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, ehTableEntrySize, 
          minimalArgList, ptrSize, false, multiThreadMode)
    {
       this->loader = loader;
       this->forwardResolver = forwardResolver;
+      this->hints = moduleHint;
    }
 };
 

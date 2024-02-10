@@ -68,7 +68,7 @@ namespace elena_lang
       bool                 wholeWord;
 
       FindModel()
-         : searchHistory(nullptr)
+         : searchHistory(nullptr), matchCase(false), wholeWord(false)
       {
          
       }

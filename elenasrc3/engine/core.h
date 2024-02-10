@@ -66,6 +66,7 @@ namespace elena_lang
    constexpr int ELENA_ERR_DIVIDE_BY_ZERO    = 0x102;
    constexpr int ELENA_ERR_OUT_OF_MEMORY     = 0x103;
    constexpr int ELENA_ERR_OUT_OF_PERMMEMORY = 0x104;
+   constexpr int ELENA_ERR_STACKOVERFLOW     = 0x105;
 
 #pragma pack(push, 1)
    // --- VMTHeader ---

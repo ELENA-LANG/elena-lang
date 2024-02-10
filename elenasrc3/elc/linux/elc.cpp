@@ -103,6 +103,7 @@ typedef ElfARM64ImageFormatter LinuxImageFormatter;
 
 constexpr int DEFAULT_MGSIZE = 688128;
 constexpr int DEFAULT_YGSIZE = 204800;
+constexpr int DEFAULT_STACKRESERV = 0x100000;
 
 class Presenter : public LinuxConsolePresenter
 {
@@ -166,11 +167,11 @@ int main(int argc, char* argv[])
 
       PathString dataPath(DATA_PATH);
 
-      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, 1, true };
+      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       Project          project(*dataPath, CURRENT_PLATFORM, &Presenter::getInstance());
       LinuxLinker      linker(&errorProcessor, &LinuxImageFormatter::getInstance(&project));
-      CompilingProcess process(dataPath, "<prolog>", "<epilog>",
+      CompilingProcess process(dataPath, "<moduleProlog>", "<prolog>", "<epilog>",
          &Presenter::getInstance(), &errorProcessor,
          VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 
@@ -206,6 +207,16 @@ int main(int argc, char* argv[])
                case 'r':
                   cleanMode = true;
                   break;
+               case 's':
+               {
+                  IdentifierString setting(argv[i] + 2);
+                  if (setting.compare("stackReserv:", 0, 12)) {
+                     ustr_t valStr = *setting + 12;
+                     int val = StrConvertor::toInt(valStr, 10);
+                     project.addIntSetting(ProjectOption::StackReserved, val);
+                  }
+                  break;
+               }
                case 't':
                {
                   IdentifierString configName(argv[i] + 2);
@@ -215,6 +226,9 @@ int main(int argc, char* argv[])
                }
                case 'p':
                   project.setBasePath(argv[i] + 2);
+                  break;
+               case 'v':
+                  process.setVerboseOn();
                   break;
                case 'w':
                   if (argv[i][2] == '0') {
@@ -231,13 +245,23 @@ int main(int argc, char* argv[])
                   }
                   break;
                case 'x':
-                  if (argv[i][2] == 'p') {
-                     project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');
-                  }
-                  else if (argv[i][2] == 'b') {
+                  if (argv[i][2] == 'b') {
                      project.addBoolSetting(ProjectOption::ConditionalBoxing, argv[i][3] != '-');
                   }
+                  else if (argv[i][2] == 'e') {
+                     project.addBoolSetting(ProjectOption::EvaluateOp, argv[i][3] != '-');
+                  }
+                  else if (argv[i][2] == 'p') {
+                     project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');
+                  }
                   break;
+               case 'f':
+               {
+                  IdentifierString setting(argv[i] + 2);
+                  process.addForward(*setting);
+
+                  break;
+               }
                default:
                   break;
             }
@@ -252,7 +276,7 @@ int main(int argc, char* argv[])
          else {
             FileNameString fileName(argv[i]);
 
-            project.addSource(*fileName, argv[i], nullptr);
+            project.addSource(*fileName, argv[i], nullptr, nullptr);
          }
       }
 

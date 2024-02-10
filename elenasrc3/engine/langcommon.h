@@ -13,6 +13,14 @@ namespace elena_lang
 {
    // default settings
    constexpr bool DEFAULT_CONDITIONAL_BOXING = true;
+   constexpr bool DEFAULT_EVALUATE_OP = true;
+
+   enum MetaHint : int
+   {
+      mhNone           = 0,
+      mhStandart       = 1,
+      mhNoValidation   = 2,
+   };
 
    enum class MethodHint : ref_t
    {
@@ -24,10 +32,11 @@ namespace elena_lang
       Virtual              = 0x00000005,
       Dispatcher           = 0x00000007,
 
-      Embeddable           = 0x00000040,
+      //Embeddable           = 0x00000040,
       Function             = 0x00000080,
       Generic              = 0x00000100,
       RetOverload          = 0x00000200,
+      Nullable             = 0x00000400,
       Multimethod          = 0x00001000,
       TargetSelf           = 0x00002000,
       Static               = 0x00004000,
@@ -68,6 +77,7 @@ namespace elena_lang
    constexpr auto errTooManyParameters       = 113;
    constexpr auto errMixedUpVariadicMessage  = 114;
    constexpr auto errRedirectToItself        = 115;
+   constexpr auto errAssigningRealOnly       = 116;
    constexpr auto errDuplicatedDefinition    = 119;
    constexpr auto errInvalidIntNumber        = 130;
    constexpr auto errCannotEval              = 140;
@@ -143,6 +153,9 @@ namespace elena_lang
    constexpr auto infoCurrentClass           = 703;
    constexpr auto infoAbstractMetod          = 704;
    constexpr auto infoMixedUpVariadic        = 705;
+   constexpr auto infoUnknownMessage         = 706;
+   constexpr auto infoTargetClass            = 707;
+   constexpr auto infoScopeMethod            = 708;
 
    constexpr auto errVMBroken                = 800;
    constexpr auto errVMNotInitialized        = 801;
@@ -232,6 +245,7 @@ namespace elena_lang
    constexpr auto V_TEMPLATEBASED         = 0x80001028u;
    constexpr auto V_WEAK                  = 0x80001029u;
    constexpr auto V_INTERFACE_DISPATCHER  = 0x8000102Au;
+   constexpr auto V_NIL_CONVERSION        = 0x8000102Bu;
 
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;
@@ -246,6 +260,7 @@ namespace elena_lang
    constexpr auto V_POINTER               = 0x8000080Au;
    constexpr auto V_EXTMESSAGE            = 0x8000080Bu;
    constexpr auto V_TYPEOF                = 0x8000080Cu;
+   //constexpr auto V_INLINEARG             = 0x8000080Du;
 
    /// primitive types
    constexpr auto V_STRING                = 0x80000001u;
@@ -279,6 +294,10 @@ namespace elena_lang
    constexpr auto V_EXTMESSAGE128         = 0x8000001Du;
    constexpr auto V_WORD64                = 0x8000001Eu;
    constexpr auto V_UINT32                = 0x8000001Fu;
+   constexpr auto V_DEFAULT               = 0x80000020u;
+   constexpr auto V_UINT8                 = 0x80000021u;
+   constexpr auto V_UINT16                = 0x80000022u;
+   constexpr auto V_NULLABLE              = 0x80000023u;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;
@@ -325,6 +344,10 @@ namespace elena_lang
    constexpr auto CONTINUE_OPERATOR_ID       = 0x0027;
    constexpr auto YIELD_OPERATOR_ID          = 0x0028;
    constexpr auto REFERENCE_OPERATOR_ID      = 0x002B;
+   constexpr auto INC_OPERATOR_ID            = 0x002C;
+   constexpr auto DEC_OPERATOR_ID            = 0x002D;
+
+   constexpr int MAX_OPERATOR_ID             = 0x002D;
 
    constexpr auto ISNIL_OPERATOR_ID          = 0x003E;
    constexpr auto CLASS_OPERATOR_ID          = 0x003F;
@@ -334,6 +357,7 @@ namespace elena_lang
    constexpr auto INT32_64_CONVERSION        = 0x001;
    constexpr auto INT32_FLOAT64_CONVERSION   = 0x002;
    constexpr auto INT16_32_CONVERSION        = 0x003;
+   constexpr auto INT8_32_CONVERSION         = 0x004;
 
    // === Global Attributes ===
    constexpr auto GA_SYMBOL_NAME             = 0x0001;
@@ -362,6 +386,7 @@ namespace elena_lang
    constexpr pos_t VM_CONFIG_CMD             = 0x110;
    constexpr pos_t VM_FREE_CMD               = 0x211;
    constexpr pos_t VM_SEND_MESSAGE_CMD       = 0x112;
+   constexpr pos_t VM_TRYCALLSYMBOL_CMD      = 0x113;
 
    // --- Configuration xpaths ---
    constexpr auto WIN_X86_KEY       = "Win_x86";
@@ -378,26 +403,27 @@ namespace elena_lang
    constexpr auto VM_CONSOLE_KEY    = "VM STA Console";
    constexpr auto VM_GUI_KEY        = "VM STA GUI";
 
-   constexpr auto CONFIG_ROOT = "configuration";
-   constexpr auto PLATFORM_CATEGORY = "configuration/platform";
-   constexpr auto TEMPLATE_CATEGORY = "templates/*";
-   constexpr auto PRIMITIVE_CATEGORY = "primitives/*";
-   constexpr auto FORWARD_CATEGORY = "forwards/*";
-   constexpr auto EXTERNAL_CATEGORY = "externals/*";
-   constexpr auto WINAPI_CATEGORY = "winapi/*";
-   constexpr auto REFERENCE_CATEGORY = "references/*";
-   constexpr auto MODULE_CATEGORY = "files/*";
-   constexpr auto FILE_CATEGORY = "include/*";
-   constexpr auto PARSER_TARGET_CATEGORY = "targets/*";
+   constexpr auto CONFIG_ROOT             = "configuration";
+   constexpr auto PLATFORM_CATEGORY       = "configuration/platform";
+   constexpr auto TEMPLATE_CATEGORY       = "templates/*";
+   constexpr auto PRIMITIVE_CATEGORY      = "primitives/*";
+   constexpr auto FORWARD_CATEGORY        = "forwards/*";
+   constexpr auto EXTERNAL_CATEGORY       = "externals/*";
+   constexpr auto WINAPI_CATEGORY         = "winapi/*";
+   constexpr auto REFERENCE_CATEGORY      = "references/*";
+   constexpr auto MODULE_CATEGORY         = "files/*";
+   constexpr auto FILE_CATEGORY           = "include/*";
+   constexpr auto PARSER_TARGET_CATEGORY  = "targets/*";
 
-   constexpr auto LIB_PATH = "project/libpath";
-   constexpr auto OUTPUT_PATH = "project/output";
-   constexpr auto TARGET_PATH = "project/executable";
-   constexpr auto PROJECT_TEMPLATE = "project/template";
-   constexpr auto NAMESPACE_KEY = "project/namespace";
-   constexpr auto DEBUGMODE_PATH = "project/debuginfo";
-   constexpr auto FILE_PROLOG = "project/prolog";
-   constexpr auto FILE_EPILOG = "project/epilog";
+   constexpr auto LIB_PATH                = "project/libpath";
+   constexpr auto OUTPUT_PATH             = "project/output";
+   constexpr auto TARGET_PATH             = "project/executable";
+   constexpr auto PROJECT_TEMPLATE        = "project/template";
+   constexpr auto NAMESPACE_KEY           = "project/namespace";
+   constexpr auto DEBUGMODE_PATH          = "project/debuginfo";
+   constexpr auto FILE_PROLOG             = "project/prolog";
+   constexpr auto FILE_EPILOG             = "project/epilog";
+   constexpr auto MODULE_PROLOG           = "project/moduleProlog";
 
    constexpr auto PLATFORMTYPE_KEY        = "system/platform";
 
@@ -441,18 +467,19 @@ namespace elena_lang
    public:
       static void loadAttributes(AttributeMap& map)
       {
-         //map.add("singleton", V_SINGLETON);
+         map.add("singleton", V_SINGLETON);
+         map.add("public_singleton", V_SINGLETON);
+         map.add("public_singleton", V_PUBLIC);
          //map.add("preloaded_symbol", V_PRELOADED);
-         //map.add("function", V_FUNCTION);
+         map.add("function", V_FUNCTION);
          map.add("get_method", V_GETACCESSOR);
          map.add("script_method", V_SCRIPTSELFMODE);
          map.add("public_namespace", V_PUBLIC);
          map.add("script_function", V_SCRIPTSELFMODE);
          map.add("public_symbol", V_PUBLIC);
          //map.add("script_function", V_FUNCTION);
-         //map.add("variable_identifier", V_VARIABLE);
-         //map.add("new_reference", V_NEWOP);
-         //map.add("new_identifier", V_NEWOP);
+         map.add("new_variable", V_VARIABLE);
+         map.add("new_identifier", V_NEWOP);
          //map.add("prev_identifier", V_PREVIOUS);
          //map.add("loop_expression", V_LOOP);
       }

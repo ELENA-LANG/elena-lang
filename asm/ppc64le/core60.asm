@@ -1017,6 +1017,35 @@ inline %76h
 
 end
 
+// ; xsaven
+inline %77h
+
+  li      r18, __n16_1
+  stw     r18, 0(r15)
+
+end
+
+// ; xsaven
+inline %977h
+
+  lis     r18, __n16hi_1
+  li      r19, __n16lo_1
+  andi.   r19, r19, 0FFFFh
+  add     r18, r18, r19
+  stw     r18, 0(r15)
+
+end
+
+// ; xsaven
+inline %0A77h
+
+  li      r18, __n16lo_1
+  andi.   r18, r18, 0FFFFh
+  addis   r18, r18, __n16hi_1
+  stw     r18, 0(r15)
+
+end
+
 // ; fabsdp
 inline %078h
 
@@ -2340,6 +2369,27 @@ inline %0D4h
 
 end
 
+// ; xsavedispn
+inline %0D5h
+
+  addi    r19, r15, __arg16_1
+  li      r17, __n16_2
+  stw     r17, 0(r19)
+
+end
+
+// ; xsavedispn
+inline %1D5h
+
+  addi    r19, r15, __arg16_1
+
+  li      r17, __n16lo_1
+  andi.   r17, r17, 0FFFFh
+  addis   r17, r17, __n16hi_1
+  stw     r17, 0(r19)
+
+end
+
 // ; xlabeldpr
 inline %0D6h
 
@@ -3325,7 +3375,7 @@ inline %1F1h
   addis   r16, r16, __xdisp32hi_2
   addi    r16, r16, __xdisp32lo_2
 
-  mr    r3, r16
+  mr      r3, r16
 
 end
 
@@ -3336,7 +3386,16 @@ inline %2F1h
   addis   r16, r16, __xdisp32hi_2
   addi    r16, r16, __xdisp32lo_2
 
-  mr    r4, r16
+  mr      r4, r16
+
+end
+
+// ; xstoresir :n, 0
+inline %5F1h
+
+  li      r16, 0
+
+  std   r16, __arg16_1(r1)
 
 end
 
@@ -3351,6 +3410,32 @@ end
 inline %7F1h
 
   li    r4, 0
+
+end
+
+// ; xstoresir :n, -1
+inline %8F1h
+
+  li      r16, 0
+  addi    r16, r16, -1
+
+  std   r16, __arg16_1(r1)
+
+end
+
+// ; xstoresir :0, -1
+inline %9F1h
+
+  li    r3, 0
+  addi  r3, r3, -1
+
+end
+
+// ; xstoresir :1, -1
+inline %0AF1h
+
+  li    r4, 0
+  addi  r4, r4, -1
 
 end
 
@@ -3702,7 +3787,15 @@ inline %0F9h
   ld      r16, toc_code(r2)
   addis   r16, r16, __xdisp32hi_2
   addi    r16, r16, __xdisp32lo_2
-  std     r16, __arg16_1(r1)
+  std     r16, __arg16_1(r31)
+
+end
+
+// ; xstorefir
+inline %5F9h
+
+  li      r16, 0
+  std     r16, __arg16_1(r31)
 
 end
 

@@ -46,12 +46,12 @@ extension bsortOp
      
     bsort()
     {
-        for (int i := self.Length / 2, i >= 0, i -= 1)
+        for (int i := self.Length / 2; i >= 0; i -= 1)
         {
             self.bsortRange(i, self.Length - 1);
         };
         
-        for (int i := self.Length - 1, i >= 0, i -= 1)
+        for (int i := self.Length - 1; i >= 0; i -= 1)
         {
             self.exchange(i, 0);
             
@@ -65,10 +65,10 @@ extension bsortOp
 public program()
 {
     // 1. Create the array
-    var size := console.write:"Enter the array size:".loadLineTo(Integer.new()).Value;
+    var size := console.write("Enter the array size:").loadLineTo(Integer.new()).Value;
 
     // 2. Initialize the array
-    var array := Array.allocate(size).populate:prompter;
+    var array := Array.allocate(size).populate(prompter);
 
     // 3. Sort the array
     array.bsort();

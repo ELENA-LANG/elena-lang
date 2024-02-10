@@ -1,4 +1,5 @@
 import system;
+import system'drawing;
 
 // --- classes ---
 public const wide ButtonClass = "Button"w;
@@ -76,19 +77,111 @@ public sealed const struct WindowHandle
       if (length == 0)
       { 
          ^ emptyWideString 
-      }
-      else
+      };
+
+      wide caption := WideString.allocate(length);
+      length := length + 1;
+            
+      extern USER32.SendMessageW(_handle, WM_GETTEXT, length, caption);
+            
+      ^ caption
+   }
+
+   setEnabled(int value)
+   {
+      extern USER32.EnableWindow(_handle, value)
+   }            
+    
+   bool isEnabled()
+   {
+      int visible := extern USER32.IsWindowEnabled(_handle);
+        
+      ^ (visible != 0)
+   }
+
+   setChecked(int n)
+   {
+      extern USER32.SendMessageW(_handle, BM_SETCHECK, n, 0)
+   }
+
+   bool isChecked()
+   {
+      int r := extern USER32.SendMessageW(_handle, BM_GETCHECK, 0, 0);
+
+	  ^ (r == BST_CHECKED)
+   }    
+
+   setVisible(int n)
+   {
+      extern USER32.ShowWindow(_handle, n)
+   }
+    
+   bool isVisible()
+   {
+      int visible := extern USER32.IsWindowVisible(_handle);
+        
+      ^ (visible != 0)
+   }
+
+   get HDC HDC()
+   {
+      HDC dc := extern USER32.GetDC(_handle);
+
+      ^ dc
+   }
+
+   refresh()
+   {
+      handle copy := _handle;
+        
+      extern
       {
-         wide caption := WideString.allocate(length);
-         length := length + 1;
-            
-         extern USER32.SendMessageW(_handle, WM_GETTEXT, length, caption);
-            
-         ^ caption
+         extern USER32.InvalidateRect(copy, 0, 1);
+         extern USER32.UpdateWindow(copy)
       }
    }
+
 }
 
 WindowHandle defaultHandle
     = WindowHandle.Default;
+
+// --- PAINTSTRUCT ---
+
+public sealed struct PAINTSTRUCT
+{
+   HDC  _HDC;
+   int  _erase;
+   RECT _rect;
+   int  _restore;
+   int  _incUpdate;
+    
+   int  dummy0;
+   int  dummy1;
+   int  dummy2;
+   int  dummy3;
+   int  dummy4;
+   int  dummy5;
+   int  dummy6;
+   int  dummy7;
+
+   constructor()
+   {
+   }
+
+   get HDC HDC()
+   {
+      ^ _HDC
+   }
+            
+   begin(WindowHandle handle)
+   {
+      extern USER32.BeginPaint(handle, self)
+   }
+    
+   end(WindowHandle handle)
+   {
+      extern USER32.EndPaint(handle, self)
+   }
+}
 

@@ -44,9 +44,31 @@ namespace elena_lang
 
    typedef CachedList<Pair<mssg_t, ref_t>, 10> VirtualMethods;
 
+   inline pos_t OpHashRule(int id)
+   {
+      return id;
+   }
+
    // --- CompilerLogic ---
    class CompilerLogic
    {
+   public:
+      struct Op
+      {
+         int      operatorId;
+         BuildKey operation;
+
+         ref_t    loperand;
+         ref_t    roperand;
+         ref_t    ioperand;
+         ref_t    output;
+      };
+
+      typedef HashTable<int, Op, OpHashRule, MAX_OPERATOR_ID> OperationMap;
+
+   private:
+      OperationMap _operations;
+
       ref_t generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags, ClassInfo::MethodMap& methods, 
          mssg_t message, void* param, ref_t(*resolve)(void*, ref_t));
 
@@ -56,6 +78,8 @@ namespace elena_lang
 
       void setSignatureStacksafe(ModuleScopeBase& scope, ModuleBase* targetModule,
          ref_t targetSignature, int& stackSafeAttr);
+
+      void loadOperations();
 
    public:
       BuildKey resolveOp(ModuleScopeBase& scope, int operatorId, ref_t* arguments, size_t length, ref_t& outputRef);
@@ -126,13 +150,11 @@ namespace elena_lang
 
       void writeAttributeMapEntry(MemoryBase* section, ustr_t key, int value);
       void writeAttributeMapEntry(MemoryBase* section, ustr_t key, ustr_t value);
-      bool readAttributeMap(MemoryBase* section, ReferenceMap& map);
 
       void writeArrayEntry(MemoryBase* section, ref_t reference);
       void writeArrayReference(MemoryBase* section, ref_t reference);
 
       void writeTypeMapEntry(MemoryBase* section, ustr_t key, ref_t reference);
-      bool readTypeMap(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
 
       //void writeDeclDictionaryEntry(MemoryBase* section, ustr_t key, ref_t reference);
       //bool readDeclDictionary(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
@@ -144,13 +166,16 @@ namespace elena_lang
 
       bool isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, bool ignoreNils);
       bool isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo target, TypeInfo source);
+      bool isTemplateCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef, bool weakCompatible);
 
       bool isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage);
       bool isMessageCompatibleWithSignature(ModuleScopeBase& scope, ref_t targetRef, 
          mssg_t targetMessage, ref_t* sourceSignature, size_t len, int& stackSafeAttr);
 
-      ref_t retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, 
+      mssg_t retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, 
          pos_t signLen, int& stackSafeAttrs);
+
+      mssg_t retrieveDynamicConvertor(ModuleScopeBase& scope, ref_t targetRef);
 
       ConversionRoutine retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ustr_t ns, 
          ref_t targetRef, TypeInfo sourceInfo);
@@ -197,6 +222,18 @@ namespace elena_lang
       bool isLessAccessible(ModuleScopeBase& scope, Visibility sourceVisibility, ref_t targetRef);
 
       void generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_t parentRef, VirtualMethods& methods);
+
+      CompilerLogic()
+         : _operations({})
+      {
+         loadOperations();
+      }
+
+      static bool readAttributeMap(MemoryBase* section, ReferenceMap& map);
+      static bool readTypeMap(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
+
+      static bool loadMetaData(ModuleScopeBase* moduleScope, ustr_t name);
+      static bool clearMetaData(ModuleScopeBase* moduleScope, ustr_t name);
 
       static CompilerLogic* getInstance()
       {

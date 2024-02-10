@@ -16,7 +16,7 @@ public program()
     auto x := new int[](ARRAY_SIZE);
 	int xc := 0;
 	int cnt := 0;
-    for (int cnt := 0, cnt < ARRAY_SIZE, cnt += 1) { x[cnt] := 0 };
+    for (int cnt := 0; cnt < ARRAY_SIZE; cnt += 1) { x[cnt] := 0 };
 	xc := xc + 1;
 	x[xc] := x[xc] + casas;
 	while (x[xc] != 0)

@@ -5,9 +5,9 @@ public interface Space
    {
       int j := -1;
       int counter := 0;
-      for (int i := -1, i < 2, i += 1)
+      for (int i := -1; i < 2; i += 1)
       {
-            for (int j := -1, j < 2, j += 1)
+            for (int j := -1; j < 2; j += 1)
             {
                 int cell := self.at(k + i, l + j);
                 if (cell == state)
@@ -48,9 +48,9 @@ public sealed class IntMatrixSpace : Space
         
       _matrix := IntMatrix.allocate(n, m);
 
-      for (int i := 0, i < _n, i+=1)
+      for (int i := 0; i < _n; i+=1)
       {
-         for (int j := 0, j < _m, j+=1)
+         for (int j := 0; j < _m; j+=1)
          {
             _matrix.setAt(i, j, 0)
          }
@@ -65,9 +65,9 @@ public sealed class IntMatrixSpace : Space
 
    private internalUpdate(RuleSet rs, IntMatrix matrix)
    {
-      for (int i := 0, i < _n, i += 1)
+      for (int i := 0; i < _n; i += 1)
       {
-         for(int j := 0, j < _m, j += 1)            
+         for(int j := 0; j < _m; j += 1)            
          {
             int cell := rs.proceed(self, i, j);
                     
@@ -95,7 +95,7 @@ public sealed class IntMatrixSpace : Space
         
       if(i >= _n)
       {
-         i := i.mod:_n
+         i := i.mod(_n)
       };
         
       int j := l;
@@ -105,7 +105,7 @@ public sealed class IntMatrixSpace : Space
       };
       if(j >= _m)
       {
-         j := j.mod:_m
+         j := j.mod(_m)
       };
       
       ^ _matrix.at(i, j)

@@ -49,10 +49,10 @@ namespace text
       string Value
          = String.copy(0, *_length, _buffer);
     
-//      get multiret Value(ref wide r)
-//      {
-//            r := WideString.copy(0, _length.Value, theBuffer);
-//      }
+      get retoverload wide Value()
+      {
+         ^ WideString.copy(0, _length.Value, _buffer);
+      }
     
       wide cast()
          = WideString.copy(0, *_length, _buffer);
@@ -67,7 +67,7 @@ namespace text
     
       append(line)
       {
-         self.write:line
+         self.write(line)
       }
                                         
       private reserve(int len)
@@ -213,7 +213,7 @@ namespace text
     
       fill(string s, int counter)
       {
-         for (int i := 0, i < counter, i += 1)
+         for (int i := 0; i < counter; i += 1)
          {
             self.write(s)
          }
@@ -221,7 +221,7 @@ namespace text
     
       fill(wide s, int counter)
       {
-         for (int i := 0, i < counter, i += 1)
+         for (int i := 0; i < counter; i += 1)
          {
             self.write(s)
          }
@@ -281,9 +281,9 @@ namespace text
       {
          self.reserve(1);
             
-         _buffer.move(index, cast int(_length), 1);
+         Array<char>.move(_buffer, index, *_length, 1);
             
-         _buffer.write(index, ch);
+         _buffer[index] := ch;
             
          _length.append(1)
       }
@@ -296,7 +296,7 @@ namespace text
          int len := *_length;
          while (index < len)
          {
-            _buffer.read(index, ref current);
+            current := _buffer[index];
                 
             if (current == value)
                { ^ index };
@@ -372,8 +372,8 @@ namespace text
          char nextCh := $0;
             
          strLen := s.Length;
-            
-         s.read(0, ref firstCh);
+           
+         firstCh := s[0];
          firstChLen := firstCh.Length;
             
          int maxIndex := *_length;
@@ -390,7 +390,7 @@ namespace text
                while (j < strLen)
                {
                   current := _buffer[index + j];
-                  s.read(j, ref nextCh);
+                  nextCh := s[j];
                         
                   if (nextCh == current)
                   { 
@@ -425,13 +425,13 @@ namespace text
          ^ String.copy(index, length, _buffer)
       }
     
-//        wide WideSubstring(int index, int length)
-//        {
-//            if (length == 0)
-//                { ^ emptyWideString };
-//                
-//            ^ WideString.copy(index, length, _buffer)
-//        }
+      wide WideSubstring(int index, int length)
+      {
+         if (length == 0)
+            { ^ emptyWideString };
+                
+         ^ WideString.copy(index, length, _buffer)
+      }
 
       delete(int index, int length)
       {
@@ -444,9 +444,9 @@ namespace text
          _length.reduce(length)
       }
     
-//        trim(int n)
-//        {
-//            _length.reduce(n)
-//        }
+      trim(int n)
+      {
+         _length.Value := n
+      }
    }
 }

@@ -24,6 +24,27 @@ public abstract class BaseControl
       }
    }
 
+   bool Enabled
+   {
+      get() = _enabled;
+        
+      set(bool value)
+      {
+         _enabled := value
+      }
+   }
+
+   bool Visible
+   {
+      get() = _visible;
+        
+        
+      set(v)
+      {
+         _visible := v
+      }
+   }
+
    Parent = _parent;    
 
    set internal Parent(object o)
@@ -31,16 +52,46 @@ public abstract class BaseControl
       if(nil == o)
       {
          if(nil == _parent)
-            { InvalidOperationException.new:"A control already unbound".raise() };
+            { InvalidOperationException.new("A control already unbound").raise() };
             
          _parent := nil
       }
       else
       {
          if(nil != _parent)
-            { InvalidOperationException.new:"A control already bound".raise() };
+            { InvalidOperationException.new("A control already bound").raise() };
             
          _parent := o
+      }
+   }
+
+   int Width
+   {
+      get()
+      {
+         int retVal := _region.Width;
+            
+         ^ retVal
+      }
+        
+      set(int n)
+      {
+         _region.Width := n
+      }
+   }
+
+   int Height
+   {
+      get()
+      {
+         int retVal := _region.Height;
+            
+         ^ retVal
+      }
+        
+      set(int n)
+      {
+         _region.Height := n
       }
    }
 

@@ -37,7 +37,7 @@ namespace collections
          };
             
          int len := backet[0];
-         for (int i := 1, i < len, i += 1)
+         for (int i := 1; i < len; i += 1)
          {
             int j := backet[i];
                 
@@ -47,7 +47,8 @@ namespace collections
                { ^ item }
          };
     
-         auto new_item := new VarTuple<TKey, TValue>(key);
+         TValue defVal := default;
+         auto new_item := new VarTuple<TKey, TValue>(key, defVal);
     
          int i := _list.Length;
          _list.append(new_item);
@@ -147,7 +148,7 @@ namespace collections
          };
             
          int len := backet[0];
-         for (int i := 1, i < len, i += 1)
+         for (int i := 1; i < len; i += 1)
          {
             int j := backet[i];
                 

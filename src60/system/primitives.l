@@ -4,14 +4,21 @@ internal singleton PrimitiveArrayOperations
 {
    copy(byte[] sour, int index, int size, byte[] dest)
    {
-      for (int i := 0, i < size, i := i + 1) {
+      for (int i := 0; i < size; i := i + 1) {
          dest[i] := sour[index + i];
+      }
+   }
+
+   copyTo(byte[] sour, int size, byte[] dest, int destIndex)
+   {
+      for (int i := 0; i < size; i := i + 1) {
+         dest[destIndex + i] := sour[i];
       }
    }
 
    copy(short[] sour, int index, int size, short[] dest)
    {
-      for (int i := 0, i < size, i := i + 1) {
+      for (int i := 0; i < size; i := i + 1) {
          dest[i] := sour[index + i];
       }
    }
@@ -21,7 +28,7 @@ internal singleton PrimitiveArrayOperations
       int destLen := dest.Length;
 
       int j := 0;
-      for (int i := 0, i < size, i := i + 1) {
+      for (int i := 0; i < size; i := i + 1) {
          char ch := sour[index + i];
          int chVal := ch.Value;
          int chLen := ch.Length;
@@ -39,7 +46,7 @@ internal singleton PrimitiveArrayOperations
       int destLen := dest.Length;
 
       int j := 0;
-      for (int i := 0, i < size, i := i + 1) {
+      for (int i := 0; i < size; i := i + 1) {
          char ch := sour[index + i];
          int chVal := ch.Value;
          int chLen := ch.Length;
@@ -243,6 +250,20 @@ internal singleton PrimitiveRealOperations
 
       ^ retVal
    }
+
+   saveToByteArray(real r, byte[] dest, int index)
+   {
+      pointer ptr := r;
+      if (index == 0) {
+         ptr.copyTo(dest, 8);
+      }
+      else {
+         byte tmp[8];
+         ptr.copyTo(tmp, 8);
+
+         PrimitiveArrayOperations.copyTo(tmp, 8, dest, index);
+      }
+   }
 }
 
 internal singleton PrimitiveStringOperations
@@ -429,13 +450,13 @@ internal singleton PrimitiveWideStringOperations
       ^ j
    }
 
-   save(short[] dest, short[] sour, int index, int length)
+   save(short[] dest, int destIndex, short[] sour, int index, int length)
    {
       int i := 0;
       while (i < length) {
          short b := sour[index + i];
 
-         dest[i] := b;
+         dest[destIndex + i] := b;
 
          i += 1;
       };
@@ -453,6 +474,38 @@ internal singleton PrimitiveIntOperations
       self.hash(n, ref int retVal);
 
       ^ retVal
+   }
+
+   saveToByteArray(int n, byte[] dest, int index)
+   {
+      byte b := n & 0FFh;
+      dest[index] := b;
+      
+      n := n $shr 8;
+      b := n & 0FFh;
+      dest[index + 1] := b;
+
+      n := n $shr 8;
+      b := n & 0FFh;
+      dest[index + 2] := b;
+
+      n := n $shr 8;
+      b := n & 0FFh;
+      dest[index + 3] := b;
+   }
+}
+
+// --- PrimitiveLongOperations ---
+
+internal singleton PrimitiveLongOperations
+{
+   saveToByteArray(long n, byte[] dest, int index)
+   {
+      int lo := n.Low;
+      PrimitiveIntOperations.saveToByteArray(lo, dest, index);
+
+      int hi := n.High;
+      PrimitiveIntOperations.saveToByteArray(hi, dest, index + 4);
    }
 }
 
@@ -693,7 +746,7 @@ internal singleton UTFOperations
    int calcSubStringLength(int index, int length, char[] array)
    {
       int subStrLength := 0;
-      for(int i := 0, i < length, i += 1)
+      for(int i := 0; i < length; i += 1)
       {
          subStrLength += array[i].Length;
       };
@@ -704,7 +757,7 @@ internal singleton UTFOperations
    int calcSubWideStringLength(int index, int length, char[] array)
    {
       int subStrLength := 0;
-      for(int i := 0, i < length, i += 1)
+      for(int i := 0; i < length; i += 1)
       {
          subStrLength += array[i].WideLength;
       };

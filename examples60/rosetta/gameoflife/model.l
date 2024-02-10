@@ -31,7 +31,7 @@ sealed class Model
     
    private onUpdate()
    {
-      OnUpdate.?(_space)
+      OnUpdate?.(_space)
    }
     
    run()

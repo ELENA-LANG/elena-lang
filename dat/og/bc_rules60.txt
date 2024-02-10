@@ -8,3 +8,5 @@ peek fp:$1, copy, peek fp:#1 => peek fp, copy, idle;
 peek fp:$1, save, peek fp:#1 => peek fp, save, idle;
 open, store fp, close => idle, idle, idle;
 open, store fp, get i, close => idle, idle, get i, idle;
+set :$2, store sp:$1 => xstore sp:$3, idle;
+set :$2, store fp:$1 => xstore fp:$3, idle;

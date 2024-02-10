@@ -252,6 +252,15 @@ system'routines'ArraySortingAgent</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> value)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
 <CODE>exchange(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
 </CODE>
 </TD>
@@ -813,6 +822,15 @@ system'routines'IndexerSortingAgent</LI>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> value)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1559,26 +1577,6 @@ system'routines'SortingAgent</LI>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== PROPERTY SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Conversion Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-routines.html#SortingAgent">SortingAgent</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
 <!-- ========== METHOD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
@@ -1598,6 +1596,15 @@ system'routines'SortingAgent</LI>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> value)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>abstract </i>&nbsp;</CODE></TD>
@@ -2118,6 +2125,24 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
+<CODE>forEachPair(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>forEachPair(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
 <CODE>seekEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
 </CODE>
 </TD>
@@ -2357,11 +2382,20 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>ascendant()
+<CODE>deepClone()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>ascendant()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
@@ -2370,7 +2404,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -2379,7 +2413,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -2388,7 +2422,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
@@ -2397,7 +2431,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
@@ -2406,7 +2440,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -2415,7 +2449,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -2424,7 +2458,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -2433,7 +2467,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -2442,7 +2476,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>

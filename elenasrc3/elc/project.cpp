@@ -95,7 +95,7 @@ PlatformType Project :: ThreadModeType()
    return _platform & PlatformType::ThreadMask;
 }
 
-void Project :: addSource(ustr_t ns, path_t path, ustr_t target)
+void Project :: addSource(ustr_t ns, path_t path, ustr_t target, ustr_t hints)
 {
    if (!_loaded && _projectName.empty())
       _projectName.copy(ns);
@@ -111,6 +111,8 @@ void Project :: addSource(ustr_t ns, path_t path, ustr_t target)
    }
    if (current == ProjectOption::None) {
       current = files.appendChild(ProjectOption::Module, ns);
+      if (!hints.empty())
+         current.appendChild(ProjectOption::Hints, hints);
    }
 
    ProjectNode fileNode = current.appendChild(ProjectOption::FileKey, _paths.count() + 1);
@@ -146,6 +148,7 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
    DynamicString<char> subNs;
    DynamicString<char> path;
    DynamicString<char> target;
+   DynamicString<char> hints;
 
    ConfigFile::Collection modules;
    if (config.select(configRoot, MODULE_CATEGORY, modules)) {
@@ -158,6 +161,9 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
          if (!moduleNode.readAttribute("target", target)) {
             target.clear();
          }
+         if (!moduleNode.readAttribute("hints", hints)) {
+            hints.clear();
+         }
 
          ReferenceName ns(Namespace(), subNs.str());
          ConfigFile::Collection files;
@@ -168,7 +174,7 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
                node.readContent(path);
 
                PathString filePath(path.str());
-               addSource(*ns, *filePath, target.str());
+               addSource(*ns, *filePath, target.str(), hints.str());
             }
          }
       }
@@ -314,6 +320,7 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
       copySetting(config, root, DEBUGMODE_PATH, ProjectOption::DebugMode);
       copySetting(config, root, THREAD_COUNTER, ProjectOption::ThreadCounter);
 
+      copySetting(config, root, MODULE_PROLOG, ProjectOption::ModuleProlog, true);
       copySetting(config, root, FILE_PROLOG, ProjectOption::Prolog, true);
       copySetting(config, root, FILE_EPILOG, ProjectOption::Epilog, true);
    }

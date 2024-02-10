@@ -23,6 +23,8 @@ namespace io
 
       TextWriter textwriter() = fileControl.writer(_path);
 
+      TextWriter logger() = fileControl.logger(_path);
+
       get int Length()
       {
          int    fileLen := 0;

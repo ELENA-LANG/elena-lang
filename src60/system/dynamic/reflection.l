@@ -9,7 +9,7 @@ public extension classROp
       int retVal := extern LoadClassMessagesLA(self, tmp_array, 0, 256);
 
       List<Message> list := new List<Message>();
-      for(int i := 0, i < retVal, i += 1)
+      for(int i := 0; i < retVal; i += 1)
       {
          ifnot (tmp_array[i].anyMask(60h))
          {
@@ -28,7 +28,7 @@ public extension classROp
       int retVal := extern LoadClassMessagesLA(self, tmp_array, 0, 256);
 
       List<MessageName> list := new List<MessageName>();
-      for(int i := 0, i < retVal, i += 1)
+      for(int i := 0; i < retVal; i += 1)
       {
          int id := tmp_array[i] & 0C0h;
          if (id == 0C0h)
@@ -45,5 +45,12 @@ public extension classROp
       };
 
       ^ list.Value
+   }
+
+   bool respondTo(Message m)
+   {
+      int retVal := extern CheckClassMessageLA(self, m);
+
+      ^ retVal != 0
    }
 }

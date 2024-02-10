@@ -144,6 +144,21 @@ bool CompilingProcess::TemplateGenerator :: importCodeTemplate(ModuleScopeBase& 
    return true;
 }
 
+size_t getLengthSkipPostfix(ustr_t name)
+{
+   size_t len = name.length();
+
+   for (size_t i = len - 1; i != 0; i--) {
+      if (name[i] == '\'' || name[i] == '&') {
+         break;
+      }
+      else if (name[i] == '#')
+         return i;
+   }
+
+   return len;
+}
+
 ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility,
    ref_t templateRef, List<SyntaxNode>& parameters, bool& alreadyDeclared)
 {
@@ -163,15 +178,18 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
 
       ref_t typeRef = (*it).arg.reference;
       ustr_t param = module->resolveReference(typeRef);
+
+      size_t paramLen = getLengthSkipPostfix(param);
+
       if (isTemplateWeakReference(param)) {
          // HOTFIX : save template based reference as is
-         name.append(param);
+         name.append(param, paramLen);
       }
       else if (isWeakReference(param)) {
          name.append(module->name());
-         name.append(param);
+         name.append(param, paramLen);
       }
-      else name.append(param);
+      else name.append(param, paramLen);
    }
    name.replaceAll('\'', '@', 0);
 
@@ -258,14 +276,16 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
 
 // --- CompilingProcess ---
 
-CompilingProcess :: CompilingProcess(PathString& appPath, path_t prologName, path_t epilogName,
+CompilingProcess :: CompilingProcess(PathString& appPath, path_t modulePrologName, path_t prologName, path_t epilogName,
    PresenterBase* presenter, ErrorProcessor* errorProcessor,
    pos_t codeAlignment,
    JITSettings defaultCoreSettings,
    JITCompilerBase* (*compilerFactory)(LibraryLoaderBase*, PlatformType)
 ) :
-   _templateGenerator(this)
+   _templateGenerator(this),
+   _forwards(nullptr)
 {
+   _modulePrologName = modulePrologName;
    _prologName = prologName;
    _epilogName = epilogName;
 
@@ -439,6 +459,8 @@ void CompilingProcess :: parseModule(ProjectEnvironment& env,
 {
    IdentifierString target;
 
+   parseFileTemlate(*env.moduleProlog, _modulePrologName, &builder);
+
    auto& file_it = module_it.files();
    while (!file_it.eof()) {
       builder.newNode(SyntaxTree::toParseKey(SyntaxKey::Namespace));
@@ -451,7 +473,7 @@ void CompilingProcess :: parseModule(ProjectEnvironment& env,
       }
 
       // generating syntax tree
-      parseFileTemlate(*env.fileProlog, _prologName, &builder); // !! temporal explicit prolog
+      parseFileTemlate(*env.fileProlog, _prologName, &builder);
       parseFile(*env.projectPath, file_it, &builder, parserTarget);
       parseFileTemlate(*env.fileEpilog, _epilogName, &builder);
 
@@ -515,7 +537,12 @@ void CompilingProcess :: buildModule(ProjectEnvironment& env,
       moduleSettings.rawStackAlingment, 
       moduleSettings.ehTableEntrySize, 
       minimalArgList, ptrSize,
-      moduleSettings.multiThreadMode);
+      moduleSettings.multiThreadMode,
+      module_it.hints());
+
+   // Validation : standart module must be named "system"
+   if (moduleScope.isStandardOne())
+      assert(module_it.name().compare(STANDARD_MODULE));
 
    _compiler->prepare(&moduleScope, forwardResolver, moduleSettings.manifestInfo);
 
@@ -546,6 +573,21 @@ void CompilingProcess :: configurate(Project& project)
 
    bool withConditionalBoxing = project.BoolSetting(ProjectOption::ConditionalBoxing, DEFAULT_CONDITIONAL_BOXING);
    _compiler->setConditionalBoxing(withConditionalBoxing);
+
+   bool evalOpFlag = project.BoolSetting(ProjectOption::EvaluateOp, DEFAULT_EVALUATE_OP);
+   _compiler->setEvaluateOp(evalOpFlag);
+
+   // load program forwards
+   for (auto it = _forwards.start(); !it.eof(); ++it) {
+      ustr_t f = *it;
+
+      size_t index = f.find('=');
+      if (index != NOTFOUND_POS) {
+         IdentifierString key(f, index);
+
+         project.addForward(*key, f + index + 1);
+      }
+   }
 }
 
 void CompilingProcess :: compile(ProjectBase& project,
@@ -608,6 +650,7 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS
    imageInfo.autoClassSymbol = project.BoolSetting(ProjectOption::ClassSymbolAutoLoad, _defaultCoreSettings.classSymbolAutoLoad);
    imageInfo.coreSettings.mgSize = project.IntSetting(ProjectOption::GCMGSize, _defaultCoreSettings.mgSize);
    imageInfo.coreSettings.ygSize = project.IntSetting(ProjectOption::GCYGSize, _defaultCoreSettings.ygSize);
+   imageInfo.coreSettings.stackReserved = project.IntSetting(ProjectOption::StackReserved, _defaultCoreSettings.stackReserved);
    imageInfo.coreSettings.threadCounter = project.IntSetting(ProjectOption::ThreadCounter, _defaultCoreSettings.threadCounter);
    imageInfo.ns = project.StringSetting(ProjectOption::Namespace);
    imageInfo.withTLS = withTLS;

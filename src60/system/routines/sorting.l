@@ -8,6 +8,8 @@ public interface SortingAgent
    }    
     
    abstract at(int index);
+   
+   abstract setAt(int index, object value);
     
    abstract exchange(int i, int j);
 }
@@ -33,6 +35,11 @@ public sealed ArraySortingAgent : SortingAgent
     
    at(int index)
       = a[index];
+
+   setAt(int index, object value)
+   {
+      a[index] := value;
+   }
 
    exchange(int i, int j)
    {
@@ -71,6 +78,13 @@ public sealed IndexerSortingAgent : SortingAgent
         
       ^ *a
    }
+    
+   setAt(int index, object value)
+   {
+      a.Index := index;
+        
+      a.Value := value
+   }
 
    exchange(int i, int j)
    {
@@ -92,7 +106,7 @@ public singleton QuickSorting
    {
       a.exchange(pivot, start);
       int i := start + 1;
-      for (int j := i, j <= end, j += 1)
+      for (int j := i; j <= end; j += 1)
       {
          if (compf(a[j], a[start]))
          {

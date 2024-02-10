@@ -13,6 +13,7 @@ constexpr auto CONFIG_FILE = "elenavm60.cfg";
 constexpr auto VA_ALIGNMENT = 0x08;
 constexpr int  DEFAULT_MGSIZE = 344064;
 constexpr int  DEFAULT_YGSIZE = 86016;
+constexpr int  DEFAULT_STACKRESERVED = 0x200000;
 
 #ifdef _M_IX86
 
@@ -96,7 +97,7 @@ void init(HMODULE hModule)
    rootPath.combine(CONFIG_FILE);
 
    machine = new ELENAWinVMMachine(*rootPath, &Presenter::getInstance(), CURRENT_PLATFORM,
-      VA_ALIGNMENT, { DEFAULT_MGSIZE, DEFAULT_YGSIZE }, createJITCompiler);
+      VA_ALIGNMENT, { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERVED }, createJITCompiler);
 }
 
 void printError(int errCode)

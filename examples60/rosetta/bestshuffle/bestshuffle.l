@@ -11,8 +11,8 @@ extension op
       var original := self.toArray();
       var shuffled := self.toArray();
     
-      for (int i := 0, i < original.Length, i += 1) {
-         for (int j := 0, j < original.Length, j += 1) {
+      for (int i := 0; i < original.Length; i += 1) {
+         for (int j := 0; j < original.Length; j += 1) {
             if (i != j && original[i] != shuffled[j] && original[j] != shuffled[i])
             {
                shuffled.exchange(i,j)
@@ -29,7 +29,7 @@ extension op
       var original := originalText.toArray();
       int score := 0;
 
-      for (int i := 0, i < original.Length, i += 1) {
+      for (int i := 0; i < original.Length; i += 1) {
          if (original[i] == shuffled[i]) { score += 1 }
       };
         
@@ -41,7 +41,7 @@ extension op
 
 public program()
 {
-   new string[]{"abracadabra", "seesaw", "grrrrrr", "pop", "up", "a"}.forEach:(s)
+   new string[]{"abracadabra", "seesaw", "grrrrrr", "pop", "up", "a"}.forEach::(s)
    {
       var shuffled_s := s.Shuffled;
 

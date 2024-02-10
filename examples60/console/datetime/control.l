@@ -24,6 +24,6 @@ public singleton control
             3 { ^now.Year.toString() }
             4 { ^now.toShortTimeString() }
             7 { forward program.stop(); ^ emptyString }
-            : { ^"Invalid choice" }
+            ! { ^"Invalid choice" }
     }
 }

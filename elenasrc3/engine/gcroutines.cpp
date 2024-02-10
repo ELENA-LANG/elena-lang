@@ -167,7 +167,7 @@ inline void YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*& shado
 
 inline void CollectMG2YGRoots(GCTable* table, ObjectPage* &shadowPtr)
 {
-   int wbar_count = (table->gc_mg_current - table->gc_mg_start) >> page_size_order;
+   intptr_t wbar_count = (table->gc_mg_current - table->gc_mg_start) >> page_size_order;
    uintptr_t wb_current = table->gc_mg_wbar;
    uintptr_t mg_current = table->gc_mg_start;
 
@@ -220,6 +220,10 @@ inline void CollectMG2YGRoots(GCTable* table, ObjectPage* &shadowPtr)
          if (testanyLong(card, 0xFF00000000000000ULL)) {
             wb_root.stack_ptr_addr = mg_current + (page_size * 7) + elObjectOffset;
             wb_root.size = getSize(wb_root.stack_ptr_addr);
+
+            // !! temporal trace code
+            if (wb_root.size > 0x10000)
+               wb_root.size = wb_root.size;
 
             YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
          }
@@ -478,7 +482,7 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
 
          //*(char*)(table->gc_header + ((allocated - table->gc_start) >> page_size_order)) = 1;
 
-         return (void*)getObjectPtr(allocated);
+         return (void*)allocated;
       }
       else {
          uintptr_t allocated = table->gc_yg_current;

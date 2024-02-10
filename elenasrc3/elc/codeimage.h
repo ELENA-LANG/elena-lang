@@ -40,6 +40,7 @@ namespace elena_lang
 
       pos_t              _entryPoint;
       pos_t              _debugEntryPoint;
+      pos_t              _stackReserved;
 
       addr_t             _tlsVariable;
 
@@ -62,6 +63,11 @@ namespace elena_lang
       addr_t getDebugEntryPoint() override
       {
          return _debugEntryPoint & ~mskAnyRef;
+      }
+
+      pos_t getStackReserved() override
+      {
+         return _stackReserved;
       }
 
       void generateAutoSymbol(ModuleBase* module, MemoryDump& tapeSymbol);

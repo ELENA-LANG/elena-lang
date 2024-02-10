@@ -7,17 +7,17 @@ public program()
 {
     var s :="hello";
     
-    if(s.startingWith:"hel")
+    if(s.startingWith("hel"))
     {
         console.printLine(s," starts with hel")
     };
     
-    if(s.endingWith:"llo")
+    if(s.endingWith("llo"))
     {
         console.printLine(s," ends with llo")
     };
 
-    if(s.containing:"el")
+    if(s.containing("el"))
     {
         console.printLine(s," contains el")
     };

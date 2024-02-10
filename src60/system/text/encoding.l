@@ -25,7 +25,7 @@
       convertTo(char[] chars, int index, ref int len, byte[] output, int outputIndex, ref int outputLen)
       {
          int j := outputIndex;
-         for (int i := 0, i < len, i += 1) {
+         for (int i := 0; i < len; i += 1) {
             char ch := chars[i + index];
 
             self.convertChar(ch, output, j, ref int chLen);
@@ -158,9 +158,9 @@
          ^ WideString.fromShortArray(index, size, buffer);
       }
 
-      toShortArray(wide s, int index, int length, short[] output)
+      toShortArray(wide s, int index, int length, short[] output, int outputIndex)
       {
-         s.saveToShortArray(index, output, length);
+         s.saveToShortArray(index, output, length, outputIndex);
       }
 
       int getCharCount(wide s)

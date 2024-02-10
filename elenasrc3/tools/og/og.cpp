@@ -70,6 +70,13 @@ ByteCodePattern decodePattern(ScriptReader& reader, ScriptToken& token)
 
          reader.read(token);
       }
+      else if (token.compare("$3")) {
+         // NOTE: it is a special case, there both $1 and $2 argument are set
+         pattern.argValue = 3;
+         pattern.argType = ByteCodePatternType::Set;
+
+         reader.read(token);
+      }
       else if (token.compare("#1")) {
          pattern.argValue = 1;
          pattern.argType = ByteCodePatternType::Match;

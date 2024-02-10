@@ -6,8 +6,7 @@ define PREPARE	            10006h
 
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
-define CORE_THREAD_TABLE    2000Bh
-define CORE_ET_TABLE        2000Bh
+define CORE_SINGLE_CONTENT  2000Bh
 
 // ; --- GC TABLE OFFSETS ---
 define gc_header             0000h
@@ -22,6 +21,7 @@ define gc_mg_wbar            0050h
 
 define et_current            0008h
 define tt_stack_frame        0010h
+define tt_stack_root         0028h
 
 // ; --- Object header fields ---
 define elSizeOffset          0004h
@@ -79,7 +79,7 @@ procedure % VEH_HANDLER
 
   mov  r10, rdx
   mov  rdx, rax   // ; set exception code
-  mov  rax, [data : % CORE_ET_TABLE]
+  mov  rax, [data : % CORE_SINGLE_CONTENT]
   jmp  rax
 
 end
@@ -106,7 +106,7 @@ labYGCollect:
   push rbp
 
   // ; lock frame
-  mov  [data : %CORE_THREAD_TABLE + tt_stack_frame], rsp
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
 
   push rcx
 
@@ -126,7 +126,7 @@ labYGCollect:
   push rcx
 
   // ;   collect frames
-  mov  rax, [data : %CORE_THREAD_TABLE + tt_stack_frame]  
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]  
   mov  rcx, rax
 
 labYGNextFrame:

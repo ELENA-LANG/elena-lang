@@ -134,7 +134,7 @@ namespace text
       {
          if(-1 == _index)
          {
-            ^ _value.Substring:_start
+            ^ _value.Substring(_start)
          }
          else
          {
@@ -177,7 +177,7 @@ namespace text
          _value := emptyString;
          _newLine := newLineConstant;
             
-         for (int i := 0, i < count, i += 1)
+         for (int i := 0; i < count; i += 1)
          {
             self.append(s);
          }
@@ -185,12 +185,12 @@ namespace text
         
       write(string s)
       {
-         _value := _value.add:s
+         _value := _value.add(s)
       }
         
       write(char ch)
       {
-         _value := _value.add:ch
+         _value := _value.add(ch)
       }
         
       writeLine(string s)

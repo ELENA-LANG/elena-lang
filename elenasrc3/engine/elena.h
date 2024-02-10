@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Compiler Engine templates,
 //		classes, structures, functions and constants
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENA_H
@@ -57,6 +57,15 @@ namespace elena_lang
       decodeMessage(message, actionRef, argCount, flags);
 
       return actionRef;
+   }
+
+   inline ref_t getFlags(mssg_t message)
+   {
+      ref_t actionRef, flags;
+      pos_t argCount;
+      decodeMessage(message, actionRef, argCount, flags);
+
+      return flags;
    }
 
    inline pos_t getArgCount(mssg_t message)
@@ -193,6 +202,8 @@ namespace elena_lang
       virtual addr_t getEntryPoint() = 0;
       virtual addr_t getDebugEntryPoint() = 0;
       virtual addr_t getTLSVariable() = 0;
+
+      virtual pos_t getStackReserved() = 0;
 
       virtual ~ImageProviderBase() = default;
    };
@@ -397,6 +408,7 @@ namespace elena_lang
 
       virtual MemoryBase* mapSection(ref_t reference, bool existing) = 0;
 
+      virtual ref_t importAction(ModuleBase* referenceModule, ref_t signRef) = 0;
       virtual ref_t importSignature(ModuleBase* referenceModule, ref_t signRef) = 0;
       virtual ref_t importMessage(ModuleBase* referenceModule, mssg_t message) = 0;
       virtual ref_t importReference(ModuleBase* referenceModule, ustr_t referenceName) = 0;
@@ -471,6 +483,7 @@ namespace elena_lang
    {
       pos_t    mgSize;
       pos_t    ygSize;
+      pos_t    stackReserved;
       pos_t    threadCounter;
       bool     classSymbolAutoLoad;
    };
@@ -555,7 +568,7 @@ namespace elena_lang
       virtual void writeWideLiteral(MemoryWriter& writer, wstr_t value) = 0;
       virtual void writeChar32(MemoryWriter& writer, ustr_t value) = 0;
       virtual void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
-      virtual void writeDump(MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
+      virtual void writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
       virtual void writeVariable(MemoryWriter& writer) = 0;
       virtual void writeMessage(MemoryWriter& writer, mssg_t message) = 0;
       virtual void writeExtMessage(MemoryWriter& writer, Pair<mssg_t, addr_t> extensionInfo, bool virtualMode) = 0;
@@ -566,6 +579,7 @@ namespace elena_lang
       virtual pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode) = 0;
       virtual pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, 
          ustr_t actionName, ref_t weakActionRef, ref_t signature, bool virtualMode) = 0;
+      virtual void addActionEntryStopper(MemoryWriter& messageWriter) = 0;
       virtual void addSignatureStopper(MemoryWriter& messageWriter) = 0;
 
       virtual void writeImm9(MemoryWriter* writer, int value, int type) = 0;

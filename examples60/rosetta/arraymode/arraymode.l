@@ -11,18 +11,18 @@ extension op
     get Mode()
     {
         var countMap := Dictionary.new(0);
-        self.forEach:(item)
+        self.forEach::(item)
         {
             countMap[item] := countMap[item] + 1
         };
     
-        countMap := countMap.Values.sort:(p,n => p > n);
+        countMap := countMap.Values.sort::(p,n => p > n);
     
         var max := countMap.FirstMember;
     
         ^ countMap
-            .filterBy:(kv => max.equal(kv.Value))
-            .selectBy:(kv => kv.Key)
+            .filterBy::(kv => max.equal(kv.Value))
+            .selectBy::(kv => kv.Key)
             .toArray()
     }
 }

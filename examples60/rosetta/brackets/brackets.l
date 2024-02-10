@@ -17,9 +17,9 @@ randomBrackets(len)
    else
    {
       var brackets := 
-         Array.allocate(len).populate:(i => $91) 
+         Array.allocate(len).populate::(i => $91) 
          + 
-         Array.allocate(len).populate:(i => $93);
+         Array.allocate(len).populate::(i => $93);
 
       brackets := brackets.randomize(len * 2);
 
@@ -33,7 +33,7 @@ extension op
    {
       var counter := new Integer(0);
     
-      self.seekEach:(ch => counter.append((ch==$91).iif(1,-1)) < 0);
+      self.seekEach::(ch => counter.append((ch==$91).iif(1,-1)) < 0);
     
       ^ (0 == counter)
    }
@@ -43,7 +43,7 @@ extension op
 
 public program()
 {
-   for(int len := 0, len < 9, len += 1)
+   for(int len := 0; len < 9; len += 1)
    {
       var str := randomBrackets(len);
 

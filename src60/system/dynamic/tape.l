@@ -81,7 +81,7 @@ public mixin DynamicClass
       <= allocate(methods.Length * 2)
    {
       int length := methods.Length;
-      for (int i := 0, i < length, i += 1)
+      for (int i := 0; i < length; i += 1)
       {
          var t := methods[i];
             

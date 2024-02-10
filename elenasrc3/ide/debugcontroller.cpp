@@ -670,9 +670,11 @@ void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName
 
       if (found) {
          _sourceModel->setTraceLine(lineInfo->row, true);
-      }
 
-      _notifier->notify(NOTIFY_DEBUG_CHANGE, DEBUGWATCH_CHANGED | FRAME_CHANGED);
+         _notifier->notify(NOTIFY_DEBUG_CHANGE, DEBUGWATCH_CHANGED | FRAME_CHANGED);
+      }
+      else _notifier->notify(NOTIFY_DEBUG_NOSOURCE, FRAME_CHANGED);
+      
    }
 }
 
