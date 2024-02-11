@@ -1,3 +1,20 @@
+## ELENA 6.0.7
+*11.02.2024*
+
+- ELENA
+  - [ADDED]meta command #load, #clear
+  - [ADDED]#563:Extended statement templates
+  - [FIXED]#508 - working on multi-value assigning
+  - [FIXED]#86 - primitive operations : int + long
+  - [FIXED]"this self" for an extension
+  - [ADDED]system : Int8Number, UShortNumber
+  - [ADDED]#629 - Read-only fields
+  - [FIXED]#613 - bytecode optimization
+  - [FIXED]#623 - Overriding property set accessor
+  - [FIXED]#601 - bytecode optimization
+  - [ADDED]evaluate an expression in compile-time if possible
+  - [ADDED]#562 - Nullable support
+
 ## ELENA 6.0.6
 *19.10.2023*
 
