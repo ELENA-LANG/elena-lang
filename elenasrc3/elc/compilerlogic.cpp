@@ -2040,7 +2040,8 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
          else return resolved;
       }
 
-      if (!implicitSignatureRef)
+      // allow to check the variadic message without arguments
+      if (!implicitSignatureRef && ((weakMessage & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE))
          return 0;
 
       ref_t signatures[ARG_COUNT];
