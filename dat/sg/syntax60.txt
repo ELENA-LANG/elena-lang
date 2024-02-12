@@ -1121,8 +1121,9 @@ PARAMETER ::=
 		DYNAMIC_DIMENSION ^ARRAY_TYPE identifier
 		| TEMPLATE_BRACKETS identifier
 		| "?" ^NULLABLE_TYPE identifier
-		| eps
-	};
+		| eps		
+	}
+	| reference identifier;
 
 SUB_VARIABLE ::=
 	identifier+ { 
@@ -1134,7 +1135,7 @@ TEMPLATE_BRACKETS ::=
 	"<" TEMPLATE_ARG { "," TEMPLATE_ARG }* ">";
 
 TEMPLATE_ARG ::=
-	identifier { TEMPLATE_BRACKETS ^ TEMPLATE_TYPE }?
+	identifier { TEMPLATE_BRACKETS ^ TEMPLATE_TYPE | DYNAMIC_DIMENSION ^ARRAY_TYPE }?
 	| reference
 	| global;
 

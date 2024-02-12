@@ -774,7 +774,7 @@ void SyntaxTreeBuilder :: flushTypeAttribute(SyntaxTreeWriter& writer, Scope& sc
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::ArrayType) {
-         flushAttribute(writer, scope, current, previusCategory, allowType, 1);
+         flushAttribute(writer, scope, current.firstChild(), previusCategory, allowType, 1);
       }
       else if (current == SyntaxKey::TemplateType) {
          flushTemplateType(writer, scope, current, false);

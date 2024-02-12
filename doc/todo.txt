@@ -18,19 +18,17 @@ In development:
   --------------------------------------
   - #620 - resolve several points
     - redirect abstract byref handler
-    - support lneg, lnot
     - elena sm : x86-64
     - fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
     - new opcode : fexp - ppc64le
-    - test - Interactive programming
     - Sorting algorithms/Sleep sort, Vigenère cipher, Walk a directory/Non-recursively
   - dev : redesign switch statement : it should be possible to use as an expression as well
     (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
     console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
   --------------------------------------
-    - calling variadic method directly : without arguments
-
     - port:db samples 
+
+    - test - Interactive programming
 
   === Iteration 21 ===
   --------------------------------------

@@ -600,6 +600,11 @@ public:
       _presenter->print(_presenter->getMessage(code), arg);
    }
 
+   void info(int code, ustr_t arg, ustr_t arg2) override
+   {
+      _presenter->print(_presenter->getMessage(code), arg, arg2);
+   }
+
    void raiseError(int code, ustr_t arg) override
    {
       _presenter->print(_presenter->getMessage(code), arg);

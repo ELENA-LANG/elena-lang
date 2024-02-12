@@ -631,6 +631,13 @@ inline %1Eh
 
 end
 
+// ; lneg
+inline % 1Fh
+
+   neg    rdx
+
+end
+
 // ; coalesce
 inline % 20h
 

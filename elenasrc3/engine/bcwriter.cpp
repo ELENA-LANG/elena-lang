@@ -1257,6 +1257,12 @@ void longSOp(CommandTape& tape, BuildNode& node, TapeScope&)
       case BNOT_OPERATOR_ID:
          tape.write(ByteCode::INotDPN, targetOffset, 8);
          break;
+      case NEGATE_OPERATOR_ID:
+         tape.write(ByteCode::PeekSI);
+         tape.write(ByteCode::LLoad);
+         tape.write(ByteCode::LNeg);
+         tape.write(ByteCode::LSaveDP, targetOffset);
+         break;
       default:
          throw InternalError(errFatalError);
    }

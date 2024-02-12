@@ -635,6 +635,16 @@ inline %1Eh
 
 end
 
+// ; lneg
+inline % 1Fh
+
+   not    edx
+   not    eax
+   add    eax, 1
+   adc    edx, 0
+
+end
+
 // ; coalesce
 inline % 20h
 

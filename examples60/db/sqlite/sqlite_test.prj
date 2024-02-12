@@ -1,0 +1,16 @@
+<configuration>
+    <project>
+        <executable>bin\sqlite_test.exe</executable>
+        <arguments></arguments>
+        <output>obj</output>
+        <options></options>
+        <namespace>sqlite_test</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>

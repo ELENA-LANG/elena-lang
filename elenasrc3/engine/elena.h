@@ -430,6 +430,7 @@ namespace elena_lang
    {
    public:
       virtual void info(int code, ustr_t arg) = 0;
+      virtual void info(int code, ustr_t arg, ustr_t arg2) = 0;
 
       virtual void raiseInternalError(int code) = 0;
       virtual void raiseError(int code, ustr_t arg) = 0;

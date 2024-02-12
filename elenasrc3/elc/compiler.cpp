@@ -2157,6 +2157,13 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
    }
    else {
       if (methodInfo.outputRef && methodInfo.outputRef != outputRef) {
+         if (_verbose) {
+            ustr_t expectedReference = scope.module->resolveReference(methodInfo.outputRef);
+            ustr_t actualReference = scope.module->resolveReference(outputRef);
+
+            _errorProcessor->info(infoExptectedType, expectedReference, actualReference);
+         }
+
          scope.raiseError(errTypeAlreadyDeclared, node);
       }
       methodInfo.outputRef = outputRef;

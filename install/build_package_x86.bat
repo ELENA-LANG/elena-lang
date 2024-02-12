@@ -131,6 +131,21 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+%~dp0\output32\bin\elena-cli %~dp0\output32\src60\algorithms\algorithms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\output32\bin\elena-cli %~dp0\output32\src60\sqlite\sqlite.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\output32\bin\elena-cli %~dp0\output32\src60\forms\forms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 %~dp0\..\bin\asm-cli -x86 %~dp0\..\asm\x32\core60.asm bin\x32
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError

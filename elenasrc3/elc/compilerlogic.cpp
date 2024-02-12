@@ -41,7 +41,7 @@ bool testMethodHint(ref_t hint, MethodHint mask)
 
 typedef CompilerLogic::Op Op;
 
-constexpr auto OperationLength = 198;
+constexpr auto OperationLength = 199;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -289,6 +289,9 @@ constexpr Op Operations[OperationLength] =
    },
    {
       BNOT_OPERATOR_ID, BuildKey::LongSOp, V_INT64, 0, 0, V_INT64
+   },
+   {
+      NEGATE_OPERATOR_ID, BuildKey::LongSOp, V_INT64, 0, 0, V_INT64
    },
    {
       EQUAL_OPERATOR_ID, BuildKey::LongCondOp, V_INT64, V_INT64, 0, V_FLAG

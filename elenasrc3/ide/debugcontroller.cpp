@@ -1078,9 +1078,9 @@ void DebugController :: readObjectArray(ContextBrowserBase* watch, void* parent,
    if (level <= 0)
       return;
 
-   size_t length = _min(_process->getArrayLength(address) / sizeof(addr_t), 100);
+   int length = (int)_min(_process->getArrayLength(address) / sizeof(addr_t), 100);
    IdentifierString value;
-   for (size_t i = 0; i < length; i++) {
+   for (int i = 0; i < length; i++) {
       addr_t itemAddress = _process->getField(address, i);
 
       value.copy("[");

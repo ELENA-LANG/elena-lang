@@ -10,6 +10,8 @@
 ..\..\bin\ldoc extensions'scripting
 ..\..\bin\ldoc extensions'dynamic
 ..\..\bin\ldoc cellular
+..\..\bin\ldoc algorithms
+..\..\bin\ldoc sqlite
 ..\..\bin\ldoc forms
 
 copy *.html ..\..\doc\api

@@ -3,7 +3,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                                (C)2021-2023, by Aleksey Rakov
+//                                                (C)2021-2024, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #ifndef BYTECODE_H
@@ -50,6 +50,7 @@ namespace elena_lang
       XLCmp          = 0x1C,
       XLoad          = 0x1D,
       XLLoad         = 0x1E,
+      LNeg           = 0x1F,
 
       Coalesce       = 0x20,
       Not            = 0x21,
