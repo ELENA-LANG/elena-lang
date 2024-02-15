@@ -308,12 +308,13 @@ ROOT_EXPRESSION ::=
 		| T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
 		| eps ^OBJECT
 	}
-	| reference ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?	
+	| { reference | global } ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?	
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L_F
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$ext" EXPRESSION ^EXTERN_OPERATION
 	| "$break" ^BREAK_OPERATION
+	| "$continue" ^CONTINUE_OPERATION
 	| "$yield" EXPRESSION ^YIELD_OPERATION
 	| BRACKET SUB_EXPRESSION {
 		"=>" { SWITCH_OPTION+ SWITCH_LAST_OPTION? } ^SWITCH_OPERATION
@@ -411,11 +412,12 @@ NESTED_ROOT_EXPRESSION ::=
 		| T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
 		| eps ^OBJECT
 	}
-	| reference ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
+	| { reference | global } ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L_F
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$ext" EXPRESSION ^EXTERN_OPERATION
 	| "$break" ^BREAK_OPERATION
+	| "$continue" ^CONTINUE_OPERATION
 	| "$yield" EXPRESSION ^YIELD_OPERATION;
 
 EXPRESSION ::=
@@ -501,7 +503,7 @@ EXPRESSION ::=
 		}
 		| "{" NESTED_EXPRESSION ^NESTED L_F
 	}
-	| reference ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
+	| { reference | global } ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L_F
 	| "!" EXPRESSION ^NOT_OPERATION
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
@@ -604,7 +606,7 @@ SUB_EXPRESSION ::=
 			| eps ^OBJECT		
 		}
 	}
-	| reference ^OBJECT SUB_L_F ")"
+	| { reference | global } ^OBJECT SUB_L_F ")"
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT SUB_L_F ")"
 	| "!" EXPRESSION ^NOT_OPERATION ")"
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION SUB_L_F ")"
@@ -686,7 +688,7 @@ L4_EXPRESSION ::=
 		| "{" NESTED_EXPRESSION ^NESTED L2_OP* L3_OP*
 		| eps ^OBJECT
 	}
-	| reference ^OBJECT L2_OP* L3_OP*
+	| { reference | global } ^OBJECT L2_OP* L3_OP*
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT	L3_OP*
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
 	| "$reference" SINGLE_EXPRESSION ^REFER_OPERATION
@@ -750,7 +752,7 @@ L6_EXPRESSION ::=
 		| "{" NESTED_EXPRESSION ^NESTED L2_OP* L3_OP* L4_OP* L5_OP*
 		| eps ^OBJECT
 	}
-	| reference ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP*
+	| { reference | global } ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP*
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT	L3_OP* L4_OP* L5_OP*
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
 	| "$reference" SINGLE_EXPRESSION ^REFER_OPERATION

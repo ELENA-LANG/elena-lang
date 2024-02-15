@@ -6,7 +6,6 @@
         <options></options>
         <namespace>sqlite_test</namespace>
         <template>console</template>
-        <debuginfo>-1</debuginfo>
     </project>
     <files>
         <module>

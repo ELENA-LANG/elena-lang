@@ -14,21 +14,22 @@ In development:
   ide:backlog (#617), vm debugger, debugger watch - struct
   tools:work with elt in ide
   prom:elena in nutshell every 2 week
-  port:db samples, gui samples, xforms, x86 mt, x86-64 vm,elenavm / elt for linux
+  port:xforms, x86 mt, x86-64 vm,elenavm / elt for linux
   --------------------------------------
   - #620 - resolve several points
     - redirect abstract byref handler
     - elena sm : x86-64
     - fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
     - new opcode : fexp - ppc64le
-    - Sorting algorithms/Sleep sort, Vigenère cipher, Walk a directory/Non-recursively
+    - 
   - dev : redesign switch statement : it should be possible to use as an expression as well
     (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
     console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
   --------------------------------------
-    - port:db samples 
+    - Walk a directory/Non-recursively
+    - Sorting algorithms/Sleep sort 
 
-    - test - Interactive programming
+    - gui samples
 
   === Iteration 21 ===
   --------------------------------------

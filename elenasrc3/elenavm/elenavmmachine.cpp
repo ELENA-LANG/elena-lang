@@ -729,3 +729,10 @@ size_t ELENAVMMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_
    return SystemRoutineProvider::LoadMessages(msection, classPtr, output, 
       skip, maxLength, true);
 }
+
+bool ELENAVMMachine :: checkClassMessage(void* classPtr, mssg_t message)
+{
+   MemoryBase* msection = getMDataSection();
+
+   return SystemRoutineProvider::CheckMessage(msection, classPtr, message);
+}

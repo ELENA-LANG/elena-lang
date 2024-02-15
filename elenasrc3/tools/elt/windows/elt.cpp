@@ -3,7 +3,7 @@
 //
 //		This is a main file containing VM terminal
 //
-//                                              (C)2021-2023, by Aleksey Rakov
+//                                              (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -11,7 +11,19 @@
 #include "vmsession.h"
 #include "windows/presenter.h"
 
+#include <windows.h>
+
 using namespace elena_lang;
+
+void getAppPath(PathString& appPath)
+{
+   wchar_t path[MAX_PATH + 1];
+
+   ::GetModuleFileName(NULL, path, MAX_PATH);
+
+   appPath.copySubPath(path, true);
+   appPath.lower();
+}
 
 class ELTPresenter : public WinConsolePresenter
 {
@@ -30,7 +42,9 @@ int main()
    ELTPresenter presenter;
    VMSession session(&presenter);
 
-   PathString commandPath(COMMAMD_TEMPLATE);
+   PathString commandPath;
+   getAppPath(commandPath);
+   commandPath.combine(COMMAMD_TEMPLATE);
    session.loadTemplate(*commandPath);
 
    session.loadScript(ELT_CONFIG);

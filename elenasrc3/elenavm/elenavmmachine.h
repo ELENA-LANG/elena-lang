@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM declaration
 //
-//                                             (C)2022-2023, by Aleksey Rakov
+//                                             (C)2022-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENAVMMACHINE_H
@@ -16,7 +16,7 @@
 
 namespace elena_lang
 {
-   constexpr auto ELENAVM_GREETING        = "ELENA VM %d.%d.%d (C)2022-2023 by Aleksey Rakov";
+   constexpr auto ELENAVM_GREETING        = "ELENA VM %d.%d.%d (C)2022-2024 by Aleksey Rakov";
    constexpr auto ELENAVM_INITIALIZING    = "Initializing...";
 
    // --- ELENAVMConfiguration ---
@@ -121,6 +121,8 @@ namespace elena_lang
       size_t loadActionName(mssg_t message, char* buffer, size_t length);
 
       size_t loadClassMessages(void* classPtr, mssg_t* output, size_t skip, size_t maxLength);
+
+      bool checkClassMessage(void* classPtr, mssg_t message);
 
       int loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output);
 

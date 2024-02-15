@@ -10977,6 +10977,21 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
             WriterContext context = { &writer, &exprScope, node };
             compileAssigningOp(context, codeScope.mapByRefReturnArg(), retVal);
          }
+         else if (scope.info.outputRef != 0 && !scope.constructorMode){
+            ExprScope exprScope(&codeScope);
+            WriterContext context = { &writer, &exprScope, node };
+
+            ref_t outputRef = scope.info.outputRef;
+            if (outputRef && outputRef != V_AUTO) {
+               convertObject(writer, exprScope, node, retVal, outputRef, false, false);
+
+               exprScope.syncStack();
+            }
+
+            writeObjectInfo(context,
+               boxArgument(context, retVal,
+                  scope.checkHint(MethodHint::Stacksafe), true, false));
+         }
          break;
       case SyntaxKey::Redirect:
          retVal = compileRedirect(writer, codeScope, bodyNode);

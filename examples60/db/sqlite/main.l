@@ -15,7 +15,7 @@ extension dbTestOp
         var table := self.executeQuery("SELECT * FROM " + tableName);
         
         // Header
-        table.fields().forEach:(fieldName)
+        table.fields().forEach::(fieldName)
         {
             console.printPaddingRight(25, fieldName)
         };
@@ -24,9 +24,9 @@ extension dbTestOp
         console.printLine();
         
         // Rows
-        table.rows().forEach:(row)
+        table.rows().forEach::(row)
         {
-            table.fields().forEach:(fieldName)
+            table.fields().forEach::(fieldName)
             {
                 console.printPaddingRight(25, row[fieldName])
             };
@@ -42,7 +42,7 @@ public program()
 {
     auto dbFile := File.assign(DBFileName);
     
-    var cnn := DBConnection.new:dbFile;
+    var cnn := DBConnection.new(dbFile);
     
     ifnot (dbFile.Available)
     {
@@ -50,28 +50,28 @@ public program()
   
         using (cnn)
         {
-            console.write:"Database is being created";
+            console.write("Database is being created");
             
-            cnn.executeNonQuery:"CREATE Table Movies (Name TEXT, Director TEXT, Year INTEGER)";
-            console.write:".";
+            cnn.executeNonQuery("CREATE Table Movies (Name TEXT, Director TEXT, Year INTEGER)");
+            console.write(".");
                 
-            cnn.executeNonQuery:"INSERT INTO Movies (Name, Director, Year) VALUES ('The Dark Knight', 'Christopher Nolan', 2008)";
-            cnn.executeNonQuery:"INSERT INTO Movies (Name, Director, Year) VALUES ('Cloverfield', 'Matt Reeves', 2008)";
-            cnn.executeNonQuery:"INSERT INTO Movies (Name, Director, Year) VALUES ('Beverly Hills Chihuahua', 'Raja Gosnell', 2008)";
-            console.write:".";
+            cnn.executeNonQuery("INSERT INTO Movies (Name, Director, Year) VALUES ('The Dark Knight', 'Christopher Nolan', 2008)");
+            cnn.executeNonQuery("INSERT INTO Movies (Name, Director, Year) VALUES ('Cloverfield', 'Matt Reeves', 2008)");
+            cnn.executeNonQuery("INSERT INTO Movies (Name, Director, Year) VALUES ('Beverly Hills Chihuahua', 'Raja Gosnell', 2008)");
+            console.write(".");
                 
             cnn.executeNonQuery("CREATE TABLE [Users] " +
                                    "([ID] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                                    "[client] NVARCHAR(100)  NULL, " +
                                    "[date] DATE  NULL " +
                                    ")");
-            console.write:".";
+            console.write(".");
                                    
-            cnn.executeNonQuery:"INSERT INTO Users (client, date) VALUES ('Alexandre', '2015-01-01')";
-            cnn.executeNonQuery:"INSERT INTO Users (client, date) VALUES ('Alex', '2015-01-01')";
-            console.write:".";
+            cnn.executeNonQuery("INSERT INTO Users (client, date) VALUES ('Alexandre', '2015-01-01')");
+            cnn.executeNonQuery("INSERT INTO Users (client, date) VALUES ('Alex', '2015-01-01')");
+            console.write(".");
             
-            console.writeLine:"Done"
+            console.writeLine("Done")
         }                    
     };
 
@@ -81,11 +81,11 @@ public program()
     {
         console.printLine("Number of table in DB: ",cnn.numberOfTable());
     
-        console.writeLine:"Tables:".writeLine();
+        console.writeLine("Tables:").writeLine();
         
-        cnn.tables().forEach:(tableName)
+        cnn.tables().forEach::(tableName)
         {
-            cnn.printTable:tableName
+            cnn.printTable(tableName)
         }
     };
 

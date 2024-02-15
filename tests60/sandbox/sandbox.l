@@ -1,58 +1,79 @@
-public sealed class DBReader : Enumerable<object[]>
+//import extensions;
+//import system'routines;
+//import extensions'threading;
+//import system'threading;
+// 
+//static sync = new object();
+// 
+//extension op
+//{
+//    sleepSort()
+//    {
+//        self.forEach::(n)
+//        {
+//            threadControl.start(
+//            {
+//                threadControl.sleep(1000 * n);
+// 
+//                lock(sync)
+//                {
+//                    console.printLine(n)
+//                }
+//            })
+//        }
+//    }
+//}
+// 
+//public program()
+//{
+//    program_arguments.skipping(1).selectBy(mssgconst toInt<intConvertOp>[1]).toArray().sleepSort();
+// 
+//    console.readChar()
+//}
+
+import system'text;
+import system'culture;
+import system'math;
+import system'routines;
+import extensions;
+ 
+class VCipher
 {
-//   DBCommand _command;
-//   Handle    _commandHandle;
-//   string[]  _fieldNames;
-//   
-//   constructor new(DBCommand command)
-//   {
-//      theCommand := command;
-//     
-//      theCommandHandle := cast Handle(command);
-//   }
-//   
-//   int readNext()
-//   {
-//      int r := extern sqlite3.sqlite3_step(theCommandHandle);
-//     
-//      ^ r
-//   }
-//   
-//   bool next()
-//   {
-//      int result := self.readNext();
-//     
-//      ^ result == SQLITE_ROW
-//   }
-//   
-//   at(int n)
-//      = theCommand.at(n);
-//   
-//   at(string fieldName)
-//   {
-//      if (nil == theFieldNames)
-//         { theFieldNames := theCommand.sql_field_names() };
-//         
-//      ^ self.at(theFieldNames.indexOfElement(fieldName))
-//   }
-//   
-//   object[] row()
-//   {
-//      int count := theCommand.readFieldCount();
-//     
-//      object[] row := new object[](count);
-//      for(int i := 0; i < count; i++)
-//      {
-//         row[i] := self.at(i)
-//      };
-//     
-//      ^ row
-//   }
-   
-   Enumerator<object[]> enumerator() = new DBEnumerator(self);
+   string encrypt(string txt, string pw, int d)
+   {
+      auto output := new TextBuilder();
+      int pwi := 0;
+ 
+      string PW := pw.toUpper();
+      var TXT := txt.toUpper();
+
+      foreach(char t; in TXT) 
+      {
+         if (t < $65) $continue;
+
+         int tmp := t - 65 + d * (pw[pwi] - 65);
+         if (tmp < 0) tmp += 26;
+         output.write((65 + tmp.mod(26)).toChar());
+         pwi++;
+         if (pwi == PW.Length) { pwi := 0 }
+      };
+
+      ^ output.Value
+   }
 }
-
-
+ 
 public program()
 {
+    var v := new VCipher();
+ 
+    var s0 := "Beware the Jabberwock, my son! The jaws that bite, the claws that catch!";
+    var pw := "VIGENERECIPHER";
+ 
+    console.printLine(s0,newLineConstant,pw,newLineConstant);
+    var s1 := v.encrypt(s0, pw, 1);
+    console.printLine("Encrypted:",s1);
+    s1 := v.encrypt(s1, "VIGENERECIPHER", -1);
+    console.printLine("Decrypted:",s1);
+    console.printLine("Press any key to continue..");
+    console.readChar()
 }
