@@ -8,7 +8,7 @@ In development:
   --------------------------------------
   dev: async programming (instant messagange sample (chat) ), #608
   op:github actions : x86
-  opt: pi - under 8 sec, #601,#602
+  opt: #601,#602
   maint:tools:backlog,#616, system module warnings, #622
   exp:snake game : text / gui version, using expression trees in real-life apps (see c#)
   ide:backlog (#617), vm debugger, debugger watch - struct
@@ -26,22 +26,30 @@ In development:
     (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
     console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
   --------------------------------------
-    - Walk a directory/Non-recursively
-    - Sorting algorithms/Sleep sort 
+    - c_a_g
 
+    - pi under 7 sec
+
+    - agenda
+
+    - operation with an array :
+         short tmp[1024];
+         tmp[0] := 0;
+
+    - Sorting algorithms/Sleep sort
     - gui samples
 
   === Iteration 21 ===
   --------------------------------------
   dev: 
   op:
-  opt:
+  opt:pi under 6 sec
   maint:#620
   exp:
   ide:
   tools:
   prom:
-  port:
+  port:win64 gui
   --------------------------------------
 
   === Iteration 22 ===

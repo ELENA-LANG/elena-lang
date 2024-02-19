@@ -591,10 +591,9 @@ void elena_lang :: loadNOp(JITCompilerScope* scope)
             scope->compiler->writeImm16(writer, scope->command.arg1 & 0xFFFF, 0);
             break;
          default:
-            // to make compiler happy
+            writeCoreReference(scope, entries->reference, entries->offset, code);
             break;
       }
-      //else writeCoreReference();
 
       entries++;
       count--;

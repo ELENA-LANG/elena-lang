@@ -27,6 +27,7 @@ public sealed const struct WindowHandle
    {
       handle hinstance := instance.Handle;
       handle h := UnsafePointer.Default;
+      handle hParent := parent.Handle;
       extern
       {
          h := extern USER32.CreateWindowExW(
@@ -38,7 +39,7 @@ public sealed const struct WindowHandle
             y,
             width,
             height,
-            parent.Handle,
+            hParent,
             0,
             hinstance,
             paramPtr)

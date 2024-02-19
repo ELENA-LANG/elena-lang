@@ -997,7 +997,7 @@ public sealed class ImageList : Object, interface<IControl>
 
    assign(Paintbox paintbox)
    {
-      paintbox.onPaint := (object sender, Canvas canvas)
+      /*paintbox.onPaint := (object sender, Canvas canvas)
       {
          int width := _size.Width;
          int height := _size.Height;
@@ -1005,7 +1005,7 @@ public sealed class ImageList : Object, interface<IControl>
          auto image := _images[_index];
             
          canvas.write(image, 0, 0, width, height)
-      }
+      }*/
    }
 
    IControl retrieve(Handle handle)

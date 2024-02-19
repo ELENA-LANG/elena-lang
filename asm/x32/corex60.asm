@@ -769,7 +769,7 @@ end
 
 // ; exclude
 inline % 10h
-                                                       
+     
   mov  ecx, fs:[2Ch]
   mov  eax, [data : %CORE_TLS_INDEX]
   mov  edi, [ecx+eax*4]
@@ -782,7 +782,7 @@ end
 // ; include
 inline % 11h
 
-  add  esp, 4                                                       
+  add  esp, 4
   mov  ecx, fs:[2Ch]
   mov  eax, [data : %CORE_TLS_INDEX]
   mov  edi, [ecx+eax*4]

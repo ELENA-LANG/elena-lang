@@ -58,24 +58,24 @@ public class MainWindow : SDIDialog
       BtmInfo := Button.new();
     
       self
-         .appendControl:LabelName
-         .appendControl:LabelSurName
-         .appendControl:LabelOtName
-         .appendControl:LabelEmail
-         .appendControl:LabelAge
-         .appendControl:LabelPhoneNumber
-         .appendControl:LabelAbout
-         .appendControl:LabelDel
-         .appendControl:Name
-         .appendControl:SurName
-         .appendControl:OtName
-         .appendControl:Email
-         .appendControl:Age
-         .appendControl:PhoneNumber
-         .appendControl:BtmExit
-         .appendControl:BtmSave
-         .appendControl:BtmDelTxt
-         .appendControl:BtmInfo;
+         .appendControl(LabelName)
+         .appendControl(LabelSurName)
+         .appendControl(LabelOtName)
+         .appendControl(LabelEmail)
+         .appendControl(LabelAge)
+         .appendControl(LabelPhoneNumber)
+         .appendControl(LabelAbout)
+         .appendControl(LabelDel)
+         .appendControl(Name)
+         .appendControl(SurName)
+         .appendControl(OtName)
+         .appendControl(Email)
+         .appendControl(Age)
+         .appendControl(PhoneNumber)
+         .appendControl(BtmExit)
+         .appendControl(BtmSave)
+         .appendControl(BtmDelTxt)
+         .appendControl(BtmInfo);
         
       // Form
       self.Caption := "Writer Account";
@@ -167,21 +167,21 @@ public class MainWindow : SDIDialog
                 
             if (dialog.run())
             {
-               _savedFile := File.assign(dialog.Selected);
+ /*              _savedFile := File.assign(dialog.Selected);
                     
                var writer := _savedFile.logger();
                     
                writer 
-                  .printLine:"//-------------------------------------------------------------------------------"
+                  .printLine("//-------------------------------------------------------------------------------")
                   .printLine("Name: ",Name.Value," ",SurName.Value," ",OtName.Value)
                   .printLine("Email: ",Email.Value)
                   .printLine("Age: ",Age.Value)
                   .printLine("PhoneNumber:",PhoneNumber.Value)
-                  .printLine:"//-------------------------------------------------------------------------------";
+                  .printLine("//-------------------------------------------------------------------------------");
 
                writer.close();
 
-               BtmDelTxt.Enabled := true
+               BtmDelTxt.Enabled := true*/
             }
          };
         
