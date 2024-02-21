@@ -496,10 +496,10 @@ class PaintboxListener : WindowCallback
       _owner.resize(control, width, height);
    }
 
-   onWMPaint(Handle hwnd)
-   {
-      _owner.paint();
-   }
+//   onWMPaint(Handle hwnd)
+//   {
+//      _owner.paint();
+//   }
 
    onWMDestoy(Handle hwnd)
    {
@@ -588,7 +588,7 @@ public sealed class Imagebox : Paintbox
 
    internal paint()
    {
-      if(_needToRefresh)
+/*      if(_needToRefresh)
          { self.refresh() };
         
       PAINTSTRUCT struct := new PAINTSTRUCT();
@@ -600,32 +600,37 @@ public sealed class Imagebox : Paintbox
       HDC dc := struct.HDC;
         
       dc.copy(0, 0, width, height, _imageDC, 0, 0, SRCCOPY);
+*/
+
 //        int err := system'external'KERNEL32 GetLastError.
                 
-      struct.end(_handle)
+//      struct.end(_handle)
    }
 
    refresh()
    {
       if(nil == _handle)
          { ^ self };
-        
+/*        
       onPaint?.(self, _canvas);
 
       super.refresh();
-      _needToRefresh := false
+      _needToRefresh := false*/
    }
  
    internal resize(Handle handle, int width, int height)
    {
-      WindowHandle hwnd := handle;
+      if(nil == _handle)
+         { ^ self };
 
+      WindowHandle hwnd := handle;
+/*
       ifnot(nil == _image)
       {
          _image.free();
          _imageDC.free()
-      };
-            
+      };*/
+/*            
       HDC dc := hwnd.HDC;
             
       _image := HBITMAP.create(dc, width, height);
@@ -633,7 +638,7 @@ public sealed class Imagebox : Paintbox
       _image.select(_imageDC);
 
       _canvas.open(_imageDC);
-
+*/
       _needToRefresh := true
    }
 }
@@ -698,25 +703,25 @@ public abstract class BasePanel : BaseWinContainer
       _controls.append(control)        
    }
     
-//    int Width
-//    {
-//        set(int v)
-//        {
-//            super.Width := v;
-//            
-//            theFrame.Width := v
-//        }        
-//    }
-//    
-//    int Height
-//    {
-//        set(int h)
-//        {
-//            super.Height := h;
-//            
-//            theFrame.Height := h
-//        }
-//    }
+   int Width
+   {
+      set(int v)
+      {
+         super.Width := v;
+
+         _frame.Width := v
+      }        
+   }
+    
+   int Height
+   {
+      set(int h)
+      {
+         super.Height := h;
+
+         _frame.Height := h
+      }
+   }
             
    setRegion(int x, int y, int width, int height)
    {
@@ -725,28 +730,28 @@ public abstract class BasePanel : BaseWinContainer
       _frame.setRegion(0, 0, width, height);
    }
     
-//   string Caption
+   string Caption
+   {
+      set(string caption)
+      {
+         _frame.Caption := caption
+      }
+        
+      set(wide caption)
+      {
+         _frame.Caption := caption
+      }
+   }    
+//
+//   set Caption(string s)
 //   {
-//      set(string caption)
-//      {
-//            theFrame.Caption := caption
-//      }
-//        
-//      set(wide caption)
-//      {
-//         theFrame.Caption := caption
-//      }
-//   }    
-
-   set Caption(string s)
-   {
-      _frame.Caption := s
-   }
-    
-   set Caption(wide s)
-   {
-      _frame.Caption := s
-   }
+//      _frame.Caption := s
+//   }
+//    
+//   set Caption(wide s)
+//   {
+//      _frame.Caption := s
+//   }
 
    internal resize(Handle handle, int width, int height)
    {

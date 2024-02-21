@@ -50,7 +50,7 @@ procedure windProc (arg1,arg2,arg3,arg4)
   jeq         labPaint
 
 labDefault:
-  call        extern:USER32.DefWindowProcW(*hwnd,*msg,*wparam,*lparam)
+  call        stdcall extern:USER32.DefWindowProcW(*hwnd,*msg,*wparam,*lparam)
   jump        labEnd2
 
 labCreate:
@@ -71,12 +71,7 @@ labCreate:
   jump        labEnd
 
 labDestroy:
-  mov         n:GWL_USERDATA
-  save        sp:1
-  load        dp:hwnd
-  save        sp:0
-
-  call        extern:USER32.GetWindowLongW,2
+  call        stdcall extern:USER32.GetWindowLongW(*hwnd,GWL_USERDATA)
 
   cmp         n:0
   jeq         labDefault
@@ -94,12 +89,7 @@ labDestroy:
   jump        labEnd
 
 labPaint:
-  mov         n:GWL_USERDATA
-  save        sp:1
-  load        dp:hwnd
-  save        sp:0
-
-  call        extern:USER32.GetWindowLongW,2
+  call        stdcall extern:USER32.GetWindowLongW(*hwnd,GWL_USERDATA)
 
   cmp         n:0
   jeq         labDefault
@@ -117,12 +107,7 @@ labPaint:
   jump        labEnd
 
 labCommand:
-  mov         n:GWL_USERDATA
-  save        sp:1
-  load        dp:hwnd
-  save        sp:0
-
-  call        extern:USER32.GetWindowLongW,2
+  call        stdcall extern:USER32.GetWindowLongW(*hwnd,GWL_USERDATA)
 
   cmp         n:0
   jeq         labDefault
@@ -143,12 +128,7 @@ labCommand:
   jump        labEnd
 
 labSize:
-  mov         n:GWL_USERDATA
-  save        sp:1
-  load        dp:hwnd
-  save        sp:0
-
-  call        extern:USER32.GetWindowLongW,2
+  call        stdcall extern:USER32.GetWindowLongW(*hwnd,GWL_USERDATA)
 
   cmp         n:0
   jeq         labDefault

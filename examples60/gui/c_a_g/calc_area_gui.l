@@ -219,19 +219,19 @@ public class MainWindow : SDIDialog
       Tconta.onIndexChanged := (args){ self.TipoDoCalculo(Tconta.SelectedIndex) };
 
       Econta1.onIndexChanged := (args){ self.TipoDoObj(Econta1.SelectedIndex) };
-        Econta2.onIndexChanged := (args){ self.TipoDoObj(4 + Econta2.SelectedIndex) };
-        Econta3.onIndexChanged := (args){ self.TipoDoObj(7 + Econta3.SelectedIndex) };
-        Econta4.onIndexChanged := (args){ self.TipoDoObj(10 + Econta4.SelectedIndex) };
+      Econta2.onIndexChanged := (args){ self.TipoDoObj(4 + Econta2.SelectedIndex) };
+      Econta3.onIndexChanged := (args){ self.TipoDoObj(7 + Econta3.SelectedIndex) };
+      Econta4.onIndexChanged := (args){ self.TipoDoObj(10 + Econta4.SelectedIndex) };
 
-        // Buttons ----------------------------------------------------------------------
-        BtmCalc.onClick := (args)
-            { self.onButtonClick() };
+      // Buttons ----------------------------------------------------------------------
+      BtmCalc.onClick := (args)
+          { self.onButtonClick() };
        
 //        BtmInfo set onClick((args)
 //            { $self $onButtonClickInfo:$self }).
 
-        BtmSair.onClick := (args)
-            { forward program.stop() }
+      BtmSair.onClick := (args)
+          { forward program.stop() }
    }
 
    private TipoDoCalculo(int index)

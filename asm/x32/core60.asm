@@ -182,6 +182,13 @@ labYGCollect:
   push esi
   push ecx
 
+  // ; save perm roots
+  mov  esi, [data : %CORE_GC_TABLE + gc_perm_start]
+  mov  ecx, [data : %CORE_GC_TABLE + gc_perm_current]
+  sub  ecx, esi
+  push esi
+  push ecx
+
   // ;   collect frames
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]  
   mov  ecx, eax

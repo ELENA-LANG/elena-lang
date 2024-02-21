@@ -13,7 +13,7 @@ In development:
   exp:snake game : text / gui version, using expression trees in real-life apps (see c#)
   ide:backlog (#617), vm debugger, debugger watch - struct
   tools:work with elt in ide
-  prom:elena in nutshell every 2 week
+  prom:#635,elena in nutshell every 2 week
   port:xforms, x86 mt, x86-64 vm,elenavm / elt for linux
   --------------------------------------
   - #620 - resolve several points
@@ -37,6 +37,7 @@ In development:
          tmp[0] := 0;
 
     - Sorting algorithms/Sleep sort
+
     - gui samples
 
   === Iteration 21 ===
