@@ -84,45 +84,6 @@ namespace elena_lang
       int      tabSize;
    };
 
-   // --- TextViewModelEvent ---
-   struct TextViewModelEvent : public EventBase
-   {
-   public:
-      DocumentChangeStatus changeStatus;
-
-      int eventId() override;
-
-      TextViewModelEvent(int status, DocumentChangeStatus changeStatus)
-         : EventBase(status), changeStatus(changeStatus)
-      {         
-      }
-   };
-
-   // --- SelectionEvent ---
-   class SelectionEvent : public EventBase
-   {
-      int _eventId;
-      int _index;
-
-   public:
-      int eventId() override;
-
-      int Index() { return _index; }
-
-      SelectionEvent(int id, int index);
-   };
-
-   // --- StartUpEvent ---
-   class StartUpEvent : public EventBase
-   {
-      int _eventId;
-
-   public:
-      int eventId() override;
-
-      StartUpEvent(int status);
-   };
-
    // --- TextViewController ---
    class TextViewController : public TextViewControllerBase
    {

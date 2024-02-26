@@ -26,14 +26,14 @@ In development:
     (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
     console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
   --------------------------------------
-    - get rid of DocumentNotifiers collection from Document
-    - get rid of NotificationStatus
     - DebugController - get rid of unnessesary fields (no need to send notification?)
     - make sure, trace info is not updated twice per step
-    - get rid of extra notify
     - test changing color scheme
 
     - ide status bar : running, stopped, finished, saved, ready, error, successful compile
+    - ide : enable / disable menu options
+    - ide : enable / disable toolbar options
+    - context menu
 
     - ide debugger : display stack allocated variable
 

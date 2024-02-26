@@ -93,9 +93,6 @@ namespace elena_lang
 
       virtual void attachListener(TextViewListener* listener) = 0;
 
-      virtual void attachDocListener(DocumentNotifier* listener) = 0;
-      virtual void removeDocListener(DocumentNotifier* listener) = 0;
-
       virtual void addDocumentView(ustr_t name, Text* text, path_t path) = 0;
       virtual void renameDocumentView(ustr_t oldName, ustr_t newName, path_t path) = 0;
 

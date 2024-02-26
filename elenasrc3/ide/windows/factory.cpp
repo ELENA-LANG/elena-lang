@@ -229,7 +229,12 @@ ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* not
    TextViewWindow* view = new TextViewWindow(notifier, _model->viewModel(), 
       &_controller->sourceController, &_styles);
    TextViewFrame* frame = new TextViewFrame(notifier, _settings.withTabAboverscore, view, 
-      _model->viewModel(), EVENT_TEXTFRAME_SELECTION_CHANGED);
+      _model->viewModel(), [](NotifierBase* notifier, int index)
+      {
+         SelectionEvent event = { EVENT_TEXTFRAME_SELECTION_CHANGED, index };
+
+         notifier->notify(&event);
+      });
 
    view->create(_instance, szTextView, owner);
    frame->createControl(_instance, owner);
@@ -261,10 +266,14 @@ ControlBase* IDEFactory :: createTabBar(WindowBase* owner, NotifierBase* notifie
    return tabBar;
 }
 
-ControlBase* IDEFactory :: createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier, 
-   int notifyCode, NotificationStatus notifyStatus)
+ControlBase* IDEFactory :: createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier)
 {
-   Splitter* splitter = new Splitter(notifier, notifyCode, notifyStatus, client, vertical);
+   Splitter* splitter = new Splitter(notifier, client, vertical, [](NotifierBase* notifier)
+      {
+         LayoutEvent event(STATUS_LAYOUT_CHANGED);
+
+         notifier->notify(&event);
+      });
 
    splitter->create(_instance, 
       vertical ? szVSplitter : szHSplitter,
@@ -427,15 +436,13 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[textIndex] = textCtrls.value1;
    children[bottomBox] = vb;
    children[tabBar] = createTabBar(sdi, notifier);
-   children[vsplitter] = createSplitter(sdi, (ControlBase*)children[tabBar], false, notifier, 
-      NOTIFY_IDE_CHANGE, IDE_LAYOUT_CHANGED);
+   children[vsplitter] = createSplitter(sdi, (ControlBase*)children[tabBar], false, notifier);
    children[statusBarIndex] = createStatusbar(sdi);
    children[compilerOutput] = createCompilerOutput((ControlBase*)children[tabBar], outputProcess, notifier);
    children[errorList] = createErrorList((ControlBase*)children[tabBar], notifier);
    children[browser] = createDebugBrowser((ControlBase*)children[tabBar], notifier);
    children[projectView] = createProjectView(sdi, notifier);
-   children[hsplitter] = createSplitter(sdi, (ControlBase*)children[projectView], true, notifier,
-      NOTIFY_IDE_CHANGE, IDE_LAYOUT_CHANGED);
+   children[hsplitter] = createSplitter(sdi, (ControlBase*)children[projectView], true, notifier);
    children[menu] = createMenu(sdi);
    children[debugContextMenu] = createDebugContextMenu(sdi);
    children[vmConsoleControl] = createVmConsoleControl((ControlBase*)children[tabBar], vmConsoleProcess);

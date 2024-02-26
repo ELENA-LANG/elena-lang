@@ -56,13 +56,10 @@ TextViewWindow :: TextViewWindow(NotifierBase* notifier, TextViewModelBase* mode
    _caretChanged = false;
    _mouseCaptured = false;
    _caret_x = 0;
-
-   _model->attachDocListener(this);
 }
 
 TextViewWindow :: ~TextViewWindow()
 {
-   _model->removeDocListener(this);
 }
 
 void TextViewWindow :: registerTextViewWindow(HINSTANCE hInstance, wstr_t className)
@@ -565,11 +562,11 @@ bool TextViewWindow :: onKeyPressed(wchar_t ch)
 
 void TextViewWindow :: onContextMenu(short x, short y)
 {
-   auto docView = _model->DocView();
+   //auto docView = _model->DocView();
 
-   if (_notifier && docView) {
-      _notifier->notifyContextMenu(CONTEXT_MENU_ON, x, y, docView->hasSelection());
-   }
+   //if (_notifier && docView) {
+   //   _notifier->notifyContextMenu(CONTEXT_MENU_ON, x, y, docView->hasSelection());
+   //}
 }
 
 LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)

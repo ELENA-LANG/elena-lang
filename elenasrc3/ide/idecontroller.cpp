@@ -45,7 +45,7 @@ void SourceViewController :: newSource(TextViewModelBase* model, ustr_t caption,
    newDocument(model, caption);
 
    if (empty)
-      status |= FRAME_VISIBILITY_CHANGED;
+      status |= STATUS_FRAME_VISIBILITY_CHANGED;
 
    if (autoSelect) {
       int index = model->getDocumentIndex(caption);
@@ -223,7 +223,7 @@ bool ProjectController :: startDebugger(ProjectModel& model)
       bool debugMode = model.getDebugMode();
       if (debugMode) {
          if (!_debugController.start(exePath.str(), commandLine.str(), debugMode/*, _breakpoints */)) {
-            notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_DEBUG_FILE_NOT_FOUND_COMPILE);
+            //notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_DEBUG_FILE_NOT_FOUND_COMPILE);
 
             return false;
          }
@@ -231,7 +231,7 @@ bool ProjectController :: startDebugger(ProjectModel& model)
       }
       else {
          if (!_debugController.start(exePath.str(), commandLine.str(), false/*, _breakpoints */)) {
-            notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_RUN_NEED_RECOMPILE);
+            //notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_RUN_NEED_RECOMPILE);
 
             return false;
          }
@@ -240,7 +240,7 @@ bool ProjectController :: startDebugger(ProjectModel& model)
       return true;
    }
    else {
-      notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_RUN_NEED_TARGET);
+      //notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_RUN_NEED_TARGET);
 
       return false;
    }
@@ -568,7 +568,7 @@ void ProjectController :: setProjectPath(ProjectModel& model, path_t projectFile
    model.projectPath.copySubPath(projectFile, true);
 }
 
-NotificationStatus ProjectController :: saveProject(ProjectModel& model)
+void ProjectController :: saveProject(ProjectModel& model)
 {
    ustr_t key = getPlatformName(_platform);
 
@@ -591,8 +591,6 @@ NotificationStatus ProjectController :: saveProject(ProjectModel& model)
    projectConfig.save(*path, FileEncoding::UTF8);
 
    model.notSaved = false;
-
-   return PROJECT_CHANGED;
 }
 
 int ProjectController :: closeProject(ProjectModel& model)
@@ -866,7 +864,7 @@ void IDEController :: init(IDEModel* model, int& status)
          }
       }
    }
-   else status |= PROJECT_CHANGED;
+   else status |= STATUS_PROJECT_CHANGED;
 }
 
 void IDEController :: traceSource(SourceViewModel* sourceModel, bool found, int row)
@@ -1180,7 +1178,7 @@ bool IDEController :: doCloseProject(FileDialogBase& dialog, MessageDialogBase& 
       projectStatus |= projectController.closeProject(model->projectModel);
 
       model->changeStatus(IDEStatus::Empty);
-      projectStatus |= IDE_STATUS_CHANGED;
+      projectStatus |= STATUS_STATUS_CHANGED;
 
       notifyOnModelChange(projectStatus);
 
@@ -1366,29 +1364,29 @@ void IDEController :: doDebugStop(IDEModel* model)
 
 void IDEController :: onCompilationStart(IDEModel* model)
 {
-   model->status = IDEStatus::Compiling;
+   //model->status = IDEStatus::Compiling;
 
-   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED | IDE_COMPILATION_STARTED);
-   _notifier->notifySelection(NOTIFY_SHOW_RESULT, model->ideScheme.compilerOutputControl);
+   //_notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED | IDE_COMPILATION_STARTED);
+   //_notifier->notifySelection(NOTIFY_SHOW_RESULT, model->ideScheme.compilerOutputControl);
 }
 
 void IDEController :: onCompilationStop(IDEModel* model)
 {
-   model->status = IDEStatus::Ready;
+   //model->status = IDEStatus::Ready;
 
-   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
+   //_notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
 }
 
 void IDEController :: onCompilationBreak(IDEModel* model)
 {
-   model->status = IDEStatus::Broken;
+   //model->status = IDEStatus::Broken;
 
-   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
+   //_notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
 }
 
 void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBase* log)
 {
-   _notifier->notifySelection(NOTIFY_SHOW_RESULT, model->ideScheme.errorListControl);
+   //_notifier->notifySelection(NOTIFY_SHOW_RESULT, model->ideScheme.errorListControl);
 
    log->clearMessages();
 
@@ -1472,20 +1470,20 @@ void IDEController :: highlightError(IDEModel* model, int row, int column, path_
 void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode, 
    text_str output, ErrorLogBase* log)
 {
-   if (exitCode == 0) {
-      model->status = IDEStatus::CompiledSuccessfully;
+   //if (exitCode == 0) {
+   //   model->status = IDEStatus::CompiledSuccessfully;
 
-      _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
-   }
-   else {
-      if (exitCode == -1) {
-         model->status = IDEStatus::CompiledWithWarnings;
-      }
-      else model->status = IDEStatus::CompiledWithErrors;
-      _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
+   //   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
+   //}
+   //else {
+   //   if (exitCode == -1) {
+   //      model->status = IDEStatus::CompiledWithWarnings;
+   //   }
+   //   else model->status = IDEStatus::CompiledWithErrors;
+   //   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
 
-      displayErrors(model, output, log);
-   }
+   //   displayErrors(model, output, log);
+   //}
 }
 
 bool IDEController :: doCompileProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model)
@@ -1522,14 +1520,14 @@ void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, ID
 {
    projectController.refreshDebugContext(contextBrowser);
 
-   _notifier->notifySelection(NOTIFY_REFRESH, model->ideScheme.debugWatch);
+   //_notifier->notifySelection(NOTIFY_REFRESH, model->ideScheme.debugWatch);
 }
 
 void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param)
 {
    projectController.refreshDebugContext(contextBrowser, item, param);
 
-   _notifier->notifySelection(NOTIFY_REFRESH, model->ideScheme.debugWatch);
+   //_notifier->notifySelection(NOTIFY_REFRESH, model->ideScheme.debugWatch);
 }
 
 bool IDEController :: onClose(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model)
@@ -1563,8 +1561,8 @@ void IDEController :: onProgramStop(IDEModel* model)
 
 void IDEController :: onStatusChange(IDEModel* model, IDEStatus newStatus)
 {
-   model->status = newStatus;
-   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
+   //model->status = newStatus;
+   //_notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
 }
 
 void IDEController :: toggleBreakpoint(IDEModel* model, int row)

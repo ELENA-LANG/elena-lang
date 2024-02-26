@@ -197,67 +197,6 @@ bool WindowApp :: initInstance(WindowBase* mainWindow, int cmdShow)
    return TRUE;
 }
 
-void WindowApp :: notify(int messageCode, NotificationStatus status)
-{
-   StatusNMHDR notification;
-
-   notification.nmhrd.code = STATUS_NOTIFICATION;
-   notification.nmhrd.hwndFrom = _hwnd;
-   notification.code = messageCode;
-   notification.status = status;
-
-   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
-}
-
-void WindowApp :: notifySelection(int messageCode, size_t param)
-{
-   SelectionNMHDR notification;
-
-   notification.nmhrd.code = STATUS_SELECTION;
-   notification.nmhrd.hwndFrom = _hwnd;
-   notification.code = messageCode;
-   notification.param = param;
-
-   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
-}
-
-void WindowApp :: notifyTreeItem(int messageCode, size_t item, size_t param)
-{
-   TreeItemNMHDR notification;
-
-   notification.nmhrd.code = STATUS_TREEITEM;
-   notification.nmhrd.hwndFrom = _hwnd;
-   notification.code = messageCode;
-   notification.item = item;
-   notification.param = param;
-
-   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
-}
-
-void WindowApp::notifyCompletion(int messageCode, int param)
-{
-   CompletionNMHDR notification;
-
-   notification.nmhrd.code = STATUS_COMPLETION;
-   notification.nmhrd.hwndFrom = _hwnd;
-   notification.code = messageCode;
-   notification.param = param;
-
-   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
-}
-
-void WindowApp :: notifyContextMenu(int id, short x, short y, bool hasSelection)
-{
-   ContextMenuNMHDR notification;
-   notification.nmhrd.code = id;
-   notification.nmhrd.hwndFrom = _hwnd;
-   notification.x = x;
-   notification.y = y;
-   notification.hasSelection = hasSelection;
-
-   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
-}
-
 void WindowApp :: notify(int id, NMHDR* notification)
 {
    notification->code = id;

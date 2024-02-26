@@ -44,6 +44,7 @@ namespace elena_lang
    constexpr int EVENT_TEXTVIEW_MODEL_CHANGED         = 0x0001;
    constexpr int EVENT_TEXTFRAME_SELECTION_CHANGED    = 0x0002;
    constexpr int EVENT_STARTUP                        = 0x0003;
+   constexpr int EVENT_LAYOUT                         = 0x0004;
 
    // --- Event Statuses ---
    constexpr int STATUS_NONE                          = 0x0000;
@@ -79,20 +80,6 @@ namespace elena_lang
    constexpr int NOTIFY_DEBUG_LOAD                       = 18;
    constexpr int NOTIFY_DEBUG_NOSOURCE                   = 19;
    constexpr int NOTIFY_DEBUG_RUNNING                    = 20;
-
-   // --- Notification statuses ---
-   constexpr NotificationStatus IDE_ONSTART              = -1;
-   constexpr NotificationStatus NONE_CHANGED             = 0x00000;
-
-   constexpr NotificationStatus IDE_LAYOUT_CHANGED       = 0x00001;
-   constexpr NotificationStatus IDE_STATUS_CHANGED       = 0x00002;
-   constexpr NotificationStatus PROJECT_CHANGED          = 0x00008;
-   constexpr NotificationStatus FRAME_VISIBILITY_CHANGED = 0x00010;
-   constexpr NotificationStatus DEBUGWATCH_CHANGED       = 0x00020;
-   constexpr NotificationStatus IDE_COMPILATION_STARTED  = 0x00040;
-   constexpr NotificationStatus OUTPUT_SHOWN             = 0x00080;
-   constexpr NotificationStatus FRAME_ACTIVATE           = 0x00100;
-   constexpr NotificationStatus COLOR_SCHEME_CHANGED     = 0x00200;
 
    // --- PathSettings ---
    struct PathSettings
@@ -346,6 +333,53 @@ namespace elena_lang
       virtual GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
          ProcessBase* vmConsoleProcess) = 0;
    };
+
+   // --- SelectionEvent ---
+   class SelectionEvent : public EventBase
+   {
+      int _eventId;
+      int _index;
+
+   public:
+      int eventId() override;
+
+      int Index() { return _index; }
+
+      SelectionEvent(int id, int index);
+   };
+
+   // --- LayoutEvent ---
+   class LayoutEvent : public EventBase
+   {
+   public:
+      int eventId() override;
+
+      LayoutEvent(int status);
+   };
+
+   // --- StartUpEvent ---
+   class StartUpEvent : public EventBase
+   {
+   public:
+      int eventId() override;
+
+      StartUpEvent(int status);
+   };
+
+   // --- TextViewModelEvent ---
+   struct TextViewModelEvent : public EventBase
+   {
+   public:
+      DocumentChangeStatus changeStatus;
+
+      int eventId() override;
+
+      TextViewModelEvent(int status, DocumentChangeStatus changeStatus)
+         : EventBase(status), changeStatus(changeStatus)
+      {
+      }
+   };
+
 }
 
 #endif

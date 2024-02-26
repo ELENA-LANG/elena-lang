@@ -19,6 +19,10 @@ namespace elena_lang
       TextViewModel* _model;
 
    public:
+      typedef void(*SelectionEventInvoker)(NotifierBase*, int);
+
+      SelectionEventInvoker _selectionInvoker;
+
       void onDocumentNew(int index) override;
       void onDocumentSelect(int index) override;
       //void afterDocumentSelect(int index) override;
@@ -29,7 +33,7 @@ namespace elena_lang
 
       void onSelChanged() override;
 
-      TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, int selNotificationId);
+      TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, SelectionEventInvoker invoker);
    };
 
 }

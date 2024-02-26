@@ -38,8 +38,7 @@ namespace elena_lang
       ControlPair createTextControl(WindowBase* owner, NotifierBase* notifier);
       ControlBase* createStatusbar(WindowBase* owner);
       ControlBase* createTabBar(WindowBase* owner, NotifierBase* notifier);
-      ControlBase* createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier, 
-         int notifyCode, NotificationStatus status);
+      ControlBase* createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier);
       ControlBase* createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess, NotifierBase* notifier);
       ControlBase* createErrorList(ControlBase* owner, NotifierBase* notifier);
       ControlBase* createProjectView(ControlBase* owner, NotifierBase* notifier);

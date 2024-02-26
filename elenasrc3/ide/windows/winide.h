@@ -63,6 +63,7 @@ namespace elena_lang
 
       void sendTextViewModelEvent(TextViewModelEvent* event, WindowApp* app);
       void sendTextFrameSelectionEvent(SelectionEvent* event, WindowApp* app);
+      void sendLayoutEvent(LayoutEvent* event, WindowApp* app);
       void sendStartUpEvent(StartUpEvent* event, WindowApp* app);
 
    public:
@@ -116,14 +117,6 @@ namespace elena_lang
       void onStartup(ModelNMHDR* rec);
       void onLayoutChange(ModelNMHDR* rec);
 
-      void onStatusChange(StatusNMHDR* rec);
-      void onSelection(SelectionNMHDR* rec);
-      void onTreeItem(TreeItemNMHDR* rec);
-      void onComplition(CompletionNMHDR* rec);
-      void onContextMenu(ContextMenuNMHDR* rec);
-      //void onModelChange(ExtNMHDR* hdr);
-      //void onNotifyMessage(ExtNMHDR* hdr);
-
       void onDebugWatch();
 
       void onDoubleClick(NMHDR* hdr);
@@ -139,9 +132,6 @@ namespace elena_lang
 
       void onToolTip(NMTTDISPINFO* toolTip);
       void onTabTip(NMTTDISPINFO* toolTip);
-
-      void onLayoutChange(NotificationStatus status);
-      void onIDEChange(NotificationStatus status);
 
       bool onCommand(int command) override;
       void onNotify(NMHDR* hdr) override;
@@ -210,10 +200,8 @@ namespace elena_lang
 
       void onDebuggerStart();
       void onDebuggerHook();
-      void onDebuggerUpdate(StatusNMHDR* rec);
       void onDebuggerSourceNotFound();
       void onDocumentUpdate(DocumentChangeStatus& changeStatus);
-      void onProgrammRunning(StatusNMHDR* rec);
 
    public:
       void populate(size_t counter, GUIControlBase** children) override;

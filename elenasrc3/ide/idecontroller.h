@@ -84,7 +84,7 @@ namespace elena_lang
       int openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
       int newProject(ProjectModel& model);
       int openProject(ProjectModel& model, path_t projectFile);
-      NotificationStatus saveProject(ProjectModel& model);
+      void saveProject(ProjectModel& model);
       int closeProject(ProjectModel& model);
 
       path_t getSourceByIndex(ProjectModel& model, int index);
@@ -118,32 +118,6 @@ namespace elena_lang
       {
          if (_notifier)
             _notifier->notify(event);
-      }
-
-      void notify(int id, NotificationStatus status) override
-      {
-         if (_notifier)
-            _notifier->notify(id, status);
-      }
-      void notifySelection(int id, size_t param) override
-      {
-         if (_notifier)
-            _notifier->notifySelection(id, param);
-      }
-      void notifyCompletion(int id, int param) override
-      {
-         if (_notifier)
-            _notifier->notifyCompletion(id, param);
-      }
-      void notifyTreeItem(int id, size_t item, size_t param) override
-      {
-         if (_notifier)
-            _notifier->notifyTreeItem(id, item, param);
-      }
-      void notifyContextMenu(int id, short x, short y, bool hasSelection) override
-      {
-         if (_notifier)
-            _notifier->notifyContextMenu(id, x, y, hasSelection);
       }
 
       ProjectController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* debugProcess, 

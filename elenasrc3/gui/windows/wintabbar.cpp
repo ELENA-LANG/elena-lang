@@ -83,8 +83,8 @@ void CustomTabBar :: selectTab(int index)
 {
    int previous = (int)::SendMessage(_handle, TCM_SETCURSEL, index, 0);
    if (_notSelected || previous != index) {
-      if (_selNotificationId)
-         _notifier->notifySelection(_selNotificationId, index);
+      //if (_selNotificationId)
+      //   _notifier->notifySelection(_selNotificationId, index);
 
       _notSelected = false;
    }

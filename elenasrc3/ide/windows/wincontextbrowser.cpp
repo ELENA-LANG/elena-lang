@@ -156,7 +156,7 @@ void ContextBrowser :: removeUnused(WatchItems& refreshedItems)
 
 void ContextBrowser :: onItemExpand(TreeViewItem item)
 {
-   _notifier->notifyTreeItem(_expandNotificationId, (size_t)item, getParam(item));
+   //_notifier->notifyTreeItem(_expandNotificationId, (size_t)item, getParam(item));
 }
 
 void ContextBrowser :: expandNode(size_t param)
@@ -168,6 +168,6 @@ void ContextBrowser :: refreshCurrentNode()
 {
    TreeViewItem current = getCurrent();
 
-   _notifier->notifyTreeItem(_expandNotificationId, (size_t)current, getParam(current));
+   //_notifier->notifyTreeItem(_expandNotificationId, (size_t)current, getParam(current));
 }
 

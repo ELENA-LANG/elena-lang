@@ -33,10 +33,6 @@ namespace elena_lang
 
 #endif
 
-   // --- Misc types
-   typedef unsigned int NotificationStatus; // !! obsolete
-   typedef unsigned int ModelChangeStatus;
-
    // --- Point ---
    struct Point
    {
@@ -186,13 +182,6 @@ namespace elena_lang
    {
    public:
       virtual void notify(EventBase* event) = 0;
-
-      // obsolete
-      virtual void notify(int id, NotificationStatus status) = 0;
-      virtual void notifySelection(int id, size_t param) = 0;
-      virtual void notifyTreeItem(int id, size_t item, size_t param) = 0;
-      virtual void notifyCompletion(int id, int param) = 0;
-      virtual void notifyContextMenu(int id, short x, short y, bool hasSelection) = 0;
    };
 
    // --- GUIApp ---

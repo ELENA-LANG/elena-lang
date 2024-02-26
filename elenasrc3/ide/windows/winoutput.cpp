@@ -130,7 +130,7 @@ CompilerOutput :: CompilerOutput(NotifierBase* notifier, int notificationId)
 
 void CompilerOutput :: afterExecution(int exitCode)
 {
-   _notifier->notifyCompletion(_notificationId, exitCode);
+   //_notifier->notifyCompletion(_notificationId, exitCode);
 }
 
 // --- VMConsoleInteractive ---

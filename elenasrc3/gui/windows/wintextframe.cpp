@@ -6,16 +6,15 @@
 
 #include "wintextframe.h"
 #include "elena.h"
-#include "controller.h"
 
 using namespace elena_lang;
 
 // --- TextViewFrame ---
 
-TextViewFrame :: TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, int selNotificationId)
+TextViewFrame :: TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, SelectionEventInvoker invoker)
    : MultiTabControl(notifier, withAbovescore, view)
 {
-   _selNotificationId = selNotificationId;
+   _selectionInvoker = invoker;
    _model = model;
 
    model->attachListener(this);
@@ -75,9 +74,7 @@ void TextViewFrame :: onSelChanged()
       _model->selectDocumentView(index + 1);
 
       if (_selNotificationId) {
-         SelectionEvent event(_selNotificationId, index);
-
-         _notifier->notify(&event);
+         _selectionInvoker(_notifier, index);
       }
    }
    else {

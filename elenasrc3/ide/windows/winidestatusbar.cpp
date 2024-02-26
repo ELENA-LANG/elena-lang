@@ -18,8 +18,6 @@ int StatusBarWidths[5] = { 200, 120, 80, 60, 80 };
 IDEStatusBar :: IDEStatusBar(IDEModel* model)
    : StatusBar(5, StatusBarWidths), _model(model)
 {
-   _model->sourceViewModel.attachDocListener(this);
-
    setIDEStatus(IDEStatus::Empty);
 
    //_pendingIDESettings = true;

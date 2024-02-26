@@ -684,7 +684,7 @@ void DebugController :: onStop()
    _currentModule.clear();
    _currentPath = nullptr;
 
-   _notifier->notifyCompletion(NOTIFY_DEBUGGER_RESULT, DEBUGGER_STOPPED);
+   //_notifier->notifyCompletion(NOTIFY_DEBUGGER_RESULT, DEBUGGER_STOPPED);
 }
 
 void DebugController :: run()
@@ -815,8 +815,8 @@ bool DebugController :: startThread()
 
    while (_process->waitForEvent(DEBUG_ACTIVE, 0));
 
-   //_listener->onStart();
-   _notifier->notify(NOTIFY_DEBUG_START, 0);
+   ////_listener->onStart();
+   //_notifier->notify(NOTIFY_DEBUG_START, 0);
 
    return _process->isStarted();
 }
@@ -863,7 +863,7 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
    if (!reader.eof()) {
       _provider.load(reader, starting, _process);
 
-      _notifier->notify(NOTIFY_DEBUG_LOAD, 0);
+      //_notifier->notify(NOTIFY_DEBUG_LOAD, 0);
 
       _provider.setDebugInfoSize(reader.position());
 

@@ -37,43 +37,6 @@ namespace elena_lang
    constexpr int STATUS_TREEITEM       = 0x104;
    constexpr int CONTEXT_MENU_ON       = 0x105;
 
-   // --- ExtNMHDR ---
-   struct StatusNMHDR
-   {
-      NMHDR              nmhrd;
-      int                code;
-      NotificationStatus status;
-   };
-
-   struct SelectionNMHDR
-   {
-      NMHDR              nmhrd;
-      int                code;
-      int                param;
-   };
-
-   struct TreeItemNMHDR
-   {
-      NMHDR              nmhrd;
-      int                code;
-      size_t             item;
-      size_t             param;
-   };
-
-   struct CompletionNMHDR
-   {
-      NMHDR              nmhrd;
-      int                code;
-      int                param;
-   };
-
-   struct ContextMenuNMHDR
-   {
-      NMHDR              nmhrd;
-      int                x, y;
-      bool               hasSelection;
-   };
-
    // --- Color ---
    class Color
    {
@@ -227,14 +190,7 @@ namespace elena_lang
       int run(GUIControlBase* mainWindow, bool maximized, EventBase* startEvent) override;
 
       void notify(int id, NMHDR* notification);
-
       void notify(EventBase* event) override;
-
-      void notify(int messageCode, NotificationStatus status) override;
-      void notifySelection(int id, size_t param) override;
-      void notifyTreeItem(int id, size_t item, size_t param) override;
-      void notifyCompletion(int id, int param) override;
-      void notifyContextMenu(int id, short x, short y, bool hasSelection) override;
 
       WindowApp(HINSTANCE instance, wstr_t accelerators, EventFormatterBase* formatter)
       {

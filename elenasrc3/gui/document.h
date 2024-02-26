@@ -235,7 +235,6 @@ namespace elena_lang
       int               _maxColumn;
 
       MarkerList        _markers;
-      DocumentNotifiers _notifiers;
 
       pos_t format(LexicalReader& reader);
 
@@ -248,16 +247,6 @@ namespace elena_lang
       void setCaret(int column, int row, bool selecting, DocumentChangeStatus& changeStatus);
 
    public:
-      void attachNotifier(DocumentNotifier* notifier)
-      {
-         _notifiers.add(notifier);
-      }
-
-      void removeNotifier(DocumentNotifier* notifier)
-      {
-         _notifiers.cut(notifier);
-      }
-
       void addMarker(int row, pos_t style, bool instanteMode, bool togleMark, DocumentChangeStatus& changeStatus)
       {
          _markers.add(row, { style, togleMark });

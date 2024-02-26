@@ -9,37 +9,6 @@
 
 using namespace elena_lang;
 
-// --- TextViewModelEvent ---
-
-int TextViewModelEvent :: eventId()
-{
-   return EVENT_TEXTVIEW_MODEL_CHANGED;
-}
-
-// --- SelectionEvent ---
-
-SelectionEvent :: SelectionEvent(int id, int index)
-   : EventBase(0), _eventId(id), _index(index)
-{
-}
-
-int SelectionEvent :: eventId()
-{
-   return _eventId;
-}
-
-// --- StartUpEvent ---
-
-StartUpEvent :: StartUpEvent(int status)
-   : EventBase(status)
-{
-}
-
-int StartUpEvent :: eventId()
-{
-   return EVENT_STARTUP;
-}
-
 // --- TextViewController ---
 
 void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name)

@@ -55,12 +55,7 @@ namespace elena_lang
       void onDocumentClose(int index);
 
    public:
-      //void afterDocumentSelect(int index) override;
-
       void attachListener(TextViewListener* listener) override;
-
-      void attachDocListener(DocumentNotifier* listener) override;
-      void removeDocListener(DocumentNotifier* listener) override;
 
       void addDocumentView(ustr_t name, Text* text, path_t path) override;
       void renameDocumentView(ustr_t oldName, ustr_t newName, path_t path) override;

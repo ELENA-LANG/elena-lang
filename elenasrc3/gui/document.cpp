@@ -230,7 +230,6 @@ bool DocumentView::LexicalReader :: readNext(TextWriter<text_c>& writer, pos_t l
 DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter) :
    _undoBuffer(UNDO_BUFFER_SIZE),
    _formatter(text, formatter, &_markers),
-   _notifiers(nullptr),
    _markers({})
 {
    _text = text;

@@ -136,6 +136,15 @@ void IDENotificationFormatter :: sendStartUpEvent(StartUpEvent* event, WindowApp
    app->notify(EVENT_STARTUP, (NMHDR*)&nw);
 }
 
+
+void IDENotificationFormatter :: sendLayoutEvent(LayoutEvent* event, WindowApp* app)
+{
+   ModelNMHDR nw = { };
+   nw.status = event->status;
+
+   app->notify(EVENT_LAYOUT, (NMHDR*)&nw);
+}
+
 void IDENotificationFormatter :: sendMessage(EventBase* event, WindowApp* app)
 {
    switch (event->eventId()) {      
@@ -147,6 +156,9 @@ void IDENotificationFormatter :: sendMessage(EventBase* event, WindowApp* app)
          break;
       case EVENT_STARTUP:
          sendStartUpEvent(dynamic_cast<StartUpEvent*>(event), app);
+         break;
+      case EVENT_LAYOUT:
+         sendLayoutEvent(dynamic_cast<LayoutEvent*>(event), app);
          break;
       default:
          assert(false);
@@ -383,7 +395,7 @@ void IDEWindow :: openResultTab(int controlIndex)
    if (!resultBar->visible()) {
       resultBar->show();
 
-      onLayoutChange(IDE_LAYOUT_CHANGED);
+      //onLayoutChange(IDE_LAYOUT_CHANGED);
    }
 }
 
@@ -400,7 +412,7 @@ void IDEWindow :: closeResultTab(int controlIndex)
    }
    else resultBar->selectTab(0);
 
-   onLayoutChange(IDE_LAYOUT_CHANGED);
+   //onLayoutChange(IDE_LAYOUT_CHANGED);
 }
 
 void IDEWindow :: toggleWindow(int child_id)
@@ -557,103 +569,6 @@ void IDEWindow :: onProjectChange(bool empty)
    enableMenuItemById(IDM_DEBUG_STEPOVER, !empty, true);
    enableMenuItemById(IDM_DEBUG_RUNTO, !empty, false);
    enableMenuItemById(IDM_DEBUG_STOP, !empty, true);
-}
-
-void IDEWindow :: onLayoutChange(NotificationStatus status)
-{
-   bool empty = _model->sourceViewModel.getDocumentCount() == 0;
-
-   if (test(status, FRAME_VISIBILITY_CHANGED)) {
-      if (!empty) {
-         _children[_model->ideScheme.textFrameId]->show();
-         _children[_model->ideScheme.textFrameId]->setFocus();
-      }
-      else _children[_model->ideScheme.textFrameId]->hide();
-   }
-   if (test(status, PROJECT_CHANGED)) {
-      onProjectChange(_model->projectModel.empty);
-   }
-
-   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-   menu->checkMenuItemById(IDM_VIEW_OUTPUT, _children[_model->ideScheme.compilerOutputControl]->visible());
-   menu->checkMenuItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
-   menu->checkMenuItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
-   menu->checkMenuItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
-   menu->checkMenuItemById(IDM_VIEW_VMCONSOLE, _children[_model->ideScheme.vmConsoleControl]->visible());
-
-   enableMenuItemById(IDM_FILE_SAVE, !empty, true);
-   enableMenuItemById(IDM_FILE_SAVEALL, !empty, true);
-   enableMenuItemById(IDM_FILE_SAVEAS, !empty, false);
-   enableMenuItemById(IDM_FILE_CLOSE, !empty, true);
-   enableMenuItemById(IDM_FILE_CLOSEALL, !empty, false);
-
-   if (empty) {
-      enableMenuItemById(IDM_EDIT_UNDO, false, true);
-      enableMenuItemById(IDM_EDIT_REDO, false, true);
-      
-      enableMenuItemById(IDM_EDIT_CUT, false, true);
-      enableMenuItemById(IDM_EDIT_COPY, false, true);
-      enableMenuItemById(IDM_EDIT_PASTE, false, true);
-
-      enableMenuItemById(IDM_PROJECT_INCLUDE, false, false);
-   }
-   else {
-      enableMenuItemById(IDM_EDIT_PASTE, true, true);
-
-      enableMenuItemById(IDM_PROJECT_INCLUDE, true, false);
-   }
-
-   enableMenuItemById(IDM_EDIT_DELETE, !empty, false);
-   enableMenuItemById(IDM_EDIT_COMMENT, !empty, false);
-   enableMenuItemById(IDM_EDIT_UNCOMMENT, !empty, false);
-
-   enableMenuItemById(IDM_EDIT_DUPLICATE, !empty, false);
-   enableMenuItemById(IDM_EDIT_SELECTALL, !empty, false);
-   enableMenuItemById(IDM_EDIT_ERASELINE, !empty, false);
-   enableMenuItemById(IDM_EDIT_INDENT, !empty, false);
-   enableMenuItemById(IDM_EDIT_OUTDENT, !empty, false);
-   enableMenuItemById(IDM_EDIT_TRIM, !empty, false);
-   enableMenuItemById(IDM_EDIT_UPPERCASE, !empty, false);
-   enableMenuItemById(IDM_EDIT_LOWERCASE, !empty, false);
-
-   enableMenuItemById(IDM_SEARCH_FIND, !empty, false);
-   enableMenuItemById(IDM_SEARCH_FINDNEXT, !empty, false);
-   enableMenuItemById(IDM_SEARCH_REPLACE, !empty, false);
-   enableMenuItemById(IDM_SEARCH_GOTOLINE, !empty, false);
-
-   enableMenuItemById(IDM_WINDOW_WINDOWS, !empty, false);
-   enableMenuItemById(IDM_WINDOW_NEXT, !empty, false);
-   enableMenuItemById(IDM_WINDOW_PREVIOUS, !empty, false);
-
-   enableMenuItemById(IDM_DEBUG_CLEARBREAKPOINT, !empty, false);
-   enableMenuItemById(IDM_DEBUG_BREAKPOINT, !empty, false);
-
-   onResize();
-
-   if (!empty)
-      _children[_model->ideScheme.textFrameId]->refresh();
-}
-
-void IDEWindow :: onIDEChange(NotificationStatus status)
-{
-   if (test(status, COLOR_SCHEME_CHANGED)) {
-      onColorSchemeChange();
-   }
-
-   if (test(status, IDE_LAYOUT_CHANGED)) {
-      onLayoutChange(status);
-   }
-
-   if (test(status, IDE_STATUS_CHANGED)) {
-      _children[_model->ideScheme.statusBar]->refresh();
-   }
-
-   if (test(status, IDE_COMPILATION_STARTED))
-      onComilationStart();
-
-   if (test(status, FRAME_ACTIVATE)) {
-      onActivate();
-   }
 }
 
 bool IDEWindow :: onCommand(int command)
@@ -883,72 +798,6 @@ void IDEWindow :: refreshDebugNode()
    dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch])->refreshCurrentNode();
 }
 
-void IDEWindow :: onStatusChange(StatusNMHDR* rec)
-{  
-   switch (rec->code) {
-      case NOTIFY_IDE_CHANGE:
-         onIDEChange(rec->status);
-         break;
-      case NOTIFY_DEBUG_START:
-         onDebuggerStart();
-         break;
-      case NOTIFY_DEBUG_LOAD:
-         onDebuggerHook();
-         break;
-      case NOTIFY_DEBUG_RUNNING:
-         onProgrammRunning(rec);
-         break;
-      default:
-         break;
-   }
-}
-
-//void IDEWindow :: onModelChange(ExtNMHDR* hdr)
-//{
-   //auto docView = _model->sourceViewModel.DocView();
-
-   //switch (hdr->extParam1) {
-   //   case NOTIFY_SOURCEMODEL:
-   //      docView->notifyOnChange();
-   //      break;
-   //   case NOTIFY_DEBUGWATCH:
-   //      onDebugWatch();
-   //      break;
-   //   case NOTIFY_CURRENTVIEW_SHOW:
-   //      _children[_model->ideScheme.textFrameId]->show();
-   //      onResize();
-   //      break;
-   //   case NOTIFY_CURRENTVIEW_HIDE:
-   //      _children[_model->ideScheme.textFrameId]->hide();
-   //      onResize();
-   //      break;
-   //   case NOTIFY_LAYOUT_CHANGED:
-   //      onLayoutChange();
-   //      break;
-   //   default:
-   //      break;
-   //}   
-//}
-
-//void IDEWindow :: onNotifyMessage(ExtNMHDR* hdr)
-//{
-   //auto docView = _model->sourceViewModel.DocView();
-
-   //switch (hdr->extParam1) {
-   //   case NOTIFY_ACTIVATE_EDITFRAME:
-   //      setChildFocus(_model->ideScheme.textFrameId);
-   //      break;
-   //   case NOTIFY_LAYOUT_CHANGED:
-   //      onLayoutChange();
-   //      break;
-   //   case NOTIFY_REFRESH:
-   //      
-   //      break;
-   //   default:
-   //      break;
-   //}
-//}
-
 void IDEWindow :: onTabSelChanged(HWND wnd)
 {
    for (size_t i = 0; i < _childCounter; i++) {
@@ -1018,49 +867,29 @@ void IDEWindow :: onRClick(NMHDR* hdr)
    }
 }
 
-void IDEWindow :: onSelection(SelectionNMHDR* rec)
-{
-   switch (rec->code) {
-      case NOTIFY_PROJECTVIEW_SEL:
-         onProjectViewSel(rec->param);
-         break;
-      case NOTIFY_SHOW_RESULT:
-         openResultTab((int)rec->param);
-         break;
-      case NOTIFY_ERROR_SEL:
-         onErrorHighlight((int)rec->param);
-         break;
-      case NOTIFY_REFRESH:
-         onChildRefresh((int)rec->param);
-         break;
-      default:
-         break;
-   }
-}
-
-void IDEWindow :: onTreeItem(TreeItemNMHDR* rec)
-{
-   switch (rec->code) {
-      case NOTIFY_DEBUG_CONTEXT_EXPANDED:
-         onDebugWatchBrowse(rec->item, rec->param);
-         break;
-      default:
-         break;
-   }
-}
-
-void IDEWindow :: onContextMenu(ContextMenuNMHDR* rec)
-{
-   Point p(rec->x, rec->y);
-
-   ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.editorContextMenu]);
-
-   menu->enableMenuItemById(IDM_EDIT_CUT, rec->hasSelection);
-   menu->enableMenuItemById(IDM_EDIT_COPY, rec->hasSelection);
-   menu->enableMenuItemById(IDM_EDIT_PASTE, Clipboard::isAvailable());
-
-   menu->show(_handle, p);
-}
+//void IDEWindow :: onTreeItem(TreeItemNMHDR* rec)
+//{
+//   switch (rec->code) {
+//      case NOTIFY_DEBUG_CONTEXT_EXPANDED:
+//         onDebugWatchBrowse(rec->item, rec->param);
+//         break;
+//      default:
+//         break;
+//   }
+//}
+//
+//void IDEWindow :: onContextMenu(ContextMenuNMHDR* rec)
+//{
+//   Point p(rec->x, rec->y);
+//
+//   ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.editorContextMenu]);
+//
+//   menu->enableMenuItemById(IDM_EDIT_CUT, rec->hasSelection);
+//   menu->enableMenuItemById(IDM_EDIT_COPY, rec->hasSelection);
+//   menu->enableMenuItemById(IDM_EDIT_PASTE, Clipboard::isAvailable());
+//
+//   menu->show(_handle, p);
+//}
 
 void IDEWindow :: onDebugResult(int code)
 {
@@ -1078,27 +907,10 @@ void IDEWindow :: onDebugResult(int code)
    }
 }
 
-void IDEWindow :: onComplition(CompletionNMHDR* rec)
-{
-   switch (rec->code) {
-      case NOTIFY_COMPILATION_RESULT:
-         onCompilationEnd(rec->param);
-         break;
-      case NOTIFY_DEBUGGER_RESULT:
-         onDebugResult(rec->param);
-         break;
-      default:
-         break;
-   }
-}
-
 void IDEWindow :: onChildRefresh(int controlId)
 {
    _children[controlId]->refresh();
 }
-
-
-
 
 void IDEWindow :: onStatusBarChange()
 {
@@ -1246,23 +1058,14 @@ void IDEWindow :: onNotify(NMHDR* hdr)
       case EVENT_STARTUP:
          onStartup((ModelNMHDR*)hdr);
          break;
+      case EVENT_LAYOUT:
+         onLayoutChange((ModelNMHDR*)hdr);
+         break;
 
 
-      case STATUS_NOTIFICATION:
-         onStatusChange((StatusNMHDR*)hdr);
-         break;
-      case STATUS_SELECTION:
-         onSelection((SelectionNMHDR*)hdr);
-         break;
-      case STATUS_TREEITEM:
-         onTreeItem((TreeItemNMHDR*)hdr);
-         break;
-      case STATUS_COMPLETION:
-         onComplition((CompletionNMHDR*)hdr);
-         break;
-      case CONTEXT_MENU_ON:
-         onContextMenu((ContextMenuNMHDR*)hdr);
-         break;
+      //case STATUS_NOTIFICATION:
+      //   onStatusChange((StatusNMHDR*)hdr);
+      //   break;
       case TCN_SELCHANGE:
          onTabSelChanged(hdr->hwndFrom);
          break;
@@ -1299,25 +1102,6 @@ void IDEWindow :: onDebuggerStart()
 void IDEWindow :: onDebuggerHook()
 {
    _controller->onDebuggerHook(_model);
-}
-
-void IDEWindow :: onDebuggerUpdate(StatusNMHDR* rec)
-{
-   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-
-   menu->enableMenuItemById(IDM_DEBUG_STOP, true);
-
-   if (test(rec->status, DEBUGWATCH_CHANGED)) {
-      onDebugWatch();
-   }
-   //if (test(rec->status, FRAME_CHANGED)) {
-   //   onTextFrameChange(rec->status);
-   //}
-}
-
-void IDEWindow :: onProgrammRunning(StatusNMHDR* rec)
-{
-   _controller->onProgramRuning(_model);
 }
 
 void IDEWindow :: onDebuggerSourceNotFound()
