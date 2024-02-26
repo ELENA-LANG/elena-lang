@@ -9,12 +9,38 @@
 
 using namespace elena_lang;
 
-// --- TextViewController ---
+// --- TextViewModelEvent ---
 
-//void TextViewController :: onFrameChange()
-//{
-//   
-//}
+int TextViewModelEvent :: eventId()
+{
+   return EVENT_TEXTVIEW_MODEL_CHANGED;
+}
+
+// --- SelectionEvent ---
+
+SelectionEvent :: SelectionEvent(int id, int index)
+   : EventBase(0), _eventId(id), _index(index)
+{
+}
+
+int SelectionEvent :: eventId()
+{
+   return _eventId;
+}
+
+// --- StartUpEvent ---
+
+StartUpEvent :: StartUpEvent(int status)
+   : EventBase(status)
+{
+}
+
+int StartUpEvent :: eventId()
+{
+   return EVENT_STARTUP;
+}
+
+// --- TextViewController ---
 
 void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name)
 {
@@ -58,20 +84,15 @@ void TextViewController :: selectPreviousDocument(TextViewModelBase* model)
    model->selectDocumentView(currentIndex);
 }
 
-bool TextViewController :: selectDocument(TextViewModelBase* model, int index, NotificationStatus& status)
+bool TextViewController :: selectDocument(TextViewModelBase* model, int index)
 {
-   if (model->selectDocumentView(index)) {
-      status |= FRAME_CHANGED;
-
-      return true;
-   }
-   return false;
+   return model->selectDocumentView(index);
 }
 
-void TextViewController :: closeDocument(TextViewModelBase* model, int index, NotificationStatus& status)
+void TextViewController :: closeDocument(TextViewModelBase* model, int index, int& status)
 {
    if (model->closeDocumentView(index))
-      status |= FRAME_CHANGED;
+      status |= STATUS_FRAME_CHANGED;
 }
 
 void TextViewController :: indent(TextViewModelBase* model)
@@ -90,7 +111,7 @@ void TextViewController :: indent(TextViewModelBase* model)
       else docView->tabbing(status, ' ', _settings.tabSize, true);
    }
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: outdent(TextViewModelBase* model)
@@ -105,7 +126,7 @@ void TextViewController :: outdent(TextViewModelBase* model)
       docView->tabbing(status, ' ', _settings.tabSize, false);
    }
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: undo(TextViewModelBase* model)
@@ -115,7 +136,7 @@ void TextViewController :: undo(TextViewModelBase* model)
 
    docView->undo(status);
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: redo(TextViewModelBase* model)
@@ -125,7 +146,7 @@ void TextViewController :: redo(TextViewModelBase* model)
 
    docView->redo(status);
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 bool TextViewController :: copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard)
@@ -155,7 +176,7 @@ void TextViewController :: pasteFromClipboard(TextViewModelBase* model, Clipboar
    if (!docView->isReadOnly()) {
       clipboard->pasteFromClipboard(status, docView);
 
-      notifyOnChange(model, status);
+      notifyTextModelChange(model, status);
    }
 }
 
@@ -167,7 +188,7 @@ bool TextViewController :: insertNewLine(TextViewModelBase* model)
       docView->eraseSelection(status);
       docView->insertNewLine(status);
 
-      notifyOnChange(model, status);
+      notifyTextModelChange(model, status);
 
       return true;
    }
@@ -183,7 +204,7 @@ bool TextViewController :: insertChar(TextViewModelBase* model, text_c ch)
       docView->eraseSelection(status);
       docView->insertChar(status, ch);
 
-      notifyOnChange(model, status);
+      notifyTextModelChange(model, status);
 
       return true;
    }
@@ -201,7 +222,7 @@ bool TextViewController :: eraseChar(TextViewModelBase* model, bool moveback)
       }
       else docView->eraseChar(status, moveback);
 
-      notifyOnChange(model, status);
+      notifyTextModelChange(model, status);
 
       return true;
    }
@@ -217,7 +238,7 @@ void TextViewController :: deleteText(TextViewModelBase* model)
       docView->eraseSelection(status);
    }
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: trim(TextViewModelBase* model)
@@ -228,7 +249,7 @@ void TextViewController :: trim(TextViewModelBase* model)
       docView->trim(status);
    }
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: eraseLine(TextViewModelBase* model)
@@ -239,7 +260,7 @@ void TextViewController :: eraseLine(TextViewModelBase* model)
       docView->eraseLine(status);
    }
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: duplicateLine(TextViewModelBase* model)
@@ -250,7 +271,7 @@ void TextViewController :: duplicateLine(TextViewModelBase* model)
       docView->duplicateLine(status);
    }
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: insertBlockText(TextViewModelBase* model, const_text_t s, size_t length)
@@ -261,7 +282,7 @@ void TextViewController :: insertBlockText(TextViewModelBase* model, const_text_
       docView->blockInserting(status, s, length);
    }
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: deleteBlockText(TextViewModelBase* model, const_text_t s, size_t length)
@@ -272,7 +293,7 @@ void TextViewController :: deleteBlockText(TextViewModelBase* model, const_text_
       docView->blockDeleting(status, s, length);
    }
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: lowerCase(TextViewModelBase* model)
@@ -283,7 +304,7 @@ void TextViewController :: lowerCase(TextViewModelBase* model)
       docView->toLowercase(status);
    }
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: upperCase(TextViewModelBase* model)
@@ -294,7 +315,7 @@ void TextViewController :: upperCase(TextViewModelBase* model)
       docView->toUppercase(status);
    }
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl)
@@ -307,7 +328,7 @@ void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift,
    }
    else docView->moveDown(status, kbShift);
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl)
@@ -320,7 +341,7 @@ void TextViewController :: moveCaretLeft(TextViewModelBase* model, bool kbShift,
    }
    else docView->moveLeft(status, kbShift);
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: selectWord(TextViewModelBase* model)
@@ -331,7 +352,7 @@ void TextViewController :: selectWord(TextViewModelBase* model)
    docView->moveLeftToken(status, false);
    docView->moveRightToken(status, true, true);
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController::selectAll(TextViewModelBase* model)
@@ -342,17 +363,23 @@ void TextViewController::selectAll(TextViewModelBase* model)
    docView->moveFirst(status, false);
    docView->moveEnd(status, true);
 
-   notifyOnChange(model, status);
-}
-
-void TextViewController :: notifyOnChange(TextViewModelBase* model, DocumentChangeStatus& changeStatus)
-{
-   model->notifyOnChange(changeStatus);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: notifyOnClipboardOperation(ClipboardBase* clipboard)
 {
    
+}
+
+void TextViewController :: notifyTextModelChange(TextViewModelBase* model, DocumentChangeStatus& changeStatus)
+{
+   model->refresh(changeStatus);
+
+   if (!_notifier)
+      return;
+
+   TextViewModelEvent event = { STATUS_DOC_READY, changeStatus };
+   _notifier->notify(&event);
 }
 
 void TextViewController :: moveCaretRight(TextViewModelBase* model, bool kbShift, bool kbCtrl)
@@ -365,7 +392,7 @@ void TextViewController :: moveCaretRight(TextViewModelBase* model, bool kbShift
    }
    else docView->moveRight(status, kbShift);
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: moveCaretUp(TextViewModelBase* model, bool kbShift, bool kbCtrl)
@@ -378,7 +405,7 @@ void TextViewController :: moveCaretUp(TextViewModelBase* model, bool kbShift, b
    }
    else docView->moveFrameUp(status);
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: moveCaretHome(TextViewModelBase* model, bool kbShift, bool kbCtrl)
@@ -391,7 +418,7 @@ void TextViewController :: moveCaretHome(TextViewModelBase* model, bool kbShift,
    }
    else docView->moveHome(status, kbShift);
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: moveCaretEnd(TextViewModelBase* model, bool kbShift, bool kbCtrl)
@@ -404,7 +431,7 @@ void TextViewController :: moveCaretEnd(TextViewModelBase* model, bool kbShift, 
    }
    else docView->moveLast(status, kbShift);
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: movePageDown(TextViewModelBase* model, bool kbShift)
@@ -414,7 +441,7 @@ void TextViewController :: movePageDown(TextViewModelBase* model, bool kbShift)
 
    docView->movePageDown(status, kbShift);
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: movePageUp(TextViewModelBase* model, bool kbShift)
@@ -424,7 +451,7 @@ void TextViewController :: movePageUp(TextViewModelBase* model, bool kbShift)
 
    docView->movePageUp(status, kbShift);
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: moveToFrame(TextViewModelBase* model, int col, int row, bool kbShift)
@@ -434,7 +461,7 @@ void TextViewController :: moveToFrame(TextViewModelBase* model, int col, int ro
 
    docView->moveToFrame(status, col, row, kbShift);
 
-   notifyOnChange(model, status);
+   notifyTextModelChange(model, status);
 }
 
 void TextViewController :: resizeModel(TextViewModelBase* model, Point size)
@@ -448,7 +475,7 @@ void TextViewController :: resizeModel(TextViewModelBase* model, Point size)
       status.frameChanged = true;
    }
 
-   notifyOnChange(model, status);
+   //notifyTextModelChange(model, status);
 }
 
 bool TextViewController :: findText(TextViewModelBase* model, FindModel* findModel)
@@ -459,7 +486,7 @@ bool TextViewController :: findText(TextViewModelBase* model, FindModel* findMod
    if (docView && docView->findLine(docStatus, findModel->text.str(), findModel->matchCase, 
       findModel->wholeWord)) 
    {
-      notifyOnChange(model, docStatus);
+      notifyTextModelChange(model, docStatus);
 
       return true;
    }
@@ -474,7 +501,7 @@ bool TextViewController :: replaceText(TextViewModelBase* model, FindModel* find
    auto docView = model->DocView();
    if (docView) {
       docView->insertLine(docStatus, findModel->newText.str(), findModel->newText.length());
-      notifyOnChange(model, docStatus);
+      notifyTextModelChange(model, docStatus);
 
       return true;
    }
@@ -493,6 +520,6 @@ void TextViewController :: goToLine(TextViewModelBase* model, int row)
       caret.y = row - 1;
 
       docView->setCaret(caret, false, docStatus);
-      notifyOnChange(model, docStatus);
+      notifyTextModelChange(model, docStatus);
    }
 }

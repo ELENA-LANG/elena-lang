@@ -6,6 +6,7 @@
 
 #include "wintextframe.h"
 #include "elena.h"
+#include "controller.h"
 
 using namespace elena_lang;
 
@@ -73,8 +74,11 @@ void TextViewFrame :: onSelChanged()
    if (index >= 0) {
       _model->selectDocumentView(index + 1);
 
-      if (_selNotificationId)
-         _notifier->notifySelection(_selNotificationId, index);
+      if (_selNotificationId) {
+         SelectionEvent event(_selNotificationId, index);
+
+         _notifier->notify(&event);
+      }
    }
    else {
       _child->hide();

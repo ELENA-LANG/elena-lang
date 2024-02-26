@@ -39,7 +39,24 @@ namespace elena_lang
    constexpr auto ERROR_RUN_NEED_RECOMPILE            = 0x0003;
    constexpr auto DEBUGGER_STOPPED                    = 0x0004;
 
-   // --- Notification codes ---
+   // --- Event IDs ---
+   // NOTE : the generic notifications must be less than 0x100
+   constexpr int EVENT_TEXTVIEW_MODEL_CHANGED         = 0x0001;
+   constexpr int EVENT_TEXTFRAME_SELECTION_CHANGED    = 0x0002;
+   constexpr int EVENT_STARTUP                        = 0x0003;
+
+   // --- Event Statuses ---
+   constexpr int STATUS_NONE                          = 0x0000;
+   constexpr int STATUS_DOC_READY                     = 0x0001;
+   constexpr int STATUS_STATUS_CHANGED                = 0x0002;
+   constexpr int STATUS_PROJECT_CHANGED               = 0x0004;
+   constexpr int STATUS_FRAME_VISIBILITY_CHANGED      = 0x0008;
+   constexpr int STATUS_FRAME_CHANGED                 = 0x0010;
+   constexpr int STATUS_DEBUG_NOSOURCE                = 0x0020;
+   constexpr int STATUS_DEBUGGER_STOPPED              = 0x0040;
+   constexpr int STATUS_DEBUG_STEP                    = 0x0080;
+   constexpr int STATUS_LAYOUT_CHANGED                = 0x0100;
+
    //constexpr auto NOTIFY_SOURCEMODEL                  = 1;
    constexpr auto NOTIFY_CURRENTVIEW_CHANGED             = 2;
    //constexpr auto NOTIFY_CURRENTVIEW_HIDE             = 4;
@@ -61,6 +78,7 @@ namespace elena_lang
    constexpr int NOTIFY_DEBUG_CONTEXT_EXPANDED           = 17;
    constexpr int NOTIFY_DEBUG_LOAD                       = 18;
    constexpr int NOTIFY_DEBUG_NOSOURCE                   = 19;
+   constexpr int NOTIFY_DEBUG_RUNNING                    = 20;
 
    // --- Notification statuses ---
    constexpr NotificationStatus IDE_ONSTART              = -1;
@@ -68,7 +86,6 @@ namespace elena_lang
 
    constexpr NotificationStatus IDE_LAYOUT_CHANGED       = 0x00001;
    constexpr NotificationStatus IDE_STATUS_CHANGED       = 0x00002;
-   constexpr NotificationStatus FRAME_CHANGED            = 0x00004;
    constexpr NotificationStatus PROJECT_CHANGED          = 0x00008;
    constexpr NotificationStatus FRAME_VISIBILITY_CHANGED = 0x00010;
    constexpr NotificationStatus DEBUGWATCH_CHANGED       = 0x00020;
@@ -96,6 +113,8 @@ namespace elena_lang
       CompiledWithErrors   = 7,
       Broken               = 8,
       DebuggerStopped      = 9,
+      Running              = 10,
+      Stopped              = 11,
    };
 
    inline bool testIDEStatus(IDEStatus value, IDEStatus mask)

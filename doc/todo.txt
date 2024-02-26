@@ -9,7 +9,7 @@ In development:
   dev: async programming (instant messagange sample (chat) ), #608
   op:github actions : x86
   opt: #601,#602
-  maint:tools:backlog,#616, system module warnings, #622
+  maint:tools:backlog,#616, system module warnings, #622, #636
   exp:snake game : text / gui version, using expression trees in real-life apps (see c#)
   ide:backlog (#617), vm debugger, debugger watch - struct
   tools:work with elt in ide
@@ -26,6 +26,17 @@ In development:
     (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
     console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
   --------------------------------------
+    - get rid of DocumentNotifiers collection from Document
+    - get rid of NotificationStatus
+    - DebugController - get rid of unnessesary fields (no need to send notification?)
+    - make sure, trace info is not updated twice per step
+    - get rid of extra notify
+    - test changing color scheme
+
+    - ide status bar : running, stopped, finished, saved, ready, error, successful compile
+
+    - ide debugger : display stack allocated variable
+
     - c_a_g
 
     - pi under 7 sec

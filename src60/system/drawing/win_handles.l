@@ -92,19 +92,19 @@ public sealed struct RECT
 
 public sealed const struct HDC
 {
-   embeddable __ptr _handle;
+   handle _handle;
 
    static HDC Default
       = default;
 
-   constructor(int handle)
+   constructor(handle h)
    {
-      _handle := handle
+      _handle := h
    }
 
    constructor newCompatible(HDC dc)
    {
-      int newDC := extern GDI32.CreateCompatibleDC(dc);
+      handle newDC := extern GDI32.CreateCompatibleDC(dc);
 
       _handle := newDC
    }
@@ -136,9 +136,9 @@ public sealed const struct HDC
     
    copy(int destX, int destY, int width, int height, HDC dc, int sourX, int sourY, int flags)
    {
-      extern GDI32.BitBlt(_handle, destX, destY, width, height, dc, sourX, sourY, flags)
-        
-        //#var(int) err := system'external'KERNEL32 GetLastError.
+      extern GDI32.BitBlt(_handle, destX, destY, width, height, dc, sourX, sourY, flags);
+
+      int err := extern KERNEL32.GetLastError();
    }        
 
    moveTo(int x, int y)
@@ -168,7 +168,7 @@ public sealed const struct HDC
 
 public sealed const struct HBITMAP
 {
-   embeddable __ptr _handle;
+   handle _handle;
 
    constructor create(HDC dc, int width, int height)
    {
@@ -204,7 +204,7 @@ public sealed const struct HBITMAP
 
 public sealed const struct HPEN
 {
-   embeddable __ptr _handle;
+   handle _handle;
     
    static HPEN Default
       = default;
@@ -234,7 +234,7 @@ public sealed const struct HPEN
 
 public sealed const struct HBRUSH
 {
-   embeddable __ptr _handle;
+   handle _handle;
 
    static HBRUSH Default
       = default;

@@ -639,15 +639,11 @@ void DocumentView :: movePageUp(DocumentChangeStatus& changeStatus, bool selecti
    }
 }
 
-void DocumentView :: notifyOnChange(DocumentChangeStatus& changeStatus)
+void DocumentView :: refresh(DocumentChangeStatus& changeStatus)
 {
    if (status.oldModified != status.modifiedMode) {
       changeStatus.modifiedChanged = true;
       status.oldModified = status.modifiedMode;
-   }
-
-   for(auto it = _notifiers.start(); !it.eof(); ++it) {
-      (*it)->onDocumentUpdate(changeStatus);
    }
 }
 
@@ -1048,9 +1044,6 @@ void DocumentView :: save(path_t path)
 
    status.modifiedMode = false;
    status.unnamed = false;
-
-   DocumentChangeStatus changeStatus = {};
-   notifyOnChange(changeStatus);
 }
 
 bool DocumentView :: canRedo()

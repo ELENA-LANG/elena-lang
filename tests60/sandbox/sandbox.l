@@ -1,24 +1,27 @@
-import system'calendar;
 import extensions;
 
-const int MAX = 50000000;
+B
+{
+    test(string command)
+    {
+        console.printLine(command);
+    }
+}
+
+C;
 
 public program()
 {
-    var started := now;
+    var a := nil;
+    var b := new B();
+    var c := new C();
+  
+    a?.test("Fired a?.test");
+/*    b?.test("Fired b?.test");
+    
+    a\.test("Fired a\.test");
+    b\.test("Fired b\.test");
+    c\.test("Fired c\.test");*/
 
-    real pi := 0.0;
-    for(int i := 0; i < MAX; i += 1)
-    {
-        pi += -1.0.power(i) / (i*2+1) * 4
-    };
-
-    var ended := now;
-
-    console.printLine(pi);
-
-    var diff := ended - started;
-    console.printLine("Time elapsed in msec:",diff.Milliseconds);
-
-    console.readChar()
+    console.readLine();
 }

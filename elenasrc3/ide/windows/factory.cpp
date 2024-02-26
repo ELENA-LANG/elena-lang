@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "factory.h"
@@ -212,7 +212,7 @@ void IDEFactory :: registerClasses()
    Splitter::registerSplitterWindow(_instance, szVSplitter, true);
 }
 
-ControlBase* IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* notifier)
+ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* notifier)
 {
    auto viewModel = _model->viewModel();
 
@@ -229,12 +229,12 @@ ControlBase* IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* no
    TextViewWindow* view = new TextViewWindow(notifier, _model->viewModel(), 
       &_controller->sourceController, &_styles);
    TextViewFrame* frame = new TextViewFrame(notifier, _settings.withTabAboverscore, view, 
-      _model->viewModel(), NOTIFY_TEXTFRAME_SEL);
+      _model->viewModel(), EVENT_TEXTFRAME_SELECTION_CHANGED);
 
    view->create(_instance, szTextView, owner);
    frame->createControl(_instance, owner);
 
-   return frame;
+   return { frame, view };
 }
 
 void IDEFactory :: reloadStyles(TextViewModelBase* viewModel)
@@ -358,7 +358,7 @@ GUIControlBase* IDEFactory :: createToolbar(ControlBase* owner)
 
 void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
    int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl, 
-   int toolBarControl, int contextEditor)
+   int toolBarControl, int contextEditor, int textIndex)
 {
    LoadStringW(_instance, IDC_COMPILER_OUTPUT, szCompilerOutput, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_COMPILER_MESSAGES, szErrorList, MAX_LOADSTRING);
@@ -377,6 +377,7 @@ void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compiler
    _model->ideScheme.vmConsoleControl = vmConsoleControl;
    _model->ideScheme.toolBarControl = toolBarControl;
    _model->ideScheme.editorContextMenu = contextEditor;
+   _model->ideScheme.textControlId = textIndex;
 
    _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
    _model->ideScheme.captions.add(errorList, szErrorList);
@@ -386,7 +387,7 @@ void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compiler
 
 GUIApp* IDEFactory :: createApp()
 {
-   WindowApp* app = new WindowApp(_instance, MAKEINTRESOURCE(IDC_IDE));
+   WindowApp* app = new WindowApp(_instance, MAKEINTRESOURCE(IDC_IDE), &IDENotificationFormatter::getInstance());
 
    registerClasses();
 
@@ -396,7 +397,7 @@ GUIApp* IDEFactory :: createApp()
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess, 
    ProcessBase* vmConsoleProcess)
 {
-   GUIControlBase* children[15];
+   GUIControlBase* children[16];
    int counter = 0;
 
    int textIndex = counter++;
@@ -414,13 +415,16 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    int vmConsoleControl = counter++;
    int toolBarControl = counter++;
    int contextEditor = counter++;
+   int editIndex = counter++;
 
    SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance, this);
    sdi->create(_instance, szSDI, nullptr);
 
    VerticalBox* vb = new VerticalBox(false, 1);
 
-   children[textIndex] = createTextControl(sdi, notifier);
+   auto textCtrls = createTextControl(sdi, notifier);
+
+   children[textIndex] = textCtrls.value1;
    children[bottomBox] = vb;
    children[tabBar] = createTabBar(sdi, notifier);
    children[vsplitter] = createSplitter(sdi, (ControlBase*)children[tabBar], false, notifier, 
@@ -437,12 +441,13 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[vmConsoleControl] = createVmConsoleControl((ControlBase*)children[tabBar], vmConsoleProcess);
    children[toolBarControl] = createToolbar(sdi);
    children[contextEditor] = createEditorContextMenu(sdi);
+   children[editIndex] = textCtrls.value2;
 
    vb->append(children[vsplitter]);
    vb->append(children[statusBarIndex]);
 
    initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView, browser, menu, statusBarIndex,
-      debugContextMenu, vmConsoleControl, toolBarControl, contextEditor);
+      debugContextMenu, vmConsoleControl, toolBarControl, contextEditor, editIndex);
 
    sdi->populate(counter, children);
    sdi->setLayout(textIndex, toolBarControl, bottomBox, -1, hsplitter);

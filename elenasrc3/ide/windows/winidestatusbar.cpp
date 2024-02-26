@@ -84,6 +84,12 @@ void IDEStatusBar :: setIDEStatus(IDEStatus status)
       case IDEStatus::Broken:
          setText(0, _T(" The process was broken"));
          break;
+      case IDEStatus::Running:
+         setText(0, _T(" Running..."));
+         break;
+      case IDEStatus::Stopped:
+         setText(0, _T(" Stopped"));
+         break;
       default:
          break;
    }

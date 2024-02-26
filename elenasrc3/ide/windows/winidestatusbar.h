@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Status Bar Header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINIDESTATUSBAR_H
@@ -14,7 +14,7 @@ namespace elena_lang
 {
    // --- IDEStatusBar ---
 
-   class IDEStatusBar : public StatusBar, DocumentNotifier
+   class IDEStatusBar : public StatusBar, public DocumentNotifier
    {
       IDEModel* _model;
       IDEStatus _status;

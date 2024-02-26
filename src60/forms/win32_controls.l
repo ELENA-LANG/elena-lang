@@ -184,6 +184,7 @@ public abstract class BaseWinControl : BaseControl
 public abstract class BaseWinContainer : BaseWinControl
 {
    List<IControl> _controls;
+   Func1          onResize : event;
 
    protected constructor new()
       <= super new()
@@ -207,6 +208,13 @@ public abstract class BaseWinContainer : BaseWinControl
                             
       ^ nil
    }        
+
+   internal resize(WindowHandle hwnd, int width, int height)
+   {
+      super.resize(hwnd, width, height);
+
+      onResize?.(self)
+   }
 
    open()
    {
@@ -496,10 +504,12 @@ class PaintboxListener : WindowCallback
       _owner.resize(control, width, height);
    }
 
-//   onWMPaint(Handle hwnd)
-//   {
-//      _owner.paint();
-//   }
+   onWMPaint(Handle hwnd)
+   {
+      super.onWMPaint(hwnd);
+
+      _owner.paint();
+   }
 
    onWMDestoy(Handle hwnd)
    {
@@ -588,49 +598,46 @@ public sealed class Imagebox : Paintbox
 
    internal paint()
    {
-/*      if(_needToRefresh)
+      if(_needToRefresh)
          { self.refresh() };
         
       PAINTSTRUCT struct := new PAINTSTRUCT();
         
       struct.begin(_handle);
         
-      _region.readDimensionTo(ref int width, ref int height);
-        
+      int width := _region.Width;
+      int height := _region.Height;
+
       HDC dc := struct.HDC;
         
       dc.copy(0, 0, width, height, _imageDC, 0, 0, SRCCOPY);
-*/
 
 //        int err := system'external'KERNEL32 GetLastError.
                 
-//      struct.end(_handle)
+      struct.end(_handle)
    }
 
    refresh()
    {
       if(nil == _handle)
          { ^ self };
-/*        
+        
       onPaint?.(self, _canvas);
 
       super.refresh();
-      _needToRefresh := false*/
+      _needToRefresh := false
    }
  
    internal resize(Handle handle, int width, int height)
    {
-      if(nil == _handle)
-         { ^ self };
-
       WindowHandle hwnd := handle;
-/*
+
       ifnot(nil == _image)
       {
          _image.free();
          _imageDC.free()
-      };*/
-/*            
+      };
+            
       HDC dc := hwnd.HDC;
             
       _image := HBITMAP.create(dc, width, height);
@@ -638,7 +645,7 @@ public sealed class Imagebox : Paintbox
       _image.select(_imageDC);
 
       _canvas.open(_imageDC);
-*/
+
       _needToRefresh := true
    }
 }
@@ -1002,7 +1009,7 @@ public sealed class ImageList : Object, interface<IControl>
 
    assign(Paintbox paintbox)
    {
-      /*paintbox.onPaint := (object sender, Canvas canvas)
+      paintbox.onPaint := (object sender, Canvas canvas)
       {
          int width := _size.Width;
          int height := _size.Height;
@@ -1010,7 +1017,7 @@ public sealed class ImageList : Object, interface<IControl>
          auto image := _images[_index];
             
          canvas.write(image, 0, 0, width, height)
-      }*/
+      }
    }
 
    IControl retrieve(Handle handle)

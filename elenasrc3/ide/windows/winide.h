@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Window Header File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINIDE_H
@@ -15,6 +15,23 @@
 
 namespace elena_lang
 {
+   // --- Notifications ---
+   struct ModelNMHDR
+   {
+      NMHDR nmhrd;
+      int   status;
+   };
+
+   struct TextViewModelNMHDR : public ModelNMHDR
+   {
+      DocumentChangeStatus docStatus;
+   };
+
+   struct TextFrameSelectionNMHDR : public ModelNMHDR
+   {
+      int index;
+   };
+
    // --- Clipboard ---
    class Clipboard : public ClipboardBase
    {
@@ -39,8 +56,32 @@ namespace elena_lang
       Clipboard(ControlBase* owner);
    };
 
+   // --- IDENotificationFormatter ---
+   class IDENotificationFormatter : public EventFormatterBase
+   {
+      IDENotificationFormatter() = default;
+
+      void sendTextViewModelEvent(TextViewModelEvent* event, WindowApp* app);
+      void sendTextFrameSelectionEvent(SelectionEvent* event, WindowApp* app);
+      void sendStartUpEvent(StartUpEvent* event, WindowApp* app);
+
+   public:
+      static IDENotificationFormatter& getInstance()
+      {
+         static IDENotificationFormatter instance; // Guaranteed to be destroyed.
+         // Instantiated on first use.
+         return instance;
+
+      }  
+      
+      IDENotificationFormatter(IDENotificationFormatter const&) = delete;
+      void operator=(IDENotificationFormatter const&) = delete;
+
+      void sendMessage(EventBase* event, WindowApp* app) override;
+   };
+
    // --- IDEWindow ---
-   class IDEWindow : public SDIWindow, DocumentNotifier
+   class IDEWindow : public SDIWindow
    {
       FileDialog        fileDialog;
       FileDialog        projectDialog;
@@ -65,7 +106,15 @@ namespace elena_lang
       RecentList        _recentFileList;
       RecentList        _recentProjectList;
 
+      DocumentNotifiers _docViewListener;
+
       void enableMenuItemById(int id, bool doEnable, bool toolBarItemAvailable);
+
+      void onTextModelChange(TextViewModelNMHDR* rec);
+      void onTextFrameSel(TextFrameSelectionNMHDR* rec);
+      void onIDEStatusChange(ModelNMHDR* rec);
+      void onStartup(ModelNMHDR* rec);
+      void onLayoutChange(ModelNMHDR* rec);
 
       void onStatusChange(StatusNMHDR* rec);
       void onSelection(SelectionNMHDR* rec);
@@ -93,7 +142,6 @@ namespace elena_lang
 
       void onLayoutChange(NotificationStatus status);
       void onIDEChange(NotificationStatus status);
-      void onTextFrameChange(NotificationStatus status);
 
       bool onCommand(int command) override;
       void onNotify(NMHDR* hdr) override;
@@ -110,6 +158,8 @@ namespace elena_lang
       void onProjectViewSel(int index);
 
       void onColorSchemeChange();
+
+      void onStatusBarChange();
 
       bool toggleTabBarWindow(int child_id);
       void toggleWindow(int child_id);
@@ -161,8 +211,9 @@ namespace elena_lang
       void onDebuggerStart();
       void onDebuggerHook();
       void onDebuggerUpdate(StatusNMHDR* rec);
-      void onDebuggerSourceNotFound(StatusNMHDR* rec);
-      void onDocumentUpdate(DocumentChangeStatus& changeStatus) override;
+      void onDebuggerSourceNotFound();
+      void onDocumentUpdate(DocumentChangeStatus& changeStatus);
+      void onProgrammRunning(StatusNMHDR* rec);
 
    public:
       void populate(size_t counter, GUIControlBase** children) override;

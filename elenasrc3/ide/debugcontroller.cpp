@@ -3,7 +3,7 @@
 //
 //		This file contains implematioon of the DebugController class and
 //    its helpers
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -527,6 +527,9 @@ void DebugController :: debugThread()
             _process->run();
             _process->resetEvent(DEBUG_RESUME);
             _process->setEvent(DEBUG_ACTIVE);
+
+            //_notifier->notify(NOTIFY_DEBUG_RUNNING, DEBUGWATCH_CHANGED | FRAME_CHANGED);
+
             break;
          case DEBUG_SUSPEND:
             _running = false;
@@ -657,25 +660,19 @@ void DebugController :: processStep()
 
 void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath)
 {
-   bool found = true;
    if (lineInfo) {
-      _sourceModel->clearTraceLine();
-
+      bool found = true;
       if (!_currentModule.compare(moduleName) || !sourcePath.compare(_currentPath)) {
          _currentModule.copy(moduleName);
          _currentPath = sourcePath;
 
-         PathString path(sourcePath);found = _sourceController->selectSource(_model, _sourceModel, moduleName, *path);
+         PathString path(sourcePath); 
+         found = _sourceController->selectSource(_model, _sourceModel, moduleName, *path);
       }
 
-      if (found) {
-         _sourceModel->setTraceLine(lineInfo->row, true);
-
-         _notifier->notify(NOTIFY_DEBUG_CHANGE, DEBUGWATCH_CHANGED | FRAME_CHANGED);
-      }
-      else _notifier->notify(NOTIFY_DEBUG_NOSOURCE, FRAME_CHANGED);
-      
+      _sourceController->traceSource(_sourceModel, found, lineInfo->row);
    }
+   else _sourceController->traceSource(_sourceModel, false, -1);
 }
 
 void DebugController :: onStop()

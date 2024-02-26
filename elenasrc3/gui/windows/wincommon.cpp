@@ -258,7 +258,20 @@ void WindowApp :: notifyContextMenu(int id, short x, short y, bool hasSelection)
    ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
 }
 
-int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, int notificationId, NotificationStatus notificationStatus)
+void WindowApp :: notify(int id, NMHDR* notification)
+{
+   notification->code = id;
+   notification->hwndFrom = _hwnd;
+
+   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)notification);
+}
+
+void WindowApp :: notify(EventBase* event)
+{
+   _eventFormatter->sendMessage(event, this);
+}
+
+int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, EventBase* startEvent)
 {
    // Perform application initialization:
    if (!initInstance(dynamic_cast<WindowBase*>(mainWindow), maximized ? SW_MAXIMIZE : SW_SHOW))
@@ -266,8 +279,8 @@ int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, int notificatio
       return FALSE;
    }
 
-   if (notificationId)
-      notify(notificationId, notificationStatus);
+   if (startEvent)
+      notify(startEvent);
 
    HACCEL hAccelTable = LoadAccelerators(_instance, _accelerators.str());
 

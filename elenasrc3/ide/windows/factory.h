@@ -16,6 +16,8 @@
 
 namespace elena_lang
 {
+   typedef Pair<ControlBase*, ControlBase*, nullptr, nullptr> ControlPair;
+
    // --- IDEFactory ---
    class IDEFactory : public GUIFactoryBase, public ViewFactoryBase
    {
@@ -33,7 +35,7 @@ namespace elena_lang
 
       void registerClasses();
 
-      ControlBase* createTextControl(WindowBase* owner, NotifierBase* notifier);
+      ControlPair createTextControl(WindowBase* owner, NotifierBase* notifier);
       ControlBase* createStatusbar(WindowBase* owner);
       ControlBase* createTabBar(WindowBase* owner, NotifierBase* notifier);
       ControlBase* createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier, 
@@ -50,7 +52,7 @@ namespace elena_lang
 
       void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
          int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, 
-         int vmConsoleOutput, int toolBarControl, int contextEditor);
+         int vmConsoleOutput, int toolBarControl, int contextEditor, int textIndex);
 
    public:
       void reloadStyles(TextViewModelBase* viewModel) override;

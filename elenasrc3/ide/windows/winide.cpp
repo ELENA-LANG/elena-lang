@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Window Implementation File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <tchar.h>
@@ -108,6 +108,52 @@ bool Clipboard :: isAvailable()
    return (::IsClipboardFormatAvailable(CF_UNICODETEXT) == TRUE);
 }
 
+// --- IDENotificationFormatter ---
+
+void IDENotificationFormatter :: sendTextViewModelEvent(TextViewModelEvent* event, WindowApp* app)
+{
+   TextViewModelNMHDR nw = { };
+   nw.docStatus = event->changeStatus;
+   nw.status = event->status;
+
+   app->notify(EVENT_TEXTVIEW_MODEL_CHANGED, (NMHDR*)&nw);
+}
+
+void IDENotificationFormatter :: sendTextFrameSelectionEvent(SelectionEvent* event, WindowApp* app)
+{
+   TextFrameSelectionNMHDR nw = { };
+   nw.index = event->Index();
+   nw.status = event->status;
+
+   app->notify(EVENT_TEXTFRAME_SELECTION_CHANGED, (NMHDR*)&nw);
+}
+
+void IDENotificationFormatter :: sendStartUpEvent(StartUpEvent* event, WindowApp* app)
+{
+   ModelNMHDR nw = { };
+   nw.status = event->status;
+
+   app->notify(EVENT_STARTUP, (NMHDR*)&nw);
+}
+
+void IDENotificationFormatter :: sendMessage(EventBase* event, WindowApp* app)
+{
+   switch (event->eventId()) {      
+      case EVENT_TEXTVIEW_MODEL_CHANGED:
+         sendTextViewModelEvent(dynamic_cast<TextViewModelEvent*>(event), app);
+         break;
+      case EVENT_TEXTFRAME_SELECTION_CHANGED:
+         sendTextFrameSelectionEvent(dynamic_cast<SelectionEvent*>(event), app);
+         break;
+      case EVENT_STARTUP:
+         sendStartUpEvent(dynamic_cast<StartUpEvent*>(event), app);
+         break;
+      default:
+         assert(false);
+         break;
+   }
+}
+
 // --- IDEWindow ---
 
 IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model, HINSTANCE instance, ViewFactoryBase* viewFactory) :
@@ -131,15 +177,14 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    _recentFileList(controller, model, IDM_FILE_FILES),
    _recentProjectList(controller, model, IDM_FILE_PROJECTS),
    aboutDialog(instance, this),
-   editorSettingsDialog(instance, this, model->viewModel())
+   editorSettingsDialog(instance, this, model->viewModel()),
+   _docViewListener(nullptr)
 {
    this->_viewFactory = viewFactory;
 
    this->_instance = instance;
    this->_controller = controller;
    this->_model = model;
-
-   model->sourceViewModel.attachDocListener(this);
 }
 
 void IDEWindow :: onActivate()
@@ -589,14 +634,6 @@ void IDEWindow :: onLayoutChange(NotificationStatus status)
       _children[_model->ideScheme.textFrameId]->refresh();
 }
 
-void IDEWindow :: onTextFrameChange(NotificationStatus status)
-{
-   DocumentChangeStatus changeStatus = { test(status, FRAME_CHANGED) };
-
-   if (_model->sourceViewModel.DocView())
-      _model->sourceViewModel.DocView()->notifyOnChange(changeStatus);
-}
-
 void IDEWindow :: onIDEChange(NotificationStatus status)
 {
    if (test(status, COLOR_SCHEME_CHANGED)) {
@@ -605,10 +642,6 @@ void IDEWindow :: onIDEChange(NotificationStatus status)
 
    if (test(status, IDE_LAYOUT_CHANGED)) {
       onLayoutChange(status);
-   }
-
-   if (test(status, FRAME_CHANGED)) {
-      onTextFrameChange(status);
    }
 
    if (test(status, IDE_STATUS_CHANGED)) {
@@ -853,11 +886,6 @@ void IDEWindow :: refreshDebugNode()
 void IDEWindow :: onStatusChange(StatusNMHDR* rec)
 {  
    switch (rec->code) {
-      case NOTIFY_ONSTART:
-         _controller->init(_model);
-         _recentFileList.assignList(&_model->projectModel.lastOpenFiles);
-         _recentProjectList.assignList(&_model->projectModel.lastOpenProjects);
-         break;
       case NOTIFY_IDE_CHANGE:
          onIDEChange(rec->status);
          break;
@@ -867,11 +895,8 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
       case NOTIFY_DEBUG_LOAD:
          onDebuggerHook();
          break;
-      case NOTIFY_DEBUG_CHANGE:
-         onDebuggerUpdate(rec);
-         break;
-      case NOTIFY_DEBUG_NOSOURCE:
-         onDebuggerSourceNotFound(rec);
+      case NOTIFY_DEBUG_RUNNING:
+         onProgrammRunning(rec);
          break;
       default:
          break;
@@ -883,9 +908,6 @@ void IDEWindow :: onStatusChange(StatusNMHDR* rec)
    //auto docView = _model->sourceViewModel.DocView();
 
    //switch (hdr->extParam1) {
-   //   case NOTIFY_ONSTART:
-   //      
-   //      break;
    //   case NOTIFY_SOURCEMODEL:
    //      docView->notifyOnChange();
    //      break;
@@ -1002,9 +1024,6 @@ void IDEWindow :: onSelection(SelectionNMHDR* rec)
       case NOTIFY_PROJECTVIEW_SEL:
          onProjectViewSel(rec->param);
          break;
-      case NOTIFY_TEXTFRAME_SEL:
-         onTextFrameChange(FRAME_CHANGED);
-         break;
       case NOTIFY_SHOW_RESULT:
          openResultTab((int)rec->param);
          break;
@@ -1078,9 +1097,157 @@ void IDEWindow :: onChildRefresh(int controlId)
    _children[controlId]->refresh();
 }
 
+
+
+
+void IDEWindow :: onStatusBarChange()
+{
+   _children[_model->ideScheme.statusBar]->refresh();
+}
+
+void IDEWindow :: onIDEStatusChange(ModelNMHDR* rec)
+{
+   if (test(rec->status, STATUS_DOC_READY)) {
+      _model->status = IDEStatus::Ready;
+
+      onStatusBarChange();
+   }
+   else if (test(rec->status, STATUS_DEBUGGER_STOPPED)) {
+      _model->status = IDEStatus::Stopped;
+
+      onStatusBarChange();
+   }   
+   else if (test(rec->status, STATUS_STATUS_CHANGED)) {
+      onStatusBarChange();
+   }
+
+   if (test(rec->status, STATUS_PROJECT_CHANGED)) {
+      onProjectChange(_model->projectModel.empty);
+   }
+
+   if (test(rec->status, STATUS_FRAME_VISIBILITY_CHANGED)) {
+      if (!_model->projectModel.empty) {
+         _children[_model->ideScheme.textFrameId]->show();
+         _children[_model->ideScheme.textFrameId]->setFocus();
+      }
+      else _children[_model->ideScheme.textFrameId]->hide();
+   }
+
+   if (test(rec->status, STATUS_LAYOUT_CHANGED)) {
+      onLayoutChange(rec);
+   }
+
+   if (test(rec->status, STATUS_DEBUG_NOSOURCE)) {
+      onDebuggerSourceNotFound();
+   }
+
+   if (test(rec->status, STATUS_DEBUG_STEP)) {
+      MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+      menu->enableMenuItemById(IDM_DEBUG_STOP, true);
+
+      onDebugWatch();
+   }
+}
+
+void IDEWindow :: onTextModelChange(TextViewModelNMHDR* rec)
+{
+   onDocumentUpdate(rec->docStatus);
+   onIDEStatusChange(rec);
+}
+
+void IDEWindow :: onTextFrameSel(TextFrameSelectionNMHDR* rec)
+{
+   _controller->onDocSelection(_model, rec->index);
+}
+
+void IDEWindow :: onLayoutChange(ModelNMHDR* rec)
+{
+   bool empty = _model->sourceViewModel.getDocumentCount() == 0;
+
+   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+   menu->checkMenuItemById(IDM_VIEW_OUTPUT, _children[_model->ideScheme.compilerOutputControl]->visible());
+   menu->checkMenuItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
+   menu->checkMenuItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
+   menu->checkMenuItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
+   menu->checkMenuItemById(IDM_VIEW_VMCONSOLE, _children[_model->ideScheme.vmConsoleControl]->visible());
+
+   enableMenuItemById(IDM_FILE_SAVE, !empty, true);
+   enableMenuItemById(IDM_FILE_SAVEALL, !empty, true);
+   enableMenuItemById(IDM_FILE_SAVEAS, !empty, false);
+   enableMenuItemById(IDM_FILE_CLOSE, !empty, true);
+   enableMenuItemById(IDM_FILE_CLOSEALL, !empty, false);
+
+   if (empty) {
+      enableMenuItemById(IDM_EDIT_UNDO, false, true);
+      enableMenuItemById(IDM_EDIT_REDO, false, true);
+
+      enableMenuItemById(IDM_EDIT_CUT, false, true);
+      enableMenuItemById(IDM_EDIT_COPY, false, true);
+      enableMenuItemById(IDM_EDIT_PASTE, false, true);
+
+      enableMenuItemById(IDM_PROJECT_INCLUDE, false, false);
+   }
+   else {
+      enableMenuItemById(IDM_EDIT_PASTE, true, true);
+
+      enableMenuItemById(IDM_PROJECT_INCLUDE, true, false);
+   }
+
+   enableMenuItemById(IDM_EDIT_DELETE, !empty, false);
+   enableMenuItemById(IDM_EDIT_COMMENT, !empty, false);
+   enableMenuItemById(IDM_EDIT_UNCOMMENT, !empty, false);
+
+   enableMenuItemById(IDM_EDIT_DUPLICATE, !empty, false);
+   enableMenuItemById(IDM_EDIT_SELECTALL, !empty, false);
+   enableMenuItemById(IDM_EDIT_ERASELINE, !empty, false);
+   enableMenuItemById(IDM_EDIT_INDENT, !empty, false);
+   enableMenuItemById(IDM_EDIT_OUTDENT, !empty, false);
+   enableMenuItemById(IDM_EDIT_TRIM, !empty, false);
+   enableMenuItemById(IDM_EDIT_UPPERCASE, !empty, false);
+   enableMenuItemById(IDM_EDIT_LOWERCASE, !empty, false);
+
+   enableMenuItemById(IDM_SEARCH_FIND, !empty, false);
+   enableMenuItemById(IDM_SEARCH_FINDNEXT, !empty, false);
+   enableMenuItemById(IDM_SEARCH_REPLACE, !empty, false);
+   enableMenuItemById(IDM_SEARCH_GOTOLINE, !empty, false);
+
+   enableMenuItemById(IDM_WINDOW_WINDOWS, !empty, false);
+   enableMenuItemById(IDM_WINDOW_NEXT, !empty, false);
+   enableMenuItemById(IDM_WINDOW_PREVIOUS, !empty, false);
+
+   enableMenuItemById(IDM_DEBUG_CLEARBREAKPOINT, !empty, false);
+   enableMenuItemById(IDM_DEBUG_BREAKPOINT, !empty, false);
+
+   onResize();
+
+   if (!empty)
+      _children[_model->ideScheme.textFrameId]->refresh();
+}
+
+void IDEWindow :: onStartup(ModelNMHDR* rec)
+{
+   _controller->init(_model, rec->status);
+
+   _recentFileList.assignList(&_model->projectModel.lastOpenFiles);
+   _recentProjectList.assignList(&_model->projectModel.lastOpenProjects);
+
+   onIDEStatusChange(rec);
+}
+
 void IDEWindow :: onNotify(NMHDR* hdr)
 {
    switch (hdr->code) {
+      case EVENT_TEXTVIEW_MODEL_CHANGED:
+         onTextModelChange((TextViewModelNMHDR*)hdr);
+         break;
+      case EVENT_TEXTFRAME_SELECTION_CHANGED:
+         onTextFrameSel((TextFrameSelectionNMHDR*)hdr);
+         break;
+      case EVENT_STARTUP:
+         onStartup((ModelNMHDR*)hdr);
+         break;
+
+
       case STATUS_NOTIFICATION:
          onStatusChange((StatusNMHDR*)hdr);
          break;
@@ -1143,19 +1310,20 @@ void IDEWindow :: onDebuggerUpdate(StatusNMHDR* rec)
    if (test(rec->status, DEBUGWATCH_CHANGED)) {
       onDebugWatch();
    }
-   if (test(rec->status, FRAME_CHANGED)) {
-      onTextFrameChange(rec->status);
-   }
+   //if (test(rec->status, FRAME_CHANGED)) {
+   //   onTextFrameChange(rec->status);
+   //}
 }
 
-void IDEWindow :: onDebuggerSourceNotFound(StatusNMHDR* rec)
+void IDEWindow :: onProgrammRunning(StatusNMHDR* rec)
+{
+   _controller->onProgramRuning(_model);
+}
+
+void IDEWindow :: onDebuggerSourceNotFound()
 {
    MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
    menu->enableMenuItemById(IDM_DEBUG_STOP, true);
-
-   if (test(rec->status, FRAME_CHANGED)) {
-      onTextFrameChange(rec->status);
-   }
 
    _controller->onDebuggerNoSource(messageDialog, _model);
 }
@@ -1192,7 +1360,7 @@ void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
    if (changeStatus.selelectionChanged) {
       MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
 
-      bool isSelected = docInfo->hasSelection();
+      bool isSelected = docInfo ? docInfo->hasSelection() : false;
 
       menu->enableMenuItemById(IDM_EDIT_COPY, isSelected);
       menu->enableMenuItemById(IDM_EDIT_CUT, isSelected);
@@ -1203,12 +1371,14 @@ void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
    if (changeStatus.textChanged) {
       MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
 
-      menu->enableMenuItemById(IDM_EDIT_UNDO, docInfo->canUndo());
-      menu->enableMenuItemById(IDM_EDIT_REDO, docInfo->canRedo());
+      menu->enableMenuItemById(IDM_EDIT_UNDO, docInfo ? docInfo->canUndo() : false);
+      menu->enableMenuItemById(IDM_EDIT_REDO, docInfo ? docInfo->canRedo() : false);
    }
 
-   if (changeStatus.textChanged || changeStatus.caretChanged) {
-      _controller->onStatusChange(_model, IDEStatus::Ready);
+   if (docInfo) {
+      for (auto it = _docViewListener.start(); !it.eof(); ++it) {
+         (*it)->onDocumentUpdate(changeStatus);
+      }
    }
 }
 
@@ -1292,6 +1462,9 @@ void IDEWindow :: populate(size_t counter, GUIControlBase** children)
    _windowList.assign(menu);
    _recentFileList.assign(menu);
    _recentProjectList.assign(menu);
+
+   _docViewListener.add(dynamic_cast<DocumentNotifier*>(_children[_model->ideScheme.textControlId]));
+   _docViewListener.add(dynamic_cast<DocumentNotifier*>(_children[_model->ideScheme.statusBar]));
 }
 
 void IDEWindow :: onColorSchemeChange()

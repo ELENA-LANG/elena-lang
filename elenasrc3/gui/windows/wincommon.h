@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Common Header File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINCOMMON_H
@@ -30,6 +30,7 @@ namespace elena_lang
    constexpr int CURSOR_SIZENS         = 3;
 
    // --- Notification types ---
+   // NOTE : the systen related notifications must be greater than 0x100
    constexpr int STATUS_NOTIFICATION   = 0x101;
    constexpr int STATUS_SELECTION      = 0x102;
    constexpr int STATUS_COMPLETION     = 0x103;
@@ -171,6 +172,15 @@ namespace elena_lang
       }
    };
 
+   // --- EventFormatterBase ---
+   class WindowApp;
+
+   class EventFormatterBase
+   {
+   public:
+      virtual void sendMessage(EventBase* event, WindowApp* app) = 0;
+   };
+
    // --- WindowBase ---
    class WindowBase : public ControlBase
    {
@@ -204,15 +214,21 @@ namespace elena_lang
    class WindowApp : public GUIApp
    {
    protected:
-      HINSTANCE _instance;
-      HWND      _hwnd;
+      HINSTANCE            _instance;
+      HWND                 _hwnd;
 
-      wstr_t    _accelerators;
+      wstr_t               _accelerators;
+
+      EventFormatterBase*  _eventFormatter;
 
       bool initInstance(WindowBase* mainWindow, int cmdShow);
 
    public:
-      int run(GUIControlBase* mainWindow, bool maximized, int notificationId, NotificationStatus notificationStatus) override;
+      int run(GUIControlBase* mainWindow, bool maximized, EventBase* startEvent) override;
+
+      void notify(int id, NMHDR* notification);
+
+      void notify(EventBase* event) override;
 
       void notify(int messageCode, NotificationStatus status) override;
       void notifySelection(int id, size_t param) override;
@@ -220,11 +236,12 @@ namespace elena_lang
       void notifyCompletion(int id, int param) override;
       void notifyContextMenu(int id, short x, short y, bool hasSelection) override;
 
-      WindowApp(HINSTANCE instance, wstr_t accelerators)
+      WindowApp(HINSTANCE instance, wstr_t accelerators, EventFormatterBase* formatter)
       {
          _instance = instance;
          _hwnd = nullptr;
          _accelerators = accelerators;
+         _eventFormatter = formatter;
       }
    };
 

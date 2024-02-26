@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains the DebugController class and its helpers header
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DEBUGCONTROLLER_H
@@ -20,6 +20,8 @@ namespace elena_lang
    class DebugSourceController
    {
    public:
+      virtual void traceSource(SourceViewModel* sourceModel, bool found, int row) = 0;
+
       virtual bool selectSource(ProjectModel* model, SourceViewModel* sourceModel, 
          ustr_t moduleName, path_t sourcePath) = 0;
 

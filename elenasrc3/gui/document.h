@@ -378,7 +378,7 @@ namespace elena_lang
 
       void save(path_t path);
 
-      void notifyOnChange(DocumentChangeStatus& changeStatus);
+      void refresh(DocumentChangeStatus& changeStatus);
 
       bool findLine(DocumentChangeStatus& changeStatus, const_text_t text, bool matchCase, bool wholeWord);
 
