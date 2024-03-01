@@ -25,6 +25,8 @@ namespace elena_lang
       virtual bool selectSource(ProjectModel* model, SourceViewModel* sourceModel, 
          ustr_t moduleName, path_t sourcePath) = 0;
 
+      virtual void onProgramFinish(SourceViewModel* sourceModel) = 0;
+
       virtual ~DebugSourceController() = default;
    };
 
@@ -225,7 +227,6 @@ namespace elena_lang
 
       ProjectModel*           _model;
       SourceViewModel*        _sourceModel;
-      NotifierBase*           _notifier;
       DebugSourceController*  _sourceController;
 
       IdentifierString        _currentModule;
@@ -292,7 +293,7 @@ namespace elena_lang
       }
 
       DebugController(DebugProcessBase* process, ProjectModel* model, 
-         SourceViewModel* sourceModel, NotifierBase* notifier, DebugSourceController* sourceController);
+         SourceViewModel* sourceModel, DebugSourceController* sourceController);
    };
    
 }

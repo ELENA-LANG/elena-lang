@@ -227,7 +227,12 @@ ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* not
 
    // initialize UI components
    TextViewWindow* view = new TextViewWindow(notifier, _model->viewModel(), 
-      &_controller->sourceController, &_styles);
+      &_controller->sourceController, &_styles, [](NotifierBase* notifier, int x, int y, bool hasSelection)
+      {
+         ContextMenuEvent event(EVENT_TEXT_CONTEXTMENU, x, y, hasSelection);
+
+         notifier->notify(&event);
+      });
    TextViewFrame* frame = new TextViewFrame(notifier, _settings.withTabAboverscore, view, 
       _model->viewModel(), [](NotifierBase* notifier, int index)
       {
@@ -295,7 +300,12 @@ ControlBase* IDEFactory :: createVmConsoleControl(ControlBase* owner, ProcessBas
 
 ControlBase* IDEFactory :: createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess, NotifierBase* notifier)
 {
-   CompilerOutput* output = new CompilerOutput(notifier, NOTIFY_COMPILATION_RESULT);
+   CompilerOutput* output = new CompilerOutput(notifier, [](NotifierBase* notifier, int statusBar)
+      {
+         SelectionEvent event = { EVENT_COMPILATION_END, statusBar };
+
+         notifier->notify(&event);
+      });
 
    output->createControl(_instance, owner);
 
@@ -306,7 +316,12 @@ ControlBase* IDEFactory :: createCompilerOutput(ControlBase* owner, ProcessBase*
 
 ControlBase* IDEFactory :: createErrorList(ControlBase* owner, NotifierBase* notifier)
 {
-   MessageLog* log = new MessageLog(notifier, NOTIFY_ERROR_SEL);
+   MessageLog* log = new MessageLog(notifier, [](NotifierBase* notifier, int index)
+      {
+         SelectionEvent event = { EVENT_ERRORLIST_SELECTION, index };
+
+         notifier->notify(&event);
+      });
    log->createControl(_instance, owner);
 
    return log;
@@ -314,8 +329,13 @@ ControlBase* IDEFactory :: createErrorList(ControlBase* owner, NotifierBase* not
 
 ControlBase* IDEFactory :: createProjectView(ControlBase* owner, NotifierBase* notifier)
 {
-   TreeView* projectView = new TreeView(300, 50, notifier, 
-      NOTIFY_PROJECTVIEW_SEL, true);
+   TreeView* projectView = new TreeView(300, 50, notifier, true,
+      [](NotifierBase* notifier, size_t param)
+      {
+         ParamSelectionEvent event = { EVENT_PROJECTVIEW_SELECTION_CHANGED, param };
+
+         notifier->notify(&event);
+      });
    projectView->createControl(_instance, owner);
 
    return projectView;

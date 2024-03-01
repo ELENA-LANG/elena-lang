@@ -98,7 +98,7 @@ namespace elena_lang
       bool startVMConsole(ProjectModel& model);
       void stopVMConsole();
 
-      void doDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action);
+      bool doDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action);
       void doDebugStop(ProjectModel& model);
 
       void runToCursor(ProjectModel& model, SourceViewModel& sourceModel);
@@ -123,7 +123,7 @@ namespace elena_lang
       ProjectController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* debugProcess, 
          ProjectModel* model, SourceViewModel* sourceModel,
          DebugSourceController* sourceController, PlatformType platform, PathHelperBase* pathHelper)
-         : _outputProcess(outputProcess), _vmProcess(vmConsoleProcess), _debugController(debugProcess, model, sourceModel, this, sourceController),
+         : _outputProcess(outputProcess), _vmProcess(vmConsoleProcess), _debugController(debugProcess, model, sourceModel, sourceController),
            _autoWatch({ nullptr, 0 }),
            _pathHelper(pathHelper)
       {
@@ -187,6 +187,7 @@ namespace elena_lang
       bool selectSource(ProjectModel* model, SourceViewModel* sourceModel,
          ustr_t moduleName, path_t sourcePath);
       void traceSource(SourceViewModel* sourceModel, bool found, int row);
+      void onProgramFinish(SourceViewModel* sourceModel);
 
       void highlightError(IDEModel* model, int row, int column, path_t path);
 

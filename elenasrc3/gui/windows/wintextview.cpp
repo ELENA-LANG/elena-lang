@@ -43,7 +43,7 @@ void ViewStyles::release()
 // --- TextViewWindow ---
 
 TextViewWindow :: TextViewWindow(NotifierBase* notifier, TextViewModelBase* model, 
-   TextViewControllerBase* controller, ViewStyles* styles)
+   TextViewControllerBase* controller, ViewStyles* styles, ContextInvoker contextInvoker)
    : WindowBase(nullptr, 50, 50)
 {
    _notifier = notifier;
@@ -56,6 +56,7 @@ TextViewWindow :: TextViewWindow(NotifierBase* notifier, TextViewModelBase* mode
    _caretChanged = false;
    _mouseCaptured = false;
    _caret_x = 0;
+   _contextInvoker = contextInvoker;
 }
 
 TextViewWindow :: ~TextViewWindow()
@@ -562,11 +563,9 @@ bool TextViewWindow :: onKeyPressed(wchar_t ch)
 
 void TextViewWindow :: onContextMenu(short x, short y)
 {
-   //auto docView = _model->DocView();
+   auto docView = _model->DocView();
 
-   //if (_notifier && docView) {
-   //   _notifier->notifyContextMenu(CONTEXT_MENU_ON, x, y, docView->hasSelection());
-   //}
+   _contextInvoker(_notifier, x, y, docView->hasSelection());
 }
 
 LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)

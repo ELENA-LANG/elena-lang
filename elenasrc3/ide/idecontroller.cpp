@@ -271,28 +271,30 @@ bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
    return true;
 }
 
-void ProjectController :: doDebugAction(ProjectModel& model, SourceViewModel& sourceModel , DebugAction action)
+bool ProjectController :: doDebugAction(ProjectModel& model, SourceViewModel& sourceModel , DebugAction action)
 {
    if (model.getStatus() != IDEStatus::Busy) {
       if (onDebugAction(model, action)) {
          switch (action) {
             case DebugAction::Run:
                _debugController.run();
-               break;
+               return true;
             case DebugAction::StepInto:
                _debugController.stepInto();
-               break;
+               return true;
             case DebugAction::StepOver:
                _debugController.stepOver();
-               break;
+               return true;
             case DebugAction::RunTo:
                runToCursor(model, sourceModel);
-               break;
+               return true;
             default:
                break;
          }
       }
    }
+
+   return false;
 }
 
 void ProjectController :: doDebugStop(ProjectModel& model)
@@ -877,11 +879,22 @@ void IDEController :: traceSource(SourceViewModel* sourceModel, bool found, int 
    if (found) {
       sourceModel->setTraceLine(row, true, docStatus);
 
-      projectStatus |= STATUS_DEBUG_STEP;
+      projectStatus |= STATUS_DEBUGGER_STEP;
    }
-   else projectStatus |= STATUS_DEBUG_NOSOURCE;
+   else projectStatus |= STATUS_DEBUGGER_NOSOURCE;
 
    TextViewModelEvent event = { projectStatus, docStatus };
+   _notifier->notify(&event);
+}
+
+void IDEController ::onProgramFinish(SourceViewModel* sourceModel)
+{
+   int projectStatus = STATUS_DEBUGGER_STOPPED;
+   DocumentChangeStatus docStatus = {};
+
+   sourceModel->clearTraceLine(docStatus);
+
+   TextViewModelEvent event = { STATUS_DEBUGGER_FINISHED, docStatus };
    _notifier->notify(&event);
 }
 
@@ -1354,7 +1367,14 @@ path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
 
 void IDEController :: doDebugAction(IDEModel* model, DebugAction action)
 {
-   projectController.doDebugAction(model->projectModel, model->sourceViewModel, action);
+   if (projectController.doDebugAction(model->projectModel, model->sourceViewModel, action)) {
+      DocumentChangeStatus docStatus = {};
+      model->sourceViewModel.clearTraceLine(docStatus);
+
+      TextViewModelEvent event = { STATUS_DEBUGGER_RUNNING, docStatus };
+      _notifier->notify(&event);
+
+   }
 }
 
 void IDEController :: doDebugStop(IDEModel* model)
@@ -1364,10 +1384,9 @@ void IDEController :: doDebugStop(IDEModel* model)
 
 void IDEController :: onCompilationStart(IDEModel* model)
 {
-   //model->status = IDEStatus::Compiling;
+   model->status = IDEStatus::Compiling;
 
-   //_notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED | IDE_COMPILATION_STARTED);
-   //_notifier->notifySelection(NOTIFY_SHOW_RESULT, model->ideScheme.compilerOutputControl);
+   notifyOnModelChange(STATUS_STATUS_CHANGED | STATUS_COMPILING | STATUS_LAYOUT_CHANGED);
 }
 
 void IDEController :: onCompilationStop(IDEModel* model)
@@ -1386,8 +1405,6 @@ void IDEController :: onCompilationBreak(IDEModel* model)
 
 void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBase* log)
 {
-   //_notifier->notifySelection(NOTIFY_SHOW_RESULT, model->ideScheme.errorListControl);
-
    log->clearMessages();
 
    // parse output for errors
@@ -1470,33 +1487,31 @@ void IDEController :: highlightError(IDEModel* model, int row, int column, path_
 void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode, 
    text_str output, ErrorLogBase* log)
 {
-   //if (exitCode == 0) {
-   //   model->status = IDEStatus::CompiledSuccessfully;
+   if (exitCode == 0) {
+      model->status = IDEStatus::CompiledSuccessfully;
 
-   //   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
-   //}
-   //else {
-   //   if (exitCode == -1) {
-   //      model->status = IDEStatus::CompiledWithWarnings;
-   //   }
-   //   else model->status = IDEStatus::CompiledWithErrors;
-   //   _notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
+      notifyOnModelChange(STATUS_STATUS_CHANGED | STATUS_PROJECT_REFRESH);
+   }
+   else {
+      if (exitCode == -1) {
+         model->status = IDEStatus::CompiledWithWarnings;
+      }
+      else model->status = IDEStatus::CompiledWithErrors;
 
-   //   displayErrors(model, output, log);
-   //}
+      displayErrors(model, output, log);
+
+      notifyOnModelChange(STATUS_STATUS_CHANGED | STATUS_PROJECT_REFRESH | STATUS_WITHERRORS);
+   }
 }
 
 bool IDEController :: doCompileProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model)
 {
-   onCompilationStart(model);
+   if (doSaveProject(dialog, projectDialog, model, false)) {
+      onCompilationStart(model);
 
-   if (!doSaveProject(dialog, projectDialog, model, false)) {
-      onCompilationBreak(model);
-
-      return false;
+      return projectController.doCompileProject(model->projectModel, DebugAction::None);
    }
-
-   return projectController.doCompileProject(model->projectModel, DebugAction::None);
+   else return false;
 }
 
 void IDEController :: doStartVMConsole(IDEModel* model)
@@ -1663,8 +1678,8 @@ void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog
    int prevSchemeIndex = model->viewModel()->schemeIndex;
 
    if(editorDialog.showModal()) {
-      //if (prevSchemeIndex != model->viewModel()->schemeIndex)
-      //   _notifier->notify(NOTIFY_IDE_CHANGE, COLOR_SCHEME_CHANGED | FRAME_CHANGED);
+      if (prevSchemeIndex != model->viewModel()->schemeIndex)
+         notifyOnModelChange(STATUS_FRAME_CHANGED);
    }
 }
 

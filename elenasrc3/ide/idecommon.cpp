@@ -191,14 +191,27 @@ void ContextBrowserBase :: populateFLOAT64(WatchContext* context, double value)
    clearNode(context->root);
    populateNode(context->root, number.str());
 }
+
 // --- SelectionEvent ---
 
-SelectionEvent::SelectionEvent(int id, int index)
+SelectionEvent :: SelectionEvent(int id, int index)
    : EventBase(0), _eventId(id), _index(index)
 {
 }
 
-int SelectionEvent::eventId()
+int SelectionEvent :: eventId()
+{
+   return _eventId;
+}
+
+// --- ParamSelectionEvent ---
+
+ParamSelectionEvent :: ParamSelectionEvent(int id, size_t param)
+   : EventBase(0), _eventId(id), _param(param)
+{
+}
+
+int ParamSelectionEvent :: eventId()
 {
    return _eventId;
 }
@@ -231,5 +244,17 @@ int StartUpEvent::eventId()
 int TextViewModelEvent::eventId()
 {
    return EVENT_TEXTVIEW_MODEL_CHANGED;
+}
+
+// --- ContextMenuEvent ---
+
+ContextMenuEvent :: ContextMenuEvent(int id, int x, int y, bool hasSelection)
+   : EventBase(0), _eventId(id), _x(x), _y(y), _hasSelection(hasSelection)
+{
+}
+
+int ContextMenuEvent :: eventId()
+{
+   return _eventId;
 }
 

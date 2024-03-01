@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TabBar Implementation File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "idecommon.h"
@@ -18,7 +18,7 @@ CustomTabBar :: CustomTabBar(NotifierBase* notifier, bool withAbovescore, int wi
    : ControlBase(nullptr, 0, 0, width, height)
 {
    _notifier = notifier;
-   _selNotificationId = 0;
+   _selectionInvoker = nullptr;
    _withAbovescore = withAbovescore;
    _notSelected = true;
 }

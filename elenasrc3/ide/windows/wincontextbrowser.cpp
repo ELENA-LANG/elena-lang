@@ -18,7 +18,7 @@ typedef String<text_t, CAPTION_LEN> CaptrionString;
 // --- ContextBrowser --
 
 ContextBrowser :: ContextBrowser(int width, int height, NotifierBase* notifier, int expandNotificationId)
-   : TreeView(width, height, notifier, 0, false, false), _rootItem(nullptr)
+   : TreeView(width, height, notifier, false, nullptr, false), _rootItem(nullptr)
 {
    _expandNotificationId = expandNotificationId;
 }

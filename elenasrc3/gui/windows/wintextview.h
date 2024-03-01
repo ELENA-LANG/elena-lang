@@ -73,8 +73,13 @@ namespace elena_lang
    // --- TextViewWindow ---
    class TextViewWindow : public WindowBase, public DocumentNotifier
    {
+   public:
+      typedef void(*ContextInvoker)(NotifierBase*, int, int, bool);
+
    protected:
       NotifierBase*           _notifier;
+
+      ContextInvoker          _contextInvoker;
 
       TextViewModelBase*      _model;
       ViewStyles*             _styles;
@@ -156,7 +161,7 @@ namespace elena_lang
 
       LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam) override;
 
-      TextViewWindow(NotifierBase* notifier, TextViewModelBase* model, TextViewControllerBase* controller, ViewStyles* styles);
+      TextViewWindow(NotifierBase* notifier, TextViewModelBase* model, TextViewControllerBase* controller, ViewStyles* styles, ContextInvoker contextInvoker);
       virtual ~TextViewWindow();
    };
 }

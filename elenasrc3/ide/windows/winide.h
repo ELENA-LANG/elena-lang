@@ -15,6 +15,14 @@
 
 namespace elena_lang
 {
+   // --- ContextMenuNMHDR ---
+   struct ContextMenuNMHDR
+   {
+      NMHDR nmhrd;
+      int   x, y;
+      bool  hasSelection;
+   };
+
    // --- Notifications ---
    struct ModelNMHDR
    {
@@ -27,9 +35,14 @@ namespace elena_lang
       DocumentChangeStatus docStatus;
    };
 
-   struct TextFrameSelectionNMHDR : public ModelNMHDR
+   struct SelectionNMHDR : public ModelNMHDR
    {
       int index;
+   };
+
+   struct ParamSelectionNMHDR : public ModelNMHDR
+   {
+      size_t param;
    };
 
    // --- Clipboard ---
@@ -63,8 +76,12 @@ namespace elena_lang
 
       void sendTextViewModelEvent(TextViewModelEvent* event, WindowApp* app);
       void sendTextFrameSelectionEvent(SelectionEvent* event, WindowApp* app);
+      void sendCompilationEndEvent(SelectionEvent* event, WindowApp* app);
+      void sendErrorListSelEvent(SelectionEvent* event, WindowApp* app);
+      void sendProjectViewSelectionEvent(ParamSelectionEvent* event, WindowApp* app);
       void sendLayoutEvent(LayoutEvent* event, WindowApp* app);
       void sendStartUpEvent(StartUpEvent* event, WindowApp* app);
+      void sendTextContextMenuEvent(ContextMenuEvent* event, WindowApp* app);
 
    public:
       static IDENotificationFormatter& getInstance()
@@ -112,16 +129,18 @@ namespace elena_lang
       void enableMenuItemById(int id, bool doEnable, bool toolBarItemAvailable);
 
       void onTextModelChange(TextViewModelNMHDR* rec);
-      void onTextFrameSel(TextFrameSelectionNMHDR* rec);
+      void onTextFrameSel(SelectionNMHDR* rec);
+      void onProjectViewSel(ParamSelectionNMHDR* rec);
       void onIDEStatusChange(ModelNMHDR* rec);
       void onStartup(ModelNMHDR* rec);
-      void onLayoutChange(ModelNMHDR* rec);
+      void onLayoutChange();
 
       void onDebugWatch();
 
       void onDoubleClick(NMHDR* hdr);
       void onRClick(NMHDR* hdr);
       void onDebugWatchRClick(size_t index);
+      void onContextMenu(ContextMenuNMHDR* rec);
 
       void onTabSelChanged(HWND wnd);
       void onTreeSelChanged(HWND wnd);
@@ -144,7 +163,10 @@ namespace elena_lang
       void onDebugResult(int code);
       void onDebugWatchBrowse(size_t item, size_t param);
 
+      void updateCompileMenu(bool compileEnable, bool debugEnable);
+
       void onProjectChange(bool empty);
+      void onProjectRefresh(bool empty);
       void onProjectViewSel(int index);
 
       void onColorSchemeChange();

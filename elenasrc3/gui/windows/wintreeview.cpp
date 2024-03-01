@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TreeView Implementation File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "idecommon.h"
@@ -13,10 +13,11 @@ using namespace elena_lang;
 
 // --- TreeView ---
 
-TreeView :: TreeView(int width, int height, NotifierBase* notifier, int notificationId, 
-   bool persistentSelection, bool enableIcons, int iconId)
+TreeView :: TreeView(int width, int height, NotifierBase* notifier, bool persistentSelection,
+   SelectionEventInvoker invoker, bool enableIcons, int iconId
+)
    : ControlBase(nullptr, 0, 0, width, height),
-   _notifier(notifier), _notificationId(notificationId),
+   _notifier(notifier), _selectionInvoker(invoker),
    _persistentSelection(persistentSelection), _enableIcons(enableIcons), _iconId(iconId)
 {
 
@@ -65,7 +66,7 @@ void TreeView :: onSelChanged()
 {
    size_t param = getParam(getCurrent());
 
-   //_notifier->notifySelection(_notificationId, param);
+   _selectionInvoker(_notifier, param);
 }
 
 size_t TreeView :: getParam(TreeViewItem item)

@@ -481,7 +481,7 @@ DebugLineInfo* DebugInfoProvider :: seekClassInfo(addr_t address, IdentifierStri
 // --- DebugController ---
 
 DebugController :: DebugController(DebugProcessBase* process, ProjectModel* model, 
-   SourceViewModel* sourceModel, NotifierBase* notifier, DebugSourceController* sourceController)
+   SourceViewModel* sourceModel, DebugSourceController* sourceController)
    : _provider(model)
 {
    _started = false;
@@ -489,7 +489,6 @@ DebugController :: DebugController(DebugProcessBase* process, ProjectModel* mode
    _running = false;
    _sourceModel = sourceModel;
    _model = model;
-   _notifier = notifier;
    _currentPath = nullptr;
    _sourceController = sourceController;
 }
@@ -527,8 +526,6 @@ void DebugController :: debugThread()
             _process->run();
             _process->resetEvent(DEBUG_RESUME);
             _process->setEvent(DEBUG_ACTIVE);
-
-            //_notifier->notify(NOTIFY_DEBUG_RUNNING, DEBUGWATCH_CHANGED | FRAME_CHANGED);
 
             break;
          case DEBUG_SUSPEND:
@@ -684,7 +681,7 @@ void DebugController :: onStop()
    _currentModule.clear();
    _currentPath = nullptr;
 
-   //_notifier->notifyCompletion(NOTIFY_DEBUGGER_RESULT, DEBUGGER_STOPPED);
+   _sourceController->onProgramFinish(_sourceModel);
 }
 
 void DebugController :: run()
@@ -815,9 +812,6 @@ bool DebugController :: startThread()
 
    while (_process->waitForEvent(DEBUG_ACTIVE, 0));
 
-   ////_listener->onStart();
-   //_notifier->notify(NOTIFY_DEBUG_START, 0);
-
    return _process->isStarted();
 }
 
@@ -862,8 +856,6 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
    // if there are new records in debug section
    if (!reader.eof()) {
       _provider.load(reader, starting, _process);
-
-      //_notifier->notify(NOTIFY_DEBUG_LOAD, 0);
 
       _provider.setDebugInfoSize(reader.position());
 

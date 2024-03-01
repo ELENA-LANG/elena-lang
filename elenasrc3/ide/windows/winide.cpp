@@ -121,11 +121,38 @@ void IDENotificationFormatter :: sendTextViewModelEvent(TextViewModelEvent* even
 
 void IDENotificationFormatter :: sendTextFrameSelectionEvent(SelectionEvent* event, WindowApp* app)
 {
-   TextFrameSelectionNMHDR nw = { };
+   SelectionNMHDR nw = { };
    nw.index = event->Index();
    nw.status = event->status;
 
    app->notify(EVENT_TEXTFRAME_SELECTION_CHANGED, (NMHDR*)&nw);
+}
+
+void IDENotificationFormatter :: sendCompilationEndEvent(SelectionEvent* event, WindowApp* app)
+{
+   SelectionNMHDR nw = { };
+   nw.index = event->Index();
+   nw.status = event->status;
+
+   app->notify(EVENT_COMPILATION_END, (NMHDR*)&nw);
+}
+
+void IDENotificationFormatter :: sendErrorListSelEvent(SelectionEvent* event, WindowApp* app)
+{
+   SelectionNMHDR nw = { };
+   nw.index = event->Index();
+   nw.status = event->status;
+
+   app->notify(EVENT_ERRORLIST_SELECTION, (NMHDR*)&nw);
+}
+
+void IDENotificationFormatter :: sendProjectViewSelectionEvent(ParamSelectionEvent* event, WindowApp* app)
+{
+   ParamSelectionNMHDR nw = { };
+   nw.param = event->Param();
+   nw.status = event->status;
+
+   app->notify(EVENT_PROJECTVIEW_SELECTION_CHANGED, (NMHDR*)&nw);
 }
 
 void IDENotificationFormatter :: sendStartUpEvent(StartUpEvent* event, WindowApp* app)
@@ -145,6 +172,17 @@ void IDENotificationFormatter :: sendLayoutEvent(LayoutEvent* event, WindowApp* 
    app->notify(EVENT_LAYOUT, (NMHDR*)&nw);
 }
 
+void IDENotificationFormatter :: sendTextContextMenuEvent(ContextMenuEvent* event, WindowApp* app)
+{
+   ContextMenuNMHDR nw = {};
+
+   nw.x = event->X();
+   nw.y = event->X();
+   nw.hasSelection = event->HasSelection();
+
+   app->notify(EVENT_TEXT_CONTEXTMENU, (NMHDR*)&nw);
+}
+
 void IDENotificationFormatter :: sendMessage(EventBase* event, WindowApp* app)
 {
    switch (event->eventId()) {      
@@ -159,6 +197,18 @@ void IDENotificationFormatter :: sendMessage(EventBase* event, WindowApp* app)
          break;
       case EVENT_LAYOUT:
          sendLayoutEvent(dynamic_cast<LayoutEvent*>(event), app);
+         break;
+      case EVENT_PROJECTVIEW_SELECTION_CHANGED:
+         sendProjectViewSelectionEvent(dynamic_cast<ParamSelectionEvent*>(event), app);
+         break;
+      case EVENT_COMPILATION_END:
+         sendCompilationEndEvent(dynamic_cast<SelectionEvent*>(event), app);
+         break;
+      case EVENT_ERRORLIST_SELECTION:
+         sendErrorListSelEvent(dynamic_cast<SelectionEvent*>(event), app);
+         break;
+      case EVENT_TEXT_CONTEXTMENU:
+         sendTextContextMenuEvent(dynamic_cast<ContextMenuEvent*>(event), app);
          break;
       default:
          assert(false);
@@ -395,7 +445,7 @@ void IDEWindow :: openResultTab(int controlIndex)
    if (!resultBar->visible()) {
       resultBar->show();
 
-      //onLayoutChange(IDE_LAYOUT_CHANGED);
+      onLayoutChange();
    }
 }
 
@@ -409,10 +459,10 @@ void IDEWindow :: closeResultTab(int controlIndex)
 
    if (resultBar->empty()) {
       resultBar->hide();
+
+      onLayoutChange();
    }
    else resultBar->selectTab(0);
-
-   //onLayoutChange(IDE_LAYOUT_CHANGED);
 }
 
 void IDEWindow :: toggleWindow(int child_id)
@@ -444,6 +494,10 @@ void IDEWindow :: setChildFocus(int controlIndex)
 
 void IDEWindow :: onComilationStart()
 {
+   updateCompileMenu(false, false);
+
+   openResultTab(_model->ideScheme.compilerOutputControl);
+
    ((ControlBase*)_children[_model->ideScheme.compilerOutputControl])->clearValue();
 }
 
@@ -464,13 +518,6 @@ void IDEWindow :: onErrorHighlight(int index)
    auto messageInfo = resultBar->getMessage(index);
    if (!messageInfo.path.empty())
       _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
-}
-
-void IDEWindow :: onProjectViewSel(int index)
-{
-   _controller->doOpenProjectSourceByIndex(_model, index);
-
-   _children[_model->ideScheme.textFrameId]->setFocus();
 }
 
 void IDEWindow :: onDebugWatch()
@@ -502,6 +549,26 @@ void IDEWindow :: enableMenuItemById(int id, bool doEnable, bool toolBarItemAvai
 
       toolBar->enableItemById(id, doEnable);
    }
+}
+
+void IDEWindow :: updateCompileMenu(bool compileEnable, bool debugEnable)
+{
+   enableMenuItemById(IDM_PROJECT_COMPILE, compileEnable, false);
+   enableMenuItemById(IDM_PROJECT_OPTION, compileEnable, false);
+
+   enableMenuItemById(IDM_DEBUG_RUN, debugEnable, true);
+   enableMenuItemById(IDM_DEBUG_STEPINTO, debugEnable, true);
+   enableMenuItemById(IDM_DEBUG_STEPOVER, debugEnable, true);
+   enableMenuItemById(IDM_DEBUG_RUNTO, debugEnable, false);
+   enableMenuItemById(IDM_DEBUG_STOP, debugEnable, true);
+}
+
+void IDEWindow :: onProjectRefresh(bool empty)
+{
+   updateCompileMenu(!empty, !empty);
+
+   enableMenuItemById(IDM_PROJECT_CLOSE, !empty, true);
+   enableMenuItemById(IDM_FILE_SAVEPROJECT, !empty, false);
 }
 
 void IDEWindow :: onProjectChange(bool empty)
@@ -559,16 +626,7 @@ void IDEWindow :: onProjectChange(bool empty)
 
    toggleProjectView(!empty);
 
-   enableMenuItemById(IDM_PROJECT_CLOSE, !empty, true);
-   enableMenuItemById(IDM_FILE_SAVEPROJECT, !empty, false);
-
-   enableMenuItemById(IDM_PROJECT_COMPILE, !empty, false);
-   enableMenuItemById(IDM_PROJECT_OPTION, !empty, false);
-   enableMenuItemById(IDM_DEBUG_RUN, !empty, true);
-   enableMenuItemById(IDM_DEBUG_STEPINTO, !empty, true);
-   enableMenuItemById(IDM_DEBUG_STEPOVER, !empty, true);
-   enableMenuItemById(IDM_DEBUG_RUNTO, !empty, false);
-   enableMenuItemById(IDM_DEBUG_STOP, !empty, true);
+   onProjectRefresh(empty);
 }
 
 bool IDEWindow :: onCommand(int command)
@@ -877,19 +935,19 @@ void IDEWindow :: onRClick(NMHDR* hdr)
 //         break;
 //   }
 //}
-//
-//void IDEWindow :: onContextMenu(ContextMenuNMHDR* rec)
-//{
-//   Point p(rec->x, rec->y);
-//
-//   ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.editorContextMenu]);
-//
-//   menu->enableMenuItemById(IDM_EDIT_CUT, rec->hasSelection);
-//   menu->enableMenuItemById(IDM_EDIT_COPY, rec->hasSelection);
-//   menu->enableMenuItemById(IDM_EDIT_PASTE, Clipboard::isAvailable());
-//
-//   menu->show(_handle, p);
-//}
+
+void IDEWindow :: onContextMenu(ContextMenuNMHDR* rec)
+{
+   Point p(rec->x, rec->y);
+
+   ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.editorContextMenu]);
+
+   menu->enableMenuItemById(IDM_EDIT_CUT, rec->hasSelection);
+   menu->enableMenuItemById(IDM_EDIT_COPY, rec->hasSelection);
+   menu->enableMenuItemById(IDM_EDIT_PASTE, Clipboard::isAvailable());
+
+   menu->show(_handle, p);
+}
 
 void IDEWindow :: onDebugResult(int code)
 {
@@ -928,7 +986,20 @@ void IDEWindow :: onIDEStatusChange(ModelNMHDR* rec)
       _model->status = IDEStatus::Stopped;
 
       onStatusBarChange();
+      updateCompileMenu(false, true);
    }   
+   else if (test(rec->status, STATUS_DEBUGGER_RUNNING)) {
+      _model->status = IDEStatus::Running;
+
+      onStatusBarChange();
+      updateCompileMenu(false, false);
+   }
+   else if (test(rec->status, STATUS_DEBUGGER_FINISHED)) {
+      _model->status = IDEStatus::Stopped;
+
+      onStatusBarChange();
+      updateCompileMenu(true, true);
+   }
    else if (test(rec->status, STATUS_STATUS_CHANGED)) {
       onStatusBarChange();
    }
@@ -936,24 +1007,34 @@ void IDEWindow :: onIDEStatusChange(ModelNMHDR* rec)
    if (test(rec->status, STATUS_PROJECT_CHANGED)) {
       onProjectChange(_model->projectModel.empty);
    }
+   else if (test(rec->status, STATUS_PROJECT_REFRESH)) {
+      onProjectRefresh(_model->projectModel.empty);
+   }
 
    if (test(rec->status, STATUS_FRAME_VISIBILITY_CHANGED)) {
-      if (!_model->projectModel.empty) {
+      if (_model->sourceViewModel.isAssigned()) {
          _children[_model->ideScheme.textFrameId]->show();
          _children[_model->ideScheme.textFrameId]->setFocus();
       }
       else _children[_model->ideScheme.textFrameId]->hide();
    }
 
-   if (test(rec->status, STATUS_LAYOUT_CHANGED)) {
-      onLayoutChange(rec);
+   if (test(rec->status, STATUS_COMPILING)) {
+      onComilationStart();
    }
 
-   if (test(rec->status, STATUS_DEBUG_NOSOURCE)) {
+   if (test(rec->status, STATUS_LAYOUT_CHANGED)) {
+      onLayoutChange();
+   }
+
+   if (test(rec->status, STATUS_WITHERRORS)) {
+      openResultTab(_model->ideScheme.errorListControl);
+   }
+
+   if (test(rec->status, STATUS_DEBUGGER_NOSOURCE)) {
       onDebuggerSourceNotFound();
    }
-
-   if (test(rec->status, STATUS_DEBUG_STEP)) {
+   else if (test(rec->status, STATUS_DEBUGGER_STEP)) {
       MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
       menu->enableMenuItemById(IDM_DEBUG_STOP, true);
 
@@ -967,12 +1048,19 @@ void IDEWindow :: onTextModelChange(TextViewModelNMHDR* rec)
    onIDEStatusChange(rec);
 }
 
-void IDEWindow :: onTextFrameSel(TextFrameSelectionNMHDR* rec)
+void IDEWindow :: onTextFrameSel(SelectionNMHDR* rec)
 {
    _controller->onDocSelection(_model, rec->index);
 }
 
-void IDEWindow :: onLayoutChange(ModelNMHDR* rec)
+void IDEWindow :: onProjectViewSel(ParamSelectionNMHDR* rec)
+{
+   _controller->doOpenProjectSourceByIndex(_model, (int)rec->param);
+
+   _children[_model->ideScheme.textFrameId]->setFocus();
+}
+
+void IDEWindow :: onLayoutChange()
 {
    bool empty = _model->sourceViewModel.getDocumentCount() == 0;
 
@@ -1053,19 +1141,26 @@ void IDEWindow :: onNotify(NMHDR* hdr)
          onTextModelChange((TextViewModelNMHDR*)hdr);
          break;
       case EVENT_TEXTFRAME_SELECTION_CHANGED:
-         onTextFrameSel((TextFrameSelectionNMHDR*)hdr);
+         onTextFrameSel((SelectionNMHDR*)hdr);
+         break;
+      case EVENT_PROJECTVIEW_SELECTION_CHANGED:
+         onProjectViewSel((ParamSelectionNMHDR*)hdr);
+         break;
+      case EVENT_COMPILATION_END:
+         onCompilationEnd(((SelectionNMHDR*)hdr)->index);
+         break;
+      case EVENT_ERRORLIST_SELECTION:
+         onErrorHighlight(((SelectionNMHDR*)hdr)->index);
          break;
       case EVENT_STARTUP:
          onStartup((ModelNMHDR*)hdr);
          break;
       case EVENT_LAYOUT:
-         onLayoutChange((ModelNMHDR*)hdr);
+         onLayoutChange();
          break;
-
-
-      //case STATUS_NOTIFICATION:
-      //   onStatusChange((StatusNMHDR*)hdr);
-      //   break;
+      case EVENT_TEXT_CONTEXTMENU:
+         onContextMenu((ContextMenuNMHDR*)hdr);
+         break;
       case TCN_SELCHANGE:
          onTabSelChanged(hdr->hwndFrom);
          break;

@@ -120,17 +120,17 @@ wchar_t* ProcessOutput :: getValue()
 
 // --- CompilerOutput ---
 
-CompilerOutput :: CompilerOutput(NotifierBase* notifier, int notificationId)
+CompilerOutput :: CompilerOutput(NotifierBase* notifier, EventInvoker invoker)
    : ProcessOutput(nullptr, true),
    _notifier(notifier),
-   _notificationId(notificationId)
+   _eventInvoker(invoker)
 {
 
 }
 
 void CompilerOutput :: afterExecution(int exitCode)
 {
-   //_notifier->notifyCompletion(_notificationId, exitCode);
+   _eventInvoker(_notifier, exitCode);
 }
 
 // --- VMConsoleInteractive ---

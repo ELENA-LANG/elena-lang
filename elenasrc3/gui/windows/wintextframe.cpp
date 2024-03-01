@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     Win32 EditFrame container File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wintextframe.h"
@@ -73,7 +73,7 @@ void TextViewFrame :: onSelChanged()
    if (index >= 0) {
       _model->selectDocumentView(index + 1);
 
-      if (_selNotificationId) {
+      if (_selectionInvoker) {
          _selectionInvoker(_notifier, index);
       }
    }
