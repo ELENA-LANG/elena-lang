@@ -343,7 +343,13 @@ ControlBase* IDEFactory :: createProjectView(ControlBase* owner, NotifierBase* n
 
 ControlBase* IDEFactory :: createDebugBrowser(ControlBase* owner, NotifierBase* notifier)
 {
-   ContextBrowser* browser = new ContextBrowser(300, 50, notifier, NOTIFY_DEBUG_CONTEXT_EXPANDED);
+   ContextBrowser* browser = new ContextBrowser(300, 50, notifier, 
+      [](NotifierBase* notifier, size_t item, size_t param)
+      {
+         BrowseEvent event = { EVENT_BROWSE_CONTEXT, item, param };
+
+         notifier->notify(&event);
+      });
    browser->createControl(_instance, owner);
    browser->hide();
 

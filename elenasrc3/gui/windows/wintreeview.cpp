@@ -66,7 +66,8 @@ void TreeView :: onSelChanged()
 {
    size_t param = getParam(getCurrent());
 
-   _selectionInvoker(_notifier, param);
+   if (_selectionInvoker)
+      _selectionInvoker(_notifier, param);
 }
 
 size_t TreeView :: getParam(TreeViewItem item)

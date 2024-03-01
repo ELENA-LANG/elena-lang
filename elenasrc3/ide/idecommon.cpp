@@ -216,6 +216,13 @@ int ParamSelectionEvent :: eventId()
    return _eventId;
 }
 
+// --- BrowseEvent ---
+
+BrowseEvent :: BrowseEvent(int id, size_t item, size_t param)
+   : EventBase(0), _eventId(id), _item(item), _param(param)
+{
+}
+
 // --- LayoutEvent ---
 
 LayoutEvent::LayoutEvent(int status)

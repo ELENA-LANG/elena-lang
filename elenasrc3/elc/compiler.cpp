@@ -10826,9 +10826,17 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
             varNode.appendChild(BuildKey::Index, localInfo.offset);
          }
          else {
-            // !! temporal stub
-            BuildNode varNode = node.appendChild(BuildKey::Variable, it.key());
+            BuildNode varNode = node.appendChild(BuildKey::VariableAddress, it.key());
             varNode.appendChild(BuildKey::Index, localInfo.offset);
+
+            ustr_t className = codeScope.moduleScope->module->resolveReference(localInfo.typeInfo.typeRef);
+            if (isWeakReference(className)) {
+               IdentifierString fullName(codeScope.module->name());
+               fullName.append(className);
+
+               varNode.appendChild(BuildKey::ClassName, *fullName);
+            }
+            else varNode.appendChild(BuildKey::ClassName, className);
          }
       }
       else {

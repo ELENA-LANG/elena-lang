@@ -40,6 +40,12 @@ namespace elena_lang
       int index;
    };
 
+   struct BrowseNMHDR : public ModelNMHDR
+   {
+      size_t item;
+      size_t param;
+   };
+
    struct ParamSelectionNMHDR : public ModelNMHDR
    {
       size_t param;
@@ -82,6 +88,7 @@ namespace elena_lang
       void sendLayoutEvent(LayoutEvent* event, WindowApp* app);
       void sendStartUpEvent(StartUpEvent* event, WindowApp* app);
       void sendTextContextMenuEvent(ContextMenuEvent* event, WindowApp* app);
+      void sendBrowseContextMenuEvent(BrowseEvent* event, WindowApp* app);
 
    public:
       static IDENotificationFormatter& getInstance()
@@ -161,7 +168,7 @@ namespace elena_lang
       void onCompilationEnd(int exitCode);
       void onErrorHighlight(int index);
       void onDebugResult(int code);
-      void onDebugWatchBrowse(size_t item, size_t param);
+      void onDebugWatchBrowse(BrowseNMHDR* rec);
 
       void updateCompileMenu(bool compileEnable, bool debugEnable);
 

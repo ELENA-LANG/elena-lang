@@ -49,6 +49,7 @@ namespace elena_lang
    constexpr int EVENT_COMPILATION_END                = 0x0006;
    constexpr int EVENT_ERRORLIST_SELECTION            = 0x0007;
    constexpr int EVENT_TEXT_CONTEXTMENU               = 0x0008;
+   constexpr int EVENT_BROWSE_CONTEXT                 = 0x0009;
 
    // --- Event Statuses ---
    constexpr int STATUS_NONE                          = 0x0000;
@@ -353,8 +354,8 @@ namespace elena_lang
    // --- ParamSelectionEvent ---
    class ParamSelectionEvent : public EventBase
    {
-      int _eventId;
-      int _param;
+      int    _eventId;
+      size_t _param;
 
    public:
       int eventId() override;
@@ -362,6 +363,23 @@ namespace elena_lang
       size_t Param() { return _param; }
 
       ParamSelectionEvent(int id, size_t param);
+   };
+
+   // --- BrowseEvent ---
+   class BrowseEvent : public EventBase
+   {
+      int    _eventId;
+      size_t _item;
+      size_t _param;
+
+   public:
+      int eventId() override { return _eventId; }
+
+      size_t Item() { return _item; }
+
+      size_t Param() { return _param; }
+
+      BrowseEvent(int id, size_t item, size_t param);
    };
 
    // --- LayoutEvent ---

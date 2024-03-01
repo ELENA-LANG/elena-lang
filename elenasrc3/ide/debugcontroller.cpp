@@ -245,6 +245,7 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             case DebugSymbol::FieldAddress:
             case DebugSymbol::ParameterInfo:
             case DebugSymbol::FieldInfo:
+            case DebugSymbol::LocalInfo:
                // replace field name reference with the name
                stringReader.seek(info.addresses.source.nameRef);
 
@@ -914,12 +915,15 @@ void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item,
    }
 }
 
-void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, ustr_t className)
+void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, ustr_t className, addr_t vmtAddress)
 {
    if (address != 0) {
       // read class VMT address if not provided
       IdentifierString classNameStr;
-      addr_t vmtAddress = _process->getClassVMT(address);
+
+      if (!vmtAddress)
+         vmtAddress = _process->getClassVMT(address);
+
       ref_t flags = 0;
       if (!emptystr(className)) {
          classNameStr.copy(className);
@@ -1157,7 +1161,7 @@ inline disp_t getFrameDisp(DebugLineInfo& frameInfo, disp_t offset)
 
 inline const char* getClassInfo(DebugLineInfo& frameInfo)
 {
-   if (frameInfo.symbol == DebugSymbol::ParameterInfo) {
+   if (frameInfo.symbol == DebugSymbol::ParameterInfo || frameInfo.symbol == DebugSymbol::LocalInfo) {
       return (const char*)frameInfo.addresses.source.nameRef;
    }
    else return nullptr;
@@ -1256,12 +1260,28 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
                      (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
             case DebugSymbol::ParameterAddress:
+            {
+               ustr_t className = getClassInfo(lineInfo[index + 2]);
+               addr_t vmtAddress = _provider.getClassAddress(className);
+
                item = readObject(watch, nullptr,
                   _process->getStackItem(
                      lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
-                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1, 
-                  getClassInfo(lineInfo[index + 2]));
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1,
+                  className, vmtAddress);
                break;
+            }
+            case DebugSymbol::LocalAddress:
+            {
+               ustr_t className = getClassInfo(lineInfo[index + 1]);
+               addr_t vmtAddress = _provider.getClassAddress(className);
+
+               item = readObject(watch, nullptr,
+                  _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1,
+                  className, vmtAddress);
+               break;
+            }
             default:
                break;
          }

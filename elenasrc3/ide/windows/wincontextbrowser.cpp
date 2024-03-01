@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Debug Context Browser Implementation File
-//                                             (C)2022, by Aleksey Rakov
+//                                             (C)2022-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wincontextbrowser.h"
@@ -17,10 +17,10 @@ typedef String<text_t, CAPTION_LEN> CaptrionString;
 
 // --- ContextBrowser --
 
-ContextBrowser :: ContextBrowser(int width, int height, NotifierBase* notifier, int expandNotificationId)
+ContextBrowser :: ContextBrowser(int width, int height, NotifierBase* notifier, BrowseEventInvoker browseInvoker)
    : TreeView(width, height, notifier, false, nullptr, false), _rootItem(nullptr)
 {
-   _expandNotificationId = expandNotificationId;
+   _browseInvoker = browseInvoker;
 }
 
 HWND ContextBrowser :: createControl(HINSTANCE instance, ControlBase* owner)
@@ -156,7 +156,7 @@ void ContextBrowser :: removeUnused(WatchItems& refreshedItems)
 
 void ContextBrowser :: onItemExpand(TreeViewItem item)
 {
-   //_notifier->notifyTreeItem(_expandNotificationId, (size_t)item, getParam(item));
+   _browseInvoker(_notifier, (size_t)item, getParam(item));
 }
 
 void ContextBrowser :: expandNode(size_t param)
@@ -168,6 +168,6 @@ void ContextBrowser :: refreshCurrentNode()
 {
    TreeViewItem current = getCurrent();
 
-   //_notifier->notifyTreeItem(_expandNotificationId, (size_t)current, getParam(current));
+   _browseInvoker(_notifier, (size_t)current, getParam(current));
 }
 

@@ -183,6 +183,16 @@ void IDENotificationFormatter :: sendTextContextMenuEvent(ContextMenuEvent* even
    app->notify(EVENT_TEXT_CONTEXTMENU, (NMHDR*)&nw);
 }
 
+void IDENotificationFormatter :: sendBrowseContextMenuEvent(BrowseEvent* event, WindowApp* app)
+{
+   BrowseNMHDR nw = {};
+
+   nw.item = event->Item();
+   nw.param = event->Param();
+
+   app->notify(EVENT_BROWSE_CONTEXT, (NMHDR*)&nw);
+}
+
 void IDENotificationFormatter :: sendMessage(EventBase* event, WindowApp* app)
 {
    switch (event->eventId()) {      
@@ -209,6 +219,9 @@ void IDENotificationFormatter :: sendMessage(EventBase* event, WindowApp* app)
          break;
       case EVENT_TEXT_CONTEXTMENU:
          sendTextContextMenuEvent(dynamic_cast<ContextMenuEvent*>(event), app);
+         break;
+      case EVENT_BROWSE_CONTEXT:
+         sendBrowseContextMenuEvent(dynamic_cast<BrowseEvent*>(event), app);
          break;
       default:
          assert(false);
@@ -531,11 +544,11 @@ void IDEWindow :: onDebugWatch()
    contextBrowser->expandRootNode();
 }
 
-void IDEWindow :: onDebugWatchBrowse(size_t item, size_t param)
+void IDEWindow :: onDebugWatchBrowse(BrowseNMHDR* rec)
 {
-   if (param) {
+   if (rec->param) {
       ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
-      _controller->refreshDebugContext(contextBrowser, _model, item, param);
+      _controller->refreshDebugContext(contextBrowser, _model, rec->item, rec->param);
    }
 }
 
@@ -925,17 +938,6 @@ void IDEWindow :: onRClick(NMHDR* hdr)
    }
 }
 
-//void IDEWindow :: onTreeItem(TreeItemNMHDR* rec)
-//{
-//   switch (rec->code) {
-//      case NOTIFY_DEBUG_CONTEXT_EXPANDED:
-//         onDebugWatchBrowse(rec->item, rec->param);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-
 void IDEWindow :: onContextMenu(ContextMenuNMHDR* rec)
 {
    Point p(rec->x, rec->y);
@@ -1160,6 +1162,9 @@ void IDEWindow :: onNotify(NMHDR* hdr)
          break;
       case EVENT_TEXT_CONTEXTMENU:
          onContextMenu((ContextMenuNMHDR*)hdr);
+         break;
+      case NOTIFY_DEBUG_CONTEXT_EXPANDED:
+         onDebugWatchBrowse((BrowseNMHDR*)hdr);
          break;
       case TCN_SELCHANGE:
          onTabSelChanged(hdr->hwndFrom);

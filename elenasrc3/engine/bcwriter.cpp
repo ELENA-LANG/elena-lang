@@ -3169,7 +3169,8 @@ void ByteCodeWriter :: saveYieldDispatch(CommandTape& tape, BuildNode node, Tape
    tape.setLabel();
 }
 
-inline void saveDebugSymbol(DebugSymbol symbol, int offset, ustr_t name, TapeScope& tapeScope)
+inline void saveDebugSymbol(DebugSymbol symbol, int offset, ustr_t name, TapeScope& tapeScope, 
+   ustr_t className = nullptr)
 {
    DebugLineInfo info = { symbol };
    info.addresses.local.offset = offset;
@@ -3178,6 +3179,13 @@ inline void saveDebugSymbol(DebugSymbol symbol, int offset, ustr_t name, TapeSco
    tapeScope.scope->debugStrings->writeString(name);
 
    tapeScope.scope->debug->write(&info, sizeof(info));
+
+   if (!emptystr(className)) {
+      DebugLineInfo classInfo = { DebugSymbol::LocalInfo };
+      classInfo.addresses.source.nameRef = tapeScope.scope->debugStrings->position();
+      tapeScope.scope->debug->write(&classInfo, sizeof(classInfo));
+      tapeScope.scope->debugStrings->writeString(className);
+   }
 }
 
 void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope)
@@ -3193,7 +3201,8 @@ void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node, TapeS
             saveDebugSymbol(DebugSymbol::Local, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
             break;
          case BuildKey::VariableAddress:
-            saveDebugSymbol(DebugSymbol::LocalAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            saveDebugSymbol(DebugSymbol::LocalAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), 
+               tapeScope, current.findChild(BuildKey::ClassName).identifier());
             break;
          case BuildKey::IntVariableAddress:
             saveDebugSymbol(DebugSymbol::IntLocalAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
