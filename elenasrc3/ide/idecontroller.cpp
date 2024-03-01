@@ -1574,12 +1574,6 @@ void IDEController :: onProgramStop(IDEModel* model)
    saveConfig(model, *path);
 }
 
-void IDEController :: onStatusChange(IDEModel* model, IDEStatus newStatus)
-{
-   //model->status = newStatus;
-   //_notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
-}
-
 void IDEController :: toggleBreakpoint(IDEModel* model, int row)
 {
    DocumentChangeStatus status = {};

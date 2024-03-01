@@ -26,8 +26,6 @@ In development:
     (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
     console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
   --------------------------------------
-    - ide debugger : display stack allocated structure variable
-
     - c_a_g
 
     - pi under 7 sec

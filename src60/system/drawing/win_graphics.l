@@ -127,7 +127,7 @@ public sealed struct Canvas
     
    close()
    {
-      _HDC := 0
+      _HDC := HDC.Default
    }
  
    setCaret(int x, int y)

@@ -97,6 +97,9 @@ public sealed const struct HDC
    static HDC Default
       = default;
 
+   handle Handle
+      = _handle;
+   
    constructor(handle h)
    {
       _handle := h
@@ -104,7 +107,7 @@ public sealed const struct HDC
 
    constructor newCompatible(HDC dc)
    {
-      handle newDC := extern GDI32.CreateCompatibleDC(dc);
+      handle newDC := extern GDI32.CreateCompatibleDC(dc.Handle);
 
       _handle := newDC
    }
@@ -121,22 +124,22 @@ public sealed const struct HDC
                         
    select(HBITMAP bitmapHandle)
    {
-      extern GDI32.SelectObject(_handle, bitmapHandle)
+      extern GDI32.SelectObject(_handle, bitmapHandle.Handle)
    }        
     
    select(HPEN penHandle)
    {
-      extern GDI32.SelectObject(_handle, penHandle)
+      extern GDI32.SelectObject(_handle, penHandle.Handle)
    }
     
    select(HBRUSH brushHandle)
    {
-      extern GDI32.SelectObject(_handle, brushHandle)
+      extern GDI32.SelectObject(_handle, brushHandle.Handle)
    }        
     
    copy(int destX, int destY, int width, int height, HDC dc, int sourX, int sourY, int flags)
    {
-      extern GDI32.BitBlt(_handle, destX, destY, width, height, dc, sourX, sourY, flags);
+      extern GDI32.BitBlt(_handle, destX, destY, width, height, dc.Handle, sourX, sourY, flags);
 
       int err := extern KERNEL32.GetLastError();
    }        
@@ -172,26 +175,27 @@ public sealed const struct HBITMAP
 
    constructor create(HDC dc, int width, int height)
    {
-      pointer h := extern GDI32.CreateCompatibleBitmap(dc, width, height);
-        
-      _handle := h
+      _handle := extern GDI32.CreateCompatibleBitmap(dc.Handle, width, height);
+      
+      int err := extern KERNEL32.GetLastError();
    }
 
    constructor load(wide path, int width, int height)
    {
-      pointer h := extern USER32.LoadImageW(
+      _handle := extern USER32.LoadImageW(
             0,   
             path,
             IMAGE_BITMAP,
             width, height,
             LR_LOADFROMFILE);
-        
-      _handle := h
    }                
+
+   handle Handle
+      = _handle;
         
    select(HDC handle)
    {
-      int retVal := extern GDI32.SelectObject(handle, _handle)
+      int retVal := extern GDI32.SelectObject(handle.Handle, _handle)
    }
     
    free()
@@ -209,20 +213,21 @@ public sealed const struct HPEN
    static HPEN Default
       = default;
 
-   constructor(int handle)
+   constructor(handle handle)
    {
       _handle := handle
    }
 
    bool IsEmpty()
-      = 0 == _handle;
+      = _handle.isUnassigned();
                         
    constructor create(int style, int width, int color)
    {
-      int h := extern GDI32.CreatePen(style, width, color);
-        
-      _handle := h
+      _handle := extern GDI32.CreatePen(style, width, color);
    }
+        
+   handle Handle
+      = _handle;
         
    free()
    {
@@ -239,17 +244,18 @@ public sealed const struct HBRUSH
    static HBRUSH Default
       = default;
 
-   constructor(int handle)
+   constructor(handle handle)
    {
       _handle := handle
    }
 
    constructor createSolid(int color)
    {
-      int h := extern GDI32.CreateSolidBrush(color);
-        
-      _handle := h
+      _handle := extern GDI32.CreateSolidBrush(color);
    }
+        
+   handle Handle
+      = _handle;
         
    free()
    {

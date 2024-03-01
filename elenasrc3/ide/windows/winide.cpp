@@ -544,6 +544,13 @@ void IDEWindow :: onDebugWatch()
    contextBrowser->expandRootNode();
 }
 
+void IDEWindow :: onDebugEnd()
+{
+   ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
+
+   contextBrowser->clearRootNode();
+}
+
 void IDEWindow :: onDebugWatchBrowse(BrowseNMHDR* rec)
 {
    if (rec->param) {
@@ -1001,6 +1008,8 @@ void IDEWindow :: onIDEStatusChange(ModelNMHDR* rec)
 
       onStatusBarChange();
       updateCompileMenu(true, true);
+
+      onDebugEnd();
    }
    else if (test(rec->status, STATUS_STATUS_CHANGED)) {
       onStatusBarChange();
@@ -1163,7 +1172,7 @@ void IDEWindow :: onNotify(NMHDR* hdr)
       case EVENT_TEXT_CONTEXTMENU:
          onContextMenu((ContextMenuNMHDR*)hdr);
          break;
-      case NOTIFY_DEBUG_CONTEXT_EXPANDED:
+      case EVENT_BROWSE_CONTEXT:
          onDebugWatchBrowse((BrowseNMHDR*)hdr);
          break;
       case TCN_SELCHANGE:

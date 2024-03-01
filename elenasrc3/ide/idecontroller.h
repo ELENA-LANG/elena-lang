@@ -241,7 +241,6 @@ namespace elena_lang
          text_str output, ErrorLogBase* log);
       void onDebuggerHook(IDEModel* model);
       void onDebuggerStop(IDEModel* model);
-      void onStatusChange(IDEModel* model, IDEStatus newStatus);
       void onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel* model);
       void onProgramRuning(IDEModel* model);
       void onDocSelection(IDEModel* model, int index);

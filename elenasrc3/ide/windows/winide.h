@@ -143,6 +143,7 @@ namespace elena_lang
       void onLayoutChange();
 
       void onDebugWatch();
+      void onDebugEnd();
 
       void onDoubleClick(NMHDR* hdr);
       void onRClick(NMHDR* hdr);
