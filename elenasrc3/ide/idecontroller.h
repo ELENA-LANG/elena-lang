@@ -185,9 +185,10 @@ namespace elena_lang
       bool doOpenProjectSourceByIndex(IDEModel* model, int index);
 
       bool selectSource(ProjectModel* model, SourceViewModel* sourceModel,
-         ustr_t moduleName, path_t sourcePath);
-      void traceSource(SourceViewModel* sourceModel, bool found, int row);
-      void onProgramFinish(SourceViewModel* sourceModel);
+         ustr_t moduleName, path_t sourcePath) override;
+      void traceSource(SourceViewModel* sourceModel, bool found, int row) override;
+      void onProgramStart(ProjectModel* model) override;
+      void onProgramFinish(SourceViewModel* sourceModel) override;
 
       void highlightError(IDEModel* model, int row, int column, path_t path);
 
@@ -239,7 +240,7 @@ namespace elena_lang
 
       void onCompilationCompletion(IDEModel* model, int exitCode, 
          text_str output, ErrorLogBase* log);
-      void onDebuggerHook(IDEModel* model);
+      void onDebuggerHook(ProjectModel* model);
       void onDebuggerStop(IDEModel* model);
       void onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel* model);
       void onProgramRuning(IDEModel* model);

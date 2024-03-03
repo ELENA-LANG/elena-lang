@@ -229,7 +229,6 @@ namespace elena_lang
       void refreshDebugNode();
 
       void onDebuggerStart();
-      void onDebuggerHook();
       void onDebuggerSourceNotFound();
       void onDocumentUpdate(DocumentChangeStatus& changeStatus);
 

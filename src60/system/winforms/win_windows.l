@@ -99,6 +99,13 @@ public closed class WindowCallback
       if (command == BN_CLICKED)
          { self.onClick(control); ^ self };      
    }
+
+   onWMClose(Handle hwnd)
+   {
+      extern {
+         extern USER32.DefWindowProcW(hwnd, WM_CLOSE, 0, 0);
+      }
+   }
 }
 
 // --- SDIWindowCallback ---
@@ -110,6 +117,11 @@ public class SDIWindowCallback : WindowCallback
 
       forward program.stop()
    }
+}
+
+// --- ChildWindowCallback ---
+public class ChildWindowCallback : WindowCallback
+{
 }
 
 // --- SDIWindowClass ---

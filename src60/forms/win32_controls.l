@@ -15,6 +15,8 @@ public interface IControl
 
    abstract open();
 
+   abstract close();
+
    abstract click();
 }
 
@@ -48,6 +50,10 @@ public abstract class BaseWinControl : BaseControl
         
       self.onCreate()
    }   
+
+   close()
+   {
+   }
 
    set Caption(string s)
    {
@@ -223,6 +229,16 @@ public abstract class BaseWinContainer : BaseWinControl
       int len := _controls.Length;
       for (int i := 0; i < len; i += 1) {
          _controls[i].open()
+      }
+   }
+
+   close()
+   {
+      super.close();
+        
+      int len := _controls.Length;
+      for (int i := 0; i < len; i += 1) {
+         _controls[i].close()
       }
    }
 }
@@ -506,8 +522,6 @@ class PaintboxListener : WindowCallback
 
    onWMPaint(Handle hwnd)
    {
-      super.onWMPaint(hwnd);
-
       _owner.paint();
    }
 
@@ -578,9 +592,9 @@ public closed class Paintbox : BaseWinControl, interface<IControl>
 
 public sealed class Imagebox : Paintbox
 {
-    HBITMAP  _image;
-    HDC      _imageDC;
-    bool     _needToRefresh;
+   HBITMAP  _image;
+   HDC      _imageDC;
+   bool     _needToRefresh;
 
    constructor new()
       <= super new()

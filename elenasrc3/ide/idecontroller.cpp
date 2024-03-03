@@ -887,7 +887,12 @@ void IDEController :: traceSource(SourceViewModel* sourceModel, bool found, int 
    _notifier->notify(&event);
 }
 
-void IDEController ::onProgramFinish(SourceViewModel* sourceModel)
+void IDEController :: onProgramStart(ProjectModel* model)
+{
+   onDebuggerHook(model);
+}
+
+void IDEController :: onProgramFinish(SourceViewModel* sourceModel)
 {
    int projectStatus = STATUS_DEBUGGER_STOPPED;
    DocumentChangeStatus docStatus = {};
@@ -1552,9 +1557,9 @@ bool IDEController :: onClose(FileDialogBase& dialog, MessageDialogBase& mssgDia
    return doCloseAll(dialog, mssgDialog, model);
 }
 
-void IDEController :: onDebuggerHook(IDEModel* model)
+void IDEController :: onDebuggerHook(ProjectModel* model)
 {
-   projectController.loadBreakpoints(model->projectModel);
+   projectController.loadBreakpoints(*model);
 }
 
 void IDEController :: onDebuggerStop(IDEModel* model)

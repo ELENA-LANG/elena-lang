@@ -1208,11 +1208,6 @@ void IDEWindow :: onDebuggerStart()
    contextBrowser->clearRootNode();
 }
 
-void IDEWindow :: onDebuggerHook()
-{
-   _controller->onDebuggerHook(_model);
-}
-
 void IDEWindow :: onDebuggerSourceNotFound()
 {
    MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);

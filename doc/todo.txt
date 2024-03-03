@@ -26,7 +26,9 @@ In development:
     (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
     console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
   --------------------------------------
-    - c_a_g
+    - debugger : struct self
+
+    - get rid of test GetLastError
 
     - pi under 7 sec
 

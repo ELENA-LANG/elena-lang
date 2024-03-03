@@ -5,6 +5,7 @@ define WM_CREATE         1;
 define WM_DESTROY        2;
 define WM_SIZE           5;
 define WM_PAINT         15;
+define WM_CLOSE         16;
 define WM_COMMAND      273;
 
 define GWL_USERDATA    -21;
@@ -48,6 +49,8 @@ procedure windProc (arg1,arg2,arg3,arg4)
   jeq         labSize
   cmp         n:WM_PAINT
   jeq         labPaint
+  cmp         n:WM_CLOSE
+  jeq         labClose
 
 labDefault:
   call        stdcall extern:USER32.DefWindowProcW(*hwnd,*msg,*wparam,*lparam)
@@ -103,6 +106,24 @@ labPaint:
   get         i:0
 
   vcall       mssg:"onWMPaint<system'Handle>[2]", class:"system'winforms'WindowCallback"
+
+  jump        labEnd
+
+labClose:
+  call        stdcall extern:USER32.GetWindowLongW(*hwnd,GWL_USERDATA)
+
+  cmp         n:0
+  jeq         labDefault
+  save        dp:ptr
+
+  set         dp:hwnd
+  store       sp:1
+
+  set         dp:ptr
+  get         i:0
+  get         i:0
+
+  vcall       mssg:"onWMClose<system'Handle>[2]", class:"system'winforms'WindowCallback"
 
   jump        labEnd
 

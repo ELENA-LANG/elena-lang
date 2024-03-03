@@ -110,46 +110,45 @@ public class MainWindow : SDIDialog
 
       // Radio Button ----------------------------------------------------------------
       Tconta.setRegion(7, 1, 150, 100);
-      Tconta.Caption := "Escolha do calculo";
+      Tconta.Caption := "Figure";
       Tconta
-         .appendItem("&Paralelogramos")
-         .appendItem("&Trapezio")
-         .appendItem("&Circulos")
-         .appendItem("&Triangulos");
+         .appendItem("&Parallelogram")
+         .appendItem("&Trapeze")
+         .appendItem("&Circle")
+         .appendItem("&Triangle");
 
       // Econta1
       Econta1.setRegion(7, 105, 150, 100);
-      Econta1.Caption := " Escolha do calculo ";
+      Econta1.Caption := " Figure variant ";
       Econta1
-         .appendItem("&Retangulo")
-         .appendItem("&Quadrado")
-         .appendItem("&Paralelogramo")
-         .appendItem("&Losango");
+         .appendItem("&Rectangle")
+         .appendItem("&Square")
+         .appendItem("&Parallelogram")
+         .appendItem("&Diamond");
 
       Econta2.setRegion(7, 105, 150, 100);
-      Econta2.Caption := " Escolha do calculo ";
+      Econta2.Caption := " Figure variant ";
       Econta2
-         .appendItem("&Retangulo")
+         .appendItem("&Rectangle")
          .appendItem("&Isosceles")
-         .appendItem("&Escaleno");
+         .appendItem("&Scalene");
       Econta2.Visible := false;
 
       Econta3.setRegion(7, 105, 150, 100);
-      Econta3.Caption := " Escolha do calculo ";
+      Econta3.Caption := " Figure variant ";
       Econta3
-         .appendItem("&Circulo")
-         .appendItem("&Coroa circular")
-         .appendItem("&Setor circular");
+         .appendItem("&Circle")
+         .appendItem("&Circular crown")
+         .appendItem("&Circular sector");
       Econta3.Visible := false;
 
       Econta4.setRegion(7, 105, 150, 100);
-      Econta4.Caption := " Escolha do calculo ";
+      Econta4.Caption := " Figure variant ";
       Econta4
-         .appendItem("&Qualquer")
-         .appendItem("&Retangulo")
-         .appendItem("&Func dos lados")
-         .appendItem("&Retangulo")
-         .appendItem("&Func lds ang");
+         .appendItem("&Common")
+         .appendItem("&Rectangle")
+         .appendItem("&Equilateral")
+         .appendItem("&Isosceles");
       Econta4.Visible := false;
 
       Tconta.SelectedIndex := 0;
@@ -164,16 +163,16 @@ public class MainWindow : SDIDialog
 
       // Buttons -----------------------------------------------------------------------
       BtmCalc.setRegion(430, 10, 150, 22);
-      BtmCalc.Caption := "Calcular";
+      BtmCalc.Caption := "Calculate";
         
       BtmInfo.setRegion(430, 40, 150, 22);
-      BtmInfo.Caption := "Infos";
+      BtmInfo.Caption := "About";
         
       BtmSalv.setRegion(430, 70, 150, 22);
-      BtmSalv.Caption := "Salvar";
+      BtmSalv.Caption := "Save";
 
       BtmSair.setRegion(430, 100, 150, 22);
-      BtmSair.Caption := "Sair";
+      BtmSair.Caption := "Exit";
 
       // Labels ------------------------------------------------------------------------
       valor.setRegion(170, 105, 245, 22);
@@ -195,24 +194,24 @@ public class MainWindow : SDIDialog
 
       _imageList.assign(_paintbox);
       _imageList.setRegion(0, 0, 379, 139);
-      _imageList.appendImage("..\formulas\Paralelogramos\bitmap1.bmp");
-      _imageList.appendImage("..\formulas\Paralelogramos\bitmap2.bmp");
-      _imageList.appendImage("..\formulas\Paralelogramos\bitmap3.bmp");
-      _imageList.appendImage("..\formulas\Paralelogramos\bitmap4.bmp");
+      _imageList.appendImage("formulas\Paralelogramos\bitmap1.bmp");
+      _imageList.appendImage("formulas\Paralelogramos\bitmap2.bmp");
+      _imageList.appendImage("formulas\Paralelogramos\bitmap3.bmp");
+      _imageList.appendImage("formulas\Paralelogramos\bitmap4.bmp");
 
-      _imageList.appendImage("..\formulas\Trapezio\bitmap1.bmp");
-      _imageList.appendImage("..\formulas\Trapezio\bitmap2.bmp");
-      _imageList.appendImage("..\formulas\Trapezio\bitmap3.bmp");
+      _imageList.appendImage("formulas\Trapezio\bitmap1.bmp");
+      _imageList.appendImage("formulas\Trapezio\bitmap2.bmp");
+      _imageList.appendImage("formulas\Trapezio\bitmap3.bmp");
 
-      _imageList.appendImage("..\formulas\Circulo\bitmap1.bmp");
-      _imageList.appendImage("..\formulas\Circulo\bitmap2.bmp");
-      _imageList.appendImage("..\formulas\Circulo\bitmap3.bmp");
+      _imageList.appendImage("formulas\Circulo\bitmap1.bmp");
+      _imageList.appendImage("formulas\Circulo\bitmap2.bmp");
+      _imageList.appendImage("formulas\Circulo\bitmap3.bmp");
         
-      _imageList.appendImage("..\formulas\Triangulos\bitmap1.bmp");
-      _imageList.appendImage("..\formulas\Triangulos\bitmap2.bmp");
-      _imageList.appendImage("..\formulas\Triangulos\bitmap3.bmp");
-      _imageList.appendImage("..\formulas\Triangulos\bitmap4.bmp");
-      _imageList.appendImage("..\formulas\Triangulos\bitmap5.bmp");
+      _imageList.appendImage("formulas\Triangulos\bitmap1.bmp");
+      _imageList.appendImage("formulas\Triangulos\bitmap2.bmp");
+      _imageList.appendImage("formulas\Triangulos\bitmap3.bmp");
+      _imageList.appendImage("formulas\Triangulos\bitmap4.bmp");
+      _imageList.appendImage("formulas\Triangulos\bitmap5.bmp");
 
       // Events ------------------------------------------------------------------------
       // Radio Buttons -----------------------------------------------------------------
@@ -227,8 +226,11 @@ public class MainWindow : SDIDialog
       BtmCalc.onClick := (args)
           { self.onButtonClick() };
        
-//        BtmInfo set onClick((args)
-//            { $self $onButtonClickInfo:$self }).
+      BtmInfo.onClick := (args)
+          { self.onButtonClickInfo() };
+
+      BtmSalv.onClick := (args)
+          { self.onButtonClickSave() };
 
       BtmSair.onClick := (args)
           { forward program.stop() }
@@ -266,7 +268,7 @@ public class MainWindow : SDIDialog
     
    private TipoDoObj(int index)
    {
-//      _imageList.SelectedIndex := index;
+      _imageList.SelectedIndex := index;
      
       valTres.Visible := false;
       valDois.Visible := false;
@@ -427,7 +429,7 @@ public class MainWindow : SDIDialog
             info.Caption := "Info: Al = Alfa ( angulo )"
          };
 
-      //_paintbox.refresh()
+      _paintbox.refresh()
    }            
  
     private onButtonClick()
@@ -522,8 +524,13 @@ public class MainWindow : SDIDialog
         valor.Caption := ("Res: " + result.toString() + " m^2");
     }
     
-//    private onButtonClickInfo(form)
-//    {
-//        //calc_area_gui'InfoForm new parent:aForm; run.
-//    }
+    private onButtonClickInfo()
+    {
+        InfoForm.new(self).run()
+    }
+    
+    private onButtonClickSave()
+    {
+        SaveForm.new(self, valor.Caption).run()
+    }
 }

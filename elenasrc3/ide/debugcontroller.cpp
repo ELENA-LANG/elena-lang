@@ -857,6 +857,8 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
    // if there are new records in debug section
    if (!reader.eof()) {
       _provider.load(reader, starting, _process);
+      
+      _sourceController->onProgramStart(_model);
 
       _provider.setDebugInfoSize(reader.position());
 
