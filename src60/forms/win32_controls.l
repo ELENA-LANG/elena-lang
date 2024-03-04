@@ -626,8 +626,6 @@ public sealed class Imagebox : Paintbox
         
       dc.copy(0, 0, width, height, _imageDC, 0, 0, SRCCOPY);
 
-//        int err := system'external'KERNEL32 GetLastError.
-                
       struct.end(_handle)
    }
 

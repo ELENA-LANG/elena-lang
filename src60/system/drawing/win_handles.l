@@ -140,8 +140,6 @@ public sealed const struct HDC
    copy(int destX, int destY, int width, int height, HDC dc, int sourX, int sourY, int flags)
    {
       extern GDI32.BitBlt(_handle, destX, destY, width, height, dc.Handle, sourX, sourY, flags);
-
-      int err := extern KERNEL32.GetLastError();
    }        
 
    moveTo(int x, int y)
@@ -176,8 +174,6 @@ public sealed const struct HBITMAP
    constructor create(HDC dc, int width, int height)
    {
       _handle := extern GDI32.CreateCompatibleBitmap(dc.Handle, width, height);
-      
-      int err := extern KERNEL32.GetLastError();
    }
 
    constructor load(wide path, int width, int height)

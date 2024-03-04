@@ -108,7 +108,7 @@ class BaseFileDialog
       struct.lStructSize := 88;
       struct.hwndOwner := _parent.Handle;
       struct.hInstance := CurrentInstance.Handle;
-      struct.lpstrFilter := _filters;
+      struct.lpstrFilter := filters;
       struct.nFilterIndex := _filterIndex;
       struct.lpstrFile := fileName;
       struct.nMaxFile := maxFile;

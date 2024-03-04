@@ -1720,13 +1720,17 @@ SizeInfo CompilerLogic :: defineStructSize(ClassInfo& info)
 
 SizeInfo CompilerLogic :: defineStructSize(ModuleScopeBase& scope, ref_t reference)
 {
+   if (!reference)
+      return {};
+
    auto sizeInfo = scope.cachedSizes.get(reference);
    if (!sizeInfo.size) {
       ClassInfo classInfo;
       if (defineClassInfo(scope, classInfo, reference)) {
          sizeInfo = defineStructSize(classInfo);
 
-         scope.cachedSizes.add(reference, sizeInfo);
+         if (sizeInfo.size)
+            scope.cachedSizes.add(reference, sizeInfo);
 
          return sizeInfo;
       }
@@ -2022,6 +2026,16 @@ inline mssg_t resolveNonpublic(mssg_t weakMessage, ClassInfo& info, bool selfCal
    return nonpublicMessage;
 }
 
+inline ref_t mapWeakSignature(ModuleScopeBase& scope, int counter)
+{
+   ref_t signatures[ARG_COUNT] = { 0 };
+   ref_t signatureLen = counter;
+   for (int i = 0; i < counter; i++)
+      signatures[i] = scope.buildins.superReference;
+
+   return scope.module->mapSignature(signatures, signatureLen, false);
+}
+
 mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, 
    ref_t implicitSignatureRef, int& stackSafeAttr, bool selfCall)
 {
@@ -2036,6 +2050,10 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
       // check if it is non public message
       mssg_t nonPublicMultiMessage = resolveNonpublic(weakMessage, info, selfCall, scope.isInternalOp(targetRef));
       if (nonPublicMultiMessage != 0) {
+         if (!implicitSignatureRef && test(nonPublicMultiMessage, STATIC_MESSAGE) && getArgCount(weakMessage) > 1) {
+            implicitSignatureRef = mapWeakSignature(scope, getArgCount(weakMessage) - 1);
+         }
+
          mssg_t resolved = resolveMultimethod(scope, nonPublicMultiMessage, targetRef, implicitSignatureRef, stackSafeAttr, selfCall);
          if (!resolved) {
             return nonPublicMultiMessage;

@@ -6762,8 +6762,23 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       arguments[argLen++] = retrieveType(scope, messageArguments[2]);
    }
 
-   if (operatorId == SET_INDEXER_OPERATOR_ID && isPrimitiveArray(arguments[0])) {
-      if (_logic->isCompatible(*scope.moduleScope, { arguments[1] }, { loperand.typeInfo.elementRef }, false))
+   if (operatorId == SET_INDEXER_OPERATOR_ID) {
+      //if (messageArguments[1].kind == ObjectKind::IntLiteral) {
+      //   // HOTFIX : try to use int literal directly if possible
+      //}
+      //switch (arguments[0]) {
+      //   case V_INT16ARRAY:
+      //   case V_INT8ARRAY:
+      //   case V_BINARYARRAY:
+      //      if (messageArguments[1].kind == ObjectKind::IntLiteral) {
+      //         arguments[1] = convertIntLiteral(scope, node, messageArguments[1], loperand.typeInfo.elementRef).typeInfo.typeRef;
+      //      }
+      //      break;
+      //   default:
+      //      break;
+      //}
+
+      if (isPrimitiveArray(arguments[0]) && _logic->isCompatible(*scope.moduleScope, { arguments[1] }, { loperand.typeInfo.elementRef }, false))
          // HOTFIX : for the generic binary array, recognize the element type
          arguments[1] = V_ELEMENT;
    }
@@ -10729,7 +10744,7 @@ void Compiler :: beginMethod(BuildTreeWriter& writer, MethodScope& scope, Syntax
 
       writer.newNode(BuildKey::Tape);
 
-      writeParameterDebugInfo(writer, scope);
+      writeMethodDebugInfo(writer, scope);
       writeMessageInfo(writer, scope);
 
    }
@@ -11630,63 +11645,72 @@ void Compiler :: writeMessageInfo(BuildTreeWriter& writer, MethodScope& scope)
    writer.appendNode(BuildKey::MethodName, *methodName);
 }
 
-void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& scope)
+void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, int size, TypeInfo typeInfo, 
+   ustr_t name, int index)
 {
-   writer.newNode(BuildKey::ParameterInfo);
+   if (size > 0) {
+      if (typeInfo.typeRef == scope.moduleScope->buildins.intReference) {
+         writer.newNode(BuildKey::IntParameterAddress, name);
+      }
+      else if (typeInfo.typeRef == scope.moduleScope->buildins.longReference) {
+         writer.newNode(BuildKey::LongParameterAddress, name);
+      }
+      else if (typeInfo.typeRef == scope.moduleScope->buildins.realReference) {
+         writer.newNode(BuildKey::RealParameterAddress, name);
+      }
+      else {
+         writer.newNode(BuildKey::ParameterAddress, name);
+
+         ref_t classRef = typeInfo.typeRef;
+         if (isPrimitiveRef(classRef))
+            classRef = resolvePrimitiveType(scope, typeInfo, true);
+
+         ustr_t className = scope.moduleScope->module->resolveReference(classRef);
+         if (isWeakReference(className)) {
+            IdentifierString fullName(scope.module->name());
+            fullName.append(className);
+
+            writer.appendNode(BuildKey::ClassName, *fullName);
+         }
+         else writer.appendNode(BuildKey::ClassName, className);
+      }
+   }
+   else if (size < 0) {
+      if (typeInfo.typeRef == V_INT16ARRAY) {
+         writer.newNode(BuildKey::ShortArrayParameter, name);
+      }
+      else if (typeInfo.typeRef == V_INT8ARRAY) {
+         writer.newNode(BuildKey::ByteArrayParameter, name);
+      }
+      else if (typeInfo.typeRef == V_INT32ARRAY) {
+         writer.newNode(BuildKey::IntArrayParameter, name);
+      }
+      else writer.newNode(BuildKey::Parameter, name); // !! temporal
+   }
+   else writer.newNode(BuildKey::Parameter, name);
+
+   writer.appendNode(BuildKey::Index, index);
+   writer.closeNode();
+
+}
+
+void Compiler :: writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope)
+{
+   writer.newNode(BuildKey::ArgumentsInfo);
 
    if (!scope.functionMode) {
-      writer.newNode(BuildKey::Parameter, "self");
-      writer.appendNode(BuildKey::Index, -1);
-      writer.closeNode();
+      ref_t classRef = scope.getClassRef();
+
+      writeParameterDebugInfo(writer, scope, _logic->defineStructSize(*scope.moduleScope, classRef).size,
+         { classRef }, "self", -1);
    }
 
    int prefix = scope.functionMode ? 0 : -1;
    for (auto it = scope.parameters.start(); !it.eof(); ++it) {
       auto paramInfo = *it;
 
-      if (paramInfo.size > 0) {
-         if (paramInfo.typeInfo.typeRef == scope.moduleScope->buildins.intReference) {
-            writer.newNode(BuildKey::IntParameterAddress, it.key());
-         }
-         else if (paramInfo.typeInfo.typeRef == scope.moduleScope->buildins.longReference) {
-            writer.newNode(BuildKey::LongParameterAddress, it.key());
-         }
-         else if (paramInfo.typeInfo.typeRef == scope.moduleScope->buildins.realReference) {
-            writer.newNode(BuildKey::RealParameterAddress, it.key());
-         }
-         else {
-            writer.newNode(BuildKey::ParameterAddress, it.key());
-
-            ref_t classRef = paramInfo.typeInfo.typeRef;
-            if (isPrimitiveRef(classRef))
-               classRef = resolvePrimitiveType(scope, paramInfo.typeInfo, true);
-
-            ustr_t className = scope.moduleScope->module->resolveReference(classRef);
-            if (isWeakReference(className)) {
-               IdentifierString fullName(scope.module->name());
-               fullName.append(className);
-
-               writer.appendNode(BuildKey::ClassName, *fullName);
-            }
-            else writer.appendNode(BuildKey::ClassName, className);
-         }
-      }
-      else if (paramInfo.size < 0) {
-         if (paramInfo.typeInfo.typeRef == V_INT16ARRAY) {
-            writer.newNode(BuildKey::ShortArrayParameter, it.key());
-         }
-         else if (paramInfo.typeInfo.typeRef == V_INT8ARRAY) {
-            writer.newNode(BuildKey::ByteArrayParameter, it.key());
-         }
-         else if (paramInfo.typeInfo.typeRef == V_INT32ARRAY) {
-            writer.newNode(BuildKey::IntArrayParameter, it.key());
-         }
-         else writer.newNode(BuildKey::Parameter, it.key()); // !! temporal
-      }
-      else writer.newNode(BuildKey::Parameter, it.key());
-
-      writer.appendNode(BuildKey::Index, prefix - paramInfo.offset);
-      writer.closeNode();
+      writeParameterDebugInfo(writer, scope, paramInfo.size, paramInfo.typeInfo, 
+         it.key(), prefix - paramInfo.offset);
    }
 
    writer.closeNode();

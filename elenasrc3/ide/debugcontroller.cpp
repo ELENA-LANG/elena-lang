@@ -1012,7 +1012,7 @@ void* DebugController :: readIntArrayLocal(ContextBrowserBase* watch, void* pare
          unsigned int b = _process->getDWORD(address + i * 4);
 
          value.copy("[");
-         value.appendInt(i);
+         value.appendInt((int)i);
          value.append("]");
 
          WatchContext context = { item, address + i * 4};

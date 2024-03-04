@@ -194,7 +194,7 @@ namespace elena_lang
       IntArrayAddress      = 0x00B8,
       UIntVariableAddress  = 0x00B9,
 
-      ParameterInfo        = 0x00C0,
+      ArgumentsInfo        = 0x00C0,
       Parameter            = 0x00C1,
       IntParameterAddress  = 0x00C2,
       LongParameterAddress = 0x00C3,

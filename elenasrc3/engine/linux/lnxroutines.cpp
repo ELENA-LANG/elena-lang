@@ -19,6 +19,17 @@ using namespace elena_lang;
 
 static uintptr_t CriticalHandler = 0;
 
+
+void SystemRoutineProvider :: OSWind()
+{
+
+}
+
+void SystemRoutineProvider :: OSUnwind()
+{
+
+}
+
 void* SystemRoutineProvider::RetrieveMDataPtr(void* imageBase, pos_t imageLength)
 {
    ImageSection header(imageBase, imageLength);

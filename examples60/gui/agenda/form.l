@@ -161,13 +161,13 @@ public class MainWindow : SDIDialog
       // Save
       BtmSave.onClick := (args)
          {
-            var dialog := SaveFileDialog.new(self);
+            var dialog := OpenFileDialog.new(self);
             dialog.addFilter("Text Files", "*.txt");
             dialog.Caption := "Select a file";
                 
             if (dialog.run())
             {
- /*              _savedFile := File.assign(dialog.Selected);
+               _savedFile := File.assign(dialog.Selected);
                     
                var writer := _savedFile.logger();
                     
@@ -181,7 +181,7 @@ public class MainWindow : SDIDialog
 
                writer.close();
 
-               BtmDelTxt.Enabled := true*/
+               BtmDelTxt.Enabled := true
             }
          };
         

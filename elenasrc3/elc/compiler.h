@@ -1278,7 +1278,9 @@ namespace elena_lang
       ref_t compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, 
          ArgumentsInfo& arguments, ref_t expectedSignRef, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs, bool& variadicArgList);
 
-      void writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& scope);
+      void writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, int size, TypeInfo typeInfo, 
+         ustr_t name, int index);
+      void writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope);
       void writeMessageInfo(BuildTreeWriter& writer, MethodScope& scope);
 
       void compileInlineInitializing(BuildTreeWriter& writer, ClassScope& classScope, SyntaxNode node);

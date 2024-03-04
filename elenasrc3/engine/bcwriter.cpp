@@ -3254,7 +3254,7 @@ inline void saveParameterDebugSymbol(DebugSymbol symbol, int offset, ustr_t name
    }
 }
 
-void ByteCodeWriter :: saveParameterInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope)
+void ByteCodeWriter :: saveArgumentsInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope)
 {
    BuildNode current = node.firstChild();
    while (current != BuildKey::None) {
@@ -3322,9 +3322,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             // declaring variables / setting array size
             saveVariableInfo(tape, current, tapeScope);
             break;
-         case BuildKey::ParameterInfo:
+         case BuildKey::ArgumentsInfo:
             // declaring variables / setting array size
-            saveParameterInfo(tape, current, tapeScope);
+            saveArgumentsInfo(tape, current, tapeScope);
             break;
          case BuildKey::MethodName:
             // declaring variables / setting array size

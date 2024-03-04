@@ -14,7 +14,7 @@ In development:
   ide:backlog (#617), vm debugger, debugger watch - struct
   tools:work with elt in ide
   prom:#635,elena in nutshell every 2 week
-  port:xforms, x86 mt, x86-64 vm,elenavm / elt for linux
+  port:x86 mt, x86-64 vm,elenavm / elt for linux
   --------------------------------------
   - #620 - resolve several points
     - redirect abstract byref handler
@@ -25,29 +25,23 @@ In development:
   - dev : redesign switch statement : it should be possible to use as an expression as well
     (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
     console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
-  --------------------------------------
-    - debugger : struct self
-
-    - get rid of test GetLastError
-
     - pi under 7 sec
-
     - step over - to the same row - must be auto skipped?
     - fix #634
 
-    - agenda
-
+    - Sorting algorithms/Sleep sort
+  --------------------------------------
+    - #588 - Operation with int constant
+    - optimization: it should be possible to convert int literal directly to v_int8 / v_int16 / v_int64, depending on the value size 
     - operation with an array :
          short tmp[1024];
          tmp[0] := 0;
-
-    - Sorting algorithms/Sleep sort
 
     - gui samples
 
   === Iteration 21 ===
   --------------------------------------
-  dev: 
+  dev: windows executable - support manifest
   op:
   opt:pi under 6 sec
   maint:#620
@@ -68,4 +62,4 @@ In development:
   ide:
   tools:
   prom:
-  port:
+  port:xforms

@@ -1,14 +1,12 @@
 import extensions;
 
-struct XY
-{
-   int x := 2;
-   int y := 3;
-}
-
 public program()
 {
-   XY xy := new XY();
+//   short tmp[1024];
+//   byte tmp[1024];
+//   tmp[0] := 0;
 
-   
+   long n := 2;
+
+   long r := n + 1;
 }
