@@ -2751,3 +2751,24 @@ bool CompilerLogic :: clearMetaData(ModuleScopeBase* moduleScope, ustr_t name)
 
    return true;
 }
+
+ref_t CompilerLogic :: retrievePrimitiveType(ModuleScopeBase& scope, ref_t reference)
+{
+   if (!reference || isPrimitiveRef(reference))
+      return reference;
+
+   ClassInfo info;
+   if (!scope.loadClassInfo(info, reference))
+      return 0;
+
+   if (isWrapper(info)) {
+      auto inner = *info.fields.start();
+
+      if (isPrimitiveRef(inner.typeInfo.typeRef))
+         return inner.typeInfo.typeRef;
+
+      return retrievePrimitiveType(scope, inner.typeInfo.typeRef);
+   }
+
+   return 0;
+}

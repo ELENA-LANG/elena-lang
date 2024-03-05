@@ -100,6 +100,9 @@ public abstract class BaseControl
       _region.set(x, y, width, height);
    }
 
+   Region Region
+      = _region;
+
    protected constructor new()
    {
       _visible := true;

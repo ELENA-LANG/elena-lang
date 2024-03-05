@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPILER_H
@@ -309,6 +309,7 @@ namespace elena_lang
       bool evalObjArrayOp(ref_t operator_id, ArgumentsInfo& args);
       bool evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
       bool evalIntOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
+      bool evalRealOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
 
    public:
       ObjectInfo mapStringConstant(ustr_t s);
@@ -1310,7 +1311,9 @@ namespace elena_lang
       ObjectInfo typecastObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
       ObjectInfo convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, 
          ref_t targetRef, bool dynamicRequired, bool withoutBoxing);
-      ObjectInfo convertIntLiteral(ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
+      ObjectInfo convertIntLiteral(ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef, bool ignoreError = false);
+
+      void convertIntLiteralForOperation(ExprScope& scope, SyntaxNode node, int operatorId, ArgumentsInfo& messageArguments);
 
       bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);
 

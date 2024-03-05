@@ -52,6 +52,13 @@ md %~dp0\output32\examples60\rosetta\reverse_words_in_string
 md %~dp0\output32\examples60\rosetta\smavg 
 md %~dp0\output32\examples60\rosetta\string_append 
 
+md %~dp0\output32\examples60\gui\c_a_g
+md %~dp0\output32\examples60\gui\c_a_g\formulas
+md %~dp0\output32\examples60\gui\c_a_g\formulas\Circulo
+md %~dp0\output32\examples60\gui\c_a_g\formulas\Paralelogramos 
+md %~dp0\output32\examples60\gui\c_a_g\formulas\Trapezio 
+md %~dp0\output32\examples60\gui\c_a_g\formulas\Triangulos 
+
 copy %~dp0\..\bin\asm-cli.exe %~dp0\output32\bin
 copy %~dp0\..\bin\elena-cli.exe %~dp0\output32\bin
 copy %~dp0\..\bin\elena-ide.exe %~dp0\output32\bin
@@ -87,9 +94,21 @@ md %~dp0\output32\src60\extensions
 xcopy %~dp0\..\src60\extensions\*.l %~dp0\output32\src60\extensions /s
 xcopy %~dp0\..\src60\extensions\*.prj %~dp0\output32\src60\extensions /s
 
+md %~dp0\output32\src60\algorithms
+xcopy %~dp0\..\src60\algorithms\*.l %~dp0\output32\src60\algorithms /s
+xcopy %~dp0\..\src60\algorithms\*.prj %~dp0\output32\src60\algorithms /s
+
 md %~dp0\output32\src60\cellular
 xcopy %~dp0\..\src60\cellular\*.l %~dp0\output32\src60\cellular /s
 xcopy %~dp0\..\src60\cellular\*.prj %~dp0\output32\src60\cellular /s
+
+md %~dp0\output32\src60\sqlite
+xcopy %~dp0\..\src60\sqlite\*.l %~dp0\output32\src60\sqlite /s
+xcopy %~dp0\..\src60\sqlite\*.prj %~dp0\output32\src60\sqlite /s
+
+md %~dp0\output32\src60\forms
+xcopy %~dp0\..\src60\forms\*.l %~dp0\output32\src60\forms /s
+xcopy %~dp0\..\src60\forms\*.prj %~dp0\output32\src60\forms /s
 
 %~dp0\..\bin\sg-cli.exe %~dp0\..\dat\sg\syntax60.txt
 @echo off 
@@ -209,6 +228,14 @@ copy %~dp0\..\examples60\rosetta\reverse_words_in_string\*.l %~dp0\output32\exam
 copy %~dp0\..\examples60\rosetta\smavg\*.l %~dp0\output32\examples60\rosetta\smavg
 copy %~dp0\..\examples60\rosetta\string_append\*.l %~dp0\output32\examples60\rosetta\string_append
 copy %~dp0\..\examples60\rosetta\twentyfour\*.l %~dp0\output32\examples60\rosetta\twentyfour
+
+copy %~dp0\..\examples60\gui\c_a_g\*.l %~dp0\output32\examples60\gui\c_a_g
+copy %~dp0\..\examples60\gui\c_a_g\*.prj %~dp0\output32\examples60\gui\c_a_g
+
+copy %~dp0\..\examples60\gui\c_a_g\formulas\Circulo\*.bmp %~dp0\output32\examples60\gui\c_a_g\formulas\Circulo
+copy %~dp0\..\examples60\gui\c_a_g\formulas\Paralelogramos\*.bmp %~dp0\output32\examples60\gui\c_a_g\formulas\Paralelogramos
+copy %~dp0\..\examples60\gui\c_a_g\formulas\Trapezio\*.bmp %~dp0\output32\examples60\gui\c_a_g\formulas\Trapezio
+copy %~dp0\..\examples60\gui\c_a_g\formulas\Triangulos\*.bmp %~dp0\output32\examples60\gui\c_a_g\formulas\Triangulos
 
 7z a %~dp0\output32\%1.zip %~dp0\output32\*.* %~dp0\output32\* -r
 

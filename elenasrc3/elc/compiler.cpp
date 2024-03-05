@@ -162,6 +162,36 @@ inline bool areConstants(ArgumentsInfo& args)
    return true;
 }
 
+inline ref_t mapLongConstant(Compiler::Scope& scope, long long integer)
+{
+   String<char, 40> s;
+
+   // convert back to string as a decimal integer
+   s.appendLong(integer, 16);
+
+   return scope.moduleScope->module->mapConstant(s.str());
+}
+
+inline ref_t mapUIntConstant(Compiler::Scope& scope, int integer)
+{
+   String<char, 20> s;
+
+   // convert back to string as a decimal integer
+   s.appendUInt(integer, 16);
+
+   return scope.moduleScope->module->mapConstant(s.str());
+}
+
+inline ref_t mapFloat64Const(ModuleBase* module, double val)
+{
+   String<char, 30> s;
+
+   // convert back to string as a decimal integer
+   s.appendDouble(val);
+
+   return module->mapConstant(s.str());
+}
+
 // --- Interpreter ---
 
 Interpreter :: Interpreter(ModuleScopeBase* scope, CompilerLogic* logic)
@@ -508,6 +538,46 @@ bool Interpreter :: evalIntOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo
    return false;
 }
 
+bool Interpreter :: evalRealOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
+{
+   ObjectInfo loperand = args[0];
+   ObjectInfo roperand = args[1];
+
+   double lvalue = 0;
+   double rvalue = 0;
+
+   if (loperand.kind == ObjectKind::Float64Literal && roperand.kind == ObjectKind::Float64Literal) {
+      ustr_t valueStr = _scope->module->resolveConstant(loperand.reference);
+      lvalue = StrConvertor::toDouble(valueStr);
+
+      valueStr = _scope->module->resolveConstant(roperand.reference);
+      rvalue = StrConvertor::toDouble(valueStr);
+   }
+   else return false;
+
+   double result = 0;
+   switch (operator_id) {
+      case ADD_OPERATOR_ID:
+         result = lvalue + rvalue;
+         break;
+      case SUB_OPERATOR_ID:
+         result = lvalue - rvalue;
+         break;
+      case MUL_OPERATOR_ID:
+         result = lvalue * rvalue;
+         break;
+      case DIV_OPERATOR_ID:
+         result = lvalue / rvalue;
+         break;
+      default:
+         return false;
+   }
+
+   retVal = { ObjectKind::Float64Literal, { V_FLOAT64 }, ::mapFloat64Const(_scope->module, result) };
+
+   return true;
+}
+
 bool Interpreter :: evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
 {
    ObjectInfo loperand = args[0];
@@ -557,6 +627,8 @@ bool Interpreter :: eval(BuildKey key, ref_t operator_id, ArgumentsInfo& argumen
          return evalDeclOp(operator_id, arguments, retVal);
       case BuildKey::IntOp:
          return evalIntOp(operator_id, arguments, retVal);
+      case BuildKey::RealOp:
+         return evalRealOp(operator_id, arguments, retVal);
       default:
          return false;
    }
@@ -6745,9 +6817,75 @@ inline bool isPrimitiveArray(ref_t typeRef)
    }
 }
 
+inline bool DoesOperationSupportConvertableIntLiteral(int operatorId)
+{
+   switch (operatorId) {
+      case ADD_OPERATOR_ID:
+      case SUB_OPERATOR_ID:
+      case LESS_OPERATOR_ID:
+      case EQUAL_OPERATOR_ID:
+      case NOTEQUAL_OPERATOR_ID:
+      case ELSE_OPERATOR_ID:
+      case MUL_OPERATOR_ID:
+      case DIV_OPERATOR_ID:
+      case NOTLESS_OPERATOR_ID:
+      case GREATER_OPERATOR_ID:
+      case NOTGREATER_OPERATOR_ID:
+      case BAND_OPERATOR_ID:
+      case BOR_OPERATOR_ID:
+      case BXOR_OPERATOR_ID:
+      case BNOT_OPERATOR_ID:
+      case AND_OPERATOR_ID:
+      case OR_OPERATOR_ID:
+      case XOR_OPERATOR_ID:
+      case ADD_ASSIGN_OPERATOR_ID:
+      case SUB_ASSIGN_OPERATOR_ID:
+      case MUL_ASSIGN_OPERATOR_ID:
+      case DIV_ASSIGN_OPERATOR_ID:
+      case SET_INDEXER_OPERATOR_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
+void Compiler :: convertIntLiteralForOperation(ExprScope& scope, SyntaxNode node, int operatorId, ArgumentsInfo& messageArguments)
+{
+   if (!DoesOperationSupportConvertableIntLiteral(operatorId))
+      return;
+
+   ObjectInfo literal = {};
+   ref_t loperandRef = messageArguments[0].typeInfo.typeRef;
+   switch (loperandRef) {
+      case V_INT16ARRAY:
+         literal = convertIntLiteral(scope, node, messageArguments[1], V_INT16, true);
+         break;
+      case V_INT8ARRAY:
+         literal = convertIntLiteral(scope, node, messageArguments[1], V_INT8, true);
+         break;
+      case V_BINARYARRAY:
+         literal = convertIntLiteral(scope, node, messageArguments[1], _logic->retrievePrimitiveType(*scope.moduleScope, messageArguments[0].typeInfo.elementRef), true);
+         break;
+      default:
+      {
+         literal = convertIntLiteral(scope, node, messageArguments[1], _logic->retrievePrimitiveType(*scope.moduleScope, loperandRef), true);
+
+         break;
+      }         
+   }
+
+   if (literal.kind != ObjectKind::Unknown)
+      messageArguments[1] = literal;
+}
+
 ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ArgumentsInfo& messageArguments,
    int operatorId, ref_t expectedRef, ArgumentsInfo* updatedOuterArgs)
 {
+   if (messageArguments.count() > 1 && messageArguments[1].kind == ObjectKind::IntLiteral) {
+      // try to typecast int literal if possible
+      convertIntLiteralForOperation(scope, node, operatorId, messageArguments);
+   }
+
    WriterContext context = { &writer, &scope, node };
 
    ObjectInfo loperand = messageArguments[0];
@@ -6763,21 +6901,6 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
    }
 
    if (operatorId == SET_INDEXER_OPERATOR_ID) {
-      //if (messageArguments[1].kind == ObjectKind::IntLiteral) {
-      //   // HOTFIX : try to use int literal directly if possible
-      //}
-      //switch (arguments[0]) {
-      //   case V_INT16ARRAY:
-      //   case V_INT8ARRAY:
-      //   case V_BINARYARRAY:
-      //      if (messageArguments[1].kind == ObjectKind::IntLiteral) {
-      //         arguments[1] = convertIntLiteral(scope, node, messageArguments[1], loperand.typeInfo.elementRef).typeInfo.typeRef;
-      //      }
-      //      break;
-      //   default:
-      //      break;
-      //}
-
       if (isPrimitiveArray(arguments[0]) && _logic->isCompatible(*scope.moduleScope, { arguments[1] }, { loperand.typeInfo.elementRef }, false))
          // HOTFIX : for the generic binary array, recognize the element type
          arguments[1] = V_ELEMENT;
@@ -9074,36 +9197,6 @@ ObjectInfo Compiler :: mapConstant(Scope& scope, SyntaxNode node)
    return { ObjectKind::ConstantLiteral, { V_WORD32 }, scope.module->mapConstant(node.identifier()) };
 }
 
-inline ref_t mapLongConstant(Compiler::Scope& scope, long long integer)
-{
-   String<char, 40> s;
-
-   // convert back to string as a decimal integer
-   s.appendLong(integer, 16);
-
-   return scope.moduleScope->module->mapConstant(s.str());
-}
-
-inline ref_t mapUIntConstant(Compiler::Scope& scope, int integer)
-{
-   String<char, 20> s;
-
-   // convert back to string as a decimal integer
-   s.appendUInt(integer, 16);
-
-   return scope.moduleScope->module->mapConstant(s.str());
-}
-
-inline ref_t mapFloat64Const(Compiler::Scope& scope, double val)
-{
-   String<char, 30> s;
-
-   // convert back to string as a decimal integer
-   s.appendDouble(val);
-
-   return scope.moduleScope->module->mapConstant(s.str());
-}
-
 ObjectInfo Compiler :: mapIntConstant(Scope& scope, SyntaxNode node, int radix)
 {
    int integer = StrConvertor::toInt(node.identifier(), radix);
@@ -9141,22 +9234,34 @@ ObjectInfo Compiler :: mapLongConstant(Scope& scope, SyntaxNode node, int radix)
    return { ObjectKind::LongLiteral, { V_INT64 }, ::mapLongConstant(scope, integer)};
 }
 
-ObjectInfo Compiler :: mapFloat64Constant(Scope& scope, SyntaxNode node)
+inline bool defineFloat64Constant(ustr_t val, ModuleBase* module, ObjectInfo& retVal)
 {
    double real = 0;
 
-   ustr_t val = node.identifier();
    if (val.endsWith("r")) {
       String<char, 50> tmp(val);
       tmp.truncate(tmp.length() - 1);
 
       real = StrConvertor::toDouble(tmp.str());
    }
-   else real = StrConvertor::toDouble(node.identifier());
+   else real = StrConvertor::toDouble(val);
    if (errno == ERANGE)
-      scope.raiseError(errInvalidIntNumber, node);
+      return false;
 
-   return { ObjectKind::Float64Literal, { V_FLOAT64 }, ::mapFloat64Const(scope, real) };
+   retVal = { ObjectKind::Float64Literal, { V_FLOAT64 }, ::mapFloat64Const(module, real) };
+
+   return true;
+}
+
+ObjectInfo Compiler :: mapFloat64Constant(Scope& scope, SyntaxNode node)
+{
+   ObjectInfo retVal = {};
+
+   if (!defineFloat64Constant(node.identifier(), scope.module, retVal)) {
+      scope.raiseError(errInvalidIntNumber, node);
+   }
+
+   return retVal;
 }
 
 ObjectInfo Compiler :: mapMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef)
@@ -9601,37 +9706,41 @@ inline bool isNormalConstant(ObjectInfo info)
    }
 }
 
-ObjectInfo Compiler :: convertIntLiteral(ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef)
+ObjectInfo Compiler :: convertIntLiteral(ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef, bool ignoreError)
 {
+   bool invalid = false;
    switch (targetRef) {
       case V_UINT8:
-         if (source.extra < 0 || source.extra > 255)
-            scope.raiseError(errInvalidOperation, node);
+         invalid = source.extra < 0 || source.extra > 255;
          break;
       case V_INT8:
-         if (source.extra < INT8_MIN || source.extra > INT8_MAX)
-            scope.raiseError(errInvalidOperation, node);
+         invalid = source.extra < INT8_MIN || source.extra > INT8_MAX;
          break;
       case V_INT16:
-         if (source.extra < INT16_MIN || source.extra > INT16_MAX)
-            scope.raiseError(errInvalidOperation, node);
+         invalid = source.extra < INT16_MIN || source.extra > INT16_MAX;
          break;
       case V_UINT16:
-         if (source.extra < 0 || source.extra > 65535)
-            scope.raiseError(errInvalidOperation, node);
+         invalid = source.extra < 0 || source.extra > 65535;
          break;
       case V_INT64:
          source.kind = ObjectKind::LongLiteral;
          break;
       case V_FLOAT64:
          source.kind = ObjectKind::Float64Literal;
-         source.reference = mapFloat64Const(scope, source.extra);
+         source.reference = mapFloat64Const(scope.module, source.extra);
          break;
       default:
-         scope.raiseError(errInvalidOperation, node);
+         invalid = true;
          break;
    }
    
+   if (invalid) {
+      if (!ignoreError)
+         scope.raiseError(errInvalidOperation, node);
+
+      return {};
+   }
+
    source.typeInfo = { targetRef };
 
    return source;

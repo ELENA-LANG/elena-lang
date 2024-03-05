@@ -1,0 +1,17 @@
+<configuration>
+  <platform key="Win_x86">
+     <project>
+        <executable>graphs.exe</executable>
+     </project>
+  </platform>
+  <project>
+     <namespace>graphs</namespace>
+     <template>gui</template>
+  </project>
+  <files>
+     <module>
+        <include>graphs.l</include>
+     </module>
+  </files>
+</configuration>
+
