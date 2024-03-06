@@ -103,6 +103,7 @@ namespace elena_lang
       bool formatterChanged;
       bool textChanged;
       bool modifiedChanged;
+      bool readOnlyChanged;
 
       bool isViewChanged()
       {
@@ -120,6 +121,7 @@ namespace elena_lang
          selelectionChanged = false;
          formatterChanged = false;
          textChanged = false;
+         readOnlyChanged = false;
       }
 
       DocumentChangeStatus()
@@ -283,6 +285,10 @@ namespace elena_lang
       void setCaret(Point caret, bool selecting, DocumentChangeStatus& changeStatus)
       {
          setCaret(caret.x, caret.y, selecting, changeStatus);
+      }
+      void setReadOnlyMode(bool mode)
+      {
+         status.readOnly = mode;
       }
 
       int getRowCount() const { return _text->getRowCount(); }

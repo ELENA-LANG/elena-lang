@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE View class header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef VIEW_H
@@ -80,6 +80,28 @@ namespace elena_lang
       }
 
       void resize(Point size) override;
+
+      bool isAnyDocumentModified()
+      {
+         auto it = _documents.start();
+         while (!it.eof()) {
+            if ((*it)->documentView->isModified())
+               return true;
+
+            it++;
+         }
+         return false;
+      }
+
+      void setReadOnlyMode(bool mode)
+      {
+         auto it = _documents.start();
+         while (!it.eof()) {
+            (*it)->documentView->setReadOnlyMode(mode);
+
+            it++;
+         }
+      }
 
       TextViewModel();
       virtual ~TextViewModel() = default;

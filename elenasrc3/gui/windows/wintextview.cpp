@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TextView Control Body File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wintextview.h"
@@ -43,7 +43,8 @@ void ViewStyles::release()
 // --- TextViewWindow ---
 
 TextViewWindow :: TextViewWindow(NotifierBase* notifier, TextViewModelBase* model, 
-   TextViewControllerBase* controller, ViewStyles* styles, ContextInvoker contextInvoker)
+   TextViewControllerBase* controller, ViewStyles* styles, 
+   ContextInvoker contextInvoker, MarginInvoker marginInvoker)
    : WindowBase(nullptr, 50, 50)
 {
    _notifier = notifier;
@@ -57,6 +58,7 @@ TextViewWindow :: TextViewWindow(NotifierBase* notifier, TextViewModelBase* mode
    _mouseCaptured = false;
    _caret_x = 0;
    _contextInvoker = contextInvoker;
+   _marginInvoker = marginInvoker;
 }
 
 TextViewWindow :: ~TextViewWindow()
@@ -456,6 +458,10 @@ void TextViewWindow :: onButtonDown(Point point, bool kbShift)
    mouseToScreen(point, col, row, margin);
 
    _controller->moveToFrame(_model, col, row, kbShift);
+
+   if (margin && _marginInvoker) {
+      _marginInvoker(_notifier);
+   }
 
    captureMouse();
 }

@@ -232,7 +232,13 @@ ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* not
          ContextMenuEvent event(EVENT_TEXT_CONTEXTMENU, x, y, hasSelection);
 
          notifier->notify(&event);
-      });
+      }, [](NotifierBase* notifier)
+         {
+            SimpleEvent event(EVENT_TEXT_MARGINLICK);
+
+            notifier->notify(&event);
+         });
+
    TextViewFrame* frame = new TextViewFrame(notifier, _settings.withTabAboverscore, view, 
       _model->viewModel(), [](NotifierBase* notifier, int index)
       {

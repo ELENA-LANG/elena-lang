@@ -89,6 +89,7 @@ namespace elena_lang
       void sendStartUpEvent(StartUpEvent* event, WindowApp* app);
       void sendTextContextMenuEvent(ContextMenuEvent* event, WindowApp* app);
       void sendBrowseContextMenuEvent(BrowseEvent* event, WindowApp* app);
+      void sendSimpleEvent(SimpleEvent* event, WindowApp* app);
 
    public:
       static IDENotificationFormatter& getInstance()
@@ -142,6 +143,7 @@ namespace elena_lang
       void onStartup(ModelNMHDR* rec);
       void onLayoutChange();
 
+      void onDebugStep();
       void onDebugWatch();
       void onDebugEnd();
 
@@ -168,10 +170,9 @@ namespace elena_lang
       void onComilationStart();
       void onCompilationEnd(int exitCode);
       void onErrorHighlight(int index);
-      void onDebugResult(int code);
       void onDebugWatchBrowse(BrowseNMHDR* rec);
 
-      void updateCompileMenu(bool compileEnable, bool debugEnable);
+      void updateCompileMenu(bool compileEnable, bool debugEnable, bool stopEnable);
 
       void onProjectChange(bool empty);
       void onProjectRefresh(bool empty);

@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Win32 Debugger class and its helpers header
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WIN32DEBUGPROCESS_H
@@ -85,7 +85,9 @@ namespace elena_lang
       void resetTrapFlag();
       void setHardwareBreakpoint(addr_t breakpoint);
       void clearHardwareBreakpoint();
+
       unsigned char setSoftwareBreakpoint(addr_t breakpoint);
+      void clearSoftwareBreakpoint(addr_t breakpoint, unsigned char substitute);
 
       void setIP(addr_t address);
 
@@ -98,7 +100,7 @@ namespace elena_lang
       Map<size_t, char> breakpoints;
 
       void addBreakpoint(addr_t address, Win32ThreadContext* context, bool started);
-      //void removeBreakpoint(size_t address, Win32ThreadContext* context, bool started);
+      void removeBreakpoint(addr_t address, Win32ThreadContext* context, bool started);
       void setSoftwareBreakpoints(Win32ThreadContext* context);
       void setHardwareBreakpoint(addr_t address, Win32ThreadContext* context, bool withStackLevelControl);
 
@@ -241,6 +243,7 @@ namespace elena_lang
 
       void setBreakpoint(addr_t address, bool withStackLevelControl) override;
       void addBreakpoint(addr_t address) override;
+      void removeBreakpoint(addr_t address) override;
 
       void addStep(addr_t address, void* current) override;
 

@@ -23,6 +23,59 @@
 
 namespace elena_lang
 {
+   // --- DateTime ---
+
+   struct DateTime
+   {
+   private:
+      SYSTEMTIME _time;
+
+   public:
+      static DateTime getFileTime(const wchar_t* path);
+
+      bool operator > (const DateTime dt) const
+      {
+         if (_time.wYear > dt._time.wYear)
+            return true;
+
+         if (_time.wYear == dt._time.wYear) {
+            if (_time.wMonth > dt._time.wMonth)
+               return true;
+
+            if (_time.wMonth == dt._time.wMonth) {
+               if (_time.wDay > dt._time.wDay)
+                  return true;
+
+               if (_time.wDay == dt._time.wDay) {
+                  if (_time.wHour > dt._time.wHour)
+                     return true;
+
+                  if (_time.wHour == dt._time.wHour) {
+                     if (_time.wMinute > dt._time.wMinute)
+                        return true;
+
+                     if (_time.wMinute == dt._time.wMinute) {
+                        if (_time.wSecond > dt._time.wSecond)
+                           return true;
+
+                        if (_time.wSecond == dt._time.wSecond) {
+                           return (_time.wMilliseconds > dt._time.wMilliseconds);
+                        }
+                     }
+                  }
+               }
+            }
+         }
+         return false;
+      }
+
+      DateTime()
+      {
+         _time.wYear = 0;
+         //memset(&_time, 0, sizeof(_time));
+      }
+   };
+
    // --- Cursor types ---
    constexpr int CURSOR_TEXT           = 0;
    constexpr int CURSOR_ARROW          = 1;

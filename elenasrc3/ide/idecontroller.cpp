@@ -1,7 +1,7 @@
 ﻿//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Controller implementation File
-//                                             (C)2005-2023, by Aleksey Rakov
+//                                             (C)2005-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <tchar.h>
@@ -246,19 +246,47 @@ bool ProjectController :: startDebugger(ProjectModel& model)
    }
 }
 
-bool ProjectController :: isOutaged(bool noWarning)
+bool ProjectController :: isOutaged(ProjectModel& projectModel, SourceViewModel& sourceModel)
 {
-   return false; // !! temporal
+   if (sourceModel.isAnyDocumentModified()) {
+      return false;
+   }
+
+   size_t projectPathLen = projectModel.projectPath.length();
+
+   NamespaceString name;
+   PathString rootPath(*projectModel.projectPath, projectModel.getOutputPath());
+   for (auto it = projectModel.sources.start(); !it.eof(); ++it) {
+      PathString source(*rootPath, *it);
+
+      PathString module;
+      module.copySubPath(*source, true);
+
+      name.copy(projectModel.getPackage());
+      name.pathToName(*module + projectPathLen);          // get a full name
+
+      _debugController.resolveNamespace(name);
+
+      ReferenceName::nameToPath(module, *name);
+      module.append(_T(".nl"));
+
+      if (name.length() != 0) {
+         if (_compareFileModifiedTime(*source, *module))
+            return false;
+      }
+      else return false;
+   }
+
+   return true;
 }
 
-bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
+bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, bool& outaged)
 {
-   if (model.getStatus() == IDEStatus::Busy)
-      return false;
-
    if (!_debugController.isStarted()) {
-      bool toRecompile = model.autoRecompile && !testIDEStatus(model.getStatus(), IDEStatus::AutoRecompiling);
-      if (isOutaged(toRecompile)) {
+      bool toRecompile = model.autoRecompile;
+      if (!isOutaged(model, sourceModel)) {
+         outaged = true;
+
          if (toRecompile) {
             if (!doCompileProject(model, action))
                return false;
@@ -271,38 +299,31 @@ bool ProjectController :: onDebugAction(ProjectModel& model, DebugAction action)
    return true;
 }
 
-bool ProjectController :: doDebugAction(ProjectModel& model, SourceViewModel& sourceModel , DebugAction action)
+void ProjectController :: doDebugAction(ProjectModel& model, SourceViewModel& sourceModel , DebugAction action)
 {
-   if (model.getStatus() != IDEStatus::Busy) {
-      if (onDebugAction(model, action)) {
-         switch (action) {
-            case DebugAction::Run:
-               _debugController.run();
-               return true;
-            case DebugAction::StepInto:
-               _debugController.stepInto();
-               return true;
-            case DebugAction::StepOver:
-               _debugController.stepOver();
-               return true;
-            case DebugAction::RunTo:
-               runToCursor(model, sourceModel);
-               return true;
-            default:
-               break;
-         }
-      }
+   switch (action) {
+      case DebugAction::Run:
+         _debugController.run();
+         break;
+      case DebugAction::StepInto:
+         _debugController.stepInto();
+         break;
+      case DebugAction::StepOver:
+         _debugController.stepOver();
+         break;
+      case DebugAction::RunTo:
+         runToCursor(model, sourceModel);
+         break;
+      default:
+         break;
    }
-
-   return false;
 }
 
 void ProjectController :: doDebugStop(ProjectModel& model)
 {
-   if (model.getStatus() != IDEStatus::Busy) {
-      _debugController.stop();
-   }
+   _debugController.stop();
 }
+
 void ProjectController :: runToCursor(ProjectModel& model, SourceViewModel& sourceModel)
 {
    auto currentDoc = sourceModel.DocView();
@@ -679,15 +700,22 @@ bool ProjectController :: toggleBreakpoint(ProjectModel& model, SourceViewModel&
       for(auto it = model.breakpoints.start(); !it.eof(); ++it) {
          auto bm = *it;
          if (bm->row == row && bm->module.compare(*ns) && bm->source.compare(*pathStr)) {
+            if (_debugController.isStarted())
+               _debugController.toggleBreakpoint(bm, false);
+
             model.breakpoints.cut(bm);
             addMode = false;
             break;
          }
       }
-
       
       if (addMode) {
-         model.breakpoints.add(new Breakpoint(row, *pathStr, *ns));
+         Breakpoint* bm = new Breakpoint(row, *pathStr, *ns);
+
+         model.breakpoints.add(bm);
+
+         if (_debugController.isStarted())
+            _debugController.toggleBreakpoint(bm, true);
 
          currentDoc->addMarker(row, STYLE_BREAKPOINT, false, true, status);
       }
@@ -704,7 +732,7 @@ bool ProjectController :: toggleBreakpoint(ProjectModel& model, SourceViewModel&
 void ProjectController :: loadBreakpoints(ProjectModel& model)
 {
    for (auto it = model.breakpoints.start(); !it.eof(); ++it) {
-      _debugController.addBreakpoint(*it);
+      _debugController.toggleBreakpoint(*it, true);
    }
 }
 
@@ -869,7 +897,7 @@ void IDEController :: init(IDEModel* model, int& status)
    else status |= STATUS_PROJECT_CHANGED;
 }
 
-void IDEController :: traceSource(SourceViewModel* sourceModel, bool found, int row)
+void IDEController :: traceStep(SourceViewModel* sourceModel, bool found, int row)
 {
    int projectStatus = STATUS_DEBUGGER_STOPPED;
    DocumentChangeStatus docStatus = {};
@@ -887,20 +915,14 @@ void IDEController :: traceSource(SourceViewModel* sourceModel, bool found, int 
    _notifier->notify(&event);
 }
 
-void IDEController :: onProgramStart(ProjectModel* model)
+void IDEController :: traceStart(ProjectModel* model)
 {
    onDebuggerHook(model);
 }
 
-void IDEController :: onProgramFinish(SourceViewModel* sourceModel)
+void IDEController :: traceFinish(SourceViewModel* sourceModel)
 {
-   int projectStatus = STATUS_DEBUGGER_STOPPED;
-   DocumentChangeStatus docStatus = {};
-
-   sourceModel->clearTraceLine(docStatus);
-
-   TextViewModelEvent event = { STATUS_DEBUGGER_FINISHED, docStatus };
-   _notifier->notify(&event);
+   notifyOnModelChange(STATUS_DEBUGGER_FINISHED);
 }
 
 bool IDEController :: selectSource(ProjectModel* model, SourceViewModel* sourceModel,
@@ -1058,7 +1080,7 @@ void IDEController :: doOpenFile(IDEModel* model, path_t path)
 bool IDEController :: doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave)
 {
    auto docView = model->sourceViewModel.DocView();
-   if (!docView)
+   if (!docView || docView->isReadOnly())
       return false;
 
    if (docView->isUnnamed() || saveAsMode) {
@@ -1370,42 +1392,44 @@ path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
    else return nullptr;
 }
 
-void IDEController :: doDebugAction(IDEModel* model, DebugAction action)
+void IDEController :: doDebugAction(IDEModel* model, DebugAction action, MessageDialogBase& mssgDialog)
 {
-   if (projectController.doDebugAction(model->projectModel, model->sourceViewModel, action)) {
+   if (model->running)
+      return;
+
+   bool outaged = false;
+   if (projectController.onDebugAction(model->projectModel, model->sourceViewModel, action, outaged)) {
+      model->running = true;
+
+      model->sourceViewModel.setReadOnlyMode(true);
+
       DocumentChangeStatus docStatus = {};
       model->sourceViewModel.clearTraceLine(docStatus);
+      docStatus.readOnlyChanged = true;
 
       TextViewModelEvent event = { STATUS_DEBUGGER_RUNNING, docStatus };
       _notifier->notify(&event);
 
+      projectController.doDebugAction(model->projectModel, model->sourceViewModel, action);
    }
+   else if (model->sourceViewModel.isAnyDocumentModified())
+      mssgDialog.info(INFO_RUN_UNSAVED_PROJECT);
+   else if (outaged)
+      mssgDialog.info(INFO_RUN_OUT_OF_DATE);
 }
 
 void IDEController :: doDebugStop(IDEModel* model)
 {
-   projectController.doDebugStop(model->projectModel);
+   if (projectController.isStarted())
+      projectController.doDebugStop(model->projectModel);
 }
 
 void IDEController :: onCompilationStart(IDEModel* model)
 {
+   model->running = true;
    model->status = IDEStatus::Compiling;
 
    notifyOnModelChange(STATUS_STATUS_CHANGED | STATUS_COMPILING | STATUS_LAYOUT_CHANGED);
-}
-
-void IDEController :: onCompilationStop(IDEModel* model)
-{
-   //model->status = IDEStatus::Ready;
-
-   //_notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
-}
-
-void IDEController :: onCompilationBreak(IDEModel* model)
-{
-   //model->status = IDEStatus::Broken;
-
-   //_notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED);
 }
 
 void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBase* log)
@@ -1492,6 +1516,8 @@ void IDEController :: highlightError(IDEModel* model, int row, int column, path_
 void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode, 
    text_str output, ErrorLogBase* log)
 {
+   model->running = false;
+
    if (exitCode == 0) {
       model->status = IDEStatus::CompiledSuccessfully;
 
@@ -1569,10 +1595,21 @@ void IDEController :: onDebuggerStop(IDEModel* model)
    model->sourceViewModel.clearTraceLine(status);
    model->status = IDEStatus::DebuggerStopped;    
 
-   //_notifier->notify(NOTIFY_IDE_CHANGE, IDE_STATUS_CHANGED | FRAME_CHANGED);
+   model->running = false;
+   model->sourceViewModel.setReadOnlyMode(false);
+
+   status.readOnlyChanged = true;
+
+   TextViewModelEvent event = { STATUS_STATUS_CHANGED, status };
+   _notifier->notify(&event);
 }
 
-void IDEController :: onProgramStop(IDEModel* model)
+void IDEController :: onDebuggerStep(IDEModel* model)
+{
+   model->running = false;
+}
+
+void IDEController :: onIDEStop(IDEModel* model)
 {
    PathString path(*model->projectModel.paths.configPath);
 
@@ -1684,21 +1721,12 @@ void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog
 
 void IDEController :: onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel* model)
 {
+   model->running = false;
+
    auto result = mssgDialog.question(QUESTION_NOSOURCE_CONTINUE);
 
    if (result == MessageDialogBase::Answer::Yes)
-      doDebugAction(model, DebugAction::StepInto);
-}
-
-void IDEController :: onProgramRuning(IDEModel* model)
-{
-   //DocumentChangeStatus status = {};
-
-   //model->sourceViewModel.clearTraceLine(status);
-   //model->status = IDEStatus::Running;
-
-   //TextViewModelEvent event = { STATUS_CHANGED, status };
-   //_notifier->notify(&event);
+      doDebugAction(model, DebugAction::StepInto, mssgDialog);
 }
 
 void IDEController :: onDocSelection(IDEModel* model, int index)

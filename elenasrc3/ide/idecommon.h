@@ -50,6 +50,7 @@ namespace elena_lang
    constexpr int EVENT_ERRORLIST_SELECTION            = 0x0007;
    constexpr int EVENT_TEXT_CONTEXTMENU               = 0x0008;
    constexpr int EVENT_BROWSE_CONTEXT                 = 0x0009;
+   constexpr int EVENT_TEXT_MARGINLICK                = 0x000A;
 
    // --- Event Statuses ---
    constexpr int STATUS_NONE                          = 0x0000;
@@ -67,8 +68,6 @@ namespace elena_lang
    constexpr int STATUS_WITHERRORS                    = 0x0800;
    constexpr int STATUS_DEBUGGER_RUNNING              = 0x1000;
    constexpr int STATUS_DEBUGGER_FINISHED             = 0x2000;
-
-
 
    constexpr int NOTIFY_DEBUGGER_RESULT                  = 6;
    constexpr int NOTIFY_ERROR_SEL                        = 7;
@@ -95,7 +94,6 @@ namespace elena_lang
    {
       Empty                = 0,
       Ready                = 1,
-      Busy                 = 2,
       AutoRecompiling      = 3,
       Compiling            = 4,
       CompiledSuccessfully = 5,
@@ -291,6 +289,7 @@ namespace elena_lang
 
       virtual void setBreakpoint(addr_t address, bool withStackLevelControl) = 0;
       virtual void addBreakpoint(addr_t address) = 0;
+      virtual void removeBreakpoint(addr_t address) = 0;
 
       virtual void addStep(addr_t address, void* current) = 0;
 
@@ -415,6 +414,17 @@ namespace elena_lang
       int eventId() override;
 
       StartUpEvent(int status);
+   };
+
+   // --- SimpleEvent ---
+   class SimpleEvent : public EventBase
+   {
+      int _eventId;
+
+   public:
+      int eventId() override;
+
+      SimpleEvent(int eventId);
    };
 
    // --- TextViewModelEvent ---

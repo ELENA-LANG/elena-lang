@@ -1,12 +1,32 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Common Body File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wincommon.h"
 
 using namespace elena_lang;
+
+// --- DateTime ---
+
+DateTime DateTime::getFileTime(const wchar_t* path)
+{
+   DateTime dt;
+
+   HANDLE hFile = ::CreateFile(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+   if (hFile) {
+      FILETIME ftCreate, ftAccess, ftWrite;
+
+      if (::GetFileTime(hFile, &ftCreate, &ftAccess, &ftWrite)) {
+         FileTimeToSystemTime(&ftWrite, &dt._time);
+      }
+
+      ::CloseHandle(hFile);
+   }   
+
+   return dt;
+}
 
 // --- ControlBase ---
 

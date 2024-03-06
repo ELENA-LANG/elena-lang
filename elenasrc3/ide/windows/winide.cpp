@@ -193,6 +193,13 @@ void IDENotificationFormatter :: sendBrowseContextMenuEvent(BrowseEvent* event, 
    app->notify(EVENT_BROWSE_CONTEXT, (NMHDR*)&nw);
 }
 
+void IDENotificationFormatter :: sendSimpleEvent(SimpleEvent* event, WindowApp* app)
+{
+   NMHDR nw = {};
+
+   app->notify(EVENT_TEXT_MARGINLICK, (NMHDR*)&nw);
+}
+
 void IDENotificationFormatter :: sendMessage(EventBase* event, WindowApp* app)
 {
    switch (event->eventId()) {      
@@ -222,6 +229,9 @@ void IDENotificationFormatter :: sendMessage(EventBase* event, WindowApp* app)
          break;
       case EVENT_BROWSE_CONTEXT:
          sendBrowseContextMenuEvent(dynamic_cast<BrowseEvent*>(event), app);
+         break;
+      case EVENT_TEXT_MARGINLICK:
+         sendSimpleEvent(dynamic_cast<SimpleEvent*>(event), app);
          break;
       default:
          assert(false);
@@ -507,7 +517,7 @@ void IDEWindow :: setChildFocus(int controlIndex)
 
 void IDEWindow :: onComilationStart()
 {
-   updateCompileMenu(false, false);
+   updateCompileMenu(false, false, true);
 
    openResultTab(_model->ideScheme.compilerOutputControl);
 
@@ -533,6 +543,14 @@ void IDEWindow :: onErrorHighlight(int index)
       _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
 }
 
+void IDEWindow :: onDebugStep()
+{
+   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+   menu->enableMenuItemById(IDM_DEBUG_STOP, true);
+
+   _controller->onDebuggerStep(_model);
+}
+
 void IDEWindow :: onDebugWatch()
 {
    openResultTab(_model->ideScheme.debugWatch);
@@ -549,6 +567,8 @@ void IDEWindow :: onDebugEnd()
    ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
 
    contextBrowser->clearRootNode();
+
+   _controller->onDebuggerStop(_model);
 }
 
 void IDEWindow :: onDebugWatchBrowse(BrowseNMHDR* rec)
@@ -571,21 +591,23 @@ void IDEWindow :: enableMenuItemById(int id, bool doEnable, bool toolBarItemAvai
    }
 }
 
-void IDEWindow :: updateCompileMenu(bool compileEnable, bool debugEnable)
+void IDEWindow :: updateCompileMenu(bool compileEnable, bool debugEnable, bool stopEnable)
 {
    enableMenuItemById(IDM_PROJECT_COMPILE, compileEnable, false);
    enableMenuItemById(IDM_PROJECT_OPTION, compileEnable, false);
+   enableMenuItemById(IDM_PROJECT_INCLUDE, compileEnable, false);
 
    enableMenuItemById(IDM_DEBUG_RUN, debugEnable, true);
    enableMenuItemById(IDM_DEBUG_STEPINTO, debugEnable, true);
    enableMenuItemById(IDM_DEBUG_STEPOVER, debugEnable, true);
    enableMenuItemById(IDM_DEBUG_RUNTO, debugEnable, false);
-   enableMenuItemById(IDM_DEBUG_STOP, debugEnable, true);
+
+   enableMenuItemById(IDM_DEBUG_STOP, stopEnable, true);
 }
 
 void IDEWindow :: onProjectRefresh(bool empty)
 {
-   updateCompileMenu(!empty, !empty);
+   updateCompileMenu(!empty, !empty, false);
 
    enableMenuItemById(IDM_PROJECT_CLOSE, !empty, true);
    enableMenuItemById(IDM_FILE_SAVEPROJECT, !empty, false);
@@ -759,16 +781,16 @@ bool IDEWindow :: onCommand(int command)
          _controller->doChangeProject(projectSettingsDialog, _model);
          break;
       case IDM_DEBUG_RUN:
-         _controller->doDebugAction(_model, DebugAction::Run);
+         _controller->doDebugAction(_model, DebugAction::Run, messageDialog);
          break;
       case IDM_DEBUG_STEPOVER:
-         _controller->doDebugAction(_model, DebugAction::StepOver);
+         _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog);
          break;
       case IDM_DEBUG_STEPINTO:
-         _controller->doDebugAction(_model, DebugAction::StepInto);
+         _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog);
          break;
       case IDM_DEBUG_RUNTO:
-         _controller->doDebugAction(_model, DebugAction::RunTo);
+         _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog);
          break;
       case IDM_DEBUG_STOP:
          _controller->doDebugStop(_model);
@@ -958,22 +980,6 @@ void IDEWindow :: onContextMenu(ContextMenuNMHDR* rec)
    menu->show(_handle, p);
 }
 
-void IDEWindow :: onDebugResult(int code)
-{
-   switch (code) {
-      case DEBUGGER_STOPPED:
-      {
-         _controller->onDebuggerStop(_model);
-
-         MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-         menu->enableMenuItemById(IDM_DEBUG_STOP, true);
-         break;
-      }
-      default:
-         break;
-   }
-}
-
 void IDEWindow :: onChildRefresh(int controlId)
 {
    _children[controlId]->refresh();
@@ -995,19 +1001,19 @@ void IDEWindow :: onIDEStatusChange(ModelNMHDR* rec)
       _model->status = IDEStatus::Stopped;
 
       onStatusBarChange();
-      updateCompileMenu(false, true);
+      updateCompileMenu(false, true, true);
    }   
    else if (test(rec->status, STATUS_DEBUGGER_RUNNING)) {
       _model->status = IDEStatus::Running;
 
       onStatusBarChange();
-      updateCompileMenu(false, false);
+      updateCompileMenu(false, false, true);
    }
    else if (test(rec->status, STATUS_DEBUGGER_FINISHED)) {
       _model->status = IDEStatus::Stopped;
 
       onStatusBarChange();
-      updateCompileMenu(true, true);
+      updateCompileMenu(true, true, false);
 
       onDebugEnd();
    }
@@ -1046,10 +1052,8 @@ void IDEWindow :: onIDEStatusChange(ModelNMHDR* rec)
       onDebuggerSourceNotFound();
    }
    else if (test(rec->status, STATUS_DEBUGGER_STEP)) {
-      MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-      menu->enableMenuItemById(IDM_DEBUG_STOP, true);
-
       onDebugWatch();
+      onDebugStep();
    }
 }
 
@@ -1174,6 +1178,9 @@ void IDEWindow :: onNotify(NMHDR* hdr)
          break;
       case EVENT_BROWSE_CONTEXT:
          onDebugWatchBrowse((BrowseNMHDR*)hdr);
+         break;
+      case EVENT_TEXT_MARGINLICK:
+         _controller->toggleBreakpoint(_model, -1);
          break;
       case TCN_SELCHANGE:
          onTabSelChanged(hdr->hwndFrom);

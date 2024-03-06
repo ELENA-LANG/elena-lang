@@ -20,13 +20,14 @@ namespace elena_lang
    class DebugSourceController
    {
    public:
-      virtual void traceSource(SourceViewModel* sourceModel, bool found, int row) = 0;
+      virtual void traceStart(ProjectModel* model) = 0;
+
+      virtual void traceStep(SourceViewModel* sourceModel, bool found, int row) = 0;
 
       virtual bool selectSource(ProjectModel* model, SourceViewModel* sourceModel, 
          ustr_t moduleName, path_t sourcePath) = 0;
 
-      virtual void onProgramStart(ProjectModel* model) = 0;
-      virtual void onProgramFinish(SourceViewModel* sourceModel) = 0;
+      virtual void traceFinish(SourceViewModel* sourceModel) = 0;
 
       virtual ~DebugSourceController() = default;
    };
@@ -275,7 +276,7 @@ namespace elena_lang
       void stepInto();
       void stop();
       void runToCursor(ustr_t name, ustr_t path, int row);
-      void addBreakpoint(Breakpoint* bp);
+      void toggleBreakpoint(Breakpoint* bp, bool adding);
 
       void readAutoContext(ContextBrowserBase* watch, int level, WatchItems* refreshedItems);
       void readContext(ContextBrowserBase* watch, void* parentItem, addr_t address, int level);

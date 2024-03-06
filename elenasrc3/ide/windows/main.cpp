@@ -51,6 +51,14 @@ public:
    }
 };
 
+bool compareFileModifiedTime(path_t sour, path_t dest)
+{
+   DateTime sourceDT = DateTime::getFileTime(sour);
+   DateTime moduleDT = DateTime::getFileTime(dest);
+
+   return sourceDT > moduleDT;
+}
+
 typedef Win32DebugProcess    DebugProcess;
 
 // Forward declarations of functions included in this code module:
@@ -79,7 +87,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    Win32Process      outputProcess(50);
    DebugProcess      debugProcess;
    IDEController     ideController(&outputProcess, &vmConsoleProcess, &debugProcess, &ideModel,
-                        textViewSettings, CURRENT_PLATFORM, &pathHelper);
+                        textViewSettings, CURRENT_PLATFORM, &pathHelper, compareFileModifiedTime);
    IDEFactory        factory(hInstance, &ideModel, &ideController, guiSettings);
 
    PathString configPath(ideModel.projectModel.paths.appPath);
@@ -98,7 +106,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    StartUpEvent startUpEvent(STATUS_NONE);
    int retVal = app->run(ideWindow, ideModel.appMaximized, &startUpEvent);
 
-   ideController.onProgramStop(&ideModel);
+   ideController.onIDEStop(&ideModel);
 
    delete app;
 

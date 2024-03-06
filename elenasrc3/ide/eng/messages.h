@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE Messages
 //
-//                                            (C)2021-2023, by Aleksex Rakov
+//                                            (C)2021-2024, by Aleksex Rakov
 //---------------------------------------------------------------------------
 
 #ifndef MESSAGES_H
@@ -18,6 +18,9 @@ namespace elena_lang
    constexpr auto QUESTION_SAVE_FILECHANGES  = _T("Save changes to ");
    constexpr auto QUESTION_CLOSE_UNSAVED     = _T("Close the tab anyway");
    constexpr auto QUESTION_NOSOURCE_CONTINUE = _T("The source code is not found. Do you want to continue?");
+
+   constexpr auto INFO_RUN_OUT_OF_DATE       = _T("The project modules are out of date\nPlease recompile the project");
+   constexpr auto INFO_RUN_UNSAVED_PROJECT   = _T("The project files are not saved\nPlease save them and recompile the project");
 
    constexpr auto NOT_FOUND_TEXT             = _T("Search string not found");
    constexpr auto REPLACE_TEXT               = _T("Replace this occurence?");

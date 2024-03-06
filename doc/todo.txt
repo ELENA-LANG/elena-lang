@@ -11,7 +11,7 @@ In development:
   opt: #601,#602
   maint:tools:backlog,#616, system module warnings, #622
   exp:snake game : text / gui version, using expression trees in real-life apps (see c#)
-  ide:backlog (#617), vm debugger, debugger watch - struct
+  ide:backlog (#617), vm debugger, include / exclude files
   tools:work with elt in ide
   prom:#635,elena in nutshell every 2 week
   port:x86 mt, x86-64 vm,elenavm / elt for linux
@@ -29,16 +29,7 @@ In development:
     - step over - to the same row - must be auto skipped?
     - fix #634
   --------------------------------------
-
-    - Applying changes to the source file via the IDE and trying to run it does not produce the expected results. Also adding syntax errors intentionally does not affect the execution
-    - solution - do not run if the program is not saved. Warn if the source code is younger than the modules
-
-
-    - I put the code in a file (not a project) and tried to use Debug --> Run to execute it, there is a window that opens and closes very quickly but the output is not redirected in any of the available panels (Output, Messages, Interactive). In the Interactive panel there is an error message: Redirect console error: 2
-    - I set a breakpoint using F5, but Debug->Run ignores the breakpoint
-    - F8 (Step Over) leads to an error "The source code is not found. Do you want to continue?"
-
-    - #636
+    - highlight error - set a focus on textview
 
     - Sorting algorithms/Sleep sort
 

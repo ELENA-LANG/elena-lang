@@ -102,6 +102,8 @@ void TextViewController :: undo(TextViewModelBase* model)
 {
    DocumentChangeStatus status = {};
    auto docView = model->DocView();
+   if (docView->isReadOnly())
+      return;
 
    docView->undo(status);
 
@@ -114,6 +116,8 @@ void TextViewController :: redo(TextViewModelBase* model)
    auto docView = model->DocView();
 
    docView->redo(status);
+   if (docView->isReadOnly())
+      return;
 
    notifyTextModelChange(model, status);
 }
@@ -468,7 +472,7 @@ bool TextViewController :: replaceText(TextViewModelBase* model, FindModel* find
    DocumentChangeStatus docStatus = {};
 
    auto docView = model->DocView();
-   if (docView) {
+   if (docView && !docView->isReadOnly()) {
       docView->insertLine(docStatus, findModel->newText.str(), findModel->newText.length());
       notifyTextModelChange(model, docStatus);
 

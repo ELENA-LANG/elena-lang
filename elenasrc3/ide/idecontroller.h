@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Controller header File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef IDECONTROLLER_H
@@ -43,6 +43,8 @@ namespace elena_lang
       RunTo
    };
 
+   typedef bool(*CompareFileDateTime)(path_t, path_t);
+
    // --- ProjectController ---
    class ProjectController : public NotifierBase
    {
@@ -56,13 +58,14 @@ namespace elena_lang
 
       PathHelperBase*         _pathHelper;
 
+      CompareFileDateTime     _compareFileModifiedTime;
+
       void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
       void saveConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node root, ConfigFile::Node platformRoot);
 
       path_t retrieveSourceName(ProjectModel* model, path_t sourcePath, NamespaceString& retVal, PathString& subPath);
 
-      bool onDebugAction(ProjectModel& model, DebugAction action);
-      bool isOutaged(bool noWarning);
+      bool isOutaged(ProjectModel& projectModel, SourceViewModel& sourceModel);
 
       bool startDebugger(ProjectModel& model/*, bool stepMode*/);
 
@@ -98,7 +101,9 @@ namespace elena_lang
       bool startVMConsole(ProjectModel& model);
       void stopVMConsole();
 
-      bool doDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action);
+      bool onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, bool& outaged);
+
+      void doDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action);
       void doDebugStop(ProjectModel& model);
 
       void runToCursor(ProjectModel& model, SourceViewModel& sourceModel);
@@ -122,13 +127,14 @@ namespace elena_lang
 
       ProjectController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* debugProcess, 
          ProjectModel* model, SourceViewModel* sourceModel,
-         DebugSourceController* sourceController, PlatformType platform, PathHelperBase* pathHelper)
+         DebugSourceController* sourceController, PlatformType platform, PathHelperBase* pathHelper, CompareFileDateTime comparer)
          : _outputProcess(outputProcess), _vmProcess(vmConsoleProcess), _debugController(debugProcess, model, sourceModel, sourceController),
            _autoWatch({ nullptr, 0 }),
            _pathHelper(pathHelper)
       {
          _notifier = nullptr;
          _platform = platform;
+         _compareFileModifiedTime = comparer;
       }
    };
 
@@ -155,8 +161,6 @@ namespace elena_lang
       void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);
 
       void onCompilationStart(IDEModel* model);
-      void onCompilationStop(IDEModel* model);
-      void onCompilationBreak(IDEModel* model);
 
       void notifyOnModelChange(int projectStatus);
 
@@ -184,11 +188,11 @@ namespace elena_lang
       //bool openFile(IDEModel* model, path_t sourceFile);
       bool doOpenProjectSourceByIndex(IDEModel* model, int index);
 
+      void traceStart(ProjectModel* model) override;
       bool selectSource(ProjectModel* model, SourceViewModel* sourceModel,
          ustr_t moduleName, path_t sourcePath) override;
-      void traceSource(SourceViewModel* sourceModel, bool found, int row) override;
-      void onProgramStart(ProjectModel* model) override;
-      void onProgramFinish(SourceViewModel* sourceModel) override;
+      void traceStep(SourceViewModel* sourceModel, bool found, int row) override;
+      void traceFinish(SourceViewModel* sourceModel) override;
 
       void highlightError(IDEModel* model, int row, int column, path_t path);
 
@@ -215,7 +219,7 @@ namespace elena_lang
 
       bool doCompileProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
       void doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model);
-      void doDebugAction(IDEModel* model, DebugAction action);
+      void doDebugAction(IDEModel* model, DebugAction action, MessageDialogBase& mssgDialog);
       void doDebugStop(IDEModel* model);
 
       void doStartVMConsole(IDEModel* model);
@@ -241,11 +245,12 @@ namespace elena_lang
       void onCompilationCompletion(IDEModel* model, int exitCode, 
          text_str output, ErrorLogBase* log);
       void onDebuggerHook(ProjectModel* model);
+      void onDebuggerStep(IDEModel* model);
       void onDebuggerStop(IDEModel* model);
       void onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel* model);
-      void onProgramRuning(IDEModel* model);
       void onDocSelection(IDEModel* model, int index);
-      void onProgramStop(IDEModel* model);
+
+      void onIDEStop(IDEModel* model);
 
       void doInclude(IDEModel* model);
 
@@ -255,13 +260,12 @@ namespace elena_lang
 
       void init(IDEModel* model, int& status);
 
-
       IDEController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* process,
-         IDEModel* model, TextViewSettings& textViewSettings, PlatformType platform, PathHelperBase* pathHelper
+         IDEModel* model, TextViewSettings& textViewSettings, PlatformType platform, PathHelperBase* pathHelper, CompareFileDateTime comparer
       ) :
          sourceController(textViewSettings),
          projectController(outputProcess, vmConsoleProcess, process, &model->projectModel, &model->sourceViewModel,
-            this, platform, pathHelper)
+            this, platform, pathHelper, comparer)
       {
          _notifier = nullptr;
          defaultEncoding = FileEncoding::UTF8;

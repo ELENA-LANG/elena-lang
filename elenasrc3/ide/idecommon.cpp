@@ -246,6 +246,7 @@ int StartUpEvent::eventId()
 {
    return EVENT_STARTUP;
 }
+
 // --- TextViewModelEvent ---
 
 int TextViewModelEvent::eventId()
@@ -261,6 +262,19 @@ ContextMenuEvent :: ContextMenuEvent(int id, int x, int y, bool hasSelection)
 }
 
 int ContextMenuEvent :: eventId()
+{
+   return _eventId;
+}
+
+// --- SimpleEvent ---
+
+SimpleEvent :: SimpleEvent(int id)
+   : EventBase(0)
+{
+   _eventId = id;
+}
+
+int SimpleEvent :: eventId()
 {
    return _eventId;
 }

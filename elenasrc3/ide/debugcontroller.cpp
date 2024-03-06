@@ -668,9 +668,9 @@ void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName
          found = _sourceController->selectSource(_model, _sourceModel, moduleName, *path);
       }
 
-      _sourceController->traceSource(_sourceModel, found, lineInfo->row);
+      _sourceController->traceStep(_sourceModel, found, lineInfo->row);
    }
-   else _sourceController->traceSource(_sourceModel, false, -1);
+   else _sourceController->traceStep(_sourceModel, false, -1);
 }
 
 void DebugController :: onStop()
@@ -682,7 +682,7 @@ void DebugController :: onStop()
    _currentModule.clear();
    _currentPath = nullptr;
 
-   _sourceController->onProgramFinish(_sourceModel);
+   _sourceController->traceFinish(_sourceModel);
 }
 
 void DebugController :: run()
@@ -726,13 +726,16 @@ void DebugController :: runToCursor(ustr_t ns, ustr_t path, int row)
    _process->setEvent(DEBUG_RESUME);
 }
 
-void DebugController :: addBreakpoint(Breakpoint* bp)
+void DebugController :: toggleBreakpoint(Breakpoint* bp, bool adding)
 {
    ModuleBase* currentModule = _provider.resolveModule(*bp->module);
    if (currentModule != nullptr) {
       addr_t address = _provider.findNearestAddress(currentModule, *bp->source, bp->row);
       if (address != INVALID_ADDR) {
-         _process->addBreakpoint(address);
+         if (adding) {
+            _process->addBreakpoint(address);
+         }
+         else _process->removeBreakpoint(address);
       }
    }
 }
@@ -858,7 +861,7 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
    if (!reader.eof()) {
       _provider.load(reader, starting, _process);
       
-      _sourceController->onProgramStart(_model);
+      _sourceController->traceStart(_model);
 
       _provider.setDebugInfoSize(reader.position());
 

@@ -57,6 +57,7 @@ class IDEModel
 {
 public:
    IDEStatus       status;
+   bool            running;
 
    SourceViewModel sourceViewModel;
    ProjectModel    projectModel;
@@ -74,6 +75,7 @@ public:
       : projectModel(&status)
    {
       status = IDEStatus::Empty;
+      running = false;
       appMaximized = false;
    }
 };
