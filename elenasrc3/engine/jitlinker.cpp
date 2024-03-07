@@ -1446,9 +1446,9 @@ void JITLinker :: copyMetaList(ModuleInfo info, ModuleInfoList& output)
    }
 }
 
-void JITLinker :: prepare(JITCompilerBase* compiler)
+void JITLinker :: prepare()
 {
-   setCompiler(compiler);
+   assert(_compiler != nullptr);
 
    _withDebugInfo = _compiler->isWithDebugInfo();
 

@@ -120,7 +120,9 @@ void ELENAVMMachine :: init(JITLinker& linker, SystemEnv* exeEnv)
       (uintptr_t)exeEnv->th_table,
       (uintptr_t)exeEnv->th_single_content);
 
-   linker.prepare(_compiler);
+   linker.setCompiler(_compiler);
+
+   linker.prepare();
 
    _env = (SystemEnv*)_compiler->getSystemEnv();
 

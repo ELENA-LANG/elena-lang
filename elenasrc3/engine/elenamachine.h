@@ -107,10 +107,6 @@ namespace elena_lang
 
       static size_t LoadCallStack(uintptr_t framePtr, uintptr_t* list, size_t length);
 
-      // OS-related startup and winding down code
-      static void OSWind();
-      static void OSUnwind();
-
       static void Init(SystemEnv* env, SystemSettings settings);
       static void InitSTAExceptionHandling(SystemEnv* env, void* criticalHandler);
       static void InitMTAExceptionHandling(SystemEnv* env, size_t index, void* criticalHandler);

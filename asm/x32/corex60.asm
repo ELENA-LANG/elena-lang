@@ -105,7 +105,7 @@ labWait:
   
   // ; GCXT: free lock
   // ; could we use mov [esi], 0 instead?
-  lock xadd [esi], edx
+  lock xadd [edi], edx
 
   ret
 
@@ -344,7 +344,6 @@ labWait:
 
   push ecx
 
-
   // ; === GCXT: safe point ===
   mov  edx, [data : %CORE_GC_TABLE + gc_signal]
   // ; if it is a collecting thread, starts the GC
@@ -533,7 +532,7 @@ labWait:
   
   // ; GCXT: free lock
   // ; could we use mov [esi], 0 instead?
-  lock xadd [esi], edx
+  lock xadd [edi], edx
 
   ret
 
@@ -662,8 +661,9 @@ labSkipWait:
   call extern "$rt.SignalStopGCLA"
 
   mov  ebx, edi
-  add  esp, 4
+  add  esp, 8
 
+  pop  ebp
   pop  esi
   ret
 
@@ -839,8 +839,7 @@ inline %3CFh
   mov  edi, data : %CORE_THREAD_TABLE + tt_slots
   mov  [edi + edx * 8], eax
 
-  mov  edi, [ecx+eax*4]
-  mov  [edi + tt_stack_root], esp
+  mov  [eax + tt_stack_root], esp
 
 end
 
@@ -848,11 +847,6 @@ end
 inline %4CFh
 
   finit
-
-  mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
-  mov  [edi + tt_stack_root], esp
 
   mov  eax, esp
   call %PREPARE

@@ -290,15 +290,11 @@ size_t ELENARTMachine :: loadAddressInfo(addr_t retPoint, char* lineInfo, size_t
 
 void ELENARTMachine :: Exit(int exitCode)
 {
-   __routineProvider.OSUnwind();
-
    __routineProvider.Exit(exitCode);
 }
 
 void ELENARTMachine :: startSTA(SystemEnv* env, void* entry)
 {
-   __routineProvider.OSWind();
-
    // setting up system
    __routineProvider.InitSTA(env);
 

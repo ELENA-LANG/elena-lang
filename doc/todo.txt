@@ -14,7 +14,7 @@ In development:
   ide:backlog (#617), vm debugger, include / exclude files
   tools:work with elt in ide
   prom:#635,elena in nutshell every 2 week
-  port:x86 mt, x86-64 vm,elenavm / elt for linux
+  port:x86-64 vm,elenavm / elt for linux
   --------------------------------------
   - #620 - resolve several points
     - redirect abstract byref handler
@@ -29,9 +29,11 @@ In development:
     - step over - to the same row - must be auto skipped?
     - fix #634
   --------------------------------------
-    - highlight error - set a focus on textview
-
     - Sorting algorithms/Sleep sort
+    - mta example - printing a text in one thread, waiting to end the program in another one
+    - x86 mt
+
+    - highlight error - set a focus on textview
 
     - gui samples
 

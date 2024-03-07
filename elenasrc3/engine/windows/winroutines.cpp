@@ -180,16 +180,6 @@ LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 
 #endif
 
-void SystemRoutineProvider :: OSWind()
-{
-   //CoInitializeEx(NULL, COINIT_MULTITHREADED);
-}
-
-void SystemRoutineProvider :: OSUnwind()
-{
-   //CoUninitialize();
-}
-
 void SystemRoutineProvider :: InitCriticalStruct(uintptr_t criticalHandler)
 {
    CriticalHandler = criticalHandler;
