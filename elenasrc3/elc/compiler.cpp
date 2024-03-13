@@ -1292,6 +1292,7 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
 {
    allocated1 = reserved1 = 0;
    allocated2 = reserved2 = 0;
+   withRetStatement = false;
 }
 
 Compiler::CodeScope :: CodeScope(CodeScope* parent)
@@ -1299,6 +1300,7 @@ Compiler::CodeScope :: CodeScope(CodeScope* parent)
 {
    reserved1 = allocated1 = parent->allocated1;
    reserved2 = allocated2 = parent->allocated2;
+   withRetStatement = false;
 }
 
 ObjectInfo Compiler::CodeScope :: mapLocal(ustr_t identifier)
@@ -1352,6 +1354,8 @@ void Compiler::CodeScope :: syncStack(CodeScope* parentScope)
 
    if (parentScope->reserved2 < reserved2)
       parentScope->reserved2 = reserved2;
+
+   parentScope->withRetStatement |= withRetStatement;
 }
 
 void Compiler::CodeScope :: markAsAssigned(ObjectInfo object)
@@ -8823,10 +8827,15 @@ ObjectInfo Compiler :: compileSubCode(BuildTreeWriter& writer, ExprScope& scope,
 ObjectInfo Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode rnode,
    SyntaxNode r2node, bool retValExpected)
 {
+   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+
    writer.newNode(BuildKey::Tape);
 
    ObjectInfo subRetCode = {};
+   bool oldWithRet = codeScope->withRetStatement;
    if (rnode == SyntaxKey::ClosureBlock || rnode == SyntaxKey::SwitchCode) {
+      codeScope->withRetStatement = false;
+
       subRetCode = compileSubCode(writer, scope, rnode.firstChild(), retValExpected ? EAttr::RetValExpected : EAttr::None);
    }
    else subRetCode = compileExpression(writer, scope, rnode, 0, EAttr::None, nullptr);
@@ -8843,7 +8852,14 @@ ObjectInfo Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprSco
       writer.newNode(BuildKey::Tape);
       ObjectInfo elseSubRetCode = {};
       if (r2node == SyntaxKey::ClosureBlock) {
+         bool withRet = codeScope->withRetStatement;
+         codeScope->withRetStatement = false;
+
          elseSubRetCode = compileSubCode(writer, scope, r2node.firstChild(), retValExpected ? EAttr::RetValExpected : EAttr::None);
+
+         if (!withRet || !codeScope->withRetStatement) {
+            codeScope->withRetStatement = oldWithRet;
+         }
       }
       else elseSubRetCode = compileExpression(writer, scope, r2node, 0, EAttr::None, nullptr);
 
@@ -8857,12 +8873,14 @@ ObjectInfo Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprSco
       }
       writer.closeNode();
    }
+   else codeScope->withRetStatement = oldWithRet;
 
    writer.closeNode();
 
    ObjectInfo retVal = {};
-   if (retValExpected)
+   if (retValExpected) {
       retVal = { ObjectKind::Object, retType, 0 };
+   }
 
    return retVal;
 }
@@ -10648,7 +10666,7 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 
       compileAssigningOp(context, byRefTarget, retVal);
 
-      retVal = {};
+      retVal = scope.mapSelf();
    }
    else {
       retVal = boxArgument(context, retVal,
@@ -10676,6 +10694,8 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
    writer.appendNode(BuildKey::goingToEOP);
 
    scope.syncStack();
+
+   codeScope.withRetStatement = true;
 
    return retVal;
 }
@@ -11107,7 +11127,13 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
          if (codeScope.isByRefHandler() && retVal.kind != ObjectKind::Unknown) {
             ExprScope exprScope(&codeScope);
             WriterContext context = { &writer, &exprScope, node };
-            compileAssigningOp(context, codeScope.mapByRefReturnArg(), retVal);
+
+            ObjectInfo byRefVar = codeScope.mapByRefReturnArg();
+
+            retVal = convertObject(writer, exprScope, node, retVal,
+               retrieveStrongType(scope, byRefVar), false, false);
+
+            compileAssigningOp(context, byRefVar, retVal);
          }
          else if (scope.info.outputRef != 0 && !scope.constructorMode){
             ExprScope exprScope(&codeScope);
@@ -11133,14 +11159,19 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
    }
 
    // if the method returns itself
-   if (retVal.kind == ObjectKind::Unknown) {
+   if (retVal.kind == ObjectKind::Unknown && !codeScope.withRetStatement) {
       ExprScope exprScope(&codeScope);
       WriterContext context = { &writer, &exprScope, node };
 
       // NOTE : extension should re
       retVal = scope.mapSelf(!scope.isExtension);
       if (codeScope.isByRefHandler()) {
-         compileAssigningOp(context, codeScope.mapByRefReturnArg(), retVal);
+         ObjectInfo byRefVar = codeScope.mapByRefReturnArg();
+
+         retVal = convertObject(writer, exprScope, node, retVal, 
+            retrieveStrongType(scope, byRefVar), false, false);
+
+         compileAssigningOp(context, byRefVar, retVal);
       }
       else {
          ref_t outputRef = scope.info.outputRef;

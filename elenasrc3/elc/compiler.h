@@ -92,7 +92,7 @@ namespace elena_lang
       Wrapper,
       ClosureInfo,
       MemberInfo,
-      LocalField
+      LocalField,
    };
 
    enum TargetMode
@@ -112,7 +112,7 @@ namespace elena_lang
       BoxingPtr,
       Conditional,
       ConditionalUnboxingRequired,
-      Weak
+      Weak,
    };
 
    struct ObjectInfo
@@ -813,6 +813,8 @@ namespace elena_lang
 
          pos_t    allocated1, reserved1;       // defines managed frame size
          pos_t    allocated2, reserved2;       // defines unmanaged frame size
+
+         bool     withRetStatement;
 
          Scope* getScope(ScopeLevel level) override
          {

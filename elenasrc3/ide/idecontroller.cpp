@@ -1503,7 +1503,7 @@ void IDEController :: highlightError(IDEModel* model, int row, int column, path_
 {
    PathString fullPath(*model->projectModel.projectPath, path);
 
-   int projectStatus = STATUS_NONE;
+   int projectStatus = STATUS_FRAME_ACTIVATE;
    openFile(model, *fullPath, projectStatus);
 
    DocumentChangeStatus docStatus = { test(projectStatus, STATUS_FRAME_CHANGED) };

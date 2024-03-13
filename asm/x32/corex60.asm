@@ -171,6 +171,7 @@ labConinue:
   mov  eax, esi
   // ; get tls entry address  
   mov  esi, data : %CORE_THREAD_TABLE + tt_slots
+  xor  ecx, ecx
   mov  edi, [esi - 4]
 labNext:
   mov  edx, [esi]
@@ -234,6 +235,13 @@ labSkipWait:
   push esi
   push ecx
 
+  // ; save perm roots
+  mov  esi, [data : %CORE_GC_TABLE + gc_perm_start]
+  mov  ecx, [data : %CORE_GC_TABLE + gc_perm_current]
+  sub  ecx, esi
+  push esi
+  push ecx
+
   // ; == GCXT: save frames ==
   mov  eax, data : %CORE_THREAD_TABLE
   mov  ebx, [eax]
@@ -243,7 +251,7 @@ labYGNextThread:
   mov  eax, data : %CORE_THREAD_TABLE + tt_slots
   
   // ; get tls entry address
-  mov  esi, [eax+ebx*4]            
+  mov  esi, [eax+ebx*8]            
   test esi, esi
   jz   short labYGNextThreadSkip
 
@@ -793,14 +801,13 @@ end
 // ; tststck
 inline %17h
 
-  xor  ecx, ecx
-
   // ; COREX
   mov  ecx, fs:[2Ch]
   mov  eax, [data : %CORE_TLS_INDEX]
   mov  edi, [ecx+eax*4]
   mov  eax, [edi + tt_stack_root]
 
+  xor  ecx, ecx
   cmp  ebx, esp
   setl cl
   cmp  ebx, eax

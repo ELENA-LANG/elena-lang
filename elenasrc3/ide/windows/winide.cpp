@@ -1055,6 +1055,10 @@ void IDEWindow :: onIDEStatusChange(ModelNMHDR* rec)
       onDebugWatch();
       onDebugStep();
    }
+
+   if (test(rec->status, STATUS_FRAME_ACTIVATE)) {
+      onActivate();
+   }
 }
 
 void IDEWindow :: onTextModelChange(TextViewModelNMHDR* rec)

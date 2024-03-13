@@ -10,18 +10,14 @@ In development:
   op:github actions : x86
   opt: #601,#602
   maint:tools:backlog,#616, system module warnings, #622
-  exp:snake game : text / gui version, using expression trees in real-life apps (see c#)
   ide:backlog (#617), vm debugger, include / exclude files
   tools:work with elt in ide
   prom:#635,elena in nutshell every 2 week
   port:x86-64 vm,elenavm / elt for linux
   --------------------------------------
   - #620 - resolve several points
-    - redirect abstract byref handler
-    - elena sm : x86-64
     - fix an issue with : Enumerable<TupleTuple#2,T1,T2> - probably we do not need them (make the internal)?
     - new opcode : fexp - ppc64le
-    - 
   - dev : redesign switch statement : it should be possible to use as an expression as well
     (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
     console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
@@ -29,13 +25,14 @@ In development:
     - step over - to the same row - must be auto skipped?
     - fix #634
   --------------------------------------
-    - Sorting algorithms/Sleep sort
-    - mta example - printing a text in one thread, waiting to end the program in another one
-    - x86 mt
+    - no need for typecasting operation after if-else operation with both branches containging byref returning operation;
+      the retval must be self
 
-    - highlight error - set a focus on textview
+    - why IntNumber.add<'RealNumber>[2] has no byref handler
 
-    - gui samples
+    - gui samples : helloworld sample
+
+    - elena sm : x86-64
 
   === Iteration 21 ===
   --------------------------------------

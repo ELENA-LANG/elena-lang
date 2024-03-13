@@ -68,6 +68,7 @@ namespace elena_lang
    constexpr int STATUS_WITHERRORS                    = 0x0800;
    constexpr int STATUS_DEBUGGER_RUNNING              = 0x1000;
    constexpr int STATUS_DEBUGGER_FINISHED             = 0x2000;
+   constexpr int STATUS_FRAME_ACTIVATE                = 0x4000;
 
    constexpr int NOTIFY_DEBUGGER_RESULT                  = 6;
    constexpr int NOTIFY_ERROR_SEL                        = 7;
