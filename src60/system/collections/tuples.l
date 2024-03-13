@@ -26,6 +26,21 @@ namespace collections
             0 { Item1 := val }
             ! { OutOfRangeException.raise() }
       }
+
+      Indexer indexer() = new BaseIndexer
+      {
+         this index := 0;
+           
+         this length := 1;
+           
+         get Value()
+            = self.at(this index);
+               
+         set Value(o)
+         {
+            self.setAt(this index, o)
+         }
+      };
    }
 
    public sealed Tuple<T1, T2>
@@ -61,7 +76,21 @@ namespace collections
 
       Tuple<object,object> cast()
          = new Tuple<object,object>(Item1, Item2);
-//         = ();        
+
+      Indexer indexer() = new BaseIndexer
+      {
+         this index := 0;
+           
+         this length := 2;
+           
+         get Value()
+            = self.at(this index);
+               
+         set Value(o)
+         {
+            self.setAt(this index, o)
+         }
+      };
    }
 
    public sealed VarTuple<T1, T2>
@@ -130,6 +159,21 @@ namespace collections
             2 { Item3 := val }
             ! { OutOfRangeException.raise() }
       }
+
+      Indexer indexer() = new BaseIndexer
+      {
+         this index := 0;
+           
+         this length := 3;
+           
+         get Value()
+            = self.at(this index);
+               
+         set Value(o)
+         {
+            self.setAt(this index, o)
+         }
+      };
    }
 
    public sealed Tuple<T1, T2, T3, T4>
@@ -170,6 +214,21 @@ namespace collections
             3 { Item4 := val }
             ! { OutOfRangeException.raise() }
       }
+
+      Indexer indexer() = new BaseIndexer
+      {
+         this index := 0;
+           
+         this length := 4;
+           
+         get Value()
+            = self.at(this index);
+               
+         set Value(o)
+         {
+            self.setAt(this index, o)
+         }
+      };
    }
 
    public sealed Tuple<T1, T2, T3, T4, T5>
@@ -214,6 +273,21 @@ namespace collections
             4 { Item5 := val }
             ! { OutOfRangeException.raise() }
       }
+
+      Indexer indexer() = new BaseIndexer
+      {
+         this index := 0;
+           
+         this length := 5;
+           
+         get Value()
+            = self.at(this index);
+               
+         set Value(o)
+         {
+            self.setAt(this index, o)
+         }
+      };
    }
 
    public sealed Tuple<T1, T2, T3, T4, T5, T6>
@@ -262,5 +336,20 @@ namespace collections
             5 { Item6 := val }
             ! { OutOfRangeException.raise() }
       }
+
+      Indexer indexer() = new BaseIndexer
+      {
+         this index := 0;
+           
+         this length := 6;
+           
+         get Value()
+            = self.at(this index);
+               
+         set Value(o)
+         {
+            self.setAt(this index, o)
+         }
+      };
    }
 }

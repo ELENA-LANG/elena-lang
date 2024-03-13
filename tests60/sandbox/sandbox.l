@@ -1,5 +1,15 @@
 import extensions;
 
+X
+{
+   real convert(byte b)
+   {
+      real r := b
+
+      ^ r;
+   }
+}
+
 A;
 
 B
@@ -14,7 +24,6 @@ B
       }
    }
 }
-
 
 public program()
 {
