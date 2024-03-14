@@ -52,6 +52,7 @@ namespace elena_lang
       {
          this->eof = this->identifier = 0;
          this->reference = 0;
+         this->globalreference = 0;
          this->string = this->character = 0;
          this->wide = 0;
          this->integer = this->hexinteger = 0;

@@ -21,10 +21,10 @@ In development:
     (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
     console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
     - pi under 7 sec
-    - step over - to the same row - must be auto skipped?
-    - fix #634
     - why IntNumber.add<'RealNumber>[2] has no byref handler
+    - step over - to the same row - must be auto skipped?
   --------------------------------------
+    - xforms
     - gui samples : helloworld sample
 
     - elena sm : x86-64
@@ -52,4 +52,3 @@ In development:
   ide:
   tools:
   prom:
-  port:xforms

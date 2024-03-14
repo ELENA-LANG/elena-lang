@@ -41,7 +41,7 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 {
    return (MethodHint)(l | (unsigned int)r);
 }
-
+//
 //inline void testNodes(SyntaxNode node)
 //{
 //   SyntaxNode current = node.firstChild();
@@ -8804,6 +8804,7 @@ ObjectInfo Compiler :: compileSubCode(BuildTreeWriter& writer, ExprScope& scope,
    ExpressionAttribute mode, bool withoutNewScope)
 {
    bool retValExpected = EAttrs::testAndExclude(mode, EAttr::RetValExpected);
+   bool withoutDebugInfo = EAttrs::testAndExclude(mode, EAttr::NoDebugInfo);
 
    scope.syncStack();
 
@@ -8811,7 +8812,7 @@ ObjectInfo Compiler :: compileSubCode(BuildTreeWriter& writer, ExprScope& scope,
    ObjectInfo retVal = {};
    if (!withoutNewScope) {
       CodeScope codeScope(parentCodeScope);
-      retVal = compileCode(writer, codeScope, node, retValExpected);
+      retVal = compileCode(writer, codeScope, node, retValExpected, withoutDebugInfo);
 
       codeScope.syncStack(parentCodeScope);
    }
@@ -8825,7 +8826,7 @@ ObjectInfo Compiler :: compileSubCode(BuildTreeWriter& writer, ExprScope& scope,
 }
 
 ObjectInfo Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode rnode,
-   SyntaxNode r2node, bool retValExpected)
+   SyntaxNode r2node, bool retValExpected, bool withoutDebugInfo)
 {
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
 
@@ -8834,9 +8835,13 @@ ObjectInfo Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprSco
    ObjectInfo subRetCode = {};
    bool oldWithRet = codeScope->withRetStatement;
    if (rnode == SyntaxKey::ClosureBlock || rnode == SyntaxKey::SwitchCode) {
+      EAttr mode = retValExpected ? EAttr::RetValExpected : EAttr::None;
+      if (withoutDebugInfo)
+         mode = mode | EAttr::NoDebugInfo;
+
       codeScope->withRetStatement = false;
 
-      subRetCode = compileSubCode(writer, scope, rnode.firstChild(), retValExpected ? EAttr::RetValExpected : EAttr::None);
+      subRetCode = compileSubCode(writer, scope, rnode.firstChild(), mode);
    }
    else subRetCode = compileExpression(writer, scope, rnode, 0, EAttr::None, nullptr);
 
@@ -8855,7 +8860,11 @@ ObjectInfo Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprSco
          bool withRet = codeScope->withRetStatement;
          codeScope->withRetStatement = false;
 
-         elseSubRetCode = compileSubCode(writer, scope, r2node.firstChild(), retValExpected ? EAttr::RetValExpected : EAttr::None);
+         EAttr mode = retValExpected ? EAttr::RetValExpected : EAttr::None;
+         if (withoutDebugInfo)
+            mode = mode | EAttr::NoDebugInfo;
+
+         elseSubRetCode = compileSubCode(writer, scope, r2node.firstChild(), mode);
 
          if (!withRet || !codeScope->withRetStatement) {
             codeScope->withRetStatement = oldWithRet;
@@ -8886,7 +8895,7 @@ ObjectInfo Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprSco
 }
 
 ObjectInfo Compiler :: compileBranchingOperation(WriterContext& context, ObjectInfo loperand, SyntaxNode rnode, 
-   SyntaxNode r2node, int operatorId, ArgumentsInfo* updatedOuterArgs, bool retValExpected)
+   SyntaxNode r2node, int operatorId, ArgumentsInfo* updatedOuterArgs, bool retValExpected, bool withoutDebugInfo)
 {
    ObjectInfo retVal = {};
    BuildKey   op = BuildKey::None;
@@ -8930,7 +8939,7 @@ ObjectInfo Compiler :: compileBranchingOperation(WriterContext& context, ObjectI
       context.writer->newNode(op, operatorId);
       context.writer->appendNode(BuildKey::Const, context.scope->moduleScope->branchingInfo.trueRef);
 
-      retVal = compileBranchingOperands(*context.writer, *context.scope, rnode, r2node, retValExpected);
+      retVal = compileBranchingOperands(*context.writer, *context.scope, rnode, r2node, retValExpected, withoutDebugInfo);
    }
    else {
       mssg_t message = 0;
@@ -8967,7 +8976,7 @@ ObjectInfo Compiler :: compileBranchingOperation(WriterContext& context, ObjectI
 }
 
 ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
-   int operatorId, bool retValExpected)
+   int operatorId, bool retValExpected, bool withoutDebugInfo)
 {
    SyntaxNode lnode = node.firstChild();
    SyntaxNode rnode = /*skipNestedExpression(*/lnode.nextNode()/*)*/;
@@ -8979,14 +8988,17 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
 
    ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter, &updatedOuterArgs);
 
-   // HOTFIX : to allow correct step over the branching statement
-   writer.appendNode(BuildKey::EndStatement);
-   writer.appendNode(BuildKey::VirtualBreakoint);
+   if (!withoutDebugInfo) {
+      // HOTFIX : to allow correct step over the branching statement
+      writer.appendNode(BuildKey::EndStatement);
+      writer.appendNode(BuildKey::VirtualBreakoint);
+   }
 
    WriterContext context = { &writer, &scope, node };
-   auto retVal = compileBranchingOperation(context, loperand, rnode, r2node, operatorId, &updatedOuterArgs, retValExpected);
+   auto retVal = compileBranchingOperation(context, loperand, rnode, r2node, operatorId, &updatedOuterArgs, retValExpected, withoutDebugInfo);
 
-   writer.appendNode(BuildKey::OpenStatement); // HOTFIX : to match the closing statement
+   if (!withoutDebugInfo)
+      writer.appendNode(BuildKey::OpenStatement); // HOTFIX : to match the closing statement
 
    return retVal;
 }
@@ -10144,7 +10156,7 @@ void Compiler :: compileSwitchOperation(BuildTreeWriter& writer, ExprScope& scop
             arguments.add(loperand);
             arguments.add(value);
             ObjectInfo retVal = compileOperation(writer, scope, node, arguments, operator_id, 0, nullptr);
-            compileBranchingOperation(context, retVal, optionNode.nextNode(), {}, IF_OPERATOR_ID, nullptr, false);
+            compileBranchingOperation(context, retVal, optionNode.nextNode(), {}, IF_OPERATOR_ID, nullptr, false, false);
 
             writer.closeNode();
             break;
@@ -10501,13 +10513,13 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::IfNotOperation:
       case SyntaxKey::IfElseOperation:
          retVal = compileBranchingOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS,
-            EAttrs::test(mode, EAttr::RetValExpected));
+            EAttrs::test(mode, EAttr::RetValExpected), EAttrs::test(mode, EAttr::NoDebugInfo));
          break;
       case SyntaxKey::BranchOperation:
          // HOTFIX : used for script based code
          retVal = compileBranchingOperation(writer, scope, current, 
             (current.firstChild().nextNode().nextNode() != SyntaxKey::None ? IF_ELSE_OPERATOR_ID : IF_OPERATOR_ID),
-            EAttrs::test(mode, EAttr::RetValExpected));
+            EAttrs::test(mode, EAttr::RetValExpected), false);
          break;
       case SyntaxKey::LoopOperation:
          retVal = compileLoopExpression(writer, scope, current.firstChild(), mode);
@@ -10702,10 +10714,14 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 
 ObjectInfo Compiler :: compileRootExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, EAttr mode)
 {
+   bool noDebugInfo = EAttrs::test(mode, EAttr::NoDebugInfo);
+
    ExprScope scope(&codeScope);
 
-   writer.appendNode(BuildKey::OpenStatement);
-   addBreakpoint(writer, findObjectNode(node), BuildKey::Breakpoint);
+   if (!noDebugInfo) {
+      writer.appendNode(BuildKey::OpenStatement);
+      addBreakpoint(writer, findObjectNode(node), BuildKey::Breakpoint);
+   }
 
    auto retVal = compileExpression(writer, scope, node, 0, mode, nullptr);
 
@@ -10713,7 +10729,8 @@ ObjectInfo Compiler :: compileRootExpression(BuildTreeWriter& writer, CodeScope&
    //   retVal = boxArgumentInPlace(writer, scope, retVal);
    //}
 
-   writer.appendNode(BuildKey::EndStatement);
+   if (!noDebugInfo)
+      writer.appendNode(BuildKey::EndStatement);
 
    scope.syncStack();
 
@@ -10990,7 +11007,7 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
    }
 }
 
-ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode)
+ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode, bool noDebugInfoMode)
 {
    ObjectInfo retVal = {};
    ObjectInfo exprRetVal = {};
@@ -11001,6 +11018,8 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
    writer.closeNode();
 
    EAttr mode = closureMode ? EAttr::RetValExpected : EAttr::None;
+   if (noDebugInfoMode)
+      mode = mode | EAttr::NoDebugInfo;
 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -11013,9 +11032,19 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
             break;
          case SyntaxKey::CodeBlock:
          {
+            bool autoGenerated = current.existChild(SyntaxKey::Autogenerated);
+
+            if (!noDebugInfoMode && autoGenerated) {
+               writer.appendNode(BuildKey::OpenStatement);
+               addBreakpoint(writer, findObjectNode(current.firstChild()), BuildKey::Breakpoint);
+            }
+
             CodeScope subScope(&codeScope);
-            exprRetVal = compileCode(writer, subScope, current, false);
+            exprRetVal = compileCode(writer, subScope, current, false, autoGenerated);
             subScope.syncStack(&codeScope);
+
+            if (!noDebugInfoMode && autoGenerated)
+               writer.appendNode(BuildKey::EndStatement);
             break;
          }
          case SyntaxKey::EOP:

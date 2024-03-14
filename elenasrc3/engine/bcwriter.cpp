@@ -3509,6 +3509,8 @@ bool ByteCodeWriter :: matchTriePatterns(BuildNode node)
          // NOTE : analize nested command
          if (matchTriePatterns(current))
             return true;
+
+         matched->clear();
       }
       if (isNonOperational(current.key)) {
          // NOTE : ignore non-operational commands)
