@@ -6,7 +6,7 @@ In development:
   ### EPIC: elena 6.0 - redux ###
   === Iteration 20 ===
   --------------------------------------
-  dev: async programming (instant messagange sample (chat) ), #608, #588
+  dev: async programming (instant messagange sample (chat) ), #608
   op:github actions : x86
   opt: #601,#602
   maint:tools:backlog,#616, system module warnings, #622
@@ -20,10 +20,13 @@ In development:
   - dev : redesign switch statement : it should be possible to use as an expression as well
     (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
     console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
-    - pi under 7 sec
     - why IntNumber.add<'RealNumber>[2] has no byref handler
     - step over - to the same row - must be auto skipped?
   --------------------------------------
+    - pi under 7 sec
+
+    - #588
+
     - xforms
     - gui samples : helloworld sample
 
@@ -31,7 +34,7 @@ In development:
 
   === Iteration 21 ===
   --------------------------------------
-  dev: windows executable - support manifest
+  dev: #637, windows executable - support manifest
   op:
   opt:pi under 6 sec
   maint:#620

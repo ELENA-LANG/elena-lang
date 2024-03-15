@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Byte code Build Tree classes
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef BUILDTREE_H
@@ -278,6 +278,8 @@ namespace elena_lang
          map.add("int_real_op", BuildKey::IntRealOp);
          map.add("real_int_op", BuildKey::RealIntOp);
          map.add("direct_call_op", BuildKey::DirectCallOp);
+         map.add("addingint", BuildKey::AddingInt);
+         map.add("saving_index", BuildKey::SavingIndex);
       }
    };
 

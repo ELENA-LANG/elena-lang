@@ -16,15 +16,15 @@ using namespace elena_lang;
 
 typedef ByteCodeWriter::TapeScope TapeScope;
 
-//inline void testNodes(BuildNode node)
-//{
-//   BuildNode current = node.firstChild();
-//   while (current != BuildKey::None) {
-//      testNodes(current);
-//
-//      current = current.nextNode();
-//   }
-//}
+inline void testNodes(BuildNode node)
+{
+   BuildNode current = node.firstChild();
+   while (current != BuildKey::None) {
+      testNodes(current);
+
+      current = current.nextNode();
+   }
+}
 
 inline BuildKey operator | (const BuildKey& l, const BuildKey& r)
 {
@@ -2161,13 +2161,7 @@ inline bool intCopying(BuildNode lastNode)
 
 inline bool intOpWithConsts(BuildNode lastNode)
 {
-   int size = lastNode.findChild(BuildKey::Size).arg.value;
-   if (size != 4)
-      return false;
-
-   BuildNode targetNode = lastNode;
-   BuildNode tempNode = getPrevious(targetNode);
-   BuildNode opNode = getPrevious(tempNode);
+   BuildNode opNode = lastNode;
    BuildNode savingOp2 = getPrevious(opNode);
    BuildNode intNode = getPrevious(savingOp2);
    BuildNode valueNode = intNode.findChild(BuildKey::Value);
@@ -2175,25 +2169,20 @@ inline bool intOpWithConsts(BuildNode lastNode)
    BuildNode sourceNode = getPrevious(savingOp1);
 
    int tempTarget = opNode.findChild(BuildKey::Index).arg.value;
-   if (tempTarget != tempNode.arg.value)
-      return false;
-
    switch (opNode.arg.value) {
       case ADD_OPERATOR_ID:
       case SUB_OPERATOR_ID:
          savingOp1.setKey(BuildKey::Copying);
-         savingOp1.setArgumentValue(targetNode.arg.value);
+         savingOp1.setArgumentValue(tempTarget);
          savingOp1.appendChild(BuildKey::Size, 4);
          intNode.setKey(BuildKey::AddingInt);
-         intNode.setArgumentValue(targetNode.arg.value);
+         intNode.setArgumentValue(tempTarget);
          if (opNode.arg.value == SUB_OPERATOR_ID) {
             // revert the value
             valueNode.setArgumentValue(-valueNode.arg.value);
          }
          savingOp2.setKey(BuildKey::Idle);
          opNode.setKey(BuildKey::Idle);
-         tempNode.setKey(BuildKey::Idle);
-         targetNode.setKey(BuildKey::Idle);
          break;
       case MUL_OPERATOR_ID:
          savingOp1.setKey(BuildKey::LoadingAccToIndex);
@@ -2201,25 +2190,20 @@ inline bool intOpWithConsts(BuildNode lastNode)
          intNode.setKey(BuildKey::IndexOp);
          intNode.setArgumentValue(opNode.arg.value);
          savingOp2.setKey(BuildKey::SavingIndex);
-         savingOp2.setArgumentValue(targetNode.arg.value);
+         savingOp2.setArgumentValue(tempTarget);
          opNode.setKey(BuildKey::Idle);
-         tempNode.setKey(BuildKey::Idle);
-         targetNode.setKey(BuildKey::Idle);
          break;
       case BAND_OPERATOR_ID:
       case BOR_OPERATOR_ID:
       case SHL_OPERATOR_ID:
       case SHR_OPERATOR_ID:
          setChild(intNode, BuildKey::Source, sourceNode.arg.value);
-         setChild(intNode, BuildKey::Index, targetNode.arg.value);
+         setChild(intNode, BuildKey::Index, tempTarget);
          intNode.setKey(BuildKey::IntConstOp);
          intNode.setArgumentValue(opNode.arg.value);
 
-         targetNode.setKey(BuildKey::Idle);
-         tempNode.setKey(BuildKey::Idle);
          opNode.setKey(BuildKey::Idle);
          savingOp2.setKey(BuildKey::Idle);
-         targetNode.setKey(BuildKey::Idle);
          savingOp1.setKey(BuildKey::Idle);
          sourceNode.setKey(BuildKey::Idle);
          break;
@@ -2230,48 +2214,44 @@ inline bool intOpWithConsts(BuildNode lastNode)
    return true;
 }
 
-inline bool intOpWithConsts2(BuildNode lastNode)
+inline bool optIntOpWithConsts(BuildNode lastNode)
+{
+   BuildNode copyNode = lastNode;
+   BuildNode sourNode = getPrevious(copyNode);
+   BuildNode opNode = getPrevious(sourNode);
+   BuildNode sourceCopyNode = getPrevious(opNode);
+
+   if (sourNode.arg.reference == opNode.arg.reference && sourNode.arg.reference == sourceCopyNode.arg.reference) {
+      opNode.setArgumentReference(copyNode.arg.reference);
+      sourceCopyNode.setArgumentReference(copyNode.arg.reference);
+
+      copyNode.setKey(BuildKey::Idle);
+      sourNode.setKey(BuildKey::Idle);
+
+      return true;
+   }
+
+   return false;
+}
+
+inline bool doubleCopyingIntOp(BuildNode lastNode)
 {
    BuildNode copyingOp = lastNode;
-   BuildNode targetNode2 = getPrevious(copyingOp);
-   BuildNode stackOp = getPrevious(targetNode2);
-   BuildNode tempOp = getPrevious(stackOp);
-   BuildNode assigningOp = getPrevious(tempOp);
-   BuildNode createOp = getPrevious(assigningOp);
-   BuildNode intOp = getPrevious(createOp);
-   BuildNode stackOp2 = getPrevious(intOp);
-   BuildNode intLiteralOp = getPrevious(stackOp2);
-   BuildNode stackOp3 = getPrevious(intLiteralOp);
-   BuildNode sourceOp = getPrevious(stackOp3);
+   BuildNode tempLocalOp = getPrevious(copyingOp);
+   BuildNode savingIndexOp = getPrevious(tempLocalOp);
 
-   BuildNode valueNode = intLiteralOp.findChild(BuildKey::Value);
-   BuildNode intOpIndex = intOp.findChild(BuildKey::Index);
+   int size = copyingOp.findChild(BuildKey::Size).arg.value;
 
-   if (targetNode2.arg.reference != assigningOp.arg.reference)
-      return false;
+   if (tempLocalOp.arg.reference == savingIndexOp.arg.reference && size == 4) {
+      savingIndexOp.setArgumentReference(copyingOp.arg.reference);
 
-   if (tempOp.arg.reference != intOpIndex.arg.reference)
-      return false;
+      copyingOp.setKey(BuildKey::Idle);
+      tempLocalOp.setKey(BuildKey::Idle);
 
-   // !! temporal - exclude div
-   if (intOp.arg.value == DIV_OPERATOR_ID)
-      return false;
+      return true;
+   }
 
-   tempOp.setKey(BuildKey::LoadingIndex);
-   tempOp.setArgumentReference(sourceOp.arg.reference);
-
-   stackOp.setKey(BuildKey::IndexOp);
-   stackOp.setArgumentValue(intOp.arg.value);
-   stackOp.appendChild(BuildKey::Value, valueNode.arg.value);
-   copyingOp.setKey(BuildKey::SavingIndexToAcc);
-
-   intOp.setKey(BuildKey::Idle);
-   stackOp2.setKey(BuildKey::Idle);
-   intLiteralOp.setKey(BuildKey::Idle);
-   stackOp3.setKey(BuildKey::Idle);
-   sourceOp.setKey(BuildKey::Idle);
-
-   return true;
+   return false;
 }
 
 inline bool assignIntOpWithConsts(BuildNode lastNode)
@@ -2607,7 +2587,7 @@ ByteCodeWriter::Transformer transformers[] =
 {
    nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts,
    boxingInt, nativeBranchingOp, intConstBranchingOp, doubleAssigningConverting, doubleAssigningIntRealOp,
-   intOpWithConsts2, inplaceCallOp, intConstAssigning, inplaceCallOp2
+   doubleCopyingIntOp, inplaceCallOp, intConstAssigning, inplaceCallOp2, optIntOpWithConsts
 };
 
 // --- ByteCodeWriter ---
@@ -3457,6 +3437,10 @@ inline bool isNonOperational(BuildKey key)
       case BuildKey::ByRefOpMark:
       case BuildKey::InplaceCall:
       case BuildKey::IntBranchOp:
+      case BuildKey::CatchOp:
+      case BuildKey::AltOp:
+      case BuildKey::LoopOp:
+      case BuildKey::ShortCircuitOp:
          return false;
       case BuildKey::OpenStatement:
       case BuildKey::EndStatement:
@@ -3509,8 +3493,6 @@ bool ByteCodeWriter :: matchTriePatterns(BuildNode node)
          // NOTE : analize nested command
          if (matchTriePatterns(current))
             return true;
-
-         matched->clear();
       }
       if (isNonOperational(current.key)) {
          // NOTE : ignore non-operational commands)
@@ -3572,6 +3554,8 @@ void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMod
    ReferenceMap& paths, bool tapeOptMode, bool threadFriendly)
 {
    optimizeBuildTree(node.findChild(BuildKey::Tape));
+
+   testNodes(node.findChild(BuildKey::Tape));
 
    if (scope.moduleScope->debugModule)
       openMethodDebugInfo(scope, sourcePathRef);

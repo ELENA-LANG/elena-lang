@@ -1,27 +1,22 @@
 import extensions;
 
-B
-{
-    test(string command)
-    {
-        console.printLine(command);
-    }
-}
+const int N = 3;
 
-C;
+singleton IntTester
+{
+   test(int val, int checkVal)
+   {
+      Assert.ifTrue(val == checkVal)
+   }
+
+   testWeak(val, checkVal)
+   {
+      Assert.ifTrue(val == checkVal)
+   }
+}
 
 public program()
 {
-    var a := nil;
-    var b := new B();
-    var c := new C();
-  
-    a?.test("Fired a?.test");
-    b?.test("Fired b?.test");
-    
-    a\.test("Fired a\.test");
-    b\.test("Fired b\.test");
-    c\.test("Fired c\.test");
-
-    console.readLine();
+   int i := 3;
+   IntTester.test(i * 2, 6)
 }
