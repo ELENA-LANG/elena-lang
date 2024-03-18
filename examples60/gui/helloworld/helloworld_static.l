@@ -1,3 +1,5 @@
+import xforms;
+
 public class MainWindow
 {
    Form;

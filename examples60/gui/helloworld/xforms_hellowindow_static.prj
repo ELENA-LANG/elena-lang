@@ -8,7 +8,7 @@
     <targets>
         <target name="grammar" type="2">
             <option>[[ #grammar tree ]]</option>
-            <option>~\scripts\xforms.es</option>
+            <option>~\scripts\xforms60.es</option>
         </target>
     </targets>
     <files>
