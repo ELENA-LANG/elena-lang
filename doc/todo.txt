@@ -22,10 +22,9 @@ In development:
     console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
     - why IntNumber.add<'RealNumber>[2] has no byref handler
     - step over - to the same row - must be auto skipped?
-  --------------------------------------
     - pi under 7 sec
-
-    - #588
+  --------------------------------------
+    - elena-cli support several profiles
 
     - xforms
     - gui samples : helloworld sample

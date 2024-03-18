@@ -1,3 +1,5 @@
+import extensions'scripting;
+
 static ScriptEngine xformsEngine
    = new ScriptEngine()
             .loadScript("[[ #grammar build ]]")

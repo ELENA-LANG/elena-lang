@@ -141,7 +141,7 @@ int main()
 
       // Initializing...
       PathString configPath(*appPath, DEFAULT_CONFIG);
-      project.loadConfig(*configPath, false/*, true, false*/);
+      project.loadConfig(*configPath, nullptr, false/*, true, false*/);
 
       // Reading command-line arguments...
       int argc;
@@ -152,9 +152,23 @@ int main()
          return -2;
       }
 
+      IdentifierString profile;
       for (int i = 1; i < argc; i++) {
          if (argv[i][0] == '-') {
             switch (argv[i][1]) {
+               case 'f':
+               {
+                  IdentifierString setting(argv[i] + 2);
+                  process.addForward(*setting);
+
+                  break;
+               }
+               case 'l':
+               {
+                  IdentifierString setting(argv[i] + 2);
+                  profile.copy(*setting);
+                  break;
+               }
                case 'm':
                   project.addBoolSetting(ProjectOption::MappingOutputMode, true);
                   break;
@@ -168,6 +182,9 @@ int main()
                   else if (argv[i][2] == '2') {
                      project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
                   }
+                  break;
+               case 'p':
+                  project.setBasePath(argv[i] + 2);
                   break;
                case 'r':
                   cleanMode = true;
@@ -189,9 +206,6 @@ int main()
                   project.loadConfigByName(*appPath, *configName, true);
                   break;
                }
-               case 'p':
-                  project.setBasePath(argv[i] + 2);
-                  break;
                case 'v':
                   process.setVerboseOn();
                   break;
@@ -220,13 +234,6 @@ int main()
                      project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');
                   }
                   break;
-               case 'f':
-               {
-                  IdentifierString setting(argv[i] + 2);
-                  process.addForward(*setting);
-
-                  break;
-               }                  
                default:
                   break;
             }
@@ -234,7 +241,7 @@ int main()
          else if (PathUtil::checkExtension(argv[i], "prj")) {
             PathString path(argv[i]);
 
-            if (!project.loadProject(*path)) {
+            if (!project.loadProject(*path, *profile)) {
                return ERROR_RET_CODE;
             }
          }

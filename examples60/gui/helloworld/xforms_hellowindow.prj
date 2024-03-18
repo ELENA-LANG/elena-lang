@@ -11,15 +11,19 @@
             <option>~\scripts\xforms60.es</option>
         </target>
     </targets>
+    <profile key="static">
+       <files>
+           <module name="stat" target="grammar">
+               <include>helloworld.xs</include>
+           </module>
+       </files>
+       <forwards>
+          <forward key="loader">helloworld'stat'loader</forward>
+       </forwards>
+    </profile>
     <files>
-        <module name="stat" target="grammar">
-            <include>helloworld.xs</include>
-        </module>
         <module>
-            <include>helloworld_static.l</include>
+            <include>helloworld.l</include>
         </module>
     </files>
-    <forwards>
-        <forward key="form">helloworld'staticForm</forward>
-    </forwards>
 </configuration>

@@ -6,7 +6,7 @@ public class MainWindow
     
    constructor new()
    {
-      Form := xforms.execute(layout, self);
+      Form := (forward loader)(self)
    }
     
 /*    onExit(arg)

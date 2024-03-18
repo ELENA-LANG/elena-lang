@@ -16,15 +16,15 @@ using namespace elena_lang;
 
 typedef ByteCodeWriter::TapeScope TapeScope;
 
-inline void testNodes(BuildNode node)
-{
-   BuildNode current = node.firstChild();
-   while (current != BuildKey::None) {
-      testNodes(current);
-
-      current = current.nextNode();
-   }
-}
+//inline void testNodes(BuildNode node)
+//{
+//   BuildNode current = node.firstChild();
+//   while (current != BuildKey::None) {
+//      testNodes(current);
+//
+//      current = current.nextNode();
+//   }
+//}
 
 inline BuildKey operator | (const BuildKey& l, const BuildKey& r)
 {
@@ -3554,8 +3554,6 @@ void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMod
    ReferenceMap& paths, bool tapeOptMode, bool threadFriendly)
 {
    optimizeBuildTree(node.findChild(BuildKey::Tape));
-
-   testNodes(node.findChild(BuildKey::Tape));
 
    if (scope.moduleScope->debugModule)
       openMethodDebugInfo(scope, sourcePathRef);

@@ -18,5 +18,14 @@ singleton IntTester
 public program()
 {
    int i := 3;
-   IntTester.test(i * 2, 6)
+//   IntTester.test(i * N, 9);
+
+//   IntTester.testWeak(i * N, 9);
+
+//   if (i == N) {
+//      console.writeLine("!!");
+//   };
+
+//   int j := N;
+   int k := i + N;
 }

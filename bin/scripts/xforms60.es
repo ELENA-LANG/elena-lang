@@ -7,21 +7,28 @@
    #define form      ::= 
 <=
       root ( public_namespace (
-        singleton (
-          nameattr ( identifier = program )
+        public_singleton (
+          nameattr ( identifier = loader )
           script_function (
             parameter ( nameattr ( identifier = owner ) )
             code (
-              assign_operation (
-                new_variable ( identifier = current )
-                message_operation (
-                  object ( reference = forms'SDIDialog )
-                  message = new
+              expression (
+                assign_operation (
+                  new_variable ( identifier = current )
+                  message_operation (
+                    object ( reference = forms'SDIDialog )
+                    message ( identifier = new )
+                  )
                 )
               )
 =>
 	"<" "Form" ">" form_closing_tag
 <=
+              returning (  
+                expression (
+                  object ( identifier = current )
+                )
+              )
             )
           )
         )
