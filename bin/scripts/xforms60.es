@@ -22,7 +22,7 @@
                 )
               )
 =>
-	"<" "Form" ">" form_closing_tag
+	"<" "Form" { val_property | property }* ">" form_closing_tag
 <=
               returning (  
                 expression (
@@ -35,6 +35,67 @@
       ))
 =>;
 
+  #define val_property ::=
+<=
+              expression (
+                property_operation (
+                  object ( identifier = current )                    
+=>
+        ":" prop_name "=" prop_value
+<=
+                )
+              )
+=>;
+
+  #define property ::=
+<=
+              expression (
+                property_operation (
+                  object ( identifier = current )                    
+=>
+        prop_name "=" prop_str_value
+<=
+                )
+              )
+=>;
+
   #define form_closing_tag ::=
 	"<" "/" "Form" ">";
+
+  #define prop_name ::=
+<= 
+                message ( 
+=>
+                    identifier
+<=
+                )
+=>;
+
+  #define prop_value ::=
+<=
+                expression (
+                   object (
+                      integer =
+=>
+                      int_quote
+<=
+                   )
+                )
+=>;
+
+  #define prop_str_value ::=
+<=
+                expression (
+                   object (
+                      literal =
+=>
+                      quote
+<=
+                   )
+                )
+=>;
+
+  #define identifier   ::= <= identifier = $identifier =>;
+  #define int_quote    ::= <= $intliteral =>;
+  #define quote        ::= <= "$literal" =>;
 ]]

@@ -1,3 +1,5 @@
+public const int CW_USEDEFAULT           = 80000000h;
+
 public const int GWL_USERDATA            = -21;
 
 public const int SWP_NOSIZE       = 0001h;

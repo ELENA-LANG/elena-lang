@@ -8,6 +8,8 @@ public abstract class BaseWinForm : BaseWinContainer
    protected constructor new()
       <= super new()
    {
+      _region.X := CW_USEDEFAULT;
+      _region.Y := CW_USEDEFAULT;
    }
 
    appendControl(BaseControl control)
