@@ -58,6 +58,7 @@ namespace elena_lang
       IdentifierString  package;
       IdentifierString  target;
       IdentifierString  templateName;
+      IdentifierString  profile;
       IdentifierString  options;
 
       ProjectPaths      sources;
@@ -69,6 +70,7 @@ namespace elena_lang
       Breakpoints       breakpoints;
 
       StringList        projectTypeList;
+      StringList        profileList;
 
       ustr_t getTarget();
       ustr_t getArguments();

@@ -48,7 +48,11 @@ namespace elena_lang
 
       void loadDefaultConfig();
 
+      void loadProfileList(ConfigFile& config);
+
    public:
+      IdentifierList availableProfileList;
+
       PlatformType SystemTarget();
       PlatformType Platform();
       PlatformType TargetType();
@@ -88,7 +92,7 @@ namespace elena_lang
       void prepare();
 
       Project(path_t path, PlatformType platform, PresenterBase* presenter)
-         : XmlProjectBase(platform), _basePath(path)
+         : XmlProjectBase(platform), _basePath(path), availableProfileList(DEFAULT_STR)
       {
          _encoding = FileEncoding::UTF8;
 

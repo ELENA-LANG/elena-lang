@@ -63,6 +63,8 @@ namespace elena_lang
       void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
       void saveConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node root, ConfigFile::Node platformRoot);
 
+      void loadProfileList(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
+
       path_t retrieveSourceName(ProjectModel* model, path_t sourcePath, NamespaceString& retVal, PathString& subPath);
 
       bool isOutaged(ProjectModel& projectModel, SourceViewModel& sourceModel);

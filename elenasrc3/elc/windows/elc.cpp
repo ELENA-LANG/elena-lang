@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the win32 / win64 command-line compiler
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <windows.h>
@@ -141,7 +141,7 @@ int main()
 
       // Initializing...
       PathString configPath(*appPath, DEFAULT_CONFIG);
-      project.loadConfig(*configPath, nullptr, false/*, true, false*/);
+      project.loadConfig(*configPath, nullptr, false);
 
       // Reading command-line arguments...
       int argc;
@@ -240,9 +240,20 @@ int main()
          }
          else if (PathUtil::checkExtension(argv[i], "prj")) {
             PathString path(argv[i]);
-
             if (!project.loadProject(*path, *profile)) {
                return ERROR_RET_CODE;
+            }
+
+            if (profile.empty() && project.availableProfileList.count() != 0) {
+               IdentifierString profileList;
+               for (auto it = project.availableProfileList.start(); !it.eof(); ++it) {
+                  if (profileList.length() != 0)
+                     profileList.append(", ");
+
+                  profileList.append(*it);
+               }
+
+               Presenter::getInstance().printLine(ELC_PROFILE_WARNING, *profileList);
             }
          }
          else {
@@ -261,7 +272,8 @@ int main()
             DEFAULT_STACKALIGNMENT,
             DEFAULT_RAW_STACKALIGNMENT,
             DEFAULT_EHTABLE_ENTRY_SIZE,
-            MINIMAL_ARG_LIST);
+            MINIMAL_ARG_LIST,
+            *profile);
       }
    }
    catch (CLIException)

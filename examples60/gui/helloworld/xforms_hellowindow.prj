@@ -12,14 +12,14 @@
         </target>
     </targets>
     <profile key="static">
-       <files>
-           <module name="stat" target="grammar">
-               <include>helloworld.xs</include>
-           </module>
-       </files>
-       <forwards>
-          <forward key="loader">helloworld'stat'loader</forward>
-       </forwards>
+        <files>
+            <module name="stat" target="grammar">
+                <include>helloworld.xs</include>
+            </module>
+        </files>
+        <forwards>
+            <forward key="loader">helloworld'stat'loader</forward>
+        </forwards>
     </profile>
     <files>
         <module>

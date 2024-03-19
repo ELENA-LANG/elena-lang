@@ -25,6 +25,8 @@ namespace elena_lang
    constexpr auto OPTIONS_SUB_CATEGORY                = "project/options";
    constexpr auto OUTPUT_SUB_CATEGORY                 = "project/output";
 
+   constexpr auto PROFILE_CATEGORY                    = "/profile";
+
    constexpr auto MODULE_CATEGORY                     = "files/*";
 
    constexpr auto WIN_X86_KEY                         = "Win_x86";

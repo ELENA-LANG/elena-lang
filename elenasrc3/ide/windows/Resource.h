@@ -115,6 +115,7 @@
 #define IDC_SETTINGS_OUTPUT            855
 #define IDC_SETTINGS_DEBUG             856
 #define IDC_SETTINGS_ARGUMENT          857
+#define IDC_SETTINGS_PROFILE           858
 
 #define IDM_DEBUG_RUN                  901
 #define IDM_DEBUG_STEPOVER             902

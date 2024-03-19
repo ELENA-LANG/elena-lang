@@ -24,7 +24,10 @@ In development:
     - step over - to the same row - must be auto skipped?
     - pi under 7 sec
   --------------------------------------
-    - elena-cli support several profiles
+    - elena-cli - warn if the profile section exists and no profile was specified; show the selected profile, otherwise
+    - linux : elena-cli migrate changes related to profile
+
+    - intsum / realsum - have to be merged into a single project with multiple profiles
 
     - xforms
     - gui samples : helloworld sample

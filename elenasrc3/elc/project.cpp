@@ -369,6 +369,8 @@ bool Project :: loadConfig(path_t path, ustr_t profileName, bool mainConfig)
          _projectPath.copy(*configPath);
 
          _loaded = true;
+
+         loadProfileList(config);
       }
 
       loadConfig(config, *configPath, profileName);
@@ -440,4 +442,34 @@ void Project :: forEachForward(void* arg, void (* feedback)(void* arg, ustr_t ke
    for (auto f_it = _forwards.start(); !f_it.eof(); ++f_it) {
       feedback(arg, f_it.key(), *f_it);
    }
+}
+
+inline void loadProfileList(ConfigFile& config, ConfigFile::Node& root, IdentifierList* profileList)
+{
+   ConfigFile::Collection profiles;
+   if (config.select(root, PROFILE_CATEGORY, profiles)) {
+      for (auto it = profiles.start(); !it.eof(); ++it) {
+         ConfigFile::Node profileNode = *it;
+
+         DynamicString<char> key;
+         profileNode.readAttribute("key", key);
+
+         if (profileList->retrieveIndex<ustr_t>(key.str(), [](ustr_t arg, ustr_t current)
+            {
+               return current.compare(arg);
+            }) == -1)
+         {
+            profileList->add(ustr_t(key.str()).clone());
+         }
+      }
+   }
+}
+
+void Project :: loadProfileList(ConfigFile& config)
+{
+   ConfigFile::Node root = config.selectRootNode();
+   ConfigFile::Node platformRoot = getPlatformRoot(config, _platform);
+
+   ::loadProfileList(config, root, &availableProfileList);
+   ::loadProfileList(config, platformRoot, &availableProfileList);
 }

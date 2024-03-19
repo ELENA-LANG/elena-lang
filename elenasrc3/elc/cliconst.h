@@ -13,7 +13,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x0241
+   #define ELC_REVISION_NUMBER               0x0242
 
 #if defined _M_IX86 || _M_X64
 
@@ -30,6 +30,7 @@ namespace elena_lang
    // --- Information messages ---
    constexpr auto ELC_GREETING               = "ELENA Command-line compiler %d.%d.%d (C)2005-2024 by Aleksey Rakov\n";
    constexpr auto ELC_STARTING               = "Project: %s, Platform: %s, Target type: %s";
+   constexpr auto ELC_PROFILE_INFO           = "Project profile: %s";
    constexpr auto ELC_CLEANING               = "Cleaning up";
    constexpr auto ELC_LINKING                = "Linking..\n";
 
@@ -43,7 +44,9 @@ namespace elena_lang
 
    constexpr auto ELC_SAVING_MODULE          = "\nsaving %s\n";
 
-   constexpr auto ELC_HELP_INFO              = "elena-cli {-key} {source-file+ | project-file}\nkeys: m - turning on address mapping output\n      r - clean the compilation output\n      t{template name} - loading the project template\n      p - set the base path\n      wX- turns off warnings with level X=1,2,4\n      xp[-] - turning on/off a generation the parameter meta info\n      xb[-] - turning on/off a conditional boxing";
+   constexpr auto ELC_PROFILE_WARNING        = "\nWARNING - Please select one of available profiles:%s\n";
+
+   constexpr auto ELC_HELP_INFO              = "elena-cli {-key} {source-file+ | project-file}\nkeys:\n   -f{fwd=reference}   - add a forward\n   -l{profile name}    - selecct a profile\n   -m                  - turning on address mapping output\n   -o{0 | 1 | 2}       - set the optimization level\n   -p                  - set the base path\n   -r                  - clean the compilation output\n   -s{ stackReserv:n } - set the linker option - stack reserved\n   -t{ template name } - load the project template\n   -v                  - turn on a verbose output mode\n  - w{ 0 | 1 | 2 | 3 } - set the minimal warnings level to X = { 0 | 1 | 2 | 3 }\n   -xb[-]              - turn on / off a conditional boxing\n   -xe[-]              - turn on / off a compile-time expression evaluation\n   -xp[-]              - turn on / off generation of the parameter meta info";
 
    constexpr auto SYNTAX_FILE                = "syntax60.dat";
    constexpr auto BC_RULES_FILE              = "bc_rules60.dat";

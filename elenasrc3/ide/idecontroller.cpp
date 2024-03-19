@@ -366,6 +366,13 @@ bool ProjectController :: compileProject(ProjectModel& model)
 
    PathString cmdLine(*model.paths.compilerPath);
    cmdLine.append(" -w3 "); // !! temporal
+
+   if (!model.profile.empty()) {
+      cmdLine.append(" -l");
+      cmdLine.append(*model.profile);
+      cmdLine.append(" ");
+   }
+
    cmdLine.append(*model.projectFile);
 
    PathString curDir;
@@ -541,6 +548,27 @@ int ProjectController :: newProject(ProjectModel& model)
    return STATUS_PROJECT_CHANGED;
 }
 
+void ProjectController :: loadProfileList(ProjectModel& model, ConfigFile& config, ConfigFile::Node root)
+{
+   ConfigFile::Collection profiles;
+   if (config.select(root, PROFILE_CATEGORY, profiles)) {
+      for (auto it = profiles.start(); !it.eof(); ++it) {
+         ConfigFile::Node profileNode = *it;
+
+         DynamicString<char> key;
+         profileNode.readAttribute("key", key);
+
+         if (model.profileList.retrieveIndex<ustr_t>(key.str(), [](ustr_t arg, ustr_t current)
+            {
+               return current.compare(arg);
+            }) == -1) 
+         {
+            model.profileList.add(ustr_t(key.str()).clone());
+         }
+      }
+   }
+}
+
 int ProjectController :: openProject(ProjectModel& model, path_t projectFile)
 {
    int status = STATUS_PROJECT_CHANGED;
@@ -568,6 +596,9 @@ int ProjectController :: openProject(ProjectModel& model, path_t projectFile)
          {
             return node.compareAttribute("key", key);
          });
+
+      loadProfileList(model, projectConfig, root);
+      loadProfileList(model, projectConfig, platformRoot);
 
       loadConfig(model, projectConfig, root);
       loadConfig(model, projectConfig, platformRoot);
