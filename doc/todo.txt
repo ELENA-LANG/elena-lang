@@ -8,20 +8,13 @@ In development:
   --------------------------------------
   prom:elena in nutshell every 1 week
   --------------------------------------
-    - IDE : include / exclude files
-    - #618
-    - new opcode : fexp - ppc64le
-  --------------------------------------
-    - #616
-
-    - elena sm : x86-64
 
   === Iteration 21 ===
   --------------------------------------
   dev: #637, windows executable - support manifest
   op:
   opt:pi under 7 sec, #602
-  maint:#620,#622
+  maint:#620,#622,#618
   exp:
   ide:vm debugger,backlog (#617)
   tools:work with elt in ide

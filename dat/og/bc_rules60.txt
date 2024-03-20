@@ -7,7 +7,6 @@ peek fp:$1, copy, peek fp:#1 => peek fp, copy, idle;
 peek fp:$1, save, peek fp:#1 => peek fp, save, idle;
 set :$2, store sp:$1 => xstore sp:$3, idle;
 set :$2, store fp:$1 => xstore fp:$3, idle;
-set dp, load, save dp => load dp, idle, save dp;
 load dp:$1, save dp:#1 => load dp, idle;
 store sp:$1, peek sp:#1 => store sp, idle;
 store fp:$1, peek fp:#1 => store fp, idle;

@@ -3234,6 +3234,13 @@ inline %6F1h
 
 end
 
+// ; xstoresir :0, -1
+inline %9F1h
+
+  mov  esi, __ptr32_2
+
+end
+
 // ; extopenin
 inline %0F2h
 

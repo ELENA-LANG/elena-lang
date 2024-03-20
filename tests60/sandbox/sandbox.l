@@ -4,11 +4,13 @@ public singleton convertor
    {
       MessageName mssg := __received.MessageName;
 
-      ^ mssg(new ExtensionVariable(extensions'convertorOp, n))
+      ^ mssg(new ExtensionVariable(n, extensions'intConvertOp))
    }
 }
 
 public program()
 {
    var n := convertor.toInt("2");
+
+   console.writeLine(n)
 }

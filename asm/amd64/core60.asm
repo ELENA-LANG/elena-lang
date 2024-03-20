@@ -2916,6 +2916,20 @@ inline %7F1h
 
 end
 
+// ; xstoresir :0, -1
+inline %9F1h
+
+  mov  r10, -1
+
+end
+
+// ; xstoresir :1, -1
+inline %0AF1h
+
+  mov  r11, -1
+
+end
+
 // ; extopenin
 inline %0F2h
 

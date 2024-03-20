@@ -300,7 +300,7 @@ public singleton intConvertExt
 { 
    generic(n)
    {
-      /*MessageName*/var mssg := __received.MessageName;
+      MessageName mssg := __received.MessageName;
 
       ^ mssg(new ExtensionVariable(n, extensions'intConvertOp))
    }

@@ -69,7 +69,7 @@ public sealed class ScriptEngine
    private buildTape(pointer tape)
    {
       var retVal := nil;
-      byte temp[1024];        
+      byte temp[1024];
       int len := extern elenasm.GetLengthSMLA(tape);
 
       if (len <= 1024) {

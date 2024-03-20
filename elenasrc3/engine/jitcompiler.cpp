@@ -3008,6 +3008,9 @@ void JITCompiler :: writeDump(ReferenceHelperBase* helper, MemoryWriter& writer,
 
    writer.align(4, 0);
 
+   if (!section->getReferences())
+      return;
+
    for (auto it = RelocationMap::Iterator(section->getReferences()); !it.eof(); ++it) {
       pos_t imageOffset = *it + position;
 
