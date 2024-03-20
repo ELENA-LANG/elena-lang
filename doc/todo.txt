@@ -6,39 +6,13 @@ In development:
   ### EPIC: elena 6.0 - redux ###
   === Iteration 20 ===
   --------------------------------------
-  dev: async programming (instant messagange sample (chat) ), #608
-  op:github actions : x86
-  opt: #601,#602
-  maint:tools:backlog,#616, system module warnings, #622
-  ide:backlog (#617), vm debugger, include / exclude files
-  tools:work with elt in ide
-  prom:#635,elena in nutshell every 2 week
-  port:x86-64 vm,elenavm / elt for linux
+  prom:elena in nutshell every 1 week
   --------------------------------------
-  - #620 - resolve several points
+    - IDE : include / exclude files
+    - #618
     - new opcode : fexp - ppc64le
-  - dev : redesign switch statement : it should be possible to use as an expression as well
-    (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
-    console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
-    - why IntNumber.add<'RealNumber>[2] has no byref handler
-    - step over - to the same row - must be auto skipped?
-    - pi under 7 sec
   --------------------------------------
-    - Supporting nested scopes
-
-    - Accessing a variable declared in the upper scope #638
-
-      var a := new List();
-      {
-         var a := 2;
-
-         super a.append(a); 
-      };
-
-      console.printLine(a.asEnumerable());
-
-    - xforms
-    - gui samples : helloworld sample
+    - #616
 
     - elena sm : x86-64
 
@@ -46,18 +20,33 @@ In development:
   --------------------------------------
   dev: #637, windows executable - support manifest
   op:
-  opt:pi under 6 sec
-  maint:#620
+  opt:pi under 7 sec, #602
+  maint:#620,#622
   exp:
-  ide:
-  tools:
-  prom:
-  port:win64 gui
+  ide:vm debugger,backlog (#617)
+  tools:work with elt in ide
+  prom:#635,elena in nutshell every 1 week
+  port:win64 gui,helloworld gui sample (button)
+
   --------------------------------------
 
   === Iteration 22 ===
   --------------------------------------
-  dev: 
+  dev: async programming (instant messagange sample (chat) ), #608
+  op:github actions : x86
+  opt:pi under 6 sec, #601
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
+  port:x86-64 vm
+
+  === Iteration 22 ===
+  --------------------------------------
+  dev: redesign switch statement : it should be possible to use as an expression as well
+    (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
+    console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
   op:
   opt:
   maint:
@@ -65,3 +54,4 @@ In development:
   ide:
   tools:
   prom:
+  port:elenavm / elt for linux

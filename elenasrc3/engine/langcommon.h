@@ -3,7 +3,7 @@
 //
 //		This file contains the language common constants
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef LANGCOMMON_H
@@ -483,7 +483,7 @@ namespace elena_lang
          map.add("public_symbol", V_PUBLIC);
          map.add("new_variable", V_VARIABLE);
          map.add("new_identifier", V_NEWOP);
-         //map.add("prev_identifier", V_PREVIOUS);
+         map.add("super_identifier", V_SUPERIOR);
          //map.add("loop_expression", V_LOOP);
       }
    };

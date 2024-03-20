@@ -1,15 +1,14 @@
-import system'collections;
-import extensions;
+public singleton convertor 
+{ 
+   generic(n)
+   {
+      MessageName mssg := __received.MessageName;
+
+      ^ mssg(new ExtensionVariable(extensions'convertorOp, n))
+   }
+}
 
 public program()
 {
-  var a := new List();
-
-  {
-     var a := 2;
-
-     super a.append(a); 
-  };
-
-  console.printLine(a.asEnumerable());
+   var n := convertor.toInt("2");
 }

@@ -95,6 +95,36 @@ public abstract class BaseControl
       }
    }
 
+   int X
+   {
+      get()
+      {
+         int retVal := _region.X;
+            
+         ^ retVal
+      }
+        
+      set(int n)
+      {
+         _region.X := n
+      }
+   }
+
+   int Y
+   {
+      get()
+      {
+         int retVal := _region.Y;
+            
+         ^ retVal
+      }
+        
+      set(int n)
+      {
+         _region.Y := n
+      }
+   }
+
    setRegion(int x, int y, int width, int height)
    {
       _region.set(x, y, width, height);
