@@ -1317,6 +1317,10 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ustr_t identifier)
 
 ObjectInfo Compiler::CodeScope :: mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
 {
+   if (EAttrs::testAndExclude(attr, EAttr::Superior)) {
+      return parent->mapIdentifier(identifier, referenceOne, attr);
+   }
+
    ObjectInfo info = mapLocal(identifier);
    if (info.kind != ObjectKind::Unknown || EAttrs::test(attr, ExpressionAttribute::Local)) {
       return info;

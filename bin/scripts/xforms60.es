@@ -22,7 +22,7 @@
                 )
               )
 =>
-	"<" "Form" { val_property | property }* ">" form_closing_tag
+	"<" "Form" { val_property | property }* ">" member* form_closing_tag
 <=
               returning (  
                 expression (
@@ -59,8 +59,38 @@
               )
 =>;
 
+  #define member ::=
+<=
+              code (
+                expression (
+                  assign_operation (
+                    new_variable ( identifier = current )
+                    message_operation (
+                      object ( reference = forms'Label )
+                      message ( identifier = new )
+                    )
+                  )
+                )
+=>
+	"<" "Label" { val_property | property }* ">" label_closing_tag
+<=
+                expression (
+                    message_operation (
+                      object ( super_identifier = current )
+                      message ( identifier = appendControl )
+                      expression (
+                         object ( identifier = current )
+                      )
+                    )
+                )
+              )
+=>;
+
   #define form_closing_tag ::=
 	"<" "/" "Form" ">";
+
+  #define label_closing_tag ::=
+	"<" "/" "Label" ">";
 
   #define prop_name ::=
 <= 

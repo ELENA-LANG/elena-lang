@@ -24,6 +24,19 @@ In development:
     - step over - to the same row - must be auto skipped?
     - pi under 7 sec
   --------------------------------------
+    - Supporting nested scopes
+
+    - Accessing a variable declared in the upper scope #638
+
+      var a := new List();
+      {
+         var a := 2;
+
+         super a.append(a); 
+      };
+
+      console.printLine(a.asEnumerable());
+
     - xforms
     - gui samples : helloworld sample
 

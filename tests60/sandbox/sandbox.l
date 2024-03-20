@@ -1,31 +1,15 @@
+import system'collections;
 import extensions;
-
-const int N = 3;
-
-singleton IntTester
-{
-   test(int val, int checkVal)
-   {
-      Assert.ifTrue(val == checkVal)
-   }
-
-   testWeak(val, checkVal)
-   {
-      Assert.ifTrue(val == checkVal)
-   }
-}
 
 public program()
 {
-   int i := 3;
-//   IntTester.test(i * N, 9);
+  var a := new List();
 
-//   IntTester.testWeak(i * N, 9);
+  {
+     var a := 2;
 
-//   if (i == N) {
-//      console.writeLine("!!");
-//   };
+     super a.append(a); 
+  };
 
-//   int j := N;
-   int k := i + N;
+  console.printLine(a.asEnumerable());
 }
