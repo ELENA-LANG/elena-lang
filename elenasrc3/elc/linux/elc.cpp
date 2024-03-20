@@ -273,7 +273,7 @@ int main(int argc, char* argv[])
          else if (PathUtil::checkExtension(argv[i], "project")) {
             PathString path(argv[i]);
 
-            if (!project.loadProject(*path)) {
+            if (!project.loadProject(*path, *profile)) {
                errorProcessor.raisePathError(errProjectAlreadyLoaded, *path);
             }
             else if (profile.empty() && project.availableProfileList.count() != 0) {

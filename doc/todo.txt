@@ -4,10 +4,6 @@ In development:
 
 [development]
   ### EPIC: elena 6.0 - redux ###
-  === Iteration 20 ===
-  --------------------------------------
-  prom:elena in nutshell every 1 week
-  --------------------------------------
 
   === Iteration 21 ===
   --------------------------------------
@@ -20,6 +16,7 @@ In development:
   tools:work with elt in ide
   prom:#635,elena in nutshell every 1 week
   port:win64 gui,helloworld gui sample (button)
+  --------------------------------------
 
   --------------------------------------
 
