@@ -1,4 +1,4 @@
-bin\sg-cli dat\sg\syntax60.txt
+.\bin\sg-cli dat\sg\syntax60.txt
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
@@ -33,16 +33,6 @@ if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
 
 bin\asm-cli -x86 asm\x32\core60_win_client.asm bin\x32
-@echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
-@echo on
-
-bin\asm-cli -amd64 asm\amd64\core60.asm bin\amd64
-@echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
-@echo on
-
-bin\asm-cli -amd64 asm\amd64\core60_win.asm bin\amd64
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
@@ -92,46 +82,6 @@ bin\elena-cli src60\xforms\xforms.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-bin\asm-cli -bc64 src60\core\system.core_routines.esm lib60_64
-@echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
-@echo on
-
-bin\asm-cli -bc64 src60\core\system.win_core_routines.esm lib60_64
-@echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
-@echo on
-
-bin\elena64-cli src60\system\system.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-bin\elena64-cli src60\extensions\extensions.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-bin\elena64-cli src60\cellular\cellular.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-bin\elena64-cli src60\algorithms\algorithms.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-bin\elena64-cli src60\sqlite\sqlite.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-bin\elena64-cli src60\forms\forms.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
 bin\ldoc system doc\api
 bin\ldoc system'routines doc\api
 bin\ldoc system'runtime doc\api
@@ -151,19 +101,11 @@ bin\elena-cli tests60\system_tests\system_tests.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-bin\elena64-cli tests60\system_tests\system_tests.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
 echo system api test for x86
-tests60\system_tests\system_tests.exe
-@echo off 
-if %ERRORLEVEL% NEQ 0 GOTO TestError
-@echo on
+copy bin\elenart60.dll tests60\system_tests\
+copy bin\elenasm60.dll tests60\system_tests\
 
-echo system api test for amd64
-tests60\system_tests\system_tests64.exe
+tests60\system_tests\system_tests.exe
 @echo off 
 if %ERRORLEVEL% NEQ 0 GOTO TestError
 @echo on

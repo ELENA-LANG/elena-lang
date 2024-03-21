@@ -43,3 +43,17 @@ jobs:
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}} /p:platform=${{ matrix.platform }} /m:2
+
+    - name: Compile Lib
+      shell: cmd
+      run: rebuild_lib60_${{matrix.platform}}.bat
+
+    - name: Prepare Artifact
+      shell: cmd
+      run: install\build_package_${{matrix.platform}}.bat 
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: elena-lang-${{matrix.platform}}-${{ env.BUILD_TAG }}
+        path: install\${{matrix.platform}}
