@@ -43,3 +43,21 @@ jobs:
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}} /p:platform=${{ matrix.platform }} /m:2
+
+    - name: Compile Lib
+      shell: cmd
+      run: rebuild_lib60.bat
+
+    - name: Prepare Artifact
+      shell: cmd
+      run: install\build_package_{{matrix.platform}}.bat 
+
+    - uses: edgarrc/action-7z@v1
+      with:
+        args: 7z a -t7z -mx=9 build${{ env.BUILD_TAG }}.7z ./install/${{ env.BUILD_TAG }}
+
+    - name: ROM Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: elena-lang-{{matrix.platform}}-${{ env.BUILD_TAG }}
+        path: build${{ env.BUILD_TAG }}.7z
