@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Byte code Build Tree classes
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef BUILDTREE_H
@@ -194,7 +194,7 @@ namespace elena_lang
       IntArrayAddress      = 0x00B8,
       UIntVariableAddress  = 0x00B9,
 
-      ParameterInfo        = 0x00C0,
+      ArgumentsInfo        = 0x00C0,
       Parameter            = 0x00C1,
       IntParameterAddress  = 0x00C2,
       LongParameterAddress = 0x00C3,
@@ -278,6 +278,8 @@ namespace elena_lang
          map.add("int_real_op", BuildKey::IntRealOp);
          map.add("real_int_op", BuildKey::RealIntOp);
          map.add("direct_call_op", BuildKey::DirectCallOp);
+         map.add("addingint", BuildKey::AddingInt);
+         map.add("saving_index", BuildKey::SavingIndex);
       }
    };
 

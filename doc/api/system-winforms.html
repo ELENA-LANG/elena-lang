@@ -23,6 +23,40 @@ ELENA&nbsp;Standard&nbsp;Library<br>6.0
 </STRONG>
 </DIV>
 </DIV>
+<A NAME="ChildWindowCallback">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'winforms'</DIV>
+<H2 title="ChildWindowCallback" class="title">ChildWindowCallback</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">ChildWindowCallback</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="#WindowCallback">'WindowCallback</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'winforms'ChildWindowCallback</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="CREATESTRUCT">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -474,7 +508,7 @@ system'winforms'OpenFileDialog</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">ShortNumber</A><I>[]</I></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">WideString</A><I>[]</I></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>_filters</CODE>
 </TD>
@@ -482,25 +516,9 @@ system'winforms'OpenFileDialog</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">ShortNumber</A><I>[]</I></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_fileName</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>_filterIndex</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_maxFile</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -536,7 +554,7 @@ system'winforms'OpenFileDialog</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#OpenFileDialog">OpenFileDialog</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN> parent, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">WideString</A><I>[]</I></SPAN> filters, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> filterIndex, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> maxFile, <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> caption)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN> parent, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">WideString</A><I>[]</I></SPAN> filters, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> filterIndex, <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> caption)
 </CODE>
 </TD>
 </TR>
@@ -763,7 +781,7 @@ system'winforms'PAINTSTRUCT</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>begin(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN> handle)
+<CODE>begin(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN> hwnd)
 </CODE>
 </TD>
 </TR>
@@ -772,7 +790,7 @@ system'winforms'PAINTSTRUCT</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>end(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN> handle)
+<CODE>end(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN> hwnd)
 </CODE>
 </TD>
 </TR>
@@ -833,7 +851,7 @@ system'winforms'SaveFileDialog</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">ShortNumber</A><I>[]</I></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">WideString</A><I>[]</I></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>_filters</CODE>
 </TD>
@@ -841,25 +859,9 @@ system'winforms'SaveFileDialog</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">ShortNumber</A><I>[]</I></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_fileName</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>_filterIndex</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_maxFile</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -895,7 +897,7 @@ system'winforms'SaveFileDialog</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#SaveFileDialog">SaveFileDialog</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN> parent, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">WideString</A><I>[]</I></SPAN> filters, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> filterIndex, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> maxFile, <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> caption)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN> parent, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">WideString</A><I>[]</I></SPAN> filters, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> filterIndex, <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> caption)
 </CODE>
 </TD>
 </TR>
@@ -1015,11 +1017,20 @@ system'winforms'SDIApplication</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>error(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> caption, <SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">Exception</A></SPAN> e)
+<CODE>run(window)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>error(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> caption, <SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">Exception</A></SPAN> e)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1183,6 +1194,15 @@ system'winforms'WindowCallback</LI>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>onWMCommand(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> hwnd, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> wParam, <SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> control)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>onWMClose(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> hwnd)
 </CODE>
 </TD>
 </TR>
@@ -2182,6 +2202,43 @@ system'winforms'</DIV>
 <i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#HInstance">HInstance</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>CurrentInstance</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="CW_USEDEFAULT">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'winforms'</DIV>
+<H2 title="CW_USEDEFAULT" class="title">CW_USEDEFAULT</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>CW_USEDEFAULT</CODE>
 </TD>
 </TABLE>
 </LI>
@@ -3736,6 +3793,43 @@ system'winforms'</DIV>
 <i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>SWP_NOSIZE</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="WM_CLOSE">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'winforms'</DIV>
+<H2 title="WM_CLOSE" class="title">WM_CLOSE</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>WM_CLOSE</CODE>
 </TD>
 </TABLE>
 </LI>

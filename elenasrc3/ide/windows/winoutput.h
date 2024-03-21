@@ -42,13 +42,17 @@ namespace elena_lang
    // --- CompilerOutput ---
    class CompilerOutput : public ProcessOutput
    {
+   public:
+      typedef void(*EventInvoker)(NotifierBase*, int);
+
+   private:
       NotifierBase* _notifier;
-      int           _notificationId;
+      EventInvoker  _eventInvoker;
 
       void afterExecution(int exitCode) override;
 
    public:
-      CompilerOutput(NotifierBase* notifier, int notificationId);
+      CompilerOutput(NotifierBase* notifier, EventInvoker invoker);
    };
 
    // --- VMConsoleInteractive ---

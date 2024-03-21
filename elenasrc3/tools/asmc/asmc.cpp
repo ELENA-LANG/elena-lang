@@ -3,7 +3,7 @@
 //
 //		Asm2BinX main file
 //
-//                                              (C)2021-2023, by Aleksey Rakov
+//                                              (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <cstdarg>
@@ -91,7 +91,7 @@ template<class AssemblyT> void compileAssembly(path_t source, path_t target)
    }
 }
 
-void compileByteCode(path_t source, path_t target, bool mode64, int rawDataAlignment)
+void compileByteCode(path_t source, path_t target, bool mode64, int rawDataAlignment, bool supportStdMode)
 {
    FileNameString sourceName(source, true);
    NamespaceString  name;
@@ -106,7 +106,7 @@ void compileByteCode(path_t source, path_t target, bool mode64, int rawDataAlign
       throw ExceptionBase();
    }
 
-   ByteCodeAssembler assembler(4, &reader, &targetModule, mode64, rawDataAlignment);
+   ByteCodeAssembler assembler(4, &reader, &targetModule, mode64, rawDataAlignment, supportStdMode);
 
    assembler.compile();
 
@@ -128,6 +128,7 @@ int main(int argc, char* argv[])
    PathString source;
    PathString target;
    CompileMode mode = CompileMode::x86;
+   bool supportStdMode = false;
    for (int i = 1; i < argc; i++) {
       if (argv[i][0] == '-') {
          ustr_t arg(argv[i] + 1);
@@ -148,6 +149,9 @@ int main(int argc, char* argv[])
          }
          else if (arg.compare(BC_32_MODE)) {
             mode = CompileMode::bc32;
+#ifdef WIN32
+            supportStdMode = true;
+#endif
          }
          else if (arg.compare(BC_64_MODE)) {
             mode = CompileMode::bc64;
@@ -226,7 +230,7 @@ int main(int argc, char* argv[])
 
             target.changeExtension("nl");
 
-            compileByteCode(*source, *target, false, 4);
+            compileByteCode(*source, *target, false, 4, supportStdMode);
 
             break;
          }
@@ -236,7 +240,7 @@ int main(int argc, char* argv[])
 
             target.changeExtension("nl");
 
-            compileByteCode(*source, *target, true, 16);
+            compileByteCode(*source, *target, true, 16, supportStdMode);
 
             break;
          }

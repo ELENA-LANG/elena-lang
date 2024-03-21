@@ -50,11 +50,14 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
    // add predefined values
    prepareImage(imageInfo.ns);
 
-   linker.prepare(compiler);
+   linker.setCompiler(compiler);
 
    if (imageInfo.withTLS) {
+      // NOTE : TLS variable must be declared first, before loading system routines
       _tlsVariable = linker.resolveTLSSection(compiler);
    }
+
+   linker.prepare();
 
    // resolve the debug entry
    _debugEntryPoint = INVALID_POS;

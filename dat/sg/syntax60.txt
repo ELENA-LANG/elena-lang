@@ -189,7 +189,8 @@ STATEMENT ::=
 	ROOT_EXPRESSION
 	| "#include" INCLUDE_STATEMENT
 	| "#let" META_STATEMENT
-	| "#new" DICTIONARY;
+	| "#new" DICTIONARY
+	| "{" BLOCK;
 
 NEXT_STATEMENT ::=
 	DECLARATION_END { 
@@ -308,12 +309,13 @@ ROOT_EXPRESSION ::=
 		| T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
 		| eps ^OBJECT
 	}
-	| reference ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?	
+	| { reference | global } ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?	
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L_F
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$ext" EXPRESSION ^EXTERN_OPERATION
 	| "$break" ^BREAK_OPERATION
+	| "$continue" ^CONTINUE_OPERATION
 	| "$yield" EXPRESSION ^YIELD_OPERATION
 	| BRACKET SUB_EXPRESSION {
 		"=>" { SWITCH_OPTION+ SWITCH_LAST_OPTION? } ^SWITCH_OPERATION
@@ -411,11 +413,12 @@ NESTED_ROOT_EXPRESSION ::=
 		| T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
 		| eps ^OBJECT
 	}
-	| reference ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
+	| { reference | global } ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L_F
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$ext" EXPRESSION ^EXTERN_OPERATION
 	| "$break" ^BREAK_OPERATION
+	| "$continue" ^CONTINUE_OPERATION
 	| "$yield" EXPRESSION ^YIELD_OPERATION;
 
 EXPRESSION ::=
@@ -501,7 +504,7 @@ EXPRESSION ::=
 		}
 		| "{" NESTED_EXPRESSION ^NESTED L_F
 	}
-	| reference ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
+	| { reference | global } ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L_F
 	| "!" EXPRESSION ^NOT_OPERATION
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
@@ -604,7 +607,7 @@ SUB_EXPRESSION ::=
 			| eps ^OBJECT		
 		}
 	}
-	| reference ^OBJECT SUB_L_F ")"
+	| { reference | global } ^OBJECT SUB_L_F ")"
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT SUB_L_F ")"
 	| "!" EXPRESSION ^NOT_OPERATION ")"
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION SUB_L_F ")"
@@ -686,7 +689,7 @@ L4_EXPRESSION ::=
 		| "{" NESTED_EXPRESSION ^NESTED L2_OP* L3_OP*
 		| eps ^OBJECT
 	}
-	| reference ^OBJECT L2_OP* L3_OP*
+	| { reference | global } ^OBJECT L2_OP* L3_OP*
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT	L3_OP*
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
 	| "$reference" SINGLE_EXPRESSION ^REFER_OPERATION
@@ -750,7 +753,7 @@ L6_EXPRESSION ::=
 		| "{" NESTED_EXPRESSION ^NESTED L2_OP* L3_OP* L4_OP* L5_OP*
 		| eps ^OBJECT
 	}
-	| reference ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP*
+	| { reference | global } ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP*
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT	L3_OP* L4_OP* L5_OP*
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
 	| "$reference" SINGLE_EXPRESSION ^REFER_OPERATION
@@ -918,8 +921,8 @@ L3_F ::=
 		| eps
 	}
 	| "::" L3_SINGLE_EXPRESSION ^ MESSAGE_OPERATION L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
-	| STAR ^PROPERTY_OPERATION L4_EXPRESSION ^MUL_OPERATION
-	| DIV ^PROPERTY_OPERATION L4_EXPRESSION ^DIV_OPERATION
+	| STAR ^PROPERTY_OPERATION L4_EXPRESSION ^MUL_OPERATION L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
+	| DIV ^PROPERTY_OPERATION L4_EXPRESSION ^DIV_OPERATION L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
 	| BAND ^PROPERTY_OPERATION L4_EXPRESSION ^BAND_OPERATION
 	| BOR ^PROPERTY_OPERATION L4_EXPRESSION ^BOR_OPERATION
 	| BXOR ^PROPERTY_OPERATION L4_EXPRESSION ^BXOR_OPERATION
@@ -1121,8 +1124,9 @@ PARAMETER ::=
 		DYNAMIC_DIMENSION ^ARRAY_TYPE identifier
 		| TEMPLATE_BRACKETS identifier
 		| "?" ^NULLABLE_TYPE identifier
-		| eps
-	};
+		| eps		
+	}
+	| reference identifier;
 
 SUB_VARIABLE ::=
 	identifier+ { 
@@ -1134,7 +1138,7 @@ TEMPLATE_BRACKETS ::=
 	"<" TEMPLATE_ARG { "," TEMPLATE_ARG }* ">";
 
 TEMPLATE_ARG ::=
-	identifier { TEMPLATE_BRACKETS ^ TEMPLATE_TYPE }?
+	identifier { TEMPLATE_BRACKETS ^ TEMPLATE_TYPE | DYNAMIC_DIMENSION ^ARRAY_TYPE }?
 	| reference
 	| global;
 

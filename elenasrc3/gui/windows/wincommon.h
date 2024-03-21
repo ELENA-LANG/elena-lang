@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Common Header File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINCOMMON_H
@@ -23,6 +23,59 @@
 
 namespace elena_lang
 {
+   // --- DateTime ---
+
+   struct DateTime
+   {
+   private:
+      SYSTEMTIME _time;
+
+   public:
+      static DateTime getFileTime(const wchar_t* path);
+
+      bool operator > (const DateTime dt) const
+      {
+         if (_time.wYear > dt._time.wYear)
+            return true;
+
+         if (_time.wYear == dt._time.wYear) {
+            if (_time.wMonth > dt._time.wMonth)
+               return true;
+
+            if (_time.wMonth == dt._time.wMonth) {
+               if (_time.wDay > dt._time.wDay)
+                  return true;
+
+               if (_time.wDay == dt._time.wDay) {
+                  if (_time.wHour > dt._time.wHour)
+                     return true;
+
+                  if (_time.wHour == dt._time.wHour) {
+                     if (_time.wMinute > dt._time.wMinute)
+                        return true;
+
+                     if (_time.wMinute == dt._time.wMinute) {
+                        if (_time.wSecond > dt._time.wSecond)
+                           return true;
+
+                        if (_time.wSecond == dt._time.wSecond) {
+                           return (_time.wMilliseconds > dt._time.wMilliseconds);
+                        }
+                     }
+                  }
+               }
+            }
+         }
+         return false;
+      }
+
+      DateTime()
+      {
+         _time.wYear = 0;
+         //memset(&_time, 0, sizeof(_time));
+      }
+   };
+
    // --- Cursor types ---
    constexpr int CURSOR_TEXT           = 0;
    constexpr int CURSOR_ARROW          = 1;
@@ -30,48 +83,12 @@ namespace elena_lang
    constexpr int CURSOR_SIZENS         = 3;
 
    // --- Notification types ---
+   // NOTE : the systen related notifications must be greater than 0x100
    constexpr int STATUS_NOTIFICATION   = 0x101;
    constexpr int STATUS_SELECTION      = 0x102;
    constexpr int STATUS_COMPLETION     = 0x103;
    constexpr int STATUS_TREEITEM       = 0x104;
    constexpr int CONTEXT_MENU_ON       = 0x105;
-
-   // --- ExtNMHDR ---
-   struct StatusNMHDR
-   {
-      NMHDR              nmhrd;
-      int                code;
-      NotificationStatus status;
-   };
-
-   struct SelectionNMHDR
-   {
-      NMHDR              nmhrd;
-      int                code;
-      int                param;
-   };
-
-   struct TreeItemNMHDR
-   {
-      NMHDR              nmhrd;
-      int                code;
-      size_t             item;
-      size_t             param;
-   };
-
-   struct CompletionNMHDR
-   {
-      NMHDR              nmhrd;
-      int                code;
-      int                param;
-   };
-
-   struct ContextMenuNMHDR
-   {
-      NMHDR              nmhrd;
-      int                x, y;
-      bool               hasSelection;
-   };
 
    // --- Color ---
    class Color
@@ -171,6 +188,15 @@ namespace elena_lang
       }
    };
 
+   // --- EventFormatterBase ---
+   class WindowApp;
+
+   class EventFormatterBase
+   {
+   public:
+      virtual void sendMessage(EventBase* event, WindowApp* app) = 0;
+   };
+
    // --- WindowBase ---
    class WindowBase : public ControlBase
    {
@@ -204,27 +230,27 @@ namespace elena_lang
    class WindowApp : public GUIApp
    {
    protected:
-      HINSTANCE _instance;
-      HWND      _hwnd;
+      HINSTANCE            _instance;
+      HWND                 _hwnd;
 
-      wstr_t    _accelerators;
+      wstr_t               _accelerators;
+
+      EventFormatterBase*  _eventFormatter;
 
       bool initInstance(WindowBase* mainWindow, int cmdShow);
 
    public:
-      int run(GUIControlBase* mainWindow, bool maximized, int notificationId, NotificationStatus notificationStatus) override;
+      int run(GUIControlBase* mainWindow, bool maximized, EventBase* startEvent) override;
 
-      void notify(int messageCode, NotificationStatus status) override;
-      void notifySelection(int id, size_t param) override;
-      void notifyTreeItem(int id, size_t item, size_t param) override;
-      void notifyCompletion(int id, int param) override;
-      void notifyContextMenu(int id, short x, short y, bool hasSelection) override;
+      void notify(int id, NMHDR* notification);
+      void notify(EventBase* event) override;
 
-      WindowApp(HINSTANCE instance, wstr_t accelerators)
+      WindowApp(HINSTANCE instance, wstr_t accelerators, EventFormatterBase* formatter)
       {
          _instance = instance;
          _hwnd = nullptr;
          _accelerators = accelerators;
+         _eventFormatter = formatter;
       }
    };
 

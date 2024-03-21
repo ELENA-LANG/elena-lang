@@ -58,24 +58,24 @@ public class MainWindow : SDIDialog
       BtmInfo := Button.new();
     
       self
-         .appendControl:LabelName
-         .appendControl:LabelSurName
-         .appendControl:LabelOtName
-         .appendControl:LabelEmail
-         .appendControl:LabelAge
-         .appendControl:LabelPhoneNumber
-         .appendControl:LabelAbout
-         .appendControl:LabelDel
-         .appendControl:Name
-         .appendControl:SurName
-         .appendControl:OtName
-         .appendControl:Email
-         .appendControl:Age
-         .appendControl:PhoneNumber
-         .appendControl:BtmExit
-         .appendControl:BtmSave
-         .appendControl:BtmDelTxt
-         .appendControl:BtmInfo;
+         .appendControl(LabelName)
+         .appendControl(LabelSurName)
+         .appendControl(LabelOtName)
+         .appendControl(LabelEmail)
+         .appendControl(LabelAge)
+         .appendControl(LabelPhoneNumber)
+         .appendControl(LabelAbout)
+         .appendControl(LabelDel)
+         .appendControl(Name)
+         .appendControl(SurName)
+         .appendControl(OtName)
+         .appendControl(Email)
+         .appendControl(Age)
+         .appendControl(PhoneNumber)
+         .appendControl(BtmExit)
+         .appendControl(BtmSave)
+         .appendControl(BtmDelTxt)
+         .appendControl(BtmInfo);
         
       // Form
       self.Caption := "Writer Account";
@@ -161,7 +161,7 @@ public class MainWindow : SDIDialog
       // Save
       BtmSave.onClick := (args)
          {
-            var dialog := SaveFileDialog.new(self);
+            var dialog := OpenFileDialog.new(self);
             dialog.addFilter("Text Files", "*.txt");
             dialog.Caption := "Select a file";
                 
@@ -172,12 +172,12 @@ public class MainWindow : SDIDialog
                var writer := _savedFile.logger();
                     
                writer 
-                  .printLine:"//-------------------------------------------------------------------------------"
+                  .printLine("//-------------------------------------------------------------------------------")
                   .printLine("Name: ",Name.Value," ",SurName.Value," ",OtName.Value)
                   .printLine("Email: ",Email.Value)
                   .printLine("Age: ",Age.Value)
                   .printLine("PhoneNumber:",PhoneNumber.Value)
-                  .printLine:"//-------------------------------------------------------------------------------";
+                  .printLine("//-------------------------------------------------------------------------------");
 
                writer.close();
 

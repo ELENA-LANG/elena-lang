@@ -3,7 +3,7 @@
 //
 //		This file contains the xml project base class declaration
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef XMLPROJECTBASE_H
@@ -194,6 +194,7 @@ namespace elena_lang
       ProjectNode    _root;
 
       ConfigFile::Node getPlatformRoot(ConfigFile& config, PlatformType platform);
+      ConfigFile::Node getProfileRoot(ConfigFile& config, ConfigFile::Node& root, ustr_t profileName);
 
       void loadKeyCollection(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath,
          ProjectOption collectionKey, ProjectOption itemKey, ustr_t prefix);

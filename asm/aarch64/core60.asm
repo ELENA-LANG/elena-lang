@@ -763,6 +763,14 @@ inline %1Eh
 
 end
 
+// ; lneg
+inline % 1Fh
+
+   mov    x17, 0
+   sub    x9, x17, x9
+
+end
+
 // ; coalesce
 inline % 20h
 

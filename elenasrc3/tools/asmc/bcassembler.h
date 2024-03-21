@@ -3,7 +3,7 @@
 //
 //		This header contains Byte-code Assembler declarations
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef BCASSEMBLER_H
@@ -121,6 +121,7 @@ namespace elena_lang
       ScriptReader _reader;
       Module*      _module;
       bool         _mode64;
+      bool         _supportStd;
       int          _rawDataAlignment;
 
       void read(ScriptToken& tokenInfo);
@@ -184,7 +185,7 @@ namespace elena_lang
          ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants, 
          int& dataSize);
       bool compileCallExt(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
-         ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants);
+         ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants, bool stdCall);
 
       bool compileXDispatchMR(ScriptToken& tokenInfo, MemoryWriter& writer, ByteCommand& command, 
          ReferenceMap& constants);
@@ -202,7 +203,7 @@ namespace elena_lang
       void compile();
 
       ByteCodeAssembler(int tabSize, UStrReader* reader, Module* module, 
-         bool mode64, int rawDataAlignment);
+         bool mode64, int rawDataAlignment, bool supportStd);
    };
 
 }

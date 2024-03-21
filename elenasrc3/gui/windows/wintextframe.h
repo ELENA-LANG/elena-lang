@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     Win32 EditFrame container File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINTEXTFRAME_H
@@ -16,7 +16,7 @@ namespace elena_lang
    class TextViewFrame : public MultiTabControl, TextViewListener
    {
    protected:
-      TextViewModel* _model;
+      TextViewModel*          _model;
 
    public:
       void onDocumentNew(int index) override;
@@ -27,11 +27,9 @@ namespace elena_lang
       void beforeDocumentClose(int index) override;
       void onDocumentClose(int index) override;
 
-
-
       void onSelChanged() override;
 
-      TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, int selNotificationId);
+      TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, SelectionEventInvoker invoker);
    };
 
 }

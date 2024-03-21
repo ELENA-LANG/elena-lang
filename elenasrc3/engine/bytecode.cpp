@@ -3,7 +3,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                                (C)2021-2023, by Aleksey Rakov
+//                                                (C)2021-2024, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #include "bytecode.h"
@@ -17,8 +17,8 @@ const char* _fnOpcodes[256] =
    "nop", "breakpoint", "snop", "redirect", "quit", "mov env", "load", "len",
    "class", "save", "throw", "unhook", "loadv", "xcmp", "bload", "wload",
 
-   "incude", "exclude", "assign", "mov frm", "loads", "mlen", "dalloc", "tststck",
-   "dtrans", "xassign", "lload", "convl", "xlcmp", "xload", "xlload", OPCODE_UNKNOWN,
+   "exclude", "incude", "assign", "mov frm", "loads", "mlen", "dalloc", "tststck",
+   "dtrans", "xassign", "lload", "convl", "xlcmp", "xload", "xlload", "lneg",
 
    "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", "xjump",
    "bcopy", "wcopy", "xpeekeq", "trylock", "freelock", OPCODE_UNKNOWN, "xget", "xcall",

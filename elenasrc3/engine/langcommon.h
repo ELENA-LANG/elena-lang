@@ -3,7 +3,7 @@
 //
 //		This file contains the language common constants
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef LANGCOMMON_H
@@ -156,6 +156,7 @@ namespace elena_lang
    constexpr auto infoUnknownMessage         = 706;
    constexpr auto infoTargetClass            = 707;
    constexpr auto infoScopeMethod            = 708;
+   constexpr auto infoExptectedType          = 709;
 
    constexpr auto errVMBroken                = 800;
    constexpr auto errVMNotInitialized        = 801;
@@ -405,6 +406,7 @@ namespace elena_lang
 
    constexpr auto CONFIG_ROOT             = "configuration";
    constexpr auto PLATFORM_CATEGORY       = "configuration/platform";
+
    constexpr auto TEMPLATE_CATEGORY       = "templates/*";
    constexpr auto PRIMITIVE_CATEGORY      = "primitives/*";
    constexpr auto FORWARD_CATEGORY        = "forwards/*";
@@ -414,6 +416,7 @@ namespace elena_lang
    constexpr auto MODULE_CATEGORY         = "files/*";
    constexpr auto FILE_CATEGORY           = "include/*";
    constexpr auto PARSER_TARGET_CATEGORY  = "targets/*";
+   constexpr auto PROFILE_CATEGORY        = "/profile";
 
    constexpr auto LIB_PATH                = "project/libpath";
    constexpr auto OUTPUT_PATH             = "project/output";
@@ -476,11 +479,11 @@ namespace elena_lang
          map.add("script_method", V_SCRIPTSELFMODE);
          map.add("public_namespace", V_PUBLIC);
          map.add("script_function", V_SCRIPTSELFMODE);
+         map.add("script_function", V_FUNCTION);
          map.add("public_symbol", V_PUBLIC);
-         //map.add("script_function", V_FUNCTION);
          map.add("new_variable", V_VARIABLE);
          map.add("new_identifier", V_NEWOP);
-         //map.add("prev_identifier", V_PREVIOUS);
+         map.add("super_identifier", V_SUPERIOR);
          //map.add("loop_expression", V_LOOP);
       }
    };

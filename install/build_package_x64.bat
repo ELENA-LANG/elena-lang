@@ -81,9 +81,21 @@ md %~dp0\output64\src60\extensions
 xcopy %~dp0\..\src60\extensions\*.l %~dp0\output64\src60\extensions /s
 xcopy %~dp0\..\src60\extensions\*.prj %~dp0\output64\src60\extensions /s
 
+md %~dp0\output64\src60\algorithms
+xcopy %~dp0\..\src60\algorithms\*.l %~dp0\output64\src60\algorithms /s
+xcopy %~dp0\..\src60\algorithms\*.prj %~dp0\output64\src60\algorithms /s
+
 md %~dp0\output64\src60\cellular
 xcopy %~dp0\..\src60\cellular\*.l %~dp0\output64\src60\cellular /s
 xcopy %~dp0\..\src60\cellular\*.prj %~dp0\output64\src60\cellular /s
+
+md %~dp0\output64\src60\sqlite
+xcopy %~dp0\..\src60\sqlite\*.l %~dp0\output64\src60\sqlite /s
+xcopy %~dp0\..\src60\sqlite\*.prj %~dp0\output64\src60\sqlite /s
+
+md %~dp0\output64\src60\forms
+xcopy %~dp0\..\src60\forms\*.l %~dp0\output64\src60\forms /s
+xcopy %~dp0\..\src60\forms\*.prj %~dp0\output64\src60\forms /s
 
 %~dp0\..\bin\sg64-cli.exe %~dp0\..\dat\sg\syntax60.txt
 @echo off 
@@ -121,6 +133,21 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 %~dp0\output64\bin\elena64-cli %~dp0\output64\src60\cellular\cellular.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\output64\bin\elena64-cli %~dp0\output64\src60\algorithms\algorithms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\output64\bin\elena64-cli %~dp0\output64\src60\sqlite\sqlite.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\output64\bin\elena64-cli %~dp0\output64\src60\forms\forms.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

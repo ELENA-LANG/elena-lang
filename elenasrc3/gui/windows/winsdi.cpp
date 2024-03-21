@@ -107,10 +107,10 @@ void VerticalBox :: setRectangle(Rectangle rec)
    int width = rec.width();
    int height = rec.height();
 
-   size_t count = _list.count();
+   int count = _list.count_int();
    if (_stretchMode) {
       int meanHeight = height / count;
-      for (size_t i = 0; i < count; i++) {
+      for (int i = 0; i < count; i++) {
          if (i == count - 1)
             meanHeight = height;
 
@@ -130,7 +130,7 @@ void VerticalBox :: setRectangle(Rectangle rec)
          height -= fixedHeight;
       }
       else height = 5;
-      for (size_t i = 0; i < count; i++) {
+      for (int i = 0; i < count; i++) {
          if (i != 0)
             height = _list[i]->getRectangle().height();
 
@@ -195,10 +195,10 @@ void HorizontalBox :: setRectangle(Rectangle rec)
    int width = rec.width();
    int height = rec.height();
 
-   size_t count = _list.count();
+   int count = _list.count_int();
    if (_stretchMode) {
       int meanWidth = width / count;
-      for (size_t i = 0; i < count; i++) {
+      for (int i = 0; i < count; i++) {
          if (i == count - 1)
             meanWidth = width;
 
@@ -210,7 +210,7 @@ void HorizontalBox :: setRectangle(Rectangle rec)
    }
    else {
       int fixedWidth = 0;
-      for (size_t i = 1; i < count; i++) {
+      for (int i = 1; i < count; i++) {
          fixedWidth += _list[i]->getRectangle().width();
          fixedWidth += _spacer;
       }
@@ -218,7 +218,7 @@ void HorizontalBox :: setRectangle(Rectangle rec)
          width -= fixedWidth;
       }
       else width = 5;
-      for (size_t i = 0; i < count; i++) {
+      for (int i = 0; i < count; i++) {
          if (i != 0)
             width = _list[i]->getRectangle().width();
 

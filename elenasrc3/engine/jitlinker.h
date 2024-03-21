@@ -238,7 +238,7 @@ namespace elena_lang
       ref_t resolveAction(ustr_t actionName);
 
       void loadPreloaded(ustr_t preloadedSection);
-      void prepare(JITCompilerBase* compiler);
+      void prepare();
       void setCompiler(JITCompilerBase* compiler)
       {
          _compiler = compiler;

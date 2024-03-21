@@ -182,6 +182,13 @@ labYGCollect:
   push esi
   push ecx
 
+  // ; save perm roots
+  mov  esi, [data : %CORE_GC_TABLE + gc_perm_start]
+  mov  ecx, [data : %CORE_GC_TABLE + gc_perm_current]
+  sub  ecx, esi
+  push esi
+  push ecx
+
   // ;   collect frames
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]  
   mov  ecx, eax
@@ -485,7 +492,7 @@ end
 
 // ; exclude
 inline % 10h
-                                                       
+  
   push ebp     
   mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], esp
 
@@ -494,7 +501,7 @@ end
 // ; include
 inline % 11h
 
-  add  esp, 4                                                       
+  add  esp, 4
 
 end
 
@@ -632,6 +639,16 @@ inline %1Eh
   lea  eax, [ebx+edx]
   mov  edx, dword ptr [eax+4]
   mov  eax, dword ptr [eax]
+
+end
+
+// ; lneg
+inline % 1Fh
+
+   not    edx
+   not    eax
+   add    eax, 1
+   adc    edx, 0
 
 end
 
@@ -2034,6 +2051,9 @@ inline %0CAh
   pop  ebp
   
   add  esp, 8
+  pop  eax
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], eax
+
   pop  ebp
 
 end
@@ -2045,6 +2065,10 @@ inline %1CAh
   pop  ebp
 
   add  esp, 8
+
+  pop  eax
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], eax
+
   pop  ebp
   
 end
@@ -3210,13 +3234,22 @@ inline %6F1h
 
 end
 
+// ; xstoresir :0, -1
+inline %9F1h
+
+  mov  esi, __ptr32_2
+
+end
+
 // ; extopenin
 inline %0F2h
 
   push ebp     
+  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push eax 
 
+  mov  ebp, eax
   xor  eax, eax
-  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push ebp
   push eax
   mov  ebp, esp
@@ -3239,9 +3272,11 @@ end
 inline %1F2h
 
   push ebp     
+  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push eax 
 
+  mov  ebp, eax
   xor  eax, eax
-  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push ebp
   push eax
   mov  ebp, esp
@@ -3255,9 +3290,11 @@ end
 inline %2F2h
 
   push ebp     
+  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push eax 
 
+  mov  ebp, eax
   xor  eax, eax
-  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push ebp
   push eax
   mov  ebp, esp
@@ -3272,9 +3309,11 @@ end
 inline %3F2h
 
   push ebp     
+  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push eax 
 
+  mov  ebp, eax
   xor  eax, eax
-  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push ebp
   push eax
   mov  ebp, esp
@@ -3291,9 +3330,11 @@ end
 inline %4F2h
 
   push ebp     
+  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push eax 
 
+  mov  ebp, eax
   xor  eax, eax
-  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push ebp
   push eax
   mov  ebp, esp
@@ -3311,9 +3352,11 @@ end
 inline %5F2h
 
   push ebp     
+  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push eax 
 
+  mov  ebp, eax
   xor  eax, eax
-  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push ebp
   push eax
   mov  ebp, esp
@@ -3332,9 +3375,11 @@ end
 inline %6F2h
 
   push ebp     
+  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push eax 
 
+  mov  ebp, eax
   xor  eax, eax
-  mov  ebp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push ebp
   push eax
   mov  ebp, esp

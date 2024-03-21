@@ -13,8 +13,6 @@ using namespace elena_lang;
 void IDEModel :: changeStatus(IDEStatus status)
 {
    this->status = status;
-
- //  onIDEChange();
 }
 
 //void IDEModel :: attachListener(IDEListener* listener)

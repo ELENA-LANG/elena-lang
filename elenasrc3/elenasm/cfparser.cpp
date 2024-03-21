@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                             (C)2023, by Aleksey Rakov
+//                                             (C)2023-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -15,12 +15,13 @@ constexpr auto IDENTIFIER_KEYWORD   = "$identifier";
 constexpr auto LITERAL_KEYWORD      = "$literal";
 constexpr auto NUMERIC_KEYWORD      = "$numeric";
 constexpr auto EPS_KEYWORD          = "$eps";
-constexpr auto IF_KEYWORD           = "$if";   // NOTE : conditional eps rule 
+constexpr auto IF_KEYWORD           = "$if";             // NOTE : conditional eps rule 
 constexpr auto EOF_KEYWORD          = "$eof";
 constexpr auto EOL_KEYWORD          = "$eol";
-constexpr auto ANYCHR_KEYWORD       = "$chr"; // > 32
+constexpr auto ANYCHR_KEYWORD       = "$chr";            // > 32
 constexpr auto CURRENT_KEYWORD      = "$current";
 constexpr auto CHARACTER_KEYWORD    = "$character";
+constexpr auto INTLITERAL_KEYWORD   = "$intliteral";     // NOTE : quote containing a number
 
 constexpr auto REFERENCE_MODE       = 1;
 constexpr auto IDENTIFIER_MODE      = 2;
@@ -35,6 +36,7 @@ constexpr auto EXCLUDE_MODE         = 10;
 constexpr auto CHARACTER_MODE       = 11;
 constexpr auto IF_MODE              = 12;
 constexpr auto IFNOT_MODE           = 13;
+constexpr auto INTLITERAL_MODE      = 14;
 
 constexpr auto WITHFORWARD_MASK = 0x80000000;
 constexpr auto POSTFIXSAVE_MODE = 0x80000000;
@@ -81,6 +83,20 @@ bool normalEOFApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptE
 bool normalLiteralApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptEngineReaderBase&, ScriptEngineCFParser*)
 {
    return (bm.state == dfaQuote);
+}
+
+bool normalIntLiteralApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptEngineReaderBase& reader, ScriptEngineCFParser*)
+{
+   if (bm.state == dfaQuote) {
+      ustr_t value = reader.lookup(bm);
+      for (pos_t i = 0; i < getlength(value); i++) {
+         if (value[i] < '0' && value[i] > '9')
+            return false;
+      }
+
+      return true;
+   }
+   return false;
 }
 
 bool normalNumericApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptEngineReaderBase&, ScriptEngineCFParser*)
@@ -254,6 +270,9 @@ void ScriptEngineCFParser :: defineApplyRule(Rule& rule, int mode, bool forwardM
             case LITERAL_MODE:
                rule.apply = normalLiteralApplyRule;
                break;
+            case INTLITERAL_MODE:
+               rule.apply = normalIntLiteralApplyRule;
+               break;
             case NUMERIC_MODE:
                rule.apply = normalNumericApplyRule;
                break;
@@ -352,6 +371,12 @@ void ScriptEngineCFParser :: saveScript(ScriptEngineReaderBase& reader, Rule& ru
             rule.saveTo = saveLiteralContent;
 
             mode = LITERAL_MODE;
+         }
+         else if (reader.compare(INTLITERAL_KEYWORD)) {
+            rule.terminal = INVALID_REF;
+            rule.saveTo = saveReference;
+
+            mode = INTLITERAL_MODE;
          }
          else if (reader.compare(NUMERIC_KEYWORD)) {
             rule.terminal = INVALID_REF;

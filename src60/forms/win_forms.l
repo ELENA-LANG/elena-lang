@@ -8,6 +8,8 @@ public abstract class BaseWinForm : BaseWinContainer
    protected constructor new()
       <= super new()
    {
+      _region.X := CW_USEDEFAULT;
+      _region.Y := CW_USEDEFAULT;
    }
 
    appendControl(BaseControl control)
@@ -17,6 +19,9 @@ public abstract class BaseWinForm : BaseWinContainer
       _controls.append(control)
    }
 
+   close()
+   {
+   }
 }
 
 // --- SDI ---
@@ -112,3 +117,94 @@ public class SDIDialog : SDIForm
    }
 
 }
+
+// --- Child ---
+
+class ChildWindowListener : ChildWindowCallback
+{
+    ChildForm _owner;
+    
+    constructor(ChildForm owner)
+    {
+        _owner := owner
+    }
+    
+   onClick(Handle handle)
+   {
+      auto control := _owner.retrieve(handle);
+      if(nil != control)
+         { control.click() };
+        
+      super.onClick(handle)
+   }
+
+   onWMDestoy(Handle hwnd)
+   {
+      super.onWMDestoy(hwnd);
+
+      //TODO : free PermVectorTable entry to reuse it
+   }
+
+   onSize(Handle control, int width, int height)
+   {
+      _owner.resize(control, width, height);
+   }
+    
+//    onchange(WindowHandle hwnd, ref int retVal)
+//    {
+//        auto control := theOwner.retrieve(handle);
+//        if(nil != control)
+//            { control.click() };
+//        
+//        super.onchange(handle, ref retVal)
+//    }
+}
+
+public closed class ChildForm : BaseWinForm
+{
+   constructor new(parent)
+      <= super new()
+   {
+      _parent := parent
+   }
+    
+   run()
+   {
+      self.open();
+      _parent.Enabled := false;
+        
+      forward program.run(_handle);
+        
+      _parent.Enabled := true
+   }    
+
+   close()
+   {
+      self.Visible := false;
+        
+      super.close()
+   }
+
+   internal createHandle()
+   {
+      int styles := WS_POPUPWINDOW | WS_DLGFRAME;
+      if(_visible)
+         { styles := styles | WS_VISIBLE };
+
+      _region.read(ref int x, ref int y, ref int width, ref int height);
+        
+      pointer paramPtr := PermVectorTable.allocate(new ChildWindowListener(self));
+
+      _handle := new WindowHandle(
+                            WS_EX_DLGMODALFRAME | WS_EX_CONTROLPARENT,
+                            SDIWindowClass,
+                            cast wide(_caption), 
+                            styles,
+                            x, y, width, height,
+                            cast WindowHandle(_parent),
+                            CurrentInstance,
+                            paramPtr);
+    }
+
+}
+

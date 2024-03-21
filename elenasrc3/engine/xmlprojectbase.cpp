@@ -3,7 +3,7 @@
 //
 //		This file contains the xml project base class implementation
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "xmlprojectbase.h"
@@ -96,6 +96,16 @@ ConfigFile::Node XmlProjectBase :: getPlatformRoot(ConfigFile& config, PlatformT
       });
 
    return platformRoot;
+}
+
+ConfigFile::Node XmlProjectBase :: getProfileRoot(ConfigFile& config, ConfigFile::Node& root, ustr_t profileName)
+{
+   ConfigFile::Node profileRoot = config.selectNode<ustr_t>(root, PROFILE_CATEGORY, profileName, [](ustr_t key, ConfigFile::Node& node)
+      {
+         return node.compareAttribute("key", key);
+      });
+
+   return profileRoot;
 }
 
 void XmlProjectBase :: loadPathCollection(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath,

@@ -98,7 +98,7 @@ namespace elena_lang
       void saveYielding(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode);
       void saveYieldDispatch(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode);
       void saveVariableInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
-      void saveParameterInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
+      void saveArgumentsInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
       void saveMethodInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
 
       void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 

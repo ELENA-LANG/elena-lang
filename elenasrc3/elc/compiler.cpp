@@ -41,7 +41,7 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 {
    return (MethodHint)(l | (unsigned int)r);
 }
-
+//
 //inline void testNodes(SyntaxNode node)
 //{
 //   SyntaxNode current = node.firstChild();
@@ -160,6 +160,36 @@ inline bool areConstants(ArgumentsInfo& args)
    }
 
    return true;
+}
+
+inline ref_t mapLongConstant(Compiler::Scope& scope, long long integer)
+{
+   String<char, 40> s;
+
+   // convert back to string as a decimal integer
+   s.appendLong(integer, 16);
+
+   return scope.moduleScope->module->mapConstant(s.str());
+}
+
+inline ref_t mapUIntConstant(Compiler::Scope& scope, int integer)
+{
+   String<char, 20> s;
+
+   // convert back to string as a decimal integer
+   s.appendUInt(integer, 16);
+
+   return scope.moduleScope->module->mapConstant(s.str());
+}
+
+inline ref_t mapFloat64Const(ModuleBase* module, double val)
+{
+   String<char, 30> s;
+
+   // convert back to string as a decimal integer
+   s.appendDouble(val);
+
+   return module->mapConstant(s.str());
 }
 
 // --- Interpreter ---
@@ -508,6 +538,46 @@ bool Interpreter :: evalIntOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo
    return false;
 }
 
+bool Interpreter :: evalRealOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
+{
+   ObjectInfo loperand = args[0];
+   ObjectInfo roperand = args[1];
+
+   double lvalue = 0;
+   double rvalue = 0;
+
+   if (loperand.kind == ObjectKind::Float64Literal && roperand.kind == ObjectKind::Float64Literal) {
+      ustr_t valueStr = _scope->module->resolveConstant(loperand.reference);
+      lvalue = StrConvertor::toDouble(valueStr);
+
+      valueStr = _scope->module->resolveConstant(roperand.reference);
+      rvalue = StrConvertor::toDouble(valueStr);
+   }
+   else return false;
+
+   double result = 0;
+   switch (operator_id) {
+      case ADD_OPERATOR_ID:
+         result = lvalue + rvalue;
+         break;
+      case SUB_OPERATOR_ID:
+         result = lvalue - rvalue;
+         break;
+      case MUL_OPERATOR_ID:
+         result = lvalue * rvalue;
+         break;
+      case DIV_OPERATOR_ID:
+         result = lvalue / rvalue;
+         break;
+      default:
+         return false;
+   }
+
+   retVal = { ObjectKind::Float64Literal, { V_FLOAT64 }, ::mapFloat64Const(_scope->module, result) };
+
+   return true;
+}
+
 bool Interpreter :: evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
 {
    ObjectInfo loperand = args[0];
@@ -557,6 +627,8 @@ bool Interpreter :: eval(BuildKey key, ref_t operator_id, ArgumentsInfo& argumen
          return evalDeclOp(operator_id, arguments, retVal);
       case BuildKey::IntOp:
          return evalIntOp(operator_id, arguments, retVal);
+      case BuildKey::RealOp:
+         return evalRealOp(operator_id, arguments, retVal);
       default:
          return false;
    }
@@ -1220,6 +1292,7 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
 {
    allocated1 = reserved1 = 0;
    allocated2 = reserved2 = 0;
+   withRetStatement = false;
 }
 
 Compiler::CodeScope :: CodeScope(CodeScope* parent)
@@ -1227,6 +1300,7 @@ Compiler::CodeScope :: CodeScope(CodeScope* parent)
 {
    reserved1 = allocated1 = parent->allocated1;
    reserved2 = allocated2 = parent->allocated2;
+   withRetStatement = false;
 }
 
 ObjectInfo Compiler::CodeScope :: mapLocal(ustr_t identifier)
@@ -1243,6 +1317,10 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ustr_t identifier)
 
 ObjectInfo Compiler::CodeScope :: mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
 {
+   if (EAttrs::testAndExclude(attr, EAttr::Superior)) {
+      return parent->mapIdentifier(identifier, referenceOne, attr);
+   }
+
    ObjectInfo info = mapLocal(identifier);
    if (info.kind != ObjectKind::Unknown || EAttrs::test(attr, ExpressionAttribute::Local)) {
       return info;
@@ -1280,6 +1358,8 @@ void Compiler::CodeScope :: syncStack(CodeScope* parentScope)
 
    if (parentScope->reserved2 < reserved2)
       parentScope->reserved2 = reserved2;
+
+   parentScope->withRetStatement |= withRetStatement;
 }
 
 void Compiler::CodeScope :: markAsAssigned(ObjectInfo object)
@@ -2157,6 +2237,13 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
    }
    else {
       if (methodInfo.outputRef && methodInfo.outputRef != outputRef) {
+         if (_verbose) {
+            ustr_t expectedReference = scope.module->resolveReference(methodInfo.outputRef);
+            ustr_t actualReference = scope.module->resolveReference(outputRef);
+
+            _errorProcessor->info(infoExptectedType, expectedReference, actualReference);
+         }
+
          scope.raiseError(errTypeAlreadyDeclared, node);
       }
       methodInfo.outputRef = outputRef;
@@ -6738,9 +6825,75 @@ inline bool isPrimitiveArray(ref_t typeRef)
    }
 }
 
+inline bool DoesOperationSupportConvertableIntLiteral(int operatorId)
+{
+   switch (operatorId) {
+      case ADD_OPERATOR_ID:
+      case SUB_OPERATOR_ID:
+      case LESS_OPERATOR_ID:
+      case EQUAL_OPERATOR_ID:
+      case NOTEQUAL_OPERATOR_ID:
+      case ELSE_OPERATOR_ID:
+      case MUL_OPERATOR_ID:
+      case DIV_OPERATOR_ID:
+      case NOTLESS_OPERATOR_ID:
+      case GREATER_OPERATOR_ID:
+      case NOTGREATER_OPERATOR_ID:
+      case BAND_OPERATOR_ID:
+      case BOR_OPERATOR_ID:
+      case BXOR_OPERATOR_ID:
+      case BNOT_OPERATOR_ID:
+      case AND_OPERATOR_ID:
+      case OR_OPERATOR_ID:
+      case XOR_OPERATOR_ID:
+      case ADD_ASSIGN_OPERATOR_ID:
+      case SUB_ASSIGN_OPERATOR_ID:
+      case MUL_ASSIGN_OPERATOR_ID:
+      case DIV_ASSIGN_OPERATOR_ID:
+      case SET_INDEXER_OPERATOR_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
+void Compiler :: convertIntLiteralForOperation(ExprScope& scope, SyntaxNode node, int operatorId, ArgumentsInfo& messageArguments)
+{
+   if (!DoesOperationSupportConvertableIntLiteral(operatorId))
+      return;
+
+   ObjectInfo literal = {};
+   ref_t loperandRef = messageArguments[0].typeInfo.typeRef;
+   switch (loperandRef) {
+      case V_INT16ARRAY:
+         literal = convertIntLiteral(scope, node, messageArguments[1], V_INT16, true);
+         break;
+      case V_INT8ARRAY:
+         literal = convertIntLiteral(scope, node, messageArguments[1], V_INT8, true);
+         break;
+      case V_BINARYARRAY:
+         literal = convertIntLiteral(scope, node, messageArguments[1], _logic->retrievePrimitiveType(*scope.moduleScope, messageArguments[0].typeInfo.elementRef), true);
+         break;
+      default:
+      {
+         literal = convertIntLiteral(scope, node, messageArguments[1], _logic->retrievePrimitiveType(*scope.moduleScope, loperandRef), true);
+
+         break;
+      }         
+   }
+
+   if (literal.kind != ObjectKind::Unknown)
+      messageArguments[1] = literal;
+}
+
 ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ArgumentsInfo& messageArguments,
    int operatorId, ref_t expectedRef, ArgumentsInfo* updatedOuterArgs)
 {
+   if (messageArguments.count() > 1 && messageArguments[1].kind == ObjectKind::IntLiteral) {
+      // try to typecast int literal if possible
+      convertIntLiteralForOperation(scope, node, operatorId, messageArguments);
+   }
+
    WriterContext context = { &writer, &scope, node };
 
    ObjectInfo loperand = messageArguments[0];
@@ -6755,8 +6908,8 @@ ObjectInfo Compiler :: compileOperation(BuildTreeWriter& writer, ExprScope& scop
       arguments[argLen++] = retrieveType(scope, messageArguments[2]);
    }
 
-   if (operatorId == SET_INDEXER_OPERATOR_ID && isPrimitiveArray(arguments[0])) {
-      if (_logic->isCompatible(*scope.moduleScope, { arguments[1] }, { loperand.typeInfo.elementRef }, false))
+   if (operatorId == SET_INDEXER_OPERATOR_ID) {
+      if (isPrimitiveArray(arguments[0]) && _logic->isCompatible(*scope.moduleScope, { arguments[1] }, { loperand.typeInfo.elementRef }, false))
          // HOTFIX : for the generic binary array, recognize the element type
          arguments[1] = V_ELEMENT;
    }
@@ -8655,6 +8808,7 @@ ObjectInfo Compiler :: compileSubCode(BuildTreeWriter& writer, ExprScope& scope,
    ExpressionAttribute mode, bool withoutNewScope)
 {
    bool retValExpected = EAttrs::testAndExclude(mode, EAttr::RetValExpected);
+   bool withoutDebugInfo = EAttrs::testAndExclude(mode, EAttr::NoDebugInfo);
 
    scope.syncStack();
 
@@ -8662,7 +8816,7 @@ ObjectInfo Compiler :: compileSubCode(BuildTreeWriter& writer, ExprScope& scope,
    ObjectInfo retVal = {};
    if (!withoutNewScope) {
       CodeScope codeScope(parentCodeScope);
-      retVal = compileCode(writer, codeScope, node, retValExpected);
+      retVal = compileCode(writer, codeScope, node, retValExpected, withoutDebugInfo);
 
       codeScope.syncStack(parentCodeScope);
    }
@@ -8676,13 +8830,22 @@ ObjectInfo Compiler :: compileSubCode(BuildTreeWriter& writer, ExprScope& scope,
 }
 
 ObjectInfo Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode rnode,
-   SyntaxNode r2node, bool retValExpected)
+   SyntaxNode r2node, bool retValExpected, bool withoutDebugInfo)
 {
+   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+
    writer.newNode(BuildKey::Tape);
 
    ObjectInfo subRetCode = {};
+   bool oldWithRet = codeScope->withRetStatement;
    if (rnode == SyntaxKey::ClosureBlock || rnode == SyntaxKey::SwitchCode) {
-      subRetCode = compileSubCode(writer, scope, rnode.firstChild(), retValExpected ? EAttr::RetValExpected : EAttr::None);
+      EAttr mode = retValExpected ? EAttr::RetValExpected : EAttr::None;
+      if (withoutDebugInfo)
+         mode = mode | EAttr::NoDebugInfo;
+
+      codeScope->withRetStatement = false;
+
+      subRetCode = compileSubCode(writer, scope, rnode.firstChild(), mode);
    }
    else subRetCode = compileExpression(writer, scope, rnode, 0, EAttr::None, nullptr);
 
@@ -8698,7 +8861,18 @@ ObjectInfo Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprSco
       writer.newNode(BuildKey::Tape);
       ObjectInfo elseSubRetCode = {};
       if (r2node == SyntaxKey::ClosureBlock) {
-         elseSubRetCode = compileSubCode(writer, scope, r2node.firstChild(), retValExpected ? EAttr::RetValExpected : EAttr::None);
+         bool withRet = codeScope->withRetStatement;
+         codeScope->withRetStatement = false;
+
+         EAttr mode = retValExpected ? EAttr::RetValExpected : EAttr::None;
+         if (withoutDebugInfo)
+            mode = mode | EAttr::NoDebugInfo;
+
+         elseSubRetCode = compileSubCode(writer, scope, r2node.firstChild(), mode);
+
+         if (!withRet || !codeScope->withRetStatement) {
+            codeScope->withRetStatement = oldWithRet;
+         }
       }
       else elseSubRetCode = compileExpression(writer, scope, r2node, 0, EAttr::None, nullptr);
 
@@ -8712,18 +8886,20 @@ ObjectInfo Compiler :: compileBranchingOperands(BuildTreeWriter& writer, ExprSco
       }
       writer.closeNode();
    }
+   else codeScope->withRetStatement = oldWithRet;
 
    writer.closeNode();
 
    ObjectInfo retVal = {};
-   if (retValExpected)
+   if (retValExpected) {
       retVal = { ObjectKind::Object, retType, 0 };
+   }
 
    return retVal;
 }
 
 ObjectInfo Compiler :: compileBranchingOperation(WriterContext& context, ObjectInfo loperand, SyntaxNode rnode, 
-   SyntaxNode r2node, int operatorId, ArgumentsInfo* updatedOuterArgs, bool retValExpected)
+   SyntaxNode r2node, int operatorId, ArgumentsInfo* updatedOuterArgs, bool retValExpected, bool withoutDebugInfo)
 {
    ObjectInfo retVal = {};
    BuildKey   op = BuildKey::None;
@@ -8767,7 +8943,7 @@ ObjectInfo Compiler :: compileBranchingOperation(WriterContext& context, ObjectI
       context.writer->newNode(op, operatorId);
       context.writer->appendNode(BuildKey::Const, context.scope->moduleScope->branchingInfo.trueRef);
 
-      retVal = compileBranchingOperands(*context.writer, *context.scope, rnode, r2node, retValExpected);
+      retVal = compileBranchingOperands(*context.writer, *context.scope, rnode, r2node, retValExpected, withoutDebugInfo);
    }
    else {
       mssg_t message = 0;
@@ -8804,7 +8980,7 @@ ObjectInfo Compiler :: compileBranchingOperation(WriterContext& context, ObjectI
 }
 
 ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
-   int operatorId, bool retValExpected)
+   int operatorId, bool retValExpected, bool withoutDebugInfo)
 {
    SyntaxNode lnode = node.firstChild();
    SyntaxNode rnode = /*skipNestedExpression(*/lnode.nextNode()/*)*/;
@@ -8816,14 +8992,17 @@ ObjectInfo Compiler :: compileBranchingOperation(BuildTreeWriter& writer, ExprSc
 
    ObjectInfo loperand = compileExpression(writer, scope, lnode, 0, EAttr::Parameter, &updatedOuterArgs);
 
-   // HOTFIX : to allow correct step over the branching statement
-   writer.appendNode(BuildKey::EndStatement);
-   writer.appendNode(BuildKey::VirtualBreakoint);
+   if (!withoutDebugInfo) {
+      // HOTFIX : to allow correct step over the branching statement
+      writer.appendNode(BuildKey::EndStatement);
+      writer.appendNode(BuildKey::VirtualBreakoint);
+   }
 
    WriterContext context = { &writer, &scope, node };
-   auto retVal = compileBranchingOperation(context, loperand, rnode, r2node, operatorId, &updatedOuterArgs, retValExpected);
+   auto retVal = compileBranchingOperation(context, loperand, rnode, r2node, operatorId, &updatedOuterArgs, retValExpected, withoutDebugInfo);
 
-   writer.appendNode(BuildKey::OpenStatement); // HOTFIX : to match the closing statement
+   if (!withoutDebugInfo)
+      writer.appendNode(BuildKey::OpenStatement); // HOTFIX : to match the closing statement
 
    return retVal;
 }
@@ -9052,36 +9231,6 @@ ObjectInfo Compiler :: mapConstant(Scope& scope, SyntaxNode node)
    return { ObjectKind::ConstantLiteral, { V_WORD32 }, scope.module->mapConstant(node.identifier()) };
 }
 
-inline ref_t mapLongConstant(Compiler::Scope& scope, long long integer)
-{
-   String<char, 40> s;
-
-   // convert back to string as a decimal integer
-   s.appendLong(integer, 16);
-
-   return scope.moduleScope->module->mapConstant(s.str());
-}
-
-inline ref_t mapUIntConstant(Compiler::Scope& scope, int integer)
-{
-   String<char, 20> s;
-
-   // convert back to string as a decimal integer
-   s.appendUInt(integer, 16);
-
-   return scope.moduleScope->module->mapConstant(s.str());
-}
-
-inline ref_t mapFloat64Const(Compiler::Scope& scope, double val)
-{
-   String<char, 30> s;
-
-   // convert back to string as a decimal integer
-   s.appendDouble(val);
-
-   return scope.moduleScope->module->mapConstant(s.str());
-}
-
 ObjectInfo Compiler :: mapIntConstant(Scope& scope, SyntaxNode node, int radix)
 {
    int integer = StrConvertor::toInt(node.identifier(), radix);
@@ -9119,22 +9268,34 @@ ObjectInfo Compiler :: mapLongConstant(Scope& scope, SyntaxNode node, int radix)
    return { ObjectKind::LongLiteral, { V_INT64 }, ::mapLongConstant(scope, integer)};
 }
 
-ObjectInfo Compiler :: mapFloat64Constant(Scope& scope, SyntaxNode node)
+inline bool defineFloat64Constant(ustr_t val, ModuleBase* module, ObjectInfo& retVal)
 {
    double real = 0;
 
-   ustr_t val = node.identifier();
    if (val.endsWith("r")) {
       String<char, 50> tmp(val);
       tmp.truncate(tmp.length() - 1);
 
       real = StrConvertor::toDouble(tmp.str());
    }
-   else real = StrConvertor::toDouble(node.identifier());
+   else real = StrConvertor::toDouble(val);
    if (errno == ERANGE)
-      scope.raiseError(errInvalidIntNumber, node);
+      return false;
 
-   return { ObjectKind::Float64Literal, { V_FLOAT64 }, ::mapFloat64Const(scope, real) };
+   retVal = { ObjectKind::Float64Literal, { V_FLOAT64 }, ::mapFloat64Const(module, real) };
+
+   return true;
+}
+
+ObjectInfo Compiler :: mapFloat64Constant(Scope& scope, SyntaxNode node)
+{
+   ObjectInfo retVal = {};
+
+   if (!defineFloat64Constant(node.identifier(), scope.module, retVal)) {
+      scope.raiseError(errInvalidIntNumber, node);
+   }
+
+   return retVal;
 }
 
 ObjectInfo Compiler :: mapMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef)
@@ -9579,37 +9740,41 @@ inline bool isNormalConstant(ObjectInfo info)
    }
 }
 
-ObjectInfo Compiler :: convertIntLiteral(ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef)
+ObjectInfo Compiler :: convertIntLiteral(ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef, bool ignoreError)
 {
+   bool invalid = false;
    switch (targetRef) {
       case V_UINT8:
-         if (source.extra < 0 || source.extra > 255)
-            scope.raiseError(errInvalidOperation, node);
+         invalid = source.extra < 0 || source.extra > 255;
          break;
       case V_INT8:
-         if (source.extra < INT8_MIN || source.extra > INT8_MAX)
-            scope.raiseError(errInvalidOperation, node);
+         invalid = source.extra < INT8_MIN || source.extra > INT8_MAX;
          break;
       case V_INT16:
-         if (source.extra < INT16_MIN || source.extra > INT16_MAX)
-            scope.raiseError(errInvalidOperation, node);
+         invalid = source.extra < INT16_MIN || source.extra > INT16_MAX;
          break;
       case V_UINT16:
-         if (source.extra < 0 || source.extra > 65535)
-            scope.raiseError(errInvalidOperation, node);
+         invalid = source.extra < 0 || source.extra > 65535;
          break;
       case V_INT64:
          source.kind = ObjectKind::LongLiteral;
          break;
       case V_FLOAT64:
          source.kind = ObjectKind::Float64Literal;
-         source.reference = mapFloat64Const(scope, source.extra);
+         source.reference = mapFloat64Const(scope.module, source.extra);
          break;
       default:
-         scope.raiseError(errInvalidOperation, node);
+         invalid = true;
          break;
    }
    
+   if (invalid) {
+      if (!ignoreError)
+         scope.raiseError(errInvalidOperation, node);
+
+      return {};
+   }
+
    source.typeInfo = { targetRef };
 
    return source;
@@ -9995,7 +10160,7 @@ void Compiler :: compileSwitchOperation(BuildTreeWriter& writer, ExprScope& scop
             arguments.add(loperand);
             arguments.add(value);
             ObjectInfo retVal = compileOperation(writer, scope, node, arguments, operator_id, 0, nullptr);
-            compileBranchingOperation(context, retVal, optionNode.nextNode(), {}, IF_OPERATOR_ID, nullptr, false);
+            compileBranchingOperation(context, retVal, optionNode.nextNode(), {}, IF_OPERATOR_ID, nullptr, false, false);
 
             writer.closeNode();
             break;
@@ -10352,13 +10517,13 @@ ObjectInfo Compiler :: compileExpression(BuildTreeWriter& writer, ExprScope& sco
       case SyntaxKey::IfNotOperation:
       case SyntaxKey::IfElseOperation:
          retVal = compileBranchingOperation(writer, scope, current, (int)current.key - OPERATOR_MAKS,
-            EAttrs::test(mode, EAttr::RetValExpected));
+            EAttrs::test(mode, EAttr::RetValExpected), EAttrs::test(mode, EAttr::NoDebugInfo));
          break;
       case SyntaxKey::BranchOperation:
          // HOTFIX : used for script based code
          retVal = compileBranchingOperation(writer, scope, current, 
             (current.firstChild().nextNode().nextNode() != SyntaxKey::None ? IF_ELSE_OPERATOR_ID : IF_OPERATOR_ID),
-            EAttrs::test(mode, EAttr::RetValExpected));
+            EAttrs::test(mode, EAttr::RetValExpected), false);
          break;
       case SyntaxKey::LoopOperation:
          retVal = compileLoopExpression(writer, scope, current.firstChild(), mode);
@@ -10517,7 +10682,7 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 
       compileAssigningOp(context, byRefTarget, retVal);
 
-      retVal = {};
+      retVal = scope.mapSelf();
    }
    else {
       retVal = boxArgument(context, retVal,
@@ -10546,15 +10711,21 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 
    scope.syncStack();
 
+   codeScope.withRetStatement = true;
+
    return retVal;
 }
 
 ObjectInfo Compiler :: compileRootExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, EAttr mode)
 {
+   bool noDebugInfo = EAttrs::test(mode, EAttr::NoDebugInfo);
+
    ExprScope scope(&codeScope);
 
-   writer.appendNode(BuildKey::OpenStatement);
-   addBreakpoint(writer, findObjectNode(node), BuildKey::Breakpoint);
+   if (!noDebugInfo) {
+      writer.appendNode(BuildKey::OpenStatement);
+      addBreakpoint(writer, findObjectNode(node), BuildKey::Breakpoint);
+   }
 
    auto retVal = compileExpression(writer, scope, node, 0, mode, nullptr);
 
@@ -10562,7 +10733,8 @@ ObjectInfo Compiler :: compileRootExpression(BuildTreeWriter& writer, CodeScope&
    //   retVal = boxArgumentInPlace(writer, scope, retVal);
    //}
 
-   writer.appendNode(BuildKey::EndStatement);
+   if (!noDebugInfo)
+      writer.appendNode(BuildKey::EndStatement);
 
    scope.syncStack();
 
@@ -10722,7 +10894,7 @@ void Compiler :: beginMethod(BuildTreeWriter& writer, MethodScope& scope, Syntax
 
       writer.newNode(BuildKey::Tape);
 
-      writeParameterDebugInfo(writer, scope);
+      writeMethodDebugInfo(writer, scope);
       writeMessageInfo(writer, scope);
 
    }
@@ -10819,9 +10991,17 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
             varNode.appendChild(BuildKey::Index, localInfo.offset);
          }
          else {
-            // !! temporal stub
-            BuildNode varNode = node.appendChild(BuildKey::Variable, it.key());
+            BuildNode varNode = node.appendChild(BuildKey::VariableAddress, it.key());
             varNode.appendChild(BuildKey::Index, localInfo.offset);
+
+            ustr_t className = codeScope.moduleScope->module->resolveReference(localInfo.typeInfo.typeRef);
+            if (isWeakReference(className)) {
+               IdentifierString fullName(codeScope.module->name());
+               fullName.append(className);
+
+               varNode.appendChild(BuildKey::ClassName, *fullName);
+            }
+            else varNode.appendChild(BuildKey::ClassName, className);
          }
       }
       else {
@@ -10831,7 +11011,7 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
    }
 }
 
-ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode)
+ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode, bool noDebugInfoMode)
 {
    ObjectInfo retVal = {};
    ObjectInfo exprRetVal = {};
@@ -10842,6 +11022,8 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
    writer.closeNode();
 
    EAttr mode = closureMode ? EAttr::RetValExpected : EAttr::None;
+   if (noDebugInfoMode)
+      mode = mode | EAttr::NoDebugInfo;
 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -10854,9 +11036,19 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
             break;
          case SyntaxKey::CodeBlock:
          {
+            bool autoGenerated = current.existChild(SyntaxKey::Autogenerated);
+
+            if (!noDebugInfoMode && autoGenerated) {
+               writer.appendNode(BuildKey::OpenStatement);
+               addBreakpoint(writer, findObjectNode(current.firstChild()), BuildKey::Breakpoint);
+            }
+
             CodeScope subScope(&codeScope);
-            exprRetVal = compileCode(writer, subScope, current, false);
+            exprRetVal = compileCode(writer, subScope, current, false, autoGenerated);
             subScope.syncStack(&codeScope);
+
+            if (!noDebugInfoMode && autoGenerated)
+               writer.appendNode(BuildKey::EndStatement);
             break;
          }
          case SyntaxKey::EOP:
@@ -10968,7 +11160,28 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
          if (codeScope.isByRefHandler() && retVal.kind != ObjectKind::Unknown) {
             ExprScope exprScope(&codeScope);
             WriterContext context = { &writer, &exprScope, node };
-            compileAssigningOp(context, codeScope.mapByRefReturnArg(), retVal);
+
+            ObjectInfo byRefVar = codeScope.mapByRefReturnArg();
+
+            retVal = convertObject(writer, exprScope, node, retVal,
+               retrieveStrongType(scope, byRefVar), false, false);
+
+            compileAssigningOp(context, byRefVar, retVal);
+         }
+         else if (scope.info.outputRef != 0 && !scope.constructorMode){
+            ExprScope exprScope(&codeScope);
+            WriterContext context = { &writer, &exprScope, node };
+
+            ref_t outputRef = scope.info.outputRef;
+            if (outputRef && outputRef != V_AUTO) {
+               convertObject(writer, exprScope, node, retVal, outputRef, false, false);
+
+               exprScope.syncStack();
+            }
+
+            writeObjectInfo(context,
+               boxArgument(context, retVal,
+                  scope.checkHint(MethodHint::Stacksafe), true, false));
          }
          break;
       case SyntaxKey::Redirect:
@@ -10979,14 +11192,19 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
    }
 
    // if the method returns itself
-   if (retVal.kind == ObjectKind::Unknown) {
+   if (retVal.kind == ObjectKind::Unknown && !codeScope.withRetStatement) {
       ExprScope exprScope(&codeScope);
       WriterContext context = { &writer, &exprScope, node };
 
       // NOTE : extension should re
       retVal = scope.mapSelf(!scope.isExtension);
       if (codeScope.isByRefHandler()) {
-         compileAssigningOp(context, codeScope.mapByRefReturnArg(), retVal);
+         ObjectInfo byRefVar = codeScope.mapByRefReturnArg();
+
+         retVal = convertObject(writer, exprScope, node, retVal, 
+            retrieveStrongType(scope, byRefVar), false, false);
+
+         compileAssigningOp(context, byRefVar, retVal);
       }
       else {
          ref_t outputRef = scope.info.outputRef;
@@ -11600,63 +11818,72 @@ void Compiler :: writeMessageInfo(BuildTreeWriter& writer, MethodScope& scope)
    writer.appendNode(BuildKey::MethodName, *methodName);
 }
 
-void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& scope)
+void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, int size, TypeInfo typeInfo, 
+   ustr_t name, int index)
 {
-   writer.newNode(BuildKey::ParameterInfo);
+   if (size > 0) {
+      if (typeInfo.typeRef == scope.moduleScope->buildins.intReference) {
+         writer.newNode(BuildKey::IntParameterAddress, name);
+      }
+      else if (typeInfo.typeRef == scope.moduleScope->buildins.longReference) {
+         writer.newNode(BuildKey::LongParameterAddress, name);
+      }
+      else if (typeInfo.typeRef == scope.moduleScope->buildins.realReference) {
+         writer.newNode(BuildKey::RealParameterAddress, name);
+      }
+      else {
+         writer.newNode(BuildKey::ParameterAddress, name);
+
+         ref_t classRef = typeInfo.typeRef;
+         if (isPrimitiveRef(classRef))
+            classRef = resolvePrimitiveType(scope, typeInfo, true);
+
+         ustr_t className = scope.moduleScope->module->resolveReference(classRef);
+         if (isWeakReference(className)) {
+            IdentifierString fullName(scope.module->name());
+            fullName.append(className);
+
+            writer.appendNode(BuildKey::ClassName, *fullName);
+         }
+         else writer.appendNode(BuildKey::ClassName, className);
+      }
+   }
+   else if (size < 0) {
+      if (typeInfo.typeRef == V_INT16ARRAY) {
+         writer.newNode(BuildKey::ShortArrayParameter, name);
+      }
+      else if (typeInfo.typeRef == V_INT8ARRAY) {
+         writer.newNode(BuildKey::ByteArrayParameter, name);
+      }
+      else if (typeInfo.typeRef == V_INT32ARRAY) {
+         writer.newNode(BuildKey::IntArrayParameter, name);
+      }
+      else writer.newNode(BuildKey::Parameter, name); // !! temporal
+   }
+   else writer.newNode(BuildKey::Parameter, name);
+
+   writer.appendNode(BuildKey::Index, index);
+   writer.closeNode();
+
+}
+
+void Compiler :: writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope)
+{
+   writer.newNode(BuildKey::ArgumentsInfo);
 
    if (!scope.functionMode) {
-      writer.newNode(BuildKey::Parameter, "self");
-      writer.appendNode(BuildKey::Index, -1);
-      writer.closeNode();
+      ref_t classRef = scope.getClassRef();
+
+      writeParameterDebugInfo(writer, scope, _logic->defineStructSize(*scope.moduleScope, classRef).size,
+         { classRef }, "self", -1);
    }
 
    int prefix = scope.functionMode ? 0 : -1;
    for (auto it = scope.parameters.start(); !it.eof(); ++it) {
       auto paramInfo = *it;
 
-      if (paramInfo.size > 0) {
-         if (paramInfo.typeInfo.typeRef == scope.moduleScope->buildins.intReference) {
-            writer.newNode(BuildKey::IntParameterAddress, it.key());
-         }
-         else if (paramInfo.typeInfo.typeRef == scope.moduleScope->buildins.longReference) {
-            writer.newNode(BuildKey::LongParameterAddress, it.key());
-         }
-         else if (paramInfo.typeInfo.typeRef == scope.moduleScope->buildins.realReference) {
-            writer.newNode(BuildKey::RealParameterAddress, it.key());
-         }
-         else {
-            writer.newNode(BuildKey::ParameterAddress, it.key());
-
-            ref_t classRef = paramInfo.typeInfo.typeRef;
-            if (isPrimitiveRef(classRef))
-               classRef = resolvePrimitiveType(scope, paramInfo.typeInfo, true);
-
-            ustr_t className = scope.moduleScope->module->resolveReference(classRef);
-            if (isWeakReference(className)) {
-               IdentifierString fullName(scope.module->name());
-               fullName.append(className);
-
-               writer.appendNode(BuildKey::ClassName, *fullName);
-            }
-            else writer.appendNode(BuildKey::ClassName, className);
-         }
-      }
-      else if (paramInfo.size < 0) {
-         if (paramInfo.typeInfo.typeRef == V_INT16ARRAY) {
-            writer.newNode(BuildKey::ShortArrayParameter, it.key());
-         }
-         else if (paramInfo.typeInfo.typeRef == V_INT8ARRAY) {
-            writer.newNode(BuildKey::ByteArrayParameter, it.key());
-         }
-         else if (paramInfo.typeInfo.typeRef == V_INT32ARRAY) {
-            writer.newNode(BuildKey::IntArrayParameter, it.key());
-         }
-         else writer.newNode(BuildKey::Parameter, it.key()); // !! temporal
-      }
-      else writer.newNode(BuildKey::Parameter, it.key());
-
-      writer.appendNode(BuildKey::Index, prefix - paramInfo.offset);
-      writer.closeNode();
+      writeParameterDebugInfo(writer, scope, paramInfo.size, paramInfo.typeInfo, 
+         it.key(), prefix - paramInfo.offset);
    }
 
    writer.closeNode();

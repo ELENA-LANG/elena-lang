@@ -69,12 +69,16 @@ public closed class WindowCallback
 
    onWMDestoy(Handle hwnd)
    {
-      extern USER32.DefWindowProcW(hwnd, WM_DESTROY, 0, 0);
+      extern {
+         extern USER32.DefWindowProcW(hwnd, WM_DESTROY, 0, 0);
+      }
    }
 
    onWMPaint(Handle hwnd)
    {
-      extern USER32.DefWindowProcW(hwnd, WM_PAINT, 0, 0);
+      extern {
+         extern USER32.DefWindowProcW(hwnd, WM_PAINT, 0, 0);
+      }
    }
 
    onWMSize(Handle hwnd, int lParam)
@@ -95,6 +99,13 @@ public closed class WindowCallback
       if (command == BN_CLICKED)
          { self.onClick(control); ^ self };      
    }
+
+   onWMClose(Handle hwnd)
+   {
+      extern {
+         extern USER32.DefWindowProcW(hwnd, WM_CLOSE, 0, 0);
+      }
+   }
 }
 
 // --- SDIWindowCallback ---
@@ -106,6 +117,11 @@ public class SDIWindowCallback : WindowCallback
 
       forward program.stop()
    }
+}
+
+// --- ChildWindowCallback ---
+public class ChildWindowCallback : WindowCallback
+{
 }
 
 // --- SDIWindowClass ---

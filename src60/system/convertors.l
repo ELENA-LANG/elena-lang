@@ -566,7 +566,7 @@ public singleton realConvertor
 
    real convert(byte b)
    {
-      real r := b
+      real r := b;
 
       ^ r;
    }

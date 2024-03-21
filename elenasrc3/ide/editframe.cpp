@@ -15,66 +15,46 @@ SourceViewModel :: SourceViewModel()
 {
 }
 
-void SourceViewModel :: beforeDocumentSelect(int index)
+void SourceViewModel :: setTraceLine(int row, bool withCursor, DocumentChangeStatus& status)
 {
-   clearErrorLine();
-}
-
-void SourceViewModel :: setTraceLine(int row, bool withCursor)
-{
-   DocumentChangeStatus status = {};
-
    _currentView->removeMarker(STYLE_TRACE_LINE, status);
 
    _currentView->addMarker(row, STYLE_TRACE_LINE, false, false, status);
    if (withCursor)
       _currentView->setCaret({ 0, row - 1 }, false, status);
-
-   _currentView->notifyOnChange(status);
 }
 
-void SourceViewModel :: clearTraceLine()
+void SourceViewModel :: clearTraceLine(DocumentChangeStatus& status)
 {
    if (_currentView != nullptr) {
-      DocumentChangeStatus status = {};
-
       _currentView->removeMarker(STYLE_TRACE_LINE, status);
-
-      _currentView->notifyOnChange(status);
    }
 }
 
-void SourceViewModel :: setErrorLine(int row, int column, bool withCursor)
+void SourceViewModel :: setErrorLine(int row, int column, bool withCursor, DocumentChangeStatus& status)
 {
-   DocumentChangeStatus status = {};
-
    _currentView->removeMarker(STYLE_ERROR_LINE, status);
 
    _currentView->addMarker(row, STYLE_ERROR_LINE, true, false, status);
    if (withCursor)
       _currentView->setCaret({ column - 1, row - 1 }, false, status);
-
-   _currentView->notifyOnChange(status);
 }
 
-void SourceViewModel :: clearErrorLine()
+void SourceViewModel :: clearErrorLine(DocumentChangeStatus& status)
 {
-   DocumentChangeStatus status = {};
-
    if(_currentView->removeMarker(STYLE_ERROR_LINE, status)) {
       status.formatterChanged = true;
-      _currentView->notifyOnChange(status);
    }
 }
 
-void SourceViewModel :: notifyOnChange(DocumentChangeStatus& status)
+void SourceViewModel :: refresh(DocumentChangeStatus& status)
 {
    if (status.textChanged || status.caretChanged) {
-      clearErrorLine();
+      clearErrorLine(status);
       status.formatterChanged = true;
    }
          
-   TextViewModel::notifyOnChange(status);
+   TextViewModel::refresh(status);
 }
 
 void SourceViewModel :: clearDocumentView()

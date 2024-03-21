@@ -824,6 +824,13 @@ inline %1Eh
 
 end
 
+// ; lneg
+inline % 1Fh
+
+   neg    r14, r14
+
+end
+
 // ; coalesce
 inline % 20h
 

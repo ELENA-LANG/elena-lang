@@ -1,58 +1,16 @@
-import extensions;
-
-singleton VariadicFunctionDispatchTester
-{
-   function(params int[] args)
+public singleton convertor 
+{ 
+   generic(n)
    {
-      console.write(".");
-      int l := args.Length;
-/*      console.writeLine(l);
-      int sum := 0;
-      for (int i := 0; i < l; i += 1) {
-         sum := sum + args[i]
-      };
-      console.write(".");
+      MessageName mssg := __received.MessageName;
 
-      ^ sum*/
+      ^ mssg(new ExtensionVariable(n, extensions'intConvertOp))
    }
 }
-/*
-singleton VariadicDispatchTester
-{
-   product(params int[] args)
-   {
-      int l := args.Length;
-      console.writeLine(l);
-      int prod := 1;
-      for (int i := 0; i < l; i += 1) {
-         prod := prod * args[i]
-      };
-      console.write(".");
 
-      ^ prod
-   }
-}
-*/
 public program()
 {
-//   console.write("vardispatcherTest:");
+   var n := convertor.toInt("2");
 
-   var r1 := VariadicFunctionDispatchTester(1,2,3);
-//   Assert.ifTrue(r1 == 6);
-   console.write(".");
-/*
-   var r2 := VariadicDispatchTester.product(1,2,3,4);
-   Assert.ifTrue(r2 == 24);
-   console.write(".");
-
-   var o := VariadicFunctionDispatchTester;
-   var o2 := VariadicDispatchTester;
-   var r3 := o(1,2,3);
-   Assert.ifTrue(r3 == 6);
-   console.write(".");
-   var r4 := o2.product(1,2,3,4);
-   Assert.ifTrue(r4 == 24);
-   console.write(".");
-
-   console.writeLine(".");*/
+   console.writeLine(n)
 }

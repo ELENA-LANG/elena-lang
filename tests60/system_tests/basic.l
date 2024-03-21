@@ -215,7 +215,12 @@ longTests()
     i *= 2l;
     i /= 2l;
     Assert.ifTrue(i == 1l);
+    console.write(".");
 
+    var tester := (long l, long control1, long control2) { long r1 := -l; long r2 := -r1; Assert.ifTrue(r1 == control1); Assert.ifTrue(r2 == control2);  };
+
+    tester(-1l,1l,-1l);
+    tester(-5000000000l,5000000000l,-5000000000l);
     console.writeLine(".");
 }
 

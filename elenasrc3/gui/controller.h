@@ -89,19 +89,25 @@ namespace elena_lang
    {
    protected:
       TextViewSettings _settings;
+      NotifierBase*    _notifier;
 
       //void onTextChanged(TextViewModelBase* model, DocumentView* view);
 
-      void notifyOnChange(TextViewModelBase* model, DocumentChangeStatus& status);
-      void notifyOnClipboardOperation(ClipboardBase* clipboard);
+      void notifyOnClipboardOperation(ClipboardBase* clipboard); // !! obsolete
+      void notifyTextModelChange(TextViewModelBase* model, DocumentChangeStatus& changeStatus);
 
    public:
+      void setNotifier(NotifierBase* notifier)
+      {
+         _notifier = notifier;
+      }
+
       bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
          FileEncoding encoding) override;
-      bool selectDocument(TextViewModelBase* model, int index, NotificationStatus& status) override;
+      bool selectDocument(TextViewModelBase* model, int index) override;
       void selectNextDocument(TextViewModelBase* model);
       void selectPreviousDocument(TextViewModelBase* model);
-      void closeDocument(TextViewModelBase* model, int index, NotificationStatus& status) override;
+      void closeDocument(TextViewModelBase* model, int index, int& status) override;
 
       void newDocument(TextViewModelBase* model, ustr_t name) override;
 
@@ -147,7 +153,7 @@ namespace elena_lang
       bool findText(TextViewModelBase* model, FindModel* findModel);
       bool replaceText(TextViewModelBase* model, FindModel* findModel);
 
-      void goToLine(TextViewModelBase* model, int row);
+      void goToLine(TextViewModelBase* model, int row);      
 
       TextViewController(TextViewSettings& settings)
       {
