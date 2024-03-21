@@ -56,4 +56,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: elena-lang-${{matrix.platform}}-${{ env.BUILD_TAG }}
-        path: ./install/${{matrix.platform}}/
+        path: install\${{matrix.platform}}\*
