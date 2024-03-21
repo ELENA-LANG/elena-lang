@@ -179,7 +179,7 @@ int main(int argc, char* argv[])
 
       // Initializing...
       PathString configPath(*dataPath, DEFAULT_CONFIG);
-      project.loadConfig(*configPath, false/*, true, false*/);
+      project.loadConfig(*configPath, nullptr, false);
 
        // Reading command-line arguments...
       if (argc < 2) {
