@@ -1,5 +1,5 @@
 #!/bin/bash
-RELEASE=elena-6.0.7.i386-linux
+RELEASE=elena-6.0.9.i386-linux
 
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/

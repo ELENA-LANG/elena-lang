@@ -7,23 +7,26 @@ In development:
 
   === Iteration 21 ===
   --------------------------------------
-  dev: #637, windows executable - support manifest
-  op:
-  opt:pi under 7 sec, #602
-  maint:#620,#622,#618
+  dev: #637, windows executable - support manifest, net, #621, #610, #612
+  opt:pi under 7 sec, #602, #611
+  maint:#620,#622
   exp:
-  ide:vm debugger,backlog (#617)
-  tools:work with elt in ide
+  ide:vm debugger
+  tools:work with elt in ide, #618
   prom:#635,elena in nutshell every 1 week
-  port:win64 gui,helloworld gui sample (button)
+  port:win64 gui,helloworld gui sample (button), chat sample, win64 script samples
   --------------------------------------
+  - github actions : x86
+  - #617
+  --------------------------------------
+  - github actions : x86
 
-  --------------------------------------
+  - #617 : include / exclude
 
   === Iteration 22 ===
   --------------------------------------
   dev: async programming (instant messagange sample (chat) ), #608
-  op:github actions : x86
+  op:
   opt:pi under 6 sec, #601
   maint:
   exp:
