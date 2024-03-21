@@ -1,0 +1,28 @@
+<configuration>
+  <platform key="Win_x86">
+     <project>
+        <output>..\..\lib60</output>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <output>..\..\lib60_64</output>
+     </project>
+  </platform>
+  <project>
+     <namespace>sqlite</namespace>
+     <template>lib60</template>
+  </project>
+  <manifest>
+     <name>ELENA SQLite Provider Library</name>
+     <version>6.0.0</version>
+     <author>Aleksey Rakov</author>
+  </manifest>
+  <files>
+     <module>
+        <include>reader.l</include>
+        <include>data_table.l</include>
+        <include>common.l</include>
+     </module>
+  </files>
+</configuration>

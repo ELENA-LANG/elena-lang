@@ -105,7 +105,7 @@ labWait:
   
   // ; GCXT: free lock
   // ; could we use mov [esi], 0 instead?
-  lock xadd [esi], edx
+  lock xadd [edi], edx
 
   ret
 
@@ -171,6 +171,7 @@ labConinue:
   mov  eax, esi
   // ; get tls entry address  
   mov  esi, data : %CORE_THREAD_TABLE + tt_slots
+  xor  ecx, ecx
   mov  edi, [esi - 4]
 labNext:
   mov  edx, [esi]
@@ -234,6 +235,13 @@ labSkipWait:
   push esi
   push ecx
 
+  // ; save perm roots
+  mov  esi, [data : %CORE_GC_TABLE + gc_perm_start]
+  mov  ecx, [data : %CORE_GC_TABLE + gc_perm_current]
+  sub  ecx, esi
+  push esi
+  push ecx
+
   // ; == GCXT: save frames ==
   mov  eax, data : %CORE_THREAD_TABLE
   mov  ebx, [eax]
@@ -243,7 +251,7 @@ labYGNextThread:
   mov  eax, data : %CORE_THREAD_TABLE + tt_slots
   
   // ; get tls entry address
-  mov  esi, [eax+ebx*4]            
+  mov  esi, [eax+ebx*8]            
   test esi, esi
   jz   short labYGNextThreadSkip
 
@@ -343,7 +351,6 @@ labWait:
   mov  [eax + tt_stack_frame], esp
 
   push ecx
-
 
   // ; === GCXT: safe point ===
   mov  edx, [data : %CORE_GC_TABLE + gc_signal]
@@ -533,7 +540,7 @@ labWait:
   
   // ; GCXT: free lock
   // ; could we use mov [esi], 0 instead?
-  lock xadd [esi], edx
+  lock xadd [edi], edx
 
   ret
 
@@ -662,8 +669,9 @@ labSkipWait:
   call extern "$rt.SignalStopGCLA"
 
   mov  ebx, edi
-  add  esp, 4
+  add  esp, 8
 
+  pop  ebp
   pop  esi
   ret
 
@@ -769,7 +777,7 @@ end
 
 // ; exclude
 inline % 10h
-                                                       
+     
   mov  ecx, fs:[2Ch]
   mov  eax, [data : %CORE_TLS_INDEX]
   mov  edi, [ecx+eax*4]
@@ -782,7 +790,7 @@ end
 // ; include
 inline % 11h
 
-  add  esp, 4                                                       
+  add  esp, 4
   mov  ecx, fs:[2Ch]
   mov  eax, [data : %CORE_TLS_INDEX]
   mov  edi, [ecx+eax*4]
@@ -793,14 +801,13 @@ end
 // ; tststck
 inline %17h
 
-  xor  ecx, ecx
-
   // ; COREX
   mov  ecx, fs:[2Ch]
   mov  eax, [data : %CORE_TLS_INDEX]
   mov  edi, [ecx+eax*4]
   mov  eax, [edi + tt_stack_root]
 
+  xor  ecx, ecx
   cmp  ebx, esp
   setl cl
   cmp  ebx, eax
@@ -839,8 +846,7 @@ inline %3CFh
   mov  edi, data : %CORE_THREAD_TABLE + tt_slots
   mov  [edi + edx * 8], eax
 
-  mov  edi, [ecx+eax*4]
-  mov  [edi + tt_stack_root], esp
+  mov  [eax + tt_stack_root], esp
 
 end
 
@@ -848,11 +854,6 @@ end
 inline %4CFh
 
   finit
-
-  mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
-  mov  [edi + tt_stack_root], esp
 
   mov  eax, esp
   call %PREPARE

@@ -208,7 +208,6 @@
     <ClInclude Include="..\ideproject.h" />
     <ClInclude Include="..\ideversion.h" />
     <ClInclude Include="..\ideview.h" />
-    <ClInclude Include="..\ideworkspace.h" />
     <ClInclude Include="..\menuhistory.h" />
     <ClInclude Include="..\sourceformatter.h" />
     <ClInclude Include="..\windowlist.h" />

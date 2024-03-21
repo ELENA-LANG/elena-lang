@@ -23,4 +23,18 @@ namespace culture
       string toLower()
          = currentLocale.toLowercase(self);
    }
-}
+
+   public extension wideStringCultureOp : WideString
+   {
+      wide toUpper(ILocale locale)
+         = locale.toUppercase(self);
+   
+      wide toUpper()
+         = currentLocale.toUppercase(self);
+
+      wide toLower(ILocale locale)
+         = locale.toLowercase(self);
+   
+      wide toLower()
+         = currentLocale.toLowercase(self);
+   }}

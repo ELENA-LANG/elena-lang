@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Debug Context Browser Header File
-//                                             (C)2022-2023, by Aleksey Rakov
+//                                             (C)2022-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINCONTEXTBROWSER_H
@@ -14,8 +14,12 @@ namespace elena_lang
 {
    class ContextBrowser : public TreeView, public ContextBrowserBase
    {
-      TreeViewItem _rootItem;
-      int          _expandNotificationId;
+   public:
+      typedef void(*BrowseEventInvoker)(NotifierBase*, size_t, size_t);
+
+   private:
+      TreeViewItem         _rootItem;
+      BrowseEventInvoker   _browseInvoker;
 
       void* findWatchNodeStartingWith(WatchContext* root, ustr_t name) override;
 
@@ -39,7 +43,7 @@ namespace elena_lang
 
       void removeUnused(WatchItems& refreshedItems) override;
 
-      ContextBrowser(int width, int height, NotifierBase* notifier, int expandNotificationId);
+      ContextBrowser(int width, int height, NotifierBase* notifier, BrowseEventInvoker browseInvoker);
    };
 }
 

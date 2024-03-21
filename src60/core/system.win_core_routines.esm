@@ -5,6 +5,7 @@ define WM_CREATE         1;
 define WM_DESTROY        2;
 define WM_SIZE           5;
 define WM_PAINT         15;
+define WM_CLOSE         16;
 define WM_COMMAND      273;
 
 define GWL_USERDATA    -21;
@@ -48,9 +49,11 @@ procedure windProc (arg1,arg2,arg3,arg4)
   jeq         labSize
   cmp         n:WM_PAINT
   jeq         labPaint
+  cmp         n:WM_CLOSE
+  jeq         labClose
 
 labDefault:
-  call        extern:USER32.DefWindowProcW(*hwnd,*msg,*wparam,*lparam)
+  call        stdcall extern:USER32.DefWindowProcW(*hwnd,*msg,*wparam,*lparam)
   jump        labEnd2
 
 labCreate:
@@ -71,12 +74,7 @@ labCreate:
   jump        labEnd
 
 labDestroy:
-  mov         n:GWL_USERDATA
-  save        sp:1
-  load        dp:hwnd
-  save        sp:0
-
-  call        extern:USER32.GetWindowLongW,2
+  call        stdcall extern:USER32.GetWindowLongW(*hwnd,GWL_USERDATA)
 
   cmp         n:0
   jeq         labDefault
@@ -94,12 +92,7 @@ labDestroy:
   jump        labEnd
 
 labPaint:
-  mov         n:GWL_USERDATA
-  save        sp:1
-  load        dp:hwnd
-  save        sp:0
-
-  call        extern:USER32.GetWindowLongW,2
+  call        stdcall extern:USER32.GetWindowLongW(*hwnd,GWL_USERDATA)
 
   cmp         n:0
   jeq         labDefault
@@ -116,13 +109,26 @@ labPaint:
 
   jump        labEnd
 
-labCommand:
-  mov         n:GWL_USERDATA
-  save        sp:1
-  load        dp:hwnd
-  save        sp:0
+labClose:
+  call        stdcall extern:USER32.GetWindowLongW(*hwnd,GWL_USERDATA)
 
-  call        extern:USER32.GetWindowLongW,2
+  cmp         n:0
+  jeq         labDefault
+  save        dp:ptr
+
+  set         dp:hwnd
+  store       sp:1
+
+  set         dp:ptr
+  get         i:0
+  get         i:0
+
+  vcall       mssg:"onWMClose<system'Handle>[2]", class:"system'winforms'WindowCallback"
+
+  jump        labEnd
+
+labCommand:
+  call        stdcall extern:USER32.GetWindowLongW(*hwnd,GWL_USERDATA)
 
   cmp         n:0
   jeq         labDefault
@@ -143,12 +149,7 @@ labCommand:
   jump        labEnd
 
 labSize:
-  mov         n:GWL_USERDATA
-  save        sp:1
-  load        dp:hwnd
-  save        sp:0
-
-  call        extern:USER32.GetWindowLongW,2
+  call        stdcall extern:USER32.GetWindowLongW(*hwnd,GWL_USERDATA)
 
   cmp         n:0
   jeq         labDefault

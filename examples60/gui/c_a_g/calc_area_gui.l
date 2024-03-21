@@ -44,16 +44,16 @@ public class MainWindow : SDIDialog
       // -----------------------------------------------------------
       // Panels
       pnlFormula   := Panel.new();
-      self.appendControl:pnlFormula;
+      self.appendControl(pnlFormula);
 
       // Text Box
       valUm        := Edit.new();
       valDois      := Edit.new();
       valTres      := Edit.new();
       self
-         .appendControl:valUm
-         .appendControl:valDois
-         .appendControl:valTres;
+         .appendControl(valUm)
+         .appendControl(valDois)
+         .appendControl(valTres);
 
       // Buttons
       BtmCalc      := Button.new();
@@ -61,10 +61,10 @@ public class MainWindow : SDIDialog
       BtmSalv      := Button.new();
       BtmSair      := Button.new();
       self
-         .appendControl:BtmCalc
-         .appendControl:BtmInfo
-         .appendControl:BtmSalv
-         .appendControl:BtmSair;
+         .appendControl(BtmCalc)
+         .appendControl(BtmInfo)
+         .appendControl(BtmSalv)
+         .appendControl(BtmSair);
 
       // Labels
       valor        := Label.new();
@@ -73,11 +73,11 @@ public class MainWindow : SDIDialog
       letter2      := Label.new();
       letter3      := Label.new();
       self
-         .appendControl:valor
-         .appendControl:info
-         .appendControl:letter1
-         .appendControl:letter2
-         .appendControl:letter3;
+         .appendControl(valor)
+         .appendControl(info)
+         .appendControl(letter1)
+         .appendControl(letter2)
+         .appendControl(letter3);
 
       // Radio Button
       Tconta       := RadioButtonGroup.new();
@@ -86,18 +86,18 @@ public class MainWindow : SDIDialog
       Econta3      := RadioButtonGroup.new();
       Econta4      := RadioButtonGroup.new();
       self
-         .appendControl:Tconta
-         .appendControl:Econta1
-         .appendControl:Econta2
-         .appendControl:Econta3
-         .appendControl:Econta4;
+         .appendControl(Tconta)
+         .appendControl(Econta1)
+         .appendControl(Econta2)
+         .appendControl(Econta3)
+         .appendControl(Econta4);
 
       // Images Formulas
-//      _paintbox  := Imagebox.new();
-//      _imageList := ImageList.new();
-//      pnlFormula 
-//         .appendControl:_imageList
-//         .appendControl:_paintbox;
+      _paintbox  := Imagebox.new();
+      _imageList := ImageList.new();
+      pnlFormula 
+         .appendControl(_imageList)
+         .appendControl(_paintbox);
       // -----------------------------------------------------------
 
       // Form ------------------------------------------------------------------------
@@ -110,46 +110,45 @@ public class MainWindow : SDIDialog
 
       // Radio Button ----------------------------------------------------------------
       Tconta.setRegion(7, 1, 150, 100);
-      Tconta.Caption := "Escolha do calculo";
+      Tconta.Caption := "Figure";
       Tconta
-         .appendItem:"&Paralelogramos"
-         .appendItem:"&Trapezio"
-         .appendItem:"&Circulos"
-         .appendItem:"&Triangulos";
+         .appendItem("&Parallelogram")
+         .appendItem("&Trapeze")
+         .appendItem("&Circle")
+         .appendItem("&Triangle");
 
       // Econta1
       Econta1.setRegion(7, 105, 150, 100);
-      Econta1.Caption := " Escolha do calculo ";
+      Econta1.Caption := " Figure variant ";
       Econta1
-         .appendItem:"&Retangulo"
-         .appendItem:"&Quadrado"
-         .appendItem:"&Paralelogramo"
-         .appendItem:"&Losango";
+         .appendItem("&Rectangle")
+         .appendItem("&Square")
+         .appendItem("&Parallelogram")
+         .appendItem("&Diamond");
 
       Econta2.setRegion(7, 105, 150, 100);
-      Econta2.Caption := " Escolha do calculo ";
+      Econta2.Caption := " Figure variant ";
       Econta2
-         .appendItem:"&Retangulo"
-         .appendItem:"&Isosceles"
-         .appendItem:"&Escaleno";
+         .appendItem("&Rectangle")
+         .appendItem("&Isosceles")
+         .appendItem("&Scalene");
       Econta2.Visible := false;
 
       Econta3.setRegion(7, 105, 150, 100);
-      Econta3.Caption := " Escolha do calculo ";
+      Econta3.Caption := " Figure variant ";
       Econta3
-         .appendItem:"&Circulo"
-         .appendItem:"&Coroa circular"
-         .appendItem:"&Setor circular";
+         .appendItem("&Circle")
+         .appendItem("&Circular crown")
+         .appendItem("&Circular sector");
       Econta3.Visible := false;
 
       Econta4.setRegion(7, 105, 150, 100);
-      Econta4.Caption := " Escolha do calculo ";
+      Econta4.Caption := " Figure variant ";
       Econta4
-         .appendItem:"&Qualquer"
-         .appendItem:"&Retangulo"
-         .appendItem:"&Func dos lados"
-         .appendItem:"&Retangulo"
-         .appendItem:"&Func lds ang";
+         .appendItem("&Common")
+         .appendItem("&Rectangle")
+         .appendItem("&Equilateral")
+         .appendItem("&Isosceles");
       Econta4.Visible := false;
 
       Tconta.SelectedIndex := 0;
@@ -164,16 +163,16 @@ public class MainWindow : SDIDialog
 
       // Buttons -----------------------------------------------------------------------
       BtmCalc.setRegion(430, 10, 150, 22);
-      BtmCalc.Caption := "Calcular";
+      BtmCalc.Caption := "Calculate";
         
       BtmInfo.setRegion(430, 40, 150, 22);
-      BtmInfo.Caption := "Infos";
+      BtmInfo.Caption := "About";
         
       BtmSalv.setRegion(430, 70, 150, 22);
-      BtmSalv.Caption := "Salvar";
+      BtmSalv.Caption := "Save";
 
       BtmSair.setRegion(430, 100, 150, 22);
-      BtmSair.Caption := "Sair";
+      BtmSair.Caption := "Exit";
 
       // Labels ------------------------------------------------------------------------
       valor.setRegion(170, 105, 245, 22);
@@ -189,52 +188,52 @@ public class MainWindow : SDIDialog
       letter3.setRegion(170, 75, 14, 22);
 
       // Image Formula -----------------------------------------------------------------
-//      _paintbox.setRegion(12, 22, 379, 139);
+      _paintbox.setRegion(12, 22, 379, 139);
 
       // Image List Formulas -----------------------------------------------------------
-/*
-      _imageList.assign:_paintbox;
+
+      _imageList.assign(_paintbox);
       _imageList.setRegion(0, 0, 379, 139);
-      _imageList.appendImage:"..\formulas\Paralelogramos\bitmap1.bmp";
-      _imageList.appendImage:"..\formulas\Paralelogramos\bitmap2.bmp";
-      _imageList.appendImage:"..\formulas\Paralelogramos\bitmap3.bmp";
-      _imageList.appendImage:"..\formulas\Paralelogramos\bitmap4.bmp";
+      _imageList.appendImage("formulas\Paralelogramos\bitmap1.bmp");
+      _imageList.appendImage("formulas\Paralelogramos\bitmap2.bmp");
+      _imageList.appendImage("formulas\Paralelogramos\bitmap3.bmp");
+      _imageList.appendImage("formulas\Paralelogramos\bitmap4.bmp");
 
-      _imageList.appendImage:"..\formulas\Trapezio\bitmap1.bmp";
-      _imageList.appendImage:"..\formulas\Trapezio\bitmap2.bmp";
-      _imageList.appendImage:"..\formulas\Trapezio\bitmap3.bmp";
+      _imageList.appendImage("formulas\Trapezio\bitmap1.bmp");
+      _imageList.appendImage("formulas\Trapezio\bitmap2.bmp");
+      _imageList.appendImage("formulas\Trapezio\bitmap3.bmp");
 
-      _imageList.appendImage:"..\formulas\Circulo\bitmap1.bmp";
-      _imageList.appendImage:"..\formulas\Circulo\bitmap2.bmp";
-      _imageList.appendImage:"..\formulas\Circulo\bitmap3.bmp";
+      _imageList.appendImage("formulas\Circulo\bitmap1.bmp");
+      _imageList.appendImage("formulas\Circulo\bitmap2.bmp");
+      _imageList.appendImage("formulas\Circulo\bitmap3.bmp");
         
-      _imageList.appendImage:"..\formulas\Triangulos\bitmap1.bmp";
-      _imageList.appendImage:"..\formulas\Triangulos\bitmap2.bmp";
-      _imageList.appendImage:"..\formulas\Triangulos\bitmap3.bmp";
-      _imageList.appendImage:"..\formulas\Triangulos\bitmap4.bmp";
-      _imageList.appendImage:"..\formulas\Triangulos\bitmap5.bmp";
-*/
+      _imageList.appendImage("formulas\Triangulos\bitmap1.bmp");
+      _imageList.appendImage("formulas\Triangulos\bitmap2.bmp");
+      _imageList.appendImage("formulas\Triangulos\bitmap3.bmp");
+      _imageList.appendImage("formulas\Triangulos\bitmap4.bmp");
+      _imageList.appendImage("formulas\Triangulos\bitmap5.bmp");
+
       // Events ------------------------------------------------------------------------
       // Radio Buttons -----------------------------------------------------------------
       Tconta.onIndexChanged := (args){ self.TipoDoCalculo(Tconta.SelectedIndex) };
 
       Econta1.onIndexChanged := (args){ self.TipoDoObj(Econta1.SelectedIndex) };
-//        Econta2.onIndexChanged := (args){ self.TipoDoObj(4 + Econta2.SelectedIndex) };
-//        Econta3.onIndexChanged := (args){ self.TipoDoObj(7 + Econta3.SelectedIndex) };
-//        Econta4.onIndexChanged := (args){ self.TipoDoObj(10 + Econta4.SelectedIndex) };
-//
-//        // Buttons ----------------------------------------------------------------------
-//        BtmCalc.onClick := (args)
-//            { self.onButtonClick() };
-//       
-////        BtmInfo set onClick: (:args)
-////            { $self $onButtonClickInfo:$self ].
-//////            
-//////        BtmSalv~eevents +=
-//////            { onclick'eval = self $onButtonClickSave. }.
-//
-//        BtmSair.onClick := (args)
-//            { forward program.stop() }
+      Econta2.onIndexChanged := (args){ self.TipoDoObj(4 + Econta2.SelectedIndex) };
+      Econta3.onIndexChanged := (args){ self.TipoDoObj(7 + Econta3.SelectedIndex) };
+      Econta4.onIndexChanged := (args){ self.TipoDoObj(10 + Econta4.SelectedIndex) };
+
+      // Buttons ----------------------------------------------------------------------
+      BtmCalc.onClick := (args)
+          { self.onButtonClick() };
+       
+      BtmInfo.onClick := (args)
+          { self.onButtonClickInfo() };
+
+      BtmSalv.onClick := (args)
+          { self.onButtonClickSave() };
+
+      BtmSair.onClick := (args)
+          { forward program.stop() }
    }
 
    private TipoDoCalculo(int index)
@@ -269,7 +268,7 @@ public class MainWindow : SDIDialog
     
    private TipoDoObj(int index)
    {
-//      _imageList.SelectedIndex := index;
+      _imageList.SelectedIndex := index;
      
       valTres.Visible := false;
       valDois.Visible := false;
@@ -430,103 +429,108 @@ public class MainWindow : SDIDialog
             info.Caption := "Info: Al = Alfa ( angulo )"
          };
 
-      //_paintbox.refresh()
+      _paintbox.refresh()
    }            
  
-//    private onButtonClick()
-//    {   
-//        var result := 0;
-//                
-//        (_imageList.SelectedIndex) =>
-//            0 {
-//                var H := valUm.Value.toReal();
-//                var B := valDois.Value.toReal();
-//                result := H * B
-//            }
-//            1 {
-//                var B := valUm.Value.toReal();
-//                result := B * B
-//            }
-//            2 {
-//                var H := valUm.Value.toReal();
-//                var B := valDois.Value.toReal();
-//                result := H * B
-//            }
-//            3 {
-//                var DM := valUm.Value.toReal();
-//                var d := valDois.Value.toReal();
-//                result := DM * d / 2
-//            }
-//            4 {
-//                var BM := valUm.Value.toReal();
-//                var b := valDois.Value.toReal();
-//                var H := valTres.Value.toReal();
-//                result := (BM + b)*H / 2
-//            }
-//            5 {
-//                var BM := valUm.Value.toReal();
-//                var b := valDois.Value.toReal();
-//                var H := valTres.Value.toReal();
-//                result := (BM + b)*H / 2
-//            }
-//            6 {
-//                var BM := valUm.Value.toReal();
-//                var b := valDois.Value.toReal();
-//                var H := valTres.Value.toReal();
-//                result := (BM + b)*H / 2
-//            }
-//            7 {
-//                var R := valUm.Value.toReal();
-//                result := Pi_value * R * R
-//            }
-//            8 {
-//                var RM := valUm.Value.toReal();
-//                var r := valDois.Value.toReal();
-//                result := Pi_value * (RM * RM - r * r);
-//            }
-//            9 {
-//                var Alfa := valUm.Value.toReal();
-//                var R := valDois.Value.toReal();
-//                result := Alfa * Pi_value * R * R / 360
-//            }
-//            10 {
-//                var B := valUm.Value.toReal();
-//                var H := valDois.Value.toReal();
-//                result := B * H / 2;
-//            }
-//            11 {
-//                var B := valUm.Value.toReal();
-//                var C := valDois.Value.toReal();
-//                result := B * C / 2;
-//            }
-//            12 {
-//                var A := valUm.Value.toReal();
-//                result := ((Pi_value.sqrt()) * A * A / 4).Rounded;
-//            }
-//            13 {
-//                var A := valUm.Value.toReal();
-//                var B := valDois.Value.toReal();
-//                var C := valTres.Value.toReal();
-//                var P := A + B + C / 2;
-//                var val1 := P-A;
-//                var val2 := P-B;
-//                var val3 := P-C;
-//                result := (P * (val1 * val2 * val3)).sqrt()
-//            }
-//            14 {
-//                var Alfa := valUm.Value.toReal();
-//                var A := valDois.Value.toReal();
-//                var B := valTres.Value.toReal();
-//                var AlfaConv := (Pi_value * Alfa) / 180;
-//                var sinAl := AlfaConv.sin();
-//                result := sinAl * A * B / 2;
-//            };
-//            
-//        valor.Caption := ("Res: " + result.toString() + " m^2");
-//    }
-//    
-//    private onButtonClickInfo(form)
-//    {
-//        //calc_area_gui'InfoForm new parent:aForm; run.
-//    }
+    private onButtonClick()
+    {   
+        var result := 0;
+                
+        (_imageList.SelectedIndex) =>
+            0 {
+                var H := valUm.Value.toReal();
+                var B := valDois.Value.toReal();
+                result := H * B
+            }
+            1 {
+                var B := valUm.Value.toReal();
+                result := B * B
+            }
+            2 {
+                var H := valUm.Value.toReal();
+                var B := valDois.Value.toReal();
+                result := H * B
+            }
+            3 {
+                var DM := valUm.Value.toReal();
+                var d := valDois.Value.toReal();
+                result := DM * d / 2
+            }
+            4 {
+                var BM := valUm.Value.toReal();
+                var b := valDois.Value.toReal();
+                var H := valTres.Value.toReal();
+                result := (BM + b)*H / 2
+            }
+            5 {
+                var BM := valUm.Value.toReal();
+                var b := valDois.Value.toReal();
+                var H := valTres.Value.toReal();
+                result := (BM + b)*H / 2
+            }
+            6 {
+                var BM := valUm.Value.toReal();
+                var b := valDois.Value.toReal();
+                var H := valTres.Value.toReal();
+                result := (BM + b)*H / 2
+            }
+            7 {
+                var R := valUm.Value.toReal();
+                result := Pi_value * R * R
+            }
+            8 {
+                var RM := valUm.Value.toReal();
+                var r := valDois.Value.toReal();
+                result := Pi_value * (RM * RM - r * r);
+            }
+            9 {
+                var Alfa := valUm.Value.toReal();
+                var R := valDois.Value.toReal();
+                result := Alfa * Pi_value * R * R / 360
+            }
+            10 {
+                var B := valUm.Value.toReal();
+                var H := valDois.Value.toReal();
+                result := B * H / 2;
+            }
+            11 {
+                var B := valUm.Value.toReal();
+                var C := valDois.Value.toReal();
+                result := B * C / 2;
+            }
+            12 {
+                var A := valUm.Value.toReal();
+                result := ((Pi_value.sqrt()) * A * A / 4).Rounded;
+            }
+            13 {
+                var A := valUm.Value.toReal();
+                var B := valDois.Value.toReal();
+                var C := valTres.Value.toReal();
+                var P := A + B + C / 2;
+                var val1 := P-A;
+                var val2 := P-B;
+                var val3 := P-C;
+                result := (P * (val1 * val2 * val3)).sqrt()
+            }
+            14 {
+                var Alfa := valUm.Value.toReal();
+                var A := valDois.Value.toReal();
+                var B := valTres.Value.toReal();
+                var AlfaConv := (Pi_value * Alfa) / 180;
+                var sinAl := AlfaConv.sin();
+                result := sinAl * A * B / 2;
+            };
+            
+        valor.Caption := ("Res: " + result.toString() + " m^2");
+    }
+    
+    private onButtonClickInfo()
+    {
+        InfoForm.new(self).run()
+    }
+    
+    private onButtonClickSave()
+    {
+        SaveForm.new(self, valor.Caption).run()
+    }
 }

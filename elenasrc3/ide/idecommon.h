@@ -25,6 +25,8 @@ namespace elena_lang
    constexpr auto OPTIONS_SUB_CATEGORY                = "project/options";
    constexpr auto OUTPUT_SUB_CATEGORY                 = "project/output";
 
+   constexpr auto PROFILE_CATEGORY                    = "/profile";
+
    constexpr auto MODULE_CATEGORY                     = "files/*";
 
    constexpr auto WIN_X86_KEY                         = "Win_x86";
@@ -39,20 +41,41 @@ namespace elena_lang
    constexpr auto ERROR_RUN_NEED_RECOMPILE            = 0x0003;
    constexpr auto DEBUGGER_STOPPED                    = 0x0004;
 
-   // --- Notification codes ---
-   //constexpr auto NOTIFY_SOURCEMODEL                  = 1;
-   constexpr auto NOTIFY_CURRENTVIEW_CHANGED             = 2;
-   //constexpr auto NOTIFY_CURRENTVIEW_HIDE             = 4;
-   //constexpr auto NOTIFY_LAYOUT_CHANGED               = 5;
-   //constexpr auto NOTIFY_ACTIVATE_EDITFRAME           = 9;
-   //constexpr auto NOTIFY_START_COMPILATION            = 10;
-   //constexpr auto NOTIFY_PROJECTMODEL                 = 11;
+   // --- Event IDs ---
+   // NOTE : the generic notifications must be less than 0x100
+   constexpr int EVENT_TEXTVIEW_MODEL_CHANGED         = 0x0001;
+   constexpr int EVENT_TEXTFRAME_SELECTION_CHANGED    = 0x0002;
+   constexpr int EVENT_STARTUP                        = 0x0003;
+   constexpr int EVENT_LAYOUT                         = 0x0004;
+   constexpr int EVENT_PROJECTVIEW_SELECTION_CHANGED  = 0x0005;
+   constexpr int EVENT_COMPILATION_END                = 0x0006;
+   constexpr int EVENT_ERRORLIST_SELECTION            = 0x0007;
+   constexpr int EVENT_TEXT_CONTEXTMENU               = 0x0008;
+   constexpr int EVENT_BROWSE_CONTEXT                 = 0x0009;
+   constexpr int EVENT_TEXT_MARGINLICK                = 0x000A;
+
+   // --- Event Statuses ---
+   constexpr int STATUS_NONE                          = 0x0000;
+   constexpr int STATUS_DOC_READY                     = 0x0001;
+   constexpr int STATUS_STATUS_CHANGED                = 0x0002;
+   constexpr int STATUS_PROJECT_CHANGED               = 0x0004;
+   constexpr int STATUS_FRAME_VISIBILITY_CHANGED      = 0x0108;
+   constexpr int STATUS_FRAME_CHANGED                 = 0x0010;
+   constexpr int STATUS_DEBUGGER_NOSOURCE             = 0x0020;
+   constexpr int STATUS_DEBUGGER_STOPPED              = 0x0040;
+   constexpr int STATUS_DEBUGGER_STEP                 = 0x0080;
+   constexpr int STATUS_LAYOUT_CHANGED                = 0x0100;
+   constexpr int STATUS_COMPILING                     = 0x0200;
+   constexpr int STATUS_PROJECT_REFRESH               = 0x0400;
+   constexpr int STATUS_WITHERRORS                    = 0x0800;
+   constexpr int STATUS_DEBUGGER_RUNNING              = 0x1000;
+   constexpr int STATUS_DEBUGGER_FINISHED             = 0x2000;
+   constexpr int STATUS_FRAME_ACTIVATE                = 0x4000;
+
    constexpr int NOTIFY_DEBUGGER_RESULT                  = 6;
    constexpr int NOTIFY_ERROR_SEL                        = 7;
    constexpr int NOTIFY_COMPILATION_RESULT               = 8;
    constexpr int NOTIFY_SHOW_RESULT                      = 9;
-   constexpr int NOTIFY_TEXTFRAME_SEL                    = 10;
-   constexpr int NOTIFY_PROJECTVIEW_SEL                  = 11;
    constexpr int NOTIFY_DEBUG_CHANGE                     = 12;
    constexpr int NOTIFY_IDE_CHANGE                       = 13;
    constexpr int NOTIFY_ONSTART                          = 14;
@@ -61,21 +84,7 @@ namespace elena_lang
    constexpr int NOTIFY_DEBUG_CONTEXT_EXPANDED           = 17;
    constexpr int NOTIFY_DEBUG_LOAD                       = 18;
    constexpr int NOTIFY_DEBUG_NOSOURCE                   = 19;
-
-   // --- Notification statuses ---
-   constexpr NotificationStatus IDE_ONSTART              = -1;
-   constexpr NotificationStatus NONE_CHANGED             = 0x00000;
-
-   constexpr NotificationStatus IDE_LAYOUT_CHANGED       = 0x00001;
-   constexpr NotificationStatus IDE_STATUS_CHANGED       = 0x00002;
-   constexpr NotificationStatus FRAME_CHANGED            = 0x00004;
-   constexpr NotificationStatus PROJECT_CHANGED          = 0x00008;
-   constexpr NotificationStatus FRAME_VISIBILITY_CHANGED = 0x00010;
-   constexpr NotificationStatus DEBUGWATCH_CHANGED       = 0x00020;
-   constexpr NotificationStatus IDE_COMPILATION_STARTED  = 0x00040;
-   constexpr NotificationStatus OUTPUT_SHOWN             = 0x00080;
-   constexpr NotificationStatus FRAME_ACTIVATE           = 0x00100;
-   constexpr NotificationStatus COLOR_SCHEME_CHANGED     = 0x00200;
+   constexpr int NOTIFY_DEBUG_RUNNING                    = 20;
 
    // --- PathSettings ---
    struct PathSettings
@@ -88,7 +97,6 @@ namespace elena_lang
    {
       Empty                = 0,
       Ready                = 1,
-      Busy                 = 2,
       AutoRecompiling      = 3,
       Compiling            = 4,
       CompiledSuccessfully = 5,
@@ -96,6 +104,8 @@ namespace elena_lang
       CompiledWithErrors   = 7,
       Broken               = 8,
       DebuggerStopped      = 9,
+      Running              = 10,
+      Stopped              = 11,
    };
 
    inline bool testIDEStatus(IDEStatus value, IDEStatus mask)
@@ -282,6 +292,7 @@ namespace elena_lang
 
       virtual void setBreakpoint(addr_t address, bool withStackLevelControl) = 0;
       virtual void addBreakpoint(addr_t address) = 0;
+      virtual void removeBreakpoint(addr_t address) = 0;
 
       virtual void addStep(addr_t address, void* current) = 0;
 
@@ -327,6 +338,112 @@ namespace elena_lang
       virtual GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
          ProcessBase* vmConsoleProcess) = 0;
    };
+
+   // --- SelectionEvent ---
+   class SelectionEvent : public EventBase
+   {
+      int _eventId;
+      int _index;
+
+   public:
+      int eventId() override;
+
+      int Index() { return _index; }
+
+      SelectionEvent(int id, int index);
+   };
+
+   // --- ParamSelectionEvent ---
+   class ParamSelectionEvent : public EventBase
+   {
+      int    _eventId;
+      size_t _param;
+
+   public:
+      int eventId() override;
+
+      size_t Param() { return _param; }
+
+      ParamSelectionEvent(int id, size_t param);
+   };
+
+   // --- BrowseEvent ---
+   class BrowseEvent : public EventBase
+   {
+      int    _eventId;
+      size_t _item;
+      size_t _param;
+
+   public:
+      int eventId() override { return _eventId; }
+
+      size_t Item() { return _item; }
+
+      size_t Param() { return _param; }
+
+      BrowseEvent(int id, size_t item, size_t param);
+   };
+
+   // --- LayoutEvent ---
+   class LayoutEvent : public EventBase
+   {
+   public:
+      int eventId() override;
+
+      LayoutEvent(int status);
+   };
+
+   // --- ContextMenuEvent ---
+   class ContextMenuEvent : public EventBase
+   {
+      int _eventId;
+      int  _x, _y;
+      bool _hasSelection;
+
+   public:
+      int eventId() override;
+
+      int X() { return _x; }
+      int Y() { return _y; }
+      bool HasSelection() { return _hasSelection; }
+
+      ContextMenuEvent(int id, int x, int y, bool hasSelection);
+   };
+
+   // --- StartUpEvent ---
+   class StartUpEvent : public EventBase
+   {
+   public:
+      int eventId() override;
+
+      StartUpEvent(int status);
+   };
+
+   // --- SimpleEvent ---
+   class SimpleEvent : public EventBase
+   {
+      int _eventId;
+
+   public:
+      int eventId() override;
+
+      SimpleEvent(int eventId);
+   };
+
+   // --- TextViewModelEvent ---
+   struct TextViewModelEvent : public EventBase
+   {
+   public:
+      DocumentChangeStatus changeStatus;
+
+      int eventId() override;
+
+      TextViewModelEvent(int status, DocumentChangeStatus changeStatus)
+         : EventBase(status), changeStatus(changeStatus)
+      {
+      }
+   };
+
 }
 
 #endif

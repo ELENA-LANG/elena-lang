@@ -221,8 +221,6 @@ namespace io
 
       char read()
       {
-         handle h := extern KERNEL32.GetStdHandle(0FFFFFFF6h);
-
          INPUT_RECORD dump := default;
          KEY_EVENT_RECORD rec := default;
 

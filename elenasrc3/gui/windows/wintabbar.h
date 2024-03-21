@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TabBar Header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINTABBAR_H
@@ -14,12 +14,15 @@ namespace elena_lang
    // --- CustomTabBar ---
    class CustomTabBar : public ControlBase
    {
-   protected:
-      NotifierBase*  _notifier;
-      int            _selNotificationId;
+   public:
+      typedef void(*SelectionEventInvoker)(NotifierBase*, int);
 
-      bool           _withAbovescore;
-      bool           _notSelected;
+   protected:
+      NotifierBase*           _notifier;
+      SelectionEventInvoker   _selectionInvoker;
+
+      bool                    _withAbovescore;
+      bool                    _notSelected;
 
    public:
       void onDrawItem(DRAWITEMSTRUCT* item) override;

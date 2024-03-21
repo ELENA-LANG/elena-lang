@@ -141,6 +141,8 @@ namespace elena_lang
 
       bool isNumericType(ModuleScopeBase& scope, ref_t& reference);
 
+      ref_t retrievePrimitiveType(ModuleScopeBase& scope, ref_t reference);
+
       void tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, ClassInfo& info, bool classClassMode);
       void tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef);
 

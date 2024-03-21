@@ -2602,15 +2602,15 @@ procedure func_invoker(arg)
 
 end
 
-procedure thread_start
-
-  system      3
+procedure thread_start(index)
 
   open        [arg1],[ptr,envptr,ex_struct:ex_struct_size]
 
-  xloadarg    fp:1
+  xloadarg    fp:index
   
   $save       dp:ptr
+
+  system      3
 
   xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
 
@@ -2673,7 +2673,7 @@ symbol mta_start
 
   call extern:InitializeMTLA (
      *arg1,
-     procedure:"system'core_routines'startUpSymbols",
+     symbol:"$auto'startUpSymbol",
      procedure:"system'core_routines'critical_exception_handler")
 
   close       []

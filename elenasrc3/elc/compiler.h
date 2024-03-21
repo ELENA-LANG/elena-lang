@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPILER_H
@@ -92,7 +92,7 @@ namespace elena_lang
       Wrapper,
       ClosureInfo,
       MemberInfo,
-      LocalField
+      LocalField,
    };
 
    enum TargetMode
@@ -112,7 +112,7 @@ namespace elena_lang
       BoxingPtr,
       Conditional,
       ConditionalUnboxingRequired,
-      Weak
+      Weak,
    };
 
    struct ObjectInfo
@@ -309,6 +309,7 @@ namespace elena_lang
       bool evalObjArrayOp(ref_t operator_id, ArgumentsInfo& args);
       bool evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
       bool evalIntOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
+      bool evalRealOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
 
    public:
       ObjectInfo mapStringConstant(ustr_t s);
@@ -813,6 +814,8 @@ namespace elena_lang
          pos_t    allocated1, reserved1;       // defines managed frame size
          pos_t    allocated2, reserved2;       // defines unmanaged frame size
 
+         bool     withRetStatement;
+
          Scope* getScope(ScopeLevel level) override
          {
             if (level == ScopeLevel::Code) {
@@ -1278,7 +1281,9 @@ namespace elena_lang
       ref_t compileMessageArguments(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode current, 
          ArgumentsInfo& arguments, ref_t expectedSignRef, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs, bool& variadicArgList);
 
-      void writeParameterDebugInfo(BuildTreeWriter& writer, MethodScope& scope);
+      void writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, int size, TypeInfo typeInfo, 
+         ustr_t name, int index);
+      void writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope);
       void writeMessageInfo(BuildTreeWriter& writer, MethodScope& scope);
 
       void compileInlineInitializing(BuildTreeWriter& writer, ClassScope& classScope, SyntaxNode node);
@@ -1308,7 +1313,9 @@ namespace elena_lang
       ObjectInfo typecastObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
       ObjectInfo convertObject(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, ObjectInfo source, 
          ref_t targetRef, bool dynamicRequired, bool withoutBoxing);
-      ObjectInfo convertIntLiteral(ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef);
+      ObjectInfo convertIntLiteral(ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef, bool ignoreError = false);
+
+      void convertIntLiteralForOperation(ExprScope& scope, SyntaxNode node, int operatorId, ArgumentsInfo& messageArguments);
 
       bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);
 
@@ -1353,11 +1360,11 @@ namespace elena_lang
          ref_t expectedRef, ExpressionAttribute mode);
       ObjectInfo compileSpecialOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, int operatorId, ref_t expectedRef);
       ObjectInfo compileBranchingOperands(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode rnode,
-         SyntaxNode r2node, bool retValExpected);
+         SyntaxNode r2node, bool retValExpected, bool withoutDebugInfo);
       ObjectInfo compileBranchingOperation(WriterContext& context, ObjectInfo loperand, SyntaxNode rnode,
-         SyntaxNode r2node, int operatorId, ArgumentsInfo* updatedOuterArgs, bool retValExpected);
+         SyntaxNode r2node, int operatorId, ArgumentsInfo* updatedOuterArgs, bool retValExpected, bool withoutDebugInfo);
       ObjectInfo compileBranchingOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node, 
-         int operatorId, bool retValExpected);
+         int operatorId, bool retValExpected, bool withoutDebugInfo);
       ObjectInfo compileCatchOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
       ObjectInfo compileFinalOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
       ObjectInfo compileAltOperation(BuildTreeWriter& writer, ExprScope& scope, SyntaxNode node);
@@ -1422,7 +1429,7 @@ namespace elena_lang
 
       ObjectInfo compileResendCode(BuildTreeWriter& writer, CodeScope& codeScope, ObjectInfo source, SyntaxNode node);
       ObjectInfo compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
-      ObjectInfo compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode);
+      ObjectInfo compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode, bool noDebugInfoMode = false);
 
       void beginMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, BuildKey scopeKey, 
          bool withDebugInfo);

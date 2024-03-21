@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains Config File class header
-//                                            (C)2021-2022, by Aleksey Rakov
+//                                            (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CONFIG_H
@@ -104,6 +104,19 @@ namespace elena_lang
          XmlNodeList list(XmlNode::Default());
          _tree.selectNodes(xpath, list);
          for(auto it = list.start(); !it.eof(); ++it) {
+            Node node(*it);
+            if (filter(arg, node))
+               return node;
+         }
+
+         return Node();
+      }
+
+      template<class ArgT> Node selectNode(Node& node, ustr_t xpath, ArgT arg, bool(*filter)(ArgT arg, Node& node))
+      {
+         XmlNodeList list(XmlNode::Default());
+         _tree.selectNodes(node.xmlNode, xpath, list);
+         for (auto it = list.start(); !it.eof(); ++it) {
             Node node(*it);
             if (filter(arg, node))
                return node;

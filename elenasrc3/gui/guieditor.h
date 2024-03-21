@@ -91,13 +91,7 @@ namespace elena_lang
          return _currentView;
       }
 
-      virtual void beforeDocumentSelect(int index) = 0;
-      //virtual void afterDocumentSelect(int index) = 0;
-
       virtual void attachListener(TextViewListener* listener) = 0;
-
-      virtual void attachDocListener(DocumentNotifier* listener) = 0;
-      virtual void removeDocListener(DocumentNotifier* listener) = 0;
 
       virtual void addDocumentView(ustr_t name, Text* text, path_t path) = 0;
       virtual void renameDocumentView(ustr_t oldName, ustr_t newName, path_t path) = 0;
@@ -116,14 +110,15 @@ namespace elena_lang
 
       virtual void resize(Point size) = 0;
 
-      virtual void notifyOnChange(DocumentChangeStatus& status)
-      {
-         _currentView->notifyOnChange(status);
-      }
-
       bool isAssigned() const
       {
          return _currentView != nullptr;
+      }
+
+      virtual void refresh(DocumentChangeStatus& changeStatus)
+      {
+         if (_currentView)
+            _currentView->refresh(changeStatus);
       }
 
       TextViewModelBase()
@@ -144,9 +139,9 @@ namespace elena_lang
       virtual bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
          FileEncoding encoding) = 0;
 
-      virtual bool selectDocument(TextViewModelBase* model, int index, NotificationStatus& status) = 0;
+      virtual bool selectDocument(TextViewModelBase* model, int index) = 0;
 
-      virtual void closeDocument(TextViewModelBase* model, int index, NotificationStatus& status) = 0;
+      virtual void closeDocument(TextViewModelBase* model, int index, int& status) = 0;
 
       virtual bool insertNewLine(TextViewModelBase* model) = 0;
       virtual bool insertChar(TextViewModelBase* model, text_c ch) = 0;

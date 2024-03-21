@@ -631,6 +631,13 @@ inline %1Eh
 
 end
 
+// ; lneg
+inline % 1Fh
+
+   neg    rdx
+
+end
+
 // ; coalesce
 inline % 20h
 
@@ -2906,6 +2913,20 @@ end
 inline %7F1h
 
   mov  r11, 0
+
+end
+
+// ; xstoresir :0, -1
+inline %9F1h
+
+  mov  r10, -1
+
+end
+
+// ; xstoresir :1, -1
+inline %0AF1h
+
+  mov  r11, -1
 
 end
 

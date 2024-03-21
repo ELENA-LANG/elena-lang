@@ -726,7 +726,8 @@ int CompilingProcess :: build(Project& project,
    pos_t defaultStackAlignment,
    pos_t defaultRawStackAlignment,
    pos_t defaultEHTableEntrySize,
-   int minimalArgList)
+   int minimalArgList,
+   ustr_t profile)
 {
    try
    {
@@ -739,6 +740,9 @@ int CompilingProcess :: build(Project& project,
       // Project Greetings
       _presenter->printLine(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()),
          getTargetTypeName(targetType, project.SystemTarget()));
+
+      if (!profile.empty())
+         _presenter->printLine(ELC_PROFILE_INFO, profile);
 
       // Cleaning up
       _presenter->printLine(ELC_CLEANING);

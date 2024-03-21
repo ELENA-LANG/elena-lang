@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Message Log Implementation File
-//                                             (C)2022-2023, by Aleksey Rakov
+//                                             (C)2022-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <tchar.h>
@@ -12,11 +12,11 @@ using namespace elena_lang;
 
 // --- MessageLog ---
 
-MessageLog :: MessageLog(NotifierBase* notifier, int highlightCode)
+MessageLog :: MessageLog(NotifierBase* notifier, SelectionEventInvoker invoker)
    : ListView(50, 50), _list({}), _paths(nullptr)
 {
    _notifier = notifier;
-   _highlightCode = highlightCode;
+   _invoker = invoker;
 }
 
 HWND MessageLog :: createControl(HINSTANCE instance, ControlBase* owner)
@@ -62,5 +62,5 @@ void MessageLog :: clearMessages()
 void MessageLog :: onItemDblClick(int index)
 {
    if (index >= 0)
-      _notifier->notifySelection(_highlightCode, index);
+      _invoker(_notifier, index);
 }

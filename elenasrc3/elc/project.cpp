@@ -3,7 +3,7 @@
 //
 //		This file contains the project class body
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -264,7 +264,7 @@ bool Project :: loadConfigByName(path_t configPath, ustr_t name, bool markAsLoad
    if (!relativePath.empty()) {
       PathString baseConfigPath(configPath, relativePath);
 
-      if (loadConfig(*baseConfigPath, false)) {
+      if (loadConfig(*baseConfigPath, nullptr, false)) {
          if (markAsLoaded)
             _loaded = true;
 
@@ -272,6 +272,16 @@ bool Project :: loadConfigByName(path_t configPath, ustr_t name, bool markAsLoad
       }
    }
    return false;
+}
+
+void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node& root, ustr_t profileName)
+{
+   loadConfig(config, configPath, root);
+   if (!profileName.empty()) {
+      ConfigFile::Node profileRoot = getProfileRoot(config, root, profileName);
+
+      loadConfig(config, configPath, profileRoot);
+   }
 }
 
 void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node& root)
@@ -326,15 +336,15 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
    }
 }
 
-void Project :: loadConfig(ConfigFile& config, path_t configPath)
+void Project :: loadConfig(ConfigFile& config, path_t configPath, ustr_t profileName)
 {
    ConfigFile::Node root = config.selectRootNode();
    ConfigFile::Node platformRoot = getPlatformRoot(config, _platform);
 
    // load common project settings
-   loadConfig(config, configPath, root);
+   loadConfig(config, configPath, root, profileName);
    // load common target dependent settings
-   loadConfig(config, configPath, platformRoot);
+   loadConfig(config, configPath, platformRoot, profileName);
 }
 
 void Project :: loadDefaultConfig()
@@ -344,11 +354,11 @@ void Project :: loadDefaultConfig()
    if (templateNode != ProjectOption::None) {
       PathString templatePath(_paths.get(templateNode.arg.value));
 
-      loadConfig(*templatePath, false);
+      loadConfig(*templatePath, nullptr, false);
    }
 }
 
-bool Project :: loadConfig(path_t path, bool mainConfig)
+bool Project :: loadConfig(path_t path, ustr_t profileName, bool mainConfig)
 {
    PathString configPath;
    configPath.copySubPath(path, false);
@@ -359,9 +369,11 @@ bool Project :: loadConfig(path_t path, bool mainConfig)
          _projectPath.copy(*configPath);
 
          _loaded = true;
+
+         loadProfileList(config);
       }
 
-      loadConfig(config, *configPath);
+      loadConfig(config, *configPath, profileName);
 
       return true;
    }
@@ -372,10 +384,10 @@ bool Project :: loadConfig(path_t path, bool mainConfig)
    }
 }
 
-bool Project :: loadProject(path_t path)
+bool Project :: loadProject(path_t path, ustr_t profileName)
 {
    if (_projectName.empty()) {
-      if(loadConfig(path, true)) {
+      if(loadConfig(path, profileName, true)) {
          FileNameString fileName(path);
          IdentifierString name(*fileName);
 
@@ -430,4 +442,34 @@ void Project :: forEachForward(void* arg, void (* feedback)(void* arg, ustr_t ke
    for (auto f_it = _forwards.start(); !f_it.eof(); ++f_it) {
       feedback(arg, f_it.key(), *f_it);
    }
+}
+
+inline void loadProfileList(ConfigFile& config, ConfigFile::Node& root, IdentifierList* profileList)
+{
+   ConfigFile::Collection profiles;
+   if (config.select(root, PROFILE_CATEGORY, profiles)) {
+      for (auto it = profiles.start(); !it.eof(); ++it) {
+         ConfigFile::Node profileNode = *it;
+
+         DynamicString<char> key;
+         profileNode.readAttribute("key", key);
+
+         if (profileList->retrieveIndex<ustr_t>(key.str(), [](ustr_t arg, ustr_t current)
+            {
+               return current.compare(arg);
+            }) == -1)
+         {
+            profileList->add(ustr_t(key.str()).clone());
+         }
+      }
+   }
+}
+
+void Project :: loadProfileList(ConfigFile& config)
+{
+   ConfigFile::Node root = config.selectRootNode();
+   ConfigFile::Node platformRoot = getPlatformRoot(config, _platform);
+
+   ::loadProfileList(config, root, &availableProfileList);
+   ::loadProfileList(config, platformRoot, &availableProfileList);
 }

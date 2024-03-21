@@ -179,7 +179,7 @@ int main(int argc, char* argv[])
 
       // Initializing...
       PathString configPath(*dataPath, DEFAULT_CONFIG);
-      project.loadConfig(*configPath, false/*, true, false*/);
+      project.loadConfig(*configPath, nullptr, false);
 
        // Reading command-line arguments...
       if (argc < 2) {
@@ -187,9 +187,20 @@ int main(int argc, char* argv[])
          return -3;
       }
 
+      IdentifierString profile;
       for (int i = 1; i < argc; i++) {
          if (argv[i][0] == '-') {
             switch (argv[i][1]) {
+               case 'f':
+               {
+                  IdentifierString setting(argv[i] + 2);
+                  process.addForward(*setting);
+
+                  break;
+               }
+               case 'l':
+                  profile.copy(argv[i] + 2);
+                  break;
                case 'm':
                   project.addBoolSetting(ProjectOption::MappingOutputMode, true);
                   break;
@@ -203,6 +214,9 @@ int main(int argc, char* argv[])
                   else if (argv[i][2] == '2') {
                      project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
                   }
+                  break;
+               case 'p':
+                  project.setBasePath(argv[i] + 2);
                   break;
                case 'r':
                   cleanMode = true;
@@ -224,9 +238,6 @@ int main(int argc, char* argv[])
                   project.loadConfigByName(*dataPath, *configName, true);
                   break;
                }
-               case 'p':
-                  project.setBasePath(argv[i] + 2);
-                  break;
                case 'v':
                   process.setVerboseOn();
                   break;
@@ -255,13 +266,6 @@ int main(int argc, char* argv[])
                      project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');
                   }
                   break;
-               case 'f':
-               {
-                  IdentifierString setting(argv[i] + 2);
-                  process.addForward(*setting);
-
-                  break;
-               }
                default:
                   break;
             }
@@ -269,8 +273,19 @@ int main(int argc, char* argv[])
          else if (PathUtil::checkExtension(argv[i], "project")) {
             PathString path(argv[i]);
 
-            if (!project.loadProject(*path)) {
+            if (!project.loadProject(*path, *profile)) {
                errorProcessor.raisePathError(errProjectAlreadyLoaded, *path);
+            }
+            else if (profile.empty() && project.availableProfileList.count() != 0) {
+               IdentifierString profileList;
+               for (auto it = project.availableProfileList.start(); !it.eof(); ++it) {
+                  if (profileList.length() != 0)
+                     profileList.append(", ");
+
+                  profileList.append(*it);
+               }
+
+               Presenter::getInstance().printLine(ELC_PROFILE_WARNING, *profileList);
             }
          }
          else {
@@ -289,13 +304,12 @@ int main(int argc, char* argv[])
             DEFAULT_STACKALIGNMENT,
             DEFAULT_RAW_STACKALIGNMENT,
             DEFAULT_EHTABLE_ENTRY_SIZE,
-            MINIMAL_ARG_LIST);
+            MINIMAL_ARG_LIST,
+            *profile);
       }
    }
    catch (CLIException e)
    {
       return -2;
    }
-
-
 }

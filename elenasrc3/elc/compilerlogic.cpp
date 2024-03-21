@@ -41,7 +41,7 @@ bool testMethodHint(ref_t hint, MethodHint mask)
 
 typedef CompilerLogic::Op Op;
 
-constexpr auto OperationLength = 198;
+constexpr auto OperationLength = 199;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -289,6 +289,9 @@ constexpr Op Operations[OperationLength] =
    },
    {
       BNOT_OPERATOR_ID, BuildKey::LongSOp, V_INT64, 0, 0, V_INT64
+   },
+   {
+      NEGATE_OPERATOR_ID, BuildKey::LongSOp, V_INT64, 0, 0, V_INT64
    },
    {
       EQUAL_OPERATOR_ID, BuildKey::LongCondOp, V_INT64, V_INT64, 0, V_FLAG
@@ -1717,13 +1720,17 @@ SizeInfo CompilerLogic :: defineStructSize(ClassInfo& info)
 
 SizeInfo CompilerLogic :: defineStructSize(ModuleScopeBase& scope, ref_t reference)
 {
+   if (!reference)
+      return {};
+
    auto sizeInfo = scope.cachedSizes.get(reference);
    if (!sizeInfo.size) {
       ClassInfo classInfo;
       if (defineClassInfo(scope, classInfo, reference)) {
          sizeInfo = defineStructSize(classInfo);
 
-         scope.cachedSizes.add(reference, sizeInfo);
+         if (sizeInfo.size)
+            scope.cachedSizes.add(reference, sizeInfo);
 
          return sizeInfo;
       }
@@ -2019,6 +2026,16 @@ inline mssg_t resolveNonpublic(mssg_t weakMessage, ClassInfo& info, bool selfCal
    return nonpublicMessage;
 }
 
+inline ref_t mapWeakSignature(ModuleScopeBase& scope, int counter)
+{
+   ref_t signatures[ARG_COUNT] = { 0 };
+   ref_t signatureLen = counter;
+   for (int i = 0; i < counter; i++)
+      signatures[i] = scope.buildins.superReference;
+
+   return scope.module->mapSignature(signatures, signatureLen, false);
+}
+
 mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, 
    ref_t implicitSignatureRef, int& stackSafeAttr, bool selfCall)
 {
@@ -2033,6 +2050,10 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
       // check if it is non public message
       mssg_t nonPublicMultiMessage = resolveNonpublic(weakMessage, info, selfCall, scope.isInternalOp(targetRef));
       if (nonPublicMultiMessage != 0) {
+         if (!implicitSignatureRef && test(nonPublicMultiMessage, STATIC_MESSAGE) && getArgCount(weakMessage) > 1) {
+            implicitSignatureRef = mapWeakSignature(scope, getArgCount(weakMessage) - 1);
+         }
+
          mssg_t resolved = resolveMultimethod(scope, nonPublicMultiMessage, targetRef, implicitSignatureRef, stackSafeAttr, selfCall);
          if (!resolved) {
             return nonPublicMultiMessage;
@@ -2040,7 +2061,8 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
          else return resolved;
       }
 
-      if (!implicitSignatureRef)
+      // allow to check the variadic message without arguments
+      if (!implicitSignatureRef && ((weakMessage & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE))
          return 0;
 
       ref_t signatures[ARG_COUNT];
@@ -2728,4 +2750,25 @@ bool CompilerLogic :: clearMetaData(ModuleScopeBase* moduleScope, ustr_t name)
    else return false;
 
    return true;
+}
+
+ref_t CompilerLogic :: retrievePrimitiveType(ModuleScopeBase& scope, ref_t reference)
+{
+   if (!reference || isPrimitiveRef(reference))
+      return reference;
+
+   ClassInfo info;
+   if (!scope.loadClassInfo(info, reference))
+      return 0;
+
+   if (isWrapper(info)) {
+      auto inner = *info.fields.start();
+
+      if (isPrimitiveRef(inner.typeInfo.typeRef))
+         return inner.typeInfo.typeRef;
+
+      return retrievePrimitiveType(scope, inner.typeInfo.typeRef);
+   }
+
+   return 0;
 }

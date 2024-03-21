@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TreeView Header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINTREEVIEW_H
@@ -17,17 +17,20 @@ namespace elena_lang
    // --- TreeView ---
    class TreeView : public ControlBase
    {
+   public:
+      typedef void(*SelectionEventInvoker)(NotifierBase*, size_t);
+
    protected:
       NotifierBase* _notifier;
 
    private:
-      int            _notificationId;
+      SelectionEventInvoker   _selectionInvoker;
 
-      bool           _persistentSelection;
-      bool           _enableIcons;
-      int            _iconId;
+      bool                    _persistentSelection;
+      bool                    _enableIcons;
+      int                     _iconId;
 
-      HIMAGELIST     _hImages;
+      HIMAGELIST              _hImages;
 
    public:
       virtual HWND createControl(HINSTANCE instance, ControlBase* owner);
@@ -56,8 +59,8 @@ namespace elena_lang
       void clear(TreeViewItem item);
       void remove(TreeViewItem item);
 
-      TreeView(int width, int height, NotifierBase* notifier, int notificationId, 
-         bool persistentSelection, bool enableIcons = false, int iconId = 0);
+      TreeView(int width, int height, NotifierBase* notifier, bool persistentSelection, 
+         SelectionEventInvoker invoker, bool enableIcons = false, int iconId = 0);
       virtual ~TreeView();
    };
 }

@@ -19,7 +19,15 @@ md %~dp0\output32\examples60\console\datetime
 md %~dp0\output32\examples60\console\goods 
 md %~dp0\output32\examples60\console\replace 
 md %~dp0\output32\examples60\console\pi
+md %~dp0\output32\examples60\console\matrix
+md %~dp0\output32\examples60\console\random
+md %~dp0\output32\examples60\files
+md %~dp0\output32\examples60\files\textdb
+md %~dp0\output32\examples60\files\textfile
 md %~dp0\output32\examples60\scripts\calc
+md %~dp0\output32\examples60\scripts\interpreter
+md %~dp0\output32\examples60\scripts\js
+md %~dp0\output32\examples60\scripts\ls
 md %~dp0\output32\examples60\rosetta\accumulator
 md %~dp0\output32\examples60\rosetta\ackermann
 md %~dp0\output32\examples60\rosetta\addfield
@@ -52,6 +60,20 @@ md %~dp0\output32\examples60\rosetta\reverse_words_in_string
 md %~dp0\output32\examples60\rosetta\smavg 
 md %~dp0\output32\examples60\rosetta\string_append 
 
+md %~dp0\output32\examples60\gui\c_a_g
+md %~dp0\output32\examples60\gui\c_a_g\formulas
+md %~dp0\output32\examples60\gui\c_a_g\formulas\Circulo
+md %~dp0\output32\examples60\gui\c_a_g\formulas\Paralelogramos 
+md %~dp0\output32\examples60\gui\c_a_g\formulas\Trapezio 
+md %~dp0\output32\examples60\gui\c_a_g\formulas\Triangulos 
+
+md %~dp0\output32\examples60\gui\agenda
+md %~dp0\output32\examples60\gui\graphs
+md %~dp0\output32\examples60\gui\helloworld
+
+md %~dp0\output32\examples60\db
+md %~dp0\output32\examples60\db\sqlite
+
 copy %~dp0\..\bin\asm-cli.exe %~dp0\output32\bin
 copy %~dp0\..\bin\elena-cli.exe %~dp0\output32\bin
 copy %~dp0\..\bin\elena-ide.exe %~dp0\output32\bin
@@ -60,6 +82,7 @@ copy %~dp0\..\bin\og-cli.exe %~dp0\output32\bin
 copy %~dp0\..\bin\ecv-cli.exe %~dp0\output32\bin
 copy %~dp0\..\bin\elt-cli.exe %~dp0\output32\bin
 copy %~dp0\..\bin\elenart60.dll %~dp0\output32\bin
+copy %~dp0\..\bin\elenasm60.dll %~dp0\output32\bin
 copy %~dp0\..\bin\elenavm60.dll %~dp0\output32\bin
 copy %~dp0\..\bin\winstub.ex_ %~dp0\output32\bin
 copy %~dp0\..\bin\elc60.cfg %~dp0\output32\bin
@@ -70,6 +93,8 @@ copy %~dp0\..\bin\command60.es %~dp0\output32\bin
 
 copy %~dp0\..\bin\x32\core60.bin %~dp0\output32\bin\x32\
 copy %~dp0\..\bin\x32\core60_win.bin %~dp0\output32\bin\x32\
+copy %~dp0\..\bin\x32\core60_win.bin %~dp0\output32\bin\x32\
+copy %~dp0\..\bin\x32\core60_win_client.bin %~dp0\output32\bin\x32\
 copy %~dp0\..\bin\x32\corex60.bin %~dp0\output32\bin\x32\
 
 copy %~dp0\..\bin\templates\*.cfg %~dp0\output32\bin\templates\
@@ -78,6 +103,7 @@ copy %~dp0\..\bin\scripts\*.es %~dp0\output32\bin\scripts\
 copy %~dp0\..\doc\license %~dp0\output32\doc\
 copy %~dp0\..\doc\contributors %~dp0\output32\doc\
 copy %~dp0\..\readme.md %~dp0\output32\
+copy %~dp0\..\CHANGELOG.md %~dp0\output32\
 
 md %~dp0\output32\src60\system
 xcopy %~dp0\..\src60\system\*.l %~dp0\output32\src60\system /s
@@ -87,9 +113,25 @@ md %~dp0\output32\src60\extensions
 xcopy %~dp0\..\src60\extensions\*.l %~dp0\output32\src60\extensions /s
 xcopy %~dp0\..\src60\extensions\*.prj %~dp0\output32\src60\extensions /s
 
+md %~dp0\output32\src60\algorithms
+xcopy %~dp0\..\src60\algorithms\*.l %~dp0\output32\src60\algorithms /s
+xcopy %~dp0\..\src60\algorithms\*.prj %~dp0\output32\src60\algorithms /s
+
 md %~dp0\output32\src60\cellular
 xcopy %~dp0\..\src60\cellular\*.l %~dp0\output32\src60\cellular /s
 xcopy %~dp0\..\src60\cellular\*.prj %~dp0\output32\src60\cellular /s
+
+md %~dp0\output32\src60\sqlite
+xcopy %~dp0\..\src60\sqlite\*.l %~dp0\output32\src60\sqlite /s
+xcopy %~dp0\..\src60\sqlite\*.prj %~dp0\output32\src60\sqlite /s
+
+md %~dp0\output32\src60\forms
+xcopy %~dp0\..\src60\forms\*.l %~dp0\output32\src60\forms /s
+xcopy %~dp0\..\src60\forms\*.prj %~dp0\output32\src60\forms /s
+
+md %~dp0\output32\src60\xforms
+xcopy %~dp0\..\src60\xforms\*.l %~dp0\output32\src60\xforms /s
+xcopy %~dp0\..\src60\xforms\*.prj %~dp0\output32\src60\xforms /s
 
 %~dp0\..\bin\sg-cli.exe %~dp0\..\dat\sg\syntax60.txt
 @echo off 
@@ -131,6 +173,26 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+%~dp0\output32\bin\elena-cli %~dp0\output32\src60\algorithms\algorithms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\output32\bin\elena-cli %~dp0\output32\src60\sqlite\sqlite.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\output32\bin\elena-cli %~dp0\output32\src60\forms\forms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\output32\bin\elena-cli %~dp0\output32\src60\xforms\xforms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 %~dp0\..\bin\asm-cli -x86 %~dp0\..\asm\x32\core60.asm bin\x32
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
@@ -156,10 +218,26 @@ copy %~dp0\..\examples60\console\goods\*.l %~dp0\output32\examples60\console\goo
 copy %~dp0\..\examples60\console\goods\*.txt %~dp0\output32\examples60\console\goods
 copy %~dp0\..\examples60\console\replace\*.l %~dp0\output32\examples60\console\replace
 copy %~dp0\..\examples60\console\pi\*.l %~dp0\output32\examples60\console\pi
+copy %~dp0\..\examples60\console\matrix\*.l %~dp0\output32\examples60\console\matrix
+copy %~dp0\..\examples60\console\matrix\*.prj %~dp0\output32\examples60\console\matrix
+copy %~dp0\..\examples60\console\random\*.l %~dp0\output32\examples60\console\random
 
 copy %~dp0\..\examples60\scripts\calc\*.l %~dp0\output32\examples60\scripts\calc
 copy %~dp0\..\examples60\scripts\calc\*.es %~dp0\output32\examples60\scripts\calc
 copy %~dp0\..\examples60\scripts\calc\*.prj %~dp0\output32\examples60\scripts\calc
+
+copy %~dp0\..\examples60\scripts\interpreter\*.l %~dp0\output32\examples60\scripts\interpreter
+copy %~dp0\..\examples60\scripts\interpreter\*.es %~dp0\output32\examples60\scripts\interpreter
+copy %~dp0\..\examples60\scripts\interpreter\*.prj %~dp0\output32\examples60\scripts\interpreter
+copy %~dp0\..\examples60\scripts\interpreter\*.txt %~dp0\output32\examples60\scripts\interpreter
+
+copy %~dp0\..\examples60\scripts\js\*.l %~dp0\output32\examples60\scripts\js
+copy %~dp0\..\examples60\scripts\js\*.js %~dp0\output32\examples60\scripts\js
+copy %~dp0\..\examples60\scripts\js\*.prj %~dp0\output32\examples60\scripts\js
+
+copy %~dp0\..\examples60\scripts\ls\*.l %~dp0\output32\examples60\scripts\ls
+copy %~dp0\..\examples60\scripts\ls\*.ls %~dp0\output32\examples60\scripts\ls
+copy %~dp0\..\examples60\scripts\ls\*.prj %~dp0\output32\examples60\scripts\ls
 
 copy %~dp0\..\examples60\rosetta\accumulator\*.l %~dp0\output32\examples60\rosetta\accumulator
 copy %~dp0\..\examples60\rosetta\ackermann\*.l %~dp0\output32\examples60\rosetta\ackermann
@@ -194,6 +272,34 @@ copy %~dp0\..\examples60\rosetta\reverse_words_in_string\*.l %~dp0\output32\exam
 copy %~dp0\..\examples60\rosetta\smavg\*.l %~dp0\output32\examples60\rosetta\smavg
 copy %~dp0\..\examples60\rosetta\string_append\*.l %~dp0\output32\examples60\rosetta\string_append
 copy %~dp0\..\examples60\rosetta\twentyfour\*.l %~dp0\output32\examples60\rosetta\twentyfour
+
+copy %~dp0\..\examples60\gui\c_a_g\*.l %~dp0\output32\examples60\gui\c_a_g
+copy %~dp0\..\examples60\gui\c_a_g\*.prj %~dp0\output32\examples60\gui\c_a_g
+
+copy %~dp0\..\examples60\gui\c_a_g\formulas\Circulo\*.bmp %~dp0\output32\examples60\gui\c_a_g\formulas\Circulo
+copy %~dp0\..\examples60\gui\c_a_g\formulas\Paralelogramos\*.bmp %~dp0\output32\examples60\gui\c_a_g\formulas\Paralelogramos
+copy %~dp0\..\examples60\gui\c_a_g\formulas\Trapezio\*.bmp %~dp0\output32\examples60\gui\c_a_g\formulas\Trapezio
+copy %~dp0\..\examples60\gui\c_a_g\formulas\Triangulos\*.bmp %~dp0\output32\examples60\gui\c_a_g\formulas\Triangulos
+
+copy %~dp0\..\examples60\gui\agenda\*.l %~dp0\output32\examples60\gui\agenda
+copy %~dp0\..\examples60\gui\agenda\*.prj %~dp0\output32\examples60\gui\agenda
+
+copy %~dp0\..\examples60\gui\graphs\*.l %~dp0\output32\examples60\gui\graphs
+copy %~dp0\..\examples60\gui\graphs\*.prj %~dp0\output32\examples60\gui\graphs
+
+copy %~dp0\..\examples60\gui\helloworld\*.l %~dp0\output32\examples60\gui\helloworld
+copy %~dp0\..\examples60\gui\helloworld\*.prj %~dp0\output32\examples60\gui\helloworld
+copy %~dp0\..\examples60\gui\helloworld\*.xs %~dp0\output32\examples60\gui\helloworld
+
+copy %~dp0\..\examples60\db\sqlite\*.l %~dp0\output32\examples60\db\sqlite
+copy %~dp0\..\examples60\db\sqlite\*.prj %~dp0\output32\examples60\db\sqlite
+
+copy %~dp0\..\examples60\files\textdb\*.l %~dp0\output32\examples60\files\textdb
+copy %~dp0\..\examples60\files\textdb\*.prj %~dp0\output32\examples60\files\textdb
+copy %~dp0\..\examples60\files\textdb\*.txt %~dp0\output32\examples60\files\textdb
+
+copy %~dp0\..\examples60\files\textfile\*.l %~dp0\output32\examples60\files\textfile
+copy %~dp0\..\examples60\files\textfile\*.txt %~dp0\output32\examples60\files\textfile
 
 7z a %~dp0\output32\%1.zip %~dp0\output32\*.* %~dp0\output32\* -r
 

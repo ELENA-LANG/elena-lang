@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Win32 Debugger class and its helpers implementation
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -190,6 +190,11 @@ unsigned char Win32ThreadContext :: setSoftwareBreakpoint(addr_t breakpoint)
    return code;
 }
 
+void Win32ThreadContext :: clearSoftwareBreakpoint(addr_t breakpoint, unsigned char substitute)
+{
+   writeDump(breakpoint, (char*)&substitute, 1);
+}
+
 void Win32ThreadContext :: setHardwareBreakpoint(addr_t breakpoint)
 {
    context.ContextFlags = CONTEXT_DEBUG_REGISTERS;
@@ -244,6 +249,19 @@ void Win32BreakpointContext :: addBreakpoint(addr_t address, Win32ThreadContext*
       breakpoints.add(address, context->setSoftwareBreakpoint(address));
    }
    else breakpoints.add(address, 0);
+}
+
+void Win32BreakpointContext :: removeBreakpoint(addr_t address, Win32ThreadContext* context, bool started)
+{
+   if (started) {
+      context->clearSoftwareBreakpoint(address, breakpoints.get(address));
+      if (context->breakpoint.software && context->breakpoint.next == address) {
+
+         context->breakpoint.clearSoftware();
+         context->resetTrapFlag();
+      }
+   }
+   breakpoints.erase(address);
 }
 
 void Win32BreakpointContext :: setSoftwareBreakpoints(Win32ThreadContext* context)
@@ -622,6 +640,11 @@ void Win32DebugProcess :: setBreakpoint(addr_t address, bool withStackLevelContr
 void Win32DebugProcess :: addBreakpoint(addr_t address)
 {
    _breakpoints.addBreakpoint(address, _current, started);
+}
+
+void Win32DebugProcess :: removeBreakpoint(addr_t address)
+{
+   _breakpoints.removeBreakpoint(address, _current, started);
 }
 
 void Win32DebugProcess :: setStepMode()

@@ -385,7 +385,6 @@ namespace elena_lang
             else return Node();
          }
 
-
          Node findChild(Key key) const
          {
             Node current = firstChild();

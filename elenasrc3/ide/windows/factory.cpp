@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "factory.h"
@@ -212,7 +212,7 @@ void IDEFactory :: registerClasses()
    Splitter::registerSplitterWindow(_instance, szVSplitter, true);
 }
 
-ControlBase* IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* notifier)
+ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* notifier)
 {
    auto viewModel = _model->viewModel();
 
@@ -227,14 +227,30 @@ ControlBase* IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* no
 
    // initialize UI components
    TextViewWindow* view = new TextViewWindow(notifier, _model->viewModel(), 
-      &_controller->sourceController, &_styles);
+      &_controller->sourceController, &_styles, [](NotifierBase* notifier, int x, int y, bool hasSelection)
+      {
+         ContextMenuEvent event(EVENT_TEXT_CONTEXTMENU, x, y, hasSelection);
+
+         notifier->notify(&event);
+      }, [](NotifierBase* notifier)
+         {
+            SimpleEvent event(EVENT_TEXT_MARGINLICK);
+
+            notifier->notify(&event);
+         });
+
    TextViewFrame* frame = new TextViewFrame(notifier, _settings.withTabAboverscore, view, 
-      _model->viewModel(), NOTIFY_TEXTFRAME_SEL);
+      _model->viewModel(), [](NotifierBase* notifier, int index)
+      {
+         SelectionEvent event = { EVENT_TEXTFRAME_SELECTION_CHANGED, index };
+
+         notifier->notify(&event);
+      });
 
    view->create(_instance, szTextView, owner);
    frame->createControl(_instance, owner);
 
-   return frame;
+   return { frame, view };
 }
 
 void IDEFactory :: reloadStyles(TextViewModelBase* viewModel)
@@ -261,10 +277,14 @@ ControlBase* IDEFactory :: createTabBar(WindowBase* owner, NotifierBase* notifie
    return tabBar;
 }
 
-ControlBase* IDEFactory :: createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier, 
-   int notifyCode, NotificationStatus notifyStatus)
+ControlBase* IDEFactory :: createSplitter(WindowBase* owner, ControlBase* client, bool vertical, NotifierBase* notifier)
 {
-   Splitter* splitter = new Splitter(notifier, notifyCode, notifyStatus, client, vertical);
+   Splitter* splitter = new Splitter(notifier, client, vertical, [](NotifierBase* notifier)
+      {
+         LayoutEvent event(STATUS_LAYOUT_CHANGED);
+
+         notifier->notify(&event);
+      });
 
    splitter->create(_instance, 
       vertical ? szVSplitter : szHSplitter,
@@ -286,7 +306,12 @@ ControlBase* IDEFactory :: createVmConsoleControl(ControlBase* owner, ProcessBas
 
 ControlBase* IDEFactory :: createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess, NotifierBase* notifier)
 {
-   CompilerOutput* output = new CompilerOutput(notifier, NOTIFY_COMPILATION_RESULT);
+   CompilerOutput* output = new CompilerOutput(notifier, [](NotifierBase* notifier, int statusBar)
+      {
+         SelectionEvent event = { EVENT_COMPILATION_END, statusBar };
+
+         notifier->notify(&event);
+      });
 
    output->createControl(_instance, owner);
 
@@ -297,7 +322,12 @@ ControlBase* IDEFactory :: createCompilerOutput(ControlBase* owner, ProcessBase*
 
 ControlBase* IDEFactory :: createErrorList(ControlBase* owner, NotifierBase* notifier)
 {
-   MessageLog* log = new MessageLog(notifier, NOTIFY_ERROR_SEL);
+   MessageLog* log = new MessageLog(notifier, [](NotifierBase* notifier, int index)
+      {
+         SelectionEvent event = { EVENT_ERRORLIST_SELECTION, index };
+
+         notifier->notify(&event);
+      });
    log->createControl(_instance, owner);
 
    return log;
@@ -305,8 +335,13 @@ ControlBase* IDEFactory :: createErrorList(ControlBase* owner, NotifierBase* not
 
 ControlBase* IDEFactory :: createProjectView(ControlBase* owner, NotifierBase* notifier)
 {
-   TreeView* projectView = new TreeView(300, 50, notifier, 
-      NOTIFY_PROJECTVIEW_SEL, true);
+   TreeView* projectView = new TreeView(300, 50, notifier, true,
+      [](NotifierBase* notifier, size_t param)
+      {
+         ParamSelectionEvent event = { EVENT_PROJECTVIEW_SELECTION_CHANGED, param };
+
+         notifier->notify(&event);
+      });
    projectView->createControl(_instance, owner);
 
    return projectView;
@@ -314,7 +349,13 @@ ControlBase* IDEFactory :: createProjectView(ControlBase* owner, NotifierBase* n
 
 ControlBase* IDEFactory :: createDebugBrowser(ControlBase* owner, NotifierBase* notifier)
 {
-   ContextBrowser* browser = new ContextBrowser(300, 50, notifier, NOTIFY_DEBUG_CONTEXT_EXPANDED);
+   ContextBrowser* browser = new ContextBrowser(300, 50, notifier, 
+      [](NotifierBase* notifier, size_t item, size_t param)
+      {
+         BrowseEvent event = { EVENT_BROWSE_CONTEXT, item, param };
+
+         notifier->notify(&event);
+      });
    browser->createControl(_instance, owner);
    browser->hide();
 
@@ -358,7 +399,7 @@ GUIControlBase* IDEFactory :: createToolbar(ControlBase* owner)
 
 void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
    int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl, 
-   int toolBarControl, int contextEditor)
+   int toolBarControl, int contextEditor, int textIndex)
 {
    LoadStringW(_instance, IDC_COMPILER_OUTPUT, szCompilerOutput, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_COMPILER_MESSAGES, szErrorList, MAX_LOADSTRING);
@@ -377,6 +418,7 @@ void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compiler
    _model->ideScheme.vmConsoleControl = vmConsoleControl;
    _model->ideScheme.toolBarControl = toolBarControl;
    _model->ideScheme.editorContextMenu = contextEditor;
+   _model->ideScheme.textControlId = textIndex;
 
    _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
    _model->ideScheme.captions.add(errorList, szErrorList);
@@ -386,7 +428,7 @@ void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compiler
 
 GUIApp* IDEFactory :: createApp()
 {
-   WindowApp* app = new WindowApp(_instance, MAKEINTRESOURCE(IDC_IDE));
+   WindowApp* app = new WindowApp(_instance, MAKEINTRESOURCE(IDC_IDE), &IDENotificationFormatter::getInstance());
 
    registerClasses();
 
@@ -396,7 +438,7 @@ GUIApp* IDEFactory :: createApp()
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess, 
    ProcessBase* vmConsoleProcess)
 {
-   GUIControlBase* children[15];
+   GUIControlBase* children[16];
    int counter = 0;
 
    int textIndex = counter++;
@@ -414,35 +456,37 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    int vmConsoleControl = counter++;
    int toolBarControl = counter++;
    int contextEditor = counter++;
+   int editIndex = counter++;
 
    SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance, this);
    sdi->create(_instance, szSDI, nullptr);
 
    VerticalBox* vb = new VerticalBox(false, 1);
 
-   children[textIndex] = createTextControl(sdi, notifier);
+   auto textCtrls = createTextControl(sdi, notifier);
+
+   children[textIndex] = textCtrls.value1;
    children[bottomBox] = vb;
    children[tabBar] = createTabBar(sdi, notifier);
-   children[vsplitter] = createSplitter(sdi, (ControlBase*)children[tabBar], false, notifier, 
-      NOTIFY_IDE_CHANGE, IDE_LAYOUT_CHANGED);
+   children[vsplitter] = createSplitter(sdi, (ControlBase*)children[tabBar], false, notifier);
    children[statusBarIndex] = createStatusbar(sdi);
    children[compilerOutput] = createCompilerOutput((ControlBase*)children[tabBar], outputProcess, notifier);
    children[errorList] = createErrorList((ControlBase*)children[tabBar], notifier);
    children[browser] = createDebugBrowser((ControlBase*)children[tabBar], notifier);
    children[projectView] = createProjectView(sdi, notifier);
-   children[hsplitter] = createSplitter(sdi, (ControlBase*)children[projectView], true, notifier,
-      NOTIFY_IDE_CHANGE, IDE_LAYOUT_CHANGED);
+   children[hsplitter] = createSplitter(sdi, (ControlBase*)children[projectView], true, notifier);
    children[menu] = createMenu(sdi);
    children[debugContextMenu] = createDebugContextMenu(sdi);
    children[vmConsoleControl] = createVmConsoleControl((ControlBase*)children[tabBar], vmConsoleProcess);
    children[toolBarControl] = createToolbar(sdi);
    children[contextEditor] = createEditorContextMenu(sdi);
+   children[editIndex] = textCtrls.value2;
 
    vb->append(children[vsplitter]);
    vb->append(children[statusBarIndex]);
 
    initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView, browser, menu, statusBarIndex,
-      debugContextMenu, vmConsoleControl, toolBarControl, contextEditor);
+      debugContextMenu, vmConsoleControl, toolBarControl, contextEditor, editIndex);
 
    sdi->populate(counter, children);
    sdi->setLayout(textIndex, toolBarControl, bottomBox, -1, hsplitter);

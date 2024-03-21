@@ -22,7 +22,7 @@ CodeGenerator _codeGenerators[256] =
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
-   loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadNop,
+   loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadNop, loadOp, loadOp,
@@ -90,7 +90,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 173;
+constexpr size_t bcCommandNumber = 174;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -127,7 +127,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::FISub,ByteCode::FIMul,ByteCode::FIDiv, ByteCode::SNop, ByteCode::TstStck,
    ByteCode::Shl, ByteCode::Shr, ByteCode::XLabelDPR, ByteCode::TryLock, ByteCode::FreeLock,
    ByteCode::XQuit, ByteCode::ExtCloseN, ByteCode::XCmpSI, ByteCode::LoadSI, ByteCode::XFSave,
-   ByteCode::XSaveN, ByteCode::XSaveDispN, ByteCode::XStoreFIR
+   ByteCode::XSaveN, ByteCode::XSaveDispN, ByteCode::XStoreFIR, ByteCode::LNeg
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
@@ -591,10 +591,9 @@ void elena_lang :: loadNOp(JITCompilerScope* scope)
             scope->compiler->writeImm16(writer, scope->command.arg1 & 0xFFFF, 0);
             break;
          default:
-            // to make compiler happy
+            writeCoreReference(scope, entries->reference, entries->offset, code);
             break;
       }
-      //else writeCoreReference();
 
       entries++;
       count--;
@@ -3008,6 +3007,9 @@ void JITCompiler :: writeDump(ReferenceHelperBase* helper, MemoryWriter& writer,
    writer.write(section->get(0), section->length());
 
    writer.align(4, 0);
+
+   if (!section->getReferences())
+      return;
 
    for (auto it = RelocationMap::Iterator(section->getReferences()); !it.eof(); ++it) {
       pos_t imageOffset = *it + position;

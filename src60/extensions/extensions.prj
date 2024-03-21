@@ -47,5 +47,8 @@
        <include>dynamic\json.l</include>
        <include>dynamic\derserializer.l</include>
      </module>
+     <module name="threading">
+       <include>threading\threading.l</include>
+     </module>
   </files>
 </configuration>

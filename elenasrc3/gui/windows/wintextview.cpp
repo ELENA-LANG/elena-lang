@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TextView Control Body File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wintextview.h"
@@ -43,7 +43,8 @@ void ViewStyles::release()
 // --- TextViewWindow ---
 
 TextViewWindow :: TextViewWindow(NotifierBase* notifier, TextViewModelBase* model, 
-   TextViewControllerBase* controller, ViewStyles* styles)
+   TextViewControllerBase* controller, ViewStyles* styles, 
+   ContextInvoker contextInvoker, MarginInvoker marginInvoker)
    : WindowBase(nullptr, 50, 50)
 {
    _notifier = notifier;
@@ -56,13 +57,12 @@ TextViewWindow :: TextViewWindow(NotifierBase* notifier, TextViewModelBase* mode
    _caretChanged = false;
    _mouseCaptured = false;
    _caret_x = 0;
-
-   _model->attachDocListener(this);
+   _contextInvoker = contextInvoker;
+   _marginInvoker = marginInvoker;
 }
 
 TextViewWindow :: ~TextViewWindow()
 {
-   _model->removeDocListener(this);
 }
 
 void TextViewWindow :: registerTextViewWindow(HINSTANCE hInstance, wstr_t className)
@@ -459,6 +459,10 @@ void TextViewWindow :: onButtonDown(Point point, bool kbShift)
 
    _controller->moveToFrame(_model, col, row, kbShift);
 
+   if (margin && _marginInvoker) {
+      _marginInvoker(_notifier);
+   }
+
    captureMouse();
 }
 
@@ -567,9 +571,7 @@ void TextViewWindow :: onContextMenu(short x, short y)
 {
    auto docView = _model->DocView();
 
-   if (_notifier && docView) {
-      _notifier->notifyContextMenu(CONTEXT_MENU_ON, x, y, docView->hasSelection());
-   }
+   _contextInvoker(_notifier, x, y, docView->hasSelection());
 }
 
 LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)

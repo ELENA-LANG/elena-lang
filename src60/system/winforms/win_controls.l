@@ -27,6 +27,7 @@ public sealed const struct WindowHandle
    {
       handle hinstance := instance.Handle;
       handle h := UnsafePointer.Default;
+      handle hParent := parent.Handle;
       extern
       {
          h := extern USER32.CreateWindowExW(
@@ -38,7 +39,7 @@ public sealed const struct WindowHandle
             y,
             width,
             height,
-            parent.Handle,
+            hParent,
             0,
             hinstance,
             paramPtr)
@@ -108,7 +109,7 @@ public sealed const struct WindowHandle
    {
       int r := extern USER32.SendMessageW(_handle, BM_GETCHECK, 0, 0);
 
-	  ^ (r == BST_CHECKED)
+      ^ (r == BST_CHECKED)
    }    
 
    setVisible(int n)
@@ -125,7 +126,7 @@ public sealed const struct WindowHandle
 
    get HDC HDC()
    {
-      HDC dc := extern USER32.GetDC(_handle);
+      handle dc := extern USER32.GetDC(_handle);
 
       ^ dc
    }
@@ -174,14 +175,17 @@ public sealed struct PAINTSTRUCT
       ^ _HDC
    }
             
-   begin(WindowHandle handle)
+   begin(WindowHandle hwnd)
    {
-      extern USER32.BeginPaint(handle, self)
+      Handle h := hwnd.Handle;
+
+      extern USER32.BeginPaint(h, self)
    }
     
-   end(WindowHandle handle)
+   end(WindowHandle hwnd)
    {
-      extern USER32.EndPaint(handle, self)
+      Handle h := hwnd.Handle;
+
+      extern USER32.EndPaint(h, self)
    }
 }
-

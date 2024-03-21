@@ -302,6 +302,7 @@ namespace elena_lang
       ParameterInfo        = 0x0302,
       MessageInfo          = 0x0303,
       FieldInfo            = 0x0304,
+      LocalInfo            = 0x0305,
    };
 
    // --- ClassAttribute ---

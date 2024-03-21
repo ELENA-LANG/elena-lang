@@ -18,7 +18,7 @@ DefaultGroupName=ELENA Programming Language
 AllowNoIcons=yes
 LicenseFile=..\doc\license
 InfoAfterFile=..\CHANGELOG.md
-OutputBaseFilename=elena-setup
+OutputBaseFilename=elena-lang-6.0.8.x86-setup
 Compression=lzma
 SolidCompression=yes
 ChangesEnvironment=yes
@@ -32,26 +32,25 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "output\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "output\doc\*"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "output\examples\*"; DestDir: "{app}\examples"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "output\lib50\*"; DestDir: "{app}\lib50"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "output32\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "output32\doc\*"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "output32\examples60\*"; DestDir: "{app}\examples60"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "output32\lib60\*"; DestDir: "{app}\lib60"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\doc\license"; DestDir: "{app}";
 Source: "..\readme.md"; DestDir: "{app}"; Flags: isreadme
 Source: "..\CHANGELOG.md"; DestDir: "{app}";
-Source: "..\rebuild_lib.bat"; DestDir: "{app}";
-Source: "..\rebuild_examples.bat"; DestDir: "{app}";
+Source: "..\rebuild_lib60.bat"; DestDir: "{app}";
 Source: "redist\VC_redist.x86.exe"; DestDir: "{app}"; Flags: deleteafterinstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\ELENA Programming Language"; Filename: "{app}\bin\elide.exe"
-Name: "{commondesktop}\ELENA Programming Language"; Filename: "{app}\bin\elide.exe"; Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\ELENA Programming Language"; Filename: "{app}\bin\elide.exe"; Tasks: quicklaunchicon
+Name: "{group}\ELENA Programming Language"; Filename: "{app}\bin\elena-ide.exe "
+Name: "{commondesktop}\ELENA Programming Language"; Filename: "{app}\bin\elena-ide.exe"; Tasks: desktopicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\ELENA Programming Language"; Filename: "{app}\bin\elena-ide.exe"; Tasks: quicklaunchicon
 
 [Run]
 Filename: "{app}\redist\VC_redist.x86.exe"; Parameters: "/install /passive /norestart"; StatusMsg: Installing VC++ 2017 Redistributables...; Check: not VCinstalled
-Filename: "{app}\bin\elide.exe"; Description: "{cm:LaunchProgram,ELENA Programming Language}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\bin\elena-ide.exe"; Description: "{cm:LaunchProgram,ELENA Programming Language}"; Flags: nowait postinstall skipifsilent
 
 [Registry]
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}\bin"; Check: NeedsAddPath('{app}\bin')

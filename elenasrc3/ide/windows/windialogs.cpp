@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //    WinAPI: Static dialog implementations
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <tchar.h>
@@ -302,6 +302,24 @@ void ProjectSettings :: loadTemplateList()
    setComboBoxIndex(IDC_SETTINGS_TEPMPLATE, selected);
 }
 
+void ProjectSettings :: loadProfileList()
+{
+   int selected = 0;
+   int current = 0;
+   for (auto it = _model->profileList.start(); !it.eof(); ++it) {
+      ustr_t key = *it;
+      if (_model->profile.compare(key)) {
+         selected = current;
+      }
+
+      WideMessage caption(key);
+      addComboBoxItem(IDC_SETTINGS_PROFILE, *caption);
+      current++;
+   }
+
+   setComboBoxIndex(IDC_SETTINGS_PROFILE, selected);
+}
+
 void ProjectSettings :: onCreate()
 {
    setTextLimit(IDC_SETTINGS_PACKAGE, IDENTIFIER_LEN);
@@ -329,6 +347,7 @@ void ProjectSettings :: onCreate()
    //else setComboBoxIndex(IDC_SETTINGS_DEBUG, 0);
 
    loadTemplateList();
+   loadProfileList();
 }
 
 void ProjectSettings :: onOK()
@@ -340,6 +359,13 @@ void ProjectSettings :: onOK()
 
       IdentifierString value(name);
       _model->templateName.copy(*value);
+   }
+
+   if (getComboBoxIndex(IDC_SETTINGS_PROFILE) != -1) {
+      getText(IDC_SETTINGS_PROFILE, (wchar_t**)(&name), IDENTIFIER_LEN);
+
+      IdentifierString value(name);
+      _model->profile.copy(*value);
    }
 
    getText(IDC_SETTINGS_PACKAGE, (wchar_t**)(&name), IDENTIFIER_LEN);

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Window Header File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINIDE_H
@@ -15,6 +15,42 @@
 
 namespace elena_lang
 {
+   // --- ContextMenuNMHDR ---
+   struct ContextMenuNMHDR
+   {
+      NMHDR nmhrd;
+      int   x, y;
+      bool  hasSelection;
+   };
+
+   // --- Notifications ---
+   struct ModelNMHDR
+   {
+      NMHDR nmhrd;
+      int   status;
+   };
+
+   struct TextViewModelNMHDR : public ModelNMHDR
+   {
+      DocumentChangeStatus docStatus;
+   };
+
+   struct SelectionNMHDR : public ModelNMHDR
+   {
+      int index;
+   };
+
+   struct BrowseNMHDR : public ModelNMHDR
+   {
+      size_t item;
+      size_t param;
+   };
+
+   struct ParamSelectionNMHDR : public ModelNMHDR
+   {
+      size_t param;
+   };
+
    // --- Clipboard ---
    class Clipboard : public ClipboardBase
    {
@@ -39,8 +75,39 @@ namespace elena_lang
       Clipboard(ControlBase* owner);
    };
 
+   // --- IDENotificationFormatter ---
+   class IDENotificationFormatter : public EventFormatterBase
+   {
+      IDENotificationFormatter() = default;
+
+      void sendTextViewModelEvent(TextViewModelEvent* event, WindowApp* app);
+      void sendTextFrameSelectionEvent(SelectionEvent* event, WindowApp* app);
+      void sendCompilationEndEvent(SelectionEvent* event, WindowApp* app);
+      void sendErrorListSelEvent(SelectionEvent* event, WindowApp* app);
+      void sendProjectViewSelectionEvent(ParamSelectionEvent* event, WindowApp* app);
+      void sendLayoutEvent(LayoutEvent* event, WindowApp* app);
+      void sendStartUpEvent(StartUpEvent* event, WindowApp* app);
+      void sendTextContextMenuEvent(ContextMenuEvent* event, WindowApp* app);
+      void sendBrowseContextMenuEvent(BrowseEvent* event, WindowApp* app);
+      void sendSimpleEvent(SimpleEvent* event, WindowApp* app);
+
+   public:
+      static IDENotificationFormatter& getInstance()
+      {
+         static IDENotificationFormatter instance; // Guaranteed to be destroyed.
+         // Instantiated on first use.
+         return instance;
+
+      }  
+      
+      IDENotificationFormatter(IDENotificationFormatter const&) = delete;
+      void operator=(IDENotificationFormatter const&) = delete;
+
+      void sendMessage(EventBase* event, WindowApp* app) override;
+   };
+
    // --- IDEWindow ---
-   class IDEWindow : public SDIWindow, DocumentNotifier
+   class IDEWindow : public SDIWindow
    {
       FileDialog        fileDialog;
       FileDialog        projectDialog;
@@ -65,21 +132,25 @@ namespace elena_lang
       RecentList        _recentFileList;
       RecentList        _recentProjectList;
 
+      DocumentNotifiers _docViewListener;
+
       void enableMenuItemById(int id, bool doEnable, bool toolBarItemAvailable);
 
-      void onStatusChange(StatusNMHDR* rec);
-      void onSelection(SelectionNMHDR* rec);
-      void onTreeItem(TreeItemNMHDR* rec);
-      void onComplition(CompletionNMHDR* rec);
-      void onContextMenu(ContextMenuNMHDR* rec);
-      //void onModelChange(ExtNMHDR* hdr);
-      //void onNotifyMessage(ExtNMHDR* hdr);
+      void onTextModelChange(TextViewModelNMHDR* rec);
+      void onTextFrameSel(SelectionNMHDR* rec);
+      void onProjectViewSel(ParamSelectionNMHDR* rec);
+      void onIDEStatusChange(ModelNMHDR* rec);
+      void onStartup(ModelNMHDR* rec);
+      void onLayoutChange();
 
+      void onDebugStep();
       void onDebugWatch();
+      void onDebugEnd();
 
       void onDoubleClick(NMHDR* hdr);
       void onRClick(NMHDR* hdr);
       void onDebugWatchRClick(size_t index);
+      void onContextMenu(ContextMenuNMHDR* rec);
 
       void onTabSelChanged(HWND wnd);
       void onTreeSelChanged(HWND wnd);
@@ -91,10 +162,6 @@ namespace elena_lang
       void onToolTip(NMTTDISPINFO* toolTip);
       void onTabTip(NMTTDISPINFO* toolTip);
 
-      void onLayoutChange(NotificationStatus status);
-      void onIDEChange(NotificationStatus status);
-      void onTextFrameChange(NotificationStatus status);
-
       bool onCommand(int command) override;
       void onNotify(NMHDR* hdr) override;
       void onActivate() override;
@@ -103,13 +170,17 @@ namespace elena_lang
       void onComilationStart();
       void onCompilationEnd(int exitCode);
       void onErrorHighlight(int index);
-      void onDebugResult(int code);
-      void onDebugWatchBrowse(size_t item, size_t param);
+      void onDebugWatchBrowse(BrowseNMHDR* rec);
+
+      void updateCompileMenu(bool compileEnable, bool debugEnable, bool stopEnable);
 
       void onProjectChange(bool empty);
+      void onProjectRefresh(bool empty);
       void onProjectViewSel(int index);
 
       void onColorSchemeChange();
+
+      void onStatusBarChange();
 
       bool toggleTabBarWindow(int child_id);
       void toggleWindow(int child_id);
@@ -159,10 +230,8 @@ namespace elena_lang
       void refreshDebugNode();
 
       void onDebuggerStart();
-      void onDebuggerHook();
-      void onDebuggerUpdate(StatusNMHDR* rec);
-      void onDebuggerSourceNotFound(StatusNMHDR* rec);
-      void onDocumentUpdate(DocumentChangeStatus& changeStatus) override;
+      void onDebuggerSourceNotFound();
+      void onDocumentUpdate(DocumentChangeStatus& changeStatus);
 
    public:
       void populate(size_t counter, GUIControlBase** children) override;
