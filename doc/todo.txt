@@ -10,19 +10,16 @@ In development:
   dev: #637, windows executable - support manifest, net, #621, #610, #612
   opt:pi under 7 sec, #602, #611
   maint:#620,#622
-  exp:
   ide:vm debugger
-  tools:work with elt in ide, #618
+  tools:#618
   prom:#635,elena in nutshell every 1 week
   port:win64 gui,helloworld gui sample (button), chat sample, win64 script samples
   --------------------------------------
-  - github actions x86 / x64 : create artefact / night builds (https://github.com/marketplace/actions/deploy-nightly, https://github.com/big-building-data/bbdata-api/blob/master/.github/workflows/main.yml)
-  - remove appveyor
   - #617
   --------------------------------------
   - #617 : include / exclude
 
-  - github actions : budget on the top page
+  - work with elt in ide
 
   === Iteration 22 ===
   --------------------------------------

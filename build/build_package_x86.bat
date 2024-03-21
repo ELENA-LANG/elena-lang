@@ -2,7 +2,7 @@
 
 ECHO =========== Compiling ELENA files ==================
 
-md %~dp0\x32
+md %~dp0\x86
 md %~dp0\x86\bin
 md %~dp0\x86\bin\templates
 md %~dp0\x86\bin\scripts

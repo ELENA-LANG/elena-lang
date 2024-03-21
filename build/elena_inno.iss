@@ -32,10 +32,10 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "output32\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "output32\doc\*"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "output32\examples60\*"; DestDir: "{app}\examples60"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "output32\lib60\*"; DestDir: "{app}\lib60"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "x86\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "x86\doc\*"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "x86\examples60\*"; DestDir: "{app}\examples60"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "x86\lib60\*"; DestDir: "{app}\lib60"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\doc\license"; DestDir: "{app}";
 Source: "..\readme.md"; DestDir: "{app}"; Flags: isreadme
 Source: "..\CHANGELOG.md"; DestDir: "{app}";

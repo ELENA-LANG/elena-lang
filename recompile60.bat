@@ -23,6 +23,9 @@ IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO =========== Release Compiled ==================
 
+CALL build\rebuild_lib60_x86.bat 
+CALL build\rebuild_lib60_x64.bat 
+
 goto:eof
 ::ERRORS
 ::---------------------
