@@ -16,12 +16,13 @@ In development:
   prom:#635,elena in nutshell every 1 week
   port:win64 gui,helloworld gui sample (button), chat sample, win64 script samples
   --------------------------------------
-  - github actions : x86
+  - github actions x86 / x64 : create artefact / night builds (https://github.com/marketplace/actions/deploy-nightly, https://github.com/big-building-data/bbdata-api/blob/master/.github/workflows/main.yml)
+  - remove appveyor
   - #617
   --------------------------------------
-  - github actions : x86
-
   - #617 : include / exclude
+
+  - github actions : budget on the top page
 
   === Iteration 22 ===
   --------------------------------------
