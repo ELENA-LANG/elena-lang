@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TextView Control Header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINTEXTVIEW_H
@@ -73,8 +73,15 @@ namespace elena_lang
    // --- TextViewWindow ---
    class TextViewWindow : public WindowBase, public DocumentNotifier
    {
+   public:
+      typedef void(*ContextInvoker)(NotifierBase*, int, int, bool);
+      typedef void(*MarginInvoker)(NotifierBase*);
+
    protected:
       NotifierBase*           _notifier;
+
+      ContextInvoker          _contextInvoker;
+      MarginInvoker           _marginInvoker;
 
       TextViewModelBase*      _model;
       ViewStyles*             _styles;
@@ -156,7 +163,8 @@ namespace elena_lang
 
       LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam) override;
 
-      TextViewWindow(NotifierBase* notifier, TextViewModelBase* model, TextViewControllerBase* controller, ViewStyles* styles);
+      TextViewWindow(NotifierBase* notifier, TextViewModelBase* model, TextViewControllerBase* controller, ViewStyles* styles, 
+         ContextInvoker contextInvoker, MarginInvoker marginInvoker);
       virtual ~TextViewWindow();
    };
 }

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     Win32 EditFrame container File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wintextframe.h"
@@ -11,10 +11,10 @@ using namespace elena_lang;
 
 // --- TextViewFrame ---
 
-TextViewFrame :: TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, int selNotificationId)
+TextViewFrame :: TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, SelectionEventInvoker invoker)
    : MultiTabControl(notifier, withAbovescore, view)
 {
-   _selNotificationId = selNotificationId;
+   _selectionInvoker = invoker;
    _model = model;
 
    model->attachListener(this);
@@ -73,8 +73,9 @@ void TextViewFrame :: onSelChanged()
    if (index >= 0) {
       _model->selectDocumentView(index + 1);
 
-      if (_selNotificationId)
-         _notifier->notifySelection(_selNotificationId, index);
+      if (_selectionInvoker) {
+         _selectionInvoker(_notifier, index);
+      }
    }
    else {
       _child->hide();

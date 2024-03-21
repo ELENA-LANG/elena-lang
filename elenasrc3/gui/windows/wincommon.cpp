@@ -1,12 +1,32 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Common Body File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wincommon.h"
 
 using namespace elena_lang;
+
+// --- DateTime ---
+
+DateTime DateTime::getFileTime(const wchar_t* path)
+{
+   DateTime dt;
+
+   HANDLE hFile = ::CreateFile(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+   if (hFile) {
+      FILETIME ftCreate, ftAccess, ftWrite;
+
+      if (::GetFileTime(hFile, &ftCreate, &ftAccess, &ftWrite)) {
+         FileTimeToSystemTime(&ftWrite, &dt._time);
+      }
+
+      ::CloseHandle(hFile);
+   }   
+
+   return dt;
+}
 
 // --- ControlBase ---
 
@@ -197,68 +217,20 @@ bool WindowApp :: initInstance(WindowBase* mainWindow, int cmdShow)
    return TRUE;
 }
 
-void WindowApp :: notify(int messageCode, NotificationStatus status)
+void WindowApp :: notify(int id, NMHDR* notification)
 {
-   StatusNMHDR notification;
+   notification->code = id;
+   notification->hwndFrom = _hwnd;
 
-   notification.nmhrd.code = STATUS_NOTIFICATION;
-   notification.nmhrd.hwndFrom = _hwnd;
-   notification.code = messageCode;
-   notification.status = status;
-
-   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
+   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)notification);
 }
 
-void WindowApp :: notifySelection(int messageCode, size_t param)
+void WindowApp :: notify(EventBase* event)
 {
-   SelectionNMHDR notification;
-
-   notification.nmhrd.code = STATUS_SELECTION;
-   notification.nmhrd.hwndFrom = _hwnd;
-   notification.code = messageCode;
-   notification.param = param;
-
-   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
+   _eventFormatter->sendMessage(event, this);
 }
 
-void WindowApp :: notifyTreeItem(int messageCode, size_t item, size_t param)
-{
-   TreeItemNMHDR notification;
-
-   notification.nmhrd.code = STATUS_TREEITEM;
-   notification.nmhrd.hwndFrom = _hwnd;
-   notification.code = messageCode;
-   notification.item = item;
-   notification.param = param;
-
-   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
-}
-
-void WindowApp::notifyCompletion(int messageCode, int param)
-{
-   CompletionNMHDR notification;
-
-   notification.nmhrd.code = STATUS_COMPLETION;
-   notification.nmhrd.hwndFrom = _hwnd;
-   notification.code = messageCode;
-   notification.param = param;
-
-   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
-}
-
-void WindowApp :: notifyContextMenu(int id, short x, short y, bool hasSelection)
-{
-   ContextMenuNMHDR notification;
-   notification.nmhrd.code = id;
-   notification.nmhrd.hwndFrom = _hwnd;
-   notification.x = x;
-   notification.y = y;
-   notification.hasSelection = hasSelection;
-
-   ::SendMessage(_hwnd, WM_NOTIFY, 0, (LPARAM)&notification);
-}
-
-int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, int notificationId, NotificationStatus notificationStatus)
+int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, EventBase* startEvent)
 {
    // Perform application initialization:
    if (!initInstance(dynamic_cast<WindowBase*>(mainWindow), maximized ? SW_MAXIMIZE : SW_SHOW))
@@ -266,8 +238,8 @@ int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, int notificatio
       return FALSE;
    }
 
-   if (notificationId)
-      notify(notificationId, notificationStatus);
+   if (startEvent)
+      notify(startEvent);
 
    HACCEL hAccelTable = LoadAccelerators(_instance, _accelerators.str());
 

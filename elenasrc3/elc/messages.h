@@ -3,14 +3,14 @@
 //
 //		Copmpiler messages 
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "errors.h"
 
 namespace elena_lang
 {
-   constexpr auto MessageLength = 92;
+   constexpr auto MessageLength = 93;
    const Pair<int, const char*, 0, nullptr> Messages[MessageLength] =
    {
       {errDuplicatedSymbol, errMsgDuplicatedSymbol},
@@ -104,7 +104,8 @@ namespace elena_lang
       {infoMixedUpVariadic, infoMssgMixedUpVariadic},
       {errRedirectToItself, errMsgRedirectToItself},
       {errIllegalStaticMethod, errMsgIllegalStaticMethod },
-      {errAssigningRealOnly, errMssgAssigningRealOnly }
+      {errAssigningRealOnly, errMssgAssigningRealOnly },
+      {infoExptectedType, infoMssgExptectedType },
    };
 
 }

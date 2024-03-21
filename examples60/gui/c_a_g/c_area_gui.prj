@@ -11,6 +11,7 @@
   <files>
      <module>
         <include>calc_area_gui.l</include>
+        <include>anot_wind.l</include>
      </module>
   </files>
 </configuration>

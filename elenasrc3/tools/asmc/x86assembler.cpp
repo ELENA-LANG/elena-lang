@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA Intel X86 Assembler
 //		classes.
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1374,9 +1374,23 @@ void X86Assembler :: compileDQField(ScriptToken& tokenInfo, MemoryWriter& writer
 
 bool X86Assembler :: compileAdc(X86Operand source, X86Operand target, MemoryWriter& writer)
 {
-   if (source.isR32_M32() && target.isR32()) {
+   if (source.type == X86OperandType::EAX && target.type == X86OperandType::DD) {
+      writer.writeByte(0x15);
+      X86Helper::writeImm(writer, target);
+   }
+   else if (source.isR32_M32() && target.isR32()) {
       writer.writeByte(0x11);
       X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR32_M32() && target.type == X86OperandType::DB) {
+      writer.writeByte(0x83);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 2), source);
+      X86Helper::writeImm(writer, target);
+   }
+   else if (source.isR8_M8() && target.type == X86OperandType::DB) {
+      writer.writeByte(0x80);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R8 + 2), source);
+      X86Helper::writeImm(writer, target);
    }
    else return false;
 

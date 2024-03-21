@@ -4,39 +4,39 @@ In development:
 
 [development]
   ### EPIC: elena 6.0 - redux ###
-  === Iteration 19 ===
-  --------------------------------------
-  * build all platforms
-
-  === Iteration 20 ===
-  --------------------------------------
-  dev: async programming (instant messagange sample (chat) ), #608
-  op:github actions : x86
-  opt: pi - under 8 sec, #601,#602
-  maint:#620, tools:backlog,#616, system module warnings, #622
-  exp:snake game : text / gui version, using expression trees in real-life apps (see c#)
-  ide:backlog (#617), vm debugger, debugger watch - struct
-  tools:
-  prom:
-  port:db samples, gui samples, xforms, x86 mt, x86-64 vm,elenavm / elt for linux
-  --------------------------------------
 
   === Iteration 21 ===
   --------------------------------------
-  dev: 
+  dev: #637, windows executable - support manifest
   op:
-  opt:
-  maint:
+  opt:pi under 7 sec, #602
+  maint:#620,#622,#618
   exp:
-  ide:
-  tools:
-  prom:
-  port:
+  ide:vm debugger,backlog (#617)
+  tools:work with elt in ide
+  prom:#635,elena in nutshell every 1 week
+  port:win64 gui,helloworld gui sample (button)
+  --------------------------------------
+
   --------------------------------------
 
   === Iteration 22 ===
   --------------------------------------
-  dev: 
+  dev: async programming (instant messagange sample (chat) ), #608
+  op:github actions : x86
+  opt:pi under 6 sec, #601
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
+  port:x86-64 vm
+
+  === Iteration 22 ===
+  --------------------------------------
+  dev: redesign switch statement : it should be possible to use as an expression as well
+    (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
+    console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
   op:
   opt:
   maint:
@@ -44,4 +44,4 @@ In development:
   ide:
   tools:
   prom:
-  port:
+  port:elenavm / elt for linux

@@ -77,7 +77,17 @@ bin\elena-cli src60\algorithms\algorithms.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elena-cli src60\sqlite\sqlite.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 bin\elena-cli src60\forms\forms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+bin\elena-cli src60\xforms\xforms.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
@@ -107,6 +117,21 @@ bin\elena64-cli src60\cellular\cellular.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elena64-cli src60\algorithms\algorithms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+bin\elena64-cli src60\sqlite\sqlite.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+bin\elena64-cli src60\forms\forms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 bin\ldoc system doc\api
 bin\ldoc system'routines doc\api
 bin\ldoc system'runtime doc\api
@@ -117,6 +142,8 @@ bin\ldoc extensions doc\api
 bin\ldoc extensions'routines doc\api
 bin\ldoc extensions'scripting doc\api
 bin\ldoc cellular doc\api
+bin\ldoc algorithms doc\api
+bin\ldoc sqlite doc\api
 bin\ldoc forms doc\api
 
 bin\elena-cli tests60\system_tests\system_tests.prj

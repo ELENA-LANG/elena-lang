@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains the DebugController class and its helpers header
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DEBUGCONTROLLER_H
@@ -20,8 +20,14 @@ namespace elena_lang
    class DebugSourceController
    {
    public:
+      virtual void traceStart(ProjectModel* model) = 0;
+
+      virtual void traceStep(SourceViewModel* sourceModel, bool found, int row) = 0;
+
       virtual bool selectSource(ProjectModel* model, SourceViewModel* sourceModel, 
          ustr_t moduleName, path_t sourcePath) = 0;
+
+      virtual void traceFinish(SourceViewModel* sourceModel) = 0;
 
       virtual ~DebugSourceController() = default;
    };
@@ -223,7 +229,6 @@ namespace elena_lang
 
       ProjectModel*           _model;
       SourceViewModel*        _sourceModel;
-      NotifierBase*           _notifier;
       DebugSourceController*  _sourceController;
 
       IdentifierString        _currentModule;
@@ -246,7 +251,7 @@ namespace elena_lang
       void readFields(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info);
       void readObjectArray(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info);
 
-      void* readObject(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, ustr_t className = nullptr);
+      void* readObject(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, ustr_t className = nullptr, addr_t vmtAddress = 0);
       void* readFieldValue(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, int size, ustr_t className = nullptr);
       void* readIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readUIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
@@ -271,7 +276,7 @@ namespace elena_lang
       void stepInto();
       void stop();
       void runToCursor(ustr_t name, ustr_t path, int row);
-      void addBreakpoint(Breakpoint* bp);
+      void toggleBreakpoint(Breakpoint* bp, bool adding);
 
       void readAutoContext(ContextBrowserBase* watch, int level, WatchItems* refreshedItems);
       void readContext(ContextBrowserBase* watch, void* parentItem, addr_t address, int level);
@@ -290,7 +295,7 @@ namespace elena_lang
       }
 
       DebugController(DebugProcessBase* process, ProjectModel* model, 
-         SourceViewModel* sourceModel, NotifierBase* notifier, DebugSourceController* sourceController);
+         SourceViewModel* sourceModel, DebugSourceController* sourceController);
    };
    
 }

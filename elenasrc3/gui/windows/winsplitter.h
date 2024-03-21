@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      WinAPI Splitter class header 
-//                                             (C)2022-2023, by Aleksey Rakov
+//                                             (C)2022-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINSPLITTER_H
@@ -17,7 +17,6 @@ namespace elena_lang
 
       NotifierBase*        _notifier;
       int                  _notifyCode;
-      NotificationStatus   _notifyStatus;
 
       ControlBase*         _client;
       bool                 _vertical;
@@ -35,7 +34,11 @@ namespace elena_lang
       void shiftOn(int delta);
 
    public:
+      typedef void(*EventInvoker)(NotifierBase*);
+
       static void registerSplitterWindow(HINSTANCE hInstance, wstr_t className, bool vertical);
+
+      EventInvoker _layoutEventInvoker;
 
       HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner) override;
 
@@ -48,7 +51,7 @@ namespace elena_lang
 
       LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam) override;
 
-      Splitter(NotifierBase* notifier, int notifyCode, NotificationStatus notifyStatus , ControlBase* client, bool vertical);
+      Splitter(NotifierBase* notifier, ControlBase* client, bool vertical, EventInvoker invoker);
    };
 }
 

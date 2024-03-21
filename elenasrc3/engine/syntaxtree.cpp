@@ -3,7 +3,7 @@
 //
 //		This file contains Syntax Tree class implementation
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -61,10 +61,10 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    //   tokens.add("preloaded_symbol", lxSymbol);
    map.add("literal", SyntaxKey::string);
    map.add("identifier", SyntaxKey::identifier);
+   map.add("super_identifier", SyntaxKey::identifier);
    map.add("character", SyntaxKey::character);
    //   tokens.add("variable_identifier", lxIdentifier);
    //   tokens.add("new_identifier", lxIdentifier);
-   //   tokens.add("prev_identifier", lxIdentifier);
    map.add("integer", SyntaxKey::integer);
    map.add("parameter", SyntaxKey::Parameter);
    ////   tokens.add("include", lxInclude);

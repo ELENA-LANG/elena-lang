@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA Byte-code assembler
 //		classes.
-//                                            (C)2021-2023, by Aleksey Rakov
+//                                            (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "bcassembler.h"
@@ -68,11 +68,12 @@ void ByteCodeAssembler::ByteCodeLabelHelper :: checkAllUsedLabels(ustr_t errorMe
 // --- ByteCodeAssembler ---
 
 ByteCodeAssembler :: ByteCodeAssembler(int tabSize, UStrReader* reader, Module* module, 
-   bool mode64, int rawDataAlignment)
+   bool mode64, int rawDataAlignment, bool supportStd)
    : _reader(tabSize, reader)
 {
    _module = module;
    _mode64 = mode64;
+   _supportStd = supportStd;
    _rawDataAlignment = rawDataAlignment;
 }
 
@@ -790,7 +791,7 @@ bool ByteCodeAssembler :: compileOpenOp(ScriptToken& tokenInfo, MemoryWriter& wr
 }
 
 bool ByteCodeAssembler :: compileCallExt(ScriptToken& tokenInfo, MemoryWriter& writer,
-   ByteCommand& command, ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants)
+   ByteCommand& command, ReferenceMap& parameters, ReferenceMap& locals, ReferenceMap& dataLocals, ReferenceMap& constants, bool stdCall)
 {
    IdentifierString functionName;
    if (tokenInfo.compare(":")) {
@@ -848,7 +849,7 @@ bool ByteCodeAssembler :: compileCallExt(ScriptToken& tokenInfo, MemoryWriter& w
 
       ByteCodeUtil::write(writer, command);
 
-      if (stackSize > 0)
+      if (stackSize > 0 && !stdCall)
          ByteCodeUtil::write(writer, ByteCode::FreeI, stackSize);
    }
    else if (tokenInfo.compare(",")) {
@@ -968,6 +969,15 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
 
    read(tokenInfo);
 
+   bool stdCall = false;
+   if (tokenInfo.compare("stdcall")) {
+      // NOTE : stdcall is applied only for x86 mode
+      if (_supportStd)
+         stdCall = true;
+
+      read(tokenInfo);
+   }
+
    command.append(' ');
    command.append(*tokenInfo.token);
 
@@ -988,7 +998,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
    if (!ByteCodeUtil::isSingleOp(opCommand.code)) {
       switch (opCommand.code) {
          case ByteCode::CallExtR:
-            return compileCallExt(tokenInfo, writer, opCommand, parameters, locals, dataLocals, constants);
+            return compileCallExt(tokenInfo, writer, opCommand, parameters, locals, dataLocals, constants, stdCall);
          case ByteCode::XOpenIN:
          case ByteCode::OpenIN:
          case ByteCode::ExtOpenIN:

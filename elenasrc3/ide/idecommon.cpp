@@ -191,3 +191,91 @@ void ContextBrowserBase :: populateFLOAT64(WatchContext* context, double value)
    clearNode(context->root);
    populateNode(context->root, number.str());
 }
+
+// --- SelectionEvent ---
+
+SelectionEvent :: SelectionEvent(int id, int index)
+   : EventBase(0), _eventId(id), _index(index)
+{
+}
+
+int SelectionEvent :: eventId()
+{
+   return _eventId;
+}
+
+// --- ParamSelectionEvent ---
+
+ParamSelectionEvent :: ParamSelectionEvent(int id, size_t param)
+   : EventBase(0), _eventId(id), _param(param)
+{
+}
+
+int ParamSelectionEvent :: eventId()
+{
+   return _eventId;
+}
+
+// --- BrowseEvent ---
+
+BrowseEvent :: BrowseEvent(int id, size_t item, size_t param)
+   : EventBase(0), _eventId(id), _item(item), _param(param)
+{
+}
+
+// --- LayoutEvent ---
+
+LayoutEvent::LayoutEvent(int status)
+   : EventBase(status)
+{
+}
+
+int LayoutEvent::eventId()
+{
+   return EVENT_LAYOUT;
+}
+
+// --- StartUpEvent ---
+
+StartUpEvent::StartUpEvent(int status)
+   : EventBase(status)
+{
+}
+
+int StartUpEvent::eventId()
+{
+   return EVENT_STARTUP;
+}
+
+// --- TextViewModelEvent ---
+
+int TextViewModelEvent::eventId()
+{
+   return EVENT_TEXTVIEW_MODEL_CHANGED;
+}
+
+// --- ContextMenuEvent ---
+
+ContextMenuEvent :: ContextMenuEvent(int id, int x, int y, bool hasSelection)
+   : EventBase(0), _eventId(id), _x(x), _y(y), _hasSelection(hasSelection)
+{
+}
+
+int ContextMenuEvent :: eventId()
+{
+   return _eventId;
+}
+
+// --- SimpleEvent ---
+
+SimpleEvent :: SimpleEvent(int id)
+   : EventBase(0)
+{
+   _eventId = id;
+}
+
+int SimpleEvent :: eventId()
+{
+   return _eventId;
+}
+

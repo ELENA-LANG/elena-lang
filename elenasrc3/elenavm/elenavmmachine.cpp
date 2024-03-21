@@ -120,7 +120,9 @@ void ELENAVMMachine :: init(JITLinker& linker, SystemEnv* exeEnv)
       (uintptr_t)exeEnv->th_table,
       (uintptr_t)exeEnv->th_single_content);
 
-   linker.prepare(_compiler);
+   linker.setCompiler(_compiler);
+
+   linker.prepare();
 
    _env = (SystemEnv*)_compiler->getSystemEnv();
 
@@ -728,4 +730,11 @@ size_t ELENAVMMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_
 
    return SystemRoutineProvider::LoadMessages(msection, classPtr, output, 
       skip, maxLength, true);
+}
+
+bool ELENAVMMachine :: checkClassMessage(void* classPtr, mssg_t message)
+{
+   MemoryBase* msection = getMDataSection();
+
+   return SystemRoutineProvider::CheckMessage(msection, classPtr, message);
 }

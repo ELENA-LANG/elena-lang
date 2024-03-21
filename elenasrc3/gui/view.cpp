@@ -68,24 +68,6 @@ void TextViewModel :: attachListener(TextViewListener* listener)
       listener->onDocumentSelect(selected);
 }
 
-void TextViewModel::attachDocListener(DocumentNotifier* listener)
-{
-   _docListeners.add(listener);
-
-   for (auto it = _documents.start(); !it.eof(); ++it) {
-      (*it)->documentView->attachNotifier(listener);
-   }
-}
-
-void TextViewModel :: removeDocListener(DocumentNotifier* listener)
-{
-   for (auto it = _documents.start(); !it.eof(); ++it) {
-      (*it)->documentView->removeNotifier(listener);
-   }
-
-   _docListeners.cut(listener);
-}
-
 void TextViewModel :: onDocumentNew(int index)
 {
    for (auto it = _listeners.start(); !it.eof(); ++it) {
@@ -158,10 +140,6 @@ void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path)
    if (emptystr(path)) {
       docView->markAsUnnamed();
       docView->markAsModified();
-   }
-
-   for (auto it = _docListeners.start(); !it.eof(); ++it) {
-      docView->attachNotifier(*it);
    }
 
    onDocumentNew(_documents.count());

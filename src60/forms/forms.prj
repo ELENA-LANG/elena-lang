@@ -1,29 +1,31 @@
 <configuration>
-  <platform key="Win_x86">
-     <project>
-        <output>..\..\lib60</output>
-     </project>
-  </platform>
-  <platform key="Win_x64">
-     <project>
-        <output>..\..\lib60_64</output>
-     </project>
-  </platform>
-  <project>
-     <namespace>forms</namespace>
-     <template>lib60</template>
-  </project>
-  <manifest>
-     <name>ELENA GUI Library</name>
-     <version>6.0.0</version>
-     <author>Aleksey Rakov</author>
-  </manifest>
-  <files>
-     <module>
-        <include>controls.l</include>
-        <include>win32_controls.l</include>
-        <include>win_forms.l</include>
-        <include>win_dialogs.l</include>
-     </module>
-  </files>
+    <platform key="Win_x86">
+        <project>
+            <output>..\..\lib60</output>
+        </project>
+    </platform>
+    <platform key="Win_x64">
+        <project>
+            <output>..\..\lib60_64</output>
+        </project>
+    </platform>
+    <project>
+        <executable></executable>
+        <options></options>
+        <namespace>forms</namespace>
+        <template>lib60</template>
+    </project>
+    <manifest>
+        <name>ELENA GUI Library</name>
+        <version>6.0.0</version>
+        <author>Aleksey Rakov</author>
+    </manifest>
+    <files>
+        <module>
+            <include>controls.l</include>
+            <include>win32_controls.l</include>
+            <include>win_forms.l</include>
+            <include>win_dialogs.l</include>
+        </module>
+    </files>
 </configuration>

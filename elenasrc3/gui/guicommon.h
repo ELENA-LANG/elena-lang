@@ -33,9 +33,6 @@ namespace elena_lang
 
 #endif
 
-   // --- Misc types
-   typedef unsigned int NotificationStatus;
-
    // --- Point ---
    struct Point
    {
@@ -167,21 +164,31 @@ namespace elena_lang
    };
 
    // --- NotifierBase ---
+   class EventBase
+   {
+   public:
+      int status;
+
+      virtual int eventId() = 0;
+
+      EventBase(int status)
+         : status(status)
+      {
+
+      }
+   };
+
    class NotifierBase
    {
    public:
-      virtual void notify(int id, NotificationStatus status) = 0;
-      virtual void notifySelection(int id, size_t param) = 0;
-      virtual void notifyTreeItem(int id, size_t item, size_t param) = 0;
-      virtual void notifyCompletion(int id, int param) = 0;
-      virtual void notifyContextMenu(int id, short x, short y, bool hasSelection) = 0;
+      virtual void notify(EventBase* event) = 0;
    };
 
    // --- GUIApp ---
    class GUIApp : public NotifierBase
    {
    public:
-      virtual int run(GUIControlBase* mainWindow, bool maximized, int notificationId, NotificationStatus notificationStatus) = 0;
+      virtual int run(GUIControlBase* mainWindow, bool maximized, EventBase* startEvent) = 0;
 
       virtual ~GUIApp() = default;
    };

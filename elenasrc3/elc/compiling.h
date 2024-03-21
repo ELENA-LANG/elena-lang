@@ -133,7 +133,8 @@ namespace elena_lang
          pos_t defaultStackAlignment, 
          pos_t defaultRawStackAlignment,
          pos_t defaultEHTableEntrySize,
-         int minimalArgList);
+         int minimalArgList,
+         ustr_t profile);
       int clean(Project& project);
 
       void setVerboseOn()

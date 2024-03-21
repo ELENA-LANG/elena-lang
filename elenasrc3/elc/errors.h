@@ -118,6 +118,7 @@ namespace elena_lang
    constexpr auto infoMsgUnknownMessage      = "\ninfo 706:   unhandled message: %s\n";
    constexpr auto infoMsgTargetClass         = "info 707:   target class: %s\n";
    constexpr auto infoMsgScopeMethod         = "info 708:   in the method: %s\n";
+   constexpr auto infoMssgExptectedType      = "\ninfo 709: the expected type is %s, but the actual type is %s\n";
 
 } // _ELENA_
 

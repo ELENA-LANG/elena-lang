@@ -230,7 +230,6 @@ bool DocumentView::LexicalReader :: readNext(TextWriter<text_c>& writer, pos_t l
 DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter) :
    _undoBuffer(UNDO_BUFFER_SIZE),
    _formatter(text, formatter, &_markers),
-   _notifiers(nullptr),
    _markers({})
 {
    _text = text;
@@ -639,15 +638,11 @@ void DocumentView :: movePageUp(DocumentChangeStatus& changeStatus, bool selecti
    }
 }
 
-void DocumentView :: notifyOnChange(DocumentChangeStatus& changeStatus)
+void DocumentView :: refresh(DocumentChangeStatus& changeStatus)
 {
    if (status.oldModified != status.modifiedMode) {
       changeStatus.modifiedChanged = true;
       status.oldModified = status.modifiedMode;
-   }
-
-   for(auto it = _notifiers.start(); !it.eof(); ++it) {
-      (*it)->onDocumentUpdate(changeStatus);
    }
 }
 
@@ -1048,9 +1043,6 @@ void DocumentView :: save(path_t path)
 
    status.modifiedMode = false;
    status.unnamed = false;
-
-   DocumentChangeStatus changeStatus = {};
-   notifyOnChange(changeStatus);
 }
 
 bool DocumentView :: canRedo()

@@ -198,3 +198,38 @@ public extension inputOp
       ^ self
    }
 }
+
+public extension outputCharFormatterOp
+{
+   printPaddingRightChar(int width, char ch, params object[] list)
+   {
+      auto buffer := new TextBuilder();
+      
+      int len := list.Length;
+      
+      for(int i := 0; i < len; i += 1)
+      {
+         object obj := list[i];
+         
+         buffer.write(obj.toString())
+      };
+      
+      self.writePaddingRight(buffer.Value, ch, width)
+   }
+   
+   printPaddingLeftChar(int width, char ch, params object[] list)
+   {
+      auto buffer := new TextBuilder();
+      
+      int len := list.Length;
+      
+      for(int i := 0; i < len; i += 1)
+      {
+         object obj := list[i];
+         
+         buffer.write(obj.toString())
+      };
+      
+      self.writePaddingLeft(buffer.Value, ch, width)
+   }
+}

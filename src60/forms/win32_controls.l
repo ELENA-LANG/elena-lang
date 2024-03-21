@@ -15,6 +15,8 @@ public interface IControl
 
    abstract open();
 
+   abstract close();
+
    abstract click();
 }
 
@@ -48,6 +50,10 @@ public abstract class BaseWinControl : BaseControl
         
       self.onCreate()
    }   
+
+   close()
+   {
+   }
 
    set Caption(string s)
    {
@@ -184,6 +190,7 @@ public abstract class BaseWinControl : BaseControl
 public abstract class BaseWinContainer : BaseWinControl
 {
    List<IControl> _controls;
+   Func1          onResize : event;
 
    protected constructor new()
       <= super new()
@@ -208,6 +215,13 @@ public abstract class BaseWinContainer : BaseWinControl
       ^ nil
    }        
 
+   internal resize(WindowHandle hwnd, int width, int height)
+   {
+      super.resize(hwnd, width, height);
+
+      onResize?.(self)
+   }
+
    open()
    {
       super.open();
@@ -215,6 +229,16 @@ public abstract class BaseWinContainer : BaseWinControl
       int len := _controls.Length;
       for (int i := 0; i < len; i += 1) {
          _controls[i].open()
+      }
+   }
+
+   close()
+   {
+      super.close();
+        
+      int len := _controls.Length;
+      for (int i := 0; i < len; i += 1) {
+         _controls[i].close()
       }
    }
 }
@@ -568,9 +592,9 @@ public closed class Paintbox : BaseWinControl, interface<IControl>
 
 public sealed class Imagebox : Paintbox
 {
-    HBITMAP  _image;
-    HDC      _imageDC;
-    bool     _needToRefresh;
+   HBITMAP  _image;
+   HDC      _imageDC;
+   bool     _needToRefresh;
 
    constructor new()
       <= super new()
@@ -595,13 +619,13 @@ public sealed class Imagebox : Paintbox
         
       struct.begin(_handle);
         
-      _region.readDimensionTo(ref int width, ref int height);
-        
+      int width := _region.Width;
+      int height := _region.Height;
+
       HDC dc := struct.HDC;
         
       dc.copy(0, 0, width, height, _imageDC, 0, 0, SRCCOPY);
-//        int err := system'external'KERNEL32 GetLastError.
-                
+
       struct.end(_handle)
    }
 
@@ -698,25 +722,25 @@ public abstract class BasePanel : BaseWinContainer
       _controls.append(control)        
    }
     
-//    int Width
-//    {
-//        set(int v)
-//        {
-//            super.Width := v;
-//            
-//            theFrame.Width := v
-//        }        
-//    }
-//    
-//    int Height
-//    {
-//        set(int h)
-//        {
-//            super.Height := h;
-//            
-//            theFrame.Height := h
-//        }
-//    }
+   int Width
+   {
+      set(int v)
+      {
+         super.Width := v;
+
+         _frame.Width := v
+      }        
+   }
+    
+   int Height
+   {
+      set(int h)
+      {
+         super.Height := h;
+
+         _frame.Height := h
+      }
+   }
             
    setRegion(int x, int y, int width, int height)
    {
@@ -725,28 +749,28 @@ public abstract class BasePanel : BaseWinContainer
       _frame.setRegion(0, 0, width, height);
    }
     
-//   string Caption
+   string Caption
+   {
+      set(string caption)
+      {
+         _frame.Caption := caption
+      }
+        
+      set(wide caption)
+      {
+         _frame.Caption := caption
+      }
+   }    
+//
+//   set Caption(string s)
 //   {
-//      set(string caption)
-//      {
-//            theFrame.Caption := caption
-//      }
-//        
-//      set(wide caption)
-//      {
-//         theFrame.Caption := caption
-//      }
-//   }    
-
-   set Caption(string s)
-   {
-      _frame.Caption := s
-   }
-    
-   set Caption(wide s)
-   {
-      _frame.Caption := s
-   }
+//      _frame.Caption := s
+//   }
+//    
+//   set Caption(wide s)
+//   {
+//      _frame.Caption := s
+//   }
 
    internal resize(Handle handle, int width, int height)
    {

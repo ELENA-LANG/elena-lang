@@ -18,8 +18,6 @@ int StatusBarWidths[5] = { 200, 120, 80, 60, 80 };
 IDEStatusBar :: IDEStatusBar(IDEModel* model)
    : StatusBar(5, StatusBarWidths), _model(model)
 {
-   _model->sourceViewModel.attachDocListener(this);
-
    setIDEStatus(IDEStatus::Empty);
 
    //_pendingIDESettings = true;
@@ -39,6 +37,15 @@ void IDEStatusBar :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
 
       setText(1, line.str());
    }
+   if (changeStatus.readOnlyChanged) {
+      auto docView = _model->viewModel()->DocView();
+
+      String<text_c, 30> line;
+      line.copy(docView->isReadOnly() ? _T("Read-only") : _T(""));
+
+      setText(2, line.str());
+   }
+
 }
 
 void IDEStatusBar :: setRectangle(Rectangle rec)
@@ -66,9 +73,6 @@ void IDEStatusBar :: setIDEStatus(IDEStatus status)
       case IDEStatus::Compiling:
          setText(0, _T(" Compiling..."));
          break;
-      case IDEStatus::Busy:
-         setText(0, _T(" Busy"));
-         break;
       case IDEStatus::AutoRecompiling:
          setText(0, _T(" Recompiling..."));
          break;
@@ -83,6 +87,12 @@ void IDEStatusBar :: setIDEStatus(IDEStatus status)
          break;
       case IDEStatus::Broken:
          setText(0, _T(" The process was broken"));
+         break;
+      case IDEStatus::Running:
+         setText(0, _T(" Running..."));
+         break;
+      case IDEStatus::Stopped:
+         setText(0, _T(" Stopped"));
          break;
       default:
          break;

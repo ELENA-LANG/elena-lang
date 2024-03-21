@@ -3,7 +3,7 @@
 //
 //		This file contains implematioon of the DebugController class and
 //    its helpers
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -245,6 +245,7 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             case DebugSymbol::FieldAddress:
             case DebugSymbol::ParameterInfo:
             case DebugSymbol::FieldInfo:
+            case DebugSymbol::LocalInfo:
                // replace field name reference with the name
                stringReader.seek(info.addresses.source.nameRef);
 
@@ -481,7 +482,7 @@ DebugLineInfo* DebugInfoProvider :: seekClassInfo(addr_t address, IdentifierStri
 // --- DebugController ---
 
 DebugController :: DebugController(DebugProcessBase* process, ProjectModel* model, 
-   SourceViewModel* sourceModel, NotifierBase* notifier, DebugSourceController* sourceController)
+   SourceViewModel* sourceModel, DebugSourceController* sourceController)
    : _provider(model)
 {
    _started = false;
@@ -489,7 +490,6 @@ DebugController :: DebugController(DebugProcessBase* process, ProjectModel* mode
    _running = false;
    _sourceModel = sourceModel;
    _model = model;
-   _notifier = notifier;
    _currentPath = nullptr;
    _sourceController = sourceController;
 }
@@ -527,6 +527,7 @@ void DebugController :: debugThread()
             _process->run();
             _process->resetEvent(DEBUG_RESUME);
             _process->setEvent(DEBUG_ACTIVE);
+
             break;
          case DEBUG_SUSPEND:
             _running = false;
@@ -657,25 +658,19 @@ void DebugController :: processStep()
 
 void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath)
 {
-   bool found = true;
    if (lineInfo) {
-      _sourceModel->clearTraceLine();
-
+      bool found = true;
       if (!_currentModule.compare(moduleName) || !sourcePath.compare(_currentPath)) {
          _currentModule.copy(moduleName);
          _currentPath = sourcePath;
 
-         PathString path(sourcePath);found = _sourceController->selectSource(_model, _sourceModel, moduleName, *path);
+         PathString path(sourcePath); 
+         found = _sourceController->selectSource(_model, _sourceModel, moduleName, *path);
       }
 
-      if (found) {
-         _sourceModel->setTraceLine(lineInfo->row, true);
-
-         _notifier->notify(NOTIFY_DEBUG_CHANGE, DEBUGWATCH_CHANGED | FRAME_CHANGED);
-      }
-      else _notifier->notify(NOTIFY_DEBUG_NOSOURCE, FRAME_CHANGED);
-      
+      _sourceController->traceStep(_sourceModel, found, lineInfo->row);
    }
+   else _sourceController->traceStep(_sourceModel, false, -1);
 }
 
 void DebugController :: onStop()
@@ -687,7 +682,7 @@ void DebugController :: onStop()
    _currentModule.clear();
    _currentPath = nullptr;
 
-   _notifier->notifyCompletion(NOTIFY_DEBUGGER_RESULT, DEBUGGER_STOPPED);
+   _sourceController->traceFinish(_sourceModel);
 }
 
 void DebugController :: run()
@@ -731,13 +726,16 @@ void DebugController :: runToCursor(ustr_t ns, ustr_t path, int row)
    _process->setEvent(DEBUG_RESUME);
 }
 
-void DebugController :: addBreakpoint(Breakpoint* bp)
+void DebugController :: toggleBreakpoint(Breakpoint* bp, bool adding)
 {
    ModuleBase* currentModule = _provider.resolveModule(*bp->module);
    if (currentModule != nullptr) {
       addr_t address = _provider.findNearestAddress(currentModule, *bp->source, bp->row);
       if (address != INVALID_ADDR) {
-         _process->addBreakpoint(address);
+         if (adding) {
+            _process->addBreakpoint(address);
+         }
+         else _process->removeBreakpoint(address);
       }
    }
 }
@@ -818,9 +816,6 @@ bool DebugController :: startThread()
 
    while (_process->waitForEvent(DEBUG_ACTIVE, 0));
 
-   //_listener->onStart();
-   _notifier->notify(NOTIFY_DEBUG_START, 0);
-
    return _process->isStarted();
 }
 
@@ -865,8 +860,8 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
    // if there are new records in debug section
    if (!reader.eof()) {
       _provider.load(reader, starting, _process);
-
-      _notifier->notify(NOTIFY_DEBUG_LOAD, 0);
+      
+      _sourceController->traceStart(_model);
 
       _provider.setDebugInfoSize(reader.position());
 
@@ -925,12 +920,15 @@ void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item,
    }
 }
 
-void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, ustr_t className)
+void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, ustr_t className, addr_t vmtAddress)
 {
    if (address != 0) {
       // read class VMT address if not provided
       IdentifierString classNameStr;
-      addr_t vmtAddress = _process->getClassVMT(address);
+
+      if (!vmtAddress)
+         vmtAddress = _process->getClassVMT(address);
+
       ref_t flags = 0;
       if (!emptystr(className)) {
          classNameStr.copy(className);
@@ -1017,7 +1015,7 @@ void* DebugController :: readIntArrayLocal(ContextBrowserBase* watch, void* pare
          unsigned int b = _process->getDWORD(address + i * 4);
 
          value.copy("[");
-         value.appendInt(i);
+         value.appendInt((int)i);
          value.append("]");
 
          WatchContext context = { item, address + i * 4};
@@ -1078,9 +1076,9 @@ void DebugController :: readObjectArray(ContextBrowserBase* watch, void* parent,
    if (level <= 0)
       return;
 
-   size_t length = _min(_process->getArrayLength(address) / sizeof(addr_t), 100);
+   int length = (int)_min(_process->getArrayLength(address) / sizeof(addr_t), 100);
    IdentifierString value;
-   for (size_t i = 0; i < length; i++) {
+   for (int i = 0; i < length; i++) {
       addr_t itemAddress = _process->getField(address, i);
 
       value.copy("[");
@@ -1168,7 +1166,7 @@ inline disp_t getFrameDisp(DebugLineInfo& frameInfo, disp_t offset)
 
 inline const char* getClassInfo(DebugLineInfo& frameInfo)
 {
-   if (frameInfo.symbol == DebugSymbol::ParameterInfo) {
+   if (frameInfo.symbol == DebugSymbol::ParameterInfo || frameInfo.symbol == DebugSymbol::LocalInfo) {
       return (const char*)frameInfo.addresses.source.nameRef;
    }
    else return nullptr;
@@ -1267,12 +1265,28 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
                      (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
             case DebugSymbol::ParameterAddress:
+            {
+               ustr_t className = getClassInfo(lineInfo[index + 2]);
+               addr_t vmtAddress = _provider.getClassAddress(className);
+
                item = readObject(watch, nullptr,
                   _process->getStackItem(
                      lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
-                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1, 
-                  getClassInfo(lineInfo[index + 2]));
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1,
+                  className, vmtAddress);
                break;
+            }
+            case DebugSymbol::LocalAddress:
+            {
+               ustr_t className = getClassInfo(lineInfo[index + 1]);
+               addr_t vmtAddress = _provider.getClassAddress(className);
+
+               item = readObject(watch, nullptr,
+                  _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1,
+                  className, vmtAddress);
+               break;
+            }
             default:
                break;
          }

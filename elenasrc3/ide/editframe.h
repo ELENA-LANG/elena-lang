@@ -16,15 +16,13 @@ namespace elena_lang
    class SourceViewModel : public TextViewModel
    {
    public:
-      void beforeDocumentSelect(int index) override;
+      void refresh(DocumentChangeStatus& status) override;
 
-      void notifyOnChange(DocumentChangeStatus& status) override;
+      void setTraceLine(int row, bool withCursor, DocumentChangeStatus& status);
+      void clearTraceLine(DocumentChangeStatus& status);
 
-      void setTraceLine(int row, bool withCursor);
-      void clearTraceLine();
-
-      void setErrorLine(int row, int column, bool withCursor);
-      void clearErrorLine();
+      void setErrorLine(int row, int column, bool withCursors, DocumentChangeStatus& status);
+      void clearErrorLine(DocumentChangeStatus& status);
 
       void clearDocumentView() override;
 

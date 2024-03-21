@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Controller header File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef IDECONTROLLER_H
@@ -18,10 +18,10 @@ namespace elena_lang
    class SourceViewController : public TextViewController
    {
    public:
-      void newSource(TextViewModelBase* model, ustr_t name, bool autoSelect, NotificationStatus& status);
+      void newSource(TextViewModelBase* model, ustr_t name, bool autoSelect, int& status);
       bool openSource(TextViewModelBase* model, ustr_t name, path_t sourcePath,
-         FileEncoding encoding, bool autoSelect, NotificationStatus& status);
-      void closeSource(TextViewModelBase* model, int index, bool autoSelect, NotificationStatus& status);
+         FileEncoding encoding, bool autoSelect, int& status);
+      void closeSource(TextViewModelBase* model, int index, bool autoSelect, int& status);
 
       void renameSource(TextViewModelBase* model, ustr_t oldName, ustr_t newName, path_t newSourcePath);
 
@@ -43,6 +43,8 @@ namespace elena_lang
       RunTo
    };
 
+   typedef bool(*CompareFileDateTime)(path_t, path_t);
+
    // --- ProjectController ---
    class ProjectController : public NotifierBase
    {
@@ -56,13 +58,16 @@ namespace elena_lang
 
       PathHelperBase*         _pathHelper;
 
+      CompareFileDateTime     _compareFileModifiedTime;
+
       void loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
       void saveConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node root, ConfigFile::Node platformRoot);
 
+      void loadProfileList(ProjectModel& model, ConfigFile& config, ConfigFile::Node platformRoot);
+
       path_t retrieveSourceName(ProjectModel* model, path_t sourcePath, NamespaceString& retVal, PathString& subPath);
 
-      bool onDebugAction(ProjectModel& model, DebugAction action);
-      bool isOutaged(bool noWarning);
+      bool isOutaged(ProjectModel& projectModel, SourceViewModel& sourceModel);
 
       bool startDebugger(ProjectModel& model/*, bool stepMode*/);
 
@@ -81,11 +86,11 @@ namespace elena_lang
 
       void setProjectPath(ProjectModel& model, path_t projectFile);
 
-      NotificationStatus openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
-      NotificationStatus newProject(ProjectModel& model);
-      NotificationStatus openProject(ProjectModel& model, path_t projectFile);
-      NotificationStatus saveProject(ProjectModel& model);
-      NotificationStatus closeProject(ProjectModel& model);
+      int openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
+      int newProject(ProjectModel& model);
+      int openProject(ProjectModel& model, path_t projectFile);
+      void saveProject(ProjectModel& model);
+      int closeProject(ProjectModel& model);
 
       path_t getSourceByIndex(ProjectModel& model, int index);
 
@@ -98,6 +103,8 @@ namespace elena_lang
       bool startVMConsole(ProjectModel& model);
       void stopVMConsole();
 
+      bool onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, bool& outaged);
+
       void doDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action);
       void doDebugStop(ProjectModel& model);
 
@@ -105,7 +112,7 @@ namespace elena_lang
       void refreshDebugContext(ContextBrowserBase* contextBrowser);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, size_t param, addr_t address);
 
-      void toggleBreakpoint(ProjectModel& model, SourceViewModel& sourceModel, int row);
+      bool toggleBreakpoint(ProjectModel& model, SourceViewModel& sourceModel, int row, DocumentChangeStatus& status);
 
       void loadBreakpoints(ProjectModel& model);
 
@@ -114,41 +121,22 @@ namespace elena_lang
          _notifier = notifier;
       }
 
-      void notify(int id, NotificationStatus status) override
+      void notify(EventBase* event) override
       {
          if (_notifier)
-            _notifier->notify(id, status);
-      }
-      void notifySelection(int id, size_t param) override
-      {
-         if (_notifier)
-            _notifier->notifySelection(id, param);
-      }
-      void notifyCompletion(int id, int param) override
-      {
-         if (_notifier)
-            _notifier->notifyCompletion(id, param);
-      }
-      void notifyTreeItem(int id, size_t item, size_t param) override
-      {
-         if (_notifier)
-            _notifier->notifyTreeItem(id, item, param);
-      }
-      void notifyContextMenu(int id, short x, short y, bool hasSelection) override
-      {
-         if (_notifier)
-            _notifier->notifyContextMenu(id, x, y, hasSelection);
+            _notifier->notify(event);
       }
 
       ProjectController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* debugProcess, 
          ProjectModel* model, SourceViewModel* sourceModel,
-         DebugSourceController* sourceController, PlatformType platform, PathHelperBase* pathHelper)
-         : _outputProcess(outputProcess), _vmProcess(vmConsoleProcess), _debugController(debugProcess, model, sourceModel, this, sourceController),
+         DebugSourceController* sourceController, PlatformType platform, PathHelperBase* pathHelper, CompareFileDateTime comparer)
+         : _outputProcess(outputProcess), _vmProcess(vmConsoleProcess), _debugController(debugProcess, model, sourceModel, sourceController),
            _autoWatch({ nullptr, 0 }),
            _pathHelper(pathHelper)
       {
          _notifier = nullptr;
          _platform = platform;
+         _compareFileModifiedTime = comparer;
       }
    };
 
@@ -157,27 +145,26 @@ namespace elena_lang
    {
       NotifierBase*           _notifier;
 
-      bool openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile, NotificationStatus& status);
-      bool openFile(IDEModel* model, path_t sourceFile, NotificationStatus& status);
-      bool openProject(IDEModel* model, path_t projectFile, NotificationStatus& status);
+      bool openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile, int& status);
+      bool openFile(IDEModel* model, path_t sourceFile, int& status);
+      int openProject(IDEModel* model, path_t projectFile);
       bool closeProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
-         NotificationStatus& status);
+         int& status);
 
       bool closeFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
-         int index, NotificationStatus& status);
+         int index, int& status);
       bool saveFile(FileDialogBase& dialog, IDEModel* model, int index, bool forcedMode);
       bool closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
-         NotificationStatus& status);
+         int& status);
       bool closeAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
-         NotificationStatus& status);
-      bool saveAll(FileDialogBase& dialog, IDEModel* model, bool forcedMode,
-         NotificationStatus& status);
+         int& status);
+      bool saveAll(FileDialogBase& dialog, IDEModel* model, bool forcedMode);
 
       void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);
 
       void onCompilationStart(IDEModel* model);
-      void onCompilationStop(IDEModel* model);
-      void onCompilationBreak(IDEModel* model);
+
+      void notifyOnModelChange(int projectStatus);
 
    public:
       FileEncoding         defaultEncoding;
@@ -195,6 +182,7 @@ namespace elena_lang
          _notifier = notifier;
 
          projectController.setNotifier(notifier);
+         sourceController.setNotifier(notifier);
       }
 
       path_t retrieveSingleProjectFile(IDEModel* model);
@@ -202,8 +190,11 @@ namespace elena_lang
       //bool openFile(IDEModel* model, path_t sourceFile);
       bool doOpenProjectSourceByIndex(IDEModel* model, int index);
 
+      void traceStart(ProjectModel* model) override;
       bool selectSource(ProjectModel* model, SourceViewModel* sourceModel,
-         ustr_t moduleName, path_t sourcePath);
+         ustr_t moduleName, path_t sourcePath) override;
+      void traceStep(SourceViewModel* sourceModel, bool found, int row) override;
+      void traceFinish(SourceViewModel* sourceModel) override;
 
       void highlightError(IDEModel* model, int row, int column, path_t path);
 
@@ -230,7 +221,7 @@ namespace elena_lang
 
       bool doCompileProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
       void doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model);
-      void doDebugAction(IDEModel* model, DebugAction action);
+      void doDebugAction(IDEModel* model, DebugAction action, MessageDialogBase& mssgDialog);
       void doDebugStop(IDEModel* model);
 
       void doStartVMConsole(IDEModel* model);
@@ -255,10 +246,13 @@ namespace elena_lang
 
       void onCompilationCompletion(IDEModel* model, int exitCode, 
          text_str output, ErrorLogBase* log);
-      void onDebuggerHook(IDEModel* model);
+      void onDebuggerHook(ProjectModel* model);
+      void onDebuggerStep(IDEModel* model);
       void onDebuggerStop(IDEModel* model);
-      void onStatusChange(IDEModel* model, IDEStatus newStatus);
       void onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel* model);
+      void onDocSelection(IDEModel* model, int index);
+
+      void onIDEStop(IDEModel* model);
 
       void doInclude(IDEModel* model);
 
@@ -266,16 +260,14 @@ namespace elena_lang
 
       bool onClose(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
 
-      void init(IDEModel* model);
-
-      void onProgramStop(IDEModel* model);
+      void init(IDEModel* model, int& status);
 
       IDEController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* process,
-         IDEModel* model, TextViewSettings& textViewSettings, PlatformType platform, PathHelperBase* pathHelper
+         IDEModel* model, TextViewSettings& textViewSettings, PlatformType platform, PathHelperBase* pathHelper, CompareFileDateTime comparer
       ) :
          sourceController(textViewSettings),
          projectController(outputProcess, vmConsoleProcess, process, &model->projectModel, &model->sourceViewModel,
-            this, platform, pathHelper)
+            this, platform, pathHelper, comparer)
       {
          _notifier = nullptr;
          defaultEncoding = FileEncoding::UTF8;

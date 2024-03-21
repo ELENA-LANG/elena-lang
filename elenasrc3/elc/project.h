@@ -3,7 +3,7 @@
 //
 //		This file contains the project class declaration
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PROJECT_H
@@ -42,12 +42,17 @@ namespace elena_lang
 
       void loadTargetType(ConfigFile& config, ConfigFile::Node& configRoot);
 
-      void loadConfig(ConfigFile& config, path_t configPath);
+      void loadConfig(ConfigFile& config, path_t configPath, ustr_t profileName);
       void loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node& root);
+      void loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node& root, ustr_t profileName);
 
       void loadDefaultConfig();
 
+      void loadProfileList(ConfigFile& config);
+
    public:
+      IdentifierList availableProfileList;
+
       PlatformType SystemTarget();
       PlatformType Platform();
       PlatformType TargetType();
@@ -80,14 +85,14 @@ namespace elena_lang
 
       bool loadConfigByName(path_t configPath, ustr_t name, bool markAsLoaded);
 
-      bool loadConfig(path_t path, bool mainConfig);
+      bool loadConfig(path_t path, ustr_t profileName, bool mainConfig);
 
-      bool loadProject(path_t path);
+      bool loadProject(path_t path, ustr_t profileName);
 
       void prepare();
 
       Project(path_t path, PlatformType platform, PresenterBase* presenter)
-         : XmlProjectBase(platform), _basePath(path)
+         : XmlProjectBase(platform), _basePath(path), availableProfileList(DEFAULT_STR)
       {
          _encoding = FileEncoding::UTF8;
 

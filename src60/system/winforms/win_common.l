@@ -1,3 +1,5 @@
+public const int CW_USEDEFAULT           = 80000000h;
+
 public const int GWL_USERDATA            = -21;
 
 public const int SWP_NOSIZE       = 0001h;
@@ -95,6 +97,7 @@ public const int WM_SETTEXT       = 0Ch;
 public const int WM_GETTEXT       = 0Dh;
 public const int WM_GETTEXTLENGTH = 0Eh;
 public const int WM_PAINT         = 0Fh;
+public const int WM_CLOSE         = 10h;
 
 public const int OFN_PATHMUSTEXIST = 00000800h;
 public const int OFN_EXPLORER      = 00080000h;
