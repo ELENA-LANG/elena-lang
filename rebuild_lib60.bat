@@ -1,4 +1,4 @@
-bin\sg-cli dat\sg\syntax60.txt
+.\bin\sg-cli dat\sg\syntax60.txt
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
