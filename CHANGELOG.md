@@ -1,3 +1,51 @@
+## ELENA 6.0.8
+*21.03.2024*
+
+- ELENA
+  - [ADDED] an opcode LNEG
+
+- ELC
+  - [ADDED] native negate operation for long integers
+  - [ADDED] #588 - Operation with int constant
+  - [ADDED] multi-profiles per a single project file; new option -l<profile-name>
+  - [ADDED] #638 - Accessing a variable declared in the upper scope
+  - [FIXED] calling a variadic method without arguments directly
+  - [FIXED] declaring a template based type with T is an array as a method result
+  - [FIXED] GC : perm generation is not included as roots for the partial collect
+  - [FIXED] generating a proper debug info for local structure / structure self
+  - [FIXED] it has to be possible to convert int literal directly to v_int8 / v_int16 / v_int64, depending on the value size 
+  - [FIXED] x86 MTA : starting the new thread / program
+  - [FIXED] x86 MTA : GC routine
+  - [FIXED] byrefHandler : if it is not contain the explicit return, assign self to byref retVal
+  - [FIXED] no need for typecasting operation after if-else operation with both branches containging returning operation
+  - [FIXED] optimizing operation with int constants
+
+- API
+  - [ADDED] sqlite module
+  - [FIXED] string.toUpper() : returns a string with an incorrect length
+  - [FIXED] windproc
+  - [ADDED] xforms
+
+- SAMPLES
+  - [ADDED] sqlite_test
+  - [FIXED] Rosetta Code : Interactive programming (repl), Vigenère cipher
+  - [ADDED] c_a_g sample
+  - [ADDED] agenda sample
+  - [ADDED] graph sample
+
+- Tools
+  - [ADDED] support for stdcall for win32
+
+- IDE
+  - [ADDED] project settings - select the project profile
+  - [FIXED] #634 - IDE debugger: the debugger must hide trace line on wait
+  - [FIXED] #634 - debugger step over some expressions
+  - [FIXED] #636 - IDE bugs
+  - [FIXED] displaying stack-allocated structures
+  - [FIXED] warn if the source code is not compiled after the change before run / debug
+  - [FIXED] warn if the source code is changed and not save before run / debug
+  - [FIXED] the document is in read-only mode during the debugging
+
 ## ELENA 6.0.7
 *11.02.2024*
 
