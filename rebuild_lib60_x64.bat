@@ -73,6 +73,9 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 echo system api test for amd64
+copy bin\elenart60_64.dll tests60\system_tests\
+copy bin\elenasm60_64.dll tests60\system_tests\
+
 tests60\system_tests\system_tests64.exe
 @echo off 
 if %ERRORLEVEL% NEQ 0 GOTO TestError
