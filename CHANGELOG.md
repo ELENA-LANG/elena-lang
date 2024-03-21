@@ -161,7 +161,7 @@
 *31.03.2023*
 
 - ELENA
-  - fixing a critical error with long number comparision operations
+  - fixing a critical error with long number comparison operations
   - (re)implementing Script Engine (elenasm60 dll)
   - #568 : Converting an external function return to the pointer
   - starting work on (re)implementing multi-threading support (win x86)
@@ -185,7 +185,7 @@
   - #535 : Setting several properties in a row 
   - #530 : Supporting unary operators : ! and -
   - supporting real number literal without postfix (e.g. 2.2)
-  - #539 : try-catch-finally opeator 
+  - #539 : try-catch-finally operator 
   - #538 : Bitwise operations 
   - #540 : support typeof attribute 
   - #541 : Support lazy creating 
