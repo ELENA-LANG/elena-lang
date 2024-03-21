@@ -46,11 +46,11 @@ jobs:
 
     - name: Compile Lib
       shell: cmd
-      run: rebuild_lib60_{{matrix.platform}}.bat
+      run: rebuild_lib60_${{matrix.platform}}.bat
 
     - name: Prepare Artifact
       shell: cmd
-      run: install\build_package_{{matrix.platform}}.bat 
+      run: install\build_package_${{matrix.platform}}.bat 
 
     - uses: edgarrc/action-7z@v1
       with:
@@ -59,5 +59,5 @@ jobs:
     - name: ROM Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: elena-lang-{{matrix.platform}}-${{ env.BUILD_TAG }}
+        name: elena-lang-${{matrix.platform}}-${{ env.BUILD_TAG }}
         path: build${{ env.BUILD_TAG }}.7z
