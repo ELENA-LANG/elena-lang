@@ -28,7 +28,7 @@
 
 - SAMPLES
   - [ADDED] sqlite_test
-  - [FIXED] Rosetta Code : Interactive programming (repl), Vigenère cipher
+  - [FIXED] Rosetta Code : Interactive programming (repl), Vigenere ciphere
   - [ADDED] c_a_g sample
   - [ADDED] agenda sample
   - [ADDED] graph sample
