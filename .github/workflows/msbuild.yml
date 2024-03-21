@@ -46,7 +46,7 @@ jobs:
 
     - name: Compile Lib
       shell: cmd
-      run: rebuild_lib60.bat
+      run: rebuild_lib60_{{matrix.platform}}.bat
 
     - name: Prepare Artifact
       shell: cmd
