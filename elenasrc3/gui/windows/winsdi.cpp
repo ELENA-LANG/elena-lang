@@ -122,7 +122,7 @@ void VerticalBox :: setRectangle(Rectangle rec)
    }
    else {
       int fixedHeight = 0;
-      for (size_t i = 1; i < count; i++) {
+      for (int i = 1; i < count; i++) {
          fixedHeight += _list[i]->getRectangle().height();
          fixedHeight += _spacer;
       }

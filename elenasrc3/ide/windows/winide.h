@@ -142,6 +142,7 @@ namespace elena_lang
       void onIDEStatusChange(ModelNMHDR* rec);
       void onStartup(ModelNMHDR* rec);
       void onLayoutChange();
+      void onDocumentSelection();
 
       void onDebugStep();
       void onDebugWatch();
@@ -223,6 +224,7 @@ namespace elena_lang
       void goToLine();
 
       void includeFile();
+      void excludeFile();
 
       void openHelp();
       void showAbout();

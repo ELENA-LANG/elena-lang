@@ -52,7 +52,7 @@ jobs:
 
     - name: Prepare Artifact
       shell: cmd
-      run: build\build_package_${{matrix.platform}}.bat 
+      run: build\create_package_${{matrix.platform}}.bat 
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4

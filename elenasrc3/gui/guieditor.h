@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GUI common editor header File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GUIEDITOR_H
@@ -93,7 +93,7 @@ namespace elena_lang
 
       virtual void attachListener(TextViewListener* listener) = 0;
 
-      virtual void addDocumentView(ustr_t name, Text* text, path_t path) = 0;
+      virtual void addDocumentView(ustr_t name, Text* text, path_t path, bool included) = 0;
       virtual void renameDocumentView(ustr_t oldName, ustr_t newName, path_t path) = 0;
 
       virtual bool selectDocumentView(int index) = 0;
@@ -135,9 +135,9 @@ namespace elena_lang
    class TextViewControllerBase
    {
    public:
-      virtual void newDocument(TextViewModelBase* model, ustr_t name) = 0;
+      virtual void newDocument(TextViewModelBase* model, ustr_t name, bool included) = 0;
       virtual bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
-         FileEncoding encoding) = 0;
+         FileEncoding encoding, bool included) = 0;
 
       virtual bool selectDocument(TextViewModelBase* model, int index) = 0;
 

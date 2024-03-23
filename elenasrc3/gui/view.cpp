@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE View class body File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "view.h"
@@ -129,12 +129,14 @@ void TextViewModel :: onDocumentClose(int index)
    }
 }
 
-void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path)
+void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path, bool included)
 {
    empty = false;
 
    auto docView = new DocumentView(text, SourceFormatter::getInstance());
    docView->setSize(_size);
+   if (included)
+      docView->markAsInclued();
 
    _documents.add(new DocumentViewScope(name, path, docView));
    if (emptystr(path)) {

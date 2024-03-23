@@ -7,7 +7,7 @@ In development:
 
   === Iteration 21 ===
   --------------------------------------
-  dev: #637, windows executable - support manifest, net, #621, #610, #612
+  dev: #637, windows executable - support manifest, net, #610, #612
   opt:pi under 7 sec, #602, #611
   maint:#620,#622
   ide:vm debugger
@@ -17,9 +17,9 @@ In development:
   --------------------------------------
   - #617
   --------------------------------------
-  - #617 : include / exclude
-
   - work with elt in ide
+
+  - #621
 
   === Iteration 22 ===
   --------------------------------------

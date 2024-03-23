@@ -517,6 +517,9 @@ namespace elena_lang
          Item* tmp = nullptr;
          Item* previous = nullptr;
 
+         if (!_top)
+            return;
+
          if (item == _top->item)
             tmp = _top;
          else {

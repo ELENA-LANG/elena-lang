@@ -1,3 +1,5 @@
+REM NOTE : the script MUST be called from the root folder
+
 bin\sg64-cli dat\sg\syntax60.txt
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError

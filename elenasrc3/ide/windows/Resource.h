@@ -104,8 +104,9 @@
 #define IDM_SEARCH_GOTOLINE            704
 
 #define IDM_PROJECT_INCLUDE            801
-#define IDM_PROJECT_COMPILE            802
-#define IDM_PROJECT_OPTION             803
+#define IDM_PROJECT_EXCLUDE            802
+#define IDM_PROJECT_COMPILE            803
+#define IDM_PROJECT_OPTION             804
 
 #define IDD_SETTINGS                   850
 #define IDC_SETTINGS_TEPMPLATE         851
