@@ -242,6 +242,8 @@ namespace elena_lang
       void setCompiler(JITCompilerBase* compiler)
       {
          _compiler = compiler;
+
+         _withDebugInfo = _compiler->isWithDebugInfo();
       }
       void complete(JITCompilerBase* compiler, ustr_t superClass);
 

@@ -1,16 +1,13 @@
-public singleton convertor 
-{ 
-   generic(n)
-   {
-      MessageName mssg := __received.MessageName;
+import extensions;
 
-      ^ mssg(new ExtensionVariable(n, extensions'intConvertOp))
+public singleton MyClassToTest
+{
+   foo()
+   {
+      console.printLine("foo fired!")
    }
 }
 
 public program()
 {
-   var n := convertor.toInt("2");
-
-   console.writeLine(n)
 }

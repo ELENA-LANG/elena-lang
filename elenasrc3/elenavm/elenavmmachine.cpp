@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM declaration
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -204,6 +204,9 @@ bool ELENAVMMachine :: configurateVM(MemoryReader& reader, SystemEnv* env)
             _standAloneMode = false;
             break;
          case VM_INIT_CMD:
+            return true;
+            break;
+         case VM_ENDOFTAPE_CMD:
             eop = true;
             break;
          case VM_PRELOADED_CMD:
@@ -214,7 +217,7 @@ bool ELENAVMMachine :: configurateVM(MemoryReader& reader, SystemEnv* env)
       }
    }
 
-   return true;
+   return false;
 }
 
 void ELENAVMMachine :: fillPreloadedSymbols(JITLinker& jitLinker, MemoryWriter& writer, ModuleBase* dummyModule)
@@ -410,7 +413,8 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
    ByteArray      tapeArray(tape, size);
    MemoryReader   reader(&tapeArray);
 
-   stopVM();
+   if (_initialized)
+      stopVM();
 
    JITLinker* jitLinker = nullptr;
 
@@ -433,7 +437,7 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
       else jitLinker->setCompiler(_compiler);
    }
 
-   if (compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule)) {
+   if (_initialized && compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule)) {
       void* address = (void*)jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
 
       resumeVM(*jitLinker, env, (void*)criricalHandler);
@@ -443,7 +447,7 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
 
       return execute(env, address);
    }
-   if (!_standAloneMode) {
+   if (_initialized && !_standAloneMode) {
       resumeVM(*jitLinker, env, (void*)criricalHandler);
    }
 

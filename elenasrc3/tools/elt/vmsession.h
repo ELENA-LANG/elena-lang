@@ -1,9 +1,9 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Tools
 //
-//		This is a main file containing VM session code
+//		This is a main file containing VM session declaration
 //
-//                                             (C)2023, by Aleksey Rakov
+//                                             (C)2023-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELTVMSESSION_H
@@ -36,15 +36,18 @@ namespace elena_lang
       void executeCommandLine(const char* line);
 
       bool executeTape(void* tape);
-      bool executeScript(const char* line);
-      bool executeCommand(const char* line, bool& running);
 
    public:
       void printHelp();
 
+      bool executeScript(const char* line);
+      bool executeCommand(const char* line, bool& running);
+
       bool loadTemplate(path_t path);
 
       bool loadScript(ustr_t pathStr);
+
+      void start();
 
       void run();
 

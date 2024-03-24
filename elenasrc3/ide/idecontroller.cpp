@@ -350,6 +350,15 @@ bool ProjectController :: startVMConsole(ProjectModel& model)
    appPath.combine(*model.paths.vmTerminalPath);
 
    PathString cmdLine(*model.paths.vmTerminalPath);
+   cmdLine.append(" \"[[ #use ");
+
+   cmdLine.append(model.getPackage());
+   cmdLine.append(_T("=\"\""));
+   cmdLine.append(*model.projectPath);
+   cmdLine.append(_T("\""));
+
+   cmdLine.append("]]\""); 
+   cmdLine.append(" -i");
 
    return _vmProcess->start(*appPath, *cmdLine, *model.paths.appPath, false);
 }

@@ -17,7 +17,10 @@ In development:
   --------------------------------------
   - #617
   --------------------------------------
-  - work with elt in ide
+  - elt : exception handler (e.g. unresolved reference)
+
+  - work with elt in ide - invoke a code from the current project
+  - https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
 
   - #621
 
