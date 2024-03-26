@@ -2681,7 +2681,7 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SyntaxNode node, Fi
       ref_t staticRef = node.arg.reference;
       if (!staticRef) {
          // generate static reference
-         IdentifierString name(scope.module->resolveReference(scope.reference));
+         IdentifierString name(scope.module->resolveReference(scope.reference) + 1);
          name.append(STATICFIELD_POSTFIX);
 
          staticRef = scope.moduleScope->mapAnonymous(*name);

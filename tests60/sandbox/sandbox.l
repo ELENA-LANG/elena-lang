@@ -1,11 +1,14 @@
-import extensions;
 
-public singleton MyClassToTest
+public class A
 {
-   foo()
+   internal constructor()
    {
-      console.printLine("foo fired!")
    }
+
+   load(ref int retVal)
+   {
+      retVal := 2
+   }  
 }
 
 public program()

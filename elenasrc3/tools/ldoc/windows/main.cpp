@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ldoc main code
 //
-//                                              (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <windows.h>

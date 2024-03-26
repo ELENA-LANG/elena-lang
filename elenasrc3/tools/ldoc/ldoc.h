@@ -194,6 +194,9 @@ namespace elena_lang
 
       void loadMetaSections();
 
+      void loadType(ref_t reference, IdentifierString& target, bool templateMode);
+      void loadType(ustr_t referenceName, IdentifierString& target, bool templateMode);
+
       bool loadClassInfo(ref_t reference, ClassInfo& info, bool headerOnly = true);
       bool loadSymbolInfo(ref_t reference, SymbolInfo& info);
 

@@ -11,25 +11,22 @@ In development:
   opt:pi under 7 sec, #602, #611
   maint:#620,#622
   ide:vm debugger
-  tools:#618
+  tools:
   prom:#635,elena in nutshell every 1 week
   port:win64 gui,helloworld gui sample (button), chat sample, win64 script samples
   --------------------------------------
   - #617
   --------------------------------------
-  - elt : exception handler (e.g. unresolved reference)
+  - #637
 
-  - work with elt in ide - invoke a code from the current project
-  - https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
-
-  - #621
+  - port : rest of system module from lib50
 
   === Iteration 22 ===
   --------------------------------------
   dev: async programming (instant messagange sample (chat) ), #608
   op:
   opt:pi under 6 sec, #601
-  maint:
+  maint: #506
   exp:
   ide:
   tools:
