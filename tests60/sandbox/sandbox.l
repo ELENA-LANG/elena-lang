@@ -1,16 +1,12 @@
-
-public class A
+public singleton Tester
 {
-   internal constructor()
+   int getValue()
    {
+      ^ 2;
    }
-
-   load(ref int retVal)
-   {
-      retVal := 2
-   }  
 }
 
 public program()
 {
+   int r := Tester.getValue()
 }

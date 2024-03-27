@@ -3,7 +3,7 @@
 //
 //		This file contains Syntax Tree class declaration
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef SYNTAXTREE_H
@@ -246,9 +246,5 @@ namespace elena_lang
       static void copyNodeSafe(SyntaxTreeWriter& writer, SyntaxNode node, bool includingNode = false);
       static void saveNode(SyntaxNode node, MemoryBase* section, bool includingNode = false);
    };
-
-   // --- BuildTreeWriter ---
-
 }
-
 #endif

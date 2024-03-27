@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Script Reader class declaration.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef SCRIPTREADER_H

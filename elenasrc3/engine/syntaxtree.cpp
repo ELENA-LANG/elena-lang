@@ -9,6 +9,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "syntaxtree.h"
+#include "scriptreader.h"
 
 using namespace elena_lang;
 
