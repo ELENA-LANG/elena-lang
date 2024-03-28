@@ -2,18 +2,24 @@
 // ------------------------------------------------
 #include "bt_optimization.h"
 
-//#include "elena.h"
-
-#include "common.h"
+#include "compiler.h"
 
 using namespace elena_lang;
 
-TEST_F(BTOptimization1, CompilerTest) {
+TEST_F(BTOptimization1_1, CompilerTest) 
+{
+   // Arrange
+   Compiler* compiler = env.createCompiler();
 
-   CompilerEnvironment env;
+   BuildTree output;
+   BuildTreeWriter writer(output);
+   Compiler::SymbolScope rootScope(nullptr, 0, Visibility::Internal);
+   Compiler::Expression expression(compiler, rootScope, writer);
    
-   //Compiler* compiler = /*env.createCompiler()*/nullptr;
+   // Act
+   expression.compileRoot(syntaxTree.readRoot(), ExpressionAttribute::None);
 
-  EXPECT_EQ(1, 1);
-  EXPECT_TRUE(true);
+   // Assess
+   bool matched = BuildTree::compare(buildTree.readRoot(), output.readRoot());
+   EXPECT_TRUE(matched);
 }

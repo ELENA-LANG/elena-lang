@@ -8,12 +8,16 @@
 #ifndef TESTS_COMMON_H
 #define TESTS_COMMON_H
 
+#include "compiler.h"
+
 namespace elena_lang 
 {
    // --- CompilerEnvironment ---
    class CompilerEnvironment
    {
    public:
+      Compiler* createCompiler();
+
       CompilerEnvironment();
    };
 }

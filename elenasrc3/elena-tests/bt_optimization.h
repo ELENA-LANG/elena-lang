@@ -8,13 +8,20 @@
 #ifndef BTOPTIMIZATION_H
 #define BTOPTIMIZATION_H
 
-#include "common.h"
+#include "pch.h"
+#include "tests_common.h"
 
 namespace elena_lang
 {
-   class BTOptimization1 : public testing::Test
+   // Optimization 1 (byRefOp) : "a := b.get()" => "b.get(ref a)"
+   class BTOptimization1_1 : public testing::Test
    {
    protected:
+      SyntaxTree syntaxTree;
+      BuildTree  buildTree;
+
+      CompilerEnvironment env;
+
       void SetUp() override
       {
       }

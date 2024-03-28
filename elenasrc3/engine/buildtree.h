@@ -241,6 +241,12 @@ namespace elena_lang
    class BuildTree : public Tree<BuildKey, BuildKey::None>
    {
    public:
+      static bool compare(Tree<BuildKey, BuildKey::None>::Node n1, Tree<BuildKey, BuildKey::None>::Node n2)
+      {
+         // !! temporal
+         return false;
+      }
+
       static pos_t countChildren(Tree<BuildKey, BuildKey::None>::Node node, BuildKey mask)
       {
          pos_t counter = 0;

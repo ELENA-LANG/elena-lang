@@ -62,7 +62,7 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\common;..\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\elc;..\common;..\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>Default</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -127,6 +127,12 @@
     <ClInclude Include="bt_optimization.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\dump.cpp" />
+    <ClCompile Include="..\common\ustring.cpp" />
+    <ClCompile Include="..\elc\compiler.cpp" />
+    <ClCompile Include="..\elc\compilerlogic.cpp" />
+    <ClCompile Include="..\engine\bytecode.cpp" />
+    <ClCompile Include="..\engine\syntaxtree.cpp" />
     <ClCompile Include="tests_common.cpp" />
     <ClCompile Include="bt_optimization.cpp" />
     <ClCompile Include="compiler_tests.cpp" />

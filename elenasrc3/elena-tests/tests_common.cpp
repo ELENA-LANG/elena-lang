@@ -8,7 +8,7 @@
 
 #include "pch.h"
 // --------------------------------------------------------------------------
-#include "common.h"
+#include "tests_common.h"
 
 using namespace elena_lang;
 
@@ -17,4 +17,9 @@ using namespace elena_lang;
 CompilerEnvironment :: CompilerEnvironment()
 {
 
+}
+
+Compiler* CompilerEnvironment :: createCompiler()
+{
+   return nullptr;
 }
