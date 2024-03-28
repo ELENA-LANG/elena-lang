@@ -1043,6 +1043,23 @@ namespace elena_lang
          }
       };
 
+      class Class
+      {
+         friend class Compiler;
+
+         Compiler*         compiler;
+         ClassScope        scope;
+
+         void resolveClassPostfixes(SyntaxNode node, bool extensionMode);
+
+         void declareClassClass(ClassScope& classClassScope, SyntaxNode node, ref_t parentRef);
+
+      public:
+         void declare(SyntaxNode node);
+
+         Class(Compiler* compiler, Scope* parent, ref_t reference, Visibility visibility);
+      };
+
       class Expression
       {
          friend class Compiler;
@@ -1182,6 +1199,7 @@ namespace elena_lang
          Expression(Compiler* compiler, SourceScope& symbolScope, BuildTreeWriter& writer);
       };
 
+      friend class Class;
       friend class Expression;
 
    private:
@@ -1276,9 +1294,10 @@ namespace elena_lang
 
       ref_t declareMultiType(Scope& scope, SyntaxNode& node, ref_t elementRef);
 
-      void declareTemplateAttributes(TemplateScope& scope, SyntaxNode node, IdentifierString& postfix);
-      void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool identifierDeclarationMode);
       void declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& fldeclaredFlagsags);
+
+      void declareTemplateAttributes(TemplateScope& scope, SyntaxNode node, IdentifierString& postfix);
+      void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool identifierDeclarationMode);      
       void declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& mode);
       void declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode, bool templateBased);
       void declareArgumentAttributes(MethodScope& scope, SyntaxNode node, TypeInfo& typeInfo, bool declarationMode);
@@ -1286,6 +1305,9 @@ namespace elena_lang
       void declareExpressionAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo, ExpressionAttributes& mode);
 
       void declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, Scope::ScopeLevel level);
+
+      void declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor,
+         bool& yieldMethodNotAllowed, bool staticNotAllowed, bool templateBased);
 
       void registerTemplateSignature(TemplateScope& scope, SyntaxNode node, IdentifierString& signature);
       void registerExtensionTemplateMethod(TemplateScope& scope, SyntaxNode& node);
@@ -1324,14 +1346,13 @@ namespace elena_lang
       void generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey, bool closed);
       void generateClassField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool singleField);
       void generateClassStaticField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs);
-      void generateClassFields(ClassScope& scope, SyntaxNode node, bool singleField);
+      void generateClassFields(ClassScope& scope, SyntaxNode node, bool singleField);      
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
       bool declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo, bool ignoreDuplicate);
       bool declareYieldVariable(Scope& scope, ustr_t name, TypeInfo typeInfo);
 
-      void declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNode node);
-      void resolveClassPostfixes(ClassScope& scope, SyntaxNode node, bool extensionMode);
+      void declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNode node);      
 
       int resolveArraySize(Scope& scope, SyntaxNode node);
 
@@ -1351,12 +1372,8 @@ namespace elena_lang
       void declareMetaInfo(Scope& scope, SyntaxNode node);
       void declareMethodMetaInfo(MethodScope& scope, SyntaxNode node);
       void declareMethod(MethodScope& scope, SyntaxNode node, bool abstractMode, bool staticNotAllowed);
-      void declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor, 
-         bool& yieldMethodNotAllowed, bool staticNotAllowed, bool templateBased);
 
-      void declareSymbol(SymbolScope& scope, SyntaxNode node);
-      void declareClassClass(ClassScope& classClassScope, SyntaxNode node, ref_t parentRef);
-      void declareClass(ClassScope& scope, SyntaxNode node);
+      void declareSymbol(SymbolScope& scope, SyntaxNode node);            
 
       void declareNamespace(NamespaceScope& ns, SyntaxNode node, bool ignoreImport = false, 
          bool ignoreExtensions = false);
@@ -1483,9 +1500,10 @@ namespace elena_lang
       void compileCustomDispatcher(BuildTreeWriter& writer, ClassScope& scope);
       void compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef);
       void compileClosureClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node);
+
       void compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
          bool exclusiveMode = false, bool ignoreAutoMultimethod = false);
-      void compileClassVMT(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope, SyntaxNode node);      
+      void compileClassVMT(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope, SyntaxNode node);
 
       void compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, SyntaxNode node);
       void compileClassSymbol(BuildTreeWriter& writer, ClassScope& scope);

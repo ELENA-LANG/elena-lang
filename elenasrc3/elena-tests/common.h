@@ -5,7 +5,17 @@
 //                                             (C)2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef TESTS_COMMON_H
+#define TESTS_COMMON_H
 
-#endif
+namespace elena_lang 
+{
+   // --- CompilerEnvironment ---
+   class CompilerEnvironment
+   {
+   public:
+      CompilerEnvironment();
+   };
+}
+
+#endif // TESTS_COMMON_H

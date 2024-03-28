@@ -1973,6 +1973,84 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
    scope.moduleScope->module->mapSection(reference | mask, false);
 }
 
+void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor,
+   bool& yieldMethodNotAllowed, bool staticNotAllowed, bool templateBased)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::MetaExpression:
+         {
+            MetaScope metaScope(&scope, Scope::ScopeLevel::Class);
+
+            evalStatement(metaScope, current);
+            break;
+         }
+         case SyntaxKey::MetaDictionary:
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Class);
+            break;
+         case SyntaxKey::Method:
+         {
+            MethodScope methodScope(&scope);
+            methodScope.isExtension = scope.extensionClassRef != 0;
+            declareMethodAttributes(methodScope, current, methodScope.isExtension, templateBased);
+
+            if (!current.arg.reference) {
+               // NOTE : an extension method must be strong-resolved
+               declareVMTMessage(methodScope, current,
+                  methodScope.checkHint(MethodHint::Extension), true);
+
+               current.setArgumentReference(methodScope.message);
+            }
+            else methodScope.message = current.arg.reference;
+
+            if (methodScope.isYieldable()) {
+               if (yieldMethodNotAllowed) {
+                  scope.raiseError(errIllegalMethod, current);
+               }
+               else yieldMethodNotAllowed = true;
+            }
+
+            declareMethodMetaInfo(methodScope, current);
+            declareMethod(methodScope, current, scope.abstractMode, staticNotAllowed);
+
+            if (methodScope.checkHint(MethodHint::Constructor)) {
+               withConstructors = true;
+               if ((methodScope.message & ~STATIC_MESSAGE) == scope.moduleScope->buildins.constructor_message) {
+                  withDefaultConstructor = true;
+               }
+               else if (getArgCount(methodScope.message) == 0 && (methodScope.checkHint(MethodHint::Protected)
+                  || methodScope.checkHint(MethodHint::Internal)))
+               {
+                  // check if it is protected / iternal default constructor
+                  ref_t dummy = 0;
+                  ustr_t actionName = scope.module->resolveAction(getAction(methodScope.message), dummy);
+                  if (actionName.endsWith(CONSTRUCTOR_MESSAGE2) || actionName.endsWith(CONSTRUCTOR_MESSAGE))
+                     withDefaultConstructor = true;
+               }
+            }
+            else if (methodScope.checkHint(MethodHint::Predefined)) {
+               auto info = scope.info.methods.get(methodScope.message);
+               if (!info.hints) {
+                  // HOTFIX : the predefined method info should be saved separately
+                  scope.info.methods.add(methodScope.message, methodScope.info);
+               }
+               else scope.raiseError(errIllegalMethod, current);
+            }
+
+            if (!_logic->validateMessage(*scope.moduleScope, methodScope.info.hints, methodScope.message)) {
+               scope.raiseError(errIllegalMethod, current);
+            }
+            break;
+         }
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: loadMetaData(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t name)
 {
    IdentifierString metaForward(META_PREFIX, name);
@@ -2638,6 +2716,59 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
       verifyMultimethods(scope, node, methodKey, scope.info, implicitMultimethods);
 }
 
+void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags)
+{
+   bool closed = test(scope.info.header.flags, elClosed);
+
+   if (scope.isClassClass()) {
+      // generate static fields
+      generateClassFields(scope, node, false);
+   }
+   else {
+      // HOTFIX : flags / fields should be compiled only for the class itself
+      generateClassFlags(scope, declaredFlags);
+
+      // generate fields
+      generateClassFields(scope, node, SyntaxTree::countChild(node, SyntaxKey::Field) == 1);
+   }
+
+   injectVirtualCode(node, scope, closed);
+
+   if (scope.isClassClass()) {
+      generateMethodDeclarations(scope, node, SyntaxKey::StaticMethod, false);
+      generateMethodDeclarations(scope, node, SyntaxKey::Constructor, false);
+   }
+   else {
+      generateMethodDeclarations(scope, node, SyntaxKey::Method, closed);
+   }
+
+   bool emptyStructure = false;
+   bool customDispatcher = false;
+   bool withAbstractMethods = false;
+   mssg_t mixedUpVariadicMessage = 0;
+   _logic->validateClassDeclaration(*scope.moduleScope, _errorProcessor, scope.info,
+      emptyStructure, customDispatcher, withAbstractMethods, mixedUpVariadicMessage);
+   if (withAbstractMethods)
+      scope.raiseError(errAbstractMethods, node);
+   if (emptyStructure)
+      scope.raiseError(errEmptyStructure, node.findChild(SyntaxKey::Name));
+   if (customDispatcher)
+      scope.raiseError(errDispatcherInInterface, node.findChild(SyntaxKey::Name));
+   if (mixedUpVariadicMessage) {
+      IdentifierString messageName;
+      ByteCodeUtil::resolveMessageName(messageName, scope.module, mixedUpVariadicMessage);
+
+      _errorProcessor->info(infoMixedUpVariadic, *messageName);
+
+      scope.raiseError(errMixedUpVariadicMessage, node.findChild(SyntaxKey::Name));
+   }
+
+   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, scope.isClassClass());
+
+   // generate operation list if required
+   _logic->injectOverloadList(this, *scope.moduleScope, scope.info, scope.reference);
+}
+
 void Compiler :: generateClassFlags(ClassScope& scope, ref_t declaredFlags)
 {
    scope.info.header.flags |= declaredFlags;
@@ -2870,59 +3001,6 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node, bool si
    }
 }
 
-void Compiler :: generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags)
-{
-   bool closed = test(scope.info.header.flags, elClosed);
-
-   if (scope.isClassClass()) {
-      // generate static fields
-      generateClassFields(scope, node, false);
-   }
-   else {
-      // HOTFIX : flags / fields should be compiled only for the class itself
-      generateClassFlags(scope, declaredFlags);
-
-      // generate fields
-      generateClassFields(scope, node, SyntaxTree:: countChild(node, SyntaxKey::Field) == 1);
-   }
-
-   injectVirtualCode(node, scope, closed);
-
-   if (scope.isClassClass()) {
-      generateMethodDeclarations(scope, node, SyntaxKey::StaticMethod, false);
-      generateMethodDeclarations(scope, node, SyntaxKey::Constructor, false);
-   }
-   else {
-      generateMethodDeclarations(scope, node, SyntaxKey::Method, closed);
-   }
-
-   bool emptyStructure = false;
-   bool customDispatcher = false;
-   bool withAbstractMethods = false;
-   mssg_t mixedUpVariadicMessage = 0;
-   _logic->validateClassDeclaration(*scope.moduleScope, _errorProcessor, scope.info, 
-      emptyStructure, customDispatcher, withAbstractMethods, mixedUpVariadicMessage);
-   if (withAbstractMethods)
-      scope.raiseError(errAbstractMethods, node);
-   if (emptyStructure)
-      scope.raiseError(errEmptyStructure, node.findChild(SyntaxKey::Name));
-   if (customDispatcher)
-      scope.raiseError(errDispatcherInInterface, node.findChild(SyntaxKey::Name));
-   if (mixedUpVariadicMessage) {
-      IdentifierString messageName;
-      ByteCodeUtil::resolveMessageName(messageName, scope.module, mixedUpVariadicMessage);
-
-      _errorProcessor->info(infoMixedUpVariadic, *messageName);
-
-      scope.raiseError(errMixedUpVariadicMessage, node.findChild(SyntaxKey::Name));
-   }
-
-   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, scope.isClassClass());
-
-   // generate operation list if required
-   _logic->injectOverloadList(this, *scope.moduleScope, scope.info, scope.reference);
-}
-
 void Compiler :: declareSymbol(SymbolScope& scope, SyntaxNode node)
 {
    declareSymbolAttributes(scope, node, false);
@@ -2951,74 +3029,6 @@ void Compiler :: declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNo
    else if (res == InheritResult::irUnsuccessfull)
       scope.raiseError(errUnknownBaseClass, baseNode);
 
-}
-
-void Compiler :: resolveClassPostfixes(ClassScope& scope, SyntaxNode node, bool extensionMode)
-{
-   ref_t parentRef = 0;
-
-   // analizing class postfixes : if it is a parrent, template or inline template
-   SyntaxNode parentNode = {};
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::InlineTemplate:
-            if (!importInlineTemplate(scope, current, INLINE_PREFIX, node))
-               scope.raiseError(errInvalidOperation, current);
-            break;
-         case SyntaxKey::Parent:
-         {
-            SyntaxNode child = current.firstChild();
-            if (child == SyntaxKey::TemplateType) {
-               if (importTemplate(scope, child, node, true)) {
-                  // try to import as weak template
-               }
-               else if (!parentRef) {
-                  parentNode = current;
-
-                  parentRef = resolveStrongTypeAttribute(scope, child, extensionMode, false);
-               }
-               else if (!importTemplate(scope, child, node, false))
-                  scope.raiseError(errUnknownTemplate, current);
-            }
-            else if (!parentRef) {
-               parentNode = current;
-
-               parentRef = resolveStrongTypeAttribute(scope, child, extensionMode, false);
-            }
-            else scope.raiseError(errInvalidSyntax, current);
-
-            break;
-         }
-         default:
-            break;
-      }
-      //else if (!parentRef) {
-      //   parentNode = baseNode;
-
-      //   parentRef = resolveStrongTypeAttribute(scope, baseNode.firstChild(), extensionMode);
-      //}
-
-      current = current.nextNode();
-   }
-
-   if (scope.info.header.parentRef == scope.reference) {
-      // if it is a super class
-      if (parentRef != 0) {
-         scope.raiseError(errInvalidSyntax, parentNode);
-      }
-   }
-   else if (parentRef == 0) {
-      parentRef = scope.info.header.parentRef;
-   }
-
-   if (extensionMode) {
-      //COMPLIER MAGIC : treat the parent declaration in the special way for the extension
-      scope.extensionClassRef = parentRef;
-
-      declareClassParent(scope.moduleScope->buildins.superReference, scope, parentNode);
-   }
-   else declareClassParent(parentRef, scope, parentNode);
 }
 
 void Compiler :: importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNode)
@@ -3559,84 +3569,6 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
    }
 }
 
-void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor, 
-   bool& yieldMethodNotAllowed, bool staticNotAllowed, bool templateBased)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::MetaExpression:
-         {
-            MetaScope metaScope(&scope, Scope::ScopeLevel::Class);
-
-            evalStatement(metaScope, current);
-            break;
-         }
-         case SyntaxKey::MetaDictionary:
-            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Class);
-            break;
-         case SyntaxKey::Method:
-         {
-            MethodScope methodScope(&scope);
-            methodScope.isExtension = scope.extensionClassRef != 0;
-            declareMethodAttributes(methodScope, current, methodScope.isExtension, templateBased);
-
-            if (!current.arg.reference) {
-               // NOTE : an extension method must be strong-resolved
-               declareVMTMessage(methodScope, current,
-                  methodScope.checkHint(MethodHint::Extension), true);
-
-               current.setArgumentReference(methodScope.message);
-            }
-            else methodScope.message = current.arg.reference;
-
-            if (methodScope.isYieldable()) {
-               if (yieldMethodNotAllowed) {
-                  scope.raiseError(errIllegalMethod, current);
-               }
-               else yieldMethodNotAllowed = true;
-            }
-
-            declareMethodMetaInfo(methodScope, current);
-            declareMethod(methodScope, current, scope.abstractMode, staticNotAllowed);
-
-            if (methodScope.checkHint(MethodHint::Constructor)) {
-               withConstructors = true;
-               if ((methodScope.message & ~STATIC_MESSAGE) == scope.moduleScope->buildins.constructor_message) {
-                  withDefaultConstructor = true;
-               }
-               else if (getArgCount(methodScope.message) == 0 && (methodScope.checkHint(MethodHint::Protected) 
-                  || methodScope.checkHint(MethodHint::Internal)))
-               {
-                  // check if it is protected / iternal default constructor
-                  ref_t dummy = 0;
-                  ustr_t actionName = scope.module->resolveAction(getAction(methodScope.message), dummy);
-                  if (actionName.endsWith(CONSTRUCTOR_MESSAGE2) || actionName.endsWith(CONSTRUCTOR_MESSAGE))
-                     withDefaultConstructor = true;
-               }
-            }
-            else if (methodScope.checkHint(MethodHint::Predefined)) {
-               auto info = scope.info.methods.get(methodScope.message);
-               if (!info.hints) {
-                  // HOTFIX : the predefined method info should be saved separately
-                  scope.info.methods.add(methodScope.message, methodScope.info);
-               }
-               else scope.raiseError(errIllegalMethod, current);
-            }
-
-            if (!_logic->validateMessage(*scope.moduleScope, methodScope.info.hints, methodScope.message)) {
-               scope.raiseError(errIllegalMethod, current);
-            }
-            break;
-         }
-         default:
-            break;
-      }
-
-      current = current.nextNode();
-   }
-}
-
 void Compiler :: inheritStaticMethods(ClassScope& scope, SyntaxNode classNode)
 {
    // inject the inherited sealed static methods
@@ -3663,36 +3595,6 @@ void Compiler :: inheritStaticMethods(ClassScope& scope, SyntaxNode classNode)
    }
 }
 
-void Compiler :: declareClassClass(ClassScope& classClassScope, SyntaxNode node, ref_t parentRef)
-{
-   classClassScope.info.header.flags |= elClassClass; // !! IMPORTANT : classclass flags should be set
-
-   declareClassParent(classClassScope.moduleScope->buildins.superReference, classClassScope, node);
-
-   // inherit sealed static methods
-   auto parentClass = mapClassSymbol(classClassScope, parentRef);
-   ClassInfo parentInfo;
-   if (_logic->defineClassInfo(*classClassScope.moduleScope, parentInfo, parentClass.typeInfo.typeRef)) {
-      for (auto it = parentInfo.attributes.start(); !it.eof(); ++it) {
-         auto key = it.key();
-
-         if (key.value2 == ClassAttribute::SealedStatic) {
-            classClassScope.info.attributes.add(key, *it);
-
-            auto methodInfo = parentInfo.methods.get(key.value1);
-            methodInfo.inherited = true;
-            classClassScope.info.methods.add(key.value1, methodInfo);
-         }
-      }
-   }
-
-   generateClassDeclaration(classClassScope, node, 0);
-   inheritStaticMethods(classClassScope, node);
-
-   // save declaration
-   classClassScope.save();
-}
-
 bool inline isExtensionDeclaration(SyntaxNode node)
 {
    if (SyntaxTree::ifChildExists(node, SyntaxKey::Attribute, V_EXTENSION))
@@ -3714,78 +3616,6 @@ void Compiler :: declareFieldMetaInfos(ClassScope& scope, SyntaxNode node)
       }
 
       current = current.nextNode();
-   }
-}
-
-void Compiler :: declareClass(ClassScope& scope, SyntaxNode node)
-{
-   bool extensionDeclaration = isExtensionDeclaration(node);
-   resolveClassPostfixes(scope, node, extensionDeclaration/*, lxParent*/ );
-
-   ref_t declaredFlags = 0;
-   declareClassAttributes(scope, node, declaredFlags);
-
-   // NOTE : due to implementation the field meta information should be analyzed before
-   // declaring VMT
-   declareFieldMetaInfos(scope, node);
-
-   bool withConstructors = false;
-   bool withDefConstructor = false;
-   bool yieldMethodNotAllowed = test(scope.info.header.flags, elWithYieldable) || test(declaredFlags, elStructureRole);
-   declareVMT(scope, node, withConstructors, withDefConstructor,
-      yieldMethodNotAllowed, false, test(declaredFlags, elTemplatebased));
-
-   if (yieldMethodNotAllowed && !test(scope.info.header.flags, elWithYieldable) && !test(declaredFlags, elStructureRole)) {
-      // HOTFIX : trying to figure out if the yield method was declared inside declareVMT
-      declaredFlags |= elWithYieldable;
-   }
-
-   // NOTE : generateClassDeclaration should be called for the proper class before a class class one
-   //        due to dynamic array implementation (auto-generated default constructor should be removed)
-   generateClassDeclaration(scope, node, declaredFlags);
-
-   if (_logic->isRole(scope.info)) {
-      // class is its own class class
-      scope.info.header.classRef = scope.reference;
-   }
-   else {
-      // define class class name
-      IdentifierString classClassName(scope.moduleScope->resolveFullName(scope.reference));
-      classClassName.append(CLASSCLASS_POSTFIX);
-
-      scope.info.header.classRef = scope.moduleScope->mapFullReference(*classClassName);
-   }
-
-   // if it is a super class validate it, generate built-in attributes
-   if (scope.reference == scope.moduleScope->buildins.superReference) {
-      validateSuperClass(scope, node);
-   }
-
-   if (scope.visibility == Visibility::Public)
-      scope.info.attributes.add({ 0, ClassAttribute::RuntimeLoadable }, INVALID_REF);
-
-   // save declaration
-   scope.save();
-
-   // declare class class if it available
-   if (scope.info.header.classRef != scope.reference && scope.info.header.classRef != 0) {
-      ClassScope classClassScope((NamespaceScope*)scope.parent, scope.info.header.classRef, scope.visibility);
-
-      if (!withDefConstructor &&!scope.abstractMode && !test(scope.info.header.flags, elDynamicRole)) {
-         // if default constructor has to be created
-         injectDefaultConstructor(scope, node, withConstructors, 
-            test(scope.info.header.flags, elStructureRole));
-      }
-
-      declareClassClass(classClassScope, node, scope.info.header.parentRef);
-
-      // HOTFIX : if the default constructor is private - a class cannot be inherited
-      if (withDefConstructor
-         && classClassScope.info.methods.exist(scope.moduleScope->buildins.constructor_message | STATIC_MESSAGE))
-      {
-         scope.info.header.flags |= elFinal;
-         scope.save();
-      }
    }
 }
 
@@ -3811,9 +3641,9 @@ void Compiler :: declareMembers(NamespaceScope& ns, SyntaxNode node)
          }
          case SyntaxKey::Class:
          {
-            ClassScope classScope(&ns, current.arg.reference, ns.defaultVisibility);
+            Class classHelper(this, &ns, current.arg.reference, ns.defaultVisibility);
 
-            declareClass(classScope, current);
+            classHelper.declare(current);
             break;
          }
          case SyntaxKey::MetaExpression:
@@ -4436,6 +4266,39 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, 
    }
 }
 
+
+void Compiler :: declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& flags)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Attribute:
+            if (!_logic->validateClassAttribute(current.arg.value, flags, scope.visibility)) {
+               current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
+               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+            }
+            break;
+         case SyntaxKey::Type:
+            scope.raiseError(errInvalidSyntax, current);
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   // handle the abstract flag
+   if (test(scope.info.header.flags, elAbstract)) {
+      if (!test(flags, elAbstract)) {
+         scope.abstractBasedMode = true;
+         scope.info.header.flags &= ~elAbstract;
+      }
+      else scope.abstractMode = true;
+   }
+   else scope.abstractMode = test(flags, elAbstract);
+}
+
 void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool identifierDeclarationMode)
 {
    bool constant = false;
@@ -4475,38 +4338,6 @@ void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bo
          nsScope->defineIntConstant(scope.reference, operand.extra);
       }
    }
-}
-
-void Compiler :: declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& flags)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::Attribute:
-            if (!_logic->validateClassAttribute(current.arg.value, flags, scope.visibility)) {
-               current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
-               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-            }
-            break;
-         case SyntaxKey::Type:
-            scope.raiseError(errInvalidSyntax, current);
-            break;
-         default:
-            break;
-      }
-
-      current = current.nextNode();
-   }
-
-   // handle the abstract flag
-   if (test(scope.info.header.flags, elAbstract)) {
-      if (!test(flags, elAbstract)) {
-         scope.abstractBasedMode = true;
-         scope.info.header.flags &= ~elAbstract;
-      }
-      else scope.abstractMode = true;
-   }
-   else scope.abstractMode = test(flags, elAbstract);
 }
 
 inline bool isMethodKind(ref_t hint)
@@ -8788,143 +8619,6 @@ void Compiler :: compileCustomDispatcher(BuildTreeWriter& writer, ClassScope& sc
    scope.save();
 }
 
-void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
-   bool exclusiveMode, bool ignoreAutoMultimethod)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::Method:
-         {
-            if (exclusiveMode
-               && (ignoreAutoMultimethod == SyntaxTree::ifChildExists(current, SyntaxKey::Autogenerated, -1)))
-            {
-               current = current.nextNode();
-               continue;
-            }
-
-            MethodScope methodScope(&scope);
-            initializeMethod(scope, methodScope, current);
-
-#ifdef FULL_OUTOUT_INFO
-            IdentifierString messageName;
-            ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
-
-            // !! temporal
-            if (messageName.compare("static:getItem<'IntNumber,'Object>[3]"))
-               methodScope.message |= 0;
-
-            _errorProcessor->info(infoCurrentMethod, *messageName);
-#endif // FULL_OUTOUT_INFO
-
-            // if it is a dispatch handler
-            if (methodScope.message == scope.moduleScope->buildins.dispatch_message) {
-               compileDispatcherMethod(writer, methodScope, current,
-                  test(scope.info.header.flags, elWithGenerics),
-                  test(scope.info.header.flags, elWithVariadics));
-            }
-            // if it is an abstract one
-            else if (methodScope.checkHint(MethodHint::Abstract)) {
-               compileAbstractMethod(writer, methodScope, current, scope.abstractMode);
-            }
-            // if it is an initializer
-            else if (methodScope.checkHint(MethodHint::Initializer)) {
-               compileInitializerMethod(writer, methodScope, node);
-            }
-            // if it is a normal method
-            else compileMethod(writer, methodScope, current);
-            break;
-         }
-         case SyntaxKey::Constructor:
-            if (_logic->isRole(scope.info)) {
-               scope.raiseError(errIllegalConstructor, node);
-            }
-            break;
-         case SyntaxKey::StaticMethod:
-            if (_logic->isRole(scope.info)) {
-               scope.raiseError(errIllegalStaticMethod, node);
-            }
-            break;
-         case SyntaxKey::StaticInitializerMethod:
-            compileStaticInitializerMethod(writer, scope, current);
-            break;
-         default:
-            break;
-      }
-
-      current = current.nextNode();
-   }
-
-   // if the VMT conatains newly defined generic / variadic handlers, overrides default one
-   if (testany(scope.info.header.flags, elWithGenerics | elWithVariadics)
-      && scope.info.methods.get(scope.moduleScope->buildins.dispatch_message).inherited)
-   {
-      compileCustomDispatcher(writer, scope);
-   }
-}
-
-void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope, SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   // first pass - compile constructors
-   while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::Constructor:
-         {
-            MethodScope methodScope(&scope);
-            initializeMethod(classClassScope, methodScope, current);
-            methodScope.constructorMode = true;
-
-   #ifdef FULL_OUTOUT_INFO
-            IdentifierString messageName;
-            ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
-
-            _errorProcessor->info(infoCurrentMethod, *messageName);
-   #endif // FULL_OUTOUT_INFO
-
-            compileConstructor(writer, methodScope, classClassScope, current, scope.isAbstract());
-            break;
-         }
-         default:
-            break;
-      }
-      current = current.nextNode();
-   }
-
-   // second pass - compile static methods
-   current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::StaticMethod:
-         {
-            MethodScope methodScope(&classClassScope);
-            initializeMethod(classClassScope, methodScope, current);
-
-#ifdef FULL_OUTOUT_INFO
-            IdentifierString messageName;
-            ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
-
-            _errorProcessor->info(infoCurrentMethod, *messageName);
-#endif // FULL_OUTOUT_INFO
-
-            compileMethod(writer, methodScope, current);
-
-            break;
-         }
-         default:
-            break;
-      }
-      current = current.nextNode();
-   }
-
-   // if the VMT conatains newly defined generic / variadic handlers, overrides default one
-   if (testany(classClassScope.info.header.flags, elWithGenerics | elWithVariadics)
-      && classClassScope.info.methods.get(scope.moduleScope->buildins.dispatch_message).inherited)
-   {
-      compileCustomDispatcher(writer, classClassScope);
-   }
-}
-
 void Compiler :: compileExpressionMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
 {
    beginMethod(writer, scope, node, BuildKey::Method, false);
@@ -9062,6 +8756,143 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
    writer.closeNode();
 
    scope.save();
+}
+
+void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
+   bool exclusiveMode, bool ignoreAutoMultimethod)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+      case SyntaxKey::Method:
+      {
+         if (exclusiveMode
+            && (ignoreAutoMultimethod == SyntaxTree::ifChildExists(current, SyntaxKey::Autogenerated, -1)))
+         {
+            current = current.nextNode();
+            continue;
+         }
+
+         MethodScope methodScope(&scope);
+         initializeMethod(scope, methodScope, current);
+
+#ifdef FULL_OUTOUT_INFO
+         IdentifierString messageName;
+         ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
+
+         // !! temporal
+         if (messageName.compare("static:getItem<'IntNumber,'Object>[3]"))
+            methodScope.message |= 0;
+
+         _errorProcessor->info(infoCurrentMethod, *messageName);
+#endif // FULL_OUTOUT_INFO
+
+         // if it is a dispatch handler
+         if (methodScope.message == scope.moduleScope->buildins.dispatch_message) {
+            compileDispatcherMethod(writer, methodScope, current,
+               test(scope.info.header.flags, elWithGenerics),
+               test(scope.info.header.flags, elWithVariadics));
+         }
+         // if it is an abstract one
+         else if (methodScope.checkHint(MethodHint::Abstract)) {
+            compileAbstractMethod(writer, methodScope, current, scope.abstractMode);
+         }
+         // if it is an initializer
+         else if (methodScope.checkHint(MethodHint::Initializer)) {
+            compileInitializerMethod(writer, methodScope, node);
+         }
+         // if it is a normal method
+         else compileMethod(writer, methodScope, current);
+         break;
+      }
+      case SyntaxKey::Constructor:
+         if (_logic->isRole(scope.info)) {
+            scope.raiseError(errIllegalConstructor, node);
+         }
+         break;
+      case SyntaxKey::StaticMethod:
+         if (_logic->isRole(scope.info)) {
+            scope.raiseError(errIllegalStaticMethod, node);
+         }
+         break;
+      case SyntaxKey::StaticInitializerMethod:
+         compileStaticInitializerMethod(writer, scope, current);
+         break;
+      default:
+         break;
+      }
+
+      current = current.nextNode();
+   }
+
+   // if the VMT conatains newly defined generic / variadic handlers, overrides default one
+   if (testany(scope.info.header.flags, elWithGenerics | elWithVariadics)
+      && scope.info.methods.get(scope.moduleScope->buildins.dispatch_message).inherited)
+   {
+      compileCustomDispatcher(writer, scope);
+   }
+}
+
+void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClassScope, ClassScope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   // first pass - compile constructors
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+      case SyntaxKey::Constructor:
+      {
+         MethodScope methodScope(&scope);
+         initializeMethod(classClassScope, methodScope, current);
+         methodScope.constructorMode = true;
+
+#ifdef FULL_OUTOUT_INFO
+         IdentifierString messageName;
+         ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
+
+         _errorProcessor->info(infoCurrentMethod, *messageName);
+#endif // FULL_OUTOUT_INFO
+
+         compileConstructor(writer, methodScope, classClassScope, current, scope.isAbstract());
+         break;
+      }
+      default:
+         break;
+      }
+      current = current.nextNode();
+   }
+
+   // second pass - compile static methods
+   current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+      case SyntaxKey::StaticMethod:
+      {
+         MethodScope methodScope(&classClassScope);
+         initializeMethod(classClassScope, methodScope, current);
+
+#ifdef FULL_OUTOUT_INFO
+         IdentifierString messageName;
+         ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
+
+         _errorProcessor->info(infoCurrentMethod, *messageName);
+#endif // FULL_OUTOUT_INFO
+
+         compileMethod(writer, methodScope, current);
+
+         break;
+      }
+      default:
+         break;
+      }
+      current = current.nextNode();
+   }
+
+   // if the VMT conatains newly defined generic / variadic handlers, overrides default one
+   if (testany(classClassScope.info.header.flags, elWithGenerics | elWithVariadics)
+      && classClassScope.info.methods.get(scope.moduleScope->buildins.dispatch_message).inherited)
+   {
+      compileCustomDispatcher(writer, classClassScope);
+   }
 }
 
 bool isEmbeddableDispatcher(ModuleScopeBase* moduleScope, SyntaxNode current)
@@ -10148,6 +9979,182 @@ void Compiler :: declareModuleExtensionDispatcher(NamespaceScope& scope, SyntaxN
       // save as preloaded class
       saveAsPreloaded(_logic, *scope.nsName, scope.module, extRef, mskVMTRef);
    }
+}
+
+// --- Compiler::Class ---
+Compiler::Class :: Class(Compiler* compiler, Scope* parent, ref_t reference, Visibility visibility)
+   : compiler(compiler), scope(parent, reference, visibility)
+{
+}
+
+void Compiler::Class :: declare(SyntaxNode node)
+{
+   bool extensionDeclaration = isExtensionDeclaration(node);
+   resolveClassPostfixes(node, extensionDeclaration/*, lxParent*/);
+
+   ref_t declaredFlags = 0;
+   compiler->declareClassAttributes(scope, node, declaredFlags);
+
+   // NOTE : due to implementation the field meta information should be analyzed before
+   // declaring VMT
+   compiler->declareFieldMetaInfos(scope, node);
+
+   bool withConstructors = false;
+   bool withDefConstructor = false;
+   bool yieldMethodNotAllowed = test(scope.info.header.flags, elWithYieldable) || test(declaredFlags, elStructureRole);
+   compiler->declareVMT(scope, node, withConstructors, withDefConstructor,
+      yieldMethodNotAllowed, false, test(declaredFlags, elTemplatebased));
+
+   if (yieldMethodNotAllowed && !test(scope.info.header.flags, elWithYieldable) && !test(declaredFlags, elStructureRole)) {
+      // HOTFIX : trying to figure out if the yield method was declared inside declareVMT
+      declaredFlags |= elWithYieldable;
+   }
+
+   // NOTE : generateClassDeclaration should be called for the proper class before a class class one
+   //        due to dynamic array implementation (auto-generated default constructor should be removed)
+   compiler->generateClassDeclaration(scope, node, declaredFlags);
+
+   if (compiler->_logic->isRole(scope.info)) {
+      // class is its own class class
+      scope.info.header.classRef = scope.reference;
+   }
+   else {
+      // define class class name
+      IdentifierString classClassName(scope.moduleScope->resolveFullName(scope.reference));
+      classClassName.append(CLASSCLASS_POSTFIX);
+
+      scope.info.header.classRef = scope.moduleScope->mapFullReference(*classClassName);
+   }
+
+   // if it is a super class validate it, generate built-in attributes
+   if (scope.reference == scope.moduleScope->buildins.superReference) {
+      compiler->validateSuperClass(scope, node);
+   }
+
+   if (scope.visibility == Visibility::Public)
+      scope.info.attributes.add({ 0, ClassAttribute::RuntimeLoadable }, INVALID_REF);
+
+   // save declaration
+   scope.save();
+
+   // declare class class if it available
+   if (scope.info.header.classRef != scope.reference && scope.info.header.classRef != 0) {
+      ClassScope classClassScope((NamespaceScope*)scope.parent, scope.info.header.classRef, scope.visibility);
+
+      if (!withDefConstructor && !scope.abstractMode && !test(scope.info.header.flags, elDynamicRole)) {
+         // if default constructor has to be created
+         compiler->injectDefaultConstructor(scope, node, withConstructors,
+            test(scope.info.header.flags, elStructureRole));
+      }
+
+      declareClassClass(classClassScope, node, scope.info.header.parentRef);
+
+      // HOTFIX : if the default constructor is private - a class cannot be inherited
+      if (withDefConstructor
+         && classClassScope.info.methods.exist(scope.moduleScope->buildins.constructor_message | STATIC_MESSAGE))
+      {
+         scope.info.header.flags |= elFinal;
+         scope.save();
+      }
+   }
+}
+
+void Compiler::Class :: resolveClassPostfixes(SyntaxNode node, bool extensionMode)
+{
+   ref_t parentRef = 0;
+
+   // analizing class postfixes : if it is a parrent, template or inline template
+   SyntaxNode parentNode = {};
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+      case SyntaxKey::InlineTemplate:
+         if (!compiler->importInlineTemplate(scope, current, INLINE_PREFIX, node))
+            scope.raiseError(errInvalidOperation, current);
+         break;
+      case SyntaxKey::Parent:
+      {
+         SyntaxNode child = current.firstChild();
+         if (child == SyntaxKey::TemplateType) {
+            if (compiler->importTemplate(scope, child, node, true)) {
+               // try to import as weak template
+            }
+            else if (!parentRef) {
+               parentNode = current;
+
+               parentRef = compiler->resolveStrongTypeAttribute(scope, child, extensionMode, false);
+            }
+            else if (!compiler->importTemplate(scope, child, node, false))
+               scope.raiseError(errUnknownTemplate, current);
+         }
+         else if (!parentRef) {
+            parentNode = current;
+
+            parentRef = compiler->resolveStrongTypeAttribute(scope, child, extensionMode, false);
+         }
+         else scope.raiseError(errInvalidSyntax, current);
+
+         break;
+      }
+      default:
+         break;
+      }
+      //else if (!parentRef) {
+      //   parentNode = baseNode;
+
+      //   parentRef = resolveStrongTypeAttribute(scope, baseNode.firstChild(), extensionMode);
+      //}
+
+      current = current.nextNode();
+   }
+
+   if (scope.info.header.parentRef == scope.reference) {
+      // if it is a super class
+      if (parentRef != 0) {
+         scope.raiseError(errInvalidSyntax, parentNode);
+      }
+   }
+   else if (parentRef == 0) {
+      parentRef = scope.info.header.parentRef;
+   }
+
+   if (extensionMode) {
+      //COMPLIER MAGIC : treat the parent declaration in the special way for the extension
+      scope.extensionClassRef = parentRef;
+
+      compiler->declareClassParent(scope.moduleScope->buildins.superReference, scope, parentNode);
+   }
+   else compiler->declareClassParent(parentRef, scope, parentNode);
+}
+
+void Compiler::Class :: declareClassClass(ClassScope& classClassScope, SyntaxNode node, ref_t parentRef)
+{
+   classClassScope.info.header.flags |= elClassClass; // !! IMPORTANT : classclass flags should be set
+
+   compiler->declareClassParent(classClassScope.moduleScope->buildins.superReference, classClassScope, node);
+
+   // inherit sealed static methods
+   auto parentClass = mapClassSymbol(classClassScope, parentRef);
+   ClassInfo parentInfo;
+   if (compiler->_logic->defineClassInfo(*classClassScope.moduleScope, parentInfo, parentClass.typeInfo.typeRef)) {
+      for (auto it = parentInfo.attributes.start(); !it.eof(); ++it) {
+         auto key = it.key();
+
+         if (key.value2 == ClassAttribute::SealedStatic) {
+            classClassScope.info.attributes.add(key, *it);
+
+            auto methodInfo = parentInfo.methods.get(key.value1);
+            methodInfo.inherited = true;
+            classClassScope.info.methods.add(key.value1, methodInfo);
+         }
+      }
+   }
+
+   compiler->generateClassDeclaration(classClassScope, node, 0);
+   compiler->inheritStaticMethods(classClassScope, node);
+
+   // save declaration
+   classClassScope.save();
 }
 
 // --- Compiler::Expression ---
