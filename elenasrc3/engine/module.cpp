@@ -449,3 +449,4 @@ MemoryBase* ROModule :: mapSection(ref_t reference, bool existing)
 
    return _sections.getPtr(reference);
 }
+

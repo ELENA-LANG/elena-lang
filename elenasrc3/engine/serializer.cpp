@@ -30,7 +30,16 @@ void syntaxTreeEncoder(TextWriter<char>& writer, SyntaxKey key, ustr_t strArg, i
          return current == arg;
       });
 
-   writer.writeText(keyName);
+   if (keyName.empty()) {
+      IdentifierString code;
+      code.append('#');
+      code.appendInt((int)key);
+
+      writer.writeText(*code);
+   }
+   else writer.writeText(keyName);
+
+   writer.writeChar(' ');
    if (!strArg.empty()) {
       writer.writeChar('"');
       writer.writeText(strArg);
@@ -38,7 +47,7 @@ void syntaxTreeEncoder(TextWriter<char>& writer, SyntaxKey key, ustr_t strArg, i
       writer.writeChar(' ');
    }
    else if (arg) {
-      String<char, 4> number;
+      String<char, 12> number;
       number.appendInt(arg);
       writer.writeText(number.str());
       writer.writeChar(' ');
@@ -74,7 +83,7 @@ bool syntaxTreeReader(SyntaxKey& key, IdentifierString& strValue, int& value, vo
 
    ScriptToken token;
    scope->scriptReader.read(token);
-   if (token.compare(")"))
+   if (token.compare(")") || token.state == dfaEOF)
       return false;
 
    key = scope->list.get(*token.token);
@@ -90,6 +99,13 @@ bool syntaxTreeReader(SyntaxKey& key, IdentifierString& strValue, int& value, vo
 
       scope->scriptReader.read(token);
    }
+   else if (token.state == dfaOperator && token.compare("-")) {
+      scope->scriptReader.read(token);
+      value = -StrConvertor::toInt(*token.token, 10);
+
+      scope->scriptReader.read(token);
+   }
+   else value = 0;
 
    return true;
 }

@@ -337,7 +337,7 @@ namespace elena_lang
       void write(ByteCode code, arg_t arg1, PseudoArg arg2);
       void write(ByteCode code, arg_t arg1, PseudoArg arg2, ref_t mask);
 
-      void import(ModuleBase* sourceModule, MemoryBase* source, bool withHeader, SectionScopeBase* target);
+      void import(ModuleBase* sourceModule, MemoryBase* source, bool withHeader, ModuleBase * targetModule);
 
       void saveTo(MemoryWriter* writer);
 
@@ -469,7 +469,7 @@ namespace elena_lang
          }            
       }
 
-      static void importCommand(ByteCommand& command, SectionScopeBase* target, ModuleBase* importer);
+      static void importCommand(ByteCommand& command, ModuleBase* exporter, ModuleBase* importer);
 
       static void formatMessageName(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
          ref_t* references, size_t len, pos_t argCount, ref_t flags);
@@ -585,6 +585,21 @@ namespace elena_lang
       }
    };
 
+   // --- ImportHelper ---
+   class ImportHelper
+   {
+   public:
+      static ref_t importReference(ModuleBase* exporter, ref_t exportRef, ModuleBase* importer);
+      static ref_t importReferenceWithMask(ModuleBase* exporter, ref_t exportRef, ModuleBase* importer);
+      static ref_t importSignature(ModuleBase* exporter, ref_t signRef, ModuleBase* importer);
+      static ref_t importMessage(ModuleBase* exporter, mssg_t exportRef, ModuleBase* importer);
+      static ref_t importAction(ModuleBase* exporter, ref_t exportRef, ModuleBase* importer);
+      static ref_t importExternal(ModuleBase* exporter, ref_t reference, ModuleBase* importer);
+      static ref_t importConstant(ModuleBase* referenceModule, ref_t reference, ModuleBase* importer);
+      static ref_t importMessageConstant(ModuleBase* referenceModule, ref_t reference, ModuleBase* importer);
+      static ref_t importExtMessageConstant(ModuleBase* exporter, ref_t reference, ModuleBase* importer);
+
+   };
 }
 
 #endif

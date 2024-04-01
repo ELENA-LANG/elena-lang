@@ -408,16 +408,6 @@ namespace elena_lang
 
       virtual MemoryBase* mapSection(ref_t reference, bool existing) = 0;
 
-      virtual ref_t importAction(ModuleBase* referenceModule, ref_t signRef) = 0;
-      virtual ref_t importSignature(ModuleBase* referenceModule, ref_t signRef) = 0;
-      virtual ref_t importMessage(ModuleBase* referenceModule, mssg_t message) = 0;
-      virtual ref_t importReference(ModuleBase* referenceModule, ustr_t referenceName) = 0;
-      virtual ref_t importReference(ModuleBase* referenceModule, ref_t reference) = 0;
-      virtual ref_t importConstant(ModuleBase* referenceModule, ref_t reference) = 0;
-      virtual ref_t importExternal(ModuleBase* referenceModule, ref_t reference) = 0;
-      virtual ref_t importMessageConstant(ModuleBase* referenceModule, ref_t reference) = 0;
-      virtual ref_t importExtMessageConstant(ModuleBase* referenceModule, ref_t reference) = 0;
-
       SectionScopeBase()
       {
          module = nullptr;

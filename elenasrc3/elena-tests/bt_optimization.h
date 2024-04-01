@@ -20,11 +20,12 @@ namespace elena_lang
       SyntaxTree syntaxTree;
       BuildTree  buildTree;
 
+      SyntaxNode declarationNode;
+      SyntaxNode exprNode;
+
       CompilerEnvironment env;
 
-      void SetUp() override
-      {
-      }
+      void SetUp() override;
    };
 }
 

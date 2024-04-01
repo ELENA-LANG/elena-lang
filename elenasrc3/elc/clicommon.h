@@ -341,9 +341,6 @@ public:
    virtual ref_t loadSymbolInfo(SymbolInfo& info, ref_t reference) = 0;
    virtual ref_t loadSymbolInfo(SymbolInfo& info, ustr_t referenceName) = 0;
 
-   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, bool headerOnly, bool inheritMode/*,
-      bool ignoreFields*/) = 0;
-
    virtual void newNamespace(ustr_t name) = 0;
    virtual bool includeNamespace(IdentifierList& importedNs, ustr_t name, bool& duplicateInclusion) = 0;
 

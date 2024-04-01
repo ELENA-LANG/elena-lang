@@ -1,12 +1,17 @@
+public const struct Struct
+{
+   embeddable __int _value[4];
+}
+
 public singleton Tester
 {
-   int getValue()
+   Struct getValue()
    {
-      ^ 2;
+      ^ new Struct();
    }
 }
 
 public program()
 {
-   int r := Tester.getValue()
+   Struct r := Tester.getValue()
 }

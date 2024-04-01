@@ -41,7 +41,7 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 {
    return (MethodHint)(l | (unsigned int)r);
 }
-//
+
 //inline void testNodes(SyntaxNode node)
 //{
 //   SyntaxNode current = node.firstChild();
@@ -50,6 +50,13 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 //
 //      current = current.nextNode();
 //   }
+//}
+
+//inline void storeNode(SyntaxNode node)
+//{
+//   DynamicUStr target;
+//
+//   SyntaxTreeSerializer::save(node, target);
 //}
 
 inline bool isSelfCall(ObjectInfo target)
@@ -367,9 +374,9 @@ void Interpreter :: copyConstCollection(ref_t sourRef, ref_t destRef, bool byVal
       ref_t currentRef = it.key() & ~mskAnyRef;
 
       if (currentMask == mskMssgNameLiteralRef) {
-         target->addReference(_scope->importAction(sourceInfo.module, currentRef) | currentMask, *it);
+         target->addReference(ImportHelper::importAction(sourceInfo.module, currentRef, _scope->module) | currentMask, *it);
       }
-      else target->addReference(_scope->importReference(sourceInfo.module, currentRef) | currentMask, *it);
+      else target->addReference(ImportHelper::importReference(sourceInfo.module, currentRef, _scope->module) | currentMask, *it);
    }
 }
 
@@ -1669,6 +1676,7 @@ Compiler :: Compiler(
    _withConditionalBoxing = false;
    _evaluateOp = false;
    _verbose = false;
+   _noValidation = false;
 
    _trackingUnassigned = false;
 
@@ -2079,7 +2087,7 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
       ClassInfo copy;
       copy.load(&reader);
 
-      scope.moduleScope->importClassInfo(copy, scope.info, parentInfo.module, false, true);
+      CompilerLogic ::importClassInfo(copy, scope.info, parentInfo.module, scope.module, false, true);
    }
    else {
       scope.info.load(&reader, false);
@@ -3619,128 +3627,6 @@ void Compiler :: declareFieldMetaInfos(ClassScope& scope, SyntaxNode node)
    }
 }
 
-void Compiler :: declareMembers(NamespaceScope& ns, SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::Namespace:
-         {
-            NamespaceScope namespaceScope(&ns);
-            declareNamespace(namespaceScope, current, false, true);
-
-            declareMembers(namespaceScope, current);
-            break;
-         }
-         case SyntaxKey::Symbol:
-         {
-            SymbolScope symbolScope(&ns, current.arg.reference, ns.defaultVisibility);
-
-            declareSymbol(symbolScope, current);
-            break;
-         }
-         case SyntaxKey::Class:
-         {
-            Class classHelper(this, &ns, current.arg.reference, ns.defaultVisibility);
-
-            classHelper.declare(current);
-            break;
-         }
-         case SyntaxKey::MetaExpression:
-         {
-            MetaScope scope(&ns, Scope::ScopeLevel::Namespace);
-
-            evalStatement(scope, current);
-            break;
-         }
-         case SyntaxKey::Template:
-         case SyntaxKey::ExtensionTemplate:
-         {
-            TemplateScope templateScope(&ns, 0, ns.defaultVisibility);
-            declareTemplateClass(templateScope, current);
-            break;
-         }
-         case SyntaxKey::TemplateCode:
-         {
-            TemplateScope templateScope(&ns, 0, ns.defaultVisibility);
-            declareTemplateCode(templateScope, current);
-            break;
-         }
-         default:
-            // to make compiler happy
-            break;
-      }
-
-      current = current.nextNode();
-   }
-
-   if (ns.declaredExtensions.count() > 0) {
-      declareModuleExtensionDispatcher(ns, node);
-
-      ns.declaredExtensions.clear();
-   }
-}
-
-
-void Compiler :: declareMemberIdentifiers(NamespaceScope& ns, SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::Namespace:
-         {
-            NamespaceScope namespaceScope(&ns);
-            declareNamespace(namespaceScope, current, true, true);
-            ns.moduleScope->newNamespace(*namespaceScope.nsName);
-
-            declareMemberIdentifiers(namespaceScope, current);
-            break;
-         }
-         case SyntaxKey::Symbol:
-         {
-            SymbolScope symbolScope(&ns, 0, ns.defaultVisibility);
-            declareSymbolAttributes(symbolScope, current, true);
-
-            SyntaxNode name = current.findChild(SyntaxKey::Name);
-
-            ref_t reference = mapNewTerminal(symbolScope, nullptr, name, nullptr, symbolScope.visibility);
-            symbolScope.module->mapSection(reference | mskSymbolRef, false);
-
-            current.setArgumentReference(reference);
-            break;
-         }
-         case SyntaxKey::Class:
-         {
-            ClassScope classScope(&ns, 0, ns.defaultVisibility);
-
-            ref_t flags = classScope.info.header.flags;
-            declareClassAttributes(classScope, current, flags);
-
-            SyntaxNode name = current.findChild(SyntaxKey::Name);
-            if (current.arg.reference == INVALID_REF) {
-               // if it is a template based class - its name was already resolved
-               classScope.reference = current.findChild(SyntaxKey::Name).arg.reference;
-            }
-            else classScope.reference = mapNewTerminal(classScope, nullptr,
-               name, nullptr, classScope.visibility);
-
-            classScope.module->mapSection(classScope.reference | mskSymbolRef, false);
-
-            current.setArgumentReference(classScope.reference);
-            break;
-         }
-      case SyntaxKey::MetaDictionary:
-            declareDictionary(ns, current, Visibility::Public, Scope::ScopeLevel::Namespace);
-            break;
-         default:
-            // to make compiler happy
-            break;
-      }
-
-      current = current.nextNode();
-   }
-}
-
 void Compiler :: importExtensions(NamespaceScope& ns, ustr_t importedNs)
 {
    ReferenceName sectionName(importedNs, EXTENSION_SECTION);
@@ -3771,58 +3657,6 @@ void Compiler :: copyParentNamespaceExtensions(NamespaceScope& source, Namespace
       auto ext = *it;
 
       target.extensions.add(it.key(), { ext.value1, ext.value2 });
-   }
-}
-
-void Compiler :: declareNamespace(NamespaceScope& ns, SyntaxNode node, bool ignoreImport, bool ignoreExtensions)
-{
-   // load the namespace name if available
-   SyntaxNode nameNode = node.findChild(SyntaxKey::Name);
-   if (nameNode == SyntaxKey::Name) {
-      if (ns.nsName.length() > 0)
-         ns.nsName.append('\'');
-
-      ns.nsName.append(nameNode.firstChild(SyntaxKey::TerminalMask).identifier());
-   }
-
-   if (!ignoreExtensions) {
-      // HOTFIX : load the module internal and public extensions
-      loadExtensions(ns, false);
-      loadExtensions(ns, true);
-   }
-
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::SourcePath:
-            ns.sourcePath.copy(current.identifier());
-            break;
-         case SyntaxKey::Import:
-            if (!ignoreImport) {
-               bool duplicateInclusion = false;
-               ustr_t name = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
-               if (ns.moduleScope->includeNamespace(ns.importedNs, name, duplicateInclusion)) {
-                  if (!ignoreExtensions)
-                     importExtensions(ns, name);
-               }
-               else if (duplicateInclusion) {
-                  ns.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, current);
-
-                  // HOTFIX : comment out, to prevent duplicate warnings
-                  current.setKey(SyntaxKey::Idle);
-               }
-               else {
-                  ns.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, current.findChild(SyntaxKey::Name));
-                  current.setKey(SyntaxKey::Idle); // remove the node, to prevent duplicate warnings
-               }
-            }
-            break;
-         default:
-            // to make compiler happy
-            break;
-      }
-
-      current = current.nextNode();
    }
 }
 
@@ -9106,11 +8940,11 @@ void Compiler :: compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, S
             break;
          case SyntaxKey::Namespace:
          {
-            NamespaceScope namespaceScope(&ns);
-            declareNamespace(namespaceScope, current, false, false);
-            copyParentNamespaceExtensions(ns, namespaceScope);
+            Namespace subNs(this, &ns);
+            subNs.declareNamespace(current, false, false);
+            copyParentNamespaceExtensions(ns, subNs.scope);
 
-            compileNamespace(writer, namespaceScope, current);
+            compileNamespace(writer, subNs.scope, current);
             break;
          }
          case SyntaxKey::Symbol:
@@ -9157,7 +8991,8 @@ inline ref_t safeMapReference(ModuleScopeBase* moduleScope, ForwardResolverBase*
       if (moduleScope->isStandardOne()) {
          return moduleScope->module->mapReference(resolved + getlength(STANDARD_MODULE));
       }
-      else return moduleScope->importReference(moduleScope->module, resolved);
+      else return moduleScope->module->mapReference(resolved);
+      //else return ImportHelper::importReference(moduleScope->module, resolved);
    }
    else return 0;
 }
@@ -9390,7 +9225,7 @@ void Compiler :: validateScope(ModuleScopeBase* moduleScope)
 
 void Compiler :: validateSuperClass(ClassScope& scope, SyntaxNode node)
 {
-   if (!scope.info.methods.exist(scope.moduleScope->buildins.dispatch_message))
+   if (!_noValidation && !scope.info.methods.exist(scope.moduleScope->buildins.dispatch_message))
       scope.raiseError(errNoDispatcher, node);
 }
 
@@ -9399,14 +9234,8 @@ void Compiler :: declareModuleIdentifiers(ModuleScopeBase* moduleScope, SyntaxNo
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Namespace) {
-         NamespaceScope ns(moduleScope, _errorProcessor, _logic, outerExtensionList);
-
-         // declare namespace
-         declareNamespace(ns, current, true, true);
-         ns.moduleScope->newNamespace(*ns.nsName);
-
-         // declare all module members - map symbol identifiers
-         declareMemberIdentifiers(ns, current);
+         Namespace ns(this, moduleScope, _errorProcessor, _logic, outerExtensionList);
+         ns.declare(current, false);
       }
 
       current = current.nextNode();
@@ -9418,13 +9247,13 @@ void Compiler :: declareModule(ModuleScopeBase* moduleScope, SyntaxNode node, Ex
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Namespace) {
-         NamespaceScope ns(moduleScope, _errorProcessor, _logic, outerExtensionList);
+         Namespace ns(this, moduleScope, _errorProcessor, _logic, outerExtensionList);
 
          // declare namespace
-         declareNamespace(ns, current, false, true);
+         ns.declareNamespace(current, false, true);
 
          // declare all module members - map symbol identifiers
-         declareMembers(ns, current);
+         ns.declareMembers(current);
       }
 
       current = current.nextNode();
@@ -9453,10 +9282,10 @@ void Compiler :: compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildT
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Namespace) {
-         NamespaceScope ns(moduleScope, _errorProcessor, _logic, outerExtensionList);
-         declareNamespace(ns, current);
+         Namespace ns(this, moduleScope, _errorProcessor, _logic, outerExtensionList);
+         ns.declareNamespace(current);
 
-         compileNamespace(writer, ns, current);
+         compileNamespace(writer, ns.scope, current);
 
          _presenter->showProgress();
       }
@@ -9981,6 +9810,218 @@ void Compiler :: declareModuleExtensionDispatcher(NamespaceScope& scope, SyntaxN
    }
 }
 
+// --- Compiler::Namespace ---
+Compiler::Namespace :: Namespace(Compiler* compiler, ModuleScopeBase* moduleScope, ErrorProcessor* errorProcessor, CompilerLogic* compilerLogic,
+   ExtensionMap* outerExtensionList)
+   : compiler(compiler), scope(moduleScope, errorProcessor, compilerLogic, outerExtensionList)
+{
+
+}
+
+Compiler::Namespace::Namespace(Compiler* compiler, NamespaceScope* parent)
+   : compiler(compiler), scope(parent)
+{
+
+}
+
+void Compiler::Namespace :: declare(SyntaxNode node, bool withMembers)
+{
+   // declare namespace
+   declareNamespace(node, true, true);
+   scope.moduleScope->newNamespace(*scope.nsName);
+
+   // declare all module members - map symbol identifiers
+   declareMemberIdentifiers(node);
+
+   if (withMembers)
+      declareMembers(node);
+}
+
+void Compiler::Namespace :: declareNamespace(SyntaxNode node, bool ignoreImport, bool ignoreExtensions)
+{
+   // load the namespace name if available
+   SyntaxNode nameNode = node.findChild(SyntaxKey::Name);
+   if (nameNode == SyntaxKey::Name) {
+      if (scope.nsName.length() > 0)
+         scope.nsName.append('\'');
+
+      scope.nsName.append(nameNode.firstChild(SyntaxKey::TerminalMask).identifier());
+   }
+
+   if (!ignoreExtensions) {
+      // HOTFIX : load the module internal and public extensions
+      compiler->loadExtensions(scope, false);
+      compiler->loadExtensions(scope, true);
+   }
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::SourcePath:
+            scope.sourcePath.copy(current.identifier());
+            break;
+         case SyntaxKey::Import:
+            if (!ignoreImport) {
+               bool duplicateInclusion = false;
+               ustr_t name = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+               if (scope.moduleScope->includeNamespace(scope.importedNs, name, duplicateInclusion)) {
+                  if (!ignoreExtensions)
+                     compiler->importExtensions(scope, name);
+               }
+               else if (duplicateInclusion) {
+                  scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, current);
+
+                  // HOTFIX : comment out, to prevent duplicate warnings
+                  current.setKey(SyntaxKey::Idle);
+               }
+               else {
+                  scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, current.findChild(SyntaxKey::Name));
+                  current.setKey(SyntaxKey::Idle); // remove the node, to prevent duplicate warnings
+               }
+            }
+            break;
+         default:
+            // to make compiler happy
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
+
+void Compiler::Namespace:: declareMemberIdentifiers(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Namespace:
+         {
+            Namespace subNamespace(compiler, &scope);
+            subNamespace.declare(current, false);
+            break;
+         }
+         case SyntaxKey::Symbol:
+         {
+            SymbolScope symbolScope(&scope, 0, scope.defaultVisibility);
+            compiler->declareSymbolAttributes(symbolScope, current, true);
+
+            SyntaxNode name = current.findChild(SyntaxKey::Name);
+
+            ref_t reference = compiler->mapNewTerminal(symbolScope, nullptr, name, nullptr, symbolScope.visibility);
+            symbolScope.module->mapSection(reference | mskSymbolRef, false);
+
+            current.setArgumentReference(reference);
+            break;
+         }
+         case SyntaxKey::Class:
+         {
+            ClassScope classScope(&scope, 0, scope.defaultVisibility);
+
+            ref_t flags = classScope.info.header.flags;
+            compiler->declareClassAttributes(classScope, current, flags);
+
+            SyntaxNode name = current.findChild(SyntaxKey::Name);
+            if (current.arg.reference == INVALID_REF) {
+               // if it is a template based class - its name was already resolved
+               classScope.reference = current.findChild(SyntaxKey::Name).arg.reference;
+            }
+            else classScope.reference = compiler->mapNewTerminal(classScope, nullptr,
+               name, nullptr, classScope.visibility);
+
+            classScope.module->mapSection(classScope.reference | mskSymbolRef, false);
+
+            current.setArgumentReference(classScope.reference);
+            break;
+         }
+         case SyntaxKey::MetaDictionary:
+            compiler->declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Namespace);
+            break;
+         default:
+            // to make compiler happy
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
+
+void Compiler::Namespace :: declareMembers(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Namespace:
+         {
+            Namespace subNamespace(compiler, &scope);
+            subNamespace.declareNamespace(current, false, true);
+
+            subNamespace.declareMembers(current);
+            break;
+         }
+         case SyntaxKey::Symbol:
+         {
+            SymbolScope symbolScope(&scope, current.arg.reference, scope.defaultVisibility);
+
+            compiler->declareSymbol(symbolScope, current);
+            break;
+         }
+         case SyntaxKey::Class:
+         {
+            Class classHelper(compiler, &scope, current.arg.reference, scope.defaultVisibility);
+
+            classHelper.declare(current);
+            break;
+         }
+         case SyntaxKey::MetaExpression:
+         {
+            MetaScope metaScope(&scope, Scope::ScopeLevel::Namespace);
+
+            compiler->evalStatement(metaScope, current);
+            break;
+         }
+         case SyntaxKey::Template:
+         case SyntaxKey::ExtensionTemplate:
+         {
+            TemplateScope templateScope(&scope, 0, scope.defaultVisibility);
+            compiler->declareTemplateClass(templateScope, current);
+            break;
+         }
+         case SyntaxKey::TemplateCode:
+         {
+            TemplateScope templateScope(&scope, 0, scope.defaultVisibility);
+            compiler->declareTemplateCode(templateScope, current);
+            break;
+         }
+         default:
+            // to make compiler happy
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   if (scope.declaredExtensions.count() > 0) {
+      compiler->declareModuleExtensionDispatcher(scope, node);
+
+      scope.declaredExtensions.clear();
+   }
+}
+
+// --- Compiler::Symbol ---
+Compiler::Symbol :: Symbol(Namespace& ns, ref_t reference, Visibility visibility)
+   : Symbol(ns.compiler, &ns.scope, reference, visibility)
+{
+
+}
+
+Compiler::Symbol::Symbol(Compiler* compiler, NamespaceScope* parent, ref_t reference, Visibility visibility)
+   : compiler(compiler), scope(parent, reference, visibility)
+{
+
+}
+
 // --- Compiler::Class ---
 Compiler::Class :: Class(Compiler* compiler, Scope* parent, ref_t reference, Visibility visibility)
    : compiler(compiler), scope(parent, reference, visibility)
@@ -10068,36 +10109,36 @@ void Compiler::Class :: resolveClassPostfixes(SyntaxNode node, bool extensionMod
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::InlineTemplate:
-         if (!compiler->importInlineTemplate(scope, current, INLINE_PREFIX, node))
-            scope.raiseError(errInvalidOperation, current);
-         break;
-      case SyntaxKey::Parent:
-      {
-         SyntaxNode child = current.firstChild();
-         if (child == SyntaxKey::TemplateType) {
-            if (compiler->importTemplate(scope, child, node, true)) {
-               // try to import as weak template
+         case SyntaxKey::InlineTemplate:
+            if (!compiler->importInlineTemplate(scope, current, INLINE_PREFIX, node))
+               scope.raiseError(errInvalidOperation, current);
+            break;
+         case SyntaxKey::Parent:
+         {
+            SyntaxNode child = current.firstChild();
+            if (child == SyntaxKey::TemplateType) {
+               if (compiler->importTemplate(scope, child, node, true)) {
+                  // try to import as weak template
+               }
+               else if (!parentRef) {
+                  parentNode = current;
+
+                  parentRef = compiler->resolveStrongTypeAttribute(scope, child, extensionMode, false);
+               }
+               else if (!compiler->importTemplate(scope, child, node, false))
+                  scope.raiseError(errUnknownTemplate, current);
             }
             else if (!parentRef) {
                parentNode = current;
 
                parentRef = compiler->resolveStrongTypeAttribute(scope, child, extensionMode, false);
             }
-            else if (!compiler->importTemplate(scope, child, node, false))
-               scope.raiseError(errUnknownTemplate, current);
-         }
-         else if (!parentRef) {
-            parentNode = current;
+            else scope.raiseError(errInvalidSyntax, current);
 
-            parentRef = compiler->resolveStrongTypeAttribute(scope, child, extensionMode, false);
+            break;
          }
-         else scope.raiseError(errInvalidSyntax, current);
-
-         break;
-      }
-      default:
-         break;
+         default:
+            break;
       }
       //else if (!parentRef) {
       //   parentNode = baseNode;
@@ -10167,6 +10208,12 @@ Compiler::Expression :: Expression(Compiler* compiler, CodeScope& codeScope, Bui
 
 Compiler::Expression::Expression(Compiler* compiler, SourceScope& symbolScope, BuildTreeWriter& writer)
    : compiler(compiler), scope(&symbolScope), writer(&writer)
+{
+
+}
+
+Compiler::Expression::Expression(Symbol& symbol, BuildTreeWriter& writer)
+   : compiler(symbol.compiler), scope(&symbol.scope), writer(&writer)
 {
 
 }

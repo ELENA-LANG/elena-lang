@@ -1043,6 +1043,39 @@ namespace elena_lang
          }
       };
 
+      class Namespace
+      {
+         friend class Compiler;
+
+         Compiler*      compiler;
+
+         void declareNamespace(SyntaxNode node, bool ignoreImport = false, bool ignoreExtensions = false);
+         void declareMemberIdentifiers(SyntaxNode node);
+         void declareMembers(SyntaxNode node);
+
+      public:
+         NamespaceScope scope;
+
+         void declare(SyntaxNode node, bool withMembers);
+
+         Namespace(Compiler* compiler, ModuleScopeBase* moduleScope, ErrorProcessor* errorProcessor, CompilerLogic* compilerLogic,
+            ExtensionMap* outerExtensionList);
+         Namespace(Compiler* compiler, NamespaceScope* parent);
+      };
+
+      class Symbol
+      {
+         friend class Compiler;
+
+         Compiler* compiler;
+
+      public:
+         SymbolScope scope;
+
+         Symbol(Namespace& ns, ref_t reference, Visibility visibility);
+         Symbol(Compiler* compiler, NamespaceScope* parent, ref_t reference, Visibility visibility);
+      };
+
       class Class
       {
          friend class Compiler;
@@ -1195,11 +1228,14 @@ namespace elena_lang
 
          ObjectInfo compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope = false);
 
+         Expression(Symbol& symbol, BuildTreeWriter& writer);
          Expression(Compiler* compiler, CodeScope& codeScope, BuildTreeWriter& writer);
          Expression(Compiler* compiler, SourceScope& symbolScope, BuildTreeWriter& writer);
       };
 
+      friend class Namespace;
       friend class Class;
+      friend class Symbol;
       friend class Expression;
 
    private:
@@ -1216,6 +1252,7 @@ namespace elena_lang
       bool                   _withConditionalBoxing;
       bool                   _evaluateOp;
       bool                   _verbose;
+      bool                   _noValidation;
 
       void loadMetaData(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t name);
 
@@ -1374,11 +1411,6 @@ namespace elena_lang
       void declareMethod(MethodScope& scope, SyntaxNode node, bool abstractMode, bool staticNotAllowed);
 
       void declareSymbol(SymbolScope& scope, SyntaxNode node);            
-
-      void declareNamespace(NamespaceScope& ns, SyntaxNode node, bool ignoreImport = false, 
-         bool ignoreExtensions = false);
-      void declareMembers(NamespaceScope& ns, SyntaxNode node);
-      void declareMemberIdentifiers(NamespaceScope& ns, SyntaxNode node);
 
       void copyParentNamespaceExtensions(NamespaceScope& source, NamespaceScope& target);
 
@@ -1587,6 +1619,11 @@ namespace elena_lang
       void setVerboseOn()
       {
          _verbose = true;
+      }
+
+      void setNoValidation()
+      {
+         _noValidation = true;
       }
 
       void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,

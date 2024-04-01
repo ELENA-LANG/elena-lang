@@ -1473,9 +1473,9 @@ bool CompilerLogic :: readTypeMap(ModuleBase* extModule, MemoryBase* section, Re
                if (NamespaceString::compareNs(name, scope->module->name())) {
                   reference = scope->module->mapReference(name + getlength(STANDARD_MODULE));
                }
-               else reference = scope->importReference(extModule, reference);
+               else reference = ImportHelper::importReference(extModule, reference, scope->module);
             }
-            else reference = scope->importReference(extModule, reference);
+            else reference = ImportHelper::importReference(extModule, reference, scope->module);
          }
 
          map.add(*key, reference);
@@ -1594,15 +1594,15 @@ bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* sec
    while (!reader.eof()) {
       ref_t extRef = reader.getRef();
       if (importMode && extRef)
-         extRef = scope->importReference(extModule, extRef);
+         extRef = ImportHelper::importReference(extModule, extRef, scope->module);
 
       mssg_t message = reader.getRef();
       if (importMode)
-         message = scope->importMessage(extModule, message);
+         message = ImportHelper::importMessage(extModule, message, scope->module);
 
       mssg_t strongMessage = reader.getRef();
       if (importMode && strongMessage)
-         strongMessage = scope->importMessage(extModule, strongMessage);
+         strongMessage = ImportHelper::importMessage(extModule, strongMessage, scope->module);
 
       if (!extRef) {
          // if it is an extension template
@@ -1911,7 +1911,7 @@ bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ModuleBase* 
    for (size_t i = 0; i < sourceLen; i++) {
       ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
 
-      if (!isCompatible(scope, { scope.importReference(targetModule, targetSign) }, { sourceSignatures[i] }, true))
+      if (!isCompatible(scope, { ImportHelper::importReference(targetModule, targetSign, scope.module) }, { sourceSignatures[i] }, true))
          return false;
    }
 
@@ -1999,7 +1999,7 @@ void CompilerLogic :: setSignatureStacksafe(ModuleScopeBase& scope, ModuleBase* 
    for (size_t i = 0; i < len; i++) {
       flag <<= 1;
 
-      if (isStacksafeArg(scope, scope.importReference(targetModule, targetSignatures[i])))
+      if (isStacksafeArg(scope, ImportHelper::importReference(targetModule, targetSignatures[i], scope.module)))
          stackSafeAttr |= flag;
    }
 }
@@ -2096,7 +2096,7 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
                {
                   setSignatureStacksafe(scope, sectionInfo.module, argSign, stackSafeAttr);
 
-                  foundMessage = scope.importMessage(sectionInfo.module, argMessage);
+                  foundMessage = ImportHelper::importMessage(sectionInfo.module, argMessage, scope.module);
                }
             }
 
@@ -2771,4 +2771,113 @@ ref_t CompilerLogic :: retrievePrimitiveType(ModuleScopeBase& scope, ref_t refer
    }
 
    return 0;
+}
+
+ref_t CompilerLogic :: loadClassInfo(ClassInfo& info, ModuleInfo& moduleInfo, ModuleBase* target, bool headerOnly, bool fieldsOnly)
+{
+   if (moduleInfo.unassigned())
+      return 0;
+
+   // load argument VMT meta data
+   MemoryBase* metaData = moduleInfo.module->mapSection(moduleInfo.reference | mskMetaClassInfoRef, true);
+   if (!metaData)
+      return 0;
+
+   MemoryReader reader(metaData);
+   if (moduleInfo.module != target) {
+      ClassInfo copy;
+      copy.load(&reader, headerOnly, fieldsOnly);
+
+      importClassInfo(copy, info, moduleInfo.module, target, headerOnly, false/*, false*/);
+
+      // import reference
+      ImportHelper::importReference(moduleInfo.module, moduleInfo.reference, target);
+   }
+   else info.load(&reader, headerOnly, fieldsOnly);
+
+   return moduleInfo.reference;
+}
+
+void CompilerLogic :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, 
+   ModuleBase* importer, bool headerOnly, bool inheritMode)
+{
+   target.header = copy.header;
+   target.size = copy.size;
+
+   if (!headerOnly) {
+      // import method references and mark them as inherited if required (inherit mode)
+      for (auto it = copy.methods.start(); !it.eof(); ++it) {
+         MethodInfo info = *it;
+
+         if (info.outputRef)
+            info.outputRef = ImportHelper::importReference(exporter, info.outputRef, importer);
+
+         if (info.multiMethod)
+            info.multiMethod = ImportHelper::importMessage(exporter, info.multiMethod, importer);
+
+         if (info.byRefHandler)
+            info.byRefHandler = ImportHelper::importMessage(exporter, info.byRefHandler, importer);
+
+         if (inheritMode) {
+            info.inherited = true;
+
+            // private methods are not inherited
+            if (!test(it.key(), STATIC_MESSAGE))
+               target.methods.add(ImportHelper::importMessage(exporter, it.key(), importer), info);
+         }
+         else target.methods.add(ImportHelper::importMessage(exporter, it.key(), importer), info);
+      }
+
+      for (auto it = copy.fields.start(); !it.eof(); ++it) {
+         FieldInfo info = *it;
+
+         if (info.typeInfo.typeRef && !isPrimitiveRef(info.typeInfo.typeRef))
+            info.typeInfo.typeRef = ImportHelper::importReference(exporter, info.typeInfo.typeRef, importer);
+
+         if (info.typeInfo.elementRef && !isPrimitiveRef(info.typeInfo.elementRef))
+            info.typeInfo.elementRef = ImportHelper::importReference(exporter, info.typeInfo.elementRef, importer);
+
+         target.fields.add(it.key(), info);
+      }
+
+      for (auto it = copy.attributes.start(); !it.eof(); ++it) {
+         ClassAttributeKey key = it.key();
+         if (test((unsigned)key.value2, (unsigned)ClassAttribute::ReferenceKeyMask)) {
+            key.value1 = ImportHelper::importReference(exporter, key.value1, importer);
+         }
+         else if (test((unsigned)key.value2, (unsigned)ClassAttribute::MessageKeyMask)) {
+            key.value1 = ImportHelper::importMessage(exporter, key.value1, importer);
+         }
+         ref_t referece = *it;
+         if (test((unsigned)key.value2, (unsigned)ClassAttribute::ReferenceMask)) {
+            referece = ImportHelper::importReference(exporter, referece, importer);
+         }
+         else if (test((unsigned)key.value2, (unsigned)ClassAttribute::MessageMask)) {
+            referece = ImportHelper::importMessage(exporter, referece, importer);
+         }
+
+         target.attributes.add(key, referece);
+      }
+
+      for (auto it = copy.statics.start(); !it.eof(); ++it) {
+         auto info = *it;
+         if (info.typeInfo.typeRef && !isPrimitiveRef(info.typeInfo.typeRef))
+            info.typeInfo.typeRef = ImportHelper::importReference(exporter, info.typeInfo.typeRef, importer);
+
+         if (info.typeInfo.elementRef)
+            info.typeInfo.elementRef = ImportHelper::importReference(exporter, info.typeInfo.elementRef, importer);
+
+         info.valueRef = ImportHelper::importReferenceWithMask(exporter, info.valueRef, importer);
+
+         target.statics.add(it.key(), info);
+      }
+   }
+
+   // import class class reference
+   if (target.header.classRef != 0)
+      target.header.classRef = ImportHelper::importReference(exporter, target.header.classRef, importer);
+
+   // import parent reference
+   if (target.header.parentRef)
+      target.header.parentRef = ImportHelper::importReference(exporter, target.header.parentRef, importer);
 }

@@ -2711,7 +2711,7 @@ void ByteCodeWriter :: importTree(CommandTape& tape, BuildNode node, Scope& scop
    }
    else importInfo = _loader->getSection(ReferenceInfo(referenceName), mskProcedureRef, 0, false);
 
-   tape.import(importInfo.module, importInfo.section, true, scope.moduleScope);
+   tape.import(importInfo.module, importInfo.section, true, scope.moduleScope->module);
 }
 
 void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 

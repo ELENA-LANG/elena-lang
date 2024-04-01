@@ -237,6 +237,35 @@ namespace elena_lang
       static bool loadMetaData(ModuleScopeBase* moduleScope, ustr_t name);
       static bool clearMetaData(ModuleScopeBase* moduleScope, ustr_t name);
 
+      static Visibility getVisibility(ustr_t name)
+      {
+         if (name.findStr(PRIVATE_PREFIX_NS) != NOTFOUND_POS)
+            return Visibility::Private;
+
+         if (name.findStr(INTERNAL_PREFIX_NS) != NOTFOUND_POS)
+            return Visibility::Internal;
+
+         return Visibility::Public;
+      }
+
+      static ustr_t getVisibilityPrefix(Visibility visibility)
+      {
+         switch (visibility) {
+            case Visibility::Internal:
+               return INTERNAL_PREFIX_NS;
+            case Visibility::Private:
+               return PRIVATE_PREFIX_NS;
+            default:
+               return "'";
+         }
+      }
+
+      static ref_t loadClassInfo(ClassInfo& info, ModuleInfo& moduleInfo, 
+         ModuleBase* target, bool headerOnly, bool fieldsOnly);
+
+      static void importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, 
+         ModuleBase* importer, bool headerOnly, bool inheritMode/*,bool ignoreFields*/);
+
       static CompilerLogic* getInstance()
       {
          static CompilerLogic instance;
