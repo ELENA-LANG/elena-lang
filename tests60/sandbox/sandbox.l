@@ -1,4 +1,4 @@
-public const struct Struct
+/*public const struct Struct
 {
    embeddable __int _value[4];
 }
@@ -19,4 +19,10 @@ public singleton Tester
 public program()
 {
    Struct r := Tester.getValue()
+}
+*/
+
+public program()
+{
+   ushort n := 2;
 }

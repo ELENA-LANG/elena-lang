@@ -54,6 +54,3 @@ entry()
         }
     }
 }
-
-public symbol startUp
-    = entry();

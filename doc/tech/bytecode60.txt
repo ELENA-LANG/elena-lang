@@ -303,6 +303,8 @@ ELENA byte codes (or ecodes)
    nlen n                   - index := acc.length / n;
                               returns the structure size
 
+   parent                   - acc := acc.class.parent
+
    read n                   - sp[0][index*n] >> acc, n bytes
 
    redirect                 - search acc::VMT for the message in index;

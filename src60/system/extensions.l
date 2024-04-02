@@ -8,7 +8,11 @@ public extension objectOp
    __getClass() : external(system'core_routines'__object_class),
                   info("Returns the object class");
 
+   __getParentClass() : external(system'core_routines'__object_parentclass),
+                  info("Returns the parent class");
+
    bool safeEqual(o)
+         : info("Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible")
       = self.equal(o) \ back(false);
 
    bool isEmpty()
@@ -25,12 +29,94 @@ public extension objectOp
       ^ len != 0;
    }
 
+   bool isNil()
+         : info("Returns true if the object is nil")
+      = nil == self;       
+
    doWith(action)
       = action(self);
 
    bool instanceOf(type) : external(system'core_routines'__object_instanceOf),
                   info("Checks if the object is an instance of type");   
 }
+
+// --- valueOp ---
+public extension valueOp
+{
+   bool isLiteral()
+      : info("Returns true if the object is literal or character")
+   {
+      if (self; is string s)
+      {
+         ^ true
+      };
+
+      if (self; is wide s)
+      {
+         ^ true
+      };
+
+      if (self; is char ch)
+      {
+         ^ true
+      };
+
+
+      ^ false
+   }
+
+   bool isInteger()
+      : info("Returns true if the object is an integer number")
+   {
+      if (self; is int n)
+      {
+         ^ true
+      };
+
+      if (self; is uint n)
+      {
+         ^ true
+      };
+
+      if (self; is short n)
+      {
+         ^ true
+      };
+
+      if (self; is ushort n)
+      {
+         ^ true
+      };
+
+      if (self; is byte n)
+      {
+         ^ true
+      };
+
+      if (self; is sbyte n)
+      {
+         ^ true
+      };
+
+      if (self; is long n)
+      {
+         ^ true
+      };
+
+      ^ false
+   }
+
+   bool isNumber()
+      : info("Returns true if the object is a number")
+   {
+      if (self; is real n)
+      {
+         ^ true
+      };
+
+      ^ self.isInteger()
+   }
+} 
 
 // --- byteOp ---
 
@@ -318,12 +404,40 @@ public extension intOp : IntNumber
         
    bool isNonnegative()
       = self <= 0;
+
+   get short High()
+   {
+      int w := self;
+      w := w & 0FFFF0000h;
+      w := w.shiftRight(8);
+        
+      ^ shortConvertor.convert(w)
+   }
+        
+   get short Low()
+   {
+      int w := self;
+      w := w & 0FFFFh;
+        
+      ^ shortConvertor.convert(w)
+   }
 }
 
 // --- uintOp ---
 
 public extension uintOp : UIntNumber
 {
+   int Hashcode
+   {
+      // Reads the object hash code into the output parameter
+      get()
+      {
+         int retVal := PrimitiveIntOperations.getHashcode(self);
+
+         ^ retVal
+      }
+   }
+
    uint sqr()
       = self * self;
 
@@ -393,6 +507,17 @@ public extension uintOp : UIntNumber
 
 public extension longOp : LongNumber
 {   
+   int Hashcode
+   {
+      // Reads the object hash code into the output parameter
+      get()
+      {
+         int retVal := PrimitiveLongOperations.getHashcode(self);
+
+         ^ retVal
+      }
+   }
+
    long power(long y)
    {
       long x := self;

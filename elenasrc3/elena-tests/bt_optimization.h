@@ -13,8 +13,7 @@
 
 namespace elena_lang
 {
-   // Optimization 1 (byRefOp) : "a := b.get()" => "b.get(ref a)"
-   class BTOptimization1_1 : public testing::Test
+   class BTOptimization1 : public testing::Test
    {
    protected:
       MemoryDump btRules;
@@ -30,6 +29,17 @@ namespace elena_lang
 
       CompilerEnvironment env;
 
+      void SetUp() override;
+
+   public:
+      void runBTTest();
+      void runCompilerTest();
+   };
+
+   // Optimization 1 (byRefOp) : "a := b.get()" => "b.get(ref a)"
+   class BTOptimization1_1 : public BTOptimization1
+   {
+   protected:
       void SetUp() override;
    };
 }

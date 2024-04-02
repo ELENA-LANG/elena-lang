@@ -869,6 +869,14 @@ inline %02Ch
 
 end
 
+// ; parent
+inline %02Dh
+
+  sub     x14, x10, elPackageOffset
+  ldr     x10, [x14]              //; edi
+
+end
+
 // ; xget
 inline %02Eh
 

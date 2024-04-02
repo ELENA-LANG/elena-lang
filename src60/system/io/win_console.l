@@ -158,7 +158,11 @@ namespace io
 
       clear()
       {
-      }      
+      }
+
+      refresh()
+      {
+      }
    }
 
    public class ConsoleWriter : IConsoleWriter
@@ -207,6 +211,10 @@ namespace io
          int coord := y * 10000h + x;
                     
          extern KERNEL32.SetConsoleCursorPosition(h, coord)
+      }
+
+      refresh()
+      {
       }
    }
 

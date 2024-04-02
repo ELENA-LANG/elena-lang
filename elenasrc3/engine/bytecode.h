@@ -65,6 +65,7 @@ namespace elena_lang
       XPeekEq        = 0x2A,
       TryLock        = 0x2B,
       FreeLock       = 0x2C,
+      Parent         = 0x2D,
       XGet           = 0x2E,
       XCall          = 0x2F,
 

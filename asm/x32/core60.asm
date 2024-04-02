@@ -754,6 +754,13 @@ inline %02Ch
 
 end
 
+// ; parent
+inline %02Dh
+
+  mov ebx, [ebx - elPackageOffset]
+
+end
+
 // ; xget
 inline %02Eh
 

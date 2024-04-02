@@ -375,6 +375,35 @@ shortTests()
     console.writeLine(".");
 }
 
+// --- ushortTests ---
+
+ushortTests()
+{
+    console.write("ushortTests:");
+    short w := 1234;
+    Assert.ifTrue(w == 1234);
+    console.write(".");
+
+    ushort n := 2;
+    ushort m := 3;
+    ushort k := 4;
+    ushort l := 3;
+
+    Assert.ifTrue(n < m);
+    Assert.ifFalse(n > m);
+    Assert.ifTrue(n <= m);
+    Assert.ifTrue(n <= n);
+    Assert.ifTrue(n >= n);
+    Assert.ifFalse(n >= m);
+    Assert.ifTrue(n == n);
+    Assert.ifFalse(n == m);
+                    
+    console.write(".");
+
+    Assert.ifTrue(n + m * k == 14);
+    console.writeLine(".");
+}
+
 // --- conversionTests ---
 
 conversionTests()

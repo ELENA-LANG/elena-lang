@@ -18,14 +18,11 @@ In development:
   - #617
   - #637 : all bt tests
   --------------------------------------
-  - serialize / deserialize tree : syntax tree
-  - serialize / deserialize tree : build tree
+  - port : rest of system module from lib50
 
-  - #637 : ByRefOpMark - message, property, weak operation
+  - #637 : ByRefOpMark - property, weak operation
 
   - remove Serializer / ScriptReader from elc project (when no longer is required)
-
-  - port : rest of system module from lib50
 
   === Iteration 22 ===
   --------------------------------------

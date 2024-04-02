@@ -17,6 +17,7 @@ public program()
    stringTests();
    wideTests();
    shortTests();
+   ushortTests();
    conversionTests();
    inlineAssignmentTests();
    singleDispatchTest();

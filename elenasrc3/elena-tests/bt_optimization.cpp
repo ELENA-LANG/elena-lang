@@ -7,6 +7,7 @@
 
 #include "bt_optimization.h"
 #include "serializer.h"
+#include "bcwriter.h"
 
 #include <windows.h>
 
@@ -31,7 +32,7 @@ constexpr auto SyntaxTree1_1 = "expression(assign_operation(object(type(identifi
 constexpr auto BuildTree1_1 = "byrefmark -8 () local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2050 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
 constexpr auto OptimizedBuildTree1_1 = "local_address -4 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2050 (type 4 ()) local_address -4 ()";
 
-void BTOptimization1_1 :: SetUp()
+void BTOptimization1 :: SetUp()
 {
    PathString appPath;
    getAppPath(appPath);
@@ -51,11 +52,71 @@ void BTOptimization1_1 :: SetUp()
    declarationNode = syntaxTree.readRoot().appendChild(SyntaxKey::Idle, 1);
    exprNode = syntaxTree.readRoot().appendChild(SyntaxKey::Idle, 2);
 
+   beforeOptimization = buildTree.readRoot().appendChild(BuildKey::Tape);
+   afterOptimization = buildTree.readRoot().appendChild(BuildKey::Tape);
+}
+
+void BTOptimization1 :: runCompilerTest()
+{
+   // Arrange
+   ModuleScopeBase* moduleScope = env.createModuleScope(true, false);
+   moduleScope->buildins.superReference = 1;
+   moduleScope->buildins.wrapperTemplateReference = 3;
+
+   Compiler* compiler = env.createCompiler();
+
+   BuildTree output;
+   BuildTreeWriter writer(output);
+   Compiler::Namespace nsScope(compiler, moduleScope, nullptr, nullptr, nullptr);
+
+   Compiler::Class cls(nsScope, 0, Visibility::Internal);
+   Compiler::Method method(cls);
+   Compiler::Code code(method);
+
+   // Act
+   nsScope.declare(declarationNode.firstChild(), true);
+
+   writer.newNode(BuildKey::Tape);
+   Compiler::Expression expression(code, writer);
+   expression.compileRoot(exprNode.firstChild(), ExpressionAttribute::NoDebugInfo);
+   writer.closeNode();
+
+   // Assess
+   bool matched = BuildTree::compare(beforeOptimization, output.readRoot(), true);
+   EXPECT_TRUE(matched);
+
+   freeobj(compiler);
+   freeobj(moduleScope);
+}
+
+void BTOptimization1 :: runBTTest()
+{
+   // Arrange
+   ByteCodeWriter::BuildTreeOptimizer buildTreeOptimizer;
+   MemoryReader reader(&btRules);
+   buildTreeOptimizer.load(reader);
+
+   BuildTree output;
+   BuildTreeWriter writer(output);
+   BuildTree::copyNode(writer, beforeOptimization, true);
+
+   // Act
+   buildTreeOptimizer.proceed(output.readRoot());
+
+   // Assess
+   bool matched = BuildTree::compare(output.readRoot(), afterOptimization, true);
+   EXPECT_TRUE(matched);
+}
+
+// --- BTOptimization1_1 ---
+
+void BTOptimization1_1 :: SetUp()
+{
+   BTOptimization1::SetUp();
+
    SyntaxTreeSerializer::load(Declaration1_1, declarationNode);
    SyntaxTreeSerializer::load(SyntaxTree1_1, exprNode);
 
-   beforeOptimization = buildTree.readRoot().appendChild(BuildKey::Tape);
-   afterOptimization = buildTree.readRoot().appendChild(BuildKey::Tape);
    BuildTreeSerializer::load(BuildTree1_1, beforeOptimization);
    BuildTreeSerializer::load(OptimizedBuildTree1_1, afterOptimization);
 }

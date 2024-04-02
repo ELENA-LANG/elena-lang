@@ -476,6 +476,15 @@ internal singleton PrimitiveIntOperations
       ^ retVal
    }
 
+   int getHashcode(uint n)
+   {
+      int v := n;
+
+      self.hash(v, ref int retVal);
+
+      ^ retVal
+   }
+
    saveToByteArray(int n, byte[] dest, int index)
    {
       byte b := n & 0FFh;
@@ -499,6 +508,15 @@ internal singleton PrimitiveIntOperations
 
 internal singleton PrimitiveLongOperations
 {
+   private hash(long n, ref int retVal) : external(system'core_routines'__longHash);
+
+   int getHashcode(long n)
+   {
+      self.hash(n, ref int retVal);
+
+      ^ retVal
+   }
+
    saveToByteArray(long n, byte[] dest, int index)
    {
       int lo := n.Low;

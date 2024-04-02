@@ -70,6 +70,14 @@ procedure __object_class
 
 end
 
+procedure __object_parentclass
+
+  peek        sp:0
+  class
+  parent
+
+end
+
 procedure __object_instanceOf
 
   peek        sp:0
@@ -1003,6 +1011,15 @@ procedure __intHash (self,n,r)
 
 end
 
+procedure __longHash (self,n,r)
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
 procedure __realHash (self,n,r)
 
   peek       sp:1
@@ -1060,6 +1077,16 @@ procedure __realToInt (self, r,retVal)
 end
 
 procedure __intToShort
+
+  peek       sp:1
+  load
+  and        n:0FFFFh
+  peek       sp:2
+  save
+
+end
+
+procedure __intToUShort
 
   peek       sp:1
   load

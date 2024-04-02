@@ -21,7 +21,7 @@ const char* _fnOpcodes[256] =
    "dtrans", "xassign", "lload", "convl", "xlcmp", "xload", "xlload", "lneg",
 
    "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", "xjump",
-   "bcopy", "wcopy", "xpeekeq", "trylock", "freelock", OPCODE_UNKNOWN, "xget", "xcall",
+   "bcopy", "wcopy", "xpeekeq", "trylock", "freelock", "parent", "xget", "xcall",
 
    "xfsave", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xquit", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,

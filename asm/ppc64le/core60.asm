@@ -932,6 +932,13 @@ inline %02Ch
 
 end
 
+// ; parent
+inline %02Dh
+
+  ld      r15, -elPackageOffset(r15)
+
+end
+
 // ; xget
 inline %02Eh
 

@@ -13138,6 +13138,7 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsIn
          case BuildKey::ByteCondOp:
          case BuildKey::UByteCondOp:
          case BuildKey::ShortCondOp:
+         case BuildKey::UShortCondOp:
          case BuildKey::LongCondOp:
          case BuildKey::LongIntCondOp:
          case BuildKey::RealCondOp:
