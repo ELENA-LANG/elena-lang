@@ -119,3 +119,100 @@ void SyntaxTreeSerializer :: load(ustr_t source, SyntaxNode& target)
 
    SyntaxTree::deserialize(target, syntaxTreeReader, &scope);
 }
+
+// --- BuildTreeSerializer ---
+
+void buildTreeEncoder(TextWriter<char>& writer, BuildKey key, ustr_t, int arg, void* extraArg)
+{
+   if (key == BuildKey::None) {
+      writer.writeTextLine(")");
+
+      return;
+   }
+
+   BuildKeyMap* map = static_cast<BuildKeyMap*>(extraArg);
+
+   ustr_t keyName = map->retrieve<BuildKey>(nullptr, key, [](BuildKey arg, ustr_t value, BuildKey current)
+      {
+         return current == arg;
+      });
+
+   if (keyName.empty()) {
+      IdentifierString code;
+      code.append('#');
+      code.appendInt((int)key);
+
+      writer.writeText(*code);
+   }
+   else writer.writeText(keyName);
+
+   writer.writeChar(' ');
+   if (arg) {
+      String<char, 12> number;
+      number.appendInt(arg);
+      writer.writeText(number.str());
+      writer.writeChar(' ');
+   }
+
+   writer.writeTextLine("(");
+}
+
+void BuildTreeSerializer :: save(BuildNode node, DynamicUStr& target)
+{
+   BuildKeyMap map(BuildKey::None);
+   BuildTree::loadBuildKeyMap(map);
+
+   DynamicUStrWriter writer(&target);
+
+   BuildTree::serialize(node, buildTreeEncoder, writer, &map);
+}
+
+struct BuildLoadScope
+{
+   ScriptReader scriptReader;
+   BuildKeyMap  map;
+
+   BuildLoadScope(UStrReader* reader)
+      : scriptReader(4, reader), map(BuildKey::None)
+   {
+   }
+};
+
+bool buildTreeReader(BuildKey& key, IdentifierString&, int& value, void* arg)
+{
+   BuildLoadScope* scope = static_cast<BuildLoadScope*>(arg);
+
+   ScriptToken token;
+   scope->scriptReader.read(token);
+   if (token.compare(")") || token.state == dfaEOF)
+      return false;
+
+   key = scope->map.get(*token.token);
+
+   scope->scriptReader.read(token);
+   if (token.state == dfaInteger) {
+      value = StrConvertor::toInt(*token.token, 10);
+
+      scope->scriptReader.read(token);
+   }
+   else if (token.state == dfaOperator && token.compare("-")) {
+      scope->scriptReader.read(token);
+      value = -StrConvertor::toInt(*token.token, 10);
+
+      scope->scriptReader.read(token);
+   }
+   else value = 0;
+
+   return true;
+}
+
+void BuildTreeSerializer :: load(ustr_t source, BuildNode& target)
+{
+   StringTextReader<char> reader(source.str());
+   BuildLoadScope scope(&reader);
+
+   BuildTree::loadBuildKeyMap(scope.map);
+
+   BuildTree::deserialize(target, buildTreeReader, &scope);
+
+}

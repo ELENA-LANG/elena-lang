@@ -70,7 +70,10 @@ ref_t TestModuleScope :: mapTemplateIdentifier(ustr_t ns, ustr_t identifier, Vis
 
 ref_t TestModuleScope :: mapFullReference(ustr_t referenceName, bool existing)
 {
-   return 0;
+   if (emptystr(referenceName))
+      return 0;
+
+   return module->mapReference(referenceName, existing);
 }
 
 ref_t TestModuleScope :: mapWeakReference(ustr_t referenceName, bool existing)
@@ -166,6 +169,38 @@ Visibility TestModuleScope :: retrieveVisibility(ref_t reference)
    return Visibility::Private;
 }
 
+// --- TestTemplateProssesor ---
+
+ref_t TestTemplateProssesor :: generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
+   List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList)
+{
+   return templateRef;
+}
+
+bool TestTemplateProssesor :: importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+   List<SyntaxNode>& parameters)
+{
+   return false;
+}
+
+bool TestTemplateProssesor :: importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+   List<SyntaxNode>& parameters)
+{
+   return false;
+}
+
+bool TestTemplateProssesor :: importPropertyTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+   List<SyntaxNode>& parameters)
+{
+   return false;
+}
+
+bool TestTemplateProssesor :: importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+   List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
+{
+   return false;
+}
+
 // --- CompilerEnvironment ---
 
 CompilerEnvironment :: CompilerEnvironment()
@@ -177,15 +212,12 @@ ModuleScopeBase* CompilerEnvironment :: createModuleScope(bool tapeOptMode, bool
 {
    auto scope = new TestModuleScope(tapeOptMode, threadFriendly);
 
-   // by default - the first reference is a super class
-   scope->buildins.superReference = 1;
-
    return scope;
 }
 
 Compiler* CompilerEnvironment :: createCompiler()
 {
-   auto compiler = new Compiler(nullptr, nullptr, nullptr, CompilerLogic::getInstance());
+   auto compiler = new Compiler(nullptr, nullptr, TestTemplateProssesor::getInstance(), CompilerLogic::getInstance());
 
    compiler->setNoValidation();
 

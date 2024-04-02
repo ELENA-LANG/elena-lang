@@ -10028,6 +10028,11 @@ Compiler::Class :: Class(Compiler* compiler, Scope* parent, ref_t reference, Vis
 {
 }
 
+Compiler::Class :: Class(Namespace& ns, ref_t reference, Visibility visibility)
+   : compiler(ns.compiler), scope(&ns.scope, reference, visibility)
+{
+}
+
 void Compiler::Class :: declare(SyntaxNode node)
 {
    bool extensionDeclaration = isExtensionDeclaration(node);
@@ -10198,6 +10203,23 @@ void Compiler::Class :: declareClassClass(ClassScope& classClassScope, SyntaxNod
    classClassScope.save();
 }
 
+// --- Compiler::Method ---
+
+Compiler::Method :: Method(Class& cls)
+   : compiler(cls.compiler), scope(&cls.scope)
+{
+
+}
+
+// --- Compiler::Code ---
+
+Compiler::Code :: Code(Method& method)
+   : compiler(method.compiler), scope(&method.scope)
+{
+
+}
+
+
 // --- Compiler::Expression ---
 
 Compiler::Expression :: Expression(Compiler* compiler, CodeScope& codeScope, BuildTreeWriter& writer)
@@ -10206,14 +10228,20 @@ Compiler::Expression :: Expression(Compiler* compiler, CodeScope& codeScope, Bui
 
 }
 
-Compiler::Expression::Expression(Compiler* compiler, SourceScope& symbolScope, BuildTreeWriter& writer)
+Compiler::Expression :: Expression(Compiler* compiler, SourceScope& symbolScope, BuildTreeWriter& writer)
    : compiler(compiler), scope(&symbolScope), writer(&writer)
 {
 
 }
 
-Compiler::Expression::Expression(Symbol& symbol, BuildTreeWriter& writer)
+Compiler::Expression :: Expression(Symbol& symbol, BuildTreeWriter& writer)
    : compiler(symbol.compiler), scope(&symbol.scope), writer(&writer)
+{
+
+}
+
+Compiler::Expression :: Expression(Code& code, BuildTreeWriter& writer)
+   : compiler(code.compiler), scope(&code.scope), writer(&writer)
 {
 
 }

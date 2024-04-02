@@ -14,9 +14,12 @@
 
 namespace elena_lang
 {
-   // --- BuildTreeReader ---
+   // --- BuildTreeSerializer ---
    class BuildTreeSerializer
    {
+   public:
+      static void save(BuildNode node, DynamicUStr& target);
+      static void load(ustr_t source, BuildNode& target);
    };
 
    // --- SyntaxTreeReader ---

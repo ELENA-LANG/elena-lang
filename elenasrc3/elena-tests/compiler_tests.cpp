@@ -8,25 +8,33 @@ using namespace elena_lang;
 
 TEST_F(BTOptimization1_1, CompilerTest) 
 {
-   //// Arrange
-   //ModuleScopeBase* moduleScope = env.createModuleScope(true, false);
-   //Compiler* compiler = env.createCompiler();
+   // Arrange
+   ModuleScopeBase* moduleScope = env.createModuleScope(true, false);
+   moduleScope->buildins.superReference = 1;
+   moduleScope->buildins.wrapperTemplateReference = 3;
 
-   //BuildTree output;
-   //BuildTreeWriter writer(output);
-   //Compiler::Namespace nsScope(compiler, moduleScope, nullptr, nullptr, nullptr);
+   Compiler* compiler = env.createCompiler();
 
-   //// Act
-   //nsScope.declare(declarationNode.firstChild(), true);
+   BuildTree output;
+   BuildTreeWriter writer(output);
+   Compiler::Namespace nsScope(compiler, moduleScope, nullptr, nullptr, nullptr);
 
-   //Compiler::Symbol symbol(nsScope, 0, Visibility::Internal);
-   //Compiler::Expression expression(symbol, writer);
-   //expression.compileRoot(exprNode.firstChild(), ExpressionAttribute::None);
+   Compiler::Class cls(nsScope, 0, Visibility::Internal);
+   Compiler::Method method(cls);
+   Compiler::Code code(method);
 
-   //// Assess
-   bool matched = /*BuildTree::compare(buildTree.readRoot(), output.readRoot())*/true;
+   // Act
+   nsScope.declare(declarationNode.firstChild(), true);
+
+   writer.newNode(BuildKey::Tape);
+   Compiler::Expression expression(code, writer);
+   expression.compileRoot(exprNode.firstChild(), ExpressionAttribute::NoDebugInfo);
+   writer.closeNode();
+
+   // Assess
+   bool matched = BuildTree::compare(buildTree.readRoot(), output.readRoot(), true);
    EXPECT_TRUE(matched);
 
-   //freeobj(compiler);
-   //freeobj(moduleScope);
+   freeobj(compiler);
+   freeobj(moduleScope);
 }

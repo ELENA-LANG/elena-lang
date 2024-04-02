@@ -25,10 +25,10 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("public_singleton", SyntaxKey::Class);
    map.add("public_symbol", SyntaxKey::Symbol);
    map.add("nested", SyntaxKey::NestedBlock);
+   map.add("method", SyntaxKey::Method);
    map.add("script_method", SyntaxKey::Method);
-   map.add("script_function", SyntaxKey::Method);
-   //   tokens.add("method", lxClassMethod);
    map.add("function", SyntaxKey::Method);
+   map.add("script_function", SyntaxKey::Method);
    map.add("get_method", SyntaxKey::Method);
    map.add("field", SyntaxKey::Field);
    map.add("message", SyntaxKey::Message);

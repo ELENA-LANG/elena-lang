@@ -72,6 +72,29 @@ namespace elena_lang
       TestModuleScope(bool tapeOptMode, bool threadFriendly);
    };
 
+   class TestTemplateProssesor : public TemplateProssesorBase
+   {
+   public:
+      ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
+         List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList) override;
+
+      bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+         List<SyntaxNode>& parameters) override;
+      bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+         List<SyntaxNode>& parameters) override;
+      bool importPropertyTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+         List<SyntaxNode>& parameters) override;
+      bool importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+         List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) override;
+
+      static TemplateProssesorBase* getInstance()
+      {
+         static TestTemplateProssesor instance;
+
+         return &instance;
+      }
+   };
+
    // --- CompilerEnvironment ---
    class CompilerEnvironment
    {

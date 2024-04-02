@@ -1091,6 +1091,29 @@ namespace elena_lang
          void declare(SyntaxNode node);
 
          Class(Compiler* compiler, Scope* parent, ref_t reference, Visibility visibility);
+         Class(Namespace& ns, ref_t reference, Visibility visibility);
+      };
+
+      class Method
+      {
+         friend class Compiler;
+
+         Compiler*   compiler;
+         MethodScope scope;
+
+      public:
+         Method(Class& cls);
+      };
+
+      class Code
+      {
+         friend class Compiler;
+
+         Compiler* compiler;
+         CodeScope scope;
+
+      public:
+         Code(Method& method);
       };
 
       class Expression
@@ -1229,6 +1252,7 @@ namespace elena_lang
          ObjectInfo compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope = false);
 
          Expression(Symbol& symbol, BuildTreeWriter& writer);
+         Expression(Code& code, BuildTreeWriter& writer);
          Expression(Compiler* compiler, CodeScope& codeScope, BuildTreeWriter& writer);
          Expression(Compiler* compiler, SourceScope& symbolScope, BuildTreeWriter& writer);
       };
