@@ -17,11 +17,16 @@ namespace elena_lang
    class BTOptimization1_1 : public testing::Test
    {
    protected:
+      MemoryDump btRules;
+
       SyntaxTree syntaxTree;
       BuildTree  buildTree;
 
       SyntaxNode declarationNode;
       SyntaxNode exprNode;
+
+      BuildNode  beforeOptimization;
+      BuildNode  afterOptimization;
 
       CompilerEnvironment env;
 

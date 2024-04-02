@@ -240,18 +240,36 @@ namespace elena_lang
    // --- BuildTree ---
    class BuildTree : public Tree<BuildKey, BuildKey::None>
    {
+      static Tree<BuildKey, BuildKey::None>::Node nextNonIdle(Tree<BuildKey, BuildKey::None>::Node node)
+      {
+         do {
+            node = node.nextNode();
+         } while (node == BuildKey::Idle);
+
+         return node;
+      }
+      static Tree<BuildKey, BuildKey::None>::Node firstNonIdle(Tree<BuildKey, BuildKey::None>::Node node)
+      {
+         node = node.firstChild();
+         while (node == BuildKey::Idle) {
+            node = node.nextNode();
+         }
+
+         return node;
+      }
+
    public:
       static bool compare(Tree<BuildKey, BuildKey::None>::Node n1, Tree<BuildKey, BuildKey::None>::Node n2, bool onlyChildren)
       {
          if (onlyChildren || (n1.key == n2.key && n1.arg.value == n2.arg.value)) {
-            Tree<BuildKey, BuildKey::None>::Node c1 = n1.firstChild();
-            Tree<BuildKey, BuildKey::None>::Node c2 = n2.firstChild();
+            Tree<BuildKey, BuildKey::None>::Node c1 = firstNonIdle(n1);
+            Tree<BuildKey, BuildKey::None>::Node c2 = firstNonIdle(n2);
             while (c1.key != BuildKey::None) {
                if (!compare(c1, c2, false))
                   return false;
 
-               c1 = c1.nextNode();
-               c2 = c2.nextNode();
+               c1 = nextNonIdle(c1);
+               c2 = nextNonIdle(c2);
             }
 
             return c2.key == BuildKey::None;
@@ -271,6 +289,27 @@ namespace elena_lang
          }
 
          return counter;
+      }
+
+      static void copyNode(Tree<BuildKey, BuildKey::None>::Writer& writer, Tree<BuildKey, BuildKey::None>::Node node, 
+         bool includingNode = false)
+      {
+         if (includingNode) {
+            if (node.arg.strArgPosition != INVALID_POS) {
+               writer.newNode(node.key, node.identifier());
+            }
+            else writer.newNode(node.key, node.arg.reference);
+         }
+
+         auto current = node.firstChild();
+         while (current != BuildKey::None) {
+            copyNode(writer, current, true);
+
+            current = current.nextNode();
+         }
+
+         if (includingNode)
+            writer.closeNode();
       }
 
       static void loadBuildKeyMap(BuildKeyMap& map)

@@ -123,6 +123,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\files.h" />
+    <ClInclude Include="..\common\paths.h" />
     <ClInclude Include="..\engine\serializer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="tests_common.h" />
@@ -130,9 +132,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\dump.cpp" />
+    <ClCompile Include="..\common\files.cpp" />
+    <ClCompile Include="..\common\paths.cpp" />
     <ClCompile Include="..\common\ustring.cpp" />
     <ClCompile Include="..\elc\compiler.cpp" />
     <ClCompile Include="..\elc\compilerlogic.cpp" />
+    <ClCompile Include="..\engine\bcwriter.cpp" />
     <ClCompile Include="..\engine\bytecode.cpp" />
     <ClCompile Include="..\engine\module.cpp" />
     <ClCompile Include="..\engine\scriptreader.cpp" />

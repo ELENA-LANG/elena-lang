@@ -32,7 +32,7 @@ TEST_F(BTOptimization1_1, CompilerTest)
    writer.closeNode();
 
    // Assess
-   bool matched = BuildTree::compare(buildTree.readRoot(), output.readRoot(), true);
+   bool matched = BuildTree::compare(beforeOptimization, output.readRoot(), true);
    EXPECT_TRUE(matched);
 
    freeobj(compiler);
