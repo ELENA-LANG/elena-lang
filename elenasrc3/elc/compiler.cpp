@@ -51,7 +51,7 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 //      current = current.nextNode();
 //   }
 //}
-
+//
 //inline void storeNode(SyntaxNode node)
 //{
 //   DynamicUStr target;
@@ -12016,62 +12016,62 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node, Obje
       ? compiler->_logic->resolveCallType(*scope.moduleScope, targetRef, resolution.message, result) : false;
    if (found) {
       switch (result.visibility) {
-      case Visibility::Private:
-         if (allowPrivateCall || isSelfCall(target)) {
-            resolution.message = result.message;
-         }
-         else found = false;
-         break;
-      case Visibility::Protected:
-         if (isSelfCall(target) || target.kind == ObjectKind::SuperLocal) {
-            resolution.message = result.message;
-         }
-         else found = false;
-         break;
-      case Visibility::Internal:
-         if (scope.moduleScope->isInternalOp(targetRef)) {
-            resolution.message = result.message;
-         }
-         else found = false;
-         break;
-      default:
-         break;
+         case Visibility::Private:
+            if (allowPrivateCall || isSelfCall(target)) {
+               resolution.message = result.message;
+            }
+            else found = false;
+            break;
+         case Visibility::Protected:
+            if (isSelfCall(target) || target.kind == ObjectKind::SuperLocal) {
+               resolution.message = result.message;
+            }
+            else found = false;
+            break;
+         case Visibility::Internal:
+            if (scope.moduleScope->isInternalOp(targetRef)) {
+               resolution.message = result.message;
+            }
+            else found = false;
+            break;
+         default:
+            break;
       }
    }
 
    if (found) {
       retVal.typeInfo = { result.outputRef };
       switch ((MethodHint)result.kind) {
-      case MethodHint::Sealed:
-         if (result.constRef && compiler->_optMode) {
-            NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+         case MethodHint::Sealed:
+            if (result.constRef && compiler->_optMode) {
+               NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
-            retVal = nsScope->defineObjectInfo(result.constRef, EAttr::None, true);
+               retVal = nsScope->defineObjectInfo(result.constRef, EAttr::None, true);
 
-            operation = BuildKey::None;
-         }
-         else operation = BuildKey::DirectCallOp;
-         // HOTFIX : do not box the variadic argument target for the direct operation
-         if (arguments[0].kind == ObjectKind::VArgParam)
-            result.stackSafe = true;
+               operation = BuildKey::None;
+            }
+            else operation = BuildKey::DirectCallOp;
+            // HOTFIX : do not box the variadic argument target for the direct operation
+            if (arguments[0].kind == ObjectKind::VArgParam)
+               result.stackSafe = true;
 
-         if (checkShortCircle && validateShortCircle(resolution.message, target)) {
-            if (compiler->_verbose) {
-               showContextInfo(resolution.message, targetRef);
+            if (checkShortCircle && validateShortCircle(resolution.message, target)) {
+               if (compiler->_verbose) {
+                  showContextInfo(resolution.message, targetRef);
+               }
+
+               if (target.kind == ObjectKind::ConstructorSelf) {
+                  scope.raiseError(errRedirectToItself, node);
+               }
+               else scope.raiseWarning(WARNING_LEVEL_1, wrnCallingItself, findMessageNode(node));
             }
 
-            if (target.kind == ObjectKind::ConstructorSelf) {
-               scope.raiseError(errRedirectToItself, node);
-            }
-            else scope.raiseWarning(WARNING_LEVEL_1, wrnCallingItself, findMessageNode(node));
-         }
-
-         break;
-      case MethodHint::Virtual:
-         operation = BuildKey::SemiDirectCallOp;
-         break;
-      default:
-         break;
+            break;
+         case MethodHint::Virtual:
+            operation = BuildKey::SemiDirectCallOp;
+            break;
+         default:
+            break;
       }
       if (operation != BuildKey::CallOp) {
          // if the method directly resolved and the target is not required to be dynamic, mark it as stacksafe
