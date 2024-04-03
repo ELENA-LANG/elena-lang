@@ -52,7 +52,7 @@ namespace elena_lang
       virtual void onDocumentModeChanged(int index, bool modifiedMode) = 0;
 
       virtual void beforeDocumentClose(int index) = 0;
-      virtual void onDocumentClose(int index) = 0;
+      virtual void onDocumentClose(int index, bool empty) = 0;
    };
 
    // --- FindModel ---

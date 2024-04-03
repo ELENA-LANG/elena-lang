@@ -122,10 +122,10 @@ void TextViewModel :: beforeDocumentClose(int index)
    }
 }
 
-void TextViewModel :: onDocumentClose(int index)
+void TextViewModel :: onDocumentClose(int index, bool empty)
 {
    for (auto it = _listeners.start(); !it.eof(); ++it) {
-      (*it)->onDocumentClose(index);
+      (*it)->onDocumentClose(index, empty);
    }
 }
 
@@ -185,7 +185,7 @@ bool TextViewModel :: closeDocumentView(int index)
    if (closed) {
       empty = _documents.count() == 0;
 
-      onDocumentClose(index);
+      onDocumentClose(index, empty);
 
       return true;
    }

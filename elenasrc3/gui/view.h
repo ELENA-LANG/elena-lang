@@ -52,7 +52,7 @@ namespace elena_lang
       //void onDocumentRename(int index);
 
       void beforeDocumentClose(int index);
-      void onDocumentClose(int index);
+      void onDocumentClose(int index, bool empty);
 
    public:
       void attachListener(TextViewListener* listener) override;
