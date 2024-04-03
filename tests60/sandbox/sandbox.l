@@ -1,4 +1,4 @@
-/*public const struct Struct
+public const struct Struct
 {
    embeddable __int _value[4];
 }
@@ -10,7 +10,7 @@ public sealed XReference
 
 public singleton Tester
 {
-   Struct getValue()
+   get Struct Value()
    {
       ^ new Struct();
    }
@@ -18,11 +18,5 @@ public singleton Tester
 
 public program()
 {
-   Struct r := Tester.getValue()
-}
-*/
-
-public program()
-{
-   ushort n := 2;
+   Struct r := *Tester
 }

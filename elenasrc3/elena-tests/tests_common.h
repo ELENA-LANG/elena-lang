@@ -99,6 +99,8 @@ namespace elena_lang
    class CompilerEnvironment
    {
    public:
+      void initializeOperators(ModuleScopeBase* scope);
+
       ModuleScopeBase* createModuleScope(bool tapeOptMode, bool threadFriendly);
 
       Compiler* createCompiler();

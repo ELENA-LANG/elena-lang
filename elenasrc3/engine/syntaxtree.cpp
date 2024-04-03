@@ -42,6 +42,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("returning", SyntaxKey::ReturnExpression);
    map.add("message_operation", SyntaxKey::MessageOperation);
    map.add("property_operation", SyntaxKey::PropertyOperation);
+   map.add("value_operation", SyntaxKey::ValueOperation);
 
    map.add("equal_operation", SyntaxKey::EqualOperation);
    map.add("notequal_operation", SyntaxKey::NotEqualOperation);

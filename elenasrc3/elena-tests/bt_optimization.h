@@ -33,11 +33,25 @@ namespace elena_lang
 
    public:
       void runBTTest();
-      void runCompilerTest();
+      void runCompilerTest(bool declareOperators);
    };
 
    // Optimization 1 (byRefOp) : "a := b.get()" => "b.get(ref a)"
    class BTOptimization1_1 : public BTOptimization1
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   // Optimization 1 (byRefOp) : "a := b.Value" => "b.prop:Value(ref a)"
+   class BTOptimization1_2 : public BTOptimization1
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   // Optimization 1 (byRefOp) : "a := *b" => "b.prop:Value(ref a)"
+   class BTOptimization1_3 : public BTOptimization1
    {
    protected:
       void SetUp() override;

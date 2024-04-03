@@ -51,7 +51,7 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 //      current = current.nextNode();
 //   }
 //}
-//
+
 //inline void storeNode(SyntaxNode node)
 //{
 //   DynamicUStr target;

@@ -8,5 +8,15 @@ using namespace elena_lang;
 
 TEST_F(BTOptimization1_1, CompilerTest) 
 {
-   runCompilerTest();
+   runCompilerTest(false);
+}
+
+TEST_F(BTOptimization1_2, CompilerTest)
+{
+   runCompilerTest(false);
+}
+
+TEST_F(BTOptimization1_3, CompilerTest)
+{
+   runCompilerTest(true);
 }

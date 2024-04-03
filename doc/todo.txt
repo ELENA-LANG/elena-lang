@@ -16,14 +16,11 @@ In development:
   port:win64 gui,helloworld gui sample (button), chat sample, win64 script samples
   --------------------------------------
   - #617
-  - #637 : all bt tests
-  - ide bug - ctrl+w hides the frame
+  - #637 : all bt tests (>=2)
   --------------------------------------
-  - compile system'net
-
-  - #637 : ByRefOpMark - property, weak operation
-
   - port : rest of extension module from lib50
+
+  - ide bug - ctrl+w hides the frame
 
   - remove Serializer / ScriptReader from elc project (when no longer is required)
 

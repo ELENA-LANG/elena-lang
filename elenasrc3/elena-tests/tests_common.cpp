@@ -215,6 +215,16 @@ ModuleScopeBase* CompilerEnvironment :: createModuleScope(bool tapeOptMode, bool
    return scope;
 }
 
+void CompilerEnvironment :: initializeOperators(ModuleScopeBase* scope)
+{
+   scope->buildins.refer_message =
+      encodeMessage(scope->module->mapAction(REFER_MESSAGE, 0, false),
+         2, 0);
+   scope->buildins.value_message =
+      encodeMessage(scope->module->mapAction(VALUE_MESSAGE, 0, false),
+         1, PROPERTY_MESSAGE);
+}
+
 Compiler* CompilerEnvironment :: createCompiler()
 {
    auto compiler = new Compiler(nullptr, nullptr, TestTemplateProssesor::getInstance(), CompilerLogic::getInstance());
