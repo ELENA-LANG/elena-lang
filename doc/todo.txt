@@ -17,9 +17,8 @@ In development:
   --------------------------------------
   - #617
   - #637 : all bt tests (>=2)
+  - port : net library
   --------------------------------------
-  - port : rest of extension module from lib50
-
   - ide bug - ctrl+w hides the frame
 
   - remove Serializer / ScriptReader from elc project (when no longer is required)
