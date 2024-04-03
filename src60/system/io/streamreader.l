@@ -2,6 +2,141 @@ import system'text;
 
 namespace io
 {
+   // --- BinaryReader ---
+    
+   public interface BinaryReader
+   {
+      Stream _stream;
+      int    _length;
+        
+      read(byte[] array, ref int actualLength)
+      {
+         _stream.read(array, ref actualLength)
+      }
+    
+      Stream Stream = _stream;
+    
+      close() => _stream;
+    
+      get bool Available()
+      {
+         int position := _stream.Index;
+            
+         ^ position < _length
+      }
+                
+      read(byte[] array, int length)
+      {
+         int read := length;
+            
+         self.read(array, ref read);
+             
+         if(length > read)
+            { IOException.new("Cannot read the specified amount").raise() }
+      }
+    
+      read(ref byte int)
+      {
+         byte buffer[4];
+         int  read := 1;
+            
+         self.read(buffer, ref read);
+            
+         if (read < 1)
+            { IOException.new("Cannot read the specified amount").raise() };
+         
+         byte b := buffer[0];
+                              
+         int := b
+      }
+    
+      read(ref short int)
+      {
+         byte buffer[4];
+         int  read := 2;
+            
+         self.read(buffer, ref read);
+            
+         if (read < 2)
+            { IOException.new("Cannot read the specified amount").raise() };
+                
+         PrimitiveIntOperations.loadFromByteArray(buffer, 0, ref int retVal := 0);
+
+         short tmp := retVal;
+         int := tmp
+      }
+    
+      read(ref char ch)
+      {
+         byte buffer[4];
+         int  read := 4;
+            
+         self.read(buffer, ref read);
+            
+         if (read < 4)
+            { IOException.new("Cannot read the specified amount").raise() };
+
+                
+         PrimitiveIntOperations.loadFromByteArray(buffer, 0, ref int retVal := 0);
+
+         char tmp := retVal;
+         ch := tmp
+      }
+    
+      read(ref int int)
+      {
+         byte buffer[4];
+         int  read := 4;
+            
+         self.read(buffer, ref read);
+            
+         if (read < 4)
+            { IOException.new("Cannot read the specified amount").raise() };
+
+         PrimitiveIntOperations.loadFromByteArray(buffer, 0, ref int retVal := 0);
+
+         int := retVal                
+      }
+    
+      read(ref long long)
+      {
+         byte buffer[8];
+         int  read := 8;
+            
+         self.read(buffer, ref read);
+            
+         if (read < 8)
+            { IOException.new("Cannot read the specified amount").raise() };
+                
+         PrimitiveLongOperations.loadFromByteArray(buffer, 0, ref long retVal := 0l);
+
+         long := retVal
+      }
+    
+      read(ref real real)
+      {
+         byte buffer[8];
+         int  read := 8;
+            
+         self.read(buffer, ref read);
+            
+         if (read < 8)
+            { IOException.new("Cannot read the specified amount").raise() };
+                
+         PrimitiveRealOperations.loadFromByteArray(buffer, 0, ref real retVal := 0.0);
+
+         real := retVal
+      }
+   }
+    
+   public sealed BinaryStreamReader : BinaryReader
+   {
+      constructor(Stream stream)
+      {
+         _stream := stream
+      }
+   }
+    
    // --- TextReader ---
    public interface TextReader
    {

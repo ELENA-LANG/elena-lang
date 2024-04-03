@@ -17,10 +17,13 @@ In development:
   --------------------------------------
   - #617
   - #637 : all bt tests
+  - ide bug - ctrl+w hides the frame
   --------------------------------------
-  - port : rest of system module from lib50
+  - compile system'net
 
   - #637 : ByRefOpMark - property, weak operation
+
+  - port : rest of extension module from lib50
 
   - remove Serializer / ScriptReader from elc project (when no longer is required)
 

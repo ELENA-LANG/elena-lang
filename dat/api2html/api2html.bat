@@ -6,6 +6,7 @@
 ..\..\bin\ldoc system'dynamic
 ..\..\bin\ldoc system'drawing
 ..\..\bin\ldoc system'winforms
+..\..\bin\ldoc system'net
 ..\..\bin\ldoc extensions
 ..\..\bin\ldoc extensions'routines
 ..\..\bin\ldoc extensions'scripting

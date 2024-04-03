@@ -1039,6 +1039,16 @@ procedure __strHash (self,s,r)
 
 end
 
+procedure __wstrHash (self,s,r)
+
+  peek       sp:1
+  load
+  and        n:0FFFFh
+  peek       sp:2
+  save
+
+end
+
 procedure __charToInt
 
   peek       sp:1
@@ -1123,6 +1133,16 @@ procedure __readIntPtr
   load
   peek       sp:2
   save
+
+end
+
+procedure __readRealPtr
+
+  peek       sp:1
+  get        i:0
+  lload
+  peek       sp:2
+  lsave
 
 end
 
