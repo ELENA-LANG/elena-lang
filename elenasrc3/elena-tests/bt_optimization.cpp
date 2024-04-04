@@ -39,7 +39,12 @@ constexpr auto OptimizedBuildTree1_2 = "local_address -4 () saving_stack 1 () cl
 
 constexpr auto SyntaxTree1_3 = "expression(assign_operation(object(type(identifier \"Struct\" ())identifier \"r\"())expression(value_operation(expression(object(identifier \"Tester\"()))))))";
 
-void BTOptimization1 :: SetUp()
+constexpr auto Declaration2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ()))) class ( attribute -2147471359 () nameattr (identifier \"IntNumberReference\" ()) field (attribute -2147475454 () type (identifier \"IntNumber\" ()) nameattr (identifier \"_value\" ())) ))";
+constexpr auto SyntaxTree2 = "expression (assign_operation (object (type (identifier \"IntNumber\" ()) identifier \"n\" ()) expression (object (integer \"2\"))))";
+constexpr auto BuildTree2 = "int_literal 2 (value 2 ()) copying -4 ( size 4 ())";
+constexpr auto OptimizedBuildTree2 = "saving_int - 4 (size 4 ()value 2 ())";
+
+void BTOptimization :: SetUp()
 {
    PathString appPath;
    getAppPath(appPath);
@@ -63,11 +68,12 @@ void BTOptimization1 :: SetUp()
    afterOptimization = buildTree.readRoot().appendChild(BuildKey::Tape);
 }
 
-void BTOptimization1 :: runCompilerTest(bool declareOperators)
+void BTOptimization :: runCompilerTest(bool declareOperators)
 {
    // Arrange
    ModuleScopeBase* moduleScope = env.createModuleScope(true, false);
    moduleScope->buildins.superReference = 1;
+   moduleScope->buildins.intReference = 2;
    moduleScope->buildins.wrapperTemplateReference = 3;
 
    Compiler* compiler = env.createCompiler();
@@ -99,7 +105,7 @@ void BTOptimization1 :: runCompilerTest(bool declareOperators)
    freeobj(moduleScope);
 }
 
-void BTOptimization1 :: runBTTest()
+void BTOptimization :: runBTTest()
 {
    // Arrange
    ByteCodeWriter::BuildTreeOptimizer buildTreeOptimizer;
@@ -122,7 +128,7 @@ void BTOptimization1 :: runBTTest()
 
 void BTOptimization1_1 :: SetUp()
 {
-   BTOptimization1::SetUp();
+   BTOptimization::SetUp();
 
    SyntaxTreeSerializer::load(Declaration1_1, declarationNode);
    SyntaxTreeSerializer::load(SyntaxTree1_1, exprNode);
@@ -135,7 +141,7 @@ void BTOptimization1_1 :: SetUp()
 
 void BTOptimization1_2 :: SetUp()
 {
-   BTOptimization1::SetUp();
+   BTOptimization::SetUp();
 
    SyntaxTreeSerializer::load(Declaration1_2, declarationNode);
    SyntaxTreeSerializer::load(SyntaxTree1_2, exprNode);
@@ -148,11 +154,24 @@ void BTOptimization1_2 :: SetUp()
 
 void BTOptimization1_3 :: SetUp()
 {
-   BTOptimization1::SetUp();
+   BTOptimization::SetUp();
 
    SyntaxTreeSerializer::load(Declaration1_2, declarationNode);
    SyntaxTreeSerializer::load(SyntaxTree1_3, exprNode);
 
    BuildTreeSerializer::load(BuildTree1_2, beforeOptimization);
    BuildTreeSerializer::load(OptimizedBuildTree1_2, afterOptimization);
+}
+
+// --- BTOptimization2 ---
+
+void BTOptimization2 :: SetUp()
+{
+   BTOptimization::SetUp();
+
+   SyntaxTreeSerializer::load(Declaration2, declarationNode);
+   SyntaxTreeSerializer::load(SyntaxTree2, exprNode);
+
+   BuildTreeSerializer::load(BuildTree2, beforeOptimization);
+   BuildTreeSerializer::load(OptimizedBuildTree2, afterOptimization);
 }

@@ -17,3 +17,8 @@ TEST_F(BTOptimization1_3, BuildTapeTest)
 {
    runBTTest();
 }
+
+TEST_F(BTOptimization2, BuildTapeTest)
+{
+   runBTTest();
+}

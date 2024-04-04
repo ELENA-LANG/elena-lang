@@ -104,6 +104,7 @@ namespace elena_lang
       bool textChanged;
       bool modifiedChanged;
       bool readOnlyChanged;
+      bool modeChanged;
 
       bool isViewChanged()
       {
@@ -122,6 +123,7 @@ namespace elena_lang
          formatterChanged = false;
          textChanged = false;
          readOnlyChanged = false;
+         modeChanged = false;
       }
 
       DocumentChangeStatus()
@@ -137,6 +139,7 @@ namespace elena_lang
             frameChanged = true;
             selelectionChanged = true;
             textChanged = true;
+            modeChanged = true;
          }
       }
    };
@@ -281,6 +284,8 @@ namespace elena_lang
          status.readOnly = mode;
       }
 
+      void setOverwriteMode(DocumentChangeStatus& changeStatus, bool mode);
+
       int getRowCount() const { return _text->getRowCount(); }
       int getMaxColumn() const { return _maxColumn; }
       disp_t getSelectionLength();
@@ -290,6 +295,7 @@ namespace elena_lang
       bool isUnnamed() { return status.unnamed; }
       bool isModified() { return status.modifiedMode; }
       bool isIncluded() { return status.included; }
+      bool isOverwriteMode() { return status.overwriteMode; }
 
       void markAsUnnamed()
       {

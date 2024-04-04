@@ -115,6 +115,8 @@ namespace elena_lang
       bool insertChar(TextViewModelBase* model, text_c ch) override;
       bool eraseChar(TextViewModelBase* model, bool moveback) override;
 
+      void setOverwriteMode(TextViewModelBase* model) override;
+
       void indent(TextViewModelBase* model) override;
       void outdent(TextViewModelBase* model) override;
 

@@ -9,25 +9,29 @@ In development:
   --------------------------------------
   dev: #637, windows executable - support manifest, net, #610, #612
   opt:pi under 7 sec, #602, #611
-  maint:#620,#622
   ide:vm debugger
-  tools:
   prom:#635,elena in nutshell every 1 week
   port:win64 gui,helloworld gui sample (button), chat sample, win64 script samples
   --------------------------------------
-  - #617
-  - #637 : all bt tests (>=3)
+  - #617 : dark color scheme, change the window background color
+  - #620 : check : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
+  - #620 : data alignment : for normal structs - allign the data to 4/8 and make an operation aligned to 4/8; so all stack allocated data is aligned to 4 / 8; field are allocated to 4 / 8 for all cases except packed flag
+  - #637 : all bt tests (>=4)
+  - #622 : pi & e constants
+  - #622 : conversion to int - raise an error if not valid
   - port : net library
   --------------------------------------
+  - #617 : editor - status bar : ins / ovr, editor - modified doc mark, 
+  - #620 : unit tests via postfix pattern
+
   - remove Serializer / ScriptReader from elc project (when no longer is required)
-  - #637 (2)
 
   === Iteration 22 ===
   --------------------------------------
   dev: async programming (instant messagange sample (chat) ), #608, #637 (all bc tests)
   op:
   opt:pi under 6 sec, #601
-  maint: #506
+  maint: #506, #617, #620, #622
   exp:
   ide:
   tools:

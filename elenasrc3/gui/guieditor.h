@@ -147,6 +147,8 @@ namespace elena_lang
       virtual bool insertChar(TextViewModelBase* model, text_c ch) = 0;
       virtual bool eraseChar(TextViewModelBase* model, bool moveback) = 0;
 
+      virtual void setOverwriteMode(TextViewModelBase* model) = 0;
+
       virtual void undo(TextViewModelBase* model) = 0;
       virtual void redo(TextViewModelBase* model) = 0;
 

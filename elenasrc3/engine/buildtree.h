@@ -344,7 +344,9 @@ namespace elena_lang
          map.add("class_reference", BuildKey::ClassReference);
          map.add("open_statement", BuildKey::OpenStatement);
          map.add("end_statement", BuildKey::EndStatement);
+         map.add("saving_int", BuildKey::SavingInt);
 
+         map.add("value", BuildKey::Value);
          map.add("tape", BuildKey::Tape);
          map.add("type", BuildKey::Type);
          map.add("size", BuildKey::Size);

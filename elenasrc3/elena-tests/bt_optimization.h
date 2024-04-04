@@ -13,7 +13,7 @@
 
 namespace elena_lang
 {
-   class BTOptimization1 : public testing::Test
+   class BTOptimization : public testing::Test
    {
    protected:
       MemoryDump btRules;
@@ -36,22 +36,29 @@ namespace elena_lang
       void runCompilerTest(bool declareOperators);
    };
 
-   // Optimization 1 (byRefOp) : "a := b.get()" => "b.get(ref a)"
-   class BTOptimization1_1 : public BTOptimization1
+   // Optimization #2 (byRefOp) : "a := b.get()" => "b.get(ref a)"
+   class BTOptimization1_1 : public BTOptimization
    {
    protected:
       void SetUp() override;
    };
 
-   // Optimization 1 (byRefOp) : "a := b.Value" => "b.prop:Value(ref a)"
-   class BTOptimization1_2 : public BTOptimization1
+   // Optimization #2 (byRefOp) : "a := b.Value" => "b.prop:Value(ref a)"
+   class BTOptimization1_2 : public BTOptimization
    {
    protected:
       void SetUp() override;
    };
 
-   // Optimization 1 (byRefOp) : "a := *b" => "b.prop:Value(ref a)"
-   class BTOptimization1_3 : public BTOptimization1
+   // Optimization #2 (byRefOp) : "a := *b" => "b.prop:Value(ref a)"
+   class BTOptimization1_3 : public BTOptimization
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   // Optimization #3 (intCopying) : "int n := 2" => direct assigning
+   class BTOptimization2 : public BTOptimization
    {
    protected:
       void SetUp() override;

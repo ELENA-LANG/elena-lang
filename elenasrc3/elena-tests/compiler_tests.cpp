@@ -20,3 +20,8 @@ TEST_F(BTOptimization1_3, CompilerTest)
 {
    runCompilerTest(true);
 }
+
+TEST_F(BTOptimization2, CompilerTest)
+{
+   runCompilerTest(false);
+}

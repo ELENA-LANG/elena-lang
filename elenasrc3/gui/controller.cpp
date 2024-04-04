@@ -203,6 +203,17 @@ bool TextViewController :: eraseChar(TextViewModelBase* model, bool moveback)
    return false;
 }
 
+void TextViewController :: setOverwriteMode(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+   if (!docView->isReadOnly()) {
+      docView->setOverwriteMode(status, !docView->isOverwriteMode());
+
+      notifyTextModelChange(model, status);
+   }
+}
+
 void TextViewController :: deleteText(TextViewModelBase* model)
 {
    DocumentChangeStatus status = {};
