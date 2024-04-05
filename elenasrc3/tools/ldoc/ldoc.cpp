@@ -18,7 +18,7 @@ constexpr auto REF_TEMPLATE_PREFIX = "system'Reference&lt;";
 
 using namespace elena_lang;
 
-constexpr auto DESCRIPTION_SECTION = "'meta$descriptions";
+constexpr auto DESCRIPTION_SECTION = "'meta$system@descriptions";
 
 inline bool isTemplateBased(ustr_t reference)
 {

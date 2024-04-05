@@ -65,6 +65,7 @@ namespace elena_lang
       IncludeStatement        = 0x001022,
       LoadStatement           = 0x001023,
       ClearStatement          = 0x001024,
+      SharedMetaDictionary    = 0x001025,
       Object                  = 0x001031,
       TemplateType            = 0x001032,
       ArrayType               = 0x001033,

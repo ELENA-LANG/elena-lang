@@ -1,3 +1,7 @@
+// declare system categories
+#new string descriptions;
+#new __string preloadedSymbols;
+
 // --- base inline templates ---
 
 public inline external(routine)
@@ -9,7 +13,7 @@ public inline external(routine)
 
 public inline info(descr)
 {
-   #new super string descriptions;
+   #share super string descriptions;
 
    #let super descriptions[$name __decl] := descr;
 }
@@ -18,7 +22,7 @@ public inline info(descr)
 
 public inline preloaded()
 {
-   #new __string preloadedSymbols;
+   #share __string preloadedSymbols;
 
    #let preloadedSymbols += __decl;
 }

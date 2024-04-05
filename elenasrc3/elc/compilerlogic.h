@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPILERLOGIC_H
@@ -234,7 +234,7 @@ namespace elena_lang
       static bool readAttributeMap(MemoryBase* section, ReferenceMap& map);
       static bool readTypeMap(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
 
-      static bool loadMetaData(ModuleScopeBase* moduleScope, ustr_t name);
+      static bool loadMetaData(ModuleScopeBase* moduleScope, ustr_t aliasName, ustr_t nsName);
       static bool clearMetaData(ModuleScopeBase* moduleScope, ustr_t name);
 
       static Visibility getVisibility(ustr_t name)

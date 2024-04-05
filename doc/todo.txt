@@ -13,7 +13,6 @@ In development:
   prom:#635,elena in nutshell every 1 week
   port:win64 gui,helloworld gui sample (button), chat sample, win64 script samples
   --------------------------------------
-  - #617 : dark color scheme, change the window background color
   - #620 : check : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
   - #620 : data alignment : for normal structs - allign the data to 4/8 and make an operation aligned to 4/8; so all stack allocated data is aligned to 4 / 8; field are allocated to 4 / 8 for all cases except packed flag
   - #637 : all bt tests (>=4)
@@ -21,8 +20,21 @@ In development:
   - #622 : conversion to int - raise an error if not valid
   - port : net library
   --------------------------------------
-  - #617 : editor - status bar : ins / ovr, editor - modified doc mark, 
+  - category - accessing a distributed collection - only the dictionary declared in the same module can be accessed (e.g with #new)
+
+  - declaring testCase category
+  - accessing meta category from the code - it must be a destributed symbol (similar to preloaded)
+
+     foreach(var c; in distributed testCaseCollection)
+     {
+        c();
+     }
+
   - #620 : unit tests via postfix pattern
+
+  - post an article describing how to use distributed dictionary for test
+
+  - #617 : dark color scheme, change the window background color
 
   - remove Serializer / ScriptReader from elc project (when no longer is required)
 

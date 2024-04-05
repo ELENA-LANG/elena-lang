@@ -24,6 +24,7 @@ __define META_STATEMENT      4129;
 __define INCLUDE_STATEMENT   4130;
 __define LOAD_STATEMENT      4131;
 __define CLEAR_STATEMENT     4132;
+__define SHARED_DICTIONARY   4133;
 __define OBJECT              4145;
 __define TEMPLATE_TYPE       4146;
 __define ARRAY_TYPE          4147;
@@ -127,6 +128,7 @@ START ::=
 
 META_DECLARATION ::=
 	"#new" DICTIONARY DECLARATION_END
+	| "#share" SHARED_DICTIONARY DECLARATION_END
 	| "#let" META_STATEMENT DECLARATION_END
 	| "#load" LOAD_STATEMENT DECLARATION_END
 	| "#clear" CLEAR_STATEMENT DECLARATION_END;
@@ -190,6 +192,7 @@ STATEMENT ::=
 	| "#include" INCLUDE_STATEMENT
 	| "#let" META_STATEMENT
 	| "#new" DICTIONARY
+	| "#share" SHARED_DICTIONARY
 	| "{" BLOCK;
 
 NEXT_STATEMENT ::=
@@ -1111,6 +1114,9 @@ DIMENSION ::=
 	| identifier;
 
 DICTIONARY ::=
+	identifier+;
+
+SHARED_DICTIONARY ::=
 	identifier+;
 
 LOAD_STATEMENT ::=

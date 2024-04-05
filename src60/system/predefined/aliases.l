@@ -1,21 +1,21 @@
 // --- aliasTypes ---
 
-#new __symbol aliasTypes;
+#new __symbol aliases;
 
-#let aliasTypes["object"]  := system'Object;
-#let aliasTypes["bool"]    := system'BoolValue;
-#let aliasTypes["byte"]    := system'ByteNumber;
-#let aliasTypes["sbyte"]   := system'SByteNumber;
-#let aliasTypes["short"]   := system'ShortNumber;
-#let aliasTypes["ushort"]  := system'UShortNumber;
-#let aliasTypes["int"]     := system'IntNumber;
-#let aliasTypes["uint"]    := system'UIntNumber;
-#let aliasTypes["long"]    := system'LongNumber;
-#let aliasTypes["real"]    := system'RealNumber;
-#let aliasTypes["char"]    := system'CharValue;
-#let aliasTypes["string"]  := system'String;
-#let aliasTypes["wide"]    := system'WideString;
-#let aliasTypes["message"] := system'Message;
-#let aliasTypes["subject"] := system'MessageName;
-#let aliasTypes["handle"]  := system'Handle;
-#let aliasTypes["pointer"] := system'UnsafePointer;
+#let aliases["object"]  := system'Object;
+#let aliases["bool"]    := system'BoolValue;
+#let aliases["byte"]    := system'ByteNumber;
+#let aliases["sbyte"]   := system'SByteNumber;
+#let aliases["short"]   := system'ShortNumber;
+#let aliases["ushort"]  := system'UShortNumber;
+#let aliases["int"]     := system'IntNumber;
+#let aliases["uint"]    := system'UIntNumber;
+#let aliases["long"]    := system'LongNumber;
+#let aliases["real"]    := system'RealNumber;
+#let aliases["char"]    := system'CharValue;
+#let aliases["string"]  := system'String;
+#let aliases["wide"]    := system'WideString;
+#let aliases["message"] := system'Message;
+#let aliases["subject"] := system'MessageName;
+#let aliases["handle"]  := system'Handle;
+#let aliases["pointer"] := system'UnsafePointer;

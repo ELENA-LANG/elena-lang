@@ -439,10 +439,19 @@ bool Interpreter :: evalObjArrayOp(ref_t operator_id, ArgumentsInfo& args)
 {
    ObjectInfo loperand = args[0];
    ObjectInfo roperand = args[1];
-   if (loperand.kind == ObjectKind::TypeList && roperand.kind == ObjectKind::Symbol) {
-      if (operator_id == ADD_ASSIGN_OPERATOR_ID) {
-         ref_t mask = mskSymbolRef;
-
+   if (loperand.kind == ObjectKind::TypeList) {
+      ref_t mask = 0;
+      switch (roperand.kind) {
+         case ObjectKind::Symbol:
+            mask = mskSymbolRef;
+            break;
+         case ObjectKind::Singleton:
+            mask = mskVMTRef;
+            break;
+         default:
+            break;
+      }
+      if (mask != 0) {
          addTypeListItem(loperand.reference, roperand.reference, mask);
 
          return true;
@@ -926,7 +935,8 @@ ObjectInfo Compiler::NamespaceScope :: mapWeakReference(ustr_t identifier, bool 
 
 ObjectInfo Compiler::NamespaceScope :: mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode)
 {
-   IdentifierString metaIdentifier(META_PREFIX, identifier);
+   IdentifierString metaIdentifier(META_PREFIX, retrieveDictionaryOwner(*this, identifier, module->name()), "@", identifier);
+   metaIdentifier.replaceAll('\'', '@', 0);
 
    // check if it is a meta dictionary
    return mapIdentifier(*metaIdentifier, referenceOne, mode | EAttr::Meta);
@@ -1120,7 +1130,7 @@ ObjectInfo Compiler::ClassScope :: mapIdentifier(ustr_t identifier, bool referen
 
 ObjectInfo Compiler::ClassScope :: mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode)
 {
-   IdentifierString metaIdentifier(META_PREFIX,identifier);
+   IdentifierString metaIdentifier(META_PREFIX, retrieveDictionaryOwner(*this, identifier, module->name()), "@", identifier);
    metaIdentifier.append('$');
    metaIdentifier.append(module->resolveReference(reference));
    metaIdentifier.replaceAll('\'', '@', 0);
@@ -1934,7 +1944,22 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
    return true;
 }
 
-void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, Scope::ScopeLevel level)
+ustr_t Compiler :: retrieveDictionaryOwner(Scope& scope, ustr_t properName, ustr_t defaultPrefix)
+{
+   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+   for (auto it = nsScope->importedNs.start(); !it.eof(); ++it) {
+      IdentifierString fullName(META_PREFIX, *it, "@", properName);
+      fullName.replaceAll('\'', '@', 0);
+
+      ref_t reference = scope.moduleScope->resolveImportedIdentifier(*fullName, &nsScope->importedNs);
+      if (reference)
+         return *it;
+   }
+
+   return defaultPrefix;
+}
+
+void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, Scope::ScopeLevel level, bool shareMode)
 {
    bool superMode = false;
    TypeInfo typeInfo = { V_DICTIONARY, V_INT32 };
@@ -1955,6 +1980,15 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
    }
 
    SyntaxNode name = node.findChild(SyntaxKey::Name);
+   
+   IdentifierString prefix(META_PREFIX);
+   if (shareMode) {
+      prefix.append(retrieveDictionaryOwner(scope, name.firstChild(SyntaxKey::TerminalMask).identifier(), scope.module->name()));
+   }
+   else prefix.append(scope.module->name());
+
+   prefix.replaceAll('\'', '@', 0);
+   prefix.append('@');
 
    IdentifierString postfix;
    switch (level) {
@@ -1969,10 +2003,10 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
       default:
          break;
    }
-
+   
    postfix.replaceAll('\'', '@', 0);
 
-   ref_t reference = mapNewTerminal(scope, META_PREFIX, name, *postfix, visibility);
+   ref_t reference = mapNewTerminal(scope, *prefix, name, *postfix, visibility);
    ref_t mask = resolveDictionaryMask(typeInfo);
 
    assert(mask != 0);
@@ -1995,7 +2029,10 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
             break;
          }
          case SyntaxKey::MetaDictionary:
-            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Class);
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Class, false);
+            break;
+         case SyntaxKey::SharedMetaDictionary:
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Class, true);
             break;
          case SyntaxKey::Method:
          {
@@ -2065,8 +2102,11 @@ void Compiler :: loadMetaData(ModuleScopeBase* moduleScope, ForwardResolverBase*
 
    ustr_t reference = forwardResolver->resolveForward(*metaForward);
 
-   if (!reference.empty())
-      CompilerLogic::loadMetaData(moduleScope, reference);
+   if (!reference.empty()) {
+      NamespaceString ns(reference);
+
+      CompilerLogic::loadMetaData(moduleScope, name, *ns);
+   }      
 }
 
 Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed)
@@ -3107,7 +3147,10 @@ void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
             break;
          }
          case SyntaxKey::MetaDictionary:
-            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field);
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field, false);
+            break;
+         case SyntaxKey::SharedMetaDictionary:
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field, true);
             break;
          case SyntaxKey::ArrayType:
             if (current.nextNode() == SyntaxKey::identifier)
@@ -3147,9 +3190,12 @@ void Compiler :: declareSymbolMetaInfo(SymbolScope& scope, SyntaxNode node)
             break;
          }
          case SyntaxKey::MetaDictionary:
-            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field);
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field, false);
             break;
-      //case SyntaxKey::Name:
+         case SyntaxKey::SharedMetaDictionary:
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field, true);
+            break;
+            //case SyntaxKey::Name:
       //case SyntaxKey::Type:
       //case SyntaxKey::ArrayType:
       //case SyntaxKey::TemplateType:
@@ -3195,7 +3241,10 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
             break;
          }
          case SyntaxKey::MetaDictionary:
-            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Method);
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Method, false);
+            break;
+         case SyntaxKey::SharedMetaDictionary:
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Method, true);
             break;
          case SyntaxKey::WithoutBody:
             withoutBody = true;
@@ -6344,7 +6393,8 @@ ObjectInfo Compiler :: defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInf
 {
    ObjectInfo retVal = {};
    bool ignoreDuplicates = EAttrs::testAndExclude(attrs, ExpressionAttribute::IgnoreDuplicate);
-   bool invalidForNonIdentifier = forwardMode || variableMode || refOp || mssgOp || memberMode;
+   bool distributedMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::DistributedForward);
+   bool invalidForNonIdentifier = forwardMode || variableMode || refOp || mssgOp || memberMode || distributedMode;
 
    switch (node.key) {
       case SyntaxKey::TemplateType:
@@ -6379,6 +6429,9 @@ ObjectInfo Compiler :: defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInf
             IdentifierString forwardName(FORWARD_PREFIX_NS, node.identifier());
 
             retVal = scope.mapIdentifier(*forwardName, true, attrs);
+         }
+         else if (distributedMode) {
+            retVal = scope.mapDictionary(node.identifier(), node.key == SyntaxKey::reference, attrs);
          }
          else if (memberMode) {
             retVal = scope.mapMember(node.identifier());
@@ -9058,10 +9111,10 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
 {
    _trackingUnassigned = (_errorProcessor->getWarningLevel() == WarningLevel::Level3);
 
-   loadMetaData(moduleScope, forwardResolver, PREDEFINED_MAP);
-   loadMetaData(moduleScope, forwardResolver, ATTRIBUTES_MAP);
-   loadMetaData(moduleScope, forwardResolver, OPERATION_MAP);
-   loadMetaData(moduleScope, forwardResolver, ALIASES_MAP);
+   loadMetaData(moduleScope, forwardResolver, PREDEFINED_MAP_KEY);
+   loadMetaData(moduleScope, forwardResolver, ATTRIBUTES_MAP_KEY);
+   loadMetaData(moduleScope, forwardResolver, OPERATION_MAP_KEY);
+   loadMetaData(moduleScope, forwardResolver, ALIASES_MAP_KEY);
 
    // cache the frequently used references
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
@@ -9934,9 +9987,6 @@ void Compiler::Namespace:: declareMemberIdentifiers(SyntaxNode node)
             current.setArgumentReference(classScope.reference);
             break;
          }
-         case SyntaxKey::MetaDictionary:
-            compiler->declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Namespace);
-            break;
          default:
             // to make compiler happy
             break;
@@ -9994,6 +10044,12 @@ void Compiler::Namespace :: declareMembers(SyntaxNode node)
             compiler->declareTemplateCode(templateScope, current);
             break;
          }
+         case SyntaxKey::MetaDictionary:
+            compiler->declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Namespace, false);
+            break;
+         case SyntaxKey::SharedMetaDictionary:
+            compiler->declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Namespace, true);
+            break;
          default:
             // to make compiler happy
             break;

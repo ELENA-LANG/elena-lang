@@ -133,6 +133,10 @@ md %~dp0\x86\src60\xforms
 xcopy %~dp0\..\src60\xforms\*.l %~dp0\x86\src60\xforms /s
 xcopy %~dp0\..\src60\xforms\*.prj %~dp0\x86\src60\xforms /s
 
+md %~dp0\x86\src60\tests
+xcopy %~dp0\..\src60\tests\*.l %~dp0\x86\src60\tests /s
+xcopy %~dp0\..\src60\tests\*.prj %~dp0\x86\src60\tests /s
+
 %~dp0\..\bin\sg-cli.exe %~dp0\..\dat\sg\syntax60.txt
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
@@ -174,6 +178,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 %~dp0\x86\bin\elena-cli %~dp0\x86\src60\algorithms\algorithms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\x86\bin\elena-cli %~dp0\x86\src60\tests\tests.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

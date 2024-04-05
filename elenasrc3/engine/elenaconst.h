@@ -70,10 +70,15 @@ namespace elena_lang
    constexpr auto AUTO_SYMBOL_PREFIX         = "@autosymbol";
    constexpr auto INLINE_CLASSNAME           = "$inline";          // nested class generic name
 
-   constexpr auto OPERATION_MAP              = "statementTemplates";
-   constexpr auto PREDEFINED_MAP             = "predefinedSymbols";
-   constexpr auto ATTRIBUTES_MAP             = "attributeSymbols";
-   constexpr auto ALIASES_MAP                = "aliasTypes";
+   constexpr auto OPERATION_MAP_KEY          = "statements";
+   constexpr auto PREDEFINED_MAP_KEY         = "defaults";
+   constexpr auto ATTRIBUTES_MAP_KEY         = "attributes";
+   constexpr auto ALIASES_MAP_KEY            = "aliases";
+
+   constexpr auto OPERATION_MAP              = "system@operations@statements";
+   constexpr auto PREDEFINED_MAP             = "system@predefined@defaults";
+   constexpr auto ATTRIBUTES_MAP             = "system@attributes@attributes";
+   constexpr auto ALIASES_MAP                = "system@predefined@aliases";
 
    constexpr auto STARTUP_ENTRY              = "$auto'startUpSymbol";
 
@@ -109,7 +114,7 @@ namespace elena_lang
    constexpr auto PTR_FORWARD                = "$ptr";            // the ptr wrapper
    constexpr auto LAZY_FORWARD               = "$lazy";
    constexpr auto NULLABLE_FORWARD           = "$nullable";
-   constexpr auto PRELOADED_FORWARD          = "preloadedSymbols";
+   constexpr auto PRELOADED_FORWARD          = "system@preloadedSymbols";
    constexpr auto START_FORWARD              = "$symbol_entry";
 
    // --- ELENA section prefixes

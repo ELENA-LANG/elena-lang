@@ -999,6 +999,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_FORWARD:
          attrs |= ExpressionAttribute::Forward;
          return true;
+      case V_DISTRIBUTED_FORWARD:
+         attrs |= ExpressionAttribute::DistributedForward;
+         return true;
       case V_INTERN:
          attrs |= ExpressionAttribute::Intern;
          return true;
@@ -2686,24 +2689,22 @@ bool CompilerLogic :: isLessAccessible(ModuleScopeBase& scope, Visibility source
    return sourceVisibility > targetVisibility;
 }
 
-bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t name)
+bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t aliasName, ustr_t nsName)
 {
-   ReferenceProperName sectionName(name);
-   NamespaceString ns(name);
+   if (aliasName.compare(PREDEFINED_MAP_KEY)) {
+      IdentifierString fullName(nsName, "'", META_PREFIX, PREDEFINED_MAP);
 
-   IdentifierString dictionaryName(ns.str(), "'", META_PREFIX);
-   dictionaryName.append(sectionName.str());
-
-   if ((*sectionName).compare(PREDEFINED_MAP)) {
-      auto predefinedInfo = moduleScope->getSection(*dictionaryName, mskAttributeMapRef, true);
+      auto predefinedInfo = moduleScope->getSection(*fullName, mskAttributeMapRef, true);
       if (predefinedInfo.section) {
          readAttributeMap(predefinedInfo.section, moduleScope->predefined);
 
          return true;
       }
    }
-   else if ((*sectionName).compare(ATTRIBUTES_MAP)) {
-      auto attributeInfo = moduleScope->getSection(*dictionaryName, mskAttributeMapRef, true);
+   else if (aliasName.compare(ATTRIBUTES_MAP_KEY)) {
+      IdentifierString fullName(nsName, "'", META_PREFIX, ATTRIBUTES_MAP);
+
+      auto attributeInfo = moduleScope->getSection(*fullName, mskAttributeMapRef, true);
 
       if (attributeInfo.section) {
          readAttributeMap(attributeInfo.section, moduleScope->attributes);
@@ -2711,8 +2712,10 @@ bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t name)
          return true;
       }
    }
-   else if ((*sectionName).compare(OPERATION_MAP)) {
-      auto operationInfo = moduleScope->getSection(*dictionaryName, mskTypeMapRef, true);
+   else if (aliasName.compare(OPERATION_MAP_KEY)) {
+      IdentifierString fullName(nsName, "'", META_PREFIX, OPERATION_MAP);
+
+      auto operationInfo = moduleScope->getSection(*fullName, mskTypeMapRef, true);
 
       if (operationInfo.section) {
          readTypeMap(operationInfo.module, operationInfo.section, moduleScope->operations, moduleScope);
@@ -2720,8 +2723,10 @@ bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t name)
          return true;
       }
    }
-   else if ((*sectionName).compare(ALIASES_MAP)) {
-      auto aliasInfo = moduleScope->getSection(*dictionaryName, mskTypeMapRef, true);
+   else if (aliasName.compare(ALIASES_MAP_KEY)) {
+      IdentifierString fullName(nsName, "'", META_PREFIX, ALIASES_MAP);
+
+      auto aliasInfo = moduleScope->getSection(*fullName, mskTypeMapRef, true);
 
       if (aliasInfo.section) {
          readTypeMap(aliasInfo.module, aliasInfo.section, moduleScope->aliases, moduleScope);

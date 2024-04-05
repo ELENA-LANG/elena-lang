@@ -237,6 +237,7 @@ namespace elena_lang
    constexpr auto V_FORWARD               = 0x80001017u;
    constexpr auto V_IMPORT                = 0x80001018u;
    constexpr auto V_MIXIN                 = 0x80001019u;
+   constexpr auto V_DISTRIBUTED_FORWARD   = 0x8000101Au;
    constexpr auto V_AUTO                  = 0x8000101Cu;
    constexpr auto V_NAMESPACE             = 0x80001021u;
    constexpr auto V_SUPERIOR              = 0x80001024u;

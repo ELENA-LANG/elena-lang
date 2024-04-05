@@ -1,10 +1,10 @@
 // === statement templates ===
 
-#new __symbol statementTemplates;
+#new __symbol statements;
 
 // --- if ---
 
-public template if<expr>(truePart) : __included(statementTemplates)
+public template if<expr>(truePart) : __included(statements)
 {
    cast bool(expr) 
      ? { truePart }
@@ -12,7 +12,7 @@ public template if<expr>(truePart) : __included(statementTemplates)
 
 // --- if:else ---
 
-public template if::else<expr>(truePart,falsePart) : __included(statementTemplates)
+public template if::else<expr>(truePart,falsePart) : __included(statements)
 {
    cast bool(expr) 
      ? { truePart } 
@@ -21,7 +21,7 @@ public template if::else<expr>(truePart,falsePart) : __included(statementTemplat
 
 // --- ifnot ---
 
-public template ifnot<expr>(falsePart) : __included(statementTemplates)
+public template ifnot<expr>(falsePart) : __included(statements)
 {
    cast bool(expr) 
      ! { falsePart }
@@ -29,7 +29,7 @@ public template ifnot<expr>(falsePart) : __included(statementTemplates)
 
 // --- ifnot:else ---
 
-public template ifnot::else<expr>(falsePart,truePart) : __included(statementTemplates)
+public template ifnot::else<expr>(falsePart,truePart) : __included(statements)
 {
    cast bool(expr) 
      ? { truePart } 
@@ -38,7 +38,7 @@ public template ifnot::else<expr>(falsePart,truePart) : __included(statementTemp
 
 // --- while ---
 
-public template while<expr>(loopBody) : __included(statementTemplates)
+public template while<expr>(loopBody) : __included(statements)
 {
    $rep cast bool(expr) 
      ? { loopBody }
@@ -46,13 +46,13 @@ public template while<expr>(loopBody) : __included(statementTemplates)
 
 // --- until ---
 
-public template until<expr>(loopBody) : __included(statementTemplates)
+public template until<expr>(loopBody) : __included(statements)
 {
    $rep cast bool(expr) 
      ! { loopBody }
 }
 
-public template until<step_expr, cond_expr>(loop_body) : __included(statementTemplates)
+public template until<step_expr, cond_expr>(loop_body) : __included(statements)
 {
     step_expr;
 
@@ -60,7 +60,7 @@ public template until<step_expr, cond_expr>(loop_body) : __included(statementTem
       ! { loop_body; __ignore_duplicates step_expr }
 }
 
-public template for::until<step_expr, cond_expr>(loop_body) : __included(statementTemplates)
+public template for::until<step_expr, cond_expr>(loop_body) : __included(statements)
 {
     step_expr;
     
@@ -70,7 +70,7 @@ public template for::until<step_expr, cond_expr>(loop_body) : __included(stateme
 
 // --- do:until ---
 
-public template do::until(loop_body, cond_expr) : __included(statementTemplates)
+public template do::until(loop_body, cond_expr) : __included(statements)
 {
    loop_body;
 
@@ -80,7 +80,7 @@ public template do::until(loop_body, cond_expr) : __included(statementTemplates)
 
 // --- do:while ---
 
-public template do::while(loop_body, cond_expr) : __included(statementTemplates)
+public template do::while(loop_body, cond_expr) : __included(statements)
 {
    loop_body;
 
@@ -90,7 +90,7 @@ public template do::while(loop_body, cond_expr) : __included(statementTemplates)
 
 // --- for ---
 
-public template for<stepExpr, condExpr>(loopBody) : __included(statementTemplates)
+public template for<stepExpr, condExpr>(loopBody) : __included(statements)
 {
    stepExpr;
 
@@ -98,21 +98,21 @@ public template for<stepExpr, condExpr>(loopBody) : __included(statementTemplate
      ? { loopBody; __ignore_duplicates stepExpr; }
 }
 
-public template for<initExpr,condExpr,stepExpr>(loopBody) : __included(statementTemplates)
+public template for<initExpr,condExpr,stepExpr>(loopBody) : __included(statements)
 {
    initExpr;
 
    $rep cast bool(condExpr) ? { loopBody; stepExpr; }
 }
 
-public template for<init_expr,condExpr,step_expr1, step_expr2>(loopBody) : __included(statementTemplates)
+public template for<init_expr,condExpr,step_expr1, step_expr2>(loopBody) : __included(statements)
 {
    init_expr;
 
    $rep cast bool(condExpr) ? { loopBody; step_expr1; step_expr2; }
 }
 
-public template for::and<init_expr1, init_expr2,condExpr,step_expr1, step_expr2>(loopBody) : __included(statementTemplates)
+public template for::and<init_expr1, init_expr2,condExpr,step_expr1, step_expr2>(loopBody) : __included(statements)
 {
    init_expr1;
    init_expr2;
@@ -122,42 +122,42 @@ public template for::and<init_expr1, init_expr2,condExpr,step_expr1, step_expr2>
 
 // --- try ---
 
-public template try(try_block) : __included(statementTemplates)
+public template try(try_block) : __included(statements)
 {
    try_block \\ back(nil);
 }
 
 // --- try:catch ---
 
-public template try::catch(try_block,catch_block) : __included(statementTemplates)
+public template try::catch(try_block,catch_block) : __included(statements)
 {
    try_block \\ on(catch_block);
 }
 
 // --- try:catch:finally ---
 
-public template try::catch::finally(try_block,catch_block,finally_block) : __included(statementTemplates)
+public template try::catch::finally(try_block,catch_block,finally_block) : __included(statements)
 {
    try_block \\ on(catch_block) $fnl finally_block;
 }
 
 // --- try:finally ---
 
-public template try::finally(try_block,finally_block) : __included(statementTemplates)
+public template try::finally(try_block,finally_block) : __included(statements)
 {
    try_block $fnl finally_block;
 }
 
 // --- extern ---
 
-public template extern(body) : __included(statementTemplates)
+public template extern(body) : __included(statements)
 {
    $ext body
 }
 
 // --- using statement ---
 
-public template using<expr>(block) : __included(statementTemplates)
+public template using<expr>(block) : __included(statements)
 {
    auto v := expr;
     
@@ -166,7 +166,7 @@ public template using<expr>(block) : __included(statementTemplates)
 
 // --- lock statement ---
 
-public template lock<expr>(block) : __included(statementTemplates)
+public template lock<expr>(block) : __included(statements)
 {
    auto v := expr;
 
@@ -178,13 +178,13 @@ public template lock<expr>(block) : __included(statementTemplates)
 // --- operator templates ---
 
 // .\
-public template operator::alt<identifier>(expr) : __included(statementTemplates)
+public template operator::alt<identifier>(expr) : __included(statements)
 {
    expr \ back(identifier);
 }
 
 // .!
-public template operator::else<identifier>(expr) : __included(statementTemplates)
+public template operator::else<identifier>(expr) : __included(statements)
 {
     (nil == identifier) ?
     {
@@ -195,7 +195,7 @@ public template operator::else<identifier>(expr) : __included(statementTemplates
 }
 
 // .?
-public template operator::ifnil<identifier>(expr) : __included(statementTemplates)
+public template operator::ifnil<identifier>(expr) : __included(statements)
 {
     cast bool(nil != identifier) 
       ? { expr } 

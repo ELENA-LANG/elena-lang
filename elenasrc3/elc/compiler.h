@@ -1365,7 +1365,10 @@ namespace elena_lang
       void declareDictionaryAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo, bool& superMode);
       void declareExpressionAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo, ExpressionAttributes& mode);
 
-      void declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, Scope::ScopeLevel level);
+      static ustr_t retrieveDictionaryOwner(Scope& scope, ustr_t properName, ustr_t defaultPrefix);
+
+      void declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, 
+         Scope::ScopeLevel level, bool shareMode);
 
       void declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor,
          bool& yieldMethodNotAllowed, bool staticNotAllowed, bool templateBased);

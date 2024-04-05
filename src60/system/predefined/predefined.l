@@ -1,9 +1,9 @@
-// --- predefinedSymbols ---
-#new predefinedSymbols;
+// --- predefined symbols ---
+#new defaults;
 
-#let predefinedSymbols["nil"]         := 80000004h;
-#let predefinedSymbols["default"]     := 80000020h;
-#let predefinedSymbols["self"]        := 80000081h;
-#let predefinedSymbols["__decl"]      := 80000082h;
-#let predefinedSymbols["super"]       := 80000083h;
-#let predefinedSymbols["__received"]  := 80000084h;
+#let defaults["nil"]         := 80000004h;
+#let defaults["default"]     := 80000020h;
+#let defaults["self"]        := 80000081h;
+#let defaults["__decl"]      := 80000082h;
+#let defaults["super"]       := 80000083h;
+#let defaults["__received"]  := 80000084h;

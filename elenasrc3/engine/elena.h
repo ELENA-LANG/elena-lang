@@ -767,6 +767,14 @@ namespace elena_lang
          append(s3);
       }
 
+      IdentifierString(ustr_t s1, ustr_t s2, ustr_t s3, ustr_t s4)
+         : String(s1)
+      {
+         append(s2);
+         append(s3);
+         append(s4);
+      }
+
       IdentifierString(wstr_t s)
       {
          size_t len = IDENTIFIER_LEN;
