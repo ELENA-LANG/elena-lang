@@ -28,20 +28,18 @@
 //}
 
 
-//#new __string testCaseCollection;
-//
-////#share __string testCaseCollection;
-//
-//myTest()
-//{
-//   console.writeLine("myTest fired!");
-//}
-//
-//#let testCaseCollection += myTest;
+#new __string testCaseCollection;
 
-public class A : info("test class");
+//#share __string testCaseCollection;
+
+myTest()
+{
+   console.writeLine("myTest fired!");
+}
+
+#let testCaseCollection += myTest;
 
 public program()
 {
-//   var list := distributed testCaseCollection;
+   var list := distributed testCaseCollection;
 }
