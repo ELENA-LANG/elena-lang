@@ -158,6 +158,7 @@ namespace elena_lang
       UByteCondOp          = 0x0080,
       UShortCondOp         = 0x0081,
       IntLongOp            = 0x0082,
+      DistributedTypeList  = 0x0083,
 
       MaxOperationalKey    = 0x0082,
 

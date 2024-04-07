@@ -42,4 +42,6 @@ myTest()
 public program()
 {
    var list := distributed testCaseCollection;
+
+   list[0]();
 }

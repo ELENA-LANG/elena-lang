@@ -416,6 +416,11 @@ void constant(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SetR, node.arg.reference | mskConstant);
 }
 
+void distrConstant(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskDistrTypeListRef);
+}
+
 void constantArray(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskConstArray);
@@ -2016,7 +2021,8 @@ ByteCodeWriter::Saver commands[] =
 
    copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp, semiDirectCallOp,
    intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex, intCopyingToAccField, intOpWithConst,
-   uint8CondOp, uint16CondOp, intLongOp
+
+   uint8CondOp, uint16CondOp, intLongOp, distrConstant
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

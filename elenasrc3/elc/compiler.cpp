@@ -935,7 +935,7 @@ ObjectInfo Compiler::NamespaceScope :: mapWeakReference(ustr_t identifier, bool 
 
 ObjectInfo Compiler::NamespaceScope :: mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode)
 {
-   IdentifierString metaIdentifier(META_PREFIX, retrieveDictionaryOwner(*this, identifier, module->name()), "@", identifier);
+   IdentifierString metaIdentifier(META_PREFIX, retrieveDictionaryOwner(*this, identifier, module->name(), mode), "@", identifier);
    metaIdentifier.replaceAll('\'', '@', 0);
 
    // check if it is a meta dictionary
@@ -1130,7 +1130,7 @@ ObjectInfo Compiler::ClassScope :: mapIdentifier(ustr_t identifier, bool referen
 
 ObjectInfo Compiler::ClassScope :: mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode)
 {
-   IdentifierString metaIdentifier(META_PREFIX, retrieveDictionaryOwner(*this, identifier, module->name()), "@", identifier);
+   IdentifierString metaIdentifier(META_PREFIX, retrieveDictionaryOwner(*this, identifier, module->name(), mode), "@", identifier);
    metaIdentifier.append('$');
    metaIdentifier.append(module->resolveReference(reference));
    metaIdentifier.replaceAll('\'', '@', 0);
@@ -1944,8 +1944,11 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
    return true;
 }
 
-ustr_t Compiler :: retrieveDictionaryOwner(Scope& scope, ustr_t properName, ustr_t defaultPrefix)
+ustr_t Compiler :: retrieveDictionaryOwner(Scope& scope, ustr_t properName, ustr_t defaultPrefix, EAttr mode)
 {
+   if (EAttrs::test(mode, EAttr::StrongResolved))
+      return defaultPrefix;
+
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
    for (auto it = nsScope->importedNs.start(); !it.eof(); ++it) {
       IdentifierString fullName(META_PREFIX, *it, "@", properName);
@@ -1983,7 +1986,7 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
    
    IdentifierString prefix(META_PREFIX);
    if (shareMode) {
-      prefix.append(retrieveDictionaryOwner(scope, name.firstChild(SyntaxKey::TerminalMask).identifier(), scope.module->name()));
+      prefix.append(retrieveDictionaryOwner(scope, name.firstChild(SyntaxKey::TerminalMask).identifier(), scope.module->name(), EAttr::None));
    }
    else prefix.append(scope.module->name());
 
@@ -4144,6 +4147,8 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, 
       case V_PTR32:
       case V_PTR64:
          return moduleScope.buildins.pointerReference;
+      case V_SYMBOL:
+         return moduleScope.buildins.superReference;
       default:
          return 0;
    }
@@ -6431,7 +6436,11 @@ ObjectInfo Compiler :: defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInf
             retVal = scope.mapIdentifier(*forwardName, true, attrs);
          }
          else if (distributedMode) {
-            retVal = scope.mapDictionary(node.identifier(), node.key == SyntaxKey::reference, attrs);
+            retVal = scope.mapDictionary(node.identifier(), node.key == SyntaxKey::reference, attrs | EAttr::StrongResolved);
+            if (retVal.kind == ObjectKind::TypeList) {
+               retVal.kind = ObjectKind::DistributedTypeList;
+            }
+            else return {};
          }
          else if (memberMode) {
             retVal = scope.mapMember(node.identifier());
@@ -12696,8 +12705,8 @@ bool Compiler::Expression :: compileAssigningOp(ObjectInfo target, ObjectInfo ex
          return false;
    }
 
-   writeObjectInfo(
-      boxArgument(exprVal, stackSafe, true, false));
+   if(!writeObjectInfo(boxArgument(exprVal, stackSafe, true, false)))
+      return false;
 
    if (fieldMode) {
       writer->appendNode(BuildKey::SavingInStack, 0);
@@ -13512,7 +13521,7 @@ ObjectInfo Compiler::Expression :: boxArgument(ObjectInfo info, bool stackSafe, 
 
    info = boxArgumentLocally(info, stackSafe, false);
 
-   if (!stackSafe && isBoxingRequired(info, allowingRefArg)) {
+   if (info.kind == ObjectKind::DistributedTypeList || (!stackSafe && isBoxingRequired(info, allowingRefArg))) {
       ObjectKey key = { info.kind, info.reference };
 
       if (!boxInPlace)
@@ -13793,7 +13802,10 @@ ObjectInfo Compiler::Expression :: boxArgumentInPlace(ObjectInfo info, ref_t tar
 
       writer->appendNode(BuildKey::Assigning, tempLocal.argument);
 
-      writeObjectInfo(info);
+      if (info.kind == ObjectKind::DistributedTypeList) {
+         writer->appendNode(BuildKey::DistributedTypeList, info.reference);
+      }
+      else writeObjectInfo(info);
       writer->appendNode(BuildKey::SavingInStack, 0);
 
       writer->appendNode(BuildKey::LoadingIndex, lenLocal.reference);

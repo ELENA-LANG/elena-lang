@@ -300,6 +300,7 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
    addr_t vaddress = INVALID_ADDR;
    switch (mask) {
       case mskAutoSymbolRef:
+      case mskDistrTypeListRef:
          // HOTFIX : preloaded symbols should be resolved later
          _owner->_mapper->addLazyReference({ mask, position, module, reference, addressMask });
          return;
@@ -1431,6 +1432,64 @@ addr_t JITLinker :: resolveStaticVariable(ReferenceInfo referenceInfo, ref_t sec
    return vaddress;
 }
 
+addr_t JITLinker :: resolveDistributeCategory(ReferenceInfo referenceInfo, ref_t sectionMask)
+{
+   ReferenceProperName name(referenceInfo.referenceName);
+
+   ModuleInfoList list({});
+   //ModuleInfoList symbolList({});
+
+   Module  module;
+   Section section;
+   SectionInfo sectionInfo = { &section };
+   sectionInfo.module = &module;
+
+   // load preloaded symbols
+   _loader->loadDistributedSymbols(*name, list);
+   for (auto it = list.start(); !it.eof(); ++it) {
+      copyDistributedSymbolList(*it, &section, sectionInfo.module);
+   }
+
+   VAddressMap references({ 0, nullptr, 0, 0 });
+
+   int size = section.length() >> 2;
+
+   addr_t vmtVAddress = INVALID_ADDR;
+
+   // get target image & resolve virtual address
+   MemoryBase* image = _imageProvider->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
+
+   // allocate object header
+   _compiler->allocateHeader(writer, vmtVAddress, size, false, _virtualMode);
+   addr_t vaddress = calculateVAddress(writer, mskRDataRef);
+
+   _mapper->mapReference(referenceInfo, vaddress, sectionMask);
+
+   JITLinkerReferenceHelper helper(this, sectionInfo.module, &references);
+   _compiler->writeCollection(&helper, writer, &sectionInfo);
+
+   fixReferences(references, image);
+
+   return vaddress;
+}
+
+void JITLinker :: copyDistributedSymbolList(ModuleInfo info, MemoryBase* target, ModuleBase* module)
+{
+   auto sectionInfo = _loader->getSection({ info.module, info.module->resolveReference(info.reference) }, mskTypeListRef, 0, true);
+   if (!sectionInfo.module)
+      return;
+
+   MemoryReader bcReader(sectionInfo.section);
+   MemoryWriter writer(target);
+
+   while (!bcReader.eof()) {
+      ref_t symbolRef = bcReader.getRef();
+
+      writer.writeDReference(ImportHelper::importReferenceWithMask(info.module, symbolRef, module) , 0);
+   }
+}
+
 void JITLinker :: copyMetaList(ModuleInfo info, ModuleInfoList& output)
 {
    auto sectionInfo = _loader->getSection({ info.module, info.module->resolveReference(info.reference) }, mskTypeListRef, 0, true);
@@ -1486,6 +1545,16 @@ void JITLinker :: prepare()
 
 void JITLinker :: complete(JITCompilerBase* compiler, ustr_t superClass)
 {
+   // load distributed categories
+   VAddressMap distrReferences({});
+   _mapper->forEachLazyReference<VAddressMap*>(&distrReferences, [](VAddressMap* distrReferences, LazyReferenceInfo info)
+      {
+         if (info.mask == mskDistrTypeListRef) {
+            distrReferences->add(info.position, { info.reference, info.module, info.addressMask, 0 });
+         }
+      });
+   fixReferences(distrReferences, _imageProvider->getTextSection());
+
    if (!superClass.empty()) {
       // set voidobj
       addr_t superAddr = resolve(superClass, mskVMTRef, true);
@@ -1591,6 +1660,9 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
             break;
          case mskPSTRRef:
             address = resolveRawConstant(referenceInfo);
+            break;
+         case mskDistrTypeListRef:
+            address = resolveDistributeCategory(referenceInfo, sectionMask);
             break;
          default:
             // to make compiler happy

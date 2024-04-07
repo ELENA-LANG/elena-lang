@@ -378,6 +378,7 @@ namespace elena_lang
    constexpr ref_t mskAutoSymbolRef       = 0x24000000u;
    constexpr ref_t mskMssgNameLiteralRef  = 0x25000000u;
    constexpr ref_t mskPackageRef          = 0x26000000u;
+   constexpr ref_t mskDistrTypeListRef    = 0x27000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

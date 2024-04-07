@@ -21,6 +21,7 @@ In development:
   - port : net library
   --------------------------------------
   - category - accessing a distributed collection - only the dictionary declared in the same module can be accessed (e.g with #new)
+  - distributed can be used only for the code expression (cannot assign it to static / const field)
 
   - declaring testCase category
   - accessing meta category from the code - it must be a destributed symbol (similar to preloaded)

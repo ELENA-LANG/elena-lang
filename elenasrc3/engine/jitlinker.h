@@ -210,6 +210,7 @@ namespace elena_lang
       addr_t resolveName(ReferenceInfo referenceInfo, bool onlyPath);
       addr_t resolvePackage(ReferenceInfo referenceInfo);
       addr_t resolveRawConstant(ReferenceInfo referenceInfo);
+      addr_t resolveDistributeCategory(ReferenceInfo referenceInfo, ref_t sectionMask);
 
       void resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader& vmtReader, FieldAddressMap& staticValues);
 
@@ -223,6 +224,8 @@ namespace elena_lang
       ReferenceInfo retrieveConstantVMT(SectionInfo info);
 
       void createGlobalAttribute(int category, ustr_t value, addr_t address);
+
+      void copyDistributedSymbolList(ModuleInfo info, MemoryBase* target, ModuleBase* module);
 
       addr_t resolve(ReferenceInfo refrenceInfo, ref_t sectionMask, bool silentMode);
 

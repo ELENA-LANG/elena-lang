@@ -24,6 +24,7 @@ namespace elena_lang
       StringDictionary,
       TypeDictionary,
       TypeList,
+      DistributedTypeList,
 
       MetaConstant,
       StringLiteral,
@@ -1365,7 +1366,7 @@ namespace elena_lang
       void declareDictionaryAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo, bool& superMode);
       void declareExpressionAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo, ExpressionAttributes& mode);
 
-      static ustr_t retrieveDictionaryOwner(Scope& scope, ustr_t properName, ustr_t defaultPrefix);
+      static ustr_t retrieveDictionaryOwner(Scope& scope, ustr_t properName, ustr_t defaultPrefix, ExpressionAttribute mode);
 
       void declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, 
          Scope::ScopeLevel level, bool shareMode);
