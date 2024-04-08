@@ -4,5 +4,11 @@ public inline testCase()
 {
    #share super __string testCaseCollection;
 
-   #let testCaseCollection += __decl;
+   #let testCaseCollection += 
+   ::{
+      string testName = $name __decl;
+
+      function()
+         => __decl;
+   };
 }

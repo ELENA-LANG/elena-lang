@@ -6,7 +6,9 @@ public singleton Engine
 
       foreach(var test; in collection)
       {
-         test()
+         console.write(test.TestName);
+         test();
+         console.writeLine();   
       }
    }
 }

@@ -20,6 +20,7 @@
   </manifest>
   <files>
      <module>
+        <include>common.l</include>
         <include>testcase_templates.l</include>
         <include>engine.l</include>
      </module>

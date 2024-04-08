@@ -27,12 +27,35 @@ import tests;
 //   Assert.ifTrue(s.Value == 2)
 //}
 
-myTest() : testCase()
+//myTest() : testCase()
+//{
+//   console.writeLine("myTest fired!");
+//}
+
+#new __string testCaseCollection;
+
+public inline injectCode()
 {
-   console.writeLine("myTest fired!");
+   #share super __string testCaseCollection;
+
+   #let testCaseCollection += 
+   ::{
+      function()
+      {
+         console.writeLine(__decl)
+      }
+   };
+}
+
+class MyClass : injectCode()
+{
 }
 
 public program()
 {
-   Engine.run();
+   auto collection := distributed testCaseCollection;
+   
+   collection[0]();
+
+//   Engine.run();
 }

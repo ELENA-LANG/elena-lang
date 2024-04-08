@@ -20,13 +20,11 @@ In development:
   - #622 : conversion to int - raise an error if not valid
   - port : net library
   --------------------------------------
-  - declaring testCase category
-  - accessing meta category from the code - it must be a destributed symbol (similar to preloaded)
+   - meta programming : for nested class -> declare the inline class, copy it to the tree, replacing __decl with a reference to the owner class
+     returns the inline class reference, later the class will be declared as a singleton
 
-     foreach(var c; in distributed testCaseCollection)
-     {
-        c();
-     }
+  - meta programming : inject class declaration into the code
+
   - print the testname
   - modify system_tests
 
