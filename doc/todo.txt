@@ -20,7 +20,8 @@ In development:
   - #622 : conversion to int - raise an error if not valid
   - port : net library
   --------------------------------------
-  - category - accessing a distributed collection - only the dictionary declared in the same module can be accessed (e.g with #new)
+  - functional test - preloaded
+  - meta symbol list vs meta class list
   - distributed can be used only for the code expression (cannot assign it to static / const field)
 
   - declaring testCase category
@@ -30,6 +31,8 @@ In development:
      {
         c();
      }
+  - print the testname
+  - modify system_tests
 
   - #620 : unit tests via postfix pattern
 

@@ -446,6 +446,7 @@ bool Interpreter :: evalObjArrayOp(ref_t operator_id, ArgumentsInfo& args)
             mask = mskSymbolRef;
             break;
          case ObjectKind::Singleton:
+         case ObjectKind::Class:
             mask = mskVMTRef;
             break;
          default:
@@ -1985,8 +1986,9 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
    SyntaxNode name = node.findChild(SyntaxKey::Name);
    
    IdentifierString prefix(META_PREFIX);
+   ustr_t ident = name.firstChild(SyntaxKey::TerminalMask).identifier();
    if (shareMode) {
-      prefix.append(retrieveDictionaryOwner(scope, name.firstChild(SyntaxKey::TerminalMask).identifier(), scope.module->name(), EAttr::None));
+      prefix.append(retrieveDictionaryOwner(scope, ident, scope.module->name(), EAttr::None));
    }
    else prefix.append(scope.module->name());
 
@@ -2008,6 +2010,14 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
    }
    
    postfix.replaceAll('\'', '@', 0);
+
+   if (shareMode && level == Scope::ScopeLevel::Namespace) {
+      IdentifierString metaIdentifier(*prefix, ident, *postfix);
+
+      auto retVal = scope.mapIdentifier(*metaIdentifier, false, EAttr::Meta);
+      if (retVal.kind != ObjectKind::Unknown)
+         return;
+   }
 
    ref_t reference = mapNewTerminal(scope, *prefix, name, *postfix, visibility);
    ref_t mask = resolveDictionaryMask(typeInfo);

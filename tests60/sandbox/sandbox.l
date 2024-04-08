@@ -27,17 +27,21 @@
 //   Assert.ifTrue(s.Value == 2)
 //}
 
-
 #new __string testCaseCollection;
 
-//#share __string testCaseCollection;
+public inline testCase()
+{
+   #share super __string testCaseCollection;
 
-myTest()
+   #let testCaseCollection += __decl;
+}
+
+myTest() : testCase()
 {
    console.writeLine("myTest fired!");
 }
 
-#let testCaseCollection += myTest;
+//#let testCaseCollection += myTest;
 
 public program()
 {
