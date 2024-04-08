@@ -1,6 +1,8 @@
+#new __string testCaseCollection;
+
 public inline testCase()
 {
-   #new __string testCaseCollection;
+   #share super __string testCaseCollection;
 
    #let testCaseCollection += __decl;
 }

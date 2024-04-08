@@ -53,6 +53,7 @@ public program()
    multiValTest();
    defaultTest();
    retValTests();
+   preloadedTests();
 
    console.writeLine("--- Passed ---")
 }

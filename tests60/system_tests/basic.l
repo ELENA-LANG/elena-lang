@@ -1846,3 +1846,17 @@ retValTests()
 
    console.writeLine(".");
 }
+
+static variableToBeLoaded = new Variable(1);
+
+symbol preloader : preloaded
+   = variableToBeLoaded.append(3);
+
+preloadedTests()
+{
+   console.write("preloadedTests:");
+
+   Assert.ifEqual(variableToBeLoaded, 4);
+
+   console.writeLine(".");
+}

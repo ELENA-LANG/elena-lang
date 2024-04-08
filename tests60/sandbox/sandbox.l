@@ -1,5 +1,5 @@
 //import extensions;
-//import tests;
+import tests;
 //
 //class Store
 //{
@@ -27,25 +27,12 @@
 //   Assert.ifTrue(s.Value == 2)
 //}
 
-#new __string testCaseCollection;
-
-public inline testCase()
-{
-   #share super __string testCaseCollection;
-
-   #let testCaseCollection += __decl;
-}
-
 myTest() : testCase()
 {
    console.writeLine("myTest fired!");
 }
 
-//#let testCaseCollection += myTest;
-
 public program()
 {
-   var list := distributed testCaseCollection;
-
-   list[0]();
+   Engine.run();
 }

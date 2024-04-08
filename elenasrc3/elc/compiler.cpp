@@ -2011,14 +2011,6 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
    
    postfix.replaceAll('\'', '@', 0);
 
-   if (shareMode && level == Scope::ScopeLevel::Namespace) {
-      IdentifierString metaIdentifier(*prefix, ident, *postfix);
-
-      auto retVal = scope.mapIdentifier(*metaIdentifier, false, EAttr::Meta);
-      if (retVal.kind != ObjectKind::Unknown)
-         return;
-   }
-
    ref_t reference = mapNewTerminal(scope, *prefix, name, *postfix, visibility);
    ref_t mask = resolveDictionaryMask(typeInfo);
 

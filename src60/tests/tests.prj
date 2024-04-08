@@ -21,6 +21,7 @@
   <files>
      <module>
         <include>testcase_templates.l</include>
+        <include>engine.l</include>
      </module>
   </files>
 </configuration>

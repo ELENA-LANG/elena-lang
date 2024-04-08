@@ -20,10 +20,6 @@ In development:
   - #622 : conversion to int - raise an error if not valid
   - port : net library
   --------------------------------------
-  - functional test - preloaded
-  - meta symbol list vs meta class list
-  - distributed can be used only for the code expression (cannot assign it to static / const field)
-
   - declaring testCase category
   - accessing meta category from the code - it must be a destributed symbol (similar to preloaded)
 
