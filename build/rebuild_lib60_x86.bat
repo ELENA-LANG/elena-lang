@@ -69,7 +69,7 @@ bin\elena-cli src60\algorithms\algorithms.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-bin\elena-cli src60\tests\tests.prj
+bin\elena-cli src60\ltests\ltests.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

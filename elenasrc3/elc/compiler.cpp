@@ -14011,6 +14011,8 @@ void Compiler::MetaExpression :: generateMethod(SyntaxTreeWriter& writer, Syntax
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::CodeBlock:
+         case SyntaxKey::ReturnExpression:
+         case SyntaxKey::Redirect:
             generateExpression(writer, current);
             break;
          default:

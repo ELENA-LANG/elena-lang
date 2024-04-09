@@ -6,7 +6,7 @@ public inline testCase()
 
    #let testCaseCollection += 
    ::{
-      string testName = $name __decl;
+      string TestName = $name __decl;
 
       function()
          => __decl;

@@ -10,7 +10,7 @@
      </project>
   </platform>
   <project>
-     <namespace>tests</namespace>
+     <namespace>ltests</namespace>
      <template>lib60</template>
   </project>
   <manifest>

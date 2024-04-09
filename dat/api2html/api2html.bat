@@ -15,5 +15,6 @@
 ..\..\bin\ldoc algorithms
 ..\..\bin\ldoc sqlite
 ..\..\bin\ldoc forms
+..\..\bin\ldoc ltests
 
 copy *.html ..\..\doc\api
