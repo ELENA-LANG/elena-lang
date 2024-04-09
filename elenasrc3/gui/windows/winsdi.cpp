@@ -436,6 +436,26 @@ LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
 
          return FALSE;
       }
+      //case WM_CTLCOLORLISTBOX:
+      //   if (_childBkBrush != nullptr) {
+      //      return (LRESULT)_childBkBrush;
+      //   }
+      //   else return WindowBase::proceed(message, wParam, lParam);
+      //   break;
+
+      ////case WM_CTLCOLORDIALOG:
+      //case WM_CTLCOLOREDIT:
+      //{
+      //   //SetBkMode((HDC)wParam, TRANSPARENT);
+      //   //SetTextColor((HDC)wParam, RGB(0x2B, 0x4C, 0x67));
+
+      //   //HBRUSH brush = CreateSolidBrush(RGB(0, 255, 0));
+      //   //return (INT_PTR)brush;
+      //   HBRUSH hBrushBackground = CreateSolidBrush(RGB(0, 0, 0));
+      //   SetTextColor((HDC)wParam, RGB(0x2B, 0x4C, 0x67));
+      //   SetBkColor((HDC)wParam, RGB(0, 255, 0));
+      //   return (LRESULT)hBrushBackground;
+      //}
       default:
          return WindowBase::proceed(message, wParam, lParam);
    }

@@ -1071,6 +1071,10 @@ void IDEWindow :: onIDEStatusChange(ModelNMHDR* rec)
 
 void IDEWindow :: onTextModelChange(TextViewModelNMHDR* rec)
 {
+   if (test(rec->status, STATUS_COLORSCHEME_CHANGED)) {
+      onColorSchemeChange();
+   }
+
    onDocumentUpdate(rec->docStatus);
    onIDEStatusChange(rec);
    if (test(rec->status, STATUS_FRAME_CHANGED)) {
@@ -1388,4 +1392,6 @@ void IDEWindow :: populate(size_t counter, GUIControlBase** children)
 void IDEWindow :: onColorSchemeChange()
 {
    _viewFactory->reloadStyles(_model->viewModel());
+
+   _viewFactory->styleControl(_children[_model->ideScheme.projectView]);
 }

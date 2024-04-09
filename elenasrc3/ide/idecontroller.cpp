@@ -1853,8 +1853,9 @@ void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog
    int prevSchemeIndex = model->viewModel()->schemeIndex;
 
    if(editorDialog.showModal()) {
-      if (prevSchemeIndex != model->viewModel()->schemeIndex)
-         notifyOnModelChange(STATUS_FRAME_CHANGED);
+      if (prevSchemeIndex != model->viewModel()->schemeIndex) {
+         notifyOnModelChange(STATUS_FRAME_CHANGED | STATUS_COLORSCHEME_CHANGED);
+      }         
    }
 }
 

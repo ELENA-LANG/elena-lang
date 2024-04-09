@@ -18,16 +18,12 @@ In development:
   - #637 : all bt tests (>=4)
   - #622 : pi & e constants
   - #622 : conversion to int - raise an error if not valid
-  - port : net library
   --------------------------------------
-  - print the testname
-  - modify system_tests
-
-  - #620 : unit tests via postfix pattern
-
-  - post an article describing how to use distributed dictionary for test
-
   - #617 : dark color scheme, change the window background color
+
+  - net library
+
+  - #617 : change the window background color for dark / classic
 
   - remove Serializer / ScriptReader from elc project (when no longer is required)
 
@@ -40,7 +36,7 @@ In development:
   exp:
   ide:
   tools:
-  prom:
+  prom:post an article describing how to use distributed dictionary for test
   port:x86-64 vm
 
   === Iteration 22 ===

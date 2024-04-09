@@ -188,6 +188,8 @@ namespace elena_lang
    {
    public:
       virtual void reloadStyles(TextViewModelBase* viewModel) = 0;
+
+      virtual void styleControl(GUIControlBase* control) = 0;
    };
 
 }

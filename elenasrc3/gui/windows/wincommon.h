@@ -178,6 +178,8 @@ namespace elena_lang
       virtual wchar_t* getValue() { return nullptr; }
       virtual void clearValue() {}
 
+      virtual bool setColor(int, Color) { return false; }
+
       ControlBase(wstr_t title, int x, int y, int width, int height) :
          _handle(nullptr),
          _title(title),

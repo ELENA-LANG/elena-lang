@@ -119,6 +119,8 @@ namespace elena_lang
       GUIControlBase** _children;
       LayoutManager    _layoutManager;
 
+      //HBRUSH           _childBkBrush;
+
       //void drawControls(HDC& hdc);
 
       void onResize() override;
@@ -161,6 +163,7 @@ namespace elena_lang
       {
          _children = nullptr;
          _childCounter = 0;
+         //_childBkBrush = nullptr;
       }
       ~SDIWindow() override
       {
