@@ -29,6 +29,12 @@ Test1()
    console.write(".")
 }
 
+Test2()
+   : testCase()
+{
+   Assert.ifTrue(false);
+}
+
 public program()
 {
    Engine.run();

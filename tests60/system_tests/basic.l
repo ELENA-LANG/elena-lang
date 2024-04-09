@@ -1,13 +1,12 @@
 import extensions;
 import system'routines;
 import system'dynamic'expressions;
+import ltests;
 
 // --- ControlTest ---
 
-controlTest()
+public controlTest() : testCase()
 {
-    console.write("controlTest:");
-    
     var b1 := false;
     if (true)
     {
@@ -31,10 +30,10 @@ controlTest()
     bool b3 := true;
     Assert.ifEqual(b3 ? 2.0 : 3.0, 2.0);
 
-    console.writeLine(".")
+    console.write(".")
 }
 
-objectTest()
+public objectTest() : testCase()
 {
     console.write("objectTest:");
     
@@ -43,15 +42,13 @@ objectTest()
     
     Assert.ifTrue(a.equalReference(a) && a.equalReference(b).Inverted);
     
-    console.writeLine(".")
+    console.write(".")
 }
 
 // --- BooleanTest ---
 
-booleanTest()
+public booleanTest() : testCase()
 {
-    console.write("booleanTest:");
-    
     var b1 := true;
     var b2 := false;
     
@@ -62,15 +59,13 @@ booleanTest()
     Assert.ifFalse(b2 != b2);
     Assert.ifTrue(b1 != b2);
     
-    console.writeLine(".")
+    console.write(".")
 }
 
 // --- intTests ---
 
-intTests()
+public intTests() : testCase()
 {
-   console.write("intTests:");
-
    int n := 2;
    int m := 3;
    int k := 4;
@@ -108,13 +103,11 @@ intTests()
    i *= 2;
    i /= 2;    
    Assert.ifTrue(i == 1);
-   console.writeLine(".");
+   console.write(".");
 }
 
-uintTests()
+public uintTests() : testCase()
 {
-   console.write("uintTests:");
-
    uint k := 2H;
    uint l := 0AH;
    uint m := 081000000H;
@@ -130,16 +123,14 @@ uintTests()
    n := 10H;
    k := m / n;
    Assert.ifTrue(k == 8000000H);
-   console.writeLine(".");
+   console.write(".");
 }
 
 
 // --- longTests ---
 
-longTests()
+public longTests() : testCase()
 {
-    console.write("longTests:");
-
     long l1 := 100000000000000l;
     long l2 := 5000000000000l;
     
@@ -221,15 +212,13 @@ longTests()
 
     tester(-1l,1l,-1l);
     tester(-5000000000l,5000000000l,-5000000000l);
-    console.writeLine(".");
+    console.write(".");
 }
 
 // --- realTests ---
 
-realTests()
+public realTests() : testCase()
 {
-    console.write("realTests:");
-
     real r := 2.89787;
     Assert.ifFalse(r == 2.8);
     Assert.ifTrue(r == 2.89787);
@@ -260,26 +249,23 @@ realTests()
     Assert.ifTrue(n <= n);            
     Assert.ifTrue(n < m);            
     Assert.ifTrue(m > n);            
-    console.writeLine(".");
+    console.write(".");
 }
 
 // --- gcTests ---
 
-gcTests()
+public gcTests() : testCase()
 {
-   console.write("gcTests:");
    for (int i := 0; i < 100000; i := i + 1)
    {
       new IntNumber();
    };
-   console.writeLine(".");
+   console.write(".");
 }
 
 // --- stringTests ---
-stringTests()
+public stringTests() : testCase()
 {
-    console.write("stringTests:");
-
     Assert.ifTrue("abc" == "abc");
     Assert.ifFalse("ab" == "abc");
     Assert.ifTrue("ba" > "ab");
@@ -314,14 +300,12 @@ stringTests()
     Assert.ifTrue("s2" < "s2");
     Assert.ifFalse("s2" < "s1");
 
-    console.writeLine(".");
+    console.write(".");
 }
 
 // --- wideTests ---
-wideTests()
+public wideTests() : testCase()
 {
-    console.write("wideTests:");
-
     Assert.ifTrue("abc"w == "abc"w);
     Assert.ifFalse("ab"w == "abc"w);
     Assert.ifTrue("ba"w > "ab"w);
@@ -354,14 +338,13 @@ wideTests()
     Assert.ifTrue("s2"w < "s2"w);
     Assert.ifFalse("s2"w < "s1"w);
 
-    console.writeLine(".");
+    console.write(".");
 }
 
 // --- shortTests ---
 
-shortTests()
+public shortTests() : testCase()
 {
-    console.write("shortTests:");
     short w := 1234;
     Assert.ifTrue(w == 1234);
     console.write(".");
@@ -372,14 +355,13 @@ shortTests()
     short l := 3;
                     
     Assert.ifTrue(n + m * k == 14);
-    console.writeLine(".");
+    console.write(".");
 }
 
 // --- ushortTests ---
 
-ushortTests()
+public ushortTests() : testCase()
 {
-    console.write("ushortTests:");
     short w := 1234;
     Assert.ifTrue(w == 1234);
     console.write(".");
@@ -401,15 +383,13 @@ ushortTests()
     console.write(".");
 
     Assert.ifTrue(n + m * k == 14);
-    console.writeLine(".");
+    console.write(".");
 }
 
 // --- conversionTests ---
 
-conversionTests()
+public conversionTests() : testCase()
 {
-    console.write("conversionTests:");
-
     var n := "23".toInt();
     var sn := n.toString();
     Assert.ifTrue(sn == "23");
@@ -444,7 +424,7 @@ conversionTests()
     console.write(".");
     int n3 := s.toInt();
     Assert.ifTrue(n3 == n2);
-    console.writeLine(".");
+    console.write(".");
 }
 
 // --- assignTests ---
@@ -467,13 +447,12 @@ AssignTestClass
    }
 }
 
-assignTests()
+public assignTests() : testCase()
 {
-   console.write("assignTests:");
    var o := new AssignTestClass(2,"test");
    o.test(2,"test");
 
-   console.writeLine(".");
+   console.write(".");
 }
 
 // --- boxingTests ---
@@ -563,10 +542,8 @@ extension boxOp : IntNumber
 }
 
 
-boxingTests()
+public boxingTests() : testCase()
 {
-   console.write("boxingTests:");
-
    int n := 123;
 
    // --- boxing read-only struct
@@ -611,7 +588,7 @@ boxingTests()
    int m2 := 2;
 
    Assert.ifTrue(n2.check(m2));
-   console.writeLine(".");
+   console.write(".");
 }
 
 // --- byRefTests ---
@@ -629,10 +606,8 @@ singleton ByRefProber
    }
 }
 
-byRefTests()
+public byRefTests() : testCase()
 {
-   console.write("byRefTests:");
-
    int n := 0;
    ByRefProber.set(ref n);
 
@@ -656,7 +631,7 @@ byRefTests()
    o.set(ref s2);
 
    Assert.ifTrue(s2 == "hello");
-   console.writeLine(".");
+   console.write(".");
 }
 
 // --- inlineAssignmentTests ---
@@ -689,9 +664,8 @@ class InlineAssignTester2Base
    }
 }
 
-inlineAssignmentTests()
+public inlineAssignmentTests() : testCase()
 {
-   console.write("inlineAssignmentTests:");
    var b := new InlineAssignTesterBase();
    b.validate();
    console.write(".");
@@ -707,7 +681,7 @@ inlineAssignmentTests()
    };
 
    child.validate();
-   console.writeLine(".");
+   console.write(".");
 }
 
 class DispatchType
@@ -745,10 +719,8 @@ sealed class SingleDispatcher
    }   
 }
 
-public singleDispatchTest()
+public singleDispatchTest() : testCase()
 {
-   console.write("singleDispatchTest:");
-
    var weakDispatcher := new SingleDispatcher();
 
    auto arg1 := new DispatchType(1);
@@ -762,7 +734,7 @@ public singleDispatchTest()
 
    Assert.ifTrue(dispatcher.check(arg1) == 1);
    Assert.ifTrue(dispatcher.check(arg2) == 2);
-   console.writeLine(".");
+   console.write(".");
 }
 
 
@@ -800,10 +772,8 @@ sealed class VariadicTester
    }
 }
 
-variadicTest()
+public variadicTest() : testCase()
 {
-    console.write("variadicTest:");
-    
     // run-time
     var tester := new VariadicTester();
     tester.test1(1,3,3);
@@ -827,7 +797,7 @@ variadicTest()
     Assert.ifTrue(tester.sum(1,2,3)==6);
     Assert.ifTrue(tester.passAndSum(1,2,3)==6);
     
-    console.writeLine(".")
+    console.write(".")
 }
 
 // --- dynamicLoadTests ---
@@ -837,17 +807,15 @@ public class DynamicallyLoadedClass
    constructor new() {}
 }
 
-dynamicLoadTests()
+public dynamicLoadTests() : testCase()
 {
-   console.write("dynamicLoadTests:");
-
    var class := new ClassReference("system_tests'DynamicallyLoadedClass");
    
    var o := class.new();
 
    Assert.ifTrue(o.instanceOf(DynamicallyLoadedClass));
 
-   console.writeLine(".");
+   console.write(".");
 }   
 
 interface ITest
@@ -875,10 +843,8 @@ class ATest
    ITest cast() = new ITest { embeddable dispatch() => self; };
 }
 
-interfaceTests()
+public interfaceTests() : testCase()
 {
-   console.write("interfaceTests:");
-
    var a := new ATest(2);
 
    ITest i := a;
@@ -886,7 +852,7 @@ interfaceTests()
    int n := i.Index;
    Assert.ifTrue(n == 2);
 
-   console.writeLine(".");
+   console.write(".");
 }
 
 singleton VariadicFunctionDispatchTester
@@ -917,10 +883,8 @@ singleton VariadicDispatchTester
    }
 }
 
-vardispatcherTest()
+public vardispatcherTest() : testCase()
 {
-   console.write("vardispatcherTest:");
-
    var r1 := VariadicFunctionDispatchTester(1,2,3);
    Assert.ifTrue(r1 == 6);
    var r2 := VariadicDispatchTester.product(1,2,3,4);
@@ -934,7 +898,7 @@ vardispatcherTest()
    var r4 := o2.product(1,2,3,4);
    Assert.ifTrue(r4 == 24);
 
-   console.writeLine(".");
+   console.write(".");
 }
 
 // --- mssgDispatchTest ---
@@ -947,24 +911,20 @@ singleton DispatchTester
     }
 }
 
-mssgDispatchTest()
+public mssgDispatchTest() : testCase()
 {
-    console.write("mssgDispatchTest:");
-    
     var mssg := mssg mssgTest[3];
     var r := mssg(DispatchTester, 1, 2);
     
     Assert.ifTrue(r == 3);
     
-    console.writeLine(".")
+    console.write(".")
 }
 
 // --- MultySelectTest ---
 
-multySelectTest()
+public multySelectTest() : testCase()
 {
-    console.write("mssgDispatchTest:");       
-    
     var n := 3;
     
     n =>
@@ -972,15 +932,13 @@ multySelectTest()
         2 { Assert.ifTrue(n==2); }
         3 { Assert.ifTrue(n==3); };
         
-    console.writeLine(".")        
+    console.write(".")        
 }
 
 // --- enumTest ---
 
-enumTest()
+public enumTest() : testCase()
 {
-    console.write("enumTest:");       
-    
     var s := String.MinValue;
     "123".forEach::(x)
     {
@@ -989,15 +947,13 @@ enumTest()
     
     Assert.ifTrue(s == "321");
         
-    console.writeLine(".")        
+    console.write(".")        
 }
 
 // --- TextBufferTest ---
 
-textBufferTest()
+public textBufferTest() : testCase()
 {
-    console.write("textBufferTest:");
-    
     var buffer := new system'text'TextBuilder();
     
     buffer.write("a");
@@ -1006,7 +962,7 @@ textBufferTest()
 
     Assert.ifTrue(buffer.Value == "abc");
 
-    console.writeLine(".");
+    console.write(".");
 }
 
 // --- LoopTest ---
@@ -1028,10 +984,8 @@ LoopTester
    }
 }
 
-loopTest()
+public loopTest() : testCase()
 {
-    console.write("loopTest:");
-    
     int sum := 0;
     for(int i := 0; i < 5; i += 1)
     {
@@ -1056,7 +1010,7 @@ loopTest()
     while(counter.next()) {};
     counter.assert();
 
-    console.writeLine(".")
+    console.write(".")
 }
 
 // --- Action Test ---
@@ -1070,25 +1024,21 @@ singleton ActionTester
         = f(arg1, arg2);
 }
 
-actionTest()
+public actionTest() : testCase()
 {
-    console.write("actionTest:");
-    
     var r := ActionTester.testWeak((x => x + 2), 1);
     Assert.ifTrue(r == 3);
     
     var r2 := ActionTester.testStrong((int x, int y => x + y), 2, 3);
     Assert.ifTrue(r2 == 5);
 
-    console.writeLine(".");
+    console.write(".");
 }
 
 // --- ArrayTest ---
 
-arrayTest()
+public arrayTest() : testCase()
 {
-    console.write("arrayTest:");
-    
     var a1 := new object[]{1,2,3};
     Assert.ifTrue(a1[1] == 2);
 
@@ -1102,7 +1052,7 @@ arrayTest()
     Assert.ifFailed({ "abc"[-1] });
     Assert.ifFailed({ "abc"[4] });
 
-    console.writeLine(".")    
+    console.write(".")    
 }
 
 class MyException : Exception
@@ -1137,10 +1087,8 @@ singleton ExecTester
 
 // --- ExceptionTest ---
 
-exceptionTest()
+public exceptionTest() : testCase()
 {
-    console.write("exceptionTest:");
-    
     bool raised := false;
     ExecTester.break() \\ on::(e){ raised := true };
     Assert.ifTrue(raised);
@@ -1184,15 +1132,13 @@ exceptionTest()
     };
     Assert.ifTrue(passed2);
     
-    console.writeLine(".")
+    console.write(".")
 }
 
 // --- nestedFieldsTest --
 
-nestedFieldsTest()
+public nestedFieldsTest() : testCase()
 {
-    console.write("nestedFieldsTest:");
-    
     var o := new
     {
         field3 := 3;
@@ -1221,19 +1167,17 @@ nestedFieldsTest()
     Assert.ifEqual(n.getParentField(), 2);
     Assert.ifEqual(n.getParentParentField(), 3);
     
-    console.writeLine(".")
+    console.write(".")
 }
 
-shortCircuitBooleanOperation()
+public shortCircuitBooleanOperation() : testCase()
 {
-    console.write("shortCircuitBooleanOperation:");
-    
     int n := 0;
     var b := (n != 0) && (1/n != 0);
         
     Assert.ifFalse(b);
     
-    console.writeLine(".")
+    console.write(".")
 }
 
 class NestedTester
@@ -1255,15 +1199,13 @@ class NestedTester
     }
 }
 
-nestedTest()
+public nestedTest() : testCase()
 {
-    console.write("nestedTest:");
-    
     auto tester := new NestedTester();
         
     tester.validate();
     
-    console.writeLine(".")
+    console.write(".")
 }
 
 // --- nestetNestedTest() ---
@@ -1289,21 +1231,17 @@ class NestetNestedTester
 }
 
 
-nestetNestedTest()
+public nestetNestedTest() : testCase()
 {
-    console.write("nestetNestedTest:");
-    
     auto tester := new NestetNestedTester();
         
     tester.validate();
     
-    console.writeLine(".")
+    console.write(".")
 }
 
-public ifExpressionTest()
+public ifExpressionTest() : testCase()
 {
-    console.write("ifExpressionTest:");
-    
     auto c := DynamicSingleton.load(
                 Expression.Method(
                    "eval",
@@ -1332,13 +1270,11 @@ public ifExpressionTest()
     Assert.ifTrue(o.eval(1,2));
     Assert.ifFalse(o.eval(1,1));
 
-    console.writeLine(".")    
+    console.write(".")    
 }
 
-public loopExpressionTest()
+public loopExpressionTest() : testCase()
 {
-    console.write("loopExpressionTest:");
-    
     auto c := DynamicSingleton.load(
                 Expression.Method(
                    "eval",
@@ -1387,7 +1323,7 @@ public loopExpressionTest()
     Assert.ifEqual(o.eval(4), 8);
     Assert.ifEqual(o.eval(0), 0);
 
-    console.writeLine(".")    
+    console.write(".")    
 }
 
 A;
@@ -1414,10 +1350,8 @@ class NilDispatcher
     }
 }
 
-nilDispatcherTest()
+public nilDispatcherTest() : testCase()
 {
-   console.write("nilDispatcherTest:");
-    
    auto d := new NilDispatcher();
    var d2 := d;
    A a := nil;
@@ -1443,13 +1377,11 @@ nilDispatcherTest()
    d2.testMe(1, nil) \ back(nil);
    d2.validate(1);
 
-   console.writeLine(".")
+   console.write(".")
 }
 
-duplicateBoxing()
+public duplicateBoxing() : testCase()
 {
-    console.write("duplicateBoxing:");
-
     var t := 0;
     int t2 := 0;
     console.then(
@@ -1482,7 +1414,7 @@ duplicateBoxing()
 //    
 //    Assert.ifTrue(mode == 0);
 
-    console.writeLine(".")
+    console.write(".")
 }
 
 public extension etOp
@@ -1501,20 +1433,16 @@ public extension etOp<T>
     }
 }
       
-templateExtensionTest()
+public templateExtensionTest() : testCase()
 {
-    console.write("templateExtensionTest:");
-    
     auto a := new A();
     Assert.testExtension(a);
     
-    console.writeLine(".")    
+    console.write(".")    
 }  
 
-public stackSafeExtensions()
+public stackSafeExtensions() : testCase()
 {
-    console.write("stackSafeExtensions:");
-    
     int i := 5;
     var m := 5;
    
@@ -1531,16 +1459,14 @@ public stackSafeExtensions()
     Assert.ifTrue(r3 == 1);
     Assert.ifTrue(r4 == 1);
     
-    console.writeLine(".")
+    console.write(".")
 }
 
-genericTest()
+public genericTest() : testCase()
 {
-    console.write("genericTest:");
-    
     var r := cast int(nilValue);
     Assert.ifTrue(r == nil);
-    console.writeLine(".")
+    console.write(".")
 }
 
 
@@ -1561,24 +1487,20 @@ OuterFieldAssigner
    }
 }
 
-outerFieldAssigningTest()
+public outerFieldAssigningTest() : testCase()
 {
-   console.write("outerFieldAssigningTest:");
-
    var tester := new OuterFieldAssigner();
 
    tester.apply(2);
    tester.test(2);
 
-   console.writeLine(".");
+   console.write(".");
 }
 
 // --- methodNotFoundTest ---
 
-methodNotFoundTest()
+public methodNotFoundTest() : testCase()
 {
-   console.write("methodNotFoundTest:");
-
    var o := 2;
    var f := false;
    try
@@ -1592,15 +1514,13 @@ methodNotFoundTest()
 
    Assert.ifTrue(f);
 
-   console.writeLine(".");
+   console.write(".");
 }
 
 // --- methodNotFoundTest ---
 
-nilReferenceTest()
+public nilReferenceTest() : testCase()
 {
-   console.write("nilReferenceTest:");
-
    var o := nil;
    var f := false;
    try
@@ -1614,7 +1534,7 @@ nilReferenceTest()
 
    Assert.ifTrue(f);
 
-   console.writeLine(".");
+   console.write(".");
 }
 
 // --- structTest ---
@@ -1654,9 +1574,8 @@ singleton StructTest
    }
 }
 
-structTest()
+public structTest() : testCase()
 {
-   console.write("structTest:");
    XY xy := new XY();
    var xy2 := new XY();
 
@@ -1675,7 +1594,7 @@ structTest()
    Assert.ifTrue(xy2.x == 3);
    Assert.ifTrue(xy2.y == 4);
 
-   console.writeLine(".");
+   console.write(".");
 }
 
 singleton LookaheadHelper
@@ -1693,16 +1612,15 @@ singleton LookaheadHelper
    }   
 }
 
-public lookaheadTests()
+public lookaheadTests() : testCase()
 {
-   console.write("lookaheadTests:");
    int r := LookaheadHelper.X() + 1;
    int r2 := LookaheadHelper.WeakX() + 1;
 
    Assert.ifTrue(r == 3);
    Assert.ifTrue(r2 == 4);
 
-   console.writeLine(".");
+   console.write(".");
 }
 
 struct IncTestStruct
@@ -1723,16 +1641,14 @@ struct IncTestStruct
    }
 }
 
-incTest()
+public incTest() : testCase()
 {
-   console.write("incTest:");
-
    IncTestStruct struct := new IncTestStruct();
 
    struct.act();
    struct.assert();
 
-   console.writeLine(".");
+   console.write(".");
 }
 
 
@@ -1744,10 +1660,8 @@ singleton MultiValGetter
    }
 }
 
-multiValTest()
+public multiValTest() : testCase()
 {
-   console.write("multiValTest:");
-
    var n := 2;
    var t := (n + 1,"abc");
 
@@ -1773,7 +1687,7 @@ multiValTest()
    Assert.ifTrue(x1 == "Alex");
    Assert.ifTrue(x2 == 13);
 
-   console.writeLine(".");
+   console.write(".");
 }
 
 // -- defaultTest --
@@ -1808,10 +1722,8 @@ struct DefaultC
    }
 }
 
-defaultTest()
+public defaultTest() : testCase()
 {
-   console.write("defaultTest:");
-
    DefaultA a := default;
    DefaultB b := default;
    DefaultC c := default;
@@ -1820,7 +1732,7 @@ defaultTest()
    Assert.ifEqual(b, new DefaultB());
    Assert.ifEqual(c, DefaultC.load(0));
 
-   console.writeLine(".");
+   console.write(".");
 }
 
 // -- retValTests --
@@ -1835,16 +1747,14 @@ extension RetValAOp : RetValA
    extendEval() {}
 }
 
-retValTests()
+public retValTests() : testCase()
 {
-   console.write("retValTests:");
-
    auto a := new RetValA();
 
    Assert.ifInstanceOf(a.eval(), RetValA);
    Assert.ifInstanceOf(a.extendEval(), RetValA);
 
-   console.writeLine(".");
+   console.write(".");
 }
 
 static variableToBeLoaded = new Variable(1);
@@ -1852,11 +1762,9 @@ static variableToBeLoaded = new Variable(1);
 symbol preloader : preloaded
    = variableToBeLoaded.append(3);
 
-preloadedTests()
+public preloadedTests() : testCase()
 {
-   console.write("preloadedTests:");
-
    Assert.ifEqual(variableToBeLoaded, 4);
 
-   console.writeLine(".");
+   console.write(".");
 }

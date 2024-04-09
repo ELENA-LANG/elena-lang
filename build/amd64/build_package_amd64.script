@@ -127,6 +127,16 @@ fi
    echo .
  fi
 
+ ../../bin/elena64-cli ../../src60/ltests/ltests.project
+ ret=$?
+ if [ $ret -eq 2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
  ../../bin/elena64-cli ../../tests60/system_tests/system_tests.project
  ret=$?
  if [ $ret -eq 2 ]

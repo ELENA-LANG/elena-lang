@@ -97,6 +97,10 @@ md %~dp0\x64\src60\forms
 xcopy %~dp0\..\src60\forms\*.l %~dp0\x64\src60\forms /s
 xcopy %~dp0\..\src60\forms\*.prj %~dp0\x64\src60\forms /s
 
+md %~dp0\x64\src60\ltests
+xcopy %~dp0\..\src60\ltests\*.l %~dp0\x64\src60\ltests /s
+xcopy %~dp0\..\src60\ltests\*.prj %~dp0\x64\src60\ltests /s
+
 %~dp0\..\bin\sg64-cli.exe %~dp0\..\dat\sg\syntax60.txt
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError

@@ -1249,7 +1249,7 @@ namespace elena_lang
          void convertIntLiteralForOperation(SyntaxNode node, int operatorId, ArgumentsInfo& messageArguments);
 
       public:
-         bool writeObjectInfo(ObjectInfo info);
+         bool writeObjectInfo(ObjectInfo info, bool allowMeta = false);
          void writeObjectInfo(ObjectInfo info, SyntaxNode node)
          {
             if (!writeObjectInfo(info))
@@ -1307,7 +1307,7 @@ namespace elena_lang
 
       pos_t saveMetaInfo(ModuleBase* module, ustr_t value, ustr_t postfix);
 
-      ref_t mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix, Visibility visibility);
+      ref_t mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix, Visibility visibility, bool ignoreDuplicates = false);
       mssg_t mapMethodName(MethodScope& scope, pos_t paramCount, ustr_t actionName, ref_t actionRef,
          ref_t flags, ref_t* signature, size_t signatureLen, bool withoutWeakMessages, bool noSignature);
       mssg_t mapMessage(Scope& scope, SyntaxNode node, bool propertyMode, bool extensionMode, bool probeMode);

@@ -1720,7 +1720,8 @@ inline ref_t resolveDictionaryMask(TypeInfo typeInfo)
    return 0;
 }
 
-ref_t Compiler :: mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix, Visibility visibility)
+ref_t Compiler :: mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix, 
+   Visibility visibility, bool ignoreDuplicates)
 {
    if (nameNode == SyntaxKey::Name) {
       SyntaxNode terminal = nameNode.firstChild(SyntaxKey::TerminalMask);
@@ -1764,18 +1765,20 @@ ref_t Compiler :: mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNod
             reference = dup;
       }
 
-      // check for duplicates
-      if (scope.module->mapSection(reference | mskTypeListRef, true))
-         scope.raiseError(errDuplicatedSymbol, nameNode.firstChild(SyntaxKey::TerminalMask));
+      if (!ignoreDuplicates) {
+         // check for duplicates
+         if (scope.module->mapSection(reference | mskTypeListRef, true))
+            scope.raiseError(errDuplicatedSymbol, nameNode.firstChild(SyntaxKey::TerminalMask));
 
-      if (scope.module->mapSection(reference | mskTypeMapRef, true))
-         scope.raiseError(errDuplicatedSymbol, nameNode.firstChild(SyntaxKey::TerminalMask));
+         if (scope.module->mapSection(reference | mskTypeMapRef, true))
+            scope.raiseError(errDuplicatedSymbol, nameNode.firstChild(SyntaxKey::TerminalMask));
 
-      if (scope.module->mapSection(reference | mskSymbolRef, true))
-         scope.raiseError(errDuplicatedSymbol, nameNode.firstChild(SyntaxKey::TerminalMask));
+         if (scope.module->mapSection(reference | mskSymbolRef, true))
+            scope.raiseError(errDuplicatedSymbol, nameNode.firstChild(SyntaxKey::TerminalMask));
 
-      if (scope.module->mapSection(reference | mskSyntaxTreeRef, true))
-         scope.raiseError(errDuplicatedSymbol, nameNode.firstChild(SyntaxKey::TerminalMask));
+         if (scope.module->mapSection(reference | mskSyntaxTreeRef, true))
+            scope.raiseError(errDuplicatedSymbol, nameNode.firstChild(SyntaxKey::TerminalMask));
+      }
 
       return reference;
    }
@@ -2011,7 +2014,7 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
    
    postfix.replaceAll('\'', '@', 0);
 
-   ref_t reference = mapNewTerminal(scope, *prefix, name, *postfix, visibility);
+   ref_t reference = mapNewTerminal(scope, *prefix, name, *postfix, visibility, true);
    ref_t mask = resolveDictionaryMask(typeInfo);
 
    assert(mask != 0);
@@ -12326,7 +12329,7 @@ ObjectInfo Compiler::Expression :: compileAssigning(SyntaxNode loperand, SyntaxN
    return target;
 }
 
-bool Compiler::Expression :: writeObjectInfo(ObjectInfo info)
+bool Compiler::Expression :: writeObjectInfo(ObjectInfo info, bool allowMeta)
 {
    switch (info.kind) {
       case ObjectKind::IntLiteral:
@@ -12446,6 +12449,12 @@ bool Compiler::Expression :: writeObjectInfo(ObjectInfo info)
             throw InternalError(errFatalError);
 
          writer->appendNode(BuildKey::ConstantReference, info.reference);
+         break;
+      case ObjectKind::DistributedTypeList:
+         if (allowMeta) {
+            writer->appendNode(BuildKey::DistributedTypeList, info.reference);
+         }
+         else return false;
          break;
       case ObjectKind::Object:
          break;
@@ -13795,7 +13804,7 @@ ObjectInfo Compiler::Expression :: boxArgumentInPlace(ObjectInfo info, ref_t tar
       // get the length
       lenLocal = declareTempLocal(V_INT32, false);
 
-      writeObjectInfo(info);
+      writeObjectInfo(info, info.kind == ObjectKind::DistributedTypeList);
       writer->appendNode(BuildKey::SavingInStack, 0);
       writer->newNode(BuildKey::ObjArraySOp, LEN_OPERATOR_ID);
       writer->appendNode(BuildKey::Index, lenLocal.argument);
@@ -13810,10 +13819,7 @@ ObjectInfo Compiler::Expression :: boxArgumentInPlace(ObjectInfo info, ref_t tar
 
       writer->appendNode(BuildKey::Assigning, tempLocal.argument);
 
-      if (info.kind == ObjectKind::DistributedTypeList) {
-         writer->appendNode(BuildKey::DistributedTypeList, info.reference);
-      }
-      else writeObjectInfo(info);
+      writeObjectInfo(info, info.kind == ObjectKind::DistributedTypeList);
       writer->appendNode(BuildKey::SavingInStack, 0);
 
       writer->appendNode(BuildKey::LoadingIndex, lenLocal.reference);
