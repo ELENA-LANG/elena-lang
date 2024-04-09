@@ -110,7 +110,7 @@ StyleInfo darkStyles[STYLE_MAX + 1] = {
    {Color(0xFF, 0xFF, 0xFF), Color(30, 30, 30), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(164, 164, 164), Color(64, 64, 64), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0x60, 0x60, 0x60), Color(0xC0, 0xC0, 0xC0), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
-   {Color(0x60, 0x60, 0x60), Color(164, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
+   {Color(0xEF, 0xEF, 0xEF), Color(64, 128, 128), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
    {Color(0xFF, 0xFF, 0xFF), Color(0xFF, 0x0, 0x0), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0xFF, 0xFF, 0xFF), Color(0x80, 0x0, 0x0), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0xC0, 0xC0, 0xC0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},

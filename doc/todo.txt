@@ -19,11 +19,9 @@ In development:
   - #622 : pi & e constants
   - #622 : conversion to int - raise an error if not valid
   --------------------------------------
-  - #617 : dark color scheme, change the window background color
-
   - net library
 
-  - #617 : change the window background color for dark / classic
+  - #617 : change the window background color for dark / classic - error list, output, vm terminal
 
   - remove Serializer / ScriptReader from elc project (when no longer is required)
 

@@ -1,0 +1,38 @@
+<configuration>
+  <platform key="Linux_I386">
+     <project>
+        <output>/usr/lib/elena/lib60</output>
+     </project>
+  </platform>
+  <platform key="Linux_AMD64">
+     <project>
+        <output>/usr/lib/elena/lib60_64</output>
+     </project>
+  </platform>
+  <platform key="Linux_PPC64le">
+     <project>
+        <output>/usr/lib/elena/lib60_64</output>
+     </project>
+  </platform>
+  <platform key="Linux_ARM64">
+     <project>
+        <output>/usr/lib/elena/lib60_64</output>
+     </project>
+  </platform>
+  <project>
+     <namespace>ltests</namespace>
+     <template>lib60</template>
+  </project>
+  <manifest>
+     <name>ELENA Unit Tests Library</name>
+     <version>6.0.0</version>
+     <author>Aleksey Rakov</author>
+  </manifest>
+  <files>
+     <module>
+        <include>common.l</include>
+        <include>testcase_templates.l</include>
+        <include>engine.l</include>
+     </module>
+  </files>
+</configuration>
