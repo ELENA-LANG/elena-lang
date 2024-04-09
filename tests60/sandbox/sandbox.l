@@ -1,5 +1,5 @@
 //import extensions;
-import tests;
+//import tests;
 //
 //class Store
 //{
@@ -36,13 +36,13 @@ import tests;
 
 public inline injectCode()
 {
-   #share super __string testCaseCollection;
+//   #share super __string testCaseCollection;
 
    #let testCaseCollection += 
    ::{
       function()
       {
-         console.writeLine(__decl)
+         console.writeLine(/*__decl*/$name __decl)
       }
    };
 }

@@ -1064,6 +1064,25 @@ namespace elena_lang
          Namespace(Compiler* compiler, NamespaceScope* parent);
       };
 
+      class MetaExpression
+      {
+         friend class Compiler;
+
+         Interpreter*   interpreter;
+         Compiler*      compiler;
+         Scope*         scope;
+
+         void generateObject(SyntaxTreeWriter& writer, SyntaxNode node);
+         void generateNameOperation(SyntaxTreeWriter& writer, SyntaxNode node);
+         void generateExpression(SyntaxTreeWriter& writer, SyntaxNode node);
+         void generateMethod(SyntaxTreeWriter& writer, SyntaxNode node);
+
+      public:
+         ObjectInfo generateNestedConstant(SyntaxNode node);
+
+         MetaExpression(Compiler* compiler, Scope* scope, Interpreter* interpreter);
+      };
+
       class Symbol
       {
          friend class Compiler;

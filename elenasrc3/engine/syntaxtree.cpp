@@ -73,6 +73,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    //   //tokens.add("forward", lxForward);
    map.add("reference", SyntaxKey::reference);
    //   tokens.add("new_reference", lxReference);
+   map.add("global_reference", SyntaxKey::globalreference);
    map.add("nameattr", SyntaxKey::Name);
    map.add("property_parameter", SyntaxKey::PropertyOperation);
    map.add("import", SyntaxKey::Import);   

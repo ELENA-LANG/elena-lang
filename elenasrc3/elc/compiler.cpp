@@ -51,7 +51,7 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 //      current = current.nextNode();
 //   }
 //}
-
+//
 //inline void storeNode(SyntaxNode node)
 //{
 //   DynamicUStr target;
@@ -3918,6 +3918,12 @@ ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, Sy
       case SyntaxKey::PrimitiveCollection:
          retVal = evalCollection(interpreter, scope, node, true, ignoreErrors);
          break;
+      case SyntaxKey::NestedBlock:
+      {
+         MetaExpression metaExpr(this, &scope, &interpreter);
+         retVal = metaExpr.generateNestedConstant(node);
+         break;
+      }
       default:
          if (ignoreErrors) {
             return {};
@@ -13925,4 +13931,130 @@ void Compiler::Expression :: compileConverting(SyntaxNode node, ObjectInfo sourc
    }
 
    writeObjectInfo(boxArgument(source, stackSafe, true, false));
+}
+
+// --- Compiler::MetaExpression ---
+
+Compiler::MetaExpression :: MetaExpression(Compiler* compiler, Scope* scope, Interpreter* interpreter)
+   : compiler(compiler), scope(scope), interpreter(interpreter)
+{
+
+}
+
+void Compiler::MetaExpression :: generateObject(SyntaxTreeWriter& writer, SyntaxNode node)
+{
+   ObjectInfo info = compiler->evalObject(*interpreter, *scope, node);
+   if (info.kind == ObjectKind::Class) {
+      writer.newNode(node.key);
+
+      ustr_t refName = scope->module->resolveReference(info.reference);
+      if (isWeakReference(refName)) {
+         IdentifierString fullName(scope->module->name(), refName);
+
+         writer.appendNode(SyntaxKey::globalreference, *fullName);
+      }
+      else writer.appendNode(SyntaxKey::globalreference, refName);
+
+      writer.closeNode();
+   }
+   else SyntaxTree::copyNode(writer, node, true);
+}
+
+void Compiler::MetaExpression :: generateNameOperation(SyntaxTreeWriter& writer, SyntaxNode node)
+{
+   ObjectInfo info = compiler->evalExpression(*interpreter, *scope, node, true, true);
+   if (info.kind == ObjectKind::StringLiteral) {
+      writer.newNode(SyntaxKey::Object);
+
+      ustr_t s = scope->module->resolveConstant(info.reference);
+
+      writer.appendNode(SyntaxKey::string, s);
+
+      writer.closeNode();
+   }
+   else SyntaxTree::copyNode(writer, node, true);
+}
+
+void Compiler::MetaExpression :: generateExpression(SyntaxTreeWriter& writer, SyntaxNode node)
+{
+   writer.newNode(node.key);
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Object:
+            generateObject(writer, current);
+            break;
+         case SyntaxKey::NameOperation:
+            generateNameOperation(writer, current);
+            break;
+         case SyntaxKey::Message:
+         case SyntaxKey::EOP:
+            SyntaxTree::copyNode(writer, current, true);
+            break;
+         default:
+            generateExpression(writer, current);
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+}
+
+void Compiler::MetaExpression :: generateMethod(SyntaxTreeWriter& writer, SyntaxNode node)
+{
+   writer.newNode(node.key);
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::CodeBlock:
+            generateExpression(writer, current);
+            break;
+         default:
+            SyntaxTree::copyNode(writer, current, true);
+            break;
+      }
+
+      current = current.nextNode();
+   }
+   
+   writer.closeNode();
+}
+
+ObjectInfo Compiler::MetaExpression :: generateNestedConstant(SyntaxNode node)
+{
+   ref_t reference = scope->moduleScope->mapAnonymous("const");
+
+   SyntaxTree dummyTree;
+   SyntaxTreeWriter writer(dummyTree);
+
+   writer.newNode(SyntaxKey::Class, reference);
+   writer.appendNode(SyntaxKey::Attribute, V_SINGLETON);
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Method:
+            generateMethod(writer, current);
+            break;
+         default:
+            return {};
+      }
+
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+
+   SyntaxNode nsNode = node.parentNode();
+   while (nsNode != SyntaxKey::Namespace)
+      nsNode = nsNode.parentNode();
+
+   SyntaxTreeWriter nsWriter(nsNode);
+   SyntaxTree::copyNode(nsWriter, dummyTree.readRoot(), true);
+
+   return { ObjectKind::Singleton, { reference }, reference };
 }

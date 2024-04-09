@@ -20,11 +20,6 @@ In development:
   - #622 : conversion to int - raise an error if not valid
   - port : net library
   --------------------------------------
-   - meta programming : for nested class -> declare the inline class, copy it to the tree, replacing __decl with a reference to the owner class
-     returns the inline class reference, later the class will be declared as a singleton
-
-  - meta programming : inject class declaration into the code
-
   - print the testname
   - modify system_tests
 
