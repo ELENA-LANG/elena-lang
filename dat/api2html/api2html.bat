@@ -16,5 +16,6 @@
 ..\..\bin\ldoc sqlite
 ..\..\bin\ldoc forms
 ..\..\bin\ldoc ltests
+..\..\bin\ldoc net
 
 copy *.html ..\..\doc\api

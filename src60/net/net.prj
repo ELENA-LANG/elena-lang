@@ -10,7 +10,7 @@
      </project>
   </platform>
   <project>
-     <namespace>algorithms</namespace>
+     <namespace>net</namespace>
      <template>lib60</template>
   </project>
   <manifest>
