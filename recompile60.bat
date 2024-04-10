@@ -24,6 +24,9 @@ REM /m:2 is used to build using parallel compilation
 "%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc3\elenasrc3.sln /p:configuration=release /p:Platform="x64" /m:2
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
+bin\elena-tests64.exe
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+
 ECHO =========== Release Compiled ==================
 
 ECHO ============== x86 build ======================

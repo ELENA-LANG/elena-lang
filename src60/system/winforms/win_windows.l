@@ -1,6 +1,6 @@
 import system;
 
-public sealed struct WNDCLASS
+public sealed packed WNDCLASS
 {
    int       style : prop;
    pointer   lpfnWndProc : prop;

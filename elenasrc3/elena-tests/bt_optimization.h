@@ -36,6 +36,33 @@ namespace elena_lang
       void runCompilerTest(bool declareOperators);
    };
 
+   class StructTest : public testing::Test
+   {
+   protected:
+      SyntaxTree syntaxTree;
+
+      SyntaxNode declarationNode;
+
+      List<int>  offsets;
+      pos_t      expectedSize;
+
+      ref_t      targetRef;
+
+      CompilerEnvironment env;
+
+      bool validateStructInfo(ClassInfo& structInfo);
+
+      void SetUp() override;
+
+   public:
+      void runTest();
+
+      StructTest()
+         : offsets(0)
+      {
+      }
+   };
+
    // Optimization #2 (byRefOp) : "a := b.get()" => "b.get(ref a)"
    class BTOptimization1_1 : public BTOptimization
    {
@@ -59,6 +86,34 @@ namespace elena_lang
 
    // Optimization #3 (intCopying) : "int n := 2" => direct assigning
    class BTOptimization2 : public BTOptimization
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   // --- StructAlignment ---
+   class StructAlignment : public StructTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   // --- PackedStructAlignment ---
+   class PackedStructAlignment : public StructTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   // --- ComplexStructAlignment ---
+   class ComplexStructAlignment : public StructTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   // --- PrimitiveStructAlignment ---
+   class PrimitiveStructAlignment : public StructTest
    {
    protected:
       void SetUp() override;

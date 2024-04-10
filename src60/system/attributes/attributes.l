@@ -62,6 +62,8 @@
 #let attributes["template"]    := 80001027h;
 #let attributes["weak"]        := 80001029h;
 #let attributes["__nil_constructor"] := 8000102Bh;
+#let attributes["packed"]      := 8000102Ch;
+
 
 /// primitive types
 #let attributes["__string"]    := 80000801h;

@@ -19,7 +19,7 @@ public sealed struct IN_ADDR
 
 // --- SOCKADDR_IN ---
 
-public sealed struct SOCKADDR_IN
+public sealed packed SOCKADDR_IN
 {
    short   family : prop;
    short   port   : prop;
@@ -65,7 +65,7 @@ const int SOCKADDR_IN_SIZE = 16;
 
 // --- AddrInfo ---
 
-public struct AddrInfo
+public packed AddrInfo
 {
    int     ai_flags;
    int     ai_family;

@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "ecviewer.h"
@@ -703,6 +703,9 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    }
    if (test(flags, elMessage)) {
       printLineAndCount("@flag ", "elMessage", row, pageSize);
+   }
+   if (test(flags, elPacked)) {
+      printLineAndCount("@flag ", "elPacked", row, pageSize);
    }
    if (test(flags, elReadOnlyRole)) {
       printLineAndCount("@flag ", "elReadOnlyRole", row, pageSize);

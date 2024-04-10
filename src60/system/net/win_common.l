@@ -56,7 +56,7 @@ public class SocketException : Exception
 
 // --- WSAStartUp ---
 
-sealed struct WSADATA
+sealed packed WSADATA
 {
    short wVersion;
    short wHighVersion;

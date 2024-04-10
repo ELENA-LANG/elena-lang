@@ -25,3 +25,18 @@ TEST_F(BTOptimization2, CompilerTest)
 {
    runCompilerTest(false);
 }
+
+TEST_F(StructAlignment, CompilerTest)
+{
+   runTest();
+}
+
+TEST_F(PackedStructAlignment, CompilerTest)
+{
+   runTest();
+}
+
+TEST_F(ComplexStructAlignment, CompilerTest)
+{
+   runTest();
+}

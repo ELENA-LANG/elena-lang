@@ -18,7 +18,6 @@ In development:
   - #622 : conversion to int - raise an error if not valid
   - remove Serializer / ScriptReader from elc project (when no longer is required)
   --------------------------------------
-  - #610 : data alignment : for normal structs - allign the data to 4/8 and make an operation aligned to 4/8; so all stack allocated data is aligned to 4 / 8; field are allocated to 4 / 8 for all cases except packed flag
 
   - pi under 7 sec
 

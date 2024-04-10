@@ -1,41 +1,47 @@
 import extensions;
-import ltests;
 
-class Store
+//struct Aligned
+//{
+//   byte  b;         // ; 0
+//   short w;         // ; 2
+//   byte  b2;        // ; 4
+//   int   n;         // ; 8
+//   byte  b3;        // ; 12
+//   long  l;         // ; 16
+//}
+
+//       0x112xxx33334xxx55555555
+
+/*
+struct XY
 {
-   field value;
+   byte b1;
+   byte b2;
+}
 
-   Value
+struct XY2
+{
+   byte b1;
+   int  n2; 
+   byte b3;
+}
+*/
+
+singleton TestHelper
+{
+   int getValue()
    {
-      set(o)
-      {
-         value := o
-      }
-
-      get()
-         = value;
+      ^ 2
    }
-}
-
-Test1()
-   : testCase()
-{
-   var s := new Store();
-
-   s.Value := 2;
-
-   Assert.ifTrue(s.Value == 2);
-
-   console.write(".")
-}
-
-Test2()
-   : testCase()
-{
-   Assert.ifTrue(false);
 }
 
 public program()
 {
-   Engine.run();
+   int retVal := TestHelper.getValue();
+
+/*   XY a := default;
+   XY b := a;
+
+   XY2 c := default;
+   XY2 d := c;*/
 }

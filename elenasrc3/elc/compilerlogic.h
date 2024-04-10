@@ -207,6 +207,8 @@ namespace elena_lang
       bool isValidType(ClassInfo& info, bool allowRole);
       bool isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole);
 
+      pos_t definePadding(ModuleScopeBase& scope, pos_t offset, pos_t size);
+
       static bool isPrimitiveArrRef(ref_t reference)
       {
          switch (reference) {

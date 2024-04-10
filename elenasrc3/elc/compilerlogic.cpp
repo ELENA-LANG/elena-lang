@@ -823,6 +823,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
       case V_MIXIN:
          flags |= elGroup;
          break;
+      case V_PACKED_STRUCT:
+         flags |= elPacked | elStructureRole;
+         break;
       case 0:
          // ignore idle
          break;
@@ -2885,4 +2888,18 @@ void CompilerLogic :: importClassInfo(ClassInfo& copy, ClassInfo& target, Module
    // import parent reference
    if (target.header.parentRef)
       target.header.parentRef = ImportHelper::importReference(exporter, target.header.parentRef, importer);
+}
+
+pos_t CompilerLogic :: definePadding(ModuleScopeBase& scope, pos_t offset, pos_t size)
+{
+   switch (size) {
+      case 1:
+         return 0;
+      case 2:
+      case 4:
+      case 8:
+         return align(offset, size) - offset;
+      default:
+         return align(offset, scope.ptrSize) - offset;
+   }
 }

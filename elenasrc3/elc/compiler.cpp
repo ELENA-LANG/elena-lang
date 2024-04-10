@@ -51,7 +51,7 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 //      current = current.nextNode();
 //   }
 //}
-//
+
 //inline void storeNode(SyntaxNode node)
 //{
 //   DynamicUStr target;
@@ -2981,6 +2981,11 @@ bool Compiler :: generateClassField(ClassScope& scope, FieldAttributes& attrs, u
          if (scope.info.size != 0 && scope.info.fields.count() == 0)
             return false;
 
+         // padding
+         if (!test(flags, elPacked)) {
+            scope.info.size += _logic->definePadding(*scope.moduleScope, scope.info.size, sizeInfo.size);
+         }
+
          offset = scope.info.size;
          scope.info.size += sizeInfo.size;
          scope.info.fields.add(name, { offset, typeInfo, readOnly });
@@ -3054,6 +3059,11 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node, bool si
       }
 
       current = current.nextNode();
+   }
+
+   // align the struct size if it is not a wrapper
+   if (test(scope.info.header.flags, elStructureRole) && !testany(scope.info.header.flags, elDynamicRole | elWrapper)) {
+      scope.info.size = align(scope.info.size, scope.moduleScope->ptrSize);
    }
 }
 

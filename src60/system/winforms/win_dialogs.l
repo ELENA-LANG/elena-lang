@@ -18,7 +18,7 @@ public singleton messageBox
    }
 }
 
-struct tagOFNA
+packed tagOFNA
 {
    int         lStructSize : prop;
    Handle      hwndOwner : prop;
