@@ -1394,4 +1394,8 @@ void IDEWindow :: onColorSchemeChange()
    _viewFactory->reloadStyles(_model->viewModel());
 
    _viewFactory->styleControl(_children[_model->ideScheme.projectView]);
+
+   _viewFactory->styleControl(this);
+
+   refresh();
 }

@@ -392,6 +392,21 @@ void SDIWindow :: onResizing(RECT* rect)
    }
 }
 
+int SDIWindow :: paintBackground()
+{
+   HDC hdc;
+   HBRUSH hbrBkgnd;
+   PAINTSTRUCT ps;
+   RECT r;
+
+   GetClientRect(_handle, &r);
+   hdc = BeginPaint(_handle, &ps);
+   FillRect(hdc, &r, _bkBrush);
+   EndPaint(_handle, &ps);
+
+   return 1;
+}
+
 LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
@@ -403,16 +418,6 @@ LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
          if(!onCommand(LOWORD(wParam)))
             return DefWindowProc(_handle, message, wParam, lParam);
          return 0;
-      //case WM_PAINT:
-      //{
-      //   PAINTSTRUCT ps;
-      //   HDC hdc = ::BeginPaint(_handle, &ps);
-      //   
-      //   drawControls(hdc);
-      //   EndPaint(_handle, &ps);
-
-      //   break;
-      //}
       case WM_DESTROY:
          PostQuitMessage(0);
          return 0;
@@ -436,6 +441,10 @@ LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
 
          return FALSE;
       }
+      case WM_ERASEBKGND:
+         return paintBackground();
+      case WM_PAINT:
+         break;
       //case WM_CTLCOLORLISTBOX:
       //   if (_childBkBrush != nullptr) {
       //      return (LRESULT)_childBkBrush;
@@ -496,4 +505,24 @@ void SDIWindow::exit()
 {
    ::SendMessage(_handle, WM_CLOSE, 0, 0);
 
+}
+
+bool SDIWindow :: setColor(int index, Color color)
+{
+   switch (index) {
+      case 0:
+         setBackgroundColor(color);
+         break;
+      default:
+         return false;
+   }
+   return true;
+}
+
+void SDIWindow :: setBackgroundColor(Color color)
+{
+   if (_bkBrush)
+      ::DeleteObject(_bkBrush);
+
+   _bkBrush = CreateSolidBrush(static_cast<long>(color));
 }

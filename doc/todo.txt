@@ -8,7 +8,7 @@ In development:
   === Iteration 21 ===
   --------------------------------------
   dev: windows executable - support manifest
-  opt:pi under 7 sec, #602, #611
+  opt:#602, #611
   prom:elena in nutshell every 1 week
   port:win64 gui, win64 script samples
   --------------------------------------
@@ -18,11 +18,11 @@ In development:
   - #622 : conversion to int - raise an error if not valid
   - remove Serializer / ScriptReader from elc project (when no longer is required)
   --------------------------------------
-  - net library
-
-  - #617 : change the window background color for dark / classic - sdi background, error list, output, vm terminal
-
   - #610 : data alignment : for normal structs - allign the data to 4/8 and make an operation aligned to 4/8; so all stack allocated data is aligned to 4 / 8; field are allocated to 4 / 8 for all cases except packed flag
+
+  - pi under 7 sec
+
+  - #617 : change the window background color for dark / classic - error list, output, vm terminal
 
   === Iteration 22 ===
   --------------------------------------
