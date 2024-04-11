@@ -3959,6 +3959,78 @@ labEnd:
 
 end
 
+// ; fill i,0
+inline %3F8h
+
+  mov     x11, __arg12_1
+  mov     x12, 0
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  str     x12, [x13], #8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; fill i,0
+inline %5F8h
+
+  mov     x11, __arg12_1
+  mov     x12, 0
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  str     x12, [x13], #8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; fill i,0
+inline %7F8h
+
+  mov     x11, __arg12_1
+  mov     x12, 0
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  str     x12, [x13], #8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; fill i,0
+inline %9F8h
+
+  mov     x11, __arg12_1
+  mov     x12, 0
+  mov     x13, x10
+
+labLoop:
+  cmp     x11, 0
+  beq     labEnd
+  sub     x11, x11, 1
+  str     x12, [x13], #8
+  b       labLoop
+
+labEnd:
+
+end
+
 // ; xstorefir
 inline %0F9h
 

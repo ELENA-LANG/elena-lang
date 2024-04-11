@@ -940,7 +940,7 @@ void elena_lang::loadIROp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
-   void* code = retrieveRCode(scope, scope->command.arg2);
+   void* code = retrieveIRCode(scope, scope->command.arg1, scope->command.arg2);
 
    ref_t arg2 = scope->command.arg2;
    pos_t position = writer->position();
@@ -2119,6 +2119,32 @@ inline void* elena_lang :: retrieveRCode(JITCompilerScope* scope, int arg)
       default:
          return scope->compiler->_inlines[0][scope->code()];
    }
+}
+
+inline void* elena_lang :: retrieveIRCode(JITCompilerScope* scope, int arg1, int arg2)
+{
+   int code = 0;
+   switch (arg1) {
+      case 1:
+         code = 2;
+         break;
+      case 2:
+         code = 4;
+         break;
+      case 3:
+         code = 6;
+         break;
+      case 4:
+         code = 8;
+         break;
+      default:
+         break;
+   }
+
+   if (arg2 == 0)
+      code++;
+
+   return scope->compiler->_inlines[code][scope->code()];
 }
 
 inline int retrieveNOpIndex(int arg, unsigned extendedForm, int baseIndex)

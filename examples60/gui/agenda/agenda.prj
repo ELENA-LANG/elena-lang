@@ -4,6 +4,11 @@
         <executable>agenda.exe</executable>
      </project>
   </platform>
+  <platform key="Win_x64">
+     <project>
+        <executable>agenda64.exe</executable>
+     </project>
+  </platform>
   <project>
      <namespace>agenda</namespace>
      <template>gui</template>

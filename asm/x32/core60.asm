@@ -1803,7 +1803,7 @@ inline % 0ADh
 
 end
 
-// ; xfillr i,0
+// ; xfillr 0
 inline % 1ADh
   xor  eax, eax
   mov  edi, ebx
@@ -3510,6 +3510,82 @@ inline % 1F8h
   mov  edi, ebx
   mov  ecx, __arg32_1
   rep  stos
+
+end
+
+// ; fill 1, r
+inline % 2F8h
+
+  mov  eax, __ptr32_2
+  mov  [ebx], eax
+
+end
+
+// ; fill 1, 0
+inline % 3F8h
+
+  xor  eax, eax
+  mov  [ebx], eax
+
+end
+
+// ; fill 2, r
+inline % 4F8h
+
+  mov  eax, __ptr32_2
+  mov  [ebx], eax
+  mov  [ebx+4], eax
+
+end
+
+// ; fill 2, 0
+inline % 5F8h
+
+  xor  eax, eax
+  mov  [ebx], eax
+  mov  [ebx+4], eax
+
+end
+
+// ; fill 3, r
+inline % 6F8h
+
+  mov  eax, __ptr32_2
+  mov  [ebx], eax
+  mov  [ebx+4], eax
+  mov  [ebx+8], eax
+
+end
+
+// ; fill 3, 0
+inline % 7F8h
+
+  xor  eax, eax
+  mov  [ebx], eax
+  mov  [ebx+4], eax
+  mov  [ebx+8], eax
+
+end
+
+// ; fill 4, r
+inline % 8F8h
+
+  mov  eax, __ptr32_2
+  mov  [ebx], eax
+  mov  [ebx+4], eax
+  mov  [ebx+8], eax
+  mov  [ebx+0Ch], eax
+
+end
+
+// ; fill 4, 0
+inline % 9F8h
+
+  xor  eax, eax
+  mov  [ebx], eax
+  mov  [ebx+4], eax
+  mov  [ebx+8], eax
+  mov  [ebx+0Ch], eax
 
 end
 

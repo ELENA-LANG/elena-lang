@@ -97,4 +97,10 @@ namespace math
       arccos()
          = cast real(self).arccos();
    }      
+
+   public real Pi
+      = mathController.pi();
+
+   public real E
+      = mathController.e();
 }

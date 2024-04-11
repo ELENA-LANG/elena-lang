@@ -3223,6 +3223,82 @@ inline % 1F8h
 
 end
 
+// ; fill 1, r
+inline % 2F8h
+
+  mov  rax, __ptr64_2
+  mov  [rbx], rax
+
+end
+
+// ; fill 1, 0
+inline % 3F8h
+
+  xor  rax, rax
+  mov  [rbx], rax
+
+end
+
+// ; fill 2, r
+inline % 4F8h
+
+  mov  rax, __ptr64_2
+  mov  [rbx], rax
+  mov  [rbx+8], rax
+
+end
+
+// ; fill 2, 0
+inline % 5F8h
+
+  xor  eax, eax
+  mov  [rbx], rax
+  mov  [rbx+8], rax
+
+end
+
+// ; fill 3, r
+inline % 6F8h
+
+  mov  rax, __ptr64_2
+  mov  [rbx], rax
+  mov  [rbx+8], rax
+  mov  [rbx+16], rax
+
+end
+
+// ; fill 3, 0
+inline % 7F8h
+
+  xor  eax, eax
+  mov  [rbx], rax
+  mov  [rbx+16], rax
+  mov  [rbx+24], rax
+
+end
+
+// ; fill 4, r
+inline % 8F8h
+
+  mov  rax, __ptr64_2
+  mov  [rbx], rax
+  mov  [rbx+8], rax
+  mov  [rbx+16], rax
+  mov  [rbx+24], rax
+
+end
+
+// ; fill 4, 0
+inline % 9F8h
+
+  xor  eax, eax
+  mov  [rbx], rax
+  mov  [rbx+8], rax
+  mov  [rbx+16], rax
+  mov  [rbx+24], rax
+
+end
+
 // ; xstorefir
 inline %0F9h
 
