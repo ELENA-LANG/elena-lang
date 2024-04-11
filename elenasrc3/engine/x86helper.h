@@ -3,7 +3,7 @@
 //
 //		This file contains CPU native helpers
 //		Supported platforms: x86 / x86-64
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef X86HELPER_H
@@ -68,6 +68,15 @@ namespace elena_lang
       RX14       = 0x00004306,
       RX15       = 0x00004307,
 
+      XMM0       = 0x00800300,
+      XMM1       = 0x00800301,
+      XMM2       = 0x00800302,
+      XMM3       = 0x00800303,
+      XMM4       = 0x00800304,
+      XMM5       = 0x00800305,
+      XMM6       = 0x00800306,
+      XMM7       = 0x00800307,
+
       R32        = 0x00100300,
       M32        = 0x00110000,
       M32disp8   = 0x00110100,
@@ -90,6 +99,8 @@ namespace elena_lang
       R16        = 0x00400300,
       M16        = 0x00410000,
       M16disp8   = 0x00410100,
+
+      XMM64      = 0x00800300,
 
       SIB        = 0x00000004,
 
@@ -225,6 +236,10 @@ namespace elena_lang
       bool isMX64() const
       {
          return test(type, X86OperandType::MX64);
+      }
+      bool isXMM64() const
+      {
+         return test(type, X86OperandType::XMM64);
       }
 
       bool isDB_DD() const

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef JITLINKER_H
@@ -248,6 +248,9 @@ namespace elena_lang
 
          _withDebugInfo = _compiler->isWithDebugInfo();
       }
+
+      void resolveDistributed();
+
       void complete(JITCompilerBase* compiler, ustr_t superClass);
 
       void copyMetaList(ModuleInfo info, ModuleInfoList& output);

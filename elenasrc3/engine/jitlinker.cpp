@@ -1543,7 +1543,7 @@ void JITLinker :: prepare()
    fixReferences(references, _imageProvider->getTextSection());
 }
 
-void JITLinker :: complete(JITCompilerBase* compiler, ustr_t superClass)
+void JITLinker :: resolveDistributed()
 {
    // load distributed categories
    VAddressMap distrReferences({});
@@ -1554,7 +1554,10 @@ void JITLinker :: complete(JITCompilerBase* compiler, ustr_t superClass)
          }
       });
    fixReferences(distrReferences, _imageProvider->getTextSection());
+}
 
+void JITLinker :: complete(JITCompilerBase* compiler, ustr_t superClass)
+{
    if (!superClass.empty()) {
       // set voidobj
       addr_t superAddr = resolve(superClass, mskVMTRef, true);

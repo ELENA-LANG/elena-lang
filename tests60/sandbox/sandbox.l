@@ -1,47 +1,33 @@
 import extensions;
+import ltests;
 
-//struct Aligned
-//{
-//   byte  b;         // ; 0
-//   short w;         // ; 2
-//   byte  b2;        // ; 4
-//   int   n;         // ; 8
-//   byte  b3;        // ; 12
-//   long  l;         // ; 16
-//}
-
-//       0x112xxx33334xxx55555555
-
-/*
-struct XY
+singleton StaticFieldAssigningOpHelper
 {
-   byte b1;
-   byte b2;
-}
+   static int i := 0;
 
-struct XY2
-{
-   byte b1;
-   int  n2; 
-   byte b3;
-}
-*/
-
-singleton TestHelper
-{
-   int getValue()
+   inc()
    {
-      ^ 2
+      i += 1;
    }
+
+   get()
+      = i;
+}
+
+public staticFieldAssigningOpTests() : testCase()
+{
+   StaticFieldAssigningOpHelper.inc();
+   StaticFieldAssigningOpHelper.inc();
+
+   Assert.ifEqual(StaticFieldAssigningOpHelper.get(), 2);
+   console.write(".");
 }
 
 public program()
 {
-   int retVal := TestHelper.getValue();
+//   staticFieldAssigningOpTests()
 
-/*   XY a := default;
-   XY b := a;
+//   StaticFieldAssigningOpHelper;
 
-   XY2 c := default;
-   XY2 d := c;*/
+   Engine.run();
 }

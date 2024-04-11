@@ -12482,6 +12482,7 @@ ObjectInfo Compiler::Expression :: boxArgumentLocally(ObjectInfo info,
       case ObjectKind::Field:
       case ObjectKind::Outer:
       case ObjectKind::OuterField:
+      case ObjectKind::StaticField:
          if (forced) {
             return boxLocally(info, stackSafe);
          }
@@ -13628,6 +13629,10 @@ ObjectInfo Compiler::Expression :: boxLocally(ObjectInfo info, bool stackSafe)
          break;
       case ObjectKind::ClassStaticConstField:
          writer->appendNode(BuildKey::Field, info.reference);
+         writer->newNode(BuildKey::CopyingAccField, 0);
+         break;
+      case ObjectKind::StaticField:
+         writer->appendNode(BuildKey::StaticVar, info.reference);
          writer->newNode(BuildKey::CopyingAccField, 0);
          break;
       default:

@@ -12,20 +12,17 @@ In development:
   prom:elena in nutshell every 1 week
   port:win64 gui, win64 script samples
   --------------------------------------
-  - #620 : check : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
   - #637 : all bt tests (>=4)
-  - #622 : pi & e constants
   - #622 : conversion to int - raise an error if not valid
   - remove Serializer / ScriptReader from elc project (when no longer is required)
   --------------------------------------
+  - #622 : pi & e constants
 
-  - pi under 7 sec
-
-  - #617 : change the window background color for dark / classic - error list, output, vm terminal
+  - #620 : check : https://www.reddit.com/r/elena_lang/comments/hyst7t/elena_51_run_elena_code_without_build/
 
   === Iteration 22 ===
   --------------------------------------
-  dev: async programming (instant messagange sample (chat) ), #608, #637 (all bc tests)
+  dev: async programming (instant messagange sample (chat) ), #608, #637 (all bc tests), #646
   op:
   opt:pi under 6 sec, #601
   maint: #506, #617, #620, #622

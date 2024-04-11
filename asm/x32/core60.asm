@@ -1285,10 +1285,8 @@ end
 // ; copy 8
 inline %790h
 
-  mov  eax, [esi]
-  mov  edi, [esi+4]
-  mov  dword ptr [ebx], eax
-  mov  dword ptr [ebx+4], edi
+  movq xmm0, qword ptr [esi] 
+  movq qword ptr [ebx] , xmm0
 
 end
 
@@ -2613,11 +2611,8 @@ end
 // ; copydpn dpn, 8
 inline %4E0h
 
-  mov  eax, [esi]
-  lea  edi, [ebp + __arg32_1]
-  mov  ecx, [esi+4]
-  mov  [edi], eax
-  mov  [edi + 4], ecx
+  movq xmm0, qword ptr [esi] 
+  movq qword ptr [ebp + __arg32_1] , xmm0
 
 end
 
