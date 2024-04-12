@@ -1,8 +1,9 @@
 import extensions;
-import system'math;
+import system'runtime;
+
+tester() {}
 
 public program()
 {
-   console.writeLine(Pi);
-   console.writeLine(E);
+   auto ptr := PermVectorTable.allocate(tester);
 }

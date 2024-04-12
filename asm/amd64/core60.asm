@@ -338,6 +338,7 @@ labPERMCollect:
   call extern "$rt.CollectPermGCLA"
 
   add  rsp, 30h
+  mov  rbx, rax
 
   pop  r11
   pop  r10

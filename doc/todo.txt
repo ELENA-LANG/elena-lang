@@ -16,7 +16,11 @@ In development:
   --------------------------------------
   - win64 gui : fix an error
 
+  - optimization : x86 / x64 - "open       (2),[],[len]"  - rep stosq - too slow
+
   - #622 : conversion to int - raise an error if not valid
+
+  - helloworld gui sample (button)
 
   === Iteration 22 ===
   --------------------------------------
@@ -28,7 +32,7 @@ In development:
   ide:vm debugger
   tools:
   prom:post an article describing how to use distributed dictionary for test,#635
-  port:x86-64 vm, win64 script samples, chat sample, helloworld gui sample (button)
+  port:x86-64 vm, win64 script samples, chat sample
 
   === Iteration 22 ===
   --------------------------------------
