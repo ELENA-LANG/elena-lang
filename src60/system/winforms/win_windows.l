@@ -1,16 +1,17 @@
 import system;
+import system'drawing;
 
-public sealed packed WNDCLASS
+public sealed struct WNDCLASS
 {
    int       style : prop;
    pointer   lpfnWndProc : prop;
    int       cbClsExtra : prop;
    int       cbWndExtra : prop;
    handle    hInstance : prop;
-   int       hIcon : prop;
-   int       hCursor : prop;
-   int       hbrBackground : prop;
-   int       lpszMenuName : prop;
+   handle    hIcon : prop;
+   handle    hCursor : prop;
+   handle    hbrBackground : prop;
+   pointer   lpszMenuName : prop;
    pointer   lpszClassName : prop;
 }
 
@@ -20,7 +21,7 @@ singleton windowClassControl
 {
    private assignWndPtr(pointer wndPtr) : external(system'win_core_routines'__setWndPtr);
 
-   wide createClass(string name, HInstance instance, int style, int background)
+   wide createClass(string name, HInstance instance, int style, HBRUSH background)
    {
       pointer wndPtr := default;
       self.assignWndPtr(wndPtr);
@@ -28,13 +29,13 @@ singleton windowClassControl
       WNDCLASS struct := default;
 
       struct.style := style;
-      struct.hbrBackground := background;
+      struct.hbrBackground := background.Handle;
       struct.hInstance := instance.Handle;
       struct.cbClsExtra := 0;
       struct.cbWndExtra := 0;
-      struct.hIcon := 0;
-      struct.hCursor := 0;
-      struct.lpszMenuName := 0;
+      struct.hIcon := Handle.Default;
+      struct.hCursor := Handle.Default;
+      struct.lpszMenuName := UnsafePointer.Default;
       struct.lpfnWndProc := wndPtr;      
 
       wide wideName := name;
@@ -126,6 +127,6 @@ public class ChildWindowCallback : WindowCallback
 
 // --- SDIWindowClass ---
 
-public static wide SDIWindowClass = windowClassControl.createClass("ELENA.SDIWINDOW.6.0", CurrentInstance, WS_ELENAWINDOW, COLOR_BACKGROUND);
-public static wide PaintboxClass  = windowClassControl.createClass("ELENA.Paintbox.6.0", CurrentInstance, CS_VREDRAW | CS_HREDRAW, 0);
-public static wide PanelClass     = windowClassControl.createClass("ELENA.PANEL.6.0", CurrentInstance, CS_VREDRAW | CS_HREDRAW, COLOR_BACKGROUND);
+public static wide SDIWindowClass = windowClassControl.createClass("ELENA.SDIWINDOW.6.0", CurrentInstance, WS_ELENAWINDOW, HBRUSH.COLOR_BACKGROUND);
+public static wide PaintboxClass  = windowClassControl.createClass("ELENA.Paintbox.6.0", CurrentInstance, CS_VREDRAW | CS_HREDRAW, HBRUSH.Default);
+public static wide PanelClass     = windowClassControl.createClass("ELENA.PANEL.6.0", CurrentInstance, CS_VREDRAW | CS_HREDRAW, HBRUSH.COLOR_BACKGROUND);

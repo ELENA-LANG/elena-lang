@@ -993,6 +993,15 @@ procedure __intToChar
 
 end
 
+procedure __setHandleDirectly
+
+  peek       sp:1
+  load
+  peek       sp:0
+  $save
+
+end
+
 procedure __intToMssg
 
   peek       sp:1

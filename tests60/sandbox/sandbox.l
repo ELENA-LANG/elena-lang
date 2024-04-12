@@ -1,9 +1,8 @@
 import extensions;
-import system'runtime;
-
-tester() {}
 
 public program()
 {
-   auto ptr := PermVectorTable.allocate(tester);
+   real r := 2.89787;
+   var n := r.RoundedInt;
+   console.printLine(r,"≈",n);
 }

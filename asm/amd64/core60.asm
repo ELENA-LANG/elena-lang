@@ -1512,9 +1512,10 @@ end
 inline %09Fh
 
   lea   rdi, [rbp + __arg32_1]
+  mov   rax, r10
 
   mov   ecx, 0
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
 
   push  rcx                // reserve space on stack
   fstcw word ptr [rsp]     // get current control word

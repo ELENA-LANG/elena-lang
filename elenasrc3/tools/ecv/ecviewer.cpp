@@ -771,13 +771,22 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
 
 void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
 {
+   bool structOne = test(classInfo.header.flags, elStructureRole);
+
    IdentifierString line;
 
    auto it = classInfo.fields.start();
    while (!it.eof()) {
       auto fieldInfo = *it;
 
-      line.copy(it.key());
+      line.clear();
+      if (structOne) {
+         line.append("+");
+         line.appendHex(fieldInfo.offset);
+         line.append("h: ");
+      }
+
+      line.append(it.key());
       if (isPrimitiveRef(fieldInfo.typeInfo.typeRef)) {
          switch (fieldInfo.typeInfo.typeRef) {
             case V_INT32:

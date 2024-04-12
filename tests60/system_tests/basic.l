@@ -219,37 +219,41 @@ public longTests() : testCase()
 
 public realTests() : testCase()
 {
-    real r := 2.89787;
-    Assert.ifFalse(r == 2.8);
-    Assert.ifTrue(r == 2.89787);
-    console.write(".");
+   real r := 2.89787;
+   Assert.ifFalse(r == 2.8);
+   Assert.ifTrue(r == 2.89787);
+   console.write(".");
 
-    real n := 2.0;
-    real m := 3.0;
-    real k := 4.0;
+   real n := 2.0;
+   real m := 3.0;
+   real k := 4.0;
 
-    Assert.ifTrue(n + m * k == 14.0);
-    console.write(".");
+   Assert.ifTrue(n + m * k == 14.0);
+   console.write(".");
 
-    real i := 1.0;
-    i += 2.1;
-    i -= 2.1;
-    i *= 2.0;
-    i /= 2.0;
-    Assert.ifTrue(i == 1.0);
-    console.write(".");
+   real i := 1.0;
+   i += 2.1;
+   i -= 2.1;
+   i *= 2.0;
+   i /= 2.0;
+   Assert.ifTrue(i == 1.0);
+   console.write(".");
     
-    Assert.ifFalse(n == m);            
-    Assert.ifTrue(n != m);            
-    Assert.ifTrue(n < k);            
-    Assert.ifFalse(n > m);            
-    Assert.ifFalse(n >= k);            
-    Assert.ifFalse(n >= m);            
-    Assert.ifTrue(n >= n);            
-    Assert.ifTrue(n <= n);            
-    Assert.ifTrue(n < m);            
-    Assert.ifTrue(m > n);            
-    console.write(".");
+   Assert.ifFalse(n == m);            
+   Assert.ifTrue(n != m);            
+   Assert.ifTrue(n < k);            
+   Assert.ifFalse(n > m);            
+   Assert.ifFalse(n >= k);            
+   Assert.ifFalse(n >= m);            
+   Assert.ifTrue(n >= n);            
+   Assert.ifTrue(n <= n);            
+   Assert.ifTrue(n < m);            
+   Assert.ifTrue(m > n);            
+   console.write(".");
+
+   int rounded := r.RoundedInt;
+   Assert.ifTrue(rounded == 3);
+   console.write(".");
 }
 
 // --- gcTests ---

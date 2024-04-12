@@ -74,10 +74,6 @@ public const int BST_UNCHECKED        = 0;
 public const int BN_CLICKED       = 0000h;
 public const int EN_CHANGE        = 0300h;
 
-// --- Window Color Constants
-
-public const int COLOR_BACKGROUND = 5;
-
 // --- Class Styles ---
 
 public const int WS_ELENAWINDOW   = 0100Bh;

@@ -819,7 +819,7 @@ public extension realOp : RealNumber
 
    get real Rounded()
    {
-      real retVal := PrimitiveRealOperations.round(self);
+      PrimitiveRealOperations.round(self, ref real retVal);
 
       ^ retVal
    }

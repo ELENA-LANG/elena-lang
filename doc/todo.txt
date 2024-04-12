@@ -7,20 +7,29 @@ In development:
 
   === Iteration 21 ===
   --------------------------------------
-  dev: windows executable - support manifest
   prom:elena in nutshell every 1 week
   --------------------------------------
   - #637 : all bt tests (>=4)
 
   - remove Serializer / ScriptReader from elc project (when no longer is required)
   --------------------------------------
+  - ecv : read windProc
+
+  - win64 gui : fix windProc
+
   - win64 gui : fix an error
 
+  - ide : sdi - repaint background
+
   - optimization : x86 / x64 - "open       (2),[],[len]"  - rep stosq - too slow
+                             - "open           :3, :xx"
+                             - "open           :4, :xx"
 
   - #622 : conversion to int - raise an error if not valid
 
   - helloworld gui sample (button)
+
+  - windows executable - support manifest
 
   === Iteration 22 ===
   --------------------------------------
