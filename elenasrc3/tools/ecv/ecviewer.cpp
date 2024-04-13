@@ -1044,7 +1044,11 @@ void ByteCodeViewer :: listMembers()
                   info->row, info->pageSize);
             }
             else if (module->mapSection(reference | mskSymbolRef, true)) {
-               info->viewer->printLineAndCount("symbol ", referenceName,
+               info->viewer->printLineAndCount("symbol #", referenceName,
+                  info->row, info->pageSize);
+            }
+            else if (module->mapSection(reference | mskProcedureRef, true)) {
+               info->viewer->printLineAndCount("procedure @", referenceName,
                   info->row, info->pageSize);
             }
          }
@@ -1102,7 +1106,7 @@ void ByteCodeViewer :: runSession()
       else if (buffer[0] == '#') {
          printSymbol(buffer + 1);
       }
-      else if (buffer[0] == '*') {
+      else if (buffer[0] == '@') {
          printProcedure(buffer + 1);
       }
       else if (ustr_t(buffer).find('.') != NOTFOUND_POS) {

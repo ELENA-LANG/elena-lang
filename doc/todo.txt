@@ -13,10 +13,6 @@ In development:
 
   - remove Serializer / ScriptReader from elc project (when no longer is required)
   --------------------------------------
-  - ecv : read windProc
-
-  - win64 gui : fix windProc
-
   - win64 gui : fix an error
 
   - ide : sdi - repaint background
@@ -28,8 +24,6 @@ In development:
   - #622 : conversion to int - raise an error if not valid
 
   - helloworld gui sample (button)
-
-  - windows executable - support manifest
 
   === Iteration 22 ===
   --------------------------------------

@@ -2060,38 +2060,10 @@ inline %2CCh
 
 end 
 
-// ; xloadargfi
+// ; xloadarg fi
 inline %0CDh
 
   mov  rdx, qword ptr [rbp + __arg32_1]
-
-end 
-
-// ; xloadarg si:1
-inline %1CDh
-
-  mov rdx, rdi
-
-end 
-
-// ; xloadarg si:2
-inline %2CDh
-
-  mov rdx, rsi
-
-end 
-
-// ; xloadarg si:3
-inline %3CDh
-
- // ; mov rdx, rdx - idle operation
-
-end 
-
-// ; xloadarg si:4
-inline %4CDh
-
-  mov rdx, rcx
 
 end 
 
@@ -2942,11 +2914,17 @@ end
 // ; extopenin
 inline %0F2h
 
-  push rbp     
-  push 0 
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
 
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
   xor  eax, eax
-  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rbp
   push rax
   mov  rbp, rsp
@@ -2968,11 +2946,17 @@ end
 // ; extopenin 0, 0
 inline %1F2h
 
-  push rbp     
-  push 0 
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
 
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
   xor  eax, eax
-  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rbp
   push rax
   mov  rbp, rsp
@@ -2985,11 +2969,17 @@ end
 // ; extopenin 1, 0
 inline %2F2h
 
-  push rbp     
-  push 0 
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
 
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
   xor  eax, eax
-  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rbp
   push rax
   mov  rbp, rsp
@@ -2997,17 +2987,24 @@ inline %2F2h
   push rbp
   mov  rbp, rsp
   push 0
+  push 0
 
 end 
 
 // ; extopenin 2, 0
 inline %3F2h
 
-  push rbp     
-  push 0 
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
 
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
   xor  eax, eax
-  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rbp
   push rax
   mov  rbp, rsp
@@ -3023,11 +3020,17 @@ end
 // ; extopenin 3, 0
 inline %4F2h
 
-  push rbp     
-  push 0 
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
 
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
   xor  eax, eax
-  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rbp
   push rax
   mov  rbp, rsp
@@ -3044,11 +3047,17 @@ end
 // ; extopenin 0, n
 inline %5F2h
 
-  push rbp     
-  push 0 
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
 
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
   xor  eax, eax
-  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rbp
   push rax
   mov  rbp, rsp
@@ -3066,11 +3075,17 @@ end
 // ; extopenin i, 0
 inline %6F2h
 
-  push rbp     
-  push 0 
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
 
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
   xor  eax, eax
-  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rbp
   push rax
   mov  rbp, rsp
