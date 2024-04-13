@@ -301,6 +301,7 @@ namespace elena_lang
    constexpr auto V_UINT8                 = 0x80000021u;
    constexpr auto V_UINT16                = 0x80000022u;
    constexpr auto V_NULLABLE              = 0x80000023u;
+   constexpr auto V_FLOAT64ARRAY          = 0x80000024u;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;

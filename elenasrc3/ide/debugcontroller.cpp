@@ -236,6 +236,7 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             case DebugSymbol::ByteArrayParameter:
             case DebugSymbol::ShortArrayParameter:
             case DebugSymbol::IntArrayParameter:
+            case DebugSymbol::RealArrayParameter:
                // replace field name reference with the name
                stringReader.seek(info.addresses.local.nameRef);
 
@@ -914,6 +915,9 @@ void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item,
       case elDebugDWORDS:
          readIntArrayLocal(watch, item, address, "content", level);
          break;
+      case elDebugFLOAT64S:
+         readRealArrayLocal(watch, item, address, "content", level);
+         break;
       default:
          readFields(watch, item, address, level, info);
          break;
@@ -1020,6 +1024,31 @@ void* DebugController :: readIntArrayLocal(ContextBrowserBase* watch, void* pare
 
          WatchContext context = { item, address + i * 4};
          watch->addOrUpdateDWORD(&context, *value, b);
+      }
+
+      return item;
+   }
+   else return nullptr;
+}
+
+void* DebugController :: readRealArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
+{
+   if (level > 0) {
+      size_t length = _min(_process->getArrayLength(address) >> 3, 100);
+
+      WatchContext context = { parent, address };
+      void* item = watch->addOrUpdate(&context, name, "<realarray>");
+
+      IdentifierString value;
+      for (size_t i = 0; i < length; i++) {
+         double b = _process->getFLOAT64(address + i * 8);
+
+         value.copy("[");
+         value.appendInt((int)i);
+         value.append("]");
+
+         WatchContext context = { item, address + i * 8 };
+         watch->addOrUpdateFLOAT64(&context, *value, b);
       }
 
       return item;
@@ -1224,8 +1253,19 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
                   _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
                break;
+            case DebugSymbol::RealArrayAddress:
+               item = readRealArrayLocal(watch, nullptr,
+                  _process->getStackItemAddress(getFPOffset(lineInfo[index].addresses.local.offset, _process->getDataOffset())),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
             case DebugSymbol::IntArrayParameter:
                item = readIntArrayLocal(watch, nullptr,
+                  _process->getStackItem(
+                     lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
+                  (const char*)lineInfo[index].addresses.local.nameRef, level - 1);
+               break;
+            case DebugSymbol::RealArrayParameter:
+               item = readRealArrayLocal(watch, nullptr,
                   _process->getStackItem(
                      lineInfo[index].addresses.local.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()),
                   (const char*)lineInfo[index].addresses.local.nameRef, level - 1);

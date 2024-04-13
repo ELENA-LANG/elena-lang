@@ -205,6 +205,7 @@ namespace elena_lang
       ShortArrayParameter  = 0x00C7,
       ByteArrayParameter   = 0x00C8,
       IntArrayParameter    = 0x00C9,
+      RealArrayParameter   = 0x00CA,
 
       BinaryArray          = 0x00D0,
 

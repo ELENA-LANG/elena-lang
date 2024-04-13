@@ -217,6 +217,8 @@ namespace elena_lang
    constexpr ref_t elDebugLiteral         = 0x00050000;
    constexpr ref_t elDebugWideLiteral     = 0x00060000;
    constexpr ref_t elDebugArray           = 0x00070000;
+   constexpr ref_t elDebugFLOAT64S        = 0x00080000;
+   constexpr ref_t elDebugBytes           = 0x00090000;
 
    // --- LoadResult enum ---
    enum class LoadResult
@@ -294,6 +296,7 @@ namespace elena_lang
       ShortArrayAddress    = 0x0106,
       IntArrayAddress      = 0x0107,
       UIntLocalAddress     = 0x0108,
+      RealArrayAddress     = 0x0109,
 
       Parameter            = 0x0200,
       IntParameterAddress  = 0x0202,
@@ -303,6 +306,7 @@ namespace elena_lang
       ByteArrayParameter   = 0x0206,
       ShortArrayParameter  = 0x0207,
       IntArrayParameter    = 0x0208,
+      RealArrayParameter   = 0x0209,
 
       FrameInfo            = 0x0301,
       ParameterInfo        = 0x0302,

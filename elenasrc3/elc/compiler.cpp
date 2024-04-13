@@ -4155,6 +4155,7 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, 
       case V_INT8ARRAY:
       case V_INT16ARRAY:
       case V_INT32ARRAY:
+      case V_FLOAT64ARRAY:
       case V_BINARYARRAY:
          return resolveArrayTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
       case V_NULLABLE:
@@ -5925,6 +5926,9 @@ inline bool isPrimitiveArray(ref_t typeRef)
       case V_BINARYARRAY:
       case V_OBJARRAY:
       case V_INT32ARRAY:
+      case V_INT8ARRAY:
+      case V_INT16ARRAY:
+      case V_FLOAT64ARRAY:
          return true;
       default:
          return false;
@@ -7939,6 +7943,9 @@ void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, 
       }
       else if (typeInfo.typeRef == V_INT32ARRAY) {
          writer.newNode(BuildKey::IntArrayParameter, name);
+      }
+      else if (typeInfo.typeRef == V_FLOAT64ARRAY) {
+         writer.newNode(BuildKey::RealArrayParameter, name);
       }
       else writer.newNode(BuildKey::Parameter, name); // !! temporal
    }

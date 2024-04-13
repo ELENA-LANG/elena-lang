@@ -13,6 +13,16 @@ In development:
 
   - remove Serializer / ScriptReader from elc project (when no longer is required)
   --------------------------------------
+  - debugger : display array of real
+
+  - debugger : display matrix
+
+  - win64 console : determinant
+
+  - win64 console : test all samples
+  - win64 console : test rosetta samples
+
+  - win64 console : anagram
   - win64 gui : fix an error
 
   - ide : sdi - repaint background

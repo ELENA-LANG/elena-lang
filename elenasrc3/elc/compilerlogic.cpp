@@ -41,7 +41,7 @@ bool testMethodHint(ref_t hint, MethodHint mask)
 
 typedef CompilerLogic::Op Op;
 
-constexpr auto OperationLength = 199;
+constexpr auto OperationLength = 202;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -559,10 +559,10 @@ constexpr Op Operations[OperationLength] =
    },
    {
       // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
-      INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT32, 0, V_INT8
+      INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT32, 0, V_ELEMENT
    },
    {
-      SET_INDEXER_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT8, V_INT32, 0
+      SET_INDEXER_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_ELEMENT, V_INT32, 0
    },
    {
       LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_INT8ARRAY, 0, 0, V_INT32
@@ -572,10 +572,10 @@ constexpr Op Operations[OperationLength] =
    },
    {
       // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
-      INDEX_OPERATOR_ID, BuildKey::ShortArrayOp, V_INT16ARRAY, V_INT32, 0, V_INT16
+      INDEX_OPERATOR_ID, BuildKey::ShortArrayOp, V_INT16ARRAY, V_INT32, 0, V_ELEMENT
    },
    {
-      SET_INDEXER_OPERATOR_ID, BuildKey::ShortArrayOp, V_INT16ARRAY, V_INT16, V_INT32, 0
+      SET_INDEXER_OPERATOR_ID, BuildKey::ShortArrayOp, V_INT16ARRAY, V_ELEMENT, V_INT32, 0
    },
    {
       LEN_OPERATOR_ID, BuildKey::IntArraySOp, V_INT32ARRAY, 0, 0, V_INT32
@@ -586,6 +586,16 @@ constexpr Op Operations[OperationLength] =
    },
    {
       SET_INDEXER_OPERATOR_ID, BuildKey::IntArrayOp, V_INT32ARRAY, V_ELEMENT, V_INT32, 0
+   },
+   {
+      LEN_OPERATOR_ID, BuildKey::BinaryArraySOp, V_FLOAT64ARRAY, 0, 0, V_INT32
+   },
+   {
+      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
+      INDEX_OPERATOR_ID, BuildKey::BinaryArrayOp, V_FLOAT64ARRAY, V_INT32, 0, V_ELEMENT
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::BinaryArrayOp, V_FLOAT64ARRAY, V_ELEMENT, V_INT32, 0
    },
    {
       INDEX_OPERATOR_ID, BuildKey::BinaryArrayOp, V_BINARYARRAY, V_INT32, 0, V_ELEMENT
@@ -1408,6 +1418,9 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
          case V_INT32ARRAY:
             info.header.flags |= elDebugDWORDS;
             break;
+         case V_FLOAT64ARRAY:
+            info.header.flags |= elDebugFLOAT64S;
+            break;
          default:
             break;
       }
@@ -1441,6 +1454,9 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
             break;
          case V_INT32ARRAY:
             info.header.flags |= elDebugDWORDS;
+            break;
+         case V_FLOAT64ARRAY:
+            info.header.flags |= elDebugFLOAT64S;
             break;
          default:
             break;
@@ -1665,7 +1681,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          break;
       case V_INT8ARRAY:
          info.header.parentRef = scope.buildins.superReference;
-         info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
+         info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elWrapper;
          info.size = -1;
          break;
       case V_INT16ARRAY:
@@ -1677,6 +1693,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugDWORDS | elStructureRole | elDynamicRole | elWrapper;
          info.size = -4;
+         break;
+      case V_FLOAT64ARRAY:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = elDebugFLOAT64S | elStructureRole | elDynamicRole | elWrapper;
+         info.size = -8;
          break;
       case V_BINARYARRAY:
          info.header.parentRef = scope.buildins.superReference;
@@ -1761,16 +1782,9 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
       if (isCompatible(scope, { V_INT32 }, { elementRef }, true) && info.size == 4)
          return V_INT32ARRAY;
 
-      //if (isCompatible(scope, V_INT32, elementRef, true)) {
-      //   switch (info.size) {
-      //      case 4:
-      //         return V_INT32ARRAY;
-      //      case 2:
-      //         return V_INT16ARRAY;
-      //      default:
-      //         break;
-      //   }
-      //}
+      if (isCompatible(scope, { V_FLOAT64 }, { elementRef }, true) && info.size == 8)
+         return V_FLOAT64ARRAY;
+
       return V_BINARYARRAY;
    }
    else return V_OBJARRAY;

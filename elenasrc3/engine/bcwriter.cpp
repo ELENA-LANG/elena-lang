@@ -3270,6 +3270,9 @@ void ByteCodeWriter :: saveArgumentsInfo(CommandTape& tape, BuildNode node, Tape
          case BuildKey::IntArrayParameter:
             saveDebugSymbol(DebugSymbol::IntArrayParameter, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
             break;
+         case BuildKey::RealArrayParameter:
+            saveDebugSymbol(DebugSymbol::RealArrayParameter, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            break;
          default:
             break;
       }

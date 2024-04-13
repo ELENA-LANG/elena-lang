@@ -1796,3 +1796,42 @@ public staticFieldAssigningOpTests() : testCase()
    Assert.ifEqual(StaticFieldAssigningOpHelper.get(), 2);
    console.write(".");
 }
+
+public RealArrayOpTests() : testCase()
+{
+   real[] r := ::Array<real>.allocate(3);
+   r[0] := 1.2;
+   r[1] := 2.3;
+   r[2] := 3.4;
+
+   Assert.ifEqual(r.Length, 3);
+   Assert.ifEqual(r[1], 2.3);
+
+   console.write(".");
+}
+
+public ShortArrayOpTests() : testCase()
+{
+   short[] r := ::Array<short>.allocate(3);
+   r[0] := 1;
+   r[1] := 2;
+   r[2] := 3;
+
+   Assert.ifEqual(r.Length, 3);
+   Assert.ifEqual(r[1], 2);
+
+   console.write(".");
+}
+
+public ByteArrayOpTests() : testCase()
+{
+   byte[] r := ::Array<byte>.allocate(3);
+   r[0] := 1;
+   r[1] := 2;
+   r[2] := 3;
+
+   Assert.ifEqual(r.Length, 3);
+   Assert.ifEqual(r[1], 2);
+
+   console.write(".");
+}
