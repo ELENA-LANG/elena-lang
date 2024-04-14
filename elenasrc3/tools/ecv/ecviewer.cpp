@@ -929,7 +929,7 @@ void ByteCodeViewer::printMethod(ustr_t name, bool fullInfo)
    }
 }
 
-void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo)
+void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo, ustr_t filterMask)
 {
    name = trim(name);
 
@@ -980,12 +980,15 @@ void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo)
       line.append('.');
       addMessage(line, entry.message);
 
-      prefix.copy("#");
-      prefix.appendInt(counter);
-      prefix.append(": ");
-      prefix.append(getMethodPrefix(test(entry.message, FUNCTION_MESSAGE)));
+      if (filterMask.empty() || (*line).findStr(filterMask) != NOTFOUND_POS) {
+         prefix.copy("#");
+         prefix.appendInt(counter);
+         prefix.append(": ");
+         prefix.append(getMethodPrefix(test(entry.message, FUNCTION_MESSAGE)));
 
-      printLineAndCount(*prefix, *line, row, _pageSize);
+         printLineAndCount(*prefix, *line, row, _pageSize);
+      }
+
 
       size -= sizeof(MethodEntry);
       counter++;
@@ -1110,8 +1113,15 @@ void ByteCodeViewer :: runSession()
          printProcedure(buffer + 1);
       }
       else if (ustr_t(buffer).find('.') != NOTFOUND_POS) {
-         printMethod(buffer, true);
+         size_t index = ustr_t(buffer).find('.');
+         if (buffer[index + 1] == '~') {
+            IdentifierString filter(buffer + index + 2);
+            buffer[index] = 0;
+
+            printClass(buffer, true, *filter);
+         }
+         else printMethod(buffer, true);
       }
-      else printClass(buffer, true);
+      else printClass(buffer, true, nullptr);
    }
 }

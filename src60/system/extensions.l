@@ -725,29 +725,29 @@ public extension realOp : RealNumber
 
    real ln()
    {
-      real retVal := PrimitiveRealOperations.ln(self);
+      PrimitiveRealOperations.ln(self, ref real retVal);
 
       ^ retVal
    }
 
    real sin()
    {
-      real retVal := PrimitiveRealOperations.sin(self);
+      PrimitiveRealOperations.sin(self, ref real retVal);
 
       ^ retVal
    }
 
    real cos()
    {
-      real retVal := PrimitiveRealOperations.cos(self);
+      PrimitiveRealOperations.cos(self, ref real retVal);
 
       ^ retVal
    }
 
    real tan()
    {
-      real sinVal := PrimitiveRealOperations.sin(self);
-      real cosVal := PrimitiveRealOperations.cos(self);
+      PrimitiveRealOperations.sin(self, ref real sinVal);
+      PrimitiveRealOperations.cos(self, ref real cosVal);
         
       real n := sinVal / cosVal;
         
@@ -756,7 +756,7 @@ public extension realOp : RealNumber
 
    real arctan()
    {
-      real retVal := PrimitiveRealOperations.arctan(self);
+      PrimitiveRealOperations.arctan(self, ref real retVal);
 
       ^ retVal
    }
@@ -764,14 +764,13 @@ public extension realOp : RealNumber
    real arcsin()
    {
       real n := self;
-      real retVal := 0.0r;
         
-      retVal := n * n;    
+      real retVal := n * n;    
       retVal := 1.0r - retVal;
-      real arg := PrimitiveRealOperations.sqrt(retVal);
+      PrimitiveRealOperations.sqrt(retVal, ref real arg);
         
       arg := n / arg;
-      retVal := PrimitiveRealOperations.arctan(arg);
+      PrimitiveRealOperations.arctan(arg, ref retVal);
         
       ^ retVal
    }
@@ -783,10 +782,10 @@ public extension realOp : RealNumber
         
       retVal := n * n;    
       retVal := 1.0r - retVal;        
-      real arg := PrimitiveRealOperations.sqrt(retVal);
+      PrimitiveRealOperations.sqrt(retVal, ref real arg);
         
       arg := arg / n;
-      retVal := PrimitiveRealOperations.arctan(arg);
+      PrimitiveRealOperations.arctan(arg, ref retVal);
         
       ^ retVal
    }
@@ -827,8 +826,12 @@ public extension realOp : RealNumber
    get int RoundedInt()
       = intConvertor.convert(self.Rounded);
 
-   real Absolute
-      = PrimitiveRealOperations.abs(self);
+   get real Absolute()
+   {
+      PrimitiveRealOperations.abs(self, ref real retVal);
+
+      ^ retVal  
+   }
 
    get real Reciprocal()
    {

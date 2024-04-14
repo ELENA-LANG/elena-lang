@@ -902,8 +902,9 @@ end
 // ; fabsdp
 inline %078h
 
+  mov   rax, r10
   lea   rdi, [rbp + __arg32_1]
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
   fabs
   fstp  qword ptr [rdi]    // ; store result 
 
@@ -912,8 +913,9 @@ end
 // ; fsqrtdp
 inline %079h
 
+  mov   rax, r10
   lea   rdi, [rbp + __arg32_1]
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
   fsqrt
   fstp  qword ptr [rdi]    // ; store result 
 
@@ -922,8 +924,9 @@ end
 // ; fexpdp
 inline %07Ah
 
+  mov   rax, r10
   lea   rdi, [rbp + __arg32_1]
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
   xor   edx, edx
 
   fldl2e                  // ; ->log2(e)
@@ -967,8 +970,9 @@ end
 // ; flndp
 inline %07Bh
 
+  mov   rax, r10
   lea   rdi, [rbp + __arg32_1]
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
 
   fldln2
   fxch
@@ -992,8 +996,9 @@ end
 // ; fsindp
 inline %07Ch
 
+  mov   rax, r10
   lea   rdi, [rbp + __arg32_1]
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
   fldpi
   fadd  st(0),st(0)       // ; ->2pi
   fxch
@@ -1015,8 +1020,9 @@ end
 // ; fcosdp
 inline %07Dh
 
+  mov   rax, r10
   lea   rdi, [rbp + __arg32_1]
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
   fcos
   fstp  qword ptr [rdi]    // ; store result 
 
@@ -1025,8 +1031,9 @@ end
 // ; farctandp
 inline %07Eh
 
+  mov   rax, r10
   lea   rdi, [rbp + __arg32_1]
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
   fld1
   fpatan                   // i.e. arctan(Src/1)
   fstp  qword ptr [rdi]    // ; store result 

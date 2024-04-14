@@ -254,6 +254,11 @@ public realTests() : testCase()
    int rounded := r.RoundedInt;
    Assert.ifTrue(rounded == 3);
    console.write(".");
+
+   real negr := -2.3;
+   real absr := negr.Absolute;
+   Assert.ifTrue(absr == 2.3);
+   console.write(".");
 }
 
 // --- gcTests ---

@@ -19,8 +19,18 @@ public program()
 //
 //      console.writeLine(matrixA.Determinant)
 
-   real[] r := ::Array<real>.allocate(3);
-   r[0] := 1.2;
-   r[1] := 2.3;
-   r[2] := 3.4;
+
+//      var matrixA := /*Matrix.create(3, "A")*/RealMatrix.allocate(2,2);
+//      matrixA[0][0] := -2;
+//      matrixA[0][1] := -1;
+//      matrixA[1][0] := 2;
+//      matrixA[1][1] := 2;
+//                                
+//      console.writeLine().writeLine("Output:");
+//
+//      console.writeLine(matrixA.Determinant)
+
+   real r := -2;
+
+   real absn := r.Absolute;
 }
