@@ -13,8 +13,6 @@ In development:
 
   - remove Serializer / ScriptReader from elc project (when no longer is required)
   --------------------------------------
-  - x86-64 : all loadxx opcodes : take the sign into account (use movsx)
-
   - x86-64 : samples (script) / rosetta code samples
 
   - win64 console : test all samples

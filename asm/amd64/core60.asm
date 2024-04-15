@@ -1234,14 +1234,14 @@ end
 // ; subn
 inline %8Ch
 
-  sub  edx, __n_1
+  sub  rdx, __n_1
 
 end
 
 // ; addn
 inline %8Dh
 
-  add  edx, __n_1
+  add  rdx, __n_1
 
 end
 
