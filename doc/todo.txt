@@ -13,22 +13,16 @@ In development:
 
   - remove Serializer / ScriptReader from elc project (when no longer is required)
   --------------------------------------
-  - ecv : filter
-
-  - win64 : real operation : abs, floor, ceil
-
-  - win64 console : determinant
-  - x86-64 : samples / rosetta code samples
+  - x86-64 : samples (script) / rosetta code samples
 
   - win64 console : test all samples
   - win64 console : test rosetta samples
+  - win64 script samples
   - x86-64 : gui
   - x86-64 : script samples
 
   - win64 console : anagram
   - win64 gui : fix an error
-
-  - ide : sdi - repaint background
 
   - optimization : x86 / x64 - "open       (2),[],[len]"  - rep stosq - too slow
                              - "open           :3, :xx"
@@ -37,6 +31,8 @@ In development:
   - #622 : conversion to int - raise an error if not valid
 
   - helloworld gui sample (button)
+
+  - ide : sdi - repaint background
 
   === Iteration 22 ===
   --------------------------------------
@@ -48,7 +44,7 @@ In development:
   ide:vm debugger
   tools:
   prom:post an article describing how to use distributed dictionary for test,#635
-  port:x86-64 vm, win64 script samples, chat sample
+  port:x86-64 vm, chat sample
 
   === Iteration 22 ===
   --------------------------------------

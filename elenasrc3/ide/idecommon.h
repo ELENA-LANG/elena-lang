@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE common classes header File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef IDECOMMON_H
@@ -167,6 +167,17 @@ namespace elena_lang
       virtual void clearMessages() = 0;
    };
 
+   // --- ContextBrowserModel ---
+   struct ContextBrowserModel
+   {
+      bool hexadecimalMode;
+
+      ContextBrowserModel()
+      {
+         hexadecimalMode = false;
+      }
+   };
+
    // --- ContextBrowserBase ---
 
    struct WatchContext
@@ -180,6 +191,8 @@ namespace elena_lang
    class ContextBrowserBase
    {
    protected:
+      ContextBrowserModel* _model;
+
       virtual void* findWatchNodeStartingWith(WatchContext* root, ustr_t name) = 0;
       virtual void editWatchNode(void* item, ustr_t name, ustr_t className, addr_t address) = 0;
       virtual void* addWatchNode(void* parentItem, ustr_t name, ustr_t className, addr_t address) = 0;

@@ -578,10 +578,12 @@ void IDEWindow :: onDebugEnd()
 
 void IDEWindow :: onDebugWatchBrowse(BrowseNMHDR* rec)
 {
+   ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
+
    if (rec->param) {
-      ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
       _controller->refreshDebugContext(contextBrowser, _model, rec->item, rec->param);
    }
+   else _controller->refreshDebugContext(contextBrowser, _model);
 }
 
 void IDEWindow :: enableMenuItemById(int id, bool doEnable, bool toolBarItemAvailable)
@@ -839,6 +841,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_DEBUG_INSPECT:
          refreshDebugNode();
          break;
+      case IDM_DEBUG_SWITCHHEXVIEW:
+         switchHexMode();
+         break;
       case IDM_WINDOW_FIRST:
       case IDM_WINDOW_SECOND:
       case IDM_WINDOW_THIRD:
@@ -906,6 +911,13 @@ void IDEWindow :: refreshDebugNode()
    dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch])->refreshCurrentNode();
 }
 
+void IDEWindow :: switchHexMode()
+{
+   _model->contextBrowserModel.hexadecimalMode = !_model->contextBrowserModel.hexadecimalMode;
+
+   refreshDebugNode();
+}
+
 void IDEWindow :: onTabSelChanged(HWND wnd)
 {
    for (size_t i = 0; i < _childCounter; i++) {
@@ -959,6 +971,8 @@ void IDEWindow :: onDebugWatchRClick(size_t controlIndex)
    }
 
    ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.debugContextMenu]);
+
+   menu->checkMenuItemById(IDM_DEBUG_SWITCHHEXVIEW, _model->contextBrowserModel.hexadecimalMode);
 
    menu->show(_handle, p);
 }

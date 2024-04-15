@@ -230,6 +230,7 @@ namespace elena_lang
       void showAbout();
 
       void refreshDebugNode();
+      void switchHexMode();
 
       void onDebuggerStart();
       void onDebuggerSourceNotFound();

@@ -1689,15 +1689,11 @@ void IDEController :: doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* 
 void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model)
 {
    projectController.refreshDebugContext(contextBrowser);
-
-   //_notifier->notifySelection(NOTIFY_REFRESH, model->ideScheme.debugWatch);
 }
 
 void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param)
 {
    projectController.refreshDebugContext(contextBrowser, item, param);
-
-   //_notifier->notifySelection(NOTIFY_REFRESH, model->ideScheme.debugWatch);
 }
 
 bool IDEController :: onClose(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model)

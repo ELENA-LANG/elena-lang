@@ -7118,6 +7118,12 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
             BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
             varNode.appendChild(BuildKey::Index, localInfo.offset);
          }
+         else if (_logic->isCompatible(*codeScope.moduleScope,
+            { V_INT64 }, { localInfo.typeInfo.typeRef }, false))
+         {
+            BuildNode varNode = node.appendChild(BuildKey::LongVariableAddress, it.key());
+            varNode.appendChild(BuildKey::Index, localInfo.offset);
+         }
          else {
             BuildNode varNode = node.appendChild(BuildKey::VariableAddress, it.key());
             varNode.appendChild(BuildKey::Index, localInfo.offset);

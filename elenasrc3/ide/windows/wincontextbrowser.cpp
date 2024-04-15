@@ -17,10 +17,12 @@ typedef String<text_t, CAPTION_LEN> CaptrionString;
 
 // --- ContextBrowser --
 
-ContextBrowser :: ContextBrowser(int width, int height, NotifierBase* notifier, BrowseEventInvoker browseInvoker)
+ContextBrowser :: ContextBrowser(ContextBrowserModel* model, int width, int height, NotifierBase* notifier,
+   BrowseEventInvoker browseInvoker)
    : TreeView(width, height, notifier, false, nullptr, false), _rootItem(nullptr)
 {
    _browseInvoker = browseInvoker;
+   _model = model;
 }
 
 HWND ContextBrowser :: createControl(HINSTANCE instance, ControlBase* owner)
