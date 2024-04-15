@@ -3515,10 +3515,10 @@ void X86_64Assembler :: compileMovsq(ScriptToken& tokenInfo, MemoryWriter& write
 
 bool X86_64Assembler :: compileMovsxd(X86Operand source, X86Operand target, MemoryWriter& writer)
 {
-   if (source.isR64() && target.isR32()) {
+   if (source.isR64() && target.isR32_M32()) {
       writer.writeByte(0x48);
       writer.writeByte(0x63);
-      X86Helper::writeModRM(writer, target, source);
+      X86Helper::writeModRM(writer, source, target);
    }
    else return false;
 

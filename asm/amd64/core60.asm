@@ -412,7 +412,7 @@ end
 // ; load
 inline %6
 
-  mov  edx, dword ptr [rbx]
+  movsxd  rdx, dword ptr [rbx]
 
 end
 
@@ -1219,7 +1219,7 @@ end
 // ; loaddp
 inline %8Ah
 
-  mov  edx, dword ptr [rbp + __arg32_1]
+  movsxd rdx, dword ptr [rbp + __arg32_1]
 
 end 
 
@@ -2048,8 +2048,7 @@ end
 // ; loadsi
 inline %0CCh
 
-  mov rax, [rsp + __arg32_1]
-  mov edx, eax
+  movsxd rdx, dword ptr [rsp + __arg32_1]
 
 end 
 
