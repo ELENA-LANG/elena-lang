@@ -536,10 +536,14 @@ end
 // ; loads
 inline % 14h
 
-  mov   edx, dword ptr [rbx]
-  shr   edx, ACTION_ORDER
-  mov   rax, mdata : %0
-  mov   edx, dword ptr [rax + rdx]
+  mov    edx, dword ptr [rbx]
+  shr    edx, ACTION_ORDER
+  mov    rax, mdata : %0
+  lea    rsi, [rdx*8]
+  mov    ecx, dword ptr [rax + rsi * 2]
+  test   ecx, ecx
+  cmovnz edx, ecx
+  shl    edx, ACTION_ORDER
 
 end
 

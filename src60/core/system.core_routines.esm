@@ -2428,6 +2428,7 @@ labVarLen:
   save       sp:0
   peek       sp:0
   xrefresh   sp:0
+  xrefresh   sp:1
 
   mov        mssg : "function:params:#constructor[1]"
 

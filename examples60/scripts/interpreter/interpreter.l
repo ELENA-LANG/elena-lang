@@ -349,15 +349,15 @@ public program()
 {
    int solution := 3;
 
-/*   if (program_arguments.Length == 1)
+   if (program_arguments.Length == 1)
    { 
       console.write("Please provide the path to the file to interpret"); AbortException.raise() 
    }
    else if (program_arguments.Length == 3) {
       solution := program_arguments[2].toInt();
-   };*/
+   };
 
-   string path := /*program_arguments[1]*/"sample1.txt";
+   string path := program_arguments[1];
 
    solution =>
       0 {
