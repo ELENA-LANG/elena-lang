@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Script Engine Parser class declaration.
 //
-//                                              (C)2023, by Aleksey Rakov
+//                                             (C)2023-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -16,7 +16,15 @@
 
 #include "windows\winsyslibloader.h"
 
+#ifdef _M_IX86
+
 #define SCRIPTENGINE_LIB PathString("elenasm60.dll").str()
+
+#elif _M_X64
+
+#define SCRIPTENGINE_LIB PathString("elenasm60_64.dll").str()
+
+#endif
 
 #else
 
