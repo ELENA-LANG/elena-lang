@@ -9,10 +9,7 @@ In development:
   --------------------------------------
   prom:elena in nutshell every 1 week
   --------------------------------------
-  - #637 : all bt tests (>=4)
-
-  - remove Serializer / ScriptReader from elc project (when no longer is required)
-  --------------------------------------
+  - x86-64 : vm
   - x86-64 : ls
   - x86-64 : dynamic_var, manboy, anagram
 
@@ -26,13 +23,11 @@ In development:
 
   - #622 : conversion to int - raise an error if not valid
 
-  - helloworld gui sample (button)
-
   - ide : sdi - repaint background
 
   === Iteration 22 ===
   --------------------------------------
-  dev: async programming (instant messagange sample (chat) ), #608, #637 (all bc tests), #646
+  dev: async programming (instant messagange sample (chat) ), #608, #637 (bt tests (>=4), all bc tests), #646
   op:
   opt:pi under 6 sec, #601
   maint: #506, #617, #620, #622
@@ -40,7 +35,7 @@ In development:
   ide:vm debugger
   tools:
   prom:post an article describing how to use distributed dictionary for test,#635
-  port:x86-64 vm, chat sample
+  port:chat sample, helloworld gui sample (button)
 
   === Iteration 22 ===
   --------------------------------------

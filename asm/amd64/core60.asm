@@ -2134,9 +2134,11 @@ inline %5CFh
 
   pop  rsi
 
+  // ; align to make it 10h alignment
+  add  rdx, 1
+  and  rdx, 0FFFFFFFEh
+
   lea  rax, [rdx*8]
-  add  eax, 8
-  and  eax, 0FFFFFFF0h
   sub  rsp, rax
   mov  rcx, rdx
   xor  rax, rax

@@ -143,7 +143,6 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
             scope->helper->writeMDataRef32(*scope->codeWriter->Memory(), scope->codeWriter->position(),
                *(pos_t*)((char*)code + disp), mask);
             break;
-
          }
       case mskCodeRef32:
       case mskDataRef32:
@@ -152,9 +151,15 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
             *(pos_t*)((char*)code + disp), mask);
          break;
+      case mskMDataRef64:
+         // HOTFIX : to deal with mdata section reference
+         if (reference == mskMDataRef64) {
+            scope->helper->writeMDataRef64(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+               *(pos_t*)((char*)code + disp), mask);
+            break;
+         }
       case mskCodeRef64:
       case mskDataRef64:
-      case mskMDataRef64:
       case mskStatDataRef64:
          scope->helper->writeVAddress64(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),

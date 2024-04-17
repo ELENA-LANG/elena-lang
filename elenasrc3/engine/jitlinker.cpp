@@ -368,6 +368,15 @@ void JITLinker::JITLinkerReferenceHelper :: writeRelAddress32(MemoryBase& target
    ::writeRelAddress32(&target, position, vaddress, disp, addressMask, _owner->_virtualMode);
 }
 
+void JITLinker::JITLinkerReferenceHelper :: writeMDataRef64(MemoryBase& target, pos_t position, pos64_t disp,
+   ref_t addressMask)
+{
+   if (!_owner->_virtualMode) {
+      ::writeVAddress64(&target, position, (addr_t)_owner->_imageProvider->getMDataSection()->get(0), disp, addressMask, false);
+   }
+   else ::writeVAddress64(&target, position, 0, disp, addressMask, _owner->_virtualMode);
+}
+
 void JITLinker::JITLinkerReferenceHelper :: writeVAddress64(MemoryBase& target, pos_t position, addr_t vaddress, pos64_t disp,
    ref_t addressMask)
 {

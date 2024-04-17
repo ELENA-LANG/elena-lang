@@ -461,6 +461,8 @@ namespace elena_lang
 
       virtual void writeMDataRef32(MemoryBase& target, pos_t position,
          pos_t disp, ref_t addressMask) = 0;
+      virtual void writeMDataRef64(MemoryBase& target, pos_t position, 
+         pos64_t disp, ref_t addressMask) = 0;
 
       virtual mssg_t importMessage(mssg_t message, ModuleBase* module = nullptr) = 0;
 

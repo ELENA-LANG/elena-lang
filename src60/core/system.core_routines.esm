@@ -1681,9 +1681,10 @@ procedure __funcmssg_closure
   xflush     sp:1
 
   alloc      i:1
-  xstore     i:1
-  load       sp:0
   store      sp:0
+
+  mov        n:4
+  xload
 
   set        fp:0
   neg
@@ -1695,6 +1696,7 @@ procedure __funcmssg_closure
 
   free       i:1
   xrefresh   sp:0
+  xrefresh   sp:1
 
   jump       vt:0
 
@@ -1714,6 +1716,7 @@ procedure __ext_closure
   free      i:1
 
   xrefresh  sp:0
+  xrefresh  sp:1
 
   jump      vt:0
 
@@ -1851,6 +1854,7 @@ procedure __saving_closure(obj, args)
 
   xrefresh   sp:0
   xrefresh   sp:1
+  peek       sp:0
 
 end
 
@@ -2065,6 +2069,9 @@ labCopy:
   jne        labCopy
 
 labCopyEnd:
+  xrefresh   sp:0
+  xrefresh   sp:1
+
   set        sp:0
   alloc      i:1
   store      sp:0
