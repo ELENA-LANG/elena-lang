@@ -9,7 +9,8 @@ In development:
   --------------------------------------
   prom:elena in nutshell every 1 week
   --------------------------------------
-  - x86-64 : vm
+  - x86-64 : xdispatchmr : 9,A
+
   - x86-64 : ls
   - x86-64 : dynamic_var, manboy, anagram
 

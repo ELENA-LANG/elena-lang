@@ -3485,7 +3485,90 @@ end
 // ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 9FAh
 
-//; !! temporally commented
+  mov  r8, rbx               // r8 -> [esp]
+  mov  [rsp+8], r10                      // ; saving arg0
+  lea  rax, [rsp + __n_2]
+  mov  [rsp+16], r11                     // ; saving arg1
+
+  mov  ecx, __n_1
+  mov  r11, rcx           // r11 -> [esp+8]
+  mov  r12, rdx           // r12 -> [esp+4]
+
+  mov  rsi, [rbx + rcx * 8]   // ; get next overload list
+  test rsi, rsi
+  jz   labEnd
+
+labNextList:
+  xor  edx, edx
+  mov  rbx, [rsi] // ; message from overload list
+
+labNextOverloadlist:
+  mov  r9, mdata : %0
+  shr  ebx, ACTION_ORDER
+  lea  r13, [rbx*8]
+  mov  r13, [r9 + r13 * 2 + 8]
+  and  ecx, ARG_MASK
+  lea  rbx, [r13 - 8]
+
+labNextParam:
+  sub  ecx, 1
+  jnz  short labMatching
+
+  mov  rcx, r11
+  mov  rbx, r8
+  mov  r9, [rbx + rcx * 8]   // ; get next overload list
+
+  lea  r13, [rdx * 8]
+  mov  rax, [r9 + r13 * 2 + 8]
+  mov  rdx, [r9 + r13 * 2]
+  mov  r10, [rsp+8]                      // ; restore arg0
+  mov  r11, [rsp+16]                     // ; restore arg1
+  jmp  rax
+
+labMatching:
+  mov  rdi, [rax + rcx * 8]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+  test  rdi, rdi                                              
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi - elVMTOffset]
+  mov  rsi, [rbx + rcx * 8 + 8]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jz   labNextParam
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  mov  rcx, r11
+  mov  rbx, r8
+  mov  rsi, [rbx + rcx * 8]   // ; get next overload list
+  add  edx, 1
+
+  mov  r13, [rsi]
+  lea  r9, [rdx * 8]
+  mov  rbx, [r13 + r9 * 2] // ; message from overload list
+
+  and  rbx, rbx
+  jnz  labNextOverloadlist
+
+  lea  r11, [r11 + 1]
+  mov  rcx, r11
+  mov  rbx, r8
+
+  mov  rsi, [rbx + rcx * 8]   // ; get next overload list
+  test rsi, rsi
+  jnz  labNextList
+
+labEnd:
+  mov  rbx, r8
+  mov  rdx, r12
+
+  mov  r10, [rsp+8]                      // ; restore arg0
+  mov  r11, [rsp+16]                     // ; restore arg1
 
 end
 
@@ -3493,7 +3576,109 @@ end
 // ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 0AFAh
 
-//; !! temporally commented
+  mov  [rsp+8], r10                      // ; saving arg0
+  lea  rax, [rsp + __n_2]
+  mov  [rsp+16], r11                     // ; saving arg1
+
+  mov  r10, __n_1 // [esp+12]
+  mov  r11, rbx   // [esp]
+  xor  ecx, ecx
+  mov  r12, rcx   // [esp+8]
+  mov  r9, rcx    // [esp+4]
+  mov  r14, rdx   // [esp+16] 
+
+  // ; count the number of args
+  mov  rbx, rax
+  mov  r8, -1
+labCountParam:
+  lea  rbx, [rbx+8]
+  cmp  r8, [rbx]
+  lea  rcx, [rcx+1]
+  jnz  short labCountParam
+  mov  r9, rcx
+
+  mov  rbx, r11
+  mov  rcx, r10
+  mov  rsi, [rbx + rcx * 8]   // ; get next overload list
+  test rsi, rsi
+  jz   labEnd
+
+labNextList:
+  xor  rdx, rdx
+  mov  rbx, [rsi] // ; message from overload list
+
+labNextOverloadlist:
+  mov  r8, mdata : %0
+  shr  ebx, ACTION_ORDER
+  lea  r13, [rbx*8]
+  mov  rbx, [r8 + r13 * 2 + 8]
+
+  lea  rbx, [rbx - 8]
+  mov  r12, rbx
+
+labNextParam:
+  add  ecx, 1
+  cmp  rcx, r9
+  jnz  short labMatching
+
+  mov  rcx, r10
+  mov  rbx, r11
+  mov  r8, [rbx + rcx * 8]   // ; get next overload list
+  lea  r13, [rdx * 8]
+  mov  rax, [r8 + r13 * 2 + 8]
+  mov  rdx, [r8 + r13 * 2]
+  mov  r10, [rsp+8]                      // ; restore arg0
+  mov  r11, [rsp+16]                     // ; restore arg1
+  jmp  rax
+
+labMatching:
+  mov    rsi, r12
+  lea    rdi, [rsi + 8]
+  cmp    [rdi], 0
+  cmovnz rsi, rdi
+  mov    r12, rsi
+
+  mov  rdi, [rax + rcx * 8]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+  test  rdi, rdi                                              
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi - elVMTOffset]
+  mov  rsi, r12
+  mov  rsi, [rsi]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jz   labNextParam
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  mov  rcx, r10
+  mov  rbx, r11
+  mov  r8, [rbx + rcx * 8]
+  add  edx, 1
+  lea  r13, [rdx * 8]
+  mov  rbx, [r8 + r13 * 2]  // ; message from overload list
+  and  rbx, rbx
+  jnz  labNextOverloadlist
+
+  lea  r10, [r10 + 1]
+  mov  rbx, r11
+  mov  rcx, r10
+
+  mov  rsi, [rbx + rcx * 8]   // ; get next overload list
+  test rsi, rsi
+  jnz  labNextList
+
+labEnd:
+  mov  rbx, r11
+  mov  rdx, r14
+
+  mov  r10, [rsp+8]                      // ; restore arg0
+  mov  r11, [rsp+16]                     // ; restore arg1
 
 end
 

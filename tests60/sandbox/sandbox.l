@@ -2,11 +2,14 @@ import extensions;
 import extensions'scripting;
 import system'dynamic'expressions;
 
-symbol used : preloaded = new object[]{Expression, DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,LazySymbolExpression, mssgconst f};
+symbol used : preloaded = new object[]{Expression, DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,LazySymbolExpression, mssgconst f, Integer};
 
 public program()
 {
-    console.writeLine("Test:");
+    console.printLine("Test:");
 
-    lscript.interpretPath("sample.ls");
+    lscript.interpretPath("sample1.ls");
+
+    console.loadLineTo(new Integer())
+
 }
