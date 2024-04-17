@@ -2742,6 +2742,8 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
+   bool functionMode = test((unsigned int)scope->command.arg1, FUNCTION_MESSAGE);
+
    void* code = nullptr;
    if ((scope->command.arg1 & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
       if (!scope->command.arg2) {
@@ -2760,7 +2762,6 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
    // simply copy correspondent inline code
    writer->write(code, length);
 
-   bool functionMode = test((unsigned int)scope->command.arg1, FUNCTION_MESSAGE);
    int startArg = (functionMode ? 0 : 1) << scope->constants->indexPower;
    int argCount = (scope->command.arg1 & ARG_MASK) + (functionMode ? 1 : 0);
 

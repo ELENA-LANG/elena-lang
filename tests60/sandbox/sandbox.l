@@ -9,7 +9,4 @@ public program()
     console.printLine("Test:");
 
     lscript.interpretPath("sample1.ls");
-
-    console.loadLineTo(new Integer())
-
 }

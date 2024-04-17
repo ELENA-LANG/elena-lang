@@ -301,7 +301,7 @@ void ByteCodeUtil :: importCommand(ByteCommand& command, ModuleBase* exporter, M
       command.arg1 = ImportHelper::importMessage(exporter, command.arg1, importer);
    }
 
-   if (isR2Command(command.code)) {
+   if (isR2Command(command.code)) {      
       command.arg2 = importRArg(command.arg2, exporter, importer);
    }
 }
@@ -956,11 +956,13 @@ ref_t ImportHelper :: importMessage(ModuleBase* exporter, mssg_t exportRef, Modu
    ref_t actionRef, flags;
    decodeMessage(exportRef, actionRef, paramCount, flags);
 
-   // signature and custom verb should be imported
-   ref_t signature = 0;
-   ustr_t actionName = exporter->resolveAction(actionRef, signature);
+   if (actionRef) {
+      // signature and custom verb should be imported
+      ref_t signature = 0;
+      ustr_t actionName = exporter->resolveAction(actionRef, signature);
 
-   actionRef = importer->mapAction(actionName, importSignature(exporter, signature, importer), false);
+      actionRef = importer->mapAction(actionName, importSignature(exporter, signature, importer), false);
+   }
 
    return encodeMessage(actionRef, paramCount, flags);
 }

@@ -3740,11 +3740,11 @@ labNextBaseClass:
 end
 
 // ; xdispatchmr
-// ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+// ; NOTE : __arg32_1 - message; __n_1 - list index, __n_2 - argument list offset
 inline % 9FAh
 
   mov  [esp+4], esi                      // ; saving arg0
-  lea  eax, [esp + __n_2]
+  lea  eax, [esp]
 
   mov  ecx, __n_1
   push ecx
@@ -3766,6 +3766,7 @@ labNextOverloadlist:
   mov  ebx, [edi + ebx * 8 + 4]
   and  ecx, ARG_MASK
   lea  ebx, [ebx - 4]
+  add  ecx, 1
 
 labNextParam:
   sub  ecx, 1
@@ -3789,7 +3790,7 @@ labMatching:
   cmovz edi, esi
 
   mov  edi, [edi - elVMTOffset]
-  mov  esi, [ebx + ecx * 4 + 4]
+  mov  esi, [ebx + ecx * 4]
 
 labNextBaseClass:
   cmp  esi, edi
@@ -3802,7 +3803,6 @@ labNextBaseClass:
   mov  ebx, [esp]
   mov  esi, [ebx + ecx * 4]   // ; get next overload list
   add  edx, 1
-  mov  esi, [esi]
   mov  ebx, [esi + edx * 8] // ; message from overload list
   and  ebx, ebx
   jnz  labNextOverloadlist

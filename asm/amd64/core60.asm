@@ -3487,7 +3487,7 @@ inline % 9FAh
 
   mov  r8, rbx               // r8 -> [esp]
   mov  [rsp+8], r10                      // ; saving arg0
-  lea  rax, [rsp + __n_2]
+  lea  rax, [rsp]
   mov  [rsp+16], r11                     // ; saving arg1
 
   mov  ecx, __n_1
@@ -3509,6 +3509,7 @@ labNextOverloadlist:
   mov  r13, [r9 + r13 * 2 + 8]
   and  ecx, ARG_MASK
   lea  rbx, [r13 - 8]
+  add  ecx, 1
 
 labNextParam:
   sub  ecx, 1
@@ -3534,7 +3535,7 @@ labMatching:
   cmovz rdi, rsi
 
   mov  rdi, [rdi - elVMTOffset]
-  mov  rsi, [rbx + rcx * 8 + 8]
+  mov  rsi, [rbx + rcx * 8]
 
 labNextBaseClass:
   cmp  rsi, rdi
@@ -3545,10 +3546,9 @@ labNextBaseClass:
 
   mov  rcx, r11
   mov  rbx, r8
-  mov  rsi, [rbx + rcx * 8]   // ; get next overload list
+  mov  r13, [rbx + rcx * 8]   // ; get next overload list
   add  edx, 1
 
-  mov  r13, [rsi]
   lea  r9, [rdx * 8]
   mov  rbx, [r13 + r9 * 2] // ; message from overload list
 
