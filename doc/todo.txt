@@ -6,32 +6,21 @@ In development:
   ### EPIC: elena 6.0 - redux ###
 
   === Iteration 21 ===
-  --------------------------------------
-  prom:elena in nutshell every 1 week
-  --------------------------------------
-  - x86-64 : anagram
-
-  - x86-64 : gui, simple_windowed_app 
-
-  - win64 gui : fix an error
-
-  - #622 : conversion to int - raise an error if not valid
-
-  - ide : sdi - repaint background
+  - test github actions
 
   === Iteration 22 ===
   --------------------------------------
-  dev: async programming (instant messagange sample (chat) ), #608, #637 (bt tests (>=4), all bc tests), #646
+  dev: #608, #637 (bt tests (>=4), all bc tests), #646
   op:
   opt:pi under 6 sec, #601
   maint: #506, #617, #620, #622
   exp:#612
   ide:vm debugger
   tools:
-  prom:post an article describing how to use distributed dictionary for test,#635
+  prom:elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test,#635
   port:chat sample, helloworld gui sample (button)
 
-  === Iteration 22 ===
+  === Iteration 23 ===
   --------------------------------------
   dev: redesign switch statement : it should be possible to use as an expression as well
     (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
@@ -44,3 +33,7 @@ In development:
   tools:
   prom:
   port:elenavm / elt for linux
+
+  === Iteration 24 ===
+  --------------------------------------
+  dev: async programming (instant messagange sample (chat) )
