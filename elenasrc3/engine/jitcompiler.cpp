@@ -25,7 +25,7 @@ CodeGenerator _codeGenerators[256] =
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
-   loadOp, loadOp, loadOp, loadOp, loadOp, loadNop, loadOp, loadOp,
+   loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
    loadOp, loadNop, loadNop, loadNop, loadOp, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -90,7 +90,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 174;
+constexpr size_t bcCommandNumber = 175;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -127,7 +127,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::FISub,ByteCode::FIMul,ByteCode::FIDiv, ByteCode::SNop, ByteCode::TstStck,
    ByteCode::Shl, ByteCode::Shr, ByteCode::XLabelDPR, ByteCode::TryLock, ByteCode::FreeLock,
    ByteCode::XQuit, ByteCode::ExtCloseN, ByteCode::XCmpSI, ByteCode::LoadSI, ByteCode::XFSave,
-   ByteCode::XSaveN, ByteCode::XSaveDispN, ByteCode::XStoreFIR, ByteCode::LNeg
+   ByteCode::XSaveN, ByteCode::XSaveDispN, ByteCode::XStoreFIR, ByteCode::LNeg, ByteCode::Parent
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
@@ -143,7 +143,6 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
             scope->helper->writeMDataRef32(*scope->codeWriter->Memory(), scope->codeWriter->position(),
                *(pos_t*)((char*)code + disp), mask);
             break;
-
          }
       case mskCodeRef32:
       case mskDataRef32:
@@ -152,9 +151,15 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
             *(pos_t*)((char*)code + disp), mask);
          break;
+      case mskMDataRef64:
+         // HOTFIX : to deal with mdata section reference
+         if (reference == mskMDataRef64) {
+            scope->helper->writeMDataRef64(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+               *(pos_t*)((char*)code + disp), mask);
+            break;
+         }
       case mskCodeRef64:
       case mskDataRef64:
-      case mskMDataRef64:
       case mskStatDataRef64:
          scope->helper->writeVAddress64(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
@@ -940,7 +945,7 @@ void elena_lang::loadIROp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
-   void* code = retrieveRCode(scope, scope->command.arg2);
+   void* code = retrieveIRCode(scope, scope->command.arg1, scope->command.arg2);
 
    ref_t arg2 = scope->command.arg2;
    pos_t position = writer->position();
@@ -1567,45 +1572,31 @@ void elena_lang::loadIndexNOp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
-   void* code = nullptr;
-   if (scope->command.arg2 == 0) {
-      switch (scope->command.arg1) {
-         case 0:
-            code = scope->compiler->_inlines[1][scope->code()];
-            break;
-         case 1:
-            code = scope->compiler->_inlines[2][scope->code()];
-            break;
-         case 2:
-            code = scope->compiler->_inlines[3][scope->code()];
-            break;
-         case 3:
-            code = scope->compiler->_inlines[4][scope->code()];
-            break;
-         default:
-            code = scope->compiler->_inlines[6][scope->code()];
-            break;
-      }
+   int index = 0;
+   switch (scope->command.arg1) {
+      case 0:
+         index = 1;
+         break;
+      case 1:
+         index = 2;
+         break;
+      case 2:
+         index = 3;
+         break;
+      case 3:
+         index = 4;
+         break;
+      case 4:
+         index = 5;
+         break;
+      default:
+         break;
    }
-   else {
-      switch (scope->command.arg1) {
-         case 0:
-            code = scope->compiler->_inlines[5][scope->code()];
-            break;
-         case 2:
-            code = scope->compiler->_inlines[7][scope->code()];
-            break;
-         case 3:
-            code = scope->compiler->_inlines[8][scope->code()];
-            break;
-         case 4:
-            code = scope->compiler->_inlines[9][scope->code()];
-            break;
-         default:
-            code = scope->compiler->_inlines[0][scope->code()];
-            break;
-      }
-   }
+
+   if (!scope->command.arg2)
+      index += 6;
+
+   void* code = scope->compiler->_inlines[index][scope->code()];
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
@@ -2119,6 +2110,32 @@ inline void* elena_lang :: retrieveRCode(JITCompilerScope* scope, int arg)
       default:
          return scope->compiler->_inlines[0][scope->code()];
    }
+}
+
+inline void* elena_lang :: retrieveIRCode(JITCompilerScope* scope, int arg1, int arg2)
+{
+   int code = 0;
+   switch (arg1) {
+      case 1:
+         code = 2;
+         break;
+      case 2:
+         code = 4;
+         break;
+      case 3:
+         code = 6;
+         break;
+      case 4:
+         code = 8;
+         break;
+      default:
+         break;
+   }
+
+   if (arg2 == 0)
+      code++;
+
+   return scope->compiler->_inlines[code][scope->code()];
 }
 
 inline int retrieveNOpIndex(int arg, unsigned extendedForm, int baseIndex)
@@ -2711,6 +2728,8 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
+   bool functionMode = test((unsigned int)scope->command.arg1, FUNCTION_MESSAGE);
+
    void* code = nullptr;
    if ((scope->command.arg1 & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
       if (!scope->command.arg2) {
@@ -2729,7 +2748,6 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
    // simply copy correspondent inline code
    writer->write(code, length);
 
-   bool functionMode = test((unsigned int)scope->command.arg1, FUNCTION_MESSAGE);
    int startArg = (functionMode ? 0 : 1) << scope->constants->indexPower;
    int argCount = (scope->command.arg1 & ARG_MASK) + (functionMode ? 1 : 0);
 

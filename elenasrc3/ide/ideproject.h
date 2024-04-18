@@ -63,6 +63,7 @@ namespace elena_lang
 
       ProjectPaths      sources;
       ProjectPaths      addedSources;
+      ProjectPaths      removeSources;
 
       ProjectPaths      lastOpenFiles;
       ProjectPaths      lastOpenProjects;

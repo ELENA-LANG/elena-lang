@@ -98,7 +98,7 @@ namespace elena_lang
       void printMethod(ustr_t name, bool fullInfo);
       void printSymbol(ustr_t name);
       void printProcedure(ustr_t name);
-      void printClass(ustr_t name, bool fullInfo);
+      void printClass(ustr_t name, bool fullInfo, ustr_t filterMask);
 
    public:
       bool load(path_t path);

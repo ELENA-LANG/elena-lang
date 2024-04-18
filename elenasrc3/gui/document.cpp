@@ -856,6 +856,14 @@ void DocumentView :: eraseChar(DocumentChangeStatus& changeStatus, bool moveback
    status.rowDifference += (_text->getRowCount() - rowCount);
 }
 
+void DocumentView :: setOverwriteMode(DocumentChangeStatus& changeStatus, bool mode)
+{
+   status.overwriteMode = mode;
+
+   changeStatus.caretChanged = true;
+   changeStatus.modeChanged = true;
+}
+
 bool DocumentView :: eraseSelection(DocumentChangeStatus& changeStatus)
 {
    if (_selection == 0)

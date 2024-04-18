@@ -408,16 +408,6 @@ namespace elena_lang
 
       virtual MemoryBase* mapSection(ref_t reference, bool existing) = 0;
 
-      virtual ref_t importAction(ModuleBase* referenceModule, ref_t signRef) = 0;
-      virtual ref_t importSignature(ModuleBase* referenceModule, ref_t signRef) = 0;
-      virtual ref_t importMessage(ModuleBase* referenceModule, mssg_t message) = 0;
-      virtual ref_t importReference(ModuleBase* referenceModule, ustr_t referenceName) = 0;
-      virtual ref_t importReference(ModuleBase* referenceModule, ref_t reference) = 0;
-      virtual ref_t importConstant(ModuleBase* referenceModule, ref_t reference) = 0;
-      virtual ref_t importExternal(ModuleBase* referenceModule, ref_t reference) = 0;
-      virtual ref_t importMessageConstant(ModuleBase* referenceModule, ref_t reference) = 0;
-      virtual ref_t importExtMessageConstant(ModuleBase* referenceModule, ref_t reference) = 0;
-
       SectionScopeBase()
       {
          module = nullptr;
@@ -471,6 +461,8 @@ namespace elena_lang
 
       virtual void writeMDataRef32(MemoryBase& target, pos_t position,
          pos_t disp, ref_t addressMask) = 0;
+      virtual void writeMDataRef64(MemoryBase& target, pos_t position, 
+         pos64_t disp, ref_t addressMask) = 0;
 
       virtual mssg_t importMessage(mssg_t message, ModuleBase* module = nullptr) = 0;
 
@@ -775,6 +767,14 @@ namespace elena_lang
       {
          append(s2);
          append(s3);
+      }
+
+      IdentifierString(ustr_t s1, ustr_t s2, ustr_t s3, ustr_t s4)
+         : String(s1)
+      {
+         append(s2);
+         append(s3);
+         append(s4);
       }
 
       IdentifierString(wstr_t s)

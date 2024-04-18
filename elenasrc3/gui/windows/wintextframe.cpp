@@ -43,11 +43,12 @@ void TextViewFrame :: beforeDocumentClose(int index)
 
 }
 
-void TextViewFrame :: onDocumentClose(int index)
+void TextViewFrame :: onDocumentClose(int index, bool empty)
 {
    eraseTabView(index - 1);
 
-   _child->hide();
+   if (empty)
+      _child->hide();
 }
 
 //void TextViewFrame :: onDocumentRename(int index)

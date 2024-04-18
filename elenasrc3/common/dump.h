@@ -3,7 +3,7 @@
 //
 //		This header contains the declaration of ELENA Engine Data Memory dump
 //		classes.
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DUMP_H
@@ -141,6 +141,46 @@ namespace elena_lang
       }
    };
 
+   // --- DynamicUStrWriter ---
+   class DynamicUStrWriter : public TextWriter<char>
+   {
+      DynamicUStr* _target;
+
+   public:
+      bool isOpen() const override { return true; }
+
+      pos_t position() const override { return _target->length_pos(); }
+
+      bool seek(pos_t position)
+      {
+         if (_target->length_pos() < position)
+            return false;
+
+         _target->trim(position);
+         return true;
+      }
+
+      bool writeNewLine() override
+      {
+         char ch = '\n';
+
+         return write(&ch, 1);
+      }
+
+      bool write(const char* s, pos_t length)
+      {
+         _target->append(s, length);
+
+         return true;
+      }
+
+      void reset()
+      {
+         _target->clear();
+      }
+
+      DynamicUStrWriter(DynamicUStr* target);
+   };
 }
 
 #endif // DUMP_H

@@ -843,7 +843,7 @@ bool Text :: insertLine(TextBookmark& bookmark, const_text_t s, size_t length)
    validateBookmark(bookmark);
 
    insert(bookmark, s, length, true);
-   bookmark._length = BM_INVALID;
+   bookmark._length = NOTFOUND_POS;
 
    _rowCount = retrieveRowCount();
 

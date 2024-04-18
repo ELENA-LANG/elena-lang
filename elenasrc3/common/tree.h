@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Tree template classes
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef TREE_H
@@ -718,6 +718,36 @@ namespace elena_lang
          }
 
          return counter;
+      }
+
+      static void serialize(Node& node, void(*encoder)(TextWriter<char>&, Key, ustr_t, int, void*), TextWriter<char>& writer, void* arg)
+      {
+         encoder(writer, node.key, node.identifier(), node.arg.value, arg);
+         Node current = node.firstChild();
+         while (current != defKey) {
+            serialize(current, encoder, writer, arg);
+
+            current = current.nextNode();
+         }
+
+         encoder(writer, defKey, nullptr, 0, nullptr);
+      }
+
+      static void deserialize(Node root, bool(*reader)(Key&, IdentifierString&, int&, void*), void* arg)
+      {
+         Key              key = defKey;
+         IdentifierString strArg;
+         int              intArg;
+
+         Node current = {};
+         while (reader(key, strArg, intArg, arg)) {
+            if (strArg.length() > 0) {
+               current = root.appendChild(key, *strArg);
+            }
+            else current = root.appendChild(key, intArg);
+
+            deserialize(current, reader, arg);
+         }
       }
 
       Tree() = default;

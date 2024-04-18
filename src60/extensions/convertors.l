@@ -5,9 +5,6 @@ import system'calendar;
 
 singleton stringExConvertor
 {
-//    string convert(RealMatrix a)
-//        = realmatrixExConvertor.toString(a);
-
     string convert(IntMatrix a)
         = intmatrixExConvertor.toString(a);
 

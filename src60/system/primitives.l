@@ -264,6 +264,17 @@ internal singleton PrimitiveRealOperations
          PrimitiveArrayOperations.copyTo(tmp, 8, dest, index);
       }
    }
+
+   loadFromByteArray(byte[] dest, int index, ref real retVal)
+   {
+      PrimitiveLongOperations.loadFromByteArray(dest, index, ref long temp);
+
+      pointer ptr := temp;
+      
+      real v := ptr;
+
+      retVal := v
+   }
 }
 
 internal singleton PrimitiveStringOperations
@@ -461,6 +472,15 @@ internal singleton PrimitiveWideStringOperations
          i += 1;
       };
    }
+
+   private hash(wide s, ref int retVal) : external(system'core_routines'__wstrHash);
+
+   int getHashcode(wide s)
+   {
+      self.hash(s, ref int retVal);
+
+      ^ retVal
+   }
 }
 
 // --- PrimitiveIntOperations ---
@@ -472,6 +492,15 @@ internal singleton PrimitiveIntOperations
    int getHashcode(int n)
    {
       self.hash(n, ref int retVal);
+
+      ^ retVal
+   }
+
+   int getHashcode(uint n)
+   {
+      int v := n;
+
+      self.hash(v, ref int retVal);
 
       ^ retVal
    }
@@ -493,12 +522,40 @@ internal singleton PrimitiveIntOperations
       b := n & 0FFh;
       dest[index + 3] := b;
    }
+
+   loadFromByteArray(byte[] dest, int index, ref int retVal)
+   {
+      int val := dest[index + 3];
+      val := val $shl 8;
+
+      int temp := dest[index + 2];
+      val := val | temp;
+      val := val $shl 8;
+
+      temp := dest[index + 1];
+      val := val | temp;
+      val := val $shl 8;
+
+      temp := dest[index];
+      val := val | temp;
+
+      retVal := val
+   }
 }
 
 // --- PrimitiveLongOperations ---
 
 internal singleton PrimitiveLongOperations
 {
+   private hash(long n, ref int retVal) : external(system'core_routines'__longHash);
+
+   int getHashcode(long n)
+   {
+      self.hash(n, ref int retVal);
+
+      ^ retVal
+   }
+
    saveToByteArray(long n, byte[] dest, int index)
    {
       int lo := n.Low;
@@ -506,6 +563,41 @@ internal singleton PrimitiveLongOperations
 
       int hi := n.High;
       PrimitiveIntOperations.saveToByteArray(hi, dest, index + 4);
+   }
+
+   loadFromByteArray(byte[] dest, int index, ref long retVal)
+   {
+      long val := dest[index + 7];
+      val := val $shl 8;
+
+      long temp := dest[index + 6];
+      val := val | temp;
+      val := val $shl 8;
+
+      temp := dest[index + 5];
+      val := val | temp;
+      val := val $shl 8;
+
+      temp := dest[index + 4];
+      val := val | temp;
+      val := val $shl 8;
+
+      temp := dest[index + 3];
+      val := val | temp;
+      val := val $shl 8;
+
+      temp := dest[index + 2];
+      val := val | temp;
+      val := val $shl 8;
+
+      temp := dest[index + 1];
+      val := val | temp;
+      val := val $shl 8;
+
+      temp := dest[index];
+      val := val | temp;
+
+      retVal := val
    }
 }
 

@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA Engine Data Section
 //		classes.
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "common.h"
@@ -151,4 +151,11 @@ bool ByteArray :: insert(pos_t position, const void* s, pos_t length)
 
 void ByteArray :: trim(pos_t position)
 {
+}
+
+// --- DynamicUStrWriter ---
+
+DynamicUStrWriter::DynamicUStrWriter(DynamicUStr* target)
+{
+   _target = target;
 }

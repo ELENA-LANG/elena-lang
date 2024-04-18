@@ -45,6 +45,8 @@ public sealed const struct WindowHandle
             paramPtr)
       };
 
+      int err := extern KERNEL32.GetLastError();
+
       if (h==0)
          { WinFormsException.raise() };
 
@@ -149,7 +151,7 @@ WindowHandle defaultHandle
 
 // --- PAINTSTRUCT ---
 
-public sealed struct PAINTSTRUCT
+public sealed packed PAINTSTRUCT
 {
    HDC  _HDC;
    int  _erase;

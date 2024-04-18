@@ -184,6 +184,13 @@ labYGCollect:
   push rsi
   push rcx
 
+  // ; save perm roots
+  mov  rsi, [data : %CORE_GC_TABLE + gc_perm_start]
+  mov  rcx, [data : %CORE_GC_TABLE + gc_perm_current]
+  sub  rcx, rsi
+  push rsi
+  push rcx
+
   // ;   collect frames
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]  
   mov  rcx, rax
@@ -338,6 +345,7 @@ labPERMCollect:
   call extern "$rt.CollectPermGCLA"
 
   add  rsp, 30h
+  mov  rbx, rax
 
   pop  r11
   pop  r10
@@ -411,7 +419,7 @@ end
 // ; load
 inline %6
 
-  mov  edx, dword ptr [rbx]
+  movsxd  rdx, dword ptr [rbx]
 
 end
 
@@ -535,10 +543,14 @@ end
 // ; loads
 inline % 14h
 
-  mov   edx, dword ptr [rbx]
-  shr   edx, ACTION_ORDER
-  mov   rax, mdata : %0
-  mov   edx, dword ptr [rax + rdx]
+  mov    edx, dword ptr [rbx]
+  shr    edx, ACTION_ORDER
+  mov    rax, mdata : %0
+  lea    rsi, [rdx*8]
+  mov    ecx, dword ptr [rax + rsi * 2]
+  test   ecx, ecx
+  cmovnz edx, ecx
+  shl    edx, ACTION_ORDER
 
 end
 
@@ -745,6 +757,13 @@ inline %02Ch
 
 end
 
+// ; parent
+inline %02Dh
+
+  mov rbx, [rbx - elPackageOffset]
+
+end
+
 // ; xget
 inline %02Eh
 
@@ -894,8 +913,9 @@ end
 // ; fabsdp
 inline %078h
 
+  mov   rax, r10
   lea   rdi, [rbp + __arg32_1]
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
   fabs
   fstp  qword ptr [rdi]    // ; store result 
 
@@ -904,8 +924,9 @@ end
 // ; fsqrtdp
 inline %079h
 
+  mov   rax, r10
   lea   rdi, [rbp + __arg32_1]
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
   fsqrt
   fstp  qword ptr [rdi]    // ; store result 
 
@@ -914,8 +935,9 @@ end
 // ; fexpdp
 inline %07Ah
 
+  mov   rax, r10
   lea   rdi, [rbp + __arg32_1]
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
   xor   edx, edx
 
   fldl2e                  // ; ->log2(e)
@@ -959,8 +981,9 @@ end
 // ; flndp
 inline %07Bh
 
+  mov   rax, r10
   lea   rdi, [rbp + __arg32_1]
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
 
   fldln2
   fxch
@@ -984,8 +1007,9 @@ end
 // ; fsindp
 inline %07Ch
 
+  mov   rax, r10
   lea   rdi, [rbp + __arg32_1]
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
   fldpi
   fadd  st(0),st(0)       // ; ->2pi
   fxch
@@ -1007,8 +1031,9 @@ end
 // ; fcosdp
 inline %07Dh
 
+  mov   rax, r10
   lea   rdi, [rbp + __arg32_1]
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
   fcos
   fstp  qword ptr [rdi]    // ; store result 
 
@@ -1017,8 +1042,9 @@ end
 // ; farctandp
 inline %07Eh
 
+  mov   rax, r10
   lea   rdi, [rbp + __arg32_1]
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
   fld1
   fpatan                   // i.e. arctan(Src/1)
   fstp  qword ptr [rdi]    // ; store result 
@@ -1204,7 +1230,7 @@ end
 // ; loaddp
 inline %8Ah
 
-  mov  edx, dword ptr [rbp + __arg32_1]
+  movsxd rdx, dword ptr [rbp + __arg32_1]
 
 end 
 
@@ -1219,14 +1245,14 @@ end
 // ; subn
 inline %8Ch
 
-  sub  edx, __n_1
+  sub  rdx, __n_1
 
 end
 
 // ; addn
 inline %8Dh
 
-  add  edx, __n_1
+  add  rdx, __n_1
 
 end
 
@@ -1504,9 +1530,10 @@ end
 inline %09Fh
 
   lea   rdi, [rbp + __arg32_1]
+  mov   rax, r10
 
   mov   ecx, 0
-  fld   qword ptr [rsi]
+  fld   qword ptr [rax]
 
   push  rcx                // reserve space on stack
   fstcw word ptr [rsp]     // get current control word
@@ -2032,8 +2059,7 @@ end
 // ; loadsi
 inline %0CCh
 
-  mov rax, [rsp + __arg32_1]
-  mov edx, eax
+  movsxd rdx, dword ptr [rsp + __arg32_1]
 
 end 
 
@@ -2051,38 +2077,10 @@ inline %2CCh
 
 end 
 
-// ; xloadargfi
+// ; xloadarg fi
 inline %0CDh
 
   mov  rdx, qword ptr [rbp + __arg32_1]
-
-end 
-
-// ; xloadarg si:1
-inline %1CDh
-
-  mov rdx, rdi
-
-end 
-
-// ; xloadarg si:2
-inline %2CDh
-
-  mov rdx, rsi
-
-end 
-
-// ; xloadarg si:3
-inline %3CDh
-
- // ; mov rdx, rdx - idle operation
-
-end 
-
-// ; xloadarg si:4
-inline %4CDh
-
-  mov rdx, rcx
 
 end 
 
@@ -2143,9 +2141,11 @@ inline %5CFh
 
   pop  rsi
 
+  // ; align to make it 10h alignment
+  add  rdx, 1
+  and  rdx, 0FFFFFFFEh
+
   lea  rax, [rdx*8]
-  add  eax, 8
-  and  eax, 0FFFFFFF0h
   sub  rsp, rax
   mov  rcx, rdx
   xor  rax, rax
@@ -2812,40 +2812,58 @@ inline %0F0h
 
 end 
 
-// ; openin 0, 0
+// ; openin 0, n
 inline %1F0h
 
   push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
   mov  rbp, rsp
 
 end 
 
-// ; openin 1, 0
+// ; openin 1, n
 inline %2F0h
 
   push rbp
+  xor  rax, rax
   mov  rbp, rsp
-  push 0
-  push 0
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
+  push rax
+  push rax
 
 end 
 
-// ; openin 2, 0
+// ; openin 2, n
 inline %3F0h
 
   push rbp
   xor  rax, rax
   mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
   push rax
   push rax
 
 end 
 
-// ; openin 3, 0
+// ; openin 3, n
 inline %4F0h
 
   push rbp
   xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
   mov  rbp, rsp
   push rax
   push rax
@@ -2854,7 +2872,7 @@ inline %4F0h
 
 end 
 
-// ; openin 0, n
+// ; openin 4, n
 inline %5F0h
 
   push rbp
@@ -2864,6 +2882,10 @@ inline %5F0h
   push rbp
   push rax
   mov  rbp, rsp
+  push rax
+  push rax
+  push rax
+  push rax
 
 end 
 
@@ -2877,6 +2899,61 @@ inline %6F0h
   sub  rsp, __arg32_1
   mov  rdi, rsp
   rep  stos
+
+end 
+
+// ; openin 0, 0
+inline %7F0h
+
+  push rbp
+  mov  rbp, rsp
+
+end 
+
+// ; openin 1, 0
+inline %8F0h
+
+  push rbp
+  mov  rbp, rsp
+  push 0
+  push 0
+
+end 
+
+// ; openin 2, 0
+inline %9F0h
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  push rax
+  push rax
+
+end 
+
+// ; openin 3, 0
+inline %0AF0h
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  push rax
+  push rax
+  push rax
+  push rax
+
+end 
+
+// ; openin 4, 0
+inline %0BF0h
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  push rax
+  push rax
+  push rax
+  push rax
 
 end 
 
@@ -2933,11 +3010,17 @@ end
 // ; extopenin
 inline %0F2h
 
-  push rbp     
-  push 0 
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
 
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
   xor  eax, eax
-  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rbp
   push rax
   mov  rbp, rsp
@@ -2956,14 +3039,200 @@ inline %0F2h
 
 end 
 
-// ; extopenin 0, 0
+// ; extopenin 0, n
 inline %1F2h
 
-  push rbp     
-  push 0 
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
 
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
   xor  eax, eax
-  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+end 
+
+// ; extopenin 1, n
+inline %2F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
+  push rax
+  push rax
+
+end 
+
+// ; extopenin 2, n
+inline %3F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
+  push rax
+  push rax
+
+end 
+
+// ; extopenin 3, n
+inline %4F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
+  push rax
+  push rax
+  push rax
+  push rax
+
+end 
+
+// ; extopenin 4, n
+inline %5F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
+  push rax
+  push rax
+  push rax
+  push rax
+
+end 
+
+// ; extopenin i, 0
+inline %6F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  mov  rcx, __n_1
+  sub  rsp, __arg32_1
+  mov  rdi, rsp
+  rep  stos
+
+end 
+
+// ; extopenin 0, 0
+inline %7F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
   push rbp
   push rax
   mov  rbp, rsp
@@ -2974,13 +3243,19 @@ inline %1F2h
 end 
 
 // ; extopenin 1, 0
-inline %2F2h
+inline %8F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
 
   push rbp     
-  push 0 
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
 
+  mov  rbp, rax
   xor  eax, eax
-  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rbp
   push rax
   mov  rbp, rsp
@@ -2988,17 +3263,24 @@ inline %2F2h
   push rbp
   mov  rbp, rsp
   push 0
+  push 0
 
 end 
 
 // ; extopenin 2, 0
-inline %3F2h
+inline %9F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
 
   push rbp     
-  push 0 
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
 
+  mov  rbp, rax
   xor  eax, eax
-  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rbp
   push rax
   mov  rbp, rsp
@@ -3012,13 +3294,19 @@ inline %3F2h
 end 
 
 // ; extopenin 3, 0
-inline %4F2h
+inline %0AF2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
 
   push rbp     
-  push 0 
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
 
+  mov  rbp, rax
   xor  eax, eax
-  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rbp
   push rax
   mov  rbp, rsp
@@ -3026,20 +3314,27 @@ inline %4F2h
   push rbp
   xor  rax, rax
   mov  rbp, rsp
+  push rax
   push rax
   push rax
   push rax
 
 end 
 
-// ; extopenin 0, n
-inline %5F2h
+// ; extopenin 4, 0
+inline %0BF2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
 
   push rbp     
-  push 0 
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
 
+  mov  rbp, rax
   xor  eax, eax
-  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rbp
   push rax
   mov  rbp, rsp
@@ -3047,32 +3342,10 @@ inline %5F2h
   push rbp
   xor  rax, rax
   mov  rbp, rsp
-  sub  rsp, __n_2
-  push rbp
   push rax
-  mov  rbp, rsp
-
-end 
-
-// ; extopenin i, 0
-inline %6F2h
-
-  push rbp     
-  push 0 
-
-  xor  eax, eax
-  mov  rbp, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
-  push rbp
   push rax
-  mov  rbp, rsp
-
-  push rbp
-  xor  rax, rax
-  mov  rbp, rsp
-  mov  rcx, __n_1
-  sub  rsp, __arg32_1
-  mov  rdi, rsp
-  rep  stos
+  push rax
+  push rax
 
 end 
 
@@ -3213,6 +3486,82 @@ inline % 1F8h
   mov  rdi, rbx
   mov  ecx, __arg32_1
   rep  stos
+
+end
+
+// ; fill 1, r
+inline % 2F8h
+
+  mov  rax, __ptr64_2
+  mov  [rbx], rax
+
+end
+
+// ; fill 1, 0
+inline % 3F8h
+
+  xor  rax, rax
+  mov  [rbx], rax
+
+end
+
+// ; fill 2, r
+inline % 4F8h
+
+  mov  rax, __ptr64_2
+  mov  [rbx], rax
+  mov  [rbx+8], rax
+
+end
+
+// ; fill 2, 0
+inline % 5F8h
+
+  xor  eax, eax
+  mov  [rbx], rax
+  mov  [rbx+8], rax
+
+end
+
+// ; fill 3, r
+inline % 6F8h
+
+  mov  rax, __ptr64_2
+  mov  [rbx], rax
+  mov  [rbx+8], rax
+  mov  [rbx+16], rax
+
+end
+
+// ; fill 3, 0
+inline % 7F8h
+
+  xor  eax, eax
+  mov  [rbx], rax
+  mov  [rbx+16], rax
+  mov  [rbx+24], rax
+
+end
+
+// ; fill 4, r
+inline % 8F8h
+
+  mov  rax, __ptr64_2
+  mov  [rbx], rax
+  mov  [rbx+8], rax
+  mov  [rbx+16], rax
+  mov  [rbx+24], rax
+
+end
+
+// ; fill 4, 0
+inline % 9F8h
+
+  xor  eax, eax
+  mov  [rbx], rax
+  mov  [rbx+8], rax
+  mov  [rbx+16], rax
+  mov  [rbx+24], rax
 
 end
 
@@ -3373,7 +3722,90 @@ end
 // ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 9FAh
 
-//; !! temporally commented
+  mov  r8, rbx               // r8 -> [esp]
+  mov  [rsp+8], r10                      // ; saving arg0
+  lea  rax, [rsp]
+  mov  [rsp+16], r11                     // ; saving arg1
+
+  mov  ecx, __n_1
+  mov  r11, rcx           // r11 -> [esp+8]
+  mov  r12, rdx           // r12 -> [esp+4]
+
+  mov  rsi, [rbx + rcx * 8]   // ; get next overload list
+  test rsi, rsi
+  jz   labEnd
+
+labNextList:
+  xor  edx, edx
+  mov  rbx, [rsi] // ; message from overload list
+
+labNextOverloadlist:
+  mov  r9, mdata : %0
+  shr  ebx, ACTION_ORDER
+  lea  r13, [rbx*8]
+  mov  r13, [r9 + r13 * 2 + 8]
+  and  ecx, ARG_MASK
+  lea  rbx, [r13 - 8]
+  add  ecx, 1
+
+labNextParam:
+  sub  ecx, 1
+  jnz  short labMatching
+
+  mov  rcx, r11
+  mov  rbx, r8
+  mov  r9, [rbx + rcx * 8]   // ; get next overload list
+
+  lea  r13, [rdx * 8]
+  mov  rax, [r9 + r13 * 2 + 8]
+  mov  rdx, [r9 + r13 * 2]
+  mov  r10, [rsp+8]                      // ; restore arg0
+  mov  r11, [rsp+16]                     // ; restore arg1
+  jmp  rax
+
+labMatching:
+  mov  rdi, [rax + rcx * 8]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+  test  rdi, rdi                                              
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi - elVMTOffset]
+  mov  rsi, [rbx + rcx * 8]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jz   labNextParam
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  mov  rcx, r11
+  mov  rbx, r8
+  mov  r13, [rbx + rcx * 8]   // ; get next overload list
+  add  edx, 1
+
+  lea  r9, [rdx * 8]
+  mov  rbx, [r13 + r9 * 2] // ; message from overload list
+
+  and  rbx, rbx
+  jnz  labNextOverloadlist
+
+  lea  r11, [r11 + 1]
+  mov  rcx, r11
+  mov  rbx, r8
+
+  mov  rsi, [rbx + rcx * 8]   // ; get next overload list
+  test rsi, rsi
+  jnz  labNextList
+
+labEnd:
+  mov  rbx, r8
+  mov  rdx, r12
+
+  mov  r10, [rsp+8]                      // ; restore arg0
+  mov  r11, [rsp+16]                     // ; restore arg1
 
 end
 
@@ -3381,7 +3813,109 @@ end
 // ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
 inline % 0AFAh
 
-//; !! temporally commented
+  mov  [rsp+8], r10                      // ; saving arg0
+  lea  rax, [rsp + __n_2]
+  mov  [rsp+16], r11                     // ; saving arg1
+
+  mov  r10, __n_1 // [esp+12]
+  mov  r11, rbx   // [esp]
+  xor  ecx, ecx
+  mov  r12, rcx   // [esp+8]
+  mov  r9, rcx    // [esp+4]
+  mov  r14, rdx   // [esp+16] 
+
+  // ; count the number of args
+  mov  rbx, rax
+  mov  r8, -1
+labCountParam:
+  lea  rbx, [rbx+8]
+  cmp  r8, [rbx]
+  lea  rcx, [rcx+1]
+  jnz  short labCountParam
+  mov  r9, rcx
+
+  mov  rbx, r11
+  mov  rcx, r10
+  mov  rsi, [rbx + rcx * 8]   // ; get next overload list
+  test rsi, rsi
+  jz   labEnd
+
+labNextList:
+  xor  rdx, rdx
+  mov  rbx, [rsi] // ; message from overload list
+
+labNextOverloadlist:
+  mov  r8, mdata : %0
+  shr  ebx, ACTION_ORDER
+  lea  r13, [rbx*8]
+  mov  rbx, [r8 + r13 * 2 + 8]
+
+  lea  rbx, [rbx - 8]
+  mov  r12, rbx
+
+labNextParam:
+  add  ecx, 1
+  cmp  rcx, r9
+  jnz  short labMatching
+
+  mov  rcx, r10
+  mov  rbx, r11
+  mov  r8, [rbx + rcx * 8]   // ; get next overload list
+  lea  r13, [rdx * 8]
+  mov  rax, [r8 + r13 * 2 + 8]
+  mov  rdx, [r8 + r13 * 2]
+  mov  r10, [rsp+8]                      // ; restore arg0
+  mov  r11, [rsp+16]                     // ; restore arg1
+  jmp  rax
+
+labMatching:
+  mov    rsi, r12
+  lea    rdi, [rsi + 8]
+  cmp    [rdi], 0
+  cmovnz rsi, rdi
+  mov    r12, rsi
+
+  mov  rdi, [rax + rcx * 8]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+  test  rdi, rdi                                              
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi - elVMTOffset]
+  mov  rsi, r12
+  mov  rsi, [rsi]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jz   labNextParam
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  mov  rcx, r10
+  mov  rbx, r11
+  mov  r8, [rbx + rcx * 8]
+  add  edx, 1
+  lea  r13, [rdx * 8]
+  mov  rbx, [r8 + r13 * 2]  // ; message from overload list
+  and  rbx, rbx
+  jnz  labNextOverloadlist
+
+  lea  r10, [r10 + 1]
+  mov  rbx, r11
+  mov  rcx, r10
+
+  mov  rsi, [rbx + rcx * 8]   // ; get next overload list
+  test rsi, rsi
+  jnz  labNextList
+
+labEnd:
+  mov  rbx, r11
+  mov  rdx, r14
+
+  mov  r10, [rsp+8]                      // ; restore arg0
+  mov  r11, [rsp+16]                     // ; restore arg1
 
 end
 

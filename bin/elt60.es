@@ -4,5 +4,6 @@
     #set preloaded preloadedSymbols
 
     #postfix " ^ ""safeEval[1]"" "
-    #start;
+
+    #terminal
 ]]

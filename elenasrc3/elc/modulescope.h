@@ -28,20 +28,6 @@ public:
    bool isStandardOne() override;
    bool withValidation() override;
 
-   ref_t importAction(ModuleBase* referenceModule, ref_t signRef) override;
-   ref_t importSignature(ModuleBase* referenceModule, ref_t signRef) override;
-   ref_t importMessage(ModuleBase* referenceModule, mssg_t message) override;
-   ref_t importReference(ModuleBase* referenceModule, ustr_t referenceName) override;
-   ref_t importReference(ModuleBase* referenceModule, ref_t reference) override
-   {
-      return importReference(referenceModule, referenceModule->resolveReference(reference));
-   }
-   ref_t importReferenceWithMask(ModuleBase* referenceModule, ref_t reference);
-   ref_t importConstant(ModuleBase* referenceModule, ref_t reference);
-   ref_t importMessageConstant(ModuleBase* referenceModule, ref_t reference);
-   ref_t importExtMessageConstant(ModuleBase* referenceModule, ref_t reference) override;
-   ref_t importExternal(ModuleBase* referenceModule, ref_t reference) override;
-
    ref_t mapAnonymous(ustr_t prefix) override;
 
    ref_t mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) override;
@@ -85,9 +71,6 @@ public:
    {
       return loadSymbolInfo(info, module->resolveReference(reference));
    }
-
-   void importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, bool headerOnly, bool inheritMode/*,
-      bool ignoreFields*/) override;
 
    void newNamespace(ustr_t name) override;
    bool includeNamespace(IdentifierList& importedNs, ustr_t name, bool& duplicateInclusion) override;

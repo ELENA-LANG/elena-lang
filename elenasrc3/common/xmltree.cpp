@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains XML Reader / Writer File class implementation
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "xmltree.h"
@@ -489,4 +489,13 @@ void XmlTree :: writeContent(size_t position, ustr_t value)
 
    _content.cut(start, end - start);
    _content.insert(value.str(), start);
+}
+
+void XmlTree :: removeNode(size_t position)
+{
+   NodeTag tag;
+   loadTag(getContent(), position, tag, nullptr);
+   size_t end = parse(_content.str(), position, _content.length(), nullptr);
+
+   _content.cut(position, end - position);
 }

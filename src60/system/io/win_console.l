@@ -4,7 +4,7 @@ namespace io
 
    const IntNumber FILE_TYPE_CHAR = 2;
 
-   struct KEY_EVENT_RECORD
+   packed KEY_EVENT_RECORD
    {
       int   bKeyDown : prop;
       short wRepeatCount : prop;
@@ -14,14 +14,14 @@ namespace io
       int   dwControlKeyState : prop;
    }
 
-   struct INPUT_RECORD
+   packed INPUT_RECORD
    {
       short eventType : prop;
       short dummy;
       KEY_EVENT_RECORD KeyEvent : prop;
    } 
 
-   sealed struct CONSOLE_SCREEN_BUFFER_INFO
+   sealed packed CONSOLE_SCREEN_BUFFER_INFO
    {
       COORD      dwSize;    
       COORD      dwCursorPosition;    
@@ -158,7 +158,11 @@ namespace io
 
       clear()
       {
-      }      
+      }
+
+      refresh()
+      {
+      }
    }
 
    public class ConsoleWriter : IConsoleWriter
@@ -207,6 +211,10 @@ namespace io
          int coord := y * 10000h + x;
                     
          extern KERNEL32.SetConsoleCursorPosition(h, coord)
+      }
+
+      refresh()
+      {
       }
    }
 

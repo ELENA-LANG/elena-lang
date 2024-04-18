@@ -754,6 +754,13 @@ inline %02Ch
 
 end
 
+// ; parent
+inline %02Dh
+
+  mov ebx, [ebx - elPackageOffset]
+
+end
+
 // ; xget
 inline %02Eh
 
@@ -1278,10 +1285,8 @@ end
 // ; copy 8
 inline %790h
 
-  mov  eax, [esi]
-  mov  edi, [esi+4]
-  mov  dword ptr [ebx], eax
-  mov  dword ptr [ebx+4], edi
+  movq xmm0, qword ptr [esi] 
+  movq qword ptr [ebx] , xmm0
 
 end
 
@@ -1798,7 +1803,7 @@ inline % 0ADh
 
 end
 
-// ; xfillr i,0
+// ; xfillr 0
 inline % 1ADh
   xor  eax, eax
   mov  edi, ebx
@@ -2606,11 +2611,8 @@ end
 // ; copydpn dpn, 8
 inline %4E0h
 
-  mov  eax, [esi]
-  lea  edi, [ebp + __arg32_1]
-  mov  ecx, [esi+4]
-  mov  [edi], eax
-  mov  [edi + 4], ecx
+  movq xmm0, qword ptr [esi] 
+  movq qword ptr [ebp + __arg32_1] , xmm0
 
 end
 
@@ -3098,48 +3100,8 @@ inline %0F0h
 
 end 
 
-// ; openin 0, 0
-inline %1F0h
-
-  push ebp
-  mov  ebp, esp
-
-end 
-
-// ; openin 1, 0
-inline %2F0h
-
-  push ebp
-  mov  ebp, esp
-  push 0
-
-end 
-
-// ; openin 2, 0
-inline %3F0h
-
-  push ebp
-  mov  ebp, esp
-  xor  ecx, ecx
-  push ecx
-  push ecx
-
-end 
-
-// ; openin 3, 0
-inline %4F0h
-
-  push ebp
-  xor  ecx, ecx
-  mov  ebp, esp
-  push ecx
-  push ecx
-  push ecx
-
-end 
-
 // ; openin 0, n
-inline %5F0h
+inline %1F0h
 
   push ebp
   mov  ebp, esp
@@ -3148,6 +3110,69 @@ inline %5F0h
   push ebp
   push ecx
   mov  ebp, esp
+
+end 
+
+// ; openin 1, n
+inline %2F0h
+
+  push ebp
+  mov  ebp, esp
+  xor  ecx, ecx
+  sub  esp, __n_2
+  push ebp
+  push ecx
+  mov  ebp, esp
+  push ecx
+
+end 
+
+// ; openin 2, n
+inline %3F0h
+
+  push ebp
+  mov  ebp, esp
+  xor  ecx, ecx
+  sub  esp, __n_2
+  push ebp
+  push ecx
+  mov  ebp, esp
+  push ecx
+  push ecx
+
+end 
+
+// ; openin 3, n
+inline %4F0h
+
+  push ebp
+  mov  ebp, esp
+  xor  ecx, ecx
+  sub  esp, __n_2
+  push ebp
+  push ecx
+  mov  ebp, esp
+  push ecx
+  push ecx
+  push ecx
+
+end 
+
+// ; openin 4, n
+inline %5F0h
+
+  push  ebp
+  mov   ebp, esp
+  xor   ecx, ecx
+  sub   esp, __n_2
+  xorps xmm0, xmm0
+  push  ebp
+  push  ecx
+  mov   ebp, esp
+
+  sub   esp, 16
+  movq  qword ptr [esp], xmm0
+  movq  qword ptr [esp+8], xmm0
 
 end 
 
@@ -3164,51 +3189,56 @@ inline %6F0h
 
 end 
 
-// ; openin 2, n
+// ; openin 0, 0
 inline %7F0h
 
   push ebp
   mov  ebp, esp
-  xor  eax, eax
-  sub  esp, __n_2
-  push ebp
-  push eax
-  mov  ebp, esp
-  push eax
-  push eax
 
 end 
 
-// ; openin 3, n
+// ; openin 1, 0
 inline %8F0h
 
   push ebp
   mov  ebp, esp
-  xor  eax, eax
-  sub  esp, __n_2
-  push ebp
-  push eax
-  mov  ebp, esp
-  push eax
-  push eax
-  push eax
+  push 0
 
 end 
 
-// ; openin 4, n
+// ; openin 2, 0
 inline %9F0h
 
   push ebp
   mov  ebp, esp
-  xor  eax, eax
-  sub  esp, __n_2
+  xor  ecx, ecx
+  push ecx
+  push ecx
+
+end 
+
+// ; openin 3, 0
+inline %0AF0h
+
   push ebp
-  push eax
+  xor  ecx, ecx
   mov  ebp, esp
-  push eax
-  push eax
-  push eax
-  push eax
+  push ecx
+  push ecx
+  push ecx
+
+end 
+
+// ; openin 4, 0
+inline %0BF0h
+
+  push ebp
+  xorps xmm0, xmm0
+  mov  ebp, esp
+
+  sub   esp, 16
+  movq  qword ptr [esp], xmm0
+  movq  qword ptr [esp+8], xmm0
 
 end 
 
@@ -3268,7 +3298,7 @@ inline %0F2h
 
 end 
 
-// ; extopenin 0, 0
+// ; extopenin 0, n
 inline %1F2h
 
   push ebp     
@@ -3282,11 +3312,16 @@ inline %1F2h
   mov  ebp, esp
 
   push ebp
+  xor  eax, eax
+  mov  ebp, esp
+  sub  esp, __n_2
+  push ebp
+  push eax
   mov  ebp, esp
 
 end 
 
-// ; extopenin 1, 0
+// ; extopenin 1, n
 inline %2F2h
 
   push ebp     
@@ -3300,12 +3335,17 @@ inline %2F2h
   mov  ebp, esp
 
   push ebp
+  xor  eax, eax
   mov  ebp, esp
-  push 0
+  sub  esp, __n_2
+  push ebp
+  push eax
+  mov  ebp, esp
+  push eax
 
 end 
 
-// ; extopenin 2, 0
+// ; extopenin 2, n
 inline %3F2h
 
   push ebp     
@@ -3321,12 +3361,16 @@ inline %3F2h
   push ebp
   xor  eax, eax
   mov  ebp, esp
+  sub  esp, __n_2
+  push ebp
+  push eax
+  mov  ebp, esp
   push eax
   push eax
 
 end 
 
-// ; extopenin 3, 0
+// ; extopenin 3, n
 inline %4F2h
 
   push ebp     
@@ -3342,13 +3386,17 @@ inline %4F2h
   push ebp
   xor  eax, eax
   mov  ebp, esp
+  sub  esp, __n_2
+  push ebp
+  push eax
+  mov  ebp, esp
   push eax
   push eax
   push eax
 
 end 
 
-// ; extopenin 0, n
+// ; extopenin 4, n
 inline %5F2h
 
   push ebp     
@@ -3368,6 +3416,10 @@ inline %5F2h
   push ebp
   push eax
   mov  ebp, esp
+  push eax
+  push eax
+  push eax
+  push eax
 
 end 
 
@@ -3391,6 +3443,109 @@ inline %6F2h
   sub  esp, __arg32_1
   mov  edi, esp
   rep  stos
+
+end 
+
+// ; extopenin 0, 0
+inline %7F2h
+
+  push ebp     
+  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  mov  ebp, esp
+
+end 
+
+// ; extopenin 1, 0
+inline %8F2h
+
+  push ebp     
+  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  mov  ebp, esp
+  push 0
+
+end 
+
+// ; extopenin 2, 0
+inline %9F2h
+
+  push ebp     
+  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  xor  eax, eax
+  mov  ebp, esp
+  push eax
+  push eax
+
+end 
+
+// ; extopenin 3, 0
+inline %0AF2h
+
+  push ebp     
+  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  xor  eax, eax
+  mov  ebp, esp
+  push eax
+  push eax
+  push eax
+
+end 
+
+// ; extopenin 4, 0
+inline %0BF2h
+
+  push ebp     
+  mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  xor  eax, eax
+  mov  ebp, esp
+  push eax
+  push eax
+  push eax
+  push eax
 
 end 
 
@@ -3508,6 +3663,83 @@ inline % 1F8h
   mov  edi, ebx
   mov  ecx, __arg32_1
   rep  stos
+
+end
+
+// ; fill 1, r
+inline % 2F8h
+
+  mov  eax, __ptr32_2
+  mov  [ebx], eax
+
+end
+
+// ; fill 1, 0
+inline % 3F8h
+
+  xor  eax, eax
+  mov  [ebx], eax
+
+end
+
+// ; fill 2, r
+inline % 4F8h
+
+  mov  eax, __ptr32_2
+  mov  [ebx], eax
+  mov  [ebx+4], eax
+
+end
+
+// ; fill 2, 0
+inline % 5F8h
+
+  xorps xmm0, xmm0
+  movq  qword ptr [ebx], xmm0
+
+//;  xor  eax, eax
+//;  mov  [ebx], eax
+//;  mov  [ebx+4], eax
+
+end
+
+// ; fill 3, r
+inline % 6F8h
+
+  mov  eax, __ptr32_2
+  mov  [ebx], eax
+  mov  [ebx+4], eax
+  mov  [ebx+8], eax
+
+end
+
+// ; fill 3, 0
+inline % 7F8h
+
+  xor  eax, eax
+  mov  [ebx], eax
+  mov  [ebx+4], eax
+  mov  [ebx+8], eax
+
+end
+
+// ; fill 4, r
+inline % 8F8h
+
+  mov  eax, __ptr32_2
+  mov  [ebx], eax
+  mov  [ebx+4], eax
+  mov  [ebx+8], eax
+  mov  [ebx+0Ch], eax
+
+end
+
+// ; fill 4, 0
+inline % 9F8h
+
+  xorps xmm0, xmm0
+  movq  qword ptr [ebx], xmm0
+  movq  qword ptr [ebx+8], xmm0
 
 end
 
@@ -3662,11 +3894,11 @@ labNextBaseClass:
 end
 
 // ; xdispatchmr
-// ; NOTE : __arg32_1 - variadic message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+// ; NOTE : __arg32_1 - message; __n_1 - list index, __n_2 - argument list offset
 inline % 9FAh
 
   mov  [esp+4], esi                      // ; saving arg0
-  lea  eax, [esp + __n_2]
+  lea  eax, [esp]
 
   mov  ecx, __n_1
   push ecx
@@ -3688,6 +3920,7 @@ labNextOverloadlist:
   mov  ebx, [edi + ebx * 8 + 4]
   and  ecx, ARG_MASK
   lea  ebx, [ebx - 4]
+  add  ecx, 1
 
 labNextParam:
   sub  ecx, 1
@@ -3711,7 +3944,7 @@ labMatching:
   cmovz edi, esi
 
   mov  edi, [edi - elVMTOffset]
-  mov  esi, [ebx + ecx * 4 + 4]
+  mov  esi, [ebx + ecx * 4]
 
 labNextBaseClass:
   cmp  esi, edi
@@ -3724,7 +3957,6 @@ labNextBaseClass:
   mov  ebx, [esp]
   mov  esi, [ebx + ecx * 4]   // ; get next overload list
   add  edx, 1
-  mov  esi, [esi]
   mov  ebx, [esi + edx * 8] // ; message from overload list
   and  ebx, ebx
   jnz  labNextOverloadlist

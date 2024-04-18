@@ -416,6 +416,11 @@ void constant(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SetR, node.arg.reference | mskConstant);
 }
 
+void distrConstant(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskDistrTypeListRef);
+}
+
 void constantArray(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskConstArray);
@@ -2016,7 +2021,8 @@ ByteCodeWriter::Saver commands[] =
 
    copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp, semiDirectCallOp,
    intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex, intCopyingToAccField, intOpWithConst,
-   uint8CondOp, uint16CondOp, intLongOp
+
+   uint8CondOp, uint16CondOp, intLongOp, distrConstant
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -2711,7 +2717,7 @@ void ByteCodeWriter :: importTree(CommandTape& tape, BuildNode node, Scope& scop
    }
    else importInfo = _loader->getSection(ReferenceInfo(referenceName), mskProcedureRef, 0, false);
 
-   tape.import(importInfo.module, importInfo.section, true, scope.moduleScope);
+   tape.import(importInfo.module, importInfo.section, true, scope.moduleScope->module);
 }
 
 void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
@@ -3264,6 +3270,9 @@ void ByteCodeWriter :: saveArgumentsInfo(CommandTape& tape, BuildNode node, Tape
          case BuildKey::IntArrayParameter:
             saveDebugSymbol(DebugSymbol::IntArrayParameter, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
             break;
+         case BuildKey::RealArrayParameter:
+            saveDebugSymbol(DebugSymbol::RealArrayParameter, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
+            break;
          default:
             break;
       }
@@ -3478,82 +3487,10 @@ inline bool isNested(BuildKey key)
    }
 }
 
-bool ByteCodeWriter :: matchTriePatterns(BuildNode node)
-{
-   BuildPatterns matchedOnes;
-   BuildPatterns nextOnes;
-
-   BuildPatterns* matched = &matchedOnes;
-   BuildPatterns* followers = &nextOnes;
-   bool           reversed = false;
-
-   BuildNode current = node.firstChild();
-   while (current != BuildKey::None) {
-      if (isNested(current.key)) {
-         // NOTE : analize nested command
-         if (matchTriePatterns(current))
-            return true;
-      }
-      if (isNonOperational(current.key)) {
-         // NOTE : ignore non-operational commands)
-         current = current.nextNode();
-
-         continue;
-      }
-
-      matched->add({ &_btTransformer.trie });
-      followers->clear();
-
-      for (auto it = matched->start(); !it.eof(); ++it) {
-         auto pattern = *it;
-
-         for (auto child_it = pattern.Children(); !child_it.eof(); ++child_it) {
-            auto currentPattern = child_it.Node();
-            auto currentPatternValue = currentPattern.Value();
-
-            if (currentPatternValue.match(current)) {
-               if (currentPatternValue.patternId && transformers[currentPatternValue.patternId](current))
-                  return true;
-
-               followers->add(currentPattern);
-            }
-         }
-      }
-
-      if (reversed) {
-         reversed = false;
-         followers = &nextOnes;
-         matched = &matchedOnes;
-      }
-      else {
-         reversed = true;
-         matched = &nextOnes;
-         followers = &matchedOnes;
-      }
-
-      current = current.nextNode();
-   }
-
-   return false;
-}
-
-void ByteCodeWriter :: optimizeBuildTree(BuildNode node)
-{
-   if (!_btTransformer.loaded)
-      return;
-
-   bool applied = true;
-   while (applied) {
-      applied = false;
-
-      applied = matchTriePatterns(node);
-   }
-}
-
 void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 
    ReferenceMap& paths, bool tapeOptMode, bool threadFriendly)
 {
-   optimizeBuildTree(node.findChild(BuildKey::Tape));
+   _buildTreeOptimizer.proceed(node.findChild(BuildKey::Tape));
 
    if (scope.moduleScope->debugModule)
       openMethodDebugInfo(scope, sourcePathRef);
@@ -3740,8 +3677,7 @@ void ByteCodeWriter :: loadBuildTreeRules(MemoryDump* dump)
 {
    MemoryReader reader(dump);
 
-   _btTransformer.trie.load(&reader);
-   _btTransformer.loaded = true;
+   _buildTreeOptimizer.load(reader);
 }
 
 void ByteCodeWriter :: loadByteCodeRules(MemoryDump* dump)
@@ -3750,4 +3686,89 @@ void ByteCodeWriter :: loadByteCodeRules(MemoryDump* dump)
 
    _bcTransformer.trie.load(&reader);
    _bcTransformer.loaded = true;
+}
+
+// --- ByteCodeWriter::BuildTreeOptimizer ---
+
+ByteCodeWriter::BuildTreeOptimizer :: BuildTreeOptimizer()
+{
+
+}
+
+void ByteCodeWriter::BuildTreeOptimizer :: load(StreamReader& reader)
+{
+   _btTransformer.trie.load(&reader);
+   _btTransformer.loaded = true;
+}
+
+void ByteCodeWriter::BuildTreeOptimizer :: proceed(BuildNode node)
+{
+   if (!_btTransformer.loaded)
+      return;
+
+   bool applied = true;
+   while (applied) {
+      applied = false;
+
+      applied = matchTriePatterns(node);
+   }
+}
+
+bool ByteCodeWriter::BuildTreeOptimizer :: matchTriePatterns(BuildNode node)
+{
+   BuildPatterns matchedOnes;
+   BuildPatterns nextOnes;
+
+   BuildPatterns* matched = &matchedOnes;
+   BuildPatterns* followers = &nextOnes;
+   bool           reversed = false;
+
+   BuildNode current = node.firstChild();
+   while (current != BuildKey::None) {
+      if (isNested(current.key)) {
+         // NOTE : analize nested command
+         if (matchTriePatterns(current))
+            return true;
+      }
+      if (isNonOperational(current.key)) {
+         // NOTE : ignore non-operational commands)
+         current = current.nextNode();
+
+         continue;
+      }
+
+      matched->add({ &_btTransformer.trie });
+      followers->clear();
+
+      for (auto it = matched->start(); !it.eof(); ++it) {
+         auto pattern = *it;
+
+         for (auto child_it = pattern.Children(); !child_it.eof(); ++child_it) {
+            auto currentPattern = child_it.Node();
+            auto currentPatternValue = currentPattern.Value();
+
+            if (currentPatternValue.match(current)) {
+               if (currentPatternValue.patternId && transformers[currentPatternValue.patternId](current))
+                  return true;
+
+               followers->add(currentPattern);
+            }
+         }
+      }
+
+      if (reversed) {
+         reversed = false;
+         followers = &nextOnes;
+         matched = &matchedOnes;
+      }
+      else {
+         reversed = true;
+         matched = &nextOnes;
+         followers = &matchedOnes;
+      }
+
+      current = current.nextNode();
+   }
+
+   return false;
 }

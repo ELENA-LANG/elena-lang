@@ -1,6 +1,15 @@
 <configuration>
+    <platform key="Win_x86">
+         <project>
+            <executable>linterpreter.exe</executable>
+         </project>
+    </platform>
+    <platform key="Win_x64">
+         <project>
+            <executable>linterpreter64.exe</executable>
+         </project>
+    </platform>
     <project>
-        <executable>linterpreter.exe</executable>
         <options></options>
         <namespace>linterpreter</namespace>
         <template>vm_console</template>

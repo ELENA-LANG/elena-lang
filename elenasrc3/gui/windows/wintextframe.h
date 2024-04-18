@@ -25,7 +25,7 @@ namespace elena_lang
       //void onDocumentRename(int index) override;
       void onDocumentModeChanged(int index, bool modifiedMode) override;
       void beforeDocumentClose(int index) override;
-      void onDocumentClose(int index) override;
+      void onDocumentClose(int index, bool empty) override;
 
       void onSelChanged() override;
 

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE common classes body File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "idecommon.h"
@@ -87,11 +87,11 @@ void* ContextBrowserBase :: addOrUpdateBYTE(WatchContext* context, ustr_t variab
 void ContextBrowserBase :: populateWORD(WatchContext* context, unsigned short value)
 {
    String<char, 20> number;
-   /*if (_browser->isHexNumberMode()) {
+   if (_model->hexadecimalMode) {
       number.appendHex(value);
       number.append('h');
    }
-   else*/ number.appendInt(value);
+   else number.appendInt(value);
 
    clearNode(context->root);
    populateNode(context->root, number.str());
@@ -101,11 +101,11 @@ void ContextBrowserBase :: populateWORD(WatchContext* context, unsigned short va
 void ContextBrowserBase :: populateDWORD(WatchContext* context, unsigned value)
 {
    String<char, 20> number;
-   /*if (_browser->isHexNumberMode()) {
+   if (_model->hexadecimalMode) {
       number.appendHex(value);
       number.append('h');
    }
-   else*/ number.appendInt(value);
+   else number.appendInt(value);
 
    clearNode(context->root);
    populateNode(context->root, number.str());
@@ -115,11 +115,11 @@ void ContextBrowserBase :: populateDWORD(WatchContext* context, unsigned value)
 void ContextBrowserBase :: populateUINT(WatchContext* context, unsigned value)
 {
    String<char, 20> number;
-   /*if (_browser->isHexNumberMode()) {
+   if (_model->hexadecimalMode) {
       number.appendHex(value);
       number.append('h');
    }
-   else*/ number.appendUInt(value);
+   else number.appendUInt(value);
 
    clearNode(context->root);
    populateNode(context->root, number.str());
@@ -158,11 +158,11 @@ void* ContextBrowserBase :: addOrUpdateQWORD(WatchContext* context, ustr_t varia
 void ContextBrowserBase :: populateQWORD(WatchContext* context, long long value)
 {
    String<char, 40> number;
-   /*if (_browser->isHexNumberMode()) {
+   if (_model->hexadecimalMode) {
       number.appendHex(value);
       number.append('h');
    }
-   else*/ number.appendLong(value);
+   else number.appendLong(value);
 
    clearNode(context->root);
    populateNode(context->root, number.str());

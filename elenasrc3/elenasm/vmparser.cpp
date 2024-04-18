@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                             (C)2023, by Aleksey Rakov
+//                                             (C)2023-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -33,8 +33,10 @@ bool VMTapeParser :: parseDirective(ScriptEngineReaderBase& reader, MemoryDump* 
          break;
       }
       else if (reader.compare("#start")) {
-         writer.write(VM_TERMINAL_CMD);
          writer.write(VM_INIT_CMD);
+      }
+      else if (reader.compare("#terminal")) {
+         writer.write(VM_TERMINAL_CMD);
       }
       else if (reader.compare("#config")) {
          ScriptBookmark bm = reader.read();
@@ -53,6 +55,55 @@ bool VMTapeParser :: parseDirective(ScriptEngineReaderBase& reader, MemoryDump* 
             else throw SyntaxError("Invalid directive", bm.lineInfo);
          }
          else throw SyntaxError("Invalid directive", bm.lineInfo);
+      }
+      else if (reader.compare("#map")) {
+         ScriptBookmark bm = reader.read();
+
+         if (bm.state == dfaQuote) {
+            writer.write(VM_FORWARD_CMD, reader.lookup(bm));
+         }
+         else {
+            IdentifierString forward;
+            if (bm.state == dfaReference) {
+               forward.append(reader.lookup(bm));
+
+               bm = reader.read();
+               if (!reader.compare("="))
+                  throw SyntaxError("Invalid #map command", bm.lineInfo);
+
+               bm = reader.read();
+               if (bm.state == dfaReference) {
+                  forward.append('=');
+                  forward.append(reader.lookup(bm));
+                  writer.write(VM_FORWARD_CMD, *forward);
+               }
+               throw SyntaxError("Invalid #map command", bm.lineInfo);
+            }
+            else throw SyntaxError("Invalid #map command", bm.lineInfo);
+         }
+      }
+      else if (reader.compare("#use")) {
+         ScriptBookmark bm = reader.read();
+
+         if (bm.state == dfaQuote) {
+            writer.write(VM_PACKAGE_CMD, reader.lookup(bm));
+         }
+         else {
+            IdentifierString package;
+            package.append(reader.lookup(bm));
+
+            bm = reader.read();
+            if (!reader.compare("="))
+               throw SyntaxError("Invalid #use command", bm.lineInfo);
+
+            bm = reader.read();
+            if (bm.state == dfaQuote) {
+               package.append('=');
+               package.append(reader.lookup(bm));
+               writer.write(VM_PACKAGE_CMD, *package);
+            }
+            else throw SyntaxError("Invalid #use command", bm.lineInfo);
+         }
       }
       else if (reader.compare("#postfix")) {
          ScriptBookmark bm = reader.read();

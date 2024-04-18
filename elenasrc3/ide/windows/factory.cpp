@@ -89,11 +89,11 @@ StyleInfo defaultStyles[STYLE_MAX + 1] = {
 
 StyleInfo classicStyles[STYLE_MAX + 1] = {
    {Color(0xFF, 0xFF, 0), Color(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-   {Color(0), Color(Canvas::Chrome()), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(Canvas::Chrome()), Color(0, 0, 68), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0x60, 0x60, 0x60), Color(0xC0, 0xC0, 0xC0), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
    {Color(0x60, 0x60, 0x60), Color(0x0, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
    {Color(0xFF, 0xFF, 0xFF), Color(0xFF, 0x0, 0x0), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
-   //{Colour(0xFF, 0xFF, 0xFF), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0xFF, 0xFF, 0xFF), Color(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0xC0, 0xC0, 0xC0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0xC0, 0xC0, 0xC0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    //{Colour(0xFF, 0xFF, 0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
@@ -106,7 +106,26 @@ StyleInfo classicStyles[STYLE_MAX + 1] = {
    //{Colour(0xFF, 0xFF, 0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false}
 };
 
-constexpr auto STYLE_SCHEME_COUNT = 2;
+StyleInfo darkStyles[STYLE_MAX + 1] = {
+   {Color(0xFF, 0xFF, 0xFF), Color(50, 50, 50), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(164, 164, 164), Color(64, 64, 64), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0x60, 0x60, 0x60), Color(0xC0, 0xC0, 0xC0), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
+   {Color(0xEF, 0xEF, 0xEF), Color(64, 128, 128), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
+   {Color(0xFF, 0xFF, 0xFF), Color(0xFF, 0x0, 0x0), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0xFF, 0xFF, 0xFF), Color(0x80, 0x0, 0x0), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   //{Colour(0xC0, 0xC0, 0xC0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   //{Colour(0xC0, 0xC0, 0xC0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   //{Colour(0xFF, 0xFF, 0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
+   //{Colour(0, 0xFF, 0x80), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   //{Colour(0, 0xFF, 0xFF), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   //{Colour(0, 0, 0x80), Colour(0xC0, 0xC0, 0xC0), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   //{Colour(0), Colour(0x0, 0xFF, 0xFF), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   //{Colour(0x60, 0x60, 0x60), Colour(0x0, 0xFF, 0xFF), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
+   //{Colour(0xFF, 0xFF, 0xFF), Colour(0xFF, 0x0, 0x0), TEXT("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   //{Colour(0xFF, 0xFF, 0), Colour(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false}
+};
+
+constexpr auto STYLE_SCHEME_COUNT = 3;
 
 MenuInfo browserContextMenuInfo[3] = {
       {IDM_DEBUG_INSPECT, CONTEXT_MENU_INSPECT},
@@ -167,6 +186,7 @@ IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel,
 {
    _schemes[0] = defaultStyles;
    _schemes[1] = classicStyles;
+   _schemes[2] = darkStyles;
    _settings = settings;
 
    _instance = instance;
@@ -258,6 +278,16 @@ void IDEFactory :: reloadStyles(TextViewModelBase* viewModel)
    _styles.assign(STYLE_MAX + 1, _schemes[viewModel->schemeIndex], viewModel->fontSize + 5, 20, &_fontFactory);
 }
 
+void IDEFactory :: styleControl(GUIControlBase* control)
+{
+   ControlBase* ctrl = static_cast<ControlBase*>(control);
+
+   auto style = _styles.getStyle(STYLE_DEFAULT);
+
+   ctrl->setColor(0, style->background);
+   ctrl->setColor(1, style->foreground);
+}
+
 ControlBase* IDEFactory :: createStatusbar(WindowBase* owner)
 {
    StatusBar* statusBar = new IDEStatusBar(_model);
@@ -344,12 +374,14 @@ ControlBase* IDEFactory :: createProjectView(ControlBase* owner, NotifierBase* n
       });
    projectView->createControl(_instance, owner);
 
+   styleControl(projectView);
+
    return projectView;
 }
 
 ControlBase* IDEFactory :: createDebugBrowser(ControlBase* owner, NotifierBase* notifier)
 {
-   ContextBrowser* browser = new ContextBrowser(300, 50, notifier, 
+   ContextBrowser* browser = new ContextBrowser(&_model->contextBrowserModel, 300, 50, notifier,
       [](NotifierBase* notifier, size_t item, size_t param)
       {
          BrowseEvent event = { EVENT_BROWSE_CONTEXT, item, param };
@@ -490,6 +522,8 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
 
    sdi->populate(counter, children);
    sdi->setLayout(textIndex, toolBarControl, bottomBox, -1, hsplitter);
+
+   styleControl(sdi);
 
    return sdi;
 }

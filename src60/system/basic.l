@@ -1405,6 +1405,9 @@ public const struct IntNumber : IntBaseNumber,
    constructor(short s)
       = s;
 
+   constructor(ushort s)
+      = s;
+
    bool equal(o)
    {
       if (o; is int n)

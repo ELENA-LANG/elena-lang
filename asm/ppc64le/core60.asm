@@ -932,6 +932,13 @@ inline %02Ch
 
 end
 
+// ; parent
+inline %02Dh
+
+  ld      r15, -elPackageOffset(r15)
+
+end
+
 // ; xget
 inline %02Eh
 
@@ -3771,6 +3778,82 @@ end
 
 // ; fillir
 inline %1F8h
+
+  li      r16, __arg16_1
+  li      r17, 0
+  mr      r18, r15
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  addi    r16, r16, -1
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; fillir
+inline %3F8h
+
+  li      r16, __arg16_1
+  li      r17, 0
+  mr      r18, r15
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  addi    r16, r16, -1
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; fillir
+inline %5F8h
+
+  li      r16, __arg16_1
+  li      r17, 0
+  mr      r18, r15
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  addi    r16, r16, -1
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; fillir
+inline %7F8h
+
+  li      r16, __arg16_1
+  li      r17, 0
+  mr      r18, r15
+
+labLoop:
+  cmpwi   r16,0
+  beq     labEnd
+  addi    r16, r16, -1
+  std     r17, 0(r18)
+  addi    r18, r18, 8
+  b       labLoop
+
+labEnd:
+
+end
+
+// ; fillir
+inline %9F8h
 
   li      r16, __arg16_1
   li      r17, 0

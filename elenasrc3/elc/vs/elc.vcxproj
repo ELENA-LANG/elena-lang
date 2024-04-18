@@ -181,6 +181,7 @@
     <ClCompile Include="..\..\engine\libman.cpp" />
     <ClCompile Include="..\..\engine\module.cpp" />
     <ClCompile Include="..\..\engine\parsertable.cpp" />
+    <ClCompile Include="..\..\engine\scriptreader.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
     <ClCompile Include="..\..\engine\syntaxtree.cpp" />
     <ClCompile Include="..\..\engine\windows\presenter.cpp" />
@@ -232,6 +233,7 @@
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\parsertable.h" />
     <ClInclude Include="..\..\engine\projectbase.h" />
+    <ClInclude Include="..\..\engine\scriptreader.h" />
     <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\engine\syntaxtree.h" />
     <ClInclude Include="..\..\engine\windows\presenter.h" />

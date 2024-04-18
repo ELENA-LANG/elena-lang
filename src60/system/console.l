@@ -22,7 +22,7 @@ public interface IConsoleWriter
 
    abstract setCursorPosition(int x, int y);
 
-//    abstract refresh();
+   abstract refresh();
 }
 
 public sealed class Console
@@ -37,11 +37,13 @@ public sealed class Console
    }
 
    write(s)
+      : info("Writes the specified literal value to the standard output stream.")
    {
       writer.write(s.toPrintable());
    }
 
    writeLine(s)
+      : info("Writes the specified literal value, followed by the current line terminator, to the standard output stream.")
    {
       writer.write(s.toPrintable());
       writer.write(newLineConstant);
@@ -53,6 +55,7 @@ public sealed class Console
    }
 
    char readChar()
+      : info("Reads the next character from the input stream")
    {
       char retVal := reader.read();
         
@@ -73,6 +76,10 @@ public sealed class Console
    string readLine()
             : info("Reads the next line of characters from the standard input stream.")
       = reader.readLine();   
+
+   wide readWideLine()
+            : info("Reads the next line of characters from the standard input stream.")
+      = reader.readWideLine();   
 }
 
 public static Console console = new Console(io'stdConsoleReader, io'stdConsoleWriter);

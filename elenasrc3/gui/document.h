@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      DocumentView class header
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DOCUMENT_H
@@ -104,6 +104,7 @@ namespace elena_lang
       bool textChanged;
       bool modifiedChanged;
       bool readOnlyChanged;
+      bool modeChanged;
 
       bool isViewChanged()
       {
@@ -122,6 +123,7 @@ namespace elena_lang
          formatterChanged = false;
          textChanged = false;
          readOnlyChanged = false;
+         modeChanged = false;
       }
 
       DocumentChangeStatus()
@@ -137,6 +139,7 @@ namespace elena_lang
             frameChanged = true;
             selelectionChanged = true;
             textChanged = true;
+            modeChanged = true;
          }
       }
    };
@@ -185,29 +188,19 @@ namespace elena_lang
          bool readOnly;
          bool modifiedMode;
          bool unnamed;
+         bool included;
          bool overwriteMode;
 
          int  rowDifference;
 
          bool oldModified;
          bool oldSelected;
-         //bool oldOvewrite;
-
-         //bool isModeChanged()
-         //{
-         //   bool changed = (modifiedMode != oldModified) || (overwriteMode != oldOvewrite);
-
-         //   oldModified = modifiedMode;
-         //   oldOvewrite = overwriteMode;
-
-         //   return changed;
-         //}
 
          void reset()
          {
             modifiedMode = false;
             readOnly = false;
-            unnamed = false;
+            unnamed = included = false;
             overwriteMode = false;
             oldSelected = oldModified = false;
 
@@ -291,6 +284,8 @@ namespace elena_lang
          status.readOnly = mode;
       }
 
+      void setOverwriteMode(DocumentChangeStatus& changeStatus, bool mode);
+
       int getRowCount() const { return _text->getRowCount(); }
       int getMaxColumn() const { return _maxColumn; }
       disp_t getSelectionLength();
@@ -299,6 +294,8 @@ namespace elena_lang
       bool isReadOnly() { return status.readOnly; }
       bool isUnnamed() { return status.unnamed; }
       bool isModified() { return status.modifiedMode; }
+      bool isIncluded() { return status.included; }
+      bool isOverwriteMode() { return status.overwriteMode; }
 
       void markAsUnnamed()
       {
@@ -307,6 +304,14 @@ namespace elena_lang
       void markAsModified()
       {
          status.modifiedMode = true;
+      }
+      void markAsInclued()
+      {
+         status.included = true;
+      }
+      void markAsExcluded()
+      {
+         status.included = false;
       }
 
       Point getSize() const { return _size; }

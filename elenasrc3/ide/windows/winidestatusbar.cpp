@@ -45,7 +45,11 @@ void IDEStatusBar :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
 
       setText(2, line.str());
    }
+   if (changeStatus.modeChanged) {
+      auto docView = _model->viewModel()->DocView();
 
+      setText(3, docView->isOverwriteMode() ? _T("OVR") : _T("INS"));
+   }
 }
 
 void IDEStatusBar :: setRectangle(Rectangle rec)

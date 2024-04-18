@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI SDI Window body File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "winsdi.h"
@@ -122,7 +122,7 @@ void VerticalBox :: setRectangle(Rectangle rec)
    }
    else {
       int fixedHeight = 0;
-      for (size_t i = 1; i < count; i++) {
+      for (int i = 1; i < count; i++) {
          fixedHeight += _list[i]->getRectangle().height();
          fixedHeight += _spacer;
       }
@@ -392,6 +392,21 @@ void SDIWindow :: onResizing(RECT* rect)
    }
 }
 
+int SDIWindow :: paintBackground()
+{
+   HDC hdc;
+   HBRUSH hbrBkgnd;
+   PAINTSTRUCT ps;
+   RECT r;
+
+   GetClientRect(_handle, &r);
+   hdc = BeginPaint(_handle, &ps);
+   FillRect(hdc, &r, _bkBrush);
+   EndPaint(_handle, &ps);
+
+   return 1;
+}
+
 LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
 {
    switch (message)
@@ -403,16 +418,6 @@ LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
          if(!onCommand(LOWORD(wParam)))
             return DefWindowProc(_handle, message, wParam, lParam);
          return 0;
-      //case WM_PAINT:
-      //{
-      //   PAINTSTRUCT ps;
-      //   HDC hdc = ::BeginPaint(_handle, &ps);
-      //   
-      //   drawControls(hdc);
-      //   EndPaint(_handle, &ps);
-
-      //   break;
-      //}
       case WM_DESTROY:
          PostQuitMessage(0);
          return 0;
@@ -436,6 +441,30 @@ LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
 
          return FALSE;
       }
+      case WM_ERASEBKGND:
+         return paintBackground();
+      //case WM_PAINT:
+      //   break;
+      //case WM_CTLCOLORLISTBOX:
+      //   if (_childBkBrush != nullptr) {
+      //      return (LRESULT)_childBkBrush;
+      //   }
+      //   else return WindowBase::proceed(message, wParam, lParam);
+      //   break;
+
+      ////case WM_CTLCOLORDIALOG:
+      //case WM_CTLCOLOREDIT:
+      //{
+      //   //SetBkMode((HDC)wParam, TRANSPARENT);
+      //   //SetTextColor((HDC)wParam, RGB(0x2B, 0x4C, 0x67));
+
+      //   //HBRUSH brush = CreateSolidBrush(RGB(0, 255, 0));
+      //   //return (INT_PTR)brush;
+      //   HBRUSH hBrushBackground = CreateSolidBrush(RGB(0, 0, 0));
+      //   SetTextColor((HDC)wParam, RGB(0x2B, 0x4C, 0x67));
+      //   SetBkColor((HDC)wParam, RGB(0, 255, 0));
+      //   return (LRESULT)hBrushBackground;
+      //}
       default:
          return WindowBase::proceed(message, wParam, lParam);
    }
@@ -476,4 +505,24 @@ void SDIWindow::exit()
 {
    ::SendMessage(_handle, WM_CLOSE, 0, 0);
 
+}
+
+bool SDIWindow :: setColor(int index, Color color)
+{
+   switch (index) {
+      case 0:
+         setBackgroundColor(color);
+         break;
+      default:
+         return false;
+   }
+   return true;
+}
+
+void SDIWindow :: setBackgroundColor(Color color)
+{
+   if (_bkBrush)
+      ::DeleteObject(_bkBrush);
+
+   _bkBrush = CreateSolidBrush(static_cast<long>(color));
 }

@@ -1,6 +1,7 @@
 
 // --- Message ---
 public sealed const struct Message
+   : info("A message constant")
 {
    embeddable __mssg value[4];
 
@@ -36,9 +37,9 @@ public sealed const struct ExtensionMessage
 {
    embeddable __ext_mssg value;
     
-//    [info:"Compares the values"]
-//    bool equal(ExtensionMessage ext_mssg)
-//        = theValue == ext_mssg;
+//   bool equal(ExtensionMessage ext_mssg)
+//         : info("Compares the values")
+//      = value == ext_mssg;
 
    dispatch() : info("Dequalifies incoming messages if they are equal to its value and redirects to the target"), 
                   external(system'core_routines'__ext_message_dispatcher);

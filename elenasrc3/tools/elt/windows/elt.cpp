@@ -35,7 +35,16 @@ public:
    }
 };
 
-int main()
+// default script mode
+void startInDefaultMode(VMSession& session)
+{
+   session.start();
+
+   session.loadScript(ELT_GRAMMAR_CONFIG);
+   session.loadScript(ELT_LSCRIPT_CONFIG);
+}
+
+int main(int argc, char* argv[])
 {
    printf(ELT_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_REVISION_NUMBER);
 
@@ -48,24 +57,29 @@ int main()
    session.loadTemplate(*commandPath);
 
    session.loadScript(ELT_CONFIG);
-   session.loadScript(ELT_GRAMMAR_CONFIG);
-   session.loadScript(ELT_LSCRIPT_CONFIG);
+
+   // load script passed via command line arguments
+   if (argc > 1) {
+      for (int i = 1; i < argc; i++) {
+         IdentifierString cmd(argv[i]);
+
+         if (argv[i][0] == '-') {
+            bool running = true;
+            if (argv[i][1] == 'i') {
+               startInDefaultMode(session);
+            }
+            else session.executeCommand(*cmd, running);
+
+            // check exit command
+            if (!running)
+               return 0;
+         }
+         else session.executeScript(*cmd);
+      }
+   }
+   else startInDefaultMode(session);
 
    session.printHelp();
-
-   //// load script passed via command line arguments
-   //if (argc > 1) {
-   //   for (int i = 1; i < argc; i++) {
-   //      if (argv[i][0] == '-') {
-   //         // check exit command
-   //         if (argv[i][1] == 'q')
-   //            return 0;
-
-   //         executeCommand(argv[i]);
-   //      }
-   //      else executeScript(argv[i]);
-   //   }
-   //}
 
    session.run();
 
