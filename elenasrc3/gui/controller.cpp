@@ -1,6 +1,6 @@
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GUI Controller implementation File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "controller.h"
@@ -11,22 +11,22 @@ using namespace elena_lang;
 
 // --- TextViewController ---
 
-void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name)
+void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name, bool included)
 {
    Text* text = new Text(_settings.eolMode);
    text->create();
 
-   model->addDocumentView(name, text, nullptr);
+   model->addDocumentView(name, text, nullptr, included);
 }
 
 bool TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
-   FileEncoding encoding)
+   FileEncoding encoding, bool included)
 {
    Text* text = new Text(_settings.eolMode);
    if (!text->load(path, encoding, false))
       return false;
 
-   model->addDocumentView(name, text, path);
+   model->addDocumentView(name, text, path, included);
 
    return true;
 }
@@ -201,6 +201,17 @@ bool TextViewController :: eraseChar(TextViewModelBase* model, bool moveback)
    }
 
    return false;
+}
+
+void TextViewController :: setOverwriteMode(TextViewModelBase* model)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+   if (!docView->isReadOnly()) {
+      docView->setOverwriteMode(status, !docView->isOverwriteMode());
+
+      notifyTextModelChange(model, status);
+   }
 }
 
 void TextViewController :: deleteText(TextViewModelBase* model)

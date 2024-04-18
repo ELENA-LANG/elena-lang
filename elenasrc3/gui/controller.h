@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GUI Controller header File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CONTOLLER_H
@@ -103,17 +103,19 @@ namespace elena_lang
       }
 
       bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
-         FileEncoding encoding) override;
+         FileEncoding encoding, bool included) override;
       bool selectDocument(TextViewModelBase* model, int index) override;
       void selectNextDocument(TextViewModelBase* model);
       void selectPreviousDocument(TextViewModelBase* model);
       void closeDocument(TextViewModelBase* model, int index, int& status) override;
 
-      void newDocument(TextViewModelBase* model, ustr_t name) override;
+      void newDocument(TextViewModelBase* model, ustr_t name, bool included) override;
 
       bool insertNewLine(TextViewModelBase* model) override;
       bool insertChar(TextViewModelBase* model, text_c ch) override;
       bool eraseChar(TextViewModelBase* model, bool moveback) override;
+
+      void setOverwriteMode(TextViewModelBase* model) override;
 
       void indent(TextViewModelBase* model) override;
       void outdent(TextViewModelBase* model) override;
@@ -158,6 +160,7 @@ namespace elena_lang
       TextViewController(TextViewSettings& settings)
       {
          _settings = settings;
+         _notifier = nullptr;
       }
    };
 

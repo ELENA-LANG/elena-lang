@@ -119,6 +119,8 @@ namespace elena_lang
       GUIControlBase** _children;
       LayoutManager    _layoutManager;
 
+      HBRUSH           _bkBrush;
+
       //void drawControls(HDC& hdc);
 
       void onResize() override;
@@ -130,6 +132,9 @@ namespace elena_lang
       bool onSetCursor() override;
 
       LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam) override;
+
+      void setBackgroundColor(Color color);
+      int paintBackground();
 
    public:
       static void registerSDIWindow(HINSTANCE hInstance, wstr_t className, HICON icon, wstr_t menuName, HICON smallIcon);
@@ -156,11 +161,14 @@ namespace elena_lang
 
       virtual void exit();
 
+      bool setColor(int, Color) override;
+
       SDIWindow(wstr_t title)
          : WindowBase(title, 800, 600)
       {
          _children = nullptr;
          _childCounter = 0;
+         _bkBrush = nullptr;
       }
       ~SDIWindow() override
       {

@@ -122,6 +122,8 @@ JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platf
 
 int main()
 {
+   long long l = 0;
+
    try
    {
       bool cleanMode = false;

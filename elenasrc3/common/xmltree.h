@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains XML Tree class header
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef XMLTREE_H
@@ -57,6 +57,11 @@ namespace elena_lang
          return _parent->insert(position, tag);
       }
 
+      virtual void removeNode(size_t position)
+      {
+         _parent->removeNode(position);
+      }
+
    public:
       static XmlNode Default()
       {
@@ -83,6 +88,11 @@ namespace elena_lang
       void setContent(ustr_t content)
       {
          writeContent(_position, content);
+      }
+
+      void remove()
+      {
+         _parent->removeNode(_position);
       }
 
       XmlNode();
@@ -121,6 +131,8 @@ namespace elena_lang
       XmlNode selectNode(XmlNode& node, ustr_t xpath);
 
       XmlNode insertNode(ustr_t xpath);
+
+      void removeNode(size_t position);
 
       void loadXml(ustr_t content);
 

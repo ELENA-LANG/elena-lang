@@ -1,6 +1,15 @@
 <configuration>
+    <platform key="Win_x86">
+         <project>
+            <executable>calc.exe</executable>
+         </project>
+    </platform>
+    <platform key="Win_x64">
+         <project>
+            <executable>calc64.exe</executable>
+         </project>
+    </platform>
     <project>
-        <executable>calc.exe</executable>
         <options></options>
         <namespace>calc</namespace>
         <template>console</template>

@@ -28,7 +28,7 @@ public static HInstance CurrentInstance = HInstance.Current;
 
 // --- MSG ---
 
-public sealed struct MSG 
+public sealed packed MSG 
 {
    handle _hwnd;
    int    _message;
@@ -41,7 +41,7 @@ public sealed struct MSG
 
 // --- CREATESTRUCT ---
 
-public sealed struct CREATESTRUCT
+public sealed packed CREATESTRUCT
 {
     pointer   CreateParam : rprop;
     HInstance instance; 

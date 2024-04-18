@@ -1,6 +1,15 @@
 <configuration>
+    <platform key="Win_x86">
+         <project>
+            <executable>interpreter.exe</executable>
+         </project>
+    </platform>
+    <platform key="Win_x64">
+         <project>
+            <executable>interpreter64.exe</executable>
+         </project>
+    </platform>
     <project>
-        <executable>interpreter.exe</executable>
         <options></options>
         <namespace>interpreter</namespace>
         <template>console</template>

@@ -316,6 +316,310 @@ public class Filter : Enumerator
     enumerable() => _enumerator;
 }
 
+// --- PatternFilter2 ---
+
+public class PatternFilter2 : Enumerator
+{
+   Func2      filter;
+   Enumerator enumerator;
+   object     previous;
+    
+   constructor new(Func2 filter, Enumerator enumerator)
+   {
+      this filter := filter;
+      this enumerator := enumerator;
+   }
+    
+   get Value() = *enumerator;
+    
+   bool next()
+   {
+      if (nil == previous)
+      {
+         ifnot (enumerator.next())
+            { ^ false };
+            
+         previous := *enumerator;
+      };
+        
+      while (enumerator.next())
+      {
+         if (filter(previous,*enumerator))
+            { ^ true };
+            
+         previous := *enumerator
+      };
+        
+      ^ false
+   }
+    
+   reset()
+   {
+      enumerator.reset();
+      previous := nil;
+   }
+    
+   enumerable() => enumerator;
+}
+
+// --- PatternFilter3 ---
+
+public class PatternFilter3 : Enumerator
+{
+   Func3      filter;
+   Enumerator enumerator;
+   object     previous;
+   object     beforePrev;
+    
+   constructor new(Func3 filter, Enumerator enumerator)
+   {
+      this filter := filter;
+      this enumerator := enumerator;
+      previous := nil;
+   }
+    
+   get Value() = *enumerator;
+    
+   reset()
+   {
+      enumerator.reset();
+      previous := nil
+   }
+    
+   bool next()
+   {
+      if (nil == previous)
+      {
+         ifnot (enumerator.next())
+            { ^ false };
+            
+         beforePrev := *enumerator;
+    
+         ifnot (enumerator.next())
+            { ^ false };
+            
+         previous := *enumerator
+      };
+                
+      while (enumerator.next())
+      {
+         if(filter(beforePrev,previous,*enumerator))
+            { ^ true };
+            
+         beforePrev := previous;
+         previous := *enumerator
+      };
+        
+      ^ false
+   }
+    
+   enumerable() => enumerator;
+}
+
+// --- PatternFilter4 ---
+
+public class PatternFilter4 : Enumerator
+{
+   Func4       filter;
+   Enumerator  enumerator;
+   object      previous;
+   object      beforePrev;
+   object      before2Prev;
+    
+   constructor new(Func4 filter, Enumerator enumerator)
+   {
+      this filter := filter;
+      this enumerator := enumerator;
+      previous := nil;
+   }
+    
+   get Value() = *enumerator;
+    
+   reset()
+   {
+      enumerator.reset();
+      previous := nil
+   }
+    
+   bool next()
+   {
+      if(nil == previous)
+      {
+         ifnot(enumerator.next())
+            { ^ false };
+            
+         before2Prev := *enumerator;
+            
+         ifnot(enumerator.next())
+            { ^ false };
+            
+         beforePrev := *enumerator;
+    
+         ifnot(enumerator.next())
+            { ^ false };
+            
+         previous := *enumerator
+      };
+                
+      while (enumerator.next())
+      {
+         if (filter(before2Prev,beforePrev,previous,*enumerator))
+            { ^ true };
+            
+         before2Prev := beforePrev;
+         beforePrev := previous;
+         previous := *enumerator
+      };
+        
+      ^ false
+   }
+    
+   enumerable() => enumerator;
+}
+
+// --- PatternFilter5 ---
+
+public class PatternFilter5 : Enumerator
+{
+   Func5      filter;
+   Enumerator enumerator;
+   object     previous;
+   object     beforePrev;
+   object     before2Prev;
+   object     before3Prev;
+    
+   constructor new(Func5 filter, Enumerator enumerator)
+   {
+      this filter := filter;
+      this enumerator := enumerator;
+      previous := nil;
+   }
+    
+   get Value() = *enumerator;
+    
+   reset()
+   {
+      enumerator.reset();
+      previous := nil
+   }
+    
+   bool next()
+   {
+      if (nil == previous)
+      {
+         ifnot(enumerator.next())
+            { ^ false };
+            
+         before3Prev := *enumerator;
+            
+         ifnot(enumerator.next())
+            { ^ false };
+            
+         before2Prev := *enumerator;
+            
+         ifnot(enumerator.next())
+            { ^ false };
+            
+         beforePrev := *enumerator;
+    
+         ifnot(enumerator.next())
+            { ^ false };
+            
+         previous := *enumerator;
+      };
+                
+      while (enumerator.next())
+      {
+         if (filter(before3Prev,before2Prev,beforePrev,previous,*enumerator))
+            { ^ true };
+            
+         before3Prev := before2Prev;
+         before2Prev := beforePrev;
+         beforePrev := previous;
+         previous := *enumerator
+      };
+        
+      ^ false
+   }
+    
+   enumerable() => enumerator;
+}
+
+// --- PatternFilter6 ---
+
+public class PatternFilter6 : Enumerator
+{
+   Func6      filter;
+   Enumerator enumerator;
+   object     previous;
+   object     beforePrev;
+   object     before2Prev;
+   object     before3Prev;
+   object     before4Prev;
+    
+   constructor new(Func6 filter, Enumerator enumerator)
+   {
+      this filter := filter;
+      this enumerator := enumerator;
+      previous := nil;
+   }
+    
+   get Value() = *enumerator;
+   
+   reset()
+   {
+      enumerator.reset();
+      previous := nil
+   }
+    
+   bool next()
+   {
+      if (nil == previous)
+      {
+         ifnot(enumerator.next())
+            { ^ false };
+            
+         before4Prev := *enumerator;
+            
+         ifnot(enumerator.next())
+            { ^ false };
+            
+         before3Prev := *enumerator;
+            
+         ifnot(enumerator.next())
+            { ^ false };
+            
+         before2Prev := *enumerator;
+            
+         ifnot(enumerator.next())
+            { ^ false };
+            
+         beforePrev := *enumerator;
+    
+         ifnot(enumerator.next())
+            { ^ false };
+            
+         previous := *enumerator;
+      };
+                                
+      while (enumerator.next())
+      {
+         if (filter(before4Prev,before3Prev,before2Prev,beforePrev,previous,*enumerator))
+                { ^ true };
+            
+         before4Prev := before3Prev;
+         before3Prev := before2Prev;
+         before2Prev := beforePrev;
+         beforePrev := previous;
+         previous := *enumerator
+      };
+        
+      ^ false
+   }
+    
+   enumerable() => enumerator;
+}
+
 // --- RangeEnumerator ---
 
 public class RangeEnumerator : Enumerator
@@ -405,6 +709,151 @@ public class ZipEnumerator : Enumerator
    }
 
    enumerable() => _enumerator1;
+}
+
+// --- JoinEnumerator ---
+
+public class JoinEnumerator : Enumerator
+{
+   Enumerator left;
+   Enumerator right;
+
+   Func2      filter;
+   Func2      selector;
+
+   constructor new(Func2 filter_f, Func2 select_f, Enumerator left_e, Enumerator right_e)
+   {
+      left := left_e;
+      right := right_e;
+        
+      filter := filter_f;
+      selector := select_f;
+   }
+    
+   reset()
+   {
+      left.reset();
+      right.reset()
+   }
+    
+   bool next()
+   {
+      while(left.next())
+      {
+         right.reset();
+            
+         while (right.next())
+         {
+            if(filter(*left, *right)) 
+            {
+               ^ true
+            }
+         }
+      };
+        
+      ^ false
+   }
+    
+   get Value() = selector(*left, *right);
+    
+   enumerable() => left;
+}
+
+// --- Repeater ---
+
+public class Repeater : Enumerator
+{
+   int      min;
+   int      max;
+   int      current;
+   Func1    func;
+
+   constructor new(int minValue, int maxValue, Func1 repetition)
+   {
+      func := repetition;
+      min := minValue;
+      max := maxValue;
+      current := min - 1
+   }
+    
+   constructor new(int minValue, int maxValue, ExtensionMessage extension)
+   {
+      func := (x => extension(x));
+      min := minValue;
+      max := maxValue;
+      current := min - 1;
+   }
+
+   get Value() = func(current);
+    
+   reset()
+   {
+      current := min - 1
+   }
+    
+   bool next()
+   {
+      current := current + 1;
+        
+      ^ (current < max)
+   }
+    
+   enumerable() = Range.for(min, max);
+}
+
+// --- IntervalEnumerator ---
+
+public class IntervalEnumerator : Enumerator
+{
+   object variable;
+   object start;
+   object end;
+   object step;
+    
+   bool   forward;
+    
+   constructor new(variable, start, end, step)
+   {
+      this variable := variable;
+      this start := start;
+      this end := end;
+      this step := step;
+        
+      forward := (start < end);
+        
+      self.reset()
+   }
+
+   constructor new(start, end, step)
+      <= new(new Variable(), start, end, step);
+
+   constructor new(start, end)
+      <= new(new Variable(), start, end, 1);
+        
+   reset() 
+   {
+      variable.Value := start;
+
+      if(forward) 
+      {
+         variable.reduce(step)
+      }
+      else variable.append(step)
+   }    
+    
+   get Value() = variable.Value;
+    
+   bool next()
+   {
+      if(forward )
+         { variable.append(step); ^ (variable < end) };
+        
+      variable.reduce(step); 
+        
+      ^ (variable > end)
+   }
+    
+   enumerable() = variable;
 }
 
 // --- patternOp ---

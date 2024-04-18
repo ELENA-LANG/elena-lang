@@ -3,7 +3,7 @@
 //
 //		This is a main file containing VM session code
 //
-//                                             (C)2023, by Aleksey Rakov
+//                                             (C)2023-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -125,6 +125,13 @@ bool VMSession :: executeScript(const char* script)
    return executeTape(tape);
 }
 
+void VMSession :: start()
+{
+   executeScript("[[ #start; ]]");
+
+   _started = true;
+}
+
 bool VMSession :: connect(void* tape)
 {
    _env.gc_yg_size = 0x15000;
@@ -137,8 +144,6 @@ bool VMSession :: connect(void* tape)
 
       return false;
    }
-
-   _started = true;
 
    return true;
 }

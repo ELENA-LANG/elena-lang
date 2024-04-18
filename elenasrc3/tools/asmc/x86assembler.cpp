@@ -119,6 +119,30 @@ X86Operand X86Assembler :: defineRegister(ustr_t token)
    else if (token.compare("edi")) {
       return { X86OperandType::EDI };
    }
+   else if (token.compare("xmm0")) {
+      return { X86OperandType::XMM0 };
+   }
+   else if (token.compare("xmm1")) {
+      return { X86OperandType::XMM1 };
+   }
+   else if (token.compare("xmm2")) {
+      return { X86OperandType::XMM2 };
+   }
+   else if (token.compare("xmm3")) {
+      return { X86OperandType::XMM3 };
+   }
+   else if (token.compare("xmm4")) {
+      return { X86OperandType::XMM4 };
+   }
+   else if (token.compare("xmm5")) {
+      return { X86OperandType::XMM5 };
+   }
+   else if (token.compare("xmm6")) {
+      return { X86OperandType::XMM6 };
+   }
+   else if (token.compare("xmm7")) {
+      return { X86OperandType::XMM7 };
+   }
    else return { X86OperandType::Unknown };
 }
 
@@ -1094,6 +1118,30 @@ void X86Assembler :: compileMov(ScriptToken& tokenInfo, MemoryWriter& writer)
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void X86Assembler :: compileMovq(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
+
+   if (!compileMovq(sour, dest, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileMovd(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
+
+   if (!compileMovd(sour, dest, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
 void X86Assembler :: compileMul(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
@@ -1318,6 +1366,18 @@ void X86Assembler::compileXor(ScriptToken& tokenInfo, MemoryWriter& writer)
    X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
 
    if (!compileXor(sour, dest, writer))
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileXorps(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   X86Operand sour = compileOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   X86Operand dest = compileOperand(tokenInfo, ASM_INVALID_DESTINATION);
+
+   if (!compileXorps(sour, dest, writer))
       throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
@@ -2022,6 +2082,39 @@ bool X86Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWrit
    return true;
 }
 
+
+bool X86Assembler :: compileMovq(X86Operand source, X86Operand target, MemoryWriter& writer)
+{
+   if (source.isR64_M64() && target.isXMM64()) {
+      writer.writeByte(0x66);
+      writer.writeByte(0x0F);
+      writer.writeByte(0xD6);
+      X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isXMM64() && target.isR64_M64()) {
+      writer.writeByte(0xF3);
+      writer.writeByte(0x0F);
+      writer.writeByte(0x7E);
+      X86Helper::writeModRM(writer, source, target);
+   }
+   else return false;
+
+   return true;
+}
+
+bool X86Assembler :: compileMovd(X86Operand source, X86Operand target, MemoryWriter& writer)
+{
+   if (source.isXMM64() && target.isR32_M32()) {
+      writer.writeByte(0x66);
+      writer.writeByte(0x0F);
+      writer.writeByte(0x6E);
+      X86Helper::writeModRM(writer, source, target);
+   }
+   else return false;
+
+   return true;
+}
+
 void X86Assembler :: compileMovsb(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    writer.writeByte(0xA4);
@@ -2382,6 +2475,18 @@ bool X86Assembler :: compileXor(X86Operand source, X86Operand target, MemoryWrit
    return true;
 }
 
+bool X86Assembler :: compileXorps(X86Operand source, X86Operand target, MemoryWriter& writer)
+{
+   if (source.isXMM64() && target.isXMM64()) {
+      writer.writeByte(0x0F);
+      writer.writeByte(0x57);
+      X86Helper::writeModRM(writer, source, target);
+   }
+   else return false;
+
+   return true;
+}
+
 void X86Assembler :: compileExternCall(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    writer.writeWord(0x15FF);
@@ -2660,11 +2765,17 @@ bool X86Assembler :: compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    if (tokenInfo.compare("mov")) {
       compileMov(tokenInfo, writer);
    }
+   else if (tokenInfo.compare("movd")) {
+      compileMovd(tokenInfo, writer);
+   }
    else if (tokenInfo.compare("movsb")) {
       compileMovsb(tokenInfo, writer);
    }
    else if (tokenInfo.compare("movsd")) {
       compileMovsd(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("movq")) {
+      compileMovq(tokenInfo, writer);
    }
    else if (tokenInfo.compare("mul")) {
       compileMul(tokenInfo, writer);
@@ -2812,6 +2923,9 @@ bool X86Assembler :: compileXOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    }
    else if (tokenInfo.compare("xor")) {
       compileXor(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("xorps")) {
+      compileXorps(tokenInfo, writer);
    }
    else return false;
 
@@ -3456,10 +3570,10 @@ void X86_64Assembler :: compileMovsq(ScriptToken& tokenInfo, MemoryWriter& write
 
 bool X86_64Assembler :: compileMovsxd(X86Operand source, X86Operand target, MemoryWriter& writer)
 {
-   if (source.isR64() && target.isR32()) {
+   if (source.isR64() && target.isR32_M32()) {
       writer.writeByte(0x48);
       writer.writeByte(0x63);
-      X86Helper::writeModRM(writer, target, source);
+      X86Helper::writeModRM(writer, source, target);
    }
    else return false;
 

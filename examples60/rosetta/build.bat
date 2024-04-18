@@ -63,12 +63,12 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-..\..\bin\elena-cli -parrays arrays.l
+..\..\bin\elena-cli -passociativearrays associativearrays.l
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-..\..\bin\elena-cli -passociativearrays associativearrays.l
+..\..\bin\elena-cli -parrays arrays.l
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

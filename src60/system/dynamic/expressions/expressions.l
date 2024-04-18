@@ -377,7 +377,7 @@ namespace expressions
 
       bool IsOperation = false;
 
-         eval()
+      eval()
          = symbol;
 
       declare(ExpressionScope parentScope)
@@ -387,6 +387,35 @@ namespace expressions
       saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
       {
          list.append(ConstantFunction.load(symbol));
+         if (index > 0) {
+            list.append(new SavingFunction(index));
+         };
+
+         scope.reserveStack(1);
+      }                
+   }
+
+   public class LazySymbolExpression : Expression
+   {
+      string symbolReference;
+        
+      constructor(string s)
+      {
+         symbolReference := s
+      }
+
+      bool IsOperation = false;
+
+      eval()      
+         = new Symbol(symbolReference);
+
+      declare(ExpressionScope parentScope)
+      {
+      }
+
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         list.append(ConstantFunction.load(new Symbol(symbolReference)));
          if (index > 0) {
             list.append(new SavingFunction(index));
          };

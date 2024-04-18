@@ -70,10 +70,15 @@ namespace elena_lang
    constexpr auto AUTO_SYMBOL_PREFIX         = "@autosymbol";
    constexpr auto INLINE_CLASSNAME           = "$inline";          // nested class generic name
 
-   constexpr auto OPERATION_MAP              = "statementTemplates";
-   constexpr auto PREDEFINED_MAP             = "predefinedSymbols";
-   constexpr auto ATTRIBUTES_MAP             = "attributeSymbols";
-   constexpr auto ALIASES_MAP                = "aliasTypes";
+   constexpr auto OPERATION_MAP_KEY          = "statements";
+   constexpr auto PREDEFINED_MAP_KEY         = "defaults";
+   constexpr auto ATTRIBUTES_MAP_KEY         = "attributes";
+   constexpr auto ALIASES_MAP_KEY            = "aliases";
+
+   constexpr auto OPERATION_MAP              = "system@operations@statements";
+   constexpr auto PREDEFINED_MAP             = "system@predefined@defaults";
+   constexpr auto ATTRIBUTES_MAP             = "system@attributes@attributes";
+   constexpr auto ALIASES_MAP                = "system@predefined@aliases";
 
    constexpr auto STARTUP_ENTRY              = "$auto'startUpSymbol";
 
@@ -109,7 +114,7 @@ namespace elena_lang
    constexpr auto PTR_FORWARD                = "$ptr";            // the ptr wrapper
    constexpr auto LAZY_FORWARD               = "$lazy";
    constexpr auto NULLABLE_FORWARD           = "$nullable";
-   constexpr auto PRELOADED_FORWARD          = "preloadedSymbols";
+   constexpr auto PRELOADED_FORWARD          = "system@preloadedSymbols";
    constexpr auto START_FORWARD              = "$symbol_entry";
 
    // --- ELENA section prefixes
@@ -201,6 +206,7 @@ namespace elena_lang
    constexpr ref_t elVirtualVMT           = 0x04000000;
    constexpr ref_t elWithYieldable        = 0x08000000;
    constexpr ref_t elGroup                = 0x10000000;
+   constexpr ref_t elPacked               = 0x20000000;
    constexpr ref_t elTemplatebased        = 0x40000000;
 
    constexpr ref_t elDebugMask            = 0x001F0000;
@@ -211,6 +217,8 @@ namespace elena_lang
    constexpr ref_t elDebugLiteral         = 0x00050000;
    constexpr ref_t elDebugWideLiteral     = 0x00060000;
    constexpr ref_t elDebugArray           = 0x00070000;
+   constexpr ref_t elDebugFLOAT64S        = 0x00080000;
+   constexpr ref_t elDebugBytes           = 0x00090000;
 
    // --- LoadResult enum ---
    enum class LoadResult
@@ -288,6 +296,7 @@ namespace elena_lang
       ShortArrayAddress    = 0x0106,
       IntArrayAddress      = 0x0107,
       UIntLocalAddress     = 0x0108,
+      RealArrayAddress     = 0x0109,
 
       Parameter            = 0x0200,
       IntParameterAddress  = 0x0202,
@@ -297,6 +306,7 @@ namespace elena_lang
       ByteArrayParameter   = 0x0206,
       ShortArrayParameter  = 0x0207,
       IntArrayParameter    = 0x0208,
+      RealArrayParameter   = 0x0209,
 
       FrameInfo            = 0x0301,
       ParameterInfo        = 0x0302,
@@ -373,6 +383,7 @@ namespace elena_lang
    constexpr ref_t mskAutoSymbolRef       = 0x24000000u;
    constexpr ref_t mskMssgNameLiteralRef  = 0x25000000u;
    constexpr ref_t mskPackageRef          = 0x26000000u;
+   constexpr ref_t mskDistrTypeListRef    = 0x27000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

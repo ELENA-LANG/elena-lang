@@ -20,6 +20,8 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
 
+  BUILD_TAG: 6.0.9
+
 permissions:
   contents: read
 
@@ -38,6 +40,12 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
 
+    - name: Setup Nuget
+      uses: Nuget/setup-nuget@v1.0.5
+
+    - name: Restore nuget packages
+      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
@@ -46,14 +54,14 @@ jobs:
 
     - name: Compile Lib
       shell: cmd
-      run: rebuild_lib60_${{matrix.platform}}.bat
+      run: build\rebuild_lib60_${{matrix.platform}}.bat
 
     - name: Prepare Artifact
       shell: cmd
-      run: install\build_package_${{matrix.platform}}.bat 
+      run: build\create_package_${{matrix.platform}}.bat 
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: elena-lang-${{matrix.platform}}-${{ env.BUILD_TAG }}
-        path: install\${{matrix.platform}}
+        path: build\${{matrix.platform}}

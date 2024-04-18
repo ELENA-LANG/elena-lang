@@ -56,3 +56,53 @@ public StrongSelector<T1, T2> : Enumerator<T2>
     
    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
 }
+
+// --- StrongJoinEnumerator ---
+
+public StrongJoinEnumerator<T1, T2, T3> : Enumerator<T3>
+{
+   Enumerator<T1> left;
+   Enumerator<T2> right;
+
+   Func<T1,T2,bool> filter;
+   Func<T1,T2,T3>   selector;
+    
+   constructor(Func<T1,T2,bool> filter_f, Func<T1,T2,T3> select_f, Enumerator<T1> left_e, Enumerator<T2> right_e)
+   {
+      left := left_e;
+      right := right_e;
+        
+      filter := filter_f;
+      selector := select_f
+   }
+    
+   reset()
+   {
+      left.reset();
+      right.reset()
+   }
+    
+   bool next()
+   {
+      while(left.next())
+      {
+         right.reset();
+            
+         while (right.next())
+         {
+            if(filter(left.get(), right.get())) 
+            {
+               ^ true
+            }
+         }
+      };
+        
+      ^ false
+   }
+    
+   T3 get() = selector(left.get(), right.get());
+    
+   enumerable() => left;    
+    
+   Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+}

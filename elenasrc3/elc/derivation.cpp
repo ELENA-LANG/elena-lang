@@ -70,6 +70,7 @@ void SyntaxTreeBuilder :: flushNamespace(SyntaxTreeWriter& writer, SyntaxNode no
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::MetaDictionary:
+         case SyntaxKey::SharedMetaDictionary:
             flushDictionary(writer, current);
             break;
          case SyntaxKey::MetaExpression:
@@ -94,6 +95,7 @@ void SyntaxTreeBuilder :: flush(SyntaxTreeWriter& writer, SyntaxNode node)
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::MetaDictionary:
+         case SyntaxKey::SharedMetaDictionary:
             flushDictionary(writer, current);
             break;
          case SyntaxKey::LoadStatement:
@@ -1299,6 +1301,7 @@ void SyntaxTreeBuilder :: flushTemplateCode(SyntaxTreeWriter& writer, Scope& sco
             flushStatement(writer, scope, current);
             break;
          case SyntaxKey::MetaDictionary:
+         case SyntaxKey::SharedMetaDictionary:
             flushDictionary(writer, current);
             break;
          case SyntaxKey::EOP:
@@ -1699,18 +1702,10 @@ void SyntaxTreeBuilder :: loadMetaSection(SyntaxNode node)
 {
    SyntaxNode terminalNode = node.firstChild(SyntaxKey::TerminalMask);
    if (terminalNode == SyntaxKey::reference) {
-      CompilerLogic::loadMetaData(_moduleScope, terminalNode.identifier());
-   }
-   else if (terminalNode == SyntaxKey::identifier) {
-      // !! temporal - to debug
-      assert(false);
+      ReferenceProperName aliasName(terminalNode.identifier());
+      NamespaceString ns(terminalNode.identifier());
 
-      SyntaxNode rootNode = node.parentNode();
-      SyntaxNode nsNode = rootNode.findChild(SyntaxKey::Namespace);
-
-      ReferenceName fullName(nsNode.identifier(), terminalNode.identifier());
-
-      CompilerLogic::loadMetaData(_moduleScope, *fullName);
+      CompilerLogic::loadMetaData(_moduleScope, *aliasName, *ns);
    }
 }
 

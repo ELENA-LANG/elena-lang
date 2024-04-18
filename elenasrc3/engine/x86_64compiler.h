@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86-64
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef X86_64COMPILER_H
@@ -28,6 +28,7 @@ namespace elena_lang
       friend void x86_64loadCallOp(JITCompilerScope* scope);
       friend void x86_64compileStackOp(JITCompilerScope* scope);
       friend void x86_64compileOpenIN(JITCompilerScope* scope);
+      friend void x86_64compileExtOpenIN(JITCompilerScope* scope);
 
    public:
       void writeImm9(MemoryWriter* writer, int value, int type) override;
@@ -52,6 +53,7 @@ namespace elena_lang
    void x86_64loadCallOp(JITCompilerScope* scope);
    void x86_64compileStackOp(JITCompilerScope* scope);
    void x86_64compileOpenIN(JITCompilerScope* scope);
+   void x86_64compileExtOpenIN(JITCompilerScope* scope);
 }
 
 #endif

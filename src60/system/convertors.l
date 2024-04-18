@@ -178,6 +178,8 @@ public singleton shortConvertor
 
 public singleton ushortConvertor
 {
+   private convertInt(int n, ref ushort retVal) : external(system'core_routines'__intToUShort);
+
    ushort convert(ushort s)
       = s;
 
@@ -186,6 +188,13 @@ public singleton ushortConvertor
       int n := s;
 
       ^ n
+   }
+
+   ushort convert(int n)
+   {
+      self.convertInt(n, ref ushort s);
+
+      ^ s;
    }
 }
 

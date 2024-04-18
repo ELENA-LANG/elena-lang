@@ -43,7 +43,7 @@ namespace elena_lang
 
       void removeUnused(WatchItems& refreshedItems) override;
 
-      ContextBrowser(int width, int height, NotifierBase* notifier, BrowseEventInvoker browseInvoker);
+      ContextBrowser(ContextBrowserModel* model, int width, int height, NotifierBase* notifier, BrowseEventInvoker browseInvoker);
    };
 }
 

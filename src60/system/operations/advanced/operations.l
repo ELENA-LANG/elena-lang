@@ -2,11 +2,11 @@ import system'operations;
 
 // === advanced statement templates ===
 
-#new __symbol statementTemplates;
+#share __symbol statements;
 
 // --- foreach ---
 
-public template foreach::in<item, collection>(loopBody) : __included(statementTemplates)
+public template foreach::in<item, collection>(loopBody) : __included(statements)
 {
    auto en := collection.enumerator();
 
@@ -20,7 +20,7 @@ public template foreach::in<item, collection>(loopBody) : __included(statementTe
 
 // --- if is ---
 
-public template if::is<expr, target>(truePart) : __included(statementTemplates)
+public template if::is<expr, target>(truePart) : __included(statements)
 {
    try
    {

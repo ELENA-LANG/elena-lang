@@ -78,6 +78,8 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
       // resolving program entry
       _debugEntryPoint = (pos_t)linker.resolve(PROGRAM_ENTRY, mskSymbolRef, true);
 
+      linker.resolveDistributed();
+
       // creating start up symbol
       Module* dummyModule = new Module();
       linker.loadPreloaded(PRELOADED_FORWARD);

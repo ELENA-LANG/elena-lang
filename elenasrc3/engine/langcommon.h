@@ -237,6 +237,7 @@ namespace elena_lang
    constexpr auto V_FORWARD               = 0x80001017u;
    constexpr auto V_IMPORT                = 0x80001018u;
    constexpr auto V_MIXIN                 = 0x80001019u;
+   constexpr auto V_DISTRIBUTED_FORWARD   = 0x8000101Au;
    constexpr auto V_AUTO                  = 0x8000101Cu;
    constexpr auto V_NAMESPACE             = 0x80001021u;
    constexpr auto V_SUPERIOR              = 0x80001024u;
@@ -247,6 +248,7 @@ namespace elena_lang
    constexpr auto V_WEAK                  = 0x80001029u;
    constexpr auto V_INTERFACE_DISPATCHER  = 0x8000102Au;
    constexpr auto V_NIL_CONVERSION        = 0x8000102Bu;
+   constexpr auto V_PACKED_STRUCT         = 0x8000102Cu;
 
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;
@@ -299,6 +301,7 @@ namespace elena_lang
    constexpr auto V_UINT8                 = 0x80000021u;
    constexpr auto V_UINT16                = 0x80000022u;
    constexpr auto V_NULLABLE              = 0x80000023u;
+   constexpr auto V_FLOAT64ARRAY          = 0x80000024u;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;

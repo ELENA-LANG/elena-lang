@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86-64
-//                                              (C)2021-2023 by Aleksey Rakov
+//                                              (C)2021-2024 by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -21,7 +21,7 @@ const Pair<ByteCode, CodeGenerator, ByteCode::None, nullptr> Overloads[Overloads
    { ByteCode::FreeI, x86_64compileStackOp},
    { ByteCode::AllocI, x86_64compileStackOp},
    { ByteCode::OpenIN, x86_64compileOpenIN},
-   { ByteCode::ExtOpenIN, x86_64compileOpenIN},
+   { ByteCode::ExtOpenIN, x86_64compileExtOpenIN},
 };
 
 inline void x86_64AllocStack(int args, MemoryWriter* code)
@@ -138,6 +138,15 @@ void elena_lang::x86_64compileOpenIN(JITCompilerScope* scope)
    scope->command.arg2 = align(scope->command.arg2, 16);
 
    elena_lang::compileOpen(scope);
+}
+
+void elena_lang::x86_64compileExtOpenIN(JITCompilerScope* scope)
+{
+   // NOTE : stack should be aligned to 16 bytes
+   scope->command.arg1 = align(scope->command.arg1, 2);
+   scope->command.arg2 = align(scope->command.arg2, 16);
+
+   elena_lang::compileExtOpen(scope);
 }
 
 // --- X86_64JITCompiler ---

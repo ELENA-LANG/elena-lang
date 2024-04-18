@@ -12,7 +12,7 @@ namespace io
       int dwHighDateTime;
    }
     
-   struct WIN32_FIND_DATA
+   packed WIN32_FIND_DATA
    {
       int      dwFileAttributes;
       FILETIME ftCreationTime;

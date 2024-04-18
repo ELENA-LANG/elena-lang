@@ -182,3 +182,19 @@ TreeViewItem TreeView :: hitTest(short x, short y)
 
    return i;
 }
+
+bool TreeView :: setColor(int index, Color color)
+{
+   switch (index) {
+      case 0:
+         SendMessage(_handle, TVM_SETBKCOLOR, 0, static_cast<long>(color));
+         break;
+      case 1:
+         SendMessage(_handle, TVM_SETTEXTCOLOR, 0, static_cast<long>(color));
+         break;
+      default:
+         return false;
+   }
+
+   return true;
+}
