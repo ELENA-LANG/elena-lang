@@ -3,7 +3,7 @@
 //
 //		This header contains x86 and x86-64 Assembler declarations
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef X86ASSEMBLER_H
@@ -97,6 +97,7 @@ namespace elena_lang
       virtual bool compileLea(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileMov(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileMovq(X86Operand source, X86Operand target, MemoryWriter& writer);
+      virtual bool compileMovd(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileMul(X86Operand source, MemoryWriter& writer);
       virtual bool compileNeg(X86Operand source, MemoryWriter& writer);
       virtual bool compileNot(X86Operand source, MemoryWriter& writer);
@@ -115,6 +116,7 @@ namespace elena_lang
       virtual bool compileTest(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual bool compileXadd(X86Operand source, X86Operand target, MemoryWriter& writer, PrefixInfo& prefixScope);
       virtual bool compileXor(X86Operand source, X86Operand target, MemoryWriter& writer);
+      virtual bool compileXorps(X86Operand source, X86Operand target, MemoryWriter& writer);
       virtual void compileExternCall(ScriptToken& tokenInfo, MemoryWriter& writer);
 
       void compileAdc(ScriptToken& tokenInfo, MemoryWriter& writer);
@@ -171,6 +173,7 @@ namespace elena_lang
       void compileMovsb(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMovsd(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMovq(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileMovd(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileMul(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileNeg(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileNop(ScriptToken& tokenInfo, MemoryWriter& writer);
@@ -197,6 +200,7 @@ namespace elena_lang
       void compileSub(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileTest(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileXor(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileXorps(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileXadd(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope);
 
       void compileDBField(ScriptToken& tokenInfo, MemoryWriter& writer) override;

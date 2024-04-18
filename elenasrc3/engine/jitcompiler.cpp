@@ -1572,45 +1572,31 @@ void elena_lang::loadIndexNOp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
-   void* code = nullptr;
-   if (scope->command.arg2 == 0) {
-      switch (scope->command.arg1) {
-         case 0:
-            code = scope->compiler->_inlines[1][scope->code()];
-            break;
-         case 1:
-            code = scope->compiler->_inlines[2][scope->code()];
-            break;
-         case 2:
-            code = scope->compiler->_inlines[3][scope->code()];
-            break;
-         case 3:
-            code = scope->compiler->_inlines[4][scope->code()];
-            break;
-         default:
-            code = scope->compiler->_inlines[6][scope->code()];
-            break;
-      }
+   int index = 0;
+   switch (scope->command.arg1) {
+      case 0:
+         index = 1;
+         break;
+      case 1:
+         index = 2;
+         break;
+      case 2:
+         index = 3;
+         break;
+      case 3:
+         index = 4;
+         break;
+      case 4:
+         index = 5;
+         break;
+      default:
+         break;
    }
-   else {
-      switch (scope->command.arg1) {
-         case 0:
-            code = scope->compiler->_inlines[5][scope->code()];
-            break;
-         case 2:
-            code = scope->compiler->_inlines[7][scope->code()];
-            break;
-         case 3:
-            code = scope->compiler->_inlines[8][scope->code()];
-            break;
-         case 4:
-            code = scope->compiler->_inlines[9][scope->code()];
-            break;
-         default:
-            code = scope->compiler->_inlines[0][scope->code()];
-            break;
-      }
-   }
+
+   if (!scope->command.arg2)
+      index += 6;
+
+   void* code = scope->compiler->_inlines[index][scope->code()];
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));

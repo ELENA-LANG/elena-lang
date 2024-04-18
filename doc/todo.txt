@@ -9,10 +9,6 @@ In development:
   --------------------------------------
   prom:elena in nutshell every 1 week
   --------------------------------------
-  - optimization : x86 / x64 - "open       (2),[],[len]"  - rep stosq - too slow
-                             - "open           :3, :xx"
-                             - "open           :4, :xx"
-
   - x86-64 : anagram
 
   - x86-64 : gui, simple_windowed_app 

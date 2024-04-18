@@ -14,7 +14,7 @@
 
 namespace elena_lang
 {
-   constexpr auto NumberOfInlines = 11;
+   constexpr auto NumberOfInlines = 12;
 
    // --- JITCompilerScope ---
    class JITCompiler;

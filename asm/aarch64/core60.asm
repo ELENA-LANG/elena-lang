@@ -3480,47 +3480,8 @@ labEnd:
 
 end 
 
-// ; openin 0, 0
-inline %1F0h
-
-   stp     x29, x30, [sp, #-16]! 
-   mov     x29, sp              // ; set frame pointer
-
-end 
-
-// ; openin 1, 0
-inline %2F0h
-
-   mov     x11, 0
-   stp     x29, x30, [sp, #-16]! 
-   mov     x29, sp              // ; set frame pointer
-   stp     x11, x11, [sp, #-16]! 
-
-end 
-
-// ; openin 2, 0
-inline %3F0h
-
-   mov     x11, 0
-   stp     x29, x30, [sp, #-16]! 
-   mov     x29, sp              // ; set frame pointer
-   stp     x11, x11, [sp, #-16]! 
-
-end 
-
-// ; openin 3, 0
-inline %4F0h
-
-  mov     x11, 0
-  stp     x29, x30, [sp, #-16]! 
-  mov     x29, sp              // ; set frame pointer
-  stp     x11, x11, [sp, #-16]! 
-  stp     x11, x11, [sp, #-16]! 
-
-end 
-
 // ; openin 0, n
-inline %5F0h
+inline %1F0h
 
   stp     x29, x30, [sp, #-16]! 
   mov     x29, sp
@@ -3553,6 +3514,56 @@ labLoop:
   b       labLoop
 
 labEnd:
+
+end 
+
+// ; openin 0, 0
+inline %7F0h
+
+   stp     x29, x30, [sp, #-16]! 
+   mov     x29, sp              // ; set frame pointer
+
+end 
+
+// ; openin 1, 0
+inline %8F0h
+
+   mov     x11, 0
+   stp     x29, x30, [sp, #-16]! 
+   mov     x29, sp              // ; set frame pointer
+   stp     x11, x11, [sp, #-16]! 
+
+end 
+
+// ; openin 2, 0
+inline %9F0h
+
+   mov     x11, 0
+   stp     x29, x30, [sp, #-16]! 
+   mov     x29, sp              // ; set frame pointer
+   stp     x11, x11, [sp, #-16]! 
+
+end 
+
+// ; openin 3, 0
+inline %0AF0h
+
+  mov     x11, 0
+  stp     x29, x30, [sp, #-16]! 
+  mov     x29, sp              // ; set frame pointer
+  stp     x11, x11, [sp, #-16]! 
+  stp     x11, x11, [sp, #-16]! 
+
+end 
+
+// ; openin 4, 0
+inline %0BF0h
+
+  mov     x11, 0
+  stp     x29, x30, [sp, #-16]! 
+  mov     x29, sp              // ; set frame pointer
+  stp     x11, x11, [sp, #-16]! 
+  stp     x11, x11, [sp, #-16]! 
 
 end 
 
@@ -3660,47 +3671,8 @@ labEnd:
 
 end 
 
-// ; extopenin 0, 0
-inline %1F2h
-
-   stp     x29, x30, [sp, #-16]! 
-   mov     x29, sp              // ; set frame pointer
-
-end 
-
-// ; extopenin 1, 0
-inline %2F2h
-
-   mov     x11, #0
-   stp     x29, x30, [sp, #-16]! 
-   mov     x29, sp              // ; set frame pointer
-   stp     x11, x11, [sp, #-16]! 
-
-end 
-
-// ; extopenin 2, 0
-inline %3F2h
-
-   mov     x11, #0
-   stp     x29, x30, [sp, #-16]! 
-   mov     x29, sp              // ; set frame pointer
-   stp     x11, x11, [sp, #-16]! 
-
-end 
-
-// ; extopenin 3, 0
-inline %4F2h
-
-   mov     x11, #0
-   stp     x29, x30, [sp, #-16]! 
-   mov     x29, sp              // ; set frame pointer
-   stp     x11, x11, [sp, #-16]! 
-   stp     x11, x11, [sp, #-16]! 
-
-end 
-
 // ; extopenin 0, n
-inline %5F2h
+inline %1F2h
 
   stp     x29, x30, [sp, #-16]! 
   mov     x29, sp
@@ -3733,6 +3705,56 @@ labLoop:
   b       labLoop
 
 labEnd:
+
+end 
+
+// ; extopenin 0, 0
+inline %7F2h
+
+   stp     x29, x30, [sp, #-16]! 
+   mov     x29, sp              // ; set frame pointer
+
+end 
+
+// ; extopenin 1, 0
+inline %8F2h
+
+   mov     x11, #0
+   stp     x29, x30, [sp, #-16]! 
+   mov     x29, sp              // ; set frame pointer
+   stp     x11, x11, [sp, #-16]! 
+
+end 
+
+// ; extopenin 2, 0
+inline %9F2h
+
+   mov     x11, #0
+   stp     x29, x30, [sp, #-16]! 
+   mov     x29, sp              // ; set frame pointer
+   stp     x11, x11, [sp, #-16]! 
+
+end 
+
+// ; extopenin 3, 0
+inline %0AF2h
+
+   mov     x11, #0
+   stp     x29, x30, [sp, #-16]! 
+   mov     x29, sp              // ; set frame pointer
+   stp     x11, x11, [sp, #-16]! 
+   stp     x11, x11, [sp, #-16]! 
+
+end 
+
+// ; extopenin 4, 0
+inline %0BF2h
+
+   mov     x11, #0
+   stp     x29, x30, [sp, #-16]! 
+   mov     x29, sp              // ; set frame pointer
+   stp     x11, x11, [sp, #-16]! 
+   stp     x11, x11, [sp, #-16]! 
 
 end 
 

@@ -2812,40 +2812,58 @@ inline %0F0h
 
 end 
 
-// ; openin 0, 0
+// ; openin 0, n
 inline %1F0h
 
   push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
   mov  rbp, rsp
 
 end 
 
-// ; openin 1, 0
+// ; openin 1, n
 inline %2F0h
 
   push rbp
+  xor  rax, rax
   mov  rbp, rsp
-  push 0
-  push 0
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
+  push rax
+  push rax
 
 end 
 
-// ; openin 2, 0
+// ; openin 2, n
 inline %3F0h
 
   push rbp
   xor  rax, rax
   mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
   push rax
   push rax
 
 end 
 
-// ; openin 3, 0
+// ; openin 3, n
 inline %4F0h
 
   push rbp
   xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
   mov  rbp, rsp
   push rax
   push rax
@@ -2854,7 +2872,7 @@ inline %4F0h
 
 end 
 
-// ; openin 0, n
+// ; openin 4, n
 inline %5F0h
 
   push rbp
@@ -2864,6 +2882,10 @@ inline %5F0h
   push rbp
   push rax
   mov  rbp, rsp
+  push rax
+  push rax
+  push rax
+  push rax
 
 end 
 
@@ -2877,6 +2899,61 @@ inline %6F0h
   sub  rsp, __arg32_1
   mov  rdi, rsp
   rep  stos
+
+end 
+
+// ; openin 0, 0
+inline %7F0h
+
+  push rbp
+  mov  rbp, rsp
+
+end 
+
+// ; openin 1, 0
+inline %8F0h
+
+  push rbp
+  mov  rbp, rsp
+  push 0
+  push 0
+
+end 
+
+// ; openin 2, 0
+inline %9F0h
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  push rax
+  push rax
+
+end 
+
+// ; openin 3, 0
+inline %0AF0h
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  push rax
+  push rax
+  push rax
+  push rax
+
+end 
+
+// ; openin 4, 0
+inline %0BF0h
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  push rax
+  push rax
+  push rax
+  push rax
 
 end 
 
@@ -2962,7 +3039,7 @@ inline %0F2h
 
 end 
 
-// ; extopenin 0, 0
+// ; extopenin 0, n
 inline %1F2h
 
   mov  [rsp+8], rcx
@@ -2981,11 +3058,16 @@ inline %1F2h
   mov  rbp, rsp
 
   push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
   mov  rbp, rsp
 
 end 
 
-// ; extopenin 1, 0
+// ; extopenin 1, n
 inline %2F2h
 
   mov  [rsp+8], rcx
@@ -3004,13 +3086,18 @@ inline %2F2h
   mov  rbp, rsp
 
   push rbp
+  xor  rax, rax
   mov  rbp, rsp
-  push 0
-  push 0
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
+  push rax
+  push rax
 
 end 
 
-// ; extopenin 2, 0
+// ; extopenin 2, n
 inline %3F2h
 
   mov  [rsp+8], rcx
@@ -3031,12 +3118,16 @@ inline %3F2h
   push rbp
   xor  rax, rax
   mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
   push rax
   push rax
 
 end 
 
-// ; extopenin 3, 0
+// ; extopenin 3, n
 inline %4F2h
 
   mov  [rsp+8], rcx
@@ -3057,13 +3148,18 @@ inline %4F2h
   push rbp
   xor  rax, rax
   mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
+  push rax
   push rax
   push rax
   push rax
 
 end 
 
-// ; extopenin 0, n
+// ; extopenin 4, n
 inline %5F2h
 
   mov  [rsp+8], rcx
@@ -3088,6 +3184,10 @@ inline %5F2h
   push rbp
   push rax
   mov  rbp, rsp
+  push rax
+  push rax
+  push rax
+  push rax
 
 end 
 
@@ -3116,6 +3216,136 @@ inline %6F2h
   sub  rsp, __arg32_1
   mov  rdi, rsp
   rep  stos
+
+end 
+
+// ; extopenin 0, 0
+inline %7F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  mov  rbp, rsp
+
+end 
+
+// ; extopenin 1, 0
+inline %8F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  mov  rbp, rsp
+  push 0
+  push 0
+
+end 
+
+// ; extopenin 2, 0
+inline %9F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  push rax
+  push rax
+
+end 
+
+// ; extopenin 3, 0
+inline %0AF2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  push rax
+  push rax
+  push rax
+  push rax
+
+end 
+
+// ; extopenin 4, 0
+inline %0BF2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push rbp     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  push rax
+  push rax
+  push rax
+  push rax
 
 end 
 
