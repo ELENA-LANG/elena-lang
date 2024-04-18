@@ -184,6 +184,13 @@ labYGCollect:
   push rsi
   push rcx
 
+  // ; save perm roots
+  mov  rsi, [data : %CORE_GC_TABLE + gc_perm_start]
+  mov  rcx, [data : %CORE_GC_TABLE + gc_perm_current]
+  sub  rcx, rsi
+  push rsi
+  push rcx
+
   // ;   collect frames
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]  
   mov  rcx, rax
