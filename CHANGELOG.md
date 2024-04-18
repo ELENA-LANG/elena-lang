@@ -1,3 +1,46 @@
+## ELENA 6.0.9
+*19.04.2024*
+
+- ELENA
+  - [ADDED] new opcode - parent
+  - [ADDED] meta expression: nested singletons
+  - [ADDED] new class flag - elPacked
+  - [ADDED] new attribute - packed  
+
+- ELC
+  - [ADDED] #637 - unit tests for byRefOp optimization
+  - [ADDED] #637 - unit tests for intCopying optimization
+  - [ADDED] #610 - struct redesign
+  - [FIXED] optimization : copy 8 / copydpn 8
+  - [FIXED] #615 : The field is not property incremented by an addition assignment
+  - [FIXED] x64 : fround opcode
+  - [FIXED] x64 : fabs opcode
+  - [FIXED] x86 : xdispatchmr opcode
+
+- API
+  - [ADDED] system'dynamic'expressions'LazySymbolExpression
+  - [FIXED] ushort - native comparison operations
+  - [ADDED] system'net
+  - [ADDED] ltests
+  - [ADDED] net
+  - [ADDED] win64 gui
+  - [FIXED] realOp.RoundedInt extension
+
+- SAMPLES
+  - [FIXED] interpreter sample for x86-64
+
+- Tools
+  - [FIXED] #618 : template class descriptions
+
+- IDE
+  - [ADDED] include / exclude file
+  - [FIXED] ctrl+w hides the frame
+  - [ADDED] ins / over modes
+  - [ADDED] dark color scheme
+   
+- Misc
+  - [ADDED] GitHub Action - MSBuild nightly build
+
 ## ELENA 6.0.8
 *21.03.2024*
 
