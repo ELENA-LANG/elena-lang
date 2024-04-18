@@ -6,11 +6,10 @@ In development:
   ### EPIC: elena 6.0 - redux ###
 
   === Iteration 21 ===
-  - test github actions
 
   === Iteration 22 ===
   --------------------------------------
-  dev: #608, #637 (bt tests (>=4), all bc tests), #646
+  dev: #608, #637 (bt tests (>=4), all bc tests), #646, interface mockup
   op:
   opt:pi under 6 sec, #601
   maint: #506, #617, #620, #622
@@ -37,3 +36,11 @@ In development:
   === Iteration 24 ===
   --------------------------------------
   dev: async programming (instant messagange sample (chat) )
+  op:
+  opt:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
+  port:

@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{3CAA69D3-0F98-44B1-A73E-E864BA51D5BD}
 AppName=ELENA Programming Language
-AppVersion=6.0.0
+AppVersion=6.0.9
 ;AppVerName=ELENA Programming Language 5.0.0
 AppPublisher=Alexey Rakov
 AppPublisherURL=http://github.com/ELENA-LANG/elena-lang
@@ -35,11 +35,11 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 Source: "x86\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "x86\doc\*"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "x86\examples60\*"; DestDir: "{app}\examples60"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "x86\src60\*"; DestDir: "{app}\src60"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "x86\lib60\*"; DestDir: "{app}\lib60"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\doc\license"; DestDir: "{app}";
 Source: "..\readme.md"; DestDir: "{app}"; Flags: isreadme
 Source: "..\CHANGELOG.md"; DestDir: "{app}";
-Source: "..\rebuild_lib60.bat"; DestDir: "{app}";
 Source: "redist\VC_redist.x86.exe"; DestDir: "{app}"; Flags: deleteafterinstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
