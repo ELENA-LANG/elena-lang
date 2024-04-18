@@ -182,7 +182,7 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-%~dp0\x86\bin\elena-cli %~dp0\x86\src60\tests\tests.prj
+%~dp0\x86\bin\elena-cli %~dp0\x86\src60\ltests\ltests.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
