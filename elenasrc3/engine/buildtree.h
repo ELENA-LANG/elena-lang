@@ -158,6 +158,7 @@ namespace elena_lang
       UByteCondOp          = 0x0080,
       UShortCondOp         = 0x0081,
       IntLongOp            = 0x0082,
+      DistributedTypeList  = 0x0083,
 
       MaxOperationalKey    = 0x0082,
 
@@ -204,6 +205,7 @@ namespace elena_lang
       ShortArrayParameter  = 0x00C7,
       ByteArrayParameter   = 0x00C8,
       IntArrayParameter    = 0x00C9,
+      RealArrayParameter   = 0x00CA,
 
       BinaryArray          = 0x00D0,
 
@@ -240,7 +242,44 @@ namespace elena_lang
    // --- BuildTree ---
    class BuildTree : public Tree<BuildKey, BuildKey::None>
    {
+      static Tree<BuildKey, BuildKey::None>::Node nextNonIdle(Tree<BuildKey, BuildKey::None>::Node node)
+      {
+         do {
+            node = node.nextNode();
+         } while (node == BuildKey::Idle);
+
+         return node;
+      }
+      static Tree<BuildKey, BuildKey::None>::Node firstNonIdle(Tree<BuildKey, BuildKey::None>::Node node)
+      {
+         node = node.firstChild();
+         while (node == BuildKey::Idle) {
+            node = node.nextNode();
+         }
+
+         return node;
+      }
+
    public:
+      static bool compare(Tree<BuildKey, BuildKey::None>::Node n1, Tree<BuildKey, BuildKey::None>::Node n2, bool onlyChildren)
+      {
+         if (onlyChildren || (n1.key == n2.key && n1.arg.value == n2.arg.value)) {
+            Tree<BuildKey, BuildKey::None>::Node c1 = firstNonIdle(n1);
+            Tree<BuildKey, BuildKey::None>::Node c2 = firstNonIdle(n2);
+            while (c1.key != BuildKey::None) {
+               if (!compare(c1, c2, false))
+                  return false;
+
+               c1 = nextNonIdle(c1);
+               c2 = nextNonIdle(c2);
+            }
+
+            return c2.key == BuildKey::None;
+         }
+
+         return false;
+      }
+
       static pos_t countChildren(Tree<BuildKey, BuildKey::None>::Node node, BuildKey mask)
       {
          pos_t counter = 0;
@@ -252,6 +291,27 @@ namespace elena_lang
          }
 
          return counter;
+      }
+
+      static void copyNode(Tree<BuildKey, BuildKey::None>::Writer& writer, Tree<BuildKey, BuildKey::None>::Node node, 
+         bool includingNode = false)
+      {
+         if (includingNode) {
+            if (node.arg.strArgPosition != INVALID_POS) {
+               writer.newNode(node.key, node.identifier());
+            }
+            else writer.newNode(node.key, node.arg.reference);
+         }
+
+         auto current = node.firstChild();
+         while (current != BuildKey::None) {
+            copyNode(writer, current, true);
+
+            current = current.nextNode();
+         }
+
+         if (includingNode)
+            writer.closeNode();
       }
 
       static void loadBuildKeyMap(BuildKeyMap& map)
@@ -280,6 +340,23 @@ namespace elena_lang
          map.add("direct_call_op", BuildKey::DirectCallOp);
          map.add("addingint", BuildKey::AddingInt);
          map.add("saving_index", BuildKey::SavingIndex);
+         map.add("open_frame", BuildKey::OpenFrame);
+         map.add("close_frame", BuildKey::CloseFrame);
+         map.add("argument", BuildKey::Argument);
+         map.add("class_reference", BuildKey::ClassReference);
+         map.add("open_statement", BuildKey::OpenStatement);
+         map.add("end_statement", BuildKey::EndStatement);
+         map.add("saving_int", BuildKey::SavingInt);
+
+         map.add("value", BuildKey::Value);
+         map.add("tape", BuildKey::Tape);
+         map.add("type", BuildKey::Type);
+         map.add("size", BuildKey::Size);
+         map.add("method_name", BuildKey::MethodName);
+         map.add("arguments_info", BuildKey::ArgumentsInfo);
+         map.add("variable_info", BuildKey::VariableInfo);
+         map.add("column", BuildKey::Column);
+         map.add("row", BuildKey::Row);
       }
    };
 

@@ -21,7 +21,7 @@ const char* _fnOpcodes[256] =
    "dtrans", "xassign", "lload", "convl", "xlcmp", "xload", "xlload", "lneg",
 
    "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", "xjump",
-   "bcopy", "wcopy", "xpeekeq", "trylock", "freelock", OPCODE_UNKNOWN, "xget", "xcall",
+   "bcopy", "wcopy", "xpeekeq", "trylock", "freelock", "parent", "xget", "xcall",
 
    "xfsave", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xquit", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -269,40 +269,40 @@ mssg_t ByteCodeUtil :: resolveMessageName(ustr_t messageName, ModuleBase* module
    return encodeMessage(actionRef, argCount, flags);
 }
 
-inline ref_t importRArg(ref_t arg, SectionScopeBase* target, ModuleBase* importer)
+inline ref_t importRArg(ref_t arg, ModuleBase* exporter, ModuleBase* importer)
 {
    if (arg != -1) {
       ref_t mask = arg & mskAnyRef;
       switch (mask) {
          case mskMssgLiteralRef:
          case mskMssgNameLiteralRef:
-            return target->importMessageConstant(importer, arg & ~mskAnyRef) | mask;
+            return ImportHelper::importMessageConstant(exporter, arg & ~mskAnyRef, importer) | mask;
             break;
          case mskExtMssgLiteralRef:
-            return target->importExtMessageConstant(importer, arg & ~mskAnyRef) | mask;
+            return ImportHelper::importExtMessageConstant(exporter, arg & ~mskAnyRef, importer) | mask;
             break;
          case mskExternalRef:
-            return target->importExternal(importer, arg & ~mskAnyRef) | mask;
+            return ImportHelper::importExternal(exporter, arg & ~mskAnyRef, importer) | mask;
             break;
          default:
-            return target->importReference(importer, arg & ~mskAnyRef) | mask;
+            return ImportHelper::importReference(exporter, arg & ~mskAnyRef, importer) | mask;
             break;
       }
    }
    return arg;
 }
 
-void ByteCodeUtil :: importCommand(ByteCommand& command, SectionScopeBase* target, ModuleBase* importer)
+void ByteCodeUtil :: importCommand(ByteCommand& command, ModuleBase* exporter, ModuleBase* importer)
 {
    if (isRCommand(command.code)) {
-      command.arg1 = importRArg(command.arg1, target, importer);
+      command.arg1 = importRArg(command.arg1, exporter, importer);
    }
    else if (isMCommand(command.code)) {
-      command.arg1 = target->importMessage(importer, command.arg1);
+      command.arg1 = ImportHelper::importMessage(exporter, command.arg1, importer);
    }
 
-   if (isR2Command(command.code)) {
-      command.arg2 = importRArg(command.arg2, target, importer);
+   if (isR2Command(command.code)) {      
+      command.arg2 = importRArg(command.arg2, exporter, importer);
    }
 }
 
@@ -688,7 +688,7 @@ void CommandTape :: write(ByteCode code, arg_t arg1, arg_t arg2)
    tape.add(command);
 }
 
-void CommandTape :: import(ModuleBase* sourceModule, MemoryBase* source, bool withHeader, SectionScopeBase* target)
+void CommandTape :: import(ModuleBase* sourceModule, MemoryBase* source, bool withHeader, ModuleBase * targetModule)
 {
    MemoryReader reader(source);
 
@@ -699,7 +699,7 @@ void CommandTape :: import(ModuleBase* sourceModule, MemoryBase* source, bool wi
    while (!reader.eof()) {
       ByteCodeUtil::read(reader, command);
 
-      ByteCodeUtil::importCommand(command, target, sourceModule);
+      ByteCodeUtil::importCommand(command, sourceModule, targetModule);
 
       tape.add(command);
    }
@@ -929,4 +929,123 @@ bool ByteCodeTransformer :: apply(CommandTape& commandTape)
    }
 
    return false;
+}
+
+// --- ImportHelper ---
+
+ref_t ImportHelper :: importReference(ModuleBase* exporter, ref_t exportRef, ModuleBase* importer)
+{
+   if (!exportRef)
+      return 0;
+
+   ustr_t referenceName = exporter->resolveReference(exportRef);
+   if (isWeakReference(referenceName) && !isTemplateWeakReference(referenceName)) {
+      IdentifierString fullName(exporter->name(), referenceName);
+
+      return importer->mapReference(*fullName);
+   }
+   else return importer->mapReference(referenceName);
+}
+
+ref_t ImportHelper :: importMessage(ModuleBase* exporter, mssg_t exportRef, ModuleBase* importer)
+{
+   if (!exportRef)
+      return 0;
+
+   pos_t paramCount = 0;
+   ref_t actionRef, flags;
+   decodeMessage(exportRef, actionRef, paramCount, flags);
+
+   if (actionRef) {
+      // signature and custom verb should be imported
+      ref_t signature = 0;
+      ustr_t actionName = exporter->resolveAction(actionRef, signature);
+
+      actionRef = importer->mapAction(actionName, importSignature(exporter, signature, importer), false);
+   }
+
+   return encodeMessage(actionRef, paramCount, flags);
+}
+
+ref_t ImportHelper :: importSignature(ModuleBase* exporter, ref_t signRef, ModuleBase* importer)
+{
+   if (!signRef)
+      return 0;
+
+   ref_t dump[ARG_COUNT];
+   size_t len = exporter->resolveSignature(signRef, dump);
+   for (size_t i = 0; i < len; i++) {
+      dump[i] = importReference(exporter, dump[i], importer);
+   }
+
+   return importer->mapSignature(dump, len, false);
+}
+
+ref_t ImportHelper :: importReferenceWithMask(ModuleBase* exporter, ref_t exportRef, ModuleBase* importer)
+{
+   ref_t mask = exportRef & mskAnyRef;
+   ref_t refId = exportRef & ~mskAnyRef;
+   if (refId)
+      refId = importReference(exporter, refId, importer);
+
+   return refId | mask;
+}
+
+ref_t ImportHelper :: importAction(ModuleBase* exporter, ref_t exportRef, ModuleBase* importer)
+{
+   if (!exportRef)
+      return 0;
+
+   ref_t signRef = 0;
+   ustr_t value = exporter->resolveAction(exportRef, signRef);
+
+   return  importer->mapAction(value, 0, signRef ? importSignature(exporter, signRef, importer) : 0);
+}
+
+ref_t ImportHelper :: importExternal(ModuleBase* exporter, ref_t reference, ModuleBase* importer)
+{
+   ustr_t refName = exporter->resolveReference(reference);
+
+   return importer->mapReference(refName);
+}
+
+ref_t ImportHelper :: importConstant(ModuleBase* exporter, ref_t reference, ModuleBase* importer)
+{
+   if (!reference)
+      return 0;
+
+   ustr_t value = exporter->resolveConstant(reference);
+
+   return  importer->mapConstant(value);
+}
+
+ref_t ImportHelper :: importMessageConstant(ModuleBase* exporter, ref_t reference, ModuleBase* importer)
+{
+   if (!reference)
+      return 0;
+
+   ustr_t value = exporter->resolveConstant(reference);
+
+   ByteCodeUtil::resolveMessage(value, importer, false);
+
+   return importer->mapConstant(value);
+}
+
+ref_t ImportHelper :: importExtMessageConstant(ModuleBase* exporter, ref_t reference, ModuleBase* importer)
+{
+   if (!reference)
+      return 0;
+
+   ustr_t value = exporter->resolveConstant(reference);
+
+   size_t index = value.find('<');
+   assert(index != NOTFOUND_POS);
+   size_t endIndex = value.findSub(index, '>');
+
+   IdentifierString messageName(value);
+   messageName.cut(index, endIndex - index + 1);
+
+   ByteCodeUtil::resolveMessage(*messageName, importer, false);
+
+   return importer->mapConstant(value);
 }

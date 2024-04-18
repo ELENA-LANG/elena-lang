@@ -1,5 +1,6 @@
 // --- Exception ---
 public class Exception
+   : info("A basic exception")
 {
    string    message;
    CallStack callStack;
@@ -31,6 +32,7 @@ public class Exception
    }
 
    string toPrintable()
+      : info("Returns the message and the call stack")
    {
       string retVal := message.add($10"Call stack:"$10).add(callStack.toPrintable());
         

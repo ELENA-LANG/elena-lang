@@ -72,7 +72,7 @@ RecentList :: RecentList(IDEController* controller, IDEModel* model, int menuBas
    _recentList = nullptr;
 }
 
-void RecentList :: onDocumentClose(int)
+void RecentList :: onDocumentClose(int, bool)
 {
    
 }

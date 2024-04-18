@@ -1,3 +1,8 @@
+import system;
+
+// --- Window Color Constants
+public const int COLOR_BACKGROUND = 5;
+
 // --- Raster Operation Codes ---
 
 public const int SRCCOPY          = 00CC0020h;
@@ -240,9 +245,17 @@ public sealed const struct HBRUSH
    static HBRUSH Default
       = default;
 
+   static HBRUSH COLOR_BACKGROUND
+      = HBRUSH.load(COLOR_BACKGROUND);
+
    constructor(handle handle)
    {
       _handle := handle
+   }
+
+   internal constructor load(int constant)
+   {
+      _handle := Handle.loadDirty(constant);
    }
 
    constructor createSolid(int color)

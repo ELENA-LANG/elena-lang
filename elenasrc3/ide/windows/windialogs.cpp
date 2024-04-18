@@ -415,6 +415,7 @@ void EditorSettings::onCreate()
 {
    addComboBoxItem(IDC_EDITOR_COLORSCHEME, _T("Default"));
    addComboBoxItem(IDC_EDITOR_COLORSCHEME, _T("Classic"));
+   addComboBoxItem(IDC_EDITOR_COLORSCHEME, _T("Dark"));
 
    setComboBoxIndex(IDC_EDITOR_COLORSCHEME, _model->schemeIndex);
 }

@@ -35,6 +35,8 @@ namespace elena_lang
    public:
       virtual HWND createControl(HINSTANCE instance, ControlBase* owner);
 
+      bool setColor(int index, Color color) override;
+
       void onSelChanged() override;
 
       virtual void onItemExpand(TreeViewItem item) {}

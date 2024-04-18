@@ -41,7 +41,7 @@ bool testMethodHint(ref_t hint, MethodHint mask)
 
 typedef CompilerLogic::Op Op;
 
-constexpr auto OperationLength = 199;
+constexpr auto OperationLength = 202;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -559,10 +559,10 @@ constexpr Op Operations[OperationLength] =
    },
    {
       // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
-      INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT32, 0, V_INT8
+      INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT32, 0, V_ELEMENT
    },
    {
-      SET_INDEXER_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT8, V_INT32, 0
+      SET_INDEXER_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_ELEMENT, V_INT32, 0
    },
    {
       LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_INT8ARRAY, 0, 0, V_INT32
@@ -572,10 +572,10 @@ constexpr Op Operations[OperationLength] =
    },
    {
       // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
-      INDEX_OPERATOR_ID, BuildKey::ShortArrayOp, V_INT16ARRAY, V_INT32, 0, V_INT16
+      INDEX_OPERATOR_ID, BuildKey::ShortArrayOp, V_INT16ARRAY, V_INT32, 0, V_ELEMENT
    },
    {
-      SET_INDEXER_OPERATOR_ID, BuildKey::ShortArrayOp, V_INT16ARRAY, V_INT16, V_INT32, 0
+      SET_INDEXER_OPERATOR_ID, BuildKey::ShortArrayOp, V_INT16ARRAY, V_ELEMENT, V_INT32, 0
    },
    {
       LEN_OPERATOR_ID, BuildKey::IntArraySOp, V_INT32ARRAY, 0, 0, V_INT32
@@ -586,6 +586,16 @@ constexpr Op Operations[OperationLength] =
    },
    {
       SET_INDEXER_OPERATOR_ID, BuildKey::IntArrayOp, V_INT32ARRAY, V_ELEMENT, V_INT32, 0
+   },
+   {
+      LEN_OPERATOR_ID, BuildKey::BinaryArraySOp, V_FLOAT64ARRAY, 0, 0, V_INT32
+   },
+   {
+      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
+      INDEX_OPERATOR_ID, BuildKey::BinaryArrayOp, V_FLOAT64ARRAY, V_INT32, 0, V_ELEMENT
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::BinaryArrayOp, V_FLOAT64ARRAY, V_ELEMENT, V_INT32, 0
    },
    {
       INDEX_OPERATOR_ID, BuildKey::BinaryArrayOp, V_BINARYARRAY, V_INT32, 0, V_ELEMENT
@@ -823,6 +833,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
       case V_MIXIN:
          flags |= elGroup;
          break;
+      case V_PACKED_STRUCT:
+         flags |= elPacked | elStructureRole;
+         break;
       case 0:
          // ignore idle
          break;
@@ -998,6 +1011,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
    switch(attrValue) {
       case V_FORWARD:
          attrs |= ExpressionAttribute::Forward;
+         return true;
+      case V_DISTRIBUTED_FORWARD:
+         attrs |= ExpressionAttribute::DistributedForward;
          return true;
       case V_INTERN:
          attrs |= ExpressionAttribute::Intern;
@@ -1402,6 +1418,9 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
          case V_INT32ARRAY:
             info.header.flags |= elDebugDWORDS;
             break;
+         case V_FLOAT64ARRAY:
+            info.header.flags |= elDebugFLOAT64S;
+            break;
          default:
             break;
       }
@@ -1435,6 +1454,9 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
             break;
          case V_INT32ARRAY:
             info.header.flags |= elDebugDWORDS;
+            break;
+         case V_FLOAT64ARRAY:
+            info.header.flags |= elDebugFLOAT64S;
             break;
          default:
             break;
@@ -1473,9 +1495,9 @@ bool CompilerLogic :: readTypeMap(ModuleBase* extModule, MemoryBase* section, Re
                if (NamespaceString::compareNs(name, scope->module->name())) {
                   reference = scope->module->mapReference(name + getlength(STANDARD_MODULE));
                }
-               else reference = scope->importReference(extModule, reference);
+               else reference = ImportHelper::importReference(extModule, reference, scope->module);
             }
-            else reference = scope->importReference(extModule, reference);
+            else reference = ImportHelper::importReference(extModule, reference, scope->module);
          }
 
          map.add(*key, reference);
@@ -1594,15 +1616,15 @@ bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* sec
    while (!reader.eof()) {
       ref_t extRef = reader.getRef();
       if (importMode && extRef)
-         extRef = scope->importReference(extModule, extRef);
+         extRef = ImportHelper::importReference(extModule, extRef, scope->module);
 
       mssg_t message = reader.getRef();
       if (importMode)
-         message = scope->importMessage(extModule, message);
+         message = ImportHelper::importMessage(extModule, message, scope->module);
 
       mssg_t strongMessage = reader.getRef();
       if (importMode && strongMessage)
-         strongMessage = scope->importMessage(extModule, strongMessage);
+         strongMessage = ImportHelper::importMessage(extModule, strongMessage, scope->module);
 
       if (!extRef) {
          // if it is an extension template
@@ -1659,7 +1681,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          break;
       case V_INT8ARRAY:
          info.header.parentRef = scope.buildins.superReference;
-         info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
+         info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elWrapper;
          info.size = -1;
          break;
       case V_INT16ARRAY:
@@ -1671,6 +1693,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugDWORDS | elStructureRole | elDynamicRole | elWrapper;
          info.size = -4;
+         break;
+      case V_FLOAT64ARRAY:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = elDebugFLOAT64S | elStructureRole | elDynamicRole | elWrapper;
+         info.size = -8;
          break;
       case V_BINARYARRAY:
          info.header.parentRef = scope.buildins.superReference;
@@ -1755,16 +1782,9 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
       if (isCompatible(scope, { V_INT32 }, { elementRef }, true) && info.size == 4)
          return V_INT32ARRAY;
 
-      //if (isCompatible(scope, V_INT32, elementRef, true)) {
-      //   switch (info.size) {
-      //      case 4:
-      //         return V_INT32ARRAY;
-      //      case 2:
-      //         return V_INT16ARRAY;
-      //      default:
-      //         break;
-      //   }
-      //}
+      if (isCompatible(scope, { V_FLOAT64 }, { elementRef }, true) && info.size == 8)
+         return V_FLOAT64ARRAY;
+
       return V_BINARYARRAY;
    }
    else return V_OBJARRAY;
@@ -1911,7 +1931,7 @@ bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ModuleBase* 
    for (size_t i = 0; i < sourceLen; i++) {
       ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
 
-      if (!isCompatible(scope, { scope.importReference(targetModule, targetSign) }, { sourceSignatures[i] }, true))
+      if (!isCompatible(scope, { ImportHelper::importReference(targetModule, targetSign, scope.module) }, { sourceSignatures[i] }, true))
          return false;
    }
 
@@ -1999,7 +2019,7 @@ void CompilerLogic :: setSignatureStacksafe(ModuleScopeBase& scope, ModuleBase* 
    for (size_t i = 0; i < len; i++) {
       flag <<= 1;
 
-      if (isStacksafeArg(scope, scope.importReference(targetModule, targetSignatures[i])))
+      if (isStacksafeArg(scope, ImportHelper::importReference(targetModule, targetSignatures[i], scope.module)))
          stackSafeAttr |= flag;
    }
 }
@@ -2096,7 +2116,7 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
                {
                   setSignatureStacksafe(scope, sectionInfo.module, argSign, stackSafeAttr);
 
-                  foundMessage = scope.importMessage(sectionInfo.module, argMessage);
+                  foundMessage = ImportHelper::importMessage(sectionInfo.module, argMessage, scope.module);
                }
             }
 
@@ -2686,24 +2706,22 @@ bool CompilerLogic :: isLessAccessible(ModuleScopeBase& scope, Visibility source
    return sourceVisibility > targetVisibility;
 }
 
-bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t name)
+bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t aliasName, ustr_t nsName)
 {
-   ReferenceProperName sectionName(name);
-   NamespaceString ns(name);
+   if (aliasName.compare(PREDEFINED_MAP_KEY)) {
+      IdentifierString fullName(nsName, "'", META_PREFIX, PREDEFINED_MAP);
 
-   IdentifierString dictionaryName(ns.str(), "'", META_PREFIX);
-   dictionaryName.append(sectionName.str());
-
-   if ((*sectionName).compare(PREDEFINED_MAP)) {
-      auto predefinedInfo = moduleScope->getSection(*dictionaryName, mskAttributeMapRef, true);
+      auto predefinedInfo = moduleScope->getSection(*fullName, mskAttributeMapRef, true);
       if (predefinedInfo.section) {
          readAttributeMap(predefinedInfo.section, moduleScope->predefined);
 
          return true;
       }
    }
-   else if ((*sectionName).compare(ATTRIBUTES_MAP)) {
-      auto attributeInfo = moduleScope->getSection(*dictionaryName, mskAttributeMapRef, true);
+   else if (aliasName.compare(ATTRIBUTES_MAP_KEY)) {
+      IdentifierString fullName(nsName, "'", META_PREFIX, ATTRIBUTES_MAP);
+
+      auto attributeInfo = moduleScope->getSection(*fullName, mskAttributeMapRef, true);
 
       if (attributeInfo.section) {
          readAttributeMap(attributeInfo.section, moduleScope->attributes);
@@ -2711,8 +2729,10 @@ bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t name)
          return true;
       }
    }
-   else if ((*sectionName).compare(OPERATION_MAP)) {
-      auto operationInfo = moduleScope->getSection(*dictionaryName, mskTypeMapRef, true);
+   else if (aliasName.compare(OPERATION_MAP_KEY)) {
+      IdentifierString fullName(nsName, "'", META_PREFIX, OPERATION_MAP);
+
+      auto operationInfo = moduleScope->getSection(*fullName, mskTypeMapRef, true);
 
       if (operationInfo.section) {
          readTypeMap(operationInfo.module, operationInfo.section, moduleScope->operations, moduleScope);
@@ -2720,8 +2740,10 @@ bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t name)
          return true;
       }
    }
-   else if ((*sectionName).compare(ALIASES_MAP)) {
-      auto aliasInfo = moduleScope->getSection(*dictionaryName, mskTypeMapRef, true);
+   else if (aliasName.compare(ALIASES_MAP_KEY)) {
+      IdentifierString fullName(nsName, "'", META_PREFIX, ALIASES_MAP);
+
+      auto aliasInfo = moduleScope->getSection(*fullName, mskTypeMapRef, true);
 
       if (aliasInfo.section) {
          readTypeMap(aliasInfo.module, aliasInfo.section, moduleScope->aliases, moduleScope);
@@ -2771,4 +2793,127 @@ ref_t CompilerLogic :: retrievePrimitiveType(ModuleScopeBase& scope, ref_t refer
    }
 
    return 0;
+}
+
+ref_t CompilerLogic :: loadClassInfo(ClassInfo& info, ModuleInfo& moduleInfo, ModuleBase* target, bool headerOnly, bool fieldsOnly)
+{
+   if (moduleInfo.unassigned())
+      return 0;
+
+   // load argument VMT meta data
+   MemoryBase* metaData = moduleInfo.module->mapSection(moduleInfo.reference | mskMetaClassInfoRef, true);
+   if (!metaData)
+      return 0;
+
+   MemoryReader reader(metaData);
+   if (moduleInfo.module != target) {
+      ClassInfo copy;
+      copy.load(&reader, headerOnly, fieldsOnly);
+
+      importClassInfo(copy, info, moduleInfo.module, target, headerOnly, false/*, false*/);
+
+      // import reference
+      ImportHelper::importReference(moduleInfo.module, moduleInfo.reference, target);
+   }
+   else info.load(&reader, headerOnly, fieldsOnly);
+
+   return moduleInfo.reference;
+}
+
+void CompilerLogic :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, 
+   ModuleBase* importer, bool headerOnly, bool inheritMode)
+{
+   target.header = copy.header;
+   target.size = copy.size;
+
+   if (!headerOnly) {
+      // import method references and mark them as inherited if required (inherit mode)
+      for (auto it = copy.methods.start(); !it.eof(); ++it) {
+         MethodInfo info = *it;
+
+         if (info.outputRef)
+            info.outputRef = ImportHelper::importReference(exporter, info.outputRef, importer);
+
+         if (info.multiMethod)
+            info.multiMethod = ImportHelper::importMessage(exporter, info.multiMethod, importer);
+
+         if (info.byRefHandler)
+            info.byRefHandler = ImportHelper::importMessage(exporter, info.byRefHandler, importer);
+
+         if (inheritMode) {
+            info.inherited = true;
+
+            // private methods are not inherited
+            if (!test(it.key(), STATIC_MESSAGE))
+               target.methods.add(ImportHelper::importMessage(exporter, it.key(), importer), info);
+         }
+         else target.methods.add(ImportHelper::importMessage(exporter, it.key(), importer), info);
+      }
+
+      for (auto it = copy.fields.start(); !it.eof(); ++it) {
+         FieldInfo info = *it;
+
+         if (info.typeInfo.typeRef && !isPrimitiveRef(info.typeInfo.typeRef))
+            info.typeInfo.typeRef = ImportHelper::importReference(exporter, info.typeInfo.typeRef, importer);
+
+         if (info.typeInfo.elementRef && !isPrimitiveRef(info.typeInfo.elementRef))
+            info.typeInfo.elementRef = ImportHelper::importReference(exporter, info.typeInfo.elementRef, importer);
+
+         target.fields.add(it.key(), info);
+      }
+
+      for (auto it = copy.attributes.start(); !it.eof(); ++it) {
+         ClassAttributeKey key = it.key();
+         if (test((unsigned)key.value2, (unsigned)ClassAttribute::ReferenceKeyMask)) {
+            key.value1 = ImportHelper::importReference(exporter, key.value1, importer);
+         }
+         else if (test((unsigned)key.value2, (unsigned)ClassAttribute::MessageKeyMask)) {
+            key.value1 = ImportHelper::importMessage(exporter, key.value1, importer);
+         }
+         ref_t referece = *it;
+         if (test((unsigned)key.value2, (unsigned)ClassAttribute::ReferenceMask)) {
+            referece = ImportHelper::importReference(exporter, referece, importer);
+         }
+         else if (test((unsigned)key.value2, (unsigned)ClassAttribute::MessageMask)) {
+            referece = ImportHelper::importMessage(exporter, referece, importer);
+         }
+
+         target.attributes.add(key, referece);
+      }
+
+      for (auto it = copy.statics.start(); !it.eof(); ++it) {
+         auto info = *it;
+         if (info.typeInfo.typeRef && !isPrimitiveRef(info.typeInfo.typeRef))
+            info.typeInfo.typeRef = ImportHelper::importReference(exporter, info.typeInfo.typeRef, importer);
+
+         if (info.typeInfo.elementRef)
+            info.typeInfo.elementRef = ImportHelper::importReference(exporter, info.typeInfo.elementRef, importer);
+
+         info.valueRef = ImportHelper::importReferenceWithMask(exporter, info.valueRef, importer);
+
+         target.statics.add(it.key(), info);
+      }
+   }
+
+   // import class class reference
+   if (target.header.classRef != 0)
+      target.header.classRef = ImportHelper::importReference(exporter, target.header.classRef, importer);
+
+   // import parent reference
+   if (target.header.parentRef)
+      target.header.parentRef = ImportHelper::importReference(exporter, target.header.parentRef, importer);
+}
+
+pos_t CompilerLogic :: definePadding(ModuleScopeBase& scope, pos_t offset, pos_t size)
+{
+   switch (size) {
+      case 1:
+         return 0;
+      case 2:
+      case 4:
+      case 8:
+         return align(offset, size) - offset;
+      default:
+         return align(offset, scope.ptrSize) - offset;
+   }
 }

@@ -26,6 +26,7 @@ public sealed const struct UnsafePointer
       = new UnsafePointer();   
 
    private readIntPtr(ref int retVal) : external(system'core_routines'__readIntPtr);
+   private readRealPtr(ref real retVal) : external(system'core_routines'__readRealPtr);
 
    private assignPtr(object obj) : external(system'core_routines'__assignPtr); 
 
@@ -56,6 +57,13 @@ public sealed const struct UnsafePointer
    int cast()
    {
       self.readIntPtr(ref int retVal);
+
+      ^ retVal
+   }
+
+   real cast()
+   {
+      self.readRealPtr(ref real retVal);
 
       ^ retVal
    }

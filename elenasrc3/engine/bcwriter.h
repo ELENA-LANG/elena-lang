@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code writer class.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef BCWRITER_H
@@ -52,12 +52,27 @@ namespace elena_lang
          }
       };
 
+      class BuildTreeOptimizer
+      {
+         BuildTreeTransformer _btTransformer;
+
+         bool matchTriePatterns(BuildNode node);
+
+      public:
+         void load(StreamReader& reader);
+
+         void proceed(BuildNode node);
+
+         BuildTreeOptimizer();
+      };
+
       typedef void(*Saver)(CommandTape& tape, BuildNode& node, TapeScope& scope);
       typedef bool(*Transformer)(BuildNode lastNode);
 
    private:
-      ByteCodeTransformer  _bcTransformer;
-      BuildTreeTransformer _btTransformer;
+      BuildTreeOptimizer   _buildTreeOptimizer;
+
+      ByteCodeTransformer  _bcTransformer;      
 
       const Saver*        _commands;
       LibraryLoaderBase*  _loader;
@@ -115,9 +130,6 @@ namespace elena_lang
       bool applyRules(CommandTape& tape);
 
       void optimizeTape(CommandTape& tape);
-
-      bool matchTriePatterns(BuildNode node);
-      void optimizeBuildTree(BuildNode node);
 
    public:
       void loadBuildTreeRules(MemoryDump* dump);

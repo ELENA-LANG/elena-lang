@@ -3,7 +3,7 @@
 //
 //		This is a main file containing doc generator code
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "ldoc.h"
@@ -13,17 +13,12 @@
 #include "ldocconst.h"
 #include "module.h"
 
-constexpr auto ByRefPrefix = "'$auto'system@Reference#1&";
-constexpr auto ArrayPrefix = "'$auto'system@Array#1&";
-
-constexpr auto ArrayLink = "system.html#Array&lt;T1&gt;";
-
-constexpr auto ARRAY_TEMPLATE_PREFIX = "Array&lt;T";
-constexpr auto REF_TEMPLATE_PREFIX = "Reference&lt;T";
+constexpr auto ARRAY_TEMPLATE_PREFIX = "system'Array&lt;";
+constexpr auto REF_TEMPLATE_PREFIX = "system'Reference&lt;";
 
 using namespace elena_lang;
 
-constexpr auto DESCRIPTION_SECTION = "'meta$descriptions";
+constexpr auto DESCRIPTION_SECTION = "'meta$system@descriptions";
 
 inline bool isTemplateBased(ustr_t reference)
 {
@@ -177,140 +172,175 @@ void parseNs(IdentifierString& ns, ustr_t root, ustr_t fullName)
    ns.append(fullName, last);
 }
 
-bool parseTemplateType(IdentifierString& line, size_t index, bool argMode)
+//bool parseTemplateType(IdentifierString& line, size_t index, bool argMode)
+//{
+//   IdentifierString temp(line);
+//
+//   line.truncate(0);
+//
+//   size_t last = index;
+//   bool first = true;
+//   bool noCurlybrackets = false;
+//   bool nsExpected = true;
+//   if (argMode && (*temp).startsWith(ByRefPrefix)) {
+//      // HOTFIX : recognize byref argument
+//
+//      temp.cut(0, getlength(ByRefPrefix));
+//
+//      line.append("ref ");
+//      noCurlybrackets = true;
+//   }
+//   else if ((*temp).startsWith(ArrayPrefix)) {
+//      // HOTFIX : recognize array argument
+//      temp.cut(0, getlength(ArrayPrefix));
+//
+//      line.append("arrayof ");
+//      noCurlybrackets = true;
+//      nsExpected = false;
+//   }
+//
+//   for (size_t i = index; i < temp.length(); i++) {
+//      if (temp[i] == '@') {
+//         temp[i] = '\'';
+//      }
+//      else if (temp[i] == '#') {
+//         line.append((*temp) + last + 1, i - last - 1);
+//      }
+//      else if (temp[i] == '&') {
+//         if (first) {
+//            last = i;
+//            line.append("&lt;");
+//            first = false;
+//         }
+//         else {
+//            line.append((*temp) + last + 1, i - last - 1);
+//            line.append(',');
+//            last = i;
+//         }
+//      }
+//   }
+//
+//   if (noCurlybrackets) {
+//      line.append(*temp);
+//   }
+//   else {
+//      line.append((*temp) + last + 1);
+//      line.append("&gt;");
+//   }
+//
+//   return nsExpected;
+//}
+
+inline bool isTemplateArg(ustr_t name, size_t index)
 {
-   IdentifierString temp(line);
+   size_t endPos = name.findSub(index, '&', name.length());
 
-   line.truncate(0);
+   IdentifierString subName(name + index, endPos - index);
 
-   size_t last = index;
-   bool first = true;
-   bool noCurlybrackets = false;
-   bool nsExpected = true;
-   if (argMode && (*temp).startsWith(ByRefPrefix)) {
-      // HOTFIX : recognize byref argument
+   if ((*subName).findStr("$private@") != NOTFOUND_POS) {
+      while (endPos > index) {
+         if (name[endPos] == '@' && name[endPos + 1] == 'T')
+            return true;
 
-      temp.cut(0, getlength(ByRefPrefix));
-
-      line.append("ref ");
-      noCurlybrackets = true;
-   }
-   else if ((*temp).startsWith(ArrayPrefix)) {
-      // HOTFIX : recognize array argument
-      temp.cut(0, getlength(ArrayPrefix));
-
-      line.append("arrayof ");
-      noCurlybrackets = true;
-      nsExpected = false;
-   }
-
-   for (size_t i = index; i < temp.length(); i++) {
-      if (temp[i] == '@') {
-         temp[i] = '\'';
-      }
-      else if (temp[i] == '#') {
-         line.append((*temp) + last + 1, i - last - 1);
-      }
-      else if (temp[i] == '&') {
-         if (first) {
-            last = i;
-            line.append("&lt;");
-            first = false;
-         }
-         else {
-            line.append((*temp) + last + 1, i - last - 1);
-            line.append(',');
-            last = i;
-         }
+         endPos--;
       }
    }
 
-   if (noCurlybrackets) {
-      line.append(*temp);
-   }
-   else {
-      line.append((*temp) + last + 1);
-      line.append("&gt;");
-   }
-
-   return nsExpected;
+   return false;
 }
 
-void parseTemplateName(IdentifierString& line)
+inline void parseClassName(IdentifierString& line, ustr_t name, size_t& index, bool skipNs, bool templateMode)
+{
+   if (name.compareSub("@$auto@", index, 7))
+      index += 7;
+
+   size_t prev = index;
+   for (size_t i = index; i < name.length(); i++) {
+      if (name[i] == '@') {
+         if (!skipNs) {
+            line.append(name + prev, i - prev);
+            line.append('\'');
+         }
+         prev = i + 1;
+      }
+      else if (name[i] == '#') {
+         line.append(name + prev, i - prev);
+         prev = i + 1;
+
+         String<char, 5> tmp;
+         size_t numEnd = name.findSub(i, '&', NOTFOUND_POS);
+         tmp.copy(name.str() + i + 1, numEnd - i - 1);
+         int count = tmp.toInt();
+         i = numEnd + 1;
+         line.append("&lt;");
+         for (int j = 0; j < count; j++) {
+            if (j != 0)
+               line.append(",");
+
+            parseClassName(line, name, i, templateMode && isTemplateArg(name, i), templateMode);
+            i++;
+         }
+         line.append("&gt;");
+         index = i;
+
+         return;
+      }
+      else if (name[i] == '&') {
+         line.append(name + prev, i - prev);
+         index = i;
+
+         return;
+      }
+   }
+
+   index = name.length() - 1;
+
+   line.append(name + prev, index - prev + 1);
+}
+
+void parseTemplateName(IdentifierString& line, bool templateMode)
 {
    IdentifierString temp(*line);
 
    line.clear();
 
-   size_t last = 0;
-   bool first = true;
-   for (size_t i = 0; i < temp.length(); i++) {
-      if (temp[i] == '@') {
-         if (!first)
-            temp[i] = '\'';
-         last = i;
-      }
-      else if (temp[i] == '#') {
-         line.append((*temp) + last + 1, i - last - 1);
-      }
-      else if (temp[i] == '&') {
-         if (first) {
-            line.append("&lt;");
-            first = false;
-         }
-         else {
-            line.append((*temp) + last + 1, i - last - 1);
-            line.append(',');
-         }
-      }
-   }
-
-   line.append((*temp) + last + 1);
-   line.append("&gt;");
+   size_t index = 0;
+   parseClassName(line, *temp, index, true, templateMode);
 }
 
-void retrieveTemplateType(IdentifierString& line)
+void retrieveTemplateType(IdentifierString& line, bool templateMode)
 {
-   IdentifierString temp(*line);
-   IdentifierString ns;
+   IdentifierString temp;
 
-   line.clear();
-
-   size_t last = 0;
-   bool first = true;
-   for (size_t i = 0; i < temp.length(); i++) {
-      if (temp[i] == '@') {
-         if (!first)
-            temp[i] = '\'';
-         last = i;
-      }
-      else if (temp[i] == '#') {
-         ns.copy(*temp + 1, last);
-         ns.replaceAll('@', '\'', 0);
-         line.append(*ns);
-         line.append((*temp) + last + 1, i - last - 1);
-      }
-      else if (temp[i] == '&') {
-         if (first) {
-            line.append("&lt;");
-            first = false;
-         }
-         else {
-            line.append((*temp) + last + 1, i - last - 1);
-            line.append(',');
-         }
-      }
-   }
-
-   line.append((*temp) + last + 1);
-   line.append("&gt;");
+   size_t index = 0;
+   parseClassName(temp, *line, index, false, templateMode);
 }
 
-void parseTemplateName(ReferenceProperName& name)
+void parseTemplateName(ReferenceProperName& name, bool templateMode)
 {
    IdentifierString temp(*name);
-   parseTemplateName(temp);
+   parseTemplateName(temp, templateMode);
    name.copy(*temp);
+}
+
+inline void skipNestedArgs(ustr_t s, size_t& i)
+{
+   int level = 1;
+
+   size_t len = s.length();
+   while (i < len) {
+      if (s.compareSub("&lt;", i, 4)) {
+         level++;
+      }
+      else if (s.compareSub("&gt;", i, 4)) {
+         level--;
+
+         if (!level)
+            break;
+      }
+
+      i++;
+   }
 }
 
 void writeRefName(TextFileWriter& writer, ustr_t name, bool allowResolvedTemplates)
@@ -323,10 +353,14 @@ void writeRefName(TextFileWriter& writer, ustr_t name, bool allowResolvedTemplat
          writer.writeChar('-');
       }
       else if (name.compareSub("&lt;", i, 4)) {
-         paramMode = true;
-         writer.writeText("&lt;");
-
          i += 3;
+         if (paramMode) {
+            skipNestedArgs(name, i);
+         }
+         else {
+            paramMode = true;
+            writer.writeText("&lt;");
+         }
       }
       else if (name.compareSub("&gt;", i, 4)) {
          if (!allowResolvedTemplates) {
@@ -387,34 +421,26 @@ void writeSymbolName(TextFileWriter& writer, ApiSymbolInfo* info)
    }
 }
 
-void writeType(TextFileWriter& writer, ustr_t type, bool fullReference = false)
+void writeType(TextFileWriter& writer, bool paramMode, ustr_t type, bool fullReference = false)
 {
-   bool arrayMode = false;
    if (type.startsWith("params ")) {
       writer.writeText("<I>params</I>&nbsp;");
       type = type + 7;
    }
-   else if (type.startsWith("ref ")) {
+   if (paramMode && type.startsWith(REF_TEMPLATE_PREFIX)) {
       writer.writeText("<I>ref</I>&nbsp;");
-      type = type + 4;
-   }
-   else if (type.startsWith("arrayof ")) {
-      type = type + 8;
-      arrayMode = true;
+
+      IdentifierString tmp(type + getlength(REF_TEMPLATE_PREFIX));
+      if ((*tmp).endsWith("&gt;"))
+         tmp.cut(tmp.length() - 4, 4);
+
+      writeType(writer, false, *tmp, fullReference);
+
+      return;
    }
 
    writer.writeText("<SPAN CLASS=\"memberNameLink\">");
-   if (type.findStr(ARRAY_TEMPLATE_PREFIX) != NOTFOUND_POS) {
-      writer.writeText("<A HREF=\"system.html#Array&lt;T1&gt;\">");
-      writer.writeText(type);
-      writer.writeText("</A>");
-   }
-   else if (type.findStr(REF_TEMPLATE_PREFIX) != NOTFOUND_POS) {
-      writer.writeText("<A HREF=\"system.html#Reference&lt;T1&gt;\">");
-      writer.writeText(type);
-      writer.writeText("</A>");
-   }
-   else if (type.find('\'') != NOTFOUND_POS) {
+   if (type.find('\'') != NOTFOUND_POS) {
       writer.writeText("<A HREF=\"");
 
       size_t index = type.findStr("&lt;");
@@ -433,32 +459,44 @@ void writeType(TextFileWriter& writer, ustr_t type, bool fullReference = false)
          }
       }
 
-      if (arrayMode) {
-         writer.writeText(ArrayLink);
-         writer.writeText("\">");
+      if (emptystr(*ns)) {
+         writer.writeText("#");
       }
       else {
-         if (emptystr(*ns)) {
-            writer.writeText("#");
-         }
-         else {
-            writeNs(writer, *ns);
-            writer.writeText(".html#");
-         }
-         writeRefName(writer, type + ns.length() + 1, false);
+         writeNs(writer, *ns);
+         writer.writeText(".html#");
+      }
+      writeRefName(writer, type + ns.length() + 1, false);
 
-         writer.writeText("\">");
+      writer.writeText("\">");
+
+      if (type.startsWith(ARRAY_TEMPLATE_PREFIX)) {
+         IdentifierString tmp(type);
+         int counter = 0;
+         while ((*tmp).startsWith(ARRAY_TEMPLATE_PREFIX)) {
+            tmp.cut(0, getlength(ARRAY_TEMPLATE_PREFIX));
+            if ((*tmp).endsWith("&gt;"))
+               tmp.cut(tmp.length() - 4, 4);
+
+            counter++;
+         }
+
+         writer.writeText(*tmp);
+
+         for (int i = 0; i < counter; i++) {
+            writer.writeText("<I>[]</I>");
+         }
       }
-      if (fullReference) {
-         writer.writeText(type);
+      else {
+         if (fullReference) {
+            writer.writeText(type);
+         }
+         else writer.writeText(type + ns.length() + 1);
       }
-      else writer.writeText(type + ns.length() + 1);
+
       writer.writeText("</A>");
    }
    else writer.writeText(type);
-
-   if (arrayMode)
-      writer.writeText("<I>[]</I>");
 
    writer.writeText("</SPAN>");
 }
@@ -583,7 +621,7 @@ void writeParent(TextFileWriter& writer, StringList::Iterator& it, ApiClassInfo*
    writer.writeTextLine("<LI>");
 
    if (!it.eof()) {
-      writeType(writer, (*it), true);
+      writeType(writer, false, (*it), true);
       writer.writeTextLine("</LI>");
 
       it++;
@@ -744,7 +782,7 @@ void writeFirstColumn(TextFileWriter& writer, ApiMethodInfo* info)
       writer.writeText("&nbsp;");
    }
    if (info->outputType.length() != 0) {
-      writeType(writer, *info->outputType);
+      writeType(writer, false, *info->outputType);
    }
 
    writer.writeTextLine("</CODE></TD>");
@@ -787,11 +825,11 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
          if (!it.eof()) {
             if (last && info->variadic) {
                writer.writeText("<i>params</i> ");
-               writeType(writer, *it);
+               writeType(writer, false, *it);
                writer.writeText("<i>[]</i>");
             }
             else {
-               writeType(writer, *it);
+               writeType(writer, true, *it);
             }
             writer.writeText(" ");
             writer.writeText(*name_it);
@@ -825,7 +863,7 @@ void writeFieldFirstColumn(TextFileWriter& writer, ApiFieldInfo* info)
       writer.writeText("&nbsp;");
    }
    if (info->type.length() != 0) {
-      writeType(writer, *info->type);
+      writeType(writer, false, *info->type);
    }
 
    writer.writeTextLine("</CODE></TD>");
@@ -865,7 +903,7 @@ void writeSymbolFirstColumn(TextFileWriter& writer, ApiSymbolInfo* info)
       writer.writeText("&nbsp;");
    }
    if (info->type.length() != 0) {
-      writeType(writer, *info->type);
+      writeType(writer, false, *info->type);
    }
 
    writer.writeTextLine("</CODE></TD>");
@@ -1058,6 +1096,108 @@ inline void readTemplateNs(IdentifierString& ns, ustr_t reference)
    ns.replaceAll('@', '\'', 0);
 }
 
+inline bool isTemplateName(ustr_t name)
+{
+   size_t index = name.find('#');
+   if (index != NOTFOUND_POS) {
+      if (name[index + 1] >= '0' && name[index + 1] <= '9')
+         return true;
+   }
+
+   return false;
+}
+
+//bool validateTemplateType(IdentifierString& type, bool templateBased, bool argMode)
+//{
+//   if (templateBased) {
+//      if (isTemplateBased(*type)) {
+//         if (isTemplateWeakReference(*type))
+//            type.cut(0, 6);
+//
+//         retrieveTemplateType(type);
+//      }
+//      else if ((*type).findStr("$private'T") != NOTFOUND_POS) {
+//         size_t index = (*type).findLast('\'');
+//         type.cut(0, index + 1);
+//      }
+//
+//      return true;
+//   }
+//   else if (isTemplateWeakReference(*type)) {
+//      NamespaceString ns(*type);
+//
+//      return parseTemplateType(type, ns.length(), argMode);
+//   }
+//
+//   return false;
+//}
+//
+
+//void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs, bool templateBased, bool argMode)
+//{
+//   bool nsExpected = false;
+//   if (isTemplateWeakReference(line)) {
+//      type.copy(line);
+//      nsExpected = false;
+//   }
+//   else if (line[0] == '\'') {
+//      type.copy(rootNs);
+//      type.append(line);
+//   }
+//   else type.copy(line);
+//
+//   nsExpected &= validateTemplateType(type, templateBased, argMode);
+//
+//   if (nsExpected) {
+//      size_t spacePos = (*type).find(' ');
+//      type.insert("'", spacePos + 1);
+//      type.insert(rootNs, spacePos + 1);
+//   }
+//}
+
+
+// loadType(fieldInfo->type, typeName, *_rootNs, apiClassInfo->templateBased, false);
+
+void DocGenerator :: loadType(ref_t reference, IdentifierString& target, bool templateMode)
+{
+   ustr_t name = _module->resolveReference(reference);
+
+   loadType(name, target, templateMode);
+}
+
+void DocGenerator :: loadType(ustr_t name, IdentifierString& target, bool templateMode)
+{
+   if (isTemplateWeakReference(name)) {
+      IdentifierString type(name);
+      IdentifierString ns;
+
+      type.cut(0, 7);
+
+      readTemplateNs(ns, *type);
+
+      parseTemplateName(type, templateMode);
+      type.insert(*ns, 0);
+
+      target.copy(*type);
+   }
+   else if (isTemplateName(name)) {
+      IdentifierString type(name);
+      IdentifierString ns;
+
+      readTemplateNs(ns, *type);
+
+      parseTemplateName(type, templateMode);
+      type.insert(*ns, 0);
+
+      target.copy(*type);
+   }
+   else if (isWeakReference(name)) {
+      target.copy(*_rootNs);
+      target.append(name);
+   }
+   else target.copy(name);
+}
+
 void DocGenerator :: loadParents(ApiClassInfo* apiClassInfo, ref_t reference)
 {
    if (!reference)
@@ -1069,68 +1209,9 @@ void DocGenerator :: loadParents(ApiClassInfo* apiClassInfo, ref_t reference)
       loadParents(apiClassInfo, info.header.parentRef);
    }
 
-   ustr_t name = _module->resolveReference(reference);
-   if (isTemplateWeakReference(name)) {
-      IdentifierString type(name);
-      IdentifierString ns;
-
-      type.cut(0, 7);
-
-      readTemplateNs(ns, *type);
-
-      parseTemplateName(type);
-      type.insert(*ns, 0);
-
-      apiClassInfo->parents.add((*type).clone());
-   }
-   else apiClassInfo->parents.add(name.clone());
-}
-
-bool validateTemplateType(IdentifierString& type, bool templateBased, bool argMode)
-{
-   if (templateBased) {
-      if (isTemplateBased(*type)) {
-         if (isTemplateWeakReference(*type))
-            type.cut(0, 6);
-
-         retrieveTemplateType(type);
-      }
-      else if ((*type).findStr("$private'T") != NOTFOUND_POS) {
-         size_t index = (*type).findLast('\'');
-         type.cut(0, index + 1);
-      }
-
-      return true;
-   }
-   else if (isTemplateWeakReference(*type)) {
-      NamespaceString ns(*type);
-
-      return parseTemplateType(type, ns.length(), argMode);
-   }
-
-   return false;
-}
-
-void loadType(IdentifierString& type, ustr_t line, ustr_t rootNs, bool templateBased, bool argMode)
-{
-   bool nsExpected = false;
-   if (isTemplateWeakReference(line)) {
-      type.copy(line);
-      nsExpected = false;
-   }
-   else if (line[0] == '\'') {
-      type.copy(rootNs);
-      type.append(line);
-   }
-   else type.copy(line);
-
-   nsExpected &= validateTemplateType(type, templateBased, argMode);
-
-   if (nsExpected) {
-      size_t spacePos = (*type).find(' ');
-      type.insert("'", spacePos + 1);
-      type.insert(rootNs, spacePos + 1);
-   }
+   IdentifierString typeName;
+   loadType(reference, typeName, apiClassInfo->templateBased);
+   apiClassInfo->parents.add((*typeName).clone());
 }
 
 void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateBased)
@@ -1155,7 +1236,7 @@ void DocGenerator :: loadMethodName(ApiMethodInfo* apiMethodInfo, bool templateB
                   skipOne = false;
                }
                else {
-                  loadType(type, *param, *_rootNs, templateBased, true);
+                  loadType(*param, type, templateBased);
 
                   //if (info->withVargs && info->name[i] == '>') {
                   //   type.append("[]");
@@ -1216,6 +1297,12 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          if (test(message, STATIC_MESSAGE))
             apiMethodInfo->prefix.append("private ");
 
+         if ((*apiMethodInfo->name).findStr("$$") != NOTFOUND_POS) {
+            apiMethodInfo->prefix.append("internal ");
+
+            apiMethodInfo->name.cut(0, (*apiMethodInfo->name).findStr("$$") + 2);
+         }
+
          if ((*apiMethodInfo->name).startsWith("static:"))
             apiMethodInfo->name.cut(0, 7);
 
@@ -1227,9 +1314,7 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
 
          loadMethodName(apiMethodInfo, apiClassInfo->templateBased);
          if (methodInfo.outputRef) {
-            ustr_t outputType = _module->resolveReference(methodInfo.outputRef);
-
-            loadType(apiMethodInfo->outputType, outputType, *_rootNs, apiClassInfo->templateBased, false);
+            loadType(methodInfo.outputRef, apiMethodInfo->outputType, apiClassInfo->templateBased);
          }
       }
       else {
@@ -1275,9 +1360,7 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
 
          loadMethodName(apiMethodInfo, apiClassInfo->templateBased);
          if (methodInfo.outputRef) {
-            ustr_t outputType = _module->resolveReference(methodInfo.outputRef);
-
-            loadType(apiMethodInfo->outputType, outputType, *_rootNs, apiClassInfo->templateBased, false);
+            loadType(methodInfo.outputRef, apiMethodInfo->outputType, apiClassInfo->templateBased);
          }
       }
 
@@ -1365,9 +1448,7 @@ void DocGenerator :: loadFields(ApiClassInfo* apiClassInfo, ClassInfo& info)
                break;
             default:
                if (!isPrimitiveRef(typeRef)) {
-                  ustr_t typeName = _module->resolveReference(typeRef);
-
-                  loadType(fieldInfo->type, typeName, *_rootNs, apiClassInfo->templateBased, false);
+                  loadType(typeRef, fieldInfo->type, apiClassInfo->templateBased);
                }
                break;
          }
@@ -1455,6 +1536,14 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
 {
    auto referenceName = _module->resolveReference(reference);
 
+   // HOTFIX : skip internal references
+   if (referenceName.findStr("$$") != NOTFOUND_POS)
+      return;
+
+   // HOTFIX : skip static references
+   if (referenceName.findStr(STATICFIELD_POSTFIX) != NOTFOUND_POS)
+      return;
+
    if (isWeakReference(referenceName)) {
       IdentifierString prefix("public ");
       if (referenceName.startsWith(INTERNAL_PREFIX)) {
@@ -1522,7 +1611,7 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             if (isTemplateDeclaration(referenceName)) {
                templateBased = true;
 
-               parseTemplateName(properName);
+               parseTemplateName(properName, templateBased);
 
                fullName.copy(*_rootNs);
                fullName.combine(*properName);
@@ -1629,9 +1718,7 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             moduleInfo->symbols.add(apiSymbolInfo);
 
             if (symbolInfo.typeRef) {
-               ustr_t typeName = _module->resolveReference(symbolInfo.typeRef);
-
-               loadType(apiSymbolInfo->type, typeName, *_rootNs, false, false);
+               loadType(symbolInfo.typeRef, apiSymbolInfo->type, false);
             }
          }
       }

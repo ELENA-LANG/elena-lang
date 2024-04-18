@@ -16,7 +16,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>6.0.3</version>
+     <version>6.0.5</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
@@ -35,7 +35,7 @@
         <include>operations\advanced\operations.l</include>
      </module>
      <module hints="1">
-        <include>base.l</include>
+        <include>inline_templates.l</include>
         <include>object.l</include>
         <include>basic.l</include>
         <include>variables.l</include>
@@ -72,6 +72,7 @@
         <include>io\common.l</include>
         <include>io\streamreader.l</include>
         <include>io\streamwriter.l</include>
+        <include>io\memorystream.l</include>
         <include>io\win_console.l</include>
         <include>io\files.l</include>
         <include>io\ioexceptions.l</include>
@@ -117,6 +118,10 @@
        <include>winforms\win_windows.l</include>
        <include>winforms\win_dialogs.l</include>
        <include>winforms\win_app.l</include>
+     </module>
+     <module name="net">
+       <include>net\win_common.l</include>
+       <include>net\win_sockets.l</include>
      </module>
   </files>
 </configuration>

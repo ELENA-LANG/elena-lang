@@ -8,7 +8,11 @@ public extension objectOp
    __getClass() : external(system'core_routines'__object_class),
                   info("Returns the object class");
 
+   __getParentClass() : external(system'core_routines'__object_parentclass),
+                  info("Returns the parent class");
+
    bool safeEqual(o)
+         : info("Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible")
       = self.equal(o) \ back(false);
 
    bool isEmpty()
@@ -25,12 +29,94 @@ public extension objectOp
       ^ len != 0;
    }
 
+   bool isNil()
+         : info("Returns true if the object is nil")
+      = nil == self;       
+
    doWith(action)
       = action(self);
 
    bool instanceOf(type) : external(system'core_routines'__object_instanceOf),
                   info("Checks if the object is an instance of type");   
 }
+
+// --- valueOp ---
+public extension valueOp
+{
+   bool isLiteral()
+      : info("Returns true if the object is literal or character")
+   {
+      if (self; is string s)
+      {
+         ^ true
+      };
+
+      if (self; is wide s)
+      {
+         ^ true
+      };
+
+      if (self; is char ch)
+      {
+         ^ true
+      };
+
+
+      ^ false
+   }
+
+   bool isInteger()
+      : info("Returns true if the object is an integer number")
+   {
+      if (self; is int n)
+      {
+         ^ true
+      };
+
+      if (self; is uint n)
+      {
+         ^ true
+      };
+
+      if (self; is short n)
+      {
+         ^ true
+      };
+
+      if (self; is ushort n)
+      {
+         ^ true
+      };
+
+      if (self; is byte n)
+      {
+         ^ true
+      };
+
+      if (self; is sbyte n)
+      {
+         ^ true
+      };
+
+      if (self; is long n)
+      {
+         ^ true
+      };
+
+      ^ false
+   }
+
+   bool isNumber()
+      : info("Returns true if the object is a number")
+   {
+      if (self; is real n)
+      {
+         ^ true
+      };
+
+      ^ self.isInteger()
+   }
+} 
 
 // --- byteOp ---
 
@@ -318,12 +404,40 @@ public extension intOp : IntNumber
         
    bool isNonnegative()
       = self <= 0;
+
+   get short High()
+   {
+      int w := self;
+      w := w & 0FFFF0000h;
+      w := w.shiftRight(8);
+        
+      ^ shortConvertor.convert(w)
+   }
+        
+   get short Low()
+   {
+      int w := self;
+      w := w & 0FFFFh;
+        
+      ^ shortConvertor.convert(w)
+   }
 }
 
 // --- uintOp ---
 
 public extension uintOp : UIntNumber
 {
+   int Hashcode
+   {
+      // Reads the object hash code into the output parameter
+      get()
+      {
+         int retVal := PrimitiveIntOperations.getHashcode(self);
+
+         ^ retVal
+      }
+   }
+
    uint sqr()
       = self * self;
 
@@ -393,6 +507,27 @@ public extension uintOp : UIntNumber
 
 public extension longOp : LongNumber
 {   
+   int Hashcode
+   {
+      // Reads the object hash code into the output parameter
+      get()
+      {
+         int retVal := PrimitiveLongOperations.getHashcode(self);
+
+         ^ retVal
+      }
+   }
+
+   get long Absolute()
+   {
+      long n := self;
+
+      if (n < 0l)
+         { n := n * -1l };
+                
+      ^ n
+   }
+
    long power(long y)
    {
       long x := self;
@@ -483,6 +618,23 @@ public extension longOp : LongNumber
         
    bool isNonnegative()
       = self <= 0l;
+
+   get int High()
+   {
+      long w := self;
+      w := w & -4294967296l;
+      w := w.shiftRight(32);
+        
+      ^ intConvertor.convert(w)
+   }
+
+   get int Low()
+   {
+      long w := self;
+      w := w & 4294967295l;
+        
+      ^ intConvertor.convert(w)
+   }
 }
 
 // --- realOp ---
@@ -573,29 +725,29 @@ public extension realOp : RealNumber
 
    real ln()
    {
-      real retVal := PrimitiveRealOperations.ln(self);
+      PrimitiveRealOperations.ln(self, ref real retVal);
 
       ^ retVal
    }
 
    real sin()
    {
-      real retVal := PrimitiveRealOperations.sin(self);
+      PrimitiveRealOperations.sin(self, ref real retVal);
 
       ^ retVal
    }
 
    real cos()
    {
-      real retVal := PrimitiveRealOperations.cos(self);
+      PrimitiveRealOperations.cos(self, ref real retVal);
 
       ^ retVal
    }
 
    real tan()
    {
-      real sinVal := PrimitiveRealOperations.sin(self);
-      real cosVal := PrimitiveRealOperations.cos(self);
+      PrimitiveRealOperations.sin(self, ref real sinVal);
+      PrimitiveRealOperations.cos(self, ref real cosVal);
         
       real n := sinVal / cosVal;
         
@@ -604,7 +756,7 @@ public extension realOp : RealNumber
 
    real arctan()
    {
-      real retVal := PrimitiveRealOperations.arctan(self);
+      PrimitiveRealOperations.arctan(self, ref real retVal);
 
       ^ retVal
    }
@@ -612,14 +764,13 @@ public extension realOp : RealNumber
    real arcsin()
    {
       real n := self;
-      real retVal := 0.0r;
         
-      retVal := n * n;    
+      real retVal := n * n;    
       retVal := 1.0r - retVal;
-      real arg := PrimitiveRealOperations.sqrt(retVal);
+      PrimitiveRealOperations.sqrt(retVal, ref real arg);
         
       arg := n / arg;
-      retVal := PrimitiveRealOperations.arctan(arg);
+      PrimitiveRealOperations.arctan(arg, ref retVal);
         
       ^ retVal
    }
@@ -631,10 +782,10 @@ public extension realOp : RealNumber
         
       retVal := n * n;    
       retVal := 1.0r - retVal;        
-      real arg := PrimitiveRealOperations.sqrt(retVal);
+      PrimitiveRealOperations.sqrt(retVal, ref real arg);
         
       arg := arg / n;
-      retVal := PrimitiveRealOperations.arctan(arg);
+      PrimitiveRealOperations.arctan(arg, ref retVal);
         
       ^ retVal
    }
@@ -667,7 +818,7 @@ public extension realOp : RealNumber
 
    get real Rounded()
    {
-      real retVal := PrimitiveRealOperations.round(self);
+      PrimitiveRealOperations.round(self, ref real retVal);
 
       ^ retVal
    }
@@ -675,8 +826,12 @@ public extension realOp : RealNumber
    get int RoundedInt()
       = intConvertor.convert(self.Rounded);
 
-   real Absolute
-      = PrimitiveRealOperations.abs(self);
+   get real Absolute()
+   {
+      PrimitiveRealOperations.abs(self, ref real retVal);
+
+      ^ retVal  
+   }
 
    get real Reciprocal()
    {
@@ -721,6 +876,26 @@ public extension realOp : RealNumber
          ^ (y == self).iif(y,y-1)
       }
    }
+
+   real round(int precision)
+   {
+      real a := self;
+      bool neg := false;
+      if(self.isNegative())
+      {
+         a := a * -1.0r;
+         neg := true;
+      };
+           
+      int b := 10.power(precision);
+      real r := a * b + 0.5r;
+        
+      int c := intConvertor.convert(r.Rounded);
+    
+      a := c.realDiv(b);
+    
+      ^ neg ? (a * -1.0r) : a
+   }    
 
    real truncate(int precision)
    {
@@ -984,6 +1159,21 @@ public extension stringOp : String
 
       ^ self
    }   
+
+   string replaceFirst(string replacee, string replacer)
+   {
+      int replaceeLen := replacee.Length;
+      int i := self.indexOf(0, replacee);
+        
+      if (i != -1)
+      { 
+         ^ self.delete(i, replaceeLen).insert(i, replacee)
+      }
+      else
+      {
+         ^ self
+      }    
+   }    
 }
 
 // --- charOp ---
@@ -1000,6 +1190,11 @@ public extension charOp : CharValue
 
          ^ retVal
       }
+   }
+
+   bool isNewLine()
+   {
+      ^ self == $10
    }
 
    bool isWhitespace()
@@ -1021,6 +1216,24 @@ public extension charOp : CharValue
       ^ (ch >= 30h) && (ch <= 39h)
    }
 
+   bool isLetter()
+   {
+      int ch := intConvertor.convert(self);
+        
+      if (ch >= 41h && ch <= 5Ah)
+         { ^ true };
+        
+      if (ch >= 61h && ch <= 7Ah)
+         { ^ true };
+        
+      if (ch >= 3ACh && ch <= 3CEh)
+         { ^ true };
+            
+      if (ch >= 400h && ch <= 42Fh)
+         { ^ true };
+            
+      ^ false
+   }
     
    bool isLToken()
    {
@@ -1041,6 +1254,212 @@ public extension charOp : CharValue
       ^ ch == 39
    }
 
+}
+
+// --- wideOp ---
+
+public extension wideOp : WideString
+{
+   wide Substring(int index)
+   {
+      int len := self.Length;
+      if (len > index)
+      {
+         len := len - index;
+            
+         ^ self.Substring(index, len)
+      };
+
+      ^ emptyWideString
+   }
+
+   int indexOf(wide s)
+      = self.indexOf(0, s);
+
+   int indexOf(char ch)
+      = self.indexOf(0, ch);
+
+   int Hashcode
+   {
+      // Reads the object hash code into the output parameter
+      get()
+      {
+         int retVal := PrimitiveWideStringOperations.getHashcode(self);
+
+         ^ retVal
+      }
+   }
+
+   bool isEmpty()
+   {
+      int len := self.Length;
+        
+      ^ len == 0;
+   }
+        
+   bool isNonempty()
+   {
+      int len := self.Length;
+        
+      ^ len != 0;
+   }
+    
+   wide padLeft(int length)
+      = self.padLeft($32, length);
+    
+   wide padLeft(char ch, int length)
+   {
+      int currentLength := self.Length;
+        
+      if (currentLength < length)
+         { ^ WideString.fill(length - currentLength, ch).add(self) };
+            
+      ^ self
+   }
+    
+   wide padRight(int length)
+       = self.padRight($32, length);
+    
+   wide padRight(char ch, int length)
+   {
+      int currentLength := self.Length;
+
+      if (currentLength < length)
+         { ^ self.add(WideString.fill(length - currentLength, ch)) };
+            
+      ^ self
+   }
+
+   bool startingWith(wide s)
+   {
+      int n := self.indexOf(0, s);
+        
+      ^ 0 == n
+   }
+        
+   bool endingWith(wide s)
+   {
+      int l1 := self.Length;
+      int l2 := s.Length;
+
+      int n := self.indexOf(l1 - l2, s);
+        
+      ^ n != -1
+   }
+        
+   bool containing(wide s)
+   {
+      int l1 := self.Length;
+      int l2 := s.Length;
+
+      int n := self.indexOf(0, s);
+        
+      ^ n != -1
+   }
+    
+   wide trimLeft(char ch)
+   {
+      int  index := 0;
+      int  len := self.Length;
+      char current := $0;
+      int  chLen := ch.Length;
+        
+      while(index < len)
+      {
+         current := self[index];
+            
+         ifnot(current == ch)
+         { 
+            if (index == 0)
+            { 
+               ^ self 
+            }
+            else
+            { 
+               ^ self.delete(0, index) 
+            }
+         };
+            
+         index += chLen
+      };
+        
+      ^ emptyWideString
+   }
+    
+   wide trimLeft()
+      = self.trimLeft($32);
+       
+   wide trimRight(char ch)
+   {
+      int  len := self.Length;
+      int  index := len - 1;
+      int  prev := len;
+      char current := $0;
+      int  chLen := ch.Length;
+        
+      while (index >= 0)
+      {
+         current := self[index];
+            
+         ifnot (current == ch)
+            { ^ self.delete(prev,len - prev) };
+            
+         prev := index;
+         index -= chLen
+      };
+        
+      ^ emptyWideString
+   }
+    
+   wide trimRight()
+      = self.trimRight($32);
+        
+   wide trim(char ch)
+      = self.trimLeft(ch).trimRight(ch);
+    
+   wide trim()
+      = self.trimLeft($32).trimRight($32);
+
+   wide replace(wide replacee, wide replacer)
+   {
+      wide   target := emptyWideString;
+      int    start := 0;
+      int    end := self.indexOf(start, replacee);
+      int    replaceeLen := replacee.Length;
+        
+      while (end != -1)
+      {
+         target := target
+                     .add(self.Substring(start, end - start))
+                     .add(replacer);
+            
+         start := end + replaceeLen;
+            
+         end := self.indexOf(start, replacee)
+      };
+    
+      if(start != 0)
+      {
+         ^ target.add(self.Substring(start))
+      };
+
+      ^ self
+   }   
+
+   wide replaceFirst(wide replacee, wide replacer)
+   {
+      int replaceeLen := replacee.Length;
+      int i := self.indexOf(0, replacee);
+        
+      if (i != -1)
+      { 
+         ^ self.delete(i, replaceeLen).insert(i, replacee)
+      }
+      else
+      {
+         ^ self
+      }    
+   }    
 }
 
 // --- arrayOp ---
@@ -1066,7 +1485,7 @@ public extension weakArrayOp
 //
 //public extension arrayOp<T> : Array<T>
 //{
-//    T[] Subarray(int index, int length)
+//    T[] (int index, int length)
 //    {
 //        ^ new Array<T>(self, index, length)
 //    }
@@ -1153,3 +1572,74 @@ public extension threadObjectOp
 
    leaveCriticalSection() : external(system'core_routines'__leaveCritical);
 }
+
+//// --- intArrayOp ---
+//
+//public extension intArrayOp : Array<int>
+//{
+//    exchange(int i1, int i2)
+//    {
+//        int n1 := self[i1];
+//        int n2 := self[i2];
+//
+//        self[i1] := n2;
+//        self[i2] := n1;
+//    }
+//
+//    populate(Func<int,int> f)
+//    {
+//        int i := 0;
+//        int l := self.Length;
+//        
+//        while (i < l)
+//        {
+//            self[i] := f(i);
+//            
+//            i := i + 1
+//        };
+//        
+//        ^ self
+//    }
+//    
+//    populate(Func1 f)
+//        = self.populate:(int n){ ^cast int(f(n)) };
+//}
+//
+//public extension arrayOp<T> : Array<T>
+//{
+//    T[] Subarray(int index, int length)
+//    {
+//        ^ new Array<T>(self, index, length)
+//    }
+//}
+//
+//// --- intmatrixOp ---
+//
+//public extension intMatrixOp : IntMatrix
+//{
+//    populate(Func<int,int,int> fn)
+//    {
+//        int n := 0;
+//        int m := 0;
+//        self.readLengthsTo(ref n, ref m);
+//        
+//        int i := 0;
+//        int j := 0;
+//        while (i < n)
+//        {
+//            j := 0;
+//            while (j < m)
+//            {
+//                int v := fn(i, j);
+//                
+//                self.write(i, j, v);
+//                
+//                j := j + 1
+//            };
+//            
+//            i := i + 1
+//        };
+//        
+//        ^ self
+//    }
+//}

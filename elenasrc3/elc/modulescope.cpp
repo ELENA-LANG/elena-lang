@@ -3,42 +3,20 @@
 //
 //		This file contains Module scope class implementation.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "modulescope.h"
 #include "bytecode.h"
+#include "compilerlogic.h"
 
 using namespace elena_lang;
 
 // --- ModuleScope ---
 
-inline ustr_t getVisibilityPrefix(Visibility visibility)
-{
-   switch (visibility) {
-      case Visibility::Internal:
-         return INTERNAL_PREFIX_NS;
-      case Visibility::Private:
-         return PRIVATE_PREFIX_NS;
-      default:
-         return "'";
-   }
-}
-
-inline Visibility getVisibility(ustr_t name)
-{
-   if (name.findStr(PRIVATE_PREFIX_NS) != NOTFOUND_POS)
-      return Visibility::Private;
-
-   if (name.findStr(INTERNAL_PREFIX_NS) != NOTFOUND_POS)
-      return Visibility::Internal;
-
-   return Visibility::Public;
-}
-
 inline ref_t mapNewIdentifier(ModuleBase* module, ustr_t identifier, Visibility visibility)
 {
-   ustr_t prefix = getVisibilityPrefix(visibility);
+   ustr_t prefix = CompilerLogic::getVisibilityPrefix(visibility);
 
    IdentifierString name(prefix, identifier);
 
@@ -47,7 +25,7 @@ inline ref_t mapNewIdentifier(ModuleBase* module, ustr_t identifier, Visibility 
 
 inline ref_t mapExistingIdentifier(ModuleBase* module, ustr_t identifier, Visibility visibility)
 {
-   ustr_t prefix = getVisibilityPrefix(visibility);
+   ustr_t prefix = CompilerLogic::getVisibilityPrefix(visibility);
 
    IdentifierString name(prefix, identifier);
 
@@ -239,112 +217,6 @@ ustr_t ModuleScope :: resolveWeakTemplateReference(ustr_t referenceName)
    return resolvedName;
 }
 
-ref_t ModuleScope :: importSignature(ModuleBase* referenceModule, ref_t signRef)
-{
-   if (!signRef)
-      return 0;
-
-   ref_t dump[ARG_COUNT];
-   size_t len = referenceModule->resolveSignature(signRef, dump);
-   for (size_t i = 0; i < len; i++) {
-      dump[i] = importReference(referenceModule, dump[i]);
-   }
-
-   return module->mapSignature(dump, len, false);
-}
-
-ref_t ModuleScope :: importMessage(ModuleBase* referenceModule, mssg_t exportRef)
-{
-   if (!exportRef)
-      return 0;
-
-   pos_t paramCount = 0;
-   ref_t actionRef, flags;
-   decodeMessage(exportRef, actionRef, paramCount, flags);
-
-   // signature and custom verb should be imported
-   ref_t signature = 0;
-   ustr_t actionName = referenceModule->resolveAction(actionRef, signature);
-
-   actionRef = module->mapAction(actionName, importSignature(referenceModule, signature), false);
-
-   return encodeMessage(actionRef, paramCount, flags);
-}
-
-ref_t ModuleScope :: importReference(ModuleBase* referenceModule, ustr_t referenceName)
-{
-   auto info = loader->getModule(ReferenceInfo(referenceModule, referenceName), true);
-   if (info.reference) {
-      referenceName = info.module->resolveReference(info.reference);
-      if (isWeakReference(referenceName) && !isTemplateWeakReference(referenceName)) {
-         IdentifierString fullName(info.module->name(), referenceName);
-
-         return module->mapReference(*fullName);
-      }
-      else return module->mapReference(referenceName);
-   }
-   else return 0;
-}
-
-ref_t ModuleScope :: importExternal(ModuleBase* referenceModule, ref_t reference)
-{
-   ustr_t refName = referenceModule->resolveReference(reference);
-
-   return module->mapReference(refName);
-}
-
-ref_t ModuleScope :: importConstant(ModuleBase* referenceModule, ref_t reference)
-{
-   if (!reference)
-      return 0;
-
-   ustr_t value = referenceModule->resolveConstant(reference);
-
-   return  module->mapConstant(value);
-}
-
-ref_t ModuleScope :: importAction(ModuleBase* referenceModule, ref_t reference)
-{
-   if (!reference)
-      return 0;
-
-   ref_t signRef = 0;
-   ustr_t value = referenceModule->resolveAction(reference, signRef);
-
-   return  module->mapAction(value, 0, signRef ? importSignature(referenceModule, signRef) : 0);
-}
-
-ref_t ModuleScope :: importMessageConstant(ModuleBase* referenceModule, ref_t reference)
-{
-   if (!reference)
-      return 0;
-
-   ustr_t value = referenceModule->resolveConstant(reference);
-
-   ByteCodeUtil::resolveMessage(value, module, false);
-
-   return module->mapConstant(value);
-}
-
-ref_t ModuleScope :: importExtMessageConstant(ModuleBase* referenceModule, ref_t reference)
-{
-   if (!reference)
-      return 0;
-
-   ustr_t value = referenceModule->resolveConstant(reference);
-
-   size_t index = value.find('<');
-   assert(index != NOTFOUND_POS);
-   size_t endIndex = value.findSub(index, '>');
-
-   IdentifierString messageName(value);
-   messageName.cut(index, endIndex - index + 1);
-
-   ByteCodeUtil::resolveMessage(*messageName, module, false);
-
-   return module->mapConstant(value);
-}
-
 SectionInfo ModuleScope :: getSection(ustr_t referenceName, ref_t mask, bool silentMode)
 {
    if (isForwardReference(referenceName)) {
@@ -414,8 +286,8 @@ ref_t ModuleScope :: loadSymbolInfo(SymbolInfo& info, ustr_t referenceName)
       copy.load(&reader);
 
       info.symbolType = copy.symbolType;
-      info.typeRef = importReference(moduleInfo.module, copy.typeRef);
-      info.valueRef = importReference(moduleInfo.module, copy.valueRef);
+      info.typeRef = ImportHelper::importReference(moduleInfo.module, copy.typeRef, module);
+      info.valueRef = ImportHelper::importReference(moduleInfo.module, copy.valueRef, module);
    }
    else info.load(&reader);
 
@@ -450,121 +322,8 @@ ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ustr_t referenceName, bool h
       }
       else moduleInfo = getModule(referenceName, true);
 
-      if (moduleInfo.unassigned())
-         return 0;
-
-      // load argument VMT meta data
-      MemoryBase* metaData = moduleInfo.module->mapSection(moduleInfo.reference | mskMetaClassInfoRef, true);
-      if (!metaData)
-         return 0;
-
-      MemoryReader reader(metaData);
-      if (moduleInfo.module != module) {
-         ClassInfo copy;
-         copy.load(&reader, headerOnly, fieldsOnly);
-
-         importClassInfo(copy, info, moduleInfo.module, headerOnly, false/*, false*/);
-
-         // import reference
-         importReference(moduleInfo.module, moduleInfo.reference);
-      }
-      else info.load(&reader, headerOnly, fieldsOnly);
-
-      return moduleInfo.reference;
+      return CompilerLogic::loadClassInfo(info, moduleInfo, module, headerOnly, fieldsOnly);
    }
-}
-
-ref_t ModuleScope :: importReferenceWithMask(ModuleBase* referenceModule, ref_t reference)
-{
-   ref_t mask = reference & mskAnyRef;
-   ref_t refId = reference & ~mskAnyRef;
-   if (refId)
-      refId = importReference(referenceModule, refId);
-
-   return refId | mask;
-}
-
-void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, bool headerOnly, bool inheritMode)
-{
-   target.header = copy.header;
-   target.size = copy.size;
-
-   if (!headerOnly) {
-      // import method references and mark them as inherited if required (inherit mode)
-      for (auto it = copy.methods.start(); !it.eof(); ++it) {
-         MethodInfo info = *it;
-
-         if (info.outputRef)
-            info.outputRef = importReference(exporter, info.outputRef);
-
-         if (info.multiMethod)
-            info.multiMethod = importMessage(exporter, info.multiMethod);
-
-         if (info.byRefHandler)
-            info.byRefHandler = importMessage(exporter, info.byRefHandler);
-
-         if (inheritMode) {
-            info.inherited = true;
-
-            // private methods are not inherited
-            if (!test(it.key(), STATIC_MESSAGE))
-               target.methods.add(importMessage(exporter, it.key()), info);
-         }
-         else target.methods.add(importMessage(exporter, it.key()), info);
-      }
-
-      for (auto it = copy.fields.start(); !it.eof(); ++it) {
-         FieldInfo info = *it;
-
-         if (info.typeInfo.typeRef && !isPrimitiveRef(info.typeInfo.typeRef))
-            info.typeInfo.typeRef = importReference(exporter, info.typeInfo.typeRef);
-
-         if (info.typeInfo.elementRef && !isPrimitiveRef(info.typeInfo.elementRef))
-            info.typeInfo.elementRef = importReference(exporter, info.typeInfo.elementRef);
-
-         target.fields.add(it.key(), info);
-      }
-
-      for (auto it = copy.attributes.start(); !it.eof(); ++it) {
-         ClassAttributeKey key = it.key();
-         if (test((unsigned)key.value2, (unsigned)ClassAttribute::ReferenceKeyMask)) {
-            key.value1 = importReference(exporter, key.value1);
-         }
-         else if (test((unsigned)key.value2, (unsigned)ClassAttribute::MessageKeyMask)) {
-            key.value1 = importMessage(exporter, key.value1);
-         }
-         ref_t referece = *it;
-         if (test((unsigned)key.value2, (unsigned)ClassAttribute::ReferenceMask)) {
-            referece = importReference(exporter, referece);
-         }
-         else if (test((unsigned)key.value2, (unsigned)ClassAttribute::MessageMask)) {
-            referece = importMessage(exporter, referece);
-         }
-
-         target.attributes.add(key, referece);
-      }
-
-      for (auto it = copy.statics.start(); !it.eof(); ++it) {
-         auto info = *it;
-         if (info.typeInfo.typeRef && !isPrimitiveRef(info.typeInfo.typeRef))
-            info.typeInfo.typeRef = importReference(exporter, info.typeInfo.typeRef);
-
-         if (info.typeInfo.elementRef)
-            info.typeInfo.elementRef = importReference(exporter, info.typeInfo.elementRef);
-
-         info.valueRef = importReferenceWithMask(exporter, info.valueRef);
-
-         target.statics.add(it.key(), info);
-      }
-   }
-
-   // import class class reference
-   if (target.header.classRef != 0)
-      target.header.classRef = importReference(exporter, target.header.classRef);
-
-   // import parent reference
-   if (target.header.parentRef)
-      target.header.parentRef = importReference(exporter, target.header.parentRef);
 }
 
 void ModuleScope :: saveListMember(ustr_t name, ustr_t memberName)
@@ -640,5 +399,5 @@ Visibility ModuleScope :: retrieveVisibility(ref_t reference)
 {
    ustr_t referenceName = module->resolveReference(reference);
 
-   return getVisibility(referenceName);
+   return CompilerLogic::getVisibility(referenceName);
 }

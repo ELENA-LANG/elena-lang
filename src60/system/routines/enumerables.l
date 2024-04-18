@@ -93,6 +93,31 @@ public extension wideListOp : WideString
 
       ^ list
    }
+    
+   Array splitBy(wide value)
+   {
+      ArrayList list := new ArrayList();
+      int       start := 0;
+      int       index := 0;
+      int       valueLen := value.Length;
+      int       literalLen := self.Length;
+        
+      while (index >= 0)
+      {
+         index := self.indexOf(start, value);
+         if (-1 != index)
+         {
+            list.append(self.Substring(start, index - start));
+            start := index + valueLen
+         }
+         else
+         {
+            list.append(self.Substring(start, literalLen - start))
+         }
+      };
+        
+      ^ list
+   }
 }
 
 // --- enumeratorOp ---
@@ -140,6 +165,21 @@ public extension enumerableOp
    filterBy(Func1 selector)
       = Filter.new(selector, cast Enumerator(self.enumerator()));
 
+   filterBy(Func2 selector)
+      = PatternFilter2.new(selector, cast Enumerator(self.enumerator()));
+        
+   filterBy(Func3 selector)
+      = PatternFilter3.new(selector, cast Enumerator(self.enumerator()));
+        
+   filterBy(Func4 selector)
+      = PatternFilter4.new(selector, cast Enumerator(self.enumerator()));
+        
+   filterBy(Func5 selector)
+      = PatternFilter5.new(selector, cast Enumerator(self.enumerator()));
+        
+   filterBy(Func6 selector)
+      = PatternFilter6.new(selector, cast Enumerator(self.enumerator()));
+
    selectBy(selector)
       = Selector.new(selector, cast Enumerator(self.enumerator()));
 
@@ -151,6 +191,15 @@ public extension enumerableOp
 
    top(counter)
       = TopFilter.new(cast int(counter), cast Enumerator(self.enumerator()));
+
+   joinBy(object list, Func2 filter_f, Func2 select_f)
+      = JoinEnumerator.new(filter_f, select_f, cast Enumerator(self.enumerator()), cast Enumerator(list.enumerator()));        
+
+   repeatTo(n)
+      = RangeEnumerator.new(self,n, 1);
+
+   repeatTill(n)
+      = RangeEnumerator.new(self, n - 1, 1);
 
    summarize(var)
    {
@@ -213,9 +262,6 @@ public extension enumerableOp
       ^ lastItem
    }
 
-   repeatTill(n)
-      = RangeEnumerator.new(self, n - 1, 1);
-
    zipBy(enumerable, zipper)
       = ZipEnumerator.new(zipper, cast Enumerator(self.enumerator()), cast Enumerator(enumerable.enumerator()));
 
@@ -241,6 +287,21 @@ public extension enumerableOp
       };
      
       ^ true
+   }
+
+   allMatchedBy(ExtensionMessage extMessage)
+      = self.allMatchedBy::(n => extMessage(n));
+
+   int countMembers()
+   {
+      auto   en := cast Enumerator(self.enumerator());
+      int    counter := 0;
+      while (en.next())
+      {
+         counter += 1
+      };
+        
+      ^ counter
    }
 
    get MaximalMember()
@@ -362,6 +423,9 @@ public extension indexableOp
 
    populate(action)
       = self.populate::(int n){ ^action(n) };
+
+   populate(ExtensionMessage ext_mssg)
+      = self.populate::(n => ext_mssg(n));
 
    deepClone()
    {

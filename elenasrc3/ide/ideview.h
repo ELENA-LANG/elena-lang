@@ -56,16 +56,18 @@ struct IDEScheme
 class IDEModel
 {
 public:
-   IDEStatus       status;
-   bool            running;
+   IDEStatus            status;
+   bool                 running;
 
-   SourceViewModel sourceViewModel;
-   ProjectModel    projectModel;
-   IDEScheme       ideScheme;
+   SourceViewModel      sourceViewModel;
+   ProjectModel         projectModel;
+   IDEScheme            ideScheme;
 
-   FindModel       findModel;
+   FindModel            findModel;
 
-   bool            appMaximized;
+   ContextBrowserModel  contextBrowserModel;
+
+   bool                 appMaximized;
 
    SourceViewModel* viewModel() { return &sourceViewModel; }
 

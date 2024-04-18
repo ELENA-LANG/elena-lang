@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef JITLINKER_H
@@ -128,6 +128,8 @@ namespace elena_lang
             ref_t addressMask) override;
          void writeVAddress64(MemoryBase& target, pos_t position, addr_t vaddress, pos64_t disp,
             ref_t addressMask) override;
+         void writeMDataRef64(MemoryBase& target, pos_t position, pos64_t disp,
+            ref_t addressMask) override;
          void writeVAddress32Hi(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
             ref_t addressMask) override;
          void writeVAddress32Lo(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
@@ -210,6 +212,7 @@ namespace elena_lang
       addr_t resolveName(ReferenceInfo referenceInfo, bool onlyPath);
       addr_t resolvePackage(ReferenceInfo referenceInfo);
       addr_t resolveRawConstant(ReferenceInfo referenceInfo);
+      addr_t resolveDistributeCategory(ReferenceInfo referenceInfo, ref_t sectionMask);
 
       void resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader& vmtReader, FieldAddressMap& staticValues);
 
@@ -223,6 +226,8 @@ namespace elena_lang
       ReferenceInfo retrieveConstantVMT(SectionInfo info);
 
       void createGlobalAttribute(int category, ustr_t value, addr_t address);
+
+      void copyDistributedSymbolList(ModuleInfo info, MemoryBase* target, ModuleBase* module);
 
       addr_t resolve(ReferenceInfo refrenceInfo, ref_t sectionMask, bool silentMode);
 
@@ -242,7 +247,12 @@ namespace elena_lang
       void setCompiler(JITCompilerBase* compiler)
       {
          _compiler = compiler;
+
+         _withDebugInfo = _compiler->isWithDebugInfo();
       }
+
+      void resolveDistributed();
+
       void complete(JITCompilerBase* compiler, ustr_t superClass);
 
       void copyMetaList(ModuleInfo info, ModuleInfoList& output);

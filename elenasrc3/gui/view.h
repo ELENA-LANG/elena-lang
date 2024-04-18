@@ -52,12 +52,12 @@ namespace elena_lang
       //void onDocumentRename(int index);
 
       void beforeDocumentClose(int index);
-      void onDocumentClose(int index);
+      void onDocumentClose(int index, bool empty);
 
    public:
       void attachListener(TextViewListener* listener) override;
 
-      void addDocumentView(ustr_t name, Text* text, path_t path) override;
+      void addDocumentView(ustr_t name, Text* text, path_t path, bool included) override;
       void renameDocumentView(ustr_t oldName, ustr_t newName, path_t path) override;
 
       int getCurrentIndex();

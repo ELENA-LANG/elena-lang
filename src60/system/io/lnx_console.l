@@ -55,6 +55,11 @@ namespace io
       clear()
       {
       }      
+
+      refresh()
+      {
+//         extern libc.fflush(handle)
+      }
    }
 
    public class ConsoleReader : IConsoleReader

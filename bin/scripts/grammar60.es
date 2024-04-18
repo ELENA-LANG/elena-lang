@@ -344,7 +344,7 @@
       
   #define object          ::=
 <=
-                    system'dynamic'expressions'SymbolExpression ( 
+                    system'dynamic'expressions'LazySymbolExpression ( 
 =>
                               "reference" "=" ref_quote
 <=

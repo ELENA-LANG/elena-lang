@@ -416,7 +416,7 @@ void TextViewWindow :: onResize()
 void TextViewWindow :: onSetFocus()
 {
    if (_model) {
-      createCaret(_styles->getLineHeight(), /*_view->docView->status.overwriteMode ? _view->styles.getStyle(STYLE_DEFAULT)->avgCharWidth : */1);
+      createCaret(_styles->getLineHeight(), _model->DocView()->isOverwriteMode() ? _styles->getStyle(STYLE_DEFAULT)->avgCharWidth : 1);
       showCaret();
 
       ControlBase::refresh();
@@ -534,6 +534,10 @@ bool TextViewWindow :: onKeyDown(int keyCode, bool kbShift, bool kbCtrl)
          break;
       case VK_DELETE:
          _controller->eraseChar(_model, false);
+         break;
+      case VK_INSERT:
+         _controller->setOverwriteMode(_model);
+         onSetFocus();
          break;
       default:
          return false;

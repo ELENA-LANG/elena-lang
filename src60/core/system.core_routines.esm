@@ -70,6 +70,14 @@ procedure __object_class
 
 end
 
+procedure __object_parentclass
+
+  peek        sp:0
+  class
+  parent
+
+end
+
 procedure __object_instanceOf
 
   peek        sp:0
@@ -985,6 +993,15 @@ procedure __intToChar
 
 end
 
+procedure __setHandleDirectly
+
+  peek       sp:1
+  load
+  peek       sp:0
+  $save
+
+end
+
 procedure __intToMssg
 
   peek       sp:1
@@ -995,6 +1012,15 @@ procedure __intToMssg
 end
 
 procedure __intHash (self,n,r)
+
+  peek       sp:1
+  load
+  peek       sp:2
+  save
+
+end
+
+procedure __longHash (self,n,r)
 
   peek       sp:1
   load
@@ -1017,6 +1043,16 @@ procedure __strHash (self,s,r)
   peek       sp:1
   load
   and        n:255 
+  peek       sp:2
+  save
+
+end
+
+procedure __wstrHash (self,s,r)
+
+  peek       sp:1
+  load
+  and        n:0FFFFh
   peek       sp:2
   save
 
@@ -1069,6 +1105,16 @@ procedure __intToShort
 
 end
 
+procedure __intToUShort
+
+  peek       sp:1
+  load
+  and        n:0FFFFh
+  peek       sp:2
+  save
+
+end
+
 procedure __uintToShort
 
   peek       sp:1
@@ -1096,6 +1142,16 @@ procedure __readIntPtr
   load
   peek       sp:2
   save
+
+end
+
+procedure __readRealPtr
+
+  peek       sp:1
+  get        i:0
+  lload
+  peek       sp:2
+  lsave
 
 end
 
@@ -1625,9 +1681,10 @@ procedure __funcmssg_closure
   xflush     sp:1
 
   alloc      i:1
-  xstore     i:1
-  load       sp:0
   store      sp:0
+
+  mov        n:4
+  xload
 
   set        fp:0
   neg
@@ -1639,6 +1696,7 @@ procedure __funcmssg_closure
 
   free       i:1
   xrefresh   sp:0
+  xrefresh   sp:1
 
   jump       vt:0
 
@@ -1658,6 +1716,7 @@ procedure __ext_closure
   free      i:1
 
   xrefresh  sp:0
+  xrefresh  sp:1
 
   jump      vt:0
 
@@ -1795,6 +1854,7 @@ procedure __saving_closure(obj, args)
 
   xrefresh   sp:0
   xrefresh   sp:1
+  peek       sp:0
 
 end
 
@@ -2009,6 +2069,9 @@ labCopy:
   jne        labCopy
 
 labCopyEnd:
+  xrefresh   sp:0
+  xrefresh   sp:1
+
   set        sp:0
   alloc      i:1
   store      sp:0
@@ -2274,6 +2337,7 @@ labNext:
   save       sp:0
   peek       sp:0
   xrefresh   sp:0
+  xrefresh   sp:1
 
   mov        mssg : "function:#constructor[0]"
   xadd       dp:command
@@ -2372,6 +2436,7 @@ labVarLen:
   save       sp:0
   peek       sp:0
   xrefresh   sp:0
+  xrefresh   sp:1
 
   mov        mssg : "function:params:#constructor[1]"
 

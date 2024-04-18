@@ -55,6 +55,11 @@ namespace elena_lang
             xmlNode.setContent(s);
          }
 
+         void remove()
+         {
+            xmlNode.remove();
+         }
+
          bool isNotFound()
          {
             return xmlNode.isNotFound();

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GUI common editor header File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GUIEDITOR_H
@@ -52,7 +52,7 @@ namespace elena_lang
       virtual void onDocumentModeChanged(int index, bool modifiedMode) = 0;
 
       virtual void beforeDocumentClose(int index) = 0;
-      virtual void onDocumentClose(int index) = 0;
+      virtual void onDocumentClose(int index, bool empty) = 0;
    };
 
    // --- FindModel ---
@@ -93,7 +93,7 @@ namespace elena_lang
 
       virtual void attachListener(TextViewListener* listener) = 0;
 
-      virtual void addDocumentView(ustr_t name, Text* text, path_t path) = 0;
+      virtual void addDocumentView(ustr_t name, Text* text, path_t path, bool included) = 0;
       virtual void renameDocumentView(ustr_t oldName, ustr_t newName, path_t path) = 0;
 
       virtual bool selectDocumentView(int index) = 0;
@@ -135,9 +135,9 @@ namespace elena_lang
    class TextViewControllerBase
    {
    public:
-      virtual void newDocument(TextViewModelBase* model, ustr_t name) = 0;
+      virtual void newDocument(TextViewModelBase* model, ustr_t name, bool included) = 0;
       virtual bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
-         FileEncoding encoding) = 0;
+         FileEncoding encoding, bool included) = 0;
 
       virtual bool selectDocument(TextViewModelBase* model, int index) = 0;
 
@@ -146,6 +146,8 @@ namespace elena_lang
       virtual bool insertNewLine(TextViewModelBase* model) = 0;
       virtual bool insertChar(TextViewModelBase* model, text_c ch) = 0;
       virtual bool eraseChar(TextViewModelBase* model, bool moveback) = 0;
+
+      virtual void setOverwriteMode(TextViewModelBase* model) = 0;
 
       virtual void undo(TextViewModelBase* model) = 0;
       virtual void redo(TextViewModelBase* model) = 0;
@@ -186,6 +188,8 @@ namespace elena_lang
    {
    public:
       virtual void reloadStyles(TextViewModelBase* viewModel) = 0;
+
+      virtual void styleControl(GUIControlBase* control) = 0;
    };
 
 }

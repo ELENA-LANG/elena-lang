@@ -4,6 +4,11 @@
         <executable>graphs.exe</executable>
      </project>
   </platform>
+  <platform key="Win_x64">
+     <project>
+        <executable>graphs64.exe</executable>
+     </project>
+  </platform>
   <project>
      <namespace>graphs</namespace>
      <template>gui</template>

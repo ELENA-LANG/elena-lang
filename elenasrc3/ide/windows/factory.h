@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef FACTORY_H
@@ -24,7 +24,7 @@ namespace elena_lang
    protected:
       FontFactory    _fontFactory;
       ViewStyles     _styles;
-      StyleInfo*     _schemes[2];
+      StyleInfo*     _schemes[3];
       GUISettinngs   _settings;
       PathSettings   _pathSettings;
 
@@ -55,6 +55,8 @@ namespace elena_lang
 
    public:
       void reloadStyles(TextViewModelBase* viewModel) override;
+
+      void styleControl(GUIControlBase* control) override;
 
       GUIApp* createApp() override;
       GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,

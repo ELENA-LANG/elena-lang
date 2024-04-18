@@ -3,7 +3,7 @@
 //
 //		This file contains String classes implementations
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //                                             (C)1994-2004, Unicode, Inc.
 //---------------------------------------------------------------------------
 

@@ -286,7 +286,7 @@ void IDEWindow :: newFile()
 
 void IDEWindow :: newProject()
 {
-   _controller->doNewProject(fileDialog, messageDialog, projectSettingsDialog, _model);
+   _controller->doNewProject(fileDialog, projectDialog, messageDialog, projectSettingsDialog, _model);
 }
 
 void IDEWindow :: openFile()
@@ -308,7 +308,7 @@ void IDEWindow::saveAll()
 
 void IDEWindow :: saveProject()
 {
-   _controller->doSaveProject(fileDialog, projectDialog, _model, true);
+   _controller->doSaveProject(projectDialog, _model, true);
 }
 
 void IDEWindow :: closeFile()
@@ -318,7 +318,7 @@ void IDEWindow :: closeFile()
 
 void IDEWindow :: closeAll()
 {
-   _controller->doCloseAll(fileDialog, messageDialog, _model);
+   _controller->doCloseAll(fileDialog, projectDialog, messageDialog, _model, false);
 }
 
 void IDEWindow :: closeAllButActive()
@@ -328,20 +328,20 @@ void IDEWindow :: closeAllButActive()
 
 void IDEWindow :: openProject()
 {
-   _controller->doOpenProject(projectDialog, messageDialog, _model);
+   _controller->doOpenProject(fileDialog, projectDialog, messageDialog, _model);
    _recentProjectList.reload();
 }
 
 void IDEWindow :: closeProject()
 {
-   _controller->doCloseProject(projectDialog, messageDialog, _model);
+   _controller->doCloseProject(fileDialog, projectDialog, messageDialog, _model);
 
    //_controller->onLayoutchange();
 }
 
 void IDEWindow :: exit()
 {
-   if(_controller->doExit(fileDialog, messageDialog, _model)) {
+   if(_controller->doExit(fileDialog, projectDialog, messageDialog, _model)) {
       SDIWindow::exit();
    }
 }
@@ -444,6 +444,11 @@ void IDEWindow :: replace()
 void IDEWindow :: includeFile()
 {
    _controller->doInclude(_model);
+}
+
+void IDEWindow :: excludeFile()
+{
+   _controller->doExclude(_model);
 }
 
 void IDEWindow :: toggleProjectView(bool open)
@@ -573,10 +578,12 @@ void IDEWindow :: onDebugEnd()
 
 void IDEWindow :: onDebugWatchBrowse(BrowseNMHDR* rec)
 {
+   ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
+
    if (rec->param) {
-      ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
       _controller->refreshDebugContext(contextBrowser, _model, rec->item, rec->param);
    }
+   else _controller->refreshDebugContext(contextBrowser, _model);
 }
 
 void IDEWindow :: enableMenuItemById(int id, bool doEnable, bool toolBarItemAvailable)
@@ -777,6 +784,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_PROJECT_INCLUDE:
          includeFile();
          break;
+      case IDM_PROJECT_EXCLUDE:
+         excludeFile();
+         break;
       case IDM_PROJECT_OPTION:
          _controller->doChangeProject(projectSettingsDialog, _model);
          break;
@@ -831,6 +841,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_DEBUG_INSPECT:
          refreshDebugNode();
          break;
+      case IDM_DEBUG_SWITCHHEXVIEW:
+         switchHexMode();
+         break;
       case IDM_WINDOW_FIRST:
       case IDM_WINDOW_SECOND:
       case IDM_WINDOW_THIRD:
@@ -868,7 +881,7 @@ bool IDEWindow :: onCommand(int command)
       case IDM_FILE_PROJECTS_9:
       {
          PathString path(_recentProjectList.getPath(command - IDM_FILE_PROJECTS));
-         _controller->doOpenProject(projectDialog, messageDialog, _model, *path);
+         _controller->doOpenProject(fileDialog, projectDialog, messageDialog, _model, *path);
          _recentProjectList.reload();
          break;
       }
@@ -896,6 +909,13 @@ bool IDEWindow :: onCommand(int command)
 void IDEWindow :: refreshDebugNode()
 {
    dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch])->refreshCurrentNode();
+}
+
+void IDEWindow :: switchHexMode()
+{
+   _model->contextBrowserModel.hexadecimalMode = !_model->contextBrowserModel.hexadecimalMode;
+
+   refreshDebugNode();
 }
 
 void IDEWindow :: onTabSelChanged(HWND wnd)
@@ -951,6 +971,8 @@ void IDEWindow :: onDebugWatchRClick(size_t controlIndex)
    }
 
    ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.debugContextMenu]);
+
+   menu->checkMenuItemById(IDM_DEBUG_SWITCHHEXVIEW, _model->contextBrowserModel.hexadecimalMode);
 
    menu->show(_handle, p);
 }
@@ -1063,8 +1085,15 @@ void IDEWindow :: onIDEStatusChange(ModelNMHDR* rec)
 
 void IDEWindow :: onTextModelChange(TextViewModelNMHDR* rec)
 {
+   if (test(rec->status, STATUS_COLORSCHEME_CHANGED)) {
+      onColorSchemeChange();
+   }
+
    onDocumentUpdate(rec->docStatus);
    onIDEStatusChange(rec);
+   if (test(rec->status, STATUS_FRAME_CHANGED)) {
+      onDocumentSelection();
+   }
 }
 
 void IDEWindow :: onTextFrameSel(SelectionNMHDR* rec)
@@ -1077,6 +1106,15 @@ void IDEWindow :: onProjectViewSel(ParamSelectionNMHDR* rec)
    _controller->doOpenProjectSourceByIndex(_model, (int)rec->param);
 
    _children[_model->ideScheme.textFrameId]->setFocus();
+}
+
+void IDEWindow :: onDocumentSelection()
+{
+   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+   auto docInfo = _model->sourceViewModel.DocView();
+
+   menu->enableMenuItemById(IDM_PROJECT_INCLUDE, docInfo && !docInfo->isIncluded());
+   menu->enableMenuItemById(IDM_PROJECT_EXCLUDE, docInfo && docInfo->isIncluded());
 }
 
 void IDEWindow :: onLayoutChange()
@@ -1105,11 +1143,10 @@ void IDEWindow :: onLayoutChange()
       enableMenuItemById(IDM_EDIT_PASTE, false, true);
 
       enableMenuItemById(IDM_PROJECT_INCLUDE, false, false);
+      enableMenuItemById(IDM_PROJECT_EXCLUDE, false, false);
    }
    else {
       enableMenuItemById(IDM_EDIT_PASTE, true, true);
-
-      enableMenuItemById(IDM_PROJECT_INCLUDE, true, false);
    }
 
    enableMenuItemById(IDM_EDIT_DELETE, !empty, false);
@@ -1229,7 +1266,7 @@ void IDEWindow :: onDebuggerSourceNotFound()
 
 bool IDEWindow :: onClose()
 {
-   if (!_controller->onClose(fileDialog, messageDialog, _model))
+   if (!_controller->onClose(fileDialog, projectDialog, messageDialog, _model))
       return false;
 
    return WindowBase::onClose();
@@ -1369,4 +1406,10 @@ void IDEWindow :: populate(size_t counter, GUIControlBase** children)
 void IDEWindow :: onColorSchemeChange()
 {
    _viewFactory->reloadStyles(_model->viewModel());
+
+   _viewFactory->styleControl(_children[_model->ideScheme.projectView]);
+
+   _viewFactory->styleControl(this);
+
+   refresh();
 }

@@ -6,33 +6,20 @@ In development:
   ### EPIC: elena 6.0 - redux ###
 
   === Iteration 21 ===
+
+  === Iteration 22 ===
   --------------------------------------
-  dev: #637, windows executable - support manifest
+  dev: #608, #637 (bt tests (>=4), all bc tests), #646, interface mockup
   op:
-  opt:pi under 7 sec, #602
-  maint:#620,#622,#618
-  exp:
-  ide:vm debugger,backlog (#617)
-  tools:work with elt in ide
-  prom:#635,elena in nutshell every 1 week
-  port:win64 gui,helloworld gui sample (button)
-  --------------------------------------
-
-  --------------------------------------
-
-  === Iteration 22 ===
-  --------------------------------------
-  dev: async programming (instant messagange sample (chat) ), #608
-  op:github actions : x86
   opt:pi under 6 sec, #601
-  maint:
-  exp:
-  ide:
+  maint: #506, #617, #620, #622
+  exp:#612
+  ide:vm debugger
   tools:
-  prom:
-  port:x86-64 vm
+  prom:elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test,#635
+  port:chat sample, helloworld gui sample (button)
 
-  === Iteration 22 ===
+  === Iteration 23 ===
   --------------------------------------
   dev: redesign switch statement : it should be possible to use as an expression as well
     (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
@@ -45,3 +32,15 @@ In development:
   tools:
   prom:
   port:elenavm / elt for linux
+
+  === Iteration 24 ===
+  --------------------------------------
+  dev: async programming (instant messagange sample (chat) )
+  op:
+  opt:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
+  port:

@@ -23,7 +23,7 @@ namespace elena_lang
       void onDocumentModeChanged(int, bool) override {}
 
       void onDocumentNew(int index) override;
-      void onDocumentClose(int index) override {}
+      void onDocumentClose(int index, bool empty) override {}
       void onDocumentSelect(int index) override;
 
       bool select(int index);
@@ -40,7 +40,7 @@ namespace elena_lang
    public:
       void onDocumentNew(int index) override;
       void onDocumentModeChanged(int index, bool modifiedMode) override;
-      void onDocumentClose(int index) override;
+      void onDocumentClose(int index, bool empty) override;
       void onDocumentSelect(int index) override;
 
       void assignList(ProjectPaths* recentList);

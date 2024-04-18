@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "ecviewer.h"
@@ -704,6 +704,9 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elMessage)) {
       printLineAndCount("@flag ", "elMessage", row, pageSize);
    }
+   if (test(flags, elPacked)) {
+      printLineAndCount("@flag ", "elPacked", row, pageSize);
+   }
    if (test(flags, elReadOnlyRole)) {
       printLineAndCount("@flag ", "elReadOnlyRole", row, pageSize);
    }
@@ -768,13 +771,22 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
 
 void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
 {
+   bool structOne = test(classInfo.header.flags, elStructureRole);
+
    IdentifierString line;
 
    auto it = classInfo.fields.start();
    while (!it.eof()) {
       auto fieldInfo = *it;
 
-      line.copy(it.key());
+      line.clear();
+      if (structOne) {
+         line.append("+");
+         line.appendHex(fieldInfo.offset);
+         line.append("h: ");
+      }
+
+      line.append(it.key());
       if (isPrimitiveRef(fieldInfo.typeInfo.typeRef)) {
          switch (fieldInfo.typeInfo.typeRef) {
             case V_INT32:
@@ -917,7 +929,7 @@ void ByteCodeViewer::printMethod(ustr_t name, bool fullInfo)
    }
 }
 
-void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo)
+void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo, ustr_t filterMask)
 {
    name = trim(name);
 
@@ -968,12 +980,15 @@ void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo)
       line.append('.');
       addMessage(line, entry.message);
 
-      prefix.copy("#");
-      prefix.appendInt(counter);
-      prefix.append(": ");
-      prefix.append(getMethodPrefix(test(entry.message, FUNCTION_MESSAGE)));
+      if (filterMask.empty() || (*line).findStr(filterMask) != NOTFOUND_POS) {
+         prefix.copy("#");
+         prefix.appendInt(counter);
+         prefix.append(": ");
+         prefix.append(getMethodPrefix(test(entry.message, FUNCTION_MESSAGE)));
 
-      printLineAndCount(*prefix, *line, row, _pageSize);
+         printLineAndCount(*prefix, *line, row, _pageSize);
+      }
+
 
       size -= sizeof(MethodEntry);
       counter++;
@@ -1032,7 +1047,11 @@ void ByteCodeViewer :: listMembers()
                   info->row, info->pageSize);
             }
             else if (module->mapSection(reference | mskSymbolRef, true)) {
-               info->viewer->printLineAndCount("symbol ", referenceName,
+               info->viewer->printLineAndCount("symbol #", referenceName,
+                  info->row, info->pageSize);
+            }
+            else if (module->mapSection(reference | mskProcedureRef, true)) {
+               info->viewer->printLineAndCount("procedure @", referenceName,
                   info->row, info->pageSize);
             }
          }
@@ -1090,12 +1109,19 @@ void ByteCodeViewer :: runSession()
       else if (buffer[0] == '#') {
          printSymbol(buffer + 1);
       }
-      else if (buffer[0] == '*') {
+      else if (buffer[0] == '@') {
          printProcedure(buffer + 1);
       }
       else if (ustr_t(buffer).find('.') != NOTFOUND_POS) {
-         printMethod(buffer, true);
+         size_t index = ustr_t(buffer).find('.');
+         if (buffer[index + 1] == '~') {
+            IdentifierString filter(buffer + index + 2);
+            buffer[index] = 0;
+
+            printClass(buffer, true, *filter);
+         }
+         else printMethod(buffer, true);
       }
-      else printClass(buffer, true);
+      else printClass(buffer, true, nullptr);
    }
 }

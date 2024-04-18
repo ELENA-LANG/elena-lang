@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPILERLOGIC_H
@@ -207,6 +207,8 @@ namespace elena_lang
       bool isValidType(ClassInfo& info, bool allowRole);
       bool isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole);
 
+      pos_t definePadding(ModuleScopeBase& scope, pos_t offset, pos_t size);
+
       static bool isPrimitiveArrRef(ref_t reference)
       {
          switch (reference) {
@@ -214,6 +216,7 @@ namespace elena_lang
             case V_INT32ARRAY:
             case V_INT16ARRAY:
             case V_INT8ARRAY:
+            case V_FLOAT64ARRAY:
             case V_BINARYARRAY:
                return true;
             default:
@@ -234,8 +237,37 @@ namespace elena_lang
       static bool readAttributeMap(MemoryBase* section, ReferenceMap& map);
       static bool readTypeMap(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
 
-      static bool loadMetaData(ModuleScopeBase* moduleScope, ustr_t name);
+      static bool loadMetaData(ModuleScopeBase* moduleScope, ustr_t aliasName, ustr_t nsName);
       static bool clearMetaData(ModuleScopeBase* moduleScope, ustr_t name);
+
+      static Visibility getVisibility(ustr_t name)
+      {
+         if (name.findStr(PRIVATE_PREFIX_NS) != NOTFOUND_POS)
+            return Visibility::Private;
+
+         if (name.findStr(INTERNAL_PREFIX_NS) != NOTFOUND_POS)
+            return Visibility::Internal;
+
+         return Visibility::Public;
+      }
+
+      static ustr_t getVisibilityPrefix(Visibility visibility)
+      {
+         switch (visibility) {
+            case Visibility::Internal:
+               return INTERNAL_PREFIX_NS;
+            case Visibility::Private:
+               return PRIVATE_PREFIX_NS;
+            default:
+               return "'";
+         }
+      }
+
+      static ref_t loadClassInfo(ClassInfo& info, ModuleInfo& moduleInfo, 
+         ModuleBase* target, bool headerOnly, bool fieldsOnly);
+
+      static void importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, 
+         ModuleBase* importer, bool headerOnly, bool inheritMode/*,bool ignoreFields*/);
 
       static CompilerLogic* getInstance()
       {

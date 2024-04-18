@@ -50,7 +50,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>6.0.3</version>
+     <version>6.0.5</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
@@ -69,7 +69,7 @@
         <include>operations/advanced/operations.l</include>
      </module>
      <module hints="1">
-        <include>base.l</include>
+        <include>inline_templates.l</include>
         <include>object.l</include>
         <include>basic.l</include>
         <include>variables.l</include>

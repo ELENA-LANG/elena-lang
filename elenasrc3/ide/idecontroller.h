@@ -18,9 +18,9 @@ namespace elena_lang
    class SourceViewController : public TextViewController
    {
    public:
-      void newSource(TextViewModelBase* model, ustr_t name, bool autoSelect, int& status);
+      void newSource(TextViewModelBase* model, ustr_t name, bool included, bool autoSelect, int& status);
       bool openSource(TextViewModelBase* model, ustr_t name, path_t sourcePath,
-         FileEncoding encoding, bool autoSelect, int& status);
+         FileEncoding encoding, bool included, bool autoSelect, int& status);
       void closeSource(TextViewModelBase* model, int index, bool autoSelect, int& status);
 
       void renameSource(TextViewModelBase* model, ustr_t oldName, ustr_t newName, path_t newSourcePath);
@@ -82,14 +82,17 @@ namespace elena_lang
          return _debugController.isStarted();
       }
 
+      bool isFileIncluded(ProjectModel& model, path_t filePath);
+
       void includeFile(ProjectModel& model, path_t filePath);
+      void excludeFile(ProjectModel& model, path_t filePath);
 
       void setProjectPath(ProjectModel& model, path_t projectFile);
 
       int openSingleFileProject(ProjectModel& model, path_t singleProjectFile);
       int newProject(ProjectModel& model);
       int openProject(ProjectModel& model, path_t projectFile);
-      void saveProject(ProjectModel& model);
+      int saveProject(ProjectModel& model);
       int closeProject(ProjectModel& model);
 
       path_t getSourceByIndex(ProjectModel& model, int index);
@@ -148,8 +151,8 @@ namespace elena_lang
       bool openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile, int& status);
       bool openFile(IDEModel* model, path_t sourceFile, int& status);
       int openProject(IDEModel* model, path_t projectFile);
-      bool closeProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
-         int& status);
+      bool closeProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, 
+         IDEModel* model, int& status);
 
       bool closeFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
          int index, int& status);
@@ -159,6 +162,7 @@ namespace elena_lang
       bool closeAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
          int& status);
       bool saveAll(FileDialogBase& dialog, IDEModel* model, bool forcedMode);
+      bool saveProject(FileDialogBase& projectDialog, IDEModel* model, bool saveAsMode, int& status);
 
       void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);
 
@@ -205,14 +209,14 @@ namespace elena_lang
       bool doSaveAll(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
       bool doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
       bool doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, int index);
-      bool doCloseAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool doCloseAll(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model, bool closeProject);
       bool doCloseAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
-      void doNewProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, ProjectSettingsBase& prjDialog, 
+      void doNewProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, ProjectSettingsBase& prjSettingDialog,
          IDEModel* model);
-      bool doOpenProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
-      void doOpenProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, path_t path);
-      bool doCloseProject(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
-      bool doSaveProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model, bool forcedMode);
+      bool doOpenProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      void doOpenProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model, path_t path);
+      bool doCloseProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool doSaveProject(FileDialogBase& projectDialog, IDEModel* model, bool saveAsMode);
 
       bool doSearch(FindDialogBase& dialog, IDEModel* model);
       bool doSearchNext(IDEModel* model);
@@ -255,10 +259,11 @@ namespace elena_lang
       void onIDEStop(IDEModel* model);
 
       void doInclude(IDEModel* model);
+      void doExclude(IDEModel* model);
 
-      bool doExit(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool doExit(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model);
 
-      bool onClose(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool onClose(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model);
 
       void init(IDEModel* model, int& status);
 
