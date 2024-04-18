@@ -1,8 +1,5 @@
-<<<<<<<< HEAD:rebuild_lib60_x86.bat
-========
 REM NOTE : the script MUST be called from the root folder
 
->>>>>>>> f62ae2a7e8bafd64db83cdfaa8a5d0a0e3f23c13:build/rebuild_lib60_x86.bat
 .\bin\sg-cli dat\sg\syntax60.txt
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
