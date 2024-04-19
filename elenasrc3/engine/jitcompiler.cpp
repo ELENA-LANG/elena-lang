@@ -2933,7 +2933,13 @@ void JITCompiler :: compileTape(ReferenceHelperBase* helper, MemoryReader& bcRea
    while (bcReader.position() < endPos) {
       ByteCodeUtil::read(bcReader, scope.command);
 
+      if (scope.command.code == ByteCode::VCallMR)
+         printf("%x", scope.command.code);
+
       generators[(unsigned char)scope.command.code](&scope);
+
+      if (scope.command.code == ByteCode::VCallMR)
+         printf("\n", scope.command.code);
    }
 }
 
