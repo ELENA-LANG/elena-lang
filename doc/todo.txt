@@ -23,12 +23,13 @@ In development:
   - #635 : sort (using json objects)
   - #620
   - #635 : calc
-  - #620
-  - #635 : hello world
   --------------------------------------
-  - #635 : new elenavm entry point
-  - #635 : c++ : call elenavm
-  - #635 : c# : call elenavm
+  - #620 : review system warnings
+  - #620 : review extensions warnings
+  - #620 : move UnsafePointer to pointers.l and use external class to deal with strings
+  - #620 : a variable must be assigned, warn if not
+  - #620 : a field must be assigned, warn if not
+  - #620 : raise an error var "abc";
 
   === Iteration 23 ===
   --------------------------------------

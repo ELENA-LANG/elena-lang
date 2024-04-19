@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ECVIEWER_H
@@ -63,7 +63,7 @@ namespace elena_lang
       void printLine(ustr_t arg1, ustr_t arg2);
       void printLineAndCount(ustr_t arg1, ustr_t arg2, int& row, int pageSize);
 
-      void listMembers();
+      void listMembers(ustr_t filter);
 
       void addIArg(arg_t arg, IdentifierString& commandStr);
 
