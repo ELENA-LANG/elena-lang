@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive Linker class implementation
 //		Supported platforms: Linux
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elflinker.h"
@@ -108,7 +108,7 @@ void ElfLinker :: prepareElfImage(ImageProviderBase& provider, ElfExecutableImag
       image.withDebugInfo);
 }
 
-LinkResult ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType)
+LinkResult ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType, path_t)
 {
    bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode, true);
    ElfExecutableImage image(withDebugMode);

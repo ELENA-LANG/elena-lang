@@ -3,7 +3,7 @@
 //
 //		This file contains the compiling processor header
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPLING_H
@@ -62,6 +62,8 @@ namespace elena_lang
       };
 
       path_t              _modulePrologName, _prologName, _epilogName;
+
+      path_t              _exeExtension;
 
       PresenterBase*      _presenter;
       ErrorProcessor*     _errorProcessor;
@@ -143,7 +145,8 @@ namespace elena_lang
          _compiler->setVerboseOn();
       }
 
-      CompilingProcess(PathString& appPath, path_t modulePrologName, path_t prologName, path_t epilogName,
+      CompilingProcess(PathString& appPath, path_t exeExtension,
+         path_t modulePrologName, path_t prologName, path_t epilogName,
          PresenterBase* presenter, ErrorProcessor* errorProcessor,
          pos_t codeAlignment,
          JITSettings defaultCoreSettings,
