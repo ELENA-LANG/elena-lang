@@ -81,7 +81,7 @@
         <include>closures.l</include>
         <include>convertors.l</include>
         <include>pointers.l</include>
-        <include>lnx_basic.l</include>
+        <include>lnx_primitives.l</include>
         <include>dynamic.l</include>
         <include>exceptions.l</include>
         <include>events.l</include>

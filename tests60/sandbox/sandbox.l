@@ -2,5 +2,8 @@ import extensions;
 
 public program()
 {
-    console.printLine("Test");
+   var f := false;
+
+   f ? { console.writeLine("true") } ! { console.writeLine("false") }
+
 }
