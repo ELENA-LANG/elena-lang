@@ -323,7 +323,7 @@ public sealed const struct Socket
 
    Socket accept()
    {
-      Socket socket := extern WS2_32.accept(_handle, 0, 0);
+      handle socket := extern WS2_32.accept(_handle, 0, 0);
             
       if (socket != INVALID_SOCKET)
       {

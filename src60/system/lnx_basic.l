@@ -1,66 +1,23 @@
-
-// --- UnsafePointer ---
-
-public sealed const struct UnsafePointer
+// --- PrimitivePointerOperations ---
+internal singleton PrimitivePointerOperations
 {
-   embeddable __ptr _pointer;
-
-   private clear() : external(system'core_routines'__clearPtr);
-
-   constructor()
+   string readString(pointer ptr)
    {
-      self.clear();
-   }
-
-   constructor(pointer ptr)
-   {
-      _pointer := ptr
-   }
-
-   constructor(object obj)
-   {
-      self.assignPtr(obj);
-   }
-
-   get constructor Default()
-      = new UnsafePointer();   
-
-   private readIntPtr(ref int retVal) : external(system'core_routines'__readIntPtr);
-
-   private assignPtr(wide str) : external(system'core_routines'__assignPtr); 
-
-   bool isUnassigned()
-   {
-      ^ _pointer == 0;
-   }
-
-   // unsafe code
-   string cast()
-   {
-      int  len := extern libc.strlen(self);
+      int  len := extern libc.strlen(ptr);
       string s := String.allocate(len);
-      extern libc.strcpy(s, self);
+      extern libc.strcpy(s, ptr);
         
       ^ s
    }
 
-   wide cast()
+   wide readWideString(pointer ptr)
    {
-        int  len := extern libc.wcslen(self);
-        wide s := WideString.allocate(len);
-        extern libc.wcscpy(s, self);
+      int  len := extern libc.wcslen(ptr);
+      wide s := WideString.allocate(len);
+      extern libc.wcscpy(s, ptr);
         
-        ^ s
+      ^ s
    }
-
-   int cast()
-   {
-      self.readIntPtr(ref int retVal);
-
-      ^ retVal
-   }
-
-   copyTo(byte[] target, int len) : external(system'core_routines'__ptrCopyTo);
 }
 
 // --- CallStack ---
