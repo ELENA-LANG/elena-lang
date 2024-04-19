@@ -864,8 +864,6 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
          size -= sizeof(MethodEntry);
       }
 
-      printf("end\n", index);
-
       if (_withDebugInfo)
          endNativeDebugInfo(debugPosition);
 
