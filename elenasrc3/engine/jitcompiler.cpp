@@ -1523,7 +1523,14 @@ void elena_lang::loadFrameIndexROp(JITCompilerScope* scope)
                scope->command.arg1 << scope->constants->indexPower, scope->frameOffset));
             break;
          case ARG12_1:
-            scope->compiler->writeImm12(writer, scope->command.arg1 << scope->constants->indexPower, 0);
+            scope->compiler->writeImm12(writer,
+               getFPOffset(scope->command.arg1 << scope->constants->indexPower, scope->frameOffset),
+               0);
+            break;
+         case INV_ARG12_1:
+            scope->compiler->writeImm12(writer,
+               -getFPOffset(scope->command.arg1 << scope->constants->indexPower, scope->frameOffset),
+               0);
             break;
          case PTR32_2:
             if (scope->command.arg2)
