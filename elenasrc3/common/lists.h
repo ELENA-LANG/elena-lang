@@ -3086,7 +3086,7 @@ namespace elena_lang
 
          bool eof()
          {
-            return index == owner->count_pos();
+            return index == owner->count_int();
          }
       };
 
