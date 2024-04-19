@@ -27,8 +27,9 @@ In development:
   - #620 : Sorting algorithms/Sleep sort
   - #635 : calc
   - #620 : implement ExtensionMessage.equal
-  --------------------------------------
   - #620 : fix aarch64 console app 
+  --------------------------------------
+  - #620 : fix broken app
 
   === Iteration 23 ===
   --------------------------------------
