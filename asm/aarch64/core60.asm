@@ -4054,10 +4054,42 @@ labEnd:
 end
 
 // ; xstorefir
+// ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %0F9h
 
   movz    x11,  __ptr32lo_2
   movk    x11,  __ptr32hi_2, lsl #16
+  sub     x12, x29, -__arg12_1
+  str     x11, [x12]
+
+end
+
+// ; xstorefir
+// ; NOTE : it is presumed that arg1 > 0 (it is inverted in jitcompiler)
+inline %4F9h
+
+  movz    x11,  __ptr32lo_2
+  movk    x11,  __ptr32hi_2, lsl #16
+  add     x12, x29, __arg12_1
+  str     x11, [x12]
+
+end
+
+// ; xstorefir i, 0
+// ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
+inline %5F9h
+
+  mov     x11, #0
+  sub     x12, x29, -__arg12_1
+  str     x11, [x12]
+
+end
+
+// ; xstorefir i, 0
+// ; NOTE : it is presumed that arg1 > 0 (it is inverted in jitcompiler)
+inline %9F9h
+
+  mov     x11, #0
   add     x12, x29, __arg12_1
   str     x11, [x12]
 
