@@ -25,6 +25,7 @@ In development:
   - calling elena vm from c++ / c# - #635
   - #635 : sort (using json objects)
   - #620 : Sorting algorithms/Sleep sort
+  - #620 : hello world sample : no need to link calendar
   - #635 : calc
   - #620 : implement ExtensionMessage.equal
   - #620 : fix aarch64 system_tests
