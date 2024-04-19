@@ -9,6 +9,6 @@
 #ifndef VMCOMMON_H
 #define VMCOMMON_H
 
-#define ELENAVM_REVISION_NUMBER        0x0022
+#define ELENAVM_REVISION_NUMBER        0x0023
 
 #endif

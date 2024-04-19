@@ -7,17 +7,28 @@ In development:
 
   === Iteration 22 ===
   --------------------------------------
-  dev: #608, #637 (bt tests (>=4), all bc tests), #646, #619
+  dev: #608, #637 (bt tests (>=4), all bc tests), #619
   op: github action - create a draft release
   opt:pi under 6 sec, #601
   maint: #506, #617, #620, #622
-  exp:#612,calling elena vm from c++ / c# - #635
+  exp:#612,
   ide:vm debugger, #617
   tools:#618
   prom:elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test,#635
   port:chat sample, helloworld gui sample (button)
   --------------------------------------
+  - #646
+  - #620
+  - calling elena vm from c++ / c# - #635
+  - #635 : sort (using json objects)
+  - #620
+  - #635 : calc
+  - #620
+  - #635 : hello world
   --------------------------------------
+  - #635 : new elenavm entry point
+  - #635 : c++ : call elenavm
+  - #635 : c# : call elenavm
 
   === Iteration 23 ===
   --------------------------------------
