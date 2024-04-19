@@ -13,7 +13,7 @@
 #include "bytecode.h"
 #include "module.h"
 
-#define FULL_OUTOUT_INFO 1
+//#define FULL_OUTOUT_INFO 1
 
 using namespace elena_lang;
 
@@ -838,7 +838,6 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
       MethodEntry entry = { };
 
       size -= sizeof(ClassHeader);
-      int index = 0; // !! temporal
       while (size > 0) {
          vmtReader.read((void*)&entry, sizeof(MethodEntry));
 
@@ -863,9 +862,6 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
             _addressMapper->addMethod(vaddress, message, methodPosition);
 
          size -= sizeof(MethodEntry);
-
-         printf("method %x\n", index);
-         index++;
       }
 
       printf("end\n", index);
