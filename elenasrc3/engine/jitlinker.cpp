@@ -838,6 +838,7 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
       MethodEntry entry = { };
 
       size -= sizeof(ClassHeader);
+      int index = 0; // !! temporal
       while (size > 0) {
          vmtReader.read((void*)&entry, sizeof(MethodEntry));
 
@@ -862,7 +863,12 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
             _addressMapper->addMethod(vaddress, message, methodPosition);
 
          size -= sizeof(MethodEntry);
+
+         printf("method %x\n", index);
+         index++;
       }
+
+      printf("end\n", index);
 
       if (_withDebugInfo)
          endNativeDebugInfo(debugPosition);
