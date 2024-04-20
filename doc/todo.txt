@@ -28,9 +28,8 @@ In development:
   - #620 : hello world sample : no need to link calendar
   - #635 : calc
   - #620 : implement ExtensionMessage.equal
-  - #620 : fix aarch64 system_tests
   --------------------------------------
-  - #620 : fix sandbox with branching
+  - #620 : fix aarch64 system_tests
 
   === Iteration 23 ===
   --------------------------------------

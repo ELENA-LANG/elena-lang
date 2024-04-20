@@ -1,8 +1,12 @@
 import extensions;
+import ltests;
+
+myTest() : testCase()
+{
+   console.writeLine("My test")
+}
 
 public program()
 {
-   var f := false;
-
-   f ? { console.writeLine("true") } ! { console.writeLine("false") }
+   Engine.run();
 }
