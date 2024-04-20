@@ -1489,6 +1489,8 @@ void JITLinker :: copyDistributedSymbolList(ModuleInfo info, MemoryBase* target,
    if (!sectionInfo.module)
       return;
 
+   printf("copyDistributedSymbolList %s\n", info.module->resolveReference(info.reference).str());
+
    MemoryReader bcReader(sectionInfo.section);
    MemoryWriter writer(target);
 
