@@ -1489,8 +1489,6 @@ void JITLinker :: copyDistributedSymbolList(ModuleInfo info, MemoryBase* target,
    if (!sectionInfo.module)
       return;
 
-   printf("copyDistributedSymbolList %s %s\n", info.module->name().str(), info.module->resolveReference(info.reference).str());
-
    MemoryReader bcReader(sectionInfo.section);
    MemoryWriter writer(target);
 
@@ -1498,10 +1496,7 @@ void JITLinker :: copyDistributedSymbolList(ModuleInfo info, MemoryBase* target,
       ref_t symbolRef = bcReader.getRef();
 
       writer.writeDReference(ImportHelper::importReferenceWithMask(info.module, symbolRef, module) , 0);
-
-      printf(".");
    }
-   printf("\n");
 }
 
 void JITLinker :: copyMetaList(ModuleInfo info, ModuleInfoList& output)

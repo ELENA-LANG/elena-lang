@@ -27,10 +27,9 @@ In development:
   - #620 : Sorting algorithms/Sleep sort
   - #620 : hello world sample : no need to link calendar
   - #635 : calc
-  - #620 : implement ExtensionMessage.equal
-  - testCollection is resolved twice - it is not correct
-  --------------------------------------
   - #620 : fix aarch64 system_tests
+  --------------------------------------
+  - #620 : aarch64 system_tests : variadicDispatcher
 
   === Iteration 23 ===
   --------------------------------------
