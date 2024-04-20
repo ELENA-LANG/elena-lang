@@ -546,8 +546,6 @@ void LibraryProvider :: loadDistributedSymbols(ModuleBase* module, ustr_t virtua
 
    ref_t reference = module->mapReference(*rootName, true);
    if (reference) {
-      printf("loadDistributedSymbols %s\n", module->name().str());
-
       list.add({ module, reference });
    }
 
