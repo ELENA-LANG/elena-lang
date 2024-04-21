@@ -14,20 +14,19 @@ In development:
   exp:#612,
   ide:vm debugger, #617
   tools:#618
-  prom:elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test,#635
+  prom:elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test
   port:chat sample, helloworld gui sample (button)
   --------------------------------------
   - #646
-  - #620 : fix ppc64le console app
   - #620 : review install scripts : include all existing samples, use different output folders
   - #620 : tests : support the symbols as well
   - calling elena vm from c++ / c# - #635
   - #635 : sort (using json objects)
   - #620 : Sorting algorithms/Sleep sort
   - #620 : hello world sample : no need to link calendar
-  - #635 : calc
+  - #620 : fix ppc64le console app
   --------------------------------------
-  - #620 : fix linux i386 / amd64 install package
+  - #635 : calc
 
   === Iteration 23 ===
   --------------------------------------
@@ -40,7 +39,7 @@ In development:
   exp:
   ide:
   tools:
-  prom:
+  prom:#635 on reddit / code project
   port:elenavm / elt for linux
 
   === Iteration 24 ===

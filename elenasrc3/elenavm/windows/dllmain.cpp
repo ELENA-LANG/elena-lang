@@ -231,7 +231,7 @@ EXTERN_DLL_EXPORT int PrepareVMLA(const char* configName, const char* ns, const 
    return InitializeVMSTLA(env, tape.get(0), exceptionHandler);
 }
 
-EXTERN_DLL_EXPORT int ExecuteVMLA(const char* target, const char* arg)
+EXTERN_DLL_EXPORT int ExecuteVMLA(const char* target, const char* arg, char* output, size_t maxLength)
 {
 #ifdef DEBUG_OUTPUT
    printf("ExecuteVMLA.6\n");
@@ -257,10 +257,18 @@ EXTERN_DLL_EXPORT int ExecuteVMLA(const char* target, const char* arg)
 
    tapeWriter.writeDWord(VM_ENDOFTAPE_CMD);
 
-   int retVal = 0;
+   int retVal = -1;
    try
    {
-      machine->evaluate(tape.get(0));
+      if (output) {
+         size_t copied = 0;
+         if (machine->evaluateAndReturn(tape.get(0), output, maxLength, copied))
+            retVal = copied;
+      }
+      else {
+         machine->evaluate(tape.get(0));
+         retVal = 0;
+      }
    }
    catch (InternalError err)
    {

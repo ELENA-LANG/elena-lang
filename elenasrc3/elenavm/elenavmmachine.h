@@ -110,6 +110,8 @@ namespace elena_lang
 
       addr_t evaluate(void* tape);
 
+      bool evaluateAndReturn(void* tape, char* output, size_t maxLength, size_t& copied);
+
       size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
       size_t loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length);
 

@@ -474,6 +474,16 @@ addr_t ELENAVMMachine :: evaluate(void* tape)
    return interprete(_env, tape, INVALID_POS, nullptr, false);
 }
 
+bool ELENAVMMachine :: evaluateAndReturn(void* tape, char* output, size_t maxLength, size_t& copied)
+{
+   auto result = evaluate(tape);
+   if (result) {
+      return SystemRoutineProvider::CopyResult(result, output, maxLength, copied);
+   }
+
+   return false;
+}
+
 void ELENAVMMachine :: Exit(int exitCode)
 {
    __routineProvider.Exit(exitCode);
