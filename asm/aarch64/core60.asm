@@ -3594,6 +3594,16 @@ inline %2F1h
 
 end
 
+// ; xstoresir i, 0
+inline %5F1h
+
+  mov     x11, #0
+
+  add     x12, sp, __arg12_1
+  str     x11, [x12]
+
+end
+
 // ; xstoresir :0, 0
 inline %6F1h
 
@@ -3611,9 +3621,7 @@ end
 // ; xstoresir :n, -1
 inline %8F1h
 
-  movz    x11,  __n16lo_1
-  movk    x11,  __n16hi_1, lsl #16
-  sxtw    x11, w11
+  movn    x11, #1 
 
   add     x12, sp, __arg12_1
   str     x11, [x12]
@@ -3623,22 +3631,14 @@ end
 // ; xstoresir :0, -1
 inline %9F1h
 
-  movz    x11,  __n16lo_1
-  movk    x11,  __n16hi_1, lsl #16
-  sxtw    x11, w11
-
-  mov     x0, x11
+  mov     x0, #1
 
 end
 
 // ; xstoresir :1, -1
 inline %0AF1h
 
-  movz    x11,  __n16lo_1
-  movk    x11,  __n16hi_1, lsl #16
-  sxtw    x11, w11
-
-  mov     x1, x11
+  movn    x1, #1 
 
 end
 
