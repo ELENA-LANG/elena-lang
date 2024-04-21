@@ -18,7 +18,6 @@ In development:
   port:chat sample, helloworld gui sample (button)
   --------------------------------------
   - #646
-  - #620 : fix linux i386 / amd64 install package
   - #620 : fix ppc64le console app
   - #620 : review install scripts : include all existing samples, use different output folders
   - #620 : tests : support the symbols as well
@@ -27,9 +26,8 @@ In development:
   - #620 : Sorting algorithms/Sleep sort
   - #620 : hello world sample : no need to link calendar
   - #635 : calc
-  - #620 : fix aarch64 system_tests
   --------------------------------------
-  - #620 : aarch64 system_tests : variadicDispatcher
+  - #620 : fix linux i386 / amd64 install package
 
   === Iteration 23 ===
   --------------------------------------

@@ -1,5 +1,5 @@
 #!/bin/bash
-RELEASE=elena-6.0.10.i386-linux
+RELEASE=elena-6.0.9.i386-linux
 
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
@@ -172,10 +172,6 @@ echo compiling lib60 files
  mkdir -p ./$RELEASE/usr/lib/elena/lib60/
  mkdir -p ./$RELEASE/usr/bin/
  mkdir -p ./$RELEASE/usr/elena-lang
-
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/console/helloworld/
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/console/sum/
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/console/words/
 
  mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/accumulator/
  mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/ackermann/
