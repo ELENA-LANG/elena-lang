@@ -3621,7 +3621,7 @@ end
 // ; xstoresir :n, -1
 inline %8F1h
 
-  movn    x11, #1 
+  mov     x11, #-1 
 
   add     x12, sp, __arg12_1
   str     x11, [x12]
@@ -3631,14 +3631,14 @@ end
 // ; xstoresir :0, -1
 inline %9F1h
 
-  mov     x0, #1
+  mov     x0, #-1
 
 end
 
 // ; xstoresir :1, -1
 inline %0AF1h
 
-  movn    x1, #1 
+  mov     x1, #-1 
 
 end
 

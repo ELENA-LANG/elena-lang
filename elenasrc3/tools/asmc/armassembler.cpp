@@ -2201,7 +2201,12 @@ void Arm64Assembler :: compileMOV(ScriptToken& tokenInfo, MemoryWriter& writer)
       valid = compileADDImm(tokenInfo, rd, rn, ARMOperand(ARMOperandType::Imm, 0), writer);
    }
    else if ((rd.isXR() && rn.type == ARMOperandType::Imm)) {
-      valid = compileMOVZ(tokenInfo, rd, rn, writer);
+      if (rn.imm < 0) {
+         // NOTE : 
+         rn.imm = ~rn.imm;
+         valid = compileMOVN(tokenInfo, rd, rn, writer);
+      }
+      else valid = compileMOVZ(tokenInfo, rd, rn, writer);
    }
 
    if (!valid)
