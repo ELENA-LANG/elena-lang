@@ -7197,18 +7197,6 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
 
    injectVariableInfo(variableNode, codeScope);
 
-   if (_trackingUnassigned) {
-      // warn if the variable was not assigned
-      for (auto it = codeScope.locals.start(); !it.eof(); ++it) {
-         if ((*it).unassigned) {
-            if((*it).size > 0) {
-               warnOnUnassignedLocal(node, codeScope, -(*it).offset);
-            }
-            else warnOnUnassignedLocal(node, codeScope, (*it).offset);
-         }
-      }
-   }
-
    // NOTE : in the closure mode the last statement is the closure result
    return closureMode ? exprRetVal : retVal;
 }
@@ -7307,6 +7295,18 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
          break;
       default:
          break;
+   }
+
+   if (_trackingUnassigned) {
+      // warn if the variable was not assigned
+      for (auto it = codeScope.locals.start(); !it.eof(); ++it) {
+         if ((*it).unassigned) {
+            if ((*it).size > 0) {
+               warnOnUnassignedLocal(node, codeScope, -(*it).offset);
+            }
+            else warnOnUnassignedLocal(node, codeScope, (*it).offset);
+         }
+      }
    }
 
    // if the method returns itself
@@ -11233,18 +11233,37 @@ ObjectInfo Compiler::Expression :: compileAltOperation(SyntaxNode node)
 
    ObjectInfo target = {};
    SyntaxNode current = node.firstChild();
-   if (current == SyntaxKey::MessageOperation || current == SyntaxKey::PropertyOperation) {
-      SyntaxNode objNode = current.firstChild();
+   switch (current.key) {
+      case SyntaxKey::MessageOperation: 
+      case SyntaxKey::PropertyOperation:
+      {
+         SyntaxNode objNode = current.firstChild();
 
-      target = compileObject(objNode, EAttr::Parameter, nullptr);
+         target = compileObject(objNode, EAttr::Parameter, nullptr);
 
-      writer->newNode(BuildKey::AltOp, ehLocal.argument);
+         writer->newNode(BuildKey::AltOp, ehLocal.argument);
 
-      writer->newNode(BuildKey::Tape);
-      compileMessageOperationR(target, objNode.nextNode(), current == SyntaxKey::PropertyOperation);
-      writer->closeNode();
+         writer->newNode(BuildKey::Tape);
+         compileMessageOperationR(target, objNode.nextNode(), current == SyntaxKey::PropertyOperation);
+         writer->closeNode();
+         break;
+      }
+      case SyntaxKey::CodeBlock:
+      case SyntaxKey::Object:
+      {
+         writer->newNode(BuildKey::AltOp, ehLocal.argument);
+
+         writer->newNode(BuildKey::Tape);
+         compile(current, 0, EAttr::Parameter, nullptr);
+         writer->closeNode();
+
+         target = { ObjectKind::Nil };
+         break;
+      }
+      default:
+         scope.raiseError(errInvalidOperation, node);
+         break;
    }
-   else scope.raiseError(errInvalidOperation, node);
 
    writer->newNode(BuildKey::Tape);
    SyntaxNode altNode = current.nextNode().firstChild();

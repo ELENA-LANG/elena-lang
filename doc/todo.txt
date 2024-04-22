@@ -7,7 +7,7 @@ In development:
 
   === Iteration 22 ===
   --------------------------------------
-  dev: #608, #637 (bt tests (>=4), all bc tests), #619
+  dev: #608, #637 (bt tests (>=4), all bc tests), #619; dev nested using statement (get rid of explicit variable)
   op: github action - create a draft release
   opt:pi under 6 sec, #601
   maint: #506, #617, #620, #622
@@ -18,12 +18,14 @@ In development:
   port:chat sample, helloworld gui sample (button)
   --------------------------------------
   - #646
-  - #620 : review install scripts : include all existing samples, use different output folders
   - #620 : tests : support the symbols as well
   - #635 : new tutorial - calling elena vm from c++ / c#
   - samples : test tutorials for script generated code
-  --------------------------------------
   - #635 : sort (using json objects)
+  * c# : json array to string and back
+  * c++ : json array to string and back
+  --------------------------------------
+  * l : json array to string and back
 
   === Iteration 23 ===
   --------------------------------------
