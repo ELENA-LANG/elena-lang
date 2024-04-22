@@ -20,13 +20,11 @@ In development:
   - #646
   - #620 : review install scripts : include all existing samples, use different output folders
   - #620 : tests : support the symbols as well
-  - calling elena vm from c++ / c# - #635
+  - write tutorial : calling elena vm from c++ / c# - #635
   - #635 : sort (using json objects)
-  - #620 : Sorting algorithms/Sleep sort
   - #620 : hello world sample : no need to link calendar
-  - #620 : fix ppc64le console app
   --------------------------------------
-  - #635 : calc
+  - #620 : fix ppc64le console app
 
   === Iteration 23 ===
   --------------------------------------
