@@ -20,11 +20,12 @@ In development:
   - #646
   - #620 : review install scripts : include all existing samples, use different output folders
   - #620 : tests : support the symbols as well
-  - write tutorial : calling elena vm from c++ / c# - #635
+  - #635 : new tutorial - calling elena vm from c++ / c#
   - #635 : sort (using json objects)
-  - #620 : hello world sample : no need to link calendar
   --------------------------------------
-  - #620 : fix ppc64le console app
+  - #620 : hello world sample : get rid of unused classes / extensions in the minimal build
+  - #620 : hello world sample : no need to link calendar
+  - #620 : hello world sample : no need to link assert
 
   === Iteration 23 ===
   --------------------------------------
