@@ -156,6 +156,24 @@ void XmlProjectBase :: loadPathSetting(ConfigFile& config, ConfigFile::Node& con
    }
 }
 
+void XmlProjectBase :: loadBoolSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath,
+   ProjectOption key)
+{
+   auto configNode = config.selectNode(configRoot, xpath);
+   if (!configNode.isNotFound()) {
+      DynamicString<char> strValue;
+      configNode.readContent(strValue);
+
+      bool value = ustr_t(strValue.str()).compare("-1");
+
+      ProjectNode node = _root.findChild(key);
+      if (node == ProjectOption::None) {
+         _root.appendChild(key, value ? "-1" : "0");
+      }
+      else node.setStrArgument(value ? "-1" : "0");
+   }
+}
+
 void XmlProjectBase :: loadKeyCollection(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath, ProjectOption collectionKey,
    ProjectOption itemKey, ustr_t prefix)
 {

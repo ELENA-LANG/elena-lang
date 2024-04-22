@@ -676,6 +676,9 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elAbstract)) {
       printLineAndCount("@flag ", "elAbstract", row, pageSize);
    }
+   if (test(flags, elAutoLoaded)) {
+      printLineAndCount("@flag ", "elAutoLoaded", row, pageSize);
+   }
    if (test(flags, elClassClass)) {
       printLineAndCount("@flag ", "elClassClass", row, pageSize);
    }

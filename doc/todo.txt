@@ -21,11 +21,9 @@ In development:
   - #620 : review install scripts : include all existing samples, use different output folders
   - #620 : tests : support the symbols as well
   - #635 : new tutorial - calling elena vm from c++ / c#
-  - #635 : sort (using json objects)
+  - samples : test tutorials for script generated code
   --------------------------------------
-  - #620 : hello world sample : get rid of unused classes / extensions in the minimal build
-  - #620 : hello world sample : no need to link calendar
-  - #620 : hello world sample : no need to link assert
+  - #635 : sort (using json objects)
 
   === Iteration 23 ===
   --------------------------------------

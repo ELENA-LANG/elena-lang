@@ -224,7 +224,7 @@ void ELENAVMMachine :: fillPreloadedSymbols(JITLinker& jitLinker, MemoryWriter& 
 {
    ModuleInfoList symbolList({});
    for (auto it = _preloadedList.start(); !it.eof(); ++it) {
-      jitLinker.copyMetaList(*it, symbolList);
+      jitLinker.copyPreloadedMetaList(*it, symbolList, false);
    }
    _preloadedList.clear();
 

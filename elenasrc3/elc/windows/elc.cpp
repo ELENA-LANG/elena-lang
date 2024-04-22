@@ -230,6 +230,9 @@ int main()
                   else if (argv[i][2] == 'e') {
                      project.addBoolSetting(ProjectOption::EvaluateOp, argv[i][3] != '-');
                   }
+                  else if (argv[i][2] == 'm') {
+                     project.addBoolSetting(ProjectOption::ModuleExtensionAutoLoad, argv[i][3] != '-');
+                  }
                   else if (argv[i][2] == 'p') {
                      project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');
                   }

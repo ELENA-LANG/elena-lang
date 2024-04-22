@@ -319,6 +319,8 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
       loadPathSetting(config, root, OUTPUT_PATH, ProjectOption::OutputPath, configPath);
       loadPathSetting(config, root, TARGET_PATH, ProjectOption::TargetPath, configPath);
 
+      loadBoolSetting(config, root, AUTOEXTENSION_PATH, ProjectOption::ModuleExtensionAutoLoad);
+
       loadParserTargets(config, root, PARSER_TARGET_CATEGORY);
 
       copySetting(config, root, MANIFEST_NAME, ProjectOption::ManifestName);
