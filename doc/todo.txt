@@ -24,9 +24,8 @@ In development:
   - #544
   - #522
   - #516
-  - #488
  --------------------------------------
-  - #486
+  - #488 : Declaring auto struct variable
 
   === Iteration 23 ===
   --------------------------------------
@@ -35,7 +34,7 @@ In development:
     console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
   op:
   opt:
-  maint:#620
+  maint:#620, #486
   exp:
   ide:
   tools:

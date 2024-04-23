@@ -413,10 +413,10 @@ namespace elena_lang
             else return {};
          }
 
-         virtual bool resolveAutoType(ObjectInfo& info, TypeInfo typeInfo)
+         virtual bool resolveAutoType(ObjectInfo& info, TypeInfo typeInfo, int size, int extra)
          {
             if (parent) {
-               return parent->resolveAutoType(info, typeInfo);
+               return parent->resolveAutoType(info, typeInfo, size, extra);
             }
             else return false;
          }
@@ -860,7 +860,7 @@ namespace elena_lang
             return scope ? scope->isExtension : false;
          }
 
-         bool resolveAutoType(ObjectInfo& info, TypeInfo typeInfo) override;
+         bool resolveAutoType(ObjectInfo& info, TypeInfo typeInfo, int size, int extra) override;
 
          void markAsAssigned(ObjectInfo object) override;
 

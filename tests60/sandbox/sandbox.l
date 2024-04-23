@@ -1,11 +1,24 @@
 import extensions;
+import extensions'dynamic;
+
+struct XY
+{
+   int x : prop;
+   int y : prop;
+
+   constructor(int x, int y)
+   {
+      this x := x;
+      this y := y
+   }
+
+   static XY Default
+      = new XY(0, 0);
+}
 
 public program()
 {
-   int a[10];
-    
-   a[0] := 0;
-   a[0] += 2;
+   auto xy := XY.Default;
 
-   console.writeLine(a[0]);
+   console.writeLine(xy.toJson());
 }

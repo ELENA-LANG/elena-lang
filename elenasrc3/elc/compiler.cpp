@@ -1394,7 +1394,7 @@ void Compiler::CodeScope :: markAsAssigned(ObjectInfo object)
    parent->markAsAssigned(object);
 }
 
-bool Compiler::CodeScope :: resolveAutoType(ObjectInfo& info, TypeInfo typeInfo)
+bool Compiler::CodeScope :: resolveAutoType(ObjectInfo& info, TypeInfo typeInfo, int size, int extra)
 {
    if (info.kind == ObjectKind::Local) {
       for (auto it = locals.start(); !it.eof(); ++it) {
@@ -1402,8 +1402,18 @@ bool Compiler::CodeScope :: resolveAutoType(ObjectInfo& info, TypeInfo typeInfo)
             if ((*it).typeInfo.typeRef == V_AUTO) {
                (*it).typeInfo.typeRef = typeInfo.typeRef;
                (*it).typeInfo.elementRef = typeInfo.elementRef;
+               (*it).size = size;
+               // HOTFIX : update the reference if required
+               if (size > 0) {
+                  SyntaxNode terminal = localNodes.exclude((*it).offset);
+                  localNodes.add(-(int)extra, terminal);
 
-               info.typeInfo = typeInfo;
+                  (*it).offset = extra;
+                  info.reference = extra;
+                  info.kind = ObjectKind::LocalAddress;
+               }
+
+               info.typeInfo = typeInfo;               
 
                return true;
             }
@@ -1411,7 +1421,7 @@ bool Compiler::CodeScope :: resolveAutoType(ObjectInfo& info, TypeInfo typeInfo)
       }
    }
 
-   return Scope::resolveAutoType(info, typeInfo);
+   return Scope::resolveAutoType(info, typeInfo, size, extra);
 }
 
 // --- Compiler::ExprScope ---
@@ -13630,7 +13640,17 @@ bool Compiler::Expression :: resolveAutoType(ObjectInfo source, ObjectInfo& targ
    if (!compiler->_logic->validateAutoType(*scope.moduleScope, sourceRef))
       return false;
 
-   return scope.resolveAutoType(target, source.typeInfo);
+   int size = 0;
+   int extra = 0;
+   if (compiler->_logic->isEmbeddableStruct(*scope.moduleScope, sourceRef)) {
+      // Bad luck : it is a auto structure, we have to reallocate the variable
+      size = align(compiler->_logic->defineStructSize(*scope.moduleScope, sourceRef).size,
+         scope.moduleScope->rawStackAlingment);
+
+      extra = allocateLocalAddress(scope, size, false);
+   }
+
+   return scope.resolveAutoType(target, source.typeInfo, size, extra);
 }
 
 ObjectInfo Compiler::Expression :: boxArgument(ObjectInfo info, bool stackSafe, bool boxInPlace, bool allowingRefArg, ref_t targetRef)

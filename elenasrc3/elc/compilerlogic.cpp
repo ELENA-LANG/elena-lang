@@ -1314,7 +1314,7 @@ bool CompilerLogic :: isEmbeddableAndReadOnly(ClassInfo& info)
    return isReadOnly(info) && isEmbeddable(info);
 }
 
-bool CompilerLogic :: isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t reference)
+bool CompilerLogic::isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t reference)
 {
    if (scope.cachedEmbeddableReadonlys.exist(reference))
       return scope.cachedEmbeddableReadonlys.get(reference);
@@ -1324,6 +1324,18 @@ bool CompilerLogic :: isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t refe
       auto retVal = isEmbeddableAndReadOnly(info);
 
       scope.cachedEmbeddableReadonlys.add(reference, retVal);
+
+      return retVal;
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: isEmbeddableStruct(ModuleScopeBase& scope, ref_t reference)
+{
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference, true)) {
+      auto retVal = isEmbeddableStruct(info);
 
       return retVal;
    }

@@ -128,10 +128,11 @@ extension jsonSerializer : TextBuilder
    {
       self.write("{");
 
-      auto props := object.__getClass().__dto_properties() \ back(nil);
+      var class := object.__getClass();
+      auto props := class.__dto_properties() \ back(nil);
       if (nil == props)
       {
-         props := object.__getProperties();
+         props := class.__getProperties();
       };
         
       int len := props.Length;
