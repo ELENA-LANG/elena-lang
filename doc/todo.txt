@@ -17,15 +17,12 @@ In development:
   prom:elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test
   port:chat sample, helloworld gui sample (button)
   --------------------------------------
+  - samples : test tutorials for script generated code
+  - #619 : template methods
   - #646
   - #620 : tests : support the symbols as well
-  - #635 : new tutorial - calling elena vm from c++ / c#
-  - samples : test tutorials for script generated code
-  - #635 : sort (using json objects)
-  * c# : json array to string and back
-  * c++ : json array to string and back
   --------------------------------------
-  * l : json array to string and back
+  - #635 : new tutorial - calling elena vm from c++ / c#
 
   === Iteration 23 ===
   --------------------------------------

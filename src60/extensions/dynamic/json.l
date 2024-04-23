@@ -251,6 +251,9 @@ singleton helper
       {
          ^ token.toInt()
       }
+      else if (ch == $45 && token[1].isDigit()) {
+         ^ token.toInt()
+      }
       else
       {
          JsonException.raise()
