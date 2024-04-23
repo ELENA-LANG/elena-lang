@@ -18,7 +18,7 @@ In development:
   port:chat sample, helloworld gui sample (button)
   --------------------------------------
   - samples : test tutorials for script generated code
-  - #619 : template methods
+  - #619 : template methods - calling template method explicitly
   - #646
   - #620 : tests : support the symbols as well
   --------------------------------------
