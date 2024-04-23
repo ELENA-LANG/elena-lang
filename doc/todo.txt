@@ -20,9 +20,13 @@ In development:
   - samples : test tutorials for script generated code
   - #619 : template methods - calling template method explicitly
   - #646
-  - #620 : tests : support the symbols as well
-  --------------------------------------
-  - #635 : new tutorial - calling elena vm from c++ / c#
+  - #593
+  - #544
+  - #522
+  - #516
+  - #488
+ --------------------------------------
+  - #486
 
   === Iteration 23 ===
   --------------------------------------

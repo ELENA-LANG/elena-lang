@@ -10913,10 +10913,69 @@ void Compiler::Expression :: compileYieldOperation(SyntaxNode node)
    writer->closeNode();
 }
 
+ObjectInfo Compiler::Expression :: compileIndexAssignOperation(SyntaxNode node, SyntaxNode rnode, int operatorId, ref_t expectedRef)
+{
+   SyntaxNode lnode = node.firstChild();
+   SyntaxNode inode = lnode.nextNode();
+
+   ArgumentsInfo  updatedOuterArgs;
+
+   //BuildKey   op = BuildKey::None;
+   ObjectInfo loperand = compile(lnode, 0,
+      EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode, &updatedOuterArgs);
+   ObjectInfo ioperand = compile(inode, 0,
+                           EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode, &updatedOuterArgs);
+   ObjectInfo roperand = compile(rnode, 0,
+                           EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode, &updatedOuterArgs);
+
+   // get the array item
+   ArgumentsInfo arguments;
+   arguments.add(loperand);
+   arguments.add(ioperand);
+
+   ObjectInfo tempInfo = compileOperation(node, arguments, INDEX_OPERATOR_ID, 0, &updatedOuterArgs);
+
+   // make an operation with it
+   switch (operatorId) {
+      case ADD_ASSIGN_OPERATOR_ID:
+         operatorId = ADD_OPERATOR_ID;
+         break;
+      case SUB_ASSIGN_OPERATOR_ID:
+         operatorId = SUB_OPERATOR_ID;
+         break;
+      case MUL_ASSIGN_OPERATOR_ID:
+         operatorId = MUL_OPERATOR_ID;
+         break;
+      case DIV_ASSIGN_OPERATOR_ID:
+         operatorId = DIV_OPERATOR_ID;
+         break;
+      default:
+         break;
+   }
+
+   arguments.clear();
+   arguments.add(tempInfo);
+   arguments.add(roperand);
+   tempInfo = compileOperation(node, arguments, operatorId, 0, &updatedOuterArgs);
+
+   // set the updated array item
+   arguments.clear();
+   arguments.add(loperand);
+   arguments.add(tempInfo);
+   arguments.add(ioperand);
+
+   return compileOperation(node, arguments, SET_INDEXER_OPERATOR_ID, expectedRef, &updatedOuterArgs);
+}
+
 ObjectInfo Compiler::Expression :: compileAssignOperation(SyntaxNode node, int operatorId, ref_t expectedRef)
 {
    SyntaxNode lnode = node.firstChild();
    SyntaxNode rnode = lnode.nextNode();
+
+   if (lnode == SyntaxKey::IndexerOperation) {
+      // HOTFIX : if it is an operation with an array item
+      return compileIndexAssignOperation(lnode, rnode, operatorId, expectedRef);
+   }
 
    ArgumentsInfo updatedOuterArgs;
    ObjectInfo loperand = compile(lnode, 0, EAttr::Parameter, &updatedOuterArgs);
@@ -12307,7 +12366,6 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, SyntaxNode 
    ObjectInfo loperand = compile(lnode, 0,
       EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode, &updatedOuterArgs);
    ObjectInfo roperand = {};
-   ObjectInfo ioperand = {};
 
    ArgumentsInfo arguments;
    arguments.add(loperand);

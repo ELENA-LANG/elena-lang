@@ -1840,3 +1840,25 @@ public ByteArrayOpTests() : testCase()
 
    console.write(".");
 }
+
+public ArrayAssignOperation() : testCase()
+{
+   int temp[4];
+
+   temp[0] := 1;
+   temp[1] := 2;
+   temp[2] := 3;
+   temp[3] := 4;
+
+   temp[0] += 2;
+   temp[1] -= 1;
+   temp[2] *= 2;
+   temp[3] /= 2;
+
+   Assert.ifEqual(temp[0], 3);
+   Assert.ifEqual(temp[1], 1);
+   Assert.ifEqual(temp[2], 6);
+   Assert.ifEqual(temp[3], 2);
+
+   console.write(".");
+}

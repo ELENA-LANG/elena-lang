@@ -888,6 +888,7 @@ OL_F ::=
 
 L0_F ::=
 	L0_OP L0_F
+	| L1a_OP
 	| L1_OP
 	| L2_OP L2_F
         | DOT MESSAGE { L3_F | eps ^PROPERTY_OPERATION }

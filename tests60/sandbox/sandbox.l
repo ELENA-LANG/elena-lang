@@ -1,15 +1,11 @@
 import extensions;
-import extensions'dynamic;
-import system'dynamic;
-import algorithms;
 
 public program()
 {
-   var arr := new object[] { 1, 5, -2, 56, -23 };
+   int a[10];
+    
+   a[0] := 0;
+   a[0] += 2;
 
-   var sortedArr := arr.quickSort();
-
-   console.writeLine(sortedArr.toJson());
-
-   
+   console.writeLine(a[0]);
 }
