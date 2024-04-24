@@ -1,24 +1,33 @@
-import extensions;
-import extensions'dynamic;
+B;
 
-struct XY
+C
 {
-   int x : prop;
-   int y : prop;
+    B cast()
+        = new B();
+}
 
-   constructor(int x, int y)
+singleton E
+{
+    load(params B[] o)
+    {
+        for(int i := 0; i < o.Length; i += 1)
+        {
+            console.writeLine(o[i])
+        }
+    }
+
+   loadAndTypecast(params object[] args)
    {
-      this x := x;
-      this y := y
+      self.load(cast B(params args));
    }
-
-   static XY Default
-      = new XY(0, 0);
 }
 
 public program()
 {
-   auto xy := XY.Default;
+   var b := new B();
+   var c := new C();
+   
+   E.loadAndTypecast(b,c);    
 
-   console.writeLine(xy.toJson());
+//    var e := E.load(b,c);
 }

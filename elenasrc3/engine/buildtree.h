@@ -159,8 +159,9 @@ namespace elena_lang
       UShortCondOp         = 0x0081,
       IntLongOp            = 0x0082,
       DistributedTypeList  = 0x0083,
+      UnboxAndCallMessage  = 0x0084,
 
-      MaxOperationalKey    = 0x0082,
+      MaxOperationalKey    = 0x0084,
 
       Import               = 0x0090,
       DictionaryOp         = 0x0091,
@@ -230,6 +231,8 @@ namespace elena_lang
       Special              = 0x8010,
       LongMode             = 0x8011,
       Source               = 0x8012,
+      Length               = 0x8013,
+      TempVar              = 0x8014,
 
       Idle                 = 0x8FFF,
 

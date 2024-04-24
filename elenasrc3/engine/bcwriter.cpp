@@ -1821,7 +1821,7 @@ void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
    // sub    n:(index + 1)
    // alloc  i:1
    // store  sp:0
-   // set    fp:arg
+
    // swap   sp:0
    // dtrans
    // swap   sp:0
@@ -1846,6 +1846,86 @@ void unboxingMessage(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::FreeI, 1);
    tape.write(ByteCode::XRefreshSI, 0);
    tape.write(ByteCode::XRefreshSI, 1);
+}
+
+void unboxingAndCallMessage(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   int index = node.findChild(BuildKey::Index).arg.value;
+   int length = node.findChild(BuildKey::Length).arg.value;
+   int temp = node.findChild(BuildKey::TempVar).arg.value;
+   mssg_t message = node.findChild(BuildKey::Message).arg.value;
+
+   // nsave  dp:tmp, 0
+   // load   dp:length
+   // add    n:index
+   // dalloc
+   // set    sp:index
+   // 
+   // alloc  i:2
+   // store  sp:1
+
+   // nadd   dp:length, -1
+   // labStart:
+   // load   dp:tmp
+   // xcmp   dp:length
+   // jeq    labEnd 
+
+   // set    fp:arg
+   // xget
+   // store  sp:0
+   // mov    m:typeMessage
+   // call   vt:0
+   // store  sp:0
+
+   // load   dp:tmp
+   // peek   sp:1
+   // xassign
+
+   // nadd   dp:tmp, 1
+   // jump   labStart
+   // labEnd:
+
+   // xstore sp:0, -1
+   // peek   sp:1
+   // xassign
+   // free   i:2
+
+   tape.write(ByteCode::NSaveDPN, temp, 0);
+   tape.write(ByteCode::LoadDP, length);
+   tape.write(ByteCode::AddN, index);
+   tape.write(ByteCode::DAlloc);
+   tape.write(ByteCode::SetSP, index);
+   tape.write(ByteCode::AllocI, 2);
+   tape.write(ByteCode::StoreSI, 1);
+   tape.write(ByteCode::NAddDPN, length, -1);
+
+   tape.newLabel();     // labStart
+   tape.setLabel(true);
+   tape.write(ByteCode::LoadDP, temp);
+   tape.write(ByteCode::XCmpDP, length);
+   tape.newLabel();     // labEnd
+   tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
+
+   tape.write(ByteCode::SetFP, node.arg.value);
+   tape.write(ByteCode::XGet);
+   tape.write(ByteCode::StoreSI, 0);
+   tape.write(ByteCode::MovM, message);
+   tape.write(ByteCode::CallVI, 0);
+   tape.write(ByteCode::StoreSI, 0);
+
+   tape.write(ByteCode::LoadDP, temp);
+   tape.write(ByteCode::PeekSI, 1);
+   tape.write(ByteCode::XAssign);
+
+   tape.write(ByteCode::NAddDPN, temp, 1);
+   tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
+   tape.setLabel();
+   tape.releaseLabel();
+
+   tape.write(ByteCode::XStoreSIR, 0, -1);
+   tape.write(ByteCode::PeekSI, 1);
+   tape.write(ByteCode::XAssign);
+   tape.write(ByteCode::FreeI, 2);
 }
 
 void loadingSubject(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -2022,7 +2102,7 @@ ByteCodeWriter::Saver commands[] =
    copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp, semiDirectCallOp,
    intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex, intCopyingToAccField, intOpWithConst,
 
-   uint8CondOp, uint16CondOp, intLongOp, distrConstant
+   uint8CondOp, uint16CondOp, intLongOp, distrConstant, unboxingAndCallMessage
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

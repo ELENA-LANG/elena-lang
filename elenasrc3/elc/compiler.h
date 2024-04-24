@@ -110,6 +110,7 @@ namespace elena_lang
       LocalUnboxingRequired,
       ArrayContent,
       UnboxingVarArgument,
+      UnboxingAndTypecastingVarArgument,
       BoxingPtr,
       Conditional,
       ConditionalUnboxingRequired,
@@ -1140,6 +1141,13 @@ namespace elena_lang
       {
          friend class Compiler;
 
+         enum class ArgumentListType : int
+         {
+            Normal = 0,
+            VariadicArgList = 1,
+            VariadicArgListWithTypecasting = 2,
+         };
+
          Compiler*         compiler;
          ExprScope         scope;
          BuildTreeWriter*  writer;
@@ -1166,6 +1174,8 @@ namespace elena_lang
          ObjectInfo compileAssigning(SyntaxNode loperand, SyntaxNode roperand, ExpressionAttribute mode);
 
          ObjectInfo compileMessageOperationR(ObjectInfo target, SyntaxNode node, bool propertyMode);
+         ObjectInfo compileMessageOperationR(SyntaxNode node, SyntaxNode messageNode, ObjectInfo source, ArgumentsInfo& arguments,
+            ArgumentsInfo* updatedOuterArgs, ref_t expectedRef, bool propertyMode, bool probeMode, ExpressionAttribute attrs);
 
          ObjectInfo compileLoop(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileExtern(SyntaxNode node, ExpressionAttribute mode);
@@ -1202,7 +1212,7 @@ namespace elena_lang
             SyntaxNode r2node, int operatorId, ArgumentsInfo* updatedOuterArgs, bool retValExpected, bool withoutDebugInfo);
 
          ref_t compileMessageArguments(SyntaxNode current, ArgumentsInfo& arguments, ref_t expectedSignRef, ExpressionAttribute mode, 
-            ArgumentsInfo* updatedOuterArgs, bool& variadicArgList);
+            ArgumentsInfo* updatedOuterArgs, ArgumentListType& argListType);
 
          MessageResolution resolveByRefHandler(ObjectInfo source, ref_t expectedRef, mssg_t weakMessage, ref_t& signatureRef, bool noExtensions);
          MessageResolution resolveMessageAtCompileTime(ObjectInfo target, mssg_t weakMessage, ref_t implicitSignatureRef, bool ignoreExtensions, 
@@ -1245,7 +1255,7 @@ namespace elena_lang
          void showContextInfo(mssg_t message, ref_t targetRef);
 
          void writeMessageArguments(ObjectInfo& target, mssg_t message, ArgumentsInfo& arguments, ObjectInfo& lenLocal, 
-            int& stackSafeAttr, bool targetOverridden, bool found, bool argUnboxingRequired, bool stackSafe);
+            int& stackSafeAttr, bool targetOverridden, bool found, ArgumentListType argType, bool stackSafe);
 
          void convertIntLiteralForOperation(SyntaxNode node, int operatorId, ArgumentsInfo& messageArguments);
 
@@ -1613,6 +1623,8 @@ namespace elena_lang
       void injectInitializer(SyntaxNode classNode, SyntaxKey methodType, mssg_t message);
 
       bool injectVirtualStrongTypedMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
+         mssg_t message, mssg_t resendMessage, ref_t outputRef, Visibility visibility, bool isExtension);
+      bool injectVirtualStrongTypedVariadicMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
          mssg_t message, mssg_t resendMessage, ref_t outputRef, Visibility visibility, bool isExtension);
 
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 

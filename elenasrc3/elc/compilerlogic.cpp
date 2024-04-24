@@ -2097,6 +2097,10 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
       if (!implicitSignatureRef && ((weakMessage & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE))
          return 0;
 
+      if (!implicitSignatureRef) {
+         implicitSignatureRef = mapWeakSignature(scope, getArgCount(weakMessage));
+      }
+
       ref_t signatures[ARG_COUNT];
       size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
 

@@ -7593,15 +7593,16 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
       if (!test(messageRef, FUNCTION_MESSAGE))
          arguments.add(source);
 
-      bool withVariadicArg = false;
+      Expression::ArgumentListType argListType = Expression::ArgumentListType::Normal;
       ref_t implicitSignatureRef = expression.compileMessageArguments(current, arguments, expectedSignRef, 
-         EAttr::NoPrimitives, &updatedOuterArgs, withVariadicArg);
+         EAttr::NoPrimitives, &updatedOuterArgs, argListType);
 
       EAttr opMode = EAttr::CheckShortCircle;
-      if (withVariadicArg) {
+      if (argListType == Expression::ArgumentListType::VariadicArgList || argListType == Expression::ArgumentListType::VariadicArgListWithTypecasting) {
          messageRef |= VARIADIC_MESSAGE;
 
-         opMode = opMode | EAttr::WithVariadicArg;
+         opMode = opMode | 
+            ((argListType == Expression::ArgumentListType::VariadicArgList) ? EAttr::WithVariadicArg : EAttr::WithVariadicArgCast);
       }
 
       retVal = expression.compileMessageOperation(node, target, messageRef,
@@ -9518,6 +9519,8 @@ inline bool isSingleDispatch(SyntaxNode node, SyntaxKey methodType, mssg_t messa
 bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
    mssg_t message, mssg_t resendMessage, ref_t outputRef, Visibility visibility, bool isExtension)
 {
+   bool variadicOne = (getFlags(resendMessage) & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
+
    ref_t actionRef = getAction(resendMessage);
    ref_t signRef = 0;
    ustr_t actionName = scope.module->resolveAction(actionRef, signRef);
@@ -9550,8 +9553,10 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, Synta
    if (!actionName.compare(INVOKE_MESSAGE))
       operationNode.appendChild(SyntaxKey::Message).appendChild(SyntaxKey::identifier, actionName);
 
+   size_t len = signLen - (variadicOne ? 1 : 0);
+
    String<char, 10> arg;
-   for (size_t i = 0; i < signLen; i++) {
+   for (size_t i = 0; i < len; i++) {
       arg.copy("$");
       arg.appendInt((int)i);
 
@@ -9568,6 +9573,31 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, Synta
          castNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, arg.str());
       }
       else operationNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, arg.str());
+   }
+
+   if (variadicOne) {
+      // pass variadic argument
+      SyntaxNode param = methodNode.appendChild(SyntaxKey::Parameter);
+      param.appendChild(SyntaxKey::Attribute, V_VARIADIC);
+      SyntaxNode nameParam = param.appendChild(SyntaxKey::Name);
+      nameParam.appendChild(SyntaxKey::identifier, "$x");
+
+      // pass variadic argument
+      if (signArgs[len] != scope.buildins.superReference) {
+         SyntaxNode castNode = operationNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::MessageOperation);
+         SyntaxNode castObject = castNode.appendChild(SyntaxKey::Object);
+         castObject.appendChild(SyntaxKey::Attribute, V_CONVERSION);
+         castObject.appendChild(SyntaxKey::Type, signArgs[len]);
+         castNode.appendChild(SyntaxKey::Message);
+         SyntaxNode varParamNode = castNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object);
+         varParamNode.appendChild(SyntaxKey::Attribute, V_VARIADIC);
+         varParamNode.appendChild(SyntaxKey::identifier, "$x");
+      }
+      else {
+         SyntaxNode varParamNode = operationNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object);
+         varParamNode.appendChild(SyntaxKey::Attribute, V_VARIADIC);
+         varParamNode.appendChild(SyntaxKey::identifier, "$x");
+      };
    }
 
    return true;
@@ -10692,12 +10722,63 @@ ObjectInfo Compiler::Expression :: compileLookAhead(SyntaxNode node, ref_t targe
    return retVal;
 }
 
+ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, SyntaxNode messageNode, ObjectInfo source, ArgumentsInfo& arguments,
+   ArgumentsInfo* updatedOuterArgs, ref_t expectedRef, bool propertyMode, bool probeMode, ExpressionAttribute attrs)
+{
+   ObjectInfo retVal = {};
+
+   mssg_t messageRef = compiler->mapMessage(scope, messageNode, propertyMode,
+      source.kind == ObjectKind::Extension, probeMode);
+
+   if (propertyMode || !test(messageRef, FUNCTION_MESSAGE))
+      arguments.add(source);
+
+   mssg_t resolvedMessage = source.mode != TargetMode::Weak ? compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
+      compiler->retrieveType(scope, source), messageRef) : 0;
+
+   ref_t expectedSignRef = 0;
+   if (resolvedMessage)
+      scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
+
+   ArgumentListType argListType = ArgumentListType::Normal;
+   ref_t implicitSignatureRef = compileMessageArguments(messageNode, arguments, expectedSignRef, EAttr::NoPrimitives,
+      updatedOuterArgs, argListType);
+
+   EAttr opMode = EAttr::None;
+   if (argListType == ArgumentListType::VariadicArgList || argListType == ArgumentListType::VariadicArgListWithTypecasting) {
+      messageRef |= VARIADIC_MESSAGE;
+
+      opMode = argListType == Expression::ArgumentListType::VariadicArgList ? EAttr::WithVariadicArg : EAttr::WithVariadicArgCast;
+   }
+
+   auto byRefResolution = resolveByRefHandler(source, expectedRef, messageRef, implicitSignatureRef,
+      EAttrs::test(attrs, EAttr::NoExtension));
+   if (byRefResolution.resolved) {
+      ObjectInfo tempRetVal = declareTempLocal(expectedRef, false);
+
+      addByRefRetVal(arguments, tempRetVal);
+      // adding mark for optimization routine
+      if (tempRetVal.kind == ObjectKind::TempLocalAddress)
+         writer->appendNode(BuildKey::ByRefOpMark, tempRetVal.argument);
+
+      compileMessageOperation(node, source, byRefResolution,
+         implicitSignatureRef, arguments, opMode, updatedOuterArgs);
+
+      retVal = tempRetVal;
+   }
+   else retVal = compileMessageOperation(node, source, messageRef,
+      implicitSignatureRef, arguments, opMode, updatedOuterArgs);
+
+   return retVal;
+}
+
 ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
    ref_t expectedRef, ExpressionAttribute attrs)
 {
    ObjectInfo retVal = { };
    ArgumentsInfo arguments;
    ArgumentsInfo updatedOuterArgs;
+   ArgumentListType argListType = ArgumentListType::Normal;
 
    SyntaxNode current = node.firstChild();
    ObjectInfo source = compileObject(current, EAttr::Parameter, &updatedOuterArgs);
@@ -10706,9 +10787,8 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
       case TargetMode::External:
       case TargetMode::WinApi:
       {
-         bool dummy = false;
-         compileMessageArguments(current, arguments, 0, EAttr::None, nullptr, dummy);
-         if (dummy)
+         compileMessageArguments(current, arguments, 0, EAttr::None, nullptr, argListType);
+         if (argListType != ArgumentListType::Normal)
             scope.raiseError(errInvalidOperation, current);
 
          retVal = compileExternalOp(node, source.reference,
@@ -10717,9 +10797,8 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
       }
       case TargetMode::CreatingArray:
       {
-         bool dummy = false;
-         compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, nullptr, dummy);
-         if (dummy)
+         compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, nullptr, argListType);
+         if (argListType != ArgumentListType::Normal)
             scope.raiseError(errInvalidOperation, current);
 
          retVal = compileNewArrayOp(node, source, expectedRef, arguments);
@@ -10727,9 +10806,8 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
       }
       case TargetMode::Creating:
       {
-         bool dummy = false;
-         ref_t signRef = compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, nullptr, dummy);
-         if (dummy)
+         ref_t signRef = compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, nullptr, argListType);
+         if (argListType != ArgumentListType::Normal)
             scope.raiseError(errInvalidOperation, current);
 
          retVal = compileNewOp(node, Compiler::mapClassSymbol(scope,
@@ -10738,12 +10816,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
       }
       case TargetMode::Casting:
       {
-         bool dummy = false;
-         compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, nullptr, dummy);
-         if (arguments.count() == 1 && !dummy) {
-            retVal = convertObject(current, arguments[0], compiler->retrieveStrongType(scope, source), false, true);
-         }
-         else scope.raiseError(errInvalidOperation, node);
+         retVal = compileMessageOperationR(source, current, false);
          break;
       }
       default:
@@ -10752,47 +10825,9 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
          source = validateObject(node, source, 0, true, true, false);
 
          current = current.nextNode();
-         mssg_t messageRef = compiler->mapMessage(scope, current, false,
-            source.kind == ObjectKind::Extension, probeMode);
 
-         if (!test(messageRef, FUNCTION_MESSAGE))
-            arguments.add(source);
-
-         mssg_t resolvedMessage = source.mode != TargetMode::Weak ? compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
-            compiler->retrieveType(scope, source), messageRef) : 0;
-
-         ref_t expectedSignRef = 0;
-         if (resolvedMessage)
-            scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
-
-         bool withVariadicArg = false;
-         ref_t implicitSignatureRef = compileMessageArguments(current, arguments, expectedSignRef, EAttr::NoPrimitives,
-            &updatedOuterArgs, withVariadicArg);
-
-         EAttr opMode = EAttr::None;
-         if (withVariadicArg) {
-            messageRef |= VARIADIC_MESSAGE;
-
-            opMode = EAttr::WithVariadicArg;
-         }
-
-         auto byRefResolution = resolveByRefHandler(source, expectedRef, messageRef, implicitSignatureRef,
-            EAttrs::test(attrs, EAttr::NoExtension));
-         if (byRefResolution.resolved) {
-            ObjectInfo tempRetVal = declareTempLocal(expectedRef, false);
-
-            addByRefRetVal(arguments, tempRetVal);
-            // adding mark for optimization routine
-            if (tempRetVal.kind == ObjectKind::TempLocalAddress)
-               writer->appendNode(BuildKey::ByRefOpMark, tempRetVal.argument);
-
-            compileMessageOperation(node, source, byRefResolution,
-               implicitSignatureRef, arguments, opMode, &updatedOuterArgs);
-
-            retVal = tempRetVal;
-         }
-         else retVal = compileMessageOperation(node, source, messageRef,
-            implicitSignatureRef, arguments, opMode, &updatedOuterArgs);
+         retVal = compileMessageOperationR(node, current, source, arguments, 
+            &updatedOuterArgs, expectedRef, false, probeMode, attrs);
 
          break;
       }
@@ -10812,49 +10847,13 @@ ObjectInfo Compiler::Expression :: compilePropertyOperation(SyntaxNode node, ref
    if (invalidObjectMode(source))
       scope.raiseError(errInvalidOperation, node);
 
-   arguments.add(source);
-
    // NOTE : the operation target shouldn't be a primtive type
    source = validateObject(node, source, 0, true, true, false);
 
    current = current.nextNode();
-   mssg_t messageRef = compiler->mapMessage(scope, current, true,
-      source.kind == ObjectKind::Extension, false);
 
-   mssg_t resolvedMessage = compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
-      compiler->retrieveType(scope, source), messageRef);
-
-   bool variadicArgList = false;
-   ref_t expectedSignRef = 0;
-   if (resolvedMessage)
-      scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
-
-   ref_t implicitSignatureRef = compileMessageArguments(current, arguments, expectedSignRef, EAttr::NoPrimitives,
-      &outerArgsToUpdate, variadicArgList);
-   EAttr opMode = EAttr::None;
-   if (variadicArgList) {
-      // HOTFIX : set variadic flag if required
-      messageRef |= VARIADIC_MESSAGE;
-
-      opMode = EAttr::WithVariadicArg;
-   }
-
-   auto byRefResolution = resolveByRefHandler(source, expectedRef,
-      messageRef, implicitSignatureRef, EAttrs::test(attrs, EAttr::NoExtension));
-   if (byRefResolution.resolved) {
-      ObjectInfo tempRetVal = declareTempLocal(expectedRef, false);
-
-      addByRefRetVal(arguments, tempRetVal);
-      if (tempRetVal.kind == ObjectKind::TempLocalAddress)
-         writer->appendNode(BuildKey::ByRefOpMark, tempRetVal.argument);
-
-      compileMessageOperation(node, source, byRefResolution,
-         implicitSignatureRef, arguments, opMode, &outerArgsToUpdate);
-
-      retVal = tempRetVal;
-   }
-   else retVal = compileMessageOperation(node, source, { messageRef },
-      implicitSignatureRef, arguments, opMode, &outerArgsToUpdate);
+   retVal = compileMessageOperationR(node, current, source, arguments, 
+      &outerArgsToUpdate, expectedRef, true, false, attrs);
 
    return retVal;
 }
@@ -11126,17 +11125,20 @@ ObjectInfo Compiler::Expression :: compileBoolOperation(SyntaxNode node, int ope
    }
 }
 
+inline mssg_t mapTypecasting(ModuleBase* module, ref_t targetRef)
+{
+   ref_t signRef = module->mapSignature(&targetRef, 1, false);
+   ref_t actionRef = module->mapAction(CAST_MESSAGE, signRef, false);
+
+   return encodeMessage(actionRef, 1, CONVERSION_MESSAGE);
+}
+
 ObjectInfo Compiler::Expression :: typecastObject(SyntaxNode node, ObjectInfo source, ref_t targetRef)
 {
    if (targetRef == scope.moduleScope->buildins.superReference)
       return source;
 
-   ustr_t refName2 = scope.module->resolveReference(targetRef);
-
-   ref_t signRef = scope.module->mapSignature(&targetRef, 1, false);
-   ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
-
-   mssg_t typecastMssg = encodeMessage(actionRef, 1, CONVERSION_MESSAGE);
+   mssg_t typecastMssg = mapTypecasting(scope.module, targetRef);
 
    ArgumentsInfo arguments;
    arguments.add(source);
@@ -11754,7 +11756,7 @@ ObjectInfo Compiler::Expression :: compileNewOp(SyntaxNode node, ObjectInfo sour
 }
 
 ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, ArgumentsInfo& arguments, ref_t expectedSignRef, EAttr mode, 
-   ArgumentsInfo* updatedOuterArgs, bool& variadicArgList)
+   ArgumentsInfo* updatedOuterArgs, ArgumentListType& argListType)
 {
    EAttr paramMode = EAttr::Parameter | EAttr::RetValExpected;
    if (EAttrs::testAndExclude(mode, EAttr::NoPrimitives))
@@ -11775,14 +11777,15 @@ ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, Argume
          auto argInfo = compile(current, signatures[signatureLen],
             paramMode, updatedOuterArgs);
 
-         if (argInfo.mode == TargetMode::UnboxingVarArgument) {
+         if (argInfo.mode == TargetMode::UnboxingVarArgument || argInfo.mode == TargetMode::UnboxingAndTypecastingVarArgument) {
             if (argInfo.typeInfo.elementRef) {
                signatures[signatureLen++] = argInfo.typeInfo.elementRef;
             }
             else signatures[signatureLen++] = scope.moduleScope->buildins.superReference;
 
-            if (!variadicArgList) {
-               variadicArgList = true;
+            if (argListType == ArgumentListType::Normal) {
+               argListType = argInfo.mode == TargetMode::UnboxingVarArgument 
+                  ? ArgumentListType::VariadicArgList : ArgumentListType::VariadicArgListWithTypecasting;
             }
             else scope.raiseError(errInvalidOperation, current);
          }
@@ -12172,7 +12175,8 @@ ObjectInfo Compiler::Expression :: declareTempLocal(ref_t typeRef, bool dynamicO
 ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node, ObjectInfo target, MessageResolution resolution, ref_t implicitSignatureRef, 
    ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs)
 {
-   bool argUnboxingRequired = EAttrs::testAndExclude(mode.attrs, EAttr::WithVariadicArg);
+   bool vargCastingRequired = EAttrs::testAndExclude(mode.attrs, EAttr::WithVariadicArgCast);
+   bool argUnboxingRequired = vargCastingRequired || EAttrs::testAndExclude(mode.attrs, EAttr::WithVariadicArg);
    bool checkShortCircle = EAttrs::testAndExclude(mode.attrs, EAttr::CheckShortCircle);
    bool allowPrivateCall = EAttrs::testAndExclude(mode.attrs, EAttr::AllowPrivateCall);
 
@@ -12324,8 +12328,12 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node, Obje
    if (operation != BuildKey::None) {
       bool targetOverridden = (target != arguments[0]);
       ObjectInfo lenLocal = {};
+      ArgumentListType argListType = vargCastingRequired ? 
+         ArgumentListType::VariadicArgListWithTypecasting 
+         : (argUnboxingRequired ? ArgumentListType::VariadicArgList : ArgumentListType::Normal);
+
       writeMessageArguments(target, resolution.message, arguments, lenLocal,
-         resolution.stackSafeAttr, targetOverridden, found, argUnboxingRequired, result.stackSafe);
+         resolution.stackSafeAttr, targetOverridden, found, argListType, result.stackSafe);
 
       if (!targetOverridden) {
          writer->appendNode(BuildKey::Argument, 0);
@@ -13011,52 +13019,32 @@ ObjectInfo Compiler::Expression :: compileBranchingOperands(SyntaxNode rnode, Sy
 ObjectInfo Compiler::Expression :: compileMessageOperationR(ObjectInfo target, SyntaxNode messageNode, bool propertyMode)
 {
    ArgumentsInfo arguments;
-   ArgumentsInfo updatedOuterArgs;
 
    switch (target.mode) {
       case TargetMode::Casting:
       {
-         bool dummy = false;
-         compileMessageArguments(messageNode, arguments, 0, EAttr::NoPrimitives, &updatedOuterArgs, dummy);
-         if (arguments.count() == 1 && !dummy) {
-            return convertObject(messageNode, arguments[0], compiler->retrieveStrongType(scope, target), false, true);
+         ArgumentListType argListType = ArgumentListType::Normal;
+         compileMessageArguments(messageNode, arguments, 0, EAttr::NoPrimitives, nullptr, argListType);
+         if (arguments.count() == 1) {
+            if (argListType == ArgumentListType::VariadicArgList) {
+               arguments[0].mode = TargetMode::UnboxingAndTypecastingVarArgument;
+               arguments[0].typeInfo = { V_ARGARRAY, compiler->retrieveStrongType(scope, target) };
+
+               return arguments[0];
+            }
+            else return convertObject(messageNode, arguments[0], compiler->retrieveStrongType(scope, target), false, true);
          }
          else scope.raiseError(errInvalidOperation, messageNode);
          break;
       }
       default:
       {
+         ArgumentsInfo updatedOuterArgs;
+
          // NOTE : the operation target shouldn't be a primitive type
          ObjectInfo source = validateObject(messageNode, target, 0, true, true, false);
 
-         mssg_t messageRef = compiler->mapMessage(scope, messageNode, propertyMode, false, false);
-
-         mssg_t resolvedMessage = compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
-            compiler->retrieveType(scope, source), messageRef);
-
-         ref_t expectedSignRef = 0;
-         if (resolvedMessage)
-            scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
-
-         if (!test(messageRef, FUNCTION_MESSAGE)) {
-            arguments.add(source);
-         }
-
-         bool withVariadicArg = false;
-         ref_t implicitSignatureRef = compileMessageArguments(messageNode, arguments, expectedSignRef,
-            EAttr::NoPrimitives, &updatedOuterArgs, withVariadicArg);
-
-         EAttr opMode = EAttr::None;
-         if (withVariadicArg) {
-            messageRef |= VARIADIC_MESSAGE;
-
-            opMode = EAttr::WithVariadicArg;
-         }
-
-         return compileMessageOperation(messageNode, source, messageRef,
-            implicitSignatureRef, arguments, opMode, &updatedOuterArgs);
-
-         break;
+         return compileMessageOperationR(messageNode, messageNode, source, arguments, &updatedOuterArgs, 0, propertyMode, false, EAttr::None);
       }
    }
 
@@ -13580,7 +13568,7 @@ void Compiler::Expression :: showContextInfo(mssg_t message, ref_t targetRef)
 
 void Compiler::Expression :: writeMessageArguments(ObjectInfo& target,
    mssg_t message, ArgumentsInfo& arguments, ObjectInfo& lenLocal, int& stackSafeAttr,
-   bool targetOverridden, bool found, bool argUnboxingRequired, bool stackSafe)
+   bool targetOverridden, bool found, ArgumentListType argType, bool stackSafe)
 {
    if (targetOverridden) {
       target = boxArgument(target, stackSafe, false, false);
@@ -13590,7 +13578,7 @@ void Compiler::Expression :: writeMessageArguments(ObjectInfo& target,
       stackSafeAttr = 0;
 
    pos_t counter = arguments.count_pos();
-   if (argUnboxingRequired) {
+   if (argType == ArgumentListType::VariadicArgListWithTypecasting || argType == ArgumentListType::VariadicArgList) {
       counter--;
 
       ObjectInfo lenLocal = declareTempLocal(scope.moduleScope->buildins.intReference, false);
@@ -13602,10 +13590,25 @@ void Compiler::Expression :: writeMessageArguments(ObjectInfo& target,
       writer->appendNode(BuildKey::Index, lenLocal.argument);
       writer->closeNode();
 
-      writer->appendNode(BuildKey::LoadingIndex, lenLocal.argument);
-      writer->newNode(BuildKey::UnboxMessage, arguments[counter].argument);
-      writer->appendNode(BuildKey::Index, counter);
-      writer->closeNode();
+      if (argType == ArgumentListType::VariadicArgListWithTypecasting) {
+         // if we need to typecast the each item of the variadic argument list
+         ObjectInfo tempLocal = declareTempLocal(scope.moduleScope->buildins.intReference, false);
+         mssg_t typecastMssg = mapTypecasting(scope.module, arguments[counter].typeInfo.elementRef);
+
+         writer->newNode(BuildKey::UnboxAndCallMessage, arguments[counter].argument);
+         writer->appendNode(BuildKey::Index, counter);
+         writer->appendNode(BuildKey::Length, lenLocal.reference);
+         writer->appendNode(BuildKey::TempVar, tempLocal.reference);
+         writer->appendNode(BuildKey::Message, typecastMssg);
+         writer->closeNode();
+
+      }
+      else {
+         writer->appendNode(BuildKey::LoadingIndex, lenLocal.argument);
+         writer->newNode(BuildKey::UnboxMessage, arguments[counter].argument);
+         writer->appendNode(BuildKey::Index, counter);
+         writer->closeNode();
+      }
    }
 
    // box the arguments if required
@@ -13619,7 +13622,7 @@ void Compiler::Expression :: writeMessageArguments(ObjectInfo& target,
       argMask <<= 1;
    }
 
-   if (isOpenArg(message) && !argUnboxingRequired) {
+   if (isOpenArg(message) && argType == ArgumentListType::Normal) {
       // NOTE : in case of unboxing variadic argument, the terminator is already copied
       arguments.add({ ObjectKind::Terminator });
       counter++;

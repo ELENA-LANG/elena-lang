@@ -22,10 +22,11 @@ In development:
   - #646
   - #593
   - #544
-  - #522
-  - #516
+  - #522 : Auto generating multi-method default handler with type casting for variadic argument list
+  * #522 : new unit test : resolve variadic single dispatch
+  * #522 : single dispatch variadic message
  --------------------------------------
-  - #488 : Declaring auto struct variable
+  * #522 : unboxing and typecasting variadic argument - functional test
 
   === Iteration 23 ===
   --------------------------------------
