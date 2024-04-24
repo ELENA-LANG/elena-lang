@@ -3888,6 +3888,7 @@ labNextBaseClass:
   jnz  labNextOverloadlist
 
   pop  ebx
+  add  esp, 8
   mov  esi, [esp+4]                      // ; restore arg0
   mov  edx, __arg32_1
 

@@ -9579,6 +9579,7 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, Synta
       // pass variadic argument
       SyntaxNode param = methodNode.appendChild(SyntaxKey::Parameter);
       param.appendChild(SyntaxKey::Attribute, V_VARIADIC);
+      param.appendChild(SyntaxKey::ArrayType).appendChild(SyntaxKey::Type, scope.buildins.superReference);
       SyntaxNode nameParam = param.appendChild(SyntaxKey::Name);
       nameParam.appendChild(SyntaxKey::identifier, "$x");
 
@@ -9619,7 +9620,7 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
 
    // try to resolve an argument list in run-time if it is only a single dispatch and argument list is not weak
    // !! temporally do not support variadic arguments
-   if (isSingleDispatch(classNode, methodType, message, resendMessage) && ((message & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE) &&
+   if (isSingleDispatch(classNode, methodType, message, resendMessage) && /*(message & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE) &&*/
       injectVirtualStrongTypedMultimethod(classNode, methodType, scope, message, resendMessage, 
          outputRef, visibility, isExtension))
    {
