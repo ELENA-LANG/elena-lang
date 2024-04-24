@@ -1912,6 +1912,7 @@ void unboxingAndCallMessage(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::MovM, message);
    tape.write(ByteCode::CallVI, 0);
    tape.write(ByteCode::StoreSI, 0);
+   tape.write(ByteCode::XRefreshSI, 1);  // NOTE :  sp[1] is not refreshed after the operation
 
    tape.write(ByteCode::LoadDP, temp);
    tape.write(ByteCode::PeekSI, 1);
@@ -1926,6 +1927,8 @@ void unboxingAndCallMessage(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::PeekSI, 1);
    tape.write(ByteCode::XAssign);
    tape.write(ByteCode::FreeI, 2);
+   tape.write(ByteCode::XRefreshSI, 0);  // NOTE :  sp[0] is not refreshed
+   tape.write(ByteCode::XRefreshSI, 1);  // NOTE :  sp[1] is not refreshed
 }
 
 void loadingSubject(CommandTape& tape, BuildNode& node, TapeScope&)
