@@ -13,16 +13,6 @@
 
 #include "bytecode.h"
 
-
-
-
-
-#include "serializer.h"
-
-
-
-
-
 //#define FULL_OUTOUT_INFO 1
 
 using namespace elena_lang;
@@ -67,6 +57,13 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 //   DynamicUStr target;
 //
 //   SyntaxTreeSerializer::save(node, target);
+//}
+
+//inline void storeNode(BuildNode node)
+//{
+//   DynamicUStr target;
+//
+//   BuildTreeSerializer::save(node, target);
 //}
 
 inline bool isSelfCall(ObjectInfo target)

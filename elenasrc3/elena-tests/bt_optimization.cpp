@@ -43,6 +43,7 @@ constexpr auto Struct_Declaration2 = "namespace (class ( nameattr (identifier \"
 constexpr auto Struct_Declaration3 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension ( integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"ByteNumber\" ()) field (attribute -2147475454 () attribute -2147481596 () nameattr (identifier \"_value\" ()) dimension (integer \"1\" ())))class (attribute -2147479550 () nameattr 60 (identifier \"ShortNumber\" ()) field (attribute -2147475454 () attribute -2147481597 ()nameattr ( identifier \"_value\" ()) dimension ( integer \"2\" ()))) class (attribute -2147479550 ()nameattr (identifier \"LongNumber\" ())field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension (integer \"8\" ()))) class (attribute -2147479550 () nameattr (identifier \"Aligned\" ())field (type (identifier \"byte\" ())nameattr (identifier \"b\" ()) ) field (type (identifier \"short\" ())nameattr (identifier \"w\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b2\" ())) field (type (identifier \"int\" ())nameattr (identifier \"n\" ()))) class (attribute -2147479550 () nameattr (identifier \"Complex\" ())field (type (identifier \"byte\" ())nameattr (identifier \"f1\" ()) ) field (type (identifier \"Aligned\" ())nameattr (identifier \"f2\" ()))))";
 
 constexpr auto S1_DefaultNamespace = "namespace (class (nameattr (identifier \"Object\" ())) class (nameattr (identifier \"B\" ())) $1)";
+constexpr auto S1_IntNumber = "class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ())))";
 constexpr auto S1_VariadicTemplates = " class (attribute -2147467263 ()attribute -2147471359 ()attribute -2147479542 ()nameattr (identifier \"VariadicArray\" ())field (attribute -2147475454 ()attribute -2147481599 ()array_type (type (identifier \"Object\" ()))nameattr (identifier \"array\" ())))  class (attribute -2147467263 ()attribute -2147471359 ()attribute -2147479542 ()nameattr (identifier \"VariadicBArray\" ())field (attribute -2147475454 ()attribute -2147481599 ()array_type (type (identifier \"B\" ()))nameattr (identifier \"array\" ())))";
 constexpr auto S1_VariadicSingleDispatch_1 = "class (attribute -2147479546 () nameattr (identifier \"E\" ()) method (nameattr (identifier \"load\" ()) parameter (attribute -2147475445 () array_type (type (identifier \"B\" ())) nameattr (identifier \"o\" ())) code ()))";
 
@@ -55,6 +56,8 @@ constexpr auto BuildTree2 = "int_literal 2 (value 2 ()) copying -4 ( size 4 ())"
 constexpr auto OptimizedBuildTree1_1 = "local_address -4 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2050 (type 4 ()) local_address -4 ()";
 constexpr auto OptimizedBuildTree1_2 = "local_address -4 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2242 (type 4 ()) local_address -4 ()";
 constexpr auto OptimizedBuildTree2 = "saving_int - 4 (size 4 ()value 2 ())";
+
+constexpr auto BuildTree_VariadicSingleDispatch_1 = "tape(arguments_info(parameter(index -1 ())parameter(index -2 ())) method_name() sealed_dispatching 256 (message 2690 ()) open_frame() assigning 1 () local_reference -2 () saving_stack() varg_sop 6 (index -4 ()) unbox_call_message -2 (index 1 () length -4 () temp_var -8 () message 577 ()) local 1 () saving_stack() argument() direct_call_op 2690 (type 5 ()) loading_index() free_varstack() close_frame() exit()) reserved 3 ()reserved_n 8 ())";
 
 constexpr auto PackedStructSize = 20;
 
@@ -70,6 +73,8 @@ constexpr auto BuildTree2 = "int_literal 2 (value 2 ()) copying -8 ( size 4 ())"
 constexpr auto OptimizedBuildTree1_1 = "local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2050 (type 4 ()) local_address -8 ()";
 constexpr auto OptimizedBuildTree1_2 = "local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2242 (type 4 ()) local_address -8 ()";
 constexpr auto OptimizedBuildTree2 = "saving_int - 8 (size 4 ()value 2 ())";
+
+constexpr auto BuildTree_VariadicSingleDispatch_1 = "tape(arguments_info(parameter(index -1 ())parameter(index -2 ())) method_name() sealed_dispatching 256 (message 2690 ()) open_frame() assigning 1 () local_reference -2 () saving_stack() varg_sop 6 (index -8 ()) unbox_call_message -2 (index 1 () length -8 () temp_var -24 () message 577 ()) local 1 () saving_stack() argument() direct_call_op 2690 (type 5 ()) loading_index() free_varstack() close_frame() exit()) reserved 4 ()reserved_n 32 ())";
 
 constexpr auto PackedStructSize = 24;
 
@@ -359,6 +364,24 @@ void Scenario1Test:: LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_
    SyntaxTreeSerializer::load(syntax.str(), declarationNode);
 }
 
+void Scenario1Test :: LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3)
+{
+   DynamicUStr syntax(common);
+
+   size_t index = common.findStr("$1");
+   if (index != NOTFOUND_POS) {
+      syntax.cut(index, 2);
+
+      syntax.insert(descr3, index);
+      syntax.insert(" ", index);
+      syntax.insert(descr2, index);
+      syntax.insert(" ", index);
+      syntax.insert(descr1, index);
+   }
+
+   SyntaxTreeSerializer::load(syntax.str(), declarationNode);
+}
+
 // --- DispatchTest ---
 
 void DispatchTest :: SetUp()
@@ -366,7 +389,12 @@ void DispatchTest :: SetUp()
    SyntaxTreeWriter writer(syntaxTree);
    writer.appendNode(SyntaxKey::Root);
 
+   BuildTreeWriter buildWriter(buildTree);
+   buildWriter.appendNode(BuildKey::Root);
+
    declarationNode = syntaxTree.readRoot().appendChild(SyntaxKey::Idle, 1);
+
+   controlOutputNode = buildTree.readRoot().appendChild(BuildKey::Tape);
 }
 
 SyntaxNode DispatchTest :: findClassNode()
@@ -392,6 +420,7 @@ void DispatchTest :: runTest()
    // Arrange
    ModuleScopeBase* moduleScope = env.createModuleScope(true, false);
    moduleScope->buildins.superReference = 1;
+   moduleScope->buildins.intReference = intNumberRef;
    moduleScope->buildins.argArrayTemplateReference = argArrayRef;
 
    env.setUpTemplateMockup(argArrayRef, 1, genericVargRef);
@@ -414,14 +443,11 @@ void DispatchTest :: runTest()
       methodHelper.compile(writer, methodNode);
 
    // Assess
-   EXPECT_TRUE(false);
-   //ClassInfo structInfo = {};
-   //moduleScope->loadClassInfo(structInfo, targetRef);
-   //bool valid = validateStructInfo(structInfo);
-   //EXPECT_TRUE(valid);
+   bool matched = BuildTree::compare(output.readRoot(), controlOutputNode, true);
+   EXPECT_TRUE(matched);
 
-//   freeobj(compiler);
-//   freeobj(moduleScope);
+   freeobj(compiler);
+   freeobj(moduleScope);
 }
 
 // --- VariadicRuntimeSingleDispatch ---
@@ -430,10 +456,13 @@ void VariadicRuntimeSingleDispatch :: SetUp()
 {
    DispatchTest::SetUp();
 
-   LoadDeclarationScenario(S1_DefaultNamespace, S1_VariadicTemplates, S1_VariadicSingleDispatch_1);
+   LoadDeclarationScenario(S1_DefaultNamespace, S1_VariadicTemplates, S1_VariadicSingleDispatch_1, S1_IntNumber);
+
+   BuildTreeSerializer::load(BuildTree_VariadicSingleDispatch_1, controlOutputNode);
 
    argArrayRef = 0x80;
    genericVargRef = 3;
    targetVargRef = 4;
    targetRef = 5;
+   intNumberRef = 6;
 }
