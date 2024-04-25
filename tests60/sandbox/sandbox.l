@@ -1,10 +1,10 @@
 B;
 
-C
-{
-    B cast()
-        = new B();
-}
+//C
+//{
+//    B cast()
+//        = new B();
+//}
 
 singleton E
 {
@@ -19,9 +19,9 @@ singleton E
 
 public program()
 {
-    var b := new B();
-    var c := new C();
-    var e := E;
+ //   var b := new B();
+//    var c := new C();
+//    var e := E;
     
-    /*E*/e.load(b,c);
+//    /*E*/e.load(b,c);
 }

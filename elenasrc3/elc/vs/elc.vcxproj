@@ -183,6 +183,7 @@
     <ClCompile Include="..\..\engine\parsertable.cpp" />
     <ClCompile Include="..\..\engine\scriptreader.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
+    <ClCompile Include="..\..\engine\serializer.cpp" />
     <ClCompile Include="..\..\engine\syntaxtree.cpp" />
     <ClCompile Include="..\..\engine\windows\presenter.cpp" />
     <ClCompile Include="..\..\engine\x86compiler.cpp" />

@@ -13,6 +13,16 @@
 
 #include "bytecode.h"
 
+
+
+
+
+#include "serializer.h"
+
+
+
+
+
 //#define FULL_OUTOUT_INFO 1
 
 using namespace elena_lang;
@@ -8714,36 +8724,8 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
                continue;
             }
 
-            MethodScope methodScope(&scope);
-            initializeMethod(scope, methodScope, current);
-
-   #ifdef FULL_OUTOUT_INFO
-            IdentifierString messageName;
-            ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
-
-            // !! temporal
-            if (messageName.compare("static:getItem<'IntNumber,'Object>[3]"))
-               methodScope.message |= 0;
-
-            _errorProcessor->info(infoCurrentMethod, *messageName);
-   #endif // FULL_OUTOUT_INFO
-
-            // if it is a dispatch handler
-            if (methodScope.message == scope.moduleScope->buildins.dispatch_message) {
-               compileDispatcherMethod(writer, methodScope, current,
-                  test(scope.info.header.flags, elWithGenerics),
-                  test(scope.info.header.flags, elWithVariadics));
-            }
-            // if it is an abstract one
-            else if (methodScope.checkHint(MethodHint::Abstract)) {
-               compileAbstractMethod(writer, methodScope, current, scope.abstractMode);
-            }
-            // if it is an initializer
-            else if (methodScope.checkHint(MethodHint::Initializer)) {
-               compileInitializerMethod(writer, methodScope, node);
-            }
-            // if it is a normal method
-            else compileMethod(writer, methodScope, current);
+            Method method(this, scope);
+            method.compile(writer, current);
             break;
          }
          case SyntaxKey::Constructor:
@@ -9065,20 +9047,17 @@ void Compiler :: compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, S
          }
          case SyntaxKey::Class:
          {
-            ClassScope classScope(&ns, current.arg.reference, ns.defaultVisibility);
-            ns.moduleScope->loadClassInfo(classScope.info, current.arg.reference, false);
-            classScope.abstractMode = test(classScope.info.header.flags, elAbstract);
-            if (test(classScope.info.header.flags, elExtension))
-               classScope.extensionClassRef = classScope.getAttribute(ClassAttribute::ExtensionRef);
+            Class classHelper(this, &ns, current.arg.reference, ns.defaultVisibility);
+            classHelper.load();
 
-            compileClass(writer, classScope, current);
+            compileClass(writer, classHelper.scope, current);
 
             // compile class class if it available
-            if (classScope.info.header.classRef != classScope.reference && classScope.info.header.classRef != 0) {
-               ClassClassScope classClassScope(&ns, classScope.info.header.classRef, classScope.visibility, &classScope.info);
+            if (classHelper.scope.info.header.classRef != classHelper.scope.reference && classHelper.scope.info.header.classRef != 0) {
+               ClassClassScope classClassScope(&ns, classHelper.scope.info.header.classRef, classHelper.scope.visibility, &classHelper.scope.info);
                ns.moduleScope->loadClassInfo(classClassScope.info, classClassScope.reference, false);
 
-               compileClassClass(writer, classClassScope, classScope, current);
+               compileClassClass(writer, classClassScope, classHelper.scope, current);
             }
             break;
          }
@@ -10343,12 +10322,60 @@ void Compiler::Class :: declareClassClass(ClassScope& classClassScope, SyntaxNod
    classClassScope.save();
 }
 
+void Compiler::Class :: load()
+{
+   scope.moduleScope->loadClassInfo(scope.info, scope.reference, false);
+   scope.abstractMode = test(scope.info.header.flags, elAbstract);
+   if (test(scope.info.header.flags, elExtension))
+      scope.extensionClassRef = scope.getAttribute(ClassAttribute::ExtensionRef);
+}
+
 // --- Compiler::Method ---
 
 Compiler::Method :: Method(Class& cls)
    : compiler(cls.compiler), scope(&cls.scope)
 {
 
+}
+
+Compiler::Method::Method(Compiler* compiler, ClassScope& classScope)
+   : compiler(compiler), scope(&classScope)
+{
+}
+
+void Compiler::Method :: compile(BuildTreeWriter& writer, SyntaxNode current)
+{
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
+   compiler->initializeMethod(*classScope, scope, current);
+
+#ifdef FULL_OUTOUT_INFO
+   IdentifierString messageName;
+   ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
+
+   // !! temporal
+   if (messageName.compare("static:getItem<'IntNumber,'Object>[3]"))
+      methodScope.message |= 0;
+
+   _errorProcessor->info(infoCurrentMethod, *messageName);
+#endif // FULL_OUTOUT_INFO
+
+   // if it is a dispatch handler
+   if (scope.message == scope.moduleScope->buildins.dispatch_message) {
+      compiler->compileDispatcherMethod(writer, scope, current,
+         test(classScope->info.header.flags, elWithGenerics),
+         test(classScope->info.header.flags, elWithVariadics));
+   }
+   // if it is an abstract one
+   else if (scope.checkHint(MethodHint::Abstract)) {
+      compiler->compileAbstractMethod(writer, scope, current, classScope->abstractMode);
+   }
+   // if it is an initializer
+   else if (scope.checkHint(MethodHint::Initializer)) {
+      compiler->compileInitializerMethod(writer, scope, current.parentNode());
+   }
+   // if it is a normal method
+   else compiler->compileMethod(writer, scope, current);
 }
 
 // --- Compiler::Code ---
@@ -10358,7 +10385,6 @@ Compiler::Code :: Code(Method& method)
 {
 
 }
-
 
 // --- Compiler::Expression ---
 

@@ -1111,6 +1111,8 @@ namespace elena_lang
       public:
          void declare(SyntaxNode node);
 
+         void load();
+
          Class(Compiler* compiler, Scope* parent, ref_t reference, Visibility visibility);
          Class(Namespace& ns, ref_t reference, Visibility visibility);
       };
@@ -1123,7 +1125,10 @@ namespace elena_lang
          MethodScope scope;
 
       public:
+         void compile(BuildTreeWriter& writer, SyntaxNode current);
+
          Method(Class& cls);
+         Method(Compiler* compiler, ClassScope& classScope);
       };
 
       class Code
@@ -1290,6 +1295,7 @@ namespace elena_lang
 
       friend class Namespace;
       friend class Class;
+      friend class Method;
       friend class Symbol;
       friend class Expression;
 

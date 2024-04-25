@@ -36,7 +36,7 @@ TEST_F(PackedStructAlignment, CompilerTest)
    runTest();
 }
 
-TEST_F(ComplexStructAlignment, CompilerTest)
+TEST_F(VariadicRuntimeSingleDispatch, CompilerTest)
 {
    runTest();
 }

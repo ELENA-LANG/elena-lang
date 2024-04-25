@@ -12,9 +12,61 @@
 
 namespace elena_lang 
 {
+   class TestErrorProcessor : public ErrorProcessor
+   {
+      TestErrorProcessor()
+         : ErrorProcessor(nullptr)
+      {
+         setWarningLevel(WarningLevel::Level0);
+      }
+
+   public:
+      void info(int code, ustr_t arg) override
+      {
+      }
+
+      void info(int code, ustr_t arg, ustr_t arg2) override
+      {
+      }
+
+      void raiseError(int code, ustr_t arg) override
+      {
+      }
+
+      void raisePathError(int code, path_t arg) override
+      {
+      }
+
+      void raisePathWarning(int code, path_t arg) override
+      {
+      }
+
+      void raiseInternalError(int code) override
+      {
+      }
+
+      void raiseTerminalError(int code, ustr_t pathArg, SyntaxNode node)
+      {
+      }
+
+      void raiseTerminalWarning(int level, int code, ustr_t pathArg, SyntaxNode node)
+      {
+      }
+
+      static ErrorProcessor* getInstance()
+      {
+         static TestErrorProcessor instance;
+
+         return &instance;
+      }
+
+   };
+
    // --- TestModuleScope ---
    class TestModuleScope : public ModuleScopeBase
    {
+      ref_t _anonymousRef;
+
    public:
       bool isStandardOne() override;
       bool withValidation() override;
@@ -74,6 +126,14 @@ namespace elena_lang
 
    class TestTemplateProssesor : public TemplateProssesorBase
    {
+      Map<Pair<ref_t, ref_t>, ref_t> _mapping;
+
+      TestTemplateProssesor()
+         : _mapping(0)
+      {
+
+      }
+
    public:
       ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
          List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList) override;
@@ -87,9 +147,14 @@ namespace elena_lang
       bool importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
          List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) override;
 
-      static TemplateProssesorBase* getInstance()
+      static TemplateProssesorBase* getInstance(Map<Pair<ref_t, ref_t>, ref_t>* mapping = nullptr)
       {
          static TestTemplateProssesor instance;
+         if (mapping) {
+            for (auto it = mapping->start(); !it.eof(); ++it) {
+               instance._mapping.add(it.key(), *it);
+            }
+         }
 
          return &instance;
       }
@@ -98,10 +163,14 @@ namespace elena_lang
    // --- CompilerEnvironment ---
    class CompilerEnvironment
    {
+      Map<Pair<ref_t, ref_t>, ref_t> _templateMapping;
+
    public:
       void initializeOperators(ModuleScopeBase* scope);
 
       ModuleScopeBase* createModuleScope(bool tapeOptMode, bool threadFriendly);
+
+      void setUpTemplateMockup(ref_t templateRef, ref_t elementRef, ref_t reference);
 
       Compiler* createCompiler();
 
