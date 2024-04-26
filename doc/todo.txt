@@ -22,12 +22,9 @@ In development:
   - #646
   - #593
   - #544
+ --------------------------------------
   - #522 : Auto generating multi-method default handler with type casting for variadic argument list
   * #522 : new unit test : resolve variadic single dispatch compile-time
-  * #522 : single dispatch variadic message : at compile-time
- --------------------------------------
-  * #522 : single dispatch variadic message : at run-time
-  * #522 : new unit test : resolve variadic single dispatch at run-time
 
   === Iteration 23 ===
   --------------------------------------

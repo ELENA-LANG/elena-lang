@@ -358,6 +358,8 @@ namespace elena_lang
          map.add("free_varstack", BuildKey::FreeVarStack);
          map.add("exit", BuildKey::Exit);
          map.add("parameter", BuildKey::Parameter);
+         map.add("call_op", BuildKey::CallOp);
+         map.add("terminator", BuildKey::TerminatorReference);
 
          map.add("value", BuildKey::Value);
          map.add("tape", BuildKey::Tape);

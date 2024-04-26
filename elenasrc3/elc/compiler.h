@@ -1180,7 +1180,7 @@ namespace elena_lang
 
          ObjectInfo compileMessageOperationR(ObjectInfo target, SyntaxNode node, bool propertyMode);
          ObjectInfo compileMessageOperationR(SyntaxNode node, SyntaxNode messageNode, ObjectInfo source, ArgumentsInfo& arguments,
-            ArgumentsInfo* updatedOuterArgs, ref_t expectedRef, bool propertyMode, bool probeMode, ExpressionAttribute attrs);
+            ArgumentsInfo* updatedOuterArgs, ref_t expectedRef, bool propertyMode, bool probeMode, bool ignoreVariadics, ExpressionAttribute attrs);
 
          ObjectInfo compileLoop(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileExtern(SyntaxNode node, ExpressionAttribute mode);

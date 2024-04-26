@@ -10747,7 +10747,7 @@ ObjectInfo Compiler::Expression :: compileLookAhead(SyntaxNode node, ref_t targe
 }
 
 ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, SyntaxNode messageNode, ObjectInfo source, ArgumentsInfo& arguments,
-   ArgumentsInfo* updatedOuterArgs, ref_t expectedRef, bool propertyMode, bool probeMode, ExpressionAttribute attrs)
+   ArgumentsInfo* updatedOuterArgs, ref_t expectedRef, bool propertyMode, bool probeMode, bool ignoreVariadics, ExpressionAttribute attrs)
 {
    ObjectInfo retVal = {};
 
@@ -10757,15 +10757,30 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
    if (propertyMode || !test(messageRef, FUNCTION_MESSAGE))
       arguments.add(source);
 
-   mssg_t resolvedMessage = source.mode != TargetMode::Weak ? compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
-      compiler->retrieveType(scope, source), messageRef) : 0;
+   mssg_t resolvedMessage = 0;
+
+   EAttr paramMode = EAttr::NoPrimitives;
+   if (source.mode != TargetMode::Weak) {
+      resolvedMessage = compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
+         compiler->retrieveType(scope, source), messageRef);
+      if (!resolvedMessage && !ignoreVariadics) {
+         ref_t variadicMssg = resolveVariadicMessage(scope, messageRef);
+
+         resolvedMessage = compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
+            compiler->retrieveType(scope, source), variadicMssg);
+         if (resolvedMessage) {
+            messageRef = variadicMssg;
+            paramMode = paramMode | EAttr::WithVariadicArg;
+         }            
+      }
+   }
 
    ref_t expectedSignRef = 0;
    if (resolvedMessage)
       scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
 
    ArgumentListType argListType = ArgumentListType::Normal;
-   ref_t implicitSignatureRef = compileMessageArguments(messageNode, arguments, expectedSignRef, EAttr::NoPrimitives,
+   ref_t implicitSignatureRef = compileMessageArguments(messageNode, arguments, expectedSignRef, paramMode,
       updatedOuterArgs, argListType);
 
    EAttr opMode = EAttr::None;
@@ -10851,7 +10866,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
          current = current.nextNode();
 
          retVal = compileMessageOperationR(node, current, source, arguments, 
-            &updatedOuterArgs, expectedRef, false, probeMode, attrs);
+            &updatedOuterArgs, expectedRef, false, probeMode, false, attrs);
 
          break;
       }
@@ -10877,7 +10892,7 @@ ObjectInfo Compiler::Expression :: compilePropertyOperation(SyntaxNode node, ref
    current = current.nextNode();
 
    retVal = compileMessageOperationR(node, current, source, arguments, 
-      &outerArgsToUpdate, expectedRef, true, false, attrs);
+      &outerArgsToUpdate, expectedRef, true, false, true, attrs);
 
    return retVal;
 }
@@ -11717,6 +11732,11 @@ ObjectInfo Compiler::Expression :: validateObject(SyntaxNode node, ObjectInfo re
       retVal = saveToTempLocal(retVal);
    }
    if (targetRef) {
+      if (retVal.kind == ObjectKind::VArgParam && retVal.mode == TargetMode::UnboxingAndTypecastingVarArgument && retVal.typeInfo.elementRef == targetRef) {
+         // HOTFIX : allow to pass the check for explicit variadic argument typecasting
+         return retVal;
+      }
+
       retVal = convertObject(node, retVal, targetRef, dynamicRequired, false);
       if (paramMode && hasToBePresaved(retVal))
          retVal = saveToTempLocal(retVal);
@@ -11782,6 +11802,8 @@ ObjectInfo Compiler::Expression :: compileNewOp(SyntaxNode node, ObjectInfo sour
 ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, ArgumentsInfo& arguments, ref_t expectedSignRef, EAttr mode, 
    ArgumentsInfo* updatedOuterArgs, ArgumentListType& argListType)
 {
+   bool variadicArg = EAttrs::testAndExclude(mode, EAttr::WithVariadicArg);
+
    EAttr paramMode = EAttr::Parameter | EAttr::RetValExpected;
    if (EAttrs::testAndExclude(mode, EAttr::NoPrimitives))
       paramMode = paramMode | EAttr::NoPrimitives;
@@ -11791,11 +11813,17 @@ ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, Argume
    ref_t signatureLen = 0;
    ref_t superReference = scope.moduleScope->buildins.superReference;
 
+   size_t signatureMaxLength = 0;
    if (expectedSignRef)
-      scope.module->resolveSignature(expectedSignRef, signatures);
+      signatureMaxLength = scope.module->resolveSignature(expectedSignRef, signatures);
 
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Expression) {
+         if (variadicArg && signatureLen == signatureMaxLength) {
+            // for variadic last argument - stay at the same position
+            signatureLen--;
+         }
+
          // try to recognize the message signature
          // NOTE : signatures[signatureLen] contains expected parameter type if expectedSignRef is provided
          auto argInfo = compile(current, signatures[signatureLen],
@@ -13068,7 +13096,8 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(ObjectInfo target, S
          // NOTE : the operation target shouldn't be a primitive type
          ObjectInfo source = validateObject(messageNode, target, 0, true, true, false);
 
-         return compileMessageOperationR(messageNode, messageNode, source, arguments, &updatedOuterArgs, 0, propertyMode, false, EAttr::None);
+         return compileMessageOperationR(messageNode, messageNode, source, arguments, &updatedOuterArgs, 0, 
+            propertyMode, false, false, EAttr::None);
       }
    }
 

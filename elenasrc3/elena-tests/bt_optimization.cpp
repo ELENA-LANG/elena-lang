@@ -58,6 +58,7 @@ constexpr auto OptimizedBuildTree1_2 = "local_address -4 () saving_stack 1 () cl
 constexpr auto OptimizedBuildTree2 = "saving_int - 4 (size 4 ()value 2 ())";
 
 constexpr auto BuildTree_VariadicSingleDispatch_1 = "tape(arguments_info(parameter(index -1 ())parameter(index -2 ())) method_name() sealed_dispatching 256 (message 2690 ()) open_frame() assigning 1 () local_reference -2 () saving_stack() varg_sop 6 (index -4 ()) unbox_call_message -2 (index 1 () length -4 () temp_var -8 () message 577 ()) local 1 () saving_stack() argument() direct_call_op 2690 (type 5 ()) loading_index() free_varstack() close_frame() exit()) reserved 3 ()reserved_n 8 ())";
+constexpr auto BuildTree_VariadicSingleDispatch_2 = "tape(open_frame() assigning 1 () class_reference 58 () direct_call_op 1056 (type 64 ()) assigning 2 () class_reference 59 () direct_call_op 1056 (type 65 ()) assigning 3 () local 2 () saving_stack() argument() call_op 17473 () assigning 4 () local 3 () saving_stack() argument() call_op 17473 () assigning 5 () terminator() saving_stack 3 () local 5 () saving_stack 2 () local 4 () saving_stack 1 () class_reference 60 () saving_stack() argument() direct_call_op 18562 (type 60 ()) local 1 () close_frame() exit()) reserved 9 ()";
 
 constexpr auto PackedStructSize = 20;
 
