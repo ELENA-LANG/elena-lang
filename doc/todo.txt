@@ -22,7 +22,7 @@ In development:
   - #646
   - #593
  --------------------------------------
-  - #544
+  - #544 : Multimethod with unresolved message - The code is never finished
 
   === Iteration 23 ===
   --------------------------------------
