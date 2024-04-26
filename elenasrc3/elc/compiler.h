@@ -1314,6 +1314,7 @@ namespace elena_lang
       bool                   _evaluateOp;
       bool                   _verbose;
       bool                   _noValidation;
+      bool                   _withDebugInfo;
 
       void loadMetaData(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t name);
 
@@ -1690,6 +1691,11 @@ namespace elena_lang
       void setNoValidation()
       {
          _noValidation = true;
+      }
+
+      void setDebugMode(bool debugMode)
+      {
+         _withDebugInfo = debugMode;
       }
 
       void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,

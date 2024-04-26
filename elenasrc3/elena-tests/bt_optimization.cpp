@@ -45,7 +45,9 @@ constexpr auto Struct_Declaration3 = "namespace (class ( nameattr (identifier \"
 constexpr auto S1_DefaultNamespace = "namespace (class (nameattr (identifier \"Object\" ())) class (nameattr (identifier \"B\" ())) $1)";
 constexpr auto S1_IntNumber = "class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ())))";
 constexpr auto S1_VariadicTemplates = " class (attribute -2147467263 ()attribute -2147471359 ()attribute -2147479542 ()nameattr (identifier \"VariadicArray\" ())field (attribute -2147475454 ()attribute -2147481599 ()array_type (type (identifier \"Object\" ()))nameattr (identifier \"array\" ())))  class (attribute -2147467263 ()attribute -2147471359 ()attribute -2147479542 ()nameattr (identifier \"VariadicBArray\" ())field (attribute -2147475454 ()attribute -2147481599 ()array_type (type (identifier \"B\" ()))nameattr (identifier \"array\" ())))";
+
 constexpr auto S1_VariadicSingleDispatch_1 = "class (attribute -2147479546 () nameattr (identifier \"E\" ()) method (nameattr (identifier \"load\" ()) parameter (attribute -2147475445 () array_type (type (identifier \"B\" ())) nameattr (identifier \"o\" ())) code ()))";
+constexpr auto S1_VariadicSingleDispatch_2 = "class (attribute -2147467263 () nameattr (identifier \"program\" ()) attribute -2147479546 () method 2592 (attribute -2147479540 ()code ( expression (assign_operation (object (attribute -2147479539 () identifier \"b\" ())expression (message_operation (object (attribute -2147479534 () identifier \"B\" ()))))) expression (assign_operation (object (attribute -2147479539 () identifier \"c\" ()) expression (message_operation (object (attribute -2147479534 ()identifier \"C\" ()))))) expression (message_operation (object (identifier \"E\" ())message (identifier \"load\" ())expression (object (identifier \"b\" ()))expression (object (identifier \"c\" ()))))))) class (nameattr (identifier \"C\" ()) method (type (identifier \"B\" ())attribute -2147479535 () returning (expression (message_operation (object (attribute -2147479534 () identifier \"B\" ())))))";
 
 #ifdef _M_IX86
 
@@ -57,8 +59,8 @@ constexpr auto OptimizedBuildTree1_1 = "local_address -4 () saving_stack 1 () cl
 constexpr auto OptimizedBuildTree1_2 = "local_address -4 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2242 (type 4 ()) local_address -4 ()";
 constexpr auto OptimizedBuildTree2 = "saving_int - 4 (size 4 ()value 2 ())";
 
-constexpr auto BuildTree_VariadicSingleDispatch_1 = "tape(arguments_info(parameter(index -1 ())parameter(index -2 ())) method_name() sealed_dispatching 256 (message 2690 ()) open_frame() assigning 1 () local_reference -2 () saving_stack() varg_sop 6 (index -4 ()) unbox_call_message -2 (index 1 () length -4 () temp_var -8 () message 577 ()) local 1 () saving_stack() argument() direct_call_op 2690 (type 5 ()) loading_index() free_varstack() close_frame() exit()) reserved 3 ()reserved_n 8 ())";
-constexpr auto BuildTree_VariadicSingleDispatch_2 = "tape(open_frame() assigning 1 () class_reference 58 () direct_call_op 1056 (type 64 ()) assigning 2 () class_reference 59 () direct_call_op 1056 (type 65 ()) assigning 3 () local 2 () saving_stack() argument() call_op 17473 () assigning 4 () local 3 () saving_stack() argument() call_op 17473 () assigning 5 () terminator() saving_stack 3 () local 5 () saving_stack 2 () local 4 () saving_stack 1 () class_reference 60 () saving_stack() argument() direct_call_op 18562 (type 60 ()) local 1 () close_frame() exit()) reserved 9 ()";
+constexpr auto BuildTree_VariadicSingleDispatch_1 = "tape(sealed_dispatching 256 (message 3202 ()) open_frame() assigning 1 () local_reference -2 () saving_stack() varg_sop 6 (index -4 ()) unbox_call_message -2 (index 1 () length -4 () temp_var -8 () message 1089 ()) local 1 () saving_stack() argument() direct_call_op 3202 (type 5 ()) loading_index() free_varstack() close_frame() exit()) reserved 3 ()reserved_n 8 ())";
+constexpr auto BuildTree_VariadicSingleDispatch_2 = "tape(open_frame() assigning 1 () class_reference 2 () direct_call_op 544 (type 10 ()) assigning 2 () class_reference 8 () direct_call_op 544 (type 14 ()) assigning 3 () local 2 () saving_stack() argument() call_op 1089 () assigning 4 () local 3 () saving_stack() argument() call_op 1089 () assigning 5 () terminator() saving_stack 3 () local 5 () saving_stack 2 () local 4 () saving_stack 1 () class_reference 5 () saving_stack() argument() direct_call_op 3202 (type 5 ()) local 1 () close_frame() exit()) reserved 9 ()";
 
 constexpr auto PackedStructSize = 20;
 
@@ -75,7 +77,8 @@ constexpr auto OptimizedBuildTree1_1 = "local_address -8 () saving_stack 1 () cl
 constexpr auto OptimizedBuildTree1_2 = "local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2242 (type 4 ()) local_address -8 ()";
 constexpr auto OptimizedBuildTree2 = "saving_int - 8 (size 4 ()value 2 ())";
 
-constexpr auto BuildTree_VariadicSingleDispatch_1 = "tape(arguments_info(parameter(index -1 ())parameter(index -2 ())) method_name() sealed_dispatching 256 (message 2690 ()) open_frame() assigning 1 () local_reference -2 () saving_stack() varg_sop 6 (index -8 ()) unbox_call_message -2 (index 1 () length -8 () temp_var -24 () message 577 ()) local 1 () saving_stack() argument() direct_call_op 2690 (type 5 ()) loading_index() free_varstack() close_frame() exit()) reserved 4 ()reserved_n 32 ())";
+constexpr auto BuildTree_VariadicSingleDispatch_1 = "tape(sealed_dispatching 256 (message 3202 ()) open_frame() assigning 1 () local_reference -2 () saving_stack() varg_sop 6 (index -8 ()) unbox_call_message -2 (index 1 () length -8 () temp_var -24 () message 1089 ()) local 1 () saving_stack() argument() direct_call_op 3202 (type 5 ()) loading_index() free_varstack() close_frame() exit()) reserved 4 ()reserved_n 32 ())";
+constexpr auto BuildTree_VariadicSingleDispatch_2 = "tape(open_frame() assigning 1 () class_reference 2 () direct_call_op 544 (type 10 ()) assigning 2 () class_reference 8 () direct_call_op 544 (type 14 ()) assigning 3 () local 2 () saving_stack() argument() call_op 1089 () assigning 4 () local 3 () saving_stack() argument() call_op 1089 () assigning 5 () terminator() saving_stack 3 () local 5 () saving_stack 2 () local 4 () saving_stack 1 () class_reference 5 () saving_stack() argument() direct_call_op 3202 (type 5 ()) local 1 () close_frame() exit()) reserved 10 ()";
 
 constexpr auto PackedStructSize = 24;
 
@@ -383,6 +386,26 @@ void Scenario1Test :: LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr
    SyntaxTreeSerializer::load(syntax.str(), declarationNode);
 }
 
+void Scenario1Test :: LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3, ustr_t descr4)
+{
+   DynamicUStr syntax(common);
+
+   size_t index = common.findStr("$1");
+   if (index != NOTFOUND_POS) {
+      syntax.cut(index, 2);
+
+      syntax.insert(descr4, index);
+      syntax.insert(" ", index);
+      syntax.insert(descr3, index);
+      syntax.insert(" ", index);
+      syntax.insert(descr2, index);
+      syntax.insert(" ", index);
+      syntax.insert(descr1, index);
+   }
+
+   SyntaxTreeSerializer::load(syntax.str(), declarationNode);
+}
+
 // --- DispatchTest ---
 
 void DispatchTest :: SetUp()
@@ -423,6 +446,9 @@ void DispatchTest :: runTest()
    moduleScope->buildins.superReference = 1;
    moduleScope->buildins.intReference = intNumberRef;
    moduleScope->buildins.argArrayTemplateReference = argArrayRef;
+   moduleScope->buildins.constructor_message =
+      encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
+         0, FUNCTION_MESSAGE);
 
    env.setUpTemplateMockup(argArrayRef, 1, genericVargRef);
    env.setUpTemplateMockup(argArrayRef, 2, targetVargRef);
@@ -439,7 +465,7 @@ void DispatchTest :: runTest()
    classHelper.load();
    Compiler::Method methodHelper(classHelper);
 
-   SyntaxNode methodNode = findAutoGenerated(findClassNode());
+   SyntaxNode methodNode = findTargetNode();
    if (methodNode != SyntaxKey::None)
       methodHelper.compile(writer, methodNode);
 
@@ -453,6 +479,11 @@ void DispatchTest :: runTest()
 
 // --- VariadicRuntimeSingleDispatch ---
 
+SyntaxNode VariadicRuntimeSingleDispatch :: findTargetNode()
+{
+   return findAutoGenerated(findClassNode());
+}
+
 void VariadicRuntimeSingleDispatch :: SetUp()
 {
    DispatchTest::SetUp();
@@ -465,5 +496,27 @@ void VariadicRuntimeSingleDispatch :: SetUp()
    genericVargRef = 3;
    targetVargRef = 4;
    targetRef = 5;
+   intNumberRef = 6;
+}
+
+// --- VariadicCompiletimeSingleDispatch ---
+
+SyntaxNode VariadicCompiletimeSingleDispatch :: findTargetNode()
+{
+   return findClassNode().findChild(SyntaxKey::Method);
+}
+
+void VariadicCompiletimeSingleDispatch :: SetUp()
+{
+   DispatchTest::SetUp();
+
+   LoadDeclarationScenario(S1_DefaultNamespace, S1_VariadicTemplates, S1_VariadicSingleDispatch_1, S1_IntNumber, S1_VariadicSingleDispatch_2);
+
+   BuildTreeSerializer::load(BuildTree_VariadicSingleDispatch_2, controlOutputNode);
+
+   argArrayRef = 0x80;
+   genericVargRef = 3;
+   targetVargRef = 4;
+   targetRef = 7;
    intNumberRef = 6;
 }

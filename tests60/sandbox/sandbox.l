@@ -1,63 +1,29 @@
-//B;
-//
-//C
-//{
-//    B cast()
-//        = new B();
-//}
-//
-//singleton E
-//{
-//    load(params B[] o)
-//    {
-//        for(int i := 0; i < o.Length; i += 1)
-//        {
-//            console.writeLine(o[i])
-//        }
-//    }
-//}
-//
-//public program()
-//{
-//   var b := new B();
-//   var c := new C();
-//
-//   E.load(b,c);
-//
-////   var e := E;    
-////   e.load(b,c);
-//}
+B;
 
-import system'text;
-import extensions;
-
-VT_B;
-
-VT_C
+C
 {
-    VT_B cast()
-        = new VT_B();
+    B cast()
+        = new B();
 }
 
-singleton VT_E
+singleton E
 {
-   load(params VT_B[] o)
-   {
-      ^ new TextBuilder().print(o.asEnumerable()).Value;
-   }
-
-   loadAndTypecast(params object[] args)
-   {
-      ^ self.load(cast VT_B(params args));
-   }
+    load(params B[] o)
+    {
+        for(int i := 0; i < o.Length; i += 1)
+        {
+            console.writeLine(o[i])
+        }
+    }
 }
 
 public program()
 {
-   var b := new VT_B();
-   var c := new VT_C();
-   
-   Assert.ifEqual(VT_E.loadAndTypecast(b,c), "system_tests'$private'VT_B,system_tests'$private'VT_B");
+   var b := new B();
+   var c := new C();
 
-   console.write(".");
+   E.load(b,c);
+
+   var e := E;    
+   e.load(b,c);
 }

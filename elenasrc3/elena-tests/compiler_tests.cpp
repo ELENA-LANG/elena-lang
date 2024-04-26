@@ -40,3 +40,8 @@ TEST_F(VariadicRuntimeSingleDispatch, CompilerTest)
 {
    runTest();
 }
+
+TEST_F(VariadicCompiletimeSingleDispatch, CompilerTest)
+{
+   runTest();
+}

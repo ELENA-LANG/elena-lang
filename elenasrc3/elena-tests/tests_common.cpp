@@ -240,6 +240,7 @@ Compiler* CompilerEnvironment :: createCompiler()
    auto compiler = new Compiler(nullptr, TestErrorProcessor::getInstance(), TestTemplateProssesor::getInstance(&_templateMapping), CompilerLogic::getInstance());
 
    compiler->setNoValidation();
+   compiler->setDebugMode(false);
 
    return compiler;
 }
