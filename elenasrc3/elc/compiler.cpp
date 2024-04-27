@@ -10833,6 +10833,16 @@ bool Compiler::Expression :: isDirectMethodCall(SyntaxNode& node)
 
             return true;
          }
+         if (test(classScope->info.header.flags, elWithVariadics)) {
+            if (compiler->_logic->isMessageSupported(classScope->info, 
+               encodeMessage(scope.module->mapAction(name, 0, true), 2, VARIADIC_MESSAGE))) 
+            {
+               node.setKey(SyntaxKey::Message);
+
+               return true;
+            }
+
+         }
       }
    }
    return false;

@@ -10,10 +10,12 @@ singleton TestHelper
 {
    myMethodInvoker()
    {
-      myMethod(new B())
+      var b1 := new B();
+      var b2 := new B();
+      myMethod(b1, b2)
    }
 
-   myMethod(B arg) 
+   myMethod(params B[] arg) 
    {
    }
 }
