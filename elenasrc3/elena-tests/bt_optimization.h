@@ -176,6 +176,9 @@ namespace elena_lang
    {
    protected:
       ref_t      targetRef;
+      ref_t      argArrayRef;
+      ref_t      genericVargRef;
+      ref_t      targetVargRef;
 
       SyntaxNode findClassNode();
       virtual SyntaxNode findTargetNode();
@@ -183,10 +186,16 @@ namespace elena_lang
       void SetUp() override;
 
    public:
-      void runTest();
+      void runTest(bool withVariadic);
    };
 
    class CallMethodWithoutTarget : public MethodCallTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class CallVariadocMethodWithoutTarget : public MethodCallTest
    {
    protected:
       void SetUp() override;

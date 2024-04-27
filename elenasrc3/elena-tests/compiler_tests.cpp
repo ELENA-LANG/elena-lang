@@ -48,5 +48,10 @@ TEST_F(VariadicCompiletimeSingleDispatch, CompilerTest)
 
 TEST_F(CallMethodWithoutTarget, CompilerTest)
 {
-   runTest();
+   runTest(false);
+}
+
+TEST_F(CallVariadocMethodWithoutTarget, CompilerTest)
+{
+   runTest(false);
 }
