@@ -10816,16 +10816,52 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
    return retVal;
 }
 
+bool Compiler::Expression :: isDirectMethodCall(SyntaxNode& node)
+{
+   if (node == SyntaxKey::Message) {
+      return true;
+   }
+   else if (node == SyntaxKey::Object && node.firstChild() == SyntaxKey::identifier) {
+      if (node.nextNode().compare(SyntaxKey::Expression, SyntaxKey::None)) {
+         ustr_t name = node.firstChild().identifier();
+         pos_t argCount = SyntaxTree::countSibling(node.nextNode(), SyntaxKey::Expression);
+
+         ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+         if (!classScope)
+            return false;
+
+         mssg_t weakMessage = encodeMessage(scope.module->mapAction(name, 0, true), argCount + 1, 0);
+         if (compiler->_logic->isMessageSupported(classScope->info, weakMessage)) {
+            node.setKey(SyntaxKey::Message);
+            node.setArgumentReference(weakMessage);
+
+            return true;
+         }
+      }
+   }
+   return false;
+}
+
 ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
    ref_t expectedRef, ExpressionAttribute attrs)
 {
    ObjectInfo retVal = { };
+   ObjectInfo source = {};
+
    ArgumentsInfo arguments;
    ArgumentsInfo updatedOuterArgs;
    ArgumentListType argListType = ArgumentListType::Normal;
 
    SyntaxNode current = node.firstChild();
-   ObjectInfo source = compileObject(current, EAttr::Parameter, &updatedOuterArgs);
+   if (isDirectMethodCall(current)) {
+      // if direct method call is possible (without specifying target)
+      source = scope.mapSelf();
+
+      return compileMessageOperationR(node, current, source, arguments,
+         &updatedOuterArgs, expectedRef, false, false, false, attrs);
+   }
+   else source = compileObject(current, EAttr::Parameter, &updatedOuterArgs);
+
    bool probeMode = source.mode == TargetMode::Probe;
    switch (source.mode) {
       case TargetMode::External:

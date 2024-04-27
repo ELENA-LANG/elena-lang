@@ -1157,6 +1157,8 @@ namespace elena_lang
          ExprScope         scope;
          BuildTreeWriter*  writer;
 
+         bool isDirectMethodCall(SyntaxNode& node);
+
          ObjectInfo compileLookAhead(SyntaxNode node,
             ref_t targetRef, ExpressionAttribute attrs);
 
