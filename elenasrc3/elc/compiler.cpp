@@ -10353,13 +10353,9 @@ void Compiler::Method :: compile(BuildTreeWriter& writer, SyntaxNode current)
 
 #ifdef FULL_OUTOUT_INFO
    IdentifierString messageName;
-   ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
+   ByteCodeUtil::resolveMessageName(messageName, scope.module, scope.message);
 
-   // !! temporal
-   if (messageName.compare("static:getItem<'IntNumber,'Object>[3]"))
-      methodScope.message |= 0;
-
-   _errorProcessor->info(infoCurrentMethod, *messageName);
+   compiler->_errorProcessor->info(infoCurrentMethod, *messageName);
 #endif // FULL_OUTOUT_INFO
 
    // if it is a dispatch handler

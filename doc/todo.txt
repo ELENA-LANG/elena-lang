@@ -21,13 +21,12 @@ In development:
   - #619 : template methods - calling template method explicitly
   - #646 : Calling own method directly without target
   * #646 : support function call with double colon (e.g. ::printing() - is always a function)
+  * #646 : unit test - check with turn off
   * #646 : an option to turn on / off this feature
-  * #646 : unit test - calling the function with the same name
-  * #646 : unit test - calling the method directly
   * #646 : warn over the function with the same name
-  * #646 : check if the class has variadic argument functions - it must be checked separetely
+  * #646 : unit test : variadic method call
  --------------------------------------
-  * #646 : Calling own method directly without target (with the same number of arguments)
+  * #646 : check if the class has variadic argument functions - it must be checked separetely
 
   === Iteration 23 ===
   --------------------------------------

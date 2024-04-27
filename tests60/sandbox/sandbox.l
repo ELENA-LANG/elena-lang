@@ -1,15 +1,20 @@
-import extensions;
+//import extensions;
+
+B;
+
+myMethod(B arg)
+{
+}
 
 singleton TestHelper
 {
    myMethodInvoker()
    {
-      myMethod("TestHelper.myMethod fired")
+      myMethod(new B())
    }
 
-   myMethod(string s) 
+   myMethod(B arg) 
    {
-      console.writeLine(s);
    }
 }
 

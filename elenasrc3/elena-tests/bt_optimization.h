@@ -171,6 +171,26 @@ namespace elena_lang
 
       void SetUp() override;
    };
+
+   class MethodCallTest : public Scenario1Test
+   {
+   protected:
+      ref_t      targetRef;
+
+      SyntaxNode findClassNode();
+      virtual SyntaxNode findTargetNode();
+
+      void SetUp() override;
+
+   public:
+      void runTest();
+   };
+
+   class CallMethodWithoutTarget : public MethodCallTest
+   {
+   protected:
+      void SetUp() override;
+   };
 }
 
 #endif
