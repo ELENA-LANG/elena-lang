@@ -247,12 +247,13 @@ namespace elena_lang
       void onStop();
 
       void readObjectContent(ContextBrowserBase* watch, void* item, addr_t address, int level,
-         DebugLineInfo* info);
+         DebugLineInfo* info, addr_t vmtAddress);
       void readFields(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info);
       void readObjectArray(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info);
 
       void* readObject(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, ustr_t className = nullptr, addr_t vmtAddress = 0);
       void* readFieldValue(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, int size, ustr_t className = nullptr);
+      void* readByteLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readUIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readLongLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);

@@ -19,8 +19,10 @@ In development:
   --------------------------------------
   - samples : test tutorials for script generated code
   - #619 : template methods - calling template method explicitly
+  - #620 : x86-64 : gui, simple_windowed_app
  --------------------------------------
-  - #620 : x86-64 : anagram, gui, simple_windowed_app
+  - #620 : x86-64 : simple_windowed_app
+  * win 64 debugger : show handle
 
   === Iteration 23 ===
   --------------------------------------
