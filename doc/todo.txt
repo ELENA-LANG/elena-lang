@@ -19,10 +19,8 @@ In development:
   --------------------------------------
   - samples : test tutorials for script generated code
   - #619 : template methods - calling template method explicitly
-  - #620 : x86-64 : anagram, gui, simple_windowed_app
-  * support function call with double colon (e.g. ::printing() - is always a function)
  --------------------------------------
-  - #646 : Calling own method directly without target
+  - #620 : x86-64 : anagram, gui, simple_windowed_app
 
   === Iteration 23 ===
   --------------------------------------

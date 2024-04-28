@@ -50,7 +50,7 @@ constexpr int size_mask          = elObjectSizeMask64;
 constexpr int struct_mask        = elStructMask64;
 
 constexpr int heap_inc           = 0x54000;
-constexpr int heapheader_inc     = 0x0A800;
+constexpr int heapheader_inc     = 0x15000;
 
 typedef ObjectPage64    ObjectPage;
 
