@@ -13753,7 +13753,7 @@ bool Compiler::Expression :: resolveAutoType(ObjectInfo source, ObjectInfo& targ
       extra = allocateLocalAddress(scope, size, false);
    }
 
-   return scope.resolveAutoType(target, source.typeInfo, size, extra);
+   return scope.resolveAutoType(target, { sourceRef }, size, extra);
 }
 
 ObjectInfo Compiler::Expression :: boxArgument(ObjectInfo info, bool stackSafe, bool boxInPlace, bool allowingRefArg, ref_t targetRef)

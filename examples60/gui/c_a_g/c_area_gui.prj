@@ -4,6 +4,11 @@
         <executable>c_a_g.exe</executable>
      </project>
   </platform>
+  <platform key="Win_x64">
+     <project>
+        <executable>c_a_g64.exe</executable>
+     </project>
+  </platform>
   <project>
      <namespace>c_a_g</namespace>
      <template>gui</template>
