@@ -1,0 +1,17 @@
+<configuration>
+    <files>
+        <module>
+            <file>common.l</file>
+            <file>main.l</file>
+        </module>
+    </files>
+    <project>
+        <executable>chat_server.exe</executable>
+        <options></options>
+        <namespace>server_console</namespace>
+        <template>mt_console</template>
+    </project>
+    <references>
+        <reference key="chat_server">..\server</reference>
+    </references>
+</configuration>

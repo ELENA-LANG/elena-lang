@@ -207,7 +207,7 @@ void ProjectController :: defineSourceName(ProjectModel* model, path_t path, Nam
    }
 }
 
-bool ProjectController :: startDebugger(ProjectModel& model)
+bool ProjectController :: startDebugger(ProjectModel& model, DebugActionResult& result)
 {
    ustr_t target = model.getTarget();
    ustr_t arguments = model.getArguments();
@@ -223,7 +223,7 @@ bool ProjectController :: startDebugger(ProjectModel& model)
       bool debugMode = model.getDebugMode();
       if (debugMode) {
          if (!_debugController.start(exePath.str(), commandLine.str(), debugMode/*, _breakpoints */)) {
-            //notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_DEBUG_FILE_NOT_FOUND_COMPILE);
+            result.noDebugFile = true;            
 
             return false;
          }
@@ -240,7 +240,7 @@ bool ProjectController :: startDebugger(ProjectModel& model)
       return true;
    }
    else {
-      //notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_RUN_NEED_TARGET);
+      result.targetMissing = true;      
 
       return false;
    }
@@ -280,12 +280,12 @@ bool ProjectController :: isOutaged(ProjectModel& projectModel, SourceViewModel&
    return true;
 }
 
-bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, bool& outaged)
+bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, DebugActionResult& result)
 {
    if (!_debugController.isStarted()) {
       bool toRecompile = model.autoRecompile;
       if (!isOutaged(model, sourceModel)) {
-         outaged = true;
+         result.outaged = true;
 
          if (toRecompile) {
             if (!doCompileProject(model, action))
@@ -293,7 +293,7 @@ bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& so
          }
          return false;
       }
-      if (!startDebugger(model))
+      if (!startDebugger(model, result))
          return false;
    }
    return true;
@@ -1521,8 +1521,8 @@ void IDEController :: doDebugAction(IDEModel* model, DebugAction action, Message
    if (model->running)
       return;
 
-   bool outaged = false;
-   if (projectController.onDebugAction(model->projectModel, model->sourceViewModel, action, outaged)) {
+   DebugActionResult result = {};
+   if (projectController.onDebugAction(model->projectModel, model->sourceViewModel, action, result)) {
       model->running = true;
 
       model->sourceViewModel.setReadOnlyMode(true);
@@ -1538,8 +1538,15 @@ void IDEController :: doDebugAction(IDEModel* model, DebugAction action, Message
    }
    else if (model->sourceViewModel.isAnyDocumentModified())
       mssgDialog.info(INFO_RUN_UNSAVED_PROJECT);
-   else if (outaged)
+   else if (result.outaged) {
       mssgDialog.info(INFO_RUN_OUT_OF_DATE);
+   }
+   else if (result.targetMissing) {
+      mssgDialog.info(INFO_NEED_TARGET);
+   }
+   else if (result.noDebugFile) {
+      mssgDialog.info(INFO_RUN_NEED_RECOMPILE);
+   }
 }
 
 void IDEController :: doDebugStop(IDEModel* model)

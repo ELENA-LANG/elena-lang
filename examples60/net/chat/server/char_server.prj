@@ -1,0 +1,14 @@
+<configuration>
+    <files>
+        <module>
+            <file>client.l</file>
+            <file>server.l</file>
+        </module>
+    </files>
+    <project>
+        <executable></executable>
+        <options></options>
+        <namespace>chat_server</namespace>
+        <template>lib60</template>
+    </project>
+</configuration>

@@ -10622,7 +10622,7 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
          retVal = compile(current.firstChild(), 0, mode, updatedOuterArgs);
          break;
       case SyntaxKey::Expression:
-         retVal = compile(current, 0, mode, updatedOuterArgs);
+         retVal = compile(current, targetRef, mode, updatedOuterArgs);
          break;
       case SyntaxKey::Object:
          retVal = compileObject(current, mode, updatedOuterArgs);

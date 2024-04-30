@@ -7,7 +7,7 @@ In development:
 
   === Iteration 22 ===
   --------------------------------------
-  dev: #608, #637 (bt tests (>=4), all bc tests), #619; dev nested using statement (get rid of explicit variable), #589
+  dev: #608, #637 (bt tests (>=4), all bc tests), #619
   op: github action - create a draft release
   opt:pi under 6 sec, #601
   maint: #506, #617, #620, #622
@@ -15,14 +15,17 @@ In development:
   ide:vm debugger, #617
   tools:#618
   prom:elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test
-  port:chat sample, helloworld gui sample (button)
+  port:helloworld gui sample (button)
   --------------------------------------
+  - #569
+  - #574
+  - #265
+  - #504
+  - #589
+  - check dev nested using statement
   - samples : test tutorials for script generated code
-  - #619 : template methods - calling template method explicitly
-  - #620 : x86-64 : gui : c_a_g
-  * #620 : x86-64 : graph
  --------------------------------------
-  * #620 : x86-64 : agenda
+  - chat sample
 
   === Iteration 23 ===
   --------------------------------------
