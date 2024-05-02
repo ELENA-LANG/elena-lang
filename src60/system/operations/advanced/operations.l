@@ -29,3 +29,14 @@ public template if::is<expr, target>(truePart) : __included(statements)
       truePart;
    }
 }
+
+// --- expr :as T ---
+
+public template as<T>(expr)  : __included(statements)
+   = cast T(expr);
+
+// --- expr :of T ---
+
+public template is<T>(expr) : __included(statements)
+   = expr.isInstanceOf(T);
+

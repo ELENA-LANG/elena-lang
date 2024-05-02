@@ -146,6 +146,8 @@ namespace elena_lang
          List<SyntaxNode>& parameters) override;
       bool importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
          List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) override;
+      bool importExpressionTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+         List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) override;
 
       static TemplateProssesorBase* getInstance(Map<Pair<ref_t, ref_t>, ref_t>* mapping = nullptr)
       {

@@ -205,6 +205,12 @@ bool TestTemplateProssesor :: importCodeTemplate(ModuleScopeBase& moduleScope, r
    return false;
 }
 
+bool TestTemplateProssesor :: importExpressionTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+   List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
+{
+   return false;
+}
+
 // --- CompilerEnvironment ---
 
 CompilerEnvironment :: CompilerEnvironment()

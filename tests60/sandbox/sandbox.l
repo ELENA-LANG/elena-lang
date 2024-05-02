@@ -1,23 +1,39 @@
 import extensions;
 
-WSData
+B
 {
-   x;
-
-   constructor new(byte n)
+   write()
    {
-      x := "byte"
+      console.writeLine("B.write")
    }
+}
 
-   constructor new(int n)
-   {
-      x := "int"
-   }
+C
+{
+   B cast()
+      = new B();
 }
 
 public program()
 {
-   var r := WSData.new(2);
-   var c := WSData;
-   var r2 := c.new(2);
+//   var c := new C();
+
+//   var b := c :as B;
+
+
+   var client := ::{ Parameter = new C(); } ;
+
+   (client.Parameter :as B).write();
+   cast B(client.Parameter).write();
+
+//   (client.Parameter :as B).write()
+
+//
+//   client.Parameter :as B
+//   client.Parameter as: B
+//
+//
+//
+//   if (x :of B) {
+//   }
 }

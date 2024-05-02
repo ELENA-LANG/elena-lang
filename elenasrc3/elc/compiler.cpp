@@ -4426,6 +4426,9 @@ void Compiler :: declareTemplateAttributes(TemplateScope& scope, SyntaxNode node
             postfix.append(':');
             postfix.append(current.firstChild(SyntaxKey::TerminalMask).identifier());
             break;
+         case SyntaxKey::ReturnExpression:
+            scope.type = TemplateType::Expression;
+            break;
          default:
             break;
       }
@@ -4598,6 +4601,7 @@ void Compiler :: declareTemplate(TemplateScope& scope, SyntaxNode& node)
       }
       case TemplateType::Inline:
       case TemplateType::Statement:
+      case TemplateType::Expression:
          break;
       default:
          scope.raiseError(errInvalidSyntax, node);
@@ -4627,6 +4631,11 @@ void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
             scope.raiseError(errInvalidSyntax, node);
          break;
       case TemplateType::Statement:
+         postfix.append('#');
+         postfix.appendInt(argCount);
+         break;
+      case TemplateType::Expression:
+         prefix.append(INLINEEXPR_PREFIX);
          postfix.append('#');
          postfix.appendInt(argCount);
          break;
@@ -10107,6 +10116,7 @@ void Compiler::Namespace :: declareMembers(SyntaxNode node)
             break;
          }
          case SyntaxKey::TemplateCode:
+         case SyntaxKey::InlineTemplateExpr:
          {
             TemplateScope templateScope(&scope, 0, scope.defaultVisibility);
             compiler->declareTemplateCode(templateScope, current);

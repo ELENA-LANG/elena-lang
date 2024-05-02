@@ -26,10 +26,13 @@ In development:
   - check dev nested using statement
   - samples : test tutorials for script generated code
   - chat sample
-  * net : onStop events
-  * net : WSAStartUp
+  - #651 : Template Expression : typecasting
  --------------------------------------
-  - #608 : single dispatch for constructors
+  * template operator for typecasting :
+    cast ChatMember(client.Parameter).write(data, length)
+     =>
+    (client.Parameter as:ChatMember).write(data, length)
+    
 
   === Iteration 23 ===
   --------------------------------------

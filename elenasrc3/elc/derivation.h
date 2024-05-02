@@ -3,7 +3,7 @@
 //               
 //		This file contains Syntax Tree Builder class declaration
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DERIVATION_H
@@ -25,7 +25,8 @@ namespace elena_lang
          InlineTemplate,
          ClassTemplate,
          PropertyTemplate,
-         ExtensionTemplate
+         ExtensionTemplate,
+         ExpressionTemplate,
       };
 
       struct Scope
@@ -49,6 +50,7 @@ namespace elena_lang
          {
             switch (type) {
                case ScopeType::InlineTemplate:
+               case ScopeType::ExpressionTemplate:
                {
                   ref_t index = arguments.get(node.identifier());
                   if (index) {
@@ -122,6 +124,7 @@ namespace elena_lang
       void parseStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current, 
          List<SyntaxNode>& arguments, List<SyntaxNode>& parameters, IdentifierString& postfix);
       void generateTemplateStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void generateTemplateExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void generateTemplateOperation(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
       void loadMetaSection(SyntaxNode node);
@@ -179,10 +182,12 @@ namespace elena_lang
          bool typeDescriptor = false);
       void flushClass(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool functionMode);
       void flushInlineTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushExpressionTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode node);
       void flushDictionary(SyntaxTreeWriter& writer, SyntaxNode node);
       void flushNamespace(SyntaxTreeWriter& writer, SyntaxNode node);
       void flush(SyntaxTreeWriter& writer, SyntaxNode node);
+
 
    public:
       void newNode(parse_key_t key) override;
@@ -228,7 +233,8 @@ namespace elena_lang
          Inline,
          CodeTemplate,
          Class,
-         InlineProperty
+         InlineProperty,
+         ExpressionTemplate
       };
 
       typedef Map<ref_t, SyntaxNode> NodeMap;
@@ -284,6 +290,8 @@ namespace elena_lang
       void importInlineTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
       void importInlinePropertyTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
       void importCodeTemplate(MemoryBase* templateSection,
+         SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
+      void importExpressionTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
 
       void generateClassTemplate(ModuleScopeBase* moduleScope, ref_t classRef, SyntaxTreeWriter& writer,

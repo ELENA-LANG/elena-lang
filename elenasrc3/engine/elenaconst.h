@@ -120,6 +120,7 @@ namespace elena_lang
    // --- ELENA section prefixes
    constexpr auto META_PREFIX                = "meta$";
    constexpr auto INLINE_PREFIX              = "inline$";
+   constexpr auto INLINEEXPR_PREFIX          = "expr$";
    constexpr auto INLINE_PROPERTY_PREFIX     = "prop$";
    constexpr auto AUTO_GENERATED_PREFIX      = "generated$";
 

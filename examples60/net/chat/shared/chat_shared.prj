@@ -1,17 +1,13 @@
 <configuration>
     <files>
         <module>
-            <file>client.l</file>
-            <file>server.l</file>
+            <file>charcommon.l</file>
         </module>
     </files>
     <project>
         <executable></executable>
         <options></options>
-        <namespace>chat_server</namespace>
+        <namespace>chat_shared</namespace>
         <template>lib60</template>
     </project>
-    <references>
-        <reference key="chat_shared">..\shared</reference>
-    </references>
 </configuration>
