@@ -97,7 +97,7 @@ namespace elena_lang
       void SetUp() override;
 
    public:
-      void runTest();
+      void runTest(bool withProtectedConstructor = false);
    };
 
    // Optimization #2 (byRefOp) : "a := b.get()" => "b.get(ref a)"
@@ -165,6 +165,14 @@ namespace elena_lang
    };
 
    class VariadicCompiletimeSingleDispatch : public DispatchTest
+   {
+   protected:
+      SyntaxNode findTargetNode() override;
+
+      void SetUp() override;
+   };
+
+   class VariadicCompiletimeConstructorSingleDispatch : public DispatchTest
    {
    protected:
       SyntaxNode findTargetNode() override;

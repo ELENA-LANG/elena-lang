@@ -55,3 +55,8 @@ TEST_F(CallVariadocMethodWithoutTarget, CompilerTest)
 {
    runTest(false);
 }
+
+TEST_F(VariadicCompiletimeConstructorSingleDispatch, CompilerTest)
+{
+   runTest(true);
+}

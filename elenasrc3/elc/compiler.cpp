@@ -1220,7 +1220,7 @@ bool Compiler::MethodScope :: checkType(MethodInfo& methodInfo, MethodHint type)
    return (methodInfo.hints & MethodHint::Mask) == type;
 }
 
-ObjectInfo Compiler::MethodScope :: mapSelf(bool memberMode)
+ObjectInfo Compiler::MethodScope :: mapSelf(bool memberMode, bool ownerClass)
 {
    if (!memberMode) {
       if (isExtension) {
@@ -1229,6 +1229,9 @@ ObjectInfo Compiler::MethodScope :: mapSelf(bool memberMode)
          return { ObjectKind::Param, { classScope->extensionClassRef }, -1 };
       }
       return { ObjectKind::Param, { }, -1 };
+   }
+   else if (ownerClass && (closureMode || nestedMode)) {
+      return parent->mapIdentifier(OWNER_VAR, false, EAttr::None);
    }
    else if (selfLocal != 0) {
       if (isEmbeddable) {
@@ -9469,7 +9472,7 @@ void Compiler :: injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey 
 inline bool isSingleDispatch(SyntaxNode node, SyntaxKey methodType, mssg_t message, mssg_t& targetMessage)
 {
    // !! currently constructor is not supporting single dispatch operation
-   if (methodType == SyntaxKey::Constructor)
+   if (methodType == SyntaxKey::Constructor && test(message, FUNCTION_MESSAGE))
       return false;
 
    mssg_t foundMessage = 0;
@@ -9601,7 +9604,7 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
 
    // try to resolve an argument list in run-time if it is only a single dispatch and argument list is not weak
    // !! temporally do not support variadic arguments
-   if (isSingleDispatch(classNode, methodType, message, resendMessage) && /*(message & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE) &&*/
+   if (isSingleDispatch(classNode, methodType, message, resendMessage) &&
       injectVirtualStrongTypedMultimethod(classNode, methodType, scope, message, resendMessage, 
          outputRef, visibility, isExtension))
    {
@@ -10459,8 +10462,10 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode,
    if (codeScope == nullptr)
       scope.raiseError(errInvalidOperation, node);
 
-   writer->appendNode(BuildKey::OpenStatement);
-   addBreakpoint(*writer, findObjectNode(node), BuildKey::Breakpoint);
+   if (compiler->_withDebugInfo) {
+      writer->appendNode(BuildKey::OpenStatement);
+      addBreakpoint(*writer, findObjectNode(node), BuildKey::Breakpoint);
+   }
 
    ObjectInfo retVal = {};
    SyntaxNode exprNode = node.findChild(SyntaxKey::Expression, SyntaxKey::CodeBlock);
@@ -10504,8 +10509,10 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode,
       scope.resolveAutoOutput(outputRef);
    }
 
-   writer->appendNode(BuildKey::EndStatement);
-   writer->appendNode(BuildKey::VirtualBreakoint);
+   if (compiler->_withDebugInfo) {
+      writer->appendNode(BuildKey::EndStatement);
+      writer->appendNode(BuildKey::VirtualBreakoint);
+   }
 
    writer->appendNode(BuildKey::goingToEOP);
 
@@ -10622,7 +10629,7 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
          retVal = compile(current.firstChild(), 0, mode, updatedOuterArgs);
          break;
       case SyntaxKey::Expression:
-         retVal = compile(current, targetRef, mode, updatedOuterArgs);
+         retVal = compile(current, 0, mode, updatedOuterArgs);
          break;
       case SyntaxKey::Object:
          retVal = compileObject(current, mode, updatedOuterArgs);
@@ -10822,7 +10829,7 @@ bool Compiler::Expression :: isDirectMethodCall(SyntaxNode& node)
          ustr_t name = node.firstChild().identifier();
          pos_t argCount = SyntaxTree::countSibling(node.nextNode(), SyntaxKey::Expression);
 
-         ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+         ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::OwnerClass);
          if (!classScope)
             return false;
 
@@ -10861,7 +10868,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
    SyntaxNode current = node.firstChild();
    if (isDirectMethodCall(current)) {
       // if direct method call is possible (without specifying target)
-      source = scope.mapSelf();
+      source = scope.mapSelf(true);
 
       return compileMessageOperationR(node, current, source, arguments,
          &updatedOuterArgs, expectedRef, false, false, false, attrs);
@@ -12169,6 +12176,12 @@ ObjectInfo Compiler::Expression :: convertObject(SyntaxNode node, ObjectInfo sou
             source = convertIntLiteral(scope, node, source, targetRef);
          }
          else source = compileNativeConversion(node, source, conversionRoutine.operationKey);
+      }
+      else if (source.kind == ObjectKind::VArgParam && source.mode == TargetMode::UnboxingVarArgument) {
+         source.mode = TargetMode::UnboxingAndTypecastingVarArgument;
+         source.typeInfo = { V_ARGARRAY, targetRef };
+
+         return source;
       }
       else source = typecastObject(node, source, targetRef);
    }

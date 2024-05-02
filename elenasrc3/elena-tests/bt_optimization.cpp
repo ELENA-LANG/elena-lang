@@ -54,6 +54,8 @@ constexpr auto S1_DirectCall_2 = "class (attribute -2147479546 ()nameattr (ident
 
 constexpr auto S1_DirectCall_3 = "class (attribute -2147479546 ()nameattr (identifier \"TestHelper\" ())method (nameattr (identifier \"myMethodInvoker\" ())code (expression (assign_operation (object (attribute -2147479539 ()identifier \"b1\" ())expression (message_operation (object (attribute -2147479534 ()identifier \"B\" ())))))expression (assign_operation (object (attribute -2147479539 ()identifier \"b2\" ())expression (message_operation (object (attribute -2147479534 ()identifier \"B\" ())))))expression (message_operation (object (identifier \"myMethod\" ())expression (object (identifier \"b1\" ()))expression (object (identifier \"b2\" ()))))))method (nameattr (identifier \"myMethod\" ())parameter (attribute -2147475445 ()array_type (type (identifier \"B\" ()))nameattr (identifier \"arg\" ()))code ()))";
 
+constexpr auto S1_VariadicConstructorSingleDispatch_1 = "class (attribute -2147479546 ()nameattr (identifier \"Tester\" ())method (nameattr (identifier \"test\" ())parameter (attribute -2147475445 ()array_type (type (identifier \"Object\" ()))nameattr (identifier \"args\" ()))code (returning (expression (message_operation (object (identifier \"X\" ())message (identifier \"load\" ())expression (object (attribute -2147475445 ()identifier \"args\" ())))))))) class (nameattr (identifier \"X\" ()) method (attribute -2147479548 ()nameattr (identifier \"load\" ())parameter (attribute -2147475445 ()array_type (type (identifier \"B\" ()))nameattr (identifier \"args\" ()))code ()))";
+
 #ifdef _M_IX86
 
 constexpr auto BuildTree1_1 = "byrefmark -8 () local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2050 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
@@ -66,6 +68,8 @@ constexpr auto OptimizedBuildTree2 = "saving_int - 4 (size 4 ()value 2 ())";
 
 constexpr auto BuildTree_VariadicSingleDispatch_1 = "tape(sealed_dispatching 256 (message 3202 ()) open_frame() assigning 1 () local_reference -2 () saving_stack() varg_sop 6 (index -4 ()) unbox_call_message -2 (index 1 () length -4 () temp_var -8 () message 1089 ()) local 1 () saving_stack() argument() direct_call_op 3202 (type 5 ()) loading_index() free_varstack() close_frame() exit()) reserved 3 ()reserved_n 8 ())";
 constexpr auto BuildTree_VariadicSingleDispatch_2 = "tape(open_frame() assigning 1 () class_reference 2 () direct_call_op 544 (type 10 ()) assigning 2 () class_reference 8 () direct_call_op 544 (type 14 ()) assigning 3 () local 2 () saving_stack() argument() call_op 1089 () assigning 4 () local 3 () saving_stack() argument() call_op 1089 () assigning 5 () terminator() saving_stack 3 () local 5 () saving_stack 2 () local 4 () saving_stack 1 () class_reference 5 () saving_stack() argument() direct_call_op 3202 (type 5 ()) local 1 () close_frame() exit()) reserved 9 ()";
+
+constexpr auto BuildTree_VariadicSingleDispatch_3 = "tape(open_frame()assigning 1 ()local_reference - 2 ()saving_stack()varg_sop 6 (index - 4 ())unbox_call_message - 2 (index 1 ()length - 4 ()temp_var - 8 ()message 1601 ())class_reference 6 ()saving_stack()argument()direct_call_op 5250 (type 12 ())loading_index() free_varstack() going_to_eop() close_frame()exit())reserved 3 ()reserved_n 8 ())";
 
 constexpr auto BuildTree_CallMethodWithoutTarget = "tape (open_frame ()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 6 ())assigning 2 ()local 2 ()saving_stack 1 ()local 1 ()saving_stack ()argument ()direct_call_op 3586 (type 4 ())local 1 ()close_frame ()exit ())reserved 4 ()";
 constexpr auto BuildTree_CallVariadicMethodWithoutTarget = "tape(open_frame()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 2 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 3 ()local 2 ()saving_stack()argument()call_op 1089 ()assigning 4 ()local 3 ()saving_stack()argument()call_op 1089 ()assigning 5 ()terminator()saving_stack 3 ()local 5 ()saving_stack 2 ()local 4 ()saving_stack 1 ()local 1 ()saving_stack()argument()direct_call_op 3714 (type 4 ())local 1 ()close_frame()exit())reserved 9 ()";
@@ -87,6 +91,8 @@ constexpr auto OptimizedBuildTree2 = "saving_int - 8 (size 4 ()value 2 ())";
 
 constexpr auto BuildTree_VariadicSingleDispatch_1 = "tape(sealed_dispatching 256 (message 3202 ()) open_frame() assigning 1 () local_reference -2 () saving_stack() varg_sop 6 (index -8 ()) unbox_call_message -2 (index 1 () length -8 () temp_var -24 () message 1089 ()) local 1 () saving_stack() argument() direct_call_op 3202 (type 5 ()) loading_index() free_varstack() close_frame() exit()) reserved 4 ()reserved_n 32 ())";
 constexpr auto BuildTree_VariadicSingleDispatch_2 = "tape(open_frame() assigning 1 () class_reference 2 () direct_call_op 544 (type 10 ()) assigning 2 () class_reference 8 () direct_call_op 544 (type 14 ()) assigning 3 () local 2 () saving_stack() argument() call_op 1089 () assigning 4 () local 3 () saving_stack() argument() call_op 1089 () assigning 5 () terminator() saving_stack 3 () local 5 () saving_stack 2 () local 4 () saving_stack 1 () class_reference 5 () saving_stack() argument() direct_call_op 3202 (type 5 ()) local 1 () close_frame() exit()) reserved 10 ()";
+
+constexpr auto BuildTree_VariadicSingleDispatch_3 = "tape(open_frame()assigning 1 ()local_reference -2 ()saving_stack()varg_sop 6 (index -8 ())unbox_call_message -2 (index 1 ()length -8 ()temp_var -24 ()message 1601 ())class_reference 6 ()saving_stack()argument()direct_call_op 5250 (type 12 ())loading_index() free_varstack() going_to_eop() close_frame()exit())reserved 4 ()reserved_n 32 ())";
 
 constexpr auto BuildTree_CallMethodWithoutTarget = "tape (open_frame ()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 6 ())assigning 2 ()local 2 ()saving_stack 1 ()local 1 ()saving_stack ()argument ()direct_call_op 3586 (type 4 ())local 1 ()close_frame ()exit ())reserved 4 ()";
 constexpr auto BuildTree_CallVariadicMethodWithoutTarget = "tape(open_frame()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 2 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 3 ()local 2 ()saving_stack()argument()call_op 1089 ()assigning 4 ()local 3 ()saving_stack()argument()call_op 1089 ()assigning 5 ()terminator()saving_stack 3 ()local 5 ()saving_stack 2 ()local 4 ()saving_stack 1 ()local 1 ()saving_stack()argument()direct_call_op 3714 (type 4 ())local 1 ()close_frame()exit())reserved 10 ()";
@@ -450,7 +456,7 @@ SyntaxNode DispatchTest :: findAutoGenerated(SyntaxNode classNode)
    return {};
 }
 
-void DispatchTest :: runTest()
+void DispatchTest :: runTest(bool withProtectedConstructor)
 {
    // Arrange
    ModuleScopeBase* moduleScope = env.createModuleScope(true, false);
@@ -460,6 +466,10 @@ void DispatchTest :: runTest()
    moduleScope->buildins.constructor_message =
       encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
          0, FUNCTION_MESSAGE);
+   if (withProtectedConstructor)
+      moduleScope->buildins.protected_constructor_message =
+         encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE2, 0, false),
+            0, FUNCTION_MESSAGE);
 
    env.setUpTemplateMockup(argArrayRef, 1, genericVargRef);
    env.setUpTemplateMockup(argArrayRef, 2, targetVargRef);
@@ -625,4 +635,26 @@ void CallVariadocMethodWithoutTarget :: SetUp()
    LoadDeclarationScenario(S1_DefaultNamespace, S1_DirectCall_1, S1_DirectCall_3, S1_VariadicTemplates);
 
    BuildTreeSerializer::load(BuildTree_CallVariadicMethodWithoutTarget, controlOutputNode);
+}
+
+// --- VariadicCompiletimeConstructorSingleDispatch ---
+
+void VariadicCompiletimeConstructorSingleDispatch :: SetUp()
+{
+   DispatchTest::SetUp();
+
+   LoadDeclarationScenario(S1_DefaultNamespace, S1_VariadicTemplates, S1_VariadicConstructorSingleDispatch_1, S1_IntNumber);
+
+   BuildTreeSerializer::load(BuildTree_VariadicSingleDispatch_3, controlOutputNode);
+
+   argArrayRef = 0x80;
+   genericVargRef = 3;
+   targetVargRef = 4;
+   targetRef = 5;
+   intNumberRef = 7;
+}
+
+SyntaxNode VariadicCompiletimeConstructorSingleDispatch :: findTargetNode()
+{
+   return findClassNode().findChild(SyntaxKey::Method);
 }

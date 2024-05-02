@@ -730,7 +730,7 @@ namespace elena_lang
 
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
          ObjectInfo mapParameter(ustr_t identifier, ExpressionAttribute attr);
-         ObjectInfo mapSelf(bool memberMode = true);
+         ObjectInfo mapSelf(bool memberMode = true, bool ownerClass = false);
          ObjectInfo mapSuper();
 
          bool isPrivate() const
@@ -948,11 +948,11 @@ namespace elena_lang
             return scope ? scope->reference : 0;
          }
 
-         ObjectInfo mapSelf()
+         ObjectInfo mapSelf(bool ownerClass = false)
          {
             MethodScope* scope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
             if (scope) {
-               return scope->mapSelf(!scope->isExtension);
+               return scope->mapSelf(!scope->isExtension, ownerClass);
             }
             else return {};
          }

@@ -1,22 +1,23 @@
 import extensions;
 
-interface I
+WSData
 {
-   abstract callMe();
-}
+   x;
 
-closed B : interface<I>
-{
-   callMe()
+   constructor new(byte n)
    {
-      console.writeLine("callMe");
+      x := "byte"
+   }
+
+   constructor new(int n)
+   {
+      x := "int"
    }
 }
 
 public program()
 {
-   var b := new B();
-
-   I i := b;
-   i.callMe();
+   var r := WSData.new(2);
+   var c := WSData;
+   var r2 := c.new(2);
 }
