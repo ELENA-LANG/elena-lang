@@ -11,6 +11,9 @@ public extension objectOp
    __getParentClass() : external(system'core_routines'__object_parentclass),
                   info("Returns the parent class");
 
+   __getParent() : external(system'core_routines'__object_parent),
+                  info("Returns the parent of the specified class");
+
    bool safeEqual(o)
          : info("Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible")
       = self.equal(o) \ back(false);

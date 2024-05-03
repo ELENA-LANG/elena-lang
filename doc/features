@@ -1,3 +1,5 @@
 List of ELENA featuers:
 -----------------------
 - variadic functions
+- if:is
+- accessing private method inside static method

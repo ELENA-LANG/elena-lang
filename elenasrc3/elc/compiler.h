@@ -677,11 +677,14 @@ namespace elena_lang
       {
          // the reference to the proper class info (used for resolving class constants)
          ClassInfo* classInfo;
+         ref_t      classInfoRef;
 
       public:
+         ref_t getProperClassRef() { return classInfoRef; }
+
          ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr) override;
 
-         ClassClassScope(Scope* parent, ref_t reference, Visibility visibility, ClassInfo* classInfo);
+         ClassClassScope(Scope* parent, ref_t reference, Visibility visibility, ClassInfo* classInfo, ref_t classInfoRef);
       };
 
       struct MethodScope : Scope
@@ -1392,6 +1395,8 @@ namespace elena_lang
       void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool declarationMode);
 
       static int allocateLocalAddress(Scope& scope, int size, bool binaryArray);
+
+      static bool isClassClassOperation(Scope& scope, ObjectInfo target);
 
       ref_t declareMultiType(Scope& scope, SyntaxNode& node, ref_t elementRef);
 

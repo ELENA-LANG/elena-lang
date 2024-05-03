@@ -78,6 +78,13 @@ procedure __object_parentclass
 
 end
 
+procedure __object_parent
+
+  peek        sp:0
+  parent
+
+end
+
 procedure __object_instanceOf
 
   peek        sp:0

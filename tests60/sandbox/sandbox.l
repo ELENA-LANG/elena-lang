@@ -4,6 +4,11 @@ X
 {
    int _x;
 
+   internal static int GetX(X x)
+   {
+      ^ x.getX()
+   }
+
    constructor(int n)
    {
       _x := n
@@ -12,10 +17,6 @@ X
    private int getX()
       = _x;
 
-   static int GetX(X x)
-   {
-      ^ x.getX()
-   }
 }
 
 extension op : X

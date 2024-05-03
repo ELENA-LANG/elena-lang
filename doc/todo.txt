@@ -28,8 +28,7 @@ In development:
   - chat sample
  --------------------------------------
   * extensions : check warnings
-  * BufferReader / BufferWriter
-  * a static method must have an access to private methods / fields; extensions?
+  * BufferWriter
 
   === Iteration 23 ===
   --------------------------------------

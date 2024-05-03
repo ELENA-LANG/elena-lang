@@ -1168,9 +1168,9 @@ void Compiler::ClassScope :: save()
 
 // --- ClassClassScope ---
 
-Compiler::ClassClassScope::ClassClassScope(Scope* parent, ref_t reference, Visibility visibility, ClassInfo* classInfo)
+Compiler::ClassClassScope::ClassClassScope(Scope* parent, ref_t reference, Visibility visibility, ClassInfo* classInfo, ref_t classInfoRef)
    : ClassScope(parent, reference, visibility),
-      classInfo(classInfo)
+      classInfo(classInfo), classInfoRef(classInfoRef)
 {
 }
 
@@ -1713,6 +1713,18 @@ Compiler :: Compiler(
    _trackingUnassigned = false;
 
    _lookaheadOptMode = true; // !! temporal
+}
+
+bool Compiler :: isClassClassOperation(Scope& scope, ObjectInfo target)
+{
+   if (target.kind == ObjectKind::Param || target.kind == ObjectKind::ParamAddress) {
+      ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+      if (classScope && classScope->isClassClass()) {
+         return target.typeInfo.typeRef == (static_cast<ClassClassScope*>(classScope))->getProperClassRef();
+      }
+   }
+
+   return false;
 }
 
 inline ref_t resolveDictionaryMask(TypeInfo typeInfo)
@@ -9071,7 +9083,7 @@ void Compiler :: compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, S
 
             // compile class class if it available
             if (classHelper.scope.info.header.classRef != classHelper.scope.reference && classHelper.scope.info.header.classRef != 0) {
-               ClassClassScope classClassScope(&ns, classHelper.scope.info.header.classRef, classHelper.scope.visibility, &classHelper.scope.info);
+               ClassClassScope classClassScope(&ns, classHelper.scope.info.header.classRef, classHelper.scope.visibility, &classHelper.scope.info, classHelper.scope.reference);
                ns.moduleScope->loadClassInfo(classClassScope.info, classClassScope.reference, false);
 
                compileClassClass(writer, classClassScope, classHelper.scope, current);
@@ -12333,7 +12345,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node, Obje
    if (found) {
       switch (result.visibility) {
          case Visibility::Private:
-            if (allowPrivateCall || isSelfCall(target)) {
+            if (allowPrivateCall || isSelfCall(target) || isClassClassOperation(scope, target)) {
                resolution.message = result.message;
             }
             else found = false;
