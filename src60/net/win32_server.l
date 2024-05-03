@@ -1,7 +1,7 @@
 import system'collections;
 import system'net;
 import system'threading;
-//import system'text;
+import system'text;
 
 public sealed class TcpRemoteClient
 {
@@ -177,51 +177,54 @@ public sealed class TcpServer
       _listenThread.start()
    }
     
-//   TcpServer sendToAll(byte[] buffer, int length)
-//   {
-//      int counter := _clients.Length;
-//        
-//      for(int i := 0; i < counter; i += 1)
-//      {
-//         TcpRemoteClient client := _clients[i];
-//            
-//         client.write(buffer, length)
-//      }
-//   }
-//    
-//   TcpServer sendToAll(string s)
-//   {
-//      byte buffer[256];
-//      int  len := s.Length;
-//      int  buf_len := 256;
-//      int  index := 0;
-//      while (len > 0)
-//      {
-//         if (len < 256)
-//         { 
-//            buf_len := len 
-//         }
-//         else    
-//         { 
-//            buf_len := 256 
-//         };
-//            
-//         UTF8Encoding.convert(index, buf_len, s, buffer);
-//            
-//         self.sendToAll(buffer, buf_len);
-//            
-//         len := len - buf_len;
-//         index := index + buf_len
-//      }
-//   }
-//    
-//   TcpServer sendToAll(int n)
-//   {
-//      byte buffer[4];
-//      buffer.write(0, n);
-//        
-//      self.sendToAll(buffer, 4)
-//   }
+   TcpServer sendToAll(byte[] buffer, int length)
+   {
+      int counter := _clients.Length;
+        
+      for(int i := 0; i < counter; i += 1)
+      {
+         TcpRemoteClient client := _clients[i];
+            
+         client.write(buffer, length)
+      }
+   }
+    
+   TcpServer sendToAll(string s)
+   {
+      byte buffer[256];
+      int  len := s.Length;
+      int  buf_len := 256;
+      int  s_len := 0;
+      int  index := 0;
+      while (len > 0)
+      {
+         if (len < 256)
+         { 
+            buf_len := len;
+            s_len := len;
+         }
+         else    
+         { 
+            buf_len := 256; 
+            s_len := 256;
+         };
+            
+         UTF8Encoder.toByteArray(s, index, ref s_len, buffer, 0, ref buf_len);
+            
+         self.sendToAll(buffer, buf_len);
+            
+         len := len - s_len;
+         index := index + s_len
+      }
+   }
+    
+   TcpServer sendToAll(int n)
+   {
+      byte buffer[4];
+      buffer.write(0, n);
+        
+      self.sendToAll(buffer, 4)
+   }
     
    close()
    {

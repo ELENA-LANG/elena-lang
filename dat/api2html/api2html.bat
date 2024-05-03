@@ -11,6 +11,7 @@
 ..\..\bin\ldoc extensions'routines
 ..\..\bin\ldoc extensions'scripting
 ..\..\bin\ldoc extensions'dynamic
+..\..\bin\ldoc extensions'io
 ..\..\bin\ldoc cellular
 ..\..\bin\ldoc algorithms
 ..\..\bin\ldoc sqlite

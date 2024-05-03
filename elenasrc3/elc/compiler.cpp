@@ -3942,6 +3942,9 @@ ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, Sy
          break;
       case SyntaxKey::Object:
          retVal = evalObject(interpreter, scope, node);
+         if (!ignoreErrors && retVal.kind == ObjectKind::Unknown) {
+            scope.raiseError(errCannotEval, node);
+         }
          break;
       case SyntaxKey::PropertyOperation:
          retVal = evalPropertyOperation(interpreter, scope, node, ignoreErrors);

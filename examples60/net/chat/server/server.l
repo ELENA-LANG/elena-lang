@@ -1,5 +1,6 @@
 import system'threading;
 import system'net;
+import extensions'dynamic;
 import net;
 
 import chat_shared;
@@ -11,9 +12,12 @@ public sealed ChatServer
    TcpServer _networkServer;
    Thread    _broadcastThread;
 
-   Func OnConnect                   : event;
-   Func<BaseClient, object> OnLeave : event;
-   Func<int, object>        OnError : event;
+   Func                         OnConnect : event;
+   Func<object, object>         OnIntro   : event;
+   Func<object, object, object> OnMessage : event;
+   Func<BaseClient, object>     OnLeave   : event;
+   Func<int, object>            OnError   : event;
+
 
    constructor new(int port)
    {
@@ -27,12 +31,45 @@ public sealed ChatServer
    {
       foreach(TcpRemoteClient client; in _networkServer.Clients) {
          lock(_lock) {
-            
+            if (client.Parameter; is ChatMember member)
+            {
+               var command := member.readCommand();
+               (command.Command) =>
+                     INTRODUCTION
+                     {
+                        member.Name := command.Value;
+
+                        OnIntro?.(member);
+
+//                        console.printLine(command.Value," joined")
+                     }
+                     SEND
+                     {
+                        OnMessage?.(member, command.Value);
+                        
+//                        console.printLine(member.Name,":",command.Value).
+                                
+                        member.Server.translate(new CommandDTO
+                                                        { 
+                                                            this Command := TRANSLATE; 
+                                                            this Value := command.Value; 
+                                                            this User := member.Name; 
+                                                        })
+                     };
+            }
          }
       };
 
       ^ true
    }
+
+   translate(command)
+   {
+      string json := command.toJson();
+        
+      _networkServer.sendToAll(json.Length).sendToAll(json)
+   }
+    
 
    start()
    {
@@ -69,7 +106,7 @@ public sealed ChatServer
       {
          lock (_lock)
          {
-            cast ChatMember(client.Parameter).write(data, length)
+            (client.Parameter :as ChatMember).write(data, length)
          }                        
       };
 

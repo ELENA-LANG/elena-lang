@@ -101,6 +101,7 @@ bin\ldoc extensions doc\api
 bin\ldoc extensions'routines doc\api
 bin\ldoc extensions'scripting doc\api
 bin\ldoc extensions'dynamic doc\api
+bin\ldoc extensions'io doc\api
 bin\ldoc cellular doc\api
 bin\ldoc algorithms doc\api
 bin\ldoc sqlite doc\api

@@ -4,76 +4,84 @@ namespace io
 {
    public interface BinaryWriter
    {
-      Stream _stream;
-        
-      Stream Stream = _stream;
+      get abstract object Source();
     
-      close() => _stream;
+      abstract close();
         
-      write(byte[] array, int length)
-      {
-         _stream.write(array, length)
-      }
+      abstract bool write(byte[] array, int length);
     
-      write(byte int)
+      bool write(byte int)
       {
          byte buffer[4];
             
          buffer[0] := int;
                     
-         self.write(buffer, 1)
+         ^ self.write(buffer, 1)
       }
     
-      write(short n)
+      bool write(short n)
       {
          byte buffer[4];
             
          buffer[0] := n.Low;
          buffer[1] := n.High;
                     
-         self.write(buffer, 2)
+         ^ self.write(buffer, 2)
       }
     
-      write(char ch)
+      bool write(char ch)
       {
          int value := ch;
 
-         self.write(value);
+         ^ self.write(value);
       }
     
-      write(int int)
+      bool write(int int)
       {
          byte buffer[4];
 
          PrimitiveLongOperations.saveToByteArray(int, buffer, 0);
                     
-         self.write(buffer, 4)
+         ^ self.write(buffer, 4)
       }
     
-      write(long long)
+      bool write(long long)
       {
          byte buffer[8];
 
          PrimitiveLongOperations.saveToByteArray(long, buffer, 0);
                     
-         self.write(buffer, 8)
+         ^ self.write(buffer, 8)
       }
     
-      write(real r)
+      bool write(real r)
       {
          byte buffer[8];
             
          PrimitiveRealOperations.saveToByteArray(r, buffer, 0);
                     
-         self.write(buffer, 8)
+         ^ self.write(buffer, 8)
       }
    }
     
    public sealed BinaryStreamWriter : BinaryWriter
    {
+      Stream _stream;
+
       constructor(Stream stream)
       {
          _stream := stream
+      }
+
+      object Source = _stream;
+
+      close() => _stream;
+
+      bool write(byte[] array, int length)
+      {
+         _stream.write(array, length);
+
+         ^ true
       }
    }
     
@@ -85,7 +93,7 @@ namespace io
       string      _newLineConstant;
       int         _newLineLength;
     
-      get abstract Stream Stream();
+      get abstract object Source();
     
       get abstract Encoder Encoder();
     
@@ -121,5 +129,65 @@ namespace io
         
       writeLine()
          <= write(_newLineConstant);
+   }
+
+   // --- StreamWriter ---   
+   public class StreamWriter : TextWriter
+   {
+      Stream  _stream;
+      Encoder _encoder;
+    
+      constructor new(Stream stream, Encoder encoder)
+      {
+         _buffer := new TextBuilder();
+         _stream := stream;
+         _encoder := encoder;
+    
+         _newLineConstant := newLineConstant;                
+         _newLineLength := _newLineConstant.Length;
+      }
+    
+      constructor new(path)
+         <= new(FileStream.openForReWrite(path), UTF8Encoder);
+            
+      constructor new(path, Encoder encoder)
+         <= new(FileStream.openForReWrite(path), encoder);
+            
+      object Source = _stream;        
+            
+      Encoder Encoder = _encoder;
+            
+      write(char[] input, int length)
+      {
+         int  total := length;
+         byte buffer[128];
+         int  blockLength := 0;
+         int  bufferLength := 0;
+         int  offset := 0;
+            
+         while (total > 0)
+         {
+            if(total < 32)
+            { 
+               blockLength := total 
+            }
+            else
+            { 
+               blockLength := 32
+            };
+                    
+            _encoder.convertTo(input, offset, ref blockLength, buffer, 0, ref bufferLength);
+                
+            _stream.write(buffer, bufferLength);
+                
+            total := total - blockLength;
+            offset := offset + blockLength
+         }
+      }
+        
+      close()
+      {
+         _stream.close()
+      }
    }
 }

@@ -15,7 +15,7 @@
   </project>
   <manifest>
     <name>ELENA Extension Library</name>
-    <version>6.0.2</version>
+    <version>6.0.3</version>
     <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -32,6 +32,7 @@
         <include>text\words.l</include>
         <include>math\functions.l</include>
         <include>math\matrix.l</include>
+        <include>io\bytearray.l</include>
      </module>
      <module name="routines">
        <include>routines\enumerating.l</include>

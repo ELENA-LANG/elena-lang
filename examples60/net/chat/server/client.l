@@ -3,11 +3,18 @@ import net;
 
 public sealed class ChatMember : BaseClient
 {
+   ChatServer      _server;
+
    constructor new(TcpRemoteClient owner, ChatServer server)
       <= super new()
    {
 //        theOwner := owner;
 //        
-//        theServer := server
+      _server := server
    }    
+
+   string Name : prop;
+
+   ChatServer Server
+      = _server;
 }

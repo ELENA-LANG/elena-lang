@@ -1,39 +1,34 @@
 import extensions;
 
-B
+X
 {
-   write()
+   int _x;
+
+   constructor(int n)
    {
-      console.writeLine("B.write")
+      _x := n
+   }
+
+   private int getX()
+      = _x;
+
+   static int GetX(X x)
+   {
+      ^ x.getX()
    }
 }
 
-C
+extension op : X
 {
-   B cast()
-      = new B();
+   printValue()
+   {
+      console.writeLine(X.GetX(self));
+   }
 }
 
 public program()
 {
-//   var c := new C();
+   var x := new X(3);
 
-//   var b := c :as B;
-
-
-   var client := ::{ Parameter = new C(); } ;
-
-   (client.Parameter :as B).write();
-   cast B(client.Parameter).write();
-
-//   (client.Parameter :as B).write()
-
-//
-//   client.Parameter :as B
-//   client.Parameter as: B
-//
-//
-//
-//   if (x :of B) {
-//   }
+   x.printValue()
 }

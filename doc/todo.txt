@@ -26,13 +26,10 @@ In development:
   - check dev nested using statement
   - samples : test tutorials for script generated code
   - chat sample
-  - #651 : Template Expression : typecasting
  --------------------------------------
-  * template operator for typecasting :
-    cast ChatMember(client.Parameter).write(data, length)
-     =>
-    (client.Parameter as:ChatMember).write(data, length)
-    
+  * extensions : check warnings
+  * BufferReader / BufferWriter
+  * a static method must have an access to private methods / fields; extensions?
 
   === Iteration 23 ===
   --------------------------------------
