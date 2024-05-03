@@ -25,10 +25,8 @@ In development:
   - #589
   - check dev nested using statement
   - samples : test tutorials for script generated code
-  - chat sample
  --------------------------------------
-  * extensions : check warnings
-  * BufferWriter
+  - chat sample
 
   === Iteration 23 ===
   --------------------------------------

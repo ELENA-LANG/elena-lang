@@ -7640,6 +7640,12 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
       if (argListType == Expression::ArgumentListType::VariadicArgList || argListType == Expression::ArgumentListType::VariadicArgListWithTypecasting) {
          messageRef |= VARIADIC_MESSAGE;
 
+
+         if (getArgCount(messageRef) > 2)
+            messageRef = overwriteArgCount(messageRef, 2);
+
+
+
          opMode = opMode | 
             ((argListType == Expression::ArgumentListType::VariadicArgList) ? EAttr::WithVariadicArg : EAttr::WithVariadicArgCast);
       }

@@ -41,7 +41,7 @@ namespace io
       }
    }
 
-   public sealed ByteArrayReader
+   public sealed ByteArrayReader : BinaryReader
    {
       byte[]         _buffer;
       int            _start;
@@ -63,6 +63,11 @@ namespace io
 
       bool Available = _position < _end;
 
+      close()
+      {
+         _position := _end
+      }
+
       read(byte[] array, ref int actualLength)
       {
          int remaining := _end - _position;
@@ -75,12 +80,47 @@ namespace io
       }
    }
 
-/*   public struct BufferReader
+   public struct BufferWriter : BinaryWriter
    {
+      int  _position; 
+      byte _buffer[255];      
+
+      object Source = _buffer;
+
+      bool write(byte[] buffer, int length)
+      {
+         if (_position >= /*$len _buffer*/255) {
+            ^ false
+         };
+   
+         Array<byte>.copyTo(_buffer, buffer, _position, length);
+
+         _position += length;
+
+         ^ true
+      }
+
+      close()
+      {
+         _position := 255
+      }
+
+      private bool copyToStream(BinaryWriter externalWriter)
+      {
+         ^ externalWriter.write(_buffer, _position);
+      }
+
+      internal static flush(BufferWriter bufferWriter, BinaryWriter externalWriter)
+      {
+         bufferWriter.copyToStream(externalWriter);
+      }
    }
 
-   public struct BufferWriter
+   public extension bufferWriterOp : BufferWriter
    {
-   }*/
-
+      bool copyToStream(BinaryWriter externalWriter)
+      {
+         ^ BufferWriter.flush(self, externalWriter);
+      }
+   }
 }

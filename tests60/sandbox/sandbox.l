@@ -1,35 +1,25 @@
-import extensions;
+//import extensions;
 
-X
+/*public extension invokeOp : MessageName
 {
-   int _x;
+    getPropertyValue(target)
+    {
+        Message mssg := self.getPropertyMessage();
+        
+        ^ mssg(target)
+    
+    }
+}*/
 
-   internal static int GetX(X x)
+
+public extension outputFormatterOp
+{
+   printFormatted(string s, params object[] args)
    {
-      ^ x.getX()
    }
-
-   constructor(int n)
-   {
-      _x := n
-   }
-
-   private int getX()
-      = _x;
-
 }
 
-extension op : X
-{
-   printValue()
-   {
-      console.writeLine(X.GetX(self));
-   }
-}
 
 public program()
 {
-   var x := new X(3);
-
-   x.printValue()
 }

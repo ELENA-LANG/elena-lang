@@ -2,6 +2,7 @@ import system'collections;
 import system'net;
 import system'threading;
 import system'text;
+import system'io;
 
 public sealed class TcpRemoteClient
 {
@@ -220,10 +221,9 @@ public sealed class TcpServer
     
    TcpServer sendToAll(int n)
    {
-      byte buffer[4];
-      buffer.write(0, n);
-        
-      self.sendToAll(buffer, 4)
+      TcpServerWriter writer := TcpServerWriter.new(self);
+
+      writer.write(n);
    }
     
    close()
@@ -233,3 +233,28 @@ public sealed class TcpServer
       _listenSocket.close()
    }
 }
+
+public class TcpServerWriter : BinaryWriter
+{
+   TcpServer _server;
+
+   constructor new(TcpServer server)
+   {
+      _server := server;
+   }
+
+   object Source = _server;
+   
+   bool write(byte[] buffer, int length)
+   {
+      _server.sendToAll(buffer, length);
+   
+      ^ true
+   }
+   
+   close()
+   {
+      _server.close()
+   }   
+}
+
