@@ -78,6 +78,7 @@ namespace elena_lang
       void LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2);
       void LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3);
       void LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3, ustr_t descr4);
+      void LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3, ustr_t descr4, ustr_t descr5);
    };
 
    class DispatchTest : public Scenario1Test
@@ -165,6 +166,14 @@ namespace elena_lang
    };
 
    class VariadicCompiletimeSingleDispatch : public DispatchTest
+   {
+   protected:
+      SyntaxNode findTargetNode() override;
+
+      void SetUp() override;
+   };
+
+   class VariadicCompiletimeSingleDispatch_WithDifferentArgs : public DispatchTest
    {
    protected:
       SyntaxNode findTargetNode() override;

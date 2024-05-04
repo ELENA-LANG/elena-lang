@@ -13,5 +13,6 @@
     </project>
     <references>
         <reference key="chat_server">..\server</reference>
+        <reference key="chat_shared">..\shared</reference>
     </references>
 </configuration>

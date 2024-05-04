@@ -13,9 +13,9 @@ public sealed ChatServer
    Thread    _broadcastThread;
 
    Func                         OnConnect : event;
-   Func<object, object>         OnIntro   : event;
-   Func<object, object, object> OnMessage : event;
-   Func<BaseClient, object>     OnLeave   : event;
+   Func<string, object>         OnIntro   : event;
+   Func<string, string, object> OnMessage : event;
+   Func<string, object>         OnLeave   : event;
    Func<int, object>            OnError   : event;
 
 
@@ -39,16 +39,12 @@ public sealed ChatServer
                      {
                         member.Name := command.Value;
 
-                        OnIntro?.(member);
-
-//                        console.printLine(command.Value," joined")
+                        OnIntro?.(member.Name);
                      }
                      SEND
                      {
-                        OnMessage?.(member, command.Value);
+                        OnMessage?.(member.Name, command.Value);
                         
-//                        console.printLine(member.Name,":",command.Value).
-                                
                         member.Server.translate(new CommandDTO
                                                         { 
                                                             this Command := TRANSLATE; 
@@ -77,7 +73,6 @@ public sealed ChatServer
       {
          lock (_lock)
          {
-            //console.writeLine:"new client joint";
             OnConnect?.();
             
             client.Parameter := ChatMember.new(client, self)
@@ -88,8 +83,7 @@ public sealed ChatServer
       {
          lock (_lock)
          {
-            //console.writeLine:"client left"
-            OnLeave?.(client.Parameter)
+            OnLeave?.(client.Parameter.Name ?? "client");
          }
       };
         
@@ -97,7 +91,6 @@ public sealed ChatServer
       {
          lock (_lock)
          {
-            //console.printLine("exception #",e.ErrorCode)
             OnError?.(e.ErrorCode)
          }
       };

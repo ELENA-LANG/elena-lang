@@ -13,6 +13,7 @@
 
 #include "bytecode.h"
 
+
 //#define FULL_OUTOUT_INFO 1
 
 using namespace elena_lang;
@@ -11895,7 +11896,7 @@ ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, Argume
 
    // compile the message argument list
    ref_t signatures[ARG_COUNT] = { 0 };
-   ref_t signatureLen = 0;
+   size_t signatureLen = 0;
    ref_t superReference = scope.moduleScope->buildins.superReference;
 
    size_t signatureMaxLength = 0;
@@ -11928,7 +11929,8 @@ ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, Argume
          }
          else {
             ref_t argRef = compiler->retrieveStrongType(scope, argInfo);
-            if (signatureLen >= ARG_COUNT) {
+            if (signatureLen >= ARG_COUNT || (variadicArg && signatureLen == signatureMaxLength - 1)) {
+               // for variadic last argument - do not overwrite the signature
                signatureLen++;
             }
             else if (argRef) {
