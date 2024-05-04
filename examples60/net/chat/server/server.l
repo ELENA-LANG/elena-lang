@@ -7,10 +7,12 @@ import chat_shared;
 
 public sealed ChatServer
 {
-   object    _lock; 
+   object          _lock; 
 
-   TcpServer _networkServer;
-   Thread    _broadcastThread;
+   TcpServer       _networkServer;
+   TcpServerWriter _networkWriter;
+
+   Thread          _broadcastThread;
 
    Func                         OnConnect : event;
    Func<string, object>         OnIntro   : event;
@@ -24,7 +26,9 @@ public sealed ChatServer
       _lock := new object();
 
       _networkServer := TcpServer.new(port);
-      _networkServer.Blocking := false
+      _networkServer.Blocking := false;
+
+      _networkWriter := TcpServerWriter.new(_networkServer);
    }
 
    private bool proceed()
@@ -63,10 +67,10 @@ public sealed ChatServer
    {
       string json := command.toJson();
         
-      _networkServer.sendToAll(json.Length).sendToAll(json)
+      _networkWriter.write(json.Length);
+      _networkWriter.write(json)
    }
     
-
    start()
    {
       _networkServer.OnConnect := (TcpRemoteClient client)

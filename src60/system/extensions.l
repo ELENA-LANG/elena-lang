@@ -40,7 +40,21 @@ public extension objectOp
       = action(self);
 
    bool instanceOf(type) : external(system'core_routines'__object_instanceOf),
-                  info("Checks if the object is an instance of type");   
+                  info("Checks if the object is an instance of type");
+
+   bool subsetOf(type)
+   {
+      var class := self.__getClass();
+      while (class != nil) {
+         if (class == type) {
+            ^ true
+         };
+       
+         class := class.__getParent()  
+      };
+
+      ^ false
+   }
 }
 
 // --- valueOp ---

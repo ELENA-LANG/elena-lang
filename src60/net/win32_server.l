@@ -178,7 +178,7 @@ public sealed class TcpServer
       _listenThread.start()
    }
     
-   TcpServer sendToAll(byte[] buffer, int length)
+   TcpServer broadcast(byte[] buffer, int length)
    {
       int counter := _clients.Length;
         
@@ -188,42 +188,6 @@ public sealed class TcpServer
             
          client.write(buffer, length)
       }
-   }
-    
-   TcpServer sendToAll(string s)
-   {
-      byte buffer[256];
-      int  len := s.Length;
-      int  buf_len := 256;
-      int  s_len := 0;
-      int  index := 0;
-      while (len > 0)
-      {
-         if (len < 256)
-         { 
-            buf_len := len;
-            s_len := len;
-         }
-         else    
-         { 
-            buf_len := 256; 
-            s_len := 256;
-         };
-            
-         UTF8Encoder.toByteArray(s, index, ref s_len, buffer, 0, ref buf_len);
-            
-         self.sendToAll(buffer, buf_len);
-            
-         len := len - s_len;
-         index := index + s_len
-      }
-   }
-    
-   TcpServer sendToAll(int n)
-   {
-      TcpServerWriter writer := TcpServerWriter.new(self);
-
-      writer.write(n);
    }
     
    close()
@@ -247,7 +211,7 @@ public class TcpServerWriter : BinaryWriter
    
    bool write(byte[] buffer, int length)
    {
-      _server.sendToAll(buffer, length);
+      _server.broadcast(buffer, length);
    
       ^ true
    }

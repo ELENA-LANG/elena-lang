@@ -1,14 +1,14 @@
-//import system'net;
+import system'net;
 //import system'text;
 //import system'threading;
 //import extensions;
-//
-//// --- TcpClient ---
-//
-//public sealed class TcpClient
-//{
+
+// --- TcpClient ---
+
+public sealed class TcpClient
+{
 //   Thread    _thread;
-//   Socket    _socket;
+   Socket    _socket;
 //   byte[]    _buffer;
 //   int       _maxLength;    
 //   object    _lock;
@@ -16,18 +16,18 @@
 //   Func<TcpClient,object>            onConnect  : event;
 //   Func<TcpClient,byte[],int,object> onReceived : event;
 //   Func<TcpClient,Exception,object>  onError    : event;
-//
-//   constructor new()
-//      <= new(1024);
-//    
-//   constructor new(int size)
-//   {
+
+   constructor new()
+      <= new(1024);
+    
+   constructor new(int size)
+   {
 //      _lock := new Object();
 //        
 //      _maxLength := size;
 //      _buffer := new byte[](_maxLength)
-//   }
-//
+   }
+
 //   connect(string address, int port)
 //   {
 //      //resolve server address and port
@@ -191,4 +191,4 @@
 //        
 //      _thread.start()
 //   }
-//}
+}

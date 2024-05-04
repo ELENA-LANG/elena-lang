@@ -62,6 +62,38 @@ namespace io
                     
          ^ self.write(buffer, 8)
       }
+
+      bool write(string s)
+      {
+         byte buffer[256];
+         int  len := s.Length;
+         int  buf_len := 256;
+         int  s_len := 0;
+         int  index := 0;
+         while (len > 0)
+         {
+            if (len < 256)
+            { 
+               buf_len := len;
+               s_len := len;
+            }
+            else    
+            { 
+               buf_len := 256; 
+               s_len := 256;
+            };
+               
+            UTF8Encoder.toByteArray(s, index, ref s_len, buffer, 0, ref buf_len);
+               
+            write(buffer, buf_len);
+               
+            len := len - s_len;
+            index := index + s_len
+         };
+
+         ^ true
+      }
+
    }
     
    public sealed BinaryStreamWriter : BinaryWriter

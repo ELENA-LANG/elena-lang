@@ -1,62 +1,29 @@
-//import extensions;
+import extensions;
 
-/*public extension invokeOp : MessageName
-{
-    getPropertyValue(target)
-    {
-        Message mssg := self.getPropertyMessage();
-        
-        ^ mssg(target)
-    
-    }
-}*/
-
-
-/*public extension outputFormatterOp
-{
-   printFormatted(string s, params object[] args)
-   {
-   }
-}*/
-
-/*
-import system'dynamic;
-import system'dynamic'expressions;
-
-symbol used : preloaded = new object[]{MyDynamicallyLoadedClass, mssg doSomething};
-
-public singleton MyDynamicallyLoadedClass
-{
-    doSomething()
-    {
-        console.writeLine("did something")
-    }
-}
-
-public program()
-{
-    var loadedClass := new Symbol("sandbox'MyDynamicallyLoadedClass");
-    var loadedMessage := new Message("doSomething[1]");
-    
-    var t := DynamicTape.load(
-        ConstantFunction.load(loadedClass),
-        MessageFunction.load(loadedMessage));
-
-    t()
-}
-*/
+A;
 
 B;
 
-C : B;
-D : B;
+C : A;
 
-singleton E
+checkTypeA(object)
 {
-   load(params B[] args) {}
+   if (object.instanceOf(A)) {
+      console.printLine(object, " is an instance of A");
+   }
+   else if (object.subsetOf(A)) {
+      console.printLine(object, " is a subset of A");
+   }
+   else console.printLine(object, " is not an instance of A");
 }
 
 public program()
 {
-   E.load(new C(), new D());
+   var a := new A();
+   var b := new B();
+   var c := new C();
+
+   checkTypeA(a);
+   checkTypeA(b);
+   checkTypeA(c);
 }
