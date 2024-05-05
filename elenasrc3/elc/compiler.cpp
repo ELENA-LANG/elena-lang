@@ -1,4 +1,5 @@
 //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA compiler class implementation.
@@ -11509,9 +11510,23 @@ ObjectInfo Compiler::Expression :: compileIsNilOperation(SyntaxNode node)
    else if (current == SyntaxKey::Object) {
       loperand = compileObject(current, EAttr::Parameter, nullptr);
    }
-   else scope.raiseError(errInvalidOperation, node);
+   else {
+      writer->newNode(BuildKey::AltOp, ehLocal.argument);
 
-   SyntaxNode altNode = current.nextNode();
+      writer->newNode(BuildKey::Tape);
+      loperand = compile(current, 0, EAttr::Parameter | EAttr::RetValExpected, nullptr);
+      writer->closeNode();
+
+      writer->newNode(BuildKey::Tape);
+      writer->appendNode(BuildKey::NilReference, 0);
+      writer->closeNode();
+
+      writer->closeNode();
+
+      loperand = saveToTempLocal({ ObjectKind::Object });
+   }
+
+   SyntaxNode altNode = current.nextNode(SyntaxKey::DeclarationMask);
    ObjectInfo roperand = compile(altNode, 0, EAttr::Parameter, nullptr);
 
    writeObjectInfo(roperand, node);

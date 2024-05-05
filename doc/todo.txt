@@ -21,7 +21,6 @@ In development:
   - #569
   - #265
   - #574
-  - #589 : Supporting ?: operator inside ??
  --------------------------------------
 
   === Iteration 23 ===
