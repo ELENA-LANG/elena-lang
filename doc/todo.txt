@@ -22,9 +22,8 @@ In development:
   - #574
   - #265
   - #504
-  - #589
  --------------------------------------
-  - chat sample
+  - #589
 
   === Iteration 23 ===
   --------------------------------------
@@ -38,7 +37,7 @@ In development:
   ide:vm debugger
   tools:
   prom:#635 on reddit / code project
-  port:elenavm / elt for linux, helloworld gui sample (button)
+  port:chat sample, elenavm / elt for linux, helloworld gui sample (button)
 
   === Iteration 24 ===
   --------------------------------------
@@ -50,4 +49,4 @@ In development:
   ide:
   tools:
   prom:
-  port:
+  port:upndown
