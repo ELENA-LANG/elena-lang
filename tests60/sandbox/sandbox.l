@@ -1,29 +1,14 @@
-import extensions;
-
-A;
-
-B;
-
-C : A;
-
-checkTypeA(object)
-{
-   if (object.instanceOf(A)) {
-      console.printLine(object, " is an instance of A");
-   }
-   else if (object.subsetOf(A)) {
-      console.printLine(object, " is a subset of A");
-   }
-   else console.printLine(object, " is not an instance of A");
-}
+//import extensions;
+//
+//public program()
+//{
+//   var o := nil;
+//
+//   var r := o?.test() ?? 0;
+//}
 
 public program()
 {
-   var a := new A();
-   var b := new B();
-   var c := new C();
-
-   checkTypeA(a);
-   checkTypeA(b);
-   checkTypeA(c);
+   short buffer[3];
+   extern USER32.IsCharLowerW(buffer[0]);
 }

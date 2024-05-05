@@ -12005,6 +12005,16 @@ ObjectInfo Compiler::Expression :: compileExternalOp(SyntaxNode node, ref_t exte
             {
                writer->appendNode(BuildKey::SavingNInStack, i - 1);
             }
+            else if (compiler->_logic->isCompatible(*scope.moduleScope, { V_INT16 },
+               arg.typeInfo, true))
+            {
+               writer->appendNode(BuildKey::SavingNInStack, i - 1);
+            }
+            else if (compiler->_logic->isCompatible(*scope.moduleScope, { V_INT8 },
+               arg.typeInfo, true))
+            {
+               writer->appendNode(BuildKey::SavingNInStack, i - 1);
+            }
             else writer->appendNode(BuildKey::SavingInStack, i - 1); // !! temporally - passing dynamic references to the exteranl routines should not be allowed
             break;
       }

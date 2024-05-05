@@ -19,11 +19,10 @@ In development:
   - test elt-cli - printLine extension, 2-3
   - new unit test : calling private method from lambda function
   - #569
-  - #574
   - #265
-  - #504
+  - #574
+  - #589 : Supporting ?: operator inside ??
  --------------------------------------
-  - #589
 
   === Iteration 23 ===
   --------------------------------------
