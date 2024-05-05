@@ -2056,6 +2056,9 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
 
    // create a meta section
    scope.moduleScope->module->mapSection(reference | mask, false);
+
+   // NOTE : comment it to prevent from executing second time
+   node.setKey(SyntaxKey::Idle);
 }
 
 void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor,
@@ -9365,8 +9368,10 @@ void Compiler :: declareModuleIdentifiers(ModuleScopeBase* moduleScope, SyntaxNo
    }
 }
 
-void Compiler :: declareModule(ModuleScopeBase* moduleScope, SyntaxNode node, ExtensionMap* outerExtensionList)
+bool Compiler :: declareModule(ModuleScopeBase* moduleScope, SyntaxNode node, ExtensionMap* outerExtensionList, bool& repeatMode, bool forced)
 {
+   bool declared = false;
+
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Namespace) {
@@ -9376,11 +9381,13 @@ void Compiler :: declareModule(ModuleScopeBase* moduleScope, SyntaxNode node, Ex
          ns.declareNamespace(current, false, true);
 
          // declare all module members - map symbol identifiers
-         ns.declareMembers(current);
+         declared |= ns.declareMembers(current, repeatMode, forced);
       }
 
       current = current.nextNode();
    }
+
+   return declared;
 }
 
 void Compiler :: declare(ModuleScopeBase* moduleScope, SyntaxTree& input, ExtensionMap* outerExtensionList)
@@ -9393,7 +9400,18 @@ void Compiler :: declare(ModuleScopeBase* moduleScope, SyntaxTree& input, Extens
    declareModuleIdentifiers(moduleScope, root, outerExtensionList);
 
    // declare all members
-   declareModule(moduleScope, root, outerExtensionList);
+   bool repeatMode = true;
+   bool idle = false;
+   while (repeatMode) {
+      repeatMode = false;
+
+      idle = !declareModule(moduleScope, root, outerExtensionList, repeatMode, false);
+      if (idle && repeatMode) {
+         repeatMode = false;
+         // if the last declaration was not successful, force it last time 
+         idle = !declareModule(moduleScope, root, outerExtensionList, repeatMode, true);
+      }
+   }
 }
 
 void Compiler :: compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildTree& output, ExtensionMap* outerExtensionList)
@@ -9986,8 +10004,9 @@ void Compiler::Namespace :: declare(SyntaxNode node, bool withMembers)
    // declare all module members - map symbol identifiers
    declareMemberIdentifiers(node);
 
+   bool dummy = false;
    if (withMembers)
-      declareMembers(node);
+      declareMembers(node, dummy, true);
 }
 
 void Compiler::Namespace :: declareNamespace(SyntaxNode node, bool ignoreImport, bool ignoreExtensions)
@@ -10096,9 +10115,10 @@ void Compiler::Namespace:: declareMemberIdentifiers(SyntaxNode node)
    }
 }
 
-
-void Compiler::Namespace :: declareMembers(SyntaxNode node)
+bool Compiler::Namespace :: declareMembers(SyntaxNode node, bool& repeatMode, bool forced)
 {
+   bool declared = false;
+
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
@@ -10107,21 +10127,30 @@ void Compiler::Namespace :: declareMembers(SyntaxNode node)
             Namespace subNamespace(compiler, &scope);
             subNamespace.declareNamespace(current, false, true);
 
-            subNamespace.declareMembers(current);
+            declared |= subNamespace.declareMembers(current, repeatMode, forced);
             break;
          }
          case SyntaxKey::Symbol:
          {
-            SymbolScope symbolScope(&scope, current.arg.reference, scope.defaultVisibility);
+            Symbol symbol(compiler, &scope, current.arg.reference, scope.defaultVisibility);
+            if (!symbol.isDeclared()) {
+               compiler->declareSymbol(symbol.scope, current);
 
-            compiler->declareSymbol(symbolScope, current);
+               declared = true;
+            }            
             break;
          }
          case SyntaxKey::Class:
          {
             Class classHelper(compiler, &scope, current.arg.reference, scope.defaultVisibility);
+            if (!classHelper.isDeclared()) {
+               if (classHelper.isParentDeclared(current) || forced) {
+                  classHelper.declare(current);
 
-            classHelper.declare(current);
+                  declared = true;
+               }               
+               else repeatMode = true;
+            }
             break;
          }
          case SyntaxKey::MetaExpression:
@@ -10129,6 +10158,7 @@ void Compiler::Namespace :: declareMembers(SyntaxNode node)
             MetaScope metaScope(&scope, Scope::ScopeLevel::Namespace);
 
             compiler->evalStatement(metaScope, current);
+            current.setKey(SyntaxKey::Idle);
             break;
          }
          case SyntaxKey::Template:
@@ -10164,6 +10194,8 @@ void Compiler::Namespace :: declareMembers(SyntaxNode node)
 
       scope.declaredExtensions.clear();
    }
+
+   return declared;
 }
 
 // --- Compiler::Symbol ---
@@ -10188,6 +10220,22 @@ Compiler::Class :: Class(Compiler* compiler, Scope* parent, ref_t reference, Vis
 Compiler::Class :: Class(Namespace& ns, ref_t reference, Visibility visibility)
    : compiler(ns.compiler), scope(&ns.scope, reference, visibility)
 {
+}
+
+bool Compiler::Class :: isParentDeclared(SyntaxNode node)
+{
+   SyntaxNode parentNode = node.findChild(SyntaxKey::Parent);
+   if (parentNode == SyntaxKey::None)
+      return true;
+
+   SyntaxNode child = parentNode.firstChild();
+   if (child != SyntaxKey::TemplateType && child != SyntaxKey::None) {
+      ref_t parentRef = compiler->resolveStrongTypeAttribute(scope, child, true, false);
+
+      return scope.moduleScope->isDeclared(parentRef);
+   }
+
+   return true;
 }
 
 void Compiler::Class :: declare(SyntaxNode node)

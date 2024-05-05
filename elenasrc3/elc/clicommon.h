@@ -302,6 +302,7 @@ public:
    virtual bool withValidation() = 0;
 
    virtual bool isDeclared(ref_t reference) = 0;
+   virtual bool isSymbolDeclared(ref_t reference) = 0;
 
    virtual bool isInternalOp(ref_t reference)
    {

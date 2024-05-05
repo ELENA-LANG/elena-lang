@@ -18,16 +18,11 @@ In development:
   - test elt64-cli
   - test elt-cli - printLine extension, 2-3
   - new unit test : calling private method from lambda function
-  - #569
-  - #265
-  - #574
  --------------------------------------
 
   === Iteration 23 ===
   --------------------------------------
-  dev: redesign switch statement : it should be possible to use as an expression as well
-    (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
-    console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
+  dev: #574,#265;
   op: github action - create a draft release
   opt:
   maint:#620, #486

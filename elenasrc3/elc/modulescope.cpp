@@ -395,6 +395,11 @@ bool ModuleScope :: isDeclared(ref_t reference)
    return mapSection(reference | mskMetaClassInfoRef, true) != nullptr;
 }
 
+bool ModuleScope :: isSymbolDeclared(ref_t reference)
+{
+   return mapSection(reference | mskMetaSymbolInfoRef, true) != nullptr;
+}
+
 Visibility ModuleScope :: retrieveVisibility(ref_t reference)
 {
    ustr_t referenceName = module->resolveReference(reference);

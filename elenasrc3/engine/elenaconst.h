@@ -17,7 +17,7 @@ namespace elena_lang
 
    constexpr auto LINE_LEN                   = 0x1000;            // the maximal source line length
    constexpr auto IDENTIFIER_LEN             = 0x0300;            // the maximal identifier length
-   constexpr auto MESSAGE_LEN                = 0x200;             // the maximal message length
+   constexpr auto MESSAGE_LEN                = 0x400;             // the maximal message length
 
   // --- ELENA Standart message constants ---
    constexpr auto ACTION_ORDER               = 9;

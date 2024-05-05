@@ -1,8 +1,9 @@
 import extensions;
 
+B : A;
+
+A;
+
 public program()
 {
-   var o := nil;
-
-   var r := o?.test() ?? 0;
 }

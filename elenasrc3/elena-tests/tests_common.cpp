@@ -164,6 +164,11 @@ bool TestModuleScope :: isDeclared(ref_t reference)
    return false;
 }
 
+bool TestModuleScope :: isSymbolDeclared(ref_t reference)
+{
+   return false;
+}
+
 Visibility TestModuleScope :: retrieveVisibility(ref_t reference)
 {
    return Visibility::Private;

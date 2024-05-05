@@ -76,6 +76,7 @@ public:
    bool includeNamespace(IdentifierList& importedNs, ustr_t name, bool& duplicateInclusion) override;
 
    bool isDeclared(ref_t reference) override;
+   bool isSymbolDeclared(ref_t reference) override;
 
    Visibility retrieveVisibility(ref_t reference) override;
 

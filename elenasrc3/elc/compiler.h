@@ -1056,7 +1056,7 @@ namespace elena_lang
 
          void declareNamespace(SyntaxNode node, bool ignoreImport = false, bool ignoreExtensions = false);
          void declareMemberIdentifiers(SyntaxNode node);
-         void declareMembers(SyntaxNode node);
+         bool declareMembers(SyntaxNode node, bool& repeatMode, bool forced);
 
       public:
          NamespaceScope scope;
@@ -1096,6 +1096,11 @@ namespace elena_lang
       public:
          SymbolScope scope;
 
+         bool isDeclared()
+         {
+            return scope.moduleScope->isSymbolDeclared(scope.reference);
+         }
+
          Symbol(Namespace& ns, ref_t reference, Visibility visibility);
          Symbol(Compiler* compiler, NamespaceScope* parent, ref_t reference, Visibility visibility);
       };
@@ -1112,6 +1117,13 @@ namespace elena_lang
          void declareClassClass(ClassScope& classClassScope, SyntaxNode node, ref_t parentRef);
 
       public:
+         bool isParentDeclared(SyntaxNode node);
+
+         bool isDeclared()
+         {
+            return scope.moduleScope->isDeclared(scope.reference);
+         }
+
          void declare(SyntaxNode node);
 
          void load();
@@ -1487,7 +1499,7 @@ namespace elena_lang
       void copyParentNamespaceExtensions(NamespaceScope& source, NamespaceScope& target);
 
       void declareModuleIdentifiers(ModuleScopeBase* moduleScope, SyntaxNode node, ExtensionMap* outerExtensionList);
-      void declareModule(ModuleScopeBase* moduleScope, SyntaxNode node, ExtensionMap* outerExtensionList);
+      bool declareModule(ModuleScopeBase* moduleScope, SyntaxNode node, ExtensionMap* outerExtensionList, bool& repeatMode, bool forced);
 
       void inheritStaticMethods(ClassScope& scope, SyntaxNode classNode);
 
