@@ -49,7 +49,7 @@ bool VMTapeParser :: parseDirective(ScriptEngineReaderBase& reader, MemoryDump* 
          ScriptBookmark bm = reader.read();
          if (reader.compare("preloaded")) {
             bm = reader.read();
-            if (bm.state == dfaIdentifier) {
+            if (bm.state == dfaQuote) {
                writer.write(VM_PRELOADED_CMD, reader.lookup(bm));
             }
             else throw SyntaxError("Invalid directive", bm.lineInfo);
