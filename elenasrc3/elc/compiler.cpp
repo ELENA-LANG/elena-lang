@@ -14,7 +14,6 @@
 
 #include "bytecode.h"
 
-
 //#define FULL_OUTOUT_INFO 1
 
 using namespace elena_lang;
@@ -8664,7 +8663,8 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
    writer.newNode(BuildKey::Class, scope.reference);
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   writer.appendNode(BuildKey::Path, *ns->sourcePath);
+   if (_withDebugInfo)
+      writer.appendNode(BuildKey::Path, *ns->sourcePath);
 
    MethodScope methodScope(&scope);
    declareClosureMessage(methodScope, node);
@@ -11978,7 +11978,7 @@ ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, Argume
          auto argInfo = compile(current, signatures[signatureLen],
             paramMode, updatedOuterArgs);
 
-         if (argInfo.mode == TargetMode::UnboxingVarArgument || argInfo.mode == TargetMode::UnboxingAndTypecastingVarArgument) {
+         if ((argInfo.mode == TargetMode::UnboxingVarArgument || argInfo.mode == TargetMode::UnboxingAndTypecastingVarArgument) && signatureLen < ARG_COUNT) {
             if (argInfo.typeInfo.elementRef) {
                signatures[signatureLen++] = argInfo.typeInfo.elementRef;
             }

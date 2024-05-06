@@ -59,6 +59,11 @@ constexpr auto S1_DirectCall_3 = "class (attribute -2147479546 ()nameattr (ident
 
 constexpr auto S1_VariadicConstructorSingleDispatch_1 = "class (attribute -2147479546 ()nameattr (identifier \"Tester\" ())method (nameattr (identifier \"test\" ())parameter (attribute -2147475445 ()array_type (type (identifier \"Object\" ()))nameattr (identifier \"args\" ()))code (returning (expression (message_operation (object (identifier \"X\" ())message (identifier \"load\" ())expression (object (attribute -2147475445 ()identifier \"args\" ())))))))) class (nameattr (identifier \"X\" ()) method (attribute -2147479548 ()nameattr (identifier \"load\" ())parameter (attribute -2147475445 ()array_type (type (identifier \"B\" ()))nameattr (identifier \"args\" ()))code ()))";
 
+// S2 Scenarion : lmbda
+constexpr auto S2_DefaultNamespace = "namespace (class (nameattr (identifier \"Object\" ()) method (nameattr (identifier \"dispatch\" ())redirect (expression (object (identifier \"nil\" ()))))) $1)";
+constexpr auto S2_Func = "class (attribute -2147467263 ()attribute -2147479545 ()nameattr (identifier \"Func\" ())method (attribute -2147471358 ()nameattr (identifier \"function\" ())no_body ()))";
+constexpr auto S2_Scenario1 = "class (attribute -2147479546 ()nameattr (identifier \"E\" ())method (nameattr (identifier \"callFromLambda\" ())code (expression (assign_operation (object (attribute -2147479539 ()identifier \"f\" ())expression (closure (code (expression (message_operation (object (identifier \"callMe\" ()))))))))expression (message_operation (object (identifier \"f\" ())))))method (attribute -2147467262 ()nameattr (identifier \"callMe\" ())code ()))";
+
 #ifdef _M_IX86
 
 constexpr auto BuildTree1_1 = "byrefmark -8 () local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2050 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
@@ -78,6 +83,8 @@ constexpr auto BuildTree_VariadicSingleDispatch_4 = "tape (open_frame ()assignin
 
 constexpr auto BuildTree_CallMethodWithoutTarget = "tape (open_frame ()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 6 ())assigning 2 ()local 2 ()saving_stack 1 ()local 1 ()saving_stack ()argument ()direct_call_op 3586 (type 4 ())local 1 ()close_frame ()exit ())reserved 4 ()";
 constexpr auto BuildTree_CallVariadicMethodWithoutTarget = "tape(open_frame()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 2 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 3 ()local 2 ()saving_stack()argument()call_op 1089 ()assigning 4 ()local 3 ()saving_stack()argument()call_op 1089 ()assigning 5 ()terminator()saving_stack 3 ()local 5 ()saving_stack 2 ()local 4 ()saving_stack 1 ()local 1 ()saving_stack()argument()direct_call_op 3714 (type 4 ())local 1 ()close_frame()exit())reserved 9 ()";
+
+constexpr auto BuildTree_LambdaCallPrivate = "tape (open_frame ()assigning 1 ()local 1 ()field ()saving_stack ()argument ()direct_call_op 3329 (type 3 ())close_frame ()exit ())reserved 2 ()";
 
 constexpr auto PackedStructSize = 20;
 
@@ -103,6 +110,8 @@ constexpr auto BuildTree_VariadicSingleDispatch_4 = "tape (open_frame ()assignin
 
 constexpr auto BuildTree_CallMethodWithoutTarget = "tape (open_frame ()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 6 ())assigning 2 ()local 2 ()saving_stack 1 ()local 1 ()saving_stack ()argument ()direct_call_op 3586 (type 4 ())local 1 ()close_frame ()exit ())reserved 4 ()";
 constexpr auto BuildTree_CallVariadicMethodWithoutTarget = "tape(open_frame()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 2 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 3 ()local 2 ()saving_stack()argument()call_op 1089 ()assigning 4 ()local 3 ()saving_stack()argument()call_op 1089 ()assigning 5 ()terminator()saving_stack 3 ()local 5 ()saving_stack 2 ()local 4 ()saving_stack 1 ()local 1 ()saving_stack()argument()direct_call_op 3714 (type 4 ())local 1 ()close_frame()exit())reserved 10 ()";
+
+constexpr auto BuildTree_LambdaCallPrivate = "tape (open_frame ()assigning 1 ()local 1 ()field ()saving_stack ()argument ()direct_call_op 3329 (type 3 ())close_frame ()exit ())reserved 4 ()";
 
 constexpr auto PackedStructSize = 24;
 
@@ -708,4 +717,94 @@ void VariadicCompiletimeConstructorSingleDispatch :: SetUp()
 SyntaxNode VariadicCompiletimeConstructorSingleDispatch :: findTargetNode()
 {
    return findClassNode().findChild(SyntaxKey::Method);
+}
+
+// --- LambdaTest ---
+
+SyntaxNode LambdaTest :: findClassNode()
+{
+   return SyntaxTree::gotoChild(declarationNode.firstChild(), SyntaxKey::Class, targetRef);
+}
+
+SyntaxNode LambdaTest :: findTargetNode()
+{
+   return findClassNode().findChild(SyntaxKey::Method);
+}
+
+BuildNode LambdaTest :: findOutput(BuildNode root)
+{
+   return BuildTree::gotoChild(root, BuildKey::Class, outputRef).findChild(BuildKey::Method);
+}
+
+void LambdaTest :: SetUp()
+{
+   SyntaxTreeWriter writer(syntaxTree);
+   writer.appendNode(SyntaxKey::Root);
+
+   BuildTreeWriter buildWriter(buildTree);
+   buildWriter.appendNode(BuildKey::Root);
+
+   declarationNode = syntaxTree.readRoot().appendChild(SyntaxKey::Idle, 1);
+
+   controlOutputNode = buildTree.readRoot().appendChild(BuildKey::Idle);
+}
+
+void LambdaTest :: runTest()
+{
+   // Arrange
+   ModuleScopeBase* moduleScope = env.createModuleScope(true, false, true);
+   moduleScope->buildins.superReference = 1;
+   moduleScope->buildins.dispatch_message = encodeMessage(
+      moduleScope->module->mapAction(DISPATCH_MESSAGE, 0, false), 1, 0);
+   moduleScope->buildins.constructor_message =
+      encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
+         0, FUNCTION_MESSAGE);
+
+   moduleScope->buildins.closureTemplateReference = funcRef;
+
+   //env.setUpTemplateMockup(argArrayRef, 1, genericVargRef);
+
+   Compiler* compiler = env.createCompiler();
+
+   BuildTree output;
+   BuildTreeWriter writer(output);
+   Compiler::Namespace nsScope(compiler, moduleScope, TestErrorProcessor::getInstance(), nullptr, nullptr);
+
+   // Act
+   nsScope.declare(declarationNode.firstChild(), true);
+
+   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public);
+   classHelper.load();
+   Compiler::Method methodHelper(classHelper);
+
+   SyntaxNode methodNode = findTargetNode();
+   if (methodNode != SyntaxKey::None) {
+      writer.newNode(BuildKey::Root);
+      writer.newNode(BuildKey::Class);
+      methodHelper.compile(writer, methodNode);
+      writer.closeNode();
+      writer.closeNode();
+   }
+
+   // Assess
+   bool matched = BuildTree::compare(findOutput(output.readRoot()), controlOutputNode, true);
+   EXPECT_TRUE(matched);
+
+   freeobj(compiler);
+   freeobj(moduleScope);
+}
+
+// --- Lambda_CallingPrivateMethod ---
+
+void Lambda_CallingPrivateMethod :: SetUp()
+{
+   LambdaTest::SetUp();
+
+   LoadDeclarationScenario(S2_DefaultNamespace, S2_Func, S2_Scenario1);
+
+   BuildTreeSerializer::load(BuildTree_LambdaCallPrivate, controlOutputNode);
+
+   funcRef = 2;
+   targetRef = 3;
+   outputRef = 0x100;
 }

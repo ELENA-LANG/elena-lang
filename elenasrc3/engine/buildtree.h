@@ -362,6 +362,7 @@ namespace elena_lang
          map.add("terminator", BuildKey::TerminatorReference);
          map.add("free_varstack", BuildKey::FreeVarStack);
          map.add("going_to_eop", BuildKey::goingToEOP);
+         map.add("field", BuildKey::Field);
 
          map.add("value", BuildKey::Value);
          map.add("tape", BuildKey::Tape);

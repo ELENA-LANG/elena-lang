@@ -224,9 +224,13 @@ CompilerEnvironment :: CompilerEnvironment()
 
 }
 
-ModuleScopeBase* CompilerEnvironment :: createModuleScope(bool tapeOptMode, bool threadFriendly)
+ModuleScopeBase* CompilerEnvironment :: createModuleScope(bool tapeOptMode, bool threadFriendly, bool withAttributes)
 {
    auto scope = new TestModuleScope(tapeOptMode, threadFriendly);
+
+   if (withAttributes) {
+      scope->attributes.add("dispatch", V_DISPATCHER);
+   }
 
    return scope;
 }

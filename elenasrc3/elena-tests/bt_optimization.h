@@ -217,6 +217,30 @@ namespace elena_lang
    protected:
       void SetUp() override;
    };
+
+   class LambdaTest : public Scenario1Test
+   {
+   protected:
+      ref_t  targetRef;
+      ref_t  funcRef;
+      ref_t  outputRef;
+
+      BuildNode findOutput(BuildNode root);
+
+      SyntaxNode findClassNode();
+      virtual SyntaxNode findTargetNode();
+
+      void SetUp() override;
+
+   public:
+      void runTest();
+   };
+
+   class Lambda_CallingPrivateMethod : public LambdaTest
+   {
+   protected:
+      void SetUp() override;
+   };
 }
 
 #endif

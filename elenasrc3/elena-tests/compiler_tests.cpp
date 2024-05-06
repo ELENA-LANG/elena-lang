@@ -62,8 +62,12 @@ TEST_F(VariadicCompiletimeConstructorSingleDispatch, CompilerTest)
 }
 
 // Test scenario : E.load(new C(), new D()); where: class E { constructor load(params B[] args) {}}, C:B and D:B
-
 TEST_F(VariadicCompiletimeSingleDispatch_WithDifferentArgs, CompilerTest)
+{
+   runTest();
+}
+
+TEST_F(Lambda_CallingPrivateMethod, CompilerTest)
 {
    runTest();
 }

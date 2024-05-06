@@ -171,7 +171,7 @@ namespace elena_lang
    public:
       void initializeOperators(ModuleScopeBase* scope);
 
-      ModuleScopeBase* createModuleScope(bool tapeOptMode, bool threadFriendly);
+      ModuleScopeBase* createModuleScope(bool tapeOptMode, bool threadFriendly, bool withAttributes = false);
 
       void setUpTemplateMockup(ref_t templateRef, ref_t elementRef, ref_t reference);
 
