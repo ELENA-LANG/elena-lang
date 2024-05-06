@@ -160,8 +160,9 @@ namespace elena_lang
       IntLongOp            = 0x0082,
       DistributedTypeList  = 0x0083,
       UnboxAndCallMessage  = 0x0084,
+      NilRefBranchOp       = 0x0085,
 
-      MaxOperationalKey    = 0x0084,
+      MaxOperationalKey    = 0x0085,
 
       Import               = 0x0090,
       DictionaryOp         = 0x0091,
@@ -335,6 +336,7 @@ namespace elena_lang
          map.add("local", BuildKey::Local);
          map.add("intcondop", BuildKey::IntCondOp);
          map.add("realcondop", BuildKey::RealCondOp);
+         map.add("nilcondop", BuildKey::NilCondOp);
          map.add("branchop", BuildKey::BranchOp);
          map.add("intbranchop", BuildKey::IntBranchOp);
          map.add("conversion_op", BuildKey::ConversionOp);

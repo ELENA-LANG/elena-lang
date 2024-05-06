@@ -19,7 +19,6 @@ In development:
   - pi under 6 sec
   - #601 : optimize: if (a == b) {} else {}
  --------------------------------------
-  - #601 : optimize: if (nil == name) {} else {}
 
   === Iteration 23 ===
   --------------------------------------

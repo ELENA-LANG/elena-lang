@@ -585,7 +585,6 @@ void intLongOp(CommandTape& tape, BuildNode& node, TapeScope&)
       default:
          throw InternalError(errFatalError);
    }
-
 }
 
 void realIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -2449,6 +2448,9 @@ inline bool nativeBranchingOp(BuildNode lastNode)
       case BuildKey::RealCondOp:
          branchNode.setKey(BuildKey::RealBranchOp);
          break;
+      case BuildKey::NilCondOp:
+         branchNode.setKey(BuildKey::NilRefBranchOp);
+         break;
       default:
          break;
    }
@@ -2881,6 +2883,11 @@ void ByteCodeWriter :: saveNativeBranching(CommandTape& tape, BuildNode node, Ta
          tape.write(ByteCode::CmpN, valueNode.arg.value);
          break;
       }
+      case BuildKey::NilRefBranchOp:
+         // NOTE : sp[0] - loperand
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::CmpR);
+         break;
       default:
          assert(false);
          break;
@@ -3414,6 +3421,7 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
          case BuildKey::IntBranchOp:
          case BuildKey::IntConstBranchOp:
          case BuildKey::RealBranchOp:
+         case BuildKey::NilRefBranchOp:
             saveNativeBranching(tape, current, tapeScope, paths, tapeOptMode, loopMode);
             weakLoop = false;
             break;
