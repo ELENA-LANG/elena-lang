@@ -2,10 +2,9 @@ import extensions;
 
 public program()
 {
-   var name := nil;
+   real x := 2;
 
-   if (nil == name) {
-      console.writeLine("name is nil")
-   } 
-   else console.printLine("name=",name)
+   if(x == 0.0r)
+      { ^ 0.0r };
+
 }

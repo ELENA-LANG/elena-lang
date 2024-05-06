@@ -497,9 +497,11 @@ void IDEWindow :: toggleWindow(int child_id)
 {
    if (child_id == _model->ideScheme.projectView) {
       if (!_children[_model->ideScheme.projectView]->visible()) {
-         openProject();
+         _children[_model->ideScheme.projectView]->show();
       }
-      else closeProject();
+      else _children[_model->ideScheme.projectView]->hide();
+
+      onLayoutChange();
    }
 }
 
@@ -1176,8 +1178,10 @@ void IDEWindow :: onLayoutChange()
 
    onResize();
 
-   if (!empty)
-      _children[_model->ideScheme.textFrameId]->refresh();
+   //if (!empty)
+   //   _children[_model->ideScheme.textFrameId]->refresh();
+
+   invalidate();
 }
 
 void IDEWindow :: onStartup(ModelNMHDR* rec)

@@ -7,24 +7,24 @@ In development:
 
   === Iteration 22 ===
   --------------------------------------
-  exp:#612,
-  ide:#617
+  ide:
   prom:elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test
   --------------------------------------
+  - #617 : adding exe extension for the target automatically
+  - #617 : ask to save the source code before compile it
+  - #637 (bt tests (>=4), all bc tests)
   - #618 : fix Map<T1,T2> - type of _list field
   - #622 : system'winforms : free PermVectorTable item after the window is closed, to save the resources
   - test elt64-cli
   - test elt-cli - printLine extension, 2-3
-  - #637 (bt tests (>=4), all bc tests)
-  - pi under 6 sec
-  - #601 : optimize: if (a == b) {} else {}
  --------------------------------------
+  - #617 : sdi - compile in the separate thread
 
   === Iteration 23 ===
   --------------------------------------
   dev: #574,#265,#619
   op: github action - create a draft release
-  opt:
+  opt:pi under 6 sec
   maint:#620, #486, #506
   exp:
   ide:vm debugger

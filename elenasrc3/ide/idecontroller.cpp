@@ -1339,7 +1339,7 @@ bool IDEController :: doCloseProject(FileDialogBase& dialog, FileDialogBase& pro
 {
    int projectStatus = STATUS_NONE;
 
-   if(closeProject(dialog, projectDialog, mssgDialog, model, projectStatus))
+   if(!closeProject(dialog, projectDialog, mssgDialog, model, projectStatus))
       return false;
 
    notifyOnModelChange(projectStatus);
