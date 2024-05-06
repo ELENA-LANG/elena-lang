@@ -19,8 +19,7 @@ In development:
   - #622 : system'winforms : free PermVectorTable item after the window is closed, to save the resources
   - test elt64-cli
  --------------------------------------
-  - test elt-cli - 2-3
-  - test elt-cli - printLine extension
+  - ide : vm_console - correctly close console
 
   === Iteration 23 ===
   --------------------------------------

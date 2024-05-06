@@ -1,12 +1,11 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      WinAPI32 program entry 
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "factory.h"
 #include "framework.h"
-#include "ide.h"
 #include "ideview.h"
 #include "windows/wincommon.h"
 #include "windows/win32controller.h"

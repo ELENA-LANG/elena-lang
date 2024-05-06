@@ -352,10 +352,14 @@ bool ProjectController :: startVMConsole(ProjectModel& model)
    PathString cmdLine(*model.paths.vmTerminalPath);
    cmdLine.append(" \"[[ #use ");
 
+   path_t outputPath = model.getOutputPath();
+   if (outputPath.empty())
+      outputPath = *model.projectPath;
+
    cmdLine.append(model.getPackage());
    cmdLine.append(_T("=\"\""));
-   cmdLine.append(*model.projectPath);
-   cmdLine.append(_T("\""));
+   cmdLine.append(outputPath);
+   cmdLine.append(_T("=\"\""));
 
    cmdLine.append("]]\""); 
    cmdLine.append(" -i");

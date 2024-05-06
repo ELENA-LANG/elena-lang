@@ -160,6 +160,7 @@
    #define l3_operation   ::= ^ <= div_operation ( => "/" l2_expression <= ) =>;
 
    #define l4_operation   ::= ^ <= add_operation ( => "+" l3_expression <= ) =>;
+   #define l4_operation   ::= ^ <= sub_operation ( => "-" l3_expression <= ) =>;
 
    #define l5_operation   ::= ^ <= equal_operation ( => "==" l4_expression <= ) =>;
    #define l5_operation   ::= ^ <= less_operation ( => "<" l4_expression <= ) =>;
