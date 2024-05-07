@@ -136,7 +136,6 @@ bool VMSession :: connect(void* tape)
 {
    _env.gc_yg_size = 0x15000;
    _env.gc_mg_size = 0x54000;
-   _env.th_single_content = &_tcontext;
 
    int retVal = InitializeVMSTLA(&_env, tape, ELT_EXCEPTION_HANDLER);
    if (retVal != 0) {

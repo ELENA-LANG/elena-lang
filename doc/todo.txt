@@ -19,7 +19,6 @@ In development:
   - #622 : system'winforms : free PermVectorTable item after the window is closed, to save the resources
  --------------------------------------
   - test elt64-cli
-  - test x64 lsinterpreter.prj 
 
   === Iteration 23 ===
   --------------------------------------

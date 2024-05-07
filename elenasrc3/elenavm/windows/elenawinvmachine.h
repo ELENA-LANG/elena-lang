@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Windows VM declaration
 //
-//                                             (C)2022-2023, by Aleksey Rakov
+//                                             (C)2022-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENAWINVMMACHINE_H
@@ -15,9 +15,9 @@ namespace elena_lang
 
 constexpr auto TEXT_MAX_SIZE     = 0x500000;
 constexpr auto RDATA_MAX_SIZE    = 0x500000;
-constexpr auto DATA_MAX_SIZE     = 0x001000;
+constexpr auto DATA_MAX_SIZE     = 0x010000;
 constexpr auto STAT_MAX_SIZE     = 0x010000;
-constexpr auto ADATA_MAX_SIZE    = 0x010000;
+constexpr auto ADATA_MAX_SIZE    = 0x100000;
 constexpr auto MDATA_MAX_SIZE    = 0x100000;
 constexpr auto MBDATA_MAX_SIZE   = 0x100000;
 constexpr auto DEBUG_MAX_SIZE    = 0x500000;

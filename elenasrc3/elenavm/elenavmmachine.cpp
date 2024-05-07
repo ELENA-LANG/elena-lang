@@ -116,9 +116,11 @@ void ELENAVMMachine :: init(JITLinker& linker, SystemEnv* exeEnv)
 
    _configuration->initLoader(_libraryProvider);
 
-   _compiler->populatePreloaded(
-      (uintptr_t)exeEnv->th_table,
-      (uintptr_t)exeEnv->th_single_content);
+   if (_standAloneMode) {
+      _compiler->populatePreloaded(
+         (uintptr_t)exeEnv->th_table,
+         (uintptr_t)exeEnv->th_single_content);
+   }
 
    linker.setCompiler(_compiler);
 

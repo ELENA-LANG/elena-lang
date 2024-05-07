@@ -16,9 +16,6 @@
 
 namespace elena_lang
 {
-   constexpr auto ELENAVM_GREETING        = "ELENA VM %d.%d.%d (C)2022-2024 by Aleksey Rakov";
-   constexpr auto ELENAVM_INITIALIZING    = "Initializing...";
-
    // --- ELENAVMConfiguration ---
 
    class ELENAVMConfiguration : public XmlProjectBase
