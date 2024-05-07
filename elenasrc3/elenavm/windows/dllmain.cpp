@@ -263,7 +263,7 @@ EXTERN_DLL_EXPORT int ExecuteVMLA(const char* target, const char* arg, char* out
       if (output) {
          size_t copied = 0;
          if (machine->evaluateAndReturn(tape.get(0), output, maxLength, copied))
-            retVal = copied;
+            retVal = (int)copied;
       }
       else {
          machine->evaluate(tape.get(0));

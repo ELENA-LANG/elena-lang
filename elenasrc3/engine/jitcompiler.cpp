@@ -2990,7 +2990,9 @@ void JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t 
             writer->Memory()->addReference(mskCodeRef32, position);
             break;
          case mskRef64:
-            MemoryBase::writeDWord(writer->Memory(), position, writer->position());
+            //MemoryBase::writeDWord(writer->Memory(), position, writer->position());
+            MemoryBase::writeQWord(writer->Memory(), position,
+               ptrToUInt64(writer->Memory()->get(writer->position())));
             writer->Memory()->addReference(mskCodeRef64, position);
             break;
          default:

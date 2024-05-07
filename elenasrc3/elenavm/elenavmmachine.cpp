@@ -437,7 +437,7 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
       else jitLinker->setCompiler(_compiler);
    }
 
-   if (_initialized && compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule)) {
+   if (_initialized && jitLinker && compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule)) {
       void* address = (void*)jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
 
       resumeVM(*jitLinker, env, (void*)criricalHandler);
@@ -447,7 +447,7 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
 
       return execute(env, address);
    }
-   if (_initialized && !_standAloneMode) {
+   if (_initialized && jitLinker && !_standAloneMode) {
       resumeVM(*jitLinker, env, (void*)criricalHandler);
    }
 

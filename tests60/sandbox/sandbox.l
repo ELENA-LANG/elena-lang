@@ -2,9 +2,8 @@ import extensions;
 
 public program()
 {
-   real x := 2;
+   AbortException.raise()
 
-   if(x == 0.0r)
-      { ^ 0.0r };
-
+//    if (program_arguments.Length == 1)
+//        { console.printLine("Please provide the path to the file to interpret"); AbortException.raise() };
 }

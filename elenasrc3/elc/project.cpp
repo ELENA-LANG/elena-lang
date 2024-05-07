@@ -282,6 +282,13 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
 
       loadConfig(config, configPath, profileRoot);
    }
+   else {
+      // if no profile was specified - use if available default profile
+      ConfigFile::Node profileRoot = getProfileRoot(config, root, "default");
+      if (!profileRoot.isNotFound())
+         loadConfig(config, configPath, profileRoot);
+
+   }
 }
 
 void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node& root)

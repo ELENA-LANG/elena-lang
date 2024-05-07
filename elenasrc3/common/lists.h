@@ -1495,7 +1495,7 @@ namespace elena_lang
 
             if (currentKey == key) {
                T value = _defValue;
-               _buffer.read(position, &value, sizeof(Key));
+               _buffer.read(position, &value, sizeof(T));
 
                return value;
             }

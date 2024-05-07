@@ -11,11 +11,20 @@
   </platform>
   <project>
      <namespace>helloworld</namespace>
-     <template>console</template>
   </project>
   <files>
      <module>
         <include>helloworld.l</include>
      </module>
   </files>
+  <profile key="virtual">
+     <project>
+        <template>vm_console</template>
+     </project>
+  </profile> 
+  <profile key="default">
+     <project>
+        <template>console</template>
+     </project>
+  </profile> 
 </configuration>

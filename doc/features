@@ -3,3 +3,5 @@ List of ELENA featuers:
 - variadic functions
 - if:is
 - accessing private method inside static method
+- project profile
+- project target : stand-alone / vm client

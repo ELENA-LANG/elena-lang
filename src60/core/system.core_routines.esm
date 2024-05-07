@@ -2687,15 +2687,15 @@ procedure thread_start(index)
   xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
 
   mov         env
-  save        dp:envptr
+  $save       dp:envptr
   set         dp:envptr
   store       fp:arg1
 
   call extern:StartThreadLA (
-     *arg1, 
+     *$arg1, 
      procedure:"system'core_routines'critical_exception_handler",
      procedure:"system'core_routines'func_invoker",
-     *ptr)
+     *$ptr)
 
   unhook
 
@@ -2713,12 +2713,12 @@ symbol sta_start
   xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
 
   mov         env
-  save        dp:envptr
+  $save       dp:envptr
   set         dp:envptr
   store       fp:arg1
 
   call extern:InitializeSTLA (
-     *arg1,
+     *$arg1,
      symbol:"$auto'startUpSymbol",
      procedure:"system'core_routines'critical_exception_handler")
 
@@ -2739,12 +2739,12 @@ symbol mta_start
   xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
 
   mov         env
-  save        dp:envptr
+  $save       dp:envptr
   set         dp:envptr
   store       fp:arg1
 
   call extern:InitializeMTLA (
-     *arg1,
+     *$arg1,
      symbol:"$auto'startUpSymbol",
      procedure:"system'core_routines'critical_exception_handler")
 
@@ -2761,12 +2761,12 @@ symbol vm_sta_start
   xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
 
   mov         env
-  save        dp:envptr
+  $save       dp:envptr
   set         dp:envptr
   store       fp:arg1
 
   call extern:InitializeVMSTLA (
-     *arg1, 
+     *$arg1, 
      constdump:"$elena'meta$startUpTape",
      pstr:"system'core_routines'critical_exception_handler")
 

@@ -17,9 +17,9 @@ In development:
   - #637 (bt tests (>=4), all bc tests)
   - #618 : fix Map<T1,T2> - type of _list field
   - #622 : system'winforms : free PermVectorTable item after the window is closed, to save the resources
-  - test elt64-cli
  --------------------------------------
-  - ide : vm_console - correctly close console
+  - test elt64-cli
+  - test x64 lsinterpreter.prj 
 
   === Iteration 23 ===
   --------------------------------------
@@ -27,7 +27,7 @@ In development:
   op: github action - create a draft release
   opt:pi under 6 sec
   maint:#620, #486, #506
-  exp:
+  exp: generate code templates - e.g. simple console app
   ide:vm debugger
   tools:
   prom:#635 on reddit / code project
