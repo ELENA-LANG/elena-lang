@@ -131,63 +131,6 @@ namespace io
       }
    }
 
-   // --- StreamReader ---
-   public class TextStreamReader : TextReader
-   {
-      Stream  _stream;
-      Encoder _encoder;
-      bool    _open;
-    
-      constructor new(Stream stream, Encoder encoder)
-      {
-         _output := new TextBuilder();
-         _newLineConstant := newLineConstant;                
-         _newLineLength := _newLineConstant.Length;
-            
-         _stream := stream;
-         _encoder := encoder;
-         _open := true;
-      }
-    
-      constructor new(path)
-         <= new(FileStream.openForRead(path), UTF8Encoder);
-            
-      constructor new(string path, Encoder encoder)
-         <= new(FileStream.openForRead(path), encoder);
-    
-      bool Available = _open;
-    
-      Stream Stream = _stream;
-    
-      Encoder Encoder = _encoder;
-    
-      read(char[] output, ref int length)
-      {
-         int  bufferLength := 64;
-         byte buffer[64];
-         _stream.read(buffer, ref bufferLength);
-         if(bufferLength == 0)
-         {
-            _open := false; 
-            length := 0;
-         }
-         else
-         {
-            int read := bufferLength;
-    
-            _encoder.convertFrom(buffer, 0, ref bufferLength, output, 0, ref length);
-                
-            if(read > bufferLength)
-               { _stream.reduceIndex(read - bufferLength) }
-         }           
-      }
-        
-      close()
-      {
-         _stream.close()
-      }
-   }
-
    singleton fileStreamHelper
    {
       Stream openForWrite(string path, bool appendMode)
@@ -195,69 +138,6 @@ namespace io
          if(appendMode) { ^ FileStream.openForAppend(path) };
             
          ^ FileStream.openForReWrite(path)
-      }
-   }
-
-   // --- StreamWriter ---   
-   public class StreamWriter : TextWriter
-   {
-      Stream  _stream;
-      Encoder _encoder;
-    
-      constructor new(Stream stream, Encoder encoder)
-      {
-         _buffer := new TextBuilder();
-         _stream := stream;
-         _encoder := encoder;
-    
-         _newLineConstant := newLineConstant;                
-         _newLineLength := _newLineConstant.Length;
-      }
-    
-      constructor new(path)
-         <= new(FileStream.openForReWrite(path), UTF8Encoder);
-            
-      constructor new(path, Encoder encoder)
-         <= new(FileStream.openForReWrite(path), encoder);
-            
-      constructor new(string path, bool appendMode)
-         <= new(fileStreamHelper.openForWrite(path, appendMode), UTF8Encoder);
-            
-      Stream Stream = _stream;        
-            
-      Encoder Encoder = _encoder;
-            
-      write(char[] input, int length)
-      {
-         int  total := length;
-         byte buffer[128];
-         int  blockLength := 0;
-         int  bufferLength := 0;
-         int  offset := 0;
-            
-         while (total > 0)
-         {
-            if(total < 32)
-            { 
-               blockLength := total 
-            }
-            else
-            { 
-               blockLength := 32
-            };
-                    
-            _encoder.convertTo(input, offset, ref blockLength, buffer, 0, ref bufferLength);
-                
-            _stream.write(buffer, bufferLength);
-                
-            total := total - blockLength;
-            offset := offset + blockLength
-         }
-      }
-        
-      close()
-      {
-         _stream.close()
       }
    }
 

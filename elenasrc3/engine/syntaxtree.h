@@ -60,6 +60,7 @@ namespace elena_lang
       CodeBlock               = 0x001C10,
       WithoutBody             = 0x001C11,
       Importing               = 0x001C12,
+      InlineTemplateExpr      = 0x001013,
       MetaDictionary          = 0x001020,
       MetaExpression          = 0x001021,
       IncludeStatement        = 0x001022,

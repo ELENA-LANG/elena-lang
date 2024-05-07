@@ -2021,7 +2021,15 @@ inline %0CAh
 
   add  rsp, 24
   pop  rbp
-  
+  pop  r15
+  pop  r14
+  pop  r13
+  pop  r12
+  pop  rbx
+  pop  rdi
+  pop  rsi
+  add  rsp, 8
+
 end
 
 // ; extclosen 0
@@ -2032,6 +2040,14 @@ inline %1CAh
 
   add  rsp, 24
   pop  rbp
+  pop  r15
+  pop  r14
+  pop  r13
+  pop  r12
+  pop  rbx
+  pop  rdi
+  pop  rsi
+  add  rsp, 8
   
 end
 
@@ -3015,6 +3031,15 @@ inline %0F2h
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rax 
@@ -3047,6 +3072,15 @@ inline %1F2h
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rax 
@@ -3074,6 +3108,15 @@ inline %2F2h
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3105,6 +3148,15 @@ inline %3F2h
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rax 
@@ -3134,6 +3186,15 @@ inline %4F2h
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3167,6 +3228,15 @@ inline %5F2h
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rax 
@@ -3199,6 +3269,15 @@ inline %6F2h
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rax 
@@ -3227,6 +3306,15 @@ inline %7F2h
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rax 
@@ -3249,6 +3337,15 @@ inline %8F2h
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3275,6 +3372,15 @@ inline %9F2h
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push rax 
@@ -3300,6 +3406,15 @@ inline %0AF2h
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3328,6 +3443,15 @@ inline %0BF2h
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]

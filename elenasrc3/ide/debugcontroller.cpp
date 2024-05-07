@@ -873,11 +873,13 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
 }
 
 void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item, addr_t address, int level, 
-   DebugLineInfo* info)
+   DebugLineInfo* info, addr_t vmtAddress)
 {
    WatchContext context = { item, address };
 
-   addr_t vmtAddress = _process->getClassVMT(address);
+   if (!vmtAddress)
+      vmtAddress = _process->getClassVMT(address);
+
    int flags = _process->getClassFlags(vmtAddress);
 
    int type = flags & elDebugMask;
@@ -895,7 +897,7 @@ void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item,
       {
          char value[DEBUG_MAX_STR_LENGTH + 1];
          size_t length = _min(_process->getArrayLength(address), DEBUG_MAX_STR_LENGTH);
-         _process->readDump(address, value, length);
+         _process->readDump(address, value, (pos_t)length);
          value[length] = 0;
          watch->populateString(&context, value);
          break;
@@ -904,7 +906,7 @@ void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item,
       {
          wide_c value[DEBUG_MAX_STR_LENGTH + 1];
          size_t length = _min(_process->getArrayLength(address), DEBUG_MAX_STR_LENGTH) >> 1;
-         _process->readDump(address, (char*)value, length << 1);
+         _process->readDump(address, (char*)value, (pos_t)(length << 1));
          value[length] = 0;
          watch->populateWideString(&context, value);
          break;
@@ -944,7 +946,7 @@ void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, add
       void* item = watch->addOrUpdate(&context, name, *classNameStr);
 
       if (level > 0)
-         readObjectContent(watch, item, address, level, info);
+         readObjectContent(watch, item, address, level, info, vmtAddress);
 
       return item;
    }
@@ -1078,6 +1080,17 @@ void* DebugController :: readUIntLocal(ContextBrowserBase* watch, void* parent, 
    else return nullptr;
 }
 
+void* DebugController :: readByteLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
+{
+   if (level > 0) {
+      unsigned int value = _process->getBYTE(address);
+
+      WatchContext context = { parent, address };
+      return watch->addOrUpdateDWORD(&context, name, value);
+   }
+   else return nullptr;
+}
+
 void* DebugController :: readLongLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
 {
    if (level > 0) {
@@ -1123,6 +1136,12 @@ void* DebugController :: readFieldValue(ContextBrowserBase* watch, void* parent,
    if (level > 0) {
       if (size == 4) {
          return readUIntLocal(watch, parent, address, name, level);
+      }
+      else if (size == 1) {
+         return readByteLocal(watch, parent, address, name, level);
+      }
+      else if (size == 8) {
+         return readLongLocal(watch, parent, address, name, level);
       }
       else {
          WatchContext context = { parent, address };
@@ -1176,7 +1195,7 @@ void DebugController :: readContext(ContextBrowserBase* watch, void* parentItem,
       IdentifierString className;
       DebugLineInfo* info = _provider.seekClassInfo(address, className, vmtAddress, flags);
 
-      readObjectContent(watch, parentItem, address, level, info);
+      readObjectContent(watch, parentItem, address, level, info, vmtAddress);
    }
 }
 

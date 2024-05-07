@@ -1499,7 +1499,7 @@ void JITLinker :: copyDistributedSymbolList(ModuleInfo info, MemoryBase* target,
    }
 }
 
-void JITLinker :: copyMetaList(ModuleInfo info, ModuleInfoList& output)
+void JITLinker :: copyPreloadedMetaList(ModuleInfo info, ModuleInfoList& output, bool ignoreAutoLoadExtensions)
 {
    auto sectionInfo = _loader->getSection({ info.module, info.module->resolveReference(info.reference) }, mskTypeListRef, 0, true);
    if (!sectionInfo.module)
@@ -1509,6 +1509,23 @@ void JITLinker :: copyMetaList(ModuleInfo info, ModuleInfoList& output)
 
    while (!bcReader.eof()) {
       ref_t symbolRef = bcReader.getRef();
+      if (ignoreAutoLoadExtensions) {
+         auto classInfo = _loader->getClassSections(
+            { info.module, info.module->resolveReference(symbolRef & ~mskAnyRef) }, mskVMTRef, mskClassRef, true);
+         if (classInfo.vmtSection) {
+            MemoryReader vmtReader(classInfo.vmtSection);
+
+            // skip record size
+            vmtReader.getPos();
+
+            // read VMT header
+            ClassHeader header;
+            vmtReader.read((void*)&header, sizeof(ClassHeader));
+
+            if (test(header.flags, elAutoLoaded | elExtension))
+               continue;
+         }
+      }
 
       output.add({ info.module, symbolRef & ~mskAnyRef });
    }
@@ -1733,7 +1750,7 @@ ref_t JITLinker :: resolveAction(ustr_t actionName)
    return resolveWeakAction(actionName);
 }
 
-void JITLinker :: loadPreloaded(ustr_t preloadedSection)
+void JITLinker :: loadPreloaded(ustr_t preloadedSection, bool ignoreAutoLoadExtensions)
 {
    ModuleInfoList list({});
    ModuleInfoList symbolList({});
@@ -1743,7 +1760,7 @@ void JITLinker :: loadPreloaded(ustr_t preloadedSection)
    // load preloaded symbols
    _loader->loadDistributedSymbols(*nameToResolve, list);
    for (auto it = list.start(); !it.eof(); ++it) {
-      copyMetaList(*it, symbolList);
+      copyPreloadedMetaList(*it, symbolList, ignoreAutoLoadExtensions);
    }
 
    // save preloaded symbols as auto symbols

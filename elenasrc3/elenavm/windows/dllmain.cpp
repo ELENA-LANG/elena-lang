@@ -201,6 +201,100 @@ EXTERN_DLL_EXPORT int EvaluateVMLA(void* tape)
    return retVal;
 }
 
+EXTERN_DLL_EXPORT int PrepareVMLA(const char* configName, const char* ns, const char* path, const char* exceptionHandler)
+{
+#ifdef DEBUG_OUTPUT
+   printf("PrepareVMLA\n");
+#endif
+
+   IdentifierString package(ns, "=", path);
+
+   auto env = new SystemEnv();
+   env->gc_yg_size = 0x15000;
+   env->gc_mg_size = 0x54000;
+   env->th_single_content = new ThreadContent();
+
+   MemoryDump tape;
+   MemoryWriter tapeWriter(&tape);
+
+   tapeWriter.writeDWord(VM_TERMINAL_CMD);
+
+   tapeWriter.writeDWord(VM_CONFIG_CMD);
+   tapeWriter.writeString(configName); // vm_client
+
+   tapeWriter.writeDWord(VM_PACKAGE_CMD);
+   tapeWriter.writeString(*package); // "embedded1=."
+
+   tapeWriter.writeDWord(VM_INIT_CMD);
+   tapeWriter.writeDWord(VM_ENDOFTAPE_CMD);
+
+   return InitializeVMSTLA(env, tape.get(0), exceptionHandler);
+}
+
+EXTERN_DLL_EXPORT int ExecuteVMLA(const char* target, const char* arg, char* output, size_t maxLength)
+{
+#ifdef DEBUG_OUTPUT
+   printf("ExecuteVMLA.6\n");
+#endif
+
+   MemoryDump tape;
+   MemoryWriter tapeWriter(&tape);
+
+   tapeWriter.writeDWord(VM_ALLOC_CMD);
+   tapeWriter.writeDWord(2);
+
+   tapeWriter.writeDWord(VM_STRING_CMD);
+   tapeWriter.writeString(arg);
+
+   tapeWriter.writeDWord(VM_SET_ARG_CMD);
+   tapeWriter.writeDWord(0);
+
+   tapeWriter.writeDWord(VM_CALLSYMBOL_CMD);
+   tapeWriter.writeString(target);
+
+   tapeWriter.writeDWord(VM_SEND_MESSAGE_CMD);
+   tapeWriter.writeString("function:#invoke[1]");
+
+   tapeWriter.writeDWord(VM_ENDOFTAPE_CMD);
+
+   int retVal = -1;
+   try
+   {
+      if (output) {
+         size_t copied = 0;
+         if (machine->evaluateAndReturn(tape.get(0), output, maxLength, copied))
+            retVal = (int)copied;
+      }
+      else {
+         machine->evaluate(tape.get(0));
+         retVal = 0;
+      }
+   }
+   catch (InternalError err)
+   {
+      printError(err.messageCode);
+      retVal = -1;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      printError(errVMReferenceNotFound, e.referenceInfo.referenceName);
+
+      retVal = -1;
+   }
+   catch (...)
+   {
+      printError(errVMBroken);
+      retVal = -1;
+   }
+
+   return retVal;
+}
+
+EXTERN_DLL_EXPORT int FreeVMLA()
+{
+   return -1;
+}
+
 EXTERN_DLL_EXPORT void ExitLA(int retVal)
 {
    if (retVal) {

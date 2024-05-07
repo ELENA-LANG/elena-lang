@@ -3,7 +3,7 @@
 //
 //		This file contains the project base class declaration
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PROJECTBASE_H
@@ -51,6 +51,7 @@ namespace elena_lang
       LibPath,
 
       ClassSymbolAutoLoad,
+      ModuleExtensionAutoLoad,
       StackAlignment,
       RawStackAlignment,
       GCMGSize,

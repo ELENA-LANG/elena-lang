@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Windows Image Section declaration
 //
-//                                             (C)2022-2023, by Aleksey Rakov
+//                                             (C)2022-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINSECTION_H

@@ -31,6 +31,12 @@ namespace elena_lang
       friend void x86_64compileExtOpenIN(JITCompilerScope* scope);
 
    public:
+      int calcFrameOffset(int argument, bool extMode) override
+      {
+         // NOTE : for the external frame we have to store all nonvolatile registers (rsi, rdi, rbx, r12, r13, r14, r15)
+         return (extMode ? 104 : 8) + (argument > 0 ? align(argument + 16, 16) : 0);
+      }
+
       void writeImm9(MemoryWriter* writer, int value, int type) override;
       void writeImm12(MemoryWriter* writer, int value, int type) override;
 

@@ -55,25 +55,9 @@ The compiler code is implemented in C++ and does not require external dependenci
 
 You have to add a path to _BIN_ folder to the system environment *PATH* or copy elenavm.dll and elenart.dll to _Windows\System32_ folder.
 
-To build the compiler under VS2019 you have to go to the root folder and type:
+To build the compiler and API under VS2019 / VS2022 you have to go to the root folder and type:
 
-    recompile60.bat
-
-To build the ELENA libraries type the following command:
-
-    rebuild_lib60.bat
-    
-To build ELENA samples type the following command:
-
-    rebuild_examples60.bat 
-    
-To build ELENA Rosetta-code samples type the following command:
-
-    examples\rosetta\build.bat 
-    
-To run unit-tests type the following command:
-
-    lib_tests.bat     
+    recompile60.bat 
 
 ## Source Code Organization
 

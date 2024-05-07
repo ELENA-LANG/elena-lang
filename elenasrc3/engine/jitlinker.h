@@ -242,7 +242,7 @@ namespace elena_lang
 
       ref_t resolveAction(ustr_t actionName);
 
-      void loadPreloaded(ustr_t preloadedSection);
+      void loadPreloaded(ustr_t preloadedSection, bool ignoreAutoLoadExtensions);
       void prepare();
       void setCompiler(JITCompilerBase* compiler)
       {
@@ -255,7 +255,7 @@ namespace elena_lang
 
       void complete(JITCompilerBase* compiler, ustr_t superClass);
 
-      void copyMetaList(ModuleInfo info, ModuleInfoList& output);
+      void copyPreloadedMetaList(ModuleInfo info, ModuleInfoList& output, bool ignoreAutoLoadExtensions);
 
       JITLinker(ReferenceMapperBase* mapper, 
          LibraryLoaderBase* loader, ForwardResolverBase* forwardResolver,

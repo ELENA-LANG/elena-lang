@@ -5,33 +5,17 @@ In development:
 [development]
   ### EPIC: elena 6.0 - redux ###
 
-  === Iteration 21 ===
-
-  === Iteration 22 ===
-  --------------------------------------
-  dev: #608, #637 (bt tests (>=4), all bc tests), #646, interface mockup
-  op:
-  opt:pi under 6 sec, #601
-  maint: #506, #617, #620, #622
-  exp:#612
-  ide:vm debugger
-  tools:
-  prom:elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test,#635
-  port:chat sample, helloworld gui sample (button)
-
   === Iteration 23 ===
   --------------------------------------
-  dev: redesign switch statement : it should be possible to use as an expression as well
-    (so we cannot use => anymore : e.g.  console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  )
-    console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third");
-  op:
-  opt:
-  maint:
-  exp:
-  ide:
-  tools:
-  prom:
-  port:elenavm / elt for linux
+  dev: #574,#265,#619,#637(bt tests (>=4), all bc tests)
+  op: github action - create a draft release
+  opt:pi under 6 sec
+  maint:#620, #486, #506
+  exp: generate code templates - e.g. simple console app
+  ide:linux simplest gui, vm debugger
+  tools:elt64-cli
+  prom:#635 on reddit;elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test
+  port:chat sample, elenavm / elt for linux, helloworld gui sample (button)
 
   === Iteration 24 ===
   --------------------------------------
@@ -43,4 +27,4 @@ In development:
   ide:
   tools:
   prom:
-  port:
+  port:upndown

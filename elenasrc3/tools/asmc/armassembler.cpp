@@ -1262,6 +1262,19 @@ bool Arm64Assembler :: compileMOVZ(ScriptToken& tokenInfo, ARMOperand rt, ARMOpe
    return true;
 }
 
+bool Arm64Assembler :: compileMOVN(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rn, MemoryWriter& writer)
+{
+   if (rt.isXR() && rn.type == ARMOperandType::Imm) {
+      writer.writeDWord(ARMHelper::makeImm16Opcode(1, 0, 0x25, 0, rn.imm, rt.type));
+
+      if (rn.reference)
+         writeReference(tokenInfo, rn.reference, writer, ASM_INVALID_SOURCE);
+   }
+   else return false;
+
+   return true;
+}
+
 bool Arm64Assembler::compileMOVK(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand rn, int lsl, MemoryWriter& writer)
 {
    if (rt.isXR() && rn.type == ARMOperandType::Imm) {
@@ -2188,7 +2201,12 @@ void Arm64Assembler :: compileMOV(ScriptToken& tokenInfo, MemoryWriter& writer)
       valid = compileADDImm(tokenInfo, rd, rn, ARMOperand(ARMOperandType::Imm, 0), writer);
    }
    else if ((rd.isXR() && rn.type == ARMOperandType::Imm)) {
-      valid = compileMOVZ(tokenInfo, rd, rn, writer);
+      if (rn.imm < 0) {
+         // NOTE : 
+         rn.imm = ~rn.imm;
+         valid = compileMOVN(tokenInfo, rd, rn, writer);
+      }
+      else valid = compileMOVZ(tokenInfo, rd, rn, writer);
    }
 
    if (!valid)
@@ -2206,6 +2224,23 @@ void Arm64Assembler :: compileMVN(ScriptToken& tokenInfo, MemoryWriter& writer)
    bool valid = false;
    if (rd.isXR() && rn.isXR()) {
       valid = compileORNShifted(tokenInfo, rd, { ARMOperandType::XZR }, rn, 0, 0, writer);
+   }
+
+   if (!valid)
+      throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void Arm64Assembler :: compileMOVN(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   ARMOperand rd = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   ARMOperand rn = readOperand(tokenInfo, ASM_INVALID_TARGET);
+
+   bool valid = false;
+   if (rd.isXR() && rn.type == ARMOperandType::Imm) {
+      valid = compileMOVN(tokenInfo, rd, rn, writer);
    }
 
    if (!valid)
@@ -2745,6 +2780,9 @@ bool Arm64Assembler::compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    }
    else if (tokenInfo.compare("movk")) {
       compileMOVK(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("movn")) {
+      compileMOVN(tokenInfo, writer);
    }
    else if (tokenInfo.compare("mul")) {
       compileMUL(tokenInfo, writer);

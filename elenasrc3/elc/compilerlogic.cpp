@@ -1314,7 +1314,7 @@ bool CompilerLogic :: isEmbeddableAndReadOnly(ClassInfo& info)
    return isReadOnly(info) && isEmbeddable(info);
 }
 
-bool CompilerLogic :: isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t reference)
+bool CompilerLogic::isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t reference)
 {
    if (scope.cachedEmbeddableReadonlys.exist(reference))
       return scope.cachedEmbeddableReadonlys.get(reference);
@@ -1324,6 +1324,18 @@ bool CompilerLogic :: isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t refe
       auto retVal = isEmbeddableAndReadOnly(info);
 
       scope.cachedEmbeddableReadonlys.add(reference, retVal);
+
+      return retVal;
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: isEmbeddableStruct(ModuleScopeBase& scope, ref_t reference)
+{
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference, true)) {
+      auto retVal = isEmbeddableStruct(info);
 
       return retVal;
    }
@@ -2085,6 +2097,10 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
       if (!implicitSignatureRef && ((weakMessage & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE))
          return 0;
 
+      if (!implicitSignatureRef) {
+         implicitSignatureRef = mapWeakSignature(scope, getArgCount(weakMessage));
+      }
+
       ref_t signatures[ARG_COUNT];
       size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
 
@@ -2293,6 +2309,41 @@ bool CompilerLogic :: checkMethod(ModuleScopeBase& scope, ref_t classRef, mssg_t
    else return false;
 }
 
+bool CompilerLogic :: isMessageSupported(ClassInfo& info, mssg_t message)
+{
+   CheckMethodResult dummy = {};
+
+   return isMessageSupported(info, message, dummy);
+}
+
+bool CompilerLogic :: isMessageSupported(ClassInfo& info, mssg_t message, CheckMethodResult& result)
+{
+   if (!checkMethod(info, message, result)) {
+      if (checkMethod(info, message | STATIC_MESSAGE, result)) {
+         result.visibility = Visibility::Private;
+
+         return true;
+      }
+      mssg_t protectedMessage = info.attributes.get({ message, ClassAttribute::ProtectedAlias });
+      if (protectedMessage) {
+         if (checkMethod(info, protectedMessage, result)) {
+            result.visibility = Visibility::Protected;
+            return true;
+         }
+      }
+      mssg_t internalMessage = info.attributes.get({ message, ClassAttribute::InternalAlias });
+      if (internalMessage) {
+         if (checkMethod(info, internalMessage, result)) {
+            result.visibility = Visibility::Internal;
+            return true;
+         }
+      }
+   }
+   else return true;
+
+   return false;
+}
+
 bool CompilerLogic :: resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message, 
    CheckMethodResult& result)
 {
@@ -2307,28 +2358,7 @@ bool CompilerLogic :: resolveCallType(ModuleScopeBase& scope, ref_t classRef, ms
       else if (test(info.header.flags, elWithCustomDispatcher))
          result.withCustomDispatcher = true;
 
-      if (!checkMethod(info, message, result)) {
-         if (checkMethod(info, message | STATIC_MESSAGE, result)) {
-            result.visibility = Visibility::Private;
-
-            return true;
-         }
-         mssg_t protectedMessage = info.attributes.get({ message, ClassAttribute::ProtectedAlias });
-         if (protectedMessage) {
-            if(checkMethod(info, protectedMessage, result)) {
-               result.visibility = Visibility::Protected;
-               return true;
-            }
-         }
-         mssg_t internalMessage = info.attributes.get({ message, ClassAttribute::InternalAlias });
-         if (internalMessage) {
-            if (checkMethod(info, internalMessage, result)) {
-               result.visibility = Visibility::Internal;
-               return true;
-            }
-         }
-      }
-      else return true;      
+      return isMessageSupported(info, message, result);
    }
 
    return false;

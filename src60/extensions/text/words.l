@@ -87,7 +87,10 @@ namespace text
             { 
                _newToken := false;
                _spaceMode := false; 
-               _operatorMode := (letter || digit) ? false : true
+               if (ch == $45) {
+                  _operatorMode := false;
+               }
+               else _operatorMode := (letter || digit) ? false : true
             }
             else if (letter || digit)
             {

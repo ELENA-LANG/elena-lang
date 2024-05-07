@@ -4,6 +4,11 @@
         <executable>simple.exe</executable>
      </project>
   </platform>
+  <platform key="Win_x64">
+     <project>
+        <executable>simple64.exe</executable>
+     </project>
+  </platform>
   <project>
      <namespace>swapp</namespace>
      <template>gui</template>

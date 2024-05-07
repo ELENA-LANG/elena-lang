@@ -123,6 +123,7 @@ namespace elena_lang
       bool isEmbeddableArray(ModuleScopeBase& scope, ref_t reference);
 
       bool isEmbeddableStruct(ClassInfo& info);
+      bool isEmbeddableStruct(ModuleScopeBase& scope, ref_t reference);
 
       bool isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t reference);
       bool isEmbeddableAndReadOnly(ClassInfo& info);
@@ -184,6 +185,10 @@ namespace elena_lang
 
       bool checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result);
       bool checkMethod(ModuleScopeBase& scope, ref_t reference, mssg_t message, CheckMethodResult& result);
+
+      // check if internal / protected / private / public message is declared
+      bool isMessageSupported(ClassInfo& info, mssg_t message, CheckMethodResult& result);
+      bool isMessageSupported(ClassInfo& info, mssg_t message);
 
       bool resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message, 
          CheckMethodResult& result);

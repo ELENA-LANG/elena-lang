@@ -1,7 +1,7 @@
 [[ 
     #grammar vmbuild
     #config vm_client
-    #set preloaded preloadedSymbols
+    #set preloaded "system@preloadedSymbols"
 
     #postfix " ^ ""safeEval[1]"" "
 

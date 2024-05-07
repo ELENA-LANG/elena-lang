@@ -3236,10 +3236,11 @@ end
 inline %0F0h
 
   mflr    r0
+
   std     r31, -10h(r1)  // ; save frame pointer
   std     r0,  -08h(r1)  // ; save return address
-
   addi    r1, r1, -16    // ; allocate raw stack
+
   mr      r31, r1        // ; set frame pointer
 
   addi    r1, r1, -__n16_2 // ; allocate raw stack
@@ -3267,80 +3268,132 @@ labEnd:
 
 end 
 
-// ; openin 0, 0
+// ; openin 0, n
 inline %1F0h
 
   mflr    r0
+
   std     r31, -10h(r1)  // ; save frame pointer
   std     r0,  -08h(r1)  // ; save return address
+  addi    r1, r1, -16    // ; allocate raw stack
 
+  mr      r31, r1        // ; set frame pointer
+
+  addi    r1, r1, -__n16_2 // ; allocate raw stack
+
+  li      r16, 0
+  std     r31, -08h(r1)  // ; save frame pointer
+  std     r16, -10h(r1)  // ; save dummy
   addi    r1, r1, -10h   // ; allocate stack
   mr      r31, r1        // ; set frame pointer
 
 end 
 
-// ; openin 1, 0
+// ; openin 1, n
 inline %2F0h
 
   mflr    r0
-  std     r31, -10h(r1)  // ; save frame pointer
-  li      r16, 0
-  std     r0,  -08h(r1)  // ; save return address
-  addi    r31, r1, -10h  // ; set frame pointer
-  std     r16, -18h(r1)  // ; save return address
-  std     r16, -20h(r1)  // ; save return address
 
-  addi    r1, r1, -20h   // ; allocate stack
-
-end 
-
-// ; openin 2, 0
-inline %3F0h
-
-  mflr    r0
-  std     r31, -10h(r1)  // ; save frame pointer
-  li      r16, 0
-  std     r0,  -08h(r1)  // ; save return address
-  addi    r31, r1, -10h  // ; set frame pointer
-  std     r16, -18h(r1)  // ; save return address
-  std     r16, -20h(r1)  // ; save return address
-
-  addi    r1, r1, -20h   // ; allocate stack
-
-end 
-
-// ; openin 3, 0
-inline %4F0h
-
-  mflr    r0
-  std     r31, -10h(r1)  // ; save frame pointer
-  li      r16, 0
-  std     r0,  -08h(r1)  // ; save return address
-  addi    r31, r1, -10h  // ; set frame pointer
-  std     r16, -18h(r1)  // ; save return address
-  std     r16, -20h(r1)  // ; save return address
-  std     r16, -28h(r1)  // ; save return address
-  std     r16, -30h(r1)  // ; save return address
-
-  addi    r1, r1, -30h   // ; allocate stack
-
-end 
-
-// ; openin 0, n
-inline %5F0h
-
-  mflr    r0
   std     r31, -10h(r1)  // ; save frame pointer
   std     r0,  -08h(r1)  // ; save return address
+  addi    r1, r1, -16    // ; allocate raw stack
 
   mr      r31, r1        // ; set frame pointer
+
   addi    r1, r1, -__n16_2 // ; allocate raw stack
 
   li      r16, 0
-  std     r31, -10h(r1)  // ; save frame pointer
-  std     r0,  -08h(r16) // ; save dummy
+  std     r31, -08h(r1)  // ; save frame pointer
+  std     r16, -10h(r1)  // ; save dummy
+  addi    r1, r1, -10h   // ; allocate stack
+  mr      r31, r1        // ; set frame pointer
 
-  addi    r1, r1, -10h    // ; allocate stack
+  std     r16, -08h(r1)  // ; save frame pointer
+  std     r16, -10h(r1)  // ; save frame pointer
+  addi    r1, r1, -10h   // ; allocate stack
+
+end 
+
+// ; openin 2, n
+inline %3F0h
+
+  mflr    r0
+
+  std     r31, -10h(r1)  // ; save frame pointer
+  std     r0,  -08h(r1)  // ; save return address
+  addi    r1, r1, -16    // ; allocate raw stack
+
+  mr      r31, r1        // ; set frame pointer
+
+  addi    r1, r1, -__n16_2 // ; allocate raw stack
+
+  li      r16, 0
+  std     r31, -08h(r1)  // ; save frame pointer
+  std     r16, -10h(r1)  // ; save dummy
+  addi    r1, r1, -10h   // ; allocate stack
+  mr      r31, r1        // ; set frame pointer
+
+  std     r16, -08h(r1)  // ; save frame pointer
+  std     r16, -10h(r1)  // ; save frame pointer
+  addi    r1, r1, -10h   // ; allocate stack
+
+end 
+
+// ; openin 3, n
+inline %4F0h
+
+  mflr    r0
+
+  std     r31, -10h(r1)  // ; save frame pointer
+  std     r0,  -08h(r1)  // ; save return address
+  addi    r1, r1, -16    // ; allocate raw stack
+
+  mr      r31, r1        // ; set frame pointer
+
+  addi    r1, r1, -__n16_2 // ; allocate raw stack
+
+  li      r16, 0
+  std     r31, -08h(r1)  // ; save frame pointer
+  std     r16, -10h(r1)  // ; save dummy
+  addi    r1, r1, -10h   // ; allocate stack
+  mr      r31, r1        // ; set frame pointer
+
+  std     r16, -08h(r1)  // ; save frame pointer
+  std     r16, -10h(r1)  // ; save frame pointer
+  addi    r1, r1, -10h   // ; allocate stack
+
+  std     r16, -08h(r1)  // ; save frame pointer
+  std     r16, -10h(r1)  // ; save frame pointer
+  addi    r1, r1, -10h   // ; allocate stack
+
+end 
+
+// ; openin 4, n
+inline %5F0h
+
+  mflr    r0
+
+  std     r31, -10h(r1)  // ; save frame pointer
+  std     r0,  -08h(r1)  // ; save return address
+  addi    r1, r1, -16    // ; allocate raw stack
+
+  mr      r31, r1        // ; set frame pointer
+
+  addi    r1, r1, -__n16_2 // ; allocate raw stack
+
+  li      r16, 0
+  std     r31, -08h(r1)  // ; save frame pointer
+  std     r16, -10h(r1)  // ; save dummy
+  addi    r1, r1, -10h   // ; allocate stack
+  mr      r31, r1        // ; set frame pointer
+
+  std     r16, -08h(r1)  // ; save frame pointer
+  std     r16, -10h(r1)  // ; save frame pointer
+  addi    r1, r1, -10h   // ; allocate stack
+
+  std     r16, -08h(r1)  // ; save frame pointer
+  std     r16, -10h(r1)  // ; save frame pointer
+  addi    r1, r1, -10h   // ; allocate stack
 
 end 
 
@@ -3368,6 +3421,81 @@ labLoop:
   b       labLoop
 
 labEnd:
+
+end 
+
+// ; openin 0, 0
+inline %7F0h
+
+  mflr    r0
+  std     r31, -10h(r1)  // ; save frame pointer
+  std     r0,  -08h(r1)  // ; save return address
+
+  addi    r1, r1, -10h   // ; allocate stack
+  mr      r31, r1        // ; set frame pointer
+
+end 
+
+// ; openin 1, 0
+inline %8F0h
+
+  mflr    r0
+  std     r31, -10h(r1)  // ; save frame pointer
+  li      r16, 0
+  std     r0,  -08h(r1)  // ; save return address
+  addi    r31, r1, -10h  // ; set frame pointer
+  std     r16, -18h(r1)  // ; save return address
+  std     r16, -20h(r1)  // ; save return address
+
+  addi    r1, r1, -20h   // ; allocate stack
+
+end 
+
+// ; openin 2, 0
+inline %9F0h
+
+  mflr    r0
+  std     r31, -10h(r1)  // ; save frame pointer
+  li      r16, 0
+  std     r0,  -08h(r1)  // ; save return address
+  addi    r31, r1, -10h  // ; set frame pointer
+  std     r16, -18h(r1)  // ; save return address
+  std     r16, -20h(r1)  // ; save return address
+
+  addi    r1, r1, -20h   // ; allocate stack
+
+end 
+
+// ; openin 3, 0
+inline %0AF0h
+
+  mflr    r0
+  std     r31, -10h(r1)  // ; save frame pointer
+  li      r16, 0
+  std     r0,  -08h(r1)  // ; save return address
+  addi    r31, r1, -10h  // ; set frame pointer
+  std     r16, -18h(r1)  // ; save return address
+  std     r16, -20h(r1)  // ; save return address
+  std     r16, -28h(r1)  // ; save return address
+  std     r16, -30h(r1)  // ; save return address
+
+  addi    r1, r1, -30h   // ; allocate stack
+end 
+
+// ; openin 4, 0
+inline %0BF0h
+
+  mflr    r0
+  std     r31, -10h(r1)  // ; save frame pointer
+  li      r16, 0
+  std     r0,  -08h(r1)  // ; save return address
+  addi    r31, r1, -10h  // ; set frame pointer
+  std     r16, -18h(r1)  // ; save return address
+  std     r16, -20h(r1)  // ; save return address
+  std     r16, -28h(r1)  // ; save return address
+  std     r16, -30h(r1)  // ; save return address
+
+  addi    r1, r1, -30h   // ; allocate stack
 
 end 
 

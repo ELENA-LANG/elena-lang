@@ -398,15 +398,15 @@ namespace elena_lang
          imm &= Mask;
 
          if (isShiftedMask_64(imm)) {
-            I = countTrailingZeros(imm);
-            CTO = countTrailingOnes(imm >> I);
+            I = (uint32_t)countTrailingZeros(imm);
+            CTO = (uint32_t)countTrailingOnes(imm >> I);
          }
          else {
             imm |= ~Mask;
             if (!isShiftedMask_64(~imm))
                return false;
 
-            unsigned CLO = countLeadingOnes(imm);
+            unsigned CLO = countLeadingOnes((uint32_t)imm);
             I = 64 - CLO;
             CTO = CLO + (uint32_t)countTrailingOnes(imm) - (64 - Size);
          }

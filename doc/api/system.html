@@ -11626,6 +11626,17 @@ Returns the parent class</div>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>__getParent()
+</CODE>
+<div class="block">
+Returns the parent of the specified class</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>safeEqual(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
@@ -11634,7 +11645,7 @@ Returns the parent class</div>
 Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible</div>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
@@ -11643,7 +11654,7 @@ Returns true if the parameter is equal to the object or false. It does not raise
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
@@ -11652,7 +11663,7 @@ Returns true if the parameter is equal to the object or false. It does not raise
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
@@ -11663,7 +11674,7 @@ Returns true if the parameter is equal to the object or false. It does not raise
 Returns true if the object is nil</div>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -11672,7 +11683,7 @@ Returns true if the object is nil</div>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
@@ -11681,6 +11692,15 @@ Returns true if the object is nil</div>
 </CODE>
 <div class="block">
 Checks if the object is an instance of type</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>subsetOf(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> type)
+</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -15877,6 +15897,113 @@ system'StackOverflowException</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>toPrintable()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="StartUpEvents">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="StartUpEvents" class="title">StartUpEvents</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">StartUpEvents</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'StartUpEvents</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>OnStop</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>OnError</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#StartUpEvents">StartUpEvents</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>stopping()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>handlingError(e)
 </CODE>
 </TD>
 </TR>
@@ -20748,6 +20875,43 @@ system'</DIV>
 <i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Pi_value</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="startUpEvents">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="startUpEvents" class="title">startUpEvents</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#StartUpEvents">StartUpEvents</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>startUpEvents</CODE>
 </TD>
 </TABLE>
 </LI>

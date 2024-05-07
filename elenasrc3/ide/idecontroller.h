@@ -43,6 +43,18 @@ namespace elena_lang
       RunTo
    };
 
+   struct DebugActionResult
+   {
+      bool outaged;
+      bool targetMissing;
+      bool noDebugFile;
+
+      DebugActionResult()
+      {
+         outaged = targetMissing = noDebugFile = false;
+      }
+   };
+
    typedef bool(*CompareFileDateTime)(path_t, path_t);
 
    // --- ProjectController ---
@@ -69,7 +81,7 @@ namespace elena_lang
 
       bool isOutaged(ProjectModel& projectModel, SourceViewModel& sourceModel);
 
-      bool startDebugger(ProjectModel& model/*, bool stepMode*/);
+      bool startDebugger(ProjectModel& model, DebugActionResult& result);
 
       bool isIncluded(ProjectModel& model, ustr_t ns);
 
@@ -106,7 +118,7 @@ namespace elena_lang
       bool startVMConsole(ProjectModel& model);
       void stopVMConsole();
 
-      bool onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, bool& outaged);
+      bool onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, DebugActionResult& result);
 
       void doDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action);
       void doDebugStop(ProjectModel& model);

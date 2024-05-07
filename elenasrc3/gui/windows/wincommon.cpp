@@ -82,6 +82,11 @@ void ControlBase :: refresh()
    ::UpdateWindow(_handle);
 }
 
+void ControlBase :: invalidate()
+{
+   ::InvalidateRect(_handle, nullptr, true);
+}
+
 bool ControlBase :: visible()
 {
    return ::IsWindowVisible(_handle) ? true : false;

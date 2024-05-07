@@ -22,6 +22,8 @@ namespace elena_lang
 
    constexpr auto INFO_RUN_OUT_OF_DATE          = _T("The project modules are out of date\nPlease recompile the project");
    constexpr auto INFO_RUN_UNSAVED_PROJECT      = _T("The project files are not saved\nPlease save them and recompile the project");
+   constexpr auto INFO_NEED_TARGET              = _T("A project has no target specified. It cannot be started\nPlease specify the project target");
+   constexpr auto INFO_RUN_NEED_RECOMPILE       = _T("A program cannot be started\nPlease re-compile the project");
 
    constexpr auto NOT_FOUND_TEXT                = _T("Search string not found");
    constexpr auto REPLACE_TEXT                  = _T("Replace this occurence?");

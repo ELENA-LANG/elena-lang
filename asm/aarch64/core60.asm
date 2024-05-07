@@ -3594,6 +3594,16 @@ inline %2F1h
 
 end
 
+// ; xstoresir i, 0
+inline %5F1h
+
+  mov     x11, #0
+
+  add     x12, sp, __arg12_1
+  str     x11, [x12]
+
+end
+
 // ; xstoresir :0, 0
 inline %6F1h
 
@@ -3611,9 +3621,7 @@ end
 // ; xstoresir :n, -1
 inline %8F1h
 
-  movz    x11,  __n16lo_1
-  movk    x11,  __n16hi_1, lsl #16
-  sxtw    x11, w11
+  mov     x11, #-1 
 
   add     x12, sp, __arg12_1
   str     x11, [x12]
@@ -3623,22 +3631,14 @@ end
 // ; xstoresir :0, -1
 inline %9F1h
 
-  movz    x11,  __n16lo_1
-  movk    x11,  __n16hi_1, lsl #16
-  sxtw    x11, w11
-
-  mov     x0, x11
+  mov     x0, #-1
 
 end
 
 // ; xstoresir :1, -1
 inline %0AF1h
 
-  movz    x11,  __n16lo_1
-  movk    x11,  __n16hi_1, lsl #16
-  sxtw    x11, w11
-
-  mov     x1, x11
+  mov     x1, #-1 
 
 end
 
@@ -4054,10 +4054,42 @@ labEnd:
 end
 
 // ; xstorefir
+// ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %0F9h
 
   movz    x11,  __ptr32lo_2
   movk    x11,  __ptr32hi_2, lsl #16
+  sub     x12, x29, -__arg12_1
+  str     x11, [x12]
+
+end
+
+// ; xstorefir
+// ; NOTE : it is presumed that arg1 > 0 (it is inverted in jitcompiler)
+inline %4F9h
+
+  movz    x11,  __ptr32lo_2
+  movk    x11,  __ptr32hi_2, lsl #16
+  add     x12, x29, __arg12_1
+  str     x11, [x12]
+
+end
+
+// ; xstorefir i, 0
+// ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
+inline %5F9h
+
+  mov     x11, #0
+  sub     x12, x29, -__arg12_1
+  str     x11, [x12]
+
+end
+
+// ; xstorefir i, 0
+// ; NOTE : it is presumed that arg1 > 0 (it is inverted in jitcompiler)
+inline %9F9h
+
+  mov     x11, #0
   add     x12, x29, __arg12_1
   str     x11, [x12]
 

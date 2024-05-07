@@ -1,0 +1,16 @@
+<configuration>
+    <files>
+        <module>
+            <file>chatclient.l</file>
+        </module>
+    </files>
+    <project>
+        <executable></executable>
+        <options></options>
+        <namespace>chat_client</namespace>
+        <template>lib60</template>
+    </project>
+    <references>
+        <reference key="chat_shared">..\shared</reference>
+    </references>
+</configuration>

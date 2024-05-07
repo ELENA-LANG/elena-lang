@@ -1,3 +1,46 @@
+## ELENA 6.0.10
+*07.05.2024*
+
+- ELENA
+  - [ADDED] #646 : Calling own method directly without target
+  - [ADDED] #651 : Template Expression - typecasting 
+  - [ADDED] #497 : a static method must have an access to private methods
+
+- ELC
+  - [FIXED] aarch64 : xstorefir opcode
+  - [FIXED] ppc64le : open opcode
+  - [ADDED] new option : auto-preloaded module extension ("-xm")
+  - [FIXED] reducing the total size of an executable by ignoring module extensions by default
+  - [FIXED] #401 - += operator with array
+  - [FIXED] #488 : Declaring auto struct variable
+  - [FIXED] #522 : single dispatch variadic message
+  - [FIXED] x86-64 : calling from external
+  - [FIXED] #608 : single dispatch for constructors
+  - [FIXED] #504 : Support an array operation with external function arguments
+  - [FIXED] #589 : Supporting ?: operator inside ??
+  - [ADDED] #569 : Ignoring order of declaration
+  - [FIXED] xhookdpr for x86-64 mode
+
+- VM
+  - [ADDED] #635 : new entry point to invoke the functionality from another program
+
+- API
+  - [FIXED] toJson extension 
+  - [FIXED] try statement does not allocate an exception
+  - [ADDED] extensions'io:ByteArrayReader,ByteArrayWriter
+
+- SAMPLES
+  - [ADDED] #635 : new tutorial to call an ELENA library from C++ / C#
+  - [ADDED] chat sample
+
+- Tools
+  - [ADDED] ecv-cli : adding a filter for listing members
+  - [FIXED]elt-cli : fixing support for extension methods
+
+- IDE
+  - [FIXED] watch : displaying stack-allocated classes
+  - [ADDED] syntax highlighting
+
 ## ELENA 6.0.9
 *19.04.2024*
 

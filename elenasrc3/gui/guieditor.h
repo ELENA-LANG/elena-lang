@@ -21,16 +21,16 @@ namespace elena_lang
    constexpr auto STYLE_TRACE_LINE     = 3;
    constexpr auto STYLE_ERROR_LINE     = 4;
    constexpr auto STYLE_BREAKPOINT     = 5;
-   //#define STYLE_KEYWORD                           3
-   //#define STYLE_COMMENT                           4
-   //#define STYLE_OPERATOR                          5
+   constexpr auto STYLE_KEYWORD        = 6;
+   constexpr auto STYLE_OPERATOR       = 7;
+   constexpr auto STYLE_COMMENT        = 8;
+   constexpr auto STYLE_NUMBER         = 9;
+   constexpr auto STYLE_STRING         = 10;
    //#define STYLE_MESSAGE                           6
-   //#define STYLE_NUMBER                            7
-   //#define STYLE_STRING                            8
    //#define STYLE_HINT                              9  // !! not used
    //#define STYLE_TRACE                             12
    //#define STYLE_HIGHLIGHTED_BRACKET               14
-   constexpr auto STYLE_MAX            = 5;
+   constexpr auto STYLE_MAX            = 10;
 
    // --- ClipboardBase ----
    class ClipboardBase

@@ -81,8 +81,6 @@ void SystemRoutineProvider :: Init(SystemEnv* env, SystemSettings settings)
 
 void SystemRoutineProvider :: InitSTA(SystemEnv* env)
 {
-
-
    SystemSettings settings;
    FillSettings(env, settings);
 

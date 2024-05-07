@@ -1,5 +1,5 @@
 #!/bin/bash
-RELEASE=elena-6.0.9.ppc64le-linux
+RELEASE=elena-6.0.10.ppc64le-linux
 
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
@@ -161,21 +161,21 @@ fi
  mkdir -p ./$RELEASE/usr/bin/
  mkdir -p ./$RELEASE/usr/elena-lang
 
- mkdir -p ./$RELEASE/usr/elena-lang/examples/console/helloworld/
- mkdir -p ./$RELEASE/usr/elena-lang/examples/console/sum/
- mkdir -p ./$RELEASE/usr/elena-lang/examples/console/words/
+ mkdir -p ./$RELEASE/usr/elena-lang/examples60/console/helloworld/
+ mkdir -p ./$RELEASE/usr/elena-lang/examples60/console/sum/
+ mkdir -p ./$RELEASE/usr/elena-lang/examples60/console/words/
 
- mkdir -p ./$RELEASE/usr/elena-lang/examples/rosetta/accumulator/
- mkdir -p ./$RELEASE/usr/elena-lang/examples/rosetta/ackermann/
- mkdir -p ./$RELEASE/usr/elena-lang/examples/rosetta/addfield/
- mkdir -p ./$RELEASE/usr/elena-lang/examples/rosetta/anonymrec/
- mkdir -p ./$RELEASE/usr/elena-lang/examples/rosetta/aplusb/
- mkdir -p ./$RELEASE/usr/elena-lang/examples/rosetta/applycallback/
- mkdir -p ./$RELEASE/usr/elena-lang/examples/rosetta/arithmeticint/
- mkdir -p ./$RELEASE/usr/elena-lang/examples/rosetta/arithmeval/
- mkdir -p ./$RELEASE/usr/elena-lang/examples/rosetta/arithmmean/
- mkdir -p ./$RELEASE/usr/elena-lang/examples/rosetta/arrayconcat/
- mkdir -p ./$RELEASE/usr/elena-lang/examples/rosetta/arraymode/
+ mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/accumulator/
+ mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/ackermann/
+ mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/addfield/
+ mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/anonymrec/
+ mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/aplusb/
+ mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/applycallback/
+ mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/arithmeticint/
+ mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/arithmeval/
+ mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/arithmmean/
+ mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/arrayconcat/
+ mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/arraymode/
 
  echo copying configuration
 
@@ -201,7 +201,7 @@ fi
 
  cp /usr/lib/elena/lib60_64/*.* ./$RELEASE/usr/lib/elena/lib60_64/
 
- cp -r ../../examples $RELEASE/usr/elena-lang
+ cp -r ../../examples60 $RELEASE/usr/elena-lang
  cp -r ../../src60 $RELEASE/usr/elena-lang
 
  mkdir ./$RELEASE/DEBIAN

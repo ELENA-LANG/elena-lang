@@ -36,7 +36,38 @@ TEST_F(PackedStructAlignment, CompilerTest)
    runTest();
 }
 
-TEST_F(ComplexStructAlignment, CompilerTest)
+TEST_F(VariadicRuntimeSingleDispatch, CompilerTest)
+{
+   runTest();
+}
+
+TEST_F(VariadicCompiletimeSingleDispatch, CompilerTest)
+{
+   runTest();
+}
+
+TEST_F(CallMethodWithoutTarget, CompilerTest)
+{
+   runTest(false);
+}
+
+TEST_F(CallVariadocMethodWithoutTarget, CompilerTest)
+{
+   runTest(false);
+}
+
+TEST_F(VariadicCompiletimeConstructorSingleDispatch, CompilerTest)
+{
+   runTest(true);
+}
+
+// Test scenario : E.load(new C(), new D()); where: class E { constructor load(params B[] args) {}}, C:B and D:B
+TEST_F(VariadicCompiletimeSingleDispatch_WithDifferentArgs, CompilerTest)
+{
+   runTest();
+}
+
+TEST_F(Lambda_CallingPrivateMethod, CompilerTest)
 {
    runTest();
 }

@@ -226,6 +226,58 @@ void SyntaxTreeBuilder :: generateTemplateStatement(SyntaxTreeWriter& writer, Sc
       
 }
 
+void SyntaxTreeBuilder :: generateTemplateExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+{
+   List<SyntaxNode> arguments({});
+   List<SyntaxNode> parameters({});
+
+   IdentifierString templateName(INLINEEXPR_PREFIX);
+
+   SyntaxNode identNode = node.findChild(SyntaxKey::identifier);
+   templateName.append(identNode.identifier());
+
+   node.setKey(SyntaxKey::Object);
+
+   // generate template arguments
+   SyntaxTree tempTree;
+   SyntaxTreeWriter tempWriter(tempTree);
+   tempWriter.newNode(SyntaxKey::Idle);
+
+   flushExpression(tempWriter, scope, node.firstChild(SyntaxKey::ScopeMask));
+   parameters.add(tempWriter.CurrentNode().firstChild());
+   tempWriter.closeNode();
+
+   SyntaxNode current = identNode.nextNode();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::TemplateArg:
+            tempWriter.newNode(SyntaxKey::Idle);
+            flushTemplateArg(tempWriter, scope, current, true);
+            arguments.add(tempWriter.CurrentNode().firstChild());
+            tempWriter.closeNode();
+            break;
+         default:
+            break;
+      }
+      current = current.nextNode();
+   }
+
+   templateName.append('#');
+   templateName.appendInt(arguments.count());
+   templateName.append('#');
+   templateName.appendInt(parameters.count());
+
+   ref_t templateRef = _moduleScope->operations.get(*templateName);
+
+   if (_templateProcessor->importExpressionTemplate(*_moduleScope, templateRef, writer.CurrentNode(),
+      arguments, parameters))
+   {
+   }
+   else {
+      _errorProcessor->raiseTerminalError(errInvalidOperation, retrievePath(node), node);
+   }
+}
+
 void SyntaxTreeBuilder :: flushIdentifier(SyntaxTreeWriter& writer, SyntaxNode identNode, bool ignoreTerminalInfo)
 {
    SyntaxTree::copyNewNode(writer, identNode);
@@ -570,6 +622,10 @@ void SyntaxTreeBuilder :: flushExpressionMember(SyntaxTreeWriter& writer, Scope&
       case SyntaxKey::TemplateCode:
          writer.CurrentNode().setKey(SyntaxKey::CodeBlock);
          generateTemplateStatement(writer, scope, current);
+         break;
+      case SyntaxKey::TemplateExpression:
+         writer.CurrentNode().setKey(SyntaxKey::Expression);
+         generateTemplateExpression(writer, scope, current);
          break;
       case SyntaxKey::TemplateOperation:
          generateTemplateOperation(writer, scope, current);
@@ -1356,6 +1412,33 @@ void SyntaxTreeBuilder :: flushInlineTemplatePostfixes(SyntaxTreeWriter& writer,
    }
 }
 
+void SyntaxTreeBuilder :: flushExpressionTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+{
+   scope.type = ScopeType::ExpressionTemplate;
+   scope.ignoreTerminalInfo = true;
+
+   flushClassMemberPostfixes(writer, scope, node);
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::TemplateArg:
+            flushTemplateArgDescr(writer, scope, current);
+            break;
+         case SyntaxKey::Parameter:
+            flushParameterArgDescr(writer, scope, current);
+            break;
+         case SyntaxKey::ReturnExpression:
+            flushTemplateCode(writer, scope, current);
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void SyntaxTreeBuilder :: flushInlineTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
    scope.type = ScopeType::InlineTemplate;
@@ -1564,7 +1647,12 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode 
             else writer.CurrentNode().setKey(SyntaxKey::Template);
             flushTemplate(writer, scope, node);
             break;
+         case SyntaxKey::ReturnExpression:
+            writer.CurrentNode().setKey(SyntaxKey::InlineTemplateExpr);
+            flushExpressionTemplate(writer, scope, node);
+            break;
          default:
+            assert(false);
             break;
       }
       
@@ -1834,6 +1922,9 @@ void TemplateProssesor :: generate(SyntaxTreeWriter& writer, TemplateScope& scop
       case Type::Class:
          copyClassMembers(writer, scope, root);
          break;
+      case Type::ExpressionTemplate:
+         copyChildren(writer, scope, root.findChild(SyntaxKey::ReturnExpression));
+         break;
       default:
          break;
    }
@@ -1917,6 +2008,12 @@ void TemplateProssesor :: importCodeTemplate(MemoryBase* templateSection,
    SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
 {
    importTemplate(Type::CodeTemplate, templateSection, target, &arguments, &parameters);
+}
+
+void TemplateProssesor :: importExpressionTemplate(MemoryBase* templateSection,
+   SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
+{
+   importTemplate(Type::ExpressionTemplate, templateSection, target, &arguments, &parameters);
 }
 
 void TemplateProssesor :: copyField(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node)

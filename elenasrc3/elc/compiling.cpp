@@ -3,7 +3,7 @@
 //
 //		This file contains the compiling processor body
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -144,6 +144,20 @@ bool CompilingProcess::TemplateGenerator :: importCodeTemplate(ModuleScopeBase& 
    return true;
 }
 
+bool CompilingProcess::TemplateGenerator :: importExpressionTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
+   SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
+{
+   auto sectionInfo = moduleScope.getSection(
+      moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
+
+   if (!sectionInfo.section)
+      return false;
+
+   _processor.importExpressionTemplate(sectionInfo.section, target, arguments, parameters);
+
+   return true;
+}
+
 size_t getLengthSkipPostfix(ustr_t name)
 {
    size_t len = name.length();
@@ -276,7 +290,8 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
 
 // --- CompilingProcess ---
 
-CompilingProcess :: CompilingProcess(PathString& appPath, path_t modulePrologName, path_t prologName, path_t epilogName,
+CompilingProcess :: CompilingProcess(PathString& appPath, path_t exeExtension,
+   path_t modulePrologName, path_t prologName, path_t epilogName,
    PresenterBase* presenter, ErrorProcessor* errorProcessor,
    pos_t codeAlignment,
    JITSettings defaultCoreSettings,
@@ -285,6 +300,7 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t modulePrologNam
    _templateGenerator(this),
    _forwards(nullptr)
 {
+   _exeExtension = exeExtension;
    _modulePrologName = modulePrologName;
    _prologName = prologName;
    _epilogName = epilogName;
@@ -648,6 +664,7 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS
    imageInfo.type = project.Platform();
    imageInfo.codeAlignment = _codeAlignment;
    imageInfo.autoClassSymbol = project.BoolSetting(ProjectOption::ClassSymbolAutoLoad, _defaultCoreSettings.classSymbolAutoLoad);
+   imageInfo.autoModuleExtension = project.BoolSetting(ProjectOption::ModuleExtensionAutoLoad, false);
    imageInfo.coreSettings.mgSize = project.IntSetting(ProjectOption::GCMGSize, _defaultCoreSettings.mgSize);
    imageInfo.coreSettings.ygSize = project.IntSetting(ProjectOption::GCYGSize, _defaultCoreSettings.ygSize);
    imageInfo.coreSettings.stackReserved = project.IntSetting(ProjectOption::StackReserved, _defaultCoreSettings.stackReserved);
@@ -662,7 +679,7 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS
    TargetImage code(project.SystemTarget(), &project, &_libraryProvider, _jitCompilerFactory,
       imageInfo, addressMapper);
 
-   auto result = linker.run(project, code, uiType);
+   auto result = linker.run(project, code, uiType, _exeExtension);
 
    _presenter->print(ELC_SUCCESSFUL_LINKING);
 
@@ -702,7 +719,8 @@ void CompilingProcess :: cleanUp(ProjectBase& project)
    path_t output = project.PathSetting(ProjectOption::TargetPath);
    if (!output.empty()) {
       PathString exePath(output);
-      exePath.changeExtension("exe");
+      if (!_exeExtension.empty())
+         exePath.changeExtension(_exeExtension);
 
       PathUtil::removeFile(*exePath);
 

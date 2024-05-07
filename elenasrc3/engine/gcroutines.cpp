@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  GC System Routines
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -50,7 +50,7 @@ constexpr int size_mask          = elObjectSizeMask64;
 constexpr int struct_mask        = elStructMask64;
 
 constexpr int heap_inc           = 0x54000;
-constexpr int heapheader_inc     = 0x0A800;
+constexpr int heapheader_inc     = 0x15000;
 
 typedef ObjectPage64    ObjectPage;
 
@@ -519,4 +519,27 @@ void* SystemRoutineProvider :: GCRoutinePerm(GCTable* table, size_t size)
    table->gc_perm_current += size;
 
    return (void*)getObjectPtr(allocated);
+}
+
+bool SystemRoutineProvider :: CopyResult(addr_t value, char* output, size_t maxLength, size_t& copied)
+{
+   size_t size = getSize(value);
+   if (size < struct_mask) {
+      // ; if the object has fields
+      return false;
+   }
+   else if (size != struct_mask) {
+      size_t bytesToCopy = size;
+      bytesToCopy += (sizeof(uintptr_t) - 1);
+      bytesToCopy &= size_ceil;
+      if (bytesToCopy > maxLength)
+         return false;
+
+      CopyObjectData(bytesToCopy, output, (void*)value);
+
+      copied = bytesToCopy;
+   }
+   else copied = 0;
+
+   return true;
 }
