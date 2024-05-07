@@ -5,30 +5,16 @@ In development:
 [development]
   ### EPIC: elena 6.0 - redux ###
 
-  === Iteration 22 ===
-  --------------------------------------
-  prom:elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test
-  --------------------------------------
-  - test elt64-cli
-  - ide : linux simplest gui
-  - ide : bracket highlighting
-  - #617 : adding exe extension for the target automatically
-  - #617 : ask to save the source code before compile it
-  - #637 (bt tests (>=4), all bc tests)
-  - #618 : fix Map<T1,T2> - type of _list field
-  - #622 : system'winforms : free PermVectorTable item after the window is closed, to save the resources
- --------------------------------------
-
   === Iteration 23 ===
   --------------------------------------
-  dev: #574,#265,#619
+  dev: #574,#265,#619,#637(bt tests (>=4), all bc tests)
   op: github action - create a draft release
   opt:pi under 6 sec
   maint:#620, #486, #506
   exp: generate code templates - e.g. simple console app
-  ide:vm debugger
-  tools:
-  prom:#635 on reddit / code project
+  ide:linux simplest gui, vm debugger
+  tools:elt64-cli
+  prom:#635 on reddit;elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test
   port:chat sample, elenavm / elt for linux, helloworld gui sample (button)
 
   === Iteration 24 ===
