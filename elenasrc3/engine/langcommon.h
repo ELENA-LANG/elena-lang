@@ -430,6 +430,7 @@ namespace elena_lang
    constexpr auto FILE_PROLOG             = "project/prolog";
    constexpr auto FILE_EPILOG             = "project/epilog";
    constexpr auto MODULE_PROLOG           = "project/moduleProlog";
+   constexpr auto AUTOEXTENSION_PATH      = "project/autoextension";
 
    constexpr auto PLATFORMTYPE_KEY        = "system/platform";
 

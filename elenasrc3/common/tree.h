@@ -240,6 +240,11 @@ namespace elena_lang
             return this->_position != node._position;
          }
 
+         bool compare(Key key1, Key key2)
+         {
+            return this->key == key1 || this->key == key2;
+         }
+
          ustr_t identifier()
          {
             if (arg.strArgPosition != INVALID_POS) {
@@ -713,6 +718,18 @@ namespace elena_lang
          while (!current.eol()) {
             if (current.key == key)
                counter++;
+
+            current = current.nextNode();
+         }
+
+         return counter;
+      }
+
+      static int countSibling(Node current, Key key)
+      {
+         int counter = 0;
+         while (current.key == key) {
+            counter++;
 
             current = current.nextNode();
          }

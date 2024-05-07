@@ -188,7 +188,7 @@ void WinNtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableI
    image.headerSize += IMAGE_SIZEOF_SECTION_HEADER * image.imageSections.headers.count();
 }
 
-LinkResult WinNtLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType uiType)
+LinkResult WinNtLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType uiType, path_t exeExtension)
 {
    bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode, true); // !! temporally by default the debug mode is on
 
@@ -198,7 +198,7 @@ LinkResult WinNtLinker :: run(ProjectBase& project, ImageProviderBase& provider,
    prepareNtImage(provider, image, uiType);
 
    PathString exePath(project.PathSetting(ProjectOption::TargetPath));
-   exePath.changeExtension(L"exe");
+   exePath.changeExtension(exeExtension);
 
    if (!createExecutable(image, *exePath, project.PathSetting(ProjectOption::BasePath))) {
       _errorProcessor->raisePathError(errCannotCreate, project.PathSetting(ProjectOption::TargetPath));

@@ -122,8 +122,6 @@ JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platf
 
 int main()
 {
-   long long l = 0;
-
    try
    {
       bool cleanMode = false;
@@ -135,7 +133,7 @@ int main()
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       Project          project(*appPath, CURRENT_PLATFORM, &Presenter::getInstance());
       WinLinker        linker(&errorProcessor, &WinImageFormatter::getInstance(&project));
-      CompilingProcess process(appPath, L"<moduleProlog>", L"<prolog>", L"<epilog>",
+      CompilingProcess process(appPath, L"exe", L"<moduleProlog>", L"<prolog>", L"<epilog>",
          &Presenter::getInstance(), &errorProcessor,
          VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 
@@ -231,6 +229,9 @@ int main()
                   }
                   else if (argv[i][2] == 'e') {
                      project.addBoolSetting(ProjectOption::EvaluateOp, argv[i][3] != '-');
+                  }
+                  else if (argv[i][2] == 'm') {
+                     project.addBoolSetting(ProjectOption::ModuleExtensionAutoLoad, argv[i][3] != '-');
                   }
                   else if (argv[i][2] == 'p') {
                      project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');

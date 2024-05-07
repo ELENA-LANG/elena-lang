@@ -124,15 +124,16 @@ extension jsonSerializer : TextBuilder
       self.write("""").write(cast string(s)).write("""")
    }
         
-   serialize(object)
+   serializeDTO(object)
    {
       self.write("{");
 
-      auto props := object.__getClass().__dto_properties();
-//        if (nil == props)
-//        [
-//            props := object __properties.
-//        ].
+      var class := object.__getClass();
+      auto props := class.__dto_properties() \ back(nil);
+      if (nil == props)
+      {
+         props := class.__getProperties();
+      };
         
       int len := props.Length;
       for (int i := 0; i < len; i++)
@@ -158,6 +159,20 @@ extension jsonSerializer : TextBuilder
       };
         
       self.write("}")
+   }
+
+   serialize(object)
+   {
+      if (object.enumerator(); is Enumerator en)
+      {
+         ^ self.serialize(en)
+      };
+      if (object.indexer(); is Indexer it)
+      {
+         ^ self.serialize(it)
+      };
+
+      ^ self.serializeDTO(object);
    }    
 
    serialize(Array array)
@@ -235,6 +250,9 @@ singleton helper
       }
       else if (ch.isDigit())
       {
+         ^ token.toInt()
+      }
+      else if (ch == $45 && token[1].isDigit()) {
          ^ token.toInt()
       }
       else

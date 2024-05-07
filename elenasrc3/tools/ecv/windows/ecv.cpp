@@ -114,7 +114,7 @@ void getAppPath(PathString& appPath)
 
 int main()
 {
-   printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2011-2023 by Aleksey Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ECV_REVISION_NUMBER);
+   printf(ECV_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ECV_REVISION_NUMBER);
 
    // Reading command-line arguments...
    int argc;

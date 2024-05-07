@@ -145,8 +145,10 @@ void ByteCodeViewer :: printHelp()
 {
    _presenter->print("\n");
    _presenter->print("list of commands\n");
-   _presenter->print("?                       - list all classes\n");
+   _presenter->print("?                       - list all classes / symbols\n");
+   _presenter->print("?~<filter>              - list classes / symbols matching a filter\n");
    _presenter->print("<class>                 - view class members\n");
+   _presenter->print("<class>.~<filter>       - view class members matching a filter\n");
    _presenter->print("<class>.<message>       - view a method byte codes\n");
    _presenter->print("<class>.<index>         - view a method specified by an index byte codes\n");
    _presenter->print("#<symbol>               - view symbol byte codes\n");
@@ -674,6 +676,9 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
    if (test(flags, elAbstract)) {
       printLineAndCount("@flag ", "elAbstract", row, pageSize);
    }
+   if (test(flags, elAutoLoaded)) {
+      printLineAndCount("@flag ", "elAutoLoaded", row, pageSize);
+   }
    if (test(flags, elClassClass)) {
       printLineAndCount("@flag ", "elClassClass", row, pageSize);
    }
@@ -1029,11 +1034,12 @@ struct BCVSessionInfo
    ByteCodeViewer* viewer;
    int             row;
    int             pageSize;
+   ustr_t          filter;
 };
 
-void ByteCodeViewer :: listMembers()
+void ByteCodeViewer :: listMembers(ustr_t filter)
 {
-   BCVSessionInfo info = { this, 1, _pageSize };
+   BCVSessionInfo info = { this, 1, _pageSize, filter };
 
    _module->forEachReference(&info, [](ModuleBase* module, ref_t reference, void* arg)
       {
@@ -1042,6 +1048,9 @@ void ByteCodeViewer :: listMembers()
          BCVSessionInfo* info = (BCVSessionInfo*)arg;
 
          if (isWeakReference(referenceName)) {
+            if (!info->filter.empty() && referenceName.findStr(info->filter) == NOTFOUND_POS)
+               return;
+
             if (module->mapSection(reference | mskVMTRef, true)) {
                info->viewer->printLineAndCount("class ", referenceName, 
                   info->row, info->pageSize);
@@ -1077,8 +1086,8 @@ void ByteCodeViewer :: runSession()
       }
 
       if (buffer[0] == '?') {
-         if (buffer[1] == 0) {
-            listMembers();
+         if (buffer[1] == 0 || buffer[1] == '~') {
+            listMembers(buffer[1] == 0 ? nullptr : buffer + 2);
          }
          else printHelp();
       }

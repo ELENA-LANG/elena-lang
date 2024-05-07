@@ -124,7 +124,7 @@ public template for::and<init_expr1, init_expr2,condExpr,step_expr1, step_expr2>
 
 public template try(try_block) : __included(statements)
 {
-   try_block \\ back(nil);
+   try_block \ back(nil);
 }
 
 // --- try:catch ---
@@ -177,13 +177,13 @@ public template lock<expr>(block) : __included(statements)
 
 // --- operator templates ---
 
-// .\
+// \.
 public template operator::alt<identifier>(expr) : __included(statements)
 {
    expr \ back(identifier);
 }
 
-// .!
+// !.
 public template operator::else<identifier>(expr) : __included(statements)
 {
     (nil == identifier) ?
@@ -194,7 +194,7 @@ public template operator::else<identifier>(expr) : __included(statements)
     expr
 }
 
-// .?
+// ?.
 public template operator::ifnil<identifier>(expr) : __included(statements)
 {
     cast bool(nil != identifier) 

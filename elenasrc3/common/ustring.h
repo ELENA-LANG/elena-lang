@@ -693,6 +693,13 @@ namespace elena_lang
 
          copy(value + index, length);
       }
+      DynamicString(const T* value)
+      {
+         _size = 0;
+         _string = nullptr;
+
+         copy(value, getlength(value));
+      }
 
    };
 

@@ -28,7 +28,6 @@ namespace elena_lang
       DynamicString<char>  _body;
 
       SystemEnv            _env;
-      ThreadContent        _tcontext;
 
       bool connect(void* tape);
       bool execute(void* tape);

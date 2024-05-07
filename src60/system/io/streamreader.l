@@ -5,25 +5,14 @@ namespace io
    // --- BinaryReader ---
     
    public interface BinaryReader
-   {
-      Stream _stream;
-      int    _length;
-        
-      read(byte[] array, ref int actualLength)
-      {
-         _stream.read(array, ref actualLength)
-      }
+   {      
+      abstract read(byte[] array, ref int actualLength);
     
-      Stream Stream = _stream;
+      get abstract object Source();
     
-      close() => _stream;
+      abstract close();
     
-      get bool Available()
-      {
-         int position := _stream.Index;
-            
-         ^ position < _length
-      }
+      get abstract bool Available();
                 
       read(byte[] array, int length)
       {
@@ -131,9 +120,27 @@ namespace io
     
    public sealed BinaryStreamReader : BinaryReader
    {
+      Stream _stream;
+      
       constructor(Stream stream)
       {
          _stream := stream
+      }
+
+      object Source = _stream;
+
+      close() => _stream;
+
+      get bool Available()
+      {
+         int position := _stream.Index;
+            
+         ^ position < _stream.Length
+      }
+
+      read(byte[] array, ref int actualLength)
+      {
+         _stream.read(array, ref actualLength)
       }
    }
     
@@ -146,7 +153,7 @@ namespace io
     
       abstract read(char[] array, ref int actualLength);
     
-      get abstract Stream Stream();
+      get abstract object Source();
     
       get abstract Encoder Encoder();
     
@@ -234,6 +241,63 @@ namespace io
          };
     
          ^ line
+      }
+   }
+
+   // --- StreamReader ---
+   public class TextStreamReader : TextReader
+   {
+      Stream  _stream;
+      Encoder _encoder;
+      bool    _open;
+    
+      constructor new(Stream stream, Encoder encoder)
+      {
+         _output := new TextBuilder();
+         _newLineConstant := newLineConstant;                
+         _newLineLength := _newLineConstant.Length;
+            
+         _stream := stream;
+         _encoder := encoder;
+         _open := true;
+      }
+    
+      constructor new(path)
+         <= new(FileStream.openForRead(path), UTF8Encoder);
+            
+      constructor new(string path, Encoder encoder)
+         <= new(FileStream.openForRead(path), encoder);
+    
+      bool Available = _open;
+    
+      object Source = _stream;
+    
+      Encoder Encoder = _encoder;
+    
+      read(char[] output, ref int length)
+      {
+         int  bufferLength := 64;
+         byte buffer[64];
+         _stream.read(buffer, ref bufferLength);
+         if(bufferLength == 0)
+         {
+            _open := false; 
+            length := 0;
+         }
+         else
+         {
+            int read := bufferLength;
+    
+            _encoder.convertFrom(buffer, 0, ref bufferLength, output, 0, ref length);
+                
+            if(read > bufferLength)
+               { _stream.reduceIndex(read - bufferLength) }
+         }           
+      }
+        
+      close()
+      {
+         _stream.close()
       }
    }
 }

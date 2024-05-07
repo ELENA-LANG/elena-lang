@@ -66,9 +66,6 @@ sealed packed WSADATA
    short iMaxUdpDg;
    int   lpVendorInfo;
     
-   constructor init(int version, int highVersion)
-        <= init(cast byte(version), cast byte(highVersion));
-    
    constructor init(byte version, byte highVersion)
    {
       short wVersionRequested := version * 10h + highVersion;

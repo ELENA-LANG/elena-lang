@@ -159,8 +159,10 @@ namespace elena_lang
       UShortCondOp         = 0x0081,
       IntLongOp            = 0x0082,
       DistributedTypeList  = 0x0083,
+      UnboxAndCallMessage  = 0x0084,
+      NilRefBranchOp       = 0x0085,
 
-      MaxOperationalKey    = 0x0082,
+      MaxOperationalKey    = 0x0085,
 
       Import               = 0x0090,
       DictionaryOp         = 0x0091,
@@ -230,6 +232,8 @@ namespace elena_lang
       Special              = 0x8010,
       LongMode             = 0x8011,
       Source               = 0x8012,
+      Length               = 0x8013,
+      TempVar              = 0x8014,
 
       Idle                 = 0x8FFF,
 
@@ -332,6 +336,7 @@ namespace elena_lang
          map.add("local", BuildKey::Local);
          map.add("intcondop", BuildKey::IntCondOp);
          map.add("realcondop", BuildKey::RealCondOp);
+         map.add("nilcondop", BuildKey::NilCondOp);
          map.add("branchop", BuildKey::BranchOp);
          map.add("intbranchop", BuildKey::IntBranchOp);
          map.add("conversion_op", BuildKey::ConversionOp);
@@ -347,6 +352,19 @@ namespace elena_lang
          map.add("open_statement", BuildKey::OpenStatement);
          map.add("end_statement", BuildKey::EndStatement);
          map.add("saving_int", BuildKey::SavingInt);
+         map.add("sealed_dispatching", BuildKey::SealedDispatchingOp);
+         map.add("local_reference", BuildKey::LocalReference);
+         map.add("varg_sop", BuildKey::VArgSOp);
+         map.add("unbox_call_message", BuildKey::UnboxAndCallMessage);
+         map.add("loading_index", BuildKey::LoadingIndex);
+         map.add("free_varstack", BuildKey::FreeVarStack);
+         map.add("exit", BuildKey::Exit);
+         map.add("parameter", BuildKey::Parameter);
+         map.add("call_op", BuildKey::CallOp);
+         map.add("terminator", BuildKey::TerminatorReference);
+         map.add("free_varstack", BuildKey::FreeVarStack);
+         map.add("going_to_eop", BuildKey::goingToEOP);
+         map.add("field", BuildKey::Field);
 
          map.add("value", BuildKey::Value);
          map.add("tape", BuildKey::Tape);
@@ -357,6 +375,13 @@ namespace elena_lang
          map.add("variable_info", BuildKey::VariableInfo);
          map.add("column", BuildKey::Column);
          map.add("row", BuildKey::Row);
+         map.add("message", BuildKey::Message);
+         map.add("index", BuildKey::Index);
+         map.add("length", BuildKey::Length);
+         map.add("temp_var", BuildKey::TempVar);
+         map.add("message", BuildKey::Message);
+         map.add("reserved", BuildKey::Reserved);
+         map.add("reserved_n", BuildKey::ReservedN);         
       }
    };
 

@@ -1,7 +1,7 @@
 ..\..\bin\ldoc system
 ..\..\bin\ldoc system'routines
+..\..\bin\ldoc system'routines'stex
 ..\..\bin\ldoc system'runtime
-..\..\bin\ldoc system'runtime'stex
 ..\..\bin\ldoc system'threading
 ..\..\bin\ldoc system'dynamic
 ..\..\bin\ldoc system'drawing
@@ -11,6 +11,7 @@
 ..\..\bin\ldoc extensions'routines
 ..\..\bin\ldoc extensions'scripting
 ..\..\bin\ldoc extensions'dynamic
+..\..\bin\ldoc extensions'io
 ..\..\bin\ldoc cellular
 ..\..\bin\ldoc algorithms
 ..\..\bin\ldoc sqlite

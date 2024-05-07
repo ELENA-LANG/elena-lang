@@ -1,0 +1,13 @@
+<configuration>
+    <files>
+        <module>
+            <file>charcommon.l</file>
+        </module>
+    </files>
+    <project>
+        <executable></executable>
+        <options></options>
+        <namespace>chat_shared</namespace>
+        <template>lib60</template>
+    </project>
+</configuration>

@@ -205,6 +205,9 @@ namespace elena_lang
       void loadPathSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath,
          ProjectOption key, path_t configPath);
 
+      void loadBoolSetting(ConfigFile& config, ConfigFile::Node& configRoot, ustr_t xpath,
+         ProjectOption key);
+
       void loadForwards(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath);
 
       ustr_t resolveKey(ProjectOption category, ProjectOption item, ustr_t key);

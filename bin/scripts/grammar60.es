@@ -144,6 +144,7 @@
   #define expression      ::= "message_operation" "(" call_expression ")";
   #define expression      ::= "property_operation" "(" prop_expression ")";
   #define expression      ::= "add_operation" "(" add_expression ")";
+  #define expression      ::= "sub_operation" "(" sub_expression ")";
   #define expression      ::= "mul_operation" "(" mul_expression ")";
   #define expression      ::= "div_operation" "(" div_expression ")";
   #define expression      ::= "equal_operation" "(" equal_expression ")";
@@ -244,6 +245,18 @@
 
   #define add_operation ::=
                <= "add" => expression;
+
+  #define sub_expression ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                              expression sub_operation
+<=
+               )
+=>;
+
+  #define sub_operation ::=
+               <= "subtract" => expression;
 
   #define mul_expression ::=
 <=

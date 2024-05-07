@@ -116,9 +116,11 @@ void ELENAVMMachine :: init(JITLinker& linker, SystemEnv* exeEnv)
 
    _configuration->initLoader(_libraryProvider);
 
-   _compiler->populatePreloaded(
-      (uintptr_t)exeEnv->th_table,
-      (uintptr_t)exeEnv->th_single_content);
+   if (_standAloneMode) {
+      _compiler->populatePreloaded(
+         (uintptr_t)exeEnv->th_table,
+         (uintptr_t)exeEnv->th_single_content);
+   }
 
    linker.setCompiler(_compiler);
 
@@ -224,7 +226,7 @@ void ELENAVMMachine :: fillPreloadedSymbols(JITLinker& jitLinker, MemoryWriter& 
 {
    ModuleInfoList symbolList({});
    for (auto it = _preloadedList.start(); !it.eof(); ++it) {
-      jitLinker.copyMetaList(*it, symbolList);
+      jitLinker.copyPreloadedMetaList(*it, symbolList, false);
    }
    _preloadedList.clear();
 
@@ -437,7 +439,7 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
       else jitLinker->setCompiler(_compiler);
    }
 
-   if (_initialized && compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule)) {
+   if (_initialized && jitLinker && compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule)) {
       void* address = (void*)jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
 
       resumeVM(*jitLinker, env, (void*)criricalHandler);
@@ -447,7 +449,7 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
 
       return execute(env, address);
    }
-   if (_initialized && !_standAloneMode) {
+   if (_initialized && jitLinker && !_standAloneMode) {
       resumeVM(*jitLinker, env, (void*)criricalHandler);
    }
 
@@ -472,6 +474,16 @@ void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, const char* crirical
 addr_t ELENAVMMachine :: evaluate(void* tape)
 {
    return interprete(_env, tape, INVALID_POS, nullptr, false);
+}
+
+bool ELENAVMMachine :: evaluateAndReturn(void* tape, char* output, size_t maxLength, size_t& copied)
+{
+   auto result = evaluate(tape);
+   if (result) {
+      return SystemRoutineProvider::CopyResult(result, output, maxLength, copied);
+   }
+
+   return false;
 }
 
 void ELENAVMMachine :: Exit(int exitCode)

@@ -1,6 +1,8 @@
+// --- test ---
+
 import extensions;
 
-public program()
+public program() : info("sdfsdgds")
 {
-    console.printLine("Test");
+   var s := "abcd";
 }

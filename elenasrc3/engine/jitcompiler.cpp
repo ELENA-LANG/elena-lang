@@ -1522,6 +1522,16 @@ void elena_lang::loadFrameIndexROp(JITCompilerScope* scope)
             writer->writeWord((unsigned short)getFPOffset(
                scope->command.arg1 << scope->constants->indexPower, scope->frameOffset));
             break;
+         case ARG12_1:
+            scope->compiler->writeImm12(writer,
+               getFPOffset(scope->command.arg1 << scope->constants->indexPower, scope->frameOffset),
+               0);
+            break;
+         case INV_ARG12_1:
+            scope->compiler->writeImm12(writer,
+               -getFPOffset(scope->command.arg1 << scope->constants->indexPower, scope->frameOffset),
+               0);
+            break;
          case PTR32_2:
             if (scope->command.arg2)
                scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
@@ -1548,7 +1558,8 @@ void elena_lang::loadFrameIndexROp(JITCompilerScope* scope)
             break;
          case PTR32HI_2:
          {
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
+            if (scope->command.arg2)
+               scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             break;
          }
          case PTR32LO_2:
@@ -2979,7 +2990,9 @@ void JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t 
             writer->Memory()->addReference(mskCodeRef32, position);
             break;
          case mskRef64:
-            MemoryBase::writeDWord(writer->Memory(), position, writer->position());
+            //MemoryBase::writeDWord(writer->Memory(), position, writer->position());
+            MemoryBase::writeQWord(writer->Memory(), position,
+               ptrToUInt64(writer->Memory()->get(writer->position())));
             writer->Memory()->addReference(mskCodeRef64, position);
             break;
          default:

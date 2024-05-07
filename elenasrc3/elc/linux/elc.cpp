@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the Linux command-line compiler
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       Project          project(*dataPath, CURRENT_PLATFORM, &Presenter::getInstance());
       LinuxLinker      linker(&errorProcessor, &LinuxImageFormatter::getInstance(&project));
-      CompilingProcess process(dataPath, "<moduleProlog>", "<prolog>", "<epilog>",
+      CompilingProcess process(dataPath, nullptr, "<moduleProlog>", "<prolog>", "<epilog>",
          &Presenter::getInstance(), &errorProcessor,
          VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 

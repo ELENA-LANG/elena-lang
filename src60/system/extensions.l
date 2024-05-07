@@ -11,6 +11,9 @@ public extension objectOp
    __getParentClass() : external(system'core_routines'__object_parentclass),
                   info("Returns the parent class");
 
+   __getParent() : external(system'core_routines'__object_parent),
+                  info("Returns the parent of the specified class");
+
    bool safeEqual(o)
          : info("Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible")
       = self.equal(o) \ back(false);
@@ -37,7 +40,21 @@ public extension objectOp
       = action(self);
 
    bool instanceOf(type) : external(system'core_routines'__object_instanceOf),
-                  info("Checks if the object is an instance of type");   
+                  info("Checks if the object is an instance of type");
+
+   bool subsetOf(type)
+   {
+      var class := self.__getClass();
+      while (class != nil) {
+         if (class == type) {
+            ^ true
+         };
+       
+         class := class.__getParent()  
+      };
+
+      ^ false
+   }
 }
 
 // --- valueOp ---

@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Compiler Engine templates,
 //		classes, structures, functions and constants
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENACONST_H
@@ -17,7 +17,7 @@ namespace elena_lang
 
    constexpr auto LINE_LEN                   = 0x1000;            // the maximal source line length
    constexpr auto IDENTIFIER_LEN             = 0x0300;            // the maximal identifier length
-   constexpr auto MESSAGE_LEN                = 0x200;             // the maximal message length
+   constexpr auto MESSAGE_LEN                = 0x400;             // the maximal message length
 
   // --- ELENA Standart message constants ---
    constexpr auto ACTION_ORDER               = 9;
@@ -120,6 +120,7 @@ namespace elena_lang
    // --- ELENA section prefixes
    constexpr auto META_PREFIX                = "meta$";
    constexpr auto INLINE_PREFIX              = "inline$";
+   constexpr auto INLINEEXPR_PREFIX          = "expr$";
    constexpr auto INLINE_PROPERTY_PREFIX     = "prop$";
    constexpr auto AUTO_GENERATED_PREFIX      = "generated$";
 

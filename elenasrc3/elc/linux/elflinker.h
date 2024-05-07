@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Executive Linker class declaration
 //		Supported platforms: Linux
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021+2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELFLINKER_H
@@ -56,7 +56,8 @@ namespace elena_lang
       virtual void prepareElfImage(ImageProviderBase& provider, ElfExecutableImage& image, unsigned int headerSize);
 
    public:
-      LinkResult run(ProjectBase& project, ImageProviderBase& code, PlatformType uiType) override;
+      LinkResult run(ProjectBase& project, ImageProviderBase& code, PlatformType uiType, 
+         path_t exeExtension) override;
 
       ElfLinker(ErrorProcessorBase* errorProcessor, ImageFormatter* imageFormatter)
          : LinkerBase(errorProcessor)

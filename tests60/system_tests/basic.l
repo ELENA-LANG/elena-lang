@@ -1,6 +1,7 @@
 import extensions;
 import system'routines;
 import system'dynamic'expressions;
+import system'text;
 import ltests;
 
 // --- ControlTest ---
@@ -1837,6 +1838,59 @@ public ByteArrayOpTests() : testCase()
 
    Assert.ifEqual(r.Length, 3);
    Assert.ifEqual(r[1], 2);
+
+   console.write(".");
+}
+
+public ArrayAssignOperation() : testCase()
+{
+   int temp[4];
+
+   temp[0] := 1;
+   temp[1] := 2;
+   temp[2] := 3;
+   temp[3] := 4;
+
+   temp[0] += 2;
+   temp[1] -= 1;
+   temp[2] *= 2;
+   temp[3] /= 2;
+
+   Assert.ifEqual(temp[0], 3);
+   Assert.ifEqual(temp[1], 1);
+   Assert.ifEqual(temp[2], 6);
+   Assert.ifEqual(temp[3], 2);
+
+   console.write(".");
+}
+
+VT_B;
+
+VT_C
+{
+    VT_B cast()
+        = new VT_B();
+}
+
+singleton VT_E
+{
+   load(params VT_B[] o)
+   {
+      ^ new TextBuilder().print(o.asEnumerable()).Value;
+   }
+
+   loadAndTypecast(params object[] args)
+   {
+      ^ self.load(cast VT_B(params args));
+   }
+}
+
+public variadicTypecastingTests() : testCase()
+{
+   var b := new VT_B();
+   var c := new VT_C();
+   
+   Assert.ifEqual(VT_E.loadAndTypecast(b,c), "system_tests'$private'VT_B,system_tests'$private'VT_B");
 
    console.write(".");
 }

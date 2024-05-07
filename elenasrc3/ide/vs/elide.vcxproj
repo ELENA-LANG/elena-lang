@@ -202,7 +202,6 @@
     <ClInclude Include="..\..\gui\windows\wintreeview.h" />
     <ClInclude Include="..\debugcontroller.h" />
     <ClInclude Include="..\editframe.h" />
-    <ClInclude Include="..\ide.h" />
     <ClInclude Include="..\idecommon.h" />
     <ClInclude Include="..\idecontroller.h" />
     <ClInclude Include="..\ideproject.h" />
@@ -251,7 +250,6 @@
     <ClCompile Include="..\..\gui\windows\wintreeview.cpp" />
     <ClCompile Include="..\debugcontroller.cpp" />
     <ClCompile Include="..\editframe.cpp" />
-    <ClCompile Include="..\ide.cpp" />
     <ClCompile Include="..\idecommon.cpp" />
     <ClCompile Include="..\idecontroller.cpp" />
     <ClCompile Include="..\ideproject.cpp" />

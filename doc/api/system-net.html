@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 5.8: Module system'net
+ELENA Standard Library 6.0: Module system'net
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 5.8: Module system'net
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>5.8
+ELENA&nbsp;Standard&nbsp;Library<br>6.0
 </STRONG>
 </DIV>
 </DIV>
@@ -36,13 +36,20 @@ system'net'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">AddrInfo</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">AddrInfo</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'net'AddrInfo</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -53,64 +60,64 @@ sealed Class <SPAN CLASS="typeNameLabel">AddrInfo</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>ai_flags</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>ai_family</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>ai_socktype</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>ai_protocol</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>ai_addrlen</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>ai_canonname</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>ai_addr</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>ai_next</CODE>
 </TD>
@@ -118,186 +125,6 @@ sealed Class <SPAN CLASS="typeNameLabel">AddrInfo</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-net.html#AddrInfo">AddrInfo</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== COVERSION SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Conversion Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-net.html#AddrInfo">AddrInfo</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- =========== PROPERTY SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Property Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Property accessor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Flags</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set</i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Flags(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Family</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set</i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Family(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>SocketType</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set</i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>SocketType(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Protocol</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set</i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Protocol(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>AddressLen</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set</i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>AddressLen(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Address</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>clear()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="AddrInfoReader">
@@ -313,13 +140,20 @@ system'net'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">AddrInfoReader</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">AddrInfoReader</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'net'AddrInfoReader</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -330,16 +164,16 @@ sealed Class <SPAN CLASS="typeNameLabel">AddrInfoReader</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>paddrinfo</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>prootinfo</CODE>
 </TD>
@@ -350,18 +184,18 @@ sealed Class <SPAN CLASS="typeNameLabel">AddrInfoReader</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-net.html#AddrInfoReader">AddrInfoReader</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-net.html#AddrInfo">AddrInfo</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> service, <SPAN CLASS="memberNameLink"><A HREF="system-net.html#AddrInfo">AddrInfo</A></SPAN> info)
 </CODE>
 </TD>
 </TR>
@@ -370,58 +204,28 @@ sealed Class <SPAN CLASS="typeNameLabel">AddrInfoReader</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-net.html#AddrInfoReader">AddrInfoReader</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-net.html#AddrInfo">AddrInfo</A></SPAN>)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-net.html#AddrInfoReader">AddrInfoReader</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> node, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> service, <SPAN CLASS="memberNameLink"><A HREF="system-net.html#AddrInfo">AddrInfo</A></SPAN> info)
 </CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== COVERSION SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Conversion Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-net.html#AddrInfoReader">AddrInfoReader</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- =========== PROPERTY SUMMARY =========== -->
+<!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Property Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Property accessor</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Available</CODE>
+<CODE>Available()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -439,25 +243,7 @@ sealed Class <SPAN CLASS="typeNameLabel">AddrInfoReader</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> service, <SPAN CLASS="memberNameLink"><A HREF="system-net.html#AddrInfo">AddrInfo</A></SPAN> info)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> node, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> service, <SPAN CLASS="memberNameLink"><A HREF="system-net.html#AddrInfo">AddrInfo</A></SPAN> info)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>next()
 </CODE>
@@ -466,7 +252,7 @@ sealed Class <SPAN CLASS="typeNameLabel">AddrInfoReader</SPAN></PRE>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#AddrInfo">AddrInfo</A></SPAN> info)
 </CODE>
@@ -475,7 +261,7 @@ sealed Class <SPAN CLASS="typeNameLabel">AddrInfoReader</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>close()
 </CODE>
@@ -484,9 +270,6 @@ sealed Class <SPAN CLASS="typeNameLabel">AddrInfoReader</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="IN_ADDR">
@@ -502,13 +285,20 @@ system'net'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">IN_ADDR</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">IN_ADDR</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'net'IN_ADDR</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -519,8 +309,8 @@ sealed Class <SPAN CLASS="typeNameLabel">IN_ADDR</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>addr</CODE>
 </TD>
@@ -528,61 +318,19 @@ sealed Class <SPAN CLASS="typeNameLabel">IN_ADDR</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-net.html#IN_ADDR">IN_ADDR</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== COVERSION SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Conversion Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-net.html#IN_ADDR">IN_ADDR</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- =========== PROPERTY SUMMARY =========== -->
+<!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Property Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Property accessor</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>set</i>&nbsp;</CODE></TD>
+<i>set </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> addr)
 </CODE>
@@ -603,7 +351,7 @@ sealed Class <SPAN CLASS="typeNameLabel">IN_ADDR</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
@@ -612,9 +360,6 @@ sealed Class <SPAN CLASS="typeNameLabel">IN_ADDR</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="SOCKADDR_IN">
@@ -630,13 +375,20 @@ system'net'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">SOCKADDR_IN</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">SOCKADDR_IN</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'net'SOCKADDR_IN</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -647,32 +399,32 @@ sealed Class <SPAN CLASS="typeNameLabel">SOCKADDR_IN</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>family</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>port</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system-net.html#IN_ADDR">IN_ADDR</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-net.html#IN_ADDR">IN_ADDR</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>sin_addr</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
-</TD>
+<CODE>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>sin_zero</CODE>
 </TD>
@@ -680,113 +432,39 @@ sealed Class <SPAN CLASS="typeNameLabel">SOCKADDR_IN</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== STATIC PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Static Property Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-net.html#SOCKADDR_IN">SOCKADDR_IN</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-net.html#SOCKADDR_IN">SOCKADDR_IN</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
+<CODE>Default()</CODE>
 </TD>
 </TR>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== COVERSION SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Conversion Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-net.html#SOCKADDR_IN">SOCKADDR_IN</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- =========== PROPERTY SUMMARY =========== -->
+<!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Property Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Property accessor</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>family</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set</i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>family(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> value)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>port</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set</i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>port(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> value)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set</i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>family(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set</i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>port(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set</i>&nbsp;</CODE></TD>
+<i>set </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>ip_address(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> ip)
 </CODE>
@@ -795,30 +473,6 @@ sealed Class <SPAN CLASS="typeNameLabel">SOCKADDR_IN</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="Socket">
@@ -834,13 +488,20 @@ system'net'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">Socket</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">Socket</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'net'Socket</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -851,10 +512,10 @@ sealed Class <SPAN CLASS="typeNameLabel">Socket</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theHandle</CODE>
+<CODE>_handle</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -863,18 +524,18 @@ sealed Class <SPAN CLASS="typeNameLabel">Socket</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-net.html#Socket">Socket</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> handle)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle)
 </CODE>
 </TD>
 </TR>
@@ -884,36 +545,6 @@ sealed Class <SPAN CLASS="typeNameLabel">Socket</SPAN></PRE>
 <SPAN CLASS="memberNameLink"><A HREF="system-net.html#Socket">Socket</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> adressFamily, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> type, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> protocol)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-net.html#Socket">Socket</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== COVERSION SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Conversion Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-net.html#Socket">Socket</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()
 </CODE>
 </TD>
 </TR>
@@ -932,7 +563,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Socket</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>open(<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN> sockAddrPtr, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> nameLen)
 </CODE>
@@ -941,7 +572,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Socket</SPAN></PRE>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>bind(<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN> sockAddrPtr, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> nameLen)
 </CODE>
@@ -950,7 +581,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Socket</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>listen(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> backLog)
 </CODE>
@@ -968,7 +599,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Socket</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>connect(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> ip_address, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> port)
 </CODE>
@@ -979,25 +610,25 @@ sealed Class <SPAN CLASS="typeNameLabel">Socket</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A><I>[]</I></SPAN> buffer)
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> buffer)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A><I>[]</I></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> flags, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> sent)
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> flags)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A><I>[]</I></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> maxLength, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> flags, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> recvd)
+<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> maxLength, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> flags)
 </CODE>
 </TD>
 </TR>
@@ -1013,7 +644,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Socket</SPAN></PRE>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>shutdown(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> how)
 </CODE>
@@ -1022,16 +653,16 @@ sealed Class <SPAN CLASS="typeNameLabel">Socket</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>iocommand(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> command, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> parameter)
+<CODE>iocommand(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> command)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>option(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> option, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> value)
 </CODE>
@@ -1040,7 +671,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Socket</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
 <CODE>close()
 </CODE>
@@ -1049,9 +680,6 @@ sealed Class <SPAN CLASS="typeNameLabel">Socket</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="SocketException">
@@ -1067,13 +695,20 @@ system'net'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-Class <SPAN CLASS="typeNameLabel">SocketException</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">SocketException</SPAN></PRE>
 <BR>
 </DIV>
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">system'Exception</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'net'SocketException</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Field Summary</H3>
@@ -1084,26 +719,26 @@ Class <SPAN CLASS="typeNameLabel">SocketException</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theMessage</CODE>
+<CODE>message</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#CallStack">CallStack</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#CallStack">CallStack</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theCallstack</CODE>
+<CODE>callStack</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>theCode</CODE>
+<CODE>_code</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1112,22 +747,13 @@ Class <SPAN CLASS="typeNameLabel">SocketException</SPAN></PRE>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor Summary</H3>
+<H3>Constructor / Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
 </TR>
 <TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>raise()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-net.html#SocketException">SocketException</A></SPAN></CODE></TD>
@@ -1136,7 +762,7 @@ Class <SPAN CLASS="typeNameLabel">SocketException</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-net.html#SocketException">SocketException</A></SPAN></CODE></TD>
@@ -1145,54 +771,24 @@ Class <SPAN CLASS="typeNameLabel">SocketException</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-net.html#SocketException">SocketException</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== COVERSION SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Conversion Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Type</TH>
-<TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-net.html#SocketException">SocketException</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- =========== PROPERTY SUMMARY =========== -->
+<!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Property Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Property accessor</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>ErrorCode</CODE>
+<CODE>ErrorCode()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1219,41 +815,6 @@ Class <SPAN CLASS="typeNameLabel">SocketException</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
-</LI>
-</UL>
-</DIV>
-<HR>
-</DIV>
-<A NAME="#initializer">
-</A>
-<!-- ======== START OF SYMBOL DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'net'</DIV>
-<H2 title="#initializer" class="title">#initializer</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Symbol Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Name</TH>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>symbol #initializer</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</DIV>
 <HR>
 </DIV>
 <A NAME="AF_INET">
@@ -1265,7 +826,14 @@ system'net'</DIV>
 <H2 title="AF_INET" class="title">AF_INET</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<DIV CLASS="summary">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Symbol Summary</H3>
@@ -1274,14 +842,12 @@ system'net'</DIV>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Name</TH>
 </TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>symbol AF_INET</CODE>
+<CODE>AF_INET</CODE>
 </TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -1297,7 +863,14 @@ system'net'</DIV>
 <H2 title="AF_UNSPEC" class="title">AF_UNSPEC</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<DIV CLASS="summary">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Symbol Summary</H3>
@@ -1306,14 +879,12 @@ system'net'</DIV>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Name</TH>
 </TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>symbol AF_UNSPEC</CODE>
+<CODE>AF_UNSPEC</CODE>
 </TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -1329,7 +900,14 @@ system'net'</DIV>
 <H2 title="AI_PASSIVE" class="title">AI_PASSIVE</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<DIV CLASS="summary">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Symbol Summary</H3>
@@ -1338,14 +916,12 @@ system'net'</DIV>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Name</TH>
 </TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>symbol AI_PASSIVE</CODE>
+<CODE>AI_PASSIVE</CODE>
 </TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -1361,7 +937,14 @@ system'net'</DIV>
 <H2 title="FIONBIO" class="title">FIONBIO</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<DIV CLASS="summary">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Symbol Summary</H3>
@@ -1370,14 +953,12 @@ system'net'</DIV>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Name</TH>
 </TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>symbol FIONBIO</CODE>
+<CODE>FIONBIO</CODE>
 </TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -1393,7 +974,14 @@ system'net'</DIV>
 <H2 title="INVALID_SOCKET" class="title">INVALID_SOCKET</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<DIV CLASS="summary">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Symbol Summary</H3>
@@ -1402,14 +990,12 @@ system'net'</DIV>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Name</TH>
 </TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>symbol INVALID_SOCKET</CODE>
+<CODE>INVALID_SOCKET</CODE>
 </TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -1425,7 +1011,14 @@ system'net'</DIV>
 <H2 title="IPPROTO_TCP" class="title">IPPROTO_TCP</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<DIV CLASS="summary">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Symbol Summary</H3>
@@ -1434,14 +1027,12 @@ system'net'</DIV>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Name</TH>
 </TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>symbol IPPROTO_TCP</CODE>
+<CODE>IPPROTO_TCP</CODE>
 </TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -1457,39 +1048,14 @@ system'net'</DIV>
 <H2 title="SD_BOTH" class="title">SD_BOTH</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<DIV CLASS="summary">
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Symbol Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Name</TH>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
-<TD CLASS="colLast">
-<CODE>symbol SD_BOTH</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-</DIV>
+<DIV CLASS="description">
+<BR>
 <HR>
-</DIV>
-<A NAME="SOCKET_ERROR">
-</A>
-<!-- ======== START OF SYMBOL DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'net'</DIV>
-<H2 title="SOCKET_ERROR" class="title">SOCKET_ERROR</H2>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
 </DIV>
 <DIV CLASS="contentContainer">
-<DIV CLASS="summary">
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Symbol Summary</H3>
@@ -1498,14 +1064,12 @@ system'net'</DIV>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Name</TH>
 </TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>symbol SOCKET_ERROR</CODE>
+<CODE>SD_BOTH</CODE>
 </TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -1521,7 +1085,14 @@ system'net'</DIV>
 <H2 title="SOCK_STREAM" class="title">SOCK_STREAM</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<DIV CLASS="summary">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Symbol Summary</H3>
@@ -1530,14 +1101,49 @@ system'net'</DIV>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Name</TH>
 </TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>symbol SOCK_STREAM</CODE>
+<CODE>SOCK_STREAM</CODE>
 </TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="SOCKET_ERROR">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'net'</DIV>
+<H2 title="SOCKET_ERROR" class="title">SOCKET_ERROR</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
 </TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>SOCKET_ERROR</CODE>
+</TD>
 </TABLE>
 </LI>
 </UL>
@@ -1553,7 +1159,14 @@ system'net'</DIV>
 <H2 title="SOMAXCONN" class="title">SOMAXCONN</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<DIV CLASS="summary">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Symbol Summary</H3>
@@ -1562,14 +1175,12 @@ system'net'</DIV>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Name</TH>
 </TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>symbol SOMAXCONN</CODE>
+<CODE>SOMAXCONN</CODE>
 </TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -1585,7 +1196,14 @@ system'net'</DIV>
 <H2 title="TCP_NODELAY" class="title">TCP_NODELAY</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<DIV CLASS="summary">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Symbol Summary</H3>
@@ -1594,14 +1212,12 @@ system'net'</DIV>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Name</TH>
 </TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>symbol TCP_NODELAY</CODE>
+<CODE>TCP_NODELAY</CODE>
 </TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -1617,7 +1233,14 @@ system'net'</DIV>
 <H2 title="WSAECONNRESET" class="title">WSAECONNRESET</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<DIV CLASS="summary">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Symbol Summary</H3>
@@ -1626,14 +1249,12 @@ system'net'</DIV>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Name</TH>
 </TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>symbol WSAECONNRESET</CODE>
+<CODE>WSAECONNRESET</CODE>
 </TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -1649,7 +1270,14 @@ system'net'</DIV>
 <H2 title="WSAEWOULDBLOCK" class="title">WSAEWOULDBLOCK</H2>
 </DIV>
 <DIV CLASS="contentContainer">
-<DIV CLASS="summary">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
 <UL CLASS="blockList">
 <LI CLASS="blockList">
 <H3>Symbol Summary</H3>
@@ -1658,14 +1286,12 @@ system'net'</DIV>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Name</TH>
 </TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
-</TD>
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>symbol WSAEWOULDBLOCK</CODE>
+<CODE>WSAEWOULDBLOCK</CODE>
 </TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -1683,7 +1309,7 @@ system'net'</DIV>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>5.8
+ELENA&nbsp;Standard&nbsp;Library<br>6.0
 </STRONG>
 </DIV>
 </DIV>

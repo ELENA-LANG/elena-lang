@@ -1,5 +1,5 @@
 import system'net;
-import system'text;
+import system'io;
 import system'threading;
 import extensions;
 
@@ -13,9 +13,9 @@ public sealed class TcpClient
    int       _maxLength;    
    object    _lock;
 
-   Func<TcpClient,object>            onConnect  : event;
-   Func<TcpClient,byte[],int,object> onReceived : event;
-   Func<TcpClient,Exception,object>  onError    : event;
+   Func<TcpClient,object>                 onConnect  : event;
+   Func<TcpClient,byte[],int,object>      onReceived : event;
+   Func<TcpClient,SocketException,object> onError    : event;
 
    constructor new()
       <= new(1024);
@@ -31,23 +31,23 @@ public sealed class TcpClient
    connect(string address, int port)
    {
       //resolve server address and port
-      AddrInfo addrinfo := new AddrInfo();
+      AddrInfo addrinfo := default;
         
       // set address info
-      addrinfo.Family := AF_UNSPEC;
-      addrinfo.SocketType := SOCK_STREAM;
-      addrinfo.Protocol := IPPROTO_TCP;
+      addrinfo.ai_family := AF_UNSPEC;
+      addrinfo.ai_socktype := SOCK_STREAM;
+      addrinfo.ai_protocol := IPPROTO_TCP;
         
       AddrInfoReader reader := new AddrInfoReader(address, port.toString(), addrinfo);
       while (reader.Available)
       {
          reader.read(addrinfo);
             
-         int     ai_family := addrinfo.Family;
-         int     ai_socktype := addrinfo.SocketType;
-         int     ai_protocol := addrinfo.Protocol;
-         int     ai_addrlen := addrinfo.AddressLen;
-         pointer ai_addrptr := addrinfo.Address;
+         int     ai_family := addrinfo.ai_family;
+         int     ai_socktype := addrinfo.ai_socktype;
+         int     ai_protocol := addrinfo.ai_protocol;
+         int     ai_addrlen := addrinfo.ai_addrlen;
+         pointer ai_addrptr := addrinfo.ai_addr;
 
          _socket := new Socket(ai_family, ai_socktype, ai_protocol);
 
@@ -72,7 +72,7 @@ public sealed class TcpClient
    {
       int mode := val ? 0 : 1;
 
-      _socket.iocommand(FIONBIO, ref mode)
+      mode := _socket.iocommand(FIONBIO)
    }
     
    set Nodelay(bool val)
@@ -93,7 +93,7 @@ public sealed class TcpClient
       lock (_lock)
       {
          if(nil != _socket)
-            { self.closeInternal() }
+            { closeInternal() }
       }
    }
     
@@ -103,7 +103,7 @@ public sealed class TcpClient
         
       int  err := e.ErrorCode;
       if(err == WSAECONNRESET)
-         { self.closeInternal() }
+         { closeInternal() }
    }
     
    private readServer()
@@ -111,64 +111,28 @@ public sealed class TcpClient
       int received := 0;
       try
       {
-         _socket.read(_buffer, _maxLength, 0, ref received)
+         received := _socket.read(_buffer, _maxLength, 0)
       }
       catch(SocketException e)
       {
-         self.onError(e)
+         onError(e)
       };
         
       if (received == 0)
       { 
-         self.closeInternal() 
+         closeInternal() 
       }
       else
       { 
          if (received > 0)
-            { onReceived(self, _buffer, received) }
+            { onReceived?.(self, _buffer, received) }
       }
    }
     
-   write(int index, byte[] buffer, int length)
+   write(byte[] buffer, int length)
    {
-      int sent := 0;
-      _socket.write(buffer, length, 0, ref sent)
+      int sent := _socket.write(buffer, length, 0)
    }
-    
-   write(string s)
-   {
-      byte buffer[256];
-        
-      int         len := s.Length;
-      int         buf_len := 256;
-      int         index := 0;
-      while (len > 0)
-      {
-         if (len < 256)
-         { 
-            buf_len := len 
-         }
-         else
-         { 
-            buf_len := 256 
-         };
-            
-         UTF8Encoding.convert(index, buf_len, s, buffer);
-            
-         self.write(0, buffer, buf_len);
-            
-         len := len - buf_len;
-         index := index + buf_len
-      }
-   }
-    
-//   write(int n)
-//   {
-//      byte buffer[4];
-//      byteArrayHelper.write(buffer, 0, n);
-//        
-//      self.write(0, buffer, 4)
-//   }
     
    private proceed()
    {
@@ -176,7 +140,7 @@ public sealed class TcpClient
       lock (_lock)
       {
          if (nil != _socket)
-            { self.readServer(); retVal := true }
+            { readServer(); retVal := true }
       };
         
       ^ retVal
@@ -186,9 +150,33 @@ public sealed class TcpClient
    {
       _thread := Thread.assign(
       {
-            while(self.proceed()){}
+            while(proceed()){}
       });
         
       _thread.start()
    }
+}
+
+public class TcpClientWriter : BinaryWriter
+{
+   TcpClient _client;
+
+   constructor new(TcpClient client)
+   {
+      _client := client;
+   }
+
+   object Source = _client;
+   
+   bool write(byte[] buffer, int length)
+   {
+      _client.write(buffer, length);
+   
+      ^ true
+   }
+   
+   close()
+   {
+      _client.close()
+   }   
 }

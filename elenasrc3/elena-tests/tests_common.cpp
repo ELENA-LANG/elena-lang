@@ -37,7 +37,7 @@ TestModuleScope::TestModuleScope(bool tapeOptMode, bool threadFriendly)
    : ModuleScopeBase(new Module(), nullptr, DEFAULT_STACKALIGNMENT, DEFAULT_RAW_STACKALIGNMENT, 
       DEFAULT_EHTABLE_ENTRY_SIZE, MINIMAL_ARG_LIST, sizeof(uintptr_t), tapeOptMode, threadFriendly)
 {
-
+   _anonymousRef = 0x100;
 }
 
 bool TestModuleScope :: isStandardOne()
@@ -52,7 +52,7 @@ bool TestModuleScope :: withValidation()
 
 ref_t TestModuleScope :: mapAnonymous(ustr_t prefix)
 {
-   return 0;
+   return _anonymousRef++;
 }
 
 ref_t TestModuleScope :: mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility)
@@ -164,6 +164,11 @@ bool TestModuleScope :: isDeclared(ref_t reference)
    return false;
 }
 
+bool TestModuleScope :: isSymbolDeclared(ref_t reference)
+{
+   return false;
+}
+
 Visibility TestModuleScope :: retrieveVisibility(ref_t reference)
 {
    return Visibility::Private;
@@ -174,6 +179,10 @@ Visibility TestModuleScope :: retrieveVisibility(ref_t reference)
 ref_t TestTemplateProssesor :: generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
    List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList)
 {
+   ref_t mapping = _mapping.get({ templateRef, parameters.get(1).arg.reference});
+   if (mapping)
+      return mapping;
+
    return templateRef;
 }
 
@@ -201,16 +210,27 @@ bool TestTemplateProssesor :: importCodeTemplate(ModuleScopeBase& moduleScope, r
    return false;
 }
 
+bool TestTemplateProssesor :: importExpressionTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+   List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
+{
+   return false;
+}
+
 // --- CompilerEnvironment ---
 
 CompilerEnvironment :: CompilerEnvironment()
+   : _templateMapping(0)
 {
 
 }
 
-ModuleScopeBase* CompilerEnvironment :: createModuleScope(bool tapeOptMode, bool threadFriendly)
+ModuleScopeBase* CompilerEnvironment :: createModuleScope(bool tapeOptMode, bool threadFriendly, bool withAttributes)
 {
    auto scope = new TestModuleScope(tapeOptMode, threadFriendly);
+
+   if (withAttributes) {
+      scope->attributes.add("dispatch", V_DISPATCHER);
+   }
 
    return scope;
 }
@@ -225,11 +245,17 @@ void CompilerEnvironment :: initializeOperators(ModuleScopeBase* scope)
          1, PROPERTY_MESSAGE);
 }
 
+void CompilerEnvironment :: setUpTemplateMockup(ref_t templateRef, ref_t elementRef, ref_t reference)
+{
+   _templateMapping.add({ templateRef, elementRef }, reference);
+}
+
 Compiler* CompilerEnvironment :: createCompiler()
 {
-   auto compiler = new Compiler(nullptr, nullptr, TestTemplateProssesor::getInstance(), CompilerLogic::getInstance());
+   auto compiler = new Compiler(nullptr, TestErrorProcessor::getInstance(), TestTemplateProssesor::getInstance(&_templateMapping), CompilerLogic::getInstance());
 
    compiler->setNoValidation();
+   compiler->setDebugMode(false);
 
    return compiler;
 }

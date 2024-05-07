@@ -6,7 +6,7 @@ public sealed struct IN_ADDR
 {
    long addr;    
     
-   set Value(LongNumber addr)
+   set Value(long addr)
    {
       this addr := addr
    }
@@ -26,38 +26,14 @@ public sealed packed SOCKADDR_IN
    IN_ADDR sin_addr;
    byte    sin_zero[4]; 
 
-   set family(IntNumber n)
-   {
-      short n16 := n;
-        
-      family := n16
-   }
-
-   set port(IntNumber n)
-   {
-      short n16 := n;
-        
-      port := n16
-   }
+   get constructor Default()
+      = default;   
 
    set ip_address(string ip)
    {
       long addr := extern WS2_32.inet_addr(ip);
         
       sin_addr.Value := addr
-   }
-
-   constructor()
-   {
-      family := 0;
-      port := 0;
-        
-      sin_zero[0]:=0;
-      sin_zero[1]:=0;
-      sin_zero[2]:=0;
-      sin_zero[3]:=0;
-
-      sin_addr.clear()
    }
 }
 
@@ -67,104 +43,14 @@ const int SOCKADDR_IN_SIZE = 16;
 
 public packed AddrInfo
 {
-   int     ai_flags;
-   int     ai_family;
-   int     ai_socktype;
-   int     ai_protocol;
-   int     ai_addrlen;
-   pointer ai_canonname;
-   pointer ai_addr;
-   pointer ai_next;
-    
-   constructor()
-   {
-      self.clear()
-   }
-    
-   int Flags
-   {
-      get()
-      {
-         ^ ai_flags
-      }
-        
-      set(int val)
-      {
-         ai_flags := val
-      }
-   }
-    
-   int Family
-   {
-      get()
-      {
-         ^ ai_family
-      }
-        
-      set(int val)
-      {
-         ai_family := val
-      }
-   }
-
-   int SocketType
-   {
-      get()
-      {
-         ^ ai_socktype
-      }
-        
-      set(int val)
-      {
-         ai_socktype := val
-      }
-   }
-
-   int Protocol
-   {
-      get()
-      {
-         ^ ai_protocol
-      }
-        
-      set(int val)
-      {
-         ai_protocol := val
-      }
-   }
-
-   int AddressLen
-   {
-      get()
-      {
-         ^ ai_addrlen
-      }
-            
-      set(int val)
-      {
-         ai_addrlen := val
-      }
-   }
-
-   pointer Address
-   {
-      get()
-      {
-         ^ ai_addr
-      }
-   }
-                
-   clear()
-   {
-      ai_flags := 0;
-      ai_family := 0;
-      ai_socktype := 0;
-      ai_protocol := 0;
-      ai_addrlen := 0;
-      ai_canonname := default;
-      ai_addr := default;
-      ai_next := default;
-   }
+   int     ai_flags     : prop;
+   int     ai_family    : prop;
+   int     ai_socktype  : prop;
+   int     ai_protocol  : prop;
+   int     ai_addrlen   : prop;
+   pointer ai_canonname : prop;
+   pointer ai_addr      : prop;
+   pointer ai_next      : prop;
 }
 
 // --- AddrInfoReader ---
@@ -173,15 +59,15 @@ public sealed struct AddrInfoReader
 {
    pointer paddrinfo;
    pointer prootinfo;
-    
+
    constructor(string service, AddrInfo info)
    {
       pointer ptr := default;
       int retVal := extern WS2_32.getaddrinfo(0, service, info, ref ptr);
-            
+
       ifnot(0 == retVal)
          { SocketException.new("getaddrinfo failed", retVal).raise() };
-            
+
       paddrinfo := ptr;
       prootinfo := ptr;
    }
@@ -276,7 +162,7 @@ public sealed const struct Socket
 
    connect(string ip_address, int port)
    {
-      SOCKADDR_IN addr := new SOCKADDR_IN();
+      SOCKADDR_IN addr := SOCKADDR_IN.Default;
       addr.port := port;
       addr.family := system'net'AF_INET;
       addr.ip_address := ip_address;
@@ -291,23 +177,21 @@ public sealed const struct Socket
    int write(byte[] buffer)
    {
       int len := buffer.Length;
-      int sent := 0;
-      self.write(buffer, len, 0, ref sent);
-        
-      ^ sent
+
+      ^ self.write(buffer, len, 0);
    }
 
-   write(byte[] buffer, int length, int flags, ref int sent)
+   int write(byte[] buffer, int length, int flags)
    {
       int retVal := extern WS2_32.send(_handle, buffer, length, flags);
             
       if (retVal == SOCKET_ERROR)
          { SocketException.new("Error at socket").raise() };
             
-      sent := retVal
+      ^ retVal
    }
 
-   read(byte[] buffer, int maxLength, int flags, ref int recvd)
+   int read(byte[] buffer, int maxLength, int flags)
    {
       int retVal := extern WS2_32.recv(_handle,buffer,maxLength,flags);
         
@@ -318,12 +202,12 @@ public sealed const struct Socket
             { SocketException.new("Error at socket").raise() }
       };
             
-      recvd := retVal
+      ^ retVal
    }
 
    Socket accept()
    {
-      Socket socket := extern WS2_32.accept(_handle, 0, 0);
+      handle socket := extern WS2_32.accept(_handle, 0, 0);
             
       if (socket != INVALID_SOCKET)
       {
@@ -343,17 +227,19 @@ public sealed const struct Socket
          { SocketException.new("Error at socket").raise() }
    }
 
-   iocommand(int command, ref int parameter)
+   int iocommand(int command)
    {
-      int retVal := extern WS2_32.ioctlsocket(_handle, command, ref parameter);
+      int retVal := extern WS2_32.ioctlsocket(_handle, command, ref int parameter);
             
       if (retVal == SOCKET_ERROR)
-         { SocketException.new("Error at socket").raise() }
+         { SocketException.new("Error at socket").raise() };
+
+      ^ parameter;
    }
 
    option(int level, int option, bool value)
    {
-      int n := value.iif(1,0);
+      int n := value ? 1 : 0;
         
       int retVal := extern WS2_32.setsockopt(
                         _handle, level, option, ref n, 1);

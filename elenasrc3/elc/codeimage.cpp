@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image class implementations
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -82,7 +82,7 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
 
       // creating start up symbol
       Module* dummyModule = new Module();
-      linker.loadPreloaded(PRELOADED_FORWARD);
+      linker.loadPreloaded(PRELOADED_FORWARD, !imageInfo.autoModuleExtension);
       addLazyReference({ mskAutoSymbolRef, INVALID_POS, 
          dummyModule, dummyModule->mapReference(resolver->resolveForward(START_FORWARD)), 0});
 

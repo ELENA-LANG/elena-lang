@@ -144,7 +144,8 @@ enum class TemplateType
    Inline,
    InlineProperty,
    Class,
-   Statement
+   Statement,
+   Expression
 };
 
 enum class Visibility
@@ -301,6 +302,7 @@ public:
    virtual bool withValidation() = 0;
 
    virtual bool isDeclared(ref_t reference) = 0;
+   virtual bool isSymbolDeclared(ref_t reference) = 0;
 
    virtual bool isInternalOp(ref_t reference)
    {
@@ -416,7 +418,8 @@ enum class ExpressionAttribute : pos64_t
    RetValExpected       = 0x00020000000,
    CheckShortCircle     = 0x00040000000,
    LookaheadExprMode    = 0x00080000000,
-   DistributedForward   = 0x00040000000,
+   WithVariadicArgCast  = 0x02008000000,
+   DistributedForward   = 0x04000000000,
    DynamicObject        = 0x08000000000,
    Superior             = 0x10000000000,
    Lookahead            = 0x20000000000,
@@ -523,6 +526,8 @@ public:
    virtual bool importPropertyTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& parameters) = 0;
    virtual bool importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+      List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
+   virtual bool importExpressionTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
 };
 
@@ -708,7 +713,8 @@ protected:
    ErrorProcessorBase* _errorProcessor;
 
 public:
-   virtual LinkResult run(ProjectBase& project, ImageProviderBase& provider, PlatformType uiType) = 0;
+   virtual LinkResult run(ProjectBase& project, ImageProviderBase& provider, 
+      PlatformType uiType, path_t exeExtension) = 0;
 
    LinkerBase(ErrorProcessorBase* errorProcessor)
    {

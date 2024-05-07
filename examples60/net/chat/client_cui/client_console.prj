@@ -1,0 +1,22 @@
+<configuration>
+    <files>
+        <module>
+            <file>common.l</file>
+            <file>main.l</file>
+        </module>
+    </files>
+    <project>
+        <executable>chat_client.exe</executable>
+        <options></options>
+        <namespace>client_console</namespace>
+        <template>mt_console</template>
+    </project>
+    <references>
+        <reference key="chat_client">..\client</reference>
+        <reference key="chat_shared">..\shared</reference>
+    </references>
+  <forwards>
+     <forward key="program">extensions'programLoop</forward>
+     <forward key="program'control">client_console'control</forward>
+  </forwards>
+</configuration>
