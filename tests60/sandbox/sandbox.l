@@ -1,9 +1,8 @@
+// --- test ---
+
 import extensions;
 
-public program()
+public program() : info("sdfsdgds")
 {
-   AbortException.raise()
-
-//    if (program_arguments.Length == 1)
-//        { console.printLine("Please provide the path to the file to interpret"); AbortException.raise() };
+   var s := "abcd";
 }

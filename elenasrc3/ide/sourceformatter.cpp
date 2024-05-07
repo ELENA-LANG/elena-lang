@@ -14,44 +14,35 @@ using namespace elena_lang;
 // --- Lexical DFA Table ---
 
 const text_c lexStart = 'a';
-const text_c lexCommentStart = 'b';
-const text_c lexKeyword = 'c';
-const text_c lexOperator = 'd';
-const text_c lexBrackets = 'e';
-const text_c lexObject = 'f';
-const text_c lexCloseBracket = 'g';
-const text_c lexStick = 'h';
-const text_c lexDigit = 'i';
-const text_c lexHint = 'j';
-const text_c lexMessage = 'k';
-const text_c lexLookahead = 'l';
-const text_c lexLineComment = 'm';
-const text_c lexComment = 'n';
-const text_c lexComment2 = 'o';
-const text_c lexQuote = 'p';
-const text_c lexQuote2 = 'q';
-const text_c lexHint2 = 'r';
+const text_c lexKeyword = 'd';
+const text_c lexObject = 'e';
+const text_c lexOperator = 'g';
+const text_c lexComment = 'j';
+const text_c lexComment2 = 'n';
+const text_c lexDigit = 'p';
+const text_c lexQuote = 's';
 
 const text_c* lexDFA[] =
 {
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadpcaadfegdddddliiiiiiiiiiddddddaffffffffffffffffffffffffffeaedfaffffffffffffffffffffffffffehedf"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadpcaadfegdddddliiiiiiiiiiddddddaffffffffffffffffffffffffffeaedfaffffffffffffffffffffffffffehedf"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadpcaadfjgdddddliiiiiiiiiiddddddacccccccccccccccccccccccccceaedcaccccccccccccccccccccccccccehedc"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadpcaadfegdddddliiiiiiiiiiddddddaffffffffffffffffffffffffffeaedfaffffffffffffffffffffffffffehedf"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadpcaadfegdddddliiiiiiiiiiddddddaffffffffffffffffffffffffffeaedfaffffffffffffffffffffffffffehedf"),
-     _T("aaaaaaaaaakaakaaaaaaaaaaaaaaaaaakdpaaadfegdddddlffffffffffddddddaffffffffffffffffffffffffffeaedfaffffffffffffffffffffffffffehedf"),
-     _T("aaaaaaaaaakaakaaaaaaaaaaaaaaaaaakdpaaadfegdddddliiiiiiiiiiddddddaffffffffffffffffffffffffffeaedfaffffffffffffffffffffffffffehedf"),
-     _T("aaaaaaaaaakaakaaaaaaaaaaaaaaaaaakdpaaadaegdddddliiiiiiiiiiddddddakkkkkkkkkkkkkkkkkkkkkkkkkkeaedkakkkkkkkkkkkkkkkkkkkkkkkkkkehedk"),
-     _T("aaaaaaaaaakaakaaaaaaaaaaaaaaaaaakdpcaadfegdddddliiiiiiiiiiddddddaiiiiiikkkkkkkkkkkkkkkkkkkkeaedkaiiiiiikikkkikkkkkikkkkkkkkehedk"),
-     _T("ajjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjrjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj"),
-     _T("aaaaaaaaaakaakaaaaaaaaaaaaaaaaaakdpcaadkegdddddlkkkkkkkkkkddddddakkkkkkkkkkkkkkkkkkkkkkkkkkeaedkakkkkkkkkkkkkkkkkkkkkkkkkkkehedk"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaddpcaadfagnddddmaaaaaaaaaaddddddaffffffffffffffffffffffffffeaedfaffffffffffffffffffffffffffehedf"),
-     _T("ammmmmmmmmammammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"),
-     _T("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnonnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn"),
-     _T("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnbnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn"),
-     _T("ppppppppppppppppppppppppppppppppppqppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp"),
-     _T("aaaaaaaaaakaakaaaaaaaaaaaaaaaaaakdpaaadaegdddddliiiiiiiiiiddddddakkkkkkkkkkkkkkkkkkkkkkkkkkeaedkakkkkkkkkkkkkkkkkkkkkkkkkkkehedk"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadpcaadfjgddjddliiiiiiiiiiddddddaffffffffffffffffffffffffffeaedfaffffffffffffffffffffffffffehedf"),
+     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaeqaaaaaeeeeeeehooooooooooeeeeeeabbbbbbbbbbbbbbbbbbbbbbbbbbaaaababbbbbbbbbbbbbbbbbbbbbbbbbbfefab"),
+     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaceaaaaaaeeeeeeeaaaaaaaaaaaeeeeeeabbbbbbbbbbbbbbbbbbbbbbbbbbaaaababbbbbbbbbbbbbbbbbbbbbbbbbbaeaab"),
+     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaceaaaaaaeeeeeeeaaaaaaaaaaaeeeeeeaddddddddddddddddddddddddddaaaadaddddddddddddddddddddddddddaeaad"),
+     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaeeeeeeeaaaaaaaaaaaeeeeeeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
+     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaafffffffaaaaaaaaaaaffffffaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaa"),
+     _T("gggggggggggggggggggggggggggggggggfggggggfffffffgggggggggggffffffgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggfffgg"),
+     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaqaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
+     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaakaaaaiaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
+     _T("jiiiiiiiiijiijiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii"),
+     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
+     _T("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkklkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"),
+     _T("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkmkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"),
+     _T("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn"),
+     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
+     _T("ppppppppppppppppppppppppppppppppppppppppppppppppoooooooooopppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp"),
+     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaafffffffaaaaaaaaaaaffffffaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaa"),
+     _T("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqrqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"),
+     _T("ssssssssssssssssssssssssssssssssssqsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"),
+     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaafffffffaaaaaaaaaaaffffffaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaa"),
 };
 
 pos_t defineStyle(text_c state, pos_t style)
@@ -60,30 +51,19 @@ pos_t defineStyle(text_c state, pos_t style)
       case lexStart:
       case lexObject:
          return STYLE_DEFAULT;
-      //case lexKeyword:
-      //   return STYLE_KEYWORD;
-      //case lexMessage:
-      //   return STYLE_MESSAGE;
-      //case lexOperator:
-      //case lexBrackets:
-      //case lexStick:
-      //case lexCloseBracket:
-      //case lexLookahead:
-      //   return STYLE_OPERATOR;
-      //case lexLineComment:
-      //case lexComment:
-      //case lexComment2:
-      //case lexCommentStart:
-      //case lexHint:                  // !! temporal, do hint needs its own style
-      //case lexHint2:
-      //   return STYLE_COMMENT;
-      //case lexDigit:
-      //   return STYLE_NUMBER;
-      //case lexQuote:
-      //case lexQuote2:
-      //   return STYLE_STRING;
+      case lexKeyword:
+         return STYLE_KEYWORD;
+      case lexOperator:
+         return STYLE_OPERATOR;
+      case lexComment:
+      case lexComment2:
+         return STYLE_COMMENT;
+      case lexDigit:
+         return STYLE_NUMBER;
+      case lexQuote:
+         return STYLE_STRING;
       default:
-         return style;
+         return NOTFOUND_POS;
    }
 }
 
@@ -101,22 +81,25 @@ void SourceFormatter :: start(FormatterInfo& info)
    info.style = STYLE_DEFAULT;
 }
 
-bool SourceFormatter :: next(text_c ch, FormatterInfo& info, pos_t& lastStyle)
+bool SourceFormatter :: next(text_c ch, FormatterInfo& info, pos_t& definedStyle)
 {
    info.state = makeStep(ch, info.state);
-   pos_t nextStyle = defineStyle(info.state, info.style);
+   pos_t currentStyle = defineStyle(info.state, info.style);
 
    bool retVal = false;
-   if (info.lookAhead) {
-      info.style = nextStyle;
+   /*if (info.lookAhead) {
+      info.style = currentStyle;
    }
-   else if (info.style != nextStyle || info.state == lexLookahead) {
-      lastStyle = info.style;
-      info.style = nextStyle;
+   else */if (currentStyle != NOTFOUND_POS/*info.style != currentStyle*//* || info.state == lexLookahead*/) {
+      info.style = currentStyle;
+      definedStyle = currentStyle;
+
+      info.state = makeStep(ch, info.state);
+
       retVal = true;
    }
 
-   info.lookAhead = info.state == lexLookahead;
+   //info.lookAhead = info.state == lexLookahead;
 
    return retVal;
 }

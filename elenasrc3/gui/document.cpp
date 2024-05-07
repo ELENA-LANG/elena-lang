@@ -71,7 +71,11 @@ void LexicalFormatter :: format()
       if (!reader.goTo((disp_t)length))
          break;
    }
-   writer.writePos(style);
+
+   if (_formatter->next(0, info, style)) {
+      writer.writePos(style);      
+   }
+   else writer.writePos(0);
    writer.writePos(reader.position() + length);
 }
 

@@ -9,16 +9,15 @@ In development:
   --------------------------------------
   prom:elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test
   --------------------------------------
+  - test elt64-cli
   - ide : linux simplest gui
   - ide : bracket highlighting
-  - ide : syntax highlight
   - #617 : adding exe extension for the target automatically
   - #617 : ask to save the source code before compile it
   - #637 (bt tests (>=4), all bc tests)
   - #618 : fix Map<T1,T2> - type of _list field
   - #622 : system'winforms : free PermVectorTable item after the window is closed, to save the resources
  --------------------------------------
-  - test elt64-cli
 
   === Iteration 23 ===
   --------------------------------------
