@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK Common Header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GTKCOMMON_H
@@ -12,61 +12,114 @@
 
 namespace elena_lang
 {
-   // --- Color ---
-   struct Color
+//   // --- Color ---
+//   struct Color
+//   {
+//      double red;
+//      double green;
+//      double blue;
+//      double alpha;
+//
+//      bool operator == (Color& color)
+//      {
+//         if (red == color.red && green == color.green && blue == color.blue && alpha == color.alpha) {
+//            return true;
+//         }
+//         else return false;
+//      }
+//
+//      bool operator != (Color& color)
+//      {
+//         if (red != color.red || green != color.green || blue != color.blue || alpha != color.alpha) {
+//            return true;
+//         }
+//         else return false;
+//      }
+//
+//      void set(double red, double green, double blue)
+//      {
+//         this->red = red;
+//         this->green = green;
+//         this->blue = blue;
+//         this->alpha = 1.0;
+//      }
+//
+//      void set(double red, double green, double blue, double alpha)
+//      {
+//         this->red = red;
+//         this->green = green;
+//         this->blue = blue;
+//         this->alpha = alpha;
+//      }
+//
+//      Color()
+//      {
+//         set(0, 0, 0);
+//      }
+//      Color(double red, double green, double blue)
+//      {
+//         set(red, green, blue);
+//      }
+//
+//      Color(double red, double green, double blue, double alpha)
+//      {
+//         set(red, green, blue, alpha);
+//      }
+//   };
+
+   // --- WindowBase ---
+   class WindowWrapper : public GUIControlBase
    {
-      double red;
-      double green;
-      double blue;
-      double alpha;
+      Gtk::Window* _window;
 
-      bool operator == (Color& color)
+   public:
+      Gtk::Window* getHandle() { return _window; }
+
+      bool checkHandle(void* param) const
       {
-         if (red == color.red && green == color.green && blue == color.blue && alpha == color.alpha) {
-            return true;
-         }
-         else return false;
+         return (void*)_window == param;
       }
 
-      bool operator != (Color& color)
+      Rectangle getRectangle() override { return {}; }
+      void setRectangle(Rectangle rec) override {}
+
+      void show() override
       {
-         if (red != color.red || green != color.green || blue != color.blue || alpha != color.alpha) {
-            return true;
-         }
-         else return false;
+         _window->show();
       }
 
-      void set(double red, double green, double blue)
+      void hide() override
       {
-         this->red = red;
-         this->green = green;
-         this->blue = blue;
-         this->alpha = 1.0;
+         _window->hide();
       }
 
-      void set(double red, double green, double blue, double alpha)
+      virtual bool visible()
       {
-         this->red = red;
-         this->green = green;
-         this->blue = blue;
-         this->alpha = alpha;
+         return _window->is_visible();
       }
 
-      Color()
-      {
-         set(0, 0, 0);
-      }
-      Color(double red, double green, double blue)
-      {
-         set(red, green, blue);
-      }
+      void setFocus() override {}
 
-      Color(double red, double green, double blue, double alpha)
+      void refresh() override {}
+
+      WindowWrapper(Gtk::Window* window)
       {
-         set(red, green, blue, alpha);
+         _window = window;
+      }
+      virtual ~WindowWrapper()
+      {
+         delete _window;
       }
    };
 
+   // --- WindowApp ---
+   class WindowApp : public GUIApp
+   {
+   public:
+      void notify(EventBase* event) override;
+
+      int run(GUIControlBase* mainWindow, bool maximized, EventBase* startEvent) override;
+   };
 }
 
 #endif // GTKCOMMON_H

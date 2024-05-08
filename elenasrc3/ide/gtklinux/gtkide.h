@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Linux-GTK IDE
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GTKIDE_H
@@ -15,6 +15,248 @@ namespace elena_lang
 
 class GTKIDEWindow : public SDIWindow
 {
+protected:
+   void populateMenu();
+
+   // event signals
+   void on_menu_file_new_source()
+   {
+      //_controller->doCreateFile();
+   }
+   void on_menu_file_new_project()
+   {
+      //_controller->doCreateProject();
+   }
+   void on_menu_file_open_source()
+   {
+      //_controller->doOpenFile();
+   }
+   void on_menu_file_open_project()
+   {
+      //_controller->doOpenProject();
+   }
+   void on_menu_file_quit()
+   {
+      //_controller->doExit();
+   }
+   void on_menu_file_save()
+   {
+      //_controller->doSave(false);
+   }
+   void on_menu_file_saveas()
+   {
+      //_controller->doSave(true);
+   }
+   void on_menu_project_saveas()
+   {
+      //_controller->doSaveProject(true);
+   }
+   void on_menu_file_saveall()
+   {
+      //_controller->doSave(true);
+   }
+   void on_menu_file_close()
+   {
+      //_controller->doCloseFile();
+   }
+   void on_menu_file_closeall()
+   {
+      //_controller->doCloseAll(false);
+   }
+   void on_menu_file_closeproject()
+   {
+      //_controller->doCloseAll(true);
+   }
+   void on_menu_file_closeallbutactive()
+   {
+      //_controller->doCloseAllButActive();
+   }
+
+   void on_menu_edit_undo()
+   {
+      //_controller->doUndo();
+   }
+   void on_menu_edit_redo()
+   {
+      //_controller->doRedo();
+   }
+   void on_menu_edit_cut()
+   {
+//      if (_controller->doEditCopy())
+//         _controller->doEditDelete();
+   }
+   void on_menu_edit_copy()
+   {
+      //_controller->doEditCopy();
+   }
+   void on_menu_edit_paste()
+   {
+      //_controller->doEditPaste();
+   }
+   void on_menu_edit_delete()
+   {
+      //_controller->doEditDelete();
+   }
+   void on_menu_edit_select_all()
+   {
+      //_controller->doSelectAll();
+   }
+   void on_menu_edit_indent()
+   {
+      //_controller->doIndent();
+   }
+   void on_menu_edit_outdent()
+   {
+      //_controller->doOutdent();
+   }
+   void on_menu_edit_trim()
+   {
+      //_controller->doTrim();
+   }
+   void on_menu_edit_erase_line()
+   {
+      //_controller->doEraseLine();
+   }
+   void on_menu_edit_upper()
+   {
+      //_controller->doUpperCase();
+   }
+   void on_menu_edit_lower()
+   {
+      //_controller->doLowerCase();
+   }
+   void on_menu_edit_comment()
+   {
+      //_controller->doComment();
+   }
+   void on_menu_edit_uncomment()
+   {
+      //_controller->doUnComment();
+   }
+   void on_menu_project_include()
+   {
+      //_controller->doInclude();
+   }
+   void on_menu_project_exclude()
+   {
+      //_controller->doExclude();
+   }
+   void on_menu_project_compile()
+   {
+      //_controller->doCompileProject();
+   }
+   void on_menu_project_cleanup()
+   {
+      //_controller->cleanUpProject();
+   }
+   void on_menu_project_forwards()
+   {
+      //_controller->doSetProjectForwards();
+   }
+   void on_menu_project_options()
+   {
+      //_controller->doSetProjectSettings();
+   }
+   void on_menu_file_clearfilehistory()
+   {
+   }
+   void on_menu_file_clearprojecthistory()
+   {
+   }
+   void on_menu_project_view()
+   {
+   }
+   void on_menu_project_output()
+   {
+//      if (!_skip) {
+//         _controller->doShowCompilerOutput(!_model->compilerOutput);
+//      }
+//      else _skip = false;
+   }
+   void on_menu_project_messages()
+   {
+//      if (!_skip) {
+//         _controller->doShowMessages(!_model->messages);
+//      }
+//      else _skip = false;
+   }
+   void on_menu_project_watch()
+   {
+   }
+   void on_menu_project_callstack()
+   {
+   }
+   void on_menu_project_interactive()
+   {
+   }
+   void on_menu_search_find()
+   {
+   }
+   void on_menu_search_findnext()
+   {
+   }
+   void on_menu_search_replace()
+   {
+   }
+   void on_menu_search_replacenext()
+   {
+   }
+   void on_menu_search_gotoline()
+   {
+   }
+   void on_menu_debug_run()
+   {
+      //_controller->doDebugRun();
+   }
+   void on_menu_debug_next()
+   {
+      //_controller->doStepOver();
+   }
+   void on_menu_debug_stepover()
+   {
+      //_controller->doStepOver();
+   }
+   void on_menu_debug_stepin()
+   {
+      //_controller->doStepInto();
+   }
+   void on_menu_debug_goto()
+   {
+   }
+   void on_menu_debug_toggle()
+   {
+   }
+   void on_menu_debug_clearbps()
+   {
+   }
+   void on_menu_debug_source()
+   {
+   }
+   void on_menu_debug_stop()
+   {
+   }
+   void on_menu_tools_editor()
+   {
+   }
+   void on_menu_tools_debugger()
+   {
+   }
+   void on_menu_window_next()
+   {
+   }
+   void on_menu_window_prev()
+   {
+   }
+   void on_menu_windows()
+   {
+   }
+   void on_menu_help_api()
+   {
+   }
+   void on_menu_help_about()
+   {
+   }
+
 public:
    GTKIDEWindow(/*const char* caption, _Controller* controller, Model* model*/);
 };
