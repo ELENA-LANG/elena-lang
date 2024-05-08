@@ -81,44 +81,7 @@
 			<Add directory="../../common" />
 			<Add directory="../../gui" />
 		</Compiler>
-		<Unit filename="../../common/dump.cpp" />
-		<Unit filename="../../common/dump.h" />
-		<Unit filename="../../common/files.cpp" />
-		<Unit filename="../../common/files.h" />
-		<Unit filename="../../common/ustring.cpp" />
-		<Unit filename="../../common/ustring.h" />
-		<Unit filename="../../gui/document.cpp" />
-		<Unit filename="../../gui/document.h" />
-		<Unit filename="../../gui/gtklinux/gtkcommon.cpp" />
-		<Unit filename="../../gui/gtklinux/gtkcommon.h" />
-		<Unit filename="../../gui/gtklinux/gtkgraphic.cpp" />
-		<Unit filename="../../gui/gtklinux/gtkgraphic.h" />
-		<Unit filename="../../gui/gtklinux/gtksdi.cpp" />
-		<Unit filename="../../gui/gtklinux/gtksdi.h" />
-		<Unit filename="../../gui/gtklinux/gtktabbar.cpp" />
-		<Unit filename="../../gui/gtklinux/gtktabbar.h" />
-		<Unit filename="../../gui/gtklinux/gtktextframe.cpp" />
-		<Unit filename="../../gui/gtklinux/gtktextframe.h" />
-		<Unit filename="../../gui/gtklinux/gtktextview.cpp" />
-		<Unit filename="../../gui/gtklinux/gtktextview.h" />
-		<Unit filename="../../gui/guicommon.h" />
-		<Unit filename="../../gui/text.cpp" />
-		<Unit filename="../../gui/text.h" />
-		<Unit filename="../../gui/view.cpp" />
-		<Unit filename="../../gui/view.h" />
-		<Unit filename="../editframe.cpp" />
-		<Unit filename="../editframe.h" />
-		<Unit filename="../gtklinux/factory.cpp" />
-		<Unit filename="../gtklinux/factory.h" />
-		<Unit filename="../gtklinux/gtkide.cpp" />
-		<Unit filename="../gtklinux/gtkide.h" />
 		<Unit filename="../gtklinux/main.cpp" />
-		<Unit filename="../ideproject.cpp" />
-		<Unit filename="../ideproject.h" />
-		<Unit filename="../ideview.cpp" />
-		<Unit filename="../ideview.h" />
-		<Unit filename="../sourceformatter.cpp" />
-		<Unit filename="../sourceformatter.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
