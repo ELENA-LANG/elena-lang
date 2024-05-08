@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK SDI Control Implementation File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "gtksdi.h"
@@ -18,6 +18,13 @@ SDIWindow :: SDIWindow()
    _childCounter = 0;
 
    add(_box);
+
+   _refActionGroup = Gtk::ActionGroup::create();
+   _refUIManager = Gtk::UIManager::create();
+
+   _refUIManager->insert_action_group(_refActionGroup);
+
+   add_accel_group(_refUIManager->get_accel_group());
 }
 
 void SDIWindow :: populate(int counter, Gtk::Widget** children)
@@ -45,5 +52,14 @@ void SDIWindow::setLayout(int client, int top, int bottom, int right, int left)
 //      _box.pack_start(*statusbar, Gtk::PACK_SHRINK);
 
    show_all_children(); // !!temporal
-
 }
+
+void SDIWindow :: loadUI(Glib::ustring ui_info, const char* name)
+{
+   _refUIManager->add_ui_from_string(ui_info);
+
+   Gtk::Widget* pMenubar = _refUIManager->get_widget(name);
+   if(pMenubar)
+      _box.pack_start(*pMenubar, Gtk::PACK_SHRINK);
+}
+

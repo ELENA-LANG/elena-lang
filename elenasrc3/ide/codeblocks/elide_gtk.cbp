@@ -12,14 +12,14 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-std=c++20" />
-					<Add option="`pkg-config gtkmm-3.0 --cflags`" />
 					<Add option="-m32" />
 					<Add option="-g" />
+					<Add option="-std=c++20" />
+					<Add option="`pkg-config gtkmm-3.0 --cflags`" />
 				</Compiler>
 				<Linker>
 					<Add option="-m32" />
-					<Add option="`pkg-config gtkmm-3.0 --libs`" />
+					<Add option="`pkg-config gtkmm-4.0 --libs`" />
 				</Linker>
 			</Target>
 			<Target title="Release32">
@@ -81,7 +81,20 @@
 			<Add directory="../../common" />
 			<Add directory="../../gui" />
 		</Compiler>
+		<Unit filename="../../common/ustring.cpp" />
+		<Unit filename="../../common/ustring.h" />
+		<Unit filename="../../gui/gtklinux/gtkcommon.cpp" />
+		<Unit filename="../../gui/gtklinux/gtkcommon.h" />
+		<Unit filename="../../gui/gtklinux/gtksdi.cpp" />
+		<Unit filename="../../gui/gtklinux/gtksdi.h" />
+		<Unit filename="../../gui/guicommon.h" />
+		<Unit filename="../gtklinux/factory.cpp" />
+		<Unit filename="../gtklinux/factory.h" />
+		<Unit filename="../gtklinux/gtkide.cpp" />
+		<Unit filename="../gtklinux/gtkide.h" />
 		<Unit filename="../gtklinux/main.cpp" />
+		<Unit filename="../idecommon.cpp" />
+		<Unit filename="../idecommon.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
