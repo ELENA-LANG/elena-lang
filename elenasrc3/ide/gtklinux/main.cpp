@@ -1,27 +1,27 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Linux-GTK+ program entry
-//                                             (C)2021/2022, by Aleksey Rakov
+//                                             (C)2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
-#include "gtklinux/gtkcommon.h"
-#include "factory.h"
+//#include "gtklinux/gtkcommon.h"
+//#include "factory.h"
 
-using namespace elena_lang;
+//using namespace elena_lang;
 
 int main(int argc, char* argv[])
 {
-   Gtk::Main kit(argc, argv);
+//   Gtk::Main kit(argc, argv);
 
-   IDEModel      ideModel(10);
-   GUISettinngs  settings = { true };
-   IDEFactory    factory(&ideModel, settings);
+//   IDEModel      ideModel(10);
+//   GUISettinngs  settings = { true };
+//   IDEFactory    factory(&ideModel, settings);
 
    //GUIApp* app = factory.createApp();
 
    int retVal = 0; // !! temporal
 
-   Gtk::Main::run(*factory.createMainWindow());
+//   Gtk::Main::run(*factory.createMainWindow());
 
    //delete app;
 
