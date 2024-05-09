@@ -167,6 +167,56 @@ inline bool isConstant(ObjectKind kind)
    }
 }
 
+inline bool isSingleObject(ObjectKind kind)
+{
+   switch (kind)
+   {
+      case ObjectKind::CharacterLiteral:
+      case ObjectKind::ConstantLiteral:
+      case ObjectKind::MssgNameLiteral:
+      case ObjectKind::MssgLiteral:
+      case ObjectKind::ExtMssgLiteral:
+      case ObjectKind::Nil:
+      case ObjectKind::Class:
+      case ObjectKind::ClassSelf:
+      case ObjectKind::ConstructorSelf:
+      case ObjectKind::Param:
+      case ObjectKind::ParamReference:
+      case ObjectKind::ParamAddress:
+      case ObjectKind::ByRefParam:
+      case ObjectKind::ByRefParamAddress:
+      case ObjectKind::Local:
+      case ObjectKind::LocalReference:
+      case ObjectKind::RefLocal:
+      case ObjectKind::TempLocal:
+      case ObjectKind::SelfLocal:
+      case ObjectKind::SuperLocal:
+      case ObjectKind::ReadOnlySelfLocal:
+      case ObjectKind::LocalAddress:
+      case ObjectKind::TempLocalAddress:
+      case ObjectKind::ReadOnlyFieldAddress:
+      case ObjectKind::FieldAddress:
+      case ObjectKind::ReadOnlyField:
+      case ObjectKind::Field:
+      case ObjectKind::Outer:
+      case ObjectKind::OuterField:
+      case ObjectKind::OuterSelf:
+      case ObjectKind::Closure:
+      case ObjectKind::ClassConstant:
+      case ObjectKind::Constant:
+      case ObjectKind::ConstArray:
+      case ObjectKind::StaticField:
+      case ObjectKind::StaticConstField:
+      case ObjectKind::ClassStaticConstField:
+      case ObjectKind::LocalField:
+         return true;
+      default:
+         return isConstant(kind);
+   }
+
+   return false;
+}
+
 inline bool areConstants(ArgumentsInfo& args)
 {
    for (size_t i = 0; i < args.count(); i++) {
@@ -13134,7 +13184,11 @@ ObjectInfo Compiler::Expression :: compileBranchingOperation(SyntaxNode node, Ob
       writer->newNode(op, operatorId);
       writer->appendNode(BuildKey::Const, scope.moduleScope->branchingInfo.trueRef);
 
-      retVal = compileBranchingOperands(rnode, r2node, retValExpected, withoutDebugInfo);
+      if (retValExpected && argLen == 3 && (roperand.kind == ObjectKind::Object) && (roperand2.kind == ObjectKind::Object)) {
+         BuildNode opNode = writer->CurrentNode();
+         retVal = compileTernaryOperands(rnode, r2node, opNode, withoutDebugInfo);
+      }
+      else retVal = compileBranchingOperands(rnode, r2node, retValExpected, withoutDebugInfo);
    }
    else {
       mssg_t message = 0;
@@ -13177,8 +13231,8 @@ ObjectInfo Compiler::Expression :: compileBranchingOperands(SyntaxNode rnode, Sy
 
    ObjectInfo subRetCode = {};
    bool oldWithRet = codeScope->withRetStatement;
+   EAttr mode = retValExpected ? EAttr::RetValExpected : EAttr::None;
    if (rnode == SyntaxKey::ClosureBlock || rnode == SyntaxKey::SwitchCode) {
-      EAttr mode = retValExpected ? EAttr::RetValExpected : EAttr::None;
       if (withoutDebugInfo)
          mode = mode | EAttr::NoDebugInfo;
 
@@ -13186,7 +13240,7 @@ ObjectInfo Compiler::Expression :: compileBranchingOperands(SyntaxNode rnode, Sy
 
       subRetCode = compileSubCode(rnode.firstChild(), mode);
    }
-   else subRetCode = compile(rnode, 0, EAttr::None, nullptr);
+   else subRetCode = compile(rnode, 0, mode, nullptr);
 
    if (retValExpected) {
       writeObjectInfo(subRetCode);
@@ -13202,7 +13256,6 @@ ObjectInfo Compiler::Expression :: compileBranchingOperands(SyntaxNode rnode, Sy
          bool withRet = codeScope->withRetStatement;
          codeScope->withRetStatement = false;
 
-         EAttr mode = retValExpected ? EAttr::RetValExpected : EAttr::None;
          if (withoutDebugInfo)
             mode = mode | EAttr::NoDebugInfo;
 
@@ -13212,7 +13265,7 @@ ObjectInfo Compiler::Expression :: compileBranchingOperands(SyntaxNode rnode, Sy
             codeScope->withRetStatement = oldWithRet;
          }
       }
-      else elseSubRetCode = compile(r2node, 0, EAttr::None, nullptr);
+      else elseSubRetCode = compile(r2node, 0, mode, nullptr);
 
       if (retValExpected) {
          writeObjectInfo(elseSubRetCode, r2node);
@@ -13232,6 +13285,41 @@ ObjectInfo Compiler::Expression :: compileBranchingOperands(SyntaxNode rnode, Sy
    }
 
    return retVal;
+}
+
+ObjectInfo Compiler::Expression :: compileTernaryOperands(SyntaxNode rnode, SyntaxNode r2node, BuildNode& opNode, bool withoutDebugInfo)
+{
+   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+
+   writer->newNode(BuildKey::Tape);
+
+   bool oldWithRet = codeScope->withRetStatement;
+   ObjectInfo lexpr = compile(rnode, 0, EAttr::RetValExpected, nullptr);
+
+   writeObjectInfo(lexpr);
+
+   writer->closeNode();
+
+   TypeInfo retType = {};
+
+   // NOTE : it should immediately follow if-block
+   writer->newNode(BuildKey::Tape);
+   ObjectInfo rexpr = compile(r2node, 0, EAttr::RetValExpected, nullptr);
+
+   writeObjectInfo(rexpr, r2node);
+
+   if (lexpr.typeInfo == rexpr.typeInfo)
+      retType = rexpr.typeInfo;
+
+   writer->closeNode();
+
+   if (isSingleObject(lexpr.kind) && isSingleObject(rexpr.kind)) {
+      opNode.setKey(BuildKey::TernaryOp);
+   }
+
+   writer->closeNode();
+
+   return { ObjectKind::Object, retType, 0 };
 }
 
 ObjectInfo Compiler::Expression :: compileMessageOperationR(ObjectInfo target, SyntaxNode messageNode, bool propertyMode)

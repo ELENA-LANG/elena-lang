@@ -2852,6 +2852,26 @@ void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScop
    }
 }
 
+void ByteCodeWriter :: saveTernaryOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
+   ReferenceMap& paths, bool tapeOptMode)
+{
+   BuildNode lnodeNode = node.findChild(BuildKey::Tape);
+   BuildNode rnodeNode = lnodeNode.nextNode();
+
+   tape.write(ByteCode::StoreSI, 1);
+
+   saveTape(tape, lnodeNode, tapeScope, paths, tapeOptMode);
+   tape.write(ByteCode::StoreSI);
+
+   saveTape(tape, rnodeNode, tapeScope, paths, tapeOptMode);
+   tape.write(ByteCode::SwapSI, 1);
+      
+   tape.write(ByteCode::CmpR, node.findChild(BuildKey::Const).arg.reference | mskVMTRef);
+
+   tape.write(ByteCode::PeekSI, 1);
+   tape.write(ByteCode::XPeekEq);
+}
+
 void ByteCodeWriter :: saveNativeBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
    ReferenceMap& paths, bool tapeOptMode, bool loopMode)
 {
@@ -3454,6 +3474,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::YieldDispatch:
             saveYieldDispatch(tape, current, tapeScope, paths, tapeOptMode);
+            break;
+         case BuildKey::TernaryOp:
+            saveTernaryOp(tape, current, tapeScope, paths, tapeOptMode);
             break;
          case BuildKey::Path:
          case BuildKey::InplaceCall:

@@ -1258,6 +1258,7 @@ namespace elena_lang
          ObjectInfo saveToTempLocal(ObjectInfo object);
 
          ObjectInfo compileBranchingOperands(SyntaxNode rnode, SyntaxNode r2node, bool retValExpected, bool withoutDebugInfo);
+         ObjectInfo compileTernaryOperands(SyntaxNode rnode, SyntaxNode r2node, BuildNode& opNode, bool withoutDebugInfo);
 
          ObjectInfo compileNativeConversion(SyntaxNode node, ObjectInfo source, ref_t operationKey);
 
