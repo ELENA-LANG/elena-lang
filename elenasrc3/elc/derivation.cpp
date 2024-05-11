@@ -774,8 +774,6 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
          writer.newNode(key, attrRef);
          flushNode(writer, scope, current);
          writer.closeNode();
-
-
       }
       else flushNode(writer, scope, current);
    }

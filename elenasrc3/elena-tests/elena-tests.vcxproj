@@ -125,7 +125,12 @@
   <ItemGroup>
     <ClInclude Include="..\common\files.h" />
     <ClInclude Include="..\common\paths.h" />
+    <ClInclude Include="..\elc\derivation.h" />
+    <ClInclude Include="..\elc\parser.h" />
+    <ClInclude Include="..\elc\source.h" />
+    <ClInclude Include="..\engine\parsertable.h" />
     <ClInclude Include="..\engine\serializer.h" />
+    <ClInclude Include="declaration.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="tests_common.h" />
     <ClInclude Include="bt_optimization.h" />
@@ -137,15 +142,21 @@
     <ClCompile Include="..\common\ustring.cpp" />
     <ClCompile Include="..\elc\compiler.cpp" />
     <ClCompile Include="..\elc\compilerlogic.cpp" />
+    <ClCompile Include="..\elc\derivation.cpp" />
+    <ClCompile Include="..\elc\parser.cpp" />
+    <ClCompile Include="..\elc\source.cpp" />
     <ClCompile Include="..\engine\bcwriter.cpp" />
     <ClCompile Include="..\engine\bytecode.cpp" />
     <ClCompile Include="..\engine\module.cpp" />
+    <ClCompile Include="..\engine\parsertable.cpp" />
     <ClCompile Include="..\engine\scriptreader.cpp" />
     <ClCompile Include="..\engine\section.cpp" />
     <ClCompile Include="..\engine\serializer.cpp" />
     <ClCompile Include="..\engine\syntaxtree.cpp" />
+    <ClCompile Include="declaration.cpp" />
     <ClCompile Include="tests_common.cpp" />
     <ClCompile Include="bt_optimization.cpp" />
+    <ClCompile Include="declare_tests.cpp" />
     <ClCompile Include="compiler_tests.cpp" />
     <ClCompile Include="bt_tests.cpp" />
     <ClCompile Include="pch.cpp">

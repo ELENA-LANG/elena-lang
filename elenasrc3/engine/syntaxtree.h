@@ -236,6 +236,22 @@ namespace elena_lang
          return (SyntaxKey)key;
       }
 
+      static bool compareNodes(SyntaxNode n1, SyntaxNode n2)
+      {
+         if (n1.key != n2.key)
+            return false;
+
+         if (n1.arg.strArgPosition != INVALID_POS) {
+            if (n2.arg.strArgPosition == INVALID_POS || !n1.identifier().compare(n2.identifier()))
+               return false;
+         }
+         else if (n2.arg.strArgPosition != INVALID_POS) {
+            return false;
+         }
+
+         return n1.arg.reference == n2.arg.reference;
+      }
+
       static void copyNewNode(SyntaxTreeWriter& writer, SyntaxNode node)
       {
          if (node.arg.strArgPosition != INVALID_POS) {
@@ -247,6 +263,25 @@ namespace elena_lang
       static void copyNode(SyntaxTreeWriter& writer, SyntaxNode node, bool includingNode = false);
       static void copyNodeSafe(SyntaxTreeWriter& writer, SyntaxNode node, bool includingNode = false);
       static void saveNode(SyntaxNode node, MemoryBase* section, bool includingNode = false);
+
+      static bool compare(SyntaxNode n1, SyntaxNode n2, bool onlyChildren)
+      {
+         if (onlyChildren || compareNodes(n1, n2)) {
+            SyntaxNode c1 = n1.firstChild();
+            SyntaxNode c2 = n2.firstChild();
+            while (c1.key != SyntaxKey::None) {
+               if (!compare(c1, c2, false))
+                  return false;
+
+               c1 = c1.nextNode();
+               c2 = c2.nextNode();;
+            }
+
+            return c2.key == SyntaxKey::None;
+         }
+
+         return false;
+      }
    };
 }
 #endif

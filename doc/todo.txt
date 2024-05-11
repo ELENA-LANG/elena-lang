@@ -29,8 +29,7 @@ In development:
   - chat sample
   - elt64-cli
   --------------------------------------
-  - #89 : new functionality : SortedList, SortedList<TKey,TValue>, (both must support indexer) , BinarySearchAlgorithm
-  * compile int t := (l < r) ? -1 : (l == r ? 0 : 1)
+  - #89 : new functionality : SortedList<TKey,TValue>, (both must support indexer) , BinarySearchAlgorithm
 
   === Iteration 24 ===
   --------------------------------------

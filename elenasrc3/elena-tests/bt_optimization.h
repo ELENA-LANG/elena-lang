@@ -8,7 +8,6 @@
 #ifndef BTOPTIMIZATION_H
 #define BTOPTIMIZATION_H
 
-#include "pch.h"
 #include "tests_common.h"
 
 namespace elena_lang
@@ -63,22 +62,12 @@ namespace elena_lang
       }
    };
 
-   class Scenario1Test : public testing::Test
+   class Scenario1Test : public BaseFixture
    {
    protected:
-      SyntaxTree syntaxTree;
       BuildTree  buildTree;
 
-      SyntaxNode declarationNode;
-
       BuildNode  controlOutputNode;
-
-      CompilerEnvironment env;
-
-      void LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2);
-      void LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3);
-      void LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3, ustr_t descr4);
-      void LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3, ustr_t descr4, ustr_t descr5);
    };
 
    class DispatchTest : public Scenario1Test

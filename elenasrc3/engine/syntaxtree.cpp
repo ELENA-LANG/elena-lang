@@ -92,6 +92,9 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("dimension", SyntaxKey::Dimension);
    map.add("eop", SyntaxKey::eop);
    map.add("EOP", SyntaxKey::EOP);
+   map.add("template_arg", SyntaxKey::TemplateArg);
+   map.add("template_type", SyntaxKey::TemplateType);
+
 }
 
 bool SyntaxTree :: save(MemoryBase* section)
