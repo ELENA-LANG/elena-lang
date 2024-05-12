@@ -99,11 +99,15 @@ namespace elena_lang
          }
 
          Scope()
+            : Scope(false)
+         {
+         }
+         Scope(bool ignoreTerminalInfo)
             : arguments(0), parameters(0)
          {
-            type = ScopeType::Unknown;
-            ignoreTerminalInfo = false;
-            nestedLevel = 0;
+            this->type = ScopeType::Unknown;
+            this->ignoreTerminalInfo = ignoreTerminalInfo;
+            this->nestedLevel = 0;
          }
       };
 
@@ -116,6 +120,8 @@ namespace elena_lang
 
       ModuleScopeBase*        _moduleScope;
       TemplateProssesorBase*  _templateProcessor;
+
+      bool                    _noDebugInfo;
 
       ScopeType defineTemplateType(SyntaxNode node);
 
@@ -141,7 +147,7 @@ namespace elena_lang
       void flushTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool allowType);
       void flushTemplageExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxKey type, bool allowType);
       void flushTemplateType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool exprMode = true);
-      void flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, int nestLevel = 1);
+      void flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool exprMode, int nestLevel = 1);
       void flushMessage(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushResend(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushObject(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
@@ -219,6 +225,17 @@ namespace elena_lang
 
          _writer.clear();
          _writer.newNode(SyntaxKey::Root);
+
+         clear();
+      }
+      SyntaxTreeBuilder(SyntaxNode rootNode, ErrorProcessor* errorProcessor,
+         ModuleScopeBase* moduleScope, TemplateProssesorBase* templateProcessor, bool noDebugInfo)
+         : _writer(rootNode), _cacheWriter(_cache)
+      {
+         _errorProcessor = errorProcessor;
+         _moduleScope = moduleScope;
+         _templateProcessor = templateProcessor;
+         _noDebugInfo = noDebugInfo;
 
          clear();
       }

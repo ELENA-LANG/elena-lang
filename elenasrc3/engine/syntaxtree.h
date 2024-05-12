@@ -274,7 +274,7 @@ namespace elena_lang
                   return false;
 
                c1 = c1.nextNode();
-               c2 = c2.nextNode();;
+               c2 = c2.nextNode();
             }
 
             return c2.key == SyntaxKey::None;

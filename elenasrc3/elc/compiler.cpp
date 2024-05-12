@@ -5186,6 +5186,9 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribu
          case SyntaxKey::Type:
             elementRef = resolveStrongTypeAttribute(scope, current, declarationMode, false);
             break;
+         case SyntaxKey::TemplateType:
+            elementRef = resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole).typeRef;
+            break;
          case SyntaxKey::identifier:
          case SyntaxKey::reference:
             elementRef = resolveTypeIdentifier(scope, current.identifier(), node.key, declarationMode, allowRole);

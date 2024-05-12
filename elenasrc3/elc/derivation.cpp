@@ -365,14 +365,25 @@ void SyntaxTreeBuilder :: flushTemplateType(SyntaxTreeWriter& writer, Scope& sco
    }
 }
 
-void SyntaxTreeBuilder :: flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, int nestLevel)
+void SyntaxTreeBuilder :: flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool exprMode, int nestLevel)
 {
    SyntaxNode current = node.firstChild();
 
    ref_t attributeCategory = V_CATEGORY_MAX;
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::ArrayType) {
-         flushArrayType(writer, scope, current, nestLevel + 1);
+         flushArrayType(writer, scope, current, exprMode, nestLevel + 1);
+      }
+      else if (exprMode && current == SyntaxKey::TemplateType) {
+         for (int i = 0; i < nestLevel; i++)
+            writer.newNode(SyntaxKey::ArrayType);
+
+         writer.newNode(SyntaxKey::TemplateType);
+         flushTemplateType(writer, scope, current);
+         writer.closeNode();
+
+         for (int i = 0; i < nestLevel; i++)
+            writer.closeNode();
       }
       else {
          bool allowType = current.nextNode() == SyntaxKey::None;
@@ -451,11 +462,11 @@ void SyntaxTreeBuilder :: flushObject(SyntaxTreeWriter& writer, Scope& scope, Sy
       if (current.nextNode() == SyntaxKey::identifier) {
          SyntaxNode identNode = node.lastChild(SyntaxKey::TerminalMask);
 
-         flushArrayType(writer, scope, current);
+         flushArrayType(writer, scope, current, true);
 
          flushNode(writer, scope, identNode);
       }
-      else flushArrayType(writer, scope, current);
+      else flushArrayType(writer, scope, current, true);
    }
    else if (current == SyntaxKey::Expression) {
       //HOTFIX : expression cannot be inside an object
@@ -746,7 +757,7 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
          bool allowType = nameNode.key == SyntaxKey::None || nextNode == nameNode;
          if (current == SyntaxKey::ArrayType) {
             //flushAttribute(writer, scope, current, attributeCategory, allowType, true);
-            flushArrayType(writer, scope, current);
+            flushArrayType(writer, scope, current, false);
          }
          else if (current == SyntaxKey::TemplateType) {
             flushTemplateType(writer, scope, current, false);
@@ -1606,7 +1617,7 @@ SyntaxTreeBuilder::ScopeType SyntaxTreeBuilder :: defineTemplateType(SyntaxNode 
 
 void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode node)
 {
-   Scope scope;
+   Scope scope(_noDebugInfo);
 
    writer.newNode(node.key);
 

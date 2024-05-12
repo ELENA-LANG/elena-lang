@@ -10,3 +10,8 @@ TEST_F(TemplateArrayFixture, DeclarationTest)
 {
    runTest();
 }
+
+TEST_F(NewTemplateArrayFixture, DeclarationTest)
+{
+   runTest();
+}

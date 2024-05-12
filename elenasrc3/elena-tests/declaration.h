@@ -21,6 +21,8 @@ namespace elena_lang
 
       CompilerEnvironment env;
 
+      SyntaxNode sourceNode;
+
       void SetUp() override;
 
    public:
@@ -29,6 +31,13 @@ namespace elena_lang
 
    // --- TemplateArrayFixture ---
    class TemplateArrayFixture : public DeclarationFixture
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   // --- NewTemplateArrayFixture ---
+   class NewTemplateArrayFixture : public DeclarationFixture
    {
    protected:
       void SetUp() override;

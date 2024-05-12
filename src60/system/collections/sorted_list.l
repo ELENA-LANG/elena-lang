@@ -39,7 +39,7 @@ namespace collections
       internal SortedListItem FirstItem
          = _top;
 
-      add(object key, object item)
+      append(object key, object item)
       {
          auto item := new SortedListItem(key, item);
    
@@ -211,61 +211,42 @@ namespace collections
 
    public sealed class SortedArrayList //: Indexable
    {
-//      VarTuple<object, object>[] _array;
+      VarTuple<object, object>[] _array;
+      Reference<int>             _length;
+      Reference<int>             _capacity;
 
-//      Array          _array;
-//      Reference<int> _length;
-//      Reference<int> _capacity;
-//
-//      constructor()
-//      {
-//         _length := 0;
-//         _capacity := 0;
-//      }
-//
-//      constructor allocate(int capacity)
-//      {
-//         _capacity := capacity;
-//         _array := Array.allocate(capacity);
-//      }
-//
-//      constructor allocate()
-//         <= allocate(32);
-//
-//      constructor load(Array a)
-//         <= fromArray(a, a.Length);
-//
-//      constructor load(o)
-//      {
-//         Enumerator e := o.enumerator();
-//         while (e.next())
-//         {
-//            self.append(*e)
-//         }
-//      }
-//
-//      /// Creates the list
-//      internal constructor fromArray(Array array, int length)
-//      {
-//         int capacity := array.Length;
-//
-//         _capacity := capacity;
-//         _length := length;
-//
-//         _array := array.clone()
-//      }
-//
-//      int Length
-//      {
-//         /// Reads the number of list item to the output parameter
-//         get()
-//         {
-//            int retVal := *_length;
-//
-//            ^ retVal
-//         }
-//      }
-//
+      constructor()
+      {
+         _length := 0;
+         _capacity := 0;
+      }
+
+      constructor allocate(int capacity)
+      {
+         _length := 0;
+         _capacity := capacity;
+         _array := new VarTuple<object, object>[](capacity);
+      }
+
+      constructor allocate()
+         <= allocate(32);
+
+      int Length
+      {
+         /// Reads the number of list item to the output parameter
+         get()
+         {
+            int retVal := *_length;
+
+            ^ retVal
+         }
+      }
+
+      append(object key, object item)
+      {
+         auto item := new VarTuple<object, object>(key, item);
+      }
+
 //      /// Returns the object at the specified position
 //      at(int index)
 //      {

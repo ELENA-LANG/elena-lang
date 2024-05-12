@@ -233,6 +233,9 @@ ModuleScopeBase* CompilerEnvironment :: createModuleScope(bool tapeOptMode, bool
 
    if (withAttributes) {
       scope->attributes.add("dispatch", V_DISPATCHER);
+      scope->attributes.add("public", V_PUBLIC);
+      scope->attributes.add("var", V_VARIABLE);
+      scope->attributes.add("new", V_NEWOP);
    }
 
    return scope;
