@@ -15,7 +15,7 @@
 
 using namespace elena_lang;
 
-constexpr auto Field_TemplateBasedArray = "namespace (class (nameattr (identifier \"A\" ())field (array_type (type (template_type (identifier \"VarTuple\" () template_arg (identifier \"object\" ()) template_arg (identifier \"object\" ()))))nameattr (identifier \"_array\" ())))";
+constexpr auto Field_TemplateBasedArray = "namespace (class (nameattr (identifier \"A\" ())field (array_type (template_type (identifier \"VarTuple\" () template_arg (type(identifier \"object\" ())) template_arg (type(identifier \"object\" ()))))nameattr (identifier \"_array\" ())))";
 constexpr auto New_TemplateBasedArray = "namespace (class (attribute -2147467263 (identifier \"public\" ())nameattr (identifier \"program\" ())attribute -2147479546 ()method (attribute -2147479540 ()code (expression (assign_operation (object (attribute -2147479539 (identifier \"var\" ())identifier \"array\" ())expression (message_operation (object (array_type (template_type (attribute -2147479534 (identifier \"new\" ())identifier \"VarTuple\" ()template_arg (type (identifier \"object\" ()))template_arg (type (identifier \"object\" ())))))expression (object (integer \"10\" ()))))))EOP (eop \"}\" ())))))";
 
 constexpr auto Src_Field_TemplateBasedArray = "A { VarTuple<object, object>[] _array; }";

@@ -21,6 +21,6 @@ namespace collections
       Map<T1, T2> o2 := nil;
       Queue<T1> o3 := nil;
       Stack<T1> o4 := nil;
-      //SortedList<T1,T2> sl := nil;
+      SortedList<T1,T2> sl := nil;
    }
 }

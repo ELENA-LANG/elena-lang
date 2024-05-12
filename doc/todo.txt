@@ -29,7 +29,7 @@ In development:
   - chat sample
   - elt64-cli
   --------------------------------------
-  - #89 : new functionality : SortedList<TKey,TValue>, (both must support indexer) , BinarySearchAlgorithm
+  - #89 : new functionality : BinarySearchAlgorithm
 
   === Iteration 24 ===
   --------------------------------------

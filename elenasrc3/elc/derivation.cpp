@@ -374,13 +374,16 @@ void SyntaxTreeBuilder :: flushArrayType(SyntaxTreeWriter& writer, Scope& scope,
       if (current == SyntaxKey::ArrayType) {
          flushArrayType(writer, scope, current, exprMode, nestLevel + 1);
       }
-      else if (exprMode && current == SyntaxKey::TemplateType) {
+      else if (current == SyntaxKey::TemplateType) {
          for (int i = 0; i < nestLevel; i++)
             writer.newNode(SyntaxKey::ArrayType);
 
-         writer.newNode(SyntaxKey::TemplateType);
-         flushTemplateType(writer, scope, current);
-         writer.closeNode();
+         if (exprMode) {
+            writer.newNode(SyntaxKey::TemplateType);
+            flushTemplateType(writer, scope, current);
+            writer.closeNode();
+         }
+         else flushTemplateType(writer, scope, current, false);
 
          for (int i = 0; i < nestLevel; i++)
             writer.closeNode();

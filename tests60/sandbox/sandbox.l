@@ -1,9 +1,13 @@
 import extensions;
 import system'collections;
 
-A { VarTuple<object, object>[] _array; }
+   public sealed class SortedList<TKey, TValue> //: Enumerable<TValue>
+   {
+      VarTuple<TKey, TValue>[] _array;
+   }
+
 
 public program()
 {
-   var array := new VarTuple<object, object>[](10);
+   SortedList<object,object> l;
 }
