@@ -1,13 +1,6 @@
-import extensions;
-import system'collections;
-
-   public sealed class SortedList<TKey, TValue> //: Enumerable<TValue>
-   {
-      VarTuple<TKey, TValue>[] _array;
-   }
-
+import extensions'scripting;
 
 public program()
 {
-   SortedList<object,object> l;
+   lscript.interpretLine("system'console.writeLine(""Hello World"")");
 }

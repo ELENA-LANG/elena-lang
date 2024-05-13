@@ -27,9 +27,8 @@ In development:
   - #637(bt tests (>=4), all bc tests)
   - #69
   - chat sample
-  - elt64-cli
+  - ide : call program from vm output console
   --------------------------------------
-  - #89 : new functionality : BinarySearchAlgorithm
 
   === Iteration 24 ===
   --------------------------------------
