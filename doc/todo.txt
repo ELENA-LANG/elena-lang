@@ -17,18 +17,18 @@ In development:
   prom:#635 on reddit;elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test
   port:elenavm / elt for linux, helloworld gui sample (button)
   --------------------------------------
+  - elt : nested call must not stop / start vm 
+  - elt : fails after executing several times
   - linux simplest gui
   - #99
   - #98
   - #97
-  - #95
-  - #94
   - #79
   - #637(bt tests (>=4), all bc tests)
   - #69
   - chat sample
-  - ide : call program from vm output console
   --------------------------------------
+  - #95 : LiteralBuffer, WideBuffer
 
   === Iteration 24 ===
   --------------------------------------

@@ -63,7 +63,7 @@ pos_t defineStyle(text_c state, pos_t style)
       case lexQuote:
          return STYLE_STRING;
       default:
-         return NOTFOUND_POS;
+         return INVALID_POS;
    }
 }
 
@@ -90,7 +90,7 @@ bool SourceFormatter :: next(text_c ch, FormatterInfo& info, pos_t& definedStyle
    /*if (info.lookAhead) {
       info.style = currentStyle;
    }
-   else */if (currentStyle != NOTFOUND_POS/*info.style != currentStyle*//* || info.state == lexLookahead*/) {
+   else */if (currentStyle != INVALID_POS) {
       info.style = currentStyle;
       definedStyle = currentStyle;
 

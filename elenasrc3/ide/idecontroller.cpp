@@ -359,7 +359,7 @@ bool ProjectController :: startVMConsole(ProjectModel& model)
    cmdLine.append(model.getPackage());
    cmdLine.append(_T("=\"\""));
    cmdLine.append(outputPath);
-   cmdLine.append(_T("=\"\""));
+   cmdLine.append(_T("\"\""));
 
    cmdLine.append("]]\""); 
    cmdLine.append(" -i");

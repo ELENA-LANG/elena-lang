@@ -1,6 +1,11 @@
-import extensions'scripting;
+import extensions;
+
+public test()
+{
+   console.writeLine("Testing")
+}
 
 public program()
 {
-   lscript.interpretLine("system'console.writeLine(""Hello World"")");
+   console.writeLine("Hello")
 }
