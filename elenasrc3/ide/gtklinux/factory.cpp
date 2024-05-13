@@ -62,8 +62,7 @@ using namespace elena_lang;
 
 // --- IDEFactory ---
 
-IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideModel,
-   IDEController* controller,
+IDEFactory :: IDEFactory(IDEModel* ideModel, IDEController* controller/*,
    GUISettinngs   settings*/)
 {
 //   _schemes[0] = defaultStyles;
@@ -72,8 +71,8 @@ IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideModel,
 //
 //   _instance = instance;
 //   _cmdShow = cmdShow;
-//   _model = ideModel;
-//   _controller = controller;
+   _model = ideModel;
+   _controller = controller;
 
    //initializeModel(ideModel);
 }
@@ -132,7 +131,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    int textIndex = counter++;
    children[textIndex] = createTextControl();
 
-   GTKIDEWindow* ideWindow = new GTKIDEWindow();
+   GTKIDEWindow* ideWindow = new GTKIDEWindow(_controller, _model);
 
    ideWindow->populate(counter, children);
    ideWindow->setLayout(textIndex, -1, -1, -1, -1);

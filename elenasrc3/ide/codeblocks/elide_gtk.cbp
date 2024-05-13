@@ -103,6 +103,8 @@
 		<Unit filename="../gtklinux/main.cpp" />
 		<Unit filename="../idecommon.cpp" />
 		<Unit filename="../idecommon.h" />
+		<Unit filename="../idecontroller.cpp" />
+		<Unit filename="../idecontroller.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

@@ -18,6 +18,8 @@ namespace elena_lang
    typedef const wide_c*   const_text_t;
    typedef wstr_t          text_str;
 
+   typedef WideString       TextString;
+
 #elif __GNUG__
 
 #ifndef _T
@@ -30,6 +32,8 @@ namespace elena_lang
    typedef char*        text_t;
    typedef const char*  const_text_t;
    typedef ustr_t       text_str;
+
+   typedef IdentifierString TextString;
 
 #endif
 

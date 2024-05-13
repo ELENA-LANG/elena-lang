@@ -8,6 +8,8 @@
 #define GTKIDE_H
 
 #include "gtklinux/gtksdi.h"
+#include "idecontroller.h"
+
 
 namespace elena_lang
 {
@@ -16,12 +18,15 @@ namespace elena_lang
 class GTKIDEWindow : public SDIWindow
 {
 protected:
+   IDEModel*         _model;
+   IDEController*    _controller;
+
    void populateMenu();
 
    // event signals
    void on_menu_file_new_source()
    {
-      //_controller->doCreateFile();
+      _controller->doNewFile(_model);
    }
    void on_menu_file_new_project()
    {
@@ -258,7 +263,7 @@ protected:
    }
 
 public:
-   GTKIDEWindow(/*const char* caption, _Controller* controller, Model* model*/);
+   GTKIDEWindow(/*const char* caption, */IDEController* controller, IDEModel* model);
 };
 
 } // _GUI_

@@ -4,7 +4,15 @@
 //                                             (C)2005-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#ifdef _MSC_VER
+
 #include <tchar.h>
+
+#else
+
+#define _T(x) x
+
+#endif
 
 #include "idecontroller.h"
 #include "eng/messages.h"
@@ -56,7 +64,7 @@ void SourceViewController :: newSource(TextViewModelBase* model, ustr_t caption,
    }
 }
 
-bool SourceViewController :: openSource(TextViewModelBase* model, ustr_t caption, path_t sourcePath, 
+bool SourceViewController :: openSource(TextViewModelBase* model, ustr_t caption, path_t sourcePath,
    FileEncoding encoding, bool included, bool autoSelect, int& status)
 {
    bool empty = model->empty;
@@ -124,7 +132,7 @@ bool ProjectController::isIncluded(ProjectModel& model, ustr_t ns)
    return NamespaceString::isIncluded(model.getPackage(), ns);
 }
 
-void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t path, 
+void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t path,
    PathString& fullPath)
 {
    if (isIncluded(model, ns)) {
@@ -223,7 +231,7 @@ bool ProjectController :: startDebugger(ProjectModel& model, DebugActionResult& 
       bool debugMode = model.getDebugMode();
       if (debugMode) {
          if (!_debugController.start(exePath.str(), commandLine.str(), debugMode/*, _breakpoints */)) {
-            result.noDebugFile = true;            
+            result.noDebugFile = true;
 
             return false;
          }
@@ -240,7 +248,7 @@ bool ProjectController :: startDebugger(ProjectModel& model, DebugActionResult& 
       return true;
    }
    else {
-      result.targetMissing = true;      
+      result.targetMissing = true;
 
       return false;
    }
@@ -338,7 +346,7 @@ void ProjectController :: runToCursor(ProjectModel& model, SourceViewModel& sour
 
       FileNameString properName(currentPath, true);
       subPath.combine(*properName);
-      
+
       IdentifierString pathStr(*subPath);
       _debugController.runToCursor(*ns, *pathStr, currentDoc->getCaret().y + 1);
    }
@@ -361,7 +369,7 @@ bool ProjectController :: startVMConsole(ProjectModel& model)
    cmdLine.append(outputPath);
    cmdLine.append(_T("\"\""));
 
-   cmdLine.append("]]\""); 
+   cmdLine.append("]]\"");
    cmdLine.append(" -i");
 
    return _vmProcess->start(*appPath, *cmdLine, *model.paths.appPath, false);
@@ -419,7 +427,7 @@ bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction post
    else if (!model.name.empty()) {
       return compileProject(model);
    }
-   else return false;   
+   else return false;
 }
 
 void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node configRoot)
@@ -609,7 +617,7 @@ void ProjectController :: loadProfileList(ProjectModel& model, ConfigFile& confi
          if (model.profileList.retrieveIndex<ustr_t>(key.str(), [](ustr_t arg, ustr_t current)
             {
                return current.compare(arg);
-            }) == -1) 
+            }) == -1)
          {
             model.profileList.add(ustr_t(key.str()).clone());
          }
@@ -725,7 +733,7 @@ int ProjectController :: openSingleFileProject(ProjectModel& model, path_t singl
    model.empty = false;
    model.name.copy(*name);
    model.projectPath.copySubPath(singleProjectFile, true);
-   
+
    model.outputPath.copySubPath(singleProjectFile, false);
    model.singleSourceProject = true;
 
@@ -789,7 +797,7 @@ bool ProjectController :: toggleBreakpoint(ProjectModel& model, SourceViewModel&
             break;
          }
       }
-      
+
       if (addMode) {
          Breakpoint* bm = new Breakpoint(row, *pathStr, *ns);
 
@@ -1137,7 +1145,7 @@ bool IDEController :: doOpenProjectSourceByIndex(IDEModel* model, int index)
    if (!sourcePath.empty()) {
       PathString fullPath(*model->projectModel.projectPath, sourcePath);
 
-      if(openFile(model, *fullPath, projectStatus)) {         
+      if(openFile(model, *fullPath, projectStatus)) {
          notifyOnModelChange(projectStatus);
 
          return true;
@@ -1216,7 +1224,7 @@ bool IDEController :: doSaveFile(FileDialogBase& dialog, IDEModel* model, bool s
       TextViewModelEvent event = { STATUS_NONE, docStatus };
       _notifier->notify(&event);
    }
-      
+
    return true;
 }
 
@@ -1358,7 +1366,7 @@ bool IDEController :: saveFile(FileDialogBase& dialog, IDEModel* model, int inde
    return doSaveFile(dialog, model, false, forcedMode);
 }
 
-bool IDEController :: closeFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+bool IDEController :: closeFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
    int index, int& status)
 {
    auto docView = model->sourceViewModel.getDocument(index);
@@ -1414,7 +1422,7 @@ bool IDEController :: doCloseFile(FileDialogBase& dialog, MessageDialogBase& mss
    return false;
 }
 
-bool IDEController :: closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+bool IDEController :: closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
    int& status)
 {
    while (model->sourceViewModel.getDocumentCount() > 0) {
@@ -1425,7 +1433,7 @@ bool IDEController :: closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDi
    return true;
 }
 
-bool IDEController :: closeAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+bool IDEController :: closeAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
    int& status)
 {
    int index = model->sourceViewModel.getCurrentIndex();
@@ -1575,8 +1583,8 @@ void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBa
    size_t length = output.length();
    size_t index = 0;
 
-   WideMessage message;
-   WideMessage fileStr, rowStr, colStr;
+   TextString message;
+   TextString fileStr, rowStr, colStr;
    while (true) {
       bool found = false;
       while (index < length) {
@@ -1629,7 +1637,7 @@ void IDEController :: displayErrors(IDEModel* model, text_str output, ErrorLogBa
          colStr.clear();
          rowStr.clear();
       }
-      
+
       log->addMessage(*message, *fileStr, *rowStr, *colStr);
    }
 }
@@ -1648,7 +1656,7 @@ void IDEController :: highlightError(IDEModel* model, int row, int column, path_
    _notifier->notify(&event);
 }
 
-void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode, 
+void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode,
    text_str output, ErrorLogBase* log)
 {
    model->running = false;
@@ -1693,7 +1701,7 @@ void IDEController :: doStopVMConsole()
 void IDEController :: doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model)
 {
    if (prjDialog.showModal()) {
-      
+
    }
 }
 
@@ -1724,7 +1732,7 @@ void IDEController :: onDebuggerStop(IDEModel* model)
    DocumentChangeStatus status = {};
 
    model->sourceViewModel.clearTraceLine(status);
-   model->status = IDEStatus::DebuggerStopped;    
+   model->status = IDEStatus::DebuggerStopped;
 
    model->running = false;
    model->sourceViewModel.setReadOnlyMode(false);
@@ -1826,7 +1834,7 @@ void IDEController :: doGoToLine(GotoDialogBase& dialog, IDEModel* model)
    }
 }
 
-void IDEController :: doSelectWindow(FileDialogBase& fileDialog, MessageDialogBase& mssgDialog, WindowListDialogBase& dialog, 
+void IDEController :: doSelectWindow(FileDialogBase& fileDialog, MessageDialogBase& mssgDialog, WindowListDialogBase& dialog,
    IDEModel* model)
 {
    auto retVal = dialog.selectWindow();
@@ -1862,7 +1870,7 @@ void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog
    if(editorDialog.showModal()) {
       if (prevSchemeIndex != model->viewModel()->schemeIndex) {
          notifyOnModelChange(STATUS_FRAME_CHANGED | STATUS_COLORSCHEME_CHANGED);
-      }         
+      }
    }
 }
 

@@ -375,7 +375,7 @@ namespace elena_lang
 
       virtual SectionInfo getCoreSection(ref_t reference, bool silentMode) = 0;
       virtual SectionInfo getSection(ReferenceInfo referenceInfo, ref_t mask, ref_t metaMask, bool silentMode) = 0;
-      virtual ClassSectionInfo getClassSections(ReferenceInfo referenceInfo, ref_t vmtMask, ref_t codeMask, 
+      virtual ClassSectionInfo getClassSections(ReferenceInfo referenceInfo, ref_t vmtMask, ref_t codeMask,
          bool silentMode) = 0;
 
       virtual ModuleInfo getModule(ReferenceInfo referenceInfo, bool silentMode) = 0;
@@ -436,7 +436,7 @@ namespace elena_lang
 
       virtual addr_t calculateVAddress(MemoryWriter& writer, ref_t addressMask) = 0;
 
-      virtual void writeSectionReference(MemoryBase* image, pos_t imageOffset, ref_t reference, 
+      virtual void writeSectionReference(MemoryBase* image, pos_t imageOffset, ref_t reference,
          SectionInfo* sectionInfo, pos_t sectionOffset, ref_t addressMask) = 0;
 
       virtual void writeReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp,
@@ -461,7 +461,7 @@ namespace elena_lang
 
       virtual void writeMDataRef32(MemoryBase& target, pos_t position,
          pos_t disp, ref_t addressMask) = 0;
-      virtual void writeMDataRef64(MemoryBase& target, pos_t position, 
+      virtual void writeMDataRef64(MemoryBase& target, pos_t position,
          pos64_t disp, ref_t addressMask) = 0;
 
       virtual mssg_t importMessage(mssg_t message, ModuleBase* module = nullptr) = 0;
@@ -519,8 +519,8 @@ namespace elena_lang
    {
    public:
       virtual void prepare(
-         LibraryLoaderBase* loader, 
-         ImageProviderBase* imageProvider, 
+         LibraryLoaderBase* loader,
+         ImageProviderBase* imageProvider,
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
          JITSettings settings,
@@ -532,9 +532,9 @@ namespace elena_lang
 
       virtual void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) = 0;
 
-      virtual void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+      virtual void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader,
          MemoryWriter& codeWriter, LabelHelperBase* lh) = 0;
-      virtual void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+      virtual void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader,
          MemoryWriter& codeWriter, LabelHelperBase* lh) = 0;
 
       virtual void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) = 0;
@@ -547,11 +547,11 @@ namespace elena_lang
 
       virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, pos_t staticLength) = 0;
       virtual void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) = 0;
-      virtual void updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress, 
+      virtual void updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress,
          ref_t flags, pos_t count, FieldAddressMap& staticValues, bool virtualMode) = 0;
       virtual pos_t copyParentVMT(void* parentVMT, void* targetVMT) = 0;
 
-      virtual void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
+      virtual void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length,
          bool structMode, bool virtualMode) = 0;
       virtual void allocateBody(MemoryWriter& writer, int size) = 0;
       virtual void writeInt32(MemoryWriter& writer, unsigned int value) = 0;
@@ -570,7 +570,7 @@ namespace elena_lang
       virtual void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) = 0;
 
       virtual pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode) = 0;
-      virtual pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, 
+      virtual pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter,
          ustr_t actionName, ref_t weakActionRef, ref_t signature, bool virtualMode) = 0;
       virtual void addActionEntryStopper(MemoryWriter& messageWriter) = 0;
       virtual void addSignatureStopper(MemoryWriter& messageWriter) = 0;
@@ -654,137 +654,6 @@ namespace elena_lang
       virtual ~PresenterBase() = default;
    };
 
-   // --- WideMessage ---
-   class WideMessage : public String<wide_c, MESSAGE_LEN>
-   {
-   public:
-      wstr_t operator*() const { return wstr_t(_string); }
-
-      void appendUstr(const char* s)
-      {
-         size_t len = length();
-
-         size_t subLen = MESSAGE_LEN - length();
-         StrConvertor::copy(_string + len, s, getlength(s), subLen);
-         _string[len + subLen] = 0;
-      }
-
-      WideMessage()
-      {
-         _string[0] = 0;
-      }
-      WideMessage(const char* s)
-      {
-         size_t len = MESSAGE_LEN;
-         StrConvertor::copy(_string, s, getlength(s), len);
-         _string[len] = 0;
-      }
-      WideMessage(const char* s1, const char* s2)
-      {
-         size_t len = MESSAGE_LEN;
-         size_t len2 = MESSAGE_LEN;
-         StrConvertor::copy(_string, s1, getlength(s1), len);
-         StrConvertor::copy(_string + len, s2, getlength(s2), len2);
-
-         _string[len + len2] = 0;
-      }
-      WideMessage(const char* s1, const char* s2, const char* s3)
-      {
-         size_t len = MESSAGE_LEN;
-         size_t len2 = MESSAGE_LEN;
-         size_t len3 = MESSAGE_LEN;
-         StrConvertor::copy(_string, s1, getlength(s1), len);
-         StrConvertor::copy(_string + len, s2, getlength(s2), len2);
-         StrConvertor::copy(_string + len + len2, s3, getlength(s3), len3);
-
-         _string[len + len2 + len3] = 0;
-      }
-      WideMessage(const char* s1, const char* s2, const char* s3, const char* s4)
-      {
-         size_t len = MESSAGE_LEN;
-         size_t len2 = MESSAGE_LEN;
-         size_t len3 = MESSAGE_LEN;
-         size_t len4 = MESSAGE_LEN;
-         StrConvertor::copy(_string, s1, getlength(s1), len);
-         StrConvertor::copy(_string + len, s2, getlength(s2), len2);
-         StrConvertor::copy(_string + len + len2, s3, getlength(s3), len3);
-         StrConvertor::copy(_string + len + len2 + len3, s4, getlength(s4), len4);
-
-         _string[len + len2 + len3 + len4] = 0;
-      }
-      WideMessage(const wide_c* s)
-      {
-         copy(s);
-      }
-      WideMessage(const wide_c* s1, const wide_c* s2)
-      {
-         copy(s1);
-         append(s2);
-      }
-   };
-
-
-   // --- IdentifierString ---
-   class IdentifierString : public String<char, IDENTIFIER_LEN>
-   {
-   public:
-      ustr_t operator*() const { return ustr_t(_string); }
-
-      bool compare(ustr_t s)
-      {
-         return s.compare(_string);
-      }
-
-      bool compare(ustr_t s, size_t index, size_t length)
-      {
-         return ustr_t(_string + index).compare(s, length);
-      }
-
-      ref_t toRef(int radix = 10) const
-      {
-         return StrConvertor::toUInt(_string, radix);
-      }
-
-      IdentifierString() = default;
-
-      IdentifierString(ustr_t s)
-         : String(s)
-      {
-
-      }
-      IdentifierString(ustr_t s, size_t length)
-         : String(s, length)
-      {
-      }
-      IdentifierString(ustr_t s1, ustr_t s2)
-         : String(s1)
-      {
-         append(s2);
-      }
-
-      IdentifierString(ustr_t s1, ustr_t s2, ustr_t s3)
-         : String(s1)
-      {
-         append(s2);
-         append(s3);
-      }
-
-      IdentifierString(ustr_t s1, ustr_t s2, ustr_t s3, ustr_t s4)
-         : String(s1)
-      {
-         append(s2);
-         append(s3);
-         append(s4);
-      }
-
-      IdentifierString(wstr_t s)
-      {
-         size_t len = IDENTIFIER_LEN;
-         StrConvertor::copy(_string, s, getlength(s), len);
-         _string[len] = 0;
-      }
-   };
-
    // --- QuoteString ---
    class QuoteString : public String<char, LINE_LEN>
    {
@@ -817,7 +686,7 @@ namespace elena_lang
                   else append(s[i]);
                   break;
                case 2:
-                  if ((s[i] < '0' || s[i] > '9') && (s[i] < 'A' || s[i] > 'F')  && (s[i] < 'a' || s[i] > 'f')) 
+                  if ((s[i] < '0' || s[i] > '9') && (s[i] < 'A' || s[i] > 'F')  && (s[i] < 'a' || s[i] > 'f'))
                   {
                      String<char, 12> number(s + index, i - index);
                      unic_c ch = StrConvertor::toInt(number.str(), (s[i] == 'h') ? 16 : 10);

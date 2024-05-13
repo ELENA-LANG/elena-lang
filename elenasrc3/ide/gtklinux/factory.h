@@ -12,8 +12,8 @@
 //#include "gtklinux/gtksdi.h"
 //#include "gtklinux/gtkgraphic.h"
 //#include "gtklinux/gtktextview.h"
-//#include "ideview.h"
-//#include "idecontroller.h"
+#include "ideview.h"
+#include "idecontroller.h"
 
 namespace elena_lang
 {
@@ -29,8 +29,8 @@ namespace elena_lang
       //HINSTANCE      _instance;
       //int            _cmdShow;
 
-//      IDEModel*      _model;
-      //IDEController* _controller;
+      IDEModel*      _model;
+      IDEController* _controller;
 
       //void registerClasses();
 
@@ -47,8 +47,8 @@ namespace elena_lang
       GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
          ProcessBase* vmConsoleProcess) override;
 
-      IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideView,
-         /*IDEController* ideController,
+      IDEFactory(IDEModel* ideView,
+         IDEController* ideController/*,
          GUISettinngs   settings*/);
    };
 }

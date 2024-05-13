@@ -128,8 +128,11 @@ static Glib::ustring ui_info =
 
 // --- GTKIDEWindow ---
 
-GTKIDEWindow :: GTKIDEWindow()
+GTKIDEWindow :: GTKIDEWindow(IDEController* controller, IDEModel* model)
 {
+   _model = model;
+   _controller = controller;
+
    populateMenu();
 }
 
