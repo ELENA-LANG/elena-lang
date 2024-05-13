@@ -12,11 +12,11 @@ using namespace elena_lang;
 // --- TabBar ---
 
 TabBar::TabBar()
-   : Gtk::Notebook()
+   //: Gtk::Widget()
 {
 }
 
-int TabBar :: addTab(const char* name, Gtk::Widget* control)
+void TabBar :: addTab(const char* name, Gtk::Widget* control)
 {
    if (!get_visible())
       show();

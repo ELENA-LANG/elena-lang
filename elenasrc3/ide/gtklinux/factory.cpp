@@ -7,8 +7,8 @@
 #include "factory.h"
 #include "gtklinux/gtkcommon.h"
 #include "gtklinux/gtkide.h"
-#include "gtklinux/gtkeditframe.h"
-//#include "gtklinux/gtktextview.h"
+#include "gtklinux/gtktextframe.h"
+#include "gtklinux/gtktextview.h"
 //#include "text.h"
 //#include "sourceformatter.h"
 
@@ -80,14 +80,12 @@ IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideModel,
 
 Gtk::Widget* IDEFactory :: createTextControl()
 {
-   auto frame = new EditFrame();
+   TextViewWindow* view = new TextViewWindow(/*_model->viewModel(), &_styles*//*, &_controller->sourceController*/);
+   TextViewFrame* frame = new TextViewFrame();
 
-//   TextViewWindow* view = new TextViewWindow(_model->viewModel(), &_styles/*, &_controller->sourceController*/);
-//   TextViewFrame* frame = new TextViewFrame(/*_settings.withTabAboverscore, view*/);
-//
-//   // !! temporal
-//   frame->addTab(_T("test"), view);
-//
+   // !! temporal
+   frame->addTab("test", view);
+
 //   view->show(); // !! temporal?
 //   frame->show(); // !! temporal?
 //

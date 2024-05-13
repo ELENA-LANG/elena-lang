@@ -15,7 +15,7 @@ namespace elena_lang
    class TabBar : public Gtk::Notebook
    {
    public:
-      int addTab(const char* name, Gtk::Widget* control);
+      void addTab(const char* name, Gtk::Widget* control);
 
       TabBar();
    };
