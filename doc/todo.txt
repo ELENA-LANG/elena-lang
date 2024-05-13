@@ -19,7 +19,6 @@ In development:
   --------------------------------------
   - elt : nested call must not stop / start vm 
   - elt : fails after executing several times
-  - linux simplest gui
   - #99
   - #98
   - #97
@@ -28,7 +27,7 @@ In development:
   - #69
   - chat sample
   --------------------------------------
-  - #95 : LiteralBuffer, WideBuffer
+  - linux simplest gui
 
   === Iteration 24 ===
   --------------------------------------
