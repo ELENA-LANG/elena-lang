@@ -18,8 +18,6 @@ namespace elena_lang
    typedef const wide_c*   const_text_t;
    typedef wstr_t          text_str;
 
-   typedef WideString       TextString;
-
 #elif __GNUG__
 
 #ifndef _T
@@ -32,8 +30,6 @@ namespace elena_lang
    typedef char*        text_t;
    typedef const char*  const_text_t;
    typedef ustr_t       text_str;
-
-   typedef IdentifierString TextString;
 
 #endif
 
@@ -197,6 +193,23 @@ namespace elena_lang
       virtual ~GUIApp() = default;
    };
 
+   // --- ConstantIdentifier ---
+   class TextString : public String <text_c, 0x100>
+   {
+   public:
+      text_str operator*() const { return text_str(_string); }
+
+      TextString()
+      {
+         _string[0] = 0;
+      }
+      TextString(ustr_t message)
+      {
+         size_t length = 0x100;
+         message.copyTo(_string, length);
+         _string[length] = 0;
+      }
+   };
 }
 
 #endif

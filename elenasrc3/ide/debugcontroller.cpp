@@ -248,7 +248,7 @@ bool DebugInfoProvider :: loadSymbol(ustr_t reference, StreamReader& addressRead
             case DebugSymbol::FieldInfo:
             case DebugSymbol::LocalInfo:
                // replace field name reference with the name
-               stringReader.seek(info.addresses.source.nameRef);
+               stringReader.seek((pos_t)info.addresses.source.nameRef);
 
                ((DebugLineInfo*)current)->addresses.source.nameRef = (addr_t)stringReader.address();
                break;
