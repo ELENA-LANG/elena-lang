@@ -94,8 +94,6 @@
 		<Unit filename="../../gui/guicommon.h" />
 		<Unit filename="../gtklinux/factory.cpp" />
 		<Unit filename="../gtklinux/factory.h" />
-		<Unit filename="../gtklinux/gtkeditframe.cpp" />
-		<Unit filename="../gtklinux/gtkeditframe.h" />
 		<Unit filename="../gtklinux/gtkide.cpp" />
 		<Unit filename="../gtklinux/gtkide.h" />
 		<Unit filename="../gtklinux/main.cpp" />
