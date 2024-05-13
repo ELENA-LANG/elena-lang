@@ -8,6 +8,7 @@
 #define FACTORY_H
 
 #include "idecommon.h"
+#include "gtklinux/gtkcommon.h"
 //#include "gtklinux/gtksdi.h"
 //#include "gtklinux/gtkgraphic.h"
 //#include "gtklinux/gtktextview.h"
@@ -33,7 +34,7 @@ namespace elena_lang
 
       //void registerClasses();
 
-      //Gtk::Widget* createTextControl();
+      Gtk::Widget* createTextControl();
 
       //void initializeModel(IDEModel* ideView);
 

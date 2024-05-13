@@ -7,7 +7,7 @@
 #include "factory.h"
 #include "gtklinux/gtkcommon.h"
 #include "gtklinux/gtkide.h"
-//#include "gtklinux/gtktextframe.h"
+#include "gtklinux/gtkeditframe.h"
 //#include "gtklinux/gtktextview.h"
 //#include "text.h"
 //#include "sourceformatter.h"
@@ -78,8 +78,10 @@ IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideModel,
    //initializeModel(ideModel);
 }
 
-//Gtk::Widget* IDEFactory :: createTextControl()
-//{
+Gtk::Widget* IDEFactory :: createTextControl()
+{
+   auto frame = new EditFrame();
+
 //   TextViewWindow* view = new TextViewWindow(_model->viewModel(), &_styles/*, &_controller->sourceController*/);
 //   TextViewFrame* frame = new TextViewFrame(/*_settings.withTabAboverscore, view*/);
 //
@@ -98,10 +100,10 @@ IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideModel,
 ////   // !! temporal
 ////   view->showWindow(SW_SHOW);
 ////   frame->showWindow(SW_SHOW);
-//
-//   return frame;
-//}
-//
+
+   return frame;
+}
+
 //void IDEFactory :: initializeModel(IDEModel* ideView)
 //{
 //   auto viewModel = ideView->viewModel();
@@ -113,23 +115,6 @@ IDEFactory :: IDEFactory(/*HINSTANCE instance, int cmdShow, IDEModel* ideModel,
 //   viewModel->docView = new DocumentView(text, ELENADocFormatter::getInstance());
 //
 //   _styles.assign(STYLE_MAX + 1, _schemes[/*model->scheme*/0], viewModel->fontSize + 5, 20, &_fontFactory);
-//}
-//
-//SDIWindow* IDEFactory :: createMainWindow()
-//{
-//   SDIWindow* sdi = new GTKIDEWindow(/*szTitle, _controller, _model*/);
-////   sdi->create(_instance, szSDI, nullptr);
-////
-//   Gtk::Widget* children[1];
-//   int counter = 0;
-//
-//   int textIndex = counter++;
-//   children[textIndex] = createTextControl();
-//
-//   sdi->populate(counter, children);
-//   sdi->setLayout(textIndex, -1, -1, -1, -1);
-//
-//   return sdi;
 //}
 
 void IDEFactory :: reloadStyles(TextViewModelBase* viewModel)
@@ -143,9 +128,18 @@ void IDEFactory :: styleControl(GUIControlBase* control)
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
          ProcessBase* vmConsoleProcess)
 {
+   Gtk::Widget* children[1];
+   int counter = 0;
+
+   int textIndex = counter++;
+   children[textIndex] = createTextControl();
+
    GTKIDEWindow* ideWindow = new GTKIDEWindow();
 
-   return new WindowWrapper(ideWindow); // !! temporal
+   ideWindow->populate(counter, children);
+   ideWindow->setLayout(textIndex, -1, -1, -1, -1);
+
+   return new WindowWrapper(ideWindow);
 }
 
 GUIApp* IDEFactory :: createApp()

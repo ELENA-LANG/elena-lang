@@ -87,9 +87,15 @@
 		<Unit filename="../../gui/gtklinux/gtkcommon.h" />
 		<Unit filename="../../gui/gtklinux/gtksdi.cpp" />
 		<Unit filename="../../gui/gtklinux/gtksdi.h" />
+		<Unit filename="../../gui/gtklinux/gtktabbar.cpp" />
+		<Unit filename="../../gui/gtklinux/gtktabbar.h" />
+		<Unit filename="../../gui/gtklinux/gtktextframe.cpp" />
+		<Unit filename="../../gui/gtklinux/gtktextframe.h" />
 		<Unit filename="../../gui/guicommon.h" />
 		<Unit filename="../gtklinux/factory.cpp" />
 		<Unit filename="../gtklinux/factory.h" />
+		<Unit filename="../gtklinux/gtkeditframe.cpp" />
+		<Unit filename="../gtklinux/gtkeditframe.h" />
 		<Unit filename="../gtklinux/gtkide.cpp" />
 		<Unit filename="../gtklinux/gtkide.h" />
 		<Unit filename="../gtklinux/main.cpp" />

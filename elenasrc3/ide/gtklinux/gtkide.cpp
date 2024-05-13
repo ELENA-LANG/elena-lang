@@ -131,8 +131,6 @@ static Glib::ustring ui_info =
 GTKIDEWindow :: GTKIDEWindow()
 {
    populateMenu();
-
-   setLayout(-1,-1,-1,-1, -1);
 }
 
 void GTKIDEWindow :: populateMenu()
