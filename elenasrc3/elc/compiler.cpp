@@ -6723,6 +6723,9 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
             break;
       }
    }
+   else if (node == SyntaxKey::Type && variableMode) {
+      return { ObjectKind::Class, {}, declaredTypeInfo.typeRef };
+   }
    else retVal = defineTerminalInfo(scope, node, declaredTypeInfo, variableMode, forwardMode, 
       refOp, mssgOp, memberMode, invalid, attrs);
 
@@ -6779,7 +6782,6 @@ ObjectInfo Compiler :: mapObject(Scope& scope, SyntaxNode node, EAttrs mode)
       }
       return {};
    }
-
    if (terminalNode.nextNode() == SyntaxKey::TemplateArg && !EAttrs::test(mode.attrs, ExpressionAttribute::NewOp)) {
       scope.raiseError(errInvalidSyntax, node);
    }
@@ -7397,7 +7399,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
          }
          break;
       case SyntaxKey::Redirect:
-         retVal = compileRedirect(writer, codeScope, bodyNode);
+         retVal = compileRedirect(writer, codeScope, bodyNode, scope.info.outputRef);
          break;
       default:
          break;
@@ -7591,7 +7593,7 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
    }
 }
 
-ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
+ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, ref_t outputRef)
 {
    Expression expression(this, codeScope, writer);
    ArgumentsInfo arguments;
@@ -7616,7 +7618,11 @@ ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeS
    _logic->setSignatureStacksafe(*codeScope.moduleScope, signRef, resolution.stackSafeAttr);
 
    ObjectInfo retVal = expression.compileMessageOperation({}, target, resolution,
-      signRef, arguments, EAttr::None, & updatedOuterArgs);
+      signRef, arguments, EAttr::None, &updatedOuterArgs);
+
+   if (outputRef) {
+      expression.convertObject(node, expression.saveToTempLocal(retVal), outputRef, true, false);
+   }      
 
    expression.scope.syncStack();
 
@@ -10593,8 +10599,11 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode,
    bool dynamicRequired = EAttrs::testAndExclude(mode, EAttr::DynamicObject);
 
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
-   if (codeScope == nullptr)
+   if (codeScope == nullptr) {    
       scope.raiseError(errInvalidOperation, node);
+
+      return {};
+   }
 
    if (compiler->_withDebugInfo) {
       writer->appendNode(BuildKey::OpenStatement);
