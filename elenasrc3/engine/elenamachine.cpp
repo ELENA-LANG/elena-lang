@@ -17,6 +17,8 @@ typedef VMTHeader32  VMTHeader;
 typedef VMTEntry32   VMTEntry;
 
 constexpr int elVMTClassOffset = elVMTClassOffset32;
+constexpr int gcPageSize = gcPageSize32;
+constexpr int elObjectOffset = elObjectOffset32;
 
 #else
 
@@ -24,8 +26,115 @@ typedef VMTHeader64  VMTHeader;
 typedef VMTEntry64   VMTEntry;
 
 constexpr int elVMTClassOffset = elVMTClassOffset64;
+constexpr int gcPageSize = gcPageSize64;
+constexpr int elObjectOffset = elObjectOffset64;
 
 #endif
+
+inline uintptr_t RetrieveStaticField(uintptr_t ptr, int index)
+{
+   uintptr_t str = *(uintptr_t*)(ptr - sizeof(VMTHeader) - index * sizeof(uintptr_t));
+
+   return str;
+}
+
+inline uintptr_t RetrieveVMT(uintptr_t ptr)
+{
+   return *(uintptr_t*)(ptr - elObjectOffset);
+}
+
+// --- ELENAMachine ---
+
+uintptr_t ELENAMachine :: createPermString(SystemEnv* env, ustr_t s, uintptr_t classPtr)
+{
+   size_t nameLen = getlength(s) + 1;
+   uintptr_t nameAddr = (uintptr_t)SystemRoutineProvider::GCRoutinePerm(env->gc_table, align(nameLen, gcPageSize));
+
+   StrConvertor::copy((char*)nameAddr, s.str(), nameLen, nameLen);
+
+   ObjectPage32* header = (ObjectPage32*)(nameAddr - elObjectOffset);
+   header->vmtPtr = classPtr;
+   header->size = nameLen;
+
+   return nameAddr;
+}
+
+addr_t ELENAMachine :: inherit(SystemEnv* env, void* srcVMTPtr, int staticLen, int nameIndex, 
+   addr_t* addresses, size_t length)
+{
+   assert(nameIndex < 0);
+
+   void* baseVMTPtr = (void*)SystemRoutineProvider::GetParent(srcVMTPtr);
+   size_t srcLength = SystemRoutineProvider::GetVMTLength(srcVMTPtr);
+   size_t baseLength = SystemRoutineProvider::GetVMTLength(baseVMTPtr);
+   int flags = SystemRoutineProvider::GetFlags(srcVMTPtr);
+
+   static int autoIndex = 0;
+
+   uintptr_t namePtr = RetrieveStaticField((uintptr_t)srcVMTPtr, nameIndex);
+   uintptr_t stringVMT = RetrieveVMT(namePtr);
+
+   IdentifierString dynamicName("$proxy");
+   if (namePtr) {
+      dynamicName.append((const char*)namePtr);
+   }
+   else dynamicName.appendInt(++autoIndex);
+
+   addr_t addr = _generatedClasses.get(*dynamicName);
+   if (addr)
+      return addr;
+
+   // NOTE : probably better to create a custom package, but for a moment we can simply copy it
+   uintptr_t nameAddr = createPermString(env, *dynamicName, stringVMT);
+
+   size_t size = (srcLength * sizeof(VMTEntry)) + sizeof(VMTHeader) + elObjectOffset32 + staticLen * sizeof(uintptr_t);
+   addr_t ptr = (addr_t)SystemRoutineProvider::GCRoutinePerm(env->gc_table, align(size, gcPageSize));
+
+   // HOTFIX : copy build-in static variables
+   uintptr_t* staticFields = (uintptr_t*)(ptr + staticLen * sizeof(uintptr_t));
+   for (int i = 0; i < staticLen; i++) {
+      staticFields[-i] = RetrieveStaticField((uintptr_t)srcVMTPtr, -i);
+   }
+   staticFields[nameIndex] = nameAddr;
+
+   VMTHeader* header = (VMTHeader*)(ptr + staticLen * sizeof(uintptr_t));
+   VMTEntry* entries = (VMTEntry*)(ptr + staticLen * sizeof(uintptr_t) + sizeof(VMTHeader));
+
+   size_t i = 0;
+   size_t j = 0;
+   size_t addr_i = 0;
+
+   VMTEntry* base = (VMTEntry*)baseVMTPtr;
+   VMTEntry* src = (VMTEntry*)srcVMTPtr;
+   while (i < srcLength) {
+      if (base[j].message == src[i].message) {
+         entries[i] = src[i];
+         if (j < baseLength)
+            j++;
+      }
+      else if (src[i].address) {
+         // if the method is not abstract
+         entries[i] = src[i];
+      }
+      else {
+         entries[i].message = src[i].message;
+         entries[i].address = addresses[addr_i];
+
+         addr_i += (addr_i < (length - 1) ? 1 : 0);
+      }
+
+      i++;
+   }
+
+   header->parentRef = (addr_t)src;
+   header->count = srcLength;
+   header->flags = flags;
+   header->classRef = (addr_t)base;
+
+   _generatedClasses.add(*dynamicName, (addr_t)entries);
+
+   return (addr_t)entries;
+}
 
 // --- SystemRoutineProvider ---
 
@@ -136,6 +245,27 @@ unsigned int SystemRoutineProvider :: GetRandomNumber(SeedStruct& seed)
    seed.z4 = ((seed.z4 & 4294967168U) << 13) ^ b;
 
    return (seed.z1 ^ seed.z2 ^ seed.z3 ^ seed.z4);
+}
+
+size_t SystemRoutineProvider :: GetVMTLength(void* classPtr)
+{
+   VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
+
+   return header->count;
+}
+
+addr_t SystemRoutineProvider::GetParent(void* classPtr)
+{
+   VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
+
+   return header->parentRef;
+}
+
+int SystemRoutineProvider :: GetFlags(void* classPtr)
+{
+   VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
+
+   return header->flags;
 }
 
 size_t SystemRoutineProvider :: LoadMessages(MemoryBase* msection, void* classPtr, mssg_t* output, size_t skip, 

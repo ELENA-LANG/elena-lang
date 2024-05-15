@@ -353,4 +353,3 @@ size_t ELENARTMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_
    return SystemRoutineProvider::LoadMessages(&msection, classPtr, output, skip, 
       maxLength, false);
 }
-

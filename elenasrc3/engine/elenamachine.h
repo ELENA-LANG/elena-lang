@@ -79,11 +79,22 @@ namespace elena_lang
    // --- ELENAMachine ---
    class ELENAMachine
    {
+   protected:
+      AddressMap  _generatedClasses;
+
+      uintptr_t createPermString(SystemEnv* env, ustr_t s, uintptr_t classPtr);
+
    public:
+      addr_t inherit(SystemEnv* env, void* srcVMTPtr, int staticLen, int nameIndex, addr_t* addresses, size_t length);
+
       addr_t execute(SystemEnv* env, void* symbolListEntry);
       addr_t execute(SystemEnv* env, void* threadEntry, void* threadFunc);
 
-      ELENAMachine() = default;
+      ELENAMachine()
+         : _generatedClasses(0)
+      {
+
+      }
 
       virtual ~ELENAMachine() = default;
    };
@@ -129,6 +140,9 @@ namespace elena_lang
 
       static size_t LoadMessages(MemoryBase* msection, void* classPtr, mssg_t* output, size_t skip,
          size_t maxLength, bool vmMode);
+      static size_t GetVMTLength(void* classPtr);
+      static addr_t GetParent(void* classPtr);
+      static int GetFlags(void* classPtr);
 
       static bool CheckMessage(MemoryBase* msection, void* classPtr, mssg_t message);
 
