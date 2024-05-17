@@ -3642,7 +3642,7 @@ void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMod
       endDebugInfo(scope);
 }
 
-void ByteCodeWriter :: saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef, 
+void ByteCodeWriter :: saveVMT(ClassInfo& info, BuildNode node, Scope& scope, pos_t sourcePathRef,
    ReferenceMap& paths, bool tapeOptMode, bool threadFriendly)
 {
    BuildNode current = node.firstChild();
@@ -3650,7 +3650,9 @@ void ByteCodeWriter :: saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef
       if (current == BuildKey::Method) {
          pos_t methodSourcePathRef = sourcePathRef;
 
-         MethodEntry entry = { current.arg.reference, scope.code->position() };
+         auto methodInfo = info.methods.get(current.arg.reference);
+
+         MethodEntry entry = { current.arg.reference, scope.code->position(), methodInfo.outputRef };
          scope.vmt->write(&entry, sizeof(MethodEntry));
 
          BuildNode pathNode = current.findChild(BuildKey::Path);
@@ -3726,10 +3728,10 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
 
       openClassDebugInfo(scope, moduleScope->module->resolveReference(node.arg.reference & ~mskAnyRef), info.header.flags);
       saveFieldDebugInfo(scope, info);
-      saveVMT(node, scope, sourcePath, paths, tapeOptMode, threadFriendly);
+      saveVMT(info, node, scope, sourcePath, paths, tapeOptMode, threadFriendly);
       endDebugInfo(scope);
    }
-   else saveVMT(node, scope, INVALID_POS, paths, tapeOptMode, threadFriendly);
+   else saveVMT(info, node, scope, INVALID_POS, paths, tapeOptMode, threadFriendly);
 
    pos_t size = vmtWriter.position() - classPosition;
    vmtSection->write(classPosition - 4, &size, sizeof(size));

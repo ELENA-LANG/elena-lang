@@ -29,8 +29,18 @@ In development:
   - chat sample
   - #590 : creating a dynamic interface wrapper (the "class" is created in perm heap, clone the interface and fill with redirect statements)
   * #590 : functional test
+  * #590 : vm : CreateProxyType
+  * #590 : sample : create a dynamic interface wrapper
+  * rename CreateProxyTypeLA to InjectProxyLA, the input parameter must contain the target object, the function must verify that 
+    the target proxy is marked as proxy dispatcher (); the target type is marked
+    as weak interface (the output is not specified); the function will create proxy vmt and inject it to the proxy : otherwise it returns 0
+
+  * the api entry must override
+  * perm alloc must be struct
+  * #590 : only stateless type can be used
+  * #590 : proxy dispatcher : contains only a single field and a custom dispatcher
   --------------------------------------
-  * #590 : elenavm : dynamic class inheritance - allocate in perm, copy vmt with custom routine
+  * #590 : output type list - ignore anonymous / proxy classes
 
   === Iteration 24 ===
   --------------------------------------

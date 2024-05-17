@@ -514,10 +514,21 @@ namespace elena_lang
       virtual void writeLabelAddress(pos_t label, MemoryWriter& writer, ref_t mask) = 0;
    };
 
+   typedef CachedList<Pair<mssg_t, ref_t>, 10> CachedOutputTypeList;
+
    // --- JITCompilerBase ---
    class JITCompilerBase
    {
    public:
+      struct VMTFixInfo
+      {
+         addr_t parentAddress;
+         addr_t classClassAddress;
+         addr_t outputListAddress;
+         ref_t  flags;
+         pos_t  count;
+      };
+
       virtual void prepare(
          LibraryLoaderBase* loader,
          ImageProviderBase* imageProvider,
@@ -539,16 +550,18 @@ namespace elena_lang
 
       virtual void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) = 0;
 
+      virtual void compileOutputTypeList(ReferenceHelperBase* helper, MemoryWriter& writer, CachedOutputTypeList& outputTypeList) = 0;
+
       virtual pos_t getStaticCounter(MemoryBase* statSection, bool emptyNotAllowed = false) = 0;
 
       virtual pos_t getVMTLength(void* targetVMT) = 0;
       virtual addr_t findMethodAddress(void* entries, mssg_t message) = 0;
       virtual pos_t findMethodOffset(void* entries, mssg_t message) = 0;
 
-      virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, pos_t staticLength) = 0;
+      virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
+         pos_t staticLength, bool withOutputList) = 0;
       virtual void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) = 0;
-      virtual void updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress,
-         ref_t flags, pos_t count, FieldAddressMap& staticValues, bool virtualMode) = 0;
+      virtual void updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode) = 0;
       virtual pos_t copyParentVMT(void* parentVMT, void* targetVMT) = 0;
 
       virtual void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length,
@@ -1107,6 +1120,7 @@ namespace elena_lang
    {
       mssg_t message;
       pos_t  codeOffset;
+      ref_t  outputRef;
    };
 
    // --- DebugLineInfo ---

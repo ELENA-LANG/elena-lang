@@ -252,6 +252,15 @@ EXTERN_DLL_EXPORT void WaitForSignalsGCLA(size_t count, void* handles)
    SystemRoutineProvider::GCWaitForSignals(count, handles);
 }
 
+/// <summary>
+/// Creates a dynamic proxy class inheriting the given VMT
+/// </summary>
+/// <returns>a reference to dynamically created VMT</returns>
+EXTERN_DLL_EXPORT void* CreateProxyTypeLA(void* classPtr, int staticLength, int nameIndex, void* handler)
+{
+   return (void*)machine->inherit(systemEnv, classPtr, staticLength, nameIndex, (addr_t*)&handler, 1);
+}
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved

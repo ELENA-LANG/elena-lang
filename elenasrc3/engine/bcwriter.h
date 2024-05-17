@@ -121,7 +121,7 @@ namespace elena_lang
       void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 
          ReferenceMap& paths, bool tapeOptMode, bool threadFriendly);
 
-      void saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths, 
+      void saveVMT(ClassInfo& info, BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths,
          bool tapeOptMode, bool threadFriendly);
 
       void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 

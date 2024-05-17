@@ -38,7 +38,7 @@ namespace elena_lang
    // --- ELENA Module structure constants ---
    constexpr auto ELENA_SIGNITURE            = "ELENA.";          // the stand alone image
    constexpr auto ELENA_VM_SIGNITURE         = "VM.ELENA.";       // the stand alone image
-   constexpr auto MODULE_SIGNATURE           = "ELENA.0610";      // the module version
+   constexpr auto MODULE_SIGNATURE           = "ELENA.0611";      // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE     = "ED.06";
 
   // --- ELENA core module names ---
@@ -209,6 +209,7 @@ namespace elena_lang
    constexpr ref_t elGroup                = 0x10000000;
    constexpr ref_t elPacked               = 0x20000000;
    constexpr ref_t elTemplatebased        = 0x40000000;
+   constexpr ref_t elWithOutputList       = 0x80000000; // NOTE : this flag is set automatically by JIT linker
 
    constexpr ref_t elDebugMask            = 0x001F0000;
    constexpr ref_t elDebugDWORD           = 0x00010000;

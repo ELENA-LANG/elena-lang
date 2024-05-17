@@ -54,3 +54,9 @@ public extension classROp
       ^ retVal != 0
    }
 }
+
+public extension proxyTypeOp
+{
+   __createProxyType()
+       : external(system'core_routines'__createProxyType);
+}

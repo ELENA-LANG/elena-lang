@@ -33,7 +33,7 @@ constexpr int elObjectOffset = elObjectOffset64;
 
 inline uintptr_t RetrieveStaticField(uintptr_t ptr, int index)
 {
-   uintptr_t str = *(uintptr_t*)(ptr - sizeof(VMTHeader) - index * sizeof(uintptr_t));
+   uintptr_t str = *(uintptr_t*)(ptr - sizeof(VMTHeader) + index * sizeof(uintptr_t));
 
    return str;
 }
@@ -74,7 +74,7 @@ addr_t ELENAMachine :: inherit(SystemEnv* env, void* srcVMTPtr, int staticLen, i
    uintptr_t namePtr = RetrieveStaticField((uintptr_t)srcVMTPtr, nameIndex);
    uintptr_t stringVMT = RetrieveVMT(namePtr);
 
-   IdentifierString dynamicName("$proxy");
+   IdentifierString dynamicName("proxy$");
    if (namePtr) {
       dynamicName.append((const char*)namePtr);
    }
@@ -92,7 +92,7 @@ addr_t ELENAMachine :: inherit(SystemEnv* env, void* srcVMTPtr, int staticLen, i
 
    // HOTFIX : copy build-in static variables
    uintptr_t* staticFields = (uintptr_t*)(ptr + staticLen * sizeof(uintptr_t));
-   for (int i = 0; i < staticLen; i++) {
+   for (int i = 1; i <= staticLen; i++) {
       staticFields[-i] = RetrieveStaticField((uintptr_t)srcVMTPtr, -i);
    }
    staticFields[nameIndex] = nameAddr;

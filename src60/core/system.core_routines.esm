@@ -31,6 +31,7 @@ define elMessage              00200000h;
 define elSubject              01000000h;
 
 define err_ret          -1;
+define nameconst_index  -1;
 
 define WM_CREATE         1;
 
@@ -2577,6 +2578,33 @@ procedure __leaveCritical
 
   peek        sp:0
   freelock
+
+end
+
+procedure __createProxyType
+
+  xflush     sp:0
+  xflush     sp:1
+  peek       sp:0
+
+  open       (2),[self]
+  store      fp:self
+
+  call       extern:CreateProxyTypeLA(self, 2, nameconst_index, 
+             procedure:"system'core_routines'proxyDispatcher")
+
+  $save      sp:0
+  peek       sp:0
+
+  close      []
+
+end
+
+procedure proxyDispatcher
+
+  peek       sp:0
+  get        i:0
+  jump       vt:0
 
 end
 
