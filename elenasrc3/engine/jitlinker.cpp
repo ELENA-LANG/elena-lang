@@ -812,9 +812,11 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
    MemoryBase* codeImage = _imageProvider->getTargetSection(mskCodeRef);
    MemoryWriter vmtWriter(vmtImage);
 
+   bool withOutputList = _withOutputList && !test(header.flags, elNestedClass);
+
    // allocate space and make VTM offset
    _compiler->allocateVMT(vmtWriter, header.flags, header.count, 
-      header.staticSize, _withOutputList);
+      header.staticSize, withOutputList);
 
    addr_t vaddress = calculateVAddress(vmtWriter, mskRDataRef);
 
@@ -862,7 +864,7 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
             _compiler->addVMTEntry(message, methodPosition,
                vmtImage->get(position), count);
 
-            if (_withOutputList && entry.outputRef && entry.outputRef != sectionInfo.reference) {
+            if (withOutputList && entry.outputRef && entry.outputRef != sectionInfo.reference) {
                // NOTE : the list must contain already resolved message constants, so only type references must be resolved
                outputTypeList.add({ message, entry.outputRef });
             }
@@ -889,7 +891,7 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
 
       resolveClassGlobalAttributes(referenceInfo, vmtReader, vaddress);
 
-      addr_t outputListAddress = _withOutputList ? 
+      addr_t outputListAddress = withOutputList ?
          resolveOutputTypeList(referenceInfo, outputTypeList) : 0;
 
       // update VMT

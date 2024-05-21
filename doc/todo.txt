@@ -3,9 +3,31 @@ In development:
 ------         
 
 [development]
-  ### EPIC: elena 6.1 - redux ###
+  ### EPIC: elena 6.2 ###
 
   === Iteration 23 ===
+  prom: returning multiple values from the method / function
+  --------------------------------------
+  - #620 : add out argument (a special case of Reference<T> template), to indicate the variable must be assigned before the method exit
+  - #590 : creating a dynamic interface wrapper (the "class" is created in perm heap, clone the interface and fill with redirect statements)
+  * #590 : functional test
+  * #590 : vm : CreateProxyType
+  * #590 : sample : create a dynamic interface wrapper
+  * rename CreateProxyTypeLA to InjectProxyLA, the input parameter must contain the target object, the function must verify that 
+    the target proxy is marked as proxy dispatcher (); the target type is marked
+    as weak interface (the output is not specified); the function will create proxy vmt and inject it to the proxy : otherwise it returns 0
+
+  * if the strong interface - verify if the output type list matches the interface one - if not return nil
+  * the api entry must override
+  * perm alloc must be struct
+  
+  --------------------------------------
+  * #590 : when no output type info - only weak interfaces are supported
+  * #590 : only stateless type can be used
+  * #590 : proxy dispatcher : contains only a single field and a custom dispatcher
+  * #590 : recognize weak interface
+
+  === Iteration 24 ===
   --------------------------------------
   dev: #574,#265,#619,#580
   op: github action - create a draft release
@@ -14,7 +36,7 @@ In development:
   exp: generate code templates - e.g. simple console app
   ide:vm debugger, #617, linux ide, linux debugger
   tools:#618, #620
-  prom:#635 on reddit;elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test
+  prom:#635 on reddit;elena in nutshell every 1 week; post an article about attributes (decorate a class, defining which operation is allowed)
   port:elenavm / elt for linux, helloworld gui sample (button)
   --------------------------------------
   - #184 : linux simplest gui
@@ -27,22 +49,8 @@ In development:
   - #637(bt tests (>=4), all bc tests)
   - #69
   - chat sample
-  - #590 : creating a dynamic interface wrapper (the "class" is created in perm heap, clone the interface and fill with redirect statements)
-  * #590 : functional test
-  * #590 : vm : CreateProxyType
-  * #590 : sample : create a dynamic interface wrapper
-  * rename CreateProxyTypeLA to InjectProxyLA, the input parameter must contain the target object, the function must verify that 
-    the target proxy is marked as proxy dispatcher (); the target type is marked
-    as weak interface (the output is not specified); the function will create proxy vmt and inject it to the proxy : otherwise it returns 0
 
-  * the api entry must override
-  * perm alloc must be struct
-  * #590 : only stateless type can be used
-  * #590 : proxy dispatcher : contains only a single field and a custom dispatcher
-  --------------------------------------
-  * #590 : output type list - ignore anonymous / proxy classes
-
-  === Iteration 24 ===
+  === Iteration 25 ===
   --------------------------------------
   dev: async programming (instant messagange sample (chat) )
   op:
@@ -54,7 +62,7 @@ In development:
   prom:
   port:upndown
 
-  === Iteration 25 ===
+  === Iteration 26 ===
   --------------------------------------
   dev: 
   op:
@@ -66,7 +74,45 @@ In development:
   prom:
   port:
 
-  === Iteration 25 ===
+  ### EPIC: elena 6.3 ###
+
+  === Iteration 27 ===
+  --------------------------------------
+  dev: 
+  op:
+  opt:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
+  port:
+
+  === Iteration 28 ===
+  --------------------------------------
+  dev: 
+  op:
+  opt:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
+  port:
+
+  === Iteration 29 ===
+  --------------------------------------
+  dev: 
+  op:
+  opt:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
+  port:
+
+  === Iteration 30 ===
   --------------------------------------
   dev: 
   op:

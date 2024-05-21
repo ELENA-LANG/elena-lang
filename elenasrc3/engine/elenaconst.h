@@ -193,6 +193,7 @@ namespace elena_lang
    constexpr ref_t elAbstract             = 0x00000200;
    constexpr ref_t elNoCustomDispatcher   = 0x00000400;
    constexpr ref_t elStructureRole        = 0x00000838;
+   constexpr ref_t elStructure            = 0x00000800;
    constexpr ref_t elReadOnlyRole         = 0x00001000;
    constexpr ref_t elNonStructureRole     = 0x00002000;
    constexpr ref_t elWrapper              = 0x00004000;
@@ -221,6 +222,7 @@ namespace elena_lang
    constexpr ref_t elDebugArray           = 0x00070000;
    constexpr ref_t elDebugFLOAT64S        = 0x00080000;
    constexpr ref_t elDebugBytes           = 0x00090000;
+   constexpr ref_t elProxy                = 0x000A0000;
 
    // --- LoadResult enum ---
    enum class LoadResult

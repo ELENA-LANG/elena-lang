@@ -192,6 +192,7 @@ namespace elena_lang
       ByRefRetMethod          = 0x00010F,
       NameArgParameter        = 0x000110,
       FillingAttr             = 0x000111,
+      ProxyDispatcher         = 0x000112,
 
       Column                  = 0x000201,
       Row                     = 0x000202,

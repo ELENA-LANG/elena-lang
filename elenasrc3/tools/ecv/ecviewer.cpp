@@ -769,6 +769,9 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
       case elDebugArray:
          printLineAndCount("@flag ", "elDebugArray", row, pageSize);
          break;
+      case elProxy:
+         printLineAndCount("@flag ", "elProxy", row, pageSize);
+         break;
       default:
          break;
    }

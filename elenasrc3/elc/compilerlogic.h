@@ -203,6 +203,8 @@ namespace elena_lang
       bool isNeedVerification(ClassInfo& info, VirtualMethodList& implicitMultimethods);
       bool verifyMultimethod(ModuleScopeBase& scope, ClassInfo& info, mssg_t message);
 
+      bool validateDispatcherType(ClassInfo& classInfo);
+
       mssg_t resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, 
          ref_t implicitSignatureRef, int& stackSafeAttr, bool selfCall);
 

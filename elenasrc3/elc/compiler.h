@@ -1411,6 +1411,8 @@ namespace elena_lang
 
       static bool isClassClassOperation(Scope& scope, ObjectInfo target);
 
+      static bool isProxy(Scope& scope, SyntaxNode node);
+
       ref_t declareMultiType(Scope& scope, SyntaxNode& node, ref_t elementRef);
 
       void declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& fldeclaredFlagsags);
@@ -1577,6 +1579,7 @@ namespace elena_lang
 
       void compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, SyntaxNode node,
          bool withGenerics);
+      void compileProxyDispatcher(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
 
       ObjectInfo compileResendCode(BuildTreeWriter& writer, CodeScope& codeScope, ObjectInfo source, SyntaxNode node);
       ObjectInfo compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, ref_t outputRef);

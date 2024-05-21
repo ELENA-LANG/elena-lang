@@ -2947,3 +2947,17 @@ pos_t CompilerLogic :: definePadding(ModuleScopeBase& scope, pos_t offset, pos_t
          return align(offset, scope.ptrSize) - offset;
    }
 }
+
+bool CompilerLogic :: validateDispatcherType(ClassInfo& classInfo)
+{
+   bool isProxy = classInfo.fields.count() == 1 && test(classInfo.header.flags, elWithCustomDispatcher | elNestedClass | elSealed)
+         && !testany(classInfo.header.flags, elWithGenerics | elWithVariadics | elWithYieldable | elStructure);
+
+   if (isProxy && (classInfo.header.flags & elDebugMask) == 0) {
+      classInfo.header.flags |= elProxy;
+
+      return true;
+   }
+
+   return false;
+}

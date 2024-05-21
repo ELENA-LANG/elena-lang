@@ -8471,6 +8471,36 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
    }
 }
 
+void Compiler :: compileProxyDispatcher(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
+{
+   SyntaxNode objNode = node.firstChild(SyntaxKey::DeclarationMask).firstChild();
+
+   // NOTE : the redirect target must be a simple variable
+   assert(objNode == SyntaxKey::Object);
+
+   Expression expression(this, codeScope, writer);
+
+   ObjectInfo target = expression.compile(objNode, 0, EAttr::None, nullptr);
+   switch (target.kind) {
+      // NOTE : the redirect operation must be done without creating a new frame
+      case ObjectKind::OuterSelf:
+      case ObjectKind::Outer:
+         writer.appendNode(BuildKey::Argument);
+         writer.appendNode(BuildKey::Field, target.reference);
+         break;
+      case ObjectKind::OuterField:
+         writer.appendNode(BuildKey::Argument);
+         writer.appendNode(BuildKey::Field, target.reference);
+         writer.appendNode(BuildKey::Field, target.extra);
+         break;
+      default:
+         codeScope.raiseError(errInvalidOperation, node);
+         break;
+   }
+
+   writer.appendNode(BuildKey::RedirectOp);
+}
+
 void Compiler :: compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, SyntaxNode node,
    bool withGenerics)
 {
@@ -8546,6 +8576,8 @@ inline bool hasVariadicFunctionDispatcher(Compiler::ClassScope* classScope, bool
 void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node,
    bool withGenerics, bool withOpenArgGenerics)
 {
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
    CodeScope codeScope(&scope);
 
    beginMethod(writer, scope, node, BuildKey::Method, false);
@@ -8558,7 +8590,10 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
             writer.appendNode(BuildKey::Import, current.arg.reference);
             break;
          case SyntaxKey::Redirect:
-            compileRedirectDispatcher(writer, scope, codeScope, current, withGenerics);
+            if (node.existChild(SyntaxKey::ProxyDispatcher)) {
+               compileProxyDispatcher(writer, codeScope, current);
+            }
+            else compileRedirectDispatcher(writer, scope, codeScope, current, withGenerics);
             break;
          default:
             scope.raiseError(errInvalidOperation, node);
@@ -8568,8 +8603,6 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
    else {
       // if it is an implicit dispatcher
       if (withGenerics) {
-         ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
-
          // !! temporally
          if (withOpenArgGenerics)
             scope.raiseError(errInvalidOperation, node);
@@ -8587,8 +8620,6 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
       // if it is open arg generic without redirect statement
       else if (withOpenArgGenerics) {
          Expression expression(this, codeScope, writer);
-
-         ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
 
          ref_t mask = VARIADIC_MESSAGE;
          bool mixedDispatcher = false;
@@ -8982,6 +9013,31 @@ void Compiler :: injectInterfaceDispatch(Scope& scope, SyntaxNode node, ref_t pa
    }
 }
 
+bool Compiler :: isProxy(Scope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Method:
+            if (current.arg.reference == scope.moduleScope->buildins.dispatch_message) {
+               SyntaxNode exprNode = current.findChild(SyntaxKey::Redirect).firstChild();
+               if (exprNode.firstChild() != SyntaxKey::Object || exprNode.firstChild().nextNode() != SyntaxKey::None) {
+                  return false;
+               }
+               else current.appendChild(SyntaxKey::ProxyDispatcher);
+            }
+            else return false;
+            break;
+         default:
+            return false;
+      }
+
+      current = current.nextNode();
+   }
+
+   return true;
+}
+
 void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef)
 {
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
@@ -9026,6 +9082,9 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
 
    generateClassDeclaration(scope, node, elNestedClass | elSealed);
 
+   // check if the nested class is a proxy class, and inject the required attribute
+   bool proxy = scope.info.header.parentRef == scope.moduleScope->buildins.superReference && isProxy(scope, node);
+
    scope.save();
 
    BuildNode buildNode = writer.CurrentNode();
@@ -9043,6 +9102,11 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
    // set flags once again
    // NOTE : it should be called after the code compilation to take into consideration outer fields
    _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, scope.isClassClass());
+
+   // validate the proxy class and set the flag
+   if (proxy && !_logic->validateDispatcherType(scope.info)) {
+      scope.raiseError(errInvalidOperation, node);
+   }
 
    // NOTE : compile once again only auto generated methods
    compileVMT(nestedWriter, scope, node, true, false);
