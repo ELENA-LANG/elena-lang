@@ -253,12 +253,12 @@ EXTERN_DLL_EXPORT void WaitForSignalsGCLA(size_t count, void* handles)
 }
 
 /// <summary>
-/// Creates a dynamic proxy class inheriting the given VMT
+/// Inject an interface VMT into a dynamic proxy class
 /// </summary>
 /// <returns>a reference to dynamically created VMT</returns>
-EXTERN_DLL_EXPORT void* CreateProxyTypeLA(void* classPtr, int staticLength, int nameIndex, void* handler)
+EXTERN_DLL_EXPORT void* InjectProxyTypeLA(void* target, void* type, int staticLength, int nameIndex)
 {
-   return (void*)machine->inherit(systemEnv, classPtr, staticLength, nameIndex, (addr_t*)&handler, 1);
+   return (void*)machine->injectType(/*systemEnv, classPtr, staticLength, nameIndex, (addr_t*)&handler, 1*/);
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,

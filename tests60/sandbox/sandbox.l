@@ -40,7 +40,7 @@ Decorator
    {
       var proxy := ::{ dispatch() => self; };
 
-//      proxy.__injectInferface(IA);
+      proxy.__injectInferface(IA);
 
 //      var type := IA;
 

@@ -59,81 +59,81 @@ uintptr_t ELENAMachine :: createPermString(SystemEnv* env, ustr_t s, uintptr_t c
    return nameAddr;
 }
 
-addr_t ELENAMachine :: inherit(SystemEnv* env, void* srcVMTPtr, int staticLen, int nameIndex, 
-   addr_t* addresses, size_t length)
+addr_t ELENAMachine :: injectType(/*SystemEnv* env, void* srcVMTPtr, int staticLen, int nameIndex,
+   addr_t* addresses, size_t length*/)
 {
-   assert(nameIndex < 0);
+   //assert(nameIndex < 0);
 
-   void* baseVMTPtr = (void*)SystemRoutineProvider::GetParent(srcVMTPtr);
-   size_t srcLength = SystemRoutineProvider::GetVMTLength(srcVMTPtr);
-   size_t baseLength = SystemRoutineProvider::GetVMTLength(baseVMTPtr);
-   int flags = SystemRoutineProvider::GetFlags(srcVMTPtr);
+   //void* baseVMTPtr = (void*)SystemRoutineProvider::GetParent(srcVMTPtr);
+   //size_t srcLength = SystemRoutineProvider::GetVMTLength(srcVMTPtr);
+   //size_t baseLength = SystemRoutineProvider::GetVMTLength(baseVMTPtr);
+   //int flags = SystemRoutineProvider::GetFlags(srcVMTPtr);
 
-   static int autoIndex = 0;
+   //static int autoIndex = 0;
 
-   uintptr_t namePtr = RetrieveStaticField((uintptr_t)srcVMTPtr, nameIndex);
-   uintptr_t stringVMT = RetrieveVMT(namePtr);
+   //uintptr_t namePtr = RetrieveStaticField((uintptr_t)srcVMTPtr, nameIndex);
+   //uintptr_t stringVMT = RetrieveVMT(namePtr);
 
-   IdentifierString dynamicName("proxy$");
-   if (namePtr) {
-      dynamicName.append((const char*)namePtr);
-   }
-   else dynamicName.appendInt(++autoIndex);
+   //IdentifierString dynamicName("proxy$");
+   //if (namePtr) {
+   //   dynamicName.append((const char*)namePtr);
+   //}
+   //else dynamicName.appendInt(++autoIndex);
 
-   addr_t addr = _generatedClasses.get(*dynamicName);
-   if (addr)
-      return addr;
+   //addr_t addr = _generatedClasses.get(*dynamicName);
+   //if (addr)
+   //   return addr;
 
-   // NOTE : probably better to create a custom package, but for a moment we can simply copy it
-   uintptr_t nameAddr = createPermString(env, *dynamicName, stringVMT);
+   //// NOTE : probably better to create a custom package, but for a moment we can simply copy it
+   //uintptr_t nameAddr = createPermString(env, *dynamicName, stringVMT);
 
-   size_t size = (srcLength * sizeof(VMTEntry)) + sizeof(VMTHeader) + elObjectOffset32 + staticLen * sizeof(uintptr_t);
-   addr_t ptr = (addr_t)SystemRoutineProvider::GCRoutinePerm(env->gc_table, align(size, gcPageSize));
+   //size_t size = (srcLength * sizeof(VMTEntry)) + sizeof(VMTHeader) + elObjectOffset32 + staticLen * sizeof(uintptr_t);
+   //addr_t ptr = (addr_t)SystemRoutineProvider::GCRoutinePerm(env->gc_table, align(size, gcPageSize));
 
-   // HOTFIX : copy build-in static variables
-   uintptr_t* staticFields = (uintptr_t*)(ptr + staticLen * sizeof(uintptr_t));
-   for (int i = 1; i <= staticLen; i++) {
-      staticFields[-i] = RetrieveStaticField((uintptr_t)srcVMTPtr, -i);
-   }
-   staticFields[nameIndex] = nameAddr;
+   //// HOTFIX : copy build-in static variables
+   //uintptr_t* staticFields = (uintptr_t*)(ptr + staticLen * sizeof(uintptr_t));
+   //for (int i = 1; i <= staticLen; i++) {
+   //   staticFields[-i] = RetrieveStaticField((uintptr_t)srcVMTPtr, -i);
+   //}
+   //staticFields[nameIndex] = nameAddr;
 
-   VMTHeader* header = (VMTHeader*)(ptr + staticLen * sizeof(uintptr_t));
-   VMTEntry* entries = (VMTEntry*)(ptr + staticLen * sizeof(uintptr_t) + sizeof(VMTHeader));
+   //VMTHeader* header = (VMTHeader*)(ptr + staticLen * sizeof(uintptr_t));
+   //VMTEntry* entries = (VMTEntry*)(ptr + staticLen * sizeof(uintptr_t) + sizeof(VMTHeader));
 
-   size_t i = 0;
-   size_t j = 0;
-   size_t addr_i = 0;
+   //size_t i = 0;
+   //size_t j = 0;
+   //size_t addr_i = 0;
 
-   VMTEntry* base = (VMTEntry*)baseVMTPtr;
-   VMTEntry* src = (VMTEntry*)srcVMTPtr;
-   while (i < srcLength) {
-      if (base[j].message == src[i].message) {
-         entries[i] = src[i];
-         if (j < baseLength)
-            j++;
-      }
-      else if (src[i].address) {
-         // if the method is not abstract
-         entries[i] = src[i];
-      }
-      else {
-         entries[i].message = src[i].message;
-         entries[i].address = addresses[addr_i];
+   //VMTEntry* base = (VMTEntry*)baseVMTPtr;
+   //VMTEntry* src = (VMTEntry*)srcVMTPtr;
+   //while (i < srcLength) {
+   //   if (base[j].message == src[i].message) {
+   //      entries[i] = src[i];
+   //      if (j < baseLength)
+   //         j++;
+   //   }
+   //   else if (src[i].address) {
+   //      // if the method is not abstract
+   //      entries[i] = src[i];
+   //   }
+   //   else {
+   //      entries[i].message = src[i].message;
+   //      entries[i].address = addresses[addr_i];
 
-         addr_i += (addr_i < (length - 1) ? 1 : 0);
-      }
+   //      addr_i += (addr_i < (length - 1) ? 1 : 0);
+   //   }
 
-      i++;
-   }
+   //   i++;
+   //}
 
-   header->parentRef = (addr_t)src;
-   header->count = srcLength;
-   header->flags = flags;
-   header->classRef = (addr_t)base;
+   //header->parentRef = (addr_t)src;
+   //header->count = srcLength;
+   //header->flags = flags;
+   //header->classRef = (addr_t)base;
 
-   _generatedClasses.add(*dynamicName, (addr_t)entries);
+   //_generatedClasses.add(*dynamicName, (addr_t)entries);
 
-   return (addr_t)entries;
+   return (addr_t)/*entries*/-1;
 }
 
 // --- SystemRoutineProvider ---

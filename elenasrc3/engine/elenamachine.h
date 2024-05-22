@@ -85,7 +85,7 @@ namespace elena_lang
       uintptr_t createPermString(SystemEnv* env, ustr_t s, uintptr_t classPtr);
 
    public:
-      addr_t inherit(SystemEnv* env, void* srcVMTPtr, int staticLen, int nameIndex, addr_t* addresses, size_t length);
+      addr_t injectType(/*SystemEnv* env, void* srcVMTPtr, int staticLen, int nameIndex, addr_t* addresses, size_t length*/);
 
       addr_t execute(SystemEnv* env, void* symbolListEntry);
       addr_t execute(SystemEnv* env, void* threadEntry, void* threadFunc);

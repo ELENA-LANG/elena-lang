@@ -57,6 +57,6 @@ public extension classROp
 
 public extension proxyTypeOp
 {
-   __createProxyType()
-       : external(system'core_routines'__createProxyType);
+   __injectInferface(type)
+       : external(system'core_routines'__createProxy);
 }

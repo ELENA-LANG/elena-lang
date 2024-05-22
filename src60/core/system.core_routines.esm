@@ -2581,30 +2581,18 @@ procedure __leaveCritical
 
 end
 
-procedure __createProxyType
+procedure __createProxy (proxy, type)
 
   xflush     sp:0
   xflush     sp:1
-  peek       sp:0
 
-  open       (2),[self]
-  store      fp:self
+  open       (4),[]
 
-  call       extern:CreateProxyTypeLA(self, 2, nameconst_index, 
-             procedure:"system'core_routines'proxyDispatcher")
+  call       extern:InjectProxyTypeLA(proxy, type, 2, nameconst_index)
 
-  $save      sp:0
-  peek       sp:0
+  peek       fp:proxy
 
   close      []
-
-end
-
-procedure proxyDispatcher
-
-  peek       sp:0
-  get        i:0
-  jump       vt:0
 
 end
 
