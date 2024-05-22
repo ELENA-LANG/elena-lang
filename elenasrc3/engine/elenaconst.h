@@ -223,6 +223,8 @@ namespace elena_lang
    constexpr ref_t elDebugFLOAT64S        = 0x00080000;
    constexpr ref_t elDebugBytes           = 0x00090000;
    constexpr ref_t elProxy                = 0x000A0000;
+   constexpr ref_t elInterface            = 0x000B0000;
+   constexpr ref_t elWeakInterface        = 0x000C0000;
 
    // --- LoadResult enum ---
    enum class LoadResult

@@ -2985,6 +2985,11 @@ inline bool checkPreviousDeclaration(SyntaxNode node, ustr_t name)
    return false;
 }
 
+inline bool isInterface(int flagMask)
+{
+   return flagMask == elInterface || flagMask == elWeakInterface;
+}
+
 bool Compiler :: generateClassField(ClassScope& scope, FieldAttributes& attrs, ustr_t name, int sizeHint, 
    TypeInfo typeInfo, bool singleField)
 {
@@ -2993,8 +2998,8 @@ bool Compiler :: generateClassField(ClassScope& scope, FieldAttributes& attrs, u
    bool  readOnly = attrs.isReadonly;
    ref_t flags = scope.info.header.flags;
 
-   // a role cannot have fields
-   if (test(flags, elStateless))
+   // a role / interface cannot have fields
+   if (test(flags, elStateless) || isInterface(flags & elDebugMask))
       return false;
 
    SizeInfo sizeInfo = {};
@@ -4266,7 +4271,6 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, 
    }
 }
 
-
 void Compiler :: declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& flags)
 {
    SyntaxNode current = node.firstChild();
@@ -4290,6 +4294,10 @@ void Compiler :: declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_
 
    // handle the abstract flag
    if (test(scope.info.header.flags, elAbstract)) {
+      // clear the interface flag by inheriting
+      if (isInterface(scope.info.header.flags & elDebugMask))
+         scope.info.header.flags &= ~elDebugMask;
+
       if (!test(flags, elAbstract)) {
          scope.abstractBasedMode = true;
          scope.info.header.flags &= ~elAbstract;
@@ -8488,11 +8496,6 @@ void Compiler :: compileProxyDispatcher(BuildTreeWriter& writer, CodeScope& code
          writer.appendNode(BuildKey::Argument);
          writer.appendNode(BuildKey::Field, target.reference);
          break;
-      case ObjectKind::OuterField:
-         writer.appendNode(BuildKey::Argument);
-         writer.appendNode(BuildKey::Field, target.reference);
-         writer.appendNode(BuildKey::Field, target.extra);
-         break;
       default:
          codeScope.raiseError(errInvalidOperation, node);
          break;
@@ -10364,7 +10367,7 @@ bool Compiler::Class :: isParentDeclared(SyntaxNode node)
 void Compiler::Class :: declare(SyntaxNode node)
 {
    bool extensionDeclaration = isExtensionDeclaration(node);
-   resolveClassPostfixes(node, extensionDeclaration/*, lxParent*/);
+   resolveClassPostfixes(node, extensionDeclaration);
 
    ref_t declaredFlags = 0;
    compiler->declareClassAttributes(scope, node, declaredFlags);

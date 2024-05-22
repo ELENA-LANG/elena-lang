@@ -3312,7 +3312,7 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
 
    if (fixInfo.outputListAddress) {
       if (virtualMode) {
-         vmtWriter.writeDReference(fixInfo.outputListAddress | mskRef32, 0);
+         vmtWriter.writeDReference(addrToUInt32(fixInfo.outputListAddress) | mskRef32, 0);
       }
       else vmtWriter.writeDWord(fixInfo.outputListAddress);
    }      

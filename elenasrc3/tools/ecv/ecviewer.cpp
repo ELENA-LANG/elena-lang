@@ -772,6 +772,12 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
       case elProxy:
          printLineAndCount("@flag ", "elProxy", row, pageSize);
          break;
+      case elInterface:
+         printLineAndCount("@flag ", "elInterface", row, pageSize);
+         break;
+      case elWeakInterface:
+         printLineAndCount("@flag ", "elWeakInterface", row, pageSize);
+         break;
       default:
          break;
    }

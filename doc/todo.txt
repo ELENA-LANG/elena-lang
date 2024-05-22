@@ -21,11 +21,13 @@ In development:
   * the api entry must override
   * perm alloc must be struct
   
+  * #590 : proxy dispatcher : contains only a single field and a custom dispatcher
+
+  * #590 : implementing interface injection : for strong interface - validate output types
   --------------------------------------
   * #590 : when no output type info - only weak interfaces are supported
   * #590 : only stateless type can be used
-  * #590 : proxy dispatcher : contains only a single field and a custom dispatcher
-  * #590 : recognize weak interface
+  * #590 : implementing interface injection : 
 
   === Iteration 24 ===
   --------------------------------------
