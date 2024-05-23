@@ -118,28 +118,39 @@ namespace io
    }
     
    // --- TextWriter ---
-    
    public interface TextWriter
    {
-      TextBuilder _buffer;
-      string      _newLineConstant;
-      int         _newLineLength;
-    
       get abstract object Source();
     
       get abstract Encoder Encoder();
     
       abstract close();
         
+      write(object)
+         <= write(object.toPrintable());
+
       abstract write(char[] array, int length);
+      
+      abstract write(string line);
+
+      abstract write(wide line);
         
+      abstract writeLine(line);
+  
+      abstract writeLine();
+   }
+    
+   // --- BaseTextWriter ---
+   public abstract BaseTextWriter : TextWriter
+   {
+      TextBuilder _buffer;
+      string      _newLineConstant;
+      int         _newLineLength;
+    
       writeLine(line)
       {
          self.write(line).write(_newLineConstant)
       }
-        
-      write(object)
-         <= write(object.Printable);
         
       write(string line)
       {
@@ -164,7 +175,7 @@ namespace io
    }
 
    // --- StreamWriter ---   
-   public class StreamWriter : TextWriter
+   public class StreamWriter : BaseTextWriter
    {
       Stream  _stream;
       Encoder _encoder;

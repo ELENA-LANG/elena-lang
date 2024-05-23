@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK+ TabBar Implementation File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 
@@ -12,11 +12,11 @@ using namespace elena_lang;
 // --- TabBar ---
 
 TabBar::TabBar()
-   : Gtk::Notebook()
+   //: Gtk::Widget()
 {
 }
 
-int TabBar :: addTab(const char* name, Gtk::Widget* control)
+void TabBar :: addTab(const char* name, Gtk::Widget* control)
 {
    if (!get_visible())
       show();

@@ -15,7 +15,7 @@
   </project>
   <manifest>
      <name>ELENA SQLite Provider Library</name>
-     <version>6.0.0</version>
+     <version>6.1.0</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>

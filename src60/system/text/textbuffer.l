@@ -449,4 +449,231 @@ namespace text
          _length.Value := n
       }
    }
+
+   // --- StringBuilder ---    
+   public sealed class StringBuilder
+   {
+      byte[]         _buffer;
+      Reference<int> _length;
+    
+      constructor()
+      {
+         _buffer := new byte[](TextPageSize);
+         _length := 0;
+      }
+                                        
+      private reserve(int len)
+      {
+         int newLength := len;
+            
+         newLength := newLength + (*_length);
+            
+         int bufferLength := _buffer.Length;
+            
+         if (newLength >= bufferLength)
+         {
+            //aNewLength := (aNewLength / $TextPageSize + 1) * $TextPageSize.
+            newLength := newLength / TextPageSize;
+            newLength := newLength + 1;
+            newLength := newLength * TextPageSize;
+                
+            var byte[] newBuffer := new byte[](newLength);
+                
+            Array<byte>.copy(newBuffer, _buffer, 0, bufferLength);
+                
+            _buffer := newBuffer
+         }
+      }
+    
+      write(char ch)
+      {
+         reserve(4);
+
+         UTF8Encoder.convertChar(ch, _buffer, *_length, ref int len);
+            
+         _length.append(len)
+      }
+        
+      write(string s)
+      {
+         int s_len := s.Length;
+         int counter := UTF8Encoding.getCharCount(s);
+
+         self.reserve(counter);
+
+         UTF8Encoder.toByteArray(s, 0, ref s_len, _buffer, *_length, ref counter);
+         
+         _length.append(counter)
+      }
+
+      wide(o)
+         <= write(o.toPrintable());
+
+      insert(int index, char ch)
+      {
+         int current := *_length;
+         if (current < index)
+            InvalidArgumentException.raise();
+
+         self.reserve(4);
+            
+         byte tmp[4];
+         UTF8Encoder.convertChar(ch, tmp, 0, ref int len := 4);
+
+         Array<byte>.move(_buffer, index, current, len);            
+         Array<byte>.copyTo(_buffer, tmp, index, len);
+            
+         _length.append(len)
+      }
+
+      insert(int index, string s)
+      {
+         int current := *_length;
+         if (current < index)
+            InvalidArgumentException.raise();
+
+         int s_len := s.Length;
+         int counter := UTF8Encoding.getCharCount(s);
+
+         self.reserve(counter);
+
+         Array<byte>.move(_buffer, index, current, s_len);
+         UTF8Encoder.toByteArray(s, 0, ref s_len, _buffer, index, ref counter);
+         
+         _length.append(counter)         
+      }
+
+      insert(index, o)
+         <= insert(index :as IntNumber, o.toPrintable());
+
+      delete(int index, int length)
+      {
+         int l := *_length;
+         l := l - index;
+         l := l - length;
+            
+         Array<byte>.move(_buffer, index, l, length);
+            
+         _length.reduce(length)
+      }
+
+      int Length
+         = *_length;
+
+      string Value
+         = String.fromByteArray(0, *_length, _buffer);
+   }
+
+   // --- WideStringBuilder ---    
+   public sealed class WideStringBuilder
+   {
+      short[]        _buffer;
+      Reference<int> _length;
+    
+      constructor()
+      {
+         _buffer := new short[](TextPageSize);
+         _length := 0;
+      }
+                                        
+      private reserve(int len)
+      {
+         int newLength := len;
+            
+         newLength := newLength + (*_length);
+            
+         int bufferLength := _buffer.Length;
+            
+         if (newLength >= bufferLength)
+         {
+            //aNewLength := (aNewLength / $TextPageSize + 1) * $TextPageSize.
+            newLength := newLength / TextPageSize;
+            newLength := newLength + 1;
+            newLength := newLength * TextPageSize;
+                
+            var short[] newBuffer := new short[](newLength);
+                
+            Array<short>.copy(newBuffer, _buffer, 0, bufferLength);
+                
+            _buffer := newBuffer
+         }
+      }
+    
+      write(char ch)
+      {
+         reserve(2);
+
+         UTF16Encoding.toShortArray(ch, _buffer, *_length, ref int len);
+            
+         _length.append(len)
+      }
+        
+      write(wide s)
+      {
+         int s_len := s.Length;
+         int counter := UTF16Encoding.getCharCount(s);
+
+         self.reserve(counter);
+
+         UTF16Encoding.toShortArray(s, 0, s_len, _buffer, *_length);
+         
+         _length.append(counter)
+      }
+
+      wide(o)
+         <= write(cast wide(o.toPrintable()));
+
+      insert(int index, char ch)
+      {
+         int current := *_length;
+         if (current < index)
+            InvalidArgumentException.raise();
+
+         self.reserve(2);
+
+         int len := ch.WideLength;
+
+         Array<short>.move(_buffer, index, current, len);            
+         UTF16Encoding.toShortArray(ch, _buffer, *_length, ref len);
+            
+         _length.append(len)
+      }
+
+      insert(int index, wide s)
+      {
+         int current := *_length;
+         if (current < index)
+            InvalidArgumentException.raise();
+
+         int s_len := s.Length;
+         int counter := UTF16Encoding.getCharCount(s);
+
+         self.reserve(counter);
+
+         Array<short>.move(_buffer, index, current, s_len);
+         UTF16Encoding.toShortArray(s, 0, s_len, _buffer, index);
+         
+         _length.append(counter)         
+      }
+
+      insert(index, o)
+         <= insert(index :as IntNumber, o.toPrintable() :as WideString);
+
+      delete(int index, int length)
+      {
+         int l := *_length;
+         l := l - index;
+         l := l - length;
+            
+         Array<short>.move(_buffer, index, l, length);
+            
+         _length.reduce(length)
+      }
+
+      int Length
+         = *_length;
+
+      string Value
+         = WideString.fromShortArray(0, *_length, _buffer);
+   }
 }

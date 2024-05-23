@@ -35,15 +35,15 @@ void ViewStyles::release()
 
 // --- TextDrawingArea ---
 
-TextViewWindow::TextDrawingArea :: TextDrawingArea(TextViewWindow* view, TextViewModelBase* model,
-   ViewStyles* styles
+TextViewWindow::TextDrawingArea :: TextDrawingArea(TextViewWindow* view/*, TextViewModelBase* model,
+   ViewStyles* styles*/
 ) :
    Glib::ObjectBase("textview"),
    Gtk::DrawingArea()
 {
-   _model = model;
+   //_model = model;
    _needToResize = false;
-   _styles = styles;
+   //_styles = styles;
 }
 
 Gtk::SizeRequestMode TextViewWindow::TextDrawingArea :: get_request_mode_vfunc() const
@@ -186,98 +186,98 @@ void TextViewWindow::TextDrawingArea :: onResize(int x, int y, int width, int he
 
 void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, int viewHeight)
 {
-   auto docView = _model->docView;
-
-   Point caret = docView->getCaret(false) - docView->getFrame();
-
-   Style* defaultStyle = _styles->getStyle(STYLE_DEFAULT);
-   Style* marginStyle = _styles->getStyle(STYLE_MARGIN);
-   int lineHeight = _styles->getLineHeight();
-   int marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
-
-   if (!defaultStyle->valid) {
-      _styles->validate(canvas.layout);
-
-      lineHeight = _styles->getLineHeight();
-      marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
-
-      _needToResize = true;
-   }
-   // if document size yet to be defined
-   if (_needToResize)
-      resizeDocument(viewWidth, viewHeight);
-
-   // draw background
-   canvas.fillRectangle(0, 0, viewWidth, viewHeight, defaultStyle);
-
-   // draw margin
-   canvas.fillRectangle(0, 0, marginWidth, viewHeight, marginStyle);
-
-   // draw text
-   int x = marginWidth;
-   int y = 1 - lineHeight;
-   int width = 0;
-
-   Style*                      style = defaultStyle;
-   char                        buffer[0x100];
-   StringTextWriter<char, 255> writer(buffer);
-   pos_t                       length = 0;
-
-   DocumentView::LexicalReader reader(docView);
-   reader.readFirst(writer, 255);
-   do {
-      style = _styles->getStyle(reader.style);
-      length = writer.position();
-
-      // set the text length
-      buffer[length] = 0;
-
-      if (reader.newLine) {
-         reader.newLine = false;
-
-         x = marginWidth;
-         y += lineHeight;
-      }
-      if (reader.bandStyle) {
-         canvas.fillRectangle(x, y, viewWidth, lineHeight + 1, marginStyle);
-
-         reader.bandStyle = false;
-      }
-
-      width = canvas.TextWidth(style, buffer);
-
-      /*else */canvas.drawText(x, y, buffer, style);
-
-      x += width;
-      writer.reset();
-   } while (reader.readNext(writer, 255));
+//   auto docView = _model->docView;
+//
+//   Point caret = docView->getCaret(false) - docView->getFrame();
+//
+//   Style* defaultStyle = _styles->getStyle(STYLE_DEFAULT);
+//   Style* marginStyle = _styles->getStyle(STYLE_MARGIN);
+//   int lineHeight = _styles->getLineHeight();
+//   int marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
+//
+//   if (!defaultStyle->valid) {
+//      _styles->validate(canvas.layout);
+//
+//      lineHeight = _styles->getLineHeight();
+//      marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
+//
+//      _needToResize = true;
+//   }
+//   // if document size yet to be defined
+//   if (_needToResize)
+//      resizeDocument(viewWidth, viewHeight);
+//
+//   // draw background
+//   canvas.fillRectangle(0, 0, viewWidth, viewHeight, defaultStyle);
+//
+//   // draw margin
+//   canvas.fillRectangle(0, 0, marginWidth, viewHeight, marginStyle);
+//
+//   // draw text
+//   int x = marginWidth;
+//   int y = 1 - lineHeight;
+//   int width = 0;
+//
+//   Style*                      style = defaultStyle;
+//   char                        buffer[0x100];
+//   StringTextWriter<char, 255> writer(buffer);
+//   pos_t                       length = 0;
+//
+//   DocumentView::LexicalReader reader(docView);
+//   reader.readFirst(writer, 255);
+//   do {
+//      style = _styles->getStyle(reader.style);
+//      length = writer.position();
+//
+//      // set the text length
+//      buffer[length] = 0;
+//
+//      if (reader.newLine) {
+//         reader.newLine = false;
+//
+//         x = marginWidth;
+//         y += lineHeight;
+//      }
+//      if (reader.bandStyle) {
+//         canvas.fillRectangle(x, y, viewWidth, lineHeight + 1, marginStyle);
+//
+//         reader.bandStyle = false;
+//      }
+//
+//      width = canvas.TextWidth(style, buffer);
+//
+//      /*else */canvas.drawText(x, y, buffer, style);
+//
+//      x += width;
+//      writer.reset();
+//   } while (reader.readNext(writer, 255));
 }
 
 int TextViewWindow::TextDrawingArea :: getLineNumberMargin()
 {
-   if (_model->lineNumbersVisible) {
-      Style* marginStyle = _styles->getStyle(STYLE_MARGIN);
-
-      return marginStyle->avgCharWidth * 5;
-   }
-   else return 0;
+//   if (_model->lineNumbersVisible) {
+//      Style* marginStyle = _styles->getStyle(STYLE_MARGIN);
+//
+//      return marginStyle->avgCharWidth * 5;
+//   }
+   /*else*/ return 0;
 }
 
 void TextViewWindow::TextDrawingArea :: resizeDocument(int width, int height)
 {
-   if (_model->isAssigned()) {
-      Point     size;
-      auto style = _styles->getStyle(STYLE_DEFAULT);
-
-      int marginWidth = getLineNumberMargin();
-
-      size.x = (width - marginWidth) / style->avgCharWidth;
-      size.y = height / _styles->getLineHeight();
-
-      _model->resize(size);
-
-      _needToResize = false;
-   }
+//   if (_model->isAssigned()) {
+//      Point     size;
+//      auto style = _styles->getStyle(STYLE_DEFAULT);
+//
+//      int marginWidth = getLineNumberMargin();
+//
+//      size.x = (width - marginWidth) / style->avgCharWidth;
+//      size.y = height / _styles->getLineHeight();
+//
+//      _model->resize(size);
+//
+//      _needToResize = false;
+//   }
 }
 
 void TextViewWindow::TextDrawingArea :: update(bool resized)
@@ -295,8 +295,8 @@ void TextViewWindow::TextDrawingArea :: update(bool resized)
 
 // --- TextViewWindow ---
 
-TextViewWindow :: TextViewWindow(TextViewModelBase* model, ViewStyles* styles)
-   : _area(this, model, styles)
+TextViewWindow :: TextViewWindow(/*TextViewModelBase* model, ViewStyles* styles*/)
+   : _area(this/*, model, styles*/)
 {
    attach(_area, 0, 1, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::EXPAND | Gtk::FILL, 0, 0);
 }

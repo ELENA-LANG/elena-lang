@@ -12,10 +12,10 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-std=c++20" />
-					<Add option="`pkg-config gtkmm-3.0 --cflags`" />
 					<Add option="-m32" />
 					<Add option="-g" />
+					<Add option="-std=c++20" />
+					<Add option="`pkg-config gtkmm-3.0 --cflags`" />
 				</Compiler>
 				<Linker>
 					<Add option="-m32" />
@@ -81,14 +81,8 @@
 			<Add directory="../../common" />
 			<Add directory="../../gui" />
 		</Compiler>
-		<Unit filename="../../common/dump.cpp" />
-		<Unit filename="../../common/dump.h" />
-		<Unit filename="../../common/files.cpp" />
-		<Unit filename="../../common/files.h" />
 		<Unit filename="../../common/ustring.cpp" />
 		<Unit filename="../../common/ustring.h" />
-		<Unit filename="../../gui/document.cpp" />
-		<Unit filename="../../gui/document.h" />
 		<Unit filename="../../gui/gtklinux/gtkcommon.cpp" />
 		<Unit filename="../../gui/gtklinux/gtkcommon.h" />
 		<Unit filename="../../gui/gtklinux/gtkgraphic.cpp" />
@@ -102,23 +96,15 @@
 		<Unit filename="../../gui/gtklinux/gtktextview.cpp" />
 		<Unit filename="../../gui/gtklinux/gtktextview.h" />
 		<Unit filename="../../gui/guicommon.h" />
-		<Unit filename="../../gui/text.cpp" />
-		<Unit filename="../../gui/text.h" />
-		<Unit filename="../../gui/view.cpp" />
-		<Unit filename="../../gui/view.h" />
-		<Unit filename="../editframe.cpp" />
-		<Unit filename="../editframe.h" />
 		<Unit filename="../gtklinux/factory.cpp" />
 		<Unit filename="../gtklinux/factory.h" />
 		<Unit filename="../gtklinux/gtkide.cpp" />
 		<Unit filename="../gtklinux/gtkide.h" />
 		<Unit filename="../gtklinux/main.cpp" />
-		<Unit filename="../ideproject.cpp" />
-		<Unit filename="../ideproject.h" />
-		<Unit filename="../ideview.cpp" />
-		<Unit filename="../ideview.h" />
-		<Unit filename="../sourceformatter.cpp" />
-		<Unit filename="../sourceformatter.h" />
+		<Unit filename="../idecommon.cpp" />
+		<Unit filename="../idecommon.h" />
+		<Unit filename="../idecontroller.cpp" />
+		<Unit filename="../idecontroller.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

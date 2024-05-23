@@ -2852,6 +2852,26 @@ void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScop
    }
 }
 
+void ByteCodeWriter :: saveTernaryOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
+   ReferenceMap& paths, bool tapeOptMode)
+{
+   BuildNode lnodeNode = node.findChild(BuildKey::Tape);
+   BuildNode rnodeNode = lnodeNode.nextNode();
+
+   tape.write(ByteCode::StoreSI, 1);
+
+   saveTape(tape, lnodeNode, tapeScope, paths, tapeOptMode);
+   tape.write(ByteCode::StoreSI);
+
+   saveTape(tape, rnodeNode, tapeScope, paths, tapeOptMode);
+   tape.write(ByteCode::SwapSI, 1);
+      
+   tape.write(ByteCode::CmpR, node.findChild(BuildKey::Const).arg.reference | mskVMTRef);
+
+   tape.write(ByteCode::PeekSI, 1);
+   tape.write(ByteCode::XPeekEq);
+}
+
 void ByteCodeWriter :: saveNativeBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
    ReferenceMap& paths, bool tapeOptMode, bool loopMode)
 {
@@ -3455,6 +3475,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
          case BuildKey::YieldDispatch:
             saveYieldDispatch(tape, current, tapeScope, paths, tapeOptMode);
             break;
+         case BuildKey::TernaryOp:
+            saveTernaryOp(tape, current, tapeScope, paths, tapeOptMode);
+            break;
          case BuildKey::Path:
          case BuildKey::InplaceCall:
             // ignore special nodes
@@ -3619,7 +3642,7 @@ void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMod
       endDebugInfo(scope);
 }
 
-void ByteCodeWriter :: saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef, 
+void ByteCodeWriter :: saveVMT(ClassInfo& info, BuildNode node, Scope& scope, pos_t sourcePathRef,
    ReferenceMap& paths, bool tapeOptMode, bool threadFriendly)
 {
    BuildNode current = node.firstChild();
@@ -3627,7 +3650,9 @@ void ByteCodeWriter :: saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef
       if (current == BuildKey::Method) {
          pos_t methodSourcePathRef = sourcePathRef;
 
-         MethodEntry entry = { current.arg.reference, scope.code->position() };
+         auto methodInfo = info.methods.get(current.arg.reference);
+
+         MethodEntry entry = { current.arg.reference, scope.code->position(), methodInfo.outputRef };
          scope.vmt->write(&entry, sizeof(MethodEntry));
 
          BuildNode pathNode = current.findChild(BuildKey::Path);
@@ -3703,10 +3728,10 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
 
       openClassDebugInfo(scope, moduleScope->module->resolveReference(node.arg.reference & ~mskAnyRef), info.header.flags);
       saveFieldDebugInfo(scope, info);
-      saveVMT(node, scope, sourcePath, paths, tapeOptMode, threadFriendly);
+      saveVMT(info, node, scope, sourcePath, paths, tapeOptMode, threadFriendly);
       endDebugInfo(scope);
    }
-   else saveVMT(node, scope, INVALID_POS, paths, tapeOptMode, threadFriendly);
+   else saveVMT(info, node, scope, INVALID_POS, paths, tapeOptMode, threadFriendly);
 
    pos_t size = vmtWriter.position() - classPosition;
    vmtSection->write(classPosition - 4, &size, sizeof(size));

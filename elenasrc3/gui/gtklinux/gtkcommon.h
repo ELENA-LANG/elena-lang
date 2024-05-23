@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK Common Header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GTKCOMMON_H
@@ -67,6 +67,59 @@ namespace elena_lang
       }
    };
 
+   // --- WindowBase ---
+   class WindowWrapper : public GUIControlBase
+   {
+      Gtk::Window* _window;
+
+   public:
+      Gtk::Window* getHandle() { return _window; }
+
+      bool checkHandle(void* param) const
+      {
+         return (void*)_window == param;
+      }
+
+      Rectangle getRectangle() override { return {}; }
+      void setRectangle(Rectangle rec) override {}
+
+      void show() override
+      {
+         _window->show();
+      }
+
+      void hide() override
+      {
+         _window->hide();
+      }
+
+      virtual bool visible()
+      {
+         return _window->is_visible();
+      }
+
+      void setFocus() override {}
+
+      void refresh() override {}
+
+      WindowWrapper(Gtk::Window* window)
+      {
+         _window = window;
+      }
+      virtual ~WindowWrapper()
+      {
+         delete _window;
+      }
+   };
+
+   // --- WindowApp ---
+   class WindowApp : public GUIApp
+   {
+   public:
+      void notify(EventBase* event) override;
+
+      int run(GUIControlBase* mainWindow, bool maximized, EventBase* startEvent) override;
+   };
 }
 
 #endif // GTKCOMMON_H

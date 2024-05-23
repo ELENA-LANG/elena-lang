@@ -23,6 +23,7 @@ public sealed Array<T> : Indexable<T>
    }
 
    static copy(Array<T> target, Array<T> source, int index, int length)
+      : info("Copies a subarray from source starting at index to target")
    {      
       for(int i := 0; i < length; i += 1)
       {
@@ -31,6 +32,7 @@ public sealed Array<T> : Indexable<T>
    }
 
    static copyTo(Array<T> target, Array<T> source, int index, int length)
+      : info("Copies a source array to target at index")
    {      
       for(int i := 0; i < length; i += 1)
       {

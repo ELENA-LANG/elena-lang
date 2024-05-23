@@ -265,16 +265,18 @@ namespace elena_lang
 
       void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) override;
 
+      void compileOutputTypeList(ReferenceHelperBase* helper, MemoryWriter& writer, CachedOutputTypeList& outputTypeList) override;
+
       pos_t getStaticCounter(MemoryBase* statSection, bool emptyNotAllowed) override;
 
       pos_t getVMTLength(void* targetVMT) override;
       addr_t findMethodAddress(void* entries, mssg_t message) override;
       pos_t findMethodOffset(void* entries, mssg_t message) override;
 
-      void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, pos_t staticLength) override;
+      void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
+         pos_t staticLength, bool withOutputList) override;
       void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) override;
-      void updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress, 
-         ref_t flags, pos_t count, FieldAddressMap& staticValues, bool virtualMode) override;
+      void updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode) override;
       pos_t copyParentVMT(void* parentVMT, void* targetVMT) override;
 
       void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
@@ -336,6 +338,8 @@ namespace elena_lang
 
       void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) override;
 
+      void compileOutputTypeList(ReferenceHelperBase* helper, MemoryWriter& writer, CachedOutputTypeList& outputTypeList) override;
+
       pos_t getStaticCounter(MemoryBase* statSection, bool emptyNotAllowed) override;
 
       int getExtMessageSize() override
@@ -348,11 +352,10 @@ namespace elena_lang
       pos_t findMethodOffset(void* entries, mssg_t message) override;
 
       void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
-         pos_t staticLength) override;
+         pos_t staticLength, bool withOutputList) override;
       pos_t copyParentVMT(void* parentVMT, void* targetVMT) override;
       void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) override;
-      void updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress, 
-         ref_t flags, pos_t count, FieldAddressMap& staticValues, bool virtualMode) override;
+      void updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode) override;
 
       void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
          bool structMode, bool virtualMode) override;

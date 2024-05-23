@@ -80,35 +80,6 @@ public abstract class BaseWinControl : BaseControl
       self.Caption := cast string(v)
    }
 
-//   string Caption
-//   {
-//      set(string s)
-//      {
-//         theCaption := s;
-//         //super.Caption := s;
-//            
-//         ifnot(nil == _handle)
-//         {
-//            _handle.setCaption(cast wide(s))
-//         }
-//      }
-//    
-//      set(wide s)
-//      {
-//         _caption := s;
-//            
-//         ifnot(nil == _handle)
-//         {
-//            _handle.setCaption(s)
-//         }
-//      }
-//        
-//      set(v)
-//      {
-//         self.Caption := cast string(v)
-//      }
-//   }
-
    get string Caption()
    {
       ifnot(nil == _handle)
@@ -159,7 +130,7 @@ public abstract class BaseWinControl : BaseControl
       }        
    }
 
-   IControl retrieve(Handle handle)
+   retrieve(Handle handle)
    {
       if(nil == _handle)
          { ^ nil };
@@ -183,6 +154,7 @@ public abstract class BaseWinControl : BaseControl
          { _handle.refresh() }
    }
 
+   click() {}
 }
 
 // --- BaseWinContainer ---
@@ -198,7 +170,7 @@ public abstract class BaseWinContainer : BaseWinControl
       _controls := new List<IControl>();
    }
 
-   IControl retrieve(Handle handle)
+   retrieve(Handle handle)
    {
       if(_handle == handle)
             { ^ self };
@@ -708,18 +680,11 @@ public abstract class BasePanel : BaseWinContainer
       self.appendControlInternal(_frame)
    }
 
-   internal appendControlInternal(BaseControl control)
+   internal appendControlInternal(control)
    {
       control.Parent := self;
 
-      _controls.append(control)        
-   }
-
-   internal appendControlInternal(ImageList control)
-   {
-      control.Parent := self;
-        
-      _controls.append(control)        
+      _controls.append(control :as IControl)
    }
     
    int Width
@@ -1065,4 +1030,5 @@ public sealed class ImageList : Object, interface<IControl>
       }
    }
 
+   close() {}
 }

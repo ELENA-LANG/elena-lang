@@ -395,7 +395,6 @@ void SDIWindow :: onResizing(RECT* rect)
 int SDIWindow :: paintBackground()
 {
    HDC hdc;
-   HBRUSH hbrBkgnd;
    PAINTSTRUCT ps;
    RECT r;
 

@@ -635,7 +635,7 @@ void Text :: copyLineToX(TextBookmark& bookmark, TextWriter<text_c>& writer, pos
       if (!bookmark.moveOn(i))
          break;
 
-      length -= i;
+      length -= (pos_t)i;
    }
 }
 

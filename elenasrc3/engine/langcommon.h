@@ -220,7 +220,7 @@ namespace elena_lang
    constexpr auto V_CONSTRUCTOR           = 0x80001004u;
    constexpr auto V_EXTENSION             = 0x80001005u;
    constexpr auto V_SINGLETON             = 0x80001006u;
-   constexpr auto V_LIMITED               = 0x80001007u;
+   constexpr auto V_INTERFACE             = 0x80001007u;
    constexpr auto V_METHOD                = 0x80001008u;
    constexpr auto V_FIELD                 = 0x80001009u;
    constexpr auto V_NONESTRUCT            = 0x8000100Au;

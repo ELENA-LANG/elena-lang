@@ -167,6 +167,7 @@ namespace elena_lang
       ConstantSettings      _constantSettings;
       bool                  _virtualMode;
       bool                  _classSymbolAutoLoadMode;
+      bool                  _withOutputList;
       bool                  _withDebugInfo;
          
       addr_t calculateVAddress(MemoryWriter& writer, ref_t targetMask);
@@ -205,6 +206,8 @@ namespace elena_lang
       addr_t resolveVMTSection(ReferenceInfo referenceInfo, ClassSectionInfo sectionInfo);
       addr_t resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
       addr_t resolveMetaSection(ReferenceInfo referenceInfo, ref_t sectionMask, SectionInfo sectionInfo);
+      // NOTE : the list contains already resolved message constants, so only type references must be resolved
+      addr_t resolveOutputTypeList(ReferenceInfo referenceInfo, CachedOutputTypeList& outputTypeList);
       addr_t resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMask);
       addr_t resolveConstantArray(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode);
       addr_t resolveConstantDump(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode);
@@ -276,6 +279,7 @@ namespace elena_lang
          _virtualMode = settings->virtualMode;
          _classSymbolAutoLoadMode = settings->autoLoadMode;
          _withDebugInfo = false;
+         _withOutputList = false;
 
          _constantSettings.intLiteralClass = forwardResolver->resolveForward(INTLITERAL_FORWARD);
          _constantSettings.longLiteralClass = forwardResolver->resolveForward(LONGLITERAL_FORWARD);

@@ -13,7 +13,7 @@ namespace elena_lang
 {
    // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION              6                    // ELENA Engine version
-   #define ENGINE_MINOR_VERSION              0
+   #define ENGINE_MINOR_VERSION              1
 
    constexpr auto LINE_LEN                   = 0x1000;            // the maximal source line length
    constexpr auto IDENTIFIER_LEN             = 0x0300;            // the maximal identifier length
@@ -38,7 +38,7 @@ namespace elena_lang
    // --- ELENA Module structure constants ---
    constexpr auto ELENA_SIGNITURE            = "ELENA.";          // the stand alone image
    constexpr auto ELENA_VM_SIGNITURE         = "VM.ELENA.";       // the stand alone image
-   constexpr auto MODULE_SIGNATURE           = "ELENA.0601";      // the module version
+   constexpr auto MODULE_SIGNATURE           = "ELENA.0611";      // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE     = "ED.06";
 
   // --- ELENA core module names ---
@@ -193,6 +193,7 @@ namespace elena_lang
    constexpr ref_t elAbstract             = 0x00000200;
    constexpr ref_t elNoCustomDispatcher   = 0x00000400;
    constexpr ref_t elStructureRole        = 0x00000838;
+   constexpr ref_t elStructure            = 0x00000800;
    constexpr ref_t elReadOnlyRole         = 0x00001000;
    constexpr ref_t elNonStructureRole     = 0x00002000;
    constexpr ref_t elWrapper              = 0x00004000;
@@ -209,6 +210,7 @@ namespace elena_lang
    constexpr ref_t elGroup                = 0x10000000;
    constexpr ref_t elPacked               = 0x20000000;
    constexpr ref_t elTemplatebased        = 0x40000000;
+   constexpr ref_t elWithOutputList       = 0x80000000; // NOTE : this flag is set automatically by JIT linker
 
    constexpr ref_t elDebugMask            = 0x001F0000;
    constexpr ref_t elDebugDWORD           = 0x00010000;
@@ -220,6 +222,9 @@ namespace elena_lang
    constexpr ref_t elDebugArray           = 0x00070000;
    constexpr ref_t elDebugFLOAT64S        = 0x00080000;
    constexpr ref_t elDebugBytes           = 0x00090000;
+   constexpr ref_t elProxy                = 0x000A0000;
+   constexpr ref_t elInterface            = 0x000B0000;
+   constexpr ref_t elWeakInterface        = 0x000C0000;
 
    // --- LoadResult enum ---
    enum class LoadResult

@@ -5,11 +5,14 @@
 //                                             (C)2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
-
 #include "pch.h"
 // --------------------------------------------------------------------------
 #include "tests_common.h"
 #include "module.h"
+
+#include "serializer.h"
+
+#include <windows.h>
 
 using namespace elena_lang;
 
@@ -230,6 +233,9 @@ ModuleScopeBase* CompilerEnvironment :: createModuleScope(bool tapeOptMode, bool
 
    if (withAttributes) {
       scope->attributes.add("dispatch", V_DISPATCHER);
+      scope->attributes.add("public", V_PUBLIC);
+      scope->attributes.add("var", V_VARIABLE);
+      scope->attributes.add("new", V_NEWOP);
    }
 
    return scope;
@@ -259,3 +265,104 @@ Compiler* CompilerEnvironment :: createCompiler()
 
    return compiler;
 }
+
+// --- BaseFixture ---
+
+void BaseFixture :: LoadDeclarationScenario(ustr_t common, ustr_t descr)
+{
+   DynamicUStr syntax(common);
+
+   size_t index = common.findStr("$1");
+   if (index != NOTFOUND_POS) {
+      syntax.cut(index, 2);
+      syntax.insert(descr, index);
+   }
+
+   SyntaxTreeSerializer::load(syntax.str(), declarationNode);
+}
+
+void BaseFixture :: LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2)
+{
+   IdentifierString descr(descr1, " ", descr2);
+
+   DynamicUStr syntax(common);
+
+   size_t index = common.findStr("$1");
+   if (index != NOTFOUND_POS) {
+      syntax.cut(index, 2);
+      syntax.insert(*descr, index);
+   }
+
+   SyntaxTreeSerializer::load(syntax.str(), declarationNode);
+}
+
+void BaseFixture :: LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3)
+{
+   DynamicUStr syntax(common);
+
+   size_t index = common.findStr("$1");
+   if (index != NOTFOUND_POS) {
+      syntax.cut(index, 2);
+
+      syntax.insert(descr3, index);
+      syntax.insert(" ", index);
+      syntax.insert(descr2, index);
+      syntax.insert(" ", index);
+      syntax.insert(descr1, index);
+   }
+
+   SyntaxTreeSerializer::load(syntax.str(), declarationNode);
+}
+
+void BaseFixture :: LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3, ustr_t descr4)
+{
+   DynamicUStr syntax(common);
+
+   size_t index = common.findStr("$1");
+   if (index != NOTFOUND_POS) {
+      syntax.cut(index, 2);
+
+      syntax.insert(descr4, index);
+      syntax.insert(" ", index);
+      syntax.insert(descr3, index);
+      syntax.insert(" ", index);
+      syntax.insert(descr2, index);
+      syntax.insert(" ", index);
+      syntax.insert(descr1, index);
+   }
+
+   SyntaxTreeSerializer::load(syntax.str(), declarationNode);
+}
+
+void BaseFixture :: LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3, ustr_t descr4, ustr_t descr5)
+{
+   DynamicUStr syntax(common);
+
+   size_t index = common.findStr("$1");
+   if (index != NOTFOUND_POS) {
+      syntax.cut(index, 2);
+
+      syntax.insert(descr5, index);
+      syntax.insert(" ", index);
+      syntax.insert(descr4, index);
+      syntax.insert(" ", index);
+      syntax.insert(descr3, index);
+      syntax.insert(" ", index);
+      syntax.insert(descr2, index);
+      syntax.insert(" ", index);
+      syntax.insert(descr1, index);
+   }
+
+   SyntaxTreeSerializer::load(syntax.str(), declarationNode);
+}
+
+void elena_lang::getAppPath(PathString& appPath)
+{
+   wchar_t path[MAX_PATH + 1];
+
+   ::GetModuleFileName(nullptr, path, MAX_PATH);
+
+   appPath.copySubPath(path, false);
+   appPath.lower();
+}
+

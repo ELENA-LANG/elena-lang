@@ -47,7 +47,7 @@ void LexicalFormatter :: format()
 
    text_t        s = nullptr;
    pos_t         length = 0;
-   FormatterInfo info;
+   FormatterInfo info = {};
 
    TextBookmarkReader reader(_text);
 

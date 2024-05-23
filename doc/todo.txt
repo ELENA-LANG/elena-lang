@@ -3,23 +3,51 @@ In development:
 ------         
 
 [development]
-  ### EPIC: elena 6.0 - redux ###
-
-  === Iteration 23 ===
-  --------------------------------------
-  dev: #574,#265,#619,#637(bt tests (>=4), all bc tests)
-  op: github action - create a draft release
-  opt:pi under 6 sec
-  maint:#620, #486, #506
-  exp: generate code templates - e.g. simple console app
-  ide:linux simplest gui, vm debugger
-  tools:elt64-cli
-  prom:#635 on reddit;elena in nutshell every 1 week; post an article describing how to use distributed dictionary for test
-  port:chat sample, elenavm / elt for linux, helloworld gui sample (button)
+  ### EPIC: elena 6.2 ###
 
   === Iteration 24 ===
   --------------------------------------
+  dev: #574,#265,#619,#580
+  op: github action - create a draft release
+  opt:pi under 6 sec, #611, #602, #601, #586
+  maint:#486, #506, #650
+  exp: generate code templates - e.g. simple console app
+  ide:vm debugger, #617, linux ide, linux debugger
+  tools:#618, #620
+  prom:#635 on reddit;elena in nutshell every 1 week; post an article about attributes (decorate a class, defining which operation is allowed)
+  port:elenavm / elt for linux, helloworld gui sample (button)
+  --------------------------------------
+  - #590 : functional test
+  - #620 : add out argument (a special case of Reference<T> template), to indicate the variable must be assigned before the method exit
+  * #590 : vm : InjectProxyTypeLA 
+  - #590 : implementing interface injection : strong interface
+  - #184 : linux simplest gui
+  - elt : nested call must not stop / start vm 
+  - elt : fails after executing several times
+  - #99
+  - #98
+  - #97
+  - #79
+  - #637(bt tests (>=4), all bc tests)
+  - #69
+  - chat sample
+  --------------------------------------
+
+  === Iteration 25 ===
+  --------------------------------------
   dev: async programming (instant messagange sample (chat) )
+  op:
+  opt:
+  maint:#620
+  exp:
+  ide:
+  tools:
+  prom:
+  port:upndown
+
+  === Iteration 26 ===
+  --------------------------------------
+  dev: 
   op:
   opt:
   maint:
@@ -27,4 +55,54 @@ In development:
   ide:
   tools:
   prom:
-  port:upndown
+  port:
+
+  ### EPIC: elena 6.3 ###
+
+  === Iteration 27 ===
+  --------------------------------------
+  dev: 
+  op:
+  opt:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
+  port:
+
+  === Iteration 28 ===
+  --------------------------------------
+  dev: 
+  op:
+  opt:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
+  port:
+
+  === Iteration 29 ===
+  --------------------------------------
+  dev: 
+  op:
+  opt:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
+  port:
+
+  === Iteration 30 ===
+  --------------------------------------
+  dev: 
+  op:
+  opt:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
+  port:

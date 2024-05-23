@@ -3105,6 +3105,20 @@ pos_t JITCompiler32 :: getStaticCounter(MemoryBase* statSection, bool emptyNotAl
    return statSection->length() >> 2;
 }
 
+void JITCompiler32 :: compileOutputTypeList(ReferenceHelperBase* helper, MemoryWriter& writer, CachedOutputTypeList& outputTypeList)
+{
+   size_t len = outputTypeList.count();
+
+   writer.writeDWord(len);
+   for (size_t i = 0; i < len; i++) {
+      auto info = outputTypeList.get(i);
+
+      writer.writeDWord(info.value1);
+      writer.writeDWord(0);
+      helper->writeReference(*writer.Memory(), writer.position() - 4, info.value2, 0, mskRef32);
+   }
+}
+
 void JITCompiler32 :: compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length)
 {
    writer.writeDWord(length);
@@ -3120,7 +3134,7 @@ void JITCompiler32 :: compileMetaList(ReferenceHelperBase* helper, MemoryReader&
 }
 
 void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength,
-   pos_t staticLength)
+   pos_t staticLength, bool withOutputList)
 {
    // create VMT static table
    vmtWriter.writeBytes(0, staticLength << 2);
@@ -3139,6 +3153,9 @@ void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vm
       vmtSize = vmtLength * sizeof(VMTEntry32);
 
    vmtWriter.writeBytes(0, vmtSize);
+
+   if (withOutputList)
+      vmtWriter.writeDWord(0);
 
    vmtWriter.seek(position);
 }
@@ -3242,18 +3259,21 @@ void JITCompiler32 :: addVMTEntry(mssg_t message, addr_t codeAddress, void* targ
    entries[index].address = (pos_t)codeAddress;
 }
 
-void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress,
-   ref_t flags, pos_t count, FieldAddressMap& staticValues, bool virtualMode)
+void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, 
+   FieldAddressMap& staticValues, bool virtualMode)
 {
    pos_t position = vmtWriter.position();
 
+   if (fixInfo.outputListAddress)
+      fixInfo.flags |= elWithOutputList;
+
    vmtWriter.seek(position - sizeof(VMTHeader32));
    VMTHeader32 header = { 0 };
-   header.flags = flags;
-   header.count = count;
+   header.flags = fixInfo.flags;
+   header.count = fixInfo.count;
    if (!virtualMode) {
-      header.parentRef = (pos_t)parentAddress;
-      header.classRef = (pos_t)classClassAddress;
+      header.parentRef = (pos_t)fixInfo.parentAddress;
+      header.classRef = (pos_t)fixInfo.classClassAddress;
    }
 
    vmtWriter.write(&header, sizeof(VMTHeader32));
@@ -3261,18 +3281,19 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddr
    if (virtualMode) {
       MemoryBase* image = vmtWriter.Memory();
 
-      if (parentAddress) {
+      if (fixInfo.parentAddress) {
          vmtWriter.seek(position - sizeof(VMTHeader32) + VMTHeader32ParentRefOffs);
-         vmtWriter.writeDReference((ref_t)parentAddress | mskRef32, 0);
+         vmtWriter.writeDReference((ref_t)fixInfo.parentAddress | mskRef32, 0);
       }
-      if (classClassAddress) {
+      if (fixInfo.classClassAddress) {
          vmtWriter.seek(position - sizeof(VMTHeader32) + VMTHeader32ClassRefOffs);
-         vmtWriter.writeDReference((ref_t)classClassAddress | mskRef32, 0);
+         vmtWriter.writeDReference((ref_t)fixInfo.classClassAddress | mskRef32, 0);
       }
 
       pos_t entryPosition = position;
-      for (pos_t i = 0; i < count; i++) {
-         image->addReference(mskCodeRef32, entryPosition + 4);
+      for (pos_t i = 0; i < fixInfo.count; i++) {
+         if (MemoryBase::getDWord(image, entryPosition + 4))
+            image->addReference(mskCodeRef32, entryPosition + 4);
 
          entryPosition += 8;
       }
@@ -3286,8 +3307,15 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddr
       }
       else vmtWriter.writeDWord((pos_t)*it);
    }
-
+  
    vmtWriter.seek(position);
+
+   if (fixInfo.outputListAddress) {
+      if (virtualMode) {
+         vmtWriter.writeDReference(addrToUInt32(fixInfo.outputListAddress) | mskRef32, 0);
+      }
+      else vmtWriter.writeDWord(fixInfo.outputListAddress);
+   }      
 }
 
 pos_t JITCompiler32 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName,
@@ -3554,7 +3582,22 @@ void JITCompiler64 :: compileMetaList(ReferenceHelperBase* helper, MemoryReader&
    }
 }
 
-void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, pos_t staticLength)
+void JITCompiler64 :: compileOutputTypeList(ReferenceHelperBase* helper, MemoryWriter& writer, CachedOutputTypeList& outputTypeList)
+{
+   size_t len = outputTypeList.count();
+
+   writer.writeQWord(len);
+   for (size_t i = 0; i < len; i++) {
+      auto info = outputTypeList.get(i);
+
+      writer.writeQWord(info.value1);
+      writer.writeQWord(0);
+      helper->writeReference(*writer.Memory(), writer.position() - 8, info.value2, 0, mskRef32);
+   }
+}
+
+void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength,
+   pos_t staticLength, bool withOutputList)
 {
    // create VMT static table
    vmtWriter.writeBytes(0, staticLength << 3);
@@ -3573,6 +3616,9 @@ void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vm
       vmtSize = vmtLength * sizeof(VMTEntry64);
 
    vmtWriter.writeBytes(0, vmtSize);
+
+   if (withOutputList)
+      vmtWriter.writeQWord(0);
 
    vmtWriter.seek(position);
 }
@@ -3664,18 +3710,17 @@ void JITCompiler64 :: addVMTEntry(mssg_t message, addr_t codeAddress, void* targ
    entries[index].address = codeAddress;
 }
 
-void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress,
-   ref_t flags, pos_t count, FieldAddressMap& staticValues, bool virtualMode)
+void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode)
 {
    pos_t position = vmtWriter.position();
 
    vmtWriter.seek(position - sizeof(VMTHeader64));
    VMTHeader64 header = { 0 };
-   header.flags = flags;
-   header.count = count;
+   header.flags = fixInfo.flags;
+   header.count = fixInfo.count;
    if (!virtualMode) {
-      header.parentRef = parentAddress;
-      header.classRef = classClassAddress;
+      header.parentRef = fixInfo.parentAddress;
+      header.classRef = fixInfo.classClassAddress;
    }
 
    vmtWriter.write(&header, sizeof(VMTHeader64));
@@ -3683,17 +3728,18 @@ void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddr
    if (virtualMode) {
       MemoryBase* image = vmtWriter.Memory();
 
-      if (parentAddress) {
+      if (fixInfo.parentAddress) {
          vmtWriter.seek(position - sizeof(VMTHeader64) + VMTHeader64ParentRefOffs);
-         vmtWriter.writeQReference((ref_t)parentAddress | mskRef64, 0);
+         vmtWriter.writeQReference((ref_t)fixInfo.parentAddress | mskRef64, 0);
       }
-      if (classClassAddress) {
+      if (fixInfo.classClassAddress) {
          vmtWriter.seek(position - sizeof(VMTHeader64) + VMTHeader64ClassRefOffs);
-         vmtWriter.writeQReference((ref_t)classClassAddress | mskRef64, 0);
+         vmtWriter.writeQReference((ref_t)fixInfo.classClassAddress | mskRef64, 0);
       }
       pos_t entryPosition = position;
-      for (pos_t i = 0; i < count; i++) {
-         image->addReference(mskCodeRef64, entryPosition + 8);
+      for (pos_t i = 0; i < fixInfo.count; i++) {
+         if (MemoryBase::getQWord(image, entryPosition + 8))
+            image->addReference(mskCodeRef64, entryPosition + 8);
 
          entryPosition += 16;
       }
@@ -3709,6 +3755,13 @@ void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddr
    }
 
    vmtWriter.seek(position);
+
+   if (fixInfo.outputListAddress) {
+      if (virtualMode) {
+         vmtWriter.writeQReference(fixInfo.outputListAddress | mskRef64, 0);
+      }
+      else vmtWriter.writeQWord(fixInfo.outputListAddress);
+   }
 }
 
 pos_t JITCompiler64 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName,

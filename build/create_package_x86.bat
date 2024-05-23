@@ -104,6 +104,7 @@ copy %~dp0\..\doc\license %~dp0\x86\doc\
 copy %~dp0\..\doc\contributors %~dp0\x86\doc\
 copy %~dp0\..\readme.md %~dp0\x86\
 copy %~dp0\..\CHANGELOG.md %~dp0\x86\
+copy %~dp0\..\VERSION %~dp0\x86\
 
 md %~dp0\x86\src60\system
 xcopy %~dp0\..\src60\system\*.l %~dp0\x86\src60\system /s
@@ -136,6 +137,10 @@ xcopy %~dp0\..\src60\xforms\*.prj %~dp0\x86\src60\xforms /s
 md %~dp0\x86\src60\ltests
 xcopy %~dp0\..\src60\ltests\*.l %~dp0\x86\src60\ltests /s
 xcopy %~dp0\..\src60\ltests\*.prj %~dp0\x86\src60\ltests /s
+
+md %~dp0\x86\src60\net
+xcopy %~dp0\..\src60\net\*.l %~dp0\x86\src60\net /s
+xcopy %~dp0\..\src60\net\*.prj %~dp0\x86\src60\net /s
 
 %~dp0\..\bin\sg-cli.exe %~dp0\..\dat\sg\syntax60.txt
 @echo off 
@@ -202,12 +207,27 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-%~dp0\..\bin\asm-cli -x86 %~dp0\..\asm\x86\core60.asm bin\x32
+%~dp0\x86\bin\elena-cli %~dp0\x86\src60\net\net.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-%~dp0\..\bin\asm-cli -x86 %~dp0\..\asm\x86\core60_win.asm bin\x32
+%~dp0\..\bin\asm-cli -x86 %~dp0\..\asm\x32\core60.asm %~dp0\x86\bin\x32
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\..\bin\asm-cli -x86 %~dp0\..\asm\x32\core60_win.asm %~dp0\x86\bin\x32
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\..\bin\asm-cli -x86 %~dp0\..\asm\x32\corex60.asm %~dp0\x86\bin\x32
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\..\bin\asm-cli -x86 %~dp0\..\asm\x32\core60_win_client.asm %~dp0\x86\bin\x32
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

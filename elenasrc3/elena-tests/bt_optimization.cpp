@@ -9,21 +9,9 @@
 #include "serializer.h"
 #include "bcwriter.h"
 
-#include <windows.h>
-
 using namespace elena_lang;
 
 constexpr auto BT_RULES_FILE = "bt_rules60.dat";
-
-inline void getAppPath(PathString& appPath)
-{
-   wchar_t path[MAX_PATH + 1];
-
-   ::GetModuleFileName(nullptr, path, MAX_PATH);
-
-   appPath.copySubPath(path, false);
-   appPath.lower();
-}
 
 // --- BTOptimization1 ---
 
@@ -382,83 +370,6 @@ void PrimitiveStructAlignment:: SetUp()
    targetRef = 4;
 
    expectedSize = 2;
-}
-
-// --- Scenario1Test ---
-
-void Scenario1Test:: LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2)
-{
-   IdentifierString descr(descr1, " ", descr2);
-
-   DynamicUStr syntax(common);
-
-   size_t index = common.findStr("$1");
-   if (index != NOTFOUND_POS) {
-      syntax.cut(index, 2);
-      syntax.insert(*descr, index);
-   }
-
-   SyntaxTreeSerializer::load(syntax.str(), declarationNode);
-}
-
-void Scenario1Test :: LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3)
-{
-   DynamicUStr syntax(common);
-
-   size_t index = common.findStr("$1");
-   if (index != NOTFOUND_POS) {
-      syntax.cut(index, 2);
-
-      syntax.insert(descr3, index);
-      syntax.insert(" ", index);
-      syntax.insert(descr2, index);
-      syntax.insert(" ", index);
-      syntax.insert(descr1, index);
-   }
-
-   SyntaxTreeSerializer::load(syntax.str(), declarationNode);
-}
-
-void Scenario1Test :: LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3, ustr_t descr4)
-{
-   DynamicUStr syntax(common);
-
-   size_t index = common.findStr("$1");
-   if (index != NOTFOUND_POS) {
-      syntax.cut(index, 2);
-
-      syntax.insert(descr4, index);
-      syntax.insert(" ", index);
-      syntax.insert(descr3, index);
-      syntax.insert(" ", index);
-      syntax.insert(descr2, index);
-      syntax.insert(" ", index);
-      syntax.insert(descr1, index);
-   }
-
-   SyntaxTreeSerializer::load(syntax.str(), declarationNode);
-}
-
-void Scenario1Test :: LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3, ustr_t descr4, ustr_t descr5)
-{
-   DynamicUStr syntax(common);
-
-   size_t index = common.findStr("$1");
-   if (index != NOTFOUND_POS) {
-      syntax.cut(index, 2);
-
-      syntax.insert(descr5, index);
-      syntax.insert(" ", index);
-      syntax.insert(descr4, index);
-      syntax.insert(" ", index);
-      syntax.insert(descr3, index);
-      syntax.insert(" ", index);
-      syntax.insert(descr2, index);
-      syntax.insert(" ", index);
-      syntax.insert(descr1, index);
-   }
-
-   SyntaxTreeSerializer::load(syntax.str(), declarationNode);
 }
 
 // --- DispatchTest ---

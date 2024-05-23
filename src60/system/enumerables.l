@@ -212,6 +212,23 @@ public abstract class BaseIndexer : Indexer
    }
 }
 
+// --- BaseEnumerator ---
+
+public abstract class BaseEnumerator : Enumerator
+{
+   Reference<int> index;
+   int            length;
+
+   bool next()
+   {
+      index.append(1);
+        
+      int n := *index;  
+
+      ^ n < length
+   }
+}
+
 // --- Range ---
 
 public sealed class Range : Enumerable<int>

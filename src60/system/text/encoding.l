@@ -163,6 +163,13 @@
          s.saveToShortArray(index, output, length, outputIndex);
       }
 
+      toShortArray(char ch, short[] output, int outputIndex, ref int len)
+      {
+         int v := ch.Value;
+
+         len := UTFOperations.convertUTF32_2_16(v, output, outputIndex, 2);
+      }
+
       int getCharCount(wide s)
       {
          int len := 0;

@@ -167,6 +167,56 @@ inline bool isConstant(ObjectKind kind)
    }
 }
 
+inline bool isSingleObject(ObjectKind kind)
+{
+   switch (kind)
+   {
+      case ObjectKind::CharacterLiteral:
+      case ObjectKind::ConstantLiteral:
+      case ObjectKind::MssgNameLiteral:
+      case ObjectKind::MssgLiteral:
+      case ObjectKind::ExtMssgLiteral:
+      case ObjectKind::Nil:
+      case ObjectKind::Class:
+      case ObjectKind::ClassSelf:
+      case ObjectKind::ConstructorSelf:
+      case ObjectKind::Param:
+      case ObjectKind::ParamReference:
+      case ObjectKind::ParamAddress:
+      case ObjectKind::ByRefParam:
+      case ObjectKind::ByRefParamAddress:
+      case ObjectKind::Local:
+      case ObjectKind::LocalReference:
+      case ObjectKind::RefLocal:
+      case ObjectKind::TempLocal:
+      case ObjectKind::SelfLocal:
+      case ObjectKind::SuperLocal:
+      case ObjectKind::ReadOnlySelfLocal:
+      case ObjectKind::LocalAddress:
+      case ObjectKind::TempLocalAddress:
+      case ObjectKind::ReadOnlyFieldAddress:
+      case ObjectKind::FieldAddress:
+      case ObjectKind::ReadOnlyField:
+      case ObjectKind::Field:
+      case ObjectKind::Outer:
+      case ObjectKind::OuterField:
+      case ObjectKind::OuterSelf:
+      case ObjectKind::Closure:
+      case ObjectKind::ClassConstant:
+      case ObjectKind::Constant:
+      case ObjectKind::ConstArray:
+      case ObjectKind::StaticField:
+      case ObjectKind::StaticConstField:
+      case ObjectKind::ClassStaticConstField:
+      case ObjectKind::LocalField:
+         return true;
+      default:
+         return isConstant(kind);
+   }
+
+   return false;
+}
+
 inline bool areConstants(ArgumentsInfo& args)
 {
    for (size_t i = 0; i < args.count(); i++) {
@@ -2935,6 +2985,11 @@ inline bool checkPreviousDeclaration(SyntaxNode node, ustr_t name)
    return false;
 }
 
+inline bool isInterface(int flagMask)
+{
+   return flagMask == elInterface || flagMask == elWeakInterface;
+}
+
 bool Compiler :: generateClassField(ClassScope& scope, FieldAttributes& attrs, ustr_t name, int sizeHint, 
    TypeInfo typeInfo, bool singleField)
 {
@@ -2943,8 +2998,8 @@ bool Compiler :: generateClassField(ClassScope& scope, FieldAttributes& attrs, u
    bool  readOnly = attrs.isReadonly;
    ref_t flags = scope.info.header.flags;
 
-   // a role cannot have fields
-   if (test(flags, elStateless))
+   // a role / interface cannot have fields
+   if (test(flags, elStateless) || isInterface(flags & elDebugMask))
       return false;
 
    SizeInfo sizeInfo = {};
@@ -4216,7 +4271,6 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, 
    }
 }
 
-
 void Compiler :: declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& flags)
 {
    SyntaxNode current = node.firstChild();
@@ -4240,6 +4294,10 @@ void Compiler :: declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_
 
    // handle the abstract flag
    if (test(scope.info.header.flags, elAbstract)) {
+      // clear the interface flag by inheriting
+      if (isInterface(scope.info.header.flags & elDebugMask))
+         scope.info.header.flags &= ~elDebugMask;
+
       if (!test(flags, elAbstract)) {
          scope.abstractBasedMode = true;
          scope.info.header.flags &= ~elAbstract;
@@ -5135,6 +5193,9 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribu
             break;
          case SyntaxKey::Type:
             elementRef = resolveStrongTypeAttribute(scope, current, declarationMode, false);
+            break;
+         case SyntaxKey::TemplateType:
+            elementRef = resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole).typeRef;
             break;
          case SyntaxKey::identifier:
          case SyntaxKey::reference:
@@ -6670,6 +6731,9 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
             break;
       }
    }
+   else if (node == SyntaxKey::Type && variableMode) {
+      return { ObjectKind::Class, {}, declaredTypeInfo.typeRef };
+   }
    else retVal = defineTerminalInfo(scope, node, declaredTypeInfo, variableMode, forwardMode, 
       refOp, mssgOp, memberMode, invalid, attrs);
 
@@ -6726,7 +6790,6 @@ ObjectInfo Compiler :: mapObject(Scope& scope, SyntaxNode node, EAttrs mode)
       }
       return {};
    }
-
    if (terminalNode.nextNode() == SyntaxKey::TemplateArg && !EAttrs::test(mode.attrs, ExpressionAttribute::NewOp)) {
       scope.raiseError(errInvalidSyntax, node);
    }
@@ -7344,7 +7407,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
          }
          break;
       case SyntaxKey::Redirect:
-         retVal = compileRedirect(writer, codeScope, bodyNode);
+         retVal = compileRedirect(writer, codeScope, bodyNode, scope.info.outputRef);
          break;
       default:
          break;
@@ -7538,7 +7601,7 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
    }
 }
 
-ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
+ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, ref_t outputRef)
 {
    Expression expression(this, codeScope, writer);
    ArgumentsInfo arguments;
@@ -7563,7 +7626,11 @@ ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeS
    _logic->setSignatureStacksafe(*codeScope.moduleScope, signRef, resolution.stackSafeAttr);
 
    ObjectInfo retVal = expression.compileMessageOperation({}, target, resolution,
-      signRef, arguments, EAttr::None, & updatedOuterArgs);
+      signRef, arguments, EAttr::None, &updatedOuterArgs);
+
+   if (outputRef) {
+      expression.convertObject(node, expression.saveToTempLocal(retVal), outputRef, true, false);
+   }      
 
    expression.scope.syncStack();
 
@@ -8412,6 +8479,31 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
    }
 }
 
+void Compiler :: compileProxyDispatcher(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
+{
+   SyntaxNode objNode = node.firstChild(SyntaxKey::DeclarationMask).firstChild();
+
+   // NOTE : the redirect target must be a simple variable
+   assert(objNode == SyntaxKey::Object);
+
+   Expression expression(this, codeScope, writer);
+
+   ObjectInfo target = expression.compile(objNode, 0, EAttr::None, nullptr);
+   switch (target.kind) {
+      // NOTE : the redirect operation must be done without creating a new frame
+      case ObjectKind::OuterSelf:
+      case ObjectKind::Outer:
+         writer.appendNode(BuildKey::Argument);
+         writer.appendNode(BuildKey::Field, target.reference);
+         break;
+      default:
+         codeScope.raiseError(errInvalidOperation, node);
+         break;
+   }
+
+   writer.appendNode(BuildKey::RedirectOp);
+}
+
 void Compiler :: compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, SyntaxNode node,
    bool withGenerics)
 {
@@ -8487,6 +8579,8 @@ inline bool hasVariadicFunctionDispatcher(Compiler::ClassScope* classScope, bool
 void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node,
    bool withGenerics, bool withOpenArgGenerics)
 {
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
    CodeScope codeScope(&scope);
 
    beginMethod(writer, scope, node, BuildKey::Method, false);
@@ -8499,7 +8593,10 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
             writer.appendNode(BuildKey::Import, current.arg.reference);
             break;
          case SyntaxKey::Redirect:
-            compileRedirectDispatcher(writer, scope, codeScope, current, withGenerics);
+            if (node.existChild(SyntaxKey::ProxyDispatcher)) {
+               compileProxyDispatcher(writer, codeScope, current);
+            }
+            else compileRedirectDispatcher(writer, scope, codeScope, current, withGenerics);
             break;
          default:
             scope.raiseError(errInvalidOperation, node);
@@ -8509,8 +8606,6 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
    else {
       // if it is an implicit dispatcher
       if (withGenerics) {
-         ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
-
          // !! temporally
          if (withOpenArgGenerics)
             scope.raiseError(errInvalidOperation, node);
@@ -8528,8 +8623,6 @@ void Compiler :: compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& s
       // if it is open arg generic without redirect statement
       else if (withOpenArgGenerics) {
          Expression expression(this, codeScope, writer);
-
-         ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
 
          ref_t mask = VARIADIC_MESSAGE;
          bool mixedDispatcher = false;
@@ -8923,6 +9016,31 @@ void Compiler :: injectInterfaceDispatch(Scope& scope, SyntaxNode node, ref_t pa
    }
 }
 
+bool Compiler :: isProxy(Scope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Method:
+            if (current.arg.reference == scope.moduleScope->buildins.dispatch_message) {
+               SyntaxNode exprNode = current.findChild(SyntaxKey::Redirect).firstChild();
+               if (exprNode.firstChild() != SyntaxKey::Object || exprNode.firstChild().nextNode() != SyntaxKey::None) {
+                  return false;
+               }
+               else current.appendChild(SyntaxKey::ProxyDispatcher);
+            }
+            else return false;
+            break;
+         default:
+            return false;
+      }
+
+      current = current.nextNode();
+   }
+
+   return true;
+}
+
 void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef)
 {
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
@@ -8967,6 +9085,9 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
 
    generateClassDeclaration(scope, node, elNestedClass | elSealed);
 
+   // check if the nested class is a proxy class, and inject the required attribute
+   bool proxy = scope.info.header.parentRef == scope.moduleScope->buildins.superReference && isProxy(scope, node);
+
    scope.save();
 
    BuildNode buildNode = writer.CurrentNode();
@@ -8984,6 +9105,11 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
    // set flags once again
    // NOTE : it should be called after the code compilation to take into consideration outer fields
    _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, scope.isClassClass());
+
+   // validate the proxy class and set the flag
+   if (proxy && !_logic->validateDispatcherType(scope.info)) {
+      scope.raiseError(errInvalidOperation, node);
+   }
 
    // NOTE : compile once again only auto generated methods
    compileVMT(nestedWriter, scope, node, true, false);
@@ -10241,7 +10367,7 @@ bool Compiler::Class :: isParentDeclared(SyntaxNode node)
 void Compiler::Class :: declare(SyntaxNode node)
 {
    bool extensionDeclaration = isExtensionDeclaration(node);
-   resolveClassPostfixes(node, extensionDeclaration/*, lxParent*/);
+   resolveClassPostfixes(node, extensionDeclaration);
 
    ref_t declaredFlags = 0;
    compiler->declareClassAttributes(scope, node, declaredFlags);
@@ -10540,8 +10666,11 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode,
    bool dynamicRequired = EAttrs::testAndExclude(mode, EAttr::DynamicObject);
 
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
-   if (codeScope == nullptr)
+   if (codeScope == nullptr) {    
       scope.raiseError(errInvalidOperation, node);
+
+      return {};
+   }
 
    if (compiler->_withDebugInfo) {
       writer->appendNode(BuildKey::OpenStatement);
@@ -13134,7 +13263,11 @@ ObjectInfo Compiler::Expression :: compileBranchingOperation(SyntaxNode node, Ob
       writer->newNode(op, operatorId);
       writer->appendNode(BuildKey::Const, scope.moduleScope->branchingInfo.trueRef);
 
-      retVal = compileBranchingOperands(rnode, r2node, retValExpected, withoutDebugInfo);
+      if (retValExpected && argLen == 3 && (roperand.kind == ObjectKind::Object) && (roperand2.kind == ObjectKind::Object)) {
+         BuildNode opNode = writer->CurrentNode();
+         retVal = compileTernaryOperands(rnode, r2node, opNode, withoutDebugInfo);
+      }
+      else retVal = compileBranchingOperands(rnode, r2node, retValExpected, withoutDebugInfo);
    }
    else {
       mssg_t message = 0;
@@ -13177,8 +13310,8 @@ ObjectInfo Compiler::Expression :: compileBranchingOperands(SyntaxNode rnode, Sy
 
    ObjectInfo subRetCode = {};
    bool oldWithRet = codeScope->withRetStatement;
+   EAttr mode = retValExpected ? EAttr::RetValExpected : EAttr::None;
    if (rnode == SyntaxKey::ClosureBlock || rnode == SyntaxKey::SwitchCode) {
-      EAttr mode = retValExpected ? EAttr::RetValExpected : EAttr::None;
       if (withoutDebugInfo)
          mode = mode | EAttr::NoDebugInfo;
 
@@ -13186,7 +13319,7 @@ ObjectInfo Compiler::Expression :: compileBranchingOperands(SyntaxNode rnode, Sy
 
       subRetCode = compileSubCode(rnode.firstChild(), mode);
    }
-   else subRetCode = compile(rnode, 0, EAttr::None, nullptr);
+   else subRetCode = compile(rnode, 0, mode, nullptr);
 
    if (retValExpected) {
       writeObjectInfo(subRetCode);
@@ -13202,7 +13335,6 @@ ObjectInfo Compiler::Expression :: compileBranchingOperands(SyntaxNode rnode, Sy
          bool withRet = codeScope->withRetStatement;
          codeScope->withRetStatement = false;
 
-         EAttr mode = retValExpected ? EAttr::RetValExpected : EAttr::None;
          if (withoutDebugInfo)
             mode = mode | EAttr::NoDebugInfo;
 
@@ -13212,7 +13344,7 @@ ObjectInfo Compiler::Expression :: compileBranchingOperands(SyntaxNode rnode, Sy
             codeScope->withRetStatement = oldWithRet;
          }
       }
-      else elseSubRetCode = compile(r2node, 0, EAttr::None, nullptr);
+      else elseSubRetCode = compile(r2node, 0, mode, nullptr);
 
       if (retValExpected) {
          writeObjectInfo(elseSubRetCode, r2node);
@@ -13232,6 +13364,41 @@ ObjectInfo Compiler::Expression :: compileBranchingOperands(SyntaxNode rnode, Sy
    }
 
    return retVal;
+}
+
+ObjectInfo Compiler::Expression :: compileTernaryOperands(SyntaxNode rnode, SyntaxNode r2node, BuildNode& opNode, bool withoutDebugInfo)
+{
+   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+
+   writer->newNode(BuildKey::Tape);
+
+   bool oldWithRet = codeScope->withRetStatement;
+   ObjectInfo lexpr = compile(rnode, 0, EAttr::RetValExpected, nullptr);
+
+   writeObjectInfo(lexpr);
+
+   writer->closeNode();
+
+   TypeInfo retType = {};
+
+   // NOTE : it should immediately follow if-block
+   writer->newNode(BuildKey::Tape);
+   ObjectInfo rexpr = compile(r2node, 0, EAttr::RetValExpected, nullptr);
+
+   writeObjectInfo(rexpr, r2node);
+
+   if (lexpr.typeInfo == rexpr.typeInfo)
+      retType = rexpr.typeInfo;
+
+   writer->closeNode();
+
+   if (isSingleObject(lexpr.kind) && isSingleObject(rexpr.kind)) {
+      opNode.setKey(BuildKey::TernaryOp);
+   }
+
+   writer->closeNode();
+
+   return { ObjectKind::Object, retType, 0 };
 }
 
 ObjectInfo Compiler::Expression :: compileMessageOperationR(ObjectInfo target, SyntaxNode messageNode, bool propertyMode)

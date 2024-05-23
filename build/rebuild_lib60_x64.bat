@@ -29,6 +29,11 @@ bin\asm64-cli -amd64 asm\amd64\core60_win.asm bin\amd64
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
 
+bin\asm64-cli -amd64 asm\amd64\core60_win_client.asm bin\amd64
+@echo off 
+if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+@echo on
+
 bin\asm64-cli -bc64 src60\core\system.core_routines.esm lib60_64
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError

@@ -54,3 +54,28 @@ public extension classROp
       ^ retVal != 0
    }
 }
+
+public extension signatureOp : Message
+{
+   int __loadSignature(object[] output, int maximalLength)
+   {
+      int retVal := extern LoadSignatureLA(self, output, maximalLength);
+
+      ^ retVal
+   }
+
+   __getFirstSignatureMember()
+   {
+      object[] output := new object[](1);
+
+      self.__loadSignature(output, 1);
+
+      ^ output[0]
+   }
+}
+
+public extension proxyTypeOp
+{
+   __injectInferface(type)
+       : external(system'core_routines'__createProxy);
+}

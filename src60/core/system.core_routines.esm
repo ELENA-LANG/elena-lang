@@ -31,6 +31,7 @@ define elMessage              00200000h;
 define elSubject              01000000h;
 
 define err_ret          -1;
+define nameconst_index  -1;
 
 define WM_CREATE         1;
 
@@ -1335,7 +1336,7 @@ procedure __symbol_load (self, s)
 
 labExit:
   peek       fp:self
-  save
+  $save
 
   close      []
 
@@ -1344,18 +1345,18 @@ end
 procedure __symbol_copy
 
   peek       sp:1
-  load
+  $load
   peek       sp:0
-  save
+  $save
 
 end
 
 procedure __symbol_equal
 
   peek        sp:0
-  load
+  $load
   peek        sp:1
-  xcmp
+  $xcmp
   seleq       class:"system'BoolValue#true", class:"system'BoolValue#false"
 
 end
@@ -2577,6 +2578,28 @@ procedure __leaveCritical
 
   peek        sp:0
   freelock
+
+end
+
+procedure __createProxy (proxy, type)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (4),[]
+
+  call       extern:InjectProxyTypeLA(proxy, type, 2, nameconst_index)
+  cmp        n:-1
+  jne        labSkip
+
+  xstore     sp:0, class : "system'InvalidArgumentException"
+  set        mssgconst : "new[1]"
+  throw
+
+labSkip:
+  peek       fp:proxy
+
+  close      []
 
 end
 

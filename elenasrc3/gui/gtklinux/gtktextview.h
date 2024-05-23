@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK TextView Control Header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GTKTEXTVIEW_H
@@ -78,9 +78,9 @@ namespace elena_lang
       protected:
          Glib::RefPtr<Gdk::Window>  _text_area;
 
-         TextViewModelBase*         _model;
+         //TextViewModelBase*         _model;
          bool                       _needToResize;
-         ViewStyles*                _styles;
+         //ViewStyles*                _styles;
 
          //Overrides:
          Gtk::SizeRequestMode get_request_mode_vfunc() const override;
@@ -104,14 +104,14 @@ namespace elena_lang
          void paint(Canvas& canvas, int viewWidth, int viewHeight);
 
       public:
-         TextDrawingArea(TextViewWindow* view, TextViewModelBase* model, ViewStyles* styles);
+         TextDrawingArea(TextViewWindow* view/*, TextViewModelBase* model, ViewStyles* styles*/);
       };
 
    protected:
       TextDrawingArea    _area;
 
    public:
-      TextViewWindow(TextViewModelBase* model, ViewStyles* styles);
+      TextViewWindow(/*TextViewModelBase* model, ViewStyles* styles*/);
    };
 }
 

@@ -130,6 +130,27 @@ void ELENARTMachine :: loadSubjectName(IdentifierString& actionName, ref_t subje
    rtmanager.loadSubjectName(actionName, subjectRef);
 }
 
+int ELENARTMachine :: loadSignature(mssg_t message, addr_t* output, pos_t maximalCount)
+{
+   ImageSection msection(_mdata, 0x1000000);
+   RTManager rtmanager(&msection, nullptr);
+
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   if (testany(message, FUNCTION_MESSAGE | CONVERSION_MESSAGE)) {
+      argCount = _min(maximalCount, argCount);
+   }
+   else argCount = _min(maximalCount, argCount - 1);
+
+   if (rtmanager.loadSignature(actionRef, maximalCount, output)) {
+      return argCount;
+   }
+
+   return 0;
+}
+
 size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t length)
 {
    ref_t actionRef, flags;
@@ -353,4 +374,3 @@ size_t ELENARTMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_
    return SystemRoutineProvider::LoadMessages(&msection, classPtr, output, skip, 
       maxLength, false);
 }
-

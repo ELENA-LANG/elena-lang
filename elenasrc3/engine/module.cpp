@@ -352,7 +352,7 @@ ROModule::ROModule(StreamReader& reader, LoadResult& result)
    char signature[12];
    reader.read(signature, getlength_pos(MODULE_SIGNATURE));
    signature[getlength(MODULE_SIGNATURE)] = 0;
-   if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) != 0) {
+   if (strncmp(signature, MODULE_SIGNATURE, strlen(MODULE_SIGNATURE)) != 0) {
       result = (strncmp(signature, ELENA_SIGNITURE, 6) == 0) ? LoadResult::WrongVersion : LoadResult::WrongStructure;
       return;
    }
