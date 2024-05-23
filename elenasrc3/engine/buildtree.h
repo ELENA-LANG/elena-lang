@@ -185,6 +185,7 @@ namespace elena_lang
       YieldingOp           = 0x00A2,
       StackCondOp          = 0x00A3,
       YieldDispatch        = 0x00A4,
+      TernaryOp            = 0x00A5,
 
       VariableInfo         = 0x00B0,
       Variable             = 0x00B1,

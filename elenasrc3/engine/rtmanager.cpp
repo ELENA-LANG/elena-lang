@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //      This header contains the implementation of the class
 //      ELENA RT manager.
-//                                              (C)2023, by Aleksey Rakov
+//                                             (C)2023-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "rtmanager.h"
@@ -207,8 +207,6 @@ bool RTManager :: loadSignature(ref_t subjectRef, pos_t argCount, addr_t* addres
    pos_t mtableOffset = MemoryBase::getDWord(msection, 0);
    ref_t actionPtr = MemoryBase::getDWord(msection, mtableOffset + subjectRef * MessageEntryLen);
    if (actionPtr != 0) {
-      size_t counter = 0;
-
       uintptr_t singPtr = 0;
       msection->read(mtableOffset + subjectRef * MessageEntryLen + sizeof(uintptr_t), &singPtr, sizeof(uintptr_t));
 

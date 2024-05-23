@@ -961,7 +961,11 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
       command.cut(0, 1);
 
       if (_mode64) {
-         command.insert("l", 0);
+         if (command.compare("xcmp")) {
+            // HOTFIX
+            command.insert("l", 1);
+         }
+         else command.insert("l", 0);
       }
    }
 
@@ -1040,6 +1044,7 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
          case ByteCode::XRefreshSI:
          case ByteCode::SaveSI:
          case ByteCode::LoadSI:
+         case ByteCode::LSaveSI:
             return compileOpStackI(tokenInfo, writer, opCommand, true);
          case ByteCode::SaveDP:
          case ByteCode::LSaveDP:

@@ -50,7 +50,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>6.0.6</version>
+     <version>6.1.0</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
@@ -94,6 +94,7 @@
         <include>collections/queues.l</include>
         <include>collections/tuples.l</include>
         <include>collections/maps.l</include>
+        <include>collections/sorted_list.l</include>
         <include>collections/template_tests.l</include>
         <include>math/math.l</include>
         <include>text/encoding.l</include>

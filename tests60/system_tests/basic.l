@@ -1894,3 +1894,33 @@ public variadicTypecastingTests() : testCase()
 
    console.write(".");
 }
+
+II_A;
+
+II_B
+{
+   II_A cast()
+      = new II_A(); 
+}
+
+interface II_I
+{
+   abstract II_A retrieve();
+}
+
+II_O : interface<II_I>
+{
+   retrieve()
+      = new II_B();
+}
+
+public interfaceImplTests() : testCase()
+{
+   var o := new II_O();
+
+   II_I i := o;
+
+   var r := i.retrieve();
+   Assert.ifTrue(r :is II_A);
+   console.write(".");
+}

@@ -1258,6 +1258,7 @@ namespace elena_lang
          ObjectInfo saveToTempLocal(ObjectInfo object);
 
          ObjectInfo compileBranchingOperands(SyntaxNode rnode, SyntaxNode r2node, bool retValExpected, bool withoutDebugInfo);
+         ObjectInfo compileTernaryOperands(SyntaxNode rnode, SyntaxNode r2node, BuildNode& opNode, bool withoutDebugInfo);
 
          ObjectInfo compileNativeConversion(SyntaxNode node, ObjectInfo source, ref_t operationKey);
 
@@ -1409,6 +1410,8 @@ namespace elena_lang
       static int allocateLocalAddress(Scope& scope, int size, bool binaryArray);
 
       static bool isClassClassOperation(Scope& scope, ObjectInfo target);
+
+      static bool isProxy(Scope& scope, SyntaxNode node);
 
       ref_t declareMultiType(Scope& scope, SyntaxNode& node, ref_t elementRef);
 
@@ -1576,9 +1579,10 @@ namespace elena_lang
 
       void compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, SyntaxNode node,
          bool withGenerics);
+      void compileProxyDispatcher(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
 
       ObjectInfo compileResendCode(BuildTreeWriter& writer, CodeScope& codeScope, ObjectInfo source, SyntaxNode node);
-      ObjectInfo compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
+      ObjectInfo compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, ref_t outputRef);
       ObjectInfo compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode, bool noDebugInfoMode = false);
 
       void beginMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, BuildKey scopeKey, 

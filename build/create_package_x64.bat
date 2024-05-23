@@ -65,6 +65,7 @@ copy %~dp0\..\bin\elenavm60.cfg %~dp0\x64\bin
 copy %~dp0\..\bin\amd64\core60.bin %~dp0\x64\bin\amd64
 copy %~dp0\..\bin\amd64\core60_win.bin %~dp0\x64\bin\amd64
 copy %~dp0\..\bin\amd64\corex60.bin %~dp0\x64\bin\amd64
+copy %~dp0\..\bin\amd64\core60_win_client.bin %~dp0\x64\bin\amd64
 
 copy %~dp0\..\bin\templates\*.cfg %~dp0\x64\bin\templates\
 copy %~dp0\..\bin\scripts\*.es %~dp0\x64\bin\scripts\

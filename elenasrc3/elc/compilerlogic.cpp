@@ -809,8 +809,12 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
       case V_SINGLETON:
          flags |= elRole | elSealed | elStateless;
          break;
-      case V_LIMITED:
-         flags |= (elClosed | elAbstract | elNoCustomDispatcher);
+      case V_INTERFACE:
+         if (!(flags & elDebugMask)) {
+            flags |= (elClosed | elAbstract | elNoCustomDispatcher);
+            flags |= elInterface;
+         }
+         else return false;
          break;
       case V_ABSTRACT:
          flags |= elAbstract;
@@ -1472,6 +1476,22 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
             break;
          default:
             break;
+      }
+   }
+   else if ((info.header.flags & elDebugMask) == elInterface) {
+      // verify if it is a weak interface (an interface without output type specified)
+      bool isWeakInterface = true;
+      for (auto it = info.methods.start(); !it.eof(); ++it) {
+         auto methodInfo = *it;
+
+         if (!methodInfo.inherited && methodInfo.outputRef && methodInfo.outputRef != classRef) {
+            isWeakInterface = false;
+            break;
+         }
+      }
+      if (isWeakInterface) {
+         info.header.flags &= ~elDebugMask;
+         info.header.flags |= elWeakInterface;
       }
    }
 }
@@ -2946,4 +2966,18 @@ pos_t CompilerLogic :: definePadding(ModuleScopeBase& scope, pos_t offset, pos_t
       default:
          return align(offset, scope.ptrSize) - offset;
    }
+}
+
+bool CompilerLogic :: validateDispatcherType(ClassInfo& classInfo)
+{
+   bool isProxy = classInfo.fields.count() == 1 && test(classInfo.header.flags, elWithCustomDispatcher | elNestedClass | elSealed)
+         && !testany(classInfo.header.flags, elWithGenerics | elWithVariadics | elWithYieldable | elStructure);
+
+   if (isProxy && (classInfo.header.flags & elDebugMask) == 0) {
+      classInfo.header.flags |= elProxy;
+
+      return true;
+   }
+
+   return false;
 }

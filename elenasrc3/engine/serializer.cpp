@@ -81,6 +81,8 @@ bool syntaxTreeReader(SyntaxKey& key, IdentifierString& strValue, int& value, vo
 {
    LoadScope* scope = static_cast<LoadScope*>(arg);
 
+   strValue.clear();
+
    ScriptToken token;
    scope->scriptReader.read(token);
    if (token.compare(")") || token.state == dfaEOF)

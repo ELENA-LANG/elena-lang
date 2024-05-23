@@ -375,7 +375,7 @@ namespace elena_lang
 
       virtual SectionInfo getCoreSection(ref_t reference, bool silentMode) = 0;
       virtual SectionInfo getSection(ReferenceInfo referenceInfo, ref_t mask, ref_t metaMask, bool silentMode) = 0;
-      virtual ClassSectionInfo getClassSections(ReferenceInfo referenceInfo, ref_t vmtMask, ref_t codeMask, 
+      virtual ClassSectionInfo getClassSections(ReferenceInfo referenceInfo, ref_t vmtMask, ref_t codeMask,
          bool silentMode) = 0;
 
       virtual ModuleInfo getModule(ReferenceInfo referenceInfo, bool silentMode) = 0;
@@ -436,7 +436,7 @@ namespace elena_lang
 
       virtual addr_t calculateVAddress(MemoryWriter& writer, ref_t addressMask) = 0;
 
-      virtual void writeSectionReference(MemoryBase* image, pos_t imageOffset, ref_t reference, 
+      virtual void writeSectionReference(MemoryBase* image, pos_t imageOffset, ref_t reference,
          SectionInfo* sectionInfo, pos_t sectionOffset, ref_t addressMask) = 0;
 
       virtual void writeReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp,
@@ -461,7 +461,7 @@ namespace elena_lang
 
       virtual void writeMDataRef32(MemoryBase& target, pos_t position,
          pos_t disp, ref_t addressMask) = 0;
-      virtual void writeMDataRef64(MemoryBase& target, pos_t position, 
+      virtual void writeMDataRef64(MemoryBase& target, pos_t position,
          pos64_t disp, ref_t addressMask) = 0;
 
       virtual mssg_t importMessage(mssg_t message, ModuleBase* module = nullptr) = 0;
@@ -514,13 +514,24 @@ namespace elena_lang
       virtual void writeLabelAddress(pos_t label, MemoryWriter& writer, ref_t mask) = 0;
    };
 
+   typedef CachedList<Pair<mssg_t, ref_t>, 10> CachedOutputTypeList;
+
    // --- JITCompilerBase ---
    class JITCompilerBase
    {
    public:
+      struct VMTFixInfo
+      {
+         addr_t parentAddress;
+         addr_t classClassAddress;
+         addr_t outputListAddress;
+         ref_t  flags;
+         pos_t  count;
+      };
+
       virtual void prepare(
-         LibraryLoaderBase* loader, 
-         ImageProviderBase* imageProvider, 
+         LibraryLoaderBase* loader,
+         ImageProviderBase* imageProvider,
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
          JITSettings settings,
@@ -532,12 +543,14 @@ namespace elena_lang
 
       virtual void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) = 0;
 
-      virtual void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+      virtual void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader,
          MemoryWriter& codeWriter, LabelHelperBase* lh) = 0;
-      virtual void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
+      virtual void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader,
          MemoryWriter& codeWriter, LabelHelperBase* lh) = 0;
 
       virtual void compileMetaList(ReferenceHelperBase* helper, MemoryReader& reader, MemoryWriter& writer, pos_t length) = 0;
+
+      virtual void compileOutputTypeList(ReferenceHelperBase* helper, MemoryWriter& writer, CachedOutputTypeList& outputTypeList) = 0;
 
       virtual pos_t getStaticCounter(MemoryBase* statSection, bool emptyNotAllowed = false) = 0;
 
@@ -545,13 +558,13 @@ namespace elena_lang
       virtual addr_t findMethodAddress(void* entries, mssg_t message) = 0;
       virtual pos_t findMethodOffset(void* entries, mssg_t message) = 0;
 
-      virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, pos_t staticLength) = 0;
+      virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
+         pos_t staticLength, bool withOutputList) = 0;
       virtual void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) = 0;
-      virtual void updateVMTHeader(MemoryWriter& vmtWriter, addr_t parentAddress, addr_t classClassAddress, 
-         ref_t flags, pos_t count, FieldAddressMap& staticValues, bool virtualMode) = 0;
+      virtual void updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode) = 0;
       virtual pos_t copyParentVMT(void* parentVMT, void* targetVMT) = 0;
 
-      virtual void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
+      virtual void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length,
          bool structMode, bool virtualMode) = 0;
       virtual void allocateBody(MemoryWriter& writer, int size) = 0;
       virtual void writeInt32(MemoryWriter& writer, unsigned int value) = 0;
@@ -570,7 +583,7 @@ namespace elena_lang
       virtual void addBreakpoint(MemoryWriter& writer, addr_t vaddress, bool virtualMode) = 0;
 
       virtual pos_t addSignatureEntry(MemoryWriter& writer, addr_t vmtAddress, ref_t& targetMask, bool virtualMode) = 0;
-      virtual pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, 
+      virtual pos_t addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter,
          ustr_t actionName, ref_t weakActionRef, ref_t signature, bool virtualMode) = 0;
       virtual void addActionEntryStopper(MemoryWriter& messageWriter) = 0;
       virtual void addSignatureStopper(MemoryWriter& messageWriter) = 0;
@@ -817,7 +830,7 @@ namespace elena_lang
                   else append(s[i]);
                   break;
                case 2:
-                  if ((s[i] < '0' || s[i] > '9') && (s[i] < 'A' || s[i] > 'F')  && (s[i] < 'a' || s[i] > 'f')) 
+                  if ((s[i] < '0' || s[i] > '9') && (s[i] < 'A' || s[i] > 'F')  && (s[i] < 'a' || s[i] > 'f'))
                   {
                      String<char, 12> number(s + index, i - index);
                      unic_c ch = StrConvertor::toInt(number.str(), (s[i] == 'h') ? 16 : 10);
@@ -1107,6 +1120,7 @@ namespace elena_lang
    {
       mssg_t message;
       pos_t  codeOffset;
+      ref_t  outputRef;
    };
 
    // --- DebugLineInfo ---

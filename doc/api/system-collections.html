@@ -1937,6 +1937,1003 @@ system'Queue&lt;T1&gt;</LI>
 </UL>
 <HR>
 </DIV>
+<A NAME="SortedArrayList">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'collections'</DIV>
+<H2 title="SortedArrayList" class="title">SortedArrayList</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">SortedArrayList</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexable">system'Indexable</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'collections'SortedArrayList</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'collections'VarTuple&lt;system'Object,system'Object&gt;<I>[]</I></A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_array</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_length</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_capacity</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;system'Object,system'Object,system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_comparator</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedArrayList">SortedArrayList</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedArrayList">SortedArrayList</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;system'Object,system'Object,system'IntNumber&gt;</A></SPAN> comparator)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedArrayList">SortedArrayList</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedArrayList">SortedArrayList</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;system'Object,system'Object,system'IntNumber&gt;</A></SPAN> comparator)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedArrayList">SortedArrayList</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>allocate()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexer()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> item)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>clear()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>trim(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="SortedList">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'collections'</DIV>
+<H2 title="SortedList" class="title">SortedList</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">SortedList</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable">system'Enumerable</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'collections'SortedList</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#SortedListItem">SortedListItem</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_top</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_length</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;system'Object,system'Object,system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_comparator</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedList">SortedList</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedList">SortedList</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;system'Object,system'Object,system'IntNumber&gt;</A></SPAN> comparator)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#SortedListItem">SortedListItem</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>FirstItem()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> item)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> item)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexOfKey(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>removeAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexer()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="SortedList&lt;T1,T2&gt;">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="SortedList&lt;T1,T2&gt;" class="title">SortedList&lt;T1,T2&gt;</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public template <SPAN CLASS="typeNameLabel">SortedList&lt;T1,T2&gt;</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable&lt;T1&gt;">system'Enumerable&lt;T2&gt;</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'SortedList&lt;T1,T2&gt;</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'collections'VarTuple&lt;T1,T2&gt;<I>[]</I></A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_array</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_length</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_capacity</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;T1,T1,system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_comparator</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-collections-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-collections-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;T1,T1,system'IntNumber&gt;</A></SPAN> comparator)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-collections-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-collections-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;T1,T1,system'IntNumber&gt;</A></SPAN> comparator)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-collections-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>allocate()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T2&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> item)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>clear()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>trim(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer&lt;T1&gt;">Indexer&lt;T2&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexer()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="SortedListEnumerator">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'collections'</DIV>
+<H2 title="SortedListEnumerator" class="title">SortedListEnumerator</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">SortedListEnumerator</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">system'Enumerator</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'collections'SortedListEnumerator</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedList">SortedList</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_list</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#SortedListItem">SortedListItem</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_current</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_started</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedListEnumerator">SortedListEnumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedList">SortedList</A></SPAN> list)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>next()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>reset()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerable()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="SortedListIndexer">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'collections'</DIV>
+<H2 title="SortedListIndexer" class="title">SortedListIndexer</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">SortedListIndexer</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">system'Indexer</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'collections'SortedListIndexer</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedList">SortedList</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_list</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_index</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedListIndexer">SortedListIndexer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedList">SortedList</A></SPAN> list)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Available()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value(value)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Index()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Index(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="Stack">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->

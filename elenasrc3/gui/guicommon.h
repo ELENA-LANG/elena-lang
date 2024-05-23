@@ -193,6 +193,23 @@ namespace elena_lang
       virtual ~GUIApp() = default;
    };
 
+   // --- ConstantIdentifier ---
+   class TextString : public String <text_c, 0x100>
+   {
+   public:
+      text_str operator*() const { return text_str(_string); }
+
+      TextString()
+      {
+         _string[0] = 0;
+      }
+      TextString(ustr_t message)
+      {
+         size_t length = 0x100;
+         message.copyTo(_string, length);
+         _string[length] = 0;
+      }
+   };
 }
 
 #endif

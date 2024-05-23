@@ -91,6 +91,8 @@ namespace elena_lang
          ReferenceMap& paths, bool tapeOptMode, bool loopMode = false);
       void saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
          ReferenceMap& paths, bool tapeOptMode, bool loopMode);
+      void saveTernaryOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
+         ReferenceMap& paths, bool tapeOptMode);
       void saveNativeBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
          ReferenceMap& paths, bool tapeOptMode, bool loopMode);
       void saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths,
@@ -119,7 +121,7 @@ namespace elena_lang
       void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 
          ReferenceMap& paths, bool tapeOptMode, bool threadFriendly);
 
-      void saveVMT(BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths, 
+      void saveVMT(ClassInfo& info, BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths,
          bool tapeOptMode, bool threadFriendly);
 
       void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 

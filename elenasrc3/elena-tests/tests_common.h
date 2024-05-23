@@ -8,6 +8,7 @@
 #ifndef TESTS_COMMON_H
 #define TESTS_COMMON_H
 
+#include "pch.h"
 #include "compiler.h"
 
 namespace elena_lang 
@@ -179,6 +180,26 @@ namespace elena_lang
 
       CompilerEnvironment();
    };
+
+   // --- BaseFixture ---
+   class BaseFixture : public testing::Test
+   {
+   protected:
+      SyntaxTree syntaxTree;
+
+      SyntaxNode declarationNode;
+
+      void LoadDeclarationScenario(ustr_t common, ustr_t descr);
+      void LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2);
+      void LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3);
+      void LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3, ustr_t descr4);
+      void LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2, ustr_t descr3, ustr_t descr4, ustr_t descr5);
+
+   public:
+      CompilerEnvironment env;
+   };
+
+   void getAppPath(PathString& appPath);
 }
 
 #endif // TESTS_COMMON_H

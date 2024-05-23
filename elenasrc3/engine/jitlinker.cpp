@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class implementation.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -812,8 +812,11 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
    MemoryBase* codeImage = _imageProvider->getTargetSection(mskCodeRef);
    MemoryWriter vmtWriter(vmtImage);
 
+   bool withOutputList = _withOutputList && !test(header.flags, elNestedClass);
+
    // allocate space and make VTM offset
-   _compiler->allocateVMT(vmtWriter, header.flags, header.count, header.staticSize);
+   _compiler->allocateVMT(vmtWriter, header.flags, header.count, 
+      header.staticSize, withOutputList);
 
    addr_t vaddress = calculateVAddress(vmtWriter, mskRDataRef);
 
@@ -837,6 +840,8 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
       addr_t      methodPosition = 0;
       MethodEntry entry = { };
 
+      CachedOutputTypeList outputTypeList({});
+
       size -= sizeof(ClassHeader);
       while (size > 0) {
          vmtReader.read((void*)&entry, sizeof(MethodEntry));
@@ -855,8 +860,15 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
             _staticMethods.add(
                { vaddress, message }, methodPosition);
          }
-         else _compiler->addVMTEntry(message, methodPosition,
-            vmtImage->get(position), count);
+         else {
+            _compiler->addVMTEntry(message, methodPosition,
+               vmtImage->get(position), count);
+
+            if (withOutputList && entry.outputRef && entry.outputRef != sectionInfo.reference) {
+               // NOTE : the list must contain already resolved message constants, so only type references must be resolved
+               outputTypeList.add({ message, entry.outputRef });
+            }
+         }
 
          if (_addressMapper && methodPosition)
             _addressMapper->addMethod(vaddress, message, methodPosition);
@@ -879,8 +891,12 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
 
       resolveClassGlobalAttributes(referenceInfo, vmtReader, vaddress);
 
+      addr_t outputListAddress = withOutputList ?
+         resolveOutputTypeList(referenceInfo, outputTypeList) : 0;
+
       // update VMT
-      _compiler->updateVMTHeader(vmtWriter, parentAddress, classClassAddress, header.flags, header.count, staticValues, _virtualMode);
+      JITCompilerBase::VMTFixInfo fixInfo = { parentAddress, classClassAddress, outputListAddress, header.flags, header.count };
+      _compiler->updateVMTHeader(vmtWriter, fixInfo, staticValues, _virtualMode);
    }
 
    return vaddress;
@@ -1091,6 +1107,24 @@ addr_t JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t se
 
    if (sectionInfo.metaSection)
       resolveSymbolAttributes(referenceInfo, vaddress, sectionInfo);
+
+   return vaddress;
+}
+
+// NOTE : the list contains already resolved message constants, so only type references must be resolved
+addr_t JITLinker :: resolveOutputTypeList(ReferenceInfo referenceInfo, CachedOutputTypeList& outputTypeList)
+{
+   VAddressMap references({ 0, nullptr, 0, 0 });
+
+   MemoryBase* image = _imageProvider->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
+
+   addr_t vaddress = calculateVAddress(writer, mskRDataRef);
+
+   JITLinkerReferenceHelper helper(this, referenceInfo.module, &references);
+   _compiler->compileOutputTypeList(&helper, writer, outputTypeList);
+
+   fixReferences(references, image);
 
    return vaddress;
 }

@@ -143,14 +143,10 @@ namespace io
          _stream.read(array, ref actualLength)
       }
    }
-    
+
    // --- TextReader ---
    public interface TextReader
    {
-      TextBuilder _output;
-      string      _newLineConstant;
-      int         _newLineLength;
-    
       abstract read(char[] array, ref int actualLength);
     
       get abstract object Source();
@@ -160,7 +156,19 @@ namespace io
       abstract close();
         
       get abstract bool Available();
-                
+
+      abstract string readLine();
+
+      abstract wide readWideLine();
+   }
+    
+   // --- TextReader ---
+   public abstract BaseTextReader : TextReader
+   {
+      TextBuilder _output;
+      string      _newLineConstant;
+      int         _newLineLength;
+    
       string readLine()
       {
          string line := emptyString;
@@ -245,7 +253,7 @@ namespace io
    }
 
    // --- StreamReader ---
-   public class TextStreamReader : TextReader
+   public class TextStreamReader : BaseTextReader
    {
       Stream  _stream;
       Encoder _encoder;
