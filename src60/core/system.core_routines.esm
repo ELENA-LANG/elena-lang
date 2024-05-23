@@ -2589,7 +2589,14 @@ procedure __createProxy (proxy, type)
   open       (4),[]
 
   call       extern:InjectProxyTypeLA(proxy, type, 2, nameconst_index)
+  cmp        n:-1
+  jne        labSkip
 
+  xstore     sp:0, class : "system'InvalidArgumentException"
+  set        mssgconst : "new[1]"
+  throw
+
+labSkip:
   peek       fp:proxy
 
   close      []

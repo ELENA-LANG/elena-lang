@@ -15,19 +15,23 @@ using namespace elena_lang;
 
 typedef VMTHeader32  VMTHeader;
 typedef VMTEntry32   VMTEntry;
+typedef ObjectPage32 ObjectPage;
 
 constexpr int elVMTClassOffset = elVMTClassOffset32;
 constexpr int gcPageSize = gcPageSize32;
 constexpr int elObjectOffset = elObjectOffset32;
+constexpr int struct_mask = elStructMask32;
 
 #else
 
 typedef VMTHeader64  VMTHeader;
 typedef VMTEntry64   VMTEntry;
+typedef ObjectPage64 ObjectPage;
 
 constexpr int elVMTClassOffset = elVMTClassOffset64;
 constexpr int gcPageSize = gcPageSize64;
 constexpr int elObjectOffset = elObjectOffset64;
+constexpr int struct_mask = elStructMask64;
 
 #endif
 
@@ -48,92 +52,130 @@ inline uintptr_t RetrieveVMT(uintptr_t ptr)
 uintptr_t ELENAMachine :: createPermString(SystemEnv* env, ustr_t s, uintptr_t classPtr)
 {
    size_t nameLen = getlength(s) + 1;
-   uintptr_t nameAddr = (uintptr_t)SystemRoutineProvider::GCRoutinePerm(env->gc_table, align(nameLen, gcPageSize));
+   uintptr_t nameAddr = (uintptr_t)SystemRoutineProvider::GCRoutinePerm(env->gc_table, align(nameLen + elObjectOffset, gcPageSize));
 
    StrConvertor::copy((char*)nameAddr, s.str(), nameLen, nameLen);
 
-   ObjectPage32* header = (ObjectPage32*)(nameAddr - elObjectOffset);
+   ObjectPage* header = (ObjectPage*)(nameAddr - elObjectOffset);
    header->vmtPtr = classPtr;
-   header->size = nameLen;
+   header->size = nameLen | struct_mask;
 
    return nameAddr;
 }
 
-addr_t ELENAMachine :: injectType(/*SystemEnv* env, void* srcVMTPtr, int staticLen, int nameIndex,
-   addr_t* addresses, size_t length*/)
+uintptr_t ELENAMachine :: createPermVMT(SystemEnv* env, size_t size)
 {
-   //assert(nameIndex < 0);
+   size += sizeof(ObjectPage);
 
-   //void* baseVMTPtr = (void*)SystemRoutineProvider::GetParent(srcVMTPtr);
-   //size_t srcLength = SystemRoutineProvider::GetVMTLength(srcVMTPtr);
-   //size_t baseLength = SystemRoutineProvider::GetVMTLength(baseVMTPtr);
-   //int flags = SystemRoutineProvider::GetFlags(srcVMTPtr);
+   uintptr_t addr = (uintptr_t)SystemRoutineProvider::GCRoutinePerm(env->gc_table, align(size, gcPageSize));
 
-   //static int autoIndex = 0;
+   ObjectPage* header = (ObjectPage*)(addr - elObjectOffset);
+   header->size = size;
+   header->vmtPtr = 0;
 
-   //uintptr_t namePtr = RetrieveStaticField((uintptr_t)srcVMTPtr, nameIndex);
-   //uintptr_t stringVMT = RetrieveVMT(namePtr);
+   return (uintptr_t)header + elObjectOffset;
+}
 
-   //IdentifierString dynamicName("proxy$");
-   //if (namePtr) {
-   //   dynamicName.append((const char*)namePtr);
-   //}
-   //else dynamicName.appendInt(++autoIndex);
+inline bool isValidProxy(uintptr_t vmtPtr)
+{
+   int flags = SystemRoutineProvider::GetFlags((void*)vmtPtr);
 
-   //addr_t addr = _generatedClasses.get(*dynamicName);
-   //if (addr)
-   //   return addr;
+   return (flags & elDebugMask) == elProxy;
+}
 
-   //// NOTE : probably better to create a custom package, but for a moment we can simply copy it
-   //uintptr_t nameAddr = createPermString(env, *dynamicName, stringVMT);
+inline bool isWeakInterface(void* vmtPtr)
+{
+   int flags = SystemRoutineProvider::GetFlags(vmtPtr);
 
-   //size_t size = (srcLength * sizeof(VMTEntry)) + sizeof(VMTHeader) + elObjectOffset32 + staticLen * sizeof(uintptr_t);
-   //addr_t ptr = (addr_t)SystemRoutineProvider::GCRoutinePerm(env->gc_table, align(size, gcPageSize));
+   return (flags & elDebugMask) == elWeakInterface;
+}
 
-   //// HOTFIX : copy build-in static variables
-   //uintptr_t* staticFields = (uintptr_t*)(ptr + staticLen * sizeof(uintptr_t));
-   //for (int i = 1; i <= staticLen; i++) {
-   //   staticFields[-i] = RetrieveStaticField((uintptr_t)srcVMTPtr, -i);
-   //}
-   //staticFields[nameIndex] = nameAddr;
+addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, int staticLen, int nameIndex)
+{
+   uintptr_t proxyVMTPtr = RetrieveVMT((uintptr_t)proxy);
 
-   //VMTHeader* header = (VMTHeader*)(ptr + staticLen * sizeof(uintptr_t));
-   //VMTEntry* entries = (VMTEntry*)(ptr + staticLen * sizeof(uintptr_t) + sizeof(VMTHeader));
+   // verify if the proxy can be used
+   if (!isValidProxy(proxyVMTPtr))
+      return INVALID_ADDR;
 
-   //size_t i = 0;
-   //size_t j = 0;
-   //size_t addr_i = 0;
+   // verify if it is a correct interface
+   if (!isWeakInterface(srcVMTPtr))
+      return INVALID_ADDR;
 
-   //VMTEntry* base = (VMTEntry*)baseVMTPtr;
-   //VMTEntry* src = (VMTEntry*)srcVMTPtr;
-   //while (i < srcLength) {
-   //   if (base[j].message == src[i].message) {
-   //      entries[i] = src[i];
-   //      if (j < baseLength)
-   //         j++;
-   //   }
-   //   else if (src[i].address) {
-   //      // if the method is not abstract
-   //      entries[i] = src[i];
-   //   }
-   //   else {
-   //      entries[i].message = src[i].message;
-   //      entries[i].address = addresses[addr_i];
+   assert(nameIndex < 0);
 
-   //      addr_i += (addr_i < (length - 1) ? 1 : 0);
-   //   }
+   static int autoIndex = 0;
 
-   //   i++;
-   //}
+   uintptr_t namePtr = RetrieveStaticField((uintptr_t)srcVMTPtr, nameIndex);
+   uintptr_t stringVMT = RetrieveVMT(namePtr);
 
-   //header->parentRef = (addr_t)src;
-   //header->count = srcLength;
-   //header->flags = flags;
-   //header->classRef = (addr_t)base;
+   IdentifierString dynamicName("proxy$");
+   if (namePtr) {
+      dynamicName.append((const char*)namePtr);
+   }
+   else dynamicName.appendInt(++autoIndex);
 
-   //_generatedClasses.add(*dynamicName, (addr_t)entries);
+   addr_t proxyVMTAddress = _generatedClasses.get(*dynamicName);
+   if (!proxyVMTAddress) {
+      // NOTE : probably better to create a custom package, but for a moment we can simply copy it
+      uintptr_t nameAddr = createPermString(env, *dynamicName, stringVMT);
+      size_t srcLength = SystemRoutineProvider::GetVMTLength(srcVMTPtr);
+      size_t size = (srcLength * sizeof(VMTEntry)) + sizeof(VMTHeader) + elObjectOffset + staticLen * sizeof(uintptr_t);
+      int flags = SystemRoutineProvider::GetFlags(srcVMTPtr);
 
-   return (addr_t)/*entries*/-1;
+      proxyVMTAddress = createPermVMT(env, size);
+
+      void* baseVMTPtr = (void*)proxyVMTPtr;
+      size_t baseLength = SystemRoutineProvider::GetVMTLength(baseVMTPtr);
+
+      // HOTFIX : copy build-in static variables
+      uintptr_t* staticFields = (uintptr_t*)(proxyVMTAddress + staticLen * sizeof(uintptr_t));
+      for (int i = 1; i <= staticLen; i++) {
+         staticFields[-i] = RetrieveStaticField((uintptr_t)srcVMTPtr, -i);
+      }
+      staticFields[nameIndex] = nameAddr;
+
+      VMTHeader* header = (VMTHeader*)(proxyVMTAddress + staticLen * sizeof(uintptr_t));
+      VMTEntry* entries = (VMTEntry*)(proxyVMTAddress + staticLen * sizeof(uintptr_t) + sizeof(VMTHeader));
+
+      VMTEntry* base = (VMTEntry*)baseVMTPtr;
+      VMTEntry* src = (VMTEntry*)srcVMTPtr;
+
+      header->parentRef = (addr_t)srcVMTPtr;
+      header->count = srcLength;
+      header->flags = flags & ~elDebugMask;
+      header->classRef = (addr_t)base;
+
+      // copy the dispatcher
+      entries[0] = src[0];
+
+      size_t i = 1, j = 1;
+      while (i < srcLength) {
+         if (j < baseLength && base[j].message == src[i].message) {
+            entries[i] = base[j];
+            j++;
+         }
+         else if (src[i].address) {
+            // if the method is not abstract
+            entries[i] = src[i];
+         }
+         else {
+            entries[i].message = src[i].message;
+            entries[i].address = base[0].address;
+         }
+
+         i++;
+      }
+
+      // skip a class header
+      proxyVMTAddress = (addr_t)entries;
+
+      _generatedClasses.add(*dynamicName, proxyVMTAddress);
+   }
+
+   SystemRoutineProvider::overrideClass(proxy, (void*)proxyVMTAddress);
+
+   return (addr_t)proxy;
 }
 
 // --- SystemRoutineProvider ---
@@ -259,6 +301,26 @@ addr_t SystemRoutineProvider::GetParent(void* classPtr)
    VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
 
    return header->parentRef;
+}
+
+addr_t SystemRoutineProvider :: GetClass(void* ptr)
+{
+   VMTHeader* header = (VMTHeader*)((uintptr_t)ptr - elVMTClassOffset);
+
+   return header->classRef;
+}
+
+bool SystemRoutineProvider :: overrideClass(void* ptr, void* classPtr)
+{
+   ObjectPage* header = (ObjectPage*)((uintptr_t)ptr - elObjectOffset);
+   VMTHeader* vmtHeader = (VMTHeader*)(header->vmtPtr - elVMTClassOffset);
+   if ((vmtHeader->flags & elDebugMask) == elProxy) {
+      header->vmtPtr = (uintptr_t)classPtr;
+
+      return true;
+   }
+
+   return false;
 }
 
 int SystemRoutineProvider :: GetFlags(void* classPtr)

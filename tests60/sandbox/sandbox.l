@@ -1,15 +1,15 @@
-//import extensions;
-//import system'dynamic;
+import extensions;
+import system'dynamic;
 
 interface IA
 {
    abstract bar();    
 }
 
-//interface IB
-//{
-//    abstract foo();    
-//}
+interface IB
+{
+    abstract foo();    
+}
 
 class A : IA
 {
@@ -42,21 +42,16 @@ Decorator
 
       proxy.__injectInferface(IA);
 
-//      var type := IA;
-
-//      var proxyType := type.__createProxyType();
-//      var proxy := proxyType.__newProxy(self);
-
-      ^ /*proxy*/nil;
+      ^ proxy;
    }
     
-//    generic()
-//    {
-//        console.print("decorating ");
-//        
-//        __received(target)
-//    }
-//        
+    generic()
+    {
+        console.print("decorating ");
+        
+        __received(target)
+    }
+        
 //    generic cast()
 //    {
 //        var type := __received.__getFirstSignatureMember();
@@ -68,36 +63,38 @@ Decorator
 //    }
 }
 
-////singleton C
-////{
-////    proceed(IA a)
-////    {
-////        console.print(a,":");
-////        a.bar()
-////    }
-////    
-////    proceed(IB b)
-////    {
-////        console.print(b,":");
-////        b.foo()
-////    }
-////    
-////    // default handler
-////    proceed(o)
-////    {
-////        console.printLine(o,": unknown");
-////    }    
-////}
+singleton C
+{
+    proceed(IA a)
+    {
+        console.print(a,":");
+        a.bar()
+    }
+    
+    proceed(IB b)
+    {
+        console.print(b,":");
+        b.foo()
+    }
+    
+    // default handler
+    proceed(o)
+    {
+        console.printLine(o,": unknown");
+    }    
+}
 
 public program()
 {
-//   var a := new A();
-//    var b := new B();
-//    var decA := new Decorator(a) :as IA;
-//    var decB := cast IB(new Decorator(b));
-//
-//    C.proceed(a);
-//    C.proceed(b);
-//    C.proceed(decA);
-//    C.proceed(decB);
+   var a := new A();
+   var b := new B();
+   var decA := new Decorator(a) :as IA;
+//   var decB := new Decorator(b) :as IB;
+
+   var s := decA.toPrintable();
+
+   C.proceed(a);
+   C.proceed(b);
+   C.proceed(decA);
+   C.proceed(decB);
 }

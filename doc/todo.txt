@@ -8,26 +8,9 @@ In development:
   === Iteration 23 ===
   prom: returning multiple values from the method / function
   --------------------------------------
-  - #620 : add out argument (a special case of Reference<T> template), to indicate the variable must be assigned before the method exit
-  - #590 : creating a dynamic interface wrapper (the "class" is created in perm heap, clone the interface and fill with redirect statements)
   * #590 : functional test
-  * #590 : vm : CreateProxyType
   * #590 : sample : create a dynamic interface wrapper
-  * rename CreateProxyTypeLA to InjectProxyLA, the input parameter must contain the target object, the function must verify that 
-    the target proxy is marked as proxy dispatcher (); the target type is marked
-    as weak interface (the output is not specified); the function will create proxy vmt and inject it to the proxy : otherwise it returns 0
-
-  * if the strong interface - verify if the output type list matches the interface one - if not return nil
-  * the api entry must override
-  * perm alloc must be struct
-  
-  * #590 : proxy dispatcher : contains only a single field and a custom dispatcher
-
-  * #590 : implementing interface injection : for strong interface - validate output types
-  --------------------------------------
-  * #590 : when no output type info - only weak interfaces are supported
-  * #590 : only stateless type can be used
-  * #590 : implementing interface injection : 
+  * #590 : return the message argument list types
 
   === Iteration 24 ===
   --------------------------------------
@@ -41,6 +24,9 @@ In development:
   prom:#635 on reddit;elena in nutshell every 1 week; post an article about attributes (decorate a class, defining which operation is allowed)
   port:elenavm / elt for linux, helloworld gui sample (button)
   --------------------------------------
+  - #620 : add out argument (a special case of Reference<T> template), to indicate the variable must be assigned before the method exit
+  * #590 : vm : InjectProxyTypeLA 
+  - #590 : implementing interface injection : strong interface
   - #184 : linux simplest gui
   - elt : nested call must not stop / start vm 
   - elt : fails after executing several times
@@ -51,6 +37,7 @@ In development:
   - #637(bt tests (>=4), all bc tests)
   - #69
   - chat sample
+  --------------------------------------
 
   === Iteration 25 ===
   --------------------------------------
