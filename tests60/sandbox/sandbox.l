@@ -19,13 +19,13 @@ class A : IA
    }    
 }
 
-//class B : IB
-//{
-//    foo()
-//    {
-//        console.writeLine("foo")
-//    }    
-//}
+class B : IB
+{
+   foo()
+   {
+      console.writeLine("foo")
+   }    
+}
 
 Decorator
 {
@@ -35,53 +35,44 @@ Decorator
    {
       this target := target
    }
-
-   IA cast() 
-   {
-      var proxy := ::{ dispatch() => self; };
-
-      proxy.__injectInferface(IA);
-
-      ^ proxy;
-   }
     
-    generic()
-    {
-        console.print("decorating ");
+   generic()
+   {
+      console.print("decorating ");
         
-        __received(target)
-    }
+      __received(target)
+   }
         
-//    generic cast()
-//    {
-//        var type := __received.__getFirstSignatureMember();
-//        
-//        var proxyType := type.__inheritProxy();
-//        var proxy := proxyType.__newProxy(self);
-//        
-//        ^ __received(proxy);
-//    }
+   generic cast()
+   {
+      var type := __received.__getFirstSignatureMember();
+
+      var proxy := ::{ dispatch() => self; };
+      proxy.__injectInferface(type);
+   
+      ^ __received(proxy);
+   }
 }
 
 singleton C
 {
-    proceed(IA a)
-    {
-        console.print(a,":");
-        a.bar()
-    }
+   proceed(IA a)
+   {
+      console.print(a,":");
+      a.bar()
+   }
     
-    proceed(IB b)
-    {
-        console.print(b,":");
-        b.foo()
-    }
+   proceed(IB b)
+   {
+      console.print(b,":");
+      b.foo()
+   }
     
-    // default handler
-    proceed(o)
-    {
-        console.printLine(o,": unknown");
-    }    
+   // default handler
+   proceed(o)
+   {
+      console.printLine(o,": unknown");
+   }    
 }
 
 public program()
@@ -89,9 +80,7 @@ public program()
    var a := new A();
    var b := new B();
    var decA := new Decorator(a) :as IA;
-//   var decB := new Decorator(b) :as IB;
-
-   var s := decA.toPrintable();
+   var decB := new Decorator(b) :as IB;
 
    C.proceed(a);
    C.proceed(b);

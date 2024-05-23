@@ -10,7 +10,7 @@ In development:
   --------------------------------------
   * #590 : functional test
   * #590 : sample : create a dynamic interface wrapper
-  * #590 : return the message argument list types
+  * #590 : return the message argument list types : LoadSignatureLA
 
   === Iteration 24 ===
   --------------------------------------

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //      This header contains the declaration of a class
 //      ELENA RT manager.
-//                                              (C)2023, by Aleksey Rakov
+//                                             (C)2023-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef RTMANAGER_H

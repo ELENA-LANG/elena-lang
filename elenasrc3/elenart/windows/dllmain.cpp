@@ -261,6 +261,17 @@ EXTERN_DLL_EXPORT void* InjectProxyTypeLA(void* target, void* type, int staticLe
    return (void*)machine->injectType(systemEnv, target, type, staticLength, nameIndex);
 }
 
+/// <summary>
+/// Returns the signature list
+/// </summary>
+/// <param name="message">A strong-typed message</param>
+/// <param name="output">Signature tyoe</param>
+/// <returns>the total length</returns>
+EXTERN_DLL_EXPORT int LoadSignatureLA(mssg_t message, addr_t* output, int maximalLength)
+{
+   return machine->loadSignature(message, output, maximalLength);
+}
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved

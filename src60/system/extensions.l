@@ -1499,14 +1499,6 @@ public extension weakArrayOp
         ^ a;
     }
 }
-//
-//public extension arrayOp<T> : Array<T>
-//{
-//    T[] (int index, int length)
-//    {
-//        ^ new Array<T>(self, index, length)
-//    }
-//}
 
 // --- stringWeakOp ---
 public extension stringWeakOp
@@ -1589,74 +1581,3 @@ public extension threadObjectOp
 
    leaveCriticalSection() : external(system'core_routines'__leaveCritical);
 }
-
-//// --- intArrayOp ---
-//
-//public extension intArrayOp : Array<int>
-//{
-//    exchange(int i1, int i2)
-//    {
-//        int n1 := self[i1];
-//        int n2 := self[i2];
-//
-//        self[i1] := n2;
-//        self[i2] := n1;
-//    }
-//
-//    populate(Func<int,int> f)
-//    {
-//        int i := 0;
-//        int l := self.Length;
-//        
-//        while (i < l)
-//        {
-//            self[i] := f(i);
-//            
-//            i := i + 1
-//        };
-//        
-//        ^ self
-//    }
-//    
-//    populate(Func1 f)
-//        = self.populate:(int n){ ^cast int(f(n)) };
-//}
-//
-//public extension arrayOp<T> : Array<T>
-//{
-//    T[] Subarray(int index, int length)
-//    {
-//        ^ new Array<T>(self, index, length)
-//    }
-//}
-//
-//// --- intmatrixOp ---
-//
-//public extension intMatrixOp : IntMatrix
-//{
-//    populate(Func<int,int,int> fn)
-//    {
-//        int n := 0;
-//        int m := 0;
-//        self.readLengthsTo(ref n, ref m);
-//        
-//        int i := 0;
-//        int j := 0;
-//        while (i < n)
-//        {
-//            j := 0;
-//            while (j < m)
-//            {
-//                int v := fn(i, j);
-//                
-//                self.write(i, j, v);
-//                
-//                j := j + 1
-//            };
-//            
-//            i := i + 1
-//        };
-//        
-//        ^ self
-//    }
-//}

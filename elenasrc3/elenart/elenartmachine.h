@@ -63,6 +63,8 @@ namespace elena_lang
 
       int loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output);
 
+      int loadSignature(mssg_t message, addr_t* output, pos_t maximalCount);
+
       void initRandomSeed(SeedStruct& seed)
       {
          __routineProvider.InitRandomSeed(seed, __routineProvider.GenerateSeed());
