@@ -1,48 +1,38 @@
 import extensions;
 import system'dynamic;
 
-interface IA
+interface IDecoratorA
 {
-   abstract bar();    
+   abstract giveMe();
 }
 
-interface IB
+class DecoratorBaseA : IDecoratorA
 {
-    abstract foo();    
-}
+   field value;
 
-class A : IA
-{
-   bar()
+   constructor(value)
    {
-      console.writeLine("bar")
-   }    
-}
-
-class B : IB
-{
-   foo()
-   {
-      console.writeLine("foo")
-   }    
-}
-
-Decorator
-{
-   field target;
-    
-   constructor(target)
-   {
-      this target := target
+      this value := value
    }
-    
-   generic()
+
+   giveMe()
+      = value;
+}
+
+class DecoratorA
+{
+   object target;
+   object extra;
+
+   constructor(target, extra)
    {
-      console.print("decorating ");
-        
-      __received(target)
+      this target := target;
+      this extra := extra;
    }
-        
+
+   giveMe()
+      = target.giveMe() + extra;
+
    generic cast()
    {
       var type := __received.__getFirstSignatureMember();
@@ -54,36 +44,15 @@ Decorator
    }
 }
 
-singleton C
+decoratorTest()
 {
-   proceed(IA a)
-   {
-      console.print(a,":");
-      a.bar()
-   }
-    
-   proceed(IB b)
-   {
-      console.print(b,":");
-      b.foo()
-   }
-    
-   // default handler
-   proceed(o)
-   {
-      console.printLine(o,": unknown");
-   }    
+   var a := new DecoratorBaseA(2);
+   var decA := new DecoratorA(a, 3);
+
+   Assert.ifEqual((decA :as IDecoratorA).giveMe(), 5);
 }
 
 public program()
 {
-   var a := new A();
-   var b := new B();
-   var decA := new Decorator(a) :as IA;
-   var decB := new Decorator(b) :as IB;
-
-   C.proceed(a);
-   C.proceed(b);
-   C.proceed(decA);
-   C.proceed(decB);
+   decoratorTest();
 }

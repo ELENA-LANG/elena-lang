@@ -28,6 +28,7 @@
         <include>random.l</include>
         <include>win_args.l</include>
         <include>app.l</include>
+        <include>formatter.l</include>
         <include>text\strings.l</include>
         <include>text\words.l</include>
         <include>math\functions.l</include>
