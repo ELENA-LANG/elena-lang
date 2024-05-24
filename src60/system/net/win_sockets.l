@@ -229,7 +229,7 @@ public sealed const struct Socket
 
    int iocommand(int command)
    {
-      int retVal := extern WS2_32.ioctlsocket(_handle, command, ref int parameter);
+      int retVal := extern WS2_32.ioctlsocket(_handle, command, out int parameter);
             
       if (retVal == SOCKET_ERROR)
          { SocketException.new("Error at socket").raise() };

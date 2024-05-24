@@ -70,7 +70,7 @@ public closed class SDIForm : BaseWinForm
       if(_visible)
          { styles := styles | WS_VISIBLE };
         
-      _region.read(ref int x, ref int y, ref int width, ref int height);
+      _region.read(out int x, out int y, out int width, out int height);
 
       pointer paramPtr := PermVectorTable.allocate(new SDIWindowListener(self));
 
@@ -101,7 +101,7 @@ public class SDIDialog : SDIForm
       if(_visible)
          { styles := styles | WS_VISIBLE };
         
-      _region.read(ref int x, ref int y, ref int width, ref int height);
+      _region.read(out int x, out int y, out int width, out int height);
         
       pointer paramPtr := PermVectorTable.allocate(new SDIWindowListener(self));
 
@@ -191,7 +191,7 @@ public closed class ChildForm : BaseWinForm
       if(_visible)
          { styles := styles | WS_VISIBLE };
 
-      _region.read(ref int x, ref int y, ref int width, ref int height);
+      _region.read(out int x, out int y, out int width, out int height);
         
       pointer paramPtr := PermVectorTable.allocate(new ChildWindowListener(self));
 

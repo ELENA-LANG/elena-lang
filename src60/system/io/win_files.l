@@ -73,7 +73,7 @@ namespace io
             dump,
             toRead,
             //ref retVal,
-            ref int temp,
+            out int temp,
             0);
 
          retVal := temp

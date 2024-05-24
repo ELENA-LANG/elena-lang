@@ -32,8 +32,6 @@ In development:
   - chat sample
   --------------------------------------
   - #620 : warn if out variable is not assigned in the method
-  - #620 : add out argument (a special case of Reference<T> template), to indicate the variable must be assigned before the method exit
-  - #620 : warn if byref variable is passed without assigning it
 
   === Iteration 25 ===
   --------------------------------------

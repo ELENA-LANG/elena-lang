@@ -47,7 +47,7 @@ public sealed class DBConnection
    
    open()
    {
-      int retVal := extern sqlite3.sqlite3_open(_path, ref handle h);
+      int retVal := extern sqlite3.sqlite3_open(_path, out handle h);
       if (retVal != SQLITE_OK) { DBException.new("Could not open a database file").raise() } else { _open := true };
       
       _DBHandle := h
@@ -158,7 +158,7 @@ public sealed class DBCommand
                                              cnn,
                                              text,
                                              textLen,
-                                             ref handle h,
+                                             out handle h,
                                              0);
       if (retVal != SQLITE_OK) { DBException.new(_connection.last_error_message()).raise() };
       

@@ -105,7 +105,7 @@ namespace io
          if(index + 4 > used)
             { OutOfRangeException.new().raise() };
             
-         PrimitiveIntOperations.loadFromByteArray(_buffer, index, ref int retVal);
+         PrimitiveIntOperations.loadFromByteArray(_buffer, index, out int retVal);
             
          ^ retVal
       }

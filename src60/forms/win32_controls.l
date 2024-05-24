@@ -231,7 +231,7 @@ public closed class Label : BaseWinControl, interface<IControl>
       if(_visible)
          { styles := styles | WS_VISIBLE };
         
-      _region.read(ref int x, ref int y, ref int width, ref int height);
+      _region.read(out int x, out int y, out int width, out int height);
         
       _handle := new WindowHandle(
                         0,
@@ -264,7 +264,7 @@ public class StaticLabel : Label
       if(_visible)
          { styles := styles | WS_VISIBLE };
         
-      _region.read(ref int x, ref int y, ref int width, ref int height);
+      _region.read(out int x, out int y, out int width, out int height);
         
       _handle := new WindowHandle(
                         0,
@@ -336,7 +336,7 @@ public sealed class Edit : BaseEdit, interface<IControl>
       int styles := WS_CHILD | WS_BORDER;
       self.updateStyles(ref styles);
         
-      _region.read(ref int x, ref int y, ref int width, ref int height);
+      _region.read(out int x, out int y, out int width, out int height);
         
       _handle := new WindowHandle(
                      WS_EX_CLIENTEDGE,
@@ -396,7 +396,7 @@ public sealed class Button : BaseButton, interface<IControl>
       int styles := WS_CHILD | BS_PUSHBUTTON;
       self.updateStyles(ref styles);
         
-      _region.read(ref int x, ref int y, ref int width, ref int height);
+      _region.read(out int x, out int y, out int width, out int height);
         
       _handle := new WindowHandle(
                         0,
@@ -459,7 +459,7 @@ public closed class RadioButton : BaseButton, interface<IControl>
       int styles := WS_CHILD | BS_AUTORADIOBUTTON;
       self.updateStyles(ref styles);
         
-      _region.read(ref int x, ref int y, ref int width, ref int height);
+      _region.read(out int x, out int y, out int width, out int height);
         
       _handle := new WindowHandle(
                         0,
@@ -546,7 +546,7 @@ public closed class Paintbox : BaseWinControl, interface<IControl>
       if(_visible)
          { styles := styles | WS_VISIBLE };
                         
-      _region.read(ref int x, ref int y, ref int width, ref int height);
+      _region.read(out int x, out int y, out int width, out int height);
        
       pointer paramPtr := PermVectorTable.allocate(new PaintboxListener(self)); 
 
@@ -651,7 +651,7 @@ public sealed class Frame : BaseWinControl, interface<IControl>
       if(_visible)
          styles := styles | WS_VISIBLE;
         
-      _region.read(ref int x, ref int y, ref int width, ref int height);
+      _region.read(out int x, out int y, out int width, out int height);
         
       _handle := new WindowHandle(
                         WS_EX_TRANSPARENT,
@@ -783,7 +783,7 @@ public sealed class Panel : BasePanel, interface<IControl>
       if(_visible)
          { styles := styles | WS_VISIBLE };
 
-      _region.read(ref int x, ref int y, ref int width, ref int height);
+      _region.read(out int x, out int y, out int width, out int height);
 
       pointer paramPtr := PermVectorTable.allocate(new PanelListener(self));
 
@@ -842,7 +842,7 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
       if(_visible)
             { styles := styles | WS_VISIBLE };
                         
-      _region.read(ref int x, ref int y, ref int width, ref int height);
+      _region.read(out int x, out int y, out int width, out int height);
         
       pointer paramPtr := PermVectorTable.allocate(new RadioButtonGroupListener(self));
 

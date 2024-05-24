@@ -20,7 +20,7 @@ namespace math
          real v := 0.0r;
          real t := 0.0r;
             
-         a.readLengthsTo(ref int n, ref int m);
+         a.readLengthsTo(out int n, out int m);
             
          if(n != m)
             { MatrixException.new("Invalid argument").raise() };
@@ -106,7 +106,7 @@ namespace math
    {
       RealMatrix clone()
       {
-         self.readLengthsTo(ref int n, ref int m);
+         self.readLengthsTo(out int n, out int m);
             
          auto r := RealMatrix.allocate(n, m);
          for(int i := 0; i < n; i += 1)
@@ -124,7 +124,7 @@ namespace math
         
       populate(Func<int,int,real> f)
       {
-         self.readLengthsTo(ref int n, ref int m);
+         self.readLengthsTo(out int n, out int m);
             
          for(int i := 0; i < n; i += 1)
          {
@@ -137,8 +137,8 @@ namespace math
         
       RealMatrix add(RealMatrix b)
       {
-         self.readLengthsTo(ref int n, ref int m);
-         b.readLengthsTo(ref int i, ref int j);
+         self.readLengthsTo(out int n, out int m);
+         b.readLengthsTo(out int i, out int j);
             
          ifnot(n == i)
             { MatrixException.new("Two matrices must have an equal number of rows and columns to be added").raise() };
@@ -163,8 +163,8 @@ namespace math
         
       RealMatrix subtract(RealMatrix b)
       {
-         self.readLengthsTo(ref int n, ref int m);
-         b.readLengthsTo(ref int i, ref int j);
+         self.readLengthsTo(out int n, out int m);
+         b.readLengthsTo(out int i, out int j);
             
          ifnot(n == i)
             { MatrixException.new("Two matrices must have an equal number of rows and columns to be added").raise() };
@@ -189,8 +189,8 @@ namespace math
         
       RealMatrix multiply(RealMatrix b)
       {
-         self.readLengthsTo(ref int n, ref int j);
-         b.readLengthsTo(ref int m, ref int p);
+         self.readLengthsTo(out int n, out int j);
+         b.readLengthsTo(out int m, out int p);
                     
          ifnot(j == m)
             { MatrixException.new("Invalid argument").raise() };
@@ -226,7 +226,7 @@ namespace math
          ifnot(even)
             { deter := deter * (-1.0r) };
             
-         a.readLengthsTo(ref int n, ref int m);
+         a.readLengthsTo(out int n, out int m);
             
          for (int i := 0; i < n; i += 1)
          {
@@ -242,13 +242,13 @@ namespace math
       {
          auto output := new TextBuilder();
             
-         self.readLengthsTo(ref int n, ref int m);
+         self.readLengthsTo(out int n, out int m);
             
          for(int i := 0; i < n; i += 1)
          {
             for(int j := 0; j < m; j += 1)
             {
-               self.read(i, j, ref real r);
+               self.read(i, j, out real r);
                     
                output.print(r,",");
             };
