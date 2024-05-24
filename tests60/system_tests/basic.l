@@ -1968,7 +1968,7 @@ class DecoratorA
    }
 }
 
-decoratorTest() : testCase()
+public decoratorTest() : testCase()
 {
    var a := new DecoratorBaseA(2);
    var decA := new DecoratorA(a, 3);

@@ -1108,7 +1108,8 @@ sealed class StringIndexer : Indexer<char>
 
 // --- WideString ---
 
-public const struct WideString : BaseValue
+public const struct WideString : BaseValue,
+   info("A UTF-16 literal value")
 {
    __string short[] array;
 

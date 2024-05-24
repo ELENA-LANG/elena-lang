@@ -26,6 +26,7 @@
 #let attributes["embeddable"]  := 80002002h;
 #let attributes["ref"]         := 80002003h;
 #let attributes["readonly"]    := 80002004h;
+#let attributes["out"]         := 80002005h;
 #let attributes["retoverload"] := 8000200Ah;
 #let attributes["params"]      := 8000200Bh;
                                                  

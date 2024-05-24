@@ -57,6 +57,8 @@ namespace elena_lang
       ParamAddress,
       ByRefParam,
       ByRefParamAddress,
+      OutParam,
+      OutParamAddress,
       Local,
       LocalReference,
       RefLocal,
@@ -1048,6 +1050,21 @@ namespace elena_lang
          }
       };
 
+      struct TerminalAttributes
+      {
+         bool variableMode;
+         bool forwardMode;
+         bool refOp;
+         bool outRefOp;
+         bool mssgOp;
+         bool memberMode;
+
+         bool isAnySet()
+         {
+            return forwardMode || variableMode || refOp || outRefOp || mssgOp || memberMode;
+         }
+      };
+
       class Namespace
       {
          friend class Compiler;
@@ -1452,7 +1469,7 @@ namespace elena_lang
 
       ref_t generateConstant(Scope& scope, ObjectInfo& info, ref_t reference, bool saveScope = true);
 
-      mssg_t defineByRefMethod(ClassScope& scope, SyntaxNode node, bool isExtension);
+      mssg_t defineOutRefMethod(ClassScope& scope, SyntaxNode node, bool isExtension);
 
       void verifyMultimethods(Scope& scope, SyntaxNode node, SyntaxKey methodKey, ClassInfo& info, VirtualMethodList& implicitMultimethods);
 
@@ -1544,8 +1561,8 @@ namespace elena_lang
 
       bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);
 
-      ObjectInfo defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo declaredTypeInfo, bool variableMode,
-         bool forwardMode, bool refOp, bool mssgOp, bool memberMode, bool& invalid, ExpressionAttribute attrs);
+      ObjectInfo defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo declaredTypeInfo, 
+         TerminalAttributes& terminalAttrs, bool& invalid, ExpressionAttribute attrs);
 
       ObjectInfo mapStringConstant(Scope& scope, SyntaxNode node);
       ObjectInfo mapWideStringConstant(Scope& scope, SyntaxNode node);

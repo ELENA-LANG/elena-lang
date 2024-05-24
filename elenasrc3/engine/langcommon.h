@@ -210,6 +210,7 @@ namespace elena_lang
    constexpr auto V_EMBEDDABLE            = 0x80002002u;
    constexpr auto V_WRAPPER               = 0x80002003u;
    constexpr auto V_READONLY              = 0x80002004u;
+   constexpr auto V_OUTWRAPPER            = 0x80002005u;
    constexpr auto V_OVERLOADRET           = 0x8000200Au;
    constexpr auto V_VARIADIC              = 0x8000200Bu;
 

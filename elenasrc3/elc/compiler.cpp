@@ -96,12 +96,12 @@ inline ref_t getSignature(ModuleBase* module, mssg_t message)
    return signRef;
 }
 
-inline void addByRefRetVal(ArgumentsInfo& arguments, ObjectInfo& tempRetVal)
+inline void addOutRetVal(ArgumentsInfo& arguments, ObjectInfo& tempRetVal)
 {
    if (tempRetVal.kind == ObjectKind::TempLocal) {
-      arguments.add({ ObjectKind::RefLocal, { V_WRAPPER, tempRetVal.typeInfo.typeRef }, tempRetVal.argument, tempRetVal.extra });
+      arguments.add({ ObjectKind::RefLocal, { V_OUTWRAPPER, tempRetVal.typeInfo.typeRef }, tempRetVal.argument, tempRetVal.extra });
    }
-   else arguments.add({ ObjectKind::TempLocalAddress, { V_WRAPPER, tempRetVal.typeInfo.typeRef }, tempRetVal.argument, tempRetVal.extra });
+   else arguments.add({ ObjectKind::TempLocalAddress, { V_OUTWRAPPER, tempRetVal.typeInfo.typeRef }, tempRetVal.argument, tempRetVal.extra });
 }
 
 inline bool validateGenericClosure(ref_t* signature, size_t length)
@@ -185,6 +185,8 @@ inline bool isSingleObject(ObjectKind kind)
       case ObjectKind::ParamAddress:
       case ObjectKind::ByRefParam:
       case ObjectKind::ByRefParamAddress:
+      case ObjectKind::OutParam:
+      case ObjectKind::OutParamAddress:
       case ObjectKind::Local:
       case ObjectKind::LocalReference:
       case ObjectKind::RefLocal:
@@ -1307,10 +1309,14 @@ ObjectInfo Compiler::MethodScope :: mapParameter(ustr_t identifier, ExpressionAt
    Parameter local = parameters.get(identifier);
    if (local.offset != -1) {
       bool byRef = local.typeInfo.typeRef == V_WRAPPER;
+      bool outRef = local.typeInfo.typeRef == V_OUTWRAPPER;
 
       if (local.size > 0) {
          if (byRef) {
             return { ObjectKind::ByRefParamAddress, { local.typeInfo.elementRef }, prefix - local.offset, local.size };
+         }
+         else if (outRef) {
+            return { ObjectKind::OutParamAddress, { local.typeInfo.elementRef }, prefix - local.offset, local.size };
          }
          else return { ObjectKind::ParamAddress, local.typeInfo, prefix - local.offset, TargetMode::Conditional };
       }
@@ -1324,6 +1330,9 @@ ObjectInfo Compiler::MethodScope :: mapParameter(ustr_t identifier, ExpressionAt
       else {
          if (byRef) {
             return { ObjectKind::ByRefParam, { local.typeInfo.elementRef }, prefix - local.offset };
+         }
+         else if (outRef) {
+            return { ObjectKind::OutParam, { local.typeInfo.elementRef }, prefix - local.offset };
          }
          else return { ObjectKind::Param, local.typeInfo, prefix - local.offset };
       }
@@ -2704,7 +2713,7 @@ void Compiler :: injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType
    }
 }
 
-mssg_t Compiler :: defineByRefMethod(ClassScope& scope, SyntaxNode node, bool isExtension)
+mssg_t Compiler :: defineOutRefMethod(ClassScope& scope, SyntaxNode node, bool isExtension)
 {
    ref_t outputRef = node.findChild(SyntaxKey::OutputType).arg.reference;
    // NOTE : the embedable type should be read-only, otherwise it is possible that the changes will be lost
@@ -2720,7 +2729,7 @@ mssg_t Compiler :: defineByRefMethod(ClassScope& scope, SyntaxNode node, bool is
       ref_t signArgs[ARG_COUNT];
       size_t signLen = scope.module->resolveSignature(signRef, signArgs);
       if (signLen == (size_t)argCount - argDiff) {
-         signArgs[signLen++] = resolvePrimitiveType(scope, { V_WRAPPER, outputRef }, true);
+         signArgs[signLen++] = resolvePrimitiveType(scope, { V_OUTWRAPPER, outputRef }, true);
 
          mssg_t byRefMessage = encodeMessage(
             scope.module->mapAction(
@@ -2803,7 +2812,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
             // HOTFIX : do not generate byref handler for methods returning constant value & variadic method & yieldable
             if ((current.arg.reference & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE && !SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_YIELDABLE)) {
                mssg_t byRefMethod = withRetOverload ? 
-                  0 : defineByRefMethod(scope, current, scope.extensionClassRef != 0);
+                  0 : defineOutRefMethod(scope, current, scope.extensionClassRef != 0);
 
                if (byRefMethod) {
                   current.appendChild(SyntaxKey::ByRefRetMethod, byRefMethod);
@@ -3568,9 +3577,9 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          if (!scope.info.outputRef || (weakSignature && paramCount > 0))
             scope.raiseError(errIllegalMethod, node);
 
-         // COMPILER MAGIC : if the message is marked as multiret - it turns into byref return handler
+         // COMPILER MAGIC : if the message is marked as multiret - it turns into outref return handler
          // NOTE : it should contain the specific return type
-         TypeInfo refType = { V_WRAPPER, scope.info.outputRef };
+         TypeInfo refType = { V_OUTWRAPPER, scope.info.outputRef };
 
          int offset = scope.parameters.count() + 1u;
          scope.parameters.add(RETVAL_ARG, { offset, refType, 0 });
@@ -4151,6 +4160,7 @@ inline bool isBoxingRequired(ObjectInfo info, bool allowByRefParam)
       case ObjectKind::TempLocalAddress:
       case ObjectKind::ParamAddress:
       case ObjectKind::ByRefParamAddress:
+      case ObjectKind::OutParamAddress:
       case ObjectKind::SelfBoxableLocal:
       case ObjectKind::FieldAddress:
          return true;
@@ -4246,6 +4256,7 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, 
       case V_FLAG:
          return moduleScope.branchingInfo.typeRef;
       case V_WRAPPER:
+      case V_OUTWRAPPER:
          return resolveWrapperTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
       case V_INT8ARRAY:
       case V_INT16ARRAY:
@@ -4386,6 +4397,10 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
    if (attributes.byRefOne) {
       typeInfo.elementRef = typeInfo.typeRef;
       typeInfo.typeRef = V_WRAPPER;
+   }
+   else if (attributes.outRefOne) {
+      typeInfo.elementRef = typeInfo.typeRef;
+      typeInfo.typeRef = V_OUTWRAPPER;
    }
    else if (attributes.variadicOne) {
       if (typeInfo.typeRef != V_ARGARRAY)
@@ -6528,13 +6543,12 @@ ObjectInfo Compiler :: mapExtMessageConstant(Scope& scope, SyntaxNode node, ref_
    return { ObjectKind::ExtMssgLiteral, { constType, extension }, constRef };
 }
 
-ObjectInfo Compiler :: defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo declaredTypeInfo, bool variableMode, 
-   bool forwardMode, bool refOp, bool mssgOp, bool memberMode, bool& invalid, ExpressionAttribute attrs)
+ObjectInfo Compiler :: defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo declaredTypeInfo, TerminalAttributes& terminalAttrs, bool& invalid, ExpressionAttribute attrs)
 {
    ObjectInfo retVal = {};
    bool ignoreDuplicates = EAttrs::testAndExclude(attrs, ExpressionAttribute::IgnoreDuplicate);
    bool distributedMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::DistributedForward);
-   bool invalidForNonIdentifier = forwardMode || variableMode || refOp || mssgOp || memberMode || distributedMode;
+   bool invalidForNonIdentifier = terminalAttrs.isAnySet() || distributedMode;
 
    switch (node.key) {
       case SyntaxKey::TemplateType:
@@ -6547,25 +6561,25 @@ ObjectInfo Compiler :: defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInf
          break;
       }
       case SyntaxKey::globalreference:
-         invalid = variableMode;
+         invalid = terminalAttrs.variableMode;
          retVal = scope.mapGlobal(node.identifier());
          break;
       case SyntaxKey::identifier:
       case SyntaxKey::reference:
-         if (variableMode) {
-            invalid = forwardMode;
+         if (terminalAttrs.variableMode) {
+            invalid = terminalAttrs.forwardMode;
 
             if (declareVariable(scope, node, declaredTypeInfo, ignoreDuplicates)) {
                retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, 
                   attrs | ExpressionAttribute::Local);
 
-               if (_trackingUnassigned && refOp) {
+               if (_trackingUnassigned && terminalAttrs.outRefOp) {
                   scope.markAsAssigned(retVal);
                }
             }
             else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
          }
-         else if (forwardMode) {
+         else if (terminalAttrs.forwardMode) {
             IdentifierString forwardName(FORWARD_PREFIX_NS, node.identifier());
 
             retVal = scope.mapIdentifier(*forwardName, true, attrs);
@@ -6577,32 +6591,34 @@ ObjectInfo Compiler :: defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInf
             }
             else return {};
          }
-         else if (memberMode) {
+         else if (terminalAttrs.memberMode) {
             retVal = scope.mapMember(node.identifier());
          }
          else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
 
-         if (refOp) {
+         if (terminalAttrs.refOp || terminalAttrs.outRefOp) {
             switch (retVal.kind) {
                case ObjectKind::LocalAddress:
-                  retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
+                  retVal.typeInfo = { terminalAttrs.outRefOp ? V_OUTWRAPPER : V_WRAPPER, retVal.typeInfo.typeRef };
                   break;
                case ObjectKind::ParamAddress:
-                  retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
+                  retVal.typeInfo = { terminalAttrs.outRefOp ? V_OUTWRAPPER : V_WRAPPER, retVal.typeInfo.typeRef };
                   break;
                case ObjectKind::Local:
                   retVal.kind = ObjectKind::RefLocal;
-                  retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
+                  retVal.typeInfo = { terminalAttrs.outRefOp ? V_OUTWRAPPER : V_WRAPPER, retVal.typeInfo.typeRef };
                   break;
                case ObjectKind::ByRefParam:
+               case ObjectKind::OutParam:
                   // allowing to pass by ref parameter directly
                   retVal.kind = ObjectKind::ParamReference;
-                  retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
+                  retVal.typeInfo = { retVal.kind == ObjectKind::OutParam ? V_OUTWRAPPER : V_WRAPPER, retVal.typeInfo.typeRef };
                   break;
+               case ObjectKind::OutParamAddress:
                case ObjectKind::ByRefParamAddress:
                   // allowing to pass by ref parameter directly
                   retVal.kind = ObjectKind::ParamAddress;
-                  retVal.typeInfo = { V_WRAPPER, retVal.typeInfo.typeRef };
+                  retVal.typeInfo = { retVal.kind == ObjectKind::OutParamAddress ? V_OUTWRAPPER : V_WRAPPER, retVal.typeInfo.typeRef };
                   //retVal.mode = TargetMode::UnboxingRequired;
                   break;
                default:
@@ -6667,15 +6683,19 @@ ObjectInfo Compiler :: defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInf
 
 ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declaredTypeInfo, EAttr attrs)
 {
-   bool forwardMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::Forward);
-   bool variableMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::NewVariable);
    bool externalOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::Extern);
    bool newOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::NewOp);
    bool castOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::CastOp);
-   bool refOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::RefOp);
-   bool mssgOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::MssgNameLiteral);
    bool probeMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::ProbeMode);
-   bool memberMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::Member);
+
+   TerminalAttributes attributeMap = {
+      EAttrs::testAndExclude(attrs, ExpressionAttribute::NewVariable),
+      EAttrs::testAndExclude(attrs, ExpressionAttribute::Forward),
+      EAttrs::testAndExclude(attrs, ExpressionAttribute::RefOp),
+      EAttrs::testAndExclude(attrs, ExpressionAttribute::OutRefOp),
+      EAttrs::testAndExclude(attrs, ExpressionAttribute::MssgNameLiteral),
+      EAttrs::testAndExclude(attrs, ExpressionAttribute::Member),
+   };
 
    ObjectInfo retVal;
    bool invalid = false;
@@ -6718,7 +6738,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
          }
       }
    }
-   else if (mssgOp) {
+   else if (attributeMap.mssgOp) {
       switch (node.key) {
          case SyntaxKey::identifier:
          {
@@ -6731,11 +6751,10 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
             break;
       }
    }
-   else if (node == SyntaxKey::Type && variableMode) {
+   else if (node == SyntaxKey::Type && attributeMap.variableMode) {
       return { ObjectKind::Class, {}, declaredTypeInfo.typeRef };
    }
-   else retVal = defineTerminalInfo(scope, node, declaredTypeInfo, variableMode, forwardMode, 
-      refOp, mssgOp, memberMode, invalid, attrs);
+   else retVal = defineTerminalInfo(scope, node, declaredTypeInfo, attributeMap, invalid, attrs);
 
    if (invalid)
       scope.raiseError(errInvalidOperation, node);
@@ -7927,7 +7946,7 @@ mssg_t Compiler :: compileByRefHandler(BuildTreeWriter& writer, MethodScope& inv
    }
 
    // add byref return arg
-   TypeInfo refType = { V_WRAPPER, invokerScope.info.outputRef };
+   TypeInfo refType = { V_OUTWRAPPER, invokerScope.info.outputRef };
    auto sizeInfo = _logic->defineStructSize(*invokerScope.moduleScope, resolvePrimitiveType(invokerScope, refType, false));
 
    int offset = invokerScope.parameters.count() + 1u;
@@ -7966,7 +7985,7 @@ void Compiler::compileByRefRedirectHandler(BuildTreeWriter& writer, MethodScope&
    }
 
    // add byref return arg
-   TypeInfo refType = { V_WRAPPER, invokerScope.info.outputRef };
+   TypeInfo refType = { V_OUTWRAPPER, invokerScope.info.outputRef };
    auto sizeInfo = _logic->defineStructSize(*invokerScope.moduleScope, resolvePrimitiveType(invokerScope, refType, false));
 
    int offset = invokerScope.parameters.count() + 1u;
@@ -8013,7 +8032,7 @@ void Compiler :: compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope
    for (auto it = methodScope.parameters.start(); !it.eof(); ++it) {
       arguments.add(methodScope.mapParameter(it.key(), EAttr::None));
    }
-   addByRefRetVal(arguments, tempRetVal);
+   addOutRetVal(arguments, tempRetVal);
 
    ref_t signRef = getSignature(codeScope.module, handler);
    _logic->setSignatureStacksafe(*codeScope.moduleScope, signRef, resolution.stackSafeAttr);
@@ -8462,7 +8481,7 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
       else validateType(scope, methodScope.info.outputRef, current, false, false);
 
       if (methodScope.checkHint(MethodHint::VirtualReturn)) {
-         TypeInfo refType = { V_WRAPPER, methodScope.info.outputRef };
+         TypeInfo refType = { V_OUTWRAPPER, methodScope.info.outputRef };
 
          SizeInfo sizeInfo = {};
          // add byref return arg
@@ -11013,7 +11032,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
    if (byRefResolution.resolved) {
       ObjectInfo tempRetVal = declareTempLocal(expectedRef, false);
 
-      addByRefRetVal(arguments, tempRetVal);
+      addOutRetVal(arguments, tempRetVal);
       // adding mark for optimization routine
       if (tempRetVal.kind == ObjectKind::TempLocalAddress)
          writer->appendNode(BuildKey::ByRefOpMark, tempRetVal.argument);
@@ -12334,7 +12353,7 @@ ObjectInfo Compiler::Expression :: convertObject(SyntaxNode node, ObjectInfo sou
          else return { ObjectKind::Nil, { V_NIL } };
       }
 
-      if (source.typeInfo.typeRef == V_WRAPPER) {
+      if (source.typeInfo.typeRef == V_WRAPPER || source.typeInfo.typeRef == V_OUTWRAPPER) {
          // unbox wrapper for the conversion
          source.typeInfo = { source.typeInfo.elementRef };
       }
@@ -12452,7 +12471,7 @@ Compiler::MessageResolution Compiler::Expression :: resolveByRefHandler(ObjectIn
          ref_t resolvedSignRef = 0;
          ustr_t actionName = scope.module->resolveAction(getAction(resolution.message), resolvedSignRef);
 
-         ref_t byRefType = compiler->retrieveStrongType(scope, { ObjectKind::Object, { V_WRAPPER, expectedRef }, 0 });
+         ref_t byRefType = compiler->retrieveStrongType(scope, { ObjectKind::Object, { V_OUTWRAPPER, expectedRef }, 0 });
          ref_t byRefSignature = compiler->_logic->defineByRefSignature(*scope.moduleScope, resolvedSignRef, byRefType);
 
          ref_t byRefMessage = encodeMessage(scope.module->mapAction(actionName, byRefSignature, false), argCount + 1, resolvedFlags);
@@ -12477,7 +12496,7 @@ Compiler::MessageResolution Compiler::Expression :: resolveByRefHandler(ObjectIn
          ref_t dummySignRef = 0;
          ustr_t actionName = scope.module->resolveAction(actionRef, dummySignRef);
 
-         ref_t byRefType = compiler->retrieveStrongType(scope, { ObjectKind::Object, { V_WRAPPER, expectedRef }, 0 });
+         ref_t byRefType = compiler->retrieveStrongType(scope, { ObjectKind::Object, { V_OUTWRAPPER, expectedRef }, 0 });
          ref_t byRefSignature = compiler->_logic->defineByRefSignature(*scope.moduleScope, signatureRef, byRefType);
 
          ref_t byRefMessage = encodeMessage(scope.module->mapAction(actionName, byRefSignature, false), argCount + 1, flags);
@@ -12761,9 +12780,14 @@ ObjectInfo Compiler::Expression :: compileAssigning(SyntaxNode loperand, SyntaxN
    if (target.kind == ObjectKind::Unknown)
       scope.raiseError(errUnknownObject, loperand.lastChild(SyntaxKey::TerminalMask));
 
+   // NOTE : out variable cannot be assigned
+   if (target.kind == ObjectKind::LocalAddress && target.typeInfo.typeRef == V_OUTWRAPPER)
+      scope.raiseError(errInvalidOperation, loperand);
+
    ObjectInfo exprVal = {};
 
-   ref_t targetRef = compiler->retrieveStrongType(scope, target);
+   // HOTFIX : allow to assign ref argument in place
+   ref_t targetRef = (target.kind == ObjectKind::LocalAddress && target.typeInfo.typeRef == V_WRAPPER) ? target.typeInfo.elementRef : compiler->retrieveStrongType(scope, target);
    if (targetRef == V_AUTO) {
       // support auto attribute
       exprVal = compile(roperand, 0, EAttr::RetValExpected, nullptr);
@@ -12864,6 +12888,7 @@ bool Compiler::Expression :: writeObjectInfo(ObjectInfo info, bool allowMeta)
       case ObjectKind::ParamReference:
       case ObjectKind::SelfBoxableLocal:
       case ObjectKind::ByRefParamAddress:
+      case ObjectKind::OutParamAddress:
       case ObjectKind::ConstructorSelf:
          writer->appendNode(BuildKey::Local, info.reference);
          break;
@@ -12906,6 +12931,7 @@ bool Compiler::Expression :: writeObjectInfo(ObjectInfo info, bool allowMeta)
          writer->appendNode(BuildKey::StaticVar, info.reference);
          break;
       case ObjectKind::ByRefParam:
+      case ObjectKind::OutParam:
          writeObjectInfo({ ObjectKind::Param, info.typeInfo, info.reference });
          writer->appendNode(BuildKey::Field);
          break;
@@ -13059,7 +13085,7 @@ ObjectInfo Compiler::Expression :: compileWeakOperation(SyntaxNode node, ref_t* 
    if (byRefResolution.resolved) {
       ObjectInfo tempRetVal = declareTempLocal(expectedRef, false);
 
-      addByRefRetVal(messageArguments, tempRetVal);
+      addOutRetVal(messageArguments, tempRetVal);
       // adding mark for optimization routine
       if (tempRetVal.kind == ObjectKind::TempLocalAddress)
          writer->appendNode(BuildKey::ByRefOpMark, tempRetVal.argument);
@@ -13095,6 +13121,7 @@ bool Compiler::Expression :: compileAssigningOp(ObjectInfo target, ObjectInfo ex
          operand = target.reference;
          break;
       case ObjectKind::ByRefParam:
+      case ObjectKind::OutParam:
          operationType = BuildKey::RefParamAssigning;
          operand = target.reference;
          break;
@@ -13109,7 +13136,10 @@ bool Compiler::Expression :: compileAssigningOp(ObjectInfo target, ObjectInfo ex
       case ObjectKind::TempLocalAddress:
       case ObjectKind::LocalAddress:
          scope.markAsAssigned(target);
-         size = compiler->_logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
+         if (target.typeInfo.typeRef == V_WRAPPER) {
+            size = compiler->_logic->defineStructSize(*scope.moduleScope, target.typeInfo.elementRef).size;
+         }
+         else size = compiler->_logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
          if (size > 0) {
             operationType = BuildKey::Copying;
             operand = target.reference;
@@ -13157,8 +13187,8 @@ bool Compiler::Expression :: compileAssigningOp(ObjectInfo target, ObjectInfo ex
          assert(size > 0);
 
          break;
-         // NOTE : it should be the last condition
       case ObjectKind::ByRefParamAddress:
+      case ObjectKind::OutParamAddress:
       {
          ref_t targetRef = compiler->retrieveStrongType(scope, target);
          size = compiler->_logic->defineStructSize(*scope.moduleScope, targetRef).size;

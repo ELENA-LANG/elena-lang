@@ -1044,6 +1044,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_WRAPPER:
          attrs |= ExpressionAttribute::RefOp;
          return true;
+      case V_OUTWRAPPER:
+         attrs |= ExpressionAttribute::OutRefOp;
+         return true;
       case V_MSSGNAME:
          attrs |= ExpressionAttribute::MssgNameLiteral;
          return true;
@@ -1078,6 +1081,9 @@ bool CompilerLogic :: validateArgumentAttribute(ref_t attrValue, TypeAttributes&
    switch (attrValue) {
       case V_WRAPPER:
          attributes.byRefOne = true;
+         return true;
+      case V_OUTWRAPPER:
+         attributes.outRefOne = true;
          return true;
       case V_VARIADIC:
          attributes.variadicOne = true;
