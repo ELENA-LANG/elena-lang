@@ -20,7 +20,6 @@ In development:
   --------------------------------------
   * #590 : vm : InjectProxyTypeLA 
   - #590 : implementing interface injection : strong interface
-  - #184 : linux simplest gui
   - elt : nested call must not stop / start vm 
   - elt : fails after executing several times
   - #99
@@ -31,7 +30,7 @@ In development:
   - #69
   - chat sample
   --------------------------------------
-  - #620 : warn if out variable is not assigned in the method
+  - #184 : linux simplest gui
 
   === Iteration 25 ===
   --------------------------------------
