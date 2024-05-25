@@ -4427,7 +4427,6 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
 
 ref_t Compiler :: declareMultiType(Scope& scope, SyntaxNode& current, ref_t elementRef)
 {
-   bool eol = false;
    ArgumentsInfo items;
    items.add({ ObjectKind::Class, { elementRef }, 0 });
 

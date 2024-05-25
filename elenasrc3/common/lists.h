@@ -3120,7 +3120,7 @@ namespace elena_lang
          return (int)_length;
       }
 
-      T& get(int index)
+      T& get(size_t index)
       {
          if (index < cacheSize) {
             return _cached[index];
