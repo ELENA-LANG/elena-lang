@@ -1373,6 +1373,22 @@ ObjectInfo Compiler::MethodScope :: mapIdentifier(ustr_t identifier, bool refere
    return Scope::mapIdentifier(identifier, referenceOne, attr);
 }
 
+void Compiler::MethodScope :: markAsAssigned(ObjectInfo object)
+{
+   int targetOffset = (functionMode ? 0 : -1) - (int)object.reference;
+
+   if (object.kind == ObjectKind::OutParam || object.kind == ObjectKind::OutParamAddress) {
+      for (auto it = parameters.start(); !it.eof(); ++it) {
+         if ((*it).offset == targetOffset) {
+            (*it).unassigned = false;
+            return;
+         }
+      }
+   }
+
+   parent->markAsAssigned(object);
+}
+
 // --- Compiler::CodeScope ---
 
 Compiler::CodeScope :: CodeScope(MethodScope* parent)
@@ -3424,7 +3440,8 @@ void Compiler :: declareParameter(MethodScope& scope, SyntaxNode current, bool w
    if (signature[signatureLen - 1] && !variadicMode)
       sizeInfo = _logic->defineStructSize(*scope.moduleScope, signature[signatureLen - 1]);
 
-   scope.parameters.add(terminal, Parameter(index, paramTypeInfo, sizeInfo.size));
+   scope.parameters.add(terminal, Parameter(index, paramTypeInfo, sizeInfo.size, 
+      paramTypeInfo.typeRef == V_OUTWRAPPER));
 }
 
 void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode)
@@ -7344,6 +7361,22 @@ void Compiler :: warnOnUnassignedLocal(SyntaxNode node, CodeScope& scope, int le
       scope.raiseWarning(WARNING_LEVEL_3, wrnUnassignedVariable, current);
 }
 
+void Compiler :: warnOnUnassignedParameter(SyntaxNode node, Scope& scope, ustr_t name)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Parameter 
+         && current.findChild(SyntaxKey::Name).findChild(SyntaxKey::identifier).identifier().compare(name))
+      {
+         scope.raiseWarning(WARNING_LEVEL_3, wrnUnassignedVariable, current);
+
+         break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 inline void clearYieldContext()
 {
    // clearing yield context
@@ -8188,6 +8221,16 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
    if (scope.isYieldable()) {
       classScope->addMssgAttribute(scope.message, ClassAttribute::YieldContextSize, scope.reserved2);
    }
+
+   if (_trackingUnassigned && current == SyntaxKey::CodeBlock) {
+      // warn if the variable was not assigned
+      for (auto it = scope.parameters.start(); !it.eof(); ++it) {
+         if ((*it).unassigned) {
+            warnOnUnassignedParameter(node, scope, it.key());
+         }
+      }
+   }
+
 }
 
 bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool internalOne, bool& isProtectedDefConst)
@@ -13121,7 +13164,11 @@ bool Compiler::Expression :: compileAssigningOp(ObjectInfo target, ObjectInfo ex
          operand = target.reference;
          break;
       case ObjectKind::ByRefParam:
+         operationType = BuildKey::RefParamAssigning;
+         operand = target.reference;
+         break;
       case ObjectKind::OutParam:
+         scope.markAsAssigned(target);
          operationType = BuildKey::RefParamAssigning;
          operand = target.reference;
          break;
@@ -13187,8 +13234,9 @@ bool Compiler::Expression :: compileAssigningOp(ObjectInfo target, ObjectInfo ex
          assert(size > 0);
 
          break;
-      case ObjectKind::ByRefParamAddress:
       case ObjectKind::OutParamAddress:
+         scope.markAsAssigned(target);
+      case ObjectKind::ByRefParamAddress:
       {
          ref_t targetRef = compiler->retrieveStrongType(scope, target);
          size = compiler->_logic->defineStructSize(*scope.moduleScope, targetRef).size;

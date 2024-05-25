@@ -229,7 +229,7 @@
          };
       }
       
-      char convertToChar(byte[] byteArray, int index, out int length)
+      char convertToChar(byte[] byteArray, int index, out int chLen)
       {
          short tmp[2];
 
@@ -242,6 +242,8 @@
    
          int length := UTFOperations.convertUTF16_2_32(tmp, 0, 2, out int value);
          length *= 2;
+
+         chLen := length;
 
          char ch := value;
 

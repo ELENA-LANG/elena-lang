@@ -738,6 +738,8 @@ namespace elena_lang
          ObjectInfo mapSelf(bool memberMode = true, bool ownerClass = false);
          ObjectInfo mapSuper();
 
+         void markAsAssigned(ObjectInfo object) override;
+
          bool isPrivate() const
          {
             return test(message, STATIC_MESSAGE);
@@ -1532,6 +1534,7 @@ namespace elena_lang
       void declareModuleExtensionDispatcher(NamespaceScope& scope, SyntaxNode node);
 
       void warnOnUnassignedLocal(SyntaxNode node, CodeScope& scope, int level);
+      void warnOnUnassignedParameter(SyntaxNode node, Scope& scope, ustr_t paramName);
 
       ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors = false);
       ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors = false, bool resolveMode = true);
