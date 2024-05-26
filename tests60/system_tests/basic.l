@@ -1977,3 +1977,24 @@ public decoratorTest() : testCase()
 
    console.write(".");
 }
+
+class ifNilOperatorHelper
+{
+   get()
+     = 2;
+
+   get Value()
+     = 3;
+}
+
+public ifNilOperatorTest() : testCase()
+{
+   var a := new ifNilOperatorHelper();
+   var b := nil;
+   Assert.ifEqual(a?.get(), 2);
+   Assert.ifEqual(a?.Value, 3);
+   console.write(".");
+   Assert.ifNil(b?.get());
+   Assert.ifNil(b?.Value);
+   console.write(".");
+}

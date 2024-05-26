@@ -14,7 +14,7 @@
 
 #include "bytecode.h"
 
-#define FULL_OUTOUT_INFO 1
+//#define FULL_OUTOUT_INFO 1
 
 using namespace elena_lang;
 
@@ -52,7 +52,7 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 //      current = current.nextNode();
 //   }
 //}
-
+//
 //inline void storeNode(SyntaxNode node)
 //{
 //   DynamicUStr target;

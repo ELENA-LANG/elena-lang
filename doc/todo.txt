@@ -18,6 +18,7 @@ In development:
   port:elenavm / elt for linux, helloworld gui sample (button)
   doc:api - add descriptions
   --------------------------------------
+  * ide : recent list - only 9 elements must be in the list
   * #590 : vm : InjectProxyTypeLA 
   - #590 : implementing interface injection : strong interface
   - elt : nested call must not stop / start vm 
