@@ -254,7 +254,7 @@ namespace elena_lang
    {
    public:
       virtual bool startThread(DebugControllerBase* controller) = 0;
-      virtual bool startProgram(const wchar_t* exePath, const wchar_t* cmdLine) = 0;
+      virtual bool startProgram(path_t exePath, path_t cmdLine) = 0;
 
       virtual void activate() = 0;
       virtual void run() = 0;

@@ -11,7 +11,11 @@
 #include "debugcontroller.h"
 #include "module.h"
 
+#ifdef _MSC_VER
+
 #include <tchar.h>
+
+#endif
 
 using namespace elena_lang;
 
@@ -482,7 +486,7 @@ DebugLineInfo* DebugInfoProvider :: seekClassInfo(addr_t address, IdentifierStri
 
 // --- DebugController ---
 
-DebugController :: DebugController(DebugProcessBase* process, ProjectModel* model, 
+DebugController :: DebugController(DebugProcessBase* process, ProjectModel* model,
    SourceViewModel* sourceModel, DebugSourceController* sourceController)
    : _provider(model)
 {
@@ -665,7 +669,7 @@ void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName
          _currentModule.copy(moduleName);
          _currentPath = sourcePath;
 
-         PathString path(sourcePath); 
+         PathString path(sourcePath);
          found = _sourceController->selectSource(_model, _sourceModel, moduleName, *path);
       }
 
@@ -822,7 +826,7 @@ bool DebugController :: startThread()
 
 void DebugController :: clearBreakpoints()
 {
-   
+
 }
 
 bool DebugController :: start(path_t programPath, path_t arguments, bool debugMode)
@@ -861,7 +865,7 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
    // if there are new records in debug section
    if (!reader.eof()) {
       _provider.load(reader, starting, _process);
-      
+
       _sourceController->traceStart(_model);
 
       _provider.setDebugInfoSize(reader.position());
@@ -872,7 +876,7 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
    else _process->setEvent(DEBUG_RESUME);
 }
 
-void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item, addr_t address, int level, 
+void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item, addr_t address, int level,
    DebugLineInfo* info, addr_t vmtAddress)
 {
    WatchContext context = { item, address };

@@ -8,7 +8,12 @@
 // --------------------------------------------------------------------------
 #include "document.h"
 #include "guieditor.h"
+
+#ifdef _MSC_VER
+
 #include <tchar.h>
+
+#endif
 
 using namespace elena_lang;
 
@@ -73,7 +78,7 @@ void LexicalFormatter :: format()
    }
 
    if (_formatter->next(0, info, style)) {
-      writer.writePos(style);      
+      writer.writePos(style);
    }
    else writer.writePos(0);
    writer.writePos(reader.position() + length);
@@ -932,7 +937,7 @@ void DocumentView :: eraseLine(DocumentChangeStatus& changeStatus)
 
 void DocumentView :: duplicateLine(DocumentChangeStatus& changeStatus)
 {
-   int rowCount = _text->getRowCount();   
+   int rowCount = _text->getRowCount();
 
    Point caret = _caret.getCaret(false);
 
