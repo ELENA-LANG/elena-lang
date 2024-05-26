@@ -12158,7 +12158,7 @@ ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, Argume
 
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Expression) {
-         if (variadicArg && signatureLen == signatureMaxLength) {
+         if (variadicArg && signatureLen == signatureMaxLength && signatureLen > 0) {
             // for variadic last argument - stay at the same position
             signatureLen--;
          }

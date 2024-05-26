@@ -61,10 +61,10 @@ void ScriptEngineBuilder :: saveToken(MemoryWriter& writer, ScriptEngineReaderBa
 }
 
 void ScriptEngineBuilder :: saveClass(MemoryWriter& writer, ScriptEngineReaderBase& reader, Stack<ScriptBookmark>& stack,
-   int allocated, int& maxAllocated, int& maxStackSize)
+   int allocated, int& maxAllocated, pos_t& maxStackSize)
 {
    pos_t start = writer.position();
-   int counter = 0;
+   pos_t counter = 0;
 
    allocated++;
 
@@ -131,7 +131,7 @@ void ScriptEngineBuilder :: flush(MemoryWriter& writer, ScriptEngineReaderBase& 
 
    ScriptBookmark bm = stack.pop();
    int allocated = 0;
-   int stackSize = 0;
+   pos_t stackSize = 0;
    if (bm.state == 0) {
       saveClass(writer, reader, stack, 0, allocated, stackSize);
    }
