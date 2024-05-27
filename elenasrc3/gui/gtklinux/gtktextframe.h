@@ -8,14 +8,26 @@
 #define GTKTEXTFRAME_H
 
 #include "gtktabbar.h"
+#include "editframe.h"
+#include "gtktextview.h"
 
 namespace elena_lang
 {
    // --- TextViewFrame ---
-   class TextViewFrame : public TabBar
+   class TextViewFrame : public TabBar, TextViewListener
    {
+   protected:
+      TextViewModel* _model;
+      ViewStyles*    _styles;
+
    public:
-      TextViewFrame();
+      void onDocumentNew(int index) override;
+      void onDocumentSelect(int index) override;
+      void onDocumentModeChanged(int index, bool modifiedMode) override;
+      void beforeDocumentClose(int index) override;
+      void onDocumentClose(int index, bool empty) override;
+
+      TextViewFrame(TextViewModel* model, ViewStyles* styles);
    };
 }
 
