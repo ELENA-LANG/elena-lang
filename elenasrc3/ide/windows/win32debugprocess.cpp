@@ -393,9 +393,9 @@ bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cm
    return true;
 }
 
-bool Win32DebugProcess :: startProgram(const wchar_t* exePath, const wchar_t* cmdLine)
+bool Win32DebugProcess :: startProgram(path_t exePath, path_t cmdLine)
 {
-   if (startProcess(exePath, cmdLine)) {
+   if (startProcess(exePath.str(), cmdLine.str())) {
       processEvent(INFINITE);
 
       return true;

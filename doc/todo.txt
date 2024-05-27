@@ -30,6 +30,8 @@ In development:
   - #637(bt tests (>=4), all bc tests)
   - #69
   - chat sample
+  - ide : debug chat sample (external library)
+  - #655 : display output after the program ends
   --------------------------------------
   - #184 : linux simplest gui
 

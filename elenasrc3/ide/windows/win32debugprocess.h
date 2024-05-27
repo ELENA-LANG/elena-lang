@@ -206,7 +206,7 @@ namespace elena_lang
 
       bool findSignature(StreamReader& reader, char* signature, pos_t length) override;
 
-      bool startProgram(const wchar_t* exePath, const wchar_t* cmdLine) override;
+      bool startProgram(path_t exePath, path_t cmdLine) override;
 
       bool proceed(int timeout) override;
       void run() override;
