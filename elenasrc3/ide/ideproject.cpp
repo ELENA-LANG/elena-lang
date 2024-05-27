@@ -18,6 +18,7 @@ ProjectModel :: ProjectModel(IDEStatus* status)
 {
    this->status = status;
 
+   this->withPersistentConsole = false;
    this->autoRecompile = /*true*/false;// !! temporal
 
    this->empty = true;

@@ -144,6 +144,8 @@ void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path, bool
       docView->markAsModified();
    }
 
+   docView->setHighlightMode(highlightSyntax);
+
    onDocumentNew(_documents.count());
 }
 

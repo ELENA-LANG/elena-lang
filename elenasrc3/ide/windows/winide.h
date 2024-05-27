@@ -119,6 +119,7 @@ namespace elena_lang
       Clipboard         clipboard;
       AboutDialog       aboutDialog;
       EditorSettings    editorSettingsDialog;
+      IDESettings       ideSettingsDialog;
 
       ViewFactoryBase*  _viewFactory;
 

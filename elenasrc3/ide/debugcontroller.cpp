@@ -497,11 +497,12 @@ DebugController :: DebugController(DebugProcessBase* process, ProjectModel* mode
    _model = model;
    _currentPath = nullptr;
    _sourceController = sourceController;
+   _witExplicitConsole = false;
 }
 
 void DebugController :: debugThread()
 {
-   if (!_process->startProgram(_debuggee.str(), _arguments.str())) {
+   if (!_process->startProgram(_debuggee.str(), _arguments.str(), _witExplicitConsole)) {
       //HOTFIX : to inform the listening thread
       _process->resetEvent(DEBUG_ACTIVE);
 
@@ -829,11 +830,12 @@ void DebugController :: clearBreakpoints()
 
 }
 
-bool DebugController :: start(path_t programPath, path_t arguments, bool debugMode)
+bool DebugController :: start(path_t programPath, path_t arguments, bool debugMode, bool witExplicitConsole)
 {
    _currentModule.clear();
    _debuggee.copy(programPath);
    _arguments.copy(arguments);
+   _witExplicitConsole = witExplicitConsole;
 
    if (debugMode) {
       addr_t entryPoint = _process->findEntryPoint(programPath);

@@ -103,6 +103,18 @@ namespace elena_lang
          }
       }
 
+      void setHighlightMode(bool mode) override
+      {
+         highlightSyntax = mode;
+
+         auto it = _documents.start();
+         while (!it.eof()) {
+            (*it)->documentView->setHighlightMode(mode);
+
+            it++;
+         }
+      }
+
       TextViewModel();
       virtual ~TextViewModel() = default;
    };

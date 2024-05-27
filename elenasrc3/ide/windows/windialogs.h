@@ -140,6 +140,19 @@ namespace elena_lang
       EditorSettings(HINSTANCE instance, WindowBase* owner, TextViewModelBase* model);
    };
 
+   class IDESettings : public WinDialog, public IDESettingsBase
+   {
+      IDEModel* _model;
+
+      void onCreate() override;
+      void onOK() override;
+
+   public:
+      bool showModal() override;
+
+      IDESettings(HINSTANCE instance, WindowBase* owner, IDEModel* model);
+   };
+
    class FindDialog : public WinDialog, public FindDialogBase
    {
       FindModel* _model;

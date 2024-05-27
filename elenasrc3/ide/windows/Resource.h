@@ -173,11 +173,15 @@
 #define IDC_EDITOR_USETAB              1704
 #define IDC_EDITOR_TABSIZE             1705
 #define IDC_EDITOR_HIGHLIGHSYNTAXFLAG  1706
-#define IDC_EDITOR_REMEMBERPATH        1708
-#define IDC_EDITOR_REMEMBERPROJECT     1709
+#define IDD_IDE_SETTINGS               1707
+#define IDC_IDE_REMEMBERPATH           1708
+#define IDC_IDE_REMEMBERPROJECT        1709
 #define IDC_EDITOR_ENCODING            1710
+#define IDC_IDE_PERSIST_CONSOLE        1711
+#define IDC_IDE_APPMAXIMIZED           1712
 
 #define IDM_EDITOR_OPTIONS             1750
+#define IDM_IDE_OPTIONS                1751
 
 #ifndef IDC_STATIC
 #define IDC_STATIC                 -1

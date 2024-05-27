@@ -14,8 +14,13 @@ namespace elena_lang
 {
    constexpr auto ROOT_NODE            = "configuration";
    constexpr auto MAXIMIZED_SETTINGS   = "configuration/settings/maximized";
+   constexpr auto LASTPATH_SETTINGS    = "configuration/settings/last_path";
+   constexpr auto LASTPROJECT_SETTINGS = "configuration/settings/last_project";
    constexpr auto FONTSIZE_SETTINGS    = "configuration/settings/font_size";
    constexpr auto SCHEME_SETTINGS      = "configuration/settings/scheme";
+   constexpr auto HIGHLIGHTSYNTAX_SETTINGS    = "configuration/settings/highlight";
+   constexpr auto PERSISTENT_CONSOLE_SETTINGS = "configuration/settings/persist_output";
+   constexpr auto LINENUMBERS_SETTINGS = "configuration/settings/line_number";
 
    constexpr auto RECENTFILES_SETTINGS = "configuration/recent_files/*";
    constexpr auto RECENTFILE_SETTINGS  = "configuration/recent_files/path";
@@ -43,6 +48,8 @@ namespace elena_lang
          PathString vmTerminalPath;
          PathString configPath;
       } paths;
+
+      bool              withPersistentConsole;
 
       bool              singleSourceProject;
       bool              autoRecompile;

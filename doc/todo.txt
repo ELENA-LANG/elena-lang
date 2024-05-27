@@ -33,6 +33,8 @@ In development:
   - chat sample
   - ide : debug chat sample (external library)
   --------------------------------------
+  - ide : editor settings - tab
+  - ide : debugger settings
   - #655 : display output after the program ends
 
   === Iteration 25 ===

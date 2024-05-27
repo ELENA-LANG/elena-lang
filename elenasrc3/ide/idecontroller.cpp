@@ -228,9 +228,10 @@ bool ProjectController :: startDebugger(ProjectModel& model, DebugActionResult& 
       commandLine.append(_T(" "));
       commandLine.append(arguments);
 
+      bool withPersistentConsole = model.withPersistentConsole && (model.singleSourceProject || (*model.profile).endsWith("console"));
       bool debugMode = model.getDebugMode();
       if (debugMode) {
-         if (!_debugController.start(exePath.str(), commandLine.str(), debugMode/*, _breakpoints */)) {
+         if (!_debugController.start(exePath.str(), commandLine.str(), debugMode, withPersistentConsole)) {
             result.noDebugFile = true;
 
             return false;
@@ -238,7 +239,7 @@ bool ProjectController :: startDebugger(ProjectModel& model, DebugActionResult& 
 
       }
       else {
-         if (!_debugController.start(exePath.str(), commandLine.str(), false/*, _breakpoints */)) {
+         if (!_debugController.start(exePath.str(), commandLine.str(), false, withPersistentConsole)) {
             //notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_RUN_NEED_RECOMPILE);
 
             return false;
@@ -744,6 +745,8 @@ int ProjectController :: openSingleFileProject(ProjectModel& model, path_t singl
    model.target.copy(*tmp);
    model.target.append(".exe");
 
+   //model.profile
+
    return STATUS_PROJECT_CHANGED;
 }
 
@@ -968,6 +971,11 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
       model->appMaximized = loadSetting(config, MAXIMIZED_SETTINGS, -1) != 0;
       model->sourceViewModel.fontSize = loadSetting(config, FONTSIZE_SETTINGS, 12);
       model->sourceViewModel.schemeIndex = loadSetting(config, SCHEME_SETTINGS, 1);
+      model->projectModel.withPersistentConsole = loadSetting(config, PERSISTENT_CONSOLE_SETTINGS, -1) != 0;
+      model->rememberLastPath = loadSetting(config, LASTPATH_SETTINGS, -1) != 0;
+      model->rememberLastProject = loadSetting(config, LASTPROJECT_SETTINGS, -1) != 0;
+      model->sourceViewModel.highlightSyntax = loadSetting(config, HIGHLIGHTSYNTAX_SETTINGS, -1) != 0;
+      model->sourceViewModel.lineNumbersVisible = loadSetting(config, LINENUMBERS_SETTINGS, -1) != 0;
 
       loadRecentFiles(config, RECENTFILES_SETTINGS, model->projectModel.lastOpenFiles);
       loadRecentFiles(config, RECENTPROJECTS_SETTINGS, model->projectModel.lastOpenProjects);
@@ -977,7 +985,6 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
    else {
       return false;
    }
-
 }
 
 void IDEController :: saveConfig(IDEModel* model, path_t configPath)
@@ -987,6 +994,11 @@ void IDEController :: saveConfig(IDEModel* model, path_t configPath)
    saveSetting(config, MAXIMIZED_SETTINGS, model->appMaximized);
    saveSetting(config, FONTSIZE_SETTINGS, model->sourceViewModel.fontSize);
    saveSetting(config, SCHEME_SETTINGS, model->sourceViewModel.schemeIndex);
+   saveSetting(config, PERSISTENT_CONSOLE_SETTINGS, model->projectModel.withPersistentConsole);
+   saveSetting(config, LASTPATH_SETTINGS, model->rememberLastPath);
+   saveSetting(config, LASTPROJECT_SETTINGS, model->rememberLastProject);
+   saveSetting(config, HIGHLIGHTSYNTAX_SETTINGS, model->sourceViewModel.highlightSyntax);
+   saveSetting(config, LINENUMBERS_SETTINGS, model->sourceViewModel.lineNumbersVisible);
 
    saveRecentFiles(config, RECENTFILE_SETTINGS, model->projectModel.lastOpenFiles);
    saveRecentFiles(config, RECENTPROJECTS_SETTINGS, model->projectModel.lastOpenProjects);
@@ -998,7 +1010,7 @@ void IDEController :: init(IDEModel* model, int& status)
 {
    status |= STATUS_STATUS_CHANGED | STATUS_FRAME_VISIBILITY_CHANGED | STATUS_LAYOUT_CHANGED;
 
-   if (model->projectModel.lastOpenProjects.count() > 0) {
+   if (model->rememberLastProject && model->projectModel.lastOpenProjects.count() > 0) {
       PathString path(model->projectModel.lastOpenProjects.get(1));
 
       if (PathUtil::checkExtension(*path, "l")) {
@@ -1871,6 +1883,14 @@ void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog
       if (prevSchemeIndex != model->viewModel()->schemeIndex) {
          notifyOnModelChange(STATUS_FRAME_CHANGED | STATUS_COLORSCHEME_CHANGED);
       }
+   }
+}
+
+void IDEController :: doConfigureIDESettings(IDESettingsBase& ideDialog, IDEModel* model)
+{
+   int prevSchemeIndex = model->viewModel()->schemeIndex;
+
+   if (ideDialog.showModal()) {
    }
 }
 

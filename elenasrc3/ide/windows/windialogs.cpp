@@ -418,6 +418,19 @@ void EditorSettings::onCreate()
    addComboBoxItem(IDC_EDITOR_COLORSCHEME, _T("Dark"));
 
    setComboBoxIndex(IDC_EDITOR_COLORSCHEME, _model->schemeIndex);
+
+   setCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG, _model->highlightSyntax);
+   setCheckState(IDC_EDITOR_LINENUMBERFLAG, _model->lineNumbersVisible);
+
+   // populate font size combo box
+   String<wchar_t, 4> size;
+   for (int i = 8; i < 25; i++) {
+      size.appendInt(i);
+      addComboBoxItem(IDC_EDITOR_FONTSIZE, size.str());
+      size.clear();
+   }
+
+   setComboBoxIndex(IDC_EDITOR_FONTSIZE, _model->fontSize - 8);
 }
 
 void EditorSettings :: onOK()
@@ -425,9 +438,49 @@ void EditorSettings :: onOK()
    int index = getComboBoxIndex(IDC_EDITOR_COLORSCHEME);
    if (index != -1)
       _model->schemeIndex = index;
+
+   int fontSize = getComboBoxIndex(IDC_EDITOR_COLORSCHEME) + 8;
+   if (_model->fontSize != fontSize) {
+      _model->fontSize = fontSize;
+   }
+
+   bool value = getCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG);
+   if (_model->highlightSyntax != value)
+      _model->setHighlightMode(value);
+
+   _model->lineNumbersVisible = getCheckState(IDC_EDITOR_LINENUMBERFLAG);
 }
 
 bool EditorSettings :: showModal()
+{
+   return show() == IDOK;
+}
+
+// --- IDESettings ---
+
+IDESettings :: IDESettings(HINSTANCE instance, WindowBase* owner, IDEModel* model)
+   : WinDialog(instance, owner, IDD_IDE_SETTINGS)
+{
+   _model = model;
+}
+
+void IDESettings :: onCreate()
+{
+   setCheckState(IDC_IDE_REMEMBERPATH, _model->rememberLastPath);
+   setCheckState(IDC_IDE_REMEMBERPROJECT, _model->rememberLastProject);
+   setCheckState(IDC_IDE_PERSIST_CONSOLE, _model->projectModel.withPersistentConsole);
+   setCheckState(IDC_IDE_APPMAXIMIZED, _model->appMaximized);
+}
+
+void IDESettings :: onOK()
+{
+   _model->rememberLastPath = getCheckState(IDC_IDE_REMEMBERPATH);
+   _model->rememberLastProject = getCheckState(IDC_IDE_REMEMBERPROJECT);
+   _model->appMaximized = getCheckState(IDC_IDE_APPMAXIMIZED);
+   _model->projectModel.withPersistentConsole = getCheckState(IDC_IDE_PERSIST_CONSOLE);
+}
+
+bool IDESettings :: showModal()
 {
    return show() == IDOK;
 }

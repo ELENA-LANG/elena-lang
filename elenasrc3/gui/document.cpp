@@ -30,6 +30,7 @@ LexicalFormatter :: LexicalFormatter(Text* text, TextFormatterBase* formatter, M
    _text = text;
    _markers = markers;
    _formatter = formatter;
+   _enabled = false;
 
    _text->attachWatcher(this);
 
@@ -41,8 +42,20 @@ LexicalFormatter :: ~LexicalFormatter()
    _text->detachWatcher(this);
 }
 
+void LexicalFormatter :: setEnabled(bool enabled)
+{
+   bool changed = (_enabled != enabled);
+
+   _enabled = enabled;
+   if (changed)
+      format();
+}
+
 void LexicalFormatter :: format()
 {
+   if (!_enabled)
+      return;
+
    _indexes.clear();
    _lexical.clear();
 
@@ -107,6 +120,9 @@ bool LexicalFormatter :: checkMarker(ReaderInfo& info)
 
 pos_t LexicalFormatter :: proceed(pos_t position, ReaderInfo& info)
 {
+   if (!_enabled)
+      return INVALID_POS;
+
    pos_t count = 0;
    if (info.newLine && checkMarker(info)) {
       return INVALID_POS;

@@ -124,6 +124,13 @@ namespace elena_lang
       typedef Map<int, Win32ThreadContext*, nullptr, nullptr, freeobj>  ThreadContextes;
       typedef MemoryMap<addr_t, void*, Map_StoreAddr, Map_GetAddr>      StepMap;
 
+      class ConsoleHelper
+      {
+      public:
+         void printText(const char* s);
+         void waitForAnyKey();
+      };
+
    protected:
       DebugEventManager          _events;
       Win32BreakpointContext     _breakpoints;
@@ -139,6 +146,7 @@ namespace elena_lang
       bool                       trapped;
       bool                       stepMode;
       bool                       needToHandle;
+      bool                       needToFreeConsole;
 
       DWORD                      dwCurrentProcessId;
       DWORD                      dwCurrentThreadId;
@@ -148,12 +156,13 @@ namespace elena_lang
 
       Win32DebugProcessException exception;
 
-      bool startProcess(const wchar_t* exePath, const wchar_t* cmdLine);
+      bool startProcess(const wchar_t* exePath, const wchar_t* cmdLine, bool withPersistentConsole);
 
       void continueProcess();
       void processEvent(size_t timeout);
       void processException(EXCEPTION_DEBUG_INFO* exception);
       void processStep();
+      void processEnd();
 
    public:
       void initEvents() override
@@ -206,7 +215,7 @@ namespace elena_lang
 
       bool findSignature(StreamReader& reader, char* signature, pos_t length) override;
 
-      bool startProgram(path_t exePath, path_t cmdLine) override;
+      bool startProgram(path_t exePath, path_t cmdLine, bool withPersistentConsole) override;
 
       bool proceed(int timeout) override;
       void run() override;
