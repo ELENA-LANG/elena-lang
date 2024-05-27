@@ -153,6 +153,19 @@ namespace elena_lang
       IDESettings(HINSTANCE instance, WindowBase* owner, IDEModel* model);
    };
 
+   class DebuggerSettings : public WinDialog, public DebuggerSettingsBase
+   {
+      ProjectModel* _model;
+
+      void onCreate() override;
+      void onOK() override;
+
+   public:
+      bool showModal() override;
+
+      DebuggerSettings(HINSTANCE instance, WindowBase* owner, ProjectModel* model);
+   };
+
    class FindDialog : public WinDialog, public FindDialogBase
    {
       FindModel* _model;

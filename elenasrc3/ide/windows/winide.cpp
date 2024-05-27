@@ -264,6 +264,7 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    aboutDialog(instance, this),
    editorSettingsDialog(instance, this, model->viewModel()),
    ideSettingsDialog(instance, this, model),
+   debuggerSettingsDialog(instance, this, &model->projectModel),
    _docViewListener(nullptr)
 {
    this->_viewFactory = viewFactory;
@@ -901,6 +902,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_IDE_OPTIONS:
          _controller->doConfigureIDESettings(ideSettingsDialog, _model);
+         break;
+      case IDM_DEBUGGER_OPTIONS:
+         _controller->doConfigureDebuggerSettings(debuggerSettingsDialog, _model);
          break;
       case IDM_WINDOW_WINDOWS:
          _controller->doSelectWindow(fileDialog, messageDialog, windowDialog, _model);

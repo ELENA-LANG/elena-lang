@@ -248,6 +248,7 @@ namespace elena_lang
 
       void doConfigureEditorSettings(EditorSettingsBase& editorDialog, IDEModel* model);
       void doConfigureIDESettings(IDESettingsBase& editorDialog, IDEModel* model);
+      void doConfigureDebuggerSettings(DebuggerSettingsBase& editorDialog, IDEModel* model);
 
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param);

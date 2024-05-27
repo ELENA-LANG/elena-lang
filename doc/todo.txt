@@ -18,6 +18,8 @@ In development:
   port:elenavm / elt for linux, helloworld gui sample (button)
   doc:api - add descriptions
   --------------------------------------
+  - ide : editor settings - tab
+  - ide : debugger settings
   - #184 : linux simplest gui (refresh textview, onDocumentUpdate ...)
   * ide : recent list - only 9 elements must be in the list
   * #590 : vm : InjectProxyTypeLA 
@@ -33,9 +35,7 @@ In development:
   - chat sample
   - ide : debug chat sample (external library)
   --------------------------------------
-  - ide : editor settings - tab
-  - ide : debugger settings
-  - #655 : display output after the program ends
+  - #658 : creating an intial repo
 
   === Iteration 25 ===
   --------------------------------------

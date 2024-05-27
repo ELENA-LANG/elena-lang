@@ -485,6 +485,36 @@ bool IDESettings :: showModal()
    return show() == IDOK;
 }
 
+// --- DebuggerSettings ---
+
+DebuggerSettings :: DebuggerSettings(HINSTANCE instance, WindowBase* owner, ProjectModel* model)
+   : WinDialog(instance, owner, IDD_DEBUGGER_SETTINGS)
+{
+   _model = model;
+}
+
+void DebuggerSettings :: onCreate()
+{
+   setText(IDC_DEBUGGER_SRCPATH, *_model->paths.librarySourceRoot);
+   setText(IDC_DEBUGGER_LIBPATH, *_model->paths.libraryRoot);
+}
+
+void DebuggerSettings :: onOK()
+{
+   wchar_t value[IDENTIFIER_LEN + 1];
+
+   getText(IDC_DEBUGGER_SRCPATH, (wchar_t**)(&value), IDENTIFIER_LEN);
+   _model->paths.librarySourceRoot.copy(value);
+
+   getText(IDC_DEBUGGER_LIBPATH, (wchar_t**)(&value), IDENTIFIER_LEN);
+   _model->paths.libraryRoot.copy(value);
+}
+
+bool DebuggerSettings::showModal()
+{
+   return show() == IDOK;
+}
+
 // --- FindDialog ---
 
 FindDialog :: FindDialog(HINSTANCE instance, WindowBase* owner, bool replaceMode, FindModel* model)

@@ -188,8 +188,7 @@ IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel,
    _model->projectModel.paths.vmTerminalPath.copy(ELT_CLI_PATH);
 
    _model->projectModel.paths.libraryRoot.copy(*_model->projectModel.paths.appPath);
-#ifdef _M_IX86
-   
+#ifdef _M_IX86   
    _model->projectModel.paths.libraryRoot.combine("..\\lib60\\");      // !! temporal
 #else
    _model->projectModel.paths.libraryRoot.combine("..\\lib60_64\\");      // !! temporal
@@ -199,6 +198,7 @@ IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel,
    _model->projectModel.paths.librarySourceRoot.combine("..\\src60\\");// !! temporal
 
    canonicalize(_model->projectModel.paths.librarySourceRoot);
+   canonicalize(_model->projectModel.paths.libraryRoot);
 }
 
 void IDEFactory :: registerClasses()

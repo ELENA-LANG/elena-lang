@@ -1,2 +1,2 @@
 
-#define IDE_REVISION_NUMBER                           5
+#define IDE_REVISION_NUMBER                           6

@@ -1888,8 +1888,12 @@ void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog
 
 void IDEController :: doConfigureIDESettings(IDESettingsBase& ideDialog, IDEModel* model)
 {
-   int prevSchemeIndex = model->viewModel()->schemeIndex;
+   if (ideDialog.showModal()) {
+   }
+}
 
+void IDEController :: doConfigureDebuggerSettings(DebuggerSettingsBase& ideDialog, IDEModel* model)
+{
    if (ideDialog.showModal()) {
    }
 }

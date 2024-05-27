@@ -107,6 +107,7 @@
 #define IDM_PROJECT_EXCLUDE            802
 #define IDM_PROJECT_COMPILE            803
 #define IDM_PROJECT_OPTION             804
+#define IDM_DEBUGGER_OPTIONS           805
 
 #define IDD_SETTINGS                   850
 #define IDC_SETTINGS_TEPMPLATE         851
@@ -179,6 +180,9 @@
 #define IDC_EDITOR_ENCODING            1710
 #define IDC_IDE_PERSIST_CONSOLE        1711
 #define IDC_IDE_APPMAXIMIZED           1712
+#define IDD_DEBUGGER_SETTINGS          1713
+#define IDC_DEBUGGER_SRCPATH           1714
+#define IDC_DEBUGGER_LIBPATH           1715
 
 #define IDM_EDITOR_OPTIONS             1750
 #define IDM_IDE_OPTIONS                1751
