@@ -224,6 +224,7 @@ ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* not
    for (int j = 0; j < STYLE_MAX; j++) {
       defaultStyles[j].size = viewModel->fontSize;
       classicStyles[j].size = viewModel->fontSize;
+      darkStyles[j].size = viewModel->fontSize;
    }
 
    // initialize view styles
