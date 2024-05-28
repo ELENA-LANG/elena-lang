@@ -648,28 +648,9 @@ void DebugController :: processStep()
       IdentifierString moduleName;
       ustr_t sourcePath = nullptr;
       DebugLineInfo* lineInfo = _provider.seekDebugLineInfo((addr_t)_process->getState(), moduleName, sourcePath);
-      /*if (lineInfo->symbol == dsAssemblyStep) {
-         size_t objectPtr = _debugger.Context()->LocalPtr(1);
-         int flags = _debugger.Context()->VMTFlags(_debugger.Context()->ClassVMT(objectPtr));
-         //if (test(flags, elTapeGroup)) {
-         //   loadTapeDebugInfo(objectPtr);
-         //   _autoStepInto = true;
-         //}
-         //else {
-            // continue debugging if it is not a tape
-         stepInto();
-         //}
-      }
-      else */onCurrentStep(lineInfo, *moduleName, sourcePath);
-   }
-   //if (_debugger.Context()->checkFailed) {
-   //   _listener->onCheckPoint(_T("Operation failed"));
-   //}
-   //if (_debugger.Exception() != NULL) {
-   //   ProcessException* exeption = _debugger.Exception();
 
-   //   _listener->onNotification(exeption->Text(), exeption->address, exeption->code);
-   //}
+      onCurrentStep(lineInfo, *moduleName, sourcePath);
+   }
 }
 
 void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath)

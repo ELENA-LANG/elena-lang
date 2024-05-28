@@ -7,7 +7,7 @@ In development:
 
   === Iteration 24 (6.6.24) ===
   --------------------------------------
-  dev: #574,#265,#619,#580
+  dev: #574,#265,#619,#580,#658(debug,compile,build,IntelliSense)
   op: github action - create a draft release
   opt:pi under 6 sec, #611, #602, #601, #586
   maint:#486, #506, #650
@@ -33,11 +33,14 @@ In development:
   - #79
   - #637(bt tests (>=4), all bc tests)
   - #69
-  - chat sample
-  - #658 : debug
-  - #658 : command - run the code
-  --------------------------------------
   - #658 : command - compile the code
+  - chat sample
+  --------------------------------------
+  - ide : warn if the project empty
+  - ide : warn if the source file is not saved
+  - ide : auto compile if the file is outaged
+  - elc : raise an error : missing ; or }
+  - elc : raise the correct error : invalid syntax at the end of the code
 
   === Iteration 25 ===
   --------------------------------------
