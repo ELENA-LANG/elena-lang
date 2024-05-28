@@ -18,6 +18,7 @@ In development:
   port:elenavm / elt for linux, helloworld gui sample (button)
   doc:api - add descriptions
   --------------------------------------
+  - github action : build for linux
   - ide : editor settings - tab
   - ide : debugger settings
   - #184 : linux simplest gui (refresh textview, onDocumentUpdate ...)
@@ -33,9 +34,10 @@ In development:
   - #637(bt tests (>=4), all bc tests)
   - #69
   - chat sample
-  - ide : debug chat sample (external library)
+  - #658 : debug
+  - #658 : command - run the code
   --------------------------------------
-  - #658 : creating an intial repo
+  - #658 : command - compile the code
 
   === Iteration 25 ===
   --------------------------------------

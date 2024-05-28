@@ -11,7 +11,8 @@ using namespace elena_lang;
 // --- ProjectModel ---
 
 ProjectModel :: ProjectModel(IDEStatus* status)
-   : lastOpenFiles(nullptr),
+   : referencePaths(nullptr),
+   lastOpenFiles(nullptr),
    lastOpenProjects(nullptr),
    sources(nullptr), addedSources(nullptr), removeSources(nullptr),
    breakpoints({}), projectTypeList(nullptr), profileList(nullptr)

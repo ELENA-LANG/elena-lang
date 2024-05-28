@@ -28,6 +28,7 @@ namespace elena_lang
    constexpr auto PROFILE_CATEGORY                    = "/profile";
 
    constexpr auto MODULE_CATEGORY                     = "files/*";
+   constexpr auto REFERENCE_CATEGORY                  = "references/*";
 
    constexpr auto WIN_X86_KEY                         = "Win_x86";
    constexpr auto WIN_X86_64_KEY                      = "Win_x64";

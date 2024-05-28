@@ -140,6 +140,16 @@ void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t 
       fullPath.combine(path);
    }
    else {
+      for (auto ref_it = model.referencePaths.start(); !ref_it.eof(); ++ref_it) {
+         ustr_t extPackage = ref_it.key();
+         if (NamespaceString::isIncluded(extPackage, ns)) {
+            fullPath.copy(*ref_it);
+            fullPath.combine(path);
+
+            return;
+         }
+      }
+
       fullPath.copy(*model.paths.librarySourceRoot);
       // HOTFIX : ignore sub ns
       size_t index = ns.find('\'');
@@ -470,10 +480,27 @@ void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, Co
       model.outputPath.copy(value.str());
    }
 
-   // load source files
    DynamicString<char> subNs;
    DynamicString<char> path;
 
+   // load references
+   ConfigFile::Collection references;
+   if (config.select(configRoot, REFERENCE_CATEGORY, references)) {
+      for (auto r_it = references.start(); !r_it.eof(); ++r_it) {
+         // add source file
+         ConfigFile::Node node = *r_it;
+         node.readContent(path);
+
+         if (!node.readAttribute("key", subNs)) {
+            subNs.clear();
+         }
+
+         PathString filePath(path.str());
+         model.referencePaths.add(subNs.str(), (*filePath).clone());
+      }
+   }
+
+   // load source files
    ConfigFile::Collection modules;
    if (config.select(configRoot, MODULE_CATEGORY, modules)) {
       for (auto m_it = modules.start(); !m_it.eof(); ++m_it) {

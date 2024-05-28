@@ -27,9 +27,11 @@ namespace elena_lang
    constexpr auto RECENTPROJECTS_SETTINGS = "configuration/recent_projects/path";
 
    // --- Map types ---
-   typedef List<path_t, freepath>      ProjectPaths;
-   typedef List<Breakpoint*, freeobj>  Breakpoints;
-   typedef List<ustr_t, freeUStr>      StringList;
+   typedef List<path_t, freepath>            ProjectPaths;
+   typedef List<Breakpoint*, freeobj>        Breakpoints;
+   typedef List<ustr_t, freeUStr>            StringList;
+
+   typedef Map<ustr_t, path_t, allocUStr, freeUStr, freepath> ReferencePathMap;
 
    // --- ProjectModel ---
    struct ProjectModel
@@ -48,6 +50,8 @@ namespace elena_lang
          PathString vmTerminalPath;
          PathString configPath;
       } paths;
+
+      ReferencePathMap referencePaths;
 
       bool              withPersistentConsole;
 

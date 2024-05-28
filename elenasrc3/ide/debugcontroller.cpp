@@ -39,20 +39,17 @@ inline ref_t mapModuleReference(ModuleBase* module, ustr_t referenceName, bool e
    else return module->mapReference(referenceName, existing);
 }
 
+inline bool isEqualOrSubSetNs(ustr_t package, ustr_t value)
+{
+   return package.compare(value) || (value.compare(package, package.length()) && (value[package.length()] == '\''));
+}
+
 void DebugInfoProvider :: retrievePath(ustr_t name, PathString& path, path_t extension)
 {
    ustr_t package = _model->getPackage();
 
-   // if it is the root package
-   if (package.compare(name)) {
-      path.copy(*_model->projectPath);
-      path.combine(_model->getOutputPath());
-
-      ReferenceName::nameToPath(path, name);
-      path.appendExtension(extension);
-   }
-   // if the class belongs to the project package
-   else if (name.compare(package, package.length()) && (name[package.length()] == '\'')) {
+   // if it is the project package
+   if (isEqualOrSubSetNs(package, name)) {
       path.copy(*_model->projectPath);
       path.combine(_model->getOutputPath());
 
@@ -60,6 +57,19 @@ void DebugInfoProvider :: retrievePath(ustr_t name, PathString& path, path_t ext
       path.appendExtension(extension);
    }
    else {
+      // check external libraries
+      for (auto ref_it = _model->referencePaths.start(); !ref_it.eof(); ++ref_it) {
+         ustr_t extPackage = ref_it.key();
+         if (isEqualOrSubSetNs(extPackage, name)) {
+            path.copy(*ref_it);
+
+            ReferenceName::nameToPath(path, name);
+            path.appendExtension(extension);
+
+            return;
+         }
+      }
+
       // if file doesn't exist use package root
       path.copy(*_model->paths.libraryRoot);
 
