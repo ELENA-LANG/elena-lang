@@ -40,7 +40,7 @@ Source: "x86\lib60\*"; DestDir: "{app}\lib60"; Flags: ignoreversion recursesubdi
 Source: "..\doc\license"; DestDir: "{app}";
 Source: "..\readme.md"; DestDir: "{app}"; Flags: isreadme
 Source: "..\CHANGELOG.md"; DestDir: "{app}";
-Source: "redist\VC_redist.x86.exe"; DestDir: "{app}"; Flags: deleteafterinstall
+Source: "redist\VC_redist.x86.exe"; DestDir: "{app}\redist"; Flags: deleteafterinstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
