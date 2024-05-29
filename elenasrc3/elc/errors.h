@@ -15,6 +15,7 @@
 namespace elena_lang
 {
    constexpr auto errMsgInvalidSyntax           = "\n%s(%d:%d): error 004: Invalid syntax near '%s'\n";
+   constexpr auto errMssgCBrExpectedSyntax      = "\n%s(%d:%d): error 009: '}' expected\n";
 
    constexpr auto errMsgDuplicatedSymbol        = "\n%s(%d:%d): error 102: Class '%s' already exists\n";
    constexpr auto errMsgDuplicatedMethod        = "\n%s(%d:%d): error 103: Method '%s' already exists in the class\n";

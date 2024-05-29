@@ -1,6 +1,7 @@
-import extensions;
+import system'io;
 
-public program()
+public program() 
 {
-   console.writeLine("Hello");
+   var n := 2
+   var k
 }

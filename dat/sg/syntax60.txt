@@ -123,6 +123,8 @@ __define FINALLY                7385;
 __define PARAMETER_BLOCK        4336;
 __define TUPLE_TYPE 		4341;
 
+__define BLOCK_CLOSING_EXPECTED         16386;
+
 START ::= 
         { DECLARATION | META_DECLARATION }+ eof 
 	| eof;
@@ -1280,4 +1282,8 @@ DECLARATION_END ::=
 	";";
 
 END_OF_BLOCK ::=
-	"}";
+	"}"
+	| BLOCK_CLOSING_EXPECTED;
+
+BLOCK_CLOSING_EXPECTED ::=
+	eof;

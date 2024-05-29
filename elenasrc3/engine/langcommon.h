@@ -62,6 +62,7 @@ namespace elena_lang
 
    // === ELENA Error codes ===
    constexpr auto errInvalidSyntax           = 4;
+   constexpr auto errCBrExpectedSyntax       = 9;
 
    constexpr auto errDuplicatedSymbol        = 102;
    constexpr auto errDuplicatedMethod        = 103;
