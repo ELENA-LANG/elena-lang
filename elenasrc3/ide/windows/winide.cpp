@@ -546,16 +546,16 @@ void IDEWindow :: onCompilationEnd(int exitCode, int postponedAction)
    if (exitCode != -2) {
       switch ((DebugAction)postponedAction) {
          case DebugAction::Run:
-            onCommand(IDM_DEBUG_RUN);
+            _controller->doDebugAction(_model, DebugAction::Run, messageDialog, true);
             break;
          case DebugAction::StepOver:
-            onCommand(IDM_DEBUG_STEPOVER);
+            _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, true);
             break;
          case DebugAction::StepInto:
-            onCommand(IDM_DEBUG_STEPINTO);
+            _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog, true);
             break;
          case DebugAction::RunTo:
-            onCommand(IDM_DEBUG_RUNTO);
+            _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog, true);
             break;
          default:
             break;
@@ -821,26 +821,25 @@ bool IDEWindow :: onCommand(int command)
          if (_model->autoSave)
             _controller->autoSave(fileDialog, projectDialog, _model);
 
-         _controller->doDebugAction(_model, DebugAction::Run, messageDialog);
+         _controller->doDebugAction(_model, DebugAction::Run, messageDialog, false);
          break;
       case IDM_DEBUG_STEPOVER:
          if (_model->autoSave)
             _controller->autoSave(fileDialog, projectDialog, _model);
 
-         _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog);
-         _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog);
+         _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, false);
          break;
       case IDM_DEBUG_STEPINTO:
          if (_model->autoSave)
             _controller->autoSave(fileDialog, projectDialog, _model);
 
-         _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog);
+         _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog, false);
          break;
       case IDM_DEBUG_RUNTO:
          if (_model->autoSave)
             _controller->autoSave(fileDialog, projectDialog, _model);
 
-         _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog);
+         _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog, false);
          break;
       case IDM_DEBUG_STOP:
          _controller->doDebugStop(_model);

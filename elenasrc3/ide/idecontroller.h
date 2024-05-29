@@ -118,7 +118,8 @@ namespace elena_lang
       bool startVMConsole(ProjectModel& model);
       void stopVMConsole();
 
-      bool onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, DebugActionResult& result);
+      bool onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, 
+         DebugActionResult& result, bool withoutPostponeAction);
 
       void doDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action);
       void doDebugStop(ProjectModel& model);
@@ -237,7 +238,8 @@ namespace elena_lang
 
       bool doCompileProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
       void doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model);
-      void doDebugAction(IDEModel* model, DebugAction action, MessageDialogBase& mssgDialog);
+      void doDebugAction(IDEModel* model, DebugAction action, 
+         MessageDialogBase& mssgDialog, bool withoutPostponeAction);
       void doDebugStop(IDEModel* model);
 
       void doStartVMConsole(IDEModel* model);

@@ -34,9 +34,9 @@ In development:
   - #637(bt tests (>=4), all bc tests)
   - #69
   - #658 : command - compile the code
-  - chat sample
-  --------------------------------------
   - elc-cli : warn if the project is empty
+  --------------------------------------
+  - chat sample
 
   === Iteration 25 ===
   --------------------------------------

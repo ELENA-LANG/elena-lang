@@ -299,10 +299,11 @@ bool ProjectController :: isOutaged(ProjectModel& projectModel, SourceViewModel&
    return true;
 }
 
-bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, DebugActionResult& result)
+bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, 
+   DebugActionResult& result, bool withoutPostponeAction)
 {
    if (!_debugController.isStarted()) {
-      bool toRecompile = model.autoRecompile;
+      bool toRecompile = model.autoRecompile && !withoutPostponeAction;
       if (!isOutaged(model, sourceModel)) {
          if (toRecompile) {
             if (!doCompileProject(model, action))
@@ -1571,13 +1572,16 @@ path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
    else return nullptr;
 }
 
-void IDEController :: doDebugAction(IDEModel* model, DebugAction action, MessageDialogBase& mssgDialog)
+void IDEController :: doDebugAction(IDEModel* model, DebugAction action, 
+   MessageDialogBase& mssgDialog, bool withoutPostponeAction)
 {
    if (model->running)
       return;
 
    DebugActionResult result = {};
-   if (projectController.onDebugAction(model->projectModel, model->sourceViewModel, action, result)) {
+   if (projectController.onDebugAction(model->projectModel, model->sourceViewModel, 
+      action, result, withoutPostponeAction)) 
+   {
       model->running = true;
 
       model->sourceViewModel.setReadOnlyMode(true);
@@ -1936,7 +1940,7 @@ void IDEController :: onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel
    auto result = mssgDialog.question(QUESTION_NOSOURCE_CONTINUE);
 
    if (result == MessageDialogBase::Answer::Yes)
-      doDebugAction(model, DebugAction::StepInto, mssgDialog);
+      doDebugAction(model, DebugAction::StepInto, mssgDialog, false);
 }
 
 void IDEController :: onDocSelection(IDEModel* model, int index)

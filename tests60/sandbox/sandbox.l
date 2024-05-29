@@ -2,6 +2,6 @@ import system'io;
 
 public program() 
 {
-   var n := 2
+   var n := 2;
 
 }
