@@ -85,8 +85,8 @@ namespace elena_lang
 
       bool isIncluded(ProjectModel& model, ustr_t ns);
 
-      bool compileProject(ProjectModel& model);
-      bool compileSingleFile(ProjectModel& model);
+      bool compileProject(ProjectModel& model, int postponedAction);
+      bool compileSingleFile(ProjectModel& model, int postponedAction);
 
    public:
       bool isStarted()
@@ -280,6 +280,8 @@ namespace elena_lang
       bool onClose(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model);
 
       void init(IDEModel* model, int& status);
+
+      void autoSave(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
 
       IDEController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* process,
          IDEModel* model, TextViewSettings& textViewSettings, PlatformType platform, PathHelperBase* pathHelper, CompareFileDateTime comparer

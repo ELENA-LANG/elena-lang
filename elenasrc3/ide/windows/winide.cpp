@@ -128,10 +128,11 @@ void IDENotificationFormatter :: sendTextFrameSelectionEvent(SelectionEvent* eve
    app->notify(EVENT_TEXTFRAME_SELECTION_CHANGED, (NMHDR*)&nw);
 }
 
-void IDENotificationFormatter :: sendCompilationEndEvent(SelectionEvent* event, WindowApp* app)
+void IDENotificationFormatter :: sendCompilationEndEvent(CompletionEvent* event, WindowApp* app)
 {
-   SelectionNMHDR nw = { };
-   nw.index = event->Index();
+   CompletionNMHDR nw = { };
+   nw.exitCode = event->ExitCode();
+   nw.postponedAction = event->PostpinedAction();
    nw.status = event->status;
 
    app->notify(EVENT_COMPILATION_END, (NMHDR*)&nw);
@@ -219,7 +220,7 @@ void IDENotificationFormatter :: sendMessage(EventBase* event, WindowApp* app)
          sendProjectViewSelectionEvent(dynamic_cast<ParamSelectionEvent*>(event), app);
          break;
       case EVENT_COMPILATION_END:
-         sendCompilationEndEvent(dynamic_cast<SelectionEvent*>(event), app);
+         sendCompilationEndEvent(dynamic_cast<CompletionEvent*>(event), app);
          break;
       case EVENT_ERRORLIST_SELECTION:
          sendErrorListSelEvent(dynamic_cast<SelectionEvent*>(event), app);
@@ -533,7 +534,7 @@ void IDEWindow :: onComilationStart()
    ((ControlBase*)_children[_model->ideScheme.compilerOutputControl])->clearValue();
 }
 
-void IDEWindow :: onCompilationEnd(int exitCode)
+void IDEWindow :: onCompilationEnd(int exitCode, int postponedAction)
 {
    wchar_t* output = ((ControlBase*)_children[_model->ideScheme.compilerOutputControl])->getValue();
    ControlBase* messageLog = (ControlBase*)_children[_model->ideScheme.errorListControl];
@@ -541,6 +542,25 @@ void IDEWindow :: onCompilationEnd(int exitCode)
    _controller->onCompilationCompletion(_model, exitCode, output, dynamic_cast<ErrorLogBase*>(messageLog));
 
    freestr(output);
+
+   if (exitCode != -2) {
+      switch ((DebugAction)postponedAction) {
+         case DebugAction::Run:
+            onCommand(IDM_DEBUG_RUN);
+            break;
+         case DebugAction::StepOver:
+            onCommand(IDM_DEBUG_STEPOVER);
+            break;
+         case DebugAction::StepInto:
+            onCommand(IDM_DEBUG_STEPINTO);
+            break;
+         case DebugAction::RunTo:
+            onCommand(IDM_DEBUG_RUNTO);
+            break;
+         default:
+            break;
+      }
+   }
 }
 
 void IDEWindow :: onErrorHighlight(int index)
@@ -783,6 +803,9 @@ bool IDEWindow :: onCommand(int command)
          replace();
          break;
       case IDM_PROJECT_COMPILE:
+         if (_model->autoSave)
+            _controller->autoSave(fileDialog, projectDialog, _model);
+
          _controller->doCompileProject(fileDialog, projectDialog, _model);
          break;
       case IDM_PROJECT_INCLUDE:
@@ -795,15 +818,28 @@ bool IDEWindow :: onCommand(int command)
          _controller->doChangeProject(projectSettingsDialog, _model);
          break;
       case IDM_DEBUG_RUN:
+         if (_model->autoSave)
+            _controller->autoSave(fileDialog, projectDialog, _model);
+
          _controller->doDebugAction(_model, DebugAction::Run, messageDialog);
          break;
       case IDM_DEBUG_STEPOVER:
+         if (_model->autoSave)
+            _controller->autoSave(fileDialog, projectDialog, _model);
+
+         _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog);
          _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog);
          break;
       case IDM_DEBUG_STEPINTO:
+         if (_model->autoSave)
+            _controller->autoSave(fileDialog, projectDialog, _model);
+
          _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog);
          break;
       case IDM_DEBUG_RUNTO:
+         if (_model->autoSave)
+            _controller->autoSave(fileDialog, projectDialog, _model);
+
          _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog);
          break;
       case IDM_DEBUG_STOP:
@@ -1215,7 +1251,7 @@ void IDEWindow :: onNotify(NMHDR* hdr)
          onProjectViewSel((ParamSelectionNMHDR*)hdr);
          break;
       case EVENT_COMPILATION_END:
-         onCompilationEnd(((SelectionNMHDR*)hdr)->index);
+         onCompilationEnd(((CompletionNMHDR*)hdr)->exitCode, ((CompletionNMHDR*)hdr)->postponedAction);
          break;
       case EVENT_ERRORLIST_SELECTION:
          onErrorHighlight(((SelectionNMHDR*)hdr)->index);

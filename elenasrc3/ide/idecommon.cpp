@@ -204,6 +204,18 @@ int SelectionEvent :: eventId()
    return _eventId;
 }
 
+// --- CompletionEvent ---
+
+CompletionEvent :: CompletionEvent(int id, int exitCode, int postpinedAction)
+   : EventBase(0), _eventId(id), _exitCode(exitCode), _postpinedAction(postpinedAction)
+{
+}
+
+int CompletionEvent :: eventId()
+{
+   return _eventId;
+}
+
 // --- ParamSelectionEvent ---
 
 ParamSelectionEvent :: ParamSelectionEvent(int id, size_t param)

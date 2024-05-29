@@ -36,9 +36,7 @@ In development:
   - #658 : command - compile the code
   - chat sample
   --------------------------------------
-  - ide : warn if the project empty
-  - ide : warn if the source file is not saved
-  - ide : auto compile if the file is outaged
+  - elc-cli : warn if the project is empty
 
   === Iteration 25 ===
   --------------------------------------

@@ -70,6 +70,7 @@ public:
    bool                 appMaximized;
    bool                 rememberLastPath;
    bool                 rememberLastProject;
+   bool                 autoSave;
 
    SourceViewModel* viewModel() { return &sourceViewModel; }
 
@@ -83,6 +84,7 @@ public:
       appMaximized = false;
       rememberLastPath = false;
       rememberLastProject = false;
+      autoSave = false;
    }
 };
 

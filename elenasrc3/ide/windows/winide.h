@@ -40,6 +40,12 @@ namespace elena_lang
       int index;
    };
 
+   struct CompletionNMHDR : public ModelNMHDR
+   {
+      int exitCode;
+      int postponedAction;
+   };
+
    struct BrowseNMHDR : public ModelNMHDR
    {
       size_t item;
@@ -82,7 +88,7 @@ namespace elena_lang
 
       void sendTextViewModelEvent(TextViewModelEvent* event, WindowApp* app);
       void sendTextFrameSelectionEvent(SelectionEvent* event, WindowApp* app);
-      void sendCompilationEndEvent(SelectionEvent* event, WindowApp* app);
+      void sendCompilationEndEvent(CompletionEvent* event, WindowApp* app);
       void sendErrorListSelEvent(SelectionEvent* event, WindowApp* app);
       void sendProjectViewSelectionEvent(ParamSelectionEvent* event, WindowApp* app);
       void sendLayoutEvent(LayoutEvent* event, WindowApp* app);
@@ -171,7 +177,7 @@ namespace elena_lang
       bool onClose() override;
 
       void onComilationStart();
-      void onCompilationEnd(int exitCode);
+      void onCompilationEnd(int exitCode, int postponedAction);
       void onErrorHighlight(int index);
       void onDebugWatchBrowse(BrowseNMHDR* rec);
 

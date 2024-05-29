@@ -321,9 +321,9 @@ ControlBase* IDEFactory :: createVmConsoleControl(ControlBase* owner, ProcessBas
 
 ControlBase* IDEFactory :: createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess, NotifierBase* notifier)
 {
-   CompilerOutput* output = new CompilerOutput(notifier, [](NotifierBase* notifier, int statusBar)
+   CompilerOutput* output = new CompilerOutput(notifier, [](NotifierBase* notifier, int exitCode, int postponedAction)
       {
-         SelectionEvent event = { EVENT_COMPILATION_END, statusBar };
+         CompletionEvent event = { EVENT_COMPILATION_END, exitCode, postponedAction };
 
          notifier->notify(&event);
       });

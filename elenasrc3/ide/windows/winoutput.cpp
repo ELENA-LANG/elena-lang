@@ -128,9 +128,9 @@ CompilerOutput :: CompilerOutput(NotifierBase* notifier, EventInvoker invoker)
 
 }
 
-void CompilerOutput :: afterExecution(int exitCode)
+void CompilerOutput :: afterExecution(int exitCode, int extraArg)
 {
-   _eventInvoker(_notifier, exitCode);
+   _eventInvoker(_notifier, exitCode, extraArg);
 }
 
 // --- VMConsoleInteractive ---

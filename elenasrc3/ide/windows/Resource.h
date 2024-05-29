@@ -183,6 +183,8 @@
 #define IDD_DEBUGGER_SETTINGS          1713
 #define IDC_DEBUGGER_SRCPATH           1714
 #define IDC_DEBUGGER_LIBPATH           1715
+#define IDC_IDE_AUTORECOMPILE          1716
+#define IDC_IDE_AUTOSAVE               1717
 
 #define IDM_EDITOR_OPTIONS             1750
 #define IDM_IDE_OPTIONS                1751

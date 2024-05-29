@@ -304,12 +304,12 @@ bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& so
    if (!_debugController.isStarted()) {
       bool toRecompile = model.autoRecompile;
       if (!isOutaged(model, sourceModel)) {
-         result.outaged = true;
-
          if (toRecompile) {
             if (!doCompileProject(model, action))
                return false;
          }
+         else result.outaged = true;
+
          return false;
       }
       if (!startDebugger(model, result))
@@ -383,7 +383,7 @@ bool ProjectController :: startVMConsole(ProjectModel& model)
    cmdLine.append("]]\"");
    cmdLine.append(" -i");
 
-   return _vmProcess->start(*appPath, *cmdLine, *model.paths.appPath, false);
+   return _vmProcess->start(*appPath, *cmdLine, *model.paths.appPath, false, 0);
 }
 
 void ProjectController :: stopVMConsole()
@@ -391,7 +391,7 @@ void ProjectController :: stopVMConsole()
    _vmProcess->stop(0);
 }
 
-bool ProjectController :: compileProject(ProjectModel& model)
+bool ProjectController :: compileProject(ProjectModel& model, int postponedAction)
 {
    PathString appPath(model.paths.appPath);
    appPath.combine(*model.paths.compilerPath);
@@ -410,10 +410,10 @@ bool ProjectController :: compileProject(ProjectModel& model)
    PathString curDir;
    curDir.append(*model.projectPath);
 
-   return _outputProcess->start(*appPath, *cmdLine, *model.projectPath, true);
+   return _outputProcess->start(*appPath, *cmdLine, *model.projectPath, true, postponedAction);
 }
 
-bool ProjectController :: compileSingleFile(ProjectModel& model)
+bool ProjectController :: compileSingleFile(ProjectModel& model, int postponedAction)
 {
    path_t singleProjectFile = model.sources.get(1);
 
@@ -427,16 +427,16 @@ bool ProjectController :: compileSingleFile(ProjectModel& model)
    PathString curDir;
    curDir.append(*model.projectPath);
 
-   return _outputProcess->start(*appPath, *cmdLine, *model.projectPath, true);
+   return _outputProcess->start(*appPath, *cmdLine, *model.projectPath, true, postponedAction);
 }
 
 bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction postponedAction)
 {
    if (model.singleSourceProject) {
-      return compileSingleFile(model);
+      return compileSingleFile(model, (int)postponedAction);
    }
    else if (!model.name.empty()) {
-      return compileProject(model);
+      return compileProject(model, (int)postponedAction);
    }
    else return false;
 }
@@ -1003,6 +1003,8 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
       model->rememberLastProject = loadSetting(config, LASTPROJECT_SETTINGS, -1) != 0;
       model->sourceViewModel.highlightSyntax = loadSetting(config, HIGHLIGHTSYNTAX_SETTINGS, -1) != 0;
       model->sourceViewModel.lineNumbersVisible = loadSetting(config, LINENUMBERS_SETTINGS, -1) != 0;
+      model->projectModel.autoRecompile = loadSetting(config, AUTO_RECOMPILE_SETTING, -1) != 0;
+      model->autoSave = loadSetting(config, AUTO_SAVE_SETTING, -1) != 0;
 
       loadRecentFiles(config, RECENTFILES_SETTINGS, model->projectModel.lastOpenFiles);
       loadRecentFiles(config, RECENTPROJECTS_SETTINGS, model->projectModel.lastOpenProjects);
@@ -1026,6 +1028,8 @@ void IDEController :: saveConfig(IDEModel* model, path_t configPath)
    saveSetting(config, LASTPROJECT_SETTINGS, model->rememberLastProject);
    saveSetting(config, HIGHLIGHTSYNTAX_SETTINGS, model->sourceViewModel.highlightSyntax);
    saveSetting(config, LINENUMBERS_SETTINGS, model->sourceViewModel.lineNumbersVisible);
+   saveSetting(config, AUTO_RECOMPILE_SETTING, model->projectModel.autoRecompile);
+   saveSetting(config, AUTO_SAVE_SETTING, model->autoSave);
 
    saveRecentFiles(config, RECENTFILE_SETTINGS, model->projectModel.lastOpenFiles);
    saveRecentFiles(config, RECENTPROJECTS_SETTINGS, model->projectModel.lastOpenProjects);
@@ -1938,4 +1942,15 @@ void IDEController :: onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel
 void IDEController :: onDocSelection(IDEModel* model, int index)
 {
    notifyOnModelChange(STATUS_FRAME_CHANGED);
+}
+
+void IDEController :: autoSave(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model)
+{
+   if (!model->running && model->sourceViewModel.isAnyDocumentModified()) {
+      for (pos_t i = 0; i < model->sourceViewModel.getDocumentCount(); i++) {
+         if (model->sourceViewModel.getDocument(i + 1)->isModified()) {
+            saveFile(dialog, model, i + 1, true);
+         }
+      }
+   }
 }
