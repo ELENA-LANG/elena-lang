@@ -238,6 +238,21 @@ namespace elena_lang
       int z4;
    };
 
+   struct GCGenInfo
+   {
+      unsigned int allocated;
+      unsigned int free;
+   };
+
+   struct GCStatistics
+   {
+      GCGenInfo      ygInfo;
+      GCGenInfo      mgInfo;
+      GCGenInfo      permInfo;
+      unsigned int   minorCollections;
+      unsigned int   majorCollections;
+   };
+
 #pragma pack(pop)
 
 }
