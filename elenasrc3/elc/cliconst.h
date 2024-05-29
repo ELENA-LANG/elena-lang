@@ -37,6 +37,7 @@ namespace elena_lang
    constexpr auto ELC_SUCCESSFUL_COMPILATION = "\nSuccessfully compiled\n";
    constexpr auto ELC_SUCCESSFUL_LINKING     = "Successfully linked\n";
    constexpr auto ELC_UNSUCCESSFUL           = "Compiled with errors\n";
+   constexpr auto ELC_IDLE_COMPILATION       = "\nNothing was compiled\n";
 
    constexpr auto ELC_PARSING_FILE           = "Parsing %s";
    constexpr auto ELC_COMPILING_MODULE       = "Compiling %s";

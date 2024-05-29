@@ -9577,8 +9577,10 @@ bool Compiler :: declareModule(ModuleScopeBase* moduleScope, SyntaxNode node, Ex
    return declared;
 }
 
-void Compiler :: declare(ModuleScopeBase* moduleScope, SyntaxTree& input, ExtensionMap* outerExtensionList)
+bool Compiler :: declare(ModuleScopeBase* moduleScope, SyntaxTree& input, ExtensionMap* outerExtensionList)
 {
+   bool nothingToCompile = true;
+
    if (moduleScope->withValidation())
       validateScope(moduleScope);
 
@@ -9598,7 +9600,11 @@ void Compiler :: declare(ModuleScopeBase* moduleScope, SyntaxTree& input, Extens
          // if the last declaration was not successful, force it last time 
          idle = !declareModule(moduleScope, root, outerExtensionList, repeatMode, true);
       }
+
+      nothingToCompile &= idle;
    }
+
+   return nothingToCompile;
 }
 
 void Compiler :: compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildTree& output, ExtensionMap* outerExtensionList)

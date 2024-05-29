@@ -1743,7 +1743,7 @@ namespace elena_lang
 
       void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,
          ManifestInfo& manifestInfo);
-      void declare(ModuleScopeBase* moduleScope, SyntaxTree& input, ExtensionMap* outerExtensionList);
+      bool declare(ModuleScopeBase* moduleScope, SyntaxTree& input, ExtensionMap* outerExtensionList);
       void compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildTree& output, ExtensionMap* outerExtensionList);
 
       void injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode,

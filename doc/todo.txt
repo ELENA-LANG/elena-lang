@@ -22,25 +22,20 @@ In development:
   - ide : editor settings - tab
   - ide : debugger settings
   - #184 : linux simplest gui (refresh textview, onDocumentUpdate ...)
-  * ide : recent list - only 9 elements must be in the list
   * #590 : vm : InjectProxyTypeLA 
   - #590 : implementing interface injection : strong interface
   - elt : nested call must not stop / start vm 
   - elt : fails after executing several times
-  - #99
-  - #98
-  - #97
-  - #79
   - #637(bt tests (>=4), all bc tests)
-  - #69
   - #658 : command - compile the code
-  - elc-cli : warn if the project is empty
-  --------------------------------------
   - chat sample
+  - #69
+  --------------------------------------
+  - ide : recent list - only 9 elements must be in the list
 
   === Iteration 25 ===
   --------------------------------------
-  dev: async programming (instant messagange sample (chat) )
+  dev: 
   op:
   opt:
   maint:#620
@@ -48,11 +43,12 @@ In development:
   ide:
   tools:
   prom:post an article about attributes (decorate a class, defining which operation is allowed)
-  port:upndown
+  port:#79
+
 
   === Iteration 26 ===
   --------------------------------------
-  dev: 
+  dev:#97,#98,#99
   op:
   opt:
   maint:
@@ -66,7 +62,7 @@ In development:
 
   === Iteration 27 ===
   --------------------------------------
-  dev: 
+  dev: async programming
   op:
   opt:
   maint:

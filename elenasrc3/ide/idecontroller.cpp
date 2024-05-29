@@ -19,8 +19,8 @@
 
 using namespace elena_lang;
 
-constexpr auto MAX_RECENT_FILES = 10;
-constexpr auto MAX_RECENT_PROJECTS = 10;
+constexpr auto MAX_RECENT_FILES = 9;
+constexpr auto MAX_RECENT_PROJECTS = 9;
 
 inline ustr_t getPlatformName(PlatformType type)
 {
