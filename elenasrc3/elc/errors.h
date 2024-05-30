@@ -96,6 +96,7 @@ namespace elena_lang
 
    constexpr auto wrnMsgSyntaxFileNotFound   = "\nwarning 500: cannot open syntax file '%s'\n";
    constexpr auto wrnMsgInvalidConfig        = "\nwarning 501: invalid or unknown config file %s\n";
+   constexpr auto wrnMsgInvalidPrjCollection = "\nwarning 502: invalid or unknown project collection file %s\n";
 
    constexpr auto errMsgCommandSetAbsent     = "\ninternal error 600: command set is not defined for %x\n";
    constexpr auto errMsgReadOnlyModule       = "\ninternal error 601: read-only module\n";

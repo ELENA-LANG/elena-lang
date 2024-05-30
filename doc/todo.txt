@@ -18,6 +18,7 @@ In development:
   port:elenavm / elt for linux, helloworld gui sample (button)
   doc:api - add descriptions
   --------------------------------------
+  - vm : GC statistics
   - github action : build for linux
   - ide : editor settings - tab
   - ide : debugger settings
@@ -30,11 +31,6 @@ In development:
   - #658 : command - compile the code
   - chat sample
   --------------------------------------
-  - #69 : GC statisics : turn on / off: number of minor collections, number of major collections
-  - #69 : GC info : allocated perm
-  - #69 : GC info : allocated / free og
-  - #69 : GC info : allocated / free mg
-  - #69 : GC info : allocated / free yg
 
   === Iteration 25 ===
   --------------------------------------

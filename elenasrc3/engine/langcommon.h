@@ -140,6 +140,7 @@ namespace elena_lang
 
    constexpr auto wrnSyntaxFileNotFound      = 500;
    constexpr auto wrnInvalidConfig           = 501;
+   constexpr auto wrnInvalidPrjCollection    = 502;
 
    constexpr auto errCommandSetAbsent        = 600;
    constexpr auto errReadOnlyModule          = 601;
@@ -411,6 +412,8 @@ namespace elena_lang
 
    constexpr auto CONFIG_ROOT             = "configuration";
    constexpr auto PLATFORM_CATEGORY       = "configuration/platform";
+
+   constexpr auto COLLECTION_CATEGORY     = "configuration/collection/*";
 
    constexpr auto TEMPLATE_CATEGORY       = "templates/*";
    constexpr auto PRIMITIVE_CATEGORY      = "primitives/*";

@@ -1,0 +1,7 @@
+<configuration>
+  <collection>
+    <project>shared\chat_shared.prj</project>
+    <project>server\char_server.prj</project>
+    <project>server_cui\server_console.prj</project>
+  </collection>
+</configuration>

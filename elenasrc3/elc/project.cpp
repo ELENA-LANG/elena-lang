@@ -482,3 +482,29 @@ void Project :: loadProfileList(ConfigFile& config)
    ::loadProfileList(config, root, &availableProfileList);
    ::loadProfileList(config, platformRoot, &availableProfileList);
 }
+
+// --- ProjectCollection ---
+
+bool ProjectCollection :: load(path_t path)
+{
+   PathString collectionPath;
+   collectionPath.copySubPath(path, false);
+
+   ConfigFile config;
+   if (config.load(path, _encoding)) {
+      DynamicString<char> pathStr;
+
+      ConfigFile::Collection modules;
+      if (config.select(COLLECTION_CATEGORY, modules)) {
+         for (auto it = modules.start(); !it.eof(); ++it) {
+            ConfigFile::Node node = *it;
+            node.readContent(pathStr);
+
+            PathString fullPath(*collectionPath, pathStr.str());
+            paths.add((*fullPath).clone());
+         }
+      }
+      return true;
+   }
+   return false;
+}
