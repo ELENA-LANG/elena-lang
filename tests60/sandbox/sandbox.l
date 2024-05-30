@@ -1,16 +1,21 @@
 import extensions;
-import extensions'runtime;
+
+
+
+struct X
+{
+   int x/* : prop*/;
+}
+
+singleton Helper
+{
+   X get()
+   {
+      ^ nil
+   }
+}
 
 public program() 
 {
-   console.printLine("before:");
-   SystemMonitor.printMemoryStatistics();
-
-   var n := 0;
-   while (n < 100000) {
-      n := n + 1;
-   };
-   
-   console.printLine("after:");
-   SystemMonitor.printMemoryStatistics();
+//   X x := Helper.get()
 }

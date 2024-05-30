@@ -10762,11 +10762,17 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode,
    if (codeScope->isByRefHandler()) {
       ObjectInfo byRefTarget = codeScope->mapByRefReturnArg();
 
-      compileAssigningOp(byRefTarget, retVal);
+      if(!compileAssigningOp(byRefTarget, retVal)) 
+         scope.raiseError(errInvalidOperation, node);
 
       retVal = scope.mapSelf();
    }
    else {
+      // HOTFIX : converting nil value to a structure is not allowed in returning expression
+      if (retVal.kind == ObjectKind::Nil && compiler->_logic->isEmbeddableStruct(*scope.moduleScope, outputRef)) {
+         scope.raiseError(errInvalidOperation, node);
+      }
+
       retVal = boxArgument(retVal,
          !dynamicRequired && retVal.kind == ObjectKind::SelfBoxableLocal, true, false);
 
@@ -14522,7 +14528,8 @@ void Compiler::Expression :: compileAssigning(SyntaxNode node, ObjectInfo target
          compiler->retrieveStrongType(scope, target), false, false);
    }
 
-   compileAssigningOp(target, source);
+   if(!compileAssigningOp(target, source))
+      scope.raiseError(errInvalidOperation, node);
 }
 
 void Compiler::Expression :: compileConverting(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool stackSafe)

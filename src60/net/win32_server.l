@@ -95,7 +95,7 @@ public sealed class TcpServer
    {
       auto socket := _listenSocket.accept();
       TcpRemoteClient client := nil;
-      if (nil != socket)
+      ifnot(socket.isInvalid)
       {
          socket.option(IPPROTO_TCP, TCP_NODELAY, true);
 

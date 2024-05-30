@@ -61,7 +61,8 @@ void DebugInfoProvider :: retrievePath(ustr_t name, PathString& path, path_t ext
       for (auto ref_it = _model->referencePaths.start(); !ref_it.eof(); ++ref_it) {
          ustr_t extPackage = ref_it.key();
          if (isEqualOrSubSetNs(extPackage, name)) {
-            path.copy(*ref_it);
+            path.copy(*_model->projectPath);
+            path.combine(*ref_it);
 
             ReferenceName::nameToPath(path, name);
             path.appendExtension(extension);

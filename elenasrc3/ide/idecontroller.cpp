@@ -143,7 +143,8 @@ void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t 
       for (auto ref_it = model.referencePaths.start(); !ref_it.eof(); ++ref_it) {
          ustr_t extPackage = ref_it.key();
          if (NamespaceString::isIncluded(extPackage, ns)) {
-            fullPath.copy(*ref_it);
+            fullPath.copy(*model.projectPath);
+            fullPath.combine(*ref_it);
             fullPath.combine(path);
 
             return;
@@ -1200,7 +1201,11 @@ bool IDEController :: doOpenProjectSourceByIndex(IDEModel* model, int index)
 
 int IDEController :: openProject(IDEModel* model, path_t projectFile)
 {
-   return projectController.openProject(model->projectModel, projectFile);
+   int retVal = projectController.openProject(model->projectModel, projectFile);
+   if (retVal)
+      addToRecentProjects(model, projectFile);
+
+   return retVal;
 }
 
 void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)
@@ -1312,8 +1317,6 @@ bool IDEController :: doOpenProject(FileDialogBase& dialog, FileDialogBase& proj
 
       if (retVal) {
          projectStatus |= retVal;
-
-         addToRecentProjects(model, *path);
 
          projectStatus |= STATUS_DOC_READY;
 

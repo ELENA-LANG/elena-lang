@@ -7,8 +7,6 @@ In development:
 
   === Iteration 24 (6.6.24) ===
   --------------------------------------
-  dev: #574,#265,#619,#580,#658(debug,compile,build,IntelliSense)
-  op: github action - create a draft release
   opt:pi under 6 sec, #611, #602, #601, #586
   maint:#486, #506, #650
   exp: generate code templates - e.g. simple console app
@@ -27,15 +25,19 @@ In development:
   - #590 : implementing interface injection : strong interface
   - elt : nested call must not stop / start vm 
   - elt : fails after executing several times
+  - #265
   - #637(bt tests (>=4), all bc tests)
+  - #562 : when the setting is on, does not allow to return / assign nil value
+  - #562 : nullable
   - #658 : command - compile the code
   - chat sample
   --------------------------------------
+  - not allowing to pass nil for structure
 
   === Iteration 25 ===
   --------------------------------------
-  dev: 
-  op:
+  dev: #574,#619,#580,#658(debug,compile,build,IntelliSense)
+  op:github action - create a draft release
   opt:
   maint:#620
   exp:
