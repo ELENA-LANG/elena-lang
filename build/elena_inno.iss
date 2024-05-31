@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{3CAA69D3-0F98-44B1-A73E-E864BA51D5BD}
 AppName=ELENA Programming Language
-AppVersion=6.1.0
+AppVersion=6.1.1
 ;AppVerName=ELENA Programming Language 6.0.10
 AppPublisher=Alexey Rakov
 AppPublisherURL=http://github.com/ELENA-LANG/elena-lang
@@ -18,7 +18,7 @@ DefaultGroupName=ELENA Programming Language
 AllowNoIcons=yes
 LicenseFile=..\doc\license
 InfoAfterFile=..\CHANGELOG.md
-OutputBaseFilename=elena-lang-6.1.0.x86-setup
+OutputBaseFilename=elena-lang-6.1.1.x86-setup
 Compression=lzma
 SolidCompression=yes
 ChangesEnvironment=yes
@@ -40,7 +40,7 @@ Source: "x86\lib60\*"; DestDir: "{app}\lib60"; Flags: ignoreversion recursesubdi
 Source: "..\doc\license"; DestDir: "{app}";
 Source: "..\readme.md"; DestDir: "{app}"; Flags: isreadme
 Source: "..\CHANGELOG.md"; DestDir: "{app}";
-Source: "redist\VC_redist.x86.exe"; DestDir: "{app}"; Flags: deleteafterinstall
+Source: "redist\VC_redist.x86.exe"; DestDir: "{app}\redist"; Flags: deleteafterinstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

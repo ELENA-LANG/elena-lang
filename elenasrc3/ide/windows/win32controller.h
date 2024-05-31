@@ -24,6 +24,8 @@ namespace elena_lang
 
       DWORD  _dwWaitTime;  // wait time to check the status of the child process
 
+      int    _extraArg;
+
       char   _buffer[BUF_SIZE];
       size_t _offset;
 
@@ -46,7 +48,7 @@ namespace elena_lang
       virtual void afterExecution(DWORD exitCode);
 
    public:
-      bool start(path_t path, path_t commandLine, path_t curDir, bool readOnly) override;
+      bool start(path_t path, path_t commandLine, path_t curDir, bool readOnly, int extraArg) override;
 
       void stop(int exitCode = 0) override;
 

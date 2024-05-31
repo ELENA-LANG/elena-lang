@@ -56,7 +56,7 @@ class PermVectorChain
 
       Used.append(1);
 
-      Array.refer(index, ref pointer ptr);
+      Array.refer(index, out pointer ptr);
 
       ^ ptr;
    }

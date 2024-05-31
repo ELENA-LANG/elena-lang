@@ -2,13 +2,13 @@
 
 public singleton byteConvertor
 {
-   convert(int n, ref byte retVal) : external(system'core_routines'__intToByte);
+   convert(int n, out byte retVal) : external(system'core_routines'__intToByte);
 
-   convert(uint n, ref byte retVal) : external(system'core_routines'__uintToByte);
+   convert(uint n, out byte retVal) : external(system'core_routines'__uintToByte);
 
-   convert(short n, ref byte retVal) : external(system'core_routines'__shortToByte);
+   convert(short n, out byte retVal) : external(system'core_routines'__shortToByte);
 
-   convert(long n, ref byte retVal) : external(system'core_routines'__longToByte);
+   convert(long n, out byte retVal) : external(system'core_routines'__longToByte);
 
    byte convert(o)
       = cast byte(o);
@@ -21,7 +21,7 @@ public singleton byteConvertor
 
    byte convert(short s)
    {
-      self.convert(s, ref byte b);
+      self.convert(s, out byte b);
 
       ^ b;      
    }
@@ -39,21 +39,21 @@ public singleton byteConvertor
          OutOfRangeException.raise();
       };
 
-      self.convert(n, ref byte b);
+      self.convert(n, out byte b);
 
       ^ b;
    }
 
    byte convert(uint n)
    {
-      self.convert(n, ref byte b);
+      self.convert(n, out byte b);
 
       ^ b;
    }
 
    byte convert(long n)
    {
-      self.convert(n, ref byte b);
+      self.convert(n, out byte b);
 
       ^ b;
    }
@@ -84,7 +84,7 @@ public singleton byteConvertor
 
 public singleton sbyteConvertor
 {
-   convert(int n, ref sbyte retVal) : external(system'core_routines'__intToSByte);
+   convert(int n, out sbyte retVal) : external(system'core_routines'__intToSByte);
 
    sbyte convert(int n)
    {
@@ -92,7 +92,7 @@ public singleton sbyteConvertor
          OutOfRangeException.raise();
       };
 
-      self.convert(n, ref sbyte b);
+      self.convert(n, out sbyte b);
 
       ^ b;
    }
@@ -102,11 +102,11 @@ public singleton sbyteConvertor
 
 public singleton shortConvertor
 {
-   private convertInt(int n, ref short retVal) : external(system'core_routines'__intToShort);
+   private convertInt(int n, out short retVal) : external(system'core_routines'__intToShort);
 
-   private convertUInt(uint n, ref short retVal) : external(system'core_routines'__uintToShort);
+   private convertUInt(uint n, out short retVal) : external(system'core_routines'__uintToShort);
 
-   private convertByte(byte b, ref short retVal) : external(system'core_routines'__byteToShort);
+   private convertByte(byte b, out short retVal) : external(system'core_routines'__byteToShort);
 
    short convert(o)
       = cast short(o);
@@ -116,7 +116,7 @@ public singleton shortConvertor
 
    short convert(byte b)
    {
-      self.convertByte(b, ref short s);
+      self.convertByte(b, out short s);
 
       ^ s;
    }   
@@ -126,14 +126,14 @@ public singleton shortConvertor
 
    short convert(int n)
    {
-      self.convertInt(n, ref short s);
+      self.convertInt(n, out short s);
 
       ^ s;
    }
 
    short convert(uint n)
    {
-      self.convertUInt(n, ref short s);
+      self.convertUInt(n, out short s);
 
       ^ s;
    }
@@ -178,7 +178,7 @@ public singleton shortConvertor
 
 public singleton ushortConvertor
 {
-   private convertInt(int n, ref ushort retVal) : external(system'core_routines'__intToUShort);
+   private convertInt(int n, out ushort retVal) : external(system'core_routines'__intToUShort);
 
    ushort convert(ushort s)
       = s;
@@ -192,7 +192,7 @@ public singleton ushortConvertor
 
    ushort convert(int n)
    {
-      self.convertInt(n, ref ushort s);
+      self.convertInt(n, out ushort s);
 
       ^ s;
    }
@@ -202,10 +202,10 @@ public singleton ushortConvertor
 
 public singleton intConvertor
 {
-   private convertChar(char ch, ref int retVal) : external(system'core_routines'__charToInt);
-   private convertLong(long l, ref int retVal) : external(system'core_routines'__longToInt);
-   private convertReal(real l, ref int retVal) : external(system'core_routines'__realToInt);
-   private convertUInt(uint l, ref int retVal) : external(system'core_routines'__uintToInt);
+   private convertChar(char ch, out int retVal) : external(system'core_routines'__charToInt);
+   private convertLong(long l, out int retVal) : external(system'core_routines'__longToInt);
+   private convertReal(real l, out int retVal) : external(system'core_routines'__realToInt);
+   private convertUInt(uint l, out int retVal) : external(system'core_routines'__uintToInt);
 
    int convert(o)
       = cast int(o);
@@ -232,28 +232,28 @@ public singleton intConvertor
 
    int convert(uint n)
    {
-      self.convertUInt(n, ref int retVal);
+      self.convertUInt(n, out int retVal);
 
       ^ retVal
    }
 
    int convert(char ch)
    {
-      self.convertChar(ch, ref int retVal);
+      self.convertChar(ch, out int retVal);
 
       ^ retVal
    }
 
    int convert(long l)
    {
-      self.convertLong(l, ref int n);
+      self.convertLong(l, out int n);
 
       ^ n;
    }
 
    int convert(real r)
    {
-      self.convertReal(r, ref int n);
+      self.convertReal(r, out int n);
 
       ^ n
    }   
@@ -316,7 +316,7 @@ public singleton intConvertor
 
 public singleton uintConvertor
 {
-   private copyDirectly(int n, ref uint retVal) : external(system'core_routines'__intToUInt);
+   private copyDirectly(int n, out uint retVal) : external(system'core_routines'__intToUInt);
 
    uint convert(o)
       = cast uint(o);
@@ -330,7 +330,7 @@ public singleton uintConvertor
 //         InvalidArgumentException.raise();
 //      };
 
-      self.copyDirectly(n, ref uint retVal);
+      self.copyDirectly(n, out uint retVal);
 
       ^ retVal
    }
@@ -615,11 +615,11 @@ public singleton realConvertor
 
 public singleton charConvertor
 {
-   convert(int n, ref char retVal) : external(system'core_routines'__intToChar);
+   convert(int n, out char retVal) : external(system'core_routines'__intToChar);
 
    char convert(int n)
    {
-      self.convert(n, ref char ch);
+      self.convert(n, out char ch);
 
       ^ ch;
    }
@@ -845,7 +845,7 @@ public singleton stringConvertor
          r := 0.0 - r;
       };
 
-      PrimitiveRealOperations.splitReal(r, ref int integerPart, ref int decimalPart, ref int decimalPartLen, ref int exponent);
+      PrimitiveRealOperations.splitReal(r, out int integerPart, out int decimalPart, out int decimalPartLen, out int exponent);
 
       byte buffer[40];
       int length := 0;
@@ -856,7 +856,7 @@ public singleton stringConvertor
       if (exponent < 0) {
          exponent := -exponent;
 
-         self.writeInteger(buffer, exponent, ref index, ref length);
+         self.writeInteger(buffer, exponent, out index, out length);
 
          // -
          tmp := 45;
@@ -1148,7 +1148,7 @@ public singleton wideConvertor
          r := 0.0 - r;
       };
 
-      PrimitiveRealOperations.splitReal(r, ref int integerPart, ref int decimalPart, ref int decimalPartLen, ref int exponent);
+      PrimitiveRealOperations.splitReal(r, out int integerPart, out int decimalPart, out int decimalPartLen, out int exponent);
 
       short buffer[40];
       int length := 0;
@@ -1276,12 +1276,12 @@ public singleton shortArrayConvertor
 
 public singleton mssgConvertor
 {
-   convert(int n, ref Message retVal) : external(system'core_routines'__intToMssg);
+   convert(int n, out Message retVal) : external(system'core_routines'__intToMssg);
 
    Message convert(int n)
       : info("Converting int value to the string<br/>NOTE : unsafe operation")
    {
-      self.convert(n, ref Message m);
+      self.convert(n, out Message m);
 
       ^ m;
    }

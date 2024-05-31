@@ -29,9 +29,7 @@ public class LoadedSet : RuleSet
     
    int proceed(Space s, int i, int j)
    {
-      int n := 0;
-      int m := 0;        
-      _set.readLengthsTo(ref n, ref m);
+      _set.readLengthsTo(out int n, out int m);
         
       if (i >= n || j >= m)
       {

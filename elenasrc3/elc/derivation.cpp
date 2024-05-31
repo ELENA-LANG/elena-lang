@@ -545,7 +545,7 @@ void SyntaxTreeBuilder :: generateTemplateOperation(SyntaxTreeWriter& writer, Sc
    List<SyntaxNode> parameters({});
 
    SyntaxNode operation = node.firstChild();
-   SyntaxNode op = operation.findChild(SyntaxKey::MessageOperation);
+   SyntaxNode op = operation.findChild(SyntaxKey::MessageOperation, SyntaxKey::PropertyOperation);
 
    IdentifierString templateName("operator:");
    switch (operation.key) {

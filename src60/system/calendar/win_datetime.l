@@ -78,9 +78,7 @@ namespace calendar
          n1 += n2;
 
          ^ new SystemTime(n1)
-      }
-
-      
+      }      
    }
 
    // --- TimeStruct ---
@@ -245,7 +243,7 @@ namespace calendar
          }
       }
 
-      readTo(ref SystemTime retVal)
+      readTo(out SystemTime retVal)
       {
          SystemTime value := 0l;
          extern KERNEL32.SystemTimeToFileTime(self, ref value);

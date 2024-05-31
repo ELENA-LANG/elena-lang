@@ -1,5 +1,6 @@
 import extensions;
 import system'routines;
+import system'dynamic;
 import system'dynamic'expressions;
 import system'text;
 import ltests;
@@ -1922,5 +1923,78 @@ public interfaceImplTests() : testCase()
 
    var r := i.retrieve();
    Assert.ifTrue(r :is II_A);
+   console.write(".");
+}
+interface IDecoratorA
+{
+   abstract giveMe();
+}
+
+class DecoratorBaseA : IDecoratorA
+{
+   field value;
+
+   constructor(value)
+   {
+      this value := value
+   }
+
+   giveMe()
+      = value;
+}
+
+class DecoratorA
+{
+   object target;
+   object extra;
+
+   constructor(target, extra)
+   {
+      this target := target;
+      this extra := extra;
+   }
+
+   giveMe()
+      = target.giveMe() + extra;
+
+   generic cast()
+   {
+      var type := __received.__getFirstSignatureMember();
+
+      var proxy := ::{ dispatch() => self; };
+      proxy.__injectInferface(type);
+   
+      ^ __received(proxy);
+   }
+}
+
+public decoratorTest() : testCase()
+{
+   var a := new DecoratorBaseA(2);
+   var decA := new DecoratorA(a, 3);
+
+   Assert.ifEqual((decA :as IDecoratorA).giveMe(), 5);
+
+   console.write(".");
+}
+
+class ifNilOperatorHelper
+{
+   get()
+     = 2;
+
+   get Value()
+     = 3;
+}
+
+public ifNilOperatorTest() : testCase()
+{
+   var a := new ifNilOperatorHelper();
+   var b := nil;
+   Assert.ifEqual(a?.get(), 2);
+   Assert.ifEqual(a?.Value, 3);
+   console.write(".");
+   Assert.ifNil(b?.get());
+   Assert.ifNil(b?.Value);
    console.write(".");
 }

@@ -56,6 +56,9 @@ typedef ObjectPage64    ObjectPage;
 
 #endif
 
+static size_t minorCollections = 0;
+static size_t majorCollections = 0;
+
 inline ObjectPage* getObjectPage(uintptr_t objptr)
 {
    return (ObjectPage*)(objptr - elObjectOffset);
@@ -328,6 +331,8 @@ inline void FixObject(GCTable* table, GCRoot* roots, size_t start, size_t end)
 
 inline void FullCollect(GCTable* table, GCRoot* roots)
 {
+   majorCollections++;
+
    uintptr_t yg_start = table->gc_yg_start;
    uintptr_t mg_end = table->gc_mg_current;
 
@@ -444,6 +449,8 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
    table->gc_yg_end = table->gc_shadow_end;
    table->gc_shadow_end = tmp;
 
+   minorCollections++;
+
    if ((table->gc_yg_end - table->gc_yg_current < size) || fullMode) {
       // ; expand MG if required to promote YG
       while (table->gc_end - table->gc_mg_current < table->gc_yg_current - table->gc_yg_start) {
@@ -542,4 +549,27 @@ bool SystemRoutineProvider :: CopyResult(addr_t value, char* output, size_t maxL
    else copied = 0;
 
    return true;
+}
+
+void SystemRoutineProvider :: CalcGCStatistics(SystemEnv* systemEnv, GCStatistics* statistics)
+{
+   auto table = systemEnv->gc_table;
+
+   statistics->ygInfo.allocated = (unsigned int)(table->gc_yg_current - table->gc_yg_start);
+   statistics->ygInfo.free = (unsigned int)table->gc_yg_end - table->gc_yg_current;
+
+   statistics->mgInfo.allocated = (unsigned int)(table->gc_mg_current - table->gc_mg_start);
+   statistics->mgInfo.free = (unsigned int)(table->gc_end - table->gc_mg_current);
+
+   statistics->permInfo.allocated = (unsigned int)(table->gc_perm_current - table->gc_perm_start);
+   statistics->permInfo.free = (unsigned int)(table->gc_perm_end - table->gc_perm_current);
+
+   statistics->minorCollections = (unsigned int)minorCollections;
+   statistics->majorCollections = (unsigned int)majorCollections;
+}
+
+void SystemRoutineProvider :: ResetGCStatistics()
+{
+   minorCollections = 0;
+   majorCollections = 0;
 }

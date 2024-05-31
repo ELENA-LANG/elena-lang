@@ -151,6 +151,9 @@ namespace elena_lang
 
       static void RaiseError(int code);
 
+      static void CalcGCStatistics(SystemEnv* systemEnv, GCStatistics* statistics);
+      static void ResetGCStatistics();
+
       static void Exit(int exitCode);
 
    } __routineProvider;

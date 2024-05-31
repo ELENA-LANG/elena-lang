@@ -1,10 +1,10 @@
 // ; --- Predefined References  --
-define INVOKER           10001h
-define VEH_HANDLER       10003h
+define INVOKER           	10001h
+define VEH_HANDLER       	10003h
 
-define CORE_TOC          20001h
-define SYSTEM_ENV        20002h
-define CORE_ET_TABLE     2000Bh
+define CORE_TOC          	20001h
+define SYSTEM_ENV        	20002h
+define CORE_SINGLE_CONTENT	2000Bh
 
 // ; ==== System commands ===
 
@@ -45,7 +45,7 @@ procedure % VEH_HANDLER
 
   mov  esi, edx
   mov  edx, eax   // ; set exception code
-  mov  eax, [data : % CORE_ET_TABLE]
+  mov  eax, [data : % CORE_SINGLE_CONTENT]
   jmp  eax
 
 end

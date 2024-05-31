@@ -80,21 +80,21 @@ public sealed const struct MessageName
 
    Message getPropertyMessage()
    {
-      self.createGetProperty(ref Message message);
+      self.createGetProperty(out Message message);
         
       ^ message
    }
 
    Message setPropertyMessage()
    {
-      self.createSetProperty(ref Message message);
+      self.createSetProperty(out Message message);
         
       ^ message
    }
 
    get Message VariadicMessage()
    {
-      self.createVariadic(ref Message message);
+      self.createVariadic(out Message message);
         
       ^ message        
    }

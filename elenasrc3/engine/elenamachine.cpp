@@ -400,7 +400,7 @@ addr_t ELENAMachine :: execute(SystemEnv* env, void* entryAddress)
    return retVal;
 }
 
-addr_t ELENAMachine::execute(SystemEnv* env, void* threadEntry, void* threadFunc)
+addr_t ELENAMachine :: execute(SystemEnv* env, void* threadEntry, void* threadFunc)
 {
    Entry entry;
    entry.address = env->bc_invoker;

@@ -499,11 +499,16 @@ void CompilingProcess :: parseModule(ProjectEnvironment& env,
    }
 }
 
-void CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target, 
+bool CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target, 
    ExtensionMap* outerExtensionList)
 {
-   _compiler->declare(&moduleScope, source, outerExtensionList);
-   _compiler->compile(&moduleScope, source, target, outerExtensionList);
+   bool nothingToCompile = _compiler->declare(&moduleScope, source, outerExtensionList);
+   if (!nothingToCompile) {
+      _compiler->compile(&moduleScope, source, target, outerExtensionList);
+
+      return true;
+   }
+   return false;
 }
 
 void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode)
@@ -526,18 +531,20 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    }
 }
 
-void CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode, 
+bool CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode, 
    ExtensionMap* outerExtensionList)
 {
    // generating build tree
    BuildTree buildTree;
-   compileModule(moduleScope, *syntaxTree, buildTree, outerExtensionList);
+   bool retVal = compileModule(moduleScope, *syntaxTree, buildTree, outerExtensionList);
 
    // generating byte code
    generateModule(moduleScope, buildTree, !templateMode);
+
+   return retVal;
 }
 
-void CompilingProcess :: buildModule(ProjectEnvironment& env,
+bool CompilingProcess :: buildModule(ProjectEnvironment& env,
    ModuleIteratorBase& module_it, SyntaxTree* syntaxTree,
    ForwardResolverBase* forwardResolver,
    ModuleSettings& moduleSettings,
@@ -568,7 +575,7 @@ void CompilingProcess :: buildModule(ProjectEnvironment& env,
 
    _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
 
-   buildSyntaxTree(moduleScope, syntaxTree, false, nullptr);
+   return buildSyntaxTree(moduleScope, syntaxTree, false, nullptr);
 }
 
 void CompilingProcess :: configurate(Project& project)
@@ -624,6 +631,7 @@ void CompilingProcess :: compile(ProjectBase& project,
    // compile the project
    SyntaxTree syntaxTree;
 
+   bool compiled = false;
    auto module_it = project.allocModuleIterator();
    while (!module_it->eof()) {
       ModuleSettings moduleSettings =
@@ -640,7 +648,7 @@ void CompilingProcess :: compile(ProjectBase& project,
          }
       };
 
-      buildModule(
+      compiled |= buildModule(
          env, *module_it, &syntaxTree, &project,
          moduleSettings,
          minimalArgList,
@@ -651,7 +659,8 @@ void CompilingProcess :: compile(ProjectBase& project,
 
    freeobj(module_it);
 
-   _presenter->print(ELC_SUCCESSFUL_COMPILATION);
+   _presenter->print(compiled 
+      ? ELC_SUCCESSFUL_COMPILATION : ELC_IDLE_COMPILATION);
 }
 
 void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS)

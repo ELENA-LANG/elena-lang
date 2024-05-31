@@ -88,14 +88,14 @@ namespace elena_lang
 
       IdentifierList      _forwards;
 
-      void buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode, 
+      bool buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode, 
          ExtensionMap* outerExtensionList);
 
       void parseFileStandart(SyntaxWriterBase* syntaxWriter, path_t path);
       void parseFileUserDefinedGrammar(SyntaxWriterBase* syntaxWriter, path_t path,
          ProjectTarget* parserTarget, path_t projectPath);
 
-      void compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target, 
+      bool compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target, 
          ExtensionMap* outerExtensionList);
       void generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode);
       void parseFileTemlate(ustr_t prolog, path_t name,
@@ -108,7 +108,7 @@ namespace elena_lang
          ModuleIteratorBase& module_it,
          SyntaxTreeBuilder& builder, 
          ModuleScopeBase& moduleScope);
-      void buildModule(ProjectEnvironment& env,
+      bool buildModule(ProjectEnvironment& env,
          ModuleIteratorBase& module_it, 
          SyntaxTree* syntaxTree, 
          ForwardResolverBase* forwardResolver,

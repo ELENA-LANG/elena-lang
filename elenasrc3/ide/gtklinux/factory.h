@@ -11,7 +11,7 @@
 #include "gtklinux/gtkcommon.h"
 //#include "gtklinux/gtksdi.h"
 //#include "gtklinux/gtkgraphic.h"
-//#include "gtklinux/gtktextview.h"
+#include "gtklinux/gtktextview.h"
 #include "ideview.h"
 #include "idecontroller.h"
 
@@ -21,10 +21,10 @@ namespace elena_lang
    class IDEFactory : public GUIFactoryBase, public ViewFactoryBase
    {
    protected:
-//      FontFactory    _fontFactory;
-//      ViewStyles     _styles;
-//      StyleInfo*     _schemes[2];
-//      GUISettinngs   _settings;
+      FontFactory    _fontFactory;
+      ViewStyles     _styles;
+      StyleInfo*     _schemes[3];
+      GUISettinngs   _settings;
 
       //HINSTANCE      _instance;
       //int            _cmdShow;
@@ -48,8 +48,8 @@ namespace elena_lang
          ProcessBase* vmConsoleProcess) override;
 
       IDEFactory(IDEModel* ideView,
-         IDEController* ideController/*,
-         GUISettinngs   settings*/);
+         IDEController* ideController,
+         GUISettinngs   settings);
    };
 }
 

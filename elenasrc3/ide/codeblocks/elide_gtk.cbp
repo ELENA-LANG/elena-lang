@@ -81,8 +81,26 @@
 			<Add directory="../../common" />
 			<Add directory="../../gui" />
 		</Compiler>
+		<Unit filename="../../common/config.cpp" />
+		<Unit filename="../../common/config.h" />
+		<Unit filename="../../common/dump.cpp" />
+		<Unit filename="../../common/dump.h" />
+		<Unit filename="../../common/files.cpp" />
+		<Unit filename="../../common/files.h" />
+		<Unit filename="../../common/paths.cpp" />
+		<Unit filename="../../common/paths.h" />
 		<Unit filename="../../common/ustring.cpp" />
 		<Unit filename="../../common/ustring.h" />
+		<Unit filename="../../common/xmltree.cpp" />
+		<Unit filename="../../common/xmltree.h" />
+		<Unit filename="../../engine/module.cpp" />
+		<Unit filename="../../engine/module.h" />
+		<Unit filename="../../engine/section.cpp" />
+		<Unit filename="../../engine/section.h" />
+		<Unit filename="../../gui/controller.cpp" />
+		<Unit filename="../../gui/controller.h" />
+		<Unit filename="../../gui/document.cpp" />
+		<Unit filename="../../gui/document.h" />
 		<Unit filename="../../gui/gtklinux/gtkcommon.cpp" />
 		<Unit filename="../../gui/gtklinux/gtkcommon.h" />
 		<Unit filename="../../gui/gtklinux/gtkgraphic.cpp" />
@@ -96,6 +114,14 @@
 		<Unit filename="../../gui/gtklinux/gtktextview.cpp" />
 		<Unit filename="../../gui/gtklinux/gtktextview.h" />
 		<Unit filename="../../gui/guicommon.h" />
+		<Unit filename="../../gui/text.cpp" />
+		<Unit filename="../../gui/text.h" />
+		<Unit filename="../../gui/view.cpp" />
+		<Unit filename="../../gui/view.h" />
+		<Unit filename="../debugcontroller.cpp" />
+		<Unit filename="../debugcontroller.h" />
+		<Unit filename="../editframe.cpp" />
+		<Unit filename="../editframe.h" />
 		<Unit filename="../gtklinux/factory.cpp" />
 		<Unit filename="../gtklinux/factory.h" />
 		<Unit filename="../gtklinux/gtkide.cpp" />
@@ -105,6 +131,12 @@
 		<Unit filename="../idecommon.h" />
 		<Unit filename="../idecontroller.cpp" />
 		<Unit filename="../idecontroller.h" />
+		<Unit filename="../ideproject.cpp" />
+		<Unit filename="../ideproject.h" />
+		<Unit filename="../ideview.cpp" />
+		<Unit filename="../ideview.h" />
+		<Unit filename="../sourceformatter.cpp" />
+		<Unit filename="../sourceformatter.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

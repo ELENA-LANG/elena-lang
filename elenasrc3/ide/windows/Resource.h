@@ -107,6 +107,7 @@
 #define IDM_PROJECT_EXCLUDE            802
 #define IDM_PROJECT_COMPILE            803
 #define IDM_PROJECT_OPTION             804
+#define IDM_DEBUGGER_OPTIONS           805
 
 #define IDD_SETTINGS                   850
 #define IDC_SETTINGS_TEPMPLATE         851
@@ -173,11 +174,20 @@
 #define IDC_EDITOR_USETAB              1704
 #define IDC_EDITOR_TABSIZE             1705
 #define IDC_EDITOR_HIGHLIGHSYNTAXFLAG  1706
-#define IDC_EDITOR_REMEMBERPATH        1708
-#define IDC_EDITOR_REMEMBERPROJECT     1709
+#define IDD_IDE_SETTINGS               1707
+#define IDC_IDE_REMEMBERPATH           1708
+#define IDC_IDE_REMEMBERPROJECT        1709
 #define IDC_EDITOR_ENCODING            1710
+#define IDC_IDE_PERSIST_CONSOLE        1711
+#define IDC_IDE_APPMAXIMIZED           1712
+#define IDD_DEBUGGER_SETTINGS          1713
+#define IDC_DEBUGGER_SRCPATH           1714
+#define IDC_DEBUGGER_LIBPATH           1715
+#define IDC_IDE_AUTORECOMPILE          1716
+#define IDC_IDE_AUTOSAVE               1717
 
 #define IDM_EDITOR_OPTIONS             1750
+#define IDM_IDE_OPTIONS                1751
 
 #ifndef IDC_STATIC
 #define IDC_STATIC                 -1

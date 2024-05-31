@@ -104,6 +104,22 @@ namespace elena_lang
       ~Project() override = default;
    };
 
+   // --- ProjectCollection ---
+   class ProjectCollection
+   {
+      FileEncoding            _encoding;
+
+   public:
+      XmlProjectBase::Paths   paths;
+
+      bool load(path_t path);
+
+      ProjectCollection()
+         : paths(nullptr)
+      {
+         _encoding = FileEncoding::UTF8;
+      }
+   };
 }
 
 #endif // PROJECT_H

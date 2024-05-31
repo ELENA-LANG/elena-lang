@@ -107,7 +107,7 @@ internal singleton PrimitiveRealOperations
 
    real getPi()
    {
-      self.getPi(ref real retVal);
+      self.getPi(out real retVal);
       
       ^ retVal
    }
@@ -246,7 +246,7 @@ internal singleton PrimitiveRealOperations
 
    int getHashcode(real r)
    {
-      self.hash(r, ref int retVal);
+      self.hash(r, out int retVal);
 
       ^ retVal
    }
@@ -267,7 +267,7 @@ internal singleton PrimitiveRealOperations
 
    loadFromByteArray(byte[] dest, int index, ref real retVal)
    {
-      PrimitiveLongOperations.loadFromByteArray(dest, index, ref long temp);
+      PrimitiveLongOperations.loadFromByteArray(dest, index, out long temp);
 
       pointer ptr := temp;
       
@@ -362,11 +362,11 @@ internal singleton PrimitiveStringOperations
       };
    }
 
-   private hash(string s, ref int retVal) : external(system'core_routines'__strHash);
+   private hash(string s, out int retVal) : external(system'core_routines'__strHash);
 
    int getHashcode(string s)
    {
-      self.hash(s, ref int retVal);
+      self.hash(s, out int retVal);
 
       ^ retVal
    }
@@ -477,7 +477,7 @@ internal singleton PrimitiveWideStringOperations
 
    int getHashcode(wide s)
    {
-      self.hash(s, ref int retVal);
+      self.hash(s, out int retVal);
 
       ^ retVal
    }
@@ -487,11 +487,11 @@ internal singleton PrimitiveWideStringOperations
 
 internal singleton PrimitiveIntOperations
 {
-   private hash(int n, ref int retVal) : external(system'core_routines'__intHash);
+   private hash(int n, out int retVal) : external(system'core_routines'__intHash);
 
    int getHashcode(int n)
    {
-      self.hash(n, ref int retVal);
+      self.hash(n, out int retVal);
 
       ^ retVal
    }
@@ -500,7 +500,7 @@ internal singleton PrimitiveIntOperations
    {
       int v := n;
 
-      self.hash(v, ref int retVal);
+      self.hash(v, out int retVal);
 
       ^ retVal
    }
@@ -547,11 +547,11 @@ internal singleton PrimitiveIntOperations
 
 internal singleton PrimitiveLongOperations
 {
-   private hash(long n, ref int retVal) : external(system'core_routines'__longHash);
+   private hash(long n, out int retVal) : external(system'core_routines'__longHash);
 
    int getHashcode(long n)
    {
-      self.hash(n, ref int retVal);
+      self.hash(n, out int retVal);
 
       ^ retVal
    }
@@ -565,7 +565,7 @@ internal singleton PrimitiveLongOperations
       PrimitiveIntOperations.saveToByteArray(hi, dest, index + 4);
    }
 
-   loadFromByteArray(byte[] dest, int index, ref long retVal)
+   loadFromByteArray(byte[] dest, int index, out long retVal)
    {
       long val := dest[index + 7];
       val := val $shl 8;

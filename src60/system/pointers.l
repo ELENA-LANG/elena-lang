@@ -58,8 +58,8 @@ public sealed const struct UnsafePointer
    get constructor Default()
       = new UnsafePointer();   
 
-   private readIntPtr(ref int retVal) : external(system'core_routines'__readIntPtr);
-   private readRealPtr(ref real retVal) : external(system'core_routines'__readRealPtr);
+   private readIntPtr(out int retVal) : external(system'core_routines'__readIntPtr);
+   private readRealPtr(out real retVal) : external(system'core_routines'__readRealPtr);
 
    private assignPtr(object obj) : external(system'core_routines'__assignPtr); 
 
@@ -81,14 +81,14 @@ public sealed const struct UnsafePointer
 
    int cast()
    {
-      self.readIntPtr(ref int retVal);
+      self.readIntPtr(out int retVal);
 
       ^ retVal
    }
 
    real cast()
    {
-      self.readRealPtr(ref real retVal);
+      self.readRealPtr(out real retVal);
 
       ^ retVal
    }
@@ -103,12 +103,12 @@ public sealed class CallStack
 {
    pointer[] stack;
 
-   private load(pointer[] stack, int length, ref int retVal) : external(system'core_routines'__loadCallStack);
+   private load(pointer[] stack, int length, out int retVal) : external(system'core_routines'__loadCallStack);
 
    constructor()
    {
       pointer stack[64];
-      self.load(stack, 64, ref int length);
+      self.load(stack, 64, out int length);
 
       this stack := class Array<pointer>.copy(stack, 0, length);
    }
@@ -116,7 +116,7 @@ public sealed class CallStack
    constructor(int trimingLevel)
    {
       pointer stack[64];
-      self.load(stack, 64, ref int length);
+      self.load(stack, 64, out int length);
 
       this stack := class Array<pointer>.copy(stack, trimingLevel, length - trimingLevel);
    }

@@ -9,7 +9,44 @@
 using namespace elena_lang;
 
 // --- TextViewFrame ---
-TextViewFrame :: TextViewFrame()
+TextViewFrame :: TextViewFrame(TextViewModel* model, ViewStyles* styles)
    : TabBar()
+{
+   _model = model;
+   _styles = styles;
+
+   _model->attachListener(this);
+}
+
+void TextViewFrame :: onDocumentNew(int index)
+{
+   TextViewWindow* view = new TextViewWindow(_model, _styles/*, &_controller->sourceController*/);
+   //textView->textview_changed().connect(sigc::mem_fun(*this,
+   //           &EditFrame::on_textview_changed));
+
+//   textView->setStyles(STYLE_MAX + 1, _schemes[_scheme], 15, 20);
+//   textView->applySettings(_model->tabSize, _model->tabCharUsing, _model->lineNumberVisible, _model->highlightSyntax);
+//
+//   textView->setDocument(document);
+//
+//   textView->show(); // !! temporal?
+
+   ustr_t title = _model->getDocumentName(index);
+   addTab(title, view);
+}
+
+void TextViewFrame :: onDocumentSelect(int index)
+{
+}
+
+void TextViewFrame :: onDocumentModeChanged(int index, bool modifiedMode)
+{
+}
+
+void TextViewFrame :: beforeDocumentClose(int index)
+{
+}
+
+void TextViewFrame :: onDocumentClose(int index, bool empty)
 {
 }

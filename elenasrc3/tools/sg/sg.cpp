@@ -178,8 +178,6 @@ int main(int argc, char* argv[])
       ParserTable  table;
       table.registerNonterminal(pkStart, "START");
       table.registerNonterminal(pkEps, "eps");
-      table.registerNonterminal(pkClose, "$close");
-      table.registerNonterminal(pkDiscard, "$new");
 
       parse_key_t rule[MAX_RULE_LEN];
       size_t rule_len = 0;
@@ -225,14 +223,14 @@ int main(int argc, char* argv[])
 
             rule[rule_len++] = registerSymbol(table, *token.token, lastKey + 1, false) | pkInjectable;
          }
-         else if (token.compare("=")) {
-            reader.read(token);
+         //else if (token.compare("=")) {
+         //   reader.read(token);
 
-            rule[rule_len++] = registerSymbol(table, *token.token, lastKey + 1, false) | pkRenaming;
-         }
-         else if (token.compare("$new") || token.compare("$close")) {
-            rule[rule_len++] = registerSymbol(table, *token.token, lastKey + 1, false) | pkInjectable | pkTraceble;
-         }
+         //   rule[rule_len++] = registerSymbol(table, *token.token, lastKey + 1, false) | pkRenaming;
+         //}
+         //else if (token.compare("$new") || token.compare("$close")) {
+         //   rule[rule_len++] = registerSymbol(table, *token.token, lastKey + 1, false) | pkInjectable | pkTraceble;
+         //}
          else if (token.compare("+")) {
             rule[rule_len - 1] = registerPlusRule(table, rule[rule_len - 1]);
          }

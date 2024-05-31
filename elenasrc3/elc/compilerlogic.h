@@ -31,6 +31,7 @@ namespace elena_lang
       bool variadicOne;
       bool variableOne;
       bool byRefOne;
+      bool outRefOne;
       bool mssgNameLiteral;
       bool newOp;
       bool classOne;
@@ -38,7 +39,7 @@ namespace elena_lang
 
       bool isNonempty() const
       {
-         return variableOne || variadicOne || byRefOne || mssgNameLiteral || newOp || typecastOne;
+         return variableOne || variadicOne || byRefOne || outRefOne || mssgNameLiteral || newOp || typecastOne;
       }
    };
 

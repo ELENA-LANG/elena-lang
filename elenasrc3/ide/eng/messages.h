@@ -9,7 +9,7 @@
 
 namespace elena_lang
 {
-   constexpr auto APP_NAME                      = _T("ELENA IDE 6.0");
+   constexpr auto APP_NAME                      = _T("ELENA IDE 6.1");
 
    constexpr auto OPEN_FILE_CAPTION             = _T("Open File");
    constexpr auto OPEN_PROJECT_CAPTION          = _T("Open Project");
@@ -27,6 +27,8 @@ namespace elena_lang
 
    constexpr auto NOT_FOUND_TEXT                = _T("Search string not found");
    constexpr auto REPLACE_TEXT                  = _T("Replace this occurence?");
+
+   constexpr auto CONSOLE_OUTPUT_TEXT           = "\nTo disable this feature go to Tools - IDE Options\nand uncheck Prevent the console from closing on the program end\nPress any key...";
 
    // --- Hints ---
    constexpr auto HINT_NEW_FILE                 = _T("New File");

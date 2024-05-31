@@ -12,7 +12,7 @@ namespace text
          this codePage := codePage;
       }
 
-      convertChar(char ch, byte[] byteArray, int index, ref int length)
+      convertChar(char ch, byte[] byteArray, int index, out int length)
       {
          byte buffer[4];
          short tmp[4];
@@ -32,14 +32,16 @@ namespace text
          length := retVal;
       }
 
-      char convertToChar(byte[] byteArray, int index, ref int length)
+      char convertToChar(byte[] byteArray, int index, out int length)
       {
          short tmp[4];
          int byteArrayLen := 1;
 
          int converted := extern KERNEL32.MultiByteToWideChar(codePage, MB_ERR_INVALID_CHARS, byteArray, byteArrayLen, tmp, 4);
          
-         UTFOperations.convertUTF16_2_32(tmp, 0, converted, ref int value);
+         length := converted;
+
+         UTFOperations.convertUTF16_2_32(tmp, 0, converted, out int value);
 
          char ch := value;
          ^ ch

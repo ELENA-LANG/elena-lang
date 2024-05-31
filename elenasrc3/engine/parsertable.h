@@ -3,7 +3,7 @@
 //               
 //		This header contains Parser table class declaration.
 //
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PARSERTABLE_H
@@ -16,14 +16,11 @@ namespace elena_lang
    // --- Parser key constants ---
    constexpr parse_key_t pkStart          = 1;
    constexpr parse_key_t pkEps            = 2; 
-   // NOTE : the keys below are special ones used to manipulate the tree construction
-   constexpr parse_key_t pkClose          = 3; 
-   constexpr parse_key_t pkDiscard        = 4; // NOTE: should be the last in the rule
 
    constexpr parse_key_t pkTraceble       = 0x01000;  // masks
    constexpr parse_key_t pkTerminal       = 0x02000;
-   constexpr parse_key_t pkInjectable     = 0x0C000;
-   constexpr parse_key_t pkRenaming       = 0x08000;
+   constexpr parse_key_t pkError          = 0x04000;
+   constexpr parse_key_t pkInjectable     = 0x08000;
    constexpr parse_key_t pkAnySymbolMask  = 0x0F000;
    constexpr parse_key_t pkMaxKey         = 0x0FFFF;
 

@@ -93,9 +93,9 @@ copy %~dp0\..\bin\command60.es %~dp0\x86\bin
 
 copy %~dp0\..\bin\x86\core60.bin %~dp0\x86\bin\x86\
 copy %~dp0\..\bin\x86\core60_win.bin %~dp0\x86\bin\x86\
-copy %~dp0\..\bin\x86\core60_win.bin %~dp0\x86\bin\x86\
 copy %~dp0\..\bin\x86\core60_win_client.bin %~dp0\x86\bin\x86\
 copy %~dp0\..\bin\x86\corex60.bin %~dp0\x86\bin\x86\
+copy %~dp0\..\bin\x86\corex60_win.bin %~dp0\x86\bin\x86\
 
 copy %~dp0\..\bin\templates\*.cfg %~dp0\x86\bin\templates\
 copy %~dp0\..\bin\scripts\*.es %~dp0\x86\bin\scripts\
@@ -218,6 +218,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 %~dp0\..\bin\asm-cli -x86 %~dp0\..\asm\x32\core60_win.asm %~dp0\x86\bin\x32
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\..\bin\asm-cli -x86 %~dp0\..\asm\x32\corex60_win.asm %~dp0\x86\bin\x32
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

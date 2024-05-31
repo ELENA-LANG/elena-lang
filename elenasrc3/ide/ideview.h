@@ -68,6 +68,9 @@ public:
    ContextBrowserModel  contextBrowserModel;
 
    bool                 appMaximized;
+   bool                 rememberLastPath;
+   bool                 rememberLastProject;
+   bool                 autoSave;
 
    SourceViewModel* viewModel() { return &sourceViewModel; }
 
@@ -79,6 +82,9 @@ public:
       status = IDEStatus::Empty;
       running = false;
       appMaximized = false;
+      rememberLastPath = false;
+      rememberLastProject = false;
+      autoSave = false;
    }
 };
 
