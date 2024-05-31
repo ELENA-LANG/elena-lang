@@ -11,7 +11,11 @@
 #include "debugcontroller.h"
 #include "module.h"
 
+#ifdef _MSC_VER
+
 #include <tchar.h>
+
+#endif
 
 using namespace elena_lang;
 
@@ -35,20 +39,17 @@ inline ref_t mapModuleReference(ModuleBase* module, ustr_t referenceName, bool e
    else return module->mapReference(referenceName, existing);
 }
 
+inline bool isEqualOrSubSetNs(ustr_t package, ustr_t value)
+{
+   return package.compare(value) || (value.compare(package, package.length()) && (value[package.length()] == '\''));
+}
+
 void DebugInfoProvider :: retrievePath(ustr_t name, PathString& path, path_t extension)
 {
    ustr_t package = _model->getPackage();
 
-   // if it is the root package
-   if (package.compare(name)) {
-      path.copy(*_model->projectPath);
-      path.combine(_model->getOutputPath());
-
-      ReferenceName::nameToPath(path, name);
-      path.appendExtension(extension);
-   }
-   // if the class belongs to the project package
-   else if (name.compare(package, package.length()) && (name[package.length()] == '\'')) {
+   // if it is the project package
+   if (isEqualOrSubSetNs(package, name)) {
       path.copy(*_model->projectPath);
       path.combine(_model->getOutputPath());
 
@@ -56,6 +57,20 @@ void DebugInfoProvider :: retrievePath(ustr_t name, PathString& path, path_t ext
       path.appendExtension(extension);
    }
    else {
+      // check external libraries
+      for (auto ref_it = _model->referencePaths.start(); !ref_it.eof(); ++ref_it) {
+         ustr_t extPackage = ref_it.key();
+         if (isEqualOrSubSetNs(extPackage, name)) {
+            path.copy(*_model->projectPath);
+            path.combine(*ref_it);
+
+            ReferenceName::nameToPath(path, name);
+            path.appendExtension(extension);
+
+            return;
+         }
+      }
+
       // if file doesn't exist use package root
       path.copy(*_model->paths.libraryRoot);
 
@@ -482,7 +497,7 @@ DebugLineInfo* DebugInfoProvider :: seekClassInfo(addr_t address, IdentifierStri
 
 // --- DebugController ---
 
-DebugController :: DebugController(DebugProcessBase* process, ProjectModel* model, 
+DebugController :: DebugController(DebugProcessBase* process, ProjectModel* model,
    SourceViewModel* sourceModel, DebugSourceController* sourceController)
    : _provider(model)
 {
@@ -493,11 +508,12 @@ DebugController :: DebugController(DebugProcessBase* process, ProjectModel* mode
    _model = model;
    _currentPath = nullptr;
    _sourceController = sourceController;
+   _witExplicitConsole = false;
 }
 
 void DebugController :: debugThread()
 {
-   if (!_process->startProgram(_debuggee.str(), _arguments.str())) {
+   if (!_process->startProgram(_debuggee.str(), _arguments.str(), _witExplicitConsole)) {
       //HOTFIX : to inform the listening thread
       _process->resetEvent(DEBUG_ACTIVE);
 
@@ -633,28 +649,9 @@ void DebugController :: processStep()
       IdentifierString moduleName;
       ustr_t sourcePath = nullptr;
       DebugLineInfo* lineInfo = _provider.seekDebugLineInfo((addr_t)_process->getState(), moduleName, sourcePath);
-      /*if (lineInfo->symbol == dsAssemblyStep) {
-         size_t objectPtr = _debugger.Context()->LocalPtr(1);
-         int flags = _debugger.Context()->VMTFlags(_debugger.Context()->ClassVMT(objectPtr));
-         //if (test(flags, elTapeGroup)) {
-         //   loadTapeDebugInfo(objectPtr);
-         //   _autoStepInto = true;
-         //}
-         //else {
-            // continue debugging if it is not a tape
-         stepInto();
-         //}
-      }
-      else */onCurrentStep(lineInfo, *moduleName, sourcePath);
-   }
-   //if (_debugger.Context()->checkFailed) {
-   //   _listener->onCheckPoint(_T("Operation failed"));
-   //}
-   //if (_debugger.Exception() != NULL) {
-   //   ProcessException* exeption = _debugger.Exception();
 
-   //   _listener->onNotification(exeption->Text(), exeption->address, exeption->code);
-   //}
+      onCurrentStep(lineInfo, *moduleName, sourcePath);
+   }
 }
 
 void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath)
@@ -665,7 +662,7 @@ void DebugController :: onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName
          _currentModule.copy(moduleName);
          _currentPath = sourcePath;
 
-         PathString path(sourcePath); 
+         PathString path(sourcePath);
          found = _sourceController->selectSource(_model, _sourceModel, moduleName, *path);
       }
 
@@ -822,14 +819,15 @@ bool DebugController :: startThread()
 
 void DebugController :: clearBreakpoints()
 {
-   
+
 }
 
-bool DebugController :: start(path_t programPath, path_t arguments, bool debugMode)
+bool DebugController :: start(path_t programPath, path_t arguments, bool debugMode, bool witExplicitConsole)
 {
    _currentModule.clear();
    _debuggee.copy(programPath);
    _arguments.copy(arguments);
+   _witExplicitConsole = witExplicitConsole;
 
    if (debugMode) {
       addr_t entryPoint = _process->findEntryPoint(programPath);
@@ -861,7 +859,7 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
    // if there are new records in debug section
    if (!reader.eof()) {
       _provider.load(reader, starting, _process);
-      
+
       _sourceController->traceStart(_model);
 
       _provider.setDebugInfoSize(reader.position());
@@ -872,7 +870,7 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
    else _process->setEvent(DEBUG_RESUME);
 }
 
-void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item, addr_t address, int level, 
+void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item, addr_t address, int level,
    DebugLineInfo* info, addr_t vmtAddress)
 {
    WatchContext context = { item, address };

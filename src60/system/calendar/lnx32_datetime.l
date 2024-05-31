@@ -56,20 +56,20 @@ namespace calendar
          tv_usec := microSeconds
       }
 
-      internal read(ref int seconds, ref int microSeconds)
+      internal read(out int seconds, out int microSeconds)
       {
          seconds := tv_sec;
          microSeconds := tv_usec
       }
 
-      internal readMSec(ref int microSeconds)
+      internal readMSec(out int microSeconds)
       {
          microSeconds := tv_usec;
       }
 
       bool equal(SystemTime operand)
       {
-         operand.read(ref int sec, ref int usec);
+         operand.read(out int sec, out int usec);
             
          if(sec == tv_sec)
             { ^ tv_usec == usec };
@@ -79,7 +79,7 @@ namespace calendar
     
       bool less(SystemTime operand)
       {
-         operand.read(ref int sec, ref int usec);
+         operand.read(out int sec, out int usec);
             
          if(sec == tv_sec)
             { ^ tv_usec < usec };
@@ -105,7 +105,7 @@ namespace calendar
     
       SystemTime subtract(SystemTime operand)
       {
-         operand.read(ref int sec, ref int usec);
+         operand.read(out int sec, out int usec);
             
          int ms := tv_usec;
          if(usec > tv_usec)
@@ -118,7 +118,7 @@ namespace calendar
     
       SystemTime add(SystemTime operand)
       {
-         operand.read(ref int sec, ref int usec);
+         operand.read(out int sec, out int usec);
             
          int ms := tv_usec + usec;
             
@@ -147,12 +147,12 @@ namespace calendar
         
       int tm_usec;        
 
-      embeddable constructor(SystemTime time)
+      constructor(SystemTime time)
       {
          self.write(time)
       }
 
-      embeddable constructor()
+      constructor()
       {
          tm_isdst := -1
       }
@@ -288,7 +288,7 @@ namespace calendar
          }
       }
 
-      readTo(ref SystemTime retVal)
+      readTo(out SystemTime retVal)
       {
          // HOTFIX
          tm_isdst := -1;

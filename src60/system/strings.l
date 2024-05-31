@@ -182,7 +182,7 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
 {
    embeddable __string T[] array;
 
-   private readArgLength(ref int retVal) : external(system'core_routines'__varg_readLength);
+   private readArgLength(out int retVal) : external(system'core_routines'__varg_readLength);
 
    T at(int n)
       = array[n];
@@ -196,7 +196,7 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
    {
       get()
       {
-         self.readArgLength(ref int len);
+         self.readArgLength(out int len);
             
          ^ len
       }
@@ -539,7 +539,7 @@ public sealed class IntMatrix
    }
         
    /// Reads the matrix lengths to the output parameter
-   readLengthsTo(ref int rows, ref int columns)
+   readLengthsTo(out int rows, out int columns)
    {
       rows := _rows;
       columns := _columns
@@ -876,7 +876,7 @@ public const struct String : BaseValue,
          OutOfRangeException.raise()
       };
 
-      UTFOperations.convertUTF8_2_32(array, index, len, ref int retVal);
+      UTFOperations.convertUTF8_2_32(array, index, len, out int retVal);
 
       char ch := retVal;
 
@@ -1108,7 +1108,8 @@ sealed class StringIndexer : Indexer<char>
 
 // --- WideString ---
 
-public const struct WideString : BaseValue
+public const struct WideString : BaseValue,
+   info("A UTF-16 literal value")
 {
    __string short[] array;
 
@@ -1248,7 +1249,7 @@ public const struct WideString : BaseValue
          OutOfRangeException.raise()
       };
 
-      UTFOperations.convertUTF16_2_32(array, index, len, ref int retVal);
+      UTFOperations.convertUTF16_2_32(array, index, len, out int retVal);
 
       char ch := retVal;
 

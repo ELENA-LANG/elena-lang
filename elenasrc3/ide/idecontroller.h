@@ -85,8 +85,8 @@ namespace elena_lang
 
       bool isIncluded(ProjectModel& model, ustr_t ns);
 
-      bool compileProject(ProjectModel& model);
-      bool compileSingleFile(ProjectModel& model);
+      bool compileProject(ProjectModel& model, int postponedAction);
+      bool compileSingleFile(ProjectModel& model, int postponedAction);
 
    public:
       bool isStarted()
@@ -118,7 +118,8 @@ namespace elena_lang
       bool startVMConsole(ProjectModel& model);
       void stopVMConsole();
 
-      bool onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, DebugActionResult& result);
+      bool onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, 
+         DebugActionResult& result, bool withoutPostponeAction);
 
       void doDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action);
       void doDebugStop(ProjectModel& model);
@@ -237,7 +238,8 @@ namespace elena_lang
 
       bool doCompileProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
       void doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model);
-      void doDebugAction(IDEModel* model, DebugAction action, MessageDialogBase& mssgDialog);
+      void doDebugAction(IDEModel* model, DebugAction action, 
+         MessageDialogBase& mssgDialog, bool withoutPostponeAction);
       void doDebugStop(IDEModel* model);
 
       void doStartVMConsole(IDEModel* model);
@@ -247,6 +249,8 @@ namespace elena_lang
       void doOutdent(IDEModel* model);
 
       void doConfigureEditorSettings(EditorSettingsBase& editorDialog, IDEModel* model);
+      void doConfigureIDESettings(IDESettingsBase& editorDialog, IDEModel* model);
+      void doConfigureDebuggerSettings(DebuggerSettingsBase& editorDialog, IDEModel* model);
 
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param);
@@ -278,6 +282,8 @@ namespace elena_lang
       bool onClose(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model);
 
       void init(IDEModel* model, int& status);
+
+      void autoSave(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
 
       IDEController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* process,
          IDEModel* model, TextViewSettings& textViewSettings, PlatformType platform, PathHelperBase* pathHelper, CompareFileDateTime comparer

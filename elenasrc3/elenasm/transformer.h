@@ -38,7 +38,7 @@ namespace elena_lang
       void saveToken(MemoryWriter& writer, ScriptEngineReaderBase& reader, ScriptBookmark bm);
 
       void saveClass(MemoryWriter& writer, ScriptEngineReaderBase& reader, Stack<ScriptBookmark>& stack, int allocated,
-         int& maxAllocated, int& maxStackSize);
+         int& maxAllocated, pos_t& maxStackSize);
       void flush(MemoryWriter& writer, ScriptEngineReaderBase& reader, Stack<ScriptBookmark>& stack);
 
    public:

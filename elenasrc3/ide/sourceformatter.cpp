@@ -7,7 +7,11 @@
 #include "sourceformatter.h"
 #include "view.h"
 
+#ifdef _MSC_VER
+
 #include <tchar.h>
+
+#endif
 
 using namespace elena_lang;
 

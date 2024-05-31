@@ -28,6 +28,7 @@ namespace elena_lang
    constexpr auto PROFILE_CATEGORY                    = "/profile";
 
    constexpr auto MODULE_CATEGORY                     = "files/*";
+   constexpr auto REFERENCE_CATEGORY                  = "references/*";
 
    constexpr auto WIN_X86_KEY                         = "Win_x86";
    constexpr auto WIN_X86_64_KEY                      = "Win_x64";
@@ -120,7 +121,7 @@ namespace elena_lang
    public:
       virtual void onOutput(const char* s) = 0;
       virtual void onErrorOutput(const char* s) = 0;
-      virtual void afterExecution(int exitCode) = 0;
+      virtual void afterExecution(int exitCode, int extraArg) = 0;
    };
 
    typedef List<ProcessListenerBase*> ProcessListeners;
@@ -137,7 +138,7 @@ namespace elena_lang
          _listeners.add(listener);
       }
 
-      virtual bool start(path_t path, path_t commandLine, path_t curDir, bool readOnly) = 0;
+      virtual bool start(path_t path, path_t commandLine, path_t curDir, bool readOnly, int extraArg) = 0;
       virtual void stop(int exitCode) = 0;
 
       virtual bool write(const char* line, size_t length) = 0;
@@ -254,7 +255,7 @@ namespace elena_lang
    {
    public:
       virtual bool startThread(DebugControllerBase* controller) = 0;
-      virtual bool startProgram(const wchar_t* exePath, const wchar_t* cmdLine) = 0;
+      virtual bool startProgram(path_t exePath, path_t cmdLine, bool withExplicitConsole) = 0;
 
       virtual void activate() = 0;
       virtual void run() = 0;
@@ -365,6 +366,23 @@ namespace elena_lang
       int Index() { return _index; }
 
       SelectionEvent(int id, int index);
+   };
+
+   // --- CompletionEvent ---
+   class CompletionEvent : public EventBase
+   {
+      int _eventId;
+      int _exitCode;
+      int _postpinedAction;
+
+   public:
+      int eventId() override;
+
+      int ExitCode() { return _exitCode; }
+
+      int PostpinedAction() { return _postpinedAction; }
+
+      CompletionEvent(int id, int exitCode, int postpinedAction);
    };
 
    // --- ParamSelectionEvent ---

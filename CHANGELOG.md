@@ -1,3 +1,30 @@
+## ELENA 6.2.0
+
+- ELENA
+
+- ELC
+  - [ADDED] optimized ternary expressions
+  - [FIXED] declaring a field with a type of template based array
+  - [ADDED] unit-test for declaring a field with a type of template based array
+
+- VM
+  - [ADDED] #590 : creating a dynamic interface wrapper
+
+- RT
+  - [ADDED] #590 : creating a dynamic interface wrapper
+
+- API
+  - [ADDED] #89 : new functionality - MemoryStream, BitArray, SortedList, SortedArrayList
+  - [ADDED] #95 : LiteralBuffer, WideBuffer
+
+- SAMPLES
+
+- Tools
+
+- IDE
+   
+- Misc
+
 ## ELENA 6.0.10
 *07.05.2024*
 

@@ -11,14 +11,16 @@ using namespace elena_lang;
 // --- ProjectModel ---
 
 ProjectModel :: ProjectModel(IDEStatus* status)
-   : lastOpenFiles(nullptr),
+   : referencePaths(nullptr),
+   lastOpenFiles(nullptr),
    lastOpenProjects(nullptr),
    sources(nullptr), addedSources(nullptr), removeSources(nullptr),
    breakpoints({}), projectTypeList(nullptr), profileList(nullptr)
 {
    this->status = status;
 
-   this->autoRecompile = /*true*/false;// !! temporal
+   this->withPersistentConsole = false;
+   this->autoRecompile = false;
 
    this->empty = true;
    this->started = false;

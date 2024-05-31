@@ -26,7 +26,8 @@ public interface Enumerator<T>
 {
    abstract bool next();
 
-   get abstract T Value();
+   get abstract T Value()
+      : info("Returns the current object");
 
    abstract reset();
 

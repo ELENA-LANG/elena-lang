@@ -244,7 +244,7 @@ namespace elena_lang
          _length = NOTFOUND_POS;
       }
 
-      bool isEOF() const { return _page.last() && _offset >= (int)(*_page).used; }
+      bool isEOF() const { return _page.last() && _offset >= (*_page).used; }
       bool isEOL() { return length_pos() <= (pos_t)_column; }
 
       TextBookmark();
@@ -292,7 +292,7 @@ namespace elena_lang
       void insert(TextBookmark bookmark, const_text_t s, size_t length, bool checkRowCount);
       void erase(TextBookmark bookmark, size_t length, bool checkRowCount);
 
-      bool compare(TextBookmark bookmark, const_text_t line, size_t len, bool matchCase, 
+      bool compare(TextBookmark bookmark, const_text_t line, size_t len, bool matchCase,
          const_text_t terminators);
 
    public:

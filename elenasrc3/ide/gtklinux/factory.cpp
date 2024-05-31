@@ -21,55 +21,61 @@ using namespace elena_lang;
 //WCHAR szSDI[MAX_LOADSTRING];                    // the main window class name
 //WCHAR szTextView[MAX_LOADSTRING];               // the main window class name
 
-//#define IDE_CHARSET_UTF8                     1 // !! dummy value
-//
-//// --- Styles ---
-//StyleInfo defaultStyles[STYLE_MAX + 1] = {
-//   {Color(0, 0, 0), Color(1, 1, 1), "Monospace", 10, false, false},
-//   {Color(0, 0, 0), Color(0.84, 0.84, 0.84), "Monospace", 10, false, false},
-//   {Color(0, 0, 0), Color(0.75, 0.75, 0.75), "Monospace", 10, false, false},
-//   //{Colour(0, 0, 1), Colour(1, 1, 1), "Monospace", 10, false, false},
-//   //{Colour(0, 0.4, 0.5), Colour(1, 1, 1), "Monospace", 10, true, false},
-//   //{Colour(0, 0, 0), Colour(1, 1, 1), "Monospace", 10, true, false},
-//   //{Colour(1, 0.5, 0.4), Colour(1, 1, 1), "Monospace", 10, false, false},
-//   //{Colour(0, 0.5, 0.5), Colour(1, 1, 1), "Monospace", 10, false, false},
-//   //{Colour(0, 0.5, 0), Colour(1, 1, 1), "Monospace", 10, false, false},
-//   //{Colour(0.37, 0.37, 0.37), Colour(0, 1, 1), "Monospace", 10, true, false},
-//   //{Colour(0.37, 0.37, 0.37), Colour(0, 1, 1), "Monospace", 10, true, false},
-//   //{Colour(0.37, 0.37, 0.37), Colour(0, 1, 1), "Monospace", 10, true, false},
-//   //{Colour(0.37, 0.37, 0.37), Colour(0, 1, 1), "Monospace", 10, true, false},
-//   //{Colour(0.37, 0.37, 0.37), Colour(0, 1, 1), "Monospace", 10, true, false},
-//   //{Colour(0.37, 0.37, 0.37), Colour(1, 1, 1), "Monospace", 10, true, false},
-//};
-////
-////StyleInfo classicStyles[STYLE_MAX + 1] = {
-////   {Colour(1, 1, 0), Colour(0, 0, 0.5), "Monospace", 10, false, false},
-////   {Colour(0, 0, 0), Colour(0.84, 0.84, 0.84), "Monospace", 10, false, false},
-////   {Colour(0.37, 0.37, 0.37), Colour(1, 1, 1), "Monospace", 10, false, false},
-////   {Colour(0.7, 0.7, 0.7), Colour(0, 0, 0.5), "Monospace", 10, false, false},
-////   {Colour(1, 1, 1), Colour(0, 0, 0.5), "Monospace", 10, false, false},
-////   {Colour(1, 1, 0), Colour(0, 0, 0.5), "Monospace", 10, true, false},
-////   {Colour(0, 1, 0.5), Colour(0, 0, 0.5), "Monospace", 10, false, false},
-////   {Colour(0, 1, 1), Colour(0, 0, 0.5), "Monospace", 10, false, false},
-////   {Colour(0.8, 0.8, 0.8), Colour(0, 0, 0.5), "Monospace", 10, false, false},
-////   {Colour(0.8, 0.8, 0.8), Colour(0, 0, 0.5), "Monospace", 10, false, false},
-////   {Colour(1, 1, 0), Colour(0, 0, 0.5), "Monospace", 10, true, false},
-////   {Colour(0, 1, 0.5), Colour(0, 0, 0.5), "Monospace", 10, false, false},
-////   {Colour(0, 1, 1), Colour(0, 0, 0.5), "Monospace", 10, false, false},
-////   {Colour(0.8, 0.8, 0.8), Colour(0, 0, 0.5), "Monospace", 10, false, false},
-////   {Colour(0.8, 0.8, 0.8), Colour(0, 0, 0.5), "Monospace", 10, false, false}//,
-////};
+// --- Styles ---
+StyleInfo defaultStyles[STYLE_MAX + 1] = {
+   {Color(0,0,0), Color(1, 1, 1), "Monospace", 10, false, false},
+   {Color(0,0,0), Color(0.84, 0.84, 0.84), "Monospace", 10, false, false},
+   {Color(0,0,0), Color(0.75, 0.75, 0.75), "Monospace", 10, false, false},
+   {Color(0.35, 0.35, 0.35), Color(0, 1, 1), "Monospace", 10, true, false},
+   {Color(1, 1, 1), Color(1, 0, 0), "Monospace", 10, false, false},
+   {Color(1, 1, 1), Color(1, 0, 0), "Monospace", 10, false, false},
+   {Color(0, 0, 1), Color(1, 1, 1), "Monospace", 10, false, false},
+   {Color(0.25, 0.5, 0.5), Color(1, 1, 1), "Monospace", 10, false, false},
+   {Color(0, 0.5, 0), Color(1, 1, 1), "Monospace", 10, false, false},
+   {Color(1, 0.5, 0.25), Color(1, 1, 1), "Monospace", 10, false, false},
+   {Color(0, 0.5, 0.5), Color(1, 1, 1), "Monospace", 10, false, false},
+};
+
+StyleInfo classicStyles[STYLE_MAX + 1] = {
+   {Color(1, 1, 0), Color(0, 0, 0.5), "Monospace", 10, false, false},
+   {Color(0.84, 0.84, 0.84), Color(0, 0, 68), "Monospace", 10, false, false},
+   {Color(0.35, 0.35, 0.35), Color(0.84, 0.84, 0.84), "Monospace", 10, true, false},
+   {Color(0.35, 0.35, 0.35), Color(0, 1, 1), "Monospace", 10, true, false},
+   {Color(1, 1, 1), Color(1, 0, 0), "Monospace", 10, false, false},
+   {Color(1, 1, 1), Color(0, 0, 0.5), "Monospace", 10, false, false},
+   {Color(1, 1, 1), Color(0, 0, 0.5), "Monospace", 10, false, false},
+   {Color(0.85, 0.85, 0.85), Color(0, 0, 0.5), "Monospace", 10, false, false},
+   {Color(0.85, 0.85, 0.85), Color(0, 0, 0.5), "Monospace", 10, false, false},
+   {Color(0, 1, 0.5), Color(0, 0, 0.5), "Monospace", 10, false, false},
+   {Color(0, 1, 1), Color(0, 0, 0.5), "Monospace", 10, false, false},
+};
+
+StyleInfo darkStyles[STYLE_MAX + 1] = {
+   {Color(1, 1, 1), Color(0.20, 0.20, 0.20), "Monospace", 10, false, false},
+   {Color(0.65, 0.65, 0.65), Color(0.5, 0.5, 0.5), "Monospace", 10, false, false},
+   {Color(0.4, 0.4, 0.4), Color(0.65, 0.65, 0.65), "Monospace", 10, true, false},
+   {Color(0.95, 0.95, 0.95), Color(0.5, 0.65, 0.65), "Monospace", 10, true, false},
+   {Color(1, 1, 1), Color(1, 0, 0), "Monospace", 10, false, false},
+   {Color(1, 1, 1), Color(0.5, 0, 0), "Monospace", 10, false, false},
+   {Color(0.5, 1, 0.9), Color(0.3, 0.3, 0.3), "Monospace", 10, false, false},
+   {Color(0.70, 0.70, 0.70), Color(0.3, 0.3, 0.3), "Monospace", 10, false, false},
+   {Color(87, 0.70, 74), Color(0.3, 0.3, 0.3), "Monospace", 10, false, false},
+   {Color(0.78, 0.8, 0.70), Color(0.3, 0.3, 0.3), "Monospace", 10, false, false},
+   {Color(0.8, 0.55, 0.6), Color(0.3, 0.3, 0.3), "Monospace", 10, false, false},
+};
+
+constexpr auto STYLE_SCHEME_COUNT = 3;
 
 // --- IDEFactory ---
 
-IDEFactory :: IDEFactory(IDEModel* ideModel, IDEController* controller/*,
-   GUISettinngs   settings*/)
+IDEFactory :: IDEFactory(IDEModel* ideModel, IDEController* controller,
+   GUISettinngs   settings)
 {
-//   _schemes[0] = defaultStyles;
-//   _schemes[1] = classicStyles;
-//   _settings = settings;
-//
-//   _instance = instance;
+   _schemes[0] = defaultStyles;
+   _schemes[1] = classicStyles;
+   _schemes[2] = darkStyles;
+   _settings = settings;
+
 //   _cmdShow = cmdShow;
    _model = ideModel;
    _controller = controller;
@@ -79,24 +85,20 @@ IDEFactory :: IDEFactory(IDEModel* ideModel, IDEController* controller/*,
 
 Gtk::Widget* IDEFactory :: createTextControl()
 {
-   TextViewWindow* view = new TextViewWindow(/*_model->viewModel(), &_styles*//*, &_controller->sourceController*/);
-   TextViewFrame* frame = new TextViewFrame();
+   auto viewModel = _model->viewModel();
 
-   // !! temporal
-   frame->addTab("test", view);
+   // update font size
+   for (int j = 0; j < STYLE_MAX; j++) {
+      defaultStyles[j].size = viewModel->fontSize;
+      classicStyles[j].size = viewModel->fontSize;
+      darkStyles[j].size = viewModel->fontSize;
+   }
 
-//   view->show(); // !! temporal?
-//   frame->show(); // !! temporal?
-//
-////   view->create(_instance, szTextView, owner);
-////   frame->createControl(_instance, owner);
-////
-////   // !! temporal
-////   frame->addTabView(_T("test"), nullptr);
-////
-////   // !! temporal
-////   view->showWindow(SW_SHOW);
-////   frame->showWindow(SW_SHOW);
+   // initialize view styles
+   reloadStyles(viewModel);
+
+   //TextViewWindow* view = new TextViewWindow(/*_model->viewModel(), &_styles*//*, &_controller->sourceController*/);
+   TextViewFrame* frame = new TextViewFrame(_model->viewModel(), &_styles);
 
    return frame;
 }
@@ -116,6 +118,7 @@ Gtk::Widget* IDEFactory :: createTextControl()
 
 void IDEFactory :: reloadStyles(TextViewModelBase* viewModel)
 {
+   _styles.assign(STYLE_MAX + 1, _schemes[viewModel->schemeIndex], viewModel->fontSize + 5, 20, &_fontFactory);
 }
 
 void IDEFactory :: styleControl(GUIControlBase* control)

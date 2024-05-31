@@ -5,49 +5,51 @@ In development:
 [development]
   ### EPIC: elena 6.2 ###
 
-  === Iteration 24 ===
+  === Iteration 25 (14.6.24) ===
   --------------------------------------
-  dev: #574,#265,#619,#580
-  op: github action - create a draft release
   opt:pi under 6 sec, #611, #602, #601, #586
-  maint:#486, #506, #650
+  maint:#650
   exp: generate code templates - e.g. simple console app
   ide:vm debugger, #617, linux ide, linux debugger
   tools:#618, #620
-  prom:#635 on reddit;elena in nutshell every 1 week; post an article about attributes (decorate a class, defining which operation is allowed)
+  prom:#635 on reddit;elena in nutshell every 1 week; 
   port:elenavm / elt for linux, helloworld gui sample (button)
+  doc:api - add descriptions
   --------------------------------------
-  - #590 : functional test
-  - #620 : add out argument (a special case of Reference<T> template), to indicate the variable must be assigned before the method exit
+  - vm : GC statistics
+  - github action : build for linux
+  - ide : editor settings - tab
+  - ide : debugger settings
+  - #184 : linux simplest gui (refresh textview, onDocumentUpdate ...)
   * #590 : vm : InjectProxyTypeLA 
   - #590 : implementing interface injection : strong interface
-  - #184 : linux simplest gui
   - elt : nested call must not stop / start vm 
   - elt : fails after executing several times
-  - #99
-  - #98
-  - #97
-  - #79
+  - #265
   - #637(bt tests (>=4), all bc tests)
-  - #69
-  - chat sample
+  - #562 : when the setting is on, does not allow to return / assign nil value
+  - chat sample : client - try to connect
+  - #658 : command - compile the project
+  - #562 : nullable
   --------------------------------------
-
-  === Iteration 25 ===
-  --------------------------------------
-  dev: async programming (instant messagange sample (chat) )
-  op:
-  opt:
-  maint:#620
-  exp:
-  ide:
-  tools:
-  prom:
-  port:upndown
+  - #658 : recognize the project
 
   === Iteration 26 ===
   --------------------------------------
-  dev: 
+  dev: #574,#619,#580,#658(debug,compile,build,IntelliSense)
+  op:github action - create a draft release
+  opt:
+  maint:#283, #620, #486, #506
+  exp:
+  ide:
+  tools:
+  prom:post an article about attributes (decorate a class, defining which operation is allowed)
+  port:#79
+
+
+  === Iteration 27 ===
+  --------------------------------------
+  dev:#97,#98,#99
   op:
   opt:
   maint:
@@ -59,21 +61,9 @@ In development:
 
   ### EPIC: elena 6.3 ###
 
-  === Iteration 27 ===
-  --------------------------------------
-  dev: 
-  op:
-  opt:
-  maint:
-  exp:
-  ide:
-  tools:
-  prom:
-  port:
-
   === Iteration 28 ===
   --------------------------------------
-  dev: 
+  dev: async programming
   op:
   opt:
   maint:
@@ -96,6 +86,18 @@ In development:
   port:
 
   === Iteration 30 ===
+  --------------------------------------
+  dev: 
+  op:
+  opt:
+  maint:
+  exp:
+  ide:
+  tools:
+  prom:
+  port:
+
+  === Iteration 31 ===
   --------------------------------------
   dev: 
   op:

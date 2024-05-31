@@ -175,7 +175,7 @@ namespace calendar
          systemTime.Second      := second;
          systemTime.Millisecond := 0;
     
-         systemTime.readTo(ref SystemTime value);
+         systemTime.readTo(out SystemTime value);
          _value := value
       }      
         
@@ -335,7 +335,7 @@ namespace calendar
             
          st.Year := years;
     
-         st.readTo(ref SystemTime retVal);        
+         st.readTo(out SystemTime retVal);        
          ^ new Date(retVal)
       }
     
@@ -358,7 +358,7 @@ namespace calendar
          n += years;
          st.Year := n;        
             
-         st.readTo(ref SystemTime retVal);        
+         st.readTo(out SystemTime retVal);        
          ^ new Date(retVal)
       }
     

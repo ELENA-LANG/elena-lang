@@ -63,6 +63,8 @@ namespace elena_lang
    // --- LexicalFormatter ---
    class LexicalFormatter : public TextWatcherBase
    {
+      bool                 _enabled;
+
       Text*                _text;
       MarkerList*          _markers;
       MemoryDump           _indexes;
@@ -83,6 +85,8 @@ namespace elena_lang
       void format();
 
    public:
+      void setEnabled(bool enabled);
+
       void onUpdate(size_t position) override;
       void onInsert(size_t position, size_t length, const_text_t line) override;
       void onErase(size_t position, size_t length, const_text_t line) override;
@@ -282,6 +286,10 @@ namespace elena_lang
       void setReadOnlyMode(bool mode)
       {
          status.readOnly = mode;
+      }
+      void setHighlightMode(bool enabled)
+      {
+         _formatter.setEnabled(enabled);
       }
 
       void setOverwriteMode(DocumentChangeStatus& changeStatus, bool mode);

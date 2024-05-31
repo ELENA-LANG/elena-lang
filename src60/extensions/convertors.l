@@ -108,7 +108,7 @@ public singleton intmatrixExConvertor
       auto output := new TextBuilder();
         
       int l := 0;
-      matrix.readLengthsTo(ref int n, ref int m);
+      matrix.readLengthsTo(out int n, out int m);
         
       for (int i := 0; i < n; i += 1)
       {
@@ -133,7 +133,7 @@ public singleton intmatrixExConvertor
       auto output := new TextBuilder();
         
       int l := 0;
-      matrix.readLengthsTo(ref int n, ref int m);
+      matrix.readLengthsTo(out int n, out int m);
         
       for (int i := 0; i < n; i += 1)
       {

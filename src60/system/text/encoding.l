@@ -143,9 +143,9 @@
          ^ retVal 
       }
 
-      char toChar(short[] shortArray, int index, ref int length)
+      char toChar(short[] shortArray, int index, out int length)
       {
-         int chLen := UTFOperations.convertUTF16_2_32(shortArray, index, length, ref int value);
+         int chLen := UTFOperations.convertUTF16_2_32(shortArray, index, length, out int value);
          char ch := value;
 
          length := chLen;
@@ -185,7 +185,7 @@
    // --- UTF8Encoder ---
    public sealed singleton UTF8Encoder : Encoder
    {
-      convertChar(char ch, byte[] byteArray, int index, ref int length)
+      convertChar(char ch, byte[] byteArray, int index, out int length)
       {
          int value := ch;
 
@@ -193,9 +193,9 @@
          length := UTFOperations.convertUTF32_2_8(value, byteArray, index, byteLen);
       }
 
-      char convertToChar(byte[] byteArray, int index, ref int sourLen)
+      char convertToChar(byte[] byteArray, int index, out int sourLen)
       {
-         sourLen := UTFOperations.convertUTF8_2_32(byteArray, index, sourLen, ref int value);
+         sourLen := UTFOperations.convertUTF8_2_32(byteArray, index, sourLen, out int value);
          char ch := value;
 
          ^ ch
@@ -205,7 +205,7 @@
    // --- UTF16Encoder ---
    public sealed singleton UTF16Encoder : Encoder
    {
-      convertChar(char ch, byte[] byteArray, int index, ref int length)
+      convertChar(char ch, byte[] byteArray, int index, out int length)
       {
          int value := ch;
          short tmp[2];
@@ -229,7 +229,7 @@
          };
       }
       
-      char convertToChar(byte[] byteArray, int index, ref int length)
+      char convertToChar(byte[] byteArray, int index, out int chLen)
       {
          short tmp[2];
 
@@ -240,8 +240,10 @@
             
          PrimitiveArrayOperations.copyToShortArray(byteArray, index, subLen, tmp, 0);
    
-         int length := UTFOperations.convertUTF16_2_32(tmp, 0, 2, ref int value);
+         int length := UTFOperations.convertUTF16_2_32(tmp, 0, 2, out int value);
          length *= 2;
+
+         chLen := length;
 
          char ch := value;
 

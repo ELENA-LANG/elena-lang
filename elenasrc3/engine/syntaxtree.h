@@ -21,6 +21,7 @@ namespace elena_lang
       MemberMask              = 0x000400,
       DeclarationMask         = 0x001000,
       TerminalMask            = 0x002000,
+      ErrorMask               = 0x004000,
 
       None                    = 0x000000,
       Root                    = 0x000001,
@@ -175,6 +176,8 @@ namespace elena_lang
       BranchOperation         = 0x0018F3,
       TupleBlock              = 0x0010F4,
       TupleType               = 0x0010F5,
+
+      ErrClosingBlockExpected = 0x04002,               // closing curly bracket expected
 
       Name                    = 0x000101,
       Namespace               = 0x000103,

@@ -12,6 +12,14 @@
 #include "core.h"
 #include "windows/pehelper.h"
 
+#ifdef _MSC_VER
+
+#include <tchar.h>
+
+#endif
+
+#include "eng/messages.h"
+
 using namespace elena_lang;
 
 #ifdef _M_IX86
@@ -344,19 +352,46 @@ void Win32BreakpointContext :: clear()
    breakpoints.clear();
 }
 
+// --- Win32DebugProcess::ConsoleHelper ---
+
+void Win32DebugProcess::ConsoleHelper :: printText(const char* s)
+{
+   HANDLE output_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+   WriteConsoleA(output_handle, s, getlength(s), 0, 0);
+}
+
+void Win32DebugProcess::ConsoleHelper :: waitForAnyKey()
+{
+   HANDLE input_handle = GetStdHandle(STD_INPUT_HANDLE);
+   INPUT_RECORD input_record;
+   DWORD input_length = 1;
+   DWORD events_read = 0;
+
+   while (true) {
+      ReadConsoleInput(input_handle, &input_record, input_length, &events_read);
+
+      if (input_record.EventType == KEY_EVENT && input_record.Event.KeyEvent.bKeyDown) {
+         return;
+      }
+   }
+}
+
 // --- Win32DebugProcess ---
 
 Win32DebugProcess :: Win32DebugProcess()
    : _threads(nullptr), steps(nullptr)
 {
    reset();
+   needToFreeConsole = false;
 }
 
-bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cmdLine)
+bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cmdLine, bool withExplicitConsole)
 {
    PROCESS_INFORMATION pi = { nullptr, nullptr, 0, 0 };
    STARTUPINFO         si;
    PathString          currentPath;
+   DWORD               flags = DEBUG_PROCESS;
 
    currentPath.copySubPath(exePath, false);
 
@@ -365,13 +400,21 @@ bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cm
    si.dwFlags = STARTF_USESHOWWINDOW;
    si.wShowWindow = SW_SHOWNORMAL;
 
+   if (withExplicitConsole) {
+      AllocConsole();
+
+      needToFreeConsole = true;
+   }
+   else flags |= CREATE_NEW_CONSOLE;
+
+
    if (!CreateProcess(
       exePath,
       (wchar_t*)cmdLine,
       nullptr,
       nullptr,
       FALSE,
-      CREATE_NEW_CONSOLE | DEBUG_PROCESS,
+      flags,
       nullptr,
       currentPath.str(), &si, &pi))
    {
@@ -393,9 +436,9 @@ bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cm
    return true;
 }
 
-bool Win32DebugProcess :: startProgram(const wchar_t* exePath, const wchar_t* cmdLine)
+bool Win32DebugProcess :: startProgram(path_t exePath, path_t cmdLine, bool withPersistentConsole)
 {
-   if (startProcess(exePath, cmdLine)) {
+   if (startProcess(exePath.str(), cmdLine.str(), withPersistentConsole)) {
       processEvent(INFINITE);
 
       return true;
@@ -427,6 +470,22 @@ void Win32DebugProcess :: continueProcess()
    needToHandle = false;
 }
 
+void Win32DebugProcess :: processEnd()
+{
+   _threads.clear();
+   _current = nullptr;
+   started = false;
+   if (needToFreeConsole) {
+      ConsoleHelper console;
+      console.printText(CONSOLE_OUTPUT_TEXT);
+      console.waitForAnyKey();
+
+      FreeConsole();
+
+      needToFreeConsole = false;
+   }
+}
+
 void Win32DebugProcess :: processEvent(size_t timeout)
 {
    DEBUG_EVENT event;
@@ -456,9 +515,7 @@ void Win32DebugProcess :: processEvent(size_t timeout)
                _current->refresh();
                //exitCheckPoint = proceedCheckPoint();
             }
-            _threads.clear();
-            _current = nullptr;
-            started = false;
+            processEnd();
             break;
          case CREATE_THREAD_DEBUG_EVENT:
             _current = new Win32ThreadContext((*_threads.start())->hProcess, event.u.CreateThread.hThread);

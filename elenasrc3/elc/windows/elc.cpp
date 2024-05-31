@@ -120,28 +120,205 @@ JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platf
    }
 }
 
+void handleOption(wchar_t* arg, IdentifierString& profile, Project& project, CompilingProcess& process,
+   ErrorProcessor& errorProcessor, path_t appPath, bool& cleanMode)
+{
+   switch (arg[1]) {
+      case 'f':
+      {
+         IdentifierString setting(arg + 2);
+         process.addForward(*setting);
+
+         break;
+      }
+      case 'l':
+      {
+         IdentifierString setting(arg + 2);
+         profile.copy(*setting);
+         break;
+      }
+      case 'm':
+         project.addBoolSetting(ProjectOption::MappingOutputMode, true);
+         break;
+      case 'o':
+         if (arg[2] == '0') {
+            project.addIntSetting(ProjectOption::OptimizationMode, optNone);
+         }
+         else if (arg[2] == '1') {
+            project.addIntSetting(ProjectOption::OptimizationMode, optLow);
+         }
+         else if (arg[2] == '2') {
+            project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
+         }
+         break;
+      case 'p':
+         project.setBasePath(arg + 2);
+         break;
+      case 'r':
+         cleanMode = true;
+         break;
+      case 's':
+      {
+         IdentifierString setting(arg + 2);
+         if (setting.compare("stackReserv:", 0, 12)) {
+            ustr_t valStr = *setting + 12;
+            int val = StrConvertor::toInt(valStr, 10);
+            project.addIntSetting(ProjectOption::StackReserved, val);
+         }
+         break;
+      }
+      case 't':
+      {
+         IdentifierString configName(arg + 2);
+
+         project.loadConfigByName(appPath, *configName, true);
+         break;
+      }
+      case 'v':
+         process.setVerboseOn();
+         break;
+      case 'w':
+         if (arg[2] == '0') {
+            errorProcessor.setWarningLevel(WarningLevel::Level0);
+         }
+         else if (arg[2] == '1') {
+            errorProcessor.setWarningLevel(WarningLevel::Level1);
+         }
+         else if (arg[2] == '2') {
+            errorProcessor.setWarningLevel(WarningLevel::Level2);
+         }
+         else if (arg[2] == '3') {
+            errorProcessor.setWarningLevel(WarningLevel::Level3);
+         }
+         break;
+      case 'x':
+         if (arg[2] == 'b') {
+            project.addBoolSetting(ProjectOption::ConditionalBoxing, arg[3] != '-');
+         }
+         else if (arg[2] == 'e') {
+            project.addBoolSetting(ProjectOption::EvaluateOp, arg[3] != '-');
+         }
+         else if (arg[2] == 'm') {
+            project.addBoolSetting(ProjectOption::ModuleExtensionAutoLoad, arg[3] != '-');
+         }
+         else if (arg[2] == 'p') {
+            project.addBoolSetting(ProjectOption::GenerateParamNameInfo, arg[3] != '-');
+         }
+         break;
+      default:
+         break;
+   }
+}
+
+int compileProject(int argc, wchar_t** argv, path_t appPath, ErrorProcessor& errorProcessor, 
+   CompilingProcess& process)
+{
+   bool cleanMode = false;
+
+   Project          project(appPath, CURRENT_PLATFORM, &Presenter::getInstance());
+   WinLinker        linker(&errorProcessor, &WinImageFormatter::getInstance(&project));
+
+   // Initializing...
+   PathString configPath(appPath, DEFAULT_CONFIG);
+   project.loadConfig(*configPath, nullptr, false);
+
+   IdentifierString profile;
+   for (int i = 1; i < argc; i++) {
+      if (argv[i][0] == '-') {
+         handleOption(argv[i], profile, project, process,
+            errorProcessor, appPath, cleanMode);
+      }
+      else if (PathUtil::checkExtension(argv[i], "prj")) {
+         PathString path(argv[i]);
+         if (!project.loadProject(*path, *profile)) {
+            return ERROR_RET_CODE;
+         }
+
+         if (profile.empty() && project.availableProfileList.count() != 0) {
+            IdentifierString profileList;
+            for (auto it = project.availableProfileList.start(); !it.eof(); ++it) {
+               if (profileList.length() != 0)
+                  profileList.append(", ");
+
+               profileList.append(*it);
+            }
+
+            Presenter::getInstance().printLine(ELC_PROFILE_WARNING, *profileList);
+         }
+      }
+      else if (PathUtil::checkExtension(argv[i], "prjcol")) {
+         Presenter::getInstance().printLine(ELC_PRJ_COLLECTION_WARNING);
+         return -2;
+      }
+      else {
+         FileNameString fileName(argv[i]);
+         IdentifierString ns(*fileName);
+         project.addSource(*ns, argv[i], nullptr, nullptr);
+      }
+   }
+
+   if (cleanMode) {
+      return process.clean(project);
+   }
+   else {
+      // Building...
+      return process.build(project, linker,
+         DEFAULT_STACKALIGNMENT,
+         DEFAULT_RAW_STACKALIGNMENT,
+         DEFAULT_EHTABLE_ENTRY_SIZE,
+         MINIMAL_ARG_LIST,
+         *profile);
+   }
+}
+
+int compileProjectCollection(int argc, wchar_t** argv, path_t path, path_t appPath,
+   ErrorProcessor& errorProcessor, CompilingProcess& process)
+{
+   Presenter* presenter = &Presenter::getInstance();
+
+   int retVal = 0;
+   ProjectCollection collection;
+
+   if (!collection.load(path)) {
+      presenter->printPath(presenter->getMessage(wrnInvalidConfig), path);
+
+      return ERROR_RET_CODE;
+   }
+
+   for (auto it = collection.paths.start(); !it.eof(); ++it) {
+      size_t destLen = FILENAME_MAX;
+      wchar_t projectPath[FILENAME_MAX];
+      StrConvertor::copy(projectPath, (*it).str(), (*it).length(), destLen);
+      projectPath[destLen] = 0;
+
+      argv[argc - 1] = projectPath;
+
+      int result = compileProject(argc, argv, appPath, errorProcessor, process);
+      if (result == ERROR_RET_CODE) {
+         return ERROR_RET_CODE;
+      }
+      else if (result == WARNING_RET_CODE) {
+         retVal = WARNING_RET_CODE;
+      }
+   }
+
+   return retVal;
+}
+
 int main()
 {
    try
    {
-      bool cleanMode = false;
-
       PathString appPath;
       getAppPath(appPath);
-
-      JITSettings defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_SACKRESERV, 1, true };
+      
+      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_SACKRESERV, 1, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
-      Project          project(*appPath, CURRENT_PLATFORM, &Presenter::getInstance());
-      WinLinker        linker(&errorProcessor, &WinImageFormatter::getInstance(&project));
       CompilingProcess process(appPath, L"exe", L"<moduleProlog>", L"<prolog>", L"<epilog>",
          &Presenter::getInstance(), &errorProcessor,
          VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 
       process.greeting();
-
-      // Initializing...
-      PathString configPath(*appPath, DEFAULT_CONFIG);
-      project.loadConfig(*configPath, nullptr, false);
 
       // Reading command-line arguments...
       int argc;
@@ -151,133 +328,11 @@ int main()
          Presenter::getInstance().printLine(ELC_HELP_INFO);
          return -2;
       }
-
-      IdentifierString profile;
-      for (int i = 1; i < argc; i++) {
-         if (argv[i][0] == '-') {
-            switch (argv[i][1]) {
-               case 'f':
-               {
-                  IdentifierString setting(argv[i] + 2);
-                  process.addForward(*setting);
-
-                  break;
-               }
-               case 'l':
-               {
-                  IdentifierString setting(argv[i] + 2);
-                  profile.copy(*setting);
-                  break;
-               }
-               case 'm':
-                  project.addBoolSetting(ProjectOption::MappingOutputMode, true);
-                  break;
-               case 'o':
-                  if (argv[i][2] == '0') {
-                     project.addIntSetting(ProjectOption::OptimizationMode, optNone);
-                  }
-                  else if (argv[i][2] == '1') {
-                     project.addIntSetting(ProjectOption::OptimizationMode, optLow);
-                  }
-                  else if (argv[i][2] == '2') {
-                     project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
-                  }
-                  break;
-               case 'p':
-                  project.setBasePath(argv[i] + 2);
-                  break;
-               case 'r':
-                  cleanMode = true;
-                  break;
-               case 's':
-               {
-                  IdentifierString setting(argv[i] + 2);
-                  if (setting.compare("stackReserv:", 0, 12)) {
-                     ustr_t valStr = *setting + 12;
-                     int val = StrConvertor::toInt(valStr, 10);
-                     project.addIntSetting(ProjectOption::StackReserved, val);
-                  }
-                  break;
-               }
-               case 't':
-               {
-                  IdentifierString configName(argv[i] + 2);
-
-                  project.loadConfigByName(*appPath, *configName, true);
-                  break;
-               }
-               case 'v':
-                  process.setVerboseOn();
-                  break;
-               case 'w':
-                  if (argv[i][2] == '0') {
-                     errorProcessor.setWarningLevel(WarningLevel::Level0);
-                  }
-                  else if (argv[i][2] == '1') {
-                     errorProcessor.setWarningLevel(WarningLevel::Level1);
-                  }
-                  else if (argv[i][2] == '2') {
-                     errorProcessor.setWarningLevel(WarningLevel::Level2);
-                  }
-                  else if (argv[i][2] == '3') {
-                     errorProcessor.setWarningLevel(WarningLevel::Level3);
-                  }
-                  break;
-               case 'x':
-                  if (argv[i][2] == 'b') {
-                     project.addBoolSetting(ProjectOption::ConditionalBoxing, argv[i][3] != '-');
-                  }
-                  else if (argv[i][2] == 'e') {
-                     project.addBoolSetting(ProjectOption::EvaluateOp, argv[i][3] != '-');
-                  }
-                  else if (argv[i][2] == 'm') {
-                     project.addBoolSetting(ProjectOption::ModuleExtensionAutoLoad, argv[i][3] != '-');
-                  }
-                  else if (argv[i][2] == 'p') {
-                     project.addBoolSetting(ProjectOption::GenerateParamNameInfo, argv[i][3] != '-');
-                  }
-                  break;
-               default:
-                  break;
-            }
-         }
-         else if (PathUtil::checkExtension(argv[i], "prj")) {
-            PathString path(argv[i]);
-            if (!project.loadProject(*path, *profile)) {
-               return ERROR_RET_CODE;
-            }
-
-            if (profile.empty() && project.availableProfileList.count() != 0) {
-               IdentifierString profileList;
-               for (auto it = project.availableProfileList.start(); !it.eof(); ++it) {
-                  if (profileList.length() != 0)
-                     profileList.append(", ");
-
-                  profileList.append(*it);
-               }
-
-               Presenter::getInstance().printLine(ELC_PROFILE_WARNING, *profileList);
-            }
-         }
-         else {
-            FileNameString fileName(argv[i]);
-            IdentifierString ns(*fileName);
-            project.addSource(*ns, argv[i], nullptr, nullptr);
-         }
+      else if (argv[argc - 1][0] != '-' && PathUtil::checkExtension(argv[argc - 1], "prjcol")) {
+         return compileProjectCollection(argc, argv, argv[argc - 1], 
+            *appPath, errorProcessor, process);
       }
-
-      if (cleanMode) {
-         return process.clean(project);
-      }
-      else {
-         // Building...
-         return process.build(project, linker,
-            DEFAULT_STACKALIGNMENT,
-            DEFAULT_RAW_STACKALIGNMENT,
-            DEFAULT_EHTABLE_ENTRY_SIZE,
-            MINIMAL_ARG_LIST,
-            *profile);
-      }
+      else return compileProject(argc, argv, *appPath, errorProcessor, process);
    }
    catch (CLIException)
    {

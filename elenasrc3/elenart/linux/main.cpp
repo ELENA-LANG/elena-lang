@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -123,6 +123,26 @@ addr_t LoadSymbolByString2LA(const char* ns, const char* symbolName)
 mssg_t LoadMessageLA(const char* messageName)
 {
    return machine->loadMessage(messageName);
+}
+
+/// <summary>
+/// Inject an interface VMT into a dynamic proxy class
+/// </summary>
+/// <returns>a reference to dynamically created VMT</returns>
+void* InjectProxyTypeLA(void* target, void* type, int staticLength, int nameIndex)
+{
+   return (void*)machine->injectType(systemEnv, target, type, staticLength, nameIndex);
+}
+
+/// <summary>
+/// Returns the signature list
+/// </summary>
+/// <param name="message">A strong-typed message</param>
+/// <param name="output">Signature tyoe</param>
+/// <returns>the total length</returns>
+int LoadSignatureLA(mssg_t message, addr_t* output, int maximalLength)
+{
+   return machine->loadSignature(message, output, maximalLength);
 }
 
 void GetRandomSeedLA(SeedStruct& seed)

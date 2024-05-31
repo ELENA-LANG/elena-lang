@@ -1,89 +1,32 @@
-import extensions;
-import system'dynamic;
-
-interface IA
+class B
 {
-   abstract bar();    
-}
-
-interface IB
-{
-    abstract foo();    
-}
-
-class A : IA
-{
-   bar()
+   protected constructor new()
    {
-      console.writeLine("bar")
-   }    
-}
-
-class B : IB
-{
-   foo()
-   {
-      console.writeLine("foo")
-   }    
-}
-
-Decorator
-{
-   field target;
-    
-   constructor(target)
-   {
-      this target := target
-   }
-    
-   generic()
-   {
-      console.print("decorating ");
-        
-      __received(target)
-   }
-        
-   generic cast()
-   {
-      var type := __received.__getFirstSignatureMember();
-
-      var proxy := ::{ dispatch() => self; };
-      proxy.__injectInferface(type);
-   
-      ^ __received(proxy);
+      console.writeLine(self)
    }
 }
 
-singleton C
+class C : B
 {
-   proceed(IA a)
+   _arg1;
+
+   constructor(arg1)
+      <= super new() 
    {
-      console.print(a,":");
-      a.bar()
+      _arg1 := arg1
    }
-    
-   proceed(IB b)
+}
+
+class D : B
+{
+   constructor(int n)
+      <= super new() 
    {
-      console.print(b,":");
-      b.foo()
    }
-    
-   // default handler
-   proceed(o)
-   {
-      console.printLine(o,": unknown");
-   }    
 }
 
 public program()
 {
-   var a := new A();
-   var b := new B();
-   var decA := new Decorator(a) :as IA;
-   var decB := new Decorator(b) :as IB;
-
-   C.proceed(a);
-   C.proceed(b);
-   C.proceed(decA);
-   C.proceed(decB);
+   var c := new C("arg");
+   var d := new D(2);
 }

@@ -29,7 +29,8 @@ Win32Process :: Win32Process(int waitTime) :
    _hStdinWrite(nullptr),
    _hStdoutRead(nullptr),
    _hChildProcess(nullptr),
-   _offset(0)
+   _offset(0),
+   _extraArg(0)
 {
 }
 
@@ -162,7 +163,7 @@ bool Win32Process :: start(const wchar_t* path, const wchar_t* cmdLine, const wc
    return true;
 }
 
-bool Win32Process :: start(path_t path, path_t cmdLine, path_t curDir, bool readOnly)
+bool Win32Process :: start(path_t path, path_t cmdLine, path_t curDir, bool readOnly, int extraArg)
 {
    HANDLE hStdoutReadTmp;              // parent stdout read handle
    HANDLE hStdoutWrite, hStderrWrite;  // child stdout write handle
@@ -171,6 +172,8 @@ bool Win32Process :: start(path_t path, path_t cmdLine, path_t curDir, bool read
    SECURITY_ATTRIBUTES sa;
 
    close();
+
+   _extraArg = extraArg;
 
    // Set up the security attributes struct.
    sa.nLength = sizeof(SECURITY_ATTRIBUTES);
@@ -274,7 +277,7 @@ void Win32Process :: writeStdError(const char* error)
 void Win32Process :: afterExecution(DWORD exitCode)
 {
    for (auto it = _listeners.start(); !it.eof(); ++it) {
-      (*it)->afterExecution(exitCode);
+      (*it)->afterExecution(exitCode, _extraArg);
    }
 }
 

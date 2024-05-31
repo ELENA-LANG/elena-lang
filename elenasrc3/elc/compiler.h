@@ -57,6 +57,8 @@ namespace elena_lang
       ParamAddress,
       ByRefParam,
       ByRefParamAddress,
+      OutParam,
+      OutParamAddress,
       Local,
       LocalReference,
       RefLocal,
@@ -736,6 +738,8 @@ namespace elena_lang
          ObjectInfo mapSelf(bool memberMode = true, bool ownerClass = false);
          ObjectInfo mapSuper();
 
+         void markAsAssigned(ObjectInfo object) override;
+
          bool isPrivate() const
          {
             return test(message, STATIC_MESSAGE);
@@ -1045,6 +1049,21 @@ namespace elena_lang
             this->message = message;
             this->extensionRef = 0;
             this->stackSafeAttr = 0;
+         }
+      };
+
+      struct TerminalAttributes
+      {
+         bool variableMode;
+         bool forwardMode;
+         bool refOp;
+         bool outRefOp;
+         bool mssgOp;
+         bool memberMode;
+
+         bool isAnySet()
+         {
+            return forwardMode || variableMode || refOp || outRefOp || mssgOp || memberMode;
          }
       };
 
@@ -1452,7 +1471,7 @@ namespace elena_lang
 
       ref_t generateConstant(Scope& scope, ObjectInfo& info, ref_t reference, bool saveScope = true);
 
-      mssg_t defineByRefMethod(ClassScope& scope, SyntaxNode node, bool isExtension);
+      mssg_t defineOutRefMethod(ClassScope& scope, SyntaxNode node, bool isExtension);
 
       void verifyMultimethods(Scope& scope, SyntaxNode node, SyntaxKey methodKey, ClassInfo& info, VirtualMethodList& implicitMultimethods);
 
@@ -1515,6 +1534,7 @@ namespace elena_lang
       void declareModuleExtensionDispatcher(NamespaceScope& scope, SyntaxNode node);
 
       void warnOnUnassignedLocal(SyntaxNode node, CodeScope& scope, int level);
+      void warnOnUnassignedParameter(SyntaxNode node, Scope& scope, ustr_t paramName);
 
       ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors = false);
       ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors = false, bool resolveMode = true);
@@ -1544,8 +1564,8 @@ namespace elena_lang
 
       bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);
 
-      ObjectInfo defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo declaredTypeInfo, bool variableMode,
-         bool forwardMode, bool refOp, bool mssgOp, bool memberMode, bool& invalid, ExpressionAttribute attrs);
+      ObjectInfo defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo declaredTypeInfo, 
+         TerminalAttributes& terminalAttrs, bool& invalid, ExpressionAttribute attrs);
 
       ObjectInfo mapStringConstant(Scope& scope, SyntaxNode node);
       ObjectInfo mapWideStringConstant(Scope& scope, SyntaxNode node);
@@ -1723,7 +1743,7 @@ namespace elena_lang
 
       void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,
          ManifestInfo& manifestInfo);
-      void declare(ModuleScopeBase* moduleScope, SyntaxTree& input, ExtensionMap* outerExtensionList);
+      bool declare(ModuleScopeBase* moduleScope, SyntaxTree& input, ExtensionMap* outerExtensionList);
       void compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildTree& output, ExtensionMap* outerExtensionList);
 
       void injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode,

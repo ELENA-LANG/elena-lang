@@ -56,6 +56,14 @@ uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, size_t newSize)
    return !r ? 0 : (uintptr_t)r;
 }
 
+uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
+{
+   void* r = mremap(allocPtr, newSize, PROT_READ | PROT_WRITE,
+      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+   return !r ? 0 : (uintptr_t)allocPtr;
+}
+
 void SystemRoutineProvider :: RaiseError(int code)
 {
    ::raise(code);

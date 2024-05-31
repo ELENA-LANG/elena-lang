@@ -19,8 +19,8 @@
 
 using namespace elena_lang;
 
-constexpr auto MAX_RECENT_FILES = 10;
-constexpr auto MAX_RECENT_PROJECTS = 10;
+constexpr auto MAX_RECENT_FILES = 9;
+constexpr auto MAX_RECENT_PROJECTS = 9;
 
 inline ustr_t getPlatformName(PlatformType type)
 {
@@ -140,6 +140,17 @@ void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t 
       fullPath.combine(path);
    }
    else {
+      for (auto ref_it = model.referencePaths.start(); !ref_it.eof(); ++ref_it) {
+         ustr_t extPackage = ref_it.key();
+         if (NamespaceString::isIncluded(extPackage, ns)) {
+            fullPath.copy(*model.projectPath);
+            fullPath.combine(*ref_it);
+            fullPath.combine(path);
+
+            return;
+         }
+      }
+
       fullPath.copy(*model.paths.librarySourceRoot);
       // HOTFIX : ignore sub ns
       size_t index = ns.find('\'');
@@ -228,9 +239,10 @@ bool ProjectController :: startDebugger(ProjectModel& model, DebugActionResult& 
       commandLine.append(_T(" "));
       commandLine.append(arguments);
 
+      bool withPersistentConsole = model.withPersistentConsole && (model.singleSourceProject || (*model.profile).endsWith("console"));
       bool debugMode = model.getDebugMode();
       if (debugMode) {
-         if (!_debugController.start(exePath.str(), commandLine.str(), debugMode/*, _breakpoints */)) {
+         if (!_debugController.start(exePath.str(), commandLine.str(), debugMode, withPersistentConsole)) {
             result.noDebugFile = true;
 
             return false;
@@ -238,7 +250,7 @@ bool ProjectController :: startDebugger(ProjectModel& model, DebugActionResult& 
 
       }
       else {
-         if (!_debugController.start(exePath.str(), commandLine.str(), false/*, _breakpoints */)) {
+         if (!_debugController.start(exePath.str(), commandLine.str(), false, withPersistentConsole)) {
             //notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_RUN_NEED_RECOMPILE);
 
             return false;
@@ -288,17 +300,18 @@ bool ProjectController :: isOutaged(ProjectModel& projectModel, SourceViewModel&
    return true;
 }
 
-bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, DebugActionResult& result)
+bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, 
+   DebugActionResult& result, bool withoutPostponeAction)
 {
    if (!_debugController.isStarted()) {
-      bool toRecompile = model.autoRecompile;
+      bool toRecompile = model.autoRecompile && !withoutPostponeAction;
       if (!isOutaged(model, sourceModel)) {
-         result.outaged = true;
-
          if (toRecompile) {
             if (!doCompileProject(model, action))
                return false;
          }
+         else result.outaged = true;
+
          return false;
       }
       if (!startDebugger(model, result))
@@ -372,7 +385,7 @@ bool ProjectController :: startVMConsole(ProjectModel& model)
    cmdLine.append("]]\"");
    cmdLine.append(" -i");
 
-   return _vmProcess->start(*appPath, *cmdLine, *model.paths.appPath, false);
+   return _vmProcess->start(*appPath, *cmdLine, *model.paths.appPath, false, 0);
 }
 
 void ProjectController :: stopVMConsole()
@@ -380,7 +393,7 @@ void ProjectController :: stopVMConsole()
    _vmProcess->stop(0);
 }
 
-bool ProjectController :: compileProject(ProjectModel& model)
+bool ProjectController :: compileProject(ProjectModel& model, int postponedAction)
 {
    PathString appPath(model.paths.appPath);
    appPath.combine(*model.paths.compilerPath);
@@ -399,10 +412,10 @@ bool ProjectController :: compileProject(ProjectModel& model)
    PathString curDir;
    curDir.append(*model.projectPath);
 
-   return _outputProcess->start(*appPath, *cmdLine, *model.projectPath, true);
+   return _outputProcess->start(*appPath, *cmdLine, *model.projectPath, true, postponedAction);
 }
 
-bool ProjectController :: compileSingleFile(ProjectModel& model)
+bool ProjectController :: compileSingleFile(ProjectModel& model, int postponedAction)
 {
    path_t singleProjectFile = model.sources.get(1);
 
@@ -416,16 +429,16 @@ bool ProjectController :: compileSingleFile(ProjectModel& model)
    PathString curDir;
    curDir.append(*model.projectPath);
 
-   return _outputProcess->start(*appPath, *cmdLine, *model.projectPath, true);
+   return _outputProcess->start(*appPath, *cmdLine, *model.projectPath, true, postponedAction);
 }
 
 bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction postponedAction)
 {
    if (model.singleSourceProject) {
-      return compileSingleFile(model);
+      return compileSingleFile(model, (int)postponedAction);
    }
    else if (!model.name.empty()) {
-      return compileProject(model);
+      return compileProject(model, (int)postponedAction);
    }
    else return false;
 }
@@ -469,10 +482,27 @@ void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, Co
       model.outputPath.copy(value.str());
    }
 
-   // load source files
    DynamicString<char> subNs;
    DynamicString<char> path;
 
+   // load references
+   ConfigFile::Collection references;
+   if (config.select(configRoot, REFERENCE_CATEGORY, references)) {
+      for (auto r_it = references.start(); !r_it.eof(); ++r_it) {
+         // add source file
+         ConfigFile::Node node = *r_it;
+         node.readContent(path);
+
+         if (!node.readAttribute("key", subNs)) {
+            subNs.clear();
+         }
+
+         PathString filePath(path.str());
+         model.referencePaths.add(subNs.str(), (*filePath).clone());
+      }
+   }
+
+   // load source files
    ConfigFile::Collection modules;
    if (config.select(configRoot, MODULE_CATEGORY, modules)) {
       for (auto m_it = modules.start(); !m_it.eof(); ++m_it) {
@@ -744,6 +774,8 @@ int ProjectController :: openSingleFileProject(ProjectModel& model, path_t singl
    model.target.copy(*tmp);
    model.target.append(".exe");
 
+   //model.profile
+
    return STATUS_PROJECT_CHANGED;
 }
 
@@ -968,6 +1000,13 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
       model->appMaximized = loadSetting(config, MAXIMIZED_SETTINGS, -1) != 0;
       model->sourceViewModel.fontSize = loadSetting(config, FONTSIZE_SETTINGS, 12);
       model->sourceViewModel.schemeIndex = loadSetting(config, SCHEME_SETTINGS, 1);
+      model->projectModel.withPersistentConsole = loadSetting(config, PERSISTENT_CONSOLE_SETTINGS, -1) != 0;
+      model->rememberLastPath = loadSetting(config, LASTPATH_SETTINGS, -1) != 0;
+      model->rememberLastProject = loadSetting(config, LASTPROJECT_SETTINGS, -1) != 0;
+      model->sourceViewModel.highlightSyntax = loadSetting(config, HIGHLIGHTSYNTAX_SETTINGS, -1) != 0;
+      model->sourceViewModel.lineNumbersVisible = loadSetting(config, LINENUMBERS_SETTINGS, -1) != 0;
+      model->projectModel.autoRecompile = loadSetting(config, AUTO_RECOMPILE_SETTING, -1) != 0;
+      model->autoSave = loadSetting(config, AUTO_SAVE_SETTING, -1) != 0;
 
       loadRecentFiles(config, RECENTFILES_SETTINGS, model->projectModel.lastOpenFiles);
       loadRecentFiles(config, RECENTPROJECTS_SETTINGS, model->projectModel.lastOpenProjects);
@@ -977,7 +1016,6 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
    else {
       return false;
    }
-
 }
 
 void IDEController :: saveConfig(IDEModel* model, path_t configPath)
@@ -987,6 +1025,13 @@ void IDEController :: saveConfig(IDEModel* model, path_t configPath)
    saveSetting(config, MAXIMIZED_SETTINGS, model->appMaximized);
    saveSetting(config, FONTSIZE_SETTINGS, model->sourceViewModel.fontSize);
    saveSetting(config, SCHEME_SETTINGS, model->sourceViewModel.schemeIndex);
+   saveSetting(config, PERSISTENT_CONSOLE_SETTINGS, model->projectModel.withPersistentConsole);
+   saveSetting(config, LASTPATH_SETTINGS, model->rememberLastPath);
+   saveSetting(config, LASTPROJECT_SETTINGS, model->rememberLastProject);
+   saveSetting(config, HIGHLIGHTSYNTAX_SETTINGS, model->sourceViewModel.highlightSyntax);
+   saveSetting(config, LINENUMBERS_SETTINGS, model->sourceViewModel.lineNumbersVisible);
+   saveSetting(config, AUTO_RECOMPILE_SETTING, model->projectModel.autoRecompile);
+   saveSetting(config, AUTO_SAVE_SETTING, model->autoSave);
 
    saveRecentFiles(config, RECENTFILE_SETTINGS, model->projectModel.lastOpenFiles);
    saveRecentFiles(config, RECENTPROJECTS_SETTINGS, model->projectModel.lastOpenProjects);
@@ -998,7 +1043,7 @@ void IDEController :: init(IDEModel* model, int& status)
 {
    status |= STATUS_STATUS_CHANGED | STATUS_FRAME_VISIBILITY_CHANGED | STATUS_LAYOUT_CHANGED;
 
-   if (model->projectModel.lastOpenProjects.count() > 0) {
+   if (model->rememberLastProject && model->projectModel.lastOpenProjects.count() > 0) {
       PathString path(model->projectModel.lastOpenProjects.get(1));
 
       if (PathUtil::checkExtension(*path, "l")) {
@@ -1156,7 +1201,11 @@ bool IDEController :: doOpenProjectSourceByIndex(IDEModel* model, int index)
 
 int IDEController :: openProject(IDEModel* model, path_t projectFile)
 {
-   return projectController.openProject(model->projectModel, projectFile);
+   int retVal = projectController.openProject(model->projectModel, projectFile);
+   if (retVal)
+      addToRecentProjects(model, projectFile);
+
+   return retVal;
 }
 
 void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)
@@ -1268,8 +1317,6 @@ bool IDEController :: doOpenProject(FileDialogBase& dialog, FileDialogBase& proj
 
       if (retVal) {
          projectStatus |= retVal;
-
-         addToRecentProjects(model, *path);
 
          projectStatus |= STATUS_DOC_READY;
 
@@ -1528,13 +1575,16 @@ path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
    else return nullptr;
 }
 
-void IDEController :: doDebugAction(IDEModel* model, DebugAction action, MessageDialogBase& mssgDialog)
+void IDEController :: doDebugAction(IDEModel* model, DebugAction action, 
+   MessageDialogBase& mssgDialog, bool withoutPostponeAction)
 {
    if (model->running)
       return;
 
    DebugActionResult result = {};
-   if (projectController.onDebugAction(model->projectModel, model->sourceViewModel, action, result)) {
+   if (projectController.onDebugAction(model->projectModel, model->sourceViewModel, 
+      action, result, withoutPostponeAction)) 
+   {
       model->running = true;
 
       model->sourceViewModel.setReadOnlyMode(true);
@@ -1874,6 +1924,18 @@ void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog
    }
 }
 
+void IDEController :: doConfigureIDESettings(IDESettingsBase& ideDialog, IDEModel* model)
+{
+   if (ideDialog.showModal()) {
+   }
+}
+
+void IDEController :: doConfigureDebuggerSettings(DebuggerSettingsBase& ideDialog, IDEModel* model)
+{
+   if (ideDialog.showModal()) {
+   }
+}
+
 void IDEController :: onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel* model)
 {
    model->running = false;
@@ -1881,10 +1943,21 @@ void IDEController :: onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel
    auto result = mssgDialog.question(QUESTION_NOSOURCE_CONTINUE);
 
    if (result == MessageDialogBase::Answer::Yes)
-      doDebugAction(model, DebugAction::StepInto, mssgDialog);
+      doDebugAction(model, DebugAction::StepInto, mssgDialog, false);
 }
 
 void IDEController :: onDocSelection(IDEModel* model, int index)
 {
    notifyOnModelChange(STATUS_FRAME_CHANGED);
+}
+
+void IDEController :: autoSave(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model)
+{
+   if (!model->running && model->sourceViewModel.isAnyDocumentModified()) {
+      for (pos_t i = 0; i < model->sourceViewModel.getDocumentCount(); i++) {
+         if (model->sourceViewModel.getDocument(i + 1)->isModified()) {
+            saveFile(dialog, model, i + 1, true);
+         }
+      }
+   }
 }

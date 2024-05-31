@@ -13,7 +13,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x0008
+   #define ELC_REVISION_NUMBER               0x000F
 
 #if defined _M_IX86 || _M_X64
 
@@ -37,6 +37,7 @@ namespace elena_lang
    constexpr auto ELC_SUCCESSFUL_COMPILATION = "\nSuccessfully compiled\n";
    constexpr auto ELC_SUCCESSFUL_LINKING     = "Successfully linked\n";
    constexpr auto ELC_UNSUCCESSFUL           = "Compiled with errors\n";
+   constexpr auto ELC_IDLE_COMPILATION       = "\nNothing was compiled\n";
 
    constexpr auto ELC_PARSING_FILE           = "Parsing %s";
    constexpr auto ELC_COMPILING_MODULE       = "Compiling %s";
@@ -45,6 +46,7 @@ namespace elena_lang
    constexpr auto ELC_SAVING_MODULE          = "\nsaving %s\n";
 
    constexpr auto ELC_PROFILE_WARNING        = "\nWARNING - Please select one of available profiles:%s\n";
+   constexpr auto ELC_PRJ_COLLECTION_WARNING = "\nWARNING - The project collection must be the last argument:%s\n";
 
    constexpr auto ELC_HELP_INFO              = "elena-cli {-key} {source-file+ | project-file}\nkeys:\n   -f{fwd=reference}   - add a forward\n   -l{profile name}    - selecct a profile\n   -m                  - turning on address mapping output\n   -o{0 | 1 | 2}       - set the optimization level\n   -p                  - set the base path\n   -r                  - clean the compilation output\n   -s{ stackReserv:n } - set the linker option - stack reserved\n   -t{ template name } - load the project template\n   -v                  - turn on a verbose output mode\n  - w{ 0 | 1 | 2 | 3 } - set the minimal warnings level to X = { 0 | 1 | 2 | 3 }\n   -xb[-]              - turn on / off a conditional boxing\n   -xe[-]              - turn on / off a compile-time expression evaluation\n   -xm[-]              - turn on / off auto loading module extension list\n   -xp[-]              - turn on / off generation of the parameter meta info";
 

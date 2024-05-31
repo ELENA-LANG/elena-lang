@@ -49,6 +49,18 @@ namespace elena_lang
       virtual bool showModal() = 0;
    };
 
+   class IDESettingsBase
+   {
+   public:
+      virtual bool showModal() = 0;
+   };
+
+   class DebuggerSettingsBase
+   {
+   public:
+      virtual bool showModal() = 0;
+   };
+
    class FindDialogBase
    {
    public:

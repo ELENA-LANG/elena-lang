@@ -418,6 +418,7 @@ enum class ExpressionAttribute : pos64_t
    RetValExpected       = 0x00020000000,
    CheckShortCircle     = 0x00040000000,
    LookaheadExprMode    = 0x00080000000,
+   OutRefOp             = 0x01000000000,
    WithVariadicArgCast  = 0x02008000000,
    DistributedForward   = 0x04000000000,
    DynamicObject        = 0x08000000000,

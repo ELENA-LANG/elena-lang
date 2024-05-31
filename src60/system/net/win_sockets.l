@@ -112,7 +112,7 @@ public sealed struct AddrInfoReader
 public sealed const struct Socket
 {
    handle _handle;
-    
+   
    constructor(handle handle)
    {
       _handle := handle
@@ -125,7 +125,15 @@ public sealed const struct Socket
       if (_handle == INVALID_SOCKET)
          { SocketException.new("Error at socket").raise() };
    }
+
+   get constructor Default()
+   {
+      _handle := Handle.loadDirty(INVALID_SOCKET);
+   }
     
+   get bool isInvalid()
+      = _handle == INVALID_SOCKET;
+
    open(pointer sockAddrPtr, int nameLen)
    {
       int retVal := extern WS2_32.connect( 
@@ -209,14 +217,7 @@ public sealed const struct Socket
    {
       handle socket := extern WS2_32.accept(_handle, 0, 0);
             
-      if (socket != INVALID_SOCKET)
-      {
-         ^ socket
-      }
-      else
-      { 
-         ^ nil 
-      }
+      ^ socket
    }
 
    shutdown(int how)
@@ -229,7 +230,7 @@ public sealed const struct Socket
 
    int iocommand(int command)
    {
-      int retVal := extern WS2_32.ioctlsocket(_handle, command, ref int parameter);
+      int retVal := extern WS2_32.ioctlsocket(_handle, command, out int parameter);
             
       if (retVal == SOCKET_ERROR)
          { SocketException.new("Error at socket").raise() };

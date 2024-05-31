@@ -188,8 +188,7 @@ IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel,
    _model->projectModel.paths.vmTerminalPath.copy(ELT_CLI_PATH);
 
    _model->projectModel.paths.libraryRoot.copy(*_model->projectModel.paths.appPath);
-#ifdef _M_IX86
-   
+#ifdef _M_IX86   
    _model->projectModel.paths.libraryRoot.combine("..\\lib60\\");      // !! temporal
 #else
    _model->projectModel.paths.libraryRoot.combine("..\\lib60_64\\");      // !! temporal
@@ -199,6 +198,7 @@ IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel,
    _model->projectModel.paths.librarySourceRoot.combine("..\\src60\\");// !! temporal
 
    canonicalize(_model->projectModel.paths.librarySourceRoot);
+   canonicalize(_model->projectModel.paths.libraryRoot);
 }
 
 void IDEFactory :: registerClasses()
@@ -224,6 +224,7 @@ ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* not
    for (int j = 0; j < STYLE_MAX; j++) {
       defaultStyles[j].size = viewModel->fontSize;
       classicStyles[j].size = viewModel->fontSize;
+      darkStyles[j].size = viewModel->fontSize;
    }
 
    // initialize view styles
@@ -320,9 +321,9 @@ ControlBase* IDEFactory :: createVmConsoleControl(ControlBase* owner, ProcessBas
 
 ControlBase* IDEFactory :: createCompilerOutput(ControlBase* owner, ProcessBase* outputProcess, NotifierBase* notifier)
 {
-   CompilerOutput* output = new CompilerOutput(notifier, [](NotifierBase* notifier, int statusBar)
+   CompilerOutput* output = new CompilerOutput(notifier, [](NotifierBase* notifier, int exitCode, int postponedAction)
       {
-         SelectionEvent event = { EVENT_COMPILATION_END, statusBar };
+         CompletionEvent event = { EVENT_COMPILATION_END, exitCode, postponedAction };
 
          notifier->notify(&event);
       });

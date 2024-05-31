@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Parser class implementation.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -73,6 +73,32 @@ parse_key_t Parser :: resolveTerminal(SourceInfo& info)
    }   
 }
 
+inline ustr_t getToken(TerminalInfo& terminalInfo)
+{
+   return terminalInfo.info.state == dfaEOF ? "<end of the file>" : terminalInfo.info.symbol;
+}
+
+inline int getErrorCode(parse_key_t symbol)
+{
+   switch ((SyntaxKey)symbol) {
+      //case nsDeclarationEndExpected:
+      //case nsStatementEndExpected:
+      //case nsDirectiveEndExpected:
+      //case nsInlineExpressionEndExpected:
+      //   return errDotExpectedSyntax;
+      case SyntaxKey::ErrClosingBlockExpected:
+         return errCBrExpectedSyntax;
+         //case nsErrNestedMemberExpected:
+         //   return errMethodNameExpected;
+         //case nsErrObjectExpected:
+         //   return errObjectExpected;
+         //case nsErrMessageExpected:
+         //   return errMessageExpected;
+      default:
+         return errInvalidSyntax;
+   }
+}
+
 bool Parser :: derive(TerminalInfo& terminalInfo, ParserStack& stack, SyntaxWriterBase* writer)
 {
    parse_key_t current = stack.pop();
@@ -88,22 +114,7 @@ bool Parser :: derive(TerminalInfo& terminalInfo, ParserStack& stack, SyntaxWrit
                writer->newNode(current);
             }
             else {
-               parse_key_t key = current & ~pkAnySymbolMask;
-               switch (key) {
-                  case pkClose:
-                     writer->closeNode();
-                     break;
-                  case pkDiscard:
-                     stack.pop();
-                     break;
-                  default:
-                     if (test(current, pkInjectable)) {
-                        writer->injectNode(current & ~pkInjectable);
-                     }
-                     else writer->renameNode(current & ~pkRenaming);
-                     break;
-               }
-
+               writer->injectNode(current & ~pkInjectable);
                current = stack.pop();
                continue;
             }
@@ -111,9 +122,10 @@ bool Parser :: derive(TerminalInfo& terminalInfo, ParserStack& stack, SyntaxWrit
          if (!_table.read(current, terminalInfo.key, stack))
             return false;
 
-         //if (test(current, mskError))
-         //   throw SyntaxError(terminal.Col(), terminal.Row(), terminal.value, getError(current));
-
+         if (test(current, pkError))
+            throw ParserError(
+               _presenter->getMessage(getErrorCode(current)),
+               terminalInfo.info.lineInfo, getToken(terminalInfo));
       }
       current = stack.pop();
    }
@@ -136,7 +148,8 @@ void Parser :: parse(UStrReader* source, SyntaxWriterBase* writer)
       terminalInfo.key = resolveTerminal(terminalInfo.info);
 
       if (!derive(terminalInfo, stack, writer))
-         throw ParserError(_presenter->getMessage(errInvalidSyntax), terminalInfo.info.lineInfo, terminalInfo.info.symbol);
+         throw ParserError(_presenter->getMessage(errInvalidSyntax), terminalInfo.info.lineInfo,
+            getToken(terminalInfo));
 
       if (test(terminalInfo.key, pkTraceble))
          writer->appendTerminal(terminalInfo.key, terminalInfo.info.symbol, terminalInfo.info.lineInfo);

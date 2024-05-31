@@ -82,6 +82,7 @@ namespace elena_lang
 
    public:
       bool          lineNumbersVisible;
+      bool          highlightSyntax;
       bool          empty;
       int           fontSize;
       int           schemeIndex;
@@ -108,6 +109,8 @@ namespace elena_lang
       virtual int getDocumentIndex(ustr_t name) = 0;
       virtual pos_t getDocumentCount() = 0;
 
+      virtual void setHighlightMode(bool mode) = 0;
+
       virtual void resize(Point size) = 0;
 
       bool isAssigned() const
@@ -128,6 +131,7 @@ namespace elena_lang
          this->empty = true;
          this->fontSize = 10;
          this->schemeIndex = 0;
+         this->highlightSyntax = false;
       }
    };
 

@@ -26,7 +26,7 @@ namespace elena_lang
 
       void onOutput(const char* s) override;
       void onErrorOutput(const char* s) override;
-      void afterExecution(int exitCode) override {}
+      void afterExecution(int exitCode, int extraArg) override {}
 
    public:
       wchar_t* getValue() override;
@@ -43,13 +43,13 @@ namespace elena_lang
    class CompilerOutput : public ProcessOutput
    {
    public:
-      typedef void(*EventInvoker)(NotifierBase*, int);
+      typedef void(*EventInvoker)(NotifierBase*, int, int);
 
    private:
       NotifierBase* _notifier;
       EventInvoker  _eventInvoker;
 
-      void afterExecution(int exitCode) override;
+      void afterExecution(int exitCode, int extraArg) override;
 
    public:
       CompilerOutput(NotifierBase* notifier, EventInvoker invoker);

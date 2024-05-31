@@ -489,7 +489,7 @@ namespace text
       {
          reserve(4);
 
-         UTF8Encoder.convertChar(ch, _buffer, *_length, ref int len);
+         UTF8Encoder.convertChar(ch, _buffer, *_length, out int len);
             
          _length.append(len)
       }
@@ -603,7 +603,7 @@ namespace text
       {
          reserve(2);
 
-         UTF16Encoding.toShortArray(ch, _buffer, *_length, ref int len);
+         UTF16Encoding.toShortArray(ch, _buffer, *_length, out int len);
             
          _length.append(len)
       }
