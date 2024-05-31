@@ -1,21 +1,32 @@
-import extensions;
-
-
-
-struct X
+class B
 {
-   int x/* : prop*/;
-}
-
-singleton Helper
-{
-   X get()
+   protected constructor new()
    {
-      ^ nil
+      console.writeLine(self)
    }
 }
 
-public program() 
+class C : B
 {
-//   X x := Helper.get()
+   _arg1;
+
+   constructor(arg1)
+      <= super new() 
+   {
+      _arg1 := arg1
+   }
+}
+
+class D : B
+{
+   constructor(int n)
+      <= super new() 
+   {
+   }
+}
+
+public program()
+{
+   var c := new C("arg");
+   var d := new D(2);
 }

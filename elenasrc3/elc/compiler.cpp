@@ -7386,10 +7386,7 @@ ObjectInfo Compiler :: mapConstructorTarget(MethodScope& scope)
 {
    ObjectInfo classSymbol = mapClassSymbol(scope, scope.getClassRef());
 
-   if (!test(scope.message, FUNCTION_MESSAGE)) {
-      return { ObjectKind::ConstructorSelf, classSymbol.typeInfo, scope.selfLocal, classSymbol.reference };
-   }
-   else return classSymbol;
+   return { ObjectKind::ConstructorSelf, classSymbol.typeInfo, scope.selfLocal, classSymbol.reference };
 }
 
 void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classScope, MethodScope& scope, CodeScope& codeScope,
@@ -7762,11 +7759,8 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
       if (argListType == Expression::ArgumentListType::VariadicArgList || argListType == Expression::ArgumentListType::VariadicArgListWithTypecasting) {
          messageRef |= VARIADIC_MESSAGE;
 
-
          if (getArgCount(messageRef) > 2)
             messageRef = overwriteArgCount(messageRef, 2);
-
-
 
          opMode = opMode | 
             ((argListType == Expression::ArgumentListType::VariadicArgList) ? EAttr::WithVariadicArg : EAttr::WithVariadicArgCast);
@@ -8370,8 +8364,11 @@ void Compiler :: compileConstructorCode(BuildTreeWriter& writer, SyntaxNode node
    }
 
    switch (current.key) {
-      case SyntaxKey::CodeBlock:
       case SyntaxKey::ResendDispatch:
+         // implicit default constructor cannot have redirect statement - because it leads to calling itself
+         if (scope.message == scope.moduleScope->buildins.constructor_message || scope.message == scope.moduleScope->buildins.protected_constructor_message)
+            scope.raiseError(errInvalidOperation, node);
+      case SyntaxKey::CodeBlock:
          compileMethodCode(writer, &classClassScope, scope, codeScope, node, newFrame);
          break;
       case SyntaxKey::ReturnExpression:
@@ -8380,6 +8377,10 @@ void Compiler :: compileConstructorCode(BuildTreeWriter& writer, SyntaxNode node
          break;
       case SyntaxKey::DirectResend:
          compileDirectResendCode(writer, codeScope, current);
+         break;
+      case SyntaxKey::Redirect:
+         // redirect is not allowed for the constructor
+         scope.raiseError(errInvalidOperation, node);
          break;
       case SyntaxKey::None:
          if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {

@@ -8,7 +8,7 @@ In development:
   === Iteration 24 (6.6.24) ===
   --------------------------------------
   opt:pi under 6 sec, #611, #602, #601, #586
-  maint:#486, #506, #650
+  maint:#650
   exp: generate code templates - e.g. simple console app
   ide:vm debugger, #617, linux ide, linux debugger
   tools:#618, #620
@@ -28,18 +28,18 @@ In development:
   - #265
   - #637(bt tests (>=4), all bc tests)
   - #562 : when the setting is on, does not allow to return / assign nil value
+  - chat sample : client - try to connect
   - #562 : nullable
   - #658 : command - compile the code
-  - chat sample
   --------------------------------------
-  - not allowing to pass nil for structure
+  - #650 : Calling a named constructor from an implicit one
 
   === Iteration 25 ===
   --------------------------------------
   dev: #574,#619,#580,#658(debug,compile,build,IntelliSense)
   op:github action - create a draft release
   opt:
-  maint:#620
+  maint:#620, #486, #506
   exp:
   ide:
   tools:
