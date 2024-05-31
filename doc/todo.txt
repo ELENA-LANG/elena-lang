@@ -29,17 +29,17 @@ In development:
   - #637(bt tests (>=4), all bc tests)
   - #562 : when the setting is on, does not allow to return / assign nil value
   - chat sample : client - try to connect
+  - #658 : command - compile the project
   - #562 : nullable
-  - #658 : command - compile the code
   --------------------------------------
-  - #650 : Calling a named constructor from an implicit one
+  - #658 : recognize the project
 
   === Iteration 25 ===
   --------------------------------------
   dev: #574,#619,#580,#658(debug,compile,build,IntelliSense)
   op:github action - create a draft release
   opt:
-  maint:#620, #486, #506
+  maint:#283, #620, #486, #506
   exp:
   ide:
   tools:
