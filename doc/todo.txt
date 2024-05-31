@@ -46,6 +46,7 @@ In development:
   prom:post an article about attributes (decorate a class, defining which operation is allowed)
   port:#79
 
+  ### EPIC: elena 6.3 ###
 
   === Iteration 27 ===
   --------------------------------------
@@ -58,8 +59,6 @@ In development:
   tools:
   prom:
   port:
-
-  ### EPIC: elena 6.3 ###
 
   === Iteration 28 ===
   --------------------------------------
