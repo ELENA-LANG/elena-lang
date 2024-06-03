@@ -124,11 +124,11 @@ namespace elena_lang
       bool isEmbeddableArray(ModuleScopeBase& scope, ref_t reference);
 
       bool isEmbeddableStruct(ClassInfo& info);
-      bool isEmbeddableStruct(ModuleScopeBase& scope, ref_t reference);
+      bool isEmbeddableStruct(ModuleScopeBase& scope, TypeInfo typeInfo);
 
-      bool isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t reference);
+      bool isEmbeddableAndReadOnly(ModuleScopeBase& scope, TypeInfo typeInfo);
       bool isEmbeddableAndReadOnly(ClassInfo& info);
-      bool isEmbeddable(ModuleScopeBase& scope, ref_t reference);
+      bool isEmbeddable(ModuleScopeBase& scope, TypeInfo typeInfo);
       bool isEmbeddable(ClassInfo& info);
 
       bool isWrapper(ModuleScopeBase& scope, ref_t reference);

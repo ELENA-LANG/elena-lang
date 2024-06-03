@@ -1045,6 +1045,7 @@ namespace elena_lang
    {
       ref_t typeRef;
       ref_t elementRef;
+      bool nullable;
 
       bool isPrimitive() const
       {
@@ -1059,6 +1060,30 @@ namespace elena_lang
       bool operator !=(TypeInfo& val) const
       {
          return this->typeRef != val.typeRef || this->elementRef != val.elementRef;
+      }
+
+      TypeInfo()
+      {
+         typeRef = elementRef = 0;
+         nullable = false;
+      }
+      TypeInfo(ref_t typeRef)
+      {
+         this->typeRef = typeRef;
+         this->elementRef = 0;
+         this->nullable = false;
+      }
+      TypeInfo(ref_t typeRef, ref_t elemantRef)
+      {
+         this->typeRef = typeRef;
+         this->elementRef = elemantRef;
+         this->nullable = false;
+      }
+      TypeInfo(ref_t typeRef, ref_t elemantRef, bool nullable)
+      {
+         this->typeRef = typeRef;
+         this->elementRef = elemantRef;
+         this->nullable = nullable;
       }
    };
 

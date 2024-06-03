@@ -499,9 +499,6 @@ public:
    virtual void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef, 
       mssg_t messageRef, MethodHint targetType) = 0;
 
-   virtual void injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode, 
-      mssg_t message, ustr_t retVar, ref_t classRef) = 0;
-
    virtual ref_t resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, 
       TypeInfo typeInfo, bool declarationMode = false) = 0;
 

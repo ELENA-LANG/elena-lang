@@ -62,7 +62,6 @@
 #let attributes["__probe"]     := 80001026h;
 #let attributes["template"]    := 80001027h;
 #let attributes["weak"]        := 80001029h;
-#let attributes["__nil_constructor"] := 8000102Bh;
 #let attributes["packed"]      := 8000102Ch;
 
 

@@ -20,19 +20,55 @@ In development:
   - github action : build for linux
   - ide : editor settings - tab
   - ide : debugger settings
+  - generate code templates : generate a code based on a record
+  - generate code templates : project templates
   - #184 : linux simplest gui (refresh textview, onDocumentUpdate ...)
   * #590 : vm : InjectProxyTypeLA 
   - #590 : implementing interface injection : strong interface
   - elt : nested call must not stop / start vm 
   - elt : fails after executing several times
+  - #661 : fix an issue
+  - #658 : create debug adapter
   - #265
   - #637(bt tests (>=4), all bc tests)
   - #562 : when the setting is on, does not allow to return / assign nil value
   - chat sample : client - try to connect
-  - #658 : command - compile the project
+  - fix gui samples (create apropriate tests)
   - #562 : nullable
+  * #562 : boxing to Nullable<T>?
+  * #562 : warn if nullable operation is executed without checking if it is nil
+  * #562 : support nullable reference : if option set - nil can be returned only for nullable reference
+  * #562 : support nullable reference : if option not set - just like a normal type
+  - #562 : nullable : int? + int? -> return int? (if both nil -> the result is nil)
+  - #562 : nullable : int? a := null; int b := a ?? 0;
+  - #562 : nullable : int? a := 2; int b := a;
   --------------------------------------
-  - #658 : recognize the project
+  int? a := nil;  <- box the reference into Nullable<int>
+  int b := a ?? 0;  // !!
+  int b := a // !! is not allowed
+
+  obbect b := a;
+  a.hasValue and so on   
+
+  * direct operation - passed the address of the variable
+  * when passed as weak - boxed into Nullable<T>
+  * nullable : strong typed - is passed directly nil or boxed value
+
+  * declared nullable variable - reference to the variable containing the reference value or nil
+
+  * int? a := 2;  // -- is declared as NullableLocal - which is boxed specially
+
+  * #562 : nullable : nullable struct
+
+  * #562 : 
+    - int? n := nil; // the variabe n has a type of int, but is is dynamically allocated : so the type of the object is NullableLocal
+
+int? n := 2; // - the constant symbol is used
+var o := n;  // - no boxing is involved
+
+  * #562 : nullable : think over possible support for nullable in ELENA
+
+  * #562 : redesign - isEmbeddable - use TypeInfo record
 
   === Iteration 26 ===
   --------------------------------------

@@ -961,9 +961,6 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_YIELDABLE:
          hint = (ref_t)MethodHint::Yieldable;
          return true;
-      case V_NIL_CONVERSION:
-         hint = (ref_t)MethodHint::Conversion | (ref_t)MethodHint::Nullable;
-         return true;
       default:
          return false;
    }
@@ -981,7 +978,6 @@ bool CompilerLogic :: validateImplicitMethodAttribute(ref_t attribute, ref_t& hi
       case V_FUNCTION:
       case V_CONVERSION:
       case V_GENERIC:
-      case V_NIL_CONVERSION:
          return validateMethodAttribute(attribute, hint, dummy);
       default:
          return false;
@@ -1294,16 +1290,19 @@ bool CompilerLogic :: isEmbeddableStruct(ClassInfo& info)
       && !test(info.header.flags, elDynamicRole);
 }
 
-bool CompilerLogic :: isEmbeddable(ModuleScopeBase& scope, ref_t reference)
+bool CompilerLogic :: isEmbeddable(ModuleScopeBase& scope, TypeInfo typeInfo)
 {
-   if (scope.cachedEmbeddables.exist(reference))
-      return scope.cachedEmbeddables.get(reference);
+   if (typeInfo.nullable)
+      return false;
+
+   if (scope.cachedEmbeddables.exist(typeInfo.typeRef))
+      return scope.cachedEmbeddables.get(typeInfo.typeRef);
 
    ClassInfo info;
-   if (defineClassInfo(scope, info, reference, true)) {
+   if (defineClassInfo(scope, info, typeInfo.typeRef, true)) {
       auto retVal = isEmbeddable(info);
 
-      scope.cachedEmbeddables.add(reference, retVal);
+      scope.cachedEmbeddables.add(typeInfo.typeRef, retVal);
 
       return retVal;
    }
@@ -1324,16 +1323,19 @@ bool CompilerLogic :: isEmbeddableAndReadOnly(ClassInfo& info)
    return isReadOnly(info) && isEmbeddable(info);
 }
 
-bool CompilerLogic::isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t reference)
+bool CompilerLogic::isEmbeddableAndReadOnly(ModuleScopeBase& scope, TypeInfo typeInfo)
 {
-   if (scope.cachedEmbeddableReadonlys.exist(reference))
-      return scope.cachedEmbeddableReadonlys.get(reference);
+   if (typeInfo.nullable)
+      return false;
+
+   if (scope.cachedEmbeddableReadonlys.exist(typeInfo.typeRef))
+      return scope.cachedEmbeddableReadonlys.get(typeInfo.typeRef);
 
    ClassInfo info;
-   if (defineClassInfo(scope, info, reference, true)) {
+   if (defineClassInfo(scope, info, typeInfo.typeRef, true)) {
       auto retVal = isEmbeddableAndReadOnly(info);
 
-      scope.cachedEmbeddableReadonlys.add(reference, retVal);
+      scope.cachedEmbeddableReadonlys.add(typeInfo.typeRef, retVal);
 
       return retVal;
    }
@@ -1341,10 +1343,13 @@ bool CompilerLogic::isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t refere
    return false;
 }
 
-bool CompilerLogic :: isEmbeddableStruct(ModuleScopeBase& scope, ref_t reference)
+bool CompilerLogic :: isEmbeddableStruct(ModuleScopeBase& scope, TypeInfo typeInfo)
 {
+   if (typeInfo.nullable)
+      return false;
+
    ClassInfo info;
-   if (defineClassInfo(scope, info, reference, true)) {
+   if (defineClassInfo(scope, info, typeInfo.typeRef, true)) {
       auto retVal = isEmbeddableStruct(info);
 
       return retVal;
