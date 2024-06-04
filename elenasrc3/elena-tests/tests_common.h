@@ -13,6 +13,17 @@
 
 namespace elena_lang 
 {
+   class TestException
+   {
+   public:
+      int code;
+
+      TestException(int code)
+         : code(code)
+      {
+      }
+   };
+
    class TestErrorProcessor : public ErrorProcessor
    {
       TestErrorProcessor()
@@ -32,22 +43,27 @@ namespace elena_lang
 
       void raiseError(int code, ustr_t arg) override
       {
+         throw TestException(code);
       }
 
       void raisePathError(int code, path_t arg) override
       {
+         throw TestException(code);
       }
 
       void raisePathWarning(int code, path_t arg) override
       {
+         throw TestException(code);
       }
 
       void raiseInternalError(int code) override
       {
+         throw TestException(code);
       }
 
-      void raiseTerminalError(int code, ustr_t pathArg, SyntaxNode node)
+      void raiseTerminalError(int code, ustr_t pathArg, SyntaxNode node) override
       {
+         throw TestException(code);
       }
 
       void raiseTerminalWarning(int level, int code, ustr_t pathArg, SyntaxNode node)

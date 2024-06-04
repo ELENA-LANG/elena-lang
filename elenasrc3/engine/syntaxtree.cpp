@@ -60,6 +60,8 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("branch_operation", SyntaxKey::BranchOperation);
    map.add("loop_expression", SyntaxKey::LoopOperation);
 
+   map.add("nullable", SyntaxKey::NullableType);
+
    map.add("symbol", SyntaxKey::Symbol);
    //   tokens.add("preloaded_symbol", lxSymbol);
    map.add("literal", SyntaxKey::string);

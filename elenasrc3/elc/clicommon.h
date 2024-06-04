@@ -632,7 +632,7 @@ public:
       throw CLIException();
    }
 
-   void raiseTerminalError(int code, ustr_t pathArg, SyntaxNode node)
+   virtual void raiseTerminalError(int code, ustr_t pathArg, SyntaxNode node)
    {
       printTerminalInfo(code, pathArg, node);
 

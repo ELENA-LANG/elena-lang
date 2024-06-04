@@ -66,10 +66,6 @@ In development:
 int? n := 2; // - the constant symbol is used
 var o := n;  // - no boxing is involved
 
-  * #562 : nullable : think over possible support for nullable in ELENA
-
-  * #562 : redesign - isEmbeddable - use TypeInfo record
-
   === Iteration 26 ===
   --------------------------------------
   dev: #574,#619,#580,#658(debug,compile,build,IntelliSense)

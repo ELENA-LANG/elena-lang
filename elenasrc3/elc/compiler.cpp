@@ -52,7 +52,7 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 //      current = current.nextNode();
 //   }
 //}
-//
+
 //inline void storeNode(SyntaxNode node)
 //{
 //   DynamicUStr target;
@@ -5702,7 +5702,7 @@ bool Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typ
 
       variable.reference = allocateLocalAddress(*codeScope, size, true);
    }
-   else if (_logic->isEmbeddableStruct(localInfo) && size == 0) {
+   else if (_logic->isEmbeddableStruct(localInfo) && size == 0 && !variable.typeInfo.nullable) {
       size = align(_logic->defineStructSize(localInfo).size,
          scope.moduleScope->rawStackAlingment);
 
@@ -10334,7 +10334,6 @@ void Compiler::Namespace:: declareMemberIdentifiers(SyntaxNode node)
 bool Compiler::Namespace :: declareMembers(SyntaxNode node, bool& repeatMode, bool forced)
 {
    bool declared = false;
-
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {

@@ -9,6 +9,9 @@
 #include "serializer.h"
 #include "bcwriter.h"
 
+#include "scenario_consts.h"
+#include "tape_consts.h"
+
 using namespace elena_lang;
 
 constexpr auto BT_RULES_FILE = "bt_rules60.dat";
@@ -30,8 +33,6 @@ constexpr auto Struct_Declaration1 = "namespace (class ( nameattr (identifier \"
 constexpr auto Struct_Declaration2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension ( integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"ByteNumber\" ()) field (attribute -2147475454 () attribute -2147481596 () nameattr (identifier \"_value\" ()) dimension (integer \"1\" ())))class (attribute -2147479550 () nameattr 60 (identifier \"ShortNumber\" ()) field (attribute -2147475454 () attribute -2147481597 ()nameattr ( identifier \"_value\" ()) dimension ( integer \"2\" ()))) class (attribute -2147479550 ()nameattr (identifier \"LongNumber\" ())field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension (integer \"8\" ()))) class (attribute -2147479508 () nameattr (identifier \"Aligned\" ())field (type (identifier \"byte\" ())nameattr (identifier \"b\" ()) ) field (type (identifier \"short\" ())nameattr (identifier \"w\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b2\" ())) field (type (identifier \"int\" ())nameattr (identifier \"n\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b3\" ()))field (type (identifier \"long\" ()) nameattr (identifier \"l\" ()))))";
 constexpr auto Struct_Declaration3 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension ( integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"ByteNumber\" ()) field (attribute -2147475454 () attribute -2147481596 () nameattr (identifier \"_value\" ()) dimension (integer \"1\" ())))class (attribute -2147479550 () nameattr 60 (identifier \"ShortNumber\" ()) field (attribute -2147475454 () attribute -2147481597 ()nameattr ( identifier \"_value\" ()) dimension ( integer \"2\" ()))) class (attribute -2147479550 ()nameattr (identifier \"LongNumber\" ())field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension (integer \"8\" ()))) class (attribute -2147479550 () nameattr (identifier \"Aligned\" ())field (type (identifier \"byte\" ())nameattr (identifier \"b\" ()) ) field (type (identifier \"short\" ())nameattr (identifier \"w\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b2\" ())) field (type (identifier \"int\" ())nameattr (identifier \"n\" ()))) class (attribute -2147479550 () nameattr (identifier \"Complex\" ())field (type (identifier \"byte\" ())nameattr (identifier \"f1\" ()) ) field (type (identifier \"Aligned\" ())nameattr (identifier \"f2\" ()))))";
 
-constexpr auto S1_DefaultNamespace = "namespace (class (nameattr (identifier \"Object\" ())) class (nameattr (identifier \"B\" ())) $1)";
-constexpr auto S1_IntNumber = "class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ())))";
 constexpr auto S1_VariadicTemplates = " class (attribute -2147467263 ()attribute -2147471359 ()attribute -2147479542 ()nameattr (identifier \"VariadicArray\" ())field (attribute -2147475454 ()attribute -2147481599 ()array_type (type (identifier \"Object\" ()))nameattr (identifier \"array\" ())))  class (attribute -2147467263 ()attribute -2147471359 ()attribute -2147479542 ()nameattr (identifier \"VariadicBArray\" ())field (attribute -2147475454 ()attribute -2147481599 ()array_type (type (identifier \"B\" ()))nameattr (identifier \"array\" ())))";
 
 constexpr auto S1_VariadicSingleDispatch_1 = "class (attribute -2147479546 () nameattr (identifier \"E\" ()) method (nameattr (identifier \"load\" ()) parameter (attribute -2147475445 () array_type (type (identifier \"B\" ())) nameattr (identifier \"o\" ())) code ()))";
@@ -48,7 +49,7 @@ constexpr auto S1_DirectCall_3 = "class (attribute -2147479546 ()nameattr (ident
 constexpr auto S1_VariadicConstructorSingleDispatch_1 = "class (attribute -2147479546 ()nameattr (identifier \"Tester\" ())method (nameattr (identifier \"test\" ())parameter (attribute -2147475445 ()array_type (type (identifier \"Object\" ()))nameattr (identifier \"args\" ()))code (returning (expression (message_operation (object (identifier \"X\" ())message (identifier \"load\" ())expression (object (attribute -2147475445 ()identifier \"args\" ())))))))) class (nameattr (identifier \"X\" ()) method (attribute -2147479548 ()nameattr (identifier \"load\" ())parameter (attribute -2147475445 ()array_type (type (identifier \"B\" ()))nameattr (identifier \"args\" ()))code ()))";
 
 // S2 Scenarion : lmbda
-constexpr auto S2_DefaultNamespace = "namespace (class (nameattr (identifier \"Object\" ()) method (nameattr (identifier \"dispatch\" ())redirect (expression (object (identifier \"nil\" ()))))) $1)";
+
 constexpr auto S2_Func = "class (attribute -2147467263 ()attribute -2147479545 ()nameattr (identifier \"Func\" ())method (attribute -2147471358 ()nameattr (identifier \"function\" ())no_body ()))";
 constexpr auto S2_Scenario1 = "class (attribute -2147479546 ()nameattr (identifier \"E\" ())method (nameattr (identifier \"callFromLambda\" ())code (expression (assign_operation (object (attribute -2147479539 ()identifier \"f\" ())expression (closure (code (expression (message_operation (object (identifier \"callMe\" ()))))))))expression (message_operation (object (identifier \"f\" ())))))method (attribute -2147467262 ()nameattr (identifier \"callMe\" ())code ()))";
 
@@ -301,6 +302,31 @@ void BTOptimization2 :: SetUp()
    BuildTreeSerializer::load(OptimizedBuildTree2, afterOptimization);
 }
 
+// --- ScenarioTest ---
+
+SyntaxNode ScenarioTest :: findTargetNode()
+{
+   return findClassNode().findChild(SyntaxKey::Method);
+}
+
+SyntaxNode ScenarioTest :: findClassNode()
+{
+   return SyntaxTree::gotoChild(declarationNode.firstChild(), SyntaxKey::Class, targetRef);
+}
+
+void ScenarioTest :: SetUp()
+{
+   SyntaxTreeWriter writer(syntaxTree);
+   writer.appendNode(SyntaxKey::Root);
+
+   BuildTreeWriter buildWriter(buildTree);
+   buildWriter.appendNode(BuildKey::Root);
+
+   declarationNode = syntaxTree.readRoot().appendChild(SyntaxKey::Idle, 1);
+
+   controlOutputNode = buildTree.readRoot().appendChild(BuildKey::Tape);
+}
+
 // --- StructAlignment ---
 
 void StructAlignment :: SetUp()
@@ -376,20 +402,7 @@ void PrimitiveStructAlignment:: SetUp()
 
 void DispatchTest :: SetUp()
 {
-   SyntaxTreeWriter writer(syntaxTree);
-   writer.appendNode(SyntaxKey::Root);
-
-   BuildTreeWriter buildWriter(buildTree);
-   buildWriter.appendNode(BuildKey::Root);
-
-   declarationNode = syntaxTree.readRoot().appendChild(SyntaxKey::Idle, 1);
-
-   controlOutputNode = buildTree.readRoot().appendChild(BuildKey::Tape);
-}
-
-SyntaxNode DispatchTest :: findClassNode()
-{
-   return SyntaxTree::gotoChild(declarationNode.firstChild(), SyntaxKey::Class, targetRef);
+   ScenarioTest::SetUp();
 }
 
 SyntaxNode DispatchTest :: findAutoGenerated(SyntaxNode classNode)
@@ -458,7 +471,7 @@ void VariadicRuntimeSingleDispatch :: SetUp()
 {
    DispatchTest::SetUp();
 
-   LoadDeclarationScenario(S1_DefaultNamespace, S1_VariadicTemplates, S1_VariadicSingleDispatch_1, S1_IntNumber);
+   LoadDeclarationScenario(S_DefaultNamespace_1, S1_VariadicTemplates, S1_VariadicSingleDispatch_1, S_IntNumber);
 
    BuildTreeSerializer::load(BuildTree_VariadicSingleDispatch_1, controlOutputNode);
 
@@ -471,16 +484,11 @@ void VariadicRuntimeSingleDispatch :: SetUp()
 
 // --- VariadicCompiletimeSingleDispatch ---
 
-SyntaxNode VariadicCompiletimeSingleDispatch :: findTargetNode()
-{
-   return findClassNode().findChild(SyntaxKey::Method);
-}
-
 void VariadicCompiletimeSingleDispatch :: SetUp()
 {
    DispatchTest::SetUp();
 
-   LoadDeclarationScenario(S1_DefaultNamespace, S1_VariadicTemplates, S1_VariadicSingleDispatch_1, S1_IntNumber, S1_VariadicSingleDispatch_2);
+   LoadDeclarationScenario(S_DefaultNamespace_1, S1_VariadicTemplates, S1_VariadicSingleDispatch_1, S_IntNumber, S1_VariadicSingleDispatch_2);
 
    BuildTreeSerializer::load(BuildTree_VariadicSingleDispatch_2, controlOutputNode);
 
@@ -493,16 +501,11 @@ void VariadicCompiletimeSingleDispatch :: SetUp()
 
 // --- VariadicCompiletimeSingleDispatch_WithDifferentArgs ---
 
-SyntaxNode VariadicCompiletimeSingleDispatch_WithDifferentArgs :: findTargetNode()
-{
-   return findClassNode().findChild(SyntaxKey::Method);
-}
-
 void VariadicCompiletimeSingleDispatch_WithDifferentArgs :: SetUp()
 {
    DispatchTest::SetUp();
 
-   LoadDeclarationScenario(S1_DefaultNamespace, S1_VariadicTemplates, S1_VariadicSingleDispatch_3b, S1_IntNumber, S1_VariadicSingleDispatch_1, S1_VariadicSingleDispatch_3a);
+   LoadDeclarationScenario(S_DefaultNamespace_1, S1_VariadicTemplates, S1_VariadicSingleDispatch_3b, S_IntNumber, S1_VariadicSingleDispatch_1, S1_VariadicSingleDispatch_3a);
 
    BuildTreeSerializer::load(BuildTree_VariadicSingleDispatch_4, controlOutputNode);
 
@@ -515,27 +518,9 @@ void VariadicCompiletimeSingleDispatch_WithDifferentArgs :: SetUp()
 
 // --- MethodCallTest ---
 
-SyntaxNode MethodCallTest :: findClassNode()
-{
-   return SyntaxTree::gotoChild(declarationNode.firstChild(), SyntaxKey::Class, targetRef);
-}
-
-SyntaxNode MethodCallTest :: findTargetNode()
-{
-   return findClassNode().findChild(SyntaxKey::Method);
-}
-
 void MethodCallTest :: SetUp()
 {
-   SyntaxTreeWriter writer(syntaxTree);
-   writer.appendNode(SyntaxKey::Root);
-
-   BuildTreeWriter buildWriter(buildTree);
-   buildWriter.appendNode(BuildKey::Root);
-
-   declarationNode = syntaxTree.readRoot().appendChild(SyntaxKey::Idle, 1);
-
-   controlOutputNode = buildTree.readRoot().appendChild(BuildKey::Tape);
+   ScenarioTest::SetUp();
 }
 
 void MethodCallTest :: runTest(bool withVariadic)
@@ -587,7 +572,7 @@ void CallMethodWithoutTarget :: SetUp()
 
    targetRef = 4;
 
-   LoadDeclarationScenario(S1_DefaultNamespace, S1_DirectCall_1, S1_DirectCall_2);
+   LoadDeclarationScenario(S_DefaultNamespace_1, S1_DirectCall_1, S1_DirectCall_2);
 
    BuildTreeSerializer::load(BuildTree_CallMethodWithoutTarget, controlOutputNode);
 }
@@ -603,7 +588,7 @@ void CallVariadocMethodWithoutTarget :: SetUp()
    genericVargRef = 5;
    targetVargRef = 6;
 
-   LoadDeclarationScenario(S1_DefaultNamespace, S1_DirectCall_1, S1_DirectCall_3, S1_VariadicTemplates);
+   LoadDeclarationScenario(S_DefaultNamespace_1, S1_DirectCall_1, S1_DirectCall_3, S1_VariadicTemplates);
 
    BuildTreeSerializer::load(BuildTree_CallVariadicMethodWithoutTarget, controlOutputNode);
 }
@@ -614,7 +599,7 @@ void VariadicCompiletimeConstructorSingleDispatch :: SetUp()
 {
    DispatchTest::SetUp();
 
-   LoadDeclarationScenario(S1_DefaultNamespace, S1_VariadicTemplates, S1_VariadicConstructorSingleDispatch_1, S1_IntNumber);
+   LoadDeclarationScenario(S_DefaultNamespace_1, S1_VariadicTemplates, S1_VariadicConstructorSingleDispatch_1, S_IntNumber);
 
    BuildTreeSerializer::load(BuildTree_VariadicSingleDispatch_3, controlOutputNode);
 
@@ -625,22 +610,7 @@ void VariadicCompiletimeConstructorSingleDispatch :: SetUp()
    intNumberRef = 7;
 }
 
-SyntaxNode VariadicCompiletimeConstructorSingleDispatch :: findTargetNode()
-{
-   return findClassNode().findChild(SyntaxKey::Method);
-}
-
 // --- LambdaTest ---
-
-SyntaxNode LambdaTest :: findClassNode()
-{
-   return SyntaxTree::gotoChild(declarationNode.firstChild(), SyntaxKey::Class, targetRef);
-}
-
-SyntaxNode LambdaTest :: findTargetNode()
-{
-   return findClassNode().findChild(SyntaxKey::Method);
-}
 
 BuildNode LambdaTest :: findOutput(BuildNode root)
 {
@@ -711,11 +681,97 @@ void Lambda_CallingPrivateMethod :: SetUp()
 {
    LambdaTest::SetUp();
 
-   LoadDeclarationScenario(S2_DefaultNamespace, S2_Func, S2_Scenario1);
+   LoadDeclarationScenario(S_DefaultNamespace_2, S2_Func, S2_Scenario1);
 
    BuildTreeSerializer::load(BuildTree_LambdaCallPrivate, controlOutputNode);
 
    funcRef = 2;
    targetRef = 3;
    outputRef = 0x100;
+}
+
+// --- IntOperation ---
+
+void IntOperation :: SetUp()
+{
+   ScenarioTest::SetUp();
+}
+
+void IntOperation :: runTest(bool exceptionExpected)
+{
+   // Arrange
+   ModuleScopeBase* moduleScope = env.createModuleScope(true, false);
+   moduleScope->buildins.superReference = 1;
+   moduleScope->buildins.intReference = intReference;
+   moduleScope->buildins.constructor_message =
+      encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
+         0, FUNCTION_MESSAGE);
+
+   moduleScope->aliases.add("int", intReference);
+
+   moduleScope->predefined.add("nil", V_NIL);
+
+   Compiler* compiler = env.createCompiler();
+
+   BuildTree output;
+   BuildTreeWriter writer(output);
+   Compiler::Namespace nsScope(compiler, moduleScope, TestErrorProcessor::getInstance(), nullptr, nullptr);
+
+   // Act
+   nsScope.declare(declarationNode.firstChild(), true);
+
+   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public);
+   classHelper.load();
+   Compiler::Method methodHelper(classHelper);
+
+   SyntaxNode methodNode = findTargetNode();
+   int catchedError = 0;
+   if (methodNode != SyntaxKey::None) {
+      try
+      {
+         methodHelper.compile(writer, methodNode);
+      }
+      catch (TestException& ex) {
+         catchedError = ex.code;
+      }
+   }      
+
+   // Assess
+   bool matched = false;
+   if (!exceptionExpected) {
+      matched = BuildTree::compare(output.readRoot(), controlOutputNode, true);
+   }
+   else matched = catchedError == expectedError;
+   
+   EXPECT_TRUE(matched);
+
+   freeobj(compiler);
+   freeobj(moduleScope);
+}
+
+// --- NillableIntAssigning ---
+
+void NillableIntAssigning :: SetUp()
+{
+   IntOperation::SetUp();
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_NillableIntAssigning);
+
+   BuildTreeSerializer::load(B_NillableIntAssigning, controlOutputNode);
+
+   intReference = 2;
+   targetRef = 3;
+}
+
+// --- IntAssigningNil ---
+
+void IntAssigningNil :: SetUp()
+{
+   IntOperation::SetUp();
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_IntAssigningNil);
+
+   intReference = 2;
+   targetRef = 3;
+   expectedError = 0x6b;
 }

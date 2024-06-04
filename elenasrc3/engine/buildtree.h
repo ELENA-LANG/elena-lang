@@ -366,6 +366,7 @@ namespace elena_lang
          map.add("free_varstack", BuildKey::FreeVarStack);
          map.add("going_to_eop", BuildKey::goingToEOP);
          map.add("field", BuildKey::Field);
+         map.add("nil", BuildKey::NilReference);
 
          map.add("value", BuildKey::Value);
          map.add("tape", BuildKey::Tape);
