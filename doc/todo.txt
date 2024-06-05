@@ -27,7 +27,6 @@ In development:
   - #590 : implementing interface injection : strong interface
   - elt : nested call must not stop / start vm 
   - elt : fails after executing several times
-  - #661 : fix an issue
   - #658 : create debug adapter
   - #265
   - #637(bt tests (>=4), all bc tests)
@@ -54,17 +53,7 @@ In development:
   * when passed as weak - boxed into Nullable<T>
   * nullable : strong typed - is passed directly nil or boxed value
 
-  * declared nullable variable - reference to the variable containing the reference value or nil
-
-  * int? a := 2;  // -- is declared as NullableLocal - which is boxed specially
-
-  * #562 : nullable : nullable struct
-
-  * #562 : 
-    - int? n := nil; // the variabe n has a type of int, but is is dynamically allocated : so the type of the object is NullableLocal
-
-int? n := 2; // - the constant symbol is used
-var o := n;  // - no boxing is involved
+  - #661 : fix an issue
 
   === Iteration 26 ===
   --------------------------------------

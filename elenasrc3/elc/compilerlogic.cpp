@@ -1292,7 +1292,7 @@ bool CompilerLogic :: isEmbeddableStruct(ClassInfo& info)
 
 bool CompilerLogic :: isEmbeddable(ModuleScopeBase& scope, TypeInfo typeInfo)
 {
-   if (typeInfo.nullable)
+   if (typeInfo.nillable)
       return false;
 
    if (scope.cachedEmbeddables.exist(typeInfo.typeRef))
@@ -1325,7 +1325,7 @@ bool CompilerLogic :: isEmbeddableAndReadOnly(ClassInfo& info)
 
 bool CompilerLogic::isEmbeddableAndReadOnly(ModuleScopeBase& scope, TypeInfo typeInfo)
 {
-   if (typeInfo.nullable)
+   if (typeInfo.nillable)
       return false;
 
    if (scope.cachedEmbeddableReadonlys.exist(typeInfo.typeRef))
@@ -1345,7 +1345,7 @@ bool CompilerLogic::isEmbeddableAndReadOnly(ModuleScopeBase& scope, TypeInfo typ
 
 bool CompilerLogic :: isEmbeddableStruct(ModuleScopeBase& scope, TypeInfo typeInfo)
 {
-   if (typeInfo.nullable)
+   if (typeInfo.nillable)
       return false;
 
    ClassInfo info;

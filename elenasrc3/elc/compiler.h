@@ -1286,7 +1286,7 @@ namespace elena_lang
          void compileYieldOperation(SyntaxNode node);
          void compileSwitchOperation(SyntaxNode node);
 
-         bool compileAssigningOp(ObjectInfo target, ObjectInfo source);
+         bool compileAssigningOp(ObjectInfo target, ObjectInfo source, bool& nillableOp);
 
          bool validateShortCircle(mssg_t message, ObjectInfo target);
 
@@ -1419,6 +1419,8 @@ namespace elena_lang
 
       static mssg_t resolveOperatorMessage(ModuleScopeBase* scope, int operatorId);
       static mssg_t resolveVariadicMessage(Scope& scope, mssg_t message);
+
+      bool isCompatible(Scope& scope, ObjectInfo source, ObjectInfo target, bool resolvePrimitives = true);
 
       bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool internalOne, bool& isProtectedDefConst);
 

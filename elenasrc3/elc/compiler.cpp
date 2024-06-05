@@ -2413,15 +2413,15 @@ inline TypeInfo retrieveTypeInfo(SyntaxNode node)
    ref_t reference = node.findChild(SyntaxKey::Target).arg.reference;
    ref_t attributes = node.findChild(SyntaxKey::Attribute).arg.reference;
 
-   return { reference, 0, test(attributes, V_NULLABLE)};
+   return { reference, 0, test(attributes, V_NILLABLE)};
 }
 
 void Compiler :: addTypeInfo(Scope& scope, SyntaxNode node, SyntaxKey key, TypeInfo typeInfo)
 {
    SyntaxNode info = node.appendChild(key);
    info.appendChild(SyntaxKey::Target, resolveStrongType(scope, typeInfo.typeRef, true));
-   if (typeInfo.nullable)
-      info.appendChild(SyntaxKey::Target, V_NULLABLE);
+   if (typeInfo.nillable)
+      info.appendChild(SyntaxKey::Target, V_NILLABLE);
 }
 
 void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
@@ -2514,7 +2514,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
       }
 
       methodInfo.outputRef = outputRef;
-      methodInfo.hints |= outputInfo.nullable ? (ref_t)MethodHint::Nullable : 0;
+      methodInfo.hints |= outputInfo.nillable ? (ref_t)MethodHint::Nillable : 0;
    }
 
    if (isOpenArg(message))
@@ -2692,7 +2692,7 @@ void Compiler :: injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool
 
 inline TypeInfo mapOutputType(MethodInfo info)
 {
-   return { info.outputRef, 0, Compiler::MethodScope::checkHint(info, MethodHint::Nullable) };
+   return { info.outputRef, 0, Compiler::MethodScope::checkHint(info, MethodHint::Nillable) };
 }
 
 void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope,
@@ -5702,7 +5702,7 @@ bool Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typ
 
       variable.reference = allocateLocalAddress(*codeScope, size, true);
    }
-   else if (_logic->isEmbeddableStruct(localInfo) && size == 0 && !variable.typeInfo.nullable) {
+   else if (_logic->isEmbeddableStruct(localInfo) && size == 0 && !variable.typeInfo.nillable) {
       size = align(_logic->defineStructSize(localInfo).size,
          scope.moduleScope->rawStackAlingment);
 
@@ -8247,6 +8247,14 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
 
 }
 
+bool Compiler :: isCompatible(Scope& scope, ObjectInfo source, ObjectInfo target, bool resolvePrimitives)
+{
+   if (source.typeInfo.isPrimitive() && resolvePrimitives)
+      source.typeInfo = { resolvePrimitiveType(scope, source.typeInfo, false) };
+
+   return _logic->isCompatible(*scope.moduleScope, target.typeInfo, source.typeInfo, true);
+}
+
 bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool internalOne, bool& isProtectedDefConst)
 {
    ref_t actionRef = getAction(message);
@@ -10784,8 +10792,12 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode,
    if (codeScope->isByRefHandler()) {
       ObjectInfo byRefTarget = codeScope->mapByRefReturnArg();
 
-      if(!compileAssigningOp(byRefTarget, retVal)) 
+      bool nillableOp = false;
+      if(!compileAssigningOp(byRefTarget, retVal, nillableOp))
          scope.raiseError(errInvalidOperation, node);
+
+      if (nillableOp)
+         scope.raiseWarning(WARNING_LEVEL_1, wrnReturningNillable, node);
 
       retVal = scope.mapSelf();
    }
@@ -11448,8 +11460,12 @@ ObjectInfo Compiler::Expression :: compileAssignOperation(SyntaxNode node, int o
       ObjectInfo opVal = compileWeakOperation(node, arguments, 2, loperand,
          messageArguments, message, expectedRef, &updatedOuterArgs);
 
-      if (!compileAssigningOp(loperand, opVal))
+      bool nillableOp = false;
+      if (!compileAssigningOp(loperand, opVal, nillableOp))
          scope.raiseError(errInvalidOperation, node);
+
+      if (nillableOp)
+         scope.raiseWarning(WARNING_LEVEL_1, wrnAssigningNillable, node);
    }
 
    return loperand;
@@ -11806,7 +11822,14 @@ ObjectInfo Compiler::Expression :: compileIsNilOperation(SyntaxNode node)
    writeObjectInfo(loperand, node);
    writer->appendNode(BuildKey::NilOp, ISNIL_OPERATOR_ID);
 
-   return { ObjectKind::Object };
+   // make the expression strong-typed if the both arguments are of the same type
+   TypeInfo typeInfo = {};
+   if (compiler->isCompatible(scope, loperand, roperand)) {
+      typeInfo = loperand.typeInfo;
+      typeInfo.nillable = roperand.typeInfo.nillable;
+   }
+
+   return { ObjectKind::Object, typeInfo, 0 };
 }
 
 ObjectInfo Compiler::Expression :: compileNested(SyntaxNode node, ExpressionAttribute mode,
@@ -12088,7 +12111,10 @@ ObjectInfo Compiler::Expression :: compileTupleAssigning(SyntaxNode node)
       ObjectInfo sourceVar = compileMessageOperation(node, exprVal, getter,
          0, arguments, EAttr::None, nullptr);
 
-      compileAssigningOp(targetVar, sourceVar);
+      bool nillableOp = false;
+      compileAssigningOp(targetVar, sourceVar, nillableOp);
+      if (nillableOp)
+         scope.raiseWarning(WARNING_LEVEL_1, wrnAssigningNillable, node);
    }
 
    return exprVal;
@@ -12879,7 +12905,8 @@ ObjectInfo Compiler::Expression :: compileAssigning(SyntaxNode loperand, SyntaxN
    }
    else exprVal = compile(roperand, targetRef, EAttr::RetValExpected, nullptr);
 
-   if (!compileAssigningOp(target, exprVal)) {
+   bool nillableOp = false;
+   if (!compileAssigningOp(target, exprVal, nillableOp)) {
       switch (target.kind) {
          case ObjectKind::ReadOnlyField:
          case ObjectKind::ReadOnlyFieldAddress:
@@ -12890,6 +12917,9 @@ ObjectInfo Compiler::Expression :: compileAssigning(SyntaxNode loperand, SyntaxN
             break;
       }
    }
+
+   if (nillableOp)
+      scope.raiseWarning(WARNING_LEVEL_1, wrnAssigningNillable, roperand);
 
    if (target == exprVal)
       scope.raiseError(errAssigningToSelf, loperand.lastChild(SyntaxKey::TerminalMask));
@@ -13075,6 +13105,7 @@ ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, ArgumentsIn
 {
    // unbox the arguments if required
    bool resultSaved = false;
+   bool dummy = false;
    for (auto it = scope.tempLocals.start(); !it.eof(); ++it) {
       ObjectInfo temp = *it;
 
@@ -13084,7 +13115,7 @@ ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, ArgumentsIn
          if (!resultSaved && retVal.kind != ObjectKind::Unknown) {
             // presave the result
             ObjectInfo tempResult = declareTempLocal(retVal.typeInfo.typeRef, false);
-            compileAssigningOp(tempResult, retVal);
+            compileAssigningOp(tempResult, retVal, dummy);
             retVal = tempResult;
 
             resultSaved = true;
@@ -13098,14 +13129,14 @@ ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, ArgumentsIn
          else if (temp.mode == TargetMode::RefUnboxingRequired) {
             temp.kind = ObjectKind::Local;
 
-            compileAssigningOp({ ObjectKind::Local, temp.typeInfo, key.value2 }, temp);
+            compileAssigningOp({ ObjectKind::Local, temp.typeInfo, key.value2 }, temp, dummy);
          }
          else if (key.value1 == ObjectKind::RefLocal) {
             writeObjectInfo(temp);
             writer->appendNode(BuildKey::Field);
             compileAssigningOp(
                { ObjectKind::Local, temp.typeInfo, key.value2 },
-               { ObjectKind::Object, temp.typeInfo, 0 });
+               { ObjectKind::Object, temp.typeInfo, 0 }, dummy);
          }
          else if (key.value1 == ObjectKind::FieldAddress) {
             unboxArgumentLocaly(temp, key);
@@ -13113,10 +13144,10 @@ ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, ArgumentsIn
          else if (temp.mode == TargetMode::ConditionalUnboxingRequired) {
             writeObjectInfo({ key.value1, temp.typeInfo, key.value2 });
             writer->newNode(BuildKey::StackCondOp);
-            compileAssigningOp({ key.value1, temp.typeInfo, key.value2 }, temp);
+            compileAssigningOp({ key.value1, temp.typeInfo, key.value2 }, temp, dummy);
             writer->closeNode();
          }
-         else compileAssigningOp({ key.value1, temp.typeInfo, key.value2 }, temp);
+         else compileAssigningOp({ key.value1, temp.typeInfo, key.value2 }, temp, dummy);
       }
    }
 
@@ -13125,7 +13156,7 @@ ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, ArgumentsIn
          if (!resultSaved && retVal.kind != ObjectKind::Unknown) {
             // presave the result
             ObjectInfo tempResult = declareTempLocal(retVal.typeInfo.typeRef, false);
-            compileAssigningOp(tempResult, retVal);
+            compileAssigningOp(tempResult, retVal, dummy);
             retVal = tempResult;
 
             resultSaved = true;
@@ -13180,7 +13211,7 @@ ObjectInfo Compiler::Expression :: compileWeakOperation(SyntaxNode node, ref_t* 
    return retVal;
 }
 
-bool Compiler::Expression :: compileAssigningOp(ObjectInfo target, ObjectInfo exprVal)
+bool Compiler::Expression :: compileAssigningOp(ObjectInfo target, ObjectInfo exprVal, bool& nillableOp)
 {
    BuildKey operationType = BuildKey::None;
    int operand = 0;
@@ -13326,6 +13357,10 @@ bool Compiler::Expression :: compileAssigningOp(ObjectInfo target, ObjectInfo ex
       // HOTFIX : nil cannit be assigned to a struct
       if (exprVal.kind == ObjectKind::Nil)
          return false;
+
+      // warn if nillable argument is used
+      if (exprVal.typeInfo.nillable)
+         nillableOp = true;
    }
    writer->closeNode();
 
@@ -14308,14 +14343,15 @@ ObjectInfo Compiler::Expression :: boxPtrLocally(ObjectInfo info)
 
 void Compiler::Expression :: unboxArgumentLocaly(ObjectInfo temp, ObjectKey key)
 {
+   bool dummy = false;
    if ((temp.typeInfo.isPrimitive() && compiler->_logic->isPrimitiveArrRef(temp.typeInfo.typeRef))
       || compiler->_logic->isEmbeddableArray(*scope.moduleScope, temp.typeInfo.typeRef))
    {
       int size = defineFieldSize(scope, { key.value1, temp.typeInfo, key.value2 });
 
-      compileAssigningOp({ key.value1, temp.typeInfo, key.value2, size }, temp);
+      compileAssigningOp({ key.value1, temp.typeInfo, key.value2, size }, temp, dummy);
    }
-   else compileAssigningOp({ key.value1, temp.typeInfo, key.value2 }, temp);
+   else compileAssigningOp({ key.value1, temp.typeInfo, key.value2 }, temp, dummy);
 }
 
 void Compiler::Expression :: unboxOuterArgs(ArgumentsInfo* updatedOuterArgs)
@@ -14324,6 +14360,8 @@ void Compiler::Expression :: unboxOuterArgs(ArgumentsInfo* updatedOuterArgs)
    ObjectInfo closure;
 
    for (pos_t i = 0; i != updatedOuterArgs->count_pos(); i++) {
+      bool dummy = false;
+
       ObjectInfo info = (*updatedOuterArgs)[i];
       if (info.kind == ObjectKind::ClosureInfo) {
          closure = (*updatedOuterArgs)[++i];
@@ -14334,11 +14372,11 @@ void Compiler::Expression :: unboxOuterArgs(ArgumentsInfo* updatedOuterArgs)
 
          if (source.kind == ObjectKind::Local) {
             closure.extra = info.reference;
-            compileAssigningOp(source, closure);
+            compileAssigningOp(source, closure, dummy);
          }
          else if (source.kind == ObjectKind::LocalAddress) {
             closure.extra = info.reference;
-            compileAssigningOp(source, closure);
+            compileAssigningOp(source, closure, dummy);
          }
          else if (source.kind == ObjectKind::Outer) {
             // ignore outer fields
@@ -14484,6 +14522,7 @@ ObjectInfo Compiler::Expression :: boxArgumentInPlace(ObjectInfo info, ref_t tar
 
 ObjectInfo Compiler::Expression :: boxRefArgumentInPlace(ObjectInfo info, ref_t targetRef)
 {
+   bool dummy = false;
    ref_t typeRef = targetRef;
    if (!typeRef)
       typeRef = compiler->resolveStrongType(scope, info.typeInfo);
@@ -14492,7 +14531,7 @@ ObjectInfo Compiler::Expression :: boxRefArgumentInPlace(ObjectInfo info, ref_t 
    tempLocal.mode = TargetMode::RefUnboxingRequired;
 
    info.kind = ObjectKind::Local;
-   compileAssigningOp(tempLocal, info);
+   compileAssigningOp(tempLocal, info, dummy);
 
    tempLocal.kind = ObjectKind::LocalReference;
 
@@ -14501,6 +14540,7 @@ ObjectInfo Compiler::Expression :: boxRefArgumentInPlace(ObjectInfo info, ref_t 
 
 ObjectInfo Compiler::Expression :: boxVariadicArgument(ObjectInfo info)
 {
+   bool dummy = false;
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
    ref_t elementRef = info.typeInfo.elementRef;
@@ -14523,7 +14563,7 @@ ObjectInfo Compiler::Expression :: boxVariadicArgument(ObjectInfo info)
    writeObjectInfo(lenLocal);
    writer->appendNode(BuildKey::SavingInStack);
    writer->appendNode(BuildKey::NewArrayOp, typeRef);
-   compileAssigningOp(destLocal, { ObjectKind::Object, { typeRef }, 0 });
+   compileAssigningOp(destLocal, { ObjectKind::Object, { typeRef }, 0 }, dummy);
 
    // copy the content
    // index len
@@ -14540,7 +14580,7 @@ ObjectInfo Compiler::Expression :: boxVariadicArgument(ObjectInfo info)
       ObjectInfo convInfo = convertObject({}, destLocal,
          info.typeInfo.typeRef, false, false);
 
-      compileAssigningOp(destLocal, convInfo);
+      compileAssigningOp(destLocal, convInfo, dummy);
 
       destLocal.typeInfo = convInfo.typeInfo;
    }
@@ -14555,8 +14595,12 @@ void Compiler::Expression :: compileAssigning(SyntaxNode node, ObjectInfo target
          compiler->resolveStrongType(scope, target.typeInfo), false, false);
    }
 
-   if(!compileAssigningOp(target, source))
+   bool nillableOp = false;
+   if(!compileAssigningOp(target, source, nillableOp))
       scope.raiseError(errInvalidOperation, node);
+
+   if (nillableOp)
+      scope.raiseWarning(WARNING_LEVEL_1, wrnAssigningNillable, node);
 }
 
 void Compiler::Expression :: compileConverting(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool stackSafe)
