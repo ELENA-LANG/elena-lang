@@ -54,6 +54,7 @@ In development:
   * nullable : strong typed - is passed directly nil or boxed value
 
   - #661 : fix an issue
+  * #661 : try block without ret expression must not have an extra redirect statement
 
   === Iteration 26 ===
   --------------------------------------

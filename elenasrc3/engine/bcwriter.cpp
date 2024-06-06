@@ -3196,10 +3196,13 @@ void ByteCodeWriter :: saveSwitching(CommandTape& tape, BuildNode node, TapeScop
 
 void ByteCodeWriter :: saveAlternate(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
 {
+   int retLabel = tape.newLabel();                 // declare ret-end-label
    tape.newLabel();
    tape.newLabel();
 
    tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
+
+   retLabel = tape.exchangeFirstsLabel(retLabel);
 
    BuildNode tryNode = node.findChild(BuildKey::Tape);
    saveTape(tape, tryNode, tapeScope, paths, tapeOptMode, false);
@@ -3209,6 +3212,19 @@ void ByteCodeWriter :: saveAlternate(CommandTape& tape, BuildNode node, TapeScop
 
    // jump
    tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
+
+   // === exit redirect block ===
+   // restore the original ret label and return the overridden one
+   retLabel = tape.exchangeFirstsLabel(retLabel);
+
+   // ret-end-label:
+   tape.setPredefinedLabel(retLabel);
+
+   // unhook
+   tape.write(ByteCode::Unhook);
+
+   tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
+   // ===========================
 
    // catchLabel:
    tape.setLabel();
@@ -3221,6 +3237,7 @@ void ByteCodeWriter :: saveAlternate(CommandTape& tape, BuildNode node, TapeScop
 
    // eos:
    tape.setLabel();
+   tape.releaseLabel(); // release ret-end-label
 }
 
 void ByteCodeWriter :: saveStackCondOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
