@@ -29,36 +29,15 @@ In development:
   - elt : fails after executing several times
   - #658 : create debug adapter
   - #265
+  * nillable argument list
+  * nillable returning type - no byref handler
   - #637(bt tests (>=4), all bc tests)
-  - #562 : when the setting is on, does not allow to return / assign nil value
-  - chat sample : client - try to connect
-  - fix gui samples (create apropriate tests)
-  - #562 : nullable
-  * #562 : boxing to Nullable<T>?
-  * #562 : warn if nullable operation is executed without checking if it is nil
-  * #562 : support nullable reference : if option set - nil can be returned only for nullable reference
-  * #562 : support nullable reference : if option not set - just like a normal type
-  - #562 : nullable : int? + int? -> return int? (if both nil -> the result is nil)
-  - #562 : nullable : int? a := null; int b := a ?? 0;
-  - #562 : nullable : int? a := 2; int b := a;
   --------------------------------------
-  int? a := nil;  <- box the reference into Nullable<int>
-  int b := a ?? 0;  // !!
-  int b := a // !! is not allowed
-
-  obbect b := a;
-  a.hasValue and so on   
-
-  * direct operation - passed the address of the variable
-  * when passed as weak - boxed into Nullable<T>
-  * nullable : strong typed - is passed directly nil or boxed value
-
-  - #661 : fix an issue
-  * #661 : try block without ret expression must not have an extra redirect statement
+  - chat sample : client - try to connect
 
   === Iteration 26 ===
   --------------------------------------
-  dev: #574,#619,#580,#658(debug,compile,build,IntelliSense)
+  dev: #574,#619,#580,#658(debug,build,IntelliSense), #562
   op:github action - create a draft release
   opt:
   maint:#283, #620, #486, #506
@@ -67,6 +46,11 @@ In development:
   tools:
   prom:post an article about attributes (decorate a class, defining which operation is allowed)
   port:#79
+  --------------------------------------
+  * #562 : boxing to Nullable<T>?
+  * #562 : support nullable reference (when option is on, warning on unsafe operation)
+  - #562 : nullable : int? == int? -> return bool?
+  - #562 : nullable : int? + int? -> return int? (if both nil -> the result is nil)
 
   ### EPIC: elena 6.3 ###
 

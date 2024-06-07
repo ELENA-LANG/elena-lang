@@ -826,6 +826,12 @@ int CompilingProcess :: build(Project& project,
       _presenter->print(ELC_UNSUCCESSFUL);
       return ERROR_RET_CODE;
    }
+   catch (InternalStrError& ex) {
+      _presenter->print(_presenter->getMessage(ex.messageCode), *ex.arg);
+
+      _presenter->print(ELC_UNSUCCESSFUL);
+      return ERROR_RET_CODE;
+   }
    catch(AbortError&) {
       _presenter->print(ELC_UNSUCCESSFUL);
       return ERROR_RET_CODE;

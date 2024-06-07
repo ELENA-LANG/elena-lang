@@ -1,47 +1,32 @@
-import extensions;
-
-class IntWrapper
-{ 
-    int value;
-      
-    constructor(int value) 
-    {
-       this value := value 
-    }
-
-    int cast()
-       = value;  
-}
-
-class MyClass
-{
-    add(int n)
-    {
-        console.printLine("add int:(",n,")")
-    }
+    import system'routines;
+    import system'dynamic;
+    import extensions;
     
-    add(string s)
+    public class Duck
     {
-        console.printLine("add literal:(",s,")")
+       canFly() = true;
+        
+       fly()
+       {
+          console.printLine("Duck flying")
+       }    
     }
-    
-    add(o)
+
+    public class Whale
     {
-        if (o; is int n) {
-           ^ self.add(n);
-        };
-
-        console.printLine("unsupported")
+       swim()
+       {
+          console.printLine("Whale swimming")
+       }
     }
-}
 
-public program()
-{
-    var o := new MyClass();
-    var wrapper := new IntWrapper(4);
-    
-    o.add("string");
-    o.add(2);
-    o.add(wrapper);
-    o.add(2.3);  // when this line is commented, the code works correctly and ends without a problem
-}
+    public program()
+    {
+       var list := new object[] { new Duck(), new Whale() };
+       foreach(var animal; in list) {
+         if (animal.canFly() \ back(false)) {
+            animal.fly();
+         }                
+         else console.printLine(animal," can't fly");
+       }
+    }

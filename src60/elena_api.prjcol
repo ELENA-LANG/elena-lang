@@ -1,0 +1,13 @@
+<configuration>
+  <collection>
+    <project>system\system.prj</project>
+    <project>extensions\extensions.prj</project>
+    <project>cellular\cellular.prj</project>
+    <project>algorithms\algorithms.prj</project>
+    <project>ltests\ltests.prj</project>
+    <project>sqlite\sqlite.prj</project>
+    <project>forms\forms.prj</project>
+    <project>xforms\xforms.prj</project>
+    <project>net\net.prj</project>
+  </collection>
+</configuration>

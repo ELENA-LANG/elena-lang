@@ -1388,6 +1388,24 @@ namespace elena_lang
       }
    };
 
+   // --- InternalStrError ---
+   struct InternalStrError : ExceptionBase
+   {
+      int              messageCode;
+      IdentifierString arg;
+
+      InternalStrError(int messageCode)
+      {
+         this->messageCode = messageCode;
+      }
+
+      InternalStrError(int messageCode, ustr_t arg)
+      {
+         this->messageCode = messageCode;
+         this->arg.copy(arg);
+      }
+   };
+
    // --- JITUnresolvedException ---
    struct JITUnresolvedException : ExceptionBase
    {

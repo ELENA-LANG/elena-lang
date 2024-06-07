@@ -12,11 +12,11 @@ public abstract class BaseWinForm : BaseWinContainer
       _region.Y := CW_USEDEFAULT;
    }
 
-   appendControl(control)
+   appendControl(BaseControl control)
    {
       control.Parent := self;
-        
-      _controls.append(control :as IControl)
+
+      _controls.append(weak control :as IControl)
    }
 
    close()

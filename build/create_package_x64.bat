@@ -127,32 +127,7 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-%~dp0\x64\bin\elena64-cli %~dp0\x64\src60\system\system.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\x64\bin\elena64-cli %~dp0\x64\src60\extensions\extensions.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\x64\bin\elena64-cli %~dp0\x64\src60\cellular\cellular.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\x64\bin\elena64-cli %~dp0\x64\src60\algorithms\algorithms.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\x64\bin\elena64-cli %~dp0\x64\src60\sqlite\sqlite.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\x64\bin\elena64-cli %~dp0\x64\src60\forms\forms.prj
+%~dp0\x64\bin\elena64-cli %~dp0\x64\src60\elena_api.prjcol
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
