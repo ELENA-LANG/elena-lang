@@ -9,7 +9,6 @@ In development:
   --------------------------------------
   opt:pi under 6 sec, #611, #602, #601, #586
   maint:#650
-  exp: generate code templates - e.g. simple console app
   ide:vm debugger, #617, linux ide, linux debugger
   tools:#618, #620
   prom:#635 on reddit;elena in nutshell every 1 week; 
@@ -20,6 +19,7 @@ In development:
   - github action : build for linux
   - ide : editor settings - tab
   - ide : debugger settings
+  - ide : goto in another thread
   - generate code templates : generate a code based on a record
   - generate code templates : project templates
   - #184 : linux simplest gui (refresh textview, onDocumentUpdate ...)
@@ -29,11 +29,11 @@ In development:
   - elt : fails after executing several times
   - #658 : create debug adapter
   - #265
+  * chat sample : server - new client
   * nillable argument list
   * nillable returning type - no byref handler
-  - #637(bt tests (>=4), all bc tests)
   --------------------------------------
-  - chat sample : client - try to connect
+  - #637(bt tests (>=4), all bc tests)
 
   === Iteration 26 ===
   --------------------------------------
@@ -41,7 +41,7 @@ In development:
   op:github action - create a draft release
   opt:
   maint:#283, #620, #486, #506
-  exp:
+  exp: generate code templates - e.g. simple console app
   ide:
   tools:
   prom:post an article about attributes (decorate a class, defining which operation is allowed)

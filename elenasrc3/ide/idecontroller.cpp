@@ -144,7 +144,7 @@ void ProjectController :: defineFullPath(ProjectModel& model, ustr_t ns, path_t 
          ustr_t extPackage = ref_it.key();
          if (NamespaceString::isIncluded(extPackage, ns)) {
             fullPath.copy(*model.projectPath);
-            fullPath.combine(*ref_it);
+            PathUtil::combineCanonicalized(fullPath, *ref_it);
             fullPath.combine(path);
 
             return;
@@ -195,6 +195,21 @@ path_t ProjectController :: retrieveSourceName(ProjectModel* model, path_t sourc
          return sourcePath + rootPathLen + rootNsPos + 1;
       }
       else {
+         for (auto ref_it = model->referencePaths.start(); !ref_it.eof(); ++ref_it) {
+            PathString extPath(model->projectPath);
+            PathUtil::combineCanonicalized(extPath, *ref_it);
+            size_t extPathLen = extPath.length();
+            if (PathUtil::compare(sourcePath, *extPath, extPathLen)) {
+               name.copy(ref_it.key());
+
+               subPath.copySubPath(*extPath + projectPathLen, true);
+
+               _debugController.resolveNamespace(name);
+
+               return sourcePath + extPathLen + 1;
+            }
+         }
+
          FileNameString fileName(sourcePath);
          IdentifierString tmp(*fileName);
 

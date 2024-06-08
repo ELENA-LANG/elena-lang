@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Path class declarations.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PATHS_H
@@ -22,6 +22,8 @@ namespace elena_lang
    typedef ustr_t path_t;
 
 #endif
+
+   class PathString;
 
    // --- PathUtil ---
    class PathUtil
@@ -42,6 +44,8 @@ namespace elena_lang
 #ifdef _MSC_VER
       static bool checkExtension(path_t path, ustr_t extension);
 #endif
+
+      static void combineCanonicalized(PathString& target, path_t subpath);
    };
 
    // --- PathString ---

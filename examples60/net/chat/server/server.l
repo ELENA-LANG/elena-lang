@@ -33,31 +33,36 @@ public sealed ChatServer
 
    private bool proceed()
    {
-      foreach(TcpRemoteClient client; in _networkServer.Clients) {
-         lock(_lock) {
-            if (client.Parameter; is ChatMember member)
-            {
-               var command := member.readCommand();
-               (command.Command) =>
-                     INTRODUCTION
-                     {
-                        member.Name := command.Value;
-
-                        OnIntro?.(member.Name);
-                     }
-                     SEND
-                     {
-                        OnMessage?.(member.Name, command.Value);
-                        
-                        member.Server.translate(new CommandDTO
-                                                        { 
-                                                            this Command := TRANSLATE; 
-                                                            this Value := command.Value; 
-                                                            this User := member.Name; 
-                                                        })
-                     };
+      try {
+         foreach(TcpRemoteClient client; in _networkServer.Clients) {
+            lock(_lock) {
+               if (client.Parameter; is ChatMember member)
+               {
+                  var command := member.readCommand();
+                  (command.Command) =>
+                        INTRODUCTION
+                        {
+                           member.Name := command.Value;
+   
+                           OnIntro?.(member.Name);
+                        }
+                        SEND
+                        {
+                           OnMessage?.(member.Name, command.Value);
+                           
+                           member.Server.translate(new CommandDTO
+                                                           { 
+                                                               this Command := TRANSLATE; 
+                                                               this Value := command.Value; 
+                                                               this User := member.Name; 
+                                                           })
+                        };
+               }
             }
-         }
+         };
+      }
+      catch(Exception ex) {
+         console.writeLine(ex);
       };
 
       ^ true
