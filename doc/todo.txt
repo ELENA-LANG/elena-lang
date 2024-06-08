@@ -7,7 +7,7 @@ In development:
 
   === Iteration 25 (14.6.24) ===
   --------------------------------------
-  opt:pi under 6 sec, #611, #602, #601, #586
+  opt:#611, #602, #601, #586
   maint:#650
   ide:vm debugger, #617, linux ide, linux debugger
   tools:#618, #620
@@ -19,7 +19,7 @@ In development:
   - github action : build for linux
   - ide : editor settings - tab
   - ide : debugger settings
-  - ide : goto in another thread
+  - ide : goto must be set in every thread
   - generate code templates : generate a code based on a record
   - generate code templates : project templates
   - #184 : linux simplest gui (refresh textview, onDocumentUpdate ...)
@@ -31,15 +31,14 @@ In development:
   - #265
   * chat sample : server - new client
   * nillable argument list
-  * nillable returning type - no byref handler
   --------------------------------------
-  - #637(bt tests (>=4), all bc tests)
+  * nillable returning type - no byref handler
 
   === Iteration 26 ===
   --------------------------------------
-  dev: #574,#619,#580,#658(debug,build,IntelliSense), #562
+  dev: #574,#619,#580,#658(debug,build,IntelliSense), #562,#637(bt tests (>=4), all bc tests)
   op:github action - create a draft release
-  opt:
+  opt:pi under 6 sec
   maint:#283, #620, #486, #506
   exp: generate code templates - e.g. simple console app
   ide:

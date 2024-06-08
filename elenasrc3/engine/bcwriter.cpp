@@ -595,9 +595,8 @@ void realIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
    if (!isAssignOp(node.arg.value)) {
       tape.write(ByteCode::CopyDPN, targetOffset, 8);
       tape.write(ByteCode::XMovSISI, 0, 1);
-
-      tape.write(ByteCode::SetDP, targetOffset);
    }
+   tape.write(ByteCode::SetDP, targetOffset);
 
    switch (node.arg.value) {
       case ADD_OPERATOR_ID:
