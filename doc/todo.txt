@@ -7,108 +7,75 @@ In development:
 
   === Iteration 25 (14.6.24) ===
   --------------------------------------
-  opt:#611, #602, #601, #586
-  maint:#650
-  ide:vm debugger, #617, linux ide, linux debugger
-  tools:#618, #620
-  prom:#635 on reddit;elena in nutshell every 1 week; 
-  port:elenavm / elt for linux, helloworld gui sample (button)
-  doc:api - add descriptions
+  dev: 
+  gen:
+  maint:
+  port:
+  prom:
   --------------------------------------
-  - vm : GC statistics
-  - github action : build for linux
-  - ide : editor settings - tab
-  - ide : debugger settings
-  - ide : goto must be set in every thread
-  - generate code templates : generate a code based on a record
-  - generate code templates : project templates
-  - #184 : linux simplest gui (refresh textview, onDocumentUpdate ...)
-  * #590 : vm : InjectProxyTypeLA 
-  - #590 : implementing interface injection : strong interface
-  - elt : nested call must not stop / start vm 
-  - elt : fails after executing several times
+  - x64 : gui
   - #658 : create debug adapter
-  - #265
+  - elenavm : GC statistics, and missing api entries
   * chat sample : server - new client
-  * nillable argument list
   --------------------------------------
-  * nillable returning type - no byref handler
 
   === Iteration 26 ===
+  dev: #265
+  gen:
+  maint:
+  port:
+  prom:
   --------------------------------------
-  dev: #574,#619,#580,#658(debug,build,IntelliSense), #562,#637(bt tests (>=4), all bc tests)
-  op:github action - create a draft release
-  opt:pi under 6 sec
-  maint:#283, #620, #486, #506
-  exp: generate code templates - e.g. simple console app
-  ide:
-  tools:
-  prom:post an article about attributes (decorate a class, defining which operation is allowed)
-  port:#79
   --------------------------------------
-  * #562 : boxing to Nullable<T>?
-  * #562 : support nullable reference (when option is on, warning on unsafe operation)
-  - #562 : nullable : int? == int? -> return bool?
-  - #562 : nullable : int? + int? -> return int? (if both nil -> the result is nil)
 
   ### EPIC: elena 6.3 ###
 
   === Iteration 27 ===
   --------------------------------------
-  dev:#97,#98,#99
-  op:
-  opt:
+  dev: 
+  gen:
   maint:
-  exp:
-  ide:
-  tools:
-  prom:
   port:
+  prom:
+  --------------------------------------
+  --------------------------------------
 
   === Iteration 28 ===
   --------------------------------------
-  dev: async programming
-  op:
-  opt:
+  dev: 
+  gen:
   maint:
-  exp:
-  ide:
-  tools:
-  prom:
   port:
+  prom:
+  --------------------------------------
+  --------------------------------------
 
   === Iteration 29 ===
   --------------------------------------
   dev: 
-  op:
-  opt:
+  gen:
   maint:
-  exp:
-  ide:
-  tools:
-  prom:
   port:
+  prom:
+  --------------------------------------
+  --------------------------------------
 
   === Iteration 30 ===
   --------------------------------------
   dev: 
-  op:
-  opt:
+  gen:
   maint:
-  exp:
-  ide:
-  tools:
-  prom:
   port:
+  prom:
+  --------------------------------------
+  --------------------------------------
 
   === Iteration 31 ===
   --------------------------------------
   dev: 
-  op:
-  opt:
+  gen:
   maint:
-  exp:
-  ide:
-  tools:
-  prom:
   port:
+  prom:
+  --------------------------------------
+  --------------------------------------

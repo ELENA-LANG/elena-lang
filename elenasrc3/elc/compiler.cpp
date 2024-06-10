@@ -2421,7 +2421,7 @@ void Compiler :: addTypeInfo(Scope& scope, SyntaxNode node, SyntaxKey key, TypeI
    SyntaxNode info = node.appendChild(key);
    info.appendChild(SyntaxKey::Target, resolveStrongType(scope, typeInfo.typeRef, true));
    if (typeInfo.nillable)
-      info.appendChild(SyntaxKey::Target, V_NILLABLE);
+      info.appendChild(SyntaxKey::Attribute, V_NILLABLE);
 }
 
 void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
@@ -4248,6 +4248,17 @@ ref_t Compiler :: resolveStrongType(Scope& scope, TypeInfo typeInfo, bool declar
    else return typeInfo.typeRef;
 }
 
+TypeInfo Compiler :: resolveStrongTypeInfo(Scope& scope, TypeInfo typeInfo, bool declarationMode)
+{
+   if (typeInfo.isPrimitive()) {
+      if (typeInfo.typeRef == V_AUTO) {
+         return typeInfo;
+      }
+      else return resolvePrimitiveType(scope, typeInfo, declarationMode);
+   }
+   else return typeInfo;
+}
+
 ref_t Compiler :: retrieveType(Scope& scope, ObjectInfo info)
 {
    if (info.typeInfo.isPrimitive() && info.typeInfo.elementRef) {
@@ -4374,8 +4385,14 @@ void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bo
          case SyntaxKey::Type:
          case SyntaxKey::ArrayType:
          case SyntaxKey::TemplateType:
-            if (!identifierDeclarationMode)
-               scope.info.typeRef = resolveStrongTypeAttribute(scope, current, true, false);
+            if (!identifierDeclarationMode) {
+               auto typeInfo = resolveStrongTypeAttribute(scope, current, true, false);
+               scope.info.typeRef = typeInfo.typeRef;
+
+               if (typeInfo.nillable)
+                  scope.raiseError(errInvalidOperation, node);
+            }
+               
             break;
          default:
             break;
@@ -4456,7 +4473,7 @@ ref_t Compiler :: declareMultiType(Scope& scope, SyntaxNode& current, ref_t elem
 
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Type) {
-         items.add({ ObjectKind::Class, { resolveStrongTypeAttribute(scope, current, true, false) }, 0 });
+         items.add({ ObjectKind::Class, resolveStrongTypeAttribute(scope, current, true, false), 0 });
       }
       else break;
 
@@ -4514,7 +4531,13 @@ void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node, bo
 
                continue;
             }
-            else scope.info.outputRef = resolveStrongTypeAttribute(scope, current, true, false);
+            else {
+               auto typeInfo = resolveStrongTypeAttribute(scope, current, true, false);
+               scope.info.outputRef = typeInfo.typeRef;
+               if (typeInfo.nillable)
+                  scope.info.hints |= (ref_t)MethodHint::Nillable;
+            }
+
             if (templateBased)
                scope.info.outputRef = resloveWeakSelfReference(scope.moduleScope, scope.info.outputRef, scope.getClassRef());
 
@@ -4599,11 +4622,11 @@ void Compiler :: registerTemplateSignature(TemplateScope& scope, SyntaxNode node
 
          if (argNode == SyntaxKey::Type) {
             signature.append('&');
-            ref_t classRef = resolveStrongTypeAttribute(scope, argNode, false, false);
-            if (!classRef)
+            auto classInfo = resolveStrongTypeAttribute(scope, argNode, false, false);
+            if (!classInfo.typeRef)
                scope.raiseError(errUnknownClass, current);
 
-            ustr_t className = scope.module->resolveReference(classRef);
+            ustr_t className = scope.module->resolveReference(classInfo.typeRef);
             if (isWeakReference(className))
                signature.append(scope.module->name());
 
@@ -4655,9 +4678,9 @@ void Compiler :: registerExtensionTemplateMethod(TemplateScope& scope, SyntaxNod
             registerTemplateSignature(scope, typeAttr, signaturePattern);
          }
          else if (typeAttr != SyntaxKey::None) {
-            ref_t classRef = resolveStrongTypeAttribute(scope, typeAttr, true, false);
+            auto classInfo = resolveStrongTypeAttribute(scope, typeAttr, true, false);
 
-            ustr_t className = scope.module->resolveReference(classRef);
+            ustr_t className = scope.module->resolveReference(classInfo.typeRef);
             if (isWeakReference(className))
                signaturePattern.append(scope.module->name());
 
@@ -5043,8 +5066,8 @@ void Compiler :: declareTemplateAttributes(Scope& scope, SyntaxNode node,
          case SyntaxKey::Type:
          case SyntaxKey::TemplateType:
          {
-            ref_t typeRef = resolveStrongTypeAttribute(scope, current, declarationMode, attributes.mssgNameLiteral);
-            parameters.add(typeRef);
+            auto typeInfo = resolveStrongTypeAttribute(scope, current, declarationMode, attributes.mssgNameLiteral);
+            parameters.add(typeInfo.typeRef);
 
             break;
          }
@@ -5247,7 +5270,7 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribu
                scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
             break;
          case SyntaxKey::Type:
-            elementRef = resolveStrongTypeAttribute(scope, current, declarationMode, false);
+            elementRef = resolveStrongTypeAttribute(scope, current, declarationMode, false).typeRef;
             break;
          case SyntaxKey::TemplateType:
             elementRef = resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole).typeRef;
@@ -5338,7 +5361,7 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAtt
    return typeInfo;
 }
 
-ref_t Compiler :: resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole)
+TypeInfo Compiler :: resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole)
 {
    TypeAttributes typeAttributes = {};
    TypeInfo typeInfo = resolveTypeAttribute(scope, node, typeAttributes, declarationMode, allowRole);
@@ -5346,9 +5369,9 @@ ref_t Compiler :: resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool
       scope.raiseError(errInvalidOperation, node);
 
    if (isPrimitiveRef(typeInfo.typeRef)) {
-      return resolvePrimitiveType(scope, typeInfo, declarationMode);
+      return { resolvePrimitiveType(scope, typeInfo, declarationMode) };
    }
-   else return typeInfo.typeRef;
+   else return typeInfo;
 }
 
 int Compiler :: resolveSize(Scope& scope, SyntaxNode node)
@@ -7028,20 +7051,20 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
    Expression expression(this, codeScope, writer);
 
    bool autoMode = false;
-   ref_t outputRef = 0;
+   TypeInfo outputInfo = {};
    if (codeScope.isByRefHandler()) {
       ObjectInfo byRefTarget = codeScope.mapByRefReturnArg();
 
-      outputRef = byRefTarget.typeInfo.typeRef;
+      outputInfo = byRefTarget.typeInfo;
    }
-   else outputRef = codeScope.getOutputRef();
+   else outputInfo = codeScope.getOutputInfo();
 
-   if (outputRef == V_AUTO) {
+   if (outputInfo.typeRef == V_AUTO) {
       autoMode = true;
-      outputRef = 0;
+      outputInfo = {};
    }
 
-   ObjectInfo retVal = expression.compileReturning(node, mode, outputRef);
+   ObjectInfo retVal = expression.compileReturning(node, mode, outputInfo);
 
    codeScope.withRetStatement = true;
 
@@ -10453,7 +10476,7 @@ bool Compiler::Class :: isParentDeclared(SyntaxNode node)
 
    SyntaxNode child = parentNode.firstChild();
    if (child != SyntaxKey::TemplateType && child != SyntaxKey::None) {
-      ref_t parentRef = compiler->resolveStrongTypeAttribute(scope, child, true, false);
+      ref_t parentRef = compiler->resolveStrongTypeAttribute(scope, child, true, false).typeRef;
 
       return scope.moduleScope->isDeclared(parentRef);
    }
@@ -10556,7 +10579,7 @@ void Compiler::Class :: resolveClassPostfixes(SyntaxNode node, bool extensionMod
                else if (!parentRef) {
                   parentNode = current;
 
-                  parentRef = compiler->resolveStrongTypeAttribute(scope, child, extensionMode, false);
+                  parentRef = compiler->resolveStrongTypeAttribute(scope, child, extensionMode, false).typeRef;
                }
                else if (!compiler->importTemplate(scope, child, node, false))
                   scope.raiseError(errUnknownTemplate, current);
@@ -10564,7 +10587,7 @@ void Compiler::Class :: resolveClassPostfixes(SyntaxNode node, bool extensionMod
             else if (!parentRef) {
                parentNode = current;
 
-               parentRef = compiler->resolveStrongTypeAttribute(scope, child, extensionMode, false);
+               parentRef = compiler->resolveStrongTypeAttribute(scope, child, extensionMode, false).typeRef;
             }
             else scope.raiseError(errInvalidSyntax, current);
 
@@ -10758,7 +10781,7 @@ ObjectInfo Compiler::Expression :: compileRoot(SyntaxNode node, EAttr mode)
    return retVal;
 }
 
-ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode, ref_t outputRef)
+ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode, TypeInfo outputInfo)
 {
    bool dynamicRequired = EAttrs::testAndExclude(mode, EAttr::DynamicObject);
 
@@ -10778,7 +10801,7 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode,
    SyntaxNode exprNode = node.findChild(SyntaxKey::Expression, SyntaxKey::CodeBlock);
    switch (exprNode.key) {
       case SyntaxKey::Expression:
-         retVal = compile(node.findChild(SyntaxKey::Expression), outputRef,
+         retVal = compile(node.findChild(SyntaxKey::Expression), outputInfo.typeRef,
             mode | EAttr::Root | EAttr::RetValExpected, nullptr);
          break;
       case SyntaxKey::CodeBlock:
@@ -10803,7 +10826,7 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode,
    }
    else {
       // HOTFIX : converting nil value to a structure is not allowed in returning expression
-      if (retVal.kind == ObjectKind::Nil && compiler->_logic->isEmbeddableStruct(*scope.moduleScope, outputRef)) {
+      if (retVal.kind == ObjectKind::Nil && compiler->_logic->isEmbeddableStruct(*scope.moduleScope, outputInfo)) {
          scope.raiseError(errInvalidOperation, node);
       }
 
@@ -10819,11 +10842,11 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode,
          retVal = { ObjectKind::Object, retVal.typeInfo, 0 };
       }
 
-      outputRef = compiler->resolveStrongType(scope, retVal.typeInfo);
+      outputInfo = compiler->resolveStrongTypeInfo(scope, retVal.typeInfo);
 
-      compiler->_logic->validateAutoType(*scope.moduleScope, outputRef);
+      compiler->_logic->validateAutoType(*scope.moduleScope, outputInfo);
 
-      scope.resolveAutoOutput(outputRef);
+      scope.resolveAutoOutput(outputInfo);
    }
 
    if (compiler->_withDebugInfo) {
@@ -12701,7 +12724,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node, Obje
    }
 
    if (found) {
-      retVal.typeInfo = { result.outputRef };
+      retVal.typeInfo = result.outputInfo;
       switch ((MethodHint)result.kind) {
          case MethodHint::Sealed:
             if (result.constRef && compiler->_optMode) {
@@ -14175,22 +14198,22 @@ void Compiler::Expression :: writeMessageArguments(ObjectInfo& target,
 
 bool Compiler::Expression :: resolveAutoType(ObjectInfo source, ObjectInfo& target)
 {
-   ref_t sourceRef = compiler->resolveStrongType(scope, source.typeInfo);
+   TypeInfo sourceInfo = compiler->resolveStrongTypeInfo(scope, source.typeInfo);
 
-   if (!compiler->_logic->validateAutoType(*scope.moduleScope, sourceRef))
+   if (!compiler->_logic->validateAutoType(*scope.moduleScope, sourceInfo))
       return false;
 
    int size = 0;
    int extra = 0;
-   if (compiler->_logic->isEmbeddableStruct(*scope.moduleScope, sourceRef)) {
+   if (compiler->_logic->isEmbeddableStruct(*scope.moduleScope, sourceInfo)) {
       // Bad luck : it is a auto structure, we have to reallocate the variable
-      size = align(compiler->_logic->defineStructSize(*scope.moduleScope, sourceRef).size,
+      size = align(compiler->_logic->defineStructSize(*scope.moduleScope, sourceInfo.typeRef).size,
          scope.moduleScope->rawStackAlingment);
 
       extra = allocateLocalAddress(scope, size, false);
    }
 
-   return scope.resolveAutoType(target, { sourceRef }, size, extra);
+   return scope.resolveAutoType(target, sourceInfo, size, extra);
 }
 
 ObjectInfo Compiler::Expression :: boxArgument(ObjectInfo info, bool stackSafe, bool boxInPlace, bool allowingRefArg, ref_t targetRef)

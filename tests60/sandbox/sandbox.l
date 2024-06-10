@@ -1,9 +1,14 @@
-    import extensions;
+import extensions;
 
-    public program()
-    {
-       real x := 2;
-       int y := 3;
+singleton Helper
+{
+   int? getValue()
+   {
+      ^ nil
+   }
+}   
 
-       x *= y
-    }
+public program()
+{
+   int x := Helper.getValue() ?? 0
+}

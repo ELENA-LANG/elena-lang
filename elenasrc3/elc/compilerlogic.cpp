@@ -1220,16 +1220,16 @@ void CompilerLogic :: validateClassDeclaration(ModuleScopeBase& scope, ErrorProc
    }
 }
 
-bool CompilerLogic :: validateAutoType(ModuleScopeBase& scope, ref_t& reference)
+bool CompilerLogic :: validateAutoType(ModuleScopeBase& scope, TypeInfo& typeInfo)
 {
    ClassInfo info;
-   if (!defineClassInfo(scope, info, reference))
+   if (!defineClassInfo(scope, info, typeInfo.typeRef))
       return false;
 
    while (isRole(info)) {
-      reference = info.header.parentRef;
+      typeInfo = { info.header.parentRef };
 
-      if (!defineClassInfo(scope, info, reference))
+      if (!defineClassInfo(scope, info, typeInfo.typeRef))
          return false;
    }
 
@@ -2299,7 +2299,7 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
       MethodInfo methodInfo = info.methods.get(message);
 
       result.message = message;
-      result.outputRef = methodInfo.outputRef;
+      result.outputInfo = { methodInfo.outputRef };
       if (test(methodInfo.hints, (ref_t)MethodHint::Private)) {
          result.visibility = Visibility::Private;
       }
@@ -2310,6 +2310,9 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
          result.visibility = Visibility::Internal;
       }
       else result.visibility = Visibility::Public;
+
+      // check nillable attribute
+      result.outputInfo.nillable = test(methodInfo.hints, (ref_t)MethodHint::Nillable);
 
       result.kind = methodInfo.hints & (ref_t)MethodHint::Mask;
       if (result.kind == (ref_t)MethodHint::Normal) {
