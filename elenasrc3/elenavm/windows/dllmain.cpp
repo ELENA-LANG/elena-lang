@@ -413,6 +413,27 @@ EXTERN_DLL_EXPORT unsigned int GetRandomIntLA(SeedStruct& seed)
    return machine->getRandomNumber(seed);
 }
 
+/// <summary>
+/// Returns the signature list
+/// </summary>
+/// <param name="message">A strong-typed message</param>
+/// <param name="output">Signature tyoe</param>
+/// <returns>the total length</returns>
+EXTERN_DLL_EXPORT int LoadSignatureLA(mssg_t message, addr_t* output, int maximalLength)
+{
+   return machine->loadSignature(message, output, maximalLength);
+}
+
+EXTERN_DLL_EXPORT void GetGCStatisticsLA(GCStatistics* statistics)
+{
+   machine->getGCStatistics(statistics);
+}
+
+EXTERN_DLL_EXPORT void ResetGCStatisticsLA(GCStatistics* statistics)
+{
+   SystemRoutineProvider::ResetGCStatistics();
+}
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved

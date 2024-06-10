@@ -39,24 +39,27 @@ public sealed ChatServer
                if (client.Parameter; is ChatMember member)
                {
                   var command := member.readCommand();
-                  (command.Command) =>
-                        INTRODUCTION
-                        {
-                           member.Name := command.Value;
-   
-                           OnIntro?.(member.Name);
-                        }
-                        SEND
-                        {
-                           OnMessage?.(member.Name, command.Value);
-                           
-                           member.Server.translate(new CommandDTO
-                                                           { 
-                                                               this Command := TRANSLATE; 
-                                                               this Value := command.Value; 
-                                                               this User := member.Name; 
-                                                           })
-                        };
+                  if (command != nil) {
+                     (command.Command) =>
+                           INTRODUCTION
+                           {
+                              member.Name := command.Value;
+      
+                              OnIntro?.(member.Name);
+                           }
+                           SEND
+                           {
+                              OnMessage?.(member.Name, command.Value);
+                              
+                              member.Server.translate(new CommandDTO
+                                                              { 
+                                                                  this Command := TRANSLATE; 
+                                                                  this Value := command.Value; 
+                                                                  this User := member.Name; 
+                                                              })
+                           }
+
+                  };
                }
             }
          };

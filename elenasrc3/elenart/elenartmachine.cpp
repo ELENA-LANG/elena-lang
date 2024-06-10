@@ -339,9 +339,16 @@ size_t ELENARTMachine :: allocateThreadEntry(SystemEnv* env)
    return INVALID_SIZE;
 }
 
+void ELENARTMachine :: clearThreadEntry(SystemEnv* env, size_t index)
+{
+   env->th_table->slots[index].content = nullptr;
+   env->th_table->slots[index].arg = nullptr;
+}
+
 void* ELENARTMachine :: allocateThread(SystemEnv* env, void* arg, void* threadProc, int flags)
 {
    size_t index = allocateThreadEntry(env);
+
    if (index == INVALID_SIZE)
       return nullptr;
 
@@ -355,9 +362,6 @@ void ELENARTMachine :: startThread(SystemEnv* env, void* entry, int index)
    void* arg = env->th_table->slots[index].arg;
    // executing the program
    execute(env, entry, arg);
-
-   // winding down thread
-   //ExitThread(retVal);
 }
 
 bool ELENARTMachine :: checkClassMessage(void* classPtr, mssg_t message)

@@ -518,6 +518,8 @@ ELENA byte codes (or ecodes)
                               n = 3 -> assign TLS entry to the THREAD_TABLE at index
                               n = 4 -> prepare the program (should be the first command) 
                               n = 5 -> inject the stack (note, should be called ouside the frame)
+                              n = 6 -> enter GC critical section
+                              n = 7 -> leave GC critical section
 
    throw                    - raise an exception (acc contains the exception object)
 

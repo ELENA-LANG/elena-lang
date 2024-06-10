@@ -837,7 +837,7 @@ inline %02Ch
 
 end
 
-// ; system 3
+// ; system 3 (thread startup)
 inline %3CFh
 
   mov  eax, [data : %CORE_TLS_INDEX]
@@ -857,6 +857,31 @@ inline %4CFh
 
   mov  eax, esp
   call %PREPARE
+
+end
+
+// ; system : enter GC critical section
+inline %6CFh
+
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+  mov  ecx, 1
+labWait:
+  xor  eax, eax
+  lock cmpxchg dword ptr[edi], ecx
+  jnz  short labWait
+
+end
+
+// ; system : leave GC critical section
+inline %7CFh
+
+  // ; GCXT: clear sync field
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+  mov  ecx, 0FFFFFFFFh
+  
+  // ; GCXT: free lock
+  // ; could we use mov [esi], 0 instead?
+  lock xadd [edi], ecx
 
 end
 
