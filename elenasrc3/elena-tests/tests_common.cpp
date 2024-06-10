@@ -36,9 +36,9 @@ constexpr int MINIMAL_ARG_LIST = 2;
 
 // --- TestModuleScope ---
 
-TestModuleScope::TestModuleScope(bool tapeOptMode, bool threadFriendly)
+TestModuleScope::TestModuleScope(bool tapeOptMode)
    : ModuleScopeBase(new Module(), nullptr, DEFAULT_STACKALIGNMENT, DEFAULT_RAW_STACKALIGNMENT, 
-      DEFAULT_EHTABLE_ENTRY_SIZE, MINIMAL_ARG_LIST, sizeof(uintptr_t), tapeOptMode, threadFriendly)
+      DEFAULT_EHTABLE_ENTRY_SIZE, MINIMAL_ARG_LIST, sizeof(uintptr_t), tapeOptMode)
 {
    _anonymousRef = 0x100;
 }
@@ -227,9 +227,9 @@ CompilerEnvironment :: CompilerEnvironment()
 
 }
 
-ModuleScopeBase* CompilerEnvironment :: createModuleScope(bool tapeOptMode, bool threadFriendly, bool withAttributes)
+ModuleScopeBase* CompilerEnvironment :: createModuleScope(bool tapeOptMode, bool withAttributes)
 {
-   auto scope = new TestModuleScope(tapeOptMode, threadFriendly);
+   auto scope = new TestModuleScope(tapeOptMode);
 
    if (withAttributes) {
       scope->attributes.add("dispatch", V_DISPATCHER);

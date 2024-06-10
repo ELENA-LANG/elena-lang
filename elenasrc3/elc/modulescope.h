@@ -89,10 +89,9 @@ public:
       pos_t ehTableEntrySize,
       int minimalArgList,
       int ptrSize,
-      bool multiThreadMode,
       int moduleHint)
       : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, ehTableEntrySize, 
-         minimalArgList, ptrSize, false, multiThreadMode)
+         minimalArgList, ptrSize, false)
    {
       this->loader = loader;
       this->forwardResolver = forwardResolver;

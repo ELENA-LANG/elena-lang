@@ -27,7 +27,6 @@ namespace elena_lang
          pos_t          rawStackAlingment;
          pos_t          ehTableEntrySize;
          bool           debugMode;
-         bool           multiThreadMode;
          ManifestInfo   manifestInfo;
       };
 
@@ -122,8 +121,7 @@ namespace elena_lang
          pos_t defaultStackAlignment, 
          pos_t defaultRawStackAlignment,
          pos_t defaultEHTableEntrySize,
-         int minimalArgList,
-         bool multiThreadMode);
+         int minimalArgList);
       void link(Project& project, LinkerBase& linker, bool withTLS);
 
    public:

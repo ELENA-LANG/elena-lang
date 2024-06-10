@@ -2413,7 +2413,7 @@ inline TypeInfo retrieveTypeInfo(SyntaxNode node)
    ref_t reference = node.findChild(SyntaxKey::Target).arg.reference;
    ref_t attributes = node.findChild(SyntaxKey::Attribute).arg.reference;
 
-   return { reference, 0, test(attributes, V_NILLABLE)};
+   return { reference, 0, attributes == V_NILLABLE};
 }
 
 void Compiler :: addTypeInfo(Scope& scope, SyntaxNode node, SyntaxKey key, TypeInfo typeInfo)

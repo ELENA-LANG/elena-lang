@@ -77,6 +77,8 @@ namespace elena_lang
       const Saver*        _commands;
       LibraryLoaderBase*  _loader;
 
+      bool                _threadFriendly;
+
       pos_t savePath(BuildNode node, Scope& scope, ReferenceMap& paths);
 
       void openSymbolDebugInfo(Scope& scope, ustr_t symbolName);
@@ -119,15 +121,15 @@ namespace elena_lang
       void saveMethodInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope);
 
       void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 
-         ReferenceMap& paths, bool tapeOptMode, bool threadFriendly);
+         ReferenceMap& paths, bool tapeOptMode);
 
       void saveVMT(ClassInfo& info, BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths,
-         bool tapeOptMode, bool threadFriendly);
+         bool tapeOptMod);
 
       void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
-         int ptrSize, ReferenceMap& paths, bool tapeOptMode, bool threadFriendly);
+         int ptrSize, ReferenceMap& paths, bool tapeOptMode);
       void saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
-         int ptrSize, ReferenceMap& paths, bool tapeOptMode, bool threadFriendly);
+         int ptrSize, ReferenceMap& paths, bool tapeOptMode);
 
       bool applyRules(CommandTape& tape);
 
@@ -138,9 +140,9 @@ namespace elena_lang
       void loadByteCodeRules(MemoryDump* dump);
 
       void save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList, 
-         int ptrSize, bool tapeOptMode, bool threadFriendly);
+         int ptrSize, bool tapeOptMode);
 
-      ByteCodeWriter(LibraryLoaderBase* loader);
+      ByteCodeWriter(LibraryLoaderBase* loader, bool threadFriendly);
    };
 }
 

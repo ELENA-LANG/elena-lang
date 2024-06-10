@@ -1,14 +1,15 @@
 import extensions;
 
-singleton Helper
+public sealed packed SOCKADDR_IN
 {
-   int? getValue()
-   {
-      ^ nil
-   }
-}   
+   short   family ;
+   short   port   ;
+
+   get constructor Default()
+      = default;   
+}
 
 public program()
 {
-   int x := Helper.getValue() ?? 0
+   SOCKADDR_IN addr := SOCKADDR_IN.Default;
 }

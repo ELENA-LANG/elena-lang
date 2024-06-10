@@ -291,7 +291,6 @@ public:
    int                  ptrSize;
 
    bool                 tapeOptMode;
-   bool                 threadFriendly;
 
    Map<ref_t, SizeInfo> cachedSizes;
    Map<ref_t, ref_t>    cachedClassReferences;
@@ -357,8 +356,7 @@ public:
       pos_t ehTableEntrySize,
       int minimalArgList,
       int ptrSize,
-      bool tapeOptMode,
-      bool threadFriendly
+      bool tapeOptMode
    ) :
       predefined(0),
       attributes(0),
@@ -377,7 +375,6 @@ public:
       this->minimalArgList = minimalArgList;
       this->ptrSize = ptrSize;
       this->tapeOptMode = tapeOptMode;
-      this->threadFriendly = threadFriendly;
    }
 };
 

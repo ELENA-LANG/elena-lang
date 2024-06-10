@@ -17,7 +17,11 @@ In development:
   - #658 : create debug adapter
   - elenavm : GC statistics, and missing api entries
   * chat sample : server - new client
+  * chat sample : fails when onConnect event is raised
   --------------------------------------
+  * mt : static symbol should be thread-safe 
+  * mt : safe region should be used for blocking external calls
+  * mt : snop
 
   === Iteration 26 ===
   dev: #265

@@ -513,14 +513,14 @@ bool CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree&
 
 void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode)
 {
-   ByteCodeWriter bcWriter(&_libraryProvider);
+   ByteCodeWriter bcWriter(&_libraryProvider, true);
    if (_btRules.length() > 0)
       bcWriter.loadBuildTreeRules(&_btRules);
    if (_bcRules.length() > 0)
       bcWriter.loadByteCodeRules(&_bcRules);
 
    bcWriter.save(tree, &moduleScope, moduleScope.minimalArgList, moduleScope.ptrSize,
-      moduleScope.tapeOptMode, moduleScope.threadFriendly);
+      moduleScope.tapeOptMode);
 
    if (savingMode) {
       // saving a module
@@ -560,7 +560,6 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
       moduleSettings.rawStackAlingment, 
       moduleSettings.ehTableEntrySize, 
       minimalArgList, ptrSize,
-      moduleSettings.multiThreadMode,
       module_it.hints());
 
    // Validation : standart module must be named "system"
@@ -617,8 +616,7 @@ void CompilingProcess :: compile(ProjectBase& project,
    pos_t defaultStackAlignment,
    pos_t defaultRawStackAlignment,
    pos_t defaultEHTableEntrySize,
-   int minimalArgList,
-   bool multiThreadMode)
+   int minimalArgList)
 {
    if (_parser == nullptr) {
       _errorProcessor->raiseInternalError(errParserNotInitialized);
@@ -640,7 +638,6 @@ void CompilingProcess :: compile(ProjectBase& project,
          project.UIntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
          project.UIntSetting(ProjectOption::EHTableEntrySize, defaultEHTableEntrySize),
          project.BoolSetting(ProjectOption::DebugMode, true),
-         multiThreadMode,
          {
             project.StringSetting(ProjectOption::ManifestName),
             project.StringSetting(ProjectOption::ManifestVersion),
@@ -762,8 +759,6 @@ int CompilingProcess :: build(Project& project,
 
       PlatformType targetType = project.TargetType();
 
-      bool multiThreadMode = project.ThreadModeType() == PlatformType::MultiThread;
-
       // Project Greetings
       _presenter->printLine(ELC_STARTING, project.ProjectName(), getPlatformName(project.Platform()),
          getTargetTypeName(targetType, project.SystemTarget()));
@@ -775,7 +770,7 @@ int CompilingProcess :: build(Project& project,
       _presenter->printLine(ELC_CLEANING);
       cleanUp(project);
 
-      compile(project, defaultStackAlignment, defaultRawStackAlignment, defaultEHTableEntrySize, minimalArgList, multiThreadMode);
+      compile(project, defaultStackAlignment, defaultRawStackAlignment, defaultEHTableEntrySize, minimalArgList);
 
       // generating target when required
       switch (targetType) {

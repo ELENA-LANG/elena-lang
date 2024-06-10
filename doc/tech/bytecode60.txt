@@ -509,7 +509,9 @@ ELENA byte codes (or ecodes)
    freelock                 - free acc
 
    label dp:i, r            - assign a specified address / label to dp[i]
-
+ 
+   snop                     - thread safe nop operation
+ 
    system n                 - invokes system command
                               n = 1 -> forced minor collect;
                               n = 2 -> forced major collect

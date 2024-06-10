@@ -139,7 +139,7 @@ namespace elena_lang
 
       Visibility retrieveVisibility(ref_t reference) override;
 
-      TestModuleScope(bool tapeOptMode, bool threadFriendly);
+      TestModuleScope(bool tapeOptMode);
    };
 
    class TestTemplateProssesor : public TemplateProssesorBase
@@ -188,7 +188,7 @@ namespace elena_lang
    public:
       void initializeOperators(ModuleScopeBase* scope);
 
-      ModuleScopeBase* createModuleScope(bool tapeOptMode, bool threadFriendly, bool withAttributes = false);
+      ModuleScopeBase* createModuleScope(bool tapeOptMode, bool withAttributes = false);
 
       void setUpTemplateMockup(ref_t templateRef, ref_t elementRef, ref_t reference);
 
