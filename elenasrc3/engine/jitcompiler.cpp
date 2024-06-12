@@ -3107,10 +3107,10 @@ pos_t JITCompiler32 :: getStaticCounter(MemoryBase* statSection, bool emptyNotAl
 
 void JITCompiler32 :: compileOutputTypeList(ReferenceHelperBase* helper, MemoryWriter& writer, CachedOutputTypeList& outputTypeList)
 {
-   size_t len = outputTypeList.count();
+   pos_t len = outputTypeList.count_pos();
 
    writer.writeDWord(len);
-   for (size_t i = 0; i < len; i++) {
+   for (pos_t i = 0; i < len; i++) {
       auto info = outputTypeList.get(i);
 
       writer.writeDWord(info.value1);
@@ -3314,7 +3314,7 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
       if (virtualMode) {
          vmtWriter.writeDReference(addrToUInt32(fixInfo.outputListAddress) | mskRef32, 0);
       }
-      else vmtWriter.writeDWord(fixInfo.outputListAddress);
+      else vmtWriter.writeDWord(addrToUInt32(fixInfo.outputListAddress));
    }      
 }
 
@@ -3758,7 +3758,7 @@ void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
 
    if (fixInfo.outputListAddress) {
       if (virtualMode) {
-         vmtWriter.writeQReference(fixInfo.outputListAddress | mskRef64, 0);
+         vmtWriter.writeQReference(addrToUInt32(fixInfo.outputListAddress | mskRef64), 0);
       }
       else vmtWriter.writeQWord(fixInfo.outputListAddress);
    }

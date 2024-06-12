@@ -13,5 +13,7 @@ public sealed class Thread
 
    start() => _handle;
 
+   join() => _handle;
+
    close() => _handle;
 }

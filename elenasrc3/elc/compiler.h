@@ -424,10 +424,10 @@ namespace elena_lang
             else return false;
          }
 
-         virtual bool resolveAutoOutput(ref_t reference)
+         virtual bool resolveAutoOutput(TypeInfo typeInfo)
          {
             if (parent) {
-               return parent->resolveAutoOutput(reference);
+               return parent->resolveAutoOutput(typeInfo);
             }
             else return false;
          }
@@ -796,17 +796,17 @@ namespace elena_lang
             return scope ? scope->visibility : Visibility::Public;
          }
 
-         bool resolveAutoOutput(ref_t reference) override
+         bool resolveAutoOutput(TypeInfo typeInfo) override
          {
             if (info.outputRef == V_AUTO) {
-               if (!reference)
-                  reference = moduleScope->buildins.superReference;
+               if (!typeInfo.typeRef)
+                  typeInfo.typeRef = moduleScope->buildins.superReference;
 
-               info.outputRef = reference;
+               info.outputRef = typeInfo.typeRef;
 
                return true;
             }
-            else return Scope::resolveAutoOutput(reference);
+            else return Scope::resolveAutoOutput(typeInfo);
          }
 
          MethodScope(ClassScope* classScope);
@@ -847,11 +847,13 @@ namespace elena_lang
             return scope ? scope->message : 0;
          }
 
-         ref_t getOutputRef()
+         TypeInfo getOutputInfo()
          {
             MethodScope* scope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
-
-            return scope ? scope->info.outputRef : 0;
+            if (scope) {
+               return { scope->info.outputRef, 0, scope->checkHint(MethodHint::Nillable) };
+            }
+            return {};
          }
 
          bool isByRefHandler()
@@ -1286,7 +1288,7 @@ namespace elena_lang
          void compileYieldOperation(SyntaxNode node);
          void compileSwitchOperation(SyntaxNode node);
 
-         bool compileAssigningOp(ObjectInfo target, ObjectInfo source);
+         bool compileAssigningOp(ObjectInfo target, ObjectInfo source, bool& nillableOp);
 
          bool validateShortCircle(mssg_t message, ObjectInfo target);
 
@@ -1314,7 +1316,7 @@ namespace elena_lang
 
          ObjectInfo compileSymbolRoot(SyntaxNode bodyNode, ExpressionAttribute mode);
          ObjectInfo compileRoot(SyntaxNode node, ExpressionAttribute mode);
-         ObjectInfo compileReturning(SyntaxNode node, ExpressionAttribute mode, ref_t outputRef);
+         ObjectInfo compileReturning(SyntaxNode node, ExpressionAttribute mode, TypeInfo outputInfo);
 
          ObjectInfo compile(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode,
             ArgumentsInfo* updatedOuterArgs);
@@ -1353,6 +1355,8 @@ namespace elena_lang
       bool                   _noValidation;
       bool                   _withDebugInfo;
 
+      void addTypeInfo(Scope& scope, SyntaxNode node, SyntaxKey key, TypeInfo typeInfo);
+
       void loadMetaData(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t name);
 
       void importExtensions(NamespaceScope& ns, ustr_t importedNs);
@@ -1388,7 +1392,9 @@ namespace elena_lang
       ObjectInfo defineArrayType(Scope& scope, ObjectInfo info, bool declarationMode);
       ref_t defineArrayType(Scope& scope, ref_t elementRef, bool declarationMode);
 
-      ref_t retrieveStrongType(Scope& scope, ObjectInfo info);
+      ref_t resolveStrongType(Scope& scope, TypeInfo typeInfo, bool declarationMode = false);
+      TypeInfo resolveStrongTypeInfo(Scope& scope, TypeInfo typeInfo, bool declarationMode = false);
+
       ref_t retrieveType(Scope& scope, ObjectInfo info);
       ref_t resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool declarationMode);
       ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type, 
@@ -1400,7 +1406,7 @@ namespace elena_lang
       ref_t resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef);
       ref_t resolveWrapperTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
       ref_t resolveArrayTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
-      ref_t resolveNullableTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
+      //ref_t resolveNullableTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
       ref_t resolveArgArrayTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
       ref_t resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo& items);
 
@@ -1409,13 +1415,15 @@ namespace elena_lang
          bool declarationMode, bool allowRole);
       TypeInfo resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
          bool declarationMode, bool allowRole);
-      ref_t resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole);
+      TypeInfo resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole);
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
          ustr_t prefix, SyntaxKey argKey, ustr_t postFix);
 
       static mssg_t resolveOperatorMessage(ModuleScopeBase* scope, int operatorId);
       static mssg_t resolveVariadicMessage(Scope& scope, mssg_t message);
+
+      bool isCompatible(Scope& scope, ObjectInfo source, ObjectInfo target, bool resolvePrimitives = true);
 
       bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool internalOne, bool& isProtectedDefConst);
 
@@ -1662,25 +1670,25 @@ namespace elena_lang
       void validateType(Scope& scope, ref_t typeRef, SyntaxNode node, bool ignoreUndeclared, bool allowRole);
 
       void injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool interfaceBased);
-      void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
+      void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope, 
          ref_t targetRef, ClassInfo& info, mssg_t multiMethod);
-      void injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
+      void injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey methodType,
          ref_t targetRef, ClassInfo& info, mssg_t multiMethod, bool abstractOne);
 
-      void injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
+      void injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType, Scope& scope,
          ref_t targetRef, ClassInfo& info, VirtualMethodList& implicitMultimethods);
 
       void injectInitializer(SyntaxNode classNode, SyntaxKey methodType, mssg_t message);
 
-      bool injectVirtualStrongTypedMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
-         mssg_t message, mssg_t resendMessage, ref_t outputRef, Visibility visibility, bool isExtension);
+      bool injectVirtualStrongTypedMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope, 
+         mssg_t message, mssg_t resendMessage, TypeInfo outputInfo, Visibility visibility, bool isExtension);
       bool injectVirtualStrongTypedVariadicMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
          mssg_t message, mssg_t resendMessage, ref_t outputRef, Visibility visibility, bool isExtension);
 
-      void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope, 
-         ref_t targetRef, ClassInfo& classInfo, mssg_t message, bool inherited, ref_t outputRef, Visibility visibility);
-      void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, mssg_t message, 
-         mssg_t resendMessage, ref_t resendTarget, ref_t outputRef, Visibility visibility, bool isExtension);
+      void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope, 
+         ref_t targetRef, ClassInfo& classInfo, mssg_t message, bool inherited, TypeInfo outputInfo, Visibility visibility);
+      void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope, mssg_t message,
+         mssg_t resendMessage, ref_t resendTarget, TypeInfo outputInfo, Visibility visibility, bool isExtension);
 
       void injectVirtualTryDispatch(SyntaxNode classNode, SyntaxKey methodType, ClassInfo& info, 
          mssg_t message, mssg_t dispatchMessage, bool inherited);
@@ -1695,7 +1703,8 @@ namespace elena_lang
 
       void injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t outputRef, SyntaxKey key, ustr_t arg);
 
-      void injectStrongRedirectMethod(SyntaxNode node, SyntaxKey methodType, ref_t reference, mssg_t message, mssg_t redirectMessage, ref_t outputRef);
+      void injectStrongRedirectMethod(Scope& scope, SyntaxNode node, SyntaxKey methodType, ref_t reference, mssg_t message,
+         mssg_t redirectMessage, TypeInfo outputInfo);
 
       void callInitMethod(Expression& expression, SyntaxNode node, ClassInfo& info, ref_t reference);
 
@@ -1746,8 +1755,8 @@ namespace elena_lang
       bool declare(ModuleScopeBase* moduleScope, SyntaxTree& input, ExtensionMap* outerExtensionList);
       void compile(ModuleScopeBase* moduleScope, SyntaxTree& input, BuildTree& output, ExtensionMap* outerExtensionList);
 
-      void injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode,
-         mssg_t message, ustr_t retVar, ref_t classRef) override;
+      void injectVirtualReturningMethod(Scope& scope, SyntaxNode classNode,
+         mssg_t message, ustr_t retVar, TypeInfo outputTypeInfo);
 
       ref_t resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, TypeInfo typeInfo, 
          bool declarationMode = false) override;

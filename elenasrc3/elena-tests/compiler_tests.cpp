@@ -71,3 +71,13 @@ TEST_F(Lambda_CallingPrivateMethod, CompilerTest)
 {
    runTest();
 }
+
+TEST_F(IntAssigningNil, CompilerTest)
+{
+   runTest(true);
+}
+
+TEST_F(NillableIntAssigning, CompilerTest)
+{
+   runTest(false);
+}

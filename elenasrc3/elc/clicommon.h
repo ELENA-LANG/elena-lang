@@ -291,7 +291,6 @@ public:
    int                  ptrSize;
 
    bool                 tapeOptMode;
-   bool                 threadFriendly;
 
    Map<ref_t, SizeInfo> cachedSizes;
    Map<ref_t, ref_t>    cachedClassReferences;
@@ -357,8 +356,7 @@ public:
       pos_t ehTableEntrySize,
       int minimalArgList,
       int ptrSize,
-      bool tapeOptMode,
-      bool threadFriendly
+      bool tapeOptMode
    ) :
       predefined(0),
       attributes(0),
@@ -377,7 +375,6 @@ public:
       this->minimalArgList = minimalArgList;
       this->ptrSize = ptrSize;
       this->tapeOptMode = tapeOptMode;
-      this->threadFriendly = threadFriendly;
    }
 };
 
@@ -498,9 +495,6 @@ class CompilerBase
 public:
    virtual void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef, 
       mssg_t messageRef, MethodHint targetType) = 0;
-
-   virtual void injectVirtualReturningMethod(ModuleScopeBase* scope, SyntaxNode classNode, 
-      mssg_t message, ustr_t retVar, ref_t classRef) = 0;
 
    virtual ref_t resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, 
       TypeInfo typeInfo, bool declarationMode = false) = 0;
@@ -635,7 +629,7 @@ public:
       throw CLIException();
    }
 
-   void raiseTerminalError(int code, ustr_t pathArg, SyntaxNode node)
+   virtual void raiseTerminalError(int code, ustr_t pathArg, SyntaxNode node)
    {
       printTerminalInfo(code, pathArg, node);
 

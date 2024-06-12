@@ -595,9 +595,8 @@ void realIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
    if (!isAssignOp(node.arg.value)) {
       tape.write(ByteCode::CopyDPN, targetOffset, 8);
       tape.write(ByteCode::XMovSISI, 0, 1);
-
-      tape.write(ByteCode::SetDP, targetOffset);
    }
+   tape.write(ByteCode::SetDP, targetOffset);
 
    switch (node.arg.value) {
       case ADD_OPERATOR_ID:
@@ -2683,10 +2682,11 @@ ByteCodeWriter::Transformer transformers[] =
 
 // --- ByteCodeWriter ---
 
-ByteCodeWriter :: ByteCodeWriter(LibraryLoaderBase* loader)
+ByteCodeWriter :: ByteCodeWriter(LibraryLoaderBase* loader, bool threadFriendly)
 {
    _commands = commands;
    _loader = loader;
+   _threadFriendly = true;
 }
 
 void ByteCodeWriter :: openSymbolDebugInfo(Scope& scope, ustr_t symbolName)
@@ -3196,10 +3196,13 @@ void ByteCodeWriter :: saveSwitching(CommandTape& tape, BuildNode node, TapeScop
 
 void ByteCodeWriter :: saveAlternate(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
 {
+   int retLabel = tape.newLabel();                 // declare ret-end-label
    tape.newLabel();
    tape.newLabel();
 
    tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
+
+   retLabel = tape.exchangeFirstsLabel(retLabel);
 
    BuildNode tryNode = node.findChild(BuildKey::Tape);
    saveTape(tape, tryNode, tapeScope, paths, tapeOptMode, false);
@@ -3209,6 +3212,19 @@ void ByteCodeWriter :: saveAlternate(CommandTape& tape, BuildNode node, TapeScop
 
    // jump
    tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
+
+   // === exit redirect block ===
+   // restore the original ret label and return the overridden one
+   retLabel = tape.exchangeFirstsLabel(retLabel);
+
+   // ret-end-label:
+   tape.setPredefinedLabel(retLabel);
+
+   // unhook
+   tape.write(ByteCode::Unhook);
+
+   tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
+   // ===========================
 
    // catchLabel:
    tape.setLabel();
@@ -3221,6 +3237,7 @@ void ByteCodeWriter :: saveAlternate(CommandTape& tape, BuildNode node, TapeScop
 
    // eos:
    tape.setLabel();
+   tape.releaseLabel(); // release ret-end-label
 }
 
 void ByteCodeWriter :: saveStackCondOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
@@ -3499,7 +3516,7 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
 }
 
 void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
-   int ptrSize, ReferenceMap& paths, bool tapeOptMode, bool threadFriendly)
+   int ptrSize, ReferenceMap& paths, bool tapeOptMode)
 {
    auto section = moduleScope->mapSection(node.arg.reference | mskSymbolRef, false);
    MemoryWriter writer(section);
@@ -3517,10 +3534,10 @@ void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope,
       pos_t sourcePathRef = savePath(node.findChild(BuildKey::Path), scope, paths);
 
       openSymbolDebugInfo(scope, moduleScope->module->resolveReference(node.arg.reference & ~mskAnyRef));
-      saveProcedure(node, scope, false, sourcePathRef, paths, tapeOptMode, threadFriendly);
+      saveProcedure(node, scope, false, sourcePathRef, paths, tapeOptMode);
       endDebugInfo(scope);
    }
-   else saveProcedure(node, scope, false, INVALID_POS, paths, tapeOptMode, threadFriendly);
+   else saveProcedure(node, scope, false, INVALID_POS, paths, tapeOptMode);
 }
 
 bool ByteCodeWriter :: applyRules(CommandTape& tape)
@@ -3602,7 +3619,7 @@ inline bool isNested(BuildKey key)
 }
 
 void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 
-   ReferenceMap& paths, bool tapeOptMode, bool threadFriendly)
+   ReferenceMap& paths, bool tapeOptMode)
 {
    _buildTreeOptimizer.proceed(node.findChild(BuildKey::Tape));
 
@@ -3614,7 +3631,7 @@ void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMod
       node.findChild(BuildKey::Reserved).arg.value,
       node.findChild(BuildKey::ReservedN).arg.value,
       classMode,
-      threadFriendly
+      _threadFriendly
    };
 
    CommandTape tape;
@@ -3643,7 +3660,7 @@ void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMod
 }
 
 void ByteCodeWriter :: saveVMT(ClassInfo& info, BuildNode node, Scope& scope, pos_t sourcePathRef,
-   ReferenceMap& paths, bool tapeOptMode, bool threadFriendly)
+   ReferenceMap& paths, bool tapeOptMode)
 {
    BuildNode current = node.firstChild();
    while (current != BuildKey::None) {
@@ -3659,7 +3676,7 @@ void ByteCodeWriter :: saveVMT(ClassInfo& info, BuildNode node, Scope& scope, po
          if (pathNode != BuildKey::None)
             methodSourcePathRef = savePath(pathNode, scope, paths);
 
-         saveProcedure(current, scope, true, methodSourcePathRef, paths, tapeOptMode, threadFriendly);
+         saveProcedure(current, scope, true, methodSourcePathRef, paths, tapeOptMode);
       }
       else if (current == BuildKey::AbstractMethod) {
          MethodEntry entry = { current.arg.reference, INVALID_POS };
@@ -3687,7 +3704,7 @@ pos_t ByteCodeWriter :: savePath(BuildNode node, Scope& scope, ReferenceMap& pat
 }
 
 void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
-   int ptrSize, ReferenceMap& paths, bool tapeOptMode, bool threadFriendly)
+   int ptrSize, ReferenceMap& paths, bool tapeOptMode)
 {
    // initialize bytecode writer
    MemoryWriter codeWriter(moduleScope->mapSection(node.arg.reference | mskClassRef, false));
@@ -3728,10 +3745,10 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
 
       openClassDebugInfo(scope, moduleScope->module->resolveReference(node.arg.reference & ~mskAnyRef), info.header.flags);
       saveFieldDebugInfo(scope, info);
-      saveVMT(info, node, scope, sourcePath, paths, tapeOptMode, threadFriendly);
+      saveVMT(info, node, scope, sourcePath, paths, tapeOptMode);
       endDebugInfo(scope);
    }
-   else saveVMT(info, node, scope, INVALID_POS, paths, tapeOptMode, threadFriendly);
+   else saveVMT(info, node, scope, INVALID_POS, paths, tapeOptMode);
 
    pos_t size = vmtWriter.position() - classPosition;
    vmtSection->write(classPosition - 4, &size, sizeof(size));
@@ -3766,7 +3783,7 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
 }
 
 void ByteCodeWriter :: save(BuildTree& tree, SectionScopeBase* moduleScope, 
-   int minimalArgList, int ptrSize, bool tapeOptMode, bool threadFriendly)
+   int minimalArgList, int ptrSize, bool tapeOptMode)
 {
    ReferenceMap paths(INVALID_POS);
 
@@ -3775,10 +3792,10 @@ void ByteCodeWriter :: save(BuildTree& tree, SectionScopeBase* moduleScope,
    while (current != BuildKey::None) {
       switch (current.key) {
          case BuildKey::Symbol:
-            saveSymbol(current, moduleScope, minimalArgList, ptrSize, paths, tapeOptMode, threadFriendly);
+            saveSymbol(current, moduleScope, minimalArgList, ptrSize, paths, tapeOptMode);
             break;
          case BuildKey::Class:
-            saveClass(current, moduleScope, minimalArgList, ptrSize, paths, tapeOptMode, threadFriendly);
+            saveClass(current, moduleScope, minimalArgList, ptrSize, paths, tapeOptMode);
             break;
          default:
             // to make compiler happy

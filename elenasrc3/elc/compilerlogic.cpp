@@ -41,7 +41,7 @@ bool testMethodHint(ref_t hint, MethodHint mask)
 
 typedef CompilerLogic::Op Op;
 
-constexpr auto OperationLength = 202;
+constexpr auto OperationLength = 206;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -654,6 +654,18 @@ constexpr Op Operations[OperationLength] =
    {
       DIV_OPERATOR_ID, BuildKey::RealIntOp, V_FLOAT64, V_INT32, 0, V_FLOAT64
    },
+   {
+      ADD_ASSIGN_OPERATOR_ID, BuildKey::RealIntOp, V_FLOAT64, V_INT32, 0, 0
+   },
+   {
+      SUB_ASSIGN_OPERATOR_ID, BuildKey::RealIntOp, V_FLOAT64, V_INT32, 0, 0
+   },
+   {
+      MUL_ASSIGN_OPERATOR_ID, BuildKey::RealIntOp, V_FLOAT64, V_INT32, 0, 0
+   },
+   {
+      DIV_ASSIGN_OPERATOR_ID, BuildKey::RealIntOp, V_FLOAT64, V_INT32, 0, 0
+   },
 };
 
 bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo target, TypeInfo source)
@@ -961,9 +973,6 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_YIELDABLE:
          hint = (ref_t)MethodHint::Yieldable;
          return true;
-      case V_NIL_CONVERSION:
-         hint = (ref_t)MethodHint::Conversion | (ref_t)MethodHint::Nullable;
-         return true;
       default:
          return false;
    }
@@ -981,7 +990,6 @@ bool CompilerLogic :: validateImplicitMethodAttribute(ref_t attribute, ref_t& hi
       case V_FUNCTION:
       case V_CONVERSION:
       case V_GENERIC:
-      case V_NIL_CONVERSION:
          return validateMethodAttribute(attribute, hint, dummy);
       default:
          return false;
@@ -1212,16 +1220,16 @@ void CompilerLogic :: validateClassDeclaration(ModuleScopeBase& scope, ErrorProc
    }
 }
 
-bool CompilerLogic :: validateAutoType(ModuleScopeBase& scope, ref_t& reference)
+bool CompilerLogic :: validateAutoType(ModuleScopeBase& scope, TypeInfo& typeInfo)
 {
    ClassInfo info;
-   if (!defineClassInfo(scope, info, reference))
+   if (!defineClassInfo(scope, info, typeInfo.typeRef))
       return false;
 
    while (isRole(info)) {
-      reference = info.header.parentRef;
+      typeInfo = { info.header.parentRef };
 
-      if (!defineClassInfo(scope, info, reference))
+      if (!defineClassInfo(scope, info, typeInfo.typeRef))
          return false;
    }
 
@@ -1294,16 +1302,19 @@ bool CompilerLogic :: isEmbeddableStruct(ClassInfo& info)
       && !test(info.header.flags, elDynamicRole);
 }
 
-bool CompilerLogic :: isEmbeddable(ModuleScopeBase& scope, ref_t reference)
+bool CompilerLogic :: isEmbeddable(ModuleScopeBase& scope, TypeInfo typeInfo)
 {
-   if (scope.cachedEmbeddables.exist(reference))
-      return scope.cachedEmbeddables.get(reference);
+   if (typeInfo.nillable)
+      return false;
+
+   if (scope.cachedEmbeddables.exist(typeInfo.typeRef))
+      return scope.cachedEmbeddables.get(typeInfo.typeRef);
 
    ClassInfo info;
-   if (defineClassInfo(scope, info, reference, true)) {
+   if (defineClassInfo(scope, info, typeInfo.typeRef, true)) {
       auto retVal = isEmbeddable(info);
 
-      scope.cachedEmbeddables.add(reference, retVal);
+      scope.cachedEmbeddables.add(typeInfo.typeRef, retVal);
 
       return retVal;
    }
@@ -1324,16 +1335,19 @@ bool CompilerLogic :: isEmbeddableAndReadOnly(ClassInfo& info)
    return isReadOnly(info) && isEmbeddable(info);
 }
 
-bool CompilerLogic::isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t reference)
+bool CompilerLogic::isEmbeddableAndReadOnly(ModuleScopeBase& scope, TypeInfo typeInfo)
 {
-   if (scope.cachedEmbeddableReadonlys.exist(reference))
-      return scope.cachedEmbeddableReadonlys.get(reference);
+   if (typeInfo.nillable)
+      return false;
+
+   if (scope.cachedEmbeddableReadonlys.exist(typeInfo.typeRef))
+      return scope.cachedEmbeddableReadonlys.get(typeInfo.typeRef);
 
    ClassInfo info;
-   if (defineClassInfo(scope, info, reference, true)) {
+   if (defineClassInfo(scope, info, typeInfo.typeRef, true)) {
       auto retVal = isEmbeddableAndReadOnly(info);
 
-      scope.cachedEmbeddableReadonlys.add(reference, retVal);
+      scope.cachedEmbeddableReadonlys.add(typeInfo.typeRef, retVal);
 
       return retVal;
    }
@@ -1341,10 +1355,13 @@ bool CompilerLogic::isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t refere
    return false;
 }
 
-bool CompilerLogic :: isEmbeddableStruct(ModuleScopeBase& scope, ref_t reference)
+bool CompilerLogic :: isEmbeddableStruct(ModuleScopeBase& scope, TypeInfo typeInfo)
 {
+   if (typeInfo.nillable)
+      return false;
+
    ClassInfo info;
-   if (defineClassInfo(scope, info, reference, true)) {
+   if (defineClassInfo(scope, info, typeInfo.typeRef, true)) {
       auto retVal = isEmbeddableStruct(info);
 
       return retVal;
@@ -2282,7 +2299,7 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
       MethodInfo methodInfo = info.methods.get(message);
 
       result.message = message;
-      result.outputRef = methodInfo.outputRef;
+      result.outputInfo = { methodInfo.outputRef };
       if (test(methodInfo.hints, (ref_t)MethodHint::Private)) {
          result.visibility = Visibility::Private;
       }
@@ -2293,6 +2310,9 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
          result.visibility = Visibility::Internal;
       }
       else result.visibility = Visibility::Public;
+
+      // check nillable attribute
+      result.outputInfo.nillable = test(methodInfo.hints, (ref_t)MethodHint::Nillable);
 
       result.kind = methodInfo.hints & (ref_t)MethodHint::Mask;
       if (result.kind == (ref_t)MethodHint::Normal) {

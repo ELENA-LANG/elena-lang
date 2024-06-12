@@ -1,7 +1,7 @@
 <configuration>
   <collection>
     <project>shared\chat_shared.prj</project>
-    <project>server\chat_server.prj</project>
-    <project>server_cui\server_console.prj</project>
+    <project>client\chat_client.prj</project>
+    <project>client_cui\client_console.prj</project>
   </collection>
 </configuration>
