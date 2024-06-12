@@ -74,8 +74,6 @@ copy %~dp0\..\doc\license %~dp0\x64\doc\
 copy %~dp0\..\doc\contributors %~dp0\x64\doc\
 copy %~dp0\..\readme.md %~dp0\x64\
 
-xcopy %~dp0\..\src60\*.prjcol %~dp0\x64\src60 /s
-
 md %~dp0\x64\src60\system
 xcopy %~dp0\..\src60\system\*.l %~dp0\x64\src60\system /s
 xcopy %~dp0\..\src60\system\*.prj %~dp0\x64\src60\system /s
@@ -103,6 +101,8 @@ xcopy %~dp0\..\src60\forms\*.prj %~dp0\x64\src60\forms /s
 md %~dp0\x64\src60\ltests
 xcopy %~dp0\..\src60\ltests\*.l %~dp0\x64\src60\ltests /s
 xcopy %~dp0\..\src60\ltests\*.prj %~dp0\x64\src60\ltests /s
+
+copy %~dp0\..\src60\elena_api.prjcol %~dp0\x64\src60\
 
 %~dp0\..\bin\sg64-cli.exe %~dp0\..\dat\sg\syntax60.txt
 @echo off 

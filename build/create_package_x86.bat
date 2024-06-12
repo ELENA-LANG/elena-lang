@@ -106,8 +106,6 @@ copy %~dp0\..\readme.md %~dp0\x86\
 copy %~dp0\..\CHANGELOG.md %~dp0\x86\
 copy %~dp0\..\VERSION %~dp0\x86\
 
-xcopy %~dp0\..\src60\*.prjcol %~dp0\x86\src60 /s
-
 md %~dp0\x86\src60\system
 xcopy %~dp0\..\src60\system\*.l %~dp0\x86\src60\system /s
 xcopy %~dp0\..\src60\system\*.prj %~dp0\x86\src60\system /s
@@ -143,6 +141,8 @@ xcopy %~dp0\..\src60\ltests\*.prj %~dp0\x86\src60\ltests /s
 md %~dp0\x86\src60\net
 xcopy %~dp0\..\src60\net\*.l %~dp0\x86\src60\net /s
 xcopy %~dp0\..\src60\net\*.prj %~dp0\x86\src60\net /s
+
+copy %~dp0\..\src60\elena_api.prjcol %~dp0\x86\src60\
 
 %~dp0\..\bin\sg-cli.exe %~dp0\..\dat\sg\syntax60.txt
 @echo off 
