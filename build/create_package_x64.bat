@@ -74,6 +74,8 @@ copy %~dp0\..\doc\license %~dp0\x64\doc\
 copy %~dp0\..\doc\contributors %~dp0\x64\doc\
 copy %~dp0\..\readme.md %~dp0\x64\
 
+copy %~dp0\..\src60\*.prjcol %~dp0\x64\src60\
+
 md %~dp0\x64\src60\system
 xcopy %~dp0\..\src60\system\*.l %~dp0\x64\src60\system /s
 xcopy %~dp0\..\src60\system\*.prj %~dp0\x64\src60\system /s
