@@ -1,15 +1,23 @@
 import extensions;
 
-public sealed packed SOCKADDR_IN
+class A
 {
-   short   family ;
-   short   port   ;
+   Func<int,real,object> Handler : event;
 
-   get constructor Default()
-      = default;   
+   constructor()
+   {
+      self.Handler := (int n, real m) { console.printLine(n,"+",m,"=",n+m); };
+      self.Handler := (int n, real m) { console.printLine(n,"-",m,"=",n-m); };
+   }
+
+   invoke(n,m)
+   {
+      Handler?.(n,m);
+   }
 }
 
 public program()
 {
-   SOCKADDR_IN addr := SOCKADDR_IN.Default;
+   var a := new A();
+   a.invoke(2,3.2);
 }

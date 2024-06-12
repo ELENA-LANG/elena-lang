@@ -2523,24 +2523,15 @@ procedure __event_dispatcher
   cmp        n:0
   jeq        labCopyEnd
 
-  set        sp:0
-  store      fp:tmp
   dalloc
-
-labCopy:
-  add        n:-1
-
-  set        fp:-1
-  xget
+  set        sp:0
+  alloc      i:1
   store      sp:0
 
-  neg
-  peek       fp:tmp
-  xassign
-  neg
-
-  cmp        n:0
-  jne        labCopy
+  set        fp:-1
+  swap       sp:0
+  dtrans
+  free       i:1
 
 labCopyEnd:
   peek       fp:arr  
@@ -2556,6 +2547,10 @@ labNext:
   save       dp:index
 
   load       dp:mssg
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
   call       vt:0
   
   peek       fp:arr  

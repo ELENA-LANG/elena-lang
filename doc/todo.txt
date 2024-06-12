@@ -7,24 +7,16 @@ In development:
 
   === Iteration 25 (14.6.24) ===
   --------------------------------------
-  dev: 
-  gen:
-  maint:
-  port:
-  prom:
-  --------------------------------------
   * mt : static symbol should be thread-safe 
   - x64 : gui
   * chat sample : server - sending a nick name
-  - #658 : create debug adapter
   --------------------------------------
-  * mt : exception handling in a thread
 
   === Iteration 26 ===
   dev: #265
   gen:
   maint:
-  port:
+  port:#658 : create debug adapter
   prom:
   --------------------------------------
   --------------------------------------
