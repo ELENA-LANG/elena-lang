@@ -5,20 +5,14 @@ In development:
 [development]
   ### EPIC: elena 6.2 ###
 
-  === Iteration 25 (14.6.24) ===
-  --------------------------------------
-  * mt : static symbol should be thread-safe 
-  - x64 : gui
-  * chat sample : server - sending a nick name
-  --------------------------------------
-
   === Iteration 26 ===
-  dev: #265
+  dev: #265, static symbol should be thread-safe, chat sample
   gen:
   maint:
-  port:#658 : create debug adapter
+  port:#658 : create debug adapter, x64 : gui
   prom:
   --------------------------------------
+  * chat sample : server - deserialize command ("{"Command"=1,"Value"="a"}")
   --------------------------------------
 
   ### EPIC: elena 6.3 ###
