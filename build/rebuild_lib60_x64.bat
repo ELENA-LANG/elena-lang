@@ -44,7 +44,7 @@ bin\asm64-cli -bc64 src60\core\system.win_core_routines.esm lib60_64
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
 
-bin\elena-cli src60\elena_api.prjcol
+bin\elena64-cli src60\elena_api.prjcol
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
