@@ -74,7 +74,7 @@ copy %~dp0\..\doc\license %~dp0\x64\doc\
 copy %~dp0\..\doc\contributors %~dp0\x64\doc\
 copy %~dp0\..\readme.md %~dp0\x64\
 
-copy %~dp0\..\src60\*.prjcol %~dp0\x64\src60\
+xcopy %~dp0\..\src60\*.prjcol %~dp0\x64\src60 /s
 
 md %~dp0\x64\src60\system
 xcopy %~dp0\..\src60\system\*.l %~dp0\x64\src60\system /s
@@ -129,7 +129,7 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-%~dp0\x64\bin\elena64-cli %~dp0\x64\src60\elena_api.prjcol
+%~dp0\x64\bin\elena64-cli %~dp0x64\src60\elena_api.prjcol
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
