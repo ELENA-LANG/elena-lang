@@ -754,3 +754,23 @@ bool ELENAVMMachine :: checkClassMessage(void* classPtr, mssg_t message)
 
    return SystemRoutineProvider::CheckMessage(msection, classPtr, message);
 }
+
+int ELENAVMMachine :: loadSignature(mssg_t message, addr_t* output, pos_t maximalCount)
+{
+   RTManager rtmanager(getMDataSection(), nullptr);
+
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   if (testany(message, FUNCTION_MESSAGE | CONVERSION_MESSAGE)) {
+      argCount = _min(maximalCount, argCount);
+   }
+   else argCount = _min(maximalCount, argCount - 1);
+
+   if (rtmanager.loadSignature(actionRef, maximalCount, output)) {
+      return argCount;
+   }
+
+   return 0;
+}

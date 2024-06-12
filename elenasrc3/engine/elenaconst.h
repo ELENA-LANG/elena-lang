@@ -38,7 +38,7 @@ namespace elena_lang
    // --- ELENA Module structure constants ---
    constexpr auto ELENA_SIGNITURE            = "ELENA.";          // the stand alone image
    constexpr auto ELENA_VM_SIGNITURE         = "VM.ELENA.";       // the stand alone image
-   constexpr auto MODULE_SIGNATURE           = "ELENA.0611";      // the module version
+   constexpr auto MODULE_SIGNATURE           = "ELENA.0612";      // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE     = "ED.06";
 
   // --- ELENA core module names ---

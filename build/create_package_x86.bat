@@ -142,6 +142,8 @@ md %~dp0\x86\src60\net
 xcopy %~dp0\..\src60\net\*.l %~dp0\x86\src60\net /s
 xcopy %~dp0\..\src60\net\*.prj %~dp0\x86\src60\net /s
 
+copy %~dp0\..\src60\elena_api.prjcol %~dp0\x86\src60\
+
 %~dp0\..\bin\sg-cli.exe %~dp0\..\dat\sg\syntax60.txt
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
@@ -167,47 +169,7 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-%~dp0\x86\bin\elena-cli %~dp0\x86\src60\system\system.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\x86\bin\elena-cli %~dp0\x86\src60\extensions\extensions.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\x86\bin\elena-cli %~dp0\x86\src60\cellular\cellular.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\x86\bin\elena-cli %~dp0\x86\src60\algorithms\algorithms.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\x86\bin\elena-cli %~dp0\x86\src60\ltests\ltests.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\x86\bin\elena-cli %~dp0\x86\src60\sqlite\sqlite.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\x86\bin\elena-cli %~dp0\x86\src60\forms\forms.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\x86\bin\elena-cli %~dp0\x86\src60\xforms\xforms.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\x86\bin\elena-cli %~dp0\x86\src60\net\net.prj
+%~dp0\x86\bin\elena-cli %~dp0x86\src60\elena_api.prjcol
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

@@ -86,6 +86,8 @@ namespace elena_lang
    constexpr auto wrnMsgUnknownFunction      = "\n%s(%d:%d): warning 408: Function message does not handled by the object '%s'\n";
    constexpr auto wrnMsgUnknownDefConstructor= "\n%s(%d:%d): warning 409: Explicit constructor is not defined in the object\n";
    constexpr auto wrnMsgCallingItself        = "\n%s(%d:%d): warning 410: Calling itself can lead to short-circuiting\n";
+   constexpr auto wrnMssgAssigningNillable   = "\n%s(%d:%d): warning 411: Assinging nillable expression can lead to nil reference exception.\nPlease use nil-coalescing operators\n";
+   constexpr auto wrnMssgReturningNillable   = "\n%s(%d:%d): warning 412: Returning nillable expression can lead to nil reference exception.\nPlease use nil-coalescing operators\n";
    constexpr auto wrnMsgUnknownModule        = "\n%s(%d:%d): warning 413: Unknown module '%s'\n";
    constexpr auto wrnMsgTypeInherited        = "\n%s(%d:%d): warning 420: Type attribute is inherited\n";
    constexpr auto wrnMsgDuplicateInclude     = "\n%s(%d:%d): warning 425: '%s': duplicate inclusion\n";

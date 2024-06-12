@@ -1,32 +1,23 @@
-class B
+import extensions;
+
+class A
 {
-   protected constructor new()
+   Func<int,real,object> Handler : event;
+
+   constructor()
    {
-      console.writeLine(self)
+      self.Handler := (int n, real m) { console.printLine(n,"+",m,"=",n+m); };
+      self.Handler := (int n, real m) { console.printLine(n,"-",m,"=",n-m); };
    }
-}
 
-class C : B
-{
-   _arg1;
-
-   constructor(arg1)
-      <= super new() 
+   invoke(n,m)
    {
-      _arg1 := arg1
-   }
-}
-
-class D : B
-{
-   constructor(int n)
-      <= super new() 
-   {
+      Handler?.(n,m);
    }
 }
 
 public program()
 {
-   var c := new C("arg");
-   var d := new D(2);
+   var a := new A();
+   a.invoke(2,3.2);
 }

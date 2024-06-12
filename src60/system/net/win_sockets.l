@@ -85,7 +85,7 @@ public sealed struct AddrInfoReader
    }
 
    bool Available
-      = paddrinfo.isEmpty().Inverted;
+      = paddrinfo.isUnassigned().Inverted;
     
    next()
    {

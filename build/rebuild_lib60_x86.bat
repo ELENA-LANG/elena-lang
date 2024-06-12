@@ -54,42 +54,7 @@ bin\asm-cli -bc32 src60\core\system.win_core_routines.esm lib60
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
 
-bin\elena-cli src60\system\system.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-bin\elena-cli src60\extensions\extensions.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-bin\elena-cli src60\cellular\cellular.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-bin\elena-cli src60\algorithms\algorithms.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-bin\elena-cli src60\ltests\ltests.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-bin\elena-cli src60\sqlite\sqlite.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-bin\elena-cli src60\forms\forms.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-bin\elena-cli src60\xforms\xforms.prj
+bin\elena-cli src60\elena_api.prjcol
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

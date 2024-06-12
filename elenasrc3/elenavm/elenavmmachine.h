@@ -149,6 +149,13 @@ namespace elena_lang
          return _settings.jitSettings.stackReserved;
       }
 
+      int loadSignature(mssg_t message, addr_t* output, pos_t maximalCount);
+
+      void getGCStatistics(GCStatistics* statistics)
+      {
+         SystemRoutineProvider::CalcGCStatistics(_env, statistics);
+      }
+
       ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
          int codeAlignment, JITSettings gcSettings,
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType));

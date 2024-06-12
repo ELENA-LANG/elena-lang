@@ -32,11 +32,10 @@ namespace elena_lang
       Virtual              = 0x00000005,
       Dispatcher           = 0x00000007,
 
-      //Embeddable           = 0x00000040,
+      Nillable             = 0x00000040,
       Function             = 0x00000080,
       Generic              = 0x00000100,
       RetOverload          = 0x00000200,
-      Nullable             = 0x00000400,
       Multimethod          = 0x00001000,
       TargetSelf           = 0x00002000,
       Static               = 0x00004000,
@@ -130,6 +129,8 @@ namespace elena_lang
    constexpr auto wrnUnknownFunction         = 408;
    constexpr auto wrnUnknownDefConstructor   = 409;
    constexpr auto wrnCallingItself           = 410;
+   constexpr auto wrnAssigningNillable       = 411;
+   constexpr auto wrnReturningNillable       = 412;
    constexpr auto wrnUnknownModule           = 413;
    constexpr auto wrnTypeInherited           = 420;
    constexpr auto wrnDuplicateInclude        = 425;
@@ -250,7 +251,6 @@ namespace elena_lang
    constexpr auto V_TEMPLATEBASED         = 0x80001028u;
    constexpr auto V_WEAK                  = 0x80001029u;
    constexpr auto V_INTERFACE_DISPATCHER  = 0x8000102Au;
-   constexpr auto V_NIL_CONVERSION        = 0x8000102Bu;
    constexpr auto V_PACKED_STRUCT         = 0x8000102Cu;
 
    /// primitive type attribute
@@ -303,7 +303,7 @@ namespace elena_lang
    constexpr auto V_DEFAULT               = 0x80000020u;
    constexpr auto V_UINT8                 = 0x80000021u;
    constexpr auto V_UINT16                = 0x80000022u;
-   constexpr auto V_NULLABLE              = 0x80000023u;
+   constexpr auto V_NILLABLE              = 0x80000023u;
    constexpr auto V_FLOAT64ARRAY          = 0x80000024u;
 
    /// built-in variables

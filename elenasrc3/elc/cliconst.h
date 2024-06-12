@@ -13,7 +13,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x000F
+   #define ELC_REVISION_NUMBER               0x0016
 
 #if defined _M_IX86 || _M_X64
 
@@ -44,6 +44,8 @@ namespace elena_lang
    constexpr auto ELC_COMPILING_TEMPLATE     = "\nCompiling %s";
 
    constexpr auto ELC_SAVING_MODULE          = "\nsaving %s\n";
+
+   constexpr auto ELC_COMPILING_PROJECT      = "\nCompiling Project %s\n\n";
 
    constexpr auto ELC_PROFILE_WARNING        = "\nWARNING - Please select one of available profiles:%s\n";
    constexpr auto ELC_PRJ_COLLECTION_WARNING = "\nWARNING - The project collection must be the last argument:%s\n";

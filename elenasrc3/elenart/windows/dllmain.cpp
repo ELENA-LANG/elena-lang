@@ -108,18 +108,32 @@ EXTERN_DLL_EXPORT void* CreateThreadLA(void* arg, void* threadProc, int flags)
    return machine->allocateThread(systemEnv, arg, threadProc, flags);
 }
 
-EXTERN_DLL_EXPORT void StartThreadLA(SystemEnv* env, void* criricalHandler, void* entryPoint, int index)
+EXTERN_DLL_EXPORT void InitThreadLA(SystemEnv* env, void* criricalHandler, int index)
+{
+   __routineProvider.InitMTAExceptionHandling(env, index, criricalHandler);
+   __routineProvider.InitMTASignals(env, index);
+}
+
+EXTERN_DLL_EXPORT void StartThreadLA(SystemEnv* env, void* entryPoint, int index)
 {
 #ifdef DEBUG_OUTPUT
-   printf("StartThreadLA.6 %x,%x\n", (int)env, (int)criricalHandler);
+   printf("StartThreadLA.6 %x\n", (int)env);
 
    fflush(stdout);
 #endif
 
-   __routineProvider.InitMTAExceptionHandling(env, index, criricalHandler);
-   __routineProvider.InitMTASignals(env, index);
-
    machine->startThread(env, entryPoint, index);
+}
+
+EXTERN_DLL_EXPORT void UninitThreadLA(SystemEnv* env, int index)
+{
+   __routineProvider.ClearMTASignals(env, index);
+   machine->clearThreadEntry(env, index);
+}
+
+EXTERN_DLL_EXPORT void ExitThreadLA(int errCode)
+{
+   return __routineProvider.ExitThread(errCode);
 }
 
 EXTERN_DLL_EXPORT void* CollectPermGCLA(size_t size)

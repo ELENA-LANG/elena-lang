@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Machine declaration
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENARTMACHINE_H
@@ -71,6 +71,7 @@ namespace elena_lang
       }
 
       size_t allocateThreadEntry(SystemEnv* env);
+      void clearThreadEntry(SystemEnv* env, size_t index);
 
       void* allocateThread(SystemEnv* env, void* arg, void* threadProc, int flags);
 

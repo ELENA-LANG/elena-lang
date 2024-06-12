@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine File class implementations.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "common.h"
@@ -162,4 +162,24 @@ bool PathUtil :: checkExtension(path_t path, path_t extension)
       return extension.compare(path.str() + pos + 1);
    }
    else return extension.empty();
+}
+
+void PathUtil :: combineCanonicalized(PathString& target, path_t subpath)
+{
+   PathString upperMask("..");
+
+   if (target[target.length() - 1] == PATH_SEPARATOR)
+      target.truncate(target.length() - 1);
+
+   while (subpath.startsWith(*upperMask) && subpath[2] == PATH_SEPARATOR) {
+      size_t index = (*target).findLast(PATH_SEPARATOR);
+      if (index != NOTFOUND_POS) {
+         target.truncate(index);
+
+         subpath = subpath + 3;
+      }
+      else break;
+   }
+
+   target.combine(subpath);
 }

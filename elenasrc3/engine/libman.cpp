@@ -218,7 +218,7 @@ ModuleBase* LibraryProvider :: resolveModule(ustr_t referenceName, ref_t& refere
 
          }
          else if (!silentMode || result == LoadResult::WrongVersion) {
-            throw InternalError(getLoadError(result));
+            throw InternalStrError(getLoadError(result), *ns);
          }
          else return nullptr;
       }

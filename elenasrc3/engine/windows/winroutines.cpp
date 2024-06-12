@@ -83,6 +83,11 @@ void SystemRoutineProvider :: Exit(int exitCode)
    ::ExitProcess(exitCode);
 }
 
+void SystemRoutineProvider :: ExitThread(int exitCode)
+{
+   ::ExitThread(exitCode);
+}
+
 #if _M_IX86 || __i386__
 
 LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
@@ -205,6 +210,14 @@ long long SystemRoutineProvider :: GenerateSeed()
 void SystemRoutineProvider :: InitMTASignals(SystemEnv* env, size_t index)
 {
    env->th_table->slots[index].content->tt_sync_event = ::CreateEvent(0, -1, 0, 0);
+   env->th_table->slots[index].content->tt_flags = 0;
+}
+
+void SystemRoutineProvider :: ClearMTASignals(SystemEnv* env, size_t index)
+{
+   ::CloseHandle(env->th_table->slots[index].content->tt_sync_event);
+
+   env->th_table->slots[index].content->tt_sync_event = nullptr;
    env->th_table->slots[index].content->tt_flags = 0;
 }
 

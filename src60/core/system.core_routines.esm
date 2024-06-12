@@ -2018,10 +2018,16 @@ procedure __thread_create(self,arg,flags,ptr)
 
   open       (2),[]
 
+  // ; == enter GC critical section ==
+  system      6 
+
   call extern:CreateThreadLA (
      *arg, 
      procedure:"system'core_routines'thread_start",
      *flags)
+
+  system      7  
+  // ; === leave GC critical section ===
 
   peek       fp:ptr
   $save
@@ -2517,24 +2523,15 @@ procedure __event_dispatcher
   cmp        n:0
   jeq        labCopyEnd
 
-  set        sp:0
-  store      fp:tmp
   dalloc
-
-labCopy:
-  add        n:-1
-
-  set        fp:-1
-  xget
+  set        sp:0
+  alloc      i:1
   store      sp:0
 
-  neg
-  peek       fp:tmp
-  xassign
-  neg
-
-  cmp        n:0
-  jne        labCopy
+  set        fp:-1
+  swap       sp:0
+  dtrans
+  free       i:1
 
 labCopyEnd:
   peek       fp:arr  
@@ -2550,6 +2547,10 @@ labNext:
   save       dp:index
 
   load       dp:mssg
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
   call       vt:0
   
   peek       fp:arr  
@@ -2705,6 +2706,9 @@ procedure thread_start(index)
   
   $save       dp:ptr
 
+  // ; == enter GC critical section ==
+  system      6 
+
   system      3
 
   xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
@@ -2714,13 +2718,32 @@ procedure thread_start(index)
   set         dp:envptr
   store       fp:arg1
 
-  call extern:StartThreadLA (
+  call extern:InitThreadLA (
      *$arg1, 
      procedure:"system'core_routines'critical_exception_handler",
+     *$ptr)
+
+  system      7  
+  // ; === leave GC critical section ===
+
+  call extern:StartThreadLA (
+     *$arg1, 
      procedure:"system'core_routines'func_invoker",
      *$ptr)
 
   unhook
+
+  // ; == enter GC critical section ==
+  system      6 
+
+  call extern:UninitThreadLA (
+     *$arg1, 
+     *$ptr)
+
+  system      7  
+  // ; === leave GC critical section ===
+
+  call extern:ExitThreadLA (0)
 
   close       []
   quit

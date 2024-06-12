@@ -704,7 +704,7 @@ public extension realOp : RealNumber
             
          x := x.ln();
             
-         x := x * y;
+         x *= y;
             
          x := x.exp();
             
@@ -715,7 +715,7 @@ public extension realOp : RealNumber
       {
          x := x.ln();
             
-         x := x * y;
+         x *= y;
             
          x := x.exp()
       };

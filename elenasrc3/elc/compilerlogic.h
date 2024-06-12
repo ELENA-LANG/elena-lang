@@ -18,7 +18,7 @@ namespace elena_lang
    {
       mssg_t      message;
       ref_t       kind;
-      ref_t       outputRef;
+      TypeInfo    outputInfo;
       ref_t       constRef;
       Visibility  visibility;
       bool        stackSafe;
@@ -108,7 +108,7 @@ namespace elena_lang
       bool validateTypeScopeAttribute(ref_t attrValue, TypeAttributes& attributes);
       bool validateResendAttribute(ref_t attrValue, bool& superMode);
 
-      bool validateAutoType(ModuleScopeBase& scope, ref_t& reference);
+      bool validateAutoType(ModuleScopeBase& scope, TypeInfo& typeInfo);
 
       bool isTryDispatchAllowed(ModuleScopeBase& scope, mssg_t message);
       mssg_t defineTryDispatcher(ModuleScopeBase& scope, mssg_t message);
@@ -124,11 +124,11 @@ namespace elena_lang
       bool isEmbeddableArray(ModuleScopeBase& scope, ref_t reference);
 
       bool isEmbeddableStruct(ClassInfo& info);
-      bool isEmbeddableStruct(ModuleScopeBase& scope, ref_t reference);
+      bool isEmbeddableStruct(ModuleScopeBase& scope, TypeInfo typeInfo);
 
-      bool isEmbeddableAndReadOnly(ModuleScopeBase& scope, ref_t reference);
+      bool isEmbeddableAndReadOnly(ModuleScopeBase& scope, TypeInfo typeInfo);
       bool isEmbeddableAndReadOnly(ClassInfo& info);
-      bool isEmbeddable(ModuleScopeBase& scope, ref_t reference);
+      bool isEmbeddable(ModuleScopeBase& scope, TypeInfo typeInfo);
       bool isEmbeddable(ClassInfo& info);
 
       bool isWrapper(ModuleScopeBase& scope, ref_t reference);

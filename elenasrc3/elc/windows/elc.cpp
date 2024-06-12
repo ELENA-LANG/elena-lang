@@ -292,6 +292,7 @@ int compileProjectCollection(int argc, wchar_t** argv, path_t path, path_t appPa
       projectPath[destLen] = 0;
 
       argv[argc - 1] = projectPath;
+      presenter->printPath(ELC_COMPILING_PROJECT, projectPath);
 
       int result = compileProject(argc, argv, appPath, errorProcessor, process);
       if (result == ERROR_RET_CODE) {

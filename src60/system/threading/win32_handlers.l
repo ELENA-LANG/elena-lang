@@ -1,6 +1,8 @@
 import system;
 import system'runtime;
 
+public const int INFINITE = 0FFFFFFFFh;
+
 // --- ThreadHandle ---
 public sealed struct ThreadHandle
 {
@@ -24,6 +26,14 @@ public sealed struct ThreadHandle
    {
       extern KERNEL32.ResumeThread(_handle)
    }
+
+   join()
+      <= join(INFINITE);
+                                                                   
+   join(int timeOut)
+   {
+      extern KERNEL32.WaitForSingleObject(_handle, timeOut)
+   }     
                                                                    
    close()
    {

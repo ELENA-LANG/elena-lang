@@ -1045,6 +1045,7 @@ namespace elena_lang
    {
       ref_t typeRef;
       ref_t elementRef;
+      bool nillable;
 
       bool isPrimitive() const
       {
@@ -1059,6 +1060,30 @@ namespace elena_lang
       bool operator !=(TypeInfo& val) const
       {
          return this->typeRef != val.typeRef || this->elementRef != val.elementRef;
+      }
+
+      TypeInfo()
+      {
+         typeRef = elementRef = 0;
+         nillable = false;
+      }
+      TypeInfo(ref_t typeRef)
+      {
+         this->typeRef = typeRef;
+         this->elementRef = 0;
+         this->nillable = false;
+      }
+      TypeInfo(ref_t typeRef, ref_t elemantRef)
+      {
+         this->typeRef = typeRef;
+         this->elementRef = elemantRef;
+         this->nillable = false;
+      }
+      TypeInfo(ref_t typeRef, ref_t elemantRef, bool nillable)
+      {
+         this->typeRef = typeRef;
+         this->elementRef = elemantRef;
+         this->nillable = nillable;
       }
    };
 
@@ -1360,6 +1385,24 @@ namespace elena_lang
       {
          this->messageCode = messageCode;
          this->arg = arg;
+      }
+   };
+
+   // --- InternalStrError ---
+   struct InternalStrError : ExceptionBase
+   {
+      int              messageCode;
+      IdentifierString arg;
+
+      InternalStrError(int messageCode)
+      {
+         this->messageCode = messageCode;
+      }
+
+      InternalStrError(int messageCode, ustr_t arg)
+      {
+         this->messageCode = messageCode;
+         this->arg.copy(arg);
       }
    };
 

@@ -58,7 +58,7 @@ void DeclarationFixture :: runTest()
 
    auto parser = new Parser(&syntax, terminals, nullptr);
 
-   ModuleScopeBase* moduleScope = env.createModuleScope(true, false, true);
+   ModuleScopeBase* moduleScope = env.createModuleScope(true, true);
 
    SyntaxTreeBuilder builder(sourceNode, nullptr, moduleScope, nullptr, true);
 
