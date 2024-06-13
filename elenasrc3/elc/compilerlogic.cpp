@@ -1079,6 +1079,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_TYPEOF:
          attrs |= ExpressionAttribute::RetrievingType;
          return true;
+      case V_CLASS:
+         attrs |= ExpressionAttribute::Class;
+         return true;
       default:
          return false;
    }
@@ -2533,18 +2536,13 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
    }
 }
 
-bool CompilerLogic :: isValidType(ClassInfo& info, bool allowRole)
-{
-   return allowRole || !testany(info.header.flags, elRole);
-}
-
-bool CompilerLogic :: isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole)
+bool CompilerLogic :: isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared)
 {
    ClassInfo info;
    if (!defineClassInfo(scope, info, classReference, true))
       return ignoreUndeclared;
 
-   return isValidType(info, allowRole);
+   return true;
 }
 
 void CompilerLogic :: generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_t parentRef, VirtualMethods& methods)

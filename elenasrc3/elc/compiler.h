@@ -1667,7 +1667,7 @@ namespace elena_lang
 
       void validateScope(ModuleScopeBase* moduleScope);
       void validateSuperClass(ClassScope& scope, SyntaxNode node);
-      void validateType(Scope& scope, ref_t typeRef, SyntaxNode node, bool ignoreUndeclared, bool allowRole);
+      void validateType(Scope& scope, ref_t typeRef, SyntaxNode node, bool ignoreUndeclared);
 
       void injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool interfaceBased);
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope, 

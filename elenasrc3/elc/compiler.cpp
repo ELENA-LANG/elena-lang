@@ -1424,6 +1424,11 @@ ObjectInfo Compiler::CodeScope :: mapIdentifier(ustr_t identifier, bool referenc
    if (EAttrs::testAndExclude(attr, EAttr::Superior)) {
       return parent->mapIdentifier(identifier, referenceOne, attr);
    }
+   else if (EAttrs::testAndExclude(attr, EAttr::Class)) {
+      NamespaceScope* scope = Scope::getScope<NamespaceScope>(*this, ScopeLevel::Namespace);
+
+      return scope->mapIdentifier(identifier, referenceOne, attr);
+   }
 
    ObjectInfo info = mapLocal(identifier);
    if (info.kind != ObjectKind::Unknown || EAttrs::test(attr, ExpressionAttribute::Local)) {
@@ -4994,7 +4999,7 @@ void Compiler :: declareExtension(ClassScope& scope, mssg_t message, bool intern
    addExtensionMessage(scope, extensionMessage, scope.reference, message, internalOne);
 }
 
-void Compiler :: validateType(Scope& scope, ref_t typeRef, SyntaxNode node, bool ignoreUndeclared, bool allowRole)
+void Compiler :: validateType(Scope& scope, ref_t typeRef, SyntaxNode node, bool ignoreUndeclared)
 {
    if (!typeRef) {
       switch (node.key) {
@@ -5007,7 +5012,7 @@ void Compiler :: validateType(Scope& scope, ref_t typeRef, SyntaxNode node, bool
       }
    }
 
-   if (!_logic->isValidType(*scope.moduleScope, typeRef, ignoreUndeclared, allowRole))
+   if (!_logic->isValidType(*scope.moduleScope, typeRef, ignoreUndeclared))
       scope.raiseError(errInvalidType, node);
 }
 
@@ -5356,7 +5361,7 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAtt
          break;
    }
 
-   validateType(scope, typeInfo.typeRef, node, declarationMode, allowRole || attributes.mssgNameLiteral);
+   validateType(scope, typeInfo.typeRef, node, declarationMode);
 
    return typeInfo;
 }
@@ -8573,7 +8578,7 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
          //if (typeAttributes.isNonempty())
          //   scope.raiseError(errInvalidOperation, typeNode);
       }
-      else validateType(scope, methodScope.info.outputRef, current, false, false);
+      else validateType(scope, methodScope.info.outputRef, current, false);
 
       if (methodScope.checkHint(MethodHint::VirtualReturn)) {
          TypeInfo refType = { V_OUTWRAPPER, methodScope.info.outputRef };
@@ -13081,7 +13086,7 @@ bool Compiler::Expression :: writeObjectInfo(ObjectInfo info, bool allowMeta)
          break;
       case ObjectKind::Object:
          break;
-      default:         
+      default:
          return false;
    }
 

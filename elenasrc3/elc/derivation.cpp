@@ -799,7 +799,7 @@ bool SyntaxTreeBuilder :: flushAttribute(SyntaxTreeWriter& writer, Scope& scope,
    bool typeExpr = false;
    ref_t attrRef = mapAttribute(node, allowType, previusCategory);
    if (isPrimitiveRef(attrRef)) {
-      typeExpr = attrRef == V_NEWOP || attrRef == V_WRAPPER ||attrRef == V_CONVERSION;
+      typeExpr = attrRef == V_NEWOP || attrRef == V_WRAPPER || attrRef == V_CONVERSION || attrRef == V_CLASS;
 
       writer.newNode(SyntaxKey::Attribute, attrRef);
       flushNode(writer, scope, node);

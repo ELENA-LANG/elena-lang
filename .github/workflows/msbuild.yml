@@ -20,7 +20,7 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
 
-  BUILD_TAG: 6.1.2
+  BUILD_TAG: 6.1.3
 
 permissions:
   contents: read

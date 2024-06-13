@@ -1,23 +1,22 @@
 import extensions;
+import extensions'dynamic;
+import system'dynamic;
 
-class A
+public class CommandDTO
 {
-   Func<int,real,object> Handler : event;
-
-   constructor()
-   {
-      self.Handler := (int n, real m) { console.printLine(n,"+",m,"=",n+m); };
-      self.Handler := (int n, real m) { console.printLine(n,"-",m,"=",n-m); };
-   }
-
-   invoke(n,m)
-   {
-      Handler?.(n,m);
-   }
+    int Command  : prop;
+    
+    string Value : prop;
+    
+    string User  : prop;
 }
 
 public program()
 {
-   var a := new A();
-   a.invoke(2,3.2);
+   var s := "{""Command"":1,""Value"":""a""}";
+
+   var dto := class Serializer<CommandDTO>.fromJson(s);
+
+   var commmand := dto.Command;
+   var value := dto.Value;
 }

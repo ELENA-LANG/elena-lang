@@ -5,15 +5,24 @@ In development:
 [development]
   ### EPIC: elena 6.2 ###
 
-  === Iteration 26 ===
-  dev: #265, static symbol should be thread-safe, chat sample
-  gen:
+  === Iteration 26 (26.06.2024) ===
+  dev: 
+      - #265, 
+      - static symbol should be thread-safe, 
+      - chat sample
+  gen: 
+      - elt : fails after executing several times, 
+      - nested call must not stop / start vm, 
+      - generate code templates : generate a code based on a record
   maint:
+      - system'winforms : free PermVectorTable item after the window is closed, to save the resources
+      - native support for Value operator with a pointer / reference
   port:#658 : create debug adapter, x64 : gui
   prom:
   --------------------------------------
-  * chat sample : server - deserialize command ("{"Command"=1,"Value"="a"}")
+  * allow to use function attribute for following syntax : "function printSum(int n, int m) { ... }", 
   --------------------------------------
+  * json to strong typed object (modify chat sample after)
 
   ### EPIC: elena 6.3 ###
 
