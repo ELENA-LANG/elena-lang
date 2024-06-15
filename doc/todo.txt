@@ -20,9 +20,10 @@ In development:
   port:#658 : create debug adapter, x64 : gui
   prom:
   --------------------------------------
-  * allow to use function attribute for following syntax : "function printSum(int n, int m) { ... }", 
+  * modify chat sample to use json to strong typed object
+  * chat sample : write message
   --------------------------------------
-  * json to strong typed object (modify chat sample after)
+  * allow to use function attribute for following syntax : "function printSum(int n, int m) { ... }", 
 
   ### EPIC: elena 6.3 ###
 

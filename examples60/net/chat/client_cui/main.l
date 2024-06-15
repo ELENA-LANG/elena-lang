@@ -46,6 +46,24 @@ class Controller
       ^ "Enter -q to exit the chat"
    }
    
+    string Prompt
+        = ">";
+    
+    proceed(line)
+    {
+        if(line == "-q")
+        {
+            _client.stop();
+    
+            forward program.stop()
+        }
+        else
+        {
+            _client.send(line)
+        };
+
+        ^ emptyString
+    }
 }
 
 public static control = new Controller();
