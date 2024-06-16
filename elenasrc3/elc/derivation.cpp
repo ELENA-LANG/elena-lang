@@ -1241,7 +1241,7 @@ void SyntaxTreeBuilder :: flushSubScope(SyntaxTreeWriter& writer, Scope& scope, 
    }
 }
 
-inline void copyTypeAttributes(SyntaxTreeWriter& writer, SyntaxNode node)
+inline void copyFunctionAttributes(SyntaxTreeWriter& writer, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -1251,6 +1251,13 @@ inline void copyTypeAttributes(SyntaxTreeWriter& writer, SyntaxNode node)
          case SyntaxKey::ArrayType:
             SyntaxTree::copyNodeSafe(writer, current, true);
             current.setKey(SyntaxKey::Idle);
+            break;
+         case SyntaxKey::Attribute:
+            if (current.arg.reference == V_FUNCTION) {
+               // copy the function attribute
+               SyntaxTree::copyNodeSafe(writer, current, true);
+               current.setKey(SyntaxKey::Idle);
+            }
             break;
          default:
             break;
@@ -1274,7 +1281,7 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
       // HOTFIX : move the type attribute ti the method
       SyntaxNode classNode = writer.CurrentNode().parentNode();
 
-      copyTypeAttributes(writer, classNode);
+      copyFunctionAttributes(writer, classNode);
    }
 
    SyntaxNode member = node.firstChild(SyntaxKey::MemberMask);

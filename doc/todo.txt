@@ -7,23 +7,26 @@ In development:
 
   === Iteration 26 (26.06.2024) ===
   dev: 
-      - #265, 
+      - #265
       - static symbol should be thread-safe, 
-      - chat sample
+      - chat sample (leaving conversation, testing)
   gen: 
       - elt : fails after executing several times, 
       - nested call must not stop / start vm, 
       - generate code templates : generate a code based on a record
   maint:
       - system'winforms : free PermVectorTable item after the window is closed, to save the resources
-      - native support for Value operator with a pointer / reference
-  port:#658 : create debug adapter, x64 : gui
+      -
+      -
+  port:
+      - #658 : create debug adapter, 
+      - x64 : gui
   prom:
   --------------------------------------
+  * native support for Value operator with a pointer / reference
   * modify chat sample to use json to strong typed object
-  * chat sample : write message
   --------------------------------------
-  * allow to use function attribute for following syntax : "function printSum(int n, int m) { ... }", 
+  * chat sample : write message
 
   ### EPIC: elena 6.3 ###
 
