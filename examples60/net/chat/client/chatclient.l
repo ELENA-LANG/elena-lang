@@ -88,7 +88,7 @@ public sealed class ChatClient : BaseClient
       _networkClient.start()
    }
     
-    stop()
+   stop()
    {
        _networkClient.close()
    }

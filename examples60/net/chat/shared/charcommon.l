@@ -36,8 +36,6 @@ public class BaseClient
                 string s := UTF8Encoding.toString(4, package_len, _buffer.Value); // !! should be optimized
 
                 _buffer.delete(0, package_len + 4);
-                
-                //^ class Serializer<CommandDTO>.fromJson(s)
 
                 ^ s.fromJson()
             }

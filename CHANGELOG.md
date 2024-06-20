@@ -58,7 +58,6 @@
 
 - SAMPLES
   - [ADDED] #635 : new tutorial to call an ELENA library from C++ / C#
-  - [ADDED] chat sample
 
 - Tools
   - [ADDED] ecv-cli : adding a filter for listing members

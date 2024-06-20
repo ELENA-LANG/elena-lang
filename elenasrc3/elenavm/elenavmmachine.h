@@ -98,6 +98,11 @@ namespace elena_lang
 
       bool loadModule(ustr_t ns);
 
+      addr_t injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, int staticLen, int nameIndex)
+      {
+         return ELENAMachine::injectType(env, proxy, srcVMTPtr, staticLen, nameIndex);
+      }
+
    public:
       bool isStandAlone() { return _standAloneMode; }
 
@@ -154,6 +159,11 @@ namespace elena_lang
       void getGCStatistics(GCStatistics* statistics)
       {
          SystemRoutineProvider::CalcGCStatistics(_env, statistics);
+      }
+
+      addr_t injectType(void* proxy, void* srcVMTPtr, int staticLen, int nameIndex)
+      {
+         return injectType(_env, proxy, srcVMTPtr, staticLen, nameIndex);
       }
 
       ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,

@@ -1,8 +1,14 @@
 import extensions;
 
-function printSum(int n, int m) { }
-
+/*singleton Tester
+{
+   test(ref int retVal)
+   {
+      retVal := 2
+   }
+}*/
 
 public program()
 {
+   Reference<int> r1 := 2;
 }

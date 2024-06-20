@@ -7900,6 +7900,18 @@ void Compiler :: compileDispatchProberCode(BuildTreeWriter& writer, CodeScope& s
    }
 }
 
+inline ref_t mapAsWeakReference(ModuleScopeBase* scope, ref_t reference)
+{
+   ustr_t refName = scope->module->resolveReference(reference);
+   if (!isTemplateWeakReference(refName) && isWeakReference(refName)) {
+      IdentifierString weakName(TEMPLATE_PREFIX_NS, refName + 1);
+
+      reference = scope->module->mapReference(*weakName);
+   }
+
+   return reference;
+}
+
 mssg_t Compiler :: declareInplaceConstructorHandler(MethodScope& invokerScope, ClassScope& classClassScope)
 {
    ClassScope* classScope = Scope::getScope<ClassScope>(invokerScope, Scope::ScopeLevel::Class);
@@ -7920,6 +7932,11 @@ mssg_t Compiler :: declareInplaceConstructorHandler(MethodScope& invokerScope, C
       signArgs[i] = signArgs[i - 1];
 
    signArgs[0] = classScope->reference;
+
+   // HOTFIX : use weak reference as a message argument
+   if (test(classScope->info.header.flags, elTemplatebased))
+      signArgs[0] = mapAsWeakReference(classClassScope.moduleScope, signArgs[0]);
+
    signLen++;
 
    mssg_t inplaceMessage = encodeMessage(

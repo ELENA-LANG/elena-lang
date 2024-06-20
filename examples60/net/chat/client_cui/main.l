@@ -15,6 +15,16 @@ class Client
 
       _chatClient.start()      
    }
+
+   send(string message)
+   { 
+      _chatClient.send(message);
+   }
+
+   stop()
+   { 
+      _chatClient.stop();
+   }
 }
 
 class Controller

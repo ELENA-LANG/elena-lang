@@ -50,7 +50,7 @@ define es_catch_frame        000Ch
 define tt_slots             00004h
 
 // ; --- Object header fields ---
-define elSyncOffset          0004h
+define elSyncOffset          0001h
 define elSizeOffset          0004h
 define elVMTOffset           0008h 
 define elObjectOffset        0008h

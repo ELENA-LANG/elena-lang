@@ -8,10 +8,10 @@ In development:
   === Iteration 26 (26.06.2024) ===
   dev: 
       - #265
-      - static symbol should be thread-safe, 
-      - chat sample (leaving conversation, testing)
+      - 
+      - 
   gen: 
-      - elt : fails after executing several times, 
+      - elt 64 : fails after executing several times, 
       - nested call must not stop / start vm, 
       - generate code templates : generate a code based on a record
   maint:
@@ -20,13 +20,12 @@ In development:
       -
   port:
       - #658 : create debug adapter, 
-      - x64 : gui
+      - 
   prom:
   --------------------------------------
-  * native support for Value operator with a pointer / reference
-  * modify chat sample to use json to strong typed object
+  * static symbol should be thread-safe, 
   --------------------------------------
-  * chat sample : write message
+  * x64 : gui
 
   ### EPIC: elena 6.3 ###
 

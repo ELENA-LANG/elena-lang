@@ -424,6 +424,15 @@ EXTERN_DLL_EXPORT int LoadSignatureLA(mssg_t message, addr_t* output, int maxima
    return machine->loadSignature(message, output, maximalLength);
 }
 
+/// <summary>
+/// Inject an interface VMT into a dynamic proxy class
+/// </summary>
+/// <returns>a reference to dynamically created VMT</returns>
+EXTERN_DLL_EXPORT void* InjectProxyTypeLA(void* target, void* type, int staticLength, int nameIndex)
+{
+   return (void*)machine->injectType(target, type, staticLength, nameIndex);
+}
+
 EXTERN_DLL_EXPORT void GetGCStatisticsLA(GCStatistics* statistics)
 {
    machine->getGCStatistics(statistics);
