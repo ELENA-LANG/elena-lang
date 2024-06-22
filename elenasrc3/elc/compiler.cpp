@@ -114,6 +114,24 @@ inline bool validateGenericClosure(ref_t* signature, size_t length)
    return true;
 }
 
+inline ref_t mapAsWeakReference(ModuleScopeBase* scope, ref_t reference)
+{
+   ustr_t refName = scope->module->resolveReference(reference);
+   if (!isWeakReference(refName)) {
+      size_t index = refName.findLast('\'', 0);
+
+      refName = refName + index;
+   }
+
+   if (!isTemplateWeakReference(refName)) {
+      IdentifierString weakName(TEMPLATE_PREFIX_NS, refName + 1);
+
+      reference = scope->module->mapReference(*weakName);
+   }
+
+   return reference;
+}
+
 void declareTemplateParameters(ModuleBase* module, TemplateTypeList& typeList,
    SyntaxTree& dummyTree, List<SyntaxNode>& parameters)
 {
@@ -2163,7 +2181,7 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
          {
             MethodScope methodScope(&scope);
             methodScope.isExtension = scope.extensionClassRef != 0;
-            declareMethodAttributes(methodScope, current, methodScope.isExtension, templateBased);
+            declareMethodAttributes(methodScope, current, methodScope.isExtension);
 
             if (!current.arg.reference) {
                // NOTE : an extension method must be strong-resolved
@@ -2684,7 +2702,13 @@ void Compiler :: injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool
          // skip class classes, extensions and singletons
          if (scope.reference != scope.moduleScope->buildins.superReference && !interfaceBased) {
             // auto generate cast$<type> message for explicitly declared classes
-            ref_t signRef = scope.module->mapSignature(&scope.reference, 1, false);
+            ref_t reference = scope.reference;
+
+            // HOTFIX : use weak template reference
+            if (test(scope.info.header.flags, elTemplatebased))
+               reference = mapAsWeakReference(scope.moduleScope, reference);
+
+            ref_t signRef = scope.module->mapSignature(&reference, 1, false);
             ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
 
             injectVirtualReturningMethod(scope, classNode,
@@ -2778,7 +2802,7 @@ mssg_t Compiler :: defineOutRefMethod(ClassScope& scope, SyntaxNode node, bool i
       ref_t signArgs[ARG_COUNT];
       size_t signLen = scope.module->resolveSignature(signRef, signArgs);
       if (signLen == (size_t)argCount - argDiff) {
-         signArgs[signLen++] = resolvePrimitiveType(scope, { V_OUTWRAPPER, outputTypeInfo.typeRef }, true);
+         signArgs[signLen++] = resolvePrimitiveType(*scope.moduleScope, { V_OUTWRAPPER, outputTypeInfo.typeRef }, true);
 
          mssg_t byRefMessage = encodeMessage(
             scope.module->mapAction(
@@ -2996,9 +3020,7 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SyntaxNode node, Fi
 
    if (attrs.size < 0) {
       if (!attrs.inlineArray) {
-         NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-
-         typeInfo.typeRef = resolveArrayTemplate(*scope.moduleScope, *nsScope->nsName, attrs.typeInfo.typeRef, true);
+         typeInfo.typeRef = resolveArrayTemplate(*scope.moduleScope, attrs.typeInfo.typeRef, true);
       }
       else scope.raiseError(errIllegalField, node);
    }
@@ -3169,9 +3191,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
          scope.info.header.flags |= elDynamicRole;
       }
       else if (!test(scope.info.header.flags, elStructureRole)) {
-         NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-
-         typeInfo.typeRef = resolveArrayTemplate(*scope.moduleScope, *nsScope->nsName, attrs.typeInfo.typeRef, true);
+         typeInfo.typeRef = resolveArrayTemplate(*scope.moduleScope, attrs.typeInfo.typeRef, true);
       }
       else scope.raiseError(errIllegalField, node);
 
@@ -3460,13 +3480,13 @@ void Compiler :: declareParameter(MethodScope& scope, SyntaxNode current, bool w
       variadicMode = true;
 
       if (isPrimitiveRef(paramTypeInfo.elementRef)) {
-         signature[signatureLen++] = resolvePrimitiveType(scope, { paramTypeInfo.elementRef }, declarationMode);
+         signature[signatureLen++] = resolvePrimitiveType(*scope.moduleScope, { paramTypeInfo.elementRef }, declarationMode);
       }
       else signature[signatureLen++] = paramTypeInfo.elementRef;
    }
    else if (paramTypeInfo.isPrimitive()) {
       // primitive arguments should be replaced with wrapper classes
-      signature[signatureLen++] = resolvePrimitiveType(scope, paramTypeInfo, declarationMode);
+      signature[signatureLen++] = resolvePrimitiveType(*scope.moduleScope, paramTypeInfo, declarationMode);
    }
    else signature[signatureLen++] = paramTypeInfo.typeRef;
 
@@ -3634,7 +3654,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          int offset = scope.parameters.count() + 1u;
          scope.parameters.add(RETVAL_ARG, { offset, refType, 0 });
 
-         signature[signatureLen++] = resolvePrimitiveType(scope, refType, true);
+         signature[signatureLen++] = resolvePrimitiveType(*scope.moduleScope, refType, true);
          paramCount++;
 
          scope.info.hints |= (ref_t)MethodHint::VirtualReturn;
@@ -3756,6 +3776,8 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
 
       methodScope.info.hints |= (ref_t)MethodHint::Normal;
       methodScope.info.outputRef = methodScope.getClassRef();
+      if (test(methodScope.getClassFlags(), elTemplatebased))
+         methodScope.info.outputRef = mapAsWeakReference(methodScope.moduleScope, methodScope.info.outputRef);
    }
    else if (methodScope.checkHint(MethodHint::Predefined)) {
       node.setKey(SyntaxKey::PredefinedMethod);
@@ -4248,7 +4270,7 @@ ref_t Compiler :: resolveStrongType(Scope& scope, TypeInfo typeInfo, bool declar
       if (typeInfo.typeRef == V_AUTO) {
          return typeInfo.typeRef;
       }
-      else return resolvePrimitiveType(scope, typeInfo, declarationMode);
+      else return resolvePrimitiveType(*scope.moduleScope, typeInfo, declarationMode);
    }
    else return typeInfo.typeRef;
 }
@@ -4259,7 +4281,7 @@ TypeInfo Compiler :: resolveStrongTypeInfo(Scope& scope, TypeInfo typeInfo, bool
       if (typeInfo.typeRef == V_AUTO) {
          return typeInfo;
       }
-      else return resolvePrimitiveType(scope, typeInfo, declarationMode);
+      else return resolvePrimitiveType(*scope.moduleScope, typeInfo, declarationMode);
    }
    else return typeInfo;
 }
@@ -4272,14 +4294,7 @@ ref_t Compiler :: retrieveType(Scope& scope, ObjectInfo info)
    else return info.typeInfo.typeRef;
 }
 
-ref_t Compiler :: resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool declarationMode)
-{
-   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-
-   return resolvePrimitiveType(*scope.moduleScope, *nsScope->nsName, typeInfo, declarationMode);
-}
-
-ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, TypeInfo typeInfo, 
+ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo typeInfo, 
    bool declarationMode)
 {
    switch (typeInfo.typeRef) {
@@ -4314,21 +4329,21 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, 
          return moduleScope.branchingInfo.typeRef;
       case V_WRAPPER:
       case V_OUTWRAPPER:
-         return resolveWrapperTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
+         return resolveWrapperTemplate(moduleScope, typeInfo.elementRef, declarationMode);
       case V_INT8ARRAY:
       case V_INT16ARRAY:
       case V_INT32ARRAY:
       case V_FLOAT64ARRAY:
       case V_BINARYARRAY:
-         return resolveArrayTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
+         return resolveArrayTemplate(moduleScope, typeInfo.elementRef, declarationMode);
       //case V_NULLABLE:
       //   return resolveNullableTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
       case V_NIL:
          return moduleScope.buildins.superReference;
       case V_ARGARRAY:
-         return resolveArgArrayTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
+         return resolveArgArrayTemplate(moduleScope, typeInfo.elementRef, declarationMode);
       case V_OBJARRAY:
-         return resolveArrayTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
+         return resolveArrayTemplate(moduleScope, typeInfo.elementRef, declarationMode);
       case V_PTR32:
       case V_PTR64:
          return moduleScope.buildins.pointerReference;
@@ -4499,7 +4514,7 @@ inline ref_t resloveWeakSelfReference(ModuleScopeBase* moduleScope, ref_t weakRe
    else return weakRef;
 }
 
-void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode, bool templateBased)
+void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode)
 {
    if (exensionMode)
       scope.info.hints |= (ref_t)MethodHint::Extension;
@@ -4542,9 +4557,6 @@ void Compiler :: declareMethodAttributes(MethodScope& scope, SyntaxNode node, bo
                if (typeInfo.nillable)
                   scope.info.hints |= (ref_t)MethodHint::Nillable;
             }
-
-            if (templateBased)
-               scope.info.outputRef = resloveWeakSelfReference(scope.moduleScope, scope.info.outputRef, scope.getClassRef());
 
             break;
          case SyntaxKey::Name:
@@ -5134,16 +5146,16 @@ ref_t Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node,
 
       NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
-      return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
+      return _templateProcessor->generateClassTemplate(*scope.moduleScope,
          templateRef, parameters, declarationMode, nullptr);
    }
 }
 
-ref_t Compiler :: resolveTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef, 
+ref_t Compiler :: resolveTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 
    ref_t elementRef, bool declarationMode)
 {
    if (isPrimitiveRef(elementRef))
-      elementRef = resolvePrimitiveType(moduleScope, ns, { elementRef });
+      elementRef = resolvePrimitiveType(moduleScope, { elementRef });
 
    TemplateTypeList typeList;
    typeList.add(elementRef);
@@ -5153,7 +5165,7 @@ ref_t Compiler :: resolveTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t
    List<SyntaxNode> parameters({});
    declareTemplateParameters(moduleScope.module, typeList, dummyTree, parameters);
 
-   return _templateProcessor->generateClassTemplate(moduleScope, ns,
+   return _templateProcessor->generateClassTemplate(moduleScope,
       templateRef, parameters, declarationMode, nullptr);
 }
 
@@ -5234,22 +5246,22 @@ ref_t Compiler :: resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outp
 
       NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
-      return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
+      return _templateProcessor->generateClassTemplate(*scope.moduleScope,
          templateReference, parameters, false, nullptr);
    }
 }
 
-ref_t Compiler :: resolveWrapperTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode)
+ref_t Compiler :: resolveWrapperTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode)
 {
    if (!elementRef)
       elementRef = moduleScope.buildins.superReference;
 
-   return resolveTemplate(moduleScope, ns, moduleScope.buildins.wrapperTemplateReference, elementRef, declarationMode);
+   return resolveTemplate(moduleScope, moduleScope.buildins.wrapperTemplateReference, elementRef, declarationMode);
 }
 
-ref_t Compiler :: resolveArrayTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode)
+ref_t Compiler :: resolveArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode)
 {
-   return resolveTemplate(moduleScope, ns, moduleScope.buildins.arrayTemplateReference, elementRef, declarationMode);
+   return resolveTemplate(moduleScope, moduleScope.buildins.arrayTemplateReference, elementRef, declarationMode);
 }
 //
 //ref_t Compiler :: resolveNullableTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode)
@@ -5257,9 +5269,9 @@ ref_t Compiler :: resolveArrayTemplate(ModuleScopeBase& moduleScope, ustr_t ns, 
 //   return resolveTemplate(moduleScope, ns, moduleScope.buildins.nullableTemplateReference, elementRef, declarationMode);
 //}
 
-ref_t Compiler :: resolveArgArrayTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode)
+ref_t Compiler :: resolveArgArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode)
 {
-   return resolveTemplate(moduleScope, ns, moduleScope.buildins.argArrayTemplateReference, elementRef, declarationMode);
+   return resolveTemplate(moduleScope, moduleScope.buildins.argArrayTemplateReference, elementRef, declarationMode);
 }
 
 TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
@@ -5286,7 +5298,8 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribu
             break;
          case SyntaxKey::ArrayType:
          case SyntaxKey::NullableType:
-            elementRef = resolvePrimitiveType(scope, resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole), declarationMode);
+            elementRef = resolvePrimitiveType(*scope.moduleScope,
+               resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole), declarationMode);
             break;
          default:
             assert(false);
@@ -5374,7 +5387,7 @@ TypeInfo Compiler :: resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, b
       scope.raiseError(errInvalidOperation, node);
 
    if (isPrimitiveRef(typeInfo.typeRef)) {
-      return { resolvePrimitiveType(scope, typeInfo, declarationMode) };
+      return { resolvePrimitiveType(*scope.moduleScope, typeInfo, declarationMode) };
    }
    else return typeInfo;
 }
@@ -5435,21 +5448,17 @@ void Compiler :: readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAt
                readFieldAttributes(scope, current, attrs, declarationMode);
 
                if (attrs.typeInfo.isPrimitive())
-                  attrs.typeInfo = { resolvePrimitiveType(scope, attrs.typeInfo, declarationMode) };
+                  attrs.typeInfo = { resolvePrimitiveType(*scope.moduleScope, attrs.typeInfo, declarationMode) };
 
                if (!declarationMode) {
-                  NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-
-                  resolveArrayTemplate(*scope.moduleScope, *nsScope->nsName,
+                  resolveArrayTemplate(*scope.moduleScope,
                      attrs.typeInfo.typeRef, declarationMode);
                }
             }
             else if (attrs.size == -1) {
                // if it is a nested array
-               NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-
                readFieldAttributes(scope, current, attrs, declarationMode);
-               attrs.typeInfo = { resolveArrayTemplate(*scope.moduleScope, *nsScope->nsName, 
+               attrs.typeInfo = { resolveArrayTemplate(*scope.moduleScope,
                   attrs.typeInfo.typeRef, declarationMode) };
             }
             else scope.raiseError(errInvalidHint, current);
@@ -5711,7 +5720,7 @@ bool Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typ
    }
    else if (_logic->isPrimitiveArrRef(variable.typeInfo.typeRef)) {
       // if it is an array reference
-      variable.typeInfo.typeRef = resolvePrimitiveType(scope, variable.typeInfo, false);
+      variable.typeInfo.typeRef = resolvePrimitiveType(*scope.moduleScope, variable.typeInfo, false);
       variable.typeInfo.elementRef = 0;
    }
 
@@ -7011,7 +7020,7 @@ ref_t Compiler :: resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo
 
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
-   return _templateProcessor->generateClassTemplate(*scope.moduleScope, *nsScope->nsName,
+   return _templateProcessor->generateClassTemplate(*scope.moduleScope,
       templateReference, parameters, false, nullptr);
 }
 
@@ -7244,7 +7253,7 @@ void Compiler :: injectVariableInfo(BuildNode node, CodeScope& codeScope)
          ref_t typeRef = localInfo.typeInfo.typeRef;
 
          if (localInfo.typeInfo.isPrimitive() && localInfo.typeInfo.elementRef)
-            typeRef = resolvePrimitiveType(codeScope, localInfo.typeInfo, false);
+            typeRef = resolvePrimitiveType(*codeScope.moduleScope, localInfo.typeInfo, false);
 
          embeddableArray = _logic->isEmbeddableArray(*codeScope.moduleScope, typeRef);
          if (embeddableArray && localInfo.size > 0) {
@@ -7900,18 +7909,6 @@ void Compiler :: compileDispatchProberCode(BuildTreeWriter& writer, CodeScope& s
    }
 }
 
-inline ref_t mapAsWeakReference(ModuleScopeBase* scope, ref_t reference)
-{
-   ustr_t refName = scope->module->resolveReference(reference);
-   if (!isTemplateWeakReference(refName) && isWeakReference(refName)) {
-      IdentifierString weakName(TEMPLATE_PREFIX_NS, refName + 1);
-
-      reference = scope->module->mapReference(*weakName);
-   }
-
-   return reference;
-}
-
 mssg_t Compiler :: declareInplaceConstructorHandler(MethodScope& invokerScope, ClassScope& classClassScope)
 {
    ClassScope* classScope = Scope::getScope<ClassScope>(invokerScope, Scope::ScopeLevel::Class);
@@ -8039,7 +8036,7 @@ mssg_t Compiler :: compileByRefHandler(BuildTreeWriter& writer, MethodScope& inv
 
    // add byref return arg
    TypeInfo refType = { V_OUTWRAPPER, invokerScope.info.outputRef };
-   auto sizeInfo = _logic->defineStructSize(*invokerScope.moduleScope, resolvePrimitiveType(invokerScope, refType, false));
+   auto sizeInfo = _logic->defineStructSize(*invokerScope.moduleScope, resolvePrimitiveType(*invokerScope.moduleScope, refType, false));
 
    int offset = invokerScope.parameters.count() + 1u;
    privateScope.parameters.add(RETVAL_ARG, { offset, refType, sizeInfo.size });
@@ -8078,7 +8075,7 @@ void Compiler::compileByRefRedirectHandler(BuildTreeWriter& writer, MethodScope&
 
    // add byref return arg
    TypeInfo refType = { V_OUTWRAPPER, invokerScope.info.outputRef };
-   auto sizeInfo = _logic->defineStructSize(*invokerScope.moduleScope, resolvePrimitiveType(invokerScope, refType, false));
+   auto sizeInfo = _logic->defineStructSize(*invokerScope.moduleScope, resolvePrimitiveType(*invokerScope.moduleScope, refType, false));
 
    int offset = invokerScope.parameters.count() + 1u;
    redirectScope.parameters.add(RETVAL_ARG, { offset, refType, sizeInfo.size });
@@ -8166,7 +8163,7 @@ void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, 
 
          ref_t classRef = typeInfo.typeRef;
          if (isPrimitiveRef(classRef))
-            classRef = resolvePrimitiveType(scope, typeInfo, true);
+            classRef = resolvePrimitiveType(*scope.moduleScope, typeInfo, true);
 
          ustr_t className = scope.moduleScope->module->resolveReference(classRef);
          if (isWeakReference(className)) {
@@ -8295,7 +8292,7 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
 bool Compiler :: isCompatible(Scope& scope, ObjectInfo source, ObjectInfo target, bool resolvePrimitives)
 {
    if (source.typeInfo.isPrimitive() && resolvePrimitives)
-      source.typeInfo = { resolvePrimitiveType(scope, source.typeInfo, false) };
+      source.typeInfo = { resolvePrimitiveType(*scope.moduleScope, source.typeInfo, false) };
 
    return _logic->isCompatible(*scope.moduleScope, target.typeInfo, source.typeInfo, true);
 }
@@ -8604,7 +8601,7 @@ void Compiler :: initializeMethod(ClassScope& scope, MethodScope& methodScope, S
          // add byref return arg
          if (_logic->isEmbeddable(*scope.moduleScope, methodScope.info.outputRef)) {
             sizeInfo = _logic->defineStructSize(*scope.moduleScope,
-               resolvePrimitiveType(scope, refType, false));
+               resolvePrimitiveType(*scope.moduleScope, refType, false));
          }
 
          int offset = methodScope.parameters.count() + 1u;
@@ -10164,7 +10161,7 @@ ref_t Compiler :: generateExtensionTemplate(ModuleScopeBase& scope, ref_t templa
    List<SyntaxNode> parameters({});
    declareTemplateParameters(scope.module, typeList, dummyTree, parameters);
 
-   return _templateProcessor->generateClassTemplate(scope, ns,
+   return _templateProcessor->generateClassTemplate(scope,
       templateRef, parameters, false, outerExtensionList);
 }
 
@@ -13229,7 +13226,7 @@ ObjectInfo Compiler::Expression :: compileWeakOperation(SyntaxNode node, ref_t* 
          break;
       }
       else if (isPrimitiveRef(arguments[i])) {
-         arguments[i - 1] = compiler->resolvePrimitiveType(scope, { arguments[i] }, false);
+         arguments[i - 1] = compiler->resolvePrimitiveType(*scope.moduleScope, { arguments[i] }, false);
       }
       else arguments[i - 1] = arguments[i];
    }
@@ -13952,7 +13949,7 @@ ObjectInfo Compiler::Expression :: compileNativeConversion(SyntaxNode node, Obje
 
    switch (operationKey) {
       case INT8_32_CONVERSION:
-         retVal = allocateResult(compiler->resolvePrimitiveType(scope, { V_INT32 }, false));
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_INT32 }, false));
 
          writeObjectInfo(retVal);
          writer->appendNode(BuildKey::SavingInStack, 0);
@@ -13962,7 +13959,7 @@ ObjectInfo Compiler::Expression :: compileNativeConversion(SyntaxNode node, Obje
          writer->appendNode(BuildKey::ConversionOp, operationKey);
          break;
       case INT16_32_CONVERSION:
-         retVal = allocateResult(compiler->resolvePrimitiveType(scope, { V_INT32 }, false));
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_INT32 }, false));
 
          writeObjectInfo(retVal);
          writer->appendNode(BuildKey::SavingInStack, 0);
@@ -13972,7 +13969,7 @@ ObjectInfo Compiler::Expression :: compileNativeConversion(SyntaxNode node, Obje
          writer->appendNode(BuildKey::ConversionOp, operationKey);
          break;
       case INT32_64_CONVERSION:
-         retVal = allocateResult(compiler->resolvePrimitiveType(scope, { V_INT64 }, false));
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_INT64 }, false));
 
          writeObjectInfo(retVal);
          writer->appendNode(BuildKey::SavingInStack, 0);
@@ -13982,7 +13979,7 @@ ObjectInfo Compiler::Expression :: compileNativeConversion(SyntaxNode node, Obje
          writer->appendNode(BuildKey::ConversionOp, operationKey);
          break;
       case INT32_FLOAT64_CONVERSION:
-         retVal = allocateResult(compiler->resolvePrimitiveType(scope, { V_FLOAT64 }, false));
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_FLOAT64 }, false));
 
          writeObjectInfo(retVal);
          writer->appendNode(BuildKey::SavingInStack, 0);
@@ -14343,7 +14340,7 @@ ObjectInfo Compiler::Expression :: boxLocally(ObjectInfo info, bool stackSafe)
       ObjectInfo dynamicTempLocal = {};
       if (fixedArray) {
          ref_t typeRef = info.typeInfo.isPrimitive()
-            ? compiler->resolvePrimitiveType(scope, info.typeInfo, false) : info.typeInfo.typeRef;
+            ? compiler->resolvePrimitiveType(*scope.moduleScope, info.typeInfo, false) : info.typeInfo.typeRef;
 
          dynamicTempLocal = declareTempLocal(typeRef, true);
 
@@ -14586,13 +14583,12 @@ ObjectInfo Compiler::Expression :: boxRefArgumentInPlace(ObjectInfo info, ref_t 
 ObjectInfo Compiler::Expression :: boxVariadicArgument(ObjectInfo info)
 {
    bool dummy = false;
-   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
    ref_t elementRef = info.typeInfo.elementRef;
    if (!elementRef)
       elementRef = scope.moduleScope->buildins.superReference;
 
-   ref_t typeRef = compiler->resolveArgArrayTemplate(*scope.moduleScope, *nsScope->nsName, elementRef, false);
+   ref_t typeRef = compiler->resolveArgArrayTemplate(*scope.moduleScope, elementRef, false);
 
    ObjectInfo destLocal = declareTempLocal(typeRef);
    ObjectInfo lenLocal = declareTempLocal(scope.moduleScope->buildins.intReference, false);

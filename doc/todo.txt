@@ -8,21 +8,13 @@ In development:
   === Iteration 26 (26.06.2024) ===
   dev: 
       - #265
-      - 
-      - 
-  gen: 
-      - elt 64 : fails after executing several times, 
-      - nested call must not stop / start vm, 
-      - generate code templates : generate a code based on a record
   maint:
       - system'winforms : free PermVectorTable item after the window is closed, to save the resources
-      -
-      -
   port:
       - #658 : create debug adapter, 
-      - 
   prom:
   --------------------------------------
+  * elt : fails after executing several times
   * static symbol should be thread-safe, 
   --------------------------------------
   * x64 : gui
@@ -32,9 +24,21 @@ In development:
   === Iteration 27 ===
   --------------------------------------
   dev: 
+      -
+      -
+      -
   gen:
+      - nested call must not stop / start vm, 
+      - generate code templates : generate a code based on a record
+      -
   maint:
+      -
+      -
+      -
   port:
+      -
+      -
+      -
   prom:
   --------------------------------------
   --------------------------------------

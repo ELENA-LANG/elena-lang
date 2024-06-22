@@ -181,13 +181,13 @@ public sealed packed PAINTSTRUCT
    {
       Handle h := hwnd.Handle;
 
-      extern USER32.BeginPaint(h, self)
+      int retVal := extern USER32.BeginPaint(h, self)
    }
     
    end(WindowHandle hwnd)
    {
       Handle h := hwnd.Handle;
 
-      extern USER32.EndPaint(h, self)
+      int retVal := extern USER32.EndPaint(h, self)
    }
 }

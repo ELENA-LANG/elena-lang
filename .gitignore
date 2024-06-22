@@ -1,8 +1,11 @@
-/lib50
-/lib50_64
 /lib60
 /lib60_64
 /dat/api2html
+/build
+/bin
+/doc
+/tests60
+/elenasrc3/packages
 *.exe
 *.exp
 *.lib
