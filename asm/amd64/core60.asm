@@ -506,7 +506,8 @@ end
 // ; exclude
 inline % 10h
 
-  push 0                                                     
+  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
+  push rax 
   push rbp     
   mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
 
@@ -515,7 +516,9 @@ end
 // ; include
 inline % 11h
 
+  mov  rax, [rsp + 8]
   add  rsp, 10h
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rax
 
 end
 

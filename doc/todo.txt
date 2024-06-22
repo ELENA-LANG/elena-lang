@@ -15,9 +15,8 @@ In development:
   prom:
   --------------------------------------
   * elt : fails after executing several times
-  * static symbol should be thread-safe, 
   --------------------------------------
-  * x64 : gui
+  * static symbol should be thread-safe, 
 
   ### EPIC: elena 6.3 ###
 
@@ -36,7 +35,7 @@ In development:
       -
       -
   port:
-      -
+      - x64 : gui
       -
       -
   prom:

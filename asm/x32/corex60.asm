@@ -782,6 +782,8 @@ inline % 10h
   mov  eax, [data : %CORE_TLS_INDEX]
   mov  edi, [ecx+eax*4]
   mov  [edi + tt_flags], 1
+  mov  eax, [edi + tt_stack_frame]
+  push eax
   push ebp     
   mov  [edi + tt_stack_frame], esp
 
@@ -795,6 +797,8 @@ inline % 11h
   mov  eax, [data : %CORE_TLS_INDEX]
   mov  edi, [ecx+eax*4]
   mov  [edi + tt_flags], 0
+  pop  eax
+  mov  [edi + tt_stack_frame], eax
 
 end
 
