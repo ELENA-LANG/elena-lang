@@ -42,19 +42,20 @@ namespace elena_lang
    class ELENAVMMachine : public ELENAMachine, public ImageProviderBase, public ExternalMapper, public LibraryLoaderListenerBase
    {
    protected:
-      bool                    _initialized;
       LibraryProvider         _libraryProvider;
       PresenterBase*          _presenter;
       ReferenceMapper         _mapper;
       JITLinkerSettings       _settings;
       SystemEnv*              _env;
 
+      bool                    _initialized;
       bool                    _standAloneMode;
       bool                    _startUpCode;
 
       path_t                  _rootPath;
 
       ELENAVMConfiguration*   _configuration;
+      JITLinker*              _jitLinker;
       JITCompilerBase*        _compiler;
 
       IdentifierString        _preloadedSection;
@@ -72,17 +73,16 @@ namespace elena_lang
       addr_t interprete(SystemEnv* env, void* tape, pos_t size, 
          const char* criricalHandlerReference, bool withConfiguration);
 
-      void onNewCode(JITLinker& jitLinker);
+      void onNewCode();
 
       virtual void stopVM();
 
       bool configurateVM(MemoryReader& reader, SystemEnv* env);
-      bool compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, 
-         ModuleBase* dummyModule);
+      bool compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, ModuleBase* dummyModule);
 
-      virtual void resumeVM(JITLinker& jitLinker, SystemEnv* env, void* criricalHandler);
+      virtual void resumeVM(SystemEnv* env, void* criricalHandler);
 
-      void init(JITLinker& jitLinker, SystemEnv* env);
+      void init(SystemEnv* env);
 
       AddressMap::Iterator externals() override;
 
@@ -90,7 +90,7 @@ namespace elena_lang
       ref_t loadSubject(ustr_t actionName);
       addr_t loadDispatcherOverloadlist(ustr_t referenceName);
 
-      void fillPreloadedSymbols(JITLinker& jitLinker, MemoryWriter& writer, ModuleBase* dummyModule);
+      void fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule);
 
       addr_t loadReference(ustr_t name, int command);
 
@@ -172,6 +172,7 @@ namespace elena_lang
       virtual ~ELENAVMMachine()
       {
          freeobj(_configuration);
+         freeobj(_jitLinker);
          freeobj(_compiler);
       }
    };

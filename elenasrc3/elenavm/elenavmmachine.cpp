@@ -107,9 +107,14 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    _libraryProvider.addListener(this);
 
    _compiler = jitCompilerFactory(&_libraryProvider, platform);
+
+   _jitLinker = new JITLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
+      &_settings, nullptr);
+
+   _jitLinker->setCompiler(_compiler);
 }
 
-void ELENAVMMachine :: init(JITLinker& linker, SystemEnv* exeEnv)
+void ELENAVMMachine :: init(SystemEnv* exeEnv)
 {
    _presenter->printLine(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER);
    _presenter->printLine(ELENAVM_INITIALIZING);
@@ -122,9 +127,7 @@ void ELENAVMMachine :: init(JITLinker& linker, SystemEnv* exeEnv)
          (uintptr_t)exeEnv->th_single_content);
    }
 
-   linker.setCompiler(_compiler);
-
-   linker.prepare();
+   _jitLinker->prepare();
 
    _env = (SystemEnv*)_compiler->getSystemEnv();
 
@@ -222,11 +225,11 @@ bool ELENAVMMachine :: configurateVM(MemoryReader& reader, SystemEnv* env)
    return false;
 }
 
-void ELENAVMMachine :: fillPreloadedSymbols(JITLinker& jitLinker, MemoryWriter& writer, ModuleBase* dummyModule)
+void ELENAVMMachine :: fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule)
 {
    ModuleInfoList symbolList({});
    for (auto it = _preloadedList.start(); !it.eof(); ++it) {
-      jitLinker.copyPreloadedMetaList(*it, symbolList, false);
+      _jitLinker->copyPreloadedMetaList(*it, symbolList, false);
    }
    _preloadedList.clear();
 
@@ -264,7 +267,7 @@ inline ref_t getCmdMask(int command)
    }
 }
 
-bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, JITLinker& jitLinker, ModuleBase* dummyModule)
+bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, ModuleBase* dummyModule)
 {
    CachedList<Pair<ref_t, pos_t>, 5> symbols;
 
@@ -285,17 +288,17 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
             break;
          case VM_CALLSYMBOL_CMD:
          case VM_CALLCLASS_CMD:
-            jitLinker.resolve(strArg, getCmdMask(command), false);
+            _jitLinker->resolve(strArg, getCmdMask(command), false);
             symbols.add({ dummyModule->mapReference(strArg) | getCmdMask(command), 0 });
             break;
          case VM_TRYCALLSYMBOL_CMD:
-            if (jitLinker.resolve(strArg, getCmdMask(command), true) != INVALID_ADDR) {
+            if (_jitLinker->resolve(strArg, getCmdMask(command), true) != INVALID_ADDR) {
                symbols.add({ dummyModule->mapReference(strArg) | getCmdMask(command), 0 });
             }
             else return false;
             break;
          case VM_STRING_CMD:
-            jitLinker.resolve(strArg, getCmdMask(command), false);
+            _jitLinker->resolve(strArg, getCmdMask(command), false);
             symbols.add({ dummyModule->mapConstant(strArg) | getCmdMask(command), 0 });
             break;
          case VM_ALLOC_CMD:
@@ -324,7 +327,7 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
 
    ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
 
-   fillPreloadedSymbols(jitLinker, writer, dummyModule);
+   fillPreloadedSymbols(writer, dummyModule);
 
    for(size_t i = 0; i < symbols.count(); i++) {
       auto p = symbols[i];
@@ -387,23 +390,23 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
    return true;
 }
 
-void ELENAVMMachine :: onNewCode(JITLinker& jitLinker)
+void ELENAVMMachine :: onNewCode()
 {
    ustr_t superClass = !_startUpCode ? nullptr : _configuration->resolveForward(SUPER_FORWARD);
 
-   jitLinker.complete(_compiler, superClass);
+   _jitLinker->complete(_compiler, superClass);
 
    _startUpCode = false;
 
    _mapper.clearLazyReferences();
 }
 
-void ELENAVMMachine :: resumeVM(JITLinker& jitLinker, SystemEnv* env, void* criricalHandler)
+void ELENAVMMachine :: resumeVM(SystemEnv* env, void* criricalHandler)
 {
    if (!_initialized)
       throw InternalError(errVMNotInitialized);
 
-   onNewCode(jitLinker);
+   onNewCode();
 
    if (criricalHandler)
       __routineProvider.InitSTAExceptionHandling(env, criricalHandler);
@@ -415,43 +418,32 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
    ByteArray      tapeArray(tape, size);
    MemoryReader   reader(&tapeArray);
 
-   if (_initialized)
-      stopVM();
-
-   JITLinker* jitLinker = nullptr;
+   stopVM();
 
    Module* dummyModule = new Module();
    MemoryDump tapeSymbol;
 
    addr_t criricalHandler = 0;
    if (!withConfiguration || configurateVM(reader, env)) {
-      jitLinker = new JITLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
-         &_settings, nullptr);
-
       if (!_initialized) {
-         init(*jitLinker, env);
+         init(env);
 
-         criricalHandler = jitLinker->resolve(criricalHandlerReference, mskProcedureRef, false);
+         criricalHandler = _jitLinker->resolve(criricalHandlerReference, mskProcedureRef, false);
 
          if (!_standAloneMode)
             env = _env;
       }
-      else jitLinker->setCompiler(_compiler);
    }
 
-   if (_initialized && jitLinker && compileVMTape(reader, tapeSymbol, *jitLinker, dummyModule)) {
-      void* address = (void*)jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
+   void* address = nullptr;
+   if (_initialized && compileVMTape(reader, tapeSymbol, dummyModule)) 
+      address = (void*)_jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
 
-      resumeVM(*jitLinker, env, (void*)criricalHandler);
+   resumeVM(env, (void*)criricalHandler);
+   freeobj(dummyModule);
 
-      freeobj(dummyModule);
-      freeobj(jitLinker);
-
+   if (address)
       return execute(env, address);
-   }
-   if (_initialized && jitLinker && !_standAloneMode) {
-      resumeVM(*jitLinker, env, (void*)criricalHandler);
-   }
 
    return 0;
 }
@@ -514,16 +506,9 @@ addr_t ELENAVMMachine :: resolveExternal(ustr_t referenceName)
 
 void ELENAVMMachine :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef)
 {
-   JITLinker* jitLinker = new JITLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
-      &_settings, nullptr);
-
-   jitLinker->setCompiler(_compiler);
-
-   ustr_t name = jitLinker->retrieveResolvedAction(subjectRef);
+   ustr_t name = _jitLinker->retrieveResolvedAction(subjectRef);
 
    actionName.copy(name);
-
-   delete jitLinker;
 }
 
 size_t ELENAVMMachine :: loadMessageName(mssg_t message, char* buffer, size_t length)
@@ -586,14 +571,9 @@ ref_t ELENAVMMachine :: loadSubject(ustr_t actionName)
 {
    stopVM();
 
-   JITLinker* jitLinker = new JITLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
-         &_settings, nullptr);
+   ref_t actionRef = _jitLinker->resolveAction(actionName);
 
-   jitLinker->setCompiler(_compiler);
-
-   ref_t actionRef = jitLinker->resolveAction(actionName);
-
-   resumeVM(*jitLinker, _env, nullptr);
+   resumeVM(_env, nullptr);
 
    return actionRef;
 }

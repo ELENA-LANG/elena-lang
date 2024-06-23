@@ -6,24 +6,20 @@ In development:
   ### EPIC: elena 6.2 ###
 
   === Iteration 26 (26.06.2024) ===
-  dev: 
-      - #265
-  maint:
-      - system'winforms : free PermVectorTable item after the window is closed, to save the resources
-  port:
-      - #658 : create debug adapter, 
-  prom:
   --------------------------------------
+  * #658 : create debug adapter
+  * system'winforms : free PermVectorTable item after the window is closed, to save the resources
   * elt : fails after executing several times
+  * elt : fails
   --------------------------------------
-  * static symbol should be thread-safe, 
+  * vm_client : test samples
 
   ### EPIC: elena 6.3 ###
 
   === Iteration 27 ===
   --------------------------------------
   dev: 
-      -
+      - #265
       -
       -
   gen:
@@ -35,7 +31,7 @@ In development:
       -
       -
   port:
-      - x64 : gui
+      - x86-64 : agenda, scripts
       -
       -
   prom:
@@ -71,6 +67,8 @@ In development:
   prom:
   --------------------------------------
   --------------------------------------
+
+  ### EPIC: elena 6.4 ###
 
   === Iteration 31 ===
   --------------------------------------
