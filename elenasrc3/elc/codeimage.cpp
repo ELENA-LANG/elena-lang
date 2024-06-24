@@ -57,7 +57,7 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
       _tlsVariable = linker.resolveTLSSection(compiler);
    }
 
-   linker.prepare();
+   linker.prepare(settings.jitSettings);
 
    // resolve the debug entry
    _debugEntryPoint = INVALID_POS;

@@ -108,14 +108,13 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
 
    _compiler = jitCompilerFactory(&_libraryProvider, platform);
 
-   _jitLinker = new JITLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
-      &_settings, nullptr);
-
-   _jitLinker->setCompiler(_compiler);
+   _jitLinker = nullptr;
 }
 
 void ELENAVMMachine :: init(SystemEnv* exeEnv)
 {
+   assert(_initialized == false);
+
    _presenter->printLine(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER);
    _presenter->printLine(ELENAVM_INITIALIZING);
 
@@ -127,7 +126,11 @@ void ELENAVMMachine :: init(SystemEnv* exeEnv)
          (uintptr_t)exeEnv->th_single_content);
    }
 
-   _jitLinker->prepare();
+   _jitLinker = new JITLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
+      &_settings, nullptr);
+   _jitLinker->setCompiler(_compiler);
+
+   _jitLinker->prepare(_settings.jitSettings);
 
    _env = (SystemEnv*)_compiler->getSystemEnv();
 
@@ -424,7 +427,7 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
    MemoryDump tapeSymbol;
 
    addr_t criricalHandler = 0;
-   if (!withConfiguration || configurateVM(reader, env)) {
+   if (withConfiguration && configurateVM(reader, env)) {
       if (!_initialized) {
          init(env);
 

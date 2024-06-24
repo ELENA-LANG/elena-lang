@@ -10,9 +10,8 @@ In development:
   * #658 : create debug adapter
   * system'winforms : free PermVectorTable item after the window is closed, to save the resources
   * elt : fails after executing several times
-  * elt : fails
   --------------------------------------
-  * vm_client : test samples
+  * elt : fails
 
   ### EPIC: elena 6.3 ###
 
