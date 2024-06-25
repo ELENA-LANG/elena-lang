@@ -3,14 +3,6 @@ In development:
 ------         
 
 [development]
-  ### EPIC: elena 6.2 ###
-
-  === Iteration 26 (26.06.2024) ===
-  * prepare releases for 6.2
-  --------------------------------------
-  * elt : fails after executing several times
-  * elt : exception handler works only once
-
   ### EPIC: elena 6.3 ###
 
   === Iteration 27 ===
@@ -20,9 +12,9 @@ In development:
       - system'winforms : free PermVectorTable item after the window is closed, to save the resources
       -
   gen:
+      - elt : nested executing managed code : keep frames (the frames must be included / excluded correctly)
+      - elt : fails after executing several times, exception handler works only once
       - nested call must not stop / start vm, 
-      - generate code templates : generate a code based on a record
-      -
   maint:
       -
       -
