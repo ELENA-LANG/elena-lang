@@ -439,12 +439,15 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
    }
 
    void* address = nullptr;
-   if (_initialized && compileVMTape(reader, tapeSymbol, dummyModule)) 
-      address = (void*)_jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
+   if (_initialized) {
+      if (compileVMTape(reader, tapeSymbol, dummyModule))
+         address = (void*)_jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
 
-   resumeVM(env, (void*)criricalHandler);
+      resumeVM(env, (void*)criricalHandler);
+   }
+
    freeobj(dummyModule);
-
+   
    if (address)
       return execute(env, address);
 
