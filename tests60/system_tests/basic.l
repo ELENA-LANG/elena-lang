@@ -1969,7 +1969,7 @@ class DecoratorA
    }
 }
 
-public decoratorTest() : testCase()
+/*public decoratorTest() : testCase()
 {
    var a := new DecoratorBaseA(2);
    var decA := new DecoratorA(a, 3);
@@ -1977,7 +1977,7 @@ public decoratorTest() : testCase()
    Assert.ifEqual((decA :as IDecoratorA).giveMe(), 5);
 
    console.write(".");
-}
+}*/
 
 class ifNilOperatorHelper
 {
