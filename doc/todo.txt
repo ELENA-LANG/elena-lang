@@ -23,7 +23,7 @@ In development:
       - x86-64 : agenda, scripts
       - #658 : create debug adapter
       -
-  prom:
+  prom: posting weekly
   --------------------------------------
   --------------------------------------
 
