@@ -1915,7 +1915,7 @@ II_O : interface<II_I>
       = new II_B();
 }
 
-public interfaceImplTests() : testCase()
+/*public interfaceImplTests() : testCase()
 {
    var o := new II_O();
 
@@ -1924,7 +1924,8 @@ public interfaceImplTests() : testCase()
    var r := i.retrieve();
    Assert.ifTrue(r :is II_A);
    console.write(".");
-}
+}*/
+
 interface IDecoratorA
 {
    abstract giveMe();
@@ -1968,7 +1969,7 @@ class DecoratorA
    }
 }
 
-/*public decoratorTest() : testCase()
+public decoratorTest() : testCase()
 {
    var a := new DecoratorBaseA(2);
    var decA := new DecoratorA(a, 3);
@@ -1976,7 +1977,7 @@ class DecoratorA
    Assert.ifEqual((decA :as IDecoratorA).giveMe(), 5);
 
    console.write(".");
-}*/
+}
 
 class ifNilOperatorHelper
 {
