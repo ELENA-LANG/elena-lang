@@ -275,8 +275,11 @@ ModuleBase* LibraryProvider :: resolveIndirectWeakModule(ustr_t weakName, ref_t&
                nsProperName.append(weakName.str());
 
                reference = (*it)->mapReference(*nsProperName, true);
-               if (reference)
+               if (reference) {
+                  assert(false); // NOTE : the template must be declared in the root namespace
+
                   return *it;
+               }                  
             }
          }
 

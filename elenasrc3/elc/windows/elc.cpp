@@ -150,6 +150,9 @@ void handleOption(wchar_t* arg, IdentifierString& profile, Project& project, Com
          else if (arg[2] == '2') {
             project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
          }
+         else if (arg[2] == '3') {
+            project.addIntSetting(ProjectOption::OptimizationMode, optHigh);
+         }
          break;
       case 'p':
          project.setBasePath(arg + 2);

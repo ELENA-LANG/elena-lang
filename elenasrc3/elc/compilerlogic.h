@@ -212,8 +212,7 @@ namespace elena_lang
       virtual ref_t resolveExtensionTemplate(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern,
          ref_t signatureRef, ustr_t ns, ExtensionMap* outerExtensionList);
 
-      bool isValidType(ClassInfo& info, bool allowRole);
-      bool isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole);
+      bool isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared);
 
       pos_t definePadding(ModuleScopeBase& scope, pos_t offset, pos_t size);
 

@@ -606,10 +606,11 @@ public sealed class Imagebox : Paintbox
       if(nil == _handle)
          { ^ self };
         
+      _needToRefresh := false;
+
       onPaint?.(self, _canvas);
 
       super.refresh();
-      _needToRefresh := false
    }
  
    internal resize(Handle handle, int width, int height)

@@ -2,6 +2,8 @@ import system'io;
 import system'text;
 import extensions'dynamic;
 
+import extensions;
+
 public const int INTRODUCTION = 1;
 public const int SEND         = 2;
 public const int TRANSLATE    = 3;
@@ -32,15 +34,10 @@ public class BaseClient
             if (package_len + 4 <= len)
             {
                 string s := UTF8Encoding.toString(4, package_len, _buffer.Value); // !! should be optimized
-                
-//                int llen := s.Length;
-                
+
                 _buffer.delete(0, package_len + 4);
-                
+
                 ^ s.fromJson()
-//                
-//                var o := s.fromJson();
-//                ^ o
             }
       };
         

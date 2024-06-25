@@ -20,7 +20,8 @@ namespace elena_lang
    {
       optNone = 0,
       optLow = 1,
-      optMiddle = 2
+      optMiddle = 2,
+      optHigh = 3
    };
 
    enum class ProjectOption

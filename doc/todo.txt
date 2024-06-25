@@ -3,26 +3,26 @@ In development:
 ------         
 
 [development]
-  ### EPIC: elena 6.2 ###
-
-  === Iteration 26 ===
-  dev: #265, static symbol should be thread-safe, chat sample
-  gen:
-  maint:
-  port:#658 : create debug adapter, x64 : gui
-  prom:
-  --------------------------------------
-  * chat sample : server - deserialize command ("{"Command"=1,"Value"="a"}")
-  --------------------------------------
-
   ### EPIC: elena 6.3 ###
 
   === Iteration 27 ===
   --------------------------------------
   dev: 
+      - #265
+      - system'winforms : free PermVectorTable item after the window is closed, to save the resources
+      -
   gen:
+      - elt : nested executing managed code : keep frames (the frames must be included / excluded correctly)
+      - elt : fails after executing several times, exception handler works only once
+      - nested call must not stop / start vm, 
   maint:
+      -
+      -
+      -
   port:
+      - x86-64 : agenda, scripts
+      - #658 : create debug adapter
+      -
   prom:
   --------------------------------------
   --------------------------------------
@@ -56,6 +56,8 @@ In development:
   prom:
   --------------------------------------
   --------------------------------------
+
+  ### EPIC: elena 6.4 ###
 
   === Iteration 31 ===
   --------------------------------------

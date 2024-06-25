@@ -50,7 +50,7 @@ define es_catch_frame        000Ch
 define tt_slots             00004h
 
 // ; --- Object header fields ---
-define elSyncOffset          0004h
+define elSyncOffset          0001h
 define elSizeOffset          0004h
 define elVMTOffset           0008h 
 define elObjectOffset        0008h
@@ -782,6 +782,8 @@ inline % 10h
   mov  eax, [data : %CORE_TLS_INDEX]
   mov  edi, [ecx+eax*4]
   mov  [edi + tt_flags], 1
+  mov  eax, [edi + tt_stack_frame]
+  push eax
   push ebp     
   mov  [edi + tt_stack_frame], esp
 
@@ -795,6 +797,8 @@ inline % 11h
   mov  eax, [data : %CORE_TLS_INDEX]
   mov  edi, [ecx+eax*4]
   mov  [edi + tt_flags], 0
+  pop  eax
+  mov  [edi + tt_stack_frame], eax
 
 end
 

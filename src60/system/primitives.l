@@ -840,7 +840,7 @@ internal singleton UTFOperations
       int subStrLength := 0;
       for(int i := 0; i < length; i += 1)
       {
-         subStrLength += array[i].Length;
+         subStrLength += array[index + i].Length;
       };
 
       ^ subStrLength;
@@ -851,7 +851,7 @@ internal singleton UTFOperations
       int subStrLength := 0;
       for(int i := 0; i < length; i += 1)
       {
-         subStrLength += array[i].WideLength;
+         subStrLength += array[index + i].WideLength;
       };
 
       ^ subStrLength;

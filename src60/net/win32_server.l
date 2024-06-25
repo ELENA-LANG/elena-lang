@@ -143,7 +143,8 @@ public sealed class TcpServer
             
          if (rcvd == 0)
          { 
-            closeClient(client, i) 
+            closeClient(client, i);
+            $break;  
          }
          else
          { 

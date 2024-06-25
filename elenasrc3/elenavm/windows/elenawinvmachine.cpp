@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Windows VM Implementation
 //
-//                                             (C)2022-2023, by Aleksey Rakov
+//                                             (C)2022-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -138,9 +138,9 @@ void ELENAWinVMMachine :: stopVM()
    _mbdata.protect(true, false);
 }
 
-void ELENAWinVMMachine :: resumeVM(JITLinker& jitLinker, SystemEnv* env, void* criricalHandler)
+void ELENAWinVMMachine :: resumeVM(SystemEnv* env, void* criricalHandler)
 {
-   ELENAVMMachine::resumeVM(jitLinker, env, criricalHandler);
+   ELENAVMMachine::resumeVM(env, criricalHandler);
 
    _text.protect(false, true);
    _rdata.protect(false, false);

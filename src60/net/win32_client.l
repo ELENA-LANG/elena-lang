@@ -11,7 +11,6 @@ public sealed class TcpClient
    Socket    _socket;
    byte[]    _buffer;
    int       _maxLength;    
-   object    _lock;
 
    Func<TcpClient,object>                 onConnect  : event;
    Func<TcpClient,byte[],int,object>      onReceived : event;
@@ -22,14 +21,15 @@ public sealed class TcpClient
     
    constructor new(int size)
    {
-      _lock := new Object();
-        
       _maxLength := size;
       _buffer := new byte[](_maxLength)
    }
 
    connect(string address, int port)
    {
+      if(_socket != nil)
+         { InvalidOperationException.raise("The socket is already open") };
+
       //resolve server address and port
       AddrInfo addrinfo := default;
         
@@ -84,17 +84,12 @@ public sealed class TcpClient
    {
       _socket.shutdown(SD_BOTH);
       _socket.close();
-        
-      _socket := nil
    }
     
    close()
    {
-      lock (_lock)
-      {
-         if(nil != _socket)
-            { closeInternal() }
-      }
+      if(nil != _socket)
+         { closeInternal() }
    }
     
    private onError(SocketException e)
@@ -115,12 +110,12 @@ public sealed class TcpClient
       }
       catch(SocketException e)
       {
-         onError(e)
+         onError(e);
       };
-        
+
       if (received == 0)
       { 
-         closeInternal() 
+         closeInternal();
       }
       else
       { 
@@ -137,11 +132,8 @@ public sealed class TcpClient
    private proceed()
    {
       bool retVal := false;
-      lock (_lock)
-      {
-         if (nil != _socket)
-            { readServer(); retVal := true }
-      };
+      if (nil != _socket)
+         { readServer(); retVal := true };
         
       ^ retVal
    }
@@ -150,7 +142,7 @@ public sealed class TcpClient
    {
       _thread := Thread.assign(
       {
-            while(proceed()){}
+         while(proceed()){}
       });
         
       _thread.start()

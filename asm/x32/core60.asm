@@ -493,6 +493,7 @@ end
 // ; exclude
 inline % 10h
   
+  push [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push ebp     
   mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], esp
 
@@ -502,6 +503,8 @@ end
 inline % 11h
 
   add  esp, 4
+  pop  eax
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], eax
 
 end
 

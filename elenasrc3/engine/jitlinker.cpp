@@ -1565,7 +1565,7 @@ void JITLinker :: copyPreloadedMetaList(ModuleInfo info, ModuleInfoList& output,
    }
 }
 
-void JITLinker :: prepare()
+void JITLinker :: prepare(JITSettings jitSettings)
 {
    assert(_compiler != nullptr);
 
@@ -1593,7 +1593,7 @@ void JITLinker :: prepare()
    resolveWeakAction(CONSTRUCTOR_MESSAGE);
 
    // prepare jit compiler
-   _compiler->prepare(_loader, _imageProvider, &helper, nullptr, _jitSettings, _virtualMode);
+   _compiler->prepare(_loader, _imageProvider, &helper, nullptr, jitSettings, _virtualMode);
 
    //// set predefined references
    //// - nil

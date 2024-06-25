@@ -214,6 +214,9 @@ int main(int argc, char* argv[])
                   else if (argv[i][2] == '2') {
                      project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
                   }
+                  else if (argv[i][2] == '3') {
+                     project.addIntSetting(ProjectOption::OptimizationMode, optHigh);
+                  }
                   break;
                case 'p':
                   project.setBasePath(argv[i] + 2);

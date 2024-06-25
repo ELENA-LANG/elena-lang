@@ -1,14 +1,16 @@
 ## ELENA 6.2.0
 
-- ELENA
-
 - ELC
   - [ADDED] optimized ternary expressions
   - [FIXED] declaring a field with a type of template based array
   - [ADDED] unit-test for declaring a field with a type of template based array
+  - [FIXED] function attribute is allowed for the function declaration
+  - [FIXED] template generation routines
+  - [FIXED] include opcode must restore previous frame value 
 
 - VM
   - [ADDED] #590 : creating a dynamic interface wrapper
+  - [FIXED] JIT code resolving
 
 - RT
   - [ADDED] #590 : creating a dynamic interface wrapper
@@ -16,14 +18,11 @@
 - API
   - [ADDED] #89 : new functionality - MemoryStream, BitArray, SortedList, SortedArrayList
   - [ADDED] #95 : LiteralBuffer, WideBuffer
+  - [ADDED] new template extensions'dynamic'Serializer<T>
+  - [FIXED] String#class.copy[4] 
 
 - SAMPLES
-
-- Tools
-
-- IDE
-   
-- Misc
+  - [ADDED] chat sample
 
 ## ELENA 6.0.10
 *07.05.2024*
@@ -58,7 +57,6 @@
 
 - SAMPLES
   - [ADDED] #635 : new tutorial to call an ELENA library from C++ / C#
-  - [ADDED] chat sample
 
 - Tools
   - [ADDED] ecv-cli : adding a filter for listing members

@@ -755,7 +755,11 @@ public const struct String : BaseValue,
             array[offs] := buffer[j];
             offs := offs + 1;
          }
-      }
+      };
+
+      // add tailing zero
+      byte z := 0;
+      array[offs] := z;
    }
 
    /// Creates the literal string copy              
@@ -767,6 +771,11 @@ public const struct String : BaseValue,
       <= allocate(UTFOperations.calcSubStringLength(index, length, charArray))
    {
       PrimitiveArrayOperations.copyCharArray(charArray, index, length, this array);
+
+      // add tailing zero
+      int len := self.Length;
+      byte z := 0;
+      array[len] := z;
    }
 
    internal constructor fromByteArray(int index, int size, byte[] buffer)
@@ -1145,7 +1154,11 @@ public const struct WideString : BaseValue,
             array[offs] := buffer[j];
             offs := offs + 1;
          }
-      }
+      };
+
+      // add tailing zero
+      short z := 0;
+      array[offs] := z;
    }
 
    /// Creates the literal string copy              
@@ -1157,6 +1170,11 @@ public const struct WideString : BaseValue,
       <= allocate(UTFOperations.calcSubWideStringLength(index, length, charArray))
    {
       PrimitiveArrayOperations.copyCharArray(charArray, index, length, this array);
+
+      // add tailing zero
+      int len := self.Length;
+      short z := 0;
+      array[len] := z;
    }
 
    internal constructor fromShortArray(int index, int size, short[] buffer)

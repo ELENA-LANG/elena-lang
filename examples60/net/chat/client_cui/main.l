@@ -15,6 +15,16 @@ class Client
 
       _chatClient.start()      
    }
+
+   send(string message)
+   { 
+      _chatClient.send(message);
+   }
+
+   stop()
+   { 
+      _chatClient.stop();
+   }
 }
 
 class Controller
@@ -46,6 +56,24 @@ class Controller
       ^ "Enter -q to exit the chat"
    }
    
+    string Prompt
+        = ">";
+    
+    proceed(line)
+    {
+        if(line == "-q")
+        {
+            _client.stop();
+    
+            forward program.stop()
+        }
+        else
+        {
+            _client.send(line)
+        };
+
+        ^ emptyString
+    }
 }
 
 public static control = new Controller();
