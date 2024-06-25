@@ -173,7 +173,7 @@ size_t getLengthSkipPostfix(ustr_t name)
    return len;
 }
 
-ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility,
+ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBase& moduleScope, Visibility visibility,
    ref_t templateRef, List<SyntaxNode>& parameters, bool& alreadyDeclared)
 {
    ModuleBase* module = moduleScope.module;
@@ -207,10 +207,10 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
    }
    name.replaceAll('\'', '@', 0);
 
-   return moduleScope.mapTemplateIdentifier(ns, *name, visibility, alreadyDeclared, false);
+   return moduleScope.mapTemplateIdentifier(*name, visibility, alreadyDeclared, false);
 }
 
-ref_t CompilingProcess::TemplateGenerator :: declareTemplateName(ModuleScopeBase& moduleScope, ustr_t ns, Visibility visibility, 
+ref_t CompilingProcess::TemplateGenerator :: declareTemplateName(ModuleScopeBase& moduleScope, Visibility visibility, 
    ref_t templateRef, List<SyntaxNode>& parameters)
 {
    ModuleBase* module = moduleScope.module;
@@ -241,16 +241,16 @@ ref_t CompilingProcess::TemplateGenerator :: declareTemplateName(ModuleScopeBase
    name.replaceAll('\'', '@', 0);
 
    bool dummy = false;
-   return moduleScope.mapTemplateIdentifier(ns, *name, visibility, dummy, true);
+   return moduleScope.mapTemplateIdentifier(*name, visibility, dummy, true);
 }
 
-ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns,
+ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBase& moduleScope,
    ref_t templateRef, List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList)
 {
    ref_t generatedReference = 0;
 
    if (declarationMode) {
-      generatedReference = declareTemplateName(moduleScope, ns, Visibility::Public, templateRef,
+      generatedReference = declareTemplateName(moduleScope, Visibility::Public, templateRef,
          parameters);
    }
    else {
@@ -260,7 +260,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
       SyntaxTree syntaxTree;
 
       bool alreadyDeclared = false;
-      generatedReference = generateTemplateName(moduleScope, ns, Visibility::Public, templateRef,
+      generatedReference = generateTemplateName(moduleScope, Visibility::Public, templateRef,
          parameters, alreadyDeclared);
 
       if (alreadyDeclared && moduleScope.isDeclared(generatedReference))
@@ -268,7 +268,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
 
       SyntaxTreeWriter writer(syntaxTree);
       writer.newNode(SyntaxKey::Root);
-      writer.newNode(SyntaxKey::Namespace, ns);
+      writer.newNode(SyntaxKey::Namespace);
 
       _processor.generateClassTemplate(&moduleScope, generatedReference, writer,
          sectionInfo.section, parameters);

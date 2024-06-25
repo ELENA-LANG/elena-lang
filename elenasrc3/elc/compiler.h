@@ -1396,18 +1396,17 @@ namespace elena_lang
       TypeInfo resolveStrongTypeInfo(Scope& scope, TypeInfo typeInfo, bool declarationMode = false);
 
       ref_t retrieveType(Scope& scope, ObjectInfo info);
-      ref_t resolvePrimitiveType(Scope& scope, TypeInfo typeInfo, bool declarationMode);
       ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type, 
          bool declarationMode, bool allowRole);
       ref_t resolveTypeTemplate(Scope& scope, SyntaxNode node,
          TypeAttributes& attributes, bool declarationMode, bool objectMode = false);
 
-      ref_t resolveTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef, ref_t elementRef, bool declarationMode);
+      ref_t resolveTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, ref_t elementRef, bool declarationMode);
       ref_t resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef);
-      ref_t resolveWrapperTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
-      ref_t resolveArrayTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
+      ref_t resolveWrapperTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode);
+      ref_t resolveArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode);
       //ref_t resolveNullableTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
-      ref_t resolveArgArrayTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
+      ref_t resolveArgArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode);
       ref_t resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo& items);
 
       int resolveSize(Scope& scope, SyntaxNode node);
@@ -1447,7 +1446,7 @@ namespace elena_lang
       void declareTemplateAttributes(TemplateScope& scope, SyntaxNode node, IdentifierString& postfix);
       void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool identifierDeclarationMode);      
       void declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& mode);
-      void declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode, bool templateBased);
+      void declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode);
       void declareArgumentAttributes(MethodScope& scope, SyntaxNode node, TypeInfo& typeInfo, bool declarationMode);
       void declareDictionaryAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo, bool& superMode);
       void declareExpressionAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo, ExpressionAttributes& mode);
@@ -1667,7 +1666,7 @@ namespace elena_lang
 
       void validateScope(ModuleScopeBase* moduleScope);
       void validateSuperClass(ClassScope& scope, SyntaxNode node);
-      void validateType(Scope& scope, ref_t typeRef, SyntaxNode node, bool ignoreUndeclared, bool allowRole);
+      void validateType(Scope& scope, ref_t typeRef, SyntaxNode node, bool ignoreUndeclared);
 
       void injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool interfaceBased);
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope, 
@@ -1758,7 +1757,7 @@ namespace elena_lang
       void injectVirtualReturningMethod(Scope& scope, SyntaxNode classNode,
          mssg_t message, ustr_t retVar, TypeInfo outputTypeInfo);
 
-      ref_t resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, TypeInfo typeInfo, 
+      ref_t resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo typeInfo, 
          bool declarationMode = false) override;
 
       ref_t generateExtensionTemplate(ModuleScopeBase& scope, ref_t templateRef, size_t argumentLen, ref_t* arguments, 

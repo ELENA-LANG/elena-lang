@@ -1,23 +1,32 @@
-import extensions;
+import extensions'scripting;
+import system'dynamic'expressions;
 
-class A
+symbol used : preloaded = new object[]{Expression, DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,LazySymbolExpression};
+
+test()
 {
-   Func<int,real,object> Handler : event;
+   var s := new system'dynamic'expressions'SymbolCollection ( 
+      new system'dynamic'expressions'SymbolInfo ( 
+         "program",
+         new system'dynamic'expressions'DynamicSingleton ( 
+            new system'dynamic'expressions'ActionMethodExpression ( 
+               new system'dynamic'expressions'CodeblockExpression ( 
+                  new system'dynamic'expressions'ExtensionOrMessageCallExpression ( 
+                     new system'dynamic'expressions'LazySymbolExpression ( 
+                        "system'console" 
+                     ), 
+                     "writeLine", 
+                     new system'dynamic'expressions'IntConstantExpression ( "2" ) ) ) ) ) ) ) ;
 
-   constructor()
-   {
-      self.Handler := (int n, real m) { console.printLine(n,"+",m,"=",n+m); };
-      self.Handler := (int n, real m) { console.printLine(n,"-",m,"=",n-m); };
-   }
-
-   invoke(n,m)
-   {
-      Handler?.(n,m);
-   }
+      s.safeEval()
 }
 
 public program()
 {
-   var a := new A();
-   a.invoke(2,3.2);
+//   var tape := lscript.eval("public program() { system'console.writeLine(2); }");
+//   var program := tape.program;
+
+   test();
+
+//   program();
 }

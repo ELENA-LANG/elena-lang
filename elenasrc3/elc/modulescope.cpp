@@ -65,21 +65,18 @@ ref_t ModuleScope :: mapAnonymous(ustr_t prefix)
    return module->mapReference(*name);
 }
 
-ref_t ModuleScope :: mapTemplateIdentifier(ustr_t ns, ustr_t templateName, Visibility visibility, bool& alreadyDeclared, bool declarationMode)
+ref_t ModuleScope :: mapTemplateIdentifier(ustr_t templateName, Visibility visibility, bool& alreadyDeclared, bool declarationMode)
 {
    IdentifierString forwardName(TEMPLATE_PREFIX_NS, templateName);
 
    if (!declarationMode) {
       if (forwardResolver->resolveForward(templateName).empty()) {
          ReferenceName fullName(module->name());
-         if (!ns.empty())
-            fullName.combine(ns);
-
          fullName.combine(templateName);
 
          forwardResolver->addForward(templateName, *fullName);
 
-         mapNewIdentifier(ns, templateName, visibility);
+         mapNewIdentifier(nullptr, templateName, visibility);
 
          alreadyDeclared = false;
       }

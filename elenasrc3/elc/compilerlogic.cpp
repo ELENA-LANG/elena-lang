@@ -1079,6 +1079,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_TYPEOF:
          attrs |= ExpressionAttribute::RetrievingType;
          return true;
+      case V_CLASS:
+         attrs |= ExpressionAttribute::Class;
+         return true;
       default:
          return false;
    }
@@ -2272,7 +2275,7 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
 
    // if there is a implicit conversion routine
    if (!isPrimitiveRef(targetRef)) {
-      ref_t sourceRef = sourceInfo.isPrimitive() ? compiler->resolvePrimitiveType(scope, ns, sourceInfo) : sourceInfo.typeRef;
+      ref_t sourceRef = sourceInfo.isPrimitive() ? compiler->resolvePrimitiveType(scope, sourceInfo) : sourceInfo.typeRef;
 
       ref_t signRef = scope.module->mapSignature(&sourceRef, 1, false);
       int stackSafeAttrs = 0;
@@ -2533,18 +2536,13 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
    }
 }
 
-bool CompilerLogic :: isValidType(ClassInfo& info, bool allowRole)
-{
-   return allowRole || !testany(info.header.flags, elRole);
-}
-
-bool CompilerLogic :: isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole)
+bool CompilerLogic :: isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared)
 {
    ClassInfo info;
    if (!defineClassInfo(scope, info, classReference, true))
       return ignoreUndeclared;
 
-   return isValidType(info, allowRole);
+   return true;
 }
 
 void CompilerLogic :: generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_t parentRef, VirtualMethods& methods)

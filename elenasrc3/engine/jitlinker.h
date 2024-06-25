@@ -162,8 +162,7 @@ namespace elena_lang
       MethodAddressMap      _staticMethods;
       AddressMapperBase*    _addressMapper;
 
-      pos_t                 _alignment;
-      JITSettings           _jitSettings;
+      pos_t                 _alignment;      
       ConstantSettings      _constantSettings;
       bool                  _virtualMode;
       bool                  _classSymbolAutoLoadMode;
@@ -246,7 +245,7 @@ namespace elena_lang
       ref_t resolveAction(ustr_t actionName);
 
       void loadPreloaded(ustr_t preloadedSection, bool ignoreAutoLoadExtensions);
-      void prepare();
+      void prepare(JITSettings jitSettings);
       void setCompiler(JITCompilerBase* compiler)
       {
          _compiler = compiler;
@@ -275,7 +274,6 @@ namespace elena_lang
          _addressMapper = addressMapper;
 
          _alignment = settings->alignment;
-         _jitSettings = settings->jitSettings;
          _virtualMode = settings->virtualMode;
          _classSymbolAutoLoadMode = settings->autoLoadMode;
          _withDebugInfo = false;

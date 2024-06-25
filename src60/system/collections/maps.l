@@ -1,6 +1,6 @@
 namespace collections
 {
-   public sealed Map<TKey, TValue> : Enumerable<Tuple<TKey, TValue>>
+   public sealed Map<TKey, TValue> : Enumerable<VarTuple<TKey, TValue>>
    {
       int _hashMask;
 
@@ -96,7 +96,7 @@ namespace collections
       }
           
       /// Returns a dictionary enumerator
-      Enumerator<Tuple<TKey, TValue>> enumerator() => _list;
+      Enumerator<VarTuple<TKey, TValue>> enumerator() => _list;
         
       Array<VarTuple<TKey, TValue>> Values = _list.Value;
     

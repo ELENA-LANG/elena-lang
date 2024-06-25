@@ -1925,6 +1925,7 @@ public interfaceImplTests() : testCase()
    Assert.ifTrue(r :is II_A);
    console.write(".");
 }
+
 interface IDecoratorA
 {
    abstract giveMe();

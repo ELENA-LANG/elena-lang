@@ -323,7 +323,7 @@ public:
 
    virtual ref_t mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) = 0;
 
-   virtual ref_t mapTemplateIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility, 
+   virtual ref_t mapTemplateIdentifier(ustr_t identifier, Visibility visibility, 
       bool& alreadyDeclared, bool declarationMode) = 0;
 
    virtual ref_t resolveImplicitIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility) = 0;
@@ -415,6 +415,7 @@ enum class ExpressionAttribute : pos64_t
    RetValExpected       = 0x00020000000,
    CheckShortCircle     = 0x00040000000,
    LookaheadExprMode    = 0x00080000000,
+   Class                = 0x00100000000,
    OutRefOp             = 0x01000000000,
    WithVariadicArgCast  = 0x02008000000,
    DistributedForward   = 0x04000000000,
@@ -496,7 +497,7 @@ public:
    virtual void generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef, 
       mssg_t messageRef, MethodHint targetType) = 0;
 
-   virtual ref_t resolvePrimitiveType(ModuleScopeBase& moduleScope, ustr_t ns, 
+   virtual ref_t resolvePrimitiveType(ModuleScopeBase& moduleScope, 
       TypeInfo typeInfo, bool declarationMode = false) = 0;
 
    virtual ref_t generateExtensionTemplate(ModuleScopeBase& scope, ref_t templateRef, size_t argumentLen,
@@ -511,7 +512,7 @@ public:
 class TemplateProssesorBase
 {
 public:
-   virtual ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
+   virtual ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
       List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList) = 0;
 
    virtual bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,

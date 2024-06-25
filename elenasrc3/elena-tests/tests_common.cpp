@@ -65,7 +65,7 @@ ref_t TestModuleScope :: mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibili
    return module->mapReference(*fullName);
 }
 
-ref_t TestModuleScope :: mapTemplateIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility, bool& alreadyDeclared,
+ref_t TestModuleScope :: mapTemplateIdentifier(ustr_t identifier, Visibility visibility, bool& alreadyDeclared,
    bool declarationMode)
 {
    return 0;
@@ -179,7 +179,7 @@ Visibility TestModuleScope :: retrieveVisibility(ref_t reference)
 
 // --- TestTemplateProssesor ---
 
-ref_t TestTemplateProssesor :: generateClassTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t templateRef,
+ref_t TestTemplateProssesor :: generateClassTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
    List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList)
 {
    ref_t mapping = _mapping.get({ templateRef, parameters.get(1).arg.reference});
