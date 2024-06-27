@@ -11011,6 +11011,9 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
       case SyntaxKey::CollectionExpression:
          retVal = compileCollection(current, mode);
          break;
+      case SyntaxKey::KeyValueExpression:
+         retVal = compileKeyValue(current, mode);
+         break;
       case SyntaxKey::Type:
       case SyntaxKey::ReferOperation:
          scope.raiseError(errInvalidOperation, node);
@@ -12103,6 +12106,28 @@ ObjectInfo Compiler::Expression :: compileTupleCollection(SyntaxNode node, ref_t
    }
 
    return { ObjectKind::Object, { tupleRef }, 0 };
+}
+
+ObjectInfo Compiler::Expression :: compileKeyValue(SyntaxNode node, ExpressionAttribute mode)
+{
+   SyntaxTree tempTree;
+   SyntaxTreeWriter treeWriter(tempTree);
+   treeWriter.newNode(SyntaxKey::NestedBlock);
+   treeWriter.newNode(SyntaxKey::Method);
+
+   treeWriter.appendNode(SyntaxKey::Attribute, V_GETACCESSOR);
+   treeWriter.newNode(SyntaxKey::Name);
+   SyntaxTree::copyNode(treeWriter, node.findChild(SyntaxKey::Object), false);
+   treeWriter.closeNode();
+
+   treeWriter.newNode(SyntaxKey::ReturnExpression);
+   SyntaxTree::copyNode(treeWriter, node.findChild(SyntaxKey::Expression), true);
+   treeWriter.closeNode();
+
+   treeWriter.closeNode();
+   treeWriter.closeNode();
+
+   return compileNested(tempTree.readRoot(), EAttr::None, nullptr);
 }
 
 ObjectInfo Compiler::Expression :: compileTupleAssigning(SyntaxNode node)

@@ -1323,6 +1323,7 @@ namespace elena_lang
          ObjectInfo compileObject(SyntaxNode node, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs);
          ObjectInfo compileCollection(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileTupleCollection(SyntaxNode node, ref_t targetRef);
+         ObjectInfo compileKeyValue(SyntaxNode node, ExpressionAttribute mode);
 
          ObjectInfo compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope = false);
 
