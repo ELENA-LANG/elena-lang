@@ -16,12 +16,41 @@
 //      = new Color(3);
 //}
 
+/*
+   get static T $name member()
+      = member;
+*/
+
+
+public enumeration enum<member, T>
+{
+   get static T member()
+      = $value member;
+}
+//
+//
+//{
+//   get static T $name Red()
+//      = nil;
+//
+//   get static T $name Green()
+//      = nil;
+//
+//   get static T $name Blue()
+//      = nil;
+//}
+//
+//
+
+
+public Color : enum<int>(Red = 1,Green = 2,Blue = 3);
+
 public program()
 {
 //   Color red := Color.Red;
 //   Color green := Color.Green;
 
-   var kv := x = 3;
+//   var kv := x = 3;
 
-   var v := kv.x;
+//   var v := kv.x;
 }

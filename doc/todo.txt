@@ -16,7 +16,7 @@ In development:
       - elt : fails after executing several times, exception handler works only once
       - nested call must not stop / start vm, 
   maint:
-      - 
+      - #667
       - elena : nested classes should not be loadable at runtime
       - constructor - single dispatcher
   port:

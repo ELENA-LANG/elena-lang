@@ -118,11 +118,14 @@ namespace elena_lang
       TupleAssignOperation    = 0x001866,
       ContinueOperation       = 0x001867,
       YieldOperation          = 0x001868,
+      ExprValOperation        = 0x001869,
+
       Postfix                 = 0x001069,
       TemplatePostfix         = 0x00106A,
       ReferOperation          = 0x00186B,
       IncOperation            = 0x00186C,
       DecOperation            = 0x00186D,
+      EnumPostfix             = 0x00106E,
       TemplateArg             = 0x001070,
       Dimension               = 0x001471,
       NestedBlock             = 0x001080,
@@ -197,6 +200,8 @@ namespace elena_lang
       NameArgParameter        = 0x000110,
       FillingAttr             = 0x000111,
       ProxyDispatcher         = 0x000112,
+      EnumNameArgParameter    = 0x000113,
+      EnumArgParameter        = 0x000114,
 
       Column                  = 0x000201,
       Row                     = 0x000202,

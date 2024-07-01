@@ -160,6 +160,52 @@ void declareTemplateParameters(ModuleBase* module, TemplateTypeList& typeList,
    dummyWriter.closeNode();
 }
 
+void declareArguments(SyntaxNode node, SyntaxTree& dummyTree, List<SyntaxNode>& arguments)
+{
+   SyntaxTreeWriter dummyWriter(dummyTree);
+   dummyWriter.newNode(SyntaxKey::Root);
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Expression:            
+            dummyWriter.newNode(SyntaxKey::Expression);
+
+            arguments.add(dummyWriter.CurrentNode());
+            SyntaxTree::copyNode(dummyWriter, current);
+
+            dummyWriter.closeNode();
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+
+   //for (size_t i = 0; i < typeList.count(); i++) {
+   //   ref_t elementRef = typeList[i];
+
+   //   dummyWriter.newNode(SyntaxKey::TemplateArg, elementRef);
+
+   //   parameters.add(dummyWriter.CurrentNode());
+
+   //   dummyWriter.newNode(SyntaxKey::Type);
+
+   //   ustr_t referenceName = module->resolveReference(elementRef);
+   //   if (isWeakReference(referenceName)) {
+   //      dummyWriter.appendNode(SyntaxKey::reference, referenceName);
+   //   }
+   //   else dummyWriter.appendNode(SyntaxKey::globalreference, referenceName);
+
+   //   dummyWriter.closeNode();
+   //   dummyWriter.closeNode();
+   //}
+
+   dummyWriter.closeNode();
+}
+
 inline ref_t mapIntConstant(ModuleScopeBase* moduleScope, int integer)
 {
    String<char, 20> s;
@@ -1995,6 +2041,35 @@ ref_t Compiler :: retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<
    }
 
    return reference;
+}
+
+bool Compiler :: importEnumTemplate(Scope& scope, SyntaxNode node, SyntaxNode target)
+{
+   TypeAttributes attributes = {};
+
+   TemplateTypeList typeList;
+   declareTemplateAttributes(scope, node, typeList, attributes, true, false);
+   if (attributes.isNonempty())
+      scope.raiseError(errInvalidOperation, node);
+
+   // HOTFIX : generate a temporal template to pass the type
+   SyntaxTree dummyTree;
+   List<SyntaxNode> parameters({});
+   declareTemplateParameters(scope.module, typeList, dummyTree, parameters);
+
+   SyntaxTree dummyTree2;
+   List<SyntaxNode> arguments({});
+   declareArguments(node, dummyTree, arguments);
+
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+   ref_t templateRef = retrieveTemplate(*ns, node, parameters, nullptr, SyntaxKey::None, ENUM_POSTFIX);
+   if (!templateRef)
+      return false;
+
+   if (!_templateProcessor->importEnumTemplate(*scope.moduleScope, templateRef, target, parameters, arguments))
+      scope.raiseError(errInvalidOperation, node);
+
+   return true;
 }
 
 bool Compiler :: importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target, bool weakOne)
@@ -3895,6 +3970,22 @@ void Compiler :: copyParentNamespaceExtensions(NamespaceScope& source, Namespace
    }
 }
 
+ObjectInfo Compiler :: evalExprValueOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors)
+{
+   SyntaxNode lnode = node.firstChild(SyntaxKey::DeclarationMask);
+   while (lnode == SyntaxKey::Expression)
+      lnode = lnode.firstChild();
+
+   if (lnode == SyntaxKey::KeyValueExpression) {
+      return evalExpression(interpreter, scope, lnode.findChild(SyntaxKey::Expression), ignoreErrors);
+   }
+
+   if (!ignoreErrors) {
+      scope.raiseError(errCannotEval, node);
+   }
+   return {};
+}
+
 ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors)
 {
    ObjectInfo loperand = {};
@@ -4087,6 +4178,9 @@ ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, Sy
       case SyntaxKey::NameOperation:
       case SyntaxKey::ReferOperation:
          retVal = evalOperation(interpreter, scope, node, (int)node.key - OPERATOR_MAKS, ignoreErrors);
+         break;
+      case SyntaxKey::ExprValOperation:
+         retVal = evalExprValueOperation(interpreter, scope, node, ignoreErrors);
          break;
       case SyntaxKey::Object:
          retVal = evalObject(interpreter, scope, node);
@@ -4762,6 +4856,7 @@ void Compiler :: saveNamespaceInfo(SyntaxNode node, NamespaceScope* nsScope, boo
 void Compiler :: declareTemplate(TemplateScope& scope, SyntaxNode& node)
 {
    switch (scope.type) {
+      case TemplateType::Enumeration:
       case TemplateType::Class:
       case TemplateType::InlineProperty:
       {
@@ -4848,8 +4943,9 @@ void Compiler :: declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
    declareTemplateAttributes(scope, node, postfix);
 
    int argCount = SyntaxTree::countChild(node, SyntaxKey::TemplateArg);
+
    postfix.append('#');
-   postfix.appendInt(argCount);
+   postfix.appendInt(scope.type == TemplateType::Enumeration ? argCount-1 : argCount);
 
    if (SyntaxTree::ifChildExists(node, SyntaxKey::Attribute, V_WEAK))
       postfix.append(WEAK_POSTFIX);
@@ -4858,6 +4954,9 @@ void Compiler :: declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
    switch (scope.type) {
       case TemplateType::InlineProperty:
          prefix.append(INLINE_PROPERTY_PREFIX);
+         break;
+      case TemplateType::Enumeration:
+         postfix.append(ENUM_POSTFIX);
          break;
       default:
          break;
@@ -10494,7 +10593,7 @@ bool Compiler::Class :: isParentDeclared(SyntaxNode node)
       return true;
 
    SyntaxNode child = parentNode.firstChild();
-   if (child != SyntaxKey::TemplateType && child != SyntaxKey::None) {
+   if (child != SyntaxKey::TemplateType && child != SyntaxKey::EnumPostfix && child != SyntaxKey::None) {
       ref_t parentRef = compiler->resolveStrongTypeAttribute(scope, child, true, false).typeRef;
 
       return scope.moduleScope->isDeclared(parentRef);
@@ -10601,6 +10700,10 @@ void Compiler::Class :: resolveClassPostfixes(SyntaxNode node, bool extensionMod
                   parentRef = compiler->resolveStrongTypeAttribute(scope, child, extensionMode, false).typeRef;
                }
                else if (!compiler->importTemplate(scope, child, node, false))
+                  scope.raiseError(errUnknownTemplate, current);
+            }
+            else if (child == SyntaxKey::EnumPostfix) {
+               if (!compiler->importEnumTemplate(scope, child, node))
                   scope.raiseError(errUnknownTemplate, current);
             }
             else if (!parentRef) {
@@ -10928,6 +11031,9 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
       case SyntaxKey::ShrOperation:
       case SyntaxKey::NegateOperation:
          retVal = compileOperation(current, (int)current.key - OPERATOR_MAKS, targetRef, mode);
+         break;
+      case SyntaxKey::ExprValOperation:
+         retVal = compileDeclOperation(current, (int)current.key - OPERATOR_MAKS);
          break;
       case SyntaxKey::BreakOperation:
       case SyntaxKey::ContinueOperation:
@@ -12895,6 +13001,20 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node, Obje
    scope.reserveArgs(arguments.count_pos());
 
    return retVal;
+}
+
+ObjectInfo Compiler::Expression :: compileDeclOperation(SyntaxNode node, int operatorId)
+{
+   Interpreter interpreter(scope.moduleScope, compiler->_logic);
+   ObjectInfo evalRetVal = compiler->evalExprValueOperation(interpreter, scope, node, false);
+   if (evalRetVal.kind != ObjectKind::Unknown) {
+      return evalRetVal;
+   }
+      
+   // NOTE : it must be only compile-time operation
+   scope.raiseError(errInvalidOperation, node);
+
+   return {};
 }
 
 ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, SyntaxNode rnode, int operatorId, ref_t expectedRef)

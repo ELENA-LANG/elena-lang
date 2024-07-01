@@ -233,6 +233,7 @@ namespace elena_lang
    constexpr auto V_VARIABLE              = 0x8000100Du;
    constexpr auto V_MEMBER                = 0x8000100Eu;
    constexpr auto V_STATIC                = 0x8000100Fu;
+   constexpr auto V_ENUMERATION           = 0x80001010u;
    constexpr auto V_CONVERSION            = 0x80001011u;
    constexpr auto V_NEWOP                 = 0x80001012u;
    constexpr auto V_DISPATCHER            = 0x80001013u;
