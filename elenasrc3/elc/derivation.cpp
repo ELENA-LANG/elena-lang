@@ -790,7 +790,6 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
                key = SyntaxKey::EnumNameArgParameter;
                attrRef = index + scope.nestedLevel;
             }
-            else flushNode(writer, scope, current);
          }
 
          writer.newNode(key, attrRef);
@@ -1904,9 +1903,11 @@ void TemplateProssesor :: copyNode(SyntaxTreeWriter& writer, TemplateScope& scop
          break;
       case SyntaxKey::NameArgParameter:
          if (node.arg.reference < 0x100) {
-            SyntaxNode nodeToInject = scope.argValues.get(scope.enumIndex);
+            SyntaxNode nodeToInject = scope.argValues.get(node.arg.reference);
 
-            copyKVKey(writer, scope, nodeToInject);
+            //writer.newNode(SyntaxKey::Name);
+            copyChildren(writer, scope, nodeToInject);
+            //writer.closeNode();
          }
          else {
             writer.newNode(node.key, node.arg.reference - 0x100);
@@ -2067,7 +2068,7 @@ void TemplateProssesor :: importTemplate(Type type, MemoryBase* templateSection,
    bufferWriter.closeNode();
 
    SyntaxTreeWriter targetWriter(target);
-   if (type == Type::Class || type == Type::InlineProperty) {
+   if (type == Type::Class || type == Type::InlineProperty || type == Type::Enumeration) {
       SyntaxNode current = bufferTree.readRoot().firstChild();
       while (current != SyntaxKey::None) {
          if(current == SyntaxKey::Method) {

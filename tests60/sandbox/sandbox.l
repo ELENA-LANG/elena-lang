@@ -21,36 +21,40 @@
       = member;
 */
 
-
-public enumeration enum<member, T>
-{
-   get static T member()
-      = $value member;
-}
-//
-//
+//public enumeration enum<member, T>
 //{
-//   get static T $name Red()
-//      = nil;
+//   T _value;
 //
-//   get static T $name Green()
-//      = nil;
+//   private constructor() {} 
 //
-//   get static T $name Blue()
-//      = nil;
+//   private constructor load(T v) { _value := v }
+//
+//   get static __typeof member()
+//      = self.load($value member);
 //}
 //
+//public const struct Color : enum<int>(Red = 1,Green = 2,Blue = 3);
 //
+//public program()
+//{
+//   Color red := Color.Red;
+////   Color green := Color.Green;
+//
+////   var kv := x = 3;
+//
+////   var v := kv.x;
+//}
 
+/*const struct */X
+{
+   int _value;
 
-public Color : enum<int>(Red = 1,Green = 2,Blue = 3);
+   private constructor() {}
+
+   /*private */constructor load(int v) { _value := v }
+}
 
 public program()
 {
-//   Color red := Color.Red;
-//   Color green := Color.Green;
-
-//   var kv := x = 3;
-
-//   var v := kv.x;
+   var x := X.load(2);
 }

@@ -8,7 +8,8 @@ In development:
   === Iteration 27 (10.06.2024) ===
   --------------------------------------
   dev: 
-      - 
+      - upndown
+      - web server - weather forecast
       - system'winforms : free PermVectorTable item after the window is closed, to save the resources
       - a field must be assigned, warn if not
   gen:
@@ -29,8 +30,10 @@ In development:
   - x86-64 : agenda, scripts
   - #265 : Support enumeration list
   * serialize / deserialize
+  * #265 : working on enumeration template
   --------------------------------------
-  * think over possible solution to declare enum
+  * fixing an issue with private constructor
+  * create a unit test - CallPrivateConstructorDirectly
 
   === Iteration 28 ===
   --------------------------------------

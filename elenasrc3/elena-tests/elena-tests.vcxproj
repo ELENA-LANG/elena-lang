@@ -134,6 +134,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="tests_common.h" />
     <ClInclude Include="bt_optimization.h" />
+    <ClInclude Include="constructor_tests.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\dump.cpp" />
@@ -158,6 +159,7 @@
     <ClCompile Include="bt_optimization.cpp" />
     <ClCompile Include="declare_tests.cpp" />
     <ClCompile Include="compiler_tests.cpp" />
+    <ClCompile Include="constructor_tests.cpp" />
     <ClCompile Include="bt_tests.cpp" />
     <ClCompile Include="pch.cpp">
     </ClCompile>
