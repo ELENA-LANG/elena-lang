@@ -14,19 +14,6 @@
 
 #include "bytecode.h"
 
-
-
-
-
-
-#include "serializer.h"
-
-
-
-
-
-
-
 //#define FULL_OUTOUT_INFO 1
 
 using namespace elena_lang;
@@ -66,12 +53,12 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 //   }
 //}
 
-inline void storeNode(SyntaxNode node)
-{
-   DynamicUStr target;
-
-   SyntaxTreeSerializer::save(node, target);
-}
+//inline void storeNode(SyntaxNode node)
+//{
+//   DynamicUStr target;
+//
+//   SyntaxTreeSerializer::save(node, target);
+//}
 
 //inline void storeNode(BuildNode node)
 //{
@@ -9160,24 +9147,14 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
    // first pass - compile constructors
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::Constructor:
-      {
-         MethodScope methodScope(&scope);
-         initializeMethod(classClassScope, methodScope, current);
-         methodScope.constructorMode = true;
-
-#ifdef FULL_OUTOUT_INFO
-         IdentifierString messageName;
-         ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
-
-         _errorProcessor->info(infoCurrentMethod, *messageName);
-#endif // FULL_OUTOUT_INFO
-
-         compileConstructor(writer, methodScope, classClassScope, current, scope.isAbstract());
-         break;
-      }
-      default:
-         break;
+         case SyntaxKey::Constructor:
+         {
+            Method method(this, scope);
+            method.compileConstructor(writer, current, classClassScope);
+            break;
+         }
+         default:
+            break;
       }
       current = current.nextNode();
    }
@@ -9186,24 +9163,24 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
    current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::StaticMethod:
-      {
-         MethodScope methodScope(&classClassScope);
-         initializeMethod(classClassScope, methodScope, current);
+         case SyntaxKey::StaticMethod:
+         {
+            MethodScope methodScope(&classClassScope);
+            initializeMethod(classClassScope, methodScope, current);
 
-#ifdef FULL_OUTOUT_INFO
-         IdentifierString messageName;
-         ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
+   #ifdef FULL_OUTOUT_INFO
+            IdentifierString messageName;
+            ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
 
-         _errorProcessor->info(infoCurrentMethod, *messageName);
-#endif // FULL_OUTOUT_INFO
+            _errorProcessor->info(infoCurrentMethod, *messageName);
+   #endif // FULL_OUTOUT_INFO
 
-         compileMethod(writer, methodScope, current);
+            compileMethod(writer, methodScope, current);
 
-         break;
-      }
-      default:
-         break;
+            break;
+         }
+         default:
+            break;
       }
       current = current.nextNode();
    }
@@ -9424,6 +9401,7 @@ void Compiler :: compileClass(BuildTreeWriter& writer, ClassScope& scope, Syntax
    writer.appendNode(BuildKey::Path, *ns->sourcePath);
 
    compileVMT(writer, scope, node);
+
    writer.closeNode();
 
    scope.save();
@@ -9447,6 +9425,7 @@ void Compiler :: compileClassClass(BuildTreeWriter& writer, ClassScope& classCla
    writer.appendNode(BuildKey::Path, *ns->sourcePath);
 
    compileClassVMT(writer, classClassScope, scope, node);
+
    writer.closeNode();
 }
 
@@ -9761,15 +9740,6 @@ void Compiler :: declareModuleIdentifiers(ModuleScopeBase* moduleScope, SyntaxNo
 
 bool Compiler :: declareModule(ModuleScopeBase* moduleScope, SyntaxNode node, ExtensionMap* outerExtensionList, bool& repeatMode, bool forced)
 {
-   storeNode(node);
-
-
-
-
-
-
-
-
    bool declared = false;
 
    SyntaxNode current = node.firstChild();
@@ -10826,6 +10796,20 @@ void Compiler::Class :: load()
       scope.extensionClassRef = scope.getAttribute(ClassAttribute::ExtensionRef);
 }
 
+// --- Compiler::ClassClass ---
+
+Compiler::ClassClass :: ClassClass(Class& classHelper)
+   : compiler(classHelper.compiler), 
+   scope(classHelper.scope.parent, classHelper.scope.info.header.classRef, classHelper.scope.visibility,
+      &classHelper.scope.info, classHelper.scope.reference)
+{
+}
+
+void Compiler::ClassClass :: load()
+{
+   scope.moduleScope->loadClassInfo(scope.info, scope.reference, false);
+}
+
 // --- Compiler::Method ---
 
 Compiler::Method :: Method(Class& cls)
@@ -10868,6 +10852,28 @@ void Compiler::Method :: compile(BuildTreeWriter& writer, SyntaxNode current)
    }
    // if it is a normal method
    else compiler->compileMethod(writer, scope, current);
+}
+
+void Compiler::Method :: compileConstructor(BuildTreeWriter& writer, SyntaxNode current, ClassScope& classClassScope)
+{
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
+   compiler->initializeMethod(classClassScope, scope, current);
+   scope.constructorMode = true;
+
+#ifdef FULL_OUTOUT_INFO
+   IdentifierString messageName;
+   ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
+
+   _errorProcessor->info(infoCurrentMethod, *messageName);
+#endif // FULL_OUTOUT_INFO
+
+   compiler->compileConstructor(writer, scope, classClassScope, current, classScope->isAbstract());
+}
+
+void Compiler::Method :: compileConstructor(BuildTreeWriter& writer, SyntaxNode current, ClassClass& classClassHelper)
+{
+   compileConstructor(writer, current, classClassHelper.scope);
 }
 
 // --- Compiler::Code ---
@@ -13583,7 +13589,7 @@ bool Compiler::Expression :: compileAssigningOp(ObjectInfo target, ObjectInfo ex
    if (size != 0) {
       writer->appendNode(BuildKey::Size, size);
 
-      // HOTFIX : nil cannit be assigned to a struct
+      // HOTFIX : nil cannot be assigned to a struct
       if (exprVal.kind == ObjectKind::Nil)
          return false;
 

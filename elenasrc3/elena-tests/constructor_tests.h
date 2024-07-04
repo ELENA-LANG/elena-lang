@@ -18,6 +18,13 @@ namespace elena_lang
       void SetUp() override;
    };
 
+   class CallPrivateConstructorDirectly : public MethodScenarioTest
+   {
+   protected:
+      SyntaxNode findTargetNode() override;
+
+      void SetUp() override;
+   };
 }
 
 #endif

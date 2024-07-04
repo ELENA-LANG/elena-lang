@@ -12,15 +12,17 @@ using namespace elena_lang;
 
 constexpr auto S1_VariadicConstructorSingleDispatch_1 = "class (attribute -2147479546 ()nameattr (identifier \"Tester\" ())method (nameattr (identifier \"test\" ())parameter (attribute -2147475445 ()array_type (type (identifier \"Object\" ()))nameattr (identifier \"args\" ()))code (returning (expression (message_operation (object (identifier \"X\" ())message (identifier \"load\" ())expression (object (attribute -2147475445 ()identifier \"args\" ())))))))) class (nameattr (identifier \"X\" ()) method (attribute -2147479548 ()nameattr (identifier \"load\" ())parameter (attribute -2147475445 ()array_type (type (identifier \"B\" ()))nameattr (identifier \"args\" ()))code ()))";
 
-constexpr auto S_PrivateConstructorTest = "class (nameattr (identifier \"X\" ())field (type (identifier \"int\" ())nameattr (identifier \"_value\" ()))method (attribute -2147467262 ()nameattr (identifier \"constructor\" ())code (EOP (eop \"}\" ())))method (attribute -2147479548 ()nameattr (identifier \"load\" ())parameter (type (identifier \"int\" ())nameattr (identifier \"v\" ()))code (expression (assign_operation (object (identifier \"_value\" ())expression (object (identifier \"v\" ()))))EOP ())))";
+constexpr auto S_PrivateConstructorTest = "class (nameattr (identifier \"X\" ())field (type (identifier \"IntNumber\" ())nameattr (identifier \"_value\" ()))method (attribute -2147467262 ()nameattr (identifier \"constructor\" ())code ())method (attribute -2147479548 ()nameattr (identifier \"load\" ())parameter (type (identifier \"IntNumber\" ())nameattr (identifier \"v\" ()))code (expression (assign_operation (object (identifier \"_value\" ())expression (object (identifier \"v\" ())))))))";
 
 #ifdef _M_IX86
 
 constexpr auto BuildTree_VariadicSingleDispatch_3 = "tape(open_frame()assigning 1 ()local_reference - 2 ()saving_stack()varg_sop 6 (index - 4 ())unbox_call_message - 2 (index 1 ()length - 4 ()temp_var - 8 ()message 1601 ())class_reference 6 ()saving_stack()argument()direct_call_op 5250 (type 12 ())loading_index() free_varstack() going_to_eop() close_frame()exit())reserved 3 ()reserved_n 8 ())";
+constexpr auto BuildTree_PrivateConstructorTest = "tape(open_frame() direct_call_op 800(type 6()) assigning 1 ()local -2 ()saving_stack()create_struct 4 (type 2()) copying_to_acc 2 (size 4 ()) assigning 2() local 2() saving_stack () local 1() field_assign () local 1() close_frame()exit())reserved 3 ())";
 
 #elif _M_X64
 
 constexpr auto BuildTree_VariadicSingleDispatch_3 = "tape(open_frame()assigning 1 ()local_reference -2 ()saving_stack()varg_sop 6 (index -8 ())unbox_call_message -2 (index 1 ()length -8 ()temp_var -24 ()message 1601 ())class_reference 6 ()saving_stack()argument()direct_call_op 5250 (type 12 ())loading_index() free_varstack() going_to_eop() close_frame()exit())reserved 4 ()reserved_n 32 ())";
+constexpr auto BuildTree_PrivateConstructorTest = "tape(open_frame() direct_call_op 800(type 6()) assigning 1 ()local -2 ()saving_stack()create_struct 4 (type 2()) copying_to_acc 2 (size 4 ()) assigning 2() local 2() saving_stack () local 1() field_assign () local 1() close_frame()exit())reserved 4 ())";
 
 #endif
 
@@ -41,6 +43,25 @@ void VariadicCompiletimeConstructorSingleDispatch :: SetUp()
    intNumberRef = 7;
 }
 
+// --- CallPrivateConstructorDirectly ---
+
+void CallPrivateConstructorDirectly :: SetUp()
+{
+   MethodScenarioTest::SetUp();
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_PrivateConstructorTest);
+
+   BuildTreeSerializer::load(BuildTree_PrivateConstructorTest, controlOutputNode);
+
+   intNumberRef = 2;
+   targetRef = 3;
+}
+
+SyntaxNode CallPrivateConstructorDirectly :: findTargetNode()
+{
+   return findClassNode().findChild(SyntaxKey::Constructor).nextNode();
+}
+
 // ==== Tests ===
 
 TEST_F(VariadicCompiletimeConstructorSingleDispatch, ConstructorTest)
@@ -48,7 +69,7 @@ TEST_F(VariadicCompiletimeConstructorSingleDispatch, ConstructorTest)
    runTest(true);
 }
 
-/*TEST_F(CallPrivateConstructorDirectly, ConstructorTest)
+TEST_F(CallPrivateConstructorDirectly, ConstructorTest)
 {
-   runTest(true);
-}*/
+   runTest(false, true);
+}

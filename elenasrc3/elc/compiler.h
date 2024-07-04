@@ -1153,6 +1153,19 @@ namespace elena_lang
          Class(Namespace& ns, ref_t reference, Visibility visibility);
       };
 
+      class ClassClass
+      {
+         friend class Compiler;
+
+         Compiler*         compiler;
+         ClassClassScope   scope;
+
+      public:
+         void load();
+
+         ClassClass(Class& classHelper);
+      };
+
       class Method
       {
          friend class Compiler;
@@ -1160,8 +1173,11 @@ namespace elena_lang
          Compiler*   compiler;
          MethodScope scope;
 
+         void compileConstructor(BuildTreeWriter& writer, SyntaxNode current, ClassScope& classClassScope);
+
       public:
          void compile(BuildTreeWriter& writer, SyntaxNode current);
+         void compileConstructor(BuildTreeWriter& writer, SyntaxNode current, ClassClass& classClassHelper);
 
          Method(Class& cls);
          Method(Compiler* compiler, ClassScope& classScope);

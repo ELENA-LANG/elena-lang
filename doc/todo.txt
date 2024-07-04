@@ -30,10 +30,8 @@ In development:
   - x86-64 : agenda, scripts
   - #265 : Support enumeration list
   * serialize / deserialize
-  * #265 : working on enumeration template
   --------------------------------------
-  * fixing an issue with private constructor
-  * create a unit test - CallPrivateConstructorDirectly
+  * #265 : working on enumeration template
 
   === Iteration 28 ===
   --------------------------------------

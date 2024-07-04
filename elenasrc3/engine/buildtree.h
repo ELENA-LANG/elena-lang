@@ -367,6 +367,7 @@ namespace elena_lang
          map.add("going_to_eop", BuildKey::goingToEOP);
          map.add("field", BuildKey::Field);
          map.add("nil", BuildKey::NilReference);
+         map.add("field_assign", BuildKey::FieldAssigning);
 
          map.add("value", BuildKey::Value);
          map.add("tape", BuildKey::Tape);

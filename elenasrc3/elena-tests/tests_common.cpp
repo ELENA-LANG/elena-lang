@@ -242,6 +242,7 @@ ModuleScopeBase* CompilerEnvironment :: createModuleScope(bool tapeOptMode, bool
       scope->attributes.add("public", V_PUBLIC);
       scope->attributes.add("var", V_VARIABLE);
       scope->attributes.add("new", V_NEWOP);
+      scope->attributes.add("constructor", V_CONSTRUCTOR);
    }
 
    return scope;
@@ -399,10 +400,10 @@ void ScenarioTest::SetUp()
 
 // --- MethodScenarioTest ---
 
-void MethodScenarioTest :: runTest(bool withProtectedConstructor)
+void MethodScenarioTest :: runTest(bool withProtectedConstructor, bool withAttributes)
 {
    // Arrange
-   ModuleScopeBase* moduleScope = env.createModuleScope(true);
+   ModuleScopeBase* moduleScope = env.createModuleScope(true, withAttributes);
    moduleScope->buildins.superReference = 1;
    moduleScope->buildins.intReference = intNumberRef;
    moduleScope->buildins.argArrayTemplateReference = argArrayRef;
@@ -430,8 +431,15 @@ void MethodScenarioTest :: runTest(bool withProtectedConstructor)
    Compiler::Method methodHelper(classHelper);
 
    SyntaxNode methodNode = findTargetNode();
-   if (methodNode != SyntaxKey::None)
+   if (methodNode == SyntaxKey::Method) {
       methodHelper.compile(writer, methodNode);
+   }
+   else if (methodNode == SyntaxKey::Constructor) {
+      Compiler::ClassClass classClassHelper(classHelper);
+      classClassHelper.load();
+
+      methodHelper.compileConstructor(writer, methodNode, classClassHelper);
+   }      
 
    // Assess
    bool matched = BuildTree::compare(output.readRoot(), controlOutputNode, true);
