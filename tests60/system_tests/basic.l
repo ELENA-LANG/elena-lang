@@ -946,9 +946,9 @@ public multySelectTest() : testCase()
     console.write(".")        
 }
 
-// --- enumTest ---
+// --- stringEnumerationTest ---
 
-public enumTest() : testCase()
+public stringEnumerationTest() : testCase()
 {
     var s := String.MinValue;
     "123".forEach::(x)
@@ -1998,4 +1998,21 @@ public ifNilOperatorTest() : testCase()
    Assert.ifNil(b?.get());
    Assert.ifNil(b?.Value);
    console.write(".");
+}
+
+// --- enumTest ---
+
+public const struct Color : enum<int>(Red = 1,Green = 2,Blue = 3);
+
+public enumTest() : testCase()
+{
+   Color red := Color.Red;
+   Color green := Color.Green;
+
+   Assert.ifTrue(red == Color.Red);
+   Assert.ifFalse(red == Color.Green);
+   Assert.ifEqual(red.toPrintable(), "Red");
+   Assert.ifEqual(green.toPrintable(), "Green");
+
+   console.write(".");   
 }

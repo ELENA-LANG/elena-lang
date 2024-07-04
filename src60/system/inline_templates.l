@@ -106,3 +106,83 @@ public weak interface<T>
       embeddable dispatch() => self;
    };
 }
+
+// --- enum ---
+
+public enumeration enum<member, T>
+{
+   T _value;
+
+   const T[] __enumValues;
+   const string[] __enumNames;
+
+   this __enumValues += $value member;
+   this __enumNames += $name member;
+
+   private constructor() {} 
+
+   private constructor load(T v) { _value := v }
+
+   get static __typeof member()
+      = self.load($value member);
+
+   T cast()
+      = _value;
+
+   private static __typeof getEnumValue(int index)
+   {
+      T value := __enumValues[index];
+
+      ^ __typeof self.load(value)
+   }
+
+   private static int getEnumCount()
+   {
+      int len := __enumValues.Length;
+
+      ^ len
+   }
+
+   static Enumerator enumerator() = new BaseEnumerator
+   {
+      this index := -1;
+         
+      this length := getEnumCount();
+         
+      get Value() = getEnumValue(this index.Value);
+         
+      enumerable() = self;
+         
+      reset()
+      {
+         this index.Value := -1
+      }
+   };
+
+   string toPrintable()
+   {
+      string[] names := __enumNames;
+      T[] values := __enumValues;
+
+      int len := values.Length;
+      for (int i := 0; i < len; i++) {
+         if (values[i] == _value) {
+            ^ names[i]
+         }            
+      };
+
+      InvalidOperationException.raise();
+
+      ^ string.MinValue
+   }
+
+   bool equal(o)
+   {
+      if (o; is T n)
+      {
+         ^ _value == n
+      };
+
+      ^ false
+   }
+}
