@@ -1931,7 +1931,7 @@ void TemplateProssesor :: copyNode(SyntaxTreeWriter& writer, TemplateScope& scop
          break;
       case SyntaxKey::EnumArgParameter:
          if (node.arg.reference < 0x100) {
-            SyntaxNode nodeToInject = scope.parameterValues.get(node.arg.reference);
+            SyntaxNode nodeToInject = scope.parameterValues.get(scope.enumIndex);
             writer.CurrentNode().setKey(nodeToInject.key);
             copyChildren(writer, scope, nodeToInject);
          }

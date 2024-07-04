@@ -21,40 +21,70 @@
       = member;
 */
 
-//public enumeration enum<member, T>
-//{
-//   T _value;
-//
-//   private constructor() {} 
-//
-//   private constructor load(T v) { _value := v }
-//
-//   get static __typeof member()
-//      = self.load($value member);
-//}
-//
-//public const struct Color : enum<int>(Red = 1,Green = 2,Blue = 3);
-//
-//public program()
-//{
-//   Color red := Color.Red;
-////   Color green := Color.Green;
-//
-////   var kv := x = 3;
-//
-////   var v := kv.x;
-//}
-
-/*const struct */X
+public enumeration enum<member, T>
 {
-   int _value;
+   T _value;
 
-   private constructor() {}
+   const T[] __enumValues;
+   const string[] __enumNames;
 
-   /*private */constructor load(int v) { _value := v }
+   this __enumValues += $value member;
+   this __enumNames += $name member;
+
+   private constructor() {} 
+
+   private constructor load(T v) { _value := v }
+
+   get static __typeof member()
+      = self.load($value member);
+
+   T cast()
+      = _value;
+
+   string toPrintable()
+   {
+      string[] names := __enumNames;
+/*      T[] values := __enumValues;
+
+      int len := values.Length;
+      for (int i := 0; i < len; i++) {
+         if (values[i] == _value) {
+            ^ names[i]
+         }            
+      };
+
+      InvalidOperationException.raise();*/
+
+      ^ string.MinValue
+   }
+
+   bool equal(o)
+   {
+      if (o; is T n)
+      {
+         ^ _value == n
+      };
+
+      ^ false
+   }
 }
+
+public const struct Color : enum<int>(Red = 1,Green = 2,Blue = 3);
 
 public program()
 {
-   var x := X.load(2);
+   Color red := Color.Red;
+//   Color green := Color.Green;
+//
+//   if (red == Color.Red)
+//   {
+//      console.writeLine("Comparson works!")
+//   };
+//   if (red == Color.Green)
+//   {
+//      console.writeLine("Comparson doesn't work!")
+//   };
+
+   var s1 := red.toPrintable();
+//   var s2 := red.toPrintable();
 }

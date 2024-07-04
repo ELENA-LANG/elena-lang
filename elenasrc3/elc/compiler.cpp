@@ -742,6 +742,9 @@ bool Interpreter :: evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInf
          case ObjectKind::Field:
             retVal = { ObjectKind::FieldName, { V_STRING }, loperand.reference };
             return true;
+         case ObjectKind::ConstGetter:
+            retVal = { ObjectKind::StringLiteral, { V_STRING }, loperand.extra };
+            return true;
          default:
             break;
       }
@@ -4066,6 +4069,17 @@ ObjectInfo Compiler :: evalObject(Interpreter& interpreter, Scope& scope, Syntax
    return mapObject(scope, node, mode);
 }
 
+ObjectInfo Compiler :: evalGetter(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors)
+{
+   // HOTFIX : getter is partially evaluated to be used with $name operator
+   SyntaxNode nameNode = node.findChild(SyntaxKey::Object).findChild(SyntaxKey::identifier);
+   assert(nameNode.key == SyntaxKey::identifier);
+
+   ref_t nameRef = scope.module->mapConstant(nameNode.identifier());
+
+   return { ObjectKind::ConstGetter, V_GETTER, 0, nameRef };
+}
+
 ObjectInfo Compiler :: evalPropertyOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors)
 {
    SyntaxNode lnode = node.firstChild();
@@ -4210,6 +4224,11 @@ ObjectInfo Compiler :: evalExpression(Interpreter& interpreter, Scope& scope, Sy
       {
          MetaExpression metaExpr(this, &scope, &interpreter);
          retVal = metaExpr.generateNestedConstant(node);
+         break;
+      }
+      case SyntaxKey::KeyValueExpression:
+      {
+         retVal = evalGetter(interpreter, scope, node, ignoreErrors);
          break;
       }
       default:
@@ -13263,8 +13282,13 @@ bool Compiler::Expression :: writeObjectInfo(ObjectInfo info, bool allowMeta)
          writer->appendNode(BuildKey::Field, info.extra);
          break;
       case ObjectKind::StaticConstField:
-         writeObjectInfo(scope.mapSelf());
-         writer->appendNode(BuildKey::ClassOp, CLASS_OPERATOR_ID);
+         if (scope.isSealed(false)) {
+            writer->appendNode(BuildKey::ClassReference, scope.getClassRef(false));
+         }
+         else {
+            writeObjectInfo(scope.mapSelf());
+            writer->appendNode(BuildKey::ClassOp, CLASS_OPERATOR_ID);
+         }
          writer->appendNode(BuildKey::Field, info.reference);
          break;
       case ObjectKind::ClassStaticConstField:

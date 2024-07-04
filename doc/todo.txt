@@ -29,9 +29,10 @@ In development:
   - ppc64le : fix decoratorTest()
   - x86-64 : agenda, scripts
   - #265 : Support enumeration list
-  * serialize / deserialize
+  * #265 : functional test - comparison, converting to string
+  * #265 : enumerating values
   --------------------------------------
-  * #265 : working on enumeration template
+  * #265 : toPrintable
 
   === Iteration 28 ===
   --------------------------------------

@@ -96,6 +96,7 @@ namespace elena_lang
       ClosureInfo,
       MemberInfo,
       LocalField,
+      ConstGetter,  // key = value constant
    };
 
    enum TargetMode
@@ -956,6 +957,12 @@ namespace elena_lang
 
             return scope ? scope->reference : 0;
          }
+         ref_t isSealed(bool ownerClass = true)
+         {
+            ClassScope* scope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+            
+            return scope ? test(scope->info.header.flags, elSealed) : false;
+         }
 
          ObjectInfo mapSelf(bool ownerClass = false)
          {
@@ -1568,6 +1575,7 @@ namespace elena_lang
       ObjectInfo evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool anonymousOne, bool ignoreErrors);
       ObjectInfo evalPropertyOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
       ObjectInfo evalExprValueOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
+      ObjectInfo evalGetter(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
 
       void evalStatement(MetaScope& scope, SyntaxNode node);
 
