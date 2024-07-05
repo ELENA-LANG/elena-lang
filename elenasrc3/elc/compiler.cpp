@@ -3998,6 +3998,37 @@ ObjectInfo Compiler :: evalExprValueOperation(Interpreter& interpreter, Scope& s
    return {};
 }
 
+ObjectInfo Compiler :: evalSizeOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors)
+{
+   SyntaxNode lnode = node.firstChild(SyntaxKey::DeclarationMask);
+
+   ObjectInfo loperand = evalExpression(interpreter, scope, lnode, ignoreErrors);
+   SizeInfo sizeInfo = {};
+   switch (loperand.kind) {
+      case ObjectKind::LocalAddress:
+      case ObjectKind::ParamAddress:
+      {
+         ref_t sourceRef = resolveStrongType(scope, loperand.typeInfo);
+         sizeInfo = _logic->defineStructSize(*scope.moduleScope, sourceRef);
+
+         break;
+      }
+      case ObjectKind::Class:
+         sizeInfo = _logic->defineStructSize(*scope.moduleScope, loperand.reference);
+         break;
+      default:
+         break;
+   }
+
+   if (sizeInfo.size > 0)
+      return { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(scope.moduleScope, sizeInfo.size), sizeInfo.size };
+
+   if (!ignoreErrors) {
+      scope.raiseError(errCannotEval, node);
+   }
+   return {};
+}
+
 ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors)
 {
    ObjectInfo loperand = {};
@@ -11100,7 +11131,8 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
          retVal = compileOperation(current, (int)current.key - OPERATOR_MAKS, targetRef, mode);
          break;
       case SyntaxKey::ExprValOperation:
-         retVal = compileDeclOperation(current, (int)current.key - OPERATOR_MAKS);
+      case SyntaxKey::SizeOperation:
+         retVal = compileEvalOnlySpecialOperation(current);
          break;
       case SyntaxKey::BreakOperation:
       case SyntaxKey::ContinueOperation:
@@ -13070,10 +13102,23 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node, Obje
    return retVal;
 }
 
-ObjectInfo Compiler::Expression :: compileDeclOperation(SyntaxNode node, int operatorId)
+ObjectInfo Compiler::Expression :: compileEvalOnlySpecialOperation(SyntaxNode node)
 {
    Interpreter interpreter(scope.moduleScope, compiler->_logic);
-   ObjectInfo evalRetVal = compiler->evalExprValueOperation(interpreter, scope, node, false);
+   ObjectInfo evalRetVal = {};
+      
+   switch (node.key) {
+      case SyntaxKey::ExprValOperation:
+         evalRetVal = compiler->evalExprValueOperation(interpreter, scope, node, false);
+         break;
+      case SyntaxKey::SizeOperation:
+         evalRetVal = compiler->evalSizeOperation(interpreter, scope, node, false);
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
    if (evalRetVal.kind != ObjectKind::Unknown) {
       return evalRetVal;
    }

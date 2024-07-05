@@ -1,26 +1,34 @@
 import extensions;
 
-public const struct Color : enum<int>(Red = 1,Green = 2,Blue = 3);
-
-public enumTest()
+packed tagOFNA
 {
-   Color red := Color.Red;
-   Color green := Color.Green;
-
-   Assert.ifTrue(red == Color.Red);
-   Assert.ifFalse(red == Color.Green);
-   Assert.ifEqual(red.toPrintable(), "Red");
-   Assert.ifEqual(green.toPrintable(), "Green");
-
-   console.write(".");   
+   int         lStructSize;
+   Handle      hwndOwner;
+   handle      hInstance;
+   pointer     lpstrFilter;
+   pointer     lpstrCustomFilter;
+   int         nMaxCustFilter;
+   int         nFilterIndex;
+   pointer     lpstrFile;
+   int         nMaxFile;
+   pointer     lpstrFileTitle;
+   int         nMaxFileTitle;
+   pointer     lpstrInitialDir;
+   pointer     lpstrTitle;
+   int         Flags;
+   short       nFileOffset;
+   short       nFileExtension;
+   pointer     lpstrDefExt;
+   int         lCustData;
+   pointer     lpfnHook;
+   pointer     lpTemplateName;
+   pointer     pvReserved;
+   int         dwReserved;
+   int         FlagsEx;
 }
 
 public program()
 {
-   enumTest();
-
-   foreach(Color c; in Color)
-   {
-      console.writeLine(c);
-   }
+   tagOFNA st;
+   int size := $size st;
 }

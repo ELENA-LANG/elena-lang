@@ -121,11 +121,13 @@ namespace elena_lang
       ExprValOperation        = 0x001869,
 
       Postfix                 = 0x001069,
+
       TemplatePostfix         = 0x00106A,
       ReferOperation          = 0x00186B,
       IncOperation            = 0x00186C,
       DecOperation            = 0x00186D,
-      EnumPostfix             = 0x00106E,
+      SizeOperation           = 0x00186E,
+      EnumPostfix             = 0x00106F,
       TemplateArg             = 0x001070,
       Dimension               = 0x001471,
       NestedBlock             = 0x001080,

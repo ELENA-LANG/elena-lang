@@ -10,25 +10,26 @@ In development:
   dev: 
       - upndown
       - web server - weather forecast
-      - system'winforms : free PermVectorTable item after the window is closed, to save the resources
       - a field must be assigned, warn if not
   gen:
-      - elt : nested executing managed code : keep frames (the frames must be included / excluded correctly)
       - elt : fails after executing several times, exception handler works only once
       - nested call must not stop / start vm, 
+      - 
   maint:
       - #667
       - elena : nested classes should not be loadable at runtime
       - constructor - single dispatcher
   port:
-      - 
       - #658 : create debug adapter
       - x86-64 : vm terminal, ide vm console
+      - 
   prom: posting weekly
   --------------------------------------
+  - elt : nested executing managed code : keep frames (the frames must be included / excluded correctly)
+  - system'winforms : free PermVectorTable item after the window is closed, to save the resources
   - ppc64le : fix decoratorTest()
-  - x86-64 : agenda, scripts
   --------------------------------------
+  - x86-64 : agenda, scripts
 
   === Iteration 28 ===
   --------------------------------------
