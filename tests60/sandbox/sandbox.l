@@ -1,34 +1,55 @@
 import extensions;
+import system'dynamic;
 
-packed tagOFNA
+interface IDecoratorA
 {
-   int         lStructSize;
-   Handle      hwndOwner;
-   handle      hInstance;
-   pointer     lpstrFilter;
-   pointer     lpstrCustomFilter;
-   int         nMaxCustFilter;
-   int         nFilterIndex;
-   pointer     lpstrFile;
-   int         nMaxFile;
-   pointer     lpstrFileTitle;
-   int         nMaxFileTitle;
-   pointer     lpstrInitialDir;
-   pointer     lpstrTitle;
-   int         Flags;
-   short       nFileOffset;
-   short       nFileExtension;
-   pointer     lpstrDefExt;
-   int         lCustData;
-   pointer     lpfnHook;
-   pointer     lpTemplateName;
-   pointer     pvReserved;
-   int         dwReserved;
-   int         FlagsEx;
+   abstract giveMe();
+}
+
+class DecoratorBaseA : IDecoratorA
+{
+   field value;
+
+   constructor(value)
+   {
+      this value := value
+   }
+
+   giveMe()
+      = value;
+}
+
+class DecoratorA
+{
+   object target;
+   object extra;
+
+   constructor(target, extra)
+   {
+      this target := target;
+      this extra := extra;
+   }
+
+   giveMe()
+      = target.giveMe() + extra;
+
+   generic cast()
+   {
+      var type := __received.__getFirstSignatureMember();
+
+      var proxy := ::{ dispatch() => self; };
+      proxy.__injectInferface(type);
+   
+      ^ __received(proxy);
+   }
 }
 
 public program()
 {
-   tagOFNA st;
-   int size := $size st;
+   var a := new DecoratorBaseA(2);
+   var decA := new DecoratorA(a, 3);
+
+   Assert.ifEqual((decA :as IDecoratorA).giveMe(), 5);
+
+   console.write(".");
 }

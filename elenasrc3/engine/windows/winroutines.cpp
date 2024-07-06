@@ -172,6 +172,9 @@ LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
          ExceptionInfo->ContextRecord->Rip = CriticalHandler;
 
          return EXCEPTION_CONTINUE_EXECUTION;
+      case 0x000006ba:
+         // !! HOTFIX : temporally ignore
+         return EXCEPTION_CONTINUE_SEARCH;
       default:
          ExceptionInfo->ContextRecord->Rdx = ExceptionInfo->ContextRecord->Rip;
          ExceptionInfo->ContextRecord->Rax = ELENA_ERR_CRITICAL;

@@ -27,9 +27,8 @@ In development:
   --------------------------------------
   - elt : nested executing managed code : keep frames (the frames must be included / excluded correctly)
   - system'winforms : free PermVectorTable item after the window is closed, to save the resources
-  - ppc64le : fix decoratorTest()
   --------------------------------------
-  - x86-64 : agenda, scripts
+  - ppc64le : fix decoratorTest()
 
   === Iteration 28 ===
   --------------------------------------
