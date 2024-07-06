@@ -35,7 +35,7 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_ARM64;
 
 #endif // defined
 
-//#define DEBUG_OUTPUT 1
+#define DEBUG_OUTPUT 1
 
 static ELENARTMachine* machine = nullptr;
 static SystemEnv* systemEnv = nullptr;
@@ -131,7 +131,9 @@ mssg_t LoadMessageLA(const char* messageName)
 /// <returns>a reference to dynamically created VMT</returns>
 void* InjectProxyTypeLA(void* target, void* type, int staticLength, int nameIndex)
 {
-   printf("InjectProxyTypeLA%llx %llx %x %x\n", (long long)target, (long long)type, staticLength, nameIndex);
+   printf("InjectProxyTypeLA %llx %llx %x %x\n", (long long)target, (long long)type, staticLength, nameIndex);
+
+   printf("machine %llx\n", machine);
 
    return (void*)machine->injectType(systemEnv, target, type, staticLength, nameIndex);
 }
