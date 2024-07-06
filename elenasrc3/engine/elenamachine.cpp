@@ -92,6 +92,8 @@ inline bool isWeakInterface(void* vmtPtr)
 
 addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, int staticLen, int nameIndex)
 {
+   printf("-1\n");
+
    uintptr_t proxyVMTPtr = RetrieveVMT((uintptr_t)proxy);
 
    // verify if the proxy can be used
@@ -101,6 +103,8 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
    // verify if it is a correct interface
    if (!isWeakInterface(srcVMTPtr))
       return INVALID_ADDR;
+
+   printf("0\n");
 
    assert(nameIndex < 0);
 
