@@ -35,7 +35,7 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_ARM64;
 
 #endif // defined
 
-#define DEBUG_OUTPUT 1
+//#define DEBUG_OUTPUT 1
 
 static ELENARTMachine* machine = nullptr;
 static SystemEnv* systemEnv = nullptr;
@@ -68,10 +68,10 @@ void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
 {
    systemEnv = env;
 
-//#ifdef DEBUG_OUTPUT
+#ifdef DEBUG_OUTPUT
    printf("InitializeSTA.6 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
    fflush(stdout);
-//#endif
+#endif
 
    if (machine == nullptr)
       init();
@@ -131,9 +131,9 @@ mssg_t LoadMessageLA(const char* messageName)
 /// <returns>a reference to dynamically created VMT</returns>
 void* InjectProxyTypeLA(void* target, void* type, int staticLength, int nameIndex)
 {
+#ifdef DEBUG_OUTPUT
    printf("InjectProxyTypeLA %llx %llx %x %x\n", (long long)target, (long long)type, staticLength, nameIndex);
-
-   printf("machine %llx\n", (long long)machine);
+#endif
 
    return (void*)machine->injectType(systemEnv, target, type, staticLength, nameIndex);
 }

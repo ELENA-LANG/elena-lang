@@ -104,7 +104,7 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
    if (!isWeakInterface(srcVMTPtr))
       return INVALID_ADDR;
 
-   printf("0\n");
+   printf("0 - %n\n", nameIndex);
 
    assert(nameIndex < 0);
 
