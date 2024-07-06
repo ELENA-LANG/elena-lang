@@ -133,7 +133,7 @@ void* InjectProxyTypeLA(void* target, void* type, int staticLength, int nameInde
 {
    printf("InjectProxyTypeLA %llx %llx %x %x\n", (long long)target, (long long)type, staticLength, nameIndex);
 
-   printf("machine %llx\n", machine);
+   printf("machine %llx\n", (long long)machine);
 
    return (void*)machine->injectType(systemEnv, target, type, staticLength, nameIndex);
 }
