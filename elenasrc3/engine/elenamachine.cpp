@@ -37,6 +37,12 @@ constexpr int struct_mask = elStructMask64;
 
 inline uintptr_t RetrieveStaticField(uintptr_t ptr, int index)
 {
+   uintptr_t addr = (ptr - sizeof(VMTHeader) + index * sizeof(uintptr_t));
+
+   printf("addr %llx", addr);
+
+
+
    uintptr_t str = *(uintptr_t*)(ptr - sizeof(VMTHeader) + index * sizeof(uintptr_t));
 
    return str;
