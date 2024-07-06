@@ -1672,7 +1672,7 @@ end
 // ; savesi
 inline %0A2h
 
-  stw     r14, __arg16_1(r1)  
+  std     r14, __arg16_1(r1)  
 
 end 
 
