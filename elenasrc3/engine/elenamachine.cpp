@@ -39,7 +39,7 @@ inline uintptr_t RetrieveStaticField(uintptr_t ptr, int index)
 {
    uintptr_t addr = (ptr - sizeof(VMTHeader) + index * sizeof(uintptr_t));
 
-   printf("addr %llx", addr);
+   printf("addr %llx, ptr %llx, index %llx", addr, ptr, index * sizeof(uintptr_t));
 
 
 
