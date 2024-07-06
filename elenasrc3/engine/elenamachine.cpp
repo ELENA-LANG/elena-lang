@@ -107,7 +107,6 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
    static int autoIndex = 0;
 
    uintptr_t namePtr = RetrieveStaticField((uintptr_t)srcVMTPtr, nameIndex);
-
    uintptr_t stringVMT = RetrieveVMT(namePtr);
 
    IdentifierString dynamicName("proxy$");

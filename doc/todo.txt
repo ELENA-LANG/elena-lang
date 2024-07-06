@@ -26,9 +26,8 @@ In development:
   prom: posting weekly
   --------------------------------------
   - elt : nested executing managed code : keep frames (the frames must be included / excluded correctly)
-  - system'winforms : free PermVectorTable item after the window is closed, to save the resources
   --------------------------------------
-  - ppc64le : fix decoratorTest()
+  - system'winforms : free PermVectorTable item after the window is closed, to save the resources
 
   === Iteration 28 ===
   --------------------------------------
