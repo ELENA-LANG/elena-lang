@@ -68,10 +68,10 @@ void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
 {
    systemEnv = env;
 
-#ifdef DEBUG_OUTPUT
+//#ifdef DEBUG_OUTPUT
    printf("InitializeSTA.6 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
    fflush(stdout);
-#endif
+//#endif
 
    if (machine == nullptr)
       init();
