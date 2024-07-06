@@ -131,9 +131,9 @@ mssg_t LoadMessageLA(const char* messageName)
 /// <returns>a reference to dynamically created VMT</returns>
 void* InjectProxyTypeLA(void* target, void* type, int staticLength, int nameIndex)
 {
-//#ifdef DEBUG_OUTPUT
+#ifdef DEBUG_OUTPUT
    printf("InjectProxyTypeLA %llx %llx %x %x\n", (long long)target, (long long)type, staticLength, nameIndex);
-//#endif
+#endif
 
    return (void*)machine->injectType(systemEnv, target, type, staticLength, nameIndex);
 }

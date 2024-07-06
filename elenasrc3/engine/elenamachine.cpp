@@ -37,12 +37,6 @@ constexpr int struct_mask = elStructMask64;
 
 inline uintptr_t RetrieveStaticField(uintptr_t ptr, int index)
 {
-   uintptr_t addr = (ptr - sizeof(VMTHeader) + index * sizeof(uintptr_t));
-
-   printf("addr %llx, ptr %llx, index %llx", addr, ptr, index * sizeof(uintptr_t));
-
-
-
    uintptr_t str = *(uintptr_t*)(ptr - sizeof(VMTHeader) + index * sizeof(uintptr_t));
 
    return str;
@@ -112,23 +106,15 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
 
    static int autoIndex = 0;
 
-   printf("-2\n");
-
    uintptr_t namePtr = RetrieveStaticField((uintptr_t)srcVMTPtr, nameIndex);
 
-   printf("-1\n");
-
    uintptr_t stringVMT = RetrieveVMT(namePtr);
-
-   printf("0\n");
 
    IdentifierString dynamicName("proxy$");
    if (namePtr) {
       dynamicName.append((const char*)namePtr);
    }
    else dynamicName.appendInt(++autoIndex);
-
-   printf("%s\n", dynamicName.str());
 
    addr_t proxyVMTAddress = _generatedClasses.get(*dynamicName);
    if (!proxyVMTAddress) {
@@ -149,8 +135,6 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
          staticFields[-i] = RetrieveStaticField((uintptr_t)srcVMTPtr, -i);
       }
       staticFields[nameIndex] = nameAddr;
-
-      printf("1\n");
 
       VMTHeader* header = (VMTHeader*)(proxyVMTAddress + staticLen * sizeof(uintptr_t));
       VMTEntry* entries = (VMTEntry*)(proxyVMTAddress + staticLen * sizeof(uintptr_t) + sizeof(VMTHeader));
@@ -184,19 +168,13 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
          i++;
       }
 
-      printf("2\n");
-
       // skip a class header
       proxyVMTAddress = (addr_t)entries;
 
       _generatedClasses.add(*dynamicName, proxyVMTAddress);
    }
 
-   printf("3\n");
-
    SystemRoutineProvider::overrideClass(proxy, (void*)proxyVMTAddress);
-
-   printf("4\n");
 
    return (addr_t)proxy;
 }
