@@ -501,7 +501,9 @@ class PaintboxListener : WindowCallback
    {
       _owner.destroy();
         
-      super.onWMDestoy(hwnd)
+      super.onWMDestoy(hwnd);
+
+      PermVectorTable.release(self);
    }
 }
 
@@ -765,6 +767,13 @@ class PanelListener : WindowCallback
    {
       _owner.resize(control, width, height);
    }
+
+   onWMDestoy(Handle hwnd)
+   {
+      super.onWMDestoy(hwnd);
+
+      PermVectorTable.release(self);
+   }
 }
 
 public sealed class Panel : BasePanel, interface<IControl>
@@ -817,6 +826,13 @@ class RadioButtonGroupListener : WindowCallback
    constructor(RadioButtonGroup owner)
    {
       _owner := owner
+   }
+
+   onWMDestoy(Handle hwnd)
+   {
+      super.onWMDestoy(hwnd);
+
+      PermVectorTable.release(self);
    }
 
    onClick(Handle control)

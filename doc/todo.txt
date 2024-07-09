@@ -5,37 +5,33 @@ In development:
 [development]
   ### EPIC: elena 6.3 ###
 
-  === Iteration 27 (10.06.2024) ===
+  === Iteration 27 (10.07.2024) ===
+  -------------------------------------- 
+  - #658 : create debug adapter
+  
+  --------------------------------------
+
+  === Iteration 28 ===
   --------------------------------------
   dev: 
       - upndown
       - web server - weather forecast
       - a field must be assigned, warn if not
+      - threads : clean the perm table after the thread is stopped / freed     
   gen:
+      - elt : nested executing managed code : keep frames (the frames must be included / excluded correctly)
       - elt : fails after executing several times, exception handler works only once
       - nested call must not stop / start vm, 
-      - 
   maint:
-      - #667
       - elena : nested classes should not be loadable at runtime
+      - #667
       - constructor - single dispatcher
+      - #658
   port:
-      - #658 : create debug adapter
       - x86-64 : vm terminal, ide vm console
-      - 
+      -
+      -
   prom: posting weekly
-  --------------------------------------
-  - elt : nested executing managed code : keep frames (the frames must be included / excluded correctly)
-  --------------------------------------
-  - system'winforms : free PermVectorTable item after the window is closed, to save the resources
-
-  === Iteration 28 ===
-  --------------------------------------
-  dev: 
-  gen:
-  maint:
-  port:
-  prom:
   --------------------------------------
   --------------------------------------
 
