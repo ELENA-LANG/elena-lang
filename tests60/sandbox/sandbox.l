@@ -1,32 +1,55 @@
-import extensions'scripting;
-import system'dynamic'expressions;
+import extensions;
+import system'dynamic;
 
-symbol used : preloaded = new object[]{Expression, DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,LazySymbolExpression};
-
-test()
+interface IDecoratorA
 {
-   var s := new system'dynamic'expressions'SymbolCollection ( 
-      new system'dynamic'expressions'SymbolInfo ( 
-         "program",
-         new system'dynamic'expressions'DynamicSingleton ( 
-            new system'dynamic'expressions'ActionMethodExpression ( 
-               new system'dynamic'expressions'CodeblockExpression ( 
-                  new system'dynamic'expressions'ExtensionOrMessageCallExpression ( 
-                     new system'dynamic'expressions'LazySymbolExpression ( 
-                        "system'console" 
-                     ), 
-                     "writeLine", 
-                     new system'dynamic'expressions'IntConstantExpression ( "2" ) ) ) ) ) ) ) ;
+   abstract giveMe();
+}
 
-      s.safeEval()
+class DecoratorBaseA : IDecoratorA
+{
+   field value;
+
+   constructor(value)
+   {
+      this value := value
+   }
+
+   giveMe()
+      = value;
+}
+
+class DecoratorA
+{
+   object target;
+   object extra;
+
+   constructor(target, extra)
+   {
+      this target := target;
+      this extra := extra;
+   }
+
+   giveMe()
+      = target.giveMe() + extra;
+
+   generic cast()
+   {
+      var type := __received.__getFirstSignatureMember();
+
+      var proxy := ::{ dispatch() => self; };
+      proxy.__injectInferface(type);
+   
+      ^ __received(proxy);
+   }
 }
 
 public program()
 {
-//   var tape := lscript.eval("public program() { system'console.writeLine(2); }");
-//   var program := tape.program;
+   var a := new DecoratorBaseA(2);
+   var decA := new DecoratorA(a, 3);
 
-   test();
+   Assert.ifEqual((decA :as IDecoratorA).giveMe(), 5);
 
-//   program();
+   console.write(".");
 }

@@ -43,7 +43,7 @@ class SDIWindowListener : SDIWindowCallback
    {
       super.onWMDestoy(hwnd);
 
-      //TODO : free PermVectorTable entry to reuse it
+      PermVectorTable.release(self);
    }
 
    onSize(Handle control, int width, int height)
@@ -142,7 +142,7 @@ class ChildWindowListener : ChildWindowCallback
    {
       super.onWMDestoy(hwnd);
 
-      //TODO : free PermVectorTable entry to reuse it
+      PermVectorTable.release(self);
    }
 
    onSize(Handle control, int width, int height)

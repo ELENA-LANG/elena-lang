@@ -71,8 +71,9 @@ public closed class WindowCallback
    onWMDestoy(Handle hwnd)
    {
       extern {
+         extern USER32.SetWindowLongW(hwnd, GWL_USERDATA, 0);
          extern USER32.DefWindowProcW(hwnd, WM_DESTROY, 0, 0);
-      }
+      };
    }
 
    onWMPaint(Handle hwnd)

@@ -96,6 +96,7 @@ namespace elena_lang
       ClosureInfo,
       MemberInfo,
       LocalField,
+      ConstGetter,  // key = value constant
    };
 
    enum TargetMode
@@ -956,6 +957,12 @@ namespace elena_lang
 
             return scope ? scope->reference : 0;
          }
+         ref_t isSealed(bool ownerClass = true)
+         {
+            ClassScope* scope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+            
+            return scope ? test(scope->info.header.flags, elSealed) : false;
+         }
 
          ObjectInfo mapSelf(bool ownerClass = false)
          {
@@ -1153,6 +1160,19 @@ namespace elena_lang
          Class(Namespace& ns, ref_t reference, Visibility visibility);
       };
 
+      class ClassClass
+      {
+         friend class Compiler;
+
+         Compiler*         compiler;
+         ClassClassScope   scope;
+
+      public:
+         void load();
+
+         ClassClass(Class& classHelper);
+      };
+
       class Method
       {
          friend class Compiler;
@@ -1160,8 +1180,11 @@ namespace elena_lang
          Compiler*   compiler;
          MethodScope scope;
 
+         void compileConstructor(BuildTreeWriter& writer, SyntaxNode current, ClassScope& classClassScope);
+
       public:
          void compile(BuildTreeWriter& writer, SyntaxNode current);
+         void compileConstructor(BuildTreeWriter& writer, SyntaxNode current, ClassClass& classClassHelper);
 
          Method(Class& cls);
          Method(Compiler* compiler, ClassScope& classScope);
@@ -1202,6 +1225,7 @@ namespace elena_lang
          ObjectInfo compilePropertyOperation(SyntaxNode node, ref_t targetRef, ExpressionAttribute attrs);
 
          ObjectInfo compileOperation(SyntaxNode node, int operatorId, ref_t expectedRef, ExpressionAttribute mode);
+         ObjectInfo compileEvalOnlySpecialOperation(SyntaxNode node);
          ObjectInfo compileSpecialOperation(SyntaxNode node, int operatorId, ref_t expectedRef);
          ObjectInfo compileAssignOperation(SyntaxNode node, int operatorId, ref_t expectedRef);
          ObjectInfo compileIndexAssignOperation(SyntaxNode lnode, SyntaxNode rnode, int operatorId, ref_t expectedRef);
@@ -1323,6 +1347,7 @@ namespace elena_lang
          ObjectInfo compileObject(SyntaxNode node, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs);
          ObjectInfo compileCollection(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileTupleCollection(SyntaxNode node, ref_t targetRef);
+         ObjectInfo compileKeyValue(SyntaxNode node, ExpressionAttribute mode);
 
          ObjectInfo compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope = false);
 
@@ -1426,6 +1451,7 @@ namespace elena_lang
 
       bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool internalOne, bool& isProtectedDefConst);
 
+      bool importEnumTemplate(Scope& scope, SyntaxNode node, SyntaxNode target);
       bool importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target, bool weakOne);
       bool importInlineTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
       bool importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
@@ -1548,6 +1574,9 @@ namespace elena_lang
       ObjectInfo evalObject(Interpreter& interpreter, Scope& scope, SyntaxNode node);
       ObjectInfo evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool anonymousOne, bool ignoreErrors);
       ObjectInfo evalPropertyOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
+      ObjectInfo evalExprValueOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
+      ObjectInfo evalSizeOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
+      ObjectInfo evalGetter(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
 
       void evalStatement(MetaScope& scope, SyntaxNode node);
 

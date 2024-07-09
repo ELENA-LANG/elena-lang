@@ -41,7 +41,7 @@ bool testMethodHint(ref_t hint, MethodHint mask)
 
 typedef CompilerLogic::Op Op;
 
-constexpr auto OperationLength = 206;
+constexpr auto OperationLength = 207;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -70,6 +70,9 @@ constexpr Op Operations[OperationLength] =
    },
    {
       NAME_OPERATOR_ID, BuildKey::DeclOp, V_DECLARATION, 0, 0, V_STRING
+   },
+   {
+      NAME_OPERATOR_ID, BuildKey::DeclOp, V_GETTER, 0, 0, V_STRING
    },
    {
       REFERENCE_OPERATOR_ID, BuildKey::DeclOp, V_DECLARATION, 0, 0, V_STRING
@@ -760,6 +763,9 @@ bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& vis
          break;
       case V_FIELD:
          type = TemplateType::InlineProperty;
+         break;
+      case V_ENUMERATION:
+         type = TemplateType::Enumeration;
          break;
       case V_TEMPLATE:
       case V_WEAK:

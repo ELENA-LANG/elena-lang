@@ -18,7 +18,7 @@ public singleton messageBox
    }
 }
 
-packed tagOFNA
+struct tagOFNA
 {
    int         lStructSize : prop;
    Handle      hwndOwner : prop;
@@ -37,7 +37,7 @@ packed tagOFNA
    short       nFileOffset : prop;
    short       nFileExtension : prop;
    pointer     lpstrDefExt : prop;
-   int         lCustData : prop;
+   pointer     lCustData : prop;
    pointer     lpfnHook : prop;
    pointer     lpTemplateName : prop;
    pointer     pvReserved : prop;
@@ -105,7 +105,7 @@ class BaseFileDialog
 
    internal prepare(tagOFNA struct, short[] filters, short[] fileName, int maxFile)
    {
-      struct.lStructSize := 88;
+      struct.lStructSize := $size struct;
       struct.hwndOwner := _parent.Handle;
       struct.hInstance := CurrentInstance.Handle;
       struct.lpstrFilter := filters;

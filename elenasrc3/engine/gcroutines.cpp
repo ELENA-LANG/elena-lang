@@ -302,8 +302,6 @@ inline void FixObject(GCTable* table, GCRoot* roots, size_t start, size_t end)
       // ; check if it valid reference
       if (*ptr >= start && *ptr < end) {
 
-         uintptr_t t = *ptr;
-
          ObjectPage* pagePtr = getObjectPage(*ptr);
          uintptr_t mappings = table->gc_header + (((uintptr_t)pagePtr - table->gc_start) >> page_size_order_minus2);
 
@@ -468,7 +466,6 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
       if (size == INVALID_SIZE)
          return nullptr;
 
-      uintptr_t allocated = table->gc_yg_current;
       if (table->gc_yg_end - table->gc_yg_current < size) {
          // ; try to allocate in the mg
          while (table->gc_end - table->gc_mg_current < size) {

@@ -144,12 +144,12 @@ namespace calendar
         
       long tm_usec;        
 
-      embeddable constructor(SystemTime time)
+      constructor(SystemTime time)
       {
          self.write(time)
       }
 
-      embeddable constructor()
+      constructor()
       {
          tm_isdst := -1
       }

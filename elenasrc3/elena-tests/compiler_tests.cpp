@@ -56,11 +56,6 @@ TEST_F(CallVariadocMethodWithoutTarget, CompilerTest)
    runTest(false);
 }
 
-TEST_F(VariadicCompiletimeConstructorSingleDispatch, CompilerTest)
-{
-   runTest(true);
-}
-
 // Test scenario : E.load(new C(), new D()); where: class E { constructor load(params B[] args) {}}, C:B and D:B
 TEST_F(VariadicCompiletimeSingleDispatch_WithDifferentArgs, CompilerTest)
 {

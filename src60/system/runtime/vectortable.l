@@ -16,6 +16,9 @@ class PermVectorArray
    setAt(int index, object obj)
       : external(system'core_routines'__perm_array_set);
 
+   removeAt(int index)
+      : external(system'core_routines'__perm_array_clear);
+
    int Length
    {
       get()
@@ -32,7 +35,8 @@ class PermVectorArray
 
 class PermVectorChain
 {
-   Reference<int> Used : rprop;
+   Reference<int> Free    : rprop;
+   Reference<int> Current : rprop;
 
    PermVectorArray Array : rprop;
 
@@ -42,30 +46,66 @@ class PermVectorChain
 
    get bool isAvailable()
    {
-      int length := Array.Length;
-      int used := *Used;
+      int free := *Free;
 
-      ^ length > used;
+      ^ free > 0;
    }
 
    pointer allocate(object)
    {
-      int     index := *Used;
+      int     index := *Current;
+      while (Array[index] != nil)
+         index++;
 
       Array[index] := object;
 
-      Used.append(1);
+      Current.Value := index + 1;
+
+      Free.reduce(1);
 
       Array.refer(index, out pointer ptr);
 
       ^ ptr;
    }
 
+   int indexOf(object)
+   {
+      int len := Array.Length;
+      for (int i := 0; i < len; i++) {
+         if (Array[i] != nil && object == Array[i]) {
+            ^ i
+         }
+      };
+
+      ^ -1
+   }
+
+   remove(int index)
+   {
+      Array.removeAt(index);
+   }
+
+   bool rearrange()
+   {
+      int len := Array.Length;
+      int free := 0;
+      for (int i := 0; i < len; i++) {
+         if (Array[i] == nil)
+            free++;
+      };
+
+      Current.Value := 0;
+      Free.Value := free;
+
+      ^ self.isAvailable;
+   }
+
    constructor(PermVectorChain next)
    {
-      Array := self.createArray();
-      Used  := 0;
-      Next  := next;
+      Array   := self.createArray();
+      Current := 0;
+      Free    := Array.Length;
+      Next    := next;
    }
 }
 
@@ -73,6 +113,7 @@ class PermVectorChain
 
 public singleton PermVectorTable
 {
+   static PermVectorChain _firstChainItem;
    static PermVectorChain _chainItem;
 
    get private bool isAvailable()
@@ -87,14 +128,57 @@ public singleton PermVectorTable
       ^  false;
    }
 
+   bool rearrange()
+   {
+      PermVectorChain previous := nil;
+      PermVectorChain current := _firstChainItem;
+      while (current != nil) {
+         if (current.rearrange()) {
+            _chainItem := current;
+
+            ^ true
+         };
+
+         previous := current;
+         current := current.Next;
+      };
+
+      if (previous == nil) {
+         _firstChainItem := new PermVectorChain(previous);
+         _chainItem := _firstChainItem;
+
+         ^ true
+      };
+      _chainItem := previous;
+
+      ^ false;
+   }
+
    pointer allocate(object obj)
    {
       if (!self.isAvailable) {
-         _chainItem := new PermVectorChain(_chainItem);
+         ifnot (rearrange()) {
+            _chainItem := new PermVectorChain(_chainItem);
+         }
       };
 
       pointer ptr := _chainItem.allocate(obj);
 
       ^ ptr;
+   }
+
+   release(object obj)
+   {
+      PermVectorChain current := _firstChainItem;
+      while (current != nil) {
+         int index := current.indexOf(obj);
+         if (index >= 0) {
+            current.remove(index);
+
+            $break;
+         };
+
+         current := current.Next;
+      };
    }
 }
