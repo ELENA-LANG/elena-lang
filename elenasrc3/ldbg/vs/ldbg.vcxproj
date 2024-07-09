@@ -167,12 +167,17 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\ldbg_session.cpp" />
     <ClCompile Include="..\windows\ldbg.cpp" />
+    <ClCompile Include="..\..\dpa\session.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\ldbg_session.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="..\dpaconst.h" />
     <ClInclude Include="..\..\common\common.h" />
+    <ClInclude Include="..\..\dpa\dpa_common.h" />
+    <ClInclude Include="..\..\dpa\session.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
