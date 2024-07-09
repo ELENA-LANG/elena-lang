@@ -11,7 +11,13 @@
 
 namespace dpa
 {
-
+   // --- Session ---
+   class Session
+   {
+   public:
+      Session();
+      virtual ~Session();
+   };
 }
 
 #endif

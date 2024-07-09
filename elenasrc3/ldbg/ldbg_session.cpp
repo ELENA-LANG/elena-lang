@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------
 
 #include "ldbg_session.h"
+#include "common.h"
 
 using namespace elena_lang;
 
@@ -17,7 +18,12 @@ DPASessionWrapper :: DPASessionWrapper()
 
 }
 
+DPASessionWrapper :: ~DPASessionWrapper()
+{
+   freeobj(_session);
+}
+
 void DPASessionWrapper :: prepare()
 {
-
+   _session = new dpa::Session();
 }

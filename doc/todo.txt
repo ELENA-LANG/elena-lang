@@ -5,12 +5,6 @@ In development:
 [development]
   ### EPIC: elena 6.3 ###
 
-  === Iteration 27 (10.07.2024) ===
-  -------------------------------------- 
-  - #658 : create debug adapter
-  
-  --------------------------------------
-
   === Iteration 28 ===
   --------------------------------------
   dev: 
@@ -26,7 +20,7 @@ In development:
       - elena : nested classes should not be loadable at runtime
       - #667
       - constructor - single dispatcher
-      - #658
+      - #658 : create debug adapter
   port:
       - x86-64 : vm terminal, ide vm console
       -

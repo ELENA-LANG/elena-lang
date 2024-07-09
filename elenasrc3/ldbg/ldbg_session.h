@@ -15,10 +15,13 @@ namespace elena_lang
 {
    class DPASessionWrapper
    {
+      dpa::Session* _session;
+
    public:
       void prepare();
 
       DPASessionWrapper();
+      virtual ~DPASessionWrapper();
    };
 }
 
