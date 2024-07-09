@@ -10,21 +10,19 @@ In development:
   dev: 
       - upndown
       - web server - weather forecast
-      - a field must be assigned, warn if not
-      - threads : clean the perm table after the thread is stopped / freed     
+      - #668
   gen:
       - elt : nested executing managed code : keep frames (the frames must be included / excluded correctly)
       - elt : fails after executing several times, exception handler works only once
       - nested call must not stop / start vm, 
   maint:
       - elena : nested classes should not be loadable at runtime
+      - constructor - single dispatcher; passing nil to single dispatcher (both normal / constructor)
       - #667
-      - constructor - single dispatcher
-      - #658 : create debug adapter
   port:
       - x86-64 : vm terminal, ide vm console
-      -
-      -
+      - #658 : create simplest debug adapter; connect with it from VSCode
+      - linux sdi - menu / new file
   prom: posting weekly
   --------------------------------------
   --------------------------------------
