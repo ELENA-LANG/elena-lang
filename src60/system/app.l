@@ -32,7 +32,7 @@ entry()
       function(AbortException e)
       {
       }
-    
+
       function(Exception err)
       {
          startUpEvents.handlingError(err);

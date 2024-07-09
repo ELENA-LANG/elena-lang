@@ -46,6 +46,7 @@
 #let attributes["var"]         := 8000100Dh;
 #let attributes["this"]        := 8000100Eh;
 #let attributes["static"]      := 8000100Fh;
+#let attributes["enumeration"] := 80001010h;
 #let attributes["cast"]        := 80001011h;
 #let attributes["new"]         := 80001012h;
 #let attributes["dispatch"]    := 80001013h;

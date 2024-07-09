@@ -1,4 +1,7 @@
+## ELENA 6.3.0
+
 ## ELENA 6.2.0
+*25.06.2024*
 
 - ELC
   - [ADDED] optimized ternary expressions

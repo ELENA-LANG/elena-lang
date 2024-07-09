@@ -158,6 +158,20 @@ bool CompilingProcess::TemplateGenerator :: importExpressionTemplate(ModuleScope
    return true;
 }
 
+bool CompilingProcess::TemplateGenerator :: importEnumTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
+   SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
+{
+   auto sectionInfo = moduleScope.getSection(
+      moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
+
+   if (!sectionInfo.section)
+      return false;
+
+   _processor.importEnumTemplate(sectionInfo.section, target, arguments, parameters);
+
+   return true;
+}
+
 size_t getLengthSkipPostfix(ustr_t name)
 {
    size_t len = name.length();

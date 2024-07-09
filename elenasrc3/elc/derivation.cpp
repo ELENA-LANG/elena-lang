@@ -784,6 +784,13 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
             }
             else flushNode(writer, scope, current);
          }
+         else if (scope.withEnumParameter()) {
+            int index = scope.parameters.get(current.identifier());
+            if (index) {
+               key = SyntaxKey::EnumNameArgParameter;
+               attrRef = index + scope.nestedLevel;
+            }
+         }
 
          writer.newNode(key, attrRef);
          flushNode(writer, scope, current);
@@ -971,6 +978,26 @@ void SyntaxTreeBuilder :: flushParentTemplate(SyntaxTreeWriter& writer, Scope& s
    writer.closeNode();
 }
 
+void SyntaxTreeBuilder :: flushEnumTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+{
+   writer.newNode(node.key);
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::TemplateArg) {
+         flushTemplateArg(writer, scope, current, true);
+      }
+      else if (current == SyntaxKey::Expression) {
+         flushExpression(writer, scope, current);
+      }
+      else flushNode(writer, scope, current);
+
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+}
+
 void SyntaxTreeBuilder :: flushParent(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
 {
    ref_t attributeCategory = V_CATEGORY_MAX;
@@ -979,6 +1006,9 @@ void SyntaxTreeBuilder :: flushParent(SyntaxTreeWriter& writer, Scope& scope, Sy
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::TemplatePostfix) {
          flushParentTemplate(writer, scope, current);
+      }
+      else if (current == SyntaxKey::EnumPostfix) {
+         flushEnumTemplate(writer, scope, current);
       }
       else if (testNodeMask(current.key, SyntaxKey::TerminalMask)) {
          flushAttribute(writer, scope, current, attributeCategory, current.nextNode() == SyntaxKey::None);
@@ -1490,6 +1520,13 @@ void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, 
 {
    // load arguments
    SyntaxNode current = node.findChild(SyntaxKey::TemplateArg);
+   if (scope.type == ScopeType::Enumeration) {
+      // NOTE : the first argument is the enumeration member
+      flushParameterArgDescr(writer, scope, current);
+
+      current = current.nextNode();
+   }
+
    while (current == SyntaxKey::TemplateArg) {
       flushTemplateArgDescr(writer, scope, current);
 
@@ -1613,6 +1650,9 @@ SyntaxTreeBuilder::ScopeType SyntaxTreeBuilder :: defineTemplateType(SyntaxNode 
                break;
             case V_EXTENSION:
                type = ScopeType::ExtensionTemplate;
+               break;
+            case V_ENUMERATION:
+               type = ScopeType::Enumeration;
                break;
             default:
                break;
@@ -1825,6 +1865,13 @@ void SyntaxTreeBuilder :: clearMetaSection(SyntaxNode node)
 
 // --- TemplateProssesor ---
 
+void TemplateProssesor :: copyKVKey(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node)
+{
+   SyntaxNode key = node.firstChild();
+
+   copyChildren(writer, scope, key);
+}
+
 void TemplateProssesor :: copyNode(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node)
 {
    switch (node.key) {
@@ -1861,6 +1908,32 @@ void TemplateProssesor :: copyNode(SyntaxTreeWriter& writer, TemplateScope& scop
             //writer.newNode(SyntaxKey::Name);
             copyChildren(writer, scope, nodeToInject);
             //writer.closeNode();
+         }
+         else {
+            writer.newNode(node.key, node.arg.reference - 0x100);
+            copyChildren(writer, scope, node);
+            writer.closeNode();
+         }
+         break;
+      case SyntaxKey::EnumNameArgParameter:
+         if (node.arg.reference < 0x100) {
+            SyntaxNode nodeToInject = scope.parameterValues.get(scope.enumIndex);
+
+            writer.newNode(SyntaxKey::Name);
+            copyKVKey(writer, scope, nodeToInject.firstChild());
+            writer.closeNode();
+         }
+         else {
+            writer.newNode(node.key, node.arg.reference - 0x100);
+            copyChildren(writer, scope, node);
+            writer.closeNode();
+         }
+         break;
+      case SyntaxKey::EnumArgParameter:
+         if (node.arg.reference < 0x100) {
+            SyntaxNode nodeToInject = scope.parameterValues.get(scope.enumIndex);
+            writer.CurrentNode().setKey(nodeToInject.key);
+            copyChildren(writer, scope, nodeToInject);
          }
          else {
             writer.newNode(node.key, node.arg.reference - 0x100);
@@ -1925,6 +1998,16 @@ void TemplateProssesor :: copyClassMembers(SyntaxTreeWriter& writer, TemplateSco
    }
 }
 
+void TemplateProssesor :: generateEnumTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node)
+{
+   scope.enumIndex = 0;
+   for (auto it = scope.parameterValues.start(); !it.eof(); ++it) {
+      scope.enumIndex++;
+
+      copyClassMembers(writer, scope, node);
+   }
+}
+
 void TemplateProssesor :: generate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateSection)
 {
    SyntaxTree templateTree;
@@ -1940,6 +2023,9 @@ void TemplateProssesor :: generate(SyntaxTreeWriter& writer, TemplateScope& scop
       case Type::InlineProperty:
       case Type::Class:
          copyClassMembers(writer, scope, root);
+         break;
+      case Type::Enumeration:
+         generateEnumTemplate(writer, scope, root);
          break;
       case Type::ExpressionTemplate:
          copyChildren(writer, scope, root.findChild(SyntaxKey::ReturnExpression));
@@ -1982,7 +2068,7 @@ void TemplateProssesor :: importTemplate(Type type, MemoryBase* templateSection,
    bufferWriter.closeNode();
 
    SyntaxTreeWriter targetWriter(target);
-   if (type == Type::Class || type == Type::InlineProperty) {
+   if (type == Type::Class || type == Type::InlineProperty || type == Type::Enumeration) {
       SyntaxNode current = bufferTree.readRoot().firstChild();
       while (current != SyntaxKey::None) {
          if(current == SyntaxKey::Method) {
@@ -2033,6 +2119,12 @@ void TemplateProssesor :: importExpressionTemplate(MemoryBase* templateSection,
    SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
 {
    importTemplate(Type::ExpressionTemplate, templateSection, target, &arguments, &parameters);
+}
+
+void TemplateProssesor :: importEnumTemplate(MemoryBase* templateSection,
+   SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
+{
+   importTemplate(Type::Enumeration, templateSection, target, &arguments, &parameters);
 }
 
 void TemplateProssesor :: copyField(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node)

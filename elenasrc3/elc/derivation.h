@@ -27,6 +27,7 @@ namespace elena_lang
          PropertyTemplate,
          ExtensionTemplate,
          ExpressionTemplate,
+         Enumeration
       };
 
       struct Scope
@@ -39,11 +40,15 @@ namespace elena_lang
 
          bool withTypeParameters() const
          {
-            return type == ScopeType::ClassTemplate || type == ScopeType::PropertyTemplate || type == ScopeType::ExtensionTemplate;
+            return type == ScopeType::ClassTemplate || type == ScopeType::PropertyTemplate || type == ScopeType::ExtensionTemplate || type == ScopeType::Enumeration;
          }
          bool withNameParameters() const
          {
             return type == ScopeType::PropertyTemplate;
+         }
+         bool withEnumParameter() const
+         {
+            return type == ScopeType::Enumeration;
          }
 
          bool isParameter(SyntaxNode node, SyntaxKey& parameterKey, ref_t& parameterIndex, bool allowType)
@@ -93,6 +98,17 @@ namespace elena_lang
                      }
                   }
                   return false;
+               case ScopeType::Enumeration:
+               {
+                  ref_t index = parameters.get(node.identifier());
+                  if (index > 0) {
+                     parameterKey = SyntaxKey::EnumArgParameter;
+                     parameterIndex = index + nestedLevel;
+
+                     return true;
+                  }
+                  return false;
+               }
                default:
                   return false;
             }
@@ -161,6 +177,7 @@ namespace elena_lang
       void flushStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushMethodCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushTupleType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory);
+      void flushEnumTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
       void copyHeader(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool includeType);
       void copyType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
@@ -251,7 +268,8 @@ namespace elena_lang
          CodeTemplate,
          Class,
          InlineProperty,
-         ExpressionTemplate
+         ExpressionTemplate,
+         Enumeration
       };
 
       typedef Map<ref_t, SyntaxNode> NodeMap;
@@ -263,12 +281,13 @@ namespace elena_lang
          NodeMap          parameterValues;
          ModuleScopeBase* moduleScope;
          ref_t            targetRef;
+         int              enumIndex;
 
          TemplateScope() :
             type(Type::None),
             argValues({}),
             parameterValues({}),
-            moduleScope(nullptr), targetRef(0)
+            moduleScope(nullptr), targetRef(0), enumIndex(0)
          {
          }
          TemplateScope(Type type, ModuleScopeBase* scope, ref_t targetRef) :
@@ -276,7 +295,8 @@ namespace elena_lang
             argValues({}),
             parameterValues({}),
             moduleScope(scope),
-            targetRef(targetRef)
+            targetRef(targetRef),
+            enumIndex(0)
          {
          }
       };
@@ -291,8 +311,11 @@ namespace elena_lang
       void copyParent(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyClassMembers(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyTemplatePostfix(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void copyKVKey(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
 
       void copyModuleInfo(SyntaxTreeWriter& writer, SyntaxNode rootNode, TemplateScope& scope);
+
+      void generateEnumTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
 
       void generate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateSection);
 
@@ -309,6 +332,8 @@ namespace elena_lang
       void importCodeTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
       void importExpressionTemplate(MemoryBase* templateSection,
+         SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
+      void importEnumTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
 
       void generateClassTemplate(ModuleScopeBase* moduleScope, ref_t classRef, SyntaxTreeWriter& writer,

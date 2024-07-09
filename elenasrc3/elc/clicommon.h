@@ -145,7 +145,8 @@ enum class TemplateType
    InlineProperty,
    Class,
    Statement,
-   Expression
+   Expression,
+   Enumeration
 };
 
 enum class Visibility
@@ -525,6 +526,8 @@ public:
       List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
    virtual bool importExpressionTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
+   virtual bool importEnumTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
+      SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
 };
 
 // --- SyntaxWriterBase ---

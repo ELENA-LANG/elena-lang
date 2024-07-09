@@ -1644,6 +1644,16 @@ procedure __perm_array_set
 
 end
 
+procedure __perm_array_clear
+
+ peek       sp:1
+ load
+ set        nil
+ swap       sp:0
+ xassign
+
+end
+
 procedure __perm_array_refer (self,index,retVal)
 
   xflush     sp:0
