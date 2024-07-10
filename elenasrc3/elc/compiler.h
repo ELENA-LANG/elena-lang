@@ -1411,6 +1411,7 @@ namespace elena_lang
 
       void declareTemplateAttributes(Scope& scope, SyntaxNode node, TemplateTypeList& parameters, 
          TypeAttributes& attributes, bool declarationMode, bool objectMode);
+      void declareIncludeAttributes(Scope& scope, SyntaxNode node, bool& textBlock);
 
       static int defineFieldSize(Scope& scope, ObjectInfo info);
 
@@ -1443,6 +1444,7 @@ namespace elena_lang
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
          ustr_t prefix, SyntaxKey argKey, ustr_t postFix);
+      ref_t retrieveBlock(NamespaceScope& scope, SyntaxNode node);
 
       static mssg_t resolveOperatorMessage(ModuleScopeBase* scope, int operatorId);
       static mssg_t resolveVariadicMessage(Scope& scope, mssg_t message);
@@ -1453,6 +1455,7 @@ namespace elena_lang
 
       bool importEnumTemplate(Scope& scope, SyntaxNode node, SyntaxNode target);
       bool importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target, bool weakOne);
+      bool includeBlock(Scope& scope, SyntaxNode node, SyntaxNode target);
       bool importInlineTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
       bool importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
       void importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNode);

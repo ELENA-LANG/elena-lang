@@ -1048,6 +1048,13 @@ void SyntaxTreeBuilder :: flushClassPostfixes(SyntaxTreeWriter& writer, Scope& s
             writer.closeNode();
          }
       }
+      else if (current.key == SyntaxKey::IncludeStatement) {
+         writer.newNode(SyntaxKey::IncludeStatement);
+         writer.newNode(SyntaxKey::Object);
+         flushTemplateType(writer, scope, current);
+         writer.closeNode();
+         writer.closeNode();
+      }
 
       current = current.nextNode();
    }
@@ -1606,30 +1613,54 @@ inline bool isTemplate(SyntaxNode node)
    return false;
 }
 
+inline bool isTextblock(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current == SyntaxKey::Attribute) {
+      if (current.arg.reference == V_TEXTBLOCK) {
+         return true;
+      }
+      current = current.nextNode();
+   }
+
+   return false;
+}
+
 inline bool isTemplateDeclaration(SyntaxNode node, SyntaxNode declaration, bool& withComplexName)
 {
    bool withPostfix = false;
 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      if (current == SyntaxKey::TemplateArg) {
-         return true;
+      switch (current.key) {
+         case SyntaxKey::TemplateArg:
+            return true;
+         case SyntaxKey::Postfix:
+            withPostfix = true;
+            break;
+         case SyntaxKey::ComplexName:
+            withComplexName = true;
+            break;
+         case SyntaxKey::Parameter:
+            if (withPostfix || isTemplate(declaration)) {
+               return true;
+            }
+            break;
+         case SyntaxKey::CodeBlock:
+            if (!withPostfix && isTemplate(declaration)) {
+               // HOTFIX : recognize inline template with no arguments
+               return true;
+            }
+            break;
+         case SyntaxKey::identifier:
+            if (isTextblock(declaration)) {
+               // HOTFIX : recognize text blocks
+               return true;
+            }
+            break;
+         default:
+            return false;
       }
-      else if (current == SyntaxKey::Postfix) {
-         withPostfix = true;
-      }
-      else if (current == SyntaxKey::ComplexName) {
-         withComplexName = true;
-      }
-      else if (current == SyntaxKey::Parameter && (withPostfix || isTemplate(declaration))) {
-         return true;
-      }
-      else if (current == SyntaxKey::CodeBlock && !withPostfix && isTemplate(declaration)) {
-         // HOTFIX : recognize inline template with no arguments
-         return true;
-      }
-      else if (current != SyntaxKey::identifier) 
-         break;
 
       current = current.nextNode();
    }
@@ -1653,6 +1684,9 @@ SyntaxTreeBuilder::ScopeType SyntaxTreeBuilder :: defineTemplateType(SyntaxNode 
                break;
             case V_ENUMERATION:
                type = ScopeType::Enumeration;
+               break;
+            case V_TEXTBLOCK:
+               type = ScopeType::Textblock;
                break;
             default:
                break;
@@ -1958,6 +1992,11 @@ void TemplateProssesor :: copyNode(SyntaxTreeWriter& writer, TemplateScope& scop
          copyChildren(writer, scope, node);
          writer.closeNode();
          break;
+      case SyntaxKey::IncludeStatement:
+         writer.newNode(SyntaxKey::IncludeStatement);
+         copyChildren(writer, scope, node);
+         writer.closeNode();
+         break;
       default:
          SyntaxTree::copyNewNode(writer, node);
          copyChildren(writer, scope, node);
@@ -2022,6 +2061,7 @@ void TemplateProssesor :: generate(SyntaxTreeWriter& writer, TemplateScope& scop
          break;
       case Type::InlineProperty:
       case Type::Class:
+      case Type::Textblock:
          copyClassMembers(writer, scope, root);
          break;
       case Type::Enumeration:
@@ -2125,6 +2165,11 @@ void TemplateProssesor :: importEnumTemplate(MemoryBase* templateSection,
    SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
 {
    importTemplate(Type::Enumeration, templateSection, target, &arguments, &parameters);
+}
+
+void TemplateProssesor :: importTextblock(MemoryBase* templateSection, SyntaxNode target)
+{
+   importTemplate(Type::Textblock, templateSection, target, nullptr, nullptr);
 }
 
 void TemplateProssesor :: copyField(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node)

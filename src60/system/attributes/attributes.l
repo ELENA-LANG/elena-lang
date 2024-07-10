@@ -50,6 +50,7 @@
 #let attributes["cast"]        := 80001011h;
 #let attributes["new"]         := 80001012h;
 #let attributes["dispatch"]    := 80001013h;
+#let attributes["textblock"]   := 80001014h;
 #let attributes["extern"]      := 80001015h;
 #let attributes["intern"]      := 80001016h;
 #let attributes["forward"]     := 80001017h;

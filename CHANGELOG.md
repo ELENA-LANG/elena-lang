@@ -1,5 +1,32 @@
 ## ELENA 6.3.0
 
+- ELENA
+  - [ADDED] key-value expression
+  - [ADDED] #265 : Support enumeration list
+  - [ADDED] self attribute
+  - [ADDED] new operator $size
+
+- ELC
+  - [FIXED] private constructor must be called directly
+  - [FIXED] accessing static fields inside a structure
+  - [FIXED] ppc64le : decoratorTest()
+
+- VM
+
+- RT
+
+- API
+  - [ADDED] reusing PermVectorTable after windows are closed
+
+- SAMPLES
+
+- Tools
+  - [ADDED] #658 : new project LDBG - ELENA Debugger Adapter
+
+- IDE
+
+- Misc
+
 ## ELENA 6.2.0
 *25.06.2024*
 

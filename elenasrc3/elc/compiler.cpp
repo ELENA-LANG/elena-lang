@@ -2046,6 +2046,28 @@ ref_t Compiler :: retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<
    return reference;
 }
 
+ref_t Compiler :: retrieveBlock(NamespaceScope& scope, SyntaxNode node)
+{
+   SyntaxNode identNode = node.firstChild(SyntaxKey::TerminalMask);
+
+   IdentifierString templateName;
+
+   templateName.append(CLASSBLOCK_PREFIX);
+   templateName.append(identNode.identifier());
+
+   NamespaceScope* ns = &scope;
+   ref_t reference = ns->resolveImplicitIdentifier(*templateName, false, true);
+   while (!reference && ns->parent != nullptr) {
+      ns = Scope::getScope<NamespaceScope>(*ns->parent, Scope::ScopeLevel::Namespace);
+      if (ns) {
+         reference = ns->resolveImplicitIdentifier(*templateName, false, false);
+      }
+      else break;
+   }
+
+   return reference;
+}
+
 bool Compiler :: importEnumTemplate(Scope& scope, SyntaxNode node, SyntaxNode target)
 {
    TypeAttributes attributes = {};
@@ -2095,6 +2117,26 @@ bool Compiler :: importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target
       return false;
 
    if(!_templateProcessor->importTemplate(*scope.moduleScope, templateRef, target, parameters))
+      scope.raiseError(errInvalidOperation, node);
+
+   return true;
+}
+
+bool Compiler :: includeBlock(Scope& scope, SyntaxNode node, SyntaxNode target)
+{
+   TypeAttributes attributes = {};
+
+   bool textBlock = false;
+   declareIncludeAttributes(scope, node, textBlock);
+   if (!textBlock)
+      scope.raiseError(errInvalidOperation, node);
+
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+   ref_t templateRef = retrieveBlock(*ns, node);
+   if (!templateRef)
+      return false;
+
+   if (!_templateProcessor->importTextblock(*scope.moduleScope, templateRef, target))
       scope.raiseError(errInvalidOperation, node);
 
    return true;
@@ -4923,6 +4965,7 @@ void Compiler :: declareTemplate(TemplateScope& scope, SyntaxNode& node)
       case TemplateType::Enumeration:
       case TemplateType::Class:
       case TemplateType::InlineProperty:
+      case TemplateType::ClassBlock:
       {
          // COMPILER MAGIC : inject imported namespaces & source path
          NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
@@ -4958,6 +5001,11 @@ void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
    switch (scope.type) {
       case TemplateType::Inline:
          prefix.append(INLINE_PREFIX);
+         if (argCount > 0)
+            scope.raiseError(errInvalidSyntax, node);
+         break;
+      case TemplateType::ClassBlock:
+         prefix.append(CLASSBLOCK_PREFIX);
          if (argCount > 0)
             scope.raiseError(errInvalidSyntax, node);
          break;
@@ -5021,6 +5069,10 @@ void Compiler :: declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
          break;
       case TemplateType::Enumeration:
          postfix.append(ENUM_POSTFIX);
+         break;
+      case TemplateType::ClassBlock:
+         prefix.append(CLASSBLOCK_PREFIX);
+         postfix.clear();
          break;
       default:
          break;
@@ -5251,6 +5303,23 @@ void Compiler :: declareTemplateAttributes(Scope& scope, SyntaxNode node,
 
             break;
          }
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: declareIncludeAttributes(Scope& scope, SyntaxNode node, bool& textBlock)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Attribute:
+            if (!_logic->validateIncludeAttribute(current.arg.reference, textBlock))
+               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+            break;
          default:
             break;
       }
@@ -10777,6 +10846,10 @@ void Compiler::Class :: resolveClassPostfixes(SyntaxNode node, bool extensionMod
 
             break;
          }
+         case SyntaxKey::IncludeStatement:
+            if (!compiler->includeBlock(scope, current.firstChild(), node))
+               scope.raiseError(errUnknownTemplate, current);
+            break;
          default:
             break;
       }

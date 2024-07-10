@@ -225,6 +225,11 @@ bool TestTemplateProssesor :: importEnumTemplate(ModuleScopeBase& moduleScope, r
    return false;
 }
 
+bool TestTemplateProssesor :: importTextblock(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target)
+{
+   return false;
+}
+
 // --- CompilerEnvironment ---
 
 CompilerEnvironment :: CompilerEnvironment()

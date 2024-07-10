@@ -172,6 +172,19 @@ bool CompilingProcess::TemplateGenerator :: importEnumTemplate(ModuleScopeBase& 
    return true;
 }
 
+bool CompilingProcess::TemplateGenerator :: importTextblock(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target)
+{
+   auto sectionInfo = moduleScope.getSection(
+      moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
+
+   if (!sectionInfo.section)
+      return false;
+
+   _processor.importTextblock(sectionInfo.section, target);
+
+   return true;
+}
+
 size_t getLengthSkipPostfix(ustr_t name)
 {
    size_t len = name.length();
