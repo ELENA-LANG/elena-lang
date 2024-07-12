@@ -1,19 +1,17 @@
-import extensions;
+static Reference<int> Seed = 0;
 
-textblock A
+int getSeed()
 {
-   foo() { console.writeLine("foo") }
-}
+   int newVal := Seed + 1;
 
-class B : using(A)
-{
-   bar() { console.writeLine("bar") }
+   Seed.Value := newVal;
+
+   ^ newVal;
 }
 
 public program()
 {
-   var b := new B();
-
-   b.foo();
-   b.bar();
+   console.writeLine(getSeed());
+   console.writeLine(getSeed());
+   console.writeLine(getSeed());
 }

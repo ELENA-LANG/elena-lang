@@ -1338,7 +1338,7 @@ namespace elena_lang
          void compileAssigning(SyntaxNode node, ObjectInfo target, ObjectInfo source, bool noConversion = false);
          void compileConverting(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool stackSafe);
 
-         ObjectInfo compileSymbolRoot(SyntaxNode bodyNode, ExpressionAttribute mode);
+         ObjectInfo compileSymbolRoot(SyntaxNode bodyNode, ExpressionAttribute mode, ref_t targetRef);
          ObjectInfo compileRoot(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileReturning(SyntaxNode node, ExpressionAttribute mode, TypeInfo outputInfo);
 

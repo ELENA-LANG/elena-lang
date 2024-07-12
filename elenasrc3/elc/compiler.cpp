@@ -7397,7 +7397,7 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
       mode = mode | ExpressionAttribute::ConstantExpr;
 
    Expression expression(this, scope, writer);
-   ObjectInfo retVal = expression.compileSymbolRoot(bodyNode, mode);
+   ObjectInfo retVal = expression.compileSymbolRoot(bodyNode, mode, scope.info.typeRef);
 
    writer.appendNode(BuildKey::CloseFrame);
 
@@ -11033,12 +11033,12 @@ Compiler::Expression :: Expression(Code& code, BuildTreeWriter& writer)
 
 }
 
-ObjectInfo Compiler::Expression :: compileSymbolRoot(SyntaxNode bodyNode, EAttr mode)
+ObjectInfo Compiler::Expression :: compileSymbolRoot(SyntaxNode bodyNode, EAttr mode, ref_t targetRef)
 {
    writer->appendNode(BuildKey::OpenStatement);
    addBreakpoint(*writer, findObjectNode(bodyNode), BuildKey::Breakpoint);
 
-   ObjectInfo retVal = compile(bodyNode.firstChild(), 0, mode, nullptr);
+   ObjectInfo retVal = compile(bodyNode.firstChild(), targetRef, mode, nullptr);
 
    writeObjectInfo(boxArgument(retVal, false, true, false));
 

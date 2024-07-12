@@ -22,13 +22,12 @@ In development:
       - linux sdi - menu / new file
   prom: posting weekly
   --------------------------------------
-  - #667
   - elt : nested executing managed code : keep frames (the frames must be included / excluded correctly)
   - upndown
   * upndown : creating a solution
-  - xforms : import vs injection
+  - xforms : using shared code instead of injection
   --------------------------------------
-  - shared inline template
+  - #667 : Boxing the symbol expression
 
   === Iteration 29 ===
   --------------------------------------
