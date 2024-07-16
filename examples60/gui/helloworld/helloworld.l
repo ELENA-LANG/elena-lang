@@ -1,18 +1,9 @@
 import xforms;
 
-public class MainWindow
+public class MainWindow : XForm, using(MainWindow)
 {
-   Form;
-    
    constructor new()
+      <= super new()
    {
-      Form := (forward loader)(self)
    }
-    
-/*    onExit(arg)
-    {
-        forward program.stop()
-    }*/
-    
-   dispatch() => Form;    
 }

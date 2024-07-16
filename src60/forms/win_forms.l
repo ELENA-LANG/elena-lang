@@ -62,7 +62,10 @@ public closed class SDIForm : BaseWinForm
    constructor new()
       <= super new()
    {
+      onInit();
    }
+
+   onInit() {}
 
    internal createHandle()
    {

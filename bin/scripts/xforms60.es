@@ -1,96 +1,173 @@
 [[
-   #grammar cf
+  #grammar cf
 
-   #define start     ::= form;
-   #define start     ::= $eof;
+  #define start         ::= form $eof;
+  #define start         ::= $eof;
 
-   #define form      ::= 
+  #define form          ::=
 <=
-      root ( public_namespace (
-        public_singleton (
-          nameattr ( identifier = loader )
-          script_function (
-            parameter ( nameattr ( identifier = owner ) )
-            code (
-              expression (
-                assign_operation (
-                  new_variable ( identifier = current )
-                  message_operation (
-                    object ( reference = forms'SDIDialog )
-                    message ( identifier = new )
-                  )
-                )
-              )
+root ( 
+ public_namespace (
+  public_textblock (
 =>
-	"<" "Form" { val_property | property }* ">" member* form_closing_tag
+    "<" "Form" name_attr form_body field_list
 <=
-              returning (  
-                expression (
+  )
+ )
+)
+=>;
+
+  #define form_body ::=
+<=
+    method (
+       nameattr( identifier = onInit )
+       code (
+=>
+     { val_form_prop | form_prop }* ">" member* form_closing_tag
+<=
+       )
+    )
+=>;
+
+  #define field_list ::= <= $buffer => $eps;
+
+  #define member ::= { label | button };
+
+  #define label ::=
+<=
+         code (
+           expression (
+             assign_operation (
+               new_variable ( identifier = current )
+               message_operation (
+                 object ( reference = forms'Label )
+                 message ( identifier = new )
+               )
+             )
+           )
+=>
+    "<" "Label" label_name_prop { val_prop | prop }* ">" label_closing_tag
+<=
+           expression (
+             message_operation (
+               object ( identifier = self )
+               message ( identifier = appendControl )
+               expression (
+                 object ( identifier = current )
+               )
+             )
+           )
+         )
+=>;
+
+  #define label_name_prop ::= ":" "Name" "=" label_declaration control_assigning;
+
+  #define label_declaration ::= %<= field ( type ( reference = forms'Label ) nameattr ( identifier = $current ) ) =>;
+
+  #define button ::=
+<=
+         code (
+           expression (
+             assign_operation (
+               new_variable ( identifier = current )
+               message_operation (
+                 object ( reference = forms'Button )
+                 message ( identifier = new )
+               )
+             )
+           )
+=>
+    "<" "Button" button_name_prop { val_prop | prop }* ">" button_closing_tag
+<=
+           expression (
+             message_operation (
+               object ( identifier = self )
+               message ( identifier = appendControl )
+               expression (
+                 object ( identifier = current )
+               )
+             )
+           )
+         )
+=>;
+
+  #define button_name_prop ::= ":" "Name" "=" button_declaration control_assigning;
+
+  #define button_declaration ::= %<= field ( type ( reference = forms'Button ) nameattr ( identifier = $current ) ) =>;
+
+  #define control_assigning ::=
+<= 
+           expression (
+             assign_operation (
+               object (
+=>
+      ident_value
+<=
+               )
+               expression
+               (
                   object ( identifier = current )
-                )
-              )
-            )
-          )
-        )
-      ))
+               )
+             )
+           )
 =>;
 
-  #define val_property ::=
+  #define val_form_prop ::=
 <=
-              expression (
-                property_operation (
-                  object ( identifier = current )                    
-=>
-        ":" prop_name "=" prop_value
-<=
-                )
-              )
-=>;
-
-  #define property ::=
-<=
-              expression (
-                property_operation (
-                  object ( identifier = current )                    
+           expression (
+             property_operation (
+               object ( identifier = self )                    
 =>
         prop_name "=" prop_str_value
 <=
-                )
-              )
+             )
+           )
 =>;
 
-  #define member ::=
+  #define form_prop ::=
 <=
-              code (
-                expression (
-                  assign_operation (
-                    new_variable ( identifier = current )
-                    message_operation (
-                      object ( reference = forms'Label )
-                      message ( identifier = new )
-                    )
-                  )
-                )
+           expression (
+             property_operation (
+               object ( identifier = self )                    
 =>
-	"<" "Label" { val_property | property }* ">" label_closing_tag
+        ":" prop_name "=" prop_value
 <=
-                expression (
-                    message_operation (
-                      object ( super_identifier = current )
-                      message ( identifier = appendControl )
-                      expression (
-                         object ( identifier = current )
-                      )
-                    )
-                )
-              )
+             )
+           )
 =>;
 
-  #define form_closing_tag ::=
-	"<" "/" "Form" ">";
+  #define val_prop ::=
+<=
+           expression (
+             property_operation (
+               object ( identifier = current )                    
+=>
+        prop_name "=" prop_str_value
+<=
+             )
+           )
+=>;
 
-  #define label_closing_tag ::=
-	"<" "/" "Label" ">";
+  #define prop ::=
+<=
+           expression (
+             property_operation (
+               object ( identifier = current )                    
+	=>
+        ":" prop_name "=" prop_value
+<=
+             )
+           )
+=>;
+
+  #define name_attr ::=
+<= 
+    nameattr (
+=>
+     ":" "Name" "=" ident_value
+<=
+    )
+=>;
 
   #define prop_name ::=
 <= 
@@ -125,7 +202,18 @@
                 )
 =>;
 
-  #define identifier   ::= <= identifier = $identifier =>;
-  #define int_quote    ::= <= $intliteral =>;
-  #define quote        ::= <= "$literal" =>;
+  #define ident_value ::= <= identifier = $literal =>; 
+  #define identifier  ::= <= identifier = $identifier =>;
+  #define int_quote   ::= <= $intliteral =>;
+  #define quote       ::= <= "$literal" =>;
+
+  #define form_closing_tag ::=
+	"<" "/" "Form" ">";
+
+  #define label_closing_tag ::=
+	"<" "/" "Label" ">";
+
+  #define button_closing_tag ::=
+	"<" "/" "Button" ">";
+
 ]]

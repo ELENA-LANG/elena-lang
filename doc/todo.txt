@@ -25,9 +25,11 @@ In development:
   - elt : nested executing managed code : keep frames (the frames must be included / excluded correctly)
   - upndown
   * upndown : creating a solution
-  - xforms : using shared code instead of injection
-  - xforms script : redesign - declare a class
+  - xforms : event handler
+  - xforms : modify hello world example
+  - xforms : onclick
   --------------------------------------
+  - literal to invoke a method
 
   === Iteration 29 ===
   --------------------------------------

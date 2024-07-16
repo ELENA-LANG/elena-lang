@@ -6,7 +6,7 @@ public program()
    var engine := new ScriptEngine();
    engine.loadPath("grammar.es");
 
-   var script := "1 2 3 4 5";
+   var script := "<Form :Name=""MainWindow""></Form>";
 
-   console.printLine(script,"=>",engine.loadScriptAsText(script));
+   console.printLine(engine.loadScriptAsText(script));
 }

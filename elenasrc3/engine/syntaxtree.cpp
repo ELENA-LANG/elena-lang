@@ -21,6 +21,8 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("namespace", SyntaxKey::Namespace);
    map.add("public_namespace", SyntaxKey::Namespace);
    map.add("class", SyntaxKey::Class);
+   map.add("public_class", SyntaxKey::Class);
+   map.add("public_textblock", SyntaxKey::Template);
    map.add("singleton", SyntaxKey::Class);   
    map.add("public_singleton", SyntaxKey::Class);
    map.add("public_symbol", SyntaxKey::Symbol);
