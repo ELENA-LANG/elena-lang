@@ -1,17 +1,12 @@
-static Reference<int> Seed = 0;
-
-int getSeed()
-{
-   int newVal := Seed + 1;
-
-   Seed.Value := newVal;
-
-   ^ newVal;
-}
+import extensions;
+import extensions'scripting;
 
 public program()
 {
-   console.writeLine(getSeed());
-   console.writeLine(getSeed());
-   console.writeLine(getSeed());
+   var engine := new ScriptEngine();
+   engine.loadPath("grammar.es");
+
+   var script := "1 2 3 4 5";
+
+   console.printLine(script,"=>",engine.loadScriptAsText(script));
 }

@@ -26,8 +26,8 @@ In development:
   - upndown
   * upndown : creating a solution
   - xforms : using shared code instead of injection
+  - xforms script : redesign - declare a class
   --------------------------------------
-  - #667 : Boxing the symbol expression
 
   === Iteration 29 ===
   --------------------------------------
