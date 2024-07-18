@@ -1,19 +1,25 @@
 import extensions;
 
-class A
+textblock Shared
 {
-   Func1 onClick : event;
-
-   onExit(sender)
+   foo()
    {
+      console.writeLine("foo")
    }
+}
 
-   constructor()
+class A : using(Shared)
+{
+   bar()
    {
-      onClick := auto onExit;
+      console.writeLine("bar")
    }
 }
 
 public program()
 {
+   var a := new A();
+
+   a.foo();
+   a.bar();
 }

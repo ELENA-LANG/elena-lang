@@ -6404,6 +6404,9 @@ inline bool DoesOperationSupportConvertableIntLiteral(int operatorId)
 mssg_t Compiler :: mapMessage(Scope& scope, SyntaxNode current, bool propertyMode,
    bool extensionMode, bool probeMode)
 {
+   if (current.key == SyntaxKey::Message && current.arg.reference)
+      return current.arg.reference;
+
    ref_t flags = propertyMode ? PROPERTY_MESSAGE : 0;
    if (extensionMode)
       flags |= FUNCTION_MESSAGE;
@@ -10331,19 +10334,8 @@ void Compiler :: generateOverloadListMember(ModuleScopeBase& scope, ref_t listRe
    }
 }
 
-void Compiler :: injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t outputRef, SyntaxKey key, ustr_t arg)
+inline void injectParameters(Compiler::Scope& scope, SyntaxNode methodNode, ref_t signRef, mssg_t message)
 {
-   SyntaxNode methodNode = classNode.appendChild(SyntaxKey::Method, message);
-   // HOTFIX : indicating virtual interface dispatcher, to ignore byref handler optimization
-   methodNode.appendChild(SyntaxKey::Attribute, V_INTERFACE_DISPATCHER);
-
-   if (outputRef)
-      methodNode.appendChild(SyntaxKey::Type, outputRef);
-
-   ref_t actionRef = getAction(message);
-   ref_t signRef = 0;
-   ustr_t actionName = scope.module->resolveAction(actionRef, signRef);
-
    if (signRef) {
       ref_t signatures[ARG_COUNT];
       size_t len = scope.module->resolveSignature(signRef, signatures);
@@ -10371,6 +10363,52 @@ void Compiler :: injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode,
          nameParam.appendChild(SyntaxKey::identifier, arg.str());
       }
    }
+}
+
+inline void injectArguments(Compiler::Scope& scope, SyntaxNode opNode, mssg_t message)
+{
+   pos_t len = getArgCount(message);
+   String<char, 10> arg;
+   for (pos_t i = 1; i < len; i++) {
+      arg.copy("$");
+      arg.appendInt(i);
+
+      opNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, arg.str());
+   }
+}
+
+void Compiler :: injectMethodInvoker(Scope& scope, SyntaxNode classNode, mssg_t message, ustr_t targetArg)
+{
+   SyntaxNode methodNode = classNode.appendChild(SyntaxKey::ClosureBlock);
+
+   ref_t actionRef = getAction(message);
+   ref_t signRef = 0;
+   ustr_t actionName = scope.module->resolveAction(actionRef, signRef);
+
+   injectParameters(scope, methodNode, signRef, message);
+
+   SyntaxNode body = methodNode.appendChild(SyntaxKey::ReturnExpression).appendChild(SyntaxKey::Expression);
+   SyntaxNode opNode = body.appendChild(((message & PREFIX_MESSAGE_MASK) == PROPERTY_MESSAGE) ? SyntaxKey::PropertyOperation : SyntaxKey::MessageOperation);
+   opNode.appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, targetArg);
+   opNode.appendChild(SyntaxKey::Message, message);
+
+   injectArguments(scope, opNode, message);
+}
+
+void Compiler :: injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t outputRef, SyntaxKey key, ustr_t arg)
+{
+   SyntaxNode methodNode = classNode.appendChild(SyntaxKey::Method, message);
+   // HOTFIX : indicating virtual interface dispatcher, to ignore byref handler optimization
+   methodNode.appendChild(SyntaxKey::Attribute, V_INTERFACE_DISPATCHER);
+
+   if (outputRef)
+      methodNode.appendChild(SyntaxKey::Type, outputRef);
+
+   ref_t actionRef = getAction(message);
+   ref_t signRef = 0;
+   ustr_t actionName = scope.module->resolveAction(actionRef, signRef);
+
+   injectParameters(scope, methodNode, signRef, message);
 
    SyntaxNode body = methodNode.appendChild(SyntaxKey::Redirect);
    body
@@ -11310,6 +11348,9 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
          break;
       case SyntaxKey::TupleAssignOperation:
          retVal = compileTupleAssigning(current);
+         break;
+      case SyntaxKey::ClosureOperation:
+         retVal = compileClosureOperation(current);
          break;
       case SyntaxKey::None:
          assert(false);
@@ -12349,6 +12390,51 @@ ObjectInfo Compiler::Expression :: compileCollection(SyntaxNode node, Expression
    }
 
    return { ObjectKind::Object, { collectionTypeRef }, 0 };
+}
+
+ObjectInfo Compiler::Expression :: compileClosureOperation(SyntaxNode node)
+{
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+   if (!classScope)
+      scope.raiseError(errInvalidOperation, node);
+
+   // check the message name
+   mssg_t targetMessage = 0;
+   ustr_t methodName;
+   SyntaxNode objNode = node.firstChild().firstChild();
+   if (objNode.key == SyntaxKey::Object && objNode.firstChild() == SyntaxKey::identifier) {
+      methodName = objNode.firstChild().identifier();
+   }
+   else scope.raiseError(errInvalidOperation, node);
+
+   // find the method to be invoked
+   for (auto it = classScope->info.methods.start(); !it.eof(); ++it) {
+      mssg_t m = it.key();
+      ref_t dummy = 0;
+      ref_t signRef = getAction(m);
+      ustr_t actionName = scope.module->resolveAction(signRef, dummy);
+      if (actionName.compare(methodName)) {
+         targetMessage = encodeMessage(scope.module->mapAction(actionName, 0, false), getArgCount(m), getFlags(m));
+
+         break;
+      }
+   }
+
+   if (!targetMessage)
+      scope.raiseError(errInvalidOperation, node);
+
+   SyntaxTree classTree;
+   SyntaxTreeWriter classWriter(classTree);
+
+   // build the closure
+   classWriter.newNode(SyntaxKey::Root);
+   
+   SyntaxNode rootNode = classWriter.CurrentNode();
+   compiler->injectMethodInvoker(scope, rootNode, targetMessage, *scope.moduleScope->selfVar);
+
+   classWriter.closeNode();
+
+   return compileClosure(rootNode.firstChild(), EAttr::None, nullptr);
 }
 
 ObjectInfo Compiler::Expression :: compileTupleCollection(SyntaxNode node, ref_t targetRef)

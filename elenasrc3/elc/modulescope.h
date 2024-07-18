@@ -48,7 +48,7 @@ public:
    ustr_t resolveFullName(ref_t reference) override
    {
       ustr_t referenceName = module->resolveReference(reference);
-      if (isTemplateWeakReference(referenceName)) {
+      if (!referenceName.empty() && isTemplateWeakReference(referenceName)) {
          return resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN);
       }
       else return referenceName;

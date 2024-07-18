@@ -1,7 +1,65 @@
-List of ELENA featuers:
------------------------
-- variadic functions
-- if:is
-- accessing private method inside static method
-- project profile
-- project target : stand-alone / vm client
+ELENA Programming Language
+==================================
+
+A class method invoke closure
+-----------------------------
+
+import extensions;
+
+class A
+{
+   Func1 onClick : event;
+
+   constructor()
+   {
+      onClick := &onExit;
+   }
+
+   onExit(sender)
+   {
+     console.printLine("onExit was called by ", sender);
+   }
+
+   invoke(sender)
+   {
+      onClick(sender)
+   }
+}
+
+public program()
+{
+   var a := new A();
+
+   a.invoke(this self);
+}
+
+A shared code
+-------------
+
+import extensions;
+
+textblock Shared
+{
+   foo()
+   {
+      console.writeLine("foo")
+   }
+}
+
+class A : using(Shared)
+{
+   bar()
+   {
+      console.writeLine("bar")
+   }
+}
+
+public program()
+{
+   var a := new A();
+
+   a.foo();
+   a.bar();
+}
+
+

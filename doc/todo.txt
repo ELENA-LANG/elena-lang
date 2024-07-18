@@ -27,9 +27,8 @@ In development:
   * upndown : creating a solution
   - xforms : event handler
   - xforms : modify hello world example
-  - xforms : onclick
   --------------------------------------
-  - literal to invoke a method
+  - xforms : onclick
 
   === Iteration 29 ===
   --------------------------------------

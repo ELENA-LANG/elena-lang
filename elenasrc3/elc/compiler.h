@@ -1348,6 +1348,7 @@ namespace elena_lang
          ObjectInfo compileCollection(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileTupleCollection(SyntaxNode node, ref_t targetRef);
          ObjectInfo compileKeyValue(SyntaxNode node, ExpressionAttribute mode);
+         ObjectInfo compileClosureOperation(SyntaxNode node);
 
          ObjectInfo compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope = false);
 
@@ -1733,6 +1734,7 @@ namespace elena_lang
       void injectInterfaceDispatch(Scope& scope, SyntaxNode node, ref_t parentRef);
 
       void injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t outputRef, SyntaxKey key, ustr_t arg);
+      void injectMethodInvoker(Scope& scope, SyntaxNode classNode, mssg_t message, ustr_t targetArg);
 
       void injectStrongRedirectMethod(Scope& scope, SyntaxNode node, SyntaxKey methodType, ref_t reference, mssg_t message,
          mssg_t redirectMessage, TypeInfo outputInfo);

@@ -148,6 +148,7 @@ namespace elena_lang
       LTExpression            = 0x00189D,
       TemplateExpression      = 0x0018A0,
       KeyValueExpression      = 0x0018A1,
+      ClosureOperation        = 0x0018A2,
       FieldInitializer        = 0x0018B0,
       Message                 = 0x0010C0,
       MessageOperation        = 0x0018C1,
