@@ -10,19 +10,20 @@
 
 using namespace elena_lang;
 
-constexpr auto REFERENCE_KEYWORD    = "$reference";
-constexpr auto IDENTIFIER_KEYWORD   = "$identifier";
-constexpr auto LITERAL_KEYWORD      = "$literal";
-constexpr auto NUMERIC_KEYWORD      = "$numeric";
-constexpr auto EPS_KEYWORD          = "$eps";
-constexpr auto IF_KEYWORD           = "$if";             // NOTE : conditional eps rule 
-constexpr auto EOF_KEYWORD          = "$eof";
-constexpr auto EOL_KEYWORD          = "$eol";
-constexpr auto ANYCHR_KEYWORD       = "$chr";            // > 32
-constexpr auto CURRENT_KEYWORD      = "$current";
-constexpr auto CHARACTER_KEYWORD    = "$character";
-constexpr auto INTLITERAL_KEYWORD   = "$intliteral";     // NOTE : quote containing a number
-constexpr auto BUFFER_KEYWORD       = "$buffer";     // NOTE : quote containing a number
+constexpr auto REFERENCE_KEYWORD       = "$reference";
+constexpr auto IDENTIFIER_KEYWORD      = "$identifier";
+constexpr auto LITERAL_KEYWORD         = "$literal";
+constexpr auto NUMERIC_KEYWORD         = "$numeric";
+constexpr auto EPS_KEYWORD             = "$eps";
+constexpr auto IF_KEYWORD              = "$if";             // NOTE : conditional eps rule 
+constexpr auto EOF_KEYWORD             = "$eof";
+constexpr auto EOL_KEYWORD             = "$eol";
+constexpr auto ANYCHR_KEYWORD          = "$chr";            // > 32
+constexpr auto CURRENT_KEYWORD         = "$current";
+constexpr auto CHARACTER_KEYWORD       = "$character";
+constexpr auto INTLITERAL_KEYWORD      = "$intliteral"; // NOTE : quote containing a number
+constexpr auto NONINTLITERAL_KEYWORD   = "$nonintliteral"; // NOTE : quote containing a number
+constexpr auto BUFFER_KEYWORD          = "$buffer";     // NOTE : quote containing a number
 
 constexpr auto REFERENCE_MODE       = 1;
 constexpr auto IDENTIFIER_MODE      = 2;
@@ -39,6 +40,7 @@ constexpr auto IF_MODE              = 12;
 constexpr auto IFNOT_MODE           = 13;
 constexpr auto INTLITERAL_MODE      = 14;
 constexpr auto BUFFER_MODE          = 15;
+constexpr auto NONINTLITERAL_MODE   = 16;
 
 constexpr auto WITHFORWARD_MASK = 0x80000000;
 constexpr auto POSTFIXSAVE_MODE = 0x80000000;
@@ -105,11 +107,21 @@ bool normalIntLiteralApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, 
    if (bm.state == dfaQuote) {
       ustr_t value = reader.lookup(bm);
       for (pos_t i = 0; i < getlength(value); i++) {
-         if (value[i] < '0' && value[i] > '9')
+         if (value[i] < '0' || value[i] > '9')
             return false;
       }
 
       return true;
+   }
+   return false;
+}
+
+bool normalNonIntLiteralApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptEngineReaderBase& reader, ScriptEngineCFParser*)
+{
+   if (bm.state == dfaQuote) {
+      ustr_t value = reader.lookup(bm);
+      if (value[0] < '0' || value[0] > '9')
+         return true;
    }
    return false;
 }
@@ -288,6 +300,9 @@ void ScriptEngineCFParser :: defineApplyRule(Rule& rule, int mode, RuleTypeModif
             case INTLITERAL_MODE:
                rule.apply = normalIntLiteralApplyRule;
                break;
+            case NONINTLITERAL_MODE:
+               rule.apply = normalNonIntLiteralApplyRule;
+               break;
             case NUMERIC_MODE:
                rule.apply = normalNumericApplyRule;
                break;
@@ -401,6 +416,12 @@ void ScriptEngineCFParser :: saveScript(ScriptEngineReaderBase& reader, Rule& ru
             rule.saveTo = saveReference;
 
             mode = INTLITERAL_MODE;
+         }
+         else if (reader.compare(NONINTLITERAL_KEYWORD)) {
+            rule.terminal = INVALID_REF;
+            rule.saveTo = saveReference;
+
+            mode = NONINTLITERAL_MODE;
          }
          else if (reader.compare(NUMERIC_KEYWORD)) {
             rule.terminal = INVALID_REF;

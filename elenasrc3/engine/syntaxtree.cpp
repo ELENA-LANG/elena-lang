@@ -46,6 +46,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("property_operation", SyntaxKey::PropertyOperation);
    map.add("value_operation", SyntaxKey::ValueOperation);
    map.add("keyvalue_expression", SyntaxKey::KeyValueExpression);
+   map.add("closure_op", SyntaxKey::ClosureOperation);
 
    map.add("equal_operation", SyntaxKey::EqualOperation);
    map.add("notequal_operation", SyntaxKey::NotEqualOperation);
