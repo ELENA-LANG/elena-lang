@@ -9,11 +9,10 @@ In development:
   --------------------------------------
       - linux sdi - menu / new file
       - #658 : create simplest debug adapter; connect with it from VSCode
-      - x86-64 : vm terminal, ide vm console
 
-  - elt : nested executing managed code : keep frames (the frames must be included / excluded correctly)
+      - x86-64 : ide vm console
   --------------------------------------
-  - fix tape code - correctly exclude / include frames
+  - x86-64 : vm terminal
 
   === Iteration 29 ===
   --------------------------------------
@@ -21,7 +20,6 @@ In development:
       - upndown (connector)
       - web server - weather forecast (project setup)
   gen:
-      - elt : fails after executing several times, exception handler works only once
       - nested call must not stop / start vm, 
   maint:
       - elena : nested classes should not be loadable at runtime
