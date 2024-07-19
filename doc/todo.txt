@@ -6,12 +6,10 @@ In development:
   ### EPIC: elena 6.3 ###
 
   === Iteration 28 (23.07) ===
+  --------------------------------------      
+  - #637
   --------------------------------------
-      - linux sdi - menu / new file
-      - #658 : create simplest debug adapter; connect with it from VSCode
-
-  --------------------------------------
-  - x86-64 : ide vm console
+  - aarch64 : fix interfaceImplTests, decoratorTest 
 
   === Iteration 29 ===
   --------------------------------------
@@ -24,6 +22,7 @@ In development:
       - elena : nested classes should not be loadable at runtime
       - constructor - single dispatcher; passing nil to single dispatcher (both normal / constructor)
   port:
+      - #658 : create simplest debug adapter; connect with it from VSCode
   prom: posting weekly
   --------------------------------------
   --------------------------------------

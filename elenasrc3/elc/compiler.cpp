@@ -6465,6 +6465,8 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
    classScope.extensionClassRef = scope.moduleScope->buildins.superReference;
    generateClassFlags(classScope, elExtension | elSealed);
 
+   classScope.info.attributes.exclude({ 0, ClassAttribute::RuntimeLoadable });
+
    // create a new overload list
    ClassInfo::MethodMap methods({});
    ResolvedMap targets(0);
@@ -9168,6 +9170,8 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
    declareClassParent(parentRef, scope, node);
    generateClassFlags(scope, elNestedClass | elSealed);
 
+   scope.info.attributes.exclude({ 0, ClassAttribute::RuntimeLoadable });
+
    // handle the abstract flag
    if (test(scope.info.header.flags, elAbstract)) {
       scope.abstractBasedMode = true;
@@ -9430,6 +9434,8 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
       scope.info.header.flags |= elVirtualVMT;
 
    declareClassParent(parentRef, scope, node);
+
+   scope.info.attributes.exclude({ 0, ClassAttribute::RuntimeLoadable });
 
    ref_t dummy = 0;
    declareClassAttributes(scope, {}, dummy);
@@ -10776,6 +10782,9 @@ void Compiler::Class :: declare(SyntaxNode node)
    bool extensionDeclaration = isExtensionDeclaration(node);
    resolveClassPostfixes(node, extensionDeclaration);
 
+   // HOTFIX : remove inherited loadable attribute
+   scope.info.attributes.exclude({ 0, ClassAttribute::RuntimeLoadable });
+
    ref_t declaredFlags = 0;
    compiler->declareClassAttributes(scope, node, declaredFlags);
 
@@ -10815,7 +10824,7 @@ void Compiler::Class :: declare(SyntaxNode node)
       compiler->validateSuperClass(scope, node);
    }
 
-   if (scope.visibility == Visibility::Public)
+   if (scope.visibility == Visibility::Public && !testany(scope.info.header.flags, elNestedClass | elTemplatebased))
       scope.info.attributes.add({ 0, ClassAttribute::RuntimeLoadable }, INVALID_REF);
 
    // save declaration
