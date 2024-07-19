@@ -5,26 +5,22 @@ In development:
 [development]
   ### EPIC: elena 6.3 ###
 
-  === Iteration 28 (23.07) ===
-  --------------------------------------      
-  - #637
-  --------------------------------------
-  - aarch64 : fix interfaceImplTests, decoratorTest 
-
-  === Iteration 29 ===
+  === Iteration 29 (05.08) ===
   --------------------------------------
   dev: 
       - upndown (connector)
-      - web server - weather forecast (project setup)
+      - web server - weather forecast
   gen:
       - nested call must not stop / start vm, 
   maint:
-      - elena : nested classes should not be loadable at runtime
-      - constructor - single dispatcher; passing nil to single dispatcher (both normal / constructor)
+      - LoadExtensionDispatcherLA : currently all preloaded symbols are loaded, but should only for the used namespace      
   port:
       - #658 : create simplest debug adapter; connect with it from VSCode
   prom: posting weekly
   --------------------------------------
+  - web server - weather forecast (project setup)
+  - constructor - single dispatcher; passing nil to single dispatcher (both normal / constructor)
+  - #637 : unit tests
   --------------------------------------
 
   === Iteration 30 ===

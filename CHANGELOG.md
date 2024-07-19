@@ -5,20 +5,31 @@
   - [ADDED] #265 : Support enumeration list
   - [ADDED] self attribute
   - [ADDED] new operator $size
+  - [ADDED] text blocks
+  - [ADDED] method reference - &myMethod
 
 - ELC
   - [FIXED] private constructor must be called directly
   - [FIXED] accessing static fields inside a structure
   - [FIXED] ppc64le : decoratorTest()
+  - [FIXED] #667 : Boxing the symbol expression
+  - [FIXED] only public classes can be loaded in run-time
 
 - VM
+  - [FIXED] GC_ALLOC routine for vm mode 
 
 - RT
 
+- SM
+  - [ADDED] CF : alternative output
+
 - API
   - [ADDED] reusing PermVectorTable after windows are closed
+  - [ADDED] xforms60 script
+  - [FIXED] external calls to be excluded from managed stack frames
 
 - SAMPLES
+  - [ADDED] xforms example
 
 - Tools
   - [ADDED] #658 : new project LDBG - ELENA Debugger Adapter
