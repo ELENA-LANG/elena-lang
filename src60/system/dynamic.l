@@ -14,7 +14,9 @@ public sealed const struct Symbol
    /// Loads a symbol
    constructor(string name)
    {
-      self.load(name);
+      extern {
+         self.load(name);
+      }
    }   
 
    constructor(pointer ptr)
@@ -30,7 +32,12 @@ public sealed const struct Symbol
 
    static Symbol tryLoad(string ns, string name)
    {
-      pointer ptr := extern LoadSymbolByString2LA(ns, name);
+      pointer ptr := default;
+
+      extern {
+         ptr := extern LoadSymbolByString2LA(ns, name);
+      };
+
       if (ptr != 0)
       {
          ^ ptr
@@ -55,7 +62,9 @@ public sealed const struct ClassReference
    constructor(string name)
       : info("Loads a symbol")
    {
-      self.load(name);
+      extern {
+        self.load(name);
+      }
    }
    
    dispatch() : external(system'core_routines'__classref_dispatcher);

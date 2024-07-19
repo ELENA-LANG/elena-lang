@@ -10,18 +10,20 @@
 
 using namespace elena_lang;
 
-constexpr auto REFERENCE_KEYWORD    = "$reference";
-constexpr auto IDENTIFIER_KEYWORD   = "$identifier";
-constexpr auto LITERAL_KEYWORD      = "$literal";
-constexpr auto NUMERIC_KEYWORD      = "$numeric";
-constexpr auto EPS_KEYWORD          = "$eps";
-constexpr auto IF_KEYWORD           = "$if";             // NOTE : conditional eps rule 
-constexpr auto EOF_KEYWORD          = "$eof";
-constexpr auto EOL_KEYWORD          = "$eol";
-constexpr auto ANYCHR_KEYWORD       = "$chr";            // > 32
-constexpr auto CURRENT_KEYWORD      = "$current";
-constexpr auto CHARACTER_KEYWORD    = "$character";
-constexpr auto INTLITERAL_KEYWORD   = "$intliteral";     // NOTE : quote containing a number
+constexpr auto REFERENCE_KEYWORD       = "$reference";
+constexpr auto IDENTIFIER_KEYWORD      = "$identifier";
+constexpr auto LITERAL_KEYWORD         = "$literal";
+constexpr auto NUMERIC_KEYWORD         = "$numeric";
+constexpr auto EPS_KEYWORD             = "$eps";
+constexpr auto IF_KEYWORD              = "$if";             // NOTE : conditional eps rule 
+constexpr auto EOF_KEYWORD             = "$eof";
+constexpr auto EOL_KEYWORD             = "$eol";
+constexpr auto ANYCHR_KEYWORD          = "$chr";            // > 32
+constexpr auto CURRENT_KEYWORD         = "$current";
+constexpr auto CHARACTER_KEYWORD       = "$character";
+constexpr auto INTLITERAL_KEYWORD      = "$intliteral"; // NOTE : quote containing a number
+constexpr auto NONINTLITERAL_KEYWORD   = "$nonintliteral"; // NOTE : quote containing a number
+constexpr auto BUFFER_KEYWORD          = "$buffer";     // NOTE : quote containing a number
 
 constexpr auto REFERENCE_MODE       = 1;
 constexpr auto IDENTIFIER_MODE      = 2;
@@ -37,11 +39,20 @@ constexpr auto CHARACTER_MODE       = 11;
 constexpr auto IF_MODE              = 12;
 constexpr auto IFNOT_MODE           = 13;
 constexpr auto INTLITERAL_MODE      = 14;
+constexpr auto BUFFER_MODE          = 15;
+constexpr auto NONINTLITERAL_MODE   = 16;
 
 constexpr auto WITHFORWARD_MASK = 0x80000000;
 constexpr auto POSTFIXSAVE_MODE = 0x80000000;
 
 //#define TRACING_INFO
+
+inline void readToken(ScriptEngineReaderBase& reader, ScriptBookmark& bm, ustr_t token)
+{
+   reader.read();
+   if (!reader.compare(token))
+      throw SyntaxError("invalid grammar rule", bm.lineInfo);
+}
 
 void saveReference(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log)
 {
@@ -70,6 +81,12 @@ void saveLiteral(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* par
    log.writeQuote(scriptReader.lookup(bm));
 }
 
+void saveBuffer(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log)
+{
+   parser->flushBuffer(log);
+   parser->clearBuffer();
+}
+
 bool nonterminalApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark&, ScriptEngineReaderBase&, ScriptEngineCFParser*)
 {
    return true;
@@ -90,11 +107,21 @@ bool normalIntLiteralApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, 
    if (bm.state == dfaQuote) {
       ustr_t value = reader.lookup(bm);
       for (pos_t i = 0; i < getlength(value); i++) {
-         if (value[i] < '0' && value[i] > '9')
+         if (value[i] < '0' || value[i] > '9')
             return false;
       }
 
       return true;
+   }
+   return false;
+}
+
+bool normalNonIntLiteralApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptEngineReaderBase& reader, ScriptEngineCFParser*)
+{
+   if (bm.state == dfaQuote) {
+      ustr_t value = reader.lookup(bm);
+      if (value[0] < '0' || value[0] > '9')
+         return true;
    }
    return false;
 }
@@ -254,7 +281,7 @@ void ScriptEngineCFParser :: setScriptPtr(ScriptBookmark& bm, Rule& rule, bool p
    }
 }
 
-void ScriptEngineCFParser :: defineApplyRule(Rule& rule, int mode, bool forwardMode, bool bookmarkMode)
+void ScriptEngineCFParser :: defineApplyRule(Rule& rule, int mode, RuleTypeModifier modifier)
 {
    if (rule.type == RuleType::Normal) {
       if (rule.terminal == 0) {
@@ -272,6 +299,9 @@ void ScriptEngineCFParser :: defineApplyRule(Rule& rule, int mode, bool forwardM
                break;
             case INTLITERAL_MODE:
                rule.apply = normalIntLiteralApplyRule;
+               break;
+            case NONINTLITERAL_MODE:
+               rule.apply = normalNonIntLiteralApplyRule;
                break;
             case NUMERIC_MODE:
                rule.apply = normalNumericApplyRule;
@@ -323,10 +353,19 @@ void ScriptEngineCFParser :: defineApplyRule(Rule& rule, int mode, bool forwardM
       rule.apply = nonterminalApplyRule;
    }
 
-   if (forwardMode)
-      rule.type = (RuleType)(rule.type | RuleType::WithForward);
-   if (bookmarkMode)
-      rule.type = (RuleType)(rule.type | RuleType::WithBookmark);
+   switch (modifier) {
+      case RuleTypeModifier::ForwardMode:
+         rule.type = (RuleType)(rule.type | RuleType::WithForward);
+         break;
+      case RuleTypeModifier::BookmarkMode:
+         rule.type = (RuleType)(rule.type | RuleType::WithBookmark);
+         break;
+      case RuleTypeModifier::BufferMode:
+         rule.type = (RuleType)(rule.type | RuleType::WithBufferOutput);
+         break;
+      default:
+         break;
+   }
 }
 
 void ScriptEngineCFParser :: saveScript(ScriptEngineReaderBase& reader, Rule& rule, int& mode, bool forwardMode)
@@ -378,6 +417,12 @@ void ScriptEngineCFParser :: saveScript(ScriptEngineReaderBase& reader, Rule& ru
 
             mode = INTLITERAL_MODE;
          }
+         else if (reader.compare(NONINTLITERAL_KEYWORD)) {
+            rule.terminal = INVALID_REF;
+            rule.saveTo = saveReference;
+
+            mode = NONINTLITERAL_MODE;
+         }
          else if (reader.compare(NUMERIC_KEYWORD)) {
             rule.terminal = INVALID_REF;
             rule.saveTo = saveReference;
@@ -386,6 +431,9 @@ void ScriptEngineCFParser :: saveScript(ScriptEngineReaderBase& reader, Rule& ru
          }
          if (reader.compare(CURRENT_KEYWORD)) {
             rule.saveTo = saveReference;
+         }
+         else if (reader.compare(BUFFER_KEYWORD)) {
+            rule.saveTo = saveBuffer;
          }
 
          writer.writeChar((char)0);
@@ -477,7 +525,7 @@ pos_t ScriptEngineCFParser :: defineGrammarBrackets(ScriptEngineReaderBase& read
    bm = reader.read();
    while (!reader.compare("}")) {
       if (reader.compare("|")) {
-         defineApplyRule(rule, applyMode, false, false);
+         defineApplyRule(rule, applyMode, RuleTypeModifier::None);
          addRule(ruleId, rule);
 
          rule = Rule();
@@ -489,7 +537,7 @@ pos_t ScriptEngineCFParser :: defineGrammarBrackets(ScriptEngineReaderBase& read
       else defineGrammarRuleMember(reader, bm, rule, ruleId, applyMode);
    }
 
-   defineApplyRule(rule, applyMode, false, false);
+   defineApplyRule(rule, applyMode, RuleTypeModifier::None);
 
    addRule(ruleId, rule);
 
@@ -526,7 +574,7 @@ pos_t ScriptEngineCFParser :: defineGrammarRuleMember(ScriptEngineReaderBase& re
 
    int applyMode = 0;
    defineGrammarRuleMember(reader, bm, rule, ruleId, applyMode);
-   defineApplyRule(rule, applyMode, false, false);
+   defineApplyRule(rule, applyMode, RuleTypeModifier::None);
 
    addRule(ruleId, rule);
 
@@ -542,7 +590,7 @@ pos_t ScriptEngineCFParser :: defineStarGrammarRule(ref_t parentRuleId, pos_t no
    recRule.nonterminal = nonterminal;
    recRule.terminal = ruleId;
    recRule.type = RuleType::Chomski;
-   defineApplyRule(recRule, 0, false, false);
+   defineApplyRule(recRule, 0, RuleTypeModifier::None);
    addRule(ruleId, recRule);
 
    // define B -> eps
@@ -560,7 +608,7 @@ pos_t ScriptEngineCFParser :: definePlusGrammarRule(ref_t parentRuleId, pos_t no
    rule.nonterminal = nonterminal;
    rule.terminal = defineStarGrammarRule(ruleId, nonterminal);
    rule.type = RuleType::Chomski;
-   defineApplyRule(rule, 0, false, false);
+   defineApplyRule(rule, 0, RuleTypeModifier::None);
    addRule(ruleId, rule);
 
    return ruleId;
@@ -575,7 +623,7 @@ pos_t ScriptEngineCFParser :: defineOptionalGrammarRule(ref_t parentRuleId, pos_
    recRule.nonterminal = nonterminal;
    recRule.terminal = 0;
    recRule.type = RuleType::Normal;
-   defineApplyRule(recRule, 0, false, false);
+   defineApplyRule(recRule, 0, RuleTypeModifier::None);
    addRule(ruleId, recRule);
 
    // define B -> eps
@@ -593,7 +641,7 @@ pos_t ScriptEngineCFParser :: defineChomskiGrammarRule(ref_t parentRuleId, pos_t
    recRule.nonterminal = nonterminal;
    recRule.terminal = terminal;
    recRule.type = RuleType::Chomski;
-   defineApplyRule(recRule, 0, false, false);
+   defineApplyRule(recRule, 0, RuleTypeModifier::None);
    addRule(ruleId, recRule);
 
    return ruleId;
@@ -605,7 +653,7 @@ void ScriptEngineCFParser :: defineIdleGrammarRule(ref_t ruleId)
    rule.nonterminal = INVALID_POS;
    rule.terminal = INVALID_POS;
    rule.type = RuleType::Normal;
-   defineApplyRule(rule, IDLE_MODE, false, false);
+   defineApplyRule(rule, IDLE_MODE, RuleTypeModifier::None);
    addRule(ruleId, rule);
 }
 
@@ -942,21 +990,34 @@ void ScriptEngineCFParser :: defineGrammarRule(ScriptEngineReaderBase& reader, S
 
    rule.type = RuleType::Normal;
    int applyMode = 0;
-   bool forwardMode = false;
-   bool bookmarkMode = false;
+   RuleTypeModifier modifier = RuleTypeModifier::None;
 
    while (!reader.compare(";") || bm.state == dfaQuote) {
       if (bm.state != dfaQuote && reader.compare("<=")) {
-         saveScript(reader, rule, applyMode, forwardMode);
+         saveScript(reader, rule, applyMode, modifier == RuleTypeModifier::ForwardMode);
+
+         bm = reader.read();
+      }
+      else if (bm.state != dfaQuote && reader.compare("%")) {
+         readToken(reader, bm, "<=");
+
+         assert(modifier == RuleTypeModifier::None);
+         modifier = RuleTypeModifier::BufferMode;
+
+         saveScript(reader, rule, applyMode, false);
+
+         rule.type = RuleType::Eps;
+         rule.apply = nonterminalApplyRule;
 
          bm = reader.read();
       }
       else if (bm.state != dfaQuote && reader.compare("^")) {
          bm = reader.read();
          if (bm.state != dfaQuote && reader.compare("<=")) {
-            forwardMode = true;
+            assert(modifier == RuleTypeModifier::None);
+            modifier = RuleTypeModifier::ForwardMode;
 
-            saveScript(reader, rule, applyMode, forwardMode);
+            saveScript(reader, rule, applyMode, true);
 
             bm = reader.read();
          }
@@ -964,7 +1025,8 @@ void ScriptEngineCFParser :: defineGrammarRule(ScriptEngineReaderBase& reader, S
       }
       else if (bm.state != dfaQuote && reader.compare("$")) {
          if (!rule.prefix1Ptr) {
-            bookmarkMode = true;
+            assert(modifier == RuleTypeModifier::None);
+            modifier = RuleTypeModifier::BookmarkMode;
          }
          else throw SyntaxError("invalid grammar rule : cannot have prefix / postfix segments", bm.lineInfo);
 
@@ -973,7 +1035,7 @@ void ScriptEngineCFParser :: defineGrammarRule(ScriptEngineReaderBase& reader, S
       else defineGrammarRuleMember(reader, bm, rule, ruleId, applyMode);
    }
 
-   defineApplyRule(rule, applyMode, forwardMode, bookmarkMode);
+   defineApplyRule(rule, applyMode, modifier);
 }
 
 void ScriptEngineCFParser :: addRule(int ruleId, Rule& rule)
@@ -1077,10 +1139,39 @@ inline void updateForwardLevel(Stack<Pair<int, int>>& forwards, int minLevel)
    }
 }
 
+void ScriptEngineCFParser :: saveRuleOutputToBuffer(Rule& rule, pos_t terminal, ScriptEngineReaderBase& scriptReader)
+{
+   saveRuleOutput(rule, terminal, scriptReader, _buffer);
+}
+
+void ScriptEngineCFParser :: saveRuleOutput(Rule& rule, pos_t terminal, ScriptEngineReaderBase& scriptReader, ScriptEngineLog& log)
+{
+   pos_t lineLen = 0;
+   if (!test(rule.type, RuleType::WithForward))
+      lineLen += log.write(getBodyText(rule.prefix1Ptr));
+
+   if (rule.saveTo != NULL)
+      rule.saveTo(scriptReader, this, terminal, log);
+
+   // HOTFIX: to prevent too long line
+   if (lineLen > 0x10) {
+      log.write('\n');
+   }
+   else log.write(' ');
+
+   log.write(getBodyText(rule.postfix1Ptr));
+}
+
 void ScriptEngineCFParser :: generateOutput(pos_t offset, ScriptEngineReaderBase& scriptReader, ScriptEngineLog& log)
 {
+   assert(!_generating);
+
+   _generating = true;
+
    if (offset == 0)
       return;
+
+   IdentifierString buffer;
 
    Stack<Pair<int, int>> bookmarks(Pair<int, int>(0, -1));
    Stack<Pair<int, int>> forwards(Pair<int, int>(0, -1));
@@ -1182,21 +1273,11 @@ void ScriptEngineCFParser :: generateOutput(pos_t offset, ScriptEngineReaderBase
             insertForwards(bookmarks, level, log);
          }
 
-         if (rule.prefix1Ptr != 0) {
-            pos_t lineLen = 0;
-            if (!test(rule.type, RuleType::WithForward))
-               lineLen += log.write(getBodyText(rule.prefix1Ptr));
-
-            if (rule.saveTo != NULL)
-               rule.saveTo(scriptReader, this, item.terminal, log);
-
-            // HOTFIX: to prevent too long line
-            if (lineLen > 0) {
-               log.write('\n');
-            }
-            else log.write(' ');
-
-            log.write(getBodyText(rule.postfix1Ptr));
+         if (test(rule.type, RuleType::WithBufferOutput)) {
+            saveRuleOutputToBuffer(rule, item.terminal, scriptReader);
+         }
+         else if (rule.prefix1Ptr != 0) {
+            saveRuleOutput(rule, item.terminal, scriptReader, log);
          }
 
          if (rule.postfix2Ptr) {
@@ -1211,6 +1292,8 @@ void ScriptEngineCFParser :: generateOutput(pos_t offset, ScriptEngineReaderBase
 
    }
    log.write((char)0);
+
+   _generating = false;
 }
 
 void ScriptEngineCFParser :: parse(ScriptEngineReaderBase& reader, MemoryDump* output)

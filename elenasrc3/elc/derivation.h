@@ -27,7 +27,8 @@ namespace elena_lang
          PropertyTemplate,
          ExtensionTemplate,
          ExpressionTemplate,
-         Enumeration
+         Enumeration,
+         Textblock
       };
 
       struct Scope
@@ -269,7 +270,8 @@ namespace elena_lang
          Class,
          InlineProperty,
          ExpressionTemplate,
-         Enumeration
+         Enumeration,
+         Textblock
       };
 
       typedef Map<ref_t, SyntaxNode> NodeMap;
@@ -335,6 +337,7 @@ namespace elena_lang
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
       void importEnumTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
+      void importTextblock(MemoryBase* templateSection, SyntaxNode target);
 
       void generateClassTemplate(ModuleScopeBase* moduleScope, ref_t classRef, SyntaxTreeWriter& writer,
          MemoryBase* sectionBody, List<SyntaxNode>& args);

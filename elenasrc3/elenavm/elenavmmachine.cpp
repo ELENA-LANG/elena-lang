@@ -328,7 +328,7 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
    pos_t sizePlaceholder = writer.position();
    writer.writePos(0);
 
-   ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
+   ByteCodeUtil::write(writer, ByteCode::ExtOpenIN, 2, 0);
 
    fillPreloadedSymbols(writer, dummyModule);
 
@@ -382,7 +382,7 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
       }
    }
 
-   ByteCodeUtil::write(writer, ByteCode::CloseN);
+   ByteCodeUtil::write(writer, ByteCode::ExtCloseN);
    ByteCodeUtil::write(writer, ByteCode::Quit);
 
    pos_t size = writer.position() - sizePlaceholder - sizeof(pos_t);

@@ -1338,7 +1338,7 @@ namespace elena_lang
          void compileAssigning(SyntaxNode node, ObjectInfo target, ObjectInfo source, bool noConversion = false);
          void compileConverting(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool stackSafe);
 
-         ObjectInfo compileSymbolRoot(SyntaxNode bodyNode, ExpressionAttribute mode);
+         ObjectInfo compileSymbolRoot(SyntaxNode bodyNode, ExpressionAttribute mode, ref_t targetRef);
          ObjectInfo compileRoot(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileReturning(SyntaxNode node, ExpressionAttribute mode, TypeInfo outputInfo);
 
@@ -1348,6 +1348,7 @@ namespace elena_lang
          ObjectInfo compileCollection(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileTupleCollection(SyntaxNode node, ref_t targetRef);
          ObjectInfo compileKeyValue(SyntaxNode node, ExpressionAttribute mode);
+         ObjectInfo compileClosureOperation(SyntaxNode node);
 
          ObjectInfo compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope = false);
 
@@ -1411,6 +1412,7 @@ namespace elena_lang
 
       void declareTemplateAttributes(Scope& scope, SyntaxNode node, TemplateTypeList& parameters, 
          TypeAttributes& attributes, bool declarationMode, bool objectMode);
+      void declareIncludeAttributes(Scope& scope, SyntaxNode node, bool& textBlock);
 
       static int defineFieldSize(Scope& scope, ObjectInfo info);
 
@@ -1443,6 +1445,7 @@ namespace elena_lang
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters, 
          ustr_t prefix, SyntaxKey argKey, ustr_t postFix);
+      ref_t retrieveBlock(NamespaceScope& scope, SyntaxNode node);
 
       static mssg_t resolveOperatorMessage(ModuleScopeBase* scope, int operatorId);
       static mssg_t resolveVariadicMessage(Scope& scope, mssg_t message);
@@ -1453,6 +1456,7 @@ namespace elena_lang
 
       bool importEnumTemplate(Scope& scope, SyntaxNode node, SyntaxNode target);
       bool importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target, bool weakOne);
+      bool includeBlock(Scope& scope, SyntaxNode node, SyntaxNode target);
       bool importInlineTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
       bool importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
       void importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNode);
@@ -1730,6 +1734,7 @@ namespace elena_lang
       void injectInterfaceDispatch(Scope& scope, SyntaxNode node, ref_t parentRef);
 
       void injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t outputRef, SyntaxKey key, ustr_t arg);
+      void injectMethodInvoker(Scope& scope, SyntaxNode classNode, mssg_t message, ustr_t targetArg);
 
       void injectStrongRedirectMethod(Scope& scope, SyntaxNode node, SyntaxKey methodType, ref_t reference, mssg_t message,
          mssg_t redirectMessage, TypeInfo outputInfo);

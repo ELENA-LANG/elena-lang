@@ -767,6 +767,9 @@ bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& vis
       case V_ENUMERATION:
          type = TemplateType::Enumeration;
          break;
+      case V_TEXTBLOCK:
+         type = TemplateType::ClassBlock;
+         break;
       case V_TEMPLATE:
       case V_WEAK:
          break;
@@ -1130,6 +1133,17 @@ bool CompilerLogic :: validateTypeScopeAttribute(ref_t attrValue, TypeAttributes
          return true;
       case V_CONVERSION:
          attributes.typecastOne = true;
+         return true;
+      default:
+         return false;
+   }
+}
+
+bool CompilerLogic :: validateIncludeAttribute(ref_t attrValue, bool& textBlock)
+{
+   switch (attrValue) {
+      case V_TEXTBLOCK:
+         textBlock = true;
          return true;
       default:
          return false;

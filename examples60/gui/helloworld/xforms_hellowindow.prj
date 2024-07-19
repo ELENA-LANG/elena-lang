@@ -1,27 +1,20 @@
 <configuration>
     <project>
-        <executable>helloworld_static.exe</executable>
+        <executable>helloworld_gui.exe</executable>
         <options></options>
         <namespace>helloworld</namespace>
         <template>gui</template>
     </project>
     <targets>
-        <target name="grammar" type="2">
+        <target name="gui_scheme" type="2">
             <option>[[ #grammar tree ]]</option>
             <option>~\scripts\xforms60.es</option>
         </target>
     </targets>
-    <profile key="static">
-        <files>
-            <module name="stat" target="grammar">
-                <include>helloworld.xs</include>
-            </module>
-        </files>
-        <forwards>
-            <forward key="loader">helloworld'stat'loader</forward>
-        </forwards>
-    </profile>
     <files>
+        <module target="gui_scheme">
+            <include>helloworld.xs</include>
+        </module>
         <module>
             <include>helloworld.l</include>
         </module>
