@@ -2046,6 +2046,28 @@ ref_t Compiler :: retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<
    return reference;
 }
 
+ref_t Compiler :: retrieveBlock(NamespaceScope& scope, SyntaxNode node)
+{
+   SyntaxNode identNode = node.firstChild(SyntaxKey::TerminalMask);
+
+   IdentifierString templateName;
+
+   templateName.append(CLASSBLOCK_PREFIX);
+   templateName.append(identNode.identifier());
+
+   NamespaceScope* ns = &scope;
+   ref_t reference = ns->resolveImplicitIdentifier(*templateName, false, true);
+   while (!reference && ns->parent != nullptr) {
+      ns = Scope::getScope<NamespaceScope>(*ns->parent, Scope::ScopeLevel::Namespace);
+      if (ns) {
+         reference = ns->resolveImplicitIdentifier(*templateName, false, false);
+      }
+      else break;
+   }
+
+   return reference;
+}
+
 bool Compiler :: importEnumTemplate(Scope& scope, SyntaxNode node, SyntaxNode target)
 {
    TypeAttributes attributes = {};
@@ -2095,6 +2117,26 @@ bool Compiler :: importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target
       return false;
 
    if(!_templateProcessor->importTemplate(*scope.moduleScope, templateRef, target, parameters))
+      scope.raiseError(errInvalidOperation, node);
+
+   return true;
+}
+
+bool Compiler :: includeBlock(Scope& scope, SyntaxNode node, SyntaxNode target)
+{
+   TypeAttributes attributes = {};
+
+   bool textBlock = false;
+   declareIncludeAttributes(scope, node, textBlock);
+   if (!textBlock)
+      scope.raiseError(errInvalidOperation, node);
+
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+   ref_t templateRef = retrieveBlock(*ns, node);
+   if (!templateRef)
+      return false;
+
+   if (!_templateProcessor->importTextblock(*scope.moduleScope, templateRef, target))
       scope.raiseError(errInvalidOperation, node);
 
    return true;
@@ -4923,6 +4965,7 @@ void Compiler :: declareTemplate(TemplateScope& scope, SyntaxNode& node)
       case TemplateType::Enumeration:
       case TemplateType::Class:
       case TemplateType::InlineProperty:
+      case TemplateType::ClassBlock:
       {
          // COMPILER MAGIC : inject imported namespaces & source path
          NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
@@ -4958,6 +5001,11 @@ void Compiler :: declareTemplateCode(TemplateScope& scope, SyntaxNode& node)
    switch (scope.type) {
       case TemplateType::Inline:
          prefix.append(INLINE_PREFIX);
+         if (argCount > 0)
+            scope.raiseError(errInvalidSyntax, node);
+         break;
+      case TemplateType::ClassBlock:
+         prefix.append(CLASSBLOCK_PREFIX);
          if (argCount > 0)
             scope.raiseError(errInvalidSyntax, node);
          break;
@@ -5021,6 +5069,10 @@ void Compiler :: declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
          break;
       case TemplateType::Enumeration:
          postfix.append(ENUM_POSTFIX);
+         break;
+      case TemplateType::ClassBlock:
+         prefix.append(CLASSBLOCK_PREFIX);
+         postfix.clear();
          break;
       default:
          break;
@@ -5251,6 +5303,23 @@ void Compiler :: declareTemplateAttributes(Scope& scope, SyntaxNode node,
 
             break;
          }
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: declareIncludeAttributes(Scope& scope, SyntaxNode node, bool& textBlock)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Attribute:
+            if (!_logic->validateIncludeAttribute(current.arg.reference, textBlock))
+               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+            break;
          default:
             break;
       }
@@ -6335,6 +6404,9 @@ inline bool DoesOperationSupportConvertableIntLiteral(int operatorId)
 mssg_t Compiler :: mapMessage(Scope& scope, SyntaxNode current, bool propertyMode,
    bool extensionMode, bool probeMode)
 {
+   if (current.key == SyntaxKey::Message && current.arg.reference)
+      return current.arg.reference;
+
    ref_t flags = propertyMode ? PROPERTY_MESSAGE : 0;
    if (extensionMode)
       flags |= FUNCTION_MESSAGE;
@@ -6392,6 +6464,8 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
    classScope.info.header.classRef = classScope.reference;
    classScope.extensionClassRef = scope.moduleScope->buildins.superReference;
    generateClassFlags(classScope, elExtension | elSealed);
+
+   classScope.info.attributes.exclude({ 0, ClassAttribute::RuntimeLoadable });
 
    // create a new overload list
    ClassInfo::MethodMap methods({});
@@ -7328,7 +7402,7 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
       mode = mode | ExpressionAttribute::ConstantExpr;
 
    Expression expression(this, scope, writer);
-   ObjectInfo retVal = expression.compileSymbolRoot(bodyNode, mode);
+   ObjectInfo retVal = expression.compileSymbolRoot(bodyNode, mode, scope.info.typeRef);
 
    writer.appendNode(BuildKey::CloseFrame);
 
@@ -9096,6 +9170,8 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
    declareClassParent(parentRef, scope, node);
    generateClassFlags(scope, elNestedClass | elSealed);
 
+   scope.info.attributes.exclude({ 0, ClassAttribute::RuntimeLoadable });
+
    // handle the abstract flag
    if (test(scope.info.header.flags, elAbstract)) {
       scope.abstractBasedMode = true;
@@ -9358,6 +9434,8 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
       scope.info.header.flags |= elVirtualVMT;
 
    declareClassParent(parentRef, scope, node);
+
+   scope.info.attributes.exclude({ 0, ClassAttribute::RuntimeLoadable });
 
    ref_t dummy = 0;
    declareClassAttributes(scope, {}, dummy);
@@ -10262,19 +10340,8 @@ void Compiler :: generateOverloadListMember(ModuleScopeBase& scope, ref_t listRe
    }
 }
 
-void Compiler :: injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t outputRef, SyntaxKey key, ustr_t arg)
+inline void injectParameters(Compiler::Scope& scope, SyntaxNode methodNode, ref_t signRef, mssg_t message)
 {
-   SyntaxNode methodNode = classNode.appendChild(SyntaxKey::Method, message);
-   // HOTFIX : indicating virtual interface dispatcher, to ignore byref handler optimization
-   methodNode.appendChild(SyntaxKey::Attribute, V_INTERFACE_DISPATCHER);
-
-   if (outputRef)
-      methodNode.appendChild(SyntaxKey::Type, outputRef);
-
-   ref_t actionRef = getAction(message);
-   ref_t signRef = 0;
-   ustr_t actionName = scope.module->resolveAction(actionRef, signRef);
-
    if (signRef) {
       ref_t signatures[ARG_COUNT];
       size_t len = scope.module->resolveSignature(signRef, signatures);
@@ -10302,6 +10369,52 @@ void Compiler :: injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode,
          nameParam.appendChild(SyntaxKey::identifier, arg.str());
       }
    }
+}
+
+inline void injectArguments(Compiler::Scope& scope, SyntaxNode opNode, mssg_t message)
+{
+   pos_t len = getArgCount(message);
+   String<char, 10> arg;
+   for (pos_t i = 1; i < len; i++) {
+      arg.copy("$");
+      arg.appendInt(i);
+
+      opNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, arg.str());
+   }
+}
+
+void Compiler :: injectMethodInvoker(Scope& scope, SyntaxNode classNode, mssg_t message, ustr_t targetArg)
+{
+   SyntaxNode methodNode = classNode.appendChild(SyntaxKey::ClosureBlock);
+
+   ref_t actionRef = getAction(message);
+   ref_t signRef = 0;
+   ustr_t actionName = scope.module->resolveAction(actionRef, signRef);
+
+   injectParameters(scope, methodNode, signRef, message);
+
+   SyntaxNode body = methodNode.appendChild(SyntaxKey::ReturnExpression).appendChild(SyntaxKey::Expression);
+   SyntaxNode opNode = body.appendChild(((message & PREFIX_MESSAGE_MASK) == PROPERTY_MESSAGE) ? SyntaxKey::PropertyOperation : SyntaxKey::MessageOperation);
+   opNode.appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, targetArg);
+   opNode.appendChild(SyntaxKey::Message, message);
+
+   injectArguments(scope, opNode, message);
+}
+
+void Compiler :: injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t outputRef, SyntaxKey key, ustr_t arg)
+{
+   SyntaxNode methodNode = classNode.appendChild(SyntaxKey::Method, message);
+   // HOTFIX : indicating virtual interface dispatcher, to ignore byref handler optimization
+   methodNode.appendChild(SyntaxKey::Attribute, V_INTERFACE_DISPATCHER);
+
+   if (outputRef)
+      methodNode.appendChild(SyntaxKey::Type, outputRef);
+
+   ref_t actionRef = getAction(message);
+   ref_t signRef = 0;
+   ustr_t actionName = scope.module->resolveAction(actionRef, signRef);
+
+   injectParameters(scope, methodNode, signRef, message);
 
    SyntaxNode body = methodNode.appendChild(SyntaxKey::Redirect);
    body
@@ -10669,6 +10782,9 @@ void Compiler::Class :: declare(SyntaxNode node)
    bool extensionDeclaration = isExtensionDeclaration(node);
    resolveClassPostfixes(node, extensionDeclaration);
 
+   // HOTFIX : remove inherited loadable attribute
+   scope.info.attributes.exclude({ 0, ClassAttribute::RuntimeLoadable });
+
    ref_t declaredFlags = 0;
    compiler->declareClassAttributes(scope, node, declaredFlags);
 
@@ -10708,7 +10824,7 @@ void Compiler::Class :: declare(SyntaxNode node)
       compiler->validateSuperClass(scope, node);
    }
 
-   if (scope.visibility == Visibility::Public)
+   if (scope.visibility == Visibility::Public && !testany(scope.info.header.flags, elNestedClass | elTemplatebased))
       scope.info.attributes.add({ 0, ClassAttribute::RuntimeLoadable }, INVALID_REF);
 
    // save declaration
@@ -10777,6 +10893,10 @@ void Compiler::Class :: resolveClassPostfixes(SyntaxNode node, bool extensionMod
 
             break;
          }
+         case SyntaxKey::IncludeStatement:
+            if (!compiler->includeBlock(scope, current.firstChild(), node))
+               scope.raiseError(errUnknownTemplate, current);
+            break;
          default:
             break;
       }
@@ -10960,12 +11080,12 @@ Compiler::Expression :: Expression(Code& code, BuildTreeWriter& writer)
 
 }
 
-ObjectInfo Compiler::Expression :: compileSymbolRoot(SyntaxNode bodyNode, EAttr mode)
+ObjectInfo Compiler::Expression :: compileSymbolRoot(SyntaxNode bodyNode, EAttr mode, ref_t targetRef)
 {
    writer->appendNode(BuildKey::OpenStatement);
    addBreakpoint(*writer, findObjectNode(bodyNode), BuildKey::Breakpoint);
 
-   ObjectInfo retVal = compile(bodyNode.firstChild(), 0, mode, nullptr);
+   ObjectInfo retVal = compile(bodyNode.firstChild(), targetRef, mode, nullptr);
 
    writeObjectInfo(boxArgument(retVal, false, true, false));
 
@@ -11237,6 +11357,9 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
          break;
       case SyntaxKey::TupleAssignOperation:
          retVal = compileTupleAssigning(current);
+         break;
+      case SyntaxKey::ClosureOperation:
+         retVal = compileClosureOperation(current);
          break;
       case SyntaxKey::None:
          assert(false);
@@ -12276,6 +12399,51 @@ ObjectInfo Compiler::Expression :: compileCollection(SyntaxNode node, Expression
    }
 
    return { ObjectKind::Object, { collectionTypeRef }, 0 };
+}
+
+ObjectInfo Compiler::Expression :: compileClosureOperation(SyntaxNode node)
+{
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+   if (!classScope)
+      scope.raiseError(errInvalidOperation, node);
+
+   // check the message name
+   mssg_t targetMessage = 0;
+   ustr_t methodName;
+   SyntaxNode objNode = node.firstChild().firstChild();
+   if (objNode.key == SyntaxKey::Object && objNode.firstChild() == SyntaxKey::identifier) {
+      methodName = objNode.firstChild().identifier();
+   }
+   else scope.raiseError(errInvalidOperation, node);
+
+   // find the method to be invoked
+   for (auto it = classScope->info.methods.start(); !it.eof(); ++it) {
+      mssg_t m = it.key();
+      ref_t dummy = 0;
+      ref_t signRef = getAction(m);
+      ustr_t actionName = scope.module->resolveAction(signRef, dummy);
+      if (actionName.compare(methodName)) {
+         targetMessage = encodeMessage(scope.module->mapAction(actionName, 0, false), getArgCount(m), getFlags(m));
+
+         break;
+      }
+   }
+
+   if (!targetMessage)
+      scope.raiseError(errInvalidOperation, node);
+
+   SyntaxTree classTree;
+   SyntaxTreeWriter classWriter(classTree);
+
+   // build the closure
+   classWriter.newNode(SyntaxKey::Root);
+   
+   SyntaxNode rootNode = classWriter.CurrentNode();
+   compiler->injectMethodInvoker(scope, rootNode, targetMessage, *scope.moduleScope->selfVar);
+
+   classWriter.closeNode();
+
+   return compileClosure(rootNode.firstChild(), EAttr::None, nullptr);
 }
 
 ObjectInfo Compiler::Expression :: compileTupleCollection(SyntaxNode node, ref_t targetRef)

@@ -63,6 +63,8 @@ namespace elena_lang
          bool importEnumTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
             SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) override;
 
+         bool importTextblock(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target) override;
+
          TemplateGenerator(CompilingProcess* process);
       };
 

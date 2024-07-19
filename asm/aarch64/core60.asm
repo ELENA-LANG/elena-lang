@@ -1269,6 +1269,15 @@ inline %89h
 
 end
 
+// ; movn (when n < 0)
+inline %989h
+
+  movz    x9, __n16lo_1
+  movk    x9, __n16hi_1, lsl #16
+  sxtw    x9, w9
+
+end
+
 // ; loaddp
 inline %8Ah
 

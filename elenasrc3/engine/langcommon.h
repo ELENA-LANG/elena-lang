@@ -237,6 +237,7 @@ namespace elena_lang
    constexpr auto V_CONVERSION            = 0x80001011u;
    constexpr auto V_NEWOP                 = 0x80001012u;
    constexpr auto V_DISPATCHER            = 0x80001013u;
+   constexpr auto V_TEXTBLOCK             = 0x80001014u;
    constexpr auto V_EXTERN                = 0x80001015u;
    constexpr auto V_INTERN                = 0x80001016u;
    constexpr auto V_FORWARD               = 0x80001017u;
@@ -489,6 +490,9 @@ namespace elena_lang
          map.add("get_method", V_GETACCESSOR);
          map.add("script_method", V_SCRIPTSELFMODE);
          map.add("public_namespace", V_PUBLIC);
+         map.add("public_class", V_PUBLIC);
+         map.add("public_textblock", V_TEXTBLOCK);
+         map.add("public_textblock", V_PUBLIC);
          map.add("script_function", V_SCRIPTSELFMODE);
          map.add("script_function", V_FUNCTION);
          map.add("public_symbol", V_PUBLIC);

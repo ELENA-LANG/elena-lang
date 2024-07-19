@@ -120,6 +120,14 @@ namespace elena_lang
          return length;
       }
 
+      void flush(ScriptEngineLog& buffer)
+      {
+         MemoryWriter writer(&_log);
+         MemoryReader reader(&buffer._log);
+
+         writer.copyFrom(&reader, buffer._log.length());
+      }
+
       static void writeQuote(MemoryWriter& writer, ustr_t token)
       {
          writer.writeChar('\"');
@@ -154,6 +162,12 @@ namespace elena_lang
          write((char)0);
 
          return _log.get(0);
+      }
+
+      void clear()
+      {
+         _log.clear();
+         _coordinates.clear();
       }
 
       CoordMap* getCoordinateMap()

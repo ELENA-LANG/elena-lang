@@ -124,11 +124,15 @@ namespace elena_lang
             ref_t addressMask) override;
          void writeMDataRef32(MemoryBase& target, pos_t position,
             pos_t disp, ref_t addressMask) override;
+         void writeStatRef32(MemoryBase& target, pos_t position,
+            pos_t disp, ref_t addressMask) override;
          void writeRelAddress32(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
             ref_t addressMask) override;
          void writeVAddress64(MemoryBase& target, pos_t position, addr_t vaddress, pos64_t disp,
             ref_t addressMask) override;
          void writeMDataRef64(MemoryBase& target, pos_t position, pos64_t disp,
+            ref_t addressMask) override;
+         void writeStatRef64(MemoryBase& target, pos_t position, pos64_t disp,
             ref_t addressMask) override;
          void writeVAddress32Hi(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
             ref_t addressMask) override;

@@ -5,35 +5,25 @@ In development:
 [development]
   ### EPIC: elena 6.3 ###
 
-  === Iteration 28 ===
+  === Iteration 28 (23.07) ===
+  --------------------------------------      
+  - #637
   --------------------------------------
-  dev: 
-      - upndown
-      - web server - weather forecast
-      - #668
-  gen:
-      - elt : nested executing managed code : keep frames (the frames must be included / excluded correctly)
-      - elt : fails after executing several times, exception handler works only once
-      - nested call must not stop / start vm, 
-  maint:
-      - elena : nested classes should not be loadable at runtime
-      - constructor - single dispatcher; passing nil to single dispatcher (both normal / constructor)
-      - #667
-  port:
-      - x86-64 : vm terminal, ide vm console
-      - #658 : create simplest debug adapter; connect with it from VSCode
-      - linux sdi - menu / new file
-  prom: posting weekly
-  --------------------------------------
-  --------------------------------------
+  - aarch64 : fix interfaceImplTests, decoratorTest 
 
   === Iteration 29 ===
   --------------------------------------
   dev: 
+      - upndown (connector)
+      - web server - weather forecast (project setup)
   gen:
+      - nested call must not stop / start vm, 
   maint:
+      - elena : nested classes should not be loadable at runtime
+      - constructor - single dispatcher; passing nil to single dispatcher (both normal / constructor)
   port:
-  prom:
+      - #658 : create simplest debug adapter; connect with it from VSCode
+  prom: posting weekly
   --------------------------------------
   --------------------------------------
 

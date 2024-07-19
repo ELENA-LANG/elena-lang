@@ -4,6 +4,11 @@
 
 // --- base inline templates ---
 
+public inline using(blockName)
+{
+   #include textblock blockName;
+}
+
 public inline external(routine)
 {
    #include intern routine;

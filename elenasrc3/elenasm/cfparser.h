@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
-//		E L E N A   P r o j e c t:  ELENA VM Script Engine
+//		E L E N A   P r o j e c t:  ELENA Script Engine
 //
-//                                             (C)2023, by Aleksey Rakov
+//                                               (C)2023-24, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CFPARSER_H
@@ -27,15 +27,24 @@ namespace elena_lang
 
       enum RuleType
       {
-         TypeMask       = 0x0F,
+         TypeMask          = 0x0F,
 
-         None           = 0x00,
-         Normal         = 0x01,
-         Chomski        = 0x02,
-         Nonterminal    = 0x03,
-         Eps            = 0x04,
-         WithForward    = 0x10,
-         WithBookmark   = 0x20,
+         None              = 0x00,
+         Normal            = 0x01,
+         Chomski           = 0x02,
+         Nonterminal       = 0x03,
+         Eps               = 0x04,
+         WithForward       = 0x10,
+         WithBookmark      = 0x20,
+         WithBufferOutput  = 0x40,
+      };
+
+      enum class RuleTypeModifier
+      {
+         None,
+         ForwardMode,
+         BookmarkMode,
+         BufferMode
       };
 
       typedef void (*SaveToSign)(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log);
@@ -117,8 +126,10 @@ namespace elena_lang
       SyntaxTable             _table;
       NameMap                 _names;
       MemoryDump              _body;
+      ScriptEngineLog         _buffer;
 
       bool                    _symbolMode;
+      bool                    _generating;
 
       ref_t mapRuleId(ustr_t name)
       {
@@ -132,7 +143,7 @@ namespace elena_lang
 
       ref_t autonameRule(ref_t parentRuleId);
 
-      void defineApplyRule(Rule& rule, int terminalType, bool forwardMode, bool bookmarkMode);
+      void defineApplyRule(Rule& rule, int terminalType, RuleTypeModifier modifier);
 
       void setScriptPtr(ScriptBookmark& bm, Rule& rule, bool prefixMode);
 
@@ -163,6 +174,19 @@ namespace elena_lang
       void insertForwards(Stack<Pair<int, int>>& forwards, int level, ScriptEngineLog& log);
 
    public:
+      void flushBuffer(ScriptEngineLog& log)
+      {
+         log.flush(_buffer);
+      }
+
+      void clearBuffer()
+      {
+         _buffer.clear();
+      }
+
+      void saveRuleOutput(Rule& rule, pos_t terminal, ScriptEngineReaderBase& scriptReader, ScriptEngineLog& log);
+      void saveRuleOutputToBuffer(Rule& rule, pos_t terminal, ScriptEngineReaderBase& scriptReader);
+
       void readScriptBookmark(pos_t ptr, ScriptBookmark& bm);
 
       bool compareToken(ScriptEngineReaderBase& reader, ScriptBookmark& bm, int rule);
@@ -182,7 +206,7 @@ namespace elena_lang
          // all body pointers should be greater than zero
          MemoryBase::writeDWord(&_body, 0, 0);
 
-         _symbolMode = false;
+         _symbolMode = _generating = false;
       }
       virtual ~ScriptEngineCFParser()
       {
