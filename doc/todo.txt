@@ -10,9 +10,8 @@ In development:
       - linux sdi - menu / new file
       - #658 : create simplest debug adapter; connect with it from VSCode
 
-      - x86-64 : ide vm console
   --------------------------------------
-  - x86-64 : vm terminal
+  - x86-64 : ide vm console
 
   === Iteration 29 ===
   --------------------------------------
