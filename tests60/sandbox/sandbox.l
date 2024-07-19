@@ -1,25 +1,6 @@
-import extensions;
-
-textblock Shared
-{
-   foo()
-   {
-      console.writeLine("foo")
-   }
-}
-
-class A : using(Shared)
-{
-   bar()
-   {
-      console.writeLine("bar")
-   }
-}
+import mylibrary;
 
 public program()
 {
-   var a := new A();
-
-   a.foo();
-   a.bar();
+   myFunction()
 }

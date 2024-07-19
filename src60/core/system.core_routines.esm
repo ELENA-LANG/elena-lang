@@ -2353,7 +2353,9 @@ labNext:
   iadd       dp:ptr, 4
 
   // loadClass
+  exclude
   call       extern:LoadClassByBufferLA(buffer, *index, *size)
+  include
   cmp        n:0
   jeq        labNotFound 
 
@@ -2452,7 +2454,9 @@ labVarLen:
   iadd       dp:ptr, 4
 
   // loadClass
+  exclude
   call       extern:LoadClassByBufferLA(buffer, *index, *size)
+  include
   cmp        n:0
   jeq        labNotFound 
 
