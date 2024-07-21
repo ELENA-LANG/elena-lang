@@ -1,11 +1,8 @@
 import extensions;
-import system'routines;
-
-A;
 
 public program()
 {
-   Reference<A> refA := nil;
+   int n := 3;
 
-   "abc".forEach::(ch){ console.writeLine(ch)};
+   int r := n + 2;
 }

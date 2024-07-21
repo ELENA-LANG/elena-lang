@@ -90,6 +90,13 @@ namespace elena_lang
       void SetUp() override;
    };
 
+   // Optimization #4 (intOpWithConsts) : "int r := n + 2" => direct op with consts
+   class BTOptimization4 : public BTOptimization
+   {
+   protected:
+      void SetUp() override;
+   };
+
    // --- StructAlignment ---
    class StructAlignment : public StructTest
    {

@@ -28,6 +28,7 @@ constexpr auto SyntaxTree1_3 = "expression(assign_operation(object(type(identifi
 
 constexpr auto Declaration2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ()))) class ( attribute -2147471359 () nameattr (identifier \"IntNumberReference\" ()) field (attribute -2147475454 () type (identifier \"IntNumber\" ()) nameattr (identifier \"_value\" ())) ))";
 constexpr auto SyntaxTree2 = "expression (assign_operation (object (type (identifier \"IntNumber\" ()) identifier \"n\" ()) expression (object (integer \"2\"))))";
+constexpr auto SyntaxTree4 = "expression ( code( expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"n\" ())expression (object (integer \"3\" ()))))expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"r\" ())expression (add_operation (object (identifier \"n\" ())expression (object (integer \"2\" ()))))))))";
 
 constexpr auto Struct_Declaration1 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension ( integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"ByteNumber\" ()) field (attribute -2147475454 () attribute -2147481596 () nameattr (identifier \"_value\" ()) dimension (integer \"1\" ())))class (attribute -2147479550 () nameattr 60 (identifier \"ShortNumber\" ()) field (attribute -2147475454 () attribute -2147481597 ()nameattr ( identifier \"_value\" ()) dimension ( integer \"2\" ()))) class (attribute -2147479550 ()nameattr (identifier \"LongNumber\" ())field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension (integer \"8\" ()))) class (attribute -2147479550 () nameattr (identifier \"Aligned\" ())field (type (identifier \"byte\" ())nameattr (identifier \"b\" ()) ) field (type (identifier \"short\" ())nameattr (identifier \"w\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b2\" ())) field (type (identifier \"int\" ())nameattr (identifier \"n\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b3\" ()))field (type (identifier \"long\" ()) nameattr (identifier \"l\" ()))))";
 constexpr auto Struct_Declaration2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension ( integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"ByteNumber\" ()) field (attribute -2147475454 () attribute -2147481596 () nameattr (identifier \"_value\" ()) dimension (integer \"1\" ())))class (attribute -2147479550 () nameattr 60 (identifier \"ShortNumber\" ()) field (attribute -2147475454 () attribute -2147481597 ()nameattr ( identifier \"_value\" ()) dimension ( integer \"2\" ()))) class (attribute -2147479550 ()nameattr (identifier \"LongNumber\" ())field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension (integer \"8\" ()))) class (attribute -2147479508 () nameattr (identifier \"Aligned\" ())field (type (identifier \"byte\" ())nameattr (identifier \"b\" ()) ) field (type (identifier \"short\" ())nameattr (identifier \"w\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b2\" ())) field (type (identifier \"int\" ())nameattr (identifier \"n\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b3\" ()))field (type (identifier \"long\" ()) nameattr (identifier \"l\" ()))))";
@@ -54,10 +55,12 @@ constexpr auto S2_Scenario1 = "class (attribute -2147479546 ()nameattr (identifi
 constexpr auto BuildTree1_1 = "byrefmark -8 () local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2050 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
 constexpr auto BuildTree1_2 = "byrefmark -8 () local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2242 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
 constexpr auto BuildTree2 = "int_literal 2 (value 2 ()) copying -4 ( size 4 ())";
+constexpr auto BuildTree4 = "int_literal 2 (value 3 ())copying -4 (size 4 ())local_address -4 ()saving_stack ()int_literal 3 (value 2 ())saving_stack 1 ()intop 4 (index -12 ())local_address -12 ()copying -8 (size 4 ())";
 
 constexpr auto OptimizedBuildTree1_1 = "local_address -4 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2050 (type 4 ()) local_address -4 ()";
 constexpr auto OptimizedBuildTree1_2 = "local_address -4 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2242 (type 4 ()) local_address -4 ()";
 constexpr auto OptimizedBuildTree2 = "saving_int - 4 (size 4 ()value 2 ())";
+constexpr auto OptimizedBuildTree4 = "saving_int -4 (size 4 ()value 3 ())local_address -4 ()copying -8 (size 4 ())addingint -8 (value 2 ())";
 
 constexpr auto BuildTree_VariadicSingleDispatch_1 = "tape(sealed_dispatching 256 (message 3202 ()) open_frame() assigning 1 () local_reference -2 () saving_stack() varg_sop 6 (index -4 ()) unbox_call_message -2 (index 1 () length -4 () temp_var -8 () message 1089 ()) local 1 () saving_stack() argument() direct_call_op 3202 (type 5 ()) loading_index() free_varstack() close_frame() exit()) reserved 3 ()reserved_n 8 ())";
 constexpr auto BuildTree_VariadicSingleDispatch_2 = "tape(open_frame() assigning 1 () class_reference 2 () direct_call_op 544 (type 10 ()) assigning 2 () class_reference 8 () direct_call_op 544 (type 14 ()) assigning 3 () local 2 () saving_stack() argument() call_op 1089 () assigning 4 () local 3 () saving_stack() argument() call_op 1089 () assigning 5 () terminator() saving_stack 3 () local 5 () saving_stack 2 () local 4 () saving_stack 1 () class_reference 5 () saving_stack() argument() direct_call_op 3202 (type 5 ()) local 1 () close_frame() exit()) reserved 9 ()";
@@ -79,10 +82,12 @@ constexpr auto ComplexStructSize = 16;
 constexpr auto BuildTree1_1 = "byrefmark -24 () local_address -24 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2050 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
 constexpr auto BuildTree1_2 = "byrefmark -24 () local_address -24 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2242 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
 constexpr auto BuildTree2 = "int_literal 2 (value 2 ()) copying -8 ( size 4 ())";
+constexpr auto BuildTree4 = "int_literal 2 (value 3 ())copying -8 (size 4 ())local_address -8 ()saving_stack ()int_literal 3 (value 2 ())saving_stack 1 ()intop 4 (index -40 ())local_address -40 ()copying -24 (size 4 ())";
 
 constexpr auto OptimizedBuildTree1_1 = "local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2050 (type 4 ()) local_address -8 ()";
 constexpr auto OptimizedBuildTree1_2 = "local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2242 (type 4 ()) local_address -8 ()";
 constexpr auto OptimizedBuildTree2 = "saving_int - 8 (size 4 ()value 2 ())";
+constexpr auto OptimizedBuildTree4 = "saving_int -8 (size 4 ()value 3 ())local_address -8 ()copying -24 (size 4 ())addingint -24 (value 2 ())";
 
 constexpr auto BuildTree_VariadicSingleDispatch_1 = "tape(sealed_dispatching 256 (message 3202 ()) open_frame() assigning 1 () local_reference -2 () saving_stack() varg_sop 6 (index -8 ()) unbox_call_message -2 (index 1 () length -8 () temp_var -24 () message 1089 ()) local 1 () saving_stack() argument() direct_call_op 3202 (type 5 ()) loading_index() free_varstack() close_frame() exit()) reserved 4 ()reserved_n 32 ())";
 constexpr auto BuildTree_VariadicSingleDispatch_2 = "tape(open_frame() assigning 1 () class_reference 2 () direct_call_op 544 (type 10 ()) assigning 2 () class_reference 8 () direct_call_op 544 (type 14 ()) assigning 3 () local 2 () saving_stack() argument() call_op 1089 () assigning 4 () local 3 () saving_stack() argument() call_op 1089 () assigning 5 () terminator() saving_stack 3 () local 5 () saving_stack 2 () local 4 () saving_stack 1 () class_reference 5 () saving_stack() argument() direct_call_op 3202 (type 5 ()) local 1 () close_frame() exit()) reserved 10 ()";
@@ -292,6 +297,19 @@ void BTOptimization2 :: SetUp()
 
    BuildTreeSerializer::load(BuildTree2, beforeOptimization);
    BuildTreeSerializer::load(OptimizedBuildTree2, afterOptimization);
+}
+
+// --- BTOptimization4 ---
+
+void BTOptimization4 :: SetUp()
+{
+   BTOptimization::SetUp();
+
+   SyntaxTreeSerializer::load(Declaration2, declarationNode);
+   SyntaxTreeSerializer::load(SyntaxTree4, exprNode);
+
+   BuildTreeSerializer::load(BuildTree4, beforeOptimization);
+   BuildTreeSerializer::load(OptimizedBuildTree4, afterOptimization);
 }
 
 // --- StructAlignment ---

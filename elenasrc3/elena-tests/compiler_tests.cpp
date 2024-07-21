@@ -26,6 +26,11 @@ TEST_F(BTOptimization2, CompilerTest)
    runCompilerTest(false);
 }
 
+TEST_F(BTOptimization4, CompilerTest)
+{
+   runCompilerTest(false);
+}
+
 TEST_F(StructAlignment, CompilerTest)
 {
    runTest();

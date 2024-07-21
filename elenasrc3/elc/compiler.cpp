@@ -12255,7 +12255,7 @@ ObjectInfo Compiler::Expression :: compileSubCode(SyntaxNode node, ExpressionAtt
 
       codeScope.syncStack(parentCodeScope);
    }
-   else retVal = compiler->compileCode(*writer, *parentCodeScope, node, retValExpected);
+   else retVal = compiler->compileCode(*writer, *parentCodeScope, node, retValExpected, withoutDebugInfo);
 
    if (!retValExpected) {
       retVal = { ObjectKind::Object };

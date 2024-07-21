@@ -20,7 +20,6 @@ In development:
   --------------------------------------
   - web server - weather forecast (project setup)
   - constructor - single dispatcher; passing nil to single dispatcher (both normal / constructor)
-  - #637 : unit tests
   --------------------------------------
 
   === Iteration 30 ===
