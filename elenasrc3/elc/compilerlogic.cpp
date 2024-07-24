@@ -2439,7 +2439,7 @@ bool CompilerLogic :: isNeedVerification(ClassInfo& info, VirtualMethodList& imp
    for (auto it = implicitMultimethods.start(); !it.eof(); it++) {
       auto vm = *it;
 
-      mssg_t message = vm.value1;
+      mssg_t message = vm.message;
 
       auto methodInfo = info.methods.get(message);
       ref_t outputRef = methodInfo.outputRef;

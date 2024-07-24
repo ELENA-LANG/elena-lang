@@ -9,7 +9,6 @@
 #include "ecviewer.h"
 #include "ecvconst.h"
 #include "module.h"
-#include "langcommon.h"
 
 using namespace elena_lang;
 

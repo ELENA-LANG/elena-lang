@@ -1,8 +1,21 @@
 import extensions;
 
+B;
+
+A
+{
+   B b;
+
+   constructor new(B? b)
+   {
+      this b := b
+   }
+}
+
 public program()
 {
-   int n := 3;
-
-   int r := n + 2;
+   var b := nil;
+//   var t := A;
+//   var a1 := t.new(b);
+   var a2 := A.new(b);
 }

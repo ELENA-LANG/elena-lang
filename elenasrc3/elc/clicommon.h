@@ -764,8 +764,27 @@ enum class VirtualType : int
    AbstractEmbeddableWrapper
 };
 
-typedef Pair<mssg_t, VirtualType, 0, VirtualType::None>  VirtualMethod;
-typedef List<VirtualMethod>                              VirtualMethodList;
+struct VirtualMethod
+{
+   mssg_t      message;
+   VirtualType type;
+   int         nillableArgs;
+
+   VirtualMethod()
+   {
+      message = 0;
+      type = VirtualType::None;
+      nillableArgs = 0;
+   }
+   VirtualMethod(mssg_t message, VirtualType type, int nillableArgs)
+   {
+      this->message = message;
+      this->type = type;
+      this->nillableArgs = nillableArgs;
+   }
+};
+
+typedef List<VirtualMethod>   VirtualMethodList;
 
 }
 

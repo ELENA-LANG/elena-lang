@@ -59,6 +59,204 @@ namespace elena_lang
       Yieldable            = 0x80000000,
    };
 
+   // --- MethodInfo ---
+   struct MethodInfo
+   {
+      bool   inherited;
+      ref_t  hints;
+      ref_t  outputRef;
+      mssg_t multiMethod;
+      mssg_t byRefHandler;
+      int    nillableArgs;
+
+      MethodInfo()
+      {
+         inherited = false;
+         hints = 0;
+         outputRef = 0;
+         multiMethod = 0;
+         byRefHandler = 0;
+         nillableArgs = 0;
+      }
+      MethodInfo(bool inherited, ref_t hints, ref_t outputRef, mssg_t multiMethod, mssg_t byRefHandler, int nillableArgs) :
+         inherited(inherited),
+         hints(hints),
+         outputRef(outputRef),
+         multiMethod(multiMethod),
+         byRefHandler(byRefHandler),
+         nillableArgs(nillableArgs)
+      {
+      }
+   };
+
+   // --- SymbolInfo ---
+   enum class SymbolType : int
+   {
+      Symbol = 0,
+      Singleton,
+      Constant,
+      ConstantArray,
+   };
+
+   struct SymbolInfo
+   {
+      SymbolType symbolType;
+      ref_t      valueRef;
+      ref_t      typeRef;
+      bool       loadableInRuntime;
+
+      SymbolInfo()
+      {
+         symbolType = SymbolType::Symbol;
+         valueRef = typeRef = 0;
+         loadableInRuntime = false;
+      }
+      SymbolInfo(SymbolType symbolType, ref_t valueRef, ref_t typeRef, bool loadableInRuntime)
+      {
+         this->symbolType = symbolType;
+         this->valueRef = valueRef;
+         this->typeRef = typeRef;
+         this->loadableInRuntime = loadableInRuntime;
+      }
+
+      void load(StreamReader* reader)
+      {
+         symbolType = (SymbolType)reader->getDWord();
+         valueRef = reader->getRef();
+         typeRef = reader->getRef();
+         loadableInRuntime = reader->getBool();
+      }
+
+      void save(StreamWriter* writer)
+      {
+         writer->writeDWord((unsigned int)symbolType);
+         writer->writeRef(valueRef);
+         writer->writeRef(typeRef);
+         writer->writeBool(loadableInRuntime);
+      }
+   };
+
+   // --- ClassInfo ---
+   struct ClassInfo
+   {
+      typedef MemoryMap<mssg_t, MethodInfo, Map_StoreUInt, Map_GetUInt> MethodMap;
+      typedef MemoryMap<ustr_t, FieldInfo, Map_StoreUStr, Map_GetUStr> FieldMap;
+      typedef MemoryMap<ustr_t, StaticFieldInfo, Map_StoreUStr, Map_GetUStr> StaticFieldMap;
+
+      ClassHeader     header;
+      pos_t           size;           // Object size
+      MethodMap       methods;
+      FieldMap        fields;
+      StaticFieldMap  statics;
+      ClassAttributes attributes;
+
+      static void loadStaticFields(StreamReader* reader, StaticFieldMap& statics)
+      {
+         pos_t statCount = reader->getPos();
+         for (pos_t i = 0; i < statCount; i++) {
+            IdentifierString fieldName;
+            reader->readString(fieldName);
+            StaticFieldInfo fieldInfo;
+            reader->read(&fieldInfo, sizeof(fieldInfo));
+
+            statics.add(*fieldName, fieldInfo);
+         }
+      }
+
+      static void saveStaticFields(StreamWriter* writer, StaticFieldMap& statics)
+      {
+         writer->writePos(statics.count());
+         statics.forEach<StreamWriter*>(writer, [](StreamWriter* writer, ustr_t name, StaticFieldInfo info)
+            {
+               writer->writeString(name);
+               writer->write(&info, sizeof(info));
+            });
+      }
+
+      void save(StreamWriter* writer, bool headerAndSizeOnly = false)
+      {
+         writer->write(&header, sizeof(ClassHeader));
+         writer->writeDWord(size);
+         if (!headerAndSizeOnly) {
+            writer->writePos(fields.count());
+            fields.forEach<StreamWriter*>(writer, [](StreamWriter* writer, ustr_t name, FieldInfo info)
+               {
+                  writer->writeString(name);
+                  writer->write(&info, sizeof(info));
+               });
+
+            writer->writePos(methods.count());
+            methods.forEach<StreamWriter*>(writer, [](StreamWriter* writer, mssg_t message, MethodInfo info)
+               {
+                  writer->writeDWord(message);
+                  writer->write(&info, sizeof(info));
+               });
+
+            writer->writePos(attributes.count());
+            attributes.forEach<StreamWriter*>(writer, [](StreamWriter* writer, ClassAttributeKey key, ref_t reference)
+               {
+                  writer->write(&key, sizeof(key));
+                  writer->writeRef(reference);
+               });
+
+            saveStaticFields(writer, statics);
+         }
+      }
+
+      void load(StreamReader* reader, bool headerAndSizeOnly = false, bool fieldsOnly = false)
+      {
+         reader->read(&header, sizeof(ClassHeader));
+         size = reader->getDWord();
+         if (!headerAndSizeOnly) {
+            pos_t fieldCount = reader->getPos();
+            for (pos_t i = 0; i < fieldCount; i++) {
+               IdentifierString fieldName;
+               reader->readString(fieldName);
+               FieldInfo fieldInfo;
+               reader->read(&fieldInfo, sizeof(fieldInfo));
+
+               fields.add(*fieldName, fieldInfo);
+            }
+
+            if (!fieldsOnly) {
+               pos_t methodsCount = reader->getPos();
+               for (pos_t i = 0; i < methodsCount; i++) {
+                  mssg_t message = reader->getDWord();
+                  MethodInfo methodInfo;
+                  reader->read(&methodInfo, sizeof(MethodInfo));
+
+                  methods.add(message, methodInfo);
+               }
+               pos_t attrCount = reader->getPos();
+               for (pos_t i = 0; i < attrCount; i++) {
+                  ClassAttributeKey key;
+                  reader->read(&key, sizeof(key));
+
+                  ref_t reference = reader->getRef();
+
+                  attributes.add(key, reference);
+               }
+
+               loadStaticFields(reader, statics);
+            }
+         }
+      }
+
+      ClassInfo() :
+         header({}),
+         size(0),
+         methods({}),
+         fields({ -1 }),
+         statics({ -1 }),
+         attributes(0)
+      {
+         //header.staticSize = 0;
+         //header.parentRef = header.classRef = 0;
+         //header.flags = 0;
+         //header.count = size = 0;
+      }
+   };
+
    // === ELENA Error codes ===
    constexpr auto errInvalidSyntax           = 4;
    constexpr auto errCBrExpectedSyntax       = 9;

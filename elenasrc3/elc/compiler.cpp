@@ -2597,6 +2597,8 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
    if (byRefMethod)
       methodInfo.byRefHandler = byRefMethod;
 
+   methodInfo.nillableArgs = node.findChild(SyntaxKey::NillableInfo).arg.reference;
+
    // check duplicates with different visibility scope
    if (MethodScope::checkHint(methodInfo, MethodHint::Private)) {
       checkMethodDuplicates(scope, node, message, message & ~STATIC_MESSAGE, false, false);
@@ -2770,8 +2772,8 @@ inline mssg_t retrieveMethod(VirtualMethodList& implicitMultimethods, mssg_t mul
 {
    return implicitMultimethods.retrieve<mssg_t>(multiMethod, [](mssg_t arg, VirtualMethod current)
       {
-         return current.value1 == arg;
-      }).value1;
+         return current.message == arg;
+      }).message;
 }
 
 mssg_t Compiler :: defineMultimethod(Scope& scope, mssg_t messageRef, bool extensionMode)
@@ -2845,7 +2847,7 @@ inline TypeInfo mapOutputType(MethodInfo info)
 }
 
 void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope,
-   ref_t targetRef, ClassInfo& info, mssg_t multiMethod)
+   ref_t targetRef, ClassInfo& info, mssg_t multiMethod, int nillableArgs)
 {
    MethodInfo methodInfo = {};
 
@@ -2872,7 +2874,7 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
          inherited = false;
 
       injectVirtualMultimethod(classNode, methodType, scope, targetRef, info, multiMethod, inherited, 
-         mapOutputType(methodInfo), visibility);
+         mapOutputType(methodInfo), visibility, nillableArgs);
 
       // COMPILER MAGIC : injecting try-multi-method dispather
       if (_logic->isTryDispatchAllowed(*scope.moduleScope, multiMethod)) {
@@ -2890,15 +2892,15 @@ void Compiler :: injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType
    // generate implicit mutli methods
    for (auto it = implicitMultimethods.start(); !it.eof(); ++it) {
       auto methodInfo = *it;
-      switch (methodInfo.value2) {
+      switch (methodInfo.type) {
          case VirtualType::Multimethod:
-            injectVirtualMultimethod(classNode, methodType, scope, targetRef, info, methodInfo.value1);
+            injectVirtualMultimethod(classNode, methodType, scope, targetRef, info, methodInfo.message, methodInfo.nillableArgs);
             break;
          case VirtualType::EmbeddableWrapper:
-            injectVirtualEmbeddableWrapper(classNode, methodType, targetRef, info, methodInfo.value1, false);
+            injectVirtualEmbeddableWrapper(classNode, methodType, targetRef, info, methodInfo.message, false);
             break;
          case VirtualType::AbstractEmbeddableWrapper:
-            injectVirtualEmbeddableWrapper(classNode, methodType, targetRef, info, methodInfo.value1, true);
+            injectVirtualEmbeddableWrapper(classNode, methodType, targetRef, info, methodInfo.message, true);
             break;
          default:
             break;
@@ -2996,7 +2998,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
             current.appendChild(SyntaxKey::Multimethod, multiMethod);
 
             if (retrieveMethod(implicitMultimethods, multiMethod) == 0) {
-               implicitMultimethods.add({ multiMethod, VirtualType::Multimethod });
+               implicitMultimethods.add({ multiMethod, VirtualType::Multimethod, current.findChild(SyntaxKey::NillableInfo).arg.value});
                thirdPassRequired = true;
             }
          }
@@ -3016,9 +3018,9 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
                      && retrieveMethod(implicitMultimethods, byRefMethod) == 0) 
                   {
                      if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_ABSTRACT)) {
-                        implicitMultimethods.add({ byRefMethod, VirtualType::AbstractEmbeddableWrapper });
+                        implicitMultimethods.add({ byRefMethod, VirtualType::AbstractEmbeddableWrapper, 0 });
                      }
-                     else implicitMultimethods.add({ byRefMethod, VirtualType::EmbeddableWrapper });
+                     else implicitMultimethods.add({ byRefMethod, VirtualType::EmbeddableWrapper, 0 });
                      thirdPassRequired = true;
                   }
                }
@@ -3577,7 +3579,7 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
 
 void Compiler :: declareParameter(MethodScope& scope, SyntaxNode current, bool withoutWeakMessages,
    bool declarationMode, bool& variadicMode, bool& weakSignature, bool& noSignature,
-   pos_t& paramCount, ref_t* signature, size_t& signatureLen)
+   pos_t& paramCount, ref_t* signature, size_t& signatureLen, bool& nillable)
 {
    int index = 1 + scope.parameters.count();
 
@@ -3624,6 +3626,8 @@ void Compiler :: declareParameter(MethodScope& scope, SyntaxNode current, bool w
 
    scope.parameters.add(terminal, Parameter(index, paramTypeInfo, sizeInfo.size, 
       paramTypeInfo.typeRef == V_OUTWRAPPER));
+
+   nillable |= paramTypeInfo.nillable;
 }
 
 void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode)
@@ -3666,20 +3670,32 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
       flags |= FUNCTION_MESSAGE;
    }
 
+   int nillableArgs = 0;
+   int argMask = 1;
    bool mixinFunction = false;
    bool noSignature = true; // NOTE : is similar to weakSignature except if withoutWeakMessages=true
    // if method has an argument list
    SyntaxNode current = node.findChild(SyntaxKey::Parameter);
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Parameter) {
+         bool nillable = false;
          declareParameter(scope, current, withoutWeakMessages,
             declarationMode, variadicMode, weakSignature, noSignature,
-            paramCount, signature, signatureLen);
+            paramCount, signature, signatureLen, nillable);
+
+         if (nillable)
+         {
+            nillableArgs |= argMask;
+         }
       }
       else break;
 
       current = current.nextNode();
+      argMask <<= 1;
    }
+
+   if (nillableArgs)
+      scope.info.nillableArgs = nillableArgs;
 
    // if the signature consists only of generic parameters - ignore it
    if (weakSignature)
@@ -3855,9 +3871,10 @@ ref_t Compiler :: declareClosureParameters(MethodScope& methodScope, SyntaxNode 
    ref_t signatures[ARG_COUNT];
    size_t signatureLen = 0;
    while (argNode == SyntaxKey::Parameter) {
+      bool dummy = false;
       declareParameter(methodScope, argNode, false, false,
          variadicMode, weakSingature, noSignature,
-         paramCount, signatures, signatureLen);
+         paramCount, signatures, signatureLen, dummy);
 
       if (variadicMode)
          flags |= VARIADIC_MESSAGE;
@@ -3916,6 +3933,9 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
    if (methodScope.info.outputRef) {
       addTypeInfo(methodScope, node, SyntaxKey::OutputInfo, mapOutputType(methodScope.info));
    }
+
+   if (methodScope.info.nillableArgs)
+      node.appendChild(SyntaxKey::NillableInfo, methodScope.info.nillableArgs);
 
    if (methodScope.info.hints)
       node.appendChild(SyntaxKey::Hints, methodScope.info.hints);
@@ -4641,7 +4661,7 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
    bool declarationMode)
 {
    SyntaxNode current = node.firstChild();
-   TypeAttributes attributes = { false, false, false };
+   TypeAttributes attributes = { };
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Type:
@@ -4652,8 +4672,8 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
             // if it is a template type attribute
             typeInfo = resolveTypeAttribute(scope, current, attributes, declarationMode, false);
             break;
-         case SyntaxKey::ArrayType:
          case SyntaxKey::NullableType:
+         case SyntaxKey::ArrayType:
             // if it is a type attribute
             typeInfo = resolveTypeScope(scope, current, attributes, declarationMode, false);
             break;
@@ -5528,8 +5548,8 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribu
          case SyntaxKey::reference:
             elementRef = resolveTypeIdentifier(scope, current.identifier(), node.key, declarationMode, allowRole);
             break;
-         case SyntaxKey::ArrayType:
          case SyntaxKey::NullableType:
+         case SyntaxKey::ArrayType:
             elementRef = resolvePrimitiveType(*scope.moduleScope,
                resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole), declarationMode);
             break;
@@ -6473,7 +6493,7 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
    for(auto it = scope.extensions.getIt(genericMessage); !it.eof(); it = scope.extensions.nextIt(genericMessage, it)) {
       auto extInfo = *it;
 
-      methods.add(extInfo.value2, { false, 0, 0, genericMessage | FUNCTION_MESSAGE, 0 });
+      methods.add(extInfo.value2, { false, 0, 0, genericMessage | FUNCTION_MESSAGE, 0, 0 });
       targets.add(extInfo.value2, extInfo.value1);
    }
 
@@ -9194,7 +9214,7 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
       classWriter.newNode(SyntaxKey::Class, scope.reference);
 
       SyntaxNode classNode = classWriter.CurrentNode();
-      injectVirtualMultimethod(classNode, SyntaxKey::Method, scope, scope.reference, scope.info, multiMethod);
+      injectVirtualMultimethod(classNode, SyntaxKey::Method, scope, scope.reference, scope.info, multiMethod, 0);
 
       classWriter.closeNode();
       classWriter.closeNode();
@@ -10055,7 +10075,7 @@ inline bool isSingleDispatch(SyntaxNode node, SyntaxKey methodType, mssg_t messa
 }
 
 bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope,
-   mssg_t message, mssg_t resendMessage, TypeInfo outputInfo, Visibility visibility, bool isExtension)
+   mssg_t message, mssg_t resendMessage, TypeInfo outputInfo, Visibility visibility, bool isExtension, int nillableArgs)
 {
    bool variadicOne = (getFlags(resendMessage) & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
 
@@ -10095,6 +10115,8 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, Synta
 
    String<char, 10> arg;
    for (size_t i = 0; i < len; i++) {
+      bool isNillable = test(nillableArgs, 1 << i);
+
       arg.copy("$");
       arg.appendInt((int)i);
 
@@ -10108,7 +10130,14 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, Synta
          castObject.appendChild(SyntaxKey::Attribute, V_CONVERSION);
          castObject.appendChild(SyntaxKey::Type, signArgs[i]);
          castNode.appendChild(SyntaxKey::Message);
-         castNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, arg.str());
+         if (isNillable) {
+            SyntaxNode isNilOp = castNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::IsNilOperation);
+            isNilOp.appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, arg.str());
+            SyntaxNode nilObject = isNilOp.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object);
+            nilObject.appendChild(SyntaxKey::Attribute, V_FORWARD);
+            nilObject.appendChild(SyntaxKey::identifier, NILVALUE_FORWARD);
+         }
+         else castNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, arg.str());
       }
       else operationNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, arg.str());
    }
@@ -10143,7 +10172,8 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, Synta
 }
 
 void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope,
-   ref_t targetRef, ClassInfo& info, mssg_t message, bool inherited, TypeInfo outputInfo, Visibility visibility)
+   ref_t targetRef, ClassInfo& info, mssg_t message, bool inherited, TypeInfo outputInfo, 
+   Visibility visibility, int nillableArgs)
 {
    bool isExtension = test(info.header.flags, elExtension);
 
@@ -10160,7 +10190,7 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
    // !! temporally do not support variadic arguments
    if (isSingleDispatch(classNode, methodType, message, resendMessage) &&
       injectVirtualStrongTypedMultimethod(classNode, methodType, scope, message, resendMessage, 
-         outputInfo, visibility, isExtension))
+         outputInfo, visibility, isExtension, nillableArgs))
    {
       // mark the message as a signle dispatcher if the class is sealed / closed / class class
       // and default multi-method was not explicitly declared
@@ -10485,7 +10515,7 @@ void Compiler :: declareModuleExtensionDispatcher(NamespaceScope& scope, SyntaxN
             if (retrieveIndex(genericMethods, genericMessage) == -1)
                genericMethods.add(genericMessage);
 
-            methods.add(extInfo.value2, { false, 0, 0, genericMessage | FUNCTION_MESSAGE, 0 });
+            methods.add(extInfo.value2, { false, 0, 0, genericMessage | FUNCTION_MESSAGE, 0, 0 });
             targets.add(extInfo.value2, extInfo.value1);
          }
       }

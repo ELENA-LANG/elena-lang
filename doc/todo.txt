@@ -19,8 +19,9 @@ In development:
   prom: posting weekly
   --------------------------------------
   - web server - weather forecast (project setup)
-  - constructor - single dispatcher; passing nil to single dispatcher (both normal / constructor)
   --------------------------------------
+  - passing nil to single dispatcher (both normal / constructor)
+  - add support for nilable argument; if the argument is nillable - check for nil and replace with nilValue
 
   === Iteration 30 ===
   --------------------------------------

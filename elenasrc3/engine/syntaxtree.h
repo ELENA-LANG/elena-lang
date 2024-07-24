@@ -205,6 +205,7 @@ namespace elena_lang
       ProxyDispatcher         = 0x000112,
       EnumNameArgParameter    = 0x000113,
       EnumArgParameter        = 0x000114,
+      NillableInfo            = 0x000115,
 
       Column                  = 0x000201,
       Row                     = 0x000202,

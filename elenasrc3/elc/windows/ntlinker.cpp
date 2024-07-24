@@ -42,7 +42,7 @@ void WinNtLinker :: writeExecutableHeader(WinNtExecutableImage& image, FileWrite
    IMAGE_FILE_HEADER header = {};
 
    header.Characteristics = image.characteristics;
-   header.NumberOfSections = image.imageSections.headers.count();
+   header.NumberOfSections = image.imageSections.headers.count_short();
    header.TimeDateStamp = (int)time(nullptr);
    header.PointerToSymbolTable = 0;
    header.NumberOfSymbols = 0;
