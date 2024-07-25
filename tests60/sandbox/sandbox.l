@@ -1,21 +1,56 @@
 import extensions;
 
-B;
+NilArgB;
 
-A
+NilArgA
 {
-   B b;
+   NilArgB b;
 
-   constructor new(B? b)
+   constructor new(NilArgB? b)
    {
       this b := b
    }
 }
 
+NilArgC
+{
+   NilArgB b;
+
+   constructor new(NilArgB b)
+   {
+      this b := b
+   }
+}
+
+singleton NilArgTester<T>
+{
+   runWeak()
+   {
+      var b := nil;
+      var t := class T;
+      var a := t.new(b);
+   }
+   runStrong()
+   {
+      var b := nil;
+      var a := class T.new(b);      
+   }
+}
+
+passingNilArg()
+{
+   NilArgTester<NilArgA>.runWeak();
+   console.write(".");
+   NilArgTester<NilArgA>.runStrong();
+   console.write(".");
+
+   Assert.ifFailed({ NilArgTester<NilArgC>.runWeak() });
+   console.write(".");
+   Assert.ifFailed({ NilArgTester<NilArgC>.runStrong() });
+   console.write(".");
+}
+
 public program()
 {
-   var b := nil;
-//   var t := A;
-//   var a1 := t.new(b);
-   var a2 := A.new(b);
+   passingNilArg()
 }

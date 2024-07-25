@@ -20,8 +20,6 @@ In development:
   --------------------------------------
   - web server - weather forecast (project setup)
   --------------------------------------
-  - passing nil to single dispatcher (both normal / constructor)
-  - add support for nilable argument; if the argument is nillable - check for nil and replace with nilValue
 
   === Iteration 30 ===
   --------------------------------------
