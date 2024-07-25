@@ -11,13 +11,15 @@ In development:
       - upndown (connector)
       - web server - weather forecast
   gen:
-      - nested call must not stop / start vm, 
+      - generate code templates : project templates
   maint:
-      - LoadExtensionDispatcherLA : currently all preloaded symbols are loaded, but should only for the used namespace      
+      - 
   port:
       - #658 : create simplest debug adapter; connect with it from VSCode
   prom: posting weekly
   --------------------------------------
+  - LoadExtensionDispatcherLA : currently all preloaded symbols are loaded, but should only for the used namespace      
+  - generate code templates : project templates
   - web server - weather forecast (project setup)
   --------------------------------------
 

@@ -1108,6 +1108,8 @@ bool CompilerLogic :: validateArgumentAttribute(ref_t attrValue, TypeAttributes&
       case V_VARIADIC:
          attributes.variadicOne = true;
          return true;
+      case V_VARIABLE:
+         return true;
       default:
          return false;
    }
