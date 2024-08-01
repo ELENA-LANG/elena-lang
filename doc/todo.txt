@@ -9,19 +9,20 @@ In development:
   --------------------------------------
   dev: 
       - upndown (connector)
-      - web server - weather forecast
+      - async programming
   gen:
-      - generate code templates : project templates
+      - lpad
   maint:
       - 
   port:
-      - #658 : create simplest debug adapter; connect with it from VSCode
+      - #658 : vscode extension (debug adapter)
   prom: posting weekly
   --------------------------------------
-  - LoadExtensionDispatcherLA : currently all preloaded symbols are loaded, but should only for the used namespace      
-  - generate code templates : project templates
-  - web server - weather forecast (project setup)
+  - lpad : generate a code based on a record
+  - User-defined string literals 
+  - #658 : connect with ldbg from VSCode  
   --------------------------------------
+  - rosetta code : add support for $ string interpolation
 
   === Iteration 30 ===
   --------------------------------------

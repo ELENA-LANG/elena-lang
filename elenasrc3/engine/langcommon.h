@@ -32,6 +32,7 @@ namespace elena_lang
       Virtual              = 0x00000005,
       Dispatcher           = 0x00000007,
 
+      Interpolator         = 0x00000020,
       Nillable             = 0x00000040,
       Function             = 0x00000080,
       Generic              = 0x00000100,

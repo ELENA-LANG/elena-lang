@@ -1350,6 +1350,7 @@ namespace elena_lang
          ObjectInfo compileTupleCollection(SyntaxNode node, ref_t targetRef);
          ObjectInfo compileKeyValue(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileClosureOperation(SyntaxNode node);
+         ObjectInfo compileInterpolation(SyntaxNode node);
 
          ObjectInfo compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope = false);
 

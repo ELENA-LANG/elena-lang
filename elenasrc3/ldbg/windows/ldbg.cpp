@@ -8,14 +8,24 @@
 //---------------------------------------------------------------------------
 
 #include "ldbg_session.h"
+#include "common.h"
 
 using namespace elena_lang;
 
 int main()
 {
+   printf("Starting\n");
+
+   int n = 0;
+   while (true)
+   {
+      n++;
+   }
+
    DPASessionWrapper session;
 
    session.prepare();
+   session.run();
 
    return 0;
 }

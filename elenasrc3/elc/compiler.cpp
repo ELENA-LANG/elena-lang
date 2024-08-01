@@ -3728,6 +3728,16 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
 
             unnamedMessage = false;
          }
+         else if (variadicMode&& paramCount == 1 && unnamedMessage && signature[0] == scope.moduleScope->buildins.superReference) {
+            constantConversion = true;
+            unnamedMessage = false;
+
+            actionStr.copy("$");
+            actionStr.append(CONSTRUCTOR_MESSAGE);
+            flags |= FUNCTION_MESSAGE;
+            scope.info.hints |= (ref_t)MethodHint::Constructor;
+            scope.info.hints |= (ref_t)MethodHint::Interpolator;
+         }
          else if (paramCount == 1 && !unnamedMessage && signature[0] == scope.moduleScope->buildins.literalReference) {
             constantConversion = true;
 
@@ -3735,14 +3745,6 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
             flags |= FUNCTION_MESSAGE;
             scope.info.hints |= (ref_t)MethodHint::Constructor;
          }
-         //else if (paramCount == 1 && unnamedMessage && weakSignature && scope.checkHint(MethodHint::Nullable)) {
-         //   ref_t voidSignRef = scope.module->mapSignature(&scope.moduleScope->buildins.nilValueReference, 1, false);
-         //   actionRef = scope.module->mapAction(CONSTRUCTOR_MESSAGE, voidSignRef, false);
-
-         //   flags |= FUNCTION_MESSAGE;
-
-         //   unnamedMessage = false;
-         //}
          else scope.raiseError(errIllegalMethod, node);
       }
       else if (scope.checkHint(MethodHint::Constructor) && unnamedMessage) {
@@ -6962,6 +6964,7 @@ ObjectInfo Compiler :: defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInf
          }
          break;
       case SyntaxKey::string:
+      case SyntaxKey::interpolate:
          invalid = invalidForNonIdentifier;
 
          retVal = mapStringConstant(scope, node);
@@ -8756,7 +8759,7 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
       // the object should not be created, because of redirecting
       isDefConvConstructor = false;
    }
-   else if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
+   else if (isDefConvConstructor && (!test(classFlags, elDynamicRole) || scope.checkHint(MethodHint::Interpolator))) {
       // new stack frame
       writer.appendNode(BuildKey::OpenFrame);
       newFrame = true;
@@ -11393,6 +11396,9 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
       case SyntaxKey::ClosureOperation:
          retVal = compileClosureOperation(current);
          break;
+      case SyntaxKey::Interpolation:
+         retVal = compileInterpolation(current);
+         break;
       case SyntaxKey::None:
          assert(false);
          break;
@@ -11405,6 +11411,39 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
       noPrimitives, paramMode, dynamicRequired, nillableArg);
 
    return retVal;
+}
+
+ObjectInfo Compiler::Expression :: compileInterpolation(SyntaxNode node)
+{
+   ArgumentsInfo arguments;
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      ObjectInfo arg = {};
+      if (current == SyntaxKey::interpolate) {
+         arg = compiler->mapTerminal(scope, current, {}, EAttr::None);
+      }
+      else arg = compile(current, 0, EAttr::None, nullptr);
+
+      arguments.add(arg);
+
+      current = current.nextNode();
+   }
+
+   ref_t typeRef = scope.moduleScope->buildins.superReference;
+   ref_t signRef = scope.module->mapSignature(&typeRef, 1, false);
+   mssg_t conversionMssg = encodeMessage(scope.module->mapAction("$#constructor", signRef, false), 1, FUNCTION_MESSAGE | VARIADIC_MESSAGE);
+
+   ObjectInfo source = {};
+   mssg_t messageRef = 0;
+   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+   auto constInfo = nsScope->extensions.get(conversionMssg);
+   if (constInfo.value1) {
+      messageRef = constInfo.value2;
+      source = compiler->mapClassSymbol(scope, constInfo.value1);
+   }
+   else scope.raiseError(errInvalidOperation, node);
+
+   return compileMessageOperation(node, source, messageRef, 0, arguments, EAttr::StrongResolved | EAttr::NoExtension, nullptr);
 }
 
 ObjectInfo Compiler::Expression :: compileObject(SyntaxNode node, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs)

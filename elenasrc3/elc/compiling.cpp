@@ -353,7 +353,8 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t exeExtension,
          SyntaxTree::toParseKey(SyntaxKey::hexinteger),
          SyntaxTree::toParseKey(SyntaxKey::longinteger),
          SyntaxTree::toParseKey(SyntaxKey::real),
-         SyntaxTree::toParseKey(SyntaxKey::constant));
+         SyntaxTree::toParseKey(SyntaxKey::constant),
+         SyntaxTree::toParseKey(SyntaxKey::interpolate));
 
       _parser = new Parser(&syntax, terminals, _presenter);
       _compiler = new Compiler(

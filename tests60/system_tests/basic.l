@@ -2068,3 +2068,11 @@ public passingNilArg() : testCase()
    Assert.ifFailed({ NilArgTester<NilArgC>.runStrong() });
    console.write(".");
 }
+
+public stringInterpolation() : testCase()
+{
+   var s := $"a_{ 1 }_b_{ 2 }_c";
+
+   Assert.ifEqual(s,"a_1_b_2_c");
+   console.write(".");
+}
