@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 6.3 ###
 
-  === Iteration 29 (05.08) ===
+  === Iteration 30 (16.8) ===
   --------------------------------------
   dev: 
       - upndown (connector)
@@ -13,25 +13,14 @@ In development:
   gen:
       - lpad
   maint:
-      - 
   port:
       - #658 : vscode extension (debug adapter)
   prom: posting weekly
   --------------------------------------
   - lpad : generate a code based on a record
   - User-defined string literals 
+  --------------------------------------
   - #658 : connect with ldbg from VSCode  
-  --------------------------------------
-  - rosetta code : add support for $ string interpolation
-
-  === Iteration 30 ===
-  --------------------------------------
-  dev: 
-  gen:
-  maint:
-  port:
-  prom:
-  --------------------------------------
   --------------------------------------
 
   ### EPIC: elena 6.4 ###

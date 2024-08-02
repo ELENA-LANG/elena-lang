@@ -7,6 +7,8 @@
   - [ADDED] new operator $size
   - [ADDED] text blocks
   - [ADDED] method reference - &myMethod
+  - [FIXED] single dispatcher : if an argument is nillable, it can accept nil value
+  - [ADDED] String interpolation 
 
 - ELC
   - [FIXED] private constructor must be called directly
@@ -14,6 +16,8 @@
   - [FIXED] ppc64le : decoratorTest()
   - [FIXED] #667 : Boxing the symbol expression
   - [FIXED] only public classes can be loaded in run-time
+  - [ADDED] #637 : bt optimization 4 unit test
+  - [FIXED] var attribute is allowed to be in the method argument list
 
 - VM
   - [FIXED] GC_ALLOC routine for vm mode 
@@ -27,6 +31,7 @@
   - [ADDED] reusing PermVectorTable after windows are closed
   - [ADDED] xforms60 script
   - [FIXED] external calls to be excluded from managed stack frames
+  - [FIXED] Directory.getFiles : raising an exception if no files were found
 
 - SAMPLES
   - [ADDED] xforms example
