@@ -12,6 +12,7 @@
 #include "elena.h"
 #include "bytecode.h"
 #include "libman.h"
+#include "langcommon.h"
 
 namespace elena_lang
 {

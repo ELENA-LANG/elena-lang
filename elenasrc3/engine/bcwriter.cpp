@@ -16,6 +16,13 @@ using namespace elena_lang;
 
 typedef ByteCodeWriter::TapeScope TapeScope;
 
+//inline void storeNode(BuildNode node)
+//{
+//   DynamicUStr target;
+//
+//   BuildTreeSerializer::save(node, target);
+//}
+
 //inline void testNodes(BuildNode node)
 //{
 //   BuildNode current = node.firstChild();

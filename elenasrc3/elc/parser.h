@@ -47,6 +47,7 @@ namespace elena_lang
       parse_key_t integer, hexinteger;
       parse_key_t longinteger, real;
       parse_key_t customnumber;
+      parse_key_t interpolate;
 
       TerminalMap()
       {
@@ -58,6 +59,7 @@ namespace elena_lang
          this->integer = this->hexinteger = 0;
          this->longinteger = this->real = 0;
          this->customnumber = 0;
+         this->interpolate = 0;
       }
       TerminalMap(parse_key_t eof,
          parse_key_t identifier,
@@ -70,7 +72,8 @@ namespace elena_lang
          parse_key_t hexinteger,
          parse_key_t longinteger,
          parse_key_t real,
-         parse_key_t customnumber)
+         parse_key_t customnumber,
+         parse_key_t interpolate)
       {
          this->eof = eof;
          this->identifier = identifier;
@@ -84,6 +87,7 @@ namespace elena_lang
          this->longinteger = longinteger;
          this->real = real;
          this->customnumber = customnumber;
+         this->interpolate = interpolate;
       }
    };
 

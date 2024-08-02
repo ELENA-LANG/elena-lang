@@ -24,6 +24,7 @@ namespace elena_lang
       bool        stackSafe;
       bool        withVariadicDispatcher;
       bool        withCustomDispatcher;
+      int         nillableArgs;
    };
 
    struct TypeAttributes
@@ -195,7 +196,7 @@ namespace elena_lang
       bool resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message, 
          CheckMethodResult& result);
 
-      mssg_t resolveSingleDispatch(ModuleScopeBase& scope, ref_t reference, ref_t weakMessage);
+      mssg_t resolveSingleDispatch(ModuleScopeBase& scope, ref_t reference, ref_t weakMessage, int& nillableArgs);
 
       void injectOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, ref_t classRef);
       void injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags, 

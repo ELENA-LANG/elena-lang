@@ -22,3 +22,8 @@ TEST_F(BTOptimization2, BuildTapeTest)
 {
    runBTTest();
 }
+
+TEST_F(BTOptimization4, BuildTapeTest)
+{
+   runBTTest();
+}

@@ -25,6 +25,7 @@ constexpr auto DEFAULT_ENCODING = FileEncoding::UTF8;
 #endif
 
 typedef Tree<parse_key_t, 0> SyntaxTempTree;
+typedef Map<ustr_t, int, allocUStr, freeUStr> Coordinates;
 
 parse_key_t lastKey = 0;
 
@@ -115,7 +116,7 @@ parse_key_t registerEpsRule(ParserTable& table, parse_key_t key)
    return eps_key;
 }
 
-void registerBrackets(ParserTable& table, parse_key_t* rule, size_t& rule_len, size_t start)
+void registerBrackets(ParserTable& table, parse_key_t* rule, size_t& rule_len, size_t start, Coordinates& coordinates, int row)
 {
    parse_key_t bracket_key = rule[start];
    if (!bracket_key) {
@@ -129,6 +130,8 @@ void registerBrackets(ParserTable& table, parse_key_t* rule, size_t& rule_len, s
       } while (!emptystr(table.resolveKey(lastKey)));
 
       bracket_key = registerSymbol(table, *ruleName, lastKey + 1, false);
+
+      coordinates.add(*ruleName, row);
 
       rule[start] = bracket_key;
    }
@@ -174,6 +177,8 @@ int main(int argc, char* argv[])
          printf(SG_FILENOTEXIST);
          return  -1;
       }
+
+      Coordinates coordiantes(-1);
 
       ParserTable  table;
       table.registerNonterminal(pkStart, "START");
@@ -246,7 +251,7 @@ int main(int argc, char* argv[])
          }
          else if (token.compare("|")) {
             if (bracketIndexes.count() > 0) {
-               registerBrackets(table, rule, rule_len, bracketIndexes.peek());
+               registerBrackets(table, rule, rule_len, bracketIndexes.peek(), coordiantes, token.lineInfo.row);
             }
             else if (rule_len != 1) {
                table.registerRule(rule, rule_len);
@@ -260,7 +265,7 @@ int main(int argc, char* argv[])
             bracketIndexes.push(rule_len - 1);
          }
          else if (token.compare("}")) {
-            registerBrackets(table, rule, rule_len, bracketIndexes.pop());
+            registerBrackets(table, rule, rule_len, bracketIndexes.pop(), coordiantes, token.lineInfo.row);
          }
          else rule[rule_len++] = registerSymbol(table, *token.token, lastKey + 1, false);
       }
@@ -269,10 +274,10 @@ int main(int argc, char* argv[])
 
       auto ambigous = table.generate();
       if (ambigous.value1) {
-         ustr_t terminal = table.resolveKey(ambigous.value2);
-         ustr_t nonterminal = table.resolveKey(ambigous.value1);
+         ustr_t nonterminal = table.resolveKey(ambigous.value2);
+         ustr_t terminal = table.resolveKey(ambigous.value1);
 
-         printf(SG_AMBIGUOUS, terminal.str(), nonterminal.str());
+         printf(SG_AMBIGUOUS, nonterminal.str(), terminal.str(), coordiantes.get(nonterminal.str()));
          return -1;
       }
 

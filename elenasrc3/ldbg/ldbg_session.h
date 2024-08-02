@@ -19,6 +19,7 @@ namespace elena_lang
 
    public:
       void prepare();
+      void run();
 
       DPASessionWrapper();
       virtual ~DPASessionWrapper();

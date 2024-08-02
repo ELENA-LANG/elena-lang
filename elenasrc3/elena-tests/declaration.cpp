@@ -47,7 +47,8 @@ void DeclarationFixture :: runTest()
       SyntaxTree::toParseKey(SyntaxKey::hexinteger),
       SyntaxTree::toParseKey(SyntaxKey::longinteger),
       SyntaxTree::toParseKey(SyntaxKey::real),
-      SyntaxTree::toParseKey(SyntaxKey::constant));
+      SyntaxTree::toParseKey(SyntaxKey::constant),
+      SyntaxTree::toParseKey(SyntaxKey::interpolate));
 
    PathString appPath;
    getAppPath(appPath);

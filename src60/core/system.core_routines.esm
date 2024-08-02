@@ -1213,6 +1213,31 @@ procedure __ptrCopyTo (self, arr, len)
 
 end
 
+procedure __ptrCopySubTo (self, arr, index, len)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[tmp]
+
+  peek       fp:self
+  get        i:0
+  store      sp:0
+  $load      sp:0
+  $save      dp:tmp
+  peek       fp:index
+  load
+  xadd       dp:tmp
+  $save      sp:0
+  peek       fp:len
+  load
+  peek       fp:arr
+  dcopy      1
+
+  close      []
+
+end
+
 procedure __copySubStr (self, dest, index, len, sour)
 
   xflush     sp:0
@@ -1246,6 +1271,45 @@ labNext:
   peek       fp:len
   load       
   xcmp       dp:i2
+  jne        labNext
+
+  close      []
+
+end
+
+procedure __copySubStr2 (self, dest, index, len, sour)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[],[i1,i2,tmp]
+
+  peek       fp:index
+  load
+  save       dp:i2
+  nsave      dp:i1, 0
+
+  peek       fp:dest
+  store      sp:1
+
+  peek       fp:sour
+  store      sp:0
+
+labNext:
+  set        dp:tmp
+  load       dp:i1
+  bread
+  xswap      sp:1
+  load       dp:i2
+  write      1
+  xswap      sp:1
+
+  nadd       dp:i1, 1
+  nadd       dp:i2, 1
+
+  peek       fp:len
+  load       
+  xcmp       dp:i1
   jne        labNext
 
   close      []

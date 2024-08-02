@@ -94,6 +94,7 @@ public sealed const struct UnsafePointer
    }
 
    copyTo(byte[] target, int len) : external(system'core_routines'__ptrCopyTo);
+   copyTo(byte[] target, int index, int len) : external(system'core_routines'__ptrCopySubTo);
 }
 
 // --- CallStack ---

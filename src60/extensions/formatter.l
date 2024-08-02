@@ -35,7 +35,7 @@ singleton helper
 
 public extension stringFormatterOp : String
 {
-   interpolate(params object[] args)
+   string interpolate(params object[] args)
    {
       auto buffer := new TextBuilder();
         

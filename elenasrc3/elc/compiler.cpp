@@ -2597,6 +2597,8 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
    if (byRefMethod)
       methodInfo.byRefHandler = byRefMethod;
 
+   methodInfo.nillableArgs = node.findChild(SyntaxKey::NillableInfo).arg.reference;
+
    // check duplicates with different visibility scope
    if (MethodScope::checkHint(methodInfo, MethodHint::Private)) {
       checkMethodDuplicates(scope, node, message, message & ~STATIC_MESSAGE, false, false);
@@ -2770,8 +2772,8 @@ inline mssg_t retrieveMethod(VirtualMethodList& implicitMultimethods, mssg_t mul
 {
    return implicitMultimethods.retrieve<mssg_t>(multiMethod, [](mssg_t arg, VirtualMethod current)
       {
-         return current.value1 == arg;
-      }).value1;
+         return current.message == arg;
+      }).message;
 }
 
 mssg_t Compiler :: defineMultimethod(Scope& scope, mssg_t messageRef, bool extensionMode)
@@ -2845,7 +2847,7 @@ inline TypeInfo mapOutputType(MethodInfo info)
 }
 
 void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope,
-   ref_t targetRef, ClassInfo& info, mssg_t multiMethod)
+   ref_t targetRef, ClassInfo& info, mssg_t multiMethod, int nillableArgs)
 {
    MethodInfo methodInfo = {};
 
@@ -2872,7 +2874,7 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
          inherited = false;
 
       injectVirtualMultimethod(classNode, methodType, scope, targetRef, info, multiMethod, inherited, 
-         mapOutputType(methodInfo), visibility);
+         mapOutputType(methodInfo), visibility, nillableArgs);
 
       // COMPILER MAGIC : injecting try-multi-method dispather
       if (_logic->isTryDispatchAllowed(*scope.moduleScope, multiMethod)) {
@@ -2890,15 +2892,15 @@ void Compiler :: injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType
    // generate implicit mutli methods
    for (auto it = implicitMultimethods.start(); !it.eof(); ++it) {
       auto methodInfo = *it;
-      switch (methodInfo.value2) {
+      switch (methodInfo.type) {
          case VirtualType::Multimethod:
-            injectVirtualMultimethod(classNode, methodType, scope, targetRef, info, methodInfo.value1);
+            injectVirtualMultimethod(classNode, methodType, scope, targetRef, info, methodInfo.message, methodInfo.nillableArgs);
             break;
          case VirtualType::EmbeddableWrapper:
-            injectVirtualEmbeddableWrapper(classNode, methodType, targetRef, info, methodInfo.value1, false);
+            injectVirtualEmbeddableWrapper(classNode, methodType, targetRef, info, methodInfo.message, false);
             break;
          case VirtualType::AbstractEmbeddableWrapper:
-            injectVirtualEmbeddableWrapper(classNode, methodType, targetRef, info, methodInfo.value1, true);
+            injectVirtualEmbeddableWrapper(classNode, methodType, targetRef, info, methodInfo.message, true);
             break;
          default:
             break;
@@ -2996,7 +2998,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
             current.appendChild(SyntaxKey::Multimethod, multiMethod);
 
             if (retrieveMethod(implicitMultimethods, multiMethod) == 0) {
-               implicitMultimethods.add({ multiMethod, VirtualType::Multimethod });
+               implicitMultimethods.add({ multiMethod, VirtualType::Multimethod, current.findChild(SyntaxKey::NillableInfo).arg.value});
                thirdPassRequired = true;
             }
          }
@@ -3016,9 +3018,9 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
                      && retrieveMethod(implicitMultimethods, byRefMethod) == 0) 
                   {
                      if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_ABSTRACT)) {
-                        implicitMultimethods.add({ byRefMethod, VirtualType::AbstractEmbeddableWrapper });
+                        implicitMultimethods.add({ byRefMethod, VirtualType::AbstractEmbeddableWrapper, 0 });
                      }
-                     else implicitMultimethods.add({ byRefMethod, VirtualType::EmbeddableWrapper });
+                     else implicitMultimethods.add({ byRefMethod, VirtualType::EmbeddableWrapper, 0 });
                      thirdPassRequired = true;
                   }
                }
@@ -3577,7 +3579,7 @@ void Compiler :: declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
 
 void Compiler :: declareParameter(MethodScope& scope, SyntaxNode current, bool withoutWeakMessages,
    bool declarationMode, bool& variadicMode, bool& weakSignature, bool& noSignature,
-   pos_t& paramCount, ref_t* signature, size_t& signatureLen)
+   pos_t& paramCount, ref_t* signature, size_t& signatureLen, bool& nillable)
 {
    int index = 1 + scope.parameters.count();
 
@@ -3624,6 +3626,8 @@ void Compiler :: declareParameter(MethodScope& scope, SyntaxNode current, bool w
 
    scope.parameters.add(terminal, Parameter(index, paramTypeInfo, sizeInfo.size, 
       paramTypeInfo.typeRef == V_OUTWRAPPER));
+
+   nillable |= paramTypeInfo.nillable;
 }
 
 void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode)
@@ -3666,20 +3670,32 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
       flags |= FUNCTION_MESSAGE;
    }
 
+   int nillableArgs = 0;
+   int argMask = 1;
    bool mixinFunction = false;
    bool noSignature = true; // NOTE : is similar to weakSignature except if withoutWeakMessages=true
    // if method has an argument list
    SyntaxNode current = node.findChild(SyntaxKey::Parameter);
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Parameter) {
+         bool nillable = false;
          declareParameter(scope, current, withoutWeakMessages,
             declarationMode, variadicMode, weakSignature, noSignature,
-            paramCount, signature, signatureLen);
+            paramCount, signature, signatureLen, nillable);
+
+         if (nillable)
+         {
+            nillableArgs |= argMask;
+         }
       }
       else break;
 
       current = current.nextNode();
+      argMask <<= 1;
    }
+
+   if (nillableArgs)
+      scope.info.nillableArgs = nillableArgs;
 
    // if the signature consists only of generic parameters - ignore it
    if (weakSignature)
@@ -3712,6 +3728,16 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
 
             unnamedMessage = false;
          }
+         else if (variadicMode&& paramCount == 1 && unnamedMessage && signature[0] == scope.moduleScope->buildins.superReference) {
+            constantConversion = true;
+            unnamedMessage = false;
+
+            actionStr.copy("$");
+            actionStr.append(CONSTRUCTOR_MESSAGE);
+            flags |= FUNCTION_MESSAGE;
+            scope.info.hints |= (ref_t)MethodHint::Constructor;
+            scope.info.hints |= (ref_t)MethodHint::Interpolator;
+         }
          else if (paramCount == 1 && !unnamedMessage && signature[0] == scope.moduleScope->buildins.literalReference) {
             constantConversion = true;
 
@@ -3719,14 +3745,6 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
             flags |= FUNCTION_MESSAGE;
             scope.info.hints |= (ref_t)MethodHint::Constructor;
          }
-         //else if (paramCount == 1 && unnamedMessage && weakSignature && scope.checkHint(MethodHint::Nullable)) {
-         //   ref_t voidSignRef = scope.module->mapSignature(&scope.moduleScope->buildins.nilValueReference, 1, false);
-         //   actionRef = scope.module->mapAction(CONSTRUCTOR_MESSAGE, voidSignRef, false);
-
-         //   flags |= FUNCTION_MESSAGE;
-
-         //   unnamedMessage = false;
-         //}
          else scope.raiseError(errIllegalMethod, node);
       }
       else if (scope.checkHint(MethodHint::Constructor) && unnamedMessage) {
@@ -3855,9 +3873,10 @@ ref_t Compiler :: declareClosureParameters(MethodScope& methodScope, SyntaxNode 
    ref_t signatures[ARG_COUNT];
    size_t signatureLen = 0;
    while (argNode == SyntaxKey::Parameter) {
+      bool dummy = false;
       declareParameter(methodScope, argNode, false, false,
          variadicMode, weakSingature, noSignature,
-         paramCount, signatures, signatureLen);
+         paramCount, signatures, signatureLen, dummy);
 
       if (variadicMode)
          flags |= VARIADIC_MESSAGE;
@@ -3916,6 +3935,9 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
    if (methodScope.info.outputRef) {
       addTypeInfo(methodScope, node, SyntaxKey::OutputInfo, mapOutputType(methodScope.info));
    }
+
+   if (methodScope.info.nillableArgs)
+      node.appendChild(SyntaxKey::NillableInfo, methodScope.info.nillableArgs);
 
    if (methodScope.info.hints)
       node.appendChild(SyntaxKey::Hints, methodScope.info.hints);
@@ -4641,7 +4663,7 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
    bool declarationMode)
 {
    SyntaxNode current = node.firstChild();
-   TypeAttributes attributes = { false, false, false };
+   TypeAttributes attributes = { };
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Type:
@@ -4652,8 +4674,8 @@ void Compiler :: declareArgumentAttributes(MethodScope& scope, SyntaxNode node, 
             // if it is a template type attribute
             typeInfo = resolveTypeAttribute(scope, current, attributes, declarationMode, false);
             break;
-         case SyntaxKey::ArrayType:
          case SyntaxKey::NullableType:
+         case SyntaxKey::ArrayType:
             // if it is a type attribute
             typeInfo = resolveTypeScope(scope, current, attributes, declarationMode, false);
             break;
@@ -5528,8 +5550,8 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribu
          case SyntaxKey::reference:
             elementRef = resolveTypeIdentifier(scope, current.identifier(), node.key, declarationMode, allowRole);
             break;
-         case SyntaxKey::ArrayType:
          case SyntaxKey::NullableType:
+         case SyntaxKey::ArrayType:
             elementRef = resolvePrimitiveType(*scope.moduleScope,
                resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole), declarationMode);
             break;
@@ -6473,7 +6495,7 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
    for(auto it = scope.extensions.getIt(genericMessage); !it.eof(); it = scope.extensions.nextIt(genericMessage, it)) {
       auto extInfo = *it;
 
-      methods.add(extInfo.value2, { false, 0, 0, genericMessage | FUNCTION_MESSAGE, 0 });
+      methods.add(extInfo.value2, { false, 0, 0, genericMessage | FUNCTION_MESSAGE, 0, 0 });
       targets.add(extInfo.value2, extInfo.value1);
    }
 
@@ -6942,6 +6964,7 @@ ObjectInfo Compiler :: defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInf
          }
          break;
       case SyntaxKey::string:
+      case SyntaxKey::interpolate:
          invalid = invalidForNonIdentifier;
 
          retVal = mapStringConstant(scope, node);
@@ -7972,7 +7995,7 @@ ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeS
       signRef, arguments, EAttr::None, &updatedOuterArgs);
 
    if (outputRef) {
-      expression.convertObject(node, expression.saveToTempLocal(retVal), outputRef, true, false);
+      expression.convertObject(node, expression.saveToTempLocal(retVal), outputRef, true, false, false);
    }      
 
    expression.scope.syncStack();
@@ -8036,8 +8059,9 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
 
       mssg_t messageRef = mapMessage(codeScope, current, propertyMode, codeScope.isExtension(), false);
 
+      int resolvedNillableArgs = 0; 
       mssg_t resolvedMessage = _logic->resolveSingleDispatch(*codeScope.moduleScope,
-         retrieveType(codeScope, source), messageRef);
+         retrieveType(codeScope, source), messageRef, resolvedNillableArgs);
 
       ref_t expectedSignRef = 0;
       if (resolvedMessage)
@@ -8048,7 +8072,7 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
 
       Expression::ArgumentListType argListType = Expression::ArgumentListType::Normal;
       ref_t implicitSignatureRef = expression.compileMessageArguments(current, arguments, expectedSignRef, 
-         EAttr::NoPrimitives, &updatedOuterArgs, argListType);
+         EAttr::NoPrimitives, &updatedOuterArgs, argListType, resolvedNillableArgs);
 
       EAttr opMode = EAttr::CheckShortCircle;
       if (argListType == Expression::ArgumentListType::VariadicArgList || argListType == Expression::ArgumentListType::VariadicArgListWithTypecasting) {
@@ -8735,7 +8759,7 @@ void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
       // the object should not be created, because of redirecting
       isDefConvConstructor = false;
    }
-   else if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
+   else if (isDefConvConstructor && (!test(classFlags, elDynamicRole) || scope.checkHint(MethodHint::Interpolator))) {
       // new stack frame
       writer.appendNode(BuildKey::OpenFrame);
       newFrame = true;
@@ -9194,7 +9218,7 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
       classWriter.newNode(SyntaxKey::Class, scope.reference);
 
       SyntaxNode classNode = classWriter.CurrentNode();
-      injectVirtualMultimethod(classNode, SyntaxKey::Method, scope, scope.reference, scope.info, multiMethod);
+      injectVirtualMultimethod(classNode, SyntaxKey::Method, scope, scope.reference, scope.info, multiMethod, 0);
 
       classWriter.closeNode();
       classWriter.closeNode();
@@ -10055,7 +10079,7 @@ inline bool isSingleDispatch(SyntaxNode node, SyntaxKey methodType, mssg_t messa
 }
 
 bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope,
-   mssg_t message, mssg_t resendMessage, TypeInfo outputInfo, Visibility visibility, bool isExtension)
+   mssg_t message, mssg_t resendMessage, TypeInfo outputInfo, Visibility visibility, bool isExtension, int nillableArgs)
 {
    bool variadicOne = (getFlags(resendMessage) & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
 
@@ -10095,6 +10119,8 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, Synta
 
    String<char, 10> arg;
    for (size_t i = 0; i < len; i++) {
+      bool isNillable = test(nillableArgs, 1 << i);
+
       arg.copy("$");
       arg.appendInt((int)i);
 
@@ -10108,7 +10134,14 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, Synta
          castObject.appendChild(SyntaxKey::Attribute, V_CONVERSION);
          castObject.appendChild(SyntaxKey::Type, signArgs[i]);
          castNode.appendChild(SyntaxKey::Message);
-         castNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, arg.str());
+         if (isNillable) {
+            SyntaxNode isNilOp = castNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::IsNilOperation);
+            isNilOp.appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, arg.str());
+            SyntaxNode nilObject = isNilOp.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object);
+            nilObject.appendChild(SyntaxKey::Attribute, V_FORWARD);
+            nilObject.appendChild(SyntaxKey::identifier, NILVALUE_FORWARD);
+         }
+         else castNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, arg.str());
       }
       else operationNode.appendChild(SyntaxKey::Expression).appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, arg.str());
    }
@@ -10143,7 +10176,8 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, Synta
 }
 
 void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope,
-   ref_t targetRef, ClassInfo& info, mssg_t message, bool inherited, TypeInfo outputInfo, Visibility visibility)
+   ref_t targetRef, ClassInfo& info, mssg_t message, bool inherited, TypeInfo outputInfo, 
+   Visibility visibility, int nillableArgs)
 {
    bool isExtension = test(info.header.flags, elExtension);
 
@@ -10160,7 +10194,7 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
    // !! temporally do not support variadic arguments
    if (isSingleDispatch(classNode, methodType, message, resendMessage) &&
       injectVirtualStrongTypedMultimethod(classNode, methodType, scope, message, resendMessage, 
-         outputInfo, visibility, isExtension))
+         outputInfo, visibility, isExtension, nillableArgs))
    {
       // mark the message as a signle dispatcher if the class is sealed / closed / class class
       // and default multi-method was not explicitly declared
@@ -10485,7 +10519,7 @@ void Compiler :: declareModuleExtensionDispatcher(NamespaceScope& scope, SyntaxN
             if (retrieveIndex(genericMethods, genericMessage) == -1)
                genericMethods.add(genericMessage);
 
-            methods.add(extInfo.value2, { false, 0, 0, genericMessage | FUNCTION_MESSAGE, 0 });
+            methods.add(extInfo.value2, { false, 0, 0, genericMessage | FUNCTION_MESSAGE, 0, 0 });
             targets.add(extInfo.value2, extInfo.value1);
          }
       }
@@ -11208,6 +11242,7 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
    bool noPrimitives = EAttrs::testAndExclude(mode, EAttr::NoPrimitives);
    bool dynamicRequired = EAttrs::testAndExclude(mode, EAttr::DynamicObject);
    bool lookaheadMode = EAttrs::testAndExclude(mode, EAttr::LookaheadExprMode) && compiler->_lookaheadOptMode;
+   bool nillableArg = EAttrs::test(mode, EAttr::Nillable);
 
    ObjectInfo retVal;
 
@@ -11273,7 +11308,7 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
       case SyntaxKey::OrOperation:
          retVal = compileBoolOperation(current, (int)current.key - OPERATOR_MAKS);
          if (targetRef)
-            typecastObject(current, retVal, targetRef);
+            typecastObject(current, retVal, targetRef, EAttrs::test(mode, EAttr::Nillable));
 
          break;
       case SyntaxKey::IndexerOperation:
@@ -11361,6 +11396,9 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
       case SyntaxKey::ClosureOperation:
          retVal = compileClosureOperation(current);
          break;
+      case SyntaxKey::Interpolation:
+         retVal = compileInterpolation(current);
+         break;
       case SyntaxKey::None:
          assert(false);
          break;
@@ -11370,9 +11408,42 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
    }
 
    retVal = validateObject(node, retVal, targetRef,
-      noPrimitives, paramMode, dynamicRequired);
+      noPrimitives, paramMode, dynamicRequired, nillableArg);
 
    return retVal;
+}
+
+ObjectInfo Compiler::Expression :: compileInterpolation(SyntaxNode node)
+{
+   ArgumentsInfo arguments;
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      ObjectInfo arg = {};
+      if (current == SyntaxKey::interpolate) {
+         arg = compiler->mapTerminal(scope, current, {}, EAttr::None);
+      }
+      else arg = compile(current, 0, EAttr::None, nullptr);
+
+      arguments.add(arg);
+
+      current = current.nextNode();
+   }
+
+   ref_t typeRef = scope.moduleScope->buildins.superReference;
+   ref_t signRef = scope.module->mapSignature(&typeRef, 1, false);
+   mssg_t conversionMssg = encodeMessage(scope.module->mapAction("$#constructor", signRef, false), 1, FUNCTION_MESSAGE | VARIADIC_MESSAGE);
+
+   ObjectInfo source = {};
+   mssg_t messageRef = 0;
+   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+   auto constInfo = nsScope->extensions.get(conversionMssg);
+   if (constInfo.value1) {
+      messageRef = constInfo.value2;
+      source = compiler->mapClassSymbol(scope, constInfo.value1);
+   }
+   else scope.raiseError(errInvalidOperation, node);
+
+   return compileMessageOperation(node, source, messageRef, 0, arguments, EAttr::StrongResolved | EAttr::NoExtension, nullptr);
 }
 
 ObjectInfo Compiler::Expression :: compileObject(SyntaxNode node, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs)
@@ -11456,16 +11527,17 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
       arguments.add(source);
 
    mssg_t resolvedMessage = 0;
+   int resolvedNillableArgs = 0;
 
    EAttr paramMode = EAttr::NoPrimitives;
    if (source.mode != TargetMode::Weak) {
       resolvedMessage = compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
-         compiler->retrieveType(scope, source), messageRef);
+         compiler->retrieveType(scope, source), messageRef, resolvedNillableArgs);
       if (!resolvedMessage && !ignoreVariadics) {
          ref_t variadicMssg = resolveVariadicMessage(scope, messageRef);
 
          resolvedMessage = compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
-            compiler->retrieveType(scope, source), variadicMssg);
+            compiler->retrieveType(scope, source), variadicMssg, resolvedNillableArgs);
          if (resolvedMessage) {
             messageRef = variadicMssg;
             paramMode = paramMode | EAttr::WithVariadicArg;
@@ -11479,7 +11551,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
 
    ArgumentListType argListType = ArgumentListType::Normal;
    ref_t implicitSignatureRef = compileMessageArguments(messageNode, arguments, expectedSignRef, paramMode,
-      updatedOuterArgs, argListType);
+      updatedOuterArgs, argListType, resolvedNillableArgs);
 
    EAttr opMode = EAttr::None;
    if (argListType == ArgumentListType::VariadicArgList || argListType == ArgumentListType::VariadicArgListWithTypecasting) {
@@ -11570,7 +11642,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
       case TargetMode::External:
       case TargetMode::WinApi:
       {
-         compileMessageArguments(current, arguments, 0, EAttr::None, nullptr, argListType);
+         compileMessageArguments(current, arguments, 0, EAttr::None, nullptr, argListType, 0);
          if (argListType != ArgumentListType::Normal)
             scope.raiseError(errInvalidOperation, current);
 
@@ -11580,7 +11652,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
       }
       case TargetMode::CreatingArray:
       {
-         compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, nullptr, argListType);
+         compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, nullptr, argListType, 0);
          if (argListType != ArgumentListType::Normal)
             scope.raiseError(errInvalidOperation, current);
 
@@ -11589,7 +11661,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
       }
       case TargetMode::Creating:
       {
-         ref_t signRef = compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, nullptr, argListType);
+         ref_t signRef = compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, nullptr, argListType, 0);
          if (argListType != ArgumentListType::Normal)
             scope.raiseError(errInvalidOperation, current);
 
@@ -11605,7 +11677,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
       default:
       {
          // NOTE : the operation target shouldn't be a primtive type
-         source = validateObject(node, source, 0, true, true, false);
+         source = validateObject(node, source, 0, true, true, false, false);
 
          current = current.nextNode();
 
@@ -11631,7 +11703,7 @@ ObjectInfo Compiler::Expression :: compilePropertyOperation(SyntaxNode node, ref
       scope.raiseError(errInvalidOperation, node);
 
    // NOTE : the operation target shouldn't be a primtive type
-   source = validateObject(node, source, 0, true, true, false);
+   source = validateObject(node, source, 0, true, true, false, false);
 
    current = current.nextNode();
 
@@ -11920,12 +11992,24 @@ inline mssg_t mapTypecasting(ModuleBase* module, ref_t targetRef)
    return encodeMessage(actionRef, 1, CONVERSION_MESSAGE);
 }
 
-ObjectInfo Compiler::Expression :: typecastObject(SyntaxNode node, ObjectInfo source, ref_t targetRef)
+ObjectInfo Compiler::Expression :: typecastObject(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool nillable)
 {
    if (targetRef == scope.moduleScope->buildins.superReference)
       return source;
 
    mssg_t typecastMssg = mapTypecasting(scope.module, targetRef);
+
+   // if it is a weak argument
+   if (nillable && !isBoxingRequired(source, false)) {
+      if (!source.typeInfo.typeRef || source.typeInfo.typeRef == scope.moduleScope->buildins.superReference || source.typeInfo.nillable) {
+         IdentifierString nilForward(FORWARD_PREFIX_NS, NILVALUE_FORWARD);
+         writeObjectInfo(scope.mapGlobal(*nilForward));
+         writer->appendNode(BuildKey::SavingInStack);
+         writeObjectInfo(source, node);
+         writer->appendNode(BuildKey::NilOp, ISNIL_OPERATOR_ID);
+         source = saveToTempLocal({ ObjectKind::Object });         
+      }
+   }
 
    ArgumentsInfo arguments;
    arguments.add(source);
@@ -12255,7 +12339,7 @@ ObjectInfo Compiler::Expression :: compileSubCode(SyntaxNode node, ExpressionAtt
 
       codeScope.syncStack(parentCodeScope);
    }
-   else retVal = compiler->compileCode(*writer, *parentCodeScope, node, retValExpected);
+   else retVal = compiler->compileCode(*writer, *parentCodeScope, node, retValExpected, withoutDebugInfo);
 
    if (!retValExpected) {
       retVal = { ObjectKind::Object };
@@ -12561,7 +12645,7 @@ ObjectInfo Compiler::Expression :: compileTupleAssigning(SyntaxNode node)
 }
 
 ObjectInfo Compiler::Expression :: validateObject(SyntaxNode node, ObjectInfo retVal, ref_t targetRef, bool noPrimitives, 
-   bool paramMode, bool dynamicRequired)
+   bool paramMode, bool dynamicRequired, bool nillable)
 {
    if (!targetRef && retVal.typeInfo.isPrimitive() && noPrimitives) {
       targetRef = compiler->resolveStrongType(scope, retVal.typeInfo);
@@ -12578,7 +12662,7 @@ ObjectInfo Compiler::Expression :: validateObject(SyntaxNode node, ObjectInfo re
          return retVal;
       }
 
-      retVal = convertObject(node, retVal, targetRef, dynamicRequired, false);
+      retVal = convertObject(node, retVal, targetRef, dynamicRequired, false, nillable);
       if (paramMode && hasToBePresaved(retVal))
          retVal = saveToTempLocal(retVal);
    }
@@ -12641,7 +12725,7 @@ ObjectInfo Compiler::Expression :: compileNewOp(SyntaxNode node, ObjectInfo sour
 }
 
 ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, ArgumentsInfo& arguments, ref_t expectedSignRef, EAttr mode, 
-   ArgumentsInfo* updatedOuterArgs, ArgumentListType& argListType)
+   ArgumentsInfo* updatedOuterArgs, ArgumentListType& argListType, int nillableArgs)
 {
    bool variadicArg = EAttrs::testAndExclude(mode, EAttr::WithVariadicArg);
 
@@ -12658,17 +12742,19 @@ ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, Argume
    if (expectedSignRef)
       signatureMaxLength = scope.module->resolveSignature(expectedSignRef, signatures);
 
+   int argMask = 1;
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Expression) {
          if (variadicArg && signatureLen == signatureMaxLength && signatureLen > 0) {
             // for variadic last argument - stay at the same position
             signatureLen--;
+            argMask >>= 1;
          }
 
          // try to recognize the message signature
          // NOTE : signatures[signatureLen] contains expected parameter type if expectedSignRef is provided
          auto argInfo = compile(current, signatures[signatureLen],
-            paramMode, updatedOuterArgs);
+            paramMode | (test(nillableArgs, argMask) ? EAttr::Nillable : EAttr::None), updatedOuterArgs);
 
          if ((argInfo.mode == TargetMode::UnboxingVarArgument || argInfo.mode == TargetMode::UnboxingAndTypecastingVarArgument) && signatureLen < ARG_COUNT) {
             if (argInfo.typeInfo.elementRef) {
@@ -12694,6 +12780,7 @@ ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, Argume
             else signatures[signatureLen++] = superReference;
          }
          arguments.add(argInfo);
+         argMask <<= 1;
       }
 
       current = current.nextNode();
@@ -12870,7 +12957,7 @@ ObjectInfo Compiler::Expression :: compileNewArrayOp(SyntaxNode node, ObjectInfo
 }
 
 ObjectInfo Compiler::Expression :: convertObject(SyntaxNode node, ObjectInfo source,
-   ref_t targetRef, bool dynamicRequired, bool withoutBoxing)
+   ref_t targetRef, bool dynamicRequired, bool withoutBoxing, bool nillable)
 {
    if (!compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, source.typeInfo, false)) {
       if (source.kind == ObjectKind::Default) {
@@ -12981,7 +13068,7 @@ ObjectInfo Compiler::Expression :: convertObject(SyntaxNode node, ObjectInfo sou
 
          return source;
       }
-      else source = typecastObject(node, source, targetRef);
+      else source = typecastObject(node, source, targetRef, nillable);
    }
 
    return source;
@@ -14030,7 +14117,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(ObjectInfo target, S
       case TargetMode::Casting:
       {
          ArgumentListType argListType = ArgumentListType::Normal;
-         compileMessageArguments(messageNode, arguments, 0, EAttr::NoPrimitives, nullptr, argListType);
+         compileMessageArguments(messageNode, arguments, 0, EAttr::NoPrimitives, nullptr, argListType, 0);
          if (arguments.count() == 1) {
             ref_t targetRef = compiler->resolveStrongType(scope, target.typeInfo);
 
@@ -14040,7 +14127,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(ObjectInfo target, S
 
                return arguments[0];
             }
-            else return convertObject(messageNode, arguments[0], targetRef, false, true);
+            else return convertObject(messageNode, arguments[0], targetRef, false, true, false);
          }
          else scope.raiseError(errInvalidOperation, messageNode);
          break;
@@ -14050,7 +14137,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(ObjectInfo target, S
          ArgumentsInfo updatedOuterArgs;
 
          // NOTE : the operation target shouldn't be a primitive type
-         ObjectInfo source = validateObject(messageNode, target, 0, true, true, false);
+         ObjectInfo source = validateObject(messageNode, target, 0, true, true, false, false);
 
          return compileMessageOperationR(messageNode, messageNode, source, arguments, &updatedOuterArgs, 0, 
             propertyMode, false, false, EAttr::None);
@@ -15049,7 +15136,7 @@ ObjectInfo Compiler::Expression :: boxVariadicArgument(ObjectInfo info)
    if (info.typeInfo.typeRef && info.typeInfo.typeRef != typeRef) {
       // if the conversion is required
       ObjectInfo convInfo = convertObject({}, destLocal,
-         info.typeInfo.typeRef, false, false);
+         info.typeInfo.typeRef, false, false, false);
 
       compileAssigningOp(destLocal, convInfo, dummy);
 
@@ -15063,7 +15150,7 @@ void Compiler::Expression :: compileAssigning(SyntaxNode node, ObjectInfo target
 {
    if (!noConversion) {
       source = convertObject(node, source,
-         compiler->resolveStrongType(scope, target.typeInfo), false, false);
+         compiler->resolveStrongType(scope, target.typeInfo), false, false, false);
    }
 
    bool nillableOp = false;
@@ -15077,7 +15164,7 @@ void Compiler::Expression :: compileAssigning(SyntaxNode node, ObjectInfo target
 void Compiler::Expression :: compileConverting(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool stackSafe)
 {
    if (targetRef && targetRef != V_AUTO) {
-      source = convertObject(node, source, targetRef, false, false);
+      source = convertObject(node, source, targetRef, false, false, false);
 
       scope.syncStack();
    }

@@ -5,36 +5,22 @@ In development:
 [development]
   ### EPIC: elena 6.3 ###
 
-  === Iteration 28 (23.07) ===
-  --------------------------------------      
-  - #637
-  --------------------------------------
-  - aarch64 : fix interfaceImplTests, decoratorTest 
-
-  === Iteration 29 ===
+  === Iteration 30 (16.8) ===
   --------------------------------------
   dev: 
       - upndown (connector)
-      - web server - weather forecast (project setup)
+      - async programming
   gen:
-      - nested call must not stop / start vm, 
+      - lpad
   maint:
-      - elena : nested classes should not be loadable at runtime
-      - constructor - single dispatcher; passing nil to single dispatcher (both normal / constructor)
   port:
-      - #658 : create simplest debug adapter; connect with it from VSCode
+      - #658 : vscode extension (debug adapter)
   prom: posting weekly
   --------------------------------------
+  - lpad : generate a code based on a record
+  - User-defined string literals 
   --------------------------------------
-
-  === Iteration 30 ===
-  --------------------------------------
-  dev: 
-  gen:
-  maint:
-  port:
-  prom:
-  --------------------------------------
+  - #658 : connect with ldbg from VSCode  
   --------------------------------------
 
   ### EPIC: elena 6.4 ###

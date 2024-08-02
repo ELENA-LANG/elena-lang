@@ -1256,17 +1256,18 @@ namespace elena_lang
 
          ObjectInfo compileNewOp(SyntaxNode node, ObjectInfo source, ref_t signRef, ArgumentsInfo& arguments);
 
-         ObjectInfo typecastObject(SyntaxNode node, ObjectInfo source, ref_t targetRef);
+         ObjectInfo typecastObject(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool nillable);
 
          ObjectInfo validateObject(SyntaxNode node, ObjectInfo retVal,
-            ref_t targetRef, bool noPrimitives, bool paramMode, bool dynamicRequired);
+            ref_t targetRef, bool noPrimitives, bool paramMode, bool dynamicRequired, bool nillable);
 
          ObjectInfo compileExternalOp(SyntaxNode node, ref_t externalRef, bool stdCall,
             ArgumentsInfo& arguments, ref_t expectedRef);
 
          ObjectInfo compileNewArrayOp(SyntaxNode node, ObjectInfo source, ref_t targetRef, ArgumentsInfo& arguments);
 
-         ObjectInfo convertObject(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool dynamicRequired, bool withoutBoxing);
+         ObjectInfo convertObject(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool dynamicRequired,
+            bool withoutBoxing, bool nillable);
 
          ObjectInfo compileMessageOperation(SyntaxNode node, ObjectInfo target, MessageResolution resolution, ref_t implicitSignatureRef, 
             ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs);
@@ -1279,7 +1280,7 @@ namespace elena_lang
             SyntaxNode r2node, int operatorId, ArgumentsInfo* updatedOuterArgs, bool retValExpected, bool withoutDebugInfo);
 
          ref_t compileMessageArguments(SyntaxNode current, ArgumentsInfo& arguments, ref_t expectedSignRef, ExpressionAttribute mode, 
-            ArgumentsInfo* updatedOuterArgs, ArgumentListType& argListType);
+            ArgumentsInfo* updatedOuterArgs, ArgumentListType& argListType, int nillableArgs);
 
          MessageResolution resolveByRefHandler(ObjectInfo source, ref_t expectedRef, mssg_t weakMessage, ref_t& signatureRef, bool noExtensions);
          MessageResolution resolveMessageAtCompileTime(ObjectInfo target, mssg_t weakMessage, ref_t implicitSignatureRef, bool ignoreExtensions, 
@@ -1349,6 +1350,7 @@ namespace elena_lang
          ObjectInfo compileTupleCollection(SyntaxNode node, ref_t targetRef);
          ObjectInfo compileKeyValue(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileClosureOperation(SyntaxNode node);
+         ObjectInfo compileInterpolation(SyntaxNode node);
 
          ObjectInfo compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope = false);
 
@@ -1538,7 +1540,7 @@ namespace elena_lang
 
       void declareParameter(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, 
          bool declarationMode, bool& variadicMode, bool& weakSignature, bool& noSignature,
-         pos_t& paramCount, ref_t* signature, size_t& signatureLen);
+         pos_t& paramCount, ref_t* signature, size_t& signatureLen, bool& nillable);
 
       ref_t declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode);
 
@@ -1703,7 +1705,7 @@ namespace elena_lang
 
       void injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool interfaceBased);
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope, 
-         ref_t targetRef, ClassInfo& info, mssg_t multiMethod);
+         ref_t targetRef, ClassInfo& info, mssg_t multiMethod, int nillableArgs);
       void injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey methodType,
          ref_t targetRef, ClassInfo& info, mssg_t multiMethod, bool abstractOne);
 
@@ -1713,12 +1715,12 @@ namespace elena_lang
       void injectInitializer(SyntaxNode classNode, SyntaxKey methodType, mssg_t message);
 
       bool injectVirtualStrongTypedMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope, 
-         mssg_t message, mssg_t resendMessage, TypeInfo outputInfo, Visibility visibility, bool isExtension);
+         mssg_t message, mssg_t resendMessage, TypeInfo outputInfo, Visibility visibility, bool isExtension, int nillableArgs);
       bool injectVirtualStrongTypedVariadicMultimethod(SyntaxNode classNode, SyntaxKey methodType, ModuleScopeBase& scope,
          mssg_t message, mssg_t resendMessage, ref_t outputRef, Visibility visibility, bool isExtension);
 
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope, 
-         ref_t targetRef, ClassInfo& classInfo, mssg_t message, bool inherited, TypeInfo outputInfo, Visibility visibility);
+         ref_t targetRef, ClassInfo& classInfo, mssg_t message, bool inherited, TypeInfo outputInfo, Visibility visibility, int nillableArgs);
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope, mssg_t message,
          mssg_t resendMessage, ref_t resendTarget, TypeInfo outputInfo, Visibility visibility, bool isExtension);
 

@@ -39,6 +39,7 @@ namespace elena_lang
       constant                = 0x00300D,
       longinteger             = 0x00300E,
       real                    = 0x00300F,
+      interpolate             = 0x003010,
 
       // NOTE : low word should be unique for every key
       Declaration             = 0x001400,
@@ -146,9 +147,11 @@ namespace elena_lang
       NestedRootExpression    = 0x00189B,
       TemplateOperation       = 0x00189C,
       LTExpression            = 0x00189D,
+      InterpolExpression      = 0x00189E,
       TemplateExpression      = 0x0018A0,
       KeyValueExpression      = 0x0018A1,
       ClosureOperation        = 0x0018A2,
+      Interpolation           = 0x0018A3,
       FieldInitializer        = 0x0018B0,
       Message                 = 0x0010C0,
       MessageOperation        = 0x0018C1,
@@ -205,6 +208,7 @@ namespace elena_lang
       ProxyDispatcher         = 0x000112,
       EnumNameArgParameter    = 0x000113,
       EnumArgParameter        = 0x000114,
+      NillableInfo            = 0x000115,
 
       Column                  = 0x000201,
       Row                     = 0x000202,
