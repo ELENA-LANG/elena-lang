@@ -4,6 +4,7 @@ namespace io
    import system'collections;
     
    const int INVALID_HANDLE_VALUE = -1;
+   const int ERROR_FILE_NOT_FOUND = 2;
    const int ERROR_NO_MORE_FILES = 012h;
     
    struct FILETIME
@@ -78,7 +79,10 @@ namespace io
                open := false;
                     
                int err := extern KERNEL32.GetLastError();
-               IOException.new("FindFirstFile - " + err.toPrintable()).raise()
+               if (err != ERROR_FILE_NOT_FOUND)
+               {
+                  IOException.new("FindFirstFile - " + err.toPrintable()).raise()
+               }                
             }
             else
             {
@@ -131,7 +135,10 @@ namespace io
       if (INVALID_HANDLE_VALUE == hFind)
       {
          int err := extern KERNEL32.GetLastError();
-         IOException.new("FindFirstFile - " + err.toPrintable()).raise();
+         if (err != ERROR_FILE_NOT_FOUND)
+         {
+            IOException.new("FindFirstFile - " + err.toPrintable()).raise();
+         };
             
          b := false;
       };
@@ -177,7 +184,8 @@ namespace io
       if (INVALID_HANDLE_VALUE == hFind)
       {
          int err := extern KERNEL32.GetLastError();
-         IOException.new("FindFirstFile - " + err.toPrintable()).raise();
+         if (err != ERROR_FILE_NOT_FOUND)
+            IOException.new("FindFirstFile - " + err.toPrintable()).raise();
             
          b := false;
       };

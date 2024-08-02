@@ -11,6 +11,7 @@
 
 #include "elena.h"
 #include "libman.h"
+#include "langcommon.h"
 
 namespace elena_lang
 {

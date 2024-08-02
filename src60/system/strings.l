@@ -790,6 +790,41 @@ public const struct String : BaseValue,
 
    string toPrintable() = self;
 
+   string cast(params object[] args)
+   {
+      byte buffer[1024];
+
+      int len := args.Length;
+      int bufLen := 0;
+
+      string retVal := nil;
+      for(int i := 0; i < len; i++) {
+         string arg := args[i].toPrintable();
+         int argLen := arg.Length;
+
+         if (argLen > 1024 - bufLen) {
+            string tempStr := String.fromByteArray(0, bufLen, buffer);
+
+            if (retVal == nil) {
+               retVal := tempStr;
+            }
+            else retVal := retVal + tempStr;
+
+            bufLen := 0;
+         };
+         PrimitiveStringOperations.copyTo(buffer, bufLen, argLen, arg);
+         bufLen += argLen;
+      };
+
+      string tempStr := String.fromByteArray(0, bufLen, buffer);
+      if (retVal == nil) {
+         retVal := tempStr;
+      }
+      else retVal := retVal + tempStr;
+
+      ^ retVal;      
+   }
+
    wide cast()
    {
       int        i := 0;

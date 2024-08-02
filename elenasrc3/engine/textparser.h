@@ -40,6 +40,9 @@ namespace elena_lang
    constexpr char dfaIfOperator     = 'c';
    constexpr char dfaElseOperator   = 'd';
    constexpr char dfaAltOpOperator  = 'e';
+   constexpr char dfaStartInterpol  = 'g';
+   constexpr char dfaNextInterpol   = 'f';
+   constexpr char dfaAltQuote       = 'h';
 
    constexpr char dfaPrivate        = 'N';
    constexpr char dfaLong           = '?';

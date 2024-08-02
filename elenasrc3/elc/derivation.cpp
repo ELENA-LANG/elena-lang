@@ -650,6 +650,9 @@ void SyntaxTreeBuilder :: flushExpressionMember(SyntaxTreeWriter& writer, Scope&
       case SyntaxKey::NullableType:
          flushNullable(writer, scope, current);
          break;
+      case SyntaxKey::interpolate:
+         flushNode(writer, scope, current);
+         break;
       case SyntaxKey::Idle:
          break;
       default:
@@ -1828,6 +1831,7 @@ void SyntaxTreeBuilder :: appendTerminal(parse_key_t key, ustr_t value, LineInfo
 
    switch (syntaxKey) {
       case SyntaxKey::string:
+      case SyntaxKey::interpolate:
       {
          QuoteString quote(value, value.length_pos());
 

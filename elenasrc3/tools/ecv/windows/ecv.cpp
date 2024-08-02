@@ -15,9 +15,6 @@
 
 using namespace elena_lang;
 
-constexpr auto PLATFORM_CATEGORY = "configuration/platform";
-constexpr auto LIB_PATH = "project/libpath";
-
 #ifdef _M_IX86
 
 constexpr auto PLATFORM_KEY = "Win_x86";

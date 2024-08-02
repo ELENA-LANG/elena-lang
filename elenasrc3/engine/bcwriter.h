@@ -11,6 +11,7 @@
 
 #include "buildtree.h"
 #include "bytecode.h"
+#include "langcommon.h"
 
 namespace elena_lang
 {

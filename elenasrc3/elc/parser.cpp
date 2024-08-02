@@ -43,7 +43,10 @@ parse_key_t Parser :: resolveTerminal(SourceInfo& info)
          return _terminalKeys.globalreference;
       case dfaQuote:
       case dfaQuoteCode:
+      case dfaAltQuote:
          return _terminalKeys.string;
+      case dfaStartInterpol:
+         return _terminalKeys.interpolate;
       case dfaWideQuote:
          return _terminalKeys.wide;
       case dfaEOF:

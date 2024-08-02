@@ -33,20 +33,20 @@ namespace elena_lang
    // --- SourceReader ---
    class SourceReader : protected TextParser<char, LINE_LEN, dfaStart, dfaMaxChar, isQuote>
    {
+      char _startState;
       bool _operatorMode;
+      bool _interpolating;
+      int _bracketLevel;
 
       ustr_t copyToken(char* token, size_t length);
       ustr_t copyQuote(char* token, size_t length, List<char*, freestr>& dynamicStrings);
+      ustr_t copyInterpolQuote(char* token, size_t length, List<char*, freestr>& dynamicStrings);
 
       bool IsOperator(char state)
       {
          return (state == dfaOperator || state == dfaAltOperator 
             || state == dfaGrOperator || state == dfaIncOperator
             || state == dfaIfOperator || state == dfaElseOperator || state == dfaAltOpOperator);
-      }
-      bool IsQuoteToken(char state)
-      {
-         return (state == dfaQuote || state == dfaWideQuote || state == dfaCharacter);
       }
 
       void resolveSignAmbiguity(SourceInfo& info)

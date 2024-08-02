@@ -718,6 +718,8 @@ namespace elena_lang
 
       int count_int() const { return (int)_list.count(); }
 
+      short count_short() const { return (short)_list.count(); }
+
       Iterator start()
       {
          return _list.start();
@@ -3201,11 +3203,17 @@ namespace elena_lang
          _allocatedSize = _length = 0;
       }
 
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_UNINITIALIZED_FIELD
+
       CachedList()
       {
          _allocated = nullptr;
          _allocatedSize = _length = 0;
       }
+
+DISABLE_WARNING_POP
+
       ~CachedList()
       {
          freeobj(_allocated);

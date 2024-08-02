@@ -1108,6 +1108,8 @@ bool CompilerLogic :: validateArgumentAttribute(ref_t attrValue, TypeAttributes&
       case V_VARIADIC:
          attributes.variadicOne = true;
          return true;
+      case V_VARIABLE:
+         return true;
       default:
          return false;
    }
@@ -2349,6 +2351,7 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
       }
 
       result.stackSafe = test(methodInfo.hints, (ref_t)MethodHint::Stacksafe);
+      result.nillableArgs = methodInfo.nillableArgs;
 
       if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {
          result.constRef = info.attributes.get({ message, ClassAttribute::ConstantMethod });
@@ -2439,7 +2442,7 @@ bool CompilerLogic :: isNeedVerification(ClassInfo& info, VirtualMethodList& imp
    for (auto it = implicitMultimethods.start(); !it.eof(); it++) {
       auto vm = *it;
 
-      mssg_t message = vm.value1;
+      mssg_t message = vm.message;
 
       auto methodInfo = info.methods.get(message);
       ref_t outputRef = methodInfo.outputRef;
@@ -2577,20 +2580,25 @@ void CompilerLogic :: generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_
          methods.add({ mssg, methodInfo.outputRef });
       }
    }
-
 }
 
-mssg_t CompilerLogic :: resolveSingleDispatch(ModuleScopeBase& scope, ref_t reference, ref_t weakMessage)
+mssg_t CompilerLogic :: resolveSingleDispatch(ModuleScopeBase& scope, ref_t reference, ref_t weakMessage, int& nillableArgs)
 {
    if (!reference)
       return 0;
 
    ClassInfo info;
    if (defineClassInfo(scope, info, reference)) {
-      return info.attributes.get({ weakMessage, ClassAttribute::SingleDispatch });
+      mssg_t dispatcher = info.attributes.get({ weakMessage, ClassAttribute::SingleDispatch });
+      if (dispatcher) {
+         CheckMethodResult result;
+         if (checkMethod(info, dispatcher, result))
+            nillableArgs = result.nillableArgs;
+      }
+
+      return dispatcher;
    }
    else return 0;
-
 }
 
 inline size_t readSignatureMember(ustr_t signature, size_t index)

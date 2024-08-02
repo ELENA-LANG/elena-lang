@@ -2016,3 +2016,63 @@ public enumTest() : testCase()
 
    console.write(".");   
 }
+
+// --- passingNilArg ---
+
+NilArgB;
+
+NilArgA
+{
+   NilArgB b;
+
+   constructor new(NilArgB? b)
+   {
+      this b := b
+   }
+}
+
+NilArgC
+{
+   NilArgB b;
+
+   constructor new(NilArgB b)
+   {
+      this b := b
+   }
+}
+
+singleton NilArgTester<T>
+{
+   runWeak()
+   {
+      var b := nil;
+      var t := class T;
+      var a := t.new(b);
+   }
+   runStrong()
+   {
+      var b := nil;
+      var a := class T.new(b);      
+   }
+}
+
+public passingNilArg() : testCase()
+{
+   NilArgTester<NilArgA>.runWeak();
+   console.write(".");
+   NilArgTester<NilArgA>.runStrong();
+   console.write(".");
+
+   Assert.ifFailed({ NilArgTester<NilArgC>.runWeak() });
+   console.write(".");
+   Assert.ifFailed({ NilArgTester<NilArgC>.runStrong() });
+   console.write(".");
+}
+
+public stringInterpolation() : testCase()
+{
+   var s := $"a_{ 1 }_b_{ 2 }_c";
+
+   Assert.ifEqual(s,"a_1_b_2_c");
+   console.write(".");
+}

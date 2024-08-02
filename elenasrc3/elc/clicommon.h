@@ -416,8 +416,9 @@ enum class ExpressionAttribute : pos64_t
    RetrievingType       = 0x00010000000,
    RetValExpected       = 0x00020000000,
    CheckShortCircle     = 0x00040000000,
-   LookaheadExprMode    = 0x00080000000,
+   LookaheadExprMode    = 0x00080000000,   
    Class                = 0x00100000000,
+   Nillable             = 0x00200000000,
    OutRefOp             = 0x01000000000,
    WithVariadicArgCast  = 0x02008000000,
    DistributedForward   = 0x04000000000,
@@ -764,8 +765,27 @@ enum class VirtualType : int
    AbstractEmbeddableWrapper
 };
 
-typedef Pair<mssg_t, VirtualType, 0, VirtualType::None>  VirtualMethod;
-typedef List<VirtualMethod>                              VirtualMethodList;
+struct VirtualMethod
+{
+   mssg_t      message;
+   VirtualType type;
+   int         nillableArgs;
+
+   VirtualMethod()
+   {
+      message = 0;
+      type = VirtualType::None;
+      nillableArgs = 0;
+   }
+   VirtualMethod(mssg_t message, VirtualType type, int nillableArgs)
+   {
+      this->message = message;
+      this->type = type;
+      this->nillableArgs = nillableArgs;
+   }
+};
+
+typedef List<VirtualMethod>   VirtualMethodList;
 
 }
 

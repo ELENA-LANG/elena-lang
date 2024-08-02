@@ -27,3 +27,9 @@ void DPASessionWrapper :: prepare()
 {
    _session = new dpa::Session();
 }
+
+void DPASessionWrapper :: run()
+{
+   // Wait for the ConfigurationDone request to be made.
+
+}
