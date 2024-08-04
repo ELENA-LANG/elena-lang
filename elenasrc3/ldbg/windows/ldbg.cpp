@@ -25,6 +25,7 @@ int main()
    DPASessionWrapper session;
 
    session.prepare();
+   session.bind();
    session.run();
 
    return 0;

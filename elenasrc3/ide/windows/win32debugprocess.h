@@ -9,33 +9,12 @@
 #define WIN32DEBUGPROCESS_H
 
 #include "idecommon.h"
-#include <windows.h>
+#include "windows/winevents.h"
 
 namespace elena_lang
 {
    // --- DebugEventManager ---
-   class DebugEventManager
-   {
-      HANDLE _events[MAX_DEBUG_EVENT];
-
-   public:
-      void init();
-      void setEvent(int event);
-      void resetEvent(int event);
-      int  waitForAnyEvent();
-      bool waitForEvent(int event, int timeout);
-      void close();
-
-      DebugEventManager()
-      {
-         for (int i = 0; i < MAX_DEBUG_EVENT; i++)
-            _events[i] = nullptr;
-      }
-      ~DebugEventManager()
-      {
-         close();
-      }
-   };
+   typedef EventManager<int, MAX_DEBUG_EVENT> DebugEventManager;
 
    class Win32DebugProcess;
    struct Win32BreakpointContext;
@@ -159,7 +138,7 @@ namespace elena_lang
       bool startProcess(const wchar_t* exePath, const wchar_t* cmdLine, bool withPersistentConsole);
 
       void continueProcess();
-      void processEvent(size_t timeout);
+      void processEvent(DWORD timeout);
       void processException(EXCEPTION_DEBUG_INFO* exception);
       void processStep();
       void processEnd();
@@ -167,7 +146,7 @@ namespace elena_lang
    public:
       void initEvents() override
       {
-         _events.init();
+         _events.init(DEBUG_ACTIVE);
       }
       void setEvent(int event) override
       {

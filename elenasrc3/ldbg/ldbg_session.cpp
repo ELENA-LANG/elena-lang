@@ -15,7 +15,7 @@ using namespace elena_lang;
 
 DPASessionWrapper :: DPASessionWrapper()
 {
-
+   _events.init(-1);
 }
 
 DPASessionWrapper :: ~DPASessionWrapper()
@@ -26,10 +26,26 @@ DPASessionWrapper :: ~DPASessionWrapper()
 void DPASessionWrapper :: prepare()
 {
    _session = new dpa::Session();
+
+   // The ConfigurationDone request is made by the client once all configuration
+   // requests have been made.
+    
+   //session->registerHandler([&](const dap::ConfigurationDoneRequest&) {
+   //   configured.fire();
+   //   return dap::ConfigurationDoneResponse();
+   //   });
+
+}
+
+void DPASessionWrapper :: bind()
+{
+   _session->connect();
 }
 
 void DPASessionWrapper :: run()
 {
-   // Wait for the ConfigurationDone request to be made.
+   _session->start();
 
+   // Wait for the ConfigurationDone request to be made.
+   _events.waitForEvent(LDBF_CONFIGURED);
 }
