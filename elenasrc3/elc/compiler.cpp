@@ -1419,7 +1419,10 @@ ObjectInfo Compiler::MethodScope :: mapIdentifier(ustr_t identifier, bool refere
             return mapSelf(false);
          }
          else if ((functionMode && !constructorMode) || closureMode || nestedMode) {
-            return parent->mapIdentifier(OWNER_VAR, false, attr);
+            if (EAttrs::test(attr, EAttr::RetrievingType)) {
+               return mapClassSymbol(*this, getClassRef());
+            }
+            else return parent->mapIdentifier(OWNER_VAR, false, attr);
          }
          else return mapSelf();
       }
@@ -6255,7 +6258,7 @@ ObjectInfo Compiler :: mapClassSymbol(Scope& scope, ref_t classRef)
          ClassInfo info;
          scope.moduleScope->loadClassInfo(info, classRef, true);
 
-         classClassRef = info.header.classRef;
+         classClassRef = test(info.header.flags, elClassClass) ? classRef : info.header.classRef;
 
          scope.moduleScope->cachedClassReferences.add(classRef, classClassRef);
       }
@@ -7047,7 +7050,7 @@ ObjectInfo Compiler :: mapTerminal(Scope& scope, SyntaxNode node, TypeInfo decla
    }
    else if (newOp || castOp) {
       if (node.key == SyntaxKey::identifier && EAttrs::testAndExclude(attrs, ExpressionAttribute::RetrievingType)) {
-         auto varInfo = scope.mapIdentifier(node.identifier(), false, attrs);
+         auto varInfo = scope.mapIdentifier(node.identifier(), false, attrs | ExpressionAttribute::RetrievingType);
          if (varInfo.kind != ObjectKind::Unknown) {
             retVal = { ObjectKind::Class, varInfo.typeInfo, 0u, newOp ? TargetMode::Creating : TargetMode::Casting };
          }

@@ -46,6 +46,8 @@ namespace elena_lang
 #endif
 
       static void combineCanonicalized(PathString& target, path_t subpath);
+
+      static void makeCorrectExePath(PathString& target);
    };
 
    // --- PathString ---

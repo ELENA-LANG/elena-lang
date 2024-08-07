@@ -191,3 +191,52 @@ public enumeration enum<member, T>
       ^ false
    }
 }
+
+//// --- yield state machine ---
+//
+//public sealed template YieldStateEnumerator : Enumerator
+//{
+//   private object __current; 
+//
+//   //private __raw rawData;
+//   //private __array stackLocals;
+//
+////   private bool gotoNextStep()
+////   {
+////      <jumper>(rawData)
+////
+////      for (int stackLocals.i = 0; i < stackLocals.number; stackLocals.i++)
+////      {
+////         __current := stackLocals.start + 2 * stackLocals.i;
+////         
+////         <capture>(rawData);
+////
+////         ^ true;
+////      };
+////
+////      __current := nil;
+////      <reset>(rawData);
+////
+////      ^ false;      
+////   }
+//
+//   Value()
+//      = _current;
+//
+//   bool next()
+//      <= gotoNextStep();
+//
+//   reset()
+//   {
+//      NotSupportedException.raise()
+//   }
+//
+//   Enumerable enumerable()
+//      = __typeof self;
+//
+//   static Enumerable cast()
+//      = {
+//         Enumerator enumerator()
+//            = new __typeof __decl();
+//      };
+//}

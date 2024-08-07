@@ -1,81 +1,151 @@
 import extensions;
 
-sealed struct OctalNumber
+//Enumerable yield func(int start, int number)
+//{
+//   for (int i = 0; i < number; i++)
+//   {
+//       $yield start + 2 * i;
+//   }
+//}
+//
+//public program()
+//{
+//   foreach(var item :in func(2, 10))
+//   {
+//      console.writeLine(item)
+//   }
+//}
+
+
+
+//singleton InfinitLoop
+//{
+//   static Enumerator _enum;
+//
+//   private Enumerable loop()
+//   {
+//      int i := 0;
+//      while (true) {
+//         $yield i;
+//
+//         i++;
+//      }
+//   }
+//
+//   int nextNumber()
+//   {
+//      var enum := _enum ?? _enum := loop().getEnumerator();
+//
+//      enum.next();
+//
+//      ^ *enum;
+//   }
+//}
+
+//private sealed template YieldStateEnumerator : Enumerator
+//{
+//   private __raw rawData;
+//   private __array stackLocals;
+//
+//   private object __current; 
+//
+//   private bool gotoNextStep()
+//   {
+//      <jumper>(rawData)
+//
+//      for (int stackLocals.i = 0; i < stackLocals.number; stackLocals.i++)
+//      {
+//         __current := stackLocals.start + 2 * stackLocals.i;
+//         
+//         <capture>(rawData);
+//
+//         ^ true;
+//      };
+//
+//      __current := nil;
+//      <reset>(rawData);
+//
+//      ^ false;      
+//   }
+//
+//   Value()
+//      = _current;
+//
+//   bool next()
+//      <= gotoNextStep();
+//
+//   reset()
+//   {
+//      NotSupportedException.raise()
+//   }
+//
+//   Enumerable enumerable()
+//      = __typeof self;
+//
+//   static Enumerable cast()
+//      = {
+//         Enumerator enumerator()
+//            = new __typeof __decl();
+//      };
+//}
+//
+//private sealed template YieldStateEnumerator<T> : Enumerator<T>
+//{
+//   private __raw rawData;
+//   private __array stackLocals;
+//
+//   private T __current; 
+//
+//   private bool gotoNextStep()
+//   {
+//      <jumper>(rawData)
+//
+//      for (int stackLocals.i = 0; i < stackLocals.number; stackLocals.i++)
+//      {
+//         __current := stackLocals.start + 2 * stackLocals.i;
+//         
+//         <capture>(rawData);
+//
+//         ^ true;
+//      };
+//
+//      __current := nil;
+//      <reset>(rawData);
+//
+//      ^ false;      
+//   }
+//
+//   T Value()
+//      = _current;
+//
+//   bool next()
+//      <= gotoNextStep();
+//
+//   reset()
+//   {
+//      NotSupportedException.raise()
+//   }
+//
+//   Enumerable<T> enumerable()
+//      = __typeof self;
+//
+//   static Enumerable<T> cast()
+//      = {
+//         Enumerator<T> enumerator()
+//            = new __typeof __decl();
+//      };
+//}
+
+A
 {
-    int value;
-
-    int cast() = value;
-
-    constructor(int n)
-    {
-        value := n;
-    }
-    
-    cast o(string s)
-    {
-        value := s.toInt(8);
-    }
-
-    internal constructor sum(OctalNumber o1, OctalNumber o2)
-    {
-        int n1 := o1.Value;
-        int n2 := o2.Value;
-
-        value := n1 + n2
-    }
-
-    internal constructor diff(OctalNumber o1, OctalNumber o2)
-    {
-        int n1 := o1.Value;
-        int n2 := o2.Value;
-
-        value := n1 - n2
-    }
-
-    internal constructor prod(OctalNumber o1, OctalNumber o2)
-    {
-        int n1 := o1.Value;
-        int n2 := o2.Value;
-
-        value := n1 * n2
-    }
-
-    internal constructor frac(OctalNumber o1, OctalNumber o2)
-    {
-        int n1 := o1.Value;
-        int n2 := o2.Value;
-
-        value := n1 / n2
-    }
-
-    int Value = value;  
-
-    string toPrintable()
-        = value.toString(8);
-
-    OctalNumber add(OctalNumber n)
-        = OctalNumber.sum(self, n);
-
-    OctalNumber subtract(OctalNumber n)
-        = OctalNumber.diff(self, n);
-
-    OctalNumber multiply(OctalNumber n)
-        = OctalNumber.prod(self, n);
-
-    OctalNumber divide(OctalNumber n)
-        = OctalNumber.frac(self, n);
+   get static Factory = ::{
+      new()
+         = new __typeof self();
+   };
 }
+
 
 public program()
 {
-    var n := 7o;
-    var m := 2o;
-    console.printLine(n,"+",m,"=",n + m);
-
-    n := 24o;
-    m := 7o;
-    console.printLine(n,"+",m,"=",n + m);
-    console.printLine(n,"-",m,"=",n - m);
-    console.printLine(n,"*",m,"=",n * m);
-    console.printLine(n,"/",m,"=",n / m);
+   var a := A.Factory.new();
 }
