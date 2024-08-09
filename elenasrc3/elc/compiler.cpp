@@ -2282,7 +2282,7 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
 }
 
 void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor,
-   bool& yieldMethodNotAllowed, bool staticNotAllowed, bool templateBased)
+   bool yieldMethodNotAllowed, bool staticNotAllowed, bool templateBased)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -2315,15 +2315,8 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
             }
             else methodScope.message = current.arg.reference;
 
-            if (methodScope.isYieldable()) {
-               if (yieldMethodNotAllowed) {
-                  scope.raiseError(errIllegalMethod, current);
-               }
-               else yieldMethodNotAllowed = true;
-            }
-
             declareMethodMetaInfo(methodScope, current);
-            declareMethod(methodScope, current, scope.abstractMode, staticNotAllowed);
+            declareMethod(methodScope, current, scope.abstractMode, staticNotAllowed, yieldMethodNotAllowed);
 
             if (methodScope.checkHint(MethodHint::Constructor)) {
                withConstructors = true;
@@ -3269,9 +3262,6 @@ bool Compiler :: generateClassField(ClassScope& scope, FieldAttributes& attrs, u
 
       // if it is a structure field
       if (test(scope.info.header.flags, elStructureRole)) {
-         if (test(scope.info.header.flags, elWithYieldable))
-            return false;
-
          if (sizeInfo.size <= 0)
             return false;
 
@@ -3908,7 +3898,16 @@ void Compiler :: declareClosureMessage(MethodScope& methodScope, SyntaxNode node
       methodScope.message = declareClosureParameters(methodScope, argNode);
 }
 
-void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool abstractMode, bool staticNotAllowed)
+void Compiler :: declareIteratorMessage(MethodScope& scope, SyntaxNode node)
+{
+   ref_t itAction = scope.module->mapAction(NEXT_MESSAGE, 0, false);
+   scope.message = encodeMessage(itAction, 1, 0);
+
+   scope.info.outputRef = scope.moduleScope->branchingInfo.typeRef;
+}
+
+void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool abstractMode,
+   bool staticNotAllowed, bool yieldMethodNotAllowed)
 {
    if (methodScope.checkHint(MethodHint::Static)) {
       if (staticNotAllowed)
@@ -3945,24 +3944,9 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
    if (methodScope.info.hints)
       node.appendChild(SyntaxKey::Hints, methodScope.info.hints);
 
-   if (methodScope.checkHint(MethodHint::Yieldable)) {
-      // raise an error if the method has arguments
-      if (getArgCount(methodScope.message) > 1 || (test(methodScope.message, FUNCTION_MESSAGE) && getArgCount(methodScope.message) > 0))
-         methodScope.raiseError(errIllegalMethod, node);
-
-      // raise an error if the class is a struct
-      // only a single yield method is allowed
-
-      // inject yield context assigning
-      node.parentNode()
-         .appendChild(SyntaxKey::AssignOperation)
-         .appendChild(SyntaxKey::YieldContext, methodScope.message);
-
-      // inject yield context field
-      node.parentNode()
-         .appendChild(SyntaxKey::Field)
-         .appendChild(SyntaxKey::Name)
-         .appendChild(SyntaxKey::identifier, YIELD_CONTEXT_FIELD);
+   if (methodScope.checkHint(MethodHint::Yieldable) && yieldMethodNotAllowed) {
+      // raise an error if the method must be static
+      methodScope.raiseError(errIllegalMethod, node);
    }
 }
 
@@ -5424,6 +5408,51 @@ ref_t Compiler :: resolveTemplate(ModuleScopeBase& moduleScope, ref_t templateRe
 
    return _templateProcessor->generateClassTemplate(moduleScope,
       templateRef, parameters, declarationMode, nullptr);
+}
+
+ref_t Compiler :: resolveStateMachine(Scope& scope, ref_t templateRef, ref_t elementRef)
+{
+   IdentifierString smName(scope.module->resolveReference(templateRef));
+
+   List<SyntaxNode> parameters({});
+   // HOTFIX : generate a temporal template to pass the type
+   SyntaxTree dummyTree;
+   SyntaxTreeWriter dummyWriter(dummyTree);
+   dummyWriter.newNode(SyntaxKey::Root);
+
+   dummyWriter.newNode(SyntaxKey::TemplateArg, elementRef);
+   dummyWriter.newNode(SyntaxKey::Type);
+
+   ustr_t referenceName = scope.moduleScope->module->resolveReference(elementRef);
+   if (isWeakReference(referenceName)) {
+      dummyWriter.appendNode(SyntaxKey::reference, referenceName);
+   }
+   else dummyWriter.appendNode(SyntaxKey::globalreference, referenceName);
+
+   dummyWriter.closeNode();
+   dummyWriter.closeNode();
+
+   dummyWriter.closeNode();
+
+   SyntaxNode current = dummyTree.readRoot().firstChild();
+   while (current == SyntaxKey::TemplateArg) {
+      parameters.add(current);
+
+      current = current.nextNode();
+   }
+
+   smName.append("#1");
+
+   ref_t templateReference = 0;
+   if (isWeakReference(*smName)) {
+      templateReference = scope.module->mapReference(*smName, true);
+   }
+   else templateReference = scope.moduleScope->mapFullReference(*smName, true);
+
+   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+   return _templateProcessor->generateClassTemplate(*scope.moduleScope,
+      templateReference, parameters, false, nullptr);
 }
 
 ref_t Compiler :: resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef)
@@ -8490,6 +8519,7 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
    SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
 
    CodeScope codeScope(&scope);
+
    if (scope.info.byRefHandler && !scope.checkHint(MethodHint::InterfaceDispatcher)) {
       if (current.key == SyntaxKey::Redirect) {
          compileByRefRedirectHandler(writer, scope, node, scope.info.byRefHandler);
@@ -8507,6 +8537,7 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
          return;
       }
    }
+
    beginMethod(writer, scope, node, BuildKey::Method, _withDebugInfo);
 
    switch (current.key) {
@@ -8538,19 +8569,41 @@ void Compiler :: compileMethod(BuildTreeWriter& writer, MethodScope& scope, Synt
    codeScope.syncStack(&scope);
    endMethod(writer, scope);
 
-   if (scope.isYieldable()) {
-      classScope->addMssgAttribute(scope.message, ClassAttribute::YieldContextSize, scope.reserved2);
-   }
+   if (_trackingUnassigned && current == SyntaxKey::CodeBlock)
+      checkUnassignedVariables(scope, node);
+}
 
-   if (_trackingUnassigned && current == SyntaxKey::CodeBlock) {
-      // warn if the variable was not assigned
-      for (auto it = scope.parameters.start(); !it.eof(); ++it) {
-         if ((*it).unassigned) {
-            warnOnUnassignedParameter(node, scope, it.key());
-         }
+void Compiler :: checkUnassignedVariables(MethodScope& scope, SyntaxNode node)
+{
+   // warn if the variable was not assigned
+   for (auto it = scope.parameters.start(); !it.eof(); ++it) {
+      if ((*it).unassigned) {
+         warnOnUnassignedParameter(node, scope, it.key());
       }
    }
+}
 
+void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
+{
+   CodeScope codeScope(&scope);
+   ExprScope exprScope(&codeScope);
+
+   // create yield state machine
+   ref_t nestedRef = scope.moduleScope->mapAnonymous();;
+   InlineClassScope smScope(&exprScope, nestedRef);
+
+   BuildNode buildNode = writer.CurrentNode();
+   while (buildNode != BuildKey::Root)
+      buildNode = buildNode.parentNode();
+
+   BuildTreeWriter nestedWriter(buildNode);
+   compileStatemachineClass(nestedWriter, smScope, node);
+
+   // convert yield state machine to the method target
+
+   // declare the invoker method
+
+   assert(false);
 }
 
 bool Compiler :: isCompatible(Scope& scope, ObjectInfo source, ObjectInfo target, bool resolvePrimitives)
@@ -9247,6 +9300,81 @@ void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope,
    scope.save();
 }
 
+void Compiler :: compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
+{
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
+   assert(!scope.info.byRefHandler);
+
+   beginMethod(writer, scope, node, BuildKey::Method, false);
+   
+   CodeScope codeScope(&scope);
+
+   SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
+   switch (current.key) {
+      case SyntaxKey::CodeBlock:
+      case SyntaxKey::ReturnExpression:
+         compileMethodCode(writer, classScope, scope, codeScope, node, false);
+         break;
+      default:
+         break;
+   }
+
+   codeScope.syncStack(&scope);
+
+   endMethod(writer, scope);
+
+   //if (scope.isYieldable()) {
+   //   classScope->addMssgAttribute(scope.message, ClassAttribute::YieldContextSize, scope.reserved2);
+   //}
+
+   if (_trackingUnassigned && current == SyntaxKey::CodeBlock)
+      checkUnassignedVariables(scope, node);
+}
+
+void Compiler :: compileStatemachineClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node)
+{
+   writer.newNode(BuildKey::Class, scope.reference);
+
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+   if (_withDebugInfo)
+      writer.appendNode(BuildKey::Path, *ns->sourcePath);
+
+   MethodScope methodScope(&scope);
+   declareIteratorMessage(methodScope, node);
+
+   ref_t elementRef = scope.moduleScope->buildins.superReference;
+   compileIteratorMethod(writer, methodScope, node);
+
+   ref_t parentRef = resolveStateMachine(scope, scope.moduleScope->buildins.yielditTemplateReference, elementRef);
+
+   declareClassParent(parentRef, scope, node);
+   generateClassFlags(scope, elNestedClass | elSealed);
+
+   scope.info.attributes.exclude({ 0, ClassAttribute::RuntimeLoadable });
+
+   // handle the abstract flag
+   if (test(scope.info.header.flags, elAbstract)) {
+      scope.abstractBasedMode = true;
+      scope.info.header.flags &= ~elAbstract;
+   }
+
+   auto m_it = scope.info.methods.getIt(methodScope.message);
+   if (!m_it.eof()) {
+      (*m_it).inherited = true;
+      (*m_it).hints &= ~(ref_t)MethodHint::Abstract;
+   }
+   else scope.info.methods.add(methodScope.message, methodScope.info);
+
+   // set flags once again
+   // NOTE : it should be called after the code compilation to take into consideration outer fields
+   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, scope.isClassClass());
+
+   writer.closeNode();
+
+   scope.save();
+}
+
 void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
    bool exclusiveMode, bool ignoreAutoMultimethod)
 {
@@ -9328,7 +9456,10 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
             _errorProcessor->info(infoCurrentMethod, *messageName);
    #endif // FULL_OUTOUT_INFO
 
-            compileMethod(writer, methodScope, current);
+            if (methodScope.isYieldable()) {
+               compileYieldMethod(writer, methodScope, current);
+            }
+            else compileMethod(writer, methodScope, current);
 
             break;
          }
@@ -9736,6 +9867,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
 
    moduleScope->buildins.closureTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, CLOSURE_FORWARD);
    moduleScope->buildins.tupleTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, TUPLE_FORWARD);
+   moduleScope->buildins.yielditTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, YIELDIT_FORWARD);
    moduleScope->buildins.lazyExpressionReference = safeMapWeakReference(moduleScope, forwardResolver, LAZY_FORWARD);
    moduleScope->buildins.uintReference = safeMapReference(moduleScope, forwardResolver, UINT_FORWARD);
    moduleScope->buildins.pointerReference = safeMapReference(moduleScope, forwardResolver, PTR_FORWARD);
@@ -10831,14 +10963,9 @@ void Compiler::Class :: declare(SyntaxNode node)
 
    bool withConstructors = false;
    bool withDefConstructor = false;
-   bool yieldMethodNotAllowed = test(scope.info.header.flags, elWithYieldable) || test(declaredFlags, elStructureRole);
+   bool yieldMethodNotAllowed = !test(declaredFlags, elStateless);
    compiler->declareVMT(scope, node, withConstructors, withDefConstructor,
       yieldMethodNotAllowed, false, test(declaredFlags, elTemplatebased));
-
-   if (yieldMethodNotAllowed && !test(scope.info.header.flags, elWithYieldable) && !test(declaredFlags, elStructureRole)) {
-      // HOTFIX : trying to figure out if the yield method was declared inside declareVMT
-      declaredFlags |= elWithYieldable;
-   }
 
    // NOTE : generateClassDeclaration should be called for the proper class before a class class one
    //        due to dynamic array implementation (auto-generated default constructor should be removed)
@@ -11056,6 +11183,9 @@ void Compiler::Method :: compile(BuildTreeWriter& writer, SyntaxNode current)
    // if it is an initializer
    else if (scope.checkHint(MethodHint::Initializer)) {
       compiler->compileInitializerMethod(writer, scope, current.parentNode());
+   }
+   else if (scope.checkHint(MethodHint::Yieldable)) {
+      compiler->compileYieldMethod(writer, scope, current.parentNode());
    }
    // if it is a normal method
    else compiler->compileMethod(writer, scope, current);

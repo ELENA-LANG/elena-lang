@@ -192,51 +192,47 @@ public enumeration enum<member, T>
    }
 }
 
-//// --- yield state machine ---
-//
-//public sealed template YieldStateEnumerator : Enumerator
-//{
-//   private object __current; 
-//
-//   //private __raw rawData;
-//   //private __array stackLocals;
-//
-////   private bool gotoNextStep()
-////   {
-////      <jumper>(rawData)
-////
-////      for (int stackLocals.i = 0; i < stackLocals.number; stackLocals.i++)
-////      {
-////         __current := stackLocals.start + 2 * stackLocals.i;
-////         
-////         <capture>(rawData);
-////
-////         ^ true;
-////      };
-////
-////      __current := nil;
-////      <reset>(rawData);
-////
-////      ^ false;      
-////   }
-//
-//   Value()
-//      = _current;
-//
+// --- yield state machine ---
+
+public sealed template YieldStateEnumerator<T> : Enumerator<T>
+{
+   T __current; 
+
+   //__raw rawData;
+   //__array stackLocals;
+
 //   bool next()
-//      <= gotoNextStep();
-//
-//   reset()
 //   {
-//      NotSupportedException.raise()
-//   }
+//      <jumper>(rawData)
 //
-//   Enumerable enumerable()
-//      = __typeof self;
+//      for (int stackLocals.i = 0; i < stackLocals.number; stackLocals.i++)
+//      {
+//         __current := stackLocals.start + 2 * stackLocals.i;
+//         
+//         <capture>(rawData);
 //
-//   static Enumerable cast()
-//      = {
-//         Enumerator enumerator()
-//            = new __typeof __decl();
+//         ^ true;
 //      };
-//}
+//
+//      __current := nil;
+//      <reset>(rawData);
+//
+//      ^ false;      
+//   }
+
+   get T Value()
+      = _current;
+
+   reset()
+   {
+      NotSupportedException.raise()
+   }
+
+   Enumerable<T> enumerable()
+      = __typeof self;
+
+   static Enumerable<T> cast() = ::{
+         Enumerator<T> enumerator()
+            = new __typeof self();
+      };
+}

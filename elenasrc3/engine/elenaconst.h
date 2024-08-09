@@ -110,7 +110,8 @@ namespace elena_lang
    constexpr auto MESSAGE_NAME_FORWARD       = "$subject";        // the message class
    constexpr auto EXT_MESSAGE_FORWARD        = "$ext_message";    // the extension message class
    constexpr auto CLOSURE_FORWARD            = "$closure";        // the closure template class
-   constexpr auto TUPLE_FORWARD              = "$tuple";          // the closure template class
+   constexpr auto TUPLE_FORWARD              = "$tuple";          // the tuple template class
+   constexpr auto YIELDIT_FORWARD            = "$yieldit";        // the yield state machine iterator template class
    constexpr auto UINT_FORWARD               = "$uint";           // the uint wrapper
    constexpr auto PTR_FORWARD                = "$ptr";            // the ptr wrapper
    constexpr auto LAZY_FORWARD               = "$lazy";
@@ -149,35 +150,36 @@ namespace elena_lang
    constexpr auto TRY_INVOKE_MESSAGE         = "#try_invoke";
    constexpr auto INIT_MESSAGE               = "#init";
 
-   constexpr auto ADD_MESSAGE             = "add";
-   constexpr auto SUB_MESSAGE             = "subtract";
-   constexpr auto MUL_MESSAGE             = "multiply";
-   constexpr auto DIV_MESSAGE             = "divide";
-   constexpr auto BAND_MESSAGE            = "band";
-   constexpr auto BOR_MESSAGE             = "bor";
-   constexpr auto BXOR_MESSAGE            = "bxor";
-   constexpr auto REFER_MESSAGE           = "at";
-   constexpr auto SET_REFER_MESSAGE       = "setAt";
-   constexpr auto IF_MESSAGE              = "if";
-   constexpr auto IIF_MESSAGE             = "iif";
-   constexpr auto EQUAL_MESSAGE           = "equal";
-   constexpr auto NOT_MESSAGE             = "Inverted";
-   constexpr auto NEGATE_MESSAGE          = "Negative";
-   constexpr auto VALUE_MESSAGE           = "Value";
-   constexpr auto ITEM_MESSAGE            = "Value";
-   constexpr auto DEFAULT_MESSAGE         = "Default";
-   constexpr auto BNOT_MESSAGE            = "BInverted";
-   constexpr auto NOTEQUAL_MESSAGE        = "notequal";
-   constexpr auto LESS_MESSAGE            = "less";
-   constexpr auto NOTLESS_MESSAGE         = "notless";
-   constexpr auto GREATER_MESSAGE         = "greater";
-   constexpr auto NOTGREATER_MESSAGE      = "notgreater";
-   constexpr auto AND_MESSAGE             = "and";
-   constexpr auto OR_MESSAGE              = "or";
-   constexpr auto XOR_MESSAGE             = "xor";
-   constexpr auto SHL_MESSAGE             = "shiftLeft";
-   constexpr auto SHR_MESSAGE             = "shiftRight";
-      
+   constexpr auto NEXT_MESSAGE               = "next";
+
+   constexpr auto ADD_MESSAGE                = "add";
+   constexpr auto SUB_MESSAGE                = "subtract";
+   constexpr auto MUL_MESSAGE                = "multiply";
+   constexpr auto DIV_MESSAGE                = "divide";
+   constexpr auto BAND_MESSAGE               = "band";
+   constexpr auto BOR_MESSAGE                = "bor";
+   constexpr auto BXOR_MESSAGE               = "bxor";
+   constexpr auto REFER_MESSAGE              = "at";
+   constexpr auto SET_REFER_MESSAGE          = "setAt";
+   constexpr auto IF_MESSAGE                 = "if";
+   constexpr auto IIF_MESSAGE                = "iif";
+   constexpr auto EQUAL_MESSAGE              = "equal";
+   constexpr auto NOT_MESSAGE                = "Inverted";
+   constexpr auto NEGATE_MESSAGE             = "Negative";
+   constexpr auto VALUE_MESSAGE              = "Value";
+   constexpr auto ITEM_MESSAGE               = "Value";
+   constexpr auto DEFAULT_MESSAGE            = "Default";
+   constexpr auto BNOT_MESSAGE               = "BInverted";
+   constexpr auto NOTEQUAL_MESSAGE           = "notequal";
+   constexpr auto LESS_MESSAGE               = "less";
+   constexpr auto NOTLESS_MESSAGE            = "notless";
+   constexpr auto GREATER_MESSAGE            = "greater";
+   constexpr auto NOTGREATER_MESSAGE         = "notgreater";
+   constexpr auto AND_MESSAGE                = "and";
+   constexpr auto OR_MESSAGE                 = "or";
+   constexpr auto XOR_MESSAGE                = "xor";
+   constexpr auto SHL_MESSAGE                = "shiftLeft";
+   constexpr auto SHR_MESSAGE                = "shiftRight";      
 
    // --- constant string lengths ---
    constexpr auto TEMPLATE_PREFIX_NS_LEN = 7;
@@ -208,7 +210,6 @@ namespace elena_lang
    constexpr ref_t elMessageName          = 0x01000000;
    constexpr ref_t elWithGenerics         = 0x02000000;
    constexpr ref_t elVirtualVMT           = 0x04000000;
-   constexpr ref_t elWithYieldable        = 0x08000000;
    constexpr ref_t elGroup                = 0x10000000;
    constexpr ref_t elPacked               = 0x20000000;
    constexpr ref_t elTemplatebased        = 0x40000000;

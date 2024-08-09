@@ -25,6 +25,8 @@ In development:
   - #658 : connect with ldbg from VSCode  
   - lpad : generate a code based on a record  
   - yield redux : return the enumerator, containing the current context info
+  * yield : unit test - only for static method
+  * yield : only for static method is allowed
   * yield : functional test
   * yield : implement InfinitLoop from sandbox
   * yield : support break
@@ -34,15 +36,13 @@ In development:
 
   * yeildable : strong-typed enumerator (the enum type mast be resolved) : mark the field as auto; after generating 
     the private method - the type is resolved and can be used to generate the parent class -> and so on
+  --------------------------------------
   * yield redux : if the method is marked as **yield** : use the yield routine;
     the new class based on the template is declared;
     declaring a private method with jumper at the beginning; 
     declaring a private constructor - creating a state fields;
     if there is a conversion to the method output -> resolve it in 
     compile-time; if no - return the newly created statemachine enumerator
-  * yield redux : declaring a forward to the state enumerator template 
-  --------------------------------------
-  * yield redux : declaring a state enumerator template 
 
   ### EPIC: elena 6.4 ###
 

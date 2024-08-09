@@ -392,6 +392,7 @@ namespace elena_lang
    /// accessors:
    constexpr auto V_GETACCESSOR           = 0x80005001u;
    constexpr auto V_SETACCESSOR           = 0x80005002u;
+   constexpr auto V_YIELDABLE             = 0x80005003u;
 
    /// visibility:
    constexpr auto V_PUBLIC                = 0x80004001u;
@@ -403,7 +404,6 @@ namespace elena_lang
    constexpr auto V_SEALED                = 0x80003001u;
    constexpr auto V_ABSTRACT              = 0x80003002u;
    constexpr auto V_CLOSED                = 0x80003003u;
-   constexpr auto V_YIELDABLE             = 0x80003004u;
    constexpr auto V_PREDEFINED            = 0x80003005u;
    constexpr auto V_OVERRIDE              = 0x80003006u;
 

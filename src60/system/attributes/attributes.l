@@ -6,6 +6,7 @@
 /// scope_accessors:
 #let attributes["get"]         := 80005001h;
 #let attributes["set"]         := 80005002h;
+#let attributes["yield"]       := 80005003h;
 
 /// visibility:
 #let attributes["public"]      := 80004001h;
@@ -17,7 +18,6 @@
 #let attributes["sealed"]      := 80003001h;
 #let attributes["abstract"]    := 80003002h;
 #let attributes["closed"]      := 80003003h;
-#let attributes["yieldable"]   := 80003004h;
 #let attributes["predefined"]  := 80003005h;
 #let attributes["override"]    := 80003006h;
 
