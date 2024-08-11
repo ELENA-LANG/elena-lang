@@ -84,6 +84,8 @@ The ELENA source code is organized as follows:
 ## Community
 We want your contributions and suggestions! One of the easiest ways to contribute is to participate in Github discussions or on Discord.
 
+Please take a look at our [contributor page](https://github.com/ELENA-LANG/elena-lang/wiki/Getting-Started-with-the-project)
+
 ### 1. Bugs, questions, suggestions?
 
 If you've noticed a bug or have a question go ahead and [make one](https://github.com/ELENA-LANG/elena-lang/issues/new/choose)!

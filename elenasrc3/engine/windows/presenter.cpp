@@ -155,6 +155,14 @@ void WinConsolePresenter :: printLine(ustr_t msg, int arg1, int arg2, int arg3)
    ::printLine(wstr.str(), arg1, arg2, arg3);
 }
 
+void WinConsolePresenter::printLine(ustr_t msg, int arg1, int arg2, int arg3, ustr_t arg4) //version support print
+{
+	WideMessage wstr(msg);
+	WideMessage warg4(arg4);
+
+	::printLine(wstr.str(), arg1, arg2, arg3, warg4.str());
+}
+
 void WinConsolePresenter :: printPathLine(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4)
 {
    WideMessage wstr(msg);
