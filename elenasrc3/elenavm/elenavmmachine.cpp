@@ -2,6 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA VM declaration
 //
 //                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2024, by ELENA-LANG Org
 //---------------------------------------------------------------------------
 
 #include "elena.h"
