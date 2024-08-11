@@ -33,7 +33,7 @@ namespace elena_lang
       void printLine(ustr_t msg, ustr_t arg1, ustr_t arg2) override;
       void printLine(ustr_t msg, ustr_t arg1, ustr_t arg2, ustr_t arg3) override;
       void printLine(ustr_t msg, int arg1, int arg2, int arg3) override;
-      void printLine(ustr_t msg, int arg1, int arg2, int arg3, std::string arg4) override; //version support print
+      void printLine(ustr_t msg, int arg1, int arg2, int arg3, ustr_t arg4) override; //version support print
 
       void printPathLine(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4) override;
       void printLine(ustr_t msg, int arg1) override;

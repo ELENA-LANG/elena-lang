@@ -111,7 +111,7 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    _jitLinker = nullptr;
 }
 
-std::string ELENAVMMachine::getArchitecture() {
+ustr_t ELENAVMMachine::getArchitecture() {
 #if defined(_WIN64) || defined(__x86_64__) || defined(__ppc64__)
     return "(64-bit)";
 #else
@@ -122,7 +122,7 @@ std::string ELENAVMMachine::getArchitecture() {
 void ELENAVMMachine :: init(SystemEnv* exeEnv)
 {
    assert(_initialized == false);
-   std::string architecture = getArchitecture();
+   ustr_t architecture = getArchitecture();
    _presenter->printLine(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER, architecture);
    _presenter->printLine(ELENAVM_INITIALIZING);
 
