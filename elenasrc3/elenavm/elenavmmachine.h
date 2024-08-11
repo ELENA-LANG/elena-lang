@@ -82,6 +82,7 @@ namespace elena_lang
 
       virtual void resumeVM(SystemEnv* env, void* criricalHandler);
 
+      ustr_t getArchitectureName();
       void init(SystemEnv* env);
 
       AddressMap::Iterator externals() override;
