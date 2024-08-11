@@ -12,6 +12,7 @@
 #include "common.h"
 #include "elenaconst.h"
 #include "section.h"
+#include<string>
 
 namespace elena_lang
 {
@@ -656,6 +657,7 @@ namespace elena_lang
       virtual void printLine(ustr_t msg, int arg1) = 0;
       virtual void printLine(ustr_t msg, int arg1, int arg2) = 0;
       virtual void printLine(ustr_t msg, int arg1, int arg2, int arg3) = 0;
+      virtual void printLine(ustr_t msg, int arg1, int arg2, int arg3, std::string arg4) = 0; //version support print
       virtual void printLine(ustr_t msg, ustr_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
       virtual void printPathLine(ustr_t msg, path_t arg) = 0;
       virtual void printPathLine(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4) = 0;

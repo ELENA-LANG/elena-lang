@@ -13,6 +13,7 @@
 #include "codescope.h" 
 #include "projectbase.h"
 #include "xmlprojectbase.h"
+#include<string>
 
 namespace elena_lang
 {
@@ -82,6 +83,7 @@ namespace elena_lang
 
       virtual void resumeVM(SystemEnv* env, void* criricalHandler);
 
+      std::string getArchitecture();
       void init(SystemEnv* env);
 
       AddressMap::Iterator externals() override;
