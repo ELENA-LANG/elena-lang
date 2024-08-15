@@ -230,9 +230,4 @@ public sealed template YieldStateEnumerator<T> : Enumerator<T>
 
    Enumerable<T> enumerable()
       = __typeof self;
-
-   static Enumerable<T> cast() = ::{
-         Enumerator<T> enumerator()
-            = new __typeof self();
-      };
 }

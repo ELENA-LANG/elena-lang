@@ -355,6 +355,7 @@ namespace elena_lang
             Symbol,
             Class,
             OwnerClass,
+            Statemachine,
             Method,
             Field,
             Code,
@@ -1031,6 +1032,21 @@ namespace elena_lang
          InlineClassScope(ExprScope* owner, ref_t reference);
       };
 
+      struct StatemachineClassScope : InlineClassScope
+      {
+         pos_t contextSize;
+
+         Scope* getScope(ScopeLevel level) override
+         {
+            if (level == ScopeLevel::Statemachine) {
+               return this;
+            }
+            else return InlineClassScope::getScope(level);
+         }
+
+         StatemachineClassScope(ExprScope* owner, ref_t reference);
+      };
+
       struct MessageResolution
       {
          bool   resolved;
@@ -1309,6 +1325,9 @@ namespace elena_lang
          ObjectInfo compileNativeConversion(SyntaxNode node, ObjectInfo source, ref_t operationKey);
 
          ObjectInfo allocateResult(ref_t resultRef);
+
+         void compileNestedInitializing(InlineClassScope& classScope, ref_t nestedRef, int& preservedClosure,
+            ArgumentsInfo* updatedOuterArgs);
 
          void compileYieldOperation(SyntaxNode node);
          void compileSwitchOperation(SyntaxNode node);
@@ -1675,7 +1694,6 @@ namespace elena_lang
 
       void compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, 
          bool withGenerics, bool withOpenArgGenerics);
-      void compileYieldInitializing(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
       void compileInitializerMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode classNode);
       void compileStaticInitializerMethod(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode classNode);
       void compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);

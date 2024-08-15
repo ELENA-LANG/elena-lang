@@ -11,7 +11,7 @@ singleton Helper
    }
 }
 
-//Enumerable func(int start, int number)
+//Enumerator func(int start, int number)
 //{
 //   for (int i = 0; i < number; i++)
 //   {
