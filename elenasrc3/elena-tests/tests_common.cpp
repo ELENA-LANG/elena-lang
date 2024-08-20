@@ -403,6 +403,16 @@ void ScenarioTest::SetUp()
    controlOutputNode = buildTree.readRoot().appendChild(BuildKey::Tape);
 }
 
+// --- CompileTest ---
+
+void CompileTest :: SetUp()
+{
+   SyntaxTreeWriter writer(syntaxTree);
+   writer.appendNode(SyntaxKey::Root);
+
+   declarationNode = syntaxTree.readRoot().appendChild(SyntaxKey::Idle, 1);
+}
+
 // --- MethodScenarioTest ---
 
 void MethodScenarioTest :: runTest(bool withProtectedConstructor, bool withAttributes)

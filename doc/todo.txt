@@ -37,9 +37,8 @@ In development:
   * yeildable : strong-typed enumerator (the enum type mast be resolved) : mark the field as auto; after generating 
     the private method - the type is resolved and can be used to generate the parent class -> and so on
   * yield : implement InfinitLoop from sandbox
-  * __raw data type
   --------------------------------------
-  * #496 : private fields - unit test (declare a private field, it must be accessible inside the class, but not in any of its children)
+  * __raw data type
 
   ### EPIC: elena 6.4 ###
 

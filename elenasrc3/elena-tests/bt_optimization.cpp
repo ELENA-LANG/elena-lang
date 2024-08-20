@@ -130,7 +130,7 @@ void BTOptimization :: SetUp()
    afterOptimization = buildTree.readRoot().appendChild(BuildKey::Tape);
 }
 
-void BTOptimization :: runCompilerTest(bool declareOperators)
+void BTOptimization :: runBuildTest(bool declareOperators)
 {
    // Arrange
    ModuleScopeBase* moduleScope = env.createModuleScope(true);
