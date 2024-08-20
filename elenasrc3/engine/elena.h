@@ -1093,14 +1093,6 @@ namespace elena_lang
       }
    };
 
-   // --- FieldInfo ---
-   struct FieldInfo
-   {
-      int      offset;
-      TypeInfo typeInfo;
-      bool     readOnly;
-   };
-
    // --- StaticFieldInfo ---
    struct StaticFieldInfo
    {

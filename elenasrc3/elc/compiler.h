@@ -120,6 +120,13 @@ namespace elena_lang
       Weak,
    };
 
+   enum DeclResult : int
+   {
+      Success = 0,
+      Duplicate = 1,
+      Illegal = 2
+   };
+
    struct ObjectInfo
    {
       ObjectKind kind;
@@ -615,6 +622,7 @@ namespace elena_lang
          bool        abstractMode;
          bool        abstractBasedMode;
          bool        extensionDispatcher;
+         bool        withPrivateField;
 
          Scope* getScope(ScopeLevel level) override
          {
@@ -1548,7 +1556,7 @@ namespace elena_lang
          MethodInfo& methodInfo, bool abstractBased);
       void generateMethodDeclaration(ClassScope& scope, SyntaxNode node, bool closed, bool hideDuplicate);
       void generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey, bool closed);
-      void generateClassField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool singleField);
+      DeclResult checkAndGenerateClassField(ClassScope& scope, SyntaxNode node, ustr_t name, FieldAttributes& attrs, bool singleField);
       void generateClassStaticField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs);
       void generateClassFields(ClassScope& scope, SyntaxNode node, bool singleField);      
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);

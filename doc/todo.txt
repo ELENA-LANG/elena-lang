@@ -5,12 +5,13 @@ In development:
 [development]
   ### EPIC: elena 6.3 ###
 
-  === Iteration 30 (16.8) ===
+  === Iteration 30 (26.8) ===
   --------------------------------------
   dev: 
       - async programming (SynchronizationContext, ThreadPool, Task)
       - upndown (connector)
       - chat: add mutex (see dpa_queue)
+      - #496
   gen:
       - lpad
   maint:
@@ -28,7 +29,6 @@ In development:
   * yield : unit test - only for static method
   * yield : only for static method is allowed
   * yield : functional test
-  * yield : implement InfinitLoop from sandbox
   * yield : support break
   * yield : return / break operator
   * yield : must return enumerator class
@@ -36,13 +36,10 @@ In development:
 
   * yeildable : strong-typed enumerator (the enum type mast be resolved) : mark the field as auto; after generating 
     the private method - the type is resolved and can be used to generate the parent class -> and so on
+  * yield : implement InfinitLoop from sandbox
+  * __raw data type
   --------------------------------------
-  * yield redux : if the method is marked as **yield** : use the yield routine;
-    the new class based on the template is declared;
-    declaring a private method with jumper at the beginning; 
-    declaring a private constructor - creating a state fields;
-    if there is a conversion to the method output -> resolve it in 
-    compile-time; if no - return the newly created statemachine enumerator
+  * #496 : private fields - unit test (declare a private field, it must be accessible inside the class, but not in any of its children)
 
   ### EPIC: elena 6.4 ###
 

@@ -194,14 +194,14 @@ public enumeration enum<member, T>
 
 // --- yield state machine ---
 
-public sealed template YieldStateEnumerator<T> : Enumerator<T>
+public abstract class YieldStateEnumerator<T> : Enumerator<T>
 {
-   T __current; 
+   private T __current; 
+   private __raw __context; 
 
-   //__raw rawData;
-   //__array stackLocals;
+//   private bool isAvailable() : external(system'core_routines'__smNext);
 
-//   bool next()
+//   private moveNext()
 //   {
 //      <jumper>(rawData)
 //
@@ -220,14 +220,22 @@ public sealed template YieldStateEnumerator<T> : Enumerator<T>
 //      ^ false;      
 //   }
 
+   bool next()
+   {
+      moveNext();
+
+//      ^ isAvailable();
+   }
+
    get T Value()
-      = _current;
+      = __current;
 
    reset()
    {
       NotSupportedException.raise()
    }
 
-   Enumerable<T> enumerable()
-      = __typeof self;
+   Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+
+   enumerable() = self;
 }

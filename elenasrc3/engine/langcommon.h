@@ -137,6 +137,42 @@ namespace elena_lang
       }
    };
 
+   enum class FieldHint : ref_t
+   {
+      None     = 0x00000000,
+      ReadOnly = 0x00000001,
+      Private  = 0x00000002,
+   };
+
+   // --- FieldInfo ---
+   struct FieldInfo
+   {
+      int      offset;
+      TypeInfo typeInfo;
+      ref_t    hints;
+
+      static bool checkHint(FieldInfo& info, FieldHint hint)
+      {
+         return test(info.hints, (ref_t)hint);
+      }
+
+      FieldInfo()
+         : offset(0), typeInfo({}), hints(0)
+      {
+
+      }
+      FieldInfo(int offset, TypeInfo typeInfo)
+         : offset(offset), typeInfo(typeInfo), hints(0)
+      {
+      }
+      FieldInfo(int offset, TypeInfo typeInfo, bool readOnly, bool privateOne)
+         : offset(offset), typeInfo(typeInfo), hints(0)
+      {
+         hints |= readOnly ? (ref_t)FieldHint::ReadOnly : 0;
+         hints |= privateOne ? (ref_t)FieldHint::Private : 0;
+      }
+   };
+
    // --- ClassInfo ---
    struct ClassInfo
    {
@@ -144,6 +180,7 @@ namespace elena_lang
       typedef MemoryMap<ustr_t, FieldInfo, Map_StoreUStr, Map_GetUStr> FieldMap;
       typedef MemoryMap<ustr_t, StaticFieldInfo, Map_StoreUStr, Map_GetUStr> StaticFieldMap;
 
+      pos_t           inheritLevel;
       ClassHeader     header;
       pos_t           size;           // Object size
       MethodMap       methods;
@@ -179,6 +216,7 @@ namespace elena_lang
          writer->write(&header, sizeof(ClassHeader));
          writer->writeDWord(size);
          if (!headerAndSizeOnly) {
+            writer->writeDWord(inheritLevel);
             writer->writePos(fields.count());
             fields.forEach<StreamWriter*>(writer, [](StreamWriter* writer, ustr_t name, FieldInfo info)
                {
@@ -209,11 +247,12 @@ namespace elena_lang
          reader->read(&header, sizeof(ClassHeader));
          size = reader->getDWord();
          if (!headerAndSizeOnly) {
+            inheritLevel = reader->getDWord();
             pos_t fieldCount = reader->getPos();
             for (pos_t i = 0; i < fieldCount; i++) {
                IdentifierString fieldName;
                reader->readString(fieldName);
-               FieldInfo fieldInfo;
+               FieldInfo fieldInfo = {};
                reader->read(&fieldInfo, sizeof(fieldInfo));
 
                fields.add(*fieldName, fieldInfo);
@@ -244,17 +283,14 @@ namespace elena_lang
       }
 
       ClassInfo() :
+         inheritLevel(0),
          header({}),
          size(0),
          methods({}),
-         fields({ -1 }),
+         fields({ -1, {} }),
          statics({ -1 }),
          attributes(0)
       {
-         //header.staticSize = 0;
-         //header.parentRef = header.classRef = 0;
-         //header.flags = 0;
-         //header.count = size = 0;
       }
    };
 

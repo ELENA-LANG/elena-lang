@@ -1,16 +1,16 @@
 import extensions;
 
-singleton Helper
-{
-   yield func(int start, int number)
-   {
-      for (int i = 0; i < number; i++)
-      {
-          $yield start + 2 * i;
-      }
-   }
-}
-
+//singleton Helper
+//{
+//   yield func(int start, int number)
+//   {
+//      for (int i = 0; i < number; i++)
+//      {
+//          $yield start + 2 * i;
+//      }
+//   }
+//}
+//
 //Enumerator func(int start, int number)
 //{
 //   for (int i = 0; i < number; i++)
@@ -21,11 +21,31 @@ singleton Helper
 //
 //public program()
 //{
-//   foreach(var item :in func(2, 10))
+//   var enum := func(2, 10);
+//
+//   foreach(var item; in /*func(2, 10)*/enum)
 //   {
 //      console.writeLine(item)
 //   }
 //}
+
+A
+{
+   private _x;
+
+   setX()
+   {
+      _x := 2;
+   }
+}
+
+B : A
+{
+   setParentX()
+   {
+      _x := 2;
+   }
+}
 
 
 

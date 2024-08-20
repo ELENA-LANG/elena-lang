@@ -13,7 +13,7 @@ namespace elena_lang
 {
    // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION              6                    // ELENA Engine version
-   #define ENGINE_MINOR_VERSION              3
+   #define ENGINE_MINOR_VERSION              4
 
    constexpr auto LINE_LEN                   = 0x1000;            // the maximal source line length
    constexpr auto IDENTIFIER_LEN             = 0x0300;            // the maximal identifier length
@@ -26,11 +26,11 @@ namespace elena_lang
    constexpr auto MESSAGE_FLAG_MASK          = 0x1E0u;
 
    constexpr auto STATIC_MESSAGE             = 0x100u;
-   constexpr auto FUNCTION_MESSAGE           = 0x020u;         // indicates it is an invoke message (without target variable in the call stack)
+   constexpr auto FUNCTION_MESSAGE           = 0x020u;            // indicates it is an invoke message (without target variable in the call stack)
    constexpr auto CONVERSION_MESSAGE         = 0x040u;
    constexpr auto VARIADIC_MESSAGE           = 0x080u;
    constexpr auto PROPERTY_MESSAGE           = 0x0C0u;
-   constexpr auto PREFIX_MESSAGE_MASK        = 0x0C0u;         // HOTFIX : is used to correctly identify VARIADIC_MESSAGE or PROPERTY_MESSAGE
+   constexpr auto PREFIX_MESSAGE_MASK        = 0x0C0u;            // HOTFIX : is used to correctly identify VARIADIC_MESSAGE or PROPERTY_MESSAGE
 
    constexpr auto ARG_COUNT                  = 0x01Eu;
    constexpr auto ARG_MASK                   = 0x01Fu;
@@ -38,7 +38,7 @@ namespace elena_lang
    // --- ELENA Module structure constants ---
    constexpr auto ELENA_SIGNITURE            = "ELENA.";          // the stand alone image
    constexpr auto ELENA_VM_SIGNITURE         = "VM.ELENA.";       // the stand alone image
-   constexpr auto MODULE_SIGNATURE           = "ELENA.0620";      // the module version
+   constexpr auto MODULE_SIGNATURE           = "ELENA.0604";      // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE     = "ED.06";
 
   // --- ELENA core module names ---
@@ -69,7 +69,7 @@ namespace elena_lang
    constexpr auto TEMPLATE_PREFIX_NS_ENCODED = "@$auto@";
    constexpr auto FORWARD_PREFIX_NS          = "$forwards'";
    constexpr auto AUTO_SYMBOL_PREFIX         = "@autosymbol";
-   constexpr auto INLINE_CLASSNAME           = "$inline";          // nested class generic name
+   constexpr auto INLINE_CLASSNAME           = "$inline";         // nested class generic name
 
    constexpr auto OPERATION_MAP_KEY          = "statements";
    constexpr auto PREDEFINED_MAP_KEY         = "defaults";

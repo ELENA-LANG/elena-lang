@@ -1190,13 +1190,14 @@ Compiler::ClassScope :: ClassScope(Scope* ns, ref_t reference, Visibility visibi
    extensionClassRef = 0;
    abstractMode = abstractBasedMode = false;
    extensionDispatcher = false;
+   withPrivateField = false;
 }
 
 inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, ExpressionAttribute attr, bool ignoreFields)
 {
    auto fieldInfo = info.fields.get(identifier);
    if (!ignoreFields && fieldInfo.offset >= 0) {
-      bool readOnly = (test(info.header.flags, elReadOnlyRole) || fieldInfo.readOnly)
+      bool readOnly = (test(info.header.flags, elReadOnlyRole) || FieldInfo::checkHint(fieldInfo, FieldHint::ReadOnly))
          && !EAttrs::test(attr, EAttr::InitializerScope);
 
       if (test(info.header.flags, elStructureRole)) {
@@ -1207,7 +1208,7 @@ inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, Expressi
          fieldInfo.typeInfo, fieldInfo.offset };
    }
    else if (!ignoreFields && fieldInfo.offset == -2) {
-      bool readOnly = (test(info.header.flags, elReadOnlyRole) || fieldInfo.readOnly)
+      bool readOnly = (test(info.header.flags, elReadOnlyRole) || FieldInfo::checkHint(fieldInfo, FieldHint::ReadOnly))
          && !EAttrs::test(attr, EAttr::InitializerScope);
 
       return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeInfo, 1u, TargetMode::ArrayContent };
@@ -1243,7 +1244,18 @@ ObjectInfo Compiler::ClassScope :: mapField(ustr_t identifier, ExpressionAttribu
 
       return mapClassInfoField(targetInfo, identifier, attr, true);
    }
-   else return mapClassInfoField(info, identifier, attr, false);
+   else {
+      if (withPrivateField) {
+         IdentifierString privateName(identifier, "$");
+         privateName.appendInt(info.inheritLevel);
+
+         auto retVal = mapClassInfoField(info, *privateName, attr, false);
+         if (retVal.kind != ObjectKind::Unknown)
+            return retVal;
+      }
+
+      return mapClassInfoField(info, identifier, attr, false);
+   }
 }
 
 ObjectInfo Compiler::ClassScope :: mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
@@ -1706,7 +1718,7 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
       }
 
       outers.add(*moduleScope->selfVar, ownerVar);
-      mapNewField(info.fields, *moduleScope->selfVar, FieldInfo{ (int)ownerVar.reference, ownerVar.outerObject.typeInfo });
+      mapNewField(info.fields, *moduleScope->selfVar, FieldInfo{ (int)ownerVar.reference, ownerVar.outerObject.typeInfo, false, false });
    }
 
    return ownerVar;
@@ -2439,6 +2451,7 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
    scope.info.header.classRef = classClassCopy;
 
    scope.info.header.flags |= flagCopy;
+   scope.info.inheritLevel++;
 
    return InheritResult::irSuccessfull;
 }
@@ -3202,6 +3215,7 @@ bool Compiler :: generateClassField(ClassScope& scope, FieldAttributes& attrs, u
    int offset = 0;
    bool  embeddable = attrs.isEmbeddable;
    bool  readOnly = attrs.isReadonly;
+   bool  privateOne = attrs.privateOne;
    ref_t flags = scope.info.header.flags;
 
    // a role / interface cannot have fields
@@ -3259,7 +3273,7 @@ bool Compiler :: generateClassField(ClassScope& scope, FieldAttributes& attrs, u
          typeInfo.typeRef = _logic->definePrimitiveArray(*scope.moduleScope, typeInfo.elementRef,
             test(scope.info.header.flags, elStructureRole));
 
-         scope.info.fields.add(name, { -2, typeInfo, readOnly });
+         scope.info.fields.add(name, { -2, typeInfo, readOnly, privateOne });
       }
       else return false;
    }
@@ -3283,7 +3297,7 @@ bool Compiler :: generateClassField(ClassScope& scope, FieldAttributes& attrs, u
 
          offset = scope.info.size;
          scope.info.size += sizeInfo.size;
-         scope.info.fields.add(name, { offset, typeInfo, readOnly });
+         scope.info.fields.add(name, { offset, typeInfo, readOnly, privateOne });
 
          if (typeInfo.isPrimitive())
             _logic->tweakPrimitiveClassFlags(scope.info, typeInfo.typeRef);
@@ -3296,14 +3310,14 @@ bool Compiler :: generateClassField(ClassScope& scope, FieldAttributes& attrs, u
          scope.info.header.flags |= elNonStructureRole;
 
          offset = scope.info.fields.count();
-         scope.info.fields.add(name, { offset, typeInfo, readOnly });
+         scope.info.fields.add(name, { offset, typeInfo, readOnly, privateOne });
       }
    }
 
    return true;
 }
 
-void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
+DeclResult Compiler :: checkAndGenerateClassField(ClassScope& scope, SyntaxNode node, ustr_t name,
    FieldAttributes& attrs, bool singleField)
 {
    TypeInfo typeInfo = attrs.typeInfo;
@@ -3316,30 +3330,28 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxNode node,
       else if (!test(scope.info.header.flags, elStructureRole)) {
          typeInfo.typeRef = resolveArrayTemplate(*scope.moduleScope, attrs.typeInfo.typeRef, true);
       }
-      else scope.raiseError(errIllegalField, node);
+      else return DeclResult::Illegal;
 
       sizeHint = 0;
    }
 
-   ustr_t name = node.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
    if (scope.info.fields.exist(name)) {
-      if (attrs.autogenerated) {
-         node.setKey(SyntaxKey::Idle);
-      }
-      else scope.raiseError(errDuplicatedField, node);
-
-      return;
+      return DeclResult::Duplicate;
    }
 
-   if (!generateClassField(scope, attrs, name, sizeHint, typeInfo, singleField))
-   {
+   if (!generateClassField(scope, attrs, name, sizeHint, typeInfo, singleField)) {
       if (attrs.overrideMode && checkPreviousDeclaration(node, name)) {
          // override the field type if both declared in the same scope
          auto it = scope.info.fields.getIt(name);
          (*it).typeInfo = typeInfo;
       }
-      else scope.raiseError(errIllegalField, node);
+      else return DeclResult::Illegal;
    }
+
+   if (attrs.privateOne)
+      scope.withPrivateField = true;
+
+   return DeclResult::Success;
 }
 
 void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node, bool singleField)
@@ -3356,7 +3368,28 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node, bool si
             generateClassStaticField(scope, current, attrs);
          }
          else if (!isClassClassMode) {
-            generateClassField(scope, current, attrs, singleField);
+            DeclResult result = DeclResult::Success;
+            if (attrs.privateOne) {
+               IdentifierString privateName(current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier(), "$");
+               privateName.appendHex(scope.info.inheritLevel);
+
+               result = checkAndGenerateClassField(scope, current, *privateName, attrs, singleField);
+            }
+            else result = checkAndGenerateClassField(scope, current, current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier(), attrs, singleField);
+
+            switch (result) {
+               case Duplicate:
+                  if (attrs.autogenerated) {
+                     node.setKey(SyntaxKey::Idle);
+                  }
+                  else scope.raiseError(errDuplicatedField, current);
+                  break;
+               case Illegal:
+                  scope.raiseError(errIllegalField, current);
+                  break;
+               default:
+                  break;
+            }
          }
       }
 
@@ -11126,6 +11159,18 @@ void Compiler::Class :: load()
    scope.abstractMode = test(scope.info.header.flags, elAbstract);
    if (test(scope.info.header.flags, elExtension))
       scope.extensionClassRef = scope.getAttribute(ClassAttribute::ExtensionRef);
+
+   // check if the class have private fields
+   for (auto it = scope.info.fields.start(); !it.eof(); ++it) {
+      if (FieldInfo::checkHint(*it, FieldHint::Private)) {
+         IdentifierString postfix("$");
+         postfix.appendInt(scope.info.inheritLevel);
+         if (it.key().endsWith(*postfix)) {
+            scope.withPrivateField = true;
+            break;
+         }
+      }
+   }
 }
 
 // --- Compiler::ClassClass ---
