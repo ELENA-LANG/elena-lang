@@ -1,16 +1,16 @@
 import extensions;
 
-//singleton Helper
-//{
-//   yield func(int start, int number)
-//   {
-//      for (int i = 0; i < number; i++)
-//      {
-//          $yield start + 2 * i;
-//      }
-//   }
-//}
-//
+singleton Helper
+{
+   yield func(int start, int number)
+   {
+      for (int i = 0; i < number; i++)
+      {
+          $yield start + 2 * i;
+      }
+   }
+}
+
 //Enumerator func(int start, int number)
 //{
 //   for (int i = 0; i < number; i++)
@@ -18,35 +18,16 @@ import extensions;
 //       $yield start + 2 * i;
 //   }
 //}
-//
-//public program()
-//{
-//   var enum := func(2, 10);
-//
-//   foreach(var item; in /*func(2, 10)*/enum)
-//   {
-//      console.writeLine(item)
-//   }
-//}
 
-A
+public program()
 {
-   private _x;
+   var enum := func(2, 10);
 
-   setX()
+   foreach(var item; in /*func(2, 10)*/enum)
    {
-      _x := 2;
+      console.writeLine(item)
    }
 }
-
-B : A
-{
-   setParentX()
-   {
-      _x := 2;
-   }
-}
-
 
 
 //singleton InfinitLoop
@@ -72,7 +53,3 @@ B : A
 //      ^ *enum;
 //   }
 //}
-
-public program()
-{
-}

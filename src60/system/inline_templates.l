@@ -197,9 +197,9 @@ public enumeration enum<member, T>
 public abstract class YieldStateEnumerator<T> : Enumerator<T>
 {
    private T __current; 
-   private __raw __context; 
+   private __ptr __context; 
 
-//   private bool isAvailable() : external(system'core_routines'__smNext);
+   private bool isAvailable() : external(system'core_routines'__smNext);
 
 //   private moveNext()
 //   {
@@ -224,7 +224,7 @@ public abstract class YieldStateEnumerator<T> : Enumerator<T>
    {
       moveNext();
 
-//      ^ isAvailable();
+      ^ isAvailable();
    }
 
    get T Value()

@@ -38,7 +38,7 @@ In development:
     the private method - the type is resolved and can be used to generate the parent class -> and so on
   * yield : implement InfinitLoop from sandbox
   --------------------------------------
-  * __raw data type
+  * yield : generate iterator state machine
 
   ### EPIC: elena 6.4 ###
 
