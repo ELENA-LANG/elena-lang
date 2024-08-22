@@ -3,7 +3,7 @@
 //
 //		This file contains the Windows Presenter declaration
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PRESENTER_H
@@ -33,6 +33,7 @@ namespace elena_lang
       void printLine(ustr_t msg, ustr_t arg1, ustr_t arg2) override;
       void printLine(ustr_t msg, ustr_t arg1, ustr_t arg2, ustr_t arg3) override;
       void printLine(ustr_t msg, int arg1, int arg2, int arg3) override;
+      void printLine(ustr_t msg, int arg1, int arg2, int arg3, ustr_t arg4) override;
       void printPathLine(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4) override;
       void printLine(ustr_t msg, int arg1) override;
       void printLine(ustr_t msg, int arg1, int arg2) override;
