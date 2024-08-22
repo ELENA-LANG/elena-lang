@@ -9,6 +9,8 @@
   - [ADDED] method reference - &myMethod
   - [FIXED] single dispatcher : if an argument is nillable, it can accept nil value
   - [ADDED] String interpolation 
+  - [REDUX] iterator method
+  - [ADDED] #496 : private fields
 
 - ELC
   - [FIXED] private constructor must be called directly
@@ -18,6 +20,7 @@
   - [FIXED] only public classes can be loaded in run-time
   - [ADDED] #637 : bt optimization 4 unit test
   - [FIXED] var attribute is allowed to be in the method argument list
+  - [FIXED] "__typeof self" expression inside the nested class / closure
 
 - VM
   - [FIXED] GC_ALLOC routine for vm mode 
