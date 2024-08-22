@@ -1,5 +1,5 @@
 Package: elena-lang
-Version: 6.2.4
+Version: 6.3.0
 Architecture: amd64
 Maintainer: Alex Rakov <arakov@yandex.ru>
 Depends: libc6 (>= 2.1)

@@ -3,39 +3,22 @@ In development:
 ------         
 
 [development]
-  ### EPIC: elena 6.3 ###
-
-  === Iteration 30 (26.8) ===
-  --------------------------------------
-  dev: 
-      - async programming (SynchronizationContext, ThreadPool, Task)
-      - upndown (connector)
-      - chat: add mutex (see dpa_queue)
-      - #496
-  gen:
-      - lpad
-  maint:
-      - #679
-  port:
-      - #658 : vscode extension (debug adapter)
-  prom: posting weekly
-  --------------------------------------
-  - async programming - general concept
-  - AsyncLocal<T>
-  - ThreadStatic
-  - #658 : connect with ldbg from VSCode  
-  - lpad : generate a code based on a record  
-  --------------------------------------
-
   ### EPIC: elena 6.4 ###
 
   === Iteration 31 ===
   --------------------------------------
   dev: 
+      - async programming (general concept, SynchronizationContext, ThreadPool, Task, AsyncLocal<T>, ThreadStatic)
+      - upndown (connector)
+      - chat: add mutex (see dpa_queue)
+      - #496
   gen:
+      - lpad : generate a code based on a record  
   maint:
+      - #679
   port:
-  prom:
+      - #658 : connect with ldbg from VSCode  
+  prom: posting weekly
   --------------------------------------
   --------------------------------------
 
