@@ -313,9 +313,6 @@ void ByteCodeUtil :: generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* 
    pos_t sizePlaceholder = writer.position();
    writer.writePos(0);
 
-   pos_t  command = 0;
-   ustr_t strArg = nullptr;
-
    ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
 
    // generate the preloaded list

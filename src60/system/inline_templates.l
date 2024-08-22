@@ -191,3 +191,23 @@ public enumeration enum<member, T>
       ^ false
    }
 }
+
+// --- yield state machine ---
+
+public abstract class YieldStateEnumerator<T> : Enumerator<T>
+{
+   private __context;  // context must be the first one
+   private T __current; 
+
+   get T Value()
+      = __current;
+
+   reset()
+   {
+      NotSupportedException.raise()
+   }
+
+   Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+
+   enumerable() = self;
+}

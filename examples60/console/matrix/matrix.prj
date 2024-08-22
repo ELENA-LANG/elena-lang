@@ -1,25 +1,26 @@
 <configuration>
-  <platform key="Win_x86">
-     <project>
-        <executable>matrix</executable>
-     </project>
-  </platform>
-  <platform key="Win_x64">
-     <project>
-        <executable>matrix64</executable>
-     </project>
-  </platform>
-  <project>
-     <namespace>matrix</namespace>
-     <template>console</template>
-  </project>
-  <files>
-     <module>
-        <include>matrix.l</include>
-     </module>
-  </files>
-  <forwards>
-     <forward key="program">extensions'programLoop</forward>
-     <forward key="program'control">matrix'control</forward>
-  </forwards>
+    <platform key="Win_x86">
+        <project>
+            <executable>matrix</executable>
+        </project>
+    </platform>
+    <platform key="Win_x64">
+        <project>
+            <executable>matrix64</executable>
+        </project>
+    </platform>
+    <project>
+        <options></options>
+        <namespace>matrix</namespace>
+        <template>console</template>
+    </project>
+    <files>
+        <module>
+            <file>matrix.l</file>
+        </module>
+    </files>
+    <forwards>
+        <forward key="program">extensions'programLoop</forward>
+        <forward key="program'control">matrix'control</forward>
+    </forwards>
 </configuration>

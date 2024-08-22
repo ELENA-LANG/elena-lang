@@ -2,6 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA VM declaration
 //
 //                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2024, by ELENA-LANG Org
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -111,11 +112,19 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    _jitLinker = nullptr;
 }
 
+ustr_t ELENAVMMachine::getArchitectureName() {
+#if defined(_WIN64) || defined(__x86_64__) || defined(__ppc64__) || defined(__aarch64__)
+    return "64-bit";
+#else
+    return "32-bit";
+#endif
+}
+
 void ELENAVMMachine :: init(SystemEnv* exeEnv)
 {
    assert(_initialized == false);
-
-   _presenter->printLine(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER);
+   ustr_t architecture = getArchitectureName();
+   _presenter->printLine(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER, architecture);
    _presenter->printLine(ELENAVM_INITIALIZING);
 
    _configuration->initLoader(_libraryProvider);

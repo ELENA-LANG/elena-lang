@@ -120,6 +120,13 @@ namespace elena_lang
       Weak,
    };
 
+   enum DeclResult : int
+   {
+      Success = 0,
+      Duplicate = 1,
+      Illegal = 2
+   };
+
    struct ObjectInfo
    {
       ObjectKind kind;
@@ -355,6 +362,7 @@ namespace elena_lang
             Symbol,
             Class,
             OwnerClass,
+            Statemachine,
             Method,
             Field,
             Code,
@@ -614,6 +622,7 @@ namespace elena_lang
          bool        abstractMode;
          bool        abstractBasedMode;
          bool        extensionDispatcher;
+         bool        withPrivateField;
 
          Scope* getScope(ScopeLevel level) override
          {
@@ -666,6 +675,7 @@ namespace elena_lang
          ObjectInfo mapMember(ustr_t identifier) override;
 
          virtual ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr);
+         ObjectInfo mapPrivateField(ustr_t identifier, ExpressionAttribute attr);
          
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
 
@@ -1031,6 +1041,28 @@ namespace elena_lang
          InlineClassScope(ExprScope* owner, ref_t reference);
       };
 
+      struct StatemachineClassScope : InlineClassScope
+      {
+         pos_t contextSize;
+         ref_t typeRef;
+
+         ObjectInfo mapContextField()
+         {
+            return { ObjectKind::Field };
+         }
+         ObjectInfo mapCurrentField();
+
+         Scope* getScope(ScopeLevel level) override
+         {
+            if (level == ScopeLevel::Statemachine) {
+               return this;
+            }
+            else return InlineClassScope::getScope(level);
+         }
+
+         StatemachineClassScope(ExprScope* owner, ref_t reference);
+      };
+
       struct MessageResolution
       {
          bool   resolved;
@@ -1310,6 +1342,9 @@ namespace elena_lang
 
          ObjectInfo allocateResult(ref_t resultRef);
 
+         void compileNestedInitializing(InlineClassScope& classScope, ref_t nestedRef, int& preservedClosure,
+            ArgumentsInfo* updatedOuterArgs);
+
          void compileYieldOperation(SyntaxNode node);
          void compileSwitchOperation(SyntaxNode node);
 
@@ -1392,6 +1427,8 @@ namespace elena_lang
 
       void saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_t reserved, pos_t reservedN);
 
+      ref_t resolveYieldType(Scope& scope, SyntaxNode node);
+
       pos_t saveMetaInfo(ModuleBase* module, ustr_t value, ustr_t postfix);
 
       ref_t mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix, Visibility visibility, bool ignoreDuplicates = false);
@@ -1432,6 +1469,7 @@ namespace elena_lang
 
       ref_t resolveTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, ref_t elementRef, bool declarationMode);
       ref_t resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef);
+      ref_t resolveStateMachine(Scope& scope, ref_t templateRef, ref_t stateRef);
       ref_t resolveWrapperTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode);
       ref_t resolveArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode);
       //ref_t resolveNullableTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
@@ -1489,7 +1527,7 @@ namespace elena_lang
          Scope::ScopeLevel level, bool shareMode);
 
       void declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor,
-         bool& yieldMethodNotAllowed, bool staticNotAllowed, bool templateBased);
+         bool yieldMethodNotAllowed, bool staticNotAllowed, bool templateBased);
 
       void registerTemplateSignature(TemplateScope& scope, SyntaxNode node, IdentifierString& signature);
       void registerExtensionTemplateMethod(TemplateScope& scope, SyntaxNode& node);
@@ -1507,6 +1545,8 @@ namespace elena_lang
 
       void checkMethodDuplicates(ClassScope& scope, SyntaxNode node, mssg_t message, 
          mssg_t publicMessage, bool protectedOne, bool internalOne);
+
+      void checkUnassignedVariables(MethodScope& scope, SyntaxNode node);
 
       ref_t generateConstant(Scope& scope, ObjectInfo& info, ref_t reference, bool saveScope = true);
 
@@ -1526,7 +1566,7 @@ namespace elena_lang
          MethodInfo& methodInfo, bool abstractBased);
       void generateMethodDeclaration(ClassScope& scope, SyntaxNode node, bool closed, bool hideDuplicate);
       void generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey, bool closed);
-      void generateClassField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool singleField);
+      DeclResult checkAndGenerateClassField(ClassScope& scope, SyntaxNode node, ustr_t name, FieldAttributes& attrs, bool singleField);
       void generateClassStaticField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs);
       void generateClassFields(ClassScope& scope, SyntaxNode node, bool singleField);      
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
@@ -1546,6 +1586,7 @@ namespace elena_lang
 
       void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode);
       void declareClosureMessage(MethodScope& scope, SyntaxNode node);
+      void declareIteratorMessage(MethodScope& scope, SyntaxNode node);
 
       void initializeMethod(ClassScope& scope, MethodScope& methodScope, SyntaxNode current);
 
@@ -1553,7 +1594,8 @@ namespace elena_lang
 
       void declareMetaInfo(Scope& scope, SyntaxNode node);
       void declareMethodMetaInfo(MethodScope& scope, SyntaxNode node);
-      void declareMethod(MethodScope& scope, SyntaxNode node, bool abstractMode, bool staticNotAllowed);
+      void declareMethod(MethodScope& scope, SyntaxNode node, bool abstractMode,
+         bool staticNotAllowed, bool yieldMethodNotAllowed);
 
       void declareSymbol(SymbolScope& scope, SyntaxNode node);            
 
@@ -1670,18 +1712,20 @@ namespace elena_lang
 
       void compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, 
          bool withGenerics, bool withOpenArgGenerics);
-      void compileYieldInitializing(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node);
       void compileInitializerMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode classNode);
       void compileStaticInitializerMethod(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode classNode);
       void compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
+      void compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileExpressionMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode);
       void compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
+      void compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileConstructor(BuildTreeWriter& writer, MethodScope& scope, ClassScope& classClassScope, 
          SyntaxNode node, bool abstractMode);
       void compileCustomDispatcher(BuildTreeWriter& writer, ClassScope& scope);
       void compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef);
       void compileClosureClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node);
+      void compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node);
 
       void compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
          bool exclusiveMode = false, bool ignoreAutoMultimethod = false);

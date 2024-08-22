@@ -805,10 +805,6 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
 #ifdef FULL_OUTOUT_INFO
    if (referenceInfo.referenceName)
       printf("linking %s\n", referenceInfo.referenceName.str());
-
-   if (referenceInfo.referenceName.compare("'$inline0"))
-      referenceInfo.module = referenceInfo.module;
-
 #endif // FULL_OUTOUT_INFO
 
    referenceInfo.module = sectionInfo.module;

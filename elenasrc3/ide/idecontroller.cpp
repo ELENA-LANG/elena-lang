@@ -248,6 +248,7 @@ bool ProjectController :: startDebugger(ProjectModel& model, DebugActionResult& 
 
    if (!target.empty()) {
       PathString exePath(*model.projectPath, target);
+      PathUtil::makeCorrectExePath(exePath);
 
       // provide the whole command line including the executable path and name
       PathString commandLine(exePath);
@@ -787,7 +788,6 @@ int ProjectController :: openSingleFileProject(ProjectModel& model, path_t singl
    IdentifierString tmp(*name);
    model.package.copy(*tmp);
    model.target.copy(*tmp);
-   model.target.append(".exe");
 
    //model.profile
 
