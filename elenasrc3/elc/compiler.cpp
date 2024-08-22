@@ -1,5 +1,4 @@
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA compiler class implementation.
@@ -8600,6 +8599,18 @@ void Compiler :: checkUnassignedVariables(MethodScope& scope, SyntaxNode node)
    }
 }
 
+ref_t Compiler :: resolveYieldType(Scope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.findChild(SyntaxKey::TemplateType);
+   if (current != SyntaxKey::None) {
+      auto typeInfo = resolveStrongTypeAttribute(scope, current.findChild(SyntaxKey::TemplateArg), true, false);
+
+      return typeInfo.typeRef;
+   }
+
+   return scope.moduleScope->buildins.superReference;
+}
+
 void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
 {
    CodeScope codeScope(&scope);
@@ -8608,7 +8619,7 @@ void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope,
    // create yield state machine
    ref_t nestedRef = scope.moduleScope->mapAnonymous();
    StatemachineClassScope smScope(&expression.scope, nestedRef);
-   smScope.typeRef = scope.moduleScope->buildins.superReference;
+   smScope.typeRef = resolveYieldType(scope, node);
 
    BuildNode buildNode = writer.CurrentNode();
    while (buildNode != BuildKey::Root)
@@ -9400,6 +9411,13 @@ void Compiler :: compileIteratorMethod(BuildTreeWriter& writer, MethodScope& sco
 
 void Compiler :: compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node)
 {
+   ref_t parentRef = resolveStateMachine(scope, scope.moduleScope->buildins.yielditTemplateReference, scope.typeRef);
+
+   declareClassParent(parentRef, scope, node);
+   generateClassFlags(scope, elNestedClass | elSealed);
+
+   scope.info.attributes.exclude({ 0, ClassAttribute::RuntimeLoadable });
+
    writer.newNode(BuildKey::Class, scope.reference);
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
@@ -9410,13 +9428,6 @@ void Compiler :: compileStatemachineClass(BuildTreeWriter& writer, StatemachineC
    declareIteratorMessage(methodScope, node);
 
    compileIteratorMethod(writer, methodScope, node);
-
-   ref_t parentRef = resolveStateMachine(scope, scope.moduleScope->buildins.yielditTemplateReference, scope.typeRef);
-
-   declareClassParent(parentRef, scope, node);
-   generateClassFlags(scope, elNestedClass | elSealed);
-
-   scope.info.attributes.exclude({ 0, ClassAttribute::RuntimeLoadable });
 
    // handle the abstract flag
    if (test(scope.info.header.flags, elAbstract)) {

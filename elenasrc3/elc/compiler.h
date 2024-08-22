@@ -1427,6 +1427,8 @@ namespace elena_lang
 
       void saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_t reserved, pos_t reservedN);
 
+      ref_t resolveYieldType(Scope& scope, SyntaxNode node);
+
       pos_t saveMetaInfo(ModuleBase* module, ustr_t value, ustr_t postfix);
 
       ref_t mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix, Visibility visibility, bool ignoreDuplicates = false);

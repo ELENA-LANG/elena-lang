@@ -2,16 +2,12 @@ import extensions;
 
 singleton Helper
 {
-   yield Enumerator func(/*int start, int number*/)
+   yield Enumerator<int> func(int start, int number)
    {
-      $yield 0;
-      $yield 2;
-      $yield 1;
-
-//      for (int i = 0; i < number; i++)
-//      {
-          //$yield start + 2 * i;
-//      }
+      for (int i := 0; i < number; i++)
+      {
+          $yield start + 2 * i;
+      }
    }
 }
 
@@ -26,7 +22,7 @@ singleton Helper
 public program()
 {
    //var enum := func(2, 10);
-   var enum := Helper.func(/*2, 10*/);
+   var enum := Helper.func(2, 10);
    foreach(var item; in /*func(2, 10)*/enum)
    {
       console.writeLine(item)

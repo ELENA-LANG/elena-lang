@@ -34,11 +34,10 @@ In development:
   * yield : must return enumerator class
   * yield : must return statemachine
 
-  * yeildable : strong-typed enumerator (the enum type mast be resolved) : mark the field as auto; after generating 
     the private method - the type is resolved and can be used to generate the parent class -> and so on
   * yield : implement InfinitLoop from sandbox
   --------------------------------------
-  * yield : generate iterator state machine
+  * yield : generate iterator state machine : with parameters
 
   ### EPIC: elena 6.4 ###
 
