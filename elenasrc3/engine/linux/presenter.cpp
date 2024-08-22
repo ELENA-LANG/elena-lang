@@ -104,11 +104,6 @@ void LinuxConsolePresenter :: printLine(ustr_t msg, ustr_t arg1, ustr_t arg2, us
    ::printLine(msg.str(), arg1.str(), arg2.str(), arg3.str());
 }
 
-void LinuxConsolePresenter::printLine(ustr_t msg, ustr_t arg1, ustr_t arg2, ustr_t arg3)
-{
-   ::printLine(msg.str(), arg1.str(), arg2.str(), arg3.str());
-}
-
 void LinuxConsolePresenter :: printLine(ustr_t msg, int arg1, int arg2, int arg3, ustr_t arg4)
 {
    ::printLine(msg.str(), arg1, arg2, arg3, arg4.str());
