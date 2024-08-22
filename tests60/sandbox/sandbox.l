@@ -1,55 +1,33 @@
 import extensions;
 
-singleton Helper
+singleton IteratorEnumerable : Enumerable
 {
-   yield Enumerator<int> func(int start, int number)
+   Enumerator enumerator()
+      = IteratorEnumerable.infinitEnumerator();
+
+   yield Enumerator infinitEnumerator()
    {
-      for (int i := 0; i < number; i++)
-      {
-          $yield start + 2 * i;
-      }
+      $yield 2;
+      $yield 5;
+      $yield 7;
    }
 }
 
-//Enumerator func(int start, int number)
-//{
-//   for (int i = 0; i < number; i++)
-//   {
-//       $yield start + 2 * i;
-//   }
-//}
+public iteratorMethodTest()
+{
+   auto e := IteratorEnumerable.enumerator();
+
+   Assert.ifTrue(e.next());
+   Assert.ifTrue(*e == 2);
+   Assert.ifTrue(e.next());
+   Assert.ifTrue(*e == 5);
+   Assert.ifTrue(e.next());
+   Assert.ifTrue(*e == 7);
+   Assert.ifFalse(e.next());
+}
+
 
 public program()
 {
-   //var enum := func(2, 10);
-   var enum := Helper.func(2, 10);
-   foreach(var item; in /*func(2, 10)*/enum)
-   {
-      console.writeLine(item)
-   }
+   iteratorMethodTest();
 }
-
-
-//singleton InfinitLoop
-//{
-//   static Enumerator _enum;
-//
-//   private Enumerable loop()
-//   {
-//      int i := 0;
-//      while (true) {
-//         $yield i;
-//
-//         i++;
-//      }
-//   }
-//
-//   int nextNumber()
-//   {
-//      var enum := _enum ?? _enum := loop().getEnumerator();
-//
-//      enum.next();
-//
-//      ^ *enum;
-//   }
-//}
