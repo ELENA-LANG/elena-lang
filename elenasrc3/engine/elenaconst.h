@@ -151,6 +151,7 @@ namespace elena_lang
    constexpr auto INIT_MESSAGE               = "#init";
 
    constexpr auto NEXT_MESSAGE               = "next";
+   constexpr auto CURRENT_FIELD              = "__current";
 
    constexpr auto ADD_MESSAGE                = "add";
    constexpr auto SUB_MESSAGE                = "subtract";

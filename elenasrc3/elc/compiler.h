@@ -675,6 +675,7 @@ namespace elena_lang
          ObjectInfo mapMember(ustr_t identifier) override;
 
          virtual ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr);
+         ObjectInfo mapPrivateField(ustr_t identifier, ExpressionAttribute attr);
          
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
 
@@ -1043,6 +1044,13 @@ namespace elena_lang
       struct StatemachineClassScope : InlineClassScope
       {
          pos_t contextSize;
+         ref_t typeRef;
+
+         ObjectInfo mapContextField()
+         {
+            return { ObjectKind::Field };
+         }
+         ObjectInfo mapCurrentField();
 
          Scope* getScope(ScopeLevel level) override
          {
@@ -1715,7 +1723,7 @@ namespace elena_lang
       void compileCustomDispatcher(BuildTreeWriter& writer, ClassScope& scope);
       void compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef);
       void compileClosureClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node);
-      void compileStatemachineClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node);
+      void compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node);
 
       void compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
          bool exclusiveMode = false, bool ignoreAutoMultimethod = false);

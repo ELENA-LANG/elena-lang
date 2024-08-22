@@ -688,7 +688,6 @@ namespace elena_lang
    constexpr auto RETVAL_ARG              = "$retVal";
    constexpr auto PARENT_VAR              = "$parent";
    constexpr auto OWNER_VAR               = "$owner";
-   constexpr auto YIELD_CONTEXT_FIELD     = "$context";
 
    inline ustr_t getPlatformName(PlatformType type)
    {

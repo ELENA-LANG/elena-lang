@@ -1246,16 +1246,21 @@ ObjectInfo Compiler::ClassScope :: mapField(ustr_t identifier, ExpressionAttribu
    }
    else {
       if (withPrivateField) {
-         IdentifierString privateName(identifier, "$");
-         privateName.appendInt(info.inheritLevel);
-
-         auto retVal = mapClassInfoField(info, *privateName, attr, false);
+         auto retVal = mapPrivateField(identifier, attr);
          if (retVal.kind != ObjectKind::Unknown)
             return retVal;
       }
 
       return mapClassInfoField(info, identifier, attr, false);
    }
+}
+
+ObjectInfo Compiler::ClassScope :: mapPrivateField(ustr_t identifier, ExpressionAttribute attr)
+{
+   IdentifierString privateName(identifier, "$");
+   privateName.appendInt(info.inheritLevel);
+
+   return mapClassInfoField(info, *privateName, attr, false);
 }
 
 ObjectInfo Compiler::ClassScope :: mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
@@ -1853,10 +1858,15 @@ bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
 
 // --- Compiler::StatemachineClassScope ---
 
-Compiler::StatemachineClassScope ::StatemachineClassScope(ExprScope* owner, ref_t reference)
+Compiler::StatemachineClassScope :: StatemachineClassScope(ExprScope* owner, ref_t reference)
    : InlineClassScope(owner, reference)
 {
    contextSize = 0;
+}
+
+ObjectInfo Compiler::StatemachineClassScope :: mapCurrentField()
+{
+   return { ObjectKind::Field, { typeRef }, 1 };
 }
 
 // --- Compiler ---
@@ -3945,6 +3955,7 @@ void Compiler :: declareIteratorMessage(MethodScope& scope, SyntaxNode node)
    scope.message = encodeMessage(itAction, 1, 0);
 
    scope.info.outputRef = scope.moduleScope->branchingInfo.typeRef;
+   scope.info.hints |= (ref_t)MethodHint::Yieldable;
 }
 
 void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool abstractMode,
@@ -7789,12 +7800,14 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
    if (scope.isYieldable()) {
+      StatemachineClassScope* smScope = Scope::getScope<StatemachineClassScope>(*classScope, Scope::ScopeLevel::Statemachine);
+
       Expression expression(this, codeScope, writer);
 
       // reserve the place for the next step
       int offset = allocateLocalAddress(codeScope, sizeof(addr_t), false);
 
-      ObjectInfo contextField = classScope->mapField(YIELD_CONTEXT_FIELD, EAttr::None);
+      ObjectInfo contextField = smScope->mapContextField();
 
       expression.writeObjectInfo(contextField);
       writer.appendNode(BuildKey::LoadingStackDump);
@@ -7851,8 +7864,13 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
       }
    }
 
+   if (scope.isYieldable()) {
+      Expression expression(this, codeScope, writer);
+
+      expression.writeObjectInfo({ ObjectKind::Singleton, { scope.moduleScope->branchingInfo.typeRef }, scope.moduleScope->branchingInfo.falseRef});
+   }
    // if the method returns itself
-   if (retVal.kind == ObjectKind::Unknown && !codeScope.withRetStatement) {
+   else if (retVal.kind == ObjectKind::Unknown && !codeScope.withRetStatement) {
       Expression expression(this, codeScope, writer);
 
       // NOTE : extension should re
@@ -8590,6 +8608,7 @@ void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope,
    // create yield state machine
    ref_t nestedRef = scope.moduleScope->mapAnonymous();
    StatemachineClassScope smScope(&expression.scope, nestedRef);
+   smScope.typeRef = scope.moduleScope->buildins.superReference;
 
    BuildNode buildNode = writer.CurrentNode();
    while (buildNode != BuildKey::Root)
@@ -8598,12 +8617,22 @@ void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope,
    BuildTreeWriter nestedWriter(buildNode);
    compileStatemachineClass(nestedWriter, smScope, node);
 
+   beginMethod(writer, scope, node, BuildKey::Method, _withDebugInfo);
+
+   // new stack frame
+   writer.appendNode(BuildKey::OpenFrame);
+
    ObjectInfo retVal = { ObjectKind::Object, { nestedRef }, 0 };
 
    int preservedClosure = 0;
    expression.compileNestedInitializing(smScope, nestedRef, preservedClosure, nullptr);
 
-   ObjectInfo contextField = smScope.mapField(YIELD_CONTEXT_FIELD, EAttr::None);
+   retVal = expression.saveToTempLocal(retVal);
+
+   ObjectInfo contextField = smScope.mapContextField();
+   contextField.kind = ObjectKind::LocalField;
+   contextField.extra = contextField.reference;
+   contextField.argument = retVal.argument;
 
    pos_t contextSize = smScope.contextSize;
 
@@ -8620,6 +8649,12 @@ void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope,
 
    expression.compileConverting(node, retVal, scope.info.outputRef,
       scope.checkHint(MethodHint::Stacksafe));
+
+   codeScope.syncStack(&scope);
+
+   writer.appendNode(BuildKey::CloseFrame);
+
+   endMethod(writer, scope);
 }
 
 bool Compiler :: isCompatible(Scope& scope, ObjectInfo source, ObjectInfo target, bool resolvePrimitives)
@@ -9363,7 +9398,7 @@ void Compiler :: compileIteratorMethod(BuildTreeWriter& writer, MethodScope& sco
       checkUnassignedVariables(scope, node);
 }
 
-void Compiler :: compileStatemachineClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node)
+void Compiler :: compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node)
 {
    writer.newNode(BuildKey::Class, scope.reference);
 
@@ -9374,10 +9409,9 @@ void Compiler :: compileStatemachineClass(BuildTreeWriter& writer, ClassScope& s
    MethodScope methodScope(&scope);
    declareIteratorMessage(methodScope, node);
 
-   ref_t elementRef = scope.moduleScope->buildins.superReference;
    compileIteratorMethod(writer, methodScope, node);
 
-   ref_t parentRef = resolveStateMachine(scope, scope.moduleScope->buildins.yielditTemplateReference, elementRef);
+   ref_t parentRef = resolveStateMachine(scope, scope.moduleScope->buildins.yielditTemplateReference, scope.typeRef);
 
    declareClassParent(parentRef, scope, node);
    generateClassFlags(scope, elNestedClass | elSealed);
@@ -9394,6 +9428,7 @@ void Compiler :: compileStatemachineClass(BuildTreeWriter& writer, ClassScope& s
    if (!m_it.eof()) {
       (*m_it).inherited = true;
       (*m_it).hints &= ~(ref_t)MethodHint::Abstract;
+      (*m_it).hints &= (ref_t)MethodHint::Yieldable;
    }
    else scope.info.methods.add(methodScope.message, methodScope.info);
 
@@ -11228,7 +11263,7 @@ void Compiler::Method :: compile(BuildTreeWriter& writer, SyntaxNode current)
       compiler->compileInitializerMethod(writer, scope, current.parentNode());
    }
    else if (scope.checkHint(MethodHint::Yieldable)) {
-      compiler->compileYieldMethod(writer, scope, current.parentNode());
+      compiler->compileYieldMethod(writer, scope, current);
    }
    // if it is a normal method
    else compiler->compileMethod(writer, scope, current);
@@ -11933,21 +11968,33 @@ void Compiler::Expression :: compileYieldOperation(SyntaxNode node)
 {
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
    MethodScope* methodScope = Scope::getScope<MethodScope>(scope, Scope::ScopeLevel::Method);
-   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+   StatemachineClassScope* smScope = Scope::getScope<StatemachineClassScope>(scope, Scope::ScopeLevel::Statemachine);
 
    if (!methodScope->isYieldable())
       scope.raiseError(errInvalidOperation, node);
 
-   ObjectInfo contextField = classScope->mapField(YIELD_CONTEXT_FIELD, EAttr::None);
+   ObjectInfo contextField = smScope->mapContextField();
+   ObjectInfo currentField = smScope->mapCurrentField();
 
    writer->newNode(BuildKey::YieldingOp, -scope.moduleScope->ptrSize);
    writer->newNode(BuildKey::Tape);
 
-   writeObjectInfo(contextField, node);
+   ObjectInfo retVal = compile(node.firstChild(), 0, EAttr::None, nullptr);
 
+   bool nillableOp = false;
+   if (!compileAssigningOp(currentField, retVal, nillableOp))
+      scope.raiseError(errInvalidOperation, node);
+
+   if (nillableOp)
+      scope.raiseWarning(WARNING_LEVEL_1, wrnReturningNillable, node);
+
+   writeObjectInfo(contextField, node);
    writer->appendNode(BuildKey::SavingStackDump);
 
-   compiler->compileRetExpression(*writer, *codeScope, node, EAttr::None);
+   // returning true
+   writeObjectInfo({ ObjectKind::Singleton, { scope.moduleScope->branchingInfo.typeRef }, scope.moduleScope->branchingInfo.trueRef });
+
+   writer->appendNode(BuildKey::goingToEOP);
 
    writer->closeNode();
    writer->closeNode();
@@ -14029,6 +14076,7 @@ bool Compiler::Expression :: compileAssigningOp(ObjectInfo target, ObjectInfo ex
    bool stackSafe = false;
    bool fieldMode = false;
    bool fieldFieldMode = false;
+   bool localFieldMode = false;
    bool accMode = false;
    bool lenRequired = false;
 
@@ -14138,6 +14186,12 @@ bool Compiler::Expression :: compileAssigningOp(ObjectInfo target, ObjectInfo ex
 
          break;
       }
+      case ObjectKind::LocalField:
+         localFieldMode = true;
+         operationType = BuildKey::FieldAssigning;
+         operand = target.extra;
+
+         break;
       default:
          return false;
    }
@@ -14157,6 +14211,10 @@ bool Compiler::Expression :: compileAssigningOp(ObjectInfo target, ObjectInfo ex
 
       writer->appendNode(BuildKey::SavingInStack, 0);
       writeObjectInfo(target);
+   }
+   else if (localFieldMode) {
+      writer->appendNode(BuildKey::SavingInStack, 0);
+      writeObjectInfo({ ObjectKind::Local, target.reference });
    }
 
    writer->newNode(operationType, operand);

@@ -196,36 +196,8 @@ public enumeration enum<member, T>
 
 public abstract class YieldStateEnumerator<T> : Enumerator<T>
 {
+   private __context;  // context must be the first one
    private T __current; 
-   private __ptr __context; 
-
-   private bool isAvailable() : external(system'core_routines'__smNext);
-
-//   private moveNext()
-//   {
-//      <jumper>(rawData)
-//
-//      for (int stackLocals.i = 0; i < stackLocals.number; stackLocals.i++)
-//      {
-//         __current := stackLocals.start + 2 * stackLocals.i;
-//         
-//         <capture>(rawData);
-//
-//         ^ true;
-//      };
-//
-//      __current := nil;
-//      <reset>(rawData);
-//
-//      ^ false;      
-//   }
-
-   bool next()
-   {
-      moveNext();
-
-      ^ isAvailable();
-   }
 
    get T Value()
       = __current;
