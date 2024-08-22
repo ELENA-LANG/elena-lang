@@ -73,6 +73,8 @@ copy %~dp0\..\bin\scripts\*.es %~dp0\x64\bin\scripts\
 copy %~dp0\..\doc\license %~dp0\x64\doc\
 copy %~dp0\..\doc\contributors %~dp0\x64\doc\
 copy %~dp0\..\readme.md %~dp0\x64\
+copy %~dp0\..\CHANGELOG.md %~dp0\x64\
+copy %~dp0\..\VERSION %~dp0\x64\
 
 md %~dp0\x64\src60\system
 xcopy %~dp0\..\src60\system\*.l %~dp0\x64\src60\system /s

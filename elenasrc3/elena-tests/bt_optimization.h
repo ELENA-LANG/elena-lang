@@ -32,7 +32,7 @@ namespace elena_lang
 
    public:
       void runBTTest();
-      void runCompilerTest(bool declareOperators);
+      void runBuildTest(bool declareOperators);
    };
 
    class StructTest : public testing::Test

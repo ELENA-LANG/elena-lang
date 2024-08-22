@@ -3,7 +3,7 @@
 //
 //		This file contains the Windows Presenter implementation
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "presenter.h"
@@ -104,6 +104,16 @@ void LinuxConsolePresenter :: printLine(ustr_t msg, ustr_t arg1, ustr_t arg2, us
    ::printLine(msg.str(), arg1.str(), arg2.str(), arg3.str());
 }
 
+void LinuxConsolePresenter :: printLine(ustr_t msg, int arg1, int arg2, int arg3, ustr_t arg4)
+{
+   ::printLine(msg.str(), arg1, arg2, arg3, arg4.str());
+}
+
+void LinuxConsolePresenter::printLine(ustr_t msg, ustr_t path, int col, int row, ustr_t s)
+{
+   ::printLine(msg.str(), path.str(), row, col, s.str());
+}
+
 void LinuxConsolePresenter :: printLine(ustr_t msg, int arg1, int arg2, int arg3)
 {
    ::printLine(msg.str(), arg1, arg2, arg3);
@@ -132,11 +142,6 @@ void LinuxConsolePresenter :: printPathLine(ustr_t msg, path_t arg)
 void LinuxConsolePresenter :: printLine(ustr_t msg)
 {
    ::printLine(msg.str());
-}
-
-void LinuxConsolePresenter :: printLine(ustr_t msg, ustr_t path, int col, int row, ustr_t s)
-{
-   ::printLine(msg.str(), path.str(), row, col, s.str());
 }
 
 void LinuxConsolePresenter::showProgress()

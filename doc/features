@@ -90,3 +90,31 @@ public program()
 ----------------------------------------------------------------------------
 
   var s := var s := $"a_{ 1 }_b_{ 2 }_c";
+
+----------------------------------------------------------------------------
+ user-defined literals
+----------------------------------------------------------------------------
+
+    import extensions;
+    
+    sealed struct OctalNumber
+    {
+        int value;
+    
+        int cast() = value;
+    
+        constructor(int n)
+        {
+            value := n;
+        }
+        
+        cast o(string s)
+        {
+            value := s.toInt(8);
+        }
+    }
+
+    public program()
+    {
+       var n := 12o;
+    } 

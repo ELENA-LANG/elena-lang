@@ -72,6 +72,13 @@ bool PathUtil :: checkExtension(path_t path, ustr_t extension)
    return PathUtil::checkExtension(path, *wExtension);
 }
 
+void PathUtil :: makeCorrectExePath(PathString& target)
+{
+   if (!PathUtil::checkExtension(*target, "exe")) {
+      target.appendExtension("exe");
+   }
+}
+
 #elif __GNUG__
 
 #include <unistd.h>
@@ -115,6 +122,11 @@ bool PathUtil :: removeFile(path_t path)
 {
    return ::remove(path.str()) != 0;;
 }
+
+void PathUtil::makeCorrectExePath(PathString& target)
+{
+}
+
 #endif
 
 

@@ -1,1 +1,1 @@
-#define LDBG_REVISION_NUMBER               0x0001
+#define LDBG_REVISION_NUMBER               0x0002

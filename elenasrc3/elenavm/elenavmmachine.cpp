@@ -113,7 +113,7 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
 }
 
 ustr_t ELENAVMMachine::getArchitectureName() {
-#if defined(_WIN64) || defined(__x86_64__) || defined(__ppc64__)
+#if defined(_WIN64) || defined(__x86_64__) || defined(__ppc64__) || defined(__aarch64__)
     return "64-bit";
 #else
     return "32-bit";

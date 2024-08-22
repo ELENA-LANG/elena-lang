@@ -13,7 +13,7 @@ namespace elena_lang
 {
    // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION              6                    // ELENA Engine version
-   #define ENGINE_MINOR_VERSION              3
+   #define ENGINE_MINOR_VERSION              4
 
    constexpr auto LINE_LEN                   = 0x1000;            // the maximal source line length
    constexpr auto IDENTIFIER_LEN             = 0x0300;            // the maximal identifier length
@@ -26,11 +26,11 @@ namespace elena_lang
    constexpr auto MESSAGE_FLAG_MASK          = 0x1E0u;
 
    constexpr auto STATIC_MESSAGE             = 0x100u;
-   constexpr auto FUNCTION_MESSAGE           = 0x020u;         // indicates it is an invoke message (without target variable in the call stack)
+   constexpr auto FUNCTION_MESSAGE           = 0x020u;            // indicates it is an invoke message (without target variable in the call stack)
    constexpr auto CONVERSION_MESSAGE         = 0x040u;
    constexpr auto VARIADIC_MESSAGE           = 0x080u;
    constexpr auto PROPERTY_MESSAGE           = 0x0C0u;
-   constexpr auto PREFIX_MESSAGE_MASK        = 0x0C0u;         // HOTFIX : is used to correctly identify VARIADIC_MESSAGE or PROPERTY_MESSAGE
+   constexpr auto PREFIX_MESSAGE_MASK        = 0x0C0u;            // HOTFIX : is used to correctly identify VARIADIC_MESSAGE or PROPERTY_MESSAGE
 
    constexpr auto ARG_COUNT                  = 0x01Eu;
    constexpr auto ARG_MASK                   = 0x01Fu;
@@ -38,7 +38,7 @@ namespace elena_lang
    // --- ELENA Module structure constants ---
    constexpr auto ELENA_SIGNITURE            = "ELENA.";          // the stand alone image
    constexpr auto ELENA_VM_SIGNITURE         = "VM.ELENA.";       // the stand alone image
-   constexpr auto MODULE_SIGNATURE           = "ELENA.0620";      // the module version
+   constexpr auto MODULE_SIGNATURE           = "ELENA.0604";      // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE     = "ED.06";
 
   // --- ELENA core module names ---
@@ -69,7 +69,7 @@ namespace elena_lang
    constexpr auto TEMPLATE_PREFIX_NS_ENCODED = "@$auto@";
    constexpr auto FORWARD_PREFIX_NS          = "$forwards'";
    constexpr auto AUTO_SYMBOL_PREFIX         = "@autosymbol";
-   constexpr auto INLINE_CLASSNAME           = "$inline";          // nested class generic name
+   constexpr auto INLINE_CLASSNAME           = "$inline";         // nested class generic name
 
    constexpr auto OPERATION_MAP_KEY          = "statements";
    constexpr auto PREDEFINED_MAP_KEY         = "defaults";
@@ -110,7 +110,8 @@ namespace elena_lang
    constexpr auto MESSAGE_NAME_FORWARD       = "$subject";        // the message class
    constexpr auto EXT_MESSAGE_FORWARD        = "$ext_message";    // the extension message class
    constexpr auto CLOSURE_FORWARD            = "$closure";        // the closure template class
-   constexpr auto TUPLE_FORWARD              = "$tuple";          // the closure template class
+   constexpr auto TUPLE_FORWARD              = "$tuple";          // the tuple template class
+   constexpr auto YIELDIT_FORWARD            = "$yieldit";        // the yield state machine iterator template class
    constexpr auto UINT_FORWARD               = "$uint";           // the uint wrapper
    constexpr auto PTR_FORWARD                = "$ptr";            // the ptr wrapper
    constexpr auto LAZY_FORWARD               = "$lazy";
@@ -149,35 +150,37 @@ namespace elena_lang
    constexpr auto TRY_INVOKE_MESSAGE         = "#try_invoke";
    constexpr auto INIT_MESSAGE               = "#init";
 
-   constexpr auto ADD_MESSAGE             = "add";
-   constexpr auto SUB_MESSAGE             = "subtract";
-   constexpr auto MUL_MESSAGE             = "multiply";
-   constexpr auto DIV_MESSAGE             = "divide";
-   constexpr auto BAND_MESSAGE            = "band";
-   constexpr auto BOR_MESSAGE             = "bor";
-   constexpr auto BXOR_MESSAGE            = "bxor";
-   constexpr auto REFER_MESSAGE           = "at";
-   constexpr auto SET_REFER_MESSAGE       = "setAt";
-   constexpr auto IF_MESSAGE              = "if";
-   constexpr auto IIF_MESSAGE             = "iif";
-   constexpr auto EQUAL_MESSAGE           = "equal";
-   constexpr auto NOT_MESSAGE             = "Inverted";
-   constexpr auto NEGATE_MESSAGE          = "Negative";
-   constexpr auto VALUE_MESSAGE           = "Value";
-   constexpr auto ITEM_MESSAGE            = "Value";
-   constexpr auto DEFAULT_MESSAGE         = "Default";
-   constexpr auto BNOT_MESSAGE            = "BInverted";
-   constexpr auto NOTEQUAL_MESSAGE        = "notequal";
-   constexpr auto LESS_MESSAGE            = "less";
-   constexpr auto NOTLESS_MESSAGE         = "notless";
-   constexpr auto GREATER_MESSAGE         = "greater";
-   constexpr auto NOTGREATER_MESSAGE      = "notgreater";
-   constexpr auto AND_MESSAGE             = "and";
-   constexpr auto OR_MESSAGE              = "or";
-   constexpr auto XOR_MESSAGE             = "xor";
-   constexpr auto SHL_MESSAGE             = "shiftLeft";
-   constexpr auto SHR_MESSAGE             = "shiftRight";
-      
+   constexpr auto NEXT_MESSAGE               = "next";
+   constexpr auto CURRENT_FIELD              = "__current";
+
+   constexpr auto ADD_MESSAGE                = "add";
+   constexpr auto SUB_MESSAGE                = "subtract";
+   constexpr auto MUL_MESSAGE                = "multiply";
+   constexpr auto DIV_MESSAGE                = "divide";
+   constexpr auto BAND_MESSAGE               = "band";
+   constexpr auto BOR_MESSAGE                = "bor";
+   constexpr auto BXOR_MESSAGE               = "bxor";
+   constexpr auto REFER_MESSAGE              = "at";
+   constexpr auto SET_REFER_MESSAGE          = "setAt";
+   constexpr auto IF_MESSAGE                 = "if";
+   constexpr auto IIF_MESSAGE                = "iif";
+   constexpr auto EQUAL_MESSAGE              = "equal";
+   constexpr auto NOT_MESSAGE                = "Inverted";
+   constexpr auto NEGATE_MESSAGE             = "Negative";
+   constexpr auto VALUE_MESSAGE              = "Value";
+   constexpr auto ITEM_MESSAGE               = "Value";
+   constexpr auto DEFAULT_MESSAGE            = "Default";
+   constexpr auto BNOT_MESSAGE               = "BInverted";
+   constexpr auto NOTEQUAL_MESSAGE           = "notequal";
+   constexpr auto LESS_MESSAGE               = "less";
+   constexpr auto NOTLESS_MESSAGE            = "notless";
+   constexpr auto GREATER_MESSAGE            = "greater";
+   constexpr auto NOTGREATER_MESSAGE         = "notgreater";
+   constexpr auto AND_MESSAGE                = "and";
+   constexpr auto OR_MESSAGE                 = "or";
+   constexpr auto XOR_MESSAGE                = "xor";
+   constexpr auto SHL_MESSAGE                = "shiftLeft";
+   constexpr auto SHR_MESSAGE                = "shiftRight";      
 
    // --- constant string lengths ---
    constexpr auto TEMPLATE_PREFIX_NS_LEN = 7;
@@ -208,7 +211,6 @@ namespace elena_lang
    constexpr ref_t elMessageName          = 0x01000000;
    constexpr ref_t elWithGenerics         = 0x02000000;
    constexpr ref_t elVirtualVMT           = 0x04000000;
-   constexpr ref_t elWithYieldable        = 0x08000000;
    constexpr ref_t elGroup                = 0x10000000;
    constexpr ref_t elPacked               = 0x20000000;
    constexpr ref_t elTemplatebased        = 0x40000000;

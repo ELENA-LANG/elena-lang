@@ -85,12 +85,9 @@ bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider
    }
 
    if (found) {
-      bool isClass = true;
       // if symbol
       if (symbol[0] == '#') {
          symbol += 1;
-
-         isClass = false;
       }
 
       auto moduleInfo = provider.getDebugModule({ symbol }, true);

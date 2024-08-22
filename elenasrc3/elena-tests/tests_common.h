@@ -234,6 +234,13 @@ namespace elena_lang
       void SetUp() override;
    };
 
+   // --- ScenarioTest --- 
+   class CompileTest : public BaseFixture
+   {
+   protected:
+      void SetUp() override;
+   };
+
    // --- MethodScenarioTest ---
    class MethodScenarioTest : public ScenarioTest
    {

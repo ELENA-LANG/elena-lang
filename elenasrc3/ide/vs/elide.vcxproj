@@ -182,6 +182,7 @@
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\engine\windows\pehelper.h" />
+    <ClInclude Include="..\..\engine\windows\winevents.h" />
     <ClInclude Include="..\..\gui\controller.h" />
     <ClInclude Include="..\..\gui\document.h" />
     <ClInclude Include="..\..\gui\guicommon.h" />

@@ -112,46 +112,6 @@ BOOL WINAPI debugEventThread(DebugControllerBase* controller)
    return TRUE;
 }
 
-// --- DebugEventManager ---
-
-void DebugEventManager :: init()
-{
-   _events[DEBUG_ACTIVE] = CreateEvent(nullptr, TRUE, TRUE, nullptr);
-   _events[DEBUG_CLOSE] = CreateEvent(nullptr, TRUE, FALSE, nullptr);
-   _events[DEBUG_SUSPEND] = CreateEvent(nullptr, TRUE, FALSE, nullptr);
-   _events[DEBUG_RESUME] = CreateEvent(nullptr, TRUE, FALSE, nullptr);
-}
-
-void DebugEventManager :: setEvent(int event)
-{
-   SetEvent(_events[event]);
-}
-
-void DebugEventManager :: resetEvent(int event)
-{
-   ResetEvent(_events[event]);
-}
-
-bool DebugEventManager :: waitForEvent(int event, int timeout)
-{
-   return (WaitForSingleObject(_events[event], timeout) == WAIT_OBJECT_0);
-}
-
-int DebugEventManager :: waitForAnyEvent()
-{
-   return WaitForMultipleObjects(MAX_DEBUG_EVENT, _events, FALSE, INFINITE);
-}
-
-void DebugEventManager :: close()
-{
-   for (int i = 0; i < MAX_DEBUG_EVENT; i++) {
-      if (_events[i]) {
-         CloseHandle(_events[i]);
-         _events[i] = nullptr;
-      }
-   }
-}
-
 // --- Win32ThreadContext ---
 
 Win32ThreadContext :: Win32ThreadContext(HANDLE hProcess, HANDLE hThread)
@@ -358,7 +318,7 @@ void Win32DebugProcess::ConsoleHelper :: printText(const char* s)
 {
    HANDLE output_handle = GetStdHandle(STD_OUTPUT_HANDLE);
 
-   WriteConsoleA(output_handle, s, getlength(s), 0, 0);
+   WriteConsoleA(output_handle, s, getlength_pos(s), 0, 0);
 }
 
 void Win32DebugProcess::ConsoleHelper :: waitForAnyKey()
@@ -486,7 +446,7 @@ void Win32DebugProcess :: processEnd()
    }
 }
 
-void Win32DebugProcess :: processEvent(size_t timeout)
+void Win32DebugProcess :: processEvent(DWORD timeout)
 {
    DEBUG_EVENT event;
 
