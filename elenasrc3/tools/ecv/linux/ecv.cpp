@@ -14,9 +14,6 @@ using namespace elena_lang;
 
 constexpr auto DEFAULT_CONFIG       = "/etc/elena/templates/lib60.config";
 
-constexpr auto PLATFORM_CATEGORY    = "configuration/platform";
-constexpr auto LIB_PATH             = "project/libpath";
-
 #if defined(__x86_64__)
 
 constexpr auto PLATFORM_KEY = "Linux_AMD64";
@@ -92,7 +89,7 @@ public:
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2011-2022 by Aleksey Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ECV_REVISION_NUMBER);
+   printf(ECV_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ECV_REVISION_NUMBER);
 
    // prepare library provider
    LibraryProvider provider;
