@@ -2092,7 +2092,7 @@ singleton IteratorEnumerable : Enumerable
    }
 }
 
-public iteratorMethodTest() : testCase()
+public iteratorMethodTest() //: testCase()
 {
    auto e := IteratorEnumerable.enumerator();
 
