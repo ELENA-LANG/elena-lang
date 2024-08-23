@@ -9,6 +9,11 @@ myFunction()
 public program()
 {
    auto myThread := Thread.assign(&myFunction);
+
+   var priority := myThread.Priority;
+
+   console.printLine("Thread priority ", priority);
+
    myThread.start();
 
    console.readChar()

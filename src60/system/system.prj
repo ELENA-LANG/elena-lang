@@ -95,6 +95,7 @@
        <include>runtime\vectortable.l</include>
      </module>
      <module name="threading">
+       <include>threading\common.l</include>
        <include>threading\win32_handlers.l</include>
        <include>threading\thread.l</include>
      </module>

@@ -22,13 +22,13 @@ In development:
   --------------------------------------
   - async programming
   * tasks
-  * thread pool
   * thread : ExecutionContext, SynchronizationContext
+  * thread pool
+  * x86-64 : mta
   * thread : SpinWait, Interrupt, Join(millisec)
   * thread refactoring : thread arguments
-  * thread refactoring : thread priority
   --------------------------------------
-  * thread refactoring : stack size
+  * thread refactoring : thread priority
 
   === Iteration 32 ===
   --------------------------------------

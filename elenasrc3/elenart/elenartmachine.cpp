@@ -345,7 +345,7 @@ void ELENARTMachine :: clearThreadEntry(SystemEnv* env, size_t index)
    env->th_table->slots[index].arg = nullptr;
 }
 
-void* ELENARTMachine :: allocateThread(SystemEnv* env, void* arg, void* threadProc, int flags)
+void* ELENARTMachine :: allocateThread(SystemEnv* env, void* arg, void* threadProc, int stackSize, int flags)
 {
    size_t index = allocateThreadEntry(env);
 
@@ -354,7 +354,7 @@ void* ELENARTMachine :: allocateThread(SystemEnv* env, void* arg, void* threadPr
 
    env->th_table->slots[index].arg = arg;
 
-   return __routineProvider.CreateThread(index, flags, threadProc);
+   return __routineProvider.CreateThread(index, stackSize, flags, threadProc);
 }
 
 void ELENARTMachine :: startThread(SystemEnv* env, void* entry, int index)

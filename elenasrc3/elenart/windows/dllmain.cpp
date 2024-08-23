@@ -103,9 +103,9 @@ EXTERN_DLL_EXPORT void ExitLA(int retVal)
 }
 
 // NOTE : arg must be unique for every separate thread
-EXTERN_DLL_EXPORT void* CreateThreadLA(void* arg, void* threadProc, int flags)
+EXTERN_DLL_EXPORT void* CreateThreadLA(void* arg, void* threadProc, int stackSize, int flags)
 {
-   return machine->allocateThread(systemEnv, arg, threadProc, flags);
+   return machine->allocateThread(systemEnv, arg, threadProc, stackSize, flags);
 }
 
 EXTERN_DLL_EXPORT void InitThreadLA(SystemEnv* env, void* criricalHandler, int index)

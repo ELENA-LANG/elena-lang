@@ -2085,7 +2085,7 @@ labSkip:
 
 end
 
-procedure __thread_create(self,arg,flags,ptr)
+procedure __thread_create(self,arg,flags,stackSize,ptr)
 
   xflush     sp:0
   xflush     sp:1
@@ -2098,6 +2098,7 @@ procedure __thread_create(self,arg,flags,ptr)
   call extern:CreateThreadLA (
      *arg, 
      procedure:"system'core_routines'thread_start",
+     *stackSize,
      *flags)
 
   system      7  
