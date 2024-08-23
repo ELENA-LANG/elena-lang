@@ -5,10 +5,10 @@ In development:
 [development]
   ### EPIC: elena 6.4 ###
 
-  === Iteration 31 ===
+  === Iteration 31 (5.9) ===
   --------------------------------------
   dev: 
-      - async programming (general concept, SynchronizationContext, ThreadPool, Task, AsyncLocal<T>, ThreadStatic)
+      - async programming (object field (similar to Event), WaitHandle, AsyncLocal<T>, ThreadStatic)
       - upndown (connector)
       - chat: add mutex (see dpa_queue)
       - #496
@@ -20,7 +20,15 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  - async programming
+  * tasks
+  * thread pool
+  * thread : ExecutionContext, SynchronizationContext
+  * thread : SpinWait, Interrupt, Join(millisec)
+  * thread refactoring : thread arguments
+  * thread refactoring : thread priority
   --------------------------------------
+  * thread refactoring : stack size
 
   === Iteration 32 ===
   --------------------------------------

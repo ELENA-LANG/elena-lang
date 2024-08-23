@@ -328,7 +328,7 @@ void ELENARTMachine :: startSTA(SystemEnv* env, void* entry)
 
 size_t ELENARTMachine :: allocateThreadEntry(SystemEnv* env)
 {
-   if (env->th_table->counter < env->threadCounter) {
+   if (env->th_table && env->th_table->counter < env->threadCounter) {
       size_t index = env->th_table->counter;
 
       env->th_table->counter++;

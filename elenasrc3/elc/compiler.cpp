@@ -10629,7 +10629,7 @@ inline void injectArguments(Compiler::Scope& scope, SyntaxNode opNode, mssg_t me
    }
 }
 
-void Compiler :: injectMethodInvoker(Scope& scope, SyntaxNode classNode, mssg_t message, ustr_t targetArg)
+void Compiler :: injectMethodInvoker(Scope& scope, SyntaxNode classNode, mssg_t message, SyntaxKey targetKey, ustr_t targetArg)
 {
    SyntaxNode methodNode = classNode.appendChild(SyntaxKey::ClosureBlock);
 
@@ -10641,7 +10641,7 @@ void Compiler :: injectMethodInvoker(Scope& scope, SyntaxNode classNode, mssg_t 
 
    SyntaxNode body = methodNode.appendChild(SyntaxKey::ReturnExpression).appendChild(SyntaxKey::Expression);
    SyntaxNode opNode = body.appendChild(((message & PREFIX_MESSAGE_MASK) == PROPERTY_MESSAGE) ? SyntaxKey::PropertyOperation : SyntaxKey::MessageOperation);
-   opNode.appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, targetArg);
+   opNode.appendChild(SyntaxKey::Object).appendChild(targetKey, targetArg);
    opNode.appendChild(SyntaxKey::Message, message);
 
    injectArguments(scope, opNode, message);
@@ -12747,6 +12747,24 @@ ObjectInfo Compiler::Expression :: compileClosureOperation(SyntaxNode node)
       }
    }
 
+   ustr_t targetArg = nullptr;
+   SyntaxKey targetKey = SyntaxKey::None;
+
+   if (!targetMessage) {
+      ObjectInfo function = scope.mapIdentifier(methodName, false, EAttr::None);
+      if (function.kind == ObjectKind::Singleton) {
+         targetArg = methodName;
+         targetKey = SyntaxKey::identifier;
+
+         int dummy = 0;
+         targetMessage = compiler->_logic->resolveFunctionSingleDispatch(*scope.moduleScope, function.reference, dummy);
+      }
+   }
+   else {
+      targetArg = *scope.moduleScope->selfVar;
+      targetKey = SyntaxKey::identifier;
+   }
+
    if (!targetMessage)
       scope.raiseError(errInvalidOperation, node);
 
@@ -12757,7 +12775,7 @@ ObjectInfo Compiler::Expression :: compileClosureOperation(SyntaxNode node)
    classWriter.newNode(SyntaxKey::Root);
    
    SyntaxNode rootNode = classWriter.CurrentNode();
-   compiler->injectMethodInvoker(scope, rootNode, targetMessage, *scope.moduleScope->selfVar);
+   compiler->injectMethodInvoker(scope, rootNode, targetMessage, targetKey, targetArg);
 
    classWriter.closeNode();
 

@@ -2604,6 +2604,35 @@ mssg_t CompilerLogic :: resolveSingleDispatch(ModuleScopeBase& scope, ref_t refe
    else return 0;
 }
 
+mssg_t CompilerLogic :: resolveFunctionSingleDispatch(ModuleScopeBase& scope, ref_t reference, int& nillableArgs)
+{
+   if (!reference)
+      return 0;
+
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference)) {
+      ref_t actionRef = scope.module->mapAction(INVOKE_MESSAGE, 0, true);
+      for (int i = 0; i < ARG_COUNT; i++) {
+         mssg_t weakMessage = encodeMessage(actionRef, i, FUNCTION_MESSAGE);
+         if (i == 0) {
+            if (info.methods.exist(weakMessage))
+               return weakMessage;
+         }
+         else {
+            mssg_t dispatcher = info.attributes.get({ weakMessage, ClassAttribute::SingleDispatch });
+            if (dispatcher) {
+               CheckMethodResult result;
+               if (checkMethod(info, dispatcher, result))
+                  nillableArgs = result.nillableArgs;
+
+               return dispatcher;
+            }
+         }
+      }
+   }
+   return 0;
+}
+
 inline size_t readSignatureMember(ustr_t signature, size_t index)
 {
    int level = 0;
