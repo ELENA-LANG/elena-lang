@@ -8043,7 +8043,7 @@ ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeS
       signRef, arguments, EAttr::None, &updatedOuterArgs);
 
    if (outputRef) {
-      expression.convertObject(node, expression.saveToTempLocal(retVal), outputRef, true, false, false);
+      expression.convertObject(node, expression.saveToTempLocal(retVal), outputRef, true, false, false, false);
    }      
 
    expression.scope.syncStack();
@@ -10604,9 +10604,11 @@ inline void injectParameters(Compiler::Scope& scope, SyntaxNode methodNode, ref_
       }
    }
    else {
+      pos_t startIndex = test(message, FUNCTION_MESSAGE) ? 0 : 1;
+
       pos_t len = getArgCount(message);
       String<char, 10> arg;
-      for (pos_t i = 1; i < len; i++) {
+      for (pos_t i = startIndex; i < len; i++) {
          arg.copy("$");
          arg.appendInt(i);
 
@@ -10619,9 +10621,11 @@ inline void injectParameters(Compiler::Scope& scope, SyntaxNode methodNode, ref_
 
 inline void injectArguments(Compiler::Scope& scope, SyntaxNode opNode, mssg_t message)
 {
+   pos_t startIndex = test(message, FUNCTION_MESSAGE) ? 0 : 1;
+
    pos_t len = getArgCount(message);
    String<char, 10> arg;
-   for (pos_t i = 1; i < len; i++) {
+   for (pos_t i = startIndex; i < len; i++) {
       arg.copy("$");
       arg.appendInt(i);
 
@@ -12914,7 +12918,7 @@ ObjectInfo Compiler::Expression :: validateObject(SyntaxNode node, ObjectInfo re
          return retVal;
       }
 
-      retVal = convertObject(node, retVal, targetRef, dynamicRequired, false, nillable);
+      retVal = convertObject(node, retVal, targetRef, dynamicRequired, false, nillable, false);
       if (paramMode && hasToBePresaved(retVal))
          retVal = saveToTempLocal(retVal);
    }
@@ -13247,7 +13251,7 @@ ObjectInfo Compiler::Expression :: compileNewArrayOp(SyntaxNode node, ObjectInfo
          NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
          auto conversionRoutine = compiler->_logic->retrieveConversionRoutine(compiler, *scope.moduleScope, *nsScope->nsName,
-            targetRef, source.typeInfo);
+            targetRef, source.typeInfo, false);
          if (conversionRoutine.result == ConversionResult::BoxingRequired) {
             source.typeInfo = { targetRef };
          }
@@ -13283,7 +13287,7 @@ ObjectInfo Compiler::Expression :: compileNewArrayOp(SyntaxNode node, ObjectInfo
 }
 
 ObjectInfo Compiler::Expression :: convertObject(SyntaxNode node, ObjectInfo source,
-   ref_t targetRef, bool dynamicRequired, bool withoutBoxing, bool nillable)
+   ref_t targetRef, bool dynamicRequired, bool withoutBoxing, bool nillable, bool directConversion)
 {
    if (!compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, source.typeInfo, false)) {
       if (source.kind == ObjectKind::Default) {
@@ -13317,7 +13321,7 @@ ObjectInfo Compiler::Expression :: convertObject(SyntaxNode node, ObjectInfo sou
       NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
       auto conversionRoutine = compiler->_logic->retrieveConversionRoutine(compiler, *scope.moduleScope, *nsScope->nsName,
-         targetRef, source.typeInfo);
+         targetRef, source.typeInfo, directConversion);
       if (!withoutBoxing && conversionRoutine.result == ConversionResult::BoxingRequired) {
          // if it is implcitily compatible
          switch (source.kind) {
@@ -14464,7 +14468,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(ObjectInfo target, S
 
                return arguments[0];
             }
-            else return convertObject(messageNode, arguments[0], targetRef, false, true, false);
+            else return convertObject(messageNode, arguments[0], targetRef, false, true, false, true);
          }
          else scope.raiseError(errInvalidOperation, messageNode);
          break;
@@ -15407,7 +15411,7 @@ ObjectInfo Compiler::Expression :: boxVariadicArgument(ObjectInfo info)
    if (info.typeInfo.typeRef && info.typeInfo.typeRef != typeRef) {
       // if the conversion is required
       ObjectInfo convInfo = convertObject({}, destLocal,
-         info.typeInfo.typeRef, false, false, false);
+         info.typeInfo.typeRef, false, false, false, false);
 
       compileAssigningOp(destLocal, convInfo, dummy);
 
@@ -15421,7 +15425,7 @@ void Compiler::Expression :: compileAssigning(SyntaxNode node, ObjectInfo target
 {
    if (!noConversion) {
       source = convertObject(node, source,
-         compiler->resolveStrongType(scope, target.typeInfo), false, false, false);
+         compiler->resolveStrongType(scope, target.typeInfo), false, false, false, false);
    }
 
    bool nillableOp = false;
@@ -15435,7 +15439,7 @@ void Compiler::Expression :: compileAssigning(SyntaxNode node, ObjectInfo target
 void Compiler::Expression :: compileConverting(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool stackSafe)
 {
    if (targetRef && targetRef != V_AUTO) {
-      source = convertObject(node, source, targetRef, false, false, false);
+      source = convertObject(node, source, targetRef, false, false, false, false);
 
       scope.syncStack();
    }

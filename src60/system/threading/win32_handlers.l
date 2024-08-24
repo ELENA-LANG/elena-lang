@@ -49,7 +49,7 @@ public sealed struct ThreadHandle
       ^ THREAD_PRIORITY_LOWEST
    }
 
-   constructor(Func f)
+   constructor(object f)
    {
       _actionPtr := PermVectorTable.allocate(f);
 
@@ -60,7 +60,7 @@ public sealed struct ThreadHandle
       }
    }
 
-   constructor(Func f, int stackSize)
+   constructor(object f, int stackSize)
    {
       _actionPtr := PermVectorTable.allocate(f);
 

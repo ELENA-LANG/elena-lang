@@ -2248,7 +2248,7 @@ mssg_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_
 }
 
 ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ustr_t ns, 
-   ref_t targetRef, TypeInfo sourceInfo)
+   ref_t targetRef, TypeInfo sourceInfo, bool directConversion)
 {
    ClassInfo info;
    if (!defineClassInfo(scope, info, targetRef))
@@ -2299,7 +2299,7 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
    }
 
    // if there is a implicit conversion routine
-   if (!isPrimitiveRef(targetRef)) {
+   if (!isPrimitiveRef(targetRef) && !directConversion) {
       ref_t sourceRef = sourceInfo.isPrimitive() ? compiler->resolvePrimitiveType(scope, sourceInfo) : sourceInfo.typeRef;
 
       ref_t signRef = scope.module->mapSignature(&sourceRef, 1, false);
@@ -2614,20 +2614,9 @@ mssg_t CompilerLogic :: resolveFunctionSingleDispatch(ModuleScopeBase& scope, re
       ref_t actionRef = scope.module->mapAction(INVOKE_MESSAGE, 0, true);
       for (int i = 0; i < ARG_COUNT; i++) {
          mssg_t weakMessage = encodeMessage(actionRef, i, FUNCTION_MESSAGE);
-         if (i == 0) {
-            if (info.methods.exist(weakMessage))
-               return weakMessage;
-         }
-         else {
-            mssg_t dispatcher = info.attributes.get({ weakMessage, ClassAttribute::SingleDispatch });
-            if (dispatcher) {
-               CheckMethodResult result;
-               if (checkMethod(info, dispatcher, result))
-                  nillableArgs = result.nillableArgs;
 
-               return dispatcher;
-            }
-         }
+         if (info.methods.exist(weakMessage))
+            return weakMessage;
       }
    }
    return 0;

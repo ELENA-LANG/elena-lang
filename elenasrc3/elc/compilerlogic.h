@@ -184,7 +184,7 @@ namespace elena_lang
       mssg_t retrieveDynamicConvertor(ModuleScopeBase& scope, ref_t targetRef);
 
       ConversionRoutine retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ustr_t ns, 
-         ref_t targetRef, TypeInfo sourceInfo);
+         ref_t targetRef, TypeInfo sourceInfo, bool directConversion);
 
       bool checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result);
       bool checkMethod(ModuleScopeBase& scope, ref_t reference, mssg_t message, CheckMethodResult& result);

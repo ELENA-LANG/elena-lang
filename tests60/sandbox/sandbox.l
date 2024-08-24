@@ -1,20 +1,53 @@
 import extensions;
 import system'threading;
 
-myFunction()
-{
-   console.writeLine("Hello from the thread");
-}
+//import system'runtime;
+//
+//myFunction()
+//{
+//   console.writeLine("Hello from the thread");
+//}
+
+//public program()
+//{
+//   auto myThread := Thread.assign(&myFunction);
+//
+//   var priority := myThread.Priority;
+//
+//   console.printLine("Thread priority ", priority);
+//
+//   myThread.start();
+//
+//   console.readChar()
+//}
+
+//myFunction(arg)
+//{
+//   console.writeLine($"{arg} from the thread");
+//}
+//
+//public program()
+//{
+//   auto myThread := Thread.assign(&myFunction);
+//
+//   var priority := myThread.Priority;
+//
+//   console.printLine("Thread priority ", priority);
+//
+//   myThread.start("Good bay");
+//
+//   console.readChar()
+//}
 
 public program()
 {
-   auto myThread := Thread.assign(&myFunction);
+//   object f := myFunction;
 
-   var priority := myThread.Priority;
+//   pointer actionPtr := PermVectorTable.allocate(f);
 
-   console.printLine("Thread priority ", priority);
+   pointer ptr := 2;
 
-   myThread.start();
+   var p := ptr;
 
-   console.readChar()
+   pointer ptr2 := p :as pointer;
 }

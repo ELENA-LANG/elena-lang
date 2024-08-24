@@ -136,3 +136,53 @@ public program()
 {
    auto myThread := Thread.assign(&myFunction);
 }
+
+----------------------------------------------------------------------------
+ threads
+----------------------------------------------------------------------------
+
+-- Without argumnet ---
+
+import extensions;
+import system'threading;
+
+myFunction()
+{
+   console.writeLine("Hello from the thread");
+}
+
+public program()
+{
+   auto myThread := Thread.assign(&myFunction);
+
+   var priority := myThread.Priority;
+
+   console.printLine("Thread priority ", priority);
+
+   myThread.start();
+
+   console.readChar()
+}
+
+-- With argumnet ---
+
+import extensions;
+import system'threading;
+
+myFunction(arg)
+{
+   console.writeLine($"{arg} from the thread");
+}
+
+public program()
+{
+   auto myThread := Thread.assign(&myFunction);
+
+   var priority := myThread.Priority;
+
+   console.printLine("Thread priority ", priority);
+
+   myThread.start("Good bay");
+
+   console.readChar()
+}

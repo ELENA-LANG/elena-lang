@@ -1299,7 +1299,7 @@ namespace elena_lang
          ObjectInfo compileNewArrayOp(SyntaxNode node, ObjectInfo source, ref_t targetRef, ArgumentsInfo& arguments);
 
          ObjectInfo convertObject(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool dynamicRequired,
-            bool withoutBoxing, bool nillable);
+            bool withoutBoxing, bool nillable, bool directConversion);
 
          ObjectInfo compileMessageOperation(SyntaxNode node, ObjectInfo target, MessageResolution resolution, ref_t implicitSignatureRef, 
             ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs);

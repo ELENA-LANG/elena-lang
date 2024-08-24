@@ -25,10 +25,14 @@ In development:
   * thread : ExecutionContext, SynchronizationContext
   * thread pool
   * x86-64 : mta
-  * thread : SpinWait, Interrupt, Join(millisec)
+  * Thread<T> template
+  * #679
+  * thread : Join(millisec), CurrentThread, isAlive
   * thread refactoring : thread arguments
+  * PermVectorTable.allocate(f) - use allocate<object> directly
+  * Pointer convertor - recognize pointer
   --------------------------------------
-  * thread refactoring : thread priority
+  * direct typecasting must have priority over implicit conversion
 
   === Iteration 32 ===
   --------------------------------------
