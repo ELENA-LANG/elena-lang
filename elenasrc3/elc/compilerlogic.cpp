@@ -1306,9 +1306,16 @@ bool CompilerLogic :: isReadOnly(ClassInfo& info)
 
 bool CompilerLogic :: isEmbeddableArray(ModuleScopeBase& scope, ref_t reference)
 {
+   if (scope.cachedEmbeddableArrays.exist(reference))
+       return scope.cachedEmbeddableArrays.get(reference);
+
    ClassInfo info;
    if (defineClassInfo(scope, info, reference, true)) {
-      return isEmbeddableArray(info);
+       auto retVal = isEmbeddableArray(info);
+
+	   scope.cachedEmbeddableArrays.add(reference, retVal);
+
+	   return retVal;
    }
 
    return false;
@@ -1388,9 +1395,14 @@ bool CompilerLogic :: isEmbeddableStruct(ModuleScopeBase& scope, TypeInfo typeIn
    if (typeInfo.nillable)
       return false;
 
+   if (scope.cachedEmbeddableStructs.exist(typeInfo.typeRef))
+	  return scope.cachedEmbeddableStructs.get(typeInfo.typeRef);
+
    ClassInfo info;
    if (defineClassInfo(scope, info, typeInfo.typeRef, true)) {
       auto retVal = isEmbeddableStruct(info);
+
+      scope.cachedEmbeddableStructs.add(typeInfo.typeRef, retVal);
 
       return retVal;
    }
@@ -1408,9 +1420,16 @@ bool CompilerLogic :: isStacksafeArg(ClassInfo& info)
 
 bool CompilerLogic :: isStacksafeArg(ModuleScopeBase& scope, ref_t reference)
 {
+   if (scope.cachedStacksafeArgs.exist(reference))
+	  return scope.cachedStacksafeArgs.get(reference);
+
    ClassInfo info;
    if (defineClassInfo(scope, info, reference, true)) {
-      return isStacksafeArg(info);
+      auto retVal = isStacksafeArg(info);
+
+	  scope.cachedStacksafeArgs.add(reference, retVal);
+
+      return retVal;
    }
 
    return false;
@@ -1418,9 +1437,16 @@ bool CompilerLogic :: isStacksafeArg(ModuleScopeBase& scope, ref_t reference)
 
 bool CompilerLogic :: isWrapper(ModuleScopeBase& scope, ref_t reference)
 {
+   if (scope.cachedWrappers.exist(reference))
+	   return scope.cachedWrappers.get(reference);
+
    ClassInfo info;
    if (defineClassInfo(scope, info, reference, true)) {
-      return isWrapper(info);
+       auto retVal = isWrapper(info);
+
+       scope.cachedWrappers.add(reference, retVal);
+
+       return retVal;
    }
 
    return false;
