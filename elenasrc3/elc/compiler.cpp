@@ -10404,14 +10404,22 @@ void Compiler :: injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey method
 
    // try to resolve an argument list in run-time if it is only a single dispatch and argument list is not weak
    // !! temporally do not support variadic arguments
-   if (isSingleDispatch(classNode, methodType, message, resendMessage) &&
-      injectVirtualStrongTypedMultimethod(classNode, methodType, scope, message, resendMessage, 
-         outputInfo, visibility, isExtension, nillableArgs))
-   {
-      // mark the message as a signle dispatcher if the class is sealed / closed / class class
-      // and default multi-method was not explicitly declared
-      if (testany(info.header.flags, elClosed | elClassClass) && !inherited)
+   if (isSingleDispatch(classNode, methodType, message, resendMessage)) {
+      if (injectVirtualStrongTypedMultimethod(classNode, methodType, scope, message, resendMessage,
+         outputInfo, visibility, isExtension, nillableArgs)) 
+      {
+         // mark the message as a signle dispatcher if the class is sealed / closed / class class
+         // and default multi-method was not explicitly declared
+         if (testany(info.header.flags, elClosed | elClassClass) && !inherited)
+            info.attributes.add({ message, ClassAttribute::SingleDispatch }, resendMessage);
+      }
+      else if (actionRef) {
+         // if it is a generic single dispatch
+         injectVirtualMultimethod(classNode, methodType, scope, message, resendMessage, resendTarget,
+            outputInfo, visibility, isExtension);
+
          info.attributes.add({ message, ClassAttribute::SingleDispatch }, resendMessage);
+      }
    }
    else {
       if (inherited) {
@@ -11769,6 +11777,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
             paramMode = paramMode | EAttr::WithVariadicArg;
          }            
       }
+      else paramMode = paramMode | EAttr::AllowGenericSignature;
    }
 
    ref_t expectedSignRef = 0;
@@ -12984,6 +12993,7 @@ ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, Argume
    ArgumentsInfo* updatedOuterArgs, ArgumentListType& argListType, int nillableArgs)
 {
    bool variadicArg = EAttrs::testAndExclude(mode, EAttr::WithVariadicArg);
+   bool allowGenericSignature = EAttrs::testAndExclude(mode, EAttr::AllowGenericSignature);
 
    EAttr paramMode = EAttr::Parameter | EAttr::RetValExpected;
    if (EAttrs::testAndExclude(mode, EAttr::NoPrimitives))
@@ -13045,7 +13055,7 @@ ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, Argume
    if (signatureLen > 0 && signatureLen <= ARG_COUNT) {
       bool anonymous = true;
       for (ref_t i = 0; i < signatureLen; i++) {
-         if (signatures[i] != superReference) {
+         if (signatures[i] != superReference || allowGenericSignature) {
             anonymous = false;
             break;
          }

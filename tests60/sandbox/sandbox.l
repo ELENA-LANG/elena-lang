@@ -1,6 +1,6 @@
-import extensions;
-import system'threading;
-
+//import extensions;
+//import system'threading;
+//
 //import system'runtime;
 //
 //myFunction()
@@ -39,15 +39,23 @@ import system'threading;
 //   console.readChar()
 //}
 
+//public program()
+//{
+//   object f := myFunction;
+//
+//   pointer actionPtr := PermVectorTable.allocate(f);
+//}
+
+singleton Helper
+{
+   test(object arg)
+   {
+   }
+}
+
 public program()
 {
-//   object f := myFunction;
+   object arg := 2;
 
-//   pointer actionPtr := PermVectorTable.allocate(f);
-
-   pointer ptr := 2;
-
-   var p := ptr;
-
-   pointer ptr2 := p :as pointer;
+   Helper.test(arg)
 }

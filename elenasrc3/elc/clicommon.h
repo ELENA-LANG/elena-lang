@@ -421,6 +421,7 @@ enum class ExpressionAttribute : pos64_t
    LookaheadExprMode    = 0x00080000000,   
    Class                = 0x00100000000,
    Nillable             = 0x00200000000,
+   AllowGenericSignature= 0x00400000000,
    OutRefOp             = 0x01000000000,
    WithVariadicArgCast  = 0x02008000000,
    DistributedForward   = 0x04000000000,

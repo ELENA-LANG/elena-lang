@@ -16,6 +16,7 @@ In development:
       - lpad : generate a code based on a record  
   maint:
       - #679
+      - add compatibility mode with ELENA 5.0 (source level) - the project may contain the compatibility (5, 6)
   port:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
@@ -30,9 +31,9 @@ In development:
   * thread : Join(millisec), CurrentThread, isAlive
   * thread refactoring : thread arguments
   * PermVectorTable.allocate(f) - use allocate<object> directly
-  * Pointer convertor - recognize pointer
+  * unit test : for method with object arg ->if it is a single dispatch operation -> use direct call
   --------------------------------------
-  * direct typecasting must have priority over implicit conversion
+  * PermVectorTable.allocate - if it is a single dispatch operation -> use direct call
 
   === Iteration 32 ===
   --------------------------------------
