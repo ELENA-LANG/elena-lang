@@ -17,6 +17,7 @@ In development:
   maint:
       - #679
       - add compatibility mode with ELENA 5.0 (source level) - the project may contain the compatibility (5, 6)
+      - set up automatic tests
   port:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly

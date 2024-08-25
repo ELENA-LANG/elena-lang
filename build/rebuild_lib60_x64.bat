@@ -1,24 +1,5 @@
 REM NOTE : the script MUST be called from the root folder
 
-bin\sg64-cli dat\sg\syntax60.txt
-@echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
-@echo on
-
-move dat\sg\syntax60.dat bin
-
-bin\og64-cli dat\og\bc_rules60.txt
-@echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
-@echo on
-move dat\og\bc_rules60.dat bin
-
-bin\og64-cli -s dat\og\bt_rules60.txt 
-@echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
-@echo on
-move dat\og\bt_rules60.dat bin
-
 bin\asm64-cli -amd64 asm\amd64\core60.asm bin\amd64
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
