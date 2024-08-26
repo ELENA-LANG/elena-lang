@@ -519,6 +519,15 @@ X86Operand X86Assembler :: compileOperand(ScriptToken& tokenInfo, ustr_t errorMe
       }
       else operand.prefix = SegmentPrefix::FS;
    }
+   else if (tokenInfo.compare("gs")) {
+      read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+      operand = readPtrOperand(tokenInfo, X86OperandType::M64disp32, errorMessage);
+
+      if (operand.prefix != SegmentPrefix::None) {
+         throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
+      }
+      else operand.prefix = SegmentPrefix::GS;
+   }
    else {
       operand = defineOperand(tokenInfo, X86OperandType::DD, errorMessage);
       if (operand.type != X86OperandType::Unknown) {
@@ -3340,6 +3349,10 @@ bool X86_64Assembler :: compileLea(X86Operand source, X86Operand target, MemoryW
 
 bool X86_64Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWriter& writer)
 {
+   if (target.prefix == SegmentPrefix::GS) {
+      writer.writeByte(0x65);
+   }
+
    if (source.isRX64() && target.isDB_DD_DQ()) {
       target.type = X86OperandType::DQ;
       writer.writeByte(0x49);
