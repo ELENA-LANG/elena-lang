@@ -2075,6 +2075,11 @@ public stringInterpolation() : testCase()
 
    Assert.ifEqual(s,"a_1_b_2_c");
    console.write(".");
+
+   var s2 := $"{ 3 }_b_{ 4 }_c";
+
+   Assert.ifEqual(s2,"3_b_4_c");
+   console.write(".");
 }
 
 // --- iteratorMethodTest ---

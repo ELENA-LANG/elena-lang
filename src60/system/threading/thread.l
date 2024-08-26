@@ -85,6 +85,8 @@ public sealed class Thread
 
    join() => _handle;
 
+   join(int milliseconds) => _handle;
+
    close()
    {
       if (handle.isNil())

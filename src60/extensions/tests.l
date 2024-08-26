@@ -12,8 +12,7 @@ public singleton Assert
    {
       ifnot(val == expr)
       {
-         AssertException.raise("Assertion failed: expected {0}
-was {1}".interpolate(val, expr))
+         AssertException.raise("Assertion failed: expected '{0}' was '{1}'".interpolate(val, expr))
       }
    }
 

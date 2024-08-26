@@ -1284,6 +1284,11 @@ procedure __copySubStr2 (self, dest, index, len, sour)
 
   open       (2),[],[i1,i2,tmp]
 
+  peek       fp:len
+  load
+  cmp        n:0
+  jeq        labEnd
+
   peek       fp:index
   load
   save       dp:i2
@@ -1312,6 +1317,7 @@ labNext:
   xcmp       dp:i1
   jne        labNext
 
+labEnd:
   close      []
 
 end

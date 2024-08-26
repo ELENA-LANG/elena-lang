@@ -1,13 +1,11 @@
-//import extensions;
-//import system'threading;
-//
-//import system'runtime;
-//
+import extensions;
+import system'threading;
+
 //myFunction()
 //{
 //   console.writeLine("Hello from the thread");
 //}
-
+//
 //public program()
 //{
 //   auto myThread := Thread.assign(&myFunction);
@@ -21,41 +19,23 @@
 //   console.readChar()
 //}
 
-//myFunction(arg)
-//{
-//   console.writeLine($"{arg} from the thread");
-//}
-//
-//public program()
-//{
-//   auto myThread := Thread.assign(&myFunction);
-//
-//   var priority := myThread.Priority;
-//
-//   console.printLine("Thread priority ", priority);
-//
-//   myThread.start("Good bay");
-//
-//   console.readChar()
-//}
-
-//public program()
-//{
-//   object f := myFunction;
-//
-//   pointer actionPtr := PermVectorTable.allocate(f);
-//}
-
-singleton Helper
+myFunction(arg)
 {
-   test(object arg)
-   {
-   }
+   //console.writeLine($"{arg} from the thread");
+   console.printLine(arg, " from the thread");
+
+   console.readChar()
 }
 
 public program()
 {
-   object arg := 2;
+   auto myThread := Thread.assign(&myFunction);
 
-   Helper.test(arg)
+   var priority := myThread.Priority;
+
+   console.printLine("Thread priority ", priority);
+
+   myThread.start("Good bay");
+
+   myThread.join(2000);
 }

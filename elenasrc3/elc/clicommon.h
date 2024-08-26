@@ -4,6 +4,7 @@
 //		This file contains the compiler common interfaces & types
 //
 //                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2024, by ELENA-LANG Org
 //---------------------------------------------------------------------------
 
 #ifndef CLICOMMON_H

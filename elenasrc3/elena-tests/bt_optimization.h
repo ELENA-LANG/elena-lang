@@ -170,6 +170,12 @@ namespace elena_lang
       void SetUp() override;
    };
 
+   class CallMethodWithSignatureOfSuperClass : public MethodScenarioTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
    class LambdaTest : public ScenarioTest
    {
    protected:

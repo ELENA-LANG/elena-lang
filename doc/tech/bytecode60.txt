@@ -200,8 +200,6 @@ ELENA byte codes (or ecodes)
 
    lload sp:i               - long:index := sp[i]
 
-   load fp:i                - index := fp[i]
-
    load dp:disp             - index := dp[disp]
 
    load sp:i                - index := sp[i]

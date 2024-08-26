@@ -16,7 +16,6 @@ In development:
       - lpad : generate a code based on a record  
   maint:
       - #679
-      - add compatibility mode with ELENA 5.0 (source level) - the project may contain the compatibility (5, 6)
       - set up automatic tests
   port:
       - #658 : connect with ldbg from VSCode  
@@ -29,12 +28,10 @@ In development:
   * x86-64 : mta
   * Thread<T> template
   * #679
-  * thread : Join(millisec), CurrentThread, isAlive
-  * thread refactoring : thread arguments
-  * PermVectorTable.allocate(f) - use allocate<object> directly
-  * unit test : for method with object arg ->if it is a single dispatch operation -> use direct call
+  * thread : CurrentThread
+  * add compatibility mode with ELENA 5.0 (source level) - the project may contain the compatibility (5, 6)
   --------------------------------------
-  * PermVectorTable.allocate - if it is a single dispatch operation -> use direct call
+  * thread : Join(millisec), isAlive
 
   === Iteration 32 ===
   --------------------------------------

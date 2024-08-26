@@ -4,6 +4,7 @@
 //		This file contains ELENA compiler logic class implementation.
 //
 //                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2024, by ELENA-LANG Org
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1307,11 +1308,11 @@ bool CompilerLogic :: isReadOnly(ClassInfo& info)
 bool CompilerLogic :: isEmbeddableArray(ModuleScopeBase& scope, ref_t reference)
 {
    if (scope.cachedEmbeddableArrays.exist(reference))
-       return scope.cachedEmbeddableArrays.get(reference);
+      return scope.cachedEmbeddableArrays.get(reference);
 
    ClassInfo info;
    if (defineClassInfo(scope, info, reference, true)) {
-       auto retVal = isEmbeddableArray(info);
+      auto retVal = isEmbeddableArray(info);
 
 	   scope.cachedEmbeddableArrays.add(reference, retVal);
 
