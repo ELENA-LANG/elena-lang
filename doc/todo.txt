@@ -29,9 +29,9 @@ In development:
   * Thread<T> template
   * #679
   * thread : CurrentThread
-  * add compatibility mode with ELENA 5.0 (source level) - the project may contain the compatibility (5, 6)
+  * thread : thread safe static field
   --------------------------------------
-  * thread : Join(millisec), isAlive
+  * add compatibility mode with ELENA 5.0 (source level) - the project may contain the compatibility (5, 6)
 
   === Iteration 32 ===
   --------------------------------------

@@ -3,6 +3,9 @@ import system'runtime;
 
 public const int INFINITE = 0FFFFFFFFh;
 
+public const int WAIT_TIMEOUT  = 00000102h;
+public const int WAIT_OBJECT_0 = 0;
+
 public const int THREAD_PRIORITY_HIGHEST = 2;
 public const int THREAD_PRIORITY_ABOVE_NORMAL = 1;
 public const int THREAD_PRIORITY_NORMAL = 0;
@@ -97,7 +100,14 @@ public sealed struct ThreadHandle
    {
       extern KERNEL32.WaitForSingleObject(_handle, timeOut)
    }     
-                                                                   
+   
+   bool checkIfAlive()
+   {
+      int retVal := extern KERNEL32.WaitForSingleObject(_handle, 0);
+
+      ^ retVal == WAIT_TIMEOUT;
+   }                                                                
+
    close()
    {
       extern KERNEL32.CloseHandle(_handle)

@@ -18,6 +18,7 @@ namespace elena_lang
    class Project : public XmlProjectBase
    {
       FileEncoding   _encoding;
+      SyntaxVersion  _syntaxVersion;
 
       PathString     _basePath;
       PathString     _projectPath;
@@ -59,6 +60,16 @@ namespace elena_lang
       PlatformType UITargetType();
       PlatformType ThreadModeType();
 
+      void setSyntaxVersion(SyntaxVersion version)
+      {
+         _syntaxVersion = version;
+      }
+
+      SyntaxVersion getSyntaxVersion()
+      {
+         return _syntaxVersion;
+      }
+
       ustr_t ProjectName()
       {
          return *_projectName;
@@ -95,6 +106,7 @@ namespace elena_lang
          : XmlProjectBase(platform), _basePath(path), availableProfileList(DEFAULT_STR)
       {
          _encoding = FileEncoding::UTF8;
+         _syntaxVersion = SyntaxVersion::L6;
 
          _platform = platform;
 

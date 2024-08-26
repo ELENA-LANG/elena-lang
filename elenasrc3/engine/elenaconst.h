@@ -239,6 +239,13 @@ namespace elena_lang
       WrongStructure
    };
 
+   // --- ELENA Syntax Version ---
+   enum class SyntaxVersion
+   {
+      L6 = 0,
+      L5 = 1
+   };
+
    // --- ELENA Platform type ---
    enum class PlatformType {
       None           = 0x00000, 

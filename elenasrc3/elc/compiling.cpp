@@ -317,7 +317,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
 
 // --- CompilingProcess ---
 
-CompilingProcess :: CompilingProcess(PathString& appPath, path_t exeExtension,
+CompilingProcess :: CompilingProcess(path_t appPath, path_t exeExtension,
    path_t modulePrologName, path_t prologName, path_t epilogName,
    PresenterBase* presenter, ErrorProcessor* errorProcessor,
    pos_t codeAlignment,
@@ -325,7 +325,8 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t exeExtension,
    JITCompilerBase* (*compilerFactory)(LibraryLoaderBase*, PlatformType)
 ) :
    _templateGenerator(this),
-   _forwards(nullptr)
+   _forwards(nullptr),
+   _appPath(appPath)
 {
    _exeExtension = exeExtension;
    _modulePrologName = modulePrologName;
@@ -338,45 +339,19 @@ CompilingProcess :: CompilingProcess(PathString& appPath, path_t exeExtension,
    _codeAlignment = codeAlignment;
    _defaultCoreSettings = defaultCoreSettings;
 
-   PathString syntaxPath(*appPath, SYNTAX_FILE);
-   FileReader syntax(*syntaxPath, FileRBMode, FileEncoding::Raw, false);
-   if (syntax.isOpen()) {
-      TerminalMap terminals(
-         SyntaxTree::toParseKey(SyntaxKey::eof),
-         SyntaxTree::toParseKey(SyntaxKey::identifier),
-         SyntaxTree::toParseKey(SyntaxKey::reference),
-         SyntaxTree::toParseKey(SyntaxKey::globalreference),
-         SyntaxTree::toParseKey(SyntaxKey::string),
-         SyntaxTree::toParseKey(SyntaxKey::character),
-         SyntaxTree::toParseKey(SyntaxKey::wide),
-         SyntaxTree::toParseKey(SyntaxKey::integer),
-         SyntaxTree::toParseKey(SyntaxKey::hexinteger),
-         SyntaxTree::toParseKey(SyntaxKey::longinteger),
-         SyntaxTree::toParseKey(SyntaxKey::real),
-         SyntaxTree::toParseKey(SyntaxKey::constant),
-         SyntaxTree::toParseKey(SyntaxKey::interpolate));
+   _compiler = new Compiler(
+      _presenter,
+      _errorProcessor,
+      &_templateGenerator,
+      CompilerLogic::getInstance());
 
-      _parser = new Parser(&syntax, terminals, _presenter);
-      _compiler = new Compiler(
-         _presenter,
-         _errorProcessor,
-         &_templateGenerator,
-         CompilerLogic::getInstance());
-   }
-   else {
-      _errorProcessor->raisePathWarning(wrnSyntaxFileNotFound, *syntaxPath);
-
-      _parser = nullptr;
-      _compiler = nullptr;
-   }
-
-   PathString bcRulesPath(*appPath, BC_RULES_FILE);
+   PathString bcRulesPath(appPath, BC_RULES_FILE);
    FileReader bcRuleReader(*bcRulesPath, FileRBMode, FileEncoding::Raw, false);
    if (bcRuleReader.isOpen()) {
       _bcRules.load(bcRuleReader, bcRuleReader.length());
    }
 
-   PathString btRulesPath(*appPath, BT_RULES_FILE);
+   PathString btRulesPath(appPath, BT_RULES_FILE);
    FileReader btRuleReader(*btRulesPath, FileRBMode, FileEncoding::Raw, false);
    if (btRuleReader.isOpen()) {
       _btRules.load(btRuleReader, btRuleReader.length());
@@ -605,6 +580,35 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
    return buildSyntaxTree(moduleScope, syntaxTree, false, nullptr);
 }
 
+void CompilingProcess :: configurateParser(SyntaxVersion version)
+{
+   PathString syntaxPath(_appPath, version == SyntaxVersion::L5 ? SYNTAX50_FILE : SYNTAX60_FILE);
+   FileReader syntax(*syntaxPath, FileRBMode, FileEncoding::Raw, false);
+   if (syntax.isOpen()) {
+      TerminalMap terminals(
+         SyntaxTree::toParseKey(SyntaxKey::eof),
+         SyntaxTree::toParseKey(SyntaxKey::identifier),
+         SyntaxTree::toParseKey(SyntaxKey::reference),
+         SyntaxTree::toParseKey(SyntaxKey::globalreference),
+         SyntaxTree::toParseKey(SyntaxKey::string),
+         SyntaxTree::toParseKey(SyntaxKey::character),
+         SyntaxTree::toParseKey(SyntaxKey::wide),
+         SyntaxTree::toParseKey(SyntaxKey::integer),
+         SyntaxTree::toParseKey(SyntaxKey::hexinteger),
+         SyntaxTree::toParseKey(SyntaxKey::longinteger),
+         SyntaxTree::toParseKey(SyntaxKey::real),
+         SyntaxTree::toParseKey(SyntaxKey::constant),
+         SyntaxTree::toParseKey(SyntaxKey::interpolate));
+
+      _parser = new Parser(&syntax, terminals, _presenter);
+   }
+   else {
+      _errorProcessor->raisePathWarning(wrnSyntaxFileNotFound, *syntaxPath);
+
+      _parser = nullptr;
+   }
+}
+
 void CompilingProcess :: configurate(Project& project)
 {
    project.prepare();
@@ -783,6 +787,7 @@ int CompilingProcess :: build(Project& project,
 {
    try
    {
+      configurateParser(project.getSyntaxVersion());
       configurate(project);
 
       PlatformType targetType = project.TargetType();

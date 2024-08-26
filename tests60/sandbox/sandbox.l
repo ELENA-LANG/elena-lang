@@ -21,8 +21,7 @@ import system'threading;
 
 myFunction(arg)
 {
-   //console.writeLine($"{arg} from the thread");
-   console.printLine(arg, " from the thread");
+   console.writeLine($"{arg} from the thread");
 
    console.readChar()
 }
@@ -35,7 +34,7 @@ public program()
 
    console.printLine("Thread priority ", priority);
 
-   myThread.start("Good bay");
+   myThread.start("Good bye");
 
    myThread.join(2000);
 }

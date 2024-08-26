@@ -59,6 +59,9 @@ public sealed class Thread
       }
    }
 
+   bool IsAlive
+      = _handle.checkIfAlive();
+
    start()
    {
       if (handle.isNil())
