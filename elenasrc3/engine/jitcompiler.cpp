@@ -52,7 +52,7 @@ CodeGenerator _codeGenerators[256] =
    loadFrameIndexOp, loadStackIndexOp, loadFrameDispOp, loadStackIndexOp, loadFrameDispOp, loadROp, loadFieldIndexOp, loadStackIndexOp,
 
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadVMTIndexOp, loadMOp, compileJlt,
-   compileJge, compileJgr, compileJle, loadNop, loadNop, loadNop, loadNop, loadNop,
+   compileJge, compileJgr, compileJle, loadTLSOp, loadTLSOp, loadNop, loadNop, loadNop,
 
    loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadStackIndexOp, loadNop,
    loadFrameIndexOp, loadStackIndexOp, compileClose, loadStackIndexOp, loadStackIndexOp, loadFrameIndexOp, loadROp, loadSysOp,
@@ -90,7 +90,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 176;
+constexpr size_t bcCommandNumber = 178;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -128,7 +128,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::Shl, ByteCode::Shr, ByteCode::XLabelDPR, ByteCode::TryLock, ByteCode::FreeLock,
    ByteCode::XQuit, ByteCode::ExtCloseN, ByteCode::XCmpSI, ByteCode::LoadSI, ByteCode::XFSave,
    ByteCode::XSaveN, ByteCode::XSaveDispN, ByteCode::XStoreFIR, ByteCode::LNeg, ByteCode::Parent,
-   ByteCode::LLoadSI
+   ByteCode::LLoadSI, ByteCode::PeekTLS, ByteCode::StoreTLS
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
@@ -607,6 +607,39 @@ void elena_lang :: loadNOp(JITCompilerScope* scope)
             break;
          case NARG16LO_1:
             scope->compiler->writeImm16(writer, scope->command.arg1 & 0xFFFF, 0);
+            break;
+         default:
+            writeCoreReference(scope, entries->reference, entries->offset, code);
+            break;
+      }
+
+      entries++;
+      count--;
+   }
+   writer->seekEOF();
+}
+
+void elena_lang :: loadTLSOp(JITCompilerScope* scope)
+{
+   MemoryWriter* writer = scope->codeWriter;
+
+   void* code = scope->compiler->_inlines[0][scope->code()];
+
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   // resolve section references
+   pos_t count = *(pos_t*)((char*)code + length);
+   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   while (count > 0) {
+      // locate relocation position
+      writer->seek(position + entries->offset);
+      switch (entries->reference) {
+         case ARG32_1:
+            scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskOffset32);
             break;
          default:
             writeCoreReference(scope, entries->reference, entries->offset, code);
@@ -3034,6 +3067,14 @@ addr_t JITCompiler :: allocateTLSIndex(ReferenceHelperBase* helper, MemoryWriter
    return position;
 }
 
+pos_t JITCompiler :: getTLSSize(MemoryBase* tlsSection)
+{
+   if (tlsSection->length() > sizeof(ThreadContent)) {
+      return tlsSection->length() - sizeof(ThreadContent);
+   }
+   return 0;
+}
+
 void JITCompiler :: allocateThreadContent(MemoryWriter* tlsWriter)
 {
    ThreadContent content = {};
@@ -3506,7 +3547,7 @@ void JITCompiler32 :: writeVariable(MemoryWriter& writer)
    writer.writeDWord(0);
 }
 
-void JITCompiler32 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode)
+void JITCompiler32 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, pos_t tlsSize, bool virtualMode)
 {
    void* env = _preloaded.get(SYSTEM_ENV);
    if (virtualMode) {
@@ -3514,12 +3555,15 @@ void JITCompiler32 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, 
       int64_t tmp = (int64_t)env;
 
       MemoryBase::writeDWord(rdata, (static_cast<ref_t>(tmp) & ~mskAnyRef), staticCounter);
+      MemoryBase::writeDWord(rdata, (static_cast<ref_t>(tmp) & ~mskAnyRef), tlsSize);
 #else
       MemoryBase::writeDWord(rdata, ((ref_t)env & ~mskAnyRef), staticCounter);
+      MemoryBase::writeDWord(rdata, ((ref_t)env & ~mskAnyRef) + 4, tlsSize);
 #endif
    }
    else {
-      *(int*)env = staticCounter;
+      ((int*)env)[0] = staticCounter;
+      ((int*)env)[1] = tlsSize;
    }
 }
 
@@ -3978,14 +4022,16 @@ void JITCompiler64 :: writeVariable(MemoryWriter& writer)
    writer.writeQWord(0);
 }
 
-void JITCompiler64 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode)
+void JITCompiler64 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, pos_t tlsSize, bool virtualMode)
 {
    void* env = _preloaded.get(SYSTEM_ENV);
    if (virtualMode) {
       MemoryBase::writeQWord(rdata, (int64_t)env & ~mskAnyRef, staticCounter);
+      MemoryBase::writeQWord(rdata, (int64_t)env & ~mskAnyRef + 8, tlsSize);
    }
    else {
-      *(int64_t*)env = staticCounter;
+      ((int64_t*)env)[0] = staticCounter;
+      ((int64_t*)env)[1] = tlsSize;
    }
 }
 

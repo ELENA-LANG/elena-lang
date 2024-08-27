@@ -159,6 +159,13 @@ enum class Visibility
    Public = 4,
 };
 
+enum class SymbolKind
+{
+   Normal = 0,
+   Static = 1,
+   ThreadVar = 2
+};
+
 struct BranchingInfo
 {
    ref_t typeRef;

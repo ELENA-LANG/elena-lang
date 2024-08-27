@@ -1694,6 +1694,21 @@ void staticEnd(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.setLabel();
 }
 
+void threadVarBegin(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.newLabel();     // declare symbol-end label
+   tape.write(ByteCode::PeekTLS, node.arg.reference | mskTLSVariable);
+   tape.write(ByteCode::CmpR, 0);
+   tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
+}
+
+void threadVarEnd(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::StoreTLS, node.arg.reference | mskTLSVariable);
+
+   tape.setLabel();
+}
+
 void classOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    switch (node.arg.value) {
@@ -2120,7 +2135,8 @@ ByteCodeWriter::Saver commands[] =
    copyingToAccExact, savingInt, addingInt, loadingAccToIndex, indexOp, savingIndexToAcc, continueOp, semiDirectCallOp,
    intRealOp, realIntOp, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex, intCopyingToAccField, intOpWithConst,
 
-   uint8CondOp, uint16CondOp, intLongOp, distrConstant, unboxingAndCallMessage, threadVarOp, threadVarAssign
+   uint8CondOp, uint16CondOp, intLongOp, distrConstant, unboxingAndCallMessage, threadVarOp, threadVarAssigning, threadVarBegin,
+   threadVarEnd
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

@@ -489,6 +489,7 @@ namespace elena_lang
    constexpr auto V_WEAK                  = 0x80001029u;
    constexpr auto V_INTERFACE_DISPATCHER  = 0x8000102Au;
    constexpr auto V_PACKED_STRUCT         = 0x8000102Cu;
+   constexpr auto V_THREADVAR             = 0x8000102Du;
 
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;

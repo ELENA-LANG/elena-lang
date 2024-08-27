@@ -784,7 +784,7 @@ bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& vis
    return true;
 }
 
-bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant, bool& isStatic)
+bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant, SymbolKind& symbolKind)
 {
    switch (attribute) {
       case V_PUBLIC:
@@ -799,7 +799,10 @@ bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visib
          constant = true;
          break;
       case V_STATIC:
-         isStatic = true;
+         symbolKind = SymbolKind::Static;
+         break;
+      case V_THREADVAR:
+         symbolKind = SymbolKind::ThreadVar;
          break;
       default:
          return false;

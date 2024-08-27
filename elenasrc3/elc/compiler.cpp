@@ -1152,7 +1152,7 @@ Compiler::SourceScope :: SourceScope(Scope* parent, ref_t reference, Visibility 
 Compiler::SymbolScope :: SymbolScope(NamespaceScope* ns, ref_t reference, Visibility visibility)
    : SourceScope(ns, reference, visibility), info({})
 {
-   isStatic = false;
+   type = SymbolKind::Normal;
    reserved1 = reserved2 = 0;
    reservedArgs = ns->moduleScope->minimalArgList;
 }
@@ -4652,7 +4652,7 @@ void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bo
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Attribute:
-            if (!_logic->validateSymbolAttribute(current.arg.value, scope.visibility, constant, scope.isStatic)) {
+            if (!_logic->validateSymbolAttribute(current.arg.value, scope.visibility, constant, scope.type)) {
                current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
                scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
             }
@@ -7492,8 +7492,16 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
    writer.appendNode(BuildKey::Path, *ns->sourcePath);
 
    writer.newNode(BuildKey::Tape);
-   if (scope.isStatic)
-      writer.appendNode(BuildKey::OpenStatic, node.arg.reference);
+   switch (scope.type) {
+      case SymbolKind::Static:
+         writer.appendNode(BuildKey::OpenStatic, node.arg.reference);
+         break;
+      case SymbolKind::ThreadVar:
+         writer.appendNode(BuildKey::OpenThreadVar, node.arg.reference);
+         break;
+      default:
+         break;
+   }
 
    writer.appendNode(BuildKey::OpenFrame);
 
@@ -7508,8 +7516,16 @@ void Compiler :: compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Synt
 
    writer.appendNode(BuildKey::CloseFrame);
 
-   if (scope.isStatic)
-      writer.appendNode(BuildKey::CloseStatic, node.arg.reference);
+   switch (scope.type) {
+      case SymbolKind::Static:
+         writer.appendNode(BuildKey::CloseStatic, node.arg.reference);
+         break;
+      case SymbolKind::ThreadVar:
+         writer.appendNode(BuildKey::CloseThreadVar, node.arg.reference);
+         break;
+      default:
+         break;
+   }
 
    writer.appendNode(BuildKey::Exit);
 
@@ -9812,7 +9828,13 @@ void Compiler :: compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, S
          case SyntaxKey::Symbol:
          {
             SymbolScope symbolScope(&ns, current.arg.reference, ns.defaultVisibility);
-            symbolScope.isStatic = SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_STATIC);
+            if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_STATIC)) {
+               symbolScope.type = SymbolKind::Static;
+            }
+            else if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_THREADVAR)) {
+               symbolScope.type = SymbolKind::ThreadVar;
+            }
+            
             symbolScope.visibility = ns.moduleScope->retrieveVisibility(symbolScope.reference);
 
             compileSymbol(writer, symbolScope, current);

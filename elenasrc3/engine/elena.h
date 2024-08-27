@@ -558,6 +558,7 @@ namespace elena_lang
       virtual void compileOutputTypeList(ReferenceHelperBase* helper, MemoryWriter& writer, CachedOutputTypeList& outputTypeList) = 0;
 
       virtual pos_t getStaticCounter(MemoryBase* statSection, bool emptyNotAllowed = false) = 0;
+      virtual pos_t getTLSSize(MemoryBase* tlsSection) = 0;
 
       virtual pos_t getVMTLength(void* targetVMT) = 0;
       virtual addr_t findMethodAddress(void* entries, mssg_t message) = 0;
@@ -608,7 +609,7 @@ namespace elena_lang
 
       virtual void* getSystemEnv() = 0;
 
-      virtual void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) = 0;
+      virtual void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, pos_t tlsSize, bool virtualMode) = 0;
       virtual void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) = 0;
 
       virtual void allocateVariable(MemoryWriter& writer) = 0;

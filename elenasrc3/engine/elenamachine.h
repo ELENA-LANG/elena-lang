@@ -114,7 +114,7 @@ namespace elena_lang
       static uintptr_t ExpandHeap(void* allocPtr, size_t newSize);
       static uintptr_t ExpandPerm(void* allocPtr, size_t newSize);
 
-      static void* GCRoutine(GCTable* table, GCRoot* roots, size_t size, bool fullMode);
+      static void* GCRoutine(GCTable* table, GCRoot* roots, int size, bool fullMode);
       static void* GCRoutinePerm(GCTable* table, size_t size);
 
       static size_t LoadCallStack(uintptr_t framePtr, uintptr_t* list, size_t length);

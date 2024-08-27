@@ -427,6 +427,7 @@ namespace elena_lang
    constexpr ref_t mskRef32Lo12_8         = 0x50000000u;          // <32 bit address> & 0xFFF  ; for ARM64 : it shoulb be b21:10
    constexpr ref_t mskXDisp32Hi           = 0x30000000u;
    constexpr ref_t mskXDisp32Lo           = 0x70000000u;
+   constexpr ref_t mskOffset32            = 0xF0000000u;
 
    // --- VAddress reference types ----
    constexpr ref_t mskCodeRef32           = 0x81000000u;

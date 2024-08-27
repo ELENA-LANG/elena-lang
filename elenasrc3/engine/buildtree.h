@@ -162,8 +162,10 @@ namespace elena_lang
       UnboxAndCallMessage  = 0x0084,
       ThreadVar            = 0x0085,
       ThreadVarAssigning   = 0x0086,
+      OpenThreadVar        = 0x0087,
+      CloseThreadVar       = 0x0088,
 
-      MaxOperationalKey    = 0x0086,
+      MaxOperationalKey    = 0x0088,
 
       Import               = 0x0090,
       DictionaryOp         = 0x0091,

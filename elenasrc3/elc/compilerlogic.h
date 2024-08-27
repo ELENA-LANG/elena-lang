@@ -98,7 +98,7 @@ namespace elena_lang
       ref_t definePrimitiveArray(ModuleScopeBase& scope, ref_t elementRef, bool structOne);
 
       bool validateTemplateAttribute(ref_t attribute, Visibility& visibility, TemplateType& type);
-      bool validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant, bool& isStatic);
+      bool validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant, SymbolKind& symbolKind);
       bool validateClassAttribute(ref_t attribute, ref_t& flags, Visibility& visibility);
       bool validateFieldAttribute(ref_t attribute, FieldAttributes& attrs);
       bool validateMethodAttribute(ref_t attribute, ref_t& hint, bool& explicitMode);

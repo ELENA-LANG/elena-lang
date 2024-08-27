@@ -66,6 +66,7 @@ define struct_mask_inv   3FFFFFFFh
 structure %SYSTEM_ENV
 
   dq 0
+  dq 0
   dq data : %CORE_GC_TABLE
   dq 0
   dq data : %CORE_THREAD_TABLE

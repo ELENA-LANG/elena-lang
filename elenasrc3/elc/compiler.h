@@ -586,7 +586,7 @@ namespace elena_lang
       struct SymbolScope : SourceScope
       {
          SymbolInfo   info;
-         bool         isStatic;
+         SymbolKind   type;
 
          pos_t        reserved1;             // defines managed frame size
          pos_t        reserved2;             // defines unmanaged frame size (excluded from GC frame chain)

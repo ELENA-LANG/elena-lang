@@ -26,13 +26,15 @@ In development:
   * x86-64 : mta
   * #679
   * thread : CurrentThread
-  * raise an error if threadvar is used for STA
-  * collect thread static variables in GC for every thread
   * thread safe static field
-  * thread safe static symbol : new type of static variable - thread safe static variable; allocate place inside TLS
-  * new type of reference - thread safe static variable
+  * raise an error if threadvar is used for STA
+  * x86-64 : fix core -> make sure gc_alloc and gc_forced are the same
+  * x86 : fix corex -> make sure gc_alloc and gc_collect are the same
+  * x86 : fix core -> make sure gc_alloc and gc_collect are the same
+  * collect thread static variables in GC for every thread
+  * linux x86-64 : GC_COLLECT
   --------------------------------------
-  * new opcode : peektls tstatic, storetls - to read / save thread safe static variable
+  * x86-64 : call GC_COLLECT from GC_ALLOC
 
   === Iteration 32 ===
   --------------------------------------
