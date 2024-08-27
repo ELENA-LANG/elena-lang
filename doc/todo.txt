@@ -23,11 +23,16 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * x86-64 : mta
   * #679
   * thread : CurrentThread
+  * raise an error if threadvar is used for STA
+  * collect thread static variables in GC for every thread
   * thread safe static field
+  * thread safe static symbol : new type of static variable - thread safe static variable; allocate place inside TLS
+  * new type of reference - thread safe static variable
   --------------------------------------
-  * x86-64 : mta
+  * new opcode : peektls tstatic, storetls - to read / save thread safe static variable
 
   === Iteration 32 ===
   --------------------------------------

@@ -495,6 +495,19 @@ addr_t JITLinker :: calculateVAddress(MemoryWriter& writer, ref_t targetMask)
    return _virtualMode ? (writer.position() | targetMask) : (addr_t)writer.address();
 }
 
+
+addr_t JITLinker :: calculateVOffset(MemoryWriter& writer, ref_t targetMask)
+{
+   // align the section
+   _compiler->alignCode(writer, _alignment, (targetMask & mskImageType) == mskCodeRef);
+
+#ifdef _DEBUG
+   if (writer.position() >= ~mskAnyRef)
+      throw InternalError(errReferenceOverflow);
+#endif
+
+   return _virtualMode ? (writer.position() | targetMask) : writer.position();
+}
 void JITLinker :: fixOffset(pos_t position, ref_t offsetMask, int offset, MemoryBase* image)
 {
    MemoryWriter writer(image);
@@ -1489,6 +1502,20 @@ addr_t JITLinker :: resolveStaticVariable(ReferenceInfo referenceInfo, ref_t sec
    return vaddress;
 }
 
+addr_t JITLinker :: resolveThreadVariable(ReferenceInfo referenceInfo, ref_t sectionMask)
+{
+   // get target image & resolve virtual address
+   MemoryBase* image = _imageProvider->getTargetSection(mskTLSRef);
+   MemoryWriter writer(image);
+
+   addr_t offset = calculateVAddress(writer, mskTLSRef);
+   _compiler->writeVariable(writer);
+
+   _mapper->mapReference(referenceInfo, offset, sectionMask);
+
+   return offset;
+}
+
 addr_t JITLinker :: resolveDistributeCategory(ReferenceInfo referenceInfo, ref_t sectionMask)
 {
    ReferenceProperName name(referenceInfo.referenceName);
@@ -1713,6 +1740,9 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
             break;
          case mskStaticVariable:
             address = resolveStaticVariable(referenceInfo, sectionMask);
+            break;
+         case mskTLSVariable:
+            address = resolveThreadVariable(referenceInfo, sectionMask);
             break;
          case mskTypeListRef:
             address = resolveMetaSection(referenceInfo, sectionMask, 

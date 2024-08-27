@@ -41,6 +41,8 @@ define tt_sync_event         000Ch
 define tt_flags              0010h
 define tt_stack_root         0014h
 
+define tt_size               0018h
+
 define es_prev_struct        0000h
 define es_catch_addr         0004h
 define es_catch_level        0008h
@@ -838,6 +840,30 @@ inline %02Ch
 
   // ; free lock
   lock xadd byte ptr [ebx - elSyncOffset], cl
+
+end
+
+// ; peektls
+inline %0BBh
+
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  ecx, fs: [2Ch]
+  mov  eax, [ecx + eax * 4]
+  lea  edi, [eax + tt_size]
+  lea  edi, [edi + __arg32_1]
+  mov  ebx, [edi]
+
+end
+
+// ; storetls
+inline %0BCh
+
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  ecx, fs: [2Ch]
+  mov  eax, [ecx + eax * 4]
+  lea  edi, [eax + tt_size]
+  lea  edi, [edi + __arg32_1]
+  mov  [edi], ebx
 
 end
 

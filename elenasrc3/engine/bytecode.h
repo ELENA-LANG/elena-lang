@@ -153,6 +153,8 @@ namespace elena_lang
       Jge            = 0xB8,
       Jgr            = 0xB9,
       Jle            = 0xBA,
+      PeekTLS        = 0xBB,
+      StoreTLS       = 0xBC,
 
       CmpR           = 0xC0,
       FCmpN          = 0xC1,

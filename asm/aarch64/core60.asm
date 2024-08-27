@@ -2149,6 +2149,16 @@ labEnd:
                                
 end
 
+// ; peektls
+inline %0BBh
+
+end
+
+// ; storetls
+inline %0BCh
+
+end
+
 // ; cmpr
 inline %0C0h
 
