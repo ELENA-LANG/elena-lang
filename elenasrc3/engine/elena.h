@@ -423,6 +423,7 @@ namespace elena_lang
       virtual void info(int code, ustr_t arg, ustr_t arg2) = 0;
 
       virtual void raiseInternalError(int code) = 0;
+      virtual void raiseError(int code) = 0;
       virtual void raiseError(int code, ustr_t arg) = 0;
       virtual void raisePathError(int code, path_t pathArg) = 0;
       virtual void raisePathWarning(int code, path_t pathArg) = 0;

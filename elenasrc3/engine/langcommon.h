@@ -352,6 +352,7 @@ namespace elena_lang
    constexpr auto errInvalidFile             = 205;
    constexpr auto errInvalidParserTarget     = 206;
    constexpr auto errInvalidParserTargetType = 207;
+   constexpr auto errTLSIsNotAllowed         = 208;
    constexpr auto errInvalidModuleVersion    = 210;
    constexpr auto errEmptyTarget             = 212;
 

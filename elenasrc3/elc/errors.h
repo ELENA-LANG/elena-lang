@@ -74,6 +74,7 @@ namespace elena_lang
    constexpr auto errMsgInvalidFile             = "\nlinker: error 205: Invalid file '%s'\n";
    constexpr auto errMsgInvalidParserTarget     = "\nlinker: error 206: Invalid parser target '%s'\n";
    constexpr auto errMsgInvalidParserTargetType = "\nlinker: error 207: Invalid parser target type '%s'\n";
+   constexpr auto errMsgTLSIsNotAllowed         = "\nlinker: error 208: thread variable can be used only for MTA\n";
    constexpr auto errMsgInvalidModuleVersion    = "\nlinker: error 210: Obsolete module file '%s'\n";
    constexpr auto errMsgEmptyTarget             = "\nlinker: error 212: Target is not specified\n";
 

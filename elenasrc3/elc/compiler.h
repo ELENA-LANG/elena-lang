@@ -90,6 +90,7 @@ namespace elena_lang
       MethodName,
       FieldName,
       StaticField,
+      StaticThreadField,
       StaticConstField,
       ClassStaticConstField,
       Wrapper,

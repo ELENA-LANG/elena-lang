@@ -271,6 +271,7 @@ inline bool isSingleObject(ObjectKind kind)
       case ObjectKind::Constant:
       case ObjectKind::ConstArray:
       case ObjectKind::StaticField:
+      case ObjectKind::StaticThreadField:
       case ObjectKind::StaticConstField:
       case ObjectKind::ClassStaticConstField:
       case ObjectKind::LocalField:
@@ -1227,6 +1228,9 @@ inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, Expressi
                   ? TargetMode::BoxingPtr : TargetMode::None
             };
 
+         }
+         else if (staticFieldInfo.offset == MID_OFFSET) {
+            return { ObjectKind::StaticThreadField, staticFieldInfo.typeInfo, staticFieldInfo.valueRef };
          }
          else return { ObjectKind::StaticField, staticFieldInfo.typeInfo, staticFieldInfo.valueRef };
       }
@@ -3191,8 +3195,12 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SyntaxNode node, Fi
          node.setArgumentReference(staticRef);
       }
 
+      if (attrs.isThreadStatic) {
+         // NOTE : MID_OFFSET indicates the sealed thread static field
+         scope.info.statics.add(name, { MID_OFFSET, typeInfo, staticRef });
+      }
       // NOTE : MAX_OFFSET indicates the sealed static field
-      scope.info.statics.add(name, { MAX_OFFSET, typeInfo, staticRef });
+      else scope.info.statics.add(name, { MAX_OFFSET, typeInfo, staticRef });
    }
 }
 
@@ -3373,7 +3381,7 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxNode node, bool si
          FieldAttributes attrs = {};
          declareFieldAttributes(scope, current, attrs);
 
-         if ((attrs.isConstant && !isClassClassMode) || attrs.isStatic) {
+         if ((attrs.isConstant && !isClassClassMode) || attrs.isStatic || attrs.isThreadStatic) {
             generateClassStaticField(scope, current, attrs);
          }
          else if (!isClassClassMode) {
@@ -13960,6 +13968,9 @@ bool Compiler::Expression :: writeObjectInfo(ObjectInfo info, bool allowMeta)
       case ObjectKind::StaticField:
          writer->appendNode(BuildKey::StaticVar, info.reference);
          break;
+      case ObjectKind::StaticThreadField:
+         writer->appendNode(BuildKey::ThreadVar, info.reference);
+         break;
       case ObjectKind::ByRefParam:
       case ObjectKind::OutParam:
          writeObjectInfo({ ObjectKind::Param, info.typeInfo, info.reference });
@@ -13994,6 +14005,7 @@ ObjectInfo Compiler::Expression :: boxArgumentLocally(ObjectInfo info,
       case ObjectKind::Outer:
       case ObjectKind::OuterField:
       case ObjectKind::StaticField:
+      case ObjectKind::StaticThreadField:
          if (forced) {
             return boxLocally(info, stackSafe);
          }
@@ -14203,6 +14215,11 @@ bool Compiler::Expression :: compileAssigningOp(ObjectInfo target, ObjectInfo ex
       case ObjectKind::StaticField:
          scope.markAsAssigned(target);
          operationType = BuildKey::StaticAssigning;
+         operand = target.reference;
+         break;
+      case ObjectKind::StaticThreadField:
+         scope.markAsAssigned(target);
+         operationType = BuildKey::ThreadVarAssigning;
          operand = target.reference;
          break;
       case ObjectKind::FieldAddress:
@@ -15149,6 +15166,10 @@ ObjectInfo Compiler::Expression :: boxLocally(ObjectInfo info, bool stackSafe)
          break;
       case ObjectKind::StaticField:
          writer->appendNode(BuildKey::StaticVar, info.reference);
+         writer->newNode(BuildKey::CopyingAccField, 0);
+         break;
+      case ObjectKind::StaticThreadField:
+         writer->appendNode(BuildKey::ThreadVar, info.reference);
          writer->newNode(BuildKey::CopyingAccField, 0);
          break;
       default:

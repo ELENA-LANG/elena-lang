@@ -23,18 +23,12 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
-  * x86-64 : mta
+  * x86-64 : mta - test
+  * x86-64 : mta - corex
+  * x86-64 : mta - ntlinker64
   * #679
-  * thread : CurrentThread
-  * thread safe static field
-  * raise an error if threadvar is used for STA
-  * x86-64 : fix core -> make sure gc_alloc and gc_forced are the same
-  * x86 : fix corex -> make sure gc_alloc and gc_collect are the same
-  * x86 : fix core -> make sure gc_alloc and gc_collect are the same
-  * collect thread static variables in GC for every thread
-  * linux x86-64 : GC_COLLECT
   --------------------------------------
-  * x86-64 : call GC_COLLECT from GC_ALLOC
+  * thread : CurrentThread
 
   === Iteration 32 ===
   --------------------------------------

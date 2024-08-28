@@ -717,6 +717,13 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS
    TargetImage code(project.SystemTarget(), &project, &_libraryProvider, _jitCompilerFactory,
       imageInfo, addressMapper);
 
+   // HOTFIX : TLS variable can be used only for MTA
+   if (!withTLS && code.getTLSSection()->length() > 0) {
+      _errorProcessor->raiseError(errTLSIsNotAllowed);
+
+      return;
+   }
+
    auto result = linker.run(project, code, uiType, _exeExtension);
 
    _presenter->print(ELC_SUCCESSFUL_LINKING);
