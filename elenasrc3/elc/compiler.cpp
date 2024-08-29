@@ -12508,7 +12508,7 @@ bool Compiler :: checkifSingleObject(Scope& scope, SyntaxNode loperand)
       loperand = loperand.firstChild();
 
    if (loperand == SyntaxKey::Object) {
-      ObjectInfo info = mapObject(scope, loperand, EAttr::Lookahead);
+      ObjectInfo info = mapObject(scope, loperand, EAttr::None);
 
       return isSingleObject(info.kind);
    }

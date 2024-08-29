@@ -2110,3 +2110,17 @@ public iteratorMethodTest() : testCase()
    Assert.ifFalse(e.next());
    console.write(".");
 }
+
+public isNilOperatorTest() : testCase()
+{
+   var a := nil; 
+   var b := 2; 
+
+   var r := a ?? b;
+   Assert.ifTrue(r == 2);
+   console.write(".");
+
+   Assert.ifNotFailed({ var a := new A(); var b := nil; var r := a ?? b.test() });
+   Assert.ifFailed({ var a := nil; var b := nil; var r := a ?? b.test() });
+   console.write(".");
+}

@@ -26,7 +26,19 @@ public singleton Assert
          };
             
       Assert.ifTrue(failed);
-    }
+   }
+
+   ifNotFailed(Func f)
+   {
+      var failed := true;
+      f() \\ 
+         on::(e)
+         {
+            failed := false;
+         };
+            
+      Assert.ifTrue(failed);
+   }
 
    ifTrue(b)
    {

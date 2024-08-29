@@ -1,20 +1,24 @@
 import extensions;
 
-A;
+//A;
 
-singleton Helper
-{
-   getInstance()
-   {
-      console.writeLine("calling getInstance");
-
-      ^ new A();
-   }
-}
+//singleton Helper
+//{
+//   getInstance()
+//   {
+//      console.writeLine("calling getInstance");
+//
+//      ^ new A();
+//   }
+//}
 
 public program()
 {
-   var a := /*new A()*/nil;
+   var a := nil; 
+   var b := 2; 
 
-   a := a ?? Helper.getInstance()
+   var r := a ?? b;
+//   Assert.ifTrue(r == 2);
+//   console.write(".");
+
 }
