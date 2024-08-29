@@ -23,8 +23,10 @@ sealed class StartHelper
 
 public sealed class Thread
 {
+//   __threadvar Thread _currentThread;
+
    ThreadHandle   _handle;
-   object         _startArg; 
+   object         _startArg;
 
    constructor assign(Func f)
    {
@@ -47,6 +49,14 @@ public sealed class Thread
       _startArg := new StartHelper(f);
       _handle := new ThreadHandle(_startArg, stackSize);
    }
+
+/*   static Thread
+   {
+      get()
+      {
+         
+      }
+   }*/
 
    ThreadPriority Priority
    {

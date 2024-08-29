@@ -2993,7 +2993,7 @@ void ByteCodeWriter :: saveNativeBranching(CommandTape& tape, BuildNode node, Ta
    }
 }
 
-void ByteCodeWriter::saveShortCircuitOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
+void ByteCodeWriter :: saveShortCircuitOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
 {
    int endLabel = tape.newLabel();
 
@@ -3003,8 +3003,12 @@ void ByteCodeWriter::saveShortCircuitOp(CommandTape& tape, BuildNode node, TapeS
    BuildNode lnode = node.findChild(BuildKey::Tape);
    BuildNode rnode = lnode.nextNode();
 
-   saveTape(tape, lnode, tapeScope, paths, tapeOptMode, false);
+   if (rnode != BuildKey::None) {
+      saveTape(tape, lnode, tapeScope, paths, tapeOptMode, false);
+   }
+   else rnode = lnode;
 
+   ByteCode jmpCode = ByteCode::Jeq;
    switch (node.arg.reference) {
       case AND_OPERATOR_ID:
          tape.write(ByteCode::CmpR, falseRef | mskVMTRef);
@@ -3012,10 +3016,14 @@ void ByteCodeWriter::saveShortCircuitOp(CommandTape& tape, BuildNode node, TapeS
       case OR_OPERATOR_ID:
          tape.write(ByteCode::CmpR, trueRef | mskVMTRef);
          break;
+      case ISNIL_OPERATOR_ID:
+         tape.write(ByteCode::CmpR, 0);
+         jmpCode = ByteCode::Jne;
+         break;
    }
 
 //   tape.write(ByteCode::BreakLabel); // !! temporally, to prevent if-optimization
-   tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
+   tape.write(jmpCode, PseudoArg::CurrentLabel);
 
    saveTape(tape, rnode, tapeScope, paths, tapeOptMode, false);
 

@@ -1454,6 +1454,8 @@ namespace elena_lang
          TypeAttributes& attributes, bool declarationMode, bool objectMode);
       void declareIncludeAttributes(Scope& scope, SyntaxNode node, bool& textBlock);
 
+      bool checkifSingleObject(Scope& scope, SyntaxNode node);
+
       static int defineFieldSize(Scope& scope, ObjectInfo info);
 
       ObjectInfo defineArrayType(Scope& scope, ObjectInfo info, bool declarationMode);

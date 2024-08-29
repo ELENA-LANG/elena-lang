@@ -1,35 +1,20 @@
 import extensions;
 
-class A
+A;
+
+singleton Helper
 {
-   constructor()
+   getInstance()
    {
-      lock(console) {
-         console.writeLine("Creating A");
-      }
+      console.writeLine("calling getInstance");
+
+      ^ new A();
    }
 }
-
-singleton B
-{
-   __threadvar A singleton;
-
-   getA()
-   {
-      if (singleton == nil)
-         singleton := new A();
-
-      ^ singleton
-   }
-}
-
 
 public program()
 {
-   var a := B.getA();
-   var b := B.getA();
+   var a := /*new A()*/nil;
 
-   extensions'threading'threadControl.start({ var b := B.getA(); });
-
-   console.readChar()
+   a := a ?? Helper.getInstance()
 }

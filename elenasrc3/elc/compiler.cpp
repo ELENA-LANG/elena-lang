@@ -12502,6 +12502,20 @@ ObjectInfo Compiler::Expression :: compileAltOperation(SyntaxNode node)
    return { ObjectKind::Object };
 }
 
+bool Compiler :: checkifSingleObject(Scope& scope, SyntaxNode loperand)
+{
+   if (loperand == SyntaxKey::Expression)
+      loperand = loperand.firstChild();
+
+   if (loperand == SyntaxKey::Object) {
+      ObjectInfo info = mapObject(scope, loperand, EAttr::Lookahead);
+
+      return isSingleObject(info.kind);
+   }
+
+   return false;
+}
+
 ObjectInfo Compiler::Expression :: compileIsNilOperation(SyntaxNode node)
 {
    ObjectInfo ehLocal = declareTempStructure({ (int)scope.moduleScope->ehTableEntrySize, false });
@@ -12548,13 +12562,31 @@ ObjectInfo Compiler::Expression :: compileIsNilOperation(SyntaxNode node)
       loperand = saveToTempLocal({ ObjectKind::Object });
    }
 
-   SyntaxNode altNode = current.nextNode(SyntaxKey::DeclarationMask);
-   ObjectInfo roperand = compile(altNode, 0, EAttr::Parameter, nullptr);
+   ObjectInfo roperand = {};
 
-   writeObjectInfo(roperand, node);
-   writer->appendNode(BuildKey::SavingInStack);
-   writeObjectInfo(loperand, node);
-   writer->appendNode(BuildKey::NilOp, ISNIL_OPERATOR_ID);
+   SyntaxNode altNode = current.nextNode(SyntaxKey::DeclarationMask);
+   // if non-branching operation is possible
+   if (compiler->checkifSingleObject(scope, altNode)) {
+      // COALESCE operation is used
+      roperand = compile(altNode, 0, EAttr::Parameter, nullptr);
+
+      writeObjectInfo(roperand, node);
+      writer->appendNode(BuildKey::SavingInStack);
+      writeObjectInfo(loperand, node);
+      writer->appendNode(BuildKey::NilOp, ISNIL_OPERATOR_ID);
+   }
+   else {
+      writer->newNode(BuildKey::ShortCircuitOp, ISNIL_OPERATOR_ID);
+
+      writer->newNode(BuildKey::Tape);
+      writeObjectInfo(loperand, node);
+      writer->closeNode();
+      writer->newNode(BuildKey::Tape);
+      roperand = compile(altNode, 0, EAttr::Parameter, nullptr);
+      writer->closeNode();
+
+      writer->closeNode();
+   }
 
    // make the expression strong-typed if the both arguments are of the same type
    TypeInfo typeInfo = {};

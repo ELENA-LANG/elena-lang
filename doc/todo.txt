@@ -27,8 +27,10 @@ In development:
   * x86-64 : mta - corex
   * x86-64 : mta - ntlinker64
   * #679
-  --------------------------------------
   * thread : CurrentThread
+  * functional test ?? with method call (a ?? expr)
+  --------------------------------------
+  * implement a ?? Helper.getInstance()
 
   === Iteration 32 ===
   --------------------------------------
