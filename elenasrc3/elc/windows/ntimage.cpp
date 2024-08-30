@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Executive Linker base class body
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "clicommon.h"
@@ -291,7 +291,23 @@ void Win32NtImageFormatter::fixImportSection(MemoryBase* section, AddressSpace& 
 
 void Win64NtImageFormatter :: createTLSSection(ImageProviderBase& provider, AddressSpace& map)
 {
-   
+   MemoryBase* tlsSection = provider.getTLSSection();
+   if (tlsSection && tlsSection->length() > 0) {
+      pos_t tls_variable = (pos_t)provider.getTLSVariable();
+
+      // map IMAGE_TLS_DIRECTORY
+      MemoryWriter rdataWriter(provider.getRDataSection());
+      map.tlsDirectory = rdataWriter.position();
+      map.tlsSize = tlsSection->length();
+
+      // create IMAGE_TLS_DIRECTORY
+      rdataWriter.writeQReference(mskTLSRef64, 0);              // StartAddressOfRawData
+      rdataWriter.writeQReference(mskTLSRef64, map.tlsSize);    // EndAddressOfRawData
+      rdataWriter.writeQReference(mskDataRef64, tls_variable);  // AddressOfIndex
+      rdataWriter.writeQWord(0);                                // AddressOfCallBacks
+      rdataWriter.writeDWord(0);                                // SizeOfZeroFill
+      rdataWriter.writeDWord(0);                                // Characteristics
+   }
 }
 
 void Win64NtImageFormatter :: createImportSection(ImageProviderBase& provider, RelocationMap& importMapping)

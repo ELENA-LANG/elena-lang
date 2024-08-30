@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains relocation functions
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 using namespace elena_lang;
@@ -71,6 +71,9 @@ inline void relocate64(pos_t pos, ref_t mask, ref_t reference, void* address, Ad
          break;
       case mskDataRef64:
          *(unsigned long long*)address += (unsigned long long)(base + space->data);
+         break;
+      case mskTLSRef64:
+         *(unsigned long long*)address += (unsigned long long)(base + space->tls);
          break;
       case mskStatDataRef64:
          *(unsigned long long*)address += (unsigned long long)(base + space->stat);

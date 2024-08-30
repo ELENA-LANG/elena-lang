@@ -182,7 +182,8 @@ void handleOption(wchar_t* arg, IdentifierString& profile, Project& project, Com
       {
          IdentifierString configName(arg + 2);
 
-         project.loadConfigByName(appPath, *configName, true);
+         if(!project.loadConfigByName(appPath, *configName, true))
+            errorProcessor.info(wrnInvalidConfig, *configName);
          break;
       }
       case 'v':

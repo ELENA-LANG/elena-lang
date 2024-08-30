@@ -489,6 +489,7 @@ namespace elena_lang
    constexpr ref_t mskStatXDisp32Lo       = 0x77000000u;
 
    constexpr ref_t mskTLSRef32            = 0x88000000u;
+   constexpr ref_t mskTLSRef64            = 0xC8000000u;
 
    // --- Address predefined references ---
    constexpr ref_t INV_ARG                = 0x00000100u;
