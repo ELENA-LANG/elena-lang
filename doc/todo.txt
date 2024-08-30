@@ -8,16 +8,13 @@ In development:
   === Iteration 31 (5.9) ===
   --------------------------------------
   dev: 
-      - thread pool
       - async programming (Task, Task<T>, object field (similar to Event), WaitHandle, AsyncLocal<T>, ThreadStatic, ExecutionContext, SynchronizationContext)
       - upndown (connector)
       - chat: add mutex (see dpa_queue)
-      - Thread<T> template
       - #496
   gen:
       - lpad : generate a code based on a record  
   maint:
-      - #679
       - set up automatic tests
   port:
       - #658 : connect with ldbg from VSCode  
@@ -25,8 +22,10 @@ In development:
   --------------------------------------
   * x86-64 : mta - test
   * x86-64 : mta - corex
+  * thread pool
+  * x86-64 : mta - gc_collect
   --------------------------------------
-  * #679
+  * ThreadLocal<T>
 
   === Iteration 32 ===
   --------------------------------------

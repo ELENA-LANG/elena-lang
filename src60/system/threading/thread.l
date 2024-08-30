@@ -62,7 +62,7 @@ public sealed class Thread
       ^ _currentThread
    }
 
-   static Thread
+   static Thread Current
    {
       get()
          = _currentThread ?? getCurrentThread();
@@ -118,5 +118,10 @@ public sealed class Thread
       _handle.close();
 
       _handle := nil;
+   }
+
+   static sleep(int milliseconds)
+   {
+      threadControl.sleep(milliseconds);
    }
 }
