@@ -626,7 +626,6 @@ void IDEWindow :: updateCompileMenu(bool compileEnable, bool debugEnable, bool s
 {
    enableMenuItemById(IDM_PROJECT_COMPILE, compileEnable, false);
    enableMenuItemById(IDM_PROJECT_OPTION, compileEnable, false);
-   enableMenuItemById(IDM_PROJECT_INCLUDE, compileEnable, false);
 
    enableMenuItemById(IDM_DEBUG_RUN, debugEnable, true);
    enableMenuItemById(IDM_DEBUG_STEPINTO, debugEnable, true);
