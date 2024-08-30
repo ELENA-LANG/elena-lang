@@ -3600,6 +3600,80 @@ inline %0F7h
 
 end
 
+// ; createnr 1,r
+inline %2F7h
+
+  mov  eax, [esi]
+  mov  ecx, page_ceil
+  add  ecx, eax
+  and  ecx, page_mask 
+  call %GC_ALLOC
+
+  mov  ecx, [esi]
+  mov  eax, __ptr32_2
+  or   ecx, struct_mask
+  mov  [ebx - elVMTOffset], eax
+  mov  [ebx - elSizeOffset], ecx
+
+end
+
+// ; createnr 2,r
+inline %3F7h
+
+  mov  eax, [esi]
+  mov  ecx, page_ceil
+  shl  eax, 1
+  add  ecx, eax
+  and  ecx, page_mask 
+  call %GC_ALLOC
+
+  mov  ecx, [esi]
+  shl  ecx, 1
+  mov  eax, __ptr32_2
+  or   ecx, struct_mask
+  mov  [ebx - elVMTOffset], eax
+  mov  [ebx - elSizeOffset], ecx
+
+end
+
+// ; createnr 4,r
+inline %5F7h
+
+  mov  eax, [esi]
+  mov  ecx, page_ceil
+  shl  eax, 2
+  add  ecx, eax
+  and  ecx, page_mask 
+  call %GC_ALLOC
+
+  mov  ecx, [esi]
+  shl  ecx, 2
+  mov  eax, __ptr32_2
+  or   ecx, struct_mask
+  mov  [ebx - elVMTOffset], eax
+  mov  [ebx - elSizeOffset], ecx
+
+end
+
+// ; createnr 8,r
+inline %7F7h
+
+  mov  eax, [esi]
+  mov  ecx, page_ceil
+  shl  eax, 3
+  add  ecx, eax
+  and  ecx, page_mask 
+  call %GC_ALLOC
+
+  mov  ecx, [esi]
+  shl  ecx, 3
+  mov  eax, __ptr32_2
+  or   ecx, struct_mask
+  mov  [ebx - elVMTOffset], eax
+  mov  [ebx - elSizeOffset], ecx
+
+end
+
 // ; fillir
 inline % 0F8h
 

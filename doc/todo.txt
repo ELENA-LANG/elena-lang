@@ -26,9 +26,8 @@ In development:
   * x86-64 : mta - test
   * x86-64 : mta - corex
   * #679
-  * x86-64 : mta - ntlinker64
   --------------------------------------
-  * optimize createn 1 (see String#class.alloc)
+  * x86-64 : mta - ntlinker64
 
   === Iteration 32 ===
   --------------------------------------
