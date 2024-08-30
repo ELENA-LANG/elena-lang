@@ -228,7 +228,7 @@ labYGNextFrame:
 
   // ; restore frame to correctly display a call stack
   mov  ecx, ebp
-  mov  ebp, [ecx+4]
+  mov  ebp, [ecx+8]
 
   // ; call GC routine
   push ecx

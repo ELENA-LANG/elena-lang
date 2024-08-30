@@ -52,6 +52,11 @@ public sealed struct ThreadHandle
       ^ THREAD_PRIORITY_LOWEST
    }
 
+   constructor()
+   {
+      _handle := extern KERNEL32.GetCurrentThread();
+   }
+
    constructor(object f)
    {
       _actionPtr := PermVectorTable.allocate(f);

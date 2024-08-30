@@ -25,11 +25,10 @@ In development:
   --------------------------------------
   * x86-64 : mta - test
   * x86-64 : mta - corex
-  * x86-64 : mta - ntlinker64
   * #679
-  * thread : CurrentThread
+  * x86-64 : mta - ntlinker64
   --------------------------------------
-  * functional test ?? with method call (a ?? expr)
+  * optimize createn 1 (see String#class.alloc)
 
   === Iteration 32 ===
   --------------------------------------

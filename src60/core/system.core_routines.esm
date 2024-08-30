@@ -2819,6 +2819,7 @@ procedure thread_start(index)
   unhook
 
   // ; == enter GC critical section ==
+  snop
   system      6 
 
   call extern:UninitThreadLA (

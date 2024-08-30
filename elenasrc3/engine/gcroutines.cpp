@@ -415,7 +415,7 @@ inline void FullCollect(GCTable* table, GCRoot* roots)
    memset((void*)table->gc_mg_wbar, 0, size);
 }
 
-void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, int size, bool fullMode)
+void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t size, bool fullMode)
 {
    //printf("GCRoutine %llx,%llx\n", (long long)roots, (long long)size);
 

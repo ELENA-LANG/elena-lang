@@ -129,6 +129,7 @@ end
 // ; in: ecx - fullmode (0, 1)
 inline % GC_COLLECT
 
+labStart:
   // ; GCXT: find the current thread entry
   mov  edi, fs:[2Ch]
   mov  eax, [data : %CORE_TLS_INDEX]
@@ -173,10 +174,16 @@ inline % GC_COLLECT
 
   // ; restore registers and try again
   pop  ecx
+  pop  edx
   pop  ebp
   pop  esi
 
-  jmp  labStart
+  test ecx, ecx
+  jz   labStart
+
+  // ; repeat the alloc operation if required
+  call %GC_ALLOC
+  ret
 
 labConinue:
   mov  [data : %CORE_GC_TABLE + gc_signal], esi // set the collecting thread signal
@@ -313,7 +320,7 @@ labYGNextThreadSkip:
 
   // ; restore frame to correctly display a call stack
   mov  ecx, ebp
-  mov  ebp, [ecx+4]
+  mov  ebp, [ecx+8]
 
   // ; call GC routine
   push ecx
@@ -692,6 +699,40 @@ inline %0BCh
   mov  eax, [ecx + eax * 4]
   lea  edi, [eax + __arg32_1]
   mov  [edi], ebx
+
+end
+
+// ; system minor collect
+inline %1CFh
+
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+
+labWait:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[edi], edx
+  jnz  short labWait
+
+  xor  ecx, ecx
+  xor  edx, edx
+  call %GC_COLLECT
+
+end
+
+// ; system full collect
+inline %2CFh
+
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+
+labWait:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[edi], edx
+  jnz  short labWait
+
+  xor  ecx, ecx
+  mov  edx, 1
+  call %GC_COLLECT
 
 end
 

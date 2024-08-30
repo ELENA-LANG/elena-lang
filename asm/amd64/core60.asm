@@ -232,7 +232,7 @@ labYGNextFrame:
 
   // ; restore frame to correctly display a call stack
   mov  rax, rbp
-  mov  rbp, [rax+8]
+  mov  rbp, [rax+16]
 
   // ; call GC routine
   sub  rsp, 30h
