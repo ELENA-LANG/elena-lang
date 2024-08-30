@@ -159,29 +159,33 @@ labStart:
   jz   short labConinue
   // ; otherwise eax contains the collecting thread event
 
+  sub  rsp, 30h
+
   // ; signal the collecting thread that it is stopped
-  push edx
-  push esi
+  mov  r12, rdx
+
+  mov  rcx, rsi
   call extern "$rt.SignalStopGCLA"
-  add  esp, 4
 
   // ; free lock
   // ; could we use mov [esi], 0 instead?
-  mov  edi, data : %CORE_GC_TABLE + gc_lock
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
   mov  ebx, 0FFFFFFFFh
-  lock xadd [edi], ebx
+  lock xadd [rdi], ebx
 
   // ; stop until GC is ended
+  mov  rcx, r12
   call extern "$rt.WaitForSignalGCLA"
-  add  esp, 4
-
+  add  rsp, 30h
   // ; restore registers and try again
-  pop  ecx
-  pop  edx
-  pop  ebp
-  pop  esi
 
-  test ecx, ecx
+  pop  rcx
+  pop  rdx
+  pop  rbp
+  pop  r11
+  pop  r10
+
+  test rcx, rcx
   jz   labStart
 
   // ; repeat the alloc operation if required
@@ -189,168 +193,178 @@ labStart:
   ret
 
 labConinue:
-  mov  [data : %CORE_GC_TABLE + gc_signal], esi // set the collecting thread signal
-  mov  ebp, esp
+  mov  [data : %CORE_GC_TABLE + gc_signal], rsi // set the collecting thread signal
+  mov  rbp, rsp
 
   // ; === thread synchronization ===
 
   // ; create list of threads need to be stopped
-  mov  eax, esi
+  mov  rax, rsi
   // ; get tls entry address  
-  mov  esi, data : %CORE_THREAD_TABLE + tt_slots
+  mov  rsi, data : %CORE_THREAD_TABLE + tt_slots
   xor  ecx, ecx
-  mov  edi, [esi - 4]
+  mov  rdi, [rsi - 8]
 labNext:
-  mov  edx, [esi]
-  test edx, edx
+  mov  rdx, [rsi]
+  test rdx, rdx
   jz   short labSkipTT
-  cmp  eax, [edx + tt_sync_event]
+  cmp  rax, [rdx + tt_sync_event]
   setz cl
-  or   ecx, [edx + tt_flags]
+  or   ecx, [rdx + tt_flags]
   test ecx, 1
   // ; skip current thread signal / thread in safe region from wait list
   jnz  short labSkipSave
-  push [edx + tt_sync_event]
+  push [rdx + tt_sync_event]
 labSkipSave:
 
   // ; reset all signal events
-  push [edx + tt_sync_event]
+  sub  rsp, 30h
+  mov  rcx, [rdx + tt_sync_event]
   call extern "$rt.SignalClearGCLA"
-  add  esp, 4
+  add  rsp, 30h
 
-  lea  esi, [esi + 8]
-  mov  eax, [data : %CORE_GC_TABLE + gc_signal]
+  lea  rsi, [rsi + 16]
+  mov  rax, [data : %CORE_GC_TABLE + gc_signal]
 labSkipTT:
   sub  edi, 1
   jnz  short labNext
 
-  mov  esi, data : %CORE_GC_TABLE + gc_lock
+  mov  rsi, data : %CORE_GC_TABLE + gc_lock
   mov  edx, 0FFFFFFFFh
-  mov  ebx, ebp
+  mov  rbx, rbp
 
   // ; free lock
   // ; could we use mov [esi], 0 instead?
-  lock xadd [esi], edx
+  lock xadd [rsi], edx
 
-  mov  ecx, esp
-  sub  ebx, esp
+  mov  rdx, rsp
+  sub  rbx, rsp
   jz   short labSkipWait
 
   // ; wait until they all stopped
-  shr  ebx, 2
-  push ecx
-  push ebx
+  shr  ebx, 3
+  sub  rsp, 30h
+  mov  ecx, ebx
   call extern "$rt.WaitForSignalsGCLA"
+  add  rsp, 30h
 
 labSkipWait:
   // ; remove list
-  mov  esp, ebp     
+  mov  rsp, rbp     
 
   // ==== GCXT end ==============
 
   // ; create set of roots
-  mov  ebp, esp
+  mov  rbp, rsp
   xor  ecx, ecx
-  push ecx        // ; reserve place 
-  push ecx
-  push ecx
+  push rcx        // ; reserve place 
+  push rcx        
+  push rcx
+  push rcx
 
   // ;   save static roots
-  mov  ecx, [rdata : %SYSTEM_ENV]
-  mov  esi, stat : %0
-  shl  ecx, 2
-  push esi
-  push ecx
+  mov  rax, rdata : %SYSTEM_ENV
+  mov  rsi, stat : %0
+  mov  ecx, dword ptr [rax]
+  shl  ecx, 3
+  push rsi
+  push rcx
 
   // ; save perm roots
-  mov  esi, [data : %CORE_GC_TABLE + gc_perm_start]
-  mov  ecx, [data : %CORE_GC_TABLE + gc_perm_current]
-  sub  ecx, esi
-  push esi
-  push ecx
+  mov  rsi, [data : %CORE_GC_TABLE + gc_perm_start]
+  mov  rcx, [data : %CORE_GC_TABLE + gc_perm_current]
+  sub  rcx, rsi
+  push rsi
+  push rcx
 
   // ; == GCXT: save frames ==
-  mov  eax, data : %CORE_THREAD_TABLE
-  mov  ebx, [eax]
+  mov  rax, data : %CORE_THREAD_TABLE
+  mov  rbx, [rax]
 
 labYGNextThread:  
   sub  ebx, 1
-  mov  eax, data : %CORE_THREAD_TABLE + tt_slots
+  mov  rax, data : %CORE_THREAD_TABLE + tt_slots
   
   // ; get tls entry address
-  mov  esi, [eax+ebx*8]            
-  test esi, esi
+  mov  r8, rbx
+  shl  r8, 4
+  add  r8, rax
+  mov  rsi, [r8]            
+  test rsi, rsi
   jz   short labYGNextThreadSkip
 
   // ; get the thread local roots
-  lea  eax, [esi + tt_size]
-  mov  ecx, [rdata : %SYSTEM_ENV + env_tls_size]
-  push eax
-  push ecx
+  lea  rax, [rsi + tt_size]
+  mov  rcx, [rdata : %SYSTEM_ENV + env_tls_size]
+  push rax
+  push rcx
 
   // ; get the top frame pointer
-  mov  eax, [esi + tt_stack_frame]
-  mov  ecx, eax
+  mov  rax, [rsi + tt_stack_frame]
+  mov  rcx, rax
 
 labYGNextFrame:
-  mov  esi, eax
-  mov  eax, [esi]
-  test eax, eax
+  mov  rsi, rax
+  mov  rax, [rsi]
+  test rax, rax
   jnz  short labYGNextFrame
   
-  push ecx
-  sub  ecx, esi
-  neg  ecx
-  push ecx  
+  push rcx
+  sub  rcx, rsi
+  neg  rcx
+  push rcx  
   
-  mov  eax, [esi + 4]
-  test eax, eax
-  mov  ecx, eax
+  mov  rax, [rsi + 8]
+  test rax, rax
+  mov  rcx, rax
   jnz  short labYGNextFrame
   nop
   nop
 
 labYGNextThreadSkip:
-  test ebx, ebx
+  test rbx, rbx
   jnz  short labYGNextThread
   // ; == GCXT: end ==
 
-  mov [ebp-4], esp      // ; save position for roots
+  mov [rbp-8], rsp      // ; save position for roots
 
-  mov  ebx, [ebp]
-  mov  edx, [ebp+4]
-  mov  eax, esp
+  mov  r8,  [rbp+8]
+  mov  rdx, [rbp]
+  mov  rcx, rsp
 
   // ; restore frame to correctly display a call stack
-  mov  ecx, ebp
-  mov  ebp, [ecx+8]
+  mov  rax, rbp
+  mov  rbp, [rax+16]
 
   // ; call GC routine
-  push ecx
-  push edx
-  push ebx
-  push eax
+  sub  rsp, 30h
+  mov  [rsp+28h], rax
   call extern "$rt.CollectGCLA"
 
-  mov  edi, eax
-  mov  ebp, [esp+12] 
+  mov  rbp, [rsp+28h] 
+  mov  rdi, rax
+
+  mov  rbp, [rsp+28h]
 
   // ; GCXT: signal the collecting thread that GC is ended
   // ; should it be placed into critical section?
-  xor  ecx, ecx
-  mov  esi, [data : %CORE_GC_TABLE + gc_signal]
+  xor  ebx, ebx
+  mov  rcx, [data : %CORE_GC_TABLE + gc_signal]
   // ; clear thread signal var
-  mov  [data : %CORE_GC_TABLE + gc_signal], ecx
-  push esi
+  mov  [data : %CORE_GC_TABLE + gc_signal], rbx
   call extern "$rt.SignalStopGCLA"
 
-  mov  ebx, edi
+  add  rsp, 30h
 
-  mov  esp, ebp 
-  pop  ecx 
-  pop  edx 
-  pop  ebp
-  pop  esi
+  mov  rbx, rdi
+
+  mov  rsp, rbp 
+  pop  rcx
+  pop  rdx
+  pop  rbp
+  pop  r11
+  pop  r10
+
   ret
 
 end
