@@ -1191,6 +1191,7 @@ Compiler::ClassScope :: ClassScope(Scope* ns, ref_t reference, Visibility visibi
    abstractMode = abstractBasedMode = false;
    extensionDispatcher = false;
    withPrivateField = false;
+   withStaticConstructor = false;
 }
 
 inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, ExpressionAttribute attr, bool ignoreFields)
@@ -3797,6 +3798,20 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
             scope.info.hints |= (ref_t)MethodHint::Constructor;
          }
          else scope.raiseError(errIllegalMethod, node);
+      }
+      else if (scope.checkHint(MethodHint::Static) && scope.checkHint(MethodHint::Constructor) && unnamedMessage) {
+         if (paramCount > 0)
+            scope.raiseError(errInvalidOperation, node);
+
+         // HOTFIX : it is a special type of constructor, so constructor hint must be removed
+         scope.info.hints &= ~(ref_t)MethodHint::Constructor;
+
+         actionStr.copy(CLASS_INIT_MESSAGE);
+         unnamedMessage = false;
+         flags |= FUNCTION_MESSAGE;
+         flags |= STATIC_MESSAGE;
+
+         node.parentNode().insertNode(SyntaxKey::HasStaticConstructor, 1);
       }
       else if (scope.checkHint(MethodHint::Constructor) && unnamedMessage) {
          actionStr.copy(CONSTRUCTOR_MESSAGE);
@@ -7972,10 +7987,23 @@ void Compiler :: compileStaticInitializerMethod(BuildTreeWriter& writer, ClassSc
       current = current.nextNode();
    }
 
+   // call the static constructor if available
+   if (scope.withStaticConstructor) {
+      Expression expression(this, scope, nestedWriter);
+
+      ArgumentsInfo args;
+
+      MessageResolution resolution = { true, scope.moduleScope->buildins.static_init_message };
+
+      expression.compileMessageOperation(node, mapClassSymbol(scope, scope.reference), resolution,
+         0, args, EAttr::None, nullptr);
+   }
+
    nestedWriter.appendNode(BuildKey::CloseFrame);
    nestedWriter.appendNode(BuildKey::Exit);
 
    nestedWriter.closeNode();
+   saveFrameAttributes(nestedWriter, scope, scope.moduleScope->minimalArgList, 0);
    nestedWriter.closeNode();
 }
 
@@ -9482,6 +9510,9 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
+         case SyntaxKey::HasStaticConstructor:
+            scope.withStaticConstructor = true;
+            break;
          case SyntaxKey::Method:
          {
             if (exclusiveMode
@@ -9995,6 +10026,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.init_message =
       encodeMessage(moduleScope->module->mapAction(INIT_MESSAGE, 0, false),
          1, STATIC_MESSAGE);
+   moduleScope->buildins.static_init_message =
+      encodeMessage(moduleScope->module->mapAction(CLASS_INIT_MESSAGE, 0, false),
+         0, STATIC_MESSAGE | FUNCTION_MESSAGE);
    moduleScope->buildins.invoke_message = encodeMessage(
       moduleScope->module->mapAction(INVOKE_MESSAGE, 0, false), 1, FUNCTION_MESSAGE);
    moduleScope->buildins.add_message =

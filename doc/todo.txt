@@ -22,9 +22,17 @@ In development:
   --------------------------------------
   * x86-64 : mta - test
   * ThreadLocal<T>
+  * ppc64le : fix iteratorMethodTest
+  * thread pool testcase (https://www.c-sharpcorner.com/article/threadpool-in-c-sharp-practical-examples/)
   * x86-64 : mta - corex
-  --------------------------------------
   * thread pool
+  * ThreadSafeQueue<T> (system'collections'threadsafe)
+  * environment.ProcessorCount (system'runtime)
+  * using TextBlock to build shared code
+  * static constructor wthout initializer -> generate dummy one
+  * static field initializer with static constructor
+  --------------------------------------
+  * static constructor : must be called inside StaticInitializer
 
   === Iteration 32 ===
   --------------------------------------

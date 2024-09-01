@@ -149,6 +149,7 @@ namespace elena_lang
    constexpr auto INVOKE_MESSAGE             = "#invoke";
    constexpr auto TRY_INVOKE_MESSAGE         = "#try_invoke";
    constexpr auto INIT_MESSAGE               = "#init";
+   constexpr auto CLASS_INIT_MESSAGE         = "#class_init";
 
    constexpr auto NEXT_MESSAGE               = "next";
    constexpr auto CURRENT_FIELD              = "__current";
