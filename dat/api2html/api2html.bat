@@ -1,4 +1,5 @@
 ..\..\bin\ldoc system
+..\..\bin\ldoc system'collections'threadsafe
 ..\..\bin\ldoc system'routines
 ..\..\bin\ldoc system'routines'stex
 ..\..\bin\ldoc system'runtime

@@ -16,6 +16,7 @@ In development:
       - lpad : generate a code based on a record  
   maint:
       - set up automatic tests
+      - #618
   port:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly

@@ -41,6 +41,7 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 bin\ldoc system doc\api
+bin\ldoc system'collections'threadsafe doc\api
 bin\ldoc system'routines doc\api
 bin\ldoc system'runtime doc\api
 bin\ldoc system'threading doc\api
