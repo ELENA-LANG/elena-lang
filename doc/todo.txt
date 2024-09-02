@@ -27,9 +27,8 @@ In development:
   * thread pool testcase (https://www.c-sharpcorner.com/article/threadpool-in-c-sharp-practical-examples/)
   * x86-64 : mta - corex
   * thread pool
-  * BlockingQueue<T>
   --------------------------------------
-  * #154 : Semaphore (https://learn.microsoft.com/en-us/windows/win32/sync/using-semaphore-objects?redirectedfrom=MSDN)
+  * BlockingQueue<T>
 
   === Iteration 32 ===
   --------------------------------------
