@@ -3156,6 +3156,11 @@ bool X86_64Assembler::compileAdd(X86Operand source, X86Operand target, MemoryWri
       writer.writeByte(0x01);
       X86Helper::writeModRM(writer, target, source);
    }
+   else if (source.isRX64() && target.isR64()) {
+      writer.writeByte(0x4C);
+      writer.writeByte(0x01);
+      X86Helper::writeModRM(writer, target, source);
+   }
    else return X86Assembler::compileAdd(source, target, writer);
 
    return true;
@@ -3464,6 +3469,10 @@ bool X86_64Assembler :: compilePush(X86Operand source, MemoryWriter& writer)
       writer.writeByte(0x41);
       writer.writeByte(0x50 + (char)source.type);
    }
+   else if (source.isM64()) {
+      writer.writeByte(0xFF);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 6 }, source);
+   }
    else if (source.type == X86OperandType::DB) {
       writer.writeByte(0x6A);
       writer.writeByte(source.offset);
@@ -3495,6 +3504,12 @@ bool X86_64Assembler :: compileShl(X86Operand source, X86Operand target, MemoryW
 {
    if (source.isR64() && target.type == X86OperandType::DB) {
       writer.writeByte(0x48);
+      writer.writeByte(0xC1);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
+      writer.writeByte(target.offset);
+   }
+   else if (source.isRX64() && target.type == X86OperandType::DB) {
+      writer.writeByte(0x4C);
       writer.writeByte(0xC1);
       X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
       writer.writeByte(target.offset);
@@ -3618,4 +3633,22 @@ bool X86_64Assembler :: compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& wri
       return true;
    }
    else return X86Assembler::compileMOpCode(tokenInfo, writer);
+}
+
+bool X86_64Assembler :: compileXadd(X86Operand source, X86Operand target, MemoryWriter& writer, PrefixInfo& prefixScope)
+{
+   if (test(prefixScope.value, LOCK_PREFIX)) {
+      writer.writeByte(0xF0);
+
+      prefixScope.value &= ~LOCK_PREFIX;
+   }
+
+   if (source.isM64() && target.isR32()) {
+      writer.writeByte(0x0F);
+      writer.writeByte(0xC0);
+      X86Helper::writeModRM(writer, target, source);
+   }
+   else return X86Assembler::compileXadd(source, target, writer, prefixScope);
+
+   return true;
 }

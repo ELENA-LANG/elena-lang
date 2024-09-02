@@ -12,6 +12,7 @@ define THREAD_WAIT          10007h
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
+define CORE_TLS_INDEX       20004h
 define CORE_SINGLE_CONTENT  2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
@@ -32,6 +33,9 @@ define elVMTSizeOffset       0008h
 define elVMTFlagOffset       0018h
 define elPackageOffset       0020h
 
+// ; --- sysenv offsets ---
+define env_tls_size          0008h
+
 // ; --- GC TABLE OFFSETS ---
 define gc_header             0000h
 define gc_start              0008h
@@ -45,15 +49,25 @@ define gc_mg_wbar            0050h
 define gc_perm_start         0058h 
 define gc_perm_end           0060h 
 define gc_perm_current       0068h 
+define gc_lock               0070h 
+define gc_signal             0078h 
 
+// ; THREAD CONTENT
 define et_current            0008h
 define tt_stack_frame        0010h
+define tt_sync_event         0018h
+define tt_flags              0020h
 define tt_stack_root         0028h
+
+define tt_size               0030h
 
 define es_prev_struct        0000h
 define es_catch_addr         0008h
 define es_catch_level        0010h
 define es_catch_frame        0018h
+
+// ; THREAD TABLE
+define tt_slots             00008h
 
 // ; --- Page Size ----
 define page_ceil               2Fh
@@ -210,7 +224,7 @@ labNext:
   jz   short labSkipTT
   cmp  rax, [rdx + tt_sync_event]
   setz cl
-  or   ecx, [rdx + tt_flags]
+  or   ecx, dword ptr [rdx + tt_flags]
   test ecx, 1
   // ; skip current thread signal / thread in safe region from wait list
   jnz  short labSkipSave

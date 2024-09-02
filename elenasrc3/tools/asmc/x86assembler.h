@@ -284,6 +284,7 @@ namespace elena_lang
       bool compileShl(X86Operand source, X86Operand target, MemoryWriter& writer) override;
       bool compileSub(X86Operand source, X86Operand target, MemoryWriter& writer) override;
       bool compileTest(X86Operand source, X86Operand target, MemoryWriter& writer) override;
+      bool compileXadd(X86Operand source, X86Operand target, MemoryWriter& writer, PrefixInfo& prefixScope) override;
       bool compileXor(X86Operand source, X86Operand target, MemoryWriter& writer) override;
 
       bool compileMOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;

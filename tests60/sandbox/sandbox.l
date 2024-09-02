@@ -1,22 +1,8 @@
 import extensions;
-
-//textblock AImpl
-//{
-//   get() {}
-//}
-
-public class A //: using(AImpl)
-{
-   static int MyX := 2;
-
-   static constructor()
-   {
-      //console.writeLine($"A is called with {MyX}");
-      console.writeLine("Hello from A")
-   }
-}
+import system'runtime;
 
 public program()
 {
-   A a := new A();
+   console.writeLine($"Processor type:{Environment.ProcessorType}");
+   console.writeLine($"Processor count:{Environment.ProcessorCount}");
 }
