@@ -1742,6 +1742,7 @@ namespace elena_lang
 
       void compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, SyntaxNode node);
 
+      static SyntaxNode addStaticInitializerMethod(ClassScope& scope, SyntaxNode node);
       ref_t compileStaticAssigning(ClassScope& scope, SyntaxNode node);
 
       void recreateFieldType(ClassScope& scope, SyntaxNode node, ustr_t fieldName);

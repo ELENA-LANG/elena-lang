@@ -11,7 +11,8 @@ public class A //: using(AImpl)
 
    static constructor()
    {
-      console.writeLine($"A is called with {MyX}");
+      //console.writeLine($"A is called with {MyX}");
+      console.writeLine("Hello from A")
    }
 }
 

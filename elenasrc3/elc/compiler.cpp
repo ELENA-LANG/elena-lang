@@ -3803,6 +3803,8 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          if (paramCount > 0)
             scope.raiseError(errInvalidOperation, node);
 
+         ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
          // HOTFIX : it is a special type of constructor, so constructor hint must be removed
          scope.info.hints &= ~(ref_t)MethodHint::Constructor;
 
@@ -3812,6 +3814,8 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          flags |= STATIC_MESSAGE;
 
          node.parentNode().insertNode(SyntaxKey::HasStaticConstructor, 1);
+
+         addStaticInitializerMethod(*classScope, node);
       }
       else if (scope.checkHint(MethodHint::Constructor) && unnamedMessage) {
          actionStr.copy(CONSTRUCTOR_MESSAGE);
@@ -6390,10 +6394,8 @@ ExternalInfo Compiler :: mapExternal(Scope& scope, SyntaxNode node)
    return scope.moduleScope->mapExternal(dllAlias, functionName);
 }
 
-ref_t Compiler :: compileStaticAssigning(ClassScope& scope, SyntaxNode node)
+SyntaxNode Compiler :: addStaticInitializerMethod(ClassScope& scope, SyntaxNode node)
 {
-   ref_t actionRef = 0;
-
    SyntaxNode rootNode = node.parentNode();
    while (rootNode != SyntaxKey::Class) {
       rootNode = rootNode.parentNode();
@@ -6404,18 +6406,24 @@ ref_t Compiler :: compileStaticAssigning(ClassScope& scope, SyntaxNode node)
       IdentifierString sectionName(scope.module->resolveReference(scope.reference));
       sectionName.append(INITIALIZER_SECTION);
 
-      actionRef = scope.moduleScope->mapAnonymous(*sectionName);
+      ref_t actionRef = scope.moduleScope->mapAnonymous(*sectionName);
 
       staticInitializer = rootNode.appendChild(SyntaxKey::StaticInitializerMethod, actionRef);
 
       scope.addAttribute(ClassAttribute::Initializer, actionRef);
    }
-   else actionRef = staticInitializer.arg.reference;
+
+   return staticInitializer;
+}
+
+ref_t Compiler :: compileStaticAssigning(ClassScope& scope, SyntaxNode node)
+{
+   SyntaxNode staticInitializer = addStaticInitializerMethod(scope, node);
 
    SyntaxTreeWriter writer(staticInitializer);
    SyntaxTree::copyNode(writer, node, true);
 
-   return actionRef;
+   return staticInitializer.arg.reference;
 }
 
 mssg_t Compiler :: resolveOperatorMessage(ModuleScopeBase* scope, int operatorId)
