@@ -35,20 +35,20 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\temp\elena-tests\</IntDir>
-    <TargetName>elena-tests</TargetName>
+    <TargetName>elena-tests-x86</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>elena-tests64</TargetName>
+    <TargetName>elena-tests-x64</TargetName>
     <IntDir>..\temp\elena-tests64\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\temp\elena-tests\</IntDir>
-    <TargetName>elena-tests</TargetName>
+    <TargetName>elena-tests-x86</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>elena-tests64</TargetName>
+    <TargetName>elena-tests-x64</TargetName>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\temp\elena-tests64\</IntDir>
   </PropertyGroup>

@@ -17,29 +17,28 @@ REM /m:2 is used to build using parallel compilation
 "%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc3\elenasrc3.sln /p:configuration=release /p:Platform="x86" /m:2
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
-ECHO Generating data files required for tests
+ECHO Generating data files
 ECHO ----------------------------------------
-bin\sg-cli dat\sg\syntax60.txt
-@echo off 
-if %ERRORLEVEL% EQU -1 GOTO SGDataGenError
-@echo on
+CALL build\rebuild_data60_x86.bat 
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
-move dat\sg\syntax60.dat bin
-
-bin\og-cli -s dat\og\bt_rules60.txt 
-@echo off 
-if %ERRORLEVEL% EQU -1 GOTO BTDataGenError
-@echo on
-move dat\og\bt_rules60.dat bin
-
-bin\elena-tests.exe
+ECHO Unit tests
+ECHO ----------------------------------------
+bin\elena-tests-x86.exe
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 REM /m:2 is used to build using parallel compilation
 "%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc3\elenasrc3.sln /p:configuration=release /p:Platform="x64" /m:2
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
-bin\elena-tests64.exe
+ECHO Generating data files
+ECHO ----------------------------------------
+CALL build\rebuild_data60_x64.bat 
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+
+ECHO Unit tests
+ECHO ----------------------------------------
+bin\elena-tests-x64.exe
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO =========== Release Compiled ==================

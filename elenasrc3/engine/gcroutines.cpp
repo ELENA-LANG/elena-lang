@@ -463,7 +463,7 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
 
       FullCollect(table, roots);
 
-      if (size == INVALID_SIZE)
+      if (size == 0)
          return nullptr;
 
       if (table->gc_yg_end - table->gc_yg_current < size) {
@@ -496,7 +496,7 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
          return (void*)getObjectPtr(allocated);
       }
    }
-   else {
+   else if (size > 0) {
       uintptr_t allocated = table->gc_yg_current;
 
       table->gc_yg_current += size;

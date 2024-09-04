@@ -84,23 +84,10 @@ procedure % VEH_HANDLER
 
 end
 
-// ; --- GC_ALLOC ---
-// ; in: rcx - size ; out: ebx - created object
-// ; note for linux - there is a separate copy
-inline % GC_ALLOC
+// ; --- GC_COLLECT ---
+// ; in: ecx - size, edx - 1 - full collect, 0 - normal one
+inline % GC_COLLECT
 
-  mov  rax, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  r12, [data : %CORE_GC_TABLE + gc_yg_end]
-  add  rcx, rax
-  cmp  rcx, r12
-  jae  short labYGCollect
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], rcx
-  lea  rbx, [rax + elObjectOffset]
-  ret
-
-labYGCollect:
-  // ; save registers
-  sub  rcx, rax
   push r10
   push r11
   push rbp
@@ -108,12 +95,14 @@ labYGCollect:
   // ; lock frame
   mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
 
+  push rdx
   push rcx
 
   // ; create set of roots
   mov  rbp, rsp
   xor  ecx, ecx
   push rcx        // ; reserve place 
+  push rcx        
   push rcx
   push rcx
 
@@ -122,6 +111,13 @@ labYGCollect:
   mov  rsi, stat : %0
   mov  ecx, dword ptr [rax]
   shl  ecx, 3
+  push rsi
+  push rcx
+
+  // ; save perm roots
+  mov  rsi, [data : %CORE_GC_TABLE + gc_perm_start]
+  mov  rcx, [data : %CORE_GC_TABLE + gc_perm_current]
+  sub  rcx, rsi
   push rsi
   push rcx
 
@@ -147,6 +143,7 @@ labYGNextFrame:
 
   mov [rbp-8], rsp      // ; save position for roots
 
+  mov  rdx, [rbp+8]
   mov  rsi, [rbp]
   mov  rdi, rsp
 
@@ -165,6 +162,7 @@ labYGNextFrame:
 
   mov  rsp, rbp 
   pop  rcx
+  pop  rdx
   pop  rbp
   pop  r11
   pop  r10

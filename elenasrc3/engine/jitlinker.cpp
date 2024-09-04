@@ -21,6 +21,12 @@ constexpr ref_t SIGNATURE_MASK = 0x80000000;
 
 // --- JITLinkerReferenceHelper ---
 
+inline void writeVOffset32(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp)
+{
+   vaddress += disp;
+   image->write(position, &vaddress, 4);
+}
+
 inline void writeVAddress32(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp, 
    ref_t addressMask, bool virtualMode)
 {
@@ -340,6 +346,9 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
          case mskRef32Lo:
             ::writeRef32Lo(_owner->_compiler, &target, position, vaddress, disp, addressMask, _owner->_virtualMode);
             break;
+         case mskOffset32:
+            ::writeVOffset32(&target, position, vaddress, disp);
+            break;
          default:
             // to make compiler happy
             break;
@@ -495,6 +504,13 @@ addr_t JITLinker :: calculateVAddress(MemoryWriter& writer, ref_t targetMask)
    return _virtualMode ? (writer.position() | targetMask) : (addr_t)writer.address();
 }
 
+addr_t JITLinker :: calculateVOffset(MemoryWriter& writer, ref_t targetMask)
+{
+   // align the section
+   _compiler->alignCode(writer, _alignment, (targetMask & mskImageType) == mskCodeRef);
+
+   return writer.position();
+}
 void JITLinker :: fixOffset(pos_t position, ref_t offsetMask, int offset, MemoryBase* image)
 {
    MemoryWriter writer(image);
@@ -554,15 +570,6 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
          case mskExtMssgLiteralRef:
             vaddress = resolve({ info.module, info.module->resolveConstant(currentRef) }, currentMask, false);
             break;
-         //case mskNameLiteralRef:
-         //case mskPathLiteralRef:
-         //   //NOTE : Zero reference is considered to be the reference to itself
-         //   if (currentRef) {
-         //      vaddress = resolveName(_loader->retrieveReferenceInfo(info.module, currentRef, 
-         //         currentMask, _forwardResolver), currentMask == mskPathLiteralRef);
-         //   }
-         //   else vaddress = resolveName(ownerReferenceInfo, currentMask == mskPathLiteralRef);
-         //   break;
          default:
             vaddress = resolve(_loader->retrieveReferenceInfo(info.module, currentRef, currentMask,
                _forwardResolver), currentMask, false);
@@ -596,6 +603,9 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
             break;
          case mskRef32Lo:
             ::writeRef32Lo(_compiler, image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode);
+            break;
+         case mskOffset32:
+            ::writeVOffset32(image, it.key(), vaddress, info.disp);
             break;
          default:
             // to make compiler happy
@@ -1489,6 +1499,20 @@ addr_t JITLinker :: resolveStaticVariable(ReferenceInfo referenceInfo, ref_t sec
    return vaddress;
 }
 
+addr_t JITLinker :: resolveThreadVariable(ReferenceInfo referenceInfo, ref_t sectionMask)
+{
+   // get target image & resolve virtual address
+   MemoryBase* image = _imageProvider->getTargetSection(mskTLSRef);
+   MemoryWriter writer(image);
+
+   addr_t offset = calculateVOffset(writer, mskTLSRef);
+   _compiler->writeVariable(writer);
+
+   _mapper->mapReference(referenceInfo, offset, sectionMask);
+
+   return offset;
+}
+
 addr_t JITLinker :: resolveDistributeCategory(ReferenceInfo referenceInfo, ref_t sectionMask)
 {
    ReferenceProperName name(referenceInfo.referenceName);
@@ -1659,6 +1683,7 @@ void JITLinker :: complete(JITCompilerBase* compiler, ustr_t superClass)
    compiler->updateEnvironment(
       _imageProvider->getRDataSection(),
       compiler->getStaticCounter(_imageProvider->getStatSection(), true),
+      compiler->getTLSSize(_imageProvider->getTLSSection()),
       _virtualMode);
 
    fixReferences(mbReferences, mbSection);
@@ -1713,6 +1738,9 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
             break;
          case mskStaticVariable:
             address = resolveStaticVariable(referenceInfo, sectionMask);
+            break;
+         case mskTLSVariable:
+            address = resolveThreadVariable(referenceInfo, sectionMask);
             break;
          case mskTypeListRef:
             address = resolveMetaSection(referenceInfo, sectionMask, 

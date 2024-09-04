@@ -16,12 +16,12 @@ constexpr auto S_PrivateConstructorTest = "class (nameattr (identifier \"X\" ())
 
 #ifdef _M_IX86
 
-constexpr auto BuildTree_VariadicSingleDispatch_3 = "tape(open_frame()assigning 1 ()local_reference - 2 ()saving_stack()varg_sop 6 (index - 4 ())unbox_call_message - 2 (index 1 ()length - 4 ()temp_var - 8 ()message 1601 ())class_reference 6 ()saving_stack()argument()direct_call_op 5250 (type 12 ())loading_index() free_varstack() going_to_eop() close_frame()exit())reserved 3 ()reserved_n 8 ())";
+constexpr auto BuildTree_VariadicSingleDispatch_3 = "tape(open_frame()assigning 1 ()local_reference - 2 ()saving_stack()varg_sop 6 (index - 4 ())unbox_call_message - 2 (index 1 ()length - 4 ()temp_var - 8 ()message 1601 ())class_reference 6 ()saving_stack()argument()direct_call_op 4226 (type 13 ())loading_index() free_varstack() going_to_eop() close_frame()exit())reserved 3 ()reserved_n 8 ())";
 constexpr auto BuildTree_PrivateConstructorTest = "tape(open_frame() direct_call_op 800(type 6()) assigning 1 ()local -2 ()saving_stack()create_struct 4 (type 2()) copying_to_acc 2 (size 4 ()) assigning 2() local 2() saving_stack () local 1() field_assign () local 1() close_frame()exit())reserved 3 ())";
 
 #elif _M_X64
 
-constexpr auto BuildTree_VariadicSingleDispatch_3 = "tape(open_frame()assigning 1 ()local_reference -2 ()saving_stack()varg_sop 6 (index -8 ())unbox_call_message -2 (index 1 ()length -8 ()temp_var -24 ()message 1601 ())class_reference 6 ()saving_stack()argument()direct_call_op 5250 (type 12 ())loading_index() free_varstack() going_to_eop() close_frame()exit())reserved 4 ()reserved_n 32 ())";
+constexpr auto BuildTree_VariadicSingleDispatch_3 = "tape(open_frame()assigning 1 ()local_reference -2 ()saving_stack()varg_sop 6 (index -8 ())unbox_call_message -2 (index 1 ()length -8 ()temp_var -24 ()message 1601 ())class_reference 6 ()saving_stack()argument()direct_call_op 4226 (type 13 ())loading_index() free_varstack() going_to_eop() close_frame()exit())reserved 4 ()reserved_n 32 ())";
 constexpr auto BuildTree_PrivateConstructorTest = "tape(open_frame() direct_call_op 800(type 6()) assigning 1 ()local -2 ()saving_stack()create_struct 4 (type 2()) copying_to_acc 2 (size 4 ()) assigning 2() local 2() saving_stack () local 1() field_assign () local 1() close_frame()exit())reserved 4 ())";
 
 #endif

@@ -103,9 +103,9 @@ EXTERN_DLL_EXPORT void ExitLA(int retVal)
 }
 
 // NOTE : arg must be unique for every separate thread
-EXTERN_DLL_EXPORT void* CreateThreadLA(void* arg, void* threadProc, int flags)
+EXTERN_DLL_EXPORT void* CreateThreadLA(void* arg, void* threadProc, int stackSize, int flags)
 {
-   return machine->allocateThread(systemEnv, arg, threadProc, flags);
+   return machine->allocateThread(systemEnv, arg, threadProc, stackSize, flags);
 }
 
 EXTERN_DLL_EXPORT void InitThreadLA(SystemEnv* env, void* criricalHandler, int index)
@@ -141,16 +141,11 @@ EXTERN_DLL_EXPORT void* CollectPermGCLA(size_t size)
    return __routineProvider.GCRoutinePerm(systemEnv->gc_table, size);
 }
 
-EXTERN_DLL_EXPORT void* CollectGCLA(void* roots, size_t size)
+EXTERN_DLL_EXPORT void* CollectGCLA(void* roots, size_t size, bool fullMode)
 {
 //   printf("CollectGCLA %llx %llx\n", (long long)roots, size);
 
-   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size, false);
-}
-
-EXTERN_DLL_EXPORT void* ForcedCollectGCLA(void* roots, int fullMode)
-{
-   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, INVALID_SIZE, fullMode != 0);
+   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size, fullMode);
 }
 
 EXTERN_DLL_EXPORT size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)

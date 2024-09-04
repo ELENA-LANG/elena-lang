@@ -105,3 +105,16 @@ public sealed class LongInteger : BaseVariable, Reference<long>
     }
 }
 
+// ---- objectExOp ---
+
+public extension objectExOp
+{
+   getAtOrDefault(int index, default)
+   {
+      if (self.Length > index) {
+         ^ self.getAt(index) ?? default;
+      };
+
+      ^ default
+   }
+}

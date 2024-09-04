@@ -52,7 +52,7 @@ inline uintptr_t RetrieveVMT(uintptr_t ptr)
 uintptr_t ELENAMachine :: createPermString(SystemEnv* env, ustr_t s, uintptr_t classPtr)
 {
    size_t nameLen = getlength(s) + 1;
-   uintptr_t nameAddr = (uintptr_t)SystemRoutineProvider::GCRoutinePerm(env->gc_table, align(nameLen + elObjectOffset, gcPageSize));
+   uintptr_t nameAddr = (uintptr_t)SystemRoutineProvider::GCRoutinePerm(env->gc_table, alignSize(nameLen + elObjectOffset, gcPageSize));
 
    StrConvertor::copy((char*)nameAddr, s.str(), nameLen, nameLen);
 
@@ -67,7 +67,7 @@ uintptr_t ELENAMachine :: createPermVMT(SystemEnv* env, size_t size)
 {
    size += sizeof(ObjectPage);
 
-   uintptr_t addr = (uintptr_t)SystemRoutineProvider::GCRoutinePerm(env->gc_table, align(size, gcPageSize));
+   uintptr_t addr = (uintptr_t)SystemRoutineProvider::GCRoutinePerm(env->gc_table, alignSize(size, gcPageSize));
 
    ObjectPage* header = (ObjectPage*)(addr - elObjectOffset);
    header->size = size;

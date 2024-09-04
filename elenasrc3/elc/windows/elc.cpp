@@ -124,6 +124,14 @@ void handleOption(wchar_t* arg, IdentifierString& profile, Project& project, Com
    ErrorProcessor& errorProcessor, path_t appPath, bool& cleanMode)
 {
    switch (arg[1]) {
+      case 'e':
+         if (wstr_t(arg).compare(L"-el5")) {
+            project.setSyntaxVersion(SyntaxVersion::L5);
+         }
+         else if (wstr_t(arg).compare(L"-el6")) {
+            project.setSyntaxVersion(SyntaxVersion::L6);
+         }
+         break;
       case 'f':
       {
          IdentifierString setting(arg + 2);
@@ -174,7 +182,8 @@ void handleOption(wchar_t* arg, IdentifierString& profile, Project& project, Com
       {
          IdentifierString configName(arg + 2);
 
-         project.loadConfigByName(appPath, *configName, true);
+         if(!project.loadConfigByName(appPath, *configName, true))
+            errorProcessor.info(wrnInvalidConfig, *configName);
          break;
       }
       case 'v':
@@ -318,7 +327,7 @@ int main()
       
       JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_SACKRESERV, 1, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
-      CompilingProcess process(appPath, L"exe", L"<moduleProlog>", L"<prolog>", L"<epilog>",
+      CompilingProcess process(*appPath, L"exe", L"<moduleProlog>", L"<prolog>", L"<epilog>",
          &Presenter::getInstance(), &errorProcessor,
          VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 

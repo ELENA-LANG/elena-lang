@@ -109,6 +109,7 @@ namespace elena_lang
       friend void loadLOp(JITCompilerScope* scope);
       friend void loadIndexOp(JITCompilerScope* scope);
       friend void loadNOp(JITCompilerScope* scope);
+      friend void loadTLSOp(JITCompilerScope* scope);
       friend void loadFieldIndexOp(JITCompilerScope* scope);
       friend void loadStackIndexOp(JITCompilerScope* scope);
       friend void loadArgIndexOp(JITCompilerScope* scope);
@@ -221,6 +222,7 @@ namespace elena_lang
       addr_t allocateTLSIndex(ReferenceHelperBase* helper, MemoryWriter& writer) override;
 
       void allocateThreadContent(MemoryWriter* tlsWriter) override;
+      pos_t getTLSSize(MemoryBase* tlsSection) override;
 
       void* getSystemEnv() override;
 
@@ -304,7 +306,7 @@ namespace elena_lang
 
       void writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode) override;
 
-      void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
+      void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, pos_t tlsSize, bool virtualMode) override;
       void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) override;
 
       void allocateVariable(MemoryWriter& writer) override;
@@ -383,7 +385,7 @@ namespace elena_lang
 
       void writeAttribute(MemoryWriter& writer, int category, ustr_t value, addr_t address, bool virtualMode) override;
 
-      void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, bool virtualMode) override;
+      void updateEnvironment(MemoryBase* rdata, pos_t staticCounter, pos_t tlsSize, bool virtualMode) override;
       void updateVoidObject(MemoryBase* rdata, addr_t superAddress, bool virtualMode) override;
 
       void allocateVariable(MemoryWriter& writer) override;
@@ -413,6 +415,7 @@ namespace elena_lang
    void loadLOp(JITCompilerScope* scope);
    void loadIndexOp(JITCompilerScope* scope);
    void loadNOp(JITCompilerScope* scope);
+   void loadTLSOp(JITCompilerScope* scope);
    void loadFieldIndexOp(JITCompilerScope* scope);
    void loadVMTIndexOp(JITCompilerScope* scope);
    void loadFrameIndexOp(JITCompilerScope* scope);

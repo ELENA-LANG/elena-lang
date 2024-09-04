@@ -149,6 +149,7 @@ namespace elena_lang
    constexpr auto INVOKE_MESSAGE             = "#invoke";
    constexpr auto TRY_INVOKE_MESSAGE         = "#try_invoke";
    constexpr auto INIT_MESSAGE               = "#init";
+   constexpr auto CLASS_INIT_MESSAGE         = "#class_init";
 
    constexpr auto NEXT_MESSAGE               = "next";
    constexpr auto CURRENT_FIELD              = "__current";
@@ -237,6 +238,13 @@ namespace elena_lang
       NotFound,
       WrongVersion,
       WrongStructure
+   };
+
+   // --- ELENA Syntax Version ---
+   enum class SyntaxVersion
+   {
+      L6 = 0,
+      L5 = 1
    };
 
    // --- ELENA Platform type ---
@@ -394,6 +402,7 @@ namespace elena_lang
    constexpr ref_t mskMssgNameLiteralRef  = 0x25000000u;
    constexpr ref_t mskPackageRef          = 0x26000000u;
    constexpr ref_t mskDistrTypeListRef    = 0x27000000u;
+   constexpr ref_t mskTLSVariable         = 0x28000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;
@@ -419,6 +428,7 @@ namespace elena_lang
    constexpr ref_t mskRef32Lo12_8         = 0x50000000u;          // <32 bit address> & 0xFFF  ; for ARM64 : it shoulb be b21:10
    constexpr ref_t mskXDisp32Hi           = 0x30000000u;
    constexpr ref_t mskXDisp32Lo           = 0x70000000u;
+   constexpr ref_t mskOffset32            = 0xF0000000u;
 
    // --- VAddress reference types ----
    constexpr ref_t mskCodeRef32           = 0x81000000u;
@@ -480,6 +490,7 @@ namespace elena_lang
    constexpr ref_t mskStatXDisp32Lo       = 0x77000000u;
 
    constexpr ref_t mskTLSRef32            = 0x88000000u;
+   constexpr ref_t mskTLSRef64            = 0xC8000000u;
 
    // --- Address predefined references ---
    constexpr ref_t INV_ARG                = 0x00000100u;

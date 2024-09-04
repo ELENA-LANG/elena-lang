@@ -114,6 +114,7 @@ end
 structure %SYSTEM_ENV
 
   dq 0
+  dq 0
   dq data : %CORE_GC_TABLE
   dq data : %CORE_SINGLE_CONTENT
   dq 0
@@ -160,6 +161,16 @@ inline % GC_ALLOC
 labYGCollect:
   // ; save registers
   sub  rcx, rax
+  xor  edx, edx
+  call %GC_COLLECT
+  ret
+
+end
+
+// ; --- GC_COLLECT ---
+// ; in: ecx - size, edx - 1 - full collect, 0 - normal one
+inline % GC_COLLECT
+
   push r10
   push r11
   push rbp
@@ -167,12 +178,14 @@ labYGCollect:
   // ; lock frame
   mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
 
+  push rdx
   push rcx
 
   // ; create set of roots
   mov  rbp, rsp
   xor  ecx, ecx
   push rcx        // ; reserve place 
+  push rcx        
   push rcx
   push rcx
 
@@ -213,12 +226,13 @@ labYGNextFrame:
 
   mov [rbp-8], rsp      // ; save position for roots
 
+  mov  r8,  [rbp+8]
   mov  rdx, [rbp]
   mov  rcx, rsp
 
   // ; restore frame to correctly display a call stack
   mov  rax, rbp
-  mov  rbp, [rax+8]
+  mov  rbp, [rax+16]
 
   // ; call GC routine
   sub  rsp, 30h
@@ -231,83 +245,7 @@ labYGNextFrame:
 
   mov  rsp, rbp 
   pop  rcx
-  pop  rbp
-  pop  r11
-  pop  r10
-
-  ret
-
-end
-
-// ; --- GC_COLLECT ---
-// ; in: ecx - fullmode (0, 1)
-inline % GC_COLLECT
-
-  // ; save registers
-  push r10
-  push r11
-  push rbp
-
-  // ; lock frame
-  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
-
-  push rcx
-
-  // ; create set of roots
-  mov  rbp, rsp
-  xor  ecx, ecx
-  push rcx        // ; reserve place 
-  push rcx
-  push rcx
-
-  // ;   save static roots
-  mov  rax, rdata : %SYSTEM_ENV
-  mov  rsi, stat : %0
-  mov  ecx, dword ptr [rax]
-  shl  ecx, 3
-  push rsi
-  push rcx
-
-  // ;   collect frames
-  mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]  
-  mov  rcx, rax
-
-labYGNextFrame:
-  mov  rsi, rax
-  mov  rax, [rsi]
-  test rax, rax
-  jnz  short labYGNextFrame
-
-  push rcx
-  sub  rcx, rsi
-  neg  rcx
-  push rcx  
-
-  mov  rax, [rsi + 8]
-  test rax, rax
-  mov  rcx, rax
-  jnz  short labYGNextFrame
-
-  mov [rbp-8], rsp      // ; save position for roots
-
-  mov  rdx, [rbp]
-  mov  rcx, rsp
-
-  // ; restore frame to correctly display a call stack
-  mov  rax, rbp
-  mov  rbp, [rax+8]
-
-  // ; call GC routine
-  sub  rsp, 30h
-  mov  [rsp+28h], rax
-  call extern "$rt.CollectGCLA"
-
-  mov  rbp, [rsp+28h] 
-  add  rsp, 30h
-  mov  rbx, rax
-
-  mov  rsp, rbp 
-  pop  rcx
+  pop  rdx
   pop  rbp
   pop  r11
   pop  r10
@@ -1842,6 +1780,16 @@ labFound:
 labEnd:
   mov   rdx, r15
                                
+end
+
+// ; peektls
+inline %0BBh
+
+end
+
+// ; storetls
+inline %0BCh
+
 end
 
 // ; cmpr r

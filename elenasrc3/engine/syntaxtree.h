@@ -209,6 +209,7 @@ namespace elena_lang
       EnumNameArgParameter    = 0x000113,
       EnumArgParameter        = 0x000114,
       NillableInfo            = 0x000115,
+      HasStaticConstructor    = 0x000116,
 
       Column                  = 0x000201,
       Row                     = 0x000202,

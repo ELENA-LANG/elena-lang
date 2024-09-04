@@ -114,6 +114,7 @@ end
 structure %SYSTEM_ENV
 
   dq 0
+  dq 0
   dq data : %CORE_GC_TABLE
   dq data : %CORE_SINGLE_CONTENT
   dq 0
@@ -2147,6 +2148,16 @@ labFound:
 labEnd:
   mov     x9, x20
                                
+end
+
+// ; peektls
+inline %0BBh
+
+end
+
+// ; storetls
+inline %0BCh
+
 end
 
 // ; cmpr
