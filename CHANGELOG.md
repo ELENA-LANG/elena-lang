@@ -1,3 +1,39 @@
+## ELENA 6.4.0
+
+- ELENA
+  - [FIXED] method reference : support function singletons
+  - [FIXED] direct typecasting must have priority over implicit conversion
+  - [ADDED] Thread static symbols / static fields
+  - [ADDED] new byte-codes : peektls / storetls
+  - [FIXED] ?? operator
+  - [ADDED] static constructor
+  - [ADDED] internal symbols
+
+- ELC
+  - [ADDED] new option -el5 / -el6 (default) - specifying grammar compatible to ELENA 5.x or 6.x
+  - [ADDED] Win x32-64 : MTA Console
+	
+- VM
+
+- RT
+
+- SM
+
+- API
+  - [ADDED] system'threading'Thread: Priority, join<int>, Current
+  - [ADDED] system'runtime'Environment
+  - [ADDED] system'collections'threadsafe'ThreadSafeQueue<T>
+  - [ADDED] #154 : system'threading'Semaphore
+  - [ADDED] system'threading'BlockingQueue<T>
+  - [ADDED]system'threading'ThreadPool
+
+- SAMPLES
+
+- Tools
+
+- IDE
+  - [FIXED] #679 : class already exist
+
 ## ELENA 6.3.0
 
 - ELENA
