@@ -117,11 +117,8 @@ public sealed struct ThreadHandle
    {
       extern KERNEL32.CloseHandle(_handle)
    }
-}
 
-public singleton threadControl
-{
-   sleep(int interval)
+   static sleep(int interval)
    {
       extern
       {

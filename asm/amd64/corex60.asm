@@ -382,3 +382,207 @@ labYGNextThreadSkip:
   ret
 
 end
+
+// --- GC_ALLOCPERM ---
+// in: ecx - size ; out: ebx - created object
+procedure %GC_ALLOCPERM
+
+labStart:
+  // ; GCXT: find the current thread entry
+  mov  rdi, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+
+  push r10
+  push r11
+
+  // ; GCXT: find the current thread entry
+  mov  rax, [rdi+rax*8]
+
+  push rbp
+
+  // ; GCXT: lock frame
+  // ; get current thread event
+  mov  rsi, [rax + tt_sync_event]
+  mov  [rax + tt_stack_frame], rsp
+
+  push rdx
+  push rcx
+
+  // ; === GCXT: safe point ===
+  mov  rdx, [data : %CORE_GC_TABLE + gc_signal]
+  // ; if it is a collecting thread, starts the GC
+  test rdx, rdx                       
+  jz   short labConinue
+  // ; otherwise eax contains the collecting thread event
+
+  sub  rsp, 30h
+
+  // ; signal the collecting thread that it is stopped
+  mov  r12, rdx
+
+  mov  rcx, rsi
+  call extern "$rt.SignalStopGCLA"
+
+  // ; free lock
+  // ; could we use mov [esi], 0 instead?
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+  mov  ebx, 0FFFFFFFFh
+  lock xadd [rdi], ebx
+
+  // ; stop until GC is ended
+  mov  rcx, r12
+  call extern "$rt.WaitForSignalGCLA"
+  add  rsp, 30h
+  // ; restore registers and try again
+
+  pop  rcx
+  pop  rdx
+  pop  rbp
+  pop  r11
+  pop  r10
+
+  test rcx, rcx
+  jz   labStart
+
+  // ; repeat the alloc operation if required
+  call %GC_ALLOC
+  ret
+
+labConinue:
+  mov  [data : %CORE_GC_TABLE + gc_signal], rsi // set the collecting thread signal
+  mov  rbp, rsp
+
+  // ; === thread synchronization ===
+
+  // ; create list of threads need to be stopped
+  mov  rax, rsi
+  // ; get tls entry address  
+  mov  rsi, data : %CORE_THREAD_TABLE + tt_slots
+  xor  ecx, ecx
+  mov  rdi, [rsi - 8]
+labNext:
+  mov  rdx, [rsi]
+  test rdx, rdx
+  jz   short labSkipTT
+  cmp  rax, [rdx + tt_sync_event]
+  setz cl
+  or   ecx, dword ptr [rdx + tt_flags]
+  test ecx, 1
+  // ; skip current thread signal / thread in safe region from wait list
+  jnz  short labSkipSave
+  push [rdx + tt_sync_event]
+labSkipSave:
+
+  // ; reset all signal events
+  sub  rsp, 30h
+  mov  rcx, [rdx + tt_sync_event]
+  call extern "$rt.SignalClearGCLA"
+  add  rsp, 30h
+
+  lea  rsi, [rsi + 16]
+  mov  rax, [data : %CORE_GC_TABLE + gc_signal]
+labSkipTT:
+  sub  edi, 1
+  jnz  short labNext
+
+  mov  rsi, data : %CORE_GC_TABLE + gc_lock
+  mov  edx, 0FFFFFFFFh
+  mov  rbx, rbp
+
+  // ; free lock
+  // ; could we use mov [esi], 0 instead?
+  lock xadd [rsi], edx
+
+  mov  rdx, rsp
+  sub  rbx, rsp
+  jz   short labSkipWait
+
+  // ; wait until they all stopped
+  shr  ebx, 3
+  sub  rsp, 30h
+  mov  ecx, ebx
+  call extern "$rt.WaitForSignalsGCLA"
+  add  rsp, 30h
+
+labSkipWait:
+  // ; remove list
+  mov  rsp, rbp     
+
+  // ==== GCXT end ==============
+
+  sub  rsp, 30h
+
+  mov  rcx, [rbp + 8]
+  call extern "$rt.CollectPermGCLA"
+
+  mov  rdi, rax
+
+  // ; GCXT: signal the collecting thread that GC is ended
+  // ; should it be placed into critical section?
+  xor  ebx, ebx
+  mov  rcx, [data : %CORE_GC_TABLE + gc_signal]
+  // ; clear thread signal var
+  mov  [data : %CORE_GC_TABLE + gc_signal], rbx
+  call extern "$rt.SignalStopGCLA"
+
+  mov  rbx, rdi
+  add  rsp, 30h
+
+  pop  rbp
+  pop  r11
+  pop  r10
+  ret
+
+end
+
+// --- THREAD_WAIT ---
+// GCXT: it is presumed that gc lock is on, edx - contains the collecting thread event handle
+
+procedure % THREAD_WAIT
+
+  push rbp
+  mov  rdi, rsp
+
+  mov  r12, rbx
+  mov  r13, rdx                  // hHandle
+
+  // ; set lock
+  mov  rbx, data : %CORE_GC_TABLE + gc_lock
+labWait:
+  mov edx, 1
+  xor eax, eax  
+  lock cmpxchg dword ptr[rbx], edx
+  jnz  short labWait
+
+  // ; find the current thread entry
+  mov  rdi, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]  
+  mov  rax, [rdx+rax*8]
+
+  mov  rsi, [rax+tt_sync_event]   // ; get current thread event
+  mov  [rax+tt_stack_frame], rdi  // ; lock stack frame
+
+  // ; signal the collecting thread that it is stopped
+  sub  rsp, 30h
+  mov  rcx, rsi
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+
+  // ; signal the collecting thread that it is stopped
+  call extern "$rt.SignalStopGCLA"
+  add  rsp, 30h
+
+  // ; free lock
+  // ; could we use mov [esi], 0 instead?
+  mov  ebx, 0FFFFFFFFh
+  lock xadd [rdi], ebx
+
+  // ; stop until GC is ended
+  mov  rcx, r13
+  call extern "$rt.WaitForSignalGCLA"
+
+  pop  rbp
+  mov  rbx, r12
+
+  ret
+
+end

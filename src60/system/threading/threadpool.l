@@ -27,4 +27,9 @@ public sealed class ThreadPool
    {
       _actions.push(f);
    }
+
+   static queueAction(Func1 f, object arg)
+   {
+      _actions.push(new StartHelper(f, arg));
+   }
 }

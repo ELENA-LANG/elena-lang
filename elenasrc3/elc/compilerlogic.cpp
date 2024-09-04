@@ -790,6 +790,9 @@ bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visib
       case V_PUBLIC:
          visibility = Visibility::Public;
          break;
+      case V_INTERNAL:
+         visibility = Visibility::Internal;
+         break;
       case V_PRIVATE:
          visibility = Visibility::Private;
          break;
@@ -803,6 +806,9 @@ bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visib
          break;
       case V_THREADVAR:
          symbolKind = SymbolKind::ThreadVar;
+         break;
+      case 0:
+         // ignore idle
          break;
       default:
          return false;

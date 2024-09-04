@@ -7,10 +7,16 @@ In development:
 
   === Iteration 31 (5.9) ===
   --------------------------------------
+  * thread pool testcase (https://www.c-sharpcorner.com/article/threadpool-in-c-sharp-practical-examples/)
+  --------------------------------------
+  * internal symbols
+
+  === Iteration 32 ===
+  --------------------------------------
   dev: 
-      - async programming (Task, Task<T>, object field (similar to Event), WaitHandle, AsyncLocal<T>, ExecutionContext, SynchronizationContext)
+      - async programming (Task<T>, object field (similar to Event), WaitHandle, AsyncLocal<T>)
+      - ThreadLocal<T>
       - upndown (connector)
-      - chat: add mutex (see dpa_queue)
       - #496
   gen:
       - lpad : generate a code based on a record  
@@ -21,23 +27,9 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
-  * x86-64 : mta - test
-  * ThreadLocal<T>
-  * ppc64le : fix iteratorMethodTest
-  * thread pool testcase (https://www.c-sharpcorner.com/article/threadpool-in-c-sharp-practical-examples/)
   * x86-64 : mta - corex
-  * thread pool
-  --------------------------------------
-  * BlockingQueue<T>
-
-  === Iteration 32 ===
-  --------------------------------------
-  dev: 
-  gen:
-  maint:
-  port:
-  prom:
-  --------------------------------------
+  * Task
+  * ppc64le : fix iteratorMethodTest
   --------------------------------------
 
   === Iteration 33 ===

@@ -4680,7 +4680,7 @@ void Compiler :: declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bo
       switch (current.key) {
          case SyntaxKey::Attribute:
             if (!_logic->validateSymbolAttribute(current.arg.value, scope.visibility, constant, scope.type)) {
-               current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
+               current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings             
                scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
             }
             break;

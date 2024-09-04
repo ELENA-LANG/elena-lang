@@ -2,13 +2,19 @@ import system;
 
 // --- StartHelper ---
 
-sealed class StartHelper
+internal sealed class StartHelper : interface<Func>
 {
    Func1  f;
 
    constructor(Func1 f)
    {
       this f := f
+   }
+
+   constructor(Func1 f, object arg)
+   {
+      this f := f;
+      Argument := arg
    }
 
    object Argument : prop;
@@ -122,6 +128,6 @@ public sealed class Thread
 
    static sleep(int milliseconds)
    {
-      threadControl.sleep(milliseconds);
+      ThreadHandle.sleep(milliseconds)
    }
 }

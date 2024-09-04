@@ -21,9 +21,12 @@ struct SYSTEM_INFO
    short   wProcessorRevision : prop;
 }
 
-textblock EnvironmentImlp
+internal class SystemInfo
 {
-   private static ProcessorType toProcessorType(int cpuType)
+   int           ProcessorCount : rprop;
+   ProcessorType ProcessorType : rprop;   
+
+   private ProcessorType toProcessorType(int cpuType)
    {
       if (cpuType == PROCESSOR_ARCHITECTURE_AMD64)
          { ^ ProcessorType.AMD64 }
@@ -39,7 +42,7 @@ textblock EnvironmentImlp
       ^ ProcessorType.Unknown
    }
 
-   static constructor()
+   constructor()
    {
       SYSTEM_INFO si := default;
 
@@ -47,7 +50,10 @@ textblock EnvironmentImlp
          extern KERNEL32.GetSystemInfo(si);
       };
 
-      _processorType := toProcessorType(si.dwOemId);
-      _processorCount := si.dwNumberOfProcessors;
+      ProcessorType := toProcessorType(si.dwOemId);
+      ProcessorCount := si.dwNumberOfProcessors;      
    }
 }
+
+internal static SystemInfo systemInfo
+   = new SystemInfo();

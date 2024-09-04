@@ -1,0 +1,14 @@
+<configuration>
+    <files>
+        <module>
+            <file>sample1.l</file>
+            <file>threadpool.l</file>
+        </module>
+    </files>
+    <project>
+        <executable>threadpoolsamples</executable>
+        <options></options>
+        <namespace>threadpoolsamples</namespace>
+        <template>mt_console</template>
+    </project>
+</configuration>
