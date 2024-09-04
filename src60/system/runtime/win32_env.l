@@ -29,17 +29,17 @@ internal class SystemInfo
    private ProcessorType toProcessorType(int cpuType)
    {
       if (cpuType == PROCESSOR_ARCHITECTURE_AMD64)
-         { ^ ProcessorType.AMD64 }
+         { ^ class ProcessorType.AMD64 }
       else if (cpuType == PROCESSOR_ARCHITECTURE_ARM)
-         { ^ ProcessorType.ARM }
+         { ^ class ProcessorType.ARM }
       else if (cpuType == PROCESSOR_ARCHITECTURE_ARM64)
-         { ^ ProcessorType.ARM64 }
+         { ^ class ProcessorType.ARM64 }
       else if (cpuType == PROCESSOR_ARCHITECTURE_IA64)
-         { ^ ProcessorType.IA64 }
+         { ^ class ProcessorType.IA64 }
       else if (cpuType == PROCESSOR_ARCHITECTURE_INTEL)
-         { ^ ProcessorType.x86 };
+         { ^ class ProcessorType.x86 };
 
-      ^ ProcessorType.Unknown
+      ^ class ProcessorType.Unknown
    }
 
    constructor()
