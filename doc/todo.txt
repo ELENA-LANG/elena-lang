@@ -5,13 +5,7 @@ In development:
 [development]
   ### EPIC: elena 6.4 ###
 
-  === Iteration 31 (5.9) ===
-  --------------------------------------
-  * thread pool testcase (https://www.c-sharpcorner.com/article/threadpool-in-c-sharp-practical-examples/)
-  --------------------------------------
-  * internal symbols
-
-  === Iteration 32 ===
+  === Iteration 32 (19.9) ===
   --------------------------------------
   dev: 
       - async programming (Task<T>, object field (similar to Event), WaitHandle, AsyncLocal<T>)
@@ -30,7 +24,10 @@ In development:
   * x86-64 : mta - corex
   * Task
   * ppc64le : fix iteratorMethodTest
+  * thread pool testcase (https://www.c-sharpcorner.com/article/threadpool-in-c-sharp-practical-examples/)
+  * inline assigning functional test : template type
   --------------------------------------
+  * inline assigning : template type
 
   === Iteration 33 ===
   --------------------------------------

@@ -1,8 +1,22 @@
 import extensions;
-import system'runtime;
+import system'collections;
+
+public sealed class QList<T>
+{
+   List<T> _list := new List<T>();
+
+   constructor() {}
+
+   push(T o)
+   {
+      _list.append(o);
+   }
+}
 
 public program()
 {
-   console.writeLine($"Processor type:{Environment.ProcessorType}");
-   console.writeLine($"Processor count:{Environment.ProcessorCount}");
+   QList<int> l := new QList<int>();
+
+   l.push(1);
+   l.push(2);
 }
