@@ -98,7 +98,7 @@ namespace elena_lang
       ref_t definePrimitiveArray(ModuleScopeBase& scope, ref_t elementRef, bool structOne);
 
       bool validateTemplateAttribute(ref_t attribute, Visibility& visibility, TemplateType& type);
-      bool validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant, bool& isStatic);
+      bool validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant, SymbolKind& symbolKind);
       bool validateClassAttribute(ref_t attribute, ref_t& flags, Visibility& visibility);
       bool validateFieldAttribute(ref_t attribute, FieldAttributes& attrs);
       bool validateMethodAttribute(ref_t attribute, ref_t& hint, bool& explicitMode);
@@ -184,7 +184,7 @@ namespace elena_lang
       mssg_t retrieveDynamicConvertor(ModuleScopeBase& scope, ref_t targetRef);
 
       ConversionRoutine retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ustr_t ns, 
-         ref_t targetRef, TypeInfo sourceInfo);
+         ref_t targetRef, TypeInfo sourceInfo, bool directConversion);
 
       bool checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result);
       bool checkMethod(ModuleScopeBase& scope, ref_t reference, mssg_t message, CheckMethodResult& result);
@@ -197,6 +197,7 @@ namespace elena_lang
          CheckMethodResult& result);
 
       mssg_t resolveSingleDispatch(ModuleScopeBase& scope, ref_t reference, ref_t weakMessage, int& nillableArgs);
+      mssg_t resolveFunctionSingleDispatch(ModuleScopeBase& scope, ref_t reference, int& nillableArgs);
 
       void injectOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, ref_t classRef);
       void injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags, 

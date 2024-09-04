@@ -64,6 +64,8 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
       case mskMssgLiteralRef:
       case mskExtMssgLiteralRef:
          return _mssgReferences.get(referenceName);
+      case mskTLSVariable:
+         return _tlsReferences.get(referenceName);
       default:
          return INVALID_ADDR;
    }
@@ -113,6 +115,9 @@ void ReferenceMapper :: mapReference(ustr_t referenceName, addr_t address, ref_t
       case mskStaticRef:
       case mskStaticVariable:
          _statReferences.add(referenceName, address);
+         break;
+      case mskTLSVariable:
+         _tlsReferences.add(referenceName, address);
          break;
       default:
          break;

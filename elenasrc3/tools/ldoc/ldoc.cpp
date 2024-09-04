@@ -172,65 +172,6 @@ void parseNs(IdentifierString& ns, ustr_t root, ustr_t fullName)
    ns.append(fullName, last);
 }
 
-//bool parseTemplateType(IdentifierString& line, size_t index, bool argMode)
-//{
-//   IdentifierString temp(line);
-//
-//   line.truncate(0);
-//
-//   size_t last = index;
-//   bool first = true;
-//   bool noCurlybrackets = false;
-//   bool nsExpected = true;
-//   if (argMode && (*temp).startsWith(ByRefPrefix)) {
-//      // HOTFIX : recognize byref argument
-//
-//      temp.cut(0, getlength(ByRefPrefix));
-//
-//      line.append("ref ");
-//      noCurlybrackets = true;
-//   }
-//   else if ((*temp).startsWith(ArrayPrefix)) {
-//      // HOTFIX : recognize array argument
-//      temp.cut(0, getlength(ArrayPrefix));
-//
-//      line.append("arrayof ");
-//      noCurlybrackets = true;
-//      nsExpected = false;
-//   }
-//
-//   for (size_t i = index; i < temp.length(); i++) {
-//      if (temp[i] == '@') {
-//         temp[i] = '\'';
-//      }
-//      else if (temp[i] == '#') {
-//         line.append((*temp) + last + 1, i - last - 1);
-//      }
-//      else if (temp[i] == '&') {
-//         if (first) {
-//            last = i;
-//            line.append("&lt;");
-//            first = false;
-//         }
-//         else {
-//            line.append((*temp) + last + 1, i - last - 1);
-//            line.append(',');
-//            last = i;
-//         }
-//      }
-//   }
-//
-//   if (noCurlybrackets) {
-//      line.append(*temp);
-//   }
-//   else {
-//      line.append((*temp) + last + 1);
-//      line.append("&gt;");
-//   }
-//
-//   return nsExpected;
-//}
-
 inline bool isTemplateArg(ustr_t name, size_t index)
 {
    size_t endPos = name.findSub(index, '&', name.length());

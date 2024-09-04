@@ -55,7 +55,10 @@ bool TestModuleScope :: withValidation()
 
 ref_t TestModuleScope :: mapAnonymous(ustr_t prefix)
 {
-   return _anonymousRef++;
+   IdentifierString name("'", prefix, INLINE_CLASSNAME);
+   name.appendInt(_anonymousRef++);
+
+   return module->mapReference(*name);
 }
 
 ref_t TestModuleScope :: mapNewIdentifier(ustr_t ns, ustr_t identifier, Visibility visibility)
@@ -120,7 +123,15 @@ ref_t TestModuleScope :: resolveWeakTemplateReferenceID(ref_t reference)
 
 SectionInfo TestModuleScope :: getSection(ustr_t referenceName, ref_t mask, bool silentMode)
 {
-   return {};
+   SectionInfo info = {};
+
+   if (isWeakReference(referenceName)) {
+      info.module = module;
+      info.reference = module->mapReference(referenceName, true);
+      info.section = module->mapSection(info.reference | mask, true);
+   }
+
+   return info;
 }
 
 MemoryBase* TestModuleScope :: mapSection(ref_t reference, bool existing)
@@ -295,14 +306,15 @@ void BaseFixture :: LoadDeclarationScenario(ustr_t common, ustr_t descr)
 
 void BaseFixture :: LoadDeclarationScenario(ustr_t common, ustr_t descr1, ustr_t descr2)
 {
-   IdentifierString descr(descr1, " ", descr2);
-
    DynamicUStr syntax(common);
 
    size_t index = common.findStr("$1");
    if (index != NOTFOUND_POS) {
       syntax.cut(index, 2);
-      syntax.insert(*descr, index);
+
+      syntax.insert(descr2, index);
+      syntax.insert(" ", index);
+      syntax.insert(descr1, index);
    }
 
    SyntaxTreeSerializer::load(syntax.str(), declarationNode);

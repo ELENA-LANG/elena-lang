@@ -174,6 +174,7 @@ namespace elena_lang
       bool                  _withDebugInfo;
          
       addr_t calculateVAddress(MemoryWriter& writer, ref_t targetMask);
+      addr_t calculateVOffset(MemoryWriter& writer, ref_t targetMask);
 
       addr_t getVMTAddress(ModuleBase* module, ref_t reference, VAddressMap& references);
       void* getVMTPtr(addr_t address);
@@ -215,6 +216,7 @@ namespace elena_lang
       addr_t resolveConstantArray(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode);
       addr_t resolveConstantDump(ReferenceInfo referenceInfo, ref_t sectionMask, bool silentMode);
       addr_t resolveStaticVariable(ReferenceInfo referenceInfo, ref_t sectionMask);
+      addr_t resolveThreadVariable(ReferenceInfo referenceInfo, ref_t sectionMask);
       addr_t resolveName(ReferenceInfo referenceInfo, bool onlyPath);
       addr_t resolvePackage(ReferenceInfo referenceInfo);
       addr_t resolveRawConstant(ReferenceInfo referenceInfo);

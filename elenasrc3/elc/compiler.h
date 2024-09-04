@@ -90,6 +90,7 @@ namespace elena_lang
       MethodName,
       FieldName,
       StaticField,
+      StaticThreadField,
       StaticConstField,
       ClassStaticConstField,
       Wrapper,
@@ -586,7 +587,7 @@ namespace elena_lang
       struct SymbolScope : SourceScope
       {
          SymbolInfo   info;
-         bool         isStatic;
+         SymbolKind   type;
 
          pos_t        reserved1;             // defines managed frame size
          pos_t        reserved2;             // defines unmanaged frame size (excluded from GC frame chain)
@@ -623,6 +624,7 @@ namespace elena_lang
          bool        abstractBasedMode;
          bool        extensionDispatcher;
          bool        withPrivateField;
+         bool        withStaticConstructor;
 
          Scope* getScope(ScopeLevel level) override
          {
@@ -1299,7 +1301,7 @@ namespace elena_lang
          ObjectInfo compileNewArrayOp(SyntaxNode node, ObjectInfo source, ref_t targetRef, ArgumentsInfo& arguments);
 
          ObjectInfo convertObject(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool dynamicRequired,
-            bool withoutBoxing, bool nillable);
+            bool withoutBoxing, bool nillable, bool directConversion);
 
          ObjectInfo compileMessageOperation(SyntaxNode node, ObjectInfo target, MessageResolution resolution, ref_t implicitSignatureRef, 
             ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs);
@@ -1452,6 +1454,8 @@ namespace elena_lang
       void declareTemplateAttributes(Scope& scope, SyntaxNode node, TemplateTypeList& parameters, 
          TypeAttributes& attributes, bool declarationMode, bool objectMode);
       void declareIncludeAttributes(Scope& scope, SyntaxNode node, bool& textBlock);
+
+      bool checkifSingleObject(Scope& scope, SyntaxNode node);
 
       static int defineFieldSize(Scope& scope, ObjectInfo info);
 
@@ -1738,6 +1742,7 @@ namespace elena_lang
 
       void compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, SyntaxNode node);
 
+      static SyntaxNode addStaticInitializerMethod(ClassScope& scope, SyntaxNode node);
       ref_t compileStaticAssigning(ClassScope& scope, SyntaxNode node);
 
       void recreateFieldType(ClassScope& scope, SyntaxNode node, ustr_t fieldName);
@@ -1780,7 +1785,7 @@ namespace elena_lang
       void injectInterfaceDispatch(Scope& scope, SyntaxNode node, ref_t parentRef);
 
       void injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t outputRef, SyntaxKey key, ustr_t arg);
-      void injectMethodInvoker(Scope& scope, SyntaxNode classNode, mssg_t message, ustr_t targetArg);
+      void injectMethodInvoker(Scope& scope, SyntaxNode classNode, mssg_t message, SyntaxKey targetKey, ustr_t targetArg);
 
       void injectStrongRedirectMethod(Scope& scope, SyntaxNode node, SyntaxKey methodType, ref_t reference, mssg_t message,
          mssg_t redirectMessage, TypeInfo outputInfo);

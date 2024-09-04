@@ -2002,7 +2002,7 @@ public ifNilOperatorTest() : testCase()
 
 // --- enumTest ---
 
-public const struct Color : enum<int>(Red = 1,Green = 2,Blue = 3);
+public const struct Color : enum<int>(Red ::= 1,Green ::= 2,Blue ::= 3);
 
 public enumTest() : testCase()
 {
@@ -2075,6 +2075,11 @@ public stringInterpolation() : testCase()
 
    Assert.ifEqual(s,"a_1_b_2_c");
    console.write(".");
+
+   var s2 := $"{ 3 }_b_{ 4 }_c";
+
+   Assert.ifEqual(s2,"3_b_4_c");
+   console.write(".");
 }
 
 // --- iteratorMethodTest ---
@@ -2103,5 +2108,19 @@ public iteratorMethodTest() : testCase()
    Assert.ifTrue(e.next());
    Assert.ifTrue(*e == 7);
    Assert.ifFalse(e.next());
+   console.write(".");
+}
+
+public isNilOperatorTest() : testCase()
+{
+   var a := nil; 
+   var b := 2; 
+
+   var r := a ?? b;
+   Assert.ifTrue(r == 2);
+   console.write(".");
+
+   Assert.ifNotFailed({ var a := new A(); var b := nil; var r := a ?? b.test() });
+   Assert.ifFailed({ var a := nil; var b := nil; var r := a ?? b.test() });
    console.write(".");
 }

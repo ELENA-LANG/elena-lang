@@ -19,8 +19,8 @@ namespace elena_lang
 
    constexpr auto LDOC_MODULE_NOTLOADED   = "cannot load a module: %s";
 
-   constexpr auto TITLE                   = "ELENA Standard Library 6.0: Module ";
-   constexpr auto TITLE2                  = "ELENA&nbsp;Standard&nbsp;Library<br>6.0";
+   constexpr auto TITLE                   = "ELENA Standard Library 6.3: Module ";
+   constexpr auto TITLE2                  = "ELENA&nbsp;Standard&nbsp;Library<br>6.3";
 
 }
 

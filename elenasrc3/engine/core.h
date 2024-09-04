@@ -2,7 +2,7 @@
 //
 //		This file contains common ELENA Core constants
 //
-//                                              (C)2021-2023, by Aleksey Rakov
+//                                              (C)2021-2024, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #ifndef CORE_H
@@ -190,6 +190,7 @@ namespace elena_lang
    struct SystemEnv
    {
       size_t            stat_counter;
+      size_t            tlsSize;
       GCTable*          gc_table;
       ThreadContent*    th_single_content;  // NOTE : used only for STA
       ThreadTable*      th_table;           // NOTE : used only for MTA 

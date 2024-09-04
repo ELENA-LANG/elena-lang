@@ -4,6 +4,7 @@
 //		This file contains the compiler common interfaces & types
 //
 //                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2024, by ELENA-LANG Org
 //---------------------------------------------------------------------------
 
 #ifndef CLICOMMON_H
@@ -158,6 +159,13 @@ enum class Visibility
    Public = 4,
 };
 
+enum class SymbolKind
+{
+   Normal = 0,
+   Static = 1,
+   ThreadVar = 2
+};
+
 struct BranchingInfo
 {
    ref_t typeRef;
@@ -194,7 +202,7 @@ struct BuiltinReferences
    mssg_t  constructor_message;
    mssg_t  protected_constructor_message;
    mssg_t  invoke_message;
-   mssg_t  init_message;
+   mssg_t  init_message, static_init_message;
    mssg_t  add_message, sub_message, mul_message, div_message;
    mssg_t  band_message, bor_message, bxor_message;
    mssg_t  and_message, or_message, xor_message;
@@ -228,7 +236,7 @@ struct BuiltinReferences
 
       dispatch_message = constructor_message = 0;
       protected_constructor_message = 0;
-      invoke_message = init_message = 0;
+      invoke_message = init_message = static_init_message = 0;
       add_message = sub_message = mul_message = div_message = 0;
       band_message = bor_message = bxor_message = 0;
       and_message = or_message = xor_message = 0;
@@ -429,6 +437,7 @@ enum class ExpressionAttribute : pos64_t
    LookaheadExprMode    = 0x00080000000,   
    Class                = 0x00100000000,
    Nillable             = 0x00200000000,
+   AllowGenericSignature= 0x00400000000,
    OutRefOp             = 0x01000000000,
    WithVariadicArgCast  = 0x02008000000,
    DistributedForward   = 0x04000000000,
@@ -493,6 +502,7 @@ struct FieldAttributes
    int      size;
    bool     isConstant;
    bool     isStatic;
+   bool     isThreadStatic;
    bool     isEmbeddable;
    bool     isReadonly;
    bool     inlineArray;
@@ -619,6 +629,13 @@ public:
    void info(int code, ustr_t arg, ustr_t arg2) override
    {
       _presenter->print(_presenter->getMessage(code), arg, arg2);
+   }
+
+   void raiseError(int code) override
+   {
+      _presenter->print(_presenter->getMessage(code));
+
+      throw CLIException();
    }
 
    void raiseError(int code, ustr_t arg) override

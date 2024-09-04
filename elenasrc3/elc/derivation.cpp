@@ -1735,6 +1735,7 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode 
             flushInlineTemplate(writer, scope, node);
             break;
          case SyntaxKey::Declaration:
+         case SyntaxKey::None:
             scope.type = defineTemplateType(writer.CurrentNode());
 
             if (scope.type == ScopeType::ExtensionTemplate) {

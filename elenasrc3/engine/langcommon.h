@@ -352,6 +352,7 @@ namespace elena_lang
    constexpr auto errInvalidFile             = 205;
    constexpr auto errInvalidParserTarget     = 206;
    constexpr auto errInvalidParserTargetType = 207;
+   constexpr auto errTLSIsNotAllowed         = 208;
    constexpr auto errInvalidModuleVersion    = 210;
    constexpr auto errEmptyTarget             = 212;
 
@@ -489,6 +490,7 @@ namespace elena_lang
    constexpr auto V_WEAK                  = 0x80001029u;
    constexpr auto V_INTERFACE_DISPATCHER  = 0x8000102Au;
    constexpr auto V_PACKED_STRUCT         = 0x8000102Cu;
+   constexpr auto V_THREADVAR             = 0x8000102Du;
 
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;

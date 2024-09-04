@@ -65,7 +65,7 @@
 #let attributes["template"]    := 80001027h;
 #let attributes["weak"]        := 80001029h;
 #let attributes["packed"]      := 8000102Ch;
-
+#let attributes["__threadvar"] := 8000102Dh;
 
 /// primitive types
 #let attributes["__string"]    := 80000801h;

@@ -5,32 +5,29 @@ In development:
 [development]
   ### EPIC: elena 6.4 ###
 
-  === Iteration 31 ===
+  === Iteration 32 (19.9) ===
   --------------------------------------
   dev: 
-      - async programming (general concept, SynchronizationContext, ThreadPool, Task, AsyncLocal<T>, ThreadStatic)
+      - async programming (Task<T>, object field (similar to Event), WaitHandle, AsyncLocal<T>)
+      - ThreadLocal<T>
       - upndown (connector)
-      - chat: add mutex (see dpa_queue)
       - #496
   gen:
       - lpad : generate a code based on a record  
   maint:
-      - #679
+      - set up automatic tests
+      - #618
   port:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * x86-64 : mta - corex
+  * Task
+  * ppc64le : fix iteratorMethodTest
+  * thread pool testcase (https://www.c-sharpcorner.com/article/threadpool-in-c-sharp-practical-examples/)
+  * inline assigning functional test : template type
   --------------------------------------
-
-  === Iteration 32 ===
-  --------------------------------------
-  dev: 
-  gen:
-  maint:
-  port:
-  prom:
-  --------------------------------------
-  --------------------------------------
+  * inline assigning : template type
 
   === Iteration 33 ===
   --------------------------------------

@@ -68,6 +68,8 @@ namespace elena_lang
          TemplateGenerator(CompilingProcess* process);
       };
 
+      path_t              _appPath;
+
       path_t              _modulePrologName, _prologName, _epilogName;
 
       path_t              _exeExtension;
@@ -120,6 +122,8 @@ namespace elena_lang
          int minimalArgList,
          int ptrSize);
 
+      void configurateParser(SyntaxVersion version);
+
       void configurate(Project& project);
       void cleanUp(ProjectBase& project);
       void compile(ProjectBase& project, 
@@ -151,7 +155,7 @@ namespace elena_lang
          _compiler->setVerboseOn();
       }
 
-      CompilingProcess(PathString& appPath, path_t exeExtension,
+      CompilingProcess(path_t appPath, path_t exeExtension,
          path_t modulePrologName, path_t prologName, path_t epilogName,
          PresenterBase* presenter, ErrorProcessor* errorProcessor,
          pos_t codeAlignment,

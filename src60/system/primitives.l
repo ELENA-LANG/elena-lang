@@ -277,7 +277,7 @@ internal singleton PrimitiveRealOperations
    }
 }
 
-/*internal*/public singleton PrimitiveStringOperations
+internal singleton PrimitiveStringOperations
 {
    copy(byte[] dest, int srcIndex, int size, string sour) : external(system'core_routines'__copySubStr);
    copyTo(byte[] dest, int dstIndex, int size, string sour) : external(system'core_routines'__copySubStr2);

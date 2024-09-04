@@ -118,3 +118,84 @@ public program()
     {
        var n := 12o;
     } 
+
+----------------------------------------------------------------------------
+ function reference
+----------------------------------------------------------------------------
+import extensions;
+
+import extensions;
+import system'threading;
+
+myFunction()
+{
+   console.writeLine("Hello from the thread");
+}
+
+public program()
+{
+   auto myThread := Thread.assign(&myFunction);
+}
+
+----------------------------------------------------------------------------
+ threads
+----------------------------------------------------------------------------
+
+-- Without argumnet ---
+
+import extensions;
+import system'threading;
+
+myFunction()
+{
+   console.writeLine("Hello from the thread");
+}
+
+public program()
+{
+   auto myThread := Thread.assign(&myFunction);
+
+   var priority := myThread.Priority;
+
+   console.printLine("Thread priority ", priority);
+
+   myThread.start();
+
+   console.readChar()
+}
+
+-- With argumnet ---
+
+import extensions;
+import system'threading;
+
+myFunction(arg)
+{
+   console.writeLine($"{arg} from the thread");
+}
+
+public program()
+{
+   auto myThread := Thread.assign(&myFunction);
+
+   var priority := myThread.Priority;
+
+   console.printLine("Thread priority ", priority);
+
+   myThread.start("Good bay");
+
+   console.readChar()
+}
+
+----------------------------------------------------------------------------
+ Environment
+----------------------------------------------------------------------------
+
+import extensions;
+import system'runtime;
+
+public program()
+{
+   console.writeLine($"Processor type:{Environment.ProcessorType}");
+   console.writeLine($"Processor count:{Environment.ProcessorCount}");
+}

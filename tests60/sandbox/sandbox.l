@@ -1,33 +1,22 @@
 import extensions;
+import system'collections;
 
-singleton IteratorEnumerable : Enumerable
+public sealed class QList<T>
 {
-   Enumerator enumerator()
-      = IteratorEnumerable.infinitEnumerator();
+   List<T> _list := new List<T>();
 
-   yield Enumerator infinitEnumerator()
+   constructor() {}
+
+   push(T o)
    {
-      $yield 2;
-      $yield 5;
-      $yield 7;
+      _list.append(o);
    }
 }
 
-public iteratorMethodTest()
-{
-   auto e := IteratorEnumerable.enumerator();
-
-   Assert.ifTrue(e.next());
-   Assert.ifTrue(*e == 2);
-   Assert.ifTrue(e.next());
-   Assert.ifTrue(*e == 5);
-   Assert.ifTrue(e.next());
-   Assert.ifTrue(*e == 7);
-   Assert.ifFalse(e.next());
-}
-
-
 public program()
 {
-   iteratorMethodTest();
+   QList<int> l := new QList<int>();
+
+   l.push(1);
+   l.push(2);
 }

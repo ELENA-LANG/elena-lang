@@ -4,6 +4,7 @@
 //		This file contains ELENA compiler logic class implementation.
 //
 //                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2024, by ELENA-LANG Org
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -783,11 +784,14 @@ bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& vis
    return true;
 }
 
-bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant, bool& isStatic)
+bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant, SymbolKind& symbolKind)
 {
    switch (attribute) {
       case V_PUBLIC:
          visibility = Visibility::Public;
+         break;
+      case V_INTERNAL:
+         visibility = Visibility::Internal;
          break;
       case V_PRIVATE:
          visibility = Visibility::Private;
@@ -798,7 +802,13 @@ bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visib
          constant = true;
          break;
       case V_STATIC:
-         isStatic = true;
+         symbolKind = SymbolKind::Static;
+         break;
+      case V_THREADVAR:
+         symbolKind = SymbolKind::ThreadVar;
+         break;
+      case 0:
+         // ignore idle
          break;
       default:
          return false;
@@ -897,6 +907,9 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
          break;
       case V_STATIC:
          attrs.isStatic = true;
+         break;
+      case V_THREADVAR:
+         attrs.isThreadStatic = true;
          break;
       case V_READONLY:
          attrs.isReadonly = true;
@@ -1307,11 +1320,11 @@ bool CompilerLogic :: isReadOnly(ClassInfo& info)
 bool CompilerLogic :: isEmbeddableArray(ModuleScopeBase& scope, ref_t reference)
 {
    if (scope.cachedEmbeddableArrays.exist(reference))
-       return scope.cachedEmbeddableArrays.get(reference);
+      return scope.cachedEmbeddableArrays.get(reference);
 
    ClassInfo info;
    if (defineClassInfo(scope, info, reference, true)) {
-       auto retVal = isEmbeddableArray(info);
+      auto retVal = isEmbeddableArray(info);
 
 	   scope.cachedEmbeddableArrays.add(reference, retVal);
 
@@ -2274,7 +2287,7 @@ mssg_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_
 }
 
 ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ustr_t ns, 
-   ref_t targetRef, TypeInfo sourceInfo)
+   ref_t targetRef, TypeInfo sourceInfo, bool directConversion)
 {
    ClassInfo info;
    if (!defineClassInfo(scope, info, targetRef))
@@ -2325,7 +2338,7 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
    }
 
    // if there is a implicit conversion routine
-   if (!isPrimitiveRef(targetRef)) {
+   if (!isPrimitiveRef(targetRef) && !directConversion) {
       ref_t sourceRef = sourceInfo.isPrimitive() ? compiler->resolvePrimitiveType(scope, sourceInfo) : sourceInfo.typeRef;
 
       ref_t signRef = scope.module->mapSignature(&sourceRef, 1, false);
@@ -2628,6 +2641,24 @@ mssg_t CompilerLogic :: resolveSingleDispatch(ModuleScopeBase& scope, ref_t refe
       return dispatcher;
    }
    else return 0;
+}
+
+mssg_t CompilerLogic :: resolveFunctionSingleDispatch(ModuleScopeBase& scope, ref_t reference, int& nillableArgs)
+{
+   if (!reference)
+      return 0;
+
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference)) {
+      ref_t actionRef = scope.module->mapAction(INVOKE_MESSAGE, 0, true);
+      for (int i = 0; i < ARG_COUNT; i++) {
+         mssg_t weakMessage = encodeMessage(actionRef, i, FUNCTION_MESSAGE);
+
+         if (info.methods.exist(weakMessage))
+            return weakMessage;
+      }
+   }
+   return 0;
 }
 
 inline size_t readSignatureMember(ustr_t signature, size_t index)

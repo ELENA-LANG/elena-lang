@@ -896,10 +896,17 @@ void ProjectController :: includeFile(ProjectModel& model, path_t filePath)
    PathString relPath(filePath);
    _pathHelper->makePathRelative(relPath, *model.projectPath);
 
-   model.sources.add((*relPath).clone());
-   model.addedSources.add((*relPath).clone());
+   // HOTFIX : make sure the file is not included
+   if (model.sources.retrieveIndex<path_t>(*relPath, [](path_t arg, path_t current)
+      {
+         return current.compare(arg);
+      }) == -1)
+   {
+      model.sources.add((*relPath).clone());
+      model.addedSources.add((*relPath).clone());
 
-   model.notSaved = true;
+      model.notSaved = true;
+   }
 }
 
 void ProjectController :: excludeFile(ProjectModel& model, path_t filePath)

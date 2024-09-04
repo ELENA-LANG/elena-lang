@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       Project          project(*dataPath, CURRENT_PLATFORM, &Presenter::getInstance());
       LinuxLinker      linker(&errorProcessor, &LinuxImageFormatter::getInstance(&project));
-      CompilingProcess process(dataPath, nullptr, "<moduleProlog>", "<prolog>", "<epilog>",
+      CompilingProcess process(*dataPath, nullptr, "<moduleProlog>", "<prolog>", "<epilog>",
          &Presenter::getInstance(), &errorProcessor,
          VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 

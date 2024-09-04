@@ -73,7 +73,7 @@ namespace elena_lang
       size_t allocateThreadEntry(SystemEnv* env);
       void clearThreadEntry(SystemEnv* env, size_t index);
 
-      void* allocateThread(SystemEnv* env, void* arg, void* threadProc, int flags);
+      void* allocateThread(SystemEnv* env, void* arg, void* threadProc, int stackSize, int flags);
 
       unsigned int getRandomNumber(SeedStruct& seed)
       {

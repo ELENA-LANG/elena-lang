@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.0: Module system'threading
+ELENA Standard Library 6.3: Module system'threading
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,9 +19,117 @@ ELENA Standard Library 6.0: Module system'threading
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.0
+ELENA&nbsp;Standard&nbsp;Library<br>6.3
 </STRONG>
 </DIV>
+</DIV>
+<A NAME="Semaphore">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="Semaphore" class="title">Semaphore</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">Semaphore</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'threading'Semaphore</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_handle</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Semaphore">Semaphore</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>create(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> initValue, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> maxValue)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>wait()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>release()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
 </DIV>
 <A NAME="Thread">
 </A>
@@ -66,6 +174,14 @@ system'threading'Thread</LI>
 <CODE>_handle</CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_startArg</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -81,10 +197,112 @@ system'threading'Thread</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>sleep(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> milliseconds)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f)
 </CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> stackSize)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> stackSize)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>current()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== STATIC PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Static Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Current()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadPriority">ThreadPriority</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Priority()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Priority(<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadPriority">ThreadPriority</A></SPAN> value)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>IsAlive()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -113,7 +331,25 @@ system'threading'Thread</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
+<CODE>start(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> arg)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
 <CODE>join()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>join(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> milliseconds)
 </CODE>
 </TD>
 </TR>
@@ -123,55 +359,6 @@ system'threading'Thread</LI>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>close()
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<HR>
-</DIV>
-<A NAME="threadControl">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'threading'</DIV>
-<H2 title="threadControl" class="title">threadControl</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-public singleton <SPAN CLASS="typeNameLabel">threadControl</SPAN></PRE>
-<BR>
-</DIV>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'threading'threadControl</LI>
-</UL>
-</LI>
-</UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>sleep(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> interval)
 </CODE>
 </TD>
 </TR>
@@ -246,9 +433,36 @@ system'threading'ThreadHandle</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>sleep(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> interval)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadHandle">ThreadHandle</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f)
+<CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadHandle">ThreadHandle</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadHandle">ThreadHandle</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> stackSize)
 </CODE>
 </TD>
 </TR>
@@ -263,6 +477,24 @@ system'threading'ThreadHandle</LI>
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadPriority">ThreadPriority</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>getPriority()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setPriority(<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadPriority">ThreadPriority</A></SPAN> priority)
+</CODE>
+</TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -294,10 +526,134 @@ system'threading'ThreadHandle</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>checkIfAlive()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>close()
 </CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="ThreadPool">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="ThreadPool" class="title">ThreadPool</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">ThreadPool</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'threading'ThreadPool</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>private </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>function:#class_init()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>queueAction(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>queueAction(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> arg)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="ThreadPriority">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="ThreadPriority" class="title">ThreadPriority</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">ThreadPriority</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'threading'ThreadPriority</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_value</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -342,6 +698,265 @@ system'threading'</DIV>
 </DIV>
 <HR>
 </DIV>
+<A NAME="THREAD_PRIORITY_ABOVE_NORMAL">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="THREAD_PRIORITY_ABOVE_NORMAL" class="title">THREAD_PRIORITY_ABOVE_NORMAL</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>THREAD_PRIORITY_ABOVE_NORMAL</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="THREAD_PRIORITY_BELOW_NORMAL">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="THREAD_PRIORITY_BELOW_NORMAL" class="title">THREAD_PRIORITY_BELOW_NORMAL</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>THREAD_PRIORITY_BELOW_NORMAL</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="THREAD_PRIORITY_HIGHEST">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="THREAD_PRIORITY_HIGHEST" class="title">THREAD_PRIORITY_HIGHEST</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>THREAD_PRIORITY_HIGHEST</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="THREAD_PRIORITY_LOWEST">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="THREAD_PRIORITY_LOWEST" class="title">THREAD_PRIORITY_LOWEST</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>THREAD_PRIORITY_LOWEST</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="THREAD_PRIORITY_NORMAL">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="THREAD_PRIORITY_NORMAL" class="title">THREAD_PRIORITY_NORMAL</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>THREAD_PRIORITY_NORMAL</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="WAIT_OBJECT_0">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="WAIT_OBJECT_0" class="title">WAIT_OBJECT_0</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>WAIT_OBJECT_0</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="WAIT_TIMEOUT">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="WAIT_TIMEOUT" class="title">WAIT_TIMEOUT</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>WAIT_TIMEOUT</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
 <DIV CLASS="bottomNav">
 <UL CLASS="navList">
 <LI>
@@ -353,7 +968,7 @@ system'threading'</DIV>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.0
+ELENA&nbsp;Standard&nbsp;Library<br>6.3
 </STRONG>
 </DIV>
 </DIV>

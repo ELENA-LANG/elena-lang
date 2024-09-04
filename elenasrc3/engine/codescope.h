@@ -33,6 +33,7 @@ namespace elena_lang
       AddressMap      _mssgReferences, _subjReferences;
       AddressMap      _dataReferences;
       AddressMap      _statReferences;
+      AddressMap      _tlsReferences;
 
       ReferenceMap    _actionNames;
       ActionMap       _actions;
@@ -80,6 +81,7 @@ namespace elena_lang
          _subjReferences(INVALID_ADDR),
          _dataReferences(INVALID_ADDR),
          _statReferences(INVALID_ADDR),
+         _tlsReferences(INVALID_ADDR),
          _actionNames(0),
          _actions(0),
          _lazyReferences({}),

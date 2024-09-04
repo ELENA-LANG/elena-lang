@@ -15,6 +15,6 @@ public singleton threadControl
    
    sleep (int n)
    {
-      @system'threading'threadControl.sleep(n)
+      Thread.sleep(n)
    }
 }

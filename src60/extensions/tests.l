@@ -12,8 +12,7 @@ public singleton Assert
    {
       ifnot(val == expr)
       {
-         AssertException.raise("Assertion failed: expected {0}
-was {1}".interpolate(val, expr))
+         AssertException.raise("Assertion failed: expected '{0}' was '{1}'".interpolate(val, expr))
       }
    }
 
@@ -27,7 +26,19 @@ was {1}".interpolate(val, expr))
          };
             
       Assert.ifTrue(failed);
-    }
+   }
+
+   ifNotFailed(Func f)
+   {
+      var failed := true;
+      f() \\ 
+         on::(e)
+         {
+            failed := false;
+         };
+            
+      Assert.ifTrue(failed);
+   }
 
    ifTrue(b)
    {

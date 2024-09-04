@@ -148,6 +148,19 @@ namespace elena_lang
          }
       }
 
+      void insertChild(pos_t parent, pos_t child)
+      {
+         auto r = (NodeRecord*)_body.get(parent);
+         if (r->child == INVALID_POS) {
+            r->child = child;
+         }
+         else {
+            auto nw = (NodeRecord*)_body.get(child);
+            nw->next = r->child;
+            r->child = child;
+         }
+      }
+
       pos_t readParent(pos_t position)
       {
          if (position == INVALID_POS)
@@ -460,6 +473,13 @@ namespace elena_lang
             return Node::read(_tree, child);
          }
 
+         Node insertNode(Key key, ref_t argument = 0)
+         {
+            pos_t child = _tree->insertChild(_position, key, argument, INVALID_POS);
+
+            return Node::read(_tree, child);
+         }
+
          // inject a child node between the current one and its children
          Node injectNode(Key key, int argument = 0)
          {
@@ -505,6 +525,16 @@ namespace elena_lang
          pos_t child = newChild(position, key, arg);
 
          appendChild(position, child);
+
+         return child;
+      }
+      pos_t insertChild(pos_t position, Key key, ref_t reference, pos_t strArgPosition)
+      {
+         NodeArg arg(reference, strArgPosition);
+
+         pos_t child = newChild(position, key, arg);
+
+         insertChild(position, child);
 
          return child;
       }

@@ -62,11 +62,11 @@ uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
    return !r ? 0 : (uintptr_t)allocPtr;
 }
 
-void* SystemRoutineProvider :: CreateThread(size_t tt_index, int flags, void* threadProc)
+void* SystemRoutineProvider :: CreateThread(size_t tt_index, int stackSize, int flags, void* threadProc)
 {
    return ::CreateThread(
       nullptr,                            // default security attributes
-      0,                                  // use default stack size  
+      stackSize,                          // use default stack size  
       (LPTHREAD_START_ROUTINE)threadProc, // thread function name
       (LPVOID)tt_index,                   // argument to thread function 
       flags,                              // use default creation flags 

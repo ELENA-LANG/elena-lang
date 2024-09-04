@@ -160,9 +160,12 @@ namespace elena_lang
       IntLongOp            = 0x0082,
       DistributedTypeList  = 0x0083,
       UnboxAndCallMessage  = 0x0084,
-      NilRefBranchOp       = 0x0085,
+      ThreadVar            = 0x0085,
+      ThreadVarAssigning   = 0x0086,
+      OpenThreadVar        = 0x0087,
+      CloseThreadVar       = 0x0088,
 
-      MaxOperationalKey    = 0x0085,
+      MaxOperationalKey    = 0x0088,
 
       Import               = 0x0090,
       DictionaryOp         = 0x0091,
@@ -186,6 +189,7 @@ namespace elena_lang
       StackCondOp          = 0x00A3,
       YieldDispatch        = 0x00A4,
       TernaryOp            = 0x00A5,
+      NilRefBranchOp       = 0x00A6,
 
       VariableInfo         = 0x00B0,
       Variable             = 0x00B1,

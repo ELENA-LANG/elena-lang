@@ -115,7 +115,8 @@ namespace elena_lang
    enum class SegmentPrefix : unsigned int
    {
       None  = 0,
-      FS    = 0x64
+      FS    = 0x64,
+      GS    = 0x65
    };
 
    // --- X86JumpType ---
@@ -302,6 +303,11 @@ namespace elena_lang
       static void writeModRM(MemoryWriter& writer, X86Operand sour, X86Operand dest)
       {
          int prefix = ((unsigned int)dest.type & 0x300) >> 2;
+         // HOTFIX : to allow GS M64Disp32
+         if (prefix == 0x80 && dest.prefix == SegmentPrefix::GS) {
+            writer.writeByte(0x14);
+            prefix = 0x10;
+         }
          int opcode = prefix + ((char)sour.type << 3) + (char)dest.type;
 
          writer.writeByte((unsigned char)opcode);

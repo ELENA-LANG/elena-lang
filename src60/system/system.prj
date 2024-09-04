@@ -80,6 +80,10 @@
         <include>io\win_files.l</include>
         <include>io\win_getfiles.l</include>
      </module>
+     <module name="collections'threadsafe">
+       <include>collections\threadsafe\queues.l</include>
+       <include>collections\threadsafe\template_tests.l</include>
+     </module>
      <module name="routines">
        <include>routines\enumerables.l</include>
        <include>routines\patterns.l</include>
@@ -93,10 +97,16 @@
        <include>runtime\common.l</include>
        <include>runtime\gc_routines.l</include>
        <include>runtime\vectortable.l</include>
+       <include>runtime\win32_env.l</include>
+       <include>runtime\env.l</include>
      </module>
      <module name="threading">
+       <include>threading\common.l</include>
        <include>threading\win32_handlers.l</include>
        <include>threading\thread.l</include>
+       <include>threading\win32_semaphores.l</include>
+       <include>threading\blockinglists.l</include>
+       <include>threading\threadpool.l</include>
      </module>
      <module name="dynamic">
        <include>dynamic\reflection.l</include>

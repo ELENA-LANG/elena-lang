@@ -287,6 +287,9 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr, bool wit
       case mskStaticVariable:
          appendPrefix(commandStr, "static:", withTabbing);
          break;
+      case mskTLSVariable:
+         appendPrefix(commandStr, "threadvar:", withTabbing);
+         break;
       case mskProcedureRef:
          appendPrefix(commandStr, "procedure:", withTabbing);
          break;
