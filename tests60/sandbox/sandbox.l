@@ -1,22 +1,21 @@
-import extensions;
-import system'collections;
+    class MyFirstClass
+    { 
+       field myFirstField;
+       
+       method doMyFirstOperation()
+       {
+          console.writeLine("My first method is invoked"); 
+       }
+    }
 
-public sealed class QList<T>
-{
-   List<T> _list := new List<T>();
+    function invokeMyClass(myObject)
+    {
+       myObject.doMyFirstOperation();
+    }
 
-   constructor() {}
+    public program()
+    {
+       invokeMyClass(new MyFirstClass());  
+    }
 
-   push(T o)
-   {
-      _list.append(o);
-   }
-}
 
-public program()
-{
-   QList<int> l := new QList<int>();
-
-   l.push(1);
-   l.push(2);
-}

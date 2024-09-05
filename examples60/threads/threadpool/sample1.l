@@ -18,7 +18,8 @@ public sample1()
    ThreadPool.queueAction(&WorkItem1, "Hello");
    ThreadPool.queueAction(&WorkItem2, 42);
    
-   Thread.sleep(1000);
+   //Thread.sleep(1000);
+   console.readChar();
 
    console.writeLine("Main thread exits")
 }
