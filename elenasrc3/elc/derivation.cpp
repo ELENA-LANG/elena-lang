@@ -2315,6 +2315,10 @@ void TemplateProssesor :: generateTemplate(SyntaxTreeWriter& writer, TemplateSco
          case SyntaxKey::Method:
             copyMethod(writer, scope, current);
             break;
+         case SyntaxKey::AssignOperation:
+         case SyntaxKey::AddAssignOperation:
+            copyNode(writer, scope, current);
+            break;
          default:
             break;
       }
