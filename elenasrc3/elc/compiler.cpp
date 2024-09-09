@@ -12435,6 +12435,9 @@ ObjectInfo Compiler::Expression :: compileCatchOperation(SyntaxNode node)
 
    writer->newNode(BuildKey::CatchOp, ehLocal.argument);
 
+   if (finallyNode != SyntaxKey::None)
+      writer->appendNode(BuildKey::Index, scope.newTempLocal());
+
    writer->newNode(BuildKey::Tape);
    compile(opNode, 0, EAttr::None, nullptr);
    writer->closeNode();

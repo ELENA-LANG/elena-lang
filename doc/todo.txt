@@ -24,11 +24,8 @@ In development:
   * x86-64 : mta - corex
   * Task
   * ppc64le : fix iteratorMethodTest
-  * thread pool testcase (https://www.c-sharpcorner.com/article/threadpool-in-c-sharp-practical-examples/)
-  * test blocking list
-  * ide : debugger - debug system'collections
   --------------------------------------
-  * ide : debugger - load system'threading 
+  * thread pool testcase (https://www.c-sharpcorner.com/article/threadpool-in-c-sharp-practical-examples/)
 
   === Iteration 33 ===
   --------------------------------------

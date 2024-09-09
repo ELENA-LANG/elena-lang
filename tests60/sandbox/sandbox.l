@@ -1,21 +1,17 @@
-    class MyFirstClass
-    { 
-       field myFirstField;
-       
-       method doMyFirstOperation()
-       {
-          console.writeLine("My first method is invoked"); 
-       }
-    }
+static sync = new object();
 
-    function invokeMyClass(myObject)
-    {
-       myObject.doMyFirstOperation();
-    }
+returnVal()
+{
+   lock(sync)  
+   {
+      ^ "Hello"
+   }
+}
 
-    public program()
-    {
-       invokeMyClass(new MyFirstClass());  
-    }
+
+public program()
+{
+   console.writeLine(returnVal());
+}
 
 

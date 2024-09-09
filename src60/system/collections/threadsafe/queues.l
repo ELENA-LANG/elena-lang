@@ -58,7 +58,6 @@ public sealed ThreadsafeQueue<T>
      
    T pop()
    {
-
       lock(_sync) {
          int top := *_top;
          int tale := *_tale;
