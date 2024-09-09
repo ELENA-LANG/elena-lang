@@ -24,7 +24,6 @@ In development:
   * x86-64 : mta - corex
   * Task
   --------------------------------------
-  * ppc64le : fix iteratorMethodTest
 
   === Iteration 33 ===
   --------------------------------------
