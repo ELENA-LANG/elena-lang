@@ -105,6 +105,8 @@
        <include>threading\win32_handlers.l</include>
        <include>threading\thread.l</include>
        <include>threading\win32_semaphores.l</include>
+       <include>threading\win32_events.l</include>
+       <include>threading\events.l</include>
        <include>threading\blockinglists.l</include>
        <include>threading\threadpool.l</include>
        <include>threading\template_tests.l</include>
