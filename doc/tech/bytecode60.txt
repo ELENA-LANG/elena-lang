@@ -525,5 +525,5 @@ ELENA byte codes (or ecodes)
 
    trylock                  - try to lock acc, if already locked COMP.EQ = 0
 
-   xhook dp:i, r            - set a handler to the specified address / label
+   xlabel dp:i, r            - set a handler to the specified address / label
 

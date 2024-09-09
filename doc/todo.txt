@@ -23,10 +23,8 @@ In development:
   --------------------------------------
   * x86-64 : mta - corex
   * Task
-  * ppc64le : fix iteratorMethodTest
-  * thread pool testcase (https://www.c-sharpcorner.com/article/threadpool-in-c-sharp-practical-examples/)
   --------------------------------------
-  * #154 : AutoResetEvent, ManualResetEvent, CountDownEvent
+  * ppc64le : fix iteratorMethodTest
 
   === Iteration 33 ===
   --------------------------------------

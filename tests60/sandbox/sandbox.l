@@ -1,17 +1,30 @@
-static sync = new object();
+import extensions;
 
-returnVal()
+// --- iteratorMethodTest ---
+
+singleton IteratorEnumerable : Enumerable
 {
-   lock(sync)  
+   Enumerator enumerator()
+      = IteratorEnumerable.infinitEnumerator();
+
+   yield Enumerator infinitEnumerator()
    {
-      ^ "Hello"
+      $yield 2;
+      $yield 5;
+      $yield 7;
    }
 }
 
-
 public program()
 {
-   console.writeLine(returnVal());
+   auto e := IteratorEnumerable.enumerator();
+
+   Assert.ifTrue(e.next());
+   Assert.ifTrue(*e == 2);
+   Assert.ifTrue(e.next());
+   Assert.ifTrue(*e == 5);
+   Assert.ifTrue(e.next());
+   Assert.ifTrue(*e == 7);
+   Assert.ifFalse(e.next());
+   console.write(".");
 }
-
-
