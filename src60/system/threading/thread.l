@@ -34,14 +34,9 @@ public sealed class Thread
    ThreadHandle   _handle;
    object         _startArg;
 
-   constructor assign(Func f)
+   constructor assign(Func f) : info("Creates a new thread. It must be started later")
    {
       _handle := new ThreadHandle(f);
-   }
-
-   constructor assign(Func f, int stackSize)
-   {
-      _handle := new ThreadHandle(f, stackSize);
    }
 
    constructor assign(Func1 f)
@@ -50,10 +45,39 @@ public sealed class Thread
       _handle := new ThreadHandle(_startArg);
    }
 
+   constructor assign(Func f, int stackSize)
+   {
+      _handle := new ThreadHandle(f, stackSize);
+   }
+
    constructor assign(Func1 f, int stackSize)
    {
       _startArg := new StartHelper(f);
       _handle := new ThreadHandle(_startArg, stackSize);
+   }
+
+   constructor new(Func f) : info("Creates and starts a new thread")
+      <= assign(f)
+   {
+      start();
+   }
+
+   constructor new(Func f, int stackSize)
+      <= assign(f, stackSize)
+   {
+      start();
+   }
+
+   constructor new(Func1 f)
+      <= assign(f)
+   {
+      start();
+   }
+
+   constructor new(Func1 f, int stackSize)
+      <= assign(f, stackSize)
+   {
+      start();
    }
 
    internal constructor current()

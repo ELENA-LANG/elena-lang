@@ -423,8 +423,8 @@ DebugLineInfo* DebugInfoProvider :: seekDebugLineInfo(addr_t lineInfoAddress, Id
          if (section != nullptr) {
             sourcePath = (const char*)section->get(current->addresses.source.nameRef);
 
-            if (sourcePath.find('\'') != NOTFOUND_POS) {
-               size_t index = sourcePath.find('\'');
+            if (sourcePath.findLast('\'') != NOTFOUND_POS) {
+               size_t index = sourcePath.findLast('\'');
                moduleName.copy(sourcePath, index);
                sourcePath = sourcePath + index + 1;
             }

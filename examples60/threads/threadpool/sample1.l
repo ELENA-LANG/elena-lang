@@ -3,7 +3,8 @@ import extensions'threading;
 
 WorkItem1(state)
 {
-   console.writeLine($"WorkItem1: {state}");
+//   console.writeLine($"WorkItem1: {state}");
+    console.writeLine("Test");
 }
 
 WorkItem2(state)
@@ -16,7 +17,7 @@ WorkItem2(state)
 public sample1()
 {
    ThreadPool.queueAction(&WorkItem1, "Hello");
-   ThreadPool.queueAction(&WorkItem2, 42);
+//   ThreadPool.queueAction(&WorkItem2, 42);
    
    //Thread.sleep(1000);
    console.readChar();
