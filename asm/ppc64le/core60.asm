@@ -2424,7 +2424,7 @@ inline %0D6h
   addis   r12, r12, __disp32hi_2
   addi    r12, r12, __disp32lo_2
 
-  std     r19, 0(r12)
+  std     r12, 0(r19)
 
 end
 
