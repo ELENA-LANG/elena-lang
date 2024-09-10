@@ -69,7 +69,7 @@ public sealed class Task
       }
    }
 
-   static Task whenAll(params Task[] tasks)
+   static Task whenAllArgs(params Task[] tasks)
    {
       auto t := new Task();
 
@@ -97,6 +97,43 @@ public sealed class Task
       };
 
       ^ t;      
+   }
+
+   static Task whenAll(Task[] tasks)
+   {
+      auto t := new Task();
+
+      int len := tasks.Length;
+      int remaining := len;
+
+      Exception e := nil;
+
+      Action<Task> continuation := (Task t)
+      {
+         e := e ?? t.Exception;
+         lock(t) {
+            remaining := remaining - 1;
+         };
+         if (remaining == 0) {
+            ifnotNil (e) {
+               t.setException(e)
+            }
+            else t.setResult();
+         };
+      };
+
+      for (int i := 0; i < len; i++) {
+         tasks[i].continueWith(continuation);
+      };
+
+      ^ t;      
+   }
+
+   static waitAll(Task[] tasks)
+   {
+      auto t := whenAll(tasks);
+
+      t.wait()
    }
 
    static Task Run(Func action)

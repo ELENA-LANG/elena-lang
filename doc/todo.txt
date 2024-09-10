@@ -12,6 +12,7 @@ In development:
       - upndown (connector)
       - #496
       - Func<T,TResult> must have default conversion to Func<T,object>
+      - toArray<T> extension method (parameterized method extensions)
   gen:
       - lpad : generate a code based on a record  
   maint:
@@ -25,10 +26,10 @@ In development:
   * x86-64 : mta - corex
   * ldoc : system'collections'threadsafe : only proper templates must be shown
   * Task<T>
-  * async statemachine
   * ldoc : system-threading-.html must not be generated
+  * async statemachine
   --------------------------------------  
-  * Task
+  * Task testing
  
   === Iteration 33 ===
   --------------------------------------

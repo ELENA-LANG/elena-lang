@@ -3,7 +3,7 @@ import system'collections;
 
 // --- Queue Template ---
  
-public sealed ThreadsafeQueue<T>
+public sealed ConcurrentQueue<T>
 {
    object _sync;
 

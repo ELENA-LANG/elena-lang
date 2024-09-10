@@ -1,20 +1,60 @@
+import system'io;
+import system'threading;
+import system'collections;
+import system'collections'threadsafe;
+import system'routines;
 import extensions;
+import extensions'routines;
 
-singleton X
-{
-
-   continueWith(Action<string> action)
-   {
-      action("hello");
-   }
-
-   do()
-   {
-      continueWith((string x){ console.writeLine(x) });
-   }}
-
+//singleton X
+//{
+//   Task someMethodAsync1()
+//   {
+//      ^ new Task(/*console.writeLine("someMethodAsync1"); Thread.delay(1000); }*/);
+//   }
+//
+////   Task someMethodAsync2()
+////   {
+////      ^ new Task({ console.writeLine("someMethodAsync2"); Thread.delay(3000); });
+////     
+////   }
+//
+//   async Task test()
+//   {
+//      console.writeLine("Before");
+//
+//      $await Task.Run( { console.writeLine("someMethodAsync1"); Thread.delay(1000); });
+//
+//      console.writeLine("After");
+//   }
+//}
+//
+//public program()
+//{
+//   Task t := X.test();
+//
+//   t.Result;
+//
+//   console.readChar()
+//}
 
 public program()
 {
-   X.do()
+   auto list := new ConcurrentQueue<string>();
+   auto dirNames := new string[]{ ".", ".." };
+   auto tasks := new List<Task>();
+   foreach(string dirName; in dirNames) {
+      Task t := Task.Run( { foreach(auto path; in Directory.getFiles(dirName)) 
+                                    list.push(path); } );
+      tasks.append(t);
+   };
+
+   Task.waitAll(tasks.Value);
+
+//   foreach (Task t in tasks)
+//      Console.WriteLine("Task {0} Status: {1}", t.Id, t.Status);
+
+   list.Snapshot.toArray().forEach(printingLn);
+
+//   Console.WriteLine("Number of files read: {0}", list.Count);
 }

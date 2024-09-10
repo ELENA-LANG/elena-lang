@@ -22,7 +22,7 @@
 - API
   - [ADDED] system'threading'Thread: Priority, join<int>, Current
   - [ADDED] system'runtime'Environment
-  - [ADDED] system'collections'threadsafe'ThreadSafeQueue<T>
+  - [ADDED] system'collections'threadsafe'ConcurrentQueue<T>
   - [ADDED] #154 : system'threading'Semaphore
   - [ADDED] system'threading'BlockingQueue<T>
   - [ADDED]system'threading'ThreadPool

@@ -98,12 +98,7 @@ namespace io
          <= getFiles("*.*");
         
       string[] getFiles(string mask)
-      {
-         auto l := new List<string>();
-         SearchFiles(_path, mask, l);
-            
-         ^l.Value;
-      }
+         = Directory.getFiles(_path, mask);
 
       create()
       {
@@ -111,6 +106,17 @@ namespace io
       }     
 
       delete()
-         = directoryControl.delete(_path);      
+         = directoryControl.delete(_path);
+
+      static string[] getFiles(string path)
+         = getFiles(path, "*.*");
+
+      static string[] getFiles(string path, string mask)
+      {
+         auto l := new List<string>();
+         SearchFiles(path, mask, l);
+            
+         ^l.Value;         
+      }
    }   
 }

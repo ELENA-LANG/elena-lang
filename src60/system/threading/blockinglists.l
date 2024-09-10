@@ -3,7 +3,7 @@ import system'collections'threadsafe;
 
 public sealed class BlockingQueue<T>
 {
-   ThreadsafeQueue<T> _list := new ThreadsafeQueue<T>();
+   ConcurrentQueue<T> _list := new ConcurrentQueue<T>();
    Semaphore          _semaphore;
 
    constructor()
