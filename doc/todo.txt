@@ -8,8 +8,7 @@ In development:
   === Iteration 32 (19.9) ===
   --------------------------------------
   dev: 
-      - async programming (object field (similar to Event), WaitHandle, AsyncLocal<T>)
-      - ThreadLocal<T>
+      - async programming
       - upndown (connector)
       - #496
       - Func<T,TResult> must have default conversion to Func<T,object>
@@ -22,11 +21,11 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
-  * async statemachine
   * #676
   * x86-64 : mta - corex
   * ldoc : system'collections'threadsafe : only proper templates must be shown
   * Task<T>
+  * async statemachine
   * ldoc : system-threading-.html must not be generated
   --------------------------------------  
   * Task

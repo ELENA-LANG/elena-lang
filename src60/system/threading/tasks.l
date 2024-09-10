@@ -101,21 +101,21 @@ public sealed class Task
 
    static Task Run(Func action)
    {
-       var t = new Task();
+       auto t := new Task();
    
-       ThreadPool.QueueUserWorkItem(_ =>
+       ThreadPool.queueAction(
        {
            try
            {
                action();
-               t.SetResult();
+               t.setResult();
            }
            catch (Exception e)
            {
-               t.SetException(e);
+               t.setException(e);
            }
        });
    
-       return t;
+       ^ t;
    }
 }
