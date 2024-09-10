@@ -20,8 +20,13 @@ public closed class BaseEvent
       => _handle;
 }
 
-public sealed class ManualEvent : BaseEvent
+public sealed class ManualResetEvent : BaseEvent
 {
+   constructor new()
+      <= new(false)
+   {
+   }
+
    constructor new(bool value)
    {
       _handle := EventHandle.new(value, false);

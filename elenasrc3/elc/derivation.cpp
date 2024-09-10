@@ -710,7 +710,7 @@ void SyntaxTreeBuilder :: flushTupleType(SyntaxTreeWriter& writer, Scope& scope,
 }
 
 void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool withNameNode, 
-   bool typeDescriptor)
+   bool typeDescriptor, bool exprMode)
 {
    SyntaxNode nameNode = node.lastChild(SyntaxKey::TerminalMask);
    if (typeDescriptor) {
@@ -766,7 +766,7 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
             flushArrayType(writer, scope, current, false);
          }
          else if (current == SyntaxKey::TemplateType) {
-            flushTemplateType(writer, scope, current, false);
+            flushTemplateType(writer, scope, current, exprMode);
          }
          else flushAttribute(writer, scope, current, attributeCategory, allowType);
 
@@ -1083,7 +1083,7 @@ void SyntaxTreeBuilder :: flushExpressionAsDescriptor(SyntaxTreeWriter& writer, 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Object) {
-         flushDescriptor(writer, scope, current);
+         flushDescriptor(writer, scope, current, true, false, true);
       }
       else _errorProcessor->raiseTerminalError(errInvalidSyntax, retrievePath(node), node);
 

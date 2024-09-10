@@ -16,7 +16,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>6.2.2</version>
+     <version>6.3.1</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
@@ -109,6 +109,7 @@
        <include>threading\events.l</include>
        <include>threading\blockinglists.l</include>
        <include>threading\threadpool.l</include>
+       <include>threading\tasks.l</include>
        <include>threading\template_tests.l</include>
      </module>
      <module name="dynamic">

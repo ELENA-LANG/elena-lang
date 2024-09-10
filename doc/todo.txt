@@ -8,23 +8,29 @@ In development:
   === Iteration 32 (19.9) ===
   --------------------------------------
   dev: 
-      - async programming (Task<T>, object field (similar to Event), WaitHandle, AsyncLocal<T>)
+      - async programming (object field (similar to Event), WaitHandle, AsyncLocal<T>)
       - ThreadLocal<T>
       - upndown (connector)
       - #496
+      - Func<T,TResult> must have default conversion to Func<T,object>
   gen:
       - lpad : generate a code based on a record  
   maint:
-      - set up automatic tests
-      - #618
+      - #675
+      - unit tests : bt optimization 
   port:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * async statemachine
+  * #676
   * x86-64 : mta - corex
+  * ldoc : system'collections'threadsafe : only proper templates must be shown
+  * Task<T>
+  * ldoc : system-threading-.html must not be generated
+  --------------------------------------  
   * Task
-  --------------------------------------
-
+ 
   === Iteration 33 ===
   --------------------------------------
   dev: 

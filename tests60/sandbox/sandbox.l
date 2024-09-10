@@ -1,30 +1,20 @@
 import extensions;
 
-// --- iteratorMethodTest ---
-
-singleton IteratorEnumerable : Enumerable
+singleton X
 {
-   Enumerator enumerator()
-      = IteratorEnumerable.infinitEnumerator();
 
-   yield Enumerator infinitEnumerator()
+   continueWith(Action<string> action)
    {
-      $yield 2;
-      $yield 5;
-      $yield 7;
+      action("hello");
    }
-}
+
+   do()
+   {
+      continueWith((string x){ console.writeLine(x) });
+   }}
+
 
 public program()
 {
-   auto e := IteratorEnumerable.enumerator();
-
-   Assert.ifTrue(e.next());
-   Assert.ifTrue(*e == 2);
-   Assert.ifTrue(e.next());
-   Assert.ifTrue(*e == 5);
-   Assert.ifTrue(e.next());
-   Assert.ifTrue(*e == 7);
-   Assert.ifFalse(e.next());
-   console.write(".");
+   X.do()
 }
