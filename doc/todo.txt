@@ -29,10 +29,8 @@ In development:
   * ldoc : system-threading-.html must not be generated
   * async statemachine
   * ide : it must be possible to set the target type for the single file project
-  * test an exception in Task
-  * Task testing
   --------------------------------------  
-  * Task.setResult - mark an argument as nillable
+  * test an exception in Task
  
   === Iteration 33 ===
   --------------------------------------

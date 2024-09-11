@@ -1,0 +1,14 @@
+<configuration>
+    <files>
+        <module>
+            <file>sample1.l</file>
+            <file>main.l</file>
+        </module>
+    </files>
+    <project>
+        <executable>tasksamples</executable>
+        <options></options>
+        <namespace>tasksamples</namespace>
+        <template>mt_console</template>
+    </project>
+</configuration>

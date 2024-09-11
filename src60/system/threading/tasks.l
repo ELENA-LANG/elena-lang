@@ -118,9 +118,9 @@ public sealed class Task
 
       Exception e := nil;
 
-      Action<Task> continuation := (Task t)
+      Action<Task> continuation := (Task completed)
       {
-         e := e ?? t.Exception;
+         e := e ?? completed.Exception;
          lock(t) {
             remaining := remaining - 1;
          };

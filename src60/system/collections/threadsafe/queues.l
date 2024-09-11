@@ -94,7 +94,7 @@ public sealed ConcurrentQueue<T>
       };
 
       var Queue<T> q := new Queue<T>();
-      for (int i := top; i <= tale; i++) {
+      for (int i := top; i < tale; i++) {
          q.push(copy[i]);
       };
 
