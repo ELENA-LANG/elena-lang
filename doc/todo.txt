@@ -11,7 +11,7 @@ In development:
       - async programming
       - upndown (connector)
       - #496
-      - Func<T,TResult> must have default conversion to Func<T,object>
+      - Func<T,TResult> must have default conversion to Func<T,object>?
       - toArray<T> extension method (parameterized method extensions)
   gen:
       - lpad : generate a code based on a record  
@@ -28,9 +28,7 @@ In development:
   * Task<T>
   * ldoc : system-threading-.html must not be generated
   * async statemachine
-  * ide : it must be possible to set the target type for the single file project
   --------------------------------------  
-  * test an exception in Task
  
   === Iteration 33 ===
   --------------------------------------

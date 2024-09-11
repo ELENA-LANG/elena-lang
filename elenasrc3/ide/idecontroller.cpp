@@ -442,6 +442,11 @@ bool ProjectController :: compileSingleFile(ProjectModel& model, int postponedAc
    cmdLine.append(" -w3 "); // !! temporal
    cmdLine.append(singleProjectFile);
 
+   if (!model.templateName.empty()) {
+      cmdLine.append(" -t");
+      cmdLine.append(*model.templateName);
+   }
+
    PathString curDir;
    curDir.append(*model.projectPath);
 
@@ -782,6 +787,8 @@ int ProjectController :: openSingleFileProject(ProjectModel& model, path_t singl
 
    model.outputPath.copySubPath(singleProjectFile, false);
    model.singleSourceProject = true;
+
+   model.templateName.clear();
 
    model.sources.add((*src).clone());
 
