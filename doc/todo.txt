@@ -31,12 +31,8 @@ In development:
   * ide : it must be possible to set the target type for the single file project
   * test an exception in Task
   * Task testing
-  * Task.setResult - mark an argument as nillable
-  * sealed method cannot be overridden
-  * single dispatch with a internal method
-  * single dispatch with a protected method
-  * sealed method must be single dispatced even if the class is not closed / sealed
   --------------------------------------  
+  * Task.setResult - mark an argument as nillable
  
   === Iteration 33 ===
   --------------------------------------

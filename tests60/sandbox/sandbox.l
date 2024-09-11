@@ -86,18 +86,19 @@
 
 A
 {
-   private setMe(int n)
+   sealed setMe(int n)
    {
    } 
+}
 
-   set()
+B : A
+{
+   sealed setMe(int n)
    {
-      var n := 2; 
-      setMe(n) 
-   }
+       console.writeLine("New one")
+   } 
 }
 
 public program()
 {
-   A a := new A();
 }
