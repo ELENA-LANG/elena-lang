@@ -32,9 +32,11 @@ In development:
   * test an exception in Task
   * Task testing
   * Task.setResult - mark an argument as nillable
-  * redirecting to another method with nil
+  * sealed method cannot be overridden
+  * single dispatch with a internal method
+  * single dispatch with a protected method
+  * sealed method must be single dispatced even if the class is not closed / sealed
   --------------------------------------  
-  * unit test : calling a method with nil - strong - direct call
  
   === Iteration 33 ===
   --------------------------------------

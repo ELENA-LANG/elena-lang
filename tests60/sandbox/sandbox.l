@@ -69,16 +69,35 @@
 ////   Console.WriteLine("Number of files read: {0}", list.Count);
 //}
 
-singleton X
+//public sealed class Task
+//{
+//   Exception      _exception;
+//
+//   setResult()
+//      <= complete(nil);
+//
+//   private complete(Exception? ex)
+//   {
+//   }
+//
+//   setException(Exception ex)
+//      <= complete(ex);
+//}
+
+A
 {
-   printMe(string? arg)
+   private setMe(int n)
    {
-//      console.writeLine(arg ?? "<nil>");
+   } 
+
+   set()
+   {
+      var n := 2; 
+      setMe(n) 
    }
 }
 
 public program()
 {
-//   X.printMe("abc");
-   X.printMe(nil);
+   A a := new A();
 }

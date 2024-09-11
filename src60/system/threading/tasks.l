@@ -38,7 +38,7 @@ public sealed class Task
       }
    }
 
-   private complete(Exception ex)
+   private complete(Exception? ex)
    {
       lock(self) {
          if (_completed) {
