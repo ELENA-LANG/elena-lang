@@ -7,24 +7,34 @@ public sealed class Task
    Exception      _exception;
    Action<Task>   _continuation;
 
+   internal constructor()
+   {
+      _completed := false;
+   }
+
    internal Exception Exception
    {  
       get()
          = _exception;
    }
 
+   private continueWithUnsafe(Action<Task> action)
+   {
+      if (_completed) {
+         ThreadPool.queueAction({ action(self) });
+      }
+      else ifnotNil(_continuation) {
+         InvalidOperationException.raise("Only a single continuation is supported currently")
+      }
+      else {
+         _continuation := action;            
+      }
+   }
+
    continueWith(Action<Task> action)
    {
       lock(self) {
-         if (_completed) {
-            ThreadPool.queueAction({ action(self) });
-         }
-         else ifnotNil(_continuation) {
-            InvalidOperationException.raise("Only a single continuation is supported currently")
-         }
-         else {
-            _continuation := action;            
-         }
+         continueWithUnsafe(action);
       }
    }
 
@@ -58,7 +68,7 @@ public sealed class Task
          ifnot(_completed)
          {
             mres := ManualResetEvent.new();
-            continueWith((Task x){ mres.set() });
+            continueWithUnsafe((Task x){ mres.set() });
          }
       };
       

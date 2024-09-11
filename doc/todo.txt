@@ -28,8 +28,13 @@ In development:
   * Task<T>
   * ldoc : system-threading-.html must not be generated
   * async statemachine
-  --------------------------------------  
+  * ide : it must be possible to set the target type for the single file project
+  * test an exception in Task
   * Task testing
+  * Task.setResult - mark an argument as nillable
+  * redirecting to another method with nil
+  --------------------------------------  
+  * unit test : calling a method with nil - strong - direct call
  
   === Iteration 33 ===
   --------------------------------------

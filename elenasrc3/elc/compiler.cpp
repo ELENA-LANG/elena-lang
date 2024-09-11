@@ -13126,8 +13126,9 @@ ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, Argume
 
          // try to recognize the message signature
          // NOTE : signatures[signatureLen] contains expected parameter type if expectedSignRef is provided
+         bool isNillable = test(nillableArgs, argMask);
          auto argInfo = compile(current, signatures[signatureLen],
-            paramMode | (test(nillableArgs, argMask) ? EAttr::Nillable : EAttr::None), updatedOuterArgs);
+            paramMode | (isNillable ? EAttr::Nillable : EAttr::None), updatedOuterArgs);
 
          if ((argInfo.mode == TargetMode::UnboxingVarArgument || argInfo.mode == TargetMode::UnboxingAndTypecastingVarArgument) && signatureLen < ARG_COUNT) {
             if (argInfo.typeInfo.elementRef) {
@@ -13140,6 +13141,10 @@ ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, Argume
                   ? ArgumentListType::VariadicArgList : ArgumentListType::VariadicArgListWithTypecasting;
             }
             else scope.raiseError(errInvalidOperation, current);
+         }
+         else if (isNillable && argInfo.kind == ObjectKind::Nil) {
+            // pass nil as strong typed one
+            signatureLen++;
          }
          else {
             ref_t argRef = compiler->resolveStrongType(scope, argInfo.typeInfo);
