@@ -15581,8 +15581,19 @@ void Compiler::LambdaClosure :: declareClosureMessage(MethodScope& methodScope, 
    methodScope.closureMode = true;
 
    SyntaxNode argNode = node.findChild(SyntaxKey::Parameter);
-   if (argNode != SyntaxKey::None)
-      methodScope.message = declareClosureParameters(methodScope, argNode);
+   if (argNode != SyntaxKey::None) {
+      bool weakMessage = false;
+      methodScope.message = declareClosureParameters(methodScope, argNode, weakMessage);
+
+      if (weakMessage && parentRef != scope.info.header.parentRef) {
+         int dummy = 0;
+         mssg_t resolvedMessage = compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
+            parentRef, methodScope.message, false, dummy);
+
+         if (resolvedMessage)
+            methodScope.message = resolvedMessage;
+      }
+   }      
 }
 
 void Compiler::LambdaClosure :: compileExpressionMethod(MethodScope& scope, SyntaxNode node)
@@ -15713,7 +15724,7 @@ ref_t Compiler::LambdaClosure :: resolveClosure(mssg_t closureMessage, ref_t out
    }
 }
 
-ref_t Compiler::LambdaClosure :: declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode)
+ref_t Compiler::LambdaClosure :: declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode, bool& weakMessage)
 {
    IdentifierString messageStr;
    pos_t paramCount = 0;
@@ -15740,7 +15751,10 @@ ref_t Compiler::LambdaClosure :: declareClosureParameters(MethodScope& methodSco
    messageStr.copy(INVOKE_MESSAGE);
    if (!weakSingature && !noSignature) {
       signRef = methodScope.module->mapSignature(signatures, signatureLen, false);
+
+      weakMessage = false;
    }
+   else weakMessage = true;
 
    ref_t actionRef = methodScope.moduleScope->module->mapAction(*messageStr, signRef, false);
 

@@ -1420,7 +1420,7 @@ namespace elena_lang
          ref_t parentRef;
 
          ref_t resolveClosure(mssg_t closureMessage, ref_t outputRef);
-         ref_t declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode);
+         ref_t declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode, bool& weakMessage);
 
       public:
          void declareClosureMessage(MethodScope& methodScope, SyntaxNode node);
