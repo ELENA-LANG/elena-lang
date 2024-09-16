@@ -1,17 +1,11 @@
-import system'io;
 import system'threading;
-import system'collections;
-import system'collections'threadsafe;
-import system'routines;
-import extensions;
-import extensions'routines;
-
+//
 //singleton X
 //{
-//   Task someMethodAsync1()
-//   {
-//      ^ new Task(/*console.writeLine("someMethodAsync1"); Thread.delay(1000); }*/);
-//   }
+////   Task someMethodAsync1()
+////   {
+////      ^ new Task(/*console.writeLine("someMethodAsync1"); Thread.delay(1000); }*/);
+////   }
 //
 ////   Task someMethodAsync2()
 ////   {
@@ -38,19 +32,58 @@ import extensions'routines;
 //   console.readChar()
 //}
 
+//public abstract class AsyncStateEnumerator
+//{
+//   static Task proceed(Enumerator<Task> e)
+//   {
+//      Task t := /*new Task()*/nil;
+//
+//      Action<Task> proceeding := (Task tsk)
+//      {
+////         try
+////         {
+////             if (e.next()) {
+//                (*e).continueWith(this self);
+//
+////                ^ this self;
+////             }
+////         }
+////         catch (Exception e)
+////         {
+////            t.setException(e);
+////         };
+////
+////         t.setResult(); 
+//      };
+//
+//      proceeding(t);
+//
+//      ^ t;  
+//   }
+//}
+
 public program()
 {
-   auto list := new ConcurrentQueue<string>();
-   auto dirNames := new string[]{ ".", "..", "..\.." };
-   auto tasks := new List<Task>();
+//   var t := (int n)
+//   {
+//      $break;
+//
+//      console.writeLine("ERR")
+//   };
+//
+//
+//   t(2)
 
-   foreach(string dirName; in dirNames) {
-      Task t := Task.Run( { foreach(auto path; in Directory.getFiles(dirName)) 
-                                    list.push(path); } );
-      tasks.append(t);
+//   Action<int> t := (int n)
+//   {
+//      ^ this self;
+//   };
+
+   Action<int> t2 := (n)
+   {
+      ^ this self;
    };
 
-   Task.waitAll(tasks.Value);
+//   Func<int,int> f := (n => n + 1); // !! must be strong typed
 
-   list.Snapshot.forEach(printingLn);
 }

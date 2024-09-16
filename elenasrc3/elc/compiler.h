@@ -1110,11 +1110,22 @@ namespace elena_lang
          }
       };
 
-      class Namespace
+      class CommonHelper
+      {
+      protected:
+         Compiler* compiler;
+
+      public:
+         CommonHelper(Compiler* compiler)
+            : compiler(compiler)
+         {
+
+         }
+      };
+
+      class Namespace : public CommonHelper
       {
          friend class Compiler;
-
-         Compiler*      compiler;
 
          void declareNamespace(SyntaxNode node, bool ignoreImport = false, bool ignoreExtensions = false);
          void declareMemberIdentifiers(SyntaxNode node);
@@ -1130,12 +1141,11 @@ namespace elena_lang
          Namespace(Compiler* compiler, NamespaceScope* parent);
       };
 
-      class MetaExpression
+      class MetaExpression : public CommonHelper
       {
          friend class Compiler;
 
          Interpreter*   interpreter;
-         Compiler*      compiler;
          Scope*         scope;
 
          void generateObject(SyntaxTreeWriter& writer, SyntaxNode node);
@@ -1149,11 +1159,9 @@ namespace elena_lang
          MetaExpression(Compiler* compiler, Scope* scope, Interpreter* interpreter);
       };
 
-      class Symbol
+      class Symbol : public CommonHelper
       {
          friend class Compiler;
-
-         Compiler* compiler;
 
       public:
          SymbolScope scope;
@@ -1167,11 +1175,10 @@ namespace elena_lang
          Symbol(Compiler* compiler, NamespaceScope* parent, ref_t reference, Visibility visibility);
       };
 
-      class Class
+      class Class : public CommonHelper
       {
          friend class Compiler;
 
-         Compiler*         compiler;
          ClassScope        scope;
 
          void resolveClassPostfixes(SyntaxNode node, bool extensionMode);
@@ -1194,11 +1201,10 @@ namespace elena_lang
          Class(Namespace& ns, ref_t reference, Visibility visibility);
       };
 
-      class ClassClass
+      class ClassClass : public CommonHelper
       {
          friend class Compiler;
 
-         Compiler*         compiler;
          ClassClassScope   scope;
 
       public:
@@ -1207,11 +1213,10 @@ namespace elena_lang
          ClassClass(Class& classHelper);
       };
 
-      class Method
+      class Method : public CommonHelper
       {
          friend class Compiler;
 
-         Compiler*   compiler;
          MethodScope scope;
 
          void compileConstructor(BuildTreeWriter& writer, SyntaxNode current, ClassScope& classClassScope);
@@ -1224,18 +1229,17 @@ namespace elena_lang
          Method(Compiler* compiler, ClassScope& classScope);
       };
 
-      class Code
+      class Code : public CommonHelper
       {
          friend class Compiler;
 
-         Compiler* compiler;
          CodeScope scope;
 
       public:
          Code(Method& method);
       };
 
-      class Expression
+      class Expression : public CommonHelper
       {
          friend class Compiler;
 
@@ -1246,7 +1250,6 @@ namespace elena_lang
             VariadicArgListWithTypecasting = 2,
          };
 
-         Compiler*         compiler;
          ExprScope         scope;
          BuildTreeWriter*  writer;
 
@@ -1284,7 +1287,7 @@ namespace elena_lang
          ObjectInfo compileNested(InlineClassScope& classCcope, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs);
 
          ObjectInfo compileNested(SyntaxNode node, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs);
-         ObjectInfo compileClosure(SyntaxNode node, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs);
+         ObjectInfo compileClosure(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs);
          ObjectInfo compileWeakOperation(SyntaxNode node, ref_t* arguments, pos_t argLen,
             ObjectInfo& loperand, ArgumentsInfo& messageArguments, mssg_t message, ref_t expectedRef, ArgumentsInfo* updatedOuterArgs);
 
@@ -1386,7 +1389,7 @@ namespace elena_lang
          ObjectInfo compileCollection(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileTupleCollection(SyntaxNode node, ref_t targetRef);
          ObjectInfo compileKeyValue(SyntaxNode node, ExpressionAttribute mode);
-         ObjectInfo compileClosureOperation(SyntaxNode node);
+         ObjectInfo compileClosureOperation(SyntaxNode node, ref_t targetRef);
          ObjectInfo compileInterpolation(SyntaxNode node);
 
          ObjectInfo compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope = false);
@@ -1397,6 +1400,39 @@ namespace elena_lang
          Expression(Compiler* compiler, SourceScope& symbolScope, BuildTreeWriter& writer);
       };
 
+      class NestedClass : public CommonHelper
+      {
+         friend class Compiler;
+
+      protected:
+         BuildTreeWriter* writer;
+
+      public:
+         InlineClassScope scope;
+
+         NestedClass(Compiler* compiler, Expression& code, ref_t nestedRef, BuildTreeWriter& writer);
+      };
+
+      class LambdaClosure : public NestedClass
+      {
+         friend class Compiler;
+
+         ref_t parentRef;
+
+         ref_t resolveClosure(mssg_t closureMessage, ref_t outputRef);
+         ref_t declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode);
+
+      public:
+         void declareClosureMessage(MethodScope& methodScope, SyntaxNode node);
+         void compileExpressionMethod(MethodScope& scope, SyntaxNode node);
+         void compileClosureMethod(MethodScope& scope, SyntaxNode node);
+
+         void compile(SyntaxNode node);
+
+         LambdaClosure(Compiler* compiler, Expression& code, ref_t nestedRef, BuildTreeWriter& writer, ref_t parentRef);
+      };
+
+      friend class CommonHelper;
       friend class Namespace;
       friend class Class;
       friend class Method;
@@ -1727,8 +1763,7 @@ namespace elena_lang
       void compileConstructor(BuildTreeWriter& writer, MethodScope& scope, ClassScope& classClassScope, 
          SyntaxNode node, bool abstractMode);
       void compileCustomDispatcher(BuildTreeWriter& writer, ClassScope& scope);
-      void compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef);
-      void compileClosureClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node);
+      void compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef);      
       void compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node);
 
       void compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,

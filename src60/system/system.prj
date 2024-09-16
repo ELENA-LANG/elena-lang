@@ -110,6 +110,7 @@
        <include>threading\blockinglists.l</include>
        <include>threading\threadpool.l</include>
        <include>threading\tasks.l</include>
+       <include>threading\templates.l</include>
        <include>threading\template_tests.l</include>
      </module>
      <module name="dynamic">

@@ -13,6 +13,7 @@ In development:
       - #496
       - Func<T,TResult> must have default conversion to Func<T,object>?
       - toArray<T> extension method (parameterized method extensions)
+      - retest : #25, #412, #413, #414
   gen:
       - lpad : generate a code based on a record  
   maint:
@@ -28,7 +29,19 @@ In development:
   * Task<T>
   * ldoc : system-threading-.html must not be generated
   * async statemachine
+  * async method must create an enumerator and call a static method proceed
+  * declare async enumerator template
+  * using $break operator instead of return expression  
+  * explicit method signature for extensions 
+  * fix warnings in all libraries
+  * call a method explicitly (providing expected target)
+    class A { test(int n){} }
+    var n := 2;
+    a.test<int>(n);
+  * unit test - typed lambda expression
   --------------------------------------  
+  * closure : when the target type of lambda expression is known - use it; after the closure generation make sure they are compatible
+    e.g. the old parent is equal or a parent of the generated closure
  
   === Iteration 33 ===
   --------------------------------------

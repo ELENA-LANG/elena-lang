@@ -3932,51 +3932,6 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
    }
 }
 
-ref_t Compiler :: declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode)
-{
-   IdentifierString messageStr;
-   pos_t paramCount = 0;
-   ref_t signRef = 0;
-
-   bool weakSingature = true;
-   bool noSignature = true;
-   bool variadicMode = false;
-   ref_t flags = FUNCTION_MESSAGE;
-   ref_t signatures[ARG_COUNT];
-   size_t signatureLen = 0;
-   while (argNode == SyntaxKey::Parameter) {
-      bool dummy = false;
-      declareParameter(methodScope, argNode, false, false,
-         variadicMode, weakSingature, noSignature,
-         paramCount, signatures, signatureLen, dummy);
-
-      if (variadicMode)
-         flags |= VARIADIC_MESSAGE;
-
-      argNode = argNode.nextNode();
-   }
-
-   messageStr.copy(INVOKE_MESSAGE);
-   if (!weakSingature && !noSignature) {
-      signRef = methodScope.module->mapSignature(signatures, signatureLen, false);
-   }
-
-   ref_t actionRef = methodScope.moduleScope->module->mapAction(*messageStr, signRef, false);
-
-   return encodeMessage(actionRef, paramCount, flags);
-}
-
-void Compiler :: declareClosureMessage(MethodScope& methodScope, SyntaxNode node)
-{
-   ref_t invokeAction = methodScope.module->mapAction(INVOKE_MESSAGE, 0, false);
-   methodScope.message = encodeMessage(invokeAction, 0, FUNCTION_MESSAGE);
-   methodScope.closureMode = true;
-
-   SyntaxNode argNode = node.findChild(SyntaxKey::Parameter);
-   if (argNode != SyntaxKey::None)
-      methodScope.message = declareClosureParameters(methodScope, argNode);
-}
-
 void Compiler :: declareIteratorMessage(MethodScope& scope, SyntaxNode node)
 {
    ref_t itAction = scope.module->mapAction(NEXT_MESSAGE, 0, false);
@@ -5533,88 +5488,6 @@ ref_t Compiler :: resolveStateMachine(Scope& scope, ref_t templateRef, ref_t ele
 
    return _templateProcessor->generateClassTemplate(*scope.moduleScope,
       templateReference, parameters, false, nullptr);
-}
-
-ref_t Compiler :: resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef)
-{
-   ref_t signRef = 0;
-   scope.module->resolveAction(getAction(closureMessage), signRef);
-
-   int paramCount = getArgCount(closureMessage);
-
-   IdentifierString closureName(scope.module->resolveReference(scope.moduleScope->buildins.closureTemplateReference));
-   if (signRef == 0) {
-      if (paramCount > 0) {
-         closureName.appendInt(paramCount);
-      }
-
-      if (isWeakReference(*closureName)) {
-         return scope.module->mapReference(*closureName, true);
-      }
-      else return scope.moduleScope->mapFullReference(*closureName, true);
-   }
-   else {
-      ref_t signatures[ARG_COUNT];
-      size_t signLen = scope.module->resolveSignature(signRef, signatures);
-
-      List<SyntaxNode> parameters({});
-
-      // HOTFIX : generate a temporal template to pass the type
-      SyntaxTree dummyTree;
-      SyntaxTreeWriter dummyWriter(dummyTree);
-      dummyWriter.newNode(SyntaxKey::Root);
-
-      for (size_t i = 0; i < signLen; i++) {
-         dummyWriter.newNode(SyntaxKey::TemplateArg, signatures[i]);
-         dummyWriter.newNode(SyntaxKey::Type);
-
-         ustr_t referenceName = scope.moduleScope->module->resolveReference(signatures[i]);
-         if (isWeakReference(referenceName)) {
-            dummyWriter.appendNode(SyntaxKey::reference, referenceName);
-         }
-         else dummyWriter.appendNode(SyntaxKey::globalreference, referenceName);
-
-         dummyWriter.closeNode();
-         dummyWriter.closeNode();
-      }
-
-      if (outputRef) {
-         dummyWriter.newNode(SyntaxKey::TemplateArg, outputRef);
-         dummyWriter.newNode(SyntaxKey::Type);
-
-         ustr_t referenceName = scope.moduleScope->module->resolveReference(outputRef);
-         if (isWeakReference(referenceName)) {
-            dummyWriter.appendNode(SyntaxKey::reference, referenceName);
-         }
-         else dummyWriter.appendNode(SyntaxKey::globalreference, referenceName);
-
-         dummyWriter.closeNode();
-         dummyWriter.closeNode();
-      }
-
-      dummyWriter.closeNode();
-
-      SyntaxNode current = dummyTree.readRoot().firstChild();
-      while (current == SyntaxKey::TemplateArg) {
-         parameters.add(current);
-
-         current = current.nextNode();
-      }
-
-      closureName.append('#');
-      closureName.appendInt(paramCount + 1);
-
-      ref_t templateReference = 0;
-      if (isWeakReference(*closureName)) {
-         templateReference = scope.module->mapReference(*closureName, true);
-      }
-      else templateReference = scope.moduleScope->mapFullReference(*closureName, true);
-
-      NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-
-      return _templateProcessor->generateClassTemplate(*scope.moduleScope,
-         templateReference, parameters, false, nullptr);
-   }
 }
 
 ref_t Compiler :: resolveWrapperTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode)
@@ -9282,148 +9155,6 @@ void Compiler :: compileCustomDispatcher(BuildTreeWriter& writer, ClassScope& sc
    scope.save();
 }
 
-void Compiler :: compileExpressionMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
-{
-   beginMethod(writer, scope, node, BuildKey::Method, false);
-
-   CodeScope codeScope(&scope);
-
-   // new stack frame
-   writer.appendNode(BuildKey::OpenFrame);
-
-   // stack should contains current self reference
-   // the original message should be restored if it is a generic method
-   scope.selfLocal = codeScope.newLocal();
-   writer.appendNode(BuildKey::Assigning, scope.selfLocal);
-
-   compileRetExpression(writer, codeScope, node, EAttr::None);
-
-   writer.appendNode(BuildKey::CloseFrame);
-
-   codeScope.syncStack(&scope);
-
-   endMethod(writer, scope);
-}
-
-void Compiler :: compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
-{
-   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
-
-   beginMethod(writer, scope, node, BuildKey::Method, false);
-
-   CodeScope codeScope(&scope);
-
-   SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
-   switch (current.key) {
-      case SyntaxKey::CodeBlock:
-      case SyntaxKey::ReturnExpression:
-         compileMethodCode(writer, classScope, scope, codeScope, node, false);
-         break;
-      default:
-         break;
-   }
-
-   codeScope.syncStack(&scope);
-
-   endMethod(writer, scope);
-}
-
-void Compiler :: compileClosureClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node)
-{
-   bool lazyExpression = node == SyntaxKey::LazyOperation;
-   ref_t parentRef = scope.info.header.parentRef;
-
-   writer.newNode(BuildKey::Class, scope.reference);
-
-   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   if (_withDebugInfo)
-      writer.appendNode(BuildKey::Path, *ns->sourcePath);
-
-   MethodScope methodScope(&scope);
-   declareClosureMessage(methodScope, node);
-
-   methodScope.functionMode = true;
-
-   mssg_t multiMethod = /*!lazyExpression && */defineMultimethod(scope, methodScope.message, false);
-   if (multiMethod) {
-      methodScope.info.multiMethod = multiMethod;
-      methodScope.info.outputRef = V_AUTO;
-   }
-
-   if (lazyExpression) {
-      compileExpressionMethod(writer, methodScope, node);
-   }
-   else {
-      compileClosureMethod(writer, methodScope, node);
-
-      // HOTFIX : inject an output type if required or used super class
-      if (methodScope.info.outputRef == V_AUTO) {
-         methodScope.info.outputRef = scope.moduleScope->buildins.superReference;
-      }
-   }
-
-   if (!lazyExpression) {
-      ref_t closureRef = resolveClosure(scope, methodScope.message, methodScope.info.outputRef);
-      if (closureRef) {
-         parentRef = closureRef;
-      }
-      else throw InternalError(errClosureError);
-   }
-   else parentRef = scope.moduleScope->buildins.lazyExpressionReference;
-
-   declareClassParent(parentRef, scope, node);
-   generateClassFlags(scope, elNestedClass | elSealed);
-
-   scope.info.attributes.exclude({ 0, ClassAttribute::RuntimeLoadable });
-
-   // handle the abstract flag
-   if (test(scope.info.header.flags, elAbstract)) {
-      scope.abstractBasedMode = true;
-      scope.info.header.flags &= ~elAbstract;
-   }
-
-   auto m_it = scope.info.methods.getIt(methodScope.message);
-   if (!m_it.eof()) {
-      (*m_it).inherited = true;
-      (*m_it).hints &= ~(ref_t)MethodHint::Abstract;
-   }
-   else scope.info.methods.add(methodScope.message, methodScope.info);
-
-   if (multiMethod) {
-      SyntaxTree classTree;
-      SyntaxTreeWriter classWriter(classTree);
-
-      // build the class tree
-      classWriter.newNode(SyntaxKey::Root);
-      classWriter.newNode(SyntaxKey::Class, scope.reference);
-
-      SyntaxNode classNode = classWriter.CurrentNode();
-      injectVirtualMultimethod(classNode, SyntaxKey::Method, scope, scope.reference, scope.info, multiMethod, 0);
-
-      classWriter.closeNode();
-      classWriter.closeNode();
-
-      SyntaxNode current = classNode.firstChild();
-      while (current != SyntaxKey::None) {
-         generateMethodDeclaration(scope, current, false, false);
-
-         current = current.nextNode();
-      }
-
-      _logic->injectOverloadList(this, *scope.moduleScope, scope.info, scope.reference);
-
-      compileVMT(writer, scope, classNode);
-   }
-
-   // set flags once again
-   // NOTE : it should be called after the code compilation to take into consideration outer fields
-   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, scope.isClassClass());
-
-   writer.closeNode();
-
-   scope.save();
-}
-
 inline void mapUninqueField(ClassInfo::FieldMap& fields, IdentifierString& name, FieldInfo info)
 {
    size_t pos = name.length();
@@ -10868,13 +10599,13 @@ void Compiler :: declareModuleExtensionDispatcher(NamespaceScope& scope, SyntaxN
 // --- Compiler::Namespace ---
 Compiler::Namespace :: Namespace(Compiler* compiler, ModuleScopeBase* moduleScope, ErrorProcessor* errorProcessor, CompilerLogic* compilerLogic,
    ExtensionMap* outerExtensionList)
-   : compiler(compiler), scope(moduleScope, errorProcessor, compilerLogic, outerExtensionList)
+   : CommonHelper(compiler), scope(moduleScope, errorProcessor, compilerLogic, outerExtensionList)
 {
 
 }
 
 Compiler::Namespace::Namespace(Compiler* compiler, NamespaceScope* parent)
-   : compiler(compiler), scope(parent)
+   : CommonHelper(compiler), scope(parent)
 {
 
 }
@@ -11089,19 +10820,19 @@ Compiler::Symbol :: Symbol(Namespace& ns, ref_t reference, Visibility visibility
 }
 
 Compiler::Symbol::Symbol(Compiler* compiler, NamespaceScope* parent, ref_t reference, Visibility visibility)
-   : compiler(compiler), scope(parent, reference, visibility)
+   : CommonHelper(compiler), scope(parent, reference, visibility)
 {
 
 }
 
 // --- Compiler::Class ---
 Compiler::Class :: Class(Compiler* compiler, Scope* parent, ref_t reference, Visibility visibility)
-   : compiler(compiler), scope(parent, reference, visibility)
+   : CommonHelper(compiler), scope(parent, reference, visibility)
 {
 }
 
 Compiler::Class :: Class(Namespace& ns, ref_t reference, Visibility visibility)
-   : compiler(ns.compiler), scope(&ns.scope, reference, visibility)
+   : CommonHelper(ns.compiler), scope(&ns.scope, reference, visibility)
 {
 }
 
@@ -11320,9 +11051,9 @@ void Compiler::Class :: load()
 // --- Compiler::ClassClass ---
 
 Compiler::ClassClass :: ClassClass(Class& classHelper)
-   : compiler(classHelper.compiler), 
-   scope(classHelper.scope.parent, classHelper.scope.info.header.classRef, classHelper.scope.visibility,
-      &classHelper.scope.info, classHelper.scope.reference)
+   : CommonHelper(classHelper.compiler), 
+      scope(classHelper.scope.parent, classHelper.scope.info.header.classRef, classHelper.scope.visibility,
+         &classHelper.scope.info, classHelper.scope.reference)
 {
 }
 
@@ -11334,13 +11065,13 @@ void Compiler::ClassClass :: load()
 // --- Compiler::Method ---
 
 Compiler::Method :: Method(Class& cls)
-   : compiler(cls.compiler), scope(&cls.scope)
+   : CommonHelper(cls.compiler), scope(&cls.scope)
 {
 
 }
 
 Compiler::Method::Method(Compiler* compiler, ClassScope& classScope)
-   : compiler(compiler), scope(&classScope)
+   : CommonHelper(compiler), scope(&classScope)
 {
 }
 
@@ -11403,7 +11134,7 @@ void Compiler::Method :: compileConstructor(BuildTreeWriter& writer, SyntaxNode 
 // --- Compiler::Code ---
 
 Compiler::Code :: Code(Method& method)
-   : compiler(method.compiler), scope(&method.scope)
+   : CommonHelper(method.compiler), scope(&method.scope)
 {
 
 }
@@ -11411,25 +11142,25 @@ Compiler::Code :: Code(Method& method)
 // --- Compiler::Expression ---
 
 Compiler::Expression :: Expression(Compiler* compiler, CodeScope& codeScope, BuildTreeWriter& writer)
-   : compiler(compiler), scope(&codeScope), writer(&writer)
+   : CommonHelper(compiler), scope(&codeScope), writer(&writer)
 {
 
 }
 
 Compiler::Expression :: Expression(Compiler* compiler, SourceScope& symbolScope, BuildTreeWriter& writer)
-   : compiler(compiler), scope(&symbolScope), writer(&writer)
+   : CommonHelper(compiler), scope(&symbolScope), writer(&writer)
 {
 
 }
 
 Compiler::Expression :: Expression(Symbol& symbol, BuildTreeWriter& writer)
-   : compiler(symbol.compiler), scope(&symbol.scope), writer(&writer)
+   : CommonHelper(symbol.compiler), scope(&symbol.scope), writer(&writer)
 {
 
 }
 
 Compiler::Expression :: Expression(Code& code, BuildTreeWriter& writer)
-   : compiler(code.compiler), scope(&code.scope), writer(&writer)
+   : CommonHelper(code.compiler), scope(&code.scope), writer(&writer)
 {
 
 }
@@ -11668,7 +11399,8 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
          retVal = compile(current.firstChild(), 0, mode, updatedOuterArgs);
          break;
       case SyntaxKey::Expression:
-         retVal = compile(current, 0, mode, updatedOuterArgs);
+         retVal = compile(current, targetRef, mode, updatedOuterArgs);
+         targetRef = 0;
          break;
       case SyntaxKey::Object:
          retVal = compileObject(current, mode, updatedOuterArgs);
@@ -11677,10 +11409,10 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
          retVal = compileNested(current, mode, updatedOuterArgs);
          break;
       case SyntaxKey::ClosureBlock:
-         retVal = compileClosure(current, mode, updatedOuterArgs);
+         retVal = compileClosure(current, targetRef, mode, updatedOuterArgs);
          break;
       case SyntaxKey::LazyOperation:
-         retVal = compileClosure(current, mode, updatedOuterArgs);
+         retVal = compileClosure(current, 0, mode, updatedOuterArgs);
          break;
       case SyntaxKey::CodeBlock:
          retVal = compileSubCode(current, mode, true);
@@ -11714,7 +11446,7 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, EAt
          retVal = compileTupleAssigning(current);
          break;
       case SyntaxKey::ClosureOperation:
-         retVal = compileClosureOperation(current);
+         retVal = compileClosureOperation(current, targetRef);
          break;
       case SyntaxKey::Interpolation:
          retVal = compileInterpolation(current);
@@ -12299,7 +12031,7 @@ ObjectInfo Compiler::Expression :: compileBoolOperation(SyntaxNode node, int ope
       SyntaxTree::copyNode(treeWriter, rnode, true);
       treeWriter.closeNode();
 
-      ObjectInfo roperand = compileClosure(tempTree.readRoot(), EAttr::Parameter, nullptr);
+      ObjectInfo roperand = compileClosure(tempTree.readRoot(), 0, EAttr::Parameter, nullptr);
       ref_t      arguments[2] =
       {
          compiler->retrieveType(scope, loperand),
@@ -12676,20 +12408,20 @@ ObjectInfo Compiler::Expression :: compileNested(SyntaxNode node, ExpressionAttr
    return compileNested(classScope, mode, updatedOuterArgs);
 }
 
-ObjectInfo Compiler::Expression :: compileClosure(SyntaxNode node, ExpressionAttribute mode,
+ObjectInfo Compiler::Expression :: compileClosure(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode,
    ArgumentsInfo* updatedOuterArgs)
 {
-   ref_t nestedRef = mapNested(mode);
-   InlineClassScope classScope(&scope, nestedRef);
-
    BuildNode buildNode = writer->CurrentNode();
    while (buildNode != BuildKey::Root)
       buildNode = buildNode.parentNode();
 
    BuildTreeWriter nestedWriter(buildNode);
-   compiler->compileClosureClass(nestedWriter, classScope, node);
 
-   return compileNested(classScope, mode, updatedOuterArgs);
+   LambdaClosure helper(compiler, *this, mapNested(mode), nestedWriter, targetRef);
+
+   helper.compile(node);
+
+   return compileNested(helper.scope, mode, updatedOuterArgs);
 }
 
 ObjectInfo Compiler::Expression :: compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope)
@@ -12853,7 +12585,7 @@ ObjectInfo Compiler::Expression :: compileCollection(SyntaxNode node, Expression
    return { ObjectKind::Object, { collectionTypeRef }, 0 };
 }
 
-ObjectInfo Compiler::Expression :: compileClosureOperation(SyntaxNode node)
+ObjectInfo Compiler::Expression :: compileClosureOperation(SyntaxNode node, ref_t targetRef)
 {
    ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
    if (!classScope)
@@ -12913,7 +12645,7 @@ ObjectInfo Compiler::Expression :: compileClosureOperation(SyntaxNode node)
 
    classWriter.closeNode();
 
-   return compileClosure(rootNode.firstChild(), EAttr::None, nullptr);
+   return compileClosure(rootNode.firstChild(), targetRef, EAttr::None, nullptr);
 }
 
 ObjectInfo Compiler::Expression :: compileTupleCollection(SyntaxNode node, ref_t targetRef)
@@ -14474,8 +14206,8 @@ ObjectInfo Compiler::Expression :: compileBranchingOperation(SyntaxNode node, Ob
       else {
          message = compiler->resolveOperatorMessage(scope.moduleScope, operatorId);
 
-         roperand = compileClosure(rnode, EAttr::None, updatedOuterArgs);
-         roperand2 = compileClosure(r2node, EAttr::None, updatedOuterArgs);
+         roperand = compileClosure(rnode, 0, EAttr::None, updatedOuterArgs);
+         roperand2 = compileClosure(r2node, 0, EAttr::None, updatedOuterArgs);
       }
 
       ArgumentsInfo messageArguments;
@@ -15599,7 +15331,7 @@ void Compiler::Expression :: compileConverting(SyntaxNode node, ObjectInfo sourc
 // --- Compiler::MetaExpression ---
 
 Compiler::MetaExpression :: MetaExpression(Compiler* compiler, Scope* scope, Interpreter* interpreter)
-   : compiler(compiler), scope(scope), interpreter(interpreter)
+   : CommonHelper(compiler), scope(scope), interpreter(interpreter)
 {
 
 }
@@ -15722,4 +15454,295 @@ ObjectInfo Compiler::MetaExpression :: generateNestedConstant(SyntaxNode node)
    SyntaxTree::copyNode(nsWriter, dummyTree.readRoot(), true);
 
    return { ObjectKind::Singleton, { reference }, reference };
+}
+
+// --- Compiler::NestedClass ---
+
+Compiler::NestedClass :: NestedClass(Compiler* compiler, Expression& expr, ref_t nestedRef, BuildTreeWriter& writer)
+   : CommonHelper(compiler), scope(&expr.scope, nestedRef), writer(&writer)
+{
+
+}
+
+// --- Compiler::LambdaClosure ---
+
+Compiler::LambdaClosure :: LambdaClosure(Compiler* compiler, Expression& expr, ref_t nestedRef, BuildTreeWriter& writer, ref_t parentRef)
+   : NestedClass(compiler, expr, nestedRef, writer)
+{
+   this->parentRef = parentRef ? parentRef : scope.info.header.parentRef;
+}
+
+void Compiler::LambdaClosure :: compile(SyntaxNode node)
+{
+   bool lazyExpression = node == SyntaxKey::LazyOperation;
+
+   writer->newNode(BuildKey::Class, scope.reference);
+
+   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+   if (compiler->_withDebugInfo)
+      writer->appendNode(BuildKey::Path, *ns->sourcePath);
+
+   MethodScope methodScope(&scope);
+   declareClosureMessage(methodScope, node);
+
+   methodScope.functionMode = true;
+
+   mssg_t multiMethod = /*!lazyExpression && */compiler->defineMultimethod(scope, methodScope.message, false);
+   if (multiMethod) {
+      methodScope.info.multiMethod = multiMethod;
+      methodScope.info.outputRef = V_AUTO;
+   }
+
+   if (lazyExpression) {
+      compileExpressionMethod(methodScope, node);
+   }
+   else {
+      compileClosureMethod(methodScope, node);
+
+      // HOTFIX : inject an output type if required or used super class
+      if (methodScope.info.outputRef == V_AUTO) {
+         methodScope.info.outputRef = scope.moduleScope->buildins.superReference;
+      }
+      else if (methodScope.info.outputRef == scope.reference) {
+         // HOTFIX : special case - if the closure returns itself - replace with a parent
+         methodScope.info.outputRef = parentRef;
+      }
+   }
+
+   if (!lazyExpression) {
+      ref_t closureRef = resolveClosure(methodScope.message, methodScope.info.outputRef);
+      if (closureRef) {
+         if (compiler->_logic->isCompatible(*scope.moduleScope, { parentRef }, { closureRef }, true)) {
+            parentRef = closureRef;
+         }
+         else scope.raiseError(errInvalidOperation, node);
+      }
+      else throw InternalError(errClosureError);
+   }
+   else parentRef = scope.moduleScope->buildins.lazyExpressionReference;
+
+   compiler->declareClassParent(parentRef, scope, node);
+   compiler->generateClassFlags(scope, elNestedClass | elSealed);
+
+   scope.info.attributes.exclude({ 0, ClassAttribute::RuntimeLoadable });
+
+   // handle the abstract flag
+   if (test(scope.info.header.flags, elAbstract)) {
+      scope.abstractBasedMode = true;
+      scope.info.header.flags &= ~elAbstract;
+   }
+
+   auto m_it = scope.info.methods.getIt(methodScope.message);
+   if (!m_it.eof()) {
+      (*m_it).inherited = true;
+      (*m_it).hints &= ~(ref_t)MethodHint::Abstract;
+   }
+   else scope.info.methods.add(methodScope.message, methodScope.info);
+
+   if (multiMethod) {
+      SyntaxTree classTree;
+      SyntaxTreeWriter classWriter(classTree);
+
+      // build the class tree
+      classWriter.newNode(SyntaxKey::Root);
+      classWriter.newNode(SyntaxKey::Class, scope.reference);
+
+      SyntaxNode classNode = classWriter.CurrentNode();
+      compiler->injectVirtualMultimethod(classNode, SyntaxKey::Method, scope, scope.reference, scope.info, multiMethod, 0);
+
+      classWriter.closeNode();
+      classWriter.closeNode();
+
+      SyntaxNode current = classNode.firstChild();
+      while (current != SyntaxKey::None) {
+         compiler->generateMethodDeclaration(scope, current, false, false);
+
+         current = current.nextNode();
+      }
+
+      compiler->_logic->injectOverloadList(compiler, *scope.moduleScope, scope.info, scope.reference);
+
+      compiler->compileVMT(*writer, scope, classNode);
+   }
+
+   // set flags once again
+   // NOTE : it should be called after the code compilation to take into consideration outer fields
+   compiler->_logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info, scope.isClassClass());
+
+   writer->closeNode();
+
+   scope.save();
+}
+
+void Compiler::LambdaClosure :: declareClosureMessage(MethodScope& methodScope, SyntaxNode node)
+{
+   ref_t invokeAction = methodScope.module->mapAction(INVOKE_MESSAGE, 0, false);
+   methodScope.message = encodeMessage(invokeAction, 0, FUNCTION_MESSAGE);
+   methodScope.closureMode = true;
+
+   SyntaxNode argNode = node.findChild(SyntaxKey::Parameter);
+   if (argNode != SyntaxKey::None)
+      methodScope.message = declareClosureParameters(methodScope, argNode);
+}
+
+void Compiler::LambdaClosure :: compileExpressionMethod(MethodScope& scope, SyntaxNode node)
+{
+   compiler->beginMethod(*writer, scope, node, BuildKey::Method, false);
+
+   CodeScope codeScope(&scope);
+
+   // new stack frame
+   writer->appendNode(BuildKey::OpenFrame);
+
+   // stack should contains current self reference
+   // the original message should be restored if it is a generic method
+   scope.selfLocal = codeScope.newLocal();
+   writer->appendNode(BuildKey::Assigning, scope.selfLocal);
+
+   compiler->compileRetExpression(*writer, codeScope, node, EAttr::None);
+
+   writer->appendNode(BuildKey::CloseFrame);
+
+   codeScope.syncStack(&scope);
+
+   compiler->endMethod(*writer, scope);
+}
+
+void Compiler::LambdaClosure :: compileClosureMethod(MethodScope& scope, SyntaxNode node)
+{
+   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
+   compiler->beginMethod(*writer, scope, node, BuildKey::Method, false);
+
+   CodeScope codeScope(&scope);
+
+   SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
+   switch (current.key) {
+      case SyntaxKey::CodeBlock:
+      case SyntaxKey::ReturnExpression:
+         compiler->compileMethodCode(*writer, classScope, scope, codeScope, node, false);
+         break;
+      default:
+         break;
+   }
+
+   codeScope.syncStack(&scope);
+
+   compiler->endMethod(*writer, scope);
+}
+
+ref_t Compiler::LambdaClosure :: resolveClosure(mssg_t closureMessage, ref_t outputRef)
+{
+   ref_t signRef = 0;
+   scope.module->resolveAction(getAction(closureMessage), signRef);
+
+   int paramCount = getArgCount(closureMessage);
+
+   IdentifierString closureName(scope.module->resolveReference(scope.moduleScope->buildins.closureTemplateReference));
+   if (signRef == 0) {
+      if (paramCount > 0) {
+         closureName.appendInt(paramCount);
+      }
+
+      if (isWeakReference(*closureName)) {
+         return scope.module->mapReference(*closureName, true);
+      }
+      else return scope.moduleScope->mapFullReference(*closureName, true);
+   }
+   else {
+      ref_t signatures[ARG_COUNT];
+      size_t signLen = scope.module->resolveSignature(signRef, signatures);
+
+      List<SyntaxNode> parameters({});
+
+      // HOTFIX : generate a temporal template to pass the type
+      SyntaxTree dummyTree;
+      SyntaxTreeWriter dummyWriter(dummyTree);
+      dummyWriter.newNode(SyntaxKey::Root);
+
+      for (size_t i = 0; i < signLen; i++) {
+         dummyWriter.newNode(SyntaxKey::TemplateArg, signatures[i]);
+         dummyWriter.newNode(SyntaxKey::Type);
+
+         ustr_t referenceName = scope.moduleScope->module->resolveReference(signatures[i]);
+         if (isWeakReference(referenceName)) {
+            dummyWriter.appendNode(SyntaxKey::reference, referenceName);
+         }
+         else dummyWriter.appendNode(SyntaxKey::globalreference, referenceName);
+
+         dummyWriter.closeNode();
+         dummyWriter.closeNode();
+      }
+
+      if (outputRef) {
+         dummyWriter.newNode(SyntaxKey::TemplateArg, outputRef);
+         dummyWriter.newNode(SyntaxKey::Type);
+
+         ustr_t referenceName = scope.moduleScope->module->resolveReference(outputRef);
+         if (isWeakReference(referenceName)) {
+            dummyWriter.appendNode(SyntaxKey::reference, referenceName);
+         }
+         else dummyWriter.appendNode(SyntaxKey::globalreference, referenceName);
+
+         dummyWriter.closeNode();
+         dummyWriter.closeNode();
+      }
+
+      dummyWriter.closeNode();
+
+      SyntaxNode current = dummyTree.readRoot().firstChild();
+      while (current == SyntaxKey::TemplateArg) {
+         parameters.add(current);
+
+         current = current.nextNode();
+      }
+
+      closureName.append('#');
+      closureName.appendInt(paramCount + 1);
+
+      ref_t templateReference = 0;
+      if (isWeakReference(*closureName)) {
+         templateReference = scope.module->mapReference(*closureName, true);
+      }
+      else templateReference = scope.moduleScope->mapFullReference(*closureName, true);
+
+      NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+      return compiler->_templateProcessor->generateClassTemplate(*scope.moduleScope,
+         templateReference, parameters, false, nullptr);
+   }
+}
+
+ref_t Compiler::LambdaClosure :: declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode)
+{
+   IdentifierString messageStr;
+   pos_t paramCount = 0;
+   ref_t signRef = 0;
+
+   bool weakSingature = true;
+   bool noSignature = true;
+   bool variadicMode = false;
+   ref_t flags = FUNCTION_MESSAGE;
+   ref_t signatures[ARG_COUNT];
+   size_t signatureLen = 0;
+   while (argNode == SyntaxKey::Parameter) {
+      bool dummy = false;
+      compiler->declareParameter(methodScope, argNode, false, false,
+         variadicMode, weakSingature, noSignature,
+         paramCount, signatures, signatureLen, dummy);
+
+      if (variadicMode)
+         flags |= VARIADIC_MESSAGE;
+
+      argNode = argNode.nextNode();
+   }
+
+   messageStr.copy(INVOKE_MESSAGE);
+   if (!weakSingature && !noSignature) {
+      signRef = methodScope.module->mapSignature(signatures, signatureLen, false);
+   }
+
+   ref_t actionRef = methodScope.moduleScope->module->mapAction(*messageStr, signRef, false);
+
+   return encodeMessage(actionRef, paramCount, flags);
 }
