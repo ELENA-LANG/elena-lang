@@ -62,28 +62,51 @@ import system'threading;
 //   }
 //}
 
-A { int cast() = 2; }
+public abstract class AsyncStateEnumerator : Enumerator<Task>
+{
+   private __context;  // context must be the first one
+   private Task __current; 
+
+   get Task Value()
+      = __current;
+
+   reset()
+   {
+      NotSupportedException.raise()
+   }
+
+   Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+
+   enumerable() = self;
+
+   static Task proceed(Enumerator<Task> e)
+   {
+      Task t := /*new Task()*/nil;
+
+      Action<Task> proceeding := (Task tsk)
+      {
+         try
+         {
+             if (e.next()) {
+                (*e).continueWith(this self);
+
+                ^ this self;
+             }
+         }
+         catch (Exception e)
+         {
+            t.setException(e);
+         };
+
+         t.setResult(); 
+      };
+
+      proceeding(t);
+
+      ^ t;  
+   }
+}
 
 public program()
 {
-//   var t := (int n)
-//   {
-//      $break;
-//
-//      console.writeLine("ERR")
-//   };
-//
-//
-//   t(2)
-
-//   Action<int> t := (int n)
-//   {
-//      ^ this self;
-//   };
-
-
-   Func<int,int> f := (n => n + 1); // !! must be strong typed
-
-   var o := f;
-   var r := o(new A());
 }

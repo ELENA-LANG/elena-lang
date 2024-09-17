@@ -32,9 +32,8 @@ In development:
   * ldoc : system-threading-.html must not be generated
   * async statemachine
   * async method must create an enumerator and call a static method proceed
-  * declare async enumerator template
   --------------------------------------  
-  * using $break operator instead of return expression  
+  * declare async enumerator template
  
   === Iteration 33 ===
   --------------------------------------
