@@ -18,7 +18,9 @@ In development:
       - lpad : generate a code based on a record  
   maint:
       - #675
+      - #689
       - unit tests : bt optimization 
+      - fix warnings in all libraries    
   port:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
@@ -31,17 +33,8 @@ In development:
   * async statemachine
   * async method must create an enumerator and call a static method proceed
   * declare async enumerator template
-  * using $break operator instead of return expression  
-  * explicit method signature for extensions 
-  * fix warnings in all libraries
-  * call a method explicitly (providing expected target)
-    class A { test(int n){} }
-    var n := 2;
-    a.test<int>(n);
-  * unit test - typed lambda expression
   --------------------------------------  
-  * closure : when the target type of lambda expression is known - use it; after the closure generation make sure they are compatible
-    e.g. the old parent is equal or a parent of the generated closure
+  * using $break operator instead of return expression  
  
   === Iteration 33 ===
   --------------------------------------

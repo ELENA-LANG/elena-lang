@@ -62,6 +62,8 @@ import system'threading;
 //   }
 //}
 
+A { int cast() = 2; }
+
 public program()
 {
 //   var t := (int n)
@@ -79,11 +81,9 @@ public program()
 //      ^ this self;
 //   };
 
-   Action<int> t2 := (n)
-   {
-      ^ this self;
-   };
 
-//   Func<int,int> f := (n => n + 1); // !! must be strong typed
+   Func<int,int> f := (n => n + 1); // !! must be strong typed
 
+   var o := f;
+   var r := o(new A());
 }
