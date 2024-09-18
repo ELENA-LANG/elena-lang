@@ -32,8 +32,9 @@ In development:
   * ldoc : system-threading-.html must not be generated
   * async statemachine
   * async method must create an enumerator and call a static method proceed
-  --------------------------------------  
   * declare async enumerator template
+  --------------------------------------  
+  * fix typecasting warning
  
   === Iteration 33 ===
   --------------------------------------

@@ -1022,6 +1022,8 @@ namespace elena_lang
 
          Map<ustr_t, Outer, allocUStr, freeUStr> outers;
 
+         ref_t expectedRef;
+
          Outer mapParent();
          Outer mapOwner();
          Outer mapSelf();
@@ -1416,8 +1418,6 @@ namespace elena_lang
       class LambdaClosure : public NestedClass
       {
          friend class Compiler;
-
-         ref_t parentRef;
 
          ref_t resolveClosure(mssg_t closureMessage, ref_t outputRef);
          ref_t declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode, bool& weakMessage);

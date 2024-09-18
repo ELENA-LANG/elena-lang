@@ -90,7 +90,7 @@ public abstract class AsyncStateEnumerator : Enumerator<Task>
              if (e.next()) {
                 (*e).continueWith(this self);
 
-                ^ this self;
+                ^ nil;
              }
          }
          catch (Exception e)

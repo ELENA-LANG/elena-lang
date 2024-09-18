@@ -1355,7 +1355,7 @@ bool Compiler::MethodScope::checkType(MethodInfo& methodInfo, MethodHint type)
    return (methodInfo.hints & MethodHint::Mask) == type;
 }
 
-ObjectInfo Compiler::MethodScope::mapSelf(bool memberMode, bool ownerClass)
+ObjectInfo Compiler::MethodScope :: mapSelf(bool memberMode, bool ownerClass)
 {
    if (!memberMode) {
       if (isExtension) {
@@ -1640,7 +1640,6 @@ ObjectInfo Compiler::ExprScope::mapMember(ustr_t identifier)
 
    ClassScope* classScope = Scope::getScope<ClassScope>(*this, ScopeLevel::Class);
    if (classScope) {
-      //if (methodScope)
       return classScope->mapField(identifier, (methodScope != nullptr && methodScope->constructorMode) ? EAttr::InitializerScope : EAttr::None);
    }
 
@@ -1682,7 +1681,7 @@ void Compiler::ExprScope::syncStack()
 
 Compiler::InlineClassScope::InlineClassScope(ExprScope* owner, ref_t reference)
    : ClassScope(owner, reference, Visibility::Internal),
-   outers({})
+   outers({}), expectedRef(0)
 {
 }
 
@@ -1704,7 +1703,7 @@ ObjectInfo Compiler::InlineClassScope::mapMember(ustr_t identifier)
    return mapField(identifier, EAttr::None);
 }
 
-Compiler::InlineClassScope::Outer Compiler::InlineClassScope::mapSelf()
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 {
    Outer ownerVar = outers.get(*moduleScope->selfVar);
    // if owner reference is not yet mapped, add it
@@ -13152,6 +13151,13 @@ ObjectInfo Compiler::Expression::convertObject(SyntaxNode node, ObjectInfo sourc
          }
          else return { ObjectKind::Nil, { V_NIL } };
       }
+      else if (source.kind == ObjectKind::SelfLocal) {
+         ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+         if (test(classScope->info.header.flags, elNestedClass)) {
+            if (compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, { ((InlineClassScope*)classScope)->expectedRef }, false))
+               return source;
+         }
+      }
 
       if (source.typeInfo.typeRef == V_WRAPPER || source.typeInfo.typeRef == V_OUTWRAPPER) {
          // unbox wrapper for the conversion
@@ -15436,11 +15442,14 @@ Compiler::NestedClass::NestedClass(Compiler* compiler, Expression& expr, ref_t n
 Compiler::LambdaClosure::LambdaClosure(Compiler* compiler, Expression& expr, ref_t nestedRef, BuildTreeWriter& writer, ref_t parentRef)
    : NestedClass(compiler, expr, nestedRef, writer)
 {
-   this->parentRef = parentRef ? parentRef : scope.info.header.parentRef;
+   this->scope.expectedRef = parentRef;
+   scope.info.header.flags |= elNestedClass;
 }
 
 void Compiler::LambdaClosure::compile(SyntaxNode node)
 {
+   ref_t parentRef = scope.expectedRef ? scope.expectedRef : scope.info.header.parentRef;
+
    bool lazyExpression = node == SyntaxKey::LazyOperation;
 
    writer->newNode(BuildKey::Class, scope.reference);
@@ -15542,7 +15551,7 @@ void Compiler::LambdaClosure::compile(SyntaxNode node)
    scope.save();
 }
 
-void Compiler::LambdaClosure::declareClosureMessage(MethodScope& methodScope, SyntaxNode node)
+void Compiler::LambdaClosure :: declareClosureMessage(MethodScope& methodScope, SyntaxNode node)
 {
    ref_t invokeAction = methodScope.module->mapAction(INVOKE_MESSAGE, 0, false);
    methodScope.message = encodeMessage(invokeAction, 0, FUNCTION_MESSAGE);
@@ -15553,14 +15562,14 @@ void Compiler::LambdaClosure::declareClosureMessage(MethodScope& methodScope, Sy
       bool weakMessage = false;
       methodScope.message = declareClosureParameters(methodScope, argNode, weakMessage);
 
-      if (weakMessage && parentRef != scope.info.header.parentRef) {
+      if (weakMessage && scope.expectedRef != scope.info.header.parentRef) {
          int dummy = 0;
          mssg_t resolvedMessage = compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
-            parentRef, methodScope.message, false, dummy);
+            scope.expectedRef, methodScope.message, false, dummy);
 
          if (resolvedMessage) {
             CheckMethodResult result = {};
-            compiler->_logic->checkMethod(*scope.moduleScope, parentRef, resolvedMessage, result);
+            compiler->_logic->checkMethod(*scope.moduleScope, scope.expectedRef, resolvedMessage, result);
 
             // if we can define the strong method signature based on the expected target
             // adjust the message and define the parameter types
@@ -15615,12 +15624,12 @@ void Compiler::LambdaClosure::compileClosureMethod(MethodScope& scope, SyntaxNod
 
    SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
    switch (current.key) {
-   case SyntaxKey::CodeBlock:
-   case SyntaxKey::ReturnExpression:
-      compiler->compileMethodCode(*writer, classScope, scope, codeScope, node, false);
-      break;
-   default:
-      break;
+      case SyntaxKey::CodeBlock:
+      case SyntaxKey::ReturnExpression:
+         compiler->compileMethodCode(*writer, classScope, scope, codeScope, node, false);
+         break;
+      default:
+         break;
    }
 
    codeScope.syncStack(&scope);
