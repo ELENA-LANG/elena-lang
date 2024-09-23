@@ -69,14 +69,14 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 inline bool isSelfCall(ObjectInfo target)
 {
    switch (target.kind) {
-   case ObjectKind::SelfLocal:
-   case ObjectKind::SelfBoxableLocal:
-   case ObjectKind::OuterSelf:
-   case ObjectKind::ClassSelf:
-   case ObjectKind::ConstructorSelf:
-      //case okInternalSelf:
-      return true;
-   default:
+      case ObjectKind::SelfLocal:
+      case ObjectKind::SelfBoxableLocal:
+      case ObjectKind::OuterSelf:
+      case ObjectKind::ClassSelf:
+      case ObjectKind::ConstructorSelf:
+         //case okInternalSelf:
+         return true;
+      default:
       return false;
    }
 }
@@ -167,16 +167,16 @@ void declareArguments(SyntaxNode node, SyntaxTree& dummyTree, List<SyntaxNode>& 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::Expression:
-         dummyWriter.newNode(SyntaxKey::Expression);
+         case SyntaxKey::Expression:
+            dummyWriter.newNode(SyntaxKey::Expression);
 
-         arguments.add(dummyWriter.CurrentNode());
-         SyntaxTree::copyNode(dummyWriter, current);
+            arguments.add(dummyWriter.CurrentNode());
+            SyntaxTree::copyNode(dummyWriter, current);
 
-         dummyWriter.closeNode();
-         break;
-      default:
-         break;
+            dummyWriter.closeNode();
+            break;
+         default:
+            break;
       }
 
       current = current.nextNode();
@@ -217,15 +217,15 @@ inline ref_t mapIntConstant(ModuleScopeBase* moduleScope, int integer)
 inline bool isConstant(ObjectKind kind)
 {
    switch (kind) {
-   case ObjectKind::IntLiteral:
-   case ObjectKind::Float64Literal:
-   case ObjectKind::LongLiteral:
-   case ObjectKind::StringLiteral:
-   case ObjectKind::WideStringLiteral:
-   case ObjectKind::Singleton:
-      return true;
-   default:
-      return false;
+      case ObjectKind::IntLiteral:
+      case ObjectKind::Float64Literal:
+      case ObjectKind::LongLiteral:
+      case ObjectKind::StringLiteral:
+      case ObjectKind::WideStringLiteral:
+      case ObjectKind::Singleton:
+         return true;
+      default:
+         return false;
    }
 }
 
@@ -233,50 +233,50 @@ inline bool isSingleObject(ObjectKind kind)
 {
    switch (kind)
    {
-   case ObjectKind::CharacterLiteral:
-   case ObjectKind::ConstantLiteral:
-   case ObjectKind::MssgNameLiteral:
-   case ObjectKind::MssgLiteral:
-   case ObjectKind::ExtMssgLiteral:
-   case ObjectKind::Nil:
-   case ObjectKind::Class:
-   case ObjectKind::ClassSelf:
-   case ObjectKind::ConstructorSelf:
-   case ObjectKind::Param:
-   case ObjectKind::ParamReference:
-   case ObjectKind::ParamAddress:
-   case ObjectKind::ByRefParam:
-   case ObjectKind::ByRefParamAddress:
-   case ObjectKind::OutParam:
-   case ObjectKind::OutParamAddress:
-   case ObjectKind::Local:
-   case ObjectKind::LocalReference:
-   case ObjectKind::RefLocal:
-   case ObjectKind::TempLocal:
-   case ObjectKind::SelfLocal:
-   case ObjectKind::SuperLocal:
-   case ObjectKind::ReadOnlySelfLocal:
-   case ObjectKind::LocalAddress:
-   case ObjectKind::TempLocalAddress:
-   case ObjectKind::ReadOnlyFieldAddress:
-   case ObjectKind::FieldAddress:
-   case ObjectKind::ReadOnlyField:
-   case ObjectKind::Field:
-   case ObjectKind::Outer:
-   case ObjectKind::OuterField:
-   case ObjectKind::OuterSelf:
-   case ObjectKind::Closure:
-   case ObjectKind::ClassConstant:
-   case ObjectKind::Constant:
-   case ObjectKind::ConstArray:
-   case ObjectKind::StaticField:
-   case ObjectKind::StaticThreadField:
-   case ObjectKind::StaticConstField:
-   case ObjectKind::ClassStaticConstField:
-   case ObjectKind::LocalField:
-      return true;
-   default:
-      return isConstant(kind);
+      case ObjectKind::CharacterLiteral:
+      case ObjectKind::ConstantLiteral:
+      case ObjectKind::MssgNameLiteral:
+      case ObjectKind::MssgLiteral:
+      case ObjectKind::ExtMssgLiteral:
+      case ObjectKind::Nil:
+      case ObjectKind::Class:
+      case ObjectKind::ClassSelf:
+      case ObjectKind::ConstructorSelf:
+      case ObjectKind::Param:
+      case ObjectKind::ParamReference:
+      case ObjectKind::ParamAddress:
+      case ObjectKind::ByRefParam:
+      case ObjectKind::ByRefParamAddress:
+      case ObjectKind::OutParam:
+      case ObjectKind::OutParamAddress:
+      case ObjectKind::Local:
+      case ObjectKind::LocalReference:
+      case ObjectKind::RefLocal:
+      case ObjectKind::TempLocal:
+      case ObjectKind::SelfLocal:
+      case ObjectKind::SuperLocal:
+      case ObjectKind::ReadOnlySelfLocal:
+      case ObjectKind::LocalAddress:
+      case ObjectKind::TempLocalAddress:
+      case ObjectKind::ReadOnlyFieldAddress:
+      case ObjectKind::FieldAddress:
+      case ObjectKind::ReadOnlyField:
+      case ObjectKind::Field:
+      case ObjectKind::Outer:
+      case ObjectKind::OuterField:
+      case ObjectKind::OuterSelf:
+      case ObjectKind::Closure:
+      case ObjectKind::ClassConstant:
+      case ObjectKind::Constant:
+      case ObjectKind::ConstArray:
+      case ObjectKind::StaticField:
+      case ObjectKind::StaticThreadField:
+      case ObjectKind::StaticConstField:
+      case ObjectKind::ClassStaticConstField:
+      case ObjectKind::LocalField:
+         return true;
+      default:
+         return isConstant(kind);
    }
 
    return false;
@@ -2729,7 +2729,7 @@ void Compiler::generateParamNameInfo(ClassScope& scope, SyntaxNode node, mssg_t 
    }
 }
 
-void Compiler::generateMethodDeclaration(ClassScope& scope, SyntaxNode node, bool closed, bool hideDuplicate)
+void Compiler :: generateMethodDeclaration(ClassScope& scope, SyntaxNode node, bool closed, bool hideDuplicate)
 {
    mssg_t message = node.arg.reference;
    MethodInfo methodInfo = {};
@@ -8592,7 +8592,7 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
 */
 
 
-   assert(true);
+   assert(false);
 }
 
 void Compiler::compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
@@ -11848,7 +11848,7 @@ ObjectInfo Compiler::Expression::compileSpecialOperation(SyntaxNode node, int op
 
 void Compiler::Expression :: compileAsyncOperation(SyntaxNode node)
 {
-   assert(true);
+   assert(false);
 }
 
 void Compiler::Expression :: compileYieldOperation(SyntaxNode node)
