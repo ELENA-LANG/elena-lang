@@ -37,6 +37,7 @@ namespace elena_lang
       Function             = 0x00000080,
       Generic              = 0x00000100,
       RetOverload          = 0x00000200,
+      Async                = 0x00000800,
       Multimethod          = 0x00001000,
       TargetSelf           = 0x00002000,
       Static               = 0x00004000,
@@ -430,6 +431,7 @@ namespace elena_lang
    constexpr auto V_GETACCESSOR           = 0x80005001u;
    constexpr auto V_SETACCESSOR           = 0x80005002u;
    constexpr auto V_YIELDABLE             = 0x80005003u;
+   constexpr auto V_ASYNC                 = 0x80005004u;
 
    /// visibility:
    constexpr auto V_PUBLIC                = 0x80004001u;

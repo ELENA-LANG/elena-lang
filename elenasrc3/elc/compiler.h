@@ -787,6 +787,10 @@ namespace elena_lang
          {
             return checkHint(MethodHint::Yieldable);
          }
+         bool isAsync()
+         {
+            return checkHint(MethodHint::Async);
+         }
 
          ref_t getClassRef(bool ownerClass = true)
          {
@@ -1353,6 +1357,7 @@ namespace elena_lang
             ArgumentsInfo* updatedOuterArgs);
 
          void compileYieldOperation(SyntaxNode node);
+         void compileAsyncOperation(SyntaxNode node);
          void compileSwitchOperation(SyntaxNode node);
 
          bool compileAssigningOp(ObjectInfo target, ObjectInfo source, bool& nillableOp);
@@ -1760,6 +1765,7 @@ namespace elena_lang
       void compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode);
       void compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
+      void compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileConstructor(BuildTreeWriter& writer, MethodScope& scope, ClassScope& classClassScope, 
          SyntaxNode node, bool abstractMode);
       void compileCustomDispatcher(BuildTreeWriter& writer, ClassScope& scope);

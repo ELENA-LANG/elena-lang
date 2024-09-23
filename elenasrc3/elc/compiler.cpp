@@ -2307,7 +2307,7 @@ void Compiler::declareDictionary(Scope& scope, SyntaxNode node, Visibility visib
    node.setKey(SyntaxKey::Idle);
 }
 
-void Compiler::declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor,
+void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor,
    bool yieldMethodNotAllowed, bool staticNotAllowed, bool templateBased)
 {
    SyntaxNode current = node.firstChild();
@@ -3923,7 +3923,7 @@ void Compiler::declareVMTMessage(MethodScope& scope, SyntaxNode node, bool witho
    }
 }
 
-void Compiler::declareIteratorMessage(MethodScope& scope, SyntaxNode node)
+void Compiler :: declareIteratorMessage(MethodScope& scope, SyntaxNode node)
 {
    ref_t itAction = scope.module->mapAction(NEXT_MESSAGE, 0, false);
    scope.message = encodeMessage(itAction, 1, 0);
@@ -3932,7 +3932,7 @@ void Compiler::declareIteratorMessage(MethodScope& scope, SyntaxNode node)
    scope.info.hints |= (ref_t)MethodHint::Yieldable;
 }
 
-void Compiler::declareMethod(MethodScope& methodScope, SyntaxNode node, bool abstractMode,
+void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool abstractMode,
    bool staticNotAllowed, bool yieldMethodNotAllowed)
 {
    if (methodScope.checkHint(MethodHint::Static)) {
@@ -7683,14 +7683,14 @@ void Compiler::warnOnUnassignedParameter(SyntaxNode node, Scope& scope, ustr_t n
    }
 }
 
-ObjectInfo Compiler::mapConstructorTarget(MethodScope& scope)
+ObjectInfo Compiler :: mapConstructorTarget(MethodScope& scope)
 {
    ObjectInfo classSymbol = mapClassSymbol(scope, scope.getClassRef());
 
    return { ObjectKind::ConstructorSelf, classSymbol.typeInfo, scope.selfLocal, classSymbol.reference };
 }
 
-void Compiler::compileMethodCode(BuildTreeWriter& writer, ClassScope* classScope, MethodScope& scope, CodeScope& codeScope,
+void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classScope, MethodScope& scope, CodeScope& codeScope,
    SyntaxNode node, bool newFrame)
 {
    if (!newFrame) {
@@ -8531,6 +8531,68 @@ ref_t Compiler::resolveYieldType(Scope& scope, SyntaxNode node)
    }
 
    return scope.moduleScope->buildins.superReference;
+}
+
+void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
+{
+/*
+   CodeScope codeScope(&scope);
+   Expression expression(this, codeScope, writer);
+
+   // create yield state machine
+   ref_t nestedRef = scope.moduleScope->mapAnonymous();
+   StatemachineClassScope smScope(&expression.scope, nestedRef);
+   smScope.typeRef = resolveYieldType(scope, node);
+
+   BuildNode buildNode = writer.CurrentNode();
+   while (buildNode != BuildKey::Root)
+      buildNode = buildNode.parentNode();
+
+   BuildTreeWriter nestedWriter(buildNode);
+   compileStatemachineClass(nestedWriter, smScope, node);
+
+   beginMethod(writer, scope, node, BuildKey::Method, _withDebugInfo);
+
+   // new stack frame
+   writer.appendNode(BuildKey::OpenFrame);
+
+   ObjectInfo retVal = { ObjectKind::Object, { nestedRef }, 0 };
+
+   int preservedClosure = 0;
+   expression.compileNestedInitializing(smScope, nestedRef, preservedClosure, nullptr);
+
+   retVal = expression.saveToTempLocal(retVal);
+
+   ObjectInfo contextField = smScope.mapContextField();
+   contextField.kind = ObjectKind::LocalField;
+   contextField.extra = contextField.reference;
+   contextField.argument = retVal.argument;
+
+   pos_t contextSize = smScope.contextSize;
+
+   writer.appendNode(BuildKey::NilReference);
+   writer.appendNode(BuildKey::SavingInStack);
+
+   writer.newNode(BuildKey::CreatingStruct, contextSize);
+   writer.appendNode(BuildKey::Type, scope.moduleScope->buildins.superReference);
+   writer.closeNode();
+
+   writer.appendNode(BuildKey::SetImmediateField, 0);
+
+   expression.compileAssigning(node, contextField, { ObjectKind::Object }, true);
+
+   expression.compileConverting(node, retVal, scope.info.outputRef,
+      scope.checkHint(MethodHint::Stacksafe));
+
+   codeScope.syncStack(&scope);
+
+   writer.appendNode(BuildKey::CloseFrame);
+
+   endMethod(writer, scope);
+*/
+
+
+   assert(true);
 }
 
 void Compiler::compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
@@ -11084,6 +11146,9 @@ void Compiler::Method::compile(BuildTreeWriter& writer, SyntaxNode current)
    else if (scope.checkHint(MethodHint::Yieldable)) {
       compiler->compileYieldMethod(writer, scope, current);
    }
+   else if (scope.checkHint(MethodHint::Async)) {
+      compiler->compileAsyncMethod(writer, scope, current);
+   }
    // if it is a normal method
    else compiler->compileMethod(writer, scope, current);
 }
@@ -11317,6 +11382,9 @@ ObjectInfo Compiler::Expression::compile(SyntaxNode node, ref_t targetRef, EAttr
    case SyntaxKey::BreakOperation:
    case SyntaxKey::ContinueOperation:
       retVal = compileSpecialOperation(current, (int)current.key - OPERATOR_MAKS, targetRef);
+      break;
+   case SyntaxKey::AsyncOperation:
+      compileAsyncOperation(current);
       break;
    case SyntaxKey::YieldOperation:
       compileYieldOperation(current);
@@ -11778,7 +11846,12 @@ ObjectInfo Compiler::Expression::compileSpecialOperation(SyntaxNode node, int op
    return retVal;
 }
 
-void Compiler::Expression::compileYieldOperation(SyntaxNode node)
+void Compiler::Expression :: compileAsyncOperation(SyntaxNode node)
+{
+   assert(true);
+}
+
+void Compiler::Expression :: compileYieldOperation(SyntaxNode node)
 {
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
    MethodScope* methodScope = Scope::getScope<MethodScope>(scope, Scope::ScopeLevel::Method);

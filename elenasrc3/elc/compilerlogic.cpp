@@ -998,6 +998,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_YIELDABLE:
          hint = (ref_t)MethodHint::Yieldable;
          return true;
+      case V_ASYNC:
+         hint = (ref_t)MethodHint::Async;
+         return true;
       default:
          return false;
    }

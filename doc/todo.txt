@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 6.4 ###
 
-  === Iteration 32 (19.9) ===
+  === Iteration 33 (7.10) ===
   --------------------------------------
   dev: 
       - async programming
@@ -31,20 +31,9 @@ In development:
   * Task<T>
   * ldoc : system-threading-.html must not be generated
   * async statemachine
-  * async method must create an enumerator and call a static method proceed
-  * declare async enumerator template
+  * $await operator
   --------------------------------------  
-  * fix typecasting warning
- 
-  === Iteration 33 ===
-  --------------------------------------
-  dev: 
-  gen:
-  maint:
-  port:
-  prom:
-  --------------------------------------
-  --------------------------------------
+  * async method must create an enumerator and call a static method proceed
 
   === Iteration 34 ===
   --------------------------------------

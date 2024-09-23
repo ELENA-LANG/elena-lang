@@ -1,112 +1,33 @@
 import system'threading;
-//
-//singleton X
-//{
-////   Task someMethodAsync1()
-////   {
-////      ^ new Task(/*console.writeLine("someMethodAsync1"); Thread.delay(1000); }*/);
-////   }
-//
-////   Task someMethodAsync2()
-////   {
-////      ^ new Task({ console.writeLine("someMethodAsync2"); Thread.delay(3000); });
-////     
-////   }
-//
-//   async Task test()
-//   {
-//      console.writeLine("Before");
-//
-//      $await Task.Run( { console.writeLine("someMethodAsync1"); Thread.delay(1000); });
-//
-//      console.writeLine("After");
-//   }
-//}
-//
-//public program()
-//{
-//   Task t := X.test();
-//
-//   t.Result;
-//
-//   console.readChar()
-//}
 
-//public abstract class AsyncStateEnumerator
-//{
-//   static Task proceed(Enumerator<Task> e)
-//   {
-//      Task t := /*new Task()*/nil;
-//
-//      Action<Task> proceeding := (Task tsk)
-//      {
-////         try
-////         {
-////             if (e.next()) {
-//                (*e).continueWith(this self);
-//
-////                ^ this self;
-////             }
-////         }
-////         catch (Exception e)
-////         {
-////            t.setException(e);
-////         };
-////
-////         t.setResult(); 
-//      };
-//
-//      proceeding(t);
-//
-//      ^ t;  
-//   }
-//}
-
-public abstract class AsyncStateEnumerator : Enumerator<Task>
+singleton X
 {
-   private __context;  // context must be the first one
-   private Task __current; 
+//   Task someMethodAsync1()
+//   {
+//      ^ new Task(/*console.writeLine("someMethodAsync1"); Thread.delay(1000); }*/);
+//   }
 
-   get Task Value()
-      = __current;
+//   Task someMethodAsync2()
+//   {
+//      ^ new Task({ console.writeLine("someMethodAsync2"); Thread.delay(3000); });
+//     
+//   }
 
-   reset()
+   async Task test()
    {
-      NotSupportedException.raise()
-   }
+      console.writeLine("Before");
 
-   Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+      $await Task.Run( { console.writeLine("someMethodAsync1"); Thread.delay(1000); });
 
-   enumerable() = self;
-
-   static Task proceed(Enumerator<Task> e)
-   {
-      Task t := /*new Task()*/nil;
-
-      Action<Task> proceeding := (Task tsk)
-      {
-         try
-         {
-             if (e.next()) {
-                (*e).continueWith(this self);
-
-                ^ nil;
-             }
-         }
-         catch (Exception e)
-         {
-            t.setException(e);
-         };
-
-         t.setResult(); 
-      };
-
-      proceeding(t);
-
-      ^ t;  
+      console.writeLine("After");
    }
 }
 
 public program()
 {
+   Task t := X.test();
+
+   t.Result;
+
+   console.readChar()
 }
