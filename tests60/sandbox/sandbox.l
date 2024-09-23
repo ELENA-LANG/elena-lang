@@ -1,5 +1,9 @@
 import system'threading;
 
+public abstract class BaseValue
+{
+}
+
 singleton X
 {
 //   Task someMethodAsync1()
@@ -13,21 +17,21 @@ singleton X
 //     
 //   }
 
-   async Task test()
+/*   async Task test()
    {
       console.writeLine("Before");
 
       $await Task.Run( { console.writeLine("someMethodAsync1"); Thread.delay(1000); });
 
       console.writeLine("After");
-   }
+   }*/
 }
 
 public program()
 {
-   Task t := X.test();
+//   Task t := X.test();
 
-   t.Result;
+//   t.Result;
 
    console.readChar()
 }
