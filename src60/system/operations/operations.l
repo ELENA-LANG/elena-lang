@@ -36,6 +36,45 @@ public template ifnot::else<expr>(falsePart,truePart) : __included(statements)
      ! { falsePart }
 }
 
+// --- ifnil ---
+
+public template ifNil<expr>(truePart) : __included(statements)
+{
+   cast bool(expr == nil) 
+     ? { truePart }
+}
+
+// --- if:else ---
+
+public template ifNil::else<expr>(truePart,falsePart) : __included(statements)
+{
+   cast bool(expr == nil)
+     ? { truePart } 
+     ! { falsePart }
+}
+
+// --- ifnot ---
+
+public template ifnotNil<expr>(falsePart) : __included(statements)
+{
+   cast bool(expr == nil) 
+     ! { falsePart }
+}
+
+// --- ifnot:else ---
+
+public template ifnotNil::else<expr>(falsePart,truePart) : __included(statements)
+{
+   cast bool(expr == nil) 
+     ? { truePart } 
+     ! { falsePart }
+}
+
+
+
+
+
+
 // --- while ---
 
 public template while<expr>(loopBody) : __included(statements)

@@ -196,7 +196,7 @@ namespace elena_lang
       bool resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message, 
          CheckMethodResult& result);
 
-      mssg_t resolveSingleDispatch(ModuleScopeBase& scope, ref_t reference, ref_t weakMessage, int& nillableArgs);
+      mssg_t resolveSingleDispatch(ModuleScopeBase& scope, ref_t reference, ref_t weakMessage, bool selfCall, int& nillableArgs);
       mssg_t resolveFunctionSingleDispatch(ModuleScopeBase& scope, ref_t reference, int& nillableArgs);
 
       void injectOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, ref_t classRef);

@@ -3,7 +3,7 @@ import system'collections;
 
 // --- Queue Template ---
  
-public sealed ThreadsafeQueue<T>
+public sealed ConcurrentQueue<T>
 {
    object _sync;
 
@@ -58,7 +58,6 @@ public sealed ThreadsafeQueue<T>
      
    T pop()
    {
-
       lock(_sync) {
          int top := *_top;
          int tale := *_tale;
@@ -95,7 +94,7 @@ public sealed ThreadsafeQueue<T>
       };
 
       var Queue<T> q := new Queue<T>();
-      for (int i := top; i <= tale; i++) {
+      for (int i := top; i < tale; i++) {
          q.push(copy[i]);
       };
 

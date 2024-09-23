@@ -1,22 +1,33 @@
-import extensions;
-import system'collections;
+import system'threading;
 
-public sealed class QList<T>
+singleton X
 {
-   List<T> _list := new List<T>();
+//   Task someMethodAsync1()
+//   {
+//      ^ new Task(/*console.writeLine("someMethodAsync1"); Thread.delay(1000); }*/);
+//   }
 
-   constructor() {}
+//   Task someMethodAsync2()
+//   {
+//      ^ new Task({ console.writeLine("someMethodAsync2"); Thread.delay(3000); });
+//     
+//   }
 
-   push(T o)
+   async Task test()
    {
-      _list.append(o);
+      console.writeLine("Before");
+
+      $await Task.Run( { console.writeLine("someMethodAsync1"); Thread.delay(1000); });
+
+      console.writeLine("After");
    }
 }
 
 public program()
 {
-   QList<int> l := new QList<int>();
+   Task t := X.test();
 
-   l.push(1);
-   l.push(2);
+   t.Result;
+
+   console.readChar()
 }

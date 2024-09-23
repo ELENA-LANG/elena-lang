@@ -354,6 +354,7 @@ namespace elena_lang
          map.add("close_frame", BuildKey::CloseFrame);
          map.add("argument", BuildKey::Argument);
          map.add("class_reference", BuildKey::ClassReference);
+         map.add("nil_reference", BuildKey::NilReference);
          map.add("open_statement", BuildKey::OpenStatement);
          map.add("end_statement", BuildKey::EndStatement);
          map.add("saving_int", BuildKey::SavingInt);

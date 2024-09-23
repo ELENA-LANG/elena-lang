@@ -43,6 +43,9 @@ constexpr auto S1_VariadicSingleDispatch_3b = "class (attribute -2147467263 ()na
 constexpr auto S1_DirectCall_1 = "class (nameattr (identifier \"myMethod\" ())attribute -2147479546 ()method (attribute -2147479540 ()parameter (type (identifier \"B\" ())nameattr (identifier \"arg\" ()))code ()))";
 constexpr auto S1_DirectCall_2 = "class (attribute -2147479546 ()nameattr (identifier \"TestHelper\" ())method (nameattr (identifier \"myMethodInvoker\" ())code (expression (message_operation (object (identifier \"myMethod\" ())expression (message_operation (object (attribute -2147479534 ()identifier \"B\" ())))))))method (nameattr (identifier \"myMethod\" ())parameter (type (identifier \"B\" ())nameattr (identifier \"arg\" ()))code ()))";
 
+constexpr auto S1_DirectCallWithNil_1 = "class (attribute -2147479546 ()nameattr (identifier \"X\" ())method (nameattr (identifier \"printMe\" ())parameter (type (nullable (identifier \"B\" ()))nameattr (identifier \"arg\" ()))code ()))";
+constexpr auto S1_DirectCallWithNil_2 = "class (attribute -2147467263 ()nameattr (identifier \"program\" ())attribute -2147479546 ()method (attribute -2147479540 ()code (expression (message_operation (object (identifier \"X\" ())message (identifier \"printMe\" ())expression (object (identifier \"nil\" ())))))))";
+
 constexpr auto S1_DirectCall_3 = "class (attribute -2147479546 ()nameattr (identifier \"TestHelper\" ())method (nameattr (identifier \"myMethodInvoker\" ())code (expression (assign_operation (object (attribute -2147479539 ()identifier \"b1\" ())expression (message_operation (object (attribute -2147479534 ()identifier \"B\" ())))))expression (assign_operation (object (attribute -2147479539 ()identifier \"b2\" ())expression (message_operation (object (attribute -2147479534 ()identifier \"B\" ())))))expression (message_operation (object (identifier \"myMethod\" ())expression (object (identifier \"b1\" ()))expression (object (identifier \"b2\" ()))))))method (nameattr (identifier \"myMethod\" ())parameter (attribute -2147475445 ()array_type (type (identifier \"B\" ()))nameattr (identifier \"arg\" ()))code ()))";
 
 constexpr auto S1_MethodWithSignatureOfObject = "class (attribute -2147479546 ()nameattr (identifier \"Helper\" ())method (nameattr (identifier \"test\" ())parameter (type (identifier \"Object\" ())nameattr (identifier \"arg\" ()))code ())) class (attribute -2147467263 ()nameattr (identifier \"program\" ())attribute -2147479546 ()method (attribute -2147479540 ()code (expression (assign_operation (object (type (identifier \"Object\" ())identifier \"arg\" ())expression (object (integer \"2\" ()))))expression (message_operation (object (identifier \"Helper\" ()) message(identifier \"test\" ())expression (object (identifier \"arg\" ())))))))";
@@ -71,6 +74,7 @@ constexpr auto BuildTree_VariadicSingleDispatch_4 = "tape (open_frame ()assignin
 
 constexpr auto BuildTree_CallMethodWithoutTarget = "tape (open_frame ()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 6 ())assigning 2 ()local 2 ()saving_stack 1 ()local 1 ()saving_stack ()argument ()direct_call_op 3074 (type 4 ())local 1 ()close_frame ()exit ())reserved 4 ()";
 constexpr auto BuildTree_CallVariadicMethodWithoutTarget = "tape(open_frame()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 2 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 3 ()local 2 ()saving_stack()argument()call_op 1089 ()assigning 4 ()local 3 ()saving_stack()argument()call_op 1089 ()assigning 5 ()terminator()saving_stack 3 ()local 5 ()saving_stack 2 ()local 4 ()saving_stack 1 ()local 1 ()saving_stack()argument()direct_call_op 3202 (type 4 ())local 1 ()close_frame()exit())reserved 9 ()";
+constexpr auto BuildTree_CallMethodWithNil = "tape (open_frame ()assigning 1 ()nil_reference ()saving_stack 1 ()class_reference 3 ()saving_stack ()argument ()direct_call_op 1538 (type 3 ())local 1 ()close_frame ()exit ())reserved 3 ()";
 
 constexpr auto BuildTree_LambdaCallPrivate = "tape (open_frame ()assigning 1 ()local 1 ()field ()saving_stack ()argument ()direct_call_op 3329 (type 3 ())close_frame ()exit ())reserved 2 ()";
 
@@ -100,6 +104,7 @@ constexpr auto BuildTree_VariadicSingleDispatch_4 = "tape (open_frame ()assignin
 
 constexpr auto BuildTree_CallMethodWithoutTarget = "tape (open_frame ()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 6 ())assigning 2 ()local 2 ()saving_stack 1 ()local 1 ()saving_stack ()argument ()direct_call_op 3074 (type 4 ())local 1 ()close_frame ()exit ())reserved 4 ()";
 constexpr auto BuildTree_CallVariadicMethodWithoutTarget = "tape(open_frame()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 2 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 3 ()local 2 ()saving_stack()argument()call_op 1089 ()assigning 4 ()local 3 ()saving_stack()argument()call_op 1089 ()assigning 5 ()terminator()saving_stack 3 ()local 5 ()saving_stack 2 ()local 4 ()saving_stack 1 ()local 1 ()saving_stack()argument()direct_call_op 3202 (type 4 ())local 1 ()close_frame()exit())reserved 10 ()";
+constexpr auto BuildTree_CallMethodWithNil = "tape (open_frame ()assigning 1 ()nil_reference ()saving_stack 1 ()class_reference 3 ()saving_stack ()argument ()direct_call_op 1538 (type 3 ())local 1 ()close_frame ()exit ())reserved 4 ()";
 
 constexpr auto BuildTree_LambdaCallPrivate = "tape (open_frame ()assigning 1 ()local 1 ()field ()saving_stack ()argument ()direct_call_op 3329 (type 3 ())close_frame ()exit ())reserved 4 ()";
 
@@ -468,6 +473,8 @@ void MethodCallTest :: runTest(bool withVariadic)
       env.setUpTemplateMockup(argArrayRef, 2, targetVargRef);
    }
 
+   moduleScope->predefined.add("nil", V_NIL);
+
    Compiler* compiler = env.createCompiler();
 
    BuildTree output;
@@ -534,6 +541,19 @@ void CallMethodWithSignatureOfSuperClass :: SetUp()
 
    targetRef = 4;
    intNumberRef = 2;
+}
+
+// --- CallMethodWithNil ---
+
+void CallMethodWithNil :: SetUp()
+{
+   MethodCallTest::SetUp();
+
+   targetRef = 4;
+
+   LoadDeclarationScenario(S_DefaultNamespace_1, S1_DirectCallWithNil_1, S1_DirectCallWithNil_2);
+
+   BuildTreeSerializer::load(BuildTree_CallMethodWithNil, controlOutputNode);
 }
 
 // --- LambdaTest ---
