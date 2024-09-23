@@ -58,7 +58,7 @@ uintptr_t ELENAMachine :: createPermString(SystemEnv* env, ustr_t s, uintptr_t c
 
    ObjectPage* header = (ObjectPage*)(nameAddr - elObjectOffset);
    header->vmtPtr = classPtr;
-   header->size = nameLen | struct_mask;
+   header->size = (int)nameLen | struct_mask;
 
    return nameAddr;
 }

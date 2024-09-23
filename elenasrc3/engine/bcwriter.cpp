@@ -3067,6 +3067,7 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
    BuildNode tryNode = node.findChild(BuildKey::Tape);
    BuildNode catchNode = tryNode.nextNode(BuildKey::Tape);
    BuildNode finallyNode = catchNode.nextNode(BuildKey::Tape);
+   BuildNode index = node.findChild(BuildKey::Index);
    saveTape(tape, tryNode, tapeScope, paths, tapeOptMode, false);
 
    // unhook
@@ -3086,8 +3087,11 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
    tape.write(ByteCode::Unhook);
 
    // finally-block
-   if (finallyNode != BuildKey::None)
+   if (finallyNode != BuildKey::None) {
+      tape.write(ByteCode::StoreFI, index.arg.value);
       saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
+      tape.write(ByteCode::PeekFI, index.arg.value);
+   }      
 
    tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
    // ===========================
@@ -3118,8 +3122,11 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
    tape.releaseLabel(); // release ret-end-label
 
    // finally-block
-   if (finallyNode != BuildKey::None)
+   if (finallyNode != BuildKey::None) {
+      tape.write(ByteCode::StoreFI, index.arg.value);
       saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
+      tape.write(ByteCode::PeekFI, index.arg.value);
+   }
 }
 
 void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
@@ -3142,8 +3149,11 @@ void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope&
    // unhook
    tape.write(ByteCode::Unhook);
 
-   if (finallyNode != BuildKey::None)
+   if (finallyNode != BuildKey::None) {
+      tape.write(ByteCode::StoreFI, index.arg.value);
       saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
+      tape.write(ByteCode::PeekFI, index.arg.value);
+   }      
 
    // jump
    tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
@@ -3159,8 +3169,11 @@ void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope&
    tape.write(ByteCode::Unhook);
 
    // finally-block
-   if (finallyNode != BuildKey::None)
+   if (finallyNode != BuildKey::None) {
+      tape.write(ByteCode::StoreFI, index.arg.value);
       saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
+      tape.write(ByteCode::PeekFI, index.arg.value);
+   }      
 
    tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
    // ===========================
@@ -3175,7 +3188,6 @@ void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope&
    // callvi 0   
    // labSkip:
    // unhook
-   // store fp:index
 
    tape.newLabel();
    tape.write(ByteCode::TstFlag, elMessage);
@@ -3185,15 +3197,19 @@ void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope&
    tape.write(ByteCode::CallVI);
    tape.setLabel();
    tape.write(ByteCode::Unhook);
-   tape.write(ByteCode::StoreFI, index.arg.value);
-
+   
    // finally-block
-   if (finallyNode != BuildKey::None)
-      saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
+   if (finallyNode != BuildKey::None) {
+      // store fp:index
+      // <finally>
+      // peek fp:index
 
-   // peek fp:index
-   // throw
-   tape.write(ByteCode::PeekFI, index.arg.value);
+      tape.write(ByteCode::StoreFI, index.arg.value);
+      saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
+      tape.write(ByteCode::PeekFI, index.arg.value);
+   }      
+
+   // throw   
    tape.write(ByteCode::Throw);
 
    // eos:

@@ -176,6 +176,12 @@ namespace elena_lang
       void SetUp() override;
    };
 
+   class CallMethodWithNil : public MethodCallTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
    class LambdaTest : public ScenarioTest
    {
    protected:

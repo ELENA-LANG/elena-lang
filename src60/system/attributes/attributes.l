@@ -7,6 +7,7 @@
 #let attributes["get"]         := 80005001h;
 #let attributes["set"]         := 80005002h;
 #let attributes["yield"]       := 80005003h;
+#let attributes["async"]       := 80005004h;
 
 /// visibility:
 #let attributes["public"]      := 80004001h;

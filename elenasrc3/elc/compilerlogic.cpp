@@ -998,6 +998,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_YIELDABLE:
          hint = (ref_t)MethodHint::Yieldable;
          return true;
+      case V_ASYNC:
+         hint = (ref_t)MethodHint::Async;
+         return true;
       default:
          return false;
    }
@@ -2624,7 +2627,7 @@ void CompilerLogic :: generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_
    }
 }
 
-mssg_t CompilerLogic :: resolveSingleDispatch(ModuleScopeBase& scope, ref_t reference, ref_t weakMessage, int& nillableArgs)
+mssg_t CompilerLogic :: resolveSingleDispatch(ModuleScopeBase& scope, ref_t reference, ref_t weakMessage, bool selfCall, int& nillableArgs)
 {
    if (!reference)
       return 0;
@@ -2632,6 +2635,14 @@ mssg_t CompilerLogic :: resolveSingleDispatch(ModuleScopeBase& scope, ref_t refe
    ClassInfo info;
    if (defineClassInfo(scope, info, reference)) {
       mssg_t dispatcher = info.attributes.get({ weakMessage, ClassAttribute::SingleDispatch });
+      if (!dispatcher) {
+         // check if it is non public message
+         mssg_t nonPublicWeakMessage = resolveNonpublic(weakMessage, info, selfCall, scope.isInternalOp(reference));
+         if (nonPublicWeakMessage != 0) {
+            dispatcher = info.attributes.get({ nonPublicWeakMessage, ClassAttribute::SingleDispatch });
+         }
+      }
+
       if (dispatcher) {
          CheckMethodResult result;
          if (checkMethod(info, dispatcher, result))

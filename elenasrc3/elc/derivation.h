@@ -203,7 +203,7 @@ namespace elena_lang
       void flushParentTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
       void flushDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool withNameNode = true, 
-         bool typeDescriptor = false);
+         bool typeDescriptor = false, bool exprMode = false);
       void flushClass(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool functionMode);
       void flushInlineTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushExpressionTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);

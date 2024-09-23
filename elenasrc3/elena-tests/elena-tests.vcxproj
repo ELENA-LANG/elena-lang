@@ -155,14 +155,14 @@
     <ClCompile Include="..\engine\section.cpp" />
     <ClCompile Include="..\engine\serializer.cpp" />
     <ClCompile Include="..\engine\syntaxtree.cpp" />
-    <ClCompile Include="declaration.cpp" />
+    <ClCompile Include="tests_declaration.cpp" />
     <ClCompile Include="tests_common.cpp" />
-    <ClCompile Include="bt_optimization.cpp" />
-    <ClCompile Include="declare_tests.cpp" />
-    <ClCompile Include="build_tests.cpp" />
-    <ClCompile Include="constructor_tests.cpp" />
-    <ClCompile Include="compile_tests.cpp" />
-    <ClCompile Include="bt_tests.cpp" />
+    <ClCompile Include="tests_bt_optimization.cpp" />
+    <ClCompile Include="tests_declare.cpp" />
+    <ClCompile Include="tests_build.cpp" />
+    <ClCompile Include="tests_constructor.cpp" />
+    <ClCompile Include="tests_compile.cpp" />
+    <ClCompile Include="tests_bt.cpp" />
     <ClCompile Include="pch.cpp">
     </ClCompile>
   </ItemGroup>

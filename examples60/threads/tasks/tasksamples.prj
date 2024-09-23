@@ -2,14 +2,13 @@
     <files>
         <module>
             <file>sample1.l</file>
-            <file>sample2.l</file>
-            <file>threadpool.l</file>
+            <file>main.l</file>
         </module>
     </files>
     <project>
-        <executable>threadpoolsamples</executable>
+        <executable>tasksamples</executable>
         <options></options>
-        <namespace>threadpoolsamples</namespace>
+        <namespace>tasksamples</namespace>
         <template>mt_console</template>
     </project>
 </configuration>

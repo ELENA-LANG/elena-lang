@@ -66,6 +66,11 @@ TEST_F(CallMethodWithSignatureOfSuperClass, BuildTest)
    runTest();
 }
 
+TEST_F(CallMethodWithNil, BuildTest)
+{
+   runTest(false);
+}
+
 // Test scenario : E.load(new C(), new D()); where: class E { constructor load(params B[] args) {}}, C:B and D:B
 TEST_F(VariadicCompiletimeSingleDispatch_WithDifferentArgs, BuildTest)
 {

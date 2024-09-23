@@ -1,3 +1,54 @@
+## ELENA 6.4.0
+
+- ELENA
+  - [FIXED] method reference : support function singletons
+  - [FIXED] direct typecasting must have priority over implicit conversion
+  - [ADDED] Thread static symbols / static fields
+  - [ADDED] new byte-codes : peektls / storetls
+  - [FIXED] ?? operator
+  - [ADDED] static constructor
+  - [ADDED] internal symbols
+
+- ELC
+  - [ADDED] new option -el5 / -el6 (default) - specifying grammar compatible to ELENA 5.x or 6.x
+  - [ADDED] Win x32-64 : MTA Console
+  - [FIXED] inline field assignment in a template class
+  - [FIXED] return inside lock
+  - [FIXED] ppc64le : fix iteratorMethodTest
+  - [FIXED] declaring a lambda function with template based argument
+  - [FIXED] calling a method directly with nil argument when allowed
+  - [FIXED] single dispatch of a private / internal / protected method
+  - [FIXED] closure argument types can be specified by an expected type
+	
+- VM
+
+- RT
+
+- SM
+
+- API
+  - [ADDED] system'threading'Thread: Priority, join<int>, Current
+  - [ADDED] system'runtime'Environment
+  - [ADDED] system'collections'threadsafe'ConcurrentQueue<T>
+  - [ADDED] #154 : system'threading'Semaphore
+  - [ADDED] system'threading'BlockingQueue<T>
+  - [ADDED]system'threading'ThreadPool
+  - [ADDED] #154 : system'threading: ManualResetEvent, AutoResetEvent, CountDownEvent
+  - [ADDED] system'threading : Task
+  - [ADDED] system'io'Directory : static getFiles / getFiles<string>
+
+- SAMPLES
+  - [ADDED] threadpool
+  - [ADDED] tasks
+
+- Tools
+  - [ECV][ADDED] displaying class attributes
+
+- IDE
+  - [FIXED] #679 : class already exist
+  - [FIXED] debug source path
+  - [ADDED] it is possible to set the target type for a single file project
+
 ## ELENA 6.3.0
 
 - ELENA

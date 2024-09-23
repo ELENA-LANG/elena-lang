@@ -5,39 +5,35 @@ In development:
 [development]
   ### EPIC: elena 6.4 ###
 
-  === Iteration 32 (19.9) ===
+  === Iteration 33 (7.10) ===
   --------------------------------------
   dev: 
-      - async programming (Task<T>, object field (similar to Event), WaitHandle, AsyncLocal<T>)
-      - ThreadLocal<T>
+      - async programming
       - upndown (connector)
       - #496
+      - Func<T,TResult> must have default conversion to Func<T,object>?
+      - toArray<T> extension method (parameterized method extensions)
+      - retest : #25, #412, #413, #414
   gen:
       - lpad : generate a code based on a record  
   maint:
-      - set up automatic tests
-      - #618
+      - #675
+      - #689
+      - unit tests : bt optimization 
+      - fix warnings in all libraries    
   port:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * #676
   * x86-64 : mta - corex
-  * Task
-  * ppc64le : fix iteratorMethodTest
-  * thread pool testcase (https://www.c-sharpcorner.com/article/threadpool-in-c-sharp-practical-examples/)
-  * inline assigning functional test : template type
-  --------------------------------------
-  * inline assigning : template type
-
-  === Iteration 33 ===
-  --------------------------------------
-  dev: 
-  gen:
-  maint:
-  port:
-  prom:
-  --------------------------------------
-  --------------------------------------
+  * ldoc : system'collections'threadsafe : only proper templates must be shown
+  * Task<T>
+  * ldoc : system-threading-.html must not be generated
+  * async statemachine
+  * $await operator
+  --------------------------------------  
+  * async method must create an enumerator and call a static method proceed
 
   === Iteration 34 ===
   --------------------------------------

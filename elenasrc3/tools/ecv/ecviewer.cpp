@@ -151,8 +151,9 @@ void ByteCodeViewer :: printHelp()
    _presenter->print("<class>.<message>       - view a method byte codes\n");
    _presenter->print("<class>.<index>         - view a method specified by an index byte codes\n");
    _presenter->print("#<symbol>               - view symbol byte codes\n");
+   _presenter->print("-a                      - toggle displaying class attributes mode\n");
    _presenter->print("-b                      - toggle bytecode mode\n");
-   _presenter->print("-h                      - toggle method hints mode\n");
+   _presenter->print("-h                      - toggle displaying method hints mode\n");
    _presenter->print("-p                      - toggle pagination mode\n");
    _presenter->print("-q                      - quit\n");
    _presenter->print("-t                      - toggle ignore-breakpoint mode\n");
@@ -847,6 +848,26 @@ void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
    }
 }
 
+void ByteCodeViewer :: printClassAttributes(ClassInfo& classInfo, int& row, int pageSize)
+{
+   IdentifierString line;
+
+   for (auto it = classInfo.attributes.start(); !it.eof(); ++it) {
+      auto attr = it.key();
+      if (attr.value2 == ClassAttribute::SingleDispatch) {
+         line.append("(SingleDispatch,");
+         addMessage(line, attr.value1);
+         line.append(")=");
+         addMessage(line, *it);
+      }
+
+      if (!line.empty()) {
+         printLineAndCount("@attribute ", *line, row, pageSize);
+         line.clear();
+      }
+   }
+}
+
 inline ustr_t getMethodPrefix(bool isFunction)
 {
    if (isFunction) {
@@ -981,6 +1002,8 @@ void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo, ustr_t filterMask)
 
       printFlags(info.header.flags, row, _pageSize);
       printFields(info, row, _pageSize);
+      if (_showClassAttributes)
+         printClassAttributes(info, row, _pageSize);
    }
 
    MethodEntry entry = {};
@@ -1120,6 +1143,10 @@ void ByteCodeViewer :: runSession()
             case 'h':
                _showMethodInfo = !_showMethodInfo;
                _presenter->print("Method hint mode is %s", _showMethodInfo ? "true" : "false");
+               break;
+            case 'a':
+               _showClassAttributes = !_showClassAttributes;
+               _presenter->print("Displaying class attributes mode is %s", _showClassAttributes ? "true" : "false");
                break;
             default:
                printHelp();
