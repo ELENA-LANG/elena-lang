@@ -34,7 +34,7 @@ In development:
   * task sample 2 - https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1?view=net-5.0
   * Task<T>
   --------------------------------------  
-  * async example
+  * $await Sample1.wait() => $await wait()
 
   === Iteration 34 ===
   --------------------------------------

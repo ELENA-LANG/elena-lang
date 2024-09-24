@@ -17,7 +17,7 @@ singleton X
    {
       console.writeLine("Before");
 
-      $await Task.Run( { console.writeLine("someMethodAsync1"); Thread.sleep(3000); });
+      $await Task.run( { console.writeLine("someMethodAsync1"); Thread.sleep(3000); });
 
       console.writeLine("After");
    }

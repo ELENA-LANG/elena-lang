@@ -146,7 +146,7 @@ public sealed class Task
       t.wait()
    }
 
-   static Task Run(Func action)
+   static Task run(Func action)
    {
        auto t := new Task();
    
@@ -165,4 +165,7 @@ public sealed class Task
    
        ^ t;
    }
+
+   static Task sleep(int msecs)
+      = run({ Thread.sleep(msecs); });
 }

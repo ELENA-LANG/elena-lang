@@ -1065,7 +1065,7 @@ namespace elena_lang
             if (level == ScopeLevel::Statemachine) {
                return this;
             }
-            else return InlineClassScope::getScope(level);
+            else return Scope::getScope(level);
          }
 
          StatemachineClassScope(ExprScope* owner, ref_t reference);
