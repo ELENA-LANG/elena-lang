@@ -6268,7 +6268,7 @@ SyntaxNode Compiler::addStaticInitializerMethod(ClassScope& scope, SyntaxNode no
 
    SyntaxNode staticInitializer = rootNode.firstChild(SyntaxKey::StaticInitializerMethod);
    if (staticInitializer == SyntaxKey::None) {
-      IdentifierString sectionName(scope.module->resolveReference(scope.reference));
+      ReferenceProperName sectionName(scope.module->resolveReference(scope.reference));
       sectionName.append(INITIALIZER_SECTION);
 
       ref_t actionRef = scope.moduleScope->mapAnonymous(*sectionName);

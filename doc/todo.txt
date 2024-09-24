@@ -14,6 +14,7 @@ In development:
       - Func<T,TResult> must have default conversion to Func<T,object>?
       - toArray<T> extension method (parameterized method extensions)
       - retest : #25, #412, #413, #414
+      - #622 (http client)
   gen:
       - lpad : generate a code based on a record  
   maint:
@@ -28,9 +29,13 @@ In development:
   * #676
   * x86-64 : mta - corex
   * ldoc : system'collections'threadsafe : only proper templates must be shown
+  * async example2 : https://dotnettutorials.net/lesson/return-a-value-from-a-task-in-csharp/
+  * task sample 2 - https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1?view=net-5.0
   * Task<T>
+  * async example
+  * stream async operations - readAsync / writeAsync
   --------------------------------------  
-  * ldoc : system-threading-.html must not be generated
+  * 
 
   === Iteration 34 ===
   --------------------------------------
