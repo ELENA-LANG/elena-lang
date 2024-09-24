@@ -194,9 +194,10 @@ struct BuiltinReferences
    ref_t   nullableTemplateReference;
    ref_t   argArrayTemplateReference;
    ref_t   closureTemplateReference, tupleTemplateReference;
-   ref_t   yielditTemplateReference;
+   ref_t   yielditTemplateReference, asyncStatemachineReference;
    ref_t   lazyExpressionReference;
    ref_t   pointerReference;
+   ref_t   taskReference;
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
@@ -231,8 +232,8 @@ struct BuiltinReferences
       arrayTemplateReference = argArrayTemplateReference = 0;
       nullableTemplateReference = 0;
       closureTemplateReference = lazyExpressionReference = tupleTemplateReference = 0;
-      yielditTemplateReference = 0;
-      pointerReference = 0;
+      asyncStatemachineReference = yielditTemplateReference = 0;
+      taskReference = pointerReference = 0;
 
       dispatch_message = constructor_message = 0;
       protected_constructor_message = 0;

@@ -511,43 +511,43 @@ ObjectInfo Interpreter::createConstCollection(ref_t arrayRef, ref_t typeRef, Arg
    for (size_t i = 0; i < args.count(); i++) {
       auto arg = args[i];
       switch (arg.kind) {
-      case ObjectKind::StringLiteral:
-         addConstArrayItem(arrayRef, arg.reference, mskLiteralRef);
-         break;
-      case ObjectKind::IntLiteral:
-         if (byValue) {
-            addIntArrayItem(arrayRef, arg.extra);
-         }
-         else addConstArrayItem(arrayRef, arg.reference, mskIntLiteralRef);
-         break;
-      case ObjectKind::LongLiteral:
-         if (byValue) {
-            ustr_t valStr = _scope->module->resolveConstant(arg.reference);
-            long long val = StrConvertor::toLong(valStr, 16);
+         case ObjectKind::StringLiteral:
+            addConstArrayItem(arrayRef, arg.reference, mskLiteralRef);
+            break;
+         case ObjectKind::IntLiteral:
+            if (byValue) {
+               addIntArrayItem(arrayRef, arg.extra);
+            }
+            else addConstArrayItem(arrayRef, arg.reference, mskIntLiteralRef);
+            break;
+         case ObjectKind::LongLiteral:
+            if (byValue) {
+               ustr_t valStr = _scope->module->resolveConstant(arg.reference);
+               long long val = StrConvertor::toLong(valStr, 16);
 
-            addLongArrayItem(arrayRef, val);
-         }
-         else addConstArrayItem(arrayRef, arg.reference, mskLongLiteralRef);
-         break;
-      case ObjectKind::Float64Literal:
-         if (byValue) {
-            ustr_t valStr = _scope->module->resolveConstant(arg.reference);
-            double val = StrConvertor::toDouble(valStr);
+               addLongArrayItem(arrayRef, val);
+            }
+            else addConstArrayItem(arrayRef, arg.reference, mskLongLiteralRef);
+            break;
+         case ObjectKind::Float64Literal:
+            if (byValue) {
+               ustr_t valStr = _scope->module->resolveConstant(arg.reference);
+               double val = StrConvertor::toDouble(valStr);
 
-            addFloatArrayItem(arrayRef, val);
-         }
-         else addConstArrayItem(arrayRef, arg.reference, mskRealLiteralRef);
-         break;
-      case ObjectKind::Singleton:
-      case ObjectKind::Class:
-         addConstArrayItem(arrayRef, arg.reference, mskVMTRef);
-         break;
-      case ObjectKind::MssgNameLiteral:
-         addMssgNameArrayItem(arrayRef, arg.reference);
-         break;
-      default:
-         assert(false);
-         break;
+               addFloatArrayItem(arrayRef, val);
+            }
+            else addConstArrayItem(arrayRef, arg.reference, mskRealLiteralRef);
+            break;
+         case ObjectKind::Singleton:
+         case ObjectKind::Class:
+            addConstArrayItem(arrayRef, arg.reference, mskVMTRef);
+            break;
+         case ObjectKind::MssgNameLiteral:
+            addMssgNameArrayItem(arrayRef, arg.reference);
+            break;
+         default:
+            assert(false);
+            break;
       }
    }
 
@@ -565,15 +565,15 @@ bool Interpreter::evalObjArrayOp(ref_t operator_id, ArgumentsInfo& args)
    if (loperand.kind == ObjectKind::TypeList) {
       ref_t mask = 0;
       switch (roperand.kind) {
-      case ObjectKind::Symbol:
-         mask = mskSymbolRef;
-         break;
-      case ObjectKind::Singleton:
-      case ObjectKind::Class:
-         mask = mskVMTRef;
-         break;
-      default:
-         break;
+         case ObjectKind::Symbol:
+            mask = mskSymbolRef;
+            break;
+         case ObjectKind::Singleton:
+         case ObjectKind::Class:
+            mask = mskVMTRef;
+            break;
+         default:
+            break;
       }
       if (mask != 0) {
          addTypeListItem(loperand.reference, roperand.reference, mask);
@@ -591,89 +591,89 @@ bool Interpreter::evalIntOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& 
    ObjectInfo roperand = args[1];
 
    switch (operator_id) {
-   case ADD_OPERATOR_ID:
-      if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
-         int value = loperand.extra + roperand.extra;
+      case ADD_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra + roperand.extra;
 
-         retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
 
-         return true;
-      }
-      break;
-   case SUB_OPERATOR_ID:
-      if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
-         int value = loperand.extra - roperand.extra;
+            return true;
+         }
+         break;
+      case SUB_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra - roperand.extra;
 
-         retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
 
-         return true;
-      }
-      break;
-   case MUL_OPERATOR_ID:
-      if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
-         int value = loperand.extra * roperand.extra;
+            return true;
+         }
+         break;
+      case MUL_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra * roperand.extra;
 
-         retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
 
-         return true;
-      }
-      break;
-   case DIV_OPERATOR_ID:
-      if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
-         int value = loperand.extra / roperand.extra;
+            return true;
+         }
+         break;
+      case DIV_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra / roperand.extra;
 
-         retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
 
-         return true;
-      }
-      break;
-   case BAND_OPERATOR_ID:
-      if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
-         int value = loperand.extra & roperand.extra;
+            return true;
+         }
+         break;
+      case BAND_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra & roperand.extra;
 
-         retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
 
-         return true;
-      }
-      break;
-   case BOR_OPERATOR_ID:
-      if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
-         int value = loperand.extra | roperand.extra;
+            return true;
+         }
+         break;
+      case BOR_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra | roperand.extra;
 
-         retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
 
-         return true;
-      }
-      break;
-   case BXOR_OPERATOR_ID:
-      if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
-         int value = loperand.extra ^ roperand.extra;
+            return true;
+         }
+         break;
+      case BXOR_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra ^ roperand.extra;
 
-         retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
 
-         return true;
-      }
-      break;
-   case SHL_OPERATOR_ID:
-      if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
-         int value = loperand.extra << roperand.extra;
+            return true;
+         }
+         break;
+      case SHL_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra << roperand.extra;
 
-         retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
 
-         return true;
-      }
-      break;
-   case SHR_OPERATOR_ID:
-      if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
-         int value = loperand.extra >> roperand.extra;
+            return true;
+         }
+         break;
+      case SHR_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            int value = loperand.extra >> roperand.extra;
 
-         retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
+            retVal = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(_scope, value), value };
 
-         return true;
-      }
-      break;
-   default:
-      break;
+            return true;
+         }
+         break;
+      default:
+         break;
    }
    return false;
 }
@@ -697,20 +697,20 @@ bool Interpreter::evalRealOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo&
 
    double result = 0;
    switch (operator_id) {
-   case ADD_OPERATOR_ID:
-      result = lvalue + rvalue;
-      break;
-   case SUB_OPERATOR_ID:
-      result = lvalue - rvalue;
-      break;
-   case MUL_OPERATOR_ID:
-      result = lvalue * rvalue;
-      break;
-   case DIV_OPERATOR_ID:
-      result = lvalue / rvalue;
-      break;
-   default:
-      return false;
+      case ADD_OPERATOR_ID:
+         result = lvalue + rvalue;
+         break;
+      case SUB_OPERATOR_ID:
+         result = lvalue - rvalue;
+         break;
+      case MUL_OPERATOR_ID:
+         result = lvalue * rvalue;
+         break;
+      case DIV_OPERATOR_ID:
+         result = lvalue / rvalue;
+         break;
+      default:
+         return false;
    }
 
    retVal = { ObjectKind::Float64Literal, { V_FLOAT64 }, ::mapFloat64Const(_scope->module, result) };
@@ -4418,15 +4418,15 @@ inline void fillObject(BuildTreeWriter& writer, ClassInfo& info, int ptrSize)
 {
    // NOTE : for simplicity FillOp is used
    switch (ptrSize) {
-   case 4:
-      writer.appendNode(BuildKey::FillOp, align(info.size, 4) >> 2);
-      break;
-   case 8:
-      writer.appendNode(BuildKey::FillOp, align(info.size, 8) >> 3);
-      break;
-   default:
-      assert(false);
-      break;
+      case 4:
+         writer.appendNode(BuildKey::FillOp, align(info.size, 4) >> 2);
+         break;
+      case 8:
+         writer.appendNode(BuildKey::FillOp, align(info.size, 8) >> 3);
+         break;
+      default:
+         assert(false);
+         break;
    }
 }
 
@@ -4453,19 +4453,19 @@ inline void copyArray(BuildTreeWriter& writer, int size)
 inline bool isBoxingRequired(ObjectInfo info, bool allowByRefParam)
 {
    switch (info.kind) {
-   case ObjectKind::LocalAddress:
-   case ObjectKind::TempLocalAddress:
-   case ObjectKind::ParamAddress:
-   case ObjectKind::ByRefParamAddress:
-   case ObjectKind::OutParamAddress:
-   case ObjectKind::SelfBoxableLocal:
-   case ObjectKind::FieldAddress:
-      return true;
-   case ObjectKind::ParamReference:
-      if (!allowByRefParam)
+      case ObjectKind::LocalAddress:
+      case ObjectKind::TempLocalAddress:
+      case ObjectKind::ParamAddress:
+      case ObjectKind::ByRefParamAddress:
+      case ObjectKind::OutParamAddress:
+      case ObjectKind::SelfBoxableLocal:
+      case ObjectKind::FieldAddress:
          return true;
-   default:
-      return false;
+      case ObjectKind::ParamReference:
+         if (!allowByRefParam)
+            return true;
+      default:
+         return false;
    }
 }
 
@@ -4523,63 +4523,63 @@ ref_t Compiler::retrieveType(Scope& scope, ObjectInfo info)
    else return info.typeInfo.typeRef;
 }
 
-ref_t Compiler::resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo typeInfo,
+ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo typeInfo,
    bool declarationMode)
 {
    switch (typeInfo.typeRef) {
-   case V_UINT8:
-      return moduleScope.buildins.uint8Reference;
-   case V_INT8:
-      return moduleScope.buildins.int8Reference;
-   case V_INT16:
-      return moduleScope.buildins.shortReference;
-   case V_UINT16:
-      return moduleScope.buildins.ushortReference;
-   case V_INT32:
-      return moduleScope.buildins.intReference;
-   case V_INT64:
-      return moduleScope.buildins.longReference;
-   case V_FLOAT64:
-      return moduleScope.buildins.realReference;
-   case V_UINT32:
-      return moduleScope.buildins.uintReference;
-   case V_STRING:
-      return moduleScope.buildins.literalReference;
-   case V_WIDESTRING:
-      return moduleScope.buildins.wideReference;
-   case V_MESSAGE:
-      return moduleScope.buildins.messageReference;
-   case V_MESSAGENAME:
-      return moduleScope.buildins.messageNameReference;
-   case V_EXTMESSAGE64:
-   case V_EXTMESSAGE128:
-      return moduleScope.buildins.extMessageReference;
-   case V_FLAG:
-      return moduleScope.branchingInfo.typeRef;
-   case V_WRAPPER:
-   case V_OUTWRAPPER:
-      return resolveWrapperTemplate(moduleScope, typeInfo.elementRef, declarationMode);
-   case V_INT8ARRAY:
-   case V_INT16ARRAY:
-   case V_INT32ARRAY:
-   case V_FLOAT64ARRAY:
-   case V_BINARYARRAY:
-      return resolveArrayTemplate(moduleScope, typeInfo.elementRef, declarationMode);
-      //case V_NULLABLE:
-      //   return resolveNullableTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
-   case V_NIL:
-      return moduleScope.buildins.superReference;
-   case V_ARGARRAY:
-      return resolveArgArrayTemplate(moduleScope, typeInfo.elementRef, declarationMode);
-   case V_OBJARRAY:
-      return resolveArrayTemplate(moduleScope, typeInfo.elementRef, declarationMode);
-   case V_PTR32:
-   case V_PTR64:
-      return moduleScope.buildins.pointerReference;
-   case V_SYMBOL:
-      return moduleScope.buildins.superReference;
-   default:
-      return 0;
+      case V_UINT8:
+         return moduleScope.buildins.uint8Reference;
+      case V_INT8:
+         return moduleScope.buildins.int8Reference;
+      case V_INT16:
+         return moduleScope.buildins.shortReference;
+      case V_UINT16:
+         return moduleScope.buildins.ushortReference;
+      case V_INT32:
+         return moduleScope.buildins.intReference;
+      case V_INT64:
+         return moduleScope.buildins.longReference;
+      case V_FLOAT64:
+         return moduleScope.buildins.realReference;
+      case V_UINT32:
+         return moduleScope.buildins.uintReference;
+      case V_STRING:
+         return moduleScope.buildins.literalReference;
+      case V_WIDESTRING:
+         return moduleScope.buildins.wideReference;
+      case V_MESSAGE:
+         return moduleScope.buildins.messageReference;
+      case V_MESSAGENAME:
+         return moduleScope.buildins.messageNameReference;
+      case V_EXTMESSAGE64:
+      case V_EXTMESSAGE128:
+         return moduleScope.buildins.extMessageReference;
+      case V_FLAG:
+         return moduleScope.branchingInfo.typeRef;
+      case V_WRAPPER:
+      case V_OUTWRAPPER:
+         return resolveWrapperTemplate(moduleScope, typeInfo.elementRef, declarationMode);
+      case V_INT8ARRAY:
+      case V_INT16ARRAY:
+      case V_INT32ARRAY:
+      case V_FLOAT64ARRAY:
+      case V_BINARYARRAY:
+         return resolveArrayTemplate(moduleScope, typeInfo.elementRef, declarationMode);
+         //case V_NULLABLE:
+         //   return resolveNullableTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
+      case V_NIL:
+         return moduleScope.buildins.superReference;
+      case V_ARGARRAY:
+         return resolveArgArrayTemplate(moduleScope, typeInfo.elementRef, declarationMode);
+      case V_OBJARRAY:
+         return resolveArrayTemplate(moduleScope, typeInfo.elementRef, declarationMode);
+      case V_PTR32:
+      case V_PTR64:
+         return moduleScope.buildins.pointerReference;
+      case V_SYMBOL:
+         return moduleScope.buildins.superReference;
+      default:
+         return 0;
    }
 }
 
@@ -5511,28 +5511,28 @@ TypeInfo Compiler::resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribute
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::Attribute:
-         if (!_logic->validateTypeScopeAttribute(current.arg.reference, attributes))
-            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-         break;
-      case SyntaxKey::Type:
-         elementRef = resolveStrongTypeAttribute(scope, current, declarationMode, false).typeRef;
-         break;
-      case SyntaxKey::TemplateType:
-         elementRef = resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole).typeRef;
-         break;
-      case SyntaxKey::identifier:
-      case SyntaxKey::reference:
-         elementRef = resolveTypeIdentifier(scope, current.identifier(), node.key, declarationMode, allowRole);
-         break;
-      case SyntaxKey::NullableType:
-      case SyntaxKey::ArrayType:
-         elementRef = resolvePrimitiveType(*scope.moduleScope,
-            resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole), declarationMode);
-         break;
-      default:
-         assert(false);
-         break;
+         case SyntaxKey::Attribute:
+            if (!_logic->validateTypeScopeAttribute(current.arg.reference, attributes))
+               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+            break;
+         case SyntaxKey::Type:
+            elementRef = resolveStrongTypeAttribute(scope, current, declarationMode, false).typeRef;
+            break;
+         case SyntaxKey::TemplateType:
+            elementRef = resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole).typeRef;
+            break;
+         case SyntaxKey::identifier:
+         case SyntaxKey::reference:
+            elementRef = resolveTypeIdentifier(scope, current.identifier(), node.key, declarationMode, allowRole);
+            break;
+         case SyntaxKey::NullableType:
+         case SyntaxKey::ArrayType:
+            elementRef = resolvePrimitiveType(*scope.moduleScope,
+               resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole), declarationMode);
+            break;
+         default:
+            assert(false);
+            break;
       }
 
       current = current.nextNode();
@@ -8521,7 +8521,7 @@ void Compiler::checkUnassignedVariables(MethodScope& scope, SyntaxNode node)
    }
 }
 
-ref_t Compiler::resolveYieldType(Scope& scope, SyntaxNode node)
+ref_t Compiler :: resolveYieldType(Scope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.findChild(SyntaxKey::TemplateType);
    if (current != SyntaxKey::None) {
@@ -8533,33 +8533,47 @@ ref_t Compiler::resolveYieldType(Scope& scope, SyntaxNode node)
    return scope.moduleScope->buildins.superReference;
 }
 
+ref_t Compiler :: resolveAsyncType(Scope& scope, SyntaxNode node)
+{
+   /*SyntaxNode current = node.findChild(SyntaxKey::TemplateType);
+   if (current != SyntaxKey::None) {
+      auto typeInfo = resolveStrongTypeAttribute(scope, current.findChild(SyntaxKey::TemplateArg), true, false);
+
+      return typeInfo.typeRef;
+   }*/
+
+   return scope.moduleScope->buildins.taskReference;
+}
+
 void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
 {
-/*
    CodeScope codeScope(&scope);
    Expression expression(this, codeScope, writer);
 
-   // create yield state machine
+   // declare a state machine enumerator
    ref_t nestedRef = scope.moduleScope->mapAnonymous();
    StatemachineClassScope smScope(&expression.scope, nestedRef);
-   smScope.typeRef = resolveYieldType(scope, node);
+   smScope.typeRef = resolveAsyncType(scope, node);
 
    BuildNode buildNode = writer.CurrentNode();
    while (buildNode != BuildKey::Root)
       buildNode = buildNode.parentNode();
 
    BuildTreeWriter nestedWriter(buildNode);
-   compileStatemachineClass(nestedWriter, smScope, node);
+   ref_t baseRef = scope.moduleScope->buildins.asyncStatemachineReference;
+   compileStatemachineClass(nestedWriter, smScope, node, baseRef);
 
+   // create a async method
    beginMethod(writer, scope, node, BuildKey::Method, _withDebugInfo);
 
    // new stack frame
    writer.appendNode(BuildKey::OpenFrame);
 
-   ObjectInfo retVal = { ObjectKind::Object, { nestedRef }, 0 };
+   //   create a state machine enumerator
+   int preservedContext = 0;
+   expression.compileNestedInitializing(smScope, nestedRef, preservedContext, nullptr);
 
-   int preservedClosure = 0;
-   expression.compileNestedInitializing(smScope, nestedRef, preservedClosure, nullptr);
+   ObjectInfo retVal = { ObjectKind::Object, { nestedRef }, 0 };
 
    retVal = expression.saveToTempLocal(retVal);
 
@@ -8581,6 +8595,19 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
 
    expression.compileAssigning(node, contextField, { ObjectKind::Object }, true);
 
+   //   invoke state machine enumerator "proceed" routine
+   ArgumentsInfo args;
+   args.add(mapClassSymbol(scope, baseRef));
+   args.add(retVal);
+
+   mssg_t weakMessage = encodeMessage(scope.module->mapAction(PROCEED_MESSAGE, 0, false), 2, 0);
+
+   MessageResolution resolution = { weakMessage };
+
+   retVal = expression.compileMessageOperation(node, args[0], resolution,
+      0, args, EAttr::None, nullptr);
+
+   //   return a result
    expression.compileConverting(node, retVal, scope.info.outputRef,
       scope.checkHint(MethodHint::Stacksafe));
 
@@ -8589,13 +8616,9 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
    writer.appendNode(BuildKey::CloseFrame);
 
    endMethod(writer, scope);
-*/
-
-
-   assert(false);
 }
 
-void Compiler::compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
+void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
 {
    CodeScope codeScope(&scope);
    Expression expression(this, codeScope, writer);
@@ -8610,7 +8633,8 @@ void Compiler::compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, S
       buildNode = buildNode.parentNode();
 
    BuildTreeWriter nestedWriter(buildNode);
-   compileStatemachineClass(nestedWriter, smScope, node);
+   compileStatemachineClass(nestedWriter, smScope, node,
+      resolveStateMachine(scope, scope.moduleScope->buildins.yielditTemplateReference, smScope.typeRef));
 
    beginMethod(writer, scope, node, BuildKey::Method, _withDebugInfo);
 
@@ -8619,8 +8643,8 @@ void Compiler::compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, S
 
    ObjectInfo retVal = { ObjectKind::Object, { nestedRef }, 0 };
 
-   int preservedClosure = 0;
-   expression.compileNestedInitializing(smScope, nestedRef, preservedClosure, nullptr);
+   int preservedContext = 0;
+   expression.compileNestedInitializing(smScope, nestedRef, preservedContext, nullptr);
 
    retVal = expression.saveToTempLocal(retVal);
 
@@ -9249,10 +9273,8 @@ void Compiler::compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope
       checkUnassignedVariables(scope, node);
 }
 
-void Compiler::compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node)
+void Compiler :: compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node, ref_t parentRef)
 {
-   ref_t parentRef = resolveStateMachine(scope, scope.moduleScope->buildins.yielditTemplateReference, scope.typeRef);
-
    declareClassParent(parentRef, scope, node);
    generateClassFlags(scope, elNestedClass | elSealed);
 
@@ -9794,9 +9816,11 @@ void Compiler::prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwar
    moduleScope->buildins.closureTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, CLOSURE_FORWARD);
    moduleScope->buildins.tupleTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, TUPLE_FORWARD);
    moduleScope->buildins.yielditTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, YIELDIT_FORWARD);
+   moduleScope->buildins.asyncStatemachineReference = safeMapWeakReference(moduleScope, forwardResolver, ASYNCIT_FORWARD);
    moduleScope->buildins.lazyExpressionReference = safeMapWeakReference(moduleScope, forwardResolver, LAZY_FORWARD);
    moduleScope->buildins.uintReference = safeMapReference(moduleScope, forwardResolver, UINT_FORWARD);
    moduleScope->buildins.pointerReference = safeMapReference(moduleScope, forwardResolver, PTR_FORWARD);
+   moduleScope->buildins.taskReference = safeMapReference(moduleScope, forwardResolver, TASK_FORWARD);
 
    moduleScope->branchingInfo.typeRef = safeMapReference(moduleScope, forwardResolver, BOOL_FORWARD);
    moduleScope->branchingInfo.trueRef = safeMapReference(moduleScope, forwardResolver, TRUE_FORWARD);
@@ -11832,15 +11856,15 @@ ObjectInfo Compiler::Expression::compileSpecialOperation(SyntaxNode node, int op
 {
    ObjectInfo retVal = {};
    switch (operatorId) {
-   case BREAK_OPERATOR_ID:
-      writer->appendNode(BuildKey::BreakOp);
-      break;
-   case CONTINUE_OPERATOR_ID:
-      writer->appendNode(BuildKey::ContinueOp);
-      break;
-   default:
-      assert(false);
-      break;
+      case BREAK_OPERATOR_ID:
+         writer->appendNode(BuildKey::BreakOp);
+         break;
+      case CONTINUE_OPERATOR_ID:
+         writer->appendNode(BuildKey::ContinueOp);
+         break;
+      default:
+         assert(false);
+         break;
    }
 
    return retVal;
@@ -11848,7 +11872,35 @@ ObjectInfo Compiler::Expression::compileSpecialOperation(SyntaxNode node, int op
 
 void Compiler::Expression :: compileAsyncOperation(SyntaxNode node)
 {
-   assert(false);
+   StatemachineClassScope* smScope = Scope::getScope<StatemachineClassScope>(scope, Scope::ScopeLevel::Statemachine);
+   if (!smScope)
+      scope.raiseError(errInvalidOperation, node);
+
+   ObjectInfo contextField = smScope->mapContextField();
+   ObjectInfo currentField = smScope->mapCurrentField();
+
+   writer->newNode(BuildKey::YieldingOp, -scope.moduleScope->ptrSize);
+   writer->newNode(BuildKey::Tape);
+
+   ObjectInfo retVal = compile(node.firstChild(), smScope->typeRef, EAttr::None, nullptr);
+
+   bool nillableOp = false;
+   if (!compileAssigningOp(currentField, retVal, nillableOp))
+      scope.raiseError(errInvalidOperation, node);
+
+   if (nillableOp)
+      scope.raiseWarning(WARNING_LEVEL_1, wrnReturningNillable, node);
+
+   writeObjectInfo(contextField, node);
+   writer->appendNode(BuildKey::SavingStackDump);
+
+   // returning true
+   writeObjectInfo({ ObjectKind::Singleton, { scope.moduleScope->branchingInfo.typeRef }, scope.moduleScope->branchingInfo.trueRef });
+
+   writer->appendNode(BuildKey::goingToEOP);
+
+   writer->closeNode();
+   writer->closeNode();
 }
 
 void Compiler::Expression :: compileYieldOperation(SyntaxNode node)
@@ -13069,7 +13121,7 @@ ObjectInfo Compiler::Expression::compileExternalOp(SyntaxNode node, ref_t extern
    return { ObjectKind::Extern, retType, 0 };
 }
 
-void Compiler::Expression::compileNestedInitializing(InlineClassScope& classScope, ref_t nestedRef, int& preservedClosure,
+void Compiler::Expression :: compileNestedInitializing(InlineClassScope& classScope, ref_t nestedRef, int& preservedContext,
    ArgumentsInfo* updatedOuterArgs)
 {
    ArgumentsInfo list;
@@ -13105,7 +13157,7 @@ void Compiler::Expression::compileNestedInitializing(InlineClassScope& classScop
 
    // second pass : fill members
    int argIndex = 0;
-   preservedClosure = 0;
+   preservedContext = 0;
    for (auto it = classScope.outers.start(); !it.eof(); ++it) {
       ObjectInfo source = (*it).outerObject;
       ObjectInfo arg = list[argIndex];
@@ -13127,10 +13179,10 @@ void Compiler::Expression::compileNestedInitializing(InlineClassScope& classScop
       }
 
       if (updatedOuterArgs && (*it).updated) {
-         if (!preservedClosure) {
-            updatedOuterArgs->add({ ObjectKind::ClosureInfo });
-            // reserve place for the closure
-            preservedClosure = updatedOuterArgs->count_pos();
+         if (!preservedContext) {
+            updatedOuterArgs->add({ ObjectKind::ContextInfo });
+            // reserve place for the context info
+            preservedContext = updatedOuterArgs->count_pos();
             updatedOuterArgs->add({ });
          }
 
@@ -15126,7 +15178,7 @@ void Compiler::Expression::unboxOuterArgs(ArgumentsInfo* updatedOuterArgs)
       bool dummy = false;
 
       ObjectInfo info = (*updatedOuterArgs)[i];
-      if (info.kind == ObjectKind::ClosureInfo) {
+      if (info.kind == ObjectKind::ContextInfo) {
          closure = (*updatedOuterArgs)[++i];
          closure.kind = ObjectKind::LocalField;
       }

@@ -29,11 +29,8 @@ In development:
   * x86-64 : mta - corex
   * ldoc : system'collections'threadsafe : only proper templates must be shown
   * Task<T>
-  * ldoc : system-threading-.html must not be generated
-  * async statemachine
-  * $await operator
   --------------------------------------  
-  * async method must create an enumerator and call a static method proceed
+  * ldoc : system-threading-.html must not be generated
 
   === Iteration 34 ===
   --------------------------------------

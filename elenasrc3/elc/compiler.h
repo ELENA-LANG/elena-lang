@@ -94,7 +94,7 @@ namespace elena_lang
       StaticConstField,
       ClassStaticConstField,
       Wrapper,
-      ClosureInfo,
+      ContextInfo,
       MemberInfo,
       LocalField,
       ConstGetter,  // key = value constant
@@ -1353,7 +1353,7 @@ namespace elena_lang
 
          ObjectInfo allocateResult(ref_t resultRef);
 
-         void compileNestedInitializing(InlineClassScope& classScope, ref_t nestedRef, int& preservedClosure,
+         void compileNestedInitializing(InlineClassScope& classScope, ref_t nestedRef, int& preservedContext,
             ArgumentsInfo* updatedOuterArgs);
 
          void compileYieldOperation(SyntaxNode node);
@@ -1471,6 +1471,7 @@ namespace elena_lang
       void saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_t reserved, pos_t reservedN);
 
       ref_t resolveYieldType(Scope& scope, SyntaxNode node);
+      ref_t resolveAsyncType(Scope& scope, SyntaxNode node);
 
       pos_t saveMetaInfo(ModuleBase* module, ustr_t value, ustr_t postfix);
 
@@ -1770,7 +1771,7 @@ namespace elena_lang
          SyntaxNode node, bool abstractMode);
       void compileCustomDispatcher(BuildTreeWriter& writer, ClassScope& scope);
       void compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef);      
-      void compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node);
+      void compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node, ref_t parentRef);
 
       void compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
          bool exclusiveMode = false, bool ignoreAutoMultimethod = false);
