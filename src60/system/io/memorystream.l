@@ -183,15 +183,15 @@ namespace io
          _buffer.write(index, length, dump)
       }
     
-      read(byte[] dump, ref int len)
+      int read(byte[] dump, int len)
       {
          int pos := _position.Value;
             
          _buffer.read(pos, len, dump);
     
-         pos := len;
-    
-         _position.append(pos);
+         _position.append(len);
+
+         ^ len
       }
     
       int Index

@@ -68,7 +68,7 @@ namespace io
          _position := _end
       }
 
-      read(byte[] array, ref int actualLength)
+      int read(byte[] array, int actualLength)
       {
          int remaining := _end - _position;
          if (remaining < actualLength) {

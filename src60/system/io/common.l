@@ -35,7 +35,7 @@ namespace io
          self.Index := newIndex
       }
             
-      abstract read(byte[] dump, ref int length);
+      abstract int read(byte[] dump, int length);
         
       abstract write(byte[] dump, int length);
         
