@@ -113,6 +113,9 @@
        <include>threading\templates.l</include>
        <include>threading\template_tests.l</include>
      </module>
+     <module name="io'threading">
+       <include>io\threading\async_common.l</include>
+     </module>
      <module name="dynamic">
        <include>dynamic\reflection.l</include>
        <include>dynamic\interpreters.l</include>

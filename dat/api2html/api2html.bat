@@ -4,6 +4,7 @@
 ..\..\bin\ldoc system'routines'stex
 ..\..\bin\ldoc system'runtime
 ..\..\bin\ldoc system'threading
+..\..\bin\ldoc system'io'threading
 ..\..\bin\ldoc system'dynamic
 ..\..\bin\ldoc system'drawing
 ..\..\bin\ldoc system'winforms
