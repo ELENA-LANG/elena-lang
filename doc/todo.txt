@@ -33,9 +33,11 @@ In development:
   * task sample 2 - https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1?view=net-5.0
   * Task<T>
   * async example
+  * stream async operations with files
   * stream async operations - readAsync / writeAsync
+  * Dictionary : static operations 
   --------------------------------------  
-  * 
+  * File : static operations 
 
   === Iteration 34 ===
   --------------------------------------
