@@ -37,9 +37,8 @@ In development:
   * task sample 2 - https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1?view=net-5.0
   * Task<T>
   * task sample 2
-  * Task : constructor, start method
   --------------------------------------  
-  * it is not possible to declare internal default constructor
+  * Task : constructor, start method
 
   === Iteration 34 ===
   --------------------------------------

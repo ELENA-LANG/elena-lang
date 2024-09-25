@@ -1,17 +1,8 @@
-public sealed class A
-{
-   protected constructor()
-   {
-      console.writeLine("new()");
-   }
-
-   constructor assign()
-   {
-      console.writeLine("assign()");
-   }
-}
+import extensions;
 
 public program()
 {
-   var a := A.assign();
+   var solution := program_arguments.getAtOrDefault(1, "1");
+
+   console.writeLine(solution)
 }

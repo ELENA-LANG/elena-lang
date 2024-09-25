@@ -46,9 +46,9 @@ ustr_t ProjectModel::getPackage()
    return *package;
 }
 
-ustr_t ProjectModel :: getArguments()
+path_t ProjectModel :: getArguments()
 {
-   return nullptr; // !! temporal
+   return *debugArguments;
 }
 
 bool ProjectModel :: getDebugMode()

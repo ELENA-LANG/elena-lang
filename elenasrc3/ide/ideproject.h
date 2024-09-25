@@ -87,7 +87,7 @@ namespace elena_lang
       StringList        profileList;
 
       ustr_t getTarget();
-      ustr_t getArguments();
+      path_t getArguments();
 
       ustr_t getPackage();
 

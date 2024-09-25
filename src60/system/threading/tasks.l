@@ -1,6 +1,6 @@
 import system;
 
-public sealed class Task
+public closed class Task
 {
    bool           _completed;
 
@@ -23,6 +23,13 @@ public sealed class Task
       _action := action;
    }
 
+   get Result()
+   {
+      wait();
+
+      ^ nil;
+   }      
+
    internal Exception Exception
    {  
       get()
@@ -42,7 +49,7 @@ public sealed class Task
       }
    }
 
-   continueWith(Action<Task> action)
+   sealed continueWith(Action<Task> action)
    {
       lock(self) {
          continueWithUnsafe(action);
@@ -65,13 +72,13 @@ public sealed class Task
       }
    }
 
-   setResult()
+   sealed setResult()
       <= complete(nil);
 
-   setException(Exception ex)
+   sealed setException(Exception ex)
       <= complete(ex);
 
-   wait()
+   sealed wait()
    {
       ManualResetEvent mres := nil;
       lock (self)
@@ -90,21 +97,21 @@ public sealed class Task
       }
    }
 
-//   start()
-//   {
-//      ThreadPool.queueAction(
-//      {
-//         try
-//         {
-//            _action();
-//            setResult();
-//         }
-//         catch (Exception e)
-//         {
-//            setException(e);
-//         }
-//      });
-//   }
+   start()
+   {
+      ThreadPool.queueAction(
+      {
+         try
+         {
+            _action();
+            setResult();
+         }
+         catch (Exception e)
+         {
+            setException(e);
+         }
+      });
+   }
 
    static Task whenAllArgs(params Task[] tasks)
    {
@@ -195,4 +202,11 @@ public sealed class Task
 
    static Task sleep(int msecs)
       = run({ Thread.sleep(msecs); });
+}
+
+// --- Task<TResult> ---
+
+public sealed class Task<TResult> : Task
+{
+   TResult _result;
 }
