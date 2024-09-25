@@ -6,7 +6,7 @@ public sealed class StartUpEvents
     
    Func1 OnError : event;
     
-   internal constructor() {}
+   internal constructor new() {}
 
    internal stopping()
    {
@@ -19,7 +19,7 @@ public sealed class StartUpEvents
    }
 }
 
-public static StartUpEvents startUpEvents = new StartUpEvents();
+public static StartUpEvents startUpEvents = StartUpEvents.new();
 
 entry()
 {

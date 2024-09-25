@@ -30,7 +30,7 @@ public sealed class Console
    IConsoleReader reader;
    IConsoleWriter writer;
 
-   internal constructor(IConsoleReader reader, IConsoleWriter writer)
+   internal constructor new(IConsoleReader reader, IConsoleWriter writer)
    {
       this reader := reader;
       this writer := writer;
@@ -82,4 +82,4 @@ public sealed class Console
       = reader.readWideLine();   
 }
 
-public static Console console = new Console(io'stdConsoleReader, io'stdConsoleWriter);
+public static Console console = Console.new(io'stdConsoleReader, io'stdConsoleWriter);

@@ -7,9 +7,20 @@ public sealed class Task
    Exception      _exception;
    Action<Task>   _continuation;
 
-   internal constructor()
+   Func           _action; 
+
+   protected constructor()
    {
       _completed := false;
+   }
+
+   internal constructor newPromise()
+   {      
+   }
+
+   constructor assign(Func action)
+   {
+      _action := action;
    }
 
    internal Exception Exception
@@ -78,6 +89,22 @@ public sealed class Task
          _exception.raise()
       }
    }
+
+//   start()
+//   {
+//      ThreadPool.queueAction(
+//      {
+//         try
+//         {
+//            _action();
+//            setResult();
+//         }
+//         catch (Exception e)
+//         {
+//            setException(e);
+//         }
+//      });
+//   }
 
    static Task whenAllArgs(params Task[] tasks)
    {

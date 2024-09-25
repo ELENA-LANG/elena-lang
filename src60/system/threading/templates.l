@@ -19,7 +19,7 @@ public abstract class AsyncStateEnumerator : Enumerator<Task>
 
    static Task proceed(Enumerator<Task> e)
    {
-      Task t := new Task();
+      Task t := Task.newPromise();
 
       Action<Task> proceeding := (Task tsk)
       {

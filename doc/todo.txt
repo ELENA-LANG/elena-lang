@@ -8,7 +8,6 @@ In development:
   === Iteration 33 (7.10) ===
   --------------------------------------
   dev: 
-      - async programming
       - upndown (connector)
       - #496
       - Func<T,TResult> must have default conversion to Func<T,object>?
@@ -22,6 +21,8 @@ In development:
       - #689
       - unit tests : bt optimization 
       - fix warnings in all libraries    
+      - test binary file operations
+      - test encoders with files  
   port:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
@@ -32,9 +33,13 @@ In development:
   * ldoc : system'collections'threadsafe : only proper templates must be shown
   * stream async operations - readAsync
   * async example2 : https://dotnettutorials.net/lesson/return-a-value-from-a-task-in-csharp/
+  * async programming with Task<T>
   * task sample 2 - https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1?view=net-5.0
-  --------------------------------------  
   * Task<T>
+  * task sample 2
+  * Task : constructor, start method
+  --------------------------------------  
+  * it is not possible to declare internal default constructor
 
   === Iteration 34 ===
   --------------------------------------

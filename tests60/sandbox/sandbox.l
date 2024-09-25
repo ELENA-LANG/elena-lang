@@ -1,5 +1,17 @@
+public sealed class A
+{
+   protected constructor()
+   {
+      console.writeLine("new()");
+   }
+
+   constructor assign()
+   {
+      console.writeLine("assign()");
+   }
+}
 
 public program()
 {
-   console.readChar();
+   var a := A.assign();
 }

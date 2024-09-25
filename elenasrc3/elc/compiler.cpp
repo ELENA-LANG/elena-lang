@@ -3814,6 +3814,10 @@ void Compiler::declareVMTMessage(MethodScope& scope, SyntaxNode node, bool witho
          actionStr.copy(CONSTRUCTOR_MESSAGE);
          unnamedMessage = false;
          flags |= FUNCTION_MESSAGE;
+
+         if (scope.checkHint(MethodHint::Internal))
+            scope.raiseError(errIllegalConstructor, node);
+
       }
       else if (scope.checkHint(MethodHint::Generic) && scope.checkHint(MethodHint::Generic)) {
          if (signatureLen > 0 || !unnamedMessage || scope.checkHint(MethodHint::Function))
