@@ -72,10 +72,10 @@ public closed class Task
       }
    }
 
-   sealed setResult()
+   internal sealed setResult()
       <= complete(nil);
 
-   sealed setException(Exception ex)
+   internal sealed setException(Exception ex)
       <= complete(ex);
 
    sealed wait()
@@ -97,7 +97,7 @@ public closed class Task
       }
    }
 
-   start()
+   sealed start()
    {
       ThreadPool.queueAction(
       {
@@ -216,4 +216,28 @@ public closed class Task
 public sealed class Task<TResult> : Task
 {
    TResult _result;
+
+   constructor assign(Func<TResult> func)
+   {
+      _action := 
+      {
+         TResult retVal := func();
+
+         setResultValue(retVal);
+      };
+   }
+
+   private setResultValue(TResult r)
+   {
+      lock(self) {
+         _result := r
+      }
+   }
+
+   get TResult Result()
+   {
+      wait();
+
+      ^ _result;
+   }
 }

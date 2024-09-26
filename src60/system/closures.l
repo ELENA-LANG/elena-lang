@@ -22,6 +22,11 @@ public interface Func
    }
 }
 
+public interface Func<TResult> : Func
+{
+   abstract TResult function();
+}
+
 // --- Func1 ---
 
 public interface Func1
