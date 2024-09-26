@@ -114,7 +114,7 @@ namespace io
       {
          byte buffer[127];
          int length := 0;
-         var output := emptyString;
+         var output := EmptyString;
             
          bool continue := true;
          while(continue)

@@ -143,7 +143,7 @@ namespace io
     
       string readLine()
       {
-         string line := emptyString;
+         string line := EmptyString;
             
          int len := -1;
          while (len == -1)
@@ -234,7 +234,7 @@ namespace io
       constructor new(Stream stream, Encoder encoder)
       {
          _output := new TextBuilder();
-         _newLineConstant := newLineConstant;                
+         _newLineConstant := NewLineConstant;                
          _newLineLength := _newLineConstant.Length;
             
          _stream := stream;

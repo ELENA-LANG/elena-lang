@@ -67,13 +67,13 @@ class Adapter
 
 public program() 
 {
-    if(program_arguments.Length == 1)
+    if(Program_arguments.Length == 1)
         {  console.printLine("Please provide the path to the file to view"); AbortException.raise() };
 
     var list := new List();
     var adapter := new Adapter();
 
-    File.assign(program_arguments[1]).forEachLine::(line)
+    File.assign(Program_arguments[1]).forEachLine::(line)
     {
         adapter.write(line);
 

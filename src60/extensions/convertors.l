@@ -122,7 +122,7 @@ public singleton intmatrixExConvertor
          l -= 1;
          output.Length := l;
             
-         output.write(newLineConstant)
+         output.write(NewLineConstant)
       };
         
       ^ output.Value
@@ -147,7 +147,7 @@ public singleton intmatrixExConvertor
          l -= 1;
          output.Length := l;
             
-         output.write(newLineConstant)
+         output.write(NewLineConstant)
       };
         
       wide ret := output.Value;

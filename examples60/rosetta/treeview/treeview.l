@@ -19,7 +19,7 @@ class Node
         <= new(value, new Node[](0));
         
     constructor new(Node[] children)
-        <= new(emptyString, children);
+        <= new(EmptyString, children);
         
     get() = theValue;
     

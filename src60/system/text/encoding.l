@@ -64,7 +64,7 @@ namespace text
       string toString(int index, int length, byte[] buffer)
       {
          char tmp[128];
-         string retVal := emptyString;
+         string retVal := EmptyString;
          int i := index;
          int len := length;
          int subLen := 128;

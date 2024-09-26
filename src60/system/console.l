@@ -25,12 +25,12 @@ public interface IConsoleWriter
    abstract refresh();
 }
 
-public sealed class Console
+public sealed class ConsoleHelperImpl
 {
    IConsoleReader reader;
    IConsoleWriter writer;
 
-   internal constructor new(IConsoleReader reader, IConsoleWriter writer)
+   constructor new(IConsoleReader reader, IConsoleWriter writer)
    {
       this reader := reader;
       this writer := writer;
@@ -45,13 +45,13 @@ public sealed class Console
    writeLine(s)
       : info("Writes the specified literal value, followed by the current line terminator, to the standard output stream.")
    {
-      writer.write(s.toPrintable());
-      writer.write(newLineConstant);
+      ConsoleHelper.write(s.toPrintable());
+      ConsoleHelper.write(NewLineConstant);
    }
 
    writeLine()
    {
-      writer.write(newLineConstant);
+      writer.write(NewLineConstant);
    }
 
    char readChar()
@@ -80,6 +80,44 @@ public sealed class Console
    wide readWideLine()
             : info("Reads the next line of characters from the standard input stream.")
       = reader.readWideLine();   
+
 }
 
-public static Console console = Console.new(io'stdConsoleReader, io'stdConsoleWriter);
+static ConsoleHelperImpl ConsoleHelper = ConsoleHelperImpl.new(io'stdConsoleReader, io'stdConsoleWriter);
+
+public singleton Console
+{
+   write(s) 
+            : info("Writes the specified literal value to the standard output stream.")
+      => ConsoleHelper;
+
+   writeLine(s)
+            : info("Writes the specified literal value, followed by the current line terminator, to the standard output stream.")
+      => ConsoleHelper;
+
+   writeLine()
+      => ConsoleHelper;
+
+   char readChar() : info("Reads the next character from the input stream")
+      => ConsoleHelper;
+
+   get bool KeyAvailable()
+      => ConsoleHelper;   
+
+   setCursorPosition(int x, int y)
+      => ConsoleHelper;
+
+   clear()
+      => ConsoleHelper;
+
+   string readLine()
+            : info("Reads the next line of characters from the standard input stream.")
+      => ConsoleHelper;
+
+   wide readWideLine()
+            : info("Reads the next line of characters from the standard input stream.")
+      => ConsoleHelper;
+}
+
+// obsolete
+public ConsoleHelperImpl console = ConsoleHelper;

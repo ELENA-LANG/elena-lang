@@ -122,9 +122,9 @@ public closed class Task
 
       Exception e := nil;
 
-      Action<Task> continuation := (Task t)
+      Action<Task> continuation := (Task completed)
       {
-         e := e ?? t.Exception;
+         e := e ?? completed.Exception;
          lock(t) {
             remaining := remaining - 1;
          };
@@ -176,6 +176,13 @@ public closed class Task
    static waitAll(Task[] tasks)
    {
       auto t := whenAll(tasks);
+
+      t.wait()
+   }
+
+   static waitAllArgs(params Task[] tasks)
+   {
+      auto t := whenAllArgs(params tasks);
 
       t.wait()
    }

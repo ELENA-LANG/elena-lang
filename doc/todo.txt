@@ -23,11 +23,12 @@ In development:
       - fix warnings in all libraries    
       - test binary file operations
       - test encoders with files  
+      - api refactoring : all symbols must start with a capital letter
   port:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
-  * test all examples : console (datetime)
+  * test all examples : console
   * #676
   * x86-64 : mta - corex
   * ldoc : system'collections'threadsafe : only proper templates must be shown
@@ -36,9 +37,8 @@ In development:
   * async programming with Task<T>
   * task sample 2 - https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1?view=net-5.0
   * Task<T>
-  * task sample 2
   --------------------------------------  
-  * Task : constructor, start method
+  * task sample 2
 
   === Iteration 34 ===
   --------------------------------------

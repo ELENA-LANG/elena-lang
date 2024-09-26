@@ -62,7 +62,7 @@ namespace text
     
       writeLine()
       {
-         self.write(newLineConstant)
+         self.write(NewLineConstant)
       }
     
       append(line)
@@ -420,7 +420,7 @@ namespace text
       string Substring(int index, int length)
       {
          if (length == 0)
-            { ^ emptyString };
+            { ^ EmptyString };
                 
          ^ String.copy(index, length, _buffer)
       }

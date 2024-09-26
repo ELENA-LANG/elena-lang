@@ -9,7 +9,7 @@ namespace text
         
       constructor()
       {
-         _value := emptyString;
+         _value := EmptyString;
          _index := 0;
          _start := 0
       }
@@ -125,7 +125,7 @@ namespace text
     
       clear()
       {
-         _value := emptyString;
+         _value := EmptyString;
          _index := 0;
          _start := 0
       }
@@ -163,8 +163,8 @@ namespace text
         
       constructor()
       {
-         _value := emptyString;
-         _newLine := newLineConstant;
+         _value := EmptyString;
+         _newLine := NewLineConstant;
       }
         
       constructor load(string s)
@@ -174,8 +174,8 @@ namespace text
     
       constructor(string s, int count)
       {
-         _value := emptyString;
-         _newLine := newLineConstant;
+         _value := EmptyString;
+         _newLine := NewLineConstant;
             
          for (int i := 0; i < count; i += 1)
          {
@@ -226,7 +226,7 @@ namespace text
         
       clear()
       {
-         _value := emptyString
+         _value := EmptyString
       }
     
       string toPrintable() = _value;

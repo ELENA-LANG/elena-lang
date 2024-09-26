@@ -2,6 +2,7 @@
     <files>
         <module>
             <file>sample1.l</file>
+            <file>sample2.l</file>
             <file>main.l</file>
         </module>
     </files>

@@ -1,2 +1,2 @@
-public const string newLineConstant
+public const string NewLineConstant
     = ""$10;

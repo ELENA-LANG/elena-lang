@@ -11,7 +11,7 @@ public singleton control
    {
       if ("-q" == line)
       {
-         forward program.stop(); ^emptyString
+         forward program.stop(); ^EmptyString
       }
       else
       {

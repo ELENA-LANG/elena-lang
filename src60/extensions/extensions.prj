@@ -51,6 +51,7 @@
      </module>
      <module name="threading">
        <include>threading\threading.l</include>
+       <include>threading\console.l</include>
      </module>
      <module name="runtime">
        <include>runtime\systemmonitor.l</include>
