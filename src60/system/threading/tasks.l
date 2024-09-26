@@ -217,6 +217,10 @@ public sealed class Task<TResult> : Task
 {
    TResult _result;
 
+   internal constructor newPromise()
+   {      
+   }
+
    constructor assign(Func<TResult> func)
    {
       _action := 
@@ -239,5 +243,14 @@ public sealed class Task<TResult> : Task
       wait();
 
       ^ _result;
+   }
+
+   static Task<TResult> run(Func<TResult> action)
+   {
+      auto t := class Task<TResult>.assign(action);
+
+      t.start();
+
+      ^ t;
    }
 }

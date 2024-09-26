@@ -1,8 +1,8 @@
 import extensions;
-import system'threading;
 import system'calendar;
+import system'threading;
 
-public program()
+sample3()
 {
    auto t := class Task<int>.run({
                                // Just loop.

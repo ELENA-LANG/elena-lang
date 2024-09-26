@@ -2975,7 +2975,7 @@ void Compiler::verifyMultimethods(Scope& scope, SyntaxNode node, SyntaxKey metho
    }
 }
 
-void Compiler::generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey, bool closed)
+void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey, bool closed)
 {
    VirtualMethodList implicitMultimethods({});
    bool thirdPassRequired = false;
@@ -3033,6 +3033,10 @@ void Compiler::generateMethodDeclarations(ClassScope& scope, SyntaxNode node, Sy
             if ((current.arg.reference & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE && !SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_YIELDABLE)) {
                mssg_t byRefMethod = withRetOverload ?
                   0 : defineOutRefMethod(scope, current, scope.extensionClassRef != 0);
+
+               // HOTFIX : ignore new byref handler for a closed class
+               if (closed && byRefMethod && !scope.info.methods.exist(byRefMethod))
+                  byRefMethod = 0;
 
                if (byRefMethod) {
                   current.appendChild(SyntaxKey::ByRefRetMethod, byRefMethod);
@@ -7298,7 +7302,7 @@ inline SyntaxNode findObjectNode(SyntaxNode node)
    return {};
 }
 
-ObjectInfo Compiler::compileRetExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, EAttr mode)
+ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, EAttr mode)
 {
    Expression expression(this, codeScope, writer);
 
@@ -7317,6 +7321,9 @@ ObjectInfo Compiler::compileRetExpression(BuildTreeWriter& writer, CodeScope& co
    }
 
    ObjectInfo retVal = expression.compileReturning(node, mode, outputInfo);
+
+   if (autoMode)
+      outputInfo.typeRef = resolveStrongType(codeScope, retVal.typeInfo);
 
    codeScope.withRetStatement = true;
 
@@ -11276,7 +11283,7 @@ ObjectInfo Compiler::Expression::compileRoot(SyntaxNode node, EAttr mode)
    return retVal;
 }
 
-ObjectInfo Compiler::Expression::compileReturning(SyntaxNode node, EAttr mode, TypeInfo outputInfo)
+ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode, TypeInfo outputInfo)
 {
    bool dynamicRequired = EAttrs::testAndExclude(mode, EAttr::DynamicObject);
 
@@ -11295,16 +11302,16 @@ ObjectInfo Compiler::Expression::compileReturning(SyntaxNode node, EAttr mode, T
    ObjectInfo retVal = {};
    SyntaxNode exprNode = node.findChild(SyntaxKey::Expression, SyntaxKey::CodeBlock);
    switch (exprNode.key) {
-   case SyntaxKey::Expression:
-      retVal = compile(node.findChild(SyntaxKey::Expression), outputInfo.typeRef,
-         mode | EAttr::Root | EAttr::RetValExpected, nullptr);
-      break;
-   case SyntaxKey::CodeBlock:
-      retVal = compiler->compileCode(*writer, *codeScope, exprNode, true);
-      break;
-   default:
-      assert(false);
-      break;
+      case SyntaxKey::Expression:
+         retVal = compile(node.findChild(SyntaxKey::Expression), outputInfo.typeRef,
+            mode | EAttr::Root | EAttr::RetValExpected, nullptr);
+         break;
+      case SyntaxKey::CodeBlock:
+         retVal = compiler->compileCode(*writer, *codeScope, exprNode, true);
+         break;
+      default:
+         assert(false);
+         break;
    }
 
    if (codeScope->isByRefHandler()) {
@@ -15600,6 +15607,9 @@ void Compiler::LambdaClosure::compile(SyntaxNode node)
       methodScope.info.multiMethod = multiMethod;
       methodScope.info.outputRef = V_AUTO;
    }
+   // try to resolve the output type for the predefined closure type
+   else if (scope.expectedRef != 0)
+      methodScope.info.outputRef = V_AUTO;
 
    if (lazyExpression) {
       compileExpressionMethod(methodScope, node);
@@ -15746,7 +15756,7 @@ void Compiler::LambdaClosure::compileExpressionMethod(MethodScope& scope, Syntax
    compiler->endMethod(*writer, scope);
 }
 
-void Compiler::LambdaClosure::compileClosureMethod(MethodScope& scope, SyntaxNode node)
+void Compiler::LambdaClosure :: compileClosureMethod(MethodScope& scope, SyntaxNode node)
 {
    ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
 
@@ -15769,7 +15779,7 @@ void Compiler::LambdaClosure::compileClosureMethod(MethodScope& scope, SyntaxNod
    compiler->endMethod(*writer, scope);
 }
 
-ref_t Compiler::LambdaClosure::resolveClosure(mssg_t closureMessage, ref_t outputRef)
+ref_t Compiler::LambdaClosure :: resolveClosure(mssg_t closureMessage, ref_t outputRef)
 {
    ref_t signRef = 0;
    scope.module->resolveAction(getAction(closureMessage), signRef);
@@ -15777,7 +15787,7 @@ ref_t Compiler::LambdaClosure::resolveClosure(mssg_t closureMessage, ref_t outpu
    int paramCount = getArgCount(closureMessage);
 
    IdentifierString closureName(scope.module->resolveReference(scope.moduleScope->buildins.closureTemplateReference));
-   if (signRef == 0) {
+   if (signRef == 0 && (outputRef == 0 || paramCount > 0)) {
       if (paramCount > 0) {
          closureName.appendInt(paramCount);
       }
