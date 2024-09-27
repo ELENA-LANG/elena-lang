@@ -1,5 +1,5 @@
 Package: elena-lang
-Version: 6.3.3
+Version: 6.4.3
 Architecture: ppc64le
 Maintainer: Alex Rakov <arakov@yandex.ru>
 Depends: libc6 (>= 2.1)

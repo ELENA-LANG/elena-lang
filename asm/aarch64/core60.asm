@@ -15,7 +15,7 @@ define VOID           	     2000Dh
 define VOIDPTR               2000Eh
 define CORE_THREAD_TABLE     2000Fh
 
-define ACTION_ORDER              9
+define ACTION_ORDER             10
 define ARG_MASK               01Fh
 define ARG_ACTION_MASK        1DFh
 

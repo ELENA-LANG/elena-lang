@@ -10463,15 +10463,15 @@ void Compiler::generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef,
    if (metaWriter.position() == 0) {
       metaWriter.writeDReference(0, messageRef);
       switch (type) {
-      case MethodHint::Sealed:
-         metaWriter.writeDReference(classRef | mskVMTMethodAddress, messageRef);
-         break;
-      case MethodHint::Virtual:
-         metaWriter.writeDReference(classRef | mskVMTMethodOffset, messageRef);
-         break;
-      default:
-         metaWriter.writeDWord(0);
-         break;
+         case MethodHint::Sealed:
+            metaWriter.writeDReference(classRef | mskVMTMethodAddress, messageRef);
+            break;
+         case MethodHint::Fixed:
+            metaWriter.writeDReference(classRef | mskVMTMethodOffset, messageRef);
+            break;
+         default:
+            metaWriter.writeDWord(0);
+            break;
       }
       metaWriter.writeDWord(0);
    }
@@ -10484,13 +10484,13 @@ void Compiler::generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef,
       metaWriter.insertDWord(0, messageRef);
       metaWriter.Memory()->addReference(0, 0);
       switch (type) {
-      case MethodHint::Sealed:
-         metaWriter.Memory()->addReference(classRef | mskVMTMethodAddress, 4);
-         break;
-      case MethodHint::Virtual:
-         metaWriter.Memory()->addReference(classRef | mskVMTMethodOffset, 4);
-         break;
-      default:
+         case MethodHint::Sealed:
+            metaWriter.Memory()->addReference(classRef | mskVMTMethodAddress, 4);
+            break;
+         case MethodHint::Fixed:
+            metaWriter.Memory()->addReference(classRef | mskVMTMethodOffset, 4);
+            break;
+         default:
          break;
       }
    }
@@ -13543,36 +13543,36 @@ ObjectInfo Compiler::Expression::compileMessageOperation(SyntaxNode node, Object
    if (found) {
       retVal.typeInfo = result.outputInfo;
       switch ((MethodHint)result.kind) {
-      case MethodHint::Sealed:
-         if (result.constRef && compiler->_optMode) {
-            NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+         case MethodHint::Sealed:
+            if (result.constRef && compiler->_optMode) {
+               NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
-            retVal = nsScope->defineObjectInfo(result.constRef, EAttr::None, true);
+               retVal = nsScope->defineObjectInfo(result.constRef, EAttr::None, true);
 
-            operation = BuildKey::None;
-         }
-         else operation = BuildKey::DirectCallOp;
-         // HOTFIX : do not box the variadic argument target for the direct operation
-         if (arguments[0].kind == ObjectKind::VArgParam)
-            result.stackSafe = true;
+               operation = BuildKey::None;
+            }
+            else operation = BuildKey::DirectCallOp;
+            // HOTFIX : do not box the variadic argument target for the direct operation
+            if (arguments[0].kind == ObjectKind::VArgParam)
+               result.stackSafe = true;
 
-         if (checkShortCircle && validateShortCircle(resolution.message, target)) {
-            if (compiler->_verbose) {
-               showContextInfo(resolution.message, targetRef);
+            if (checkShortCircle && validateShortCircle(resolution.message, target)) {
+               if (compiler->_verbose) {
+                  showContextInfo(resolution.message, targetRef);
+               }
+
+               if (target.kind == ObjectKind::ConstructorSelf) {
+                  scope.raiseError(errRedirectToItself, node);
+               }
+               else scope.raiseWarning(WARNING_LEVEL_1, wrnCallingItself, findMessageNode(node));
             }
 
-            if (target.kind == ObjectKind::ConstructorSelf) {
-               scope.raiseError(errRedirectToItself, node);
-            }
-            else scope.raiseWarning(WARNING_LEVEL_1, wrnCallingItself, findMessageNode(node));
-         }
-
-         break;
-      case MethodHint::Virtual:
-         operation = BuildKey::SemiDirectCallOp;
-         break;
-      default:
-         break;
+            break;
+         case MethodHint::Fixed:
+            operation = BuildKey::SemiDirectCallOp;
+            break;
+         default:
+            break;
       }
       if (operation != BuildKey::CallOp) {
          // if the method directly resolved and the target is not required to be dynamic, mark it as stacksafe
@@ -13599,7 +13599,7 @@ ObjectInfo Compiler::Expression::compileMessageOperation(SyntaxNode node, Object
                showContextInfo(resolution.message, targetRef);
             }
 
-            if (test(resolution.message, CONVERSION_MESSAGE)) {
+            if ((resolution.message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE) {
                scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownTypecast, node);
             }
             else if (resolution.message == scope.moduleScope->buildins.refer_message) {

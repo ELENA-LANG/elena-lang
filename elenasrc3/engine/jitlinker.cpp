@@ -241,6 +241,18 @@ void JITLinker::JITLinkerReferenceHelper :: writeSectionReference(MemoryBase* im
       pos_t offset = _owner->resolveVMTMethodOffset(sectionInfo->module, currentRef, message);
       _owner->fixOffset(imageOffset, addressMask, offset, image);
    }
+   else if (currentMask == mskHMTMethodOffset) {
+      _owner->resolve(
+         _owner->_loader->retrieveReferenceInfo(sectionInfo->module, currentRef, mskVMTRef,
+            _owner->_forwardResolver), mskVMTRef, false);
+
+      // message id should be replaced with an appropriate method address
+      mssg_t message = _owner->createMessage(sectionInfo->module,
+         MemoryBase::getDWord(section, sectionOffset), *_references);
+
+      pos_t offset = _owner->resolveHiddenMTMethodOffset(sectionInfo->module, currentRef, message);
+      _owner->fixOffset(imageOffset, addressMask, offset, image);
+   }
    else if (currentMask == mskVMTMethodAddress) {
       _owner->resolve(
          _owner->_loader->retrieveReferenceInfo(sectionInfo->module, currentRef, mskVMTRef,
@@ -591,6 +603,16 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
             info.addressMask = 0; // clear because it is already fixed
             break;
          }
+         case mskHMTMethodOffset:
+         {
+            resolve(_loader->retrieveReferenceInfo(info.module, currentRef, mskVMTRef,
+               _forwardResolver), mskVMTRef, false);
+            pos_t offset = resolveHiddenMTMethodOffset(info.module, currentRef, info.message);
+            fixOffset(it.key(), info.addressMask, offset, image);
+
+            info.addressMask = 0; // clear because it is already fixed
+            break;
+         }
          case mskMssgNameLiteralRef:
          {
             ref_t dummy = 0;
@@ -676,6 +698,17 @@ pos_t JITLinker :: resolveVMTMethodOffset(ModuleBase* module, ref_t reference, m
    void* vmtPtr = getVMTPtr(vmtAddress);
 
    pos_t offset = _compiler->findMethodOffset(vmtPtr, message);
+
+   return offset;
+}
+
+pos_t JITLinker :: resolveHiddenMTMethodOffset(ModuleBase* module, ref_t reference, mssg_t message)
+{
+   addr_t vmtAddress = resolve(_loader->retrieveReferenceInfo(module, reference, mskVMTRef, _forwardResolver), mskVMTRef, false);
+
+   void* vmtPtr = getVMTPtr(vmtAddress);
+
+   pos_t offset = _compiler->findHiddenMethodOffset(vmtPtr, message);
 
    return offset;
 }

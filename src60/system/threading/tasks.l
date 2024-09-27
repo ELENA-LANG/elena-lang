@@ -238,6 +238,9 @@ public sealed class Task<TResult> : Task
       }
    }
 
+   private TResult getResultValue()
+      = _result;
+
    get TResult Result()
    {
       wait();

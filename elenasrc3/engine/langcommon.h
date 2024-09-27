@@ -29,7 +29,7 @@ namespace elena_lang
       None                 = 0x00000000,
       Normal               = 0x00000001,
       Sealed               = 0x00000003,
-      Virtual              = 0x00000005,
+      Fixed                = 0x00000005,
       Dispatcher           = 0x00000007,
 
       Async                = 0x00000010,

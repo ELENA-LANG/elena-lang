@@ -44,3 +44,49 @@ public abstract class AsyncStateEnumerator : Enumerator<Task>
       ^ t;  
    }
 }
+
+public abstract class AsyncStateEnumerator<TResult> : Enumerator<Task<TResult>>
+{
+   private __context;  // context must be the first one
+   private Task __current; 
+
+   get Task Value()
+      = __current;
+
+   reset()
+   {
+      NotSupportedException.raise()
+   }
+
+   Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+
+   enumerable() = self;
+
+   static Task<TResult> proceed(Enumerator<Task> e)
+   {
+      Task<Result> t := Task.newPromise();
+
+      Action<Task> proceeding := (Task tsk)
+      {
+         try
+         {
+             if (e.next()) {
+                (*e).continueWith(this self);
+
+                ^ this self;
+             }
+             else t.setResultValue((*e).getResultValue());
+         }
+         catch (Exception e)
+         {
+            t.setException(e);
+         };
+
+         t.setResult(); 
+      };
+
+      proceeding(t);
+
+      ^ t;  
+   }
+}

@@ -3,20 +3,23 @@ In development:
 ------         
 
 [development]
-  ### EPIC: elena 6.4 ###
+  ### EPIC: elena 6.5 ###
 
   === Iteration 33 (7.10) ===
   --------------------------------------
   dev: 
       - upndown (connector)
       - #496
-      - Func<T,TResult> must have default conversion to Func<T,object>?
       - toArray<T> extension method (parameterized method extensions)
       - retest : #25, #412, #413, #414
+      - #676
       - #622 (http client)
+      - byref must be virtual hidden or private; 
+        remove byref invoker; closed class may have virtual internal methods
   gen:
       - lpad : generate a code based on a record  
   maint:
+      - unit tests : virtual, internal virtual, byref for closed class, virtual internal by closed class
       - #675
       - #689
       - unit tests : bt optimization 
@@ -24,18 +27,25 @@ In development:
       - test binary file operations
       - test encoders with files  
       - api refactoring : all symbols must start with a capital letter
+      - test all examples : console
+      - redesign winforms
   port:
+      - x86-64 : mta - corex
+  tools: 
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
-  * test all examples : console
-  * #676
-  * x86-64 : mta - corex
   * ldoc : system'collections'threadsafe : only proper templates must be shown
   * stream async operations - readAsync
   * async example2 : https://dotnettutorials.net/lesson/return-a-value-from-a-task-in-csharp/
-  --------------------------------------  
   * async programming with Task<T>
+  * async method returning a value
+  * virtual methods (virtual normal, virtual abstract, virtual internal (hidden))
+  * support virtual table
+  * support virtual call ()
+  * generateOverloadList must support virtual method
+  --------------------------------------  
+  * JIT : indexed method generating (fixed order, after the main method table; terminated by 0)
 
   === Iteration 34 ===
   --------------------------------------
@@ -47,7 +57,7 @@ In development:
   --------------------------------------
   --------------------------------------
 
-  ### EPIC: elena 6.5 ###
+  ### EPIC: elena 6.6 ###
 
   === Iteration 35 ===
   --------------------------------------

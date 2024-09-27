@@ -2391,7 +2391,7 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
             result.kind = (ref_t)MethodHint::Sealed; // mark it as sealed - because the class is sealed
          }
          else if (test(info.header.flags, elClosed)) {
-            result.kind = (ref_t)MethodHint::Virtual; // mark it as virtual - because the class is closed
+            result.kind = (ref_t)MethodHint::Fixed; // mark it as fixed - because the class is closed
          }
       }
 
@@ -2560,7 +2560,7 @@ ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeB
          compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Sealed);
       }
       else if (test(flags, elClosed)) {
-         compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Virtual);
+         compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Fixed);
       }
       else compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Normal);
    }

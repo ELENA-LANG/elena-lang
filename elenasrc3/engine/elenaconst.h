@@ -13,24 +13,25 @@ namespace elena_lang
 {
    // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION              6                    // ELENA Engine version
-   #define ENGINE_MINOR_VERSION              4
+   #define ENGINE_MINOR_VERSION              5
 
    constexpr auto LINE_LEN                   = 0x1000;            // the maximal source line length
    constexpr auto IDENTIFIER_LEN             = 0x0300;            // the maximal identifier length
    constexpr auto MESSAGE_LEN                = 0x400;             // the maximal message length
 
   // --- ELENA Standart message constants ---
-   constexpr auto ACTION_ORDER               = 9;
+   constexpr auto ACTION_ORDER               = 10;
 
-   constexpr auto ACTION_MASK                = 0x1C0u;
-   constexpr auto MESSAGE_FLAG_MASK          = 0x1E0u;
+   constexpr auto ACTION_MASK                = 0x3C0u;
+   constexpr auto MESSAGE_FLAG_MASK          = 0x3E0u;
 
+   constexpr auto INDEXED_MESSAGE            = 0x200u;
    constexpr auto STATIC_MESSAGE             = 0x100u;
-   constexpr auto FUNCTION_MESSAGE           = 0x020u;            // indicates it is an invoke message (without target variable in the call stack)
-   constexpr auto CONVERSION_MESSAGE         = 0x040u;
-   constexpr auto VARIADIC_MESSAGE           = 0x080u;
-   constexpr auto PROPERTY_MESSAGE           = 0x0C0u;
-   constexpr auto PREFIX_MESSAGE_MASK        = 0x0C0u;            // HOTFIX : is used to correctly identify VARIADIC_MESSAGE or PROPERTY_MESSAGE
+   constexpr auto FUNCTION_MESSAGE           = 0x020u;        
+   constexpr auto VARIADIC_MESSAGE           = 0x040u;        
+   constexpr auto PROPERTY_MESSAGE           = 0x080u;        
+   constexpr auto CONVERSION_MESSAGE         = 0x0C0u;        
+   constexpr auto PREFIX_MESSAGE_MASK        = 0x0C0u;            // HOTFIX : is used to correctly identify VARIADIC_MESSAGE / PROPERTY_MESSAGE / CONVERSION_MESSAGE
 
    constexpr auto ARG_COUNT                  = 0x01Eu;
    constexpr auto ARG_MASK                   = 0x01Fu;
@@ -38,7 +39,7 @@ namespace elena_lang
    // --- ELENA Module structure constants ---
    constexpr auto ELENA_SIGNITURE            = "ELENA.";          // the stand alone image
    constexpr auto ELENA_VM_SIGNITURE         = "VM.ELENA.";       // the stand alone image
-   constexpr auto MODULE_SIGNATURE           = "ELENA.0604";      // the module version
+   constexpr auto MODULE_SIGNATURE           = "ELENA.0605";      // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE     = "ED.06";
 
   // --- ELENA core module names ---
@@ -331,30 +332,31 @@ namespace elena_lang
    constexpr ref_t mskLiteralRef          = 0x0E000000u;   // reference to constant literal
    constexpr ref_t mskVMTMethodAddress    = 0x0F000000u;
    constexpr ref_t mskVMTMethodOffset     = 0x10000000u;
-   constexpr ref_t mskConstArray          = 0x11000000u;
-   constexpr ref_t mskMessageBodyRef      = 0x12000000u;
-   constexpr ref_t mskMetaSymbolInfoRef   = 0x13000000u;
-   constexpr ref_t mskDeclAttributesRef   = 0x14000000u;
-   constexpr ref_t mskMetaExtensionRef    = 0x15000000u;
-   constexpr ref_t mskStaticRef           = 0x16000000u;
-   constexpr ref_t mskCharacterRef        = 0x17000000u;   // reference to character literal
-   constexpr ref_t mskConstant            = 0x18000000u;
-   constexpr ref_t mskStaticVariable      = 0x19000000u;
-   constexpr ref_t mskNameLiteralRef      = 0x1A000000u;
-   constexpr ref_t mskPathLiteralRef      = 0x1B000000u;
-   constexpr ref_t mskMssgLiteralRef      = 0x1C000000u;
-   constexpr ref_t mskLabelRef            = 0x1D000000u;
-   constexpr ref_t mskWideLiteralRef      = 0x1E000000u;   // reference to wide literal constant
-   constexpr ref_t mskStringMapRef        = 0x1F000000u;
-   constexpr ref_t mskLongLiteralRef      = 0x20000000u;
-   constexpr ref_t mskRealLiteralRef      = 0x21000000u;
-   constexpr ref_t mskExtMssgLiteralRef   = 0x22000000u;
-   constexpr ref_t mskPSTRRef             = 0x23000000u;
-   constexpr ref_t mskAutoSymbolRef       = 0x24000000u;
-   constexpr ref_t mskMssgNameLiteralRef  = 0x25000000u;
-   constexpr ref_t mskPackageRef          = 0x26000000u;
-   constexpr ref_t mskDistrTypeListRef    = 0x27000000u;
-   constexpr ref_t mskTLSVariable         = 0x28000000u;
+   constexpr ref_t mskHMTMethodOffset     = 0x11000000u;
+   constexpr ref_t mskConstArray          = 0x12000000u;
+   constexpr ref_t mskMessageBodyRef      = 0x13000000u;
+   constexpr ref_t mskMetaSymbolInfoRef   = 0x14000000u;
+   constexpr ref_t mskDeclAttributesRef   = 0x15000000u;
+   constexpr ref_t mskMetaExtensionRef    = 0x16000000u;
+   constexpr ref_t mskStaticRef           = 0x17000000u;
+   constexpr ref_t mskCharacterRef        = 0x18000000u;   // reference to character literal
+   constexpr ref_t mskConstant            = 0x19000000u;
+   constexpr ref_t mskStaticVariable      = 0x1A000000u;
+   constexpr ref_t mskNameLiteralRef      = 0x1B000000u;
+   constexpr ref_t mskPathLiteralRef      = 0x1C000000u;
+   constexpr ref_t mskMssgLiteralRef      = 0x1D000000u;
+   constexpr ref_t mskLabelRef            = 0x1E000000u;
+   constexpr ref_t mskWideLiteralRef      = 0x1F000000u;   // reference to wide literal constant
+   constexpr ref_t mskStringMapRef        = 0x20000000u;
+   constexpr ref_t mskLongLiteralRef      = 0x21000000u;
+   constexpr ref_t mskRealLiteralRef      = 0x22000000u;
+   constexpr ref_t mskExtMssgLiteralRef   = 0x23000000u;
+   constexpr ref_t mskPSTRRef             = 0x24000000u;
+   constexpr ref_t mskAutoSymbolRef       = 0x25000000u;
+   constexpr ref_t mskMssgNameLiteralRef  = 0x26000000u;
+   constexpr ref_t mskPackageRef          = 0x27000000u;
+   constexpr ref_t mskDistrTypeListRef    = 0x28000000u;
+   constexpr ref_t mskTLSVariable         = 0x29000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

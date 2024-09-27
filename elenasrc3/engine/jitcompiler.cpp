@@ -3253,6 +3253,24 @@ pos_t JITCompiler32 :: findMethodOffset(void* entries, mssg_t message)
    return offset;
 }
 
+pos_t JITCompiler32 :: findHiddenMethodOffset(void* entries, mssg_t message)
+{
+   VMTHeader32* header = (VMTHeader32*)((uintptr_t)entries - elVMTClassOffset32);
+   pos_t offset = 0;
+   // NOTE : hidden table follows the main method table
+   pos_t i = header->count;
+   while (((VMTEntry32*)entries)[i].message) {
+      if (((VMTEntry32*)entries)[i].message == message) {
+         offset = i * sizeof(VMTEntry32);
+         break;
+      }
+
+      i++;
+   }
+
+   return offset;
+}
+
 pos_t JITCompiler32 :: copyParentVMT(void* parentVMT, void* targetVMT)
 {
    if (parentVMT) {
@@ -3721,6 +3739,24 @@ pos_t JITCompiler64 :: findMethodOffset(void* entries, mssg_t message)
          offset = (pos_t)i * sizeof(VMTEntry64);
          break;
       }
+   }
+
+   return offset;
+}
+
+pos_t JITCompiler64 :: findHiddenMethodOffset(void* entries, mssg_t message)
+{
+   VMTHeader64* header = (VMTHeader64*)((uintptr_t)entries - elVMTClassOffset64);
+   pos_t offset = 0;
+   // NOTE : hidden table follows the main method table
+   pos64_t i = header->count;
+   while (((VMTEntry64*)entries)[i].message) {
+      if (((VMTEntry64*)entries)[i].message == message) {
+         offset = static_cast<pos_t>(i * sizeof(VMTEntry64));
+         break;
+      }
+
+      i++;
    }
 
    return offset;

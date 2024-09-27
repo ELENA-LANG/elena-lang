@@ -758,7 +758,7 @@ int ELENAVMMachine :: loadSignature(mssg_t message, addr_t* output, pos_t maxima
    pos_t argCount = 0;
    decodeMessage(message, actionRef, argCount, flags);
 
-   if (testany(message, FUNCTION_MESSAGE | CONVERSION_MESSAGE)) {
+   if (test(message, FUNCTION_MESSAGE) || ((message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE)) {
       argCount = _min(maximalCount, argCount);
    }
    else argCount = _min(maximalCount, argCount - 1);

@@ -274,6 +274,7 @@ namespace elena_lang
       pos_t getVMTLength(void* targetVMT) override;
       addr_t findMethodAddress(void* entries, mssg_t message) override;
       pos_t findMethodOffset(void* entries, mssg_t message) override;
+      pos_t findHiddenMethodOffset(void* entries, mssg_t message) override;
 
       void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
          pos_t staticLength, bool withOutputList) override;
@@ -352,6 +353,7 @@ namespace elena_lang
       pos_t getVMTLength(void* targetVMT) override;
       addr_t findMethodAddress(void* entries, mssg_t message) override;
       pos_t findMethodOffset(void* entries, mssg_t message) override;
+      pos_t findHiddenMethodOffset(void* entries, mssg_t message) override;
 
       void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
          pos_t staticLength, bool withOutputList) override;

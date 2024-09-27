@@ -564,6 +564,7 @@ namespace elena_lang
       virtual pos_t getVMTLength(void* targetVMT) = 0;
       virtual addr_t findMethodAddress(void* entries, mssg_t message) = 0;
       virtual pos_t findMethodOffset(void* entries, mssg_t message) = 0;
+      virtual pos_t findHiddenMethodOffset(void* entries, mssg_t message) = 0;
 
       virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
          pos_t staticLength, bool withOutputList) = 0;
