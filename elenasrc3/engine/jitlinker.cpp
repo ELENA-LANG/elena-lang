@@ -870,6 +870,56 @@ void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader
    }
 }
 
+void JITLinker :: fillMethodTable(addr_t vaddress, pos_t position, MemoryReader& vmtReader, ClassSectionInfo& sectionInfo,
+   MemoryBase* vmtImage, MemoryBase* codeImage, pos_t& size, pos_t& count,
+   VAddressMap& references, CachedOutputTypeList& outputTypeList, bool withOutputList)
+{
+   JITLinkerReferenceHelper helper(this, sectionInfo.module, &references);
+
+   MemoryWriter   codeWriter(codeImage);
+   MemoryReader   codeReader(sectionInfo.codeSection);
+
+   // fill the public method table
+   addr_t      methodPosition = 0;
+   MethodEntry entry = { };
+
+   size -= sizeof(ClassHeader);
+   while (size > 0) {
+      vmtReader.read((void*)&entry, sizeof(MethodEntry));
+
+      if (entry.codeOffset == INVALID_POS) {
+         methodPosition = 0;
+      }
+      else {
+         codeReader.seek(entry.codeOffset);
+         methodPosition = loadMethod(helper, codeReader, codeWriter);
+      }
+
+      // NOTE : statically linked message is not added to VMT
+      mssg_t message = helper.importMessage(entry.message);
+      if (test(entry.message, STATIC_MESSAGE)) {
+         _staticMethods.add(
+            { vaddress, message }, methodPosition);
+      }
+      else {
+         _compiler->addVMTEntry(message, methodPosition,
+            vmtImage->get(position), count);
+
+         if (withOutputList && entry.outputRef && entry.outputRef != sectionInfo.reference) {
+            // NOTE : the list must contain already resolved message constants, so only type references must be resolved
+            outputTypeList.add({ message, entry.outputRef });
+         }
+      }
+
+      if (_addressMapper && methodPosition)
+         _addressMapper->addMethod(vaddress, message, methodPosition);
+
+      size -= sizeof(MethodEntry);
+   }
+
+   // fill the hidden (index) table
+}
+
 addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionInfo sectionInfo,
    VAddressMap& references)
 {
@@ -883,8 +933,6 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
 
    referenceInfo.module = sectionInfo.module;
    referenceInfo.referenceName = referenceInfo.module->resolveReference(sectionInfo.reference);
-
-   JITLinkerReferenceHelper helper(this, sectionInfo.module, &references);
 
    // VMT just in time compilation
    MemoryReader vmtReader(sectionInfo.vmtSection);
@@ -903,7 +951,7 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
    bool withOutputList = _withOutputList && !test(header.flags, elNestedClass);
 
    // allocate space and make VTM offset
-   _compiler->allocateVMT(vmtWriter, header.flags, header.count, 
+   _compiler->allocateVMT(vmtWriter, header.flags, header.count, header.indexCount,
       header.staticSize, withOutputList);
 
    addr_t vaddress = calculateVAddress(vmtWriter, mskRDataRef);
@@ -922,47 +970,9 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
          debugPosition = createNativeClassDebugInfo(referenceInfo, vaddress);
 
       // read and compile VMT entries
-      MemoryWriter   codeWriter(codeImage);
-      MemoryReader   codeReader(sectionInfo.codeSection);
-
-      addr_t      methodPosition = 0;
-      MethodEntry entry = { };
-
       CachedOutputTypeList outputTypeList({});
-
-      size -= sizeof(ClassHeader);
-      while (size > 0) {
-         vmtReader.read((void*)&entry, sizeof(MethodEntry));
-
-         if (entry.codeOffset == INVALID_POS) {
-            methodPosition = 0;
-         }
-         else {
-            codeReader.seek(entry.codeOffset);
-            methodPosition = loadMethod(helper, codeReader, codeWriter);
-         }
-
-         // NOTE : statically linked message is not added to VMT
-         mssg_t message = helper.importMessage(entry.message);
-         if (test(entry.message, STATIC_MESSAGE)) {
-            _staticMethods.add(
-               { vaddress, message }, methodPosition);
-         }
-         else {
-            _compiler->addVMTEntry(message, methodPosition,
-               vmtImage->get(position), count);
-
-            if (withOutputList && entry.outputRef && entry.outputRef != sectionInfo.reference) {
-               // NOTE : the list must contain already resolved message constants, so only type references must be resolved
-               outputTypeList.add({ message, entry.outputRef });
-            }
-         }
-
-         if (_addressMapper && methodPosition)
-            _addressMapper->addMethod(vaddress, message, methodPosition);
-
-         size -= sizeof(MethodEntry);
-      }
+      fillMethodTable(vaddress, position, vmtReader, sectionInfo, vmtImage, codeImage, size,
+         count, references, outputTypeList, withOutputList);
 
       if (_withDebugInfo)
          endNativeDebugInfo(debugPosition);

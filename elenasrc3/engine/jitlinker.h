@@ -190,6 +190,10 @@ namespace elena_lang
 
       addr_t loadMethod(ReferenceHelperBase& refHelper, MemoryReader& reader, MemoryWriter& writer);
 
+      void fillMethodTable(addr_t vaddress, pos_t position, MemoryReader& vmtReader, ClassSectionInfo& sectionInfo,
+         MemoryBase* vmtImage, MemoryBase* codeImage, pos_t& size, pos_t& count,
+         VAddressMap& references, CachedOutputTypeList& outputTypeList, bool withOutputList);
+
       addr_t createVMTSection(ReferenceInfo referenceInfo, ClassSectionInfo sectionInfo, 
          VAddressMap& references);
 

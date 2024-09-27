@@ -3188,7 +3188,7 @@ void JITCompiler32 :: compileMetaList(ReferenceHelperBase* helper, MemoryReader&
 }
 
 void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength,
-   pos_t staticLength, bool withOutputList)
+   pos_t indexTableLength, pos_t staticLength, bool withOutputList)
 {
    // create VMT static table
    vmtWriter.writeBytes(0, staticLength << 2);
@@ -3202,9 +3202,11 @@ void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vm
 
    pos_t position = vmtWriter.position();
    pos_t vmtSize = 0;
-   if (test(flags, elStandartVMT))
-      // + VMT length
+   if (test(flags, elStandartVMT)) {
+      // VMT length + (IT length + 1)
       vmtSize = vmtLength * sizeof(VMTEntry32);
+      vmtSize += (indexTableLength + 1) * sizeof(VMTEntry32);
+   }
 
    vmtWriter.writeBytes(0, vmtSize);
 
@@ -3672,7 +3674,7 @@ void JITCompiler64 :: compileOutputTypeList(ReferenceHelperBase* helper, MemoryW
 }
 
 void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength,
-   pos_t staticLength, bool withOutputList)
+   pos_t indexTableLength, pos_t staticLength, bool withOutputList)
 {
    // create VMT static table
    vmtWriter.writeBytes(0, staticLength << 3);
@@ -3686,9 +3688,11 @@ void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vm
 
    pos_t position = vmtWriter.position();
    pos_t vmtSize = 0;
-   if (test(flags, elStandartVMT))
-      // + VMT length
+   if (test(flags, elStandartVMT)) {
+      // VMT length + (IT length + 1)
       vmtSize = vmtLength * sizeof(VMTEntry64);
+      vmtSize += (indexTableLength + 1) * sizeof(VMTEntry64);
+   }
 
    vmtWriter.writeBytes(0, vmtSize);
 

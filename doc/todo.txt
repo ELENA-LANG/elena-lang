@@ -44,6 +44,7 @@ In development:
   * support virtual table
   * support virtual call ()
   * generateOverloadList must support virtual method
+  * predefined method cannot be indexed
   --------------------------------------  
   * JIT : indexed method generating (fixed order, after the main method table; terminated by 0)
 

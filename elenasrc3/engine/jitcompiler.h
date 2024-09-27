@@ -277,7 +277,7 @@ namespace elena_lang
       pos_t findHiddenMethodOffset(void* entries, mssg_t message) override;
 
       void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
-         pos_t staticLength, bool withOutputList) override;
+         pos_t indexTableLength, pos_t staticLength, bool withOutputList) override;
       void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) override;
       void updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode) override;
       pos_t copyParentVMT(void* parentVMT, void* targetVMT) override;
@@ -356,7 +356,7 @@ namespace elena_lang
       pos_t findHiddenMethodOffset(void* entries, mssg_t message) override;
 
       void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
-         pos_t staticLength, bool withOutputList) override;
+         pos_t indexTableLength, pos_t staticLength, bool withOutputList) override;
       pos_t copyParentVMT(void* parentVMT, void* targetVMT) override;
       void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) override;
       void updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode) override;

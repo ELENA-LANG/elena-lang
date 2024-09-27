@@ -567,7 +567,7 @@ namespace elena_lang
       virtual pos_t findHiddenMethodOffset(void* entries, mssg_t message) = 0;
 
       virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
-         pos_t staticLength, bool withOutputList) = 0;
+         pos_t indexTableLength, pos_t staticLength, bool withOutputList) = 0;
       virtual void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) = 0;
       virtual void updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode) = 0;
       virtual pos_t copyParentVMT(void* parentVMT, void* targetVMT) = 0;
@@ -1110,6 +1110,7 @@ namespace elena_lang
       pos_t  staticSize;      // static table size
       ref_t  classRef;        // class class reference
       pos_t  count;
+      pos_t  indexCount;
       ref_t  flags;
       ref_t  parentRef;
    };

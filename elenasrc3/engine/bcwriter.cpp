@@ -3777,14 +3777,19 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
    ClassInfo info;
    info.load(&metaReader);
 
-   // reset VMT length
+   // reset VMT & HMT lengths
    info.header.count = 0;
+   info.header.indexCount = 0;
    for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
       auto m_info = *m_it;
 
       //NOTE : ingnore statically linked and predefined methods
       if (!test(m_it.key(), STATIC_MESSAGE) && !test(m_info.hints, (ref_t)MethodHint::Predefined))
          info.header.count++;
+
+      //NOTE : count indexed methods
+      if (test(m_it.key(), INDEXED_MESSAGE))
+         info.header.indexCount++;
    }
 
    vmtWriter.write(&info.header, sizeof(ClassHeader));  // header
