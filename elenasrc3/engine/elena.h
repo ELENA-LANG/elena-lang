@@ -570,7 +570,7 @@ namespace elena_lang
          pos_t indexTableLength, pos_t staticLength, bool withOutputList) = 0;
       virtual void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) = 0;
       virtual void updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode) = 0;
-      virtual pos_t copyParentVMT(void* parentVMT, void* targetVMT) = 0;
+      virtual Pair<pos_t, pos_t> copyParentVMT(void* parentVMT, void* targetVMT, pos_t indexTableOffset) = 0;
 
       virtual void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length,
          bool structMode, bool virtualMode) = 0;

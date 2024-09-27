@@ -3273,8 +3273,10 @@ pos_t JITCompiler32 :: findHiddenMethodOffset(void* entries, mssg_t message)
    return offset;
 }
 
-pos_t JITCompiler32 :: copyParentVMT(void* parentVMT, void* targetVMT)
+Pair<pos_t, pos_t> JITCompiler32 :: copyParentVMT(void* parentVMT, void* targetVMT, pos_t indexTableOffset)
 {
+   Pair<pos_t, pos_t> counters = {};
+
    if (parentVMT) {
       // get the parent vmt size
       VMTHeader32* header = (VMTHeader32*)((uintptr_t)parentVMT - elVMTClassOffset32);
@@ -3287,9 +3289,23 @@ pos_t JITCompiler32 :: copyParentVMT(void* parentVMT, void* targetVMT)
          ((VMTEntry32*)targetVMT)[i] = parentEntries[i];
       }
 
-      return header->count;
+      VMTEntry32* dstVMT = (VMTEntry32*)targetVMT;
+
+      auto r = parentEntries[header->count];
+      auto r2 = dstVMT[indexTableOffset];
+
+      // copy parent Index Table
+      pos_t indexCount = 0;
+      while (((VMTEntry32*)targetVMT)[header->count + indexCount].message) {
+         ((VMTEntry32*)targetVMT)[indexTableOffset + indexCount] = parentEntries[header->count + indexCount];
+
+         indexCount++;
+      }
+
+      counters.value1 =header->count;
+      counters.value2 = indexCount;
    }
-   else return 0;
+   return counters;
 }
 
 void JITCompiler32 :: allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length,
@@ -3766,8 +3782,10 @@ pos_t JITCompiler64 :: findHiddenMethodOffset(void* entries, mssg_t message)
    return offset;
 }
 
-pos_t JITCompiler64 :: copyParentVMT(void* parentVMT, void* targetVMT)
+Pair<pos_t, pos_t> JITCompiler64 :: copyParentVMT(void* parentVMT, void* targetVMT, pos_t indexTableOffset)
 {
+   Pair<pos_t, pos_t> counters = {};
+
    if (parentVMT) {
       // get the parent vmt size
       VMTHeader64* header = (VMTHeader64*)((uintptr_t)parentVMT - elVMTClassOffset64);
@@ -3780,9 +3798,18 @@ pos_t JITCompiler64 :: copyParentVMT(void* parentVMT, void* targetVMT)
          ((VMTEntry64*)targetVMT)[i] = parentEntries[i];
       }
 
-      return (pos_t)header->count;
+      // copy parent Index Table
+      pos_t indexCount = 0;
+      while (((VMTEntry64*)targetVMT)[header->count + indexCount].message) {
+         ((VMTEntry64*)targetVMT)[indexTableOffset + indexCount] = parentEntries[header->count + indexCount];
+
+         indexCount++;
+      }
+
+      counters.value1 = static_cast<pos_t>(header->count);
+      counters.value2 = indexCount;
    }
-   else return 0;
+   return counters;
 }
 
 void JITCompiler64 :: addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount)

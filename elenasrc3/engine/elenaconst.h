@@ -20,12 +20,11 @@ namespace elena_lang
    constexpr auto MESSAGE_LEN                = 0x400;             // the maximal message length
 
   // --- ELENA Standart message constants ---
-   constexpr auto ACTION_ORDER               = 10;
+   constexpr auto ACTION_ORDER               = 9;
 
-   constexpr auto ACTION_MASK                = 0x3C0u;
-   constexpr auto MESSAGE_FLAG_MASK          = 0x3E0u;
+   constexpr auto ACTION_MASK                = 0x1C0u;
+   constexpr auto MESSAGE_FLAG_MASK          = 0x1E0u;
 
-   constexpr auto INDEXED_MESSAGE            = 0x200u;
    constexpr auto STATIC_MESSAGE             = 0x100u;
    constexpr auto FUNCTION_MESSAGE           = 0x020u;        
    constexpr auto VARIADIC_MESSAGE           = 0x040u;        

@@ -280,7 +280,7 @@ namespace elena_lang
          pos_t indexTableLength, pos_t staticLength, bool withOutputList) override;
       void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) override;
       void updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode) override;
-      pos_t copyParentVMT(void* parentVMT, void* targetVMT) override;
+      Pair<pos_t, pos_t> copyParentVMT(void* parentVMT, void* targetVMT, pos_t indexTableOffset) override;
 
       void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
          bool structMode, bool virtualMode) override;
@@ -357,7 +357,7 @@ namespace elena_lang
 
       void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
          pos_t indexTableLength, pos_t staticLength, bool withOutputList) override;
-      pos_t copyParentVMT(void* parentVMT, void* targetVMT) override;
+      Pair<pos_t, pos_t> copyParentVMT(void* parentVMT, void* targetVMT, pos_t indexTableOffset) override;
       void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) override;
       void updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode) override;
 

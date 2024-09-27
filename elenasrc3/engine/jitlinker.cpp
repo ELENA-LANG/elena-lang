@@ -871,7 +871,7 @@ void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader
 }
 
 void JITLinker :: fillMethodTable(addr_t vaddress, pos_t position, MemoryReader& vmtReader, ClassSectionInfo& sectionInfo,
-   MemoryBase* vmtImage, MemoryBase* codeImage, pos_t& size, pos_t& count,
+   MemoryBase* vmtImage, MemoryBase* codeImage, pos_t& size, pos_t& count, pos_t& indexCount,
    VAddressMap& references, CachedOutputTypeList& outputTypeList, bool withOutputList)
 {
    JITLinkerReferenceHelper helper(this, sectionInfo.module, &references);
@@ -963,7 +963,9 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
 
       // load the parent class
       addr_t parentAddress = getVMTAddress(sectionInfo.module, header.parentRef, references);
-      pos_t count = _compiler->copyParentVMT(getVMTPtr(parentAddress), vmtImage->get(position));
+      auto counters = _compiler->copyParentVMT(getVMTPtr(parentAddress), vmtImage->get(position), header.count);
+      pos_t count = counters.value1;
+      pos_t indexCount = counters.value2;
 
       pos_t debugPosition = INVALID_POS;
       if (_withDebugInfo)
@@ -972,12 +974,12 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
       // read and compile VMT entries
       CachedOutputTypeList outputTypeList({});
       fillMethodTable(vaddress, position, vmtReader, sectionInfo, vmtImage, codeImage, size,
-         count, references, outputTypeList, withOutputList);
+         count, indexCount, references, outputTypeList, withOutputList);
 
       if (_withDebugInfo)
          endNativeDebugInfo(debugPosition);
 
-      if (count != header.count)
+      if (count != header.count || header.indexCount != indexCount)
          throw InternalError(errCorruptedVMT);
 
       // load the class class

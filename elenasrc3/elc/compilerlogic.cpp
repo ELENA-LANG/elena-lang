@@ -2370,13 +2370,13 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
 
       result.message = message;
       result.outputInfo = { methodInfo.outputRef };
-      if (test(methodInfo.hints, (ref_t)MethodHint::Private)) {
+      if (MethodInfo::checkVisibility(methodInfo, MethodHint::Private)) {
          result.visibility = Visibility::Private;
       }
-      else if (test(methodInfo.hints, (ref_t)MethodHint::Protected)) {
+      else if (MethodInfo::checkVisibility(methodInfo, MethodHint::Protected)) {
          result.visibility = Visibility::Protected;
       }
-      else if (test(methodInfo.hints, (ref_t)MethodHint::Internal)) {
+      else if (MethodInfo::checkVisibility(methodInfo, MethodHint::Internal)) {
          result.visibility = Visibility::Internal;
       }
       else result.visibility = Visibility::Public;

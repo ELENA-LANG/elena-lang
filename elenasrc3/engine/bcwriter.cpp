@@ -3787,9 +3787,9 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
       if (!test(m_it.key(), STATIC_MESSAGE) && !test(m_info.hints, (ref_t)MethodHint::Predefined))
          info.header.count++;
 
-      //NOTE : count indexed methods
-      if (test(m_it.key(), INDEXED_MESSAGE))
-         info.header.indexCount++;
+      ////NOTE : count indexed methods
+      //if (test(m_it.key(), INDEXED_MESSAGE))
+      //   info.header.indexCount++;
    }
 
    vmtWriter.write(&info.header, sizeof(ClassHeader));  // header

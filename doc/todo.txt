@@ -40,11 +40,12 @@ In development:
   * async example2 : https://dotnettutorials.net/lesson/return-a-value-from-a-task-in-csharp/
   * async programming with Task<T>
   * async method returning a value
-  * virtual methods (virtual normal, virtual abstract, virtual internal (hidden))
-  * support virtual table
-  * support virtual call ()
-  * generateOverloadList must support virtual method
   * predefined method cannot be indexed
+  * check that for the indexed method - correct overload method is generated
+  * generateOverloadList must support virtual method
+  * indexed methods (indexed normal, indexed abstract, indexed internal (hidden))
+  * support indexed table
+  * support indexed call ()
   --------------------------------------  
   * JIT : indexed method generating (fixed order, after the main method table; terminated by 0)
 
