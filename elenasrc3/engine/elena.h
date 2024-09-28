@@ -533,6 +533,7 @@ namespace elena_lang
          addr_t outputListAddress;
          ref_t  flags;
          pos_t  count;
+         pos_t  indexCount;
       };
 
       virtual void prepare(
@@ -569,6 +570,8 @@ namespace elena_lang
       virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
          pos_t indexTableLength, pos_t staticLength, bool withOutputList) = 0;
       virtual void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) = 0;
+      virtual void addIndexEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t indexOffset, pos_t& indexCount) = 0;
+
       virtual void updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode) = 0;
       virtual Pair<pos_t, pos_t> copyParentVMT(void* parentVMT, void* targetVMT, pos_t indexTableOffset) = 0;
 

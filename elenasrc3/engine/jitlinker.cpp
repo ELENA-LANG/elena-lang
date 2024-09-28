@@ -918,6 +918,20 @@ void JITLinker :: fillMethodTable(addr_t vaddress, pos_t position, MemoryReader&
    }
 
    // fill the hidden (index) table
+   mssg_t indexMessage = vmtReader.getDWord();
+   while (indexMessage) {
+      // add a new index
+      indexMessage = helper.importMessage(indexMessage);
+
+      if (test(indexMessage, STATIC_MESSAGE)) {
+         _compiler->addIndexEntry(indexMessage, _staticMethods.get({ vaddress, indexMessage }), vmtImage->get(position), count, indexCount);
+      }
+      else {
+         _compiler->addIndexEntry(indexMessage, INVALID_ADDR, vmtImage->get(position), count, indexCount);
+      }
+
+      indexMessage = vmtReader.getDWord();
+   }
 }
 
 addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionInfo sectionInfo,
@@ -995,7 +1009,7 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
          resolveOutputTypeList(referenceInfo, outputTypeList) : 0;
 
       // update VMT
-      JITCompilerBase::VMTFixInfo fixInfo = { parentAddress, classClassAddress, outputListAddress, header.flags, header.count };
+      JITCompilerBase::VMTFixInfo fixInfo = { parentAddress, classClassAddress, outputListAddress, header.flags, header.count, header.indexCount };
       _compiler->updateVMTHeader(vmtWriter, fixInfo, staticValues, _virtualMode);
    }
 

@@ -94,6 +94,11 @@ namespace elena_lang
       {
       }
 
+      static bool checkHint(MethodInfo& info, MethodHint hint)
+      {
+         return test(info.hints, (ref_t)hint);
+      }
+
       static bool checkVisibility(MethodInfo& info, MethodHint hint)
       {
          return (info.hints & (ref_t)MethodHint::VisibilityMask) == (ref_t)hint;

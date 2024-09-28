@@ -3349,6 +3349,43 @@ void JITCompiler32 :: addVMTEntry(mssg_t message, addr_t codeAddress, void* targ
    entries[index].address = (pos_t)codeAddress;
 }
 
+inline addr_t findEntryAddress(VMTEntry32* entries, mssg_t message, pos_t counter)
+{
+   for (pos_t i = 0; i < counter; i++) {
+      if (entries[i].message == message)
+         return entries[i].address;
+   }
+
+   assert(false);
+   return INVALID_ADDR;
+}
+
+void JITCompiler32 :: addIndexEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t indexOffset, pos_t& indexCount)
+{
+   VMTEntry32* entries = (VMTEntry32*)targetVMT;
+
+   pos_t index = indexOffset;
+   while (entries[index].message) {
+      if (entries[index].message == message) {
+         if (codeAddress == INVALID_ADDR) {
+            entries[index].address = findEntryAddress(entries, message, indexCount);
+         }
+         else entries[index].address = codeAddress;
+
+         return;
+      }
+
+      index++;
+   }
+
+   if (codeAddress == INVALID_ADDR) {
+      entries[index].address = findEntryAddress(entries, message, indexCount);
+   }
+   else entries[index].address = codeAddress;
+
+   indexCount++;
+}
+
 void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, 
    FieldAddressMap& staticValues, bool virtualMode)
 {
@@ -3382,6 +3419,14 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
 
       pos_t entryPosition = position;
       for (pos_t i = 0; i < fixInfo.count; i++) {
+         if (MemoryBase::getDWord(image, entryPosition + 4))
+            image->addReference(mskCodeRef32, entryPosition + 4);
+
+         entryPosition += 8;
+      }
+
+      // fix index table
+      for (pos_t i = 0; i < fixInfo.indexCount; i++) {
          if (MemoryBase::getDWord(image, entryPosition + 4))
             image->addReference(mskCodeRef32, entryPosition + 4);
 
@@ -3834,6 +3879,43 @@ void JITCompiler64 :: addVMTEntry(mssg_t message, addr_t codeAddress, void* targ
    entries[index].address = codeAddress;
 }
 
+inline addr_t findEntryAddress(VMTEntry64* entries, mssg_t message, pos_t counter)
+{
+   for (pos_t i = 0; i < counter; i++) {
+      if (entries[i].message == message)
+         return (addr_t)entries[i].address;
+   }
+
+   assert(false);
+   return INVALID_ADDR;
+}
+
+void JITCompiler64 :: addIndexEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t indexOffset, pos_t& indexCount)
+{
+   VMTEntry64* entries = (VMTEntry64*)targetVMT;
+
+   pos_t index = indexOffset;
+   while (entries[index].message) {
+      if (entries[index].message == message) {
+         if (codeAddress == INVALID_ADDR) {
+            entries[index].address = findEntryAddress(entries, message, indexCount);
+         }
+         else entries[index].address = codeAddress;
+
+         return;
+      }
+
+      index++;
+   }
+
+   if (codeAddress == INVALID_ADDR) {
+      entries[index].address = findEntryAddress(entries, message, indexCount);
+   }
+   else entries[index].address = codeAddress;
+
+   indexCount++;
+}
+
 void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode)
 {
    pos_t position = vmtWriter.position();
@@ -3863,6 +3945,14 @@ void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
       pos_t entryPosition = position;
       for (pos_t i = 0; i < fixInfo.count; i++) {
          if (MemoryBase::getQWord(image, entryPosition + 8))
+            image->addReference(mskCodeRef64, entryPosition + 8);
+
+         entryPosition += 16;
+      }
+
+      // fix index table
+      for (pos_t i = 0; i < fixInfo.indexCount; i++) {
+         if (MemoryBase::getDWord(image, entryPosition + 8))
             image->addReference(mskCodeRef64, entryPosition + 8);
 
          entryPosition += 16;

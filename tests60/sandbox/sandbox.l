@@ -20,9 +20,21 @@ import extensions;
 //   Console.printLine("Finished ", t.Result, " iterations.");
 //}
 
+A
+{
+   /*indexed*/ testMe()
+   {
+      Console.writeLine("Fired");
+   }
+}
+
 public program()
 {
-   "abc"[-1];
+   A a := new A();
+   a.testMe();
+
+   var o := a;
+   o.testMe();
 
 //    Assert.ifFailed({ "abc"[-1] });
 //    Assert.ifFailed({ "abc"[4] });

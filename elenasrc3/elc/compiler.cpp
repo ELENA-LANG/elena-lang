@@ -5272,12 +5272,12 @@ void Compiler::validateType(Scope& scope, ref_t typeRef, SyntaxNode node, bool i
 {
    if (!typeRef) {
       switch (node.key) {
-      case SyntaxKey::string:
-         scope.raiseError(errInvalidSyntax, node);
-         break;
-      default:
-         scope.raiseError(errUnknownClass, node);
-         break;
+         case SyntaxKey::string:
+            scope.raiseError(errInvalidSyntax, node);
+            break;
+         default:
+            scope.raiseError(errUnknownClass, node);
+            break;
       }
    }
 
