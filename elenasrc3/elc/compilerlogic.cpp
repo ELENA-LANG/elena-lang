@@ -1001,6 +1001,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_ASYNC:
          hint = (ref_t)MethodHint::Async;
          return true;
+      case V_INDEXED_ATTR:
+         hint = (ref_t)MethodHint::Indexed;
+         return true;
       default:
          return false;
    }
@@ -2389,6 +2392,9 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
          // check if the normal method can be called directly / semi-directly
          if (test(info.header.flags, elSealed)) {
             result.kind = (ref_t)MethodHint::Sealed; // mark it as sealed - because the class is sealed
+         }
+         else if (MethodInfo::checkHint(methodInfo, MethodHint::Indexed)) {
+            result.kind = (ref_t)MethodHint::ByIndex;
          }
          else if (test(info.header.flags, elClosed)) {
             result.kind = (ref_t)MethodHint::Fixed; // mark it as fixed - because the class is closed

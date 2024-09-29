@@ -20,39 +20,26 @@ import extensions;
 //   Console.printLine("Finished ", t.Result, " iterations.");
 //}
 
-A
+namespace IndexedTest
 {
-   /*indexed*/ testMe()
+   A
    {
-      Console.writeLine("Fired");
+      indexed foo()
+         = "from A";
    }
+   
+   B : A
+   {
+      indexed foo()
+         = "from B";   
+   }   
 }
 
 public program()
 {
-   A a := new A();
-   a.testMe();
+   IndexedTest'A a := new IndexedTest'A();
+   Assert.ifEqual(a.foo(), "from A");
 
    var o := a;
-   o.testMe();
-
-//    Assert.ifFailed({ "abc"[-1] });
-//    Assert.ifFailed({ "abc"[4] });
-//    console.write(".");
-//
-//    string s := "abc";
-//
-//    Assert.ifTrue(s == "abc");
-//    console.write(".");
-//    string s2 := "de";
-//    var s3 := s + s2;
-//
-//    Assert.ifTrue(s3 == "abcde");
-//    console.write(".");
-//
-//    Assert.ifTrue("s1" < "s2");
-//    Assert.ifTrue("s2" < "s2");
-//    Assert.ifFalse("s2" < "s1");
-//
-//    console.write(".");
+   Assert.ifEqual(o.foo(), "from A");
 }

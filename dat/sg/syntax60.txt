@@ -330,7 +330,7 @@ ROOT_EXPRESSION ::=
 		| T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
 		| eps ^OBJECT
 	}
-	| { reference | global } ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?	
+	| { reference | global } { O_R | eps ^OBJECT }
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L_F
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
 	| "&" SINGLE_EXPRESSION ^CLOSURE_OPERATION L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
@@ -988,6 +988,17 @@ L3_SINGLE_EXPRESSION ::=
 			}
 			| ")" "{" ^ PARAMETER BLOCK ^CLOSURE ^EXPRESSION
 	};
+
+O_R ::=
+	identifier ^OBJECT { ASSIGN ASSIGN_R }? 
+	| BRACKET ^OBJECT FUNCTION_R L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
+	| L3_OOP L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
+	| L4_OOP L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
+	| L5_OOP L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
+	| L6_OOP L7_OP* L8_OP? L9_OP?
+	| L7_OOP L7_OP* L8_OP? L9_OP?
+	| L8_OOP
+	| L9_OOP;
 
 RI_F ::= 
 	DOT ^MESSAGE_OPERATION MESSAGE { L3_F | eps ^PROPERTY_OPERATION }

@@ -53,6 +53,15 @@ namespace elena_lang
       bool                 withDebugInfo;
       ref_t                frameOffset;
       ref_t                stackOffset;
+      bool                 altMode;
+
+      bool getAltMode()
+      {
+         bool oriValue = altMode;
+         altMode = false;
+
+         return oriValue;
+      }
 
       unsigned char code() const
       {
@@ -145,6 +154,7 @@ namespace elena_lang
       friend void compileAlloc(JITCompilerScope* scope);
       friend void compileFree(JITCompilerScope* scope);
       friend void compileBreakpoint(JITCompilerScope* scope);
+      friend void compileAltMode(JITCompilerScope* scope);
       friend void compileClose(JITCompilerScope* scope);
       friend void compileOpen(JITCompilerScope* scope);
       friend void compileExtOpen(JITCompilerScope* scope);
@@ -459,6 +469,7 @@ namespace elena_lang
    void compileExtOpen(JITCompilerScope* scope);
    void compileXOpen(JITCompilerScope* scope);
    void compileBreakpoint(JITCompilerScope* scope);
+   void compileAltMode(JITCompilerScope* scope);
    void compileJump(JITCompilerScope* scope);
    void compileJeq(JITCompilerScope* scope);
    void compileJne(JITCompilerScope* scope);

@@ -31,6 +31,7 @@ namespace elena_lang
       Sealed               = 0x00000003,
       Fixed                = 0x00000005,
       Dispatcher           = 0x00000007,
+      ByIndex              = 0x00000008,
 
       Async                = 0x00000010,
       Interpolator         = 0x00000020,
@@ -445,8 +446,11 @@ namespace elena_lang
    constexpr auto V_CATEGORY_MAX          = 0x0000F000u;
 
    /// modificator
-   constexpr auto V_IGNOREDUPLICATE       = 0x80006001u;
-   constexpr auto V_SCRIPTSELFMODE        = 0x80006002u;
+   constexpr auto V_IGNOREDUPLICATE       = 0x80007001u;
+   constexpr auto V_SCRIPTSELFMODE        = 0x80007002u;
+
+   /// indexed
+   constexpr auto V_INDEXED_ATTR          = 0x80006001u;
 
    /// accessors:
    constexpr auto V_GETACCESSOR           = 0x80005001u;

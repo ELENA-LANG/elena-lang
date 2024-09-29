@@ -44,10 +44,9 @@ In development:
   * check that for the indexed method - correct overload method is generated
   * generateOverloadList must support virtual method
   * indexed methods (indexed normal, indexed abstract, indexed internal (hidden))
-  * support indexed table
-  * support indexed call ()
+  * functional test : by index call
   --------------------------------------  
-  * JIT : indexed method generating (fixed order, after the main method table; terminated by 0)
+  * support indexed call
 
   === Iteration 34 ===
   --------------------------------------

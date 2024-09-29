@@ -165,10 +165,10 @@ ELENA byte codes (or ecodes)
    jump vt:i                - jump to acc::VMT[i] method;
                               acc contains the result
 
-   vcall mssg:m, r          - calls via table the method resolved by JIT by r and m
+   vcall mssg:m, r          - calls via table (or index table in alt mode) the method resolved by JIT by r and m
                               acc contains the result 
  
-   vjump mssg:m, r          - jumps via table the method resolved by JIT by r and m
+   vjump mssg:m, r          - jumps via table (or index table in alt mode) the method resolved by JIT by r and m
                               acc contains the result 
 
    xcall                    - calls the procedure in acc;
@@ -506,6 +506,8 @@ ELENA byte codes (or ecodes)
 
  Misc operations:
  ---------------- 
+   altmode                  - turn on alt mode; after the affected operation, it is reset
+
    freelock                 - free acc
 
    label dp:i, r            - assign a specified address / label to dp[i]

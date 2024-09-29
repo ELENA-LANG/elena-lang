@@ -179,6 +179,7 @@ void semiDirectCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
 
    bool variadicOp = (node.arg.reference & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
+   bool indexTableMode = node.existChild(BuildKey::IndexTableMode);
 
    pos_t argCount = getArgCount(node.arg.reference);
    if (!variadicOp && (int)argCount < tapeScope.scope->minimalArgList) {
@@ -188,6 +189,11 @@ void semiDirectCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    }
 
    tape.write(ByteCode::MovM, node.arg.reference);
+
+   // if it is an indexed call
+   if (indexTableMode)
+      tape.write(ByteCode::AltMode);
+
    tape.write(ByteCode::VCallMR, node.arg.reference, targetRef | mskVMTRef);
 }
 

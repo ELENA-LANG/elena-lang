@@ -27,7 +27,7 @@ CodeGenerator _codeGenerators[256] =
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
-   loadOp, loadNop, loadNop, loadNop, loadOp, loadNop, loadNop, loadNop,
+   loadOp, compileAltMode, loadNop, loadNop, loadOp, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -2103,6 +2103,8 @@ void elena_lang::loadVMTROp(JITCompilerScope* scope)
    // simply copy correspondent inline code
    writer->write(code, length);
 
+   int argMask = scope->getAltMode() ? mskHMTMethodOffset : mskVMTMethodOffset;
+
    // resolve section references
    pos_t count = *(pos_t*)((char*)code + length);
    RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
@@ -2111,15 +2113,15 @@ void elena_lang::loadVMTROp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodOffset,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32);
             break;
          case ARG12_1:
-            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodOffset,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32Lo12);
             break;
          case ARG16_1:
-            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodOffset,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32Lo);
             break;
          default:
@@ -2690,6 +2692,11 @@ void elena_lang::compileBreakpoint(JITCompilerScope* scope)
       scope->helper->addBreakpoint(*scope->codeWriter);
 }
 
+void elena_lang::compileAltMode(JITCompilerScope* scope)
+{
+   scope->altMode = true;
+}
+
 void elena_lang::compileJump(JITCompilerScope* scope)
 {
    pos_t label = scope->tapeReader->position() + scope->command.arg1;
@@ -2889,6 +2896,7 @@ JITCompilerScope :: JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* c
    this->frameOffset = 0;
    this->withDebugInfo = compiler->isWithDebugInfo();
    this->inlineMode = false;
+   this->altMode = false;
 }
 
 // --- JITCompiler ---
@@ -3378,8 +3386,9 @@ void JITCompiler32 :: addIndexEntry(mssg_t message, addr_t codeAddress, void* ta
       index++;
    }
 
+   entries[index].message = message;
    if (codeAddress == INVALID_ADDR) {
-      entries[index].address = findEntryAddress(entries, message, indexCount);
+      entries[index].address = findEntryAddress(entries, message, indexOffset);
    }
    else entries[index].address = codeAddress;
 

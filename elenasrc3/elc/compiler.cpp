@@ -13489,6 +13489,7 @@ ObjectInfo Compiler::Expression::compileMessageOperation(SyntaxNode node, Object
    bool argUnboxingRequired = vargCastingRequired || EAttrs::testAndExclude(mode.attrs, EAttr::WithVariadicArg);
    bool checkShortCircle = EAttrs::testAndExclude(mode.attrs, EAttr::CheckShortCircle);
    bool allowPrivateCall = EAttrs::testAndExclude(mode.attrs, EAttr::AllowPrivateCall);
+   bool indexedCallMode = false;
 
    ObjectInfo retVal(ObjectKind::Object);
 
@@ -13517,26 +13518,26 @@ ObjectInfo Compiler::Expression::compileMessageOperation(SyntaxNode node, Object
       ? compiler->_logic->resolveCallType(*scope.moduleScope, targetRef, resolution.message, result) : false;
    if (found) {
       switch (result.visibility) {
-      case Visibility::Private:
-         if (allowPrivateCall || isSelfCall(target) || isClassClassOperation(scope, target)) {
-            resolution.message = result.message;
-         }
-         else found = false;
-         break;
-      case Visibility::Protected:
-         if (isSelfCall(target) || target.kind == ObjectKind::SuperLocal) {
-            resolution.message = result.message;
-         }
-         else found = false;
-         break;
-      case Visibility::Internal:
-         if (scope.moduleScope->isInternalOp(targetRef)) {
-            resolution.message = result.message;
-         }
-         else found = false;
-         break;
-      default:
-         break;
+         case Visibility::Private:
+            if (allowPrivateCall || isSelfCall(target) || isClassClassOperation(scope, target)) {
+               resolution.message = result.message;
+            }
+            else found = false;
+            break;
+         case Visibility::Protected:
+            if (isSelfCall(target) || target.kind == ObjectKind::SuperLocal) {
+               resolution.message = result.message;
+            }
+            else found = false;
+            break;
+         case Visibility::Internal:
+            if (scope.moduleScope->isInternalOp(targetRef)) {
+               resolution.message = result.message;
+            }
+            else found = false;
+            break;
+         default:
+            break;
       }
    }
 
@@ -13570,6 +13571,10 @@ ObjectInfo Compiler::Expression::compileMessageOperation(SyntaxNode node, Object
             break;
          case MethodHint::Fixed:
             operation = BuildKey::SemiDirectCallOp;
+            break;
+         case MethodHint::ByIndex:
+            operation = BuildKey::SemiDirectCallOp;
+            indexedCallMode = true;
             break;
          default:
             break;
@@ -13654,6 +13659,8 @@ ObjectInfo Compiler::Expression::compileMessageOperation(SyntaxNode node, Object
 
       if (targetRef)
          writer->appendNode(BuildKey::Type, targetRef);
+      if (indexedCallMode)
+         writer->appendNode(BuildKey::IndexTableMode);
 
       writer->closeNode();
 
