@@ -2795,18 +2795,19 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
    MemoryWriter* writer = scope->codeWriter;
 
    bool functionMode = test((unsigned int)scope->command.arg1, FUNCTION_MESSAGE);
+   int altModifier = scope->altMode ? 6 : 0;
 
    void* code = nullptr;
    if ((scope->command.arg1 & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
       if (!scope->command.arg2) {
          code = scope->compiler->_inlines[10][scope->code()];
       }
-      else code = scope->compiler->_inlines[5][scope->code()];
+      else code = scope->compiler->_inlines[5 + altModifier][scope->code()];
    }
    else if (!scope->command.arg2) {
       code = scope->compiler->_inlines[9][scope->code()];
    }
-   else code = scope->compiler->_inlines[0][scope->code()];
+   else code = scope->compiler->_inlines[0 + altModifier][scope->code()];
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
@@ -3376,7 +3377,7 @@ void JITCompiler32 :: addIndexEntry(mssg_t message, addr_t codeAddress, void* ta
          if (codeAddress == INVALID_ADDR) {
             entries[index].address = findEntryAddress(entries, message, indexOffset);
          }
-         else entries[index].address = codeAddress;
+         else entries[index].address = (pos_t)codeAddress;
 
          return;
       }
@@ -3388,7 +3389,7 @@ void JITCompiler32 :: addIndexEntry(mssg_t message, addr_t codeAddress, void* ta
    if (codeAddress == INVALID_ADDR) {
       entries[index].address = findEntryAddress(entries, message, indexOffset);
    }
-   else entries[index].address = codeAddress;
+   else entries[index].address = (pos_t)codeAddress;
 
    indexCount++;
 }

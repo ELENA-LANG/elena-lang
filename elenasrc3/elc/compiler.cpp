@@ -6459,7 +6459,7 @@ ref_t targetResolver(void* param, mssg_t mssg)
    return ((ResolvedMap*)param)->get(mssg);
 }
 
-ref_t Compiler::compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope, mssg_t genericMessage,
+ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope, mssg_t genericMessage,
    ref_t outputRef)
 {
    ref_t extRef = scope.moduleScope->mapAnonymous();
@@ -6482,8 +6482,10 @@ ref_t Compiler::compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceSco
       targets.add(extInfo.value2, extInfo.value1);
    }
 
+
+
    _logic->injectMethodOverloadList(this, *scope.moduleScope,
-      classScope.info.header.flags, genericMessage | FUNCTION_MESSAGE, methods,
+      MethodHint::Sealed, genericMessage | FUNCTION_MESSAGE, methods,
       classScope.info.attributes, &targets, targetResolver, ClassAttribute::OverloadList);
 
    SyntaxTree classTree;
@@ -7903,7 +7905,14 @@ void Compiler::compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope
    writer.closeNode();
 }
 
-void Compiler::compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope, ClassScope& classScope,
+inline bool isIndexedOp(ClassInfo& info, mssg_t message)
+{
+   auto mi = info.methods.get(message);
+
+   return MethodInfo::checkHint(mi, MethodHint::Indexed);
+}
+
+void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope, ClassScope& classScope,
    SyntaxNode node, bool implicitMode)
 {
    mssg_t message = scope.getMessageID();
@@ -7919,6 +7928,9 @@ void Compiler::compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope, C
 
    writer.newNode(op, opRef);
    writer.appendNode(BuildKey::Message, message);
+   if (isIndexedOp(classScope.info, message)) {
+      writer.appendNode(BuildKey::IndexTableMode);
+   }
    writer.closeNode();
 
    if (implicitMode) {
@@ -10469,6 +10481,9 @@ void Compiler::generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef,
          case MethodHint::Fixed:
             metaWriter.writeDReference(classRef | mskVMTMethodOffset, messageRef);
             break;
+         case MethodHint::ByIndex:
+            metaWriter.writeDReference(classRef | mskHMTMethodOffset, messageRef);
+            break;
          default:
             metaWriter.writeDWord(0);
             break;
@@ -10489,6 +10504,9 @@ void Compiler::generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef,
             break;
          case MethodHint::Fixed:
             metaWriter.Memory()->addReference(classRef | mskVMTMethodOffset, 4);
+            break;
+         case MethodHint::ByIndex:
+            metaWriter.Memory()->addReference(classRef | mskHMTMethodOffset, 4);
             break;
          default:
          break;
@@ -10667,7 +10685,7 @@ void Compiler::declareModuleExtensionDispatcher(NamespaceScope& scope, SyntaxNod
          mssg_t genericMessage = *g_it;
 
          _logic->injectMethodOverloadList(this, *scope.moduleScope,
-            classScope.info.header.flags, genericMessage | FUNCTION_MESSAGE, methods,
+            MethodHint::Sealed, genericMessage | FUNCTION_MESSAGE, methods,
             classScope.info.attributes, &targets, targetResolver, ClassAttribute::ExtOverloadList);
       }
 

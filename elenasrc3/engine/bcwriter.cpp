@@ -501,8 +501,12 @@ void loadingIndex(CommandTape& tape, BuildNode& node, TapeScope&)
 void dispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    mssg_t message = node.findChild(BuildKey::Message).arg.reference;
+   bool altMode = node.existChild(BuildKey::IndexTableMode);
    if (message) {
       // if it is a multi-method dispatcher
+      if (altMode)
+         tape.write(ByteCode::AltMode);
+
       tape.write(ByteCode::DispatchMR, message, node.arg.reference | mskConstArray);
    }
    // otherwise it is generic dispatcher

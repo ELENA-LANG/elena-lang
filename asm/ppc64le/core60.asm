@@ -3209,8 +3209,9 @@ end
 // ; vjumpmr
 inline % 6ECh
 
-  ld       r17, -elVMTSizeOffset(r15)     
   ld       r16, -elVMTOffset(r15)     
+  ld       r17, -elVMTSizeOffset(r16)     
+  sldi     r17, r17, 4
   addi     r16, r16, r17
   ld       r17, __arg16_1(r16)
   mtctr    r17            // ; put code address into ctr
@@ -4543,6 +4544,254 @@ labNextBaseClass:
 
 end
 
+// ; dispatchmr (alt mode)
+// ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 06FBh
+
+  std     r3, 0(r1)                         // ; saving arg0
+//;  lea  rax, [rsp + __n_2]
+  addi    r17, r1, __n16_2
+  std     r4, 8(r1)                         // ; saving arg1
+
+  addi    r17, r17, -8                      // ; HOTFIX : caller address is not in the stack
+
+//;  mov  rsi, __ptr64_2
+  ld      r21, toc_rdata(r2)
+  addis   r21, r21, __disp32hi_2 
+  addi    r21, r21, __disp32lo_2 
+
+//;  xor  edx, edx
+  li      r25, 0
+//;  mov  rbx, [rsi] // ; message from overload list
+  ld      r22, 0(r21)                           //;!!
+
+labNextOverloadlist:
+//;  mov  r9, mdata : %0
+  ld      r24, toc_mdata(r2)
+
+//;  shr  ebx, ACTION_ORDER
+  srdi    r22, r22, ACTION_ORDER
+//;  lea  r13, [rbx*8]
+  sldi    r23, r22, 4
+
+//;  mov  r13, [r9 + r13 * 2 + 8]
+  add     r23, r23, r24
+  ld      r23, 8(r23)
+//;  mov  ecx, __n_1
+  li      r16, __n16_1
+//;  lea  rbx, [r13 - 8]
+  addi    r22, r23, -8
+
+labNextParam:
+//;  sub  ecx, 1
+  addi    r16, r16, -1
+//;  jnz  short labMatching
+  cmpwi   r16,0
+  bne     labMatching
+
+  sldi    r23, r25, 4  
+  add     r25, r21, r23
+
+  ld      r23, 8(r25)
+  ld      r14, 0(r25)
+  ld      r16, -elVMTOffset(r15)
+  ld      r20, -elVMTSizeOffset(r16)     
+  sldi    r20, r20, 4
+  add     r16, r16, r20
+  add     r20, r16, r23
+  ld      r0, 8(r20)                
+  mtctr   r0
+  bctr
+
+labMatching:
+//;  mov  rdi, [rax + rcx * 8]
+  sldi    r19, r16, 3
+  add     r18, r19, r17
+  ld      r18, 0(r18)
+
+  //; check nil
+//;  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+  ld      r20, toc_rdata(r2)
+  addis   r20, r20, rdata_disp32hi : %VOIDPTR
+  addi    r20, r20, rdata_disp32lo : %VOIDPTR
+  addi    r20, r20, elObjectOffset
+//;  test  rdi, rdi                                              
+  cmpwi   r18,0
+
+//;  cmovz rdi, rsi
+  iseleq  r18, r20, r18
+
+//;  mov  rdi, [rdi - elVMTOffset]
+  ld      r18, -elVMTOffset(r18)
+//;  mov  rsi, [rbx + rcx * 8]
+  add     r20,  r22, r19
+  ld      r20, 0(r20)
+
+labNextBaseClass:
+//;  cmp  rsi, rdi
+  cmp     r20, r18
+//;  jz   labNextParam
+  beq     labNextParam 
+//;  mov  rdi, [rdi - elPackageOffset]
+  ld      r18, -elPackageOffset(r18)
+//;  and  rdi, rdi
+  cmpwi   r18, 0
+//;  jnz  short labNextBaseClass
+  bne     labNextBaseClass
+
+//;  add  rdx, 1
+  addi    r25, r25, 1
+//;  mov  r13, __ptr32_2
+  mr      r23, r21
+
+//;  lea  r9, [rdx * 8]
+  sldi    r24, r25, 4
+
+//;  mov  rbx, [r13 + r9 * 2] // ; message from overload list
+  add     r22, r24, r23
+  ld      r22, 0(r22)
+
+//;  and  rbx, rbx
+  cmpwi   r22, 0
+//;  jnz  labNextOverloadlist
+  bne     labNextOverloadlist
+
+end
+
+// ; dispatchmr
+// ; NOTE : __arg32_1 - message; __n_1 - arg count; __ptr32_2 - list, __n_2 - argument list offset
+inline % 0BFBh
+
+  std     r3, 0(r1)                         // ; saving arg0
+//;  lea  rax, [rsp + __n_2]
+  addi    r17, r1, __n16_2
+  std     r4, 8(r1)                         // ; saving arg1
+
+  addi    r17, r17, -8                      // ; HOTFIX : caller address is not in the stack
+
+//;  mov  rsi, __ptr64_2
+  ld      r21, toc_rdata(r2)
+  addis   r21, r21, __disp32hi_2 
+  addi    r21, r21, __disp32lo_2 
+
+//;  xor  edx, edx
+  li      r25, 0
+  li      r16, 0
+
+  // ; count the number of args
+  mr      r22, r17
+  li      r23, 0
+  addi    r23, r23, -1                        // ; define the terminator
+labCountParam:
+  addi    r22, r22, 8
+  ld      r24, 0(r22)
+  addi    r16, r16, 1
+  cmp     r24, r23
+  bne     labCountParam
+  mr      r17, r16
+
+//;  mov  rbx, [rsi] // ; message from overload list
+  ld      r22, 0(r21)                           //;!!
+
+labNextOverloadlist:
+//;  mov  r9, mdata : %0
+  ld      r24, toc_mdata(r2)
+
+//;  shr  ebx, ACTION_ORDER
+  srdi    r22, r22, ACTION_ORDER
+//;  lea  r13, [rbx*8]
+  sldi    r23, r22, 4
+
+//;  mov  r13, [r9 + r13 * 2 + 8]
+  add     r23, r23, r24
+  ld      r23, 8(r23)
+//;  mov  ecx, __n_1
+  li      r16, __n16_1
+//;  lea  rbx, [r13 - 8]
+  addi    r22, r23, -8
+  mr      r26, r22
+
+labNextParam:
+//;  add  ecx, 1
+  addi    r16, r16, 1
+//;  jnz  short labMatching
+  cmpwi   r16,0
+  bne     labMatching
+
+  sldi    r23, r25, 4  
+  add     r25, r21, r23
+
+  ld      r23, 8(r25)
+  ld      r14, 0(r25)
+
+  ld      r16, -elVMTOffset(r15)
+  ld      r20, -elVMTSizeOffset(r16)     
+  sldi    r20, r20, 4
+  add     r16, r16, r20
+  add     r20, r16, r23
+  ld      r0, 8(r20)                
+  mtctr   r0
+  bctr
+
+labMatching:
+  addi    r20, r26, 8
+  ld      r18, 0(r20)
+  cmpwi   r18, 0
+  iseleq  r26, r26, r20
+
+//;  mov  rdi, [rax + rcx * 8]
+  sldi    r19, r16, 3
+  add     r18, r19, r17
+  ld      r18, 0(r18)
+
+  //; check nil
+//;  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+  ld      r20, toc_rdata(r2)
+  addis   r20, r20, rdata_disp32hi : %VOIDPTR
+  addi    r20, r20, rdata_disp32lo : %VOIDPTR
+  addi    r20, r20, elObjectOffset
+//;  test  rdi, rdi                                              
+  cmpwi   r18,0
+
+//;  cmovz rdi, rsi
+  iseleq  r18, r20, r18
+
+//;  mov  rdi, [rdi - elVMTOffset]
+  ld      r18, -elVMTOffset(r18)
+//;  mov  rsi, [rbx + rcx * 8]
+  ld      r20, 0(r26)
+
+labNextBaseClass:
+//;  cmp  rsi, rdi
+  cmp     r20, r18
+//;  jz   labNextParam
+  beq     labNextParam 
+//;  mov  rdi, [rdi - elPackageOffset]
+  ld      r18, -elPackageOffset(r18)
+//;  and  rdi, rdi
+  cmpwi   r18, 0
+//;  jnz  short labNextBaseClass
+  bne     labNextBaseClass
+
+//;  add  rdx, 1
+  addi    r25, r25, 1
+//;  mov  r13, __ptr32_2
+  mr      r23, r21
+
+//;  lea  r9, [rdx * 8]
+  sldi    r24, r25, 4
+
+//;  mov  rbx, [r13 + r9 * 2] // ; message from overload list
+  add     r22, r24, r23
+  ld      r22, 0(r22)
+
+//;  and  rbx, rbx
+  cmpwi   r22, 0
+//;  jnz  labNextOverloadlist
+  bne     labNextOverloadlist
+
+end
+
 // ; vcallmr
 inline % 0FCh
 
@@ -4557,8 +4806,9 @@ end
 // ; vcallmr
 inline % 6FCh
 
-  ld       r17, -elVMTSizeOffset(r15)     
   ld       r16, -elVMTOffset(r15)     
+  ld       r17, -elVMTSizeOffset(r16)     
+  sldi     r17, r17, 4
   addi     r16, r16, __arg16_1
   addi     r16, r16, r17
   ld       r17, 8(r16)

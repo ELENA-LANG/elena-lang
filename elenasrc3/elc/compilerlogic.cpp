@@ -2532,7 +2532,7 @@ inline ustr_t resolveActionName(ModuleBase* module, mssg_t message)
    return module->resolveAction(getAction(message), signRef);
 }
 
-ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags, ClassInfo::MethodMap& methods, 
+ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, MethodHint callType, ClassInfo::MethodMap& methods, 
    mssg_t message, void* param, ref_t(*resolve)(void*, ref_t))
 {
    // create a new overload list
@@ -2562,13 +2562,7 @@ ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeB
    for (size_t i = 0; i < list.count(); i++) {
       ref_t classRef = resolve(param, list[i]);
 
-      if (test(flags, elSealed) || test(message, STATIC_MESSAGE)) {
-         compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Sealed);
-      }
-      else if (test(flags, elClosed)) {
-         compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Fixed);
-      }
-      else compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Normal);
+      compiler->generateOverloadListMember(scope, listRef, classRef, list[i], callType);
    }
 
    return listRef;
@@ -2585,11 +2579,11 @@ ref_t paramFeedback(void* param, ref_t)
 #endif
 }
 
-void CompilerLogic :: injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags,
+void CompilerLogic :: injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, MethodHint callType,
    mssg_t message, ClassInfo::MethodMap& methods, ClassAttributes& attributes,
    void* param, ref_t(*resolve)(void*, ref_t), ClassAttribute attribute)
 {
-   ref_t listRef = generateOverloadList(compiler, scope, flags, methods, message, param, resolve);
+   ref_t listRef = generateOverloadList(compiler, scope, callType, methods, message, param, resolve);
 
    ClassAttributeKey key = { message, attribute };
    attributes.exclude(key);
@@ -2604,7 +2598,18 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
          // create a new overload list
          mssg_t message = it.key();
 
-         injectMethodOverloadList(compiler, scope, info.header.flags, message, 
+         MethodHint callType = MethodHint::Normal;
+         if (test(info.header.flags, elSealed) || test(message, STATIC_MESSAGE)) {
+            callType = MethodHint::Sealed;
+         }
+         else if (MethodInfo::checkHint(methodInfo, MethodHint::Indexed)) {
+            callType = MethodHint::ByIndex;
+         }
+         else if (test(info.header.flags, elClosed)) {
+            callType = MethodHint::Fixed;
+         }
+
+         injectMethodOverloadList(compiler, scope, callType, message,
             info.methods, info.attributes, UInt32ToPtr(classRef), paramFeedback, ClassAttribute::OverloadList);
       }
    }

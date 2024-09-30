@@ -71,7 +71,7 @@ namespace elena_lang
    private:
       OperationMap _operations;
 
-      ref_t generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags, ClassInfo::MethodMap& methods, 
+      ref_t generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, MethodHint targetType, ClassInfo::MethodMap& methods,
          mssg_t message, void* param, ref_t(*resolve)(void*, ref_t));
 
       bool isSignatureCompatible(ModuleScopeBase& scope, ref_t targetSignature, ref_t* sourceSignatures, size_t sourceLen);
@@ -200,7 +200,7 @@ namespace elena_lang
       mssg_t resolveFunctionSingleDispatch(ModuleScopeBase& scope, ref_t reference, int& nillableArgs);
 
       void injectOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, ref_t classRef);
-      void injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags, 
+      void injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, MethodHint callType,
          mssg_t message, ClassInfo::MethodMap& methods, ClassAttributes& attributes,
          void* param, ref_t(*resolve)(void*, ref_t), ClassAttribute attribute);
 

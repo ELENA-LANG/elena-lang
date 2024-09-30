@@ -20,6 +20,32 @@ import extensions;
 //   Console.printLine("Finished ", t.Result, " iterations.");  
 //}
 
+/*
+namespace IndexedTest
+{
+   A
+   {
+      indexed foo(string s)
+         = "from A with " + s;
+
+      indexed foo(int n)
+         = "from A with int";
+   }
+   
+   B : A
+   {
+      indexed foo(string s)
+         = "from B "+s;   
+   }   
+
+   C : A
+   {
+      indexed bar()
+         = "from C";   
+   }
+}
+*/
+
 namespace IndexedTest
 {
    A
@@ -44,7 +70,8 @@ namespace IndexedTest
 public program()
 {
    IndexedTest'A a := new IndexedTest'A();
-   Assert.ifEqual(a.foo(), "from A");
+   var r := a.foo();
+/*   Assert.ifEqual(a.foo(), "from A");
    Assert.ifEqual(weak a.foo(), "from A");
    console.write(".");
 
@@ -55,5 +82,19 @@ public program()
    IndexedTest'A c := new IndexedTest'C();
    Assert.ifEqual(c.foo(), "from A");
    Assert.ifEqual(weak c.foo(), "from A");
-   console.write(".");
+   console.write(".");*/
+
+//   IndexedTest'A a := new IndexedTest'A();
+//   Assert.ifEqual(a.foo("Hello"), "from A with Hello");
+//   Assert.ifEqual(weak a.foo(), "from A");
+/*   console.write(".");
+
+   IndexedTest'A b := new IndexedTest'B();
+   Assert.ifEqual(b.foo(), "from B");
+   Assert.ifEqual(weak b.foo(), "from B");
+
+   IndexedTest'A c := new IndexedTest'C();
+   Assert.ifEqual(c.foo(), "from A");
+   Assert.ifEqual(weak c.foo(), "from A");
+   console.write(".");*/
 }
