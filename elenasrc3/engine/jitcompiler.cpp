@@ -2094,7 +2094,9 @@ void elena_lang::loadVMTROp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
-   void* code = scope->compiler->_inlines[0][scope->code()];
+   int codeIndex = scope->altMode ? 6 : 0;
+
+   void* code = scope->compiler->_inlines[codeIndex][scope->code()];
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
@@ -3266,19 +3268,20 @@ pos_t JITCompiler32 :: findMethodOffset(void* entries, mssg_t message)
 pos_t JITCompiler32 :: findHiddenMethodOffset(void* entries, mssg_t message)
 {
    VMTHeader32* header = (VMTHeader32*)((uintptr_t)entries - elVMTClassOffset32);
-   pos_t offset = 0;
+
    // NOTE : hidden table follows the main method table
    pos_t i = header->count;
    while (((VMTEntry32*)entries)[i].message) {
       if (((VMTEntry32*)entries)[i].message == message) {
-         offset = i * sizeof(VMTEntry32);
-         break;
+         return (i - header->count) * sizeof(VMTEntry32);
       }
 
       i++;
    }
+   // must not reach this point
+   assert(false);
 
-   return offset;
+   return 0;
 }
 
 Pair<pos_t, pos_t> JITCompiler32 :: copyParentVMT(void* parentVMT, void* targetVMT, pos_t indexTableOffset)
@@ -3297,14 +3300,9 @@ Pair<pos_t, pos_t> JITCompiler32 :: copyParentVMT(void* parentVMT, void* targetV
          ((VMTEntry32*)targetVMT)[i] = parentEntries[i];
       }
 
-      VMTEntry32* dstVMT = (VMTEntry32*)targetVMT;
-
-      auto r = parentEntries[header->count];
-      auto r2 = dstVMT[indexTableOffset];
-
       // copy parent Index Table
       pos_t indexCount = 0;
-      while (((VMTEntry32*)targetVMT)[header->count + indexCount].message) {
+      while (((VMTEntry32*)parentEntries)[header->count + indexCount].message) {
          ((VMTEntry32*)targetVMT)[indexTableOffset + indexCount] = parentEntries[header->count + indexCount];
 
          indexCount++;
@@ -3376,7 +3374,7 @@ void JITCompiler32 :: addIndexEntry(mssg_t message, addr_t codeAddress, void* ta
    while (entries[index].message) {
       if (entries[index].message == message) {
          if (codeAddress == INVALID_ADDR) {
-            entries[index].address = findEntryAddress(entries, message, indexCount);
+            entries[index].address = findEntryAddress(entries, message, indexOffset);
          }
          else entries[index].address = codeAddress;
 
@@ -3821,19 +3819,21 @@ pos_t JITCompiler64 :: findMethodOffset(void* entries, mssg_t message)
 pos_t JITCompiler64 :: findHiddenMethodOffset(void* entries, mssg_t message)
 {
    VMTHeader64* header = (VMTHeader64*)((uintptr_t)entries - elVMTClassOffset64);
-   pos_t offset = 0;
+
    // NOTE : hidden table follows the main method table
    pos64_t i = header->count;
    while (((VMTEntry64*)entries)[i].message) {
       if (((VMTEntry64*)entries)[i].message == message) {
-         offset = static_cast<pos_t>(i * sizeof(VMTEntry64));
-         break;
+         return static_cast<pos_t>((i - header->count) * sizeof(VMTEntry64));
       }
 
       i++;
    }
 
-   return offset;
+   // must not reach this point
+   assert(false);
+
+   return 0;
 }
 
 Pair<pos_t, pos_t> JITCompiler64 :: copyParentVMT(void* parentVMT, void* targetVMT, pos_t indexTableOffset)
@@ -3854,7 +3854,7 @@ Pair<pos_t, pos_t> JITCompiler64 :: copyParentVMT(void* parentVMT, void* targetV
 
       // copy parent Index Table
       pos_t indexCount = 0;
-      while (((VMTEntry64*)targetVMT)[header->count + indexCount].message) {
+      while (((VMTEntry64*)parentEntries)[header->count + indexCount].message) {
          ((VMTEntry64*)targetVMT)[indexTableOffset + indexCount] = parentEntries[header->count + indexCount];
 
          indexCount++;
@@ -3907,7 +3907,7 @@ void JITCompiler64 :: addIndexEntry(mssg_t message, addr_t codeAddress, void* ta
    while (entries[index].message) {
       if (entries[index].message == message) {
          if (codeAddress == INVALID_ADDR) {
-            entries[index].address = findEntryAddress(entries, message, indexCount);
+            entries[index].address = findEntryAddress(entries, message, indexOffset);
          }
          else entries[index].address = codeAddress;
 
@@ -3917,8 +3917,9 @@ void JITCompiler64 :: addIndexEntry(mssg_t message, addr_t codeAddress, void* ta
       index++;
    }
 
+   entries[index].message = message;
    if (codeAddress == INVALID_ADDR) {
-      entries[index].address = findEntryAddress(entries, message, indexCount);
+      entries[index].address = findEntryAddress(entries, message, indexOffset);
    }
    else entries[index].address = codeAddress;
 

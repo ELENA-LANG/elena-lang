@@ -3438,6 +3438,19 @@ inline %0ECh
 
 end
 
+// ; vjumpmr
+inline %6ECh
+
+  sub     x14, x10, elVMTOffset              
+  ldr     x17, [x14]
+  add     x17, x17, __arg12_1
+  ldr     x14, [x10, elVMTSizeOffset]
+  add     x17, x17, x14
+  ldr     x17, [x17]
+  br      x17
+
+end
+
 // ; jumpmr
 inline %0EDh
 
@@ -4668,6 +4681,20 @@ inline %0FCh
   sub     x14, x10, elVMTOffset              
   ldr     x17, [x14]
   add     x17, x17, x18
+  ldr     x17, [x17, #8]
+  blr     x17
+
+end
+
+// ; vcallmr
+inline %06FCh
+
+  mov     x18, __arg16_1
+  sub     x14, x10, elVMTOffset              
+  ldr     x17, [x14]
+  add     x17, x17, x18
+  ldr     x14, [x10, elVMTSizeOffset]
+  add     x17, x17, x14
   ldr     x17, [x17, #8]
   blr     x17
 

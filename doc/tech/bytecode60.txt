@@ -280,7 +280,7 @@ ELENA byte codes (or ecodes)
                               temp >> dp[disp];
                               
    dispatch m, r            - search in message table r the message in index and provided parameter list; 
-                              if found jumps to it;
+                              if found jumps to it / index table (in alt mode);
 
    dtrans                   - sp[0] >> acc, index ptrs
 
@@ -320,7 +320,7 @@ ELENA byte codes (or ecodes)
                               temp >> acc[disp];
 
    xdispatch i              - index - message, acc[i], acc[i+1], ... - list of overload list, null terminated;
-                              searches in overload list for mathced signature, if found jumps to direct address;
+                              searches in overload list for mathced signature, if found jumps directly to it;
                               otherwise goes to the next one, until zero is encountered
 
    xdispatch m, r           - search in message table r the message in index and provided parameter list; 

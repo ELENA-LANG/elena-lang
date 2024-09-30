@@ -42,8 +42,10 @@ In development:
   * async method returning a value
   * predefined method cannot be indexed
   * check that for the indexed method - correct overload method is generated
+  * indexed methods (indexed normal, indexed abstract, indexed internal (hidden)) 
+  * xdispatchrm / xdispatchi - alt mode affect index -> x86, x86-64, ppc64, aarch64
+  * functional test : by index call with multi-method
   * generateOverloadList must support virtual method
-  * indexed methods (indexed normal, indexed abstract, indexed internal (hidden))
   * functional test : by index call
   --------------------------------------  
   * support indexed call

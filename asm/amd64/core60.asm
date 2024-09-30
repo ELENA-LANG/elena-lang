@@ -2737,6 +2737,15 @@ inline % 0ECh
 
 end
 
+// ; vjumpmr
+inline % 06ECh
+
+  mov  rax, [rbx - elVMTOffset]
+  add  rax, [rbx - elVMTSizeOffset]
+  jmp  [rax + __arg32_1]
+
+end
+
 // ; jumpmr
 inline %0EDh
 
@@ -4145,6 +4154,16 @@ inline % 0FCh
 
   mov  ecx, __arg32_1
   mov  rax, [rbx - elVMTOffset]
+  call [rax + rcx + 8]
+
+end
+
+// ; vcallmr
+inline % 06FCh
+
+  mov  rax, [rbx - elVMTOffset]
+  mov  ecx, __arg32_1
+  add  rax, [rbx - elVMTSizeOffset]
   call [rax + rcx + 8]
 
 end

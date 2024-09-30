@@ -3012,6 +3012,16 @@ inline %0ECh
 
 end
 
+// ; vjumpmr
+inline %06ECh
+
+  mov  eax, [ebx - elVMTOffset]
+  add  eax, [ebx - elVMTSizeOffset]
+  mov  eax, [eax + __arg32_1]
+  jmp  eax
+
+end
+
 // ; jumpmr
 inline %0EDh
 
@@ -4263,6 +4273,16 @@ inline %0FCh
 
   mov  ecx, __arg32_1
   mov  eax, [ebx - elVMTOffset]
+  call [eax + ecx + 4]
+
+end
+
+// ; vcallmr
+inline %06FCh
+
+  mov  eax, [ebx - elVMTOffset]
+  mov  ecx, __arg32_1
+  add  eax, [ebx - elVMTSizeOffset]
   call [eax + ecx + 4]
 
 end

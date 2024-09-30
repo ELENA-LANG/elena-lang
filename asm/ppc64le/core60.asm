@@ -3206,6 +3206,18 @@ inline % 0ECh
 
 end
 
+// ; vjumpmr
+inline % 6ECh
+
+  ld       r17, -elVMTSizeOffset(r15)     
+  ld       r16, -elVMTOffset(r15)     
+  addi     r16, r16, r17
+  ld       r17, __arg16_1(r16)
+  mtctr    r17            // ; put code address into ctr
+  bctr                    // ; and jump to it
+
+end
+
 // ; jumpmr
 inline %0EDh
 
@@ -4536,6 +4548,19 @@ inline % 0FCh
 
   ld       r16, -elVMTOffset(r15)     
   addi     r16, r16, __arg16_1
+  ld       r17, 8(r16)
+  mtctr    r17            // ; put code address into ctr
+  bctrl                   // ; and call it
+
+end
+
+// ; vcallmr
+inline % 6FCh
+
+  ld       r17, -elVMTSizeOffset(r15)     
+  ld       r16, -elVMTOffset(r15)     
+  addi     r16, r16, __arg16_1
+  addi     r16, r16, r17
   ld       r17, 8(r16)
   mtctr    r17            // ; put code address into ctr
   bctrl                   // ; and call it

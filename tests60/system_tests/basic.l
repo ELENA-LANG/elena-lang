@@ -2124,3 +2124,41 @@ public isNilOperatorTest() : testCase()
    Assert.ifFailed({ var a := nil; var b := nil; var r := a ?? b.test() });
    console.write(".");
 }
+
+namespace IndexedTest
+{
+   A
+   {
+      indexed foo()
+         = "from A";
+   }
+   
+   B : A
+   {
+      indexed foo()
+         = "from B";   
+   }   
+
+   C : A
+   {
+      indexed bar()
+         = "from C";   
+   }
+}
+
+public indexedTests() : testCase()
+{
+   IndexedTest'A a := new IndexedTest'A();
+   Assert.ifEqual(a.foo(), "from A");
+   Assert.ifEqual(weak a.foo(), "from A");
+   console.write(".");
+
+   IndexedTest'A b := new IndexedTest'B();
+   Assert.ifEqual(b.foo(), "from B");
+   Assert.ifEqual(weak b.foo(), "from B");
+
+   IndexedTest'A c := new IndexedTest'C();
+   Assert.ifEqual(c.foo(), "from A");
+   Assert.ifEqual(weak c.foo(), "from A");
+   console.write(".");
+}
