@@ -45,7 +45,7 @@ In development:
   * indexed methods (indexed normal, indexed abstract, indexed internal (hidden)) 
   * functional test : by index call with multi-method
   --------------------------------------  
-  * xdispatchrm / xdispatchi - alt mode affect index -> x86-64, ppc64, aarch64
+  * indexed multi method must be marked as indexed as well
 
   === Iteration 34 ===
   --------------------------------------

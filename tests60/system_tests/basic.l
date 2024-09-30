@@ -2131,12 +2131,21 @@ namespace IndexedTest
    {
       indexed foo()
          = "from A";
+
+      indexed foo(string s)
+         = "from A with " + s;
+
+      indexed foo(int n)
+         = "from A with int";
    }
    
    B : A
    {
       indexed foo()
          = "from B";   
+
+      indexed foo(string s)
+         = "from B with "+s;   
    }   
 
    C : A
@@ -2161,4 +2170,13 @@ public indexedTests() : testCase()
    Assert.ifEqual(c.foo(), "from A");
    Assert.ifEqual(weak c.foo(), "from A");
    console.write(".");
+
+   Assert.ifEqual(a.foo("Hello"), "from A with Hello");
+   Assert.ifEqual(weak a.foo("Hello2"), "from A with Hello2");
+   Assert.ifEqual(b.foo("Hello"), "from B with Hello");
+   Assert.ifEqual(weak b.foo("Hello"), "from B with Hello");
+   Assert.ifEqual(c.foo("Hello2"), "from A with Hello2");
+   Assert.ifEqual(weak c.foo("Hello2"), "from A with Hello2");
+   console.write(".");
+
 }

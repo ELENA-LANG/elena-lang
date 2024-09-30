@@ -3000,6 +3000,8 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
                hints |= (ref_t)MethodHint::Static;
             if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_PRIVATE))
                hints |= (ref_t)MethodHint::Private;
+            if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_INDEXED_ATTR))
+               hints |= (ref_t)MethodHint::Indexed;
 
             // mark weak message as a multi-method
             auto m_it = scope.info.methods.getIt(multiMethod);
