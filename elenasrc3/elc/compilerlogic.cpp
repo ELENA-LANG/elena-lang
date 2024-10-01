@@ -2403,6 +2403,7 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
 
       result.stackSafe = test(methodInfo.hints, (ref_t)MethodHint::Stacksafe);
       result.nillableArgs = methodInfo.nillableArgs;
+      result.byRefHandler = methodInfo.byRefHandler;
 
       if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {
          result.constRef = info.attributes.get({ message, ClassAttribute::ConstantMethod });
@@ -2430,6 +2431,16 @@ bool CompilerLogic :: checkMethod(ModuleScopeBase& scope, ref_t classRef, mssg_t
       return checkMethod(info, message, result);
    }
    else return false;
+}
+
+mssg_t CompilerLogic :: retrieveByRefHandler(ModuleScopeBase& scope, ref_t reference, mssg_t message)
+{
+   CheckMethodResult result = {};
+   if (checkMethod(scope, reference, message, result)) {
+      return result.byRefHandler;
+   }
+
+   return 0;
 }
 
 bool CompilerLogic :: isMessageSupported(ClassInfo& info, mssg_t message)

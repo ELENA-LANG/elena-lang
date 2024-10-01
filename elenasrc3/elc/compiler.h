@@ -1082,6 +1082,7 @@ namespace elena_lang
          mssg_t message;
          ref_t  extensionRef;
          int    stackSafeAttr;
+         mssg_t byRefHandler;
 
          MessageResolution()
          {
@@ -1089,6 +1090,7 @@ namespace elena_lang
             this->message = 0;
             this->extensionRef = 0;
             this->stackSafeAttr = 0;
+            this->byRefHandler = 0;
          }
          MessageResolution(bool resolved, mssg_t message)
          {
@@ -1096,6 +1098,7 @@ namespace elena_lang
             this->message = message;
             this->extensionRef = 0;
             this->stackSafeAttr = 0;
+            this->byRefHandler = 0;
          }
          MessageResolution(mssg_t message)
          {
@@ -1103,6 +1106,7 @@ namespace elena_lang
             this->message = message;
             this->extensionRef = 0;
             this->stackSafeAttr = 0;
+            this->byRefHandler = 0;
          }
       };
 
@@ -1332,7 +1336,7 @@ namespace elena_lang
 
          MessageResolution resolveByRefHandler(ObjectInfo source, ref_t expectedRef, mssg_t weakMessage, ref_t& signatureRef, bool noExtensions);
          MessageResolution resolveMessageAtCompileTime(ObjectInfo target, mssg_t weakMessage, ref_t implicitSignatureRef, bool ignoreExtensions, 
-            bool ignoreVariadics);
+            bool ignoreVariadics, bool checkByRefHandler = false);
 
          ObjectInfo declareTempLocal(ref_t typeRef, bool dynamicOnly = true);
          ObjectInfo declareTempStructure(SizeInfo sizeInfo);

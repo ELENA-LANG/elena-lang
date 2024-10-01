@@ -25,6 +25,7 @@ namespace elena_lang
       bool        withVariadicDispatcher;
       bool        withCustomDispatcher;
       int         nillableArgs;
+      mssg_t      byRefHandler;
    };
 
    struct TypeAttributes
@@ -188,6 +189,8 @@ namespace elena_lang
 
       bool checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result);
       bool checkMethod(ModuleScopeBase& scope, ref_t reference, mssg_t message, CheckMethodResult& result);
+
+      mssg_t retrieveByRefHandler(ModuleScopeBase& scope, ref_t reference, mssg_t message);
 
       // check if internal / protected / private / public message is declared
       bool isMessageSupported(ClassInfo& info, mssg_t message, CheckMethodResult& result);

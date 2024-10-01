@@ -2584,7 +2584,7 @@ void Compiler::addTypeInfo(Scope& scope, SyntaxNode node, SyntaxKey key, TypeInf
       info.appendChild(SyntaxKey::Attribute, V_NILLABLE);
 }
 
-void Compiler::generateMethodAttributes(ClassScope& scope, SyntaxNode node,
+void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
    MethodInfo& methodInfo, bool abstractBased)
 {
    mssg_t message = node.arg.reference;
@@ -10139,7 +10139,7 @@ inline SyntaxNode newVirtualMethod(SyntaxNode classNode, SyntaxKey methodType, m
    return methodNode;
 }
 
-void Compiler::injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey methodType,
+void Compiler :: injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey methodType,
    ref_t targetRef, ClassInfo& info, mssg_t message, bool abstractOne)
 {
    MethodInfo methodInfo = {};
@@ -13415,7 +13415,7 @@ ObjectInfo Compiler::Expression::convertObject(SyntaxNode node, ObjectInfo sourc
    return source;
 }
 
-Compiler::MessageResolution Compiler::Expression::resolveByRefHandler(ObjectInfo source, ref_t expectedRef,
+Compiler::MessageResolution Compiler::Expression :: resolveByRefHandler(ObjectInfo source, ref_t expectedRef,
    mssg_t weakMessage, ref_t& signatureRef, bool noExtensions)
 {
    if (source.mode == TargetMode::Weak)
@@ -13434,7 +13434,7 @@ Compiler::MessageResolution Compiler::Expression::resolveByRefHandler(ObjectInfo
    if (expectedRef != 0 && targetRef != 0) {
       // try to resolve the weak message
       MessageResolution resolution = resolveMessageAtCompileTime(source, weakMessage,
-         signatureRef, noExtensions, true);
+         signatureRef, noExtensions, true, true);
 
       if (resolution.resolved || argCount == 1) {
          ref_t resolvedFlags = resolution.resolved ? getFlags(resolution.message) : flags;
@@ -13448,9 +13448,15 @@ Compiler::MessageResolution Compiler::Expression::resolveByRefHandler(ObjectInfo
 
          ref_t byRefMessage = encodeMessage(scope.module->mapAction(actionName, byRefSignature, false), argCount + 1, resolvedFlags);
 
-         ref_t byRefTarget = resolution.extensionRef ? resolution.extensionRef : targetRef;
-         CheckMethodResult dummy = {};
-         if (compiler->_logic->resolveCallType(*scope.moduleScope, byRefTarget, byRefMessage, dummy)) {
+         if (resolution.byRefHandler && compiler->_logic->isSignatureCompatible(*scope.moduleScope, byRefMessage, resolution.byRefHandler)) {
+            resolution.resolved = true;
+         }
+         else {
+            ref_t byRefTarget = resolution.extensionRef ? resolution.extensionRef : targetRef;
+            CheckMethodResult dummy = {};
+            resolution.resolved = compiler->_logic->resolveCallType(*scope.moduleScope, byRefTarget, byRefMessage, dummy);
+         }
+         if (resolution.resolved) {
             // NOTE : the original signature is extended with byref handler
             signatureRef = compiler->_logic->defineByRefSignature(*scope.moduleScope, signatureRef, byRefType);;
 
@@ -14829,8 +14835,8 @@ ObjectInfo Compiler::Expression::allocateResult(ref_t resultRef)
    return {}; // NOTE : should never be reached
 }
 
-Compiler::MessageResolution Compiler::Expression::resolveMessageAtCompileTime(ObjectInfo target, mssg_t weakMessage, ref_t implicitSignatureRef,
-   bool ignoreExtensions, bool ignoreVariadics)
+Compiler::MessageResolution Compiler::Expression :: resolveMessageAtCompileTime(ObjectInfo target, mssg_t weakMessage, ref_t implicitSignatureRef,
+   bool ignoreExtensions, bool ignoreVariadics, bool checkByRefHandler)
 {
    MessageResolution resolution = {};
 
@@ -14846,6 +14852,8 @@ Compiler::MessageResolution Compiler::Expression::resolveMessageAtCompileTime(Ob
    if (resolution.message != 0) {
       resolution.resolved = true;
       resolution.stackSafeAttr = resolvedStackSafeAttr;
+      if (checkByRefHandler)
+         resolution.byRefHandler = compiler->_logic->retrieveByRefHandler(*scope.moduleScope, targetRef, resolution.message);
 
       // if the object handles the compile-time resolved message - use it
       return resolution;
@@ -14861,6 +14869,8 @@ Compiler::MessageResolution Compiler::Expression::resolveMessageAtCompileTime(Ob
       if (resolution.message != 0) {
          resolution.resolved = true;
          resolution.stackSafeAttr = resolvedStackSafeAttr;
+         if (checkByRefHandler)
+            resolution.byRefHandler = compiler->_logic->retrieveByRefHandler(*scope.moduleScope, targetRef, resolution.message);
 
          // if the object handles the compile-time resolved variadic message - use it
          return resolution;
@@ -14873,6 +14883,9 @@ Compiler::MessageResolution Compiler::Expression::resolveMessageAtCompileTime(Ob
       CheckMethodResult dummy = {};
       if (compiler->_logic->resolveCallType(*scope.moduleScope, targetRef, weakMessage, dummy)) {
          resolution.message = weakMessage;
+         if (checkByRefHandler) {
+            resolution.byRefHandler = dummy.byRefHandler;
+         }
 
          return resolution;
       }
@@ -14886,6 +14899,8 @@ Compiler::MessageResolution Compiler::Expression::resolveMessageAtCompileTime(Ob
          resolution.resolved = true;
          resolution.extensionRef = extensionRef;
          resolution.stackSafeAttr = resolvedStackSafeAttr;
+         if (checkByRefHandler)
+            resolution.byRefHandler = compiler->_logic->retrieveByRefHandler(*scope.moduleScope, extensionRef, resolution.message);
 
          return resolution;
       }
@@ -14906,6 +14921,8 @@ Compiler::MessageResolution Compiler::Expression::resolveMessageAtCompileTime(Ob
          resolution.stackSafeAttr = resolvedStackSafeAttr;
          resolution.message = variadicMessage;
          resolution.extensionRef = extensionRef;
+         if (checkByRefHandler)
+            resolution.byRefHandler = compiler->_logic->retrieveByRefHandler(*scope.moduleScope, extensionRef, resolution.message);
 
          return resolution;
       }

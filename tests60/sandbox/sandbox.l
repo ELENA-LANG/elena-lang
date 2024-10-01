@@ -20,27 +20,15 @@ import extensions;
 //   Console.printLine("Finished ", t.Result, " iterations.");  
 //}
 
-closed class A
+A
 {
-   foo()
-   {
-      console.writeLine("foo fired!")
-   }
-}
-
-B : A
-{
-   indexed internal bar()
-   {
-      console.writeLine("bar fired!")
-   }
+   int getValue()
+      = 2;
 }
 
 public program()
 {
-   B b := new B();
-   A a := b;
+   A a := new A();
 
-   b.bar();
-   a.foo();
+   int n := a.getValue();
 }
