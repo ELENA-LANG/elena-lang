@@ -20,28 +20,27 @@ import extensions;
 //   Console.printLine("Finished ", t.Result, " iterations.");  
 //}
 
-B
+closed class A
 {
-   private callMe()
+   foo()
    {
-   }
-
-   test()
-   {
-      self.callMe();
+      console.writeLine("foo fired!")
    }
 }
 
-A
+B : A
 {
-   indexed internal foo(string s)
-      = "from A with " + s;
+   indexed internal bar()
+   {
+      console.writeLine("bar fired!")
+   }
 }
 
 public program()
 {
-   A a := new A();
+   B b := new B();
+   A a := b;
 
-   var r := a.foo("Hello");
-   Console.writeLine(r)
+   b.bar();
+   a.foo();
 }

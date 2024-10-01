@@ -14,8 +14,6 @@ In development:
       - retest : #25, #412, #413, #414
       - #676
       - #622 (http client)
-      - byref must be virtual hidden or private; 
-        remove byref invoker; closed class may have virtual internal methods
   gen:
       - lpad : generate a code based on a record  
   maint:
@@ -40,10 +38,10 @@ In development:
   * async example2 : https://dotnettutorials.net/lesson/return-a-value-from-a-task-in-csharp/
   * async programming with Task<T>
   * async method returning a value
-  * indexed methods : indexed abstract
-  * functional test - indexed internal methods (available directly, unavailable for the weak call)
+  * closed class may have byref handler
+  * remove byref invoker
   --------------------------------------  
-  * indexed methods : indexed internal (hidden) 
+  * byref must be virtual hidden or private;     
 
   === Iteration 34 ===
   --------------------------------------

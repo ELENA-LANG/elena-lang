@@ -568,7 +568,7 @@ public boxingTests() : testCase()
    console.write(".");
 
    // --- boxing / unboxing variable struct
-   BoxingStruct st;
+   BoxingStruct st := default;
    BoxingProber.set(st);
    st.test(3,4);
    console.write(".");
@@ -2137,6 +2137,9 @@ namespace IndexedTest
 
       indexed foo(int n)
          = "from A with int";
+
+      indexed internal fooInternal(string s)
+         = "from A with hidden " + s;
    }
    
    B : A
@@ -2146,6 +2149,9 @@ namespace IndexedTest
 
       indexed foo(string s)
          = "from B with "+s;   
+
+      indexed internal fooInternal(string s)
+         = "from B with hidden " + s;
    }   
 
    C : A
@@ -2177,6 +2183,15 @@ public indexedTests() : testCase()
    Assert.ifEqual(weak b.foo("Hello"), "from B with Hello");
    Assert.ifEqual(c.foo("Hello2"), "from A with Hello2");
    Assert.ifEqual(weak c.foo("Hello2"), "from A with Hello2");
+   console.write(".");
+
+   Assert.ifEqual(a.fooInternal("Hello"), "from A with hidden Hello");
+   Assert.ifEqual(b.fooInternal("Hello"), "from B with hidden Hello");
+   Assert.ifEqual(c.fooInternal("Hello2"), "from A with hidden Hello2");
+
+   Assert.ifFailed({weak a.fooInternal("Hello")});
+   Assert.ifFailed({weak b.fooInternal("Hello")});
+   Assert.ifFailed({weak c.fooInternal("Hello")});
    console.write(".");
 
 }
