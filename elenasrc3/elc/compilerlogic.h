@@ -279,6 +279,11 @@ namespace elena_lang
       static void importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, 
          ModuleBase* importer, bool headerOnly, bool inheritMode/*,bool ignoreFields*/);
 
+      static bool isSealedMethod(mssg_t message, MethodInfo& info)
+      {
+         return test(message, STATIC_MESSAGE) || MethodInfo::checkType(info, MethodHint::Sealed);
+      }
+
       static CompilerLogic* getInstance()
       {
          static CompilerLogic instance;

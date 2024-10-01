@@ -777,7 +777,6 @@ namespace elena_lang
          }
 
          bool checkType(MethodHint type);
-         static bool checkType(MethodInfo& methodInfo, MethodHint type);
 
          bool isGeneric()
          {

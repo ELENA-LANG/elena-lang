@@ -41,6 +41,7 @@ In development:
   * async programming with Task<T>
   * async method returning a value
   * indexed methods : indexed abstract
+  * functional test - indexed internal methods (available directly, unavailable for the weak call)
   --------------------------------------  
   * indexed methods : indexed internal (hidden) 
 

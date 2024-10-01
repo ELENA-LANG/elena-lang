@@ -1347,12 +1347,7 @@ Compiler::MethodScope::MethodScope(ClassScope* parent) :
 
 bool Compiler::MethodScope::checkType(MethodHint type)
 {
-   return (info.hints & MethodHint::Mask) == type;
-}
-
-bool Compiler::MethodScope::checkType(MethodInfo& methodInfo, MethodHint type)
-{
-   return (methodInfo.hints & MethodHint::Mask) == type;
+   return MethodInfo::checkType(info, type);
 }
 
 ObjectInfo Compiler::MethodScope :: mapSelf(bool memberMode, bool ownerClass)
@@ -2767,7 +2762,7 @@ void Compiler :: generateMethodDeclaration(ClassScope& scope, SyntaxNode node, b
       }
 
       // HOTFIX : auto generated sealed static methods should be allowed
-      if (existing && MethodScope::checkType(methodInfo, MethodHint::Sealed) && !autoMultimethod)
+      if (existing && MethodInfo::checkType(methodInfo, MethodHint::Sealed) && !autoMultimethod)
          scope.raiseError(errClosedMethod, node);
 
       if (test(scope.info.header.flags, elExtension) && (privateOne || internalOne))
@@ -4003,7 +3998,7 @@ void Compiler::inheritStaticMethods(ClassScope& scope, SyntaxNode classNode)
       auto methodInfo = *it;
       mssg_t key = it.key();
 
-      if (!methodInfo.inherited && MethodScope::checkType(methodInfo, MethodHint::Sealed) &&
+      if (!methodInfo.inherited && MethodInfo::checkType(methodInfo, MethodHint::Sealed) &&
          MethodScope::checkHint(methodInfo, MethodHint::Static))
       {
          scope.info.attributes.add({ it.key(), ClassAttribute::SealedStatic }, scope.reference);
@@ -8137,18 +8132,26 @@ void Compiler::compileDispatchProberCode(BuildTreeWriter& writer, CodeScope& sco
 
    mssg_t message = scope.getMessageID();
    mssg_t dispatchMessage = node.arg.reference;
+   MethodInfo dispatchInfo = classScope->info.methods.get(dispatchMessage);
 
+   bool indexTableMode = false;
    BuildKey op = BuildKey::DispatchingOp;
    ref_t    opRef = classScope->info.attributes.get({ dispatchMessage, ClassAttribute::OverloadList });
    if (!opRef)
       scope.raiseError(errIllegalOperation, node);
 
-   if (test(classScope->info.header.flags, elSealed) || test(dispatchMessage, STATIC_MESSAGE)) {
+   if (MethodInfo::checkVisibility(dispatchInfo, MethodHint::Internal)) {
+      // NOTE : the check must preceed the next one to correctly deal with internal indexed messages
+      indexTableMode = true;
+   }
+   else if (test(classScope->info.header.flags, elSealed) || CompilerLogic::isSealedMethod(dispatchMessage, dispatchInfo)) {
       op = BuildKey::SealedDispatchingOp;
    }
 
    writer.newNode(op, opRef);
    writer.appendNode(BuildKey::Message, dispatchMessage);
+   if (indexTableMode)
+      writer.appendNode(BuildKey::IndexTableMode);
    writer.closeNode();
 
    SyntaxNode targetNode = node.findChild(SyntaxKey::Target);

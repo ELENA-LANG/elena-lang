@@ -109,7 +109,11 @@ namespace elena_lang
       {
          ref_t mask = info.hints & (ref_t)MethodHint::VisibilityMask;
 
-         return mask == (ref_t)hint1 || mask == (ref_t)hint2;
+         return mask == (ref_t)hint1 || mask == (ref_t)hint2;      
+      }
+      static bool checkType(MethodInfo& info, MethodHint type)
+      {
+         return (info.hints & (ref_t)MethodHint::Mask) == (ref_t)type;
       }
    };
 
