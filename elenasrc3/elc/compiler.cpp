@@ -2394,7 +2394,7 @@ void Compiler::loadMetaData(ModuleScopeBase* moduleScope, ForwardResolverBase* f
    }
 }
 
-Compiler::InheritResult Compiler::inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed)
+Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed)
 {
    ref_t flagCopy = scope.info.header.flags;
    ref_t classClassCopy = scope.info.header.classRef;
@@ -2421,16 +2421,15 @@ Compiler::InheritResult Compiler::inheritClass(ClassScope& scope, ref_t parentRe
       auto it = scope.info.methods.start();
       while (!it.eof()) {
          mssg_t message = it.key();
-
-         ref_t hints = (*it).hints;
+         MethodInfo mi = *it;
 
          (*it).inherited = true;
          ++it;
 
          // private methods are not inherited
-         // except for the initializer
-         if (test(message, STATIC_MESSAGE) && !test(hints, (ref_t)MethodHint::Initializer))
+         if (MethodInfo::checkVisibility(mi, MethodHint::Private)) {
             scope.info.methods.exclude(message);
+         }
       }
    }
 
@@ -7924,7 +7923,7 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
    if (!opRef)
       scope.raiseError(errIllegalOperation, node);
 
-   if (test(classScope.info.header.flags, elSealed) || test(message, STATIC_MESSAGE)) {
+   if (test(classScope.info.header.flags, elSealed) || scope.isSealedMethod()) {
       op = BuildKey::SealedDispatchingOp;
    }
 

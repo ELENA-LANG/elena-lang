@@ -863,6 +863,12 @@ namespace elena_lang
 
             return scope ? scope->message : 0;
          }
+         bool isSealedMethod()
+         {
+            MethodScope* scope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
+
+            return scope->checkType(MethodHint::Sealed);
+         }
 
          TypeInfo getOutputInfo()
          {

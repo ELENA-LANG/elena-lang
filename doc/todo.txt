@@ -40,12 +40,9 @@ In development:
   * async example2 : https://dotnettutorials.net/lesson/return-a-value-from-a-task-in-csharp/
   * async programming with Task<T>
   * async method returning a value
-  * predefined method cannot be indexed
-  * check that for the indexed method - correct overload method is generated
-  * indexed methods (indexed normal, indexed abstract, indexed internal (hidden)) 
-  * functional test : by index call with multi-method
+  * indexed methods : indexed abstract
   --------------------------------------  
-  * indexed multi method must be marked as indexed as well
+  * indexed methods : indexed internal (hidden) 
 
   === Iteration 34 ===
   --------------------------------------

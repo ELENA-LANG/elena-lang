@@ -2443,8 +2443,6 @@ bool CompilerLogic :: isMessageSupported(ClassInfo& info, mssg_t message, CheckM
 {
    if (!checkMethod(info, message, result)) {
       if (checkMethod(info, message | STATIC_MESSAGE, result)) {
-         result.visibility = Visibility::Private;
-
          return true;
       }
       mssg_t protectedMessage = info.attributes.get({ message, ClassAttribute::ProtectedAlias });
@@ -2599,11 +2597,15 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
          mssg_t message = it.key();
 
          MethodHint callType = MethodHint::Normal;
-         if (test(info.header.flags, elSealed) || test(message, STATIC_MESSAGE)) {
+         if (test(info.header.flags, elSealed)) {
             callType = MethodHint::Sealed;
          }
          else if (MethodInfo::checkHint(methodInfo, MethodHint::Indexed)) {
             callType = MethodHint::ByIndex;
+         }
+         else if (test(message, STATIC_MESSAGE)) {
+            // NOTE : the check must be after the checking of indexed method to correctly deal with hidden indexed methods
+            callType = MethodHint::Sealed;
          }
          else if (test(info.header.flags, elClosed)) {
             callType = MethodHint::Fixed;
@@ -3028,7 +3030,7 @@ void CompilerLogic :: importClassInfo(ClassInfo& copy, ClassInfo& target, Module
             info.inherited = true;
 
             // private methods are not inherited
-            if (!test(it.key(), STATIC_MESSAGE))
+            if (!MethodInfo::checkVisibility(info, MethodHint::Private))
                target.methods.add(ImportHelper::importMessage(exporter, it.key(), importer), info);
          }
          else target.methods.add(ImportHelper::importMessage(exporter, it.key(), importer), info);
