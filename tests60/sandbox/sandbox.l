@@ -22,7 +22,7 @@ import extensions;
 
 A
 {
-   int getValue()
+   get int Value()
       = 2;
 }
 
@@ -30,5 +30,5 @@ public program()
 {
    A a := new A();
 
-   int n := a.getValue();
+   int n := *a;
 }

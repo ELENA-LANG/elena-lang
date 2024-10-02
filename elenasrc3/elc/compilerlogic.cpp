@@ -2454,7 +2454,10 @@ bool CompilerLogic :: isMessageSupported(ClassInfo& info, mssg_t message, CheckM
 {
    if (!checkMethod(info, message, result)) {
       if (checkMethod(info, message | STATIC_MESSAGE, result)) {
-         return true;
+         if (result.visibility == Visibility::Private)
+            return true;
+
+         result = {};
       }
       mssg_t protectedMessage = info.attributes.get({ message, ClassAttribute::ProtectedAlias });
       if (protectedMessage) {

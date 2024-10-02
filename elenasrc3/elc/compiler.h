@@ -1647,6 +1647,9 @@ namespace elena_lang
 
       void declareSymbolMetaInfo(SymbolScope& scope, SyntaxNode node);
 
+      void declareByRefHandler(SyntaxNode classNode, SyntaxKey methodType,
+         ref_t targetRef, ClassInfo& info, mssg_t message, bool abstractOne);
+
       void declareMetaInfo(Scope& scope, SyntaxNode node);
       void declareMethodMetaInfo(MethodScope& scope, SyntaxNode node);
       void declareMethod(MethodScope& scope, SyntaxNode node, bool abstractMode,
@@ -1760,7 +1763,7 @@ namespace elena_lang
       mssg_t declareInplaceConstructorHandler(MethodScope& invokerScope, ClassScope& classClassScope);
       mssg_t compileInplaceConstructorHandler(BuildTreeWriter& writer, MethodScope& invokerScope,
          ClassScope& classClassScope, SyntaxNode current, SyntaxNode methodNode, mssg_t handler);
-      mssg_t compileByRefHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node,
+      void compileByRefHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node,
          mssg_t byRefHandler);
       void compileByRefRedirectHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node,
          mssg_t byRefHandler);
@@ -1806,10 +1809,10 @@ namespace elena_lang
       void injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool interfaceBased);
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope, 
          ref_t targetRef, ClassInfo& info, mssg_t multiMethod, int nillableArgs);
-      void injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey methodType,
-         ref_t targetRef, ClassInfo& info, mssg_t multiMethod, bool abstractOne);
 
       void injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType, Scope& scope,
+         ref_t targetRef, ClassInfo& info, VirtualMethodList& implicitMultimethods);
+      void declareVirtualMethods(SyntaxNode classNode, SyntaxKey methodType, Scope& scope,
          ref_t targetRef, ClassInfo& info, VirtualMethodList& implicitMultimethods);
 
       void injectInitializer(SyntaxNode classNode, SyntaxKey methodType, mssg_t message);

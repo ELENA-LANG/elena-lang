@@ -57,6 +57,7 @@ namespace elena_lang
 
    constexpr auto WEAK_POSTFIX               = "#weak";
    constexpr auto ENUM_POSTFIX               = "#enum";
+   constexpr auto BYREF_POSTFIX              = "#byref";
 
    constexpr auto NAMESPACE_REF              = "$namespace";
 

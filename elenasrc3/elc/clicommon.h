@@ -790,8 +790,8 @@ enum class VirtualType : int
 {
    None = 0,
    Multimethod,
-   EmbeddableWrapper,
-   AbstractEmbeddableWrapper
+   ByRefHandler,
+   AbstractByRefHandler
 };
 
 struct VirtualMethod
