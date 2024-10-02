@@ -7947,7 +7947,7 @@ void Compiler::compileStaticInitializerMethod(BuildTreeWriter& writer, ClassScop
    nestedWriter.closeNode();
 }
 
-void Compiler::compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode)
+void Compiler :: compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode)
 {
    SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
    if (current.key == SyntaxKey::WithoutBody) {
@@ -7959,6 +7959,11 @@ void Compiler::compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope
 
    writer.newNode(BuildKey::AbstractMethod, scope.message);
    writer.closeNode();
+
+   if (scope.info.byRefHandler) {
+      writer.newNode(BuildKey::AbstractMethod, scope.info.byRefHandler);
+      writer.closeNode();
+   }
 }
 
 inline bool isIndexedOp(ClassInfo& info, mssg_t message)

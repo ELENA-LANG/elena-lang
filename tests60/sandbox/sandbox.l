@@ -22,13 +22,13 @@ import extensions;
 
 A
 {
-   get int Value()
-      = 2;
+   int getValue(int n)
+      = 2 + n;
 }
 
 public program()
 {
    A a := new A();
 
-   int n := *a;
+   int n := a.getValue(2);
 }
