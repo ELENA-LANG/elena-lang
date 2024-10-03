@@ -11,6 +11,7 @@
 ..\..\bin\ldoc system'net
 ..\..\bin\ldoc extensions
 ..\..\bin\ldoc extensions'routines
+..\..\bin\ldoc extensions'routines'stex
 ..\..\bin\ldoc extensions'scripting
 ..\..\bin\ldoc extensions'dynamic
 ..\..\bin\ldoc extensions'io
