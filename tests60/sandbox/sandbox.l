@@ -20,15 +20,25 @@ import extensions;
 //   Console.printLine("Finished ", t.Result, " iterations.");  
 //}
 
-A
+extension op
 {
-   int getValue(int n)
-      = 2 + n;
+   int xmod(o)
+   {
+      ^ self.xmod(cast int(o))
+   }
+
+   int xmod(int n)
+      = n + 3;
 }
 
 public program()
 {
-   A a := new A();
+   int n := 2;
 
-   int n := a.getValue(2);
+   int r := n.xmod(3);
+
+//   int n := 10;
+//   int radix := 3;
+//
+//   int r := n.mod(radix);
 }

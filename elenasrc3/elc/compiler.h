@@ -1270,6 +1270,9 @@ namespace elena_lang
 
          bool isDirectMethodCall(SyntaxNode& node);
 
+         bool checkValidity(ObjectInfo target, CheckMethodResult& result, bool allowPrivateCall);
+         bool checkValidity(ObjectInfo target, MessageResolution& resolution, bool allowPrivateCall);
+
          ObjectInfo compileLookAhead(SyntaxNode node,
             ref_t targetRef, ExpressionAttribute attrs);
 

@@ -40,12 +40,8 @@ In development:
   * async method returning a value
   * closed class may have byref handler
   * teset ret ovlerload
-  * test byref handler for internal / private / protected - inside / outside
-  * test byref handler for extension
-  * test byref handler for normal, closed, sealed classes
-  * remove byref invoker
   --------------------------------------  
-  * byref must be virtual hidden or private;     
+  * fix int r := n.mod(radix);
 
   === Iteration 34 ===
   --------------------------------------
