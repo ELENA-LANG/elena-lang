@@ -37,11 +37,8 @@ In development:
   * stream async operations - readAsync
   * async example2 : https://dotnettutorials.net/lesson/return-a-value-from-a-task-in-csharp/
   * async programming with Task<T>
-  * async method returning a value
-  * closed class may have byref handler
-  * teset ret ovlerload
   --------------------------------------  
-  * fix int r := n.mod(radix);
+  * async method returning a value
 
   === Iteration 34 ===
   --------------------------------------

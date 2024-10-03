@@ -30,7 +30,7 @@ public closed class Task
       ^ nil;
    }      
 
-   internal Exception Exception
+   indexed internal Exception Exception
    {  
       get()
          = _exception;
@@ -231,14 +231,14 @@ public sealed class Task<TResult> : Task
       };
    }
 
-   private setResultValue(TResult r)
+   indexed internal setResultValue(TResult r)
    {
       lock(self) {
          _result := r
       }
    }
 
-   private TResult getResultValue()
+   indexed internal TResult getResultValue()
       = _result;
 
    get TResult Result()
