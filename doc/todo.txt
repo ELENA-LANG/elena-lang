@@ -24,20 +24,18 @@ In development:
       - test binary file operations
       - test encoders with files  
       - api refactoring : all symbols must start with a capital letter
-      - test all examples : console
       - redesign winforms
   port:
   tools: 
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * test all examples : console
   * stream async operations - readAsync
   * #675
   * x86-64 : mta - corex
-  * ldoc : system'collections'threadsafe : only proper templates must be shown 
-  * functional test - __getClassName
   --------------------------------------  
-  * typecasting error : why the target is objectOp? (typecasting to IntNumber)
+  * ldoc : system'collections'threadsafe : only proper templates must be shown 
 
   === Iteration 34 ===
   --------------------------------------

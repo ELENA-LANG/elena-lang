@@ -1473,6 +1473,19 @@ bool isTemplateDeclaration(ustr_t referenceName)
    return referenceName.findStr("@T1") != NOTFOUND_POS/* && referenceName.findStr("$private") != NOTFOUND_POS*/;
 }
 
+bool isOwnTemplate(ustr_t referenceName, ustr_t ns)
+{
+   ReferenceProperName templateName(referenceName);
+
+   size_t index = (*templateName).find('#');
+   templateName.cut(index, templateName.length() - index);
+   index = (*templateName).findLast('@');
+   templateName.cut(index, templateName.length() - index);
+   templateName.replaceAll('@', '\'', 0);
+
+   return ns.compare(*templateName);
+}
+
 void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
 {
    auto referenceName = _module->resolveReference(reference);
@@ -1549,7 +1562,7 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
       if (_module->mapSection(reference | mskVMTRef, true) || extensionRef) {
          bool templateBased = false;
          if (isTemplateBased(referenceName)) {
-            if (isTemplateDeclaration(referenceName)) {
+            if (isTemplateDeclaration(referenceName) && isOwnTemplate(referenceName, _module->name())) {
                templateBased = true;
 
                parseTemplateName(properName, templateBased);
