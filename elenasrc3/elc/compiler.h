@@ -990,6 +990,12 @@ namespace elena_lang
             
             return scope ? test(scope->info.header.flags, elSealed) : false;
          }
+         ref_t isExtension(bool ownerClass = true)
+         {
+            ClassScope* scope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+
+            return scope ? (scope->extensionClassRef != 0) : false;
+         }
 
          ObjectInfo mapSelf(bool ownerClass = false)
          {

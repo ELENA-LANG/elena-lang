@@ -6937,127 +6937,127 @@ ObjectInfo Compiler::defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo 
    bool invalidForNonIdentifier = terminalAttrs.isAnySet() || distributedMode;
 
    switch (node.key) {
-   case SyntaxKey::TemplateType:
-   {
-      TypeAttributes typeAttributes = {};
-      TypeInfo typeInfo = resolveTypeAttribute(scope, node, typeAttributes, false, false);
-      retVal = { ObjectKind::Class, typeInfo, 0u };
+      case SyntaxKey::TemplateType:
+      {
+         TypeAttributes typeAttributes = {};
+         TypeInfo typeInfo = resolveTypeAttribute(scope, node, typeAttributes, false, false);
+         retVal = { ObjectKind::Class, typeInfo, 0u };
 
-      retVal = mapClassSymbol(scope, resolveStrongType(scope, retVal.typeInfo));
-      break;
-   }
-   case SyntaxKey::globalreference:
-      invalid = terminalAttrs.variableMode;
-      retVal = scope.mapGlobal(node.identifier());
-      break;
-   case SyntaxKey::identifier:
-   case SyntaxKey::reference:
-      if (terminalAttrs.variableMode) {
-         invalid = terminalAttrs.forwardMode;
+         retVal = mapClassSymbol(scope, resolveStrongType(scope, retVal.typeInfo));
+         break;
+      }
+      case SyntaxKey::globalreference:
+         invalid = terminalAttrs.variableMode;
+         retVal = scope.mapGlobal(node.identifier());
+         break;
+      case SyntaxKey::identifier:
+      case SyntaxKey::reference:
+         if (terminalAttrs.variableMode) {
+            invalid = terminalAttrs.forwardMode;
 
-         if (declareVariable(scope, node, declaredTypeInfo, ignoreDuplicates)) {
-            retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference,
-               attrs | ExpressionAttribute::Local);
+            if (declareVariable(scope, node, declaredTypeInfo, ignoreDuplicates)) {
+               retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference,
+                  attrs | ExpressionAttribute::Local);
 
-            if (_trackingUnassigned && terminalAttrs.outRefOp) {
-               scope.markAsAssigned(retVal);
+               if (_trackingUnassigned && terminalAttrs.outRefOp) {
+                  scope.markAsAssigned(retVal);
+               }
             }
+            else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
+         }
+         else if (terminalAttrs.forwardMode) {
+            IdentifierString forwardName(FORWARD_PREFIX_NS, node.identifier());
+
+            retVal = scope.mapIdentifier(*forwardName, true, attrs);
+         }
+         else if (distributedMode) {
+            retVal = scope.mapDictionary(node.identifier(), node.key == SyntaxKey::reference, attrs | EAttr::StrongResolved);
+            if (retVal.kind == ObjectKind::TypeList) {
+               retVal.kind = ObjectKind::DistributedTypeList;
+            }
+            else return {};
+         }
+         else if (terminalAttrs.memberMode) {
+            retVal = scope.mapMember(node.identifier());
          }
          else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
-      }
-      else if (terminalAttrs.forwardMode) {
-         IdentifierString forwardName(FORWARD_PREFIX_NS, node.identifier());
 
-         retVal = scope.mapIdentifier(*forwardName, true, attrs);
-      }
-      else if (distributedMode) {
-         retVal = scope.mapDictionary(node.identifier(), node.key == SyntaxKey::reference, attrs | EAttr::StrongResolved);
-         if (retVal.kind == ObjectKind::TypeList) {
-            retVal.kind = ObjectKind::DistributedTypeList;
+         if (terminalAttrs.refOp || terminalAttrs.outRefOp) {
+            switch (retVal.kind) {
+               case ObjectKind::LocalAddress:
+                  retVal.typeInfo = { terminalAttrs.outRefOp ? V_OUTWRAPPER : V_WRAPPER, retVal.typeInfo.typeRef };
+                  break;
+               case ObjectKind::ParamAddress:
+                  retVal.typeInfo = { terminalAttrs.outRefOp ? V_OUTWRAPPER : V_WRAPPER, retVal.typeInfo.typeRef };
+                  break;
+               case ObjectKind::Local:
+                  retVal.kind = ObjectKind::RefLocal;
+                  retVal.typeInfo = { terminalAttrs.outRefOp ? V_OUTWRAPPER : V_WRAPPER, retVal.typeInfo.typeRef };
+                  break;
+               case ObjectKind::ByRefParam:
+               case ObjectKind::OutParam:
+                  // allowing to pass by ref parameter directly
+                  retVal.kind = ObjectKind::ParamReference;
+                  retVal.typeInfo = { retVal.kind == ObjectKind::OutParam ? V_OUTWRAPPER : V_WRAPPER, retVal.typeInfo.typeRef };
+                  break;
+               case ObjectKind::OutParamAddress:
+               case ObjectKind::ByRefParamAddress:
+                  // allowing to pass by ref parameter directly
+                  retVal.kind = ObjectKind::ParamAddress;
+                  retVal.typeInfo = { retVal.kind == ObjectKind::OutParamAddress ? V_OUTWRAPPER : V_WRAPPER, retVal.typeInfo.typeRef };
+                  //retVal.mode = TargetMode::UnboxingRequired;
+                  break;
+               default:
+                  invalid = true;
+                  break;
+            }
          }
-         else return {};
-      }
-      else if (terminalAttrs.memberMode) {
-         retVal = scope.mapMember(node.identifier());
-      }
-      else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
+         break;
+      case SyntaxKey::string:
+      case SyntaxKey::interpolate:
+         invalid = invalidForNonIdentifier;
 
-      if (terminalAttrs.refOp || terminalAttrs.outRefOp) {
-         switch (retVal.kind) {
-         case ObjectKind::LocalAddress:
-            retVal.typeInfo = { terminalAttrs.outRefOp ? V_OUTWRAPPER : V_WRAPPER, retVal.typeInfo.typeRef };
-            break;
-         case ObjectKind::ParamAddress:
-            retVal.typeInfo = { terminalAttrs.outRefOp ? V_OUTWRAPPER : V_WRAPPER, retVal.typeInfo.typeRef };
-            break;
-         case ObjectKind::Local:
-            retVal.kind = ObjectKind::RefLocal;
-            retVal.typeInfo = { terminalAttrs.outRefOp ? V_OUTWRAPPER : V_WRAPPER, retVal.typeInfo.typeRef };
-            break;
-         case ObjectKind::ByRefParam:
-         case ObjectKind::OutParam:
-            // allowing to pass by ref parameter directly
-            retVal.kind = ObjectKind::ParamReference;
-            retVal.typeInfo = { retVal.kind == ObjectKind::OutParam ? V_OUTWRAPPER : V_WRAPPER, retVal.typeInfo.typeRef };
-            break;
-         case ObjectKind::OutParamAddress:
-         case ObjectKind::ByRefParamAddress:
-            // allowing to pass by ref parameter directly
-            retVal.kind = ObjectKind::ParamAddress;
-            retVal.typeInfo = { retVal.kind == ObjectKind::OutParamAddress ? V_OUTWRAPPER : V_WRAPPER, retVal.typeInfo.typeRef };
-            //retVal.mode = TargetMode::UnboxingRequired;
-            break;
-         default:
-            invalid = true;
-            break;
-         }
-      }
-      break;
-   case SyntaxKey::string:
-   case SyntaxKey::interpolate:
-      invalid = invalidForNonIdentifier;
+         retVal = mapStringConstant(scope, node);
+         break;
+      case SyntaxKey::wide:
+         invalid = invalidForNonIdentifier;
 
-      retVal = mapStringConstant(scope, node);
-      break;
-   case SyntaxKey::wide:
-      invalid = invalidForNonIdentifier;
+         retVal = mapWideStringConstant(scope, node);
+         break;
+      case SyntaxKey::character:
+         invalid = invalidForNonIdentifier;
 
-      retVal = mapWideStringConstant(scope, node);
-      break;
-   case SyntaxKey::character:
-      invalid = invalidForNonIdentifier;
+         retVal = mapCharacterConstant(scope, node);
+         break;
+      case SyntaxKey::integer:
+         invalid = invalidForNonIdentifier;
 
-      retVal = mapCharacterConstant(scope, node);
-      break;
-   case SyntaxKey::integer:
-      invalid = invalidForNonIdentifier;
+         retVal = mapIntConstant(scope, node, 10);
+         break;
+      case SyntaxKey::hexinteger:
+         invalid = invalidForNonIdentifier;
 
-      retVal = mapIntConstant(scope, node, 10);
-      break;
-   case SyntaxKey::hexinteger:
-      invalid = invalidForNonIdentifier;
+         retVal = mapUIntConstant(scope, node, 16);
+         break;
+      case SyntaxKey::longinteger:
+         invalid = invalidForNonIdentifier;
 
-      retVal = mapUIntConstant(scope, node, 16);
-      break;
-   case SyntaxKey::longinteger:
-      invalid = invalidForNonIdentifier;
+         retVal = mapLongConstant(scope, node, 10);
+         break;
+      case SyntaxKey::real:
+         invalid = invalidForNonIdentifier;
 
-      retVal = mapLongConstant(scope, node, 10);
-      break;
-   case SyntaxKey::real:
-      invalid = invalidForNonIdentifier;
+         retVal = mapFloat64Constant(scope, node);
+         break;
+      case SyntaxKey::constant:
+         invalid = invalidForNonIdentifier;
 
-      retVal = mapFloat64Constant(scope, node);
-      break;
-   case SyntaxKey::constant:
-      invalid = invalidForNonIdentifier;
-
-      retVal = mapConstant(scope, node);
-      break;
-   default:
-      // to make compiler happy
-      invalid = true;
-      break;
+         retVal = mapConstant(scope, node);
+         break;
+      default:
+         // to make compiler happy
+         invalid = true;
+         break;
    }
 
    if (EAttrs::test(attrs, EAttr::Weak)) {
@@ -13922,144 +13922,144 @@ ObjectInfo Compiler::Expression::compileAssigning(SyntaxNode loperand, SyntaxNod
 bool Compiler::Expression::writeObjectInfo(ObjectInfo info, bool allowMeta)
 {
    switch (info.kind) {
-   case ObjectKind::IntLiteral:
-      writer->newNode(BuildKey::IntLiteral, info.reference);
-      writer->appendNode(BuildKey::Value, info.extra);
-      writer->closeNode();
-      break;
-   case ObjectKind::Float64Literal:
-      writer->appendNode(BuildKey::RealLiteral, info.reference);
-      break;
-   case ObjectKind::LongLiteral:
-      writer->appendNode(BuildKey::LongLiteral, info.reference);
-      break;
-   case ObjectKind::StringLiteral:
-      writer->appendNode(BuildKey::StringLiteral, info.reference);
-      break;
-   case ObjectKind::WideStringLiteral:
-      writer->appendNode(BuildKey::WideStringLiteral, info.reference);
-      break;
-   case ObjectKind::CharacterLiteral:
-      writer->appendNode(BuildKey::CharLiteral, info.reference);
-      break;
-   case ObjectKind::MssgLiteral:
-      writer->appendNode(BuildKey::MssgLiteral, info.reference);
-      break;
-   case ObjectKind::MssgNameLiteral:
-      writer->appendNode(BuildKey::MssgNameLiteral, info.reference);
-      break;
-   case ObjectKind::ExtMssgLiteral:
-      writer->appendNode(BuildKey::ExtMssgLiteral, info.reference);
-      break;
-      //case ObjectKind::MetaDictionary:
-   //   writer.appendNode(BuildKey::MetaDictionary, info.reference);
-   //   break;
-   //case ObjectKind::MetaArray:
-   //   writer.appendNode(BuildKey::MetaArray, info.reference);
-   //   break;
-   case ObjectKind::Nil:
-      writer->appendNode(BuildKey::NilReference, 0);
-      break;
-   case ObjectKind::Terminator:
-      writer->appendNode(BuildKey::TerminatorReference, 0);
-      break;
-   case ObjectKind::Symbol:
-      writer->appendNode(BuildKey::SymbolCall, info.reference);
-      break;
-   case ObjectKind::Extension:
-   case ObjectKind::Class:
-   case ObjectKind::ClassSelf:
-   case ObjectKind::Singleton:
-   case ObjectKind::ConstantRole:
-      writer->appendNode(BuildKey::ClassReference, info.reference);
-      break;
-   case ObjectKind::Constant:
-      writer->appendNode(BuildKey::ConstantReference, info.reference);
-      break;
-   case ObjectKind::ConstArray:
-      writer->appendNode(BuildKey::ConstArrayReference, info.reference);
-      break;
-   case ObjectKind::Param:
-   case ObjectKind::SelfLocal:
-   case ObjectKind::SuperLocal:
-   case ObjectKind::ReadOnlySelfLocal:
-   case ObjectKind::Local:
-   case ObjectKind::TempLocal:
-   case ObjectKind::ParamAddress:
-   case ObjectKind::ParamReference:
-   case ObjectKind::SelfBoxableLocal:
-   case ObjectKind::ByRefParamAddress:
-   case ObjectKind::OutParamAddress:
-   case ObjectKind::ConstructorSelf:
-      writer->appendNode(BuildKey::Local, info.reference);
-      break;
-   case ObjectKind::LocalField:
-      writer->appendNode(BuildKey::Local, info.reference);
-      writer->appendNode(BuildKey::Field, info.extra);
-      break;
-   case ObjectKind::VArgParam:
-      writer->appendNode(BuildKey::LocalReference, info.reference);
-      break;
-   case ObjectKind::LocalReference:
-      writer->appendNode(BuildKey::LocalReference, info.reference);
-      break;
-   case ObjectKind::LocalAddress:
-   case ObjectKind::TempLocalAddress:
-      writer->appendNode(BuildKey::LocalAddress, info.reference);
-      break;
-   case ObjectKind::ReadOnlyField:
-   case ObjectKind::Field:
-   case ObjectKind::Outer:
-   case ObjectKind::OuterSelf:
-      writeObjectInfo(scope.mapSelf());
-      writer->appendNode(BuildKey::Field, info.reference);
-      break;
-   case ObjectKind::OuterField:
-      writeObjectInfo(scope.mapSelf());
-      writer->appendNode(BuildKey::Field, info.reference);
-      writer->appendNode(BuildKey::Field, info.extra);
-      break;
-   case ObjectKind::StaticConstField:
-      if (scope.isSealed(false)) {
-         writer->appendNode(BuildKey::ClassReference, scope.getClassRef(false));
-      }
-      else {
+      case ObjectKind::IntLiteral:
+         writer->newNode(BuildKey::IntLiteral, info.reference);
+         writer->appendNode(BuildKey::Value, info.extra);
+         writer->closeNode();
+         break;
+      case ObjectKind::Float64Literal:
+         writer->appendNode(BuildKey::RealLiteral, info.reference);
+         break;
+      case ObjectKind::LongLiteral:
+         writer->appendNode(BuildKey::LongLiteral, info.reference);
+         break;
+      case ObjectKind::StringLiteral:
+         writer->appendNode(BuildKey::StringLiteral, info.reference);
+         break;
+      case ObjectKind::WideStringLiteral:
+         writer->appendNode(BuildKey::WideStringLiteral, info.reference);
+         break;
+      case ObjectKind::CharacterLiteral:
+         writer->appendNode(BuildKey::CharLiteral, info.reference);
+         break;
+      case ObjectKind::MssgLiteral:
+         writer->appendNode(BuildKey::MssgLiteral, info.reference);
+         break;
+      case ObjectKind::MssgNameLiteral:
+         writer->appendNode(BuildKey::MssgNameLiteral, info.reference);
+         break;
+      case ObjectKind::ExtMssgLiteral:
+         writer->appendNode(BuildKey::ExtMssgLiteral, info.reference);
+         break;
+         //case ObjectKind::MetaDictionary:
+      //   writer.appendNode(BuildKey::MetaDictionary, info.reference);
+      //   break;
+      //case ObjectKind::MetaArray:
+      //   writer.appendNode(BuildKey::MetaArray, info.reference);
+      //   break;
+      case ObjectKind::Nil:
+         writer->appendNode(BuildKey::NilReference, 0);
+         break;
+      case ObjectKind::Terminator:
+         writer->appendNode(BuildKey::TerminatorReference, 0);
+         break;
+      case ObjectKind::Symbol:
+         writer->appendNode(BuildKey::SymbolCall, info.reference);
+         break;
+      case ObjectKind::Extension:
+      case ObjectKind::Class:
+      case ObjectKind::ClassSelf:
+      case ObjectKind::Singleton:
+      case ObjectKind::ConstantRole:
+         writer->appendNode(BuildKey::ClassReference, info.reference);
+         break;
+      case ObjectKind::Constant:
+         writer->appendNode(BuildKey::ConstantReference, info.reference);
+         break;
+      case ObjectKind::ConstArray:
+         writer->appendNode(BuildKey::ConstArrayReference, info.reference);
+         break;
+      case ObjectKind::Param:
+      case ObjectKind::SelfLocal:
+      case ObjectKind::SuperLocal:
+      case ObjectKind::ReadOnlySelfLocal:
+      case ObjectKind::Local:
+      case ObjectKind::TempLocal:
+      case ObjectKind::ParamAddress:
+      case ObjectKind::ParamReference:
+      case ObjectKind::SelfBoxableLocal:
+      case ObjectKind::ByRefParamAddress:
+      case ObjectKind::OutParamAddress:
+      case ObjectKind::ConstructorSelf:
+         writer->appendNode(BuildKey::Local, info.reference);
+         break;
+      case ObjectKind::LocalField:
+         writer->appendNode(BuildKey::Local, info.reference);
+         writer->appendNode(BuildKey::Field, info.extra);
+         break;
+      case ObjectKind::VArgParam:
+         writer->appendNode(BuildKey::LocalReference, info.reference);
+         break;
+      case ObjectKind::LocalReference:
+         writer->appendNode(BuildKey::LocalReference, info.reference);
+         break;
+      case ObjectKind::LocalAddress:
+      case ObjectKind::TempLocalAddress:
+         writer->appendNode(BuildKey::LocalAddress, info.reference);
+         break;
+      case ObjectKind::ReadOnlyField:
+      case ObjectKind::Field:
+      case ObjectKind::Outer:
+      case ObjectKind::OuterSelf:
          writeObjectInfo(scope.mapSelf());
-         writer->appendNode(BuildKey::ClassOp, CLASS_OPERATOR_ID);
-      }
-      writer->appendNode(BuildKey::Field, info.reference);
-      break;
-   case ObjectKind::ClassStaticConstField:
-      writeObjectInfo(scope.mapSelf());
-      writer->appendNode(BuildKey::Field, info.reference);
-      break;
-   case ObjectKind::StaticField:
-      writer->appendNode(BuildKey::StaticVar, info.reference);
-      break;
-   case ObjectKind::StaticThreadField:
-      writer->appendNode(BuildKey::ThreadVar, info.reference);
-      break;
-   case ObjectKind::ByRefParam:
-   case ObjectKind::OutParam:
-      writeObjectInfo({ ObjectKind::Param, info.typeInfo, info.reference });
-      writer->appendNode(BuildKey::Field);
-      break;
-   case ObjectKind::ClassConstant:
-      if (info.reference == INVALID_REF)
-         throw InternalError(errFatalError);
+         writer->appendNode(BuildKey::Field, info.reference);
+         break;
+      case ObjectKind::OuterField:
+         writeObjectInfo(scope.mapSelf());
+         writer->appendNode(BuildKey::Field, info.reference);
+         writer->appendNode(BuildKey::Field, info.extra);
+         break;
+      case ObjectKind::StaticConstField:
+         if (scope.isSealed(false) && !scope.isExtension(false)) {
+            writer->appendNode(BuildKey::ClassReference, scope.getClassRef(false));
+         }
+         else {
+            writeObjectInfo(scope.mapSelf());
+            writer->appendNode(BuildKey::ClassOp, CLASS_OPERATOR_ID);
+         }
+         writer->appendNode(BuildKey::Field, info.reference);
+         break;
+      case ObjectKind::ClassStaticConstField:
+         writeObjectInfo(scope.mapSelf());
+         writer->appendNode(BuildKey::Field, info.reference);
+         break;
+      case ObjectKind::StaticField:
+         writer->appendNode(BuildKey::StaticVar, info.reference);
+         break;
+      case ObjectKind::StaticThreadField:
+         writer->appendNode(BuildKey::ThreadVar, info.reference);
+         break;
+      case ObjectKind::ByRefParam:
+      case ObjectKind::OutParam:
+         writeObjectInfo({ ObjectKind::Param, info.typeInfo, info.reference });
+         writer->appendNode(BuildKey::Field);
+         break;
+      case ObjectKind::ClassConstant:
+         if (info.reference == INVALID_REF)
+            throw InternalError(errFatalError);
 
-      writer->appendNode(BuildKey::ConstantReference, info.reference);
-      break;
-   case ObjectKind::DistributedTypeList:
-      if (allowMeta) {
-         writer->appendNode(BuildKey::DistributedTypeList, info.reference);
-      }
-      else return false;
-      break;
-   case ObjectKind::Object:
-      break;
-   default:
-      return false;
+         writer->appendNode(BuildKey::ConstantReference, info.reference);
+         break;
+      case ObjectKind::DistributedTypeList:
+         if (allowMeta) {
+            writer->appendNode(BuildKey::DistributedTypeList, info.reference);
+         }
+         else return false;
+         break;
+      case ObjectKind::Object:
+         break;
+      default:
+         return false;
    }
 
    return true;
@@ -14069,36 +14069,36 @@ ObjectInfo Compiler::Expression::boxArgumentLocally(ObjectInfo info,
    bool stackSafe, bool forced)
 {
    switch (info.kind) {
-   case ObjectKind::Field:
-   case ObjectKind::Outer:
-   case ObjectKind::OuterField:
-   case ObjectKind::StaticField:
-   case ObjectKind::StaticThreadField:
-      if (forced) {
-         return boxLocally(info, stackSafe);
-      }
-      return info;
-   case ObjectKind::ReadOnlyFieldAddress:
-   case ObjectKind::FieldAddress:
-      if (info.argument == 0 && !forced) {
-         ObjectInfo retVal = scope.mapSelf();
-         // HOTFIX : no conditional boxing in this case
-         if (retVal.mode == TargetMode::Conditional)
-            retVal.mode = TargetMode::None;
+      case ObjectKind::Field:
+      case ObjectKind::Outer:
+      case ObjectKind::OuterField:
+      case ObjectKind::StaticField:
+      case ObjectKind::StaticThreadField:
+         if (forced) {
+            return boxLocally(info, stackSafe);
+         }
+         return info;
+      case ObjectKind::ReadOnlyFieldAddress:
+      case ObjectKind::FieldAddress:
+         if (info.argument == 0 && !forced) {
+            ObjectInfo retVal = scope.mapSelf();
+            // HOTFIX : no conditional boxing in this case
+            if (retVal.mode == TargetMode::Conditional)
+               retVal.mode = TargetMode::None;
 
-         retVal.typeInfo = info.typeInfo;
+            retVal.typeInfo = info.typeInfo;
 
-         return retVal;
-      }
-      else return boxLocally(info, stackSafe);
-   case ObjectKind::StaticConstField:
-   case ObjectKind::ClassStaticConstField:
-      if (info.mode == TargetMode::BoxingPtr) {
-         return boxPtrLocally(info);
-      }
-      else return info;
-   default:
-      return info;
+            return retVal;
+         }
+         else return boxLocally(info, stackSafe);
+      case ObjectKind::StaticConstField:
+      case ObjectKind::ClassStaticConstField:
+         if (info.mode == TargetMode::BoxingPtr) {
+            return boxPtrLocally(info);
+         }
+         else return info;
+      default:
+         return info;
    }
 }
 

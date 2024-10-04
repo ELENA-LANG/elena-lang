@@ -6,4 +6,5 @@ public program()
 
    solution =>
       1 { sample1() }
+      2 { sample2() }
 }

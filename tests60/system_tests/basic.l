@@ -2220,3 +2220,13 @@ public sealedMethodDispatcher() : testCase()
    Assert.ifNotFailed({ weak b.continueWith(c); });
    console.write(".");
 }
+
+public objectOpTests() : testCase()
+{
+   A a := new A();
+
+   string name := a.__getClassName();
+
+   Assert.ifEqual(name, "system_tests'$private'A");
+   console.write(".");
+}

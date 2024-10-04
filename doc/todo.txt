@@ -18,7 +18,6 @@ In development:
       - lpad : generate a code based on a record  
   maint:
       - unit tests : virtual, internal virtual, byref for closed class, virtual internal by closed class
-      - #675
       - #689
       - unit tests : bt optimization 
       - fix warnings in all libraries    
@@ -28,16 +27,17 @@ In development:
       - test all examples : console
       - redesign winforms
   port:
-      - x86-64 : mta - corex
   tools: 
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
-  * ldoc : system'collections'threadsafe : only proper templates must be shown 
   * stream async operations - readAsync
-  * typecasting error : why the target is objectOp?
+  * #675
+  * x86-64 : mta - corex
+  * ldoc : system'collections'threadsafe : only proper templates must be shown 
+  * functional test - __getClassName
   --------------------------------------  
-  * async example2 : https://dotnettutorials.net/lesson/return-a-value-from-a-task-in-csharp/
+  * typecasting error : why the target is objectOp? (typecasting to IntNumber)
 
   === Iteration 34 ===
   --------------------------------------
