@@ -241,6 +241,40 @@ namespace elena_lang
 
       void generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_t parentRef, VirtualMethods& methods);
 
+      void retrieveTemplateNs(ModuleScopeBase& scope, ref_t reference, ReferenceProperName& templateName)
+      {
+         templateName.copyName(scope.resolveFullName(reference));
+
+         size_t index = (*templateName).find('#');
+         templateName.cut(index, templateName.length() - index);
+         index = (*templateName).findLast('@');
+         templateName.cut(index, templateName.length() - index);
+         templateName.replaceAll('@', '\'', 0);
+      }
+
+      bool isTemplateInternalOp(ModuleScopeBase& scope, ref_t reference1, ref_t reference2)
+      {
+         // retrive the template namespace
+         ReferenceProperName templateNs;
+         retrieveTemplateNs(scope, reference1, templateNs);
+
+         NamespaceString referenceNs(scope.resolveFullName(reference2));
+
+         return (*templateNs).compare(*referenceNs);
+      }
+      bool isInternalOp(ModuleScopeBase& scope, ref_t reference)
+      {
+         ustr_t referenceName = scope.resolveFullName(reference);
+         if (isWeakReference(referenceName)) {
+            return true;
+         }
+         else {
+            auto refInfo = scope.getModule(referenceName, true);
+
+            return refInfo.module == scope.module;
+         }
+      }
+
       CompilerLogic()
          : _operations({})
       {

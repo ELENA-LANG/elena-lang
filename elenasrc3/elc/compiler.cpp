@@ -1850,8 +1850,8 @@ bool Compiler::InlineClassScope::markAsPresaved(ObjectInfo object)
 
 // --- Compiler::StatemachineClassScope ---
 
-Compiler::StatemachineClassScope::StatemachineClassScope(ExprScope* owner, ref_t reference)
-   : InlineClassScope(owner, reference), contextSize(0), typeRef(0)
+Compiler::StatemachineClassScope::StatemachineClassScope(ExprScope* owner, ref_t reference, bool asyncMode)
+   : InlineClassScope(owner, reference), contextSize(0), typeRef(0), resultRef(0), asyncMode(asyncMode)
 {
 }
 
@@ -2330,7 +2330,7 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
          if (!current.arg.reference) {
             // NOTE : an extension method must be strong-resolved
             declareVMTMessage(methodScope, current,
-               methodScope.checkHint(MethodHint::Extension), true);
+               methodScope.checkHint(MethodHint::Extension), true, templateBased);
 
             current.setArgumentReference(methodScope.message);
          }
@@ -3735,7 +3735,7 @@ void Compiler::declareParameter(MethodScope& scope, SyntaxNode current, bool wit
    nillable |= paramTypeInfo.nillable;
 }
 
-void Compiler::declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode)
+void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode, bool templateBasedMode)
 {
    IdentifierString actionStr;
    ref_t            actionRef = 0;
@@ -3940,7 +3940,13 @@ void Compiler::declareVMTMessage(MethodScope& scope, SyntaxNode node, bool witho
 
       if (MethodInfo::checkVisibility(scope.info, MethodHint::Internal)) {
          actionStr.insert("$$", 0);
-         actionStr.insert(scope.module->name(), 0);
+         if (templateBasedMode) {
+            ReferenceProperName ns;
+            _logic->retrieveTemplateNs(*scope.moduleScope, scope.getClassRef(), ns);
+            actionStr.insert(*ns, 0);
+         }
+         else actionStr.insert(scope.module->name(), 0);
+         actionStr.replaceAll('\'', '@', 0);
       }
       else if (MethodInfo::checkVisibility(scope.info, MethodHint::Protected)) {
          if (actionStr.compare(CONSTRUCTOR_MESSAGE) && paramCount == 0) {
@@ -7366,26 +7372,44 @@ inline SyntaxNode findObjectNode(SyntaxNode node)
 
 ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, EAttr mode)
 {
+   ObjectInfo retVal = {};
+
    Expression expression(this, codeScope, writer);
 
-   bool autoMode = false;
-   TypeInfo outputInfo = {};
-   if (codeScope.isByRefHandler()) {
-      ObjectInfo byRefTarget = codeScope.mapByRefReturnArg();
+   MethodScope* methodScope = Scope::getScope<MethodScope>(codeScope, Scope::ScopeLevel::Method);
+   if (methodScope && methodScope->isYieldable()) {
+      StatemachineClassScope* smScope = Scope::getScope<StatemachineClassScope>(codeScope, Scope::ScopeLevel::Statemachine);
+      assert(smScope != nullptr);
+      if (smScope->asyncMode) {
+         expression.compileAsyncOperation(node, false);
 
-      outputInfo = byRefTarget.typeInfo;
+         retVal = { ObjectKind::Singleton, { codeScope.moduleScope->branchingInfo.typeRef }, codeScope.moduleScope->branchingInfo.falseRef };
+         expression.writeObjectInfo(retVal);
+
+         writer.appendNode(BuildKey::goingToEOP);
+      }
+      else codeScope.raiseError(errInvalidOperation, node);
    }
-   else outputInfo = codeScope.getOutputInfo();
+   else {
+      bool autoMode = false;
+      TypeInfo outputInfo = {};
+      if (codeScope.isByRefHandler()) {
+         ObjectInfo byRefTarget = codeScope.mapByRefReturnArg();
 
-   if (outputInfo.typeRef == V_AUTO) {
-      autoMode = true;
-      outputInfo = {};
+         outputInfo = byRefTarget.typeInfo;
+      }
+      else outputInfo = codeScope.getOutputInfo();
+
+      if (outputInfo.typeRef == V_AUTO) {
+         autoMode = true;
+         outputInfo = {};
+      }
+
+      retVal = expression.compileReturning(node, mode, outputInfo);
+
+      if (autoMode)
+         outputInfo.typeRef = resolveStrongType(codeScope, retVal.typeInfo);
    }
-
-   ObjectInfo retVal = expression.compileReturning(node, mode, outputInfo);
-
-   if (autoMode)
-      outputInfo.typeRef = resolveStrongType(codeScope, retVal.typeInfo);
 
    codeScope.withRetStatement = true;
 
@@ -8614,16 +8638,22 @@ ref_t Compiler :: resolveYieldType(Scope& scope, SyntaxNode node)
    return scope.moduleScope->buildins.superReference;
 }
 
-ref_t Compiler :: resolveAsyncType(Scope& scope, SyntaxNode node)
+ref_t Compiler :: declareAsyncStatemachine(StatemachineClassScope& scope, SyntaxNode node)
 {
-   /*SyntaxNode current = node.findChild(SyntaxKey::TemplateType);
+   SyntaxNode current = node.findChild(SyntaxKey::TemplateType);
    if (current != SyntaxKey::None) {
       auto typeInfo = resolveStrongTypeAttribute(scope, current.findChild(SyntaxKey::TemplateArg), true, false);
 
-      return typeInfo.typeRef;
-   }*/
+      scope.typeRef = resolveStateMachine(scope, scope.moduleScope->buildins.taskReference, typeInfo.typeRef);
+      scope.resultRef = typeInfo.typeRef;
 
-   return scope.moduleScope->buildins.taskReference;
+      return resolveStateMachine(scope, scope.moduleScope->buildins.asyncStatemachineReference, typeInfo.typeRef);
+   }
+   else {
+      scope.typeRef = scope.moduleScope->buildins.taskReference;
+
+      return scope.moduleScope->buildins.asyncStatemachineReference;
+   }
 }
 
 void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
@@ -8633,15 +8663,14 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
 
    // declare a state machine enumerator
    ref_t nestedRef = scope.moduleScope->mapAnonymous();
-   StatemachineClassScope smScope(&expression.scope, nestedRef);
-   smScope.typeRef = resolveAsyncType(scope, node);
+   StatemachineClassScope smScope(&expression.scope, nestedRef, true);   
+   ref_t baseRef = declareAsyncStatemachine(smScope, node);
 
    BuildNode buildNode = writer.CurrentNode();
    while (buildNode != BuildKey::Root)
       buildNode = buildNode.parentNode();
 
    BuildTreeWriter nestedWriter(buildNode);
-   ref_t baseRef = scope.moduleScope->buildins.asyncStatemachineReference;
    compileStatemachineClass(nestedWriter, smScope, node, baseRef);
 
    // create a async method
@@ -8683,7 +8712,11 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
 
    mssg_t weakMessage = encodeMessage(scope.module->mapAction(PROCEED_MESSAGE, 0, false), 2, 0);
 
-   MessageResolution resolution = { weakMessage };
+   int resolvedNillableArgs = 0;
+   MessageResolution resolution = _logic->resolveSingleDispatch(*scope.moduleScope,
+      retrieveType(scope, args[0]), weakMessage, false, resolvedNillableArgs);
+   if (resolution.message)
+      resolution.resolved = true;
 
    retVal = expression.compileMessageOperation(node, args[0], resolution,
       0, args, EAttr::None, nullptr);
@@ -8706,7 +8739,7 @@ void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope,
 
    // create yield state machine
    ref_t nestedRef = scope.moduleScope->mapAnonymous();
-   StatemachineClassScope smScope(&expression.scope, nestedRef);
+   StatemachineClassScope smScope(&expression.scope, nestedRef, false);
    smScope.typeRef = resolveYieldType(scope, node);
 
    BuildNode buildNode = writer.CurrentNode();
@@ -8903,31 +8936,31 @@ void Compiler::compileConstructorCode(BuildTreeWriter& writer, SyntaxNode node, 
    }
 
    switch (current.key) {
-   case SyntaxKey::ResendDispatch:
-      // implicit default constructor cannot have redirect statement - because it leads to calling itself
-      if (scope.message == scope.moduleScope->buildins.constructor_message || scope.message == scope.moduleScope->buildins.protected_constructor_message)
-         scope.raiseError(errInvalidOperation, node);
-   case SyntaxKey::CodeBlock:
-      compileMethodCode(writer, &classClassScope, scope, codeScope, node, newFrame);
-      break;
-   case SyntaxKey::ReturnExpression:
-      compileRetExpression(writer, codeScope, current, EAttr::DynamicObject);
-      writer.appendNode(BuildKey::CloseFrame);
-      break;
-   case SyntaxKey::DirectResend:
-      compileDirectResendCode(writer, codeScope, current);
-      break;
-   case SyntaxKey::Redirect:
-      // redirect is not allowed for the constructor
-      scope.raiseError(errInvalidOperation, node);
-      break;
-   case SyntaxKey::None:
-      if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
+      case SyntaxKey::ResendDispatch:
+         // implicit default constructor cannot have redirect statement - because it leads to calling itself
+         if (scope.message == scope.moduleScope->buildins.constructor_message || scope.message == scope.moduleScope->buildins.protected_constructor_message)
+            scope.raiseError(errInvalidOperation, node);
+      case SyntaxKey::CodeBlock:
+         compileMethodCode(writer, &classClassScope, scope, codeScope, node, newFrame);
+         break;
+      case SyntaxKey::ReturnExpression:
+         compileRetExpression(writer, codeScope, current, EAttr::DynamicObject);
          writer.appendNode(BuildKey::CloseFrame);
          break;
-      }
-   default:
-      throw InternalError(errFatalError);
+      case SyntaxKey::DirectResend:
+         compileDirectResendCode(writer, codeScope, current);
+         break;
+      case SyntaxKey::Redirect:
+         // redirect is not allowed for the constructor
+         scope.raiseError(errInvalidOperation, node);
+         break;
+      case SyntaxKey::None:
+         if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
+            writer.appendNode(BuildKey::CloseFrame);
+            break;
+         }
+      default:
+         throw InternalError(errFatalError);
    }
 }
 
@@ -9053,7 +9086,7 @@ void Compiler::initializeMethod(ClassScope& scope, MethodScope& methodScope, Syn
    methodScope.targetSelfMode = methodScope.checkHint(MethodHint::TargetSelf);
    methodScope.nestedMode = scope.getScope(Scope::ScopeLevel::OwnerClass) != &scope;
 
-   declareVMTMessage(methodScope, current, false, false);
+   declareVMTMessage(methodScope, current, false, false, false);
 
    if (methodScope.info.outputRef) {
       SyntaxNode typeNode = current.findChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateType);
@@ -9336,12 +9369,12 @@ void Compiler::compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope
 
    SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
    switch (current.key) {
-   case SyntaxKey::CodeBlock:
-   case SyntaxKey::ReturnExpression:
-      compileMethodCode(writer, classScope, scope, codeScope, node, false);
-      break;
-   default:
-      break;
+      case SyntaxKey::CodeBlock:
+      case SyntaxKey::ReturnExpression:
+         compileMethodCode(writer, classScope, scope, codeScope, node, false);
+         break;
+      default:
+         break;
    }
 
    codeScope.syncStack(&scope);
@@ -9784,6 +9817,9 @@ void Compiler::compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, Syn
          if (classHelper.scope.info.header.classRef != classHelper.scope.reference && classHelper.scope.info.header.classRef != 0) {
             ClassClassScope classClassScope(&ns, classHelper.scope.info.header.classRef, classHelper.scope.visibility, &classHelper.scope.info, classHelper.scope.reference);
             ns.moduleScope->loadClassInfo(classClassScope.info, classClassScope.reference, false);
+
+            if (test(classHelper.scope.info.header.flags, elTemplatebased))
+               classClassScope.info.header.flags |= elTemplatebased;
 
             compileClassClass(writer, classClassScope, classHelper.scope, current);
          }
@@ -10491,7 +10527,7 @@ void Compiler::injectVirtualReturningMethod(Scope& scope, SyntaxNode classNode,
    exprNode.appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, retVar);
 }
 
-void Compiler::generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef,
+void Compiler :: generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef,
    mssg_t messageRef, MethodHint type)
 {
    MemoryWriter metaWriter(scope.module->mapSection(listRef | mskConstArray, false));
@@ -11463,7 +11499,7 @@ ObjectInfo Compiler::Expression::compile(SyntaxNode node, ref_t targetRef, EAttr
          retVal = compileSpecialOperation(current, (int)current.key - OPERATOR_MAKS, targetRef);
          break;
       case SyntaxKey::AsyncOperation:
-         compileAsyncOperation(current);
+         compileAsyncOperation(current, paramMode || targetRef != 0);
          break;
       case SyntaxKey::YieldOperation:
          compileYieldOperation(current);
@@ -11651,15 +11687,15 @@ ObjectInfo Compiler::Expression::compileLookAhead(SyntaxNode node, ref_t targetR
    ObjectInfo retVal;
 
    switch (node.key) {
-   case SyntaxKey::MessageOperation:
-      retVal = compileMessageOperation(node, targetRef, mode);
-      break;
-   case SyntaxKey::PropertyOperation:
-      retVal = compilePropertyOperation(node, targetRef, mode);
-      break;
-   default:
-      assert(false);
-      break;
+      case SyntaxKey::MessageOperation:
+         retVal = compileMessageOperation(node, targetRef, mode);
+         break;
+      case SyntaxKey::PropertyOperation:
+         retVal = compilePropertyOperation(node, targetRef, mode);
+         break;
+      default:
+         assert(false);
+         break;
    }
 
    if (!targetRef && compiler->_logic->isEmbeddable(*scope.moduleScope, retVal.typeInfo.typeRef)) {
@@ -11673,15 +11709,15 @@ ObjectInfo Compiler::Expression::compileLookAhead(SyntaxNode node, ref_t targetR
       }
 
       switch (node.key) {
-      case SyntaxKey::MessageOperation:
-         retVal = compileMessageOperation(node, targetRef, mode);
-         break;
-      case SyntaxKey::PropertyOperation:
-         retVal = compilePropertyOperation(node, targetRef, mode);
-         break;
-      default:
-         assert(false);
-         break;
+         case SyntaxKey::MessageOperation:
+            retVal = compileMessageOperation(node, targetRef, mode);
+            break;
+         case SyntaxKey::PropertyOperation:
+            retVal = compilePropertyOperation(node, targetRef, mode);
+            break;
+         default:
+            assert(false);
+            break;
       }
    }
 
@@ -11714,7 +11750,13 @@ bool Compiler::Expression :: checkValidity(ObjectInfo target, CheckMethodResult&
          }
          break;
       case Visibility::Internal:
-         if (scope.moduleScope->isInternalOp(compiler->resolveStrongType(scope, target.typeInfo))) {
+         if (compiler->_logic->isInternalOp(*scope.moduleScope, compiler->resolveStrongType(scope, target.typeInfo))) {
+            return true;
+         }
+         if (test(scope.getClassFlags(), elTemplatebased) 
+            && compiler->_logic->isTemplateInternalOp(*scope.moduleScope, scope.getClassRef(), 
+                  compiler->resolveStrongType(scope, target.typeInfo))) 
+         {
             return true;
          }
          break;
@@ -11964,7 +12006,7 @@ ObjectInfo Compiler::Expression::compileSpecialOperation(SyntaxNode node, int op
    return retVal;
 }
 
-void Compiler::Expression :: compileAsyncOperation(SyntaxNode node)
+void Compiler::Expression :: compileAsyncOperation(SyntaxNode node, bool valueExpected)
 {
    StatemachineClassScope* smScope = Scope::getScope<StatemachineClassScope>(scope, Scope::ScopeLevel::Statemachine);
    if (!smScope)
@@ -11995,6 +12037,9 @@ void Compiler::Expression :: compileAsyncOperation(SyntaxNode node)
 
    writer->closeNode();
    writer->closeNode();
+
+   if (valueExpected)
+      writeObjectInfo(currentField, node);
 }
 
 void Compiler::Expression :: compileYieldOperation(SyntaxNode node)
@@ -14181,124 +14226,124 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
    bool lenRequired = false;
 
    switch (target.kind) {
-   case ObjectKind::Local:
-   case ObjectKind::TempLocal:
-      scope.markAsAssigned(target);
-      operationType = BuildKey::Assigning;
-      operand = target.reference;
-      break;
-   case ObjectKind::ByRefParam:
-      operationType = BuildKey::RefParamAssigning;
-      operand = target.reference;
-      break;
-   case ObjectKind::OutParam:
-      scope.markAsAssigned(target);
-      operationType = BuildKey::RefParamAssigning;
-      operand = target.reference;
-      break;
-   case ObjectKind::SelfBoxableLocal:
-   case ObjectKind::ParamAddress:
-      accMode = true;
-      operationType = BuildKey::CopyingToAcc;
-      operand = target.reference;
-      size = compiler->_logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
-      stackSafe = true;
-      break;
-   case ObjectKind::TempLocalAddress:
-   case ObjectKind::LocalAddress:
-      scope.markAsAssigned(target);
-      if (target.typeInfo.typeRef == V_WRAPPER) {
-         size = compiler->_logic->defineStructSize(*scope.moduleScope, target.typeInfo.elementRef).size;
-      }
-      else size = compiler->_logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
-      if (size > 0) {
-         operationType = BuildKey::Copying;
+      case ObjectKind::Local:
+      case ObjectKind::TempLocal:
+         scope.markAsAssigned(target);
+         operationType = BuildKey::Assigning;
          operand = target.reference;
-      }
-      else {
-         lenRequired = true;
+         break;
+      case ObjectKind::ByRefParam:
+         operationType = BuildKey::RefParamAssigning;
+         operand = target.reference;
+         break;
+      case ObjectKind::OutParam:
+         scope.markAsAssigned(target);
+         operationType = BuildKey::RefParamAssigning;
+         operand = target.reference;
+         break;
+      case ObjectKind::SelfBoxableLocal:
+      case ObjectKind::ParamAddress:
          accMode = true;
-         operationType = BuildKey::CopyingArr;
-         size = -size;
-      }
-      stackSafe = true;
-      break;
-   case ObjectKind::Field:
-      scope.markAsAssigned(target);
-      operationType = BuildKey::FieldAssigning;
-      operand = target.reference;
-      fieldMode = true;
-      break;
-   case ObjectKind::OuterField:
-      scope.markAsAssigned(target);
-      operationType = BuildKey::FieldAssigning;
-      operand = target.extra;
-      fieldFieldMode = fieldMode = true;
-      break;
-   case ObjectKind::StaticField:
-      scope.markAsAssigned(target);
-      operationType = BuildKey::StaticAssigning;
-      operand = target.reference;
-      break;
-   case ObjectKind::StaticThreadField:
-      scope.markAsAssigned(target);
-      operationType = BuildKey::ThreadVarAssigning;
-      operand = target.reference;
-      break;
-   case ObjectKind::FieldAddress:
-      scope.markAsAssigned(target);
-      fieldMode = true;
-      if (target.reference) {
-         operationType = BuildKey::CopyingToAccField;
-         operand = target.reference;
-      }
-      else operationType = BuildKey::CopyingToAccExact;
-      operand = target.reference;
-      size = compiler->_logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
-      if (size < 0) {
-         size = target.extra;
-      }
-      stackSafe = true;
-
-      assert(size > 0);
-
-      break;
-   case ObjectKind::OutParamAddress:
-      scope.markAsAssigned(target);
-   case ObjectKind::ByRefParamAddress:
-   {
-      ref_t targetRef = compiler->resolveStrongType(scope, target.typeInfo);
-      size = compiler->_logic->defineStructSize(*scope.moduleScope, targetRef).size;
-      if (size > 0) {
-         stackSafe = true;
          operationType = BuildKey::CopyingToAcc;
          operand = target.reference;
-         accMode = true;
+         size = compiler->_logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
+         stackSafe = true;
+         break;
+      case ObjectKind::TempLocalAddress:
+      case ObjectKind::LocalAddress:
+         scope.markAsAssigned(target);
+         if (target.typeInfo.typeRef == V_WRAPPER) {
+            size = compiler->_logic->defineStructSize(*scope.moduleScope, target.typeInfo.elementRef).size;
+         }
+         else size = compiler->_logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
+         if (size > 0) {
+            operationType = BuildKey::Copying;
+            operand = target.reference;
+         }
+         else {
+            lenRequired = true;
+            accMode = true;
+            operationType = BuildKey::CopyingArr;
+            size = -size;
+         }
+         stackSafe = true;
+         break;
+      case ObjectKind::Field:
+         scope.markAsAssigned(target);
+         operationType = BuildKey::FieldAssigning;
+         operand = target.reference;
+         fieldMode = true;
+         break;
+      case ObjectKind::OuterField:
+         scope.markAsAssigned(target);
+         operationType = BuildKey::FieldAssigning;
+         operand = target.extra;
+         fieldFieldMode = fieldMode = true;
+         break;
+      case ObjectKind::StaticField:
+         scope.markAsAssigned(target);
+         operationType = BuildKey::StaticAssigning;
+         operand = target.reference;
+         break;
+      case ObjectKind::StaticThreadField:
+         scope.markAsAssigned(target);
+         operationType = BuildKey::ThreadVarAssigning;
+         operand = target.reference;
+         break;
+      case ObjectKind::FieldAddress:
+         scope.markAsAssigned(target);
+         fieldMode = true;
+         if (target.reference) {
+            operationType = BuildKey::CopyingToAccField;
+            operand = target.reference;
+         }
+         else operationType = BuildKey::CopyingToAccExact;
+         operand = target.reference;
+         size = compiler->_logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
+         if (size < 0) {
+            size = target.extra;
+         }
+         stackSafe = true;
+
+         assert(size > 0);
+
+         break;
+      case ObjectKind::OutParamAddress:
+         scope.markAsAssigned(target);
+      case ObjectKind::ByRefParamAddress:
+      {
+         ref_t targetRef = compiler->resolveStrongType(scope, target.typeInfo);
+         size = compiler->_logic->defineStructSize(*scope.moduleScope, targetRef).size;
+         if (size > 0) {
+            stackSafe = true;
+            operationType = BuildKey::CopyingToAcc;
+            operand = target.reference;
+            accMode = true;
+         }
+         else assert(false); // !! temporally
+
+         break;
       }
-      else assert(false); // !! temporally
+      case ObjectKind::Outer:
+      {
+         InlineClassScope* closure = Scope::getScope<InlineClassScope>(scope, Scope::ScopeLevel::Class);
+         if (/*!method->subCodeMode || */!closure->markAsPresaved(target))
+            return false;
 
-      break;
-   }
-   case ObjectKind::Outer:
-   {
-      InlineClassScope* closure = Scope::getScope<InlineClassScope>(scope, Scope::ScopeLevel::Class);
-      if (/*!method->subCodeMode || */!closure->markAsPresaved(target))
+         operationType = BuildKey::FieldAssigning;
+         operand = target.reference;
+         fieldMode = true;
+
+         break;
+      }
+      case ObjectKind::LocalField:
+         localFieldMode = true;
+         operationType = BuildKey::FieldAssigning;
+         operand = target.extra;
+
+         break;
+      default:
          return false;
-
-      operationType = BuildKey::FieldAssigning;
-      operand = target.reference;
-      fieldMode = true;
-
-      break;
-   }
-   case ObjectKind::LocalField:
-      localFieldMode = true;
-      operationType = BuildKey::FieldAssigning;
-      operand = target.extra;
-
-      break;
-   default:
-      return false;
    }
 
    if (!writeObjectInfo(boxArgument(exprVal, stackSafe, true, false)))
@@ -14527,34 +14572,34 @@ ObjectInfo Compiler::Expression::compileMessageOperationR(ObjectInfo target, Syn
    ArgumentsInfo arguments;
 
    switch (target.mode) {
-   case TargetMode::Casting:
-   {
-      ArgumentListType argListType = ArgumentListType::Normal;
-      compileMessageArguments(messageNode, arguments, 0, EAttr::NoPrimitives, nullptr, argListType, 0);
-      if (arguments.count() == 1) {
-         ref_t targetRef = compiler->resolveStrongType(scope, target.typeInfo);
+      case TargetMode::Casting:
+      {
+         ArgumentListType argListType = ArgumentListType::Normal;
+         compileMessageArguments(messageNode, arguments, 0, EAttr::NoPrimitives, nullptr, argListType, 0);
+         if (arguments.count() == 1) {
+            ref_t targetRef = compiler->resolveStrongType(scope, target.typeInfo);
 
-         if (argListType == ArgumentListType::VariadicArgList) {
-            arguments[0].mode = TargetMode::UnboxingAndTypecastingVarArgument;
-            arguments[0].typeInfo = { V_ARGARRAY, targetRef };
+            if (argListType == ArgumentListType::VariadicArgList) {
+               arguments[0].mode = TargetMode::UnboxingAndTypecastingVarArgument;
+               arguments[0].typeInfo = { V_ARGARRAY, targetRef };
 
-            return arguments[0];
+               return arguments[0];
+            }
+            else return convertObject(messageNode, arguments[0], targetRef, false, true, false, true);
          }
-         else return convertObject(messageNode, arguments[0], targetRef, false, true, false, true);
+         else scope.raiseError(errInvalidOperation, messageNode);
+         break;
       }
-      else scope.raiseError(errInvalidOperation, messageNode);
-      break;
-   }
-   default:
-   {
-      ArgumentsInfo updatedOuterArgs;
+      default:
+      {
+         ArgumentsInfo updatedOuterArgs;
 
-      // NOTE : the operation target shouldn't be a primitive type
-      ObjectInfo source = validateObject(messageNode, target, 0, true, true, false, false);
+         // NOTE : the operation target shouldn't be a primitive type
+         ObjectInfo source = validateObject(messageNode, target, 0, true, true, false, false);
 
-      return compileMessageOperationR(messageNode, messageNode, source, arguments, &updatedOuterArgs, 0,
-         propertyMode, false, false, EAttr::None);
-   }
+         return compileMessageOperationR(messageNode, messageNode, source, arguments, &updatedOuterArgs, 0,
+            propertyMode, false, false, EAttr::None);
+      }
    }
 
    return {};

@@ -979,10 +979,18 @@ namespace elena_lang
    public:
       ustr_t operator*() const { return ustr_t(_string); }
 
-      ReferenceProperName(ustr_t referenceName)
+      void copyName(ustr_t referenceName)
       {
          size_t pos = referenceName.findLast('\'', 0);
          copy(referenceName.str() + pos + 1);
+      }
+
+      ReferenceProperName(ustr_t referenceName)
+      {
+         copyName(referenceName);
+      }
+      ReferenceProperName()
+      {
       }
    };
 

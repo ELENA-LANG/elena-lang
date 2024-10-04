@@ -978,6 +978,12 @@ namespace elena_lang
 
             return scope ? scope->reference : 0;
          }
+         ref_t getClassFlags(bool ownerClass = true)
+         {
+            ClassScope* scope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+
+            return scope ? scope->info.header.flags : 0;
+         }
          ref_t isSealed(bool ownerClass = true)
          {
             ClassScope* scope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
@@ -1058,6 +1064,8 @@ namespace elena_lang
       {
          pos_t contextSize;
          ref_t typeRef;
+         ref_t resultRef;
+         bool  asyncMode;
 
          ObjectInfo mapContextField()
          {
@@ -1073,7 +1081,7 @@ namespace elena_lang
             else return Scope::getScope(level);
          }
 
-         StatemachineClassScope(ExprScope* owner, ref_t reference);
+         StatemachineClassScope(ExprScope* owner, ref_t reference, bool asyncMode);
       };
 
       struct MessageResolution
@@ -1369,7 +1377,7 @@ namespace elena_lang
             ArgumentsInfo* updatedOuterArgs);
 
          void compileYieldOperation(SyntaxNode node);
-         void compileAsyncOperation(SyntaxNode node);
+         void compileAsyncOperation(SyntaxNode node, bool valueExpected);
          void compileSwitchOperation(SyntaxNode node);
 
          bool compileAssigningOp(ObjectInfo target, ObjectInfo source, bool& nillableOp);
@@ -1483,7 +1491,7 @@ namespace elena_lang
       void saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_t reserved, pos_t reservedN);
 
       ref_t resolveYieldType(Scope& scope, SyntaxNode node);
-      ref_t resolveAsyncType(Scope& scope, SyntaxNode node);
+      ref_t declareAsyncStatemachine(StatemachineClassScope& scope, SyntaxNode node);
 
       pos_t saveMetaInfo(ModuleBase* module, ustr_t value, ustr_t postfix);
 
@@ -1642,7 +1650,7 @@ namespace elena_lang
 
       ref_t declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode);
 
-      void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode);
+      void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode, bool templateBasedMode);
       void declareClosureMessage(MethodScope& scope, SyntaxNode node);
       void declareIteratorMessage(MethodScope& scope, SyntaxNode node);
 

@@ -1,22 +1,44 @@
+//closed A
+//{
+//   indexed internal getResultUnsafe()
+//      = nil;
+//}
+//
+//sealed B : A
+//{
+//   indexed internal int getResultUnsafe()
+//      = 2;
+//}
+//
+//public program()
+//{
+//   A a := new B();
+//
+//   int n := a.getResultUnsafe();
+//}
+
 import extensions;
 import system'threading;
-import system'routines;
-import system'collections;
 
-static int[] Numbers = class List<int>.load(Range.for(0, 30000).enumerator()).Value;
+singleton Tester
+{
+   async Task<int> getValueAsync()
+   {
+      ^ 2
+   }
+
+   async Task<int> addValueAsync(int n)
+   {
+      int val := $await getValueAsync();
+
+      val := val + n;
+
+      ^ val
+   }
+}
 
 public program()
 {
-   auto task := class Task<long>.run({
-                               long total := 0;
-                               for (int i := 0; i < Numbers.Length; i++)
-                               {
-                                   total += Numbers[i];
-                               };
-                               ^ total;
-                            });
-
-   Console.writeLine("Doing some other work...");
-
-   Console.printLine("Sum is ", task.Result);  
+   int n := Tester.addValueAsync(3).Result;
+   Console.printLine("the result is ", n);
 }

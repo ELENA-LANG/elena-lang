@@ -2196,7 +2196,7 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
          stackSafeAttr |= 1;
 
       // check if it is non public message
-      mssg_t nonPublicMultiMessage = resolveNonpublic(weakMessage, info, selfCall, scope.isInternalOp(targetRef));
+      mssg_t nonPublicMultiMessage = resolveNonpublic(weakMessage, info, selfCall, isInternalOp(scope, targetRef));
       if (nonPublicMultiMessage != 0) {
          if (!implicitSignatureRef && test(nonPublicMultiMessage, STATIC_MESSAGE) && getArgCount(weakMessage) > 1) {
             implicitSignatureRef = mapWeakSignature(scope, getArgCount(weakMessage) - 1);
@@ -2611,7 +2611,7 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
          mssg_t message = it.key();
 
          MethodHint callType = MethodHint::Normal;
-         if (test(info.header.flags, elSealed)) {
+         if (test(info.header.flags, elSealed) || MethodInfo::checkHint(methodInfo, MethodHint::Sealed)) {
             callType = MethodHint::Sealed;
          }
          else if (MethodInfo::checkHint(methodInfo, MethodHint::Indexed)) {
@@ -2664,7 +2664,7 @@ mssg_t CompilerLogic :: resolveSingleDispatch(ModuleScopeBase& scope, ref_t refe
       mssg_t dispatcher = info.attributes.get({ weakMessage, ClassAttribute::SingleDispatch });
       if (!dispatcher) {
          // check if it is non public message
-         mssg_t nonPublicWeakMessage = resolveNonpublic(weakMessage, info, selfCall, scope.isInternalOp(reference));
+         mssg_t nonPublicWeakMessage = resolveNonpublic(weakMessage, info, selfCall, isInternalOp(scope, reference));
          if (nonPublicWeakMessage != 0) {
             dispatcher = info.attributes.get({ nonPublicWeakMessage, ClassAttribute::SingleDispatch });
          }

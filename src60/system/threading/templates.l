@@ -29,14 +29,14 @@ public abstract class AsyncStateEnumerator : Enumerator<Task>
                 (*e).continueWith(this self);
 
                 ^ this self;
-             }
+             };
+
+             t.setResult(); 
          }
          catch (Exception e)
          {
             t.setException(e);
          };
-
-         t.setResult(); 
       };
 
       proceeding(t);
@@ -45,7 +45,7 @@ public abstract class AsyncStateEnumerator : Enumerator<Task>
    }
 }
 
-public abstract class AsyncStateEnumerator<TResult> : Enumerator<Task<TResult>>
+public abstract class AsyncStateEnumerator<TResult> : Enumerator<Task>
 {
    private __context;  // context must be the first one
    private Task __current; 
@@ -64,7 +64,7 @@ public abstract class AsyncStateEnumerator<TResult> : Enumerator<Task<TResult>>
 
    static Task<TResult> proceed(Enumerator<Task> e)
    {
-      Task<Result> t := Task.newPromise();
+      Task<TResult> t := class Task<TResult>.newPromise();
 
       Action<Task> proceeding := (Task tsk)
       {
@@ -75,14 +75,14 @@ public abstract class AsyncStateEnumerator<TResult> : Enumerator<Task<TResult>>
 
                 ^ this self;
              }
-             else t.setResultValue((*e).getResultValue());
+             else t.setResultValue((*e).getResultUnsafe());
+
+             t.setResult(); 
          }
          catch (Exception e)
          {
             t.setException(e);
          };
-
-         t.setResult(); 
       };
 
       proceeding(t);

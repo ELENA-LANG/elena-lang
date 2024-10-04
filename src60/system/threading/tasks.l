@@ -1,6 +1,6 @@
 import system;
 
-public closed class Task
+public class Task
 {
    bool           _completed;
 
@@ -23,12 +23,15 @@ public closed class Task
       _action := action;
    }
 
-   get Result()
+   indexed get Result()
    {
       wait();
 
       ^ nil;
    }      
+
+   indexed internal getResultUnsafe()
+      = nil;
 
    indexed internal Exception Exception
    {  
@@ -80,6 +83,10 @@ public closed class Task
 
    sealed wait()
    {
+      if (_completed) {
+         ^ self
+      };   
+
       ManualResetEvent mres := nil;
       lock (self)
       {
@@ -217,8 +224,19 @@ public sealed class Task<TResult> : Task
 {
    TResult _result;
 
+   protected constructor()
+   {
+      _completed := false;
+   }
+
+   constructor(TResult retVal) 
+   {
+      _result := retVal;
+      _completed := true;
+   }
+
    internal constructor newPromise()
-   {      
+   {
    }
 
    constructor assign(Func<TResult> func)
@@ -238,15 +256,18 @@ public sealed class Task<TResult> : Task
       }
    }
 
-   indexed internal TResult getResultValue()
+   indexed internal TResult getResultUnsafe()
       = _result;
 
-   get TResult Result()
+   indexed get TResult Result()
    {
       wait();
 
       ^ _result;
    }
+
+   TResult cast()
+      = self.Result;
 
    static Task<TResult> run(Func<TResult> action)
    {

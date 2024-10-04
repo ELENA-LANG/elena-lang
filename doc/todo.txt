@@ -33,12 +33,11 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
-  * ldoc : system'collections'threadsafe : only proper templates must be shown
+  * ldoc : system'collections'threadsafe : only proper templates must be shown 
   * stream async operations - readAsync
-  * async example2 : https://dotnettutorials.net/lesson/return-a-value-from-a-task-in-csharp/
-  * async programming with Task<T>
+  * typecasting error : why the target is objectOp?
   --------------------------------------  
-  * async method returning a value
+  * async example2 : https://dotnettutorials.net/lesson/return-a-value-from-a-task-in-csharp/
 
   === Iteration 34 ===
   --------------------------------------

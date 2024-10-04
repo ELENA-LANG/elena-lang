@@ -320,19 +320,6 @@ public:
    virtual bool isDeclared(ref_t reference) = 0;
    virtual bool isSymbolDeclared(ref_t reference) = 0;
 
-   virtual bool isInternalOp(ref_t reference)
-   {
-      ustr_t referenceName = resolveFullName(reference);
-      if (isWeakReference(referenceName)) {
-         return true;
-      }
-      else {
-         auto refInfo = getModule(referenceName, true);
-
-         return refInfo.module == module;
-      }
-   }
-
    virtual ref_t mapAnonymous(ustr_t prefix = nullptr) = 0;
 
    virtual ref_t mapFullReference(ustr_t referenceName, bool existing = false) = 0;

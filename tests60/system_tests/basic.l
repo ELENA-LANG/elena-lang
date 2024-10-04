@@ -2195,3 +2195,28 @@ public indexedTests() : testCase()
    console.write(".");
 
 }
+
+namespace sealedMethodDispatcherTest
+{
+   C;
+   
+   public closed A
+   {
+      sealed continueWith(C c)
+      {
+      }
+   }
+   
+   public sealed B : A
+   {
+   }
+}
+
+public sealedMethodDispatcher() : testCase()
+{
+   sealedMethodDispatcherTest'B b := new sealedMethodDispatcherTest'B();
+   var c := new sealedMethodDispatcherTest'C();
+   
+   Assert.ifNotFailed({ weak b.continueWith(c); });
+   console.write(".");
+}
