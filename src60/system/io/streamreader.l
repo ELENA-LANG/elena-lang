@@ -155,7 +155,7 @@ namespace io
                char buffer[64];
                int  bufferLen := 64;
                     
-               self.read(buffer, ref bufferLen);
+               bufferLen := self.read(buffer, bufferLen);
                if(bufferLen == 0)
                { 
                   len := -2 // !! to indicate the eof 
@@ -197,7 +197,7 @@ namespace io
                char buffer[64];
                int  bufferLen := 64;
 
-               self.read(buffer, ref bufferLen);
+               bufferLen := self.read(buffer, bufferLen);
                if(bufferLen == 0)
                { 
                   len := -2 // !! to indicate the eof 
@@ -267,7 +267,7 @@ namespace io
          {
             int read := actualLen;
     
-            actualLen := _encoder.convertFrom(buffer, 0, ref bufferLength, output, 0, length);
+            actualLen := _encoder.convertFrom(buffer, 0, ref read, output, 0, length);
                 
             if(read > bufferLength)
                { _stream.reduceIndex(read - bufferLength) }

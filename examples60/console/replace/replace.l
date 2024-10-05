@@ -5,9 +5,9 @@ import extensions'text;
 
 public program()
 {
-    var text := console.print("Enter the text:").loadLineTo(new StringWriter());
-    var searchText := console.print("Enter the phrase to be found:").readLine();  
-    var replaceText := console.print("Enter the phrase to replace with:").readLine();
+    var text := Console.print("Enter the text:").loadLineTo(new StringWriter());
+    var searchText := Console.print("Enter the phrase to be found:").readLine();  
+    var replaceText := Console.print("Enter the phrase to replace with:").readLine();
 
     var bm := new StringBookmark(text);
 
@@ -16,7 +16,7 @@ public program()
         bm.delete(searchText).insert(replaceText)
     };
 
-    console
+    Console
         .printLine("The resulting text:",bm)
         .readChar() // wait for any key
 }

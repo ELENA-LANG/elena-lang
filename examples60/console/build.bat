@@ -3,12 +3,12 @@
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-..\..\bin\elena-cli sum\intsum.prj
+..\..\bin\elena-cli -lintsum sum\sum.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-..\..\bin\elena-cli sum\realsum.prj
+..\..\bin\elena-cli -lrealsum sum\sum.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

@@ -15,10 +15,10 @@ public program()
 
     var ended := Now;
 
-    console.printLine(pi);
+    Console.printLine(pi);
 
     var diff := ended - started;
-    console.printLine("Time elapsed in msec:",diff.Milliseconds);
+    Console.printLine("Time elapsed in msec:",diff.Milliseconds);
 
-    console.readChar()
+    Console.readChar()
 }

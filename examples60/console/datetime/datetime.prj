@@ -19,7 +19,7 @@
      </module>
   </files>
   <forwards>
-     <forward key="program">extensions'programLoop</forward>
-     <forward key="program'control">datetime'control</forward>
+     <forward key="program">extensions'ProgramLoop</forward>
+     <forward key="program'control">datetime'Control</forward>
   </forwards>
 </configuration>

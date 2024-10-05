@@ -1,6 +1,6 @@
 // --- ProgramLoop ---
 
-class ProgramLoop
+class ProgramLoopImpl
 {
    bool   _active;
    object _control;
@@ -32,4 +32,4 @@ class ProgramLoop
    }
 }
 
-public static programLoop = ProgramLoop.assign(forward program'control);
+public static ProgramLoop = ProgramLoopImpl.assign(forward program'control);

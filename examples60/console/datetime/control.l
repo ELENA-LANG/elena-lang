@@ -3,7 +3,7 @@ import extensions;
 
 // --- Control ---
 
-public singleton control
+public singleton Control
 {
     get string Prompt
         = "Please select your option:

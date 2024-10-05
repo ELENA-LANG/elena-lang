@@ -383,12 +383,12 @@ public program()
 			while (x[xc] != 0)
 			{
 				xc := xc + 2;
-				console.write(charConvertor.convert(x[xc]));
+				Console.write(charConvertor.convert(x[xc]));
     	        xc := xc -4;
 				while (x[xc] != 0)
 				{
 					x[xc] := x[xc] + 1;
-					console.write(charConvertor.convert(x[xc]));
+					Console.write(charConvertor.convert(x[xc]));
 					while (x[xc] != 0)
 					{
 						x[xc] := x[xc] - 1
@@ -401,7 +401,7 @@ public program()
 			while (x[xc] != 0)
 			{
 				xc := xc + 2;
-				console.write(charConvertor.convert(x[xc]));
+				Console.write(charConvertor.convert(x[xc]));
 				xc := xc -2;
 				x[xc] := x[xc] - 1
 			};
@@ -443,14 +443,14 @@ public program()
 		xc := xc -8
 	};
 	x[xc] := x[xc] + 10;
-	console.write(charConvertor.convert(x[xc]));
+	Console.write(charConvertor.convert(x[xc]));
 
     var end := Now;
  
-    console.writeLine();
+    Console.writeLine();
      
     var diff := end - start;
-    console.printLine("Time elapsed in msec:",diff.Milliseconds);
+    Console.printLine("Time elapsed in msec:",diff.Milliseconds);
 
-    console.readChar()
+    Console.readChar()
 }

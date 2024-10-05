@@ -68,7 +68,7 @@ class Adapter
 public program() 
 {
     if(Program_arguments.Length == 1)
-        {  console.printLine("Please provide the path to the file to view"); AbortException.raise() };
+        {  Console.printLine("Please provide the path to the file to view"); AbortException.raise() };
 
     var list := new List();
     var adapter := new Adapter();
@@ -90,5 +90,5 @@ public program()
 
     list.forEach(printingLn);
 
-    console.readChar()
+    Console.readChar()
 }

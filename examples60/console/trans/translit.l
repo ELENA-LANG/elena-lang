@@ -4,7 +4,7 @@ import extensions;
 
 // --- RusLatRules ---
 
-/*const*/ rusLatRules = new object[]
+/*const*/ RusLatRules = new object[]
 {
     ( "а", "a" ),
     ( "б", "b" ),
@@ -48,7 +48,7 @@ Transliteration(text)
     
    text.forEach::(ch)
    {
-      var rule := rusLatRules.seekEach::
+      var rule := RusLatRules.seekEach::
          (x => x.Item1 == ch.toPrintable() );
                 
       if (nil == rule)

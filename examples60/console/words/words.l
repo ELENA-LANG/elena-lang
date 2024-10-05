@@ -36,11 +36,11 @@ class WordList
 
 public program()
 {
-   console.writeLine("Enter the text(to stop press enter two times):");
+   Console.writeLine("Enter the text(to stop press enter two times):");
 
    // read until the empty string is not entered
    var text := new StringWriter();
-   for(string line := console.readLine(); until line.isEmpty())
+   for(string line := Console.readLine(); until line.isEmpty())
    {
       text.writeLine(line)
    };
@@ -49,9 +49,9 @@ public program()
 
    text.forEachWord::(word){ list.append(word) };
 
-   console.printLine("There are ",list.unique_words," unique words out of ",list.total_words);
+   Console.printLine("There are ",list.unique_words," unique words out of ",list.total_words);
    if (list.total_words > 0)
-      { console.printLine("the list of unique words:",list.ascendant()) };
+      { Console.printLine("the list of unique words:",list.ascendant()) };
 
-   console.readChar() // wait for any key
+   Console.readChar() // wait for any key
 }
