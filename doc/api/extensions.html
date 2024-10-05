@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.0: Module extensions
+ELENA Standard Library 6.4: Module extensions
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 6.0: Module extensions
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.0
+ELENA&nbsp;Standard&nbsp;Library<br>6.3
 </STRONG>
 </DIV>
 </DIV>
@@ -148,7 +148,7 @@ extensions'Assert</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>ifTrue(b)
+<CODE>ifNotFailed(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
@@ -157,7 +157,7 @@ extensions'Assert</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>ifFalse(b)
+<CODE>ifTrue(b)
 </CODE>
 </TD>
 </TR>
@@ -166,11 +166,20 @@ extensions'Assert</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>ifNil(b)
+<CODE>ifFalse(b)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>ifNil(b)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -780,9 +789,9 @@ extensions'RandomGenerator</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="extensions.html#RandomGenerator">RandomGenerator</A></SPAN></CODE></TD>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="extensions.html#RandomGenerator">RandomGenerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>xtensions$$#constructor</i>()
+<CODE>new()
 </CODE>
 </TD>
 </TR>
@@ -983,6 +992,43 @@ Initializes a variable</div>
 </TABLE>
 </LI>
 </UL>
+<HR>
+</DIV>
+<A NAME="Program_arguments">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+extensions'</DIV>
+<H2 title="Program_arguments" class="title">Program_arguments</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Program_arguments</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
 <HR>
 </DIV>
 <A NAME="program_arguments">
@@ -1384,6 +1430,24 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
+<CODE>printWide(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>printWideLine(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
 <CODE><i>dispatch</i>()
 </CODE>
 </TD>
@@ -1492,7 +1556,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>assertTrue()
+<CODE>getAtOrDefault(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> default)
 </CODE>
 </TD>
 </TR>
@@ -1501,7 +1565,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>assertFalse()
+<CODE>assertTrue()
 </CODE>
 </TD>
 </TR>
@@ -1510,7 +1574,64 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
+<CODE>assertFalse()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
 <CODE>randomize(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> count)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="String">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="String" class="title">String</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">String</SPAN></PRE>
+<BR>
+</DIV>
+<!-- ========== EXTENSION SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Extension Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Extension Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>interpolate(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -1530,7 +1651,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.0
+ELENA&nbsp;Standard&nbsp;Library<br>6.3
 </STRONG>
 </DIV>
 </DIV>

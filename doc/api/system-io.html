@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.0: Module system'io
+ELENA Standard Library 6.4: Module system'io
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,9 +19,509 @@ ELENA Standard Library 6.0: Module system'io
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.0
+ELENA&nbsp;Standard&nbsp;Library<br>6.3
 </STRONG>
 </DIV>
+</DIV>
+<A NAME="BaseTextReader">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'io'</DIV>
+<H2 title="BaseTextReader" class="title">BaseTextReader</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract public class <SPAN CLASS="typeNameLabel">BaseTextReader</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextReader">system'io'TextReader</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'io'BaseTextReader</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-text.html#TextBuilder">TextBuilder</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_output</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_newLineConstant</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_newLineLength</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>readLine()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>readWideLine()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="BaseTextWriter">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'io'</DIV>
+<H2 title="BaseTextWriter" class="title">BaseTextWriter</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract public class <SPAN CLASS="typeNameLabel">BaseTextWriter</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">system'io'TextWriter</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'io'BaseTextWriter</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-text.html#TextBuilder">TextBuilder</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_buffer</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_newLineConstant</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_newLineLength</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> line)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> line)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>writeLine(line)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>writeLine()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="BinaryReader">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'io'</DIV>
+<H2 title="BinaryReader" class="title">BinaryReader</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract public class <SPAN CLASS="typeNameLabel">BinaryReader</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'io'BinaryReader</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Source()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Available()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> array, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>readExact(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> array, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>read(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> int)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>read(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> int)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>read(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>read(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> int)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>read(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> long)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>read(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> real)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="BinaryStreamReader">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'io'</DIV>
+<H2 title="BinaryStreamReader" class="title">BinaryStreamReader</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">BinaryStreamReader</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#BinaryReader">system'io'BinaryReader</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'io'BinaryStreamReader</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#Stream">Stream</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_stream</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#BinaryStreamReader">BinaryStreamReader</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#Stream">Stream</A></SPAN> stream)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Source()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Available()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> array, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> actualLength)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
 </DIV>
 <A NAME="BinaryStreamWriter">
 </A>
@@ -96,6 +596,56 @@ system'io'BinaryStreamWriter</LI>
 </TABLE>
 </LI>
 </UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Source()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> array, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
 <HR>
 </DIV>
 <A NAME="BinaryWriter">
@@ -124,26 +674,6 @@ system'io'BinaryWriter</LI>
 </UL>
 </LI>
 </UL>
-<!-- ========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-io.html#Stream">Stream</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_stream</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
 <!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
@@ -156,9 +686,9 @@ system'io'BinaryWriter</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-io.html#Stream">Stream</A></SPAN></CODE></TD>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Stream()</CODE>
+<CODE>Source()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -176,7 +706,7 @@ system'io'BinaryWriter</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>close()
 </CODE>
@@ -185,7 +715,7 @@ system'io'BinaryWriter</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> array, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
@@ -194,7 +724,7 @@ system'io'BinaryWriter</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> int)
 </CODE>
@@ -203,7 +733,7 @@ system'io'BinaryWriter</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> n)
 </CODE>
@@ -212,7 +742,7 @@ system'io'BinaryWriter</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
@@ -221,7 +751,7 @@ system'io'BinaryWriter</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> int)
 </CODE>
@@ -230,7 +760,7 @@ system'io'BinaryWriter</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> long)
 </CODE>
@@ -239,9 +769,18 @@ system'io'BinaryWriter</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> r)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -502,6 +1041,15 @@ system'io'ConsoleWriter</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>refresh()
+</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -561,6 +1109,24 @@ system'io'Directory</LI>
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'String<I>[]</I></A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>getFiles(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'String<I>[]</I></A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>getFiles(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> mask)
+</CODE>
+</TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -698,6 +1264,42 @@ system'io'File</LI>
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>saveContent(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> content)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>readContentTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="system-text.html#TextBuilder">TextBuilder</A></SPAN> output)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>readContent(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>readWideContent(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
+</CODE>
+</TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -862,11 +1464,17 @@ public class <SPAN CLASS="typeNameLabel">FileEnumerator</SPAN></PRE>
 </DIV>
 <UL CLASS="inheritance">
 <LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">system'Enumerator&lt;system'$private'io'WIN32_FIND_DATA&gt;</A></SPAN></LI>
 <LI>
 <UL CLASS="inheritance">
 <LI>
 system'io'FileEnumerator</LI>
+</UL>
+</LI>
 </UL>
 </LI>
 </UL>
@@ -1183,9 +1791,9 @@ system'io'FileStream</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> dump, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> retVal)
+<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> dump, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> len)
 </CODE>
 </TD>
 </TR>
@@ -1296,6 +1904,371 @@ system'io'IOException</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system-io.html#IOException">IOException</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="MemoryBuffer">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'io'</DIV>
+<H2 title="MemoryBuffer" class="title">MemoryBuffer</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">MemoryBuffer</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'io'MemoryBuffer</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_buffer</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_used</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_capacity</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>allocate()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> array)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>readInt32(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> array)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>delete(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>clear()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="MemoryStream">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'io'</DIV>
+<H2 title="MemoryStream" class="title">MemoryStream</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">MemoryStream</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#Stream">system'io'Stream</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'io'MemoryStream</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_buffer</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_position</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryStream">MemoryStream</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryStream">MemoryStream</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryStream">MemoryStream</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> array)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Index()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Index(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> dump, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> len)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> dump, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
 </CODE>
 </TD>
 </TR>
@@ -1504,9 +2477,9 @@ system'io'Stream</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>abstract </i>&nbsp;</CODE></TD>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> dump, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> dump, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
@@ -1559,7 +2532,13 @@ public class <SPAN CLASS="typeNameLabel">StreamWriter</SPAN></PRE>
 <LI>
 <UL CLASS="inheritance">
 <LI>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#BaseTextWriter">system'io'BaseTextWriter</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
 system'io'StreamWriter</LI>
+</UL>
+</LI>
 </UL>
 </LI>
 </UL>
@@ -1653,15 +2632,6 @@ system'io'StreamWriter</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-io.html#StreamWriter">StreamWriter</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> appendMode)
-</CODE>
-</TD>
-</TR>
 </TABLE>
 </LI>
 </UL>
@@ -1677,9 +2647,9 @@ system'io'StreamWriter</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-io.html#Stream">Stream</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Stream()</CODE>
+<CODE>Source()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1751,42 +2721,6 @@ system'io'TextReader</LI>
 </UL>
 </LI>
 </UL>
-<!-- ========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-text.html#TextBuilder">TextBuilder</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_output</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_newLineConstant</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_newLineLength</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
 <!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
@@ -1799,9 +2733,9 @@ system'io'TextReader</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-io.html#Stream">Stream</A></SPAN></CODE></TD>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Stream()</CODE>
+<CODE>Source()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1835,9 +2769,9 @@ system'io'TextReader</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>abstract </i>&nbsp;</CODE></TD>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'CharValue<I>[]</I></A></SPAN> array, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> actualLength)
+<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'CharValue<I>[]</I></A></SPAN> array, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
@@ -1853,7 +2787,7 @@ system'io'TextReader</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>readLine()
 </CODE>
@@ -1862,7 +2796,7 @@ system'io'TextReader</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>readWideLine()
 </CODE>
@@ -1899,7 +2833,13 @@ public class <SPAN CLASS="typeNameLabel">TextStreamReader</SPAN></PRE>
 <LI>
 <UL CLASS="inheritance">
 <LI>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#BaseTextReader">system'io'BaseTextReader</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
 system'io'TextStreamReader</LI>
+</UL>
+</LI>
 </UL>
 </LI>
 </UL>
@@ -2016,9 +2956,9 @@ system'io'TextStreamReader</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-io.html#Stream">Stream</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Stream()</CODE>
+<CODE>Source()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2052,9 +2992,9 @@ system'io'TextStreamReader</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'CharValue<I>[]</I></A></SPAN> output, <I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'CharValue<I>[]</I></A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
@@ -2098,42 +3038,6 @@ system'io'TextWriter</LI>
 </UL>
 </LI>
 </UL>
-<!-- ========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-text.html#TextBuilder">TextBuilder</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_buffer</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_newLineConstant</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_newLineLength</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
 <!-- ========== PROPERTY SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
@@ -2146,9 +3050,9 @@ system'io'TextWriter</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-io.html#Stream">Stream</A></SPAN></CODE></TD>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Stream()</CODE>
+<CODE>Source()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2201,7 +3105,25 @@ system'io'TextWriter</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> line)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> line)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>writeLine(line)
 </CODE>
@@ -2210,25 +3132,7 @@ system'io'TextWriter</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> line)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> line)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
+<i>abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>writeLine()
 </CODE>
@@ -2324,7 +3228,7 @@ system'io'</DIV>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.0
+ELENA&nbsp;Standard&nbsp;Library<br>6.3
 </STRONG>
 </DIV>
 </DIV>

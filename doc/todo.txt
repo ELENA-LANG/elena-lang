@@ -11,7 +11,6 @@ In development:
       - upndown (connector)
       - #496
       - toArray<T> extension method (parameterized method extensions)
-      - retest : #25, #412, #413, #414
       - #676
       - #622 (http client)
   gen:
@@ -24,18 +23,19 @@ In development:
       - test encoders with files  
       - api refactoring : all symbols must start with a capital letter
       - redesign winforms
+      - api : add descriptions 
   port:
   tools: 
-
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * retest : #25, #412, #413, #414
   * x86-64 : mta - basic test
   * fix warnings in all libraries    
   * test all examples : console
   * stream async operations - readAsync
   --------------------------------------  
-  * #675
+  * fix ldoc : generating system
 
   === Iteration 34 ===
   --------------------------------------

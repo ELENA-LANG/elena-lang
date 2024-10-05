@@ -6,8 +6,8 @@ public extension asyncStreamOp : Stream
    Task writeAsync(byte[] dump, int length)
       = Task.run( { self.write(dump, length); });
 
-//   Task<int> readAsync(byte[] dump, int length)
-//   {
-//      ^ Task.Run( { self.read(dump, ref length); });
-//   }   
+/*   Task<int> readAsync(byte[] dump, int length)
+   {
+      ^ class Task<int>.Run( { ^ self.read(dump, ref length); });
+   }   */
 }

@@ -1109,6 +1109,9 @@ void DocGenerator :: loadType(ref_t reference, IdentifierString& target, bool te
 void DocGenerator :: loadType(ustr_t name, IdentifierString& target, bool templateMode)
 {
    if (isTemplateWeakReference(name)) {
+      if (name.findStr("Rang") != NOTFOUND_POS)
+         templateMode = true;
+
       IdentifierString type(name);
       IdentifierString ns;
 

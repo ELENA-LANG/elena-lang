@@ -116,6 +116,12 @@ inline bool validateGenericClosure(ref_t* signature, size_t length)
 inline ref_t mapAsWeakReference(ModuleScopeBase* scope, ref_t reference)
 {
    ustr_t refName = scope->module->resolveReference(reference);
+
+#ifndef  NDEBUG
+   // make sure that only real template based classes are mapped
+   assert(refName.find('#') != NOTFOUND_POS);
+#endif //  _DEBUG
+
    if (!isWeakReference(refName)) {
       size_t index = refName.findLast('\'', 0);
 
@@ -3501,6 +3507,8 @@ void Compiler::declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNode
    }
    else if (res == InheritResult::irUnsuccessfull)
       scope.raiseError(errUnknownBaseClass, baseNode);
+
+   scope.info.header.flags &= ~elTemplatebased; // reset the flag by inheriting a template based class
 }
 
 void Compiler::importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNode)
@@ -4662,17 +4670,17 @@ void Compiler::declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t&
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::Attribute:
-         if (!_logic->validateClassAttribute(current.arg.value, flags, scope.visibility)) {
-            current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
-            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-         }
-         break;
-      case SyntaxKey::Type:
-         scope.raiseError(errInvalidSyntax, current);
-         break;
-      default:
-         break;
+         case SyntaxKey::Attribute:
+            if (!_logic->validateClassAttribute(current.arg.value, flags, scope.visibility)) {
+               current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
+               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+            }
+            break;
+         case SyntaxKey::Type:
+            scope.raiseError(errInvalidSyntax, current);
+            break;
+         default:
+            break;
       }
 
       current = current.nextNode();
@@ -9626,7 +9634,7 @@ bool Compiler::isProxy(Scope& scope, SyntaxNode node)
    return true;
 }
 
-void Compiler::compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef)
+void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef)
 {
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
    scope.info.header.flags |= elNestedClass;
@@ -9636,12 +9644,12 @@ void Compiler::compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, Sy
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::Field:
-      case SyntaxKey::Method:
-         virtualClass = false;
-         break;
-      default:
-         break;
+         case SyntaxKey::Field:
+         case SyntaxKey::Method:
+            virtualClass = false;
+            break;
+         default:
+            break;
       }
 
       current = current.nextNode();
@@ -11088,44 +11096,44 @@ void Compiler::Class::resolveClassPostfixes(SyntaxNode node, bool extensionMode)
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::InlineTemplate:
-         if (!compiler->importInlineTemplate(scope, current, INLINE_PREFIX, node))
-            scope.raiseError(errInvalidOperation, current);
-         break;
-      case SyntaxKey::Parent:
-      {
-         SyntaxNode child = current.firstChild();
-         if (child == SyntaxKey::TemplateType) {
-            if (compiler->importTemplate(scope, child, node, true)) {
-               // try to import as weak template
+         case SyntaxKey::InlineTemplate:
+            if (!compiler->importInlineTemplate(scope, current, INLINE_PREFIX, node))
+               scope.raiseError(errInvalidOperation, current);
+            break;
+         case SyntaxKey::Parent:
+         {
+            SyntaxNode child = current.firstChild();
+            if (child == SyntaxKey::TemplateType) {
+               if (compiler->importTemplate(scope, child, node, true)) {
+                  // try to import as weak template
+               }
+               else if (!parentRef) {
+                  parentNode = current;
+
+                  parentRef = compiler->resolveStrongTypeAttribute(scope, child, extensionMode, false).typeRef;
+               }
+               else if (!compiler->importTemplate(scope, child, node, false))
+                  scope.raiseError(errUnknownTemplate, current);
+            }
+            else if (child == SyntaxKey::EnumPostfix) {
+               if (!compiler->importEnumTemplate(scope, child, node))
+                  scope.raiseError(errUnknownTemplate, current);
             }
             else if (!parentRef) {
                parentNode = current;
 
                parentRef = compiler->resolveStrongTypeAttribute(scope, child, extensionMode, false).typeRef;
             }
-            else if (!compiler->importTemplate(scope, child, node, false))
-               scope.raiseError(errUnknownTemplate, current);
-         }
-         else if (child == SyntaxKey::EnumPostfix) {
-            if (!compiler->importEnumTemplate(scope, child, node))
-               scope.raiseError(errUnknownTemplate, current);
-         }
-         else if (!parentRef) {
-            parentNode = current;
+            else scope.raiseError(errInvalidSyntax, current);
 
-            parentRef = compiler->resolveStrongTypeAttribute(scope, child, extensionMode, false).typeRef;
+            break;
          }
-         else scope.raiseError(errInvalidSyntax, current);
-
-         break;
-      }
-      case SyntaxKey::IncludeStatement:
-         if (!compiler->includeBlock(scope, current.firstChild(), node))
-            scope.raiseError(errUnknownTemplate, current);
-         break;
-      default:
-         break;
+         case SyntaxKey::IncludeStatement:
+            if (!compiler->includeBlock(scope, current.firstChild(), node))
+               scope.raiseError(errUnknownTemplate, current);
+            break;
+         default:
+            break;
       }
       //else if (!parentRef) {
       //   parentNode = baseNode;
