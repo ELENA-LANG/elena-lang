@@ -1,8 +1,8 @@
-A;
+const int N = 10;
 
 public program()
 {
-   A a := new A();
-
-   int n := a;
+   for (var i := 0; i < N; i++) {
+      Console.writeLine(i);
+   }
 }

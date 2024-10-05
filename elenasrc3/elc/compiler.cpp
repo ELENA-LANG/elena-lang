@@ -12180,20 +12180,28 @@ ObjectInfo Compiler::Expression::compileAssignOperation(SyntaxNode node, int ope
    }
    else {
       switch (operatorId) {
-      case ADD_ASSIGN_OPERATOR_ID:
-         operatorId = ADD_OPERATOR_ID;
-         break;
-      case SUB_ASSIGN_OPERATOR_ID:
-         operatorId = SUB_OPERATOR_ID;
-         break;
-      case MUL_ASSIGN_OPERATOR_ID:
-         operatorId = MUL_OPERATOR_ID;
-         break;
-      case DIV_ASSIGN_OPERATOR_ID:
-         operatorId = DIV_OPERATOR_ID;
-         break;
-      default:
-         break;
+         case ADD_ASSIGN_OPERATOR_ID:
+            operatorId = ADD_OPERATOR_ID;
+            break;
+         case SUB_ASSIGN_OPERATOR_ID:
+            operatorId = SUB_OPERATOR_ID;
+            break;
+         case MUL_ASSIGN_OPERATOR_ID:
+            operatorId = MUL_OPERATOR_ID;
+            break;
+         case DIV_ASSIGN_OPERATOR_ID:
+            operatorId = DIV_OPERATOR_ID;
+            break;
+         case INC_OPERATOR_ID:
+            operatorId = ADD_OPERATOR_ID;
+            roperand = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(scope.moduleScope, 1), 1 };
+            break;
+         case DEC_OPERATOR_ID:
+            operatorId = SUB_OPERATOR_ID;
+            roperand = { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(scope.moduleScope, 1), 1 };
+            break;
+         default:
+            break;
       }
 
       mssg_t message = Compiler::resolveOperatorMessage(scope.moduleScope, operatorId);
