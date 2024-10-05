@@ -20,22 +20,22 @@ In development:
       - unit tests : virtual, internal virtual, byref for closed class, virtual internal by closed class
       - #689
       - unit tests : bt optimization 
-      - fix warnings in all libraries    
       - test binary file operations
       - test encoders with files  
       - api refactoring : all symbols must start with a capital letter
       - redesign winforms
   port:
   tools: 
+
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * x86-64 : mta - basic test
+  * fix warnings in all libraries    
   * test all examples : console
   * stream async operations - readAsync
-  * #675
-  * x86-64 : mta - corex
   --------------------------------------  
-  * ldoc : system'collections'threadsafe : only proper templates must be shown 
+  * #675
 
   === Iteration 34 ===
   --------------------------------------
