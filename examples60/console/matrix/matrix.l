@@ -19,7 +19,7 @@ class Matrix
     constructor create(int n, string name)
         <= new (RealMatrix.allocate(n,n).populate::(int i,int j)
             { 
-                ^ console.print("Enter ",name,"[",i,",",j,"]=").readLine().toReal()
+                ^ Console.print("Enter ",name,"[",i,",",j,"]=").readLine().toReal()
             });
     
     constructor newIdentityOf(int n)
@@ -43,7 +43,7 @@ class Matrix
 
 // ---- Program ---
 
-public singleton control
+public singleton Control
 {
     Prompt = "Choose an option
 [1] - Sum Matrix
@@ -58,66 +58,66 @@ Your choice:";
     {
         choice =>
             "1" {
-                console.write("Enter the order of matrix: ");
-                var N := console.readLine().toInt();
+                Console.write("Enter the order of matrix: ");
+                var N := Console.readLine().toInt();
                 
                 var matrixA := Matrix.create(N, "A");
                 
-                console.writeLine();
+                Console.writeLine();
                 
                 var matrixB := Matrix.create(N,"B");
                 
-                console.writeLine().writeLine("Output:");
+                Console.writeLine().writeLine("Output:");
 
                 RealMatrix sum := matrixA + matrixB;
 
                 ^ sum.toString()
             }
             "2" {
-                console.write("Enter the order of matrix: ");
-                var N := console.readLine().toInt();
+                Console.write("Enter the order of matrix: ");
+                var N := Console.readLine().toInt();
                 
                 var matrixA := Matrix.create(N, "A");
                 
-                console.writeLine();
+                Console.writeLine();
                 
                 var matrixB := Matrix.create(N,"B");
                 
-                console.writeLine().writeLine("Output:");
+                Console.writeLine().writeLine("Output:");
 
                 RealMatrix diff := matrixA - matrixB;
 
                 ^ diff.toString()
             }
             "3" {
-                console.write("Enter the order of matrix: ");
-                var N := console.readLine().toInt();
+                Console.write("Enter the order of matrix: ");
+                var N := Console.readLine().toInt();
                 
                 var matrixA := Matrix.create(N, "A");
                 
-                console.writeLine();
+                Console.writeLine();
                 
                 var matrixB := Matrix.create(N,"B");
                 
-                console.writeLine().writeLine("Output:");
+                Console.writeLine().writeLine("Output:");
 
                 RealMatrix product := matrixA * matrixB;
 
                 ^ product.toString()
             }
             "4" {
-                console.write("Enter the order of matrix: ");
-                var N := console.readLine().toInt();
+                Console.write("Enter the order of matrix: ");
+                var N := Console.readLine().toInt();
                 
                 var matrixA := Matrix.create(N, "A");
                                 
-                console.writeLine().writeLine("Output:");
+                Console.writeLine().writeLine("Output:");
 
                 ^ matrixA.Determinant
             }
             "5" {
-                console.write("Enter the order of matrix: ");
-                var N := console.readLine().toInt();
+                Console.write("Enter the order of matrix: ");
+                var N := Console.readLine().toInt();
                 
                 RealMatrix identity := Matrix.newIdentityOf(N);
 

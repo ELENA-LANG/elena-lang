@@ -131,14 +131,14 @@ public sealed class CallStack
       byte    buffer[512];
       int     bufferLength := 0; 
       pointer address;
-      string  callStackText := emptyString;
+      string  callStackText := EmptyString;
       int     length := stack.Length;
       for (int i := 1; i < length; i += 1) {
          address := stack[i];
 
          bufferLength := extern LoadAddressInfoLM(address, buffer, 512);
          if (bufferLength > 0) {
-            callStackText := callStackText + String.fromByteArray(0, bufferLength, buffer).add(newLineConstant)
+            callStackText := callStackText + String.fromByteArray(0, bufferLength, buffer).add(NewLineConstant)
          }
       };
 

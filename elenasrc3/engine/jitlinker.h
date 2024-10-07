@@ -186,8 +186,13 @@ namespace elena_lang
 
       addr_t resolveVMTMethodAddress(ModuleBase* module, ref_t reference, mssg_t message);
       pos_t resolveVMTMethodOffset(ModuleBase* module, ref_t reference, mssg_t message);
+      pos_t resolveHiddenMTMethodOffset(ModuleBase* module, ref_t reference, mssg_t message);
 
       addr_t loadMethod(ReferenceHelperBase& refHelper, MemoryReader& reader, MemoryWriter& writer);
+
+      void fillMethodTable(addr_t vaddress, pos_t position, MemoryReader& vmtReader, ClassSectionInfo& sectionInfo,
+         MemoryBase* vmtImage, MemoryBase* codeImage, pos_t& size, pos_t& count, pos_t& indexCount,
+         VAddressMap& references, CachedOutputTypeList& outputTypeList, bool withOutputList);
 
       addr_t createVMTSection(ReferenceInfo referenceInfo, ClassSectionInfo sectionInfo, 
          VAddressMap& references);
@@ -265,36 +270,12 @@ namespace elena_lang
 
       void copyPreloadedMetaList(ModuleInfo info, ModuleInfoList& output, bool ignoreAutoLoadExtensions);
 
-      JITLinker(ReferenceMapperBase* mapper, 
+      JITLinker(ReferenceMapperBase* mapper,
          LibraryLoaderBase* loader, ForwardResolverBase* forwardResolver,
          ImageProviderBase* provider,
          JITLinkerSettings* settings,
          AddressMapperBase* addressMapper
-      ) : _staticMethods(INVALID_ADDR)
-      {
-         _mapper = mapper;
-         _loader = loader;
-         _forwardResolver = forwardResolver;
-         _imageProvider = provider;
-         _compiler = nullptr;
-         _addressMapper = addressMapper;
-
-         _alignment = settings->alignment;
-         _virtualMode = settings->virtualMode;
-         _classSymbolAutoLoadMode = settings->autoLoadMode;
-         _withDebugInfo = false;
-         _withOutputList = false;
-
-         _constantSettings.intLiteralClass = forwardResolver->resolveForward(INTLITERAL_FORWARD);
-         _constantSettings.longLiteralClass = forwardResolver->resolveForward(LONGLITERAL_FORWARD);
-         _constantSettings.realLiteralClass = forwardResolver->resolveForward(REALLITERAL_FORWARD);
-         _constantSettings.literalClass = forwardResolver->resolveForward(LITERAL_FORWARD);
-         _constantSettings.wideLiteralClass = forwardResolver->resolveForward(WIDELITERAL_FORWARD);
-         _constantSettings.characterClass = forwardResolver->resolveForward(CHAR_FORWARD);
-         _constantSettings.messageClass = forwardResolver->resolveForward(MESSAGE_FORWARD);
-         _constantSettings.extMessageClass = forwardResolver->resolveForward(EXT_MESSAGE_FORWARD);
-         _constantSettings.messageNameClass = forwardResolver->resolveForward(MESSAGE_NAME_FORWARD);
-      }
+      );
    };
 
 }

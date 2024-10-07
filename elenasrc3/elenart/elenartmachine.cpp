@@ -139,7 +139,7 @@ int ELENARTMachine :: loadSignature(mssg_t message, addr_t* output, pos_t maxima
    pos_t argCount = 0;
    decodeMessage(message, actionRef, argCount, flags);
 
-   if (testany(message, FUNCTION_MESSAGE | CONVERSION_MESSAGE)) {
+   if (test(message, FUNCTION_MESSAGE) || ((message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE)) {
       argCount = _min(maximalCount, argCount);
    }
    else argCount = _min(maximalCount, argCount - 1);
@@ -163,7 +163,7 @@ size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t le
    IdentifierString messageName;
    ByteCodeUtil::formatMessageName(messageName, nullptr, *actionName, nullptr, 0, argCount, flags);
 
-   if (test(message, CONVERSION_MESSAGE)) {
+   if ((message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE) {
       size_t position = (*messageName).find('[');
 
       ImageSection msection(_mdata, 0x1000000);

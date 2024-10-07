@@ -19,5 +19,5 @@ singleton CommandLineFactory
     }
 }
 
-public commandLineArguments =
+public CommandLineArguments =
     CommandLineFactory.load();

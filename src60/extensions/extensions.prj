@@ -40,6 +40,9 @@
        <include>routines\combinations.l</include>
        <include>routines\compound.l</include>
      </module>
+     <module name="routines'stex">
+       <include>routines\stex\convertors.l</include>
+     </module>
      <module name="scripting">
        <include>scripting\interpreter.l</include>
        <include>scripting\win_scripts.l</include>
@@ -51,6 +54,7 @@
      </module>
      <module name="threading">
        <include>threading\threading.l</include>
+       <include>threading\console.l</include>
      </module>
      <module name="runtime">
        <include>runtime\systemmonitor.l</include>

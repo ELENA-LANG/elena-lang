@@ -1,13 +1,13 @@
-    namespace text
+namespace text
 {
    // --- Encoder ---
    public interface Encoder
    {
-      abstract convertChar(char ch, byte[] byteArray, int index, ref int length);
+      abstract int convertChar(char ch, byte[] byteArray, int index);
 
       abstract char convertToChar(byte[] byteArray, int index, ref int length);
 
-      convertFrom(byte[] byteArray, int index, ref int len, char[] output, int outputIndex, ref int outputLen)
+      int convertFrom(byte[] byteArray, int index, ref int len, char[] output, int outputIndex, int outputLen)
       {
          int i := 0;
          int j := outputIndex;
@@ -19,24 +19,24 @@
             j += 1;
          };
 
-         outputLen := j - outputIndex;
+         ^ j - outputIndex;
       }
 
-      convertTo(char[] chars, int index, ref int len, byte[] output, int outputIndex, ref int outputLen)
+      int convertTo(char[] chars, int index, ref int len, byte[] output, int outputIndex, int outputLen)
       {
          int j := outputIndex;
          for (int i := 0; i < len; i += 1) {
             char ch := chars[i + index];
 
-            self.convertChar(ch, output, j, ref int chLen);
+            int chLen := self.convertChar(ch, output, j);
 
             j += chLen;
          };
 
-         outputLen := j - outputIndex;
+         ^ j - outputIndex;
       }
 
-      toByteArray(string s, int index, ref int length, byte[] output, int outputIndex, ref int outputLength)
+      int toByteArray(string s, int index, ref int length, byte[] output, int outputIndex, int outputLength)
       {
          char tmp[128];
          int end := length;
@@ -58,13 +58,13 @@
 
          length := i - index;
 
-         self.convertTo(tmp, 0, j, output, outputIndex, ref outputLength);
+         ^ self.convertTo(tmp, 0, j, output, outputIndex, outputLength);
       }
 
       string toString(int index, int length, byte[] buffer)
       {
          char tmp[128];
-         string retVal := emptyString;
+         string retVal := EmptyString;
          int i := index;
          int len := length;
          int subLen := 128;
@@ -72,7 +72,7 @@
             if (len < subLen)
                subLen := len;
 
-            self.convertFrom(buffer, i, ref subLen, tmp, 0, ref int outputLen);
+            int outputLen := self.convertFrom(buffer, i, ref subLen, tmp, 0, 128);
             
             retVal := retVal + String.copy(0, outputLen, tmp);
 
@@ -94,7 +94,7 @@
             if (len < subLen)
                subLen := len;
 
-            self.convertFrom(buffer, i, ref subLen, tmp, 0, ref int outputLen);
+            int outputLen := self.convertFrom(buffer, i, ref subLen, tmp, 0, 128);
             
             retVal := retVal + WideString.copy(0, outputLen, tmp);
 
@@ -185,12 +185,12 @@
    // --- UTF8Encoder ---
    public sealed singleton UTF8Encoder : Encoder
    {
-      convertChar(char ch, byte[] byteArray, int index, out int length)
+      int convertChar(char ch, byte[] byteArray, int index)
       {
          int value := ch;
 
          int byteLen := byteArray.Length;
-         length := UTFOperations.convertUTF32_2_8(value, byteArray, index, byteLen);
+         ^ UTFOperations.convertUTF32_2_8(value, byteArray, index, byteLen);
       }
 
       char convertToChar(byte[] byteArray, int index, out int sourLen)
@@ -205,7 +205,7 @@
    // --- UTF16Encoder ---
    public sealed singleton UTF16Encoder : Encoder
    {
-      convertChar(char ch, byte[] byteArray, int index, out int length)
+      int convertChar(char ch, byte[] byteArray, int index)
       {
          int value := ch;
          short tmp[2];
@@ -217,7 +217,7 @@
          byteArray[index] := lo;
          byteArray[index + 1] := hi;
 
-         length := 2;
+         int length := 2;
 
          if (tmpLen == 2) {
             hi := tmp[1].High;
@@ -227,6 +227,8 @@
 
             length := 4;   
          };
+
+         ^ length;
       }
       
       char convertToChar(byte[] byteArray, int index, out int chLen)

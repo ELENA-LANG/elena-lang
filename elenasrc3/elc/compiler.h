@@ -94,7 +94,7 @@ namespace elena_lang
       StaticConstField,
       ClassStaticConstField,
       Wrapper,
-      ClosureInfo,
+      ContextInfo,
       MemberInfo,
       LocalField,
       ConstGetter,  // key = value constant
@@ -363,6 +363,7 @@ namespace elena_lang
             Symbol,
             Class,
             OwnerClass,
+            ClassClass,
             Statemachine,
             Method,
             Field,
@@ -695,6 +696,14 @@ namespace elena_lang
          ref_t      classInfoRef;
 
       public:
+         Scope* getScope(ScopeLevel level) override
+         {
+            if (level == ScopeLevel::ClassClass) {
+               return this;
+            }
+            else return ClassScope::getScope(level);
+         }
+
          ref_t getProperClassRef() { return classInfoRef; }
 
          ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr) override;
@@ -777,7 +786,6 @@ namespace elena_lang
          }
 
          bool checkType(MethodHint type);
-         static bool checkType(MethodInfo& methodInfo, MethodHint type);
 
          bool isGeneric()
          {
@@ -862,6 +870,12 @@ namespace elena_lang
             MethodScope* scope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
 
             return scope ? scope->message : 0;
+         }
+         bool isSealedMethod()
+         {
+            MethodScope* scope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
+
+            return scope->checkType(MethodHint::Sealed);
          }
 
          TypeInfo getOutputInfo()
@@ -973,11 +987,23 @@ namespace elena_lang
 
             return scope ? scope->reference : 0;
          }
+         ref_t getClassFlags(bool ownerClass = true)
+         {
+            ClassScope* scope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+
+            return scope ? scope->info.header.flags : 0;
+         }
          ref_t isSealed(bool ownerClass = true)
          {
             ClassScope* scope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
             
             return scope ? test(scope->info.header.flags, elSealed) : false;
+         }
+         ref_t isExtension(bool ownerClass = true)
+         {
+            ClassScope* scope = Scope::getScope<ClassScope>(*this, ownerClass ? ScopeLevel::OwnerClass : ScopeLevel::Class);
+
+            return scope ? (scope->extensionClassRef != 0) : false;
          }
 
          ObjectInfo mapSelf(bool ownerClass = false)
@@ -1053,6 +1079,8 @@ namespace elena_lang
       {
          pos_t contextSize;
          ref_t typeRef;
+         ref_t resultRef;
+         bool  asyncMode;
 
          ObjectInfo mapContextField()
          {
@@ -1065,10 +1093,10 @@ namespace elena_lang
             if (level == ScopeLevel::Statemachine) {
                return this;
             }
-            else return InlineClassScope::getScope(level);
+            else return Scope::getScope(level);
          }
 
-         StatemachineClassScope(ExprScope* owner, ref_t reference);
+         StatemachineClassScope(ExprScope* owner, ref_t reference, bool asyncMode);
       };
 
       struct MessageResolution
@@ -1077,6 +1105,7 @@ namespace elena_lang
          mssg_t message;
          ref_t  extensionRef;
          int    stackSafeAttr;
+         mssg_t byRefHandler;
 
          MessageResolution()
          {
@@ -1084,6 +1113,7 @@ namespace elena_lang
             this->message = 0;
             this->extensionRef = 0;
             this->stackSafeAttr = 0;
+            this->byRefHandler = 0;
          }
          MessageResolution(bool resolved, mssg_t message)
          {
@@ -1091,6 +1121,7 @@ namespace elena_lang
             this->message = message;
             this->extensionRef = 0;
             this->stackSafeAttr = 0;
+            this->byRefHandler = 0;
          }
          MessageResolution(mssg_t message)
          {
@@ -1098,6 +1129,7 @@ namespace elena_lang
             this->message = message;
             this->extensionRef = 0;
             this->stackSafeAttr = 0;
+            this->byRefHandler = 0;
          }
       };
 
@@ -1261,6 +1293,9 @@ namespace elena_lang
 
          bool isDirectMethodCall(SyntaxNode& node);
 
+         bool checkValidity(ObjectInfo target, CheckMethodResult& result, bool allowPrivateCall);
+         bool checkValidity(ObjectInfo target, MessageResolution& resolution, bool allowPrivateCall);
+
          ObjectInfo compileLookAhead(SyntaxNode node,
             ref_t targetRef, ExpressionAttribute attrs);
 
@@ -1327,7 +1362,7 @@ namespace elena_lang
 
          MessageResolution resolveByRefHandler(ObjectInfo source, ref_t expectedRef, mssg_t weakMessage, ref_t& signatureRef, bool noExtensions);
          MessageResolution resolveMessageAtCompileTime(ObjectInfo target, mssg_t weakMessage, ref_t implicitSignatureRef, bool ignoreExtensions, 
-            bool ignoreVariadics);
+            bool ignoreVariadics, bool checkByRefHandler = false);
 
          ObjectInfo declareTempLocal(ref_t typeRef, bool dynamicOnly = true);
          ObjectInfo declareTempStructure(SizeInfo sizeInfo);
@@ -1353,11 +1388,11 @@ namespace elena_lang
 
          ObjectInfo allocateResult(ref_t resultRef);
 
-         void compileNestedInitializing(InlineClassScope& classScope, ref_t nestedRef, int& preservedClosure,
+         void compileNestedInitializing(InlineClassScope& classScope, ref_t nestedRef, int& preservedContext,
             ArgumentsInfo* updatedOuterArgs);
 
          void compileYieldOperation(SyntaxNode node);
-         void compileAsyncOperation(SyntaxNode node);
+         void compileAsyncOperation(SyntaxNode node, bool valueExpected);
          void compileSwitchOperation(SyntaxNode node);
 
          bool compileAssigningOp(ObjectInfo target, ObjectInfo source, bool& nillableOp);
@@ -1471,6 +1506,7 @@ namespace elena_lang
       void saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_t reserved, pos_t reservedN);
 
       ref_t resolveYieldType(Scope& scope, SyntaxNode node);
+      ref_t declareAsyncStatemachine(StatemachineClassScope& scope, SyntaxNode node);
 
       pos_t saveMetaInfo(ModuleBase* module, ustr_t value, ustr_t postfix);
 
@@ -1629,13 +1665,16 @@ namespace elena_lang
 
       ref_t declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode);
 
-      void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode);
+      void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode, bool templateBasedMode);
       void declareClosureMessage(MethodScope& scope, SyntaxNode node);
       void declareIteratorMessage(MethodScope& scope, SyntaxNode node);
 
       void initializeMethod(ClassScope& scope, MethodScope& methodScope, SyntaxNode current);
 
       void declareSymbolMetaInfo(SymbolScope& scope, SyntaxNode node);
+
+      void declareByRefHandler(SyntaxNode classNode, SyntaxKey methodType,
+         ref_t targetRef, ClassInfo& info, mssg_t message, bool abstractOne);
 
       void declareMetaInfo(Scope& scope, SyntaxNode node);
       void declareMethodMetaInfo(MethodScope& scope, SyntaxNode node);
@@ -1750,7 +1789,7 @@ namespace elena_lang
       mssg_t declareInplaceConstructorHandler(MethodScope& invokerScope, ClassScope& classClassScope);
       mssg_t compileInplaceConstructorHandler(BuildTreeWriter& writer, MethodScope& invokerScope,
          ClassScope& classClassScope, SyntaxNode current, SyntaxNode methodNode, mssg_t handler);
-      mssg_t compileByRefHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node,
+      void compileByRefHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node,
          mssg_t byRefHandler);
       void compileByRefRedirectHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node,
          mssg_t byRefHandler);
@@ -1770,7 +1809,7 @@ namespace elena_lang
          SyntaxNode node, bool abstractMode);
       void compileCustomDispatcher(BuildTreeWriter& writer, ClassScope& scope);
       void compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef);      
-      void compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node);
+      void compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node, ref_t parentRef);
 
       void compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
          bool exclusiveMode = false, bool ignoreAutoMultimethod = false);
@@ -1796,10 +1835,10 @@ namespace elena_lang
       void injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool interfaceBased);
       void injectVirtualMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope, 
          ref_t targetRef, ClassInfo& info, mssg_t multiMethod, int nillableArgs);
-      void injectVirtualEmbeddableWrapper(SyntaxNode classNode, SyntaxKey methodType,
-         ref_t targetRef, ClassInfo& info, mssg_t multiMethod, bool abstractOne);
 
       void injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType, Scope& scope,
+         ref_t targetRef, ClassInfo& info, VirtualMethodList& implicitMultimethods);
+      void declareVirtualMethods(SyntaxNode classNode, SyntaxKey methodType, Scope& scope,
          ref_t targetRef, ClassInfo& info, VirtualMethodList& implicitMultimethods);
 
       void injectInitializer(SyntaxNode classNode, SyntaxKey methodType, mssg_t message);
@@ -1821,7 +1860,8 @@ namespace elena_lang
       void injectDefaultConstructor(ClassScope& scope, SyntaxNode node, 
          bool protectedOne, bool withClearOption);
 
-      void injectVariableInfo(BuildNode node, CodeScope& codeScope);
+      void addVariableInfo(BuildNode node, Scope& codeScope, ustr_t name, Parameter& parameter);
+      void injectVariablesInfo(BuildNode node, CodeScope& codeScope);
 
       void injectInterfaceDispatch(Scope& scope, SyntaxNode node, ref_t parentRef);
 

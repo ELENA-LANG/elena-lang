@@ -112,7 +112,7 @@ public extension objectExOp
    getAtOrDefault(int index, default)
    {
       if (self.Length > index) {
-         ^ self.getAt(index) ?? default;
+         ^ self.at(index) ?? default;
       };
 
       ^ default

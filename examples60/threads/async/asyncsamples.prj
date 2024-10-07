@@ -1,0 +1,15 @@
+<configuration>
+    <files>
+        <module>
+            <file>sample1.l</file>
+            <file>sample2.l</file>
+            <file>main.l</file>
+        </module>
+    </files>
+    <project>
+        <executable>asyncsamples</executable>
+        <options></options>
+        <namespace>asyncsamples</namespace>
+        <template>mt_console</template>
+    </project>
+</configuration>

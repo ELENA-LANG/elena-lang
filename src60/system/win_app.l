@@ -8,5 +8,5 @@ singleton CommandLineFactory
     }
 }
 
-public commandLine = 
+public CommandLine = 
     CommandLineFactory.load();

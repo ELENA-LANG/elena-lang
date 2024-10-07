@@ -32,7 +32,8 @@ namespace elena_lang
          int               ptrSize;
       };
 
-      typedef Stack<Pair<int, int>> LoopLabels;
+      typedef Stack<Pair<int, int>>       LoopLabels;
+      typedef CachedList<mssg_t, 0x10>    IndexedMessages;
 
       struct TapeScope
       {
@@ -125,7 +126,8 @@ namespace elena_lang
          ReferenceMap& paths, bool tapeOptMode);
 
       void saveVMT(ClassInfo& info, BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths,
-         bool tapeOptMod);
+         bool tapeOptMod, IndexedMessages& indexes);
+      void saveIndexTable(Scope& scope, IndexedMessages& indexes);
 
       void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
          int ptrSize, ReferenceMap& paths, bool tapeOptMode);

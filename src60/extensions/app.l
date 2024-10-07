@@ -1,6 +1,6 @@
 // --- ProgramLoop ---
 
-class ProgramLoop
+class ProgramLoopImpl
 {
    bool   _active;
    object _control;
@@ -19,9 +19,9 @@ class ProgramLoop
    function()
    {
       // if grettings is not defined - do nothing
-      console.printLine(_control.greeting() ?? emptyString);
+      console.printLine(_control.greeting() ?? EmptyString);
         
-      var prompt := _control.Prompt ?? emptyString;
+      var prompt := _control.Prompt ?? EmptyString;
         
       while (_active)
       {
@@ -32,4 +32,4 @@ class ProgramLoop
    }
 }
 
-public static programLoop = ProgramLoop.assign(forward program'control);
+public static ProgramLoop = ProgramLoopImpl.assign(forward program'control);

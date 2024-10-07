@@ -12,7 +12,7 @@ randomBrackets(len)
 {
    if (0 == len)
    { 
-      ^emptyString 
+      ^ EmptyString 
    }
    else
    {

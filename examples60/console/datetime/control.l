@@ -3,7 +3,7 @@ import extensions;
 
 // --- Control ---
 
-public singleton control
+public singleton Control
 {
     get string Prompt
         = "Please select your option:
@@ -19,11 +19,11 @@ public singleton control
         auto choice := s.toInt();
         
         choice =>
-            1 { ^now.toString() }
-            2 { ^utcNow.toString() }
-            3 { ^now.Year.toString() }
-            4 { ^now.toShortTimeString() }
-            7 { forward program.stop(); ^ emptyString }
+            1 { ^Now.toString() }
+            2 { ^UtcNow.toString() }
+            3 { ^Now.Year.toString() }
+            4 { ^Now.toShortTimeString() }
+            7 { forward program.stop(); ^ EmptyString }
             ! { ^"Invalid choice" }
     }
 }

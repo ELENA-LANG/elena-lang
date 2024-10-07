@@ -62,7 +62,7 @@ namespace text
     
       writeLine()
       {
-         self.write(newLineConstant)
+         self.write(NewLineConstant)
       }
     
       append(line)
@@ -420,7 +420,7 @@ namespace text
       string Substring(int index, int length)
       {
          if (length == 0)
-            { ^ emptyString };
+            { ^ EmptyString };
                 
          ^ String.copy(index, length, _buffer)
       }
@@ -489,7 +489,7 @@ namespace text
       {
          reserve(4);
 
-         UTF8Encoder.convertChar(ch, _buffer, *_length, out int len);
+         int len := UTF8Encoder.convertChar(ch, _buffer, *_length);
             
          _length.append(len)
       }
@@ -518,7 +518,7 @@ namespace text
          self.reserve(4);
             
          byte tmp[4];
-         UTF8Encoder.convertChar(ch, tmp, 0, ref int len := 4);
+         int len := UTF8Encoder.convertChar(ch, tmp, 0);
 
          Array<byte>.move(_buffer, index, current, len);            
          Array<byte>.copyTo(_buffer, tmp, index, len);

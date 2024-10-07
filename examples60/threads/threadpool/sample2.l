@@ -4,18 +4,14 @@ import extensions'threading;
 
 WorkItem3(state)
 {
-   lock(console) {
-      console.writeLine("WorkItem1");
-   };   
+   Console.printLineConcurrent("WorkItem1");
 
    state.signal()
 }
 
 WorkItem4(state)
 {
-   lock(console) {
-      console.writeLine("WorkItem2");
-   };   
+   Console.printLineConcurrent("WorkItem2");
 
    state.signal()
 }
@@ -29,5 +25,5 @@ public sample2()
    
    event.wait();
 
-   console.writeLine("Main thread exits")
+   Console.writeLine("Main thread exits")
 }

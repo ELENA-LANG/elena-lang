@@ -13,7 +13,7 @@ public sample1()
    auto tasks := new List<Task>();
 
    foreach(string dirName; in dirNames) {
-      Task t := Task.Run( { foreach(auto path; in Directory.getFiles(dirName)) 
+      Task t := Task.run( { foreach(auto path; in Directory.getFiles(dirName)) 
                                     list.push(path); } );
       tasks.append(t);
    };

@@ -389,9 +389,12 @@ namespace calendar
          = new Date(_value);
    }
 
-   // --- now ---    
-   public Date now = Date.Now;
-    
+   // --- obsolete ---    
+   public Date now = Date.Now;    
+   // --- obsolete ---    
    public Date utcNow = Date.UtcNow;
 
+   // --- now ---    
+   public Date Now = Date.Now;
+   public Date UtcNow = Date.UtcNow;
 }

@@ -18,21 +18,21 @@ extension EReader
       }
       catch(Exception e)
       {
-         console.writeLine(e.Message).readChar();
+         Console.writeLine(e.Message).readChar();
                     
          AbortException.raise()
       }
    }   
 }
 
-enteredNumber = forward number.new().loadFrom(console);
+EnteredNumber = forward number.new().loadFrom(Console);
 
 // --- Program ---
 
 public program()
 {
-   console
+   Console
       .printLine(forward prompt)
-      .printLine("The sum is ",enteredNumber + enteredNumber)
+      .printLine("The sum is ",EnteredNumber + EnteredNumber)
       .readChar()
 }

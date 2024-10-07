@@ -568,7 +568,7 @@ public boxingTests() : testCase()
    console.write(".");
 
    // --- boxing / unboxing variable struct
-   BoxingStruct st;
+   BoxingStruct st := default;
    BoxingProber.set(st);
    st.test(3,4);
    console.write(".");
@@ -2123,4 +2123,156 @@ public isNilOperatorTest() : testCase()
    Assert.ifNotFailed({ var a := new A(); var b := nil; var r := a ?? b.test() });
    Assert.ifFailed({ var a := nil; var b := nil; var r := a ?? b.test() });
    console.write(".");
+}
+
+namespace IndexedTest
+{
+   A
+   {
+      indexed foo()
+         = "from A";
+
+      indexed foo(string s)
+         = "from A with " + s;
+
+      indexed foo(int n)
+         = "from A with int";
+
+      indexed internal fooInternal(string s)
+         = "from A with hidden " + s;
+   }
+   
+   B : A
+   {
+      indexed foo()
+         = "from B";   
+
+      indexed foo(string s)
+         = "from B with "+s;   
+
+      indexed internal fooInternal(string s)
+         = "from B with hidden " + s;
+   }   
+
+   C : A
+   {
+      indexed bar()
+         = "from C";   
+   }
+}
+
+public indexedTests() : testCase()
+{
+   IndexedTest'A a := new IndexedTest'A();
+   Assert.ifEqual(a.foo(), "from A");
+   Assert.ifEqual(weak a.foo(), "from A");
+   console.write(".");
+
+   IndexedTest'A b := new IndexedTest'B();
+   Assert.ifEqual(b.foo(), "from B");
+   Assert.ifEqual(weak b.foo(), "from B");
+
+   IndexedTest'A c := new IndexedTest'C();
+   Assert.ifEqual(c.foo(), "from A");
+   Assert.ifEqual(weak c.foo(), "from A");
+   console.write(".");
+
+   Assert.ifEqual(a.foo("Hello"), "from A with Hello");
+   Assert.ifEqual(weak a.foo("Hello2"), "from A with Hello2");
+   Assert.ifEqual(b.foo("Hello"), "from B with Hello");
+   Assert.ifEqual(weak b.foo("Hello"), "from B with Hello");
+   Assert.ifEqual(c.foo("Hello2"), "from A with Hello2");
+   Assert.ifEqual(weak c.foo("Hello2"), "from A with Hello2");
+   console.write(".");
+
+   Assert.ifEqual(a.fooInternal("Hello"), "from A with hidden Hello");
+   Assert.ifEqual(b.fooInternal("Hello"), "from B with hidden Hello");
+   Assert.ifEqual(c.fooInternal("Hello2"), "from A with hidden Hello2");
+
+   Assert.ifFailed({weak a.fooInternal("Hello")});
+   Assert.ifFailed({weak b.fooInternal("Hello")});
+   Assert.ifFailed({weak c.fooInternal("Hello")});
+   console.write(".");
+
+}
+
+namespace sealedMethodDispatcherTest
+{
+   C;
+   
+   public closed A
+   {
+      sealed continueWith(C c)
+      {
+      }
+   }
+   
+   public sealed B : A
+   {
+   }
+}
+
+public sealedMethodDispatcher() : testCase()
+{
+   sealedMethodDispatcherTest'B b := new sealedMethodDispatcherTest'B();
+   var c := new sealedMethodDispatcherTest'C();
+   
+   Assert.ifNotFailed({ weak b.continueWith(c); });
+   console.write(".");
+}
+
+public objectOpTests() : testCase()
+{
+   A a := new A();
+
+   string name := a.__getClassName();
+
+   Assert.ifEqual(name, "system_tests'$private'A");
+   console.write(".");
+}
+
+namespace variadicBoxingTestset
+{
+   A
+   {
+      field args;
+
+      constructor load(params string[] args)
+      {
+         this args := args;
+      }
+
+      int Length
+         = args.Length;
+
+      validate(params string[] args)
+      {
+         for (int i := 0; i < args.Length; i++) {
+            Assert.ifEqual(this args[i], args[i]);
+         }
+      }
+
+      static validate2(params string[] args)
+      {
+         string[] boxedArgs := args;
+
+         Assert.ifEqual(boxedArgs.Length, args.Length);
+
+         for (int i := 0; i < args.Length; i++) {
+            Assert.ifEqual(boxedArgs[i], args[i]);
+         }
+      }
+   }
+}
+
+public variadicBoxingTest() : testCase()
+{
+   auto a := variadicBoxingTestset'A.load("a", "b", "c");
+   
+   Assert.ifEqual(a.Length, 3);
+   a.validate("a", "b", "c");
+   Console.write(".");
+
+   variadicBoxingTestset'A.validate2("a", "b", "c");
+   Console.write(".");
 }

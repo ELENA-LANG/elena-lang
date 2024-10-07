@@ -881,6 +881,18 @@ namespace collections
          _array := new T[](16);
       }
         
+      constructor load(source)
+         <= load(cast Enumerator<T>(source));
+
+      constructor load(Enumerator<T> e)
+      {
+         _capacity := 16;
+         _length := 0;
+         _array := new T[](16);
+            
+         self.appendRange(e)        
+      }       
+
       constructor load(T[] a, int index, int len)
       {
          int size := len / 32;

@@ -179,6 +179,7 @@ void semiDirectCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
 
    bool variadicOp = (node.arg.reference & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
+   bool indexTableMode = node.existChild(BuildKey::IndexTableMode);
 
    pos_t argCount = getArgCount(node.arg.reference);
    if (!variadicOp && (int)argCount < tapeScope.scope->minimalArgList) {
@@ -188,6 +189,11 @@ void semiDirectCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    }
 
    tape.write(ByteCode::MovM, node.arg.reference);
+
+   // if it is an indexed call
+   if (indexTableMode)
+      tape.write(ByteCode::AltMode);
+
    tape.write(ByteCode::VCallMR, node.arg.reference, targetRef | mskVMTRef);
 }
 
@@ -495,8 +501,12 @@ void loadingIndex(CommandTape& tape, BuildNode& node, TapeScope&)
 void dispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    mssg_t message = node.findChild(BuildKey::Message).arg.reference;
+   bool altMode = node.existChild(BuildKey::IndexTableMode);
    if (message) {
       // if it is a multi-method dispatcher
+      if (altMode)
+         tape.write(ByteCode::AltMode);
+
       tape.write(ByteCode::DispatchMR, message, node.arg.reference | mskConstArray);
    }
    // otherwise it is generic dispatcher
@@ -3717,7 +3727,7 @@ void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMod
 }
 
 void ByteCodeWriter :: saveVMT(ClassInfo& info, BuildNode node, Scope& scope, pos_t sourcePathRef,
-   ReferenceMap& paths, bool tapeOptMode)
+   ReferenceMap& paths, bool tapeOptMode, IndexedMessages& indexedMessages)
 {
    BuildNode current = node.firstChild();
    while (current != BuildKey::None) {
@@ -3725,6 +3735,8 @@ void ByteCodeWriter :: saveVMT(ClassInfo& info, BuildNode node, Scope& scope, po
          pos_t methodSourcePathRef = sourcePathRef;
 
          auto methodInfo = info.methods.get(current.arg.reference);
+         if (MethodInfo::checkHint(methodInfo, MethodHint::Indexed))
+            indexedMessages.add(current.arg.reference);
 
          MethodEntry entry = { current.arg.reference, scope.code->position(), methodInfo.outputRef };
          scope.vmt->write(&entry, sizeof(MethodEntry));
@@ -3736,12 +3748,26 @@ void ByteCodeWriter :: saveVMT(ClassInfo& info, BuildNode node, Scope& scope, po
          saveProcedure(current, scope, true, methodSourcePathRef, paths, tapeOptMode);
       }
       else if (current == BuildKey::AbstractMethod) {
+         auto methodInfo = info.methods.get(current.arg.reference);
+         if (MethodInfo::checkHint(methodInfo, MethodHint::Indexed))
+            indexedMessages.add(current.arg.reference);
+
          MethodEntry entry = { current.arg.reference, INVALID_POS };
          scope.vmt->write(&entry, sizeof(MethodEntry));
       }
 
       current = current.nextNode();
    }
+
+}
+
+void ByteCodeWriter :: saveIndexTable(Scope& scope, IndexedMessages& indexedMessages)
+{
+   // saving indexes terminated with 0
+   for (pos_t i = 0; i < indexedMessages.count_pos(); i++)
+      scope.vmt->writeDWord(indexedMessages[i]);
+
+   scope.vmt->writeDWord(0);
 }
 
 pos_t ByteCodeWriter :: savePath(BuildNode node, Scope& scope, ReferenceMap& paths)
@@ -3777,19 +3803,25 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
    ClassInfo info;
    info.load(&metaReader);
 
-   // reset VMT length
+   // reset VMT & HMT lengths
    info.header.count = 0;
+   info.header.indexCount = 0;
    for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
       auto m_info = *m_it;
 
       //NOTE : ingnore statically linked and predefined methods
       if (!test(m_it.key(), STATIC_MESSAGE) && !test(m_info.hints, (ref_t)MethodHint::Predefined))
          info.header.count++;
+
+      //NOTE : count indexed methods
+      if (MethodInfo::checkHint(m_info, MethodHint::Indexed))
+         info.header.indexCount++;
    }
 
    vmtWriter.write(&info.header, sizeof(ClassHeader));  // header
 
    Scope scope = { &vmtWriter, &codeWriter, moduleScope, nullptr, nullptr, minimalArgList, ptrSize };
+   IndexedMessages indexedMessages;
    if (moduleScope->debugModule) {
       // initialize debug info writers
       MemoryWriter debugWriter(moduleScope->debugModule->mapSection(DEBUG_LINEINFO_ID, false));
@@ -3802,13 +3834,15 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
 
       openClassDebugInfo(scope, moduleScope->module->resolveReference(node.arg.reference & ~mskAnyRef), info.header.flags);
       saveFieldDebugInfo(scope, info);
-      saveVMT(info, node, scope, sourcePath, paths, tapeOptMode);
+      saveVMT(info, node, scope, sourcePath, paths, tapeOptMode, indexedMessages);
       endDebugInfo(scope);
    }
-   else saveVMT(info, node, scope, INVALID_POS, paths, tapeOptMode);
+   else saveVMT(info, node, scope, INVALID_POS, paths, tapeOptMode, indexedMessages);
 
    pos_t size = vmtWriter.position() - classPosition;
    vmtSection->write(classPosition - 4, &size, sizeof(size));
+
+   saveIndexTable(scope, indexedMessages);
 
    ClassInfo::saveStaticFields(&vmtWriter, info.statics);
 

@@ -255,7 +255,7 @@ namespace math
             int l := output.Length;
             output.Length := l - 1;
                 
-            output.write(newLineConstant);
+            output.write(NewLineConstant);
          };
             
          ^ output.Value

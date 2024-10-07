@@ -7,10 +7,10 @@ const int ARRAY_SIZE = 32768;
 public program()
 {
     int casas := 50;
-    if(program_arguments.Length > 1)
-        { casas := program_arguments[1].toInt() };
+    if(Program_arguments.Length > 1)
+        { casas := Program_arguments[1].toInt() };
     
-    var start := now;
+    var start := Now;
     
 	//#var x := system'Array new &length:ARRAY_SIZE.
     auto x := new int[](ARRAY_SIZE);
@@ -383,12 +383,12 @@ public program()
 			while (x[xc] != 0)
 			{
 				xc := xc + 2;
-				console.write(charConvertor.convert(x[xc]));
+				Console.write(charConvertor.convert(x[xc]));
     	        xc := xc -4;
 				while (x[xc] != 0)
 				{
 					x[xc] := x[xc] + 1;
-					console.write(charConvertor.convert(x[xc]));
+					Console.write(charConvertor.convert(x[xc]));
 					while (x[xc] != 0)
 					{
 						x[xc] := x[xc] - 1
@@ -401,7 +401,7 @@ public program()
 			while (x[xc] != 0)
 			{
 				xc := xc + 2;
-				console.write(charConvertor.convert(x[xc]));
+				Console.write(charConvertor.convert(x[xc]));
 				xc := xc -2;
 				x[xc] := x[xc] - 1
 			};
@@ -443,14 +443,14 @@ public program()
 		xc := xc -8
 	};
 	x[xc] := x[xc] + 10;
-	console.write(charConvertor.convert(x[xc]));
+	Console.write(charConvertor.convert(x[xc]));
 
-    var end := now;
+    var end := Now;
  
-    console.writeLine();
+    Console.writeLine();
      
     var diff := end - start;
-    console.printLine("Time elapsed in msec:",diff.Milliseconds);
+    Console.printLine("Time elapsed in msec:",diff.Milliseconds);
 
-    console.readChar()
+    Console.readChar()
 }

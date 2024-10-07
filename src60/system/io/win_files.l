@@ -64,19 +64,17 @@ namespace io
                 0)
       }
     
-      read(byte[] dump, ref int retVal)
+      int read(byte[] dump, int len)
       {
-         int toRead := retVal;
-            
          extern KERNEL32.ReadFile(
             _handle,
             dump,
-            toRead,
+            len,
             //ref retVal,
             out int temp,
             0);
 
-         retVal := temp
+         ^ temp
       }
     
       int Index

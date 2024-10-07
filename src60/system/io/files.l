@@ -37,14 +37,28 @@ namespace io
 
       saveContent(string content)
       {
-         using(TextWriter writer := fileControl.writer(_path)) {
-            writer.write(content);
-         }
+         File.saveContent(_path, content);
       }    
 
-      private read(TextBuilder output)
+      string readContent()
+         = File.readContent(_path);
+        
+      wide readWideContent()
+         = File.readWideContent(_path);
+
+      delete()
+         = fileControl.delete(_path);
+
+      static saveContent(string path, string content)
       {
-         using(TextReader reader := fileControl.newReader(_path)) {
+         using(TextWriter writer := fileControl.writer(path)) {
+            writer.write(content);
+         }         
+      }
+
+      static readContentTo(string path, TextBuilder output)
+      {
+         using(TextReader reader := fileControl.newReader(path)) {
             char       buffer[128];
             int        read := 0;
             while (reader.Available)
@@ -54,30 +68,26 @@ namespace io
                    
                output.write(buffer, read)
             };            
-         }
+         }         
       }
 
-      string readContent()
+      static string readContent(string path)
       {
          auto output := new TextBuilder();
             
-         self.read(output);
-            
-         ^ output.Value
-      }
-        
-      wide readWideContent()
-      {
-         auto output := new TextBuilder();
-            
-         self.read(output);
+         File.readContentTo(path, output);
             
          ^ output.Value
       }
 
-      delete()
-         = fileControl.delete(_path);
-
+      static wide readWideContent(string path)
+      {
+         auto output := new TextBuilder();
+            
+         File.readContentTo(path, output);
+            
+         ^ output.Value
+      }
    }
 
    // --- Directory ---

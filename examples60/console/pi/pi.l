@@ -5,7 +5,7 @@ const int MAX = 50000000;
 
 public program()
 {
-    var started := now;
+    var started := Now;
 
     real pi := 0.0;
     for(int i := 0; i < MAX; i += 1)
@@ -13,12 +13,12 @@ public program()
         pi += -1.0.power(i) / (i*2+1) * 4
     };
 
-    var ended := now;
+    var ended := Now;
 
-    console.printLine(pi);
+    Console.printLine(pi);
 
     var diff := ended - started;
-    console.printLine("Time elapsed in msec:",diff.Milliseconds);
+    Console.printLine("Time elapsed in msec:",diff.Milliseconds);
 
-    console.readChar()
+    Console.readChar()
 }

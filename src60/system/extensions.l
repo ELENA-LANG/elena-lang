@@ -1001,7 +1001,7 @@ public extension stringOp : String
          ^ self.Substring(index, len)
       };
 
-      ^ emptyString
+      ^ EmptyString
    }
 
    int indexOf(string s)
@@ -1114,7 +1114,7 @@ public extension stringOp : String
          index += chLen
       };
         
-      ^ emptyString
+      ^ EmptyString
    }
     
    string trimLeft()
@@ -1139,7 +1139,7 @@ public extension stringOp : String
          index -= chLen
       };
         
-      ^ emptyString
+      ^ EmptyString
    }
     
    string trimRight()
@@ -1153,7 +1153,7 @@ public extension stringOp : String
 
    string replace(string replacee, string replacer)
    {
-      string target := emptyString;
+      string target := EmptyString;
       int    start := 0;
       int    end := self.indexOf(start, replacee);
       int    replaceeLen := replacee.Length;

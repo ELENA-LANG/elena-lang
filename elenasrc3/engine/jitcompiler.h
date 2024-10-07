@@ -53,6 +53,15 @@ namespace elena_lang
       bool                 withDebugInfo;
       ref_t                frameOffset;
       ref_t                stackOffset;
+      bool                 altMode;
+
+      bool getAltMode()
+      {
+         bool oriValue = altMode;
+         altMode = false;
+
+         return oriValue;
+      }
 
       unsigned char code() const
       {
@@ -145,6 +154,7 @@ namespace elena_lang
       friend void compileAlloc(JITCompilerScope* scope);
       friend void compileFree(JITCompilerScope* scope);
       friend void compileBreakpoint(JITCompilerScope* scope);
+      friend void compileAltMode(JITCompilerScope* scope);
       friend void compileClose(JITCompilerScope* scope);
       friend void compileOpen(JITCompilerScope* scope);
       friend void compileExtOpen(JITCompilerScope* scope);
@@ -274,12 +284,14 @@ namespace elena_lang
       pos_t getVMTLength(void* targetVMT) override;
       addr_t findMethodAddress(void* entries, mssg_t message) override;
       pos_t findMethodOffset(void* entries, mssg_t message) override;
+      pos_t findHiddenMethodOffset(void* entries, mssg_t message) override;
 
       void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
-         pos_t staticLength, bool withOutputList) override;
+         pos_t indexTableLength, pos_t staticLength, bool withOutputList) override;
       void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) override;
+      void addIndexEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t indexOffset, pos_t& indexCount) override;
       void updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode) override;
-      pos_t copyParentVMT(void* parentVMT, void* targetVMT) override;
+      Pair<pos_t, pos_t> copyParentVMT(void* parentVMT, void* targetVMT, pos_t indexTableOffset) override;
 
       void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
          bool structMode, bool virtualMode) override;
@@ -352,11 +364,13 @@ namespace elena_lang
       pos_t getVMTLength(void* targetVMT) override;
       addr_t findMethodAddress(void* entries, mssg_t message) override;
       pos_t findMethodOffset(void* entries, mssg_t message) override;
+      pos_t findHiddenMethodOffset(void* entries, mssg_t message) override;
 
       void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
-         pos_t staticLength, bool withOutputList) override;
-      pos_t copyParentVMT(void* parentVMT, void* targetVMT) override;
+         pos_t indexTableLength, pos_t staticLength, bool withOutputList) override;
+      Pair<pos_t, pos_t> copyParentVMT(void* parentVMT, void* targetVMT, pos_t indexTableOffset) override;
       void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) override;
+      void addIndexEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t indexOffset, pos_t& indexCount) override;
       void updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode) override;
 
       void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length, 
@@ -455,6 +469,7 @@ namespace elena_lang
    void compileExtOpen(JITCompilerScope* scope);
    void compileXOpen(JITCompilerScope* scope);
    void compileBreakpoint(JITCompilerScope* scope);
+   void compileAltMode(JITCompilerScope* scope);
    void compileJump(JITCompilerScope* scope);
    void compileJeq(JITCompilerScope* scope);
    void compileJne(JITCompilerScope* scope);

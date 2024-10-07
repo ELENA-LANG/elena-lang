@@ -68,15 +68,19 @@ namespace io
          _position := _end
       }
 
-      read(byte[] array, ref int actualLength)
+      int read(byte[] array, int length)
       {
+         int actualLen := length;
+
          int remaining := _end - _position;
-         if (remaining < actualLength) {
-            actualLength := remaining
+         if (remaining < length) {
+            actualLen := remaining
          }
-         else remaining := actualLength;
+         else remaining := length;
 
          Array<byte>.copy(array, _buffer, _position, remaining);
+
+         ^ actualLen
       }
    }
 

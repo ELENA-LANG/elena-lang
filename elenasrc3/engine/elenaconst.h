@@ -13,7 +13,7 @@ namespace elena_lang
 {
    // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION              6                    // ELENA Engine version
-   #define ENGINE_MINOR_VERSION              4
+   #define ENGINE_MINOR_VERSION              5
 
    constexpr auto LINE_LEN                   = 0x1000;            // the maximal source line length
    constexpr auto IDENTIFIER_LEN             = 0x0300;            // the maximal identifier length
@@ -26,11 +26,11 @@ namespace elena_lang
    constexpr auto MESSAGE_FLAG_MASK          = 0x1E0u;
 
    constexpr auto STATIC_MESSAGE             = 0x100u;
-   constexpr auto FUNCTION_MESSAGE           = 0x020u;            // indicates it is an invoke message (without target variable in the call stack)
-   constexpr auto CONVERSION_MESSAGE         = 0x040u;
-   constexpr auto VARIADIC_MESSAGE           = 0x080u;
-   constexpr auto PROPERTY_MESSAGE           = 0x0C0u;
-   constexpr auto PREFIX_MESSAGE_MASK        = 0x0C0u;            // HOTFIX : is used to correctly identify VARIADIC_MESSAGE or PROPERTY_MESSAGE
+   constexpr auto FUNCTION_MESSAGE           = 0x020u;        
+   constexpr auto VARIADIC_MESSAGE           = 0x040u;        
+   constexpr auto PROPERTY_MESSAGE           = 0x080u;        
+   constexpr auto CONVERSION_MESSAGE         = 0x0C0u;        
+   constexpr auto PREFIX_MESSAGE_MASK        = 0x0C0u;            // HOTFIX : is used to correctly identify VARIADIC_MESSAGE / PROPERTY_MESSAGE / CONVERSION_MESSAGE
 
    constexpr auto ARG_COUNT                  = 0x01Eu;
    constexpr auto ARG_MASK                   = 0x01Fu;
@@ -38,7 +38,7 @@ namespace elena_lang
    // --- ELENA Module structure constants ---
    constexpr auto ELENA_SIGNITURE            = "ELENA.";          // the stand alone image
    constexpr auto ELENA_VM_SIGNITURE         = "VM.ELENA.";       // the stand alone image
-   constexpr auto MODULE_SIGNATURE           = "ELENA.0604";      // the module version
+   constexpr auto MODULE_SIGNATURE           = "ELENA.0605";      // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE     = "ED.06";
 
   // --- ELENA core module names ---
@@ -57,6 +57,7 @@ namespace elena_lang
 
    constexpr auto WEAK_POSTFIX               = "#weak";
    constexpr auto ENUM_POSTFIX               = "#enum";
+   constexpr auto BYREF_POSTFIX              = "#byref";
 
    constexpr auto NAMESPACE_REF              = "$namespace";
 
@@ -65,59 +66,10 @@ namespace elena_lang
    constexpr auto ROOT_MODULE                = "$rootnamespace";  // The project namespace
 
    // --- ELENA standard forwards
+   constexpr auto FORWARD_PREFIX_NS          = "$forwards'";
    constexpr auto TEMPLATE_PREFIX_NS         = "'$auto'";
    constexpr auto TEMPLATE_PREFIX_NS_ENCODED = "@$auto@";
-   constexpr auto FORWARD_PREFIX_NS          = "$forwards'";
    constexpr auto AUTO_SYMBOL_PREFIX         = "@autosymbol";
-   constexpr auto INLINE_CLASSNAME           = "$inline";         // nested class generic name
-
-   constexpr auto OPERATION_MAP_KEY          = "statements";
-   constexpr auto PREDEFINED_MAP_KEY         = "defaults";
-   constexpr auto ATTRIBUTES_MAP_KEY         = "attributes";
-   constexpr auto ALIASES_MAP_KEY            = "aliases";
-
-   constexpr auto OPERATION_MAP              = "system@operations@statements";
-   constexpr auto PREDEFINED_MAP             = "system@predefined@defaults";
-   constexpr auto ATTRIBUTES_MAP             = "system@attributes@attributes";
-   constexpr auto ALIASES_MAP                = "system@predefined@aliases";
-
-   constexpr auto STARTUP_ENTRY              = "$auto'startUpSymbol";
-
-   constexpr auto VM_TAPE                    = "$elena'meta$startUpTape";
-
-   constexpr auto PROGRAM_ENTRY              = "$forwards'program";         // used by the linker to define the debug entry
-
-   constexpr auto SYSTEM_FORWARD             = "$system_entry";   // the system entry
-   constexpr auto SUPER_FORWARD              = "$super";          // the common class predecessor
-   constexpr auto NILVALUE_FORWARD           = "$nil";            // the nil value
-   constexpr auto INTLITERAL_FORWARD         = "$int";            // the int literal
-   constexpr auto LONGLITERAL_FORWARD        = "$long";           // the long literal
-   constexpr auto REALLITERAL_FORWARD        = "$real";           // the real literal
-   constexpr auto INT8LITERAL_FORWARD        = "$int8";           // the int literal
-   constexpr auto UINT8LITERAL_FORWARD       = "$uint8";          // the int literal
-   constexpr auto INT16LITERAL_FORWARD       = "$short";          // the int literal
-   constexpr auto UINT16LITERAL_FORWARD      = "$ushort";         // the int literal
-   constexpr auto LITERAL_FORWARD            = "$string";         // the string literal
-   constexpr auto WIDELITERAL_FORWARD        = "$wide";           // the wide string literal
-   constexpr auto CHAR_FORWARD               = "$char";           // the char literal
-   constexpr auto BOOL_FORWARD               = "$boolean";        // the boolean class
-   constexpr auto TRUE_FORWARD               = "$true";           // the true boolean value
-   constexpr auto FALSE_FORWARD              = "$false";          // the false boolean value
-   constexpr auto WRAPPER_FORWARD            = "$ref";            // the wrapper template
-   constexpr auto ARRAY_FORWARD              = "$array";          // the array template
-   constexpr auto VARIADIC_ARRAY_FORWARD     = "$varray";         // the array template 
-   constexpr auto MESSAGE_FORWARD            = "$message";        // the message class
-   constexpr auto MESSAGE_NAME_FORWARD       = "$subject";        // the message class
-   constexpr auto EXT_MESSAGE_FORWARD        = "$ext_message";    // the extension message class
-   constexpr auto CLOSURE_FORWARD            = "$closure";        // the closure template class
-   constexpr auto TUPLE_FORWARD              = "$tuple";          // the tuple template class
-   constexpr auto YIELDIT_FORWARD            = "$yieldit";        // the yield state machine iterator template class
-   constexpr auto UINT_FORWARD               = "$uint";           // the uint wrapper
-   constexpr auto PTR_FORWARD                = "$ptr";            // the ptr wrapper
-   constexpr auto LAZY_FORWARD               = "$lazy";
-   constexpr auto NULLABLE_FORWARD           = "$nullable";
-   constexpr auto PRELOADED_FORWARD          = "system@preloadedSymbols";
-   constexpr auto START_FORWARD              = "$symbol_entry";
 
    // --- ELENA section prefixes
    constexpr auto META_PREFIX                = "meta$";
@@ -153,6 +105,7 @@ namespace elena_lang
 
    constexpr auto NEXT_MESSAGE               = "next";
    constexpr auto CURRENT_FIELD              = "__current";
+   constexpr auto PROCEED_MESSAGE            = "proceed";
 
    constexpr auto ADD_MESSAGE                = "add";
    constexpr auto SUB_MESSAGE                = "subtract";
@@ -379,30 +332,31 @@ namespace elena_lang
    constexpr ref_t mskLiteralRef          = 0x0E000000u;   // reference to constant literal
    constexpr ref_t mskVMTMethodAddress    = 0x0F000000u;
    constexpr ref_t mskVMTMethodOffset     = 0x10000000u;
-   constexpr ref_t mskConstArray          = 0x11000000u;
-   constexpr ref_t mskMessageBodyRef      = 0x12000000u;
-   constexpr ref_t mskMetaSymbolInfoRef   = 0x13000000u;
-   constexpr ref_t mskDeclAttributesRef   = 0x14000000u;
-   constexpr ref_t mskMetaExtensionRef    = 0x15000000u;
-   constexpr ref_t mskStaticRef           = 0x16000000u;
-   constexpr ref_t mskCharacterRef        = 0x17000000u;   // reference to character literal
-   constexpr ref_t mskConstant            = 0x18000000u;
-   constexpr ref_t mskStaticVariable      = 0x19000000u;
-   constexpr ref_t mskNameLiteralRef      = 0x1A000000u;
-   constexpr ref_t mskPathLiteralRef      = 0x1B000000u;
-   constexpr ref_t mskMssgLiteralRef      = 0x1C000000u;
-   constexpr ref_t mskLabelRef            = 0x1D000000u;
-   constexpr ref_t mskWideLiteralRef      = 0x1E000000u;   // reference to wide literal constant
-   constexpr ref_t mskStringMapRef        = 0x1F000000u;
-   constexpr ref_t mskLongLiteralRef      = 0x20000000u;
-   constexpr ref_t mskRealLiteralRef      = 0x21000000u;
-   constexpr ref_t mskExtMssgLiteralRef   = 0x22000000u;
-   constexpr ref_t mskPSTRRef             = 0x23000000u;
-   constexpr ref_t mskAutoSymbolRef       = 0x24000000u;
-   constexpr ref_t mskMssgNameLiteralRef  = 0x25000000u;
-   constexpr ref_t mskPackageRef          = 0x26000000u;
-   constexpr ref_t mskDistrTypeListRef    = 0x27000000u;
-   constexpr ref_t mskTLSVariable         = 0x28000000u;
+   constexpr ref_t mskHMTMethodOffset     = 0x11000000u;
+   constexpr ref_t mskConstArray          = 0x12000000u;
+   constexpr ref_t mskMessageBodyRef      = 0x13000000u;
+   constexpr ref_t mskMetaSymbolInfoRef   = 0x14000000u;
+   constexpr ref_t mskDeclAttributesRef   = 0x15000000u;
+   constexpr ref_t mskMetaExtensionRef    = 0x16000000u;
+   constexpr ref_t mskStaticRef           = 0x17000000u;
+   constexpr ref_t mskCharacterRef        = 0x18000000u;   // reference to character literal
+   constexpr ref_t mskConstant            = 0x19000000u;
+   constexpr ref_t mskStaticVariable      = 0x1A000000u;
+   constexpr ref_t mskNameLiteralRef      = 0x1B000000u;
+   constexpr ref_t mskPathLiteralRef      = 0x1C000000u;
+   constexpr ref_t mskMssgLiteralRef      = 0x1D000000u;
+   constexpr ref_t mskLabelRef            = 0x1E000000u;
+   constexpr ref_t mskWideLiteralRef      = 0x1F000000u;   // reference to wide literal constant
+   constexpr ref_t mskStringMapRef        = 0x20000000u;
+   constexpr ref_t mskLongLiteralRef      = 0x21000000u;
+   constexpr ref_t mskRealLiteralRef      = 0x22000000u;
+   constexpr ref_t mskExtMssgLiteralRef   = 0x23000000u;
+   constexpr ref_t mskPSTRRef             = 0x24000000u;
+   constexpr ref_t mskAutoSymbolRef       = 0x25000000u;
+   constexpr ref_t mskMssgNameLiteralRef  = 0x26000000u;
+   constexpr ref_t mskPackageRef          = 0x27000000u;
+   constexpr ref_t mskDistrTypeListRef    = 0x28000000u;
+   constexpr ref_t mskTLSVariable         = 0x29000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

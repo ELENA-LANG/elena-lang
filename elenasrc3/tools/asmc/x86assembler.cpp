@@ -1486,6 +1486,10 @@ bool X86Assembler :: compileAdd(X86Operand source, X86Operand target, MemoryWrit
       writer.writeByte(0x01);
       X86Helper::writeModRM(writer, target, source);
    }
+   else if (source.isR32() && target.isR32_M32()) {
+      writer.writeByte(0x03);
+      X86Helper::writeModRM(writer, source, target);
+   }
    else if (source.isR8_M8() && target.isR8()) {
       writer.writeByte(0x00);
       X86Helper::writeModRM(writer, target, source);
@@ -3160,6 +3164,11 @@ bool X86_64Assembler::compileAdd(X86Operand source, X86Operand target, MemoryWri
       writer.writeByte(0x4C);
       writer.writeByte(0x01);
       X86Helper::writeModRM(writer, target, source);
+   }
+   else if (source.isR64() && target.isR64_M64()) {
+      writer.writeByte(0x48);
+      writer.writeByte(0x03);
+      X86Helper::writeModRM(writer, source, target);
    }
    else return X86Assembler::compileAdd(source, target, writer);
 
