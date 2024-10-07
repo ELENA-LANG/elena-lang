@@ -15,7 +15,7 @@ extension op
 
 public program()
 {
-    var start := now;
+    var start := Now;
     
     auto dictionary := new Map<string,object>();
 
@@ -37,7 +37,7 @@ public program()
         .top(20)
         .forEach::(pair){ console.printLine(pair.Item2) };
     
-    var end := now;
+    var end := Now;
    
     var diff := end - start;
 

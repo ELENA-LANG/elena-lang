@@ -27,7 +27,7 @@ CodeGenerator _codeGenerators[256] =
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
-   loadOp, loadNop, loadNop, loadNop, loadOp, loadNop, loadNop, loadNop,
+   loadOp, compileAltMode, loadNop, loadNop, loadOp, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -2094,7 +2094,9 @@ void elena_lang::loadVMTROp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
-   void* code = scope->compiler->_inlines[0][scope->code()];
+   int codeIndex = scope->altMode ? 6 : 0;
+
+   void* code = scope->compiler->_inlines[codeIndex][scope->code()];
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
@@ -2102,6 +2104,8 @@ void elena_lang::loadVMTROp(JITCompilerScope* scope)
 
    // simply copy correspondent inline code
    writer->write(code, length);
+
+   int argMask = scope->getAltMode() ? mskHMTMethodOffset : mskVMTMethodOffset;
 
    // resolve section references
    pos_t count = *(pos_t*)((char*)code + length);
@@ -2111,15 +2115,15 @@ void elena_lang::loadVMTROp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case ARG32_1:
-            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodOffset,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32);
             break;
          case ARG12_1:
-            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodOffset,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32Lo12);
             break;
          case ARG16_1:
-            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodOffset,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32Lo);
             break;
          default:
@@ -2690,6 +2694,11 @@ void elena_lang::compileBreakpoint(JITCompilerScope* scope)
       scope->helper->addBreakpoint(*scope->codeWriter);
 }
 
+void elena_lang::compileAltMode(JITCompilerScope* scope)
+{
+   scope->altMode = true;
+}
+
 void elena_lang::compileJump(JITCompilerScope* scope)
 {
    pos_t label = scope->tapeReader->position() + scope->command.arg1;
@@ -2786,18 +2795,19 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
    MemoryWriter* writer = scope->codeWriter;
 
    bool functionMode = test((unsigned int)scope->command.arg1, FUNCTION_MESSAGE);
+   int altModifier = scope->altMode ? 6 : 0;
 
    void* code = nullptr;
    if ((scope->command.arg1 & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
       if (!scope->command.arg2) {
          code = scope->compiler->_inlines[10][scope->code()];
       }
-      else code = scope->compiler->_inlines[5][scope->code()];
+      else code = scope->compiler->_inlines[5 + altModifier][scope->code()];
    }
    else if (!scope->command.arg2) {
       code = scope->compiler->_inlines[9][scope->code()];
    }
-   else code = scope->compiler->_inlines[0][scope->code()];
+   else code = scope->compiler->_inlines[0 + altModifier][scope->code()];
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
@@ -2889,6 +2899,7 @@ JITCompilerScope :: JITCompilerScope(ReferenceHelperBase* helper, JITCompiler* c
    this->frameOffset = 0;
    this->withDebugInfo = compiler->isWithDebugInfo();
    this->inlineMode = false;
+   this->altMode = false;
 }
 
 // --- JITCompiler ---
@@ -3188,7 +3199,7 @@ void JITCompiler32 :: compileMetaList(ReferenceHelperBase* helper, MemoryReader&
 }
 
 void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength,
-   pos_t staticLength, bool withOutputList)
+   pos_t indexTableLength, pos_t staticLength, bool withOutputList)
 {
    // create VMT static table
    vmtWriter.writeBytes(0, staticLength << 2);
@@ -3202,9 +3213,11 @@ void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vm
 
    pos_t position = vmtWriter.position();
    pos_t vmtSize = 0;
-   if (test(flags, elStandartVMT))
-      // + VMT length
+   if (test(flags, elStandartVMT)) {
+      // VMT length + (IT length + 1)
       vmtSize = vmtLength * sizeof(VMTEntry32);
+      vmtSize += (indexTableLength + 1) * sizeof(VMTEntry32);
+   }
 
    vmtWriter.writeBytes(0, vmtSize);
 
@@ -3253,8 +3266,29 @@ pos_t JITCompiler32 :: findMethodOffset(void* entries, mssg_t message)
    return offset;
 }
 
-pos_t JITCompiler32 :: copyParentVMT(void* parentVMT, void* targetVMT)
+pos_t JITCompiler32 :: findHiddenMethodOffset(void* entries, mssg_t message)
 {
+   VMTHeader32* header = (VMTHeader32*)((uintptr_t)entries - elVMTClassOffset32);
+
+   // NOTE : hidden table follows the main method table
+   pos_t i = header->count;
+   while (((VMTEntry32*)entries)[i].message) {
+      if (((VMTEntry32*)entries)[i].message == message) {
+         return (i - header->count) * sizeof(VMTEntry32);
+      }
+
+      i++;
+   }
+   // must not reach this point
+   assert(false);
+
+   return 0;
+}
+
+Pair<pos_t, pos_t> JITCompiler32 :: copyParentVMT(void* parentVMT, void* targetVMT, pos_t indexTableOffset)
+{
+   Pair<pos_t, pos_t> counters = {};
+
    if (parentVMT) {
       // get the parent vmt size
       VMTHeader32* header = (VMTHeader32*)((uintptr_t)parentVMT - elVMTClassOffset32);
@@ -3267,9 +3301,18 @@ pos_t JITCompiler32 :: copyParentVMT(void* parentVMT, void* targetVMT)
          ((VMTEntry32*)targetVMT)[i] = parentEntries[i];
       }
 
-      return header->count;
+      // copy parent Index Table
+      pos_t indexCount = 0;
+      while (((VMTEntry32*)parentEntries)[header->count + indexCount].message) {
+         ((VMTEntry32*)targetVMT)[indexTableOffset + indexCount] = parentEntries[header->count + indexCount];
+
+         indexCount++;
+      }
+
+      counters.value1 =header->count;
+      counters.value2 = indexCount;
    }
-   else return 0;
+   return counters;
 }
 
 void JITCompiler32 :: allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length,
@@ -3313,6 +3356,44 @@ void JITCompiler32 :: addVMTEntry(mssg_t message, addr_t codeAddress, void* targ
    entries[index].address = (pos_t)codeAddress;
 }
 
+inline addr_t findEntryAddress(VMTEntry32* entries, mssg_t message, pos_t counter)
+{
+   for (pos_t i = 0; i < counter; i++) {
+      if (entries[i].message == message)
+         return entries[i].address;
+   }
+
+   assert(false);
+   return INVALID_ADDR;
+}
+
+void JITCompiler32 :: addIndexEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t indexOffset, pos_t& indexCount)
+{
+   VMTEntry32* entries = (VMTEntry32*)targetVMT;
+
+   pos_t index = indexOffset;
+   while (entries[index].message) {
+      if (entries[index].message == message) {
+         if (codeAddress == INVALID_ADDR) {
+            entries[index].address = findEntryAddress(entries, message, indexOffset);
+         }
+         else entries[index].address = (pos_t)codeAddress;
+
+         return;
+      }
+
+      index++;
+   }
+
+   entries[index].message = message;
+   if (codeAddress == INVALID_ADDR) {
+      entries[index].address = findEntryAddress(entries, message, indexOffset);
+   }
+   else entries[index].address = (pos_t)codeAddress;
+
+   indexCount++;
+}
+
 void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, 
    FieldAddressMap& staticValues, bool virtualMode)
 {
@@ -3346,6 +3427,14 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
 
       pos_t entryPosition = position;
       for (pos_t i = 0; i < fixInfo.count; i++) {
+         if (MemoryBase::getDWord(image, entryPosition + 4))
+            image->addReference(mskCodeRef32, entryPosition + 4);
+
+         entryPosition += 8;
+      }
+
+      // fix index table
+      for (pos_t i = 0; i < fixInfo.indexCount; i++) {
          if (MemoryBase::getDWord(image, entryPosition + 4))
             image->addReference(mskCodeRef32, entryPosition + 4);
 
@@ -3654,7 +3743,7 @@ void JITCompiler64 :: compileOutputTypeList(ReferenceHelperBase* helper, MemoryW
 }
 
 void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength,
-   pos_t staticLength, bool withOutputList)
+   pos_t indexTableLength, pos_t staticLength, bool withOutputList)
 {
    // create VMT static table
    vmtWriter.writeBytes(0, staticLength << 3);
@@ -3668,9 +3757,11 @@ void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vm
 
    pos_t position = vmtWriter.position();
    pos_t vmtSize = 0;
-   if (test(flags, elStandartVMT))
-      // + VMT length
+   if (test(flags, elStandartVMT)) {
+      // VMT length + (IT length + 1)
       vmtSize = vmtLength * sizeof(VMTEntry64);
+      vmtSize += (indexTableLength + 1) * sizeof(VMTEntry64);
+   }
 
    vmtWriter.writeBytes(0, vmtSize);
 
@@ -3726,8 +3817,30 @@ pos_t JITCompiler64 :: findMethodOffset(void* entries, mssg_t message)
    return offset;
 }
 
-pos_t JITCompiler64 :: copyParentVMT(void* parentVMT, void* targetVMT)
+pos_t JITCompiler64 :: findHiddenMethodOffset(void* entries, mssg_t message)
 {
+   VMTHeader64* header = (VMTHeader64*)((uintptr_t)entries - elVMTClassOffset64);
+
+   // NOTE : hidden table follows the main method table
+   pos64_t i = header->count;
+   while (((VMTEntry64*)entries)[i].message) {
+      if (((VMTEntry64*)entries)[i].message == message) {
+         return static_cast<pos_t>((i - header->count) * sizeof(VMTEntry64));
+      }
+
+      i++;
+   }
+
+   // must not reach this point
+   assert(false);
+
+   return 0;
+}
+
+Pair<pos_t, pos_t> JITCompiler64 :: copyParentVMT(void* parentVMT, void* targetVMT, pos_t indexTableOffset)
+{
+   Pair<pos_t, pos_t> counters = {};
+
    if (parentVMT) {
       // get the parent vmt size
       VMTHeader64* header = (VMTHeader64*)((uintptr_t)parentVMT - elVMTClassOffset64);
@@ -3740,9 +3853,18 @@ pos_t JITCompiler64 :: copyParentVMT(void* parentVMT, void* targetVMT)
          ((VMTEntry64*)targetVMT)[i] = parentEntries[i];
       }
 
-      return (pos_t)header->count;
+      // copy parent Index Table
+      pos_t indexCount = 0;
+      while (((VMTEntry64*)parentEntries)[header->count + indexCount].message) {
+         ((VMTEntry64*)targetVMT)[indexTableOffset + indexCount] = parentEntries[header->count + indexCount];
+
+         indexCount++;
+      }
+
+      counters.value1 = static_cast<pos_t>(header->count);
+      counters.value2 = indexCount;
    }
-   else return 0;
+   return counters;
 }
 
 void JITCompiler64 :: addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount)
@@ -3765,6 +3887,44 @@ void JITCompiler64 :: addVMTEntry(mssg_t message, addr_t codeAddress, void* targ
 
    entries[index].message = message;
    entries[index].address = codeAddress;
+}
+
+inline addr_t findEntryAddress(VMTEntry64* entries, mssg_t message, pos_t counter)
+{
+   for (pos_t i = 0; i < counter; i++) {
+      if (entries[i].message == message)
+         return (addr_t)entries[i].address;
+   }
+
+   assert(false);
+   return INVALID_ADDR;
+}
+
+void JITCompiler64 :: addIndexEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t indexOffset, pos_t& indexCount)
+{
+   VMTEntry64* entries = (VMTEntry64*)targetVMT;
+
+   pos_t index = indexOffset;
+   while (entries[index].message) {
+      if (entries[index].message == message) {
+         if (codeAddress == INVALID_ADDR) {
+            entries[index].address = findEntryAddress(entries, message, indexOffset);
+         }
+         else entries[index].address = codeAddress;
+
+         return;
+      }
+
+      index++;
+   }
+
+   entries[index].message = message;
+   if (codeAddress == INVALID_ADDR) {
+      entries[index].address = findEntryAddress(entries, message, indexOffset);
+   }
+   else entries[index].address = codeAddress;
+
+   indexCount++;
 }
 
 void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode)
@@ -3796,6 +3956,14 @@ void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
       pos_t entryPosition = position;
       for (pos_t i = 0; i < fixInfo.count; i++) {
          if (MemoryBase::getQWord(image, entryPosition + 8))
+            image->addReference(mskCodeRef64, entryPosition + 8);
+
+         entryPosition += 16;
+      }
+
+      // fix index table
+      for (pos_t i = 0; i < fixInfo.indexCount; i++) {
+         if (MemoryBase::getDWord(image, entryPosition + 8))
             image->addReference(mskCodeRef64, entryPosition + 8);
 
          entryPosition += 16;

@@ -194,9 +194,10 @@ struct BuiltinReferences
    ref_t   nullableTemplateReference;
    ref_t   argArrayTemplateReference;
    ref_t   closureTemplateReference, tupleTemplateReference;
-   ref_t   yielditTemplateReference;
+   ref_t   yielditTemplateReference, asyncStatemachineReference;
    ref_t   lazyExpressionReference;
    ref_t   pointerReference;
+   ref_t   taskReference;
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
@@ -231,8 +232,8 @@ struct BuiltinReferences
       arrayTemplateReference = argArrayTemplateReference = 0;
       nullableTemplateReference = 0;
       closureTemplateReference = lazyExpressionReference = tupleTemplateReference = 0;
-      yielditTemplateReference = 0;
-      pointerReference = 0;
+      asyncStatemachineReference = yielditTemplateReference = 0;
+      taskReference = pointerReference = 0;
 
       dispatch_message = constructor_message = 0;
       protected_constructor_message = 0;
@@ -318,19 +319,6 @@ public:
 
    virtual bool isDeclared(ref_t reference) = 0;
    virtual bool isSymbolDeclared(ref_t reference) = 0;
-
-   virtual bool isInternalOp(ref_t reference)
-   {
-      ustr_t referenceName = resolveFullName(reference);
-      if (isWeakReference(referenceName)) {
-         return true;
-      }
-      else {
-         auto refInfo = getModule(referenceName, true);
-
-         return refInfo.module == module;
-      }
-   }
 
    virtual ref_t mapAnonymous(ustr_t prefix = nullptr) = 0;
 
@@ -789,8 +777,8 @@ enum class VirtualType : int
 {
    None = 0,
    Multimethod,
-   EmbeddableWrapper,
-   AbstractEmbeddableWrapper
+   ByRefHandler,
+   AbstractByRefHandler
 };
 
 struct VirtualMethod

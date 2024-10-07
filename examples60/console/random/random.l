@@ -17,31 +17,31 @@ public program()
    var intCounts := new int[](distGroupCount);
    var realCounts := new int[](distGroupCount);
 
-   console.printLine("Random reals:");
+   Console.printLine("Random reals:");
    for(int i := 0; i < rows; i += 1)
    {
       for(int j := 0; j <= cols; j += 1)
       {
-         console.printPaddingRight(12, randomGenerator.nextReal());
+         Console.printPaddingRight(12, randomGenerator.nextReal());
       };
         
-      console.writeLine()
+      Console.writeLine()
    };
 
-   console.writeLine();
-   console.writeLine("Random integers:");
+   Console.writeLine();
+   Console.writeLine("Random integers:");
    for(int i := 0; i < rows; i += 1)
    {
       for(int j := 0; j <= cols; j += 1)
       {
-         console.printPaddingRight(12, randomGenerator.nextInt());
+         Console.printPaddingRight(12, randomGenerator.nextInt());
       };
         
-      console.writeLine()
+      Console.writeLine()
    };
 
-   console.writeLine();
-   console.writeLine("Distribution");
+   Console.writeLine();
+   Console.writeLine("Distribution");
 
    for(int i := 0; i < runCount; i += 1)
    {
@@ -56,14 +56,14 @@ public program()
 
    for(int i := 0; i < distGroupCount; i += 1)
    {
-      console.printPaddingLeft(12, (i * intGroupSize).toInt(),"-");
-      console.printPaddingLeft(12, ((i + 1) * intGroupSize - 1).toInt());
-      console.printPaddingLeft(12, intCounts[i]);
+      Console.printPaddingLeft(12, (i * intGroupSize).toInt(),"-");
+      Console.printPaddingLeft(12, ((i + 1) * intGroupSize - 1).toInt());
+      Console.printPaddingLeft(12, intCounts[i]);
 
-      console.printPaddingLeft(14, i.toReal() / distGroupCount,"-");
-      console.printPaddingLeft(12, (i + 1).toReal() / distGroupCount);
-      console.printPaddingLeft(12, realCounts[i]);
+      Console.printPaddingLeft(14, i.toReal() / distGroupCount,"-");
+      Console.printPaddingLeft(12, (i + 1).toReal() / distGroupCount);
+      Console.printPaddingLeft(12, realCounts[i]);
                 
-      console.writeLine()
+      Console.writeLine()
    }
 }

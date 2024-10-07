@@ -24,6 +24,7 @@ define ARG_MASK               01Fh
 define ARG_ACTION_MASK        1DFh
 
 // ; --- Object header fields ---
+define elSyncOffset          0008h
 define elSizeOffset          0004h
 define elVMTOffset           0010h 
 define elObjectOffset        0010h
@@ -536,7 +537,7 @@ labSkipWait:
 end
 
 // --- THREAD_WAIT ---
-// GCXT: it is presumed that gc lock is on, edx - contains the collecting thread event handle
+// GCXT: it is presumed that gc lock is on, rdx - contains the collecting thread event handle
 
 procedure % THREAD_WAIT
 
@@ -584,5 +585,245 @@ labWait:
   mov  rbx, r12
 
   ret
+
+end
+
+// ; --- System Core Preloaded Routines --
+
+// ; ==== Command Set ==
+
+// ; snop
+inline % 2
+
+  // ; safe point
+  mov  rdx, [data : %CORE_GC_TABLE + gc_signal]
+  test rdx, rdx                       // ; if it is a collecting thread, waits
+  jz   short labConinue               // ; otherwise goes on
+
+  nop
+  nop
+  call %THREAD_WAIT                   // ; waits until the GC is stopped
+
+labConinue:
+
+end
+
+// ; throw
+inline %0Ah
+
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rcx, [rcx+rax*8]
+  mov  rdi, [rcx + et_current]
+  jmp  [rdi + es_catch_addr]
+
+end
+
+// ; unhook
+inline %0Bh
+
+  // ; GCXT: get current thread frame
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rcx, gs:[58h]
+  mov  rcx, [rcx+rax*8]
+  mov  rdi, [rcx + et_current]
+
+  mov  rax, [rdi + es_prev_struct]
+  mov  rbp, [rdi + es_catch_frame]
+  mov  rsp, [rdi + es_catch_level]
+
+  mov  [rcx + et_current], rax
+
+end
+
+// ; exclude
+inline % 10h
+     
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rax*8]
+  mov  dword ptr [rdi + tt_flags], 1
+  mov  rax, [rdi + tt_stack_frame]
+  push rax
+  push rbp     
+  mov  [rdi + tt_stack_frame], rsp
+
+end
+
+// ; include
+inline % 11h
+
+  add  rsp, 8
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rax*8]
+  mov  dword ptr [rdi + tt_flags], 0
+  pop  rax
+  mov  [rdi + tt_stack_frame], rax
+
+end
+
+// ; tststck
+inline %17h
+
+  // ; COREX
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rax*8]
+  mov  rax, [rdi + tt_stack_root]
+
+  xor  ecx, ecx
+  cmp  rbx, rsp
+  setl cl
+  cmp  rbx, rax
+  setg ch
+  cmp  ecx, 0
+
+end
+
+// ; trylock
+inline %02Bh
+
+  // ; GCXT: try to lock
+  xor  eax, eax
+  mov  ecx, 1
+  lock cmpxchg byte ptr[rbx - elSyncOffset], cl
+  test eax, eax 
+
+end
+
+// ; freelock
+inline %02Ch
+
+  mov  ecx, -1
+
+  // ; free lock
+  lock xadd byte ptr [rbx - elSyncOffset], cl
+
+end
+
+// ; peektls
+inline %0BBh
+
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rcx, gs:[58h]
+  mov  rax, [rcx + rax * 8]
+  lea  rdi, [rax + __arg32_1]
+  mov  rbx, [rdi]
+
+end
+
+// ; storetls
+inline %0BCh
+
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rcx, gs:[58h]
+  mov  rax, [rcx + rax * 8]
+  lea  rdi, [rax + __arg32_1]
+  mov  [rdi], rbx
+
+end
+
+// ; system minor collect
+inline %1CFh
+
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+
+labWait:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[rdi], edx
+  jnz  short labWait
+
+  xor  rcx, rcx
+  xor  rdx, rdx
+  call %GC_COLLECT
+
+end
+
+// ; system full collect
+inline %2CFh
+
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+
+labWait:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[rdi], edx
+  jnz  short labWait
+
+  xor  rcx, rcx
+  mov  edx, 1
+  call %GC_COLLECT
+
+end
+
+// ; system 3 (thread startup)
+inline %3CFh
+
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rcx, gs:[58h]
+  mov  rax, [rcx + rax * 8]
+  mov  rdi, data : %CORE_THREAD_TABLE + tt_slots
+  shl  rdx, 4 
+  mov  [rdi + rdx], rax
+  shr  rdx, 4 
+
+  mov  [rax + tt_stack_root], rsp
+
+end
+
+// ; system startup
+inline %4CFh
+
+  finit
+
+  mov  rax, rsp
+  call %PREPARE
+
+end
+
+// ; system : enter GC critical section
+inline %6CFh
+
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+  mov  ecx, 1
+labWait:
+  xor  eax, eax
+  lock cmpxchg dword ptr[rdi], ecx
+  jnz  short labWait
+
+end
+
+// ; system : leave GC critical section
+inline %7CFh
+
+  // ; GCXT: clear sync field
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+  mov  ecx, 0FFFFFFFFh
+  
+  // ; GCXT: free lock
+  // ; could we use mov [esi], 0 instead?
+  lock xadd [rdi], ecx
+
+end
+
+// ; xhookdpr
+inline %0E6h
+
+  // ; GCXT: get current thread frame
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rcx, gs:[58h]
+  lea  rdi, [rbp + __arg32_1]
+  mov  rax, [rcx+rax*8]
+
+  mov  rcx, [rax + et_current]
+  mov  [rdi + es_catch_frame], rbp
+  mov  [rdi + es_prev_struct], rcx
+  mov  [rdi + es_catch_level], rsp
+  mov  rcx, __ptr64_2
+  mov  [rdi + es_catch_addr], rcx
+
+  mov  [rax + et_current], rdi
 
 end

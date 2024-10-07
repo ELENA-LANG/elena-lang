@@ -2,8 +2,8 @@
 
 public program()
 {
-    console.writeLine("Hello World");
+    Console.writeLine("Hello World");
     
     // wait for any key
-    console.readChar()
+    Console.readChar()
 }

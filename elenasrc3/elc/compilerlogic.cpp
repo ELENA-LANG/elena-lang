@@ -1001,6 +1001,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_ASYNC:
          hint = (ref_t)MethodHint::Async;
          return true;
+      case V_INDEXED_ATTR:
+         hint = (ref_t)MethodHint::Indexed;
+         return true;
       default:
          return false;
    }
@@ -2193,7 +2196,7 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
          stackSafeAttr |= 1;
 
       // check if it is non public message
-      mssg_t nonPublicMultiMessage = resolveNonpublic(weakMessage, info, selfCall, scope.isInternalOp(targetRef));
+      mssg_t nonPublicMultiMessage = resolveNonpublic(weakMessage, info, selfCall, isInternalOp(scope, targetRef));
       if (nonPublicMultiMessage != 0) {
          if (!implicitSignatureRef && test(nonPublicMultiMessage, STATIC_MESSAGE) && getArgCount(weakMessage) > 1) {
             implicitSignatureRef = mapWeakSignature(scope, getArgCount(weakMessage) - 1);
@@ -2370,13 +2373,13 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
 
       result.message = message;
       result.outputInfo = { methodInfo.outputRef };
-      if (test(methodInfo.hints, (ref_t)MethodHint::Private)) {
+      if (MethodInfo::checkVisibility(methodInfo, MethodHint::Private)) {
          result.visibility = Visibility::Private;
       }
-      else if (test(methodInfo.hints, (ref_t)MethodHint::Protected)) {
+      else if (MethodInfo::checkVisibility(methodInfo, MethodHint::Protected)) {
          result.visibility = Visibility::Protected;
       }
-      else if (test(methodInfo.hints, (ref_t)MethodHint::Internal)) {
+      else if (MethodInfo::checkVisibility(methodInfo, MethodHint::Internal)) {
          result.visibility = Visibility::Internal;
       }
       else result.visibility = Visibility::Public;
@@ -2390,13 +2393,17 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
          if (test(info.header.flags, elSealed)) {
             result.kind = (ref_t)MethodHint::Sealed; // mark it as sealed - because the class is sealed
          }
+         else if (MethodInfo::checkHint(methodInfo, MethodHint::Indexed)) {
+            result.kind = (ref_t)MethodHint::ByIndex;
+         }
          else if (test(info.header.flags, elClosed)) {
-            result.kind = (ref_t)MethodHint::Virtual; // mark it as virtual - because the class is closed
+            result.kind = (ref_t)MethodHint::Fixed; // mark it as fixed - because the class is closed
          }
       }
 
       result.stackSafe = test(methodInfo.hints, (ref_t)MethodHint::Stacksafe);
       result.nillableArgs = methodInfo.nillableArgs;
+      result.byRefHandler = methodInfo.byRefHandler;
 
       if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {
          result.constRef = info.attributes.get({ message, ClassAttribute::ConstantMethod });
@@ -2426,6 +2433,16 @@ bool CompilerLogic :: checkMethod(ModuleScopeBase& scope, ref_t classRef, mssg_t
    else return false;
 }
 
+mssg_t CompilerLogic :: retrieveByRefHandler(ModuleScopeBase& scope, ref_t reference, mssg_t message)
+{
+   CheckMethodResult result = {};
+   if (checkMethod(scope, reference, message, result)) {
+      return result.byRefHandler;
+   }
+
+   return 0;
+}
+
 bool CompilerLogic :: isMessageSupported(ClassInfo& info, mssg_t message)
 {
    CheckMethodResult dummy = {};
@@ -2437,9 +2454,10 @@ bool CompilerLogic :: isMessageSupported(ClassInfo& info, mssg_t message, CheckM
 {
    if (!checkMethod(info, message, result)) {
       if (checkMethod(info, message | STATIC_MESSAGE, result)) {
-         result.visibility = Visibility::Private;
+         if (result.visibility == Visibility::Private)
+            return true;
 
-         return true;
+         result = {};
       }
       mssg_t protectedMessage = info.attributes.get({ message, ClassAttribute::ProtectedAlias });
       if (protectedMessage) {
@@ -2526,7 +2544,7 @@ inline ustr_t resolveActionName(ModuleBase* module, mssg_t message)
    return module->resolveAction(getAction(message), signRef);
 }
 
-ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags, ClassInfo::MethodMap& methods, 
+ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, MethodHint callType, ClassInfo::MethodMap& methods, 
    mssg_t message, void* param, ref_t(*resolve)(void*, ref_t))
 {
    // create a new overload list
@@ -2556,13 +2574,7 @@ ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeB
    for (size_t i = 0; i < list.count(); i++) {
       ref_t classRef = resolve(param, list[i]);
 
-      if (test(flags, elSealed) || test(message, STATIC_MESSAGE)) {
-         compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Sealed);
-      }
-      else if (test(flags, elClosed)) {
-         compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Virtual);
-      }
-      else compiler->generateOverloadListMember(scope, listRef, classRef, list[i], MethodHint::Normal);
+      compiler->generateOverloadListMember(scope, listRef, classRef, list[i], callType);
    }
 
    return listRef;
@@ -2579,11 +2591,11 @@ ref_t paramFeedback(void* param, ref_t)
 #endif
 }
 
-void CompilerLogic :: injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags,
+void CompilerLogic :: injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, MethodHint callType,
    mssg_t message, ClassInfo::MethodMap& methods, ClassAttributes& attributes,
    void* param, ref_t(*resolve)(void*, ref_t), ClassAttribute attribute)
 {
-   ref_t listRef = generateOverloadList(compiler, scope, flags, methods, message, param, resolve);
+   ref_t listRef = generateOverloadList(compiler, scope, callType, methods, message, param, resolve);
 
    ClassAttributeKey key = { message, attribute };
    attributes.exclude(key);
@@ -2598,7 +2610,22 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
          // create a new overload list
          mssg_t message = it.key();
 
-         injectMethodOverloadList(compiler, scope, info.header.flags, message, 
+         MethodHint callType = MethodHint::Normal;
+         if (test(info.header.flags, elSealed) || MethodInfo::checkHint(methodInfo, MethodHint::Sealed)) {
+            callType = MethodHint::Sealed;
+         }
+         else if (MethodInfo::checkHint(methodInfo, MethodHint::Indexed)) {
+            callType = MethodHint::ByIndex;
+         }
+         else if (test(message, STATIC_MESSAGE)) {
+            // NOTE : the check must be after the checking of indexed method to correctly deal with hidden indexed methods
+            callType = MethodHint::Sealed;
+         }
+         else if (test(info.header.flags, elClosed)) {
+            callType = MethodHint::Fixed;
+         }
+
+         injectMethodOverloadList(compiler, scope, callType, message,
             info.methods, info.attributes, UInt32ToPtr(classRef), paramFeedback, ClassAttribute::OverloadList);
       }
    }
@@ -2637,7 +2664,7 @@ mssg_t CompilerLogic :: resolveSingleDispatch(ModuleScopeBase& scope, ref_t refe
       mssg_t dispatcher = info.attributes.get({ weakMessage, ClassAttribute::SingleDispatch });
       if (!dispatcher) {
          // check if it is non public message
-         mssg_t nonPublicWeakMessage = resolveNonpublic(weakMessage, info, selfCall, scope.isInternalOp(reference));
+         mssg_t nonPublicWeakMessage = resolveNonpublic(weakMessage, info, selfCall, isInternalOp(scope, reference));
          if (nonPublicWeakMessage != 0) {
             dispatcher = info.attributes.get({ nonPublicWeakMessage, ClassAttribute::SingleDispatch });
          }
@@ -3017,7 +3044,7 @@ void CompilerLogic :: importClassInfo(ClassInfo& copy, ClassInfo& target, Module
             info.inherited = true;
 
             // private methods are not inherited
-            if (!test(it.key(), STATIC_MESSAGE))
+            if (!MethodInfo::checkVisibility(info, MethodHint::Private))
                target.methods.add(ImportHelper::importMessage(exporter, it.key(), importer), info);
          }
          else target.methods.add(ImportHelper::importMessage(exporter, it.key(), importer), info);

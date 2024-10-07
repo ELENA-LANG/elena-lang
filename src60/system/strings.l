@@ -1023,6 +1023,9 @@ public const struct String : BaseValue,
    string clone() = String.copy(self);
 }
 
+public const String EmptyString = String.MinValue;
+
+// obsolete
 public const String emptyString = String.MinValue;
 
 // --- StringEnumerator ---

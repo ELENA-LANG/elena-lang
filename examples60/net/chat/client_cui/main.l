@@ -72,7 +72,7 @@ class Controller
             _client.send(line)
         };
 
-        ^ emptyString
+        ^ EmptyString
     }
 }
 

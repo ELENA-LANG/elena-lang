@@ -4,12 +4,14 @@
 ..\..\bin\ldoc system'routines'stex
 ..\..\bin\ldoc system'runtime
 ..\..\bin\ldoc system'threading
+..\..\bin\ldoc system'io'threading
 ..\..\bin\ldoc system'dynamic
 ..\..\bin\ldoc system'drawing
 ..\..\bin\ldoc system'winforms
 ..\..\bin\ldoc system'net
 ..\..\bin\ldoc extensions
 ..\..\bin\ldoc extensions'routines
+..\..\bin\ldoc extensions'routines'stex
 ..\..\bin\ldoc extensions'scripting
 ..\..\bin\ldoc extensions'dynamic
 ..\..\bin\ldoc extensions'io

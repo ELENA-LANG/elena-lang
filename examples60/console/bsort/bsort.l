@@ -6,7 +6,7 @@ import extensions;
 
 prompter(int index)
 {
-     ^ console.print("Enter array[",index,"]:").loadLineTo(Integer.new()).Value
+     ^ Console.print("Enter array[",index,"]:").loadLineTo(Integer.new()).Value
 }
 
 // --- bsortOp ---
@@ -65,7 +65,7 @@ extension bsortOp
 public program()
 {
     // 1. Create the array
-    var size := console.write("Enter the array size:").loadLineTo(Integer.new()).Value;
+    var size := Console.write("Enter the array size:").loadLineTo(Integer.new()).Value;
 
     // 2. Initialize the array
     var array := Array.allocate(size).populate(prompter);
@@ -74,7 +74,7 @@ public program()
     array.bsort();
 
     // 4. Print the array
-    console.printLine("Sorted array:",array);
+    Console.printLine("Sorted array:",array);
 
-    console.readChar() // wait for any key
+    Console.readChar() // wait for any key
 }

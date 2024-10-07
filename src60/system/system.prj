@@ -16,7 +16,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>6.3.1</version>
+     <version>6.4.3</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
@@ -112,6 +112,9 @@
        <include>threading\tasks.l</include>
        <include>threading\templates.l</include>
        <include>threading\template_tests.l</include>
+     </module>
+     <module name="io'threading">
+       <include>io\threading\async_common.l</include>
      </module>
      <module name="dynamic">
        <include>dynamic\reflection.l</include>

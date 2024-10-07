@@ -244,7 +244,7 @@ void ProjectController :: defineSourceName(ProjectModel* model, path_t path, Nam
 bool ProjectController :: startDebugger(ProjectModel& model, DebugActionResult& result)
 {
    ustr_t target = model.getTarget();
-   ustr_t arguments = model.getArguments();
+   path_t arguments = model.getArguments();
 
    if (!target.empty()) {
       PathString exePath(*model.projectPath, target);

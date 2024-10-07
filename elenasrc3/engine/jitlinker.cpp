@@ -241,6 +241,18 @@ void JITLinker::JITLinkerReferenceHelper :: writeSectionReference(MemoryBase* im
       pos_t offset = _owner->resolveVMTMethodOffset(sectionInfo->module, currentRef, message);
       _owner->fixOffset(imageOffset, addressMask, offset, image);
    }
+   else if (currentMask == mskHMTMethodOffset) {
+      _owner->resolve(
+         _owner->_loader->retrieveReferenceInfo(sectionInfo->module, currentRef, mskVMTRef,
+            _owner->_forwardResolver), mskVMTRef, false);
+
+      // message id should be replaced with an appropriate method address
+      mssg_t message = _owner->createMessage(sectionInfo->module,
+         MemoryBase::getDWord(section, sectionOffset), *_references);
+
+      pos_t offset = _owner->resolveHiddenMTMethodOffset(sectionInfo->module, currentRef, message);
+      _owner->fixOffset(imageOffset, addressMask, offset, image);
+   }
    else if (currentMask == mskVMTMethodAddress) {
       _owner->resolve(
          _owner->_loader->retrieveReferenceInfo(sectionInfo->module, currentRef, mskVMTRef,
@@ -458,6 +470,37 @@ addr_t JITLinker::JITLinkerReferenceHelper :: resolveMDataVAddress()
 
 // --- JITLinker ---
 
+JITLinker :: JITLinker(ReferenceMapperBase* mapper,
+   LibraryLoaderBase* loader, ForwardResolverBase* forwardResolver,
+   ImageProviderBase* provider,
+   JITLinkerSettings* settings,
+   AddressMapperBase* addressMapper
+) : _staticMethods(INVALID_ADDR)
+{
+   _mapper = mapper;
+   _loader = loader;
+   _forwardResolver = forwardResolver;
+   _imageProvider = provider;
+   _compiler = nullptr;
+   _addressMapper = addressMapper;
+
+   _alignment = settings->alignment;
+   _virtualMode = settings->virtualMode;
+   _classSymbolAutoLoadMode = settings->autoLoadMode;
+   _withDebugInfo = false;
+   _withOutputList = false;
+
+   _constantSettings.intLiteralClass = forwardResolver->resolveForward(INTLITERAL_FORWARD);
+   _constantSettings.longLiteralClass = forwardResolver->resolveForward(LONGLITERAL_FORWARD);
+   _constantSettings.realLiteralClass = forwardResolver->resolveForward(REALLITERAL_FORWARD);
+   _constantSettings.literalClass = forwardResolver->resolveForward(LITERAL_FORWARD);
+   _constantSettings.wideLiteralClass = forwardResolver->resolveForward(WIDELITERAL_FORWARD);
+   _constantSettings.characterClass = forwardResolver->resolveForward(CHAR_FORWARD);
+   _constantSettings.messageClass = forwardResolver->resolveForward(MESSAGE_FORWARD);
+   _constantSettings.extMessageClass = forwardResolver->resolveForward(EXT_MESSAGE_FORWARD);
+   _constantSettings.messageNameClass = forwardResolver->resolveForward(MESSAGE_NAME_FORWARD);
+}
+
 addr_t JITLinker :: getVMTAddress(ModuleBase* module, ref_t reference, VAddressMap& references)
 {
    if (reference) {
@@ -560,6 +603,16 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
             info.addressMask = 0; // clear because it is already fixed
             break;
          }
+         case mskHMTMethodOffset:
+         {
+            resolve(_loader->retrieveReferenceInfo(info.module, currentRef, mskVMTRef,
+               _forwardResolver), mskVMTRef, false);
+            pos_t offset = resolveHiddenMTMethodOffset(info.module, currentRef, info.message);
+            fixOffset(it.key(), info.addressMask, offset, image);
+
+            info.addressMask = 0; // clear because it is already fixed
+            break;
+         }
          case mskMssgNameLiteralRef:
          {
             ref_t dummy = 0;
@@ -645,6 +698,17 @@ pos_t JITLinker :: resolveVMTMethodOffset(ModuleBase* module, ref_t reference, m
    void* vmtPtr = getVMTPtr(vmtAddress);
 
    pos_t offset = _compiler->findMethodOffset(vmtPtr, message);
+
+   return offset;
+}
+
+pos_t JITLinker :: resolveHiddenMTMethodOffset(ModuleBase* module, ref_t reference, mssg_t message)
+{
+   addr_t vmtAddress = resolve(_loader->retrieveReferenceInfo(module, reference, mskVMTRef, _forwardResolver), mskVMTRef, false);
+
+   void* vmtPtr = getVMTPtr(vmtAddress);
+
+   pos_t offset = _compiler->findHiddenMethodOffset(vmtPtr, message);
 
    return offset;
 }
@@ -806,6 +870,70 @@ void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader
    }
 }
 
+void JITLinker :: fillMethodTable(addr_t vaddress, pos_t position, MemoryReader& vmtReader, ClassSectionInfo& sectionInfo,
+   MemoryBase* vmtImage, MemoryBase* codeImage, pos_t& size, pos_t& count, pos_t& indexCount,
+   VAddressMap& references, CachedOutputTypeList& outputTypeList, bool withOutputList)
+{
+   JITLinkerReferenceHelper helper(this, sectionInfo.module, &references);
+
+   MemoryWriter   codeWriter(codeImage);
+   MemoryReader   codeReader(sectionInfo.codeSection);
+
+   // fill the public method table
+   addr_t      methodPosition = 0;
+   MethodEntry entry = { };
+
+   size -= sizeof(ClassHeader);
+   while (size > 0) {
+      vmtReader.read((void*)&entry, sizeof(MethodEntry));
+
+      if (entry.codeOffset == INVALID_POS) {
+         methodPosition = 0;
+      }
+      else {
+         codeReader.seek(entry.codeOffset);
+         methodPosition = loadMethod(helper, codeReader, codeWriter);
+      }
+
+      // NOTE : statically linked message is not added to VMT
+      mssg_t message = helper.importMessage(entry.message);
+      if (test(entry.message, STATIC_MESSAGE)) {
+         _staticMethods.add(
+            { vaddress, message }, methodPosition);
+      }
+      else {
+         _compiler->addVMTEntry(message, methodPosition,
+            vmtImage->get(position), count);
+
+         if (withOutputList && entry.outputRef && entry.outputRef != sectionInfo.reference) {
+            // NOTE : the list must contain already resolved message constants, so only type references must be resolved
+            outputTypeList.add({ message, entry.outputRef });
+         }
+      }
+
+      if (_addressMapper && methodPosition)
+         _addressMapper->addMethod(vaddress, message, methodPosition);
+
+      size -= sizeof(MethodEntry);
+   }
+
+   // fill the hidden (index) table
+   mssg_t indexMessage = vmtReader.getDWord();
+   while (indexMessage) {
+      // add a new index
+      indexMessage = helper.importMessage(indexMessage);
+
+      if (test(indexMessage, STATIC_MESSAGE)) {
+         _compiler->addIndexEntry(indexMessage, _staticMethods.get({ vaddress, indexMessage }), vmtImage->get(position), count, indexCount);
+      }
+      else {
+         _compiler->addIndexEntry(indexMessage, INVALID_ADDR, vmtImage->get(position), count, indexCount);
+      }
+
+      indexMessage = vmtReader.getDWord();
+   }
+}
+
 addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionInfo sectionInfo,
    VAddressMap& references)
 {
@@ -819,8 +947,6 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
 
    referenceInfo.module = sectionInfo.module;
    referenceInfo.referenceName = referenceInfo.module->resolveReference(sectionInfo.reference);
-
-   JITLinkerReferenceHelper helper(this, sectionInfo.module, &references);
 
    // VMT just in time compilation
    MemoryReader vmtReader(sectionInfo.vmtSection);
@@ -839,7 +965,7 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
    bool withOutputList = _withOutputList && !test(header.flags, elNestedClass);
 
    // allocate space and make VTM offset
-   _compiler->allocateVMT(vmtWriter, header.flags, header.count, 
+   _compiler->allocateVMT(vmtWriter, header.flags, header.count, header.indexCount,
       header.staticSize, withOutputList);
 
    addr_t vaddress = calculateVAddress(vmtWriter, mskRDataRef);
@@ -851,59 +977,23 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
 
       // load the parent class
       addr_t parentAddress = getVMTAddress(sectionInfo.module, header.parentRef, references);
-      pos_t count = _compiler->copyParentVMT(getVMTPtr(parentAddress), vmtImage->get(position));
+      auto counters = _compiler->copyParentVMT(getVMTPtr(parentAddress), vmtImage->get(position), header.count);
+      pos_t count = counters.value1;
+      pos_t indexCount = counters.value2;
 
       pos_t debugPosition = INVALID_POS;
       if (_withDebugInfo)
          debugPosition = createNativeClassDebugInfo(referenceInfo, vaddress);
 
       // read and compile VMT entries
-      MemoryWriter   codeWriter(codeImage);
-      MemoryReader   codeReader(sectionInfo.codeSection);
-
-      addr_t      methodPosition = 0;
-      MethodEntry entry = { };
-
       CachedOutputTypeList outputTypeList({});
-
-      size -= sizeof(ClassHeader);
-      while (size > 0) {
-         vmtReader.read((void*)&entry, sizeof(MethodEntry));
-
-         if (entry.codeOffset == INVALID_POS) {
-            methodPosition = 0;
-         }
-         else {
-            codeReader.seek(entry.codeOffset);
-            methodPosition = loadMethod(helper, codeReader, codeWriter);
-         }
-
-         // NOTE : statically linked message is not added to VMT
-         mssg_t message = helper.importMessage(entry.message);
-         if (test(entry.message, STATIC_MESSAGE)) {
-            _staticMethods.add(
-               { vaddress, message }, methodPosition);
-         }
-         else {
-            _compiler->addVMTEntry(message, methodPosition,
-               vmtImage->get(position), count);
-
-            if (withOutputList && entry.outputRef && entry.outputRef != sectionInfo.reference) {
-               // NOTE : the list must contain already resolved message constants, so only type references must be resolved
-               outputTypeList.add({ message, entry.outputRef });
-            }
-         }
-
-         if (_addressMapper && methodPosition)
-            _addressMapper->addMethod(vaddress, message, methodPosition);
-
-         size -= sizeof(MethodEntry);
-      }
+      fillMethodTable(vaddress, position, vmtReader, sectionInfo, vmtImage, codeImage, size,
+         count, indexCount, references, outputTypeList, withOutputList);
 
       if (_withDebugInfo)
          endNativeDebugInfo(debugPosition);
 
-      if (count != header.count)
+      if (count != header.count || header.indexCount != indexCount)
          throw InternalError(errCorruptedVMT);
 
       // load the class class
@@ -919,7 +1009,7 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
          resolveOutputTypeList(referenceInfo, outputTypeList) : 0;
 
       // update VMT
-      JITCompilerBase::VMTFixInfo fixInfo = { parentAddress, classClassAddress, outputListAddress, header.flags, header.count };
+      JITCompilerBase::VMTFixInfo fixInfo = { parentAddress, classClassAddress, outputListAddress, header.flags, header.count, header.indexCount };
       _compiler->updateVMTHeader(vmtWriter, fixInfo, staticValues, _virtualMode);
    }
 

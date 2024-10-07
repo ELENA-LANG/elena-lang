@@ -12,7 +12,7 @@ public sealed struct RandomGenerator
 {
    Seed _seed;
     
-   internal constructor()
+   internal constructor new()
    {
       extern GetRandomSeedLA(_seed);
    }
@@ -57,7 +57,7 @@ public sealed struct RandomGenerator
 }
 
 // --- randomGenerator ---
-public static RandomGenerator randomGenerator = new RandomGenerator();
+public static RandomGenerator randomGenerator = RandomGenerator.new();
 
 // -- ERandomizer --
 

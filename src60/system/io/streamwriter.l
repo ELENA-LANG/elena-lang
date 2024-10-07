@@ -186,7 +186,7 @@ namespace io
          _stream := stream;
          _encoder := encoder;
     
-         _newLineConstant := newLineConstant;                
+         _newLineConstant := NewLineConstant;                
          _newLineLength := _newLineConstant.Length;
       }
     

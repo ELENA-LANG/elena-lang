@@ -1,7 +1,10 @@
 #new attributes;
 
 /// modificator:
-#let attributes["__ignore_duplicates"] :=  80006001h;
+#let attributes["__ignore_duplicates"] :=  80007001h;
+
+/// method attributes:
+#let attributes["indexed"]     :=  80006001h;
 
 /// scope_accessors:
 #let attributes["get"]         := 80005001h;

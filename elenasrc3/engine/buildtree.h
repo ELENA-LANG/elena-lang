@@ -239,6 +239,7 @@ namespace elena_lang
       Source               = 0x8012,
       Length               = 0x8013,
       TempVar              = 0x8014,
+      IndexTableMode       = 0x8015,
 
       Idle                 = 0x8FFF,
 

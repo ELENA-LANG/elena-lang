@@ -533,6 +533,7 @@ namespace elena_lang
          addr_t outputListAddress;
          ref_t  flags;
          pos_t  count;
+         pos_t  indexCount;
       };
 
       virtual void prepare(
@@ -564,12 +565,15 @@ namespace elena_lang
       virtual pos_t getVMTLength(void* targetVMT) = 0;
       virtual addr_t findMethodAddress(void* entries, mssg_t message) = 0;
       virtual pos_t findMethodOffset(void* entries, mssg_t message) = 0;
+      virtual pos_t findHiddenMethodOffset(void* entries, mssg_t message) = 0;
 
       virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
-         pos_t staticLength, bool withOutputList) = 0;
+         pos_t indexTableLength, pos_t staticLength, bool withOutputList) = 0;
       virtual void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) = 0;
+      virtual void addIndexEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t indexOffset, pos_t& indexCount) = 0;
+
       virtual void updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, FieldAddressMap& staticValues, bool virtualMode) = 0;
-      virtual pos_t copyParentVMT(void* parentVMT, void* targetVMT) = 0;
+      virtual Pair<pos_t, pos_t> copyParentVMT(void* parentVMT, void* targetVMT, pos_t indexTableOffset) = 0;
 
       virtual void allocateHeader(MemoryWriter& writer, addr_t vmtAddress, int length,
          bool structMode, bool virtualMode) = 0;
@@ -975,10 +979,18 @@ namespace elena_lang
    public:
       ustr_t operator*() const { return ustr_t(_string); }
 
-      ReferenceProperName(ustr_t referenceName)
+      void copyName(ustr_t referenceName)
       {
          size_t pos = referenceName.findLast('\'', 0);
          copy(referenceName.str() + pos + 1);
+      }
+
+      ReferenceProperName(ustr_t referenceName)
+      {
+         copyName(referenceName);
+      }
+      ReferenceProperName()
+      {
       }
    };
 
@@ -1109,6 +1121,7 @@ namespace elena_lang
       pos_t  staticSize;      // static table size
       ref_t  classRef;        // class class reference
       pos_t  count;
+      pos_t  indexCount;
       ref_t  flags;
       ref_t  parentRef;
    };

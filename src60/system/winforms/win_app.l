@@ -4,7 +4,7 @@ public sealed class SDIApplication
 {
    object _mainWindow;
 
-   internal constructor()
+   constructor new()
    {
       _mainWindow := forward MainWindow.new();
    }
@@ -74,4 +74,4 @@ public sealed class SDIApplication
    }
 }
 
-public static SDIApplication program = new SDIApplication(); 
+public static SDIApplication program = SDIApplication.new(); 

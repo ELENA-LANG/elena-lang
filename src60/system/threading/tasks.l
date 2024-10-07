@@ -1,18 +1,39 @@
 import system;
 
-public sealed class Task
+public class Task
 {
    bool           _completed;
 
    Exception      _exception;
    Action<Task>   _continuation;
 
-   internal constructor()
+   Func           _action; 
+
+   protected constructor()
    {
       _completed := false;
    }
 
-   internal Exception Exception
+   internal constructor newPromise()
+   {      
+   }
+
+   constructor assign(Func action)
+   {
+      _action := action;
+   }
+
+   indexed get Result()
+   {
+      wait();
+
+      ^ nil;
+   }      
+
+   indexed internal getResultUnsafe()
+      = nil;
+
+   indexed internal Exception Exception
    {  
       get()
          = _exception;
@@ -31,7 +52,7 @@ public sealed class Task
       }
    }
 
-   continueWith(Action<Task> action)
+   sealed continueWith(Action<Task> action)
    {
       lock(self) {
          continueWithUnsafe(action);
@@ -54,14 +75,18 @@ public sealed class Task
       }
    }
 
-   setResult()
+   internal sealed setResult()
       <= complete(nil);
 
-   setException(Exception ex)
+   internal sealed setException(Exception ex)
       <= complete(ex);
 
-   wait()
+   sealed wait()
    {
+      if (_completed) {
+         ^ self
+      };   
+
       ManualResetEvent mres := nil;
       lock (self)
       {
@@ -79,6 +104,22 @@ public sealed class Task
       }
    }
 
+   sealed start()
+   {
+      ThreadPool.queueAction(
+      {
+         try
+         {
+            _action();
+            setResult();
+         }
+         catch (Exception e)
+         {
+            setException(e);
+         }
+      });
+   }
+
    static Task whenAllArgs(params Task[] tasks)
    {
       auto t := new Task();
@@ -88,9 +129,9 @@ public sealed class Task
 
       Exception e := nil;
 
-      Action<Task> continuation := (Task t)
+      Action<Task> continuation := (Task completed)
       {
-         e := e ?? t.Exception;
+         e := e ?? completed.Exception;
          lock(t) {
             remaining := remaining - 1;
          };
@@ -146,7 +187,14 @@ public sealed class Task
       t.wait()
    }
 
-   static Task Run(Func action)
+   static waitAllArgs(params Task[] tasks)
+   {
+      auto t := whenAllArgs(params tasks);
+
+      t.wait()
+   }
+
+   static Task run(Func action)
    {
        auto t := new Task();
    
@@ -164,5 +212,69 @@ public sealed class Task
        });
    
        ^ t;
+   }
+
+   static Task sleep(int msecs)
+      = run({ Thread.sleep(msecs); });
+}
+
+// --- Task<TResult> ---
+
+public sealed class Task<TResult> : Task
+{
+   TResult _result;
+
+   protected constructor()
+   {
+      _completed := false;
+   }
+
+   constructor(TResult retVal) 
+   {
+      _result := retVal;
+      _completed := true;
+   }
+
+   internal constructor newPromise()
+   {
+   }
+
+   constructor assign(Func<TResult> func)
+   {
+      _action := 
+      {
+         TResult retVal := func();
+
+         setResultValue(retVal);
+      };
+   }
+
+   indexed internal setResultValue(TResult r)
+   {
+      lock(self) {
+         _result := r
+      }
+   }
+
+   indexed internal TResult getResultUnsafe()
+      = _result;
+
+   indexed get TResult Result()
+   {
+      wait();
+
+      ^ _result;
+   }
+
+   TResult cast()
+      = self.Result;
+
+   static Task<TResult> run(Func<TResult> action)
+   {
+      auto t := class Task<TResult>.assign(action);
+
+      t.start();
+
+      ^ t;
    }
 }

@@ -25,6 +25,7 @@ namespace elena_lang
       bool        withVariadicDispatcher;
       bool        withCustomDispatcher;
       int         nillableArgs;
+      mssg_t      byRefHandler;
    };
 
    struct TypeAttributes
@@ -71,7 +72,7 @@ namespace elena_lang
    private:
       OperationMap _operations;
 
-      ref_t generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags, ClassInfo::MethodMap& methods, 
+      ref_t generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, MethodHint targetType, ClassInfo::MethodMap& methods,
          mssg_t message, void* param, ref_t(*resolve)(void*, ref_t));
 
       bool isSignatureCompatible(ModuleScopeBase& scope, ref_t targetSignature, ref_t* sourceSignatures, size_t sourceLen);
@@ -189,6 +190,8 @@ namespace elena_lang
       bool checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result);
       bool checkMethod(ModuleScopeBase& scope, ref_t reference, mssg_t message, CheckMethodResult& result);
 
+      mssg_t retrieveByRefHandler(ModuleScopeBase& scope, ref_t reference, mssg_t message);
+
       // check if internal / protected / private / public message is declared
       bool isMessageSupported(ClassInfo& info, mssg_t message, CheckMethodResult& result);
       bool isMessageSupported(ClassInfo& info, mssg_t message);
@@ -200,7 +203,7 @@ namespace elena_lang
       mssg_t resolveFunctionSingleDispatch(ModuleScopeBase& scope, ref_t reference, int& nillableArgs);
 
       void injectOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, ref_t classRef);
-      void injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ref_t flags, 
+      void injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, MethodHint callType,
          mssg_t message, ClassInfo::MethodMap& methods, ClassAttributes& attributes,
          void* param, ref_t(*resolve)(void*, ref_t), ClassAttribute attribute);
 
@@ -237,6 +240,40 @@ namespace elena_lang
       bool isLessAccessible(ModuleScopeBase& scope, Visibility sourceVisibility, ref_t targetRef);
 
       void generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_t parentRef, VirtualMethods& methods);
+
+      void retrieveTemplateNs(ModuleScopeBase& scope, ref_t reference, ReferenceProperName& templateName)
+      {
+         templateName.copyName(scope.resolveFullName(reference));
+
+         size_t index = (*templateName).find('#');
+         templateName.cut(index, templateName.length() - index);
+         index = (*templateName).findLast('@');
+         templateName.cut(index, templateName.length() - index);
+         templateName.replaceAll('@', '\'', 0);
+      }
+
+      bool isTemplateInternalOp(ModuleScopeBase& scope, ref_t reference1, ref_t reference2)
+      {
+         // retrive the template namespace
+         ReferenceProperName templateNs;
+         retrieveTemplateNs(scope, reference1, templateNs);
+
+         NamespaceString referenceNs(scope.resolveFullName(reference2));
+
+         return (*templateNs).compare(*referenceNs);
+      }
+      bool isInternalOp(ModuleScopeBase& scope, ref_t reference)
+      {
+         ustr_t referenceName = scope.resolveFullName(reference);
+         if (isWeakReference(referenceName)) {
+            return true;
+         }
+         else {
+            auto refInfo = scope.getModule(referenceName, true);
+
+            return refInfo.module == scope.module;
+         }
+      }
 
       CompilerLogic()
          : _operations({})
@@ -278,6 +315,11 @@ namespace elena_lang
 
       static void importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, 
          ModuleBase* importer, bool headerOnly, bool inheritMode/*,bool ignoreFields*/);
+
+      static bool isSealedMethod(mssg_t message, MethodInfo& info)
+      {
+         return test(message, STATIC_MESSAGE) || MethodInfo::checkType(info, MethodHint::Sealed);
+      }
 
       static CompilerLogic* getInstance()
       {

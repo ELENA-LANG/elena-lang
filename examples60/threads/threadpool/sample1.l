@@ -4,14 +4,14 @@ import extensions'threading;
 
 WorkItem1(state)
 {
-   console.writeLine($"WorkItem1: {state}");
+   Console.printLineConcurrent("WorkItem1: ", state);
 }
 
 WorkItem2(state)
 {
    int num := state.toInt();
    int square := num * num;
-   console.writeLine($"WorkItem2: {num} * {num} = {square}");
+   Console.printLineConcurrent($"WorkItem2: {num} * {num} = {square}");
 }
 
 public sample1()
@@ -21,5 +21,5 @@ public sample1()
    
    Thread.sleep(1000);
 
-   console.writeLine("Main thread exits")
+   Console.printLineConcurrent("Main thread exits")
 }
