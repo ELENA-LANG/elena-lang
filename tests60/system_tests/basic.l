@@ -2230,3 +2230,49 @@ public objectOpTests() : testCase()
    Assert.ifEqual(name, "system_tests'$private'A");
    console.write(".");
 }
+
+namespace variadicBoxingTestset
+{
+   A
+   {
+      field args;
+
+      constructor load(params string[] args)
+      {
+         this args := args;
+      }
+
+      int Length
+         = args.Length;
+
+      validate(params string[] args)
+      {
+         for (int i := 0; i < args.Length; i++) {
+            Assert.ifEqual(this args[i], args[i]);
+         }
+      }
+
+      static validate2(params string[] args)
+      {
+         string[] boxedArgs := args;
+
+         Assert.ifEqual(boxedArgs.Length, args.Length);
+
+         for (int i := 0; i < args.Length; i++) {
+            Assert.ifEqual(boxedArgs[i], args[i]);
+         }
+      }
+   }
+}
+
+public variadicBoxingTest() : testCase()
+{
+   auto a := variadicBoxingTestset'A.load("a", "b", "c");
+   
+   Assert.ifEqual(a.Length, 3);
+   a.validate("a", "b", "c");
+   Console.write(".");
+
+   variadicBoxingTestset'A.validate2("a", "b", "c");
+   Console.write(".");
+}

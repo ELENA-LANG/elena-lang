@@ -34,10 +34,8 @@ In development:
   * test all examples : db
   * fix x86-64 : mta - sandbox2
   * reset #414
-  * functional test - boxing variadic argument list
-  * fixing #413
   --------------------------------------  
-  * fix ifExpressionTest
+  * fixing #413
 
   === Iteration 34 ===
   --------------------------------------

@@ -26,8 +26,8 @@
 //}
 
 //import system'dynamic'expressions;
-//import extensions;
-//
+import extensions;
+
 //public program()
 //{
 //    auto c := DynamicSingleton.load(
@@ -61,22 +61,53 @@
 //    console.write(".")    
 //}
 
-A
+namespace variadicBoxingTestset
 {
-   field x;
-
-   constructor()
+   A
    {
-      x := 3;
-   }
+      field args;
 
-   constructor new(arg)
-   {
-      x := arg
+      constructor load(params string[] args)
+      {
+         this args := args;
+      }
+
+      int Length
+         = args.Length;
+
+      validate(params string[] args)
+      {
+         for (int i := 0; i < args.Length; i++) {
+            Assert.ifEqual(this args[i], args[i]);
+         }
+      }
+
+      static validate2(params string[] args)
+      {
+         string[] boxedArgs := args;
+
+         Assert.ifEqual(boxedArgs.Length, args.Length);
+
+         for (int i := 0; i < args.Length; i++) {
+            Assert.ifEqual(boxedArgs[i], args[i]);
+         }
+      }
    }
+}
+
+public variadicBoxingTest()
+{
+   auto a := variadicBoxingTestset'A.load("a", "b", "c");
+   
+   Assert.ifEqual(a.Length, 3);
+   a.validate("a", "b", "c");
+   Console.write(".");
+
+   variadicBoxingTestset'A.validate2("a", "b", "c");
+   Console.write(".");
 }
 
 public program()
 {
-   var a := A.new(2);
+   variadicBoxingTest()
 }

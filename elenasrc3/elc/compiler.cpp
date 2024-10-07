@@ -9512,14 +9512,14 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
    // first pass - compile constructors
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::Constructor:
-      {
-         Method method(this, scope);
-         method.compileConstructor(writer, current, classClassScope);
-         break;
-      }
-      default:
-         break;
+         case SyntaxKey::Constructor:
+         {
+            Method method(this, scope);
+            method.compileConstructor(writer, current, classClassScope);
+            break;
+         }
+         default:
+            break;
       }
       current = current.nextNode();
    }
@@ -9807,55 +9807,55 @@ void Compiler::compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, Syn
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::SourcePath:
-         ns.sourcePath.copy(current.identifier());
-         break;
-      case SyntaxKey::Namespace:
-      {
-         Namespace subNs(this, &ns);
-         subNs.declareNamespace(current, false, false);
-         copyParentNamespaceExtensions(ns, subNs.scope);
+         case SyntaxKey::SourcePath:
+            ns.sourcePath.copy(current.identifier());
+            break;
+         case SyntaxKey::Namespace:
+         {
+            Namespace subNs(this, &ns);
+            subNs.declareNamespace(current, false, false);
+            copyParentNamespaceExtensions(ns, subNs.scope);
 
-         compileNamespace(writer, subNs.scope, current);
-         break;
-      }
-      case SyntaxKey::Symbol:
-      {
-         SymbolScope symbolScope(&ns, current.arg.reference, ns.defaultVisibility);
-         if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_STATIC)) {
-            symbolScope.type = SymbolKind::Static;
+            compileNamespace(writer, subNs.scope, current);
+            break;
          }
-         else if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_THREADVAR)) {
-            symbolScope.type = SymbolKind::ThreadVar;
+         case SyntaxKey::Symbol:
+         {
+            SymbolScope symbolScope(&ns, current.arg.reference, ns.defaultVisibility);
+            if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_STATIC)) {
+               symbolScope.type = SymbolKind::Static;
+            }
+            else if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_THREADVAR)) {
+               symbolScope.type = SymbolKind::ThreadVar;
+            }
+
+            symbolScope.visibility = ns.moduleScope->retrieveVisibility(symbolScope.reference);
+
+            compileSymbol(writer, symbolScope, current);
+            break;
          }
+         case SyntaxKey::Class:
+         {
+            Class classHelper(this, &ns, current.arg.reference, ns.defaultVisibility);
+            classHelper.load();
 
-         symbolScope.visibility = ns.moduleScope->retrieveVisibility(symbolScope.reference);
+            compileClass(writer, classHelper.scope, current);
 
-         compileSymbol(writer, symbolScope, current);
-         break;
-      }
-      case SyntaxKey::Class:
-      {
-         Class classHelper(this, &ns, current.arg.reference, ns.defaultVisibility);
-         classHelper.load();
+            // compile class class if it available
+            if (classHelper.scope.info.header.classRef != classHelper.scope.reference && classHelper.scope.info.header.classRef != 0) {
+               ClassClassScope classClassScope(&ns, classHelper.scope.info.header.classRef, classHelper.scope.visibility, &classHelper.scope.info, classHelper.scope.reference);
+               ns.moduleScope->loadClassInfo(classClassScope.info, classClassScope.reference, false);
 
-         compileClass(writer, classHelper.scope, current);
+               if (test(classHelper.scope.info.header.flags, elTemplatebased))
+                  classClassScope.info.header.flags |= elTemplatebased;
 
-         // compile class class if it available
-         if (classHelper.scope.info.header.classRef != classHelper.scope.reference && classHelper.scope.info.header.classRef != 0) {
-            ClassClassScope classClassScope(&ns, classHelper.scope.info.header.classRef, classHelper.scope.visibility, &classHelper.scope.info, classHelper.scope.reference);
-            ns.moduleScope->loadClassInfo(classClassScope.info, classClassScope.reference, false);
-
-            if (test(classHelper.scope.info.header.flags, elTemplatebased))
-               classClassScope.info.header.flags |= elTemplatebased;
-
-            compileClassClass(writer, classClassScope, classHelper.scope, current);
+               compileClassClass(writer, classClassScope, classHelper.scope, current);
+            }
+            break;
          }
-         break;
-      }
-      default:
-         // to make compiler happy
-         break;
+         default:
+            // to make compiler happy
+            break;
       }
 
       current = current.nextNode();
@@ -15551,8 +15551,6 @@ ObjectInfo Compiler::Expression::boxRefArgumentInPlace(ObjectInfo info, ref_t ta
 ObjectInfo Compiler::Expression :: boxVariadicArgument(ObjectInfo info)
 {
    bool dummy = false;
-
-   assert(info.typeInfo.typeRef == V_VARIADIC);
    ref_t elementRef = info.typeInfo.elementRef;
    if (!elementRef)
       elementRef = scope.moduleScope->buildins.superReference;
@@ -15585,6 +15583,18 @@ ObjectInfo Compiler::Expression :: boxVariadicArgument(ObjectInfo info)
    writeObjectInfo(destLocal);
    writer->appendNode(BuildKey::CopyingArr);
 
+   if (isPrimitiveRef(info.typeInfo.typeRef))
+      info.typeInfo = compiler->resolveStrongTypeInfo(scope, info.typeInfo, false);
+
+   if (info.typeInfo.typeRef && info.typeInfo.typeRef != typeRef) {
+      // if the conversion is required
+      ObjectInfo convInfo = convertObject({}, destLocal,
+         info.typeInfo.typeRef, false, false, false, false);
+
+      compileAssigningOp(destLocal, convInfo, dummy);
+
+      destLocal.typeInfo = convInfo.typeInfo;
+   }
    return destLocal;
 }
 
