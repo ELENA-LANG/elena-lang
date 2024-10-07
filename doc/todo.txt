@@ -29,11 +29,15 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * x86-64 : mta - main sample sandbox2
+  * forms : review warnings
   * test all examples : db
-  * retest : #25, #412, #413, #414
-  * x86-64 : mta - basic test
+  * fix x86-64 : mta - sandbox2
+  * reset #414
+  * functional test - boxing variadic argument list
+  * fixing #413
   --------------------------------------  
-  * fix warnings in all libraries    
+  * fix ifExpressionTest
 
   === Iteration 34 ===
   --------------------------------------

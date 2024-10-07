@@ -7598,113 +7598,121 @@ void Compiler::endMethod(BuildTreeWriter& writer, MethodScope& scope)
    writer.closeNode();
 }
 
-void Compiler::injectVariableInfo(BuildNode node, CodeScope& codeScope)
+void Compiler :: addVariableInfo(BuildNode node, Scope& scope, ustr_t name, Parameter& localInfo)
 {
-   for (auto it = codeScope.locals.start(); !it.eof(); ++it) {
-      auto localInfo = *it;
-      bool embeddableArray = false;
-      if (localInfo.typeInfo.typeRef) {
-         ref_t typeRef = localInfo.typeInfo.typeRef;
+   ModuleScopeBase* moduleScope = scope.moduleScope;
 
-         if (localInfo.typeInfo.isPrimitive() && localInfo.typeInfo.elementRef)
-            typeRef = resolvePrimitiveType(*codeScope.moduleScope, localInfo.typeInfo, false);
+   bool embeddableArray = false;
+   if (localInfo.typeInfo.typeRef) {
+      ref_t typeRef = localInfo.typeInfo.typeRef;
 
-         embeddableArray = _logic->isEmbeddableArray(*codeScope.moduleScope, typeRef);
-         if (embeddableArray && localInfo.size > 0) {
-            node.appendChild(BuildKey::BinaryArray, localInfo.offset)
-               .appendChild(BuildKey::Size, localInfo.size);
+      if (localInfo.typeInfo.isPrimitive() && localInfo.typeInfo.elementRef)
+         typeRef = resolvePrimitiveType(*scope.moduleScope, localInfo.typeInfo, false);
+
+      embeddableArray = _logic->isEmbeddableArray(*scope.moduleScope, typeRef);
+      if (embeddableArray && localInfo.size > 0) {
+         node.appendChild(BuildKey::BinaryArray, localInfo.offset)
+            .appendChild(BuildKey::Size, localInfo.size);
+      }
+   }
+
+   if (localInfo.size > 0) {
+      if (embeddableArray) {
+         if (_logic->isCompatible(*moduleScope,
+            { V_INT8 }, { localInfo.typeInfo.elementRef }, false))
+         {
+            BuildNode varNode = node.appendChild(BuildKey::ByteArrayAddress, name);
+            varNode.appendChild(BuildKey::Index, localInfo.offset);
+         }
+         else if (_logic->isCompatible(*moduleScope,
+            { V_UINT8 }, { localInfo.typeInfo.elementRef }, false))
+         {
+            BuildNode varNode = node.appendChild(BuildKey::ByteArrayAddress, name);
+            varNode.appendChild(BuildKey::Index, localInfo.offset);
+         }
+         else if (_logic->isCompatible(*moduleScope,
+            { V_INT16 }, { localInfo.typeInfo.elementRef }, false))
+         {
+            BuildNode varNode = node.appendChild(BuildKey::ShortArrayAddress, name);
+            varNode.appendChild(BuildKey::Index, localInfo.offset);
+         }
+         else if (_logic->isCompatible(*moduleScope,
+            { V_INT32 }, { localInfo.typeInfo.elementRef }, false))
+         {
+            BuildNode varNode = node.appendChild(BuildKey::IntArrayAddress, name);
+            varNode.appendChild(BuildKey::Index, localInfo.offset);
          }
       }
-
-      if (localInfo.size > 0) {
-         if (embeddableArray) {
-            if (_logic->isCompatible(*codeScope.moduleScope,
-               { V_INT8 }, { localInfo.typeInfo.elementRef }, false))
-            {
-               BuildNode varNode = node.appendChild(BuildKey::ByteArrayAddress, it.key());
-               varNode.appendChild(BuildKey::Index, localInfo.offset);
-            }
-            else if (_logic->isCompatible(*codeScope.moduleScope,
-               { V_UINT8 }, { localInfo.typeInfo.elementRef }, false))
-            {
-               BuildNode varNode = node.appendChild(BuildKey::ByteArrayAddress, it.key());
-               varNode.appendChild(BuildKey::Index, localInfo.offset);
-            }
-            else if (_logic->isCompatible(*codeScope.moduleScope,
-               { V_INT16 }, { localInfo.typeInfo.elementRef }, false))
-            {
-               BuildNode varNode = node.appendChild(BuildKey::ShortArrayAddress, it.key());
-               varNode.appendChild(BuildKey::Index, localInfo.offset);
-            }
-            else if (_logic->isCompatible(*codeScope.moduleScope,
-               { V_INT32 }, { localInfo.typeInfo.elementRef }, false))
-            {
-               BuildNode varNode = node.appendChild(BuildKey::IntArrayAddress, it.key());
-               varNode.appendChild(BuildKey::Index, localInfo.offset);
-            }
-         }
-         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.intReference) {
-            BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
-            varNode.appendChild(BuildKey::Index, localInfo.offset);
-         }
-         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.uintReference) {
-            BuildNode varNode = node.appendChild(BuildKey::UIntVariableAddress, it.key());
-            varNode.appendChild(BuildKey::Index, localInfo.offset);
-         }
-         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.int8Reference) {
-            BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
-            varNode.appendChild(BuildKey::Index, localInfo.offset);
-         }
-         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.uint8Reference) {
-            BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
-            varNode.appendChild(BuildKey::Index, localInfo.offset);
-         }
-         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.shortReference) {
-            BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
-            varNode.appendChild(BuildKey::Index, localInfo.offset);
-         }
-         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.longReference) {
-            BuildNode varNode = node.appendChild(BuildKey::LongVariableAddress, it.key());
-            varNode.appendChild(BuildKey::Index, localInfo.offset);
-         }
-         else if (localInfo.typeInfo.typeRef == codeScope.moduleScope->buildins.realReference) {
-            BuildNode varNode = node.appendChild(BuildKey::RealVariableAddress, it.key());
-            varNode.appendChild(BuildKey::Index, localInfo.offset);
-         }
-         else if (_logic->isCompatible(*codeScope.moduleScope,
-            { V_INT32 }, { localInfo.typeInfo.typeRef }, false))
-         {
-            BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, it.key());
-            varNode.appendChild(BuildKey::Index, localInfo.offset);
-         }
-         else if (_logic->isCompatible(*codeScope.moduleScope,
-            { V_INT64 }, { localInfo.typeInfo.typeRef }, false))
-         {
-            BuildNode varNode = node.appendChild(BuildKey::LongVariableAddress, it.key());
-            varNode.appendChild(BuildKey::Index, localInfo.offset);
-         }
-         else {
-            BuildNode varNode = node.appendChild(BuildKey::VariableAddress, it.key());
-            varNode.appendChild(BuildKey::Index, localInfo.offset);
-
-            ustr_t className = codeScope.moduleScope->module->resolveReference(localInfo.typeInfo.typeRef);
-            if (isWeakReference(className)) {
-               IdentifierString fullName(codeScope.module->name());
-               fullName.append(className);
-
-               varNode.appendChild(BuildKey::ClassName, *fullName);
-            }
-            else varNode.appendChild(BuildKey::ClassName, className);
-         }
-      }
-      else {
-         BuildNode varNode = node.appendChild(BuildKey::Variable, it.key());
+      else if (localInfo.typeInfo.typeRef == moduleScope->buildins.intReference) {
+         BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, name);
          varNode.appendChild(BuildKey::Index, localInfo.offset);
       }
+      else if (localInfo.typeInfo.typeRef == moduleScope->buildins.uintReference) {
+         BuildNode varNode = node.appendChild(BuildKey::UIntVariableAddress, name);
+         varNode.appendChild(BuildKey::Index, localInfo.offset);
+      }
+      else if (localInfo.typeInfo.typeRef == moduleScope->buildins.int8Reference) {
+         BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, name);
+         varNode.appendChild(BuildKey::Index, localInfo.offset);
+      }
+      else if (localInfo.typeInfo.typeRef == moduleScope->buildins.uint8Reference) {
+         BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, name);
+         varNode.appendChild(BuildKey::Index, localInfo.offset);
+      }
+      else if (localInfo.typeInfo.typeRef == moduleScope->buildins.shortReference) {
+         BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, name);
+         varNode.appendChild(BuildKey::Index, localInfo.offset);
+      }
+      else if (localInfo.typeInfo.typeRef == moduleScope->buildins.longReference) {
+         BuildNode varNode = node.appendChild(BuildKey::LongVariableAddress, name);
+         varNode.appendChild(BuildKey::Index, localInfo.offset);
+      }
+      else if (localInfo.typeInfo.typeRef == moduleScope->buildins.realReference) {
+         BuildNode varNode = node.appendChild(BuildKey::RealVariableAddress, name);
+         varNode.appendChild(BuildKey::Index, localInfo.offset);
+      }
+      else if (_logic->isCompatible(*moduleScope,
+         { V_INT32 }, { localInfo.typeInfo.typeRef }, false))
+      {
+         BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, name);
+         varNode.appendChild(BuildKey::Index, localInfo.offset);
+      }
+      else if (_logic->isCompatible(*moduleScope,
+         { V_INT64 }, { localInfo.typeInfo.typeRef }, false))
+      {
+         BuildNode varNode = node.appendChild(BuildKey::LongVariableAddress, name);
+         varNode.appendChild(BuildKey::Index, localInfo.offset);
+      }
+      else {
+         BuildNode varNode = node.appendChild(BuildKey::VariableAddress, name);
+         varNode.appendChild(BuildKey::Index, localInfo.offset);
+
+         ustr_t className = moduleScope->module->resolveReference(localInfo.typeInfo.typeRef);
+         if (isWeakReference(className)) {
+            IdentifierString fullName(scope.module->name());
+            fullName.append(className);
+
+            varNode.appendChild(BuildKey::ClassName, *fullName);
+         }
+         else varNode.appendChild(BuildKey::ClassName, className);
+      }
+   }
+   else {
+      BuildNode varNode = node.appendChild(BuildKey::Variable, name);
+      varNode.appendChild(BuildKey::Index, localInfo.offset);
    }
 }
 
-ObjectInfo Compiler::compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode, bool noDebugInfoMode)
+
+void Compiler :: injectVariablesInfo(BuildNode node, CodeScope& codeScope)
+{
+   for (auto it = codeScope.locals.start(); !it.eof(); ++it) {
+      auto localInfo = *it;
+      addVariableInfo(node, codeScope, it.key(), localInfo);
+   }
+}
+
+ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode, bool noDebugInfoMode)
 {
    ObjectInfo retVal = {};
    ObjectInfo exprRetVal = {};
@@ -7758,7 +7766,7 @@ ObjectInfo Compiler::compileCode(BuildTreeWriter& writer, CodeScope& codeScope, 
    }
 
    if (!noDebugInfoMode)
-      injectVariableInfo(variableNode, codeScope);
+      injectVariablesInfo(variableNode, codeScope);
 
    // NOTE : in the closure mode the last statement is the closure result
    return closureMode ? exprRetVal : retVal;
@@ -8495,7 +8503,7 @@ void Compiler::writeMessageInfo(BuildTreeWriter& writer, MethodScope& scope)
    writer.appendNode(BuildKey::MethodName, *methodName);
 }
 
-void Compiler::writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, int size, TypeInfo typeInfo,
+void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, int size, TypeInfo typeInfo,
    ustr_t name, int index)
 {
    if (size > 0) {
@@ -8550,10 +8558,22 @@ void Compiler::writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope)
 {
    writer.newNode(BuildKey::ArgumentsInfo);
 
-   if (!scope.functionMode) {
+   if (!scope.functionMode || scope.constructorMode) {
       ref_t classRef = scope.getClassRef();
+      int classSize = _logic->defineStructSize(*scope.moduleScope, classRef).size;
 
-      writeParameterDebugInfo(writer, scope, _logic->defineStructSize(*scope.moduleScope, classRef).size,
+      if (scope.constructorMode) {
+         Parameter selfParam = { 1, { classRef }, classSize, false };
+
+         writer.closeNode();
+
+         writer.newNode(BuildKey::VariableInfo);
+         addVariableInfo(writer.CurrentNode(), scope, "self", selfParam);
+         writer.closeNode();
+
+         writer.newNode(BuildKey::ArgumentsInfo);
+      }
+      else writeParameterDebugInfo(writer, scope, classSize,
          { classRef }, "self", -1);
    }
 
@@ -11663,24 +11683,24 @@ ObjectInfo Compiler::Expression::compileInterpolation(SyntaxNode node)
    return compileMessageOperation(node, source, messageRef, 0, arguments, EAttr::StrongResolved | EAttr::NoExtension, nullptr);
 }
 
-ObjectInfo Compiler::Expression::compileObject(SyntaxNode node, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs)
+ObjectInfo Compiler::Expression :: compileObject(SyntaxNode node, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs)
 {
    if (node == SyntaxKey::Object) {
       ObjectInfo retVal = compiler->mapObject(scope, node, mode);
       switch (retVal.kind) {
-      case ObjectKind::ConstantLiteral:
-      {
-         ArgumentsInfo arguments;
-         ref_t typeRef = scope.moduleScope->buildins.literalReference;
-         ref_t signRef = scope.module->mapSignature(&typeRef, 1, false);
+         case ObjectKind::ConstantLiteral:
+         {
+            ArgumentsInfo arguments;
+            ref_t typeRef = scope.moduleScope->buildins.literalReference;
+            ref_t signRef = scope.module->mapSignature(&typeRef, 1, false);
 
-         return compileNewOp(node, retVal, signRef, arguments);
-      }
-      case ObjectKind::Unknown:
-         scope.raiseError(errUnknownObject, node.lastChild(SyntaxKey::TerminalMask));
-         break;
-      default:
-         break;
+            return compileNewOp(node, retVal, signRef, arguments);
+         }
+         case ObjectKind::Unknown:
+            scope.raiseError(errUnknownObject, node.lastChild(SyntaxKey::TerminalMask));
+            break;
+         default:
+            break;
       }
 
       return retVal;
@@ -15528,10 +15548,11 @@ ObjectInfo Compiler::Expression::boxRefArgumentInPlace(ObjectInfo info, ref_t ta
    return tempLocal;
 }
 
-ObjectInfo Compiler::Expression::boxVariadicArgument(ObjectInfo info)
+ObjectInfo Compiler::Expression :: boxVariadicArgument(ObjectInfo info)
 {
    bool dummy = false;
 
+   assert(info.typeInfo.typeRef == V_VARIADIC);
    ref_t elementRef = info.typeInfo.elementRef;
    if (!elementRef)
       elementRef = scope.moduleScope->buildins.superReference;
@@ -15563,16 +15584,6 @@ ObjectInfo Compiler::Expression::boxVariadicArgument(ObjectInfo info)
    writer->appendNode(BuildKey::SavingInStack);
    writeObjectInfo(destLocal);
    writer->appendNode(BuildKey::CopyingArr);
-
-   if (info.typeInfo.typeRef && info.typeInfo.typeRef != typeRef) {
-      // if the conversion is required
-      ObjectInfo convInfo = convertObject({}, destLocal,
-         info.typeInfo.typeRef, false, false, false, false);
-
-      compileAssigningOp(destLocal, convInfo, dummy);
-
-      destLocal.typeInfo = convInfo.typeInfo;
-   }
 
    return destLocal;
 }

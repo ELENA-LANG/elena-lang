@@ -363,6 +363,7 @@ namespace elena_lang
             Symbol,
             Class,
             OwnerClass,
+            ClassClass,
             Statemachine,
             Method,
             Field,
@@ -695,6 +696,14 @@ namespace elena_lang
          ref_t      classInfoRef;
 
       public:
+         Scope* getScope(ScopeLevel level) override
+         {
+            if (level == ScopeLevel::ClassClass) {
+               return this;
+            }
+            else return ClassScope::getScope(level);
+         }
+
          ref_t getProperClassRef() { return classInfoRef; }
 
          ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr) override;
@@ -1851,7 +1860,8 @@ namespace elena_lang
       void injectDefaultConstructor(ClassScope& scope, SyntaxNode node, 
          bool protectedOne, bool withClearOption);
 
-      void injectVariableInfo(BuildNode node, CodeScope& codeScope);
+      void addVariableInfo(BuildNode node, Scope& codeScope, ustr_t name, Parameter& parameter);
+      void injectVariablesInfo(BuildNode node, CodeScope& codeScope);
 
       void injectInterfaceDispatch(Scope& scope, SyntaxNode node, ref_t parentRef);
 
