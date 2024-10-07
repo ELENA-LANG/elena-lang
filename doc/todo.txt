@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 6.5 ###
 
-  === Iteration 33 (7.10) ===
+  === Iteration 34 ===
   --------------------------------------
   dev: 
       - upndown (connector)
@@ -16,7 +16,6 @@ In development:
   gen:
       - lpad : generate a code based on a record  
   maint:
-      - unit tests : virtual, internal virtual, byref for closed class, virtual internal by closed class
       - #689
       - unit tests : bt optimization 
       - test binary file operations
@@ -32,12 +31,12 @@ In development:
   * x86-64 : mta - main sample sandbox2
   * forms : review warnings
   * test all examples : db
+  --------------------------------------
   * fix x86-64 : mta - sandbox2
-  * reset #414
-  --------------------------------------  
-  * fixing #413
 
-  === Iteration 34 ===
+  ### EPIC: elena 6.6 ###
+
+  === Iteration 35 ===
   --------------------------------------
   dev: 
   gen:
@@ -47,9 +46,7 @@ In development:
   --------------------------------------
   --------------------------------------
 
-  ### EPIC: elena 6.6 ###
-
-  === Iteration 35 ===
+  === Iteration 36 ===
   --------------------------------------
   dev: 
   gen:
