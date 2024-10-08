@@ -240,6 +240,7 @@ namespace elena_lang
          _errorProcessor = errorProcessor;
          _moduleScope = moduleScope;
          _templateProcessor = templateProcessor;
+         _noDebugInfo = false;
 
          _writer.clear();
          _writer.newNode(SyntaxKey::Root);

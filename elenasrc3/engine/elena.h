@@ -1182,30 +1182,6 @@ namespace elena_lang
    };
 #pragma pack(pop)
 
-   // --- ExceptionBase ---
-   class ExceptionBase {};
-
-   class AbortError : ExceptionBase {};
-
-   // --- InternalError ---
-   struct InternalError : ExceptionBase
-   {
-      int messageCode;
-      int arg;
-
-      InternalError(int messageCode)
-      {
-         this->messageCode = messageCode;
-         this->arg = 0;
-      }
-
-      InternalError(int messageCode, int arg)
-      {
-         this->messageCode = messageCode;
-         this->arg = arg;
-      }
-   };
-
    // --- InternalStrError ---
    struct InternalStrError : ExceptionBase
    {

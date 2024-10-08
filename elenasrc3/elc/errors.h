@@ -115,6 +115,8 @@ namespace elena_lang
    constexpr auto errMsgNotImplemented       = "\nNot implemented error\n";
    constexpr auto errMsgCorruptedVMT         = "\nVMT structure is corrupt\n";
 
+   constexpr auto errMssgFailedMemoryAllocation = "\nnFatal error: cannot allocate the memory\n";
+
    constexpr auto infoMsgNewMethod           = "\ninfo 701:   new method %s\n";
    constexpr auto infoMsgCurrentMethod       = "\ninfo 702:   compiling method %s\n";
    constexpr auto infoMsgCurrentClass        = "\ninfo 703: compiling class %s\n";

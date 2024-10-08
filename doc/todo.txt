@@ -10,13 +10,11 @@ In development:
   dev: 
       - upndown (connector)
       - #496
-      - toArray<T> extension method (parameterized method extensions)
       - #676
       - #622 (http client)
   gen:
       - lpad : generate a code based on a record  
   maint:
-      - #689
       - unit tests : bt optimization 
       - test binary file operations
       - test encoders with files  
@@ -29,14 +27,15 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * #689
+  * toArray<T> extension method (parameterized method extensions)
+  * test all examples : files
   * start to look at the basic low level optimization (Modern X86 Assembly Language Programming)
   * x86-64 : mta - main sample sandbox2
-  * forms : review warnings
-  * test all examples : db
   * fix x86-64 : mta - sandbox2
-  * x86-64 : fix system 3
   --------------------------------------
-  * fix opcode mov gs,r/m64
+  * #696 - it will be possible to provide the mapping file, containing the paths to all data / config files; the system will look for the 
+    file in the current folder, or it can be selected via a command-line argument
 
   ### EPIC: elena 6.6 ###
 

@@ -935,7 +935,7 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
       int height := _region.Height;
 
       if (_handle != nil) {
-         self.resize(_handle, width, height)
+         self.resize(_handle.Handle, width, height)
       }
       else self.resize(Handle.Default, width, height)
    }
