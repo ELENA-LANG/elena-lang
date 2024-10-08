@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 6.5 ###
 
-  === Iteration 34 ===
+  === Iteration 34 (21.10) ===
   --------------------------------------
   dev: 
       - upndown (connector)
@@ -23,16 +23,20 @@ In development:
       - api refactoring : all symbols must start with a capital letter
       - redesign winforms
       - api : add descriptions 
+      - threading samples must be included into release files
   port:
   tools: 
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * start to look at the basic low level optimization (Modern X86 Assembly Language Programming)
   * x86-64 : mta - main sample sandbox2
   * forms : review warnings
   * test all examples : db
-  --------------------------------------
   * fix x86-64 : mta - sandbox2
+  * x86-64 : fix system 3
+  --------------------------------------
+  * fix opcode mov gs,r/m64
 
   ### EPIC: elena 6.6 ###
 
