@@ -9,19 +9,22 @@
 #include "clicommon.h"
 // --------------------------------------------------------------------------
 #include "pathmanager.h"
+#include <unistd.h>
 
 using namespace elena_lang;
 
 // --- PathHelper ---
 
-path_t PathHelper :: retrievePath(const char** filesToLookFor, size_t listLength, path_t defaultPath)
+PathHelper::PathMap* PathHelper::pathCache = nullptr;
+
+path_t PathHelper :: retrievePath(const char* filesToLookFor[], size_t listLength, path_t defaultPath)
 {
    if (pathCache && pathCache->exist(defaultPath))
       return pathCache->get(defaultPath);
 
-   char appPath[PATH_MAX] = { 0 };
+   char appPath[FILENAME_MAX] = { 0 };
 
-   if (!readlink("/proc/self/exe", appPath, PATH_MAX) == -1)
+   if (readlink("/proc/self/exe", appPath, FILENAME_MAX) == -1)
       return defaultPath;
 
    for (size_t i = 0; i < listLength; i++) {
@@ -32,7 +35,7 @@ path_t PathHelper :: retrievePath(const char** filesToLookFor, size_t listLength
    }
 
    if (!pathCache) {
-      pathCache = new PathCache(nullptr);
+      pathCache = new PathMap(nullptr);
    }
 
    pathCache->add(defaultPath, path_t(appPath).clone());
@@ -44,16 +47,20 @@ path_t PathHelper :: retrieveFilePath(path_t defaultPath)
    if (pathCache && pathCache->exist(defaultPath))
       return pathCache->get(defaultPath);
 
-   char appPath[PATH_MAX] = { 0 };
+   char appPath[FILENAME_MAX] = { 0 };
 
-   if (!readlink("/proc/self/exe", appPath, PATH_MAX) == -1)
+   if (readlink("/proc/self/exe", appPath, FILENAME_MAX) == -1)
       return defaultPath;
 
    PathString fullPath(appPath);
-   FileName fileName(defaultPath);
+   FileNameString fileName(defaultPath);
    fullPath.combine(*fileName);
    if (!PathUtil::ifExist(*fullPath))
       return defaultPath;
+
+   if (!pathCache) {
+      pathCache = new PathMap(nullptr);
+   }
 
    pathCache->add(defaultPath, (*fullPath).clone());
    return pathCache->get(defaultPath);

@@ -102,6 +102,8 @@
 		<Unit filename="../../engine/jitlinker.h" />
 		<Unit filename="../../engine/libman.cpp" />
 		<Unit filename="../../engine/libman.h" />
+		<Unit filename="../../engine/linux/presenter.cpp" />
+		<Unit filename="../../engine/linux/presenter.h" />
 		<Unit filename="../../engine/module.cpp" />
 		<Unit filename="../../engine/module.h" />
 		<Unit filename="../../engine/parsertable.cpp" />
@@ -139,12 +141,18 @@
 		<Unit filename="../linux/elflinker32.h" />
 		<Unit filename="../linux/elflinker64.cpp" />
 		<Unit filename="../linux/elflinker64.h" />
+		<Unit filename="../linux/elfsyslibloader.cpp" />
+		<Unit filename="../linux/elfsyslibloader.h" />
+		<Unit filename="../linux/pathmanager.cpp" />
+		<Unit filename="../linux/pathmanager.h" />
 		<Unit filename="../modulescope.cpp" />
 		<Unit filename="../modulescope.h" />
 		<Unit filename="../parser.cpp" />
 		<Unit filename="../parser.h" />
 		<Unit filename="../project.cpp" />
 		<Unit filename="../project.h" />
+		<Unit filename="../separser.cpp" />
+		<Unit filename="../separser.h" />
 		<Unit filename="../source.cpp" />
 		<Unit filename="../source.h" />
 		<Extensions />

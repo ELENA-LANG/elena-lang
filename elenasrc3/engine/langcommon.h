@@ -109,7 +109,7 @@ namespace elena_lang
       {
          ref_t mask = info.hints & (ref_t)MethodHint::VisibilityMask;
 
-         return mask == (ref_t)hint1 || mask == (ref_t)hint2;      
+         return mask == (ref_t)hint1 || mask == (ref_t)hint2;
       }
       static bool checkType(MethodInfo& info, MethodHint type)
       {
@@ -209,7 +209,7 @@ namespace elena_lang
 
       pos_t           inheritLevel;
       ClassHeader     header;
-      pos_t           size;           // Object size
+      int             size;           // Object size
       MethodMap       methods;
       FieldMap        fields;
       StaticFieldMap  statics;
@@ -703,7 +703,7 @@ namespace elena_lang
    constexpr auto FALSE_FORWARD              = "$false";          // the false boolean value
    constexpr auto WRAPPER_FORWARD            = "$ref";            // the wrapper template
    constexpr auto ARRAY_FORWARD              = "$array";          // the array template
-   constexpr auto VARIADIC_ARRAY_FORWARD     = "$varray";         // the array template 
+   constexpr auto VARIADIC_ARRAY_FORWARD     = "$varray";         // the array template
    constexpr auto MESSAGE_FORWARD            = "$message";        // the message class
    constexpr auto MESSAGE_NAME_FORWARD       = "$subject";        // the message class
    constexpr auto EXT_MESSAGE_FORWARD        = "$ext_message";    // the extension message class

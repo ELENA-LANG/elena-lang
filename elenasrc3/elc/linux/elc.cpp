@@ -160,13 +160,15 @@ JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platf
    }
 }
 
+const char* dataFileList[] = { BC_RULES_FILE, BT_RULES_FILE, SYNTAX60_FILE };
+
 int main(int argc, char* argv[])
 {
    try
    {
       bool cleanMode = false;
 
-      PathString dataPath(PathHelper::retrievePath({ BC_RULES_FILE, BT_RULES_FILE, SYNTAX60_FILE }, DATA_PATH));
+      PathString dataPath(PathHelper::retrievePath(dataFileList, 3, DATA_PATH));
 
       JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());

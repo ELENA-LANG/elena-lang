@@ -4336,7 +4336,6 @@ ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, Synt
    }
 
    ArgumentsInfo arguments;
-   EAttr paramMode = EAttr::Parameter;
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Expression) {
          auto argInfo = evalExpression(interpreter, scope, current, ignoreErrors);
@@ -7336,8 +7335,6 @@ ref_t Compiler::resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo& 
    if (!templateReference)
       scope.raiseError(errInvalidOperation, node);
 
-   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-
    return _templateProcessor->generateClassTemplate(*scope.moduleScope,
       templateReference, parameters, false, nullptr);
 }
@@ -8691,7 +8688,7 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
 
    // declare a state machine enumerator
    ref_t nestedRef = scope.moduleScope->mapAnonymous();
-   StatemachineClassScope smScope(&expression.scope, nestedRef, true);   
+   StatemachineClassScope smScope(&expression.scope, nestedRef, true);
    ref_t baseRef = declareAsyncStatemachine(smScope, node);
 
    BuildNode buildNode = writer.CurrentNode();
@@ -9372,7 +9369,6 @@ inline void mapUninqueField(ClassInfo::FieldMap& fields, IdentifierString& name,
 {
    size_t pos = name.length();
    int   index = 0;
-   ref_t ref = 0;
    while (true) {
       name[pos] = 0;
       name.appendUInt(index++, 16);
@@ -10654,7 +10650,7 @@ void Compiler::injectMethodInvoker(Scope& scope, SyntaxNode classNode, mssg_t me
 
    ref_t actionRef = getAction(message);
    ref_t signRef = 0;
-   ustr_t actionName = scope.module->resolveAction(actionRef, signRef);
+   scope.module->resolveAction(actionRef, signRef);
 
    injectParameters(scope, methodNode, signRef, message);
 
@@ -10677,7 +10673,7 @@ void Compiler::injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, m
 
    ref_t actionRef = getAction(message);
    ref_t signRef = 0;
-   ustr_t actionName = scope.module->resolveAction(actionRef, signRef);
+   scope.module->resolveAction(actionRef, signRef);
 
    injectParameters(scope, methodNode, signRef, message);
 
@@ -11761,7 +11757,7 @@ bool Compiler::Expression :: checkValidity(ObjectInfo target, MessageResolution&
       return checkValidity(target, result, allowPrivateCall);
    }
 
-   return false;   
+   return false;
 }
 
 bool Compiler::Expression :: checkValidity(ObjectInfo target, CheckMethodResult& result, bool allowPrivateCall)
@@ -11781,9 +11777,9 @@ bool Compiler::Expression :: checkValidity(ObjectInfo target, CheckMethodResult&
          if (compiler->_logic->isInternalOp(*scope.moduleScope, compiler->resolveStrongType(scope, target.typeInfo))) {
             return true;
          }
-         if (test(scope.getClassFlags(), elTemplatebased) 
-            && compiler->_logic->isTemplateInternalOp(*scope.moduleScope, scope.getClassRef(), 
-                  compiler->resolveStrongType(scope, target.typeInfo))) 
+         if (test(scope.getClassFlags(), elTemplatebased)
+            && compiler->_logic->isTemplateInternalOp(*scope.moduleScope, scope.getClassRef(),
+                  compiler->resolveStrongType(scope, target.typeInfo)))
          {
             return true;
          }
@@ -12072,7 +12068,6 @@ void Compiler::Expression :: compileAsyncOperation(SyntaxNode node, bool valueEx
 
 void Compiler::Expression :: compileYieldOperation(SyntaxNode node)
 {
-   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
    MethodScope* methodScope = Scope::getScope<MethodScope>(scope, Scope::ScopeLevel::Method);
    StatemachineClassScope* smScope = Scope::getScope<StatemachineClassScope>(scope, Scope::ScopeLevel::Statemachine);
 
@@ -13583,7 +13578,7 @@ Compiler::MessageResolution Compiler::Expression :: resolveByRefHandler(ObjectIn
 
          if (resolution.byRefHandler && compiler->_logic->isSignatureCompatible(*scope.moduleScope, byRefMessage, resolution.byRefHandler)) {
             byRefMessage = resolution.byRefHandler;
-            scope.module->resolveAction(getAction(byRefMessage), signatureRef);         
+            scope.module->resolveAction(getAction(byRefMessage), signatureRef);
 
             resolution.resolved = true;
          }
@@ -13878,7 +13873,6 @@ ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, SyntaxNode rn
       inode = lnode.nextNode();
    }
 
-   BuildKey   op = BuildKey::None;
    ObjectInfo loperand = compile(lnode, 0,
       EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode, &updatedOuterArgs);
    ObjectInfo roperand = {};
@@ -14574,7 +14568,6 @@ ObjectInfo Compiler::Expression::compileTernaryOperands(SyntaxNode rnode, Syntax
 
    writer->newNode(BuildKey::Tape);
 
-   bool oldWithRet = codeScope->withRetStatement;
    ObjectInfo lexpr = compile(rnode, 0, EAttr::RetValExpected, nullptr);
 
    writeObjectInfo(lexpr);
@@ -15627,7 +15620,7 @@ void Compiler::Expression::compileConverting(SyntaxNode node, ObjectInfo source,
 // --- Compiler::MetaExpression ---
 
 Compiler::MetaExpression::MetaExpression(Compiler* compiler, Scope* scope, Interpreter* interpreter)
-   : CommonHelper(compiler), scope(scope), interpreter(interpreter)
+   : CommonHelper(compiler), interpreter(interpreter), scope(scope)
 {
 }
 
@@ -15754,7 +15747,7 @@ ObjectInfo Compiler::MetaExpression::generateNestedConstant(SyntaxNode node)
 // --- Compiler::NestedClass ---
 
 Compiler::NestedClass::NestedClass(Compiler* compiler, Expression& expr, ref_t nestedRef, BuildTreeWriter& writer)
-   : CommonHelper(compiler), scope(&expr.scope, nestedRef), writer(&writer)
+   : CommonHelper(compiler), writer(&writer), scope(&expr.scope, nestedRef)
 {
 }
 
@@ -16035,8 +16028,6 @@ ref_t Compiler::LambdaClosure :: resolveClosure(mssg_t closureMessage, ref_t out
          templateReference = scope.module->mapReference(*closureName, true);
       }
       else templateReference = scope.moduleScope->mapFullReference(*closureName, true);
-
-      NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
       return compiler->_templateProcessor->generateClassTemplate(*scope.moduleScope,
          templateReference, parameters, false, nullptr);

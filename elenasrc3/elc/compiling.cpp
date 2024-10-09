@@ -237,7 +237,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
    return moduleScope.mapTemplateIdentifier(*name, visibility, alreadyDeclared, false);
 }
 
-ref_t CompilingProcess::TemplateGenerator :: declareTemplateName(ModuleScopeBase& moduleScope, Visibility visibility, 
+ref_t CompilingProcess::TemplateGenerator :: declareTemplateName(ModuleScopeBase& moduleScope, Visibility visibility,
    ref_t templateRef, List<SyntaxNode>& parameters)
 {
    ModuleBase* module = moduleScope.module;
@@ -324,9 +324,9 @@ CompilingProcess :: CompilingProcess(path_t appPath, path_t exeExtension,
    JITSettings defaultCoreSettings,
    JITCompilerBase* (*compilerFactory)(LibraryLoaderBase*, PlatformType)
 ) :
+   _appPath(appPath),
    _templateGenerator(this),
-   _forwards(nullptr),
-   _appPath(appPath)
+   _forwards(nullptr)
 {
    _exeExtension = exeExtension;
    _modulePrologName = modulePrologName;
@@ -502,7 +502,7 @@ void CompilingProcess :: parseModule(ProjectEnvironment& env,
    }
 }
 
-bool CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target, 
+bool CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree& source, BuildTree& target,
    ExtensionMap* outerExtensionList)
 {
    bool nothingToCompile = _compiler->declare(&moduleScope, source, outerExtensionList);
@@ -534,7 +534,7 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    }
 }
 
-bool CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode, 
+bool CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode,
    ExtensionMap* outerExtensionList)
 {
    // generating build tree
@@ -559,9 +559,9 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
       forwardResolver,
       _libraryProvider.createModule(module_it.name()),
       moduleSettings.debugMode ? _libraryProvider.createDebugModule(module_it.name()) : nullptr,
-      moduleSettings.stackAlingment, 
-      moduleSettings.rawStackAlingment, 
-      moduleSettings.ehTableEntrySize, 
+      moduleSettings.stackAlingment,
+      moduleSettings.rawStackAlingment,
+      moduleSettings.ehTableEntrySize,
       minimalArgList, ptrSize,
       module_it.hints());
 
@@ -688,7 +688,7 @@ void CompilingProcess :: compile(ProjectBase& project,
 
    freeobj(module_it);
 
-   _presenter->print(compiled 
+   _presenter->print(compiled
       ? ELC_SUCCESSFUL_COMPILATION : ELC_IDLE_COMPILATION);
 }
 
