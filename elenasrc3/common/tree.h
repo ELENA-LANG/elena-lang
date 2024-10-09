@@ -650,6 +650,11 @@ namespace elena_lang
             return Node::read(_tree, _current);
          }
 
+         Tree* getOwner()
+         {
+            return _tree;
+         }
+
          void clear()
          {
             _tree->clear();
@@ -673,6 +678,12 @@ namespace elena_lang
             this->_pendingBookmarks = 0;
          }
       };
+
+
+      bool isTreeNode(Node node)
+      {
+         return this == node._tree;
+      }
 
       Node readRoot()
       {
