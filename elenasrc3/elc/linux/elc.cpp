@@ -42,6 +42,7 @@
 #include "constants.h"
 #include "messages.h"
 #include "linux/presenter.h"
+#include "linux/pathmanager.h"
 
 #include <stdarg.h>
 
@@ -165,7 +166,7 @@ int main(int argc, char* argv[])
    {
       bool cleanMode = false;
 
-      PathString dataPath(DATA_PATH);
+      PathString dataPath(PathHelper::retrievePath({ BC_RULES_FILE, BT_RULES_FILE, SYNTAX60_FILE }, DATA_PATH));
 
       JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
@@ -178,7 +179,7 @@ int main(int argc, char* argv[])
       process.greeting();
 
       // Initializing...
-      PathString configPath(*dataPath, DEFAULT_CONFIG);
+      PathString configPath(*dataPath, PathHelper::retrieveFilePath(DEFAULT_CONFIG));
       project.loadConfig(*configPath, nullptr, false);
 
        // Reading command-line arguments...
