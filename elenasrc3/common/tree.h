@@ -127,7 +127,11 @@ namespace elena_lang
 
          pos_t position = stringWriter.position();
 
-         stringWriter.writeString(strArgument, getlength_pos(strArgument) + 1);
+         pos_t len = getlength_pos(strArgument);
+         if (len > 0) {
+            stringWriter.writeString(strArgument, len + 1);
+         }
+         else stringWriter.writeByte(0);
 
          return position;
       }
