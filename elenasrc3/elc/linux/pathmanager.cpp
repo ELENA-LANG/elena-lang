@@ -17,14 +17,25 @@ using namespace elena_lang;
 
 PathHelper::PathMap* PathHelper::pathCache = nullptr;
 
+inline bool loadAppPath(char* appPath, size_t len)
+{
+   if (readlink("/proc/self/exe", appPath, len) == -1)
+      return false;
+
+   size_t index = path_t(appPath).findLast(PATH_SEPARATOR);
+   if (index != NOTFOUND_POS)
+      appPath[index] = 0;
+
+   return true;
+}
+
 path_t PathHelper :: retrievePath(const char* filesToLookFor[], size_t listLength, path_t defaultPath)
 {
    if (pathCache && pathCache->exist(defaultPath))
       return pathCache->get(defaultPath);
 
    char appPath[FILENAME_MAX] = { 0 };
-
-   if (readlink("/proc/self/exe", appPath, FILENAME_MAX) == -1)
+   if (!loadAppPath(appPath, FILENAME_MAX))
       return defaultPath;
 
    for (size_t i = 0; i < listLength; i++) {
@@ -48,12 +59,11 @@ path_t PathHelper :: retrieveFilePath(path_t defaultPath)
       return pathCache->get(defaultPath);
 
    char appPath[FILENAME_MAX] = { 0 };
-
-   if (readlink("/proc/self/exe", appPath, FILENAME_MAX) == -1)
+   if (!loadAppPath(appPath, FILENAME_MAX))
       return defaultPath;
 
    PathString fullPath(appPath);
-   FileNameString fileName(defaultPath);
+   FileNameString fileName(defaultPath, true);
    fullPath.combine(*fileName);
    if (!PathUtil::ifExist(*fullPath))
       return defaultPath;

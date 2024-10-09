@@ -2154,8 +2154,6 @@ bool Compiler::importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target, 
 
 bool Compiler::includeBlock(Scope& scope, SyntaxNode node, SyntaxNode target)
 {
-   TypeAttributes attributes = {};
-
    bool textBlock = false;
    declareIncludeAttributes(scope, node, textBlock);
    if (!textBlock)
@@ -3229,7 +3227,6 @@ void Compiler::generateClassStaticField(ClassScope& scope, SyntaxNode node, Fiel
 
    TypeInfo typeInfo = attrs.typeInfo;
    bool  isConst = attrs.isConstant;
-   ref_t flags = scope.info.header.flags;
 
    if (attrs.size < 0) {
       if (!attrs.inlineArray) {
@@ -3992,8 +3989,6 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
 
       // if it is an explicit constant conversion
       if (constantConversion) {
-         NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-
          addExtensionMessage(scope, scope.message, scope.getClassRef(), scope.message,
             scope.getClassVisibility() != Visibility::Public);
       }
@@ -4079,7 +4074,7 @@ void Compiler::inheritStaticMethods(ClassScope& scope, SyntaxNode classNode)
       if (!methodInfo.inherited && MethodInfo::checkType(methodInfo, MethodHint::Sealed) &&
          MethodScope::checkHint(methodInfo, MethodHint::Static))
       {
-         scope.info.attributes.add({ it.key(), ClassAttribute::SealedStatic }, scope.reference);
+         scope.info.attributes.add({ key, ClassAttribute::SealedStatic }, scope.reference);
       }
    }
 }
@@ -4283,7 +4278,7 @@ ObjectInfo Compiler::evalPropertyOperation(Interpreter& interpreter, Scope& scop
       CheckMethodResult result = {};
       bool found = _logic->resolveCallType(*scope.moduleScope, resolveStrongType(scope,
          loperand.typeInfo), message, result);
-      if (result.constRef) {
+      if (found && result.constRef) {
          NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
          return nsScope->defineObjectInfo(result.constRef, EAttr::None, true);
@@ -4558,7 +4553,7 @@ int Compiler::defineFieldSize(Scope& scope, ObjectInfo info)
    auto f_it = classScope->info.fields.start();
    while (!f_it.eof()) {
       auto fieldInfo = *f_it;
-      if (fieldInfo.offset == info.reference)
+      if (fieldInfo.offset == (int)info.reference)
          break;
 
       ++f_it;
@@ -5491,8 +5486,6 @@ ref_t Compiler::resolveTypeTemplate(Scope& scope, SyntaxNode node,
       if (!templateRef)
          scope.raiseError(errUnknownClass, terminalNode);
 
-      NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-
       return _templateProcessor->generateClassTemplate(*scope.moduleScope,
          templateRef, parameters, declarationMode, nullptr);
    }
@@ -5554,8 +5547,6 @@ ref_t Compiler::resolveStateMachine(Scope& scope, ref_t templateRef, ref_t eleme
       templateReference = scope.module->mapReference(*smName, true);
    }
    else templateReference = scope.moduleScope->mapFullReference(*smName, true);
-
-   NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
    return _templateProcessor->generateClassTemplate(*scope.moduleScope,
       templateReference, parameters, false, nullptr);
@@ -6141,7 +6132,7 @@ bool Compiler::evalAccumClassConstant(ustr_t constName, ClassScope& scope, Synta
    else constInfo.reference = mapClassConst(scope.moduleScope, scope.reference);
 
    auto fieldInfo = *(collectionInfo.fields.start());
-   ref_t elementTypeRef = resolveStrongType(scope, { fieldInfo.typeInfo.elementRef });
+   /*ref_t elementTypeRef = */resolveStrongType(scope, { fieldInfo.typeInfo.elementRef });
 
    ObjectInfo value = evalExpression(interpreter, scope, node);
    if (value.kind == ObjectKind::Symbol && value.reference == scope.reference) {
@@ -14564,8 +14555,6 @@ ObjectInfo Compiler::Expression::compileBranchingOperands(SyntaxNode rnode, Synt
 
 ObjectInfo Compiler::Expression::compileTernaryOperands(SyntaxNode rnode, SyntaxNode r2node, BuildNode& opNode, bool withoutDebugInfo)
 {
-   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
-
    writer->newNode(BuildKey::Tape);
 
    ObjectInfo lexpr = compile(rnode, 0, EAttr::RetValExpected, nullptr);

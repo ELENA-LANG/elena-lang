@@ -2604,7 +2604,7 @@ inline void loadPreloaded(JITCompilerScope& scope, LibraryLoaderBase* loader, si
                map.add(functions[i], (void*)(scope.helper->calculateVAddress(*scope.codeWriter, mask) & ~mskAnyRef));
             }
             else map.add(functions[i], (void*)scope.helper->calculateVAddress(*scope.codeWriter, mask));
-            
+
             positions.add(functions[i], scope.codeWriter->position());
 
             allocateCode(&scope, info.section->get(0));
@@ -3042,7 +3042,7 @@ void JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t 
    else {
       switch (mask) {
          case mskRef32:
-            MemoryBase::writeDWord(writer->Memory(), position, 
+            MemoryBase::writeDWord(writer->Memory(), position,
                ptrToUInt32(writer->Memory()->get(writer->position())));
             writer->Memory()->addReference(mskCodeRef32, position);
             break;
@@ -3394,7 +3394,7 @@ void JITCompiler32 :: addIndexEntry(mssg_t message, addr_t codeAddress, void* ta
    indexCount++;
 }
 
-void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, 
+void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo,
    FieldAddressMap& staticValues, bool virtualMode)
 {
    pos_t position = vmtWriter.position();
@@ -3450,7 +3450,7 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
       }
       else vmtWriter.writeDWord((pos_t)*it);
    }
-  
+
    vmtWriter.seek(position);
 
    if (fixInfo.outputListAddress) {
@@ -3458,7 +3458,7 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
          vmtWriter.writeDReference(addrToUInt32(fixInfo.outputListAddress) | mskRef32, 0);
       }
       else vmtWriter.writeDWord(addrToUInt32(fixInfo.outputListAddress));
-   }      
+   }
 }
 
 pos_t JITCompiler32 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName,
@@ -4195,7 +4195,7 @@ void JITCompiler64 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, 
    void* env = _preloaded.get(SYSTEM_ENV);
    if (virtualMode) {
       MemoryBase::writeQWord(rdata, (int64_t)env & ~mskAnyRef, staticCounter);
-      MemoryBase::writeQWord(rdata, (int64_t)env & ~mskAnyRef + 8, tlsSize);
+      MemoryBase::writeQWord(rdata, ((int64_t)env & ~mskAnyRef) + 8, tlsSize);
    }
    else {
       ((int64_t*)env)[0] = staticCounter;
