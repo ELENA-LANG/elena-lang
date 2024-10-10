@@ -21,9 +21,9 @@ define page_size64                   32;
 define ptr_size32                     4;
 define ptr_size64                     8;
                                       
-define get_prop_mssg                0C1h;
-define set_prop_mssg                0C2h;
-define variadic_mssg                080h;
+define get_prop_mssg                081h;
+define set_prop_mssg                082h;
+define variadic_mssg                040h;
 
 define __realSize                     8;
 

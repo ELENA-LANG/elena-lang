@@ -939,9 +939,9 @@ public multySelectTest() : testCase()
     var n := 3;
     
     n =>
-        1 { Assert.ifTrue(n==1); }
-        2 { Assert.ifTrue(n==2); }
-        3 { Assert.ifTrue(n==3); };
+        1 : { Assert.ifTrue(n==1); }
+        2 : { Assert.ifTrue(n==2); }
+        3 : { Assert.ifTrue(n==3); };
         
     console.write(".")        
 }
@@ -1922,7 +1922,7 @@ public interfaceImplTests() : testCase()
    II_I i := o;
 
    var r := i.retrieve();
-   Assert.ifTrue(r :is II_A);
+   Assert.ifTrue(r is:II_A);
    console.write(".");
 }
 
@@ -1974,7 +1974,7 @@ public decoratorTest() : testCase()
    var a := new DecoratorBaseA(2);
    var decA := new DecoratorA(a, 3);
 
-   Assert.ifEqual((decA :as IDecoratorA).giveMe(), 5);
+   Assert.ifEqual((decA as:IDecoratorA).giveMe(), 5);
 
    console.write(".");
 }
@@ -2275,4 +2275,25 @@ public variadicBoxingTest() : testCase()
 
    variadicBoxingTestset'A.validate2("a", "b", "c");
    Console.write(".");
+}
+
+namespace reflectionTestset
+{
+   A
+   {
+      string Name : prop;
+   }
+}
+
+
+public reflectionTest() : testCase()
+{
+   reflectionTestset'A a := new reflectionTestset'A();
+
+   MessageName subj := mssg Name;
+   
+   subj.setPropertyValue(a, "Ivan");
+
+   Assert.ifEqual(subj.getPropertyValue(a), "Ivan");
+   Console.write(".");   
 }

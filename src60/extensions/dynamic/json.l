@@ -203,9 +203,9 @@ singleton helper
             
          token := helper.readNext(e);
          token =>
-            "," { token := helper.readNext(e) }
-            "}" { eof := true }
-            ! { JsonException.new().raise() }
+            "," : { token := helper.readNext(e) }
+            "}" : { eof := true }
+            ! : { JsonException.new().raise() }
       };
         
       ^ target
@@ -221,9 +221,9 @@ singleton helper
             
          token := helper.readNext(e);
          token =>
-            "," { token := helper.readNext(e) }
-            "]" { eof := true }
-            ! { JsonException.new().raise() }
+            "," : { token := helper.readNext(e) }
+            "]" : { eof := true }
+            ! : { JsonException.new().raise() }
       };
         
       ^ target

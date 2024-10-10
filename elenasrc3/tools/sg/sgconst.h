@@ -12,7 +12,7 @@
 namespace elena_lang
 {
 
-   #define SG_REVISION_NUMBER            0x0002
+   #define SG_REVISION_NUMBER            0x0003
 
    constexpr auto SG_GREETING            = "ELENA command line syntax generator %d.%d.%d (C)2005-2024 by Aleksey Rakov\n";
 

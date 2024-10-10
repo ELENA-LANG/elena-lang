@@ -1217,11 +1217,11 @@ public extension charOp : CharValue
    bool isWhitespace()
    {
       self =>
-         $9  { ^ true }
-         $32 { ^ true }
-         $10 { ^ true }
-         $13 { ^ true }
-         $12 { ^ true };
+         $9  : { ^ true }
+         $32 : { ^ true }
+         $10 : { ^ true }
+         $13 : { ^ true }
+         $12 : { ^ true };
             
       ^ false
    }

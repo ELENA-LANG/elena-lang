@@ -136,7 +136,7 @@ public abstract class BaseWinControl : BaseControl
          { ^ nil };
             
       if(_handle == handle)
-         { ^ weak self :as IControl };
+         { ^ weak self as:IControl };
             
       ^ nil 
    }
@@ -173,7 +173,7 @@ public abstract class BaseWinContainer : BaseWinControl
    IControl retrieve(Handle handle)
    {
       if(_handle == handle)
-            { ^ weak self :as IControl };
+            { ^ weak self as:IControl };
 
       int len := _controls.Length;
       IControl current;
@@ -687,14 +687,14 @@ public abstract class BasePanel : BaseWinContainer
    {
       control.Parent := self;
 
-      _controls.append(weak control :as IControl)
+      _controls.append(weak control as:IControl)
    }
 
    internal appendControlInternal(ImageList control)
    {
       control.Parent := self;
 
-      _controls.append(weak control :as IControl)
+      _controls.append(weak control as:IControl)
    }
     
    int Width

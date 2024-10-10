@@ -153,8 +153,8 @@ namespace elena_lang
       void loadMetaSection(SyntaxNode node);
       void clearMetaSection(SyntaxNode node);
 
-      void flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
 
       void flushL6AsTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushIdentifier(SyntaxTreeWriter& writer, SyntaxNode identNode, bool ignoreTerminalInfo);
@@ -202,23 +202,26 @@ namespace elena_lang
       void flushParent(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void flushParentTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
 
-      void flushDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool withNameNode = true, 
+      void flushDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool withNameNode = true, 
          bool typeDescriptor = false, bool exprMode = false);
-      void flushClass(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool functionMode);
-      void flushInlineTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushExpressionTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode node);
-      void flushDictionary(SyntaxTreeWriter& writer, SyntaxNode node);
-      void flushNamespace(SyntaxTreeWriter& writer, SyntaxNode node);
+      void flushClass(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool functionMode);
+      void flushInlineTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushExpressionTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode& node);
+      void flushDictionary(SyntaxTreeWriter& writer, SyntaxNode& node);
+      void flushNamespace(SyntaxTreeWriter& writer, SyntaxNode& node);
       void flush(SyntaxTreeWriter& writer, SyntaxNode node);
-
 
    public:
       void newNode(parse_key_t key) override;
       void newNode(parse_key_t key, ustr_t arg) override;
       void appendTerminal(parse_key_t key, ustr_t value, LineInfo lineInfo) override;
       void injectNode(parse_key_t key) override;
+
       void renameNode(parse_key_t key) override;
+      void mergeRChildren(parse_key_t key) override;
+      void mergeLChildren(parse_key_t key) override;
+      void encloseLastChild(parse_key_t key) override;
 
       void closeNode() override;
 

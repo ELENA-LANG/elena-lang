@@ -43,7 +43,7 @@ inline ustr_t retrievePath(SyntaxNode node)
    return "<undefined>";
 }
 
-void SyntaxTreeBuilder :: flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+void SyntaxTreeBuilder :: flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node)
 {
    SyntaxTree::copyNewNode(writer, node);
 
@@ -54,7 +54,7 @@ void SyntaxTreeBuilder :: flushNode(SyntaxTreeWriter& writer, Scope& scope, Synt
    writer.closeNode();
 }
 
-void SyntaxTreeBuilder :: flushCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+void SyntaxTreeBuilder :: flushCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -64,7 +64,7 @@ void SyntaxTreeBuilder :: flushCollection(SyntaxTreeWriter& writer, Scope& scope
    }
 }
 
-void SyntaxTreeBuilder :: flushNamespace(SyntaxTreeWriter& writer, SyntaxNode node)
+void SyntaxTreeBuilder :: flushNamespace(SyntaxTreeWriter& writer, SyntaxNode& node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -687,7 +687,7 @@ void SyntaxTreeBuilder :: flushExpression(SyntaxTreeWriter& writer, Scope& scope
    writer.closeNode();
 }
 
-void SyntaxTreeBuilder :: flushDictionary(SyntaxTreeWriter& writer, SyntaxNode node)
+void SyntaxTreeBuilder :: flushDictionary(SyntaxTreeWriter& writer, SyntaxNode& node)
 {
    writer.newNode(node.key);
 
@@ -709,7 +709,7 @@ void SyntaxTreeBuilder :: flushTupleType(SyntaxTreeWriter& writer, Scope& scope,
    }
 }
 
-void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool withNameNode, 
+void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool withNameNode, 
    bool typeDescriptor, bool exprMode)
 {
    SyntaxNode nameNode = node.lastChild(SyntaxKey::TerminalMask);
@@ -1380,7 +1380,7 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
    writer.closeNode();
 }
 
-void SyntaxTreeBuilder :: flushClass(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool functionMode)
+void SyntaxTreeBuilder :: flushClass(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool functionMode)
 {
    flushClassPostfixes(writer, scope, node);
 
@@ -1471,7 +1471,7 @@ void SyntaxTreeBuilder :: flushInlineTemplatePostfixes(SyntaxTreeWriter& writer,
    }
 }
 
-void SyntaxTreeBuilder :: flushExpressionTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+void SyntaxTreeBuilder :: flushExpressionTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node)
 {
    scope.type = ScopeType::ExpressionTemplate;
    scope.ignoreTerminalInfo = true;
@@ -1498,7 +1498,7 @@ void SyntaxTreeBuilder :: flushExpressionTemplate(SyntaxTreeWriter& writer, Scop
    }
 }
 
-void SyntaxTreeBuilder :: flushInlineTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+void SyntaxTreeBuilder :: flushInlineTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node)
 {
    scope.type = ScopeType::InlineTemplate;
    scope.ignoreTerminalInfo = true;
@@ -1702,7 +1702,7 @@ SyntaxTreeBuilder::ScopeType SyntaxTreeBuilder :: defineTemplateType(SyntaxNode 
    return type;
 }
 
-void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode node)
+void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode& node)
 {
    Scope scope(_noDebugInfo);
 
@@ -1869,6 +1869,49 @@ void SyntaxTreeBuilder :: renameNode(parse_key_t key)
 {
    SyntaxNode current = _cacheWriter.CurrentNode();
    current.setKey(SyntaxTree::fromParseKey(key));
+}
+
+void SyntaxTreeBuilder :: mergeRChildren(parse_key_t key)
+{
+   SyntaxNode current = _cacheWriter.CurrentNode();
+
+   SyntaxNode rchild = current.firstChild().nextNode();
+   SyntaxNode nextRChild = rchild.nextNode();
+   if (rchild != SyntaxKey::None) {
+      rchild.encloseNode(SyntaxTree::fromParseKey(key));
+
+      while (nextRChild != SyntaxKey::None) {
+         SyntaxNode c = nextRChild;
+         nextRChild = nextRChild.nextNode();
+
+         rchild.mergeNodes(c);
+      }
+   }   
+}
+
+void SyntaxTreeBuilder::mergeLChildren(parse_key_t key)
+{
+   SyntaxNode current = _cacheWriter.CurrentNode();
+
+   SyntaxNode lchild = current.firstChild();
+   SyntaxNode nextLChild = lchild.nextNode();
+   lchild.encloseNode(SyntaxTree::fromParseKey(key));
+
+   while (nextLChild.nextNode() != SyntaxKey::None) {
+      SyntaxNode c = nextLChild;
+      nextLChild = nextLChild.nextNode();
+
+      lchild.mergeNodes(c);
+   }
+}
+
+void SyntaxTreeBuilder :: encloseLastChild(parse_key_t key)
+{
+   SyntaxNode current = _cacheWriter.CurrentNode();
+   SyntaxNode lastChild = current.lastChild();
+
+   if (lastChild != SyntaxKey::None)
+      lastChild.encloseNode(SyntaxTree::fromParseKey(key));
 }
 
 void SyntaxTreeBuilder :: closeNode()

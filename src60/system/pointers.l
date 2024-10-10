@@ -52,7 +52,7 @@ public sealed const struct UnsafePointer
 
    constructor(object obj)
    {
-      if (obj :is pointer) {
+      if (obj is: pointer) {
          _pointer := cast UnsafePointer(obj)
       }
       else self.assignPtr(obj);

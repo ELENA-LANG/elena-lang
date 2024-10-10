@@ -388,7 +388,36 @@ end
 // in: ecx - size ; out: ebx - created object
 procedure %GC_ALLOCPERM
 
+  // ; GCXT: set lock
 labStart:
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+
+labWait:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[rdi], edx
+  jnz  short labWait
+
+  mov  rax, [data : %CORE_GC_TABLE + gc_perm_current]
+  mov  r12, [data : %CORE_GC_TABLE + gc_perm_end]
+  add  rcx, rax
+  cmp  rcx, r12
+  jae  short labPERMCollect
+  mov  [data : %CORE_GC_TABLE + gc_perm_current], rcx
+
+  // ; GCXT: clear sync field
+  mov  edx, 0FFFFFFFFh
+  lea  rbx, [rax + elObjectOffset]
+  
+  // ; GCXT: free lock
+  // ; could we use mov [esi], 0 instead?
+  lock xadd [rdi], edx
+
+  ret
+
+labPERMCollect:
+  sub  rcx, rax
+
   // ; GCXT: find the current thread entry
   mov  rdi, gs:[58h]
   mov  rax, [data : %CORE_TLS_INDEX]
@@ -513,7 +542,7 @@ labSkipWait:
 
   sub  rsp, 30h
 
-  mov  rcx, [rbp + 8]
+  mov  rcx, [rbp]
   call extern "$rt.CollectPermGCLA"
 
   mov  rdi, rax
@@ -527,7 +556,7 @@ labSkipWait:
   call extern "$rt.SignalStopGCLA"
 
   mov  rbx, rdi
-  add  rsp, 30h
+  add  rsp, 40h
 
   pop  rbp
   pop  r11

@@ -84,7 +84,7 @@ class Record
 public program() 
 {
     if (Program_arguments.Length == 1)
-        { console.write("Please provide the path to the file to view"); AbortException.raise() };
+        { Console.write("Please provide the path to the file to view"); AbortException.raise() };
 
     var db := new List().append(new Record());
     
@@ -111,5 +111,5 @@ public program()
     // print the list
     db.forEach(printingLn);
 
-    console.readChar()
+    Console.readChar()
 }

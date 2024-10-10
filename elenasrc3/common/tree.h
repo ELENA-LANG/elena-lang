@@ -489,13 +489,58 @@ namespace elena_lang
          {
             NodeRecord* record = (NodeRecord*)_tree->_body.get(_position);
             if (record->child != INVALID_POS) {
-               NodeArg arg(argument, INVALID_POS);
+               NodeArg arg((ref_t)argument, INVALID_POS);
 
                pos_t child = _tree->injectChild(_position, key, arg);
 
                return Node::read(_tree, child);
             }
             else return appendChild(key, argument);
+         }
+
+         // enclose the node with a new one
+         Node encloseNode(Key key, int argument = 0)
+         {
+            NodeRecord* record = (NodeRecord*)_tree->_body.get(_position);
+
+            _tree->injectChild(_position, this->key, this->arg);
+
+            this->key = key;
+            this->arg = { (ref_t)argument, INVALID_POS };
+
+            _tree->save(_position, this->key, this->arg);
+
+            return *this;
+         }
+
+         Node mergeNodes(Node& child)
+         {
+            NodeRecord* targetRecord = (NodeRecord*)_tree->_body.get(_position);
+            NodeRecord* sourceRecord = (NodeRecord*)_tree->_body.get(child._position);
+
+            // exclude the child from the children
+            Node previous = child.prevNode();
+            NodeRecord* prevRecord = previous.eol() ? nullptr : (NodeRecord*)_tree->_body.get(previous._position);
+            if (!prevRecord) {
+               Node childParent = child.parentNode();
+               NodeRecord* childParentRecord = (NodeRecord*)_tree->_body.get(childParent._position);
+
+               childParentRecord->child = sourceRecord->next;
+            }
+            else prevRecord->next = sourceRecord->next;
+
+            // append the source to the current node
+            sourceRecord->parent = _position;
+            sourceRecord->next = INVALID_POS;
+
+            Node lastChild = this->lastChild();
+            if (!lastChild.eol()) {
+               NodeRecord* lastRecord = (NodeRecord*)_tree->_body.get(lastChild._position);
+               lastRecord->next = child._position;
+            }
+            else targetRecord->child = child._position;
+
+            return *this;
          }
 
          bool eol() const

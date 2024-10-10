@@ -22,11 +22,18 @@ In development:
       - redesign winforms
       - api : add descriptions 
       - threading samples must be included into release files
+      - start to look at the basic low level optimization (Modern X86 Assembly Language Programming)
+      - ide : "is:" must be marked with a special color as inline template
   port:
   tools: 
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * Derivation : use SyntaxNode be reference for optimization
+  * test all examples : gui
+  * x86-64 : mta - main sample sandbox2
+  * fix x86-64 : mta - sandbox2
+  * fix x86-64 : func_invoker
   * #696 - it will be possible to provide the mapping file, containing the paths to all data / config files; the system will look for the 
     file in the current folder, or it can be selected via a command-line argument
   * elenart : linux : try to get syntax.dat and config file similar to windows version
@@ -34,13 +41,11 @@ In development:
   * modify config files to use relative paths
   * make possible to use relative paths in config files (~)
   * #689
+  * fix reddit posts
+  * quick review samples _: console, db, files
   * toArray<T> extension method (parameterized method extensions)
-  * test all examples : files
-  * start to look at the basic low level optimization (Modern X86 Assembly Language Programming)
-  * x86-64 : mta - main sample sandbox2
-  * fix x86-64 : mta - sandbox2
   --------------------------------------
-  * fix x86-64 : system'runtime'$private'PermVectorChain.createArray : GC_ALLOCPERM
+  * modify grammar to support parametrized method call
 
   ### EPIC: elena 6.6 ###
 

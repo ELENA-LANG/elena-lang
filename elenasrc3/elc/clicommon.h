@@ -550,6 +550,9 @@ public:
    virtual void newNode(parse_key_t key, ustr_t arg) = 0;
    virtual void injectNode(parse_key_t key) = 0;
    virtual void renameNode(parse_key_t key) = 0;
+   virtual void mergeRChildren(parse_key_t key) = 0;
+   virtual void mergeLChildren(parse_key_t key) = 0;
+   virtual void encloseLastChild(parse_key_t key) = 0;
 
    virtual void appendTerminal(parse_key_t key, ustr_t value, LineInfo lineInfo) = 0;
 
