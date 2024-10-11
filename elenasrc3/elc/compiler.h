@@ -1133,6 +1133,12 @@ namespace elena_lang
          }
       };
 
+      struct MessageCallContext
+      {
+         mssg_t weakMessage;
+         ref_t  implicitSignatureRef;
+      };
+
       struct TerminalAttributes
       {
          bool variableMode;
@@ -1347,7 +1353,7 @@ namespace elena_lang
          ObjectInfo convertObject(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool dynamicRequired,
             bool withoutBoxing, bool nillable, bool directConversion);
 
-         ObjectInfo compileMessageOperation(SyntaxNode node, ObjectInfo target, MessageResolution resolution, ref_t implicitSignatureRef,
+         ObjectInfo compileMessageCall(SyntaxNode node, ObjectInfo target, MessageCallContext& context, MessageResolution resolution,
             ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs);
          ObjectInfo compileOperation(SyntaxNode loperand, SyntaxNode roperand,
             int operatorId, ref_t expectedRef);
@@ -1360,8 +1366,8 @@ namespace elena_lang
          ref_t compileMessageArguments(SyntaxNode current, ArgumentsInfo& arguments, ref_t expectedSignRef, ExpressionAttribute mode,
             ArgumentsInfo* updatedOuterArgs, ArgumentListType& argListType, int nillableArgs);
 
-         MessageResolution resolveByRefHandler(ObjectInfo source, ref_t expectedRef, mssg_t weakMessage, ref_t& signatureRef, bool noExtensions);
-         MessageResolution resolveMessageAtCompileTime(ObjectInfo target, mssg_t weakMessage, ref_t implicitSignatureRef, bool ignoreExtensions,
+         MessageResolution resolveByRefHandler(ObjectInfo source, ref_t expectedRef, MessageCallContext& context, bool noExtensions);
+         MessageResolution resolveMessageAtCompileTime(ObjectInfo target, MessageCallContext& messageContext, bool ignoreExtensions,
             bool ignoreVariadics, bool checkByRefHandler = false);
 
          ObjectInfo declareTempLocal(ref_t typeRef, bool dynamicOnly = true);
@@ -1523,8 +1529,8 @@ namespace elena_lang
 
       ref_t mapTemplateType(Scope& scope, SyntaxNode terminal, pos_t parameterCount);
 
-      ref_t mapExtension(BuildTreeWriter& writer, Scope& scope, mssg_t& resolvedMessage, ref_t& implicitSignatureRef,
-         ObjectInfo object, int& stackSafeAttr);
+      ref_t mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCallContext& context,
+         ObjectInfo object, mssg_t& resolvedMessage, int& stackSafeAttr);
 
       mssg_t defineMultimethod(Scope& scope, mssg_t messageRef, bool extensionMode);
 

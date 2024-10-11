@@ -34,12 +34,7 @@ In development:
   * x86-64 : mta - main sample sandbox2
   * fix x86-64 : mta - sandbox2
   * fix x86-64 : func_invoker
-  * #696 - it will be possible to provide the mapping file, containing the paths to all data / config files; the system will look for the 
-    file in the current folder, or it can be selected via a command-line argument
-  * elenart : linux : try to get syntax.dat and config file similar to windows version
-  * ecv : linux : try to get syntax.dat and config file similar to windows version
-  * modify config files to use relative paths
-  * make possible to use relative paths in config files (~)
+  * provide set of config files for Linux with relative paths
   * #689
   * fix reddit posts
   * quick review samples _: console, db, files

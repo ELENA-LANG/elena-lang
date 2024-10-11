@@ -2745,16 +2745,19 @@ ref_t CompilerLogic :: resolveExtensionTemplate(ModuleScopeBase& scope, Compiler
    scope.module->resolveSignature(signatureRef, signatures);
 
    // matching pattern with the provided signature
-   size_t i = pattern.find('.') + 2;
+   size_t i = pattern.find('.') ;
 
    // define an argument length
    size_t argLenPos = pattern.findSub(0, '#', i, NOTFOUND_POS);
    if (i != NOTFOUND_POS) {
+      i += 2;
+
       String<char, 5> tmp;
       tmp.copy(pattern + argLenPos + 1, i - argLenPos - 3);
 
       argumentLen = tmp.toInt();
    }
+   else i = getlength(pattern);
 
    IdentifierString templateName(pattern, i - 2);
    ref_t templateRef = scope.mapFullReference(*templateName, true);
@@ -2863,6 +2866,30 @@ ref_t CompilerLogic :: resolveExtensionTemplate(ModuleScopeBase& scope, Compiler
    }
 
    return 0;
+}
+
+ref_t CompilerLogic :: resolveExtensionTemplateByTemplateArgs(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern, 
+   ustr_t ns, size_t argumentLen, ref_t* arguments, ExtensionMap* outerExtensionList)
+{
+   // matching pattern with the provided signature
+   size_t i = pattern.find('.');
+
+   // define an argument length
+   size_t argLenPos = pattern.findSub(0, '#', i, NOTFOUND_POS);
+   if (i != NOTFOUND_POS) {
+      i += 2;
+
+      String<char, 5> tmp;
+      tmp.copy(pattern + argLenPos + 1, i - argLenPos - 3);
+
+      argumentLen = tmp.toInt();
+   }
+   else return 0;
+
+   IdentifierString templateName(pattern, i - 2);
+   ref_t templateRef = scope.mapFullReference(*templateName, true);
+
+   return compiler->generateExtensionTemplate(scope, templateRef, argumentLen, arguments, ns, outerExtensionList);
 }
 
 bool CompilerLogic :: isNumericType(ModuleScopeBase& scope, ref_t& reference)

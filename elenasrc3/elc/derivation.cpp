@@ -650,6 +650,9 @@ void SyntaxTreeBuilder :: flushExpressionMember(SyntaxTreeWriter& writer, Scope&
       case SyntaxKey::NullableType:
          flushNullable(writer, scope, current);
          break;
+      case SyntaxKey::TemplateArg:
+         flushTemplateArg(writer, scope, current, true);
+         break;
       case SyntaxKey::interpolate:
          flushNode(writer, scope, current);
          break;
