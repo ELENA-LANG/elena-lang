@@ -1,17 +1,9 @@
 import extensions;
-
-extension op2 : int
-{
-   int sumAndReturn(int arg)
-      = self + arg;
-}
+import system'text;
 
 public program()
 {
-   int n := 1;
-   int m := 3;
+   string s := "hölü";
 
-   int r := n.sumAndReturn(m);
-
-   console.printLine("the result is ", r);
+   console.writeLine(s);
 }
