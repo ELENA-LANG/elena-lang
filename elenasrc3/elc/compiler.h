@@ -1137,6 +1137,19 @@ namespace elena_lang
       {
          mssg_t weakMessage;
          ref_t  implicitSignatureRef;
+         pos_t  templateArgCount;
+         ref_t* templateArgs;
+
+         MessageCallContext()
+            : weakMessage(0), implicitSignatureRef(0), templateArgCount(0), templateArgs(nullptr)
+         {
+
+         }
+         MessageCallContext(mssg_t weakMessage, ref_t implicitSignatureRef)
+            : weakMessage(weakMessage), implicitSignatureRef(implicitSignatureRef), templateArgCount(0), templateArgs(nullptr)
+         {
+
+         }
       };
 
       struct TerminalAttributes

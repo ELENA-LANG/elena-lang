@@ -1113,6 +1113,8 @@ namespace elena_lang
       int      offset;
       TypeInfo typeInfo;
       ref_t    valueRef;
+
+      StaticFieldInfo() = default;
    };
 
    // --- ClassHeader ---
@@ -1124,6 +1126,8 @@ namespace elena_lang
       pos_t  indexCount;
       ref_t  flags;
       ref_t  parentRef;
+
+      ClassHeader() = default;
    };
 
    // --- MethodEntry ---
@@ -1132,6 +1136,8 @@ namespace elena_lang
       mssg_t message;
       pos_t  codeOffset;
       ref_t  outputRef;
+
+      MethodEntry() = default;
    };
 
    // --- DebugLineInfo ---

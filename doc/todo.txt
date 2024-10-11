@@ -38,9 +38,8 @@ In development:
   * #689
   * fix reddit posts
   * quick review samples _: console, db, files
-  * toArray<T> extension method (parameterized method extensions)
   --------------------------------------
-  * modify grammar to support parametrized method call
+  * post article abour extension support in ELENA
 
   ### EPIC: elena 6.6 ###
 

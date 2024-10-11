@@ -2882,7 +2882,8 @@ ref_t CompilerLogic :: resolveExtensionTemplateByTemplateArgs(ModuleScopeBase& s
       String<char, 5> tmp;
       tmp.copy(pattern + argLenPos + 1, i - argLenPos - 3);
 
-      argumentLen = tmp.toInt();
+      if(argumentLen != tmp.toInt())
+         return 0;
    }
    else return 0;
 

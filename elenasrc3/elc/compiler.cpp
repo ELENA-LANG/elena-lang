@@ -5400,21 +5400,21 @@ void Compiler::declareTemplateAttributes(Scope& scope, SyntaxNode node,
    SyntaxNode current = objectMode ? node.nextNode() : node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::Attribute:
-         if (!_logic->validateTypeScopeAttribute(current.arg.reference, attributes))
-            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-         break;
-      case SyntaxKey::TemplateArg:
-      case SyntaxKey::Type:
-      case SyntaxKey::TemplateType:
-      {
-         auto typeInfo = resolveStrongTypeAttribute(scope, current, declarationMode, attributes.mssgNameLiteral);
-         parameters.add(typeInfo.typeRef);
+         case SyntaxKey::Attribute:
+            if (!_logic->validateTypeScopeAttribute(current.arg.reference, attributes))
+               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+            break;
+         case SyntaxKey::TemplateArg:
+         case SyntaxKey::Type:
+         case SyntaxKey::TemplateType:
+         {
+            auto typeInfo = resolveStrongTypeAttribute(scope, current, declarationMode, attributes.mssgNameLiteral);
+            parameters.add(typeInfo.typeRef);
 
-         break;
-      }
-      default:
-         break;
+            break;
+         }
+         default:
+            break;
       }
 
       current = current.nextNode();
@@ -6490,6 +6490,10 @@ mssg_t Compiler::mapMessage(Scope& scope, SyntaxNode current, bool propertyMode,
       current = current.nextNode();
    }
 
+   // HOTFIX : skip tempalte args
+   while (current == SyntaxKey::TemplateArg)
+      current = current.nextNode();
+
    pos_t argCount = 1;
    while (current != SyntaxKey::None) {
       argCount++;
@@ -6591,7 +6595,14 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCal
       objectRef = scope.moduleScope->buildins.superReference;
    }
 
-   if (context.implicitSignatureRef) {
+   if (context.templateArgCount > 0) {
+      // auto generate extension template for explicitly defined strong-typed signature
+      for (auto it = nsScope->extensionTemplates.getIt(context.weakMessage); !it.eof(); it = nsScope->extensionTemplates.nextIt(context.weakMessage, it)) {
+         _logic->resolveExtensionTemplateByTemplateArgs(*scope.moduleScope, this, *it,
+            *nsScope->nsName, context.templateArgCount, context.templateArgs, nsScope->outerExtensionList ? nsScope->outerExtensionList : &nsScope->extensions);
+      }
+   }
+   else if (context.implicitSignatureRef) {
       // auto generate extension template for strong-typed signature
       for (auto it = nsScope->extensionTemplates.getIt(context.weakMessage); !it.eof(); it = nsScope->extensionTemplates.nextIt(context.weakMessage, it)) {
          _logic->resolveExtensionTemplate(*scope.moduleScope, this, *it,
@@ -11793,6 +11804,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
 {
    ObjectInfo retVal = {};
 
+   ref_t templateArgs[ARG_COUNT];
    MessageCallContext callContext = {};
 
    callContext.weakMessage = compiler->mapMessage(scope, messageNode, propertyMode,
@@ -11800,6 +11812,17 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
 
    if (propertyMode || !test(callContext.weakMessage, FUNCTION_MESSAGE))
       arguments.add(source);
+
+   if (messageNode.nextNode() == SyntaxKey::TemplateArg) {
+      messageNode = messageNode.nextNode();
+      while (messageNode == SyntaxKey::TemplateArg) {
+         templateArgs[callContext.templateArgCount++] = compiler->resolveStrongTypeAttribute(scope, messageNode, false, false).typeRef;
+
+         messageNode = messageNode.nextNode();
+      }
+
+      callContext.templateArgs = templateArgs;
+   }
 
    mssg_t resolvedMessage = 0;
    int resolvedNillableArgs = 0;
@@ -13021,7 +13044,7 @@ ObjectInfo Compiler::Expression::compileTupleAssigning(SyntaxNode node)
       ref_t actionRef = scope.module->mapAction(REFER_MESSAGE, 0, false);
       mssg_t getter = encodeMessage(actionRef, 2, 0);
 
-      MessageCallContext context = { getter };
+      MessageCallContext context = { getter, 0 };
       ObjectInfo sourceVar = compileMessageCall(node, exprVal, context, getter,
          arguments, EAttr::None, nullptr);
 
