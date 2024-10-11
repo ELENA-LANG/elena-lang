@@ -1,9 +1,8 @@
-import extensions;
-import system'text;
+A;
 
 public program()
 {
-   string s := "hölü";
+   var o := new A();
 
-   console.writeLine(s);
+   o.fail();
 }

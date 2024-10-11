@@ -1,82 +1,18 @@
-// --- startUp ---
+import extensions;
 
-public sealed class StartUpEvents
+class MyClass
 {
-   Func OnStop : event;
-    
-   Func1 OnError : event;
-    
-   internal constructor new() {}
-
-   internal stopping()
-   {
-      OnStop?.();
-   }
-    
-   internal handlingError(e)
-   {
-      OnError?.(e)
-   }
+    add(n)
+    {
+        console.printLine("add(",n,")")
+    }
 }
 
-public static StartUpEvents startUpEvents = StartUpEvents.new();
-
-entry()
+public program()
 {
-   try
-   {
-      forward program();
-   }
-   catch::
-   {
-      function(AbortException e)
-      {
-      }
-
-      function(Exception err)
-      {
-         startUpEvents.handlingError(err);
-
-         console.writeLine(err);
-
-         extern ExitLA(-1);
-      }
-   }
-   finally
-   {
-      startUpEvents.stopping()
-   }
-}
-
-gui_entry()
-{
-   try
-   {
-      forward program();
-   }
-   catch::
-   {
-      function(AbortException e)
-      {
-      }
+    var o := new MyClass();
     
-      function(Exception err)
-      {
-         startUpEvents.handlingError(err);
-
-         forward program.error("ELENA", err);
-
-         extern ExitLA(-1);
-      }
-   }
-   finally
-   {
-      startUpEvents.stopping()
-   }
+    o.add("string");
+    o.add(2);
+    o.add(3.1)
 }
-
-private entrySymbol
-    = entry();
-
-private guiEntrySymbol
-    = gui_entry();

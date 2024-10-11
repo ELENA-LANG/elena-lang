@@ -219,7 +219,7 @@ namespace io
                blockLength := 32
             };
                     
-            _encoder.convertTo(input, offset, ref blockLength, buffer, 0, ref bufferLength);
+            bufferLength := _encoder.convertTo(input, offset, ref blockLength, buffer, 0, bufferLength);
                 
             _stream.write(buffer, bufferLength);
                 

@@ -22,12 +22,13 @@ In development:
       - api : add descriptions 
       - threading samples must be included into release files
       - start to look at the basic low level optimization (Modern X86 Assembly Language Programming)
-      - ide : "is:" must be marked with a special color as inline template
+      - 
   port:
   tools: 
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * check : ELENA 6 : How to use ELENA code from external program
   * Derivation : use SyntaxNode be reference for optimization
   * test all examples : gui
   * x86-64 : mta - main sample sandbox2
@@ -35,12 +36,17 @@ In development:
   * fix x86-64 : func_invoker
   * provide set of config files for Linux with relative paths
   * #689
-  * fix reddit posts
-  * quick review samples _: console, db, files
-  * fix redirecting to FileConsoleStream
-  * test encoders with files  
+  * fix helloworld in vm mode
+  * fix sqlite_test sample
+  * review Writing efficient code in ELENA, ELENA 6 : Module initializer, ELENA 6 : User-defined literals
+  * review ELENA 6 : How to declare an enumeration type
+  * review ELENA 6 : How to generated code to send a message at run time
+  * review ELENA 6 : How to handle exceptions
+  * fix ELENA 6 : How to implement a dynamic decorator
+  * fix ELENA 6 : How to convert an object to the specific type
+  * fix an example with variadic arg
   --------------------------------------
-  * fix encoder code (see an example with ConsoleFileWriter)
+  * fix reddit posts
 
   ### EPIC: elena 6.6 ###
 
