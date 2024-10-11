@@ -17,7 +17,6 @@ In development:
   maint:
       - unit tests : bt optimization 
       - test binary file operations
-      - test encoders with files  
       - api refactoring : all symbols must start with a capital letter
       - redesign winforms
       - api : add descriptions 
@@ -38,8 +37,10 @@ In development:
   * #689
   * fix reddit posts
   * quick review samples _: console, db, files
+  * fix redirecting to FileConsoleStream
+  * test encoders with files  
   --------------------------------------
-  * post article abour extension support in ELENA
+  * fix encoder code (see an example with ConsoleFileWriter)
 
   ### EPIC: elena 6.6 ###
 

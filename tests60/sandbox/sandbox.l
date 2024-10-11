@@ -1,7 +1,17 @@
 import extensions;
-import extensions'routines'stex;
+
+extension op2 : int
+{
+   int sumAndReturn(int arg)
+      = self + arg;
+}
 
 public program()
 {
-   var array := Range.for(0, 10).&toArray<int>();
+   int n := 1;
+   int m := 3;
+
+   int r := n.sumAndReturn(m);
+
+   console.printLine("the result is ", r);
 }
