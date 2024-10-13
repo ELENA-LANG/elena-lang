@@ -10283,7 +10283,7 @@ inline bool isSingleDispatch(SyntaxNode node, SyntaxKey methodType, mssg_t messa
    else return false;
 }
 
-bool Compiler::injectVirtualStrongTypedMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope,
+bool Compiler :: injectVirtualStrongTypedMultimethod(SyntaxNode classNode, SyntaxKey methodType, Scope& scope,
    mssg_t message, mssg_t resendMessage, TypeInfo outputInfo, Visibility visibility, bool isExtension, int nillableArgs, bool isSealed)
 {
    bool variadicOne = (getFlags(resendMessage) & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
@@ -15157,7 +15157,7 @@ void Compiler::Expression::writeMessageArguments(ObjectInfo& target,
       writer->appendNode(BuildKey::Index, lenLocal.argument);
       writer->closeNode();
 
-      if (argType == ArgumentListType::VariadicArgListWithTypecasting) {
+      if (argType == ArgumentListType::VariadicArgListWithTypecasting && arguments[counter].typeInfo.elementRef != scope.moduleScope->buildins.superReference) {
          // if we need to typecast the each item of the variadic argument list
          ObjectInfo tempLocal = declareTempLocal(scope.moduleScope->buildins.intReference, false);
          mssg_t typecastMssg = mapTypecasting(scope.module, arguments[counter].typeInfo.elementRef);

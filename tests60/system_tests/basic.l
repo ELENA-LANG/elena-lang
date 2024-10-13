@@ -2297,3 +2297,28 @@ public reflectionTest() : testCase()
    Assert.ifEqual(subj.getPropertyValue(a), "Ivan");
    Console.write(".");   
 }
+
+namespace variadicFunctionTestset
+{
+   function variadicSum(params object[] args)
+   { 
+      var sum := 0;
+      for (int i := 0; i < args.Length; i++) {
+         sum := sum + args[i]
+      };
+   
+      ^ sum
+   }
+   
+   function sumAndTest(object sumToCheck, params object[] args)
+   { 
+      Assert.ifEqual(variadicSum(params args), sumToCheck);
+   }
+}
+
+
+public variadicFunctionTest() : testCase()
+{
+   variadicFunctionTestset'sumAndTest(6, 1,2,3);
+   Console.write(".");   
+}

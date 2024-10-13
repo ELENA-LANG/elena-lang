@@ -44,9 +44,8 @@ In development:
   * review ELENA 6 : How to handle exceptions
   * fix ELENA 6 : How to implement a dynamic decorator
   * fix ELENA 6 : How to convert an object to the specific type
-  * fix an example with variadic arg
   --------------------------------------
-  * fix reddit posts
+  * fix an example with variadic arg
 
   ### EPIC: elena 6.6 ###
 
