@@ -6712,6 +6712,15 @@ inline SyntaxNode findMessageNode(SyntaxNode node)
    return node.findChild(SyntaxKey::Message);
 }
 
+inline SyntaxNode findFunctionNode(SyntaxNode node)
+{
+   if (node != SyntaxKey::Object)
+      node = node.firstChild();
+   
+   SyntaxNode terminal = node.firstChild(SyntaxKey::TerminalMask);
+   return terminal;
+}
+
 void Compiler::addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey)
 {
    SyntaxNode terminal = node.firstChild(SyntaxKey::TerminalMask);
@@ -6729,12 +6738,12 @@ void Compiler::addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey 
 bool invalidObjectMode(ObjectInfo info)
 {
    switch (info.mode) {
-   case TargetMode::None:
-   case TargetMode::Conditional:
-   case TargetMode::Weak:
-      return false;
-   default:
-      return true;
+      case TargetMode::None:
+      case TargetMode::Conditional:
+      case TargetMode::Weak:
+         return false;
+      default:
+         return true;
    }
 }
 
@@ -7227,28 +7236,28 @@ ObjectInfo Compiler::convertIntLiteral(ExprScope& scope, SyntaxNode node, Object
 {
    bool invalid = false;
    switch (targetRef) {
-   case V_UINT8:
-      invalid = source.extra < 0 || source.extra > 255;
-      break;
-   case V_INT8:
-      invalid = source.extra < INT8_MIN || source.extra > INT8_MAX;
-      break;
-   case V_INT16:
-      invalid = source.extra < INT16_MIN || source.extra > INT16_MAX;
-      break;
-   case V_UINT16:
-      invalid = source.extra < 0 || source.extra > 65535;
-      break;
-   case V_INT64:
-      source.kind = ObjectKind::LongLiteral;
-      break;
-   case V_FLOAT64:
-      source.kind = ObjectKind::Float64Literal;
-      source.reference = mapFloat64Const(scope.module, source.extra);
-      break;
-   default:
-      invalid = true;
-      break;
+      case V_UINT8:
+         invalid = source.extra < 0 || source.extra > 255;
+         break;
+      case V_INT8:
+         invalid = source.extra < INT8_MIN || source.extra > INT8_MAX;
+         break;
+      case V_INT16:
+         invalid = source.extra < INT16_MIN || source.extra > INT16_MAX;
+         break;
+      case V_UINT16:
+         invalid = source.extra < 0 || source.extra > 65535;
+         break;
+      case V_INT64:
+         source.kind = ObjectKind::LongLiteral;
+         break;
+      case V_FLOAT64:
+         source.kind = ObjectKind::Float64Literal;
+         source.reference = mapFloat64Const(scope.module, source.extra);
+         break;
+      default:
+         invalid = true;
+         break;
    }
 
    if (invalid) {
@@ -13112,7 +13121,7 @@ ObjectInfo Compiler::Expression::compileNewOp(SyntaxNode node, ObjectInfo source
    }
    else context.weakMessage = overwriteArgCount(scope.moduleScope->buildins.constructor_message, arguments.count_pos());
 
-   ObjectInfo retVal = compileMessageCall(node, source, context, context.weakMessage, arguments, EAttr::StrongResolved | EAttr::NoExtension, nullptr);
+   ObjectInfo retVal = compileMessageCall(node, source, context, context.weakMessage, arguments, EAttr::StrongResolved | EAttr::NoExtension | EAttr::CheckShortCircle, nullptr);
 
    if (arguments.count_pos() < 2 && (source.kind == ObjectKind::Class || source.kind == ObjectKind::ClassSelf)) {
       pos_t argCount = arguments.count_pos() + 1;
@@ -13233,18 +13242,18 @@ ObjectInfo Compiler::Expression::compileExternalOp(SyntaxNode node, ref_t extern
    ref_t intArgType = 0;
    BuildKey intArgOp = BuildKey::None;
    switch (scope.moduleScope->ptrSize) {
-   case 4:
-      intArgType = V_INT32;
-      intArgOp = BuildKey::SavingNInStack;
-      break;
-   case 8:
-      retType = { V_INT64 };
-      intArgType = V_INT64;
-      intArgOp = BuildKey::SavingLInStack;
-      break;
-   default:
-      assert(false);
-      break;
+      case 4:
+         intArgType = V_INT32;
+         intArgOp = BuildKey::SavingNInStack;
+         break;
+      case 8:
+         retType = { V_INT64 };
+         intArgType = V_INT64;
+         intArgOp = BuildKey::SavingLInStack;
+         break;
+      default:
+         assert(false);
+         break;
    }
 
    for (pos_t i = count; i > 0; i--) {
@@ -13494,41 +13503,41 @@ ObjectInfo Compiler::Expression::convertObject(SyntaxNode node, ObjectInfo sourc
       if (!withoutBoxing && conversionRoutine.result == ConversionResult::BoxingRequired) {
          // if it is implcitily compatible
          switch (source.kind) {
-         case ObjectKind::TempLocalAddress:
-         case ObjectKind::LocalAddress:
-         case ObjectKind::IntLiteral:
-         case ObjectKind::MssgLiteral:
-         case ObjectKind::CharacterLiteral:
-         case ObjectKind::RefLocal:
-         case ObjectKind::ParamReference:
-            source.typeInfo.typeRef = targetRef;
-            break;
-         case ObjectKind::SelfBoxableLocal:
-         case ObjectKind::ParamAddress:
-            if (source.mode == TargetMode::Conditional && source.typeInfo.typeRef != targetRef) {
-               source.mode = TargetMode::None;
+            case ObjectKind::TempLocalAddress:
+            case ObjectKind::LocalAddress:
+            case ObjectKind::IntLiteral:
+            case ObjectKind::MssgLiteral:
+            case ObjectKind::CharacterLiteral:
+            case ObjectKind::RefLocal:
+            case ObjectKind::ParamReference:
                source.typeInfo.typeRef = targetRef;
+               break;
+            case ObjectKind::SelfBoxableLocal:
+            case ObjectKind::ParamAddress:
+               if (source.mode == TargetMode::Conditional && source.typeInfo.typeRef != targetRef) {
+                  source.mode = TargetMode::None;
+                  source.typeInfo.typeRef = targetRef;
 
-               return source;
-            }
-            else source.typeInfo.typeRef = targetRef;
-            break;
-         default:
-            if (source.kind == ObjectKind::SelfLocal && source.mode == TargetMode::ArrayContent) {
-               source.typeInfo.typeRef = targetRef;
-               source.kind = ObjectKind::SelfBoxableLocal;
-            }
-            else return boxArgument(source, false, true, false, targetRef);
+                  return source;
+               }
+               else source.typeInfo.typeRef = targetRef;
+               break;
+            default:
+               if (source.kind == ObjectKind::SelfLocal && source.mode == TargetMode::ArrayContent) {
+                  source.typeInfo.typeRef = targetRef;
+                  source.kind = ObjectKind::SelfBoxableLocal;
+               }
+               else return boxArgument(source, false, true, false, targetRef);
          }
       }
       else if (conversionRoutine.result == ConversionResult::VariadicBoxingRequired) {
          switch (source.kind) {
-         case ObjectKind::VArgParam:
-            source.typeInfo.typeRef = targetRef;
-            break;
-         default:
-            assert(false);
-            break;
+            case ObjectKind::VArgParam:
+               source.typeInfo.typeRef = targetRef;
+               break;
+            default:
+               assert(false);
+               break;
          }
       }
       else if (conversionRoutine.result == ConversionResult::Conversion) {
@@ -13746,7 +13755,7 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
                if (target.kind == ObjectKind::ConstructorSelf) {
                   scope.raiseError(errRedirectToItself, node);
                }
-               else scope.raiseWarning(WARNING_LEVEL_1, wrnCallingItself, findMessageNode(node));
+               else scope.raiseWarning(WARNING_LEVEL_1, wrnCallingItself, functionMode ? findFunctionNode(node) : findMessageNode(node));
             }
 
             break;
@@ -14645,7 +14654,7 @@ ObjectInfo Compiler::Expression::compileMessageOperationR(ObjectInfo target, Syn
 
                return arguments[0];
             }
-            else return convertObject(messageNode, arguments[0], targetRef, false, true, false, true);
+            else return convertObject(messageNode, arguments[0], targetRef, false, true, false, arguments[0].mode == TargetMode::Weak);
          }
          else scope.raiseError(errInvalidOperation, messageNode);
          break;

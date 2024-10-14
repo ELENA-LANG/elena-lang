@@ -2322,3 +2322,37 @@ public variadicFunctionTest() : testCase()
    variadicFunctionTestset'sumAndTest(6, 1,2,3);
    Console.write(".");   
 }
+
+sealed class MyIntValue
+{
+   int value;
+
+   constructor(string value)
+   {
+      this value := value.toInt()
+   }
+
+   int Value = value;
+}
+
+public implicitConvertorTest() : testCase()
+{
+   auto v := "2" as: MyIntValue;
+
+   Assert.ifEqual(v.Value, 2);
+   Console.write(".");   
+}
+
+public pointerTest() : testCase()
+{
+   pointer ptr := 2;
+
+   var o := ptr;
+   pointer ptr2 := o;
+
+   int v := ptr.Value;
+   int v2 := ptr.Value;
+
+   Assert.ifEqual(v, 2);
+   Assert.ifEqual(v2, 2);
+}

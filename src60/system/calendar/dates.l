@@ -45,7 +45,7 @@ namespace calendar
             
          retVal := retVal / 864000000000l;
             
-         ^ intConvertor.convert(retVal)
+         ^ IntConvertor.convert(retVal)
       }
     
       get int Hours()
@@ -54,7 +54,7 @@ namespace calendar
             
          retVal := retVal / 36000000000l;
             
-         ^ intConvertor.convert(retVal)
+         ^ IntConvertor.convert(retVal)
       }
                             
       get int Minutes()
@@ -63,7 +63,7 @@ namespace calendar
             
          retVal := retVal / 600000000l;
             
-         ^ intConvertor.convert(retVal)
+         ^ IntConvertor.convert(retVal)
       }
     
       get int Seconds()
@@ -72,7 +72,7 @@ namespace calendar
             
          retVal := retVal / 10000000l;
             
-         ^ intConvertor.convert(retVal)
+         ^ IntConvertor.convert(retVal)
       }
     
       get long Milliseconds()

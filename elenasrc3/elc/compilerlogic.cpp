@@ -2910,7 +2910,8 @@ bool CompilerLogic :: isNumericType(ModuleScopeBase& scope, ref_t& reference)
 
       return true;
    }
-   if (isCompatible(scope, { V_INT64 }, { reference }, false)) {
+   if (isCompatible(scope, { V_INT64 }, { reference }, false) && !isCompatible(scope, { V_PTR64 }, { reference }, false)) {
+      // HOTFIX : ignore pointer
       reference = V_INT64;
 
       return true;

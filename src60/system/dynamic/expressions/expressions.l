@@ -882,7 +882,7 @@ namespace expressions
    {
       constructor(o)
       {
-         this object := intConvertor.convert(o)
+         this object := IntConvertor.convert(o)
       }
    }
 
@@ -890,9 +890,9 @@ namespace expressions
    {
       constructor(string o)
       {
-         int n := intConvertor.convert(o.Substring(1));
+         int n := IntConvertor.convert(o.Substring(1));
 
-         this object := charConvertor.convert(n)
+         this object := CharConvertor.convert(n)
       }
    }
 

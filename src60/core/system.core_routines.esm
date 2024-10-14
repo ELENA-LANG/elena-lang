@@ -775,6 +775,16 @@ procedure __uintToInt
 
 end
 
+procedure __ushortToInt
+
+  peek       sp:1
+  load
+  and        n:0FFFFh
+  peek       sp:2
+  save
+
+end
+
 procedure __realTrunc (self, r1, r2)
 
   xflush     sp:0
@@ -1143,23 +1153,42 @@ procedure __byteToShort
 
 end
 
-procedure __readIntPtr
+procedure __readIntPtr(ptr, retVal)
 
-  peek       sp:1
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+  peek       fp:ptr
   get        i:0
-  load
-  peek       sp:2
-  save
+  xstore     i:0 
+  $load      sp:0
+  peek       fp:retVal
+  $save
+
+  close      []
 
 end
 
-procedure __readRealPtr
+procedure __readIntPtrVal
 
+  peek       sp:0
+  get        i:0
+  load
   peek       sp:1
+  save
+  peek       sp:0
+
+end
+
+procedure __readRealPtrVal
+
+  peek       sp:0
   get        i:0
   lload
-  peek       sp:2
+  peek       sp:1
   lsave
+  peek       sp:0
 
 end
 

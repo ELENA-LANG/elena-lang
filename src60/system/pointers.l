@@ -39,6 +39,10 @@ public sealed const struct UnsafePointer
    embeddable __ptr _pointer;
 
    private clear() : external(system'core_routines'__clearPtr);
+   private readIntPtr(out int retVal) : external(system'core_routines'__readIntPtr);
+   private readIntPtrValue(out int retVal) : external(system'core_routines'__readIntPtrVal);
+   private readRealPtrValue(out real retVal) : external(system'core_routines'__readRealPtrVal);
+   private assignPtr(object obj) : external(system'core_routines'__assignPtr); 
 
    constructor()
    {
@@ -53,18 +57,13 @@ public sealed const struct UnsafePointer
    constructor(object obj)
    {
       if (obj is: pointer) {
-         _pointer := cast UnsafePointer(obj)
+         _pointer := cast UnsafePointer(weak obj)
       }
       else self.assignPtr(obj);
    }
 
    get constructor Default()
       = new UnsafePointer();   
-
-   private readIntPtr(out int retVal) : external(system'core_routines'__readIntPtr);
-   private readRealPtr(out real retVal) : external(system'core_routines'__readRealPtr);
-
-   private assignPtr(object obj) : external(system'core_routines'__assignPtr); 
 
    bool isUnassigned()
    {
@@ -89,11 +88,28 @@ public sealed const struct UnsafePointer
       ^ retVal
    }
 
-   real cast()
-   {
-      self.readRealPtr(out real retVal);
+   get int Value()
+   {   
+      self.readIntPtrValue(out int retVal);
 
       ^ retVal
+   }
+
+   get retoverload real Value()
+   {
+      self.readRealPtrValue(out real retVal);
+
+      ^ retVal
+   }
+
+   get retoverload string Value()
+   {
+      ^ PrimitivePointerOperations.readString(self);
+   }
+
+   get retoverload wide Value()
+   {
+      ^ PrimitivePointerOperations.readWideString(self);
    }
 
    copyTo(byte[] target, int len) : external(system'core_routines'__ptrCopyTo);

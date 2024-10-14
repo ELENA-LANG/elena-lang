@@ -834,7 +834,7 @@ public const struct String : BaseValue,
       short buffer[256];            
       if (l < 256)
       {
-         m := shortArrayConvertor.convert(self, l, buffer, 0, 256);
+         m := ShortArrayConvertor.convert(self, l, buffer, 0, 256);
 
          ^ WideString.fromShortArray(0, m, buffer)
       };
@@ -848,7 +848,7 @@ public const struct String : BaseValue,
             page := 256
          };
 
-         m := shortArrayConvertor.convert(self.Substring(i,page), page, buffer, 0, 256);
+         m := ShortArrayConvertor.convert(self.Substring(i,page), page, buffer, 0, 256);
 
          retVal := retVal.add(WideString.fromShortArray(0, m, buffer));
 
@@ -1234,7 +1234,7 @@ public const struct WideString : BaseValue,
       byte buffer[256];            
       if (l < 128)
       {
-         m := byteArrayConvertor.convert(self, l, buffer, 0, 256);
+         m := ByteArrayConvertor.convert(self, l, buffer, 0, 256);
 
          ^ String.fromByteArray(0, m, buffer)
       };
@@ -1248,7 +1248,7 @@ public const struct WideString : BaseValue,
             page := 256
          };
 
-         m := byteArrayConvertor.convert(self.Substring(i,page), page, buffer, 0, 256);
+         m := ByteArrayConvertor.convert(self.Substring(i,page), page, buffer, 0, 256);
 
          retVal := retVal.add(String.fromByteArray(0, m, buffer));
 
@@ -1561,35 +1561,35 @@ public sealed class Variant
     
     /// Tries to convert the value to a byte number
     byte cast()
-        = byteConvertor.convert(value);
+        = ByteConvertor.convert(value);
 
     /// Tries to convert the value to a short integer number
     short cast()
-        = shortConvertor.convert(value);
+        = ShortConvertor.convert(value);
 
     /// Tries to convert the value to a character
     char cast()
-        = charConvertor.convert(value);
+        = CharConvertor.convert(value);
 
     /// Tries to convert the literal value to the integer number
     int cast()
-        = intConvertor.convert(value);
+        = IntConvertor.convert(value);
 
     /// Tries to convert the literal value to the long integer number
     long cast()
-        = longConvertor.convert(value);
+        = LongConvertor.convert(value);
 
     /// Tries to convert the literal value to the real number
     real cast()
-        = realConvertor.convert(value);
+        = RealConvertor.convert(value);
 
     /// Returns a literal value
     string cast()
-        = stringConvertor.convert(value);
+        = StringConvertor.convert(value);
     
     /// Returns a wide literal value
     wide cast()
-        = wideConvertor.convert(value);
+        = WideConvertor.convert(value);
 
     string toPrintable()
         => value;

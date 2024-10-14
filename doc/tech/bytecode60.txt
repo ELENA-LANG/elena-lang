@@ -64,6 +64,8 @@ ELENA byte codes (or ecodes)
 
    bload                    - index := byte([acc])
 
+   convl                    - index => long:index
+
    get i                    - acc[i] => acc
 
    lload                    - long:index := long:[acc] 
@@ -183,8 +185,6 @@ ELENA byte codes (or ecodes)
 
    attach                   - include the exluded managed frame link;
                               should immediately preceed open opcode
-
-   convl                    - index => long:index
 
    dalloc                   - sp += index ; reserve and fill with zeros; 
                               new sp value is aligned to 2 in x86-64 mode

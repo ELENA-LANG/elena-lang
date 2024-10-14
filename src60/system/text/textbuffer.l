@@ -159,7 +159,7 @@ namespace text
          ch := s[i_val];
          while (ch != $125)
          {
-            n := intConvertor.convert(ch);
+            n := IntConvertor.convert(ch);
             if(n >= 30h && n <= 39h)
             {               
                n := n - 30h;

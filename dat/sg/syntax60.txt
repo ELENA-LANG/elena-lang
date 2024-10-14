@@ -1017,6 +1017,7 @@ L_F ::=
 	| L7_OP+ L8_OP? L9_OP?
 	| L8_OP
 	| L9_OP
+	| identifier ":" ^^EXPRESSION TEMPLATE_ARG ^ TEMPLATE_EXPR_BLOCK ^ EXPRESSION
 	| eps;
 
 SUB_L_F ::=
