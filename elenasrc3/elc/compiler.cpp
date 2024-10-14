@@ -6550,8 +6550,6 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
       targets.add(extInfo.value2, extInfo.value1);
    }
 
-
-
    _logic->injectMethodOverloadList(this, *scope.moduleScope,
       MethodHint::Sealed, genericMessage | FUNCTION_MESSAGE, methods,
       classScope.info.attributes, &targets, targetResolver, ClassAttribute::OverloadList);
@@ -15063,16 +15061,15 @@ Compiler::MessageResolution Compiler::Expression :: resolveMessageAtCompileTime(
       if ((messageContext.weakMessage & PREFIX_MESSAGE_MASK) == PROPERTY_MESSAGE)
          return { messageContext.weakMessage };
 
-      // check if the extension handles the variadic message
+      // check if the extension handles the variadic message      
       MessageCallContext variadicContext = { resolveVariadicMessage(scope, messageContext.weakMessage), messageContext.implicitSignatureRef };
       resolvedStackSafeAttr = 0;
       extensionRef = compiler->mapExtension(*writer, scope, variadicContext,
-         target, variadicContext.weakMessage, resolvedStackSafeAttr);
+         target, resolution.message, resolvedStackSafeAttr);
       if (extensionRef != 0) {
          // if there is an extension to handle the compile-time resolved message - use it
          resolution.resolved = true;
          resolution.stackSafeAttr = resolvedStackSafeAttr;
-         resolution.message = variadicContext.weakMessage;
          resolution.extensionRef = extensionRef;
          if (checkByRefHandler)
             resolution.byRefHandler = compiler->_logic->retrieveByRefHandler(*scope.moduleScope, extensionRef, resolution.message);
