@@ -37,13 +37,8 @@ In development:
   * provide set of config files for Linux with relative paths
   * #689
   * fix helloworld in vm mode
-  * fix sqlite_test sample
-  * review Writing efficient code in ELENA, ELENA 6 : Module initializer, ELENA 6 : User-defined literals
-  * review ELENA 6 : How to declare an enumeration type
-  * review ELENA 6 : How to generated code to send a message at run time
-  * review ELENA 6 : How to handle exceptions
   --------------------------------------
-  * fix ELENA 6 : How to implement a dynamic decorator
+  * fix sqlite_test sample  
 
   ### EPIC: elena 6.6 ###
 

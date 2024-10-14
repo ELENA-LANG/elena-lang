@@ -6883,12 +6883,12 @@ ObjectInfo Compiler::mapMessageConstant(Scope& scope, SyntaxNode node, ref_t act
    Interpreter interpreter(scope.moduleScope, _logic);
    ObjectInfo retVal = evalExpression(interpreter, scope, node.findChild(SyntaxKey::Expression));
    switch (retVal.kind) {
-   case ObjectKind::IntLiteral:
-      argCount = retVal.extra;
-      break;
-   default:
-      scope.raiseError(errCannotEval, node);
-      break;
+      case ObjectKind::IntLiteral:
+         argCount = retVal.extra;
+         break;
+      default:
+         scope.raiseError(errCannotEval, node);
+         break;
    }
 
    mssg_t message = encodeMessage(actionRef, argCount, 0);
@@ -6899,19 +6899,19 @@ ObjectInfo Compiler::mapMessageConstant(Scope& scope, SyntaxNode node, ref_t act
    return { ObjectKind::MssgLiteral, { V_MESSAGE }, constRef };
 }
 
-ObjectInfo Compiler::mapExtMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef, ref_t extension)
+ObjectInfo Compiler :: mapExtMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef, ref_t extension)
 {
    pos_t argCount = 0;
 
    Interpreter interpreter(scope.moduleScope, _logic);
    ObjectInfo retVal = evalExpression(interpreter, scope, node.findChild(SyntaxKey::Expression));
    switch (retVal.kind) {
-   case ObjectKind::IntLiteral:
-      argCount = retVal.extra;
-      break;
-   default:
-      scope.raiseError(errCannotEval, node);
-      break;
+      case ObjectKind::IntLiteral:
+         argCount = retVal.extra;
+         break;
+      default:
+         scope.raiseError(errCannotEval, node);
+         break;
    }
 
    mssg_t message = encodeMessage(actionRef, argCount, 0);
@@ -6919,7 +6919,8 @@ ObjectInfo Compiler::mapExtMessageConstant(Scope& scope, SyntaxNode node, ref_t 
    ByteCodeUtil::resolveMessageName(messageName, scope.module, message);
 
    size_t index = (*messageName).find('[');
-   assert(index != NOTFOUND_POS); // !! temporal
+   if (index == NOTFOUND_POS)
+      scope.raiseError(errInvalidOperation, node);
 
    ustr_t extRefName = scope.moduleScope->resolveFullName(extension);
    messageName.insert(">", index);
@@ -6933,14 +6934,14 @@ ObjectInfo Compiler::mapExtMessageConstant(Scope& scope, SyntaxNode node, ref_t 
 
    ref_t constType = V_EXTMESSAGE64;
    switch (scope.moduleScope->ptrSize) {
-   case 4:
-      constType = V_EXTMESSAGE64;
-      break;
-   case 8:
-      constType = V_EXTMESSAGE128;
-      break;
-   default:
-      break;
+      case 4:
+         constType = V_EXTMESSAGE64;
+         break;
+      case 8:
+         constType = V_EXTMESSAGE128;
+         break;
+      default:
+         break;
    }
 
    return { ObjectKind::ExtMssgLiteral, { constType, extension }, constRef };
