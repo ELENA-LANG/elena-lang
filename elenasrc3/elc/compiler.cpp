@@ -5627,52 +5627,52 @@ TypeInfo Compiler::resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAttri
 {
    TypeInfo typeInfo = {};
    switch (node.key) {
-   case SyntaxKey::TemplateArg:
-      typeInfo = resolveTypeAttribute(scope, node.firstChild(), attributes, declarationMode, allowRole);
-      break;
-   case SyntaxKey::Type:
-   {
-      if (node.arg.reference)
-         return { node.arg.reference };
+      case SyntaxKey::TemplateArg:
+         typeInfo = resolveTypeAttribute(scope, node.firstChild(), attributes, declarationMode, allowRole);
+         break;
+      case SyntaxKey::Type:
+      {
+         if (node.arg.reference)
+            return { node.arg.reference };
 
-      SyntaxNode current = node.firstChild();
-      if (current == SyntaxKey::Type || current == SyntaxKey::ArrayType || current == SyntaxKey::NullableType) {
-         // !! should be refactored
-         typeInfo = resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole);
-      }
-      else if (current == SyntaxKey::TemplateType) {
-         typeInfo.typeRef = resolveTypeTemplate(scope, current, attributes, declarationMode);
-      }
-      else if (SyntaxTree::test(current.key, SyntaxKey::TerminalMask)) {
-         if (current.nextNode() == SyntaxKey::TemplateArg) {
-            // !! should be refactored : TemplateType should be used instead
+         SyntaxNode current = node.firstChild();
+         if (current == SyntaxKey::Type || current == SyntaxKey::ArrayType || current == SyntaxKey::NullableType) {
+            // !! should be refactored
+            typeInfo = resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole);
+         }
+         else if (current == SyntaxKey::TemplateType) {
             typeInfo.typeRef = resolveTypeTemplate(scope, current, attributes, declarationMode);
          }
-         else typeInfo.typeRef = resolveTypeIdentifier(scope, current.identifier(), current.key, declarationMode, allowRole);
+         else if (SyntaxTree::test(current.key, SyntaxKey::TerminalMask)) {
+            if (current.nextNode() == SyntaxKey::TemplateArg) {
+               // !! should be refactored : TemplateType should be used instead
+               typeInfo.typeRef = resolveTypeTemplate(scope, current, attributes, declarationMode);
+            }
+            else typeInfo.typeRef = resolveTypeIdentifier(scope, current.identifier(), current.key, declarationMode, allowRole);
+         }
+         else assert(false);
+         break;
       }
-      else assert(false);
-      break;
-   }
-   case SyntaxKey::TemplateType:
-      typeInfo.typeRef = resolveTypeTemplate(scope, node, attributes, declarationMode);
-      break;
-   case SyntaxKey::ArrayType:
-   {
-      typeInfo = resolveTypeScope(scope, node, attributes, declarationMode, allowRole);
+      case SyntaxKey::TemplateType:
+         typeInfo.typeRef = resolveTypeTemplate(scope, node, attributes, declarationMode);
+         break;
+      case SyntaxKey::ArrayType:
+      {
+         typeInfo = resolveTypeScope(scope, node, attributes, declarationMode, allowRole);
 
-      if (attributes.variadicOne)
-         scope.raiseError(errInvalidOperation, node);
-      break;
-   }
-   case SyntaxKey::NullableType:
-      typeInfo = resolveTypeScope(scope, node, attributes, declarationMode, allowRole);
-      break;
-   default:
-      if (SyntaxTree::test(node.key, SyntaxKey::TerminalMask)) {
-         typeInfo.typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
+         if (attributes.variadicOne)
+            scope.raiseError(errInvalidOperation, node);
+         break;
       }
-      else assert(false);
-      break;
+      case SyntaxKey::NullableType:
+         typeInfo = resolveTypeScope(scope, node, attributes, declarationMode, allowRole);
+         break;
+      default:
+         if (SyntaxTree::test(node.key, SyntaxKey::TerminalMask)) {
+            typeInfo.typeRef = resolveTypeIdentifier(scope, node.identifier(), node.key, declarationMode, allowRole);
+         }
+         else assert(false);
+         break;
    }
 
    validateType(scope, typeInfo.typeRef, node, declarationMode);

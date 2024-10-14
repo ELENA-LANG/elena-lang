@@ -1,9 +1,11 @@
-symbol startUp : preloaded = true.then(
-{  
-   console.writeLine("Starting up")
-});
+import extensions;
 
-public myFunction()
+test(Action<object> arg)
 {
-   console.writeLine("Working");
+   arg("2");
+}
+
+public program()
+{
+   test((::Action<object> x){ console.printLine("arg ", x, " is passed") });
 }

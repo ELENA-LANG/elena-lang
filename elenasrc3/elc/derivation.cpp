@@ -1071,11 +1071,11 @@ void SyntaxTreeBuilder :: flushStatement(SyntaxTreeWriter& writer, Scope& scope,
    flushExpression(writer, scope, node);
 }
 
-void SyntaxTreeBuilder :: flushMethodMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
+void SyntaxTreeBuilder :: flushMethodMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool exprMode)
 {
    writer.newNode(node.key);
 
-   flushDescriptor(writer, scope, node);
+   flushDescriptor(writer, scope, node, true, false, exprMode);
    //flushImports(scope, node);
 
    writer.closeNode();
@@ -1144,7 +1144,7 @@ void SyntaxTreeBuilder :: flushClosure(SyntaxTreeWriter& writer, Scope& scope, S
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Parameter) {
-         flushMethodMember(writer, scope, current);
+         flushMethodMember(writer, scope, current, true);
       }
       else if (current == SyntaxKey::ParameterBlock) {
          flushParameterBlock(writer, scope, current);

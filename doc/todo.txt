@@ -35,10 +35,8 @@ In development:
   * fix x86-64 : mta - sandbox2
   * fix x86-64 : func_invoker
   * provide set of config files for Linux with relative paths
-  * #689
-  * fix helloworld in vm mode
   --------------------------------------
-  * fix sqlite_test sample  
+  * declaring a lambda function with template based argument #689	
 
   ### EPIC: elena 6.6 ###
 

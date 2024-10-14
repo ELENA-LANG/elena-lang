@@ -3080,7 +3080,7 @@ addr_t JITCompiler :: allocateTLSIndex(ReferenceHelperBase* helper, MemoryWriter
 
 pos_t JITCompiler :: getTLSSize(MemoryBase* tlsSection)
 {
-   if (tlsSection->length() > sizeof(ThreadContent)) {
+   if (tlsSection && tlsSection->length() > sizeof(ThreadContent)) {
       return tlsSection->length() - sizeof(ThreadContent);
    }
    return 0;
