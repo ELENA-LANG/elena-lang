@@ -2797,24 +2797,22 @@ end
 
 procedure func_invoker(arg)
 
-  xflush     sp:0
-  xflush     sp:1
-
-  open       (2),[]
+  extopen    (2),[]
 
   peek       fp:arg
+
   get        i:0
   mov        mssg:"function:#invoke[0]" 
   call       vt:0 
 
-  close      []
+  extclose   []
   quit
 
 end
 
 procedure thread_start(index)
 
-  open        [arg1],[ptr,envptr,ex_struct:ex_struct_size]
+  extopen     [arg1],[ptr,envptr,ex_struct:ex_struct_size]
 
   xloadarg    fp:index
   
@@ -2860,7 +2858,7 @@ procedure thread_start(index)
 
   call extern:ExitThreadLA (0)
 
-  close       []
+  extclose    []
   quit
 
 end

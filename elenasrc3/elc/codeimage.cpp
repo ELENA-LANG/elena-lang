@@ -87,7 +87,7 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
          dummyModule, dummyModule->mapReference(resolver->resolveForward(START_FORWARD)), 0});
 
       MemoryDump tapeSymbol;
-      generateAutoSymbol(dummyModule, tapeSymbol);
+      generateAutoSymbol(dummyModule, tapeSymbol, true);
       addr_t vaddress = linker.resolveTemporalByteCode(tapeSymbol, dummyModule);
       mapReference(STARTUP_ENTRY, vaddress, mskSymbolRef);
 
@@ -198,7 +198,7 @@ void TargetImage :: prepareImage(ustr_t ns)
    debugWriter.writeString(ns);
 }
 
-void TargetImage :: generateAutoSymbol(ModuleBase* module, MemoryDump& tapeSymbol)
+void TargetImage :: generateAutoSymbol(ModuleBase* module, MemoryDump& tapeSymbol, bool withExtFrame)
 {
    // fill the list of virtual references
    ModuleInfoList symbolList({});
@@ -209,5 +209,5 @@ void TargetImage :: generateAutoSymbol(ModuleBase* module, MemoryDump& tapeSymbo
          }
       });
 
-   ByteCodeUtil::generateAutoSymbol(symbolList, module, tapeSymbol);
+   ByteCodeUtil::generateAutoSymbol(symbolList, module, tapeSymbol, withExtFrame);
 }

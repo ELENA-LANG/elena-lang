@@ -702,6 +702,53 @@ inline %0BCh
 
 end
 
+// ; extclosen
+inline %0CAh
+
+  add  ebp, __n_1
+  mov  esp, ebp
+  pop  ebp
+  
+  add  esp, 8
+
+  pop  ebx
+  mov  ecx, fs:[2Ch]
+  mov  edx, [data : %CORE_TLS_INDEX]
+  mov  edi, [ecx+edx*4]
+  mov  [edi + tt_stack_frame], ebx
+
+  pop  ebp
+
+  pop  ebx
+  pop  ecx
+  pop  edi
+  pop  esi
+
+end
+
+// ; extclosen 0
+inline %1CAh
+
+  mov  esp, ebp
+  pop  ebp
+
+  add  esp, 8
+
+  pop  ebx
+  mov  ecx, fs:[2Ch]
+  mov  edx, [data : %CORE_TLS_INDEX]
+  mov  edi, [ecx+edx*4]
+  mov  [edi + tt_stack_frame], ebx
+
+  pop  ebp
+
+  pop  ebx
+  pop  ecx
+  pop  edi
+  pop  esi
+  
+end
+
 // ; system minor collect
 inline %1CFh
 
@@ -802,3 +849,377 @@ inline %0E6h
   mov  [eax + et_current], edi
 
 end
+
+// ; extopenin
+inline %0F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
+
+  push ebp     
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  edi, [ecx+eax*4]
+  mov  eax, [edi + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  xor  eax, eax
+  mov  ebp, esp
+  sub  esp, __n_2
+  push ebp
+  push eax
+  mov  ebp, esp
+  mov  ecx, __n_1
+  sub  esp, __arg32_1
+  mov  edi, esp
+  rep  stos
+
+end 
+
+// ; extopenin 0, n
+inline %1F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
+
+  push ebp     
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  edi, [ecx+eax*4]
+  mov  eax, [edi + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  xor  eax, eax
+  mov  ebp, esp
+  sub  esp, __n_2
+  push ebp
+  push eax
+  mov  ebp, esp
+
+end 
+
+// ; extopenin 1, n
+inline %2F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
+
+  push ebp     
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  edi, [ecx+eax*4]
+  mov  eax, [edi + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  xor  eax, eax
+  mov  ebp, esp
+  sub  esp, __n_2
+  push ebp
+  push eax
+  mov  ebp, esp
+  push eax
+
+end 
+
+// ; extopenin 2, n
+inline %3F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
+
+  push ebp     
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  edi, [ecx+eax*4]
+  mov  eax, [edi + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  xor  eax, eax
+  mov  ebp, esp
+  sub  esp, __n_2
+  push ebp
+  push eax
+  mov  ebp, esp
+  push eax
+  push eax
+
+end 
+
+// ; extopenin 3, n
+inline %4F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
+
+  push ebp     
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  edi, [ecx+eax*4]
+  mov  eax, [edi + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  xor  eax, eax
+  mov  ebp, esp
+  sub  esp, __n_2
+  push ebp
+  push eax
+  mov  ebp, esp
+  push eax
+  push eax
+  push eax
+
+end 
+
+// ; extopenin 4, n
+inline %5F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
+
+  push ebp     
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  edi, [ecx+eax*4]
+  mov  eax, [edi + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  xor  eax, eax
+  mov  ebp, esp
+  sub  esp, __n_2
+  push ebp
+  push eax
+  mov  ebp, esp
+  push eax
+  push eax
+  push eax
+  push eax
+
+end 
+
+// ; extopenin i, 0
+inline %6F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
+
+  push ebp     
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  edi, [ecx+eax*4]
+  mov  eax, [edi + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  xor  eax, eax
+  mov  ebp, esp
+  mov  ecx, __n_1
+  sub  esp, __arg32_1
+  mov  edi, esp
+  rep  stos
+
+end 
+
+// ; extopenin 0, 0
+inline %7F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
+
+  push ebp     
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  edi, [ecx+eax*4]
+  mov  eax, [edi + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  mov  ebp, esp
+
+end 
+
+// ; extopenin 1, 0
+inline %8F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
+
+  push ebp     
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  edi, [ecx+eax*4]
+  mov  eax, [edi + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  mov  ebp, esp
+  push 0
+
+end 
+
+// ; extopenin 2, 0
+inline %9F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
+
+  push ebp     
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  edi, [ecx+eax*4]
+  mov  eax, [edi + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  xor  eax, eax
+  mov  ebp, esp
+  push eax
+  push eax
+
+end 
+
+// ; extopenin 3, 0
+inline %0AF2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
+
+  push ebp     
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  edi, [ecx+eax*4]
+  mov  eax, [edi + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  xor  eax, eax
+  mov  ebp, esp
+  push eax
+  push eax
+  push eax
+
+end 
+
+// ; extopenin 4, 0
+inline %0BF2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
+
+  push ebp     
+  mov  ecx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  edi, [ecx+eax*4]
+  mov  eax, [edi + tt_stack_frame]
+  push eax 
+
+  mov  ebp, eax
+  xor  eax, eax
+  push ebp
+  push eax
+  mov  ebp, esp
+
+  push ebp
+  xor  eax, eax
+  mov  ebp, esp
+  push eax
+  push eax
+  push eax
+  push eax
+
+end 

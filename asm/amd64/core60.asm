@@ -1970,7 +1970,10 @@ inline %0CAh
   mov  rsp, rbp
   pop  rbp
 
-  add  rsp, 24
+  add  rsp, 16
+  pop  rbx
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rbx
+
   pop  rbp
   pop  r15
   pop  r14
@@ -1989,7 +1992,10 @@ inline %1CAh
   mov  rsp, rbp
   pop  rbp
 
-  add  rsp, 24
+  add  rsp, 16
+  pop  rbx
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rbx
+
   pop  rbp
   pop  r15
   pop  r14

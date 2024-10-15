@@ -2008,10 +2008,15 @@ inline %0CAh
   pop  ebp
   
   add  esp, 8
-  pop  eax
-  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], eax
+  pop  ebx
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], ebx
 
   pop  ebp
+
+  pop  ebx
+  pop  ecx
+  pop  edi
+  pop  esi
 
 end
 
@@ -2023,10 +2028,15 @@ inline %1CAh
 
   add  esp, 8
 
-  pop  eax
-  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], eax
+  pop  ebx
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], ebx
 
   pop  ebp
+
+  pop  ebx
+  pop  ecx
+  pop  edi
+  pop  esi
   
 end
 
@@ -3239,6 +3249,11 @@ end
 // ; extopenin
 inline %0F2h
 
+  push esi
+  push edi
+  push ecx
+  push ebx
+
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push eax 
@@ -3266,6 +3281,11 @@ end
 // ; extopenin 0, n
 inline %1F2h
 
+  push esi
+  push edi
+  push ecx
+  push ebx
+
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push eax 
@@ -3288,6 +3308,11 @@ end
 
 // ; extopenin 1, n
 inline %2F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
 
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3312,6 +3337,11 @@ end
 
 // ; extopenin 2, n
 inline %3F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
 
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3338,6 +3368,11 @@ end
 // ; extopenin 3, n
 inline %4F2h
 
+  push esi
+  push edi
+  push ecx
+  push ebx
+
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push eax 
@@ -3363,6 +3398,11 @@ end
 
 // ; extopenin 4, n
 inline %5F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
 
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3391,6 +3431,11 @@ end
 // ; extopenin i, 0
 inline %6F2h
 
+  push esi
+  push edi
+  push ecx
+  push ebx
+
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push eax 
@@ -3414,6 +3459,11 @@ end
 // ; extopenin 0, 0
 inline %7F2h
 
+  push esi
+  push edi
+  push ecx
+  push ebx
+
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push eax 
@@ -3431,6 +3481,11 @@ end
 
 // ; extopenin 1, 0
 inline %8F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
 
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3450,6 +3505,11 @@ end
 
 // ; extopenin 2, 0
 inline %9F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
 
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3472,6 +3532,11 @@ end
 // ; extopenin 3, 0
 inline %0AF2h
 
+  push esi
+  push edi
+  push ecx
+  push ebx
+
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push eax 
@@ -3493,6 +3558,11 @@ end
 
 // ; extopenin 4, 0
 inline %0BF2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
 
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]

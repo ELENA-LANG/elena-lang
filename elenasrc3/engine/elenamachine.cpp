@@ -378,6 +378,28 @@ bool SystemRoutineProvider :: CheckMessage(MemoryBase* msection, void* classPtr,
 
 // --- ELENAMachine ---
 
+addr_t ELENAMachine :: executeDirectly(void* entryAddress)
+{
+   Entry entry;
+   entry.address = entryAddress;
+
+   // executing the program   
+
+   addr_t retVal = 0;
+   try
+   {
+      retVal = entry.evaluate0();
+   }
+   catch (InternalError&)
+   {
+      //_instance->printInfo("EAbortException");
+
+      retVal = 0;
+   }
+
+   return retVal;
+}
+
 addr_t ELENAMachine :: execute(SystemEnv* env, void* entryAddress)
 {
    Entry entry;
@@ -388,7 +410,7 @@ addr_t ELENAMachine :: execute(SystemEnv* env, void* entryAddress)
    addr_t retVal = 0;
    try
    {
-      retVal = entry.evaluate(entryAddress, nullptr);
+      retVal = entry.evaluate2(entryAddress, nullptr);
    }
    catch (InternalError&)
    {
@@ -405,7 +427,7 @@ addr_t ELENAMachine :: execute(SystemEnv* env, void* threadEntry, void* threadFu
    Entry entry;
    entry.address = env->bc_invoker;
 
-   addr_t retVal = entry.evaluate(threadEntry, threadFunc);
+   addr_t retVal = entry.evaluate2(threadEntry, threadFunc);
 
    return retVal;
 }

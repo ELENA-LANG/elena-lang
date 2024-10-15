@@ -3375,7 +3375,7 @@ void JITCompiler32 :: addIndexEntry(mssg_t message, addr_t codeAddress, void* ta
    while (entries[index].message) {
       if (entries[index].message == message) {
          if (codeAddress == INVALID_ADDR) {
-            entries[index].address = findEntryAddress(entries, message, indexOffset);
+            entries[index].address = static_cast<pos_t>(findEntryAddress(entries, message, indexOffset));
          }
          else entries[index].address = (pos_t)codeAddress;
 
@@ -3387,7 +3387,7 @@ void JITCompiler32 :: addIndexEntry(mssg_t message, addr_t codeAddress, void* ta
 
    entries[index].message = message;
    if (codeAddress == INVALID_ADDR) {
-      entries[index].address = findEntryAddress(entries, message, indexOffset);
+      entries[index].address = static_cast<pos_t>(findEntryAddress(entries, message, indexOffset));
    }
    else entries[index].address = (pos_t)codeAddress;
 

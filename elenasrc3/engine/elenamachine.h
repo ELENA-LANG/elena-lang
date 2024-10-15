@@ -88,6 +88,7 @@ namespace elena_lang
    public:
       addr_t injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, int staticLen, int nameIndex/*, addr_t* addresses, size_t length*/);
 
+      addr_t executeDirectly(void* symbolListEntry);
       addr_t execute(SystemEnv* env, void* symbolListEntry);
       addr_t execute(SystemEnv* env, void* threadEntry, void* threadFunc);
 

@@ -306,14 +306,14 @@ void ByteCodeUtil :: importCommand(ByteCommand& command, ModuleBase* exporter, M
    }
 }
 
-void ByteCodeUtil :: generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* module, MemoryDump& tapeSymbol)
+void ByteCodeUtil :: generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* module, MemoryDump& tapeSymbol, bool withExtFrame)
 {
    MemoryWriter writer(&tapeSymbol);
 
    pos_t sizePlaceholder = writer.position();
    writer.writePos(0);
 
-   ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
+   ByteCodeUtil::write(writer, withExtFrame ? ByteCode::ExtOpenIN : ByteCode::OpenIN, 2, 0);
 
    // generate the preloaded list
    for (auto it = symbolList.start(); !it.eof(); ++it) {
@@ -327,7 +327,7 @@ void ByteCodeUtil :: generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* 
       else ByteCodeUtil::write(writer, ByteCode::CallR, module->mapReference(symbolName) | mskSymbolRef);
    }
 
-   ByteCodeUtil::write(writer, ByteCode::CloseN);
+   ByteCodeUtil::write(writer, withExtFrame ? ByteCode::ExtCloseN : ByteCode::CloseN);
    ByteCodeUtil::write(writer, ByteCode::Quit);
 
    pos_t size = writer.position() - sizePlaceholder - sizeof(pos_t);

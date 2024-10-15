@@ -753,6 +753,63 @@ inline %0BCh
 
 end
 
+
+
+
+// ; extclosen
+inline %0CAh
+
+  add  rbp, __n_1
+  mov  rsp, rbp
+  pop  rbp
+
+  add  rsp, 16
+  pop  rbx
+
+  mov  rcx, gs:[58h]
+  mov  rdx, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rdx*8]
+  mov  [rdi + tt_stack_frame], rbx
+
+  pop  rbp
+  pop  r15
+  pop  r14
+  pop  r13
+  pop  r12
+  pop  rbx
+  pop  rdi
+  pop  rsi
+  add  rsp, 8
+
+end
+
+// ; extclosen 0
+inline %1CAh
+
+  mov  rsp, rbp
+  pop  rbp
+
+  add  rsp, 16
+  pop  rbx
+
+  mov  rcx, gs:[58h]
+  mov  rdx, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rdx*8]
+  mov  [rdi + tt_stack_frame], rbx
+
+  pop  rbp
+  pop  r15
+  pop  r14
+  pop  r13
+  pop  r12
+  pop  rbx
+  pop  rdi
+  pop  rsi
+  add  rsp, 8
+  
+end
+
+
 // ; system minor collect
 inline %1CFh
 
@@ -856,3 +913,501 @@ inline %0E6h
   mov  [rax + et_current], rdi
 
 end
+
+// ; extopenin
+inline %0F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
+  push rbp     
+
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rax*8]
+  mov  rax, [rdi + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
+  mov  rcx, __n_1
+  sub  rsp, __arg32_1
+  mov  rdi, rsp
+  rep  stos
+
+end 
+
+// ; extopenin 0, n
+inline %1F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
+  push rbp     
+
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rax*8]
+  mov  rax, [rdi + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+end 
+
+// ; extopenin 1, n
+inline %2F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
+  push rbp     
+
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rax*8]
+  mov  rax, [rdi + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
+  push rax
+  push rax
+
+end 
+
+// ; extopenin 2, n
+inline %3F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
+  push rbp     
+
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rax*8]
+  mov  rax, [rdi + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
+  push rax
+  push rax
+
+end 
+
+// ; extopenin 3, n
+inline %4F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
+  push rbp     
+
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rax*8]
+  mov  rax, [rdi + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
+  push rax
+  push rax
+  push rax
+  push rax
+
+end 
+
+// ; extopenin 4, n
+inline %5F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
+  push rbp     
+
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rax*8]
+  mov  rax, [rdi + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  sub  rsp, __n_2
+  push rbp
+  push rax
+  mov  rbp, rsp
+  push rax
+  push rax
+  push rax
+  push rax
+
+end 
+
+// ; extopenin i, 0
+inline %6F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
+  push rbp     
+
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rax*8]
+  mov  rax, [rdi + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  mov  rcx, __n_1
+  sub  rsp, __arg32_1
+  mov  rdi, rsp
+  rep  stos
+
+end 
+
+// ; extopenin 0, 0
+inline %7F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
+  push rbp     
+
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rax*8]
+  mov  rax, [rdi + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  mov  rbp, rsp
+
+end 
+
+// ; extopenin 1, 0
+inline %8F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
+  push rbp     
+
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rax*8]
+  mov  rax, [rdi + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  mov  rbp, rsp
+  push 0
+  push 0
+
+end 
+
+// ; extopenin 2, 0
+inline %9F2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
+  push rbp     
+
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rax*8]
+  mov  rax, [rdi + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  push rax
+  push rax
+
+end 
+
+// ; extopenin 3, 0
+inline %0AF2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
+  push rbp     
+
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rax*8]
+  mov  rax, [rdi + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  push rax
+  push rax
+  push rax
+  push rax
+
+end 
+
+// ; extopenin 4, 0
+inline %0BF2h
+
+  mov  [rsp+8], rcx
+  mov  [rsp+16], rdx
+  mov  [rsp+24], r8
+  mov  [rsp+32], r9
+
+  push 0 
+  push rsi
+  push rdi
+  push rbx
+  push r12
+  push r13
+  push r14
+  push r15
+
+  push rbp     
+
+  mov  rcx, gs:[58h]
+  mov  rax, [data : %CORE_TLS_INDEX]
+  mov  rdi, [rcx+rax*8]
+  mov  rax, [rdi + tt_stack_frame]
+  push rax 
+
+  mov  rbp, rax
+  xor  eax, eax
+  push rbp
+  push rax
+  mov  rbp, rsp
+
+  push rbp
+  xor  rax, rax
+  mov  rbp, rsp
+  push rax
+  push rax
+  push rax
+  push rax
+
+end 

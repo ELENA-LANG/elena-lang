@@ -30,12 +30,14 @@ In development:
   --------------------------------------
   * check : ELENA 6 : How to use ELENA code from external program
   * Derivation : use SyntaxNode be reference for optimization
-  * test all examples : gui
   * x86-64 : mta - main sample sandbox2
+  * test elt
+  * redesign bc_invoker for x86, mta x86, x86-64, mta x86-64
+  * redux : bc_invoker is used only for elt operations; probably it must be taken from env
+  * test all examples (console)
   * fix x86-64 : mta - sandbox2
-  * fix x86-64 : func_invoker
   --------------------------------------
-  * #696 : provide set of config files for Linux with relative paths
+  * fix x86-64 : func_invoker
 
   ### EPIC: elena 6.6 ###
 
