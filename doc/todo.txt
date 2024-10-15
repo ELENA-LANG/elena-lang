@@ -34,9 +34,8 @@ In development:
   * x86-64 : mta - main sample sandbox2
   * fix x86-64 : mta - sandbox2
   * fix x86-64 : func_invoker
-  * provide set of config files for Linux with relative paths
   --------------------------------------
-  * declaring a lambda function with template based argument #689	
+  * #696 : provide set of config files for Linux with relative paths
 
   ### EPIC: elena 6.6 ###
 

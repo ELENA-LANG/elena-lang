@@ -12,6 +12,7 @@
 namespace elena_lang
 {
    // compiler service files
+   constexpr auto LOCAL_DEFAULT_CONFIG = "./local.elc60.config";
    constexpr auto DEFAULT_CONFIG = "/etc/elena/elc60.config";
    constexpr auto DATA_PATH = "/usr/share/elena";
 

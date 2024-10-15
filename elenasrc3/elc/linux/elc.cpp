@@ -181,7 +181,13 @@ int main(int argc, char* argv[])
       process.greeting();
 
       // Initializing...
-      PathString configPath(*dataPath, PathHelper::retrieveFilePath(DEFAULT_CONFIG));
+      path_t defaultConfigPath = PathHelper::retrieveFilePath(LOCAL_DEFAULT_CONFIG);
+      if (defaultConfigPath.compare(LOCAL_DEFAULT_CONFIG)) {
+         // if the local config file was not found
+         defaultConfigPath = DEFAULT_CONFIG;
+      }
+
+      PathString configPath(*dataPath, PathHelper::retrieveFilePath(defaultConfigPath));
       project.loadConfig(*configPath, nullptr, false);
 
        // Reading command-line arguments...
