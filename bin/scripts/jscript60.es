@@ -145,7 +145,7 @@
 <=
     expression (
      message_operation (
-       object ( reference = system'console )
+       object ( reference = system'Console )
        message ( identifier = writeLine )
 
 =>

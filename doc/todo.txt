@@ -28,15 +28,19 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * test all x86 examples (gui)
+  * x86-64 mta - sandbox2 : fix GC issue
   * check : ELENA 6 : How to use ELENA code from external program
   * Derivation : use SyntaxNode be reference for optimization
   * x86-64 : mta - main sample sandbox2
-  * test elt
-  * redesign bc_invoker for x86, mta x86, x86-64, mta x86-64
-  * redux : bc_invoker is used only for elt operations; probably it must be taken from env
-  * test all examples (console)
+  * redux : get rid of bc_invoker
+  * fix elt : printing message
+  * generating code in run-time
+  * vm : fix Runtime evaluation sample
+  * rt : fix Runtime evaluation sample
+  * fixing - auto loading only used namespaces (instead of all)
   --------------------------------------
-  * fix x86-64 : mta - sandbox2
+  * auto loading nested preloaded symbols
 
   ### EPIC: elena 6.6 ###
 

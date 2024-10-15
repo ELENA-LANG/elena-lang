@@ -369,28 +369,37 @@ void Project :: loadDefaultConfig()
 
 bool Project :: loadConfig(path_t path, ustr_t profileName, bool mainConfig)
 {
-   PathString configPath;
-   configPath.copySubPath(path, false);
+   try
+   {
+      PathString configPath;
+      configPath.copySubPath(path, false);
 
-   ConfigFile config;
-   if (config.load(path, _encoding)) {
-      if (mainConfig) {
-         _projectPath.copy(*configPath);
+      ConfigFile config;
+      if (config.load(path, _encoding)) {
+         if (mainConfig) {
+            _projectPath.copy(*configPath);
 
-         _loaded = true;
+            _loaded = true;
 
-         loadProfileList(config);
+            loadProfileList(config);
+         }
+
+         loadConfig(config, *configPath, profileName);
+
+         return true;
       }
+      else {
+         _presenter->printPath(_presenter->getMessage(wrnInvalidConfig), path);
 
-      loadConfig(config, *configPath, profileName);
-
-      return true;
+         return false;
+      }
    }
-   else {
+   catch (XMLException&)
+   {
       _presenter->printPath(_presenter->getMessage(wrnInvalidConfig), path);
-
-      return false;
    }
+
+   return false;
 }
 
 bool Project :: loadProject(path_t path, ustr_t profileName)

@@ -2228,7 +2228,7 @@ bool Compiler::importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t post
    return true;
 }
 
-ustr_t Compiler::retrieveDictionaryOwner(Scope& scope, ustr_t properName, ustr_t defaultPrefix, EAttr mode)
+ustr_t Compiler :: retrieveDictionaryOwner(Scope& scope, ustr_t properName, ustr_t defaultPrefix, EAttr mode)
 {
    if (EAttrs::test(mode, EAttr::StrongResolved))
       return defaultPrefix;
@@ -2243,6 +2243,10 @@ ustr_t Compiler::retrieveDictionaryOwner(Scope& scope, ustr_t properName, ustr_t
          return *it;
    }
 
+   if (nsScope->parent) {
+      return retrieveDictionaryOwner(*nsScope->parent, properName, defaultPrefix, mode);
+   }
+
    return defaultPrefix;
 }
 
@@ -2254,15 +2258,15 @@ void Compiler::declareDictionary(Scope& scope, SyntaxNode node, Visibility visib
 
    if (superMode) {
       switch (level) {
-      case Scope::ScopeLevel::Class:
-         level = Scope::ScopeLevel::Namespace;
-         break;
-      case Scope::ScopeLevel::Method:
-      case Scope::ScopeLevel::Field:
-         level = Scope::ScopeLevel::Class;
-         break;
-      default:
-         break;
+         case Scope::ScopeLevel::Class:
+            level = Scope::ScopeLevel::Namespace;
+            break;
+         case Scope::ScopeLevel::Method:
+         case Scope::ScopeLevel::Field:
+            level = Scope::ScopeLevel::Class;
+            break;
+         default:
+            break;
       }
    }
 
@@ -3607,34 +3611,34 @@ void Compiler::declareSymbolMetaInfo(SymbolScope& scope, SyntaxNode node)
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::InlineTemplate:
-         if (!importInlineTemplate(scope, current, INLINE_PREFIX, node))
-            scope.raiseError(errUnknownTemplate, node);
-         break;
-      case SyntaxKey::MetaExpression:
-      {
-         MetaScope metaScope(&scope, Scope::ScopeLevel::Symbol);
+         case SyntaxKey::InlineTemplate:
+            if (!importInlineTemplate(scope, current, INLINE_PREFIX, node))
+               scope.raiseError(errUnknownTemplate, node);
+            break;
+         case SyntaxKey::MetaExpression:
+         {
+            MetaScope metaScope(&scope, Scope::ScopeLevel::Symbol);
 
-         evalStatement(metaScope, current);
-         break;
-      }
-      case SyntaxKey::MetaDictionary:
-         declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field, false);
-         break;
-      case SyntaxKey::SharedMetaDictionary:
-         declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field, true);
-         break;
-         //case SyntaxKey::Name:
-   //case SyntaxKey::Type:
-   //case SyntaxKey::ArrayType:
-   //case SyntaxKey::TemplateType:
-   //case SyntaxKey::Attribute:
-   //case SyntaxKey::Dimension:
-   //case SyntaxKey::EOP:
-   //   break;
-      default:
-         //   scope.raiseError(errInvalidSyntax, node);
-         break;
+            evalStatement(metaScope, current);
+            break;
+         }
+         case SyntaxKey::MetaDictionary:
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field, false);
+            break;
+         case SyntaxKey::SharedMetaDictionary:
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field, true);
+            break;
+            //case SyntaxKey::Name:
+      //case SyntaxKey::Type:
+      //case SyntaxKey::ArrayType:
+      //case SyntaxKey::TemplateType:
+      //case SyntaxKey::Attribute:
+      //case SyntaxKey::Dimension:
+      //case SyntaxKey::EOP:
+      //   break;
+         default:
+            //   scope.raiseError(errInvalidSyntax, node);
+            break;
       }
 
       current = current.nextNode();
@@ -4701,26 +4705,26 @@ void Compiler::declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::Attribute:
-         if (!_logic->validateSymbolAttribute(current.arg.value, scope.visibility, constant, scope.type)) {
-            current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
-            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-         }
-         break;
-      case SyntaxKey::Type:
-      case SyntaxKey::ArrayType:
-      case SyntaxKey::TemplateType:
-         if (!identifierDeclarationMode) {
-            auto typeInfo = resolveStrongTypeAttribute(scope, current, true, false);
-            scope.info.typeRef = typeInfo.typeRef;
+         case SyntaxKey::Attribute:
+            if (!_logic->validateSymbolAttribute(current.arg.value, scope.visibility, constant, scope.type)) {
+               current.setArgumentValue(0); // HOTFIX : to prevent duplicate warnings
+               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+            }
+            break;
+         case SyntaxKey::Type:
+         case SyntaxKey::ArrayType:
+         case SyntaxKey::TemplateType:
+            if (!identifierDeclarationMode) {
+               auto typeInfo = resolveStrongTypeAttribute(scope, current, true, false);
+               scope.info.typeRef = typeInfo.typeRef;
 
-            if (typeInfo.nillable)
-               scope.raiseError(errInvalidOperation, node);
-         }
+               if (typeInfo.nillable)
+                  scope.raiseError(errInvalidOperation, node);
+            }
 
-         break;
-      default:
-         break;
+            break;
+         default:
+            break;
       }
 
       current = current.nextNode();
@@ -10932,68 +10936,68 @@ bool Compiler::Namespace::declareMembers(SyntaxNode node, bool& repeatMode, bool
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::Namespace:
-      {
-         Namespace subNamespace(compiler, &scope);
-         subNamespace.declareNamespace(current, false, true);
+         case SyntaxKey::Namespace:
+         {
+            Namespace subNamespace(compiler, &scope);
+            subNamespace.declareNamespace(current, false, true);
 
-         declared |= subNamespace.declareMembers(current, repeatMode, forced);
-         break;
-      }
-      case SyntaxKey::Symbol:
-      {
-         Symbol symbol(compiler, &scope, current.arg.reference, scope.defaultVisibility);
-         if (!symbol.isDeclared()) {
-            compiler->declareSymbol(symbol.scope, current);
-
-            declared = true;
+            declared |= subNamespace.declareMembers(current, repeatMode, forced);
+            break;
          }
-         break;
-      }
-      case SyntaxKey::Class:
-      {
-         Class classHelper(compiler, &scope, current.arg.reference, scope.defaultVisibility);
-         if (!classHelper.isDeclared()) {
-            if (classHelper.isParentDeclared(current) || forced) {
-               classHelper.declare(current);
+         case SyntaxKey::Symbol:
+         {
+            Symbol symbol(compiler, &scope, current.arg.reference, scope.defaultVisibility);
+            if (!symbol.isDeclared()) {
+               compiler->declareSymbol(symbol.scope, current);
 
                declared = true;
             }
-            else repeatMode = true;
+            break;
          }
-         break;
-      }
-      case SyntaxKey::MetaExpression:
-      {
-         MetaScope metaScope(&scope, Scope::ScopeLevel::Namespace);
+         case SyntaxKey::Class:
+         {
+            Class classHelper(compiler, &scope, current.arg.reference, scope.defaultVisibility);
+            if (!classHelper.isDeclared()) {
+               if (classHelper.isParentDeclared(current) || forced) {
+                  classHelper.declare(current);
 
-         compiler->evalStatement(metaScope, current);
-         current.setKey(SyntaxKey::Idle);
-         break;
-      }
-      case SyntaxKey::Template:
-      case SyntaxKey::ExtensionTemplate:
-      {
-         TemplateScope templateScope(&scope, 0, scope.defaultVisibility);
-         compiler->declareTemplateClass(templateScope, current);
-         break;
-      }
-      case SyntaxKey::TemplateCode:
-      case SyntaxKey::InlineTemplateExpr:
-      {
-         TemplateScope templateScope(&scope, 0, scope.defaultVisibility);
-         compiler->declareTemplateCode(templateScope, current);
-         break;
-      }
-      case SyntaxKey::MetaDictionary:
-         compiler->declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Namespace, false);
-         break;
-      case SyntaxKey::SharedMetaDictionary:
-         compiler->declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Namespace, true);
-         break;
-      default:
-         // to make compiler happy
-         break;
+                  declared = true;
+               }
+               else repeatMode = true;
+            }
+            break;
+         }
+         case SyntaxKey::MetaExpression:
+         {
+            MetaScope metaScope(&scope, Scope::ScopeLevel::Namespace);
+
+            compiler->evalStatement(metaScope, current);
+            current.setKey(SyntaxKey::Idle);
+            break;
+         }
+         case SyntaxKey::Template:
+         case SyntaxKey::ExtensionTemplate:
+         {
+            TemplateScope templateScope(&scope, 0, scope.defaultVisibility);
+            compiler->declareTemplateClass(templateScope, current);
+            break;
+         }
+         case SyntaxKey::TemplateCode:
+         case SyntaxKey::InlineTemplateExpr:
+         {
+            TemplateScope templateScope(&scope, 0, scope.defaultVisibility);
+            compiler->declareTemplateCode(templateScope, current);
+            break;
+         }
+         case SyntaxKey::MetaDictionary:
+            compiler->declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Namespace, false);
+            break;
+         case SyntaxKey::SharedMetaDictionary:
+            compiler->declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Namespace, true);
+            break;
+         default:
+            // to make compiler happy
+            break;
       }
 
       current = current.nextNode();

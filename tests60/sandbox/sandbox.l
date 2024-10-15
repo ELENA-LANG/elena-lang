@@ -1,11 +1,11 @@
-import extensions;
+import system'dynamic'expressions;
+import extensions'scripting;
 
-test(Action<object> arg)
-{
-   arg("2");
-}
+//symbol used : preloaded = Expression;
 
 public program()
 {
-   test((::Action<object> x){ console.printLine("arg ", x, " is passed") });
+   var o := Expression;
+
+   lscript.interpretLine("system'console.writeLine(""Hello World"")");
 }

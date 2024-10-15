@@ -458,7 +458,7 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
    freeobj(dummyModule);
    
    if (address)
-      return execute(env, address);
+      return execute(address);
 
    return 0;
 }
