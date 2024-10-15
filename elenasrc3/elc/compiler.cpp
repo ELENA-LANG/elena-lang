@@ -2969,7 +2969,7 @@ void Compiler :: declareByRefHandler(SyntaxNode classNode, SyntaxKey methodType,
    }
    else {
       handlerInfo.hints |= (ref_t)MethodHint::Indexed;
-      handlerInfo.hints |= (ref_t)MethodHint::Normal;
+      handlerInfo.hints |= test(info.header.flags, elSealed) ? (ref_t)MethodHint::Sealed : (ref_t)MethodHint::Normal;
       if (MethodInfo::checkVisibility(methodInfo, MethodHint::Protected)) {
          handlerInfo.hints |= (ref_t)MethodHint::Protected;
       }

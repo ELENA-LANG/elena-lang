@@ -37,10 +37,13 @@ In development:
   * fix elt : printing message
   * generating code in run-time
   * vm : fix Runtime evaluation sample
+  * functional test (script_tests)
   * rt : fix Runtime evaluation sample
-  * fixing - auto loading only used namespaces (instead of all)
-  --------------------------------------
+  * fixing Runtime evaluation
   * auto loading nested preloaded symbols
+  * fixing toByteArray is not found
+  --------------------------------------
+  * unit test for byref handler
 
   ### EPIC: elena 6.6 ###
 

@@ -2390,11 +2390,11 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
       result.kind = methodInfo.hints & (ref_t)MethodHint::Mask;
       if (result.kind == (ref_t)MethodHint::Normal) {
          // check if the normal method can be called directly / semi-directly
-         if (test(info.header.flags, elSealed)) {
-            result.kind = (ref_t)MethodHint::Sealed; // mark it as sealed - because the class is sealed
-         }
-         else if (MethodInfo::checkHint(methodInfo, MethodHint::Indexed)) {
+         if (MethodInfo::checkHint(methodInfo, MethodHint::Indexed)) {
             result.kind = (ref_t)MethodHint::ByIndex;
+         }
+         else if (test(info.header.flags, elSealed)) {
+            result.kind = (ref_t)MethodHint::Sealed; // mark it as sealed - because the class is sealed
          }
          else if (test(info.header.flags, elClosed)) {
             result.kind = (ref_t)MethodHint::Fixed; // mark it as fixed - because the class is closed
