@@ -35,9 +35,8 @@ In development:
   * redesign bc_invoker for x86, mta x86, x86-64, mta x86-64
   * redux : bc_invoker is used only for elt operations; probably it must be taken from env
   * test all examples (console)
-  * fix x86-64 : mta - sandbox2
   --------------------------------------
-  * fix x86-64 : func_invoker
+  * fix x86-64 : mta - sandbox2
 
   ### EPIC: elena 6.6 ###
 

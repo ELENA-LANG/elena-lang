@@ -400,6 +400,18 @@ addr_t ELENAMachine :: executeDirectly(void* entryAddress)
    return retVal;
 }
 
+addr_t ELENAMachine :: executeDirectly(void* entryAddress, void* arg)
+{
+   Entry entry;
+   entry.address = entryAddress;
+
+   // executing the program   
+
+   addr_t retVal = entry.evaluate1(arg);
+
+   return retVal;
+}
+
 addr_t ELENAMachine :: execute(SystemEnv* env, void* entryAddress)
 {
    Entry entry;

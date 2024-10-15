@@ -210,6 +210,7 @@ namespace elena_lang
       union {
          void* address;
          int  (*evaluate2)(void*, void*);
+         int  (*evaluate1)(void*);
          int  (*evaluate0)();
       };
 

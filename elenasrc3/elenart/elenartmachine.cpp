@@ -361,7 +361,7 @@ void ELENARTMachine :: startThread(SystemEnv* env, void* entry, int index)
 {
    void* arg = env->th_table->slots[index].arg;
    // executing the program
-   execute(env, entry, arg);
+   executeDirectly(entry, arg);
 }
 
 bool ELENARTMachine :: checkClassMessage(void* classPtr, mssg_t message)
