@@ -419,11 +419,8 @@ void CompilingProcess :: parseFileUserDefinedGrammar(SyntaxWriterBase* syntaxWri
 
    try {
       // based on the target type generate the syntax tree for the file
-      PathString fullPath(projectPath);
-      fullPath.combine(path);
-
       SyntaxTree derivationTree;
-      parser.parse(*fullPath, derivationTree);
+      parser.parse(path, derivationTree);
 
       syntaxWriter->saveTree(derivationTree);
    }

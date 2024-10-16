@@ -8,5 +8,5 @@ public evalTest() : testCase()
 
    Assert.ifEqual(ret, "Hello World");
 
-   console.writeLine(".");
+   console.write(".");
 }

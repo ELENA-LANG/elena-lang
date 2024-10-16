@@ -3213,8 +3213,10 @@ void Compiler::generateClassFlags(ClassScope& scope, ref_t declaredFlags)
 {
    scope.info.header.flags |= declaredFlags;
 
-   if (test(scope.info.header.flags, elExtension))
+   if (test(scope.info.header.flags, elExtension)) {
+      scope.info.header.flags |= elSealed;
       scope.addAttribute(ClassAttribute::ExtensionRef, scope.extensionClassRef);
+   }
 }
 
 void Compiler::generateClassStaticField(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs)

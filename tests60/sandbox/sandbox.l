@@ -1,6 +1,12 @@
-import extensions'scripting;
+extension realOp : real
+{
+   real xpower(int i)
+      = i;
+}
 
 public program()
 {
-   lscript.interpretLine("system'console.writeLine(""Hello World"")");
+   int i := 1;
+
+   real r := -1.0.xpower(i);
 }

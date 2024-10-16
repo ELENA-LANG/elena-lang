@@ -10,30 +10,30 @@ In development:
   dev: 
       - upndown (connector)
       - #496
-      - #676
       - #622 (http client)
   gen:
       - lpad : generate a code based on a record  
   maint:
-      - review pi performance (must be ~6)
       - unit tests : bt optimization 
       - test binary file operations
       - api refactoring : all symbols must start with a capital letter
       - redesign winforms
       - api : add descriptions 
       - threading samples must be included into release files
-      - start to look at the basic low level optimization (Modern X86 Assembly Language Programming)
-      - 
+      - ide : windows / linux
   port:
   tools: 
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * review pi performance (must < 6)
+  * start to look at the basic low level optimization (Modern X86 Assembly Language Programming)
+  * test linix versions
+  * test all x86 examples (net)
   * x86-64 : mta - main sample sandbox2
-  * test all x86 examples (gui)
   * x86-64 mta - sandbox2 : fix GC issue
   --------------------------------------
-  * Derivation : use SyntaxNode be reference for optimization
+  * #676 : Strict type option 
 
   ### EPIC: elena 6.6 ###
 

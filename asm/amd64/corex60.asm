@@ -584,7 +584,7 @@ labWait:
   jnz  short labWait
 
   // ; find the current thread entry
-  mov  rdi, gs:[58h]
+  mov  rdx, gs:[58h]
   mov  rax, [data : %CORE_TLS_INDEX]  
   mov  rax, [rdx+rax*8]
 

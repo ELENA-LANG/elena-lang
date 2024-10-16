@@ -146,9 +146,9 @@ namespace elena_lang
 
       void parseStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current, 
          List<SyntaxNode>& arguments, List<SyntaxNode>& parameters, IdentifierString& postfix);
-      void generateTemplateStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void generateTemplateStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
       void generateTemplateExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void generateTemplateOperation(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void generateTemplateOperation(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
 
       void loadMetaSection(SyntaxNode node);
       void clearMetaSection(SyntaxNode node);
@@ -156,51 +156,51 @@ namespace elena_lang
       void flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
       void flushCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
 
-      void flushL6AsTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushIdentifier(SyntaxTreeWriter& writer, SyntaxNode identNode, bool ignoreTerminalInfo);
-      void flushTemplateCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushTemplateArgDescr(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushParameterArgDescr(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool allowType);
-      void flushTemplageExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxKey type, bool allowType);
-      void flushTemplateType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool exprMode = true);
-      void flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool exprMode, int nestLevel = 1);
-      void flushMessage(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushResend(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushObject(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushNested(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushNullable(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode current);
-      void flushClosure(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushExpressionCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushExpressionAsDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushL6AsTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushIdentifier(SyntaxTreeWriter& writer, SyntaxNode& identNode, bool ignoreTerminalInfo);
+      void flushTemplateCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushTemplateArgDescr(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushParameterArgDescr(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool allowType);
+      void flushTemplageExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, SyntaxKey type, bool allowType);
+      void flushTemplateType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool exprMode = true);
+      void flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool exprMode, int nestLevel = 1);
+      void flushMessage(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushResend(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushObject(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushNested(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushNullable(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& current);
+      void flushClosure(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushExpressionCollection(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushExpressionAsDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
       void flushExpressionMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushMethodCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushTupleType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory);
-      void flushEnumTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushMethodCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushTupleType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, ref_t& previusCategory);
+      void flushEnumTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
 
-      void copyHeader(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool includeType);
-      void copyType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void copyHeader(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool includeType);
+      void copyType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
 
       void flushSubScopeMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxNode headerNode);
       void flushSubScope(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, SyntaxNode headerNode);
 
-      void flushClassMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool functionMode = false);
-      void flushMethod(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushMethodMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, bool exprMode = false);
-      void flushParameterBlock(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      bool flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
+      void flushClassMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool functionMode = false);
+      void flushMethod(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushMethodMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool exprMode = false);
+      void flushParameterBlock(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      bool flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, ref_t& previusCategory, 
          bool allowType, int arrayNestLevel = 0);
-      void flushTypeAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node, ref_t& previusCategory, 
+      void flushTypeAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, ref_t& previusCategory, 
          bool allowType, bool onlyChildren = false);
-      void flushInlineTemplatePostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node/*, bool ignorePostfix*/);
-      void flushClassPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushSymbolPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushParent(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
-      void flushParentTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
+      void flushInlineTemplatePostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushClassMemberPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node/*, bool ignorePostfix*/);
+      void flushClassPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushSymbolPostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushParent(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushParentTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
 
       void flushDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool withNameNode = true, 
          bool typeDescriptor = false, bool exprMode = false);
