@@ -60,3 +60,10 @@ labEnd:
   ret
 
 end
+
+// ; system startup
+inline %4CFh
+
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_root], esp
+
+end

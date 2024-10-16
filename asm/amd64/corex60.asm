@@ -956,6 +956,8 @@ inline %0F2h
   sub  rsp, __arg32_1
   mov  rdi, rsp
   rep  stos
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -997,6 +999,8 @@ inline %1F2h
   push rbp
   push rax
   mov  rbp, rsp
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -1040,6 +1044,8 @@ inline %2F2h
   mov  rbp, rsp
   push rax
   push rax
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -1083,6 +1089,8 @@ inline %3F2h
   mov  rbp, rsp
   push rax
   push rax
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -1128,6 +1136,8 @@ inline %4F2h
   push rax
   push rax
   push rax
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -1173,6 +1183,8 @@ inline %5F2h
   push rax
   push rax
   push rax
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -1214,6 +1226,8 @@ inline %6F2h
   sub  rsp, __arg32_1
   mov  rdi, rsp
   rep  stos
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -1250,6 +1264,8 @@ inline %7F2h
 
   push rbp
   mov  rbp, rsp
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -1288,6 +1304,8 @@ inline %8F2h
   mov  rbp, rsp
   push 0
   push 0
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -1327,6 +1345,8 @@ inline %9F2h
   mov  rbp, rsp
   push rax
   push rax
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -1368,6 +1388,8 @@ inline %0AF2h
   push rax
   push rax
   push rax
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -1409,5 +1431,7 @@ inline %0BF2h
   push rax
   push rax
   push rax
+  mov  r10, rax
+  mov  r11, rax
 
 end 

@@ -15,6 +15,7 @@ In development:
   gen:
       - lpad : generate a code based on a record  
   maint:
+      - review pi performance (must be ~6)
       - unit tests : bt optimization 
       - test binary file operations
       - api refactoring : all symbols must start with a capital letter
@@ -28,17 +29,12 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * x86-64 : mta - main sample sandbox2
   * test all x86 examples (gui)
   * x86-64 mta - sandbox2 : fix GC issue
-  * check : ELENA 6 : How to use ELENA code from external program
   * Derivation : use SyntaxNode be reference for optimization
-  * x86-64 : mta - main sample sandbox2
-  * redux : get rid of bc_invoker
-  * fix elt : printing message
-  * generating code in run-time
-  * vm : fix Runtime evaluation sample
   --------------------------------------
-  * functional test (script_tests)
+  * redux : get rid of bc_invoker
 
   ### EPIC: elena 6.6 ###
 

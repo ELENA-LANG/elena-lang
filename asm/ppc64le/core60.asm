@@ -3641,6 +3641,7 @@ labLoop:
   b       labLoop
 
 labEnd:
+  // ; init r3, r4 with zero (and in all variants)
 
 end 
 

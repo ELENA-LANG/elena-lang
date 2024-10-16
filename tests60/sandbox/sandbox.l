@@ -2,5 +2,5 @@ import extensions'scripting;
 
 public program()
 {
-   var ret := lscript.interpretLine("""Hello "".add(""World"")");
+   lscript.interpretLine("system'console.writeLine(""Hello World"")");
 }

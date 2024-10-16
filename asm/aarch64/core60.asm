@@ -3703,6 +3703,7 @@ labLoop:
   b       labLoop
 
 labEnd:
+  // ; init x0, x1 with zero (and in all variants)
 
 end 
 

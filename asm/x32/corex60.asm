@@ -882,6 +882,7 @@ inline %0F2h
   sub  esp, __arg32_1
   mov  edi, esp
   rep  stos
+  mov  esi, eax
 
 end 
 
@@ -913,6 +914,7 @@ inline %1F2h
   push ebp
   push eax
   mov  ebp, esp
+  mov  esi, eax
 
 end 
 
@@ -945,6 +947,7 @@ inline %2F2h
   push eax
   mov  ebp, esp
   push eax
+  mov  esi, eax
 
 end 
 
@@ -978,6 +981,7 @@ inline %3F2h
   mov  ebp, esp
   push eax
   push eax
+  mov  esi, eax
 
 end 
 
@@ -1012,6 +1016,7 @@ inline %4F2h
   push eax
   push eax
   push eax
+  mov  esi, eax
 
 end 
 
@@ -1047,6 +1052,7 @@ inline %5F2h
   push eax
   push eax
   push eax
+  mov  esi, eax
 
 end 
 
@@ -1078,6 +1084,7 @@ inline %6F2h
   sub  esp, __arg32_1
   mov  edi, esp
   rep  stos
+  mov  esi, eax
 
 end 
 
@@ -1104,6 +1111,7 @@ inline %7F2h
 
   push ebp
   mov  ebp, esp
+  mov  esi, eax
 
 end 
 
@@ -1131,6 +1139,7 @@ inline %8F2h
   push ebp
   mov  ebp, esp
   push 0
+  mov  esi, eax
 
 end 
 
@@ -1160,6 +1169,7 @@ inline %9F2h
   mov  ebp, esp
   push eax
   push eax
+  mov  esi, eax
 
 end 
 
@@ -1190,6 +1200,7 @@ inline %0AF2h
   push eax
   push eax
   push eax
+  mov  esi, eax
 
 end 
 
@@ -1221,5 +1232,6 @@ inline %0BF2h
   push eax
   push eax
   push eax
+  mov  esi, eax
 
 end 
