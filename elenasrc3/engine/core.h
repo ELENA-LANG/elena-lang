@@ -43,7 +43,6 @@ namespace elena_lang
    constexpr int  elVMTFlagOffset64          = 0x18;
 
    // --- ELENA CORE built-in routines
-   constexpr ref_t INVOKER                   = 0x10001;
    constexpr ref_t GC_ALLOC                  = 0x10002;
    constexpr ref_t EXCEPTION_HANDLER         = 0x10003;
    constexpr ref_t GC_COLLECT                = 0x10004;
@@ -194,7 +193,7 @@ namespace elena_lang
       GCTable*          gc_table;
       ThreadContent*    th_single_content;  // NOTE : used only for STA
       ThreadTable*      th_table;           // NOTE : used only for MTA 
-      void*             bc_invoker;
+      void*             reserved;
       void*             veh_handler;
       pos_t             gc_mg_size;
       pos_t             gc_yg_size;

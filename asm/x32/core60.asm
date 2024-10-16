@@ -1,5 +1,4 @@
 // ; --- Predefined References  --
-define INVOKER              10001h
 define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
 define GC_COLLECT	    10004h
@@ -120,7 +119,7 @@ structure %SYSTEM_ENV
   dd data : %CORE_GC_TABLE
   dd data : %CORE_SINGLE_CONTENT
   dd 0
-  dd code : %INVOKER
+  dd 0
   dd code : %VEH_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize

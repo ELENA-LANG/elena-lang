@@ -83,10 +83,10 @@ constexpr ref_t coreConstants[coreConstantNumber] =
 };
 
 // preloaded gc routines
-constexpr int coreFunctionNumber = 7;
+constexpr int coreFunctionNumber = 6;
 constexpr ref_t coreFunctions[coreFunctionNumber] =
 {
-   INVOKER, GC_ALLOC, EXCEPTION_HANDLER, GC_COLLECT, GC_ALLOCPERM, PREPARE, THREAD_WAIT
+   GC_ALLOC, EXCEPTION_HANDLER, GC_COLLECT, GC_ALLOCPERM, PREPARE, THREAD_WAIT
 };
 
 // preloaded bc commands

@@ -32,9 +32,8 @@ In development:
   * x86-64 : mta - main sample sandbox2
   * test all x86 examples (gui)
   * x86-64 mta - sandbox2 : fix GC issue
-  * Derivation : use SyntaxNode be reference for optimization
   --------------------------------------
-  * redux : get rid of bc_invoker
+  * Derivation : use SyntaxNode be reference for optimization
 
   ### EPIC: elena 6.6 ###
 

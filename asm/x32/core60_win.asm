@@ -1,5 +1,4 @@
 // ; --- Predefined References  --
-define INVOKER           	10001h
 define VEH_HANDLER       	10003h
 
 define CORE_TOC          	20001h
@@ -7,38 +6,6 @@ define SYSTEM_ENV        	20002h
 define CORE_SINGLE_CONTENT	2000Bh
 
 // ; ==== System commands ===
-
-// INVOKER(function, arg)
-procedure % INVOKER
-
-  // ; save registers
-  mov  eax, [esp+4]   // ; function
-  push esi
-  mov  esi, [esp+12]  // ; arg
-  push edi
-  push ecx
-  push ebx
-  push ebp
-
-  // ; declare new frame
-  push 0              // ; FrameHeader.previousFrame
-  push 0              // ; FrameHeader.reserved
-  mov  ebp, esp       // ; FrameHeader
-  push esi            // ; arg
-
-  call eax
-  add  esp, 12        // ; clear FrameHeader+arg
-  mov  eax, ebx
-
-  // ; restore registers
-  pop  ebp
-  pop  ebx
-  pop  ecx
-  pop  edi
-  pop  esi
-  ret
-
-end
 
 // VEH_HANDLER() 
 procedure % VEH_HANDLER

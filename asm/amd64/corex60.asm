@@ -1,7 +1,6 @@
 // !! NOTE : R15 register must be preserved
 
 // ; --- Predefined References  --
-define INVOKER              10001h
 define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
 define GC_COLLECT	    10004h
@@ -85,7 +84,7 @@ structure %SYSTEM_ENV
   dq data : %CORE_GC_TABLE
   dq 0
   dq data : %CORE_THREAD_TABLE
-  dq code : %INVOKER
+  dq 0
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize
