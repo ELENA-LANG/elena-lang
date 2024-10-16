@@ -628,6 +628,9 @@ void CompilingProcess :: configurate(Project& project)
    bool evalOpFlag = project.BoolSetting(ProjectOption::EvaluateOp, DEFAULT_EVALUATE_OP);
    _compiler->setEvaluateOp(evalOpFlag);
 
+   bool strictTypeFlag = project.BoolSetting(ProjectOption::StrictTypeEnforcing, DEFAULT_STRICT_TYPE_ENFORCING);
+   _compiler->setStrictTypeFlag(strictTypeFlag);
+
    // load program forwards
    for (auto it = _forwards.start(); !it.eof(); ++it) {
       ustr_t f = *it;
@@ -802,6 +805,9 @@ int CompilingProcess :: build(Project& project,
 
       if (!profile.empty())
          _presenter->printLine(ELC_PROFILE_INFO, profile);
+
+      if (_compiler->checkStrictTypeFlag())
+         _presenter->printLine(ELC_STRICT_MODE);
 
       // Cleaning up
       _presenter->printLine(ELC_CLEANING);

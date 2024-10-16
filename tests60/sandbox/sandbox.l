@@ -1,12 +1,14 @@
-extension realOp : real
-{
-   real xpower(int i)
-      = i;
-}
+sealed A;
 
 public program()
 {
-   int i := 1;
+   A a := new A();
 
-   real r := -1.0.xpower(i);
+   a.test();
 }
+
+/*
+public program()
+{
+   int n := 23.1;
+}*/

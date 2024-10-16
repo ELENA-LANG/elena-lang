@@ -12,8 +12,9 @@
 namespace elena_lang
 {
    // default settings
-   constexpr bool DEFAULT_CONDITIONAL_BOXING = true;
-   constexpr bool DEFAULT_EVALUATE_OP = true;
+   constexpr bool DEFAULT_CONDITIONAL_BOXING       = true;
+   constexpr bool DEFAULT_EVALUATE_OP              = true;
+   constexpr bool DEFAULT_STRICT_TYPE_ENFORCING    = false;
 
    enum MetaHint : int
    {
@@ -371,6 +372,9 @@ namespace elena_lang
    constexpr auto errUnknownDefConstructor   = 184;
    constexpr auto errUnknownMessage          = 185;
    constexpr auto errAssigningToSelf         = 186;
+   constexpr auto errUnknownTypecast         = 188;
+   constexpr auto errUnknownFunction         = 189;
+   constexpr auto errUnsupportedOperator     = 189;
 
    constexpr auto errUnknownModule           = 201;
    constexpr auto errUnresovableLink         = 202;

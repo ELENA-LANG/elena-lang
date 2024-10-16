@@ -1887,6 +1887,7 @@ Compiler::Compiler(
    _verbose = false;
    _noValidation = false;
    _withDebugInfo = true;
+   _strictTypeEnforcing = false;
 
    _trackingUnassigned = false;
 
@@ -13696,6 +13697,61 @@ ObjectInfo Compiler::Expression::declareTempLocal(ref_t typeRef, bool dynamicOnl
    }
 }
 
+void Compiler::Expression :: handleUnsupportedMessageCall(SyntaxNode node, mssg_t message, ref_t targetRef, bool weakTarget, bool strongResolved)
+{
+   if (strongResolved) {
+      if (getAction(message) == getAction(scope.moduleScope->buildins.constructor_message)) {
+         scope.raiseError(errUnknownDefConstructor, node);
+      }
+      else scope.raiseError(errUnknownMessage, findMessageNode(node));
+   }
+   else {
+      SyntaxNode messageNode = findMessageNode(node);
+      if (weakTarget/* || ignoreWarning*/) {
+         // ignore warning for super class / type-less one
+      }
+      else if (messageNode == SyntaxKey::None) {
+         if (compiler->_verbose) {
+            showContextInfo(message, targetRef);
+         }
+
+         if ((message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE) {
+            if (compiler->_strictTypeEnforcing && compiler->_logic->isSealedClass(*scope.moduleScope, targetRef)) {
+               scope.raiseError(errUnknownTypecast, node);
+            }
+            else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownTypecast, node);
+         }
+         else if (message == scope.moduleScope->buildins.refer_message) {
+            if (compiler->_strictTypeEnforcing && compiler->_logic->isSealedClass(*scope.moduleScope, targetRef)) {
+               scope.raiseError(errUnsupportedOperator, node);
+            }
+            else scope.raiseWarning(WARNING_LEVEL_1, wrnUnsupportedOperator, node);
+         }
+         else if (compiler->_strictTypeEnforcing && compiler->_logic->isSealedClass(*scope.moduleScope, targetRef)) {
+            scope.raiseError(errUnknownFunction, node);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownFunction, node);
+      }
+      else {
+         if (compiler->_verbose) {
+            IdentifierString messageName;
+            ByteCodeUtil::resolveMessageName(messageName, scope.module, message);
+
+            compiler->_errorProcessor->info(infoUnknownMessage, *messageName);
+
+            ustr_t name = scope.module->resolveReference(targetRef);
+            if (!name.empty())
+               compiler->_errorProcessor->info(infoTargetClass, name);
+         }
+
+         if (compiler->_strictTypeEnforcing && compiler->_logic->isSealedClass(*scope.moduleScope, targetRef)) {
+            scope.raiseError(errUnknownMessage, messageNode);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, messageNode);
+      }
+   }
+}
+
 ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInfo target, MessageCallContext& context, MessageResolution resolution,
    ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs)
 {
@@ -13781,50 +13837,12 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
       }
    }
    else if (targetRef) {
-      if (EAttrs::test(mode.attrs, EAttr::StrongResolved)) {
-         if (getAction(resolution.message) == getAction(scope.moduleScope->buildins.constructor_message)) {
-            scope.raiseError(errUnknownDefConstructor, node);
-         }
-         else scope.raiseError(errUnknownMessage, findMessageNode(node));
-      }
-      else {
-         bool weakTarget = targetRef == scope.moduleScope->buildins.superReference || result.withCustomDispatcher || target.mode == TargetMode::Weak;
+      handleUnsupportedMessageCall(node, resolution.message, targetRef,
+         targetRef == scope.moduleScope->buildins.superReference || result.withCustomDispatcher || target.mode == TargetMode::Weak,
+         EAttrs::test(mode.attrs, EAttr::StrongResolved));
 
-         SyntaxNode messageNode = findMessageNode(node);
-         if (weakTarget/* || ignoreWarning*/) {
-            // ignore warning for super class / type-less one
-         }
-         else if (messageNode == SyntaxKey::None) {
-            if (compiler->_verbose) {
-               showContextInfo(resolution.message, targetRef);
-            }
-
-            if ((resolution.message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE) {
-               scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownTypecast, node);
-            }
-            else if (resolution.message == scope.moduleScope->buildins.refer_message) {
-               scope.raiseWarning(WARNING_LEVEL_1, wrnUnsupportedOperator, node);
-            }
-            else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownFunction, node);
-         }
-         else {
-            if (compiler->_verbose) {
-               IdentifierString messageName;
-               ByteCodeUtil::resolveMessageName(messageName, scope.module, resolution.message);
-
-               compiler->_errorProcessor->info(infoUnknownMessage, *messageName);
-
-               ustr_t name = scope.module->resolveReference(targetRef);
-               if (!name.empty())
-                  compiler->_errorProcessor->info(infoTargetClass, name);
-            }
-
-            scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, messageNode);
-         }
-
-         // treat it as a weak reference
-         targetRef = 0;
-      }
+      // treat it as a weak reference
+      targetRef = 0;
    }
 
    if (target.kind == ObjectKind::SuperLocal) {

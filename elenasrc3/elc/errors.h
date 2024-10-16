@@ -66,6 +66,9 @@ namespace elena_lang
    constexpr auto errMsgUnknownDefConstructor   = "\n%s(%d:%d): error 184: A constructor is not defined for the class\n";
    constexpr auto errMsgUnknownMessage          = "\n%s(%d:%d): error 185: Message '%s' does not handled by the object\n";
    constexpr auto errMsgAssigningToSelf         = "\n%s(%d:%d): error 186: Cannot assign a variable '%s' to itself\n";
+   constexpr auto errMsgUnknownTypecast         = "\n%s(%d:%d): error 188: typecasting routine cannot be found\n";
+   constexpr auto errMsgUnknownFunction         = "\n%s(%d:%d): error 189: Function message does not handled by the object '%s'\n";
+   constexpr auto errMsgUnsupportedOperator     = "\n%s(%d:%d): error 190: operator handler is not defined for %s\n";
 
    constexpr auto errMsgUnknownModule           = "\nlinker: error 201: Unknown module '%s'\n";
    constexpr auto errMsgUnresovableLink         = "\nlinker: error 202: Link '%s' is not resolved\n";

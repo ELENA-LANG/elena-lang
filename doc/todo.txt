@@ -32,8 +32,10 @@ In development:
   * test all x86 examples (net)
   * x86-64 : mta - main sample sandbox2
   * x86-64 mta - sandbox2 : fix GC issue
+  * #676 : IDE settings (project / single file)
+  * #676 : Strict type option (project)
   --------------------------------------
-  * #676 : Strict type option 
+  * #676 : Strict type option (command line)
 
   ### EPIC: elena 6.6 ###
 

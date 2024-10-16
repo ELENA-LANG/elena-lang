@@ -10,7 +10,7 @@
 
 namespace elena_lang
 {
-   constexpr auto MessageLength = 99;
+   constexpr auto MessageLength = 103;
    const Pair<int, const char*, 0, nullptr> Messages[MessageLength] =
    {
       {errDuplicatedSymbol, errMsgDuplicatedSymbol},
@@ -81,10 +81,11 @@ namespace elena_lang
       {errIllegalOperation, errMsgIllegalOperation},
       {errUnknownDefConstructor, errMsgUnknownDefConstructor},
       {wrnUnknownMessage, wrnMsgUnknownMessage},
-      {wrnUnknownDefConstructor, wrnMsgUnknownDefConstructor},
       {errUnknownMessage, errMsgUnknownMessage},
+      {wrnUnknownDefConstructor, wrnMsgUnknownDefConstructor},
       {errInvalidConstAttr, errMsgInvalidConstAttr},
       {wrnUnknownFunction, wrnMsgUnknownFunction},
+      {errUnknownFunction, errMsgUnknownFunction},
       {errIllegalPrivate, errMsgIllegalPrivate},
       {wrnTypeInherited, wrnMsgTypeInherited},
       {errTypeAlreadyDeclared, errMsgTypeAlreadyDeclared},
@@ -92,7 +93,9 @@ namespace elena_lang
       {errClosureError, errMsgClosureError},
       {errInvalidType, errMsgInvalidType},
       {wrnUnknownTypecast, wrnMsgUnknownTypecast},
+      {errUnknownTypecast, errMsgUnknownTypecast},
       {wrnUnsupportedOperator, wrnMsgUnsupportedOperator},
+      {errUnsupportedOperator, errMsgUnsupportedOperator},
       {errInvalidParserTarget, errMsgInvalidParserTarget},
       {errInvalidParserTargetType, errMsgInvalidParserTargetType},
       {errTLSIsNotAllowed, errMsgTLSIsNotAllowed},

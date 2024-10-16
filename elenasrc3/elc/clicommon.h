@@ -313,6 +313,7 @@ public:
    Map<ref_t, bool>     cachedEmbeddableArrays;
    Map<ref_t, bool>     cachedStacksafeArgs;
    Map<ref_t, bool>     cachedWrappers; 
+   Map<ref_t, bool>     cachedSealed;
 
    virtual bool isStandardOne() = 0;
    virtual bool withValidation() = 0;
@@ -373,7 +374,8 @@ public:
       cachedEmbeddableStructs(false),
       cachedEmbeddableArrays(false),
       cachedStacksafeArgs(false),
-      cachedWrappers(false)
+      cachedWrappers(false),
+      cachedSealed(false)
    {
       this->module = module;
       this->debugModule = debugModule;

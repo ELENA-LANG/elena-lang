@@ -1366,6 +1366,8 @@ namespace elena_lang
          ObjectInfo convertObject(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool dynamicRequired,
             bool withoutBoxing, bool nillable, bool directConversion);
 
+         void handleUnsupportedMessageCall(SyntaxNode node, mssg_t message, ref_t targetRef, bool weakTarget, bool strongResolved);
+
          ObjectInfo compileMessageCall(SyntaxNode node, ObjectInfo target, MessageCallContext& context, MessageResolution resolution,
             ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs);
          ObjectInfo compileOperation(SyntaxNode loperand, SyntaxNode roperand,
@@ -1514,6 +1516,7 @@ namespace elena_lang
       bool                   _verbose;
       bool                   _noValidation;
       bool                   _withDebugInfo;
+      bool                   _strictTypeEnforcing;
 
       void addTypeInfo(Scope& scope, SyntaxNode node, SyntaxKey key, TypeInfo typeInfo);
 
@@ -1917,6 +1920,15 @@ namespace elena_lang
       void setEvaluateOp(bool flag)
       {
          _evaluateOp = flag;
+      }
+
+      bool checkStrictTypeFlag()
+      {
+         return _strictTypeEnforcing;
+      }
+      void setStrictTypeFlag(bool flag)
+      {
+         _strictTypeEnforcing = flag;
       }
 
       void setVerboseOn()
