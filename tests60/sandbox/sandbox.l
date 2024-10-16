@@ -15,30 +15,30 @@
 
 import system'text;
 
-interface X
-{
-   int calc(int arg)
-      = arg + 2;
-}
-
-singleton Y : X
-{
+//interface X
+//{
 //   int calc(int arg)
-//      = arg + 3;
-}
+//      = arg + 2;
+//}
+//
+//singleton Y : X
+//{
+////   int calc(int arg)
+////      = arg + 3;
+//}
+//
+//public program()
+//{
+//   int ret := Y.calc(3);
+//}
 
 public program()
 {
-   int ret := Y.calc(3);
-}
+      byte tmp[1024];
+      int tmpIndex := 0;
 
-//public program()
-//{
-//      byte tmp[1024];
-//      int tmpIndex := 0;
-//
-//         auto s := "abcd";
-//         int sLen := s.Length;
-//
-//         int tmpLen := UTF8Encoder.toByteArray(s, 0, ref sLen, tmp, tmpIndex, 1024);
-//}
+         auto s := "abcd";
+         int sLen := s.Length;
+
+         int tmpLen := UTF8Encoder.toByteArray(s, 0, ref sLen, tmp, tmpIndex, 1024);
+}

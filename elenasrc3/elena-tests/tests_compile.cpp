@@ -12,6 +12,18 @@ using namespace elena_lang;
 
 constexpr auto PrivateField_Scenario1 = "class (nameattr (identifier \"A\" ())field (attribute -2147467262 ()nameattr (identifier \"_x\" ()))method (nameattr (identifier \"setX\" ())code (expression (assign_operation (object (identifier \"_x\" ())expression (object (integer \"2\" ())))))))class (nameattr 62 (identifier \"B\" ())parent (type (identifier \"A\" ()))method (nameattr (identifier \"setParentX\" ())code (expression (assign_operation (object (identifier \"_x\" ())expression (object (integer \"2\" ())))))))";
 
+constexpr auto CallingIndexedethodFromSealed_Scenario1 = "expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"ret\" ())expression (message_operation (object (identifier \"Y\" ())message (identifier \"calc\" ())expression (object (integer \"3\" ())))))";
+
+#ifdef _M_IX86
+
+constexpr auto Build_CallingIndexedethodFromSealed_Scenario1 = "byrefmark -8 () local_address -8 () saving_stack 2() int_literal 2 (value 3 ())saving_stack 1 ()class_reference 5 ()saving_stack ()argument ()semi_direct_call_op 4355 (type 5 ()index_table_mode ())local_address -8 ()copying -4 (size 4 ())";
+
+#elif _M_X64
+
+constexpr auto Build_CallingIndexedethodFromSealed_Scenario1 = "byrefmark -24 () local_address -24 () saving_stack 2() int_literal 2 (value 3 ())saving_stack 1 ()class_reference 5 ()saving_stack ()argument ()semi_direct_call_op 4355 (type 5 ()index_table_mode ())local_address -24 ()copying -8 (size 4 ())";
+
+#endif
+
 // --- CompileScenarioTest ---
 
 void CompileScenarioTest :: SetUp()
@@ -85,4 +97,34 @@ TEST_F(AccessPrivateField, AccessPrivateFieldTest)
 TEST_F(AccessPrivateField, AccessParentPrivateFieldTest)
 {
    runTest(4, 106);
+}
+
+
+// --- CallingIndexedethodFromSealed ---
+/*
+interface X
+{
+   int calc(int arg)
+      = arg + 2;
+}
+
+singleton Y : X {}
+
+{
+   int ret := Y.calc(3); // Must be indexed call
+}
+*/
+void CallingIndexedMethodFromSealed::SetUp()
+{
+   ExprTest::SetUp();
+
+   LoadDeclarationScenario(S_DefaultNamespace_2, S_IntNumber, S_IntRefeference, IndexedClass_Scenario1);
+   SyntaxTreeSerializer::load(CallingIndexedethodFromSealed_Scenario1, exprNode);
+
+   BuildTreeSerializer::load(Build_CallingIndexedethodFromSealed_Scenario1, buildNode);
+}
+
+TEST_F(CallingIndexedMethodFromSealed, CallingIndexedMethodTest)
+{
+   runBuildTest(true, false);
 }

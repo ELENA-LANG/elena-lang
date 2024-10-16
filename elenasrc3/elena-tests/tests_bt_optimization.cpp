@@ -117,6 +117,8 @@ constexpr auto ComplexStructSize = 24;
 
 #endif
 
+// --- BTOptimization ---
+
 void BTOptimization :: SetUp()
 {
    PathString appPath;
@@ -128,54 +130,9 @@ void BTOptimization :: SetUp()
       btRules.load(btRuleReader, btRuleReader.length());
    }
 
-   SyntaxTreeWriter writer(syntaxTree);
-   writer.appendNode(SyntaxKey::Root);
+   ExprTest::SetUp();
 
-   BuildTreeWriter buildWriter(buildTree);
-   buildWriter.appendNode(BuildKey::Root);
-
-   declarationNode = syntaxTree.readRoot().appendChild(SyntaxKey::Idle, 1);
-   exprNode = syntaxTree.readRoot().appendChild(SyntaxKey::Idle, 2);
-
-   beforeOptimization = buildTree.readRoot().appendChild(BuildKey::Tape);
    afterOptimization = buildTree.readRoot().appendChild(BuildKey::Tape);
-}
-
-void BTOptimization :: runBuildTest(bool declareOperators)
-{
-   // Arrange
-   ModuleScopeBase* moduleScope = env.createModuleScope(true);
-   moduleScope->buildins.superReference = 1;
-   moduleScope->buildins.intReference = 2;
-   moduleScope->buildins.wrapperTemplateReference = 3;
-
-   Compiler* compiler = env.createCompiler();
-
-   BuildTree output;
-   BuildTreeWriter writer(output);
-   Compiler::Namespace nsScope(compiler, moduleScope, nullptr, nullptr, nullptr);
-
-   Compiler::Class cls(nsScope, 0, Visibility::Internal);
-   Compiler::Method method(cls);
-   Compiler::Code code(method);
-
-   // Act
-   nsScope.declare(declarationNode.firstChild(), true);
-
-   if (declareOperators)
-      env.initializeOperators(moduleScope);
-
-   writer.newNode(BuildKey::Tape);
-   Compiler::Expression expression(code, writer);
-   expression.compileRoot(exprNode.firstChild(), ExpressionAttribute::NoDebugInfo);
-   writer.closeNode();
-
-   // Assess
-   bool matched = BuildTree::compare(beforeOptimization, output.readRoot(), true);
-   EXPECT_TRUE(matched);
-
-   freeobj(compiler);
-   freeobj(moduleScope);
 }
 
 void BTOptimization :: runBTTest()
@@ -187,7 +144,7 @@ void BTOptimization :: runBTTest()
 
    BuildTree output;
    BuildTreeWriter writer(output);
-   BuildTree::copyNode(writer, beforeOptimization, true);
+   BuildTree::copyNode(writer, buildNode, true);
 
    // Act
    buildTreeOptimizer.proceed(output.readRoot());
@@ -267,7 +224,7 @@ void BTOptimization1_1 :: SetUp()
    SyntaxTreeSerializer::load(Declaration1_1, declarationNode);
    SyntaxTreeSerializer::load(SyntaxTree1_1, exprNode);
 
-   BuildTreeSerializer::load(BuildTree1_1, beforeOptimization);
+   BuildTreeSerializer::load(BuildTree1_1, buildNode);
    BuildTreeSerializer::load(OptimizedBuildTree1_1, afterOptimization);
 }
 
@@ -280,7 +237,7 @@ void BTOptimization1_2 :: SetUp()
    SyntaxTreeSerializer::load(Declaration1_2, declarationNode);
    SyntaxTreeSerializer::load(SyntaxTree1_2, exprNode);
 
-   BuildTreeSerializer::load(BuildTree1_2, beforeOptimization);
+   BuildTreeSerializer::load(BuildTree1_2, buildNode);
    BuildTreeSerializer::load(OptimizedBuildTree1_2, afterOptimization);
 }
 
@@ -293,7 +250,7 @@ void BTOptimization1_3 :: SetUp()
    SyntaxTreeSerializer::load(Declaration1_2, declarationNode);
    SyntaxTreeSerializer::load(SyntaxTree1_3, exprNode);
 
-   BuildTreeSerializer::load(BuildTree1_2, beforeOptimization);
+   BuildTreeSerializer::load(BuildTree1_2, buildNode);
    BuildTreeSerializer::load(OptimizedBuildTree1_2, afterOptimization);
 }
 
@@ -306,7 +263,7 @@ void BTOptimization2 :: SetUp()
    SyntaxTreeSerializer::load(Declaration2, declarationNode);
    SyntaxTreeSerializer::load(SyntaxTree2, exprNode);
 
-   BuildTreeSerializer::load(BuildTree2, beforeOptimization);
+   BuildTreeSerializer::load(BuildTree2, buildNode);
    BuildTreeSerializer::load(OptimizedBuildTree2, afterOptimization);
 }
 
@@ -319,7 +276,7 @@ void BTOptimization4 :: SetUp()
    SyntaxTreeSerializer::load(Declaration2, declarationNode);
    SyntaxTreeSerializer::load(SyntaxTree4, exprNode);
 
-   BuildTreeSerializer::load(BuildTree4, beforeOptimization);
+   BuildTreeSerializer::load(BuildTree4, buildNode);
    BuildTreeSerializer::load(OptimizedBuildTree4, afterOptimization);
 }
 
