@@ -140,8 +140,8 @@ namespace elena_lang
       bool isStacksafeArg(ModuleScopeBase& scope, ref_t reference);
       bool isStacksafeArg(ClassInfo& info);
 
-      bool isSealedClass(ClassInfo& info);
-      bool isSealedClass(ModuleScopeBase& scope, ref_t reference);
+      bool isClosedClass(ClassInfo& info);
+      bool isClosedClass(ModuleScopeBase& scope, ref_t reference);
 
       bool isMultiMethod(ClassInfo& info, MethodInfo& methodInfo);
 

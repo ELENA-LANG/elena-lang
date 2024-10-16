@@ -1477,16 +1477,16 @@ bool CompilerLogic :: isWrapper(ClassInfo& info)
       && !test(info.header.flags, elDynamicRole);
 }
 
-bool CompilerLogic :: isSealedClass(ModuleScopeBase& scope, ref_t reference)
+bool CompilerLogic ::isClosedClass(ModuleScopeBase& scope, ref_t reference)
 {
-   if (scope.cachedSealed.exist(reference))
-      return scope.cachedSealed.get(reference);
+   if (scope.cachedClosed.exist(reference))
+      return scope.cachedClosed.get(reference);
 
    ClassInfo info;
    if (defineClassInfo(scope, info, reference, true)) {
-      auto retVal = isSealedClass(info);
+      auto retVal = isClosedClass(info);
 
-      scope.cachedSealed.add(reference, retVal);
+      scope.cachedClosed.add(reference, retVal);
 
       return retVal;
    }
@@ -1494,9 +1494,9 @@ bool CompilerLogic :: isSealedClass(ModuleScopeBase& scope, ref_t reference)
    return false;
 }
 
-bool CompilerLogic :: isSealedClass(ClassInfo& info)
+bool CompilerLogic :: isClosedClass(ClassInfo& info)
 {
-   return test(info.header.flags, elSealed);
+   return test(info.header.flags, elClosed);
 }
 
 bool CompilerLogic :: isMultiMethod(ClassInfo& info, MethodInfo& methodInfo)

@@ -13716,18 +13716,18 @@ void Compiler::Expression :: handleUnsupportedMessageCall(SyntaxNode node, mssg_
          }
 
          if ((message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE) {
-            if (compiler->_strictTypeEnforcing && compiler->_logic->isSealedClass(*scope.moduleScope, targetRef)) {
+            if (compiler->_strictTypeEnforcing && compiler->_logic->isClosedClass(*scope.moduleScope, targetRef)) {
                scope.raiseError(errUnknownTypecast, node);
             }
             else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownTypecast, node);
          }
          else if (message == scope.moduleScope->buildins.refer_message) {
-            if (compiler->_strictTypeEnforcing && compiler->_logic->isSealedClass(*scope.moduleScope, targetRef)) {
+            if (compiler->_strictTypeEnforcing && compiler->_logic->isClosedClass(*scope.moduleScope, targetRef)) {
                scope.raiseError(errUnsupportedOperator, node);
             }
             else scope.raiseWarning(WARNING_LEVEL_1, wrnUnsupportedOperator, node);
          }
-         else if (compiler->_strictTypeEnforcing && compiler->_logic->isSealedClass(*scope.moduleScope, targetRef)) {
+         else if (compiler->_strictTypeEnforcing && compiler->_logic->isClosedClass(*scope.moduleScope, targetRef)) {
             scope.raiseError(errUnknownFunction, node);
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownFunction, node);
@@ -13744,7 +13744,7 @@ void Compiler::Expression :: handleUnsupportedMessageCall(SyntaxNode node, mssg_
                compiler->_errorProcessor->info(infoTargetClass, name);
          }
 
-         if (compiler->_strictTypeEnforcing && compiler->_logic->isSealedClass(*scope.moduleScope, targetRef)) {
+         if (compiler->_strictTypeEnforcing && compiler->_logic->isClosedClass(*scope.moduleScope, targetRef)) {
             scope.raiseError(errUnknownMessage, messageNode);
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, messageNode);
