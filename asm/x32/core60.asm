@@ -151,7 +151,8 @@ inline % GC_ALLOC
 
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
   add  ecx, eax
-  cmp  ecx, [data : %CORE_GC_TABLE + gc_yg_end]
+  mov  edi, [data : %CORE_GC_TABLE + gc_yg_end]
+  cmp  ecx, edi
   jae  short labYGCollect
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
   lea  ebx, [eax + elObjectOffset]
@@ -310,7 +311,8 @@ labSplit:
 labStart:
   shr   esi, 1
   setnc cl
-  cmp   edx, [edi+esi*8]
+  mov   eax, [edi+esi*8]
+  cmp   edx, eax
   je    short labFound
   lea   eax, [edi+esi*8]
   jb    short labSplit
@@ -507,7 +509,7 @@ inline %17h
   setl cl
   cmp  ebx, eax
   setg ch
-  cmp  ecx, 0
+  test ecx, ecx
 
 end
 
@@ -1810,7 +1812,8 @@ labSplit:
 labStart:
   shr   esi, 1
   setnc cl
-  cmp   edx, [edi+esi*8]
+  mov   eax, [edi+esi*8]
+  cmp   edx, eax
   je    short labFound
   lea   eax, [edi+esi*8]
   jb    short labSplit
@@ -1849,7 +1852,7 @@ end
 // ; cmpr 0
 inline %1C0h
 
-  cmp  ebx, 0
+  test ebx, ebx
 
 end 
 
@@ -1967,7 +1970,8 @@ end
 // ; xcmpsi
 inline %0C6h
 
-  cmp  edx, [esp + __arg32_1]
+  mov  eax, [esp + __arg32_1]
+  cmp  edx, eax
 
 end 
 
@@ -1981,14 +1985,16 @@ end
 // ; cmpfi
 inline %0C8h
 
-  cmp  ebx, [ebp + __arg32_1]
+  mov  eax, [ebp + __arg32_1]
+  cmp  ebx, eax
 
 end 
 
 // ; cmpsi
 inline %0C9h
 
-  cmp  ebx, [esp + __arg32_1]
+  mov  eax, [esp + __arg32_1]
+  cmp  ebx, eax
 
 end 
 

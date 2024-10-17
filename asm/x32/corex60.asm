@@ -654,7 +654,7 @@ inline %17h
   setl cl
   cmp  ebx, eax
   setg ch
-  cmp  ecx, 0
+  test ecx, ecx
 
 end
 

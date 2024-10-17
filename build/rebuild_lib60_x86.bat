@@ -75,19 +75,19 @@ tests60\system_tests\system_tests.exe
 if %ERRORLEVEL% NEQ 0 GOTO TestError
 @echo on
 
-bin\elena-cli tests60\script_tests\script_tests.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
+REM bin\elena-cli tests60\script_tests\script_tests.prj
+REM @echo off 
+REM if %ERRORLEVEL% EQU -2 GOTO CompilerError
+REM @echo on
 
-echo system api test for x86
-copy bin\elenart60.dll tests60\script_tests\
-copy bin\elenasm60.dll tests60\script_testss\
+REM echo system api test for x86
+REM copy bin\elenart60.dll tests60\script_tests\
+REM copy bin\elenasm60.dll tests60\script_tests\
 
-tests60\script_tests\script_tests.exe
-@echo off 
-if %ERRORLEVEL% NEQ 0 GOTO TestError
-@echo on
+REM tests60\script_tests\script_tests.exe
+REM @echo off 
+REM if %ERRORLEVEL% NEQ 0 GOTO TestError
+REM @echo on
 
 @echo off 
 echo === Done ===

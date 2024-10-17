@@ -27,12 +27,12 @@ In development:
   prom: posting weekly
   --------------------------------------
   * review pi performance (must < 6)
-  * start to look at the basic low level optimization (Modern X86 Assembly Language Programming)
   * test linix versions
   * test all x86 examples (net)
   * x86-64 : mta - main sample sandbox2
-  --------------------------------------
   * x86-64 mta - sandbox2 : fix GC issue
+  --------------------------------------
+  * Align branch targets in performance-critical loops to 16-byte boundaries
 
   ### EPIC: elena 6.6 ###
 

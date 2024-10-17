@@ -705,7 +705,7 @@ inline %17h
   setl cl
   cmp  rbx, rax
   setg ch
-  cmp  ecx, 0
+  test ecx, ecx
 
 end
 

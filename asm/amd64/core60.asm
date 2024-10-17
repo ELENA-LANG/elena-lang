@@ -525,7 +525,7 @@ inline %17h
   setl cl
   cmp  rbx, rax
   setg ch
-  cmp  ecx, 0
+  test ecx, ecx
 
 end
 
@@ -1802,8 +1802,7 @@ end
 // ; cmpr 0
 inline %1C0h
 
-  mov  rax, 0
-  cmp  rbx, rax
+  test rbx, rbx
 
 end 
 
