@@ -738,46 +738,47 @@ namespace elena_lang
    constexpr auto VM_CONSOLE_KEY    = "VM STA Console";
    constexpr auto VM_GUI_KEY        = "VM STA GUI";
 
-   constexpr auto CONFIG_ROOT             = "configuration";
-   constexpr auto PLATFORM_CATEGORY       = "configuration/platform";
+   constexpr auto CONFIG_ROOT                   = "configuration";
+   constexpr auto PLATFORM_CATEGORY             = "configuration/platform";
 
-   constexpr auto COLLECTION_CATEGORY     = "configuration/collection/*";
+   constexpr auto COLLECTION_CATEGORY           = "configuration/collection/*";
 
-   constexpr auto TEMPLATE_CATEGORY       = "templates/*";
-   constexpr auto PRIMITIVE_CATEGORY      = "primitives/*";
-   constexpr auto FORWARD_CATEGORY        = "forwards/*";
-   constexpr auto EXTERNAL_CATEGORY       = "externals/*";
-   constexpr auto WINAPI_CATEGORY         = "winapi/*";
-   constexpr auto REFERENCE_CATEGORY      = "references/*";
-   constexpr auto MODULE_CATEGORY         = "files/*";
-   constexpr auto FILE_CATEGORY           = "include/*";
-   constexpr auto PARSER_TARGET_CATEGORY  = "targets/*";
-   constexpr auto PROFILE_CATEGORY        = "/profile";
+   constexpr auto TEMPLATE_CATEGORY             = "templates/*";
+   constexpr auto PRIMITIVE_CATEGORY            = "primitives/*";
+   constexpr auto FORWARD_CATEGORY              = "forwards/*";
+   constexpr auto EXTERNAL_CATEGORY             = "externals/*";
+   constexpr auto WINAPI_CATEGORY               = "winapi/*";
+   constexpr auto REFERENCE_CATEGORY            = "references/*";
+   constexpr auto MODULE_CATEGORY               = "files/*";
+   constexpr auto FILE_CATEGORY                 = "include/*";
+   constexpr auto PARSER_TARGET_CATEGORY        = "targets/*";
+   constexpr auto PROFILE_CATEGORY              = "/profile";
 
-   constexpr auto LIB_PATH                = "project/libpath";
-   constexpr auto OUTPUT_PATH             = "project/output";
-   constexpr auto TARGET_PATH             = "project/executable";
-   constexpr auto PROJECT_TEMPLATE        = "project/template";
-   constexpr auto NAMESPACE_KEY           = "project/namespace";
-   constexpr auto DEBUGMODE_PATH          = "project/debuginfo";
-   constexpr auto FILE_PROLOG             = "project/prolog";
-   constexpr auto FILE_EPILOG             = "project/epilog";
-   constexpr auto MODULE_PROLOG           = "project/moduleProlog";
-   constexpr auto AUTOEXTENSION_PATH      = "project/autoextension";
+   constexpr auto LIB_PATH                      = "project/libpath";
+   constexpr auto OUTPUT_PATH                   = "project/output";
+   constexpr auto TARGET_PATH                   = "project/executable";
+   constexpr auto PROJECT_TEMPLATE              = "project/template";
+   constexpr auto NAMESPACE_KEY                 = "project/namespace";
+   constexpr auto DEBUGMODE_PATH                = "project/debuginfo";
+   constexpr auto FILE_PROLOG                   = "project/prolog";
+   constexpr auto FILE_EPILOG                   = "project/epilog";
+   constexpr auto MODULE_PROLOG                 = "project/moduleProlog";
+   constexpr auto AUTOEXTENSION_PATH            = "project/autoextension";
+   constexpr auto STRICT_TYPE_ENFORCING_PATH    = "project/stricttype";
 
-   constexpr auto PLATFORMTYPE_KEY        = "system/platform";
+   constexpr auto PLATFORMTYPE_KEY              = "system/platform";
 
-   constexpr auto MGSIZE_PATH             = "linker/mgsize";
-   constexpr auto YGSIZE_PATH             = "linker/ygsize";
-   constexpr auto THREAD_COUNTER          = "linker/threadcounter";
+   constexpr auto MGSIZE_PATH                   = "linker/mgsize";
+   constexpr auto YGSIZE_PATH                   = "linker/ygsize";
+   constexpr auto THREAD_COUNTER                = "linker/threadcounter";
 
-   constexpr auto MANIFEST_NAME           = "manifest/name";
-   constexpr auto MANIFEST_VERSION        = "manifest/version";
-   constexpr auto MANIFEST_AUTHOR         = "manifest/author";
+   constexpr auto MANIFEST_NAME                 = "manifest/name";
+   constexpr auto MANIFEST_VERSION              = "manifest/version";
+   constexpr auto MANIFEST_AUTHOR               = "manifest/author";
 
-   constexpr auto RETVAL_ARG              = "$retVal";
-   constexpr auto PARENT_VAR              = "$parent";
-   constexpr auto OWNER_VAR               = "$owner";
+   constexpr auto RETVAL_ARG                    = "$retVal";
+   constexpr auto PARENT_VAR                    = "$parent";
+   constexpr auto OWNER_VAR                     = "$owner";
 
    inline ustr_t getPlatformName(PlatformType type)
    {

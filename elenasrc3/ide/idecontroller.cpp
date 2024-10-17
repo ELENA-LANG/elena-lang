@@ -42,6 +42,45 @@ inline ustr_t getPlatformName(PlatformType type)
    }
 }
 
+inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue)
+{
+   // read target type; merge it with platform if required
+   ConfigFile::Node targetType = config.selectNode(xpath);
+   if (!targetType.isNotFound()) {
+      DynamicString<char> key;
+      targetType.readContent(key);
+
+      return key.toInt();
+   }
+   else return defValue;
+}
+
+inline void loadSetting(ConfigFile& config, ustr_t xpath, IdentifierString& retVal)
+{
+   // read target type; merge it with platform if required
+   ConfigFile::Node targetType = config.selectNode(xpath);
+   if (!targetType.isNotFound()) {
+      DynamicString<char> key;
+      targetType.readContent(key);
+
+      retVal.copy(key.str());
+   }
+   else retVal.clear();
+}
+
+inline void saveSetting(ConfigFile& config, ustr_t xpath, int value)
+{
+   String<char, 15> number;
+   number.appendInt(value);
+
+   config.appendSetting(xpath, number.str());
+}
+
+inline void removeSetting(ConfigFile& config, ustr_t xpath)
+{
+   config.removeSetting(xpath);
+}
+
 // --- SourceViewController ---
 
 void SourceViewController :: newSource(TextViewModelBase* model, ustr_t caption, bool included, bool autoSelect, int& status)
@@ -447,6 +486,13 @@ bool ProjectController :: compileSingleFile(ProjectModel& model, int postponedAc
       cmdLine.append(*model.templateName);
    }
 
+   if (model.strictType == -1) {
+      cmdLine.append(" -xs");
+   }
+   else if (model.strictType == -1) {
+      cmdLine.append(" -xs-");
+   }
+
    PathString curDir;
    curDir.append(*model.projectPath);
 
@@ -502,6 +548,8 @@ void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, Co
 
       model.outputPath.copy(value.str());
    }
+
+   model.strictType = loadSetting(config, STRICT_TYPE_SETTING, 1);
 
    DynamicString<char> subNs;
    DynamicString<char> path;
@@ -624,6 +672,11 @@ void ProjectController :: saveConfig(ProjectModel& model, ConfigFile& config, Co
       }
       else config.appendSetting(TARGET_CATEGORY, *model.target);
    }
+
+   if (model.strictType == FLAG_UNDEFINED) {
+      removeSetting(config, STRICT_TYPE_SETTING);
+   }
+   else saveSetting(config, STRICT_TYPE_SETTING, model.strictType);
 
    // remove source files
    for (auto it = model.removeSources.start(); !it.eof(); ++it) {
@@ -929,32 +982,6 @@ void ProjectController :: excludeFile(ProjectModel& model, path_t filePath)
 
 // --- IDEController ---
 
-inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue)
-{
-   // read target type; merge it with platform if required
-   ConfigFile::Node targetType = config.selectNode(xpath);
-   if (!targetType.isNotFound()) {
-      DynamicString<char> key;
-      targetType.readContent(key);
-
-      return key.toInt();
-   }
-   else return defValue;
-}
-
-inline void loadSetting(ConfigFile& config, ustr_t xpath, IdentifierString& retVal)
-{
-   // read target type; merge it with platform if required
-   ConfigFile::Node targetType = config.selectNode(xpath);
-   if (!targetType.isNotFound()) {
-      DynamicString<char> key;
-      targetType.readContent(key);
-
-      retVal.copy(key.str());
-   }
-   else retVal.clear();
-}
-
 inline void loadRecentFiles(ConfigFile& config, ustr_t xpath, ProjectPaths& paths)
 {
    DynamicString<char> path;
@@ -986,14 +1013,6 @@ inline void loadCollectionKey(ConfigFile& config, ConfigFile::Node& rootNode, us
          keyList.add(ustr_t(key.str()).clone());
       }
    }
-}
-
-inline void saveSetting(ConfigFile& config, ustr_t xpath, int value)
-{
-   String<char, 15> number;
-   number.appendInt(value);
-
-   config.appendSetting(xpath, number.str());
 }
 
 inline void saveRecentFiles(ConfigFile& config, ustr_t xpath, ProjectPaths& paths)
