@@ -3,9 +3,9 @@ In development:
 ------         
 
 [development]
-  ### EPIC: elena 6.5 ###
+  ### EPIC: elena 6.6 ###
 
-  === Iteration 34 (21.10) ===
+  === Iteration 35 (2.11) ===
   --------------------------------------
   dev: 
       - upndown (connector)
@@ -37,9 +37,7 @@ In development:
   --------------------------------------
   * new opcode xnop - if the jump alignment optimization is on, the follow command is alligned to 16bit offset
 
-  ### EPIC: elena 6.6 ###
-
-  === Iteration 35 ===
+  === Iteration 36 ===
   --------------------------------------
   dev: 
   gen:
@@ -49,7 +47,7 @@ In development:
   --------------------------------------
   --------------------------------------
 
-  === Iteration 36 ===
+  === Iteration 37 ===
   --------------------------------------
   dev: 
   gen:
