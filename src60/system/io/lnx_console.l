@@ -97,7 +97,7 @@ namespace io
 
             int ch := extern libc.getchar();
 
-            byte b := byteConvertor.convert(ch);
+            byte b := ByteConvertor.convert(ch);
     
             buffer[i] := b;
     
