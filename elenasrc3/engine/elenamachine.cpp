@@ -378,17 +378,17 @@ bool SystemRoutineProvider :: CheckMessage(MemoryBase* msection, void* classPtr,
 
 // --- ELENAMachine ---
 
-addr_t ELENAMachine :: execute(SystemEnv* env, void* entryAddress)
+addr_t ELENAMachine :: execute(void* entryAddress)
 {
    Entry entry;
-   entry.address = env->bc_invoker;
+   entry.address = entryAddress;
 
    // executing the program   
 
    addr_t retVal = 0;
    try
    {
-      retVal = entry.evaluate(entryAddress, nullptr);
+      retVal = entry.evaluate0();
    }
    catch (InternalError&)
    {
@@ -400,12 +400,14 @@ addr_t ELENAMachine :: execute(SystemEnv* env, void* entryAddress)
    return retVal;
 }
 
-addr_t ELENAMachine :: execute(SystemEnv* env, void* threadEntry, void* threadFunc)
+addr_t ELENAMachine :: execute(void* entryAddress, void* arg)
 {
    Entry entry;
-   entry.address = env->bc_invoker;
+   entry.address = entryAddress;
 
-   addr_t retVal = entry.evaluate(threadEntry, threadFunc);
+   // executing the program   
+
+   addr_t retVal = entry.evaluate1(arg);
 
    return retVal;
 }

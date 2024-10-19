@@ -199,7 +199,7 @@ public extension byteOp : ByteNumber
    {
       var retVal := self / operand * operand;
         
-      ^ byteConvertor.convert(retVal)
+      ^ ByteConvertor.convert(retVal)
    }
 
    bool isOdd()
@@ -285,7 +285,7 @@ public extension shortOp : ShortNumber
    {
       var retVal := self / operand * operand;
         
-      ^ shortConvertor.convert(retVal)
+      ^ ShortConvertor.convert(retVal)
    }    
 
    bool isOdd()
@@ -312,7 +312,7 @@ public extension shortOp : ShortNumber
       w := w & 0FF00h;
       w := w.shiftRight(8);
         
-      ^ byteConvertor.convert(w)
+      ^ ByteConvertor.convert(w)
    }
         
    get byte Low()
@@ -320,7 +320,7 @@ public extension shortOp : ShortNumber
       short w := self;
       w := w & 0FFh;
         
-      ^ byteConvertor.convert(w)
+      ^ ByteConvertor.convert(w)
    }
 }
 
@@ -428,7 +428,7 @@ public extension intOp : IntNumber
       w := w & 0FFFF0000h;
       w := w.shiftRight(8);
         
-      ^ shortConvertor.convert(w)
+      ^ ShortConvertor.convert(w)
    }
         
    get short Low()
@@ -436,7 +436,7 @@ public extension intOp : IntNumber
       int w := self;
       w := w & 0FFFFh;
         
-      ^ shortConvertor.convert(w)
+      ^ ShortConvertor.convert(w)
    }
 }
 
@@ -642,7 +642,7 @@ public extension longOp : LongNumber
       w := w & -4294967296l;
       w := w.shiftRight(32);
         
-      ^ intConvertor.convert(w)
+      ^ IntConvertor.convert(w)
    }
 
    get int Low()
@@ -650,7 +650,7 @@ public extension longOp : LongNumber
       long w := self;
       w := w & 4294967295l;
         
-      ^ intConvertor.convert(w)
+      ^ IntConvertor.convert(w)
    }
 }
 
@@ -831,7 +831,7 @@ public extension realOp : RealNumber
    }
 
    get int IntegerInt()
-      = intConvertor.convert(self.Integer);
+      = IntConvertor.convert(self.Integer);
 
    get real Rounded()
    {
@@ -841,7 +841,7 @@ public extension realOp : RealNumber
    }
 
    get int RoundedInt()
-      = intConvertor.convert(self.Rounded);
+      = IntConvertor.convert(self.Rounded);
 
    get real Absolute()
    {
@@ -907,7 +907,7 @@ public extension realOp : RealNumber
       int b := 10.power(precision);
       real r := a * b + 0.5r;
         
-      int c := intConvertor.convert(r.Rounded);
+      int c := IntConvertor.convert(r.Rounded);
     
       a := c.realDiv(b);
     
@@ -1217,25 +1217,25 @@ public extension charOp : CharValue
    bool isWhitespace()
    {
       self =>
-         $9  { ^ true }
-         $32 { ^ true }
-         $10 { ^ true }
-         $13 { ^ true }
-         $12 { ^ true };
+         $9  : { ^ true }
+         $32 : { ^ true }
+         $10 : { ^ true }
+         $13 : { ^ true }
+         $12 : { ^ true };
             
       ^ false
    }
 
    bool isDigit()
    {
-      int ch := intConvertor.convert(self);
+      int ch := IntConvertor.convert(self);
         
       ^ (ch >= 30h) && (ch <= 39h)
    }
 
    bool isLetter()
    {
-      int ch := intConvertor.convert(self);
+      int ch := IntConvertor.convert(self);
         
       if (ch >= 41h && ch <= 5Ah)
          { ^ true };
@@ -1254,7 +1254,7 @@ public extension charOp : CharValue
     
    bool isLToken()
    {
-      int ch := intConvertor.convert(self);
+      int ch := IntConvertor.convert(self);
         
       if (ch >= 41h && ch <= 5Ah)
          { ^ true };

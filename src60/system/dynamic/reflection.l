@@ -13,7 +13,7 @@ public extension classROp
       {
          ifnot (tmp_array[i].anyMask(60h))
          {
-            Message message := mssgConvertor.convert(tmp_array[i]);
+            Message message := MssgConvertor.convert(tmp_array[i]);
                
             list.append(message);
          };
@@ -35,7 +35,7 @@ public extension classROp
          {
             int count := tmp_array[i] & 01Fh;
             if (count == 1) {
-               Message message := mssgConvertor.convert(tmp_array[i]);
+               Message message := MssgConvertor.convert(tmp_array[i]);
                    
                MessageName prop := message.MessageName;
                    

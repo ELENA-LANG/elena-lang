@@ -71,6 +71,7 @@ namespace elena_lang
 
       XFSave         = 0x30,
       AltMode        = 0x31,  
+      XNop           = 0x32,
       XQuit          = 0x34,
 
       FIAdd          = 0x70,
@@ -484,7 +485,7 @@ namespace elena_lang
       static mssg_t resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode);
       static mssg_t resolveMessageName(ustr_t messageName, ModuleBase* module, bool readOnlyMode);
 
-      static void generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* module, MemoryDump& tapeSymbol);
+      static void generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* module, MemoryDump& tapeSymbol, bool withExtFrame);
    };
 
    enum class ByteCodePatternType

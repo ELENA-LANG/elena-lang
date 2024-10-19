@@ -145,6 +145,8 @@ namespace io
 
       TextWriter writer(path) = StreamWriter.new(FileStream.openForReWrite(path), UTF8Encoder);
 
+      TextWriter writer(string path, Encoder encoder) = StreamWriter.new(FileStream.openForReWrite(path), encoder);
+
       TextWriter logger(path) = StreamWriter.new(FileStream.openForAppend(path), UTF8Encoder);
 
       bool isAvailable(path)

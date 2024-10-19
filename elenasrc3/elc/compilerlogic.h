@@ -140,6 +140,9 @@ namespace elena_lang
       bool isStacksafeArg(ModuleScopeBase& scope, ref_t reference);
       bool isStacksafeArg(ClassInfo& info);
 
+      bool isClosedClass(ClassInfo& info);
+      bool isClosedClass(ModuleScopeBase& scope, ref_t reference);
+
       bool isMultiMethod(ClassInfo& info, MethodInfo& methodInfo);
 
       bool isValidOp(int operatorId, const int* validOperators, size_t len);
@@ -217,6 +220,8 @@ namespace elena_lang
 
       virtual ref_t resolveExtensionTemplate(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern,
          ref_t signatureRef, ustr_t ns, ExtensionMap* outerExtensionList);
+      virtual ref_t resolveExtensionTemplateByTemplateArgs(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern, 
+         ustr_t ns, size_t argumentLen, ref_t* arguments, ExtensionMap* outerExtensionList);
 
       bool isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared);
 

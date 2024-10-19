@@ -313,6 +313,7 @@ public:
    Map<ref_t, bool>     cachedEmbeddableArrays;
    Map<ref_t, bool>     cachedStacksafeArgs;
    Map<ref_t, bool>     cachedWrappers; 
+   Map<ref_t, bool>     cachedClosed;
 
    virtual bool isStandardOne() = 0;
    virtual bool withValidation() = 0;
@@ -373,7 +374,8 @@ public:
       cachedEmbeddableStructs(false),
       cachedEmbeddableArrays(false),
       cachedStacksafeArgs(false),
-      cachedWrappers(false)
+      cachedWrappers(false),
+      cachedClosed(false)
    {
       this->module = module;
       this->debugModule = debugModule;
@@ -550,6 +552,9 @@ public:
    virtual void newNode(parse_key_t key, ustr_t arg) = 0;
    virtual void injectNode(parse_key_t key) = 0;
    virtual void renameNode(parse_key_t key) = 0;
+   virtual void mergeRChildren(parse_key_t key) = 0;
+   virtual void mergeLChildren(parse_key_t key) = 0;
+   virtual void encloseLastChild(parse_key_t key) = 0;
 
    virtual void appendTerminal(parse_key_t key, ustr_t value, LineInfo lineInfo) = 0;
 

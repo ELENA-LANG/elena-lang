@@ -274,7 +274,7 @@ namespace calendar
             long val := tm_usec;
             val /= 1000;
                 
-            int nval := intConvertor.convert(val);
+            int nval := IntConvertor.convert(val);
 
             ^ nval
          }

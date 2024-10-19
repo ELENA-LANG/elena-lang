@@ -143,7 +143,7 @@ namespace io
                subs_len := 128
             };
 
-            OEMEncoder.toByteArray(literal, index, ref subs_len, buffer, 0, ref buf_len);
+            buf_len := OEMEncoder.toByteArray(literal, index, ref subs_len, buffer, 0, buf_len);
 
             self.write(buffer, buf_len);
 

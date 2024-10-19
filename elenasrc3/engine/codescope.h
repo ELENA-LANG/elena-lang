@@ -68,8 +68,8 @@ namespace elena_lang
       }
 
       ReferenceMapper(ExternalMapper* externalMapper = nullptr) :
-         _symbolReferences(INVALID_ADDR), 
-         _exportReferences(INVALID_ADDR), 
+         _symbolReferences(INVALID_ADDR),
+         _exportReferences(INVALID_ADDR),
          _constReferences(INVALID_ADDR),
          _numberReferences(INVALID_ADDR),
          _literalReferences(INVALID_ADDR),
@@ -87,7 +87,7 @@ namespace elena_lang
          _lazyReferences({}),
          _externalMapper(externalMapper)
       {
-         
+
       }
    };
 
@@ -120,7 +120,7 @@ namespace elena_lang
       MemoryBase* getTargetDebugSection() override;
 
       ImageProvider() :
-         _text(), _mdata(), _adata(), _mbdata(), _rdata(),
+         _text(), _adata(), _mdata(), _mbdata(), _rdata(),
          _import(), _data(), _stat(), _tls(), _debug()
       {
       }

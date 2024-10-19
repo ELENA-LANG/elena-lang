@@ -11,6 +11,8 @@
 
 namespace elena_lang
 {
+   constexpr auto errFailedMemoryAllocation = -16;
+
    // --- MemoryDump ---
 
    class MemoryDump : public MemoryBase

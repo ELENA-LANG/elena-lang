@@ -27,7 +27,7 @@ CodeGenerator _codeGenerators[256] =
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
-   loadOp, compileAltMode, loadNop, loadNop, loadOp, loadNop, loadNop, loadNop,
+   loadOp, compileAltMode, loadXNop, loadNop, loadOp, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -83,10 +83,10 @@ constexpr ref_t coreConstants[coreConstantNumber] =
 };
 
 // preloaded gc routines
-constexpr int coreFunctionNumber = 7;
+constexpr int coreFunctionNumber = 6;
 constexpr ref_t coreFunctions[coreFunctionNumber] =
 {
-   INVOKER, GC_ALLOC, EXCEPTION_HANDLER, GC_COLLECT, GC_ALLOCPERM, PREPARE, THREAD_WAIT
+   GC_ALLOC, EXCEPTION_HANDLER, GC_COLLECT, GC_ALLOCPERM, PREPARE, THREAD_WAIT
 };
 
 // preloaded bc commands
@@ -320,6 +320,13 @@ void elena_lang :: loadNop(JITCompilerScope* scope)
    }
    // or add the label
    else scope->lh->setLabel(position, *scope->codeWriter, scope->helper);
+}
+
+void elena_lang :: loadXNop(JITCompilerScope* scope)
+{   
+   //scope->compiler->alignJumpAddress(*scope->codeWriter);
+
+   loadNop(scope);
 }
 
 void elena_lang :: loadLOp(JITCompilerScope* scope)
@@ -2604,7 +2611,7 @@ inline void loadPreloaded(JITCompilerScope& scope, LibraryLoaderBase* loader, si
                map.add(functions[i], (void*)(scope.helper->calculateVAddress(*scope.codeWriter, mask) & ~mskAnyRef));
             }
             else map.add(functions[i], (void*)scope.helper->calculateVAddress(*scope.codeWriter, mask));
-            
+
             positions.add(functions[i], scope.codeWriter->position());
 
             allocateCode(&scope, info.section->get(0));
@@ -3042,7 +3049,7 @@ void JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t 
    else {
       switch (mask) {
          case mskRef32:
-            MemoryBase::writeDWord(writer->Memory(), position, 
+            MemoryBase::writeDWord(writer->Memory(), position,
                ptrToUInt32(writer->Memory()->get(writer->position())));
             writer->Memory()->addReference(mskCodeRef32, position);
             break;
@@ -3080,7 +3087,7 @@ addr_t JITCompiler :: allocateTLSIndex(ReferenceHelperBase* helper, MemoryWriter
 
 pos_t JITCompiler :: getTLSSize(MemoryBase* tlsSection)
 {
-   if (tlsSection->length() > sizeof(ThreadContent)) {
+   if (tlsSection && tlsSection->length() > sizeof(ThreadContent)) {
       return tlsSection->length() - sizeof(ThreadContent);
    }
    return 0;
@@ -3375,7 +3382,7 @@ void JITCompiler32 :: addIndexEntry(mssg_t message, addr_t codeAddress, void* ta
    while (entries[index].message) {
       if (entries[index].message == message) {
          if (codeAddress == INVALID_ADDR) {
-            entries[index].address = findEntryAddress(entries, message, indexOffset);
+            entries[index].address = static_cast<pos_t>(findEntryAddress(entries, message, indexOffset));
          }
          else entries[index].address = (pos_t)codeAddress;
 
@@ -3387,14 +3394,14 @@ void JITCompiler32 :: addIndexEntry(mssg_t message, addr_t codeAddress, void* ta
 
    entries[index].message = message;
    if (codeAddress == INVALID_ADDR) {
-      entries[index].address = findEntryAddress(entries, message, indexOffset);
+      entries[index].address = static_cast<pos_t>(findEntryAddress(entries, message, indexOffset));
    }
    else entries[index].address = (pos_t)codeAddress;
 
    indexCount++;
 }
 
-void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo, 
+void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixInfo,
    FieldAddressMap& staticValues, bool virtualMode)
 {
    pos_t position = vmtWriter.position();
@@ -3450,7 +3457,7 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
       }
       else vmtWriter.writeDWord((pos_t)*it);
    }
-  
+
    vmtWriter.seek(position);
 
    if (fixInfo.outputListAddress) {
@@ -3458,7 +3465,7 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
          vmtWriter.writeDReference(addrToUInt32(fixInfo.outputListAddress) | mskRef32, 0);
       }
       else vmtWriter.writeDWord(addrToUInt32(fixInfo.outputListAddress));
-   }      
+   }
 }
 
 pos_t JITCompiler32 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName,
@@ -4195,7 +4202,7 @@ void JITCompiler64 :: updateEnvironment(MemoryBase* rdata, pos_t staticCounter, 
    void* env = _preloaded.get(SYSTEM_ENV);
    if (virtualMode) {
       MemoryBase::writeQWord(rdata, (int64_t)env & ~mskAnyRef, staticCounter);
-      MemoryBase::writeQWord(rdata, (int64_t)env & ~mskAnyRef + 8, tlsSize);
+      MemoryBase::writeQWord(rdata, ((int64_t)env & ~mskAnyRef) + 8, tlsSize);
    }
    else {
       ((int64_t*)env)[0] = staticCounter;

@@ -244,22 +244,22 @@ public class MainWindow : SDIDialog
       Econta4.Visible := false;
 
       index =>
-         0 {
+         0 : {
             Econta1.Visible := true;
 
             Econta1.SelectedIndex := 0
          }
-         1 {
+         1 : {
             Econta2.Visible := true;
 
             Econta2.SelectedIndex := 0
          }
-         2 {
+         2 : {
             Econta3.Visible := true;
 
             Econta3.SelectedIndex := 0
          }
-         3 {
+         3 : {
             Econta4.Visible := true;
 
             Econta4.SelectedIndex := 0
@@ -283,7 +283,7 @@ public class MainWindow : SDIDialog
       info.Caption  := "Info: ";
                 
       index =>
-         0 {
+         0 : {
             valUm.Visible := true;
             valDois.Visible := true;
             letter1.Visible := true;
@@ -292,13 +292,13 @@ public class MainWindow : SDIDialog
             letter1.Caption := "h: ";
             letter2.Caption := "b: ";
          }           
-         1 {
+         1 : {
             valUm.Visible := true;
             letter1.Visible := true;
             
             letter1.Caption := "b: "
          }
-         2 {
+         2 : {
             valUm.Visible := true;
             valDois.Visible := true;
             letter1.Visible := true;
@@ -307,7 +307,7 @@ public class MainWindow : SDIDialog
             letter1.Caption := "h: ";
             letter2.Caption := "b: ";
          }            
-         3 {
+         3 : {
             valUm.Visible := true;
             valDois.Visible := true;
             letter1.Visible := true;
@@ -316,7 +316,7 @@ public class MainWindow : SDIDialog
             letter1.Caption := "D: ";
             letter2.Caption := "d: ";
          }           
-         4 {
+         4 : {
             valUm.Visible := true;
             valDois.Visible := true;
             valTres.Visible := true;
@@ -328,7 +328,7 @@ public class MainWindow : SDIDialog
             letter2.Caption := "b: ";
             letter3.Caption := "h: ";
          }
-         5 {
+         5 : {
             valUm  .Visible := true;
             valDois.Visible := true;
             valTres.Visible := true;
@@ -340,7 +340,7 @@ public class MainWindow : SDIDialog
             letter2.Caption := "b: ";
             letter3.Caption := "h: ";
          }
-         6 {
+         6 : {
             valUm  .Visible := true;
             valDois.Visible := true;
             valTres.Visible := true;
@@ -352,13 +352,13 @@ public class MainWindow : SDIDialog
             letter2.Caption := "b: ";
             letter3.Caption := "h: ";
          }
-         7 {
+         7 : {
             valUm  .Visible := true;
             letter1.Visible := true;
             
             letter1.Caption := "r: ";
          }
-         8 {
+         8 : {
             valUm  .Visible := true;
             valDois.Visible := true;
             letter1.Visible := true;
@@ -367,7 +367,7 @@ public class MainWindow : SDIDialog
             letter1.Caption := "R: ";
             letter2.Caption := "r: ";
          }
-         9 {
+         9 : {
             valUm  .Visible := true;
             valDois.Visible := true;
             letter1.Visible := true;
@@ -378,7 +378,7 @@ public class MainWindow : SDIDialog
             
             info.Caption := "Info: Al = Alfa ( angulo )"
          }
-         10 {
+         10 : {
             valUm  .Visible := true;
             valDois.Visible := true;
             letter1.Visible := true;
@@ -387,7 +387,7 @@ public class MainWindow : SDIDialog
             letter1.Caption := "B: ";
             letter2.Caption := "H: ";
          }
-         11 {
+         11 : {
             valUm  .Visible := true;
             valDois.Visible := true;
             letter1.Visible := true;
@@ -396,13 +396,13 @@ public class MainWindow : SDIDialog
             letter1.Caption := "B: ";
             letter2.Caption := "C: ";
          }
-         12 {
+         12 : {
             valUm  .Visible := true;
             letter1.Visible := true;
             
             letter1.Caption := "A: ";
          }
-         13 {
+         13 : {
             valUm  .Visible := true;
             valDois.Visible := true;
             valTres.Visible := true;
@@ -414,7 +414,7 @@ public class MainWindow : SDIDialog
             letter2.Caption := "b: ";
             letter3.Caption := "c: ";
          }
-         14 {
+         14 : {
             valUm  .Visible := true;
             valDois.Visible := true;
             valTres.Visible := true;
@@ -437,72 +437,72 @@ public class MainWindow : SDIDialog
         var result := 0;
                 
         (_imageList.SelectedIndex) =>
-            0 {
+            0 : {
                 var H := valUm.Value.toReal();
                 var B := valDois.Value.toReal();
                 result := H * B
             }
-            1 {
+            1 : {
                 var B := valUm.Value.toReal();
                 result := B * B
             }
-            2 {
+            2 : {
                 var H := valUm.Value.toReal();
                 var B := valDois.Value.toReal();
                 result := H * B
             }
-            3 {
+            3 : {
                 var DM := valUm.Value.toReal();
                 var d := valDois.Value.toReal();
                 result := DM * d / 2
             }
-            4 {
+            4 : {
                 var BM := valUm.Value.toReal();
                 var b := valDois.Value.toReal();
                 var H := valTres.Value.toReal();
                 result := (BM + b)*H / 2
             }
-            5 {
+            5 : {
                 var BM := valUm.Value.toReal();
                 var b := valDois.Value.toReal();
                 var H := valTres.Value.toReal();
                 result := (BM + b)*H / 2
             }
-            6 {
+            6 : {
                 var BM := valUm.Value.toReal();
                 var b := valDois.Value.toReal();
                 var H := valTres.Value.toReal();
                 result := (BM + b)*H / 2
             }
-            7 {
+            7 : {
                 var R := valUm.Value.toReal();
                 result := Pi_value * R * R
             }
-            8 {
+            8 : {
                 var RM := valUm.Value.toReal();
                 var r := valDois.Value.toReal();
                 result := Pi_value * (RM * RM - r * r);
             }
-            9 {
+            9 : {
                 var Alfa := valUm.Value.toReal();
                 var R := valDois.Value.toReal();
                 result := Alfa * Pi_value * R * R / 360
             }
-            10 {
+            10 : {
                 var B := valUm.Value.toReal();
                 var H := valDois.Value.toReal();
                 result := B * H / 2;
             }
-            11 {
+            11 : {
                 var B := valUm.Value.toReal();
                 var C := valDois.Value.toReal();
                 result := B * C / 2;
             }
-            12 {
+            12 : {
                 var A := valUm.Value.toReal();
                 result := ((Pi_value.sqrt()) * A * A / 4).Rounded;
             }
-            13 {
+            13 : {
                 var A := valUm.Value.toReal();
                 var B := valDois.Value.toReal();
                 var C := valTres.Value.toReal();
@@ -512,7 +512,7 @@ public class MainWindow : SDIDialog
                 var val3 := P-C;
                 result := (P * (val1 * val2 * val3)).sqrt()
             }
-            14 {
+            14 : {
                 var Alfa := valUm.Value.toReal();
                 var A := valDois.Value.toReal();
                 var B := valTres.Value.toReal();

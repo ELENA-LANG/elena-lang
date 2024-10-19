@@ -21,6 +21,7 @@ namespace elena_lang
    constexpr parse_key_t pkTerminal       = 0x02000;
    constexpr parse_key_t pkError          = 0x04000;
    constexpr parse_key_t pkInjectable     = 0x08000;
+   constexpr parse_key_t pkTransformMark  = 0x09000;
    constexpr parse_key_t pkAnySymbolMask  = 0x0F000;
    constexpr parse_key_t pkMaxKey         = 0x0FFFF;
 

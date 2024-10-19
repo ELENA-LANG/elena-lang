@@ -1,6 +1,6 @@
 // --- byteConvertor ---
 
-public singleton byteConvertor
+public singleton ByteConvertor
 {
    convert(int n, out byte retVal) : external(system'core_routines'__intToByte);
 
@@ -60,21 +60,21 @@ public singleton byteConvertor
 
    byte convert(real r)
    {
-      int n := intConvertor.convert(r);
+      int n := IntConvertor.convert(r);
 
       ^ self.convert(n);
    }
 
    byte convert(string s, int radix)
    {
-      int n := intConvertor.convert(s, radix);
+      int n := IntConvertor.convert(s, radix);
 
       ^ self.convert(n);
    }
 
    byte convert(wide s, int radix)
    {
-      int n := intConvertor.convert(s, radix);
+      int n := IntConvertor.convert(s, radix);
 
       ^ self.convert(n);
    }
@@ -82,7 +82,7 @@ public singleton byteConvertor
 
 // --- sbyteConvertor ---
 
-public singleton sbyteConvertor
+public singleton SByteConvertor
 {
    convert(int n, out sbyte retVal) : external(system'core_routines'__intToSByte);
 
@@ -100,7 +100,7 @@ public singleton sbyteConvertor
 
 // --- shortConvertor ---
 
-public singleton shortConvertor
+public singleton ShortConvertor
 {
    private convertInt(int n, out short retVal) : external(system'core_routines'__intToShort);
 
@@ -140,35 +140,35 @@ public singleton shortConvertor
 
    short convert(long l)
    {
-      int n := intConvertor.convert(l);
+      int n := IntConvertor.convert(l);
 
       ^ self.convert(n)
    }
 
    short convert(real r)
    {
-      int n := intConvertor.convert(r);
+      int n := IntConvertor.convert(r);
 
       ^ self.convert(n)
    }
 
    short convert(char ch)
    {
-      int n := intConvertor.convert(ch);
+      int n := IntConvertor.convert(ch);
 
       ^ self.convert(n)
    }
 
    short convert(string s, int radix)
    {
-      int n := intConvertor.convert(s, radix);
+      int n := IntConvertor.convert(s, radix);
 
       ^ self.convert(n)
    }
 
    short convert(wide s, int radix)
    {
-      int n := intConvertor.convert(s, radix);
+      int n := IntConvertor.convert(s, radix);
 
       ^ self.convert(n)
    }
@@ -176,7 +176,7 @@ public singleton shortConvertor
 
 // --- ushortConvertor ---
 
-public singleton ushortConvertor
+public singleton UShortConvertor
 {
    private convertInt(int n, out ushort retVal) : external(system'core_routines'__intToUShort);
 
@@ -198,14 +198,15 @@ public singleton ushortConvertor
    }
 }
 
-// --- intConvertor ---
+// --- IntConvertor ---
 
-public singleton intConvertor
+public singleton IntConvertor
 {
    private convertChar(char ch, out int retVal) : external(system'core_routines'__charToInt);
    private convertLong(long l, out int retVal) : external(system'core_routines'__longToInt);
    private convertReal(real l, out int retVal) : external(system'core_routines'__realToInt);
    private convertUInt(uint l, out int retVal) : external(system'core_routines'__uintToInt);
+   private convertUShort(ushort s, out int retVal) : external(system'core_routines'__ushortToInt);
 
    int convert(o)
       = cast int(o);
@@ -233,6 +234,13 @@ public singleton intConvertor
    int convert(uint n)
    {
       self.convertUInt(n, out int retVal);
+
+      ^ retVal
+   }
+
+   int convert(ushort n)
+   {
+      self.convertUShort(n, out int retVal);
 
       ^ retVal
    }
@@ -312,9 +320,9 @@ public singleton intConvertor
       <= convert(s, 10);
 }
 
-// --- uintConvertor ---
+// --- uIntConvertor ---
 
-public singleton uintConvertor
+public singleton UIntConvertor
 {
    private copyDirectly(int n, out uint retVal) : external(system'core_routines'__intToUInt);
 
@@ -339,18 +347,18 @@ public singleton uintConvertor
    {
       int n := b;
 
-      ^ uintConvertor.convert(n);
+      ^ UIntConvertor.convert(n);
    }
 
    uint convert(short s)
    {
       int n := s;
 
-      ^ uintConvertor.convert(n);
+      ^ UIntConvertor.convert(n);
    }
    uint convert(long l)
    {
-      int n := intConvertor.convert(l);
+      int n := IntConvertor.convert(l);
 
       ^ self.convert(n);
    }
@@ -398,7 +406,7 @@ public singleton uintConvertor
 
 // --- longConvertor ---
 
-public singleton longConvertor
+public singleton LongConvertor
 {
    long convert(o)
       = cast long(o);
@@ -440,7 +448,7 @@ public singleton longConvertor
    long convert(real r)
    {
       // !! temporal implementation
-      int n := intConvertor.convert(r);
+      int n := IntConvertor.convert(r);
 
       long l := n;
 
@@ -449,7 +457,7 @@ public singleton longConvertor
 
    long convert(char ch)
    {
-      int n := intConvertor.convert(ch);
+      int n := IntConvertor.convert(ch);
 
       long l := n;
 
@@ -522,7 +530,7 @@ public singleton longConvertor
 
 // --- realConvertor ---
 
-public singleton realConvertor
+public singleton RealConvertor
 {
    real convert(o)
       = cast real(o);
@@ -548,7 +556,7 @@ public singleton realConvertor
       };
 
       bool inverted := false;
-      int intPart := intConvertor.convert(intPartStr, 10);
+      int intPart := IntConvertor.convert(intPartStr, 10);
       if (intPart < 0) {
          intPart := -intPart;
          inverted := true;
@@ -556,7 +564,7 @@ public singleton realConvertor
 
       real r := intPart;
       if (decimalPartStr != nil) {
-         real frac := intConvertor.convert(decimalPartStr, 10);
+         real frac := IntConvertor.convert(decimalPartStr, 10);
          for (int i := 0; i < decimalPartStr.Length; i += 1) {
             frac := frac * 0.1;
          };
@@ -571,7 +579,7 @@ public singleton realConvertor
    }
 
    real convert(wide w)
-      <= convert(stringConvertor.convert(w));
+      <= convert(StringConvertor.convert(w));
 
    real convert(byte b)
    {
@@ -603,7 +611,7 @@ public singleton realConvertor
 
    real convert(long l)
    {
-      int n := intConvertor.convert(l);
+      int n := IntConvertor.convert(l);
 
       real r := n;
 
@@ -613,7 +621,7 @@ public singleton realConvertor
 
 // --- charConvertor ---
 
-public singleton charConvertor
+public singleton CharConvertor
 {
    convert(int n, out char retVal) : external(system'core_routines'__intToChar);
 
@@ -662,9 +670,9 @@ public singleton charConvertor
       = cast char(o);
 }
 
-// --- stringConvertor ---
+// --- StringConvertor ---
 
-public singleton stringConvertor
+public singleton StringConvertor
 {
    string convert(byte b, int radix)
    {
@@ -943,7 +951,7 @@ public singleton stringConvertor
 
 // --- wideConvertor ---
 
-public singleton wideConvertor
+public singleton WideConvertor
 {
    wide convert(char ch)
    {
@@ -1230,7 +1238,7 @@ public singleton wideConvertor
 
 // --- byteArrayConvertor ---
 
-public singleton byteArrayConvertor
+public singleton ByteArrayConvertor
 {
    int convert(wide sour, int sourLen, byte[] dest, int destIndex, int destLen)
    {
@@ -1252,7 +1260,7 @@ public singleton byteArrayConvertor
 
 // --- shortArrayConvertor ---
 
-public singleton shortArrayConvertor
+public singleton ShortArrayConvertor
 {
    int convert(string sour, int sourLen, short[] dest, int destIndex, int destLen)
    {
@@ -1274,7 +1282,7 @@ public singleton shortArrayConvertor
 
 // --- mssgConvertor ---
 
-public singleton mssgConvertor
+public singleton MssgConvertor
 {
    convert(int n, out Message retVal) : external(system'core_routines'__intToMssg);
 

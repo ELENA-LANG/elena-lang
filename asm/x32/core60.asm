@@ -1,5 +1,4 @@
 // ; --- Predefined References  --
-define INVOKER              10001h
 define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
 define GC_COLLECT	    10004h
@@ -120,7 +119,7 @@ structure %SYSTEM_ENV
   dd data : %CORE_GC_TABLE
   dd data : %CORE_SINGLE_CONTENT
   dd 0
-  dd code : %INVOKER
+  dd 0
   dd code : %VEH_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize
@@ -152,7 +151,8 @@ inline % GC_ALLOC
 
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
   add  ecx, eax
-  cmp  ecx, [data : %CORE_GC_TABLE + gc_yg_end]
+  mov  edi, [data : %CORE_GC_TABLE + gc_yg_end]
+  cmp  ecx, edi
   jae  short labYGCollect
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
   lea  ebx, [eax + elObjectOffset]
@@ -311,17 +311,21 @@ labSplit:
 labStart:
   shr   esi, 1
   setnc cl
-  cmp   edx, [edi+esi*8]
+  mov   eax, [edi+esi*8]
+  cmp   edx, eax
   je    short labFound
   lea   eax, [edi+esi*8]
   jb    short labSplit
   lea   edi, [eax+8]
   sub   esi, ecx
   jmp   short labSplit
+  nop
 labFound:
   mov   eax, [edi+esi*8+4]
   mov   esi, [esp+4]
   jmp   eax
+
+  rgw nop [eax + eax + 0]
 
 labEnd:
   mov   esi, [esp+4]
@@ -508,7 +512,7 @@ inline %17h
   setl cl
   cmp  ebx, eax
   setg ch
-  cmp  ecx, 0
+  test ecx, ecx
 
 end
 
@@ -1811,7 +1815,8 @@ labSplit:
 labStart:
   shr   esi, 1
   setnc cl
-  cmp   edx, [edi+esi*8]
+  mov   eax, [edi+esi*8]
+  cmp   edx, eax
   je    short labFound
   lea   eax, [edi+esi*8]
   jb    short labSplit
@@ -1850,7 +1855,7 @@ end
 // ; cmpr 0
 inline %1C0h
 
-  cmp  ebx, 0
+  test ebx, ebx
 
 end 
 
@@ -1968,7 +1973,8 @@ end
 // ; xcmpsi
 inline %0C6h
 
-  cmp  edx, [esp + __arg32_1]
+  mov  eax, [esp + __arg32_1]
+  cmp  edx, eax
 
 end 
 
@@ -1982,14 +1988,16 @@ end
 // ; cmpfi
 inline %0C8h
 
-  cmp  ebx, [ebp + __arg32_1]
+  mov  eax, [ebp + __arg32_1]
+  cmp  ebx, eax
 
 end 
 
 // ; cmpsi
 inline %0C9h
 
-  cmp  ebx, [esp + __arg32_1]
+  mov  eax, [esp + __arg32_1]
+  cmp  ebx, eax
 
 end 
 
@@ -2008,10 +2016,15 @@ inline %0CAh
   pop  ebp
   
   add  esp, 8
-  pop  eax
-  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], eax
+  pop  ebx
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], ebx
 
   pop  ebp
+
+  pop  ebx
+  pop  ecx
+  pop  edi
+  pop  esi
 
 end
 
@@ -2023,10 +2036,15 @@ inline %1CAh
 
   add  esp, 8
 
-  pop  eax
-  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], eax
+  pop  ebx
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], ebx
 
   pop  ebp
+
+  pop  ebx
+  pop  ecx
+  pop  edi
+  pop  esi
   
 end
 
@@ -3239,6 +3257,11 @@ end
 // ; extopenin
 inline %0F2h
 
+  push esi
+  push edi
+  push ecx
+  push ebx
+
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push eax 
@@ -3260,12 +3283,18 @@ inline %0F2h
   sub  esp, __arg32_1
   mov  edi, esp
   rep  stos
+  mov  esi, eax
 
 end 
 
 // ; extopenin 0, n
 inline %1F2h
 
+  push esi
+  push edi
+  push ecx
+  push ebx
+
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push eax 
@@ -3283,12 +3312,18 @@ inline %1F2h
   push ebp
   push eax
   mov  ebp, esp
+  mov  esi, eax
 
 end 
 
 // ; extopenin 1, n
 inline %2F2h
 
+  push esi
+  push edi
+  push ecx
+  push ebx
+
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push eax 
@@ -3307,12 +3342,18 @@ inline %2F2h
   push eax
   mov  ebp, esp
   push eax
+  mov  esi, eax
 
 end 
 
 // ; extopenin 2, n
 inline %3F2h
 
+  push esi
+  push edi
+  push ecx
+  push ebx
+
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push eax 
@@ -3332,12 +3373,18 @@ inline %3F2h
   mov  ebp, esp
   push eax
   push eax
+  mov  esi, eax
 
 end 
 
 // ; extopenin 3, n
 inline %4F2h
 
+  push esi
+  push edi
+  push ecx
+  push ebx
+
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push eax 
@@ -3358,12 +3405,18 @@ inline %4F2h
   push eax
   push eax
   push eax
+  mov  esi, eax
 
 end 
 
 // ; extopenin 4, n
 inline %5F2h
 
+  push esi
+  push edi
+  push ecx
+  push ebx
+
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push eax 
@@ -3385,11 +3438,17 @@ inline %5F2h
   push eax
   push eax
   push eax
+  mov  esi, eax
 
 end 
 
 // ; extopenin i, 0
 inline %6F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
 
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3408,11 +3467,17 @@ inline %6F2h
   sub  esp, __arg32_1
   mov  edi, esp
   rep  stos
+  mov  esi, eax
 
 end 
 
 // ; extopenin 0, 0
 inline %7F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
 
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3426,11 +3491,17 @@ inline %7F2h
 
   push ebp
   mov  ebp, esp
+  mov  esi, eax
 
 end 
 
 // ; extopenin 1, 0
 inline %8F2h
+
+  push esi
+  push edi
+  push ecx
+  push ebx
 
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3445,12 +3516,18 @@ inline %8F2h
   push ebp
   mov  ebp, esp
   push 0
+  mov  esi, eax
 
 end 
 
 // ; extopenin 2, 0
 inline %9F2h
 
+  push esi
+  push edi
+  push ecx
+  push ebx
+
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push eax 
@@ -3466,12 +3543,18 @@ inline %9F2h
   mov  ebp, esp
   push eax
   push eax
+  mov  esi, eax
 
 end 
 
 // ; extopenin 3, 0
 inline %0AF2h
 
+  push esi
+  push edi
+  push ecx
+  push ebx
+
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push eax 
@@ -3488,12 +3571,18 @@ inline %0AF2h
   push eax
   push eax
   push eax
+  mov  esi, eax
 
 end 
 
 // ; extopenin 4, 0
 inline %0BF2h
 
+  push esi
+  push edi
+  push ecx
+  push ebx
+
   push ebp     
   mov  eax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
   push eax 
@@ -3511,6 +3600,7 @@ inline %0BF2h
   push eax
   push eax
   push eax
+  mov  esi, eax
 
 end 
 

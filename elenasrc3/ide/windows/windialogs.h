@@ -95,7 +95,9 @@ namespace elena_lang
       void setTextLimit(int id, int maxLength);
 
       void setCheckState(int id, bool value);
+      void setUndefinedCheckState(int id);
       bool getCheckState(int id);
+      bool isUndefined(int id);
 
    public:
       static BOOL CALLBACK DialogProc(HWND hwnd, size_t message, WPARAM wParam, LPARAM lParam);

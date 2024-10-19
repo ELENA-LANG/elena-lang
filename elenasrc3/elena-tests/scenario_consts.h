@@ -6,6 +6,7 @@ constexpr auto S_DefaultNamespace_3 = "namespace (class (nameattr (identifier \"
 
 // scenario basic types
 constexpr auto S_IntNumber = "class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ())))";
+constexpr auto S_IntRefeference = "class ( attribute -2147471359 () nameattr (identifier \"IntReference\" ()) field (attribute -2147475454 () type (identifier \"IntNumber\" ()) nameattr (identifier \"_value\" ())) )";
 
 // main program body
 constexpr auto S_NillableIntAssigning = "class (attribute -2147467263 ()nameattr (identifier \"program\" ())attribute -2147479546 ()method (attribute -2147479540 ()code (expression (assign_operation (object (nullable (type (identifier \"IntNumber\" ()))identifier \"n\" ())expression (object (identifier \"nil\" ()))))expression (assign_operation (object (nullable (type (identifier \"IntNumber\" ()))identifier \"m\" ())expression (object (integer \"2\" ())))))))";
@@ -13,4 +14,4 @@ constexpr auto S_IntAssigningNil = "class (attribute -2147467263 ()nameattr (ide
 
 constexpr auto S1_VariadicTemplates = " class (attribute -2147467263 ()attribute -2147471359 ()attribute -2147479542 ()nameattr (identifier \"VariadicArray\" ())field (attribute -2147475454 ()attribute -2147481599 ()array_type (type (identifier \"Object\" ()))nameattr (identifier \"array\" ())))  class (attribute -2147467263 ()attribute -2147471359 ()attribute -2147479542 ()nameattr (identifier \"VariadicBArray\" ())field (attribute -2147475454 ()attribute -2147481599 ()array_type (type (identifier \"B\" ()))nameattr (identifier \"array\" ())))";
 
-
+constexpr auto IndexedClass_Scenario1 = "class (attribute -2147479545 ()nameattr 67 (identifier \"X\" ())method (type (identifier \"IntNumber\" ())nameattr (identifier \"calc\" ())parameter (type (identifier \"IntNumber\" ())nameattr (identifier \"arg\" ()))returning ())) class (attribute -2147479546 ()nameattr (identifier \"Y\" ())parent (type (identifier \"X\" ())))";

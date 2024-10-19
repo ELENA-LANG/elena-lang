@@ -71,7 +71,7 @@ namespace elena_lang
          return _stackReserved;
       }
 
-      void generateAutoSymbol(ModuleBase* module, MemoryDump& tapeSymbol);
+      void generateAutoSymbol(ModuleBase* module, MemoryDump& tapeSymbol, bool withExtFrame);
 
       TargetImage(PlatformType systemTarget, ForwardResolverBase* resolver, LibraryLoaderBase* loader,
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType),

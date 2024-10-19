@@ -213,14 +213,14 @@ internal singleton PrimitiveRealOperations
       int e := PrimitiveRealOperations.normalizeFloat(ref r);
 
       real remainder := value.Integer;
-      int intPart := intConvertor.convert(remainder);
+      int intPart := IntConvertor.convert(remainder);
 
       remainder := value - remainder;
 
       decimalPartLen := 9;
       remainder := remainder * 1.0e9;
 
-      int decPart := intConvertor.convert(remainder);
+      int decPart := IntConvertor.convert(remainder);
 
       // rounding
       real tmp := decPart;
@@ -271,7 +271,7 @@ internal singleton PrimitiveRealOperations
 
       pointer ptr := temp;
       
-      real v := ptr;
+      real v := ptr.Value;
 
       retVal := v
    }
@@ -705,7 +705,7 @@ internal singleton UTFOperations
    int convertUTF32_2_8(int value, byte[] dest, int index, int length)
    {
       if (value < 80h) {
-         byte b := intConvertor.convert(value);
+         byte b := IntConvertor.convert(value);
 
          dest[index] := b;
 
@@ -719,8 +719,8 @@ internal singleton UTFOperations
          int n2 := value & 03Fh;
          n2 := n2 | 080h;  
 
-         byte b1 := intConvertor.convert(n1);
-         byte b2 := intConvertor.convert(n2);
+         byte b1 := IntConvertor.convert(n1);
+         byte b2 := IntConvertor.convert(n2);
 
          dest[index] := b1;
          dest[index + 1] := b2;
@@ -739,9 +739,9 @@ internal singleton UTFOperations
          int n3 := value & 03Fh;
          n3 := n3 | 080h;  
 
-         byte b1 := intConvertor.convert(n1);
-         byte b2 := intConvertor.convert(n2);
-         byte b3 := intConvertor.convert(n3);
+         byte b1 := IntConvertor.convert(n1);
+         byte b2 := IntConvertor.convert(n2);
+         byte b3 := IntConvertor.convert(n3);
 
          dest[index] := b1;
          dest[index + 1] := b2;
@@ -765,10 +765,10 @@ internal singleton UTFOperations
          int n4 := value & 03Fh;
          n4 := n4 | 080h;  
 
-         byte b1 := intConvertor.convert(n1);
-         byte b2 := intConvertor.convert(n2);
-         byte b3 := intConvertor.convert(n3);
-         byte b4 := intConvertor.convert(n4);
+         byte b1 := IntConvertor.convert(n1);
+         byte b2 := IntConvertor.convert(n2);
+         byte b3 := IntConvertor.convert(n3);
+         byte b4 := IntConvertor.convert(n4);
 
          dest[index] := b1;
          dest[index + 1] := b2;
@@ -788,7 +788,7 @@ internal singleton UTFOperations
       int length := 0;
       int n := value;
       if (n < 010000h) {
-         short s := shortConvertor.convert(n); 
+         short s := ShortConvertor.convert(n); 
          
          dest[index] := s;
 
@@ -797,12 +797,12 @@ internal singleton UTFOperations
       
       int n2 := n $shr 10;
       n2 += 0D7C0h;
-      short tmp := shortConvertor.convert(n2); 
+      short tmp := ShortConvertor.convert(n2); 
       dest[index] := tmp;
       
       n := n & 03FFh;
       n += 0DC00h;
-      tmp := shortConvertor.convert(n); 
+      tmp := ShortConvertor.convert(n); 
       dest[index + 1] := tmp;
 
       ^ 2;        

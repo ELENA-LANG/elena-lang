@@ -117,7 +117,17 @@ bool Parser :: derive(TerminalInfo& terminalInfo, ParserStack& stack, SyntaxWrit
                writer->newNode(current);
             }
             else {
-               writer->injectNode(current & ~pkInjectable);
+               if (current == pkTransformMark) {
+                  current = stack.pop();
+                  if (current == pkTransformMark) {
+                     current = stack.pop();
+                     // ^^ operation - L nodes must be merged
+                     writer->mergeLChildren(current & ~pkInjectable);
+                  }
+                  // = operation - the last node must be enclosed
+                  else writer->encloseLastChild(current & ~pkInjectable);
+               }
+               else writer->injectNode(current & ~pkInjectable);                  
                current = stack.pop();
                continue;
             }

@@ -1025,6 +1025,12 @@ void ByteCodeViewer :: printClass(ustr_t name, bool fullInfo, ustr_t filterMask)
          prefix.append(": ");
          prefix.append(getMethodPrefix(test(entry.message, FUNCTION_MESSAGE)));
 
+         if (_showMethodInfo) {
+            line.append(" (");
+            line.appendHex(entry.message);
+            line.append("h)");
+         }
+
          printLineAndCount(*prefix, *line, row, _pageSize);
       }
 

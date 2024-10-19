@@ -383,12 +383,12 @@ public program()
 			while (x[xc] != 0)
 			{
 				xc := xc + 2;
-				Console.write(charConvertor.convert(x[xc]));
+				Console.write(CharConvertor.convert(x[xc]));
     	        xc := xc -4;
 				while (x[xc] != 0)
 				{
 					x[xc] := x[xc] + 1;
-					Console.write(charConvertor.convert(x[xc]));
+					Console.write(CharConvertor.convert(x[xc]));
 					while (x[xc] != 0)
 					{
 						x[xc] := x[xc] - 1
@@ -401,7 +401,7 @@ public program()
 			while (x[xc] != 0)
 			{
 				xc := xc + 2;
-				Console.write(charConvertor.convert(x[xc]));
+				Console.write(CharConvertor.convert(x[xc]));
 				xc := xc -2;
 				x[xc] := x[xc] - 1
 			};
@@ -443,7 +443,7 @@ public program()
 		xc := xc -8
 	};
 	x[xc] := x[xc] + 10;
-	Console.write(charConvertor.convert(x[xc]));
+	Console.write(CharConvertor.convert(x[xc]));
 
     var end := Now;
  

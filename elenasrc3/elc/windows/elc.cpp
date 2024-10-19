@@ -216,6 +216,9 @@ void handleOption(wchar_t* arg, IdentifierString& profile, Project& project, Com
          else if (arg[2] == 'p') {
             project.addBoolSetting(ProjectOption::GenerateParamNameInfo, arg[3] != '-');
          }
+         else if (arg[2] == 's') {
+            project.addBoolSetting(ProjectOption::StrictTypeEnforcing, arg[3] != '-');
+         }
          break;
       default:
          break;
