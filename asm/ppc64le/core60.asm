@@ -4810,7 +4810,7 @@ inline % 6FCh
   ld       r17, -elVMTSizeOffset(r16)     
   sldi     r17, r17, 4
   addi     r16, r16, __arg16_1
-  addi     r16, r16, r17
+  add      r16, r16, r17
   ld       r17, 8(r16)
   mtctr    r17            // ; put code address into ctr
   bctrl                   // ; and call it
