@@ -27,7 +27,7 @@ CodeGenerator _codeGenerators[256] =
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
-   loadOp, compileAltMode, loadNop, loadNop, loadOp, loadNop, loadNop, loadNop,
+   loadOp, compileAltMode, loadXop, loadNop, loadOp, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -320,6 +320,13 @@ void elena_lang :: loadNop(JITCompilerScope* scope)
    }
    // or add the label
    else scope->lh->setLabel(position, *scope->codeWriter, scope->helper);
+}
+
+void elena_lang :: loadXNop(JITCompilerScope* scope)
+{   
+   scope->compiler->alignJumpAddress(*scope->codeWriter);
+
+   loadNop(scope);
 }
 
 void elena_lang :: loadLOp(JITCompilerScope* scope)

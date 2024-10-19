@@ -424,6 +424,7 @@ namespace elena_lang
    inline void* retrieveIRCode(JITCompilerScope* scope, int arg1, int arg2);
 
    void loadNop(JITCompilerScope*);
+   void loadXNop(JITCompilerScope*);
    void loadOp(JITCompilerScope* scope);
    void loadSysOp(JITCompilerScope* scope);
    void loadLOp(JITCompilerScope* scope);

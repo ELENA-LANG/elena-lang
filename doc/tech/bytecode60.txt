@@ -529,3 +529,5 @@ ELENA byte codes (or ecodes)
 
    xlabel dp:i, r            - set a handler to the specified address / label
 
+   xnop                     - align the following label to CPU optimized jump alignment
+ 

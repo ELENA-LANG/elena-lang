@@ -33,9 +33,9 @@ In development:
   * x86-64 : mta - main sample sandbox2
   * x86-64 mta - sandbox2 : fix GC issue
   * review if using xnop impoves performance (pi & anagram samples)
-  * new opcode xnop - if the jump alignment optimization is on, the follow command is alligned to 16bit offset
-  --------------------------------------
   * validate bsredirect (on several examples) - if it is better with nop or not
+  --------------------------------------
+  * new opcode xnop - if the jump alignment optimization is on, the follow command is alligned to 16bit offset
 
   ### EPIC: elena 6.6 ###
 

@@ -71,6 +71,7 @@ namespace elena_lang
 
       XFSave         = 0x30,
       AltMode        = 0x31,  
+      XNop           = 0x32,
       XQuit          = 0x34,
 
       FIAdd          = 0x70,
