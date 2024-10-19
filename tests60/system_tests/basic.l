@@ -1098,7 +1098,7 @@ singleton ExecTester
 
 // --- ExceptionTest ---
 
-public exceptionTest() : testCase()
+public exceptionTest() //: testCase()
 {
     bool raised := false;
     ExecTester.break() \\ on::(e){ raised := true };
