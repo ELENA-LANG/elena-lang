@@ -18,10 +18,10 @@ namespace calendar
          long rem := nanosec - secs * 1000000000l;
          rem := rem / 1000l;
                             
-         int tmp := intConvertor.convert(secs);
+         int tmp := IntConvertor.convert(secs);
          tv_sec := tmp;
             
-         tmp := intConvertor.convert(rem);
+         tmp := IntConvertor.convert(rem);
          tv_usec := tmp;
       }
 
