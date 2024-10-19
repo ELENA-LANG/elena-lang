@@ -27,7 +27,7 @@ CodeGenerator _codeGenerators[256] =
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
-   loadOp, compileAltMode, loadXop, loadNop, loadOp, loadNop, loadNop, loadNop,
+   loadOp, compileAltMode, loadXNop, loadNop, loadOp, loadNop, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -324,7 +324,7 @@ void elena_lang :: loadNop(JITCompilerScope* scope)
 
 void elena_lang :: loadXNop(JITCompilerScope* scope)
 {   
-   scope->compiler->alignJumpAddress(*scope->codeWriter);
+   //scope->compiler->alignJumpAddress(*scope->codeWriter);
 
    loadNop(scope);
 }

@@ -549,7 +549,7 @@ namespace elena_lang
       virtual int getExtMessageSize() = 0;
 
       virtual void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) = 0;
-      virtual void alignJumpAddress(MemoryWriter& writer) = 0;
+      //virtual void alignJumpAddress(MemoryWriter& writer) = 0;
 
       virtual void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader,
          MemoryWriter& codeWriter, LabelHelperBase* lh) = 0;
