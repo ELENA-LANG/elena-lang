@@ -3,7 +3,7 @@
 //
 //		This file contains the common templates, classes,
 //		structures, functions and constants
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMMON_H
@@ -105,5 +105,32 @@ namespace elena_lang
 #include "files.h"
 
 #define DEFAULT_STR (elena_lang::ustr_t)nullptr
+
+namespace elena_lang
+{
+   // --- ExceptionBase ---
+   class ExceptionBase {};
+
+   class AbortError : ExceptionBase {};
+
+   // --- InternalError ---
+   struct InternalError : ExceptionBase
+   {
+      int messageCode;
+      int arg;
+
+      InternalError(int messageCode)
+      {
+         this->messageCode = messageCode;
+         this->arg = 0;
+      }
+
+      InternalError(int messageCode, int arg)
+      {
+         this->messageCode = messageCode;
+         this->arg = arg;
+      }
+   };
+}
 
 #endif // COMMON_H

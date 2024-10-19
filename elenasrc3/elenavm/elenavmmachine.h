@@ -71,14 +71,14 @@ namespace elena_lang
       void addPackage(ustr_t packageLine);
 
       addr_t interprete(SystemEnv* env, void* tape, pos_t size, 
-         const char* criricalHandlerReference, bool withConfiguration);
+         const char* criricalHandlerReference, bool withConfiguration, bool withSystemStartUp);
 
       void onNewCode();
 
       virtual void stopVM();
 
       bool configurateVM(MemoryReader& reader, SystemEnv* env);
-      bool compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, ModuleBase* dummyModule);
+      bool compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, ModuleBase* dummyModule, bool withSystemStartUp);
 
       virtual void resumeVM(SystemEnv* env, void* criricalHandler);
 

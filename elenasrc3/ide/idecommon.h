@@ -24,6 +24,7 @@ namespace elena_lang
    constexpr auto NAMESPACE_SUB_CATEGORY              = "project/namespace";
    constexpr auto OPTIONS_SUB_CATEGORY                = "project/options";
    constexpr auto OUTPUT_SUB_CATEGORY                 = "project/output";
+   constexpr auto STRICT_TYPE_SETTING                 = "project/stricttype";
 
    constexpr auto PROFILE_CATEGORY                    = "/profile";
 

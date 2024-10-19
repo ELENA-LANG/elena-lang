@@ -241,6 +241,23 @@ namespace elena_lang
       void SetUp() override;
    };
 
+   // --- ExprTest ---
+   class ExprTest : public BaseFixture
+   {
+   protected:
+      BuildTree  buildTree;
+
+      SyntaxNode exprNode;
+
+      BuildNode  buildNode;
+
+   protected:
+      void SetUp() override;
+
+   public:
+      void runBuildTest(bool declareDefaultMessages = false, bool declareOperators = false);
+   };
+
    // --- MethodScenarioTest ---
    class MethodScenarioTest : public ScenarioTest
    {

@@ -16,15 +16,15 @@ namespace collections
       at(int index)
       {
          index =>
-            0 { ^ Item1 }
-            ! { OutOfRangeException.raise() }
+            0 : { ^ Item1 }
+            ! : { OutOfRangeException.raise() }
       }
 
       setAt(int index, object val)
       {
          index =>
-            0 { Item1 := val }
-            ! { OutOfRangeException.raise() }
+            0 : { Item1 := val }
+            ! : { OutOfRangeException.raise() }
       }
 
       Indexer indexer() = new BaseIndexer
@@ -61,17 +61,17 @@ namespace collections
       at(int index)
       {
          index =>
-            0 { ^ Item1 }
-            1 { ^ Item2 }
-            ! { OutOfRangeException.raise() }
+            0 : { ^ Item1 }
+            1 : { ^ Item2 }
+            ! : { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val)
       {
          index =>
-            0 { Item1 := val }
-            1 { Item2 := val }
-            ! { OutOfRangeException.raise() }
+            0 : { Item1 := val }
+            1 : { Item2 := val }
+            ! : { OutOfRangeException.raise() }
       }
 
       Tuple<object,object> cast()
@@ -111,17 +111,17 @@ namespace collections
       at(int index)
       {
          index =>
-            0 { ^ Item1 }
-            1 { ^ Item2 }
-            ! { OutOfRangeException.raise() }
+            0 : { ^ Item1 }
+            1 : { ^ Item2 }
+            ! : { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val)
       {
          index =>
-            0 { Item1 := val }
-            1 { Item2 := val }
-            ! { OutOfRangeException.raise() }
+            0 : { Item1 := val }
+            1 : { Item2 := val }
+            ! : { OutOfRangeException.raise() }
       }
    }
 
@@ -145,19 +145,19 @@ namespace collections
       at(int index)
       {
          index =>
-            0 { ^ Item1 }
-            1 { ^ Item2 }
-            2 { ^ Item3 }
-            ! { OutOfRangeException.raise() }
+            0 : { ^ Item1 }
+            1 : { ^ Item2 }
+            2 : { ^ Item3 }
+            ! : { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val)
       {
          index =>
-            0 { Item1 := val }
-            1 { Item2 := val }
-            2 { Item3 := val }
-            ! { OutOfRangeException.raise() }
+            0 : { Item1 := val }
+            1 : { Item2 := val }
+            2 : { Item3 := val }
+            ! : { OutOfRangeException.raise() }
       }
 
       Indexer indexer() = new BaseIndexer
@@ -198,21 +198,21 @@ namespace collections
       at(int index)
       {
          index =>
-            0 { ^ Item1 }
-            1 { ^ Item2 }
-            2 { ^ Item3 }
-            3 { ^ Item4 }
-            ! { OutOfRangeException.raise() }
+            0 : { ^ Item1 }
+            1 : { ^ Item2 }
+            2 : { ^ Item3 }
+            3 : { ^ Item4 }
+            ! : { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val)
       {
          index =>
-            0 { Item1 := val }
-            1 { Item2 := val }
-            2 { Item3 := val }
-            3 { Item4 := val }
-            ! { OutOfRangeException.raise() }
+            0 : { Item1 := val }
+            1 : { Item2 := val }
+            2 : { Item3 := val }
+            3 : { Item4 := val }
+            ! : { OutOfRangeException.raise() }
       }
 
       Indexer indexer() = new BaseIndexer
@@ -255,23 +255,23 @@ namespace collections
       at(int index)
       {
          index =>
-            0 { ^ Item1 }
-            1 { ^ Item2 }
-            2 { ^ Item3 }
-            3 { ^ Item4 }
-            4 { ^ Item5 }
-            ! { OutOfRangeException.raise() }
+            0 : { ^ Item1 }
+            1 : { ^ Item2 }
+            2 : { ^ Item3 }
+            3 : { ^ Item4 }
+            4 : { ^ Item5 }
+            ! : { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val)
       {
          index =>
-            0 { Item1 := val }
-            1 { Item2 := val }
-            2 { Item3 := val }
-            3 { Item4 := val }
-            4 { Item5 := val }
-            ! { OutOfRangeException.raise() }
+            0 : { Item1 := val }
+            1 : { Item2 := val }
+            2 : { Item3 := val }
+            3 : { Item4 := val }
+            4 : { Item5 := val }
+            ! : { OutOfRangeException.raise() }
       }
 
       Indexer indexer() = new BaseIndexer
@@ -316,25 +316,25 @@ namespace collections
       at(int index)
       {
          index =>
-            0 { ^ Item1 }
-            1 { ^ Item2 }
-            2 { ^ Item3 }
-            3 { ^ Item4 }
-            4 { ^ Item5 }
-            5 { ^ Item6 }
-            ! { OutOfRangeException.raise() }
+            0 : { ^ Item1 }
+            1 : { ^ Item2 }
+            2 : { ^ Item3 }
+            3 : { ^ Item4 }
+            4 : { ^ Item5 }
+            5 : { ^ Item6 }
+            ! : { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val)
       {
          index =>
-            0 { Item1 := val }
-            1 { Item2 := val }
-            2 { Item3 := val }
-            3 { Item4 := val }
-            4 { Item5 := val }
-            5 { Item6 := val }
-            ! { OutOfRangeException.raise() }
+            0 : { Item1 := val }
+            1 : { Item2 := val }
+            2 : { Item3 := val }
+            3 : { Item4 := val }
+            4 : { Item5 := val }
+            5 : { Item6 := val }
+            ! : { OutOfRangeException.raise() }
       }
 
       Indexer indexer() = new BaseIndexer

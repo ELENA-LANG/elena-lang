@@ -18,10 +18,10 @@ namespace calendar
          long rem := nanosec - secs * 1000000000l;
          rem := rem / 1000l;
                             
-         int tmp := intConvertor.convert(secs);
+         int tmp := IntConvertor.convert(secs);
          tv_sec := tmp;
             
-         tmp := intConvertor.convert(rem);
+         tmp := IntConvertor.convert(rem);
          tv_usec := tmp;
       }
 
@@ -91,11 +91,11 @@ namespace calendar
 
       get long Value()
       {
-         long l := longConvertor.convert(tv_sec);
+         long l := LongConvertor.convert(tv_sec);
                 
          l := l * 10000000l;
 
-         long l2 := longConvertor.convert(tv_usec);
+         long l2 := LongConvertor.convert(tv_usec);
          l2 := l2 * 10l;
                 
          l := l + l2;

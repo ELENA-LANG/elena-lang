@@ -349,6 +349,7 @@ namespace elena_lang
          map.add("int_real_op", BuildKey::IntRealOp);
          map.add("real_int_op", BuildKey::RealIntOp);
          map.add("direct_call_op", BuildKey::DirectCallOp);
+         map.add("semi_direct_call_op", BuildKey::SemiDirectCallOp);
          map.add("addingint", BuildKey::AddingInt);
          map.add("saving_index", BuildKey::SavingIndex);
          map.add("open_frame", BuildKey::OpenFrame);
@@ -391,6 +392,7 @@ namespace elena_lang
          map.add("message", BuildKey::Message);
          map.add("reserved", BuildKey::Reserved);
          map.add("reserved_n", BuildKey::ReservedN);         
+         map.add("index_table_mode", BuildKey::IndexTableMode);
       }
    };
 

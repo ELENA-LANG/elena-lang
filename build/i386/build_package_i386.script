@@ -1,5 +1,5 @@
 #!/bin/bash
-RELEASE=elena-6.4.3.i386-linux
+RELEASE=elena-6.5.0.i386-linux
 
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
@@ -61,7 +61,9 @@ else
 fi
 
 cp ../../dat/og/*.dat /usr/share/elena/
+cp ../../dat/og/*.dat ../../bin
 cp ../../dat/sg/syntax60.dat /usr/share/elena
+cp ../../dat/sg/syntax60.dat ../../bin
 
 echo compiling assembly files
 

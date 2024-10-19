@@ -48,7 +48,7 @@ public sealed struct RandomGenerator
    {
       int next := self.eval(1000000);
         
-      real retVal := realConvertor.convert(next);
+      real retVal := RealConvertor.convert(next);
         
       retVal := retVal / 1000000.0r;
         

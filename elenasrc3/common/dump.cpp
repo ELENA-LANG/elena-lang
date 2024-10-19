@@ -22,6 +22,8 @@ MemoryDump :: MemoryDump()
    _total = SECTION_PAGE_SIZE;
 
    _buffer = realloc(nullptr, SECTION_PAGE_SIZE);
+
+   assert(_buffer != nullptr);
 }
 
 MemoryDump :: MemoryDump(pos_t capacity)
@@ -30,6 +32,8 @@ MemoryDump :: MemoryDump(pos_t capacity)
    _total = capacity;
 
    _buffer = realloc(nullptr, capacity);
+
+   assert(_buffer != nullptr);
 }
 
 MemoryDump :: MemoryDump(const MemoryDump& copy)
@@ -54,6 +58,7 @@ void MemoryDump :: reserve(pos_t size)
          _buffer = newBuffer;
          _total = newSize;
       }
+      else throw InternalError(errFailedMemoryAllocation);
    }
 }
 

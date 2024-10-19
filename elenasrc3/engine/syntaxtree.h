@@ -273,7 +273,11 @@ namespace elena_lang
       static void copyNewNode(SyntaxTreeWriter& writer, SyntaxNode node)
       {
          if (node.arg.strArgPosition != INVALID_POS) {
-            writer.newNode(node.key, node.identifier());
+            if (writer.getOwner()->isTreeNode(node)) {
+               IdentifierString tmp(node.identifier());
+               writer.newNode(node.key, *tmp);
+            }
+            else writer.newNode(node.key, node.identifier());
          }
          else writer.newNode(node.key, node.arg.reference);
       }

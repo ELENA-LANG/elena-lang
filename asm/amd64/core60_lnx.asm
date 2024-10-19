@@ -1,7 +1,7 @@
 // ; --- Predefined References  --
-define INVOKER              10001h
 define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
+define GC_COLLECT	    10004h
 define PREPARE	            10006h
 
 define SYSTEM_ENV           20002h
@@ -18,6 +18,9 @@ define gc_mg_start           0038h
 define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
+define gc_perm_start         0058h 
+define gc_perm_end           0060h 
+define gc_perm_current       0068h 
 
 define et_current            0008h
 define tt_stack_frame        0010h
@@ -29,50 +32,6 @@ define elVMTOffset           0010h
 define elObjectOffset        0010h
 
 // ; ==== System commands ===
-
-// INVOKER(function, arg)
-procedure % INVOKER
-
-  // ; RDI - function
-  // ; RSI - arg
-                                            
-  // ; save registers
-  push 0
-  push rsi
-  push rdi
-  push rbx
-  push rbp
-  push r12
-  push r13
-  push r14
-  push r15
-
-  // ; declare new frame
-  mov  rax, rdi
-  xor  rdi, rdi
-  push 0              // ; FrameHeader.previousFrame
-  push 0              // ; FrameHeader.reserved
-  mov  rbp, rsp       // ; FrameHeader
-  push rdi
-  push rsi            // ; arg
-
-  call rax
-  add  rsp, 32        // ; clear FrameHeader+arg
-  mov  rax, rbx
-
-  // ; restore registers
-  pop  r15
-  pop  r14
-  pop  r13
-  pop  r12
-  pop  rbp
-  pop  rbx
-  pop  rdi
-  pop  rsi
-  add  rsp, 8
-  ret
-
-end
 
 // VEH_HANDLER() 
 procedure % VEH_HANDLER

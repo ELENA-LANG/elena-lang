@@ -1,7 +1,6 @@
 // !! NOTE : R15 register must be preserved
 
 // ; --- Predefined References  --
-define INVOKER              10001h
 define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
 define GC_COLLECT	    10004h
@@ -118,7 +117,7 @@ structure %SYSTEM_ENV
   dq data : %CORE_GC_TABLE
   dq data : %CORE_SINGLE_CONTENT
   dq 0
-  dq code : %INVOKER
+  dq 0
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize
@@ -526,7 +525,7 @@ inline %17h
   setl cl
   cmp  rbx, rax
   setg ch
-  cmp  ecx, 0
+  test ecx, ecx
 
 end
 
@@ -1803,8 +1802,7 @@ end
 // ; cmpr 0
 inline %1C0h
 
-  mov  rax, 0
-  cmp  rbx, rax
+  test rbx, rbx
 
 end 
 
@@ -1970,7 +1968,10 @@ inline %0CAh
   mov  rsp, rbp
   pop  rbp
 
-  add  rsp, 24
+  add  rsp, 16
+  pop  rbx
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rbx
+
   pop  rbp
   pop  r15
   pop  r14
@@ -1989,7 +1990,10 @@ inline %1CAh
   mov  rsp, rbp
   pop  rbp
 
-  add  rsp, 24
+  add  rsp, 16
+  pop  rbx
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rbx
+
   pop  rbp
   pop  r15
   pop  r14
@@ -3023,6 +3027,8 @@ inline %0F2h
   sub  rsp, __arg32_1
   mov  rdi, rsp
   rep  stos
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -3060,6 +3066,8 @@ inline %1F2h
   push rbp
   push rax
   mov  rbp, rsp
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -3099,6 +3107,8 @@ inline %2F2h
   mov  rbp, rsp
   push rax
   push rax
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -3138,6 +3148,8 @@ inline %3F2h
   mov  rbp, rsp
   push rax
   push rax
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -3179,6 +3191,8 @@ inline %4F2h
   push rax
   push rax
   push rax
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -3220,6 +3234,8 @@ inline %5F2h
   push rax
   push rax
   push rax
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -3257,6 +3273,8 @@ inline %6F2h
   sub  rsp, __arg32_1
   mov  rdi, rsp
   rep  stos
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -3289,6 +3307,8 @@ inline %7F2h
 
   push rbp
   mov  rbp, rsp
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -3323,6 +3343,8 @@ inline %8F2h
   mov  rbp, rsp
   push 0
   push 0
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -3358,6 +3380,8 @@ inline %9F2h
   mov  rbp, rsp
   push rax
   push rax
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -3395,6 +3419,8 @@ inline %0AF2h
   push rax
   push rax
   push rax
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 
@@ -3432,6 +3458,8 @@ inline %0BF2h
   push rax
   push rax
   push rax
+  mov  r10, rax
+  mov  r11, rax
 
 end 
 

@@ -90,7 +90,7 @@ void ElfARM64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData&
       symtabWriter.writeQWord(0);
 
       // relocation table entry
-      pos_t relPosition = reltabWriter.position() - reltabOffset;
+      //pos_t relPosition = reltabWriter.position() - reltabOffset;
       reltabWriter.writeQReference(importRef, gotPosition);
       reltabWriter.writeQWord((symbolIndex << 32) + relocateType);
       reltabWriter.writeQWord(0);

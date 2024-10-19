@@ -122,7 +122,7 @@ public struct AllocFunction : TapeFunction
     
    constructor(string strSize)
    {
-      this size := intConvertor.convert(strSize)
+      this size := IntConvertor.convert(strSize)
    }
     
    constructor(int size)
@@ -160,7 +160,7 @@ public struct LocalFunction : TapeFunction
     
    constructor(string strIndex)
    {
-      this index := intConvertor.convert(strIndex)
+      this index := IntConvertor.convert(strIndex)
    }
     
    mixin function(params object[] args) : external(system'core_routines'__local_closure);

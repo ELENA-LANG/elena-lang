@@ -12,27 +12,17 @@
 
 namespace elena_lang
 {
-   class BTOptimization : public testing::Test
+   class BTOptimization : public ExprTest
    {
    protected:
       MemoryDump btRules;
-
-      SyntaxTree syntaxTree;
-      BuildTree  buildTree;
-
-      SyntaxNode declarationNode;
-      SyntaxNode exprNode;
-
-      BuildNode  beforeOptimization;
+      
       BuildNode  afterOptimization;
-
-      CompilerEnvironment env;
 
       void SetUp() override;
 
    public:
       void runBTTest();
-      void runBuildTest(bool declareOperators);
    };
 
    class StructTest : public testing::Test

@@ -12,8 +12,9 @@
 namespace elena_lang
 {
    // default settings
-   constexpr bool DEFAULT_CONDITIONAL_BOXING = true;
-   constexpr bool DEFAULT_EVALUATE_OP = true;
+   constexpr bool DEFAULT_CONDITIONAL_BOXING       = true;
+   constexpr bool DEFAULT_EVALUATE_OP              = true;
+   constexpr bool DEFAULT_STRICT_TYPE_ENFORCING    = false;
 
    enum MetaHint : int
    {
@@ -109,7 +110,7 @@ namespace elena_lang
       {
          ref_t mask = info.hints & (ref_t)MethodHint::VisibilityMask;
 
-         return mask == (ref_t)hint1 || mask == (ref_t)hint2;      
+         return mask == (ref_t)hint1 || mask == (ref_t)hint2;
       }
       static bool checkType(MethodInfo& info, MethodHint type)
       {
@@ -209,7 +210,7 @@ namespace elena_lang
 
       pos_t           inheritLevel;
       ClassHeader     header;
-      pos_t           size;           // Object size
+      int             size;           // Object size
       MethodMap       methods;
       FieldMap        fields;
       StaticFieldMap  statics;
@@ -371,6 +372,9 @@ namespace elena_lang
    constexpr auto errUnknownDefConstructor   = 184;
    constexpr auto errUnknownMessage          = 185;
    constexpr auto errAssigningToSelf         = 186;
+   constexpr auto errUnknownTypecast         = 188;
+   constexpr auto errUnknownFunction         = 189;
+   constexpr auto errUnsupportedOperator     = 189;
 
    constexpr auto errUnknownModule           = 201;
    constexpr auto errUnresovableLink         = 202;
@@ -703,7 +707,7 @@ namespace elena_lang
    constexpr auto FALSE_FORWARD              = "$false";          // the false boolean value
    constexpr auto WRAPPER_FORWARD            = "$ref";            // the wrapper template
    constexpr auto ARRAY_FORWARD              = "$array";          // the array template
-   constexpr auto VARIADIC_ARRAY_FORWARD     = "$varray";         // the array template 
+   constexpr auto VARIADIC_ARRAY_FORWARD     = "$varray";         // the array template
    constexpr auto MESSAGE_FORWARD            = "$message";        // the message class
    constexpr auto MESSAGE_NAME_FORWARD       = "$subject";        // the message class
    constexpr auto EXT_MESSAGE_FORWARD        = "$ext_message";    // the extension message class
@@ -734,46 +738,47 @@ namespace elena_lang
    constexpr auto VM_CONSOLE_KEY    = "VM STA Console";
    constexpr auto VM_GUI_KEY        = "VM STA GUI";
 
-   constexpr auto CONFIG_ROOT             = "configuration";
-   constexpr auto PLATFORM_CATEGORY       = "configuration/platform";
+   constexpr auto CONFIG_ROOT                   = "configuration";
+   constexpr auto PLATFORM_CATEGORY             = "configuration/platform";
 
-   constexpr auto COLLECTION_CATEGORY     = "configuration/collection/*";
+   constexpr auto COLLECTION_CATEGORY           = "configuration/collection/*";
 
-   constexpr auto TEMPLATE_CATEGORY       = "templates/*";
-   constexpr auto PRIMITIVE_CATEGORY      = "primitives/*";
-   constexpr auto FORWARD_CATEGORY        = "forwards/*";
-   constexpr auto EXTERNAL_CATEGORY       = "externals/*";
-   constexpr auto WINAPI_CATEGORY         = "winapi/*";
-   constexpr auto REFERENCE_CATEGORY      = "references/*";
-   constexpr auto MODULE_CATEGORY         = "files/*";
-   constexpr auto FILE_CATEGORY           = "include/*";
-   constexpr auto PARSER_TARGET_CATEGORY  = "targets/*";
-   constexpr auto PROFILE_CATEGORY        = "/profile";
+   constexpr auto TEMPLATE_CATEGORY             = "templates/*";
+   constexpr auto PRIMITIVE_CATEGORY            = "primitives/*";
+   constexpr auto FORWARD_CATEGORY              = "forwards/*";
+   constexpr auto EXTERNAL_CATEGORY             = "externals/*";
+   constexpr auto WINAPI_CATEGORY               = "winapi/*";
+   constexpr auto REFERENCE_CATEGORY            = "references/*";
+   constexpr auto MODULE_CATEGORY               = "files/*";
+   constexpr auto FILE_CATEGORY                 = "include/*";
+   constexpr auto PARSER_TARGET_CATEGORY        = "targets/*";
+   constexpr auto PROFILE_CATEGORY              = "/profile";
 
-   constexpr auto LIB_PATH                = "project/libpath";
-   constexpr auto OUTPUT_PATH             = "project/output";
-   constexpr auto TARGET_PATH             = "project/executable";
-   constexpr auto PROJECT_TEMPLATE        = "project/template";
-   constexpr auto NAMESPACE_KEY           = "project/namespace";
-   constexpr auto DEBUGMODE_PATH          = "project/debuginfo";
-   constexpr auto FILE_PROLOG             = "project/prolog";
-   constexpr auto FILE_EPILOG             = "project/epilog";
-   constexpr auto MODULE_PROLOG           = "project/moduleProlog";
-   constexpr auto AUTOEXTENSION_PATH      = "project/autoextension";
+   constexpr auto LIB_PATH                      = "project/libpath";
+   constexpr auto OUTPUT_PATH                   = "project/output";
+   constexpr auto TARGET_PATH                   = "project/executable";
+   constexpr auto PROJECT_TEMPLATE              = "project/template";
+   constexpr auto NAMESPACE_KEY                 = "project/namespace";
+   constexpr auto DEBUGMODE_PATH                = "project/debuginfo";
+   constexpr auto FILE_PROLOG                   = "project/prolog";
+   constexpr auto FILE_EPILOG                   = "project/epilog";
+   constexpr auto MODULE_PROLOG                 = "project/moduleProlog";
+   constexpr auto AUTOEXTENSION_PATH            = "project/autoextension";
+   constexpr auto STRICT_TYPE_ENFORCING_PATH    = "project/stricttype";
 
-   constexpr auto PLATFORMTYPE_KEY        = "system/platform";
+   constexpr auto PLATFORMTYPE_KEY              = "system/platform";
 
-   constexpr auto MGSIZE_PATH             = "linker/mgsize";
-   constexpr auto YGSIZE_PATH             = "linker/ygsize";
-   constexpr auto THREAD_COUNTER          = "linker/threadcounter";
+   constexpr auto MGSIZE_PATH                   = "linker/mgsize";
+   constexpr auto YGSIZE_PATH                   = "linker/ygsize";
+   constexpr auto THREAD_COUNTER                = "linker/threadcounter";
 
-   constexpr auto MANIFEST_NAME           = "manifest/name";
-   constexpr auto MANIFEST_VERSION        = "manifest/version";
-   constexpr auto MANIFEST_AUTHOR         = "manifest/author";
+   constexpr auto MANIFEST_NAME                 = "manifest/name";
+   constexpr auto MANIFEST_VERSION              = "manifest/version";
+   constexpr auto MANIFEST_AUTHOR               = "manifest/author";
 
-   constexpr auto RETVAL_ARG              = "$retVal";
-   constexpr auto PARENT_VAR              = "$parent";
-   constexpr auto OWNER_VAR               = "$owner";
+   constexpr auto RETVAL_ARG                    = "$retVal";
+   constexpr auto PARENT_VAR                    = "$parent";
+   constexpr auto OWNER_VAR                     = "$owner";
 
    inline ustr_t getPlatformName(PlatformType type)
    {

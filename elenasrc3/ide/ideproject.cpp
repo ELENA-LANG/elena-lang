@@ -25,6 +25,7 @@ ProjectModel :: ProjectModel(IDEStatus* status)
    this->empty = true;
    this->started = false;
    this->notSaved = false;
+   this->strictType = FLAG_UNDEFINED;
 
    // !!NOTE : make sure the path separator should tail the path
    if (this->paths.librarySourceRoot[this->paths.librarySourceRoot.length() - 1] != PATH_SEPARATOR)

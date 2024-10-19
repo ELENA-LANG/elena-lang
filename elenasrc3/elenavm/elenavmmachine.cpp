@@ -279,7 +279,7 @@ inline ref_t getCmdMask(int command)
    }
 }
 
-bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, ModuleBase* dummyModule)
+bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, ModuleBase* dummyModule, bool withSystemStartUp)
 {
    CachedList<Pair<ref_t, pos_t>, 5> symbols;
 
@@ -337,10 +337,14 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
    pos_t sizePlaceholder = writer.position();
    writer.writePos(0);
 
+   if (withSystemStartUp)
+      ByteCodeUtil::write(writer, ByteCode::System, 4);
+
    ByteCodeUtil::write(writer, ByteCode::ExtOpenIN, 2, 0);
 
    fillPreloadedSymbols(writer, dummyModule);
 
+   bool needtoFlush = true;
    for(size_t i = 0; i < symbols.count(); i++) {
       auto p = symbols[i];
       ref_t mask = p.value1 & mskAnyRef;
@@ -369,21 +373,27 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
       else {
          switch (p.value2) {
             case VM_ALLOC_CMD:
-               ByteCodeUtil::write(writer, ByteCode::XFlushSI, 0);
-               ByteCodeUtil::write(writer, ByteCode::XFlushSI, 1);
+               if (needtoFlush) {
+                  ByteCodeUtil::write(writer, ByteCode::XFlushSI, 0);
+                  ByteCodeUtil::write(writer, ByteCode::XFlushSI, 1);
+                  needtoFlush = false;
+               }
                ByteCodeUtil::write(writer, ByteCode::AllocI, p.value1);
                break;
             case VM_FREE_CMD:
                ByteCodeUtil::write(writer, ByteCode::FreeI, p.value1);
                ByteCodeUtil::write(writer, ByteCode::XRefreshSI, 0);
                ByteCodeUtil::write(writer, ByteCode::XRefreshSI, 1);
+               needtoFlush = true;
                break;
             case VM_SET_ARG_CMD:
                ByteCodeUtil::write(writer, ByteCode::StoreSI, p.value1);
+               needtoFlush = true;
                break;
             case VM_SEND_MESSAGE_CMD:
                ByteCodeUtil::write(writer, ByteCode::MovM, p.value1);
                ByteCodeUtil::write(writer, ByteCode::CallVI);
+               needtoFlush = true;
                break;
             default:
                break;
@@ -392,7 +402,7 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
    }
 
    ByteCodeUtil::write(writer, ByteCode::ExtCloseN);
-   ByteCodeUtil::write(writer, ByteCode::Quit);
+   ByteCodeUtil::write(writer, ByteCode::XQuit);
 
    pos_t size = writer.position() - sizePlaceholder - sizeof(pos_t);
 
@@ -425,7 +435,7 @@ void ELENAVMMachine :: resumeVM(SystemEnv* env, void* criricalHandler)
 }
 
 addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, 
-   const char* criricalHandlerReference, bool withConfiguration)
+   const char* criricalHandlerReference, bool withConfiguration, bool withSystemStartUp)
 {
    ByteArray      tapeArray(tape, size);
    MemoryReader   reader(&tapeArray);
@@ -449,7 +459,7 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
 
    void* address = nullptr;
    if (_initialized) {
-      if (compileVMTape(reader, tapeSymbol, dummyModule))
+      if (compileVMTape(reader, tapeSymbol, dummyModule, withSystemStartUp))
          address = (void*)_jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
 
       resumeVM(env, (void*)criricalHandler);
@@ -458,7 +468,7 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
    freeobj(dummyModule);
    
    if (address)
-      return execute(env, address);
+      return execute(address);
 
    return 0;
 }
@@ -466,7 +476,7 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
 void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
 {
    if (tape != nullptr) {
-      interprete(env, tape, INVALID_POS, criricalHandlerReference, true);
+      interprete(env, tape, INVALID_POS, criricalHandlerReference, true, false);
    }
    else {
       // initialize VM in terminal mode
@@ -480,7 +490,7 @@ void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, const char* crirical
 
 addr_t ELENAVMMachine :: evaluate(void* tape)
 {
-   return interprete(_env, tape, INVALID_POS, nullptr, false);
+   return interprete(_env, tape, INVALID_POS, nullptr, false, true);
 }
 
 bool ELENAVMMachine :: evaluateAndReturn(void* tape, char* output, size_t maxLength, size_t& copied)
@@ -571,7 +581,7 @@ addr_t ELENAVMMachine :: loadReference(ustr_t name, int command)
       addVMTapeEntry(tapeWriter, command, name);
    addVMTapeEntry(tapeWriter, VM_ENDOFTAPE_CMD);
 
-   interprete(_env, tape.get(0), tape.length(), nullptr, true);
+   interprete(_env, tape.get(0), tape.length(), nullptr, true, false);
 
    return emptystr(name)
       ? 0 : _mapper.resolveReference({ nullptr, name }, getCmdMask(command));

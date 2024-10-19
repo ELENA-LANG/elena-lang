@@ -255,7 +255,7 @@ namespace elena_lang
    protected:
       int calcFrameOffset(int argument, bool extMode) override
       {
-         return (extMode ? 20  : 4) + (argument > 0 ? align(argument + 8, 4) : 0);
+         return (extMode ? 36  : 4) + (argument > 0 ? align(argument + 8, 4) : 0);
       }
 
       int calcTotalSize(int numberOfFields) override;
@@ -424,6 +424,7 @@ namespace elena_lang
    inline void* retrieveIRCode(JITCompilerScope* scope, int arg1, int arg2);
 
    void loadNop(JITCompilerScope*);
+   void loadXNop(JITCompilerScope*);
    void loadOp(JITCompilerScope* scope);
    void loadSysOp(JITCompilerScope* scope);
    void loadLOp(JITCompilerScope* scope);

@@ -1806,7 +1806,7 @@ void breakOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 
       eolLabel = loopOp.value2;
    }
-   
+
    if (eolLabel > 0) {
       tape.write(ByteCode::Jump, eolLabel);
    }
@@ -1895,7 +1895,7 @@ void unboxingAndCallMessage(CommandTape& tape, BuildNode& node, TapeScope&)
    // add    n:index
    // dalloc
    // set    sp:index
-   // 
+   //
    // alloc  i:2
    // store  sp:1
 
@@ -1903,7 +1903,7 @@ void unboxingAndCallMessage(CommandTape& tape, BuildNode& node, TapeScope&)
    // labStart:
    // load   dp:tmp
    // xcmp   dp:length
-   // jeq    labEnd 
+   // jeq    labEnd
 
    // set    fp:arg
    // xget
@@ -2602,8 +2602,8 @@ inline bool inplaceCallOp(BuildNode lastNode)
    BuildNode callNode = getPrevious(markNode);
    BuildNode classNode = getPrevious(callNode);
 
-   if (classNode == BuildKey::ClassReference && getArgCount(callNode.arg.reference) == 0 
-      && getArgCount(markNode.arg.reference) == 1) 
+   if (classNode == BuildKey::ClassReference && getArgCount(callNode.arg.reference) == 0
+      && getArgCount(markNode.arg.reference) == 1)
    {
       int targetOffset = lastNode.arg.value;
 
@@ -2848,7 +2848,7 @@ void ByteCodeWriter :: importTree(CommandTape& tape, BuildNode node, Scope& scop
    tape.import(importInfo.module, importInfo.section, true, scope.moduleScope->module);
 }
 
-void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
+void ByteCodeWriter :: saveBranching(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
    ReferenceMap& paths, bool tapeOptMode, bool loopMode)
 {
    bool ifElseMode = node.arg.value == IF_ELSE_OPERATOR_ID;
@@ -2908,7 +2908,7 @@ void ByteCodeWriter :: saveTernaryOp(CommandTape& tape, BuildNode node, TapeScop
 
    saveTape(tape, rnodeNode, tapeScope, paths, tapeOptMode);
    tape.write(ByteCode::SwapSI, 1);
-      
+
    tape.write(ByteCode::CmpR, node.findChild(BuildKey::Const).arg.reference | mskVMTRef);
 
    tape.write(ByteCode::PeekSI, 1);
@@ -3005,7 +3005,7 @@ void ByteCodeWriter :: saveNativeBranching(CommandTape& tape, BuildNode node, Ta
 
 void ByteCodeWriter :: saveShortCircuitOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
 {
-   int endLabel = tape.newLabel();
+   tape.newLabel();
 
    ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
    ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
@@ -3040,9 +3040,10 @@ void ByteCodeWriter :: saveShortCircuitOp(CommandTape& tape, BuildNode node, Tap
    tape.setLabel();
 }
 
-void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
+void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
    ReferenceMap& paths, bool tapeOptMode)
 {
+   //tape.write(ByteCode::XNop);
    int startLabel = tape.newLabel();
    tape.setLabel(true);
    int eopLabel = tape.newLabel();
@@ -3063,11 +3064,11 @@ void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& ta
    tape.releaseLabel();
 }
 
-void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
+void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
    ReferenceMap& paths, bool tapeOptMode)
 {
    int retLabel = tape.newLabel();                 // declare ret-end-label
-   tape.newLabel();                                // declare end-label  
+   tape.newLabel();                                // declare end-label
    tape.newLabel();                                // declare alternative-label
 
    tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
@@ -3101,7 +3102,7 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
       tape.write(ByteCode::StoreFI, index.arg.value);
       saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
       tape.write(ByteCode::PeekFI, index.arg.value);
-   }      
+   }
 
    tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
    // ===========================
@@ -3113,7 +3114,7 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
    // jeq labSkip
    // load
    // peeksi 0
-   // callvi 0   
+   // callvi 0
    // labSkip:
    // unhook
    tape.newLabel();
@@ -3143,7 +3144,7 @@ void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope&
    ReferenceMap& paths, bool tapeOptMode)
 {
    int retLabel = tape.newLabel();                 // declare ret-end-label
-   tape.newLabel();                                // declare end-label  
+   tape.newLabel();                                // declare end-label
    tape.newLabel();                                // declare alternative-label
 
    tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
@@ -3163,7 +3164,7 @@ void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope&
       tape.write(ByteCode::StoreFI, index.arg.value);
       saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
       tape.write(ByteCode::PeekFI, index.arg.value);
-   }      
+   }
 
    // jump
    tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
@@ -3183,7 +3184,7 @@ void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope&
       tape.write(ByteCode::StoreFI, index.arg.value);
       saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
       tape.write(ByteCode::PeekFI, index.arg.value);
-   }      
+   }
 
    tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
    // ===========================
@@ -3195,7 +3196,7 @@ void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope&
    // jeq labSkip
    // load
    // peeksi 0
-   // callvi 0   
+   // callvi 0
    // labSkip:
    // unhook
 
@@ -3207,7 +3208,7 @@ void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope&
    tape.write(ByteCode::CallVI);
    tape.setLabel();
    tape.write(ByteCode::Unhook);
-   
+
    // finally-block
    if (finallyNode != BuildKey::None) {
       // store fp:index
@@ -3217,9 +3218,9 @@ void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope&
       tape.write(ByteCode::StoreFI, index.arg.value);
       saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
       tape.write(ByteCode::PeekFI, index.arg.value);
-   }      
+   }
 
-   // throw   
+   // throw
    tape.write(ByteCode::Throw);
 
    // eos:
@@ -3331,7 +3332,7 @@ void ByteCodeWriter :: saveYielding(CommandTape& tape, BuildNode node, TapeScope
    tape.setLabel();
 }
 
-void ByteCodeWriter :: saveYieldDispatch(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
+void ByteCodeWriter :: saveYieldDispatch(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
    ReferenceMap& paths, bool tapeOptMode)
 {
    // get i:0
@@ -3349,7 +3350,7 @@ void ByteCodeWriter :: saveYieldDispatch(CommandTape& tape, BuildNode node, Tape
    tape.setLabel();
 }
 
-inline void saveDebugSymbol(DebugSymbol symbol, int offset, ustr_t name, TapeScope& tapeScope, 
+inline void saveDebugSymbol(DebugSymbol symbol, int offset, ustr_t name, TapeScope& tapeScope,
    ustr_t className = nullptr)
 {
    DebugLineInfo info = { symbol };
@@ -3381,7 +3382,7 @@ void ByteCodeWriter :: saveVariableInfo(CommandTape& tape, BuildNode node, TapeS
             saveDebugSymbol(DebugSymbol::Local, current.findChild(BuildKey::Index).arg.value, current.identifier(), tapeScope);
             break;
          case BuildKey::VariableAddress:
-            saveDebugSymbol(DebugSymbol::LocalAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(), 
+            saveDebugSymbol(DebugSymbol::LocalAddress, current.findChild(BuildKey::Index).arg.value, current.identifier(),
                tapeScope, current.findChild(BuildKey::ClassName).identifier());
             break;
          case BuildKey::IntVariableAddress:
@@ -3493,7 +3494,7 @@ void ByteCodeWriter :: saveExternOp(CommandTape& tape, BuildNode node, TapeScope
    includeFrame(tape, tapeScope.threadFriendly);
 }
 
-void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
+void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
    ReferenceMap& paths, bool tapeOptMode, bool loopMode)
 {
    bool weakLoop = loopMode;
@@ -3572,7 +3573,7 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             _commands[(int)current.key](tape, current, tapeScope);
             break;
       }
-   
+
       current = current.nextNode();
    }
 
@@ -3582,7 +3583,7 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
    }
 }
 
-void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
+void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList,
    int ptrSize, ReferenceMap& paths, bool tapeOptMode)
 {
    auto section = moduleScope->mapSection(node.arg.reference | mskSymbolRef, false);
@@ -3685,7 +3686,7 @@ inline bool isNested(BuildKey key)
    }
 }
 
-void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 
+void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef,
    ReferenceMap& paths, bool tapeOptMode)
 {
    _buildTreeOptimizer.proceed(node.findChild(BuildKey::Tape));
@@ -3786,7 +3787,7 @@ pos_t ByteCodeWriter :: savePath(BuildNode node, Scope& scope, ReferenceMap& pat
    return sourcePathRef;
 }
 
-void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 
+void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList,
    int ptrSize, ReferenceMap& paths, bool tapeOptMode)
 {
    // initialize bytecode writer
@@ -3873,7 +3874,7 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
    }
 }
 
-void ByteCodeWriter :: save(BuildTree& tree, SectionScopeBase* moduleScope, 
+void ByteCodeWriter :: save(BuildTree& tree, SectionScopeBase* moduleScope,
    int minimalArgList, int ptrSize, bool tapeOptMode)
 {
    ReferenceMap paths(INVALID_POS);

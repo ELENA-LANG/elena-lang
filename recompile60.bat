@@ -28,7 +28,7 @@ bin\elena-tests-x86.exe
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 REM /m:2 is used to build using parallel compilation
-"%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc3\elenasrc3.sln /p:configuration=release /p:Platform="x64" /m:2
+"%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc3\elenasrc3.sln /p:configuration=release /p:Platform="x64" /m:2 -restore -p:RestorePackagesConfig=true
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Generating data files

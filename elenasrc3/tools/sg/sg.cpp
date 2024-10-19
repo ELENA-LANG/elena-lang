@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "sgconst.h"
@@ -225,29 +225,41 @@ int main(int argc, char* argv[])
          }
          else if (token.compare("^")) {
             reader.read(token);
+            if (token.compare("^")) {
+               // NOTE : ^^ means merge lchildren
+               rule[rule_len++] = pkTransformMark;
+               rule[rule_len++] = pkTransformMark;
 
+               reader.read(token);
+            }
             rule[rule_len++] = registerSymbol(table, *token.token, lastKey + 1, false) | pkInjectable;
          }
-         //else if (token.compare("=")) {
-         //   reader.read(token);
-
-         //   rule[rule_len++] = registerSymbol(table, *token.token, lastKey + 1, false) | pkRenaming;
-         //}
-         //else if (token.compare("$new") || token.compare("$close")) {
-         //   rule[rule_len++] = registerSymbol(table, *token.token, lastKey + 1, false) | pkInjectable | pkTraceble;
-         //}
+         else if (token.compare("=")) {
+            reader.read(token);
+            rule[rule_len++] = pkTransformMark;
+            rule[rule_len++] = registerSymbol(table, *token.token, lastKey + 1, false) | pkInjectable;
+         }
          else if (token.compare("+")) {
-            rule[rule_len - 1] = registerPlusRule(table, rule[rule_len - 1]);
+            if (rule_len > 0) {
+               rule[rule_len - 1] = registerPlusRule(table, rule[rule_len - 1]);
+            }
+            else throw SyntaxError(SG_INVALID_RULE, token.lineInfo);
          }
          else if (token.compare("*")) {
-            rule[rule_len - 1] = registerStarRule(table, rule[rule_len - 1]);
+            if (rule_len > 0) {
+               rule[rule_len - 1] = registerStarRule(table, rule[rule_len - 1]);
+            }
+            else throw SyntaxError(SG_INVALID_RULE, token.lineInfo);
          }
          else if (token.compare(";")) {
             table.registerRule(rule, rule_len);
             rule_len = 0;
          }
          else if (token.compare("?")) {
-            rule[rule_len - 1] = registerEpsRule(table, rule[rule_len - 1]);
+            if (rule_len > 0) {
+               rule[rule_len - 1] = registerEpsRule(table, rule[rule_len - 1]);
+            }
+            else throw SyntaxError(SG_INVALID_RULE, token.lineInfo);
          }
          else if (token.compare("|")) {
             if (bracketIndexes.count() > 0) {

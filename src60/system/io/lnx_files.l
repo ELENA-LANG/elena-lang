@@ -39,15 +39,15 @@ namespace io
             _handle)
       }
     
-      read(byte[] dump, ref int retVal)
+      int read(byte[] dump, int length)
       {
          int n := extern libc.fread(
                      dump,
                      1,
-                     retVal,
+                     length,
                      _handle);
     
-         retVal := n
+         ^ n
       }
     
       int Index

@@ -111,7 +111,7 @@ namespace text
    {
       char toChar(byte b)
       {
-         char retVal := charConvertor.convert(b);
+         char retVal := CharConvertor.convert(b);
            
          ^ retVal 
       }
@@ -138,7 +138,7 @@ namespace text
    {
       char toChar(short w)
       {
-         char retVal := charConvertor.convert(w);
+         char retVal := CharConvertor.convert(w);
            
          ^ retVal 
       }

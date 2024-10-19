@@ -56,6 +56,13 @@ namespace io
          }         
       }
 
+      static saveContent(string path, string content, Encoder encoder)
+      {
+         using(TextWriter writer := fileControl.writer(path, encoder)) {
+            writer.write(content);
+         }         
+      }
+
       static readContentTo(string path, TextBuilder output)
       {
          using(TextReader reader := fileControl.newReader(path)) {
