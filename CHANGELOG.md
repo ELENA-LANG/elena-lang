@@ -1,4 +1,4 @@
-## ELENA 6.4.0
+## ELENA 6.5.0
 
 - ELENA
   - [FIXED] method reference : support function singletons
@@ -8,6 +8,11 @@
   - [FIXED] ?? operator
   - [ADDED] static constructor
   - [ADDED] internal symbols
+  - [ADDED] supporting async methods
+  - [ADDED] supporting indexed methods
+  - [ADDED] indexed internal methods can be declared in a closed class
+  - [REDUX]!! refactoring grammar to make it more readable
+  - [ADDED] support parameterized extension method call
 
 - ELC
   - [ADDED] new option -el5 / -el6 (default) - specifying grammar compatible to ELENA 5.x or 6.x
@@ -19,12 +24,15 @@
   - [FIXED] calling a method directly with nil argument when allowed
   - [FIXED] single dispatch of a private / internal / protected method
   - [FIXED] closure argument types can be specified by an expected type
-	
-- VM
-
-- RT
-
-- SM
+  - [FIXED] it is not possible to declare internal default constructor
+  - [FIXED] #675 - Using ++ operator with a weak type
+  - [FIXED] incorrect typecast handler signature for the classes inheriting template-based ones
+  - [FIXED]variadic argument list of super class is type-casted
+  - [FIXED] #689: declaring a lambda function with template based argument
+  - [FIXED] fixing issues ABI convention for external calls
+  - [FIXED] preloaded symbols in sub namespaces
+  - [FIXED] calling indexed method from the sealed class
+  - [ADDED] new option -xs - Strict type enforcing option (raise an error if the sealed class is typecasted / called the method that does not exists)
 
 - API
   - [ADDED] system'threading'Thread: Priority, join<int>, Current
@@ -36,18 +44,37 @@
   - [ADDED] #154 : system'threading: ManualResetEvent, AutoResetEvent, CountDownEvent
   - [ADDED] system'threading : Task
   - [ADDED] system'io'Directory : static getFiles / getFiles<string>
+  - [ADDED] File : saveContent, readContent, readWideContent
+  - [ADDED] system'io'threading : asyncStreamOp extension
+  - [ADDED] system'threading.Task - sleep<int>
+  - [ADDED] extensions'threading : outputConcurrentOp extension
+  - [REDUX] all symbols must start with a capital letter
+  - [ADDED] system'threading : Task<TResult>
+  - [FIXED] system'objectOp.__getClassName[1]
+  - [ADDED] extensions'routines'stex : toArray<T>
 
 - SAMPLES
   - [ADDED] threadpool
   - [ADDED] tasks
+  - [ADDED] asyncsamples
+  - [ADDED] task sample 2
 
 - Tools
   - [ECV][ADDED] displaying class attributes
+  - [FIXED][ldoc] system-threading-.html must not be generated
+  - [FIXED][ldoc] system-threading : generate only templates declared in the module
+  - [FIXED][ASMC] opcode mov gs,r/m64
 
 - IDE
   - [FIXED] #679 : class already exist
   - [FIXED] debug source path
   - [ADDED] it is possible to set the target type for a single file project
+  - [FIXED] project options - debug command arguments
+  - [FIXED] correct debug info of the constructor self variable
+  - [FIXED] #413 - boxing variadic argument
+
+- Misc
+  - [ADDED]new functional test : script_tests
 
 ## ELENA 6.3.0
 
