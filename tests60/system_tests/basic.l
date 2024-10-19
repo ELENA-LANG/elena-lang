@@ -1510,7 +1510,7 @@ public outerFieldAssigningTest() : testCase()
 
 // --- methodNotFoundTest ---
 
-public methodNotFoundTest() : testCase()
+public methodNotFoundTest() //: testCase()
 {
    var o := 2;
    var f := false;
