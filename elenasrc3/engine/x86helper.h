@@ -82,6 +82,9 @@ namespace elena_lang
       M32disp8   = 0x00110100,
       M32disp32  = 0x00110200,
 
+      EaxEaxDisp32 = 0x00110204,
+      EaxEaxDisp8  = 0x00110104,
+
       R64        = 0x00008300,
       M64        = 0x00018000,
       M64disp8   = 0x00018100,

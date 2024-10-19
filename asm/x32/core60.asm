@@ -319,10 +319,13 @@ labStart:
   lea   edi, [eax+8]
   sub   esi, ecx
   jmp   short labSplit
+  nop
 labFound:
   mov   eax, [edi+esi*8+4]
   mov   esi, [esp+4]
   jmp   eax
+
+  rgw nop [eax + eax + 0]
 
 labEnd:
   mov   esi, [esp+4]

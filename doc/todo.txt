@@ -10,7 +10,7 @@ In development:
   dev: 
       - upndown (connector)
       - #496
-      - #622 (http client)
+      - #622
   gen:
       - lpad : generate a code based on a record  
   maint:
@@ -21,18 +21,21 @@ In development:
       - api : add descriptions 
       - threading samples must be included into release files
       - ide : windows / linux
+      - review pi performance (must < 6)
   port:
   tools: 
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
-  * review pi performance (must < 6)
+  * http client
   * test linix versions
   * test all x86 examples (net)
   * x86-64 : mta - main sample sandbox2
   * x86-64 mta - sandbox2 : fix GC issue
+  * review if using xnop impoves performance (pi & anagram samples)
+  * new opcode xnop - if the jump alignment optimization is on, the follow command is alligned to 16bit offset
   --------------------------------------
-  * Align branch targets in performance-critical loops to 16-byte boundaries
+  * validate bsredirect (on several examples) - if it is better with nop or not
 
   ### EPIC: elena 6.6 ###
 
