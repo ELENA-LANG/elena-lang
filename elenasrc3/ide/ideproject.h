@@ -28,6 +28,8 @@ namespace elena_lang
    constexpr auto RECENTFILE_SETTINGS           = "configuration/recent_files/path";
    constexpr auto RECENTPROJECTS_SETTINGS       = "configuration/recent_projects/path";
 
+   constexpr auto FLAG_UNDEFINED                = 1;
+
    // --- Map types ---
    typedef List<path_t, freepath>            ProjectPaths;
    typedef List<Breakpoint*, freeobj>        Breakpoints;
@@ -62,6 +64,7 @@ namespace elena_lang
       bool              empty;
       bool              started;
       bool              notSaved;
+      int               strictType; // 1 - default, 0 - off, -1 - on
       PathString        name;
       PathString        projectFile;
       PathString        projectPath;

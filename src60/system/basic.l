@@ -1,4 +1,3 @@
-
 // --- BaseValue ---
 public abstract class BaseValue
    : info("a base value")
@@ -276,7 +275,7 @@ public const struct ByteNumber : IntBaseNumber,
 
    constructor(int n)
             : info("Creates the object with a specified value")
-      = byteConvertor.convert(n);
+      = ByteConvertor.convert(n);
 
    add(o)
      <= add(cast byte(o));
@@ -480,23 +479,23 @@ public const struct ByteNumber : IntBaseNumber,
 
    short cast()
             : info("Returns the value as a short integer")
-      = shortConvertor.convert(self);
+      = ShortConvertor.convert(self);
 
    int cast()
             : info("returns the value as an integer")
-      = intConvertor.convert(self);
+      = IntConvertor.convert(self);
 
    uint cast()
             : info("returns the value as an unsigned integer")
-      = uintConvertor.convert(self);
+      = UIntConvertor.convert(self);
 
    long cast()
             : info("Returns the value as a long integer")
-      = longConvertor.convert(self);
+      = LongConvertor.convert(self);
 
    real cast()
             : info("Returns the value as a real number")
-      = realConvertor.convert(self);
+      = RealConvertor.convert(self);
 
    byte shiftLeft(int val)
             : info("shifts an integer value to the left by a specified number of bits")
@@ -512,7 +511,7 @@ public const struct ByteNumber : IntBaseNumber,
 
    string toPrintable()
             : info("returns the literal presentation")
-      = stringConvertor.convert(self, 10);
+      = StringConvertor.convert(self, 10);
 
    byte clone()
             : info("clones the value")
@@ -547,7 +546,7 @@ public const struct SByteNumber : IntBaseNumber,
 
    constructor(int n)
             : info("Creates the object with a specified value")
-      = sbyteConvertor.convert(n);
+      = SByteConvertor.convert(n);
 
    add(o)
      <= add(cast sbyte(o));
@@ -751,23 +750,23 @@ public const struct SByteNumber : IntBaseNumber,
 
    short cast()
             : info("Returns the value as a short integer")
-      = shortConvertor.convert(self);
+      = ShortConvertor.convert(self);
 
    int cast()
             : info("returns the value as an integer")
-      = intConvertor.convert(self);
+      = IntConvertor.convert(self);
 
    uint cast()
             : info("returns the value as an unsigned integer")
-      = uintConvertor.convert(self);
+      = UIntConvertor.convert(self);
 
    long cast()
             : info("Returns the value as a long integer")
-      = longConvertor.convert(self);
+      = LongConvertor.convert(self);
 
    real cast()
             : info("Returns the value as a real number")
-      = realConvertor.convert(self);
+      = RealConvertor.convert(self);
 
    sbyte shiftLeft(int val)
             : info("shifts an integer value to the left by a specified number of bits")
@@ -783,7 +782,7 @@ public const struct SByteNumber : IntBaseNumber,
 
    string toPrintable()
             : info("returns the literal presentation")
-      = stringConvertor.convert(self, 10);
+      = StringConvertor.convert(self, 10);
 
    sbyte clone()
             : info("clones the value")
@@ -818,14 +817,14 @@ public const struct ShortNumber : IntBaseNumber,
 
    constructor(byte b)
             : info("creates the object with specified value")
-      = shortConvertor.convert(b);
+      = ShortConvertor.convert(b);
 
    constructor(sbyte b)
             : info("creates the object with specified value")
-      = shortConvertor.convert(b);
+      = ShortConvertor.convert(b);
 
    constructor(int n)
-      = shortConvertor.convert(n);
+      = ShortConvertor.convert(n);
 
    add(o)
      <= add(cast short(o));
@@ -1031,26 +1030,26 @@ public const struct ShortNumber : IntBaseNumber,
 
    byte cast()
          : info("Returns the byte value") 
-      = byteConvertor.convert(self);
+      = ByteConvertor.convert(self);
 
    int cast()
             : info("Returns the integer value") 
-      = intConvertor.convert(self);
+      = IntConvertor.convert(self);
 
    uint cast()
             : info("Returns the unsigned integer value") 
-      = uintConvertor.convert(self);
+      = UIntConvertor.convert(self);
 
    long cast()
             : info("Returns the long integer value") 
-      = longConvertor.convert(self);
+      = LongConvertor.convert(self);
 
    real cast()
             : info("Returns the real number value") 
-      = realConvertor.convert(self);
+      = RealConvertor.convert(self);
 
    string toPrintable()
-      = stringConvertor.convert(self, 10);
+      = StringConvertor.convert(self, 10);
 
    short shiftLeft(int val)
             : info("shifts an integer value to the left by a specified number of bits")
@@ -1106,14 +1105,14 @@ public const struct UShortNumber : IntBaseNumber,
 
    constructor(short s)
             : info("creates the object with specified value")
-      = ushortConvertor.convert(s);
+      = UShortConvertor.convert(s);
 
    constructor(byte b)
             : info("creates the object with specified value")
-      = ushortConvertor.convert(b);
+      = UShortConvertor.convert(b);
 
    constructor(int n)
-      = ushortConvertor.convert(n);
+      = UShortConvertor.convert(n);
 
    add(o)
      <= add(cast ushort(o));
@@ -1319,30 +1318,30 @@ public const struct UShortNumber : IntBaseNumber,
 
    byte cast()
          : info("Returns the byte value") 
-      = byteConvertor.convert(self);
+      = ByteConvertor.convert(self);
 
    short cast()
             : info("Returns the signed short value") 
-      = shortConvertor.convert(self);
+      = ShortConvertor.convert(self);
 
    int cast()
             : info("Returns the integer value") 
-      = intConvertor.convert(self);
+      = IntConvertor.convert(self);
 
    uint cast()
             : info("Returns the unsigned integer value") 
-      = uintConvertor.convert(self);
+      = UIntConvertor.convert(self);
 
    long cast()
             : info("Returns the long integer value") 
-      = longConvertor.convert(self);
+      = LongConvertor.convert(self);
 
    real cast()
             : info("Returns the real number value") 
-      = realConvertor.convert(self);
+      = RealConvertor.convert(self);
 
    string toPrintable()
-      = stringConvertor.convert(self, 10);
+      = StringConvertor.convert(self, 10);
 
    ushort shiftLeft(int val)
             : info("shifts an integer value to the left by a specified number of bits")
@@ -1397,7 +1396,7 @@ public const struct IntNumber : IntBaseNumber,
 
    constructor(uint n)
             : info("Creates the object with specified value")
-      = intConvertor.convert(n);
+      = IntConvertor.convert(n);
 
    constructor(byte b)
       = b;
@@ -1406,7 +1405,7 @@ public const struct IntNumber : IntBaseNumber,
       = s;
 
    constructor(ushort s)
-      = s;
+      = IntConvertor.convert(s);
 
    bool equal(o)
    {
@@ -1654,26 +1653,26 @@ public const struct IntNumber : IntBaseNumber,
 
    byte cast()
             : info("Returns the byte value")
-      = byteConvertor.convert(self);
+      = ByteConvertor.convert(self);
 
    short cast()
             : info("Returns the value as a short integer")
-      = shortConvertor.convert(self);
+      = ShortConvertor.convert(self);
 
    long cast()
             : info("Returns the long integer")
-      = longConvertor.convert(self);
+      = LongConvertor.convert(self);
 
    real cast()
             : info("Returns the real number")
-      = realConvertor.convert(self);
+      = RealConvertor.convert(self);
 
    uint cast()
             : info("Returns the unsigned integer")
       = new UIntNumber(self);
 
    string toPrintable()
-      = stringConvertor.convert(self, 10);
+      = StringConvertor.convert(self, 10);
 
    int clone()
             : info("Clones the value")
@@ -1718,17 +1717,17 @@ public sealed const struct UIntNumber : IntBaseNumber,
 
    constructor(byte b)
    {
-      _value := uintConvertor.convert(b);
+      _value := UIntConvertor.convert(b);
    }
 
    constructor(short s)
    {
-      _value := uintConvertor.convert(s);
+      _value := UIntConvertor.convert(s);
    }
 
    constructor(int n)
    {
-      _value := uintConvertor.convert(n);
+      _value := UIntConvertor.convert(n);
    }
 
    constructor(uint n)
@@ -1741,12 +1740,12 @@ public sealed const struct UIntNumber : IntBaseNumber,
 
    cast u(string s)
    {
-      _value := uintConvertor.convert(s);
+      _value := UIntConvertor.convert(s);
    }
 
    cast H(string s)
    {
-      _value := uintConvertor.convert(s, 16);
+      _value := UIntConvertor.convert(s, 16);
    }
 
    static uint MinValue
@@ -1762,15 +1761,15 @@ public sealed const struct UIntNumber : IntBaseNumber,
 
    string toPrintable()
             : info("Returns the literal presentation")
-         = stringConvertor.convert(self, 16);
+         = StringConvertor.convert(self, 16);
 
    short cast()
             : info("Returns the value as a short integer")
-      = shortConvertor.convert(self);
+      = ShortConvertor.convert(self);
 
    byte cast()
             : info("Returns the byte value")
-      = byteConvertor.convert(self);
+      = ByteConvertor.convert(self);
 
    int cast()
       = self;
@@ -2069,39 +2068,39 @@ public sealed const struct LongNumber : IntBaseNumber,
 
    constructor(int n)
             : info("Creates the object with specified value")
-      = longConvertor.convert(n);
+      = LongConvertor.convert(n);
 
    constructor(uint n)
             : info("Creates the object with specified value")
-      = longConvertor.convert(n);
+      = LongConvertor.convert(n);
 
    constructor(short n)
             : info("Creates the object with specified value")
-      = longConvertor.convert(n);
+      = LongConvertor.convert(n);
 
    constructor(byte b)
             : info("Creates the object with specified value")
-      = longConvertor.convert(b);
+      = LongConvertor.convert(b);
 
    int cast()
             : info("Returns an integer value")
-      = intConvertor.convert(self);
+      = IntConvertor.convert(self);
 
    uint cast()
             : info("Returns an integer value")
-      = uintConvertor.convert(self);
+      = UIntConvertor.convert(self);
 
    short cast()
             : info("Returns an integer value")
-      = shortConvertor.convert(self);
+      = ShortConvertor.convert(self);
 
    byte cast()
             : info("Returns an integer value")
-      = byteConvertor.convert(self);
+      = ByteConvertor.convert(self);
 
    real cast()
             : info("Returns a real value")
-      = realConvertor.convert(self);
+      = RealConvertor.convert(self);
 
    bool equal(o)
    {
@@ -2300,7 +2299,7 @@ public sealed const struct LongNumber : IntBaseNumber,
       = -1l * _value;
 
    string toPrintable()
-      = stringConvertor.convert(self, 10);
+      = StringConvertor.convert(self, 10);
 
    long clone()
       = new LongNumber(_value);
@@ -2340,13 +2339,13 @@ public sealed const struct RealNumber : BaseNumber,
       = Pi_value;
 
    constructor(int n)
-      = realConvertor.convert(n);
+      = RealConvertor.convert(n);
    
    constructor(byte n)
-      = realConvertor.convert(n);
+      = RealConvertor.convert(n);
    
    constructor(short n)
-      = realConvertor.convert(n);
+      = RealConvertor.convert(n);
 
    constructor()
             : info("Creates the object with a default value (0)")
@@ -2358,11 +2357,11 @@ public sealed const struct RealNumber : BaseNumber,
    
    constructor(uint n)
             : info("Creates the object with specified value")
-      = realConvertor.convert(n);
+      = RealConvertor.convert(n);
 
    constructor(long n)
             : info("Creates the object with specified value")
-      = realConvertor.convert(n);
+      = RealConvertor.convert(n);
 
    bool equal(o)
    {
@@ -2511,7 +2510,7 @@ public sealed const struct RealNumber : BaseNumber,
 
    string toPrintable()
             : info("Returns the literal presentation")
-      = stringConvertor.convert(self);
+      = StringConvertor.convert(self);
 
    real clone()
             : info("Clones the value")
@@ -2555,11 +2554,11 @@ public const struct CharValue : BaseValue,
 
    constructor load(int n)
             : info("Creates the object with specified numeric value")
-      = charConvertor.convert(n);
+      = CharConvertor.convert(n);
 
    get internal int Value()
    {
-      int val := intConvertor.convert(self);
+      int val := IntConvertor.convert(self);
 
       ^ val
    }
@@ -2644,13 +2643,13 @@ public const struct CharValue : BaseValue,
       = new CharValue(self);
 
    string toPrintable()
-      = stringConvertor.convert(self);
+      = StringConvertor.convert(self);
 
    string cast()
-      = stringConvertor.convert(self); 
+      = StringConvertor.convert(self); 
 
    wide cast()
-      = wideConvertor.convert(self); 
+      = WideConvertor.convert(self); 
 }
 
 // --- nil constant ---

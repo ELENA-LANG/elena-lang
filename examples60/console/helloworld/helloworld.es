@@ -1,5 +1,5 @@
 [[
-   #define start ::= "?" <= system'console.eval&writeLine( => $literal <= ) =>; 
+   #define start ::= "?" <= system'Console.eval&writeLine( => $literal <= ) =>; 
 ]]
 
 ? "Hello World!!"

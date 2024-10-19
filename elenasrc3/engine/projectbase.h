@@ -70,6 +70,7 @@ namespace elena_lang
       MappingOutputMode,
       OptimizationMode,
       GenerateParamNameInfo,
+      StrictTypeEnforcing,
       ConditionalBoxing,
       EvaluateOp,
 

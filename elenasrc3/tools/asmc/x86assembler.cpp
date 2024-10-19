@@ -1181,9 +1181,28 @@ void X86Assembler :: compileNeg(ScriptToken& tokenInfo, MemoryWriter& writer)
 
 void X86Assembler :: compileNop(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
-   writer.writeByte(0x90);
-
-   read(tokenInfo);
+   X86Operand sour = compileOperand(tokenInfo, nullptr);
+   if (sour.type != X86OperandType::Unknown) {
+      if (sour.type == X86OperandType::M32disp8) {
+         writer.writeByte(0x0F);
+         writer.writeByte(0x1F);
+         writer.writeWord(0x40);
+      }
+      else if (sour.type == X86OperandType::EaxEaxDisp8) {
+         writer.writeByte(0x0F);
+         writer.writeByte(0x1F);
+         writer.writeWord(0x44);
+         writer.writeByte(0);
+      }
+      else if (sour.type == X86OperandType::EaxEaxDisp32) {
+         writer.writeByte(0x0F);
+         writer.writeByte(0x1F);
+         writer.writeWord(0x84);
+         writer.writeDWord(0);
+      }      
+      else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+   }
+   else writer.writeByte(0x90);
 }
 
 void X86Assembler :: compileNot(ScriptToken& tokenInfo, MemoryWriter& writer)
@@ -2844,6 +2863,11 @@ bool X86Assembler::compileROpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
    }
    else if (tokenInfo.compare("rep")) {
       compileRep(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("rgw")) {
+      writer.writeByte(0x66);
+
+      read(tokenInfo);
    }
    else if (tokenInfo.compare("ret")) {
       compileRet(tokenInfo, writer);

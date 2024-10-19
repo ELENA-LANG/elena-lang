@@ -549,6 +549,7 @@ namespace elena_lang
       virtual int getExtMessageSize() = 0;
 
       virtual void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) = 0;
+      //virtual void alignJumpAddress(MemoryWriter& writer) = 0;
 
       virtual void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader,
          MemoryWriter& codeWriter, LabelHelperBase* lh) = 0;
@@ -567,7 +568,7 @@ namespace elena_lang
       virtual pos_t findMethodOffset(void* entries, mssg_t message) = 0;
       virtual pos_t findHiddenMethodOffset(void* entries, mssg_t message) = 0;
 
-      virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, 
+      virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength,
          pos_t indexTableLength, pos_t staticLength, bool withOutputList) = 0;
       virtual void addVMTEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t& entryCount) = 0;
       virtual void addIndexEntry(mssg_t message, addr_t codeAddress, void* targetVMT, pos_t indexOffset, pos_t& indexCount) = 0;
@@ -1124,6 +1125,8 @@ namespace elena_lang
       pos_t  indexCount;
       ref_t  flags;
       ref_t  parentRef;
+
+      ClassHeader() = default;
    };
 
    // --- MethodEntry ---
@@ -1132,6 +1135,17 @@ namespace elena_lang
       mssg_t message;
       pos_t  codeOffset;
       ref_t  outputRef;
+
+      MethodEntry() = default;
+
+      MethodEntry(mssg_t message, pos_t codeOffset)
+         : message(message), codeOffset(codeOffset), outputRef(0)
+      {
+      }
+      MethodEntry(mssg_t message, pos_t codeOffset, ref_t outputRef)
+         : message(message), codeOffset(codeOffset), outputRef(outputRef)
+      {
+      }
    };
 
    // --- DebugLineInfo ---
@@ -1181,30 +1195,6 @@ namespace elena_lang
       }
    };
 #pragma pack(pop)
-
-   // --- ExceptionBase ---
-   class ExceptionBase {};
-
-   class AbortError : ExceptionBase {};
-
-   // --- InternalError ---
-   struct InternalError : ExceptionBase
-   {
-      int messageCode;
-      int arg;
-
-      InternalError(int messageCode)
-      {
-         this->messageCode = messageCode;
-         this->arg = 0;
-      }
-
-      InternalError(int messageCode, int arg)
-      {
-         this->messageCode = messageCode;
-         this->arg = arg;
-      }
-   };
 
    // --- InternalStrError ---
    struct InternalStrError : ExceptionBase

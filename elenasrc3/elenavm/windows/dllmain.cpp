@@ -112,6 +112,9 @@ void printError(int errCode)
       case errVMNotInitialized:
          printf("ELENAVM: not initialized");
          break;
+      case errFailedMemoryAllocation:
+         printf("ELENAVM: cannot reserve the memory");
+         break;
       default:
          printf("ELENAVM: Unknown error %d\n", errCode);
          break;

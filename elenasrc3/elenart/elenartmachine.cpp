@@ -320,7 +320,7 @@ void ELENARTMachine :: startSTA(SystemEnv* env, void* entry)
    __routineProvider.InitSTA(env);
 
    // executing the program
-   execute(env, entry);
+   execute(entry);
 
    // winding down system
    Exit(0);
@@ -361,7 +361,7 @@ void ELENARTMachine :: startThread(SystemEnv* env, void* entry, int index)
 {
    void* arg = env->th_table->slots[index].arg;
    // executing the program
-   execute(env, entry, arg);
+   execute(entry, arg);
 }
 
 bool ELENARTMachine :: checkClassMessage(void* classPtr, mssg_t message)

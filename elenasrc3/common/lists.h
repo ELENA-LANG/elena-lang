@@ -2763,6 +2763,8 @@ namespace elena_lang
       {
          Key key;
          T   item;
+
+         CachedItem() = default;
       };
 
       class CachedMemoryMapIterator

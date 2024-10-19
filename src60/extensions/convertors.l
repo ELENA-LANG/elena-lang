@@ -3,10 +3,10 @@ import system'collections;
 import system'routines;
 import system'calendar;
 
-singleton stringExConvertor
+singleton StringExConvertor
 {
     string convert(IntMatrix a)
-        = intmatrixExConvertor.toString(a);
+        = IntmatrixExConvertor.toString(a);
 
    string convert(Indexer it)
    {
@@ -53,7 +53,7 @@ singleton stringExConvertor
       <= convert(o.indexer());
 
    string convert(o)
-      = stringConvertor.convert(o);
+      = StringConvertor.convert(o);
 }
 
 // --- arrayConvertorEx ---
@@ -93,7 +93,7 @@ public singleton arrayConvertorEx
 
 // --- intmatrixExConvertor ---
 
-public singleton intmatrixExConvertor
+public singleton IntmatrixExConvertor
 {
    IntMatrix convert(Array a)
    {
@@ -158,7 +158,7 @@ public singleton intmatrixExConvertor
 
 // --- enumerableConvertor ---
 
-singleton enumerableConvertor
+singleton EnumerableConvertor
 {
    Enumerable convert(Enumerable o)
       = o;
@@ -167,7 +167,7 @@ singleton enumerableConvertor
       = new Enumerable { Enumerator enumerator() = o.enumerator(); };
 }
 
-public singleton byteArrayExConvertor
+public singleton ByteArrayExConvertor
 {
    byte[] convert(string s)
    {
@@ -208,10 +208,10 @@ public singleton byteArrayExConvertor
 public extension stringConvertOp
 {
    string toString()
-      = stringExConvertor.convert(self);
+      = StringExConvertor.convert(self);
 
    string toString(int radix)
-      = stringConvertor.convert(self, radix);
+      = StringConvertor.convert(self, radix);
 }
 
 // --- intConvertOp ---
@@ -219,10 +219,10 @@ public extension stringConvertOp
 public extension intConvertOp
 {
    int toInt()
-     = intConvertor.convert(self);
+     = IntConvertor.convert(self);
 
    int toInt(int radix)
-     = intConvertor.convert(self, radix);
+     = IntConvertor.convert(self, radix);
 }
 
 // --- byteConvertOp ---
@@ -230,7 +230,7 @@ public extension intConvertOp
 public extension byteConvertOp
 {
    byte toByte()
-     = byteConvertor.convert(self);
+     = ByteConvertor.convert(self);
 }
 
 // --- shortConvertOp ---
@@ -238,28 +238,28 @@ public extension byteConvertOp
 public extension shortConvertOp
 {
    short toShort()
-     = shortConvertor.convert(self);
+     = ShortConvertor.convert(self);
 }
 
 // --- longConvertOp ---
 public extension longConvertOp
 {
    long toLong()
-      = longConvertor.convert(self);
+      = LongConvertor.convert(self);
 }
 
 // --- realConvertOp ---
 public extension realConvertOp
 {
    real toReal()
-      = realConvertor.convert(self);
+      = RealConvertor.convert(self);
 }
 
 // --- enumerableExOp ---
 public extension enumerableExOp
 {
     Enumerable asEnumerable()
-        = enumerableConvertor.convert(self);
+        = EnumerableConvertor.convert(self);
 }
 
 // --- arrayConvertOp ---
@@ -274,7 +274,7 @@ public extension arrayConvertOp
 public extension intArrayConvertOp
 {
    IntMatrix toIntMatrix()
-      = intmatrixExConvertor.convert(self);
+      = IntmatrixExConvertor.convert(self);
 }
 
 // --- convertorOp ---
@@ -285,15 +285,15 @@ public extension convertorOp
       = new Variant(self).saveTo(target);
 
    char toChar()
-      = charConvertor.convert(self);
+      = CharConvertor.convert(self);
 
    byte[] toByteArray()
-      = byteArrayExConvertor.convert(self);
+      = ByteArrayExConvertor.convert(self);
 }
 
 // --- convertor ---
 
-public singleton intConvertExt
+public singleton IntConvertExt
 { 
    generic(n)
    {

@@ -197,25 +197,25 @@ public sealed class DBCommand
       int columnType := extern sqlite3.sqlite3_column_type(_commandHandle, index);
       
       columnType =>
-         SQLITE_INTEGER
+         SQLITE_INTEGER:
              {
                  int val := extern sqlite3.sqlite3_column_int(_commandHandle, index);
                  
                  ^ val
              }
-         SQLITE_TEXT
+         SQLITE_TEXT:
              {
                  pointer columnTextPtr := extern sqlite3.sqlite3_column_text(_commandHandle, index);
       
                  ^ cast string(columnTextPtr)
              }
-         SQLITE_FLOAT
+         SQLITE_FLOAT:
              {
                  real val := extern sqlite3.sqlite3_column_double(_commandHandle, index);
                  
                  ^ val
              }
-         SQLITE_BLOB
+         SQLITE_BLOB:
              {
                  pointer blob := extern sqlite3.sqlite3_column_blob(_commandHandle, index);
                  int len := extern sqlite3.sqlite3_column_bytes(_commandHandle, index);
@@ -226,11 +226,11 @@ public sealed class DBCommand
       
                  ^ arr
              }
-         SQLITE_NULL
+         SQLITE_NULL:
              {
                  ^ nil
              }
-         !
+         ! :
              {
                  DBException.new("Unsupported type").raise()
              }

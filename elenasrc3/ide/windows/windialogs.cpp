@@ -266,9 +266,19 @@ void WinDialog :: setCheckState(int id, bool value)
    ::SendDlgItemMessage(_handle, id, BM_SETCHECK, value ? BST_CHECKED : BST_UNCHECKED, 0);
 }
 
+void WinDialog :: setUndefinedCheckState(int id)
+{
+   ::SendDlgItemMessage(_handle, id, BM_SETCHECK, BST_INDETERMINATE, 0);
+}
+
 bool WinDialog :: getCheckState(int id)
 {
    return test((int)::SendDlgItemMessage(_handle, id, BM_GETCHECK, 0, 0), BST_CHECKED);
+}
+
+bool WinDialog :: isUndefined(int id)
+{
+   return test((int)::SendDlgItemMessage(_handle, id, BM_GETCHECK, 0, 0), BST_INDETERMINATE);
 }
 
 void WinDialog :: enable(int id, bool enabled)
@@ -346,6 +356,11 @@ void ProjectSettings :: onCreate()
    //}
    //else setComboBoxIndex(IDC_SETTINGS_DEBUG, 0);
 
+   if (_model->strictType == FLAG_UNDEFINED) {
+      setUndefinedCheckState(IDC_SETTINGS_STRICTTYPE);
+   }
+   else setCheckState(IDC_SETTINGS_STRICTTYPE, _model->strictType == -1);
+
    loadTemplateList();
    loadProfileList();
 }
@@ -395,7 +410,16 @@ void ProjectSettings :: onOK()
    getText(IDC_SETTINGS_ARGUMENT, (wchar_t**)(&name), IDENTIFIER_LEN);
    _model->debugArguments.copy(name);
 
-   _model->notSaved = true;
+   if (isUndefined(IDC_SETTINGS_STRICTTYPE)) {
+      _model->strictType = FLAG_UNDEFINED;
+   }
+   else if (getCheckState(IDC_SETTINGS_STRICTTYPE)) {
+      _model->strictType = -1;
+   }
+   else _model->strictType = 0;
+
+   if (!_model->singleSourceProject)
+      _model->notSaved = true;
 }
 
 bool ProjectSettings :: showModal()

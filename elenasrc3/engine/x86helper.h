@@ -82,6 +82,9 @@ namespace elena_lang
       M32disp8   = 0x00110100,
       M32disp32  = 0x00110200,
 
+      EaxEaxDisp32 = 0x00110204,
+      EaxEaxDisp8  = 0x00110104,
+
       R64        = 0x00008300,
       M64        = 0x00018000,
       M64disp8   = 0x00018100,
@@ -302,23 +305,26 @@ namespace elena_lang
 
       static void writeModRM(MemoryWriter& writer, X86Operand sour, X86Operand dest)
       {
-         int prefix = ((unsigned int)dest.type & 0x300) >> 2;
-         // HOTFIX : to allow GS M64Disp32
-         if (prefix == 0x80 && dest.prefix == SegmentPrefix::GS) {
-            writer.writeByte(0x14);
-            prefix = 0x10;
-         }
-         int opcode = prefix + ((char)sour.type << 3) + (char)dest.type;
+         unsigned int destType = (unsigned int)dest.type;
 
+         if (test(dest.type, X86OperandType::M64disp32) && dest.prefix == SegmentPrefix::GS) {
+            // HOTFIX : for direct m64 disp mode - use SIB mode
+            destType = 0x25000004;
+         }
+
+         int prefix = (destType & 0x300) >> 2;
+         int opcode = prefix + ((char)sour.type << 3) + (char)destType;
          writer.writeByte((unsigned char)opcode);
-         if ((char)dest.type == (char)X86OperandType::SIB && dest.type != X86OperandType::ESP 
+
+         if ((char)destType == (char)X86OperandType::SIB && dest.type != X86OperandType::ESP
             && dest.type != X86OperandType::RSP && dest.type != X86OperandType::RX12 && dest.type != X86OperandType::AH) {
-            int sib = (char)((unsigned int)dest.type >> 24);
+            int sib = (char)(destType >> 24);
             if (sib == 0)
                sib = 0x24;
 
             writer.writeByte((unsigned char)sib);
          }
+
          if (test(dest.type, X86OperandType::M32disp8) || test(dest.type, X86OperandType::M8disp8)
             || test(dest.type, X86OperandType::M64disp8) || test(dest.type, X86OperandType::MX64disp8)) {
             writer.writeByte((unsigned char)dest.offset);

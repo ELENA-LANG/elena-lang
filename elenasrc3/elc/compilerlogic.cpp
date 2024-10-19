@@ -120,7 +120,7 @@ constexpr Op Operations[OperationLength] =
    {
       BNOT_OPERATOR_ID, BuildKey::IntSOp, V_INT32, 0, 0, V_INT32
    },
-   { 
+   {
       NEGATE_OPERATOR_ID, BuildKey::IntSOp, V_INT32, 0, 0, V_INT32
    },
    {
@@ -483,9 +483,9 @@ constexpr Op Operations[OperationLength] =
    {
       MUL_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
    },
-   {     
+   {
       DIV_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, V_UINT16
-   }, 
+   },
    {
       ADD_ASSIGN_OPERATOR_ID, BuildKey::ShortOp, V_UINT16, V_UINT16, 0, 0
    },
@@ -1194,7 +1194,7 @@ bool CompilerLogic :: validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_
    }
 
    // const attribute can be applied only to a get-property
-   if (testMethodHint(hints, MethodHint::Constant) 
+   if (testMethodHint(hints, MethodHint::Constant)
       && ((message & PREFIX_MESSAGE_MASK) != PROPERTY_MESSAGE && getArgCount(message) > 1))
    {
       return false;
@@ -1477,6 +1477,28 @@ bool CompilerLogic :: isWrapper(ClassInfo& info)
       && !test(info.header.flags, elDynamicRole);
 }
 
+bool CompilerLogic ::isClosedClass(ModuleScopeBase& scope, ref_t reference)
+{
+   if (scope.cachedClosed.exist(reference))
+      return scope.cachedClosed.get(reference);
+
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference, true)) {
+      auto retVal = isClosedClass(info);
+
+      scope.cachedClosed.add(reference, retVal);
+
+      return retVal;
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: isClosedClass(ClassInfo& info)
+{
+   return test(info.header.flags, elClosed);
+}
+
 bool CompilerLogic :: isMultiMethod(ClassInfo& info, MethodInfo& methodInfo)
 {
    return test(methodInfo.hints, (ref_t)MethodHint::Multimethod);
@@ -1523,7 +1545,7 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
          info.header.flags |= elDebugArray;
       }
    }
-   
+
    if (isEmbeddableArray(info)) {
       auto inner = *info.fields.start();
       switch (inner.typeInfo.typeRef) {
@@ -1594,7 +1616,7 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
 
 void CompilerLogic :: tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef)
 {
-   
+
 }
 
 void CompilerLogic :: writeTypeMapEntry(MemoryBase* section, ustr_t key, ref_t reference)
@@ -1733,7 +1755,7 @@ void CompilerLogic :: writeExtMessageEntry(MemoryBase* section, mssg_t message, 
    writer.writeString(pattern);
 }
 
-bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* section, ExtensionMap& map, 
+bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* section, ExtensionMap& map,
    ExtensionTemplateMap& extensionTemplates, ModuleScopeBase* scope)
 {
    bool importMode = extModule != scope->module;
@@ -1766,7 +1788,7 @@ bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* sec
    return true;
 }
 
-bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, 
+bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference,
    bool headerOnly, bool fieldsOnly)
 {
    if (isPrimitiveRef(reference) && !headerOnly) {
@@ -2044,7 +2066,7 @@ inline ref_t getSignature(ModuleScopeBase& scope, mssg_t message)
    return signRef;
 }
 
-bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ModuleBase* targetModule, ref_t targetSignature, 
+bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ModuleBase* targetModule, ref_t targetSignature,
    ref_t* sourceSignatures, size_t sourceLen)
 {
    ref_t targetSignatures[ARG_COUNT];
@@ -2066,7 +2088,7 @@ bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ModuleBase* 
    return true;
 }
 
-bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ref_t targetSignature, 
+bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ref_t targetSignature,
    ref_t* sourceSignatures, size_t sourceLen)
 {
    ref_t targetSignatures[ARG_COUNT];
@@ -2094,7 +2116,7 @@ bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, mssg_t targe
    return isSignatureCompatible(scope, getSignature(scope, targetMessage), sourceSignatures, len);
 }
 
-bool CompilerLogic :: isMessageCompatibleWithSignature(ModuleScopeBase& scope, ref_t targetRef, 
+bool CompilerLogic :: isMessageCompatibleWithSignature(ModuleScopeBase& scope, ref_t targetRef,
    mssg_t targetMessage, ref_t* sourceSignature, size_t len, int& stackSafeAttr)
 {
    ref_t targetSignRef = getSignature(scope, targetMessage);
@@ -2135,7 +2157,7 @@ void CompilerLogic :: setSignatureStacksafe(ModuleScopeBase& scope, ref_t target
    }
 }
 
-void CompilerLogic :: setSignatureStacksafe(ModuleScopeBase& scope, ModuleBase* targetModule, 
+void CompilerLogic :: setSignatureStacksafe(ModuleScopeBase& scope, ModuleBase* targetModule,
    ref_t targetSignature, int& stackSafeAttr)
 {
    ref_t targetSignatures[ARG_COUNT];
@@ -2184,7 +2206,7 @@ inline ref_t mapWeakSignature(ModuleScopeBase& scope, int counter)
    return scope.module->mapSignature(signatures, signatureLen, false);
 }
 
-mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, 
+mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef,
    ref_t implicitSignatureRef, int& stackSafeAttr, bool selfCall)
 {
    if (!targetRef)
@@ -2243,8 +2265,8 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
                }
             }
             else {
-               if (isSignatureCompatible(scope, sectionInfo.module, 
-                  argSign, signatures, signatureLen)) 
+               if (isSignatureCompatible(scope, sectionInfo.module,
+                  argSign, signatures, signatureLen))
                {
                   setSignatureStacksafe(scope, sectionInfo.module, argSign, stackSafeAttr);
 
@@ -2274,14 +2296,14 @@ mssg_t CompilerLogic :: retrieveDynamicConvertor(ModuleScopeBase& scope, ref_t t
    return 0;
 }
 
-mssg_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, 
+mssg_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef,
    pos_t signLen, int& stackSafeAttrs)
 {
    ref_t classClassRef = getClassClassRef(scope, targetRef);
    mssg_t messageRef = overwriteArgCount(scope.buildins.constructor_message, signLen);
 
    // try to resolve implicit multi-method
-   mssg_t resolvedMessage = resolveMultimethod(scope, messageRef, classClassRef, 
+   mssg_t resolvedMessage = resolveMultimethod(scope, messageRef, classClassRef,
       signRef, stackSafeAttrs, false);
 
    if (resolvedMessage)
@@ -2292,7 +2314,7 @@ mssg_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_
    return 0;
 }
 
-ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ustr_t ns, 
+ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ustr_t ns,
    ref_t targetRef, TypeInfo sourceInfo, bool directConversion)
 {
    ClassInfo info;
@@ -2390,11 +2412,11 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
       result.kind = methodInfo.hints & (ref_t)MethodHint::Mask;
       if (result.kind == (ref_t)MethodHint::Normal) {
          // check if the normal method can be called directly / semi-directly
-         if (test(info.header.flags, elSealed)) {
-            result.kind = (ref_t)MethodHint::Sealed; // mark it as sealed - because the class is sealed
-         }
-         else if (MethodInfo::checkHint(methodInfo, MethodHint::Indexed)) {
+         if (MethodInfo::checkHint(methodInfo, MethodHint::Indexed)) {
             result.kind = (ref_t)MethodHint::ByIndex;
+         }
+         else if (test(info.header.flags, elSealed)) {
+            result.kind = (ref_t)MethodHint::Sealed; // mark it as sealed - because the class is sealed
          }
          else if (test(info.header.flags, elClosed)) {
             result.kind = (ref_t)MethodHint::Fixed; // mark it as fixed - because the class is closed
@@ -2479,7 +2501,7 @@ bool CompilerLogic :: isMessageSupported(ClassInfo& info, mssg_t message, CheckM
    return false;
 }
 
-bool CompilerLogic :: resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message, 
+bool CompilerLogic :: resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message,
    CheckMethodResult& result)
 {
    if (!classRef)
@@ -2544,7 +2566,7 @@ inline ustr_t resolveActionName(ModuleBase* module, mssg_t message)
    return module->resolveAction(getAction(message), signRef);
 }
 
-ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, MethodHint callType, ClassInfo::MethodMap& methods, 
+ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, MethodHint callType, ClassInfo::MethodMap& methods,
    mssg_t message, void* param, ref_t(*resolve)(void*, ref_t))
 {
    // create a new overload list
@@ -2689,7 +2711,7 @@ mssg_t CompilerLogic :: resolveFunctionSingleDispatch(ModuleScopeBase& scope, re
    ClassInfo info;
    if (defineClassInfo(scope, info, reference)) {
       ref_t actionRef = scope.module->mapAction(INVOKE_MESSAGE, 0, true);
-      for (int i = 0; i < ARG_COUNT; i++) {
+      for (pos_t i = 0; i < ARG_COUNT; i++) {
          mssg_t weakMessage = encodeMessage(actionRef, i, FUNCTION_MESSAGE);
 
          if (info.methods.exist(weakMessage))
@@ -2736,7 +2758,7 @@ inline void decodeClassName(IdentifierString& signature)
    else signature.replaceAll('@', '\'', 0);
 }
 
-ref_t CompilerLogic :: resolveExtensionTemplate(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern, ref_t signatureRef, 
+ref_t CompilerLogic :: resolveExtensionTemplate(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern, ref_t signatureRef,
    ustr_t ns, ExtensionMap* outerExtensionList)
 {
    size_t argumentLen = 0;
@@ -2745,16 +2767,19 @@ ref_t CompilerLogic :: resolveExtensionTemplate(ModuleScopeBase& scope, Compiler
    scope.module->resolveSignature(signatureRef, signatures);
 
    // matching pattern with the provided signature
-   size_t i = pattern.find('.') + 2;
+   size_t i = pattern.find('.') ;
 
    // define an argument length
    size_t argLenPos = pattern.findSub(0, '#', i, NOTFOUND_POS);
    if (i != NOTFOUND_POS) {
+      i += 2;
+
       String<char, 5> tmp;
       tmp.copy(pattern + argLenPos + 1, i - argLenPos - 3);
 
       argumentLen = tmp.toInt();
    }
+   else i = getlength(pattern);
 
    IdentifierString templateName(pattern, i - 2);
    ref_t templateRef = scope.mapFullReference(*templateName, true);
@@ -2865,6 +2890,31 @@ ref_t CompilerLogic :: resolveExtensionTemplate(ModuleScopeBase& scope, Compiler
    return 0;
 }
 
+ref_t CompilerLogic :: resolveExtensionTemplateByTemplateArgs(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern, 
+   ustr_t ns, size_t argumentLen, ref_t* arguments, ExtensionMap* outerExtensionList)
+{
+   // matching pattern with the provided signature
+   size_t i = pattern.find('.');
+
+   // define an argument length
+   size_t argLenPos = pattern.findSub(0, '#', i, NOTFOUND_POS);
+   if (i != NOTFOUND_POS) {
+      i += 2;
+
+      String<char, 5> tmp;
+      tmp.copy(pattern + argLenPos + 1, i - argLenPos - 3);
+
+      if(argumentLen != tmp.toInt())
+         return 0;
+   }
+   else return 0;
+
+   IdentifierString templateName(pattern, i - 2);
+   ref_t templateRef = scope.mapFullReference(*templateName, true);
+
+   return compiler->generateExtensionTemplate(scope, templateRef, argumentLen, arguments, ns, outerExtensionList);
+}
+
 bool CompilerLogic :: isNumericType(ModuleScopeBase& scope, ref_t& reference)
 {
    if (isCompatible(scope, { V_INT8 }, { reference }, false)) {
@@ -2882,7 +2932,8 @@ bool CompilerLogic :: isNumericType(ModuleScopeBase& scope, ref_t& reference)
 
       return true;
    }
-   if (isCompatible(scope, { V_INT64 }, { reference }, false)) {
+   if (isCompatible(scope, { V_INT64 }, { reference }, false) && !isCompatible(scope, { V_PTR64 }, { reference }, false)) {
+      // HOTFIX : ignore pointer
       reference = V_INT64;
 
       return true;
@@ -3020,7 +3071,7 @@ ref_t CompilerLogic :: loadClassInfo(ClassInfo& info, ModuleInfo& moduleInfo, Mo
    return moduleInfo.reference;
 }
 
-void CompilerLogic :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter, 
+void CompilerLogic :: importClassInfo(ClassInfo& copy, ClassInfo& target, ModuleBase* exporter,
    ModuleBase* importer, bool headerOnly, bool inheritMode)
 {
    target.header = copy.header;

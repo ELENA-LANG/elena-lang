@@ -42,6 +42,7 @@
 #include "constants.h"
 #include "messages.h"
 #include "linux/presenter.h"
+#include "linux/pathmanager.h"
 
 #include <stdarg.h>
 
@@ -159,13 +160,15 @@ JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platf
    }
 }
 
+const char* dataFileList[] = { BC_RULES_FILE, BT_RULES_FILE, SYNTAX60_FILE };
+
 int main(int argc, char* argv[])
 {
    try
    {
       bool cleanMode = false;
 
-      PathString dataPath(DATA_PATH);
+      PathString dataPath(PathHelper::retrievePath(dataFileList, 3, DATA_PATH));
 
       JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
@@ -178,7 +181,13 @@ int main(int argc, char* argv[])
       process.greeting();
 
       // Initializing...
-      PathString configPath(*dataPath, DEFAULT_CONFIG);
+      path_t defaultConfigPath = PathHelper::retrieveFilePath(LOCAL_DEFAULT_CONFIG);
+      if (defaultConfigPath.compare(LOCAL_DEFAULT_CONFIG)) {
+         // if the local config file was not found
+         defaultConfigPath = DEFAULT_CONFIG;
+      }
+
+      PathString configPath(*dataPath, PathHelper::retrieveFilePath(defaultConfigPath));
       project.loadConfig(*configPath, nullptr, false);
 
        // Reading command-line arguments...

@@ -23,7 +23,7 @@ const char* _fnOpcodes[256] =
    "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", "xjump",
    "bcopy", "wcopy", "xpeekeq", "trylock", "freelock", "parent", "xget", "xcall",
 
-   "xfsave", "altmode", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xquit", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "xfsave", "altmode", "xnop", OPCODE_UNKNOWN, "xquit", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -143,7 +143,7 @@ void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase
    messageName.append(actionName);
    if (len > 0) {
       messageName.append('<');
-      
+
       for (size_t i = 0; i < len; i++) {
          if (i != 0)
             messageName.append(',');
@@ -271,7 +271,7 @@ mssg_t ByteCodeUtil :: resolveMessageName(ustr_t messageName, ModuleBase* module
 
 inline ref_t importRArg(ref_t arg, ModuleBase* exporter, ModuleBase* importer)
 {
-   if (arg != -1) {
+   if (arg != INVALID_REF) {
       ref_t mask = arg & mskAnyRef;
       switch (mask) {
          case mskMssgLiteralRef:
@@ -301,19 +301,19 @@ void ByteCodeUtil :: importCommand(ByteCommand& command, ModuleBase* exporter, M
       command.arg1 = ImportHelper::importMessage(exporter, command.arg1, importer);
    }
 
-   if (isR2Command(command.code)) {      
+   if (isR2Command(command.code)) {
       command.arg2 = importRArg(command.arg2, exporter, importer);
    }
 }
 
-void ByteCodeUtil :: generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* module, MemoryDump& tapeSymbol)
+void ByteCodeUtil :: generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* module, MemoryDump& tapeSymbol, bool withExtFrame)
 {
    MemoryWriter writer(&tapeSymbol);
 
    pos_t sizePlaceholder = writer.position();
    writer.writePos(0);
 
-   ByteCodeUtil::write(writer, ByteCode::OpenIN, 2, 0);
+   ByteCodeUtil::write(writer, withExtFrame ? ByteCode::ExtOpenIN : ByteCode::OpenIN, 2, 0);
 
    // generate the preloaded list
    for (auto it = symbolList.start(); !it.eof(); ++it) {
@@ -327,7 +327,7 @@ void ByteCodeUtil :: generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* 
       else ByteCodeUtil::write(writer, ByteCode::CallR, module->mapReference(symbolName) | mskSymbolRef);
    }
 
-   ByteCodeUtil::write(writer, ByteCode::CloseN);
+   ByteCodeUtil::write(writer, withExtFrame ? ByteCode::ExtCloseN : ByteCode::CloseN);
    ByteCodeUtil::write(writer, ByteCode::Quit);
 
    pos_t size = writer.position() - sizePlaceholder - sizeof(pos_t);
@@ -459,8 +459,8 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
             *blocks.getIt(index) = 1;
          }
       }
-      else if (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop 
-         && command.code != ByteCode::Breakpoint) 
+      else if (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop
+         && command.code != ByteCode::Breakpoint)
       {
          switch (command.code) {
             case ByteCode::Throw:
@@ -538,7 +538,7 @@ inline bool optimizeProcJumps(ByteCodeIterator it)
          importMode = false;
       }
 
-      bool isCommand = !importMode && (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop 
+      bool isCommand = !importMode && (command.code <= ByteCode::CallExtR && command.code >= ByteCode::Nop
          && command.code != ByteCode::Breakpoint);
 
       if (index == blockEnd) {
@@ -807,7 +807,7 @@ bool ByteCodePattern :: checkLabel(ByteCodeIterator it, int label, int offset)
 
 void ByteCodeTransformer :: transform(ByteCodeIterator trans_it, ByteCodeTrieNode replacement, PatternArg& arg)
 {
-   ByteCodeIterator target_it = trans_it;
+   //ByteCodeIterator target_it = trans_it;
 
    ByteCodePattern pattern = replacement.Value();
    while (pattern.code != ByteCode::None) {
@@ -893,7 +893,7 @@ bool ByteCodeTransformer :: apply(CommandTape& commandTape)
          for (auto it = matched->start(); !it.eof(); ++it) {
             PatternArg arg = (*it).arg;
             auto patternNode = (*it).node;
-            auto pattern = patternNode.Value();
+            //auto pattern = patternNode.Value();
 
             for (auto child_it = patternNode.Children(); !child_it.eof(); ++child_it) {
                auto currentPatternNode = child_it.Node();

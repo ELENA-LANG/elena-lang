@@ -1,5 +1,4 @@
 // ; --- Predefined References  --
-define INVOKER              10001h
 define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
 define GC_COLLECT	    10004h
@@ -142,7 +141,7 @@ structure %SYSTEM_ENV
   dq data : %CORE_GC_TABLE
   dq data : %CORE_SINGLE_CONTENT
   dq 0
-  dq code : %INVOKER
+  dq 0
   dq code : %VEH_HANDLER
   // ; dd GCMGSize
   // ; dd GCYGSize
@@ -3212,7 +3211,7 @@ inline % 6ECh
   ld       r16, -elVMTOffset(r15)     
   ld       r17, -elVMTSizeOffset(r16)     
   sldi     r17, r17, 4
-  addi     r16, r16, r17
+  add      r16, r16, r17
   ld       r17, __arg16_1(r16)
   mtctr    r17            // ; put code address into ctr
   bctr                    // ; and jump to it
@@ -3641,6 +3640,7 @@ labLoop:
   b       labLoop
 
 labEnd:
+  // ; init r3, r4 with zero (and in all variants)
 
 end 
 
@@ -4810,7 +4810,7 @@ inline % 6FCh
   ld       r17, -elVMTSizeOffset(r16)     
   sldi     r17, r17, 4
   addi     r16, r16, __arg16_1
-  addi     r16, r16, r17
+  add      r16, r16, r17
   ld       r17, 8(r16)
   mtctr    r17            // ; put code address into ctr
   bctrl                   // ; and call it

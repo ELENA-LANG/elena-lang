@@ -8,27 +8,27 @@ using namespace elena_lang;
 
 TEST_F(BTOptimization1_1, BuildTest) 
 {
-   runBuildTest(false);
+   runBuildTest();
 }
 
 TEST_F(BTOptimization1_2, BuildTest)
 {
-   runBuildTest(false);
+   runBuildTest();
 }
 
 TEST_F(BTOptimization1_3, BuildTest)
 {
-   runBuildTest(true);
+   runBuildTest(false, true);
 }
 
 TEST_F(BTOptimization2, BuildTest)
 {
-   runBuildTest(false);
+   runBuildTest();
 }
 
 TEST_F(BTOptimization4, BuildTest)
 {
-   runBuildTest(false);
+   runBuildTest();
 }
 
 TEST_F(StructAlignment, BuildTest)

@@ -939,9 +939,9 @@ public multySelectTest() : testCase()
     var n := 3;
     
     n =>
-        1 { Assert.ifTrue(n==1); }
-        2 { Assert.ifTrue(n==2); }
-        3 { Assert.ifTrue(n==3); };
+        1 : { Assert.ifTrue(n==1); }
+        2 : { Assert.ifTrue(n==2); }
+        3 : { Assert.ifTrue(n==3); };
         
     console.write(".")        
 }
@@ -1922,7 +1922,7 @@ public interfaceImplTests() : testCase()
    II_I i := o;
 
    var r := i.retrieve();
-   Assert.ifTrue(r :is II_A);
+   Assert.ifTrue(r is:II_A);
    console.write(".");
 }
 
@@ -1974,7 +1974,7 @@ public decoratorTest() : testCase()
    var a := new DecoratorBaseA(2);
    var decA := new DecoratorA(a, 3);
 
-   Assert.ifEqual((decA :as IDecoratorA).giveMe(), 5);
+   Assert.ifEqual((decA as:IDecoratorA).giveMe(), 5);
 
    console.write(".");
 }
@@ -2275,4 +2275,84 @@ public variadicBoxingTest() : testCase()
 
    variadicBoxingTestset'A.validate2("a", "b", "c");
    Console.write(".");
+}
+
+namespace reflectionTestset
+{
+   A
+   {
+      string Name : prop;
+   }
+}
+
+
+public reflectionTest() : testCase()
+{
+   reflectionTestset'A a := new reflectionTestset'A();
+
+   MessageName subj := mssg Name;
+   
+   subj.setPropertyValue(a, "Ivan");
+
+   Assert.ifEqual(subj.getPropertyValue(a), "Ivan");
+   Console.write(".");   
+}
+
+namespace variadicFunctionTestset
+{
+   function variadicSum(params object[] args)
+   { 
+      var sum := 0;
+      for (int i := 0; i < args.Length; i++) {
+         sum := sum + args[i]
+      };
+   
+      ^ sum
+   }
+   
+   function sumAndTest(object sumToCheck, params object[] args)
+   { 
+      Assert.ifEqual(variadicSum(params args), sumToCheck);
+   }
+}
+
+
+public variadicFunctionTest() : testCase()
+{
+   variadicFunctionTestset'sumAndTest(6, 1,2,3);
+   Console.write(".");   
+}
+
+sealed class MyIntValue
+{
+   int value;
+
+   constructor(string value)
+   {
+      this value := value.toInt()
+   }
+
+   int Value = value;
+}
+
+public implicitConvertorTest() : testCase()
+{
+   auto v := "2" as: MyIntValue;
+
+   Assert.ifEqual(v.Value, 2);
+   Console.write(".");   
+}
+
+public pointerTest() : testCase()
+{
+   pointer ptr := 2;
+
+   var o := ptr;
+   pointer ptr2 := o;
+
+   int v := ptr.Value;
+   int v2 := ptr.Value;
+
+   Assert.ifEqual(v, 2);
+   Assert.ifEqual(v2, 2);
 }

@@ -3,7 +3,7 @@ import system;
 namespace math
 {
    // --- mathController ---    
-   singleton mathController
+   singleton MathController
    {
       absolute(byte n)
          = n.Absolute;
@@ -39,10 +39,10 @@ namespace math
          = 1.0.exp();
                 
       Radian
-         = realConvertor.convert(self).Radian;
+         = RealConvertor.convert(self).Radian;
                 
       Degree
-         = realConvertor.convert(self).Degree;
+         = RealConvertor.convert(self).Degree;
    }
 
    public extension mathOp
@@ -51,16 +51,16 @@ namespace math
          = cast real(self).Rounded;
       
       RoundedInt
-         = intConvertor.convert(cast real(self).Rounded);
+         = IntConvertor.convert(cast real(self).Rounded);
       
       Integer
          = cast real(self).Integer;
       
       IntegerInt
-         = intConvertor.convert(cast real(self).Integer);
+         = IntConvertor.convert(cast real(self).Integer);
 
       mod(n)
-         = mathController.mod(self, n);
+         = MathController.mod(self, n);
     
       frac()
          = cast real(self).frac();
@@ -99,8 +99,8 @@ namespace math
    }      
 
    public real Pi
-      = mathController.pi();
+      = MathController.pi();
 
    public real E
-      = mathController.e();
+      = MathController.e();
 }

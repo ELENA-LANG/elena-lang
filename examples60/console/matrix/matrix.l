@@ -57,7 +57,7 @@ Your choice:";
     proceed(choice)
     {
         choice =>
-            "1" {
+            "1" : {
                 Console.write("Enter the order of matrix: ");
                 var N := Console.readLine().toInt();
                 
@@ -73,7 +73,7 @@ Your choice:";
 
                 ^ sum.toString()
             }
-            "2" {
+            "2" : {
                 Console.write("Enter the order of matrix: ");
                 var N := Console.readLine().toInt();
                 
@@ -89,7 +89,7 @@ Your choice:";
 
                 ^ diff.toString()
             }
-            "3" {
+            "3" : {
                 Console.write("Enter the order of matrix: ");
                 var N := Console.readLine().toInt();
                 
@@ -105,7 +105,7 @@ Your choice:";
 
                 ^ product.toString()
             }
-            "4" {
+            "4" : {
                 Console.write("Enter the order of matrix: ");
                 var N := Console.readLine().toInt();
                 
@@ -115,7 +115,7 @@ Your choice:";
 
                 ^ matrixA.Determinant
             }
-            "5" {
+            "5" : {
                 Console.write("Enter the order of matrix: ");
                 var N := Console.readLine().toInt();
                 
@@ -123,7 +123,7 @@ Your choice:";
 
                 ^ identity.toString()
             }
-            "6" {
+            "6" : {
                 forward program.stop()
             }
     }
