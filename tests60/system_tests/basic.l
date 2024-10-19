@@ -1098,7 +1098,7 @@ singleton ExecTester
 
 // --- ExceptionTest ---
 
-public exceptionTest() //: testCase()
+public exceptionTest() : testCase()
 {
     bool raised := false;
     ExecTester.break() \\ on::(e){ raised := true };
@@ -1510,7 +1510,7 @@ public outerFieldAssigningTest() : testCase()
 
 // --- methodNotFoundTest ---
 
-public methodNotFoundTest() //: testCase()
+public methodNotFoundTest() : testCase()
 {
    var o := 2;
    var f := false;
