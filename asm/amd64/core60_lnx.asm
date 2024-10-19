@@ -18,6 +18,9 @@ define gc_mg_start           0038h
 define gc_mg_current         0040h
 define gc_end                0048h
 define gc_mg_wbar            0050h
+define gc_perm_start         0058h 
+define gc_perm_end           0060h 
+define gc_perm_current       0068h 
 
 define et_current            0008h
 define tt_stack_frame        0010h
