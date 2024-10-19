@@ -1,6 +1,7 @@
 // ; --- Predefined References  --
 define GC_ALLOC	            10002h
 define VEH_HANDLER          10003h
+define GC_COLLECT	    10004h
 define PREPARE	            10006h
 
 define SYSTEM_ENV           20002h
