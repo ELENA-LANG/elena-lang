@@ -91,11 +91,11 @@ namespace calendar
 
       get long Value()
       {
-         long l := longConvertor.convert(tv_sec);
+         long l := LongConvertor.convert(tv_sec);
                 
          l := l * 10000000l;
 
-         long l2 := longConvertor.convert(tv_usec);
+         long l2 := LongConvertor.convert(tv_usec);
          l2 := l2 * 10l;
                 
          l := l + l2;
