@@ -44,6 +44,129 @@ void X86JITCompiler :: alignCode(MemoryWriter& writer, pos_t alignment, bool isT
    writer.align(alignment, isText ? 0x90 : 0x00);
 }
 
+void X86JITCompiler :: alignJumpAddress(MemoryWriter& writer)
+{
+   int bytesToFill = 0x10 - (writer.position() & 0xF);
+   switch (bytesToFill) {
+      case 1:
+         writer.writeByte(0x90);
+         break;
+      case 2:
+         writer.writeWord(0x9066);
+         break;
+      case 3:
+         writer.writeByte(0x0F);
+         writer.writeWord(0x1F);
+         break;
+      case 4:
+         writer.writeByte(0x0F);
+         writer.writeWord(0x401F);
+         writer.writeByte(0);
+         break;
+      case 5:
+         writer.writeByte(0x0F);
+         writer.writeWord(0x441F);
+         writer.writeWord(0);
+         break;
+      case 6:
+         writer.writeByte(0x66);
+         writer.writeByte(0x0F);
+         writer.writeWord(0x441F);
+         writer.writeWord(0);
+         break;
+      case 7:
+         writer.writeByte(0x0F);
+         writer.writeWord(0x801F);
+         writer.writeDWord(0);
+         break;
+      case 8:
+         writer.writeByte(0x0F);
+         writer.writeWord(0x841F);
+         writer.writeDWord(0);
+         writer.writeByte(0);
+         break;
+      case 9:
+         writer.writeByte(0x66);
+         writer.writeByte(0x0F);
+         writer.writeWord(0x841F);
+         writer.writeDWord(0);
+         writer.writeByte(0);
+         break;
+      case 10:
+         writer.writeByte(0x90);
+
+         writer.writeByte(0x66);
+         writer.writeByte(0x0F);
+         writer.writeWord(0x841F);
+         writer.writeDWord(0);
+         writer.writeByte(0);
+         break;
+      case 11:
+         writer.writeWord(0x9066);
+
+         writer.writeByte(0x66);
+         writer.writeByte(0x0F);
+         writer.writeWord(0x841F);
+         writer.writeDWord(0);
+         writer.writeByte(0);
+         break;
+      case 12:
+         writer.writeByte(0x0F);
+         writer.writeWord(0x1F);
+
+         writer.writeByte(0x0F);
+         writer.writeWord(0x1F);
+         writer.writeByte(0x66);
+         writer.writeByte(0x0F);
+         writer.writeWord(0x841F);
+         writer.writeDWord(0);
+         writer.writeByte(0);
+         break;
+      case 13:
+         writer.writeByte(0x0F);
+         writer.writeWord(0x401F);
+         writer.writeByte(0);
+
+         writer.writeByte(0x0F);
+         writer.writeWord(0x1F);
+         writer.writeByte(0x66);
+         writer.writeByte(0x0F);
+         writer.writeWord(0x841F);
+         writer.writeDWord(0);
+         writer.writeByte(0);
+         break;
+      case 14:
+         writer.writeByte(0x0F);
+         writer.writeWord(0x441F);
+         writer.writeWord(0);
+
+         writer.writeByte(0x0F);
+         writer.writeWord(0x1F);
+         writer.writeByte(0x66);
+         writer.writeByte(0x0F);
+         writer.writeWord(0x841F);
+         writer.writeDWord(0);
+         writer.writeByte(0);
+         break;
+      case 15:
+         writer.writeByte(0x66);
+         writer.writeByte(0x0F);
+         writer.writeWord(0x441F);
+         writer.writeWord(0);
+
+         writer.writeByte(0x0F);
+         writer.writeWord(0x1F);
+         writer.writeByte(0x66);
+         writer.writeByte(0x0F);
+         writer.writeWord(0x841F);
+         writer.writeDWord(0);
+         writer.writeByte(0);
+         break;
+      default:
+         break;
+   }
+}
+
 void X86JITCompiler :: compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
    MemoryWriter& codeWriter, LabelHelperBase*)
 {

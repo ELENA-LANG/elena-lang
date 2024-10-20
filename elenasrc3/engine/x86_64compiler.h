@@ -41,6 +41,10 @@ namespace elena_lang
       void writeImm12(MemoryWriter* writer, int value, int type) override;
 
       void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) override;
+      void alignJumpAddress(MemoryWriter& writer) override
+      {
+         // must be implemented
+      }
 
       // NOTE that LabelHelperBase argument should be overridden inside the CPU compiler
       void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 

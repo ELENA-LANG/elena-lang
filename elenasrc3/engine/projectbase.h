@@ -52,6 +52,7 @@ namespace elena_lang
       LibPath,
 
       ClassSymbolAutoLoad,
+      WithJumpAlignment,
       ModuleExtensionAutoLoad,
       StackAlignment,
       RawStackAlignment,

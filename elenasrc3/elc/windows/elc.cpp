@@ -210,6 +210,9 @@ void handleOption(wchar_t* arg, IdentifierString& profile, Project& project, Com
          else if (arg[2] == 'e') {
             project.addBoolSetting(ProjectOption::EvaluateOp, arg[3] != '-');
          }
+         else if (arg[2] == 'j') {
+            project.addBoolSetting(ProjectOption::WithJumpAlignment, arg[3] != '-');
+         }
          else if (arg[2] == 'm') {
             project.addBoolSetting(ProjectOption::ModuleExtensionAutoLoad, arg[3] != '-');
          }
@@ -328,7 +331,7 @@ int main()
       PathString appPath;
       getAppPath(appPath);
       
-      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_SACKRESERV, 1, true };
+      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_SACKRESERV, 1, true, false };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       CompilingProcess process(*appPath, L"exe", L"<moduleProlog>", L"<prolog>", L"<epilog>",
          &Presenter::getInstance(), &errorProcessor,

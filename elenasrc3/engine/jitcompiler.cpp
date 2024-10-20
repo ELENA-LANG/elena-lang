@@ -324,7 +324,7 @@ void elena_lang :: loadNop(JITCompilerScope* scope)
 
 void elena_lang :: loadXNop(JITCompilerScope* scope)
 {   
-   //scope->compiler->alignJumpAddress(*scope->codeWriter);
+   scope->compiler->alignJumpAddress(*scope->codeWriter);
 
    loadNop(scope);
 }
@@ -2961,6 +2961,11 @@ void JITCompiler :: prepare(
    JITSettings settings,
    bool virtualMode)
 {
+   if (settings.withAlignedJump) {
+      _codeGenerators[(int)ByteCode::XNop] = ::loadXNop;
+   }
+   else _codeGenerators[(int)ByteCode::XNop] = ::loadNop;
+
    Map<ref_t, pos_t> positions(INVALID_POS);
    loadCoreRoutines(loader, imageProvider, helper, lh, settings, positions, true, virtualMode);
    loadCoreRoutines(loader, imageProvider, helper, lh, settings, positions, false, virtualMode);

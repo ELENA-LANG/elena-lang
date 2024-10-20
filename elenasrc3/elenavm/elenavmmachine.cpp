@@ -38,6 +38,9 @@ void ELENAVMConfiguration :: loadConfig(ConfigFile& config, path_t configPath, C
    loadPathCollection(config, root, REFERENCE_CATEGORY,
       ProjectOption::References, configPath);
 
+   loadBoolSetting(config, root, STRICT_TYPE_ENFORCING_PATH, ProjectOption::StrictTypeEnforcing);
+   loadBoolSetting(config, root, JUMP_ALIGNMENT_PATH, ProjectOption::WithJumpAlignment);
+
    loadPathSetting(config, root, LIB_PATH, ProjectOption::LibPath, configPath);
 
    loadKeyCollection(config, root, EXTERNAL_CATEGORY,
@@ -102,6 +105,7 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
    _configuration = new ELENAVMConfiguration(platform, configPath);
 
    _settings.autoLoadMode = _configuration->BoolSetting(ProjectOption::ClassSymbolAutoLoad);
+   _settings.jitSettings.withAlignedJump = _configuration->BoolSetting(ProjectOption::WithJumpAlignment);
    _settings.virtualMode = false;
    _settings.alignment = codeAlignment;
 

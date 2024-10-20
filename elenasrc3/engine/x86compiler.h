@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef X86COMPILER_H
@@ -29,6 +29,7 @@ namespace elena_lang
       void writeImm12(MemoryWriter* writer, int value, int type) override;
 
       void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) override;
+      void alignJumpAddress(MemoryWriter& writer) override;
 
       // NOTE that LabelHelperBase argument should be overridden inside the CPU compiler
       void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
