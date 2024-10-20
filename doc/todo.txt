@@ -27,15 +27,13 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
-  * http client
-  * test linix versions
   * test all x86 examples (net)
   * x86-64 : mta - main sample sandbox2
   * x86-64 mta - sandbox2 : fix GC issue
   * review if using xnop impoves performance (pi & anagram samples)
   * validate bsredirect (on several examples) - if it is better with nop or not
   --------------------------------------
-  * if the jump alignment optimization is off - xnop is idle
+  * http client
 
   === Iteration 36 ===
   --------------------------------------

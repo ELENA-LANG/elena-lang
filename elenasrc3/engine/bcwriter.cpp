@@ -3043,7 +3043,7 @@ void ByteCodeWriter :: saveShortCircuitOp(CommandTape& tape, BuildNode node, Tap
 void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
    ReferenceMap& paths, bool tapeOptMode)
 {
-   //tape.write(ByteCode::XNop);
+   tape.write(ByteCode::XNop);
    int startLabel = tape.newLabel();
    tape.setLabel(true);
    int eopLabel = tape.newLabel();
