@@ -331,7 +331,7 @@ int main()
       PathString appPath;
       getAppPath(appPath);
       
-      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_SACKRESERV, 1, true, false };
+      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_SACKRESERV, 1, true, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       CompilingProcess process(*appPath, L"exe", L"<moduleProlog>", L"<prolog>", L"<epilog>",
          &Presenter::getInstance(), &errorProcessor,

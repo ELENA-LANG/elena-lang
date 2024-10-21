@@ -11,6 +11,7 @@ In development:
       - upndown (connector)
       - #496
       - #622
+      - http client (https get, post, put, patch, delete, head, options, trace)
   gen:
       - lpad : generate a code based on a record  
   maint:
@@ -33,7 +34,7 @@ In development:
   * review if using xnop impoves performance (pi & anagram samples)
   * validate bsredirect (on several examples) - if it is better with nop or not
   --------------------------------------
-  * http client
+  * http client : get
 
   === Iteration 36 ===
   --------------------------------------
