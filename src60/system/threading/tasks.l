@@ -44,7 +44,7 @@ public class Task
       if (_completed) {
          ThreadPool.queueAction({ action(self) });
       }
-      else ifnotNil(_continuation) {
+      else if:not:nil(_continuation) {
          InvalidOperationException.raise("Only a single continuation is supported currently")
       }
       else {
@@ -69,7 +69,7 @@ public class Task
          _exception := ex;
          _completed := true;
 
-         ifnotNil(_continuation) {
+         if:not:nil(_continuation) {
             _continuation(self);
          }
       }
@@ -90,7 +90,7 @@ public class Task
       ManualResetEvent mres := nil;
       lock (self)
       {
-         ifnot(_completed)
+         if:not(_completed)
          {
             mres := ManualResetEvent.new();
             continueWithUnsafe((Task x){ mres.set() });
@@ -98,7 +98,7 @@ public class Task
       };
       
       mres?.wait();
-      ifnotNil (_exception)
+      if:not:nil (_exception)
       {
          _exception.raise()
       }
@@ -136,7 +136,7 @@ public class Task
             remaining := remaining - 1;
          };
          if (remaining == 0) {
-            ifnotNil (e) {
+            if:not:nil (e) {
                t.setException(e)
             }
             else t.setResult();
@@ -166,7 +166,7 @@ public class Task
             remaining := remaining - 1;
          };
          if (remaining == 0) {
-            ifnotNil (e) {
+            if:not:nil (e) {
                t.setException(e)
             }
             else t.setResult();

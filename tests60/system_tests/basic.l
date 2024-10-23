@@ -2091,9 +2091,9 @@ singleton IteratorEnumerable : Enumerable
 
    yield Enumerator infinitEnumerator()
    {
-      $yield 2;
-      $yield 5;
-      $yield 7;
+      :yield 2;
+      :yield 5;
+      :yield 7;
    }
 }
 

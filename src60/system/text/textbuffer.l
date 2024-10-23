@@ -97,7 +97,7 @@ namespace text
       {
          int length := s.Length;
             
-         ifnot (0 == length)
+         if:not (0 == length)
          {
             self.reserve(length);
 
@@ -111,7 +111,7 @@ namespace text
       {
          int length := s.Length;
             
-         ifnot (0 == length)
+         if:not (0 == length)
          {
             self.reserve(length);
                 
@@ -137,7 +137,7 @@ namespace text
 
       write(char[] array, int length)
       {
-         ifnot (0 == length)
+         if:not (0 == length)
          {
             self.reserve(length);
     

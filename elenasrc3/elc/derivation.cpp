@@ -194,15 +194,19 @@ void SyntaxTreeBuilder :: generateTemplateStatement(SyntaxTreeWriter& writer, Sc
 
    IdentifierString templateName;
 
-   SyntaxNode identNode = node.firstChild();
-   if (identNode == SyntaxKey::Object) {
-      templateName.append(identNode.firstChild(SyntaxKey::identifier).identifier());
-   }
-   else if (identNode == SyntaxKey::identifier) {
+   SyntaxNode current = node.firstChild();
+   SyntaxNode identNode = (current == SyntaxKey::Object) ? current.firstChild(SyntaxKey::identifier) : current;
+   if (identNode == SyntaxKey::identifier) {
       templateName.append(identNode.identifier());
+      while (identNode.nextNode() == SyntaxKey::identifier) {
+         identNode = identNode.nextNode();
+
+         templateName.append(":");
+         templateName.append(identNode.identifier());
+      }
    }
 
-   SyntaxNode current = identNode.nextNode();
+   current = current.nextNode();
 
    // generate template arguments
    SyntaxTree tempTree;
@@ -222,8 +226,7 @@ void SyntaxTreeBuilder :: generateTemplateStatement(SyntaxTreeWriter& writer, Sc
    }
    else {
       _errorProcessor->raiseTerminalError(errInvalidOperation, retrievePath(node), node);
-   }
-      
+   }      
 }
 
 void SyntaxTreeBuilder :: generateTemplateExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node)
@@ -558,6 +561,15 @@ void SyntaxTreeBuilder :: generateTemplateOperation(SyntaxTreeWriter& writer, Sc
          break;
       case SyntaxKey::IfOperation:
          templateName.append("ifnil#1#1");
+         break;
+      case SyntaxKey::identifier:
+         templateName.append(operation.identifier());
+         if (operation.nextNode() == SyntaxKey::Expression) {
+            op = operation.nextNode();
+
+            templateName.append("#0#1");
+         }
+         else templateName.append("#0#0");
          break;
       default:
          assert(false);
@@ -1658,7 +1670,7 @@ inline bool isTemplateDeclaration(SyntaxNode node, SyntaxNode declaration, bool&
             }
             break;
          case SyntaxKey::CodeBlock:
-            if (!withPostfix && isTemplate(declaration)) {
+            if ((!withPostfix || withComplexName) && isTemplate(declaration)) {
                // HOTFIX : recognize inline template with no arguments
                return true;
             }

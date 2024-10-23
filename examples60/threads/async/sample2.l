@@ -10,7 +10,7 @@ singleton Tester
 
    async Task<int> addValueAsync(int n)
    {
-      int val := $await getValueAsync();
+      int val := :await getValueAsync();
 
       val := val + n;
 

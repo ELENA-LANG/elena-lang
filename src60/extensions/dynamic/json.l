@@ -59,7 +59,7 @@ extension jsonSerializer : TextBuilder
       int len := struct.__FieldCount;
       while (i < len)
       {
-         ifnot(0 == i) 
+         if:not(0 == i) 
             { self.write(",") };
             
          var prop := struct.getField(i);
@@ -191,7 +191,7 @@ singleton helper
       {
          string field := helper.getIdentifier(token);
             
-         ifnot(helper.readNext(e) == ":")
+         if:not(helper.readNext(e) == ":")
             { JsonException.new().raise() };
             
          var object := helper.deserializeObject(e);
@@ -263,7 +263,7 @@ singleton helper
     
    string readNext(Enumerator<string> e)
    {
-      ifnot(e.next())
+      if:not(e.next())
          { JsonException.raise() };
 
       ^ *e        
@@ -275,7 +275,7 @@ singleton helper
       char fch := field[0];
       char lch := field[len - 1];
                 
-      ifnot(lch == $34 && fch == $34)
+      if:not(lch == $34 && fch == $34)
          { JsonException.raise() };
             
       ^ field.Substring(1, len - 2)
@@ -287,7 +287,7 @@ singleton helper
       char fch := field[0];
       char lch := field[len - 1];
         
-      ifnot(lch == $34 && fch == $34)
+      if:not(lch == $34 && fch == $34)
          { JsonException.raise() };
             
       ^ field.Substring(1, len - 2)

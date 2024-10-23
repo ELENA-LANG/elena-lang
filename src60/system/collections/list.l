@@ -59,7 +59,7 @@ namespace collections
       at(int index)
       {
          int len := *_length;
-         ifnot (len > index)
+         if:not (len > index)
             { OutOfRangeException.raise() };
 
          ^ _array[index]
@@ -69,7 +69,7 @@ namespace collections
       setAt(int index, object o)
       {
          int len := *_length;
-         ifnot (len > index)
+         if:not (len > index)
             { OutOfRangeException.raise() };
 
          _array.setAt(index, o)
@@ -949,7 +949,7 @@ namespace collections
       {
          int len := *_length;
             
-         ifnot(index < len)
+         if:not(index < len)
             { OutOfRangeException.raise() };
                 
          ^ _array[index]
@@ -960,7 +960,7 @@ namespace collections
       {
          int len := *_length;
             
-         ifnot(index < len)
+         if:not(index < len)
             { OutOfRangeException.raise() };
             
          _array[index] := object
@@ -1006,7 +1006,7 @@ namespace collections
       /// Removes an object at the specified position
       remove(int index)
       {
-         ifnot (index < *_length)
+         if:not (index < *_length)
             { OutOfRangeException.raise() };
             
          _length.reduce(1);

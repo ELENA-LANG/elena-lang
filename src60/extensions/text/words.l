@@ -23,7 +23,7 @@ namespace text
       {
          if (ch.isWhitespace())
          {
-            ifnot (_spaceMode)
+            if:not (_spaceMode)
                { _spaceMode := true; ^ true }
          }
          else
@@ -67,14 +67,14 @@ namespace text
          bool letter := ch.isLToken();
          if (whitespace)
          {
-            ifnot(_spaceMode)
+            if:not(_spaceMode)
                { _spaceMode := true; _newToken := true; ^ true }
          }
          else
          {
             if (ch == $22h)
             {
-               ifnot(_newToken)
+               if:not(_newToken)
                   { _newToken := true; ^ true };
                     
                _quoteMode := true;
@@ -166,7 +166,7 @@ namespace text
             }
             else
             {
-               ifnot (_dfa.isWhitespace())
+               if:not (_dfa.isWhitespace())
                   { _buffer.write(ch) }
             };
                     
@@ -208,14 +208,14 @@ namespace text
          bool whitespace := ch.isWhitespace();
          if (whitespace)
          {
-            ifnot(_spaceMode)
+            if:not(_spaceMode)
                { _spaceMode := true; _newToken := true; ^ true }
          }
          else
          {
             if (ch == $22h)
             {
-               ifnot(_newToken)
+               if:not(_newToken)
                   { _newToken := true; ^ true };
                     
                _quoteMode := true;

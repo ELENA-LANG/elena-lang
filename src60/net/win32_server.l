@@ -95,7 +95,7 @@ public sealed class TcpServer
    {
       auto socket := _listenSocket.accept();
       TcpRemoteClient client := nil;
-      ifnot(socket.isInvalid)
+      if:not(socket.isInvalid)
       {
          socket.option(IPPROTO_TCP, TCP_NODELAY, true);
 
@@ -144,7 +144,7 @@ public sealed class TcpServer
          if (rcvd == 0)
          { 
             closeClient(client, i);
-            $break;  
+            :break;  
          }
          else
          { 

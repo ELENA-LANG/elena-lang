@@ -1,13 +1,68 @@
+import extensions;
 //import system'collections;
 //
-//const string Reserved = "$^[]";
+//const string Reserved = "$^[]+";
+//
 //
 //internal interface PatternRule
 //{
-//   abstract int match(string s, int index, char ch);
+//   abstract PatternRule gotoNext(Stack<PatternRule> parents);
+//   
+//   abstract PatternRule? makeStep(string s, int index, char ch, Stack<PatternRule> parents);
 //}
 //
-//internal sealed CharRule : PatternRule
+//internal abstract LinkRule
+//{
+//   PatternRule _nextRule;
+//
+//   PatternRule gotoNext(Stack<PatternRule> parents)
+//   {
+//      ifNil (_nextRule) {
+//         ^ parents.pop().gotoNext(parents);
+//      };
+//
+//      ^ _nextRule;
+//   }
+//}
+//
+//internal abstract GroupRule : LinkRule
+//{
+//   PatternRule[] _rules;
+//}
+//
+//internal NestedRule : LinkRule
+//{
+//   PatternRule _child;
+//
+//   PatternRule? makeStep(string s, int index, char ch, Stack<PatternRule> parents)
+//   {
+//      parents.push(self);
+//      PatternRule next := _child.makeStep(s, index, ch, parents);
+//      ifNil (next) {
+//         parents.pop();
+//      };
+//
+//      ^ next
+//   }
+//}
+//
+//internal sealed OptionalRule : NestedRule
+//{
+//   PatternRule? makeStep(string s, int index, char ch, Stack<PatternRule> parents)
+//   {
+//      parents.push(self);
+//      PatternRule next := _child.makeStep(s, index, ch, parents);
+//      ifNil(next) {
+//         parents.pop();
+//
+//         ^ gotoNext(parents).makeStep(s, index, ch, parents)
+//      };
+//
+//      ^ next
+//   }
+//}
+//
+//internal sealed CharRule : LinkRule
 //{
 //   char _ch;
 //
@@ -16,10 +71,71 @@
 //      _ch := ch;
 //   }
 //
-//   int match(string s, int index, char ch)
+//   PatternRule? makeStep(string s, int index, char ch, Stack<PatternRule> parents)
 //   {
 //      if (_ch == ch) {
-//         ^ index + 1
+//         ^ gotoNext(parents);
+//      };
+//
+//      ^ nil;
+//   }
+//}
+//
+//internal sealed OrRule  : GroupRule
+//{
+//   PatternRule? makeStep(string s, int index, char ch, Stack<PatternRule> parents)
+//   {
+//      parents.push(self);
+//
+//      int len := _rules.Length;
+//      for (int i := 0; i < len; i++) {
+//         PatternRule next := _rules[i].makeStep(s, index, ch);
+//         ifnotNil(next) {
+//            ^ next;
+//         };
+//      };
+//      
+//      parents.pop();
+//      
+//      ^ nil
+//   }
+//}
+//
+//internal sealed RecursiveRule : NestedRule
+//{
+//   PatternRule gotoNext(Stack<PatternRule> parents)
+//   {
+//      ^ self
+//   }
+//
+//   PatternRule? makeStep(string s, int index, char ch, Stack<PatternRule> parents)
+//   {
+//      parents.push(self);
+//
+//      PatternRule next := _child.makeStep(s, index, ch, parents);
+//      ifNil (next) {
+//         parents.pop();
+//
+//         ^ super.gotoNext(parents).makeStep(s, index, ch, parents);
+//      }
+//   }
+//}
+//
+//
+//
+//internal interface PatternRule
+//{
+//   abstract int match(int state, string s, int index, char ch);
+//}
+//
+//internal sealed CharRule : PatternRule
+//{
+//   char _ch;
+//
+//   int match(int state, string s, int index, char ch)
+//   {
+//      if (_ch == ch) {
+//         ^ state + 1
 //      };
 //
 //      ^ -1
@@ -38,17 +154,32 @@
 //      _rules := rules;
 //   }
 //
-//   int match(string s, int index, char ch)
+//   int match(int state, string s, int index, char ch)
 //   {
 //      int len := _rules.Length;
 //      for (int i := 0; i < len; i++) {
-//         int next := _rules[i].match(s, index, ch);
+//         int next := _rules[i].match(state, s, index, ch);
 //         if (next != -1) {
 //            ^ next
 //         }
 //      };
 //
 //      ^ -1
+//   }
+//}
+//
+//internal sealed RecursiveRule : PatternRule
+//{
+//   PatternRule _child;
+//
+//   int match(int state, string s, int index, char ch)
+//   {
+//      int next := _child.match(state, s, index, ch);
+//      if (next == -1) {
+//         ^ state + 1
+//      };
+//
+//      ^ state  
 //   }
 //}
 //
@@ -87,9 +218,15 @@
 //         char ch := pattern[i];
 //         ch =>
 //            $93 : { i++; $break; }
-//            ! : { orList.append(defineRule(ch)) };
+//              ! : { 
+//                  PatternRule rule := defineRule(ch);
+//                  if (rule != nil) {
+//                     orList.append(rule)
+//                  }
+//                  else InvalidArgumentException.raise("pattern")
+//               };
 //
-//         i := ch.Length
+//         i += ch.Length
 //      };
 //
 //      list.append(OrRule.load(orList.Value));
@@ -168,20 +305,29 @@
 ////   var b := regex.match("abcd");
 ////   var b2 := regex.match("ab3cd");
 //
-//   auto regex := new RegEx("^[ab]$");
+//   auto regex := new RegEx("^[ab]+$");
 //
 //   var b := regex.match("a");
 //   var b2 := regex.match("ab");
 //   var b3 := regex.match("b");   
 //}
 
+singleton IteratorEnumerable : Enumerable
+{
+   Enumerator enumerator()
+      = IteratorEnumerable.infinitEnumerator();
+
+   yield Enumerator infinitEnumerator()
+   {
+      :yield 2;
+      :yield 5;
+      :yield 7;
+   }
+}
+
 public program()
 {
-   for (int i := 0; i < 4; i++) {
-      i =>
-         0 : { console.writeLine("0") }
-         1 : { console.writeLine("1") }
-         2 : { console.writeLine("2") }
-         ! : { console.writeLine("!") }
-   }
+   auto e := IteratorEnumerable.enumerator();
+   
+   console.printLine(e.asEnumerable())
 }

@@ -35,14 +35,18 @@ In development:
   * generate api info for added modules
   * http client : get (quick & dirty)
   * http client : uri
+  * retest samples till net ones
   * example for regex 
   * regular expressions : split
   * regular expressions: functional test
   * regular expressions: pattern
   * regular expressions: match
+  * support option
+  * support any .
   * regular expressions : simplest match
+  * operators shl:, shr:, len:, name:, fnl: (finally:)
   --------------------------------------
-  * step over symbol (see console) must goes out of the symbol
+  * support :yield, :await
 
   === Iteration 36 ===
   --------------------------------------

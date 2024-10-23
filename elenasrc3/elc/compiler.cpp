@@ -12768,8 +12768,10 @@ void Compiler::Expression :: compileSwitchOperation(SyntaxNode node, bool withou
 
    ObjectInfo loperand = compileObject(current, EAttr::Parameter, nullptr);
 
-   if (!withoutDebugInfo)
+   if (!withoutDebugInfo) {
       writer->appendNode(BuildKey::EndStatement);
+      writer->appendNode(BuildKey::VirtualBreakpoint);
+   }      
 
    writer->newNode(BuildKey::Switching);
 

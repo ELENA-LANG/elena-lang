@@ -12,7 +12,7 @@
 
 using namespace elena_lang;
 
-constexpr size_t MAX_RULE_LEN = 30;
+constexpr size_t MAX_RULE_LEN = 50;
 
 #ifdef _MSC_VER
 

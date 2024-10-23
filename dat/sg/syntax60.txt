@@ -320,6 +320,10 @@ ROOT_EXPRESSION ::=
 		| INC ^OBJECT ^INC_OPERATION
 		| DEC ^OBJECT ^DEC_OPERATION
 		| T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
+		| { ":" identifier }+ "(" ^OBJECT MESSAGE_PARAMETER ")" {
+			T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
+			| LT_EXPRESSION ^ TEMPLATE_BLOCK
+		}
 		| eps ^OBJECT
 	}
 	| { reference | global } { O_R | eps ^OBJECT }
@@ -331,7 +335,8 @@ ROOT_EXPRESSION ::=
 	| "$break" ^BREAK_OPERATION
 	| "$continue" ^CONTINUE_OPERATION
 	| "$yield" EXPRESSION ^YIELD_OPERATION
-	| "$await" EXPRESSION ^ASYNC_OPERATION
+	| "$await" EXPRESSION ^ASYNC_OPERATION	
+	| ":" identifier EXPRESSION? ^OPERATION_TEMPLATE
 	| BRACKET SUB_EXPRESSION {
 		"=>" { SWITCH_OPTION+ SWITCH_LAST_OPTION? } ^SWITCH_OPERATION
 		| L2_OP+ L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
@@ -426,16 +431,21 @@ NESTED_ROOT_EXPRESSION ::=
 		| INC ^OBJECT ^INC_OPERATION
 		| DEC ^OBJECT ^DEC_OPERATION
 		| T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
+		| { ":" identifier }+ "(" ^OBJECT MESSAGE_PARAMETER ")" {
+			T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
+			| LT_EXPRESSION ^ TEMPLATE_BLOCK
+		}
 		| eps ^OBJECT
 	}
 	| { reference | global } ^OBJECT L2_OP* L3_OP* L4_OP* L5_OP* L6_OP? L7_OP* L8_OP? L9_OP?
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L_F
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$ext" EXPRESSION ^EXTERN_OPERATION
-	| "$break" ^BREAK_OPERATION
 	| "$continue" ^CONTINUE_OPERATION
 	| "$yield" EXPRESSION ^YIELD_OPERATION
-	| "$await" EXPRESSION ^ASYNC_OPERATION;
+	| "$await" EXPRESSION ^ASYNC_OPERATION
+	| "$break" ^BREAK_OPERATION
+	| ":" identifier ^OPERATION_TEMPLATE;
 
 EXPRESSION ::=
 	identifier { 
@@ -1416,6 +1426,7 @@ ELSE_DOT   ::= "!.";
 ALT_DOT    ::= "\.";
 INC        ::= "++";
 DEC        ::= "--";
+BREAK      ::= "break";
 
 DECLARATION_END ::=
 	";";

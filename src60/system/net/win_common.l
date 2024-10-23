@@ -72,7 +72,7 @@ sealed packed WSADATA
 
       int retVal := extern WS2_32.WSAStartup(wVersionRequested, self);
             
-      ifnot (0 == retVal)
+      if:not (0 == retVal)
          { SocketException.new("Cannot start socket service", retVal).raise() };
             
       //startUpEvents.OnStop := { self.close() }

@@ -65,7 +65,7 @@ public sealed struct AddrInfoReader
       pointer ptr := default;
       int retVal := extern WS2_32.getaddrinfo(0, service, info, ref ptr);
 
-      ifnot(0 == retVal)
+      if:not(0 == retVal)
          { SocketException.new("getaddrinfo failed", retVal).raise() };
 
       paddrinfo := ptr;
@@ -77,7 +77,7 @@ public sealed struct AddrInfoReader
       pointer ptr := default;
       int retVal := extern WS2_32.getaddrinfo(node, service, info, ref ptr);
             
-      ifnot(0 == retVal)
+      if:not(0 == retVal)
          { SocketException.new("getaddrinfo failed", retVal).raise() };
             
       paddrinfo := ptr;

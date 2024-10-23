@@ -11,7 +11,7 @@ public extension classROp
       List<Message> list := new List<Message>();
       for(int i := 0; i < retVal; i += 1)
       {
-         ifnot (tmp_array[i].anyMask(60h))
+         if:not (tmp_array[i].anyMask(60h))
          {
             Message message := MssgConvertor.convert(tmp_array[i]);
                
