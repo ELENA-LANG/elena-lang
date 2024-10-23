@@ -1,0 +1,3 @@
+public sealed class RegEx
+{
+}

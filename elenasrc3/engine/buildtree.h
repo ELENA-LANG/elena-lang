@@ -101,7 +101,7 @@ namespace elena_lang
       RealLiteral          = 0x0047,
       RealOp               = 0x0048,
       RealCondOp           = 0x0049,
-      VirtualBreakoint     = 0x004A,
+      VirtualBreakpoint    = 0x004A,
       ConversionOp         = 0x004B,
       SemiResendOp         = 0x004C,
       NilCondOp            = 0x004D,

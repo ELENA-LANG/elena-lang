@@ -2176,7 +2176,7 @@ inline BuildNode getPrevious(BuildNode node)
 {
    node = node.prevNode();
    switch (node.key) {
-      case BuildKey::VirtualBreakoint:
+      case BuildKey::VirtualBreakpoint:
       case BuildKey::Breakpoint:
       case BuildKey::EOPBreakpoint:
       case BuildKey::EndStatement:
@@ -2201,7 +2201,7 @@ inline BuildNode getNextNode(BuildNode node)
 {
    node = node.nextNode();
    switch (node.key) {
-      case BuildKey::VirtualBreakoint:
+      case BuildKey::VirtualBreakpoint:
       case BuildKey::Breakpoint:
       case BuildKey::EOPBreakpoint:
       case BuildKey::EndStatement:
@@ -3235,6 +3235,10 @@ void ByteCodeWriter :: saveSwitchOption(CommandTape& tape, BuildNode node, TapeS
    // NOTE : loopMode is set to true due to current implementation, so the branching will use an existing label
    saveTape(tape, node, tapeScope, paths, tapeOptMode, true);
 
+   // HOTFIX : inject virtual breakpoint to fine-tune a debugger
+   BuildNode idleNode = {};
+   addVirtualBreakpoint(tape, idleNode, tapeScope);
+
    tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
 
    tape.setLabel();
@@ -3652,7 +3656,7 @@ inline bool isNonOperational(BuildKey key)
          return false;
       case BuildKey::OpenStatement:
       case BuildKey::EndStatement:
-      case BuildKey::VirtualBreakoint:
+      case BuildKey::VirtualBreakpoint:
       case BuildKey::EOPBreakpoint:
          // NOTE : to simplify the patterns, ignore open / end statement commands
          return true;

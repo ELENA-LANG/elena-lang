@@ -11374,7 +11374,7 @@ ObjectInfo Compiler::Expression::compileSymbolRoot(SyntaxNode bodyNode, EAttr mo
 
    writer->appendNode(BuildKey::EndStatement);
 
-   writer->appendNode(BuildKey::VirtualBreakoint);
+   writer->appendNode(BuildKey::VirtualBreakpoint);
 
    scope.syncStack();
 
@@ -11383,8 +11383,13 @@ ObjectInfo Compiler::Expression::compileSymbolRoot(SyntaxNode bodyNode, EAttr mo
 
 ObjectInfo Compiler::Expression::compileRoot(SyntaxNode node, EAttr mode)
 {
-   bool noDebugInfo = EAttrs::test(mode, EAttr::NoDebugInfo);
+   SyntaxNode current = node.firstChild();
+   if (current == SyntaxKey::CodeBlock) {
+      // HOTFIX : if it is an codeblock inside an expression - no need for open / end statements
+      return compileSubCode(current, mode, true);
+   }
 
+   bool noDebugInfo = EAttrs::test(mode, EAttr::NoDebugInfo);
    if (!noDebugInfo) {
       writer->appendNode(BuildKey::OpenStatement);
       Compiler::addBreakpoint(*writer, findObjectNode(node), BuildKey::Breakpoint);
@@ -11474,7 +11479,7 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode,
 
    if (compiler->_withDebugInfo) {
       writer->appendNode(BuildKey::EndStatement);
-      writer->appendNode(BuildKey::VirtualBreakoint);
+      writer->appendNode(BuildKey::VirtualBreakpoint);
    }
 
    writer->appendNode(BuildKey::goingToEOP);
@@ -11619,7 +11624,7 @@ ObjectInfo Compiler::Expression::compile(SyntaxNode node, ref_t targetRef, EAttr
          retVal = compileSubCode(current, mode, true);
          break;
       case SyntaxKey::SwitchOperation:
-         compileSwitchOperation(current);
+         compileSwitchOperation(current, EAttrs::test(mode, EAttr::NoDebugInfo));
          break;
       case SyntaxKey::CollectionExpression:
          retVal = compileCollection(current, mode);
@@ -12437,7 +12442,7 @@ ObjectInfo Compiler::Expression::compileBranchingOperation(SyntaxNode node, int 
    if (!withoutDebugInfo) {
       // HOTFIX : to allow correct step over the branching statement
       writer->appendNode(BuildKey::EndStatement);
-      writer->appendNode(BuildKey::VirtualBreakoint);
+      writer->appendNode(BuildKey::VirtualBreakpoint);
    }
 
    auto retVal = compileBranchingOperation(node, loperand, rnode, r2node, operatorId, &updatedOuterArgs,
@@ -12457,7 +12462,7 @@ ObjectInfo Compiler::Expression::compileLoop(SyntaxNode node, ExpressionAttribut
 
    compile(node, 0, mode, nullptr);
 
-   writer->appendNode(BuildKey::VirtualBreakoint);
+   writer->appendNode(BuildKey::VirtualBreakpoint);
 
    writer->closeNode();
 
@@ -12754,7 +12759,7 @@ ObjectInfo Compiler::Expression::compileSubCode(SyntaxNode node, ExpressionAttri
    return retVal;
 }
 
-void Compiler::Expression::compileSwitchOperation(SyntaxNode node)
+void Compiler::Expression :: compileSwitchOperation(SyntaxNode node, bool withoutDebugInfo)
 {
    Interpreter interpreter(scope.moduleScope, compiler->_logic);
    ArgumentsInfo arguments;
@@ -12763,42 +12768,52 @@ void Compiler::Expression::compileSwitchOperation(SyntaxNode node)
 
    ObjectInfo loperand = compileObject(current, EAttr::Parameter, nullptr);
 
+   if (!withoutDebugInfo)
+      writer->appendNode(BuildKey::EndStatement);
+
    writer->newNode(BuildKey::Switching);
 
    current = current.nextNode();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::SwitchOption:
-      {
-         SyntaxNode optionNode = current.firstChild();
+         case SyntaxKey::SwitchOption:
+         {
+            SyntaxNode optionNode = current.firstChild();
 
-         writer->newNode(BuildKey::SwitchOption);
+            writer->newNode(BuildKey::SwitchOption);
 
-         int operator_id = EQUAL_OPERATOR_ID;
-         ObjectInfo value = compiler->evalExpression(interpreter, scope, optionNode);
-         arguments.clear();
-         arguments.add(loperand);
-         arguments.add(value);
-         ObjectInfo retVal = compileOperation(node, arguments, operator_id, 0, nullptr);
-         compileBranchingOperation(node, retVal, optionNode.nextNode(), {}, IF_OPERATOR_ID, nullptr, false, false);
+            int operator_id = EQUAL_OPERATOR_ID;
+            ObjectInfo value = compiler->evalExpression(interpreter, scope, optionNode);
+            arguments.clear();
+            arguments.add(loperand);
+            arguments.add(value);
+            ObjectInfo retVal = compileOperation(node, arguments, operator_id, 0, nullptr);
 
-         writer->closeNode();
-         break;
-      }
-      case SyntaxKey::SwitchLastOption:
-         writer->newNode(BuildKey::ElseOption);
-         compileSubCode(current.firstChild(), EAttr::None);
-         writer->closeNode();
-         break;
-      default:
-         assert(false);
-         break;
+            compileBranchingOperation(node, retVal, optionNode.nextNode(), {}, IF_OPERATOR_ID, nullptr, false, false);
+
+            writer->closeNode();
+
+            break;
+         }
+         case SyntaxKey::SwitchLastOption:
+            writer->newNode(BuildKey::ElseOption);
+
+            compileSubCode(current.firstChild(), EAttr::None);
+
+            writer->closeNode();
+            break;
+         default:
+            assert(false);
+            break;
       }
 
       current = current.nextNode();
    }
 
    writer->closeNode();
+
+   if (!withoutDebugInfo)
+      writer->appendNode(BuildKey::OpenStatement);
 }
 
 ObjectInfo Compiler::Expression::compileCollection(SyntaxNode node, ExpressionAttribute mode)
@@ -14556,9 +14571,6 @@ ObjectInfo Compiler::Expression::compileBranchingOperation(SyntaxNode node, Obje
 
       retVal = compileMessageCall(node, loperand, context, context.weakMessage, messageArguments, EAttr::NoExtension, updatedOuterArgs);
    }
-
-   // HOTFIX : to compenstate the closed statement above
-   writer->appendNode(BuildKey::OpenStatement);
 
    return retVal;
 }

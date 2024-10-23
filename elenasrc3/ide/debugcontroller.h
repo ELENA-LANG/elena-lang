@@ -184,6 +184,7 @@ namespace elena_lang
       {
          bool             stepMode;
          bool             gotoMode;
+         bool             autoNextLine;
          int              col, row;
          IdentifierString source;
          IdentifierString path;
@@ -191,6 +192,7 @@ namespace elena_lang
          void clear()
          {
             stepMode = gotoMode = false;
+            autoNextLine = false;
             col = row = -1;
             source.clear();
             path.clear();
@@ -264,6 +266,8 @@ namespace elena_lang
       void* readIntArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readRealArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
 
+      void autoStepOver();
+
    public:
       bool isStarted() const
       {
@@ -277,6 +281,7 @@ namespace elena_lang
       void run();
       void stepOver();
       void stepInto();
+
       void stop();
       void runToCursor(ustr_t name, ustr_t path, int row);
       void toggleBreakpoint(Breakpoint* bp, bool adding);

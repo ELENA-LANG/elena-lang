@@ -28,13 +28,21 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * review if using xnop impoves performance (pi & anagram samples)
   * test all x86 examples (net)
   * x86-64 : mta - main sample sandbox2
   * x86-64 mta - sandbox2 : fix GC issue
-  * review if using xnop impoves performance (pi & anagram samples)
-  * validate bsredirect (on several examples) - if it is better with nop or not
+  * generate api info for added modules
+  * http client : get (quick & dirty)
+  * http client : uri
+  * example for regex 
+  * regular expressions : split
+  * regular expressions: functional test
+  * regular expressions: pattern
+  * regular expressions: match
+  * regular expressions : simplest match
   --------------------------------------
-  * http client : get
+  * step over symbol (see console) must goes out of the symbol
 
   === Iteration 36 ===
   --------------------------------------
