@@ -264,4 +264,14 @@ public template operator::await(expr) : __included(statements)
     $await expr;
 }
 
+// shl:
+
+public template operator::shl(expr, arg) : __included(statements)
+   = expr $shl arg;
+
+// shr:
+
+public template operator::shr(expr, arg) : __included(statements)
+   = expr $shr arg;
+
 

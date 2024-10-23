@@ -1,4 +1,4 @@
-import extensions;
+//import extensions;
 //import system'collections;
 //
 //const string Reserved = "$^[]+";
@@ -17,7 +17,7 @@ import extensions;
 //
 //   PatternRule gotoNext(Stack<PatternRule> parents)
 //   {
-//      ifNil (_nextRule) {
+//      if:nil(_nextRule) {
 //         ^ parents.pop().gotoNext(parents);
 //      };
 //
@@ -38,7 +38,7 @@ import extensions;
 //   {
 //      parents.push(self);
 //      PatternRule next := _child.makeStep(s, index, ch, parents);
-//      ifNil (next) {
+//      if:nil(next) {
 //         parents.pop();
 //      };
 //
@@ -52,7 +52,7 @@ import extensions;
 //   {
 //      parents.push(self);
 //      PatternRule next := _child.makeStep(s, index, ch, parents);
-//      ifNil(next) {
+//      if:nil(next) {
 //         parents.pop();
 //
 //         ^ gotoNext(parents).makeStep(s, index, ch, parents)
@@ -90,7 +90,7 @@ import extensions;
 //      int len := _rules.Length;
 //      for (int i := 0; i < len; i++) {
 //         PatternRule next := _rules[i].makeStep(s, index, ch);
-//         ifnotNil(next) {
+//         if:not:nil(next) {
 //            ^ next;
 //         };
 //      };
@@ -113,13 +113,14 @@ import extensions;
 //      parents.push(self);
 //
 //      PatternRule next := _child.makeStep(s, index, ch, parents);
-//      ifNil (next) {
+//      if:nil(next) {
 //         parents.pop();
 //
 //         ^ super.gotoNext(parents).makeStep(s, index, ch, parents);
 //      }
 //   }
 //}
+//
 //
 //
 //
@@ -312,22 +313,11 @@ import extensions;
 //   var b3 := regex.match("b");   
 //}
 
-singleton IteratorEnumerable : Enumerable
-{
-   Enumerator enumerator()
-      = IteratorEnumerable.infinitEnumerator();
-
-   yield Enumerator infinitEnumerator()
-   {
-      :yield 2;
-      :yield 5;
-      :yield 7;
-   }
-}
 
 public program()
 {
-   auto e := IteratorEnumerable.enumerator();
-   
-   console.printLine(e.asEnumerable())
+   int n := 2;
+
+   int r := n shl:2;
+   int r2 := r shr:2;
 }

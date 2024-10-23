@@ -39,4 +39,3 @@ public template as<T>(expr)  : __included(statements)
 
 public template is<T>(expr) : __included(statements)
    = expr.instanceOf(T);
-

@@ -260,6 +260,13 @@ void SyntaxTreeBuilder :: generateTemplateExpression(SyntaxTreeWriter& writer, S
             arguments.add(tempWriter.CurrentNode().firstChild());
             tempWriter.closeNode();
             break;
+         case SyntaxKey::SubExpression:
+            tempWriter.newNode(SyntaxKey::Expression);
+            flushExpressionCollection(tempWriter, scope, current);
+            parameters.add(tempWriter.CurrentNode().firstChild());
+            tempWriter.closeNode();
+            templateName.insert("operator:", 5);
+            break;
          default:
             break;
       }

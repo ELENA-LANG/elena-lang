@@ -37,16 +37,15 @@ In development:
   * http client : uri
   * retest samples till net ones
   * example for regex 
+  * operators len:, name:
   * regular expressions : split
   * regular expressions: functional test
   * regular expressions: pattern
   * regular expressions: match
   * support option
   * support any .
-  * regular expressions : simplest match
-  * operators shl:, shr:, len:, name:, fnl: (finally:)
   --------------------------------------
-  * support :yield, :await
+  * regular expressions : simplest match
 
   === Iteration 36 ===
   --------------------------------------
