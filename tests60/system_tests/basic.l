@@ -1922,7 +1922,7 @@ public interfaceImplTests() : testCase()
    II_I i := o;
 
    var r := i.retrieve();
-   Assert.ifTrue(r is:II_A);
+   Assert.ifTrue(r is::II_A);
    console.write(".");
 }
 
