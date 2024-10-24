@@ -1243,10 +1243,10 @@ public extension charOp : CharValue
       if (ch >= 61h && ch <= 7Ah)
          { ^ true };
         
-      if (ch >= 3ACh && ch <= 3CEh)
+      if (ch >= 370h && ch <= 3FBh)
          { ^ true };
             
-      if (ch >= 400h && ch <= 42Fh)
+      if (ch >= 400h && ch <= 4FFh)
          { ^ true };
             
       ^ false

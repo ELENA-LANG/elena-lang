@@ -1,7 +1,7 @@
 import system;
 import system'collections;
 
-const string Reserved = "$^[]+*-?";
+const string Reserved = "$^[]+*?()\";
 const string Postfix = "+*?";
 
 internal interface PatternRule
@@ -11,16 +11,11 @@ internal interface PatternRule
    abstract PatternRule? gotoNext(Stack<PatternRule> parents);
    
    abstract PatternRule? makeStep(string s, int index, char ch, Stack<PatternRule> parents);
-
-   abstract bool isMatched(Stack<PatternRule> parents);
 }
 
 internal abstract LinkRule : PatternRule
 {
    PatternRule _nextRule;
-
-   bool isMatched(Stack<PatternRule> parents)
-      = false;
 
    indexed internal setNext(PatternRule rule)
    {
@@ -81,6 +76,46 @@ internal sealed OptionalRule : NestedRule
       };
 
       ^ next
+   }
+}
+
+internal sealed AnyRule : LinkRule
+{
+   constructor()
+   {
+   }
+
+   PatternRule? makeStep(string s, int index, char ch, Stack<PatternRule> parents)
+   {
+      if (ch == $10 || ch == $0)
+         { ^ nil };
+
+      if (index < s.Length) {
+         ^ gotoNext(parents)
+      };
+
+      ^ nil
+   }
+}
+
+internal sealed AnyWordChar : LinkRule
+{
+   constructor()
+   {
+   }
+
+   PatternRule? makeStep(string s, int index, char ch, Stack<PatternRule> parents)
+   {
+      if (ch.isLetter())
+         { ^ gotoNext(parents) };      
+
+      if (ch.isDigit())
+         { ^ gotoNext(parents) };
+
+      if (ch.isWhitespace())
+         { ^ nil };
+
+      ^ nil
    }
 }
 
@@ -156,9 +191,6 @@ internal sealed RecursiveRule : NestedRule
       _child := child
    }
 
-   bool isMatched(Stack<PatternRule> parents)
-      = super.gotoNext(parents).isMatched(parents);
-
    PatternRule? gotoNext(Stack<PatternRule> parents)
    {
       ^ self
@@ -187,13 +219,10 @@ internal sealed singleton EOLRule : PatternRule
    }
 
    PatternRule? makeStep(string s, int index, char ch, Stack<PatternRule> parents)
-      = nil;
+      = ch == $0 ? self : nil;
 
    PatternRule? gotoNext(Stack<PatternRule> parents)
       = nil;
-
-   bool isMatched(Stack<PatternRule> parents)
-      = true;
 }
 
 public sealed class RegEx
@@ -216,12 +245,78 @@ public sealed class RegEx
    private PatternRule? defineRule(char ch)
    {
       ch =>
-         $36: { ^ EOLRule };
+         $47: { ^ new AnyRule() };
 
       if (isReserved(ch))
          { ^ nil };
 
       ^ CharRule.new(ch)
+   }
+
+   private PatternRule? defineEscRule(char ch)
+   {
+      ch =>
+         $119: { ^ new AnyWordChar() };
+
+      ^ CharRule.new(ch)
+   }
+
+   private PatternRule parseBrackets(string pattern, ref int index, int len)
+   {
+      List<PatternRule> orList := new List<PatternRule>();
+
+      int i := index + 1;
+      while (i < len) {
+         PatternRule rule := parseLine(pattern, ref i, len, $41);
+         orList.append(rule);
+         if (pattern[i] == $41) {
+            i++;
+
+            :break
+         };
+
+         i++;
+      };
+
+      if (i == len)
+         InvalidArgumentException.raise("pattern");
+
+      index := i;
+      if (orList.Length == 1) {
+         ^ NestedRule.new(orList.First)
+      };
+
+
+      ^ OrRule.load(orList.Value)
+   }
+
+   private PatternRule defineRule(string pattern, ref int index, ref char ch)
+   {
+      int i := index;
+      int chLen := ch.Length;
+
+      PatternRule rule := nil;
+      if (pattern[i + chLen] == $45) {
+         i += chLen;
+         i++;
+
+         char lastCh := pattern[i];
+         chLen := lastCh.Length;
+
+         rule := CharRangeRule.new(ch, lastCh);
+
+         ch := lastCh
+      }
+      else if (ch == $92) {
+         i++;
+         ch := pattern[i];
+         rule := defineEscRule(ch);
+      }
+      else rule := defineRule(ch);
+
+      index := i;
+
+      ^ rule;
    }
 
    private PatternRule parseGroup(string pattern, ref int index, int len)
@@ -231,29 +326,18 @@ public sealed class RegEx
       List<PatternRule> orList := new List<PatternRule>();
       while (i < len) {
          char ch := pattern[i];
-         int chLen := ch.Length;
+         
          ch =>
             $93 : { i++; :break; }
               ! : {
-                  PatternRule rule := nil;
-                  if (pattern[i + chLen] == $45) {
-                     i += chLen;
-                     i++;
-
-                     char lastCh := pattern[i];
-                     chLen := lastCh.Length;
-
-                     rule := CharRangeRule.new(ch, lastCh);
-                  }
-                  else rule := defineRule(ch);
-
+                  PatternRule rule := defineRule(pattern, ref i, ref ch);
                   if (rule != nil) {
                      orList.append(rule)
                   }
                   else InvalidArgumentException.raise("pattern")
                };
 
-         i += chLen
+         i += ch.Length
       };
 
       index := i;
@@ -265,21 +349,24 @@ public sealed class RegEx
       ^ OrRule.load(orList.Value)
    }
 
-   private PatternRule parsePattern(string pattern)
+   private PatternRule parseLine(string pattern, ref int index, int len, char terminator)
    {
-      int len := pattern.Length;
-      int i := 0;
+      auto list := new List<PatternRule>();
+      parseLine(list, pattern, ref index, len, terminator);
+      
+      ^ linkRules(list)
+   }
 
-      if (pattern[0] == $94) {
-         i++;
-      }
-      else InvalidArgumentException.raise("pattern"); // !! temporally
-
-      List<PatternRule> list := new List<PatternRule>();
+   private parseLine(List<PatternRule> list, string pattern, ref int index, int len, char terminator)
+   {
+      int i := index;
       while (i < len) {
          char ch := pattern[i];
 
-         if (isPostfix(ch)) {
+         if (ch == terminator || ch == $124) {
+            :break;
+         }
+         else if (isPostfix(ch)) {
             if(list.Empty)
                InvalidArgumentException.raise("pattern");
 
@@ -299,11 +386,16 @@ public sealed class RegEx
          else {
             bool continueMode := false;
             PatternRule rule := nil;
-            if (ch == $91) {
-               rule := parseGroup(pattern, ref i, len);
-               continueMode := true
-            }
-            else rule := defineRule(ch);
+            ch =>
+               $91: {
+                  rule := parseGroup(pattern, ref i, len);
+                  continueMode := true
+               }
+               $40: {
+                  rule := parseBrackets(pattern, ref i, len);
+                  continueMode := true
+               }
+               !: { rule := defineRule(pattern, ref i, ref ch) };
    
             if:nil(rule) 
                InvalidArgumentException.raise("pattern");
@@ -318,12 +410,42 @@ public sealed class RegEx
          i += ch.Length;
       };
 
+      index := i;
+   }
+
+   private PatternRule linkRules(List<PatternRule> list)
+   {
       int listLen := list.Length - 1;
       for (int i := 0; i < listLen; i++) {
          list[i].setNext(list[i + 1])
       };
 
       ^ list.First
+   }
+
+   private PatternRule parsePattern(string pattern)
+   {
+      int len := pattern.Length;
+      int i := 0;
+
+      if (pattern[0] == $94) {
+         i++;
+      }
+      else InvalidArgumentException.raise("pattern"); // !! temporally
+
+      List<PatternRule> list := new List<PatternRule>();
+
+      parseLine(list, pattern, ref i, len, $36);
+      if (i < len && pattern[i] == $36) {
+         list.append(EOLRule);
+      
+         i++;      
+      };
+
+      if (i < len)
+         InvalidArgumentException.raise("pattern");
+
+      ^ linkRules(list)
    }   
 
    constructor prepare(string pattern)
@@ -349,6 +471,6 @@ public sealed class RegEx
          index += ch.Length;
       };
 
-      ^ current.isMatched(parents)
+      ^ current.makeStep(s, len, $0, parents) != nil
    }
 }
