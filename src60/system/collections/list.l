@@ -920,6 +920,9 @@ namespace collections
             ^ retVal
          }        
       }
+
+      get bool Empty()
+         = *_length == 0;
         
       private expand()
       {
@@ -1023,6 +1026,8 @@ namespace collections
             
       /// Returns the top object
       T First = _array.at(0);
+        
+      T Last = _array.at(*_length - 1);
         
       /// Clears the list
       clear()

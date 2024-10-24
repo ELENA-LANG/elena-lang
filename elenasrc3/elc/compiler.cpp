@@ -4835,61 +4835,61 @@ void Compiler::declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool
    bool explicitMode = false;
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::Attribute:
-      {
-         ref_t value = current.arg.reference;
+         case SyntaxKey::Attribute:
+         {
+            ref_t value = current.arg.reference;
 
-         ref_t hint = 0;
-         if (_logic->validateMethodAttribute(value, hint, explicitMode)) {
-            if (isMethodKind(hint) && isMethodKind(scope.info.hints)) {
-               // a method kind can be set only once
-               scope.raiseError(errInvalidHint, node);
+            ref_t hint = 0;
+            if (_logic->validateMethodAttribute(value, hint, explicitMode)) {
+               if (isMethodKind(hint) && isMethodKind(scope.info.hints)) {
+                  // a method kind can be set only once
+                  scope.raiseError(errInvalidHint, node);
+               }
+               else scope.info.hints |= hint;
             }
-            else scope.info.hints |= hint;
-         }
-         else if (value == V_TYPEOF) {
-            // HOTFIX : if it is a type of the class
-            if (!scope.info.outputRef)
-               scope.info.outputRef = scope.getClassRef();
-         }
-         else {
-            current.setArgumentReference(0);
+            else if (value == V_TYPEOF) {
+               // HOTFIX : if it is a type of the class
+               if (!scope.info.outputRef)
+                  scope.info.outputRef = scope.getClassRef();
+            }
+            else {
+               current.setArgumentReference(0);
 
-            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, node);
+               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, node);
+            }
+            break;
          }
-         break;
-      }
-      case SyntaxKey::Type:
-      case SyntaxKey::ArrayType:
-      case SyntaxKey::TemplateType:
-         // if it is a type attribute
-         if (scope.info.outputRef) {
-            scope.info.outputRef = declareMultiType(scope, current, scope.info.outputRef);
+         case SyntaxKey::Type:
+         case SyntaxKey::ArrayType:
+         case SyntaxKey::TemplateType:
+            // if it is a type attribute
+            if (scope.info.outputRef) {
+               scope.info.outputRef = declareMultiType(scope, current, scope.info.outputRef);
 
-            continue;
-         }
-         else {
-            auto typeInfo = resolveStrongTypeAttribute(scope, current, true, false);
-            scope.info.outputRef = typeInfo.typeRef;
-            if (typeInfo.nillable)
-               scope.info.hints |= (ref_t)MethodHint::Nillable;
-         }
+               continue;
+            }
+            else {
+               auto typeInfo = resolveStrongTypeAttribute(scope, current, true, false);
+               scope.info.outputRef = typeInfo.typeRef;
+               if (typeInfo.nillable)
+                  scope.info.hints |= (ref_t)MethodHint::Nillable;
+            }
 
-         break;
-      case SyntaxKey::Name:
-      {
-         // resolving implicit method attributes
-         ref_t attr = scope.moduleScope->attributes.get(current.firstChild(SyntaxKey::TerminalMask).identifier());
-         ref_t hint = (ref_t)MethodHint::None;
-         if (_logic->validateImplicitMethodAttribute(attr, hint)) {
-            scope.info.hints |= hint;
-            current.setKey(SyntaxKey::Attribute);
-            current.setArgumentReference(attr);
+            break;
+         case SyntaxKey::Name:
+         {
+            // resolving implicit method attributes
+            ref_t attr = scope.moduleScope->attributes.get(current.firstChild(SyntaxKey::TerminalMask).identifier());
+            ref_t hint = (ref_t)MethodHint::None;
+            if (_logic->validateImplicitMethodAttribute(attr, hint)) {
+               scope.info.hints |= hint;
+               current.setKey(SyntaxKey::Attribute);
+               current.setArgumentReference(attr);
+            }
+            break;
          }
-         break;
-      }
-      default:
-         break;
+         default:
+            break;
       }
 
       current = current.nextNode();

@@ -42,10 +42,8 @@ In development:
   * regular expressions: functional test
   * regular expressions: pattern
   * regular expressions: match
-  * support option
-  * support any .
   --------------------------------------
-  * regular expressions : simplest match
+  * support any .
 
   === Iteration 36 ===
   --------------------------------------
