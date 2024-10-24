@@ -3,6 +3,7 @@ import system'routines;
 import system'dynamic;
 import system'dynamic'expressions;
 import system'text;
+import system'text'parsing;
 import ltests;
 
 // --- ControlTest ---
