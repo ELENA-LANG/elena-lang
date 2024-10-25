@@ -7,15 +7,20 @@ public singleton Control
 
    greeting()
    {
-      string pattern := Console.print("Please enter a regular expression to be tested against:").readLine();
+      string pattern := Console.print("Please enter a regular expression to be tested against ( e.g. ^\w+$ ):").readLine();
       
       _regEx := new RegEx(pattern);
    }
 
 
-    get string Prompt
-        = "Please enter a string to validate:";
+   get string Prompt
+      = "Please enter a string to validate or press ENTER to exit:";
 
    proceed(line)
-      = _regEx.match(line) ? "matched" : "not matched";
+   {
+      if (line == String.Empty) 
+        forward program.stop();
+
+      ^ _regEx.match(line) ? "matched" : "not matched";
+   }
 }
