@@ -11,7 +11,7 @@ public singleton Control
       
       _regEx := new RegEx(pattern);
 
-      ^ $"The pattern is {pattern}"$10;
+      ^ $"The pattern is {pattern}";
    }
 
 
