@@ -28,41 +28,20 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * http client : get (quick & dirty)
+  * regular expressions: pattern
+  * regular expressions : split
+  * regular expressions : support basic character classes (\W \d and so on)
   * review if using xnop impoves performance (pi & anagram samples)
   * test all x86 examples (net)
   * x86-64 : mta - main sample sandbox2
   * x86-64 mta - sandbox2 : fix GC issue
   * generate api info for added modules
-  * http client : get (quick & dirty)
+  * generate api info List<T>
   * http client : uri
   * retest samples till net ones
-  * regex - functional test
-  * example for regex 
-  * operators len:, name:
-  * regular expressions : split
-  * regular expressions: functional test
-  * regular expressions: pattern
-  * regular expressions: match
-  * ^(ht|f)tp(s?)\:\/\/[0-9a-zA-Z]([-\.\w]*[0-9a-zA-Z])*(:(0-9)*)*(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&%\$#_]*)?$
-
-
-  * ^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/
-
-  * ^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\.[a-zA-Z]{2,3})$
-
-
-  * [0-9a-zA-Z]([-\.\w]*[0-9a-zA-Z])*
-
-
-  * ^(ht|f)tp(s?)\:\/\/[0-9a-zA-Z]([-\.\w]*[0-9a-zA-Z])*(:(0-9)*)*$
-
-https://xn--masekowski-d0b.pl/
-
-
-(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&%\$#_]*)?
-
   --------------------------------------
-  * brackets
+  * example for regex 
 
   === Iteration 36 ===
   --------------------------------------

@@ -1,0 +1,17 @@
+<configuration>
+    <files>
+        <module>
+            <file>regex.l</file>
+        </module>
+    </files>
+    <project>
+        <executable>regex</executable>
+        <options></options>
+        <namespace>regex</namespace>
+        <template>console</template>
+    </project>
+    <forwards>
+       <forward key="program">extensions'ProgramLoop</forward>
+       <forward key="program'control">regex'Control</forward>
+    </forwards>
+</configuration>
