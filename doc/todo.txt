@@ -39,9 +39,8 @@ In development:
   * generate api info for added modules
   * generate api info List<T>
   * http client : uri
-  * retest samples till net ones
   --------------------------------------
-  * example for regex 
+  * retest : db, files, gui
 
   === Iteration 36 ===
   --------------------------------------
