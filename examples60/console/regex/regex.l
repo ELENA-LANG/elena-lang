@@ -10,6 +10,8 @@ public singleton Control
       string pattern := Console.print("Please enter a regular expression to be tested against ( e.g. ^\w+$ ):").readLine();
       
       _regEx := new RegEx(pattern);
+
+      ^ $"The pattern is {pattern}"$10;
    }
 
 
@@ -18,7 +20,7 @@ public singleton Control
 
    proceed(line)
    {
-      if (line == String.Empty) 
+      if (line == String.MinValue) 
         forward program.stop();
 
       ^ _regEx.match(line) ? "matched" : "not matched";
