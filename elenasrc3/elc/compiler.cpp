@@ -11429,6 +11429,9 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode,
    SyntaxNode exprNode = node.findChild(SyntaxKey::Expression, SyntaxKey::CodeBlock);
    switch (exprNode.key) {
       case SyntaxKey::Expression:
+         if (outputInfo.nillable)
+            mode = mode | EAttr::Nillable;
+
          retVal = compile(node.findChild(SyntaxKey::Expression), outputInfo.typeRef,
             mode | EAttr::Root | EAttr::RetValExpected, nullptr);
          break;
