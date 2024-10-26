@@ -9,11 +9,14 @@
 ..\..\bin\ldoc system'drawing
 ..\..\bin\ldoc system'winforms
 ..\..\bin\ldoc system'net
+..\..\bin\ldoc system'text'parsing
 ..\..\bin\ldoc extensions
 ..\..\bin\ldoc extensions'routines
+..\..\bin\ldoc extensions'runtime
 ..\..\bin\ldoc extensions'routines'stex
 ..\..\bin\ldoc extensions'scripting
 ..\..\bin\ldoc extensions'dynamic
+..\..\bin\ldoc extensions'threading
 ..\..\bin\ldoc extensions'io
 ..\..\bin\ldoc cellular
 ..\..\bin\ldoc algorithms
@@ -21,5 +24,7 @@
 ..\..\bin\ldoc forms
 ..\..\bin\ldoc ltests
 ..\..\bin\ldoc net
+..\..\bin\ldoc net'http
+..\..\bin\ldoc xforms
 
 copy *.html ..\..\doc\api

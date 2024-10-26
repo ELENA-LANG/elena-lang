@@ -38,9 +38,8 @@ In development:
   * x86-64 mta - sandbox2 : fix GC issue
   * review once again latest reddit articles 
   * ldoc : String info - get rid of arams:$#constructor(Object args)
-  * generate api info for added modules
   --------------------------------------
-  * generate api info List<T>   
+  * generate api info for added modules
 
   === Iteration 36 ===
   --------------------------------------

@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.5: Module extensions'threading
+ELENA Standard Library 6.5: Module system'text'parsing
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -14,7 +14,7 @@ ELENA Standard Library 6.5: Module extensions'threading
 <A HREF="index.html">Overview</A>
 </LI>
 <LI>
-<A HREF="extensions-threading-summary.html">Module</A>
+<A HREF="system-text-parsing-summary.html">Module</A>
 </LI>
 </UL>
 <DIV CLASS="aboutLanguage">
@@ -23,20 +23,20 @@ ELENA&nbsp;Standard&nbsp;Library<br>6.5
 </STRONG>
 </DIV>
 </DIV>
-<A NAME="threadControl">
+<A NAME="RegEx">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
 <DIV CLASS="header">
 <DIV CLASS="subTitle">
-extensions'threading'</DIV>
-<H2 title="threadControl" class="title">threadControl</H2>
+system'text'parsing'</DIV>
+<H2 title="RegEx" class="title">RegEx</H2>
 </DIV>
 <DIV CLASS="contentContainer">
 <DIV CLASS="description">
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public singleton <SPAN CLASS="typeNameLabel">threadControl</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">RegEx</SPAN></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -45,8 +45,58 @@ public singleton <SPAN CLASS="typeNameLabel">threadControl</SPAN></PRE>
 <LI>
 <UL CLASS="inheritance">
 <LI>
-extensions'threading'threadControl</LI>
+system'text'parsing'RegEx</LI>
 </UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-text-parsing-$intern.html#PatternRule">PatternRule</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_startRule</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor / Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-text-parsing.html#RegEx">RegEx</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> pattern)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-text-parsing.html#RegEx">RegEx</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>prepare(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> pattern)
+</CODE>
+</TD>
+</TR>
+</TABLE>
 </LI>
 </UL>
 <!-- ========== METHOD SUMMARY =========== -->
@@ -61,66 +111,9 @@ extensions'threading'threadControl</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>start(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>sleep(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
-</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<HR>
-</DIV>
-<A NAME="Object">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'</DIV>
-<H2 title="Object" class="title">Object</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
-<BR>
-</DIV>
-<!-- ========== EXTENSION SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Extension Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Extension Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>dispatch</i>()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>printLineConcurrent(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
+<CODE>match(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -135,7 +128,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <A HREF="index.html">Overview</A>
 </LI>
 <LI>
-<A HREF="extensions-threading-summary.html">Module</A>
+<A HREF="system-text-parsing-summary.html">Module</A>
 </LI>
 </UL>
 <DIV CLASS="aboutLanguage">
