@@ -2124,6 +2124,10 @@ public isNilOperatorTest() : testCase()
    Assert.ifNotFailed({ var a := new A(); var b := nil; var r := a ?? b.test() });
    Assert.ifFailed({ var a := nil; var b := nil; var r := a ?? b.test() });
    console.write(".");
+
+   string s := nil;
+   Assert.ifEqual(s ?? String.MinValue, EmptyString);
+   console.write(".");
 }
 
 namespace IndexedTest

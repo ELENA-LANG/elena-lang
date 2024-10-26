@@ -12623,12 +12623,12 @@ bool Compiler::checkifSingleObject(Scope& scope, SyntaxNode loperand)
 
 ObjectInfo Compiler::Expression::compileIsNilOperation(SyntaxNode node)
 {
-   ObjectInfo ehLocal = declareTempStructure({ (int)scope.moduleScope->ehTableEntrySize, false });
-
    ObjectInfo loperand = {};
    SyntaxNode current = node.firstChild();
 
    if (current == SyntaxKey::MessageOperation || current == SyntaxKey::PropertyOperation) {
+      ObjectInfo ehLocal = declareTempStructure({ (int)scope.moduleScope->ehTableEntrySize, false });
+
       SyntaxNode objNode = current.firstChild();
 
       loperand = compileObject(objNode, EAttr::Parameter, nullptr);
@@ -12652,6 +12652,8 @@ ObjectInfo Compiler::Expression::compileIsNilOperation(SyntaxNode node)
       loperand = compileObject(current, EAttr::Parameter, nullptr);
    }
    else {
+      ObjectInfo ehLocal = declareTempStructure({ (int)scope.moduleScope->ehTableEntrySize, false });
+
       writer->newNode(BuildKey::AltOp, ehLocal.argument);
 
       writer->newNode(BuildKey::Tape);
@@ -12688,7 +12690,19 @@ ObjectInfo Compiler::Expression::compileIsNilOperation(SyntaxNode node)
       writer->closeNode();
       writer->newNode(BuildKey::Tape);
       roperand = compile(altNode, 0, EAttr::Parameter, nullptr);
+      writeObjectInfo(roperand, node);
       writer->closeNode();
+
+      if (roperand.kind == ObjectKind::Constant) {
+         // Bad luck - we have to remove already created node, because more optimal construction is possible
+         writer->CurrentNode().setKey(BuildKey::Idle);
+         writer->closeNode();
+
+         writeObjectInfo(roperand, node);
+         writer->appendNode(BuildKey::SavingInStack);
+         writeObjectInfo(loperand, node);
+         writer->newNode(BuildKey::NilOp, ISNIL_OPERATOR_ID);
+      }
 
       writer->closeNode();
    }

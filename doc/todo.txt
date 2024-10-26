@@ -36,11 +36,20 @@ In development:
   * test all x86 examples (net)
   * x86-64 : mta - main sample sandbox2
   * x86-64 mta - sandbox2 : fix GC issue
+  * review once again latest reddit articles 
+  * ldoc : String info - get rid of arams:$#constructor(Object args)
   * generate api info for added modules
-  * generate api info List<T>
-  * http client : uri
+  * generate api info List<T>   
+  * test : http://www.google.com/startSide?arg=3
+  * test : http://www.google.com/startSide
+  * test : http://www.google.com/
+  * test : http://www.google.com
+  * test : http://127.0.0.1/
+  * test : http://127.0.0.1
+  * functional test - ?? operator with string.MinValue
+  * string.MinValue - must be used directly
   --------------------------------------
-  * retest : db, files, gui
+  * fix ?? operator
 
   === Iteration 36 ===
   --------------------------------------
