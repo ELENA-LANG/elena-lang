@@ -19,33 +19,12 @@
 // //  Assert.ifTrue(regex1.match("a/"));
 //}
 
-//import extensions;
-//import net'http;
-//
-//public program()
-//{
-//   Uri uri := new Uri("http://127.0.0.1");
-//
-//   Console.printLine("Scheme:",uri.Scheme," Host:",uri.Host," Port:",uri.Port," Path:",uri.Path," Query:",uri.Query);
-//}
-
-A
-{
-   string s;
-
-   string get()
-      = s ?? String.MinValue;
-
-   constructor() {}
-
-   constructor(string s) { this s := s }
-}
+import extensions;
+import net'http;
 
 public program()
 {
-   A a := new A();
-   var r := a.get();
-//   console.writeLine(a.get());
-//   A a2 := new A("hi");
-//   console.writeLine(a2.get());
+   Uri uri := new Uri("http://www.google.com/startSide?arg=3");
+
+   Console.printLine("Scheme:",uri.Scheme," Host:",uri.Host," Port:",uri.Port," Path:",uri.Path," Query:",uri.Query);
 }

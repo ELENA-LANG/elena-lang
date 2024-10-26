@@ -1,6 +1,6 @@
 import system'text'parsing;
 
-internal static RegEx UrlRegEx = new RegEx("^(ht|f)tp(s?)\:\/\/[0-9a-zA-Z]((\.|-+)?[0-9a-zA-Z])*(:(0-9)*)?(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&%\$#_]*)?$");
+internal static RegEx UrlRegEx = new RegEx("^(ht|f)tp(s?)\:\/\/[0-9a-zA-Z]((\.|-+)?[0-9a-zA-Z])*(:(0-9)*)?(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&%\$#_=]*)?$");
 
 public sealed class Uri
 {
@@ -59,7 +59,7 @@ public sealed class Uri
       index := end + 1;
       
       if (index < len) {
-         int pathEnd := url.indexOf(index, $63);
+         end := url.indexOf(index, $63);
          if (end == -1)
             end := len;
 
@@ -78,6 +78,6 @@ public sealed class Uri
    constructor parse(string url)
    {
       if:not (parseUrl(url))
-         InvalidOperationException.raise("url");
+         InvalidArgumentException.raise("url");
    }
 }

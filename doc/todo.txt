@@ -39,17 +39,8 @@ In development:
   * review once again latest reddit articles 
   * ldoc : String info - get rid of arams:$#constructor(Object args)
   * generate api info for added modules
-  * generate api info List<T>   
-  * test : http://www.google.com/startSide?arg=3
-  * test : http://www.google.com/startSide
-  * test : http://www.google.com/
-  * test : http://www.google.com
-  * test : http://127.0.0.1/
-  * test : http://127.0.0.1
-  * functional test - ?? operator with string.MinValue
-  * string.MinValue - must be used directly
   --------------------------------------
-  * fix ?? operator
+  * generate api info List<T>   
 
   === Iteration 36 ===
   --------------------------------------
