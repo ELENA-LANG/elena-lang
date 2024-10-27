@@ -41,13 +41,13 @@ public sealed ChatServer
                   var command := member.readCommand();
                   if (command != nil) {
                      (command.Command) =>
-                           INTRODUCTION
+                           INTRODUCTION:
                            {
                               member.Name := command.Value;
       
                               OnIntro?.(member.Name);
                            }
-                           SEND
+                           SEND:
                            {
                               OnMessage?.(member.Name, command.Value);
                               
