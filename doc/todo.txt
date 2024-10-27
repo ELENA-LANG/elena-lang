@@ -11,6 +11,7 @@ In development:
       - upndown (connector)
       - #496
       - #622
+      * #34 : web api
       - http client (https get, post, put, patch, delete, head, options, trace)
   gen:
       - lpad : generate a code based on a record  
@@ -28,18 +29,13 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
-  * http client : get (quick & dirty)
-  * regular expressions: pattern
-  * regular expressions : split
-  * regular expressions : support basic character classes (\W \d and so on)
-  * review if using xnop impoves performance (pi & anagram samples)
-  * test all x86 examples (net)
   * x86-64 : mta - main sample sandbox2
-  * x86-64 mta - sandbox2 : fix GC issue
-  * review once again latest reddit articles 
+  * rosetta code : moving to 6.5
   * ldoc : String info - get rid of arams:$#constructor(Object args)
+  * http client : get (quick & dirty)
+  * test all x86 examples (net)
   --------------------------------------
-  * generate api info for added modules
+  * x86-64 mta - sandbox2 : fix GC issue
 
   === Iteration 36 ===
   --------------------------------------
