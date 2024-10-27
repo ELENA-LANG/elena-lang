@@ -42,7 +42,7 @@ class Controller
 
    greeting()
    {
-      Сonsole.printLine("ELENA Chat Client v.", VERSION);
+      Console.printLine("ELENA Chat Client v.", VERSION);
         
       string userName := Сonsole.write("Enter nickname:").readLine();
 
