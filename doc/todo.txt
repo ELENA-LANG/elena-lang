@@ -22,20 +22,20 @@ In development:
       - redesign winforms
       - api : add descriptions 
       - threading samples must be included into release files
-      - ide : windows / linux
+      - ide : windows
       - review pi performance (must < 6)
   port:
   tools: 
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
-  * x86-64 : mta - main sample sandbox2
+  * ide : linux
+  * x86-64 : mta - test net examples for mta
   * rosetta code : moving to 6.5
   * ldoc : String info - get rid of arams:$#constructor(Object args)
   * http client : get (quick & dirty)
-  * test all x86 examples (net)
   --------------------------------------
-  * x86-64 mta - sandbox2 : fix GC issue
+  * test all x86 examples (net)
 
   === Iteration 36 ===
   --------------------------------------
