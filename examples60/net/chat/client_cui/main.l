@@ -44,13 +44,13 @@ class Controller
    {
       Console.printLine("ELENA Chat Client v.", VERSION);
         
-      string userName := Сonsole.write("Enter nickname:").readLine();
+      string userName := Console.write("Enter nickname:").readLine();
 
       try {
          _client.start(userName, _ipAddress, _port);
       }
       catch(Exception ex) {
-         Сonsole.writeLine("Cannot esteblish connection!"); AbortException.raise()
+         Console.writeLine("Cannot esteblish connection!"); AbortException.raise()
       };
             
       ^ "Enter -q to exit the chat"
