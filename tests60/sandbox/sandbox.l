@@ -31,46 +31,13 @@
 
 import extensions;
 
-sealed class MyIntValue
+singleton Tester
 {
-    int value;
-    
-    constructor(string value)
-    {
-        this value := value.toInt()
-    }
-    
-    constructor(real value)
-    {
-        this value := value.toInt()
-    }
-    
-    constructor(int value)
-    {
-        this value := value
-    }
-    
-    int Value = value;
-}
-
-class MyClass
-{
-    add(MyIntValue v)
-    {
-        Console.printLine("add(MyIntValue(",v.Value,"))")
-    }
-    
-    add(n)
-    {
-        Console.printLine("unsupported")
-    }
+   get Value()
+      = 2;
 }
 
 public program()
 {
-    var o := new MyClass();
-    
-    o.add("2" as: MyIntValue);
-    o.add(3 as: MyIntValue);
-    o.add(4.0 as: MyIntValue);
+   int n := Tester.Value as::int;
 }
