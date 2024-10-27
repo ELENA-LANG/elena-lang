@@ -111,7 +111,7 @@ public sealed ChatServer
       {
          lock (_lock)
          {
-            (client.Parameter :as ChatMember).write(data, length)
+            (client.Parameter as::ChatMember).write(data, length)
          }                        
       };
 
