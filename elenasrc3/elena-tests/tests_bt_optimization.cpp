@@ -94,11 +94,13 @@ constexpr auto ComplexStructSize = 16;
 
 constexpr auto BuildTree1_1 = "byrefmark -24 () local_address -24 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2306 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
 constexpr auto BuildTree1_2 = "byrefmark -24 () local_address -24 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2434 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
+constexpr auto BuildTree1_4 = "byrefmark -24 () local_address -24 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1() class_reference 4 () saving_stack () argument () direct_call_op 3331 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
 constexpr auto BuildTree2 = "int_literal 2 (value 2 ()) copying -8 ( size 4 ())";
 constexpr auto BuildTree4 = "int_literal 2 (value 3 ())copying -8 (size 4 ())local_address -8 ()saving_stack ()int_literal 3 (value 2 ())saving_stack 1 ()intop 4 (index -40 ())local_address -40 ()copying -24 (size 4 ())";
 
 constexpr auto OptimizedBuildTree1_1 = "local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2306 (type 4 ()) local_address -8 ()";
 constexpr auto OptimizedBuildTree1_2 = "local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2434 (type 4 ()) local_address -8 ()";
+constexpr auto OptimizedBuildTree1_4 = "local_address -8 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3331 (type 4 ()) local_address -8 ()";
 constexpr auto OptimizedBuildTree2 = "saving_int - 8 (size 4 ()value 2 ())";
 constexpr auto OptimizedBuildTree4 = "saving_int -8 (size 4 ()value 3 ())local_address -8 ()copying -24 (size 4 ())addingint -24 (value 2 ())";
 
