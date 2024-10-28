@@ -13651,7 +13651,7 @@ Compiler::MessageResolution Compiler::Expression :: resolveByRefHandler(ObjectIn
          ref_t resolvedSignRef = 0;
          ustr_t actionName = scope.module->resolveAction(getAction(resolution.message), resolvedSignRef);
 
-         ref_t byRefType = compiler->resolveStrongType(scope, { V_OUTWRAPPER, expectedRef });
+         ref_t byRefType = compiler->resolveStrongType(scope, { V_OUTWRAPPER, expectedRef }, true);
          ref_t byRefSignature = compiler->_logic->defineByRefSignature(*scope.moduleScope, resolvedSignRef, byRefType);
 
          ref_t byRefMessage = encodeMessage(scope.module->mapAction(actionName, byRefSignature, false), argCount + 1, resolvedFlags);

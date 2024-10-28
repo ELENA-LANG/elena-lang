@@ -186,22 +186,22 @@ public sealed const struct Socket
    Task connectAsync(string ip_address, int port)
       = Task.run({ connect(ip_address, port); });
 
-   int write(byte[] buffer)
+   int send(byte[] buffer)
    {
       int len := buffer.Length;
 
-      ^ self.write(buffer, len, 0);
+      ^ self.send(buffer, len, 0);
    }
 
-   Task<int> writeAsync(byte[] buffer)
+   Task<int> sendAsync(byte[] buffer)
       = ::Task<int>.run(
       {
-         int written := write(buffer);
+         int written := send(buffer);
 
          ^ written
       });
 
-   int write(byte[] buffer, int length, int flags)
+   int send(byte[] buffer, int length, int flags)
    {
       int retVal := extern WS2_32.send(_handle, buffer, length, flags);
             
@@ -211,15 +211,15 @@ public sealed const struct Socket
       ^ retVal
    }
 
-//   Task<int> writeAsync(byte[] buffer, int length, int flags)
-//      = ::Task<int>.run(
-//      {
-//         int written := write(buffer, length, flags);
-//
-//         ^ written
-//      });
+   Task<int> sendAsync(byte[] buffer, int length, int flags)
+      = ::Task<int>.run(
+      {
+         int sent := send(buffer, length, flags);
 
-   int read(byte[] buffer, int maxLength, int flags)
+         ^ sent
+      });
+
+   int receive(byte[] buffer, int maxLength, int flags)
    {
       int retVal := extern WS2_32.recv(_handle,buffer,maxLength,flags);
         
@@ -232,6 +232,14 @@ public sealed const struct Socket
             
       ^ retVal
    }
+
+   Task<int> receiveAsync(byte[] buffer, int maxLength, int flags)
+      = ::Task<int>.run(
+      {
+         int received := receive(buffer, maxLength, flags);
+
+         ^ received
+      });
 
    Socket accept()
    {
