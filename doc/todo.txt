@@ -29,13 +29,20 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
+  * test all x86 examples (net)
+  * fix chat server - it is blocked
   * ide : linux
   * x86-64 : mta - test net examples for mta
   * rosetta code : moving to 6.5
   * ldoc : String info - get rid of arams:$#constructor(Object args)
+  * redesign chat sample
+  * net tcpserver / tcpclient - async operations
+  * net tcpserver / tcpclient - fix code for blocking
+  * IDE : fix syntax highlighting (see system'net:win_common.l)
   * http client : get (quick & dirty)
+  * review system'net - Reference<Task<Socket>> - why it was declared?
   --------------------------------------
-  * test all x86 examples (net)
+  * socket operation - using async operations : sendAsync, receiveAsync, receiveFromAsync, sendToAsync
 
   === Iteration 36 ===
   --------------------------------------

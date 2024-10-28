@@ -259,6 +259,10 @@ namespace elena_lang
 
       bool isTemplateInternalOp(ModuleScopeBase& scope, ref_t reference1, ref_t reference2)
       {
+         // if it is the same class - an internal operation is allowed
+         if (reference1 == reference2)
+            return true;
+
          // retrive the template namespace
          ReferenceProperName templateNs;
          retrieveTemplateNs(scope, reference1, templateNs);

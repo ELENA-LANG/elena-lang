@@ -1,4 +1,5 @@
 import system;
+import system'threading;
 
 // --- IN_ADDR ---
 
@@ -182,12 +183,23 @@ public sealed const struct Socket
          { SocketException.new("Error at socket").raise() }
    }
 
+   Task connectAsync(string ip_address, int port)
+      = Task.run({ connect(ip_address, port); });
+
    int write(byte[] buffer)
    {
       int len := buffer.Length;
 
       ^ self.write(buffer, len, 0);
    }
+
+   Task<int> writeAsync(byte[] buffer)
+      = ::Task<int>.run(
+      {
+         int written := write(buffer);
+
+         ^ written
+      });
 
    int write(byte[] buffer, int length, int flags)
    {
@@ -198,6 +210,14 @@ public sealed const struct Socket
             
       ^ retVal
    }
+
+//   Task<int> writeAsync(byte[] buffer, int length, int flags)
+//      = ::Task<int>.run(
+//      {
+//         int written := write(buffer, length, flags);
+//
+//         ^ written
+//      });
 
    int read(byte[] buffer, int maxLength, int flags)
    {
@@ -219,6 +239,14 @@ public sealed const struct Socket
             
       ^ socket
    }
+
+   Task<Socket> acceptAsync()
+      = ::Task<Socket>.run(
+      {
+         handle socket := extern WS2_32.accept(_handle, 0, 0);
+
+         ^ new Socket(socket)
+      });
 
    shutdown(int how)
    {
