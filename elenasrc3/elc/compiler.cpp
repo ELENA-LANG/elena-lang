@@ -13677,6 +13677,8 @@ Compiler::MessageResolution Compiler::Expression :: resolveByRefHandler(ObjectIn
             resolution.message = byRefMessage;
 
             // NOTE : the stack safe attributes are resolved again the target signature
+            // this type we must generate by ref handler to set stacksafe attribute properly
+            compiler->resolveStrongType(scope, { V_OUTWRAPPER, expectedRef }, false);
             compiler->_logic->setSignatureStacksafe(*scope.moduleScope, byRefSignature, resolution.stackSafeAttr);
 
             context = byRefContext;

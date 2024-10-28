@@ -1,28 +1,35 @@
 import extensions;
 import system'threading;
 
-public sealed const struct Socket
+public const struct XCharValue
 {
-   handle _handle;
+   embeddable __word _value[4];
 
-   int write(byte[] buffer)
+   bool equal(XString s)
    {
-      int len := buffer.Length;
+//      int sLen := s.Length;
+//      int chLen := self.Length;
+//      
+//      if (sLen == chLen)
+//      {
+         XCharValue ch := s[0];
 
-//      ^ self.write(buffer, len, 0);
-   
-      ^ len
+//         ^ self == ch    
+//      };
+//
+//      ^ false
    }
+}
 
-   Task<int> writeAsync(byte[] buffer)
-      = ::Task<int>.run(
-      {
-         int written := write(buffer);
-
-         ^ written
-      });
+public sealed class XString
+{
+   XCharValue at(int n)
+   {
+   }
 }
 
 public program()
 {
+    Assert.ifTrue("abc"[1] == "b");
+    console.write(".");
 }

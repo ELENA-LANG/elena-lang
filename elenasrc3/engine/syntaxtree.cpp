@@ -59,6 +59,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("mul_operation", SyntaxKey::MulOperation);
    map.add("div_operation", SyntaxKey::DivOperation);
    map.add("assign_operation", SyntaxKey::AssignOperation);
+   map.add("index_operation", SyntaxKey::IndexerOperation);
 
    map.add("if_operation", SyntaxKey::IfOperation);
    map.add("branch_operation", SyntaxKey::BranchOperation);

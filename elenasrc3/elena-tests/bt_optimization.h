@@ -73,6 +73,13 @@ namespace elena_lang
       void SetUp() override;
    };
 
+   // Optimization #2 (byRefOp + boxing / unboxing) : "a := b[0]"
+   class BTOptimization1_4 : public BTOptimization
+   {
+   protected:
+      void SetUp() override;
+   };
+
    // Optimization #3 (intCopying) : "int n := 2" => direct assigning
    class BTOptimization2 : public BTOptimization
    {

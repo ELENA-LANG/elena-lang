@@ -2259,11 +2259,18 @@ inline bool doubleAssigningByRefHandler(BuildNode lastNode)
    if(scanFrameForLocalAddresses(opNode, BuildKey::Copying, lastNode.arg.value)) {
       BuildNode byRefArg = BuildTree::gotoNode(lastNode, BuildKey::LocalAddress, lastNode.arg.value);
       BuildNode copyOp = opNode.nextNode();
+      BuildNode prevCopyOp = getPrevious(opNode);
+
+      // check if it is unboxing op
+      if (prevCopyOp.key != BuildKey::Copying || prevCopyOp.arg.reference != lastNode.arg.value)
+         prevCopyOp = {};
 
       // modify the tree to exclude double copying
       byRefArg.setArgumentValue(copyOp.arg.value);
       opNode.setArgumentValue(copyOp.arg.value);
       copyOp.setKey(BuildKey::Idle);
+      if (prevCopyOp.key == BuildKey::Copying)
+         prevCopyOp.setArgumentValue(copyOp.arg.value);
 
       return true;
    }

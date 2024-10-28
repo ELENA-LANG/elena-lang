@@ -40,8 +40,12 @@ In development:
   * net tcpserver / tcpclient - fix code for blocking
   * IDE : fix syntax highlighting (see system'net:win_common.l)
   * http client : get (quick & dirty)
+  * review net tcpserver / tcpclient
+  * fix failed functional tests - stringTests
+  * review CharValue.equal<'String>[2] : no need to box the char before calling s[index]
+  * review CharValue.equal<'String>[2]
   --------------------------------------
-  * review system'net - Reference<Task<Socket>> - why it was declared?
+  * new build tree optimization =2, check for fixing duplicate copying with unboxing
 
   === Iteration 36 ===
   --------------------------------------
