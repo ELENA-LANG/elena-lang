@@ -571,8 +571,9 @@ void SyntaxTreeBuilder :: generateTemplateOperation(SyntaxTreeWriter& writer, Sc
          break;
       case SyntaxKey::identifier:
          templateName.append(operation.identifier());
-         if (operation.nextNode() == SyntaxKey::Expression) {
+         if (operation.nextNode().compare(SyntaxKey::Expression, SyntaxKey::L3Expression)) {
             op = operation.nextNode();
+            op.setKey(SyntaxKey::Expression);
 
             templateName.append("#0#1");
          }

@@ -13379,15 +13379,15 @@ void Compiler::Expression :: compileNestedInitializing(InlineClassScope& classSc
 
       arg = boxArgument(arg, false, false, false);
       switch (arg.kind) {
-      case ObjectKind::Field:
-      case ObjectKind::ReadOnlyField:
-      case ObjectKind::Outer:
-      case ObjectKind::OuterField:
-      case ObjectKind::OuterSelf:
-         arg = saveToTempLocal(arg);
-         break;
-      default:
-         break;
+         case ObjectKind::Field:
+         case ObjectKind::ReadOnlyField:
+         case ObjectKind::Outer:
+         case ObjectKind::OuterField:
+         case ObjectKind::OuterSelf:
+            arg = saveToTempLocal(arg);
+            break;
+         default:
+            break;
       }
 
       list.add(arg);
@@ -13413,17 +13413,17 @@ void Compiler::Expression :: compileNestedInitializing(InlineClassScope& classSc
       auto fieldInfo = classScope.info.fields.get(it.key());
 
       switch (arg.kind) {
-      case ObjectKind::SelfLocal:
-      case ObjectKind::Local:
-      case ObjectKind::TempLocal:
-      case ObjectKind::Param:
-         writer->appendNode(BuildKey::AssignLocalToStack, arg.reference);
-         writer->appendNode(BuildKey::SetImmediateField, fieldInfo.offset);
-         break;
-      default:
-         // NOTE : should neve be hit
-         assert(false);
-         break;
+         case ObjectKind::SelfLocal:
+         case ObjectKind::Local:
+         case ObjectKind::TempLocal:
+         case ObjectKind::Param:
+            writer->appendNode(BuildKey::AssignLocalToStack, arg.reference);
+            writer->appendNode(BuildKey::SetImmediateField, fieldInfo.offset);
+            break;
+         default:
+            // NOTE : should neve be hit
+            assert(false);
+            break;
       }
 
       if (updatedOuterArgs && (*it).updated) {

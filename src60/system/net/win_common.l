@@ -13,12 +13,14 @@ public const int TCP_NODELAY = 1;
 
 public const int FIONBIO = 8004667Eh;
 
-public const int WSAEWOULDBLOCK = 10035;
-public const int WSAECONNRESET  = 10054;
+public const int WSAEWOULDBLOCK  = 10035;
+public const int WSAECONNRESET   = 10054;
 
-public const int SOMAXCONN = 5;
+public const int SOL_SOCKET      = 1;
+public const int SO_ERROR        = 4;
+public const int SOMAXCONN       = 5;
 
-public const int SD_BOTH = 2;
+public const int SD_BOTH         = 2;
 
 // --- WSAException ---
 

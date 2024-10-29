@@ -648,9 +648,9 @@ system'net'Socket</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> buffer)
+<CODE>connectAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> ip_address, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> port)
 </CODE>
 </TD>
 </TR>
@@ -659,16 +659,52 @@ system'net'Socket</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> flags)
+<CODE>send(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> buffer)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>sendAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> buffer)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> maxLength, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> flags)
+<CODE>send(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> flags)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>sendAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> flags)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>receive(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> maxLength, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> flags)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>receiveAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> maxLength, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> flags)
 </CODE>
 </TD>
 </TR>
@@ -684,13 +720,22 @@ system'net'Socket</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'net'Socket&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>acceptAsync()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>shutdown(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> how)
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
@@ -699,7 +744,7 @@ system'net'Socket</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -708,7 +753,7 @@ system'net'Socket</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>

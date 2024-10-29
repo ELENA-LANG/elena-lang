@@ -25,6 +25,7 @@
 ..\..\bin\ldoc ltests
 ..\..\bin\ldoc net
 ..\..\bin\ldoc net'http
+..\..\bin\ldoc net'server
 ..\..\bin\ldoc xforms
 
 copy *.html ..\..\doc\api

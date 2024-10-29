@@ -29,23 +29,19 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: posting weekly
   --------------------------------------
-  * test all x86 examples (net)
   * fix chat server - it is blocked
   * ide : linux
   * x86-64 : mta - test net examples for mta
   * rosetta code : moving to 6.5
   * ldoc : String info - get rid of arams:$#constructor(Object args)
-  * redesign chat sample
-  * net tcpserver / tcpclient - async operations
-  * net tcpserver / tcpclient - fix code for blocking
   * IDE : fix syntax highlighting (see system'net:win_common.l)
   * http client : get (quick & dirty)
-  * review net tcpserver / tcpclient
-  * fix failed functional tests - stringTests
-  * review CharValue.equal<'String>[2] : no need to box the char before calling s[index]
-  * review CharValue.equal<'String>[2]
+  * test all x86 examples (net)
+  * redesign chat sample
+  * refactor - net'server'tcpserver (an extra library)
+  * refactor - tcplistener
   --------------------------------------
-  * new build tree optimization =2, check for fixing duplicate copying with unboxing
+  * test threading samples
 
   === Iteration 36 ===
   --------------------------------------

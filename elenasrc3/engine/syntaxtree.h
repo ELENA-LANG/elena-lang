@@ -149,6 +149,7 @@ namespace elena_lang
       TemplateOperation       = 0x00189C,
       LTExpression            = 0x00189D,
       InterpolExpression      = 0x00189E,
+      L3Expression            = 0x00189F,
       TemplateExpression      = 0x0018A0,
       KeyValueExpression      = 0x0018A1,
       ClosureOperation        = 0x0018A2,

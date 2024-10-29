@@ -21,12 +21,15 @@
   <files>
      <module>
         <include>common.l</include>
-        <include>win32_server.l</include>
         <include>win32_client.l</include>
+        <include>win32_listener.l</include>
      </module>
      <module name="http">
        <include>http\common.l</include>
        <include>http\httpclient.l</include>
+     </module>
+     <module name="server">
+       <include>server\win32_server.l</include>
      </module>
   </files>
 </configuration>

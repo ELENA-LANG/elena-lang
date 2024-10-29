@@ -264,9 +264,10 @@ public sealed const struct Socket
          { SocketException.new("Error at socket").raise() }
    }
 
-   int iocommand(int command)
+   int iocommand(int command, int mode)
    {
-      int retVal := extern WS2_32.ioctlsocket(_handle, command, out int parameter);
+      int parameter := mode;
+      int retVal := extern WS2_32.ioctlsocket(_handle, command, ref parameter);
             
       if (retVal == SOCKET_ERROR)
          { SocketException.new("Error at socket").raise() };
@@ -283,6 +284,17 @@ public sealed const struct Socket
             
       if (retVal == SOCKET_ERROR)
          { SocketException.new("Error at socket").raise() }
+   }
+
+   bool isConnected()
+   {      
+      int size := 4;
+
+      int retVal := extern WS2_32.getsockopt(
+                        _handle, SOL_SOCKET, SO_ERROR, out int errCode, ref size);
+
+      
+      ^ (retVal == 0 && errCode == 0);
    }
 
    close()
