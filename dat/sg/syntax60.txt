@@ -827,7 +827,8 @@ SUB_SINGLE_EXPRESSION ::=
 
 L3_EXPRESSION ::=
 	identifier+ {
-		L3_OOP
+		L2_OOP
+		| L3_OOP
 		| eps ^OBJECT
 	}
 	| { reference | global } ^OBJECT L3_OP;
