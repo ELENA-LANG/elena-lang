@@ -267,9 +267,17 @@ namespace elena_lang
          ReferenceProperName templateNs;
          retrieveTemplateNs(scope, reference1, templateNs);
 
-         NamespaceString referenceNs(scope.resolveFullName(reference2));
+         if (isTemplateWeakReference(scope.module->resolveReference(reference2))) {
+            ReferenceProperName templateNs2;
+            retrieveTemplateNs(scope, reference2, templateNs2);
 
-         return (*templateNs).compare(*referenceNs);
+            return (*templateNs).compare(*templateNs2);
+         }
+         else {
+            NamespaceString referenceNs(scope.resolveFullName(reference2));
+
+            return (*templateNs).compare(*referenceNs);
+         }
       }
       bool isInternalOp(ModuleScopeBase& scope, ref_t reference)
       {

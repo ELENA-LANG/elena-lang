@@ -41,7 +41,7 @@ In development:
   * refactor - net'server'tcpserver (an extra library)
   * refactor - tcplistener
   --------------------------------------
-  * fixing : 2nd async sample
+  * net : get rid of warnings
 
   === Iteration 36 ===
   --------------------------------------

@@ -61,13 +61,13 @@ public class TcpListener
 
    async Task<Socket> acceptSocketAsync()
    {
-//      Socket socket := :await _listenSocket.acceptAsync();
-//      if:not(socket.isInvalid)
-//      {
-//         if (_noDelayMode)
-//            socket.option(IPPROTO_TCP, TCP_NODELAY, true);
-//      };
-//
-//      ^ socket
+      Socket socket := :await _listenSocket.acceptAsync();
+      if:not(socket.isInvalid)
+      {
+         if (_noDelayMode)
+            socket.option(IPPROTO_TCP, TCP_NODELAY, true);
+      };
+
+      ^ socket
    }
 }

@@ -1745,13 +1745,13 @@ void IDEController :: highlightError(IDEModel* model, int row, int column, path_
    PathString fullPath(*model->projectModel.projectPath, path);
 
    int projectStatus = STATUS_FRAME_ACTIVATE;
-   openFile(model, *fullPath, projectStatus);
+   if (openFile(model, *fullPath, projectStatus)) {
+      DocumentChangeStatus docStatus = { test(projectStatus, STATUS_FRAME_CHANGED) };
+      model->viewModel()->setErrorLine(row, column, true, docStatus);
 
-   DocumentChangeStatus docStatus = { test(projectStatus, STATUS_FRAME_CHANGED) };
-   model->viewModel()->setErrorLine(row, column, true, docStatus);
-
-   TextViewModelEvent event = { projectStatus, docStatus };
-   _notifier->notify(&event);
+      TextViewModelEvent event = { projectStatus, docStatus };
+      _notifier->notify(&event);
+   }
 }
 
 void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode,
