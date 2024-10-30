@@ -1,35 +1,25 @@
 import extensions;
 import system'threading;
 
-public const struct XCharValue
+singleton Tester
 {
-   embeddable __word _value[4];
-
-   bool equal(XString s)
+   async Task<int> getValueAsync()
    {
-//      int sLen := s.Length;
-//      int chLen := self.Length;
-//      
-//      if (sLen == chLen)
-//      {
-         XCharValue ch := s[0];
-
-//         ^ self == ch    
-//      };
-//
-//      ^ false
+      ^ 2
    }
-}
 
-public sealed class XString
-{
-   XCharValue at(int n)
+   async Task<int> addValueAsync(int n)
    {
+      int val := :await getValueAsync();
+
+      val := val + n;
+
+      ^ val
    }
 }
 
 public program()
 {
-    Assert.ifTrue("abc"[1] == "b");
-    console.write(".");
+   int n := Tester.addValueAsync(3).Result;
+   Console.printLine("the result is ", n);
 }

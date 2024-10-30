@@ -11551,7 +11551,7 @@ ObjectInfo Compiler::Expression::compile(SyntaxNode node, ref_t targetRef, EAttr
          retVal = compileSpecialOperation(current, (int)current.key - OPERATOR_MAKS, targetRef);
          break;
       case SyntaxKey::AsyncOperation:
-         compileAsyncOperation(current, paramMode || targetRef != 0);
+         retVal = compileAsyncOperation(current, paramMode || targetRef != 0 || EAttrs::testAndExclude(mode, EAttr::RetValExpected));
          break;
       case SyntaxKey::YieldOperation:
          compileYieldOperation(current);
@@ -12073,13 +12073,15 @@ ObjectInfo Compiler::Expression::compileSpecialOperation(SyntaxNode node, int op
    return retVal;
 }
 
-void Compiler::Expression :: compileAsyncOperation(SyntaxNode node, bool valueExpected)
+ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, bool valueExpected)
 {
+   ObjectInfo retVal = {};
+
    StatemachineClassScope* smScope = Scope::getScope<StatemachineClassScope>(scope, Scope::ScopeLevel::Statemachine);
    if (!smScope) {
       scope.raiseError(errInvalidOperation, node);
 
-      return; // !! should never reach it; added to make the compiler happy
+      return {}; // !! should never reach it; added to make the compiler happy
    }      
 
    ObjectInfo contextField = smScope->mapContextField();
@@ -12088,10 +12090,10 @@ void Compiler::Expression :: compileAsyncOperation(SyntaxNode node, bool valueEx
    writer->newNode(BuildKey::YieldingOp, -scope.moduleScope->ptrSize);
    writer->newNode(BuildKey::Tape);
 
-   ObjectInfo retVal = compile(node.firstChild(), smScope->typeRef, EAttr::None, nullptr);
+   ObjectInfo exprVal = compile(node.firstChild(), smScope->typeRef, EAttr::None, nullptr);
 
    bool nillableOp = false;
-   if (!compileAssigningOp(currentField, retVal, nillableOp))
+   if (!compileAssigningOp(currentField, exprVal, nillableOp))
       scope.raiseError(errInvalidOperation, node);
 
    if (nillableOp)
@@ -12108,8 +12110,7 @@ void Compiler::Expression :: compileAsyncOperation(SyntaxNode node, bool valueEx
    writer->closeNode();
    writer->closeNode();
 
-   if (valueExpected)
-      writeObjectInfo(currentField, node);
+   return valueExpected ? currentField : retVal;
 }
 
 void Compiler::Expression :: compileYieldOperation(SyntaxNode node)

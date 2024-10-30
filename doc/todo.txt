@@ -41,7 +41,7 @@ In development:
   * refactor - net'server'tcpserver (an extra library)
   * refactor - tcplistener
   --------------------------------------
-  * test threading samples
+  * fixing : 2nd async sample
 
   === Iteration 36 ===
   --------------------------------------
