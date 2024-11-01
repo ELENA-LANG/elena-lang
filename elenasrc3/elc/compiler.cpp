@@ -12123,7 +12123,7 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t 
    writer->closeNode();
 
    if (valueExpected) {
-      return retMode ? contextField : convertObject(node, contextField, targetRef, dynamicRequired, false, false, false);
+      return retMode ? currentField : convertObject(node, currentField, targetRef, dynamicRequired, false, false, false);
    }
    
    return retVal;
