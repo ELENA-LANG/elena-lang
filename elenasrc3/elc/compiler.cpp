@@ -12123,6 +12123,10 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t 
    writer->closeNode();
 
    if (valueExpected) {
+      // to ingnore the compatibility errors, replace Task with Task<T> type, if applicable
+      if (compiler->_logic->isCompatible(*scope.moduleScope, currentField.typeInfo, exprVal.typeInfo, false))
+         currentField.typeInfo = exprVal.typeInfo;
+
       return retMode ? currentField : convertObject(node, currentField, targetRef, dynamicRequired, false, false, false);
    }
    

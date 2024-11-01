@@ -39,9 +39,8 @@ In development:
   * test all x86 examples (net)
   * redesign chat sample
   * refactor - net'server'tcpserver (an extra library)
-  * refactor - tcplistener
   --------------------------------------
-  * net : get rid of warnings
+  * refactor - tcplistener
 
   === Iteration 36 ===
   --------------------------------------
