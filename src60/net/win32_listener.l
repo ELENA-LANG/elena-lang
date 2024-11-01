@@ -70,4 +70,28 @@ public class TcpListener
 
       ^ socket
    }
+
+   TcpClient acceptTcpClient()
+   {
+      Socket socket := _listenSocket.accept();
+      if:not(socket.isInvalid)
+      {
+         if (_noDelayMode)
+            socket.option(IPPROTO_TCP, TCP_NODELAY, true);
+      };
+
+      ^ TcpClient.new(socket)
+   }
+
+   async Task<TcpClient> acceptTcpClientAsync()
+   {
+      Socket socket := :await _listenSocket.acceptAsync();
+      if:not(socket.isInvalid)
+      {
+         if (_noDelayMode)
+            socket.option(IPPROTO_TCP, TCP_NODELAY, true);
+      };
+
+      ^ TcpClient.new(socket)
+   }
 }

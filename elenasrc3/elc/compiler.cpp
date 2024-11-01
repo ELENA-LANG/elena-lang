@@ -1861,9 +1861,14 @@ Compiler::StatemachineClassScope::StatemachineClassScope(ExprScope* owner, ref_t
 {
 }
 
-ObjectInfo Compiler::StatemachineClassScope::mapCurrentField()
+ObjectInfo Compiler::StatemachineClassScope :: mapCurrentField()
 {
-   return { ObjectKind::Field, { typeRef }, 1 };
+   // !! HOTFIX : take the second declared field
+   auto it = info.fields.start();
+   it++;
+   ustr_t fieldName = it.key();
+
+   return mapField(fieldName, EAttr::None);
 }
 
 // --- Compiler ---
@@ -7402,7 +7407,7 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
       StatemachineClassScope* smScope = Scope::getScope<StatemachineClassScope>(codeScope, Scope::ScopeLevel::Statemachine);
       assert(smScope != nullptr);
       if (smScope->asyncMode) {
-         expression.compileAsyncOperation(node, false);
+         expression.compileAsyncOperation(node, smScope->typeRef, true);
 
          retVal = { ObjectKind::Singleton, { codeScope.moduleScope->branchingInfo.typeRef }, codeScope.moduleScope->branchingInfo.falseRef };
          expression.writeObjectInfo(retVal);
@@ -11557,7 +11562,8 @@ ObjectInfo Compiler::Expression::compile(SyntaxNode node, ref_t targetRef, EAttr
          retVal = compileSpecialOperation(current, (int)current.key - OPERATOR_MAKS, targetRef);
          break;
       case SyntaxKey::AsyncOperation:
-         retVal = compileAsyncOperation(current, paramMode || targetRef != 0 || EAttrs::testAndExclude(mode, EAttr::RetValExpected));
+         retVal = compileAsyncOperation(current, targetRef, paramMode || EAttrs::test(mode, EAttr::RetValExpected));
+         targetRef = 0;
          break;
       case SyntaxKey::YieldOperation:
          compileYieldOperation(current);
@@ -12079,7 +12085,7 @@ ObjectInfo Compiler::Expression::compileSpecialOperation(SyntaxNode node, int op
    return retVal;
 }
 
-ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, bool valueExpected)
+ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t targetRef, bool valueExpected)
 {
    ObjectInfo retVal = {};
 
@@ -12096,7 +12102,7 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, bool v
    writer->newNode(BuildKey::YieldingOp, -scope.moduleScope->ptrSize);
    writer->newNode(BuildKey::Tape);
 
-   ObjectInfo exprVal = compile(node.firstChild(), smScope->typeRef, EAttr::None, nullptr);
+   ObjectInfo exprVal = compile(node.firstChild(), targetRef, EAttr::None, nullptr);
 
    bool nillableOp = false;
    if (!compileAssigningOp(currentField, exprVal, nillableOp))

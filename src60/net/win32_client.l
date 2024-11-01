@@ -13,6 +13,11 @@ public sealed class TcpClient
    {
    }
 
+   internal constructor new(Socket socket)
+   {
+      _socket := socket
+   }
+
    constructor connect(string address, int port)
    {
       //resolve server address and port

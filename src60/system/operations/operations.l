@@ -260,9 +260,7 @@ public template operator::yield(expr) : __included(statements)
 // :await
 
 public template operator::await(expr) : __included(statements)
-{
-    $await expr;
-}
+    = $await expr;
 
 // shl:
 
