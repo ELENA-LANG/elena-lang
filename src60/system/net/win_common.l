@@ -22,6 +22,8 @@ public const int SOMAXCONN       = 5;
 
 public const int SD_BOTH         = 2;
 
+public const int FD_SETSIZE      = 64;
+
 // --- WSAException ---
 
 public class SocketException : Exception

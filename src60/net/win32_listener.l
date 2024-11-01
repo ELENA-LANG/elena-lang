@@ -6,10 +6,10 @@ public class TcpListener
    Socket _listenSocket;
    bool   _noDelayMode;
 
-   constructor open(int port)
-      <= open(port, true);
+   constructor new(int port)
+      <= new(port, true);
 
-   constructor open(int port, bool noDelayMode)
+   constructor new(int port, bool noDelayMode)
    {
       _noDelayMode := noDelayMode;
 
@@ -35,12 +35,12 @@ public class TcpListener
 
          _listenSocket.bind(ai_addrptr, ai_addrlen);
 
+         if (_noDelayMode)
+            _listenSocket.option(IPPROTO_TCP, TCP_NODELAY, true);
       };
-
-      _listenSocket.listen(SOMAXCONN)
    }
 
-   close()
+   stop()
    {
       _listenSocket.shutdown(SD_BOTH);
         
@@ -94,4 +94,12 @@ public class TcpListener
 
       ^ TcpClient.new(socket)
    }
+
+   start()
+   {
+      _listenSocket.listen(SOMAXCONN)
+   }
+
+   close()
+      <= stop();
 }

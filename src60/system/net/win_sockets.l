@@ -1,5 +1,20 @@
 import system;
+import system'calendar;
 import system'threading;
+
+// --- FD_SET ---
+
+internal sealed struct FD_SET
+{
+   int    fd_count : prop;
+
+//   handle fd_array[FD_SETSIZE];
+
+   constructor()
+   {
+      fd_count := 0;
+   }
+}
 
 // --- IN_ADDR ---
 
@@ -107,6 +122,10 @@ public sealed struct AddrInfoReader
       extern WS2_32.freeaddrinfo(prootinfo)
    }
 }
+
+// --- SelectMode ---
+
+public const struct SelectMode : enum<int>(SelectRead ::= 1, SelectWrite ::= 2, Error ::= 3);
 
 // --- Socket ---
 
@@ -295,6 +314,11 @@ public sealed const struct Socket
 
       
       ^ (retVal == 0 && errCode == 0);
+   }
+
+   poll(Timespan timeout, SelectMode mode)
+   {
+      int retVal := extern WS2_32.select();
    }
 
    close()

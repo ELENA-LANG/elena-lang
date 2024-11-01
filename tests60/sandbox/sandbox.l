@@ -1,8 +1,13 @@
 import extensions;
 
+const int N = 2;
+
+struct X
+{
+   int arg;
+   int array[N];
+}
+
 public program()
 {
-   int n := 4;
- 
-   int r := n shl:2;
 }

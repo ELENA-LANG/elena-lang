@@ -895,20 +895,16 @@ ObjectInfo Compiler::NamespaceScope::defineObjectInfo(ref_t reference, Expressio
 
             return info;
          }
-         //      else if (module->mapSection(reference | mskMetaAttributesRef, true)) {
-         //         info.kind = ObjectKind::MetaDictionary;
-         //         info.type = V_OBJATTRIBUTES;
-         //         info.reference = reference;
+         else if (intConstants.exist(reference)) {
+            int value = intConstants.get(reference);
 
-         //         return info;
-         //      }
-         //      else if (module->mapSection(reference | mskDeclAttributesRef, true)) {
-         //         info.kind = ObjectKind::MetaDictionary;
-         //         info.type = V_DECLATTRIBUTES;
-         //         info.reference = reference;
+            info.kind = ObjectKind::IntLiteral;
+            info.typeInfo = V_INT32;
+            info.reference = ::mapIntConstant(moduleScope, value);
+            info.extra = value;
 
-         //         return info;
-         //      }
+            return info;
+         }
       }
       if (internOne) {
          // check if it is an internal procedure
@@ -7117,10 +7113,10 @@ ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declare
    if (externalOp) {
       auto externalInfo = mapExternal(scope, node);
       switch (externalInfo.type) {
-      case ExternalType::WinApi:
-         return { ObjectKind::Extern, {}, externalInfo.reference, 0, TargetMode::WinApi };
-      default:
-         return { ObjectKind::Extern, {}, externalInfo.reference, 0, TargetMode::External };
+         case ExternalType::WinApi:
+            return { ObjectKind::Extern, {}, externalInfo.reference, 0, TargetMode::WinApi };
+         default:
+            return { ObjectKind::Extern, {}, externalInfo.reference, 0, TargetMode::External };
       }
    }
    else if (newOp || castOp) {
@@ -7133,37 +7129,37 @@ ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declare
       }
       else {
          switch (node.key) {
-         case SyntaxKey::TemplateType:
-         case SyntaxKey::ArrayType:
-         case SyntaxKey::Type:
-         case SyntaxKey::identifier:
-         case SyntaxKey::reference:
-         {
-            TypeAttributes typeAttributes = {};
-            TypeInfo typeInfo = resolveTypeAttribute(scope, node, typeAttributes, false, false);
+            case SyntaxKey::TemplateType:
+            case SyntaxKey::ArrayType:
+            case SyntaxKey::Type:
+            case SyntaxKey::identifier:
+            case SyntaxKey::reference:
+            {
+               TypeAttributes typeAttributes = {};
+               TypeInfo typeInfo = resolveTypeAttribute(scope, node, typeAttributes, false, false);
 
-            retVal = { ObjectKind::Class, typeInfo, 0u, newOp ? TargetMode::Creating : TargetMode::Casting };
-            if (CompilerLogic::isPrimitiveArrRef(retVal.typeInfo.typeRef) && newOp)
-               retVal.mode = TargetMode::CreatingArray;
-            break;
-         }
-         default:
-            invalid = true;
-            break;
+               retVal = { ObjectKind::Class, typeInfo, 0u, newOp ? TargetMode::Creating : TargetMode::Casting };
+               if (CompilerLogic::isPrimitiveArrRef(retVal.typeInfo.typeRef) && newOp)
+                  retVal.mode = TargetMode::CreatingArray;
+               break;
+            }
+            default:
+               invalid = true;
+               break;
          }
       }
    }
    else if (attributeMap.mssgOp) {
       switch (node.key) {
-      case SyntaxKey::identifier:
-      {
-         retVal = { ObjectKind::MssgNameLiteral, { V_MESSAGENAME },
-            scope.module->mapAction(node.identifier(), 0, false) };
-         break;
-      }
-      default:
-         invalid = true;
-         break;
+         case SyntaxKey::identifier:
+         {
+            retVal = { ObjectKind::MssgNameLiteral, { V_MESSAGENAME },
+               scope.module->mapAction(node.identifier(), 0, false) };
+            break;
+         }
+         default:
+            invalid = true;
+            break;
       }
    }
    else if (node == SyntaxKey::Type && attributeMap.variableMode) {
@@ -7511,14 +7507,14 @@ void Compiler::compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Syntax
 
    writer.newNode(BuildKey::Tape);
    switch (scope.type) {
-   case SymbolKind::Static:
-      writer.appendNode(BuildKey::OpenStatic, node.arg.reference);
-      break;
-   case SymbolKind::ThreadVar:
-      writer.appendNode(BuildKey::OpenThreadVar, node.arg.reference);
-      break;
-   default:
-      break;
+      case SymbolKind::Static:
+         writer.appendNode(BuildKey::OpenStatic, node.arg.reference);
+         break;
+      case SymbolKind::ThreadVar:
+         writer.appendNode(BuildKey::OpenThreadVar, node.arg.reference);
+         break;
+      default:
+         break;
    }
 
    writer.appendNode(BuildKey::OpenFrame);
@@ -7535,14 +7531,14 @@ void Compiler::compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Syntax
    writer.appendNode(BuildKey::CloseFrame);
 
    switch (scope.type) {
-   case SymbolKind::Static:
-      writer.appendNode(BuildKey::CloseStatic, node.arg.reference);
-      break;
-   case SymbolKind::ThreadVar:
-      writer.appendNode(BuildKey::CloseThreadVar, node.arg.reference);
-      break;
-   default:
-      break;
+      case SymbolKind::Static:
+         writer.appendNode(BuildKey::CloseStatic, node.arg.reference);
+         break;
+      case SymbolKind::ThreadVar:
+         writer.appendNode(BuildKey::CloseThreadVar, node.arg.reference);
+         break;
+      default:
+         break;
    }
 
    writer.appendNode(BuildKey::Exit);

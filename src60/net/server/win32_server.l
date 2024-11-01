@@ -3,7 +3,9 @@
 //import system'threading;
 //import system'text;
 //import system'io;
-//
+
+import net;
+
 //public sealed class TcpRemoteClient
 //{
 //   Socket _socket;
@@ -35,62 +37,36 @@
 //      => _socket;
 //}
 
-//public sealed class TcpServer
-//{
-//   Socket                _listenSocket;
+public sealed class EventBasedTcpServer
+{
+   TcpListener       _listener;
+   bool              _started;
+
 //   List<TcpRemoteClient> _clients;
 //   Thread                _listenThread;  
 //   byte[]                _buffer;
 //   int                   _maxLength;
-//   bool                  _noDelayMode;
-//
+
 //   Func<TcpRemoteClient,object> OnConnect               : event;
 //   Func<TcpRemoteClient,object> OnLeave                 : event;
 //   Func<TcpRemoteClient,byte[],int,object> OnReceived   : event;
 //   Func<TcpRemoteClient,SocketException,object> OnError : event;
-//    
-//   constructor new(int port)
-//      <= new(port, 1024);
-//
-//   constructor new(int port, int bufferSize)
-//      <= new(port, bufferSize, true);
-//
-//   constructor new(int port, int bufferSize, bool noDelayMode)
-//   {
-//      _noDelayMode := noDelayMode;
-//
+    
+   constructor new(int port)
+      <= new(port, 1024);
+
+   constructor new(int port, int bufferSize)
+   {
+      _started := false;
+
 //      _maxLength := bufferSize;
 //      _buffer := new byte[](_maxLength);
 //
 //      _clients := new List<TcpRemoteClient>();
-//        
-//      //resolve server address and port
-//      AddrInfo addrinfo := default;
-//
-//      // set address info
-//      addrinfo.ai_family := AF_INET;
-//      addrinfo.ai_socktype := SOCK_STREAM;
-//      addrinfo.ai_protocol := IPPROTO_TCP;
-//      addrinfo.ai_flags  := AI_PASSIVE;
-//        
-//      // Create a SOCKET for connecting to server
-//      using(AddrInfoReader reader := new AddrInfoReader(port.toPrintable(), addrinfo)) {
-//         reader.read(addrinfo);
-//         int       ai_family := addrinfo.ai_family;
-//         int       ai_socktype := addrinfo.ai_socktype;
-//         int       ai_protocol := addrinfo.ai_protocol;
-//         int       ai_addrlen := addrinfo.ai_addrlen;
-//         pointer   ai_addrptr := addrinfo.ai_addr;
-//
-//         _listenSocket := new Socket(ai_family, ai_socktype, ai_protocol);
-//
-//         _listenSocket.bind(ai_addrptr, ai_addrlen);
-//
-//      };
-//
-//      _listenSocket.listen(SOMAXCONN)
-//   }
-//
+
+//      _listener := TcpListener.new(port, true)
+   }
+
 //   Enumerable<TcpRemoteClient> Clients = new Enumerable<TcpRemoteClient>
 //   { 
 //      Enumerator<TcpRemoteClient> enumerator() => _clients; 
@@ -181,17 +157,19 @@
 //        
 //      ^ true
 //   }
-//    
-//   start()
-//   {
+    
+   start()
+   {
+      _started := true;
+
 //      _listenThread := Thread.assign(
 //      {
 //         while (proceed()){}
 //      });
-//        
-//      _listenThread.start()
-//   }
-//    
+
+      _listener.start()
+   }
+
 //   TcpServer broadcast(byte[] buffer, int length)
 //   {
 //      int counter := _clients.Length;
@@ -210,7 +188,7 @@
 //        
 //      _listenSocket.close()
 //   }
-//}
+}
 
 //public class TcpServerWriter : BinaryWriter
 //{
