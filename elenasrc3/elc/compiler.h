@@ -1413,7 +1413,7 @@ namespace elena_lang
             ArgumentsInfo* updatedOuterArgs);
 
          void compileYieldOperation(SyntaxNode node);
-         ObjectInfo compileAsyncOperation(SyntaxNode node, ref_t targetRef, bool valueExpected);
+         ObjectInfo compileAsyncOperation(SyntaxNode node, ref_t targetRef, bool valueExpected, bool dynamicRequired, bool retMode);
          void compileSwitchOperation(SyntaxNode node, bool withoutDebugInfo);
 
          bool compileAssigningOp(ObjectInfo target, ObjectInfo source, bool& nillableOp);

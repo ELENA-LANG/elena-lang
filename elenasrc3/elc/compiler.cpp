@@ -7407,7 +7407,7 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
       StatemachineClassScope* smScope = Scope::getScope<StatemachineClassScope>(codeScope, Scope::ScopeLevel::Statemachine);
       assert(smScope != nullptr);
       if (smScope->asyncMode) {
-         expression.compileAsyncOperation(node, smScope->typeRef, true);
+         expression.compileAsyncOperation(node, smScope->typeRef, true, true, true);
 
          retVal = { ObjectKind::Singleton, { codeScope.moduleScope->branchingInfo.typeRef }, codeScope.moduleScope->branchingInfo.falseRef };
          expression.writeObjectInfo(retVal);
@@ -11562,7 +11562,7 @@ ObjectInfo Compiler::Expression::compile(SyntaxNode node, ref_t targetRef, EAttr
          retVal = compileSpecialOperation(current, (int)current.key - OPERATOR_MAKS, targetRef);
          break;
       case SyntaxKey::AsyncOperation:
-         retVal = compileAsyncOperation(current, targetRef, paramMode || EAttrs::test(mode, EAttr::RetValExpected));
+         retVal = compileAsyncOperation(current, targetRef, paramMode || EAttrs::test(mode, EAttr::RetValExpected), dynamicRequired, false);
          targetRef = 0;
          break;
       case SyntaxKey::YieldOperation:
@@ -12085,7 +12085,7 @@ ObjectInfo Compiler::Expression::compileSpecialOperation(SyntaxNode node, int op
    return retVal;
 }
 
-ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t targetRef, bool valueExpected)
+ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t targetRef, bool valueExpected, bool dynamicRequired, bool retMode)
 {
    ObjectInfo retVal = {};
 
@@ -12102,7 +12102,7 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t 
    writer->newNode(BuildKey::YieldingOp, -scope.moduleScope->ptrSize);
    writer->newNode(BuildKey::Tape);
 
-   ObjectInfo exprVal = compile(node.firstChild(), targetRef, EAttr::None, nullptr);
+   ObjectInfo exprVal = compile(node.firstChild(), retMode ? targetRef: currentField.typeInfo.typeRef, EAttr::None, nullptr);
 
    bool nillableOp = false;
    if (!compileAssigningOp(currentField, exprVal, nillableOp))
@@ -12122,7 +12122,7 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t 
    writer->closeNode();
    writer->closeNode();
 
-   return valueExpected ? currentField : retVal;
+   return valueExpected ? convertObject(node, contextField, targetRef, dynamicRequired, false, false, false) : retVal;
 }
 
 void Compiler::Expression :: compileYieldOperation(SyntaxNode node)
