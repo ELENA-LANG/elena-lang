@@ -10,4 +10,5 @@ struct X
 
 public program()
 {
+   X x := default;
 }

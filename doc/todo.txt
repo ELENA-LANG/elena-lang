@@ -40,9 +40,8 @@ In development:
   * redesign chat sample
   * refactor - net'server'tcpserver (an extra library)
   * refactor - tcplistener
-  * tcplistener.pending
   --------------------------------------
-  * new method : socket.poll
+  * tcplistener.pending
 
   === Iteration 36 ===
   --------------------------------------

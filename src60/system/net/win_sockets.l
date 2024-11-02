@@ -2,17 +2,63 @@ import system;
 import system'calendar;
 import system'threading;
 
+public const int FD_SETSIZE      = 64;
+
+// --- TIMEVAL ---
+
+internal sealed struct TIMEVAL
+{
+   int tv_sec;
+   int tv_usec;
+
+   constructor(Timespan span)
+   {
+      if (span.isZero()) {
+         tv_sec := 0;
+         tv_usec := 0;
+      }
+      else {
+         SystemTime st := span.SystemTime;
+         
+         long nanosec := st.Value;
+         long secs := nanosec / 1000000000l;
+            
+         long rem := nanosec - secs * 1000000000l;
+         rem := rem / 1000l;
+                            
+         int tmp := IntConvertor.convert(secs);
+         tv_sec := tmp;
+            
+         tmp := IntConvertor.convert(rem);
+         tv_usec := tmp;
+      }
+   }
+}
+
 // --- FD_SET ---
 
 internal sealed struct FD_SET
 {
    int    fd_count : prop;
 
-//   handle fd_array[FD_SETSIZE];
+   handle fd_array[FD_SETSIZE];
 
    constructor()
    {
       fd_count := 0;
+   }
+
+   bool isSet(handle h)
+   {
+      int len := fd_count;
+      for (int i := 0; i < len; i++) {
+         handle current := fd_array[i];
+         if (current == h) {
+            ^ true;
+         }
+      };
+
+      ^ false
    }
 }
 
@@ -316,9 +362,23 @@ public sealed const struct Socket
       ^ (retVal == 0 && errCode == 0);
    }
 
-   poll(Timespan timeout, SelectMode mode)
+   bool poll(Timespan timeout, SelectMode mode)
    {
-      int retVal := extern WS2_32.select();
+      TIMEVAL timeVal := timeout;
+      FD_SET fd_set := default;
+
+      int retVal := 0;
+      if (mode == SelectMode.SelectRead) {
+         retVal := extern WS2_32.select(0, fd_set, 0, 0, timeVal);
+      }
+      else if (mode == SelectMode.SelectWrite) {
+         retVal := extern WS2_32.select(0, 0, fd_set, 0, timeVal);
+      }
+      else if (mode == SelectMode.Error) {
+         retVal := extern WS2_32.select(0, 0, 0, fd_set, timeVal);
+      };
+
+      ^ fd_set.isSet(_handle);
    }
 
    close()
