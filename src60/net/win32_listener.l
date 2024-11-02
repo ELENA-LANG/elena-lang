@@ -1,3 +1,4 @@
+import system'calendar;
 import system'net;
 import system'threading;
 
@@ -102,4 +103,7 @@ public class TcpListener
 
    close()
       <= stop();
+
+   bool Pending
+      = _listenSocket.poll(Timespan.Default, SelectMode.SelectRead);
 }
