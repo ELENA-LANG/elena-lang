@@ -488,6 +488,13 @@ namespace elena_lang
       bool     withAlignedJump;
 
       JITSettings() = default;
+      JITSettings(pos_t mgSize, pos_t ygSize, pos_t stackReserved, 
+         pos_t threadCounter, bool classSymbolAutoLoad, bool withAlignedJump)
+         : mgSize(mgSize), ygSize(ygSize), stackReserved(stackReserved), threadCounter(threadCounter), 
+           classSymbolAutoLoad(classSymbolAutoLoad), withAlignedJump(withAlignedJump)
+      {
+
+      }
    };
 
    // --- LabelHelperBase ---
