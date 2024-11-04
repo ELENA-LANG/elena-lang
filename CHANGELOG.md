@@ -1,5 +1,31 @@
 ## ELENA 6.6.0
 
+- ELC
+  - [ADDED] new option "-xj" to turn on jump alignment
+  - [ADDED] if:nil / if:not:nil / if:not template statements
+  - [ADDED] :break / :continue / :yield / :await template operators
+  - [FIXED] nillable output type - returning nil may lead to a nil operation exception
+  - [FIXED] an expression: s ?? String.MinValue
+  - [FIXED] template generation - internal operation is not correctly recognized
+  - [FIXED] generating unnecessary wrapper classes while validating byref handlers
+  - [FIXED] generating async methods - operation with class fields
+  - [FIXED] constant symbols can be used to define the array field size
+  - [FIXED] calling extension method if internal one exists
+  - [REDUX] CORE_TLS_INDEX is no longer user for x86 / x86-64
+
+- API
+  - [ADDED] net'http'HttpClient, net'http'Uri
+  - [ADDED] system'text'parsing'RegEx
+  - [ADDED] system'net'NetworkStream
+  - [ADDED] system'net'Socket : poll<Timespan,SelectMode>[3]
+  - [ADDED] net'TcpListener : prop:Pending
+
+- SAMPLES
+  - [ADDED] console regex sample
+
+- IDE
+  - [FIXED]debugger : step over multi-select statement
+
 ## ELENA 6.5.0
 
 - ELENA
