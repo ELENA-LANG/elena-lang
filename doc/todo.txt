@@ -38,8 +38,8 @@ In development:
   * redesign chat sample : send, leave
   * ldoc : String info - get rid of arams:$#constructor(Object args)
   * redesign chat sample : connect
-  * ide : linux
   --------------------------------------
+  * ide : linux
 
   === Iteration 37 ===
   --------------------------------------
