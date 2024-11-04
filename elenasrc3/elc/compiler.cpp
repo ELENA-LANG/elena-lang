@@ -77,7 +77,7 @@ inline bool isSelfCall(ObjectInfo target)
          //case okInternalSelf:
          return true;
       default:
-      return false;
+         return false;
    }
 }
 

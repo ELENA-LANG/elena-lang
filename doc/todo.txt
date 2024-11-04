@@ -38,9 +38,8 @@ In development:
   * http client : get (quick & dirty)
   * test all x86 examples (net)
   * redesign chat sample : new, write, send, leave
-  * redux : it looks like CORE_TLS_INDEX is not required. It always equals to 0, because the linker guaranteed that it is allocated at the start. The refactoring can simplify the output code
   --------------------------------------
-  * check why NetworkStream.DataAvailable is not accessible
+  * redux : it looks like CORE_TLS_INDEX is not required. It always equals to 0, because the linker guaranteed that it is allocated at the start. The refactoring can simplify the output code
 
   === Iteration 36 ===
   --------------------------------------
