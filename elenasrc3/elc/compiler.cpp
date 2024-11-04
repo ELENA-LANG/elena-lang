@@ -11830,6 +11830,18 @@ bool Compiler::Expression :: checkValidity(ObjectInfo target, CheckMethodResult&
    return false;
 }
 
+bool Compiler::Expression :: resolveAndValidate(ObjectInfo target, ref_t targetRef, mssg_t message,
+   CheckMethodResult& result, bool weakCall, bool allowPrivateCall)
+{
+   if (weakCall
+      ? false : compiler->_logic->resolveCallType(*scope.moduleScope, targetRef, message, result))
+   {
+      return checkValidity(target, result, allowPrivateCall);
+   }
+
+   return false;
+}
+
 ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, SyntaxNode messageNode, ObjectInfo source, ArgumentsInfo& arguments,
    ArgumentsInfo* updatedOuterArgs, ref_t expectedRef, bool propertyMode, bool probeMode, bool ignoreVariadics, ExpressionAttribute attrs)
 {
@@ -13836,13 +13848,10 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
    ref_t targetRef = compiler->resolveStrongType(scope, target.typeInfo);
 
    CheckMethodResult result = {};
-   bool found = target.mode != TargetMode::Weak
-      ? compiler->_logic->resolveCallType(*scope.moduleScope, targetRef, resolution.message, result) : false;
+   bool found = resolveAndValidate(target, targetRef, resolution.message, result,
+      target.mode == TargetMode::Weak, allowPrivateCall);
    if (found) {
-      if (checkValidity(target, result, allowPrivateCall)) {
-         resolution.message = result.message;
-      }
-      else found = false;
+      resolution.message = result.message;
    }
 
    if (found) {
@@ -15107,7 +15116,7 @@ Compiler::MessageResolution Compiler::Expression :: resolveMessageAtCompileTime(
       // check the existing extensions if allowed
       // if the object handles the weak message - do not use extensions
       CheckMethodResult dummy = {};
-      if (compiler->_logic->resolveCallType(*scope.moduleScope, targetRef, messageContext.weakMessage, dummy)) {
+      if (resolveAndValidate(target, targetRef, messageContext.weakMessage, dummy, false, true)) {
          resolution.message = messageContext.weakMessage;
          if (checkByRefHandler) {
             resolution.byRefHandler = dummy.byRefHandler;

@@ -12,6 +12,7 @@ public const int IPPROTO_TCP = 6;
 public const int TCP_NODELAY = 1;
 
 public const int FIONBIO = 8004667Eh;
+public const int FIONREAD = 4004667Fh;
 
 public const int WSAEWOULDBLOCK  = 10035;
 public const int WSAECONNRESET   = 10054;

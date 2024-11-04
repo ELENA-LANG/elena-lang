@@ -7,7 +7,8 @@ import extensions;
 
 public sealed class TcpClient
 {
-   Socket    _socket;
+   Socket        _socket;
+   NetworkStream _stream;
 
    constructor()
    {
@@ -84,7 +85,7 @@ public sealed class TcpClient
    }
 
    NetworkStream stream()
-      = new NetworkStream(_socket);
+       = _stream ?? _stream := NetworkStream.assign(_socket, true);
 }
 
 //public sealed class TcpClient

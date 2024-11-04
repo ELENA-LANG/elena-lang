@@ -357,9 +357,19 @@ public sealed const struct Socket
 
       int retVal := extern WS2_32.getsockopt(
                         _handle, SOL_SOCKET, SO_ERROR, out int errCode, ref size);
-
       
       ^ (retVal == 0 && errCode == 0);
+   }
+
+   int available()
+   {
+      int value := 0;
+      int retVal := extern WS2_32.ioctlsocket(_handle, FIONREAD, ref value);
+
+      if (retVal == SOCKET_ERROR)
+         { SocketException.new("Error at socket").raise() };
+
+      ^ value
    }
 
    bool poll(Timespan timeout, SelectMode mode)

@@ -1,14 +1,9 @@
 import extensions;
-
-const int N = 2;
-
-struct X
-{
-   int arg;
-   int array[N];
-}
+import system'net;
 
 public program()
 {
-   X x := default;
+   NetworkStream steam := nil;
+
+   steam.isDataAvailable
 }
