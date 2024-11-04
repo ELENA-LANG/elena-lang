@@ -110,17 +110,17 @@ namespace io
             
             ^ n 
          }
-            
-         set(length)
-         {
-            int pos := self.Index;
-                
-            self.Index := length;
-            extern KERNEL32.SetEndOfFile(_handle);
-                
-            if(length > pos)
-               { self.Index := pos }
-         }
+      }
+
+      indexed internal setLength(int length)
+      {
+         int pos := self.Index;
+             
+         self.Index := length;
+         extern KERNEL32.SetEndOfFile(_handle);
+             
+         if(length > pos)
+            { self.Index := pos }
       }
 
       close()

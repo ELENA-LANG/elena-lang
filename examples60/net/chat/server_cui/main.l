@@ -3,18 +3,18 @@ import chat_server;
 
 public program()
 {
-   console.printLine("ELENA Chat Server v.", VERSION);
+   Console.printLine("ELENA Chat Server v.", VERSION);
 
    auto server := ChatServer.new(DEFAULT_PORT);
 
-   server.OnConnect := { console.writeLine("new client"); };
-   server.OnLeave := (string name){ console.printLine(name, " just left"); };
-   server.OnError := (int code){ console.printLine("exception #",code) };
-   server.OnIntro := (string name){ console.printLine(name, " joined"); };
-   server.OnMessage := (string name, string message){ console.printLine(name, ": ", message); };
+   server.OnConnect := { Console.writeLine("new client"); };
+   server.OnLeave := (string name){ Console.printLine(name, " just left"); };
+   server.OnError := (int code){ Console.printLine("exception #",code) };
+   server.OnIntro := (string name){ Console.printLine(name, " joined"); };
+   server.OnMessage := (string name, string message){ Console.printLine(name, ": ", message); };
 
    server.start();
 
-   console.printLine("To quit, please press any key");
-   console.readChar();
+   Console.printLine("To quit, please press any key");
+   Console.readChar();
 }

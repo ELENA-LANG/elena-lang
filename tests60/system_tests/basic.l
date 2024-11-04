@@ -3,6 +3,7 @@ import system'routines;
 import system'dynamic;
 import system'dynamic'expressions;
 import system'text;
+import system'text'parsing;
 import ltests;
 
 // --- ControlTest ---
@@ -1922,7 +1923,7 @@ public interfaceImplTests() : testCase()
    II_I i := o;
 
    var r := i.retrieve();
-   Assert.ifTrue(r is:II_A);
+   Assert.ifTrue(r is::II_A);
    console.write(".");
 }
 
@@ -1974,7 +1975,7 @@ public decoratorTest() : testCase()
    var a := new DecoratorBaseA(2);
    var decA := new DecoratorA(a, 3);
 
-   Assert.ifEqual((decA as:IDecoratorA).giveMe(), 5);
+   Assert.ifEqual((decA as::IDecoratorA).giveMe(), 5);
 
    console.write(".");
 }
@@ -2091,9 +2092,9 @@ singleton IteratorEnumerable : Enumerable
 
    yield Enumerator infinitEnumerator()
    {
-      $yield 2;
-      $yield 5;
-      $yield 7;
+      :yield 2;
+      :yield 5;
+      :yield 7;
    }
 }
 
@@ -2122,6 +2123,10 @@ public isNilOperatorTest() : testCase()
 
    Assert.ifNotFailed({ var a := new A(); var b := nil; var r := a ?? b.test() });
    Assert.ifFailed({ var a := nil; var b := nil; var r := a ?? b.test() });
+   console.write(".");
+
+   string s := nil;
+   Assert.ifEqual(s ?? String.MinValue, EmptyString);
    console.write(".");
 }
 
@@ -2337,7 +2342,7 @@ sealed class MyIntValue
 
 public implicitConvertorTest() : testCase()
 {
-   auto v := "2" as: MyIntValue;
+   auto v := "2" as:: MyIntValue;
 
    Assert.ifEqual(v.Value, 2);
    Console.write(".");   
@@ -2355,4 +2360,50 @@ public pointerTest() : testCase()
 
    Assert.ifEqual(v, 2);
    Assert.ifEqual(v2, 2);
+   Console.write(".");
+}
+
+public regExTest() : testCase()
+{
+   auto regex1 := new RegEx("^a$");
+   Assert.ifTrue(regex1.match("a"));
+   Assert.ifFalse(regex1.match("aa"));
+   Assert.ifFalse(regex1.match("b"));
+   Console.write(".");
+
+   auto regex2 := new RegEx("^[ab]$");
+   Assert.ifTrue(regex2.match("a"));
+   Assert.ifFalse(regex2.match("aa"));
+   Assert.ifTrue(regex2.match("b"));
+   Console.write(".");
+
+   auto regex3 := new RegEx("^a*$");
+   Assert.ifTrue(regex3.match("a"));
+   Assert.ifTrue(regex3.match("aa"));
+   Assert.ifTrue(regex3.match(""));
+   Assert.ifFalse(regex3.match("b"));
+
+   auto regex4 := new RegEx("^a+$");
+   Assert.ifTrue(regex4.match("a"));
+   Assert.ifTrue(regex4.match("aa"));
+   Assert.ifFalse(regex4.match(""));
+   Assert.ifFalse(regex4.match("b"));
+   Console.write(".");
+
+   auto regex5 := new RegEx("^[a-z]+$");
+   Assert.ifTrue(regex5.match("abcd"));
+   Assert.ifFalse(regex5.match("ab3cd"));
+   Console.write(".");
+
+   auto regex6 := new RegEx("^abb?a$");
+   Assert.ifTrue(regex6.match("abba"));
+   Assert.ifFalse(regex6.match("aca"));
+   Assert.ifTrue(regex6.match("aba"));
+   Console.write(".");
+
+   auto regex7 := new RegEx("^(ht|f)$");
+   Assert.ifTrue(regex7.match("ht"));
+   Assert.ifTrue(regex7.match("f"));
+   Assert.ifFalse(regex7.match("http"));
+   Console.write(".");
 }

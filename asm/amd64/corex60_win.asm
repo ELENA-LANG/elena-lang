@@ -12,8 +12,7 @@ procedure % VEH_HANDLER
   mov  edx, eax   // ; set exception code
 
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rcx, [rcx+rax*8]
+  mov  rcx, [rcx]
   jmp  [rcx]
 
 end

@@ -1,146 +1,152 @@
 <configuration>
-  <platform key="Win_x86">
-     <project>
-        <output>..\..\lib60</output>
-     </project>
-  </platform>
-  <platform key="Win_x64">
-     <project>
-        <output>..\..\lib60_64</output>
-     </project>
-  </platform>
-  <project>
-     <namespace>system</namespace>
-     <template>lib60</template>
-     <prolog> </prolog>
-  </project>
-  <manifest>
-     <name>ELENA Standard Library</name>
-     <version>6.4.3</version>
-     <author>Aleksey Rakov</author>
-  </manifest>
-  <files>
-     <module name="attributes" hints="2">
-        <include>attributes\attributes.l</include>
-     </module>
-     <module name="predefined" hints="2">
-        <include>predefined\predefined.l</include>
-        <include>predefined\aliases.l</include>
-     </module>
-     <module name="operations" hints="2">
-        <include>operations\inline.l</include>
-        <include>operations\operations.l</include>
-     </module>
-     <module name="operations'advanced" hints="2">
-        <include>operations\advanced\operations.l</include>
-     </module>
-     <module hints="1">
-        <include>inline_templates.l</include>
-        <include>object.l</include>
-        <include>basic.l</include>
-        <include>variables.l</include>
-        <include>primitives.l</include>
-        <include>enumerables.l</include>
-        <include>strings.l</include>
-        <include>extensions.l</include>
-        <include>messaging.l</include>
-        <include>closures.l</include>
-        <include>convertors.l</include>
-        <include>pointers.l</include>
-        <include>win_primitives.l</include>
-        <include>dynamic.l</include>
-        <include>exceptions.l</include>
-        <include>events.l</include>
-        <include>console.l</include>
-        <include>app.l</include>
-        <include>win_app.l</include>
-        <include>win_strings.l</include>
-        <include>template_tests.l</include>
-        <include>collections\list.l</include>
-        <include>collections\queues.l</include>
-        <include>collections\tuples.l</include>
-        <include>collections\maps.l</include>
-        <include>collections\sorted_list.l</include>
-        <include>collections\template_tests.l</include>
-        <include>math\math.l</include>
-        <include>calendar\win_datetime.l</include>
-        <include>calendar\dates.l</include>
-        <include>culture\common.l</include>
-        <include>culture\win_locale.l</include>
-        <include>text\encoding.l</include>
-        <include>text\win_encoding.l</include>
-        <include>text\textbuffer.l</include>
-        <include>io\common.l</include>
-        <include>io\streamreader.l</include>
-        <include>io\streamwriter.l</include>
-        <include>io\memorystream.l</include>
-        <include>io\win_console.l</include>
-        <include>io\files.l</include>
-        <include>io\ioexceptions.l</include>
-        <include>io\win_files.l</include>
-        <include>io\win_getfiles.l</include>
-     </module>
-     <module name="collections'threadsafe">
-       <include>collections\threadsafe\queues.l</include>
-       <include>collections\threadsafe\template_tests.l</include>
-     </module>
-     <module name="routines">
-       <include>routines\enumerables.l</include>
-       <include>routines\patterns.l</include>
-       <include>routines\sorting.l</include>
-     </module>
-     <module name="routines'stex">
-       <include>routines\stex\strong_extensions.l</include>
-       <include>routines\stex\strong_patterns.l</include>
-     </module>
-     <module name="runtime">
-       <include>runtime\common.l</include>
-       <include>runtime\gc_routines.l</include>
-       <include>runtime\vectortable.l</include>
-       <include>runtime\win32_env.l</include>
-       <include>runtime\env.l</include>
-     </module>
-     <module name="threading">
-       <include>threading\common.l</include>
-       <include>threading\win32_handlers.l</include>
-       <include>threading\thread.l</include>
-       <include>threading\win32_semaphores.l</include>
-       <include>threading\win32_events.l</include>
-       <include>threading\events.l</include>
-       <include>threading\blockinglists.l</include>
-       <include>threading\threadpool.l</include>
-       <include>threading\tasks.l</include>
-       <include>threading\templates.l</include>
-       <include>threading\template_tests.l</include>
-     </module>
-     <module name="io'threading">
-       <include>io\threading\async_common.l</include>
-     </module>
-     <module name="dynamic">
-       <include>dynamic\reflection.l</include>
-       <include>dynamic\interpreters.l</include>
-       <include>dynamic\groups.l</include>
-       <include>dynamic\closure.l</include>
-       <include>dynamic\tape.l</include>
-       <include>dynamic\expressions\expressions.l</include>
-     </module>
-     <module name="drawing">
-       <include>drawing\common.l</include>
-       <include>drawing\win_handles.l</include>
-       <include>drawing\win_graphics.l</include>
-     </module>
-     <module name="winforms">
-       <include>winforms\win_common.l</include>
-       <include>winforms\win32_exceptions.l</include>
-       <include>winforms\win_handles.l</include>
-       <include>winforms\win_controls.l</include>
-       <include>winforms\win_windows.l</include>
-       <include>winforms\win_dialogs.l</include>
-       <include>winforms\win_app.l</include>
-     </module>
-     <module name="net">
-       <include>net\win_common.l</include>
-       <include>net\win_sockets.l</include>
-     </module>
-  </files>
+    <platform key="Win_x86">
+        <project>
+            <output>..\..\lib60</output>
+        </project>
+    </platform>
+    <platform key="Win_x64">
+        <project>
+            <output>..\..\lib60_64</output>
+        </project>
+    </platform>
+    <project>
+        <executable></executable>
+        <options>-v</options>
+        <namespace>system</namespace>
+        <template>lib60</template>
+        <prolog></prolog>
+    </project>
+    <manifest>
+        <name>ELENA Standard Library</name>
+        <version>6.5.0</version>
+        <author>Aleksey Rakov</author>
+    </manifest>
+    <files>
+        <module name="attributes" hints="2">
+            <include>attributes\attributes.l</include>
+        </module>
+        <module name="predefined" hints="2">
+            <include>predefined\predefined.l</include>
+            <include>predefined\aliases.l</include>
+        </module>
+        <module name="operations" hints="2">
+            <include>operations\inline.l</include>
+            <include>operations\operations.l</include>
+        </module>
+        <module name="operations'advanced" hints="2">
+            <include>operations\advanced\operations.l</include>
+        </module>
+        <module hints="1">
+            <include>inline_templates.l</include>
+            <include>object.l</include>
+            <include>basic.l</include>
+            <include>variables.l</include>
+            <include>primitives.l</include>
+            <include>enumerables.l</include>
+            <include>strings.l</include>
+            <include>extensions.l</include>
+            <include>messaging.l</include>
+            <include>closures.l</include>
+            <include>convertors.l</include>
+            <include>pointers.l</include>
+            <include>win_primitives.l</include>
+            <include>dynamic.l</include>
+            <include>exceptions.l</include>
+            <include>events.l</include>
+            <include>console.l</include>
+            <include>app.l</include>
+            <include>win_app.l</include>
+            <include>win_strings.l</include>
+            <include>template_tests.l</include>
+            <include>collections\list.l</include>
+            <include>collections\queues.l</include>
+            <include>collections\tuples.l</include>
+            <include>collections\maps.l</include>
+            <include>collections\sorted_list.l</include>
+            <include>collections\template_tests.l</include>
+            <include>math\math.l</include>
+            <include>calendar\win_datetime.l</include>
+            <include>calendar\dates.l</include>
+            <include>culture\common.l</include>
+            <include>culture\win_locale.l</include>
+            <include>text\encoding.l</include>
+            <include>text\win_encoding.l</include>
+            <include>text\textbuffer.l</include>
+            <include>io\common.l</include>
+            <include>io\streamreader.l</include>
+            <include>io\streamwriter.l</include>
+            <include>io\memorystream.l</include>
+            <include>io\win_console.l</include>
+            <include>io\files.l</include>
+            <include>io\ioexceptions.l</include>
+            <include>io\win_files.l</include>
+            <include>io\win_getfiles.l</include>
+        </module>
+        <module name="collections'threadsafe">
+            <include>collections\threadsafe\queues.l</include>
+            <include>collections\threadsafe\template_tests.l</include>
+        </module>
+        <module name="routines">
+            <include>routines\enumerables.l</include>
+            <include>routines\patterns.l</include>
+            <include>routines\sorting.l</include>
+        </module>
+        <module name="routines'stex">
+            <include>routines\stex\strong_extensions.l</include>
+            <include>routines\stex\strong_patterns.l</include>
+        </module>
+        <module name="runtime">
+            <include>runtime\common.l</include>
+            <include>runtime\gc_routines.l</include>
+            <include>runtime\vectortable.l</include>
+            <include>runtime\win32_env.l</include>
+            <include>runtime\env.l</include>
+        </module>
+        <module name="threading">
+            <include>threading\common.l</include>
+            <include>threading\win32_handlers.l</include>
+            <include>threading\thread.l</include>
+            <include>threading\win32_semaphores.l</include>
+            <include>threading\win32_events.l</include>
+            <include>threading\events.l</include>
+            <include>threading\blockinglists.l</include>
+            <include>threading\threadpool.l</include>
+            <include>threading\tasks.l</include>
+            <include>threading\templates.l</include>
+            <include>threading\template_tests.l</include>
+        </module>
+        <module name="io'threading">
+            <include>io\threading\async_common.l</include>
+        </module>
+        <module name="dynamic">
+            <include>dynamic\reflection.l</include>
+            <include>dynamic\interpreters.l</include>
+            <include>dynamic\groups.l</include>
+            <include>dynamic\closure.l</include>
+            <include>dynamic\tape.l</include>
+            <include>dynamic\expressions\expressions.l</include>
+        </module>
+        <module name="drawing">
+            <include>drawing\common.l</include>
+            <include>drawing\win_handles.l</include>
+            <include>drawing\win_graphics.l</include>
+        </module>
+        <module name="winforms">
+            <include>winforms\win_common.l</include>
+            <include>winforms\win32_exceptions.l</include>
+            <include>winforms\win_handles.l</include>
+            <include>winforms\win_controls.l</include>
+            <include>winforms\win_windows.l</include>
+            <include>winforms\win_dialogs.l</include>
+            <include>winforms\win_app.l</include>
+        </module>
+        <module name="net">
+            <include>net\win_common.l</include>
+            <include>net\win_sockets.l</include>
+            <include>net\networkstream.l</include>
+        </module>
+        <module name="text'parsing">
+            <include>text\parsing\regex.l</include>
+        </module>
+    </files>
 </configuration>

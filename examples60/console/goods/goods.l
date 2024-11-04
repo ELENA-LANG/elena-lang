@@ -38,7 +38,7 @@ class Adapter
 
     write(s)
     {
-        ifnot(0 == _bm.Length)
+        if:not(0 == _bm.Length)
            { _bm.append(";") };
         
         _bm.append(s)

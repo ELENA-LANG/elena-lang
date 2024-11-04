@@ -21,7 +21,7 @@ class WordList
    {
       _total := _total + 1;
 
-      ifnot(_list.ifExists(word))
+      if:not(_list.ifExists(word))
          { _list.append(word) }
    }
 

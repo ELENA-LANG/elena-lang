@@ -650,6 +650,15 @@ void DebugController :: processStep()
       ustr_t sourcePath = nullptr;
       DebugLineInfo* lineInfo = _provider.seekDebugLineInfo((addr_t)_process->getState(), moduleName, sourcePath);
 
+      if (_postponed.autoNextLine) {
+         if (lineInfo->row == _postponed.row) {
+            autoStepOver();
+
+            return;
+         }
+
+         _postponed.autoNextLine = false;
+      }
       onCurrentStep(lineInfo, *moduleName, sourcePath);
    }
 }
@@ -738,6 +747,11 @@ void DebugController :: toggleBreakpoint(Breakpoint* bp, bool adding)
    }
 }
 
+bool isNeedAutoStep(DebugLineInfo* currentStep, DebugLineInfo* nextStep)
+{
+   return nextStep->addresses.step.address == currentStep->addresses.step.address || nextStep->row == currentStep->row || nextStep->symbol == DebugSymbol::VirtualBreakpoint;
+}
+
 void DebugController :: stepInto()
 {
    if (_running || !_process->isStarted())
@@ -760,12 +774,7 @@ void DebugController :: stepInto()
       DebugLineInfo* nextStep = _provider.getNextStep(lineInfo, false);
       // if the address is the same perform the virtual step
       if (nextStep && nextStep->addresses.step.address == lineInfo->addresses.step.address) {
-         /*if (nextStep->symbol != dsVirtualEnd) {
-            _debugger.processVirtualStep(nextStep);
-            processStep();
-            return;
-         }
-         else */_process->setStepMode();
+         _process->setStepMode();
       }
       /*else if (test(lineInfo->symbol, dsAtomicStep)) {
          _debugger.setBreakpoint(nextStep->addresses.step.address, true);
@@ -774,6 +783,12 @@ void DebugController :: stepInto()
       else _process->setStepMode();
    }
 
+   _process->setEvent(DEBUG_RESUME);
+}
+
+void DebugController :: autoStepOver()
+{
+   _process->setStepMode();
    _process->setEvent(DEBUG_RESUME);
 }
 
@@ -793,8 +808,14 @@ void DebugController :: stepOver()
       DebugLineInfo* lineInfo = _provider.seekDebugLineInfo((addr_t)_process->getState());
       DebugLineInfo* nextStep = _provider.getNextStep(lineInfo, true);
       if (nextStep) {
-         if (nextStep && nextStep->addresses.step.address == lineInfo->addresses.step.address) {
-            _process->setStepMode();
+         if (nextStep && isNeedAutoStep(lineInfo, nextStep)) {
+            _postponed.autoNextLine = true;
+            _postponed.row = lineInfo->row;
+
+            if (nextStep->symbol == DebugSymbol::VirtualBreakpoint) {
+               _process->setBreakpoint(nextStep->addresses.step.address, true);
+            }
+            else _process->setStepMode();
          }
          else _process->setBreakpoint(nextStep->addresses.step.address, true);
       }

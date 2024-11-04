@@ -1476,7 +1476,7 @@ bool isTemplateDeclaration(ustr_t referenceName)
    return referenceName.findStr("@T1") != NOTFOUND_POS/* && referenceName.findStr("$private") != NOTFOUND_POS*/;
 }
 
-bool isOwnTemplate(ustr_t referenceName, ustr_t ns)
+bool isOwnTemplate(ustr_t referenceName, ustr_t ns, NamespaceString& templateNs)
 {
    ReferenceProperName templateName(referenceName);
 
@@ -1486,7 +1486,15 @@ bool isOwnTemplate(ustr_t referenceName, ustr_t ns)
    templateName.cut(index, templateName.length() - index);
    templateName.replaceAll('@', '\'', 0);
 
-   return ns.compare(*templateName);
+   if (!ns.compare(*templateName)) {
+      if ((*templateName).startsWith(ns) && (*templateName)[ns.length()] == '\'') {
+         templateNs.copy(*templateName);
+
+         return true;
+      }
+      return false;
+   }
+   else return true;
 }
 
 void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
@@ -1540,14 +1548,6 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
          return;
 
       NamespaceString ns(*fullName);
-      ApiModuleInfo* moduleInfo = findModule(modules, *ns);
-      if (!moduleInfo) {
-         moduleInfo = new ApiModuleInfo();
-         moduleInfo->name.copy(*ns);
-
-         modules.add(moduleInfo);
-      }
-
       if (isExtension(reference)) {
          extensionRef = reference;
          reference = findExtensionTarget(extensionRef);
@@ -1565,12 +1565,12 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
       if (_module->mapSection(reference | mskVMTRef, true) || extensionRef) {
          bool templateBased = false;
          if (isTemplateBased(referenceName)) {
-            if (isTemplateDeclaration(referenceName) && isOwnTemplate(referenceName, _module->name())) {
+            if (isTemplateDeclaration(referenceName) && isOwnTemplate(referenceName, _module->name(), ns)) {
                templateBased = true;
 
                parseTemplateName(properName, templateBased);
 
-               fullName.copy(*_rootNs);
+               fullName.copy(*ns);
                fullName.combine(*properName);
             }
             else return;
@@ -1578,6 +1578,14 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
             prefix.append("template ");
          }
          else prefix.append("class ");
+
+         ApiModuleInfo* moduleInfo = findModule(modules, *ns);
+         if (!moduleInfo) {
+            moduleInfo = new ApiModuleInfo();
+            moduleInfo->name.copy(*ns);
+
+            modules.add(moduleInfo);
+         }
 
          ApiClassInfo* info = findClass(moduleInfo, *fullName);
          if (!info) {
@@ -1655,6 +1663,14 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
          }
       }
       else if (_module->mapSection(reference | mskSymbolRef, true)) {
+         ApiModuleInfo* moduleInfo = findModule(modules, *ns);
+         if (!moduleInfo) {
+            moduleInfo = new ApiModuleInfo();
+            moduleInfo->name.copy(*ns);
+
+            modules.add(moduleInfo);
+         }
+
          SymbolInfo symbolInfo;
          loadSymbolInfo(reference, symbolInfo);
 

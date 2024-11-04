@@ -65,7 +65,7 @@ public sealed class DBConnection
    
    executeNonQuery(string sqlText)
    {
-      ifnot (_open) { DBException.new("SQLite database is not open.").raise() };
+      if:not (_open) { DBException.new("SQLite database is not open.").raise() };
       
       using(auto command := DBCommand.new(self, sqlText))
       {
@@ -75,7 +75,7 @@ public sealed class DBConnection
    
    executeQuery(string sqlText)
    {
-      ifnot (_open) { DBException.new("SQLite database is not open.").raise() };
+      if:not (_open) { DBException.new("SQLite database is not open.").raise() };
       
       auto command := DBCommand.new(self, sqlText);
       
@@ -93,7 +93,7 @@ public sealed class DBConnection
      
    numberOfTable()
    {
-      ifnot (_open) { DBException.new("SQLite database is not open.").raise() };
+      if:not (_open) { DBException.new("SQLite database is not open.").raise() };
       
       auto command := DBCommand.new(self, "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';");
       
@@ -106,7 +106,7 @@ public sealed class DBConnection
    
    tables()
    {
-      ifnot (_open) { DBException.new("SQLite database is not open.").raise() };
+      if:not (_open) { DBException.new("SQLite database is not open.").raise() };
       
       auto command := DBCommand.new(self, "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';");
       
@@ -142,7 +142,7 @@ public sealed class DBCommand
    {
       _connection := connection;
          
-      ifnot (_connection.isAvailable()) { DBException.new("SQLite database is not open.").raise() };
+      if:not (_connection.isAvailable()) { DBException.new("SQLite database is not open.").raise() };
       
       self.prepare(text)
    }

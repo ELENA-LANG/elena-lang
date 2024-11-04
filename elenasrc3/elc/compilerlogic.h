@@ -259,13 +259,25 @@ namespace elena_lang
 
       bool isTemplateInternalOp(ModuleScopeBase& scope, ref_t reference1, ref_t reference2)
       {
+         // if it is the same class - an internal operation is allowed
+         if (reference1 == reference2)
+            return true;
+
          // retrive the template namespace
          ReferenceProperName templateNs;
          retrieveTemplateNs(scope, reference1, templateNs);
 
-         NamespaceString referenceNs(scope.resolveFullName(reference2));
+         if (isTemplateWeakReference(scope.module->resolveReference(reference2))) {
+            ReferenceProperName templateNs2;
+            retrieveTemplateNs(scope, reference2, templateNs2);
 
-         return (*templateNs).compare(*referenceNs);
+            return (*templateNs).compare(*templateNs2);
+         }
+         else {
+            NamespaceString referenceNs(scope.resolveFullName(reference2));
+
+            return (*templateNs).compare(*referenceNs);
+         }
       }
       bool isInternalOp(ModuleScopeBase& scope, ref_t reference)
       {

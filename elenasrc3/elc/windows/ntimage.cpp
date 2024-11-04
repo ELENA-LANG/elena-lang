@@ -220,11 +220,11 @@ void Win32NtImageFormatter :: createTLSSection(ImageProviderBase& provider, Addr
 
       // create IMAGE_TLS_DIRECTORY
       rdataWriter.writeDReference(mskTLSRef32, 0);              // StartAddressOfRawData
-      rdataWriter.writeDReference(mskTLSRef32, map.tlsSize);      // EndAddressOfRawData
+      rdataWriter.writeDReference(mskTLSRef32, map.tlsSize);    // EndAddressOfRawData
       rdataWriter.writeDReference(mskDataRef32, tls_variable);  // AddressOfIndex
-      rdataWriter.writeDWord(0);                       // AddressOfCallBacks
-      rdataWriter.writeDWord(0);                       // SizeOfZeroFill
-      rdataWriter.writeDWord(0);                       // Characteristics
+      rdataWriter.writeDWord(0);                                // AddressOfCallBacks
+      rdataWriter.writeDWord(0);                                // SizeOfZeroFill
+      rdataWriter.writeDWord(0);                                // Characteristics
    }
 }
 

@@ -9,7 +9,6 @@ define THREAD_WAIT          10007h
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE   	    20003h
-define CORE_TLS_INDEX       20004h
 define CORE_SINGLE_CONTENT  2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
@@ -130,13 +129,11 @@ inline % GC_COLLECT
 
 labStart:
   // ; GCXT: find the current thread entry
-  mov  edi, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-
+  mov  eax, fs:[2Ch]
   push esi
 
   // ; GCXT: find the current thread entry
-  mov  eax, [edi+eax*4]
+  mov  eax, [eax]
 
   push ebp
 
@@ -387,13 +384,12 @@ labPERMCollect:
   sub  ecx, eax
 
   // ; GCXT: find the current thread entry
-  mov  edx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  eax, fs:[2Ch]
 
   push esi
 
   // ; GCXT: find the current thread entry
-  mov  eax, [edx+eax*4]
+  mov  eax, [eax]
 
   push ebp
 
@@ -535,9 +531,8 @@ labWait:
   jnz  short labWait
 
   // ; find the current thread entry
-  mov  edx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]  
-  mov  eax, [edx+eax*4]
+  mov  eax, fs:[2Ch]
+  mov  eax, [eax]
 
   mov  esi, [eax+tt_sync_event]   // ; get current thread event
   mov  [eax+tt_stack_frame], edi  // ; lock stack frame
@@ -588,9 +583,8 @@ end
 // ; throw
 inline %0Ah
 
-  mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  ecx, [ecx+eax*4]
+  mov  eax, fs:[2Ch]
+  mov  ecx, [eax]
   mov  edi, [ecx + et_current]
   jmp  [edi + es_catch_addr]
 
@@ -600,9 +594,8 @@ end
 inline %0Bh
 
   // ; GCXT: get current thread frame
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs:[2Ch]
-  mov  ecx, [ecx+eax*4]
+  mov  eax, fs:[2Ch]
+  mov  ecx, [eax]
   mov  edi, [ecx + et_current]
 
   mov  eax, [edi + es_prev_struct]
@@ -616,9 +609,8 @@ end
 // ; exclude
 inline % 10h
      
-  mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
+  mov  eax, fs:[2Ch]
+  mov  edi, [eax]
   mov  [edi + tt_flags], 1
   mov  eax, [edi + tt_stack_frame]
   push eax
@@ -631,9 +623,8 @@ end
 inline % 11h
 
   add  esp, 4
-  mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
+  mov  eax, fs:[2Ch]
+  mov  edi, [eax]
   mov  [edi + tt_flags], 0
   pop  eax
   mov  [edi + tt_stack_frame], eax
@@ -644,9 +635,8 @@ end
 inline %17h
 
   // ; COREX
-  mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
+  mov  eax, fs:[2Ch]
+  mov  edi, [eax]
   mov  eax, [edi + tt_stack_root]
 
   xor  ecx, ecx
@@ -682,9 +672,8 @@ end
 // ; peektls
 inline %0BBh
 
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs: [2Ch]
-  mov  eax, [ecx + eax * 4]
+  mov  eax, fs: [2Ch]
+  mov  eax, [eax]
   lea  edi, [eax + __arg32_1]
   mov  ebx, [edi]
 
@@ -693,9 +682,8 @@ end
 // ; storetls
 inline %0BCh
 
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs: [2Ch]
-  mov  eax, [ecx + eax * 4]
+  mov  eax, fs: [2Ch]
+  mov  eax, [eax]
   lea  edi, [eax + __arg32_1]
   mov  [edi], ebx
 
@@ -712,8 +700,7 @@ inline %0CAh
 
   pop  ebx
   mov  ecx, fs:[2Ch]
-  mov  edx, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+edx*4]
+  mov  edi, [ecx]
   mov  [edi + tt_stack_frame], ebx
 
   pop  ebp
@@ -735,8 +722,7 @@ inline %1CAh
 
   pop  ebx
   mov  ecx, fs:[2Ch]
-  mov  edx, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+edx*4]
+  mov  edi, [ecx]
   mov  [edi + tt_stack_frame], ebx
 
   pop  ebp
@@ -785,9 +771,8 @@ end
 // ; system 3 (thread startup)
 inline %3CFh
 
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs: [2Ch]
-  mov  eax, [ecx + eax * 4]
+  mov  eax, fs: [2Ch]
+  mov  eax, [eax]
   mov  edi, data : %CORE_THREAD_TABLE + tt_slots
   mov  [edi + edx * 8], eax
 
@@ -834,10 +819,9 @@ end
 inline %0E6h
 
   // ; GCXT: get current thread frame
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs:[2Ch]
+  mov  eax, fs:[2Ch]
   lea  edi, [ebp + __arg32_1]
-  mov  eax, [ecx+eax*4]
+  mov  eax, [eax]
 
   mov  ecx, [eax + et_current]
   mov  [edi + es_catch_frame], ebp
@@ -858,9 +842,8 @@ inline %0F2h
   push ebx
 
   push ebp     
-  mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
+  mov  eax, fs:[2Ch]
+  mov  edi, [eax]
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -895,8 +878,7 @@ inline %1F2h
 
   push ebp     
   mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
+  mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -927,8 +909,7 @@ inline %2F2h
 
   push ebp     
   mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
+  mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -960,8 +941,7 @@ inline %3F2h
 
   push ebp     
   mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
+  mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -994,8 +974,7 @@ inline %4F2h
 
   push ebp     
   mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
+  mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -1029,8 +1008,7 @@ inline %5F2h
 
   push ebp     
   mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
+  mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -1065,8 +1043,7 @@ inline %6F2h
 
   push ebp     
   mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
+  mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -1097,8 +1074,7 @@ inline %7F2h
 
   push ebp     
   mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
+  mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -1124,8 +1100,7 @@ inline %8F2h
 
   push ebp     
   mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
+  mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -1152,8 +1127,7 @@ inline %9F2h
 
   push ebp     
   mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
+  mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -1182,8 +1156,7 @@ inline %0AF2h
 
   push ebp     
   mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
+  mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -1213,8 +1186,7 @@ inline %0BF2h
 
   push ebp     
   mov  ecx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edi, [ecx+eax*4]
+  mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
   push eax 
 

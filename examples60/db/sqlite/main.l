@@ -44,7 +44,7 @@ public program()
     
     var cnn := DBConnection.new(dbFile);
     
-    ifnot (dbFile.Available)
+    if:not (dbFile.Available)
     {
         cnn.open();
   

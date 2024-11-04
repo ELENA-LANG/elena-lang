@@ -178,7 +178,7 @@ namespace io
          _buffer.write(0, length, dump)
       }
     
-      private write(byte[] dump, int index, int length)
+      write(byte[] dump, int index, int length)
       {
          _buffer.write(index, length, dump)
       }
@@ -219,11 +219,6 @@ namespace io
             int len := _buffer.Length;
             
             ^ len
-         }
-            
-         set(int length)
-         {
-            NotSupportedException.raise()
          }
       }
         

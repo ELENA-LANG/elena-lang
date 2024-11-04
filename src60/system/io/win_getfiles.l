@@ -193,7 +193,7 @@ namespace io
       auto buffer := new TextBuilder();
       while (b)
       {
-         ifnot (ffd.isFile())
+         if:not (ffd.isFile())
          {
             buffer.clear();
             buffer.append(path);

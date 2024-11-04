@@ -1,6 +1,9 @@
-sealed A;
+import extensions;
+import system'net;
 
 public program()
 {
-   int n := 23.1;
+   NetworkStream steam := nil;
+
+   steam.isDataAvailable
 }

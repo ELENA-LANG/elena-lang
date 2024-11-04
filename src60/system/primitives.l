@@ -302,7 +302,7 @@ internal singleton PrimitiveStringOperations
             int len2 := ch2.Length;
             if (len1 != len2 || ch1 != ch2) {
                isEqual := false;
-               $break
+               :break
             };
             j += len2;
          };
@@ -397,7 +397,7 @@ internal singleton PrimitiveWideStringOperations
             int len2 := ch2.Length;
             if (len1 != len2 || ch1 != ch2) {
                isEqual := false;
-               $break
+               :break
             };
             j += len2;
          };

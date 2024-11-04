@@ -39,6 +39,13 @@ namespace calendar
          }
       }
 
+      bool isEmpty()
+      {
+         long val := _value.Value;
+
+         ^ val == 0;
+      }
+
       get int Days()
       {
          long retVal := _value.Value;

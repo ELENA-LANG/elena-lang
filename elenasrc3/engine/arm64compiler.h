@@ -36,6 +36,10 @@ namespace elena_lang
       void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) override;
 
       void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) override;
+      void alignJumpAddress(MemoryWriter& writer) override
+      {
+         // must be implemented
+      }
 
       void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
          MemoryWriter& codeWriter, LabelHelperBase* lh) override;

@@ -3,14 +3,16 @@ In development:
 ------         
 
 [development]
-  ### EPIC: elena 6.5 ###
+  ### EPIC: elena 6.6 ###
 
-  === Iteration 34 (21.10) ===
+  === Iteration 36 (18.11) ===
   --------------------------------------
   dev: 
       - upndown (connector)
       - #496
       - #622
+      * #34 : web api
+      - http client (https get, post, put, patch, delete, head, options, trace)
   gen:
       - lpad : generate a code based on a record  
   maint:
@@ -20,36 +22,26 @@ In development:
       - redesign winforms
       - api : add descriptions 
       - threading samples must be included into release files
-      - ide : windows / linux
+      - ide : windows
       - review pi performance (must < 6)
   port:
   tools: 
       - #658 : connect with ldbg from VSCode  
-  prom: posting weekly
+  prom: bi-posting weekly
   --------------------------------------
-  * http client
-  * test linix versions
+  * fix chat server - it is blocked
+  * x86-64 : mta - test net examples for mta
+  * rosetta code : moving to 6.5
+  * IDE : fix syntax highlighting (see system'net:win_common.l)
+  * http client : get (quick & dirty)
   * test all x86 examples (net)
-  * x86-64 : mta - main sample sandbox2
-  * x86-64 mta - sandbox2 : fix GC issue
-  * review if using xnop impoves performance (pi & anagram samples)
-  * validate bsredirect (on several examples) - if it is better with nop or not
-  --------------------------------------
-  * new opcode xnop - if the jump alignment optimization is on, the follow command is alligned to 16bit offset
-
-  ### EPIC: elena 6.6 ###
-
-  === Iteration 35 ===
-  --------------------------------------
-  dev: 
-  gen:
-  maint:
-  port:
-  prom:
-  --------------------------------------
+  * redesign chat sample : send, leave
+  * ldoc : String info - get rid of arams:$#constructor(Object args)
+  * redesign chat sample : connect
+  * ide : linux
   --------------------------------------
 
-  === Iteration 36 ===
+  === Iteration 37 ===
   --------------------------------------
   dev: 
   gen:

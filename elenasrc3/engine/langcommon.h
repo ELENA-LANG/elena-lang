@@ -765,6 +765,7 @@ namespace elena_lang
    constexpr auto MODULE_PROLOG                 = "project/moduleProlog";
    constexpr auto AUTOEXTENSION_PATH            = "project/autoextension";
    constexpr auto STRICT_TYPE_ENFORCING_PATH    = "project/stricttype";
+   constexpr auto JUMP_ALIGNMENT_PATH           = "project/alignedjump";
 
    constexpr auto PLATFORMTYPE_KEY              = "system/platform";
 

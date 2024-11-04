@@ -9,9 +9,9 @@ class Client
    {
       _chatClient := ChatClient.new(ip, port, userName);
         
-      _chatClient.OnError := (int err) { console.printLine("Exception #",err); };
-      _chatClient.OnConnect := { console.writeLine("connected"); };
-      _chatClient.OnMessage := (string user, string message){ console.printLine().printLine(user,":",message).print(">") };
+      _chatClient.OnError := (int err) { Console.printLine("Exception #",err); };
+      _chatClient.OnConnect := { Console.writeLine("connected"); };
+      _chatClient.OnMessage := (string user, string message){ Console.printLine().printLine(user,":",message).print(">") };
 
       _chatClient.start()      
    }
@@ -42,15 +42,15 @@ class Controller
 
    greeting()
    {
-      console.printLine("ELENA Chat Client v.", VERSION);
+      Console.printLine("ELENA Chat Client v.", VERSION);
         
-      string userName := console.write("Enter nickname:").readLine();
+      string userName := Console.write("Enter nickname:").readLine();
 
       try {
          _client.start(userName, _ipAddress, _port);
       }
       catch(Exception ex) {
-         console.writeLine("Cannot esteblish connection!"); AbortException.raise()
+         Console.writeLine("Cannot esteblish connection!"); AbortException.raise()
       };
             
       ^ "Enter -q to exit the chat"

@@ -97,7 +97,7 @@ namespace text
       {
          int length := s.Length;
             
-         ifnot (0 == length)
+         if:not (0 == length)
          {
             self.reserve(length);
 
@@ -111,7 +111,7 @@ namespace text
       {
          int length := s.Length;
             
-         ifnot (0 == length)
+         if:not (0 == length)
          {
             self.reserve(length);
                 
@@ -137,7 +137,7 @@ namespace text
 
       write(char[] array, int length)
       {
-         ifnot (0 == length)
+         if:not (0 == length)
          {
             self.reserve(length);
     
@@ -544,7 +544,7 @@ namespace text
       }
 
       insert(index, o)
-         <= insert(index as:IntNumber, o.toPrintable());
+         <= insert(index as::IntNumber, o.toPrintable());
 
       delete(int index, int length)
       {
@@ -657,7 +657,7 @@ namespace text
       }
 
       insert(index, o)
-         <= insert(index as:IntNumber, o.toPrintable() as:WideString);
+         <= insert(index as::IntNumber, o.toPrintable() as::WideString);
 
       delete(int index, int length)
       {

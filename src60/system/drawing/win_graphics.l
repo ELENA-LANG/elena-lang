@@ -99,7 +99,7 @@ public sealed struct Canvas
     
    set(Pen pen)
    {
-      ifnot (0 == _pen)
+      if:not (0 == _pen)
          { _pen.free() };
             
       _pen := pen;     
@@ -113,7 +113,7 @@ public sealed struct Canvas
    {
       HBRUSH brushCopy := _brush;
         
-      ifnot (0 == brushCopy)
+      if:not (0 == brushCopy)
          { brushCopy.free() };
             
       brushCopy := brush;
@@ -175,11 +175,11 @@ public sealed struct Canvas
  
    free()
    {
-      ifnot (_pen.IsEmpty())
+      if:not (_pen.IsEmpty())
          { _pen.free() };
            
       HBRUSH brushCopy := _brush;
-      ifnot (0 == brushCopy)
+      if:not (0 == brushCopy)
          { brushCopy.free() };
             
       _brush := HBRUSH.Default;
