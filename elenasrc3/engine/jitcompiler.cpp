@@ -3081,11 +3081,9 @@ void JITCompiler :: allocateBody(MemoryWriter& writer, int size)
 addr_t JITCompiler :: allocateTLSIndex(ReferenceHelperBase* helper, MemoryWriter& writer)
 {
    pos_t position = writer.position();
-   addr_t address = helper->calculateVAddress(writer, _constants.inlineMask);
+   helper->calculateVAddress(writer, _constants.inlineMask);
 
    allocateVariable(writer);
-
-   _preloaded.add(CORE_TLS_INDEX, (void*)address);
 
    return position;
 }
