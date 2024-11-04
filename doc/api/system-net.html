@@ -405,6 +405,14 @@ system'net'NetworkStream</LI>
 <CODE>_socket</CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_ownStream</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -423,6 +431,15 @@ system'net'NetworkStream</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system-net.html#NetworkStream">NetworkStream</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#Socket">Socket</A></SPAN> socket)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-net.html#NetworkStream">NetworkStream</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#Socket">Socket</A></SPAN> socket, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> socketStream)
 </CODE>
 </TD>
 </TR>
@@ -520,6 +537,15 @@ system'net'NetworkStream</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>isDataAvailable()
+</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -548,6 +574,14 @@ system'net'NetworkStream</LI>
 <TD CLASS="colLast">
 <CODE>writeAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> dump, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>isDataAvailable()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1006,13 +1040,22 @@ system'net'Socket</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>available()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>poll(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN> timeout, <SPAN CLASS="memberNameLink"><A HREF="system-net.html#SelectMode">SelectMode</A></SPAN> mode)
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1339,6 +1382,43 @@ system'net'</DIV>
 <i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>FIONBIO</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="FIONREAD">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'net'</DIV>
+<H2 title="FIONREAD" class="title">FIONREAD</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>FIONREAD</CODE>
 </TD>
 </TABLE>
 </LI>
