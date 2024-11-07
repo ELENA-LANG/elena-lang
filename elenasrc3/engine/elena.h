@@ -495,6 +495,12 @@ namespace elena_lang
       {
 
       }
+      JITSettings(pos_t mgSize, pos_t ygSize, pos_t stackReserved)
+         : mgSize(mgSize), ygSize(ygSize), stackReserved(stackReserved), threadCounter(1),
+         classSymbolAutoLoad(false), withAlignedJump(false)
+      {
+
+      }
    };
 
    // --- LabelHelperBase ---
