@@ -769,6 +769,7 @@ SUB_EXPRESSION ::=
 		{ "," EXPRESSION }+ ")" "{" ^ PARAMETER_BLOCK BLOCK ^CLOSURE ^EXPRESSION
 		| ")" "{" ^ PARAMETER_BLOCK BLOCK ^CLOSURE ^EXPRESSION
 	}
+	| ":" identifier L3_EXPRESSION? ^OPERATION_TEMPLATE ")"
 	| BRACKET SUB_EXPRESSION SUB_L_F ")";
 
 SUB_SINGLE_EXPRESSION ::=
@@ -831,7 +832,8 @@ L3_EXPRESSION ::=
 		| L3_OOP
 		| eps ^OBJECT
 	}
-	| { reference | global } ^OBJECT L3_OP;
+	| { reference | global } ^OBJECT L3_OP
+	| BRACKET SUB_EXPRESSION;
 
 L4_EXPRESSION ::=
 	identifier { 

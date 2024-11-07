@@ -255,7 +255,7 @@ namespace elena_lang
       void SetUp() override;
 
    public:
-      void runBuildTest(bool declareDefaultMessages = false, bool declareOperators = false);
+      void runBuildTest(bool declareDefaultMessages = false, bool declareOperators = false, ref_t funcRef = 0);
    };
 
    // --- MethodScenarioTest ---

@@ -29,6 +29,7 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: bi-posting weekly
   --------------------------------------
+  * ide : linux - open, edit, save, close
   * fix chat server - it is blocked
   * x86-64 : mta - test net examples for mta
   * rosetta code : moving to 6.5
@@ -38,8 +39,11 @@ In development:
   * redesign chat sample : send, leave
   * ldoc : String info - get rid of arams:$#constructor(Object args)
   * redesign chat sample : connect
+  * ide : linux - show the file
+  * fixing #283
+  * unit test - unboxing race condition
   --------------------------------------
-  * ide : linux
+  * race condition by unboxing (e.g. weak if-else branching)
 
   === Iteration 37 ===
   --------------------------------------

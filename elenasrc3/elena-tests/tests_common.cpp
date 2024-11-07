@@ -505,14 +505,14 @@ void ExprTest::SetUp()
    buildNode = buildTree.readRoot().appendChild(BuildKey::Tape);
 }
 
-
-void ExprTest :: runBuildTest(bool declareDefaultMessages, bool declareOperators)
+void ExprTest :: runBuildTest(bool declareDefaultMessages, bool declareOperators, ref_t funcRef)
 {
    // Arrange
    ModuleScopeBase* moduleScope = env.createModuleScope(true, declareDefaultMessages);
    moduleScope->buildins.superReference = 1;
    moduleScope->buildins.intReference = 2;
    moduleScope->buildins.wrapperTemplateReference = 3;
+   moduleScope->buildins.closureTemplateReference = funcRef;
 
    if (declareDefaultMessages) {
       moduleScope->buildins.dispatch_message = encodeMessage(
@@ -538,13 +538,15 @@ void ExprTest :: runBuildTest(bool declareDefaultMessages, bool declareOperators
    if (declareOperators)
       env.initializeOperators(moduleScope);
 
+   writer.newNode(BuildKey::Root);
    writer.newNode(BuildKey::Tape);
    Compiler::Expression expression(code, writer);
    expression.compileRoot(exprNode.firstChild(), ExpressionAttribute::NoDebugInfo);
    writer.closeNode();
+   writer.closeNode();
 
    // Assess
-   bool matched = BuildTree::compare(buildNode, output.readRoot(), true);
+   bool matched = BuildTree::compare(buildNode, output.readRoot().firstChild(), true);
    EXPECT_TRUE(matched);
 
    freeobj(compiler);

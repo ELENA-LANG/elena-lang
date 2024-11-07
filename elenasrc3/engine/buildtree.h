@@ -339,6 +339,7 @@ namespace elena_lang
          map.add("copying_to_acc", BuildKey::CopyingToAcc);
          map.add("copying_to_acc_exact", BuildKey::CopyingToAccExact);
          map.add("copying_to_acc_field", BuildKey::CopyingToAccField);
+         map.add("create_class", BuildKey::CreatingClass);
          map.add("local", BuildKey::Local);
          map.add("intcondop", BuildKey::IntCondOp);
          map.add("realcondop", BuildKey::RealCondOp);
@@ -375,7 +376,8 @@ namespace elena_lang
          map.add("field", BuildKey::Field);
          map.add("nil", BuildKey::NilReference);
          map.add("field_assign", BuildKey::FieldAssigning);
-
+         map.add("assign_local_to_stack", BuildKey::AssignLocalToStack);
+         map.add("set_imm_field", BuildKey::SetImmediateField);
          map.add("value", BuildKey::Value);
          map.add("tape", BuildKey::Tape);
          map.add("type", BuildKey::Type);

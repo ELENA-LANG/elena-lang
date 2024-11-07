@@ -1,9 +1,22 @@
 import extensions;
-import system'net;
+import system'math;
+
+public extension lazyOp
+{
+   whileFalse(Func action)
+   {
+      until(self)
+      {
+         action()
+      }
+   }        
+}
 
 public program()
 {
-   NetworkStream steam := nil;
-
-   steam.isDataAvailable
+    var n := 1;
+    
+    (:lazy (n.sqr().mod(100) == 64)).whileFalse({ n := n + 1 });
+    
+    console.printLine(n)
 }

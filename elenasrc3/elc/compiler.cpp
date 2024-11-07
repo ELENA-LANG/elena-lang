@@ -9479,7 +9479,7 @@ void Compiler :: compileStatemachineClass(BuildTreeWriter& writer, StatemachineC
    scope.save();
 }
 
-void Compiler::compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
+void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
    bool exclusiveMode, bool ignoreAutoMultimethod)
 {
    SyntaxNode current = node.firstChild();

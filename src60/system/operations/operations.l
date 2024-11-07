@@ -262,6 +262,11 @@ public template operator::yield(expr) : __included(statements)
 public template operator::await(expr) : __included(statements)
     = $await expr;
 
+// :lazy
+
+public template operator::lazy(expr) : __included(statements)
+    = $lazy expr;
+
 // shl:
 
 public template operator::shl(expr, arg) : __included(statements)
