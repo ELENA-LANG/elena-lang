@@ -24,26 +24,25 @@ In development:
       - threading samples must be included into release files
       - ide : windows
       - review pi performance (must < 6)
+      - linux editor - open / close / save / exit
   port:
   tools: 
       - #658 : connect with ldbg from VSCode  
   prom: bi-posting weekly
   --------------------------------------
   * ide : linux - open, edit, save, close
+  * ide : linux - show the file
+  * fixing #283
   * fix chat server - it is blocked
   * x86-64 : mta - test net examples for mta
   * rosetta code : moving to 6.5
-  * IDE : fix syntax highlighting (see system'net:win_common.l)
   * http client : get (quick & dirty)
   * test all x86 examples (net)
   * redesign chat sample : send, leave
-  * ldoc : String info - get rid of arams:$#constructor(Object args)
+  * IDE : fix syntax highlighting (see system'net:win_common.l)
   * redesign chat sample : connect
-  * ide : linux - show the file
-  * fixing #283
-  * unit test - unboxing race condition
   --------------------------------------
-  * race condition by unboxing (e.g. weak if-else branching)
+  * ldoc : String info - get rid of arams:$#constructor(Object args)
 
   === Iteration 37 ===
   --------------------------------------

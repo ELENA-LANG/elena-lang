@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI graphical tools Implementation
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "gtklinux/gtkgraphic.h"
@@ -174,6 +174,7 @@ void Canvas :: drawText(int x, int y, const char* s, Style* style)
 int Canvas :: TextWidth(Style* style, const char* s)
 {
    layout->set_font_description(style->font->font);
+
    layout->set_text(s);
 
    int text_width;
