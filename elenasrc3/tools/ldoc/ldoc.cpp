@@ -655,7 +655,7 @@ void writeConstructorHeader(TextFileWriter& writer, ApiClassInfo* info, const ch
    writer.writeTextLine("<UL CLASS=\"blockList\">");
    writer.writeTextLine("<LI CLASS=\"blockList\">");
 
-   writer.writeTextLine("<H3>Constructor / Static Method Summary</H3>");
+   writer.writeTextLine("<H3>Constructor Summary</H3>");
 
    writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
    writer.writeTextLine("<TR>");
@@ -677,6 +677,22 @@ void writeStaticPropertyHeader(TextFileWriter& writer, ApiClassInfo* info, const
    writer.writeTextLine("<TR>");
    writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
    writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Static Property</TH>");
+   writer.writeTextLine("</TR>");
+}
+
+void writeStaticMethodHeader(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeTextLine("<!-- ========== STATIC METHOD SUMMARY =========== -->");
+
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<LI CLASS=\"blockList\">");
+
+   writer.writeTextLine("<H3>Static Method Summary</H3>");
+
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeTextLine("<TR>");
+   writer.writeTextLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Constructor / Static Method</TH>");
    writer.writeTextLine("</TR>");
 }
 
@@ -1226,6 +1242,9 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
    auto apiMethodInfo = new ApiMethodInfo();
    apiMethodInfo->extensionOne = memberType == MemberType::Extension;
 
+   if (test(methodInfo.hints, (ref_t)MethodHint::Constructor))
+      apiMethodInfo->constructor = true;
+
    if (ByteCodeUtil::resolveMessageName(apiMethodInfo->name, _module, message)) {
       if (descriptions) {
          ustr_t descr = descriptions->get(*apiMethodInfo->name);
@@ -1238,6 +1257,9 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          apiMethodInfo->name.copy("dispatch");
       }
       else if ((*apiMethodInfo->name).findStr(CONSTRUCTOR_MESSAGE) != NOTFOUND_POS) {
+         if ((*apiMethodInfo->name).findStr("$#constructor") != NOTFOUND_POS)
+            apiMethodInfo->function = false;
+
          if (test(message, STATIC_MESSAGE))
             apiMethodInfo->prefix.append("private ");
 
@@ -1253,7 +1275,19 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          if ((*apiMethodInfo->name).startsWith("function:"))
             apiMethodInfo->name.cut(0, 9);
 
-         apiMethodInfo->name.cut(0, 1);
+         if ((*apiMethodInfo->name).startsWith("params:")) {
+            apiMethodInfo->name.cut(0, 7);
+            apiMethodInfo->variadic = true;
+         }
+
+         if (apiMethodInfo->name[0] == '$') {
+            // if it is interpolate constructor
+            apiMethodInfo->name.cut(0, 2);
+
+            apiMethodInfo->name.insert("interpolate ", 0);
+         }
+         else apiMethodInfo->name.cut(0, 1);
+
          apiMethodInfo->special = true;
 
          loadMethodName(apiMethodInfo, apiClassInfo->templateBased);
@@ -1330,6 +1364,9 @@ void DocGenerator :: loadClassMethod(ApiClassInfo* apiClassInfo, mssg_t message,
          if (memberType == MemberType::ClassClass) {
             if (apiMethodInfo->property) {
                apiClassInfo->staticProperties.add(apiMethodInfo);
+            }
+            else if (!apiMethodInfo->constructor) {
+               apiClassInfo->staticMethods.add(apiMethodInfo);
             }
             else apiClassInfo->constructors.add(apiMethodInfo);
          }
@@ -1772,6 +1809,12 @@ void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWri
    if (classInfo->constructors.count() > 0) {
       writeConstructorHeader(bodyWriter, classInfo, *moduleName);
       generateMethodList(bodyWriter, classInfo->constructors);
+      writeConstructorFooter(bodyWriter, classInfo, *moduleName);
+   }
+
+   if (classInfo->staticMethods.count() > 0) {
+      writeStaticMethodHeader(bodyWriter, classInfo, *moduleName);
+      generateMethodList(bodyWriter, classInfo->staticMethods);
       writeConstructorFooter(bodyWriter, classInfo, *moduleName);
    }
 

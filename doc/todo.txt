@@ -41,6 +41,7 @@ In development:
   * redesign chat sample : send, leave
   * IDE : fix syntax highlighting (see system'net:win_common.l)
   * redesign chat sample : connect
+  * ldoc : split sections - static methods from constructors
   --------------------------------------
   * ldoc : String info - get rid of arams:$#constructor(Object args)
 

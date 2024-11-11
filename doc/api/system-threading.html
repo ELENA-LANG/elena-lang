@@ -83,10 +83,10 @@ system'threading'AsyncStateEnumerator</LI>
 </TABLE>
 </LI>
 </UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== STATIC METHOD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor / Static Method Summary</H3>
+<H3>Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
@@ -231,7 +231,7 @@ system'threading'AutoResetEvent</LI>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor / Static Method Summary</H3>
+<H3>Constructor Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
@@ -413,7 +413,7 @@ system'threading'BlockingQueue&lt;T1&gt;</LI>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor / Static Method Summary</H3>
+<H3>Constructor Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
@@ -520,7 +520,7 @@ system'threading'CountDownEvent</LI>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor / Static Method Summary</H3>
+<H3>Constructor Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
@@ -643,7 +643,7 @@ system'threading'ManualResetEvent</LI>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor / Static Method Summary</H3>
+<H3>Constructor Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
@@ -721,7 +721,7 @@ system'threading'Semaphore</LI>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor / Static Method Summary</H3>
+<H3>Constructor Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
@@ -853,7 +853,46 @@ system'threading'Task</LI>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor / Static Method Summary</H3>
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor2</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>newPromise()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> action)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== STATIC METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
@@ -919,33 +958,6 @@ system'threading'Task</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>sleep(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> msecs)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor2</i>()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>newPromise()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> action)
 </CODE>
 </TD>
 </TR>
@@ -1136,7 +1148,55 @@ system'threading'Task&lt;T1&gt;</LI>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor / Static Method Summary</H3>
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor2</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-threading-$private.html#T1">T1</A></SPAN> retVal)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>newPromise()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1&gt;">Func&lt;T1&gt;</A></SPAN> func)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== STATIC METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
@@ -1148,42 +1208,6 @@ system'threading'Task&lt;T1&gt;</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>run(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1&gt;">Func&lt;T1&gt;</A></SPAN> action)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor2</i>()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-threading-$private.html#T1">T1</A></SPAN> retVal)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>newPromise()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1&gt;">Func&lt;T1&gt;</A></SPAN> func)
 </CODE>
 </TD>
 </TR>
@@ -1319,7 +1343,104 @@ system'threading'Thread</LI>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor / Static Method Summary</H3>
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f)
+</CODE>
+<div class="block">
+Creates a new thread. It must be started later</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> stackSize)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> stackSize)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f)
+</CODE>
+<div class="block">
+Creates and starts a new thread</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> stackSize)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> stackSize)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>current()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== STATIC METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
@@ -1331,91 +1452,6 @@ system'threading'Thread</LI>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>sleep(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> milliseconds)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f)
-</CODE>
-<div class="block">
-Creates a new thread. It must be started later</div>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> stackSize)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> stackSize)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f)
-</CODE>
-<div class="block">
-Creates and starts a new thread</div>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> stackSize)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> stackSize)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>current()
 </CODE>
 </TD>
 </TR>
@@ -1595,7 +1631,46 @@ system'threading'ThreadHandle</LI>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor / Static Method Summary</H3>
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadHandle">ThreadHandle</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadHandle">ThreadHandle</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadHandle">ThreadHandle</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> stackSize)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== STATIC METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
@@ -1607,33 +1682,6 @@ system'threading'ThreadHandle</LI>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>sleep(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> interval)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadHandle">ThreadHandle</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadHandle">ThreadHandle</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> f)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadHandle">ThreadHandle</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> stackSize)
 </CODE>
 </TD>
 </TR>
@@ -1743,10 +1791,10 @@ system'threading'ThreadPool</LI>
 </UL>
 </LI>
 </UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<!-- ========== STATIC METHOD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
-<H3>Constructor / Static Method Summary</H3>
+<H3>Static Method Summary</H3>
 <TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>

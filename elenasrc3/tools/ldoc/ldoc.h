@@ -30,6 +30,7 @@ namespace elena_lang
       bool              cast;
       bool              function;
       bool              variadic;
+      bool              constructor;
 
       StringList        paramTypes;
       StringList        paramNames;
@@ -38,7 +39,7 @@ namespace elena_lang
          : extensionOne(false), paramTypes(nullptr), paramNames(nullptr)
       {
          function = cast = property = special = false;
-         variadic = false;
+         variadic = constructor = false;
       }
    };
 
@@ -78,6 +79,7 @@ namespace elena_lang
       ApiMethodInfoList methods;
       ApiFieldInfoList  fields;
       ApiMethodInfoList constructors;
+      ApiMethodInfoList staticMethods;
       ApiMethodInfoList convertors;
       ApiMethodInfoList properties;
       ApiMethodInfoList staticProperties;
@@ -85,7 +87,7 @@ namespace elena_lang
 
       ApiClassInfo()
          : parents(nullptr), methods(nullptr ), fields(nullptr),
-            constructors(nullptr), convertors(nullptr), extensions(nullptr),
+            constructors(nullptr), staticMethods(nullptr), convertors(nullptr), extensions(nullptr),
             properties(nullptr), staticProperties(nullptr)
       {
          templateBased = false;
