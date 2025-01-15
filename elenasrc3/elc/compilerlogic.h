@@ -301,7 +301,7 @@ namespace elena_lang
       static bool readAttributeMap(MemoryBase* section, ReferenceMap& map);
       static bool readTypeMap(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
 
-      static bool loadMetaData(ModuleScopeBase* moduleScope, ustr_t aliasName, ustr_t nsName);
+      static bool loadMetaData(ModuleScopeBase* moduleScope, ustr_t aliasName, ustr_t nsName, bool derivationMode);
       static bool clearMetaData(ModuleScopeBase* moduleScope, ustr_t name);
 
       static Visibility getVisibility(ustr_t name)

@@ -99,7 +99,9 @@ void SyntaxTreeBuilder :: flush(SyntaxTreeWriter& writer, SyntaxNode node)
             flushDictionary(writer, current);
             break;
          case SyntaxKey::LoadStatement:
-            loadMetaSection(current);
+            if (!loadMetaSection(current)) {
+               SyntaxTree::copyNode(writer, current, true);
+            }               
             break;
          case SyntaxKey::ClearStatement:
             clearMetaSection(current);
@@ -1969,15 +1971,16 @@ void SyntaxTreeBuilder :: closeNode()
    }
 }
 
-void SyntaxTreeBuilder :: loadMetaSection(SyntaxNode node)
+bool SyntaxTreeBuilder :: loadMetaSection(SyntaxNode node)
 {
    SyntaxNode terminalNode = node.firstChild(SyntaxKey::TerminalMask);
    if (terminalNode == SyntaxKey::reference) {
       ReferenceProperName aliasName(terminalNode.identifier());
       NamespaceString ns(terminalNode.identifier());
 
-      CompilerLogic::loadMetaData(_moduleScope, *aliasName, *ns);
+      return CompilerLogic::loadMetaData(_moduleScope, *aliasName, *ns, true);
    }
+   return false;
 }
 
 void SyntaxTreeBuilder :: clearMetaSection(SyntaxNode node)

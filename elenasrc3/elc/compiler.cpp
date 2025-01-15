@@ -452,7 +452,7 @@ bool Interpreter::evalDictionaryOp(ref_t operator_id, ArgumentsInfo& args)
          }
       }
       else if (loperand.kind == ObjectKind::TypeDictionary
-         && (roperand.kind == ObjectKind::Symbol || roperand.kind == ObjectKind::Template)
+         && (roperand.kind == ObjectKind::Symbol || roperand.kind == ObjectKind::Template || roperand.kind == ObjectKind::Class)
          && args[2].kind == ObjectKind::StringLiteral)
       {
          ObjectInfo ioperand = args[2];
@@ -2252,7 +2252,24 @@ ustr_t Compiler :: retrieveDictionaryOwner(Scope& scope, ustr_t properName, ustr
    return defaultPrefix;
 }
 
-void Compiler::declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, Scope::ScopeLevel level, bool shareMode)
+void Compiler :: loadStatement(Scope& scope, SyntaxNode node)
+{
+   SyntaxNode terminalNode = node.firstChild(SyntaxKey::TerminalMask);
+
+   bool valid = false;
+   if (terminalNode.key == SyntaxKey::reference) {
+      ReferenceProperName aliasName(terminalNode.identifier());
+      NamespaceString ns(terminalNode.identifier());
+
+      valid = CompilerLogic::loadMetaData(scope.moduleScope, *aliasName, *ns, true);
+   }
+   else valid = CompilerLogic::loadMetaData(scope.moduleScope, terminalNode.identifier(), scope.module->name(), true);
+
+   if (!valid)
+      scope.raiseError(errInvalidOperation, node);
+}
+
+void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, Scope::ScopeLevel level, bool shareMode)
 {
    bool superMode = false;
    TypeInfo typeInfo = { V_DICTIONARY, V_INT32 };
@@ -2395,7 +2412,7 @@ void Compiler::loadMetaData(ModuleScopeBase* moduleScope, ForwardResolverBase* f
    if (!reference.empty()) {
       NamespaceString ns(reference);
 
-      CompilerLogic::loadMetaData(moduleScope, name, *ns);
+      CompilerLogic::loadMetaData(moduleScope, name, *ns, false);
    }
 }
 
@@ -10855,32 +10872,32 @@ void Compiler::Namespace::declareNamespace(SyntaxNode node, bool ignoreImport, b
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::SourcePath:
-         scope.sourcePath.copy(current.identifier());
-         break;
-      case SyntaxKey::Import:
-         if (!ignoreImport) {
-            bool duplicateInclusion = false;
-            ustr_t name = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
-            if (scope.moduleScope->includeNamespace(scope.importedNs, name, duplicateInclusion)) {
-               if (!ignoreExtensions)
-                  compiler->importExtensions(scope, name);
-            }
-            else if (duplicateInclusion) {
-               scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, current);
+         case SyntaxKey::SourcePath:
+            scope.sourcePath.copy(current.identifier());
+            break;
+         case SyntaxKey::Import:
+            if (!ignoreImport) {
+               bool duplicateInclusion = false;
+               ustr_t name = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+               if (scope.moduleScope->includeNamespace(scope.importedNs, name, duplicateInclusion)) {
+                  if (!ignoreExtensions)
+                     compiler->importExtensions(scope, name);
+               }
+               else if (duplicateInclusion) {
+                  scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, current);
 
-               // HOTFIX : comment out, to prevent duplicate warnings
-               current.setKey(SyntaxKey::Idle);
+                  // HOTFIX : comment out, to prevent duplicate warnings
+                  current.setKey(SyntaxKey::Idle);
+               }
+               else {
+                  scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, current.findChild(SyntaxKey::Name));
+                  current.setKey(SyntaxKey::Idle); // remove the node, to prevent duplicate warnings
+               }
             }
-            else {
-               scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, current.findChild(SyntaxKey::Name));
-               current.setKey(SyntaxKey::Idle); // remove the node, to prevent duplicate warnings
-            }
-         }
-         break;
-      default:
-         // to make compiler happy
-         break;
+            break;
+         default:
+            // to make compiler happy
+            break;
       }
 
       current = current.nextNode();
@@ -11004,6 +11021,9 @@ bool Compiler::Namespace::declareMembers(SyntaxNode node, bool& repeatMode, bool
             break;
          case SyntaxKey::SharedMetaDictionary:
             compiler->declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Namespace, true);
+            break;
+         case SyntaxKey::LoadStatement:
+            compiler->loadStatement(scope, current);
             break;
          default:
             // to make compiler happy

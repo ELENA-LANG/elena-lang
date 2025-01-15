@@ -25,6 +25,15 @@ In development:
       - ide : windows
       - review pi performance (must < 6)
       - linux editor - open / close / save / exit
+      - test binary file reader / writer
+      - matrix sample : review the code, it should be possible to use the lambda function without specifying the exact output type
+      - implement ExtensionMessage.equal
+      - support subexpression for "?." and "\." (e.g. object.__getClass()\.__dto_properties())
+      - support function call with double colon (e.g. ::printing() - is always a function)
+      - redesign switch statement : it should be possible to use as an expression as well (so we cannot use => anymore : e.g. 
+        console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  ) console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third")
+      - warn if typecasting method returns itself, it leads to infinite call
+
   port:
   tools: 
       - #658 : connect with ldbg from VSCode  
@@ -41,9 +50,14 @@ In development:
   * redesign chat sample : send, leave
   * IDE : fix syntax highlighting (see system'net:win_common.l)
   * redesign chat sample : connect
-  * ldoc : split sections - static methods from constructors
+  * user defined type alias
+  * declare and use alias with meta operations
+  * it must be possible to declare them inside the module; it must be possible to import module containing
+    the custom aliases
+  * aliases and predefined can be loaded in compile-time
   --------------------------------------
-  * ldoc : String info - get rid of arams:$#constructor(Object args)
+  * #load meta operation must be executed both in parsing and declaration mode (in this case it must add only unique aliases);
+    currently only aliases must be loaded in declaration time
 
   === Iteration 37 ===
   --------------------------------------

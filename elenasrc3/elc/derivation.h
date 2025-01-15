@@ -150,7 +150,7 @@ namespace elena_lang
       void generateTemplateExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode node);
       void generateTemplateOperation(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
 
-      void loadMetaSection(SyntaxNode node);
+      bool loadMetaSection(SyntaxNode node);
       void clearMetaSection(SyntaxNode node);
 
       void flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);

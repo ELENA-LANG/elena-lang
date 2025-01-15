@@ -1626,6 +1626,7 @@ namespace elena_lang
       void declareArgumentAttributes(MethodScope& scope, SyntaxNode node, TypeInfo& typeInfo, bool declarationMode);
       void declareDictionaryAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo, bool& superMode);
       void declareExpressionAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo, ExpressionAttributes& mode);
+      void loadStatement(Scope& scope, SyntaxNode node);
 
       static ustr_t retrieveDictionaryOwner(Scope& scope, ustr_t properName, ustr_t defaultPrefix, ExpressionAttribute mode);
 

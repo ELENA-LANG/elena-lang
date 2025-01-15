@@ -1650,6 +1650,7 @@ bool CompilerLogic :: readTypeMap(ModuleBase* extModule, MemoryBase* section, Re
             else reference = ImportHelper::importReference(extModule, reference, scope->module);
          }
 
+         map.exclude(*key);
          map.add(*key, reference);
       }
       else return false;
@@ -2957,9 +2958,9 @@ bool CompilerLogic :: isLessAccessible(ModuleScopeBase& scope, Visibility source
    return sourceVisibility > targetVisibility;
 }
 
-bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t aliasName, ustr_t nsName)
+bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t aliasName, ustr_t nsName, bool derivationMode)
 {
-   if (aliasName.compare(PREDEFINED_MAP_KEY)) {
+   if (aliasName.compare(PREDEFINED_MAP_KEY) && !derivationMode) {
       IdentifierString fullName(nsName, "'", META_PREFIX, PREDEFINED_MAP);
 
       auto predefinedInfo = moduleScope->getSection(*fullName, mskAttributeMapRef, true);
@@ -2991,7 +2992,7 @@ bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t aliasNam
          return true;
       }
    }
-   else if (aliasName.compare(ALIASES_MAP_KEY)) {
+   else if (aliasName.compare(ALIASES_MAP_KEY) && !derivationMode) {
       IdentifierString fullName(nsName, "'", META_PREFIX, ALIASES_MAP);
 
       auto aliasInfo = moduleScope->getSection(*fullName, mskTypeMapRef, true);
