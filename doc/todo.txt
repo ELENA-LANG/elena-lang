@@ -11,9 +11,9 @@ In development:
   * fix #704
   * fix #702
   --------------------------------------
-  * test all samples win x32-64, linux i386, amd64, ppc64le, aarch64
+  * test all samples linux amd64, ppc64le, aarch64
   --------------------------------------
-  * test all samples : win32
+  * test all samples : linux i386
 
   === Iteration 37 ===
   --------------------------------------
