@@ -20,6 +20,9 @@ namespace io
       constructor openForAppend(path)
          <= new(path, "a");
 
+      constructor openForEdit(path)
+            <= new(path, "w");
+        
       constructor new(string path, string attributes)
       {
          _handle := extern libc.fopen
@@ -83,11 +86,11 @@ namespace io
                 ^ ret
 
          }
+      }
 
-         set(value)
-         {
-            NotSupportedException.raise()
-         }
+      indexed internal setLength(int length)
+      {
+         NotSupportedException.raise()
       }
 
       close()
