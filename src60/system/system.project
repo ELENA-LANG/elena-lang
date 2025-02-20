@@ -130,5 +130,8 @@
        <include>dynamic/tape.l</include>
        <include>dynamic/expressions/expressions.l</include>
      </module>
+     <module name="text'parsing">
+       <include>text/parsing/regex.l</include>
+     </module>
   </files>
 </configuration>
