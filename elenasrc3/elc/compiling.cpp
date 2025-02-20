@@ -3,7 +3,7 @@
 //
 //		This file contains the compiling processor body
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -475,8 +475,6 @@ void CompilingProcess :: parseModule(ProjectEnvironment& env,
 {
    IdentifierString target;
 
-   parseFileTemlate(*env.moduleProlog, _modulePrologName, &builder);
-
    auto& file_it = module_it.files();
    while (!file_it.eof()) {
       builder.newNode(SyntaxTree::toParseKey(SyntaxKey::Namespace));
@@ -545,6 +543,7 @@ bool CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTre
 }
 
 bool CompilingProcess :: buildModule(ProjectEnvironment& env,
+   LexicalMap::Iterator& lexical_it,
    ModuleIteratorBase& module_it, SyntaxTree* syntaxTree,
    ForwardResolverBase* forwardResolver,
    ModuleSettings& moduleSettings,
@@ -565,6 +564,16 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
    // Validation : standart module must be named "system"
    if (moduleScope.isStandardOne())
       assert(module_it.name().compare(STANDARD_MODULE));
+
+   // loading lexical elements
+   while (!lexical_it.eof()) {
+      ustr_t name = lexical_it.key();
+      ustr_t ns = *lexical_it;
+
+      CompilerLogic::loadMetaData(&moduleScope, name, ns);
+
+      ++lexical_it;
+   }
 
    _compiler->prepare(&moduleScope, forwardResolver, moduleSettings.manifestInfo);
 
@@ -677,8 +686,11 @@ void CompilingProcess :: compile(ProjectBase& project,
          }
       };
 
+      LexicalMap::Iterator lexical_it = project.getLexicalIterator();
       compiled |= buildModule(
-         env, *module_it, &syntaxTree, &project,
+         env, 
+         lexical_it,
+         *module_it, &syntaxTree, &project,
          moduleSettings,
          minimalArgList,
          sizeof(uintptr_t));

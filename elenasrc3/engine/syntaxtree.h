@@ -3,7 +3,7 @@
 //
 //		This file contains Syntax Tree class declaration
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef SYNTAXTREE_H
@@ -66,8 +66,6 @@ namespace elena_lang
       MetaDictionary          = 0x001020,
       MetaExpression          = 0x001021,
       IncludeStatement        = 0x001022,
-      LoadStatement           = 0x001023,
-      ClearStatement          = 0x001024,
       SharedMetaDictionary    = 0x001025,
       Object                  = 0x001031,
       TemplateType            = 0x001032,

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class implementation.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "compiler.h"
@@ -2252,23 +2252,6 @@ ustr_t Compiler :: retrieveDictionaryOwner(Scope& scope, ustr_t properName, ustr
    return defaultPrefix;
 }
 
-void Compiler :: loadStatement(Scope& scope, SyntaxNode node)
-{
-   SyntaxNode terminalNode = node.firstChild(SyntaxKey::TerminalMask);
-
-   bool valid = false;
-   if (terminalNode.key == SyntaxKey::reference) {
-      ReferenceProperName aliasName(terminalNode.identifier());
-      NamespaceString ns(terminalNode.identifier());
-
-      valid = CompilerLogic::loadMetaData(scope.moduleScope, *aliasName, *ns, true);
-   }
-   else valid = CompilerLogic::loadMetaData(scope.moduleScope, terminalNode.identifier(), scope.module->name(), true);
-
-   if (!valid)
-      scope.raiseError(errInvalidOperation, node);
-}
-
 void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, Scope::ScopeLevel level, bool shareMode)
 {
    bool superMode = false;
@@ -2400,19 +2383,6 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
       }
 
       current = current.nextNode();
-   }
-}
-
-void Compiler::loadMetaData(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t name)
-{
-   IdentifierString metaForward(META_PREFIX, name);
-
-   ustr_t reference = forwardResolver->resolveForward(*metaForward);
-
-   if (!reference.empty()) {
-      NamespaceString ns(reference);
-
-      CompilerLogic::loadMetaData(moduleScope, name, *ns, false);
    }
 }
 
@@ -9971,15 +9941,10 @@ void Compiler::createPackageInfo(ModuleScopeBase* moduleScope, ManifestInfo& man
    evalCollection(interpreter, scope, tempTree.readRoot(), true, false);
 }
 
-void Compiler::prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,
+void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,
    ManifestInfo& manifestInfo)
 {
    _trackingUnassigned = (_errorProcessor->getWarningLevel() == WarningLevel::Level3);
-
-   loadMetaData(moduleScope, forwardResolver, PREDEFINED_MAP_KEY);
-   loadMetaData(moduleScope, forwardResolver, ATTRIBUTES_MAP_KEY);
-   loadMetaData(moduleScope, forwardResolver, OPERATION_MAP_KEY);
-   loadMetaData(moduleScope, forwardResolver, ALIASES_MAP_KEY);
 
    // cache the frequently used references
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
@@ -11021,9 +10986,6 @@ bool Compiler::Namespace::declareMembers(SyntaxNode node, bool& repeatMode, bool
             break;
          case SyntaxKey::SharedMetaDictionary:
             compiler->declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Namespace, true);
-            break;
-         case SyntaxKey::LoadStatement:
-            compiler->loadStatement(scope, current);
             break;
          default:
             // to make compiler happy

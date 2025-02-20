@@ -3,7 +3,7 @@
 //
 //		This file contains the xml project base class declaration
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef XMLPROJECTBASE_H
@@ -189,6 +189,7 @@ namespace elena_lang
 
       Paths          _paths;
       Forwards       _forwards;
+      LexicalMap     _lexicals;
 
       ProjectTree    _projectTree;
       ProjectNode    _root;
@@ -209,6 +210,7 @@ namespace elena_lang
          ProjectOption key);
 
       void loadForwards(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath);
+      void loadLexicals(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath);
 
       ustr_t resolveKey(ProjectOption category, ProjectOption item, ustr_t key);
 
@@ -228,6 +230,11 @@ namespace elena_lang
 
       int IntSetting(ProjectOption option, int defValue) const override;
       unsigned UIntSetting(ProjectOption option, unsigned int defValue) const override;
+
+      LexicalMap::Iterator getLexicalIterator() override
+      {
+         return _lexicals.start();
+      }
 
       ModuleIteratorBase* allocModuleIterator() override
       {

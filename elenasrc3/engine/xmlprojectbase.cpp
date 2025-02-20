@@ -75,7 +75,7 @@ unsigned int XmlProjectBase :: UIntSetting(ProjectOption option, unsigned int de
 }
 
 XmlProjectBase :: XmlProjectBase(PlatformType platform)
-   : _paths(nullptr), _forwards(nullptr)
+   : _paths(nullptr), _forwards(nullptr), _lexicals(nullptr)
 {
    _platform = platform;
 
@@ -222,6 +222,24 @@ void XmlProjectBase :: loadForwards(ConfigFile& config, ConfigFile::Node& root, 
             node.readContent(value);
 
             addForward(key.str(), value.str());
+         }
+      }
+   }
+}
+
+void XmlProjectBase :: loadLexicals(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath)
+{
+   DynamicString<char> key, value;
+
+   ConfigFile::Collection collection;
+   if (config.select(root, xpath, collection)) {
+      for (auto it = collection.start(); !it.eof(); ++it) {
+         ConfigFile::Node node = *it;
+
+         if (node.readAttribute("key", key)) {
+            node.readContent(value);
+
+            _lexicals.add(key.str(), ustr_t(value.str()).clone());
          }
       }
    }

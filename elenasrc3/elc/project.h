@@ -3,7 +3,7 @@
 //
 //		This file contains the project class declaration
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PROJECT_H

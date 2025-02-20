@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class implementation.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //                                             (C)2024, by ELENA-LANG Org
 //---------------------------------------------------------------------------
 
@@ -2958,9 +2958,9 @@ bool CompilerLogic :: isLessAccessible(ModuleScopeBase& scope, Visibility source
    return sourceVisibility > targetVisibility;
 }
 
-bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t aliasName, ustr_t nsName, bool derivationMode)
+bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t aliasName, ustr_t nsName)
 {
-   if (aliasName.compare(PREDEFINED_MAP_KEY) && !derivationMode) {
+   if (aliasName.compare(PREDEFINED_MAP_KEY)) {
       IdentifierString fullName(nsName, "'", META_PREFIX, PREDEFINED_MAP);
 
       auto predefinedInfo = moduleScope->getSection(*fullName, mskAttributeMapRef, true);
@@ -2992,7 +2992,7 @@ bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t aliasNam
          return true;
       }
    }
-   else if (aliasName.compare(ALIASES_MAP_KEY) && !derivationMode) {
+   else if (aliasName.compare(ALIASES_MAP_KEY)) {
       IdentifierString fullName(nsName, "'", META_PREFIX, ALIASES_MAP);
 
       auto aliasInfo = moduleScope->getSection(*fullName, mskTypeMapRef, true);
@@ -3005,25 +3005,6 @@ bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t aliasNam
    }
 
    return false;
-}
-
-bool CompilerLogic :: clearMetaData(ModuleScopeBase* moduleScope, ustr_t name)
-{
-   if (name.compare(PREDEFINED_MAP)) {
-      moduleScope->predefined.clear();
-   }
-   else if (name.compare(ATTRIBUTES_MAP)) {
-      moduleScope->attributes.clear();
-   }
-   else if (name.compare(OPERATION_MAP)) {
-      moduleScope->operations.clear();
-   }
-   else if (name.compare(ALIASES_MAP)) {
-      moduleScope->aliases.clear();
-   }
-   else return false;
-
-   return true;
 }
 
 ref_t CompilerLogic :: retrievePrimitiveType(ModuleScopeBase& scope, ref_t reference)

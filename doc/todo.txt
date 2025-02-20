@@ -5,7 +5,17 @@ In development:
 [development]
   ### EPIC: elena 6.6 ###
 
-  === Iteration 36 (18.11) ===
+  === Iteration 36 (13.03) ===
+  --------------------------------------
+  --------------------------------------
+  * fix #704
+  * fix #702
+  --------------------------------------
+  * test all samples win x32-64, linux i386, amd64, ppc64le, aarch64
+  --------------------------------------
+  * test all samples : win32
+
+  === Iteration 37 ===
   --------------------------------------
   dev: 
       - upndown (connector)
@@ -16,6 +26,7 @@ In development:
   gen:
       - lpad : generate a code based on a record  
   maint:
+      - #702
       - unit tests : bt optimization 
       - test binary file operations
       - api refactoring : all symbols must start with a capital letter
@@ -56,15 +67,39 @@ In development:
     the custom aliases
   * aliases and predefined can be loaded in compile-time
   --------------------------------------
-  * #load meta operation must be executed both in parsing and declaration mode (in this case it must add only unique aliases);
-    currently only aliases must be loaded in declaration time
+  --------------------------------------
 
-  === Iteration 37 ===
+  === Iteration 38 ===
   --------------------------------------
   dev: 
   gen:
   maint:
   port:
   prom:
+  --------------------------------------
+  --------------------------------------
+  --------------------------------------
+
+  === Iteration 39 ===
+  --------------------------------------
+  dev: 
+  gen:
+  maint:
+  port:
+  prom:
+  --------------------------------------
+  --------------------------------------
+  --------------------------------------
+
+  ### EPIC: elena 6.7 ###
+
+  === Iteration 40 ===
+  --------------------------------------
+  dev: 
+  gen:
+  maint:
+  port:
+  prom:
+  --------------------------------------
   --------------------------------------
   --------------------------------------
