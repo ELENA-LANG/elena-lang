@@ -15,6 +15,7 @@ In development:
   * test all samples linux ppc64le, aarch64
   --------------------------------------
   * test all samples : linux amd64
+  * check try catch opcodes
 
   === Iteration 37 ===
   --------------------------------------

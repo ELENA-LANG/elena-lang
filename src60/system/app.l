@@ -24,10 +24,10 @@ public static StartUpEvents startUpEvents = StartUpEvents.new();
 
 entry()
 {
-   try
-   {
+//   try
+//   {
       forward program();
-   }
+/*   }
    catch::
    {
       function(AbortException e)
@@ -46,7 +46,7 @@ entry()
    finally
    {
       startUpEvents.stopping()
-   }
+   }*/
 }
 
 gui_entry()
