@@ -11,11 +11,13 @@ In development:
   * fix #704
   * fix #702
   * fix pi sample for 64 bit
-  --------------------------------------
   * test all samples linux ppc64le, aarch64
-  --------------------------------------
   * test all samples : linux amd64
-  * check try catch opcodes
+  --------------------------------------
+  * redesign extopen / ext close for linux
+  --------------------------------------
+  * modify x86_64compiler - to have separate offset for windows / linux in calcFrameOffset
+  * raise an error if there are more than 4 arguments of procedure with extopen
 
   === Iteration 37 ===
   --------------------------------------
