@@ -16,7 +16,6 @@ In development:
   --------------------------------------
   * redesign extopen / ext close for linux
   --------------------------------------
-  * modify x86_64compiler - to have separate offset for windows / linux in calcFrameOffset
   * raise an error if there are more than 4 arguments of procedure with extopen
 
   === Iteration 37 ===
