@@ -21,15 +21,15 @@
 //    console.printLine(n)
 //}
 
-#new __symbol aliases;
+//#new __symbol aliases;
 
-#let aliases["myint"]  := system'IntNumber;
+//#let aliases["myint"]  := system'IntNumber;
 
-#load sandbox'aliases;
+//#load sandbox'aliases;
 
-myint X = 2;
+//myint X = 2;
 
 public program()
 {
-  myint n := X
+//  myint n := X
 }
