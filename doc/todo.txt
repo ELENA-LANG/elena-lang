@@ -10,10 +10,11 @@ In development:
   --------------------------------------
   * fix #704
   * fix #702
+  * fix pi sample for 64 bit
   --------------------------------------
-  * test all samples linux amd64, ppc64le, aarch64
+  * test all samples linux ppc64le, aarch64
   --------------------------------------
-  * test all samples : linux i386
+  * test all samples : linux amd64
 
   === Iteration 37 ===
   --------------------------------------
