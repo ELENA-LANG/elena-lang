@@ -100,11 +100,6 @@ size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, size_t length)
 
 size_t LoadAddressInfoLM(size_t retPoint, char* lineInfo, size_t length)
 {
-//#ifdef DEBUG_OUTPUT
-   printf("LoadAddressInfoLM %llx\n", (long long)retPoint);
-   fflush(stdout);
-//#endif
-
    return machine->loadAddressInfo(retPoint, lineInfo, length);
 }
 

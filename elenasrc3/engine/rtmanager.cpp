@@ -191,6 +191,8 @@ size_t RTManager :: retriveAddressInfo(LibraryLoaderBase& provider, addr_t retAd
       }
       buffer[copied] = 0;
 
+      printf("retriveAddressInfo %s\n", buffer);
+
       return copied;
    }
 
