@@ -9,19 +9,20 @@ In development:
   --------------------------------------
   --------------------------------------
   * fix #704
+  * fix pi sample for aarch64
   * test all samples linux aarch64
   * fix pi sample for ppc64le
   * test all samples linux ppc64le
   * fix ppc64 :exception test
   --------------------------------------
-  * fix pi sample for linux:
+  * fix amd64 pi sample for linux:
      Call stack:
      system'calendar'Date.subtract<'calendar'Date>[2]:calendar/dates.l(223)
      pi'program.function:#invoke:pi.l(20)
      system'$private'entry.function:#invoke:app.l(29)
      system'$private'entrySymbol#sym:app.l(80)
   --------------------------------------
-  * add a new unit test
+  * check why exception info is not working for amd64
 
   === Iteration 37 ===
   --------------------------------------
