@@ -28,8 +28,6 @@ void* SystemRoutineProvider::RetrieveMDataPtr(void* imageBase, pos_t imageLength
       return (void*)addr;
    }
 
-   printf("failed to find mdata\n");
-
    return nullptr;
 }
 
