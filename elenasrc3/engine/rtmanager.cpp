@@ -85,6 +85,8 @@ bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider
    }
 
    if (found) {
+      printf("readAddressInfo %s\n", *symbol);
+
       // if symbol
       if (symbol[0] == '#') {
          symbol += 1;
