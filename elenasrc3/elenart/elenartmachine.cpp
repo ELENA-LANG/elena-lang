@@ -95,6 +95,8 @@ bool ELENARTMachine :: loadDebugSection()
       MemoryWriter writer(&_debugSection);
       writer.copyFrom(&reader, len);
 
+      printf("loadDebugSection %x \n", len);
+
       return len != 0;
    }
 }
