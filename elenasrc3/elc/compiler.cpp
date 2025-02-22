@@ -15370,7 +15370,7 @@ ObjectInfo Compiler::Expression::boxLocally(ObjectInfo info, bool stackSafe)
 
    switch (info.kind) {
       case ObjectKind::FieldAddress:
-      case ObjectKind::ReadOnlyField:
+      case ObjectKind::ReadOnlyFieldAddress:
          writer->newNode(BuildKey::CopyingAccField, info.reference);
          break;
       case ObjectKind::StaticConstField:

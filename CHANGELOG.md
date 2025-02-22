@@ -13,6 +13,7 @@
   - [FIXED] calling extension method if internal one exists
   - [REDUX] CORE_TLS_INDEX is no longer user for x86 / x86-64
   - [FIXED] #702 : Elena 6.5.0 crashes in Ubuntu 24.04 docker image
+  - [FIXED] an invalid operation with a structure field
 
 - API
   - [ADDED] net'http'HttpClient, net'http'Uri

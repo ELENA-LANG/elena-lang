@@ -29,6 +29,18 @@
 
 //myint X = 2;
 
+public sealed const struct A
+{
+      int tv_sec;
+      int tv_usec;
+
+      test()
+      {
+         int ms := tv_usec;
+      }
+}
+
+
 public program()
 {
 //  myint n := X
