@@ -52,6 +52,10 @@ bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider
       reader.read(&tempAddr, sizeof(tempAddr));
 
       ustr_t ns = reader.getString(DEFAULT_STR);
+
+      const char* s = ns.str();
+      printf("readAddressInfo ns %s\n", s);
+
    }
 
    // search through debug section until the ret point is inside two consecutive steps within the same object
