@@ -15,6 +15,7 @@
   - [FIXED] #702 : Elena 6.5.0 crashes in Ubuntu 24.04 docker image
   - [FIXED] an invalid operation with a structure field
   - [FIXED] linux x86-64 : debug module structure
+  - [FIXED] Linux x86-64 : FPU operations
 
 - API
   - [ADDED] net'http'HttpClient, net'http'Uri

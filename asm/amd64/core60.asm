@@ -765,7 +765,7 @@ inline %072h
 
 end
 
-// ; fdiv
+// ; fidiv
 inline %073h
 
   mov  rax, r10
