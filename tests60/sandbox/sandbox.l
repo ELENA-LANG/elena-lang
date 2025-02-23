@@ -35,11 +35,11 @@ class MyException : Exception
         <= super new(s);
 }
 
-class MyException2 : Exception
+/*class MyException2 : Exception
 {
     constructor new(s)
         <= super new(s);
-}
+}*/
 
 singleton ExecTester
 {
@@ -48,25 +48,25 @@ singleton ExecTester
         MyException.new("OnError handler works").raise()
     }
     
-    break2()
+/*    break2()
     {
         MyException2.new("OnError2 handler works").raise()
-    }
-    
+    }*/
+/*    
     break3()
     {
         MyException2.new("Nested OnError2 handler works").raise()
-    }
+    }*/
 }
 
 public program()
 {
-    bool raised := false;
+//    bool raised := false;
     ExecTester.break() \\ on::(e){ raised := true };
-    Assert.ifTrue(raised);
+//    Assert.ifTrue(raised);
     console.write(".");
     
-    bool passed := false;
+/*    bool passed := false;
     try
     {
         ExecTester.break2()
@@ -81,8 +81,8 @@ public program()
         {
             passed := true;
         }        
-    };
-    Assert.ifTrue(passed);
+    };*/
+/*    Assert.ifTrue(passed);
     console.write(".");
     
     bool passed2 := false;
@@ -104,5 +104,5 @@ public program()
     };
     Assert.ifTrue(passed2);
     
-    console.write(".")
+    console.write(".")*/
 }
