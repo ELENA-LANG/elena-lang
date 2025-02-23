@@ -16,13 +16,7 @@ In development:
   * fix ppc64 :exception test
   --------------------------------------
   * fix amd64 pi sample for linux:
-     Call stack:
-     system'calendar'Date.subtract<'calendar'Date>[2]:calendar/dates.l(223)
-     pi'program.function:#invoke:pi.l(20)
-     system'$private'entry.function:#invoke:app.l(29)
-     system'$private'entrySymbol#sym:app.l(80)
   --------------------------------------
-  * check why exception info is not working for amd64
 
   === Iteration 37 ===
   --------------------------------------

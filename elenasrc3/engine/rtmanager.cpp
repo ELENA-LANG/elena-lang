@@ -52,10 +52,6 @@ bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider
       reader.read(&tempAddr, sizeof(tempAddr));
 
       ustr_t ns = reader.getString(DEFAULT_STR);
-
-      const char* s = ns.str();
-      printf("readAddressInfo ns %s\n", s);
-
    }
 
    // search through debug section until the ret point is inside two consecutive steps within the same object
@@ -89,9 +85,6 @@ bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider
    }
 
    if (found) {
-      const char* s = symbol.str();
-      printf("readAddressInfo %s\n", s);
-
       // if symbol
       if (symbol[0] == '#') {
          symbol += 1;
@@ -197,8 +190,6 @@ size_t RTManager :: retriveAddressInfo(LibraryLoaderBase& provider, addr_t retAd
          buffer[copied++] = ')';
       }
       buffer[copied] = 0;
-
-      printf("retriveAddressInfo %s\n", buffer);
 
       return copied;
    }
