@@ -68,14 +68,14 @@ public program()
     }
     catch::
     {
-        function(MyException e)
-        {
+//        function(MyException e)
+//        {
             //Assert.ifTrue(false)
-        }
-/*        function(MyException2 e)
+//        }
+        function(MyException2 e)
         {
-            passed := true;
-        } */
+//            passed := true;
+        }
     };
 //    Assert.ifTrue(passed);
     console.write(".");
