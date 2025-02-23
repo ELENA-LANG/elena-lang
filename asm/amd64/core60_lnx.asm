@@ -144,7 +144,6 @@ end
 inline %4CFh
 
   finit
-  ffree st(0)
   mov  [data : %CORE_SINGLE_CONTENT + tt_stack_root], rsp
 
   mov  rax, rsp

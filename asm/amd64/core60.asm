@@ -770,7 +770,7 @@ inline %073h
 
   mov  rax, r10
   fld   qword ptr [rbx]
-  fild  [rax]
+  fild  dword ptr [rax]
   fdivp
   fstp  qword ptr [rbx]
 
