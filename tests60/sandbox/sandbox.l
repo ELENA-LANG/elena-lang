@@ -61,43 +61,15 @@ singleton ExecTester
 
 public program()
 {
-//    bool passed := false;
-    try
+/*    try
     {
         ExecTester.break2()
     }
     catch::
     {
-//        function(MyException e)
-//        {
-            //Assert.ifTrue(false)
-//        }
         function(MyException2 e)
         {
-//            passed := true;
         }
-    };
-//    Assert.ifTrue(passed);
+    };*/
     console.write(".");
-/*    
-    bool passed2 := false;
-    try
-    {
-        try
-        {
-            MyException2.new("Nested OnError2 handler works").raise()
-        }
-        catch(MyException e)
-        {
-            console.writeLine("!!Wrong handler");
-            Assert.ifTrue(false)
-        }
-    }
-    catch(MyException2 e)
-    {
-        passed2 := true;
-    };
-    Assert.ifTrue(passed2);
-    
-    console.write(".")*/
 }
