@@ -31,7 +31,11 @@ import extensions;
 
 public program()
 {
-  real r := -1.0.power(1);
+    real pi := 0.0;
+    for(int i := 0; i < 1; i += 1)
+    {
+        pi += -1.0.power(i) / (i*2+1) * 4
+    };
 
-  console.printLine(r);
+    console.printLine(pi)
 }
