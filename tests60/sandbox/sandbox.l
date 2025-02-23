@@ -62,7 +62,7 @@ singleton ExecTester
 public program()
 {
 //    bool raised := false;
-    ExecTester.break() \\ on::(e){ raised := true };
+    ExecTester.break() \\ on::(e){ /*raised := true*/ };
 //    Assert.ifTrue(raised);
     console.write(".");
     
