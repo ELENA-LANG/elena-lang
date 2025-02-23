@@ -13,9 +13,8 @@ In development:
   * test all samples linux aarch64
   * fix pi sample for ppc64le
   * test all samples linux ppc64le
-  * fix ppc64 :exception test
   --------------------------------------
-  * fix amd64 pi sample for linux:
+  * fix ppc64 :exception test
   --------------------------------------
 
   === Iteration 37 ===
