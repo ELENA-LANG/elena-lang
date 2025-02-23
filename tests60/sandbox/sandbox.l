@@ -28,30 +28,30 @@ import extensions;
 //#load sandbox'aliases;
 
 //myint X = 2;
-
+/*
 class MyException : Exception
 {
     constructor new(s)
         <= super new(s);
 }
-
-/*class MyException2 : Exception
+*/
+class MyException2 : Exception
 {
     constructor new(s)
         <= super new(s);
-}*/
+}
 
 singleton ExecTester
 {
-    break()
+/*    break()
     {
         MyException.new("OnError handler works").raise()
     }
-    
-/*    break2()
+*/    
+    break2()
     {
         MyException2.new("OnError2 handler works").raise()
-    }*/
+    }
 /*    
     break3()
     {
@@ -61,12 +61,7 @@ singleton ExecTester
 
 public program()
 {
-//    bool raised := false;
-    ExecTester.break() \\ on::(e){ /*raised := true*/ };
-//    Assert.ifTrue(raised);
-    console.write(".");
-    
-/*    bool passed := false;
+//    bool passed := false;
     try
     {
         ExecTester.break2()
@@ -75,16 +70,16 @@ public program()
     {
         function(MyException e)
         {
-            Assert.ifTrue(false)
+            //Assert.ifTrue(false)
         }
-        function(MyException2 e)
+/*        function(MyException2 e)
         {
             passed := true;
-        }        
-    };*/
-/*    Assert.ifTrue(passed);
+        } */
+    };
+//    Assert.ifTrue(passed);
     console.write(".");
-    
+/*    
     bool passed2 := false;
     try
     {
