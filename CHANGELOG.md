@@ -18,6 +18,7 @@
   - [FIXED] Linux x86-64 : FPU operations
   - [FIXED] ppc64le extopen / extclose opcode
   - [FIXED] #704 : Porting to FreeBSD/PowerPC64
+  - [FIXED] aarch64 extopen / extclose opcode
 
 - API
   - [ADDED] net'http'HttpClient, net'http'Uri

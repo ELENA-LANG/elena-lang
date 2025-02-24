@@ -7,8 +7,9 @@ In development:
 
   === Iteration 36 (13.03) ===
   --------------------------------------
-  * test all samples linux aarch64
+  * aarch64 : fix exceptionTest, methodNotFoundTest
   --------------------------------------
+  * fix extopen / extclose
 
   === Iteration 37 ===
   --------------------------------------
