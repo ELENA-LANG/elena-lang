@@ -1660,6 +1660,10 @@ void elena_lang::loadIndexNOp(JITCompilerScope* scope)
    if (!scope->command.arg2)
       index += 6;
 
+   // !! temporal
+   if (scope->command.code == ByteCode::ExtOpenIN)
+     printf("extopen %x\n", index);
+
    void* code = scope->compiler->_inlines[index][scope->code()];
 
    pos_t position = writer->position();

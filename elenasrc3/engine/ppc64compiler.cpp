@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: PPC64le
-//                                              (C)2021-2022 by Aleksey Rakov
+//                                              (C)2021-2025 by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -18,7 +18,7 @@ const Pair<ByteCode, CodeGenerator, ByteCode::None, nullptr> Overloads[Overloads
 {
    { ByteCode::CallExtR, PPC64loadCallOp},
    { ByteCode::OpenIN, PPC64compileOpenIN},
-   { ByteCode::ExtOpenIN, PPC64compileOpenIN},
+   { ByteCode::ExtOpenIN, PPC64compileExtOpenIN},
 };
 
 //inline void x86_64AllocStack(int args, MemoryWriter* code)
@@ -138,6 +138,15 @@ void elena_lang::PPC64compileOpenIN(JITCompilerScope* scope)
    scope->command.arg2 = align(scope->command.arg2, 16);
 
    elena_lang::compileOpen(scope);
+}
+
+void elena_lang::PPC64compileExtOpenIN(JITCompilerScope* scope)
+{
+   // NOTE : stack should be aligned to 16 bytes
+   scope->command.arg1 = align(scope->command.arg1, 2);
+   scope->command.arg2 = align(scope->command.arg2, 16);
+
+   elena_lang::compileExtOpen(scope);
 }
 
 // --- PPC64leJITCompiler ---

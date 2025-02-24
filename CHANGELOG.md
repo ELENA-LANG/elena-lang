@@ -16,6 +16,7 @@
   - [FIXED] an invalid operation with a structure field
   - [FIXED] linux x86-64 : debug module structure
   - [FIXED] Linux x86-64 : FPU operations
+  - [FIXED] ppc64le extopen opcode
 
 - API
   - [ADDED] net'http'HttpClient, net'http'Uri

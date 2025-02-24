@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: PPC64le
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PPC64COMPILER_H
@@ -28,6 +28,7 @@ namespace elena_lang
 
       friend void PPC64loadCallOp(JITCompilerScope* scope);
       friend void PPC64compileOpenIN(JITCompilerScope* scope);
+      friend void PPC64compileExtOpenIN(JITCompilerScope* scope);
       //friend void x86_64compileFreeI(JITCompilerScope* scope);
 
    public:
@@ -60,6 +61,7 @@ namespace elena_lang
 
    void PPC64loadCallOp(JITCompilerScope* scope);
    void PPC64compileOpenIN(JITCompilerScope* scope);
+   void PPC64compileExtOpenIN(JITCompilerScope* scope);
    //void x86_64compileFreeI(JITCompilerScope* scope);
 }
 
