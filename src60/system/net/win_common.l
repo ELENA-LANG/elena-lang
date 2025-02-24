@@ -12,13 +12,16 @@ public const int IPPROTO_TCP = 6;
 public const int TCP_NODELAY = 1;
 
 public const int FIONBIO = 8004667Eh;
+public const int FIONREAD = 4004667Fh;
 
-public const int WSAEWOULDBLOCK = 10035;
-public const int WSAECONNRESET  = 10054;
+public const int WSAEWOULDBLOCK  = 10035;
+public const int WSAECONNRESET   = 10054;
 
-public const int SOMAXCONN = 5;
+public const int SOL_SOCKET      = 1;
+public const int SO_ERROR        = 4;
+public const int SOMAXCONN       = 5;
 
-public const int SD_BOTH = 2;
+public const int SD_BOTH         = 2;
 
 // --- WSAException ---
 
@@ -72,7 +75,7 @@ sealed packed WSADATA
 
       int retVal := extern WS2_32.WSAStartup(wVersionRequested, self);
             
-      ifnot (0 == retVal)
+      if:not (0 == retVal)
          { SocketException.new("Cannot start socket service", retVal).raise() };
             
       //startUpEvents.OnStop := { self.close() }

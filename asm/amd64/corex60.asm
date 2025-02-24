@@ -11,7 +11,6 @@ define THREAD_WAIT          10007h
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
-define CORE_TLS_INDEX       20004h
 define CORE_SINGLE_CONTENT  2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
@@ -148,13 +147,12 @@ inline % GC_COLLECT
 labStart:
   // ; GCXT: find the current thread entry
   mov  rdi, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
 
   push r10
   push r11
 
   // ; GCXT: find the current thread entry
-  mov  rax, [rdi+rax*8]
+  mov  rax, [rdi]
 
   push rbp
 
@@ -419,13 +417,12 @@ labPERMCollect:
 
   // ; GCXT: find the current thread entry
   mov  rdi, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
 
   push r10
   push r11
 
   // ; GCXT: find the current thread entry
-  mov  rax, [rdi+rax*8]
+  mov  rax, [rdi]
 
   push rbp
 
@@ -585,8 +582,7 @@ labWait:
 
   // ; find the current thread entry
   mov  rdx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]  
-  mov  rax, [rdx+rax*8]
+  mov  rax, [rdx]
 
   mov  rsi, [rax+tt_sync_event]   // ; get current thread event
   mov  [rax+tt_stack_frame], rdi  // ; lock stack frame
@@ -640,8 +636,7 @@ end
 inline %0Ah
 
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rcx, [rcx+rax*8]
+  mov  rcx, [rcx]
   mov  rdi, [rcx + et_current]
   jmp  [rdi + es_catch_addr]
 
@@ -651,9 +646,8 @@ end
 inline %0Bh
 
   // ; GCXT: get current thread frame
-  mov  rax, [data : %CORE_TLS_INDEX]
   mov  rcx, gs:[58h]
-  mov  rcx, [rcx+rax*8]
+  mov  rcx, [rcx]
   mov  rdi, [rcx + et_current]
 
   mov  rax, [rdi + es_prev_struct]
@@ -668,8 +662,7 @@ end
 inline % 10h
      
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rax*8]
+  mov  rdi, [rcx]
   mov  dword ptr [rdi + tt_flags], 1
   mov  rax, [rdi + tt_stack_frame]
   push rax
@@ -683,8 +676,7 @@ inline % 11h
 
   add  rsp, 8
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rax*8]
+  mov  rdi, [rcx]
   mov  dword ptr [rdi + tt_flags], 0
   pop  rax
   mov  [rdi + tt_stack_frame], rax
@@ -696,8 +688,7 @@ inline %17h
 
   // ; COREX
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rax*8]
+  mov  rdi, [rcx]
   mov  rax, [rdi + tt_stack_root]
 
   xor  ecx, ecx
@@ -733,9 +724,8 @@ end
 // ; peektls
 inline %0BBh
 
-  mov  rax, [data : %CORE_TLS_INDEX]
   mov  rcx, gs:[58h]
-  mov  rax, [rcx + rax * 8]
+  mov  rax, [rcx]
   lea  rdi, [rax + __arg32_1]
   mov  rbx, [rdi]
 
@@ -744,16 +734,12 @@ end
 // ; storetls
 inline %0BCh
 
-  mov  rax, [data : %CORE_TLS_INDEX]
   mov  rcx, gs:[58h]
-  mov  rax, [rcx + rax * 8]
+  mov  rax, [rcx]
   lea  rdi, [rax + __arg32_1]
   mov  [rdi], rbx
 
 end
-
-
-
 
 // ; extclosen
 inline %0CAh
@@ -766,8 +752,7 @@ inline %0CAh
   pop  rbx
 
   mov  rcx, gs:[58h]
-  mov  rdx, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rdx*8]
+  mov  rdi, [rcx]
   mov  [rdi + tt_stack_frame], rbx
 
   pop  rbp
@@ -792,8 +777,7 @@ inline %1CAh
   pop  rbx
 
   mov  rcx, gs:[58h]
-  mov  rdx, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rdx*8]
+  mov  rdi, [rcx]
   mov  [rdi + tt_stack_frame], rbx
 
   pop  rbp
@@ -846,9 +830,8 @@ end
 // ; system 3 (thread startup)
 inline %3CFh
 
-  mov  rax, [data : %CORE_TLS_INDEX]
   mov  rcx, gs:[58h]
-  mov  rax, [rcx + rax * 8]
+  mov  rax, [rcx]
   mov  rdi, data : %CORE_THREAD_TABLE + tt_slots
   shl  rdx, 4 
   mov  [rdi + rdx], rax
@@ -897,10 +880,9 @@ end
 inline %0E6h
 
   // ; GCXT: get current thread frame
-  mov  rax, [data : %CORE_TLS_INDEX]
   mov  rcx, gs:[58h]
   lea  rdi, [rbp + __arg32_1]
-  mov  rax, [rcx+rax*8]
+  mov  rax, [rcx]
 
   mov  rcx, [rax + et_current]
   mov  [rdi + es_catch_frame], rbp
@@ -933,8 +915,7 @@ inline %0F2h
   push rbp     
 
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rax*8]
+  mov  rdi, [rcx]
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -980,8 +961,7 @@ inline %1F2h
   push rbp     
 
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rax*8]
+  mov  rdi, [rcx]
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1023,8 +1003,7 @@ inline %2F2h
   push rbp     
 
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rax*8]
+  mov  rdi, [rcx]
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1068,8 +1047,7 @@ inline %3F2h
   push rbp     
 
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rax*8]
+  mov  rdi, [rcx]
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1113,8 +1091,7 @@ inline %4F2h
   push rbp     
 
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rax*8]
+  mov  rdi, [rcx]
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1160,8 +1137,7 @@ inline %5F2h
   push rbp     
 
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rax*8]
+  mov  rdi, [rcx]
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1207,8 +1183,7 @@ inline %6F2h
   push rbp     
 
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rax*8]
+  mov  rdi, [rcx]
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1250,8 +1225,7 @@ inline %7F2h
   push rbp     
 
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rax*8]
+  mov  rdi, [rcx]
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1288,8 +1262,7 @@ inline %8F2h
   push rbp     
 
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rax*8]
+  mov  rdi, [rcx]
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1328,8 +1301,7 @@ inline %9F2h
   push rbp     
 
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rax*8]
+  mov  rdi, [rcx]
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1369,8 +1341,7 @@ inline %0AF2h
   push rbp     
 
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rax*8]
+  mov  rdi, [rcx]
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1412,8 +1383,7 @@ inline %0BF2h
   push rbp     
 
   mov  rcx, gs:[58h]
-  mov  rax, [data : %CORE_TLS_INDEX]
-  mov  rdi, [rcx+rax*8]
+  mov  rdi, [rcx]
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 

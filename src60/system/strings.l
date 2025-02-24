@@ -374,14 +374,14 @@ public sealed Matrix<T>
               
              bool next()
              {
-                ifnot (i < length1)
+                if:not (i < length1)
                 {
                    ^ false
                 };
                   
                 j := j + 1;
                   
-                ifnot (j < length2)
+                if:not (j < length2)
                 {
                    j := -1;
                    i := i + 1;

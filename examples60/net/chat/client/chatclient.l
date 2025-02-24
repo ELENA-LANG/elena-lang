@@ -73,7 +73,7 @@ public sealed class ChatClient : BaseClient
          if (nil != command)
          {
             (command.Command) =>
-               TRANSLATE
+               TRANSLATE :
                {
                   OnMessage?.(command.User, command.Value)
                }

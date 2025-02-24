@@ -74,8 +74,8 @@ public class InvalidArgumentException : Exception
    constructor new() : info("Creates the exception")
       <= new("Invalid argument");
 
-   constructor new(string message) : info("Creates the exception")
-      <= super new(message);
+   constructor new(string argument) : info("Creates the exception")
+      <= super new($"an invalid argument {argument}");
 }
 
 // --- MethodNotFoundException ---

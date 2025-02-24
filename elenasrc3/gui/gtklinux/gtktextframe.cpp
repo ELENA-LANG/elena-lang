@@ -9,18 +9,19 @@
 using namespace elena_lang;
 
 // --- TextViewFrame ---
-TextViewFrame :: TextViewFrame(TextViewModel* model, ViewStyles* styles)
+TextViewFrame :: TextViewFrame(TextViewModel* model, TextViewControllerBase* controller, ViewStyles* styles)
    : TabBar()
 {
    _model = model;
    _styles = styles;
+   _controller = controller;
 
    _model->attachListener(this);
 }
 
 void TextViewFrame :: onDocumentNew(int index)
 {
-   TextViewWindow* view = new TextViewWindow(_model, _styles/*, &_controller->sourceController*/);
+   TextViewWindow* view = new TextViewWindow(_model, _controller, _styles);
    //textView->textview_changed().connect(sigc::mem_fun(*this,
    //           &EditFrame::on_textview_changed));
 

@@ -2176,7 +2176,7 @@ inline BuildNode getPrevious(BuildNode node)
 {
    node = node.prevNode();
    switch (node.key) {
-      case BuildKey::VirtualBreakoint:
+      case BuildKey::VirtualBreakpoint:
       case BuildKey::Breakpoint:
       case BuildKey::EOPBreakpoint:
       case BuildKey::EndStatement:
@@ -2201,7 +2201,7 @@ inline BuildNode getNextNode(BuildNode node)
 {
    node = node.nextNode();
    switch (node.key) {
-      case BuildKey::VirtualBreakoint:
+      case BuildKey::VirtualBreakpoint:
       case BuildKey::Breakpoint:
       case BuildKey::EOPBreakpoint:
       case BuildKey::EndStatement:
@@ -2259,11 +2259,18 @@ inline bool doubleAssigningByRefHandler(BuildNode lastNode)
    if(scanFrameForLocalAddresses(opNode, BuildKey::Copying, lastNode.arg.value)) {
       BuildNode byRefArg = BuildTree::gotoNode(lastNode, BuildKey::LocalAddress, lastNode.arg.value);
       BuildNode copyOp = opNode.nextNode();
+      BuildNode prevCopyOp = getPrevious(opNode);
+
+      // check if it is unboxing op
+      if (prevCopyOp.key != BuildKey::Copying || prevCopyOp.arg.reference != lastNode.arg.value)
+         prevCopyOp = {};
 
       // modify the tree to exclude double copying
       byRefArg.setArgumentValue(copyOp.arg.value);
       opNode.setArgumentValue(copyOp.arg.value);
       copyOp.setKey(BuildKey::Idle);
+      if (prevCopyOp.key == BuildKey::Copying)
+         prevCopyOp.setArgumentValue(copyOp.arg.value);
 
       return true;
    }
@@ -3043,7 +3050,7 @@ void ByteCodeWriter :: saveShortCircuitOp(CommandTape& tape, BuildNode node, Tap
 void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
    ReferenceMap& paths, bool tapeOptMode)
 {
-   //tape.write(ByteCode::XNop);
+   tape.write(ByteCode::XNop);
    int startLabel = tape.newLabel();
    tape.setLabel(true);
    int eopLabel = tape.newLabel();
@@ -3234,6 +3241,10 @@ void ByteCodeWriter :: saveSwitchOption(CommandTape& tape, BuildNode node, TapeS
 
    // NOTE : loopMode is set to true due to current implementation, so the branching will use an existing label
    saveTape(tape, node, tapeScope, paths, tapeOptMode, true);
+
+   // HOTFIX : inject virtual breakpoint to fine-tune a debugger
+   BuildNode idleNode = {};
+   addVirtualBreakpoint(tape, idleNode, tapeScope);
 
    tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
 
@@ -3652,7 +3663,7 @@ inline bool isNonOperational(BuildKey key)
          return false;
       case BuildKey::OpenStatement:
       case BuildKey::EndStatement:
-      case BuildKey::VirtualBreakoint:
+      case BuildKey::VirtualBreakpoint:
       case BuildKey::EOPBreakpoint:
          // NOTE : to simplify the patterns, ignore open / end statement commands
          return true;

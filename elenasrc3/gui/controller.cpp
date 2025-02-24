@@ -19,7 +19,7 @@ void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name, bo
    model->addDocumentView(name, text, nullptr, included);
 }
 
-bool TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
+bool TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, path_t path,
    FileEncoding encoding, bool included)
 {
    Text* text = new Text(_settings.eolMode);
@@ -176,6 +176,22 @@ bool TextViewController :: insertChar(TextViewModelBase* model, text_c ch)
    if (!docView->isReadOnly() && ch >= 0x20) {
       docView->eraseSelection(status);
       docView->insertChar(status, ch);
+
+      notifyTextModelChange(model, status);
+
+      return true;
+   }
+
+   return false;
+}
+
+bool TextViewController :: insertLine(TextViewModelBase* model, text_t s, size_t length)
+{
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+   if (!docView->isReadOnly()) {
+      docView->eraseSelection(status);
+      docView->insertLine(status, s, length);
 
       notifyTextModelChange(model, status);
 
@@ -352,7 +368,7 @@ void TextViewController::selectAll(TextViewModelBase* model)
 
 void TextViewController :: notifyOnClipboardOperation(ClipboardBase* clipboard)
 {
-   
+
 }
 
 void TextViewController :: notifyTextModelChange(TextViewModelBase* model, DocumentChangeStatus& changeStatus)
@@ -467,8 +483,8 @@ bool TextViewController :: findText(TextViewModelBase* model, FindModel* findMod
    DocumentChangeStatus docStatus = {};
 
    auto docView = model->DocView();
-   if (docView && docView->findLine(docStatus, findModel->text.str(), findModel->matchCase, 
-      findModel->wholeWord)) 
+   if (docView && docView->findLine(docStatus, findModel->text.str(), findModel->matchCase,
+      findModel->wholeWord))
    {
       notifyTextModelChange(model, docStatus);
 

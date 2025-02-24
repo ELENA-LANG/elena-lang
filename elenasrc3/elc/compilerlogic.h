@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPILERLOGIC_H
@@ -259,13 +259,25 @@ namespace elena_lang
 
       bool isTemplateInternalOp(ModuleScopeBase& scope, ref_t reference1, ref_t reference2)
       {
+         // if it is the same class - an internal operation is allowed
+         if (reference1 == reference2)
+            return true;
+
          // retrive the template namespace
          ReferenceProperName templateNs;
          retrieveTemplateNs(scope, reference1, templateNs);
 
-         NamespaceString referenceNs(scope.resolveFullName(reference2));
+         if (isTemplateWeakReference(scope.module->resolveReference(reference2))) {
+            ReferenceProperName templateNs2;
+            retrieveTemplateNs(scope, reference2, templateNs2);
 
-         return (*templateNs).compare(*referenceNs);
+            return (*templateNs).compare(*templateNs2);
+         }
+         else {
+            NamespaceString referenceNs(scope.resolveFullName(reference2));
+
+            return (*templateNs).compare(*referenceNs);
+         }
       }
       bool isInternalOp(ModuleScopeBase& scope, ref_t reference)
       {
@@ -290,7 +302,6 @@ namespace elena_lang
       static bool readTypeMap(ModuleBase* module, MemoryBase* section, ReferenceMap& map, ModuleScopeBase* scope);
 
       static bool loadMetaData(ModuleScopeBase* moduleScope, ustr_t aliasName, ustr_t nsName);
-      static bool clearMetaData(ModuleScopeBase* moduleScope, ustr_t name);
 
       static Visibility getVisibility(ustr_t name)
       {

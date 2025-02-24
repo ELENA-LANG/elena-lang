@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: PPC64le
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PPC64COMPILER_H
@@ -28,6 +28,7 @@ namespace elena_lang
 
       friend void PPC64loadCallOp(JITCompilerScope* scope);
       friend void PPC64compileOpenIN(JITCompilerScope* scope);
+      friend void PPC64compileExtOpenIN(JITCompilerScope* scope);
       //friend void x86_64compileFreeI(JITCompilerScope* scope);
 
    public:
@@ -41,6 +42,10 @@ namespace elena_lang
       void resolveLabelAddress(MemoryWriter* writer, ref_t mask, pos_t position, bool virtualMode) override;
 
       void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) override;
+      void alignJumpAddress(MemoryWriter& writer) override
+      {
+         // must be implemented
+      }
 
       void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 
          MemoryWriter& codeWriter, LabelHelperBase* lh) override;
@@ -56,6 +61,7 @@ namespace elena_lang
 
    void PPC64loadCallOp(JITCompilerScope* scope);
    void PPC64compileOpenIN(JITCompilerScope* scope);
+   void PPC64compileExtOpenIN(JITCompilerScope* scope);
    //void x86_64compileFreeI(JITCompilerScope* scope);
 }
 

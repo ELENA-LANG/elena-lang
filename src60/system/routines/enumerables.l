@@ -224,10 +224,10 @@ public extension enumerableOp
         
       while (it1.next())
       {
-            ifnot(it2.next())
+            if:not(it2.next())
                 { ^ false };
             
-            ifnot ((*it1).equal(*it2))
+            if:not ((*it1).equal(*it2))
                 { ^ false }
       };
         
@@ -280,7 +280,7 @@ public extension enumerableOp
       auto en := cast Enumerator(self.enumerator());
       while (en.next())
       {
-         ifnot (f(*en))
+         if:not (f(*en))
          {
             ^ false
          }
@@ -456,7 +456,7 @@ public extension indexableOp
         
       while (a.Available)
       {
-         ifnot ((*a) == (*b))
+         if:not ((*a) == (*b))
             { ^ false };
                 
          a.appendIndex(1);
@@ -519,7 +519,7 @@ public extension indexableOp
          it.appendIndex(1);
          while (it.Available)
          {
-            ifnot (compareFunc(previous, *it))
+            if:not (compareFunc(previous, *it))
             {
                ^ false
             };

@@ -11,9 +11,9 @@ using namespace elena_lang;
 constexpr auto CONFIG_FILE = "elenavm60.cfg";
 
 constexpr auto VA_ALIGNMENT = 0x08;
-constexpr int  DEFAULT_MGSIZE = 344064;
-constexpr int  DEFAULT_YGSIZE = 86016;
-constexpr int  DEFAULT_STACKRESERVED = 0x200000;
+constexpr unsigned int DEFAULT_MGSIZE = 344064;
+constexpr unsigned int DEFAULT_YGSIZE = 86016;
+constexpr unsigned int DEFAULT_STACKRESERVED = 0x200000;
 
 #ifdef _M_IX86
 

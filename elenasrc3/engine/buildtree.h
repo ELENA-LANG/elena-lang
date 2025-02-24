@@ -101,7 +101,7 @@ namespace elena_lang
       RealLiteral          = 0x0047,
       RealOp               = 0x0048,
       RealCondOp           = 0x0049,
-      VirtualBreakoint     = 0x004A,
+      VirtualBreakpoint    = 0x004A,
       ConversionOp         = 0x004B,
       SemiResendOp         = 0x004C,
       NilCondOp            = 0x004D,
@@ -339,6 +339,7 @@ namespace elena_lang
          map.add("copying_to_acc", BuildKey::CopyingToAcc);
          map.add("copying_to_acc_exact", BuildKey::CopyingToAccExact);
          map.add("copying_to_acc_field", BuildKey::CopyingToAccField);
+         map.add("create_class", BuildKey::CreatingClass);
          map.add("local", BuildKey::Local);
          map.add("intcondop", BuildKey::IntCondOp);
          map.add("realcondop", BuildKey::RealCondOp);
@@ -375,7 +376,8 @@ namespace elena_lang
          map.add("field", BuildKey::Field);
          map.add("nil", BuildKey::NilReference);
          map.add("field_assign", BuildKey::FieldAssigning);
-
+         map.add("assign_local_to_stack", BuildKey::AssignLocalToStack);
+         map.add("set_imm_field", BuildKey::SetImmediateField);
          map.add("value", BuildKey::Value);
          map.add("tape", BuildKey::Tape);
          map.add("type", BuildKey::Type);

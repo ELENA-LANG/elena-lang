@@ -11,7 +11,7 @@
 
 namespace elena_lang
 {
-   #define LDOC_REVISION_NUMBER           0x001C
+   #define LDOC_REVISION_NUMBER           0x001D
 
    constexpr auto LDOC_GREETING           = "ELENA command line Html Documentation generator %d.%d.%d (C)2021-24 by Aleksey Rakov\n";
    constexpr auto LDOC_READING            = "Reading...\n";
@@ -19,8 +19,8 @@ namespace elena_lang
 
    constexpr auto LDOC_MODULE_NOTLOADED   = "cannot load a module: %s";
 
-   constexpr auto TITLE                   = "ELENA Standard Library 6.4: Module ";
-   constexpr auto TITLE2                  = "ELENA&nbsp;Standard&nbsp;Library<br>6.3";
+   constexpr auto TITLE                   = "ELENA Standard Library 6.5: Module ";
+   constexpr auto TITLE2                  = "ELENA&nbsp;Standard&nbsp;Library<br>6.5";
 
 }
 

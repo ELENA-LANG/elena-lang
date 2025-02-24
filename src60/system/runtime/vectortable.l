@@ -157,7 +157,7 @@ public singleton PermVectorTable
    pointer allocate(object obj)
    {
       if (!self.isAvailable) {
-         ifnot (rearrange()) {
+         if:not (rearrange()) {
             _chainItem := new PermVectorChain(_chainItem);
          }
       };
@@ -175,7 +175,7 @@ public singleton PermVectorTable
          if (index >= 0) {
             current.remove(index);
 
-            $break;
+            :break;
          };
 
          current := current.Next;

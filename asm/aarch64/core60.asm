@@ -2397,6 +2397,16 @@ inline %0CAh
   add     x29, x29, __n12_1
   mov     sp, x29
   ldp     x29, x30, [sp], #16
+
+  add     x29, x29, #16
+  mov     sp, x29
+
+  ldp     x29, x30, [sp], #16 
+  ldp     x27, x28, [sp], #16 
+  ldp     x25, x26, [sp], #16 
+  ldp     x23, x24, [sp], #16 
+  ldp     x21, x22, [sp], #16 
+  ldp     x19, x20, [sp], #16 
   
 end
 
@@ -2405,6 +2415,16 @@ inline %1CAh
 
   mov     sp, x29
   ldp     x29, x30, [sp], #16
+
+  add     x29, x29, #16
+  mov     sp, x29
+
+  ldp     x29, x30, [sp], #16 
+  ldp     x27, x28, [sp], #16 
+  ldp     x25, x26, [sp], #16 
+  ldp     x23, x24, [sp], #16 
+  ldp     x21, x22, [sp], #16 
+  ldp     x19, x20, [sp], #16 
   
 end
 
@@ -3679,7 +3699,24 @@ end
 // ; extopenin
 inline %0F2h
 
+  stp     x19, x20, [sp, #-16]! 
+  stp     x21, x22, [sp, #-16]! 
+  stp     x23, x24, [sp, #-16]! 
+  stp     x25, x26, [sp, #-16]! 
+  stp     x27, x28, [sp, #-16]! 
   stp     x29, x30, [sp, #-16]! 
+
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+  add     x14, x14, # tt_stack_frame
+
+  mov     x3, 0
+  ldr     x12, [x14]
+  stp     x3, x12, [sp, #-16]! 
+
+  mov     x29, sp
+
+  stp     x29, x3, [sp, #-16]! 
   mov     x29, sp
 
   sub     sp, sp, __n12_2 // ; allocate raw stack
@@ -3709,6 +3746,23 @@ end
 // ; extopenin 0, n
 inline %1F2h
 
+  stp     x19, x20, [sp, #-16]! 
+  stp     x21, x22, [sp, #-16]! 
+  stp     x23, x24, [sp, #-16]! 
+  stp     x25, x26, [sp, #-16]! 
+  stp     x27, x28, [sp, #-16]! 
+  stp     x29, x30, [sp, #-16]! 
+
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+  add     x14, x14, # tt_stack_frame
+
+  mov     x3, 0
+  ldr     x12, [x14]
+  stp     x3, x12, [sp, #-16]! 
+
+  mov     x29, sp
+
   stp     x29, x30, [sp, #-16]! 
   mov     x29, sp
 
@@ -3723,6 +3777,23 @@ end
 
 // ; extopenin i, 0
 inline %6F2h
+
+  stp     x19, x20, [sp, #-16]! 
+  stp     x21, x22, [sp, #-16]! 
+  stp     x23, x24, [sp, #-16]! 
+  stp     x25, x26, [sp, #-16]! 
+  stp     x27, x28, [sp, #-16]! 
+  stp     x29, x30, [sp, #-16]! 
+
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+  add     x14, x14, # tt_stack_frame
+
+  mov     x3, 0
+  ldr     x12, [x14]
+  stp     x3, x12, [sp, #-16]! 
+
+  mov     x29, sp
 
   stp     x29, x30, [sp, #-16]! 
   mov     x29, sp
@@ -3746,23 +3817,74 @@ end
 // ; extopenin 0, 0
 inline %7F2h
 
-   stp     x29, x30, [sp, #-16]! 
-   mov     x29, sp              // ; set frame pointer
+  stp     x19, x20, [sp, #-16]! 
+  stp     x21, x22, [sp, #-16]! 
+  stp     x23, x24, [sp, #-16]! 
+  stp     x25, x26, [sp, #-16]! 
+  stp     x27, x28, [sp, #-16]! 
+  stp     x29, x30, [sp, #-16]! 
+
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+  add     x14, x14, # tt_stack_frame
+
+  mov     x3, 0
+  ldr     x12, [x14]
+  stp     x3, x12, [sp, #-16]! 
+
+  mov     x29, sp
+
+  stp     x29, x30, [sp, #-16]! 
+  mov     x29, sp              // ; set frame pointer
 
 end 
 
 // ; extopenin 1, 0
 inline %8F2h
 
-   mov     x11, #0
-   stp     x29, x30, [sp, #-16]! 
-   mov     x29, sp              // ; set frame pointer
-   stp     x11, x11, [sp, #-16]! 
+  stp     x19, x20, [sp, #-16]! 
+  stp     x21, x22, [sp, #-16]! 
+  stp     x23, x24, [sp, #-16]! 
+  stp     x25, x26, [sp, #-16]! 
+  stp     x27, x28, [sp, #-16]! 
+  stp     x29, x30, [sp, #-16]! 
+
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+  add     x14, x14, # tt_stack_frame
+
+  mov     x3, 0
+  ldr     x12, [x14]
+  stp     x3, x12, [sp, #-16]! 
+
+  mov     x29, sp
+
+  mov     x11, #0
+  stp     x29, x30, [sp, #-16]! 
+  mov     x29, sp              // ; set frame pointer
+  stp     x11, x11, [sp, #-16]! 
 
 end 
 
 // ; extopenin 2, 0
 inline %9F2h
+
+  stp     x19, x20, [sp, #-16]! 
+  stp     x21, x22, [sp, #-16]! 
+  stp     x23, x24, [sp, #-16]! 
+  stp     x25, x26, [sp, #-16]! 
+  stp     x27, x28, [sp, #-16]! 
+  stp     x29, x30, [sp, #-16]! 
+
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+  add     x14, x14, # tt_stack_frame
+
+  mov     x3, 0
+  ldr     x12, [x14]
+  stp     x3, x12, [sp, #-16]! 
+
+  mov     x29, sp
 
    mov     x11, #0
    stp     x29, x30, [sp, #-16]! 
@@ -3774,6 +3896,23 @@ end
 // ; extopenin 3, 0
 inline %0AF2h
 
+  stp     x19, x20, [sp, #-16]! 
+  stp     x21, x22, [sp, #-16]! 
+  stp     x23, x24, [sp, #-16]! 
+  stp     x25, x26, [sp, #-16]! 
+  stp     x27, x28, [sp, #-16]! 
+  stp     x29, x30, [sp, #-16]! 
+
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+  add     x14, x14, # tt_stack_frame
+
+  mov     x3, 0
+  ldr     x12, [x14]
+  stp     x3, x12, [sp, #-16]! 
+
+  mov     x29, sp
+
    mov     x11, #0
    stp     x29, x30, [sp, #-16]! 
    mov     x29, sp              // ; set frame pointer
@@ -3784,6 +3923,23 @@ end
 
 // ; extopenin 4, 0
 inline %0BF2h
+
+  stp     x19, x20, [sp, #-16]! 
+  stp     x21, x22, [sp, #-16]! 
+  stp     x23, x24, [sp, #-16]! 
+  stp     x25, x26, [sp, #-16]! 
+  stp     x27, x28, [sp, #-16]! 
+  stp     x29, x30, [sp, #-16]! 
+
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+  add     x14, x14, # tt_stack_frame
+
+  mov     x3, 0
+  ldr     x12, [x14]
+  stp     x3, x12, [sp, #-16]! 
+
+  mov     x29, sp
 
    mov     x11, #0
    stp     x29, x30, [sp, #-16]! 

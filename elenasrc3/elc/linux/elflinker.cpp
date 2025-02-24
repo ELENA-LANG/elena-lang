@@ -83,7 +83,7 @@ bool ElfLinker :: createDebugFile(ImageProviderBase& provider, ElfExecutableImag
    addr_t entryPoint = image.addressMap.code + image.addressMap.imageBase + provider.getDebugEntryPoint();
 
    debugWriter.writePos(debug->length());
-   debugWriter.writePos((pos_t)entryPoint);
+   debugWriter.write(&entryPoint, sizeof(addr_t));
 
    // save breakpoints
    MemoryReader reader(debug);

@@ -1,4 +1,39 @@
-## ELENA 6.4.0
+## ELENA 6.6.0
+
+- ELC
+  - [ADDED] new option "-xj" to turn on jump alignment
+  - [ADDED] if:nil / if:not:nil / if:not template statements
+  - [ADDED] :break / :continue / :yield / :await template operators
+  - [FIXED] nillable output type - returning nil may lead to a nil operation exception
+  - [FIXED] an expression: s ?? String.MinValue
+  - [FIXED] template generation - internal operation is not correctly recognized
+  - [FIXED] generating unnecessary wrapper classes while validating byref handlers
+  - [FIXED] generating async methods - operation with class fields
+  - [FIXED] constant symbols can be used to define the array field size
+  - [FIXED] calling extension method if internal one exists
+  - [REDUX] CORE_TLS_INDEX is no longer user for x86 / x86-64
+  - [FIXED] #702 : Elena 6.5.0 crashes in Ubuntu 24.04 docker image
+  - [FIXED] an invalid operation with a structure field
+  - [FIXED] linux x86-64 : debug module structure
+  - [FIXED] Linux x86-64 : FPU operations
+  - [FIXED] ppc64le extopen / extclose opcode
+  - [FIXED] #704 : Porting to FreeBSD/PowerPC64
+  - [FIXED] aarch64 extopen / extclose opcode
+
+- API
+  - [ADDED] net'http'HttpClient, net'http'Uri
+  - [ADDED] system'text'parsing'RegEx
+  - [ADDED] system'net'NetworkStream
+  - [ADDED] system'net'Socket : poll<Timespan,SelectMode>[3]
+  - [ADDED] net'TcpListener : prop:Pending
+
+- SAMPLES
+  - [ADDED] console regex sample
+
+- IDE
+  - [FIXED]debugger : step over multi-select statement
+
+## ELENA 6.5.0
 
 - ELENA
   - [FIXED] method reference : support function singletons
@@ -11,6 +46,8 @@
   - [ADDED] supporting async methods
   - [ADDED] supporting indexed methods
   - [ADDED] indexed internal methods can be declared in a closed class
+  - [REDUX]!! refactoring grammar to make it more readable
+  - [ADDED] support parameterized extension method call
 
 - ELC
   - [ADDED] new option -el5 / -el6 (default) - specifying grammar compatible to ELENA 5.x or 6.x
@@ -25,12 +62,12 @@
   - [FIXED] it is not possible to declare internal default constructor
   - [FIXED] #675 - Using ++ operator with a weak type
   - [FIXED] incorrect typecast handler signature for the classes inheriting template-based ones
-	
-- VM
-
-- RT
-
-- SM
+  - [FIXED]variadic argument list of super class is type-casted
+  - [FIXED] #689: declaring a lambda function with template based argument
+  - [FIXED] fixing issues ABI convention for external calls
+  - [FIXED] preloaded symbols in sub namespaces
+  - [FIXED] calling indexed method from the sealed class
+  - [ADDED] new option -xs - Strict type enforcing option (raise an error if the sealed class is typecasted / called the method that does not exists)
 
 - API
   - [ADDED] system'threading'Thread: Priority, join<int>, Current
@@ -49,6 +86,7 @@
   - [REDUX] all symbols must start with a capital letter
   - [ADDED] system'threading : Task<TResult>
   - [FIXED] system'objectOp.__getClassName[1]
+  - [ADDED] extensions'routines'stex : toArray<T>
 
 - SAMPLES
   - [ADDED] threadpool
@@ -60,6 +98,7 @@
   - [ECV][ADDED] displaying class attributes
   - [FIXED][ldoc] system-threading-.html must not be generated
   - [FIXED][ldoc] system-threading : generate only templates declared in the module
+  - [FIXED][ASMC] opcode mov gs,r/m64
 
 - IDE
   - [FIXED] #679 : class already exist
@@ -68,6 +107,9 @@
   - [FIXED] project options - debug command arguments
   - [FIXED] correct debug info of the constructor self variable
   - [FIXED] #413 - boxing variadic argument
+
+- Misc
+  - [ADDED]new functional test : script_tests
 
 ## ELENA 6.3.0
 

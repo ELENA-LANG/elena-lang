@@ -286,7 +286,7 @@ namespace collections
          for (int i := 0; i < len; i++) {
             if (_comparator(_array[i].Item1, key) < 0) {
                index := i;
-               $break
+               :break
             }
          };
          if (index != -1) {
@@ -310,7 +310,7 @@ namespace collections
       at(int index)
       {
          int len := *_length;
-         ifnot (len > index)
+         if:not (len > index)
             { OutOfRangeException.raise() };
 
          ^ _array[index].Item2
@@ -320,7 +320,7 @@ namespace collections
       setAt(int index, object o)
       {
          int len := *_length;
-         ifnot (len > index)
+         if:not (len > index)
             { OutOfRangeException.raise() };
 
          auto item := _array[index];
@@ -471,7 +471,7 @@ namespace collections
          for (int i := 0; i < len; i++) {
             if (_comparator(_array[i].Item1, key) < 0) {
                index := i;
-               $break
+               :break
             }
          };
          if (index != -1) {
@@ -495,7 +495,7 @@ namespace collections
       TValue at(int index)
       {
          int len := *_length;
-         ifnot (len > index)
+         if:not (len > index)
             { OutOfRangeException.raise() };
 
          ^ _array[index].Item2
@@ -505,7 +505,7 @@ namespace collections
       setAt(int index, TValue o)
       {
          int len := *_length;
-         ifnot (len > index)
+         if:not (len > index)
             { OutOfRangeException.raise() };
 
          auto item := _array[index];

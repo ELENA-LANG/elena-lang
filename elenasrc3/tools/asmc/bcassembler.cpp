@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA Byte-code assembler
 //		classes.
-//                                            (C)2021-2024, by Aleksey Rakov
+//                                            (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "bcassembler.h"
@@ -1005,7 +1005,11 @@ bool ByteCodeAssembler :: compileByteCode(ScriptToken& tokenInfo, MemoryWriter& 
             return compileCallExt(tokenInfo, writer, opCommand, parameters, locals, dataLocals, constants, stdCall);
          case ByteCode::XOpenIN:
          case ByteCode::OpenIN:
+            return compileOpenOp(tokenInfo, writer, opCommand, locals, dataLocals, constants, dataSize);
          case ByteCode::ExtOpenIN:
+            // HOTFIX : currently a function called outside the native code must have up to 4 arguments
+            if (parameters.count() > 4)
+               throw SyntaxError(BASM_ARGUMENTS_TOO_MANY, tokenInfo.lineInfo);
             return compileOpenOp(tokenInfo, writer, opCommand, locals, dataLocals, constants, dataSize);
          case ByteCode::CloseN:
          case ByteCode::ExtCloseN:

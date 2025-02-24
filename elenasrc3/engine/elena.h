@@ -485,6 +485,22 @@ namespace elena_lang
       pos_t    stackReserved;
       pos_t    threadCounter;
       bool     classSymbolAutoLoad;
+      bool     withAlignedJump;
+
+      JITSettings() = default;
+      JITSettings(pos_t mgSize, pos_t ygSize, pos_t stackReserved, 
+         pos_t threadCounter, bool classSymbolAutoLoad, bool withAlignedJump)
+         : mgSize(mgSize), ygSize(ygSize), stackReserved(stackReserved), threadCounter(threadCounter), 
+           classSymbolAutoLoad(classSymbolAutoLoad), withAlignedJump(withAlignedJump)
+      {
+
+      }
+      JITSettings(pos_t mgSize, pos_t ygSize, pos_t stackReserved)
+         : mgSize(mgSize), ygSize(ygSize), stackReserved(stackReserved), threadCounter(1),
+         classSymbolAutoLoad(false), withAlignedJump(false)
+      {
+
+      }
    };
 
    // --- LabelHelperBase ---
@@ -549,7 +565,7 @@ namespace elena_lang
       virtual int getExtMessageSize() = 0;
 
       virtual void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) = 0;
-      //virtual void alignJumpAddress(MemoryWriter& writer) = 0;
+      virtual void alignJumpAddress(MemoryWriter& writer) = 0;
 
       virtual void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader,
          MemoryWriter& codeWriter, LabelHelperBase* lh) = 0;

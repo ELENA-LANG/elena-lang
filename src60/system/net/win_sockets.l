@@ -1,4 +1,66 @@
 import system;
+import system'calendar;
+import system'threading;
+
+public const int FD_SETSIZE      = 64;
+
+// --- TIMEVAL ---
+
+internal sealed struct TIMEVAL
+{
+   int tv_sec;
+   int tv_usec;
+
+   constructor(Timespan span)
+   {
+      if (span.isZero()) {
+         tv_sec := 0;
+         tv_usec := 0;
+      }
+      else {
+         SystemTime st := span.SystemTime;
+         
+         long nanosec := st.Value;
+         long secs := nanosec / 1000000000l;
+            
+         long rem := nanosec - secs * 1000000000l;
+         rem := rem / 1000l;
+                            
+         int tmp := IntConvertor.convert(secs);
+         tv_sec := tmp;
+            
+         tmp := IntConvertor.convert(rem);
+         tv_usec := tmp;
+      }
+   }
+}
+
+// --- FD_SET ---
+
+internal sealed struct FD_SET
+{
+   int    fd_count : prop;
+
+   handle fd_array[FD_SETSIZE];
+
+   constructor()
+   {
+      fd_count := 0;
+   }
+
+   bool isSet(handle h)
+   {
+      int len := fd_count;
+      for (int i := 0; i < len; i++) {
+         handle current := fd_array[i];
+         if (current == h) {
+            ^ true;
+         }
+      };
+
+      ^ false
+   }
+}
 
 // --- IN_ADDR ---
 
@@ -65,7 +127,7 @@ public sealed struct AddrInfoReader
       pointer ptr := default;
       int retVal := extern WS2_32.getaddrinfo(0, service, info, ref ptr);
 
-      ifnot(0 == retVal)
+      if:not(0 == retVal)
          { SocketException.new("getaddrinfo failed", retVal).raise() };
 
       paddrinfo := ptr;
@@ -77,7 +139,7 @@ public sealed struct AddrInfoReader
       pointer ptr := default;
       int retVal := extern WS2_32.getaddrinfo(node, service, info, ref ptr);
             
-      ifnot(0 == retVal)
+      if:not(0 == retVal)
          { SocketException.new("getaddrinfo failed", retVal).raise() };
             
       paddrinfo := ptr;
@@ -106,6 +168,10 @@ public sealed struct AddrInfoReader
       extern WS2_32.freeaddrinfo(prootinfo)
    }
 }
+
+// --- SelectMode ---
+
+public const struct SelectMode : enum<int>(SelectRead ::= 1, SelectWrite ::= 2, Error ::= 3);
 
 // --- Socket ---
 
@@ -182,14 +248,25 @@ public sealed const struct Socket
          { SocketException.new("Error at socket").raise() }
    }
 
-   int write(byte[] buffer)
+   Task connectAsync(string ip_address, int port)
+      = Task.run({ connect(ip_address, port); });
+
+   int send(byte[] buffer)
    {
       int len := buffer.Length;
 
-      ^ self.write(buffer, len, 0);
+      ^ self.send(buffer, len, 0);
    }
 
-   int write(byte[] buffer, int length, int flags)
+   Task<int> sendAsync(byte[] buffer)
+      = ::Task<int>.run(
+      {
+         int written := send(buffer);
+
+         ^ written
+      });
+
+   int send(byte[] buffer, int length, int flags)
    {
       int retVal := extern WS2_32.send(_handle, buffer, length, flags);
             
@@ -199,7 +276,15 @@ public sealed const struct Socket
       ^ retVal
    }
 
-   int read(byte[] buffer, int maxLength, int flags)
+   Task<int> sendAsync(byte[] buffer, int length, int flags)
+      = ::Task<int>.run(
+      {
+         int sent := send(buffer, length, flags);
+
+         ^ sent
+      });
+
+   int receive(byte[] buffer, int maxLength, int flags)
    {
       int retVal := extern WS2_32.recv(_handle,buffer,maxLength,flags);
         
@@ -213,12 +298,28 @@ public sealed const struct Socket
       ^ retVal
    }
 
+   Task<int> receiveAsync(byte[] buffer, int maxLength, int flags)
+      = ::Task<int>.run(
+      {
+         int received := receive(buffer, maxLength, flags);
+
+         ^ received
+      });
+
    Socket accept()
    {
       handle socket := extern WS2_32.accept(_handle, 0, 0);
             
       ^ socket
    }
+
+   Task<Socket> acceptAsync()
+      = ::Task<Socket>.run(
+      {
+         handle socket := extern WS2_32.accept(_handle, 0, 0);
+
+         ^ new Socket(socket)
+      });
 
    shutdown(int how)
    {
@@ -228,9 +329,10 @@ public sealed const struct Socket
          { SocketException.new("Error at socket").raise() }
    }
 
-   int iocommand(int command)
+   int iocommand(int command, int mode)
    {
-      int retVal := extern WS2_32.ioctlsocket(_handle, command, out int parameter);
+      int parameter := mode;
+      int retVal := extern WS2_32.ioctlsocket(_handle, command, ref parameter);
             
       if (retVal == SOCKET_ERROR)
          { SocketException.new("Error at socket").raise() };
@@ -247,6 +349,46 @@ public sealed const struct Socket
             
       if (retVal == SOCKET_ERROR)
          { SocketException.new("Error at socket").raise() }
+   }
+
+   bool isConnected()
+   {      
+      int size := 4;
+
+      int retVal := extern WS2_32.getsockopt(
+                        _handle, SOL_SOCKET, SO_ERROR, out int errCode, ref size);
+      
+      ^ (retVal == 0 && errCode == 0);
+   }
+
+   int available()
+   {
+      int value := 0;
+      int retVal := extern WS2_32.ioctlsocket(_handle, FIONREAD, ref value);
+
+      if (retVal == SOCKET_ERROR)
+         { SocketException.new("Error at socket").raise() };
+
+      ^ value
+   }
+
+   bool poll(Timespan timeout, SelectMode mode)
+   {
+      TIMEVAL timeVal := timeout;
+      FD_SET fd_set := default;
+
+      int retVal := 0;
+      if (mode == SelectMode.SelectRead) {
+         retVal := extern WS2_32.select(0, fd_set, 0, 0, timeVal);
+      }
+      else if (mode == SelectMode.SelectWrite) {
+         retVal := extern WS2_32.select(0, 0, fd_set, 0, timeVal);
+      }
+      else if (mode == SelectMode.Error) {
+         retVal := extern WS2_32.select(0, 0, 0, fd_set, timeVal);
+      };
+
+      ^ fd_set.isSet(_handle);
    }
 
    close()

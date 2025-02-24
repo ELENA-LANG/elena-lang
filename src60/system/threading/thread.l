@@ -117,7 +117,7 @@ public sealed class Thread
       if (handle.isNil())
          InvalidOperationException.raise();
 
-      ifnot (_startArg.isNil())
+      if:not (_startArg.isNil())
          InvalidOperationException.raise();
 
       _handle.start();

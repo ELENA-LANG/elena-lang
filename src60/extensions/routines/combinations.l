@@ -32,7 +32,7 @@ singleton sequentialNext : BaseStrategy
          {
             auto it := cast Indexer(indexer); 
                     
-            ifnot(it.appendIndex(1).Available)
+            if:not(it.appendIndex(1).Available)
                { it.Index := 0; ^ false };
                         
             ^ true

@@ -3,43 +3,73 @@ In development:
 ------         
 
 [development]
-  ### EPIC: elena 6.5 ###
+  ### EPIC: elena 6.6 ###
 
-  === Iteration 34 (21.10) ===
+  === Iteration 36 (13.03) ===
+  --------------------------------------
+  * aarch64 : fix exceptionTest, methodNotFoundTest
+  --------------------------------------
+  * fix extopen / extclose
+
+  === Iteration 37 ===
   --------------------------------------
   dev: 
       - upndown (connector)
       - #496
       - #622
+      * #34 : web api
+      - http client (https get, post, put, patch, delete, head, options, trace)
   gen:
       - lpad : generate a code based on a record  
   maint:
+      - #702
       - unit tests : bt optimization 
       - test binary file operations
       - api refactoring : all symbols must start with a capital letter
       - redesign winforms
       - api : add descriptions 
       - threading samples must be included into release files
-      - ide : windows / linux
+      - ide : windows
       - review pi performance (must < 6)
+      - linux editor - open / close / save / exit
+      - test binary file reader / writer
+      - matrix sample : review the code, it should be possible to use the lambda function without specifying the exact output type
+      - implement ExtensionMessage.equal
+      - support subexpression for "?." and "\." (e.g. object.__getClass()\.__dto_properties())
+      - support function call with double colon (e.g. ::printing() - is always a function)
+      - redesign switch statement : it should be possible to use as an expression as well (so we cannot use => anymore : e.g. 
+        console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  ) console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third")
+      - warn if typecasting method returns itself, it leads to infinite call
+
   port:
   tools: 
       - #658 : connect with ldbg from VSCode  
-  prom: posting weekly
+  prom: bi-posting weekly
   --------------------------------------
-  * http client
-  * test linix versions
+  * ide : linux - open, edit, save, close
+  * ide : linux - show the file
+  * fixing #283
+  * fix chat server - it is blocked
+  * x86-64 : mta - test net examples for mta
+  * rosetta code : moving to 6.5
+  * http client : get (quick & dirty)
   * test all x86 examples (net)
-  * x86-64 : mta - main sample sandbox2
-  * x86-64 mta - sandbox2 : fix GC issue
-  * review if using xnop impoves performance (pi & anagram samples)
-  * validate bsredirect (on several examples) - if it is better with nop or not
+  * redesign chat sample : send, leave
+  * IDE : fix syntax highlighting (see system'net:win_common.l)
+  * redesign chat sample : connect
+  * user defined type alias
+  * declare and use alias with meta operations
+  * it must be possible to declare them inside the module; it must be possible to import module containing
+    the custom aliases
+  * type alias
+  * fix pi sample for aarch64
   --------------------------------------
-  * new opcode xnop - if the jump alignment optimization is on, the follow command is alligned to 16bit offset
+  * fix pi sample for ppc64le
+  --------------------------------------
+  * ppc64 : ln
+  * ppc64 : exp
 
-  ### EPIC: elena 6.6 ###
-
-  === Iteration 35 ===
+  === Iteration 38 ===
   --------------------------------------
   dev: 
   gen:
@@ -48,13 +78,28 @@ In development:
   prom:
   --------------------------------------
   --------------------------------------
+  --------------------------------------
 
-  === Iteration 36 ===
+  === Iteration 39 ===
   --------------------------------------
   dev: 
   gen:
   maint:
   port:
   prom:
+  --------------------------------------
+  --------------------------------------
+  --------------------------------------
+
+  ### EPIC: elena 6.7 ###
+
+  === Iteration 40 ===
+  --------------------------------------
+  dev: 
+  gen:
+  maint:
+  port:
+  prom:
+  --------------------------------------
   --------------------------------------
   --------------------------------------

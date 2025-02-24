@@ -317,6 +317,8 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
 
       loadForwards(config, root, FORWARD_CATEGORY);
 
+      loadLexicals(config, root, LEXICAL_CATEGORY);
+
       loadKeyCollection(config, root, EXTERNAL_CATEGORY,
          ProjectOption::Externals, ProjectOption::External, nullptr);
       loadKeyCollection(config, root, WINAPI_CATEGORY,
@@ -328,6 +330,7 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
 
       loadBoolSetting(config, root, AUTOEXTENSION_PATH, ProjectOption::ModuleExtensionAutoLoad);
       loadBoolSetting(config, root, STRICT_TYPE_ENFORCING_PATH, ProjectOption::StrictTypeEnforcing);
+      loadBoolSetting(config, root, JUMP_ALIGNMENT_PATH, ProjectOption::WithJumpAlignment);
 
       loadParserTargets(config, root, PARSER_TARGET_CATEGORY);
 
@@ -340,7 +343,6 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
       copySetting(config, root, DEBUGMODE_PATH, ProjectOption::DebugMode);
       copySetting(config, root, THREAD_COUNTER, ProjectOption::ThreadCounter);
 
-      copySetting(config, root, MODULE_PROLOG, ProjectOption::ModuleProlog, true);
       copySetting(config, root, FILE_PROLOG, ProjectOption::Prolog, true);
       copySetting(config, root, FILE_EPILOG, ProjectOption::Epilog, true);
    }

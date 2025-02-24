@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPILER_H
@@ -1312,6 +1312,9 @@ namespace elena_lang
 
          bool isDirectMethodCall(SyntaxNode& node);
 
+         bool resolveAndValidate(ObjectInfo target, ref_t targetRef, mssg_t message,
+            CheckMethodResult& result, bool weakCall, bool allowPrivateCall);
+
          bool checkValidity(ObjectInfo target, CheckMethodResult& result, bool allowPrivateCall);
          bool checkValidity(ObjectInfo target, MessageResolution& resolution, bool allowPrivateCall);
 
@@ -1413,8 +1416,8 @@ namespace elena_lang
             ArgumentsInfo* updatedOuterArgs);
 
          void compileYieldOperation(SyntaxNode node);
-         void compileAsyncOperation(SyntaxNode node, bool valueExpected);
-         void compileSwitchOperation(SyntaxNode node);
+         ObjectInfo compileAsyncOperation(SyntaxNode node, ref_t targetRef, bool valueExpected, bool dynamicRequired, bool retMode);
+         void compileSwitchOperation(SyntaxNode node, bool withoutDebugInfo);
 
          bool compileAssigningOp(ObjectInfo target, ObjectInfo source, bool& nillableOp);
 
@@ -1519,8 +1522,6 @@ namespace elena_lang
       bool                   _strictTypeEnforcing;
 
       void addTypeInfo(Scope& scope, SyntaxNode node, SyntaxKey key, TypeInfo typeInfo);
-
-      void loadMetaData(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t name);
 
       void importExtensions(NamespaceScope& ns, ustr_t importedNs);
       void loadExtensions(NamespaceScope& ns, bool internalOne);

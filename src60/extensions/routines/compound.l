@@ -82,7 +82,7 @@ public class CompoundEnumerator : Enumerator
          int len := enumerators.Length;
             
          index += 1;
-         ifnot (index < len)
+         if:not (index < len)
          {
             ^ false
          }

@@ -72,14 +72,14 @@ public class SkipFilter : Enumerator
     
    bool next()
    {
-      ifnot (_skipped)
+      if:not (_skipped)
       {
          _skipped := true;
             
          int i := _counter;
          while (i > 0)            
          {
-            ifnot (_enumerator.next())
+            if:not (_enumerator.next())
             {
                ^ false
             };
@@ -336,7 +336,7 @@ public class PatternFilter2 : Enumerator
    {
       if (nil == previous)
       {
-         ifnot (enumerator.next())
+         if:not (enumerator.next())
             { ^ false };
             
          previous := *enumerator;
@@ -390,12 +390,12 @@ public class PatternFilter3 : Enumerator
    {
       if (nil == previous)
       {
-         ifnot (enumerator.next())
+         if:not (enumerator.next())
             { ^ false };
             
          beforePrev := *enumerator;
     
-         ifnot (enumerator.next())
+         if:not (enumerator.next())
             { ^ false };
             
          previous := *enumerator
@@ -445,17 +445,17 @@ public class PatternFilter4 : Enumerator
    {
       if(nil == previous)
       {
-         ifnot(enumerator.next())
+         if:not(enumerator.next())
             { ^ false };
             
          before2Prev := *enumerator;
             
-         ifnot(enumerator.next())
+         if:not(enumerator.next())
             { ^ false };
             
          beforePrev := *enumerator;
     
-         ifnot(enumerator.next())
+         if:not(enumerator.next())
             { ^ false };
             
          previous := *enumerator
@@ -507,22 +507,22 @@ public class PatternFilter5 : Enumerator
    {
       if (nil == previous)
       {
-         ifnot(enumerator.next())
+         if:not(enumerator.next())
             { ^ false };
             
          before3Prev := *enumerator;
             
-         ifnot(enumerator.next())
+         if:not(enumerator.next())
             { ^ false };
             
          before2Prev := *enumerator;
             
-         ifnot(enumerator.next())
+         if:not(enumerator.next())
             { ^ false };
             
          beforePrev := *enumerator;
     
-         ifnot(enumerator.next())
+         if:not(enumerator.next())
             { ^ false };
             
          previous := *enumerator;
@@ -576,27 +576,27 @@ public class PatternFilter6 : Enumerator
    {
       if (nil == previous)
       {
-         ifnot(enumerator.next())
+         if:not(enumerator.next())
             { ^ false };
             
          before4Prev := *enumerator;
             
-         ifnot(enumerator.next())
+         if:not(enumerator.next())
             { ^ false };
             
          before3Prev := *enumerator;
             
-         ifnot(enumerator.next())
+         if:not(enumerator.next())
             { ^ false };
             
          before2Prev := *enumerator;
             
-         ifnot(enumerator.next())
+         if:not(enumerator.next())
             { ^ false };
             
          beforePrev := *enumerator;
     
-         ifnot(enumerator.next())
+         if:not(enumerator.next())
             { ^ false };
             
          previous := *enumerator;

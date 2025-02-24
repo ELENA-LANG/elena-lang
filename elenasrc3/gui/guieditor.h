@@ -70,7 +70,7 @@ namespace elena_lang
       FindModel()
          : searchHistory(nullptr), matchCase(false), wholeWord(false)
       {
-         
+
       }
    };
 
@@ -140,7 +140,7 @@ namespace elena_lang
    {
    public:
       virtual void newDocument(TextViewModelBase* model, ustr_t name, bool included) = 0;
-      virtual bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
+      virtual bool openDocument(TextViewModelBase* model, ustr_t name, path_t path,
          FileEncoding encoding, bool included) = 0;
 
       virtual bool selectDocument(TextViewModelBase* model, int index) = 0;
@@ -149,6 +149,7 @@ namespace elena_lang
 
       virtual bool insertNewLine(TextViewModelBase* model) = 0;
       virtual bool insertChar(TextViewModelBase* model, text_c ch) = 0;
+      virtual bool insertLine(TextViewModelBase* model, text_t s, size_t length) = 0;
       virtual bool eraseChar(TextViewModelBase* model, bool moveback) = 0;
 
       virtual void setOverwriteMode(TextViewModelBase* model) = 0;

@@ -100,7 +100,7 @@ extension zhangsuenOp : Matrix<CharValue>
                 var nbr := nbrs[group[i][j]];
  
                 if (self[r + nbr[1]][c + nbr[0]] == $32)
-                    { count := count + 1; $break; };
+                    { count := count + 1; :break; };
             }
         };
  

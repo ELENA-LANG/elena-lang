@@ -140,10 +140,10 @@ namespace math
          self.readLengthsTo(out int n, out int m);
          b.readLengthsTo(out int i, out int j);
             
-         ifnot(n == i)
+         if:not(n == i)
             { MatrixException.new("Two matrices must have an equal number of rows and columns to be added").raise() };
             
-         ifnot(m == j)
+         if:not(m == j)
             { MatrixException.new("Two matrices must have an equal number of rows and columns to be added").raise() };
                 
          auto r := RealMatrix.allocate(n, m);
@@ -166,10 +166,10 @@ namespace math
          self.readLengthsTo(out int n, out int m);
          b.readLengthsTo(out int i, out int j);
             
-         ifnot(n == i)
+         if:not(n == i)
             { MatrixException.new("Two matrices must have an equal number of rows and columns to be added").raise() };
             
-         ifnot(m == j)
+         if:not(m == j)
             { MatrixException.new("Two matrices must have an equal number of rows and columns to be added").raise() };
                 
          auto r := RealMatrix.allocate(n, m);
@@ -192,7 +192,7 @@ namespace math
          self.readLengthsTo(out int n, out int j);
          b.readLengthsTo(out int m, out int p);
                     
-         ifnot(j == m)
+         if:not(j == m)
             { MatrixException.new("Invalid argument").raise() };
     
          auto r := RealMatrix.allocate(n, p);
@@ -223,7 +223,7 @@ namespace math
          real deter := 1.0r;
          real v := 0.0r;
     
-         ifnot(even)
+         if:not(even)
             { deter := deter * (-1.0r) };
             
          a.readLengthsTo(out int n, out int m);

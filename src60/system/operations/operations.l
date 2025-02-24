@@ -21,7 +21,7 @@ public template if::else<expr>(truePart,falsePart) : __included(statements)
 
 // --- ifnot ---
 
-public template ifnot<expr>(falsePart) : __included(statements)
+public template if::not<expr>(falsePart) : __included(statements)
 {
    cast bool(expr) 
      ! { falsePart }
@@ -29,16 +29,16 @@ public template ifnot<expr>(falsePart) : __included(statements)
 
 // --- ifnot:else ---
 
-public template ifnot::else<expr>(falsePart,truePart) : __included(statements)
+public template if::not::else<expr>(falsePart,truePart) : __included(statements)
 {
    cast bool(expr) 
      ? { truePart } 
      ! { falsePart }
 }
 
-// --- ifnil ---
+// --- if:nil ---
 
-public template ifNil<expr>(truePart) : __included(statements)
+public template if::nil<expr>(truePart) : __included(statements)
 {
    cast bool(expr == nil) 
      ? { truePart }
@@ -46,16 +46,16 @@ public template ifNil<expr>(truePart) : __included(statements)
 
 // --- if:else ---
 
-public template ifNil::else<expr>(truePart,falsePart) : __included(statements)
+public template if::nil::else<expr>(truePart,falsePart) : __included(statements)
 {
    cast bool(expr == nil)
      ? { truePart } 
      ! { falsePart }
 }
 
-// --- ifnot ---
+// --- if:not:nil ---
 
-public template ifnotNil<expr>(falsePart) : __included(statements)
+public template if::not::nil<expr>(falsePart) : __included(statements)
 {
    cast bool(expr == nil) 
      ! { falsePart }
@@ -63,17 +63,12 @@ public template ifnotNil<expr>(falsePart) : __included(statements)
 
 // --- ifnot:else ---
 
-public template ifnotNil::else<expr>(falsePart,truePart) : __included(statements)
+public template if::not::nil::else<expr>(falsePart,truePart) : __included(statements)
 {
    cast bool(expr == nil) 
      ? { truePart } 
      ! { falsePart }
 }
-
-
-
-
-
 
 // --- while ---
 
@@ -240,3 +235,46 @@ public template operator::ifnil<identifier>(expr) : __included(statements)
       ? { expr } 
       ! { nil };
 }
+
+// :break
+
+public template operator::break() : __included(statements)
+{
+    $break;
+}
+
+// :continue
+
+public template operator::continue() : __included(statements)
+{
+    $continue;
+}
+
+// :yield
+
+public template operator::yield(expr) : __included(statements)
+{
+    $yield expr;
+}
+
+// :await
+
+public template operator::await(expr) : __included(statements)
+    = $await expr;
+
+// :lazy
+
+public template operator::lazy(expr) : __included(statements)
+    = $lazy expr;
+
+// shl:
+
+public template operator::shl(expr, arg) : __included(statements)
+   = expr $shl arg;
+
+// shr:
+
+public template operator::shr(expr, arg) : __included(statements)
+   = expr $shr arg;
+
+

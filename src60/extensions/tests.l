@@ -10,7 +10,7 @@ public singleton Assert
 {
    ifEqual(object expr, object val)
    {
-      ifnot(val == expr)
+      if:not(val == expr)
       {
          AssertException.raise("Assertion failed: expected '{0}' was '{1}'".interpolate(val, expr))
       }
@@ -42,7 +42,7 @@ public singleton Assert
 
    ifTrue(b)
    {
-      ifnot(b)
+      if:not(b)
       {
          AssertException.raise("Assertion failed")
       }
@@ -58,7 +58,7 @@ public singleton Assert
 
    ifNil(b)
    {
-      ifnot(nil == b)
+      if:not(nil == b)
       {
          AssertException.raise("Assertion failed")
       }

@@ -11,6 +11,16 @@
 
 #include "jitcompiler.h"
 
+#if defined(__x86_64__)
+
+#define EXT_OFFSET 64
+
+#else
+
+#define EXT_OFFSET 104
+
+#endif
+
 namespace elena_lang
 {
    // --- X86_64JITCompiler --
@@ -34,13 +44,17 @@ namespace elena_lang
       int calcFrameOffset(int argument, bool extMode) override
       {
          // NOTE : for the external frame we have to store all nonvolatile registers (rsi, rdi, rbx, r12, r13, r14, r15)
-         return (extMode ? 104 : 8) + (argument > 0 ? align(argument + 16, 16) : 0);
+         return (extMode ? EXT_OFFSET : 8) + (argument > 0 ? align(argument + 16, 16) : 0);
       }
 
       void writeImm9(MemoryWriter* writer, int value, int type) override;
       void writeImm12(MemoryWriter* writer, int value, int type) override;
 
       void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) override;
+      void alignJumpAddress(MemoryWriter& writer) override
+      {
+         // must be implemented
+      }
 
       // NOTE that LabelHelperBase argument should be overridden inside the CPU compiler
       void compileProcedure(ReferenceHelperBase* helper, MemoryReader& bcReader, 

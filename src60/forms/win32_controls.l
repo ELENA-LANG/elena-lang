@@ -37,7 +37,7 @@ public abstract class BaseWinControl : BaseControl
 
    internal onCreate()
    {
-      ifnot(_enabled )
+      if:not(_enabled )
          { _handle.setEnabled(0) };
    }
 
@@ -59,7 +59,7 @@ public abstract class BaseWinControl : BaseControl
    {
       _caption := s;
             
-      ifnot(nil == _handle)
+      if:not(nil == _handle)
       {
          _handle.setCaption(cast wide(s))
       }
@@ -69,7 +69,7 @@ public abstract class BaseWinControl : BaseControl
    {
       _caption := s;
             
-      ifnot(nil == _handle)
+      if:not(nil == _handle)
       {
          _handle.setCaption(s)
       }
@@ -82,7 +82,7 @@ public abstract class BaseWinControl : BaseControl
 
    get string Caption()
    {
-      ifnot(nil == _handle)
+      if:not(nil == _handle)
       {
          _caption := _handle.getCaption()
       };
@@ -96,7 +96,7 @@ public abstract class BaseWinControl : BaseControl
       {
          super.Visible := v;
             
-         ifnot(nil == _handle)
+         if:not(nil == _handle)
          {
             _handle.setVisible(_visible ? 5 : 0);
          }
@@ -109,7 +109,7 @@ public abstract class BaseWinControl : BaseControl
       {
          super.Enabled := value;
             
-         ifnot(nil == _handle)
+         if:not(nil == _handle)
          {
             int val := _enabled ? -1 : 0;
                 
@@ -123,7 +123,7 @@ public abstract class BaseWinControl : BaseControl
    {
       super.setRegion(x, y, width, height);
         
-      ifnot(nil == _handle)
+      if:not(nil == _handle)
       {
          _handle.setPosition(x, y, 0, 0, SWP_NOSIZE);
          _handle.setPosition(0, 0, width, height, SWP_NOMOVE)
@@ -136,7 +136,7 @@ public abstract class BaseWinControl : BaseControl
          { ^ nil };
             
       if(_handle == handle)
-         { ^ weak self as:IControl };
+         { ^ weak self as::IControl };
             
       ^ nil 
    }
@@ -173,7 +173,7 @@ public abstract class BaseWinContainer : BaseWinControl
    IControl retrieve(Handle handle)
    {
       if(_handle == handle)
-            { ^ weak self as:IControl };
+            { ^ weak self as::IControl };
 
       int len := _controls.Length;
       IControl current;
@@ -435,7 +435,7 @@ public closed class RadioButton : BaseButton, interface<IControl>
    {
       get()
       {
-         ifnot(nil == _handle)
+         if:not(nil == _handle)
             { _checked := _handle.isChecked() };
                 
          ^ _checked
@@ -445,7 +445,7 @@ public closed class RadioButton : BaseButton, interface<IControl>
       {
          _checked := v;
             
-         ifnot(nil == _handle)
+         if:not(nil == _handle)
          {
             _handle.setChecked(v ? BST_CHECKED : BST_UNCHECKED)
          }
@@ -619,7 +619,7 @@ public sealed class Imagebox : Paintbox
    {
       WindowHandle hwnd := handle;
 
-      ifnot(nil == _image)
+      if:not(nil == _image)
       {
          _image.free();
          _imageDC.free()
@@ -687,14 +687,14 @@ public abstract class BasePanel : BaseWinContainer
    {
       control.Parent := self;
 
-      _controls.append(weak control as:IControl)
+      _controls.append(weak control as::IControl)
    }
 
    internal appendControlInternal(ImageList control)
    {
       control.Parent := self;
 
-      _controls.append(weak control as:IControl)
+      _controls.append(weak control as::IControl)
    }
     
    int Width
@@ -890,7 +890,7 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
         
       set(n)
       {
-         ifnot(-1 == _selected)
+         if:not(-1 == _selected)
             { self.setChecked(false) };
             
          _selected := n;

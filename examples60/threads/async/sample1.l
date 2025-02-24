@@ -4,14 +4,14 @@ class Sample1
 {
    async static Task wait()
    {
-      $await Task.sleep(10000);
+      :await Task.sleep(10000);
       console.writeLine("10 Seconds wait Completed\n");
    }
 
    async static Task someMethod()
    {
       console.writeLine("Some Method Started......");
-      $await wait();
+      :await wait();
       console.writeLine("Some Method End");      
    }
 

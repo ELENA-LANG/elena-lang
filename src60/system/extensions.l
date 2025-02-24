@@ -1099,7 +1099,7 @@ public extension stringOp : String
       {
          current := self[index];
             
-         ifnot(current == ch)
+         if:not(current == ch)
          { 
             if (index == 0)
             { 
@@ -1132,7 +1132,7 @@ public extension stringOp : String
       {
          current := self[index];
             
-         ifnot (current == ch)
+         if:not (current == ch)
             { ^ self.delete(prev,len - prev) };
             
          prev := index;
@@ -1243,10 +1243,10 @@ public extension charOp : CharValue
       if (ch >= 61h && ch <= 7Ah)
          { ^ true };
         
-      if (ch >= 3ACh && ch <= 3CEh)
+      if (ch >= 370h && ch <= 3FBh)
          { ^ true };
             
-      if (ch >= 400h && ch <= 42Fh)
+      if (ch >= 400h && ch <= 4FFh)
          { ^ true };
             
       ^ false
@@ -1385,7 +1385,7 @@ public extension wideOp : WideString
       {
          current := self[index];
             
-         ifnot(current == ch)
+         if:not(current == ch)
          { 
             if (index == 0)
             { 
@@ -1418,7 +1418,7 @@ public extension wideOp : WideString
       {
          current := self[index];
             
-         ifnot (current == ch)
+         if:not (current == ch)
             { ^ self.delete(prev,len - prev) };
             
          prev := index;
