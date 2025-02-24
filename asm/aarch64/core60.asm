@@ -2398,6 +2398,9 @@ inline %0CAh
   mov     sp, x29
   ldp     x29, x30, [sp], #16
 
+  add     x29, x29, #16
+  mov     sp, x29
+
   ldp     x29, x30, [sp], #16 
   ldp     x27, x28, [sp], #16 
   ldp     x25, x26, [sp], #16 
@@ -2412,6 +2415,9 @@ inline %1CAh
 
   mov     sp, x29
   ldp     x29, x30, [sp], #16
+
+  add     x29, x29, #16
+  mov     sp, x29
 
   ldp     x29, x30, [sp], #16 
   ldp     x27, x28, [sp], #16 
