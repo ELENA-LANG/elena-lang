@@ -2190,7 +2190,7 @@ inline %0CAh
 
   addi  r31, r31, __n16_1  // ; skip unframed stack
   mr    r1, r31            // ; restore stack pointer
-  addi  r1, r1, 16
+  addi  r1, r1, 32
 
   ld   r31, 168(r1)
   ld   r30, 160(r1)
@@ -2207,7 +2207,7 @@ end
 inline %1CAh
 
   mr    r1, r31              // ; restore stack pointer
-  addi  r1, r1, 16
+  addi  r1, r1, 32
 
   ld   r31, 168(r1)
   ld   r30, 160(r1)
