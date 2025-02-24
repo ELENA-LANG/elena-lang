@@ -2188,8 +2188,8 @@ end
 // ; extclosen
 inline %0CAh
 
-  addi    r31, r31, __n16_1  // ; skip unframed stack
-  mr      r1, r31              // ; restore stack pointer
+  addi  r31, r31, __n16_1  // ; skip unframed stack
+  mr    r1, r31            // ; restore stack pointer
   addi  r1, r1, 16
 
   ld   r31, 168(r1)
@@ -3795,6 +3795,11 @@ inline %7F2h
   addi  r1, r1, -16       // ; allocate raw stack
   mr    r31, r1           // ; set frame pointer
 
+  addi  r1, r1, -10h      // ; allocate stack
+
+  std     r31, -10h(r1)   // ; save frame pointer
+  mr      r31, r1         // ; set frame pointer
+
 end 
 
 // ; extopenin 1, 0
@@ -3832,7 +3837,7 @@ inline %8F2h
 
   li      r16, 0
   std     r31, -10h(r1)   // ; save frame pointer
-  addi    r31, r1, -8     // ; set frame pointer
+  addi    r31, r1, -10h   // ; set frame pointer
   std     r16, -18h(r1)  
   std     r16, -20h(r1)  
 
@@ -3873,7 +3878,7 @@ inline %9F2h
 
   li      r16, 0
   std     r31, -10h(r1)   // ; save frame pointer
-  addi    r31, r1, -8     // ; set frame pointer
+  addi    r31, r1, -10h   // ; set frame pointer
   std     r16, -18h(r1)  
   std     r16, -20h(r1)  
 
@@ -3914,7 +3919,7 @@ inline %0AF2h
 
   li      r16, 0
   std     r31, -10h(r1)   // ; save frame pointer
-  addi    r31, r1, -8     // ; set frame pointer
+  addi    r31, r1, -10h   // ; set frame pointer
   std     r16, -18h(r1)  
   std     r16, -20h(r1)  
   std     r16, -28h(r1)  // ; save return address
@@ -3957,7 +3962,7 @@ inline %0BF2h
 
   li      r16, 0
   std     r31, -10h(r1)   // ; save frame pointer
-  addi    r31, r1, -8     // ; set frame pointer
+  addi    r31, r1, -10h   // ; set frame pointer
   std     r16, -18h(r1)  
   std     r16, -20h(r1)  
   std     r16, -28h(r1)  // ; save return address
