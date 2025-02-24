@@ -8,16 +8,11 @@ In development:
   === Iteration 36 (13.03) ===
   --------------------------------------
   --------------------------------------
-  * fix #704
   * fix pi sample for aarch64
   * test all samples linux aarch64
+  --------------------------------------
   * fix pi sample for ppc64le
-  * test all samples linux ppc64le
   --------------------------------------
-  * fix ppc64 :exceptionTest, methodNotFoundTest
-  --------------------------------------
-  * fix ppc64le : extopen / extclose (save required registers)
-  * fix exception test
 
   === Iteration 37 ===
   --------------------------------------

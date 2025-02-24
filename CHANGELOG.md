@@ -17,6 +17,7 @@
   - [FIXED] linux x86-64 : debug module structure
   - [FIXED] Linux x86-64 : FPU operations
   - [FIXED] ppc64le extopen / extclose opcode
+  - [FIXED] #704 : Porting to FreeBSD/PowerPC64
 
 - API
   - [ADDED] net'http'HttpClient, net'http'Uri
