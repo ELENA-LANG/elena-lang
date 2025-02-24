@@ -14,7 +14,7 @@ In development:
   * fix pi sample for ppc64le
   * test all samples linux ppc64le
   --------------------------------------
-  * fix ppc64 :exception test
+  * fix ppc64 :exceptionTest, methodNotFoundTest
   --------------------------------------
   * fix ppc64le : extopen / extclose (save required registers)
   * fix exception test

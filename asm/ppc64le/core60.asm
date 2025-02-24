@@ -3877,10 +3877,10 @@ inline %9F2h
   addi    r1, r1, -20h    // ; allocate stack
 
   li      r16, 0
-  std     r31, -10h(r1)   // ; save frame pointer
-  addi    r31, r1, -10h   // ; set frame pointer
-  std     r16, -18h(r1)  
-  std     r16, -20h(r1)  
+  std     r31, 10h(r1)    // ; save frame pointer
+  addi    r31, r1, 10h    // ; set frame pointer
+  std     r16, 8(r1)  
+  std     r16, 0(r1)  
 
 end 
 
