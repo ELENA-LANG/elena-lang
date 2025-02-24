@@ -142,9 +142,13 @@ void elena_lang::PPC64compileOpenIN(JITCompilerScope* scope)
 
 void elena_lang::PPC64compileExtOpenIN(JITCompilerScope* scope)
 {
+   printf("PPC64compileOpenIN %x\n", scope->command.arg1);
+
    // NOTE : stack should be aligned to 16 bytes
    scope->command.arg1 = align(scope->command.arg1, 2);
    scope->command.arg2 = align(scope->command.arg2, 16);
+
+   printf("PPC64compileOpenIN %x\n", scope->command.arg1);
 
    elena_lang::compileExtOpen(scope);
 }
