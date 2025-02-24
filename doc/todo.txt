@@ -7,11 +7,7 @@ In development:
 
   === Iteration 36 (13.03) ===
   --------------------------------------
-  --------------------------------------
-  * fix pi sample for aarch64
   * test all samples linux aarch64
-  --------------------------------------
-  * fix pi sample for ppc64le
   --------------------------------------
 
   === Iteration 37 ===
@@ -64,9 +60,13 @@ In development:
   * declare and use alias with meta operations
   * it must be possible to declare them inside the module; it must be possible to import module containing
     the custom aliases
-  * aliases and predefined can be loaded in compile-time
+  * type alias
+  * fix pi sample for aarch64
   --------------------------------------
+  * fix pi sample for ppc64le
   --------------------------------------
+  * ppc64 : ln
+  * ppc64 : exp
 
   === Iteration 38 ===
   --------------------------------------
