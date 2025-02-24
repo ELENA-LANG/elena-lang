@@ -2197,9 +2197,11 @@ inline %0CAh
   ld   r29, 152(r1)
   ld   r28, 144(r1)
   ld   r27, 136(r1)
-
   ld   r0,  128(r1)
+
   mtlr r0
+
+  addi  r1, r1, 176
   
 end
 
@@ -2214,9 +2216,11 @@ inline %1CAh
   ld   r29, 152(r1)
   ld   r28, 144(r1)
   ld   r27, 136(r1)
-
   ld   r0,  128(r1)
+
   mtlr r0
+
+  addi  r1, r1, 176
   
 end
 
