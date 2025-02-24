@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class implementation.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //                                             (C)2024, by ELENA-LANG Org
 //---------------------------------------------------------------------------
 
@@ -1650,6 +1650,7 @@ bool CompilerLogic :: readTypeMap(ModuleBase* extModule, MemoryBase* section, Re
             else reference = ImportHelper::importReference(extModule, reference, scope->module);
          }
 
+         map.exclude(*key);
          map.add(*key, reference);
       }
       else return false;
@@ -3004,25 +3005,6 @@ bool CompilerLogic :: loadMetaData(ModuleScopeBase* moduleScope, ustr_t aliasNam
    }
 
    return false;
-}
-
-bool CompilerLogic :: clearMetaData(ModuleScopeBase* moduleScope, ustr_t name)
-{
-   if (name.compare(PREDEFINED_MAP)) {
-      moduleScope->predefined.clear();
-   }
-   else if (name.compare(ATTRIBUTES_MAP)) {
-      moduleScope->attributes.clear();
-   }
-   else if (name.compare(OPERATION_MAP)) {
-      moduleScope->operations.clear();
-   }
-   else if (name.compare(ALIASES_MAP)) {
-      moduleScope->aliases.clear();
-   }
-   else return false;
-
-   return true;
 }
 
 ref_t CompilerLogic :: retrievePrimitiveType(ModuleScopeBase& scope, ref_t reference)

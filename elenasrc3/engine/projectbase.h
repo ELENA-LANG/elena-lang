@@ -3,7 +3,7 @@
 //
 //		This file contains the project base class declaration
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PROJECTBASE_H
@@ -75,7 +75,6 @@ namespace elena_lang
       ConditionalBoxing,
       EvaluateOp,
 
-      ModuleProlog,
       Prolog,
       Epilog,
 
@@ -178,7 +177,6 @@ namespace elena_lang
    struct ProjectEnvironment
    {
       PathString       projectPath;
-      IdentifierString moduleProlog;
       IdentifierString fileProlog;
       IdentifierString fileEpilog;
 
@@ -191,6 +189,8 @@ namespace elena_lang
       }
    };
 
+   typedef Map<ustr_t, ustr_t, allocUStr, freeUStr, freeUStr> LexicalMap;
+
    class ProjectBase : public ForwardResolverBase
    {
    public:
@@ -199,6 +199,8 @@ namespace elena_lang
       virtual FileIteratorBase* allocPrimitiveIterator() = 0;
       virtual FileIteratorBase* allocPackageIterator() = 0;
       virtual CategoryIteratorBase* allocTargetIterator() = 0;
+
+      virtual LexicalMap::Iterator getLexicalIterator() = 0;
 
       virtual path_t PathSetting(ProjectOption option) const = 0;
       virtual path_t PathSetting(ProjectOption option, ustr_t key) const = 0;
@@ -246,7 +248,6 @@ namespace elena_lang
       virtual void initEnvironment(ProjectEnvironment& env)
       {
          env.projectPath.copy(PathSetting(ProjectOption::ProjectPath));
-         env.moduleProlog.copy(StringSetting(ProjectOption::ModuleProlog));
          env.fileProlog.copy(StringSetting(ProjectOption::Prolog));
          env.fileEpilog.copy(StringSetting(ProjectOption::Epilog));
 

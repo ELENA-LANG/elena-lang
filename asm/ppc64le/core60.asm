@@ -2188,27 +2188,39 @@ end
 // ; extclosen
 inline %0CAh
 
-  addi    r31, r31, __n16_1  // ; skip unframed stack
-  mr      r1, r31              // ; restore stack pointer
+  addi  r31, r31, __n16_1  // ; skip unframed stack
+  mr    r1, r31            // ; restore stack pointer
+  addi  r1, r1, 32
 
-  ld      r31, 00h(r1)         // ; restore frame pointer
-  ld      r0,  08h(r1)         // ; restore  return address
+  ld   r31, 168(r1)
+  ld   r30, 160(r1)
+  ld   r29, 152(r1)
+  ld   r28, 144(r1)
+  ld   r27, 136(r1)
+  ld   r0,  128(r1)
 
-  mtlr    r0
-  addi    r1, r1, 10h          // ; free stack
+  mtlr r0
+
+  addi  r1, r1, 176
   
 end
 
 // ; extclosen 0
 inline %1CAh
 
-  mr      r1, r31              // ; restore stack pointer
+  mr    r1, r31              // ; restore stack pointer
+  addi  r1, r1, 32
 
-  ld      r31, 00h(r1)         // ; restore frame pointer
-  ld      r0,  08h(r1)         // ; restore  return address
+  ld   r31, 168(r1)
+  ld   r30, 160(r1)
+  ld   r29, 152(r1)
+  ld   r28, 144(r1)
+  ld   r27, 136(r1)
+  ld   r0,  128(r1)
 
-  mtlr    r0
-  addi    r1, r1, 10h          // ; free stack
+  mtlr r0
+
+  addi  r1, r1, 176
   
 end
 
@@ -3611,12 +3623,29 @@ inline %0F2h
   lis     r2, rdata32_hi : %CORE_TOC
   addi    r2, r2, rdata32_lo : %CORE_TOC
 
-  mflr    r0
-  std     r31, -10h(r1)  // ; save frame pointer
-  std     r0,  -08h(r1)  // ; save return address
+  stdu  r1, -176(r1)
 
-  addi    r1, r1, -16    // ; allocate raw stack
-  mr      r31, r1        // ; set frame pointer
+  mflr    r0
+
+  std   r31, 168(r1)
+  std   r30, 160(r1)
+  std   r29, 152(r1)
+  std   r28, 144(r1)
+  std   r27, 136(r1)
+  std   r0,  128(r1)
+
+  // ; recover previous frame
+  ld    r16, toc_data(r2)
+  addis r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi  r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
+  ld    r10, tt_stack_frame(r16)
+
+  li    r16, 0
+  std   r10, -10h(r1)     // ; save the previous frame pointer
+  std   r16, -08h(r1)     // ; save zero
+
+  addi  r1, r1, -16       // ; allocate raw stack
+  mr    r31, r1           // ; set frame pointer
 
   addi    r1, r1, -__n16_2 // ; allocate raw stack
 
@@ -3644,91 +3673,45 @@ labEnd:
 
 end 
 
-// ; extopenin 0, 0
+// ; extopenin 0, n
 inline %1F2h
 
   // ; loading TOC pointer
-  lis   r2, rdata32_hi : %CORE_TOC
-  addi r2, r2, rdata32_lo : %CORE_TOC
+  lis     r2, rdata32_hi : %CORE_TOC
+  addi    r2, r2, rdata32_lo : %CORE_TOC
 
+  stdu  r1, -176(r1)
+
+  mflr    r0
+
+  std   r31, 168(r1)
+  std   r30, 160(r1)
+  std   r29, 152(r1)
+  std   r28, 144(r1)
+  std   r27, 136(r1)
+  std   r0,  128(r1)
+
+  // ; recover previous frame
+  ld    r16, toc_data(r2)
+  addis r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi  r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
+  ld    r10, tt_stack_frame(r16)
+
+  li    r16, 0
+  std   r10, -10h(r1)     // ; save the previous frame pointer
+  std   r16, -08h(r1)     // ; save zero
+
+  addi  r1, r1, -16       // ; allocate raw stack
+  mr    r31, r1           // ; set frame pointer
+
+  addi    r1, r1, -__n16_2 // ; allocate raw stack
+
+  li      r16, 0
+  std     r31, -08h(r1)  // ; save frame pointer
+  std     r16, -10h(r1)  // ; save dummy
   addi    r1, r1, -10h   // ; allocate stack
-  mflr    r0
-  std     r31, -10h(r1)  // ; save frame pointer
-  std     r0,  -08h(r1)  // ; save return address
-
   mr      r31, r1        // ; set frame pointer
 
-end 
-
-// ; extopenin 1, 0
-inline %2F2h
-
-  // ; loading TOC pointer
-  lis   r2, rdata32_hi : %CORE_TOC
-  addi r2, r2, rdata32_lo : %CORE_TOC
-
-  addi    r1, r1, -20h   // ; allocate stack
-  mflr    r0
-  std     r31, -10h(r1)  // ; save frame pointer
-  li      r16, 0
-  addi    r31, r1, -10h  // ; set frame pointer
-  std     r0,  -08h(r1)  // ; save return address
-  std     r16, -18h(r1)  // ; save return address
-  std     r16, -20h(r1)  // ; save return address
-
-end 
-
-// ; extopenin 2, 0
-inline %3F2h
-
-  // ; loading TOC pointer
-  lis   r2, rdata32_hi : %CORE_TOC
-  addi r2, r2, rdata32_lo : %CORE_TOC
-
-  addi    r1, r1, -20h   // ; allocate stack
-  mflr    r0
-  std     r31, -10h(r1)  // ; save frame pointer
-  li      r16, 0
-  addi    r31, r1, -10h  // ; set frame pointer
-  std     r0,  -08h(r1)  // ; save return address
-  std     r16, -18h(r1)  // ; save return address
-  std     r16, -20h(r1)  // ; save return address
-
-end 
-
-// ; extopenin 3, 0
-inline %4F2h
-
-  // ; loading TOC pointer
-  lis   r2, rdata32_hi : %CORE_TOC
-  addi r2, r2, rdata32_lo : %CORE_TOC
-
-  addi    r1, r1, -30h   // ; allocate stack
-  mflr    r0
-  std     r31, -10h(r1)  // ; save frame pointer
-  li      r16, 0
-  addi    r31, r1, -10h  // ; set frame pointer
-  std     r0,  -08h(r1)  // ; save return address
-  std     r16, -18h(r1)  // ; save return address
-  std     r16, -20h(r1)  // ; save return address
-  std     r16, -28h(r1)  // ; save return address
-  std     r16, -30h(r1)  // ; save return address
-
-end 
-
-// ; extopenin 0, n
-inline %5F2h
-
-  // ; loading TOC pointer
-  lis   r2, rdata32_hi : %CORE_TOC
-  addi r2, r2, rdata32_lo : %CORE_TOC
-
-  addi    r1, r1, -10h    // ; allocate stack
-  mflr    r0
-  std     r31, -10h(r1)  // ; save frame pointer
-  std     r0,  -08h(r1)  // ; save return address
-
-  mr      r31, r1        // ; set frame pointer
   addi    r1, r1, -__n16_2 // ; allocate raw stack
 
   li      r16, 0
@@ -3738,18 +3721,35 @@ inline %5F2h
 end 
 
 // ; extopenin i, 0
-inline %6F2h
+inline %06F2h
 
   // ; loading TOC pointer
   lis     r2, rdata32_hi : %CORE_TOC
   addi    r2, r2, rdata32_lo : %CORE_TOC
 
+  stdu  r1, -176(r1)
+
   mflr    r0
-  li      r16, 0
-  std     r31, -08h(r1)  // ; save frame pointer
-  std     r16, -10h(r1)  // ; save dummy
-  addi    r1, r1, -10h   // ; allocate stack
-  mr      r31, r1        // ; set frame pointer
+
+  std   r31, 168(r1)
+  std   r30, 160(r1)
+  std   r29, 152(r1)
+  std   r28, 144(r1)
+  std   r27, 136(r1)
+  std   r0,  128(r1)
+
+  // ; recover previous frame
+  ld    r16, toc_data(r2)
+  addis r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi  r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
+  ld    r10, tt_stack_frame(r16)
+
+  li    r16, 0
+  std   r10, -10h(r1)     // ; save the previous frame pointer
+  std   r16, -08h(r1)     // ; save zero
+
+  addi  r1, r1, -16       // ; allocate raw stack
+  mr    r31, r1           // ; set frame pointer
 
   addi    r1, r1,  -__arg16_1   // ; allocate stack
   li      r16, __arg16_1
@@ -3765,6 +3765,212 @@ labLoop:
   b       labLoop
 
 labEnd:
+
+end 
+
+// ; extopenin 0, 0
+inline %7F2h
+
+  // ; loading TOC pointer
+  lis     r2, rdata32_hi : %CORE_TOC
+  addi    r2, r2, rdata32_lo : %CORE_TOC
+
+  stdu  r1, -176(r1)
+
+  mflr    r0
+
+  std   r31, 168(r1)
+  std   r30, 160(r1)
+  std   r29, 152(r1)
+  std   r28, 144(r1)
+  std   r27, 136(r1)
+  std   r0,  128(r1)
+
+  // ; recover previous frame
+  ld    r16, toc_data(r2)
+  addis r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi  r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
+  ld    r10, tt_stack_frame(r16)
+
+  li    r16, 0
+  std   r10, -10h(r1)     // ; save the previous frame pointer
+  std   r16, -08h(r1)     // ; save zero
+
+  addi  r1, r1, -16       // ; allocate raw stack
+  mr    r31, r1           // ; set frame pointer
+
+  addi  r1, r1, -10h      // ; allocate stack
+
+  std     r31, -10h(r1)   // ; save frame pointer
+  mr      r31, r1         // ; set frame pointer
+
+end 
+
+// ; extopenin 1, 0
+inline %8F2h
+
+  // ; loading TOC pointer
+  lis     r2, rdata32_hi : %CORE_TOC
+  addi    r2, r2, rdata32_lo : %CORE_TOC
+
+  stdu  r1, -176(r1)
+
+  mflr    r0
+
+  std   r31, 168(r1)
+  std   r30, 160(r1)
+  std   r29, 152(r1)
+  std   r28, 144(r1)
+  std   r27, 136(r1)
+  std   r0,  128(r1)
+
+  // ; recover previous frame
+  ld    r16, toc_data(r2)
+  addis r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi  r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
+  ld    r10, tt_stack_frame(r16)
+
+  li    r16, 0
+  std   r10, -10h(r1)     // ; save the previous frame pointer
+  std   r16, -08h(r1)     // ; save zero
+
+  addi  r1, r1, -16       // ; allocate raw stack
+  mr    r31, r1           // ; set frame pointer
+
+  addi    r1, r1, -20h    // ; allocate stack
+
+  li      r16, 0
+  std     r31, -10h(r1)   // ; save frame pointer
+  addi    r31, r1, -10h   // ; set frame pointer
+  std     r16, -18h(r1)  
+  std     r16, -20h(r1)  
+
+end 
+
+// ; extopenin 2, 0
+inline %9F2h
+
+  // ; loading TOC pointer
+  lis     r2, rdata32_hi : %CORE_TOC
+  addi    r2, r2, rdata32_lo : %CORE_TOC
+
+  stdu  r1, -176(r1)
+
+  mflr    r0
+
+  std   r31, 168(r1)
+  std   r30, 160(r1)
+  std   r29, 152(r1)
+  std   r28, 144(r1)
+  std   r27, 136(r1)
+  std   r0,  128(r1)
+
+  // ; recover previous frame
+  ld    r16, toc_data(r2)
+  addis r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi  r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
+  ld    r10, tt_stack_frame(r16)
+
+  li    r16, 0
+  std   r10, -10h(r1)     // ; save the previous frame pointer
+  std   r16, -08h(r1)     // ; save zero
+
+  addi  r1, r1, -16       // ; allocate raw stack
+  mr    r31, r1           // ; set frame pointer
+
+  addi    r1, r1, -20h    // ; allocate stack
+
+  li      r16, 0
+  std     r31, 10h(r1)    // ; save frame pointer
+  addi    r31, r1, 10h    // ; set frame pointer
+  std     r16, 8(r1)  
+  std     r16, 0(r1)  
+
+end 
+
+// ; extopenin 3, 0
+inline %0AF2h
+
+  // ; loading TOC pointer
+  lis     r2, rdata32_hi : %CORE_TOC
+  addi    r2, r2, rdata32_lo : %CORE_TOC
+
+  stdu  r1, -176(r1)
+
+  mflr    r0
+
+  std   r31, 168(r1)
+  std   r30, 160(r1)
+  std   r29, 152(r1)
+  std   r28, 144(r1)
+  std   r27, 136(r1)
+  std   r0,  128(r1)
+
+  // ; recover previous frame
+  ld    r16, toc_data(r2)
+  addis r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi  r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
+  ld    r10, tt_stack_frame(r16)
+
+  li    r16, 0
+  std   r10, -10h(r1)     // ; save the previous frame pointer
+  std   r16, -08h(r1)     // ; save zero
+
+  addi  r1, r1, -16       // ; allocate raw stack
+  mr    r31, r1           // ; set frame pointer
+
+  addi    r1, r1, -30h    // ; allocate stack
+
+  li      r16, 0
+  std     r31, -10h(r1)   // ; save frame pointer
+  addi    r31, r1, -10h   // ; set frame pointer
+  std     r16, -18h(r1)  
+  std     r16, -20h(r1)  
+  std     r16, -28h(r1)  // ; save return address
+  std     r16, -30h(r1)  // ; save return address
+
+end 
+
+// ; extopenin 4, 0
+inline %0BF2h
+
+  // ; loading TOC pointer
+  lis     r2, rdata32_hi : %CORE_TOC
+  addi    r2, r2, rdata32_lo : %CORE_TOC
+
+  stdu  r1, -176(r1)
+
+  mflr    r0
+
+  std   r31, 168(r1)
+  std   r30, 160(r1)
+  std   r29, 152(r1)
+  std   r28, 144(r1)
+  std   r27, 136(r1)
+  std   r0,  128(r1)
+
+  // ; recover previous frame
+  ld    r16, toc_data(r2)
+  addis r16, r16, data_disp32hi : %CORE_SINGLE_CONTENT
+  addi  r16, r16, data_disp32lo : %CORE_SINGLE_CONTENT
+  ld    r10, tt_stack_frame(r16)
+
+  li    r16, 0
+  std   r10, -10h(r1)     // ; save the previous frame pointer
+  std   r16, -08h(r1)     // ; save zero
+
+  addi  r1, r1, -16       // ; allocate raw stack
+  mr    r31, r1           // ; set frame pointer
+
+  addi    r1, r1, -30h    // ; allocate stack
+
+  li      r16, 0
+  std     r31, -10h(r1)   // ; save frame pointer
+  addi    r31, r1, -10h   // ; set frame pointer
+  std     r16, -18h(r1)  
+  std     r16, -20h(r1)  
+  std     r16, -28h(r1)  // ; save return address
+  std     r16, -30h(r1)  // ; save return address
 
 end 
 

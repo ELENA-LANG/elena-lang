@@ -3,7 +3,7 @@
 //
 //		This file contains the compiling processor header
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPLING_H
@@ -115,6 +115,7 @@ namespace elena_lang
          SyntaxTreeBuilder& builder, 
          ModuleScopeBase& moduleScope);
       bool buildModule(ProjectEnvironment& env,
+         LexicalMap::Iterator& lexical_it,
          ModuleIteratorBase& module_it, 
          SyntaxTree* syntaxTree, 
          ForwardResolverBase* forwardResolver,

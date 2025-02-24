@@ -1067,6 +1067,8 @@ public arrayTest() : testCase()
     console.write(".")    
 }
 
+// --- ExceptionTest ---
+
 class MyException : Exception
 {
     constructor new(s)
@@ -1096,8 +1098,6 @@ singleton ExecTester
         MyException2.new("Nested OnError2 handler works").raise()
     }
 }
-
-// --- ExceptionTest ---
 
 public exceptionTest() : testCase()
 {

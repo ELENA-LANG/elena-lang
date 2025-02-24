@@ -37,6 +37,12 @@ namespace elena_lang
    protected:
       void SetUp() override;
    };
+
+   class DuplicateBoxingTest : public ExprTest
+   {
+   protected:
+      void SetUp() override;
+   };
 }
 
 #endif

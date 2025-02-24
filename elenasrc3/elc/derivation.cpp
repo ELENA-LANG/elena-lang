@@ -3,7 +3,7 @@
 //
 //		This file contains Syntax Tree Builder class implementation
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -97,12 +97,6 @@ void SyntaxTreeBuilder :: flush(SyntaxTreeWriter& writer, SyntaxNode node)
          case SyntaxKey::MetaDictionary:
          case SyntaxKey::SharedMetaDictionary:
             flushDictionary(writer, current);
-            break;
-         case SyntaxKey::LoadStatement:
-            loadMetaSection(current);
-            break;
-         case SyntaxKey::ClearStatement:
-            clearMetaSection(current);
             break;
          case SyntaxKey::MetaExpression:
          {
@@ -1967,24 +1961,6 @@ void SyntaxTreeBuilder :: closeNode()
       _cacheWriter.clear();
       _cacheWriter.newNode(SyntaxKey::Root);
    }
-}
-
-void SyntaxTreeBuilder :: loadMetaSection(SyntaxNode node)
-{
-   SyntaxNode terminalNode = node.firstChild(SyntaxKey::TerminalMask);
-   if (terminalNode == SyntaxKey::reference) {
-      ReferenceProperName aliasName(terminalNode.identifier());
-      NamespaceString ns(terminalNode.identifier());
-
-      CompilerLogic::loadMetaData(_moduleScope, *aliasName, *ns);
-   }
-}
-
-void SyntaxTreeBuilder :: clearMetaSection(SyntaxNode node)
-{
-   SyntaxNode terminalNode = node.firstChild(SyntaxKey::TerminalMask);
-
-   CompilerLogic::clearMetaData(_moduleScope, terminalNode.identifier());
 }
 
 // --- TemplateProssesor ---

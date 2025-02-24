@@ -3,7 +3,7 @@
 //
 //		This file contains the compiler common interfaces & types
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CLICONST
@@ -13,7 +13,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x0076
+   #define ELC_REVISION_NUMBER               0x007B
 
 #if defined _M_IX86 || _M_X64
 
@@ -28,7 +28,7 @@ namespace elena_lang
 #endif
 
    // --- Information messages ---
-   constexpr auto ELC_GREETING               = "ELENA Command-line compiler %d.%d.%d (C)2005-2024 by Aleksey Rakov, ELENA-LANG Org\n";
+   constexpr auto ELC_GREETING               = "ELENA Command-line compiler %d.%d.%d (C)2005-2025 by Aleksey Rakov, ELENA-LANG Org\n";
    constexpr auto ELC_STARTING               = "\nProject: %s, Platform: %s, Target type: %s";
    constexpr auto ELC_STRICT_MODE            = "Strict type enforcing is on";
    constexpr auto ELC_PROFILE_INFO           = "Project profile: %s";

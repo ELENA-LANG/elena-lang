@@ -17,6 +17,12 @@ REM /m:2 is used to build using parallel compilation
 "%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc3\elenasrc3.sln /p:configuration=release /p:Platform="x86" /m:2
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
+REM /m:2 is used to build using parallel compilation
+"%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc3\elenasrc3.sln /p:configuration=release /p:Platform="x64" /m:2 -restore -p:RestorePackagesConfig=true
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+
+IF "%1"=="-build" GOTO End
+
 ECHO Generating data files
 ECHO ----------------------------------------
 CALL build\rebuild_data60_x86.bat 
@@ -25,10 +31,6 @@ IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 ECHO Unit tests
 ECHO ----------------------------------------
 bin\elena-tests-x86.exe
-IF NOT %ERRORLEVEL%==0 GOTO CompilerError
-
-REM /m:2 is used to build using parallel compilation
-"%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc3\elenasrc3.sln /p:configuration=release /p:Platform="x64" /m:2 -restore -p:RestorePackagesConfig=true
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Generating data files
@@ -70,4 +72,7 @@ echo The syntax data file cannnot be generated
 goto:eof
 :BTDataGenError
 echo The build tape rule data file cannnot be generated
+goto:eof
+:End
+echo Build completed
 goto:eof

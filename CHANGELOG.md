@@ -12,6 +12,13 @@
   - [FIXED] constant symbols can be used to define the array field size
   - [FIXED] calling extension method if internal one exists
   - [REDUX] CORE_TLS_INDEX is no longer user for x86 / x86-64
+  - [FIXED] #702 : Elena 6.5.0 crashes in Ubuntu 24.04 docker image
+  - [FIXED] an invalid operation with a structure field
+  - [FIXED] linux x86-64 : debug module structure
+  - [FIXED] Linux x86-64 : FPU operations
+  - [FIXED] ppc64le extopen / extclose opcode
+  - [FIXED] #704 : Porting to FreeBSD/PowerPC64
+  - [FIXED] aarch64 extopen / extclose opcode
 
 - API
   - [ADDED] net'http'HttpClient, net'http'Uri

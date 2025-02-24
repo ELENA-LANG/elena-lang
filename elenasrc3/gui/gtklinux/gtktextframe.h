@@ -17,8 +17,9 @@ namespace elena_lang
    class TextViewFrame : public TabBar, TextViewListener
    {
    protected:
-      TextViewModel* _model;
-      ViewStyles*    _styles;
+      TextViewModel*          _model;
+      ViewStyles*             _styles;
+      TextViewControllerBase* _controller;
 
    public:
       void onDocumentNew(int index) override;
@@ -27,7 +28,7 @@ namespace elena_lang
       void beforeDocumentClose(int index) override;
       void onDocumentClose(int index, bool empty) override;
 
-      TextViewFrame(TextViewModel* model, ViewStyles* styles);
+      TextViewFrame(TextViewModel* model, TextViewControllerBase* controller, ViewStyles* styles);
    };
 }
 

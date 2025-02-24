@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class implementation.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "compiler.h"
@@ -452,7 +452,7 @@ bool Interpreter::evalDictionaryOp(ref_t operator_id, ArgumentsInfo& args)
          }
       }
       else if (loperand.kind == ObjectKind::TypeDictionary
-         && (roperand.kind == ObjectKind::Symbol || roperand.kind == ObjectKind::Template)
+         && (roperand.kind == ObjectKind::Symbol || roperand.kind == ObjectKind::Template || roperand.kind == ObjectKind::Class)
          && args[2].kind == ObjectKind::StringLiteral)
       {
          ObjectInfo ioperand = args[2];
@@ -2252,7 +2252,7 @@ ustr_t Compiler :: retrieveDictionaryOwner(Scope& scope, ustr_t properName, ustr
    return defaultPrefix;
 }
 
-void Compiler::declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, Scope::ScopeLevel level, bool shareMode)
+void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, Scope::ScopeLevel level, bool shareMode)
 {
    bool superMode = false;
    TypeInfo typeInfo = { V_DICTIONARY, V_INT32 };
@@ -2383,19 +2383,6 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
       }
 
       current = current.nextNode();
-   }
-}
-
-void Compiler::loadMetaData(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t name)
-{
-   IdentifierString metaForward(META_PREFIX, name);
-
-   ustr_t reference = forwardResolver->resolveForward(*metaForward);
-
-   if (!reference.empty()) {
-      NamespaceString ns(reference);
-
-      CompilerLogic::loadMetaData(moduleScope, name, *ns);
    }
 }
 
@@ -9479,7 +9466,7 @@ void Compiler :: compileStatemachineClass(BuildTreeWriter& writer, StatemachineC
    scope.save();
 }
 
-void Compiler::compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
+void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
    bool exclusiveMode, bool ignoreAutoMultimethod)
 {
    SyntaxNode current = node.firstChild();
@@ -9954,15 +9941,10 @@ void Compiler::createPackageInfo(ModuleScopeBase* moduleScope, ManifestInfo& man
    evalCollection(interpreter, scope, tempTree.readRoot(), true, false);
 }
 
-void Compiler::prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,
+void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,
    ManifestInfo& manifestInfo)
 {
    _trackingUnassigned = (_errorProcessor->getWarningLevel() == WarningLevel::Level3);
-
-   loadMetaData(moduleScope, forwardResolver, PREDEFINED_MAP_KEY);
-   loadMetaData(moduleScope, forwardResolver, ATTRIBUTES_MAP_KEY);
-   loadMetaData(moduleScope, forwardResolver, OPERATION_MAP_KEY);
-   loadMetaData(moduleScope, forwardResolver, ALIASES_MAP_KEY);
 
    // cache the frequently used references
    moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
@@ -10855,32 +10837,32 @@ void Compiler::Namespace::declareNamespace(SyntaxNode node, bool ignoreImport, b
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::SourcePath:
-         scope.sourcePath.copy(current.identifier());
-         break;
-      case SyntaxKey::Import:
-         if (!ignoreImport) {
-            bool duplicateInclusion = false;
-            ustr_t name = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
-            if (scope.moduleScope->includeNamespace(scope.importedNs, name, duplicateInclusion)) {
-               if (!ignoreExtensions)
-                  compiler->importExtensions(scope, name);
-            }
-            else if (duplicateInclusion) {
-               scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, current);
+         case SyntaxKey::SourcePath:
+            scope.sourcePath.copy(current.identifier());
+            break;
+         case SyntaxKey::Import:
+            if (!ignoreImport) {
+               bool duplicateInclusion = false;
+               ustr_t name = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+               if (scope.moduleScope->includeNamespace(scope.importedNs, name, duplicateInclusion)) {
+                  if (!ignoreExtensions)
+                     compiler->importExtensions(scope, name);
+               }
+               else if (duplicateInclusion) {
+                  scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, current);
 
-               // HOTFIX : comment out, to prevent duplicate warnings
-               current.setKey(SyntaxKey::Idle);
+                  // HOTFIX : comment out, to prevent duplicate warnings
+                  current.setKey(SyntaxKey::Idle);
+               }
+               else {
+                  scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, current.findChild(SyntaxKey::Name));
+                  current.setKey(SyntaxKey::Idle); // remove the node, to prevent duplicate warnings
+               }
             }
-            else {
-               scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, current.findChild(SyntaxKey::Name));
-               current.setKey(SyntaxKey::Idle); // remove the node, to prevent duplicate warnings
-            }
-         }
-         break;
-      default:
-         // to make compiler happy
-         break;
+            break;
+         default:
+            // to make compiler happy
+            break;
       }
 
       current = current.nextNode();
@@ -15388,7 +15370,7 @@ ObjectInfo Compiler::Expression::boxLocally(ObjectInfo info, bool stackSafe)
 
    switch (info.kind) {
       case ObjectKind::FieldAddress:
-      case ObjectKind::ReadOnlyField:
+      case ObjectKind::ReadOnlyFieldAddress:
          writer->newNode(BuildKey::CopyingAccField, info.reference);
          break;
       case ObjectKind::StaticConstField:

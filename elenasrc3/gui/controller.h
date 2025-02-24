@@ -114,7 +114,7 @@ namespace elena_lang
          _notifier = notifier;
       }
 
-      bool openDocument(TextViewModelBase* model, ustr_t name, path_t path, 
+      bool openDocument(TextViewModelBase* model, ustr_t name, path_t path,
          FileEncoding encoding, bool included) override;
       bool selectDocument(TextViewModelBase* model, int index) override;
       void selectNextDocument(TextViewModelBase* model);
@@ -125,6 +125,7 @@ namespace elena_lang
 
       bool insertNewLine(TextViewModelBase* model) override;
       bool insertChar(TextViewModelBase* model, text_c ch) override;
+      bool insertLine(TextViewModelBase* model, text_t s, size_t length) override;
       bool eraseChar(TextViewModelBase* model, bool moveback) override;
 
       void setOverwriteMode(TextViewModelBase* model) override;
@@ -167,7 +168,7 @@ namespace elena_lang
       bool findText(TextViewModelBase* model, FindModel* findModel);
       bool replaceText(TextViewModelBase* model, FindModel* findModel);
 
-      void goToLine(TextViewModelBase* model, int row);      
+      void goToLine(TextViewModelBase* model, int row);
 
       TextViewController(TextViewSettings& settings)
       {

@@ -22,8 +22,6 @@ __define END_OF_BLOCK        4107;
 __define DICTIONARY          4128;
 __define META_STATEMENT      4129;
 __define INCLUDE_STATEMENT   4130;
-__define LOAD_STATEMENT      4131;
-__define CLEAR_STATEMENT     4132;
 __define SHARED_DICTIONARY   4133;
 __define OBJECT              4145;
 __define TEMPLATE_TYPE       4146;
@@ -143,8 +141,6 @@ META_DECLARATION ::=
 	"#new" DICTIONARY DECLARATION_END
 	| "#share" SHARED_DICTIONARY DECLARATION_END
 	| "#let" META_STATEMENT DECLARATION_END
-	| "#load" LOAD_STATEMENT DECLARATION_END
-	| "#clear" CLEAR_STATEMENT DECLARATION_END	
 	| "#include" INCLUDE_STATEMENT DECLARATION_END;
 
 DECLARATION ::=
@@ -769,6 +765,7 @@ SUB_EXPRESSION ::=
 		{ "," EXPRESSION }+ ")" "{" ^ PARAMETER_BLOCK BLOCK ^CLOSURE ^EXPRESSION
 		| ")" "{" ^ PARAMETER_BLOCK BLOCK ^CLOSURE ^EXPRESSION
 	}
+	| ":" identifier L3_EXPRESSION? ^OPERATION_TEMPLATE ")"
 	| BRACKET SUB_EXPRESSION SUB_L_F ")";
 
 SUB_SINGLE_EXPRESSION ::=
@@ -831,7 +828,8 @@ L3_EXPRESSION ::=
 		| L3_OOP
 		| eps ^OBJECT
 	}
-	| { reference | global } ^OBJECT L3_OP;
+	| { reference | global } ^OBJECT L3_OP
+	| BRACKET SUB_EXPRESSION;
 
 L4_EXPRESSION ::=
 	identifier { 
@@ -1334,7 +1332,7 @@ SHARED_DICTIONARY ::=
 	identifier+;
 
 LOAD_STATEMENT ::=
-	{ reference | identifier };
+	{ reference | identifier } { "," reference | identifier }*;
 
 CLEAR_STATEMENT ::=
 	identifier;

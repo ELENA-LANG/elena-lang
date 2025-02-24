@@ -3,7 +3,7 @@
 //
 //		This file contains the language common constants
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef LANGCOMMON_H
@@ -745,6 +745,7 @@ namespace elena_lang
 
    constexpr auto TEMPLATE_CATEGORY             = "templates/*";
    constexpr auto PRIMITIVE_CATEGORY            = "primitives/*";
+   constexpr auto LEXICAL_CATEGORY              = "lexicals/*";
    constexpr auto FORWARD_CATEGORY              = "forwards/*";
    constexpr auto EXTERNAL_CATEGORY             = "externals/*";
    constexpr auto WINAPI_CATEGORY               = "winapi/*";
@@ -762,7 +763,6 @@ namespace elena_lang
    constexpr auto DEBUGMODE_PATH                = "project/debuginfo";
    constexpr auto FILE_PROLOG                   = "project/prolog";
    constexpr auto FILE_EPILOG                   = "project/epilog";
-   constexpr auto MODULE_PROLOG                 = "project/moduleProlog";
    constexpr auto AUTOEXTENSION_PATH            = "project/autoextension";
    constexpr auto STRICT_TYPE_ENFORCING_PATH    = "project/stricttype";
    constexpr auto JUMP_ALIGNMENT_PATH           = "project/alignedjump";

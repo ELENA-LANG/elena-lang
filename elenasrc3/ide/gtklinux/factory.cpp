@@ -98,7 +98,7 @@ Gtk::Widget* IDEFactory :: createTextControl()
    reloadStyles(viewModel);
 
    //TextViewWindow* view = new TextViewWindow(/*_model->viewModel(), &_styles*//*, &_controller->sourceController*/);
-   TextViewFrame* frame = new TextViewFrame(_model->viewModel(), &_styles);
+   TextViewFrame* frame = new TextViewFrame(_model->viewModel(), &_controller->sourceController, &_styles);
 
    return frame;
 }

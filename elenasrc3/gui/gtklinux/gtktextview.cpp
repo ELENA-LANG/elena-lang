@@ -36,14 +36,18 @@ void ViewStyles::release()
 // --- TextDrawingArea ---
 
 TextViewWindow::TextDrawingArea :: TextDrawingArea(TextViewWindow* view, TextViewModelBase* model,
-   ViewStyles* styles
+   TextViewControllerBase* controller, ViewStyles* styles
 ) :
    Glib::ObjectBase("textview"),
    Gtk::DrawingArea()
 {
    _view = view;
    _model = model;
+   _controller = controller;
    _needToResize = false;
+   _caretVisible = true;
+   _caretChanged = true;
+   _caret_x = 0;
    _styles = styles;
 }
 
@@ -185,6 +189,19 @@ void TextViewWindow::TextDrawingArea :: onResize(int x, int y, int width, int he
    update(true);
 }
 
+void TextView::TextDrawingArea :: onEditorChange()
+{
+//   if (_document->status.isViewChanged()) {
+//      _cached = false;
+//
+//      refresh();
+//   }
+
+   update(false);
+
+   _view->_textview_changed.emit();
+}
+
 void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, int viewHeight)
 {
    auto docView = _model->DocView();
@@ -254,6 +271,33 @@ void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, in
       x += width;
       writer.reset();
    } while (reader.readNext(writer, 255));
+
+   // Draw cursor
+   if (_caretVisible && caret.x >= 0 && caret.y >= 0) {
+      if (_caret_x == 0 || _caretChanged) {
+         _caret_x = 0;
+
+         text_c buffer[255];
+         StringTextWriter<text_c, 255> writer(buffer);
+
+         DocumentView::LexicalReader reader(docView);
+         reader.seekCurrentLine();
+         reader.readCurrentLine(writer, 255);
+         do {
+            buffer[writer.position()] = 0;
+            _caret_x += canvas.TextWidth(_styles->getStyle(reader.style), buffer);
+
+            writer.reset();
+         } while (reader.readCurrentLine(writer, 0xFF));
+
+         _caretChanged = false;
+      }
+
+      //if (!docView->isOverwriteMode()) {
+         canvas.drawCursor(marginWidth + _caret_x, lineHeight * caret.y + 1, style);
+      //}
+      //else canvas.drawOverwriteCursor(marginWidth + _caret_x, lineHeight * caret.y + 1, style);
+   }
 }
 
 int TextViewWindow::TextDrawingArea :: getLineNumberMargin()
@@ -285,23 +329,169 @@ void TextViewWindow::TextDrawingArea :: resizeDocument(int width, int height)
 
 void TextViewWindow::TextDrawingArea :: update(bool resized)
 {
-//   if (_model) {
-//      auto docView = _model->DocView();
-//
-//      _view->updateVScroller(resized);
+   if (_model) {
+      auto docView = _model->DocView();
+
+      _view->updateVScroller(resized);
 //      if (docView->status.maxColChanged) {
 //         _view->updateHScroller(true);
 //         docView->status.maxColChanged = false;
 //      }
-//      else _view->updateHScroller(resized);
-//   }
+      //else _view->updateHScroller(resized);
+   }
    queue_draw();
+}
+
+bool TextViewWindow::TextDrawingArea :: on_key_press_event(GdkEventKey* event)
+{
+   auto docView = _model->DocView();
+   if (!docView || docView->isReadOnly())
+      return Gtk::DrawingArea::on_key_press_event(event);
+
+   if (event->type == GDK_KEY_PRESS) {
+      bool shift = elena_lang::test(event->state, (unsigned int)GDK_SHIFT_MASK);
+      bool ctrl = elena_lang::test(event->state, (unsigned int)GDK_CONTROL_MASK);
+      switch (event->keyval) {
+         case GDK_KEY_Right:
+            _controller->moveCaretRight(_model, shift, ctrl);
+            break;
+         case GDK_KEY_Left:
+            _controller->moveCaretLeft(_model, shift, ctrl);
+            break;
+         case GDK_KEY_Down:
+            _controller->moveCaretDown(_model, shift, ctrl);
+            break;
+         case GDK_KEY_Up:
+            _controller->moveCaretUp(_model, shift, ctrl);
+            break;
+         case GDK_KEY_Home:
+            _controller->moveCaretHome(_model, shift, ctrl);
+            break;
+         case GDK_KEY_End:
+            _controller->moveCaretEnd(_model, shift, ctrl);
+            break;
+         case GDK_KEY_Page_Up:
+            _controller->movePageUp(_model, shift);
+            break;
+         case GDK_KEY_Page_Down:
+            _controller->movePageDown(_model, shift);
+            break;
+         case GDK_KEY_Return:
+            if (!_controller->insertNewLine(_model))
+               return false;
+            break;
+         case GDK_KEY_BackSpace:
+            _controller->eraseChar(_model, true);
+            break;
+         case GDK_KEY_Delete:
+            _controller->eraseChar(_model, false);
+            break;
+         case GDK_KEY_Insert:
+            _controller->setOverwriteMode(_model);
+            break;
+         case GDK_KEY_Tab:
+            if (elena_lang::test(event->state, (unsigned int)GDK_CONTROL_MASK)) {
+      //            g_signal_emit (GTK_OBJECT(_handle), signals[CTRLTAB_PRESSED],
+      //                           0, _ELENA_::test(event->state, GDK_SHIFT_MASK));
+            }
+            else _controller->indent(_model);
+            break;
+         default:
+            if (!ctrl) {
+               guint32 unichar = gdk_keyval_to_unicode(event->keyval);
+               if (unichar >= 0x20) {
+                  char utf8string[10];
+                  int count = g_unichar_to_utf8(unichar, utf8string);
+
+                  if (count > 1) {
+                     _controller->insertLine(_model, utf8string, count);
+                  }
+                  else _controller->insertChar(_model, utf8string[0]);
+               }
+               else return Gtk::DrawingArea::on_key_press_event(event);
+            }
+            else return Gtk::DrawingArea::on_key_press_event(event);
+      }
+      onEditorChange();
+
+      return true;
+   }
+   else return Gtk::DrawingArea::on_key_press_event(event);
+}
+
+bool TextViewWindow::TextDrawingArea :: on_button_press_event(GdkEventButton* event)
+{
+   if (event->type == GDK_BUTTON_PRESS/* && event->window == text_view->text_area*/) {
+      grab_focus();
+
+      auto docView = _model->DocView();
+      if (docView) {
+         bool kbShift = event->state & GDK_SHIFT_MASK;
+         Point point(event->x, event->y);
+
+//      _resetBlink(true);
+
+         DocumentChangeStatus status = {};
+         int col = 0, row = 0;
+         bool margin = false;
+         if(mouseToScreen(point, col, row, margin))
+            docView->moveToFrame(status, col, row, kbShift);
+   //   if (margin) {
+   //      notify(IDE_EDITOR_MARGINCLICKED);
+   //   }
+         _captureMouse();
+
+   //   refresh(true);
+         onEditorChange();
+         onDocumentUpdate(status);
+      }
+      return true;
+   }
+   else return false;
+}
+
+bool TextView::TextDrawingArea :: mouseToScreen(Point point, int& col, int& row, bool& margin)
+{
+//   //Rectangle rect = getRectangle();
+   Style defaultStyle = _styles[STYLE_DEFAULT];
+   if (defaultStyle.valid) {
+      int marginWidth = _styles.getMarginWidth() + getLineNumberMargin();
+      int offset = defaultStyle.avgCharWidth / 2;
+
+      col = (point.x/* - rect.topLeft.x*/ - marginWidth + offset) / defaultStyle.avgCharWidth;
+      row = (point.y/* - rect.topLeft.y*/) / (_styles.getLineHeight());
+      margin = (point.x/* - rect.topLeft.x*/ < marginWidth);
+
+      return true;
+   }
+   else return false;
+}
+
+bool TextView::TextDrawingArea :: on_button_release_event (GdkEventButton* event)
+{
+   //_releaseMouse();
+
+   return true;
+}
+
+bool TextView::TextDrawingArea :: on_scroll_event(GdkEventScroll* scroll_event)
+{
+   if (_document) {
+      int offset = (scroll_event->direction == GDK_SCROLL_UP) ? -1 : 1;
+
+      if (_ELENA_::test(scroll_event->state, GDK_CONTROL_MASK)) {
+         offset *= _document->getSize().y;
+      }
+      _document->vscroll(offset);
+
+      onEditorChange();
+   }
 }
 
 // --- TextViewWindow ---
 
-TextViewWindow :: TextViewWindow(TextViewModelBase* model, ViewStyles* styles)
-   : _area(this, model, styles)
+TextViewWindow :: TextViewWindow(TextViewModelBase* model, TextViewControllerBase* controller, ViewStyles* styles)
+   : _area(this, model, controller, styles)
 {
    attach(_area, 0, 1, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::EXPAND | Gtk::FILL, 0, 0);
 }

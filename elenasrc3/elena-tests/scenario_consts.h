@@ -14,4 +14,6 @@ constexpr auto S_IntAssigningNil = "class (attribute -2147467263 ()nameattr (ide
 
 constexpr auto S1_VariadicTemplates = " class (attribute -2147467263 ()attribute -2147471359 ()attribute -2147479542 ()nameattr (identifier \"VariadicArray\" ())field (attribute -2147475454 ()attribute -2147481599 ()array_type (type (identifier \"Object\" ()))nameattr (identifier \"array\" ())))  class (attribute -2147467263 ()attribute -2147471359 ()attribute -2147479542 ()nameattr (identifier \"VariadicBArray\" ())field (attribute -2147475454 ()attribute -2147481599 ()array_type (type (identifier \"B\" ()))nameattr (identifier \"array\" ())))";
 
+constexpr auto Tester_2Args = "class (attribute -2147467263 ()attribute -2147479546 () nameattr (identifier \"Tester\" ()) method (nameattr (identifier \"testArg2\" ()) parameter (nameattr (identifier \"arg1\" ())) parameter (nameattr (identifier \"arg2\" ())) code ()))";
+
 constexpr auto IndexedClass_Scenario1 = "class (attribute -2147479545 ()nameattr 67 (identifier \"X\" ())method (type (identifier \"IntNumber\" ())nameattr (identifier \"calc\" ())parameter (type (identifier \"IntNumber\" ())nameattr (identifier \"arg\" ()))returning ())) class (attribute -2147479546 ()nameattr (identifier \"Y\" ())parent (type (identifier \"X\" ())))";
