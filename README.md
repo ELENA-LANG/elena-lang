@@ -16,8 +16,11 @@
 [![MSBuild](https://github.com/ELENA-LANG/elena-lang/actions/workflows/msbuild.yml/badge.svg?branch=master)](https://github.com/ELENA-LANG/elena-lang/actions/workflows/msbuild.yml)
 [![Sponsor](https://img.shields.io/badge/patreon-donate-green.svg)](https://www.patreon.com/elena_lang)
 [![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&link=https://github.com/sponsors/arakov)](https://github.com/sponsors/arakov)
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W01B4CV8)
 
+</div>
+
+<div align="center">
+    [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W01B4CV8)
 </div>
 
 ELENA is a general-purpose language with late binding. It is multi-paradigm, combining features of functional and object-oriented programming. It supports both strong and weak types, run-time conversions, boxing and unboxing primitive types, direct usage of external libraries. A rich set of tools is provided to deal with message dispatching : multi-methods, message qualifying, generic message handlers. Multiple-inheritance can be simulated using mixins and type interfaces. The built-in script engine allows incorporating custom-defined scripts into your applications. Both stand-alone applications and Virtual machine clients are supported.
