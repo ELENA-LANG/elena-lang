@@ -3,7 +3,7 @@
 //
 //		This file contains PPC64 Assembler implementation
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1921,6 +1921,18 @@ void PPC64Assembler::compileDQField(ScriptToken& tokenInfo, MemoryWriter& writer
       writer.writeQReference(reference, d);
    }
    else writer.writeQWord(d);
+}
+
+void PPC64Assembler::compileDoubleField(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   read(tokenInfo);
+
+   if (tokenInfo.state == dfaQuote) {
+      double val = StrConvertor::toDouble(*tokenInfo.token);
+
+      writer.writeDouble(val);
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
 bool PPC64Assembler :: compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)

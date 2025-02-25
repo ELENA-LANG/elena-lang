@@ -3,7 +3,7 @@
 //
 //		This file contains AARCH64 Assembler implementation
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -2935,6 +2935,13 @@ void Arm64Assembler::compileDQField(ScriptToken& tokenInfo, MemoryWriter& writer
       writer.writeQReference(reference, d);
    }
    else writer.writeQWord(d);
+}
+
+void Arm64Assembler :: compileDoubleField(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   auto operand = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+
+   throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
 void Arm64Assembler :: compileProcedure(ScriptToken& tokenInfo)

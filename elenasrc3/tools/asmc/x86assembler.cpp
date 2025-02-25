@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA Intel X86 Assembler
 //		classes.
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1458,6 +1458,11 @@ void X86Assembler :: compileDQField(ScriptToken& tokenInfo, MemoryWriter& writer
       X86Helper::writeImm(writer, sour);
    }
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+void X86Assembler :: compileDoubleField(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
 bool X86Assembler :: compileAdc(X86Operand source, X86Operand target, MemoryWriter& writer)

@@ -96,7 +96,12 @@ end
 
 structure % CORE_MATH_TABLE
 
-  dq 0         // ; reserved
+  dbl "1.4426950408889634074"      // ; 00 : FM_DOUBLE_LOG2OFE
+  dbl "2.30933477057345225087e-2"  // ; 08 : 
+  dbl "2.02020656693165307700e1"   // ; 16 : 
+  dbl "1.51390680115615096133e3"   // ; 24 : 
+  dbl "1.0"                        // ; 32 : 
+  dbl "0.5"                        // ; 40 : 
 
 end
  
@@ -1091,6 +1096,75 @@ end
 
 // ; fexpdp
 inline %07Ah
+
+  ld      r17, toc_rdata(r2)
+  addis   r17, r17, rdata_disp32hi : %SYSTEM_ENV
+  addi    r17, r17, rdata_disp32lo : %SYSTEM_ENV
+
+  addi    r19, r31, __arg16_1 // ; dest (r19)
+
+  lfd     f17, 0(r3)          // ; x (f17)
+
+  // ; x = x * FM_DOUBLE_LOG2OFE
+  lfd     f20, (0)r17
+  fmul    f17, f17, f20
+
+  // ; ipart = x + 0.5
+  lfd     f20, (40)r17
+  fadd    f18, f17, f20
+                              // ; ipart(f18)
+  frin    f18, f18            // ; ipart = floor(ipart)
+
+  fsub    f19, f17, f18       // ; fpart = x - ipart; (f19)
+
+  // ; FM_DOUBLE_INIT_EXP(epart,ipart);
+  fctidz  f20, f18
+  stfd    f20, 0(r19) 
+  ldr     r18, 0(r19) 
+  li      r20, 0
+  std     r20, 0(r19)
+  stw     r18, 4(r19)
+
+  fmul    f17, f19, f19       // ; x = fpart*fpart;
+
+  lfd     f20, (8)r17         // ; px =        fm_exp2_p[0];
+
+  // ; px = px*x + fm_exp2_p[1];
+  fmul    f20, f20, f17
+  lfd     f21, (16)r17
+  fadd    f20, f20, f21
+
+  // ; qx =    x + fm_exp2_q[0];
+  lfd     f22, (8)r17
+  fadd    f22, f22, f17
+
+  // ; px = px*x + fm_exp2_p[2];
+  fmul    f20, f20, f17
+  lfd     f21, (24)r17
+  fadd    f20, f20, f21
+
+  // ; qx = qx*x + fm_exp2_q[1];
+  fmul    f22, f22, f17
+  lfd     f21, (16)r17
+  fadd    f22, f22, f21
+
+  // ; px = px * fpart;
+  fmul    f20, f20, f19
+
+  // ; x = 1.0 + 2.0*(px/(qx-px))
+  lfd     f16, (32)r17
+  mr      f17, f16
+  fadd    f16, f16, f16
+
+  fsub    f21, f22, f20
+  fdiv    f21, f20, f21
+  fmul    f16, f16, f21
+  fadd    f17, f17, f16
+
+  // ; epart.f*x;
+  fld     f20, 0(r19)
+  fmul    f20, f20, f17
+  stfd    f20, 0(r19) 
 
 end
 

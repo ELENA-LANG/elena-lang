@@ -3,7 +3,7 @@
 //
 //		This header contains abstract Assembler declarations
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ASSEMBLER_H
@@ -148,6 +148,7 @@ namespace elena_lang
       virtual void compileDWField(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual void compileDDField(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
       virtual void compileDQField(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
+      virtual void compileDoubleField(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
 
       virtual void compileProcedure(ScriptToken& tokenInfo) = 0;
 
