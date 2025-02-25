@@ -11,11 +11,14 @@ In development:
       - upndown (connector)
       - #496
       - #622
-      * #34 : web api
+      - #34 : web api
       - http client (https get, post, put, patch, delete, head, options, trace)
+      - ppc64 : ln
+      - aarch64 : exp, ln
   gen:
       - lpad : generate a code based on a record  
   maint:
+      - pi samples for ppc64, aarch64
       - #702
       - unit tests : bt optimization 
       - test binary file operations
@@ -56,12 +59,11 @@ In development:
   * it must be possible to declare them inside the module; it must be possible to import module containing
     the custom aliases
   * type alias
-  * fix pi sample for aarch64
   --------------------------------------
-  * fix pi sample for ppc64le
-  --------------------------------------
-  * ppc64 : ln
   * ppc64 : exp
+  --------------------------------------
+  * introduce math_table in core
+  * asmc - table of double number
 
   === Iteration 38 ===
   --------------------------------------
