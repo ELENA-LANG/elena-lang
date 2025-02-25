@@ -19,12 +19,6 @@
 
 </div>
 
-<div align="center">
-    
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W01B4CV8)
-    
-</div>
-
 ELENA is a general-purpose language with late binding. It is multi-paradigm, combining features of functional and object-oriented programming. It supports both strong and weak types, run-time conversions, boxing and unboxing primitive types, direct usage of external libraries. A rich set of tools is provided to deal with message dispatching : multi-methods, message qualifying, generic message handlers. Multiple-inheritance can be simulated using mixins and type interfaces. The built-in script engine allows incorporating custom-defined scripts into your applications. Both stand-alone applications and Virtual machine clients are supported.
 
 ### Features
@@ -132,3 +126,9 @@ Reach out with any questions you may have and we'll make sure to answer them as 
 
 The compiler and executables distributed in this package fall under MIT License, 
 for more information read the file LICENSE.
+
+<div align="center">
+    
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W01B4CV8)
+    
+</div>
