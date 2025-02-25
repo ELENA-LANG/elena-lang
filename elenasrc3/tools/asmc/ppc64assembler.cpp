@@ -1931,6 +1931,8 @@ void PPC64Assembler::compileDoubleField(ScriptToken& tokenInfo, MemoryWriter& wr
       double val = StrConvertor::toDouble(*tokenInfo.token);
 
       writer.writeDouble(val);
+
+      read(tokenInfo);
    }
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }

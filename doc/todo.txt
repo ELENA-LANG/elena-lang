@@ -60,10 +60,10 @@ In development:
     the custom aliases
   * type alias
   --------------------------------------
-  * ppc64 : exp
+  * ppc64 : fexp
   --------------------------------------
-  * introduce math_table in core
-  * asmc - table of double number
+  * compile ppc64 asm
+  * test ppc64 : fexp
 
   === Iteration 38 ===
   --------------------------------------

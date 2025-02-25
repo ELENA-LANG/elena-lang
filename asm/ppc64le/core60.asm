@@ -1106,11 +1106,11 @@ inline %07Ah
   lfd     f17, 0(r3)          // ; x (f17)
 
   // ; x = x * FM_DOUBLE_LOG2OFE
-  lfd     f20, (0)r17
+  lfd     f20, 0(r17)
   fmul    f17, f17, f20
 
   // ; ipart = x + 0.5
-  lfd     f20, (40)r17
+  lfd     f20, 40(r17)
   fadd    f18, f17, f20
                               // ; ipart(f18)
   frin    f18, f18            // ; ipart = floor(ipart)
@@ -1120,40 +1120,44 @@ inline %07Ah
   // ; FM_DOUBLE_INIT_EXP(epart,ipart);
   fctidz  f20, f18
   stfd    f20, 0(r19) 
-  ldr     r18, 0(r19) 
+  ld      r18, 0(r19) 
   li      r20, 0
   std     r20, 0(r19)
   stw     r18, 4(r19)
 
   fmul    f17, f19, f19       // ; x = fpart*fpart;
 
-  lfd     f20, (8)r17         // ; px =        fm_exp2_p[0];
+  lfd     f20, 8(r17)         // ; px =        fm_exp2_p[0];
 
   // ; px = px*x + fm_exp2_p[1];
   fmul    f20, f20, f17
-  lfd     f21, (16)r17
+  lfd     f21, 16(r17)
   fadd    f20, f20, f21
 
   // ; qx =    x + fm_exp2_q[0];
-  lfd     f22, (8)r17
+  lfd     f22, 8(r17)
   fadd    f22, f22, f17
 
   // ; px = px*x + fm_exp2_p[2];
   fmul    f20, f20, f17
-  lfd     f21, (24)r17
+  lfd     f21, 24(r17)
   fadd    f20, f20, f21
 
   // ; qx = qx*x + fm_exp2_q[1];
   fmul    f22, f22, f17
-  lfd     f21, (16)r17
+  lfd     f21, 16(r17)
   fadd    f22, f22, f21
 
   // ; px = px * fpart;
   fmul    f20, f20, f19
 
   // ; x = 1.0 + 2.0*(px/(qx-px))
-  lfd     f16, (32)r17
-  mr      f17, f16
+  lfd     f16, 32(r17)
+
+  // ; mr      f17, f16
+  stfd    f16, -8(r1)
+  lfd     f17, -8(r1)
+
   fadd    f16, f16, f16
 
   fsub    f21, f22, f20
@@ -1162,7 +1166,7 @@ inline %07Ah
   fadd    f17, f17, f16
 
   // ; epart.f*x;
-  fld     f20, 0(r19)
+  lfd     f20, 0(r19)
   fmul    f20, f20, f17
   stfd    f20, 0(r19) 
 
