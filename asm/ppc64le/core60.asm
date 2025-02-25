@@ -102,6 +102,9 @@ structure % CORE_MATH_TABLE
   dbl "1.51390680115615096133e3"   // ; 24 : 
   dbl "1.0"                        // ; 32 : 
   dbl "0.5"                        // ; 40 : 
+  dbl "2.33184211722314911771e2"   // ; 48
+  dbl "4.36821166879210612817e3"   // ; 56
+
 
 end
  
@@ -1135,7 +1138,7 @@ inline %07Ah
   fadd    f20, f20, f21
 
   // ; qx =    x + fm_exp2_q[0];
-  lfd     f22, 8(r17)
+  lfd     f22, 48(r17)
   fadd    f22, f22, f17
 
   // ; px = px*x + fm_exp2_p[2];
@@ -1145,7 +1148,7 @@ inline %07Ah
 
   // ; qx = qx*x + fm_exp2_q[1];
   fmul    f22, f22, f17
-  lfd     f21, 16(r17)
+  lfd     f21, 56(r17)
   fadd    f22, f22, f21
 
   // ; px = px * fpart;
