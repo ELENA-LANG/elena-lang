@@ -105,7 +105,6 @@ structure % CORE_MATH_TABLE
   dbl "2.33184211722314911771e2"   // ; 48
   dbl "4.36821166879210612817e3"   // ; 56
 
-
 end
  
 structure % CORE_SINGLE_CONTENT

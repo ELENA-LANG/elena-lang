@@ -18,6 +18,7 @@ In development:
   gen:
       - lpad : generate a code based on a record  
   maint:
+      - linux system : fix all warnings
       - pi samples for ppc64, aarch64
       - #702
       - unit tests : bt optimization 

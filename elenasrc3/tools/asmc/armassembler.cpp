@@ -2942,9 +2942,16 @@ void Arm64Assembler::compileDQField(ScriptToken& tokenInfo, MemoryWriter& writer
 
 void Arm64Assembler :: compileDoubleField(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
-   auto operand = readOperand(tokenInfo, ASM_INVALID_SOURCE);
+   read(tokenInfo);
 
-   throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+   if (tokenInfo.state == dfaQuote) {
+      double val = StrConvertor::toDouble(*tokenInfo.token);
+
+      writer.writeDouble(val);
+
+      read(tokenInfo);
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
 void Arm64Assembler :: compileProcedure(ScriptToken& tokenInfo)
