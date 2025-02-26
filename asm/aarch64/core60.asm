@@ -1046,7 +1046,7 @@ inline %07Ah
   fmul    d17, d17, d20
 
   // ; ipart = x + 0.5
-  ldr     d20, [x17, #5]
+  ldr     d20, [x17, #40]
   fadd    d18, d17, d20
                               // ; ipart(d18)
   frintz  d18, d18            // ; ipart = floor(ipart)
@@ -1061,37 +1061,37 @@ inline %07Ah
   lsl     x18, x18, x20
   mov     x20, #0
   str     x20, [x19]
-  str     w18, [x19, #1]
+  str     w18, [x19, #4]
 
   fmul    d17, d19, d19       // ; x = fpart*fpart;
 
-  ldr     d20, [x17, #1]      // ; px =        fm_exp2_p[0];
+  ldr     d20, [x17, #8]      // ; px =        fm_exp2_p[0];
 
   // ; px = px*x + fm_exp2_p[1];
   fmul    d20, d20, d17
-  ldr     d21, [x17, #2]
+  ldr     d21, [x17, #16]
   fadd    d20, d20, d21
 
   // ; qx =    x + fm_exp2_q[0];
-  ldr     d22, [x17, #6]
+  ldr     d22, [x17, #48]
   fadd    d22, d22, d17
 
   // ; px = px*x + fm_exp2_p[2];
   fmul    d20, d20, d17
-  ldr     d21, [x17, #3]
+  ldr     d21, [x17, #24]
 
   fadd    d20, d20, d21
 
   // ; qx = qx*x + fm_exp2_q[1];
   fmul    d22, d22, d17
-  ldr     d21, [x17, #7]
+  ldr     d21, [x17, #56]
   fadd    d22, d22, d21
 
   // ; px = px * fpart;
   fmul    d20, d20, d19
 
   // ; x = 1.0 + 2.0*(px/(qx-px))
-  ldr     d16, [x17, #4]
+  ldr     d16, [x17, #32]
 
   fmov    d17, d16
 
