@@ -1101,8 +1101,8 @@ end
 inline %07Ah
 
   ld      r17, toc_rdata(r2)
-  addis   r17, r17, rdata_disp32hi : %SYSTEM_ENV
-  addi    r17, r17, rdata_disp32lo : %SYSTEM_ENV
+  addis   r17, r17, rdata_disp32hi : %CORE_MATH_TABLE
+  addi    r17, r17, rdata_disp32lo : %CORE_MATH_TABLE
 
   addi    r19, r31, __arg16_1 // ; dest (r19)
 

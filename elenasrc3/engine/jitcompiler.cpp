@@ -943,10 +943,9 @@ void elena_lang::loadFrameDispOp(JITCompilerScope* scope)
                scope->constants->dataOffset), 0);
             break;
          default:
-            // to make compiler happy
+            writeCoreReference(scope, entries->reference, entries->offset, code);
             break;
       }
-      //else writeCoreReference();
 
       entries++;
       count--;
