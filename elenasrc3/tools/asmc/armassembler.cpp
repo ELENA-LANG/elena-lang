@@ -1151,6 +1151,9 @@ bool Arm64Assembler :: compileLDR(ScriptToken& tokenInfo, ARMOperand rt, ARMOper
    else if (rt.isDR() && ptr.isPreindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 1, 0, 1, 0, ptr.imm, 3, ptr.type, rt.type));
    }
+   else if (rt.isDR() && ptr.isUnsigned()) {
+      writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 1, 0, 1, 1, ptr.imm >> 3, 3, ptr.type, rt.type));
+   }
    else return false;
 
    return true;
@@ -1451,6 +1454,9 @@ bool Arm64Assembler :: compileSTR(ScriptToken& tokenInfo, ARMOperand rt, ARMOper
       if (ptr.reference)
          writeReference(tokenInfo, ptr.reference, writer, ASM_INVALID_SOURCE);
    }
+   else if (rt.isWR() && ptr.isUnsigned()) {
+      writer.writeDWord(ARMHelper::makeImm12Opcode(2, 7, 0, 1, 0, ptr.imm >> 3, ptr.type, rt.type));
+   }
    else if (rt.isXR() && ptr.isPostindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 0, 0, 0, 0, ptr.imm, 1, ptr.type, rt.type));
    }
@@ -1462,6 +1468,9 @@ bool Arm64Assembler :: compileSTR(ScriptToken& tokenInfo, ARMOperand rt, ARMOper
    }
    else if (rt.isDR() && ptr.isPostindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 1, 0, 0, 0, ptr.imm, 1, ptr.type, rt.type));
+   }
+   else if (rt.isDR() && ptr.isUnsigned()) {
+      writer.writeDWord(ARMHelper::makeImm12Opcode(3, 7, 1, 1, 0, ptr.imm >> 3, ptr.type, rt.type));
    }
    else return false;
 
