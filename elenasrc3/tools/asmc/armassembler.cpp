@@ -1455,7 +1455,7 @@ bool Arm64Assembler :: compileSTR(ScriptToken& tokenInfo, ARMOperand rt, ARMOper
          writeReference(tokenInfo, ptr.reference, writer, ASM_INVALID_SOURCE);
    }
    else if (rt.isWR() && ptr.isUnsigned()) {
-      writer.writeDWord(ARMHelper::makeImm12Opcode(2, 7, 0, 1, 0, ptr.imm >> 3, ptr.type, rt.type));
+      writer.writeDWord(ARMHelper::makeImm12Opcode(2, 7, 0, 1, 0, ptr.imm >> 2, ptr.type, rt.type));
    }
    else if (rt.isXR() && ptr.isPostindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 0, 0, 0, 0, ptr.imm, 1, ptr.type, rt.type));
