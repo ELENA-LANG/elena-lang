@@ -1124,6 +1124,10 @@ inline %07Ah
   fctidz  f20, f18
   stfd    f20, 0(r19) 
   ld      r18, 0(r19) 
+  li      r20, 1023
+  add     r18, r18, r20 
+  li      r18, 20
+  sld     r18, r18, r20
   li      r20, 0
   std     r20, 0(r19)
   stw     r18, 4(r19)
