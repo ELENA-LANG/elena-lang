@@ -1116,7 +1116,7 @@ inline %07Ah
   lfd     f20, 40(r17)
   fadd    f18, f17, f20
                               // ; ipart(f18)
-  frin    f18, f18            // ; ipart = floor(ipart)
+  friz    f18, f18            // ; ipart = floor(ipart)
 
   fsub    f19, f17, f18       // ; fpart = x - ipart; (f19)
 
