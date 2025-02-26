@@ -3,7 +3,7 @@ In development:
 ------         
 
 [development]
-  ### EPIC: elena 6.6 ###
+  ### EPIC: elena 6.7 ###
 
   === Iteration 37 (17.03) ===
   --------------------------------------
@@ -11,10 +11,14 @@ In development:
       - upndown (connector)
       - #496
       - #622
+      - #283
       - #34 : web api
-      - http client (https get, post, put, patch, delete, head, options, trace)
+      - http client (http get, get, post, put, patch, delete, head, options, trace, support https)
       - ppc64 : ln
       - aarch64 : ln
+  ide:
+      - linux - show the file
+      - fix syntax highlighting (see system'net:win_common.l)
   gen:
       - lpad : generate a code based on a record  
   maint:
@@ -38,30 +42,18 @@ In development:
       - redesign switch statement : it should be possible to use as an expression as well (so we cannot use => anymore : e.g. 
         console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  ) console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third")
       - warn if typecasting method returns itself, it leads to infinite call
-
   port:
+      - chat sample
+      - test all x86 examples (net)
+      - rosetta code : moving to 6.5
+      - x86-64 : mta - test net examples for mta   
   tools: 
       - #658 : connect with ldbg from VSCode  
   prom: bi-posting weekly
   --------------------------------------
-  * ide : linux - open, edit, save, close
-  * ide : linux - show the file
-  * fixing #283
-  * fix chat server - it is blocked
-  * x86-64 : mta - test net examples for mta
-  * rosetta code : moving to 6.5
-  * http client : get (quick & dirty)
-  * test all x86 examples (net)
-  * redesign chat sample : send, leave
-  * IDE : fix syntax highlighting (see system'net:win_common.l)
-  * redesign chat sample : connect
-  * user defined type alias
-  * declare and use alias with meta operations
-  * it must be possible to declare them inside the module; it must be possible to import module containing
-    the custom aliases
-  * type alias
+  linux - edit, save, close
   --------------------------------------
-  * aarch64 : fexp
+  linux - open
   --------------------------------------
 
   === Iteration 38 ===
@@ -86,7 +78,7 @@ In development:
   --------------------------------------
   --------------------------------------
 
-  ### EPIC: elena 6.7 ###
+  ### EPIC: elena 6.8 ###
 
   === Iteration 40 ===
   --------------------------------------
