@@ -1152,7 +1152,7 @@ bool Arm64Assembler :: compileLDR(ScriptToken& tokenInfo, ARMOperand rt, ARMOper
       writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 1, 0, 1, 0, ptr.imm, 3, ptr.type, rt.type));
    }
    else if (rt.isDR() && ptr.isUnsigned()) {
-      writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 1, 0, 1, 1, ptr.imm >> 3, 3, ptr.type, rt.type));
+      writer.writeDWord(ARMHelper::makeImm12Opcode(3, 7, 1, 1, 1, ptr.imm >> 3, ptr.type, rt.type));
    }
    else return false;
 
