@@ -14,7 +14,7 @@ In development:
       - #34 : web api
       - http client (https get, post, put, patch, delete, head, options, trace)
       - ppc64 : ln
-      - aarch64 : exp, ln
+      - aarch64 : ln
   gen:
       - lpad : generate a code based on a record  
   maint:
@@ -60,10 +60,8 @@ In development:
     the custom aliases
   * type alias
   --------------------------------------
-  * ppc64 : fexp
+  * aarch64 : fexp
   --------------------------------------
-  * compile ppc64 asm
-  * test ppc64 : fexp
 
   === Iteration 38 ===
   --------------------------------------

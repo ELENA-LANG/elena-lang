@@ -1027,57 +1027,78 @@ end
 // ; fexpdp
 inline %07Ah
 
-//; static double expo(double n) {
-//;     int a = 0, b = n > 0;
-//;     double c = 1, d = 1, e = 1;
-//;     for (b || (n = -n); e + .00001 < (e += (d *= n) / (c *= ++a)););
-//;     // approximately 15 iterations
-//;     return b ? e : 1 / e;
+  movz    x17, rdata_ptr32lo : %CORE_MATH_TABLE
+  movk    x17, rdata_ptr32hi : %CORE_MATH_TABLE, lsl #16
 
-  mov     x15, #0
-  fmov    d14, #"1E-4" // ; diff = 0.00001
+  add     x19, x29, __arg12_1 // ; dest (x19)
 
-  ldr     d7, [x0]     // ; n
+  ldr     d17, [x0]           // ; x (d17)
 
-  fcmp    d7, #0
-  blt     labSkip
-  fneg    d7, d7
-  mov     x15, #1
+  // ; x = x * FM_DOUBLE_LOG2OFE
+  ldr     d20, [x17]
+  fmul    d17, d17, d20
 
-labSkip:
-  mov     x4, #0       // ; a = 0
+  // ; ipart = x + 0.5
+  ldr     d20, [x17, #40]!
+  fadd    d18, d17, d20
+                              // ; ipart(d18)
+  frintz  d18, d18            // ; ipart = floor(ipart)
 
-  fmov    d3, #"1E0"   // ; e = 1
-  fmov    d5, d3       // ; c = 1
-  fmov    d6, d3       // ; d = 1
+  fsub    d19, d17, d18       // ; fpart = x - ipart; (d19)
 
-  // ; e = d3  a = x4, c = d5, d = d6 ; n = d7
+  // ; FM_DOUBLE_INIT_EXP(epart,ipart);
+  frintx  d20, d18
+  fcvtzs  x18, d20
+  add     x18, x18, #1023
+  mov     x20, #20
+  lsl     x18, x18, x20
+  mov     x20, #0
+  str     x20, [x19]
+  str     w18, [x19, #4]!
 
-labNext:
-  // ; e + .00001 < (e += (d *= n) / (c *= ++a))
-  fmov    d13, d3
+  fmul    d17, d19, d19       // ; x = fpart*fpart;
 
-  add     x4, x4, #1     // ; ++a
-  fmov    d4, x4 
-  frintx  d4, d4
+  ldr     d20, [x17, #8]!     // ; px =        fm_exp2_p[0];
 
-  fmul    d5, d5, d4     // ; c *= (++a)
-  fmul    d6, d6, d7     // ; d *= n
-  fdiv    d12, d6, d5    // ; (d *= n) / (c *= ++a)
-  fadd    d3, d3, d12    // ; e += (d *= n) / (c *= ++a)
+  // ; px = px*x + fm_exp2_p[1];
+  fmul    d20, d20, d17
+  ldr     d21, [x17, #16]!
+  fadd    d20, d20, d21
 
-  fsub    d13, d13, d3
-  fcmp    d13, d14
-  bgt     labNext
+  // ; qx =    x + fm_exp2_q[0];
+  ldr     d22, [x17, #48]!
+  fadd    d22, d22, d17
 
-  cmp     x15, #0
-  fmov    d16, #"1E0"
-  bne     labSkip2
-  fdiv    d3, d16, d3
+  // ; px = px*x + fm_exp2_p[2];
+  fmul    d20, d20, d17
+  ldr     d21, [x17, #24]!
 
-labSkip2:
-  add     x19, x29, __arg12_1
-  str     d3, [x19]
+  fadd    d20, d20, d21
+
+  // ; qx = qx*x + fm_exp2_q[1];
+  fmul    d22, d22, d17
+  ldr     d21, [x17, #56]!
+  fadd    d22, d22, d21
+
+  // ; px = px * fpart;
+  fmul    d20, d20, d19
+
+  // ; x = 1.0 + 2.0*(px/(qx-px))
+  ldr     d16, [x17, #32]!
+
+  fmov    d17, d16
+
+  fadd    d16, d16, d16
+
+  fsub    d21, d22, d20
+  fdiv    d21, d20, d21
+  fmul    d16, d16, d21
+  fadd    d17, d17, d16
+
+  // ; epart.f*x;
+  ldr     d20, [x19]
+  fmul    d20, d20, d17
+  str     d20, [x19]
 
 end
 

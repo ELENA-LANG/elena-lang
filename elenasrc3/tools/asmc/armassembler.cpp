@@ -1148,6 +1148,9 @@ bool Arm64Assembler :: compileLDR(ScriptToken& tokenInfo, ARMOperand rt, ARMOper
    else if (rt.isDR() && ptr.isPostindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 1, 0, 1, 0, ptr.imm, 1, ptr.type, rt.type));
    }
+   else if (rt.isDR() && ptr.isPreindex()) {
+      writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 1, 0, 1, 0, ptr.imm, 3, ptr.type, rt.type));
+   }
    else return false;
 
    return true;
