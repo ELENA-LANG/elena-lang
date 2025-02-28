@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK Common Window Implementation
-//                                              (C)2024, by Alexei Rakov
+//                                              (C)2024-2025, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "gtkcommon.h"
@@ -26,4 +26,5 @@ int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, EventBase* star
 
 void WindowApp :: notify(EventBase* event)
 {
+   _eventBroadcaster->sendMessage(event);
 }

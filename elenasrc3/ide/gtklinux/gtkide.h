@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Linux-GTK IDE
 //
-//                                             (C)2024, by Aleksey Rakov
+//                                             (C)2024-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GTKIDE_H
@@ -13,6 +13,14 @@
 
 namespace elena_lang
 {
+
+// --- IDEEventCenter ---
+
+class IDEEventCenter : public EventFormatterBase
+{
+   type_textview_changed _textview_changed;
+}
+
 // --- GTKIDEView ---
 
 class GTKIDEWindow : public SDIWindow
@@ -263,6 +271,8 @@ protected:
    }
 
 public:
+   void on_text_model_change(TextViewModelEvent event);
+
    GTKIDEWindow(/*const char* caption, */IDEController* controller, IDEModel* model);
 };
 

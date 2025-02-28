@@ -52,8 +52,9 @@ In development:
   prom: bi-posting weekly
   --------------------------------------  
   --------------------------------------
-  linux ide - show the file
+  - linux ide - show the file
   --------------------------------------
+  * send update event
 
   === Iteration 38 ===
   --------------------------------------

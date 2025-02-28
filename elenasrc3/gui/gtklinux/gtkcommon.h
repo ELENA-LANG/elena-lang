@@ -184,13 +184,27 @@ namespace elena_lang
       virtual void notify(EventBase* event) = 0;
    };
 
-   // --- GUIApp ---
-   class GUIApp : public NotifierBase
+   // --- BroadcasterBase ---
+   class BroadcasterBase
    {
    public:
-      virtual int run(GUIControlBase* mainWindow, bool maximized, EventBase* startEvent) = 0;
+      virtual void sendMessage(EventBase* event) = 0;
+   };
 
-      virtual ~GUIApp() = default;
+   // --- GUIApp ---
+   class WindowApp : public GUIApp
+   {
+      BroadcasterBase*  _eventBroadcaster;
+
+   public:
+      int run(GUIControlBase* mainWindow, bool maximized, EventBase* startEvent) override;
+
+      void notify(EventBase* event) override;
+
+      WindowApp(BroadcasterBase* eventBroadcaster)
+      {
+         _eventBroadcaster = eventBroadcaster;
+      }
    };
 
    // --- ConstantIdentifier ---

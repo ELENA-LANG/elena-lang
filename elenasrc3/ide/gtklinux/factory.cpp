@@ -66,6 +66,24 @@ StyleInfo darkStyles[STYLE_MAX + 1] = {
 
 constexpr auto STYLE_SCHEME_COUNT = 3;
 
+// --- IDEBroadcaster ---
+
+IDEBroadcaster :: IDEBroadcaster()
+{
+}
+
+IDEBroadcaster :: sendMessage(EventBase* event)
+{
+   int eventId = event->eventId();
+   switch (eventId) {
+      case EVENT_TEXTVIEW_MODEL_CHANGED:
+         textview_changed.emit(*event);
+         break;
+      default:
+         break;
+   }
+}
+
 // --- IDEFactory ---
 
 IDEFactory :: IDEFactory(IDEModel* ideModel, IDEController* controller,
@@ -138,6 +156,8 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
 
    ideWindow->populate(counter, children);
    ideWindow->setLayout(textIndex, -1, -1, -1, -1);
+
+   _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change))
 
    return new WindowWrapper(ideWindow);
 }

@@ -228,3 +228,7 @@ void GTKIDEWindow :: populateMenu()
 
    loadUI(ui_info, "/MenuBar");
 }
+
+void GTKIDEWindow :: on_text_model_change(TextViewModelEvent event)
+{
+}

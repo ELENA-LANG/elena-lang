@@ -13,8 +13,6 @@
 
 namespace elena_lang
 {
-   typedef sigc::signal<void(DocumentChangeStatus)> type_textview_changed;
-
    // --- StyleInfo ---
    struct StyleInfo
    {
