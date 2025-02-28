@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK TextView Control Header File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GTKTEXTVIEW_H
@@ -13,6 +13,8 @@
 
 namespace elena_lang
 {
+   typedef sigc::signal<void(DocumentChangeStatus)> type_textview_changed;
+
    // --- StyleInfo ---
    struct StyleInfo
    {
@@ -107,7 +109,7 @@ namespace elena_lang
          bool on_scroll_event (GdkEventScroll* scroll_event) override;
 
          void onResize(int x, int y, int width, int height);
-         void onEditorChange();
+         void onDocumentUpdate(DocumentChangeStatus& changeStatus);
 
          bool mouseToScreen(Point point, int& col, int& row, bool& margin);
 
@@ -123,9 +125,13 @@ namespace elena_lang
       };
 
    protected:
-      TextDrawingArea    _area;
+      TextDrawingArea       _area;
+
+      type_textview_changed _textview_changed;
 
    public:
+      type_textview_changed textview_changed();
+
       void updateVScroller(bool resized);
 
       TextViewWindow(TextViewModelBase* model, TextViewControllerBase* controller,

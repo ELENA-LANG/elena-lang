@@ -17,7 +17,7 @@ In development:
       - ppc64 : ln
       - aarch64 : ln
   ide:
-      - linux - show the file
+      - linux - open, edit, save, close
       - fix syntax highlighting (see system'net:win_common.l)
   gen:
       - lpad : generate a code based on a record  
@@ -50,10 +50,9 @@ In development:
   tools: 
       - #658 : connect with ldbg from VSCode  
   prom: bi-posting weekly
+  --------------------------------------  
   --------------------------------------
-  linux - edit, save, close
-  --------------------------------------
-  linux - open
+  linux ide - show the file
   --------------------------------------
 
   === Iteration 38 ===
