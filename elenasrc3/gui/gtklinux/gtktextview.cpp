@@ -199,7 +199,7 @@ void TextViewWindow::TextDrawingArea :: onDocumentUpdate(DocumentChangeStatus& c
 
    update(false);
 
-   _view->_textview_changed.emit(changeStatus);
+   //_view->_textview_changed.emit(changeStatus);
 }
 
 void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, int viewHeight)
@@ -500,11 +500,6 @@ TextViewWindow :: TextViewWindow(TextViewModelBase* model, TextViewControllerBas
    : _area(this, model, controller, styles)
 {
    attach(_area, 0, 1, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::EXPAND | Gtk::FILL, 0, 0);
-}
-
-type_textview_changed TextViewWindow :: textview_changed()
-{
-   return _textview_changed;
 }
 
 void TextViewWindow :: updateVScroller(bool resized)

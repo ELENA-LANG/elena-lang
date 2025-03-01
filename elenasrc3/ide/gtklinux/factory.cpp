@@ -72,12 +72,12 @@ IDEBroadcaster :: IDEBroadcaster()
 {
 }
 
-IDEBroadcaster :: sendMessage(EventBase* event)
+void IDEBroadcaster :: sendMessage(EventBase* event)
 {
    int eventId = event->eventId();
    switch (eventId) {
       case EVENT_TEXTVIEW_MODEL_CHANGED:
-         textview_changed.emit(*event);
+         textview_changed.emit(*(TextViewModelEvent*)event);
          break;
       default:
          break;
@@ -118,6 +118,8 @@ Gtk::Widget* IDEFactory :: createTextControl()
    //TextViewWindow* view = new TextViewWindow(/*_model->viewModel(), &_styles*//*, &_controller->sourceController*/);
    TextViewFrame* frame = new TextViewFrame(_model->viewModel(), &_controller->sourceController, &_styles);
 
+   //_broadcaster.textview_changed.connect(sigc::mem_fun(*frame, &TextViewFrame::on_text_model_change));
+
    return frame;
 }
 
@@ -157,14 +159,14 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    ideWindow->populate(counter, children);
    ideWindow->setLayout(textIndex, -1, -1, -1, -1);
 
-   _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change))
+   _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change));
 
    return new WindowWrapper(ideWindow);
 }
 
 GUIApp* IDEFactory :: createApp()
 {
-   WindowApp* app = new WindowApp();
+   WindowApp* app = new WindowApp(&_broadcaster);
 
    return app;
 }

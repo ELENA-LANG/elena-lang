@@ -231,4 +231,17 @@ void GTKIDEWindow :: populateMenu()
 
 void GTKIDEWindow :: on_text_model_change(TextViewModelEvent event)
 {
+//   if (test(rec->status, STATUS_COLORSCHEME_CHANGED)) {
+//      onColorSchemeChange();
+//   }
+//
+   onDocumentUpdate(event.changeStatus);
+//   onIDEStatusChange(rec);
+//   if (test(rec->status, STATUS_FRAME_CHANGED)) {
+//      onDocumentSelection();
+//   }
+}
+
+void GTKIDEWindow :: onDocumentUpdate(DocumentChangeStatus changeStatus)
+{
 }

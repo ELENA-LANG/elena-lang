@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     Linux EditFrame container File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GTKTEXTFRAME_H
@@ -22,6 +22,8 @@ namespace elena_lang
       TextViewControllerBase* _controller;
 
    public:
+      //void on_text_model_change(TextViewModelEvent event);
+
       void onDocumentNew(int index) override;
       void onDocumentSelect(int index) override;
       void onDocumentModeChanged(int index, bool modifiedMode) override;

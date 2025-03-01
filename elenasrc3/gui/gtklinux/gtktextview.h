@@ -125,11 +125,7 @@ namespace elena_lang
    protected:
       TextDrawingArea       _area;
 
-      type_textview_changed _textview_changed;
-
    public:
-      type_textview_changed textview_changed();
-
       void updateVScroller(bool resized);
 
       TextViewWindow(TextViewModelBase* model, TextViewControllerBase* controller,

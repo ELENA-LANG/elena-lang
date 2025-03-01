@@ -14,13 +14,6 @@
 namespace elena_lang
 {
 
-// --- IDEEventCenter ---
-
-class IDEEventCenter : public EventFormatterBase
-{
-   type_textview_changed _textview_changed;
-}
-
 // --- GTKIDEView ---
 
 class GTKIDEWindow : public SDIWindow
@@ -269,6 +262,8 @@ protected:
    void on_menu_help_about()
    {
    }
+
+   void onDocumentUpdate(DocumentChangeStatus changeStatus);
 
 public:
    void on_text_model_change(TextViewModelEvent event);

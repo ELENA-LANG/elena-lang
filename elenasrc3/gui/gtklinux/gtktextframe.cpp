@@ -51,3 +51,12 @@ void TextViewFrame :: beforeDocumentClose(int index)
 void TextViewFrame :: onDocumentClose(int index, bool empty)
 {
 }
+
+/*void TextViewFrame :: on_text_model_change(TextViewModelEvent event)
+{
+   //int currentIndex = _model->getCurrentIndex();
+
+   get_current().pointer->get_child();
+
+   get_child
+}*/
