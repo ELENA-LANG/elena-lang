@@ -22,8 +22,6 @@ namespace elena_lang
       TextViewControllerBase* _controller;
 
    public:
-      //void on_text_model_change(TextViewModelEvent event);
-
       void onDocumentNew(int index) override;
       void onDocumentSelect(int index) override;
       void onDocumentModeChanged(int index, bool modifiedMode) override;

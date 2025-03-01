@@ -10,7 +10,6 @@
 #include "gtklinux/gtksdi.h"
 #include "idecontroller.h"
 
-
 namespace elena_lang
 {
 
