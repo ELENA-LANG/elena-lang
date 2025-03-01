@@ -126,6 +126,8 @@
 		<Unit filename="../gtklinux/factory.h" />
 		<Unit filename="../gtklinux/gtkide.cpp" />
 		<Unit filename="../gtklinux/gtkide.h" />
+		<Unit filename="../gtklinux/gtkidetextview.cpp" />
+		<Unit filename="../gtklinux/gtkidetextview.h" />
 		<Unit filename="../gtklinux/main.cpp" />
 		<Unit filename="../idecommon.cpp" />
 		<Unit filename="../idecommon.h" />
