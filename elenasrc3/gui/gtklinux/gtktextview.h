@@ -107,7 +107,6 @@ namespace elena_lang
          bool on_scroll_event (GdkEventScroll* scroll_event) override;
 
          void onResize(int x, int y, int width, int height);
-         void onDocumentUpdate(DocumentChangeStatus& changeStatus);
 
          bool mouseToScreen(Point point, int& col, int& row, bool& margin);
 
@@ -118,6 +117,8 @@ namespace elena_lang
          void paint(Canvas& canvas, int viewWidth, int viewHeight);
 
       public:
+         void onDocumentUpdate(DocumentChangeStatus& changeStatus);
+
          TextDrawingArea(TextViewWindow* view, TextViewModelBase* model,
             TextViewControllerBase* controller, ViewStyles* styles);
       };
@@ -126,6 +127,8 @@ namespace elena_lang
       TextDrawingArea       _area;
 
    public:
+      void onDocumentUpdate(DocumentChangeStatus& changeStatus);
+
       void updateVScroller(bool resized);
 
       TextViewWindow(TextViewModelBase* model, TextViewControllerBase* controller,

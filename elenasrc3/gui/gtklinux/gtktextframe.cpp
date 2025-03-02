@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     Linux EditFrame container File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "gtklinux/gtktextframe.h"
@@ -52,11 +52,7 @@ void TextViewFrame :: onDocumentClose(int index, bool empty)
 {
 }
 
-/*void TextViewFrame :: on_text_model_change(TextViewModelEvent event)
+TextViewWindow* TextViewFrame :: getCurrentTextView()
 {
-   //int currentIndex = _model->getCurrentIndex();
-
-   get_current().pointer->get_child();
-
-   get_child
-}*/
+   return dynamic_cast<TextViewWindow*>(getCurrentControl());
+}

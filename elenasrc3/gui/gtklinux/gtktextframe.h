@@ -21,6 +21,8 @@ namespace elena_lang
       ViewStyles*             _styles;
       TextViewControllerBase* _controller;
 
+      TextViewWindow* getCurrentTextView();
+
    public:
       void onDocumentNew(int index) override;
       void onDocumentSelect(int index) override;

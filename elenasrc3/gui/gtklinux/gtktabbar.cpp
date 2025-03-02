@@ -28,6 +28,15 @@ void TabBar :: addTab(const char* name, Gtk::Widget* control)
    append_page(*hb, name); // !! temporal
 }
 
+Gtk::Widget* TabBar :: getCurrentControl()
+{
+   Gtk::HBox* hb = dynamic_cast<Gtk::HBox*>(get_nth_page(get_current_page()));
+
+   auto list =  hb->get_children();
+
+   return list[0];
+}
+
 /*Gtk::Widget* TabBar :: getTabControl(int index) const
 {
    if (index == -1)
@@ -40,4 +49,3 @@ void TabBar :: addTab(const char* name, Gtk::Widget* control)
    }
    return (*it)->control;
 }*/
-

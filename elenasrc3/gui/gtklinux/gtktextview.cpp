@@ -191,15 +191,13 @@ void TextViewWindow::TextDrawingArea :: onResize(int x, int y, int width, int he
 
 void TextViewWindow::TextDrawingArea :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
 {
-//   if (_document->status.isViewChanged()) {
-//      _cached = false;
-//
-//      refresh();
-//   }
+   if (changeStatus.isViewChanged()) {
+      //_cached = false;
+      _caret_x = 0;
+   }
+   _caretChanged = changeStatus.caretChanged;
 
    update(false);
-
-   //_view->_textview_changed.emit(changeStatus);
 }
 
 void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, int viewHeight)
@@ -509,4 +507,9 @@ void TextViewWindow :: updateVScroller(bool resized)
 //   }
 //   if (resized)
 //      _vadjustment->changed();
+}
+
+void TextViewWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
+{
+   _area.onDocumentUpdate(changeStatus);
 }

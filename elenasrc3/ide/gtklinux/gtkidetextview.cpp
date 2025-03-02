@@ -1,23 +1,24 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
-//                     Linux EditFrame container File
+//                     Linux TextView container implementation
 //                                              (C)2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
-#ifndef GTKIDETEXTFRAME_H
-#define GTKIDETEXTFRAME_H
+#include "gtklinux/gtkidetextview.h"
 
-namespace elena_lang
+using namespace elena_lang;
+
+// --- IDETextViewFrame ---
+
+IDETextViewFrame :: IDETextViewFrame(TextViewModel* model, TextViewControllerBase* controller, ViewStyles* styles)
+   : TextViewFrame(model, controller, styles)
 {
 
-class IDETextViewFrame : public TextViewFrame
+}
+
+void IDETextViewFrame :: on_text_model_change(TextViewModelEvent event)
 {
-public:
-   void on_text_model_change(TextViewModelEvent event);
-
-   IDETextViewFrame();
-};
-
-} // _GUI_
-
-#endif // winideH
+   auto client = getCurrentTextView();
+   if (client)
+      client->onDocumentUpdate(event.changeStatus);
+}

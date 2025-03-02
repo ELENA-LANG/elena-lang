@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "factory.h"
 #include "gtklinux/gtkcommon.h"
 #include "gtklinux/gtkide.h"
-#include "gtklinux/gtktextframe.h"
+#include "gtklinux/gtkidetextview.h"
 #include "gtklinux/gtktextview.h"
 //#include "text.h"
 //#include "sourceformatter.h"
@@ -116,7 +116,7 @@ Gtk::Widget* IDEFactory :: createTextControl()
    reloadStyles(viewModel);
 
    //TextViewWindow* view = new TextViewWindow(/*_model->viewModel(), &_styles*//*, &_controller->sourceController*/);
-   TextViewFrame* frame = new IDETextViewFrame(_model->viewModel(), &_controller->sourceController, &_styles);
+   IDETextViewFrame* frame = new IDETextViewFrame(_model->viewModel(), &_controller->sourceController, &_styles);
 
    _broadcaster.textview_changed.connect(sigc::mem_fun(*frame, &IDETextViewFrame::on_text_model_change));
 
