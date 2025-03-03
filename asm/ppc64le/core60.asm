@@ -1323,7 +1323,7 @@ labSkip:
 
 //;   z = x * (z * px / qx) - 0.5 * z + x;
   fmul    f20, f21, f18
-  fmul    f20, f20, f19
+  fdiv    f20, f20, f19
   fmul    f22, f20, f17
 
   lfd     f20, 40(r17)
