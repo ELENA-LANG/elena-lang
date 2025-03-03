@@ -1216,8 +1216,9 @@ inline %07Bh
   //; extract exponent and part of the mantissa */
 
 //;   fpart = val.s.i1 & FM_DOUBLE_MMASK;
-  lis     r20, 0Fh
-  addi    r20, r18, 0FFFFh
+  li      r20, -1
+  andi.   r20, r20, 0FFFFh
+  addis   r20, r20, 0Fh
   lwz     r16, 4(r19)
   and     r16, r16, r20
 //;   ipart = val.s.i1 & FM_DOUBLE_EMASK;
