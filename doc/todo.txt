@@ -53,8 +53,7 @@ In development:
   --------------------------------------
   - ppc64 : ln
   --------------------------------------
-  * implementing for ppc64le
-  * test examples
+  * test example
   * test pi sample
 
   === Iteration 38 ===
