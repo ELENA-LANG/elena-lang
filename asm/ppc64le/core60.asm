@@ -1208,7 +1208,7 @@ inline %07Bh
 
 //;   udi_t val;
 //;   double z (f21), px(f18), qx(f19);
-//;   int32_t ipart (r18), fpart (r17);
+//;   int32_t ipart (r18), fpart (r16);
 
 //;   val.f = x;
   stfd    f17, 0(r19) 
@@ -1218,8 +1218,8 @@ inline %07Bh
 //;   fpart = val.s.i1 & FM_DOUBLE_MMASK;
   lis     r20, 0Fh
   addi    r20, r18, 0FFFFh
-  lwz     r17, 4(r19)
-  and     r17, r17, r20
+  lwz     r16, 4(r19)
+  and     r16, r16, r20
 //;   ipart = val.s.i1 & FM_DOUBLE_EMASK;
   lis     r20, 7FF0h
   lwz     r18, 4(r19)
@@ -1228,9 +1228,9 @@ inline %07Bh
 //;   /* set exponent to 0 to get the prefactor to 2**ipart */
 //;   fpart |= FM_DOUBLE_EZERO;
   lis     r20, 3FF0h
-  or      r17, r17, r20
+  or      r16, r16, r20
 //;   val.s.i1 = fpart;
-  stw     r17, 4(r19)
+  stw     r16, 4(r19)
 //;   x = val.f;
   lfd     f17, 0(r19)
 
