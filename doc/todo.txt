@@ -11,10 +11,8 @@ In development:
       - upndown (connector)
       - #496
       - #622
-      - #283
       - #34 : web api
       - http client (http get, get, post, put, patch, delete, head, options, trace, support https)
-      - ppc64 : ln
       - aarch64 : ln
   ide:
       - linux - open, edit, save, close
@@ -24,7 +22,6 @@ In development:
   maint:
       - linux system : fix all warnings
       - pi samples for ppc64, aarch64
-      - #702
       - unit tests : bt optimization 
       - test binary file operations
       - api refactoring : all symbols must start with a capital letter
@@ -33,7 +30,6 @@ In development:
       - threading samples must be included into release files
       - ide : windows
       - review pi performance (must < 6)
-      - linux editor - open / close / save / exit
       - test binary file reader / writer
       - matrix sample : review the code, it should be possible to use the lambda function without specifying the exact output type
       - implement ExtensionMessage.equal
@@ -51,8 +47,15 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: bi-posting weekly
   --------------------------------------  
+  - linux : ide - open
+  - #283
+  - upndown - connector form
   --------------------------------------
+  - ppc64 : ln
   --------------------------------------
+  * implementing for ppc64le
+  * test examples
+  * test pi sample
 
   === Iteration 38 ===
   --------------------------------------

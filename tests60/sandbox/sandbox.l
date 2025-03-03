@@ -4,5 +4,8 @@ public program()
 {
    real r := 1.0;
 
-   console.printLine(r.exp());
+   real z := r.exp();
+   console.printLine(z);
+
+   console.printLine(z.ln());
 }
