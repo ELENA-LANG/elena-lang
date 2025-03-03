@@ -7,5 +7,5 @@ public program()
    real z := /*r.exp()*/41;
 //   console.printLine(z);
 
-   console.printLine(z.ln());
+   console.printLine(z.power(3));
 }
