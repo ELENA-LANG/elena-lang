@@ -21,6 +21,8 @@ protected:
    IDEModel*         _model;
    IDEController*    _controller;
 
+   FileDialog        fileDialog;
+
    void populateMenu();
 
    // event signals
@@ -34,7 +36,9 @@ protected:
    }
    void on_menu_file_open_source()
    {
-      //_controller->doOpenFile();
+      _controller->doOpenFile(fileDialog, _model);
+      //_recentFileList.reload();
+      //_recentProjectList.reload();
    }
    void on_menu_file_open_project()
    {

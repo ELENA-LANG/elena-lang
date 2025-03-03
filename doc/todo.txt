@@ -13,7 +13,6 @@ In development:
       - #622
       - #34 : web api
       - http client (http get, get, post, put, patch, delete, head, options, trace, support https)
-      - aarch64 : ln
   ide:
       - linux - open, edit, save, close
       - fix syntax highlighting (see system'net:win_common.l)
@@ -47,14 +46,13 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: bi-posting weekly
   --------------------------------------  
-  - linux : ide - open
   - #283
   - upndown - connector form
+  - aarch64 : ln
   --------------------------------------
-  - ppc64 : ln
+  - linux : ide - open
   --------------------------------------
-  * test example
-  * test pi sample
+  * linux : ide - open dialog
 
   === Iteration 38 ===
   --------------------------------------

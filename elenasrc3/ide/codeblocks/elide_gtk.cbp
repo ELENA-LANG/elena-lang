@@ -128,6 +128,8 @@
 		<Unit filename="../gtklinux/gtkide.h" />
 		<Unit filename="../gtklinux/gtkidetextview.cpp" />
 		<Unit filename="../gtklinux/gtkidetextview.h" />
+		<Unit filename="../gtklinux/gtkdialogs.cpp" />
+		<Unit filename="../gtklinux/gtkdialogs.h" />
 		<Unit filename="../gtklinux/main.cpp" />
 		<Unit filename="../idecommon.cpp" />
 		<Unit filename="../idecommon.h" />
