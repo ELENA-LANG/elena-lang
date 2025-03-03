@@ -1339,7 +1339,7 @@ labSkip:
   fmul    f20, f20, f18
   fadd    f21, f21, f20
 
-  stfd    f20, 0(r19) 
+  stfd    f21, 0(r19) 
 
 end
 
