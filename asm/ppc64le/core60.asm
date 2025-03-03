@@ -1329,7 +1329,7 @@ labSkip:
   lfd     f20, 40(r17)
   fmul    f20, f20, f21
   fsub    f22, f22, f20 
-  fadd    f20, f22, f17
+  fadd    f21, f22, f17
 
 //;   z += ((double)ipart) * FM_DOUBLE_LOGEOF2;
   std     r18, 0(r19) 
