@@ -7,7 +7,8 @@
 #ifndef GTKDIALOGS_H
 #define GTKDIALOGS_H
 
-//#include "controller.h"
+#include "controller.h"
+#include "gtklinux/gtkcommon.h"
 //#include "editcontrol.h"
 //#include "ideproject.h"
 //#include "ideview.h"
@@ -29,7 +30,13 @@ namespace elena_lang
    // --- FileDialog ---
    class FileDialog : public FileDialogBase
    {
-//      WindowBase*  _owner;
+      Gtk::Window* _owner;
+
+      const char*  _initialDir;
+      const char*  _caption;
+
+      const char** _filter;
+      int          _filterCounter;
 //
 //      OPENFILENAME _struct;
 //      wchar_t      _fileName[MAX_PATH * 8];        // ??
@@ -38,13 +45,13 @@ namespace elena_lang
    public:
 //      static const wchar_t* ProjectFilter;
 //      static const wchar_t* SourceFilter;
-//
-//      bool openFile(PathString& path) override;
-//      bool openFiles(List<path_t, freepath>& files) override;
-//      bool saveFile(path_t ext, PathString& path) override;
-//
-      FileDialog(/*HINSTANCE instance, WindowBase* owner, const wchar_t* filter, const wchar_t* caption,
-         const wchar_t* initialDir = nullptr*/);
+
+      bool openFile(PathString& path) override;
+      bool openFiles(List<path_t, freepath>& files) override;
+      bool saveFile(path_t ext, PathString& path) override;
+
+      FileDialog(Gtk::Window* owner, const char** filter, int filterCounter, const char* caption,
+         const char* initialDir = nullptr);
    };
 //
 //   class MessageDialog : public MessageDialogBase
@@ -231,4 +238,3 @@ namespace elena_lang
 }
 
 #endif
-

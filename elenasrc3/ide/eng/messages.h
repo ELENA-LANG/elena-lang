@@ -9,7 +9,7 @@
 
 namespace elena_lang
 {
-   constexpr auto APP_NAME                      = _T("ELENA IDE 6.1");
+   constexpr auto APP_NAME                      = _T("ELENA IDE 6.6");
 
    constexpr auto OPEN_FILE_CAPTION             = _T("Open File");
    constexpr auto OPEN_PROJECT_CAPTION          = _T("Open Project");

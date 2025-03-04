@@ -1,11 +1,35 @@
-import extensions;
+/*import extensions;
 
 public program()
 {
-//   real r := 1.0;
+   real r := 1.0;
 
-   real z := /*r.exp()*/42;
-//   console.printLine(z);
+   real z := r.exp();
+   console.printLine(z);
 
-   console.printLine(z.power(2.0));
+   console.printLine(z.ln());
+}
+*/
+
+import extensions;
+import system'math;
+   
+public extension lazyOp
+{
+     whileFalse(Func action)
+     {
+         until(self)
+         {
+             action()
+         }
+     }        
+}
+
+public program()
+{
+     var n := 1;
+    
+     (:lazy (n.sqr().mod(100) == 64)).whileFalse({ n := n + 1 });
+   
+     console.printLine(n)
 }

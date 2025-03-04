@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 
 #include "gtklinux/gtkide.h"
+#include "eng/messages.h"
 
 using namespace elena_lang;
 
@@ -125,9 +126,18 @@ static Glib::ustring ui_info =
 //        "  </toolbar>"
         "</ui>";
 
+const char* SOURCE_FILE_FILTER[] =
+{
+   "*.l",
+   "ELENA source file",
+   "*",
+   "Any files"
+};
+
 // --- GTKIDEWindow ---
 
 GTKIDEWindow :: GTKIDEWindow(IDEController* controller, IDEModel* model)
+   : fileDialog(this, SOURCE_FILE_FILTER, 4, OPEN_FILE_CAPTION, *model->projectModel.paths.lastPath)
 {
    _model = model;
    _controller = controller;

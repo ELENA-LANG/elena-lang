@@ -8,6 +8,7 @@
 #define GTKIDE_H
 
 #include "gtklinux/gtksdi.h"
+#include "gtklinux/gtkdialogs.h"
 #include "idecontroller.h"
 
 namespace elena_lang

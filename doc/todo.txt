@@ -14,7 +14,7 @@ In development:
       - #34 : web api
       - http client (http get, get, post, put, patch, delete, head, options, trace, support https)
   ide:
-      - linux - open, edit, save, close
+      - linux - edit, save, close
       - fix syntax highlighting (see system'net:win_common.l)
   gen:
       - lpad : generate a code based on a record  
@@ -46,13 +46,15 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: bi-posting weekly
   --------------------------------------  
-  - #283
   - upndown - connector form
   - aarch64 : ln
+  - ide : linux - edit
   --------------------------------------
-  - linux : ide - open
+  - #283 : unboxing duplicate object
   --------------------------------------
-  * linux : ide - open dialog
+  * review the problem
+  * fix the problem
+  * make unit test
 
   === Iteration 38 ===
   --------------------------------------
