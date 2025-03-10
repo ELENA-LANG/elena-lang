@@ -14726,6 +14726,7 @@ ObjectInfo Compiler::Expression::compileBranchingOperation(SyntaxNode node, Obje
             }
 
             prepareConflictResolution();
+            updatedOuterArgs->clear();
 
             roperand = compileClosure(rnode, 0, EAttr::None, updatedOuterArgs);
             roperand2 = compileClosure(r2node, 0, EAttr::None, updatedOuterArgs);
