@@ -1783,7 +1783,10 @@ ObjectInfo Compiler::InlineClassScope::mapIdentifier(ustr_t identifier, bool ref
    else {
       Outer outer = outers.get(identifier);
       if (outer.reference != INVALID_REF) {
-         return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference, outer.outerObject.reference };
+         if (outer.outerObject.kind == ObjectKind::TempLocal && outer.outerObject.mode == TargetMode::RefUnboxingRequired) {
+            return { ObjectKind::OuterField, outer.outerObject.typeInfo, outer.reference };
+         }
+         else return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference, outer.outerObject.reference };
       }
       else {
          outer.outerObject = parent->mapIdentifier(identifier, referenceOne, attr);
