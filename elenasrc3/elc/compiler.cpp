@@ -11811,6 +11811,14 @@ ObjectInfo Compiler::Expression::compileLookAhead(SyntaxNode node, ref_t targetR
       if (overrideTarget)
          targetRef = retVal.typeInfo.typeRef;
 
+      // bad luck, we must rollback the changes and compile again
+      lastNode = lastNode.nextNode();
+      while (lastNode != BuildKey::None) {
+         lastNode.setKey(BuildKey::Idle);
+
+         lastNode = lastNode.nextNode();
+      }
+
       if (scope.unboxingConflictFound) {
          scope.trackingClosureLocals = false;
 
@@ -11821,14 +11829,6 @@ ObjectInfo Compiler::Expression::compileLookAhead(SyntaxNode node, ref_t targetR
                scope.tempLocals.add(it.key(), boxRefArgumentInPlace(local));
             }
          }
-      }
-
-      // bad luck, we must rollback the changes and compile again
-      lastNode = lastNode.nextNode();
-      while (lastNode != BuildKey::None) {
-         lastNode.setKey(BuildKey::Idle);
-
-         lastNode = lastNode.nextNode();
       }
 
       switch (node.key) {
