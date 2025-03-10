@@ -1424,7 +1424,8 @@ namespace elena_lang
          ObjectInfo boxLocally(ObjectInfo info, bool stackSafe);
          ObjectInfo boxPtrLocally(ObjectInfo info);
          ObjectInfo boxArgumentInPlace(ObjectInfo info, ref_t targetRef = 0);
-         ObjectInfo boxRefArgumentInPlace(ObjectInfo info, ObjectKind tempKind, ref_t targetRef = 0);
+         ObjectInfo boxRefArgumentLocallyInPlace(ObjectInfo info, ref_t targetRef = 0);
+         ObjectInfo boxRefArgumentInPlace(ObjectInfo info, ref_t targetRef = 0);
          ObjectInfo boxVariadicArgument(ObjectInfo info);
 
          ObjectInfo unboxArguments(ObjectInfo retVal, ArgumentsInfo* updatedOuterArgs);

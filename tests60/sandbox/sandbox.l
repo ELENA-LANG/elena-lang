@@ -33,3 +33,26 @@ public program()
    
      console.printLine(n)
 }
+
+/*
+public program()
+{
+    var t := 0;
+    int t2 := 0;
+    console.then(
+    {
+        Assert.ifTrue(t == 0);
+        Assert.ifTrue(t2 == 0);
+        
+        t := 1;
+        t2 += 1;
+    }).then(
+    {
+        Assert.ifTrue(t == 1);
+        Assert.ifTrue(t2 == 1);
+        
+        t := 2;
+        t2 += 1;
+    });
+}
+*/

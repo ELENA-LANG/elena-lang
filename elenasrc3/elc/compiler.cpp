@@ -11818,7 +11818,7 @@ ObjectInfo Compiler::Expression::compileLookAhead(SyntaxNode node, ref_t targetR
             if ((*it).mode == TrackingMode::Updated) {
                ObjectInfo local = { it.key().value1, (*it).typeInfo, it.key().value2 };
 
-               scope.tempLocals.add(it.key(), boxRefArgumentInPlace(local, ObjectKind::TempLocal));
+               scope.tempLocals.add(it.key(), boxRefArgumentInPlace(local));
             }
          }
       }
@@ -15421,7 +15421,7 @@ ObjectInfo Compiler::Expression::boxArgument(ObjectInfo info, bool stackSafe, bo
 
             retVal = boxArgumentInPlace(info, targetRef);
          }
-         else retVal = boxRefArgumentInPlace(info, ObjectKind::LocalReference, targetRef);
+         else retVal = boxRefArgumentLocallyInPlace(info, targetRef);
 
          if (!boxInPlace)
             scope.tempLocals.add(key, retVal);
@@ -15721,7 +15721,7 @@ ObjectInfo Compiler::Expression::boxArgumentInPlace(ObjectInfo info, ref_t targe
    return tempLocal;
 }
 
-ObjectInfo Compiler::Expression::boxRefArgumentInPlace(ObjectInfo info, ObjectKind tempKind, ref_t targetRef)
+ObjectInfo Compiler::Expression :: boxRefArgumentLocallyInPlace(ObjectInfo info, ref_t targetRef)
 {
    bool dummy = false;
    ref_t typeRef = targetRef;
@@ -15734,7 +15734,33 @@ ObjectInfo Compiler::Expression::boxRefArgumentInPlace(ObjectInfo info, ObjectKi
    info.kind = ObjectKind::Local;
    compileAssigningOp(tempLocal, info, dummy);
 
-   tempLocal.kind = tempKind;
+   tempLocal.kind = ObjectKind::LocalReference;
+
+   return tempLocal;
+}
+
+ObjectInfo Compiler::Expression :: boxRefArgumentInPlace(ObjectInfo info, ref_t targetRef)
+{
+   bool dummy = false;
+   ref_t typeRef = targetRef;
+   if (!typeRef)
+      typeRef = compiler->resolveStrongType(scope, info.typeInfo);
+
+   ObjectInfo tempLocal = declareTempLocal(typeRef);
+   tempLocal.mode = TargetMode::RefUnboxingRequired;
+
+   info.kind = ObjectKind::TempLocal;
+
+   writeObjectInfo(info);
+   writer->appendNode(BuildKey::SavingInStack, 0);
+
+   // create a wrapper
+   writer->newNode(BuildKey::CreatingClass, 1);
+   writer->appendNode(BuildKey::Type, scope.moduleScope->buildins.superReference);
+   writer->closeNode();
+   writer->appendNode(BuildKey::FieldAssigning, 0);
+
+   compileAssigningOp(tempLocal, { ObjectKind::Object }, dummy);
 
    return tempLocal;
 }
