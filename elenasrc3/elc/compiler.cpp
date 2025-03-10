@@ -1600,14 +1600,14 @@ bool Compiler::CodeScope::resolveAutoType(ObjectInfo& info, TypeInfo typeInfo, i
 // --- Compiler::ExprScope ---
 
 Compiler::ExprScope::ExprScope(SourceScope* parent)
-   : Scope(parent), tempLocals({})
+   : Scope(parent), trackingClosureLocals(false), unboxingConflictFound(false), tempLocals({}), trackingLocals({})
 {
    allocatedArgs = 0;
    tempAllocated2 = tempAllocated1 = 0;
 }
 
 Compiler::ExprScope::ExprScope(CodeScope* parent)
-   : Scope(parent), tempLocals({})
+   : Scope(parent), trackingClosureLocals(false), unboxingConflictFound(false), tempLocals({}), trackingLocals({})
 {
    allocatedArgs = 0;
    tempAllocated1 = parent->allocated1;
@@ -1619,6 +1619,21 @@ int Compiler::ExprScope::newTempLocal()
    tempAllocated1++;
 
    return tempAllocated1;
+}
+
+ObjectInfo Compiler::ExprScope :: mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
+{
+   ObjectInfo info = Scope::mapIdentifier(identifier, referenceOne, attr);
+   if (unboxingConflictFound && !trackingClosureLocals && info.kind != ObjectKind::Unknown) {
+      ObjectKey key = { info.kind, info.reference };
+
+      ObjectInfo temp = tempLocals.get(key);
+      if (temp.mode == TargetMode::RefUnboxingRequired) {
+         return temp;
+      }
+   }
+
+   return info;
 }
 
 ObjectInfo Compiler::ExprScope::mapGlobal(ustr_t globalReference)
@@ -1784,6 +1799,7 @@ ObjectInfo Compiler::InlineClassScope::mapIdentifier(ustr_t identifier, bool ref
             case ObjectKind::Param:
             case ObjectKind::ParamAddress:
             case ObjectKind::Local:
+            case ObjectKind::TempLocal:
             case ObjectKind::Outer:
             case ObjectKind::OuterField:
             case ObjectKind::OuterSelf:
@@ -1801,6 +1817,10 @@ ObjectInfo Compiler::InlineClassScope::mapIdentifier(ustr_t identifier, bool ref
 
                if (outer.outerObject.kind == ObjectKind::OuterSelf) {
                   return { ObjectKind::OuterSelf, outer.outerObject.typeInfo, outer.reference };
+               }
+               else if (outer.outerObject.kind == ObjectKind::TempLocal && outer.outerObject.mode == TargetMode::RefUnboxingRequired) {
+                  // NOTE : recognize the updatable captured variable
+                  return { ObjectKind::OuterField, outer.outerObject.typeInfo, outer.reference };
                }
                else return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference };
             }
@@ -11370,6 +11390,45 @@ ObjectInfo Compiler::Expression::compileSymbolRoot(SyntaxNode bodyNode, EAttr mo
    return retVal;
 }
 
+inline int countClosures(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   int counter = 0;
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Expression:
+         case SyntaxKey::Object:
+         case SyntaxKey::MessageOperation:
+         case SyntaxKey::PropertyOperation:
+            counter += countClosures(current);
+            break;
+         case SyntaxKey::NestedBlock:
+         case SyntaxKey::ClosureBlock:
+         case SyntaxKey::LazyOperation:
+            counter++;
+            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   return counter;
+}
+
+inline bool isClosureConflictExpected(SyntaxNode node)
+{
+   SyntaxNode current = node == SyntaxKey::Expression ? node.firstChild() : node;
+   switch (current.key) {
+      case SyntaxKey::MessageOperation:
+      case SyntaxKey::PropertyOperation:
+         return countClosures(current) > 1;
+      default:
+         return false;
+   }
+}
+
 ObjectInfo Compiler::Expression::compileRoot(SyntaxNode node, EAttr mode)
 {
    SyntaxNode current = node.firstChild();
@@ -11382,6 +11441,12 @@ ObjectInfo Compiler::Expression::compileRoot(SyntaxNode node, EAttr mode)
    if (!noDebugInfo) {
       writer->appendNode(BuildKey::OpenStatement);
       Compiler::addBreakpoint(*writer, findObjectNode(node), BuildKey::Breakpoint);
+   }
+
+   if (isClosureConflictExpected(node)) {
+      scope.trackingClosureLocals = true;
+
+      mode = mode | EAttr::LookaheadExprMode;
    }
 
    auto retVal = compile(node, 0, mode, nullptr);
@@ -11741,8 +11806,23 @@ ObjectInfo Compiler::Expression::compileLookAhead(SyntaxNode node, ref_t targetR
          break;
    }
 
-   if (!targetRef && compiler->_logic->isEmbeddable(*scope.moduleScope, retVal.typeInfo.typeRef)) {
-      targetRef = retVal.typeInfo.typeRef;
+   bool overrideTarget = !targetRef && compiler->_logic->isEmbeddable(*scope.moduleScope, retVal.typeInfo.typeRef);
+   if (overrideTarget || scope.unboxingConflictFound) {
+      if (overrideTarget)
+         targetRef = retVal.typeInfo.typeRef;
+
+      if (scope.unboxingConflictFound) {
+         scope.trackingClosureLocals = false;
+
+         for (auto it = scope.trackingLocals.start(); !it.eof(); ++it) {
+            if ((*it).mode == TrackingMode::Updated) {
+               ObjectInfo local = { it.key().value1, (*it).typeInfo, it.key().value2 };
+
+               scope.tempLocals.add(it.key(), boxRefArgumentInPlace(local, ObjectKind::TempLocal));
+            }
+         }
+      }
+
       // bad luck, we must rollback the changes and compile again
       lastNode = lastNode.nextNode();
       while (lastNode != BuildKey::None) {
@@ -13437,6 +13517,22 @@ void Compiler::Expression :: compileNestedInitializing(InlineClassScope& classSc
             break;
       }
 
+      // HOTFIX : tracking possible conflict with closure unwrapping
+      bool needToBeTracked = arg.kind == ObjectKind::Local && scope.trackingClosureLocals;
+      if (needToBeTracked) {
+         ObjectKey key = { arg.kind, arg.reference };
+
+         TrackingMode trackInfo = scope.trackingLocals.get(key).mode;
+         if (((*it).updated && trackInfo != TrackingMode::None) 
+            || trackInfo == TrackingMode::Updated) 
+         {
+            scope.unboxingConflictFound = true;
+         }
+
+         scope.trackingLocals.erase(key);
+         scope.trackingLocals.add(key, { arg.typeInfo, (*it).updated ? TrackingMode::Updated : TrackingMode::Captched });
+      }
+
       if (updatedOuterArgs && (*it).updated) {
          if (!preservedContext) {
             updatedOuterArgs->add({ ObjectKind::ContextInfo });
@@ -14240,7 +14336,7 @@ ObjectInfo Compiler::Expression::boxArgumentLocally(ObjectInfo info,
    }
 }
 
-ObjectInfo Compiler::Expression::unboxArguments(ObjectInfo retVal, ArgumentsInfo* updatedOuterArgs)
+ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, ArgumentsInfo* updatedOuterArgs)
 {
    // unbox the arguments if required
    bool resultSaved = false;
@@ -15325,7 +15421,7 @@ ObjectInfo Compiler::Expression::boxArgument(ObjectInfo info, bool stackSafe, bo
 
             retVal = boxArgumentInPlace(info, targetRef);
          }
-         else retVal = boxRefArgumentInPlace(info, targetRef);
+         else retVal = boxRefArgumentInPlace(info, ObjectKind::LocalReference, targetRef);
 
          if (!boxInPlace)
             scope.tempLocals.add(key, retVal);
@@ -15625,7 +15721,7 @@ ObjectInfo Compiler::Expression::boxArgumentInPlace(ObjectInfo info, ref_t targe
    return tempLocal;
 }
 
-ObjectInfo Compiler::Expression::boxRefArgumentInPlace(ObjectInfo info, ref_t targetRef)
+ObjectInfo Compiler::Expression::boxRefArgumentInPlace(ObjectInfo info, ObjectKind tempKind, ref_t targetRef)
 {
    bool dummy = false;
    ref_t typeRef = targetRef;
@@ -15638,7 +15734,7 @@ ObjectInfo Compiler::Expression::boxRefArgumentInPlace(ObjectInfo info, ref_t ta
    info.kind = ObjectKind::Local;
    compileAssigningOp(tempLocal, info, dummy);
 
-   tempLocal.kind = ObjectKind::LocalReference;
+   tempLocal.kind = tempKind;
 
    return tempLocal;
 }

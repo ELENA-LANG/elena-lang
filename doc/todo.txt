@@ -52,8 +52,9 @@ In development:
   --------------------------------------
   - #283 : unboxing duplicate object
   --------------------------------------
-  * review the problem
-  * fix the problem
+  * test the solution
+
+  * add functionality to generate syntax / build trees for the module (trace mode - compile & save but without creating executable)
   * make unit test
 
   === Iteration 38 ===
