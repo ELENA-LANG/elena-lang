@@ -1411,15 +1411,18 @@ public duplicateBoxing() : testCase()
         t := 2;
         t2 += 1;
     });
-    
+    console.write(".")
+
     Assert.ifTrue(t == 2);
     Assert.ifTrue(t2 == 2);
+    console.write(".")
 
     var mode := -1;
     var value := false;
     value ? { mode := 0 } ! { mode := 1 };
     
     Assert.ifTrue(mode == 1);
+    console.write(".")
     
     value := true;
     value ? { mode := 0 } ! { mode := 1 };
