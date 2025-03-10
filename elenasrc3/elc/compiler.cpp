@@ -14370,9 +14370,18 @@ ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, ArgumentsIn
             unboxArgumentLocaly(temp, key);
          }
          else if (temp.mode == TargetMode::RefUnboxingRequired) {
-            temp.kind = ObjectKind::Local;
+            if (temp.kind == ObjectKind::LocalReference) {
+               temp.kind = ObjectKind::Local;
 
-            compileAssigningOp({ ObjectKind::Local, temp.typeInfo, key.value2 }, temp, dummy);
+               compileAssigningOp({ ObjectKind::Local, temp.typeInfo, key.value2 }, temp, dummy);
+            }
+            else {
+               writeObjectInfo(temp);
+               writer->appendNode(BuildKey::Field);
+               compileAssigningOp(
+                  { ObjectKind::Local, temp.typeInfo, key.value2 },
+                  { ObjectKind::Object, temp.typeInfo, 0 }, dummy);
+            }
          }
          else if (key.value1 == ObjectKind::RefLocal) {
             writeObjectInfo(temp);
@@ -15592,16 +15601,7 @@ void Compiler::Expression::unboxOuterArgs(ArgumentsInfo* updatedOuterArgs)
             closure.extra = info.reference;
             compileAssigningOp(source, closure, dummy);
          }
-         else if (source.kind == ObjectKind::TempLocal && source.mode == TargetMode::RefUnboxingRequired) {
-            ObjectKey key = scope.tempLocals.retrieve<ref_t>({}, source.reference, [](ref_t arg, ObjectKey key, ObjectInfo current)
-               {
-                  return arg == current.reference && current.kind == ObjectKind::TempLocal;
-               });
-
-            source = { key.value1, source.typeInfo, key.value2 };
-            compileAssigningOp(source, closure, dummy);
-         }
-         else if (source.kind == ObjectKind::Outer) {
+         else if (source.kind == ObjectKind::Outer || (source.kind == ObjectKind::TempLocal && source.mode == TargetMode::RefUnboxingRequired)) {
             // ignore outer fields
          }
          else assert(false);
