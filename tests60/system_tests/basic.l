@@ -1424,6 +1424,7 @@ public duplicateBoxing() : testCase()
     Assert.ifTrue(mode == 1);
     console.write(".");
     
+    mode := -1;
     value := true;
     value ? { mode := 0 } ! { mode := 1 };
     
