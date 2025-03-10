@@ -11796,6 +11796,19 @@ ObjectInfo Compiler::Expression :: compileObject(SyntaxNode node, ExpressionAttr
    else return compile(node, 0, mode, updatedOuterArgs);
 }
 
+void Compiler::Expression :: prepareConflictResolution()
+{
+   scope.trackingClosureLocals = false;
+
+   for (auto it = scope.trackingLocals.start(); !it.eof(); ++it) {
+      if ((*it).mode == TrackingMode::Updated) {
+         ObjectInfo local = { it.key().value1, (*it).typeInfo, it.key().value2 };
+
+         scope.tempLocals.add(it.key(), boxRefArgumentInPlace(local));
+      }
+   }
+}
+
 ObjectInfo Compiler::Expression::compileLookAhead(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode)
 {
    BuildNode lastNode = writer->CurrentNode().lastChild();
@@ -11828,15 +11841,7 @@ ObjectInfo Compiler::Expression::compileLookAhead(SyntaxNode node, ref_t targetR
       }
 
       if (scope.unboxingConflictFound) {
-         scope.trackingClosureLocals = false;
-
-         for (auto it = scope.trackingLocals.start(); !it.eof(); ++it) {
-            if ((*it).mode == TrackingMode::Updated) {
-               ObjectInfo local = { it.key().value1, (*it).typeInfo, it.key().value2 };
-
-               scope.tempLocals.add(it.key(), boxRefArgumentInPlace(local));
-            }
-         }
+         prepareConflictResolution();
       }
 
       switch (node.key) {
@@ -14719,6 +14724,8 @@ ObjectInfo Compiler::Expression::compileBranchingOperation(SyntaxNode node, Obje
 
                lastNode = lastNode.nextNode();
             }
+
+            prepareConflictResolution();
 
             roperand = compileClosure(rnode, 0, EAttr::None, updatedOuterArgs);
             roperand2 = compileClosure(r2node, 0, EAttr::None, updatedOuterArgs);

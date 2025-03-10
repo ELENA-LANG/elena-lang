@@ -1346,6 +1346,8 @@ namespace elena_lang
          bool checkValidity(ObjectInfo target, CheckMethodResult& result, bool allowPrivateCall);
          bool checkValidity(ObjectInfo target, MessageResolution& resolution, bool allowPrivateCall);
 
+         void prepareConflictResolution();
+
          ObjectInfo compileLookAhead(SyntaxNode node,
             ref_t targetRef, ExpressionAttribute attrs);
 
