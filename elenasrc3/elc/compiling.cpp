@@ -706,6 +706,10 @@ void CompilingProcess :: compile(ProjectBase& project,
 
 void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS)
 {
+   // ignore link operation for trace mode
+   if (project.BoolSetting(ProjectOption::TracingMode))
+      return;
+
    PlatformType uiType = project.UITargetType();
 
    _presenter->print(ELC_LINKING);

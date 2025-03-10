@@ -75,6 +75,8 @@ namespace elena_lang
       ConditionalBoxing,
       EvaluateOp,
 
+      TracingMode,
+
       Prolog,
       Epilog,
 

@@ -37,6 +37,7 @@ In development:
       - redesign switch statement : it should be possible to use as an expression as well (so we cannot use => anymore : e.g. 
         console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  ) console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third")
       - warn if typecasting method returns itself, it leads to infinite call
+      - add functionality to generate syntax / build trees for the module (trace mode - compile & save but without creating executable)
   port:
       - chat sample
       - test all x86 examples (net)
@@ -50,12 +51,7 @@ In development:
   - aarch64 : ln
   - ide : linux - edit
   --------------------------------------
-  - #283 : unboxing duplicate object
   --------------------------------------
-  * test the solution
-
-  * add functionality to generate syntax / build trees for the module (trace mode - compile & save but without creating executable)
-  * make unit test
 
   === Iteration 38 ===
   --------------------------------------

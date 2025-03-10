@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the win32 / win64 command-line compiler
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <windows.h>
@@ -221,6 +221,11 @@ void handleOption(wchar_t* arg, IdentifierString& profile, Project& project, Com
          }
          else if (arg[2] == 's') {
             project.addBoolSetting(ProjectOption::StrictTypeEnforcing, arg[3] != '-');
+         }
+         break;
+      case '-':
+         if (wstr_t(arg).compare(L"--tracing")) {
+            project.addBoolSetting(ProjectOption::TracingMode, true);
          }
          break;
       default:
