@@ -1784,7 +1784,7 @@ ObjectInfo Compiler::InlineClassScope::mapIdentifier(ustr_t identifier, bool ref
       Outer outer = outers.get(identifier);
       if (outer.reference != INVALID_REF) {
          if (outer.outerObject.kind == ObjectKind::TempLocal && outer.outerObject.mode == TargetMode::RefUnboxingRequired) {
-            return { ObjectKind::OuterField, outer.outerObject.typeInfo, outer.reference };
+            return { ObjectKind::OuterField, outer.outerObject.typeInfo, outer.reference, TargetMode::RefUnboxingRequired };
          }
          else return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference, outer.outerObject.reference };
       }
@@ -1823,7 +1823,7 @@ ObjectInfo Compiler::InlineClassScope::mapIdentifier(ustr_t identifier, bool ref
                }
                else if (outer.outerObject.kind == ObjectKind::TempLocal && outer.outerObject.mode == TargetMode::RefUnboxingRequired) {
                   // NOTE : recognize the updatable captured variable
-                  return { ObjectKind::OuterField, outer.outerObject.typeInfo, outer.reference };
+                  return { ObjectKind::OuterField, outer.outerObject.typeInfo, outer.reference, TargetMode::RefUnboxingRequired };
                }
                else return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference };
             }
@@ -1845,25 +1845,30 @@ ObjectInfo Compiler::InlineClassScope::mapIdentifier(ustr_t identifier, bool ref
 
 bool Compiler::InlineClassScope::markAsPresaved(ObjectInfo object)
 {
-   if (object.kind == ObjectKind::Outer) {
+   if (object.kind == ObjectKind::Outer || (object.kind == ObjectKind::OuterField && object.mode == TargetMode::RefUnboxingRequired)) {
       auto it = outers.start();
       while (!it.eof()) {
          if ((*it).reference == object.reference) {
-            if ((*it).outerObject.kind == ObjectKind::Local || (*it).outerObject.kind == ObjectKind::LocalAddress) {
-               (*it).updated = true;
-
-               return true;
-            }
-            else if ((*it).outerObject.kind == ObjectKind::Outer) {
-               InlineClassScope* closure = (InlineClassScope*)parent->getScope(Scope::ScopeLevel::Class);
-               if (closure->markAsPresaved((*it).outerObject)) {
+            switch ((*it).outerObject.kind) {
+               case ObjectKind::Local:
+               case ObjectKind::TempLocal:
+               case ObjectKind::LocalAddress:
                   (*it).updated = true;
 
                   return true;
+               case ObjectKind::Outer:
+               {
+                  InlineClassScope* closure = (InlineClassScope*)parent->getScope(Scope::ScopeLevel::Class);
+                  if (closure->markAsPresaved((*it).outerObject)) {
+                     (*it).updated = true;
+
+                     return true;
+                  }
+                  else return false;
                }
-               else return false;
+               default:
+                  break;
             }
-            break;
          }
 
          it++;
@@ -14512,7 +14517,12 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
          fieldMode = true;
          break;
       case ObjectKind::OuterField:
-         scope.markAsAssigned(target);
+         if (target.mode == TargetMode::RefUnboxingRequired) {
+            InlineClassScope* closure = Scope::getScope<InlineClassScope>(scope, Scope::ScopeLevel::Class);
+            if (!closure->markAsPresaved(target))
+               return false;
+         }
+         else scope.markAsAssigned(target);
          operationType = BuildKey::FieldAssigning;
          operand = target.extra;
          fieldFieldMode = fieldMode = true;
@@ -15580,6 +15590,15 @@ void Compiler::Expression::unboxOuterArgs(ArgumentsInfo* updatedOuterArgs)
          }
          else if (source.kind == ObjectKind::LocalAddress) {
             closure.extra = info.reference;
+            compileAssigningOp(source, closure, dummy);
+         }
+         else if (source.kind == ObjectKind::TempLocal && source.mode == TargetMode::RefUnboxingRequired) {
+            ObjectKey key = scope.tempLocals.retrieve<ref_t>({}, source.reference, [](ref_t arg, ObjectKey key, ObjectInfo current)
+               {
+                  return arg == current.reference && current.kind == ObjectKind::TempLocal;
+               });
+
+            source = { key.value1, source.typeInfo, key.value2 };
             compileAssigningOp(source, closure, dummy);
          }
          else if (source.kind == ObjectKind::Outer) {
