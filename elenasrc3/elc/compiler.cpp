@@ -14703,8 +14703,28 @@ ObjectInfo Compiler::Expression::compileBranchingOperation(SyntaxNode node, Obje
       else {
          context.weakMessage = compiler->resolveOperatorMessage(scope.moduleScope, operatorId);
 
+         // HOTFIX : to deal with conflicting unboxing captured locals
+         scope.trackingClosureLocals = true;
+         BuildNode lastNode = writer->CurrentNode().lastChild();
+
          roperand = compileClosure(rnode, 0, EAttr::None, updatedOuterArgs);
          roperand2 = compileClosure(r2node, 0, EAttr::None, updatedOuterArgs);
+
+         scope.trackingClosureLocals = false;
+         if (scope.unboxingConflictFound) {
+            // bad luck, we have to rollback the latest changes and compile them again
+            lastNode = lastNode.nextNode();
+            while (lastNode != BuildKey::None) {
+               lastNode.setKey(BuildKey::Idle);
+
+               lastNode = lastNode.nextNode();
+            }
+
+            roperand = compileClosure(rnode, 0, EAttr::None, updatedOuterArgs);
+            roperand2 = compileClosure(r2node, 0, EAttr::None, updatedOuterArgs);
+
+            scope.unboxingConflictFound = false;
+         }
       }
 
       ArgumentsInfo messageArguments;

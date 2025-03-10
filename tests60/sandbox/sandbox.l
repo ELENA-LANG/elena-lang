@@ -1,5 +1,5 @@
-/*import extensions;
-
+import extensions;
+/*
 public program()
 {
    real r := 1.0;
