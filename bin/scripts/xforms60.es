@@ -39,7 +39,7 @@ root (
 
   #define field_list ::= <= $buffer => $eps;
 
-  #define member ::= { label | button | radiobuttongroup | panel };
+  #define member ::= { label | button | radiobuttongroup | panel | edit };
 
   #define label ::=
 <=
@@ -102,6 +102,37 @@ root (
   #define button_name_prop ::= ":" "Name" "=" button_declaration control_assigning;
 
   #define button_declaration ::= %<= field ( type ( reference = forms'Button ) nameattr ( identifier = $current ) ) =>;
+
+  #define edit ::=
+<=
+         code (
+           expression (
+             assign_operation (
+               new_variable ( identifier = current )
+               message_operation (
+                 object ( reference = forms'Edit )
+                 message ( identifier = new )
+               )
+             )
+           )
+=>
+    "<" "Edit" edit_name_prop { val_prop | prop }* ">" edit_closing_tag
+<=
+           expression (
+             message_operation (
+               object ( super_identifier = current )
+               message ( identifier = appendControl )
+               expression (
+                 object ( identifier = current )
+               )
+             )
+           )
+         )
+=>;
+
+  #define edit_name_prop ::= ":" "Name" "=" edit_declaration control_assigning;
+
+  #define edit_declaration ::= %<= field ( type ( reference = forms'Edit ) nameattr ( identifier = $current ) ) =>;
 
   #define radiobuttongroup ::=
 <=
@@ -317,6 +348,9 @@ root (
 
   #define button_closing_tag ::=
 	"<" "/" "Button" ">";
+
+  #define edit_closing_tag ::=
+	"<" "/" "Edit" ">";
 
   #define rbgroup_closing_tag ::=
 	"<" "/" "RadioButtonGroup" ">";

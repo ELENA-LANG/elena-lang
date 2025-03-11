@@ -56,7 +56,6 @@ In development:
   --------------------------------------
   - upndown - declaring connector form components
   --------------------------------------
-  * GroupBox1
   * pnlHost
   * pnlClient
   * on start "&Host" must be selected by default
