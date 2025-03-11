@@ -53,9 +53,13 @@ In development:
   - lpad : generate a code based on a record - general concept 
   - test all x86 examples (net)
   --------------------------------------
-  - upndown - add basic components
+  - upndown - declaring connector form components
   --------------------------------------
-  * work on the form components
+  * rbgConnectType
+  * redesign xforms - support nested declaration (button / label / rbgroup may be declared inside the panel)
+  * GroupBox1
+  * pnlHost
+  * pnlClient
 
   === Iteration 38 ===
   --------------------------------------

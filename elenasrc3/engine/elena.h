@@ -710,6 +710,14 @@ namespace elena_lang
          StrConvertor::copy(_string + len, s, getlength(s), subLen);
          _string[len + subLen] = 0;
       }
+      void appendUstr(const char* s, size_t str_len)
+      {
+         size_t len = length();
+
+         size_t subLen = MESSAGE_LEN - length();
+         StrConvertor::copy(_string + len, s, str_len, subLen);
+         _string[len + subLen] = 0;
+      }
 
       WideMessage()
       {

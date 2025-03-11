@@ -6,6 +6,8 @@
 //                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+//#define FULL_OUTOUT_INFO 1
+
 #include "compiler.h"
 #include "langcommon.h"
 #include <errno.h>
@@ -13,7 +15,11 @@
 
 #include "bytecode.h"
 
-//#define FULL_OUTOUT_INFO 1
+#ifdef FULL_OUTOUT_INFO
+
+#include "serializer.h"
+
+#endif
 
 using namespace elena_lang;
 
@@ -52,12 +58,18 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 //   }
 //}
 
-//inline void storeNode(SyntaxNode node)
-//{
-//   DynamicUStr target;
-//
-//   SyntaxTreeSerializer::save(node, target);
-//}
+#ifdef FULL_OUTOUT_INFO
+
+inline void printTree(PresenterBase* presenter, SyntaxNode node)
+{
+   DynamicUStr target;
+
+   SyntaxTreeSerializer::save(node, target);
+
+   presenter->print(target.str());
+}
+
+#endif // FULL_OUTOUT_INFO
 
 //inline void storeNode(BuildNode node)
 //{
@@ -5117,6 +5129,11 @@ void Compiler::declareTemplate(TemplateScope& scope, SyntaxNode& node)
 
    saveTemplate(scope, node);
 
+#ifdef FULL_OUTOUT_INFO
+   _presenter->print("\nSyntax tree:\n");
+   printTree(_presenter, node);
+#endif
+
    node.setKey(SyntaxKey::Idle);
 }
 
@@ -6832,7 +6849,7 @@ ObjectInfo Compiler::mapConstant(Scope& scope, SyntaxNode node)
 
 ObjectInfo Compiler::mapIntConstant(Scope& scope, SyntaxNode node, int radix)
 {
-   int integer = StrConvertor::toInt(node.identifier(), radix);
+   int integer = node.identifier().empty() ? 0 : StrConvertor::toInt(node.identifier(), radix);
    if (errno == ERANGE)
       scope.raiseError(errInvalidIntNumber, node);
 
@@ -11072,6 +11089,11 @@ bool Compiler::Class::isParentDeclared(SyntaxNode node)
 
 void Compiler::Class::declare(SyntaxNode node)
 {
+#ifdef FULL_OUTOUT_INFO
+   compiler->_presenter->print("\nSyntax tree:\n");
+   printTree(compiler->_presenter, node);
+#endif
+
    bool extensionDeclaration = isExtensionDeclaration(node);
    resolveClassPostfixes(node, extensionDeclaration);
 
