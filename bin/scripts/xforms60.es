@@ -22,6 +22,14 @@ root (
     method (
        nameattr( identifier = onInit )
        code (
+           expression (
+             assign_operation (
+               new_variable ( identifier = current )
+               expression (
+                 object ( identifier = self )
+               )
+             )
+           )
 =>
      { val_form_prop | form_prop }* ">" member* form_closing_tag
 <=
