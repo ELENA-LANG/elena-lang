@@ -13,6 +13,7 @@ In development:
       - #622
       - #34 : web api
       - http client (http get, get, post, put, patch, delete, head, options, trace, support https)
+      - MTA support for Linux  
   ide:
       - linux - edit, save, close
       - fix syntax highlighting (see system'net:win_common.l)
@@ -40,18 +41,21 @@ In development:
       - add functionality to generate syntax / build trees for the module (trace mode - compile & save but without creating executable)
   port:
       - chat sample
-      - test all x86 examples (net)
       - rosetta code : moving to 6.5
       - x86-64 : mta - test net examples for mta   
+      - test all x86-64 examples (net)
   tools: 
       - #658 : connect with ldbg from VSCode  
   prom: bi-posting weekly
   --------------------------------------  
-  - upndown - connector form
   - aarch64 : ln
   - ide : linux - edit
+  - lpad : generate a code based on a record - general concept 
+  - test all x86 examples (net)
   --------------------------------------
+  - upndown - add basic components
   --------------------------------------
+  * work on the form components
 
   === Iteration 38 ===
   --------------------------------------

@@ -31,7 +31,7 @@ root (
 
   #define field_list ::= <= $buffer => $eps;
 
-  #define member ::= { label | button };
+  #define member ::= { label | button | radiobuttongroup };
 
   #define label ::=
 <=
@@ -94,6 +94,52 @@ root (
   #define button_name_prop ::= ":" "Name" "=" button_declaration control_assigning;
 
   #define button_declaration ::= %<= field ( type ( reference = forms'Button ) nameattr ( identifier = $current ) ) =>;
+
+  #define radiobuttongroup ::=
+<=
+         code (
+           expression (
+             assign_operation (
+               new_variable ( identifier = current )
+               message_operation (
+                 object ( reference = forms'RadioButtonGroup )
+                 message ( identifier = new )
+               )
+             )
+           )
+=>
+    "<" "RadioButtonGroup" rbgroup_name_prop { val_prop | prop }* ">" item* rbgroup_closing_tag
+<=
+           expression (
+             message_operation (
+               object ( identifier = self )
+               message ( identifier = appendControl )
+               expression (
+                 object ( identifier = current )
+               )
+             )
+           )
+         )
+=>;
+
+  #define rbgroup_name_prop ::= ":" "Name" "=" rbgroup_declaration control_assigning;
+
+  #define rbgroup_declaration ::= %<= field ( type ( reference = forms'RadioButtonGroup ) nameattr ( identifier = $current ) ) =>;
+
+  #define item ::=
+<=
+           expression (
+             message_operation (
+               object ( identifier = current )
+               message ( identifier = appendItem )
+=>
+    "<" "Item" itemval_prop ">" item_closing_tag
+<=
+             )
+           ) 
+=>;
+
+  #define itemval_prop ::= "Caption" "=" prop_str_value;
 
   #define control_assigning ::=
 <= 
@@ -232,5 +278,11 @@ root (
 
   #define button_closing_tag ::=
 	"<" "/" "Button" ">";
+
+  #define rbgroup_closing_tag ::=
+	"<" "/" "RadioButtonGroup" ">";
+
+  #define item_closing_tag ::=
+	"<" "/" "Item" ">";
 
 ]]
