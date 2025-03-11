@@ -56,9 +56,6 @@ In development:
   --------------------------------------
   - upndown - declaring connector form components
   --------------------------------------
-  * super attribute
-  * support pannel
-  * redesign xforms - support nested declaration (button / label / rbgroup may be declared inside the panel)
   * GroupBox1
   * pnlHost
   * pnlClient

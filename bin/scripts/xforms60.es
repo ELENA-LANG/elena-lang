@@ -50,7 +50,7 @@ root (
 <=
            expression (
              message_operation (
-               object ( identifier = self )
+               object ( super_identifier = current )
                message ( identifier = appendControl )
                expression (
                  object ( identifier = current )
@@ -81,7 +81,7 @@ root (
 <=
            expression (
              message_operation (
-               object ( identifier = self )
+               object ( super_identifier = current )
                message ( identifier = appendControl )
                expression (
                  object ( identifier = current )
@@ -112,7 +112,7 @@ root (
 <=
            expression (
              message_operation (
-               object ( identifier = self )
+               object ( super_identifier = current )
                message ( identifier = appendControl )
                expression (
                  object ( identifier = current )
@@ -143,7 +143,7 @@ root (
 <=
            expression (
              message_operation (
-               object ( identifier = self )
+               object ( super_identifier = current )
                message ( identifier = appendControl )
                expression (
                  object ( identifier = current )
