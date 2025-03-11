@@ -20,6 +20,7 @@ In development:
   gen:
       - lpad : generate a code based on a record  
   maint:
+      - test fexpdp opcode
       - linux system : fix all warnings
       - pi samples for ppc64, aarch64
       - unit tests : bt optimization 
@@ -55,11 +56,13 @@ In development:
   --------------------------------------
   - upndown - declaring connector form components
   --------------------------------------
-  * rbgConnectType
+  * super attribute
+  * support pannel
   * redesign xforms - support nested declaration (button / label / rbgroup may be declared inside the panel)
   * GroupBox1
   * pnlHost
   * pnlClient
+  * on start "&Host" must be selected by default
 
   === Iteration 38 ===
   --------------------------------------

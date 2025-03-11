@@ -31,7 +31,7 @@ root (
 
   #define field_list ::= <= $buffer => $eps;
 
-  #define member ::= { label | button | radiobuttongroup };
+  #define member ::= { label | button | radiobuttongroup | panel };
 
   #define label ::=
 <=
@@ -125,6 +125,37 @@ root (
   #define rbgroup_name_prop ::= ":" "Name" "=" rbgroup_declaration control_assigning;
 
   #define rbgroup_declaration ::= %<= field ( type ( reference = forms'RadioButtonGroup ) nameattr ( identifier = $current ) ) =>;
+
+  #define panel ::=
+<=
+         code (
+           expression (
+             assign_operation (
+               new_variable ( identifier = current )
+               message_operation (
+                 object ( reference = forms'Panel )
+                 message ( identifier = new )
+               )
+             )
+           )
+=>
+    "<" "Panel" panel_name_prop { val_prop | prop }* ">" member* panel_closing_tag
+<=
+           expression (
+             message_operation (
+               object ( identifier = self )
+               message ( identifier = appendControl )
+               expression (
+                 object ( identifier = current )
+               )
+             )
+           )
+         )
+=>;
+
+  #define panel_name_prop ::= ":" "Name" "=" panel_declaration control_assigning;
+
+  #define panel_declaration ::= %<= field ( type ( reference = forms'Panel ) nameattr ( identifier = $current ) ) =>;
 
   #define item ::=
 <=
@@ -285,4 +316,6 @@ root (
   #define item_closing_tag ::=
 	"<" "/" "Item" ">";
 
+  #define panel_closing_tag ::=
+	"<" "/" "Panel" ">";
 ]]
