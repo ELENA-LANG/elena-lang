@@ -39,7 +39,7 @@ root (
 
   #define field_list ::= <= $buffer => $eps;
 
-  #define member ::= { label | button | radiobuttongroup | panel | edit };
+  #define member ::= { label | button | radiobuttongroup | panel | edit | combobox };
 
   #define label ::=
 <=
@@ -102,6 +102,37 @@ root (
   #define button_name_prop ::= ":" "Name" "=" button_declaration control_assigning;
 
   #define button_declaration ::= %<= field ( type ( reference = forms'Button ) nameattr ( identifier = $current ) ) =>;
+
+  #define combobox ::=
+<=
+         code (
+           expression (
+             assign_operation (
+               new_variable ( identifier = current )
+               message_operation (
+                 object ( reference = forms'Combobox )
+                 message ( identifier = new )
+               )
+             )
+           )
+=>
+    "<" "Combobox" combobox_name_prop { val_prop | prop }* ">" combobox_closing_tag
+<=
+           expression (
+             message_operation (
+               object ( super_identifier = current )
+               message ( identifier = appendControl )
+               expression (
+                 object ( identifier = current )
+               )
+             )
+           )
+         )
+=>;
+
+  #define combobox_name_prop ::= ":" "Name" "=" combobox_declaration control_assigning;
+
+  #define combobox_declaration ::= %<= field ( type ( reference = forms'Combobox ) nameattr ( identifier = $current ) ) =>;
 
   #define edit ::=
 <=
@@ -360,4 +391,7 @@ root (
 
   #define panel_closing_tag ::=
 	"<" "/" "Panel" ">";
+
+  #define combobox_closing_tag ::=
+	"<" "/" "Combobox" ">";
 ]]

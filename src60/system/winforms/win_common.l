@@ -70,6 +70,10 @@ public const int BS_AUTORADIOBUTTON   = 9;
 public const int BST_CHECKED          = 1;
 public const int BST_UNCHECKED        = 0;
 
+// --- combobox styles ---
+public const int CBS_DROPDOWNLIST     = 3;
+public const int CBS_DROPDOWN         = 2;
+
 // --- Notifications ---
 public const int BN_CLICKED       = 0000h;
 public const int EN_CHANGE        = 0300h;

@@ -56,7 +56,10 @@ In development:
   --------------------------------------
   - upndown - declaring connector form components
   --------------------------------------
-  * pnlHost
+  * cmdSearch
+  * cmdAccept
+  * cmdDeny
+  * cmdShowStat.
   * pnlClient
   * on start "&Host" must be selected by default
 
