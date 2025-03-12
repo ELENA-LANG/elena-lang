@@ -19,7 +19,7 @@ In development:
       - linux - select tab, save, close
       - fix syntax highlighting (see system'net:win_common.l)
   gen:
-      - lpad : generate a code based on a record  
+      - lpad / elt : declare an extension, parse it and apply to the input
   maint:
       - pi samples for ppc64, aarch64
       - unit tests : bt optimization 
@@ -51,8 +51,10 @@ In development:
   - http client (http get)
   - linux system : fix all warnings
   --------------------------------------
-  - lpad : generate a code based on a record - general concept 
+  - #708 : initial support
   --------------------------------------
+  * port changes from windows to linux elc
+  * introduce macOs elc version 
 
   === Iteration 38 ===
   --------------------------------------
