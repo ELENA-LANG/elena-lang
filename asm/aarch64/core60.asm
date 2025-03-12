@@ -1152,7 +1152,8 @@ inline %07Bh
   ldrsw   x16, [x19, #4]
   and     x16, x16, x20
 //;   ipart = val.s.i1 & FM_DOUBLE_EMASK;
-  movz    x20, #7FF0h
+  movz    x20, #0
+  movk    x20, #7FF0h, lsl #16
   ldrsw   x18, [x19, #4]
   and     x18, x18, x20
 
