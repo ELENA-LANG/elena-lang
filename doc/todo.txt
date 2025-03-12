@@ -56,6 +56,18 @@ In development:
   --------------------------------------
   - upndown - declaring connector form components
   --------------------------------------
+  * test xforms sample
+
+  * support "^""(?<current>d+)""$"
+  * support """(?<current>[a-zA-Z_]w+)"""
+  * support """&(?<current>[a-zA-Z_]w+)"""
+
+  * elenasm : $regex can be used for $intliteral, $nonintliteral
+  * elenasm : get rid of $intliteral, $nonintliteral
+
+  * elenasm : support matching pattern for literal quote
+  * redesign xforms : support attribute - :onClick="&onExit" 
+  * redesign xforms : support attribute - :Enabled="true"
   * cmdAccept
   * cmdDeny
   * cmdShowStat.

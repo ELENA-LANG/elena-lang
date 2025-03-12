@@ -47,7 +47,16 @@ namespace elena_lang
          BufferMode
       };
 
-      typedef void (*SaveToSign)(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log);
+      class SaverBase
+      {
+      public:
+         virtual bool isMatched(ustr_t token, char state)
+         {
+            return true;
+         }
+
+         virtual void saveTo(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log) = 0;
+      };
 
       struct Rule
       {
@@ -60,7 +69,8 @@ namespace elena_lang
          pos_t    postfix2Ptr;
 
          bool(*apply)(Rule& rule, ScriptBookmark& bm, ScriptEngineReaderBase& reader, ScriptEngineCFParser* parser);
-         SaveToSign saveTo;
+
+         SaverBase* saver;
 
          Rule()
          {
@@ -70,7 +80,7 @@ namespace elena_lang
             postfix2Ptr = prefix2Ptr = 0;
 
             apply = nullptr;
-            saveTo = nullptr;
+            saver = nullptr;
          }
       };
 
@@ -120,6 +130,7 @@ namespace elena_lang
       //typedef MemoryHashTable<pos_t, Rule, syntaxRuleCF, cnCFHashSize, Map_StoreUInt, Map_GetUInt> SyntaxTable;
       typedef HashTable<pos_t, Rule, syntaxRuleCF, cnCFHashSize> SyntaxTable;
       typedef Queue<DerivationItem> DerivationQueue;
+      typedef List<SaverBase*, freeobj> RegExList;
 
    protected:
       ScriptEngineParserBase* _baseParser;
@@ -130,6 +141,8 @@ namespace elena_lang
 
       bool                    _symbolMode;
       bool                    _generating;
+
+      RegExList               _regExList;
 
       ref_t mapRuleId(ustr_t name)
       {
@@ -173,6 +186,8 @@ namespace elena_lang
 
       void insertForwards(Stack<Pair<int, int>>& forwards, int level, ScriptEngineLog& log);
 
+      SaverBase* createRegEx(ScriptBookmark& bm, ustr_t regex);
+
    public:
       void flushBuffer(ScriptEngineLog& log)
       {
@@ -199,7 +214,7 @@ namespace elena_lang
       void parse(ScriptEngineReaderBase& reader, MemoryDump* output) override;
 
       ScriptEngineCFParser(ScriptEngineParserBase* baseParser)
-         : _table({}), _names(0)
+         : _table({}), _names(0), _regExList(nullptr)
       {
          _baseParser = baseParser;
 

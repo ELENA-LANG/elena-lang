@@ -339,13 +339,25 @@ root (
 
   #define prop_value ::=
 <=
+                expression (
+                   object (
+                      identifier =
+=>
+                      nonint_quote
+<=
+                   )
+                )
+=>;
+
+  #define prop_value ::=
+<=
                  expression (
                    closure_op (
                      expression (
                        object (
                          identifier =
 =>
-                         nonint_quote
+                         closure_quote
 <=     
                        )
                      )
@@ -365,11 +377,12 @@ root (
                 )
 =>;
 
-  #define ident_value ::= <= identifier = $literal =>; 
-  #define identifier  ::= <= identifier = $identifier =>;
-  #define int_quote   ::= <= $intliteral =>;
-  #define nonint_quote::= <= $nonintliteral =>;
-  #define quote       ::= <= "$literal" =>;
+  #define ident_value  ::= <= identifier = $literal =>; 
+  #define identifier   ::= <= identifier = $identifier =>;
+  #define int_quote    ::= <= $intliteral =>;
+  #define nonint_quote ::= <= $regex "^""(?<current>[a-zA-Z_]\w*)""$" =>;
+  #define closure_quote ::= <= $regex "^""&(?<current>[a-zA-Z_]\w*)""$" =>;
+  #define quote         ::= <= "$literal" =>;
 
   #define form_closing_tag ::=
 	"<" "/" "Form" ">";
