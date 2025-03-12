@@ -8,7 +8,7 @@ In development:
   === Iteration 37 (17.03) ===
   --------------------------------------
   dev: 
-      - upndown (connector)
+      - upndown (connector - interaction)
       - #496
       - #622
       - #34 : web api
@@ -49,14 +49,12 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: bi-posting weekly
   --------------------------------------  
-  - aarch64 : ln
   - ide : linux - edit
   - lpad : generate a code based on a record - general concept 
   - test all x86 examples (net)
   --------------------------------------
-  - upndown - declaring connector form components
+  - aarch64 : ln
   --------------------------------------
-  * on start "&Host" must be selected by default
 
   === Iteration 38 ===
   --------------------------------------
