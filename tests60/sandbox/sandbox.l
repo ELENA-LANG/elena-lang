@@ -2,11 +2,10 @@ import extensions;
 
 public program()
 {
-   var variable := "Level 0";
-   {
-      var variable := "Level 1";
+   real r := 1.0;
 
-      console.printLine(super variable);
-      console.printLine(variable);
-   }
+   real z := r.exp();
+   console.printLine(z);
+
+   console.printLine(z.ln());
 }
