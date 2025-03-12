@@ -1159,7 +1159,8 @@ inline %07Bh
 
 //;   /* set exponent to 0 to get the prefactor to 2**ipart */
 //;   fpart |= FM_DOUBLE_EZERO;
-  movz    x20, #3FF0h
+  movz    x20, #0
+  movk    x20, #3FF0h, lsl #16
   orr     x16, x16, x20
 //;   val.s.i1 = fpart;
   str     w16, [x19, #4]
