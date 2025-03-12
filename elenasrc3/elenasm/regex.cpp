@@ -22,6 +22,9 @@ PatternRule* RegExFactory :: defineEscRule(char ch)
    if (ch == 'w') {
       return new AnyWordChar();
    }
+   else if (ch == 'd') {
+      return new DigitChar();
+   }
 
    return new CharRule(ch);
 }

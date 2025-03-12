@@ -379,7 +379,7 @@ root (
 
   #define ident_value  ::= <= identifier = $literal =>; 
   #define identifier   ::= <= identifier = $identifier =>;
-  #define int_quote    ::= <= $intliteral =>;
+  #define int_quote    ::= <= $regex "^""(?<current>\d+)""$" =>;
   #define nonint_quote ::= <= $regex "^""(?<current>[a-zA-Z_]\w*)""$" =>;
   #define closure_quote ::= <= $regex "^""&(?<current>[a-zA-Z_]\w*)""$" =>;
   #define quote         ::= <= "$literal" =>;

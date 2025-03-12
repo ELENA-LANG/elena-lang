@@ -266,6 +266,23 @@ namespace elena_lang
       }
    };
 
+   class DigitChar : public LinkRule
+   {
+   public:
+      PatternRule* makeStep(ustr_t s, int index, char ch, Stack<PatternRule*>& parents) override
+      {
+         if (PatternRule::isDigit(ch)) {
+            return gotoNext(parents);
+         }
+
+         return nullptr;
+      }
+
+      DigitChar()
+      {
+      }
+   };
+
    class AnyRule : public LinkRule
    {
    public:

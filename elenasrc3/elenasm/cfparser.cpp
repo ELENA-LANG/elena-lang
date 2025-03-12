@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                             (C)2023-2024, by Aleksey Rakov
+//                                             (C)2023-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -22,8 +22,6 @@ constexpr auto EOL_KEYWORD             = "$eol";
 constexpr auto ANYCHR_KEYWORD          = "$chr";            // > 32
 constexpr auto CURRENT_KEYWORD         = "$current";
 constexpr auto CHARACTER_KEYWORD       = "$character";
-constexpr auto INTLITERAL_KEYWORD      = "$intliteral"; // NOTE : quote containing a number
-constexpr auto NONINTLITERAL_KEYWORD   = "$nonintliteral"; // NOTE : quote containing a number
 constexpr auto BUFFER_KEYWORD          = "$buffer";     // NOTE : quote containing a number
 constexpr auto REGEX_KEYWORD           = "$regex";
 
@@ -40,9 +38,7 @@ constexpr auto EXCLUDE_MODE         = 10;
 constexpr auto CHARACTER_MODE       = 11;
 constexpr auto IF_MODE              = 12;
 constexpr auto IFNOT_MODE           = 13;
-constexpr auto INTLITERAL_MODE      = 14;
 constexpr auto BUFFER_MODE          = 15;
-constexpr auto NONINTLITERAL_MODE   = 16;
 constexpr auto REGEX_MODE           = 17;
 
 constexpr auto WITHFORWARD_MASK = 0x80000000;
@@ -147,30 +143,6 @@ bool normalEOFApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptE
 bool normalLiteralApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptEngineReaderBase&, ScriptEngineCFParser*)
 {
    return (bm.state == dfaQuote);
-}
-
-bool normalIntLiteralApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptEngineReaderBase& reader, ScriptEngineCFParser*)
-{
-   if (bm.state == dfaQuote) {
-      ustr_t value = reader.lookup(bm);
-      for (pos_t i = 0; i < getlength(value); i++) {
-         if (value[i] < '0' || value[i] > '9')
-            return false;
-      }
-
-      return true;
-   }
-   return false;
-}
-
-bool normalNonIntLiteralApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptEngineReaderBase& reader, ScriptEngineCFParser*)
-{
-   if (bm.state == dfaQuote) {
-      ustr_t value = reader.lookup(bm);
-      if (value[0] < '0' || value[0] > '9')
-         return true;
-   }
-   return false;
 }
 
 bool normalNumericApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptEngineReaderBase&, ScriptEngineCFParser*)
@@ -361,12 +333,6 @@ void ScriptEngineCFParser :: defineApplyRule(Rule& rule, int mode, RuleTypeModif
             case LITERAL_MODE:
                rule.apply = normalLiteralApplyRule;
                break;
-            case INTLITERAL_MODE:
-               rule.apply = normalIntLiteralApplyRule;
-               break;
-            case NONINTLITERAL_MODE:
-               rule.apply = normalNonIntLiteralApplyRule;
-               break;
             case NUMERIC_MODE:
                rule.apply = normalNumericApplyRule;
                break;
@@ -477,18 +443,6 @@ void ScriptEngineCFParser :: saveScript(ScriptEngineReaderBase& reader, Rule& ru
             rule.saver = LiteralContentSaver::getInstance();
 
             mode = LITERAL_MODE;
-         }
-         else if (reader.compare(INTLITERAL_KEYWORD)) {
-            rule.terminal = INVALID_REF;
-            rule.saver = ReferenceSaver::getInstance();
-
-            mode = INTLITERAL_MODE;
-         }
-         else if (reader.compare(NONINTLITERAL_KEYWORD)) {
-            rule.terminal = INVALID_REF;
-            rule.saver = ReferenceSaver::getInstance();
-
-            mode = NONINTLITERAL_MODE;
          }
          else if (reader.compare(NUMERIC_KEYWORD)) {
             rule.terminal = INVALID_REF;
