@@ -14,8 +14,9 @@ In development:
       - #34 : web api
       - http client (http get, post, put, patch, delete, head, options, trace, support https)
       - MTA support for Linux  
+      - #708 : compile the project, create Linker
   ide:
-      - linux - edit, save, close
+      - linux - select tab, save, close
       - fix syntax highlighting (see system'net:win_common.l)
   gen:
       - lpad : generate a code based on a record  
@@ -46,14 +47,12 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: bi-posting weekly
   --------------------------------------  
-  - lpad : generate a code based on a record - general concept 
   - test all x86 examples (net)
   - http client (http get)
   - linux system : fix all warnings
   --------------------------------------
-  - ide : linux - edit
+  - lpad : generate a code based on a record - general concept 
   --------------------------------------
-  * set focus on activate
 
   === Iteration 38 ===
   --------------------------------------
