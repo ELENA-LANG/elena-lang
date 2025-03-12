@@ -245,7 +245,7 @@ void GTKIDEWindow :: on_text_model_change(TextViewModelEvent event)
 //   }
 //
    onDocumentUpdate(event.changeStatus);
-//   onIDEStatusChange(rec);
+   onIDEStatusChange(event.status);
 //   if (test(rec->status, STATUS_FRAME_CHANGED)) {
 //      onDocumentSelection();
 //   }
@@ -253,4 +253,15 @@ void GTKIDEWindow :: on_text_model_change(TextViewModelEvent event)
 
 void GTKIDEWindow :: onDocumentUpdate(DocumentChangeStatus changeStatus)
 {
+}
+
+void GTKIDEWindow :: onIDEStatusChange(int status)
+{
+   //if (test(rec->status, STATUS_FRAME_VISIBILITY_CHANGED)) {
+   //   if (_model->sourceViewModel.isAssigned()) {
+         //_children[_model->ideScheme.textFrameId]->show();
+         //_children[_model->ideScheme.textFrameId]->setFocus();
+    //  }
+      //else _children[_model->ideScheme.textFrameId]->hide();
+   //}
 }

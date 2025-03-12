@@ -268,6 +268,7 @@ protected:
    }
 
    void onDocumentUpdate(DocumentChangeStatus changeStatus);
+   void onIDEStatusChange(int status);
 
 public:
    void on_text_model_change(TextViewModelEvent event);

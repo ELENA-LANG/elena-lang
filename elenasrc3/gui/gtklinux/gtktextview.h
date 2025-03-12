@@ -126,6 +126,11 @@ namespace elena_lang
    protected:
       TextDrawingArea       _area;
 
+      void on_grab_focus() override
+      {
+         _area.grab_focus();
+      }
+
    public:
       void onDocumentUpdate(DocumentChangeStatus& changeStatus);
 
