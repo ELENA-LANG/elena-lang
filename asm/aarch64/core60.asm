@@ -1178,7 +1178,7 @@ inline %07Bh
 //;      but we have the mantissa in the interval 1 < x < 2.
 //;      adjust by dividing x by 2 and incrementing ipart, if needed. */
 //;   if (x > FM_DOUBLE_SQRT2) {
-  ldr     d20, [x16, #64]
+  ldr     d20, [x17, #64]
   fcmp    d17, d20
   blt     labSkip
   beq     labSkip
