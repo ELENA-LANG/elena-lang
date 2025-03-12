@@ -12,7 +12,7 @@ In development:
       - #496
       - #622
       - #34 : web api
-      - http client (http get, get, post, put, patch, delete, head, options, trace, support https)
+      - http client (http get, post, put, patch, delete, head, options, trace, support https)
       - MTA support for Linux  
   ide:
       - linux - edit, save, close
@@ -20,13 +20,10 @@ In development:
   gen:
       - lpad : generate a code based on a record  
   maint:
-      - test fexpdp opcode
-      - linux system : fix all warnings
       - pi samples for ppc64, aarch64
       - unit tests : bt optimization 
       - test binary file operations
       - api refactoring : all symbols must start with a capital letter
-      - redesign winforms
       - api : add descriptions 
       - threading samples must be included into release files
       - ide : windows
@@ -49,12 +46,14 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: bi-posting weekly
   --------------------------------------  
-  - ide : linux - edit
   - lpad : generate a code based on a record - general concept 
   - test all x86 examples (net)
+  - http client (http get)
+  - linux system : fix all warnings
   --------------------------------------
-  - aarch64 : ln
+  - ide : linux - edit
   --------------------------------------
+  * set focus on activate
 
   === Iteration 38 ===
   --------------------------------------
