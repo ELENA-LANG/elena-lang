@@ -56,11 +56,6 @@ In development:
   --------------------------------------
   - upndown - declaring connector form components
   --------------------------------------
-  * redesign xforms : support attribute - :Enabled="true"
-  * cmdAccept
-  * cmdDeny
-  * cmdShowStat.
-  * pnlClient
   * on start "&Host" must be selected by default
 
   === Iteration 38 ===

@@ -938,9 +938,14 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
                         parent,
                         CurrentInstance,
                         paramPtr);
-                                                
-      if(_selected != -1 && nil != onIndexChanged)
-         { onIndexChanged(self) }
+
+      if (_selected != -1) {
+         setChecked(true);                  
+
+         if(nil != onIndexChanged)
+            { onIndexChanged(self) }
+      }
+
    }
 
    int SelectedIndex
