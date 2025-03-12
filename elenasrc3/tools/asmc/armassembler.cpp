@@ -1209,7 +1209,7 @@ bool Arm64Assembler :: compileLDRSW(ScriptToken& tokenInfo, ARMOperand rt, ARMOp
          writeReference(tokenInfo, ptr.reference, writer, ASM_INVALID_SOURCE);
    }
    else if (rt.isXR() && ptr.isUnsigned()) {
-      writer.writeDWord(ARMHelper::makeImm12Opcode(2, 7, 0, 1, 2, ptr.imm >> 3, ptr.type, rt.type));
+      writer.writeDWord(ARMHelper::makeImm12Opcode(2, 7, 0, 1, 2, ptr.imm >> 2, ptr.type, rt.type));
    }
    else return false;
 
