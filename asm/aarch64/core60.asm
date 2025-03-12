@@ -1165,7 +1165,7 @@ inline %07Bh
 //;   val.s.i1 = fpart;
   str     w16, [x19, #4]
 //;   x = val.f;
-  str     d17, [x19]
+  ldr     d17, [x19]
 
 //;   /* extract exponent */
 //;   ipart >>= FM_DOUBLE_MBITS;
