@@ -39,7 +39,7 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86;
 
 constexpr int DEFAULT_MGSIZE              = 344064;
 constexpr int DEFAULT_YGSIZE              = 86016;
-constexpr int DEFAULT_SACKRESERV          = 0x200000;
+constexpr int DEFAULT_STACKRESERV         = 0x200000;
 
 constexpr int MINIMAL_ARG_LIST            = 1;
 
@@ -56,7 +56,7 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86_64;
 
 constexpr int DEFAULT_MGSIZE              = 688128;
 constexpr int DEFAULT_YGSIZE              = 204800;
-constexpr int DEFAULT_SACKRESERV          = 0x200000;
+constexpr int DEFAULT_STACKRESERV         = 0x200000;
 
 constexpr int MINIMAL_ARG_LIST            = 2;
 
@@ -245,7 +245,7 @@ int main()
       PathString appPath;
       getAppPath(appPath);
       
-      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_SACKRESERV, 1, true, true };
+      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       CompilingProcess process(*appPath, L"exe", L"<moduleProlog>", L"<prolog>", L"<epilog>",
          &Presenter::getInstance(), &errorProcessor,

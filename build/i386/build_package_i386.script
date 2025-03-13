@@ -109,7 +109,7 @@ echo compiling lib60 files
    exit 1
  fi
 
- ../../bin/elena64-cli ../../src60/elena_api.linux.prjcol
+ ../../bin/elena-cli ../../src60/elena_api.linux.prjcol
  ret=$?
  if [ $ret -eq 2 ]
  then
@@ -119,7 +119,7 @@ echo compiling lib60 files
    echo .
  fi
 
- ../../bin/elena64-cli ../../tests60/system_tests/system_tests.prj
+ ../../bin/elena-cli ../../tests60/system_tests/system_tests.prj
  ret=$?
  if [ $ret -eq 2 ]
  then
