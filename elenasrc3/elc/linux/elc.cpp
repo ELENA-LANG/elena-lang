@@ -199,7 +199,7 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
       defaultConfigPath = DEFAULT_CONFIG;
    }
 
-   PathString configPath(*dataPath, PathHelper::retrieveFilePath(defaultConfigPath));
+   PathString configPath(dataPath, PathHelper::retrieveFilePath(defaultConfigPath));
    project.loadConfig(*configPath, nullptr, false);
 
    IdentifierString profile;
@@ -267,7 +267,7 @@ int compileProjectCollection(int argc, char** argv, path_t path, path_t dataPath
 
    for (auto it = collection.paths.start(); !it.eof(); ++it) {
       size_t destLen = FILENAME_MAX;
-      wchar_t projectPath[FILENAME_MAX];
+      char projectPath[FILENAME_MAX];
       StrConvertor::copy(projectPath, (*it).str(), (*it).length(), destLen);
       projectPath[destLen] = 0;
 
@@ -294,7 +294,7 @@ int main(int argc, char* argv[])
    {
       PathString dataPath(PathHelper::retrievePath(dataFileList, 3, DATA_PATH));
 
-      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_SACKRESERV, 1, true, true };
+      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       CompilingProcess process(*dataPath, nullptr, "<moduleProlog>", "<prolog>", "<epilog>",
          &Presenter::getInstance(), &errorProcessor,
@@ -309,7 +309,7 @@ int main(int argc, char* argv[])
       }
       else if (argv[argc - 1][0] != '-' && PathUtil::checkExtension(argv[argc - 1], "prjcol")) {
          return compileProjectCollection(argc, argv, argv[argc - 1],
-            *appPath, errorProcessor, process);
+            *dataPath, errorProcessor, process);
       }
       else return compileProject(argc, argv, *dataPath, errorProcessor, process);
    }

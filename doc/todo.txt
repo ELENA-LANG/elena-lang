@@ -53,9 +53,8 @@ In development:
   --------------------------------------
   - #708 : initial support
   --------------------------------------
-  * rename project to prj - so no need to have separate project files
-  * port changes from windows to linux elc
-  * introduce macOs elc version 
+  * test linux elc
+  * #708 : introduce macOs elc version, dummy macholinker  
 
   === Iteration 38 ===
   --------------------------------------

@@ -326,7 +326,8 @@ CompilingProcess :: CompilingProcess(path_t appPath, path_t exeExtension,
 ) :
    _appPath(appPath),
    _templateGenerator(this),
-   _forwards(nullptr)
+   _forwards(nullptr),
+   _parser(nullptr)
 {
    _exeExtension = exeExtension;
    _modulePrologName = modulePrologName;
@@ -688,7 +689,7 @@ void CompilingProcess :: compile(ProjectBase& project,
 
       LexicalMap::Iterator lexical_it = project.getLexicalIterator();
       compiled |= buildModule(
-         env, 
+         env,
          lexical_it,
          *module_it, &syntaxTree, &project,
          moduleSettings,

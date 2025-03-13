@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Tree template classes
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef TREE_H
@@ -301,7 +301,7 @@ namespace elena_lang
             this->arg.strArgPosition = INVALID_POS;
 
             _tree->save(_position, key, arg);
-         }         
+         }
          void setStrArgument(ustr_t value)
          {
             this->arg.value = 0;
@@ -501,7 +501,7 @@ namespace elena_lang
          // enclose the node with a new one
          Node encloseNode(Key key, int argument = 0)
          {
-            NodeRecord* record = (NodeRecord*)_tree->_body.get(_position);
+            //NodeRecord* record = (NodeRecord*)_tree->_body.get(_position);
 
             _tree->injectChild(_position, this->key, this->arg);
 
