@@ -51,10 +51,7 @@ In development:
   - http client (http get)
   - linux system : fix all warnings
   --------------------------------------
-  - #708 : initial support
   --------------------------------------
-  * test linux elc
-  * #708 : introduce macOs elc version, dummy macholinker  
 
   === Iteration 38 ===
   --------------------------------------
