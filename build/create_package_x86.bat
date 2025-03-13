@@ -74,6 +74,11 @@ md %~dp0\x86\examples60\gui\helloworld
 md %~dp0\x86\examples60\db
 md %~dp0\x86\examples60\db\sqlite
 
+md %~dp0\x86\examples60\threads
+md %~dp0\x86\examples60\threads\async
+md %~dp0\x86\examples60\threads\tasks
+md %~dp0\x86\examples60\threads\threadpool
+
 copy %~dp0\..\bin\asm-cli.exe %~dp0\x86\bin
 copy %~dp0\..\bin\elena-cli.exe %~dp0\x86\bin
 copy %~dp0\..\bin\elena-ide.exe %~dp0\x86\bin
@@ -296,6 +301,9 @@ copy %~dp0\..\examples60\files\textdb\*.txt %~dp0\x86\examples60\files\textdb
 
 copy %~dp0\..\examples60\files\textfile\*.l %~dp0\x86\examples60\files\textfile
 copy %~dp0\..\examples60\files\textfile\*.txt %~dp0\x86\examples60\files\textfile
+
+xcopy %~dp0\..\examples60\threads\*.l %~dp0\x86\examples60\threads /s
+xcopy %~dp0\..\examples60\threads\*.prj %~dp0\x86\examples60\threads /s
 
 goto:eof
 ::ERRORS
