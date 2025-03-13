@@ -123,113 +123,22 @@ JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platf
 void handleOption(wchar_t* arg, IdentifierString& profile, Project& project, CompilingProcess& process,
    ErrorProcessor& errorProcessor, path_t appPath, bool& cleanMode)
 {
-   switch (arg[1]) {
-      case 'e':
-         if (wstr_t(arg).compare(L"-el5")) {
-            project.setSyntaxVersion(SyntaxVersion::L5);
-         }
-         else if (wstr_t(arg).compare(L"-el6")) {
-            project.setSyntaxVersion(SyntaxVersion::L6);
-         }
-         break;
-      case 'f':
-      {
-         IdentifierString setting(arg + 2);
-         process.addForward(*setting);
-
-         break;
-      }
-      case 'l':
-      {
-         IdentifierString setting(arg + 2);
-         profile.copy(*setting);
-         break;
-      }
-      case 'm':
-         project.addBoolSetting(ProjectOption::MappingOutputMode, true);
-         break;
-      case 'o':
-         if (arg[2] == '0') {
-            project.addIntSetting(ProjectOption::OptimizationMode, optNone);
-         }
-         else if (arg[2] == '1') {
-            project.addIntSetting(ProjectOption::OptimizationMode, optLow);
-         }
-         else if (arg[2] == '2') {
-            project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
-         }
-         else if (arg[2] == '3') {
-            project.addIntSetting(ProjectOption::OptimizationMode, optHigh);
-         }
-         break;
-      case 'p':
-         project.setBasePath(arg + 2);
-         break;
-      case 'r':
-         cleanMode = true;
-         break;
-      case 's':
-      {
-         IdentifierString setting(arg + 2);
-         if (setting.compare("stackReserv:", 0, 12)) {
-            ustr_t valStr = *setting + 12;
-            int val = StrConvertor::toInt(valStr, 10);
-            project.addIntSetting(ProjectOption::StackReserved, val);
-         }
-         break;
-      }
+   switch(arg[1]) {
       case 't':
       {
          IdentifierString configName(arg + 2);
 
-         if(!project.loadConfigByName(appPath, *configName, true))
+         if (!project.loadConfigByName(appPath, *configName, true))
             errorProcessor.info(wrnInvalidConfig, *configName);
          break;
       }
-      case 'v':
-         process.setVerboseOn();
-         break;
-      case 'w':
-         if (arg[2] == '0') {
-            errorProcessor.setWarningLevel(WarningLevel::Level0);
-         }
-         else if (arg[2] == '1') {
-            errorProcessor.setWarningLevel(WarningLevel::Level1);
-         }
-         else if (arg[2] == '2') {
-            errorProcessor.setWarningLevel(WarningLevel::Level2);
-         }
-         else if (arg[2] == '3') {
-            errorProcessor.setWarningLevel(WarningLevel::Level3);
-         }
-         break;
-      case 'x':
-         if (arg[2] == 'b') {
-            project.addBoolSetting(ProjectOption::ConditionalBoxing, arg[3] != '-');
-         }
-         else if (arg[2] == 'e') {
-            project.addBoolSetting(ProjectOption::EvaluateOp, arg[3] != '-');
-         }
-         else if (arg[2] == 'j') {
-            project.addBoolSetting(ProjectOption::WithJumpAlignment, arg[3] != '-');
-         }
-         else if (arg[2] == 'm') {
-            project.addBoolSetting(ProjectOption::ModuleExtensionAutoLoad, arg[3] != '-');
-         }
-         else if (arg[2] == 'p') {
-            project.addBoolSetting(ProjectOption::GenerateParamNameInfo, arg[3] != '-');
-         }
-         else if (arg[2] == 's') {
-            project.addBoolSetting(ProjectOption::StrictTypeEnforcing, arg[3] != '-');
-         }
-         break;
-      case '-':
-         if (wstr_t(arg).compare(L"--tracing")) {
-            project.addBoolSetting(ProjectOption::TracingMode, true);
-         }
-         break;
       default:
+      {
+         IdentifierString argStr(arg);
+
+         CommandHelper::handleOption(*argStr, profile, project, process, errorProcessor, cleanMode);
          break;
+      }
    }
 }
 

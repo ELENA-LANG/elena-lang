@@ -107,7 +107,7 @@ fi
    exit 1
  fi
 
- ../../bin/elena64-cli ../../src60/system/system.project
+ ../../bin/elena64-cli ../../src60/elena_api.linux.prjcol
  ret=$?
  if [ $ret -eq 2 ]
  then
@@ -117,27 +117,7 @@ fi
    echo .
  fi
 
- ../../bin/elena64-cli ../../src60/extensions/extensions.project
- ret=$?
- if [ $ret -eq 2 ]
- then
-   echo "Failure" >&2
-   exit 1
- else
-   echo .
- fi
-
- ../../bin/elena64-cli ../../src60/ltests/ltests.project
- ret=$?
- if [ $ret -eq 2 ]
- then
-   echo "Failure" >&2
-   exit 1
- else
-   echo .
- fi
-
- ../../bin/elena64-cli ../../tests60/system_tests/system_tests.project
+ ../../bin/elena64-cli ../../tests60/system_tests/system_tests.prj
  ret=$?
  if [ $ret -eq 2 ]
  then
