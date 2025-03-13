@@ -731,6 +731,8 @@ namespace elena_lang
    constexpr auto LINUX_PPC64le_KEY = "Linux_PPC64le";
    constexpr auto LINUX_ARM64_KEY   = "Linux_ARM64";
 
+   constexpr auto MACOS_ARM64_KEY   = "MacOS_ARM64";
+
    constexpr auto LIBRARY_KEY       = "Library";
    constexpr auto CONSOLE_KEY       = "STA Console";
    constexpr auto GUI_KEY           = "STA GUI";
@@ -796,6 +798,8 @@ namespace elena_lang
             return LINUX_PPC64le_KEY;
          case PlatformType::Linux_ARM64:
             return LINUX_ARM64_KEY;
+         case PlatformType::MacOS_ARM64:
+            return MACOS_ARM64_KEY;
          default:
             return nullptr;
       }
