@@ -7,8 +7,32 @@ In development:
 
   === Iteration 37 (17.03) ===
   --------------------------------------
+  maint:
+      - test binary file operations
+      - api refactoring : all symbols must start with a capital letter
+      - api : add descriptions 
+      - threading samples must be included into release files
+      - test binary file reader / writer
+      - matrix sample : review the code, it should be possible to use the lambda function without specifying the exact output type
+      - implement ExtensionMessage.equal
+      - support subexpression for "?." and "\." (e.g. object.__getClass()\.__dto_properties())
+      - support function call with double colon (e.g. ::printing() - is always a function)
+      - redesign switch statement : it should be possible to use as an expression as well (so we cannot use => anymore : e.g. 
+        console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  ) console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third")
+      - warn if typecasting method returns itself, it leads to infinite call
+  --------------------------------------  
+  - http client (http get)
+  - linux system : fix all warnings
+  - upndown (connector - interaction)
+  - pi samples for ppc64, aarch64
+  --------------------------------------
+  - test all x86 examples (net)
+  --------------------------------------
+
+  === Iteration 38 ===
+  --------------------------------------
   dev: 
-      - upndown (connector - interaction)
+      - upndown
       - #496
       - #622
       - #34 : web api
@@ -18,48 +42,21 @@ In development:
   ide:
       - linux - select tab, save, close
       - fix syntax highlighting (see system'net:win_common.l)
+      - ide : windows
   gen:
       - lpad / elt : declare an extension, parse it and apply to the input
   maint:
-      - pi samples for ppc64, aarch64
+      - test all x86-64 examples
       - unit tests : bt optimization 
-      - test binary file operations
-      - api refactoring : all symbols must start with a capital letter
-      - api : add descriptions 
-      - threading samples must be included into release files
-      - ide : windows
-      - review pi performance (must < 6)
-      - test binary file reader / writer
-      - matrix sample : review the code, it should be possible to use the lambda function without specifying the exact output type
-      - implement ExtensionMessage.equal
-      - support subexpression for "?." and "\." (e.g. object.__getClass()\.__dto_properties())
-      - support function call with double colon (e.g. ::printing() - is always a function)
-      - redesign switch statement : it should be possible to use as an expression as well (so we cannot use => anymore : e.g. 
-        console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  ) console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third")
-      - warn if typecasting method returns itself, it leads to infinite call
-      - add functionality to generate syntax / build trees for the module (trace mode - compile & save but without creating executable)
   port:
       - chat sample
       - rosetta code : moving to 6.5
       - x86-64 : mta - test net examples for mta   
       - test all x86-64 examples (net)
+      - pi samples for ppc64, aarch64
   tools: 
       - #658 : connect with ldbg from VSCode  
   prom: bi-posting weekly
-  --------------------------------------  
-  - test all x86 examples (net)
-  - http client (http get)
-  - linux system : fix all warnings
-  --------------------------------------
-  --------------------------------------
-
-  === Iteration 38 ===
-  --------------------------------------
-  dev: 
-  gen:
-  maint:
-  port:
-  prom:
   --------------------------------------
   --------------------------------------
   --------------------------------------
@@ -69,6 +66,7 @@ In development:
   dev: 
   gen:
   maint:
+      - review pi performance (must < 6)
   port:
   prom:
   --------------------------------------
