@@ -7,19 +7,16 @@ In development:
 
   === Iteration 37 (17.03) ===
   --------------------------------------  
-  - pi samples for ppc64, aarch64
-  - upndown (connector - interaction)
-  --------------------------------------
   - #34 : http client (http get)
   --------------------------------------
 
   === Iteration 38 ===
   --------------------------------------
   dev: 
-      - upndown
+      - upndown (connector - interaction)
       - #496
       - #622
-      - #34 : http client (https get, post, put, patch, delete, head, options, trace), web api
+      - #34 : http client (https (https://github.com/HISONA/https_client), post, put, patch, delete, head, options, trace), web api
       - MTA support for Linux  
       - #708 : compile the project (elc, og, sg, asm, ecv), create Linker
       - implement ExtensionMessage.equal
@@ -30,6 +27,7 @@ In development:
   gen:
       - lpad / elt : declare an extension, parse it and apply to the input
   maint:
+      - pi samples for ppc64, aarch64
       - test all x86-64 examples
       - unit tests : bt optimization 
       - warn if typecasting method returns itself, it leads to infinite call

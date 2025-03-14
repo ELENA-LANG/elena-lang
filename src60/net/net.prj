@@ -26,6 +26,8 @@
      </module>
      <module name="http">
        <include>http\common.l</include>
+       <include>http\httpheaders.l</include>
+       <include>http\httpresponse.l</include>
        <include>http\httpclient.l</include>
      </module>
      <module name="server">

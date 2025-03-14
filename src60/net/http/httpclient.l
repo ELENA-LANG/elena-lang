@@ -1,15 +1,23 @@
 import system'net;
+import system'threading;
 
 public class HttpClient
-{
+{      
+   HttpHeaders _headers;
+   Socket      _socket;
+
    constructor new()
    {
+      headers := new HttpHeaders();
    }
 
-   get(Uri uri)
+   HttpHeaders Headers
+      = headers;
+
+   async Task<HttpResponse> getAsync(Uri uri)
    {
       /* Create TCP socket */
-      auto socket := new Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+      _socket := new Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
       /* Set remote->sin_addr.s_addr */
       SOCKADDR_IN remote := default;   
@@ -21,5 +29,16 @@ public class HttpClient
       socket.open(remote);
 
       /* Send headers to server */
+      NetworkStream stream := new NetworkStream(socket);
+
+      :await stream.writeAsync(headers.Value);
+
+      ^ new HttpResponse(stream);
+      
+   }
+
+   close()
+   {
+      _socket.close()
    }
 }
