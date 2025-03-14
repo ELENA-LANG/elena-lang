@@ -924,7 +924,7 @@ ObjectInfo Compiler::NamespaceScope::defineObjectInfo(ref_t reference, Expressio
          info.reference = reference;
       }
       else {
-         if (checkMode) {
+         if (checkMode && !metaOne) {
             ClassInfo classInfo;
             if (moduleScope->loadClassInfo(classInfo, reference, true) != 0) {
                // if it is an extension

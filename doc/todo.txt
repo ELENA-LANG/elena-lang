@@ -13,6 +13,9 @@ In development:
   --------------------------------------
   - linux system : fix all warnings
   --------------------------------------
+  * the library target must be lib60; modify script to copy from there to the system path
+  * copmpile system.linux.prj
+  * why parent is resolved in declaration mode
 
   === Iteration 38 ===
   --------------------------------------
