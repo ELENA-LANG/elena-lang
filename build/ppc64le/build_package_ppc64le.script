@@ -1,6 +1,7 @@
 #!/bin/bash
 RELEASE=elena-6.6.2.ppc64le-linux
 
+mkdir -p ../lib60_64
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
 mkdir -p /etc/elena/templates/
@@ -85,7 +86,7 @@ fi
 #
 # echo compiling lib50 files
 
- ../../bin/asm64-cli -bc64 ../../src60/core/system.core_routines.esm /usr/lib/elena/lib60_64
+ ../../bin/asm64-cli -bc64 ../../src60/core/system.core_routines.esm ../../lib60_64
  ret=$?
  if [ $ret -eq 0 ]
  then
@@ -108,7 +109,7 @@ fi
  cp ../../lib60_64/*.nl /usr/lib/elena/lib60_64
  cp ../../lib60_64/*.dnl /usr/lib/elena/lib60_64 
 
- ../../bin/elena64-cli ../../tests60/system_tests/system_tests.prj
+ elena64-cli ../../tests60/system_tests/system_tests.prj
  ret=$?
  if [ $ret -eq 2 ]
  then
