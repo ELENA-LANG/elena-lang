@@ -768,7 +768,10 @@ void CompilingProcess :: cleanUp(ProjectBase& project)
       _libraryProvider.resolvePath(module_it->name(), path);
 
       // remove a module
-      PathUtil::removeFile(*path);
+      if (!PathUtil::removeFile(*path) && _verbose) {
+         if (PathUtil::ifExist(*path))
+            _presenter->printPath("cannot remove file %s\n", *path);
+      }
 
       // remove a debug module
       path.changeExtension("dnl");

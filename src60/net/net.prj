@@ -15,7 +15,7 @@
   </project>
   <manifest>
      <name>ELENA Network Provider Library</name>
-     <version>6.5.0</version>
+     <version>6.6.0</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>

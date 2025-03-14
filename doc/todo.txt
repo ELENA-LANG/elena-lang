@@ -8,11 +8,9 @@ In development:
   === Iteration 37 (17.03) ===
   --------------------------------------  
   - pi samples for ppc64, aarch64
-  - http client (http get)
   - upndown (connector - interaction)
-  - warn if the compiler cannot delete module files (in clean mode)
   --------------------------------------
-  - linux system : fix all warnings
+  - #34 : http client (http get)
   --------------------------------------
 
   === Iteration 38 ===
@@ -21,8 +19,7 @@ In development:
       - upndown
       - #496
       - #622
-      - #34 : web api
-      - http client (http get, post, put, patch, delete, head, options, trace, support https)
+      - #34 : http client (https get, post, put, patch, delete, head, options, trace), web api
       - MTA support for Linux  
       - #708 : compile the project (elc, og, sg, asm, ecv), create Linker
       - implement ExtensionMessage.equal
