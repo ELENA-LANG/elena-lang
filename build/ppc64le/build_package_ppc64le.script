@@ -105,6 +105,9 @@ fi
    echo .
  fi
 
+ cp ../../lib60_64/*.nl /usr/lib/elena/lib60_64
+ cp ../../lib60_64/*.dnl /usr/lib/elena/lib60_64 
+
  ../../bin/elena64-cli ../../tests60/system_tests/system_tests.prj
  ret=$?
  if [ $ret -eq 2 ]

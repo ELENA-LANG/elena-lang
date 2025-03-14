@@ -119,6 +119,9 @@ echo compiling lib60 files
    echo .
  fi
 
+ cp ../../lib60/*.nl /usr/lib/elena/lib60
+ cp ../../lib60/*.dnl /usr/lib/elena/lib60
+
  ../../bin/elena-cli ../../tests60/system_tests/system_tests.prj
  ret=$?
  if [ $ret -eq 2 ]

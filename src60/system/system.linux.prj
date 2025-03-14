@@ -1,7 +1,7 @@
 <configuration>
   <platform key="Linux_I386">
      <project>
-        <output>/usr/lib/elena/lib60</output>
+        <output>../../lib60</output>
      </project>
      <files>
         <module>
@@ -12,7 +12,7 @@
   </platform>
   <platform key="Linux_AMD64">
      <project>
-        <output>/usr/lib/elena/lib60_64</output>
+        <output>../../lib60_64</output>
      </project>
      <files>
         <module>
@@ -23,7 +23,7 @@
   </platform>
   <platform key="Linux_PPC64le">
      <project>
-        <output>/usr/lib/elena/lib60_64</output>
+        <output>../../lib60_64</output>
      </project>
      <files>
         <module>
@@ -34,7 +34,7 @@
   </platform>
   <platform key="Linux_ARM64">
      <project>
-        <output>/usr/lib/elena/lib60_64</output>
+        <output>../../lib60_64</output>
      </project>
      <files>
         <module>
