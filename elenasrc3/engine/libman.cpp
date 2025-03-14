@@ -498,6 +498,8 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ustr_t referenceName, For
 
 ModuleBase* LibraryProvider :: createModule(ustr_t name)
 {
+   assert(!_modules.exist(name));
+
    auto module = new Module(name);
 
    _modules.add(name, module);
