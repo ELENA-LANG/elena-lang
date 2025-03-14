@@ -2,6 +2,8 @@ import system'text;
 
 namespace io
 {
+   const int F_OK     = 0;
+
    const int SEEK_SET = 0;
    const int SEEK_CUR = 1;
    const int SEEK_END = 2;
@@ -102,9 +104,39 @@ namespace io
    singleton fileControl
    {
       TextReader newReader(path) = TextStreamReader.new(path);
+
+      TextWriter writer(path) = StreamWriter.new(FileStream.openForReWrite(path), UTF8Encoder);
+
+      TextWriter writer(string path, Encoder encoder) = StreamWriter.new(FileStream.openForReWrite(path), encoder);
+
+      TextWriter logger(path) = StreamWriter.new(FileStream.openForAppend(path), UTF8Encoder);
+
+      bool isAvailable(path)
+      {
+         int ret := extern libc.access(path as::String, F_OK);
+            
+         ^ ret == 0
+      }      
+
+      bool delete(path)
+      {
+         int ret := extern libc.remove(path as::String);
+            
+         ^ ret == 0
+      }
    }
 
    singleton directoryControl
    {
+      bool isAvailable(path)
+      {
+         string s := path as::String;
+         if:not(s.endingWith("/"))
+            s := s + "/";
+
+         int ret := extern libc.access(s, F_OK);
+            
+         ^ ret == 0
+      }      
    }
 }

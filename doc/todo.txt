@@ -10,12 +10,10 @@ In development:
   - pi samples for ppc64, aarch64
   - http client (http get)
   - upndown (connector - interaction)
+  - warn if the compiler cannot delete module files (in clean mode)
   --------------------------------------
   - linux system : fix all warnings
   --------------------------------------
-  * the library target must be lib60; modify script to copy from there to the system path
-  * copmpile system.linux.prj
-  * why parent is resolved in declaration mode
 
   === Iteration 38 ===
   --------------------------------------
