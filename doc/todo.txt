@@ -15,6 +15,7 @@ In development:
       - MTA support for Linux  
       - #708 : compile the project (elc, og, sg, asm, ecv), create Linker
       - implement ExtensionMessage.equal
+      - raise an error if an async extension is declared (until the feature is not implemented)
   ide:
       - linux - select tab, save, close
       - fix syntax highlighting (see system'net:win_common.l)

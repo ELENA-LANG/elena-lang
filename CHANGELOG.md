@@ -23,6 +23,12 @@
   - [FIXED] #704 : Porting to FreeBSD/PowerPC64
   - [FIXED] aarch64 extopen / extclose opcode
   - [FIXED] #283 : unboxing duplicate object
+  - [ADDED] CORE_MATH_TABLE core table
+  - [ADDED] ppc64le : fexp
+  - [ADDED] aarch64 : fexp
+  - [ADDED] ppc64le : fln
+  - [ADDED] aarch64 : fln
+  - [FIXED] #283 : unboxing duplicate object
 
 - API
   - [ADDED] net'http'HttpClient, net'http'Uri
@@ -30,12 +36,21 @@
   - [ADDED] system'net'NetworkStream
   - [ADDED] system'net'Socket : poll<Timespan,SelectMode>[3]
   - [ADDED] net'TcpListener : prop:Pending
+  - [ADDED] forms'Combobox
+  - [ADDED] net'HttpClient
+
+- SM
+  - [ADDED] supporting $regex rules
+
+- Scripts
+  - [ADDED] xforms : supporting RadioButton, Panel, Edit, Combobox
 
 - SAMPLES
   - [ADDED] console regex sample
 
 - IDE
   - [FIXED]debugger : step over multi-select statement
+  - [ADDED] Linux - open a file 
 
 - Tools
   - [ADDED][LDOC] static methods are in the separate category
