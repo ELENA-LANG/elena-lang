@@ -5,18 +5,13 @@ In development:
 [development]
   ### EPIC: elena 6.7 ###
 
-  === Iteration 37 (17.03) ===
-  --------------------------------------  
-  - #34 : http client (http get)
-  --------------------------------------
-
-  === Iteration 38 ===
+  === Iteration 38 (05.04) ===
   --------------------------------------
   dev: 
       - upndown (connector - interaction)
       - #496
       - #622
-      - #34 : http client (https (https://github.com/HISONA/https_client), post, put, patch, delete, head, options, trace), web api
+      - #34 : http client (http get, https get (https://github.com/HISONA/https_client), post, put, patch, delete, head, options, trace), web api
       - MTA support for Linux  
       - #708 : compile the project (elc, og, sg, asm, ecv), create Linker
       - implement ExtensionMessage.equal
