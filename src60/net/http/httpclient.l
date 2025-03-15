@@ -31,10 +31,15 @@ public class HttpClient
       /* Send headers to server */
       NetworkStream stream := new NetworkStream(_socket);
 
-      :await stream.writeAsync(_headers.Value);
+      string request := $"GET / HTTP/1.1\r\nHost:{uri.Host}$1310Connection:close$1310{_headers.Value}$13$10";
 
-      ^ HttpResponse.assign(stream);
-      
+      :await stream.writeAsync(request);
+
+      HttpResponse response := HttpResponse.assign(stream);
+
+      :await response.readHeader();
+
+      ^ response;
    }
 
    close()

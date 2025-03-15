@@ -11,7 +11,7 @@ In development:
       - upndown (connector - interaction)
       - #496
       - #622
-      - #34 : http client (https get (https://github.com/HISONA/https_client), post, put, patch, delete, head, options, trace), web api
+      - #34 : http client (https get (https://github.com/HISONA/https_client), support redirects, post, put, patch, delete, head, options, trace), web api
       - MTA support for Linux  
       - #708 : compile the project (elc, og, sg, asm, ecv), create Linker
       - implement ExtensionMessage.equal
