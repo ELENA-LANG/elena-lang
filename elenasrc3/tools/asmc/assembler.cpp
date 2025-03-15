@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA Assembler
 //		classes.
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -431,6 +431,9 @@ void AssemblerBase :: compileStructure(ScriptToken& tokenInfo)
       else if (tokenInfo.compare("dq")) {
          compileDQField(tokenInfo, writer);
       } 
+      else if (tokenInfo.compare("dbl")) {
+         compileDoubleField(tokenInfo, writer);
+      }
       else throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
    }
 }

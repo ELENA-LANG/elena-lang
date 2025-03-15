@@ -22,6 +22,14 @@ root (
     method (
        nameattr( identifier = onInit )
        code (
+           expression (
+             assign_operation (
+               new_variable ( identifier = current )
+               expression (
+                 object ( identifier = self )
+               )
+             )
+           )
 =>
      { val_form_prop | form_prop }* ">" member* form_closing_tag
 <=
@@ -31,7 +39,7 @@ root (
 
   #define field_list ::= <= $buffer => $eps;
 
-  #define member ::= { label | button };
+  #define member ::= { label | button | radiobuttongroup | panel | edit | combobox };
 
   #define label ::=
 <=
@@ -50,7 +58,7 @@ root (
 <=
            expression (
              message_operation (
-               object ( identifier = self )
+               object ( super_identifier = current )
                message ( identifier = appendControl )
                expression (
                  object ( identifier = current )
@@ -81,7 +89,7 @@ root (
 <=
            expression (
              message_operation (
-               object ( identifier = self )
+               object ( super_identifier = current )
                message ( identifier = appendControl )
                expression (
                  object ( identifier = current )
@@ -94,6 +102,145 @@ root (
   #define button_name_prop ::= ":" "Name" "=" button_declaration control_assigning;
 
   #define button_declaration ::= %<= field ( type ( reference = forms'Button ) nameattr ( identifier = $current ) ) =>;
+
+  #define combobox ::=
+<=
+         code (
+           expression (
+             assign_operation (
+               new_variable ( identifier = current )
+               message_operation (
+                 object ( reference = forms'Combobox )
+                 message ( identifier = new )
+               )
+             )
+           )
+=>
+    "<" "Combobox" combobox_name_prop { val_prop | prop }* ">" combobox_closing_tag
+<=
+           expression (
+             message_operation (
+               object ( super_identifier = current )
+               message ( identifier = appendControl )
+               expression (
+                 object ( identifier = current )
+               )
+             )
+           )
+         )
+=>;
+
+  #define combobox_name_prop ::= ":" "Name" "=" combobox_declaration control_assigning;
+
+  #define combobox_declaration ::= %<= field ( type ( reference = forms'Combobox ) nameattr ( identifier = $current ) ) =>;
+
+  #define edit ::=
+<=
+         code (
+           expression (
+             assign_operation (
+               new_variable ( identifier = current )
+               message_operation (
+                 object ( reference = forms'Edit )
+                 message ( identifier = new )
+               )
+             )
+           )
+=>
+    "<" "Edit" edit_name_prop { val_prop | prop }* ">" edit_closing_tag
+<=
+           expression (
+             message_operation (
+               object ( super_identifier = current )
+               message ( identifier = appendControl )
+               expression (
+                 object ( identifier = current )
+               )
+             )
+           )
+         )
+=>;
+
+  #define edit_name_prop ::= ":" "Name" "=" edit_declaration control_assigning;
+
+  #define edit_declaration ::= %<= field ( type ( reference = forms'Edit ) nameattr ( identifier = $current ) ) =>;
+
+  #define radiobuttongroup ::=
+<=
+         code (
+           expression (
+             assign_operation (
+               new_variable ( identifier = current )
+               message_operation (
+                 object ( reference = forms'RadioButtonGroup )
+                 message ( identifier = new )
+               )
+             )
+           )
+=>
+    "<" "RadioButtonGroup" rbgroup_name_prop { val_prop | prop }* ">" item* rbgroup_closing_tag
+<=
+           expression (
+             message_operation (
+               object ( super_identifier = current )
+               message ( identifier = appendControl )
+               expression (
+                 object ( identifier = current )
+               )
+             )
+           )
+         )
+=>;
+
+  #define rbgroup_name_prop ::= ":" "Name" "=" rbgroup_declaration control_assigning;
+
+  #define rbgroup_declaration ::= %<= field ( type ( reference = forms'RadioButtonGroup ) nameattr ( identifier = $current ) ) =>;
+
+  #define panel ::=
+<=
+         code (
+           expression (
+             assign_operation (
+               new_variable ( identifier = current )
+               message_operation (
+                 object ( reference = forms'Panel )
+                 message ( identifier = new )
+               )
+             )
+           )
+=>
+    "<" "Panel" panel_name_prop { val_prop | prop }* ">" member* panel_closing_tag
+<=
+           expression (
+             message_operation (
+               object ( super_identifier = current )
+               message ( identifier = appendControl )
+               expression (
+                 object ( identifier = current )
+               )
+             )
+           )
+         )
+=>;
+
+  #define panel_name_prop ::= ":" "Name" "=" panel_declaration control_assigning;
+
+  #define panel_declaration ::= %<= field ( type ( reference = forms'Panel ) nameattr ( identifier = $current ) ) =>;
+
+  #define item ::=
+<=
+           expression (
+             message_operation (
+               object ( identifier = current )
+               message ( identifier = appendItem )
+=>
+    "<" "Item" itemval_prop ">" item_closing_tag
+<=
+             )
+           ) 
+=>;
+
+  #define itemval_prop ::= "Caption" "=" prop_str_value;
 
   #define control_assigning ::=
 <= 
@@ -192,13 +339,25 @@ root (
 
   #define prop_value ::=
 <=
+                expression (
+                   object (
+                      identifier =
+=>
+                      nonint_quote
+<=
+                   )
+                )
+=>;
+
+  #define prop_value ::=
+<=
                  expression (
                    closure_op (
                      expression (
                        object (
                          identifier =
 =>
-                         nonint_quote
+                         closure_quote
 <=     
                        )
                      )
@@ -218,11 +377,12 @@ root (
                 )
 =>;
 
-  #define ident_value ::= <= identifier = $literal =>; 
-  #define identifier  ::= <= identifier = $identifier =>;
-  #define int_quote   ::= <= $intliteral =>;
-  #define nonint_quote::= <= $nonintliteral =>;
-  #define quote       ::= <= "$literal" =>;
+  #define ident_value  ::= <= identifier = $literal =>; 
+  #define identifier   ::= <= identifier = $identifier =>;
+  #define int_quote    ::= <= $regex "^""(?<current>\d+)""$" =>;
+  #define nonint_quote ::= <= $regex "^""(?<current>[a-zA-Z_]\w*)""$" =>;
+  #define closure_quote ::= <= $regex "^""&(?<current>[a-zA-Z_]\w*)""$" =>;
+  #define quote         ::= <= "$literal" =>;
 
   #define form_closing_tag ::=
 	"<" "/" "Form" ">";
@@ -233,4 +393,18 @@ root (
   #define button_closing_tag ::=
 	"<" "/" "Button" ">";
 
+  #define edit_closing_tag ::=
+	"<" "/" "Edit" ">";
+
+  #define rbgroup_closing_tag ::=
+	"<" "/" "RadioButtonGroup" ">";
+
+  #define item_closing_tag ::=
+	"<" "/" "Item" ">";
+
+  #define panel_closing_tag ::=
+	"<" "/" "Panel" ">";
+
+  #define combobox_closing_tag ::=
+	"<" "/" "Combobox" ">";
 ]]

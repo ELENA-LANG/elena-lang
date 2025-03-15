@@ -6,8 +6,8 @@
 //                                             (C)2021-2023, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
-#ifndef ELFPPCIMAGE_H
-#define ELFPPCIMAGE_H
+#ifndef ELFARMIMAGE_H
+#define ELFARMIMAGE_H
 
 #include "elfimage.h"
 

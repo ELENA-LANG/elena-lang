@@ -1181,7 +1181,29 @@ procedure __readIntPtrVal
 
 end
 
+procedure __readPtrVal
+
+  peek       sp:0
+  get        i:0
+  load
+  peek       sp:1
+  save
+  peek       sp:0
+
+end
+
 procedure __readRealPtrVal
+
+  peek       sp:0
+  get        i:0
+  lload
+  peek       sp:1
+  lsave
+  peek       sp:0
+
+end
+
+procedure __readLongPtrVal
 
   peek       sp:0
   get        i:0

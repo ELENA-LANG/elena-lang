@@ -316,7 +316,6 @@ abstract class BaseEdit : BaseWinControl
             
       retVal := styles
    }
-
 }
 
 // --- Edit ---
@@ -473,6 +472,66 @@ public closed class RadioButton : BaseButton, interface<IControl>
                         
       if(_checked)
          { self.Checked := true }
+   }
+}
+
+// --- BaseList ---
+
+abstract class BaseList : BaseWinControl
+{
+   List<string> _items;
+
+   protected constructor new()
+      <= super new()
+   {
+      _items := new List<string>();
+   }
+
+   internal updateStyles(ref int retVal)
+   {
+      int styles := retVal;
+        
+      if(_visible)
+         { styles := styles | WS_VISIBLE };
+      if(_tabStop)
+         { styles := styles | WS_TABSTOP };
+            
+      retVal := styles
+   }
+
+   appendItem(string s)
+   {
+      _items.append(s);
+   }
+}
+
+// --- Combobox ---
+
+public sealed class Combobox : BaseList, interface<IControl>
+{
+   constructor new()
+      <= super new()
+   {
+   }
+
+   internal createHandle()
+   {
+      WindowHandle parent := _parent;
+        
+      int styles := WS_CHILD | CBS_DROPDOWNLIST;
+      self.updateStyles(ref styles);
+        
+      _region.read(out int x, out int y, out int width, out int height);
+        
+      _handle := new WindowHandle(
+                        0,
+                        ComboboxClass, 
+                        WideString.MinValue, 
+                        styles,
+                        x, y, width, height,
+                        parent, 
+                        CurrentInstance,
+                        UnsafePointer.Default)                        
    }
 }
 
@@ -879,9 +938,14 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
                         parent,
                         CurrentInstance,
                         paramPtr);
-                                                
-      if(_selected != -1 && nil != onIndexChanged)
-         { onIndexChanged(self) }
+
+      if (_selected != -1) {
+         setChecked(true);                  
+
+         if(nil != onIndexChanged)
+            { onIndexChanged(self) }
+      }
+
    }
 
    int SelectedIndex

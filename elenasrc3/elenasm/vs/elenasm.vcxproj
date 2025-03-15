@@ -183,6 +183,7 @@
     <ClInclude Include="..\..\engine\syntaxtree.h" />
     <ClInclude Include="..\..\engine\textparser.h" />
     <ClInclude Include="..\cfparser.h" />
+    <ClInclude Include="..\regex.h" />
     <ClInclude Include="..\scriptmachine.h" />
     <ClInclude Include="..\scriptparser.h" />
     <ClInclude Include="..\smcommon.h" />
@@ -199,6 +200,7 @@
     <ClCompile Include="..\..\engine\scriptreader.cpp" />
     <ClCompile Include="..\..\engine\syntaxtree.cpp" />
     <ClCompile Include="..\cfparser.cpp" />
+    <ClCompile Include="..\regex.cpp" />
     <ClCompile Include="..\scriptmachine.cpp" />
     <ClCompile Include="..\scriptparser.cpp" />
     <ClCompile Include="..\transformer.cpp" />

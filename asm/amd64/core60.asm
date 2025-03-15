@@ -11,6 +11,7 @@ define THREAD_WAIT          10007h
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
+define CORE_MATH_TABLE      20004h
 define CORE_SINGLE_CONTENT  2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
@@ -64,6 +65,12 @@ define struct_mask_inv   3FFFFFFFh
 // ; --- System Core Preloaded Routines --
 
 structure % CORE_TOC
+
+  dq 0         // ; reserved
+
+end
+
+structure % CORE_MATH_TABLE
 
   dq 0         // ; reserved
 

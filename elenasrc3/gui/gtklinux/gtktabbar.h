@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK+ TabBar Header File
-//                                             (C)2024, by Aleksey Rakov
+//                                             (C)2024-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GTKTABBAR_H
@@ -16,6 +16,8 @@ namespace elena_lang
    {
    public:
       void addTab(const char* name, Gtk::Widget* control);
+
+      Gtk::Widget* getCurrentControl();
 
       TabBar();
    };

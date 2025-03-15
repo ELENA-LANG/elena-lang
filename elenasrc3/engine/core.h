@@ -2,7 +2,7 @@
 //
 //		This file contains common ELENA Core constants
 //
-//                                              (C)2021-2024, by Aleksey Rakov
+//                                              (C)2021-2025, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #ifndef CORE_H
@@ -53,6 +53,7 @@ namespace elena_lang
    constexpr ref_t CORE_TOC                  = 0x20001;
    constexpr ref_t SYSTEM_ENV                = 0x20002;
    constexpr ref_t CORE_GC_TABLE             = 0x20003;
+   constexpr ref_t CORE_MATH_TABLE           = 0x20004;
    constexpr ref_t CORE_SINGLE_CONTENT       = 0x2000B;
    constexpr ref_t VOIDOBJ                   = 0x2000D;
    constexpr ref_t VOIDPTR                   = 0x2000E;

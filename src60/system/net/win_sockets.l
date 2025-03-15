@@ -79,23 +79,93 @@ public sealed struct IN_ADDR
    }
 }
 
+// --- hostent ---
+public sealed struct hostent
+{
+   pointer h_name;
+   pointer h_aliases;
+   short   h_addrtype;
+   short   h_length;
+   pointer h_addr_list;
+
+   static hostent load(string host)
+   {
+      hostent tmp := default;
+
+      pointer ptr := extern WS2_32.gethostbyname(host);
+
+      ptr.copyToUnsafe(tmp, $size tmp);
+
+      ^ tmp
+   }
+
+   get string IP()
+   {
+      if (h_addrtype == AF_INET) {
+         pointer addr := h_addr_list.Value;
+         pointer paddr_in := addr.Value;
+
+         IN_ADDR addr_in := default;
+         addr_in.Value := paddr_in.getLongValue();
+
+         pointer pip := extern WS2_32.inet_ntoa(addr_in);
+
+         ^ pip.getStringUnsafe();
+      }
+      else {
+         SocketException.new("gethostbyname failed").raise()
+      };
+
+      ^ nil;
+   }
+}
+
 // --- SOCKADDR_IN ---
 
 public sealed packed SOCKADDR_IN
 {
-   short   family : prop;
-   short   port   : prop;
+   short   family;
+   short   port;
    IN_ADDR sin_addr;
    byte    sin_zero[4]; 
 
    get constructor Default()
       = default;   
 
-   set ip_address(string ip)
+   short Family 
    {
-      long addr := extern WS2_32.inet_addr(ip);
-        
-      sin_addr.Value := addr
+      get() { ^ family }
+
+      set(val)
+      {
+         family := val
+      }
+   }
+
+   set Ip_address(string ip)
+   {
+      family := AF_INET;
+
+      int retVal := extern WS2_32.inet_pton(AF_INET, ip, sin_addr);
+
+      if (retVal < 0) {
+         SocketException.new("Can't set remote->sin_addr.s_addr", retVal).raise();
+      }
+      else if (retVal == 0) {
+         SocketException.new("Not a valid IP", retVal).raise();
+      }
+   }
+   
+   set Port(short value)
+   {
+      port := extern WS2_32.htons(value);
+   }
+
+   get short Port()
+   {
+      short val := extern WS2_32.ntohs(port); 
+
+      ^ val
    }
 }
 
@@ -211,6 +281,17 @@ public sealed const struct Socket
          { SocketException.new("Error at socket").raise() }
    }
 
+   open(SOCKADDR_IN sockAddr)
+   {
+      int retVal := extern WS2_32.connect( 
+            _handle,
+            sockAddr,
+            $size sockAddr);
+            
+      if (SOCKET_ERROR == retVal)
+         { SocketException.new("Error at socket").raise() }
+   }
+
    bind(pointer sockAddrPtr, int nameLen)
    {
       int retVal := extern WS2_32.bind(_handle, sockAddrPtr, nameLen);
@@ -237,9 +318,9 @@ public sealed const struct Socket
    connect(string ip_address, int port)
    {
       SOCKADDR_IN addr := SOCKADDR_IN.Default;
-      addr.port := port;
-      addr.family := system'net'AF_INET;
-      addr.ip_address := ip_address;
+      addr.Port := port;
+      addr.Family := system'net'AF_INET;
+      addr.Ip_address := ip_address;
         
       pointer ptr := addr;
       int retVal := extern WS2_32.connect(_handle, ptr, SOCKADDR_IN_SIZE);

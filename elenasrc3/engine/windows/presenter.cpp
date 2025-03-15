@@ -107,9 +107,24 @@ void WinConsolePresenter :: printPath(ustr_t msg, path_t arg)
 
 void WinConsolePresenter :: print(ustr_t msg)
 {
-   WideMessage wstr(msg);
+   size_t len = msg.length();
+   if (len < MESSAGE_LEN) {
+      WideMessage wstr(msg);
 
-   ::print(wstr.str());
+      ::print(wstr.str());
+   }
+   else {
+      while (len > 0) {
+         WideMessage wstr;
+         size_t sublen = _min(msg.length(), MESSAGE_LEN);
+
+         wstr.appendUstr(msg, sublen);
+         ::print(wstr.str());
+
+         len -= sublen;
+         msg = msg + sublen;
+      }
+   }
 }
 
 void WinConsolePresenter :: print(ustr_t msg, ustr_t path, int col, int row, ustr_t s)

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA command-Line Compiler
 //
-//		This file contains the Windows Presenter declaration
+//		This file contains the Linux Presenter declaration
 //
 //                                             (C)2021-2024, by Aleksey Rakov
 //---------------------------------------------------------------------------

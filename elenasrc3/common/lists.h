@@ -1028,7 +1028,7 @@ namespace elena_lang
       }
 
       Queue(T defItem)
-         : _list(_defaultItem)
+         : _list(defItem)
       {
          _defaultItem = defItem;
       }

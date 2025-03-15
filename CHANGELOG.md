@@ -1,5 +1,8 @@
 ## ELENA 6.6.0
 
+- ELENA
+  - [ADDED] user defined type alias
+
 - ELC
   - [ADDED] new option "-xj" to turn on jump alignment
   - [ADDED] if:nil / if:not:nil / if:not template statements
@@ -19,6 +22,7 @@
   - [FIXED] ppc64le extopen / extclose opcode
   - [FIXED] #704 : Porting to FreeBSD/PowerPC64
   - [FIXED] aarch64 extopen / extclose opcode
+  - [FIXED] #283 : unboxing duplicate object
 
 - API
   - [ADDED] net'http'HttpClient, net'http'Uri
@@ -32,6 +36,9 @@
 
 - IDE
   - [FIXED]debugger : step over multi-select statement
+
+- Tools
+  - [ADDED][LDOC] static methods are in the separate category
 
 ## ELENA 6.5.0
 

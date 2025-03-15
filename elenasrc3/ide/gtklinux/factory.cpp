@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "factory.h"
 #include "gtklinux/gtkcommon.h"
 #include "gtklinux/gtkide.h"
-#include "gtklinux/gtktextframe.h"
+#include "gtklinux/gtkidetextview.h"
 #include "gtklinux/gtktextview.h"
 //#include "text.h"
 //#include "sourceformatter.h"
@@ -66,6 +66,24 @@ StyleInfo darkStyles[STYLE_MAX + 1] = {
 
 constexpr auto STYLE_SCHEME_COUNT = 3;
 
+// --- IDEBroadcaster ---
+
+IDEBroadcaster :: IDEBroadcaster()
+{
+}
+
+void IDEBroadcaster :: sendMessage(EventBase* event)
+{
+   int eventId = event->eventId();
+   switch (eventId) {
+      case EVENT_TEXTVIEW_MODEL_CHANGED:
+         textview_changed.emit(*(TextViewModelEvent*)event);
+         break;
+      default:
+         break;
+   }
+}
+
 // --- IDEFactory ---
 
 IDEFactory :: IDEFactory(IDEModel* ideModel, IDEController* controller,
@@ -98,7 +116,9 @@ Gtk::Widget* IDEFactory :: createTextControl()
    reloadStyles(viewModel);
 
    //TextViewWindow* view = new TextViewWindow(/*_model->viewModel(), &_styles*//*, &_controller->sourceController*/);
-   TextViewFrame* frame = new TextViewFrame(_model->viewModel(), &_controller->sourceController, &_styles);
+   IDETextViewFrame* frame = new IDETextViewFrame(_model->viewModel(), &_controller->sourceController, &_styles);
+
+   _broadcaster.textview_changed.connect(sigc::mem_fun(*frame, &IDETextViewFrame::on_text_model_change));
 
    return frame;
 }
@@ -139,12 +159,14 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    ideWindow->populate(counter, children);
    ideWindow->setLayout(textIndex, -1, -1, -1, -1);
 
+   _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change));
+
    return new WindowWrapper(ideWindow);
 }
 
 GUIApp* IDEFactory :: createApp()
 {
-   WindowApp* app = new WindowApp();
+   WindowApp* app = new WindowApp(&_broadcaster);
 
    return app;
 }

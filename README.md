@@ -43,6 +43,10 @@ ELENA is a general-purpose language with late binding. It is multi-paradigm, com
 - **Windows** : x86 (32-bit) / x86-64 (64-bit) 
 - **Linux** : x86 (32-bit) / x86-64 (64-bit)  / ppc64le / arm64 (a64)
 
+## Platforms to be supported
+
+- **macOS** : arm64 (a64)
+
 ## Source Download and Compilation
 
 To acquire the source code clone the git repository:
@@ -126,3 +130,9 @@ Reach out with any questions you may have and we'll make sure to answer them as 
 
 The compiler and executables distributed in this package fall under MIT License, 
 for more information read the file LICENSE.
+
+<div align="center">
+    
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W01B4CV8)
+    
+</div>

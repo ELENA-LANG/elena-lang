@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Linux-GTK+ GTK IDE
-//                                             (C)2024, by Aleksey Rakov
+//                                             (C)2024-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "gtklinux/gtkide.h"
+#include "eng/messages.h"
 
 using namespace elena_lang;
-
 
 static Glib::ustring ui_info =
         "<ui>"
@@ -126,9 +126,18 @@ static Glib::ustring ui_info =
 //        "  </toolbar>"
         "</ui>";
 
+const char* SOURCE_FILE_FILTER[] =
+{
+   "*.l",
+   "ELENA source file",
+   "*",
+   "Any files"
+};
+
 // --- GTKIDEWindow ---
 
 GTKIDEWindow :: GTKIDEWindow(IDEController* controller, IDEModel* model)
+   : fileDialog(this, SOURCE_FILE_FILTER, 4, OPEN_FILE_CAPTION, *model->projectModel.paths.lastPath)
 {
    _model = model;
    _controller = controller;
@@ -227,4 +236,32 @@ void GTKIDEWindow :: populateMenu()
    _refActionGroup->add( Gtk::Action::create("HelpAbout", "About..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_help_about));
 
    loadUI(ui_info, "/MenuBar");
+}
+
+void GTKIDEWindow :: on_text_model_change(TextViewModelEvent event)
+{
+//   if (test(rec->status, STATUS_COLORSCHEME_CHANGED)) {
+//      onColorSchemeChange();
+//   }
+//
+   onDocumentUpdate(event.changeStatus);
+   onIDEStatusChange(event.status);
+//   if (test(rec->status, STATUS_FRAME_CHANGED)) {
+//      onDocumentSelection();
+//   }
+}
+
+void GTKIDEWindow :: onDocumentUpdate(DocumentChangeStatus changeStatus)
+{
+}
+
+void GTKIDEWindow :: onIDEStatusChange(int status)
+{
+   //if (test(rec->status, STATUS_FRAME_VISIBILITY_CHANGED)) {
+   //   if (_model->sourceViewModel.isAssigned()) {
+         //_children[_model->ideScheme.textFrameId]->show();
+         //_children[_model->ideScheme.textFrameId]->setFocus();
+    //  }
+      //else _children[_model->ideScheme.textFrameId]->hide();
+   //}
 }

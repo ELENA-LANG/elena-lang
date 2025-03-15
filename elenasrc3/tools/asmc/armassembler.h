@@ -3,7 +3,7 @@
 //
 //		This header contains AARCH64 Assembler declarations
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ARMASSEMBLER_H
@@ -185,6 +185,7 @@ namespace elena_lang
       void compileDWField(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       void compileDDField(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       void compileDQField(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      void compileDoubleField(ScriptToken& tokenInfo, MemoryWriter& writer) override;
 
       void compileProcedure(ScriptToken& tokenInfo) override;
 

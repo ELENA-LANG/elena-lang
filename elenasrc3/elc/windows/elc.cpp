@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the win32 / win64 command-line compiler
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <windows.h>
@@ -39,7 +39,7 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86;
 
 constexpr int DEFAULT_MGSIZE              = 344064;
 constexpr int DEFAULT_YGSIZE              = 86016;
-constexpr int DEFAULT_SACKRESERV          = 0x200000;
+constexpr int DEFAULT_STACKRESERV         = 0x200000;
 
 constexpr int MINIMAL_ARG_LIST            = 1;
 
@@ -56,7 +56,7 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86_64;
 
 constexpr int DEFAULT_MGSIZE              = 688128;
 constexpr int DEFAULT_YGSIZE              = 204800;
-constexpr int DEFAULT_SACKRESERV          = 0x200000;
+constexpr int DEFAULT_STACKRESERV         = 0x200000;
 
 constexpr int MINIMAL_ARG_LIST            = 2;
 
@@ -123,108 +123,22 @@ JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platf
 void handleOption(wchar_t* arg, IdentifierString& profile, Project& project, CompilingProcess& process,
    ErrorProcessor& errorProcessor, path_t appPath, bool& cleanMode)
 {
-   switch (arg[1]) {
-      case 'e':
-         if (wstr_t(arg).compare(L"-el5")) {
-            project.setSyntaxVersion(SyntaxVersion::L5);
-         }
-         else if (wstr_t(arg).compare(L"-el6")) {
-            project.setSyntaxVersion(SyntaxVersion::L6);
-         }
-         break;
-      case 'f':
-      {
-         IdentifierString setting(arg + 2);
-         process.addForward(*setting);
-
-         break;
-      }
-      case 'l':
-      {
-         IdentifierString setting(arg + 2);
-         profile.copy(*setting);
-         break;
-      }
-      case 'm':
-         project.addBoolSetting(ProjectOption::MappingOutputMode, true);
-         break;
-      case 'o':
-         if (arg[2] == '0') {
-            project.addIntSetting(ProjectOption::OptimizationMode, optNone);
-         }
-         else if (arg[2] == '1') {
-            project.addIntSetting(ProjectOption::OptimizationMode, optLow);
-         }
-         else if (arg[2] == '2') {
-            project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
-         }
-         else if (arg[2] == '3') {
-            project.addIntSetting(ProjectOption::OptimizationMode, optHigh);
-         }
-         break;
-      case 'p':
-         project.setBasePath(arg + 2);
-         break;
-      case 'r':
-         cleanMode = true;
-         break;
-      case 's':
-      {
-         IdentifierString setting(arg + 2);
-         if (setting.compare("stackReserv:", 0, 12)) {
-            ustr_t valStr = *setting + 12;
-            int val = StrConvertor::toInt(valStr, 10);
-            project.addIntSetting(ProjectOption::StackReserved, val);
-         }
-         break;
-      }
+   switch(arg[1]) {
       case 't':
       {
          IdentifierString configName(arg + 2);
 
-         if(!project.loadConfigByName(appPath, *configName, true))
+         if (!project.loadConfigByName(appPath, *configName, true))
             errorProcessor.info(wrnInvalidConfig, *configName);
          break;
       }
-      case 'v':
-         process.setVerboseOn();
-         break;
-      case 'w':
-         if (arg[2] == '0') {
-            errorProcessor.setWarningLevel(WarningLevel::Level0);
-         }
-         else if (arg[2] == '1') {
-            errorProcessor.setWarningLevel(WarningLevel::Level1);
-         }
-         else if (arg[2] == '2') {
-            errorProcessor.setWarningLevel(WarningLevel::Level2);
-         }
-         else if (arg[2] == '3') {
-            errorProcessor.setWarningLevel(WarningLevel::Level3);
-         }
-         break;
-      case 'x':
-         if (arg[2] == 'b') {
-            project.addBoolSetting(ProjectOption::ConditionalBoxing, arg[3] != '-');
-         }
-         else if (arg[2] == 'e') {
-            project.addBoolSetting(ProjectOption::EvaluateOp, arg[3] != '-');
-         }
-         else if (arg[2] == 'j') {
-            project.addBoolSetting(ProjectOption::WithJumpAlignment, arg[3] != '-');
-         }
-         else if (arg[2] == 'm') {
-            project.addBoolSetting(ProjectOption::ModuleExtensionAutoLoad, arg[3] != '-');
-         }
-         else if (arg[2] == 'p') {
-            project.addBoolSetting(ProjectOption::GenerateParamNameInfo, arg[3] != '-');
-         }
-         else if (arg[2] == 's') {
-            project.addBoolSetting(ProjectOption::StrictTypeEnforcing, arg[3] != '-');
-         }
-         break;
       default:
+      {
+         IdentifierString argStr(arg);
+
+         CommandHelper::handleOption(*argStr, profile, project, process, errorProcessor, cleanMode);
          break;
+      }
    }
 }
 
@@ -331,7 +245,7 @@ int main()
       PathString appPath;
       getAppPath(appPath);
       
-      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_SACKRESERV, 1, true, true };
+      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
       CompilingProcess process(*appPath, L"exe", L"<moduleProlog>", L"<prolog>", L"<epilog>",
          &Presenter::getInstance(), &errorProcessor,
