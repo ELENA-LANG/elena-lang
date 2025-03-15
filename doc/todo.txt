@@ -11,25 +11,23 @@ In development:
       - upndown (connector - interaction)
       - #496
       - #622
-      - #34 : http client (http get, https get (https://github.com/HISONA/https_client), post, put, patch, delete, head, options, trace), web api
+      - #34 : http client (https get (https://github.com/HISONA/https_client), post, put, patch, delete, head, options, trace), web api
       - MTA support for Linux  
       - #708 : compile the project (elc, og, sg, asm, ecv), create Linker
       - implement ExtensionMessage.equal
       - raise an error if an async extension is declared (until the feature is not implemented)
   ide:
-      - linux - select tab, save, close
-      - fix syntax highlighting (see system'net:win_common.l)
+      - linux - select tab, save, close      
       - ide : windows
+      - syntax highlighting
   gen:
       - lpad / elt : declare an extension, parse it and apply to the input
   maint:
-      - pi samples for ppc64, aarch64
+      - pi samples for aarch64 
       - test all x86-64 examples
       - unit tests : bt optimization 
       - warn if typecasting method returns itself, it leads to infinite call
-      - test binary file reader / writer
       - api : add descriptions 
-      - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
   port:
       - chat sample
       - rosetta code : moving to 6.5
@@ -40,7 +38,15 @@ In development:
       - #658 : connect with ldbg from VSCode  
   prom: bi-posting weekly
   --------------------------------------
+  - #34 : http client (http get)
+  - pi samples for ppc64
+  - fix syntax highlighting (see system'net:win_common.l)
+  - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
   --------------------------------------
+  * working on http client
+  * test http client:
+      // struct http_response *hresp = http_get("http://www.google.com", "User-agent:MyUserAgent\r\n");
+  * nets : http client get examples
   --------------------------------------
 
   === Iteration 39 ===
