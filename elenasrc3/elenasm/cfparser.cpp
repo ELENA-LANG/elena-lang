@@ -1,12 +1,13 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                             (C)2023-2024, by Aleksey Rakov
+//                                             (C)2023-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "cfparser.h"
+#include "regex.h"
 
 using namespace elena_lang;
 
@@ -21,9 +22,8 @@ constexpr auto EOL_KEYWORD             = "$eol";
 constexpr auto ANYCHR_KEYWORD          = "$chr";            // > 32
 constexpr auto CURRENT_KEYWORD         = "$current";
 constexpr auto CHARACTER_KEYWORD       = "$character";
-constexpr auto INTLITERAL_KEYWORD      = "$intliteral"; // NOTE : quote containing a number
-constexpr auto NONINTLITERAL_KEYWORD   = "$nonintliteral"; // NOTE : quote containing a number
 constexpr auto BUFFER_KEYWORD          = "$buffer";     // NOTE : quote containing a number
+constexpr auto REGEX_KEYWORD           = "$regex";
 
 constexpr auto REFERENCE_MODE       = 1;
 constexpr auto IDENTIFIER_MODE      = 2;
@@ -38,9 +38,8 @@ constexpr auto EXCLUDE_MODE         = 10;
 constexpr auto CHARACTER_MODE       = 11;
 constexpr auto IF_MODE              = 12;
 constexpr auto IFNOT_MODE           = 13;
-constexpr auto INTLITERAL_MODE      = 14;
 constexpr auto BUFFER_MODE          = 15;
-constexpr auto NONINTLITERAL_MODE   = 16;
+constexpr auto REGEX_MODE           = 17;
 
 constexpr auto WITHFORWARD_MASK = 0x80000000;
 constexpr auto POSTFIXSAVE_MODE = 0x80000000;
@@ -54,38 +53,82 @@ inline void readToken(ScriptEngineReaderBase& reader, ScriptBookmark& bm, ustr_t
       throw SyntaxError("invalid grammar rule", bm.lineInfo);
 }
 
-void saveReference(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log)
+class ReferenceSaver : public ScriptEngineCFParser::SaverBase
 {
-   ScriptBookmark bm;
-   parser->readScriptBookmark(ptr, bm);
+public:
+   void saveTo(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log) override
+   {
+      ScriptBookmark bm;
+      parser->readScriptBookmark(ptr, bm);
 
-   log.writeCoord(bm.lineInfo);
-   log.write(scriptReader.lookup(bm));
-}
+      log.writeCoord(bm.lineInfo);
+      log.write(scriptReader.lookup(bm));
+   }
 
-void saveLiteralContent(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log)
+   static ScriptEngineCFParser::SaverBase* getInstance()
+   {
+      static ReferenceSaver instance;
+
+      return &instance;
+   }
+};
+
+class LiteralContentSaver : public ScriptEngineCFParser::SaverBase
 {
-   ScriptBookmark bm;
-   parser->readScriptBookmark(ptr, bm);
+public:
+   void saveTo(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log) override
+   {
+      ScriptBookmark bm;
+      parser->readScriptBookmark(ptr, bm);
 
-   log.writeCoord(bm.lineInfo);
-   log.write(scriptReader.lookup(bm));
-}
+      log.writeCoord(bm.lineInfo);
+      log.write(scriptReader.lookup(bm));
+   }
 
-void saveLiteral(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log)
+   static ScriptEngineCFParser::SaverBase* getInstance()
+   {
+      static LiteralContentSaver instance;
+
+      return &instance;
+   }
+};
+
+class LiteralSaver : public ScriptEngineCFParser::SaverBase
 {
-   ScriptBookmark bm;
-   parser->readScriptBookmark(ptr, bm);
+public:
+   void saveTo(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log) override
+   {
+      ScriptBookmark bm;
+      parser->readScriptBookmark(ptr, bm);
 
-   log.writeCoord(bm.lineInfo);
-   log.writeQuote(scriptReader.lookup(bm));
-}
+      log.writeCoord(bm.lineInfo);
+      log.writeQuote(scriptReader.lookup(bm));
+   }
 
-void saveBuffer(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log)
+   static ScriptEngineCFParser::SaverBase* getInstance()
+   {
+      static LiteralSaver instance;
+
+      return &instance;
+   }
+};
+
+class BufferSaver : public ScriptEngineCFParser::SaverBase
 {
-   parser->flushBuffer(log);
-   parser->clearBuffer();
-}
+public:
+   void saveTo(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log) override
+   {
+      parser->flushBuffer(log);
+      parser->clearBuffer();
+   }
+
+   static ScriptEngineCFParser::SaverBase* getInstance()
+   {
+      static BufferSaver instance;
+
+      return &instance;
+   }
+};
 
 bool nonterminalApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark&, ScriptEngineReaderBase&, ScriptEngineCFParser*)
 {
@@ -100,30 +143,6 @@ bool normalEOFApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptE
 bool normalLiteralApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptEngineReaderBase&, ScriptEngineCFParser*)
 {
    return (bm.state == dfaQuote);
-}
-
-bool normalIntLiteralApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptEngineReaderBase& reader, ScriptEngineCFParser*)
-{
-   if (bm.state == dfaQuote) {
-      ustr_t value = reader.lookup(bm);
-      for (pos_t i = 0; i < getlength(value); i++) {
-         if (value[i] < '0' || value[i] > '9')
-            return false;
-      }
-
-      return true;
-   }
-   return false;
-}
-
-bool normalNonIntLiteralApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptEngineReaderBase& reader, ScriptEngineCFParser*)
-{
-   if (bm.state == dfaQuote) {
-      ustr_t value = reader.lookup(bm);
-      if (value[0] < '0' || value[0] > '9')
-         return true;
-   }
-   return false;
 }
 
 bool normalNumericApplyRule(ScriptEngineCFParser::Rule&, ScriptBookmark& bm, ScriptEngineReaderBase&, ScriptEngineCFParser*)
@@ -185,6 +204,11 @@ bool excludeSpecialApplyRule(ScriptEngineCFParser::Rule& rule, ScriptBookmark& b
 bool normalApplyRule(ScriptEngineCFParser::Rule& rule, ScriptBookmark& bm, ScriptEngineReaderBase& reader, ScriptEngineCFParser* parser)
 {
    return bm.state != dfaEOF && parser->compareToken(reader, bm, rule.terminal);
+}
+
+bool regexApplyRule(ScriptEngineCFParser::Rule& rule, ScriptBookmark& bm, ScriptEngineReaderBase& reader, ScriptEngineCFParser* parser)
+{
+   return rule.saver->isMatched(reader.lookup(bm), bm.state);
 }
 
 // --- ScriptEngineCFParser ---
@@ -281,6 +305,18 @@ void ScriptEngineCFParser :: setScriptPtr(ScriptBookmark& bm, Rule& rule, bool p
    }
 }
 
+ScriptEngineCFParser::SaverBase* ScriptEngineCFParser::createRegEx(ScriptBookmark& bm, ustr_t regex)
+{
+   auto regEx = RegExFactory::generate(regex);
+   if (!regEx) {
+      throw SyntaxError("invalid grammar rule", bm.lineInfo);
+   }
+
+   _regExList.add(regEx);
+
+   return regEx;
+}
+
 void ScriptEngineCFParser :: defineApplyRule(Rule& rule, int mode, RuleTypeModifier modifier)
 {
    if (rule.type == RuleType::Normal) {
@@ -296,12 +332,6 @@ void ScriptEngineCFParser :: defineApplyRule(Rule& rule, int mode, RuleTypeModif
                break;
             case LITERAL_MODE:
                rule.apply = normalLiteralApplyRule;
-               break;
-            case INTLITERAL_MODE:
-               rule.apply = normalIntLiteralApplyRule;
-               break;
-            case NONINTLITERAL_MODE:
-               rule.apply = normalNonIntLiteralApplyRule;
                break;
             case NUMERIC_MODE:
                rule.apply = normalNumericApplyRule;
@@ -342,6 +372,9 @@ void ScriptEngineCFParser :: defineApplyRule(Rule& rule, int mode, RuleTypeModif
                break;
             case EXCLUDE_MODE:
                rule.apply = excludeApplyRule;
+               break;
+            case REGEX_MODE:
+               rule.apply = regexApplyRule;
                break;
             default:
                rule.apply = normalApplyRule;
@@ -384,56 +417,52 @@ void ScriptEngineCFParser :: saveScript(ScriptEngineReaderBase& reader, Rule& ru
          if (forwardMode)
             throw SyntaxError("invalid grammar rule", bm.lineInfo);
 
-         if (rule.saveTo != nullptr || (!prefixMode && !reader.compare(CURRENT_KEYWORD)))
+         if (rule.saver != nullptr || (!prefixMode && !reader.compare(CURRENT_KEYWORD)))
             throw SyntaxError("invalid grammar rule", bm.lineInfo);
 
          if (reader.compare(REFERENCE_KEYWORD)) {
             rule.terminal = INVALID_REF;
-            rule.saveTo = saveReference;
+            rule.saver = ReferenceSaver::getInstance();
 
             mode = REFERENCE_MODE;
          }
          else if (reader.compare(IDENTIFIER_KEYWORD)) {
             rule.terminal = INVALID_REF;
-            rule.saveTo = saveReference;
+            rule.saver = ReferenceSaver::getInstance();
 
             mode = IDENTIFIER_MODE;
          }
          else if (reader.compare(CHARACTER_KEYWORD)) {
             rule.terminal = INVALID_REF;
-            rule.saveTo = saveLiteralContent;
+            rule.saver = LiteralContentSaver::getInstance();
 
             mode = CHARACTER_MODE;
          }
          else if (reader.compare(LITERAL_KEYWORD)) {
             rule.terminal = INVALID_REF;
-            rule.saveTo = saveLiteralContent;
+            rule.saver = LiteralContentSaver::getInstance();
 
             mode = LITERAL_MODE;
          }
-         else if (reader.compare(INTLITERAL_KEYWORD)) {
-            rule.terminal = INVALID_REF;
-            rule.saveTo = saveReference;
-
-            mode = INTLITERAL_MODE;
-         }
-         else if (reader.compare(NONINTLITERAL_KEYWORD)) {
-            rule.terminal = INVALID_REF;
-            rule.saveTo = saveReference;
-
-            mode = NONINTLITERAL_MODE;
-         }
          else if (reader.compare(NUMERIC_KEYWORD)) {
             rule.terminal = INVALID_REF;
-            rule.saveTo = saveReference;
+            rule.saver = ReferenceSaver::getInstance();
 
             mode = NUMERIC_MODE;
          }
          if (reader.compare(CURRENT_KEYWORD)) {
-            rule.saveTo = saveReference;
+            rule.saver = ReferenceSaver::getInstance();
          }
          else if (reader.compare(BUFFER_KEYWORD)) {
-            rule.saveTo = saveBuffer;
+            rule.saver = BufferSaver::getInstance();
+         }
+         else if (reader.compare(REGEX_KEYWORD)) {
+            bm = reader.read();
+
+            rule.terminal = INVALID_REF;
+            rule.saver = createRegEx(bm, reader.lookup(bm));
+
+            mode = REGEX_MODE;
          }
 
          writer.writeChar((char)0);
@@ -444,7 +473,7 @@ void ScriptEngineCFParser :: saveScript(ScriptEngineReaderBase& reader, Rule& ru
             throw SyntaxError("invalid grammar rule", bm.lineInfo);
 
          rule.terminal = INVALID_REF;
-         rule.saveTo = saveLiteral;
+         rule.saver = LiteralSaver::getInstance();
 
          mode = REFERENCE_MODE;
 
@@ -456,7 +485,7 @@ void ScriptEngineCFParser :: saveScript(ScriptEngineReaderBase& reader, Rule& ru
             throw SyntaxError("invalid grammar rule", bm.lineInfo);
 
          rule.terminal = INVALID_REF;
-         rule.saveTo = saveLiteral;
+         rule.saver = LiteralSaver::getInstance();
 
          mode = IDENTIFIER_MODE;
 
@@ -468,7 +497,7 @@ void ScriptEngineCFParser :: saveScript(ScriptEngineReaderBase& reader, Rule& ru
             throw SyntaxError("invalid grammar rule", bm.lineInfo);
 
          rule.terminal = INVALID_REF;
-         rule.saveTo = saveLiteral;
+         rule.saver = LiteralSaver::getInstance();
 
          mode = LITERAL_MODE;
 
@@ -480,7 +509,7 @@ void ScriptEngineCFParser :: saveScript(ScriptEngineReaderBase& reader, Rule& ru
             throw SyntaxError("invalid grammar rule", bm.lineInfo);
 
          rule.terminal = INVALID_REF;
-         rule.saveTo = saveLiteral;
+         rule.saver = LiteralSaver::getInstance();
 
          mode = NUMERIC_MODE;
 
@@ -492,7 +521,7 @@ void ScriptEngineCFParser :: saveScript(ScriptEngineReaderBase& reader, Rule& ru
             throw SyntaxError("invalid grammar rule", bm.lineInfo);
 
          rule.terminal = INVALID_REF;
-         rule.saveTo = saveLiteral;
+         rule.saver = LiteralSaver::getInstance();
 
          mode = CHARACTER_MODE;
 
@@ -1150,8 +1179,8 @@ void ScriptEngineCFParser :: saveRuleOutput(Rule& rule, pos_t terminal, ScriptEn
    if (!test(rule.type, RuleType::WithForward))
       lineLen += log.write(getBodyText(rule.prefix1Ptr));
 
-   if (rule.saveTo != NULL)
-      rule.saveTo(scriptReader, this, terminal, log);
+   if (rule.saver != NULL)
+      rule.saver->saveTo(scriptReader, this, terminal, log);
 
    // HOTFIX: to prevent too long line
    if (lineLen > 0x10) {
@@ -1229,7 +1258,7 @@ void ScriptEngineCFParser :: generateOutput(pos_t offset, ScriptEngineReaderBase
    // NOTE: reset level to -1 to match the backward calculated levels 
    level = -1;
    Stack<pos_t> postfixes(0);
-   Stack<SaveToSign> functions(0);
+   Stack<SaverBase*> functions(nullptr);
    while (stack.count() > 0) {
       item = stack.pop();
       if (item.ruleKey == 0) {
@@ -1242,10 +1271,10 @@ void ScriptEngineCFParser :: generateOutput(pos_t offset, ScriptEngineReaderBase
 
                log.write(getBodyText(ptr));
 
-               auto saveTo = functions.pop();
+               auto saver = functions.pop();
                int terminal = postfixes.pop();
 
-               saveTo(scriptReader, this, terminal, log);
+               saver->saveTo(scriptReader, this, terminal, log);
 
                ptr = postfixes.pop();
             }
@@ -1284,7 +1313,7 @@ void ScriptEngineCFParser :: generateOutput(pos_t offset, ScriptEngineReaderBase
             postfixes.push(rule.postfix2Ptr);
 
             postfixes.push(item.terminal);
-            functions.push(rule.saveTo);
+            functions.push(rule.saver);
             postfixes.push(rule.prefix2Ptr | POSTFIXSAVE_MODE);
          }
          else postfixes.push(rule.prefix2Ptr);

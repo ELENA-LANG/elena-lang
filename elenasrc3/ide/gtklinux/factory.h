@@ -17,10 +17,25 @@
 
 namespace elena_lang
 {
+   typedef sigc::signal<void(TextViewModelEvent)> type_textview_changed;
+
+   // --- IDEBroadcaster ---
+   class IDEBroadcaster : public BroadcasterBase
+   {
+   public:
+      type_textview_changed textview_changed;
+
+      void sendMessage(EventBase* event) override;
+
+      IDEBroadcaster();
+   };
+
    // --- IDEFactory ---
    class IDEFactory : public GUIFactoryBase, public ViewFactoryBase
    {
    protected:
+      IDEBroadcaster _broadcaster;
+
       FontFactory    _fontFactory;
       ViewStyles     _styles;
       StyleInfo*     _schemes[3];

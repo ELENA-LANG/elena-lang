@@ -1,4 +1,5 @@
 import system'text'parsing;
+import system'net;
 
 internal static RegEx UrlRegEx = new RegEx("^(ht|f)tp(s?)\:\/\/[0-9a-zA-Z]((\.|-+)?[0-9a-zA-Z])*(:(0-9)*)?(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&%\$#_=]*)?$");
 
@@ -6,6 +7,7 @@ public sealed class Uri
 {
    string _scheme;
    string _host;
+   string _ip; 
    string _port;
    string _path;
    string _query;
@@ -21,8 +23,20 @@ public sealed class Uri
    get string Host()
       = _host;
 
-   get string Port()
+   get string IP()
+      = _query;
+
+   get string PortValue()
       = _port ?? String.MinValue;
+
+   get short Port()
+   {
+      if:not:nil(_port) {
+         ^ ShortConvertor.convert(_port, 10);
+      };
+
+      ^ 0;
+   }
 
    get string Path()
       = _path ?? String.MinValue;
@@ -71,6 +85,9 @@ public sealed class Uri
       if (index < len) {
          _query := url.Substring(index, len - index);
       };
+
+      hostent h := hostent.load(_host);
+      _ip := h.IP;
 
       ^ true;
    }

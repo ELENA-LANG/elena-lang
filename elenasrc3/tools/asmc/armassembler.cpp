@@ -3,7 +3,7 @@
 //
 //		This file contains AARCH64 Assembler implementation
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1148,6 +1148,12 @@ bool Arm64Assembler :: compileLDR(ScriptToken& tokenInfo, ARMOperand rt, ARMOper
    else if (rt.isDR() && ptr.isPostindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 1, 0, 1, 0, ptr.imm, 1, ptr.type, rt.type));
    }
+   else if (rt.isDR() && ptr.isPreindex()) {
+      writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 1, 0, 1, 0, ptr.imm, 3, ptr.type, rt.type));
+   }
+   else if (rt.isDR() && ptr.isUnsigned()) {
+      writer.writeDWord(ARMHelper::makeImm12Opcode(3, 7, 1, 1, 1, ptr.imm >> 3, ptr.type, rt.type));
+   }
    else return false;
 
    return true;
@@ -1203,7 +1209,7 @@ bool Arm64Assembler :: compileLDRSW(ScriptToken& tokenInfo, ARMOperand rt, ARMOp
          writeReference(tokenInfo, ptr.reference, writer, ASM_INVALID_SOURCE);
    }
    else if (rt.isXR() && ptr.isUnsigned()) {
-      writer.writeDWord(ARMHelper::makeImm12Opcode(2, 7, 0, 1, 2, ptr.imm >> 3, ptr.type, rt.type));
+      writer.writeDWord(ARMHelper::makeImm12Opcode(2, 7, 0, 1, 2, ptr.imm >> 2, ptr.type, rt.type));
    }
    else return false;
 
@@ -1448,6 +1454,9 @@ bool Arm64Assembler :: compileSTR(ScriptToken& tokenInfo, ARMOperand rt, ARMOper
       if (ptr.reference)
          writeReference(tokenInfo, ptr.reference, writer, ASM_INVALID_SOURCE);
    }
+   else if (rt.isWR() && ptr.isUnsigned()) {
+      writer.writeDWord(ARMHelper::makeImm12Opcode(2, 7, 0, 1, 0, ptr.imm >> 2, ptr.type, rt.type));
+   }
    else if (rt.isXR() && ptr.isPostindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 0, 0, 0, 0, ptr.imm, 1, ptr.type, rt.type));
    }
@@ -1459,6 +1468,9 @@ bool Arm64Assembler :: compileSTR(ScriptToken& tokenInfo, ARMOperand rt, ARMOper
    }
    else if (rt.isDR() && ptr.isPostindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 1, 0, 0, 0, ptr.imm, 1, ptr.type, rt.type));
+   }
+   else if (rt.isDR() && ptr.isUnsigned()) {
+      writer.writeDWord(ARMHelper::makeImm12Opcode(3, 7, 1, 1, 0, ptr.imm >> 3, ptr.type, rt.type));
    }
    else return false;
 
@@ -2935,6 +2947,20 @@ void Arm64Assembler::compileDQField(ScriptToken& tokenInfo, MemoryWriter& writer
       writer.writeQReference(reference, d);
    }
    else writer.writeQWord(d);
+}
+
+void Arm64Assembler :: compileDoubleField(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   read(tokenInfo);
+
+   if (tokenInfo.state == dfaQuote) {
+      double val = StrConvertor::toDouble(*tokenInfo.token);
+
+      writer.writeDouble(val);
+
+      read(tokenInfo);
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
 void Arm64Assembler :: compileProcedure(ScriptToken& tokenInfo)

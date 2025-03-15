@@ -40,8 +40,10 @@ public sealed const struct UnsafePointer
 
    private clear() : external(system'core_routines'__clearPtr);
    private readIntPtr(out int retVal) : external(system'core_routines'__readIntPtr);
+   private readPtrValue(out UnsafePointer retVal) : external(system'core_routines'__readPtrVal);
    private readIntPtrValue(out int retVal) : external(system'core_routines'__readIntPtrVal);
    private readRealPtrValue(out real retVal) : external(system'core_routines'__readRealPtrVal);
+   private readLongPtrValue(out long retVal) : external(system'core_routines'__readLongPtrVal);
    private assignPtr(object obj) : external(system'core_routines'__assignPtr); 
 
    constructor()
@@ -88,7 +90,14 @@ public sealed const struct UnsafePointer
       ^ retVal
    }
 
-   get int Value()
+   get pointer Value()
+   {
+      self.readPtrValue(out pointer retVal);
+
+      ^ retVal
+   }
+
+   get retoverload int Value()
    {   
       self.readIntPtrValue(out int retVal);
 
@@ -102,6 +111,13 @@ public sealed const struct UnsafePointer
       ^ retVal
    }
 
+   get retoverload long Value()
+   {
+      self.readLongPtrValue(out long retVal);
+
+      ^ retVal
+   }
+
    get retoverload string Value()
    {
       ^ PrimitivePointerOperations.readString(self);
@@ -111,6 +127,22 @@ public sealed const struct UnsafePointer
    {
       ^ PrimitivePointerOperations.readWideString(self);
    }
+
+   long getLongValue()
+   {
+      long val := self.Value;
+
+      ^ val;
+   }
+   
+   string getStringUnsafe()
+   {
+      string str := self.Value;
+
+      ^ str
+   }
+
+   copyToUnsafe(object ptr, int length) : external(system'core_routines'__ptrCopyTo);
 
    copyTo(byte[] target, int len) : external(system'core_routines'__ptrCopyTo);
    copyTo(byte[] target, int index, int len) : external(system'core_routines'__ptrCopySubTo);

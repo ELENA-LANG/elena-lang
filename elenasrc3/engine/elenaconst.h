@@ -13,7 +13,7 @@ namespace elena_lang
 {
    // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION              6                    // ELENA Engine version
-   #define ENGINE_MINOR_VERSION              5
+   #define ENGINE_MINOR_VERSION              6
 
    constexpr auto LINE_LEN                   = 0x1000;            // the maximal source line length
    constexpr auto IDENTIFIER_LEN             = 0x0300;            // the maximal identifier length
@@ -219,6 +219,8 @@ namespace elena_lang
 
       Linux_PPC64le  = 0x00025,
       Linux_PPC32le  = 0x00026,
+
+      MacOS_ARM64    = 0x00034,
 
       TargetMask     = 0x00F00,
       Standalone     = 0x00000,

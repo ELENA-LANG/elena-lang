@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     Linux EditFrame container File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GTKTEXTFRAME_H
@@ -20,6 +20,8 @@ namespace elena_lang
       TextViewModel*          _model;
       ViewStyles*             _styles;
       TextViewControllerBase* _controller;
+
+      TextViewWindow* getCurrentTextView();
 
    public:
       void onDocumentNew(int index) override;

@@ -244,8 +244,8 @@ public sealed class RegEx
 
    private PatternRule? defineRule(char ch)
    {
-      ch =>
-         $47: { ^ new AnyRule() };
+      ch =>             
+         $46: { ^ new AnyRule() };
 
       if (isReserved(ch))
          { ^ nil };
@@ -436,7 +436,7 @@ public sealed class RegEx
       List<PatternRule> list := new List<PatternRule>();
 
       parseLine(list, pattern, ref i, len, $36);
-      if (i < len && pattern[i] == $36) {
+      if (i < len && pattern[i] == $36) {       
          list.append(EOLRule);
       
          i++;      

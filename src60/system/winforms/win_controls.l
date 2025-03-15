@@ -5,6 +5,7 @@ import system'drawing;
 public const wide ButtonClass = "Button"w;
 public const wide EditClass   = "Edit"w;
 public const wide StaticClass = "Static"w;
+public const wide ComboboxClass = "Combobox"w;
 
 // --- WindowHandle ---
 

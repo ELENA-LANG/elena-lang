@@ -51,7 +51,7 @@ bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider
    if (!vmMode) {
       reader.read(&tempAddr, sizeof(tempAddr));
 
-      ustr_t ns = reader.getString(DEFAULT_STR);
+      /*ustr_t ns = */reader.getString(DEFAULT_STR);
    }
 
    // search through debug section until the ret point is inside two consecutive steps within the same object

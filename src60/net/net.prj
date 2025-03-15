@@ -15,7 +15,7 @@
   </project>
   <manifest>
      <name>ELENA Network Provider Library</name>
-     <version>6.5.0</version>
+     <version>6.6.0</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
@@ -26,6 +26,8 @@
      </module>
      <module name="http">
        <include>http\common.l</include>
+       <include>http\httpheaders.l</include>
+       <include>http\httpresponse.l</include>
        <include>http\httpclient.l</include>
      </module>
      <module name="server">

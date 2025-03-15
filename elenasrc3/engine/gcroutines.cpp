@@ -433,7 +433,7 @@ void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t s
    CollectMG2YGRoots(table, shadowPtr);
 
    // ; collect perm yg roots
-   if (table->gc_perm_current > table->gc_perm_current)
+   if (table->gc_perm_current > table->gc_perm_end)
       CollectPermYGRoots(table, shadowPtr);
 
    // ; save gc_yg_current to mark  objects

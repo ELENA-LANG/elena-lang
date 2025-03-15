@@ -367,7 +367,6 @@ bool SystemRoutineProvider :: CheckMessage(MemoryBase* msection, void* classPtr,
    RTManager manager(msection, nullptr);
 
    VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
-   size_t counter = 0;
    // NOTE : skip the dispatcher
    for (pos_t i = 1; i < header->count; i++) {
       if (((VMTEntry*)classPtr)[i].message == message)

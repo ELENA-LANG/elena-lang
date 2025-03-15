@@ -3,7 +3,7 @@
 //
 //		This header contains PPC64 Assembler declarations
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PPC64ASSEMBLER_H
@@ -148,6 +148,7 @@ namespace elena_lang
       void compileDWField(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       void compileDDField(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       void compileDQField(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      void compileDoubleField(ScriptToken& tokenInfo, MemoryWriter& writer) override;
 
       bool compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       bool compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;

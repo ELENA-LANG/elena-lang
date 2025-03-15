@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT compiler class implementation.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -75,11 +75,11 @@ constexpr ref_t coreVariables[coreVariableNumber] =
    CORE_GC_TABLE, CORE_SINGLE_CONTENT, CORE_THREAD_TABLE
 };
 
-constexpr int coreConstantNumber = 4;
+constexpr int coreConstantNumber = 5;
 constexpr ref_t coreConstants[coreConstantNumber] =
 {
    // NOTE: SYSTEM_ENV should be the last one to add correctly extra fields: GCMGSize, GCYGSize
-   CORE_TOC, VOIDOBJ, VOIDPTR, SYSTEM_ENV
+   CORE_TOC, VOIDOBJ, VOIDPTR, CORE_MATH_TABLE, SYSTEM_ENV
 };
 
 // preloaded gc routines
@@ -943,10 +943,9 @@ void elena_lang::loadFrameDispOp(JITCompilerScope* scope)
                scope->constants->dataOffset), 0);
             break;
          default:
-            // to make compiler happy
+            writeCoreReference(scope, entries->reference, entries->offset, code);
             break;
       }
-      //else writeCoreReference();
 
       entries++;
       count--;

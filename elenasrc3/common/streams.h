@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of abstract stream reader
 //      and writer classes
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef STREAMS_H
@@ -336,6 +336,10 @@ namespace elena_lang
       bool writeSize(size_t value)
       {
          return write(&value, sizeof(size_t));
+      }
+      bool writeDouble(double value)
+      {
+         return write(&value, sizeof(double));
       }
 
       virtual bool writeBytes(unsigned char ch, pos_t count)

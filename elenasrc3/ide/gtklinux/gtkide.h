@@ -1,18 +1,19 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Linux-GTK IDE
 //
-//                                             (C)2024, by Aleksey Rakov
+//                                             (C)2024-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GTKIDE_H
 #define GTKIDE_H
 
 #include "gtklinux/gtksdi.h"
+#include "gtklinux/gtkdialogs.h"
 #include "idecontroller.h"
-
 
 namespace elena_lang
 {
+
 // --- GTKIDEView ---
 
 class GTKIDEWindow : public SDIWindow
@@ -20,6 +21,8 @@ class GTKIDEWindow : public SDIWindow
 protected:
    IDEModel*         _model;
    IDEController*    _controller;
+
+   FileDialog        fileDialog;
 
    void populateMenu();
 
@@ -34,7 +37,9 @@ protected:
    }
    void on_menu_file_open_source()
    {
-      //_controller->doOpenFile();
+      _controller->doOpenFile(fileDialog, _model);
+      //_recentFileList.reload();
+      //_recentProjectList.reload();
    }
    void on_menu_file_open_project()
    {
@@ -262,7 +267,12 @@ protected:
    {
    }
 
+   void onDocumentUpdate(DocumentChangeStatus changeStatus);
+   void onIDEStatusChange(int status);
+
 public:
+   void on_text_model_change(TextViewModelEvent event);
+
    GTKIDEWindow(/*const char* caption, */IDEController* controller, IDEModel* model);
 };
 

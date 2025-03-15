@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Text class header
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef TEXT_H
@@ -117,6 +117,7 @@ namespace elena_lang
 
                return true;
             }
+            else return true;
          }
          else return false;
 #elif _MSC_VER

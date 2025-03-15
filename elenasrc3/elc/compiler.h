@@ -121,6 +121,13 @@ namespace elena_lang
       Weak,
    };
 
+   enum class TrackingMode
+   {
+      None = 0,
+      Captched,
+      Updated
+   };
+
    enum DeclResult : int
    {
       Success = 0,
@@ -249,8 +256,25 @@ namespace elena_lang
       }
    };
 
+   struct ObjectTrackingInfo
+   {
+      TypeInfo     typeInfo;
+      TrackingMode mode;
+
+      ObjectTrackingInfo()
+         : typeInfo({}), mode(TrackingMode::None)
+      {         
+      }
+      ObjectTrackingInfo(TypeInfo typeInfo, TrackingMode mode)
+         : typeInfo(typeInfo), mode(mode)
+      {
+
+      }
+   };
+
    typedef Pair<ObjectKind, ref_t, ObjectKind::Unknown, 0>                                   ObjectKey;
-   typedef MemoryMap<ObjectKey, ObjectInfo, Map_StoreKey<ObjectKey>, Map_GetKey<ObjectKey>>  ObjectKeys;
+   typedef MemoryMap<ObjectKey, ObjectInfo, Map_StoreKey<ObjectKey>, Map_GetKey<ObjectKey>>  ObjectKeyMap;
+   typedef Map<ObjectKey, ObjectTrackingInfo>                                                ObjectTrackingMap;
    typedef CachedList<ref_t, 4>                                                              TemplateTypeList;
 
    struct Parameter
@@ -967,7 +991,10 @@ namespace elena_lang
 
       struct ExprScope : Scope
       {
-         ObjectKeys tempLocals;
+         bool              trackingClosureLocals;
+         bool              unboxingConflictFound;
+         ObjectKeyMap      tempLocals;
+         ObjectTrackingMap trackingLocals;  // is used to keep track of used in the closure local variables (when trackingClosureLocals is on)
 
          pos_t allocatedArgs;
          pos_t tempAllocated1;
@@ -1015,6 +1042,7 @@ namespace elena_lang
             else return {};
          }
 
+         ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
          ObjectInfo mapMember(ustr_t identifier) override;
          ObjectInfo mapGlobal(ustr_t globalReference) override;
 
@@ -1318,6 +1346,8 @@ namespace elena_lang
          bool checkValidity(ObjectInfo target, CheckMethodResult& result, bool allowPrivateCall);
          bool checkValidity(ObjectInfo target, MessageResolution& resolution, bool allowPrivateCall);
 
+         void prepareConflictResolution();
+
          ObjectInfo compileLookAhead(SyntaxNode node,
             ref_t targetRef, ExpressionAttribute attrs);
 
@@ -1396,6 +1426,7 @@ namespace elena_lang
          ObjectInfo boxLocally(ObjectInfo info, bool stackSafe);
          ObjectInfo boxPtrLocally(ObjectInfo info);
          ObjectInfo boxArgumentInPlace(ObjectInfo info, ref_t targetRef = 0);
+         ObjectInfo boxRefArgumentLocallyInPlace(ObjectInfo info, ref_t targetRef = 0);
          ObjectInfo boxRefArgumentInPlace(ObjectInfo info, ref_t targetRef = 0);
          ObjectInfo boxVariadicArgument(ObjectInfo info);
 

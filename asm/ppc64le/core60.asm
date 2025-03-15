@@ -9,6 +9,7 @@ define THREAD_WAIT          10007h
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
 define CORE_GC_TABLE        20003h
+define CORE_MATH_TABLE      20004h
 define CORE_SINGLE_CONTENT  2000Bh
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
@@ -90,6 +91,36 @@ structure % CORE_TOC
   dq stat   : 0             // ; address of stat section
   dq code   : %GC_ALLOCPERM // ; address of alloc function
   dq code   : %PREPARE      // ; address of alloc function
+
+end
+
+structure % CORE_MATH_TABLE
+
+  dbl "1.4426950408889634074"      // ; 00 : FM_DOUBLE_LOG2OFE
+  dbl "2.30933477057345225087e-2"  // ; 08 : 
+  dbl "2.02020656693165307700e1"   // ; 16 : 
+  dbl "1.51390680115615096133e3"   // ; 24 : 
+  dbl "1.0"                        // ; 32 : 
+  dbl "0.5"                        // ; 40 : 
+  dbl "2.33184211722314911771e2"   // ; 48
+  dbl "4.36821166879210612817e3"   // ; 56
+
+  dbl "1.41421356237309504880"     // ; 64
+
+  dbl "1.01875663804580931796e-4"  // ; 72
+  dbl "4.97494994976747001425e-1"  // ; 80
+  dbl "4.70579119878881725854e0"   // ; 88
+  dbl "1.44989225341610930846e1"   // ; 96
+  dbl "1.79368678507819816313e1"   // ; 104
+  dbl "7.70838733755885391666e0"   // ; 112
+
+  dbl "1.12873587189167450590e1"   // ; 120
+  dbl "4.52279145837532221105e1"   // ; 128
+  dbl "8.29875266912776603211e1"   // ; 136
+  dbl "7.11544750618563894466e1"   // ; 144
+  dbl "2.31251620126765340583e1"   // ; 152
+
+  dbl "6.9314718055994530942e-1"   // ; 160
 
 end
  
@@ -1085,10 +1116,231 @@ end
 // ; fexpdp
 inline %07Ah
 
+  ld      r17, toc_rdata(r2)
+  addis   r17, r17, rdata_disp32hi : %CORE_MATH_TABLE
+  addi    r17, r17, rdata_disp32lo : %CORE_MATH_TABLE
+
+  addi    r19, r31, __arg16_1 // ; dest (r19)
+
+  lfd     f17, 0(r3)          // ; x (f17)
+
+  // ; x = x * FM_DOUBLE_LOG2OFE
+  lfd     f20, 0(r17)
+  fmul    f17, f17, f20
+
+  // ; ipart = x + 0.5
+  lfd     f20, 40(r17)
+  fadd    f18, f17, f20
+                              // ; ipart(f18)
+  friz    f18, f18            // ; ipart = floor(ipart)
+
+  fsub    f19, f17, f18       // ; fpart = x - ipart; (f19)
+
+  // ; FM_DOUBLE_INIT_EXP(epart,ipart);
+  fctidz  f20, f18
+  stfd    f20, 0(r19) 
+  ld      r18, 0(r19) 
+  li      r20, 1023
+  add     r18, r18, r20 
+  li      r20, 20
+  sld     r18, r18, r20
+  li      r20, 0
+  std     r20, 0(r19)
+  stw     r18, 4(r19)
+
+  fmul    f17, f19, f19       // ; x = fpart*fpart;
+
+  lfd     f20, 8(r17)         // ; px =        fm_exp2_p[0];
+
+  // ; px = px*x + fm_exp2_p[1];
+  fmul    f20, f20, f17
+  lfd     f21, 16(r17)
+  fadd    f20, f20, f21
+
+  // ; qx =    x + fm_exp2_q[0];
+  lfd     f22, 48(r17)
+  fadd    f22, f22, f17
+
+  // ; px = px*x + fm_exp2_p[2];
+  fmul    f20, f20, f17
+  lfd     f21, 24(r17)
+  fadd    f20, f20, f21
+
+  // ; qx = qx*x + fm_exp2_q[1];
+  fmul    f22, f22, f17
+  lfd     f21, 56(r17)
+  fadd    f22, f22, f21
+
+  // ; px = px * fpart;
+  fmul    f20, f20, f19
+
+  // ; x = 1.0 + 2.0*(px/(qx-px))
+  lfd     f16, 32(r17)
+
+  // ; mr      f17, f16
+  stfd    f16, -8(r1)
+  lfd     f17, -8(r1)
+
+  fadd    f16, f16, f16
+
+  fsub    f21, f22, f20
+  fdiv    f21, f20, f21
+  fmul    f16, f16, f21
+  fadd    f17, f17, f16
+
+  // ; epart.f*x;
+  lfd     f20, 0(r19)
+  fmul    f20, f20, f17
+  stfd    f20, 0(r19) 
+
 end
 
 // ; fln
 inline %07Bh
+
+  ld      r17, toc_rdata(r2)
+  addis   r17, r17, rdata_disp32hi : %CORE_MATH_TABLE
+  addi    r17, r17, rdata_disp32lo : %CORE_MATH_TABLE
+
+  addi    r19, r31, __arg16_1 // ; dest (r19)
+
+  lfd     f17, 0(r3)          // ; x (f17)
+
+//;   udi_t val;
+//;   double z (f21), px(f18), qx(f19);
+//;   int32_t ipart (r18), fpart (r16);
+
+//;   val.f = x;
+  stfd    f17, 0(r19) 
+
+  //; extract exponent and part of the mantissa */
+
+//;   fpart = val.s.i1 & FM_DOUBLE_MMASK;
+  li      r20, -1
+  andi.   r20, r20, 0FFFFh
+  addis   r20, r20, 0Fh
+  lwz     r16, 4(r19)
+  and     r16, r16, r20
+//;   ipart = val.s.i1 & FM_DOUBLE_EMASK;
+  lis     r20, 7FF0h
+  lwz     r18, 4(r19)
+  and     r18, r18, r20
+
+//;   /* set exponent to 0 to get the prefactor to 2**ipart */
+//;   fpart |= FM_DOUBLE_EZERO;
+  lis     r20, 3FF0h
+  or      r16, r16, r20
+//;   val.s.i1 = fpart;
+  stw     r16, 4(r19)
+//;   x = val.f;
+  lfd     f17, 0(r19)
+
+//;   /* extract exponent */
+//;   ipart >>= FM_DOUBLE_MBITS;
+  li      r20, 20
+  srd     r18, r18, r20
+
+//;   ipart -= FM_DOUBLE_BIAS;
+  li      r20, 1023
+  sub     r18, r18, r20
+
+//;   /* the polynomial is computed for sqrt(0.5) < x < sqrt(2),
+//;      but we have the mantissa in the interval 1 < x < 2.
+//;      adjust by dividing x by 2 and incrementing ipart, if needed. */
+//;   if (x > FM_DOUBLE_SQRT2) {
+  lfd     f20, 64(r17)
+  fcmpu   f17, f20
+  blt     labSkip
+  beq     labSkip
+
+//;      x *= 0.5;
+  lfd     f20, 40(r17)
+  fmul    f17, f17, f20
+//;      ++ipart;
+  addi    r18, r18, 1   
+//;   }
+labSkip:
+
+//;   /* use polynomial approximation for log(1+x) */
+//;   x -= 1.0;
+  lfd     f20, 32(r17)
+  fsub    f17, f17, f20
+
+//;   px = fm_log2_p[0];
+  lfd     f18, 72(r17)
+
+//;   px = px * x + fm_log2_p[1];
+  lfd     f20, 80(r17)
+  fmul    f18, f18, f17
+  fadd    f18, f18, f20
+
+//;   px = px * x + fm_log2_p[2];
+  lfd     f20, 88(r17)
+  fmul    f18, f18, f17
+  fadd    f18, f18, f20
+
+//;   px = px * x + fm_log2_p[3];
+  lfd     f20, 96(r17)
+  fmul    f18, f18, f17
+  fadd    f18, f18, f20
+
+//;   px = px * x + fm_log2_p[4];
+  lfd     f20, 104(r17)
+  fmul    f18, f18, f17
+  fadd    f18, f18, f20
+
+//;   px = px * x + fm_log2_p[5];
+  lfd     f20, 112(r17)
+  fmul    f18, f18, f17
+  fadd    f18, f18, f20
+
+//;   qx = x + fm_log2_q[0];
+  lfd     f20, 120(r17)
+  fadd    f19, f17, f20
+
+//;   qx = qx * x + fm_log2_q[1];
+  lfd     f20, 128(r17)
+  fmul    f19, f19, f17
+  fadd    f19, f19, f20
+
+//;   qx = qx * x + fm_log2_q[2];
+  lfd     f20, 136(r17)
+  fmul    f19, f19, f17
+  fadd    f19, f19, f20
+
+//;   qx = qx * x + fm_log2_q[3];
+  lfd     f20, 144(r17)
+  fmul    f19, f19, f17
+  fadd    f19, f19, f20
+
+//;   qx = qx * x + fm_log2_q[4];
+  lfd     f20, 152(r17)
+  fmul    f19, f19, f17
+  fadd    f19, f19, f20
+
+//;   z = x * x;
+  fmul    f21, f17, f17
+
+//;   z = x * (z * px / qx) - 0.5 * z + x;
+  fmul    f20, f21, f18
+  fdiv    f20, f20, f19
+  fmul    f22, f20, f17
+
+  lfd     f20, 40(r17)
+  fmul    f20, f20, f21
+  fsub    f22, f22, f20 
+  fadd    f21, f22, f17
+
+//;   z += ((double)ipart) * FM_DOUBLE_LOGEOF2;
+  std     r18, 0(r19) 
+  lfd     f20, 0(r19) 
+  fcfid   f20, f20
+  lfd     f18, 160(r17)
+  fmul    f20, f20, f18
+  fadd    f21, f21, f20
+
+  stfd    f21, 0(r19) 
+
 end
 
 // ; fsin

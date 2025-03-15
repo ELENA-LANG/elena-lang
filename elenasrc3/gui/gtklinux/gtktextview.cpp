@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK+ TextView Control Implementation File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "gtklinux/gtktextview.h"
@@ -189,17 +189,15 @@ void TextViewWindow::TextDrawingArea :: onResize(int x, int y, int width, int he
    update(true);
 }
 
-void TextView::TextDrawingArea :: onEditorChange()
+void TextViewWindow::TextDrawingArea :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
 {
-//   if (_document->status.isViewChanged()) {
-//      _cached = false;
-//
-//      refresh();
-//   }
+   if (changeStatus.isViewChanged()) {
+      //_cached = false;
+      _caret_x = 0;
+   }
+   _caretChanged = changeStatus.caretChanged;
 
    update(false);
-
-   _view->_textview_changed.emit();
 }
 
 void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, int viewHeight)
@@ -330,7 +328,7 @@ void TextViewWindow::TextDrawingArea :: resizeDocument(int width, int height)
 void TextViewWindow::TextDrawingArea :: update(bool resized)
 {
    if (_model) {
-      auto docView = _model->DocView();
+      //auto docView = _model->DocView();
 
       _view->updateVScroller(resized);
 //      if (docView->status.maxColChanged) {
@@ -412,7 +410,7 @@ bool TextViewWindow::TextDrawingArea :: on_key_press_event(GdkEventKey* event)
             }
             else return Gtk::DrawingArea::on_key_press_event(event);
       }
-      onEditorChange();
+      //onEditorChange();
 
       return true;
    }
@@ -439,10 +437,9 @@ bool TextViewWindow::TextDrawingArea :: on_button_press_event(GdkEventButton* ev
    //   if (margin) {
    //      notify(IDE_EDITOR_MARGINCLICKED);
    //   }
-         _captureMouse();
+         //_captureMouse();
 
-   //   refresh(true);
-         onEditorChange();
+         //   refresh(true);
          onDocumentUpdate(status);
       }
       return true;
@@ -450,16 +447,16 @@ bool TextViewWindow::TextDrawingArea :: on_button_press_event(GdkEventButton* ev
    else return false;
 }
 
-bool TextView::TextDrawingArea :: mouseToScreen(Point point, int& col, int& row, bool& margin)
+bool TextViewWindow::TextDrawingArea :: mouseToScreen(Point point, int& col, int& row, bool& margin)
 {
 //   //Rectangle rect = getRectangle();
-   Style defaultStyle = _styles[STYLE_DEFAULT];
-   if (defaultStyle.valid) {
-      int marginWidth = _styles.getMarginWidth() + getLineNumberMargin();
-      int offset = defaultStyle.avgCharWidth / 2;
+   Style* defaultStyle = _styles->getStyle(STYLE_DEFAULT);
+   if (defaultStyle->valid) {
+      int marginWidth = getLineNumberMargin();
+      int offset = defaultStyle->avgCharWidth / 2;
 
-      col = (point.x/* - rect.topLeft.x*/ - marginWidth + offset) / defaultStyle.avgCharWidth;
-      row = (point.y/* - rect.topLeft.y*/) / (_styles.getLineHeight());
+      col = (point.x/* - rect.topLeft.x*/ - marginWidth + offset) / defaultStyle->avgCharWidth;
+      row = (point.y/* - rect.topLeft.y*/) / (_styles->getLineHeight());
       margin = (point.x/* - rect.topLeft.x*/ < marginWidth);
 
       return true;
@@ -467,25 +464,32 @@ bool TextView::TextDrawingArea :: mouseToScreen(Point point, int& col, int& row,
    else return false;
 }
 
-bool TextView::TextDrawingArea :: on_button_release_event (GdkEventButton* event)
+bool TextViewWindow::TextDrawingArea :: on_button_release_event (GdkEventButton* event)
 {
    //_releaseMouse();
 
    return true;
 }
 
-bool TextView::TextDrawingArea :: on_scroll_event(GdkEventScroll* scroll_event)
+bool TextViewWindow::TextDrawingArea :: on_scroll_event(GdkEventScroll* scroll_event)
 {
-   if (_document) {
+   DocumentChangeStatus status = {};
+
+   auto docView = _model->DocView();
+   if (docView) {
       int offset = (scroll_event->direction == GDK_SCROLL_UP) ? -1 : 1;
 
-      if (_ELENA_::test(scroll_event->state, GDK_CONTROL_MASK)) {
-         offset *= _document->getSize().y;
+      if (test((int)scroll_event->state, GDK_CONTROL_MASK)) {
+         offset *= docView->getSize().y;
       }
-      _document->vscroll(offset);
+      docView->vscroll(status, offset);
 
-      onEditorChange();
+      onDocumentUpdate(status);
+
+      return true;
    }
+
+   return false;
 }
 
 // --- TextViewWindow ---
@@ -503,4 +507,9 @@ void TextViewWindow :: updateVScroller(bool resized)
 //   }
 //   if (resized)
 //      _vadjustment->changed();
+}
+
+void TextViewWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
+{
+   _area.onDocumentUpdate(changeStatus);
 }
