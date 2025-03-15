@@ -8,11 +8,11 @@ public class HttpClient
 
    constructor new()
    {
-      headers := new HttpHeaders();
+      _headers := new HttpHeaders();
    }
 
    HttpHeaders Headers
-      = headers;
+      = _headers;
 
    async Task<HttpResponse> getAsync(Uri uri)
    {
@@ -26,14 +26,14 @@ public class HttpClient
       remote.Port := uri.Port;
 
       /* Connect */
-      socket.open(remote);
+      _socket.open(remote);
 
       /* Send headers to server */
-      NetworkStream stream := new NetworkStream(socket);
+      NetworkStream stream := new NetworkStream(_socket);
 
-      :await stream.writeAsync(headers.Value);
+      :await stream.writeAsync(_headers.Value);
 
-      ^ new HttpResponse(stream);
+      ^ HttpResponse.assign(stream);
       
    }
 

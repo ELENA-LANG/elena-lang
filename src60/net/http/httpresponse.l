@@ -1,8 +1,11 @@
+import system'net;
+import system'threading;
+
 public class HttpResponse
 {
    NetworkStream _stream;
 
-   internal constructor(NetworkStream stream)
+   internal constructor assign(NetworkStream stream)
    {
       _stream := stream
    }
