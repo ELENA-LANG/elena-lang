@@ -261,7 +261,7 @@ void LibraryProvider :: loadTemplateForwards(ModuleBase* module, ref_t reference
    IdentifierString resolved;
 
    MemoryReader reader(module->mapSection(reference | mskMetaInfo, true), 0);
-   while (reader.eof()) {
+   while (!reader.eof()) {
       reader.readString(forward);
       reader.readString(resolved);
 
@@ -365,11 +365,17 @@ ModuleInfo LibraryProvider :: getWeakModule(ustr_t weakReferenceName, bool silen
 {
    ModuleInfo retVal;
 
-   retVal.module = resolveWeakModule(weakReferenceName, retVal.reference, true);
-   if (retVal.module == nullptr) {
-      // Bad luck : try to resolve it indirectly
-      retVal.module = resolveIndirectWeakModule(weakReferenceName, retVal.reference, silentMode);
+   ustr_t resolved = _templates.get(weakReferenceName);
+   if (!resolved.empty()) {
+      return getModule({ resolved }, silentMode);
    }
+
+   retVal.module = resolveWeakModule(weakReferenceName, retVal.reference, true);
+   //if (retVal.module == nullptr) {
+
+      //// Bad luck : try to resolve it indirectly
+      //retVal.module = resolveIndirectWeakModule(weakReferenceName, retVal.reference, silentMode);
+   //}
 
    return retVal;
 }
