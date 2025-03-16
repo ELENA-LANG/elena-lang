@@ -50,7 +50,6 @@ namespace elena_lang
 
    // --- ELENA special sections ---
    constexpr auto NAMESPACES_SECTION         = "$namespaces";
-   constexpr auto IMPORTS_SECTION            = "$import";
    constexpr auto EXTENSION_SECTION          = "#extensions";
    constexpr auto INITIALIZER_SECTION        = "#initializer";
    constexpr auto PACKAGE_SECTION            = "#package";

@@ -270,61 +270,6 @@ void LibraryProvider :: loadTemplateForwards(ModuleBase* module, ref_t reference
    }
 }
 
-ModuleBase* LibraryProvider :: resolveIndirectWeakModule(ustr_t weakName, ref_t& reference, bool silentMode)
-{
-   IdentifierString relativeName(TEMPLATE_PREFIX_NS, weakName);
-
-   for (auto it = _modules.start(); !it.eof(); ++it) {
-      // try to resolve it once again
-      IdentifierString properName("'", weakName);
-
-      reference = (*it)->mapReference(*properName, true);
-      if (reference)
-         return *it;
-
-      // if not - find the module 
-
-      // if not - load imported modules
-      if ((*it)->mapReference(*relativeName, true)) {
-         // get list of nested namespaces
-         IdentifierString nsSectionName("'", NAMESPACES_SECTION);
-         auto nsSection = (*it)->mapSection((*it)->mapReference(*nsSectionName, true) | mskLiteralListRef, true);
-         if (nsSection) {
-            MemoryReader nsReader(nsSection);
-            while (!nsReader.eof()) {
-               IdentifierString nsProperName("'");
-               nsReader.appendString(nsProperName);
-               nsProperName.append("'");
-               nsProperName.append(weakName.str());
-
-               reference = (*it)->mapReference(*nsProperName, true);
-               if (reference) {
-                  assert(false); // NOTE : the template must be declared in the root namespace
-
-                  return *it;
-               }                  
-            }
-         }
-
-         // get list of imported modules
-         IdentifierString importSectionName("'", IMPORTS_SECTION);
-         auto importSection = (*it)->mapSection((*it)->mapReference(*importSectionName, true) | mskLiteralListRef, true);
-         if (importSection) {
-            MemoryReader importReader(importSection);
-            while (!importReader.eof()) {
-               IdentifierString moduleName;
-               importReader.readString(moduleName);
-
-               LoadResult tempResult;
-               loadModule(*moduleName, tempResult, true);
-            }
-         }
-      }
-   }
-
-   return nullptr;
-}
-
 void LibraryProvider :: addCorePath(path_t path)
 {
    _binaryPaths.add(nullptr, path.clone());
@@ -371,11 +316,6 @@ ModuleInfo LibraryProvider :: getWeakModule(ustr_t weakReferenceName, bool silen
    }
 
    retVal.module = resolveWeakModule(weakReferenceName, retVal.reference, true);
-   //if (retVal.module == nullptr) {
-
-      //// Bad luck : try to resolve it indirectly
-      //retVal.module = resolveIndirectWeakModule(weakReferenceName, retVal.reference, silentMode);
-   //}
 
    return retVal;
 }

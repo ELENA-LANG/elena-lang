@@ -387,9 +387,6 @@ bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ustr_t name, bo
       if (value == nullptr) {
          importedNs.add(name.clone());
 
-         if (sectionInfo.module != module)
-            saveListMember(IMPORTS_SECTION, sectionInfo.module->name());
-
          return true;
       }
       else duplicateInclusion = true;

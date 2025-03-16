@@ -41,7 +41,6 @@ namespace elena_lang
 
       ModuleBase* resolveModule(ustr_t referenceName, ref_t& reference, bool silentMode, bool debugModule);
       ModuleBase* resolveWeakModule(ustr_t referenceName, ref_t& reference, bool silentMode);
-      ModuleBase* resolveIndirectWeakModule(ustr_t referenceName, ref_t& reference, bool silentMode);
 
       void loadTemplateForwards(ModuleBase* module, ref_t reference);
 

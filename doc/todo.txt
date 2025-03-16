@@ -44,10 +44,6 @@ In development:
   - fix syntax highlighting (see system'net:win_common.l)
   - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
   --------------------------------------
-  * save resolved weak reference, so
-  * try to get rid of import list - it can lead to significant performance hit
-  * time (28 sec)
-
   * redesign / review template reusing (probably store the list of indirectly resolved references)
   * working on http client
   * test http client:
