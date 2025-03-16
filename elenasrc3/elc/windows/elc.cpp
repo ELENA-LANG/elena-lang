@@ -6,6 +6,8 @@
 //                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+//#define TIME_RECORDING 1
+
 #include <windows.h>
 
 #include "elena.h"
@@ -26,6 +28,8 @@
 #include "messages.h"
 #include "constants.h"
 #include "windows/presenter.h"
+
+#include <time.h>
 
 using namespace elena_lang;
 
@@ -257,15 +261,30 @@ int main()
       int argc;
       wchar_t** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 
+#ifdef TIME_RECORDING
+      clock_t start, finish;
+      start = clock();
+#endif
+
+      int retVal = 0;
       if (argc < 2) {
          Presenter::getInstance().printLine(ELC_HELP_INFO);
          return -2;
       }
       else if (argv[argc - 1][0] != '-' && PathUtil::checkExtension(argv[argc - 1], "prjcol")) {
-         return compileProjectCollection(argc, argv, argv[argc - 1], 
+         retVal = compileProjectCollection(argc, argv, argv[argc - 1],
             *appPath, errorProcessor, process);
       }
-      else return compileProject(argc, argv, *appPath, errorProcessor, process);
+      else retVal = compileProject(argc, argv, *appPath, errorProcessor, process);
+
+#ifdef TIME_RECORDING
+      finish = clock();
+
+      double duration = (double)(finish - start) / CLOCKS_PER_SEC;
+      printf("The compilation took %2.3f seconds\n", duration);
+#endif
+
+      return retVal;
    }
    catch (CLIException)
    {

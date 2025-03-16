@@ -234,6 +234,10 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
    }
    name.replaceAll('\'', '@', 0);
 
+   // !! temporal
+   if ((*name).findStr("Task#1&system@Int") != NOTFOUND_POS)
+      alreadyDeclared |= false;
+
    return moduleScope.mapTemplateIdentifier(*name, visibility, alreadyDeclared, false);
 }
 

@@ -394,6 +394,8 @@ namespace elena_lang
          if (state == dfaQuote) {
             return RegEx::isMatched(token, state);
          }
+
+         return false;
       }
 
       void saveTo(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log) override;

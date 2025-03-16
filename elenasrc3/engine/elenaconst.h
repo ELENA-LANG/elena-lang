@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Compiler Engine templates,
 //		classes, structures, functions and constants
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENACONST_H
@@ -54,6 +54,7 @@ namespace elena_lang
    constexpr auto EXTENSION_SECTION          = "#extensions";
    constexpr auto INITIALIZER_SECTION        = "#initializer";
    constexpr auto PACKAGE_SECTION            = "#package";
+   constexpr auto TEMPLATE_MAPPING           = "#templates";
 
    constexpr auto WEAK_POSTFIX               = "#weak";
    constexpr auto ENUM_POSTFIX               = "#enum";
@@ -359,6 +360,7 @@ namespace elena_lang
    constexpr ref_t mskPackageRef          = 0x27000000u;
    constexpr ref_t mskDistrTypeListRef    = 0x28000000u;
    constexpr ref_t mskTLSVariable         = 0x29000000u;
+   constexpr ref_t mskMetaInfo            = 0x2A000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

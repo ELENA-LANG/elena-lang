@@ -304,6 +304,7 @@ public:
    int                  ptrSize;
 
    bool                 tapeOptMode;
+   bool                 reusingTemplates;
 
    Map<ref_t, SizeInfo> cachedSizes;
    Map<ref_t, ref_t>    cachedClassReferences;

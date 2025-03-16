@@ -3,14 +3,14 @@
 //
 //		This file contains the base class implementing ELENA LibraryManager.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 // -------------------------------------------------------
 #include "libman.h"
 
-#include <utility>
+//#include <utility>
 
 #include "module.h"
 #include "langcommon.h"
@@ -249,6 +249,21 @@ ModuleBase* LibraryProvider :: resolveWeakModule(ustr_t weakName, ref_t& referen
    return nullptr;
 }
 
+void LibraryProvider :: loadForwards(ModuleBase* module, ref_t reference, ForwardResolverBase* forwardResolver)
+{
+   IdentifierString forward;
+   IdentifierString resolved;
+
+   MemoryReader reader(module->mapSection(reference | mskMetaInfo, true), 0);
+   while (reader.eof()) {
+      reader.readString(forward);
+      reader.readString(resolved);
+
+      if (forwardResolver->resolveForward(*forward).empty())
+         forwardResolver->addForward(*forward, *resolved);
+   }
+}
+
 ModuleBase* LibraryProvider :: resolveIndirectWeakModule(ustr_t weakName, ref_t& reference, bool silentMode)
 {
    IdentifierString relativeName(TEMPLATE_PREFIX_NS, weakName);
@@ -260,6 +275,8 @@ ModuleBase* LibraryProvider :: resolveIndirectWeakModule(ustr_t weakName, ref_t&
       reference = (*it)->mapReference(*properName, true);
       if (reference)
          return *it;
+
+      // if not - find the module 
 
       // if not - load imported modules
       if ((*it)->mapReference(*relativeName, true)) {

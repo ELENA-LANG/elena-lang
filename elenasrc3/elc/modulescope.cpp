@@ -70,7 +70,8 @@ ref_t ModuleScope :: mapTemplateIdentifier(ustr_t templateName, Visibility visib
    IdentifierString forwardName(TEMPLATE_PREFIX_NS, templateName);
 
    if (!declarationMode) {
-      if (forwardResolver->resolveForward(templateName).empty()) {
+      ustr_t resolved = forwardResolver->resolveForward(templateName);
+      if (resolved.empty()) {
          ReferenceName fullName(module->name());
          fullName.combine(templateName);
 
@@ -80,7 +81,17 @@ ref_t ModuleScope :: mapTemplateIdentifier(ustr_t templateName, Visibility visib
 
          alreadyDeclared = false;
       }
-      else alreadyDeclared = true;
+      else {
+         alreadyDeclared = true;
+
+         //if (!resolvedTemplates.exist(templateName)) {
+         //   auto info = loader->retrieveReferenceInfo(resolved, forwardResolver);
+         //   if (info.module != module) {
+         //      // the reference to reused template must be saved as well
+         //      resolvedTemplates.add(templateName, resolved.clone());
+         //   }
+         //}
+      }
    }
 
    return module->mapReference(*forwardName);
@@ -379,6 +390,11 @@ bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ustr_t name, bo
 
          if (sectionInfo.module != module)
             saveListMember(IMPORTS_SECTION, sectionInfo.module->name());
+
+         // load resolved template mapping if available
+         ref_t mappingRef = sectionInfo.module->mapReference(TEMPLATE_MAPPING);
+         if (mappingRef)
+            loader->loadForwards(sectionInfo.module, mappingRef, forwardResolver);
 
          return true;
       }

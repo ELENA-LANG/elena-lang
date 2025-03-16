@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of the base class implementing
 //      ELENA JIT Loader.
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef LIBMAN_H
@@ -95,6 +95,8 @@ namespace elena_lang
          ForwardResolverBase* forwardResolver) override;
 
       void loadDistributedSymbols(ustr_t virtualSymbolName, ModuleInfoList& list) override;
+
+      void loadForwards(ModuleBase* module, ref_t reference, ForwardResolverBase* forwardResolver) override;
 
       ModuleBase* createModule(ustr_t name);
       ModuleBase* createDebugModule(ustr_t name);
