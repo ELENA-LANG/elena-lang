@@ -355,6 +355,8 @@ public:
 
    virtual Visibility retrieveVisibility(ref_t reference) = 0;
 
+   virtual void flush() = 0;
+
    ModuleScopeBase(ModuleBase* module,
       ModuleBase* debugModule,
       pos_t stackAlingment, 

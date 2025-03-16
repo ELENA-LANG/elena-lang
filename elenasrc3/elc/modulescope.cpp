@@ -83,14 +83,13 @@ ref_t ModuleScope :: mapTemplateIdentifier(ustr_t templateName, Visibility visib
       }
       else {
          alreadyDeclared = true;
-
-         //if (!resolvedTemplates.exist(templateName)) {
-         //   auto info = loader->retrieveReferenceInfo(resolved, forwardResolver);
-         //   if (info.module != module) {
-         //      // the reference to reused template must be saved as well
-         //      resolvedTemplates.add(templateName, resolved.clone());
-         //   }
-         //}
+         if (!reusedTemplates.exist(templateName)) {
+            auto info = loader->retrieveReferenceInfo(resolved, forwardResolver);
+            if (info.module != module) {
+               // the reference to reused template must be saved as well
+               reusedTemplates.add(templateName, resolved.clone());
+            }
+         }
       }
    }
 
@@ -391,11 +390,6 @@ bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ustr_t name, bo
          if (sectionInfo.module != module)
             saveListMember(IMPORTS_SECTION, sectionInfo.module->name());
 
-         // load resolved template mapping if available
-         ref_t mappingRef = sectionInfo.module->mapReference(TEMPLATE_MAPPING);
-         if (mappingRef)
-            loader->loadForwards(sectionInfo.module, mappingRef, forwardResolver);
-
          return true;
       }
       else duplicateInclusion = true;
@@ -418,4 +412,19 @@ Visibility ModuleScope :: retrieveVisibility(ref_t reference)
    ustr_t referenceName = module->resolveReference(reference);
 
    return CompilerLogic::getVisibility(referenceName);
+}
+
+void ModuleScope :: flush()
+{
+   MemoryBase* section = module->mapSection(
+      module->mapReference(TEMPLATE_MAPPING, false) | mskMetaInfo,
+      false);
+
+   MemoryWriter metaWriter(section);
+
+   reusedTemplates.forEach<StreamWriter*>(&metaWriter, [](StreamWriter* writer, ustr_t key, ustr_t value)
+      {
+         writer->writeString(key);
+         writer->writeString(value);
+      });
 }

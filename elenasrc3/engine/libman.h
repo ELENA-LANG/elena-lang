@@ -25,6 +25,7 @@ namespace elena_lang
 
       PathMap           _binaryPaths, _packagePaths;
       ModuleMap         _binaries, _modules, _debugModules;
+      Forwards          _templates;
 
       Listeners         _listeners;
 
@@ -41,6 +42,8 @@ namespace elena_lang
       ModuleBase* resolveModule(ustr_t referenceName, ref_t& reference, bool silentMode, bool debugModule);
       ModuleBase* resolveWeakModule(ustr_t referenceName, ref_t& reference, bool silentMode);
       ModuleBase* resolveIndirectWeakModule(ustr_t referenceName, ref_t& reference, bool silentMode);
+
+      void loadTemplateForwards(ModuleBase* module, ref_t reference);
 
    public:
       enum class ModuleRequestResult
@@ -95,8 +98,6 @@ namespace elena_lang
          ForwardResolverBase* forwardResolver) override;
 
       void loadDistributedSymbols(ustr_t virtualSymbolName, ModuleInfoList& list) override;
-
-      void loadForwards(ModuleBase* module, ref_t reference, ForwardResolverBase* forwardResolver) override;
 
       ModuleBase* createModule(ustr_t name);
       ModuleBase* createDebugModule(ustr_t name);

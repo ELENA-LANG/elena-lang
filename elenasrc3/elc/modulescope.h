@@ -22,6 +22,8 @@ class ModuleScope : public ModuleScopeBase
    LibraryLoaderBase*   loader;
    ForwardResolverBase* forwardResolver;
 
+   Forwards             reusedTemplates;
+
    void saveListMember(ustr_t name, ustr_t memberName);
 
 public:
@@ -80,6 +82,8 @@ public:
 
    Visibility retrieveVisibility(ref_t reference) override;
 
+   void flush() override;
+
    ModuleScope(LibraryLoaderBase* loader, 
       ForwardResolverBase* forwardResolver, 
       ModuleBase* module,
@@ -91,7 +95,7 @@ public:
       int ptrSize,
       int moduleHint)
       : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, ehTableEntrySize, 
-         minimalArgList, ptrSize, false)
+         minimalArgList, ptrSize, false), reusedTemplates(nullptr)
    {
       this->loader = loader;
       this->forwardResolver = forwardResolver;

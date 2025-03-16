@@ -385,8 +385,6 @@ namespace elena_lang
 
       virtual void resolvePath(ustr_t ns, PathString& path) = 0;
 
-      virtual void loadForwards(ModuleBase* module, ref_t reference, ForwardResolverBase* forwardResolver) = 0;
-
       virtual void loadDistributedSymbols(ustr_t virtualSymbolName, ModuleInfoList& list) = 0;
    };
 

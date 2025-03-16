@@ -43,6 +43,7 @@ LibraryProvider :: LibraryProvider()
       _binaries(nullptr),
       _modules(nullptr),
       _debugModules(nullptr),
+      _templates(nullptr),
       _listeners(nullptr)
 {
 }
@@ -110,6 +111,11 @@ ModuleBase* LibraryProvider :: loadModule(ustr_t name, LoadResult& result, bool 
          return nullptr;
       }
       else _modules.add(name, module);
+
+      // load resolved template mapping if available
+      ref_t mappingRef = module->mapReference(TEMPLATE_MAPPING, true);
+      if (mappingRef)
+         loadTemplateForwards(module, mappingRef);
 
       onModuleLoad(module);
    }
@@ -249,7 +255,7 @@ ModuleBase* LibraryProvider :: resolveWeakModule(ustr_t weakName, ref_t& referen
    return nullptr;
 }
 
-void LibraryProvider :: loadForwards(ModuleBase* module, ref_t reference, ForwardResolverBase* forwardResolver)
+void LibraryProvider :: loadTemplateForwards(ModuleBase* module, ref_t reference)
 {
    IdentifierString forward;
    IdentifierString resolved;
@@ -259,8 +265,8 @@ void LibraryProvider :: loadForwards(ModuleBase* module, ref_t reference, Forwar
       reader.readString(forward);
       reader.readString(resolved);
 
-      if (forwardResolver->resolveForward(*forward).empty())
-         forwardResolver->addForward(*forward, *resolved);
+      if (!_templates.exist(*forward))
+         _templates.add(*forward, (*resolved).clone());
    }
 }
 

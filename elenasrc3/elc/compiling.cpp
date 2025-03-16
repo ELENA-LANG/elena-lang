@@ -529,6 +529,8 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
       // saving a module
       _presenter->print(ELC_SAVING_MODULE, moduleScope.module->name());
 
+      moduleScope.flush();
+
       _libraryProvider.saveModule(moduleScope.module);
       _libraryProvider.saveDebugModule(moduleScope.debugModule);
    }
