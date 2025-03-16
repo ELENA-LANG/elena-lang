@@ -1,7 +1,7 @@
 #!/bin/bash
 RELEASE=elena-6.6.2.amd64-linux
 
-mkdir -p ../lib60_64
+mkdir -p ../../lib60_64
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
 mkdir -p /etc/elena/templates/
