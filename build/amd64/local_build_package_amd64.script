@@ -1,0 +1,106 @@
+#!/bin/bash
+
+mkdir -p ../../lib60_64
+mkdir -p ../../bin/amd64
+
+echo compiling data files
+
+../../bin/sg64-cli ../../dat/sg/syntax60.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../../bin/og64-cli ../../dat/og/bc_rules60.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../../bin/og64-cli -s ../../dat/og/bt_rules60.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+
+cp ../../dat/og/*.dat ../../bin
+cp ../../dat/sg/syntax60.dat ../../bin
+
+echo compiling assembly files
+
+../../bin/asm64-cli -amd64 ../../asm/amd64/core60.asm ../../bin/amd64
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../../bin/asm64-cli -amd64 ../../asm/amd64/core60_lnx.asm ../../bin/amd64
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+# echo compiling lib60 files
+
+ ../../bin/asm64-cli -bc64 ../../src60/core/system.core_routines.esm ../../lib60_64
+ ret=$?
+ if [ $ret -eq 0 ]
+ then
+   echo .
+ else
+   echo "Failure" >&2
+   exit 1
+ fi
+
+ ../../bin/elena64-cli ../../src60/elena_api.linux.prjcol
+ ret=$?
+ if [ $ret -eq 2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ elena64-cli ../../tests60/system_tests/system_tests.prj
+ ret=$?
+ if [ $ret -eq 2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ ../../tests60/system_tests/system_tests
+ ret=$?
+ if [ $ret -eq 2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+exit 0
