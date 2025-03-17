@@ -29,3 +29,26 @@ var content = await res.Content.ReadAsStringAsync();
 Console.WriteLine(content);
 
 */
+
+import net'http;
+
+singleton Tester
+{
+   async Task browse()
+   {
+      var client = new HttpClient(); 
+      client.Headers.add("User-agent", "MyUserAgent");
+
+      HttpResponse content := :await client.getAsync("http://www.google.com");
+
+      string content := :await content.readAsStringAsync();
+
+      console.writeLine(content);
+   }
+}
+
+public program()
+{
+   Tester.browse().Result;
+
+}

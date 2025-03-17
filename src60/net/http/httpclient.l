@@ -6,7 +6,7 @@ public class HttpClient
    HttpHeaders _headers;
    Socket      _socket;
 
-   constructor new()
+   constructor()
    {
       _headers := new HttpHeaders();
    }

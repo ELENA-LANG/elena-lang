@@ -43,7 +43,7 @@ In development:
   - pi samples for ppc64
   - fix syntax highlighting (see system'net:win_common.l)
   - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
-  --------------------------------------
+  --------------------------------------  
   * test http client:
       // struct http_response *hresp = http_get("http://www.google.com", "User-agent:MyUserAgent\r\n");
   * nets : http client get examples
