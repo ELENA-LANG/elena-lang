@@ -480,16 +480,6 @@ void EditorSettings::onCreate()
 
    setCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG, _model->highlightSyntax);
    setCheckState(IDC_EDITOR_LINENUMBERFLAG, _model->lineNumbersVisible);
-
-   // populate font size combo box
-   String<wchar_t, 4> size;
-   for (int i = 8; i < 25; i++) {
-      size.appendInt(i);
-      addComboBoxItem(IDC_EDITOR_FONTSIZE, size.str());
-      size.clear();
-   }
-
-   setComboBoxIndex(IDC_EDITOR_FONTSIZE, _model->fontInfo.size - 8);
 }
 
 void EditorSettings :: onOK()
@@ -497,11 +487,6 @@ void EditorSettings :: onOK()
    int index = getComboBoxIndex(IDC_EDITOR_COLORSCHEME);
    if (index != -1)
       _model->schemeIndex = index;
-
-   int fontSize = getComboBoxIndex(IDC_EDITOR_COLORSCHEME) + 8;
-   if (_model->fontInfo.size != fontSize) {
-      _model->fontInfo.size = fontSize;
-   }
 
    bool value = getCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG);
    if (_model->highlightSyntax != value)
