@@ -127,6 +127,7 @@ namespace elena_lang
       EditorSettings    editorSettingsDialog;
       IDESettings       ideSettingsDialog;
       DebuggerSettings  debuggerSettingsDialog;
+      FontDialog        fontSettingsDialog;
 
       ViewFactoryBase*  _viewFactory;
 

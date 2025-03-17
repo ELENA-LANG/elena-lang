@@ -1,7 +1,7 @@
 ﻿//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Controller implementation File
-//                                             (C)2005-2024, by Aleksey Rakov
+//                                             (C)2005-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifdef _MSC_VER
@@ -74,6 +74,11 @@ inline void saveSetting(ConfigFile& config, ustr_t xpath, int value)
    number.appendInt(value);
 
    config.appendSetting(xpath, number.str());
+}
+
+inline void saveSetting(ConfigFile& config, ustr_t xpath, ustr_t value)
+{
+   config.appendSetting(xpath, value.str());
 }
 
 inline void removeSetting(ConfigFile& config, ustr_t xpath)
@@ -1046,7 +1051,6 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
    ConfigFile config;
    if (config.load(path, FileEncoding::UTF8)) {
       model->appMaximized = loadSetting(config, MAXIMIZED_SETTINGS, -1) != 0;
-      model->sourceViewModel.fontSize = loadSetting(config, FONTSIZE_SETTINGS, 12);
       model->sourceViewModel.schemeIndex = loadSetting(config, SCHEME_SETTINGS, 1);
       model->projectModel.withPersistentConsole = loadSetting(config, PERSISTENT_CONSOLE_SETTINGS, -1) != 0;
       model->rememberLastPath = loadSetting(config, LASTPATH_SETTINGS, -1) != 0;
@@ -1055,6 +1059,16 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
       model->sourceViewModel.lineNumbersVisible = loadSetting(config, LINENUMBERS_SETTINGS, -1) != 0;
       model->projectModel.autoRecompile = loadSetting(config, AUTO_RECOMPILE_SETTING, -1) != 0;
       model->autoSave = loadSetting(config, AUTO_SAVE_SETTING, -1) != 0;
+
+      // load font size
+      int fontSize = loadSetting(config, FONTSIZE_SETTINGS, 12);
+      IdentifierString fontName;
+      loadSetting(config, FONTNAME_SETTINGS, fontName);
+      if (fontName.empty()) {
+         fontName.copy(DEFAULT_FONTNAME);
+      }
+
+      model->sourceViewModel.fontInfo = { *fontName, fontSize };
 
       loadRecentFiles(config, RECENTFILES_SETTINGS, model->projectModel.lastOpenFiles);
       loadRecentFiles(config, RECENTPROJECTS_SETTINGS, model->projectModel.lastOpenProjects);
@@ -1071,7 +1085,6 @@ void IDEController :: saveConfig(IDEModel* model, path_t configPath)
    ConfigFile config(ROOT_NODE);
 
    saveSetting(config, MAXIMIZED_SETTINGS, model->appMaximized);
-   saveSetting(config, FONTSIZE_SETTINGS, model->sourceViewModel.fontSize);
    saveSetting(config, SCHEME_SETTINGS, model->sourceViewModel.schemeIndex);
    saveSetting(config, PERSISTENT_CONSOLE_SETTINGS, model->projectModel.withPersistentConsole);
    saveSetting(config, LASTPATH_SETTINGS, model->rememberLastPath);
@@ -1080,6 +1093,10 @@ void IDEController :: saveConfig(IDEModel* model, path_t configPath)
    saveSetting(config, LINENUMBERS_SETTINGS, model->sourceViewModel.lineNumbersVisible);
    saveSetting(config, AUTO_RECOMPILE_SETTING, model->projectModel.autoRecompile);
    saveSetting(config, AUTO_SAVE_SETTING, model->autoSave);
+
+   saveSetting(config, FONTSIZE_SETTINGS, model->sourceViewModel.fontInfo.size);
+   IdentifierString fontName(model->sourceViewModel.fontInfo.name.str());
+   saveSetting(config, FONTNAME_SETTINGS, *fontName);
 
    saveRecentFiles(config, RECENTFILE_SETTINGS, model->projectModel.lastOpenFiles);
    saveRecentFiles(config, RECENTPROJECTS_SETTINGS, model->projectModel.lastOpenProjects);
@@ -1970,6 +1987,13 @@ void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog
       if (prevSchemeIndex != model->viewModel()->schemeIndex || prevHighlightSyntax != model->viewModel()->highlightSyntax) {
          notifyOnModelChange(STATUS_FRAME_CHANGED | STATUS_COLORSCHEME_CHANGED);
       }
+   }
+}
+
+void IDEController :: doConfigureFontSettings(FontDialogBase& editorDialog, IDEModel* model)
+{
+   if (editorDialog.selectFont(model->viewModel()->fontInfo)) {
+      notifyOnModelChange(STATUS_FRAME_CHANGED | STATUS_COLORSCHEME_CHANGED);
    }
 }
 

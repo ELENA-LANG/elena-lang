@@ -264,6 +264,7 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    _recentProjectList(controller, model, IDM_FILE_PROJECTS),
    aboutDialog(instance, this),
    editorSettingsDialog(instance, this, model->viewModel()),
+   fontSettingsDialog(instance, this),
    ideSettingsDialog(instance, this, model),
    debuggerSettingsDialog(instance, this, &model->projectModel),
    _docViewListener(nullptr)
@@ -933,6 +934,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_EDITOR_OPTIONS:
          _controller->doConfigureEditorSettings(editorSettingsDialog, _model);
+         break;
+      case IDM_EDITOR_FONT_OPTIONS:
+         _controller->doConfigureFontSettings(fontSettingsDialog, _model);
          break;
       case IDM_IDE_OPTIONS:
          _controller->doConfigureIDESettings(ideSettingsDialog, _model);

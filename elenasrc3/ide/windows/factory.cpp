@@ -220,13 +220,6 @@ ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* not
 {
    auto viewModel = _model->viewModel();
 
-   // update font size
-   for (int j = 0; j < STYLE_MAX; j++) {
-      defaultStyles[j].size = viewModel->fontSize;
-      classicStyles[j].size = viewModel->fontSize;
-      darkStyles[j].size = viewModel->fontSize;
-   }
-
    // initialize view styles
    reloadStyles(viewModel);
 
@@ -260,7 +253,19 @@ ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* not
 
 void IDEFactory :: reloadStyles(TextViewModelBase* viewModel)
 {
-   _styles.assign(STYLE_MAX + 1, _schemes[viewModel->schemeIndex], viewModel->fontSize + 5, 20, &_fontFactory);
+   // update font size
+   for (int j = 0; j <= STYLE_MAX; j++) {
+      defaultStyles[j].size = viewModel->fontInfo.size;
+      defaultStyles[j].faceName = *viewModel->fontInfo.name;
+
+      classicStyles[j].size = viewModel->fontInfo.size;
+      classicStyles[j].faceName = *viewModel->fontInfo.name;
+
+      darkStyles[j].size = viewModel->fontInfo.size;
+      darkStyles[j].faceName = *viewModel->fontInfo.name;
+   }
+
+   _styles.assign(STYLE_MAX + 1, _schemes[viewModel->schemeIndex], viewModel->fontInfo.size + 5, 20, &_fontFactory);
 }
 
 void IDEFactory :: styleControl(GUIControlBase* control)

@@ -189,6 +189,7 @@
 
 #define IDM_EDITOR_OPTIONS             1750
 #define IDM_IDE_OPTIONS                1751
+#define IDM_EDITOR_FONT_OPTIONS        1752
 
 #ifndef IDC_STATIC
 #define IDC_STATIC                 -1

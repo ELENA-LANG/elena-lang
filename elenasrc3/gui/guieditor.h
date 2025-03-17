@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GUI common editor header File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GUIEDITOR_H
@@ -74,6 +74,22 @@ namespace elena_lang
       }
    };
 
+   // --- FontInfo ---
+   struct FontInfo
+   {
+      TextString name;
+      int        size;
+
+      FontInfo(ustr_t name, int size)
+         : name(name), size(size)
+      {
+      }
+      FontInfo(int size)
+         : size(size)
+      {
+      }
+   };
+
    // --- TextViewBase ---
    class TextViewModelBase
    {
@@ -84,7 +100,7 @@ namespace elena_lang
       bool          lineNumbersVisible;
       bool          highlightSyntax;
       bool          empty;
-      int           fontSize;
+      FontInfo      fontInfo;
       int           schemeIndex;
 
       DocumentView* DocView()
@@ -125,11 +141,11 @@ namespace elena_lang
       }
 
       TextViewModelBase()
+         : fontInfo(10)
       {
          this->_currentView = nullptr;
          this->lineNumbersVisible = true; // !! temporal hard-coded
          this->empty = true;
-         this->fontSize = 10;
          this->schemeIndex = 0;
          this->highlightSyntax = true;
       }

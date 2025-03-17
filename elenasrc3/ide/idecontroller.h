@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Controller header File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef IDECONTROLLER_H
@@ -248,6 +248,7 @@ namespace elena_lang
       void doIndent(IDEModel* model);
       void doOutdent(IDEModel* model);
 
+      void doConfigureFontSettings(FontDialogBase& editorDialog, IDEModel* model);
       void doConfigureEditorSettings(EditorSettingsBase& editorDialog, IDEModel* model);
       void doConfigureIDESettings(IDESettingsBase& editorDialog, IDEModel* model);
       void doConfigureDebuggerSettings(DebuggerSettingsBase& editorDialog, IDEModel* model);

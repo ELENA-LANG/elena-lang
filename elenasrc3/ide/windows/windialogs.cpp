@@ -1,12 +1,13 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //    WinAPI: Static dialog implementations
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <tchar.h>
 
 #include "windialogs.h"
+#include "windows/wincanvas.h"
 
 #include "Resource.h"
 #include "eng/messages.h"
@@ -113,6 +114,40 @@ bool FileDialog :: saveFile(path_t ext, PathString& path)
    }
    else return false;
 }
+
+// --- FontDialog ---
+
+FontDialog :: FontDialog(HINSTANCE instance, WindowBase* owner)
+{
+   _owner = owner;
+
+   // Initialize CHOOSEFONT
+   ZeroMemory(&_lf, sizeof(_lf));
+   ZeroMemory(&_cf, sizeof(_cf));
+   _cf.lStructSize = sizeof(_cf);
+   _cf.hwndOwner = owner->handle();
+   _cf.lpLogFont = &_lf;
+   _cf.Flags = CF_SCREENFONTS;
+}
+
+bool FontDialog :: selectFont(FontInfo& fontInfo)
+{
+   HDC hdc = ::GetDC(_owner->handle());
+
+   _lf.lfHeight = Font::fromSize(hdc, fontInfo.size);
+   StrUtil::move(_lf.lfFaceName, fontInfo.name.str(), fontInfo.name.length() + 1);
+
+   _cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT | CF_TTONLY;
+   if (ChooseFont(&_cf) == TRUE) {
+      fontInfo.size = Font::toSize(hdc, _lf.lfHeight);
+      fontInfo.name.copy(_lf.lfFaceName);
+
+      return true;
+   }
+   return false;
+}
+
+// --- MessageDialog ---
 
 MessageDialogBase::Answer MessageDialog :: question(text_str message, text_str param)
 {
@@ -454,7 +489,7 @@ void EditorSettings::onCreate()
       size.clear();
    }
 
-   setComboBoxIndex(IDC_EDITOR_FONTSIZE, _model->fontSize - 8);
+   setComboBoxIndex(IDC_EDITOR_FONTSIZE, _model->fontInfo.size - 8);
 }
 
 void EditorSettings :: onOK()
@@ -464,8 +499,8 @@ void EditorSettings :: onOK()
       _model->schemeIndex = index;
 
    int fontSize = getComboBoxIndex(IDC_EDITOR_COLORSCHEME) + 8;
-   if (_model->fontSize != fontSize) {
-      _model->fontSize = fontSize;
+   if (_model->fontInfo.size != fontSize) {
+      _model->fontInfo.size = fontSize;
    }
 
    bool value = getCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG);
@@ -490,6 +525,8 @@ IDESettings :: IDESettings(HINSTANCE instance, WindowBase* owner, IDEModel* mode
 
 void IDESettings :: onCreate()
 {
+   loadFontList();
+
    setCheckState(IDC_IDE_REMEMBERPATH, _model->rememberLastPath);
    setCheckState(IDC_IDE_REMEMBERPROJECT, _model->rememberLastProject);
    setCheckState(IDC_IDE_PERSIST_CONSOLE, _model->projectModel.withPersistentConsole);
@@ -511,6 +548,15 @@ void IDESettings :: onOK()
 bool IDESettings :: showModal()
 {
    return show() == IDOK;
+}
+
+void IDESettings :: loadFontList()
+{
+   //LOGFONT lf;
+   //memset(&lf, 0, sizeof(lf));
+   //lf.lfCharSet = DEFAULT_CHARSET;
+
+   //EnumFontFamiliesEx(screenDC, &lf, GetFontsCallback, NULL, 0)
 }
 
 // --- DebuggerSettings ---
