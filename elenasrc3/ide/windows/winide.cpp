@@ -1131,6 +1131,7 @@ void IDEWindow :: onTextModelChange(TextViewModelNMHDR* rec)
 {
    if (test(rec->status, STATUS_COLORSCHEME_CHANGED)) {
       onColorSchemeChange();
+      rec->docStatus.frameChanged = true;
    }
 
    onDocumentUpdate(rec->docStatus);

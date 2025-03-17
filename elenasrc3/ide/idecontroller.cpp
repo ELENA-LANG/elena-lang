@@ -1964,9 +1964,10 @@ void IDEController :: doOutdent(IDEModel* model)
 void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog, IDEModel* model)
 {
    int prevSchemeIndex = model->viewModel()->schemeIndex;
+   bool prevHighlightSyntax = model->viewModel()->highlightSyntax;
 
    if(editorDialog.showModal()) {
-      if (prevSchemeIndex != model->viewModel()->schemeIndex) {
+      if (prevSchemeIndex != model->viewModel()->schemeIndex || prevHighlightSyntax != model->viewModel()->highlightSyntax) {
          notifyOnModelChange(STATUS_FRAME_CHANGED | STATUS_COLORSCHEME_CHANGED);
       }
    }

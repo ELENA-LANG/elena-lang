@@ -131,7 +131,7 @@ namespace elena_lang
          this->empty = true;
          this->fontSize = 10;
          this->schemeIndex = 0;
-         this->highlightSyntax = false;
+         this->highlightSyntax = true;
       }
    };
 

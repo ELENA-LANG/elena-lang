@@ -44,8 +44,10 @@ In development:
   - fix syntax highlighting (see system'net:win_common.l)
   - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
   --------------------------------------
-  * redesign / review template reusing (probably store the list of indirectly resolved references)
-  * working on http client
+  * IDE : highlight on - to be reflected asap
+  * IDE : highlighting by default
+  * IDE : fix syntax highlighting (see system'net:win_common.l)
+  * IDE : font select
   * test http client:
       // struct http_response *hresp = http_get("http://www.google.com", "User-agent:MyUserAgent\r\n");
   * nets : http client get examples
