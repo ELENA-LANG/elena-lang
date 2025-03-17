@@ -436,6 +436,7 @@ namespace elena_lang
    constexpr auto errFatalError       = -1;
    constexpr auto errFatalLinker      = -2;
    constexpr auto errCorruptedVMT     = -4;
+   constexpr auto errMissingNamespace = -5;
 
    // --- Project warning levels
    constexpr int WARNING_LEVEL_1          = 1;

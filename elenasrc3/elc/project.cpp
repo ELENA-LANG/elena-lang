@@ -153,6 +153,7 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
    ConfigFile::Collection modules;
    if (config.select(configRoot, MODULE_CATEGORY, modules)) {
       for (auto m_it = modules.start(); !m_it.eof(); ++m_it) {
+
          ConfigFile::Node moduleNode = *m_it;
 
          if (!moduleNode.readAttribute("name", subNs)) {

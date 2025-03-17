@@ -117,6 +117,7 @@ namespace elena_lang
    constexpr auto errMsgFatalLinkerError     = "\nFatal linker error\n";
    constexpr auto errMsgNotImplemented       = "\nNot implemented error\n";
    constexpr auto errMsgCorruptedVMT         = "\nVMT structure is corrupt\n";
+   constexpr auto errMsgMissingNamespace     = "\nInvalid project structure - missing namespace\n";
 
    constexpr auto errMssgFailedMemoryAllocation = "\nnFatal error: cannot allocate the memory\n";
 

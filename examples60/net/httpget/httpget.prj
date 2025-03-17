@@ -6,5 +6,6 @@
     </files>
     <project>
         <template>mt_console</template>
+        <namespace>httpget</namespace>
     </project>
 </configuration>
