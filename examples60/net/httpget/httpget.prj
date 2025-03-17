@@ -1,0 +1,10 @@
+<configuration>
+    <files>
+        <module>
+            <file>httpget.l</file>
+        </module>
+    </files>
+    <project>
+        <template>mt_console</template>
+    </project>
+</configuration>

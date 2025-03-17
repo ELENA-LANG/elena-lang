@@ -31,17 +31,18 @@ Console.WriteLine(content);
 */
 
 import net'http;
+import system'threading;
 
 singleton Tester
 {
    async Task browse()
    {
-      var client = new HttpClient(); 
+      HttpClient client := new HttpClient(); 
       client.Headers.add("User-agent", "MyUserAgent");
 
-      HttpResponse content := :await client.getAsync("http://www.google.com");
+      HttpResponse response := :await client.getAsync("http://www.google.com");
 
-      string content := :await content.readAsStringAsync();
+      string content := :await response.readAsStringAsync();
 
       console.writeLine(content);
    }

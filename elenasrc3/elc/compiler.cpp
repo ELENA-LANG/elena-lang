@@ -4042,6 +4042,7 @@ void Compiler :: declareIteratorMessage(MethodScope& scope, SyntaxNode node)
 
    scope.info.outputRef = scope.moduleScope->branchingInfo.typeRef;
    scope.info.hints |= (ref_t)MethodHint::Yieldable;
+   scope.nestedMode = true;
 }
 
 void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool abstractMode,

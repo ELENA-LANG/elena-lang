@@ -14,6 +14,9 @@ public class HttpClient
    HttpHeaders Headers
       = _headers;
 
+   Task<HttpResponse> getAsync(string url)
+      = getAsync(Uri.parse(url));
+
    async Task<HttpResponse> getAsync(Uri uri)
    {
       /* Create TCP socket */

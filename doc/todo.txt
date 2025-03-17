@@ -46,6 +46,7 @@ In development:
   --------------------------------------  
   * test http client:
       // struct http_response *hresp = http_get("http://www.google.com", "User-agent:MyUserAgent\r\n");
+  * x86-64 : httpget
   * nets : http client get examples
   --------------------------------------
 
