@@ -5,6 +5,8 @@
         </module>
     </files>
     <project>
+        <executable>httpget</executable>
+        <options></options>
         <template>mt_console</template>
         <namespace>httpget</namespace>
     </project>

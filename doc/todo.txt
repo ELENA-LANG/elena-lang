@@ -22,6 +22,8 @@ In development:
       - syntax highlighting
   gen:
       - lpad / elt : declare an extension, parse it and apply to the input
+  api:
+      - functionality in run-time to print the library version info
   maint:
       - pi samples for aarch64 
       - test all x86-64 examples
@@ -44,6 +46,7 @@ In development:
   - fix syntax highlighting (see system'net:win_common.l)
   - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
   --------------------------------------  
+  * Task - raise an exception if it happends during the operation
   * test http client:
       // struct http_response *hresp = http_get("http://www.google.com", "User-agent:MyUserAgent\r\n");
   * x86-64 : httpget, threading samples

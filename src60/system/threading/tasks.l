@@ -84,6 +84,11 @@ public class Task
    sealed wait()
    {
       if (_completed) {
+         if:not:nil (_exception)
+         {
+            _exception.raise()
+         };
+
          ^ self
       };   
 
