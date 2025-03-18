@@ -2,16 +2,16 @@ import system'text;
 
 public class HttpHeaders
 {
-   StringBuilder content;
+   StringBuilder _content;
 
    constructor()
    {
-      content := new StringBuilder();
+      _content := new StringBuilder();
    }
 
    add(string name, string content)
    {
-      content
+      _content
          .write(name)
          .write(":")
          .write(content)
@@ -19,5 +19,5 @@ public class HttpHeaders
    }
 
    get string Value()
-      => content; 
+      => _content; 
 }

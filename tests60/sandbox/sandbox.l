@@ -1,11 +1,11 @@
 import extensions;
+import system'text;
 
 public program()
 {
-   real r := 1.0;
+   StringBuilder content := new StringBuilder();
 
-   real z := r.exp();
-   console.printLine(z);
-
-   console.printLine(z.ln());
+   content
+      .write(":")
+      .write($13$10);
 }

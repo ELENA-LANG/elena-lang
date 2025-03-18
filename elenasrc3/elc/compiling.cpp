@@ -821,11 +821,11 @@ int CompilingProcess :: build(Project& project,
 {
    try
    {
-      if (project.Namespace().empty())
-         throw InternalError(errMissingNamespace);
-
       configurateParser(project.getSyntaxVersion());
       configurate(project);
+
+      if (project.Namespace().empty())
+         throw InternalError(errMissingNamespace);
 
       PlatformType targetType = project.TargetType();
 

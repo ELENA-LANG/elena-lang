@@ -3,7 +3,7 @@
 //
 //		This file contains the ELENA Compiler error messages
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ERRORS_H

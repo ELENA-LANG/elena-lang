@@ -17,7 +17,7 @@ In development:
       - implement ExtensionMessage.equal
       - raise an error if an async extension is declared (until the feature is not implemented)
   ide:
-      - linux - select tab, save, close      
+      - #184 : linux - select tab, save, close      
       - ide : windows
       - syntax highlighting
   gen:
