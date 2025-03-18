@@ -506,7 +506,7 @@ namespace text
          _length.append(counter)
       }
 
-      wide(o)
+      write(o)
          <= write(o.toPrintable());
 
       insert(int index, char ch)

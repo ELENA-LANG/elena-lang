@@ -12,10 +12,10 @@ public class HttpHeaders
    add(string name, string content)
    {
       content
-         .append(name)
-         .append(":")
-         .append(content)
-         .append($13$10);
+         .write(name)
+         .write(":")
+         .write(content)
+         .write($13$10);
    }
 
    get string Value()
