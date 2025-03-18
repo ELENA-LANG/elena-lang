@@ -24,7 +24,7 @@ public sealed class Uri
       = _host;
 
    get string IP()
-      = _query;
+      = _ip;
 
    get string PortValue()
       = _port ?? String.MinValue;
@@ -68,7 +68,10 @@ public sealed class Uri
          _host := url.Substring(index, portIndex - index);
          _port := url.Substring(portIndex + 1, end - portIndex - 1);
       }
-      else _host := url.Substring(index, end - index);
+      else { 
+         _host := url.Substring(index, end - index);
+         _port := "80"
+      };
 
       index := end + 1;
       
