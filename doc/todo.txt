@@ -21,6 +21,7 @@ In development:
       - ide : windows
       - syntax highlighting
       - page up - must be reduced by 2 lines
+      - async method - auto watch : self and some variables are not displayed
   gen:
       - lpad / elt : declare an extension, parse it and apply to the input
   api:
@@ -46,7 +47,6 @@ In development:
   - vs #2 : elena.tmLanguage.json  
   - #34 : https get (https://github.com/HISONA/https_client)
   --------------------------------------  
-  * IDE : display short field
   * test http client:
       // struct http_response *hresp = http_get("http://www.google.com", "User-agent:MyUserAgent\r\n");
 

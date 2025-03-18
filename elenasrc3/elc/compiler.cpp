@@ -1775,11 +1775,11 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope::mapParent()
       ExprScope* exprScope = Scope::getScope<ExprScope>(*parent, ScopeLevel::Expr);
       if (exprScope) {
          parentVar.outerObject = exprScope->mapSelf();
+
+         outers.add(PARENT_VAR, parentVar);
+         mapNewField(info.fields, PARENT_VAR, FieldInfo{ (int)parentVar.reference, parentVar.outerObject.typeInfo });
       }
       else parentVar = mapOwner();
-
-      outers.add(PARENT_VAR, parentVar);
-      mapNewField(info.fields, PARENT_VAR, FieldInfo{ (int)parentVar.reference, parentVar.outerObject.typeInfo });
    }
 
    return parentVar;

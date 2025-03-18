@@ -1082,9 +1082,9 @@ namespace elena_lang
 
          ref_t expectedRef;
 
-         Outer mapParent();
-         Outer mapOwner();
-         Outer mapSelf();
+         virtual Outer mapParent();
+         virtual Outer mapOwner();
+         virtual Outer mapSelf();
 
          ObjectInfo mapMember(ustr_t identifier) override;
 
@@ -1122,6 +1122,16 @@ namespace elena_lang
                return this;
             }
             else return InlineClassScope::getScope(level);
+         }
+
+         Outer mapParent() override
+         {
+            return mapSelf();
+         }
+
+         Outer mapOwner() override
+         {
+            return mapSelf();
          }
 
          StatemachineClassScope(ExprScope* owner, ref_t reference, bool asyncMode);
