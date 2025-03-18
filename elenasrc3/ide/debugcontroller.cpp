@@ -3,7 +3,7 @@
 //
 //		This file contains implematioon of the DebugController class and
 //    its helpers
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1110,6 +1110,17 @@ void* DebugController :: readByteLocal(ContextBrowserBase* watch, void* parent, 
    else return nullptr;
 }
 
+void* DebugController :: readShortLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
+{
+   if (level > 0) {
+      unsigned int value = _process->getWORD(address);
+
+      WatchContext context = { parent, address };
+      return watch->addOrUpdateDWORD(&context, name, value);
+   }
+   else return nullptr;
+}
+
 void* DebugController :: readLongLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
 {
    if (level > 0) {
@@ -1155,6 +1166,9 @@ void* DebugController :: readFieldValue(ContextBrowserBase* watch, void* parent,
    if (level > 0) {
       if (size == 4) {
          return readUIntLocal(watch, parent, address, name, level);
+      }
+      else if (size == 2) {
+         return readShortLocal(watch, parent, address, name, level);
       }
       else if (size == 1) {
          return readByteLocal(watch, parent, address, name, level);

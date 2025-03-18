@@ -46,6 +46,7 @@ In development:
   - vs #2 : elena.tmLanguage.json  
   - #34 : https get (https://github.com/HISONA/https_client)
   --------------------------------------  
+  * IDE : display short field
   * test http client:
       // struct http_response *hresp = http_get("http://www.google.com", "User-agent:MyUserAgent\r\n");
   * x86-64 : httpget, threading samples
