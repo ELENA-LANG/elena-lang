@@ -23,8 +23,11 @@ public class HttpResponse
       ^ 0
    }
 
-   private int seekHeaderEnd(byte[] buffer, int length)
+   private int seekHeaderEnd()
    {
+      byte[] buffer := _buffer.Content;
+
+      int length := _buffer.Length;
       int eol := seekEOL(buffer, 0, length);
       if (eol > 0 && length - eol > 2) {
          if (buffer[eol]==13 && buffer[eol+1]==10) {
@@ -33,7 +36,7 @@ public class HttpResponse
 
          int start := eol;
          while (start < length) {
-            eol := seekEOL(buffer, start, length);
+            eol := seekEOL(buffer, start, length - start);
             if (eol > 0 && length - eol > 2) {
                if (buffer[eol]==13 && buffer[eol+1]==10) {
                   ^ eol + 2;
@@ -56,31 +59,28 @@ public class HttpResponse
 
    async internal Task readHeader()
    {
-      byte buffer[512];
-      int received := :await _stream.readAsync(buffer, 512);      
-      _buffer.write(0, received, buffer);
+      int received := :await _stream.readAsync(_buffer, 512);
+      while (received > 0) {
+         int eoh := seekHeaderEnd();
+         if (eoh > 0)
+            :break;
 
-      int eol := seekHeaderEnd(buffer, received);
-      while (eol == 0) {
-         received := :await _stream.readAsync(buffer, 512);
-         _buffer.write(0, received, buffer);
-
-         eol := seekHeaderEnd(_buffer.Value, _buffer.Length);
-      }
+         received := :await _stream.readAsync(_buffer, 512);
+      };
    }
 
    async Task<string> readAsStringAsync()
    {
-      byte buffer[512];
-      int received := :await _stream.readAsync(buffer, 512);
+      int received := :await _stream.readAsync(_buffer, 512);
       while (received > 0) {
-         _buffer.write(0, received, buffer);
-
-         received := :await _stream.readAsync(buffer, 512);
+         received := :await _stream.readAsync(_buffer, 512);
       };
 
-      int eoh := seekHeaderEnd(_buffer.Value, _buffer.Length);
-      
-      ^ UTF8Encoding.toString(eoh, buffer.Length - eoh, _buffer.Value);
+      int length := _buffer.Length;
+      int eoh := seekHeaderEnd();
+      if (eoh == 0)
+         HttpException.raise("Invalid response");
+
+      ^ UTF8Encoding.toString(eoh, length - eoh, _buffer.Content);
    }
 }

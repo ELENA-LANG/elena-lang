@@ -60,9 +60,12 @@ public class TcpListener
       ^ socket
    }
 
+   private Task<Socket> listenAsync()
+      = ::Task<Socket>.run({ ^ _listenSocket.accept(); });
+
    async Task<Socket> acceptSocketAsync()
    {
-      Socket socket := :await _listenSocket.acceptAsync();
+      Socket socket := :await listenAsync();
       if:not(socket.isInvalid)
       {
          if (_noDelayMode)
@@ -86,7 +89,7 @@ public class TcpListener
 
    async Task<TcpClient> acceptTcpClientAsync()
    {
-      Socket socket := :await _listenSocket.acceptAsync();
+      Socket socket := :await listenAsync();
       if:not(socket.isInvalid)
       {
          if (_noDelayMode)

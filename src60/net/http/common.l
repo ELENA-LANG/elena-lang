@@ -1,6 +1,12 @@
 import system'text'parsing;
 import system'net;
 
+public class HttpException : Exception
+{
+   constructor new(string s)
+      <= super new(s);
+}
+
 internal static RegEx UrlRegEx = new RegEx("^(ht|f)tp(s?)\:\/\/[0-9a-zA-Z]((\.|-+)?[0-9a-zA-Z])*(:(0-9)*)?(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&%\$#_=]*)?$");
 
 public sealed class Uri

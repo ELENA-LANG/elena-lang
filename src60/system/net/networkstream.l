@@ -7,11 +7,13 @@ public class NetworkStream : Stream
 {
    Socket _socket;
    bool   _ownStream;
+   byte[] _buffer; 
 
    constructor(Socket socket)
    {
       _socket := socket;
       _ownStream := false;
+      _buffer := new byte[](512);
    }
 
    constructor assign(Socket socket, bool socketStream)
@@ -56,13 +58,35 @@ public class NetworkStream : Stream
    }
      
    indexed internal Task<int> readAsync(byte[] dump, int length)
-      = _socket.receiveAsync(dump, length, 0);
+      = ::Task<int>.run({ ^ _socket.receive(dump, length, 0) });
      
    indexed internal Task<int> writeAsync(byte[] dump, int length)
-      = _socket.sendAsync(dump, length, 0);
+      = ::Task<int>.run({ ^ _socket.send(dump, length, 0) });
      
    indexed internal bool isDataAvailable
       = _socket.available() != 0;
+
+   indexed async internal Task<int> readAsync(MemoryBuffer buffer, int length)
+   {
+      int total_received := 0;
+      int total := length;
+      while (total > 0) {
+         int size := 512;
+         if (size > length)
+            size := length;
+
+         int received := :await readAsync(_buffer, size);
+         if (received > 0) {
+            total_received += received;
+            total -= received;
+
+            buffer.write(0, received, _buffer);
+         }
+         else :break;
+      };
+
+      ^ total_received;
+   }
 
    indexed async internal Task writeAsync(string s)
    {
@@ -122,6 +146,9 @@ public extension AsyncStreamExtension : NetworkStream
 
    Task<string> readAsStringAsync()
       = self.readAsStringAsync();
+
+   Task<int> readAsync(MemoryBuffer buffer, int length)
+      = self.readAsync(buffer, length);
 
 //   async Task writeAsync(string s)
 //   {

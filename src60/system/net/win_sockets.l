@@ -253,9 +253,6 @@ public sealed const struct Socket
       ^ socket
    }
 
-   static Task<Socket> connectAsync(string host, short port)
-      = ::Task<Socket>.run({ ^ Socket.connect(host, port); });
-
    constructor(handle handle)
    {
       _handle := handle
@@ -329,14 +326,6 @@ public sealed const struct Socket
       ^ self.send(buffer, len, 0);
    }
 
-   Task<int> sendAsync(byte[] buffer)
-      = ::Task<int>.run(
-      {
-         int written := send(buffer);
-
-         ^ written
-      });
-
    int send(byte[] buffer, int length, int flags)
    {
       int retVal := extern WS2_32.send(_handle, buffer, length, flags);
@@ -346,14 +335,6 @@ public sealed const struct Socket
             
       ^ retVal
    }
-
-   Task<int> sendAsync(byte[] buffer, int length, int flags)
-      = ::Task<int>.run(
-      {
-         int sent := send(buffer, length, flags);
-
-         ^ sent
-      });
 
    int receive(byte[] buffer, int maxLength, int flags)
    {
@@ -369,28 +350,12 @@ public sealed const struct Socket
       ^ retVal
    }
 
-   Task<int> receiveAsync(byte[] buffer, int maxLength, int flags)
-      = ::Task<int>.run(
-      {
-         int received := receive(buffer, maxLength, flags);
-
-         ^ received
-      });
-
    Socket accept()
    {
       handle socket := extern WS2_32.accept(_handle, 0, 0);
             
       ^ socket
    }
-
-   Task<Socket> acceptAsync()
-      = ::Task<Socket>.run(
-      {
-         handle socket := extern WS2_32.accept(_handle, 0, 0);
-
-         ^ new Socket(socket)
-      });
 
    shutdown(int how)
    {

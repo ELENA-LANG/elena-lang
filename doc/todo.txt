@@ -49,6 +49,9 @@ In development:
   * IDE : display short field
   * test http client:
       // struct http_response *hresp = http_get("http://www.google.com", "User-agent:MyUserAgent\r\n");
+
+  * fix string request := $"GET / HTTP/1.1\r\nHost:{uri.Host}"$1310"Connection:close"$1310"{_headers.Value}"$13$10;
+  * fix debugger 
   * x86-64 : httpget, threading samples
   --------------------------------------
 

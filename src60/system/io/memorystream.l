@@ -20,6 +20,9 @@ namespace io
          _used := 0;
       }
         
+      get byte[] Content
+         = _buffer;
+
       get byte[] Value()
       {
          int used := _used.Value;
