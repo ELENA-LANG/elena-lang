@@ -8764,6 +8764,7 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
 
    // stack should contains current self reference
    // the original message should be restored if it is a generic method
+   scope.selfLocal = codeScope.newLocal();
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
    //   create a state machine enumerator
