@@ -93,7 +93,7 @@ public sealed struct HOSTENT
       HOSTENT tmp := default;
 
       pointer ptr := extern WS2_32.gethostbyname(host);
-      if(ptr.isUnassigned)
+      if(ptr.isUnassigned())
          SocketException.new("gethostbyname failed").raise();
 
       ptr.copyToUnsafe(tmp, $size tmp);

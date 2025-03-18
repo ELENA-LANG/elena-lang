@@ -6346,9 +6346,13 @@ ObjectInfo Compiler::mapClassSymbol(Scope& scope, ref_t classRef)
 
       retVal.typeInfo = { classClassRef };
 
+      MethodScope* methodScope = Scope::getScope<MethodScope>(scope, Scope::ScopeLevel::Method);
       ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
       if (classScope != nullptr && (classScope->reference == retVal.typeInfo.typeRef))
       {
+         retVal.kind = ObjectKind::ClassSelf;
+      }
+      else if (methodScope != nullptr && methodScope->constructorMode && classClassRef == retVal.typeInfo.typeRef) {
          retVal.kind = ObjectKind::ClassSelf;
       }
 
@@ -14486,7 +14490,7 @@ ObjectInfo Compiler::Expression::compileWeakOperation(SyntaxNode node, ref_t* ar
       retVal = tempRetVal;
    }
    else retVal = compileMessageCall(node, loperand, context, { context.weakMessage },
-      messageArguments, EAttr::NoExtension, updatedOuterArgs);
+      messageArguments, EAttr::NoExtension | EAttr::CheckShortCircle, updatedOuterArgs);
 
    return retVal;
 }

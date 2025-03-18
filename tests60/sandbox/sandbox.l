@@ -1,11 +1,17 @@
 import extensions;
-import system'text;
+
+public sealed packed XSOCKADDR_IN
+{
+   short   family;
+   short   port;
+//   IN_ADDR sin_addr;
+   byte    sin_zero[4]; 
+
+   get constructor Default()
+      = default;   
+}
 
 public program()
 {
-   StringBuilder content := new StringBuilder();
-
-   content
-      .write(":")
-      .write($13$10);
+   XSOCKADDR_IN remote := default;
 }

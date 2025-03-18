@@ -23,7 +23,7 @@ public class HttpClient
       _socket := new Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
       /* Set remote->sin_addr.s_addr */
-      SOCKADDR_IN remote := default;   
+      SOCKADDR_IN remote := default;
 
       remote.Ip_address := uri.IP;
       remote.Port := uri.Port;

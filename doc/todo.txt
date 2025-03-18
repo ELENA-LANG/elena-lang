@@ -29,7 +29,6 @@ In development:
       - pi samples for aarch64 
       - test all x86-64 examples
       - unit tests : bt optimization 
-      - warn if typecasting method returns itself, it leads to infinite call
       - api : add descriptions 
   port:
       - chat sample
@@ -46,7 +45,8 @@ In development:
   - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
   - vs #2 : elena.tmLanguage.json  
   --------------------------------------  
-  * Task - raise an exception if it happends during the operation
+  * fix infinit loop : 
+       SOCKADDR_IN remote := default;
   * test http client:
       // struct http_response *hresp = http_get("http://www.google.com", "User-agent:MyUserAgent\r\n");
   * x86-64 : httpget, threading samples
