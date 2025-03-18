@@ -19,17 +19,8 @@ public class HttpClient
 
    async Task<HttpResponse> getAsync(Uri uri)
    {
-      /* Create TCP socket */
-      _socket := new Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-      /* Set remote->sin_addr.s_addr */
-      SOCKADDR_IN remote := default;
-
-      remote.Ip_address := uri.IP;
-      remote.Port := uri.Port;
-
       /* Connect */
-      _socket.open(remote);
+       _socket := :await Socket.connectAsync(uri.Host, uri.Port);
 
       /* Send headers to server */
       NetworkStream stream := new NetworkStream(_socket);

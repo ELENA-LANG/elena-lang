@@ -7,7 +7,6 @@ public sealed class Uri
 {
    string _scheme;
    string _host;
-   string _ip; 
    string _port;
    string _path;
    string _query;
@@ -22,9 +21,6 @@ public sealed class Uri
 
    get string Host()
       = _host;
-
-   get string IP()
-      = _ip;
 
    get string PortValue()
       = _port ?? String.MinValue;
@@ -88,9 +84,6 @@ public sealed class Uri
       if (index < len) {
          _query := url.Substring(index, len - index);
       };
-
-      HOSTENT h := HOSTENT.load(_host);
-      _ip := h.IP;
 
       ^ true;
    }

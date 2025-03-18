@@ -79,48 +79,6 @@ public sealed struct IN_ADDR
    }
 }
 
-// --- HOSTENT ---
-public sealed struct HOSTENT
-{
-   pointer h_name;
-   pointer h_aliases;
-   short   h_addrtype;
-   short   h_length;
-   pointer h_addr_list;
-
-   static HOSTENT load(string host)
-   {
-      HOSTENT tmp := default;
-
-      pointer ptr := extern WS2_32.gethostbyname(host);
-      if(ptr.isUnassigned())
-         SocketException.new("gethostbyname failed").raise();
-
-      ptr.copyToUnsafe(tmp, $size tmp);
-
-      ^ tmp
-   }
-
-   get string IP()
-   {
-      if (h_addrtype == AF_INET) {
-         pointer addr_list := h_addr_list.Value;
-
-         IN_ADDR addr_in := default;
-         addr_in.Value := addr_list.getLongValue();
-
-         pointer pip := extern WS2_32.inet_ntoa(addr_in);
-
-         ^ pip.getStringUnsafe();
-      }
-      else {
-         SocketException.new("gethostbyname failed").raise()
-      };
-
-      ^ nil;
-   }
-}
-
 // --- SOCKADDR_IN ---
 
 public sealed packed SOCKADDR_IN
@@ -143,28 +101,31 @@ public sealed packed SOCKADDR_IN
       }
    }
 
-   set Ip_address(string ip)
+   set Ip4_address(string ip)
    {
       family := AF_INET;
 
-      int retVal := extern WS2_32.inet_pton(AF_INET, ip, sin_addr);
+      IN_ADDR in_addr := default;
+      int retVal := extern WS2_32.inet_pton(AF_INET, ip, /*sin_addr*/in_addr);
 
       if (retVal < 0) {
          SocketException.new("Can't set remote->sin_addr.s_addr", retVal).raise();
       }
       else if (retVal == 0) {
          SocketException.new("Not a valid IP", retVal).raise();
-      }
+      };
+
+      sin_addr := in_addr;
    }
    
    set Port(short value)
    {
-      port := extern WS2_32.htons(value);
+      port := /*extern WS2_32.htons(value)*/value;
    }
 
    get short Port()
    {
-      short val := extern WS2_32.ntohs(port); 
+      short val := /*extern WS2_32.ntohs(*/port/*)*/; 
 
       ^ val
    }
@@ -250,6 +211,51 @@ public sealed const struct Socket
 {
    handle _handle;
    
+   static Socket connect(string host, short port)
+   {
+      Socket socket := default;   
+
+      //resolve server address and port
+      AddrInfo addrinfo := default;
+        
+      // set address info
+      addrinfo.ai_family := AF_UNSPEC;
+      addrinfo.ai_socktype := SOCK_STREAM;
+      addrinfo.ai_protocol := IPPROTO_TCP;
+        
+      AddrInfoReader reader := new AddrInfoReader(host, port.toPrintable(), addrinfo);
+      while (reader.Available)
+      {
+         reader.read(addrinfo);
+            
+         int     ai_family := addrinfo.ai_family;
+         int     ai_socktype := addrinfo.ai_socktype;
+         int     ai_protocol := addrinfo.ai_protocol;
+         int     ai_addrlen := addrinfo.ai_addrlen;
+         pointer ai_addrptr := addrinfo.ai_addr;
+
+         socket := new Socket(ai_family, ai_socktype, ai_protocol);
+
+         if (socket.tryOpen(ai_addrptr, ai_addrlen))
+         {
+            reader.close();
+        
+            ^ socket
+         };
+            
+         reader.next()
+      };
+        
+      reader.close();
+        
+      SocketException.raise($"Unable to open {host}");
+
+      ^ socket
+   }
+
+   static Task<Socket> connectAsync(string host, short port)
+      = ::Task<Socket>.run({ ^ Socket.connect(host, port); });
+
    constructor(handle handle)
    {
       _handle := handle
@@ -315,23 +321,6 @@ public sealed const struct Socket
             
       ^ (SOCKET_ERROR != retVal)
    }
-
-   connect(string ip_address, int port)
-   {
-      SOCKADDR_IN addr := SOCKADDR_IN.Default;
-      addr.Port := port;
-      addr.Family := system'net'AF_INET;
-      addr.Ip_address := ip_address;
-        
-      pointer ptr := addr;
-      int retVal := extern WS2_32.connect(_handle, ptr, SOCKADDR_IN_SIZE);
-            
-      if (retVal == SOCKET_ERROR)
-         { SocketException.new("Error at socket").raise() }
-   }
-
-   Task connectAsync(string ip_address, int port)
-      = Task.run({ connect(ip_address, port); });
 
    int send(byte[] buffer)
    {
