@@ -86,7 +86,7 @@ public sealed class Uri
          _query := url.Substring(index, len - index);
       };
 
-      hostent h := hostent.load(_host);
+      HOSTENT h := HOSTENT.load(_host);
       _ip := h.IP;
 
       ^ true;

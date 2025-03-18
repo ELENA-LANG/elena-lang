@@ -79,8 +79,8 @@ public sealed struct IN_ADDR
    }
 }
 
-// --- hostent ---
-public sealed struct hostent
+// --- HOSTENT ---
+public sealed struct HOSTENT
 {
    pointer h_name;
    pointer h_aliases;
@@ -88,11 +88,13 @@ public sealed struct hostent
    short   h_length;
    pointer h_addr_list;
 
-   static hostent load(string host)
+   static HOSTENT load(string host)
    {
-      hostent tmp := default;
+      HOSTENT tmp := default;
 
       pointer ptr := extern WS2_32.gethostbyname(host);
+      if(ptr.isUnassigned)
+         SocketException.new("gethostbyname failed").raise();
 
       ptr.copyToUnsafe(tmp, $size tmp);
 
@@ -102,11 +104,10 @@ public sealed struct hostent
    get string IP()
    {
       if (h_addrtype == AF_INET) {
-         pointer addr := h_addr_list.Value;
-         pointer paddr_in := addr.Value;
+         pointer addr_list := h_addr_list.Value;
 
          IN_ADDR addr_in := default;
-         addr_in.Value := paddr_in.getLongValue();
+         addr_in.Value := addr_list.getLongValue();
 
          pointer pip := extern WS2_32.inet_ntoa(addr_in);
 

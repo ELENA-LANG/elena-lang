@@ -20,6 +20,7 @@ In development:
       - #184 : linux - select tab, save, close      
       - ide : windows
       - syntax highlighting
+      - page up - must be reduced by 2 lines
   gen:
       - lpad / elt : declare an extension, parse it and apply to the input
   api:
@@ -37,14 +38,13 @@ In development:
       - test all x86-64 examples (net)
       - pi samples for ppc64, aarch64
   tools: 
-      - #658 : connect with ldbg from VSCode  
-      - vs #1 : elena.tmLanguage.json
+      - #658 : connect with ldbg from VSCode        
   prom: bi-posting weekly
   --------------------------------------
   - #34 : http client (http get)
   - pi samples for ppc64
-  - fix syntax highlighting (see system'net:win_common.l)
   - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
+  - vs #2 : elena.tmLanguage.json  
   --------------------------------------  
   * Task - raise an exception if it happends during the operation
   * test http client:
