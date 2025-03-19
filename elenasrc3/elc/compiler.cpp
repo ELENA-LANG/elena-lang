@@ -8739,7 +8739,19 @@ ref_t Compiler :: declareAsyncStatemachine(StatemachineClassScope& scope, Syntax
 
 void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
 {
+   // create a async method
+   beginMethod(writer, scope, node, BuildKey::Method, _withDebugInfo);
+
+   // new stack frame
+   writer.appendNode(BuildKey::OpenFrame);
+
    CodeScope codeScope(&scope);
+
+   // stack should contains current self reference
+   // the original message should be restored if it is a generic method
+   scope.selfLocal = codeScope.newLocal();
+   writer.appendNode(BuildKey::Assigning, scope.selfLocal);
+
    Expression expression(this, codeScope, writer);
 
    // declare a state machine enumerator
@@ -8751,21 +8763,8 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
    while (buildNode != BuildKey::Root)
       buildNode = buildNode.parentNode();
 
-   scope.selfLocal = codeScope.newLocal();
-
    BuildTreeWriter nestedWriter(buildNode);
    compileStatemachineClass(nestedWriter, smScope, node, baseRef);
-
-   // create a async method
-   beginMethod(writer, scope, node, BuildKey::Method, _withDebugInfo);
-
-   // new stack frame
-   writer.appendNode(BuildKey::OpenFrame);
-
-   // stack should contains current self reference
-   // the original message should be restored if it is a generic method
-   scope.selfLocal = codeScope.newLocal();
-   writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
    //   create a state machine enumerator
    int preservedContext = 0;
@@ -8813,6 +8812,7 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
    expression.compileConverting(node, retVal, scope.info.outputRef,
       scope.checkHint(MethodHint::Stacksafe));
 
+   expression.scope.syncStack();
    codeScope.syncStack(&scope);
 
    writer.appendNode(BuildKey::CloseFrame);
