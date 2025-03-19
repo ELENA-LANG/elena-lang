@@ -37,14 +37,16 @@ singleton Tester
 {
    async Task browse()
    {
-      HttpClient client := new HttpClient(); 
-      client.Headers.add("User-agent", "MyUserAgent");
+      using(HttpClient client := new HttpClient())
+      {
+         client.Headers.add("User-agent", "MyUserAgent");
 
-      HttpResponse response := :await client.getAsync("http://www.google.com");
+         HttpResponse response := :await client.getAsync("http://www.google.com");
 
-      string content := :await response.readAsStringAsync();
+         string content := :await response.readAsStringAsync();
 
-      console.writeLine(content);
+         console.writeLine(content);
+      }
    }
 }
 
