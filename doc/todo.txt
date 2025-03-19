@@ -47,10 +47,11 @@ In development:
   - vs #2 : elena.tmLanguage.json  
   - #34 : https get (https://github.com/HISONA/https_client)
   --------------------------------------  
-  * compile with using
-
+  * check GC
   * test http client:
       // struct http_response *hresp = http_get("http://www.google.com", "User-agent:MyUserAgent\r\n");
+
+  * compile with using
 
   * fix string request := $"GET / HTTP/1.1\r\nHost:{uri.Host}"$1310"Connection:close"$1310"{_headers.Value}"$13$10;
   * fix debugger 

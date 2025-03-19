@@ -12,6 +12,8 @@ using namespace elena_lang;
 
 #if _M_IX86 || __i386__
 
+constexpr int LOCK_FLAG          = 0x01000000;
+
 constexpr int elObjectOffset     = elObjectOffset32;
 constexpr int gcCollectedMask    = 0x80000000;
 
@@ -33,6 +35,8 @@ constexpr int heapheader_inc     = 0x0A800;
 typedef ObjectPage32    ObjectPage;
 
 #else
+
+constexpr size_t LOCK_FLAG       = 0x0;
 
 constexpr int elObjectOffset     = elObjectOffset64;
 constexpr int gcCollectedMask    = 0x80000000;
@@ -294,7 +298,7 @@ void MGCollect(GCRoot* root, size_t start, size_t end)
 inline void FixObject(GCTable* table, GCRoot* roots, size_t start, size_t end)
 {
    uintptr_t* ptr = (uintptr_t*)roots->stack_ptr;
-   size_t  size = roots->size;
+   size_t  size = roots->size & ~LOCK_FLAG;
 
    GCRoot  current;
 
