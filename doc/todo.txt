@@ -33,6 +33,7 @@ In development:
       - api : add descriptions 
   port:
       - chat sample
+      - x86-64 : httpget, threading samples
       - rosetta code : moving to 6.5
       - x86-64 : mta - test net examples for mta   
       - test all x86-64 examples (net)
@@ -56,7 +57,7 @@ In development:
   * fix string request := $"GET / HTTP/1.1\r\nHost:{uri.Host}"$1310"Connection:close"$1310"{_headers.Value}"$13$10;
   * fix debugger 
   * httpclient - increase the buffer size
-  * x86-64 : httpget, threading samples
+  * 
   --------------------------------------
 
   === Iteration 39 ===
