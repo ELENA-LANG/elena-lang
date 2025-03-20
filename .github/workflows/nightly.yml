@@ -6,6 +6,11 @@
 name: Nightly MSBuild
 
 on:
+  workflow_call:
+    inputs:
+      env:
+        description: 'Test'
+        required: true
   schedule:
     - cron: '30 2 * * *'  # Run once per day, to avoid Coverity's submission limits
   push:
