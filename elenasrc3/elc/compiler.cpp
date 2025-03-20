@@ -5844,6 +5844,9 @@ void Compiler::declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldA
    if (attrs.typeInfo.isPrimitive()) {
       bool valid = true;
       switch (attrs.typeInfo.typeRef) {
+         case V_AUTO:
+            valid = !test(scope.info.header.flags, elStructure);
+            break;
          case V_INTBINARY:
             switch (attrs.size) {
                case 1:

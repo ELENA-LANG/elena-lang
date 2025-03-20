@@ -26,11 +26,13 @@ In development:
       - lpad / elt : declare an extension, parse it and apply to the input
   api:
       - functionality in run-time to print the library version info
+      - include net / thread examples in build
   maint:
       - pi samples for aarch64 
       - test all x86-64 examples
       - unit tests : bt optimization 
       - api : add descriptions 
+      - github actions : `set-output` command is deprecated 
   port:
       - chat sample
       - x86-64 : httpget, threading samples
