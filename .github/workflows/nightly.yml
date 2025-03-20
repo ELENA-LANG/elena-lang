@@ -33,11 +33,11 @@ jobs:
         os: [windows-latest]
         platform: [x86, x64]
 
-    steps:
+    steps:    
     - uses: actions/checkout@v4
-        with:
-          ref: iteration38
-
+      with:
+        ref: iteration38
+       
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
 
