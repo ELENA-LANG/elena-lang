@@ -1,0 +1,80 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: MSBuild
+
+on:
+  schedule:
+    - cron: '30 2 * * *'  # Run once per day, to avoid Coverity's submission limits
+  push:
+    branches: [ "iteration38" ]
+    paths:
+      - elenasrc3/**
+      - asm/**
+      - src60/**
+      - examples60/**
+
+env:
+  # Path to the solution file relative to the root of the project.
+  SOLUTION_FILE_PATH: .\elenasrc3\elenasrc3.sln
+
+  # Configuration type to build.
+  # You can convert this to a build matrix if you need coverage of multiple configuration types.
+  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  BUILD_CONFIGURATION: Debug
+
+  BUILD_TAG: 6.6.3
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest]
+        platform: [x86, x64]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup Nuget
+      uses: Nuget/setup-nuget@v1.0.5
+
+    - name: Restore nuget packages
+      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+
+    - name: Build
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      # Add additional options to the MSBuild command line here (like platform or verbosity level).
+      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}} /p:platform=${{ matrix.platform }} /m:2
+
+    - name: Generate Data
+      shell: cmd
+      run: build\rebuild_data60_${{matrix.platform}}.bat
+
+    - name: Run Tests
+      shell: cmd
+      run: bin\elena-tests-${{matrix.platform}}.exe
+
+    - name: Compile Lib
+      shell: cmd
+      run: build\rebuild_lib60_${{matrix.platform}}.bat
+
+    - name: Prepare Artifact
+      shell: cmd
+      run: build\create_package_${{matrix.platform}}.bat 
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}
+        path: build\${{matrix.platform}}
