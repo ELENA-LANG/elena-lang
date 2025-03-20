@@ -10,6 +10,7 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+  workflow_dispatch: # Put here!!
 
 env:
   # Path to the solution file relative to the root of the project.
