@@ -6,7 +6,6 @@
 name: Nightly MSBuild
 
 on:
-  workflow_call:
   schedule:
     - cron: '30 2 * * *'  # Run once per day, to avoid Coverity's submission limits
   push:
@@ -16,6 +15,7 @@ on:
       - asm/**
       - src60/**
       - examples60/**
+  workflow_dispatch: # Put here!!
 
 env:
   # Path to the solution file relative to the root of the project.
