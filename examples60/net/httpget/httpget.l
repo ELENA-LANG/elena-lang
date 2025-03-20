@@ -47,8 +47,6 @@ singleton Tester
 
          console.writeLine(content);
       };
-
-      client.close(); 
    }
 }
 
