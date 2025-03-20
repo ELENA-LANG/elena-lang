@@ -1204,6 +1204,26 @@ Compiler::ClassScope::ClassScope(Scope* ns, ref_t reference, Visibility visibili
    withStaticConstructor = false;
 }
 
+bool Compiler::ClassScope :: resolveAutoType(ObjectInfo& targetInfo, TypeInfo typeInfo, int size, int extra)
+{
+   if (targetInfo.kind == ObjectKind::Field) {
+      for (auto it = info.fields.start(); !it.eof(); ++it) {
+         if ((*it).offset == (int)targetInfo.reference) {
+            if ((*it).typeInfo.typeRef == V_AUTO) {
+               (*it).typeInfo.typeRef = typeInfo.typeRef;
+               (*it).typeInfo.elementRef = typeInfo.elementRef;
+
+               targetInfo.typeInfo = typeInfo;
+
+               return true;
+            }
+         }
+      }
+   }
+
+   return Scope::resolveAutoType(targetInfo, typeInfo, size, extra);
+}
+
 inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, ExpressionAttribute attr, bool ignoreFields)
 {
    auto fieldInfo = info.fields.get(identifier);
@@ -3333,7 +3353,10 @@ bool Compiler::generateClassField(ClassScope& scope, FieldAttributes& attrs, ust
       return false;
 
    SizeInfo sizeInfo = {};
-   if (typeInfo.isPrimitive()) {
+   if (typeInfo.typeRef == V_AUTO) {
+
+   }
+   else if (typeInfo.isPrimitive()) {
       if (!sizeHint) {
          return false;
       }
@@ -6039,12 +6062,12 @@ bool Compiler::declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeI
    if (ignoreDuplicate) {
       auto var = codeScope->mapIdentifier(*identifier, false, EAttr::None);
       switch (var.kind) {
-      case ObjectKind::Local:
-      case ObjectKind::LocalAddress:
-         // exit if the variable with this names does exist
-         return false;
-      default:
-         break;
+         case ObjectKind::Local:
+         case ObjectKind::LocalAddress:
+            // exit if the variable with this names does exist
+            return false;
+         default:
+            break;
       }
    }
 
@@ -7019,6 +7042,15 @@ ObjectInfo Compiler::defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo 
             if (declareVariable(scope, node, declaredTypeInfo, ignoreDuplicates)) {
                retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference,
                   attrs | ExpressionAttribute::Local);
+
+               if (retVal.kind == ObjectKind::Unknown) {
+                  MethodScope* methodScope = Scope::getScope<MethodScope>(scope, Scope::ScopeLevel::Method);
+                  if (methodScope && methodScope->isYieldable()) {
+                     // HOTFIX : it is a iterator method
+                     retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference,
+                        attrs);
+                  }
+               }
 
                if (_trackingUnassigned && terminalAttrs.outRefOp) {
                   scope.markAsAssigned(retVal);
@@ -15457,7 +15489,7 @@ bool Compiler::Expression::resolveAutoType(ObjectInfo source, ObjectInfo& target
 
    int size = 0;
    int extra = 0;
-   if (compiler->_logic->isEmbeddableStruct(*scope.moduleScope, sourceInfo)) {
+   if (compiler->_logic->isEmbeddableStruct(*scope.moduleScope, sourceInfo) && target.kind == ObjectKind::Local) {
       // Bad luck : it is a auto structure, we have to reallocate the variable
       size = align(compiler->_logic->defineStructSize(*scope.moduleScope, sourceInfo.typeRef).size,
          scope.moduleScope->rawStackAlingment);

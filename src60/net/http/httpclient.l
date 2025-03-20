@@ -31,8 +31,6 @@ public class HttpClient
       //string request := $"GET / HTTP/1.1\r\nHost:{uri.Host}"$1310"Connection:close"$1310"{_headers.Value}"$13$10;
       string request := "GET / HTTP/1.1" + $13 + $10 + "Host:" + uri.Host + $13 + $10 + "Connection:close" + $13 + $10 + _headers.Value + $13 + $10;
 
-      console.writeLine(request);
-
       :await stream.writeAsync(request);
 
       HttpResponse response := HttpResponse.assign(stream);

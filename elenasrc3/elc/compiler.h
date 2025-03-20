@@ -699,6 +699,8 @@ namespace elena_lang
             return test(info.header.flags, elAbstract);
          }
 
+         bool resolveAutoType(ObjectInfo& info, TypeInfo typeInfo, int size, int extra) override;
+
          ObjectInfo mapMember(ustr_t identifier) override;
 
          virtual ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr);

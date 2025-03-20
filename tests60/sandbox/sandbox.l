@@ -1,17 +1,12 @@
 import extensions;
 
-public sealed packed XSOCKADDR_IN
+A
 {
-   short   family;
-   short   port;
-//   IN_ADDR sin_addr;
-   byte    sin_zero[4]; 
-
-   get constructor Default()
-      = default;   
+   auto x := 2;
+   auto y := "abc";
 }
 
 public program()
 {
-   XSOCKADDR_IN remote := default;
+   var a := new A();
 }
