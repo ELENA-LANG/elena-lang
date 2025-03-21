@@ -12308,6 +12308,12 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t 
    if (nillableOp)
       scope.raiseWarning(WARNING_LEVEL_1, wrnReturningNillable, node);
 
+   // saving local variables
+   for (auto local_it = smScope->localMappings.start(); !local_it.eof(); ++local_it) {
+      bool dummy = false;
+      compileAssigningOp({ ObjectKind::Field, (ref_t)*local_it }, { ObjectKind::Local, (ref_t)local_it.key() }, dummy);
+   }
+
    writeObjectInfo(contextField, node);
    writer->appendNode(BuildKey::SavingStackDump);
 

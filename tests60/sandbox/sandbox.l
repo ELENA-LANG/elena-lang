@@ -53,7 +53,7 @@ public class Tester
       var current := start + 1;
 
       while (true) {
-         Console.printLine("The previous is ", current ?? "<nil>");
+         Console.printLine("The previous is ", previous ?? "<nil>");
 
          :yield current;      
    
