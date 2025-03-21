@@ -6056,6 +6056,8 @@ void Compiler :: markYieldVariable(Scope& scope, ref_t localOffset)
 
    auto fieldInfo = smScope->mapField(*tmpName, {});
 
+   printf("%s %x - %x\n", tmpName.str(), localOffset, fieldInfo.reference);
+
    smScope->localMappings.add(localOffset, fieldInfo.reference);
 }
 
@@ -13622,6 +13624,8 @@ void Compiler::Expression :: compileNestedInitializing(InlineClassScope& classSc
 
       list.add(arg);
    }
+
+   printf("compileNestedInitializing %x \n", classScope.info.fields.count());
 
    writer->newNode(BuildKey::CreatingClass, classScope.info.fields.count());
    writer->appendNode(BuildKey::Type, nestedRef);
