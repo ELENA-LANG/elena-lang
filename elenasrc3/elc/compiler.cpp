@@ -8904,7 +8904,18 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
 
 void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
 {
+   beginMethod(writer, scope, node, BuildKey::Method, _withDebugInfo);
+
+   // new stack frame
+   writer.appendNode(BuildKey::OpenFrame);
+
    CodeScope codeScope(&scope);
+
+   // stack should contains current self reference
+   // the original message should be restored if it is a generic method
+   scope.selfLocal = codeScope.newLocal();
+   writer.appendNode(BuildKey::Assigning, scope.selfLocal);
+
    Expression expression(this, codeScope, writer);
 
    // create yield state machine
@@ -8919,11 +8930,6 @@ void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope,
    BuildTreeWriter nestedWriter(buildNode);
    compileStatemachineClass(nestedWriter, smScope, node,
       resolveStateMachine(scope, scope.moduleScope->buildins.yielditTemplateReference, smScope.typeRef));
-
-   beginMethod(writer, scope, node, BuildKey::Method, _withDebugInfo);
-
-   // new stack frame
-   writer.appendNode(BuildKey::OpenFrame);
 
    ObjectInfo retVal = { ObjectKind::Object, { nestedRef }, 0 };
 
