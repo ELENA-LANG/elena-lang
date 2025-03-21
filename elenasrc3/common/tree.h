@@ -108,6 +108,7 @@ namespace elena_lang
 
          NodeRecord nw;
          nw.next = INVALID_POS;
+         nw.child = INVALID_POS;
          nw.key = key;
          nw.arg = arg;
 
@@ -595,7 +596,6 @@ namespace elena_lang
          pos_t          _current;
 
          Stack<pos_t>   _bookmarks;
-         pos_t          _pendingBookmarks;
 
          void updateBookmarks(Stack<pos_t>& bookmarks, pos_t oldPos, pos_t newPos)
          {
@@ -609,11 +609,10 @@ namespace elena_lang
          {
             NodeArg arg(argument, strArgRef);
 
-            pos_t prev = _tree->readPrevious(position);
-            if (prev != INVALID_REF) {
-               _current = _tree->injectSibling(prev, type, arg);
+            if (position != INVALID_REF) {
+               _current = _tree->injectSibling(position, type, arg);
             }
-            else _current = _tree->injectChild(position, type, arg);
+            else _current = _tree->injectChild(_current, type, arg);
 
             updateBookmarks(_bookmarks, position, _current);
          }
@@ -621,16 +620,15 @@ namespace elena_lang
       public:
          pos_t newBookmark()
          {
-            _pendingBookmarks++;
+            Node lastNode = CurrentNode().lastChild();
 
-            return _bookmarks.count() + _pendingBookmarks;
+            _bookmarks.push(lastNode._position);
+
+            return _bookmarks.count();
          }
          void removeBookmark()
          {
-            if (_pendingBookmarks > 0) {
-               _pendingBookmarks--;
-            }
-            else _bookmarks.pop();
+            _bookmarks.pop();
          }
 
          void newNode(Key key, ref_t arg)
@@ -705,7 +703,6 @@ namespace elena_lang
             _tree->clear();
             _current = INVALID_POS;
             _bookmarks.clear();
-            _pendingBookmarks = 0;
          }
 
          Writer(Tree& tree)
@@ -713,14 +710,12 @@ namespace elena_lang
          {
             this->_tree = &tree;
             this->_current = INVALID_POS;
-            this->_pendingBookmarks = 0;
          }
          Writer(Node& node)
             : _bookmarks(INVALID_POS)
          {
             this->_tree = node._tree;
             this->_current = node._position;
-            this->_pendingBookmarks = 0;
          }
       };
 

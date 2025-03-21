@@ -58,6 +58,17 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 //   }
 //}
 
+inline void testNodes(BuildNode node)
+{
+   BuildNode current = node.firstChild();
+   while (current != BuildKey::None) {
+      testNodes(current);
+
+      current = current.nextNode();
+   }
+}
+
+
 #ifdef FULL_OUTOUT_INFO
 
 inline void printTree(PresenterBase* presenter, SyntaxNode node)
@@ -1913,7 +1924,7 @@ bool Compiler::InlineClassScope::markAsPresaved(ObjectInfo object)
 // --- Compiler::StatemachineClassScope ---
 
 Compiler::StatemachineClassScope::StatemachineClassScope(ExprScope* owner, ref_t reference, bool asyncMode)
-   : InlineClassScope(owner, reference), contextSize(0), typeRef(0), resultRef(0), asyncMode(asyncMode)
+   : InlineClassScope(owner, reference), contextSize(0), typeRef(0), resultRef(0), asyncMode(asyncMode), localMappings(-1)
 {
 }
 
@@ -6033,14 +6044,19 @@ int Compiler::resolveArraySize(Scope& scope, SyntaxNode node)
    }
 }
 
-bool Compiler::declareYieldVariable(Scope& scope, ustr_t name, TypeInfo typeInfo)
+void Compiler :: markYieldVariable(Scope& scope, ref_t localOffset)
 {
-   ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+   StatemachineClassScope* smScope = Scope::getScope<StatemachineClassScope>(scope, Scope::ScopeLevel::Statemachine);
 
-   FieldAttributes attrs = { typeInfo };
+   IdentifierString tmpName("#");
+   tmpName.appendHex(localOffset);
 
-   // NOTE : should return false to indicate that it is not a variable
-   return !generateClassField(*classScope, attrs, name, 0, typeInfo, false);
+   FieldAttributes attrs = { };
+   assert(generateClassField(*smScope, attrs, *tmpName, 0, {}, false));
+
+   auto fieldInfo = smScope->mapField(*tmpName, {});
+
+   smScope->localMappings.add(localOffset, fieldInfo.reference);
 }
 
 bool Compiler::declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo, bool ignoreDuplicate)
@@ -6116,11 +6132,13 @@ bool Compiler::declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeI
    else if (size != 0) {
       scope.raiseError(errInvalidOperation, terminal);
    }
-   else if (methodScope && methodScope->isYieldable()) {
-      // NOTE : yieildable method is a special case when the referece variable is declared as a special class field
-      return declareYieldVariable(scope, *identifier, typeInfo);
+   else {
+      variable.reference = codeScope->newLocal();
+      if (methodScope && methodScope->isYieldable()) {
+         // NOTE : yieildable method is a special case when the referece variable is declared as a special class field
+         markYieldVariable(scope, variable.reference);
+      }
    }
-   else variable.reference = codeScope->newLocal();
 
    if (exprScope)
       exprScope->syncStack();
@@ -7889,6 +7907,27 @@ ObjectInfo Compiler :: mapConstructorTarget(MethodScope& scope)
    return { ObjectKind::ConstructorSelf, classSymbol.typeInfo, scope.selfLocal, classSymbol.reference };
 }
 
+void Compiler :: injectLocalLoadingForYieldMethod(BuildTreeWriter& writer, ClassScope* classScope, CodeScope& codeScope)
+{
+   StatemachineClassScope* smScope = Scope::getScope<StatemachineClassScope>(*classScope, Scope::ScopeLevel::Statemachine);
+
+   BuildTree tmp;
+   BuildTreeWriter tmpWriter(tmp);
+   tmpWriter.newNode(BuildKey::Root);
+
+   Expression expression(this, codeScope, tmpWriter);
+   for (auto local_it = smScope->localMappings.start(); !local_it.eof(); ++local_it) {
+      bool dummy = false;
+      expression.compileAssigningOp({ ObjectKind::Local, (ref_t)local_it.key() }, { ObjectKind::Field, (ref_t)*local_it }, dummy);
+   }
+
+   tmpWriter.closeNode();
+
+   BuildTree::injectChildren(writer, tmp.readRoot());
+
+   testNodes(writer.CurrentNode());
+}
+
 void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classScope, MethodScope& scope, CodeScope& codeScope,
    SyntaxNode node, bool newFrame)
 {
@@ -7919,6 +7958,10 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
 
       expression.writeObjectInfo(contextField);
       writer.appendNode(BuildKey::LoadingStackDump);
+
+      // mark the place to inject the local loading
+      writer.newBookmark();
+
       writer.appendNode(BuildKey::YieldDispatch, offset);
    }
    if (scope.isGeneric()) {
@@ -7973,6 +8016,10 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
    }
 
    if (scope.isYieldable()) {
+      // we have to inject the variable loading code here
+      injectLocalLoadingForYieldMethod(writer, classScope, codeScope);
+      writer.removeBookmark();
+
       Expression expression(this, codeScope, writer);
 
       expression.writeObjectInfo({ ObjectKind::Singleton, { scope.moduleScope->branchingInfo.typeRef }, scope.moduleScope->branchingInfo.falseRef });
@@ -9789,8 +9836,7 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
 
    bool withConstructors = false;
    bool withDefaultConstructor = false;
-   bool yieldMethodNotAllowed = true;
-   declareVMT(scope, node, withConstructors, withDefaultConstructor, yieldMethodNotAllowed, true, false);
+   declareVMT(scope, node, withConstructors, withDefaultConstructor, true, true, false);
    if (withConstructors)
       scope.raiseError(errIllegalConstructor, node);
 
@@ -11150,9 +11196,8 @@ void Compiler::Class::declare(SyntaxNode node)
 
    bool withConstructors = false;
    bool withDefConstructor = false;
-   bool yieldMethodNotAllowed = !test(declaredFlags, elStateless);
    compiler->declareVMT(scope, node, withConstructors, withDefConstructor,
-      yieldMethodNotAllowed, false, test(declaredFlags, elTemplatebased));
+      false, false, test(declaredFlags, elTemplatebased));
 
    // NOTE : generateClassDeclaration should be called for the proper class before a class class one
    //        due to dynamic array implementation (auto-generated default constructor should be removed)
@@ -12304,6 +12349,12 @@ void Compiler::Expression :: compileYieldOperation(SyntaxNode node)
 
    writeObjectInfo(contextField, node);
    writer->appendNode(BuildKey::SavingStackDump);
+
+   // saving local variables
+   for (auto local_it = smScope->localMappings.start(); !local_it.eof(); ++local_it) {
+      bool dummy = false;
+      compileAssigningOp({ ObjectKind::Field, (ref_t)*local_it }, { ObjectKind::Local, (ref_t)local_it.key() }, dummy);
+   }
 
    // returning true
    writeObjectInfo({ ObjectKind::Singleton, { scope.moduleScope->branchingInfo.typeRef }, scope.moduleScope->branchingInfo.trueRef });

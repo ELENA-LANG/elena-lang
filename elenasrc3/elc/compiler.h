@@ -1107,10 +1107,14 @@ namespace elena_lang
 
       struct StatemachineClassScope : InlineClassScope
       {
+         typedef Map<int, int> LocalFieldMapping;
+
          pos_t contextSize;
          ref_t typeRef;
          ref_t resultRef;
          bool  asyncMode;
+
+         LocalFieldMapping localMappings;
 
          ObjectInfo mapContextField()
          {
@@ -1648,6 +1652,8 @@ namespace elena_lang
       bool importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
       void importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNode);
 
+      void injectLocalLoadingForYieldMethod(BuildTreeWriter& writer, ClassScope* classScope, CodeScope& codeScope);
+
       void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool declarationMode);
 
       static int allocateLocalAddress(Scope& scope, int size, bool binaryArray);
@@ -1719,7 +1725,8 @@ namespace elena_lang
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
       bool declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo, bool ignoreDuplicate);
-      bool declareYieldVariable(Scope& scope, ustr_t name, TypeInfo typeInfo);
+
+      void markYieldVariable(Scope& scope, ref_t localOffset);
 
       void declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNode node);
 

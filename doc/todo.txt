@@ -33,6 +33,7 @@ In development:
       - unit tests : bt optimization 
       - api : add descriptions 
       - github actions : `set-output` command is deprecated 
+      - release build - include linux for x86 / x86-64
   port:
       - chat sample
       - x86-64 : httpget, threading samples
@@ -45,11 +46,15 @@ In development:
   prom: bi-posting weekly
   --------------------------------------
   - #34 : http client (http get)
+  - publish nightly build
   - pi samples for ppc64
   - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
   - vs #2 : elena.tmLanguage.json  
   - #34 : https get (https://github.com/HISONA/https_client)
   --------------------------------------  
+  * redesign iteration method local variables support: store them as normal one and copy to and from on start / end (similar to stack-allocated one)
+  *  using inside using in async / yield method
+
   * compile with using
 
   * fix string request := $"GET / HTTP/1.1\r\nHost:{uri.Host}"$1310"Connection:close"$1310"{_headers.Value}"$13$10;
