@@ -3455,6 +3455,8 @@ bool Compiler::generateClassField(ClassScope& scope, FieldAttributes& attrs, ust
 
          offset = scope.info.fields.count();
          scope.info.fields.add(name, { offset, typeInfo, readOnly, privateOne });
+
+         printf("new field %s\n", name.str());
       }
    }
 
@@ -6035,12 +6037,12 @@ int Compiler::resolveArraySize(Scope& scope, SyntaxNode node)
    Interpreter interpreter(scope.moduleScope, _logic);
    ObjectInfo retVal = evalExpression(interpreter, scope, node);
    switch (retVal.kind) {
-   case ObjectKind::IntLiteral:
-      return retVal.extra;
-      break;
-   default:
-      scope.raiseError(errInvalidOperation, node);
-      return 0;
+      case ObjectKind::IntLiteral:
+         return retVal.extra;
+         break;
+      default:
+         scope.raiseError(errInvalidOperation, node);
+         return 0;
    }
 }
 
@@ -6054,7 +6056,7 @@ void Compiler :: markYieldVariable(Scope& scope, ref_t localOffset)
    FieldAttributes attrs = { };
    assert(generateClassField(*smScope, attrs, *tmpName, 0, {}, false));
 
-   auto fieldInfo = smScope->mapField(*tmpName, {});
+   auto fieldInfo = smScope->mapField(*tmpName, ExpressionAttribute::None);
 
    printf("%s %x - %x\n", tmpName.str(), localOffset, fieldInfo.reference);
 
