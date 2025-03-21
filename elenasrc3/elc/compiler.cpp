@@ -58,16 +58,15 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 //   }
 //}
 
-inline void testNodes(BuildNode node)
-{
-   BuildNode current = node.firstChild();
-   while (current != BuildKey::None) {
-      testNodes(current);
-
-      current = current.nextNode();
-   }
-}
-
+//inline void testNodes(BuildNode node)
+//{
+//   BuildNode current = node.firstChild();
+//   while (current != BuildKey::None) {
+//      testNodes(current);
+//
+//      current = current.nextNode();
+//   }
+//}
 
 #ifdef FULL_OUTOUT_INFO
 
@@ -7925,8 +7924,6 @@ void Compiler :: injectLocalLoadingForYieldMethod(BuildTreeWriter& writer, Class
    tmpWriter.closeNode();
 
    BuildTree::injectChildren(writer, tmp.readRoot());
-
-   testNodes(writer.CurrentNode());
 }
 
 void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classScope, MethodScope& scope, CodeScope& codeScope,
@@ -7955,13 +7952,13 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
       // reserve the place for the next step
       int offset = allocateLocalAddress(codeScope, sizeof(addr_t), false);
 
+      // mark the place to inject the local loading
+      writer.newBookmark();
+
       ObjectInfo contextField = smScope->mapContextField();
 
       expression.writeObjectInfo(contextField);
       writer.appendNode(BuildKey::LoadingStackDump);
-
-      // mark the place to inject the local loading
-      writer.newBookmark();
 
       writer.appendNode(BuildKey::YieldDispatch, offset);
    }
