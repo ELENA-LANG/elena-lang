@@ -3353,8 +3353,6 @@ inline bool isInterface(int flagMask)
 bool Compiler::generateClassField(ClassScope& scope, FieldAttributes& attrs, ustr_t name, int sizeHint,
    TypeInfo typeInfo, bool singleField)
 {
-   printf("generateClassField %s\n", name.str());
-
    int offset = 0;
    bool  embeddable = attrs.isEmbeddable;
    bool  readOnly = attrs.isReadonly;
@@ -3364,8 +3362,6 @@ bool Compiler::generateClassField(ClassScope& scope, FieldAttributes& attrs, ust
    // a role / interface cannot have fields
    if (test(flags, elStateless) || isInterface(flags & elDebugMask))
       return false;
-
-   printf("generateClassField.2\n");
 
    SizeInfo sizeInfo = {};
    if (typeInfo.typeRef == V_AUTO) {
@@ -3426,8 +3422,6 @@ bool Compiler::generateClassField(ClassScope& scope, FieldAttributes& attrs, ust
       else return false;
    }
    else {
-      printf("generateClassField.3\n");
-
       if (scope.info.fields.exist(name)) {
          return false;
       }
@@ -3453,8 +3447,6 @@ bool Compiler::generateClassField(ClassScope& scope, FieldAttributes& attrs, ust
             _logic->tweakPrimitiveClassFlags(scope.info, typeInfo.typeRef);
       }
       else {
-         printf("generateClassField.4\n");
-
          // primitive / virtual classes cannot be declared
          if (sizeInfo.size != 0 && typeInfo.isPrimitive())
             return false;
@@ -3463,8 +3455,6 @@ bool Compiler::generateClassField(ClassScope& scope, FieldAttributes& attrs, ust
 
          offset = scope.info.fields.count();
          scope.info.fields.add(name, { offset, typeInfo, readOnly, privateOne });
-
-         printf("new field %s\n", name.str());
       }
    }
 
@@ -6062,11 +6052,10 @@ void Compiler :: markYieldVariable(Scope& scope, ref_t localOffset)
    tmpName.appendHex(localOffset);
 
    FieldAttributes attrs = { };
-   assert(generateClassField(*smScope, attrs, *tmpName, 0, {}, false));
+   bool valid = generateClassField(*smScope, attrs, *tmpName, 0, {}, false);
+   assert(valid);
 
    auto fieldInfo = smScope->mapField(*tmpName, ExpressionAttribute::None);
-
-   printf("%s %x - %x\n", tmpName.str(), localOffset, fieldInfo.reference);
 
    smScope->localMappings.add(localOffset, fieldInfo.reference);
 }
@@ -13634,8 +13623,6 @@ void Compiler::Expression :: compileNestedInitializing(InlineClassScope& classSc
 
       list.add(arg);
    }
-
-   printf("compileNestedInitializing %x \n", classScope.info.fields.count());
 
    writer->newNode(BuildKey::CreatingClass, classScope.info.fields.count());
    writer->appendNode(BuildKey::Type, nestedRef);
