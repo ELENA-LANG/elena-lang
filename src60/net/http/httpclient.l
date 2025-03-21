@@ -42,6 +42,7 @@ public class HttpClient
 
    close()
    {
-      _socket.close()
+      if:not:nil(_socket)
+         _socket.close()
    }
 }
