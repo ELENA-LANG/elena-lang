@@ -52,9 +52,6 @@ In development:
   - vs #2 : elena.tmLanguage.json  
   - #34 : https get (https://github.com/HISONA/https_client)
   --------------------------------------  
-  * redesign iteration method local variables support: store them as normal one and copy to and from on start / end (similar to stack-allocated one)
-  *  using inside using in async / yield method
-
   * compile with using
 
   * fix string request := $"GET / HTTP/1.1\r\nHost:{uri.Host}"$1310"Connection:close"$1310"{_headers.Value}"$13$10;
