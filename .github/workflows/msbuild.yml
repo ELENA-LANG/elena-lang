@@ -65,7 +65,7 @@ jobs:
       shell: cmd
       run: build\rebuild_lib60_${{matrix.platform}}.bat
 
-    - name: Prepare Artifact
+    - name: Prepare Release
       shell: cmd
       run: build\create_package_${{matrix.platform}}.bat 
         
@@ -79,4 +79,3 @@ jobs:
         prerelease: true
         files: |
           ./build/*.zip
-

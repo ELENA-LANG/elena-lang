@@ -84,4 +84,3 @@ jobs:
         prerelease: true
         files: |
           ./build/*.zip
-          

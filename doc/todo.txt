@@ -48,19 +48,20 @@ In development:
   - vs #2 : elena.tmLanguage.json  
   - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
   - pi samples for ppc64
-  - #34 : https get (https://github.com/HISONA/https_client)  
+  - #34
   * httpclient - increase the buffer size
+  * https get (https://github.com/HISONA/https_client)  
   * test http client:
       // struct http_response *hresp = http_get("http://www.google.com", "User-agent:MyUserAgent\r\n");
   * httpclient return content without initial size field, trailing 0
   * test GC several times
   * fix string request := $"GET / HTTP/1.1\r\nHost:{uri.Host}"$1310"Connection:close"$1310"{_headers.Value}"$13$10;
+  * response : if response header contains - Transfer-Encoding: chunked - compact chunks into single body
   * yield inside try operator is not allowed
   * propagate an exception inside the current try / catch if available
   * if await operator is inside try/catch block - close it before returning and open again after return
-  * redesign try catch statement - support try_exclude / try_include (to be used for async method)
   --------------------------------------  
-  - publish nightly build
+  * redesign try catch statement - support try_exclude / try_include (to be used for async method)
   --------------------------------------
 
   === Iteration 39 ===

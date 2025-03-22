@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code compiler class implementation.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -3071,22 +3071,22 @@ void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& ta
    tape.releaseLabel();
 }
 
-void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
-   ReferenceMap& paths, bool tapeOptMode)
+void ByteCodeWriter :: openTryBlock(CommandTape& tape, TryContextInfo& tryInfo)
 {
-   int retLabel = tape.newLabel();                 // declare ret-end-label
+   tryInfo.retLabel = tape.newLabel();                 // declare ret-end-label
    tape.newLabel();                                // declare end-label
    tape.newLabel();                                // declare alternative-label
 
-   tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
+   tape.write(ByteCode::XHookDPR, tryInfo.ptr, PseudoArg::CurrentLabel, mskLabelRef);
 
-   retLabel = tape.exchangeFirstsLabel(retLabel);
+   tryInfo.retLabel = tape.exchangeFirstsLabel(tryInfo.retLabel);
+}
 
-   BuildNode tryNode = node.findChild(BuildKey::Tape);
-   BuildNode catchNode = tryNode.nextNode(BuildKey::Tape);
-   BuildNode finallyNode = catchNode.nextNode(BuildKey::Tape);
-   BuildNode index = node.findChild(BuildKey::Index);
-   saveTape(tape, tryNode, tapeScope, paths, tapeOptMode, false);
+// NOTE : closing is true for the actual try-catch end, and false - for try_exclude
+void ByteCodeWriter :: closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo, bool closing, 
+   TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
+{
+   BuildNode finallyNode = tryInfo.catchNode.nextNode(BuildKey::Tape);
 
    // unhook
    tape.write(ByteCode::Unhook);
@@ -3096,19 +3096,19 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
 
    // === exit redirect block ===
    // restore the original ret label and return the overridden one
-   retLabel = tape.exchangeFirstsLabel(retLabel);
+   tryInfo.retLabel = tape.exchangeFirstsLabel(tryInfo.retLabel);
 
    // ret-end-label:
-   tape.setPredefinedLabel(retLabel);
+   tape.setPredefinedLabel(tryInfo.retLabel);
 
    // unhook
    tape.write(ByteCode::Unhook);
 
    // finally-block
    if (finallyNode != BuildKey::None) {
-      tape.write(ByteCode::StoreFI, index.arg.value);
+      tape.write(ByteCode::StoreFI, tryInfo.index);
       saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
-      tape.write(ByteCode::PeekFI, index.arg.value);
+      tape.write(ByteCode::PeekFI, tryInfo.index);
    }
 
    tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
@@ -3133,18 +3133,39 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
    tape.setLabel();
    tape.write(ByteCode::Unhook);
 
-   saveTape(tape, catchNode, tapeScope, paths, tapeOptMode, false);
+   saveTape(tape, tryInfo.catchNode, tapeScope, paths, tapeOptMode, false);
 
    // eos:
    tape.setLabel();
    tape.releaseLabel(); // release ret-end-label
 
    // finally-block
-   if (finallyNode != BuildKey::None) {
-      tape.write(ByteCode::StoreFI, index.arg.value);
+   if (closing && finallyNode != BuildKey::None) {
+      tape.write(ByteCode::StoreFI, tryInfo.index);
       saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
-      tape.write(ByteCode::PeekFI, index.arg.value);
+      tape.write(ByteCode::PeekFI, tryInfo.index);
    }
+}
+
+void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
+   ReferenceMap& paths, bool tapeOptMode)
+{
+   BuildNode tryNode = node.findChild(BuildKey::Tape);
+
+   TryContextInfo blockInfo = {};
+   blockInfo.catchNode = tryNode.nextNode(BuildKey::Tape);   
+   blockInfo.index = node.findChild(BuildKey::Index).arg.value;
+   blockInfo.ptr = node.arg.value;
+
+   openTryBlock(tape, blockInfo);
+
+   tapeScope.tryContexts.push(blockInfo);
+
+   saveTape(tape, tryNode, tapeScope, paths, tapeOptMode, false);
+
+   blockInfo = tapeScope.tryContexts.pop();
+
+   closeTryBlock(tape, blockInfo, true, tapeScope, paths, tapeOptMode);
 }
 
 void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
