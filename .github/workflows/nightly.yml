@@ -74,7 +74,7 @@ jobs:
         name: elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}
         path: build\${{matrix.platform}}
 
-    - run: Compress-Archive -Path .\build\${{matrix.platform}}\* -Destination .\build\${{matrix.platform}}\elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}.zip
+    - run: Compress-Archive .\build\${{matrix.platform}}\* .\build\elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}.zip
           
     - name: Upload Release
       uses: softprops/action-gh-release@v2
@@ -83,5 +83,5 @@ jobs:
         draft: false
         prerelease: true
         files: |
-          .\build\${{matrix.platform}}\elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}.zip
+          .\build\elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}.zip
           
