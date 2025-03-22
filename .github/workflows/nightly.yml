@@ -85,5 +85,5 @@ jobs:
         draft: false
         prerelease: true
         files: |
-          .\build\elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}.zip
+          ./build/*.zip
           
