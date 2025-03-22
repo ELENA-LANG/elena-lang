@@ -75,6 +75,8 @@ jobs:
         path: build\${{matrix.platform}}
 
     - run: Compress-Archive .\build\${{matrix.platform}}\* .\build\elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}.zip
+
+    - run: ls .\build
           
     - name: Upload Release
       uses: softprops/action-gh-release@v2
