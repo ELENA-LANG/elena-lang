@@ -21,8 +21,7 @@ env:
 
   BUILD_TAG: 6.6.3
 
-permissions:
-  contents: read
+permissions: write-all
 
 jobs:
   build:
