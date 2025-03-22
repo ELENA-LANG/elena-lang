@@ -74,3 +74,19 @@ jobs:
       with:
         name: elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}
         path: build\${{matrix.platform}}
+
+    - name: Create zip
+      uses: ihiroky/archive-action@v1
+      with:
+        root_dir: build\${{matrix.platform}}
+        file_path: elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}.zip
+          
+    - name: Upload Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: nightly
+        draft: false
+        prerelease: true
+        files: |
+          build\${{matrix.platform}}\elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}.zip
+          
