@@ -56,10 +56,10 @@ void Splitter :: registerSplitterWindow(HINSTANCE hInstance, wstr_t className, b
       CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS);
 }
 
-HWND Splitter :: create(HINSTANCE instance, wstr_t className, ControlBase* owner)
+HWND Splitter :: create(HINSTANCE instance, wstr_t className, ControlBase* owner, int dwExStyles)
 {
    _handle = ::CreateWindowEx(
-      0, className, _title,
+      dwExStyles, className, _title,
       WS_CHILD,
       CW_USEDEFAULT, 0, 4, 4, owner->handle(), nullptr, instance, (LPVOID)this);
 

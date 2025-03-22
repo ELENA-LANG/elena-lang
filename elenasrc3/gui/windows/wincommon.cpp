@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Common Body File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wincommon.h"
@@ -30,9 +30,9 @@ DateTime DateTime::getFileTime(const wchar_t* path)
 
 // --- ControlBase ---
 
-HWND ControlBase :: create(HINSTANCE instance, wstr_t className, ControlBase* owner)
+HWND ControlBase :: create(HINSTANCE instance, wstr_t className, ControlBase* owner, int dwExStyles)
 {
-   _handle = ::CreateWindowW(className.str(), _title.str(), WS_OVERLAPPEDWINDOW,
+   _handle = ::CreateWindowExW(dwExStyles, className.str(), _title.str(), WS_OVERLAPPEDWINDOW,
       _rect.topLeft.x, _rect.topLeft.y, _rect.width(), _rect.height(), owner ? owner->handle() : nullptr, nullptr, instance, this);
 
    return _handle;

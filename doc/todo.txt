@@ -45,21 +45,23 @@ In development:
       - #658 : connect with ldbg from VSCode        
   prom: bi-posting weekly
   --------------------------------------
-  - #34 : http client (http get)
+  - vs #2 : elena.tmLanguage.json  
+  - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
   - publish nightly build
   - pi samples for ppc64
-  - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
-  - vs #2 : elena.tmLanguage.json  
-  - #34 : https get (https://github.com/HISONA/https_client)
-  --------------------------------------  
-  * compile with using
-
-  * fix string request := $"GET / HTTP/1.1\r\nHost:{uri.Host}"$1310"Connection:close"$1310"{_headers.Value}"$13$10;
-  * test GC several times
-  * httpclient return content without initial size field, trailing 0
+  - #34 : https get (https://github.com/HISONA/https_client)  
+  * httpclient - increase the buffer size
   * test http client:
       // struct http_response *hresp = http_get("http://www.google.com", "User-agent:MyUserAgent\r\n");
-  * httpclient - increase the buffer size
+  * httpclient return content without initial size field, trailing 0
+  * test GC several times
+  * fix string request := $"GET / HTTP/1.1\r\nHost:{uri.Host}"$1310"Connection:close"$1310"{_headers.Value}"$13$10;
+  * yield inside try operator is not allowed
+  * propagate an exception inside the current try / catch if available
+  * if await operator is inside try/catch block - close it before returning and open again after return
+  * redesign try catch statement - make them flat
+  --------------------------------------  
+  - Dragging files into the IDE to open doesn't work #721
   --------------------------------------
 
   === Iteration 39 ===

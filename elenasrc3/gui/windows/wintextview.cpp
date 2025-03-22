@@ -70,10 +70,10 @@ void TextViewWindow :: registerTextViewWindow(HINSTANCE hInstance, wstr_t classN
    WindowBase::registerClass(hInstance, WindowBase::WndProc, className, nullptr, nullptr, nullptr, CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS);
 }
 
-HWND TextViewWindow :: create(HINSTANCE instance, wstr_t className, ControlBase* owner)
+HWND TextViewWindow :: create(HINSTANCE instance, wstr_t className, ControlBase* owner, int dwExStyles)
 {
    _handle = ::CreateWindowEx(
-      WS_EX_CLIENTEDGE, className, _title,
+      dwExStyles | WS_EX_CLIENTEDGE, className, _title,
       WS_CHILD | WS_VSCROLL | WS_HSCROLL | WS_CLIPCHILDREN | WS_EX_RTLREADING,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, owner->handle(), nullptr, instance, (LPVOID)this);
 

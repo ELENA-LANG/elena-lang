@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Window Implementation File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <tchar.h>
@@ -1463,4 +1463,25 @@ void IDEWindow :: onColorSchemeChange()
    _viewFactory->styleControl(this);
 
    refresh();
+}
+
+void IDEWindow :: onDropFiles(HDROP hDrop)
+{
+   TCHAR szName[MAX_PATH];
+
+   int count = DragQueryFile(hDrop, 0xFFFFFFFF, szName, MAX_PATH);
+   for (int i = 0; i < count; i++)
+   {
+      DragQueryFile(hDrop, i, szName, MAX_PATH);
+
+      if(PathUtil::checkExtension(path_t(szName), "l")) {
+         _controller->doOpenFile(_model, path_t(szName));
+      }
+      else if (PathUtil::checkExtension(path_t(szName), "prj")) {
+         _controller->doOpenProject(fileDialog, projectDialog, messageDialog, _model, path_t(szName));
+         break;
+      }
+   }
+
+   DragFinish(hDrop);
 }

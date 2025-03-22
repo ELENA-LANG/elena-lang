@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "factory.h"
@@ -245,7 +245,7 @@ ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* not
          notifier->notify(&event);
       });
 
-   view->create(_instance, szTextView, owner);
+   view->create(_instance, szTextView, owner, 0);
    frame->createControl(_instance, owner);
 
    return { frame, view };
@@ -481,7 +481,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    int editIndex = counter++;
 
    SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance, this);
-   sdi->create(_instance, szSDI, nullptr);
+   sdi->create(_instance, szSDI, nullptr, WS_EX_ACCEPTFILES);
 
    VerticalBox* vb = new VerticalBox(false, 1);
 
