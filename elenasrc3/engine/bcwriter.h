@@ -23,6 +23,8 @@ namespace elena_lang
          bool      catchMode;
          int       index;
          int       retLabel;
+         int       endLabel;
+         int       altLabel;
          ref_t     ptr;
          BuildNode catchNode;
 
@@ -32,7 +34,7 @@ namespace elena_lang
 
          }
          TryContextInfo(bool catchMode)
-            : catchMode(catchMode), index(0), retLabel(0), ptr(0)
+            : catchMode(catchMode), index(0), retLabel(0), endLabel(0), altLabel(0), ptr(0)
          {
 
          }
@@ -114,8 +116,8 @@ namespace elena_lang
 
       void importTree(CommandTape& tape, BuildNode node, Scope& scope);
 
-      void openTryBlock(CommandTape& tape, TryContextInfo& tryInfo);
-      void closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo, bool closing,
+      void openTryBlock(CommandTape& tape, TryContextInfo& tryInfo, bool virtualMode);
+      void closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo, bool virtualMode,
          TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode);
 
       void includeTryBlocks(CommandTape& tape, TapeScope& tapeScope);

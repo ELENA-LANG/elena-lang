@@ -3071,19 +3071,26 @@ void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& ta
    tape.releaseLabel();
 }
 
-void ByteCodeWriter :: openTryBlock(CommandTape& tape, TryContextInfo& tryInfo)
+void ByteCodeWriter :: openTryBlock(CommandTape& tape, TryContextInfo& tryInfo, bool virtualMode)
 {
-   tryInfo.retLabel = tape.newLabel();                 // declare ret-end-label
-   tape.newLabel();                                // declare end-label
-   tape.newLabel();                                // declare alternative-label
+   if (!virtualMode) {
+      tryInfo.retLabel = tape.newLabel();             // declare ret-end-label
+      tryInfo.endLabel = tape.newLabel();             // declare end-label
+      tryInfo.altLabel = tape.newLabel();             // declare alternative-label
+   }
+   else {
+      tryInfo.retLabel = tape.renewLabel(tryInfo.retLabel); // declare ret-end-label
+      tryInfo.endLabel = tape.renewLabel(tryInfo.endLabel); // declare end-label
+      tryInfo.altLabel = tape.renewLabel(tryInfo.altLabel); // declare alternative-label
+   }
 
-   tape.write(ByteCode::XHookDPR, tryInfo.ptr, PseudoArg::CurrentLabel, mskLabelRef);
+   tape.write(ByteCode::XHookDPR, tryInfo.ptr, tryInfo.altLabel, mskLabelRef);
 
    tryInfo.retLabel = tape.exchangeFirstsLabel(tryInfo.retLabel);
 }
 
 // NOTE : closing is true for the actual try-catch end, and false - for try_exclude
-void ByteCodeWriter :: closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo, bool closing, 
+void ByteCodeWriter :: closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo, bool virtualMode,
    TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
 {
    BuildNode finallyNode = tryInfo.catchMode ? tryInfo.catchNode.nextNode(BuildKey::Tape) : tryInfo.catchNode;
@@ -3092,7 +3099,7 @@ void ByteCodeWriter :: closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo,
    tape.write(ByteCode::Unhook);
 
    if (!tryInfo.catchMode) {
-      if (closing && finallyNode != BuildKey::None) {
+      if (virtualMode && finallyNode != BuildKey::None) {
          tape.write(ByteCode::StoreFI, tryInfo.index);
          saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
          tape.write(ByteCode::PeekFI, tryInfo.index);
@@ -3100,7 +3107,7 @@ void ByteCodeWriter :: closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo,
    }
 
    // jump
-   tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
+   tape.write(ByteCode::Jump, tryInfo.endLabel);
 
    // === exit redirect block ===
    // restore the original ret label and return the overridden one
@@ -3123,7 +3130,10 @@ void ByteCodeWriter :: closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo,
    // ===========================
 
    // catchLabel:
-   tape.setLabel();
+   if (virtualMode) {
+      tape.setPredefinedLabel(tryInfo.altLabel);
+   }
+   else tape.setLabel();
 
    // tstflg elMessage
    // jeq labSkip
@@ -3145,8 +3155,13 @@ void ByteCodeWriter :: closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo,
       saveTape(tape, tryInfo.catchNode, tapeScope, paths, tapeOptMode, false);
 
       // eos:
-      tape.setLabel();
-      tape.releaseLabel(); // release ret-end-label
+      if (virtualMode) {
+         tape.setPredefinedLabel(tryInfo.endLabel);
+      }
+      else {
+         tape.setLabel();
+         tape.releaseLabel(); // release ret-end-label
+      }
 
       // finally-block
       if (finallyNode != BuildKey::None) {
@@ -3155,7 +3170,7 @@ void ByteCodeWriter :: closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo,
          tape.write(ByteCode::PeekFI, tryInfo.index);
       }
 
-      if (!closing)
+      if (!virtualMode)
          tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
    }
    else {
@@ -3174,8 +3189,13 @@ void ByteCodeWriter :: closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo,
       tape.write(ByteCode::Throw);
 
       // eos:
-      tape.setLabel();
-      tape.releaseLabel(); // release ret-end-label
+      if (virtualMode) {
+         tape.setPredefinedLabel(tryInfo.endLabel);
+      }
+      else {
+         tape.setLabel();
+         tape.releaseLabel(); // release ret-end-label
+      }
    }
 }
 
@@ -3184,7 +3204,7 @@ void ByteCodeWriter::includeTryBlocks(CommandTape& tape, TapeScope& tapeScope)
    if (tapeScope.tryContexts.count() == 1) {
       auto info = tapeScope.tryContexts.pop();
 
-      openTryBlock(tape, info);
+      openTryBlock(tape, info, true);
 
       tapeScope.tryContexts.push(info);
    }
@@ -3196,7 +3216,7 @@ void ByteCodeWriter::includeTryBlocks(CommandTape& tape, TapeScope& tapeScope)
       while (temp.count() > 0) {
          auto info = temp.pop();
 
-         openTryBlock(tape, info);
+         openTryBlock(tape, info, true);
 
          tapeScope.tryContexts.push(info);
       }
@@ -3238,7 +3258,7 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
    blockInfo.index = node.findChild(BuildKey::Index).arg.value;
    blockInfo.ptr = node.arg.value;
 
-   openTryBlock(tape, blockInfo);
+   openTryBlock(tape, blockInfo, false);
 
    tapeScope.tryContexts.push(blockInfo);
 
@@ -3259,9 +3279,13 @@ void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope&
    blockInfo.index = node.findChild(BuildKey::Index).arg.value;
    blockInfo.ptr = node.arg.value;
 
-   openTryBlock(tape, blockInfo);
+   openTryBlock(tape, blockInfo, false);
+
+   tapeScope.tryContexts.push(blockInfo);
 
    saveTape(tape, tryNode, tapeScope, paths, tapeOptMode, false);
+
+   blockInfo = tapeScope.tryContexts.pop();
 
    closeTryBlock(tape, blockInfo, true, tapeScope, paths, tapeOptMode);
 }

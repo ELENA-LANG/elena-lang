@@ -135,6 +135,13 @@ namespace elena_lang
       Illegal = 2
    };
 
+   enum class CodeFlowMode
+   {
+      Normal   = 0,
+      TryCatch = 1,
+      Alt      = 2
+   };
+
    struct ObjectInfo
    {
       ObjectKind kind;
@@ -463,6 +470,14 @@ namespace elena_lang
          {
             if (parent) {
                return parent->resolveAutoOutput(typeInfo);
+            }
+            else return false;
+         }
+
+         virtual bool checkFlowMode(CodeFlowMode mode)
+         {
+            if (parent) {
+               return parent->checkFlowMode(mode);
             }
             else return false;
          }
@@ -860,6 +875,11 @@ namespace elena_lang
             else return Scope::resolveAutoOutput(typeInfo);
          }
 
+         bool checkFlowMode(CodeFlowMode) override
+         {
+            return false;
+         }
+
          MethodScope(ClassScope* classScope);
       };
 
@@ -875,6 +895,8 @@ namespace elena_lang
          pos_t    allocated2, reserved2;       // defines unmanaged frame size
 
          bool     withRetStatement;
+
+         CodeFlowMode flowMode;
 
          Scope* getScope(ScopeLevel level) override
          {
@@ -971,6 +993,14 @@ namespace elena_lang
          void mapNewLocal(ustr_t local, int level, TypeInfo typeInfo, int size, bool unassigned)
          {
             locals.add(local, Parameter(level, typeInfo, size, unassigned));
+         }
+
+         bool checkFlowMode(CodeFlowMode mode) override
+         {
+            if (flowMode == mode) {
+               return true;
+            }
+            else return Scope::checkFlowMode(mode);
          }
 
          void syncStack(MethodScope* methodScope);
@@ -1103,6 +1133,11 @@ namespace elena_lang
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
 
          bool markAsPresaved(ObjectInfo object);
+
+         bool checkFlowMode(CodeFlowMode) override
+         {
+            return false;
+         }
 
          InlineClassScope(ExprScope* owner, ref_t reference);
       };

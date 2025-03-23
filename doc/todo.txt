@@ -16,6 +16,8 @@ In development:
       - #708 : compile the project (elc, og, sg, asm, ecv), create Linker
       - implement ExtensionMessage.equal
       - raise an error if an async extension is declared (until the feature is not implemented)
+      - alt operation inside async operation is not allowed
+      - yield inside try operator is not allowed
   ide:
       - #184 : linux - select tab, save, close      
       - ide : windows
@@ -57,11 +59,8 @@ In development:
   * test GC several times
   * fix string request := $"GET / HTTP/1.1\r\nHost:{uri.Host}"$1310"Connection:close"$1310"{_headers.Value}"$13$10;
   * response : if response header contains - Transfer-Encoding: chunked - compact chunks into single body
-  * yield inside try operator is not allowed
-  * propagate an exception inside the current try / catch if available
-  * if await operator is inside try/catch block - close it before returning and open again after return
   --------------------------------------  
-  * add try-finally test
+  * if await operator is inside try/catch block - close it before returning and open again after return
   --------------------------------------
 
   === Iteration 39 ===

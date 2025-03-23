@@ -3,7 +3,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                                (C)2021-2024, by Aleksey Rakov
+//                                                (C)2021-2025, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #include "bytecode.h"
@@ -676,6 +676,11 @@ void CommandTape :: write(ByteCode code, arg_t arg1, PseudoArg arg2)
 void CommandTape::write(ByteCode code, arg_t arg1, PseudoArg arg2, ref_t mask)
 {
    write(code, arg1, resolvePseudoArg(arg2) | mask);
+}
+
+void CommandTape :: write(ByteCode code, arg_t arg1, int arg2, ref_t mask)
+{
+   write(code, arg1, arg2 | mask);
 }
 
 void CommandTape :: write(ByteCode code, arg_t arg1, arg_t arg2)

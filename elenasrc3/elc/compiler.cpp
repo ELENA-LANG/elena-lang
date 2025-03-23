@@ -1516,7 +1516,7 @@ void Compiler::MethodScope::markAsAssigned(ObjectInfo object)
 // --- Compiler::CodeScope ---
 
 Compiler::CodeScope::CodeScope(MethodScope* parent)
-   : Scope(parent), locals({}), localNodes({})
+   : Scope(parent), locals({}), localNodes({}), flowMode(CodeFlowMode::Normal)
 {
    allocated1 = reserved1 = 0;
    allocated2 = reserved2 = 0;
@@ -1524,7 +1524,7 @@ Compiler::CodeScope::CodeScope(MethodScope* parent)
 }
 
 Compiler::CodeScope::CodeScope(CodeScope* parent)
-   : Scope(parent), locals({}), localNodes({})
+   : Scope(parent), locals({}), localNodes({}), flowMode(CodeFlowMode::Normal)
 {
    reserved1 = allocated1 = parent->allocated1;
    reserved2 = allocated2 = parent->allocated2;
@@ -12338,6 +12338,8 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t 
    writeObjectInfo(contextField, node);
    writer->appendNode(BuildKey::SavingStackDump);
 
+   writer->appendNode(BuildKey::ExcludeTry); // exclide the current try blocks before exiting an iteration method
+
    // returning true
    writeObjectInfo({ ObjectKind::Singleton, { scope.moduleScope->branchingInfo.typeRef }, scope.moduleScope->branchingInfo.trueRef });
 
@@ -12345,6 +12347,8 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t 
 
    writer->closeNode();
    writer->closeNode();
+
+   writer->appendNode(BuildKey::IncludeTry); // include the current try blocks again
 
    if (valueExpected) {
       // to ingnore the compatibility errors, replace Task with Task<T> type, if applicable
@@ -12750,7 +12754,7 @@ ObjectInfo Compiler::Expression::compileCatchOperation(SyntaxNode node)
       writer->appendNode(BuildKey::Index, scope.newTempLocal());
 
    writer->newNode(BuildKey::Tape);
-   compile(opNode, 0, EAttr::None, nullptr);
+   compile(opNode, 0, EAttr::TryMode, nullptr);
    writer->closeNode();
 
    writer->newNode(BuildKey::Tape);
@@ -12794,7 +12798,7 @@ ObjectInfo Compiler::Expression::compileFinalOperation(SyntaxNode node)
    writer->appendNode(BuildKey::Index, index1);
 
    writer->newNode(BuildKey::Tape);
-   compile(opNode, 0, EAttr::None, nullptr);
+   compile(opNode, 0, EAttr::TryMode, nullptr);
    writer->closeNode();
 
    scope.syncStack();
@@ -12825,35 +12829,35 @@ ObjectInfo Compiler::Expression::compileAltOperation(SyntaxNode node)
    ObjectInfo target = {};
    SyntaxNode current = node.firstChild();
    switch (current.key) {
-   case SyntaxKey::MessageOperation:
-   case SyntaxKey::PropertyOperation:
-   {
-      SyntaxNode objNode = current.firstChild();
+      case SyntaxKey::MessageOperation:
+      case SyntaxKey::PropertyOperation:
+      {
+         SyntaxNode objNode = current.firstChild();
 
-      target = compileObject(objNode, EAttr::Parameter, nullptr);
+         target = compileObject(objNode, EAttr::Parameter, nullptr);
 
-      writer->newNode(BuildKey::AltOp, ehLocal.argument);
+         writer->newNode(BuildKey::AltOp, ehLocal.argument);
 
-      writer->newNode(BuildKey::Tape);
-      compileMessageOperationR(target, objNode.nextNode(), current == SyntaxKey::PropertyOperation);
-      writer->closeNode();
-      break;
-   }
-   case SyntaxKey::CodeBlock:
-   case SyntaxKey::Object:
-   {
-      writer->newNode(BuildKey::AltOp, ehLocal.argument);
+         writer->newNode(BuildKey::Tape);
+         compileMessageOperationR(target, objNode.nextNode(), current == SyntaxKey::PropertyOperation);
+         writer->closeNode();
+         break;
+      }
+      case SyntaxKey::CodeBlock:
+      case SyntaxKey::Object:
+      {
+         writer->newNode(BuildKey::AltOp, ehLocal.argument);
 
-      writer->newNode(BuildKey::Tape);
-      compile(current, 0, EAttr::Parameter, nullptr);
-      writer->closeNode();
+         writer->newNode(BuildKey::Tape);
+         compile(current, 0, EAttr::Parameter, nullptr);
+         writer->closeNode();
 
-      target = { ObjectKind::Nil };
-      break;
-   }
-   default:
-      scope.raiseError(errInvalidOperation, node);
-      break;
+         target = { ObjectKind::Nil };
+         break;
+      }
+      default:
+         scope.raiseError(errInvalidOperation, node);
+         break;
    }
 
    writer->newNode(BuildKey::Tape);
@@ -13019,17 +13023,38 @@ ObjectInfo Compiler::Expression::compileClosure(SyntaxNode node, ref_t targetRef
    return compileNested(helper.scope, mode, updatedOuterArgs);
 }
 
+inline CodeFlowMode defineTryMode(SyntaxNode node)
+{
+   SyntaxNode parent = node.parentNode();
+   while (parent != SyntaxKey::None) {
+      if (parent.key == SyntaxKey::CatchOperation || parent.key == SyntaxKey::FinalOperation) {
+         return CodeFlowMode::TryCatch;
+      }
+      else if (parent.key == SyntaxKey::AltOperation) {
+         return CodeFlowMode::TryCatch;
+      }
+      parent = parent.parentNode();
+   }
+
+   return CodeFlowMode::Normal;
+}
+
 ObjectInfo Compiler::Expression::compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope)
 {
    bool retValExpected = EAttrs::testAndExclude(mode, EAttr::RetValExpected);
    bool withoutDebugInfo = EAttrs::testAndExclude(mode, EAttr::NoDebugInfo);
+   bool tryMode = EAttrs::testAndExclude(mode, EAttr::TryMode);
 
    scope.syncStack();
 
    CodeScope* parentCodeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
    ObjectInfo retVal = {};
-   if (!withoutNewScope) {
+   if (!withoutNewScope || tryMode) {
       CodeScope codeScope(parentCodeScope);
+      if (tryMode) {
+         codeScope.flowMode = defineTryMode(node);
+      }
+
       retVal = compiler->compileCode(*writer, codeScope, node, retValExpected, withoutDebugInfo);
 
       codeScope.syncStack(parentCodeScope);

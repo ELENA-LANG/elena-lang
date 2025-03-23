@@ -306,6 +306,20 @@ namespace elena_lang
          return labelSeed;
       }
 
+      int renewLabel(int oldLabel)
+      {
+         labelSeed++;
+
+         for (auto it = labels.start(); !it.eof(); ++it) {
+            if (*it == oldLabel) {
+               *it = labelSeed;
+               break;
+            }
+         }
+
+         return labelSeed;
+      }
+
       void setLabel(bool persist = false)
       {
          if (persist) {
@@ -341,6 +355,7 @@ namespace elena_lang
       void write(ByteCode code, PseudoArg arg);
       void write(ByteCode code, arg_t arg1, PseudoArg arg2);
       void write(ByteCode code, arg_t arg1, PseudoArg arg2, ref_t mask);
+      void write(ByteCode code, arg_t arg1, int arg2, ref_t mask);
 
       void import(ModuleBase* sourceModule, MemoryBase* source, bool withHeader, ModuleBase * targetModule);
 
