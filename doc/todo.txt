@@ -61,7 +61,7 @@ In development:
   * propagate an exception inside the current try / catch if available
   * if await operator is inside try/catch block - close it before returning and open again after return
   --------------------------------------  
-  * redesign try catch statement - support try_exclude / try_include (to be used for async method)
+  * add try-finally test
   --------------------------------------
 
   === Iteration 39 ===

@@ -190,6 +190,8 @@ namespace elena_lang
       YieldDispatch        = 0x00A4,
       TernaryOp            = 0x00A5,
       NilRefBranchOp       = 0x00A6,
+      ExcludeTry           = 0x00A7,
+      IncludeTry           = 0x00A8,
 
       VariableInfo         = 0x00B0,
       Variable             = 0x00B1,

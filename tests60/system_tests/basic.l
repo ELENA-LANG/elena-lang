@@ -1147,6 +1147,43 @@ public exceptionTest() : testCase()
     console.write(".")
 }
 
+// -- tryFinallyTest ---
+
+public trzFinallyTest() : testCase()
+{
+   var passed := false;
+   var passed2 := false;
+   Assert.ifFailed(
+   {
+      var o := new Object();
+      try
+      {
+         o.fail()
+      }
+      finally
+      {
+         passed := true
+      }
+   });
+   Assert.ifTrue(passed);    
+   console.write(".");
+
+   Assert.ifNotFailed(
+   {
+      var o := new Object();
+      try
+      {
+         o.toPrintable()
+      }
+      finally
+      {
+         passed2 := true
+      }
+   });
+   Assert.ifTrue(passed);    
+   console.write(".");
+}
+
 // --- nestedFieldsTest --
 
 public nestedFieldsTest() : testCase()

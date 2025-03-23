@@ -20,13 +20,19 @@ namespace elena_lang
    public:
       struct TryContextInfo
       {
+         bool      catchMode;
          int       index;
          int       retLabel;
          ref_t     ptr;
          BuildNode catchNode;
 
          TryContextInfo()
-            : index(0), retLabel(0), ptr(0)
+            : TryContextInfo(false)
+         {
+
+         }
+         TryContextInfo(bool catchMode)
+            : catchMode(catchMode), index(0), retLabel(0), ptr(0)
          {
 
          }
@@ -110,6 +116,10 @@ namespace elena_lang
 
       void openTryBlock(CommandTape& tape, TryContextInfo& tryInfo);
       void closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo, bool closing,
+         TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode);
+
+      void includeTryBlocks(CommandTape& tape, TapeScope& tapeScope);
+      void excludeTryBlocks(CommandTape& tape,
          TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode);
 
       void saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
