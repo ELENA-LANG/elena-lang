@@ -37,7 +37,7 @@ public program()
    console.readChar()
 }
 */
-
+/*
 public class Tester
 {
    field start;
@@ -62,16 +62,26 @@ public class Tester
       };
    }
 }
-
+*/
 public program()
 {
-   var n := Console.write("enter number of iteration:").readLine().toInt();
+   var o := new Object();
+   try
+   {
+      o.fail()
+         //o.toPrintable()
+   }
+   catch::
+   {
+      function(Exception err)
+      {
+         console.writeLine(err);
 
-   var tester := new Tester();
-   var enum := tester.enumerator();
-   for (int i := 0; i < n; i++) {
-      enum.next();
-
-      Console.printLine("The current is ", *enum)
-   };
+         extern ExitLA(-1);
+      }
+   }
+   finally
+   {
+      console.writeLine("Finally triggered")
+   }
 }

@@ -3113,7 +3113,7 @@ void ByteCodeWriter :: closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo,
    tape.write(ByteCode::Unhook);
 
    // finally-block
-   if (closing && finallyNode != BuildKey::None) {
+   if (finallyNode != BuildKey::None) {
       tape.write(ByteCode::StoreFI, tryInfo.index);
       saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
       tape.write(ByteCode::PeekFI, tryInfo.index);
@@ -3149,15 +3149,18 @@ void ByteCodeWriter :: closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo,
       tape.releaseLabel(); // release ret-end-label
 
       // finally-block
-      if (closing && finallyNode != BuildKey::None) {
+      if (finallyNode != BuildKey::None) {
          tape.write(ByteCode::StoreFI, tryInfo.index);
          saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
          tape.write(ByteCode::PeekFI, tryInfo.index);
       }
+
+      if (!closing)
+         tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
    }
    else {
       // finally-block
-      if (closing && finallyNode != BuildKey::None) {
+      if (finallyNode != BuildKey::None) {
          // store fp:index
          // <finally>
          // peek fp:index

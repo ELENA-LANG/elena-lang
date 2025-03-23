@@ -1061,6 +1061,8 @@ namespace elena_lang
          }
 
          void syncStack();
+         void commitTempStack(int& prevAllocated1, int& prevAllocated2);
+         void freeTempStack(int prevAllocated1, int prevAllocated2);
 
          ExprScope(SourceScope* parent);
          ExprScope(CodeScope* parent);

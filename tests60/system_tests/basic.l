@@ -1149,7 +1149,7 @@ public exceptionTest() : testCase()
 
 // -- tryFinallyTest ---
 
-public trzFinallyTest() : testCase()
+public tryFinallyTest() : testCase()
 {
    var passed := false;
    var passed2 := false;

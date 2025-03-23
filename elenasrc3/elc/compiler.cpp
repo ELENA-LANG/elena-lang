@@ -1731,6 +1731,29 @@ void Compiler::ExprScope::syncStack()
    }
 }
 
+void Compiler::ExprScope :: commitTempStack(int& prevAllocated1, int& prevAllocated2)
+{
+   CodeScope* codeScope = Scope::getScope<CodeScope>(*this, Scope::ScopeLevel::Code);
+   if (codeScope != nullptr) {
+      prevAllocated1 = codeScope->allocated1;
+      prevAllocated2 = codeScope->allocated2;
+
+      if (codeScope->reserved1 > codeScope->allocated1)
+         codeScope->allocated1 = codeScope->reserved1;
+
+      if (codeScope->reserved2 > codeScope->allocated2)
+         codeScope->allocated2 = codeScope->reserved2;
+   }
+}
+
+void Compiler::ExprScope :: freeTempStack(int prevAllocated1, int prevAllocated2)
+{
+   CodeScope* codeScope = Scope::getScope<CodeScope>(*this, Scope::ScopeLevel::Code);
+   if (codeScope != nullptr) {
+      codeScope->allocated1 = prevAllocated1;
+      codeScope->allocated2 = prevAllocated2;
+   }
+}
 // --- Compiler::InlineClassScope ---
 
 Compiler::InlineClassScope::InlineClassScope(ExprScope* owner, ref_t reference)
@@ -12735,13 +12758,20 @@ ObjectInfo Compiler::Expression::compileCatchOperation(SyntaxNode node)
       catchNode.firstChild().firstChild(), false);
    writer->closeNode();
 
+   scope.syncStack();
+
    if (finallyNode != SyntaxKey::None) {
       if (finallyNode.existChild(SyntaxKey::ClosureBlock))
          finallyNode = finallyNode.findChild(SyntaxKey::ClosureBlock);
 
+      int prevAllocated1, prevAllocated2;
+      scope.commitTempStack(prevAllocated1, prevAllocated2); // HOTFIX : to prevent overwritting temporal variables
+
       writer->newNode(BuildKey::Tape);
       compile(finallyNode, 0, EAttr::None, nullptr);
       writer->closeNode();
+
+      scope.freeTempStack(prevAllocated1, prevAllocated2);
    }
 
    writer->closeNode();
@@ -12767,12 +12797,21 @@ ObjectInfo Compiler::Expression::compileFinalOperation(SyntaxNode node)
    compile(opNode, 0, EAttr::None, nullptr);
    writer->closeNode();
 
+   scope.syncStack();
+
+   int prevAllocated1, prevAllocated2;
+   if (finallyNode != SyntaxKey::None)
+      scope.commitTempStack(prevAllocated1, prevAllocated2); // HOTFIX : to prevent overwritting temporal variables
+
    if (finallyNode.existChild(SyntaxKey::ClosureBlock))
       finallyNode = finallyNode.findChild(SyntaxKey::ClosureBlock);
 
    writer->newNode(BuildKey::Tape);
    compile(finallyNode, 0, EAttr::None, nullptr);
    writer->closeNode();
+
+   if (finallyNode != SyntaxKey::None)
+      scope.freeTempStack(prevAllocated1, prevAllocated2);
 
    writer->closeNode();
 
