@@ -76,8 +76,6 @@ public program()
       function(Exception err)
       {
          console.writeLine(err);
-
-         extern ExitLA(-1);
       }
    }
    finally

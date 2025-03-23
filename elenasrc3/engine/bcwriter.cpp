@@ -3229,7 +3229,7 @@ void ByteCodeWriter :: excludeTryBlocks(CommandTape& tape,
    if (tapeScope.tryContexts.count() == 1) {
       auto info = tapeScope.tryContexts.pop();
 
-      closeTryBlock(tape, info, false, tapeScope, paths, tapeOptMode);
+      closeTryBlock(tape, info, true, tapeScope, paths, tapeOptMode);
 
       tapeScope.tryContexts.push(info);
    }
@@ -3238,7 +3238,7 @@ void ByteCodeWriter :: excludeTryBlocks(CommandTape& tape,
       while (temp.count() > 0) {
          auto info = tapeScope.tryContexts.pop();
 
-         closeTryBlock(tape, info, false, tapeScope, paths, tapeOptMode);
+         closeTryBlock(tape, info, true, tapeScope, paths, tapeOptMode);
 
          temp.push(info);
       }
@@ -3266,7 +3266,7 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
 
    blockInfo = tapeScope.tryContexts.pop();
 
-   closeTryBlock(tape, blockInfo, true, tapeScope, paths, tapeOptMode);
+   closeTryBlock(tape, blockInfo, false, tapeScope, paths, tapeOptMode);
 }
 
 void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
@@ -3287,7 +3287,7 @@ void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope&
 
    blockInfo = tapeScope.tryContexts.pop();
 
-   closeTryBlock(tape, blockInfo, true, tapeScope, paths, tapeOptMode);
+   closeTryBlock(tape, blockInfo, false, tapeScope, paths, tapeOptMode);
 }
 
 void ByteCodeWriter :: saveSwitchOption(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
