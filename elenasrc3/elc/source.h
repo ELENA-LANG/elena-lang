@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Source Reader class declaration.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef SOURCE_H
@@ -40,7 +40,7 @@ namespace elena_lang
 
       ustr_t copyToken(char* token, size_t length);
       ustr_t copyQuote(char* token, size_t length, List<char*, freestr>& dynamicStrings);
-      ustr_t copyInterpolQuote(char* token, size_t length, List<char*, freestr>& dynamicStrings);
+      ustr_t copyInterpolQuote(char* token, size_t length, bool charMode, List<char*, freestr>& dynamicStrings);
 
       bool IsOperator(char state)
       {

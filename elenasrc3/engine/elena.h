@@ -859,6 +859,10 @@ namespace elena_lang
                   if (s[i]==0) {
                      mode = 0;
                   }
+                  else if (s[i] == '$') {
+                     mode = 2;
+                     index = i + 1;
+                  }
                   else if (s[i] == '"') {
                      if (s[i + 1] == '"')
                         append(s[i]);

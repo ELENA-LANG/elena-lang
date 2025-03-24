@@ -106,14 +106,14 @@ inline char* copyInterpolQuote(char* dest, const char* src, pos_t start, size_t 
    return dest;
 }
 
-ustr_t SourceReader :: copyInterpolQuote(char* token, size_t length, List<char*, freestr>& dynamicStrings)
+ustr_t SourceReader :: copyInterpolQuote(char* token, size_t length, bool charMode, List<char*, freestr>& dynamicStrings)
 {
    pos_t start = _startPosition;
    if (_line[start] == '$' || _line[start] == '{')
       start++;
 
    size_t tokenLen = _position - start;
-   if (_line[start] != '"')
+   if (_line[start] != '"' || charMode)
       tokenLen++;
 
    if (tokenLen > length) {
@@ -156,11 +156,16 @@ SourceInfo SourceReader :: read(char* line, size_t length, List<char*, freestr>&
       case dfaCharacter:
          info.symbol = copyQuote(line, length, dynamicStrings);
          break;
-      case dfaAltQuote:
       case dfaAltQuote2:
          _startState = dfaStart;
 
-         info.symbol = copyInterpolQuote(line, length, dynamicStrings);
+         info.symbol = copyInterpolQuote(line, length, true, dynamicStrings);
+         info.state = dfaStartInterpol;
+         break;
+      case dfaAltQuote:
+         _startState = dfaStart;
+
+         info.symbol = copyInterpolQuote(line, length, false, dynamicStrings);
          info.state = dfaStartInterpol;
          break;
       case dfaStartInterpol:
@@ -168,7 +173,7 @@ SourceInfo SourceReader :: read(char* line, size_t length, List<char*, freestr>&
          _bracketLevel = 1;
          _startState = dfaStart;
 
-         info.symbol = copyInterpolQuote(line, length, dynamicStrings);
+         info.symbol = copyInterpolQuote(line, length, false, dynamicStrings);
          break;
       default:
          info.symbol = copyToken(line, length);
