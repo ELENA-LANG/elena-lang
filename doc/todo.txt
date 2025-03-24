@@ -58,8 +58,8 @@ In development:
       // struct http_response *hresp = http_get("http://www.google.com", "User-agent:MyUserAgent\r\n");
   * httpclient return content without initial size field, trailing 0
   * response : if response header contains - Transfer-Encoding: chunked - compact chunks into single body
-  * fix string request := $"GET / HTTP/1.1\r\nHost:{uri.Host}"$1310"Connection:close"$1310"{_headers.Value}"$13$10;
   --------------------------------------  
+  * fix string request := $"GET / HTTP/1.1\r\nHost:{uri.Host}"$1310"Connection:close"$1310"{_headers.Value}"$13$10;
   --------------------------------------
 
   === Iteration 39 ===

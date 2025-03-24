@@ -31,7 +31,6 @@ public class HttpClient
       string host := uri.Host;
       string headers := _headers.Value;
       string request := $"GET / HTTP/1.1"$13$10"Host:{host}"$13$10"Connection:close"$13$10"{headers}"$13$10;
-//      string request := "GET / HTTP/1.1" + $13 + $10 + "Host:" + uri.Host + $13 + $10 + "Connection:close" + $13 + $10 + _headers.Value + $13 + $10;
 
       :await stream.writeAsync(request);
 

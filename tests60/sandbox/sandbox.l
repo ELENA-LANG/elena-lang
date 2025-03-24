@@ -64,12 +64,18 @@ public class Tester
 }
 */
 
+singleton X
+{
+   string Host
+      = "www.google.com";
+
+   Headers
+      = "Http:Agent"$13$10;
+}
+
 public program()
 {
-   var a := "www.a.b";
-   var b := "Http:Agent"$13$10;
+   string request := $"GET / HTTP/1.1"$13$10"Host:{X.Host}"$13$10"Connection:close"$13$10"{X.Headers}"$13$10;
 
-   var s:= $"GET / HTTP/1.1"$13$10"Host:{a}"$13$10"Connection:close"$13$10"{b}"$13$10;
-
-   console.writeLine(s);
+   console.writeLine(request);
 }
