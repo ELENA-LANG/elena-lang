@@ -53,39 +53,39 @@ namespace io
         
       private writeInternal(int index, int length, byte[] array)
       {        
-         byte temp[64];
+         byte temp[1024];
          int  n := index;
          int  len := length;
-         int  temp_len := 64;
+         int  temp_len := 1024;
     
          int used := _used.Value;
                     
          while (len > 0)
          {
-            if(len < 64)
+            if(len < 1024)
             { 
                temp_len := len 
             }
             else
             { 
-               temp_len := 64 
+               temp_len := 1024 
             };
                 
             Array<byte>.copy(temp, array, n, temp_len);
             Array<byte>.copyTo(_buffer, temp, used, temp_len);
-                
+
+            used += temp_len;            
             n := n + temp_len;
             len := len - temp_len
-         }
+         };
+
+         _used.append(length)
       }
         
       write(int index, int length, byte[] array)
       {
          int used := _used.Value;        
          int capacity := _capacity.Value;
-            
-         if(used < index)
-            { OutOfRangeException.raise() };
             
          if(capacity < used + length)
             { self.reserve(length) };

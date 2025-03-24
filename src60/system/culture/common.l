@@ -1,6 +1,6 @@
 namespace culture
 {
-   interface ILocale
+   public interface ILocale
    {
       abstract string toUppercase(string s);
       abstract wide toUppercase(wide s);
@@ -37,4 +37,5 @@ namespace culture
    
       wide toLower()
          = currentLocale.toLowercase(self);
-   }}
+   }
+}
