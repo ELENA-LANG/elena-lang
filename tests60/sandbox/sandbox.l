@@ -1,5 +1,7 @@
 import extensions;
 
+import system'collections;
+
 /*
 public singleton FibonacciGenerator
 {
@@ -63,6 +65,35 @@ public class Tester
    }
 }
 */
+
+public A
+{
+   object _sync;
+
+   List<int>      _array;
+   Reference<int> _top;
+   Reference<int> _tale;
+     
+   push(int object)
+   {
+      lock(_sync) {
+         int capacity := _array.Length;
+         int tale := *_tale;
+            
+         if (tale < capacity)
+         { 
+            _array.setAt(tale, object) 
+         }
+         else
+         { 
+            _array.append(object) 
+         };
+                
+         _tale.append(1)
+      }
+   }
+}
+
 public program()
 {
    var o := new Object();
@@ -71,13 +102,13 @@ public program()
       o.fail()
          //o.toPrintable()
    }
-   catch::
+/*   catch::
    {
       function(Exception err)
       {
          console.writeLine(err);
       }
-   }
+   }*/
    finally
    {
       console.writeLine("Finally triggered")

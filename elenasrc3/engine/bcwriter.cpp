@@ -3099,7 +3099,8 @@ void ByteCodeWriter :: closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo,
    tape.write(ByteCode::Unhook);
 
    if (!tryInfo.catchMode) {
-      if (virtualMode && finallyNode != BuildKey::None) {
+      // for try-finally statement, the finnaly code must be called here
+      if (!virtualMode && finallyNode != BuildKey::None) {
          tape.write(ByteCode::StoreFI, tryInfo.index);
          saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
          tape.write(ByteCode::PeekFI, tryInfo.index);
@@ -3120,7 +3121,7 @@ void ByteCodeWriter :: closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo,
    tape.write(ByteCode::Unhook);
 
    // finally-block
-   if (finallyNode != BuildKey::None) {
+   if (finallyNode != BuildKey::None) {      
       tape.write(ByteCode::StoreFI, tryInfo.index);
       saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
       tape.write(ByteCode::PeekFI, tryInfo.index);
