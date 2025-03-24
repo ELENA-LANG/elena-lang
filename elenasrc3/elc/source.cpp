@@ -12,7 +12,7 @@
 
 using namespace elena_lang;
 
-const char* source_dfa[40] =
+const char* source_dfa[42] =
 {
         ".????????BB??B??????????????????BdFIRCDLQQDbDVQHEEEEEEEEEEDDDDYc`CCCCCCCCCCCCCCCCCCCCCCCCCCDeQDC?CCCCCCCCCCCCCCCCCCCCCCCCCCDDDDC",
         "*********BB*********************B***********************************************************************************************",
@@ -53,7 +53,9 @@ const char* source_dfa[40] =
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "ffffffffffffffffffffffffffffffffffhffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffgffff",
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfAAAA",
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfAiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "????????????????????????????????????????????????jjjjjjjjjj??????????????????????????????????????????????????????????????????????",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfAiAAAAAAAAAAAjjjjjjjjjjAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 };
 
 // --- SourceReader ---
@@ -154,7 +156,8 @@ SourceInfo SourceReader :: read(char* line, size_t length, List<char*, freestr>&
       case dfaCharacter:
          info.symbol = copyQuote(line, length, dynamicStrings);
          break;
-      case dfaAltQuote:;
+      case dfaAltQuote:
+      case dfaAltQuote2:
          _startState = dfaStart;
 
          info.symbol = copyInterpolQuote(line, length, dynamicStrings);

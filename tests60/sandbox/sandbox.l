@@ -66,10 +66,10 @@ public class Tester
 
 public program()
 {
-//   var a := "www.a.b";
+   var a := "www.a.b";
    var b := "Http:Agent"$13$10;
 
-   console.writeLine(b);
+   var s:= $"GET / HTTP/1.1"$13$10"Host:{a}"$13$10"Connection:close"$13$10"{b}"$13$10;
 
-//   var s:= $"GET / HTTP/1.1\r\nHost:{uri.Host}"$13$10"Connection:close"$13$10"{_headers.Value}"$13$10;
+   console.writeLine(s);
 }
