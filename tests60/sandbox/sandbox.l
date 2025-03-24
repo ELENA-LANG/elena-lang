@@ -1,7 +1,5 @@
 import extensions;
 
-import system'collections;
-
 /*
 public singleton FibonacciGenerator
 {
@@ -69,9 +67,9 @@ public class Tester
 public program()
 {
 //   var a := "www.a.b";
-   var b := "Http:Agent"$1310;
+   var b := "Http:Agent"$13$10;
 
    console.writeLine(b);
 
-//   var s:= $"GET / HTTP/1.1\r\nHost:{uri.Host}"$1310"Connection:close"$1310"{_headers.Value}"$13$10;
+//   var s:= $"GET / HTTP/1.1\r\nHost:{uri.Host}"$13$10"Connection:close"$13$10"{_headers.Value}"$13$10;
 }

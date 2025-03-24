@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Source Reader class implementation.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -34,7 +34,7 @@ const char* source_dfa[40] =
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfAAAAAAAAAAAAASSSSSSSSSSAAAAAAARRRRRRRRRRRRRRRRRRRRRRRRRRAAAAAARRRRRRRRRRRRRRRRRRRRRRRRRRAAAAA",
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFATAAAAAAAAAAASSSSSSSSSSAAAAAAASSSSSSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASAAAAAAAAAAAAAAAAAAAAAAA",
         "????????????????????????????????????????????????UUUUUUUUUU??????????????????????????????????????????????????????????????????????",
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFAGAAAAAAAAAAAUUUUUUUUUUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFATAAAAAAAAAAAUUUUUUUUUUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "---------------------------------------------Q---------------Q------------------------------------------------------------------",
         "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!EEEEEEEEEE!!!D!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
