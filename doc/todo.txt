@@ -48,18 +48,14 @@ In development:
       - #658 : connect with ldbg from VSCode        
   prom: bi-posting weekly
   --------------------------------------
+  - #34 : https get (https://github.com/HISONA/https_client), httpclient - increase the buffer size
   - vs #2 : elena.tmLanguage.json  
   - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
   - pi samples for ppc64
-  - #34
-  * httpclient - increase the buffer size
-  * https get (https://github.com/HISONA/https_client)  
-  * test http client:
+  - test http client:
       // struct http_response *hresp = http_get("http://www.google.com", "User-agent:MyUserAgent\r\n");
-  * httpclient return content without initial size field, trailing 0
-  * response : if response header contains - Transfer-Encoding: chunked - compact chunks into single body
   --------------------------------------  
-  * fix string request := $"GET / HTTP/1.1\r\nHost:{uri.Host}"$1310"Connection:close"$1310"{_headers.Value}"$13$10;
+  * response : if response header contains - Transfer-Encoding: chunked - compact chunks into single body
   --------------------------------------
 
   === Iteration 39 ===
