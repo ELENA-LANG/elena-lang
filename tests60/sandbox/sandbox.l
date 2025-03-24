@@ -66,51 +66,12 @@ public class Tester
 }
 */
 
-public A
-{
-   object _sync;
-
-   List<int>      _array;
-   Reference<int> _top;
-   Reference<int> _tale;
-     
-   push(int object)
-   {
-      lock(_sync) {
-         int capacity := _array.Length;
-         int tale := *_tale;
-            
-         if (tale < capacity)
-         { 
-            _array.setAt(tale, object) 
-         }
-         else
-         { 
-            _array.append(object) 
-         };
-                
-         _tale.append(1)
-      }
-   }
-}
-
 public program()
 {
-   var o := new Object();
-   try
-   {
-      o.fail()
-         //o.toPrintable()
-   }
-/*   catch::
-   {
-      function(Exception err)
-      {
-         console.writeLine(err);
-      }
-   }*/
-   finally
-   {
-      console.writeLine("Finally triggered")
-   }
+//   var a := "www.a.b";
+   var b := "Http:Agent"$1310;
+
+   console.writeLine(b);
+
+//   var s:= $"GET / HTTP/1.1\r\nHost:{uri.Host}"$1310"Connection:close"$1310"{_headers.Value}"$13$10;
 }
