@@ -40,7 +40,7 @@ namespace elena_lang
 
       ustr_t copyToken(char* token, size_t length);
       ustr_t copyQuote(char* token, size_t length, List<char*, freestr>& dynamicStrings);
-      ustr_t copyInterpolQuote(char* token, size_t length, bool charMode, List<char*, freestr>& dynamicStrings);
+      ustr_t copyInterpolQuote(char* token, size_t length, bool nextInterpolToken, List<char*, freestr>& dynamicStrings);
 
       bool IsOperator(char state)
       {
