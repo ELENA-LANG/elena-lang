@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Win32 Debugger class and its helpers implementation
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -348,8 +348,10 @@ Win32DebugProcess :: Win32DebugProcess()
 
 inline bool isIncluded(path_t paths, path_t path)
 {
+   pos_t length = path.length_pos();
    pos_t index = paths.findStr(path);
-   return (index != NOTFOUND_POS && (paths[index + 1] == ';' || paths[index + 1] == 0));
+
+   return (index != NOTFOUND_POS && (paths[index + length] == ';' || paths[index + length] == 0 || paths[index + length] == '\\'));
 }
 
 bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cmdLine, const wchar_t* appPath,
@@ -383,10 +385,11 @@ bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cm
       pathsEnv.allocate(4096);
 
       int dwRet = GetEnvironmentVariable(_T("PATH"), (LPWSTR)pathsEnv.str(), 4096);
-      if (dwRet && isIncluded(pathsEnv.str(), appPath)) {
+      if (dwRet && !isIncluded(pathsEnv.str(), appPath)) {
          trimPos = pathsEnv.length_pos();
 
-         pathsEnv.append(';');
+         if (!pathsEnv.empty() && pathsEnv[pathsEnv.length() - 1] != ';')
+            pathsEnv.append(';');
          pathsEnv.append(appPath);
 
          SetEnvironmentVariable(_T("PATH"), pathsEnv.str());

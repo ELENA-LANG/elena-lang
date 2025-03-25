@@ -9,8 +9,6 @@ In development:
   --------------------------------------
   dev: 
       - upndown (connector - interaction)
-      - #496
-      - #622      
       - MTA support for Linux  
       - #708 : compile the project (elc, og, sg, asm, ecv), create Linker
       - implement ExtensionMessage.equal
@@ -19,7 +17,6 @@ In development:
       - yield inside try operator is not allowed
       - unit tests for try-catch / try-catch-finally / try-finally
   ide:
-      - #184 : linux - select tab, save, close      
       - ide : windows
       - syntax highlighting
       - page up - must be reduced by 2 lines
@@ -30,39 +27,38 @@ In development:
       - functionality in run-time to print the library version info
       - include net / thread examples in build
   maint:
-      - pi samples for aarch64 
       - test all x86-64 examples
       - unit tests : bt optimization 
       - api : add descriptions 
       - github actions : `set-output` command is deprecated 
   port:
-      - chat sample
       - x86-64 : httpget, threading samples
-      - rosetta code : moving to 6.5
+      - rosetta code : moving to 6.6 (test, use Console)
       - x86-64 : mta - test net examples for mta   
       - test all x86-64 examples (net)
-      - pi samples for ppc64, aarch64
-  tools: 
-      - #658 : connect with ldbg from VSCode        
-  prom: bi-posting weekly
   --------------------------------------
   - vs #2 : elena.tmLanguage.json  
+  - #658 :  connect with ldbg from VSCode        
+  - #184 : linux - select tab
   - arrange action for i386 / amd64 linux release
-  - pi samples for ppc64
   --------------------------------------  
-  - #723 : include path to approot temporally inside IDE
+  - pi samples for ppc64
   --------------------------------------
 
   === Iteration 39 ===
   --------------------------------------
   dev: 
-  - api refactoring : main program entry to be called - Program
-  - #34 : https get (https://github.com/yhirose/cpp-httplib), 
+      - api refactoring : main program entry to be called - Program
+      - #34 : https get (https://github.com/yhirose/cpp-httplib), 
+      - #496
+      - #622
   gen:
+  ide:
+      - #184 : linux - save, close      
   maint:
-      - review pi performance (must < 6)
   port:
-  prom:
+      - pi samples for aarch64 
+  prom: bi-posting weekly
   --------------------------------------
   --------------------------------------
   --------------------------------------
@@ -74,6 +70,7 @@ In development:
   gen:
   maint:
   port:
+      - chat sample
   prom:
   --------------------------------------
   --------------------------------------
@@ -86,6 +83,7 @@ In development:
   dev: 
   gen:
   maint:
+      - review pi performance (must < 6)
   port:
   prom:
   --------------------------------------

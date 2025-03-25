@@ -1054,7 +1054,7 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
       model->sourceViewModel.schemeIndex = loadSetting(config, SCHEME_SETTINGS, 1);
       model->projectModel.withPersistentConsole = loadSetting(config, PERSISTENT_CONSOLE_SETTINGS, -1) != 0;
 #ifdef _MSC_VER
-      model->projectModel.includeAppPath2PathsTemporally = loadSetting(config, INCLIDE_PATH2ENV_SETTINGS, -1) != 0;
+      model->projectModel.includeAppPath2PathsTemporally = loadSetting(config, INCLIDE_PATH2ENV_SETTINGS, 0) != 0;
 #endif
       model->rememberLastPath = loadSetting(config, LASTPATH_SETTINGS, -1) != 0;
       model->rememberLastProject = loadSetting(config, LASTPROJECT_SETTINGS, -1) != 0;
