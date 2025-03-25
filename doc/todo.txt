@@ -35,7 +35,6 @@ In development:
       - unit tests : bt optimization 
       - api : add descriptions 
       - github actions : `set-output` command is deprecated 
-      - release build - include linux for x86 / x86-64
   port:
       - chat sample
       - x86-64 : httpget, threading samples
@@ -47,15 +46,17 @@ In development:
       - #658 : connect with ldbg from VSCode        
   prom: bi-posting weekly
   --------------------------------------
-  - pi samples for ppc64
   - vs #2 : elena.tmLanguage.json  
+  - arrange action for i386 / amd64 linux release
+  - pi samples for ppc64
   --------------------------------------  
-  - api refactoring : main program entry to be called - Program
+  - #723 : include path to approot temporally inside IDE
   --------------------------------------
 
   === Iteration 39 ===
   --------------------------------------
   dev: 
+  - api refactoring : main program entry to be called - Program
   - #34 : https get (https://github.com/yhirose/cpp-httplib), 
   gen:
   maint:

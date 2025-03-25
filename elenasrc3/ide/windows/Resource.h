@@ -185,6 +185,7 @@
 #define IDC_DEBUGGER_LIBPATH           1715
 #define IDC_IDE_AUTORECOMPILE          1716
 #define IDC_IDE_AUTOSAVE               1717
+#define IDC_IDE_INCLUDE_APPPATH        1718
 
 #define IDM_EDITOR_OPTIONS             1750
 #define IDM_IDE_OPTIONS                1751

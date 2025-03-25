@@ -251,12 +251,18 @@ namespace elena_lang
       addr_t address;
    };
 
+   struct StartUpSettings
+   {
+      bool withExplicitConsole;
+      bool includeAppPath2Paths;  // applicable only for Windows
+   };
+
    // --- DebugProcessBase ---
    class DebugProcessBase
    {
    public:
       virtual bool startThread(DebugControllerBase* controller) = 0;
-      virtual bool startProgram(path_t exePath, path_t cmdLine, bool withExplicitConsole) = 0;
+      virtual bool startProgram(path_t exePath, path_t cmdLine, path_t appPath, StartUpSettings& startUpSettings) = 0;
 
       virtual void activate() = 0;
       virtual void run() = 0;

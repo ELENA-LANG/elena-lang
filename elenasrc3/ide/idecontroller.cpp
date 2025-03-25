@@ -300,17 +300,17 @@ bool ProjectController :: startDebugger(ProjectModel& model, DebugActionResult& 
       commandLine.append(arguments);
 
       bool withPersistentConsole = model.withPersistentConsole && (model.singleSourceProject || (*model.profile).endsWith("console"));
+      bool includeAppPath2Paths = model.includeAppPath2PathsTemporally;
       bool debugMode = model.getDebugMode();
       if (debugMode) {
-         if (!_debugController.start(exePath.str(), commandLine.str(), debugMode, withPersistentConsole)) {
+         if (!_debugController.start(exePath.str(), commandLine.str(), debugMode, { withPersistentConsole, includeAppPath2Paths })) {
             result.noDebugFile = true;
 
             return false;
          }
-
       }
       else {
-         if (!_debugController.start(exePath.str(), commandLine.str(), false, withPersistentConsole)) {
+         if (!_debugController.start(exePath.str(), commandLine.str(), false, { withPersistentConsole, includeAppPath2Paths })) {
             //notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_RUN_NEED_RECOMPILE);
 
             return false;
@@ -1053,6 +1053,9 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
       model->appMaximized = loadSetting(config, MAXIMIZED_SETTINGS, -1) != 0;
       model->sourceViewModel.schemeIndex = loadSetting(config, SCHEME_SETTINGS, 1);
       model->projectModel.withPersistentConsole = loadSetting(config, PERSISTENT_CONSOLE_SETTINGS, -1) != 0;
+#ifdef _MSC_VER
+      model->projectModel.includeAppPath2PathsTemporally = loadSetting(config, INCLIDE_PATH2ENV_SETTINGS, -1) != 0;
+#endif
       model->rememberLastPath = loadSetting(config, LASTPATH_SETTINGS, -1) != 0;
       model->rememberLastProject = loadSetting(config, LASTPROJECT_SETTINGS, -1) != 0;
       model->sourceViewModel.highlightSyntax = loadSetting(config, HIGHLIGHTSYNTAX_SETTINGS, -1) != 0;
@@ -1087,6 +1090,9 @@ void IDEController :: saveConfig(IDEModel* model, path_t configPath)
    saveSetting(config, MAXIMIZED_SETTINGS, model->appMaximized);
    saveSetting(config, SCHEME_SETTINGS, model->sourceViewModel.schemeIndex);
    saveSetting(config, PERSISTENT_CONSOLE_SETTINGS, model->projectModel.withPersistentConsole);
+#ifdef _MSC_VER
+   saveSetting(config, INCLIDE_PATH2ENV_SETTINGS, model->projectModel.includeAppPath2PathsTemporally);
+#endif
    saveSetting(config, LASTPATH_SETTINGS, model->rememberLastPath);
    saveSetting(config, LASTPROJECT_SETTINGS, model->rememberLastProject);
    saveSetting(config, HIGHLIGHTSYNTAX_SETTINGS, model->sourceViewModel.highlightSyntax);

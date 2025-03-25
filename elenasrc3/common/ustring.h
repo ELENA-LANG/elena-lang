@@ -3,7 +3,7 @@
 //
 //		This header contains UTF8 String classes declarations
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef USTRING_H
@@ -600,6 +600,13 @@ namespace elena_lang
       }
 
    public:
+      bool allocate(size_t size)
+      {
+         create(size);
+
+         return _string != nullptr;
+      }
+
       T& operator[](size_t index)
       {
          return *(_string + index);
@@ -700,7 +707,10 @@ namespace elena_lang
 
          copy(value, getlength(value));
       }
-
+      virtual ~DynamicString()
+      {
+         freestr(_string);
+      }
    };
 
    typedef DynamicString<char> DynamicUStr;

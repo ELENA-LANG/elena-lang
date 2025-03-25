@@ -515,6 +515,7 @@ void IDESettings :: onCreate()
    setCheckState(IDC_IDE_REMEMBERPATH, _model->rememberLastPath);
    setCheckState(IDC_IDE_REMEMBERPROJECT, _model->rememberLastProject);
    setCheckState(IDC_IDE_PERSIST_CONSOLE, _model->projectModel.withPersistentConsole);
+   setCheckState(IDC_IDE_INCLUDE_APPPATH, _model->projectModel.includeAppPath2PathsTemporally);
    setCheckState(IDC_IDE_APPMAXIMIZED, _model->appMaximized);
    setCheckState(IDC_IDE_AUTORECOMPILE, _model->projectModel.autoRecompile);
    setCheckState(IDC_IDE_AUTOSAVE, _model->autoSave);
@@ -526,6 +527,7 @@ void IDESettings :: onOK()
    _model->rememberLastProject = getCheckState(IDC_IDE_REMEMBERPROJECT);
    _model->appMaximized = getCheckState(IDC_IDE_APPMAXIMIZED);
    _model->projectModel.withPersistentConsole = getCheckState(IDC_IDE_PERSIST_CONSOLE);
+   _model->projectModel.includeAppPath2PathsTemporally = getCheckState(IDC_IDE_INCLUDE_APPPATH);
    _model->projectModel.autoRecompile = getCheckState(IDC_IDE_AUTORECOMPILE);
    _model->autoSave = getCheckState(IDC_IDE_AUTOSAVE);
 }

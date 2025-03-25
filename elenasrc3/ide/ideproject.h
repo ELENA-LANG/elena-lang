@@ -32,6 +32,9 @@ namespace elena_lang
    constexpr auto SCHEME_SETTINGS               = "configuration/settings/scheme";
    constexpr auto HIGHLIGHTSYNTAX_SETTINGS      = "configuration/settings/highlight";
    constexpr auto PERSISTENT_CONSOLE_SETTINGS   = "configuration/settings/persist_output";
+#ifdef _MSC_VER
+   constexpr auto INCLIDE_PATH2ENV_SETTINGS     = "configuration/settings/include_path_2_env";
+#endif
    constexpr auto LINENUMBERS_SETTINGS          = "configuration/settings/line_number";
    constexpr auto AUTO_RECOMPILE_SETTING        = "configuration/settings/autocomp";
    constexpr auto AUTO_SAVE_SETTING             = "configuration/settings/autosave";
@@ -70,6 +73,7 @@ namespace elena_lang
       ReferencePathMap referencePaths;
 
       bool              withPersistentConsole;
+      bool              includeAppPath2PathsTemporally;
 
       bool              singleSourceProject;
       bool              autoRecompile;

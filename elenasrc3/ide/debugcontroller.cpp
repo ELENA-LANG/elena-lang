@@ -499,7 +499,7 @@ DebugLineInfo* DebugInfoProvider :: seekClassInfo(addr_t address, IdentifierStri
 
 DebugController :: DebugController(DebugProcessBase* process, ProjectModel* model,
    SourceViewModel* sourceModel, DebugSourceController* sourceController)
-   : _provider(model)
+   : _provider(model), _startUpSettings({})
 {
    _started = false;
    _process = process;
@@ -508,12 +508,11 @@ DebugController :: DebugController(DebugProcessBase* process, ProjectModel* mode
    _model = model;
    _currentPath = nullptr;
    _sourceController = sourceController;
-   _witExplicitConsole = false;
 }
 
 void DebugController :: debugThread()
 {
-   if (!_process->startProgram(_debuggee.str(), _arguments.str(), _witExplicitConsole)) {
+   if (!_process->startProgram(_debuggee.str(), _arguments.str(), *_model->paths.appPath, _startUpSettings)) {
       //HOTFIX : to inform the listening thread
       _process->resetEvent(DEBUG_ACTIVE);
 
@@ -843,12 +842,12 @@ void DebugController :: clearBreakpoints()
 
 }
 
-bool DebugController :: start(path_t programPath, path_t arguments, bool debugMode, bool witExplicitConsole)
+bool DebugController :: start(path_t programPath, path_t arguments, bool debugMode, StartUpSettings startUpSettings)
 {
    _currentModule.clear();
    _debuggee.copy(programPath);
    _arguments.copy(arguments);
-   _witExplicitConsole = witExplicitConsole;
+   _startUpSettings = startUpSettings;
 
    if (debugMode) {
       addr_t entryPoint = _process->findEntryPoint(programPath);

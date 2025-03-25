@@ -224,7 +224,7 @@ namespace elena_lang
       bool                    _running;
       PathString              _debuggee;
       PathString              _arguments;
-      bool                    _witExplicitConsole;
+      StartUpSettings         _startUpSettings;
 
       DebugProcessBase*       _process;
       DebugInfoProvider       _provider;
@@ -275,7 +275,7 @@ namespace elena_lang
          return _started;
       }
 
-      bool start(path_t programPath, path_t arguments, bool debugMode, bool witExplicitConsole);
+      bool start(path_t programPath, path_t arguments, bool debugMode, StartUpSettings startUpSettings);
 
       void clearBreakpoints();
 
