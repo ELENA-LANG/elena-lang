@@ -7,7 +7,9 @@ public program()
 
     pi += -1.0.power(i) / (i*2+1) * 4;
     i++;
-    pi += -1.0.power(i) / (i*2+1) * 4;
+    real r := -1.0.power(i) / (i*2+1) * 4;
+    pi += r;
 
+    Console.printLine(r);
     Console.printLine(pi);
 }
