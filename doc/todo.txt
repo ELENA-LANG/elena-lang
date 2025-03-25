@@ -50,7 +50,7 @@ In development:
   - pi samples for ppc64
   - vs #2 : elena.tmLanguage.json  
   --------------------------------------  
-  - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
+  - api refactoring : main program entry to be called - Program
   --------------------------------------
 
   === Iteration 39 ===

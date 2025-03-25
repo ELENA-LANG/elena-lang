@@ -20,7 +20,7 @@ public sample1()
 
    Task.waitAll(tasks.Value);
 
-   list.Snapshot.forEach(printingLn);
+   list.Snapshot.forEach(PrintingLn);
 
    Console.writeLine("Main thread exits")
 }

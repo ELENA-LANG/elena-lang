@@ -56,7 +56,7 @@ public program()
     {
         Console.printLine("Department: ",info.Department);
  
-        info.Employees.forEach(printingLn);
+        info.Employees.forEach(PrintingLn);
  
         Console.writeLine("---------------------------------------------")
     };
