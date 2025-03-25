@@ -4,7 +4,7 @@ import extensions'scripting;
 //public live_program()
 //{
 //   if (program_arguments.Length == 1)
-//        { console.printLine("Please provide the path to the file to interpret"); AbortException.raise() };
+//        { Console.printLine("Please provide the path to the file to interpret"); AbortException.raise() };
 //
 //    try
 //    {
@@ -14,7 +14,7 @@ import extensions'scripting;
 //    }
 //    catch(Exception e)
 //    {
-//        console.printLine:e
+//        Console.printLine:e
 //    }
 //}
 

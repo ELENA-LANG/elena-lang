@@ -19,15 +19,15 @@ class ProgramLoopImpl
    function()
    {
       // if grettings is not defined - do nothing
-      console.printLine(_control.greeting() ?? EmptyString);
+      Console.printLine(_control.greeting() ?? EmptyString);
         
       var prompt := _control.Prompt ?? EmptyString;
         
       while (_active)
       {
-         console.write(prompt);
+         Console.write(prompt);
 
-         console.printLine(_control.proceed(console.readLine()))
+         Console.printLine(_control.proceed(Console.readLine()))
       }
    }
 }

@@ -27,14 +27,14 @@ public program()
 {
    auto e := FibonacciGenerator.enumerator();
     
-   int n := console.print("Enter the length of fibonacci series:").readLine().toInt();
+   int n := Console.print("Enter the length of fibonacci series:").readLine().toInt();
    for(int i := 0; i < n; i++) {
       e.next();
 
-      console.printLine(*e)
+      Console.printLine(*e)
    };
     
-   console.readChar()
+   Console.readChar()
 }
 */
 /*
@@ -77,5 +77,5 @@ public program()
 {
    string request := $"GET / HTTP/1.1"$13$10"Host:{X.Host}"$13$10"Connection:close"$13$10"{X.Headers}"$13$10;
 
-   console.writeLine(request);
+   Console.writeLine(request);
 }

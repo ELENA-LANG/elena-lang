@@ -12,7 +12,7 @@ public program()
         int n := 1;
         while (true) {
            lock(sync) {
-              console.writeLine("Line from thread 1 : " + n.toPrintable());
+              Console.writeLine("Line from thread 1 : " + n.toPrintable());
               n++;
            };
            if (n == 50000)
@@ -21,7 +21,7 @@ public program()
       }
       catch(Exception ex)
       {
-         console.writeLine(ex);
+         Console.writeLine(ex);
       }
    });
 
@@ -30,13 +30,13 @@ public program()
       int n := 1000;
       while (true) {
          lock(sync) {
-            console.writeLine("Line from thread 2 : " + n.toPrintable());
+            Console.writeLine("Line from thread 2 : " + n.toPrintable());
             n++;
          }         
       }
    });
 
-   console.readChar()
+   Console.readChar()
 }
 
 /*public program()
@@ -47,11 +47,11 @@ public program()
    {
       var s := list.pop();
 
-      console.printLine("Thread says ",s);
+      Console.printLine("Thread says ",s);
    });
 
-   console.printLineConcurrent("Send a message to a thread");
-   var msg := console.readLine();
+   Console.printLineConcurrent("Send a message to a thread");
+   var msg := Console.readLine();
 
    list.push(msg);
 

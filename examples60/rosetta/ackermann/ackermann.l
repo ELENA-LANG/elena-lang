@@ -34,9 +34,9 @@ public program()
    {
       for(int j := 0; j <= 5; j += 1)
       {
-         console.printLine("A(",i,",",j,")=",ackermann(i,j))
+         Console.printLine("A(",i,",",j,")=",ackermann(i,j))
       }
    };
 
-   console.readChar()
+   Console.readChar()
 }

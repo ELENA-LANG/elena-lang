@@ -65,7 +65,7 @@ public sealed ChatServer
          };
       }
       catch(Exception ex) {
-         console.writeLine(ex);
+         Console.writeLine(ex);
       };
 
       ^ true

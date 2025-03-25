@@ -22,5 +22,5 @@ public sample1()
 
    list.Snapshot.forEach(printingLn);
 
-   console.writeLine("Main thread exits")
+   Console.writeLine("Main thread exits")
 }

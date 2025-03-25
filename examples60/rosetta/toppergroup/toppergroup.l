@@ -54,12 +54,12 @@ public program()
  
     employees.topNPerDepartment(2).forEach::(info)
     {
-        console.printLine("Department: ",info.Department);
+        Console.printLine("Department: ",info.Department);
  
         info.Employees.forEach(printingLn);
  
-        console.writeLine("---------------------------------------------")
+        Console.writeLine("---------------------------------------------")
     };
  
-    console.readChar()
+    Console.readChar()
 }

@@ -6,7 +6,7 @@ public program()
     var a := new int[]{1,2,3};
     var b := new int[]{4,5};
 
-    console.printLine(
+    Console.printLine(
         "(",a.asEnumerable(),") + (",b.asEnumerable(),
         ") = (",(a + b).asEnumerable(),")").readChar();
 }

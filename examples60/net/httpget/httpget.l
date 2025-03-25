@@ -45,7 +45,7 @@ singleton Tester
 
          string content := :await response.readAsStringAsync();
 
-         console.writeLine(content);
+         Console.writeLine(content);
       };
    }
 }

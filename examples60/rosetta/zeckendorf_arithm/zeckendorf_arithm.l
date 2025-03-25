@@ -229,33 +229,33 @@ sealed struct ZeckendorfNumber
 
 public program()
 {
-    console.printLine("Addition:");
+    Console.printLine("Addition:");
     var n := 10n;
     
     n += 10n;
-    console.printLine(n);
+    Console.printLine(n);
     n += 10n;
-    console.printLine(n);
+    Console.printLine(n);
     n += 1001n;
-    console.printLine(n);
+    Console.printLine(n);
     n += 1000n;
-    console.printLine(n);
+    Console.printLine(n);
     n += 10101n;
-    console.printLine(n);
+    Console.printLine(n);
     
-    console.printLine("Subtraction:");
+    Console.printLine("Subtraction:");
     n := 1000n;
     n -= 101n;
-    console.printLine(n);
+    Console.printLine(n);
     n := 10101010n;
     n -= 1010101n;
-    console.printLine(n);
+    Console.printLine(n);
     
-    console.printLine("Multiplication:");
+    Console.printLine("Multiplication:");
     n := 1001n;
     n *= 101n;
-    console.printLine(n);
+    Console.printLine(n);
     n := 101010n;
     n += 101n;
-    console.printLine(n)
+    Console.printLine(n)
 }

@@ -121,13 +121,13 @@ sealed class Model
                     electronHead { label := headLabel }
                     electronTail { label := tailLabel };
  
-                console.write(label);
+                Console.write(label);
  
                 j := j + 1
             };
  
             i := i + 1;
-            console.writeLine()
+            Console.writeLine()
         }
     }
 }
@@ -137,7 +137,7 @@ public program()
     Model model := Model.load(sample,10,30);
     for(int i := 0; i < 10; i += 1)
     {
-        console.printLineFormatted("Iteration {0}",i);
+        Console.printLineFormatted("Iteration {0}",i);
         model.print().run()
     }    
 }

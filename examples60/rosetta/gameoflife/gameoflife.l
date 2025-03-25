@@ -27,18 +27,18 @@ singleton gameOfLifeRuleSet : RuleSet
 
 playGame(Model model)
 {
-   console.clear();
+   Console.clear();
     
    model.OnUpdate := (Space sp){ sp.print() };
 
-   until (console.KeyAvailable)
+   until (Console.KeyAvailable)
    {
       model.run();
         
       threadControl.sleep(DELAY)
    };
 
-   console.readChar()
+   Console.readChar()
 }
 
 //public test

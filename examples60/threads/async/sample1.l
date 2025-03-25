@@ -5,22 +5,22 @@ class Sample1
    async static Task wait()
    {
       :await Task.sleep(10000);
-      console.writeLine("10 Seconds wait Completed\n");
+      Console.writeLine("10 Seconds wait Completed\n");
    }
 
    async static Task someMethod()
    {
-      console.writeLine("Some Method Started......");
+      Console.writeLine("Some Method Started......");
       :await wait();
-      console.writeLine("Some Method End");      
+      Console.writeLine("Some Method End");      
    }
 
    static run()
    {
-      console.writeLine("Main Method Started......");
+      Console.writeLine("Main Method Started......");
       someMethod();
-      console.writeLine("Main Method End");
-      console.readChar();
+      Console.writeLine("Main Method End");
+      Console.readChar();
    }
 }
 

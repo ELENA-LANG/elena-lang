@@ -10,8 +10,7 @@ In development:
   dev: 
       - upndown (connector - interaction)
       - #496
-      - #622
-      - #34 : http client (support redirects, post, put, patch, delete, head, options, trace), web api
+      - #622      
       - MTA support for Linux  
       - #708 : compile the project (elc, og, sg, asm, ecv), create Linker
       - implement ExtensionMessage.equal
@@ -48,19 +47,16 @@ In development:
       - #658 : connect with ldbg from VSCode        
   prom: bi-posting weekly
   --------------------------------------
-  - #34 : https get (https://github.com/HISONA/https_client), httpclient - increase the buffer size
-  - vs #2 : elena.tmLanguage.json  
-  - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
   - pi samples for ppc64
-  - test http client:
-      // struct http_response *hresp = http_get("http://www.google.com", "User-agent:MyUserAgent\r\n");
+  - vs #2 : elena.tmLanguage.json  
   --------------------------------------  
-  * response : if response header contains - Transfer-Encoding: chunked - compact chunks into single body
+  - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
   --------------------------------------
 
   === Iteration 39 ===
   --------------------------------------
   dev: 
+  - #34 : https get (https://github.com/yhirose/cpp-httplib), 
   gen:
   maint:
       - review pi performance (must < 6)
@@ -70,9 +66,21 @@ In development:
   --------------------------------------
   --------------------------------------
 
+  === Iteration 40 ===
+  --------------------------------------
+  dev: 
+  - #34 : http client : support redirects, post, put, patch, delete, head, options, trace), web api
+  gen:
+  maint:
+  port:
+  prom:
+  --------------------------------------
+  --------------------------------------
+  --------------------------------------
+
   ### EPIC: elena 6.8 ###
 
-  === Iteration 40 ===
+  === Iteration 41 ===
   --------------------------------------
   dev: 
   gen:
@@ -83,7 +91,7 @@ In development:
   --------------------------------------
   --------------------------------------
 
-  === Iteration 41 ===
+  === Iteration 42 ===
   --------------------------------------
   dev: 
   gen:

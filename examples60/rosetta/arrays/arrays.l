@@ -24,7 +24,7 @@ public program()
  
     dynamicArray[2] := 3;    
     
-    console.writeLine(array[0]);
-    console.writeLine(stackAllocatedArray[1]);
-    console.writeLine(dynamicArray[2]);
+    Console.writeLine(array[0]);
+    Console.writeLine(stackAllocatedArray[1]);
+    Console.writeLine(dynamicArray[2]);
 }

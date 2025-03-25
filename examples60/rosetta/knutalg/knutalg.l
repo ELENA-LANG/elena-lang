@@ -48,5 +48,5 @@ public program()
         }
     };    
  
-    console.printLine(bin).readChar()
+    Console.printLine(bin).readChar()
 }
