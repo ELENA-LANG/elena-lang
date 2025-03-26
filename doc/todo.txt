@@ -36,6 +36,7 @@ In development:
   === Iteration 39 ===
   --------------------------------------
   dev: 
+      - support fladd, flsub, fldiv, flmul (throu special prefix??)
       - #34 : https get (https://github.com/yhirose/cpp-httplib), 
       - MTA support for Linux  
       - #496

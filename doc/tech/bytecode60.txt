@@ -391,6 +391,14 @@ ELENA byte codes (or ecodes)
 
    fisub                    - double:[acc] -= int:[sp[0]]
  
+   fladd                    - double:[acc] += long:[sp[0]]
+ 
+   fldiv                    - double:[acc] /= long:[sp[0]]
+ 
+   flmul                    - double:[acc] *= long:[sp[0]]
+
+   flsub                    - double:[acc] -= long:[sp[0]]
+ 
    fmul dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] *= temp;
                               n = 8  
