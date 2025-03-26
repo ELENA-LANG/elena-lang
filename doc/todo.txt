@@ -13,23 +13,21 @@ In development:
       - raise an error if an async extension is declared (until the feature is not implemented)
       - alt operation inside async operation is not allowed
       - yield inside try operator is not allowed
-  ide:
-      - page up - must be reduced by 2 lines
   api:
       - functionality in run-time to print the library version info
   maint:
       - github actions : `set-output` command is deprecated 
   --------------------------------------
-  - #722 : [IDE] Scrolling experience 
+  - arrange action for i386 / amd64 linux release
+  - #722 : [IDE] Scrolling experience  / page up - must be reduced by 2 lines
   - review internal identifiers / messages, sub project must share them with root project, internal messages must be
     resolved fully in JITLinker, share the internal namespaces, to speed up
   - modify package scripts, copy all examples with a single command
   - place all examples into single project collection
   - prjcol : support sub folders 
   - #658 :  connect with ldbg from VSCode        
-  - #184 : linux - select tab
   --------------------------------------  
-  - arrange action for i386 / amd64 linux release
+  - #184 : linux - select tab
   --------------------------------------
 
   === Iteration 39 ===
@@ -46,7 +44,7 @@ In development:
   ide:
       - ide : windows
       - syntax highlighting
-      - #184 : linux - save, close      
+      - #184 : linux - save, close, ...
       - async method - auto watch : self and some variables are not displayed
   maint:
       - test all x86-64 examples

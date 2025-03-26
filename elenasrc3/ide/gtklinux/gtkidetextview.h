@@ -15,10 +15,15 @@ namespace elena_lang
 
 class IDETextViewFrame : public TextViewFrame
 {
+   BroadcasterBase* _eventBroadcaster;
+
+protected:
+    void onTabChange(int page_num) override;
+
 public:
    void on_text_model_change(TextViewModelEvent event);
 
-   IDETextViewFrame(TextViewModel* model, TextViewControllerBase* controller, ViewStyles* styles);
+   IDETextViewFrame(TextViewModel* model, TextViewControllerBase* controller, ViewStyles* styles, BroadcasterBase* eventBroadcaster);
 };
 
 } // _GUI_

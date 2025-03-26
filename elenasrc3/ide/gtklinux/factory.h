@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2024, by Aleksey Rakov
+//                                             (C)2024-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef FACTORY_H
@@ -18,12 +18,14 @@
 namespace elena_lang
 {
    typedef sigc::signal<void(TextViewModelEvent)> type_textview_changed;
+   typedef sigc::signal<void(SelectionEvent)> type_textframe_changed;
 
    // --- IDEBroadcaster ---
    class IDEBroadcaster : public BroadcasterBase
    {
    public:
-      type_textview_changed textview_changed;
+      type_textview_changed    textview_changed;
+      type_textframe_changed   textframe_changed;
 
       void sendMessage(EventBase* event) override;
 
